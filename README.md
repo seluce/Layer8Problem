@@ -36,7 +36,7 @@ Das Spiel läuft komplett im Browser. Es ist keine Installation notwendig.
 ## 🛠️ Technologie
 
 Das Projekt ist bewusst simpel gehalten (Old School), um leicht anpassbar und portabel zu sein:
-* **HTML5 & CSS3** (mit Tailwind CSS via CDN, auch wenn Cloudflare in letzter Ueit häufiger Ausfalle hatte)
+* **HTML5 & CSS3** (mit Tailwind CSS via CDN, auch wenn Cloudflare in letzter Zeit häufiger Ausfalle hatte)
 * **Vanilla JavaScript** (Keine Frameworks, keine Build-Tools)
 
 ## ⚠️ Disclaimer & Lizenz
