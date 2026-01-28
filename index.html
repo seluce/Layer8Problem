@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT-HELL: FINAL v33</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap');
+        
+        body { 
+            font-family: 'JetBrains Mono', monospace; 
+            background-color: #020617; 
+            color: #e2e8f0; 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column; padding: 1rem;
+        }
+
+        /* NEON LOOK */
+        .neon-box {
+            background: #0f172a; border: 1px solid #1e293b;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); border-radius: 0.75rem; position: relative;
+        }
+        .border-blue { border-top: 3px solid #3b82f6; }
+        .border-green { border-top: 3px solid #10b981; }
+        .border-orange { border-top: 3px solid #f97316; }
+        .border-red { border-top: 3px solid #ef4444; }
+        .border-purple { border-top: 3px solid #a855f7; }
+
+        /* TICKET COUNTER ANIMATION */
+        .ticket-pulse { animation: pulse-red 1s infinite; color: #ef4444; }
+        @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* BOSS TIMER BAR */
+        #boss-timer-container {
+            width: 100%; height: 8px; background: #334155; border-radius: 4px; 
+            margin-bottom: 1rem; overflow: hidden; display: none; border: 1px solid #ef4444;
+        }
+        #boss-timer-bar {
+            height: 100%; background: #ef4444; width: 100%; transition: width 1s linear;
+        }
+
+        /* ACHIEVEMENT TOAST */
+        #achievement-container {
+            position: fixed; bottom: 100px; right: 20px; z-index: 50;
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+        }
+        .achievement-toast {
+            background: rgba(16, 185, 129, 0.95); color: white;
+            border: 2px solid #059669; border-radius: 8px;
+            padding: 12px 16px; min-width: 250px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+            animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4s forwards;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .ach-icon { font-size: 24px; }
+        .ach-text { display: flex; flex-direction: column; text-align: left; }
+        .ach-title { font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #ecfdf5; }
+        .ach-desc { font-size: 10px; opacity: 0.9; }
+
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
+
+        /* EMAIL POPUP SYSTEM */
+        .email-overlay {
+            position: absolute; top: 10%; left: 5%; right: 5%; 
+            background: #1e293b; border: 2px solid #fbbf24; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9); z-index: 50;
+            border-radius: 8px; padding: 15px;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: none; flex-direction: column;
+        }
+        .email-header { font-size: 10px; color: #fbbf24; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #334155; padding-bottom: 5px;}
+        .email-body { font-size: 12px; color: white; margin-bottom: 15px; font-style: italic; }
+        .email-timer-bg { width: 100%; height: 4px; background: #334155; margin-bottom: 10px; }
+        .email-timer-fill { height: 100%; background: #ef4444; width: 100%; transition: width 1s linear; }
+        
+        @keyframes popIn { from { transform: scale(0.8) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+
+        /* PHONE */
+        #smartphone {
+            background: #000; border: 4px solid #334155; border-radius: 12px;
+            overflow: hidden; position: relative; display: flex; flex-direction: column;
+        }
+        .chat-bubble { padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; font-size: 0.75rem; max-width: 90%; }
+        .chat-in { background: #1e293b; border-left: 3px solid #6366f1; align-self: flex-start; }
+        .chat-out { background: #3b82f6; color: white; align-self: flex-end; }
+        .chat-system { background: #0f172a; border: 1px solid #334155; color: #94a3b8; align-self: center; text-align: center; font-size: 0.65rem; margin-top: 5px; padding: 5px; border-radius: 5px;}
+
+        /* INVENTORY SLOTS */
+        .inv-slot {
+            background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
+            border-radius: 8px; display: flex; justify-content: center; align-items: center;
+            font-size: 20px; transition: all 0.2s; cursor: help; position: relative;
+        }
+        .inv-slot:hover { border-color: #fbbf24; }
+        .inv-slot.empty { opacity: 0.3; }
+        .inv-slot.used { opacity: 0.4; filter: grayscale(100%); border-color: #000; }
+        .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 10px; color: #10b981; }
+
+        /* BUTTONS */
+        .action-btn {
+            background: #1e293b; border: 1px solid #334155; transition: all 0.1s;
+            border-radius: 0.75rem; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; cursor: pointer;
+        }
+        .action-btn:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
+        .action-btn:active { transform: translateY(0); }
+        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .choice-btn {
+            width: 100%; background: #1e293b; border: 1px solid #475569; padding: 1rem;
+            text-align: left; transition: all 0.2s; border-radius: 0.5rem; margin-bottom: 0.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .choice-btn:hover { border-color: #3b82f6; background: #0f172a; }
+        .choice-btn.locked { opacity: 0.5; border-color: #ef4444; cursor: not-allowed; background: #1a1a1a; }
+        .choice-btn.locked:hover { border-color: #ef4444; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+    </style>
+</head>
+<body>
+    
+    <div id="achievement-container"></div>
+
+    <div id="intro-modal" class="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4">
+        <div class="neon-box border-blue bg-slate-900 max-w-4xl w-full p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-8">
+            <div class="flex-1">
+                <h1 class="text-5xl font-black text-white mb-4 tracking-tighter">IT-HELL</h1>
+                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                    Willkommen bei <strong>GlobalCorp</strong>. Du bist der SysAdmin. <br><br>
+                    Du bist gefangen in der Support-Hölle. Jeden Morgen wachst du auf und hoffst, dass der Serverraum abgebrannt ist – aber nein, die Lichter blinken noch.
+                    <br><br>
+                    Dein Chef hält IT für Vodoo-Zauber, der nichts kosten darf. Deine Kollegen denken, das Internet ist "dieses blaue E". Und du? Du bist der Hausmeister für digitalen Müll.
+                    <br><br>
+                    <strong>DEIN ZIEL:</strong> Überlebe bis <strong>16:30 Uhr</strong>. Lass dich nicht feuern. Rast nicht aus. Und lass dich nicht von der <strong>Ticket-Lawine</strong> begraben.
+                </p>
+                <button onclick="engine.start()" 
+                    class="bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-4 px-8 rounded-xl w-full transition-all transform hover:scale-105 shadow-lg shadow-blue-900/50">
+                    AN DIE ARBEIT
+                </button>
+            </div>
+            
+            <div class="flex-1 bg-black/30 p-6 rounded-xl border border-slate-700 text-xs font-mono space-y-4">
+                <h3 class="text-white font-bold border-b border-slate-700 pb-2">STATUS WERTE</h3>
+                <div class="flex gap-3"><div class="text-2xl">📩</div><div><strong class="text-purple-400">TICKETS</strong><br>Alle 30 Min kommt eins. Ab 10 ist Game Over!</div></div>
+                <div class="flex gap-3"><div class="text-2xl">⚡</div><div><strong class="text-emerald-400">FAULHEIT</strong><br>Zu hoch? Der Chef wird misstrauisch.</div></div>
+                <div class="flex gap-3"><div class="text-2xl">😡</div><div><strong class="text-orange-400">AGGRO</strong><br>Bei 100% wirfst du den Monitor. Game Over.</div></div>
+                <div class="flex gap-3"><div class="text-2xl">👁️</div><div><strong class="text-red-500">CHEF-RADAR</strong><br>Bei 100% gibt's ne Abmahnung. Dann Rauswurf.</div></div>
+                <div class="flex gap-3"><div class="text-2xl">🎒</div><div><strong class="text-amber-400">LOOT</strong><br>Finde Items, um Probleme zu lösen.</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-5 gap-4 h-24 mb-4">
+        <div class="neon-box border-blue flex flex-col justify-center items-center col-span-1">
+            <span class="text-[10px] text-blue-400 font-bold uppercase">Uhrzeit</span>
+            <div id="clock" class="text-4xl font-black text-white">08:00</div>
+        </div>
+        
+        <div class="neon-box border-purple p-3 flex flex-col justify-center items-center col-span-1 relative">
+            <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">OFFENE TICKETS</span>
+            <div id="ticket-count" class="text-4xl font-black text-white">0</div>
+            <div class="text-[8px] text-slate-500">Max: 10</div>
+        </div>
+
+        <div class="neon-box border-green p-3 flex flex-col justify-center col-span-1">
+            <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400"><span>FAULHEIT</span><span id="val-fl">0%</span></div>
+            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-fl" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div></div>
+        </div>
+        <div class="neon-box border-orange p-3 flex flex-col justify-center col-span-1">
+            <div class="flex justify-between text-xs font-bold mb-1 text-orange-400"><span>AGGRO</span><span id="val-al">0%</span></div>
+            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-al" class="h-full bg-orange-500 transition-all duration-300" style="width: 0%"></div></div>
+        </div>
+        <div class="neon-box border-red p-3 flex flex-col justify-center col-span-1">
+            <div class="flex justify-between text-xs font-bold mb-1 text-red-500"><span>CHEF-RADAR</span><span id="val-cr">0%</span></div>
+            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-cr" class="h-full bg-red-600 transition-all duration-300" style="width: 0%"></div></div>
+        </div>
+    </div>
+
+    <div class="flex-1 flex gap-4 min-h-0 mb-4">
+
+        <div id="terminal" class="flex-[2] neon-box p-6 overflow-y-auto flex flex-col relative">
+            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v10.0</div>
+            
+            <div id="boss-timer-container">
+                <div id="boss-timer-bar"></div>
+            </div>
+
+            <div id="email-overlay" class="email-overlay">
+                <div class="email-header flex justify-between">
+                    <span>📧 NEUE E-MAIL</span>
+                    <span id="email-sender">Absender</span>
+                </div>
+                <div class="email-timer-bg"><div id="email-timer-bar" class="email-timer-fill"></div></div>
+                <div id="email-subject" class="email-body">Betreff...</div>
+                <div class="grid grid-cols-2 gap-2 mt-auto">
+                    <button onclick="engine.resolveEmail(true)" class="bg-blue-600 hover:bg-blue-500 text-white text-[10px] py-2 rounded">ANTWORTEN (-Aggro)</button>
+                    <button onclick="engine.resolveEmail(false)" class="bg-slate-700 hover:bg-slate-600 text-white text-[10px] py-2 rounded">IGNORIEREN (+Radar)</button>
+                </div>
+            </div>
+
+            <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40">
+                <div class="text-6xl mb-4">🖥️</div>
+                <h1 class="text-2xl font-bold">SYSTEM BEREIT</h1>
+                <p>Wähle eine Aktion unten.</p>
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col gap-4 min-w-[320px]">
+            <div id="smartphone" class="flex-[2]">
+                <div class="phone-notch"><div class="w-12 h-1 bg-slate-600 rounded-full"></div></div>
+                
+                <div id="phone-standby" class="flex-1 flex flex-col justify-center items-center bg-slate-900 text-white">
+                    <div class="text-5xl font-thin mb-2" id="phone-clock">08:00</div>
+                    <div id="phone-notification" class="hidden mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse" onclick="engine.openPhone()">
+                        <div class="text-xl">📩</div>
+                        <div><div class="text-[10px] font-bold">NEUE NACHRICHT</div><div class="text-[9px]">Jetzt lesen...</div></div>
+                    </div>
+                </div>
+
+                <div id="phone-app" class="hidden flex-1 bg-slate-800 flex-col">
+                    <div class="bg-indigo-600 p-2 text-xs font-bold text-white flex justify-between">
+                        <span id="app-title">Nachricht</span>
+                    </div>
+                    <div id="app-content" class="flex-1 p-2 overflow-y-auto flex flex-col gap-2"></div>
+                    <div id="app-actions" class="p-2 bg-slate-900 border-t border-slate-700 grid grid-cols-1 gap-1"></div>
+                </div>
+            </div>
+            
+            <div class="flex-[2] neon-box p-3 flex flex-col">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2">
+                    <span class="text-[10px] text-amber-500 font-bold">INVENTAR</span>
+                    <span class="text-[10px] text-slate-500 font-bold">LOG</span>
+                </div>
+                <div id="inventory-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+                <div id="log-feed" class="flex-1 overflow-y-auto font-mono text-[10px] space-y-1 text-slate-400 border-t border-slate-800 pt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="h-20 grid grid-cols-4 gap-4">
+        <button onclick="engine.trigger('coffee')" class="action-btn text-amber-500"><span class="text-xl">☕</span><span class="text-xs font-bold">KAFFEE</span></button>
+        <button onclick="engine.trigger('sidequest')" class="action-btn text-purple-500"><span class="text-xl">🎲</span><span class="text-xs font-bold">SIDE-QUEST</span></button>
+        <button onclick="engine.trigger('server')" class="action-btn text-emerald-500"><span class="text-xl">💾</span><span class="text-xs font-bold">SERVERRAUM</span></button>
+        <button onclick="engine.trigger('calls')" class="action-btn bg-blue-900/30 text-blue-400 border-blue-800"><span class="text-xl">📞</span><span class="text-xs font-bold">ANRUF (Ticket -1)</span></button>
+    </div>
+
+    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/95 z-50 flex items-center justify-center p-8">
+        <div id="modal-content" class="max-w-xl w-full bg-slate-900 border-2 border-red-600 p-8 rounded-xl text-center shadow-2xl"></div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html>
