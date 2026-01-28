@@ -336,6 +336,22 @@ const engine = {
     },
 
     resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
+        // Zeitsprung: Zufällig 3-5 Stunden zurück
+        if(m === -999) {
+            let hoursBack = 3 + Math.floor(Math.random() * 3);
+            m = -(hoursBack * 60);
+            if(this.state.time + m < 8 * 60) {
+                m = -(this.state.time - 8 * 60);
+            }
+            hoursBack = Math.round(-m / 60);
+            if(hoursBack > 0) {
+                res = `ZEITSPRUNG! Die Uhr dreht sich ${hoursBack} Stunden zurück! Alle Monitore flackern wild. Die Kollegen reiben sich die Augen. 'War es nicht gerade noch Nachmittag?!' Dein Arbeitstag fängt praktisch von vorne an!`;
+                this.log(`⏰ ZEITPARADOXON: ${hoursBack}h zurückgedreht!`, "text-purple-500 font-bold");
+            } else {
+                res = "Das Gerät summt kurz und geht aus. Es ist zu früh am Tag für Zeitreisen.";
+            }
+        }
+
         if(type === 'coffee') this.state.coffeeConsumed++;
 
         let oldTimeChunk = Math.floor(this.state.time / 30);

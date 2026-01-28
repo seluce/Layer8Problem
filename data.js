@@ -572,6 +572,15 @@ const DB = {
                 { t: "Diskette lesen", req: "manual", m: 30, f: -5, a: 0, c: -10, r: "Dank des Handbuchs kannst du sie lesen. Es sind nur Highscores von Minesweeper. Enttäuschend." },
                 { t: "Ignorieren", m: 0, f: 0, a: 0, c: 0, r: "Vielleicht besser so." }
             ]
+        },
+        {
+            id: "srv_timewarp",
+            title: "Die Zeitmaschine",
+            text: "Hinter einem uralten IBM-Mainframe findest du ein seltsames Gerät mit blinkenden LEDs und einem Display: 'CHRONOS v0.1 - Zeitkompensator'. Es summt bedrohlich. Ein großer roter Knopf ist beschriftet mit 'AKTIVIEREN'. Auf einem Post-It steht: 'NICHT DRÜCKEN! - Müller (2003)'.",
+            opts: [
+                { t: "KNOPF DRÜCKEN!", m: -999, f: 10, a: -10, c: 15, r: "ZEITSPRUNG!" },
+                { t: "Bloß nicht anfassen!", m: 5, f: 0, a: 5, c: 0, r: "Wer weiß, was das Ding macht. Du gehst lieber einen großen Bogen drum herum. Wahrscheinlich hat sich Müller 2003 was dabei gedacht." }
+            ]
         }
     ],
 
