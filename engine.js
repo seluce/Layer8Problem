@@ -299,6 +299,16 @@ checkAchievements: function() {
         if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
             this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
         }
+		
+        // KEVIN QUEST: Der Mentor (Besitze Kevins RAM)
+        if(this.state.inventory.find(i => i.id === 'kevin_ram') && !this.hasAch('ach_mentor')) {
+            this.unlockAchievement('ach_mentor', '👨‍👦 Der Mentor', 'Kevin hat dir sein Heiligstes geschenkt. Du hast ein Herz.');
+        }
+
+        // GEHALTS-ERFOLG: Wolf of Wall Street (Besitze den Arbeitsvertrag)
+        if(this.state.inventory.find(i => i.id === 'contract') && !this.hasAch('ach_wolf')) {
+            this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
+        }
     },
 
     hasAch: function(id) { return this.state.achievements.includes(id); },
