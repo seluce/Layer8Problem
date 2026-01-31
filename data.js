@@ -3160,7 +3160,7 @@ const DB = {
                 },
                 { 
                     t: "Trocken kontern: 'Ist die geleast?'", 
-                    m: 10, f: 0, a: 5, c: 5, 
+                    m: 10, f: 0, a: -5, c: 5, 
                     r: "Sein Grinsen gefriert. Er läuft rot an und stammelt etwas von 'Wertanlage'. Die umstehenden Kollegen lachen laut los. Ein Sieg auf ganzer Linie." 
                 },
                 { 
@@ -3600,7 +3600,7 @@ const DB = {
                 { 
                     t: "Ihm Feuer geben & zuhören", 
                     m: 10, f: 5, a: -5, c: 0, 
-                    r: "Er zieht tief an der Zigarette. 'Danke Jung. Diese digitalen Schlösser machen mich fertig! Ich hab das vom Papierlager im Keller jetzt einfach auf 0-0-0-0 gestellt. Aber sags keinem!' Gut zu wissen." 
+                    r: "Er zieht tief an der Zigarette. 'Danke Jung. Diese digitalen Schlösser machen mich fertig! Ich hab das vom Papierlager im Keller jetzt einfach auf 0-0-0-0 gestellt. Aber sags keinem!'" 
                 },
                 { 
                     t: "Schnell weitergehen", 
@@ -3847,9 +3847,8 @@ const DB = {
             opts: [
                 { 
                     t: "Skrupellos: Kabel bei Azubi Kevin klauen", 
-                    loot: "usb_cable", 
                     m: 10, f: 0, a: -10, c: -10, 
-                    r: "Du schleichst zu Kevins Platz und ziehst das Kabel aus seinem Scanner. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der CEO bekommt seinen Ausdruck. Du behältst das Kabel als Trophäe." 
+                    r: "Du schleichst zu Kevins Platz und ziehst das Kabel aus seinem Scanner. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der CEO bekommt seinen Ausdruck." 
                 },
                 { 
                     t: "Achselzucken: 'Tja, Hardware-Defekt'", 
@@ -3858,7 +3857,7 @@ const DB = {
                 },
                 { 
                     t: "Verzweiflungstat: WLAN-Hotspot improvisieren", 
-                    m: 5, f: 5, a: 5, c: 10, 
+                    m: 5, f: -5, a: 5, c: 10, 
                     r: "Du versuchst wildes Tethering mit dem Handy. Es klappt! ...fast. Der Drucker spuckt den Vertrag aus, aber leider auf dem Etikettendrucker in der Logistik. In Briefmarkengröße. Der Wille war da." 
                 }
             ]
