@@ -27,7 +27,10 @@ const engine = {
         isEmailOpen: false,
 		
 		// Speichert das Ende, damit wir es verzögert anzeigen können
-        pendingEnd: null
+        pendingEnd: null,
+
+        // Aktive Items
+        lastStressballTime: -100,
     },
 
     init: function() {
@@ -49,7 +52,7 @@ const engine = {
         }
     },
 
-    // Setzt Schwierigkeit und startet dann erst den Loop
+// Setzt Schwierigkeit und startet dann erst den Loop (oder das Tutorial)
     setDifficulty: function(level) {
         document.getElementById('difficulty-modal').style.display = 'none';
         
@@ -60,21 +63,40 @@ const engine = {
             this.state.difficultyMult = 1.0;
             this.log("Modus: MITTWOCH. Business as usual.", "text-blue-400");
         } else if (level === 'hard') {
-            this.state.difficultyMult = 1.5;
-            this.state.tickets = 2; // Startet schon mit Arbeit
-            this.state.al = 20;     // Startet genervt
+            this.state.difficultyMult = 1.25;
+            this.state.tickets = 2;
+            this.state.al = 0;
             this.log("Modus: MONTAG. Viel Glück.", "text-red-500 font-bold");
         }
         
         this.updateUI();
-        // Hier startet jetzt erst der Loop für Mails etc.
-        this.checkRandomEmail(); 
+
+        // Tutorial starten (Verzögert, damit UI fertig gerendert ist)
+        setTimeout(() => {
+            if (typeof tutorial !== 'undefined') {
+                // Wir versuchen, das Tutorial zu starten.
+                // Die start()-Funktion prüft selbst den LocalStorage.
+                tutorial.start();
+                
+                // JETZT prüfen wir: Läuft das Tutorial gerade?
+                // Falls NEIN (weil schon gesehen oder übersprungen), starten wir das Spiel sofort.
+                if (!tutorial.isActive) {
+                    this.checkRandomEmail();
+                }
+                // Falls JA (isActive == true), macht diese Funktion hier nichts mehr.
+                // Das Spiel wird dann später von tutorial.finish() gestartet.
+            } else {
+                // Fallback: Falls die tutorial.js fehlt, Spiel einfach starten
+                this.checkRandomEmail();
+            }
+        }, 500);
     },
 
     // --- E-MAIL LOGIK ---
     checkRandomEmail: function() {
         if(this.state.isEmailOpen) return;
-        
+        if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
+
         // Basis-Chance hängt vom Schwierigkeitsgrad ab
         // Montag (1.5) = Höhere Wahrscheinlichkeit für Mails
         let baseChance = 0.2 * this.state.difficultyMult; 
@@ -176,7 +198,7 @@ const engine = {
     },
 
     // --- CORE ---
-    updateUI: function() {
+updateUI: function() {
         this.state.fl = Math.max(0, Math.min(100, this.state.fl));
         this.state.al = Math.max(0, Math.min(100, this.state.al));
         this.state.cr = Math.max(0, Math.min(100, this.state.cr));
@@ -199,31 +221,62 @@ const engine = {
         tEl.innerText = this.state.tickets;
         tEl.className = this.state.tickets > 7 ? "text-4xl font-black text-white ticket-counter ticket-pulse" : "text-4xl font-black text-white ticket-counter";
 
-		// --- INVENTAR UPDATE (Hauptansicht) ---
+		// --- INVENTAR UPDATE (Hauptansicht / Mini-Slots) ---
         const invGrid = document.getElementById('inventory-grid');
         const invBadge = document.getElementById('inv-badge');
         invGrid.innerHTML = '';
         
-        // Zeige immer genau 5 Slots im Hauptmenü (stabilisiert das Layout)
-        // Wir nehmen nur die ersten 5 Items aus dem Inventar für die Schnellansicht
+        // Zeige die ersten 5 Items
         for(let i=0; i < 5; i++) {
-            let itemData = this.state.inventory[i]; // Kann undefined sein
+            let itemData = this.state.inventory[i];
             let slot = document.createElement('div');
             
             if(itemData) {
                 let dbItem = DB.items[itemData.id];
-                slot.className = 'inv-slot';
+                // Basis-Klasse (wichtig: relative für Overlay)
+                slot.className = 'inv-slot relative group'; 
                 slot.innerText = dbItem ? dbItem.icon : '?';
                 slot.title = dbItem ? dbItem.name : 'Unbekannt';
-                // Klick öffnet auch den großen Rucksack
-                slot.onclick = () => this.openInventory();
+
+                // --- SPEZIAL LOGIK AUCH HIER ---
+                
+                // A) Stressball
+                if (itemData.id === 'stressball') {
+                    let isReady = (this.state.time - this.state.lastStressballTime >= 60);
+                    if(isReady) {
+                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20';
+                        // Grüner Punkt
+                        slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>`;
+                        slot.onclick = () => this.useItem('stressball');
+                        slot.title += " (Benutzen)";
+                    } else {
+                        // Cooldown Overlay (etwas kleiner für Mini-View)
+                        let wait = 60 - (this.state.time - this.state.lastStressballTime);
+                        slot.innerHTML += `
+                            <div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]">
+                                <span class="font-bold text-white text-xs select-none">${wait}</span>
+                            </div>
+                        `;
+                    slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
+                    }
+                }
+                // B) Verbrauchsgüter (Direkt benutzen)
+                else if (itemData.id === 'energy' || itemData.id === 'donut') {
+                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
+                    slot.onclick = () => this.useItem(itemData.id);
+                    slot.title += " (verwenden)";
+                }
+                // C) Normale Items (Öffnen das große Inventar)
+                else {
+                    slot.onclick = () => this.openInventory();
+                }
+
             } else {
                 slot.className = 'inv-slot empty';
             }
             invGrid.appendChild(slot);
         }
 
-        // Badge Logik: Zeige "+X" wenn mehr als 5 Items da sind
         if(this.state.inventory.length > 5) {
             let diff = this.state.inventory.length - 5;
             invBadge.innerText = `+${diff}`;
@@ -237,40 +290,59 @@ const engine = {
     },
 
 checkAchievements: function() {
-        // --- GRIND & SAMMELN ---
-        if(this.state.coffeeConsumed >= 5 && !this.hasAch('ach_coffee')) {
-            this.unlockAchievement('ach_coffee', '☕ Koffein-Junkie', '5 Kaffees getrunken. Dein Herz bedankt sich.');
+        // --- PLAYSTYLE: EXTREME ---
+        
+        // 1. DER ASKET (Kein Kaffee) - Ab 16:00
+        // Belohnt das Aushalten von Aggro ohne Hilfsmittel
+        if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
+            this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
         }
-        if(this.state.emailsIgnored >= 3 && !this.hasAch('ach_ignore')) {
-            this.unlockAchievement('ach_ignore', '🙈 Ignorant', '3 Mails ignoriert. Problem? Welches Problem?');
+
+        // 2. KOFFEIN-SCHOCK (Zu viel Kaffee)
+        // Erhöht auf 8 -> Man muss fast jede Stunde zur Maschine rennen
+        if(this.state.coffeeConsumed >= 8 && !this.hasAch('ach_coffee')) {
+            this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
         }
-        if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
-            this.unlockAchievement('ach_hoarder', '🎒 Messie', 'Deine Taschen platzen gleich.');
+
+        // 3. GHOSTING (Mails ignorieren)
+        // Erhöht auf 5 -> Das ist richtig gefährlich für den Radar-Wert
+        if(this.state.emailsIgnored >= 5 && !this.hasAch('ach_ignore')) {
+            this.unlockAchievement('ach_ignore', '👻 Ghosting-Profi', '5 Mails ignoriert. Deine "Entf"-Taste glüht.');
+        }
+
+        // 4. SCHWARZES LOCH (Volles Inventar)
+        // Erhöht auf 8 -> Man muss alles mitnehmen, auch Müll
+        if(this.state.inventory.length >= 8 && !this.hasAch('ach_hoarder')) {
+            this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
         }
 
         // --- STATS STATUS ---
         if(this.state.fl >= 80 && this.state.fl < 100 && !this.hasAch('ach_lazy')) {
-            this.unlockAchievement('ach_lazy', '🦥 Faulpelz', '80% Faulheit. Du bist ein Effizienz-Experte im Nichtstun.');
+            this.unlockAchievement('ach_lazy', '🦥 Faulpelz', '80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben.');
         }
-        // DER CHOLERIKER: Wut auf Anschlag
-        if (this.state.al >= 92 && !this.hasAch('ach_rage')) {
-            this.unlockAchievement('ach_rage', '🤬 Der Choleriker', 'Puls auf 180. Du bist eine tickende Zeitbombe.');
+        
+        if (this.state.al >= 95 && !this.hasAch('ach_rage')) { // Auf 95% erhöht -> Riskanter
+            this.unlockAchievement('ach_rage', '🤬 180 Puls', 'Nur noch ein dummer Anruf und es knallt. (95% Aggro)');
         }
 
-        // --- SPECIFIC ITEM SETS ---
-        // MACGYVER
-        const tools = ['hammer', 'tape', 'screw', 'zip_ties'];
+        // --- ITEM SETS  ---
+        
+        // MACGYVER (Fix: Items angepasst, die es wirklich gibt)
+        // Prüfe: Tape, Schraubendreher, Kabel, Handbuch
+        const tools = ['tape', 'screw', 'kabel', 'manual'];
         const hasAllTools = tools.every(toolId => this.state.inventory.find(i => i.id === toolId));
         if(hasAllTools && !this.hasAch('ach_macgyver')) {
-            this.unlockAchievement('ach_macgyver', '🛠️ MacGyver', 'Hammer, Tape, Schrauber & Kabelbinder. Du kannst alles fixen.');
+            this.unlockAchievement('ach_macgyver', '🛠️ MacGyver', 'Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi.');
         }
+        
         // MILLIONÄR
         if(this.state.inventory.find(i => i.id === 'black_card') && !this.hasAch('ach_rich')) {
-            this.unlockAchievement('ach_rich', '💸 Der Millionär', 'Du hast dem Prinzen vertraut. Nie mehr arbeiten!');
+            this.unlockAchievement('ach_rich', '💸 Der Millionär', 'Du hast dem Prinzen vertraut. Kündigung ist raus!');
         }
+        
         // MR ROBOT
         if(this.state.inventory.find(i => i.id === 'admin_pw') && !this.hasAch('ach_hacker')) {
-            this.unlockAchievement('ach_hacker', '💻 Mr. Robot', 'Du hast die volle Kontrolle (Root-PW).');
+            this.unlockAchievement('ach_hacker', '💻 Mr. Robot', 'Root-Rechte. Jetzt gehört das Netzwerk dir.');
         }
 
         // --- END GAME CHALLENGES (Zeitabhängig) ---
@@ -282,30 +354,34 @@ checkAchievements: function() {
 
         // ZEN MEISTER (Keine Wut) - Ab 15:00
         if(this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
-            this.unlockAchievement('ach_zen', '🧘 Zen-Meister', '15 Uhr und Puls auf 60. Respekt.');
+            this.unlockAchievement('ach_zen', '🕊️ Zen-Meister', '15 Uhr und die Ruhe selbst. Bist du überhaupt wach?');
         }
 
         // MITARBEITER DES MONATS (Anti-Faul) - Ab 16:00
         if (this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
-            this.unlockAchievement('ach_workaholic', '👔 Mitarbeiter des Monats', 'Du hast tatsächlich gearbeitet? In dieser Firma?!');
+            this.unlockAchievement('ach_workaholic', '👔 Streber', 'Du hast tatsächlich gearbeitet? Du machst uns anderen schlecht!');
         }
 
-        // DER STREBER (Inbox Zero) - Ab 16:20 (980 Min)
-        if (this.state.time >= 980 && this.state.tickets === 0 && !this.hasAch('ach_streber')) {
-            this.unlockAchievement('ach_streber', '🤓 Der Streber', 'Alle Tickets erledigt? Jetzt sehen wir anderen schlecht aus.');
+        // Man hat genau 9 Tickets (Limit ist 10). Ein Anruf mehr und Game Over.
+        if (this.state.time >= 975 && this.state.tickets === 9 && !this.hasAch('ach_risk')) {
+            this.unlockAchievement('ach_risk', '🎢 Drahtseilakt', 'Feierabend mit 9 offenen Tickets. Das war verdammt knapp.');
         }
 
-        // TANZ AUF DEM VULKAN (High Risk Survival) - Ab 16:20 (980 Min)
+        // INBOX ZERO - Ab 16:20
+        if (this.state.time >= 980 && this.state.tickets === 0 && !this.hasAch('ach_clean')) {
+            this.unlockAchievement('ach_clean', '✨ Inbox Zero', 'Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.');
+        }
+
+        // TANZ AUF DEM VULKAN (High Risk Survival) - Ab 16:20
         if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
             this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
         }
-		
-        // KEVIN QUEST: Der Mentor (Besitze Kevins RAM)
+        
+        // QUESTS
         if(this.state.inventory.find(i => i.id === 'kevin_ram') && !this.hasAch('ach_mentor')) {
-            this.unlockAchievement('ach_mentor', '👨‍👦 Der Mentor', 'Kevin hat dir sein Heiligstes geschenkt. Du hast ein Herz.');
+            this.unlockAchievement('ach_mentor', '👨‍👦 Der Mentor', 'Du hast Kevin gerettet. Er wird es nie vergessen (leider).');
         }
 
-        // GEHALTS-ERFOLG: Wolf of Wall Street (Besitze den Arbeitsvertrag)
         if(this.state.inventory.find(i => i.id === 'contract') && !this.hasAch('ach_wolf')) {
             this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
         }
@@ -340,10 +416,19 @@ checkAchievements: function() {
     },
 
     triggerBossFight: function() {
+        // Filtere alle Bosse, die noch nicht dran waren
         let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
+        
+        // Wenn alle Bosse besiegt sind, passiert nichts (oder man könnte pool = DB.bossfights machen für Reset)
         if(pool.length === 0) return; 
 
-        let boss = pool[0]; 
+        // --- HIER WAR DER FEHLER ---
+        // Alt: let boss = pool[0];  <-- Das hat immer den ersten in der Liste genommen (Ransomware)
+        
+        // Neu: Zufälligen Boss aus dem verbleibenden Pool wählen
+        let boss = pool[Math.floor(Math.random() * pool.length)]; 
+        // ---------------------------
+
         this.state.activeEvent = true;
         this.state.usedIDs.add(boss.id);
         this.disableButtons(true);
@@ -356,7 +441,9 @@ checkAchievements: function() {
         let timeLeft = boss.timer;
         this.state.bossTimer = setInterval(() => {
             timeLeft--;
-            document.getElementById('boss-timer-bar').style.width = (timeLeft / boss.timer * 100) + "%";
+            const bar = document.getElementById('boss-timer-bar');
+            if(bar) bar.style.width = (timeLeft / boss.timer * 100) + "%";
+            
             if(timeLeft <= 0) {
                 clearInterval(this.state.bossTimer);
                 this.resolveBossFail(boss.fail);
@@ -419,12 +506,33 @@ checkAchievements: function() {
             let missingText = "";
 
             if (opt.req) {
+                // 1. Grund-Check: Habe ich das Item?
                 let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
-                if (!hasItem) {
+                
+                // 2. Spezial-Check: Stressball Cooldown
+                let onCooldown = false;
+                if (opt.req === 'stressball') {
+                    // Wenn weniger als 60 Min vergangen sind -> Cooldown aktiv
+                    if (this.state.time - this.state.lastStressballTime < 60) {
+                        onCooldown = true;
+                    }
+                }
+
+                // Wenn Item fehlt ODER Cooldown aktiv ist -> Sperren
+                if (!hasItem || onCooldown) {
                     locked = true;
                     btnClass += " locked";
+                    
                     let itemName = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
-                    missingText = `(Fehlt: ${itemName})`;
+                    
+                    // Text unterscheiden
+                    if (!hasItem) {
+                        missingText = `(Fehlt: ${itemName})`;
+                    } else if (onCooldown) {
+                        // Zeige Restzeit an
+                        let wait = 60 - (this.state.time - this.state.lastStressballTime);
+                        missingText = `(Platt: ${wait}m)`;
+                    }
                 }
             }
 
@@ -455,6 +563,7 @@ checkAchievements: function() {
 resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
         if(type === 'coffee') this.state.coffeeConsumed++;
 
+        // Zeit & Tickets
         let oldTimeChunk = Math.floor(this.state.time / 30);
         let newTimeChunk = Math.floor((this.state.time + m) / 30);
         let newTickets = newTimeChunk - oldTimeChunk;
@@ -466,23 +575,45 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
 
         this.state.time += m;
         
+        // Lunch Check
         let triggerLunch = false;
         if (!this.state.lunchDone && this.state.time >= 12 * 60) {
             triggerLunch = true;
             this.state.lunchDone = true;
         }
 
-        // ÄNDERUNG: Multiplikator für Events
-        let mult = this.state.difficultyMult;
+        // --- SCHWIERIGKEIT & FAULHEIT LOGIK ---
         
-        // Positive Aggro/Radar Werte werden multipliziert
-        let finalA = a > 0 ? Math.ceil(a * mult) : a;
-        let finalC = c > 0 ? Math.ceil(c * mult) : c;
+        // 1. Schwierigkeitsgrad (0.8 / 1.0 / 1.5)
+        let diffMult = this.state.difficultyMult;
 
+        // 2. Faulheits-Faktor (Risk vs Reward)
+        // Formel: 1 + (Faulheit / 100)
+        let lazyMult = 1 + (this.state.fl / 200);
+
+        // Werte berechnen
         this.state.fl += f;
-        this.state.al += finalA;
-        this.state.cr += finalC;
 
+        // Aggro: Wird nur durch Schwierigkeit beeinflusst
+        let finalA = a > 0 ? Math.ceil(a * diffMult) : a;
+        this.state.al += finalA;
+
+        // RADAR: Hier greift die Faulheit (Silent Mechanic)
+        let finalC = c;
+
+        if (c > 0) {
+            // Strafe = Basis * Schwierigkeit * Faulheit
+            // Wir berechnen den Schaden still im Hintergrund
+            finalC = Math.ceil(c * diffMult * lazyMult);
+        } else {
+            // Bei Radar-Bonus (c < 0) hilft Faulheit nicht
+            finalC = c; 
+        }
+
+        this.state.cr += finalC;
+        // ---------------------------------------
+
+        // Items Logic
         if(loot && loot !== "") {
             if(!this.state.inventory.find(i => i.id === loot)) {
                 this.state.inventory.push({ id: loot, used: false });
@@ -492,7 +623,6 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
         if(usedItem && usedItem !== "") {
             let itemObj = this.state.inventory.find(i => i.id === usedItem);
             let dbItem = DB.items[usedItem];
-            
             if(itemObj) {
                 if (!dbItem || !dbItem.keep) {
                     this.state.inventory = this.state.inventory.filter(i => i !== itemObj);
@@ -503,18 +633,15 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
         this.log(res);
         this.updateUI();
 
-        // --- HIER BEGINNT DER NEUE TEIL ---
+        // UI Rendern
         const term = document.getElementById('terminal-content');
         
-        // Standard-Werte für "Spiel geht weiter"
         let btnAction = triggerLunch ? "engine.triggerLunch()" : "engine.reset()";
         let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : "WEITER";
-        let btnColor = "bg-blue-600 hover:bg-blue-500"; // Standard Blau
+        let btnColor = "bg-blue-600 hover:bg-blue-500"; 
 
-        // Wenn ein Game Over wartet (pendingEnd ist gesetzt), ändern wir den Button!
         if (this.state.pendingEnd) {
             btnAction = "engine.finishGame()";
-            
             if (this.state.pendingEnd.isWin) {
                 btnText = "FEIERABEND MACHEN 🎉";
                 btnColor = "bg-green-600 hover:bg-green-500";
@@ -524,6 +651,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
             }
         }
 
+        // BEREINIGT: Kein penaltyInfo mehr im HTML String
         term.innerHTML = `
             <div class="w-full max-w-xl text-left fade-in flex flex-col h-full justify-center">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8">
@@ -588,6 +716,17 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
     },
 
     handlePhoneChoice: function(text, nextId) {
+        const actions = document.getElementById('app-actions');
+        
+        // --- FIX: SPAM-SCHUTZ ---
+        // Prüfen, ob Buttons überhaupt noch da sind. 
+        // Wenn leer, wurde schon geklickt -> Abbruch!
+        if (!actions || actions.innerHTML.trim() === '') return;
+
+        // Sofort die Buttons entfernen, damit kein zweiter Klick möglich ist
+        actions.innerHTML = '';
+        // ------------------------
+
         const content = document.getElementById('app-content');
         content.innerHTML += `<div class="chat-bubble chat-out">${text}</div>`;
         
@@ -595,12 +734,13 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
 
         let ev = this.state.currentPhoneEvent;
         
+        // Prüfung ob nextId existiert
         let validNext = (ev.results && ev.results[nextId]) || (ev.nodes && ev.nodes[nextId]);
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
             content.innerHTML += `<div class="chat-system text-red-500">Verbindung abgebrochen.</div>`;
-            document.getElementById('app-actions').innerHTML = '';
+            // actions.innerHTML = ''; // Nicht mehr nötig, da oben schon geleert
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -611,15 +751,20 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
 
         if (ev.results && ev.results[nextId]) {
             let res = ev.results[nextId];
+            
+            // Loot Logic
             if(res.loot && !this.state.inventory.find(i => i.id === res.loot)) {
                 this.state.inventory.push({ id: res.loot, used: false });
                 this.log("DOWNLOAD: " + DB.items[res.loot].name);
             }
+            
+            // Stats anwenden
             this.state.fl += (res.fl || 0);
             this.state.al += (res.al || 0);
             this.state.cr += (res.cr || 0);
+            
             content.innerHTML += `<div class="chat-system">${res.txt}</div>`;
-            document.getElementById('app-actions').innerHTML = '';
+            // actions.innerHTML = ''; // Nicht mehr nötig
             content.scrollTop = content.scrollHeight;
             
             setTimeout(() => {
@@ -628,7 +773,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
                 this.state.time += 15; 
                 this.updateUI();
                 
-                // Wenn Handy dich gekillt hat, sofort beenden
+                // Wenn Handy dich gekillt hat (z.B. Virus), sofort beenden
                 if (this.state.pendingEnd) {
                     this.finishGame();
                 } else {
@@ -638,6 +783,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
                 }
             }, 3000);
         } else if (ev.nodes[nextId]) {
+            // Nächster Knoten (Gespräch geht weiter)
             setTimeout(() => { this.renderPhoneNode(ev.nodes[nextId]); }, 500);
         }
     },
@@ -654,6 +800,11 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
     },
 
     log: function(msg, colorClass) {
+        // SPAM-SCHUTZ: Wenn die Nachricht identisch zur vorherigen ist, ignorieren.
+        // Das verhindert, dass das Log explodiert, wenn man wie wild klickt.
+        if (this.state.lastLogMsg === msg) return;
+        this.state.lastLogMsg = msg;
+
         const feed = document.getElementById('log-feed');
         let h = Math.floor(this.state.time / 60);
         let m = this.state.time % 60;
@@ -736,13 +887,23 @@ checkEndConditions: function() {
         }
         // E. GEFEUERT (Chef-Radar >= 100)
         else if(this.state.cr >= 100) {
+            
+            // Logik für die "Zweite Chance" basierend auf Schwierigkeit
+            let resetTo = 50; // Standard (Mittwoch)
+            if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
+            if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
+
             if(!this.state.warningReceived) {
-                // Die erste Abmahnung kommt SOFORT (wie bisher), damit man gewarnt ist
                 this.state.warningReceived = true;
-                this.state.cr = 50;
-                this.showModal("ABMAHNUNG", "Der Chef steht an deinem Tisch: 'Noch ein Fehler und Sie fliegen!' (Radar auf 50% gesetzt).", false);
+                
+                // Setze Radar zurück basierend auf Schwierigkeit
+                this.state.cr = resetTo; 
+                
+                let warningText = `Der Chef tobt: 'Das war Ihre LETZTE Warnung!' (Radar auf ${resetTo}% gesetzt).`;
+                if(this.state.difficultyMult > 1.2) warningText += " Er beobachtet dich jetzt genau!";
+                
+                this.showModal("ABMAHNUNG", warningText, false);
             } else {
-                // Der endgültige Rauswurf wartet jetzt auf den Klick
                 this.state.pendingEnd = { 
                     title: "GEFEUERT", 
                     text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + fullReport, 
@@ -808,28 +969,59 @@ checkEndConditions: function() {
     },
 
 // --- INVENTAR SYSTEM ---
-    openInventory: function() {
+openInventory: function() {
         const modal = document.getElementById('inventory-modal');
         const grid = document.getElementById('full-inventory-grid');
         
         grid.innerHTML = '';
         
-        // Alle Items rendern
         this.state.inventory.forEach(itemData => {
             let slot = document.createElement('div');
             let dbItem = DB.items[itemData.id];
-            slot.className = 'inv-slot';
+            
+            // Basis-Klasse
+            slot.className = 'inv-slot relative group cursor-default'; 
+            
+            // Icon & Name
             slot.innerText = dbItem ? dbItem.icon : '?';
             slot.title = dbItem ? dbItem.name : 'Unbekannt';
-            
-            // Name unter dem Icon im Modal anzeigen für Klarheit
             slot.innerHTML += `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate">${dbItem.name}</div>`;
-            slot.style.marginBottom = "15px"; // Platz für Text
+            slot.style.marginBottom = "15px";
+
+            // --- SPEZIAL INTERAKTIONEN ---
+
+            // 1. STRESSBALL (Cooldown Logik)
+            if (itemData.id === 'stressball') {
+                let isReady = (this.state.time - this.state.lastStressballTime >= 60);
+                
+                if (isReady) {
+                    slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20'; 
+                    slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>`; 
+                    slot.onclick = () => this.useItem('stressball');
+                    slot.title += " (benutzen)";
+                } else {
+                    slot.className += ' cursor-not-allowed'; 
+                    let wait = 60 - (this.state.time - this.state.lastStressballTime);
+                    slot.innerHTML += `
+                        <div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]">
+                            <span class="font-black text-white text-xl drop-shadow-md select-none">${wait}</span>
+                        </div>
+                    `;
+                        slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
+                }
+            }
             
+            // 2. VERBRAUCHSGÜTER (Energy & Donut)
+            else if (itemData.id === 'energy' || itemData.id === 'donut') {
+                slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
+                slot.onclick = () => this.useItem(itemData.id);
+                slot.title += " (verwenden)";
+            }
+
             grid.appendChild(slot);
         });
 
-        // Leere Slots auffüllen, damit es gut aussieht (mindestens 10 Slots im Rucksack)
+        // Leere Slots auffüllen
         let fillCount = Math.max(0, 10 - this.state.inventory.length);
         for(let i=0; i<fillCount; i++) {
             let slot = document.createElement('div');
@@ -841,12 +1033,64 @@ checkEndConditions: function() {
         modal.classList.add('flex');
     },
 
-    closeInventory: function() {
+closeInventory: function() {
         const modal = document.getElementById('inventory-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     },
 	
+// --- ITEM NUTZUNG ---
+// --- ITEM NUTZUNG ---
+    useItem: function(id) {
+        // Helper: Prüfen, ob Inventar offen ist, um es live zu aktualisieren
+        const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
+
+        // A. STRESSBALL
+        if (id === 'stressball') {
+            if (this.state.time - this.state.lastStressballTime < 60) {
+                let waitTime = 60 - (this.state.time - this.state.lastStressballTime);
+                // Neuer Flavor-Text statt technischem "Cooldown"
+                this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${waitTime} Min)`, "text-slate-500");
+                return;
+            }
+            this.state.al = Math.max(0, this.state.al - 10);
+            this.state.time += 5; 
+            this.state.lastStressballTime = this.state.time;
+            this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -10)", "text-green-400");
+            
+            this.updateUI();
+            if(isInvOpen) this.openInventory(); // Nur refreshen, wenn offen!
+            return;
+        }
+
+        // B. VERBRAUCHSGÜTER
+        if (id === 'energy' || id === 'donut') {
+            let index = this.state.inventory.findIndex(i => i.id === id);
+            
+            if (index > -1) {
+                this.state.inventory.splice(index, 1);
+                
+                if (id === 'energy') {
+                    this.state.fl = Math.max(0, this.state.fl - 15);
+                    this.log("ZISCH! Du ext den Energy Drink. Dein Herz rast, aber du bist hellwach. (Faulheit -15)", "text-blue-400");
+                } 
+                else if (id === 'donut') {
+                    this.state.al = Math.max(0, this.state.al - 15);
+                    this.log("Mmmh... Zuckerglasur. Die Wut schmilzt dahin. (Aggro -15)", "text-pink-400");
+                }
+
+                else if (id === 'bubble_wrap') {
+                    this.state.al = Math.max(0, this.state.al - 10);
+                    this.log("*Plopp* *Plopp* *Plopp*. Das ist besser als Therapie. (Aggro -10)", "text-cyan-400");
+                }
+
+                this.updateUI();
+                if(isInvOpen) this.openInventory(); // Nur refreshen, wenn offen!
+            }
+            return;
+        }
+    },
+
 	// --- TEAM / CHARAKTERE ---
     openTeam: function() {
         const modal = document.getElementById('team-modal');

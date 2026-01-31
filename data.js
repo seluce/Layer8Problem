@@ -8,6 +8,7 @@ const DB = {
         "secret_list": { icon: "📁", name: "Schwarze Liste" },
 		"arg_list_1": { icon: "📝", name: "Argumente (Ich)" }, 
         "arg_list_2": { icon: "📑", name: "Argumente (Kevin)" },
+        "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie" },
         
         // WERKZEUGE (Dauerhaft -> keep: true)
         "admin_pw": { icon: "🔑", name: "Root-Passwort", keep: true },
@@ -1445,7 +1446,7 @@ const DB = {
             text: "Die neue 'Smart Office' KI hat die Kaffeemaschine, die Jalousien und die Toilettentüren verriegelt. Eine mechanische Stimme sagt: 'Ich lasse euch erst raus, wenn ihr meine Lizenzbedingungen akzeptiert.'",
             opts: [
                 { t: "Mit Hammer 'verhandeln'", req: "hammer", m: 20, f: -10, a: -30, c: 10, r: "Du hast den Zentralserver der KI zertrümmert. Die Türen sind offen. Sachschaden: 10.000€. Befriedigung: Unbezahlbar." },
-                { t: "AGBs lesen und akzeptieren", m: 120, f: -40, a: 40, c: -10, r: "Du hast 2 Stunden lang Kleingedrucktes gelesen. Alle hassen dich, weil sie so lange eingesperrt waren." },
+                { t: "AGBs lesen und akzeptieren", m: 120, f: -40, a: 30, c: -10, r: "Du hast 2 Stunden lang Kleingedrucktes gelesen. Alle hassen dich, weil sie so lange eingesperrt waren." },
                 { t: "Stecker ziehen", m: 5, f: 10, a: 0, c: 20, r: "Alles ist aus. Auch das Licht. Aber die Türen sind offen." }
             ]
         },
@@ -2012,7 +2013,34 @@ const DB = {
                     r: "'Klasse, Microsoft kümmert sich!' Du schaust grinsend zu, wie die Firma gehackt wird. Ein Hauch von Anarchie. Game Over Risiko extrem hoch." 
                 }
             ]
-        }
+        },
+        {
+        id: "call_waiting_hell",
+        title: "Die Warteschleife",
+        text: "Du hängst beim Internet-Provider in der Warteschleife. 'Ihr Anruf ist uns wichtig...' seit 45 Minuten. Die Musik macht dich aggressiv.",
+        type: "call",
+        opts: [
+            { 
+                btn: "Warten & Wüten", 
+                al: 15, // Aggro steigt massiv
+                desc: "Ich lege nicht auf! Aus Prinzip!",
+                res: "Nach 60 Minuten wird aufgelegt. Du beißt in die Tischkante." 
+            },
+            { 
+                btn: "Hörer anschreien", 
+                al: 10, cr: 5, 
+                desc: "RAUS DA!",
+                res: "Du schreist das Telefon an. Der Chef läuft vorbei und schüttelt den Kopf." 
+            },
+            { 
+                btn: "Folie nutzen", 
+                req: "bubble_wrap", 
+                al: -20,
+                desc: "*Plopp* *Plopp* *Plopp*",
+                res: "Du drückst die Bläschen im Takt der Warteschleifen-Musik. Das macht den Horror erträglich. (Item verbraucht)" 
+            }
+        ]
+    },
     ],
 
 // === SERVERRAUM ===
@@ -2715,7 +2743,7 @@ const DB = {
             text: "Die Tür zum Konferenzraum steht offen. Auf dem großen Tisch, zwischen leeren Wasserflaschen und Flipchart-Papier, steht noch eine Schachtel vom Management-Meeting. Inhalt: Ein einsamer, leicht angetrockneter Schoko-Donut mit bunten Streuseln.",
             opts: [
                 { 
-                    t: "Den Donut 'sicherstellen' (Looten)", 
+                    t: "Den Donut 'sicherstellen'", 
                     loot: "donut", 
                     m: 5, f: 5, a: -5, c: 0, 
                     r: "Du wickelst ihn schnell in eine Serviette. Er ist zwar etwas hart, aber Zucker ist Zucker. Außerdem eignet er sich hervorragend als Bestechungsmittel für hungrige Azubis." 
@@ -3362,7 +3390,35 @@ const DB = {
                     r: "Du steckst ihn in die Tasche. Das Wissen, eine Not-Ration zu haben, beruhigt dich ein wenig." 
                 }
             ]
-        }
+        },
+        {
+        id: "coffee_disaster",
+        title: "OUT OF ORDER",
+        text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern.",
+        type: "coffee", // Wichtig: Kategorie Coffee
+        opts: [
+            { 
+                btn: "Dagegen treten", 
+                al: 10, // Wut steigt
+                desc: "Funktioniert bei Druckern doch auch!",
+                res: "Du trittst gegen die Maschine. Kaffee läuft aus. Auf deine Schuhe. Großartig." 
+            },
+            { 
+                btn: "Reparieren", 
+                req: "screw", // Belohnung für Werkzeug
+                al: -10, cr: -5,
+                desc: "Gehäuse aufschrauben, Schlauch verbinden...",
+                res: "Du fixierst den Schlauch. Die Maschine surrt! Der erste Schluck schmeckt nach Sieg (und Kalk)." 
+            },
+            { 
+                btn: "Folie nutzen", 
+                req: "bubble_wrap", 
+                al: -15, // Beruhigung statt Koffein
+                desc: "Statt Kaffee gibt es Bläschen.",
+                res: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. Kein Kaffee, aber zumindest kein Mord." 
+            }
+        ]
+    }
     ],
 
 // === SIDE QUESTS ===
@@ -3567,7 +3623,7 @@ const DB = {
                     r: "Du kämpfst mit dem Knoten und gewinnst! Ein langes, graues LAN-Kabel gehört jetzt dir. Inventar +1." 
                 },
                 { 
-                    t: "Ganz unten tasten (Vorsicht: Weich)", 
+                    t: "Blind nach dem roten 'Ding' ganz unten wühlen", // Viel immersiver!
                     loot: "stressball", 
                     m: 10, f: 5, a: 0, c: 0, 
                     r: "Igit... was ist das? Ach, nur ein alter Wut-Ball! Er ist etwas klebrig, aber drückbar. Inventar +1." 
@@ -3937,6 +3993,54 @@ const DB = {
                 }
             ]
         },
+        {
+        id: "quest_gabi_pc",
+        title: "Sicherheitslücke",
+        text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
+        type: "quest",
+        opts: [
+            { 
+                btn: "Richtlinie vortragen", 
+                f: -5, 
+                desc: "Du sperrst den PC und klebst einen bösen Zettel dran.",
+                res: "Gabi kommt zurück, liest den Zettel und rollt mit den Augen. Du fühlst dich sicher." 
+            },
+            { 
+                btn: "Kalender checken", 
+                f: 5, 
+                desc: "Nur ein kurzer Blick...",
+                // Das hier startet sofort das nächste Event (Verkettung)
+                next: "quest_boss_chair" 
+            },
+            { 
+                btn: "Ignorieren", 
+                f: 0, 
+                desc: "Nicht mein Zirkus, nicht meine Affen.",
+                res: "Du gehst weiter."
+            }
+        ]
+    },
+    {
+        id: "quest_boss_chair",
+        title: "Operation Rückgrat",
+        text: "Im Kalender steht: 'Lieferung Massagesessel (Privat)'. Der Sessel steht ausgepackt im verlassenen Chefbüro. Er sieht aus wie ein Cockpit.",
+        type: "quest",
+        opts: [
+            { 
+                btn: "Probeliegen", 
+                f: 20, al: -40,
+                desc: "Nur kurz die 'Shiatsu'-Funktion testen...",
+                res: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du schläfst ein und wachst sabbernd aber tiefenentspannt wieder auf." 
+            },
+            { 
+                btn: "Kartons filzen", 
+                f: -5, 
+                loot: "bubble_wrap", 
+                desc: "Du durchsuchst den Müll nach Brauchbarem.",
+                res: "Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
+            }
+        ]
+    },
 		
         // --- PHONE EVENTS (Chat-System) ---
         {

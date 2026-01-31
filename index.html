@@ -160,69 +160,27 @@
         </div>
     </div>
 	
-	<div id="difficulty-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden items-center justify-center p-4">
-        <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center">
-            <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
-            <p class="text-slate-400 mb-8">Wie sehr hasst du dein Leben heute?</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onclick="engine.setDifficulty('easy')" class="group relative bg-slate-800 border border-green-500 hover:bg-green-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <div class="text-4xl mb-2">🍺</div>
-                    <h3 class="text-xl font-bold text-green-400 mb-2">FREITAG</h3>
-                    <div class="text-xs text-slate-300 italic mb-4">"Hoch die Hände, Wochenende!"</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-green-500">✔ Weniger Tickets</li>
-                        <li class="text-green-500">✔ Kollegen sind entspannt</li>
-                        <li class="text-green-500">✔ Aggro steigt langsam (0.8x)</li>
-                    </ul>
-                </button>
-
-                <button onclick="engine.setDifficulty('normal')" class="group relative bg-slate-800 border border-blue-500 hover:bg-blue-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <div class="text-4xl mb-2">☕</div>
-                    <h3 class="text-xl font-bold text-blue-400 mb-2">MITTWOCH</h3>
-                    <div class="text-xs text-slate-300 italic mb-4">"Bergfest. Der Wahnsinn ist Routine."</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-blue-500">● Standard Wahnsinn</li>
-                        <li class="text-blue-500">● Normale Ticket-Rate</li>
-                        <li class="text-blue-500">● Standard Multiplikator (1.0x)</li>
-                    </ul>
-                </button>
-
-                <button onclick="engine.setDifficulty('hard')" class="group relative bg-slate-800 border border-red-600 hover:bg-red-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <div class="text-4xl mb-2">💀</div>
-                    <h3 class="text-xl font-bold text-red-500 mb-2">MONTAG</h3>
-                    <div class="text-xs text-slate-300 italic mb-4">"Warum tue ich mir das an?"</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-red-500">⚠ Startet mit 2 Tickets</li>
-                        <li class="text-red-500">⚠ Startet mit 20% Aggro</li>
-                        <li class="text-red-500">⚠ Boss ruft öfter an (1.5x)</li>
-                    </ul>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4 h-auto lg:h-24 mb-4 shrink-0">
-        <div class="neon-box border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
+        <div id="clock-container" class="neon-box border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
             <span class="text-[10px] text-blue-400 font-bold uppercase">Uhrzeit</span>
             <div id="clock" class="text-3xl lg:text-4xl font-black text-white">08:00</div>
         </div>
         
-        <div class="neon-box border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
+        <div id="ticket-container" class="neon-box border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
             <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">OFFENE TICKETS</span>
             <div id="ticket-count" class="text-3xl lg:text-4xl font-black text-white">0</div>
             <div class="text-[8px] text-slate-500">Max: 10</div>
         </div>
 
-        <div class="neon-box border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
+        <div id="stat-row-fl" class="neon-box border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
             <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400"><span>FAULHEIT</span><span id="val-fl">0%</span></div>
             <div class="h-2 bg-slate-800 rounded-full"><div id="bar-fl" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div></div>
         </div>
-        <div class="neon-box border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
+        <div id="stat-row-al" class="neon-box border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
             <div class="flex justify-between text-xs font-bold mb-1 text-orange-400"><span>AGGRO</span><span id="val-al">0%</span></div>
             <div class="h-2 bg-slate-800 rounded-full"><div id="bar-al" class="h-full bg-orange-500 transition-all duration-300" style="width: 0%"></div></div>
         </div>
-        <div class="neon-box border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
+        <div id="stat-row-cr" class="neon-box border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
             <div class="flex justify-between text-xs font-bold mb-1 text-red-500"><span>CHEF-RADAR</span><span id="val-cr">0%</span></div>
             <div class="h-2 bg-slate-800 rounded-full"><div id="bar-cr" class="h-full bg-red-600 transition-all duration-300" style="width: 0%"></div></div>
         </div>
@@ -307,11 +265,22 @@
         </div>
     </div>
 
-    <div class="h-20 grid grid-cols-4 gap-2 lg:gap-4 shrink-0">
-        <button onclick="engine.trigger('coffee')" class="action-btn text-amber-500"><span class="text-xl">☕</span><span class="text-[10px] md:text-xs font-bold">KAFFEE</span></button>
-        <button onclick="engine.trigger('sidequest')" class="action-btn text-purple-500"><span class="text-xl">🎲</span><span class="text-[10px] md:text-xs font-bold">SIDE-QUEST</span></button>
-        <button onclick="engine.trigger('server')" class="action-btn text-emerald-500"><span class="text-xl">💾</span><span class="text-[10px] md:text-xs font-bold">SERVERRAUM</span></button>
-        <button onclick="engine.trigger('calls')" class="action-btn bg-blue-900/30 text-blue-400 border-blue-800"><span class="text-xl">📞</span><span class="text-[10px] md:text-xs font-bold">ANRUF</span></button>
+<div id="action-bar" class="h-20 grid grid-cols-4 gap-2 lg:gap-4 shrink-0">
+        <button id="btn-coffee" onclick="engine.trigger('coffee')" class="action-btn text-amber-500">
+            <span class="text-xl">☕</span><span class="text-[10px] md:text-xs font-bold">KAFFEE</span>
+        </button>
+        
+        <button id="btn-sidequest" onclick="engine.trigger('sidequest')" class="action-btn text-purple-500">
+            <span class="text-xl">🎲</span><span class="text-[10px] md:text-xs font-bold">SIDE-QUEST</span>
+        </button>
+        
+        <button id="btn-server" onclick="engine.trigger('server')" class="action-btn text-emerald-500">
+            <span class="text-xl">💾</span><span class="text-[10px] md:text-xs font-bold">SERVERRAUM</span>
+        </button>
+        
+        <button id="btn-calls" onclick="engine.trigger('calls')" class="action-btn bg-blue-900/30 text-blue-400 border-blue-800">
+            <span class="text-xl">📞</span><span class="text-[10px] md:text-xs font-bold">ANRUF</span>
+        </button>
     </div>
 
     <div id="modal-overlay" class="fixed inset-0 hidden bg-black/95 z-50 flex items-center justify-center p-8">
@@ -345,7 +314,85 @@
         </div>
     </div>
 
+    <div id="difficulty-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden items-center justify-center p-4">
+        <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center">
+            <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
+            <p class="text-slate-400 mb-8">Wie sehr hasst du dein Leben heute?</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="engine.setDifficulty('easy')" class="group relative bg-slate-800 border border-green-500 hover:bg-green-900/20 p-6 rounded-xl transition-all hover:scale-105">
+                    <div class="text-4xl mb-2">🍺</div>
+                    <h3 class="text-xl font-bold text-green-400 mb-2">FREITAG</h3>
+                    <div class="text-xs text-slate-300 italic mb-4">"Hoch die Hände, Wochenende!"</div>
+                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                        <li class="text-green-500">✔ Weniger Tickets</li>
+                        <li class="text-green-500">✔ Kollegen sind entspannt</li>
+                        <li class="text-green-500">✔ Aggro steigt langsam (0.8x)</li>
+                    </ul>
+                </button>
+
+                <button onclick="engine.setDifficulty('normal')" class="group relative bg-slate-800 border border-blue-500 hover:bg-blue-900/20 p-6 rounded-xl transition-all hover:scale-105">
+                    <div class="text-4xl mb-2">☕</div>
+                    <h3 class="text-xl font-bold text-blue-400 mb-2">MITTWOCH</h3>
+                    <div class="text-xs text-slate-300 italic mb-4">"Bergfest. Der Wahnsinn ist Routine."</div>
+                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                        <li class="text-blue-500">● Standard Wahnsinn</li>
+                        <li class="text-blue-500">● Normale Ticket-Rate</li>
+                        <li class="text-blue-500">● Standard Multiplikator (1.0x)</li>
+                    </ul>
+                </button>
+
+                <button onclick="engine.setDifficulty('hard')" class="group relative bg-slate-800 border border-red-600 hover:bg-red-900/20 p-6 rounded-xl transition-all hover:scale-105">
+                    <div class="text-4xl mb-2">💀</div>
+                    <h3 class="text-xl font-bold text-red-500 mb-2">MONTAG</h3>
+                    <div class="text-xs text-slate-300 italic mb-4">"Warum tue ich mir das an?"</div>
+                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                        <li class="text-red-500">⚠ Startet mit 2 Tickets</li>
+                        <li class="text-red-500">⚠ Fehler werden härter bestraft</li>
+                        <li class="text-red-500">⚠ Boss ruft öfter an (1.25x)</li>
+                    </ul>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tutorial-overlay" class="fixed inset-0 z-[2000] hidden overflow-hidden">
+        
+        <div id="tut-spotlight" class="absolute border-2 border-white rounded-xl transition-all duration-300 pointer-events-none z-[2010] shadow-[0_0_0_9999px_rgba(0,0,0,0.85)]"></div>
+
+        <div id="tut-text-box" class="absolute z-[2020] max-w-md bg-slate-900 border border-white p-6 rounded-xl shadow-2xl transition-all duration-300 flex flex-col gap-4">
+            <h3 id="tut-title" class="text-xl font-bold text-white"></h3>
+            <p id="tut-desc" class="text-slate-300 text-sm leading-relaxed">Hier lernst du, wie du überlebst.</p>
+            <div class="flex justify-between items-center mt-2">
+                <span id="tut-step-count" class="text-xs text-slate-500 font-mono">1/10</span>
+                <button onclick="tutorial.next()" class="bg-white hover:bg-slate-200 text-black font-bold py-2 px-6 rounded transition-transform hover:scale-105">
+                    WEITER ➤
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tut-ask-modal" class="fixed inset-0 z-[2100] hidden items-center justify-center bg-black/90 backdrop-blur-sm">
+        <div class="bg-slate-900 border-2 border-white p-6 rounded-xl max-w-sm w-full shadow-2xl text-center mx-4">
+            <div class="text-4xl mb-4">🎓</div>
+            <h3 class="text-xl font-bold text-white mb-2">Neu hier?</h3>
+            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                Willst du eine kurze Einweisung in deinen neuen Arbeitsplatz als SysAdmin?
+            </p>
+            
+            <div class="grid gap-3">
+                <button onclick="tutorial.run()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded transition-transform hover:scale-105 shadow-lg border border-green-400">
+                    Ja, zeig mir alles!
+                </button>
+                <button onclick="tutorial.skip()" class="bg-transparent hover:bg-slate-800 text-slate-400 font-bold py-2 px-4 rounded border border-slate-700 transition-colors">
+                    Nein, ich kenne mich aus.
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="data.js"></script>
     <script src="engine.js"></script>
+    <script src="tutorial.js"></script>
 </body>
 </html>
