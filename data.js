@@ -3994,53 +3994,48 @@ const DB = {
             ]
         },
         {
-        id: "quest_gabi_pc",
-        title: "Sicherheitslücke",
-        text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
-        type: "quest",
-        opts: [
+            id: "quest_gabi_pc",
+            title: "Sicherheitslücke",
+            text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
+            type: "quest",
+            opts: [
+                { 
+                    t: "Richtlinie vortragen", 
+                    m: 5, f: -5, a: 0, c: 0,
+                    r: "Gabi kommt zurück, liest den Zettel und rollt mit den Augen. Du fühlst dich sicher, aber unbeliebt." 
+                },
+                { 
+                    t: "Kalender checken", 
+                    m: 5, f: 5, a: 0, c: 0,
+                    r: "Du wirfst einen schnellen Blick in den Kalender. Oha, was steht denn da?",
+                    next: "quest_boss_chair" 
+                },
+                { 
+                    t: "Ignorieren", 
+                    m: 2, f: 0, a: 0, c: 0,
+                    r: "Nicht mein Zirkus, nicht meine Affen. Du gehst weiter."
+                }
+            ]
+        },
+        {
+            id: "quest_boss_chair",
+            title: "Operation Rückgrat",
+            text: "Die Tür zum Chefbüro steht sperrangelweit offen. Von Dr. Wichtig fehlt jede Spur. Mitten im Raum thront eine frisch ausgepackte Lieferung: Ein High-End Massagesessel, der aussieht wie ein Raumschiff-Cockpit.",
+            type: "quest",
+            opts: [
             { 
-                btn: "Richtlinie vortragen", 
-                f: -5, 
-                desc: "Du sperrst den PC und klebst einen bösen Zettel dran.",
-                res: "Gabi kommt zurück, liest den Zettel und rollt mit den Augen. Du fühlst dich sicher." 
+                    t: "Probeliegen (Shiatsu-Test)", 
+                    m: 20, f: 20, a: -40, c: 0,
+                    r: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du schläfst ein und wachst sabbernd aber tiefenentspannt wieder auf." 
             },
             { 
-                t: "Kalender checken", 
-                m: 5, f: 5, a: 0, c: 0,
-
-                r: "Du wirfst einen schnellen Blick in den Kalender. Oha, was steht denn da?",
-                next: "quest_boss_chair" 
-            },
-            { 
-                btn: "Ignorieren", 
-                f: 0, 
-                desc: "Nicht mein Zirkus, nicht meine Affen.",
-                res: "Du gehst weiter."
-            }
-        ]
-    },
-    {
-        id: "quest_boss_chair",
-        title: "Operation Rückgrat",
-        text: "Im Kalender steht: 'Lieferung Massagesessel (Privat)'. Der Sessel steht ausgepackt im verlassenen Chefbüro. Er sieht aus wie ein Cockpit.",
-        type: "quest",
-        opts: [
-            { 
-                btn: "Probeliegen", 
-                f: 20, al: -40,
-                desc: "Nur kurz die 'Shiatsu'-Funktion testen...",
-                res: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du schläfst ein und wachst sabbernd aber tiefenentspannt wieder auf." 
-            },
-            { 
-                btn: "Kartons filzen", 
-                f: -5, 
-                loot: "bubble_wrap", 
-                desc: "Du durchsuchst den Müll nach Brauchbarem.",
-                res: "Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
-            }
-        ]
-    },
+                    t: "Kartons filzen", 
+                    m: 10, f: -5, a: 0, c: 0,
+                    loot: "bubble_wrap", 
+                    r: "Du durchsuchst den Müll nach Brauchbarem. Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
+                }
+            ]
+        },
 		
         // --- PHONE EVENTS (Chat-System) ---
         {
