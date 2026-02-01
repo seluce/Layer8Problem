@@ -2021,23 +2021,20 @@ const DB = {
         type: "call",
         opts: [
             { 
-                btn: "Warten & Wüten", 
-                al: 15, // Aggro steigt massiv
-                desc: "Ich lege nicht auf! Aus Prinzip!",
-                res: "Nach 60 Minuten wird aufgelegt. Du beißt in die Tischkante." 
+                t: "Warten & Wüten", 
+                m: 60, f: 0, a: 15, c: 0, // Kostet viel Zeit (60m laut Text)
+                r: "Nach 60 Minuten wird aufgelegt. Du beißt in die Tischkante." 
             },
             { 
-                btn: "Hörer anschreien", 
-                al: 10, cr: 5, 
-                desc: "RAUS DA!",
-                res: "Du schreist das Telefon an. Der Chef läuft vorbei und schüttelt den Kopf." 
+                t: "Hörer anschreien", 
+                m: 5, f: 0, a: 10, c: 5, // Geht schnell, aber Chef hört es (Radar +5)
+                r: "Du schreist das Telefon an: 'RAUS DA!'. Der Chef läuft vorbei und schüttelt den Kopf." 
             },
             { 
-                btn: "Folie nutzen", 
+                t: "Folie nutzen", 
                 req: "bubble_wrap", 
-                al: -20,
-                desc: "*Plopp* *Plopp* *Plopp*",
-                res: "Du drückst die Bläschen im Takt der Warteschleifen-Musik. Das macht den Horror erträglich. (Item verbraucht)" 
+                m: 45, f: 0, a: -20, c: 0, // Nutzt die Wartezeit sinnvoll
+                r: "Du drückst die Bläschen im Takt der Warteschleifen-Musik. Das macht den Horror erträglich. (Item verbraucht)" 
             }
         ]
     },
@@ -3395,30 +3392,27 @@ const DB = {
         id: "coffee_disaster",
         title: "OUT OF ORDER",
         text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern.",
-        type: "coffee", // Wichtig: Kategorie Coffee
+        type: "coffee",
         opts: [
             { 
-                btn: "Dagegen treten", 
-                al: 10, // Wut steigt
-                desc: "Funktioniert bei Druckern doch auch!",
-                res: "Du trittst gegen die Maschine. Kaffee läuft aus. Auf deine Schuhe. Großartig." 
+                t: "Dagegen treten", 
+                m: 5, f: 0, a: 10, c: 0, // Wut steigt, geht schnell
+                r: "Du trittst gegen die Maschine. Kaffee läuft aus. Auf deine Schuhe. Großartig." 
             },
             { 
-                btn: "Reparieren", 
-                req: "screw", // Belohnung für Werkzeug
-                al: -10, cr: -5,
-                desc: "Gehäuse aufschrauben, Schlauch verbinden...",
-                res: "Du fixierst den Schlauch. Die Maschine surrt! Der erste Schluck schmeckt nach Sieg (und Kalk)." 
+                t: "Reparieren", 
+                req: "screw", 
+                m: 15, f: 0, a: -10, c: -5, // Dauert etwas, aber lohnt sich
+                r: "Du fixierst den Schlauch. Die Maschine surrt! Der erste Schluck schmeckt nach Sieg (und Kalk)." 
             },
             { 
-                btn: "Folie nutzen", 
+                t: "Folie nutzen", 
                 req: "bubble_wrap", 
-                al: -15, // Beruhigung statt Koffein
-                desc: "Statt Kaffee gibt es Bläschen.",
-                res: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. Kein Kaffee, aber zumindest kein Mord." 
+                m: 10, f: 5, a: -15, c: 0, // Faulheit steigt leicht (man sitzt ja rum)
+                r: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. Kein Kaffee, aber zumindest kein Mord." 
             }
         ]
-    }
+    },
     ],
 
 // === SIDE QUESTS ===
@@ -3994,53 +3988,48 @@ const DB = {
             ]
         },
         {
-        id: "quest_gabi_pc",
-        title: "Sicherheitslücke",
-        text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
-        type: "quest",
-        opts: [
+            id: "quest_gabi_pc",
+            title: "Sicherheitslücke",
+            text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
+            type: "quest",
+            opts: [
+                { 
+                    t: "Richtlinie vortragen", 
+                    m: 5, f: -5, a: 0, c: 0,
+                    r: "Gabi kommt zurück, liest den Zettel und rollt mit den Augen. Du fühlst dich sicher, aber unbeliebt." 
+                },
+                { 
+                    t: "Kalender checken", 
+                    m: 5, f: 5, a: 0, c: 0,
+                    r: "Du wirfst einen schnellen Blick in den Kalender. Oha, was steht denn da?",
+                    next: "quest_boss_chair" 
+                },
+                { 
+                    t: "Ignorieren", 
+                    m: 2, f: 0, a: 0, c: 0,
+                    r: "Nicht mein Zirkus, nicht meine Affen. Du gehst weiter."
+                }
+            ]
+        },
+        {
+            id: "quest_boss_chair",
+            title: "Operation Rückgrat",
+            text: "Die Tür zum Chefbüro steht sperrangelweit offen. Von Dr. Wichtig fehlt jede Spur. Mitten im Raum thront eine frisch ausgepackte Lieferung: Ein High-End Massagesessel, der aussieht wie ein Raumschiff-Cockpit.",
+            type: "quest",
+            opts: [
             { 
-                btn: "Richtlinie vortragen", 
-                f: -5, 
-                desc: "Du sperrst den PC und klebst einen bösen Zettel dran.",
-                res: "Gabi kommt zurück, liest den Zettel und rollt mit den Augen. Du fühlst dich sicher." 
+                    t: "Probeliegen (Shiatsu-Test)", 
+                    m: 20, f: 20, a: -40, c: 0,
+                    r: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du schläfst ein und wachst sabbernd aber tiefenentspannt wieder auf." 
             },
             { 
-                t: "Kalender checken", 
-                m: 5, f: 5, a: 0, c: 0,
-
-                r: "Du wirfst einen schnellen Blick in den Kalender. Oha, was steht denn da?",
-                next: "quest_boss_chair" 
-            },
-            { 
-                btn: "Ignorieren", 
-                f: 0, 
-                desc: "Nicht mein Zirkus, nicht meine Affen.",
-                res: "Du gehst weiter."
-            }
-        ]
-    },
-    {
-        id: "quest_boss_chair",
-        title: "Operation Rückgrat",
-        text: "Im Kalender steht: 'Lieferung Massagesessel (Privat)'. Der Sessel steht ausgepackt im verlassenen Chefbüro. Er sieht aus wie ein Cockpit.",
-        type: "quest",
-        opts: [
-            { 
-                btn: "Probeliegen", 
-                f: 20, al: -40,
-                desc: "Nur kurz die 'Shiatsu'-Funktion testen...",
-                res: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du schläfst ein und wachst sabbernd aber tiefenentspannt wieder auf." 
-            },
-            { 
-                btn: "Kartons filzen", 
-                f: -5, 
-                loot: "bubble_wrap", 
-                desc: "Du durchsuchst den Müll nach Brauchbarem.",
-                res: "Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
-            }
-        ]
-    },
+                    t: "Kartons filzen", 
+                    m: 10, f: -5, a: 0, c: 0,
+                    loot: "bubble_wrap", 
+                    r: "Du durchsuchst den Müll nach Brauchbarem. Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
+                }
+            ]
+        },
 		
         // --- PHONE EVENTS (Chat-System) ---
         {
