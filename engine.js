@@ -31,12 +31,159 @@ const engine = {
 
         // Aktive Items
         lastStressballTime: -100,
+
+        // Dauerhaftes Archiv
+        archive: {
+            items: [],
+            achievements: [],
+            achievementDiffs: {}
+        }
     },
 
     init: function() {
+        this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
         this.log("System v40.0 geladen. Warte auf User...");
+    },
+
+    // --- PERSISTENZ (Speichern & Laden) ---
+    loadSystem: function() {
+        const data = localStorage.getItem('layer8_archive');
+        if(data) {
+            try {
+                this.state.archive = JSON.parse(data);
+                // Fallback falls Struktur leer war
+                if(!this.state.archive.items) this.state.archive.items = [];
+                if(!this.state.archive.achievements) this.state.archive.achievements = [];
+            } catch(e) { console.error("Savegame Error", e); }
+        }
+    },
+
+    saveSystem: function() {
+        localStorage.setItem('layer8_archive', JSON.stringify(this.state.archive));
+    },
+
+    addToArchive: function(type, id) {
+        if(!this.state.archive[type].includes(id)) {
+            this.state.archive[type].push(id);
+            this.saveSystem(); 
+        }
+    },
+
+    // --- ARCHIV UI ---
+// --- ARCHIV SYSTEM V2 (Tabs & Stats) ---
+    openArchive: function() {
+        const modal = document.getElementById('archive-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // 1. STATISTIK BERECHNEN
+        const totalItems = Object.keys(DB.items).length;
+        const foundItems = this.state.archive.items.length;
+        
+        const totalAchs = DB.achievements.length;
+        const unlockedAchs = this.state.archive.achievements.length;
+
+        document.getElementById('stats-items').innerText = `${foundItems} / ${totalItems}`;
+        document.getElementById('stats-achs').innerText = `${unlockedAchs} / ${totalAchs}`;
+
+        // Standard-Tab öffnen
+        this.renderArchiveTab('all');
+    },
+
+// --- ARCHIV UI ---
+    openArchive: function() {
+        const modal = document.getElementById('archive-modal');
+        const content = document.getElementById('archive-content');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        // 1. STATISTIK BERECHNEN
+        const totalItems = Object.keys(DB.items).length;
+        const foundItems = this.state.archive.items.length;
+        const totalAchs = DB.achievements.length;
+        const unlockedAchs = this.state.archive.achievements.length;
+
+        document.getElementById('stats-items').innerText = `${foundItems} / ${totalItems}`;
+        document.getElementById('stats-achs').innerText = `${unlockedAchs} / ${totalAchs}`;
+
+        // 2. INHALT RENDERN (ALLES AUF EINMAL)
+        content.innerHTML = '';
+
+        // --- ITEMS SEKTION ---
+        let html = `<div class="mb-8"><h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">📦 GEFUNDENE ITEMS</h3>`;
+        html += `<div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
+        
+        for (const [id, item] of Object.entries(DB.items)) {
+            const unlocked = this.state.archive.items.includes(id);
+            html += `
+                <div class="aspect-square bg-slate-800 rounded border ${unlocked ? 'border-amber-500/50 text-white' : 'border-slate-700 opacity-30 text-slate-600'} flex items-center justify-center text-xl cursor-help transition-all hover:scale-110 hover:border-amber-400 hover:z-10 relative group" title="${unlocked ? item.name : '???' }">
+                    ${unlocked ? item.icon : '?'}
+                </div>`;
+        }
+        html += `</div></div>`;
+
+        // --- ERFOLGE SEKTION ---
+        html += `<h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">🏆 ERFOLGE</h3>`;
+        html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
+
+        if(DB.achievements) {
+            DB.achievements.forEach(ach => {
+                const unlocked = this.state.archive.achievements.includes(ach.id);
+                
+                // Schwierigkeit auslesen
+                let diff = "none";
+                if (this.state.archive.achievementDiffs) {
+                    diff = this.state.archive.achievementDiffs[ach.id] || "easy";
+                }
+
+                // Styling
+                let borderClass = "border-slate-800 opacity-40";
+                let bgClass = "bg-slate-900/30";
+                let badge = "";
+                let icon = "🔒";
+                let title = "???";
+                let desc = "Spiele weiter...";
+
+                if (unlocked) {
+                    icon = ach.icon;
+                    title = ach.title;
+                    desc = ach.desc;
+                    
+                    if (diff === 'hard') {
+                        borderClass = "border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]"; 
+                        badge = '<span class="text-[9px] text-red-400 font-bold border border-red-500/30 px-1.5 rounded ml-auto bg-red-950/30">MONTAG</span>';
+                    } else if (diff === 'normal') {
+                        borderClass = "border-blue-500/50 bg-blue-900/10"; 
+                        badge = '<span class="text-[9px] text-blue-400 font-bold border border-blue-500/30 px-1.5 rounded ml-auto bg-blue-950/30">MITTWOCH</span>';
+                    } else {
+                        borderClass = "border-green-500/50 bg-green-900/10"; 
+                        badge = '<span class="text-[9px] text-green-400 font-bold border border-green-500/30 px-1.5 rounded ml-auto bg-green-950/30">FREITAG</span>';
+                    }
+                }
+
+                html += `
+                    <div class="flex gap-3 p-3 rounded border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group">
+                        <div class="text-2xl shrink-0 group-hover:scale-110 transition-transform">${icon}</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="font-bold text-xs truncate ${unlocked ? 'text-white' : 'text-slate-500'}">${title}</div>
+                                ${badge}
+                            </div>
+                            <div class="text-[10px] text-slate-400 leading-tight line-clamp-2">${desc}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        html += `</div>`;
+        content.innerHTML += html;
+    },
+
+    closeArchive: function() {
+        document.getElementById('archive-modal').classList.add('hidden');
+        document.getElementById('archive-modal').classList.remove('flex');
     },
 
     // Startet nicht mehr das Spiel, sondern zeigt die Auswahl
@@ -247,7 +394,7 @@ updateUI: function() {
                         slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20';
                         // Grüner Punkt
                         slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>`;
-                        slot.onclick = () => this.useItem('stressball');
+                        slot.onclick = () => this.askUseItem('stressball');
                         slot.title += " (Benutzen)";
                     } else {
                         // Cooldown Overlay (etwas kleiner für Mini-View)
@@ -263,7 +410,7 @@ updateUI: function() {
                 // B) Verbrauchsgüter (Direkt benutzen)
                 else if (itemData.id === 'energy' || itemData.id === 'donut') {
                     slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
-                    slot.onclick = () => this.useItem(itemData.id);
+                    slot.onclick = () => this.askUseItem(itemData.id);
                     slot.title += " (verwenden)";
                 }
                 // C) Normale Items (Öffnen das große Inventar)
@@ -390,17 +537,131 @@ checkAchievements: function() {
     hasAch: function(id) { return this.state.achievements.includes(id); },
 
     unlockAchievement: function(id, title, text) {
-        this.state.achievements.push(id); 
-        this.state.achievedTitles.push(title);
-        const container = document.getElementById('achievement-container');
-        if(container) {
-            const toast = document.createElement('div');
-            toast.className = 'achievement-toast';
-            toast.innerHTML = `<div class="ach-icon">🏆</div><div class="ach-text"><span class="ach-title">${title}</span><br><span class="ach-desc">${text}</span></div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 5000);
+        // 1. In die aktuelle Session aufnehmen (für UI Updates)
+        if (!this.state.achievements.includes(id)) {
+            this.state.achievements.push(id); 
+            this.state.achievedTitles.push(title);
+            
+            // Toast anzeigen (nur wenn ganz neu in diesem Run)
+            const container = document.getElementById('achievement-container');
+            if(container) {
+                const toast = document.createElement('div');
+                toast.className = 'achievement-toast';
+                toast.innerHTML = `<div class="ach-icon">🏆</div><div class="ach-text"><span class="ach-title">${title}</span><br><span class="ach-desc">${text}</span></div>`;
+                container.appendChild(toast);
+                setTimeout(() => { toast.remove(); }, 5000);
+            }
+            this.log(`ERFOLG FREIGESCHALTET: ${title}`, "text-yellow-400 font-bold");
         }
-        this.log(`ERFOLG: ${title}`, "text-yellow-400 font-bold");
+
+        // 2. Ins Archiv speichern mit Schwierigkeitsgrad
+        this.saveAchievementToArchive(id);
+    },
+
+unlockAchievement: function(id, title, text) {
+        // 1. Session-Check: Haben wir diesen Erfolg in DIESEM aktuellen Spiel schon?
+        // Wenn ja -> Sofort abbrechen (verhindert Spam im Loop)
+        if (this.state.achievements.includes(id)) {
+            return;
+        }
+
+        // 2. Archiv-Check: Haben wir ihn früher schon mal geschafft? Und wenn ja, wie schwer?
+        
+        // Aktueller Schwierigkeitsgrad ermitteln (1=Easy, 2=Normal, 3=Hard)
+        let currentDiffVal = 1;
+        if (this.state.difficultyMult >= 1.0) currentDiffVal = 2; // Mittwoch
+        if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
+
+        // Gespeicherter Grad aus dem Archiv holen
+        let savedDiffVal = 0; // 0 = Noch nie geschafft
+        
+        // Sicherheits-Check: Existiert das Archiv korrekt?
+        if (this.state.archive && this.state.archive.achievements && this.state.archive.achievements.includes(id)) {
+            let savedDiffName = "easy";
+            // Prüfen ob wir die Schwierigkeit gespeichert haben
+            if (this.state.archive.achievementDiffs) {
+                savedDiffName = this.state.archive.achievementDiffs[id] || "easy";
+            }
+            
+            // Text zu Zahl umwandeln für Vergleich
+            if (savedDiffName === "normal") savedDiffVal = 2;
+            else if (savedDiffName === "hard") savedDiffVal = 3;
+            else savedDiffVal = 1; 
+        }
+
+        // ENTSCHEIDUNG: Nur Benachrichtigen, wenn NEU (0) oder BESSER als vorher
+        let isNewOrBetter = (savedDiffVal === 0) || (currentDiffVal > savedDiffVal);
+
+        // In die aktuelle Session aufnehmen (damit Check 1 beim nächsten Frame greift)
+        this.state.achievements.push(id);
+        this.state.achievedTitles.push(title);
+
+        // NUR wenn es neu oder ein Upgrade ist: Feedback geben (Log & Toast)
+        if (isNewOrBetter) {
+            
+            // Text für Log vorbereiten
+            let logText = `ERFOLG FREIGESCHALTET: ${title}`;
+            let logColor = "text-yellow-400 font-bold"; // Standard Gold
+            let toastDesc = text;
+
+            // Falls es ein Upgrade war (z.B. Easy -> Hard)
+            if (savedDiffVal > 0) {
+                const diffNames = ["", "FREITAG", "MITTWOCH", "MONTAG"];
+                logText = `🏆 ERFOLG AUFGEWERTET: ${title} (${diffNames[currentDiffVal]})`;
+                logColor = "text-purple-400 font-bold"; // Upgrade Lila
+                toastDesc = `Upgrade auf ${diffNames[currentDiffVal]}!`;
+            }
+
+            // A. Log schreiben
+            this.log(logText, logColor);
+
+            // B. Toast anzeigen
+            const container = document.getElementById('achievement-container');
+            if(container) {
+                const toast = document.createElement('div');
+                toast.className = 'achievement-toast';
+                toast.innerHTML = `<div class="ach-icon">🏆</div><div class="ach-text"><span class="ach-title">${title}</span><br><span class="ach-desc">${toastDesc}</span></div>`;
+                container.appendChild(toast);
+                
+                // Nach 5 Sekunden entfernen
+                setTimeout(() => { 
+                    if(toast.parentNode) toast.remove(); 
+                }, 5000);
+            }
+        }
+
+        // 3. Im Hintergrund immer speichern (falls Upgrade nötig)
+        this.saveAchievementToArchive(id, currentDiffVal);
+    },
+
+    // Hilfsfunktion zum Speichern mit Schwierigkeitsgrad
+    saveAchievementToArchive: function(id, currentDiffVal) {
+        // Sicherstellen, dass Strukturen existieren
+        if (!this.state.archive.achievements) this.state.archive.achievements = [];
+        if (!this.state.archive.achievementDiffs) this.state.archive.achievementDiffs = {};
+
+        // Mapping Zahl -> Name
+        let diffName = "easy";
+        if (currentDiffVal === 2) diffName = "normal";
+        if (currentDiffVal === 3) diffName = "hard";
+
+        // Prüfen was gespeichert ist
+        let savedDiffName = this.state.archive.achievementDiffs[id] || "none";
+        let savedDiffVal = 0;
+        if (savedDiffName === "easy") savedDiffVal = 1;
+        if (savedDiffName === "normal") savedDiffVal = 2;
+        if (savedDiffName === "hard") savedDiffVal = 3;
+
+        // Speichern wenn neu oder besser
+        if (!this.state.archive.achievements.includes(id) || currentDiffVal > savedDiffVal) {
+            
+            if (!this.state.archive.achievements.includes(id)) {
+                this.state.archive.achievements.push(id);
+            }
+            
+            this.state.archive.achievementDiffs[id] = diffName;
+            this.saveSystem(); // LocalStorage Update
+        }
     },
 
     trigger: function(type) {
@@ -421,11 +682,8 @@ checkAchievements: function() {
         
         // Wenn alle Bosse besiegt sind, passiert nichts (oder man könnte pool = DB.bossfights machen für Reset)
         if(pool.length === 0) return; 
-
-        // --- HIER WAR DER FEHLER ---
-        // Alt: let boss = pool[0];  <-- Das hat immer den ersten in der Liste genommen (Ransomware)
-        
-        // Neu: Zufälligen Boss aus dem verbleibenden Pool wählen
+     
+        // Zufälligen Boss aus dem verbleibenden Pool wählen
         let boss = pool[Math.floor(Math.random() * pool.length)]; 
         // ---------------------------
 
@@ -617,6 +875,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
         if(loot && loot !== "") {
             if(!this.state.inventory.find(i => i.id === loot)) {
                 this.state.inventory.push({ id: loot, used: false });
+                this.addToArchive('items', loot);
                 this.log(`ITEM: ${DB.items[loot].name}`, "text-yellow-400");
             }
         }
@@ -997,7 +1256,7 @@ openInventory: function() {
                 if (isReady) {
                     slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20'; 
                     slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>`; 
-                    slot.onclick = () => this.useItem('stressball');
+                    slot.onclick = () => this.askUseItem('stressball');
                     slot.title += " (benutzen)";
                 } else {
                     slot.className += ' cursor-not-allowed'; 
@@ -1014,7 +1273,7 @@ openInventory: function() {
             // 2. VERBRAUCHSGÜTER (Energy & Donut)
             else if (itemData.id === 'energy' || itemData.id === 'donut') {
                 slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
-                slot.onclick = () => this.useItem(itemData.id);
+                slot.onclick = () => this.askUseItem(itemData.id);
                 slot.title += " (verwenden)";
             }
 
@@ -1039,36 +1298,87 @@ closeInventory: function() {
         modal.classList.remove('flex');
     },
 	
-// --- ITEM NUTZUNG ---
-// --- ITEM NUTZUNG ---
-    useItem: function(id) {
-        // Helper: Prüfen, ob Inventar offen ist, um es live zu aktualisieren
-        const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
-
-        // A. STRESSBALL
+// --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
+    
+// 1. Abfrage: Willst du wirklich?
+    askUseItem: function(id) {
+        // Cooldown Check VOR dem Modal
         if (id === 'stressball') {
             if (this.state.time - this.state.lastStressballTime < 60) {
-                let waitTime = 60 - (this.state.time - this.state.lastStressballTime);
-                // Neuer Flavor-Text statt technischem "Cooldown"
-                this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${waitTime} Min)`, "text-slate-500");
-                return;
+                let wait = 60 - (this.state.time - this.state.lastStressballTime);
+                this.log(`Der Ball ist noch platt. Er muss sich erst wieder entfalten (${wait} Min).`, "text-slate-500");
+                return; // Kein Modal, direkt Abbruch
             }
+        }
+
+        // Daten holen
+        let itemDB = DB.items[id];
+        let title = itemDB ? itemDB.name : id; // Wenn du es in data.js in "Stressball" umbenennst, steht hier automatisch "Stressball"
+        let icon = itemDB ? itemDB.icon : "❓";
+        
+        let desc = "Unbekannter Effekt.";
+        let warn = "Dieses Item wird verbraucht.";
+
+        // --- FLAVOR TEXTE ---
+        
+        if (id === 'stressball') {
+            desc = "Senkt AGGRO sofort um -10 Punkte. *Quietsch*";
+            // Statt "Cooldown": Materialermüdung
+            warn = "Material-Ermüdung! Nach dem Kneten ist der Ball für 60 Minuten platt und nutzlos.";
+        } 
+        else if (id === 'energy') {
+            desc = "Senkt FAULHEIT um -15. Flüssiges Herzrasen.";
+            warn = "Ex und hopp! Die Dose ist danach leer. Kein Pfand, keine Rückgabe.";
+        }
+        else if (id === 'donut') {
+            desc = "Senkt AGGRO um -15. Seelentröster aus Teig.";
+            warn = "Einmaliger Genuss (Hüftgold bleibt für immer). Der Donut ist danach weg.";
+        }
+        else if (id === 'bubble_wrap') {
+            desc = "Senkt AGGRO um -10. Sehr befriedigend.";
+            warn = "Einweg-Therapie! Wenn alle Blasen geplatzt sind, ist der Spaß vorbei.";
+        }
+
+        // Modal befüllen
+        this.state.pendingItem = id; 
+        document.getElementById('item-confirm-icon').innerText = icon;
+        document.getElementById('item-confirm-title').innerText = title;
+        document.getElementById('item-confirm-desc').innerText = desc;
+        document.getElementById('item-confirm-warn').innerText = warn;
+
+        // Modal anzeigen
+        document.getElementById('item-confirm-modal').classList.remove('hidden');
+        document.getElementById('item-confirm-modal').classList.add('flex');
+    },
+
+    // 2. Bestätigung: Jetzt wirklich tun
+    confirmUseItem: function() {
+        let id = this.state.pendingItem;
+        if (!id) return;
+
+        this.closeItemConfirm(); // Fenster zu
+        
+        // Helper: Prüfen, ob Inventar offen ist (für Refresh der Anzeige)
+        const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
+
+        // --- LOGIK ---
+        
+        // A. Kein Verbrauch (nur Cooldown)
+        if (id === 'stressball') {
             this.state.al = Math.max(0, this.state.al - 10);
             this.state.time += 5; 
             this.state.lastStressballTime = this.state.time;
-            this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -10)", "text-green-400");
             
-            this.updateUI();
-            if(isInvOpen) this.openInventory(); // Nur refreshen, wenn offen!
-            return;
+            // DEIN ORIGINAL TEXT:
+            this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -10)", "text-green-400");
         }
 
         // B. VERBRAUCHSGÜTER
-        if (id === 'energy' || id === 'donut') {
+        else if (['energy', 'donut', 'bubble_wrap'].includes(id)) {
             let index = this.state.inventory.findIndex(i => i.id === id);
             
             if (index > -1) {
-                this.state.inventory.splice(index, 1);
+                this.state.inventory.splice(index, 1); // Item aus Array löschen
                 
                 if (id === 'energy') {
                     this.state.fl = Math.max(0, this.state.fl - 15);
@@ -1078,17 +1388,22 @@ closeInventory: function() {
                     this.state.al = Math.max(0, this.state.al - 15);
                     this.log("Mmmh... Zuckerglasur. Die Wut schmilzt dahin. (Aggro -15)", "text-pink-400");
                 }
-
                 else if (id === 'bubble_wrap') {
                     this.state.al = Math.max(0, this.state.al - 10);
                     this.log("*Plopp* *Plopp* *Plopp*. Das ist besser als Therapie. (Aggro -10)", "text-cyan-400");
                 }
-
-                this.updateUI();
-                if(isInvOpen) this.openInventory(); // Nur refreshen, wenn offen!
             }
-            return;
         }
+
+        this.updateUI(); // Balken updaten
+        if(isInvOpen) this.openInventory(); // Inventar neu zeichnen (Item entfernen)
+        this.state.pendingItem = null;
+    },
+
+    closeItemConfirm: function() {
+        document.getElementById('item-confirm-modal').classList.add('hidden');
+        document.getElementById('item-confirm-modal').classList.remove('flex');
+        this.state.pendingItem = null;
     },
 
 	// --- TEAM / CHARAKTERE ---

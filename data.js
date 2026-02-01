@@ -2,11 +2,11 @@ const DB = {
     // === ITEMS (Loot & Werkzeuge) ===
     items: {
         // VERBRAUCHSGEGENSTÄNDE (Einmalig)
-        "wifi_note": { icon: "📝", name: "WLAN-Zettel" },
+        "wifi_note": { icon: "🏷️", name: "WLAN-Zettel" },
         "donut": { icon: "🍩", name: "Alter Donut" },
         "energy": { icon: "⚡", name: "Energy Drink" },
         "secret_list": { icon: "📁", name: "Schwarze Liste" },
-		"arg_list_1": { icon: "📝", name: "Argumente (Ich)" }, 
+		"arg_list_1": { icon: "📋", name: "Argumente (Ich)" }, 
         "arg_list_2": { icon: "📑", name: "Argumente (Kevin)" },
         "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie" },
         
@@ -15,7 +15,7 @@ const DB = {
         "kabel": { icon: "🔌", name: "LAN-Kabel", keep: true },
         "tape": { icon: "🩹", name: "Panzertape", keep: true },
         "screw": { icon: "🪛", name: "Schraubendreher", keep: true },
-        "stressball": { icon: "🔴", name: "Wut-Ball", keep: true },
+        "stressball": { icon: "🔴", name: "Anti-Stressball", keep: true },
         "manual": { icon: "📖", name: "Win95 Handbuch", keep: true },
         "usb_stick": { icon: "💾", name: "Boot-Stick", keep: true },
         "fire_ext": { icon: "🧯", name: "Feuerlöscher", keep: true },
@@ -929,16 +929,34 @@ const DB = {
             ],
             fail: { m: 120, f: -20, a: 50, c: 50, r: "KERN-SCHMELZE! Es riecht nach verschmortem Plastik. Der Feuermelder geht los. Renn!" }
         },
-		{
+        {
             id: "boss_db_purge",
             title: "💀 DROP DATABASE PROD 💀",
             text: "ALARM! Der Azubi Kevin hat 'aus Versehen' das Lösch-Skript auf der LIVE-DATENBANK gestartet! Die Balken werden rot! Kundendaten verschwinden im Sekundentakt! (8 Sekunden)",
             timer: 8,
             opts: [
-                { t: "Not-Aus (Kabel kappen)", req: "kabel", m: 5, f: -10, a: 20, c: 10, r: "Du hast das Haupt-Glasfaserkabel mit bloßen Händen rausgerissen. Die Löschung stoppt. Die Firma ist offline, aber die Daten sind noch da (teilweise)." },
-                { t: "Admin-Override", req: "admin_pw", m: 5, f: 5, a: -10, c: -20, r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Kevin weint." }
+                { 
+                    t: "Netzwerkbrücke bauen", 
+                    req: "kabel",
+                    m: 10, f: -10, a: 10, c: 0, 
+                    r: "Du stöpselst wild Kabel um und leitest den Traffic auf den Test-Server. Die Löschung läuft ins Leere. Kevin starrt dich bewundernd an." 
+                },
+                { 
+                    t: "Admin-Override", 
+                    req: "admin_pw", 
+                    m: 5, f: 5, a: -10, c: -20,
+                    r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Die Daten sind sicher." 
+                },
+                { 
+                    t: "Steckerleiste rausreißen (Blackout)", 
+                    m: 45, f: 0, a: 20, c: 30,
+                    r: "KLACK. Funken sprühen. Das Büro ist dunkel. Die Löschung ist gestoppt... genau wie der Rest der Firma. Der Server-Check dauert ewig (45 Min), aber die Daten leben noch." 
+                }
             ],
-            fail: { m: 120, f: -50, a: 50, c: 100, r: "DATENBANK LEER. Die Firma existiert digital nicht mehr. Du musst Backups von 1998 einspielen." }
+            fail: { 
+                m: 120, f: -50, a: 50, c: 80, 
+                r: "DATENBANK LEER. 'Error 404: Company not found'. Der Chef steht weinend im Serverraum. Du solltest schon mal deinen Lebenslauf aktualisieren." 
+            }
         },
         {
             id: "boss_tiktok",
@@ -946,10 +964,28 @@ const DB = {
             text: "Ein bekannter Influencer ist in den Serverraum eingedrungen! 'Yo Leute, checkt mal diese blinkenden Lichter! Ich zieh mal hier dran für den Prank!' Er greift nach dem Haupt-Switch!",
             timer: 12,
             opts: [
-                { t: "Fesseln (Bürgerfestnahme)", req: "zip_ties", m: 15, f: -5, a: -20, c: 10, r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'IT-Guy vs. Influencer'." },
-                { t: "Mit Feuerlöscher 'einnebeln'", req: "fire_ext", m: 10, f: 0, a: 30, c: 0, r: "Du hast ihn komplett eingeweißt. Er hustet und rennt weg. Die Server sind staubig, aber sicher." }
+                { 
+                    t: "Fesseln (Bürgerfestnahme)", 
+                    req: "zip_ties",
+                    m: 15, f: -5, a: -20, c: 10, 
+                    r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'Sigma Male Admin verteidigt Revier'. Die Kommentare feiern dich." 
+                },
+                { 
+                    t: "Mit Feuerlöscher 'einnebeln'", 
+                    req: "fire_ext", 
+                    m: 10, f: 0, a: 30, c: 0, 
+                    r: "WOOSH! Du hast ihn komplett eingeweißt. Er hustet und rennt weg: 'Mein Merch ist ruiniert!'. Die Server sind staubig, aber sicher." 
+                },
+                { 
+                    t: "Bodycheck (Tackle)", 
+                    m: 5, f: 0, a: 40, c: 20, 
+                    r: "Du rammst ihn mit voller Wucht weg, bevor er den Stecker zieht. Sein Smartphone fliegt gegen ein Rack (kaputt). Er heult und droht mit Anwalt. Du hast blaue Flecken und bist stinksauer." 
+                }
             ],
-            fail: { m: 60, f: 0, a: 50, c: 50, r: "ER HAT DEN STECKER GEZOGEN! 'Ouuuups, war nur ein Prank Bro!'. Das Internet ist weg. Du gehst viral als 'Der heulende Admin'." }
+            fail: { 
+                m: 60, f: 0, a: 50, c: 50, 
+                r: "ER HAT DEN STECKER GEZOGEN! 'Ouuuups, war nur ein Prank Bro!'. Das Internet ist weg. Du gehst viral als 'Der heulende Admin' und wirst zum Meme. Der Chef ist 'not amused'." 
+            }
         },
         {
             id: "boss_ups_battery",
@@ -968,10 +1004,28 @@ const DB = {
             text: "Fehlfunktion im Sicherheitssystem! Die Brandschutztüren schließen sich. Der Sauerstoff wird abgesaugt (Halon-Anlage). Du hast 10 Sekunden, bevor du ohnmächtig wirst!",
             timer: 10,
             opts: [
-                { t: "Tür aufschrauben", req: "screw", m: 10, f: -10, a: 0, c: 0, r: "In Rekordzeit hast du das Panel abgeschraubt und die Drähte kurzgeschlossen. Tür offen. Du lebst!" },
-                { t: "Scheibe einschlagen", req: "hammer", m: 5, f: 0, a: 10, c: 10, r: "Klirr! Du kletterst durch die Scherben. Freiheit! Aber du blutest leicht." }
+                { 
+                    t: "Tür aufschrauben", 
+                    req: "screw", 
+                    m: 10, f: -10, a: 0, c: 0, 
+                    r: "In Rekordzeit hast du das Panel abgeschraubt und die Drähte kurzgeschlossen. Tür offen. Du lebst!" 
+                },
+                { 
+                    t: "Scheibe mit Hammer einschlagen", 
+                    req: "hammer", 
+                    m: 5, f: 0, a: 10, c: 10, 
+                    r: "Klirr! Du kletterst durch die Scherben. Freiheit! Aber du musst den Schaden erklären." 
+                },
+                { 
+                    t: "Scheibe mit dem Ellbogen rammen", 
+                    m: 5, f: 0, a: 30, c: 10, 
+                    r: "AUTSCH! Mit einem Schrei wirfst du dich ins Glas. Es splittert. Dein Arm blutet und pocht wie wild, aber du bekommst Luft." 
+                }
             ],
-            fail: { m: 120, f: 20, a: 0, c: 0, r: "OHNMACHT. Du wachst im Krankenhaus auf. Die Feuerwehr hat dich gerettet. Man nennt dich jetzt 'Dornröschen'." }
+            fail: { 
+                m: 120, f: 30, a: 20, c: 50, 
+                r: "OHNMACHT. Du wachst im Krankenhaus auf. Der Chef steht am Bett: 'Wer schläft, fliegt! Das ziehen wir vom Lohn ab!' (Radar +50)" 
+            }
         },
         {
             id: "boss_coffee_crisis",
@@ -2755,7 +2809,7 @@ const DB = {
         {
             id: "cof_flirt",
             title: "Der Schwarm",
-            text: "Sarah/Marc aus der HR steht da. Er/Sie lächelt dich an. 'Na, IT-Held? Alles im Griff oder brennt der Server?'",
+            text: "Sarah aus der HR steht da. Sie lächelt dich an. 'Na, IT-Held? Alles im Griff oder brennt der Server?'",
             opts: [
                 { t: "Flirten: 'Für dich lösche ich jedes Feuer'", m: 20, f: 10, a: -30, c: 5, r: "Es läuft gut! Ihr verabredet euch zum Mittagessen. Deine Laune ist top." },
                 { t: "Panisch weglaufen", m: 5, f: 0, a: 10, c: 0, r: "Peinlich berührt geflüchtet. Kaffee vergessen. Du hasst dich selbst." }
@@ -3988,7 +4042,7 @@ const DB = {
             ]
         },
         {
-            id: "quest_gabi_pc",
+            id: "sq_gabi_pc",
             title: "Sicherheitslücke",
             text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
             type: "quest",
@@ -4002,7 +4056,6 @@ const DB = {
                     t: "Kalender checken", 
                     m: 5, f: 5, a: 0, c: 0,
                     r: "Du wirfst einen schnellen Blick in den Kalender. Oha, was steht denn da?",
-                    next: "quest_boss_chair" 
                 },
                 { 
                     t: "Ignorieren", 
@@ -4012,7 +4065,7 @@ const DB = {
             ]
         },
         {
-            id: "quest_boss_chair",
+            id: "sq_boss_chair",
             title: "Operation Rückgrat",
             text: "Die Tür zum Chefbüro steht sperrangelweit offen. Von Dr. Wichtig fehlt jede Spur. Mitten im Raum thront eine frisch ausgepackte Lieferung: Ein High-End Massagesessel, der aussieht wie ein Raumschiff-Cockpit.",
             type: "quest",
@@ -4828,6 +4881,36 @@ const DB = {
             icon: "💀", 
             desc: "Mädchen für alles. Brandlöscher. Seelsorger. Eigentlich wolltest du nur Computer reparieren, jetzt reparierst du Menschen. Dein Kaffee-Konsum ist medizinisch bedenklich." 
         }
+    ],
+
+// === ERFOLGE (Für das Sammelalbum) ===
+    achievements: [
+        // EXTREME PLAYSTYLE
+        { id: "ach_ascetic", icon: "🧘", title: "Der Asket", desc: "16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft." },
+        { id: "ach_coffee", icon: "🫀", title: "Herzrasen", desc: "8 Tassen getrunken. Du kannst Farben hören und die Zeit anhalten." },
+        { id: "ach_ignore", icon: "👻", title: "Ghosting-Profi", desc: "5 Mails ignoriert. Deine 'Entf'-Taste glüht." },
+        { id: "ach_hoarder", icon: "🛒", title: "Loot-Goblin", desc: "8 Items im Inventar. Dein Rucksack platzt." },
+        
+        // STATS
+        { id: "ach_lazy", icon: "🦥", title: "Faulpelz", desc: "80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben." },
+        { id: "ach_rage", icon: "🤬", title: "180 Puls", desc: "Nur noch ein dummer Anruf und es knallt. (95% Aggro)" },
+        
+        // ITEMS & SKILLS
+        { id: "ach_macgyver", icon: "🛠️", title: "MacGyver", desc: "Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi." },
+        { id: "ach_rich", icon: "💸", title: "Der Millionär", desc: "Du hast dem Prinzen vertraut. Kündigung ist raus!" },
+        { id: "ach_hacker", icon: "💻", title: "Mr. Robot", desc: "Root-Rechte erhalten. Jetzt gehört das Netzwerk dir." },
+        
+        // END GAME / ZEITABHÄNGIG
+        { id: "ach_ninja", icon: "🥷", title: "Ninja", desc: "Fast unsichtbar für den Chef (bis 14 Uhr unbemerkt)." },
+        { id: "ach_zen", icon: "🕊️", title: "Zen-Meister", desc: "15 Uhr und die Ruhe selbst (0 Aggro). Bist du überhaupt wach?" },
+        { id: "ach_workaholic", icon: "👔", title: "Streber", desc: "Bis 16 Uhr fast keine Faulheit. Du machst uns anderen schlecht!" },
+        { id: "ach_risk", icon: "🎢", title: "Drahtseilakt", desc: "Feierabend mit 9 offenen Tickets. Das war verdammt knapp." },
+        { id: "ach_clean", icon: "✨", title: "Inbox Zero", desc: "Alle Tickets erledigt? Das System glaubt, es ist ein Fehler." },
+        { id: "ach_survivor", icon: "🌋", title: "Tanz auf dem Vulkan", desc: "Maximaler Stress (90/90) kurz vor Feierabend. Du brauchst Urlaub." },
+        
+        // STORY
+        { id: "ach_mentor", icon: "👨‍👦", title: "Der Mentor", desc: "Du hast Kevin gerettet. Er wird es nie vergessen (leider)." },
+        { id: "ach_wolf", icon: "📈", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. 500€ mehr Gehalt!" }
     ],
 	
 };

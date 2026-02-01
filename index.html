@@ -131,11 +131,12 @@
     
     <div id="achievement-container"></div>
 
-    <div id="intro-modal" class="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4">
+<div id="intro-modal" class="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4">
         <div class="neon-box border-blue bg-slate-900 max-w-4xl w-full p-8 shadow-2xl relative overflow-hidden flex flex-col md:flex-row gap-8 max-h-[90vh] overflow-y-auto">
-            <div class="flex-1">
+            
+            <div class="flex-1 flex flex-col">
                 <h1 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter">Layer8Problem</h1>
-                <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                <p class="text-slate-300 text-sm leading-relaxed mb-8 flex-1">
                     Willkommen bei <strong>GlobalCorp</strong>. Du bist der SysAdmin. <br><br>
                     Du bist gefangen in der Support-Hölle. Jeden Morgen wachst du auf und hoffst, dass der Serverraum abgebrannt ist – aber nein, die Lichter blinken noch.
                     <br><br>
@@ -143,19 +144,47 @@
                     <br><br>
                     <strong>DEIN ZIEL:</strong> Überlebe bis <strong>16:30 Uhr</strong>. Lass dich nicht feuern. Raste nicht aus. Und lass dich nicht von der <strong>Ticket-Lawine</strong> begraben.
                 </p>
-                <button onclick="engine.start()" 
-                    class="bg-blue-600 hover:bg-blue-500 text-white text-xl font-bold py-4 px-8 rounded-xl w-full transition-all shadow-lg">
-                    AN DIE ARBEIT
-                </button>
+                
+                <div class="space-y-3 mt-auto">
+                    <button onclick="engine.start()" 
+                        class="bg-blue-600 hover:bg-blue-500 text-white text-lg font-bold py-4 px-8 rounded-xl w-full transition-all shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02]">
+                        AN DIE ARBEIT
+                    </button>
+                    
+                    <button onclick="engine.openArchive()" 
+                        class="border border-slate-700 hover:border-purple-500 hover:bg-slate-800 text-slate-400 hover:text-purple-400 py-3 rounded-xl w-full font-bold uppercase transition-all text-xs tracking-widest flex items-center justify-center gap-2">
+                        <span>🏆</span> Karriere & Sammlung
+                    </button>
+                </div>
             </div>
             
-            <div class="flex-1 bg-black/30 p-6 rounded-xl border border-slate-700 text-xs font-mono space-y-4">
-                <h3 class="text-white font-bold border-b border-slate-700 pb-2">STATUS WERTE</h3>
-                <div class="flex gap-3"><div class="text-2xl">📩</div><div><strong class="text-purple-400">TICKETS</strong><br>Alle 30 Min kommt eins. Ab 10 ist Game Over!</div></div>
-                <div class="flex gap-3"><div class="text-2xl">⚡</div><div><strong class="text-emerald-400">FAULHEIT</strong><br>Zu hoch? Der Chef wird misstrauisch.</div></div>
-                <div class="flex gap-3"><div class="text-2xl">😡</div><div><strong class="text-orange-400">AGGRO</strong><br>Bei 100% wirfst du den Monitor. Game Over.</div></div>
-                <div class="flex gap-3"><div class="text-2xl">👁️</div><div><strong class="text-red-500">CHEF-RADAR</strong><br>Bei 100% gibt's ne Abmahnung. Dann Rauswurf.</div></div>
-                <div class="flex gap-3"><div class="text-2xl">🎒</div><div><strong class="text-amber-400">LOOT</strong><br>Finde Items, um Probleme zu lösen.</div></div>
+            <div class="flex-1 bg-black/30 p-6 rounded-xl border border-slate-700 text-xs font-mono space-y-5 h-fit">
+                <h3 class="text-white font-bold border-b border-slate-700 pb-2 mb-2">STATUS WERTE</h3>
+                
+                <div class="flex gap-4 items-start">
+                    <div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shrink-0">📩</div>
+                    <div><strong class="text-purple-400 block mb-1">TICKETS</strong>Alle 30 Min kommt eins. Ab 10 ist Game Over!</div>
+                </div>
+                
+                <div class="flex gap-4 items-start">
+                    <div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shrink-0">⚡</div>
+                    <div><strong class="text-emerald-400 block mb-1">FAULHEIT</strong>Zu hoch? Der Chef wird misstrauisch und bestraft Fehler härter.</div>
+                </div>
+                
+                <div class="flex gap-4 items-start">
+                    <div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shrink-0">😡</div>
+                    <div><strong class="text-orange-400 block mb-1">AGGRO</strong>Bei 100% wirfst du den Monitor aus dem Fenster. Game Over.</div>
+                </div>
+                
+                <div class="flex gap-4 items-start">
+                    <div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shrink-0">👁️</div>
+                    <div><strong class="text-red-500 block mb-1">CHEF-RADAR</strong>Bei 100% fliegst du raus. (Tipp: Arbeit senkt Radar).</div>
+                </div>
+                
+                <div class="flex gap-4 items-start">
+                    <div class="text-2xl bg-slate-800 w-10 h-10 flex items-center justify-center rounded-lg shrink-0">🎒</div>
+                    <div><strong class="text-amber-400 block mb-1">LOOT</strong>Finde Items, um Probleme kreativ zu lösen.</div>
+                </div>
             </div>
         </div>
     </div>
@@ -251,6 +280,10 @@
                         <div onclick="engine.openTeam()" class="cursor-pointer hover:bg-slate-800 rounded px-1 transition-colors flex items-center gap-2">
                             <span class="text-[10px] text-white font-bold">👥 TEAM</span>
                         </div>
+
+                        <div onclick="engine.openArchive()" class="cursor-pointer hover:bg-slate-800 rounded px-1 transition-colors flex items-center gap-2">
+                            <span class="text-[10px] text-purple-400 font-bold">🏆 ARCHIV</span>
+                        </div>
                     </div>
 
                     <span onclick="engine.toggleLog()" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1">
@@ -299,6 +332,35 @@
             </div>
         </div>
     </div>
+
+    <div id="item-confirm-modal" class="fixed inset-0 bg-black/95 z-[1200] hidden items-center justify-center p-6">
+        <div class="neon-box border-white bg-slate-900 max-w-sm w-full p-6 shadow-2xl relative text-center flex flex-col items-center">
+            
+            <div id="item-confirm-icon" class="text-6xl mb-4 bg-slate-800 w-24 h-24 flex items-center justify-center rounded-xl border border-slate-600 shadow-lg">
+                📦
+            </div>
+
+            <h3 id="item-confirm-title" class="text-xl font-black text-white mb-2 uppercase">ITEM NAME</h3>
+            
+            <p id="item-confirm-desc" class="text-emerald-400 font-bold text-sm mb-4">
+                Effekt: ???
+            </p>
+
+            <div class="bg-slate-950/50 border border-slate-800 p-3 rounded-lg w-full mb-6 text-xs text-slate-300 text-left">
+                <strong class="text-red-400 block mb-1">⚠ ACHTUNG:</strong>
+                <span id="item-confirm-warn">Warntext hier.</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 w-full">
+                <button onclick="engine.closeItemConfirm()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-lg font-bold transition-colors">
+                    ABBRECHEN
+                </button>
+                <button onclick="engine.confirmUseItem()" class="bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-bold shadow-lg transition-transform hover:scale-105">
+                    BENUTZEN
+                </button>
+            </div>
+        </div>
+    </div>
 	
 	<div id="team-modal" class="fixed inset-0 hidden bg-black/95 z-[1100] items-center justify-center p-4">
         <div class="neon-box border-white bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -311,6 +373,37 @@
             <div class="mt-6 text-center">
                 <button onclick="engine.closeTeam()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded text-xs font-bold uppercase">Zurück an die Arbeit</button>
             </div>
+        </div>
+    </div>
+
+    <div id="archive-modal" class="fixed inset-0 bg-black/95 z-[1100] hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-600 w-full max-w-5xl h-[85vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
+            
+            <div class="bg-slate-950 p-6 border-b border-slate-700 shrink-0">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
+                            KARRIERE-FORTSCHRITT
+                        </h2>
+                        <div class="text-xs text-slate-400 mt-1">Deine gesammelten Werke des Wahnsinns.</div>
+                    </div>
+                    <button onclick="engine.closeArchive()" class="text-slate-400 hover:text-white text-2xl transition-colors">✖</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900 rounded p-2 border border-slate-800 flex items-center justify-between px-4">
+                        <span class="text-amber-500 font-bold text-xs">📦 ITEMS</span>
+                        <span id="stats-items" class="text-white font-mono font-bold">0 / 0</span>
+                    </div>
+                    <div class="bg-slate-900 rounded p-2 border border-slate-800 flex items-center justify-between px-4">
+                        <span class="text-purple-500 font-bold text-xs">🏆 ERFOLGE</span>
+                        <span id="stats-achs" class="text-white font-mono font-bold">0 / 0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="archive-content" class="flex-1 p-6 overflow-y-auto custom-scrollbar bg-slate-900/50">
+                </div>
         </div>
     </div>
 
@@ -361,10 +454,10 @@
         <div id="tut-spotlight" class="absolute border-2 border-white rounded-xl transition-all duration-300 pointer-events-none z-[2010] shadow-[0_0_0_9999px_rgba(0,0,0,0.85)]"></div>
 
         <div id="tut-text-box" class="absolute z-[2020] max-w-md bg-slate-900 border border-white p-6 rounded-xl shadow-2xl transition-all duration-300 flex flex-col gap-4">
-            <h3 id="tut-title" class="text-xl font-bold text-white"></h3>
+            <h3 id="tut-title" class="text-xl font-bold text-white">Willkommen!</h3>
             <p id="tut-desc" class="text-slate-300 text-sm leading-relaxed">Hier lernst du, wie du überlebst.</p>
             <div class="flex justify-between items-center mt-2">
-                <span id="tut-step-count" class="text-xs text-slate-500 font-mono">1/10</span>
+                <span id="tut-step-count" class="text-xs text-slate-500 font-mono">1/13</span>
                 <button onclick="tutorial.next()" class="bg-white hover:bg-slate-200 text-black font-bold py-2 px-6 rounded transition-transform hover:scale-105">
                     WEITER ➤
                 </button>
