@@ -2022,19 +2022,19 @@ const DB = {
         opts: [
             { 
                 t: "Warten & Wüten", 
-                m: 60, f: 0, a: 15, c: 0, // Kostet viel Zeit (60m laut Text)
+                m: 60, f: 15, a: 20, c: 0,
                 r: "Nach 60 Minuten wird aufgelegt. Du beißt in die Tischkante." 
             },
             { 
                 t: "Hörer anschreien", 
-                m: 5, f: 0, a: 10, c: 5, // Geht schnell, aber Chef hört es (Radar +5)
-                r: "Du schreist das Telefon an: 'RAUS DA!'. Der Chef läuft vorbei und schüttelt den Kopf." 
+                m: 5, f: 0, a: 10, c: 10,
+                r: "Du schreist das Telefon an: 'GEH DRAN VERDAMMT!'. Der Chef läuft vorbei und schüttelt den Kopf." 
             },
             { 
                 t: "Folie nutzen", 
                 req: "bubble_wrap", 
-                m: 45, f: 0, a: -20, c: 0, // Nutzt die Wartezeit sinnvoll
-                r: "Du drückst die Bläschen im Takt der Warteschleifen-Musik. Das macht den Horror erträglich. (Item verbraucht)" 
+                m: 45, f: 10, a: -20, c: 0,
+                r: "Du drückst die Bläschen im Takt der Warteschleifen-Musik. Das macht den Horror erträglich." 
             }
         ]
     },
