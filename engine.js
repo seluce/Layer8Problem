@@ -11,7 +11,7 @@ const engine = {
         lunchDone: false,
         bossTimer: null,
         ticketWarning: false,
-        
+      
         // Schwierigkeitsgrad (Standard 1.0)
         difficultyMult: 1.0, 
 
@@ -25,6 +25,9 @@ const engine = {
         spamClicked: 0,
         usedEmails: new Set(),
         isEmailOpen: false,
+
+        // Story-Entscheidungen
+        storyFlags: {},
 		
 		// Speichert das Ende, damit wir es verzögert anzeigen können
         pendingEnd: null,
@@ -44,7 +47,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v40.0 geladen. Warte auf User...");
+        this.log("System v1.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -71,27 +74,6 @@ const engine = {
         }
     },
 
-    // --- ARCHIV UI ---
-// --- ARCHIV SYSTEM V2 (Tabs & Stats) ---
-    openArchive: function() {
-        const modal = document.getElementById('archive-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-
-        // 1. STATISTIK BERECHNEN
-        const totalItems = Object.keys(DB.items).length;
-        const foundItems = this.state.archive.items.length;
-        
-        const totalAchs = DB.achievements.length;
-        const unlockedAchs = this.state.archive.achievements.length;
-
-        document.getElementById('stats-items').innerText = `${foundItems} / ${totalItems}`;
-        document.getElementById('stats-achs').innerText = `${unlockedAchs} / ${totalAchs}`;
-
-        // Standard-Tab öffnen
-        this.renderArchiveTab('all');
-    },
-
 // --- ARCHIV UI ---
     openArchive: function() {
         const modal = document.getElementById('archive-modal');
@@ -108,23 +90,57 @@ const engine = {
         document.getElementById('stats-items').innerText = `${foundItems} / ${totalItems}`;
         document.getElementById('stats-achs').innerText = `${unlockedAchs} / ${totalAchs}`;
 
-        // 2. INHALT RENDERN (ALLES AUF EINMAL)
-        content.innerHTML = '';
+        // 2. ITEMS TRENNEN
+        let normalItems = [];
+        let questItems = [];
 
-        // --- ITEMS SEKTION ---
-        let html = `<div class="mb-8"><h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">📦 GEFUNDENE ITEMS</h3>`;
+        for (const [id, item] of Object.entries(DB.items)) {
+            if (item.quest) {
+                questItems.push({id, item});
+            } else {
+                normalItems.push({id, item});
+            }
+        }
+
+        // 3. INHALT RENDERN
+        content.innerHTML = '';
+        let html = '';
+
+        // --- SEKTION A: NORMALE ITEMS ---
+        html += `<div class="mb-8"><h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">📦 GEFUNDENE AUSRÜSTUNG</h3>`;
         html += `<div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
         
-        for (const [id, item] of Object.entries(DB.items)) {
+        normalItems.forEach(({id, item}) => {
             const unlocked = this.state.archive.items.includes(id);
+            // Standard Style (Grau/Blau)
+            let borderClass = unlocked ? 'border-slate-500/50 text-slate-200 bg-slate-800' : 'border-slate-800 opacity-20 text-slate-700 bg-slate-900';
+            
             html += `
-                <div class="aspect-square bg-slate-800 rounded border ${unlocked ? 'border-amber-500/50 text-white' : 'border-slate-700 opacity-30 text-slate-600'} flex items-center justify-center text-xl cursor-help transition-all hover:scale-110 hover:border-amber-400 hover:z-10 relative group" title="${unlocked ? item.name : '???' }">
+                <div class="aspect-square rounded border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all hover:scale-110 hover:border-blue-400 hover:z-10 relative group" title="${unlocked ? item.name : '???' }">
                     ${unlocked ? item.icon : '?'}
                 </div>`;
-        }
+        });
         html += `</div></div>`;
 
-        // --- ERFOLGE SEKTION ---
+        // --- SEKTION B: QUEST ITEMS (TROPHÄEN) ---
+        if (questItems.length > 0) {
+            html += `<div class="mb-8"><h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">🏆 LEGENDÄRE TROPHÄEN</h3>`;
+            html += `<div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
+            
+            questItems.forEach(({id, item}) => {
+                const unlocked = this.state.archive.items.includes(id);
+                // Premium Style (Gold/Amber)
+                let borderClass = unlocked ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-slate-800 opacity-20 text-slate-700 bg-slate-900';
+
+                html += `
+                    <div class="aspect-square rounded border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all hover:scale-110 hover:border-amber-400 hover:z-10 relative group" title="${unlocked ? item.name : '???' }">
+                        ${unlocked ? item.icon : '?'}
+                    </div>`;
+            });
+            html += `</div></div>`;
+        }
+
+        // --- SEKTION C: ERFOLGE (Wie bisher) ---
         html += `<h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">🏆 ERFOLGE</h3>`;
         html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
 
@@ -144,7 +160,7 @@ const engine = {
                 let badge = "";
                 let icon = "🔒";
                 let title = "???";
-                let desc = "Spiele weiter...";
+                let desc = "noch nicht freigeschaltet...";
 
                 if (unlocked) {
                     icon = ach.icon;
@@ -239,42 +255,67 @@ const engine = {
         }, 500);
     },
 
-    // --- E-MAIL LOGIK ---
+// --- E-MAIL SYSTEM ---
+
+    // Prüft basierend auf Wahrscheinlichkeit, ob eine zufällige E-Mail getriggert wird
     checkRandomEmail: function() {
         if(this.state.isEmailOpen) return;
         if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
 
-        // Basis-Chance hängt vom Schwierigkeitsgrad ab
-        // Montag (1.5) = Höhere Wahrscheinlichkeit für Mails
+        // Wahrscheinlichkeit berechnen (Basis + Ticket-Last)
         let baseChance = 0.2 * this.state.difficultyMult; 
-        
         let chance = baseChance + (this.state.tickets * 0.05); 
+        
         if(Math.random() < chance) {
             setTimeout(() => { this.triggerEmail(); }, 1500);
         }
     },
 
-    triggerEmail: function() {
+    // Öffnet eine E-Mail (Zufall oder gezielt per ID)
+    triggerEmail: function(forcedId = null) {
         if(!DB.emails) return; 
         
-        let availableEmails = DB.emails.filter(e => !this.state.usedEmails.has(e.subj));
-        if(availableEmails.length === 0) {
-            this.state.usedEmails.clear(); 
-            availableEmails = DB.emails;
+        let email;
+
+        if (forcedId) {
+            // Gezielte Auswahl für Antwort-Ketten
+            email = DB.emails.find(e => e.id === forcedId);
+        } else {
+            // Zufällige Auswahl aus dem Pool (filtert verknüpfte E-Mails aus)
+            let availableEmails = DB.emails.filter(e => 
+                !this.state.usedEmails.has(e.subj) && !e.linked
+            );
+            
+            // Pool zurücksetzen, wenn leer (außer verknüpfte Mails)
+            if(availableEmails.length === 0) {
+                this.state.usedEmails.clear(); 
+                availableEmails = DB.emails.filter(e => !e.linked);
+            }
+            email = availableEmails[Math.floor(Math.random() * availableEmails.length)];
         }
-        let email = availableEmails[Math.floor(Math.random() * availableEmails.length)];
+
+        if (!email) return;
+
+        // Als gelesen markieren
         this.state.usedEmails.add(email.subj);
 
+        // UI Referenzen
         const overlay = document.getElementById('email-overlay');
         const timerBar = document.getElementById('email-timer-bar');
         const actionContainer = document.getElementById('email-actions');
         
+        // Inhalt setzen
         document.getElementById('email-sender').innerText = email.sender;
         document.getElementById('email-subject').innerText = email.subj;
-        if(email.body) {
-             document.getElementById('email-subject').innerText += "\n\n" + email.body;
+        
+        if(document.getElementById('email-body')) {
+            document.getElementById('email-body').innerText = email.body || "";
+        } else {
+            // Fallback für alte HTML-Struktur
+            document.getElementById('email-subject').innerText += "\n\n" + (email.body || "");
         }
         
+        // Buttons generieren
         actionContainer.innerHTML = '';
         if(email.opts) {
             email.opts.forEach(opt => {
@@ -289,7 +330,7 @@ const engine = {
         overlay.style.display = 'flex';
         this.state.isEmailOpen = true;
         
-        // ÄNDERUNG: Timer könnte man am Montag auch kürzer machen (optional, hier noch Standard 15s)
+        // Timer initialisieren (15 Sekunden)
         const DURATION = 15000; 
         const UPDATE_RATE = 50; 
         let timePassed = 0;
@@ -308,25 +349,27 @@ const engine = {
         }, UPDATE_RATE);
     },
 
+    // Verarbeitet die Entscheidung oder den Timeout
     resolveEmail: function(opt, timeout = false) {
+        // Timer und Overlay zurücksetzen
         clearInterval(this.state.emailInterval);
         document.getElementById('email-overlay').style.display = 'none';
         this.state.isEmailOpen = false;
         
+        // Fall A: Zeit abgelaufen (Timeout)
         if(timeout) {
-            // Strafe für Ignorieren wird auch multipliziert am Montag
             let penalty = Math.ceil(10 * this.state.difficultyMult);
             this.log(`E-MAIL IGNORIERT! Radar +${penalty}`, "text-red-500 font-bold");
             this.state.cr += penalty;
             this.state.emailsIgnored++;
-        } else if(opt) {
+        } 
+        // Fall B: Benutzerentscheidung
+        else if(opt) {
             this.log("E-Mail: " + opt.txt, "text-blue-400");
             
-            // ÄNDERUNG: Multiplikator anwenden
+            // Schwierigkeitsgrad auf Stats anwenden
             let mult = this.state.difficultyMult;
             
-            // Negative Effekte (Aggro/Radar steigt) werden verstärkt
-            // Positive Effekte (Abbau) bleiben gleich
             let addF = opt.f; 
             let addA = opt.a > 0 ? Math.ceil(opt.a * mult) : opt.a; 
             let addC = opt.c > 0 ? Math.ceil(opt.c * mult) : opt.c; 
@@ -334,11 +377,18 @@ const engine = {
             this.state.fl += (addF || 0);
             this.state.al += (addA || 0);
             this.state.cr += (addC || 0);
+
+            // Prüfen auf Folgemails (Chaining)
+            if (opt.nextEmail) {
+                setTimeout(() => {
+                    this.triggerEmail(opt.nextEmail);
+                }, 2000);
+            }
         }
         
         this.updateUI();
-		
-		// NEU: Wenn die E-Mail dich gekillt hat, sofort beenden
+        
+        // Prüfung auf Spielende durch Statusänderung
         if (this.state.pendingEnd) {
             this.finishGame();
         }
@@ -368,52 +418,47 @@ updateUI: function() {
         tEl.innerText = this.state.tickets;
         tEl.className = this.state.tickets > 7 ? "text-4xl font-black text-white ticket-counter ticket-pulse" : "text-4xl font-black text-white ticket-counter";
 
-		// --- INVENTAR UPDATE (Hauptansicht / Mini-Slots) ---
+        // --- INVENTAR UPDATE (Hauptansicht / Mini-Slots) ---
         const invGrid = document.getElementById('inventory-grid');
         const invBadge = document.getElementById('inv-badge');
         invGrid.innerHTML = '';
         
-        // Zeige die ersten 5 Items
+        // 1. Filtere Quest-Items für die Mini-Ansicht RAUS
+        let visibleItems = this.state.inventory.filter(i => {
+            let dbItem = DB.items[i.id];
+            return dbItem && !dbItem.quest; 
+        });
+
+        // Zeige die ersten 5 der SICHTBAREN Items
         for(let i=0; i < 5; i++) {
-            let itemData = this.state.inventory[i];
+            let itemData = visibleItems[i]; 
             let slot = document.createElement('div');
             
             if(itemData) {
                 let dbItem = DB.items[itemData.id];
-                // Basis-Klasse (wichtig: relative für Overlay)
                 slot.className = 'inv-slot relative group'; 
                 slot.innerText = dbItem ? dbItem.icon : '?';
                 slot.title = dbItem ? dbItem.name : 'Unbekannt';
 
-                // --- SPEZIAL LOGIK AUCH HIER ---
-                
-                // A) Stressball
+                // --- SPEZIAL LOGIK ---
                 if (itemData.id === 'stressball') {
                     let isReady = (this.state.time - this.state.lastStressballTime >= 60);
                     if(isReady) {
                         slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20';
-                        // Grüner Punkt
                         slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>`;
                         slot.onclick = () => this.askUseItem('stressball');
                         slot.title += " (Benutzen)";
                     } else {
-                        // Cooldown Overlay (etwas kleiner für Mini-View)
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                        slot.innerHTML += `
-                            <div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]">
-                                <span class="font-bold text-white text-xs select-none">${wait}</span>
-                            </div>
-                        `;
-                    slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
+                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-bold text-white text-xs select-none">${wait}</span></div>`;
+                        // HIER IST DEIN ORIGINAL TEXT:
+                        slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
                 }
-                // B) Verbrauchsgüter (Direkt benutzen)
                 else if (itemData.id === 'energy' || itemData.id === 'donut') {
                     slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
                     slot.onclick = () => this.askUseItem(itemData.id);
-                    slot.title += " (verwenden)";
                 }
-                // C) Normale Items (Öffnen das große Inventar)
                 else {
                     slot.onclick = () => this.openInventory();
                 }
@@ -424,8 +469,8 @@ updateUI: function() {
             invGrid.appendChild(slot);
         }
 
-        if(this.state.inventory.length > 5) {
-            let diff = this.state.inventory.length - 5;
+        if(visibleItems.length > 5) {
+            let diff = visibleItems.length - 5;
             invBadge.innerText = `+${diff}`;
             invBadge.classList.remove('hidden');
         } else {
@@ -492,6 +537,10 @@ checkAchievements: function() {
             this.unlockAchievement('ach_hacker', '💻 Mr. Robot', 'Root-Rechte. Jetzt gehört das Netzwerk dir.');
         }
 
+        if(this.state.inventory.find(i => i.id === 'contract') && !this.hasAch('ach_wolf')) {
+            this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
+        }
+
         // --- END GAME CHALLENGES (Zeitabhängig) ---
         
         // NINJA (Heimlich faul) - Ab 14:00
@@ -524,13 +573,33 @@ checkAchievements: function() {
             this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
         }
         
-        // QUESTS
+        // CHARACTER QUESTS
         if(this.state.inventory.find(i => i.id === 'kevin_ram') && !this.hasAch('ach_mentor')) {
             this.unlockAchievement('ach_mentor', '👨‍👦 Der Mentor', 'Du hast Kevin gerettet. Er wird es nie vergessen (leider).');
         }
 
-        if(this.state.inventory.find(i => i.id === 'contract') && !this.hasAch('ach_wolf')) {
-            this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
+        if(this.state.inventory.find(i => i.id === 'golden_stapler') && !this.hasAch('ach_ally')) {
+            this.unlockAchievement('ach_ally', 'Marketing-Allianz', 'Du und Chantal: Ein tödliches Team.');
+        }
+
+        if(this.state.inventory.find(i => i.id === 'master_key') && !this.hasAch('ach_keymaster')) {
+            this.unlockAchievement('ach_keymaster', 'Keymaster', 'Egon vertraut dir blind.');
+        }
+
+        if(this.state.inventory.find(i => i.id === 'mixtape') && !this.hasAch('ach_rockstar')) {
+            this.unlockAchievement('ach_rockstar', 'Metal Queen', 'Laut, schnell und loyal.');
+        }
+
+        if(this.state.inventory.find(i => i.id === 'scotch_bottle') && !this.hasAch('ach_closer')) {
+            this.unlockAchievement('ach_closer', 'The Closer', 'Markus und du: Ein profitables Team.');
+        }
+
+        if(this.state.inventory.find(i => i.id === 'cat_pic') && !this.hasAch('ach_cat_whisperer')) {
+            this.unlockAchievement('ach_cat_whisperer', 'Katzenflüsterer', 'Rüdiger mag dich. Frau Elster auch.');
+        }
+
+        if(this.state.inventory.find(i => i.id === 'corp_chronicles') && !this.hasAch('ach_lore')) {
+            this.unlockAchievement('ach_lore', 'Der Historiker', 'Du kennst nun die Wahrheit. Manche Türen sollten besser geschlossen bleiben.');
         }
     },
 
@@ -664,12 +733,22 @@ unlockAchievement: function(id, title, text) {
         }
     },
 
-    trigger: function(type) {
+trigger: function(type) {
         if(this.state.activeEvent) return;
         if (type === 'sidequest') { this.handleSideQuest(); return; }
-        if(Math.random() < 0.05 && type !== 'calls') { this.triggerBossFight(); return; }
+        // ... (Boss Logik bleibt) ...
 
-        let pool = DB[type].filter(ev => !this.state.usedIDs.has(ev.id));
+        // NEUE FILTER LOGIK:
+        let pool = DB[type].filter(ev => {
+            // 1. Wurde Event schon benutzt?
+            if (this.state.usedIDs.has(ev.id)) return false;
+            
+            // 2. Hat das Event eine Story-Voraussetzung?
+            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            
+            return true;
+        });
+
         if (pool.length === 0) { this.renderTerminal(DB.special.empty_pool, type); return; }
         
         let ev = pool[Math.floor(Math.random() * pool.length)];
@@ -715,7 +794,14 @@ unlockAchievement: function(id, title, text) {
     },
 
     handleSideQuest: function() {
-        let pool = DB.sidequests.filter(ev => !this.state.usedIDs.has(ev.id));
+        if(!DB.sidequests) return; 
+
+        let pool = DB.sidequests.filter(ev => {
+            if (this.state.usedIDs.has(ev.id)) return false;
+            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            return true;
+        });
+
         if (pool.length === 0) { this.log("Gerade nichts los."); return; }
 
         let ev = pool[Math.floor(Math.random() * pool.length)];
@@ -725,6 +811,8 @@ unlockAchievement: function(id, title, text) {
             this.state.currentPhoneEvent = ev;
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
+            
+            // Notification anzeigen
             document.getElementById('phone-notification').classList.remove('hidden');
             document.getElementById('phone-notification').classList.add('flex');
             this.log("Handy: " + ev.title);
@@ -733,92 +821,268 @@ unlockAchievement: function(id, title, text) {
         }
     },
 
+// --- TERMINAL RENDERING (UPDATED) ---
+
     renderTerminal: function(ev, type) {
         this.state.activeEvent = true;
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
         const term = document.getElementById('terminal-content');
-        this.renderEventHTML(ev, type, term);
+
+        // ENTSCHEIDUNG: Ist es ein neuer Story-Call (Nodes) oder ein alter (Opts)?
+        if (ev.nodes && ev.startNode) {
+            // NEU: Story-Chain starten
+            this.state.currentChainEvent = ev;
+            this.state.currentChainType = type;
+            this.renderChainNode(ev.startNode);
+        } else {
+            // ALT: Standard Event rendern
+            this.renderEventHTML(ev, type, term);
+        }
     },
 
+// --- TERMINAL RENDERING & CALL SYSTEM (FIXED) ---
+
+    renderTerminal: function(ev, type) {
+        this.state.activeEvent = true;
+        if(ev.id) this.state.usedIDs.add(ev.id); 
+        this.disableButtons(true);
+
+        // ENTSCHEIDUNG: Ist es ein neuer Story-Call (Nodes)?
+        if (ev.nodes && ev.startNode) {
+            this.state.currentChainEvent = ev;
+            this.state.currentChainType = type;
+            this.renderChainNode(ev.startNode);
+        } else {
+            // ALT: Standard Event
+            const term = document.getElementById('terminal-content');
+            this.renderEventHTML(ev, type, term);
+        }
+    },
+
+// --- TERMINAL & CALL SYSTEM (FINAL FIX) ---
+
+    renderTerminal: function(ev, type) {
+        this.state.activeEvent = true;
+        if(ev.id) this.state.usedIDs.add(ev.id); 
+        this.disableButtons(true);
+
+        const term = document.getElementById('terminal-content');
+        
+        // WICHTIG: Container-Styling für Zentrierung
+        term.className = "flex-1 flex flex-col justify-center items-center p-4 w-full h-full";
+
+        // ENTSCHEIDUNG: Neu (Nodes) oder Alt (Opts)?
+        if (ev.nodes && ev.startNode) {
+            this.state.currentChainEvent = ev;
+            this.state.currentChainType = type;
+            this.renderChainNode(ev.startNode);
+        } else {
+            this.renderEventHTML(ev, type, term);
+        }
+    },
+
+    // 1. NEUES SYSTEM (Story-Ketten)
+    renderChainNode: function(nodeId) {
+        const ev = this.state.currentChainEvent;
+        const type = this.state.currentChainType;
+        const node = ev.nodes[nodeId];
+        const term = document.getElementById('terminal-content');
+
+        if (!node) { console.error("Node not found:", nodeId); return; }
+
+        // Gemeinsames HTML generieren
+        term.innerHTML = this.buildEventHTML(
+            type, 
+            ev.title || "Anruf", 
+            node.text, 
+            node.opts, 
+            true // isChain = true
+        );
+    },
+
+    // 2. ALTES SYSTEM (Einfache Events)
     renderEventHTML: function(ev, type, container) {
-        let color = type === 'calls' ? 'text-blue-400' : (type === 'boss' ? 'text-red-500' : 'text-amber-400');
-        let icon = type === 'boss' ? '🚨' : (type === 'calls' ? '📞' : '⚡');
+        container.innerHTML = this.buildEventHTML(
+            type, 
+            ev.title, 
+            ev.text, 
+            ev.opts, 
+            false // isChain = false
+        );
+    },
+
+    // 3. GEMEINSAMES HTML-TEMPLATE (Mit Farben & Zeit-Vorschau)
+    buildEventHTML: function(type, title, text, opts, isChain) {
+        
+        // --- STYLE KONFIGURATION ---
+        // Standard (z.B. Coffee, Special) = Amber/Gelb
+        let color = 'text-amber-400';       
+        let borderColor = 'border-amber-500';
+        let icon = '⚡'; 
+
+        // Spezifische Farben je nach Typ
+        switch(type) {
+            case 'calls': // ANRUFE (Blau)
+                color = 'text-blue-400';
+                borderColor = 'border-blue-500';
+                icon = '📞';
+                break;
+            
+            case 'boss': // BOSS (Rot)
+                color = 'text-red-500';
+                borderColor = 'border-red-500';
+                icon = '🚨';
+                break;
+            
+            case 'sidequest': // SIDE-QUEST (Lila)
+                color = 'text-purple-400';
+                borderColor = 'border-purple-500';
+                icon = '🔮'; // Magische Kugel / Quest Icon
+                break;
+            
+            case 'server': // SERVERRAUM (Grün)
+                color = 'text-emerald-400';
+                borderColor = 'border-emerald-500';
+                icon = '💻'; // Laptop / Terminal
+                break;
+
+            case 'coffee': // KAFFEE (Amber, aber spezielles Icon)
+                icon = '☕';
+                break;
+        }
 
         let html = `
-            <div class="w-full max-w-xl text-left fade-in">
-                <div class="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
-                    <span class="text-2xl">${icon}</span>
-                    <span class="${color} font-bold uppercase tracking-widest">${type}</span>
+            <div class="w-full max-w-2xl text-left fade-in bg-slate-900 border border-slate-700 p-6 rounded-xl shadow-2xl">
+                
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-600 pb-4">
+                    <span class="text-3xl">${icon}</span>
+                    <div class="flex flex-col">
+                        <span class="${color} font-black uppercase tracking-widest text-sm">${type}</span>
+                        <h2 class="text-2xl font-bold text-slate-100">${title}</h2>
+                    </div>
                 </div>
-                <h2 class="text-xl font-bold text-white mb-4">${ev.title}</h2>
-                <div class="bg-slate-900/50 p-4 rounded border-l-4 border-slate-600 mb-6 italic text-slate-300 text-sm">
-                    "${ev.text}"
+                
+                <div class="bg-black/40 p-5 rounded-lg border-l-4 ${borderColor} mb-8">
+                    <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${text}"</p>
                 </div>
-                <div class="space-y-2">
+
+                <div class="space-y-3">
         `;
 
-        ev.opts.forEach(opt => {
-            let locked = false;
-            let btnClass = "choice-btn group";
-            let missingText = "";
+        if (opts) {
+            opts.forEach(opt => {
+                let locked = false;
+                let reqText = "";
 
-            if (opt.req) {
-                // 1. Grund-Check: Habe ich das Item?
-                let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
+                // --- ZEIT VORSCHAU LOGIK ---
+                let timeCost = opt.m || 0; 
                 
-                // 2. Spezial-Check: Stressball Cooldown
-                let onCooldown = false;
-                if (opt.req === 'stressball') {
-                    // Wenn weniger als 60 Min vergangen sind -> Cooldown aktiv
-                    if (this.state.time - this.state.lastStressballTime < 60) {
-                        onCooldown = true;
+                if (isChain && this.state.currentChainEvent && opt.next) {
+                    const nextNode = this.state.currentChainEvent.results?.[opt.next];
+                    if (nextNode && (nextNode.m || nextNode.min)) {
+                        timeCost = nextNode.m || nextNode.min;
+                    }
+                    else if (this.state.currentChainEvent.nodes?.[opt.next]) {
+                        timeCost = 0; 
                     }
                 }
 
-                // Wenn Item fehlt ODER Cooldown aktiv ist -> Sperren
-                if (!hasItem || onCooldown) {
-                    locked = true;
-                    btnClass += " locked";
-                    
-                    let itemName = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
-                    
-                    // Text unterscheiden
-                    if (!hasItem) {
-                        missingText = `(Fehlt: ${itemName})`;
-                    } else if (onCooldown) {
-                        // Zeige Restzeit an
-                        let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                        missingText = `(Platt: ${wait}m)`;
+                // Item Check
+                if (opt.req) {
+                    let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
+                    let onCooldown = false;
+                    if (opt.req === 'stressball' && (this.state.time - this.state.lastStressballTime < 60)) onCooldown = true;
+
+                    if (!hasItem || onCooldown) {
+                        locked = true;
+                        let itemName = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
+                        if(!hasItem) reqText = `(Fehlt: ${itemName})`;
+                        if(onCooldown) reqText = `(Cooldown)`;
                     }
                 }
-            }
 
-            let safeRes = opt.r.replace(/'/g, "\\'");
-            let lootItem = opt.loot || "";
-            let usedItem = opt.req || ""; 
+                // STYLE
+                let btnClass = "";
+                let clickAction = "";
+                let iconBtn = "";
 
-            let clickAction = type === 'boss' 
-                ? `clearInterval(engine.state.bossTimer); document.getElementById('boss-timer-container').style.display='none'; engine.resolveTerminal('${safeRes}', ${opt.m}, ${opt.f}, ${opt.a}, ${opt.c}, '${lootItem}', '${usedItem}', '${type}')`
-                : `engine.resolveTerminal('${safeRes}', ${opt.m}, ${opt.f}, ${opt.a}, ${opt.c}, '${lootItem}', '${usedItem}', '${type}')`;
+                if (locked) {
+                    btnClass = "w-full text-left p-4 rounded border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
+                    iconBtn = "🔒";
+                } else {
+                    // Der Hover-Effekt und Text bleiben neutral (Slate/Weiß), 
+                    // aber das kleine Icon (➤) nimmt die Farbe des Events an!
+                    btnClass = "w-full text-left p-4 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
+                    iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
+                    
+                    if (isChain) {
+                        clickAction = `onclick="engine.handleChainChoice('${opt.next}')"`;
+                    } else {
+                        let safeRes = opt.r ? opt.r.replace(/'/g, "\\'") : '';
+                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}')"`;
+                    }
+                }
 
-            html += `
-                <button onclick="${locked ? '' : clickAction}" 
-                    class="${btnClass}" ${locked ? 'disabled' : ''}>
-                    <span class="font-bold text-slate-300 ${locked ? 'opacity-50' : 'group-hover:text-white'}">
-                        ➤ ${opt.t} <span class="text-xs text-red-500">${missingText}</span>
-                    </span>
-                    <span class="text-xs text-slate-500 bg-black/30 px-2 rounded">+${opt.m}m</span>
-                </button>
-            `;
-        });
+                // ZEIT BADGE
+                let badgeHTML = "";
+                if (timeCost > 0) {
+                    let badgeColor = timeCost >= 30 ? "text-red-400 bg-red-900/30 border-red-900/50" : "text-slate-400 bg-black/30 border-slate-700";
+                    badgeHTML = `<span class="text-xs ${badgeColor} border px-2 py-1 rounded ml-3 font-mono whitespace-nowrap">-${timeCost} min</span>`;
+                } else if (isChain && !locked && !opt.next.startsWith('res_')) {
+                     badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded ml-3 font-mono">...</span>`;
+                }
 
+                let warningSpan = locked ? `<span class="text-sm text-red-500 font-normal ml-2">${reqText}</span>` : "";
+
+                html += `
+                <button class="${btnClass}" ${clickAction} ${locked ? 'disabled' : ''}>
+                    <div class="flex items-center">
+                        <span class="mr-3 text-xl">${iconBtn}</span>
+                        <span>${opt.t} ${warningSpan}</span>
+                    </div>
+                    ${badgeHTML}
+                </button>`;
+            });
+        }
+        
         html += `</div></div>`;
-        container.innerHTML = html;
-        container.className = "flex-1 flex flex-col p-4";
+        return html;
     },
 
-resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
+    // NEU: Logik für die Auswahl in Call-Ketten
+    handleChainChoice: function(nextId) {
+        const ev = this.state.currentChainEvent;
+
+        // Fall 1: Weiter im Text
+        if (ev.nodes && ev.nodes[nextId]) {
+            this.renderChainNode(nextId);
+            return;
+        }
+
+        // Fall 2: Ergebnis (Ende)
+        if (ev.results && ev.results[nextId]) {
+            const res = ev.results[nextId];
+            this.resolveTerminal(
+                res.txt,
+                res.min || res.m || 0,
+                res.fl || res.f || 0,
+                res.al || res.a || 0,
+                res.cr || res.c || 0,
+                res.loot || null,
+                null, 
+                this.state.currentChainType,
+                res.next || null
+            );
+            this.state.currentChainEvent = null;
+            return;
+        }
+
+        console.error("Chain Error: Ziel nicht gefunden", nextId);
+        this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
+    },
+
+resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         if(type === 'coffee') this.state.coffeeConsumed++;
 
         // Zeit & Tickets
@@ -870,6 +1134,11 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
 
         this.state.cr += finalC;
         // ---------------------------------------
+
+        // Story Flag setzen
+        if (next && next !== "") {
+            this.state.storyFlags[next] = true;
+        }
 
         // Items Logic
         if(loot && loot !== "") {
@@ -954,52 +1223,102 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
         document.getElementById('app-content').innerHTML = '';
         this.renderPhoneNode(ev.nodes[ev.startNode]);
     },
-
-    renderPhoneNode: function(node) {
+	
+renderPhoneNode: function(node) {
+        // Sicherstellen, dass Content und Actions existieren
         const content = document.getElementById('app-content');
-        content.innerHTML += `<div class="chat-bubble chat-in">${node.text}</div>`;
         const actions = document.getElementById('app-actions');
+        
+        if (!content || !actions) return;
+
+        // Avatar basierend auf App-Name oder Titel (Default: ?)
+        // Wir nehmen einfach den ersten Buchstaben des Titels als "Avatar"
+        let ev = this.state.currentPhoneEvent;
+        let avatarLetter = ev.title ? ev.title.charAt(0).toUpperCase() : "?";
+        let senderName = ev.title || "Unbekannt";
+
+        // HTML für EINGEHENDE Nachricht (Links, Grau, Modern)
+        // Hier wird der Text aus der Data.js (node.text) eingefügt
+        content.innerHTML += `
+        <div class="w-full flex justify-start mb-4 fade-in">
+            <div class="flex items-end gap-2 max-w-[85%]">
+                <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0 border border-slate-500">
+                    ${avatarLetter}
+                </div>
+                
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-slate-400 ml-1 mb-0.5">${senderName}</span>
+                    <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed border border-slate-600 relative">
+                        ${node.text}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        // Buttons rendern (Deine Antwortmöglichkeiten)
         actions.innerHTML = '';
+        // Container Styling sicherstellen
+        actions.className = "p-2 bg-slate-900 border-t border-slate-700 flex flex-col gap-2"; 
+
         node.opts.forEach(opt => {
             const btn = document.createElement('button');
-            btn.className = "bg-blue-600 hover:bg-blue-500 text-white p-2 rounded text-[10px] font-bold mb-1 w-full";
-            btn.innerText = opt.t;
-            btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next);
+            // Neuer Button Look: Wie "Antwortvorschläge"
+            btn.className = "bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-3 px-4 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center gap-2 group";
+            
+            // Requirements prüfen (z.B. Items)
+            let locked = false;
+            if (opt.req) {
+                 const hasItem = this.state.inventory.some(i => (typeof i === 'string' ? i : i.id) === opt.req);
+                 if (!hasItem) locked = true;
+            }
+
+            if (locked) {
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.innerHTML = `<span class="text-red-500">🔒</span> ${opt.t} <span class="text-xs ml-auto">(Fehlt: ${opt.req})</span>`;
+            } else {
+                // Kleiner Pfeil im Button
+                btn.innerHTML = `<span class="opacity-50 group-hover:opacity-100">➤</span> ${opt.t}`;
+                // WICHTIG: Hier wird deine handlePhoneChoice aufgerufen
+                btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next);
+            }
+            
             actions.appendChild(btn);
         });
         
-        // AUTO SCROLL
+        // AUTO SCROLL (Sanft nach unten)
         setTimeout(() => {
-            content.scrollTop = content.scrollHeight;
+            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
         }, 100);
     },
 
-    handlePhoneChoice: function(text, nextId) {
+handlePhoneChoice: function(text, nextId) {
         const actions = document.getElementById('app-actions');
         
-        // --- FIX: SPAM-SCHUTZ ---
-        // Prüfen, ob Buttons überhaupt noch da sind. 
-        // Wenn leer, wurde schon geklickt -> Abbruch!
+        // SPAM-SCHUTZ
         if (!actions || actions.innerHTML.trim() === '') return;
-
-        // Sofort die Buttons entfernen, damit kein zweiter Klick möglich ist
-        actions.innerHTML = '';
-        // ------------------------
+        actions.innerHTML = ''; 
 
         const content = document.getElementById('app-content');
-        content.innerHTML += `<div class="chat-bubble chat-out">${text}</div>`;
         
-        content.scrollTop = content.scrollHeight;
+        // 1. DEINE NACHRICHT (Rechts, Blau)
+        content.innerHTML += `
+        <div class="w-full flex justify-end mb-4 fade-in">
+            <div class="max-w-[85%] flex flex-col items-end">
+                <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed border border-blue-500 relative">
+                    ${text}
+                </div>
+                <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>
+            </div>
+        </div>`;
+        
+        content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
 
         let ev = this.state.currentPhoneEvent;
-        
-        // Prüfung ob nextId existiert
         let validNext = (ev.results && ev.results[nextId]) || (ev.nodes && ev.nodes[nextId]);
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
-            content.innerHTML += `<div class="chat-system text-red-500">Verbindung abgebrochen.</div>`;
-            // actions.innerHTML = ''; // Nicht mehr nötig, da oben schon geleert
+            content.innerHTML += `<div class="text-center text-xs text-red-500 my-2">- Verbindung abgebrochen -</div>`;
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -1008,42 +1327,99 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type) {
             return;
         }
 
+        // FALL A: STORY ENDE (Result)
         if (ev.results && ev.results[nextId]) {
             let res = ev.results[nextId];
             
-            // Loot Logic
+            // Loot & Items Logic
             if(res.loot && !this.state.inventory.find(i => i.id === res.loot)) {
                 this.state.inventory.push({ id: res.loot, used: false });
-                this.log("DOWNLOAD: " + DB.items[res.loot].name);
+                this.addToArchive('items', res.loot);
+                let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
+                this.log("ERHALTEN: " + itemName, "text-yellow-400");
+            }
+
+            if(res.req) {
+                let itemIndex = this.state.inventory.findIndex(i => i.id === res.req);
+                if(itemIndex > -1) {
+                    let itemName = DB.items[res.req] ? DB.items[res.req].name : res.req;
+                    this.state.inventory.splice(itemIndex, 1);
+                    this.log("VERLOREN: " + itemName, "text-red-400");
+                }
             }
             
-            // Stats anwenden
+            // Stats Update
             this.state.fl += (res.fl || 0);
             this.state.al += (res.al || 0);
             this.state.cr += (res.cr || 0);
             
-            content.innerHTML += `<div class="chat-system">${res.txt}</div>`;
-            // actions.innerHTML = ''; // Nicht mehr nötig
-            content.scrollTop = content.scrollHeight;
-            
+            // Simulation: Gegenüber tippt kurz, bevor er geht
+            const loadingId = "typing-" + Date.now();
+            content.innerHTML += `
+            <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
+                <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+            </div>`;
+            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+
+            // Kurze Wartezeit vor dem Ergebnis (1.5 Sekunden)
             setTimeout(() => {
-                this.closePhone();
-                this.log("Handy: " + res.txt);
-                this.state.time += 15; 
-                this.updateUI();
-                
-                // Wenn Handy dich gekillt hat (z.B. Virus), sofort beenden
-                if (this.state.pendingEnd) {
-                    this.finishGame();
-                } else {
-                    this.state.activeEvent = false;
-                    this.disableButtons(false);
-                    this.checkRandomEmail(); 
-                }
-            }, 3000);
-        } else if (ev.nodes[nextId]) {
-            // Nächster Knoten (Gespräch geht weiter)
-            setTimeout(() => { this.renderPhoneNode(ev.nodes[nextId]); }, 500);
+                const loader = document.getElementById(loadingId);
+                if(loader) loader.remove();
+
+                // System Nachricht (Grau, Zentriert)
+                content.innerHTML += `
+                <div class="w-full flex justify-center my-4 fade-in">
+                    <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-sm">
+                        ${res.txt}
+                    </div>
+                </div>`;
+                content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+
+                setTimeout(() => {
+                    this.closePhone();
+                    this.log("Handy: " + res.txt);
+                    this.state.time += 15; 
+                    this.updateUI();
+                    
+                    if (this.state.pendingEnd) {
+                        this.finishGame();
+                    } else {
+                        this.state.activeEvent = false;
+                        this.disableButtons(false);
+                        this.checkRandomEmail(); 
+                    }
+                }, 4000); // Zeit zum Lesen des Ergebnisses
+            }, 1500);
+
+        } 
+        // FALL B: GESPRÄCH GEHT WEITER (Next Node)
+        else if (ev.nodes[nextId]) {
+            
+            // TIPP-ANIMATION (Bouncing Dots)
+            const loadingId = "typing-" + Date.now();
+            content.innerHTML += `
+            <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
+                <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+            </div>`;
+            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+
+            // ZUFALLS-ZEIT: Zwischen 1.5 und 2.5 Sekunden
+            // Das wirkt organisch, mal schneller, mal langsamer.
+            let typingDuration = 1500 + Math.random() * 1000;
+
+            setTimeout(() => {
+                const loader = document.getElementById(loadingId);
+                if(loader) loader.remove();
+                this.renderPhoneNode(ev.nodes[nextId]);
+            }, typingDuration);
         }
     },
 
@@ -1227,65 +1603,118 @@ checkEndConditions: function() {
         }
     },
 
-// --- INVENTAR SYSTEM ---
-openInventory: function() {
+    // --- INVENTAR SYSTEM ---
+    openInventory: function() {
         const modal = document.getElementById('inventory-modal');
         const grid = document.getElementById('full-inventory-grid');
         
+        // Grid leeren und Layout für 2 Sektionen vorbereiten
         grid.innerHTML = '';
-        
-        this.state.inventory.forEach(itemData => {
+        grid.className = "flex flex-col gap-6 w-full"; 
+
+        // 1. ITEMS TRENNEN
+        let normalItems = [];
+        let questItems = [];
+
+        this.state.inventory.forEach(item => {
+            let db = DB.items[item.id];
+            if (db && db.quest) {
+                questItems.push(item);
+            } else {
+                normalItems.push(item);
+            }
+        });
+
+        // --- HILFSFUNKTION ZUM RENDERN EINES SLOTS ---
+        const renderSlot = (itemData, isQuest) => {
             let slot = document.createElement('div');
             let dbItem = DB.items[itemData.id];
             
-            // Basis-Klasse
-            slot.className = 'inv-slot relative group cursor-default'; 
-            
-            // Icon & Name
+            // Standard-Klassen
+            let baseClass = isQuest 
+                ? 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' 
+                : 'inv-slot relative group cursor-default';
+
+            // SPEZIAL: Das Buch muss anklickbar sein, auch wenn es ein Quest-Item ist!
+            if (itemData.id === 'corp_chronicles') {
+                baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40 shadow-[0_0_15px_rgba(251,191,36,0.3)]';
+            }
+
+            slot.className = baseClass;
             slot.innerText = dbItem ? dbItem.icon : '?';
             slot.title = dbItem ? dbItem.name : 'Unbekannt';
-            slot.innerHTML += `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate">${dbItem.name}</div>`;
-            slot.style.marginBottom = "15px";
+            slot.innerHTML += `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate">${dbItem ? dbItem.name : '???'}</div>`;
+            slot.style.marginBottom = "15px"; 
 
-            // --- SPEZIAL INTERAKTIONEN ---
-
-            // 1. STRESSBALL (Cooldown Logik)
-            if (itemData.id === 'stressball') {
-                let isReady = (this.state.time - this.state.lastStressballTime >= 60);
-                
-                if (isReady) {
-                    slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20'; 
-                    slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>`; 
-                    slot.onclick = () => this.askUseItem('stressball');
-                    slot.title += " (benutzen)";
-                } else {
-                    slot.className += ' cursor-not-allowed'; 
-                    let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                    slot.innerHTML += `
-                        <div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]">
-                            <span class="font-black text-white text-xl drop-shadow-md select-none">${wait}</span>
-                        </div>
-                    `;
+            // --- KLICK LOGIK ---
+            
+            // 1. Normale Items (Oben)
+            if (!isQuest) {
+                if (itemData.id === 'stressball') {
+                    let isReady = (this.state.time - this.state.lastStressballTime >= 60);
+                    if (isReady) {
+                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20'; 
+                        slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>`; 
+                        slot.onclick = () => this.askUseItem('stressball');
+                    } else {
+                        slot.className += ' cursor-not-allowed'; 
+                        let wait = 60 - (this.state.time - this.state.lastStressballTime);
+                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-black text-white text-xl">${wait}</span></div>`;
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
+                    }
+                }
+                else if (itemData.id === 'energy' || itemData.id === 'donut') {
+                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
+                    slot.onclick = () => this.askUseItem(itemData.id);
+                }
+            } 
+            // 2. Quest Items (Unten)
+            else {
+                if (itemData.id === 'corp_chronicles') {
+                    // HIER IST DER FIX: Das Buch öffnet die Lore!
+                    slot.onclick = () => this.showLoreModal();
+                } else {
+                    // Alle anderen Quest-Items (Tacker, Tape etc.) machen nur Text
+                    slot.onclick = () => this.log(`Erinnerung: ${dbItem.name}`, "text-amber-400");
                 }
             }
-            
-            // 2. VERBRAUCHSGÜTER (Energy & Donut)
-            else if (itemData.id === 'energy' || itemData.id === 'donut') {
-                slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
-                slot.onclick = () => this.askUseItem(itemData.id);
-                slot.title += " (verwenden)";
-            }
+            return slot;
+        };
 
-            grid.appendChild(slot);
+        // --- SEKTION 1: RUCKSACK (Normale Items) ---
+        // Limit jetzt auf 10 gesetzt
+        let sectionNormal = document.createElement('div');
+        sectionNormal.innerHTML = `<h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">🎒 Rucksack (${normalItems.length}/10)</h3>`;
+        let gridNormal = document.createElement('div');
+        gridNormal.className = "grid grid-cols-5 gap-4"; // 5 pro Reihe
+
+        normalItems.forEach(item => {
+            gridNormal.appendChild(renderSlot(item, false));
         });
 
-        // Leere Slots auffüllen
-        let fillCount = Math.max(0, 10 - this.state.inventory.length);
+        // Leere Slots auffüllen (bis 10)
+        let fillCount = Math.max(0, 10 - normalItems.length);
         for(let i=0; i<fillCount; i++) {
             let slot = document.createElement('div');
-            slot.className = 'inv-slot empty opacity-20';
-            grid.appendChild(slot);
+            slot.className = 'inv-slot empty opacity-10';
+            gridNormal.appendChild(slot);
+        }
+        sectionNormal.appendChild(gridNormal);
+        grid.appendChild(sectionNormal);
+
+        // --- SEKTION 2: SAMMLUNG (Quest Items) ---
+        if (questItems.length > 0) {
+            let sectionQuest = document.createElement('div');
+            sectionQuest.innerHTML = `<h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1 mt-4">🏆 Sammlung & Trophäen</h3>`;
+            let gridQuest = document.createElement('div');
+            gridQuest.className = "grid grid-cols-5 gap-4"; // Jetzt auch 5 pro Reihe (Einheitlich!)
+
+            questItems.forEach(item => {
+                gridQuest.appendChild(renderSlot(item, true));
+            });
+            
+            sectionQuest.appendChild(gridQuest);
+            grid.appendChild(sectionQuest);
         }
 
         modal.classList.remove('hidden');
@@ -1297,7 +1726,7 @@ closeInventory: function() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     },
-	
+		
 // --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
     
 // 1. Abfrage: Willst du wirklich?
@@ -1309,6 +1738,12 @@ closeInventory: function() {
                 this.log(`Der Ball ist noch platt. Er muss sich erst wieder entfalten (${wait} Min).`, "text-slate-500");
                 return; // Kein Modal, direkt Abbruch
             }
+        }
+
+        // --- LORE ITEM CHECK ---
+        if (id === 'corp_chronicles') {
+            this.showLoreModal();
+            return; // Modal wird nicht benötigt, wir zeigen das Lore-Fenster
         }
 
         // Daten holen
@@ -1404,6 +1839,105 @@ closeInventory: function() {
         document.getElementById('item-confirm-modal').classList.add('hidden');
         document.getElementById('item-confirm-modal').classList.remove('flex');
         this.state.pendingItem = null;
+    },
+
+    // --- LORE SYSTEM ---
+    showLoreModal: function() {
+        const oldModal = document.getElementById('lore-modal');
+        if(oldModal) oldModal.remove();
+
+        const html = `
+            <div id="lore-modal" class="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4 fade-in">
+                <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
+                    
+                    <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]"></div>
+                        <h2 class="text-3xl font-bold text-[#d7ccc8] uppercase tracking-[0.2em] mb-1 relative z-10">GlobalCorp Chronik</h2>
+                        <span class="text-sm text-[#a1887f] italic font-serif relative z-10">"Tradition seit 1899. Wir verwalten das Chaos."</span>
+                    </div>
+
+                    <div class="overflow-y-auto p-10 space-y-12 text-lg leading-relaxed bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
+                        
+                        <div class="text-center border-b-2 border-[#d7ccc8] pb-6">
+                            <p class="italic text-xl">
+                                "WARNUNG: Das Lesen dieser Chronik während der Arbeitszeit gilt als 'stiller Diebstahl' und wird automatisch vom Gehalt abgezogen. Lächeln Sie beim Lesen nicht. Freude ist nicht im Budget vorgesehen."
+                            </p>
+                        </div>
+
+                        <div class="relative pl-8 border-l-4 border-[#8d6e63]">
+                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1899</div>
+                            <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Der Baron und die Dampf-Bürokratie</h3>
+                            <p class="mb-4">
+                                Baron Wilhelm von Gier gründete GlobalCorp ursprünglich im Sauerland als <strong>"Kaiserliche Manufaktur für Formulare & Selbstzweck"</strong>. Seine Vision war revolutionär: Er wollte Probleme verkaufen, für die nur er die Lösung hatte.
+                            </p>
+                            <p>
+                                Sein erstes Patent war der <em>"Endlos-Stempelautomat"</em>, eine dampfbetriebene Maschine, die Anträge gleichzeitig genehmigte, ablehnte und schredderte. Das erzeugte maximalen Umsatz bei minimalem Ergebnis. Ein Geschäftsmodell war geboren.
+                            </p>
+                        </div>
+
+                        <div class="relative pl-8 border-l-4 border-[#8d6e63]">
+                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1955</div>
+                            <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Das Beton-Zeitalter</h3>
+                            <p class="mb-4">
+                                Im Wirtschaftswunder erkannte GlobalCorp, dass glückliche Mitarbeiter unproduktiv sind (weil sie zu viel reden). Die Lösung war die Erfindung des <strong>Grautons "RAL 7035"</strong>.
+                            </p>
+                            <p>
+                                Das Management führte das revolutionäre Konzept des "Open Space Warzones" ein: Großraumbüros ohne Schallschutz, in denen das Tippen des Nachbarn den eigenen Willen bricht. Zudem wurde Kaffee als offizielles Grundnahrungsmittel eingeführt – nicht um wach zu bleiben, sondern um das Zittern der Hände als "dynamische Energie" zu verkaufen.
+                            </p>
+                        </div>
+
+                        <div class="relative pl-8 border-l-4 border-[#8d6e63]">
+                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1982</div>
+                            <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Die Fax-Revolution</h3>
+                            <p class="mb-4">
+                                GlobalCorp vernetzte die Welt. Zumindest alle Teile der Welt, die ein piepsendes Modem besaßen. Das Management führte die "Krawatten-Pflicht" auch für Telefonate ein, da man glaubte, man könne "Kompetenz durch die Leitung hören".
+                            </p>
+                            <p>
+                                In dieser Zeit entstand auch die legendäre Abteilung "Human Resources". Der Name war Programm: Menschen wurden endlich wie Ressourcen behandelt – abbaubar, verbrauchbar und leicht zu ersetzen.
+                            </p>
+                        </div>
+
+                        <div class="relative pl-8 border-l-4 border-[#8d6e63]">
+                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1999</div>
+                            <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Das Internet-Missverständnis</h3>
+                            <p class="mb-4">
+                                Dr. Wichtig Sr. kaufte für 500 Millionen Mark "das Internet". Er erhielt eine AOL-CD-ROM und ein 56k-Modem. Um das Gesicht zu wahren, wurde die "Cloud" erfunden.
+                            </p>
+                            <p>
+                                <strong>Fakt ist:</strong> Unsere Cloud ist kein Netzwerk. Es ist ein stillgelegter Salzstollen in Bottrop, in dem "Der Archivar" (ein Mitarbeiter, der seit 1974 das Tageslicht nicht gesehen hat) wichtige E-Mails auf Mikrofilm abfotografiert. Das erklärt die Ladezeiten beim Login.
+                            </p>
+                        </div>
+
+                        <div class="relative pl-8 border-l-4 border-[#8d6e63]">
+                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">2024</div>
+                            <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Synergie & KI-Wahnsinn</h3>
+                            <p class="mb-4">
+                                Heute sind wir "Agil". Das bedeutet: Wir rennen im Kreis, schreien "Sprint!" und hoffen, dass niemand merkt, dass wir kein Ziel haben.
+                            </p>
+                            <p>
+                                Unsere neue KI <strong>"H.A.L.G.E.R.D."</strong> überwacht nun jeden Mausklick. Sie berechnet in Echtzeit, ob Ihre Pinkelpause "geschäftsrelevant" war. Sollte Ihre Produktivität unter 120% fallen, wird Ihr Bürostuhl automatisch unbequemer eingestellt. Willkommen in der Zukunft.
+                            </p>
+                        </div>
+
+                        <div class="bg-[#efebe9] p-6 rounded border border-[#d7ccc8] italic text-center mt-12 shadow-inner">
+                            "Wir sind nicht hier, um die Welt zu verbessern. Wir sind hier, damit die Quartalszahlen stimmen. Gehen Sie jetzt wieder an die Arbeit."
+                            <br>
+                            <span class="font-bold not-italic text-sm mt-3 block uppercase tracking-widest text-[#5d4037]">- Dr. Wichtig, CEO</span>
+                        </div>
+
+                    </div>
+
+                    <div class="p-6 bg-[#d7ccc8] border-t-4 border-[#8d6e63] flex justify-center">
+                        <button onclick="document.getElementById('lore-modal').remove()" class="bg-[#5d4037] hover:bg-[#3e2723] text-[#fdf6e3] px-10 py-3 rounded shadow-lg font-bold uppercase tracking-wider transition-transform hover:scale-105 border-2 border-[#8d6e63]">
+                            Buch schließen (und vergessen)
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', html);
     },
 
 	// --- TEAM / CHARAKTERE ---
