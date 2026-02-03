@@ -1,3 +1,10 @@
+\[1.0.1] - 2024-05-22
+
+* Kleinen Übersetzungsfehler korrigiert
+* Buttongröße für die Antworten im Terminal und Chat wurden optimiert
+
+
+
 \[1.0.0] - 2024-05-22
 
 * Neues Chat- \& Entscheidungs-Layout für alle Aktionen

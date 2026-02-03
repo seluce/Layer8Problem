@@ -5408,7 +5408,7 @@ const DB = {
                     r: "Anfängerfehler! Er hakt dich sofort unter: 'Ah, Müller! Perfekt! Wir brauchen Ihren Input zu Pastellfarben!' Du sitzt 60 Minuten im Meeting, während deine Blase kurz vorm Platzen ist. Hölle auf Erden." 
                 },
                 { 
-                    t: "Handy ans Ohr & schreien: 'FEUERWALL BRENNT?!'", 
+                    t: "Handy ans Ohr & schreien: 'FIREWALL BRENNT?!'", 
                     m: 5, f: 5, a: -5, c: 0, 
                     r: "Der Marketing-Leiter springt erschrocken zur Seite, um nicht 'verbrannt' zu werden. Du rennst an ihm vorbei direkt in die Kabine. Notlügen sind Notwehr." 
                 }

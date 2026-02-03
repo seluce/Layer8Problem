@@ -47,7 +47,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v1.0 geladen. Warte auf User...");
+        this.log("System v1.0.1 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -967,7 +967,7 @@ trigger: function(type) {
                     <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${text}"</p>
                 </div>
 
-                <div class="space-y-3">
+                <div class="space-y-2.5">
         `;
 
         if (opts) {
@@ -1008,12 +1008,12 @@ trigger: function(type) {
                 let iconBtn = "";
 
                 if (locked) {
-                    btnClass = "w-full text-left p-4 rounded border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
+                    btnClass = "w-full text-left p-2.5 rounded border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
                     iconBtn = "🔒";
                 } else {
                     // Der Hover-Effekt und Text bleiben neutral (Slate/Weiß), 
                     // aber das kleine Icon (➤) nimmt die Farbe des Events an!
-                    btnClass = "w-full text-left p-4 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
+                    btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
                     
                     if (isChain) {
@@ -1263,7 +1263,7 @@ renderPhoneNode: function(node) {
         node.opts.forEach(opt => {
             const btn = document.createElement('button');
             // Neuer Button Look: Wie "Antwortvorschläge"
-            btn.className = "bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-3 px-4 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center gap-2 group";
+            btn.className = "bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center gap-2 group";
             
             // Requirements prüfen (z.B. Items)
             let locked = false;
