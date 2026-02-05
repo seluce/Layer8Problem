@@ -2593,7 +2593,7 @@ const DB = {
                 }
             ]
         },
-{
+        {
         id: "call_grandma_1",
         title: "Oma Erna",
         startNode: "root",
@@ -3313,7 +3313,6 @@ const DB = {
         id: "call_waiting_hell",
         title: "Die Warteschleife",
         text: "Du hängst beim Internet-Provider in der Warteschleife. 'Ihr Anruf ist uns wichtig...' seit 45 Minuten. Die Musik macht dich aggressiv.",
-        type: "call",
         opts: [
             { 
                 t: "Warten & Wüten", 
@@ -5104,7 +5103,6 @@ const DB = {
         id: "cof_disaster",
         title: "OUT OF ORDER",
         text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern.",
-        type: "coffee",
         opts: [
             { 
                 t: "Dagegen treten", 
@@ -5122,24 +5120,6 @@ const DB = {
                 req: "bubble_wrap", 
                 m: 10, f: 5, a: -15, c: 0,
                 r: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. Kein Kaffee, aber zumindest kein Mord." 
-            }
-        ]
-    },
-    {
-        id: "cof_story_chantal_1",
-        title: "Chantal ohne Filter",
-        text: "Chantal steht ohne Handy an der Kaffeemaschine. Sie starrt leer vor sich hin. Ihr Make-up ist perfekt, aber ihre Hand zittert. 'Diese ganze Fake-Welt... manchmal will ich das alles einfach löschen.'",
-        opts: [
-            { 
-                t: "Sarkasmus: 'Willkommen in der Realität'", 
-                m: 2, f: 0, a: 5, c: 0, 
-                r: "Sie setzt sofort ihr PR-Lächeln wieder auf. 'War nur ein Witz! #GoodVibesOnly!' Die Maske ist wieder oben." 
-            },
-            { 
-                t: "Ehrliche Frage: 'Harter Tag?'", 
-                next: "chantal_trust", 
-                m: 10, f: 5, a: -5, c: 0, 
-                r: "Sie atmet tief aus. 'Du hast ja keine Ahnung. Der Chef will Wunder, das Budget ist Null.' Ihr schweigt kurz gemeinsam. Ein ehrlicher Moment." 
             }
         ]
     },
@@ -5333,42 +5313,6 @@ const DB = {
                 t: "Ablehnen",
                 m: 5, f: 0, a: 0, c: 0,
                 r: "Der Pilz wirkt enttäuscht und zieht sich zurück."
-            }
-        ]
-    },
-    {
-        id: "cof_sugar_1",
-        title: "Der Zucker-Baron",
-        text: "Bernd (Logistik) stopft hektisch *alle* Zuckerpäckchen in seine Taschen. 'Psst! Rationierung! Ich lege Vorräte an! Willst du auch welche?'",
-        opts: [
-            { 
-                t: "Komplize werden: 'Gib her!'",
-                next: "sugar_buddy",
-                m: 5, f: -5, a: -10, c: 10,
-                r: "Bernd schiebt dir eine Handvoll zu. Diebstahl verbindet."
-            },
-            { 
-                t: "Moralapostel spielen",
-                m: 5, f: 0, a: 15, c: 0,
-                r: "Bernd zischt: 'Systemling!' und rennt davon. Du stehst ohne Zucker da."
-            }
-        ]
-    },
-    {
-        id: "cof_sugar_2",
-        title: "Zucker-Schock",
-        reqStory: "sugar_buddy",
-        text: "Bernd fängt dich ab. Er zittert. 'Der Automat... leer! Jemand hat den Zucker geklaut! (Er war es). Ich brauche Stoff! Hast du noch was?'",
-        opts: [
-            { 
-                t: "Ihm den Zucker zurückgeben",
-                m: 5, f: 0, a: -15, c: 0,
-                r: "Er kippt ihn sich pur in den Mund. 'Ohhh ja...' Er wird sofort ruhig. Du hast eine Krise verhindert."
-            },
-            { 
-                t: "Ablehnen: 'Pech gehabt.'",
-                m: 5, f: 0, a: 30, c: 0,
-                r: "Er schreit dich an: 'VERRÄTER!' und tritt gegen den Mülleimer. Der Lärm hallt lange nach."
             }
         ]
     },
@@ -6035,26 +5979,6 @@ const DB = {
                 next: "kevin_pro",
                 m: 15, f: -5, a: 0, c: 0, 
                 r: "Du schaust dir den Code an. Es ist chaotisch, aber... genial. Du zeigst ihm einen Trick für die Schleife. Kevin strahlt: 'Danke, Chef!'" 
-            }
-        ]
-    },
-    {
-        id: "story_chantal_2",
-        kind: "text",
-        reqStory: "chantal_trust",
-        title: "Hilfe aus dem Marketing",
-        text: "Chantal kommt in dein Büro. Leise. 'Hey... ich soll für den Chef eine Präsentation über 'IT-Effizienz' fälschen. Ich will das nicht. Hast du echte Zahlen für mich, die gut aussehen?'",
-        opts: [
-            { 
-                t: "Ablehnen: 'Ich fälsche nichts.'", 
-                m: 5, f: 0, a: 0, c: 0, 
-                r: "Sie nickt enttäuscht. 'Verstehe schon.' Sie geht. Sie wird die Zahlen wohl erfinden müssen." 
-            },
-            { 
-                t: "Ihr die 'guten' Statistiken geben", 
-                next: "chantal_ally", 
-                m: 15, f: 0, a: 0, c: -5, 
-                r: "Du druckst die wahren Server-Logs aus, die zeigen, wie viel Spam die IT filtert. 'Damit kannst du arbeiten.' Sie lächelt echt: 'Danke. Du bist der Einzige hier, der normal ist.'" 
             }
         ]
     },

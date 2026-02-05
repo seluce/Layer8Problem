@@ -292,16 +292,25 @@ const engine = {
 
     checkRandomEmail: function() {
         // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
-        if(this.state.isEmailOpen || this.state.emailPending) return; // <--- FIX: Auch prüfen ob Pending!
+        if(this.state.isEmailOpen || this.state.emailPending) return; // <--- Auch prüfen ob Pending!
         if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
 
-        // 2. BLOCKADE-LOGIK (Events filtern)
-        const type = this.state.currentEventType; 
-        const allowedTypes = ['call', 'server', 'coffee', 'sidequest', 'story'];
-        
-        if (!type || !allowedTypes.includes(type)) return;
-        if (this.state.currentEventId && this.state.currentEventId.includes('boss')) return;
-        if (this.state.currentEventId && this.state.currentEventId.includes('lunch')) return;
+        // --- ID-BASIERTE PRÜFUNG (WHITELIST & BLACKLIST) ---
+        // Wir holen uns die ID des aktuellen Events (z.B. "srv_fire" oder "boss_hack")
+        const id = this.state.currentEventId || "";
+
+        // A) WHITELIST: Nur erlauben, wenn die ID eines dieser Kürzel enthält
+        // call = Anrufe, srv_ = Server, cof_ = Kaffee, sq_ = Sidequest
+        const isAllowed = id.includes('srv_') || 
+                          id.includes('cof_') || 
+                          id.includes('sq_')  || 
+                          id.includes('call_');
+
+        if (!isAllowed) return; // Abbruch, wenn es kein Standard-Event ist
+
+        // B) BLACKLIST: Spezielle Situationen blockieren
+        if (id.includes('boss')) return;
+        if (id.includes('lunch')) return;
 
         // 3. SPAM-SCHUTZ (Letztes Event)
         if (this.state.lastEmailEventId === this.state.currentEventId) return;
@@ -323,7 +332,7 @@ const engine = {
         }
     },
 
-    // Öffnet das E-Mail Overlay (Dark Mode, Blue Hover, Bug-Safe)
+    // Öffnet das E-Mail Overlay
     triggerEmail: function(forcedId = null) {
         this.state.emailPending = false; 
 
@@ -708,28 +717,6 @@ checkAchievements: function() {
     },
 
     hasAch: function(id) { return this.state.achievements.includes(id); },
-
-    unlockAchievement: function(id, title, text) {
-        // 1. In die aktuelle Session aufnehmen (für UI Updates)
-        if (!this.state.achievements.includes(id)) {
-            this.state.achievements.push(id); 
-            this.state.achievedTitles.push(title);
-            
-            // Toast anzeigen (nur wenn ganz neu in diesem Run)
-            const container = document.getElementById('achievement-container');
-            if(container) {
-                const toast = document.createElement('div');
-                toast.className = 'achievement-toast';
-                toast.innerHTML = `<div class="ach-icon">🏆</div><div class="ach-text"><span class="ach-title">${title}</span><br><span class="ach-desc">${text}</span></div>`;
-                container.appendChild(toast);
-                setTimeout(() => { toast.remove(); }, 5000);
-            }
-            this.log(`ERFOLG FREIGESCHALTET: ${title}`, "text-yellow-400 font-bold");
-        }
-
-        // 2. Ins Archiv speichern mit Schwierigkeitsgrad
-        this.saveAchievementToArchive(id);
-    },
 
 unlockAchievement: function(id, title, text) {
         // 1. Session-Check: Haben wir diesen Erfolg in DIESEM aktuellen Spiel schon?
