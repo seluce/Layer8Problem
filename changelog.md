@@ -1,3 +1,7 @@
+\[1.1.1] - 2026-02-05
+* Ein Event war in der falschen Kategorie zugewiesen, was behoben wurde
+* Einige neue Folgeevents für Serverraum und Sidequests (Phone)
+
 \[1.1.0] - 2026-02-05
 * E-Mails wurden überarbeitet (neues Design, neue Logik, mobiloptimiert)
 * Erfolge sind nun sichtbar und haben ein Hinweis zur Freischaltung
