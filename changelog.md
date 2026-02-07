@@ -1,3 +1,7 @@
+\[1.2.0 - 2026-02-07
+* Melden Funktion eingebaut, um Kontakt mit mir aufzunehmen (Fehler, Feedbacks, Allgemeines)
+* Kleine Korrekturen bei verschiedenen Events, um das Balancing anzupassen.
+
 \[1.1.2 - 2026-02-05
 * Einige E-Mails hatten keine ID, wo durch sie häufiger als einmalig kommen konnten.
 * Einige neue Folgeevents für verschiedene Bereiche

@@ -5775,7 +5775,7 @@ const DB = {
                     r: "Du wirfst dich zwischen Wischmopps und Eimer. Du hörst Schritte... sie gehen vorbei. Puh. Du riechst jetzt zwar penetrant nach Zitronen-WC-Reiniger, aber du bist entkommen." 
                 },
                 { 
-                    t: "Fataler Fehler: Blickkontakt herstellen", 
+                    t: "Blickkontakt herstellen", 
                     m: 60, f: -20, a: 30, c: -5, 
                     r: "Anfängerfehler! Er hakt dich sofort unter: 'Ah, Müller! Perfekt! Wir brauchen Ihren Input zu Pastellfarben!' Du sitzt 60 Minuten im Meeting, während deine Blase kurz vorm Platzen ist. Hölle auf Erden." 
                 },
@@ -5895,9 +5895,9 @@ const DB = {
             title: "Die verschwundene Maus",
             text: "Frau Erna vom Empfang vermisst ihre 'Glücksmaus'. Sie ist weg. Der Hauptverdächtige ist der Büro-Hund 'Bello'.",
             opts: [
-                { t: "Detektiv spielen", m: 30, f: 10, a: -10, c: 0, r: "Du findest die Maus in Bellos Körbchen. Sie ist vollgesabbert. Erna ist überglücklich und schenkt dir Schokolade." },
-                { t: "Neue Maus aus dem Lager holen", m: 10, f: -5, a: 0, c: 0, r: "Problem gelöst, aber Erna ist traurig. 'Es ist nicht dasselbe!'" },
-                { t: "Bello verhören", m: 15, f: 20, a: -20, c: 5, r: "Du bellst den Hund an. Der Chef kommt vorbei: 'Alles okay bei Ihnen?'" }
+                { t: "Detektiv spielen", m: 30, f: -10, a: 10, c: -10, r: "Du findest die Maus in Bellos Körbchen. Sie ist vollgesabbert. Erna ist überglücklich und schenkt dir Schokolade." },
+                { t: "Neue Maus aus dem Lager holen", m: 5, f: -5, a: 0, c: 0, r: "Problem gelöst, aber Erna ist traurig. 'Es ist nicht dasselbe!'" },
+                { t: "Bello verhören", m: 15, f: 10, a: -10, c: 10, r: "Du bellst den Hund an. Der Chef kommt vorbei: 'Alles okay bei Ihnen?'" }
             ]
         },
         {
@@ -6950,7 +6950,7 @@ const DB = {
         results: {
             "res_simp": { 
                 txt: "Du hast jetzt eine Affäre im Büro. Vorteil: Gratis Kaffee. Nachteil: Du bist jetzt ihr persönlicher 24/7 IT-Sklave.", 
-                m: 10, fl: -10, al: -10, cr: 10 
+                m: 10, fl: -10, al: -15, cr: 10 
             },
             "res_friendzone": { 
                 txt: "Sie hat dich unmatcht. Aber dein professioneller Stolz ist intakt. Und du musst ihren Laptop nicht fixen.", 
