@@ -49,7 +49,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v1.3.1 geladen. Warte auf User...");
+        this.log("System v1.4.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -501,9 +501,21 @@ const engine = {
             color = "text-blue-400";
             
             let mult = this.state.difficultyMult;
-            if(opt.f) this.state.fl += opt.f;
-            if(opt.a) this.state.al += Math.ceil(opt.a * mult);
-            if(opt.c) this.state.cr += Math.ceil(opt.c * mult);
+            
+            // Zwischenspeichern der finalen Werte für die Animation
+            let addedF = opt.f || 0;
+            let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
+            let addedC = opt.c ? Math.ceil(opt.c * mult) : 0;
+
+            if(addedF) this.state.fl += addedF;
+            if(addedA) this.state.al += addedA;
+            if(addedC) this.state.cr += addedC;
+
+            // --- NEU: Floating Text für E-Mails ---
+            if (addedF !== 0) this.showFloatingText('val-fl', addedF);
+            if (addedA !== 0) this.showFloatingText('val-al', addedA);
+            if (addedC !== 0) this.showFloatingText('val-cr', addedC);
+            // --------------------------------------
 
             if(opt.txt) {
                 setTimeout(() => this.log(`Re: ${opt.txt}`, "text-slate-400 italic"), 500);
@@ -1173,6 +1185,15 @@ trigger: function(type) {
     },
 
 resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
+        // --- INTRANET TRIGGER  ---
+        // Wenn das Event-Ergebnis exakt den Befehl enthält, öffnen wir das Intranet!
+        if (res === "CMD:OPEN_INTRANET") {
+            // Wir tauschen den angezeigten Text gegen etwas Passendes aus
+            res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
+            this.openIntranet();
+        }
+        // --------------------------------
+
         if(type === 'coffee') this.state.coffeeConsumed++;
 
         // Zeit & Tickets
@@ -1225,6 +1246,12 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         this.state.cr += finalC;
         // ---------------------------------------
 
+        // --- Floating Text aufrufen ---
+        // (Wichtig: Hier nutzen wir finalA und finalC wegen der Multiplikatoren)
+        if (f !== 0) this.showFloatingText('val-fl', f, f > 0);
+        if (finalA !== 0) this.showFloatingText('val-al', finalA, finalA > 0);
+        if (finalC !== 0) this.showFloatingText('val-cr', finalC, finalC > 0);
+
         // Story Flag setzen
         if (next && next !== "") {
             this.state.storyFlags[next] = true;
@@ -1269,14 +1296,18 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
             }
         }
 
-        // BEREINIGT: Kein penaltyInfo mehr im HTML String
+        // Pille-Summary generieren. Wir nutzen hier die Original-Parameter (m, f) 
+        // und die berechneten Final-Werte (finalA, finalC), damit die Multiplikatoren stimmen!
+        let statSummaryHTML = this.buildStatSummary(m, f, finalA, finalC);
+
         term.innerHTML = `
             <div class="w-full max-w-xl text-left fade-in flex flex-col h-full justify-center">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 shadow-xl">
                     <h3 class="font-bold text-white mb-2 uppercase text-xs tracking-widest text-emerald-500">Ergebnis</h3>
                     <p class="text-slate-300 italic text-lg leading-relaxed">"${res}"</p>
+                    ${statSummaryHTML}
                 </div>
-                <button onclick="${btnAction}" class="${btnColor} text-white w-full py-4 rounded-xl font-bold uppercase transition-all shadow-lg">
+                <button onclick="${btnAction}" class="${btnColor} text-white w-full py-4 rounded-xl font-bold uppercase transition-all shadow-lg border border-slate-700/50">
                     ${btnText}
                 </button>
             </div>
@@ -1297,6 +1328,34 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         term.innerHTML = `<div class="text-6xl mb-4">🖥️</div><h1 class="text-2xl font-bold">SYSTEM BEREIT</h1><p>Wähle eine Aktion unten.</p>`;
         
         this.checkRandomEmail();
+    },
+
+    // --- UI HELPER: Stat Summary ---
+    buildStatSummary: function(m, f, a, c) {
+        let html = '';
+        
+        // Helfer für einzelne Pillen
+        const makePill = (val, label, colorClass) => {
+            // Fallback auf 0, falls der Wert undefined/null ist
+            let num = val || 0; 
+            
+            // Pluszeichen nur bei Werten größer 0 (Minus ist bei <0 automatisch dabei)
+            const sign = num > 0 ? '+' : '';
+            
+            return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-slate-800 border border-slate-700">
+                        <span class="${colorClass}">${label}</span> 
+                        <span class="text-white ml-0.5">${sign}${num}</span>
+                    </span>`;
+        };
+
+        // Die Stats generieren mit festen Identitäts-Farben (werden jetzt IMMER angezeigt)
+        html += makePill(f, 'Faulheit', 'text-green-400');
+        html += makePill(a, 'Aggro', 'text-orange-400');
+        html += makePill(c, 'Chef', 'text-red-500');
+
+        return `<div class="flex flex-wrap gap-2 mt-4 fade-in">
+                    ${html}
+                </div>`;
     },
 
     // --- PHONE SYSTEM ---
@@ -1440,10 +1499,20 @@ handlePhoneChoice: function(text, nextId) {
                 }
             }
             
-            // Stats Update
-            this.state.fl += (res.fl || 0);
-            this.state.al += (res.al || 0);
-            this.state.cr += (res.cr || 0);
+        // Stats Update
+        let finalF = res.fl || 0;
+        let finalA = res.al || 0;
+        let finalC = res.cr || 0;
+
+        this.state.fl += finalF;
+        this.state.al += finalA;
+        this.state.cr += finalC;
+
+        // --- NEU: Floating Text für Phone ---
+        if (finalF !== 0) this.showFloatingText('val-fl', finalF);
+        if (finalA !== 0) this.showFloatingText('val-al', finalA);
+        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
+        // ------------------------------------
             
             // Simulation: Gegenüber tippt kurz, bevor er geht
             const loadingId = "typing-" + Date.now();
@@ -2102,6 +2171,82 @@ closeInventory: function() {
         const modal = document.getElementById('team-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    },
+
+    // --- INTRANET SYSTEM ---
+    openIntranet: function() {
+        const modal = document.getElementById('intranet-modal');
+        // iFrame bei jedem Öffnen auf die Startseite zurücksetzen (Optional, aber gut)
+        const frame = document.getElementById('intranet-frame');
+        if(frame) frame.src = "assets/intranet/index.html"; 
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    },
+
+    closeIntranet: function() {
+        const modal = document.getElementById('intranet-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        
+        // --- ACHIEVEMENT CHECK ---
+        this.unlockAchievement(
+            'ach_intranet', 
+            '🌐 Meister des Internets', 
+            'Du hast die tiefsten, dunkelsten Tiefen des Firmen-Intranets erforscht.'
+        );
+    },
+
+    // --- VISUELLES FEEDBACK (Floating Text) ---
+    showFloatingText: function(elementId, value) {
+        if (value === 0) return; // Nichts anzeigen bei 0
+
+        const target = document.getElementById(elementId);
+        if (!target) return;
+
+        // 1. Element erstellen (+ oder - davor setzen)
+        const floatEl = document.createElement('div');
+        const sign = value > 0 ? '+' : '';
+        floatEl.innerText = `${sign}${value}`;
+
+        // 2. Farbe festlegen (Abhängig vom Balken, unabhängig ob gut/schlecht)
+        let color = 'text-white'; // Fallback
+        if (elementId === 'val-fl') {
+            // Faulheit = Immer Grün
+            color = 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]';
+        } else if (elementId === 'val-al') {
+            // Aggro = Immer Orange
+            color = 'text-orange-400 drop-shadow-[0_0_10px_rgba(251,146,60,0.8)]';
+        } else if (elementId === 'val-cr') {
+            // Chef/Radar = Immer Rot
+            color = 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]';
+        }
+
+        // Styling (Start-Zustand) - Jetzt noch langsamer: 3000ms (3 Sekunden)
+        floatEl.className = `fixed font-normal text-xl z-[9999] pointer-events-none transition-all duration-[3000ms] ease-out ${color}`;
+
+        // 3. Start-Position berechnen
+        const rect = target.getBoundingClientRect();
+        floatEl.style.left = (rect.left + rect.width / 2) + 'px';
+        floatEl.style.top = (rect.top - 10) + 'px';
+        floatEl.style.transform = 'translate(-50%, 0) scale(1)';
+        floatEl.style.opacity = '1';
+
+        document.body.appendChild(floatEl);
+
+        // 4. Animation auslösen (Schwebt nach oben, verblasst langsam)
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                // Schwebt ruhig 40px nach oben
+                floatEl.style.transform = 'translate(-50%, -40px) scale(1)';
+                floatEl.style.opacity = '0';
+            });
+        });
+
+        // 5. Müllabfuhr (Element nach 3 Sekunden löschen)
+        setTimeout(() => {
+            floatEl.remove();
+        }, 3000);
     },
 
 // --- REPORT SYSTEM ---

@@ -6827,6 +6827,29 @@ const DB = {
             }
         ]
     },
+    {
+            id: "sq_boss_snoop",
+            kind: "text",
+            title: "Schritte auf dem Flur",
+            text: "Du hörst schwere Schritte auf dem Flur. Die Tür knarrt auf. Dr. Wichtig steht im Türrahmen und blinzelt auf deinen Bildschirm. Du hast gerade privat im Internet gesurft.",
+            opts: [
+                { 
+                    t: "Panisch das Firmen-Intranet öffnen", 
+                    m: 5, f: -5, a: 0, c: 0, 
+                    r: "CMD:OPEN_INTRANET" 
+                },
+                { 
+                    t: "Schnell eine alte Code-Datei aufrufen", 
+                    m: 2, f: 0, a: 5, c: -5, 
+                    r: "Er schaut auf den grünen Text auf schwarzem Grund. 'Ah, Sie hacken den Mainframe. Sehr gut.' Er geht wieder." 
+                },
+                { 
+                    t: "Den Monitor einfach ausschalten", 
+                    m: 1, f: 5, a: 0, c: 15, 
+                    r: "Er starrt auf den schwarzen Bildschirm. 'Stromsparen? Sehr löblich, aber wir haben hier Deadlines!' Er notiert sich etwas." 
+                }
+            ]
+        },
 
         // --- PHONE EVENTS (Chat-System) ---
     {
@@ -8038,7 +8061,10 @@ const DB = {
         { id: "ach_closer", icon: "💼", title: "The Closer", desc: "Du und Markus: Geld schläft nicht. Ihr habt den Deal gerettet.", hint: "Hilf dem Sales-Team beim Abschluss, wenn es drauf ankommt." },
         { id: "ach_cat_whisperer", icon: "🐈", title: "Katzenflüsterer", desc: "Du und Frau Elster: Freunde fürs Leben (und für Rüdiger).", hint: "Löse das Katzen-Problem der Buchhaltung." },
         { id: "ach_lore", icon: "🕯️", title: "Der Historiker", desc: "Du hast die Chronik gelesen. Jetzt weißt du, warum wir Disketten anbeten.", hint: "Finde und lies die geheime Geschichte der Firma." },
-        { id: "ach_wolf", icon: "📈", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. Der Vertrag gehört dir.", hint: "Gewinne die harte Verhandlung gegen den Endgegner." }
+        { id: "ach_wolf", icon: "📈", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. Der Vertrag gehört dir.", hint: "Gewinne die harte Verhandlung gegen den Endgegner." },
+
+        // SONSTIGES
+        { id: "ach_intranet", icon: "🌐", title: "Meister des Internets", desc: "Du hast die tiefsten, dunkelsten Tiefen des Firmen-Intranets erforscht.", hint: "Manche Firmen-Webseiten öffnet man nur in absoluter Panik." }
 ],
 	
 };
