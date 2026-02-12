@@ -49,7 +49,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v1.4.0 geladen. Warte auf User...");
+        this.log("System v1.5.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1186,11 +1186,15 @@ trigger: function(type) {
 
 resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         // --- INTRANET TRIGGER  ---
-        // Wenn das Event-Ergebnis exakt den Befehl enthält, öffnen wir das Intranet!
         if (res === "CMD:OPEN_INTRANET") {
-            // Wir tauschen den angezeigten Text gegen etwas Passendes aus
             res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
             this.openIntranet();
+        }
+
+        // --- BOARD TRIGGER ---
+        if (res === "CMD:OPEN_BOARD") {
+            res = "Du vertiefst dich in die faszinierende Welt der Firmen-Aushänge...";
+            this.openBoard();
         }
         // --------------------------------
 
@@ -1658,30 +1662,39 @@ checkEndConditions: function() {
 
         // A. RAGE QUIT (Aggro >= 100)
         if(this.state.al >= 100) {
+            // 1. Tagebuch generieren
+            let diary = this.generateDiaryEntry("RAGE"); 
+            
             this.state.pendingEnd = { 
                 title: "RAGE QUIT", 
-                text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport, 
+                text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary, // <-- Hier + diary anhängen
                 isWin: false 
             };
         }
         // B. TICKET LAWINE (Zu viele Tickets)
         else if(this.state.tickets >= 10) {
+            // 1. Tagebuch generieren
+            let diary = this.generateDiaryEntry("TICKETS");
+
             this.state.pendingEnd = { 
                 title: "GEFEUERT", 
-                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + fullReport, 
+                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + fullReport + diary, // <-- Hier + diary anhängen
                 isWin: false 
             };
         }
-        // C. WARNUNG (Tickets >= 7) -> Das bleibt so! Warnungen sollen sofort kommen.
+        // C. WARNUNG (Tickets >= 7) -> Das bleibt so!
         else if(this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, sonst fliegst du!", false);
         }
         // D. FEIERABEND (Zeit abgelaufen)
         else if(this.state.time >= 16*60+30) {
+            // 1. Tagebuch generieren
+            let diary = this.generateDiaryEntry("WIN");
+
             this.state.pendingEnd = { 
                 title: "FEIERABEND", 
-                text: "16:30! Du hast den Tag überlebt.<br>" + fullReport, 
+                text: "16:30! Du hast den Tag überlebt.<br>" + fullReport + diary, // <-- Hier + diary anhängen
                 isWin: true 
             };
         }
@@ -1704,9 +1717,12 @@ checkEndConditions: function() {
                 
                 this.showModal("ABMAHNUNG", warningText, false);
             } else {
+                // 1. Tagebuch generieren
+                let diary = this.generateDiaryEntry("FIRED");
+
                 this.state.pendingEnd = { 
                     title: "GEFEUERT", 
-                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + fullReport, 
+                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + fullReport + diary, // <-- Hier + diary anhängen
                     isWin: false 
                 };
             }
@@ -2247,6 +2263,138 @@ closeInventory: function() {
         setTimeout(() => {
             floatEl.remove();
         }, 3000);
+    },
+
+    // --- TAGEBUCH GENERATOR ---
+    generateDiaryEntry: function(endReason) {
+        const state = this.state;
+        
+        // Hilfsfunktion: Baut aus ["A", "B", "C"] einen Satz "A, B und C"
+        const formatList = (arr) => {
+            if (arr.length === 0) return "";
+            if (arr.length === 1) return arr[0];
+            let last = arr.pop();
+            return arr.join(", ") + " und " + last;
+        };
+
+        // 1. EVENT-ANALYSE (Orte)
+        const usedArray = Array.from(state.usedIDs);
+        const serverVisits = usedArray.filter(id => id.startsWith('srv_')).length;
+        const callVisits = usedArray.filter(id => id.startsWith('call_')).length;
+        const questVisits = usedArray.filter(id => id.startsWith('sq_')).length;
+
+        // ==========================================
+        // ABSATZ 1: Die Grundstimmung & der Ort
+        // ==========================================
+        let p1 = "";
+        
+        // Hier nutzen wir Achievements für extreme Playstyles
+        if (state.achievements.includes('ach_rage')) p1 += "Heute war ich ein wandelndes Pulverfass. Ein falsches Wort und ich hätte den Router angezündet. ";
+        else if (state.achievements.includes('ach_lazy')) p1 += "Mein Motto heute lautete ganz klar: Warum heute arbeiten, wenn man es auch auf unbestimmte Zeit verschieben kann? ";
+        else if (state.achievements.includes('ach_ascetic')) p1 += "Ich habe den Tag ohne einen Tropfen Kaffee überlebt – mein Kopf dröhnt vor Tugendhaftigkeit. ";
+        else if (state.achievements.includes('ach_coffee')) p1 += "Mein Blut besteht mittlerweile zu 90% aus Koffein. Ich kann Farben schmecken. ";
+        else if (state.achievements.includes('ach_workaholic')) p1 += "Ich habe heute tatsächlich so hart gearbeitet, dass ich uns alle schlecht aussehen lasse. ";
+        else p1 += "Ein weiterer Tag im alltäglichen Corporate-Wahnsinn neigt sich dem Ende. ";
+
+        if (questVisits > serverVisits && questVisits > callVisits) {
+            p1 += "Anstatt mich um echte Probleme zu kümmern, bin ich lieber ziellos durch die Flure gegeistert und habe mich in seltsame Büro-Dramen verwickeln lassen.";
+        } else if (serverVisits > callVisits + 2) {
+            p1 += "Um den nervigen Menschen aus dem Weg zu gehen, habe ich mich heute größtenteils im fensterlosen Serverraum verschanzt.";
+        } else if (callVisits > serverVisits + 3) {
+            p1 += "Gefühlt klebte mir das Telefon pausenlos am Ohr, während ich der halben Belegschaft erklären durfte, wie man einen Stecker in die Steckdose drückt.";
+        } else {
+            p1 += "Zwischen piepsenden Servern und panischen Anrufen habe ich irgendwie versucht, den Betrieb am Laufen zu halten.";
+        }
+
+        // ==========================================
+        // ABSATZ 2: Begegnungen (Achievements & Lore Items)
+        // ==========================================
+        let p2 = "";
+        let encounters = [];
+        const hasAch = (id) => state.achievements.includes(id);
+        const hasItem = (id) => state.inventory.some(i => i.id === id);
+
+        // Story-Erfolge prüfen
+        if (hasAch('ach_mentor')) encounters.push("ich Azubi Kevin vor dem totalen IT-Kollaps bewahrt habe");
+        if (hasAch('ach_ally')) encounters.push("ich eine unheilige Allianz mit Chantal aus dem Marketing geschmiedet habe");
+        if (hasAch('ach_rockstar')) encounters.push("mir Gabi vom Empfang ihr feinstes Death-Metal-Mixtape anvertraut hat");
+        if (hasAch('ach_cat_whisperer')) encounters.push("ich das Katzenproblem der Buchhaltung ein für alle Mal gelöst habe");
+        if (hasAch('ach_keymaster')) encounters.push("mir Hausmeister Egon seinen Generalschlüssel überlassen hat");
+        if (hasAch('ach_closer')) encounters.push("ich mit Markus aus dem Sales einen wichtigen Deal gerettet habe");
+        if (hasAch('ach_wolf')) encounters.push("ich dem Chef einen neuen Arbeitsvertrag aus den Rippen geleiert habe");
+        if (hasAch('ach_hacker')) encounters.push("ich mir illegale Admin-Rechte im System verschafft habe");
+        if (hasAch('ach_rich')) encounters.push("ich dem nigerianischen Prinzen mein Vertrauen (und mein Konto) geschenkt habe");
+        
+        // Lore Items (die keine Achievements sind)
+        if (hasItem('corp_chronicles')) encounters.push("ich mich in die tiefen Geheimnisse der verbotenen Firmenchronik eingelesen habe");
+        if (hasItem('prince_letter')) encounters.push("ich einen sehr verdächtigen Brief von einem Prinzen erhalten habe");
+
+        if (encounters.length > 0) {
+            p2 += `Besonders denkwürdig war heute, dass ${formatList(encounters)}. `;
+        }
+
+        // Gewohnheiten (Basierend auf Achievements)
+        let habits = [];
+        if (hasAch('ach_ignore')) habits.push("die Entf-Taste bei eintreffenden Mails mein absolut bester Freund war");
+        if (hasAch('ach_hoarder')) habits.push("ich meinen Rucksack mit absolutem Müll vollgestopft habe");
+        if (hasAch('ach_intranet')) habits.push("ich mich stundenlang im toxischen Firmen-Intranet versteckt habe");
+        if (hasAch('ach_macgyver')) habits.push("ich mich mit Tape und Kabelbindern wie ein IT-MacGyver gefühlt habe");
+        if (hasAch('ach_clean')) habits.push("ich tatsächlich 'Inbox Zero' erreicht habe (ein Wunder!)");
+        
+        if (habits.length > 0) {
+            let conn = encounters.length > 0 ? "Ansonsten" : "Meine Strategie";
+            p2 += `${conn} bestand heute hauptsächlich daraus, dass ${formatList(habits)}.`;
+        }
+
+        // ==========================================
+        // ABSATZ 3: Das Finale (Game Over / Win)
+        // ==========================================
+        let p3 = "";
+        if (endReason === "RAGE") {
+            p3 = "Das bittere Ende vom Lied? Mir ist die Sicherung durchgebrannt. Ein fliegender Monitor ist schließlich auch eine Form von fristloser Kündigung!";
+        } else if (endReason === "TICKETS") {
+            p3 = "Schlussendlich hat mich die Ticket-Lawine komplett unter sich begraben. Das System ist restlos kollabiert – und ich bin meinen Job los.";
+        } else if (endReason === "FIRED") {
+            p3 = "Dass der Sicherheitsdienst mich am Ende persönlich rauseskortiert hat, ist der perfekte Schlusspunkt für dieses Trauerspiel.";
+        } else if (endReason === "WIN") {
+            p3 = "Irgendwie habe ich es lebend bis 16:30 Uhr geschafft. Feierabend. Morgen geht der ganze Zirkus wieder von vorne los...";
+        }
+
+        // ==========================================
+        // HTML ZUSAMMENBAUEN
+        // ==========================================
+        return `
+            <details class='mt-6 group text-left'>
+                <summary class='cursor-pointer list-none bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3 rounded-lg flex justify-between items-center transition-colors shadow-sm'>
+                    <span class='text-slate-300 font-bold uppercase tracking-widest text-xs flex items-center gap-2'>
+                        <span class="text-xl">📖</span> 
+                        Persönliches Logbuch lesen
+                    </span>
+                    <span class='text-slate-500 group-open:rotate-180 transition-transform duration-300'>▼</span>
+                </summary>
+                
+                <div class='mt-2 p-5 bg-slate-950 border border-slate-800 border-l-4 border-l-slate-500 rounded-b-lg text-slate-300 italic font-serif text-sm shadow-inner relative'>
+                    <div class="space-y-4">
+                        <p class="leading-relaxed">"${p1}"</p>
+                        ${p2 ? `<p class="leading-relaxed">"${p2}"</p>` : ''}
+                        <p class="leading-relaxed font-bold text-white border-t border-slate-800 pt-3">"${p3}"</p>
+                    </div>
+                </div>
+            </details>
+        `;
+    },
+
+    // --- SCHWARZES BRETT ---
+    openBoard: function() {
+        const modal = document.getElementById('board-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    },
+
+    closeBoard: function() {
+        const modal = document.getElementById('board-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     },
 
 // --- REPORT SYSTEM ---

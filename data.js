@@ -5786,6 +5786,28 @@ const DB = {
             }
         ]
     },
+    {
+        id: "cof_bulletin_board",
+        title: "Warten auf das schwarze Gold",
+        text: "Der Ladebalken der Maschine klebt seit einer gefühlten Ewigkeit bei 99%. Ein einzelner Tropfen fällt in Zeitlupe. Die Spannung ist kaum auszuhalten.",
+        opts: [
+            { 
+                t: "Die Zeit mit Kevin totschlagen",
+                m: 10, f: 10, a: -10, c: 5, 
+                r: "Kevin textet dich mit seinem 'Gaming-Teppich' zu. Es ist furchtbar, aber immerhin hältst du am Ende einen frischen, heißen Kaffee in der Hand." 
+            },
+            { 
+                t: "Ungeduldig wippen & zurückrennen", 
+                m: 1, f: -5, a: 2, c: 0, 
+                r: "Du hältst es nicht mehr aus und reißt den Becher weg. Ein heißer Tropfen landet auf deinem Hemd, aber du bist sofort wieder am Platz." 
+            },
+            { 
+                t: "Das 'Schwarze Brett' studieren", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "CMD:OPEN_BOARD"
+            }
+        ]
+    },
     ],
 
 // === SIDE QUESTS ===

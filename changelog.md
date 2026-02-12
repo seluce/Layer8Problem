@@ -1,9 +1,14 @@
+\[1.5.0] - 2026-02-12
+
+* Es gibt jetzt ein kleines Tagesbuch, was den Arbeitstag am Endergebnis zusammenfasst
+* Ein neues (Secret)-Event (Easter-Egg) wurde in den Pool hinzugefügt
+
 \[1.4.0] - 2026-02-11
 
 * Die Animation für das Verändern der Statuswerte werden nun flüssiger dargestellt
 * Bei Statusveränderungen gib es nun ergänzend schwebende Zahlen bei den Statuswerten
 * Im jeweiligen Event-Ergebnis werden nun die Statuswerte dargestellt
-* Ein neues (Secret)-Event wurde in den Pool hinzugefügt
+* Ein neues (Secret)-Event (Easter-Egg) wurde in den Pool hinzugefügt
 * Ein neuer Erfolg zum Entdecken wurde hinzugefügt
 
 \[1.3.1] - 2026-02-10

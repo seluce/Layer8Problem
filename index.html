@@ -226,7 +226,7 @@
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
         <div id="terminal" class="flex-[2] neon-box p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v1.4.0</div>
+            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v1.5.0</div>
             
             <div id="boss-timer-container">
                 <div id="boss-timer-bar"></div>
@@ -314,9 +314,10 @@
     </div>
 
     <div id="modal-overlay" class="fixed inset-0 hidden bg-black/95 z-50 flex items-center justify-center p-8">
-        <div id="modal-content" class="max-w-xl w-full bg-slate-900 border-2 border-red-600 p-8 rounded-xl text-center shadow-2xl"></div>
+        <div id="modal-content" class="max-w-xl w-full bg-slate-900 border-2 border-red-600 p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto""></div>
     </div>
-	
+
+<!-- INVENTAR MODAL START -->		
 	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/95 z-[1100] items-center justify-center p-4">
         <div class="neon-box border-amber-500 bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
             <button onclick="engine.closeInventory()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
@@ -329,7 +330,9 @@
             </div>
         </div>
     </div>
+<!-- INVENTAR MODAL END -->	
 
+<!-- ITEM CONFIRM MODAL START -->	
     <div id="item-confirm-modal" class="fixed inset-0 bg-black/95 z-[1200] hidden items-center justify-center p-6">
         <div class="neon-box border-white bg-slate-900 max-w-sm w-full p-6 shadow-2xl relative text-center flex flex-col items-center">
             
@@ -358,7 +361,9 @@
             </div>
         </div>
     </div>
-	
+<!-- ITEM CONFIRM MODAL END -->	
+
+<!-- KOLLEGIUM / TEAM MODAL START -->	
 	<div id="team-modal" class="fixed inset-0 hidden bg-black/95 z-[1100] items-center justify-center p-4">
         <div class="neon-box border-white bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="engine.closeTeam()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
@@ -372,7 +377,9 @@
             </div>
         </div>
     </div>
+<!-- KOLLEGIUM / TEAM MODAL END -->	
 
+<!-- ARCHIV MODAL START -->
     <div id="archive-modal" class="fixed inset-0 bg-black/95 z-[1100] hidden items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-600 w-full max-w-5xl h-[85vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
             
@@ -403,7 +410,9 @@
                 </div>
         </div>
     </div>
+<!-- ARCHIV MODAL END -->
 	
+<!-- E-MAIL MODAL START -->
 <div id="email-modal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
     
     <div class="w-full max-w-lg bg-slate-900 border border-slate-600 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col font-sans text-slate-200 overflow-hidden relative animate-pop-in">
@@ -455,7 +464,9 @@
         </div>
     </div>
 </div>
+<!-- E-MAIL MODAL END -->
 
+<!-- SCHWIERIGKEIT MODAL START -->
     <div id="difficulty-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden items-center justify-center p-4">
         <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
@@ -497,7 +508,9 @@
             </div>
         </div>
     </div>
+<!-- SCHWIERIGKEIT MODAL END -->
 
+<!-- TUTORIAL MODAL START -->
     <div id="tutorial-overlay" class="fixed inset-0 z-[2000] hidden overflow-hidden">
         
         <div id="tut-spotlight" class="absolute border-2 border-white rounded-xl transition-all duration-300 pointer-events-none z-[2010] shadow-[0_0_0_9999px_rgba(0,0,0,0.85)]"></div>
@@ -532,7 +545,9 @@
             </div>
         </div>
     </div>
+<!-- TUTORIAL MODAL END -->
 
+<!-- INTRANET MODAL START -->
 <div id="intranet-modal" class="fixed inset-0 hidden bg-slate-950/80 backdrop-blur-sm z-[1200] items-center justify-center p-2 md:p-8">
     
     <div class="bg-slate-900 w-[95vw] max-w-[1400px] h-[95vh] flex flex-col rounded-lg shadow-2xl overflow-hidden ring-1 ring-slate-700">
@@ -565,7 +580,161 @@
         
     </div>
 </div>
+<!-- INTRANET MODAL END -->
 
+<!-- SCHWARZES BRETT MODAL START -->
+<div id="board-modal" class="fixed inset-0 hidden bg-black/90 z-[1300] items-center justify-center p-0 md:p-8 backdrop-blur-sm fade-in overflow-hidden">
+    
+    <div class="relative w-full h-full md:max-w-6xl md:h-[90vh] bg-[#dcbfa3] md:rounded-lg shadow-2xl border-x-0 md:border-8 border-[#5d4037] flex flex-col">
+        
+        <div class="absolute inset-0 opacity-30 pointer-events-none z-0" style="background-image: url('https://www.transparenttextures.com/patterns/cork-1.png');"></div>
+
+        <div class="relative z-20 bg-[#5d4037] text-[#fdf6e3] text-center py-3 shadow-md border-b-4 border-[#3e2723] shrink-0">
+            <h2 class="text-xl md:text-2xl font-black uppercase tracking-[0.2em] drop-shadow-md">GlobalCorp • Community Board</h2>
+            <span class="text-[10px] md:text-xs text-[#a1887f] block font-serif opacity-80">"Kommunikation ist der Schlüssel (der leider klemmt)."</span>
+            
+            <button onclick="engine.closeBoard()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded shadow-inner transition-colors font-bold tracking-wider">
+                SCHLIESSEN
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-10 relative z-10 scrollbar-thin scrollbar-thumb-[#5d4037] scrollbar-track-[#dcbfa3]">
+            
+            <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+
+                <div class="bg-yellow-100 p-5 shadow-md rotate-1 break-inside-avoid relative group">
+                    <div class="w-3 h-3 rounded-full bg-red-600 absolute -top-1.5 left-1/2 shadow-sm"></div>
+                    <p class="font-bold text-red-700 underline mb-2 uppercase text-sm">AN DEN JOGHURT-DIEB!!!</p>
+                    <p class="text-sm font-serif leading-relaxed text-slate-800">
+                        Wer auch immer meinen <strong>Bi-Fi Roll</strong> aus dem Kühlschrank genommen hat: <br>
+                        Ich habe die Überwachungskameras der Kantine gehackt. Ich weiß, dass du rote Sneaker trägst. <br>
+                        Leg ihn zurück. Du hast 24h.
+                    </p>
+                    <p class="mt-2 text-xs font-bold text-right">- Kevin (IT)</p>
+                </div>
+
+                <div class="bg-blue-50 p-4 shadow-sm -rotate-2 break-inside-avoid relative mt-[-10px] ml-4 group">
+                    <div class="w-12 h-3 bg-slate-200/50 absolute -top-2 left-10 rotate-1"></div> <p class="text-xs font-mono text-blue-900">
+                        Lieber Kevin,<br>
+                        1. Das war kein Bi-Fi, das war ein Experiment der Biologie-Abteilung (Schimmelpilz-Kultur 'Delta-9').<br>
+                        2. Wenn du das gegessen hast, solltest du dringend zum Arzt, statt Drohbriefe zu schreiben.<br>
+                        LG, Dr. Brinkmann
+                    </p>
+                </div>
+
+                <div class="bg-[#fef9c3] p-6 shadow-md -rotate-1 transform hover:scale-105 transition-transform relative max-w-sm mx-auto font-mono text-sm text-slate-800 break-inside-avoid">
+                    <div class="w-4 h-4 rounded-full bg-green-700 absolute -top-2 left-4 shadow-sm"></div> 
+                    <h3 class="font-bold underline mb-2">Betr: Projekt "Quanten-Cloud"</h3>
+                    <p class="leading-relaxed text-xs">
+                        "Sehr geehrtes Sales-Team,<br>
+                        vielen Dank für die Implementierung der 'KI-gesteuerten Echtzeit-Datenbank'.<br><br>
+                        Wir wissen zwar nicht, warum sie aussieht wie eine Excel-Tabelle von 1998 und warum einer ihrer Mitarbeiter jeden Morgen manuell Daten eingeben muss, aber die Performance ist beeindruckend!<br>
+                        Gerne wieder!"<br>
+                    </p>
+                    <span class="block mt-4 text-[10px] text-slate-500 font-bold uppercase">- MegaCorp Industries CEO</span>
+                    <div class="absolute -bottom-4 -right-4 w-16 h-16 rounded-full border-4 border-[#d7ccc8] opacity-30 pointer-events-none"></div>
+                </div>
+
+                <div class="bg-white p-6 shadow-lg rotate-0 break-inside-avoid relative border border-slate-300">
+                    <div class="w-4 h-4 rounded-full bg-blue-900 absolute top-2 right-2 shadow-sm"></div>
+                    <div class="border-b-2 border-blue-900 mb-3 pb-1">
+                        <span class="text-xl">⚖️</span>
+                        <span class="font-bold text-blue-900 text-xs uppercase tracking-widest">HR Management</span>
+                    </div>
+                    <h4 class="font-bold text-sm mb-2 text-slate-800">Initiative: "Work-Life-Integration"</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        Um Stress zu reduzieren, führen wir das "Schlaf-am-Platz"-Konzept ein. <br>
+                        <strong>Die Regeln:</strong>
+                    </p>
+                    <ul class="list-disc pl-4 text-[10px] text-slate-600 space-y-1 mb-3">
+                        <li>Maximal 3 Minuten pro Auge.</li>
+                        <li>Dabei muss die Maus bewegt werden (nutzen Sie Ihre Reflexe).</li>
+                        <li>Träumen von der Konkurrenz ist untersagt (NDA-Verstoß).</li>
+                    </ul>
+                    <div class="bg-slate-100 text-slate-500 text-[9px] p-2 text-center italic">
+                        "Wer schläft, sündigt nicht. Aber er arbeitet auch nicht. Also sündigen Sie lieber." - Dr. Wichtig
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 shadow-[2px_2px_5px_rgba(0,0,0,0.2)] rotate-2 break-inside-avoid relative">
+                    <div class="w-3 h-3 rounded-full bg-green-600 absolute -top-1.5 left-4"></div>
+                    <h3 class="font-black text-2xl text-slate-800 mb-1">ZU VERSCHENKEN</h3>
+                    
+                    <p class="font-bold text-xs text-red-600 mb-2 uppercase border-b border-red-200 pb-1">Aktenvernichter "ShredMaster 3000"</p>
+                    
+                    <p class="text-xs text-slate-700 mb-2 leading-relaxed">
+                        Er funktioniert technisch noch, aber die Messer sind stumpf. <br>
+                        Er schneidet das Papier nicht, er <strong>kaut</strong> es nur. Die Dokumente kommen warm, feucht und als Klumpen wieder raus.<br>
+                        Zudem macht er Geräusche, die klingen, als würde er leise weinen.
+                    </p>
+                    <p class="text-[10px] text-slate-500 italic mt-2">
+                        Nur an Bastler oder Exorzisten abzugeben. Ich halte das emotional nicht mehr aus.
+                    </p>
+                    
+                    <div class="flex justify-between mt-4 border-t border-dashed border-slate-300 pt-1">
+                        <div class="w-1/5 border-r border-dashed border-slate-300 h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">Nimm ihn!</div>
+                        <div class="w-1/5 border-r border-dashed border-slate-300 h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">Gratis</div>
+                        <div class="w-1/5 border-r border-dashed border-slate-300 h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">Bitte</div>
+                        <div class="w-1/5 border-r border-dashed border-slate-300 h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">Hilfe</div>
+                        <div class="w-1/5 h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">Mutprobe</div>
+                    </div>
+                </div>
+
+                <div class="bg-[#e5e7eb] p-4 shadow-sm rotate-0 break-inside-avoid relative">
+                    <div class="w-12 h-12 bg-yellow-600/10 rounded-full absolute -top-2 -left-2 blur-md pointer-events-none"></div> 
+                    <div class="w-3 h-3 rounded-full bg-slate-800 absolute top-1 left-1/2"></div>
+                    
+                    <h4 class="font-serif font-bold text-lg border-b border-slate-800 mb-2 pb-1 text-slate-900">Weser-Kurier (Archiv 1998)</h4>
+                    <h5 class="font-serif font-bold text-sm leading-tight mb-2 text-slate-900">"GlobalCorp verspricht: Das papierlose Büro kommt!"</h5>
+                    
+                    <p class="font-serif text-xs text-justify leading-snug text-slate-800">
+                        Der visionäre Gründer Dr. Wichtig erklärte heute, dass Drucker bald nur noch im Museum zu finden sein werden. "Wir setzen voll auf Disketten und Gedankenübertragung", so der CEO bei der Eröffnung der neuen Zentrale im Moor.
+                    </p>
+                    
+                    <div class="mt-3 text-[10px] font-bold text-red-600 -rotate-3 border-2 border-red-600 inline-block px-2 py-0.5 rounded-sm transform origin-left">
+                        Gut gealtert. - Kevin
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 shadow-lg rotate-1 break-inside-avoid relative border-l-8 border-red-600">
+                    <div class="w-3 h-3 rounded-full bg-red-600 absolute -top-1.5 left-4"></div>
+                    <h4 class="font-bold text-red-600 uppercase text-xs mb-2">Sicherheitswarnung Stufe Rot</h4>
+                    <p class="text-xs font-bold text-slate-800 mb-2">
+                        Betr: Biologische Gefahr in Kühlschrank 2
+                    </p>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        Aufgrund des "Bi-Fi-Vorfalls" ist die Teeküche im 2. Stock bis auf Weiteres eine <strong>Sperrzone</strong>. Ein Team in Schutzanzügen ist unterwegs.
+                    </p>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Bitte atmen Sie im Flur nur flach.
+                    </p>
+                    <p class="mt-3 text-[10px] font-bold text-slate-400 text-right">- Facility Management (Egon)</p>
+                </div>
+
+                <div class="bg-blue-200 p-4 shadow-md -rotate-2 break-inside-avoid relative">
+                    <div class="w-3 h-3 rounded-full bg-yellow-500 absolute top-1 right-1"></div>
+                    <p class="font-handwriting text-blue-900 text-sm leading-loose">
+                        "Hallo Leute,<br>
+                        ich habe gekündigt und eine Strandbar auf Bali aufgemacht.<br>
+                        Der Kaffee hier schmeckt nach Freiheit (und Kokosnuss).<br>
+                        Viel Spaß beim nächsten Audit!<br>
+                        Eure Ex-Kollegin Sarah"
+                    </p>
+                    <div class="absolute bottom-2 right-2 opacity-50 text-[100px] leading-none text-yellow-400 pointer-events-none">☀️</div>
+                </div>
+
+            </div>
+            
+            <div class="mt-12 text-center opacity-50">
+                <p class="text-[#5d4037] text-xs font-serif italic">Ende des Brettes. Gehen Sie weiter, hier gibt es nichts mehr zu sehen.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- SCHWARZES BRETT MODAL END-->
+
+<!-- REPORT MODAL START -->
 <div id="report-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[60] backdrop-blur-sm">
     <div class="bg-slate-900 border-2 border-slate-600 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
         <button onclick="engine.closeReportModal()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
@@ -606,6 +775,7 @@
         </div>
     </div>
 </div>
+<!-- REPORT MODAL END -->
 
     <script src="data.js"></script>
     <script src="engine.js"></script>
