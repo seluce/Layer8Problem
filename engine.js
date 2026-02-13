@@ -49,7 +49,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v1.5.0 geladen. Warte auf User...");
+        this.log("System v2.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1006,52 +1006,42 @@ trigger: function(type) {
         );
     },
 
-    // 3. GEMEINSAMES HTML-TEMPLATE (Mit Farben & Zeit-Vorschau)
+    // 3. GEMEINSAMES HTML-TEMPLATE
     buildEventHTML: function(type, title, text, opts, isChain) {
         
         // --- STYLE KONFIGURATION ---
-        // Standard (z.B. Coffee, Special) = Amber/Gelb
         let color = 'text-amber-400';       
         let borderColor = 'border-amber-500';
         let icon = '⚡'; 
 
-        // Spezifische Farben je nach Typ
         switch(type) {
-            case 'calls': // ANRUFE (Blau)
+            case 'calls': 
                 color = 'text-blue-400';
                 borderColor = 'border-blue-500';
                 icon = '📞';
                 break;
-            
-            case 'boss': // BOSS (Rot)
+            case 'boss': 
                 color = 'text-red-500';
                 borderColor = 'border-red-500';
                 icon = '🚨';
                 break;
-            
-            case 'sidequest': // SIDE-QUEST (Lila)
+            case 'sidequest': 
                 color = 'text-purple-400';
                 borderColor = 'border-purple-500';
-                icon = '🎲'; // Magische Kugel / Quest Icon
+                icon = '🎲';
                 break;
-            
-            case 'server': // SERVERRAUM (Grün)
+            case 'server': 
                 color = 'text-emerald-400';
                 borderColor = 'border-emerald-500';
-                icon = '💾'; // Laptop / Terminal
+                icon = '💾';
                 break;
-
-            case 'coffee': // KAFFEE (Amber, aber spezielles Icon)
+            case 'coffee': 
                 icon = '☕';
                 break;
         }
 
-        // --- STORY CHECK ---
-        // Prüft, ob die ID "story" enthält (z.B. "sq_story_kevin_2" oder "cof_story_chantal_1")
-        if (this.state.currentEventId && this.state.currentEventId.includes('_story_')) {
-            // color = 'text-yellow-400';
-            // borderColor = 'border-yellow-500';            
-            icon = '📖'; // Buch-Icon für Story-Quests
+        if (this.state.currentEventId && this.state.currentEventId.includes('_story_')) {          
+            icon = '📖'; 
         }
 
         let html = `
@@ -1077,19 +1067,6 @@ trigger: function(type) {
                 let locked = false;
                 let reqText = "";
 
-                // --- ZEIT VORSCHAU LOGIK ---
-                let timeCost = opt.m || 0; 
-                
-                if (isChain && this.state.currentChainEvent && opt.next) {
-                    const nextNode = this.state.currentChainEvent.results?.[opt.next];
-                    if (nextNode && (nextNode.m || nextNode.min)) {
-                        timeCost = nextNode.m || nextNode.min;
-                    }
-                    else if (this.state.currentChainEvent.nodes?.[opt.next]) {
-                        timeCost = 0; 
-                    }
-                }
-
                 // Item Check
                 if (opt.req) {
                     let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
@@ -1103,6 +1080,16 @@ trigger: function(type) {
                         if(onCooldown) reqText = `(Cooldown)`;
                     }
                 }
+				
+                // REM Check
+                if(opt.rem && !locked) {
+                    let hasItem = this.state.inventory.find(i => i.id === opt.rem);
+                    if(!hasItem) {
+                        locked = true;
+                        let itemName = DB.items[opt.rem] ? DB.items[opt.rem].name : opt.rem;
+                        reqText = `(Benötigt: ${itemName})`;
+                    }
+                }
 
                 // STYLE
                 let btnClass = "";
@@ -1113,8 +1100,6 @@ trigger: function(type) {
                     btnClass = "w-full text-left p-2.5 rounded border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
                     iconBtn = "🔒";
                 } else {
-                    // Der Hover-Effekt und Text bleiben neutral (Slate/Weiß), 
-                    // aber das kleine Icon (➤) nimmt die Farbe des Events an!
                     btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
                     
@@ -1122,16 +1107,13 @@ trigger: function(type) {
                         clickAction = `onclick="engine.handleChainChoice('${opt.next}')"`;
                     } else {
                         let safeRes = opt.r ? opt.r.replace(/'/g, "\\'") : '';
-                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}')"`;
+                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}', '${opt.rem||''}')"`;
                     }
                 }
 
-                // ZEIT BADGE
+                // BADGE NUR NOCH FÜR KETTEN (Punkte ...), KEINE ZEIT MEHR
                 let badgeHTML = "";
-                if (timeCost > 0) {
-                    let badgeColor = timeCost >= 30 ? "text-red-400 bg-red-900/30 border-red-900/50" : "text-slate-400 bg-black/30 border-slate-700";
-                    badgeHTML = `<span class="text-xs ${badgeColor} border px-2 py-1 rounded ml-3 font-mono whitespace-nowrap">-${timeCost} min</span>`;
-                } else if (isChain && !locked && !opt.next.startsWith('res_')) {
+                if (isChain && !locked && !opt.next.startsWith('res_')) {
                      badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded ml-3 font-mono">...</span>`;
                 }
 
@@ -1174,7 +1156,8 @@ trigger: function(type) {
                 res.loot || null,
                 null, 
                 this.state.currentChainType,
-                res.next || null
+                res.next || null,
+                res.rem || null
             );
             this.state.currentChainEvent = null;
             return;
@@ -1184,7 +1167,7 @@ trigger: function(type) {
         this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
     },
 
-resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
+resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem) { // <--- HIER: rem HINZUGEFÜGT
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
             res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
@@ -1220,55 +1203,42 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         }
 
         // --- SCHWIERIGKEIT & FAULHEIT LOGIK ---
-        
-        // 1. Schwierigkeitsgrad (0.8 / 1.0 / 1.5)
         let diffMult = this.state.difficultyMult;
-
-        // 2. Faulheits-Faktor (Risk vs Reward)
-        // Formel: 1 + (Faulheit / 100)
         let lazyMult = 1 + (this.state.fl / 200);
 
-        // Werte berechnen
         this.state.fl += f;
-
-        // Aggro: Wird nur durch Schwierigkeit beeinflusst
         let finalA = a > 0 ? Math.ceil(a * diffMult) : a;
         this.state.al += finalA;
 
-        // RADAR: Hier greift die Faulheit (Silent Mechanic)
         let finalC = c;
-
         if (c > 0) {
-            // Strafe = Basis * Schwierigkeit * Faulheit
-            // Wir berechnen den Schaden still im Hintergrund
             finalC = Math.ceil(c * diffMult * lazyMult);
         } else {
-            // Bei Radar-Bonus (c < 0) hilft Faulheit nicht
             finalC = c; 
         }
-
         this.state.cr += finalC;
-        // ---------------------------------------
 
-        // --- Floating Text aufrufen ---
-        // (Wichtig: Hier nutzen wir finalA und finalC wegen der Multiplikatoren)
-        if (f !== 0) this.showFloatingText('val-fl', f, f > 0);
-        if (finalA !== 0) this.showFloatingText('val-al', finalA, finalA > 0);
-        if (finalC !== 0) this.showFloatingText('val-cr', finalC, finalC > 0);
+        // --- Floating Text ---
+        if (f !== 0) this.showFloatingText('val-fl', f);
+        if (finalA !== 0) this.showFloatingText('val-al', finalA);
+        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
 
         // Story Flag setzen
         if (next && next !== "") {
             this.state.storyFlags[next] = true;
         }
 
-        // Items Logic
+        // Items Logic: LOOT
         if(loot && loot !== "") {
             if(!this.state.inventory.find(i => i.id === loot)) {
                 this.state.inventory.push({ id: loot, used: false });
                 this.addToArchive('items', loot);
-                this.log(`ITEM: ${DB.items[loot].name}`, "text-yellow-400");
+                let itemName = DB.items[loot] ? DB.items[loot].name : loot; // Safety check
+                this.log(`ITEM: ${itemName}`, "text-yellow-400");
             }
         }
+        
+        // Items Logic: USED (Veraltet, aber wir lassen es sicherheitshalber drin)
         if(usedItem && usedItem !== "") {
             let itemObj = this.state.inventory.find(i => i.id === usedItem);
             let dbItem = DB.items[usedItem];
@@ -1278,6 +1248,15 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
                 }
             }
         }
+
+        // --- FIX: ITEMS REMOVED (rem) ---
+        // Hier nutzen wir jetzt die Variable 'rem', die oben übergeben wurde
+        if (rem && rem !== "") {
+            this.state.inventory = this.state.inventory.filter(i => i.id !== rem);
+            let removedName = DB.items[rem] ? DB.items[rem].name : rem;
+            this.log(`Verloren: ${removedName}`, "text-orange-400");
+        }
+        // --------------------------------
 
         this.log(res);
         this.updateUI();
@@ -1300,8 +1279,6 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
             }
         }
 
-        // Pille-Summary generieren. Wir nutzen hier die Original-Parameter (m, f) 
-        // und die berechneten Final-Werte (finalA, finalC), damit die Multiplikatoren stimmen!
         let statSummaryHTML = this.buildStatSummary(m, f, finalA, finalC);
 
         term.innerHTML = `
@@ -1340,10 +1317,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
         
         // Helfer für einzelne Pillen
         const makePill = (val, label, colorClass) => {
-            // Fallback auf 0, falls der Wert undefined/null ist
             let num = val || 0; 
-            
-            // Pluszeichen nur bei Werten größer 0 (Minus ist bei <0 automatisch dabei)
             const sign = num > 0 ? '+' : '';
             
             return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-slate-800 border border-slate-700">
@@ -1352,7 +1326,13 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next) {
                     </span>`;
         };
 
-        // Die Stats generieren mit festen Identitäts-Farben (werden jetzt IMMER angezeigt)
+        // 1. ZEIT (Neu: Als erstes Element anzeigen)
+        // Wir zeigen nur an, wenn Zeit vergangen ist (m > 0)
+        if (m > 0) {
+            html += makePill(m, 'Minuten', 'text-blue-400');
+        }
+
+        // 2. STATS (Wie bisher)
         html += makePill(f, 'Faulheit', 'text-green-400');
         html += makePill(a, 'Aggro', 'text-orange-400');
         html += makePill(c, 'Chef', 'text-red-500');

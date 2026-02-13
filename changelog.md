@@ -1,3 +1,9 @@
+\[2.0.0] - 2026-02-13
+
+* Server, Coffee und Side-Quests haben jetzt bei beinahe allen Events Folge-Events. Jede Entscheidung wird neue Events erzeugen!
+* Es gibt nun die Option Gegenstände wieder abzugeben, wenn diese im Inventar sind (remove item)
+* Zeiten werden nicht mehr vorher dargestellt, damit jede Entscheidung wohlüberlegt sein sollte
+
 \[1.5.0] - 2026-02-12
 
 * Es gibt jetzt ein kleines Tagesbuch, was den Arbeitstag am Endergebnis zusammenfasst

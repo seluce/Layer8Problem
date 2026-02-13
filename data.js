@@ -3721,510 +3721,2026 @@ const DB = {
 
     // === SERVERRAUM ===
     server: [
-        {
-            id: "srv_lore",
-            title: "Der vergessene Aktenschrank",
-            text: "Ganz hinten, hinter dem alten Mainframe, steht ein offener Aktenschrank mit der Aufschrift 'VERTRAULICH'.",
-            opts: [
-                { t: "Darin stöbern", loot: "secret_list", m: 15, f: 5, a: 0, c: 5, r: "Du findest die 'Schwarze Liste' der HR-Abteilung. Pures Dynamit! Inventar +1." },
-                { t: "Ignorieren", m: 5, f: 0, a: 0, c: 0, r: "Besser nichts wissen." }
-            ]
-        },
+    {
+        id: "srv_lore_1",
+        title: "Der vergessene Aktenschrank",
+        text: "Hinter dem Mainframe steht ein verstaubter Schrank mit der Aufschrift 'VERTRAULICH'. Er ist leicht geöffnet. Oben drauf liegt eine Rolle Verpackungsmaterial.",
+        opts: [
+            { 
+                t: "In den Akten wühlen", 
+                loot: "secret_list", 
+                next: "path_lore_list", 
+                m: 20, f: 5, a: 0, c: 5, 
+                r: "Du wühlst dich durch staubige Rechnungen, bis du sie findest: Die 'Schwarze Liste' der HR. Das ist pures Dynamit. Du steckst sie schnell ein. (Inventar +1)" 
+            },
+            { 
+                t: "Die Luftpolsterfolie nehmen", 
+                loot: "bubble_wrap", 
+                next: "path_lore_bubble", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du entscheidest dich für das einfache Vergnügen. Die Folie wandert in deine Tasche. Manchmal ist Plastik besser als Wissen. (Inventar +1)" 
+            },
+            { 
+                t: "Nichts anfassen und gehen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du lässt die Geister der Vergangenheit ruhen. Manche Türen bleiben besser verschlossen." 
+            }
+        ]
+    },
+    {
+        id: "srv_lore_2a",
+        title: "Interne Ermittlung",
+        reqStory: "path_lore_list",
+        text: "Du hörst schwere Schritte im Gang. Es ist 'Der Cleaner' von der HR-Abteilung. Er sucht nach undichten Stellen. Die 'Schwarze Liste' in deiner Tasche fühlt sich plötzlich tonnenschwer an.",
+        opts: [
+            { 
+                t: "Im Kabelschacht verstecken", 
+                m: 15, f: -5, a: 15, c: -5, 
+                r: "Du quetschst dich zwischen staubige Kabelstränge. Er geht vorbei, schnüffelt kurz in der Luft, verschwindet aber wieder. Dein Herz hämmert." 
+            },
+            { 
+                t: "Liste zurückgeben", 
+                rem: "secret_list",
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du fängst ihn ab. 'Habe ich gefunden. Lag da einfach rum.' Er nimmt sie wortlos, nickt dir zu und geht. Keine Beweise, kein Ärger. (Item entfernt)" 
+            },
+            { 
+                t: "Mit Feuerlöscher ablenken", 
+                req: "fire_ext",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Ein kurzer Stoß CO2 sorgt für Nebel und Verwirrung. 'Feueralarm? Ich bin weg!' ruft er und rennt. Chaos ist dein Freund." 
+            }
+        ]
+    },
+    {
+        id: "srv_lore_2b",
+        title: "Taschenkontrolle",
+        reqStory: "path_lore_bubble",
+        text: "Der 'Cleaner' von HR fängt dich im Flur ab. 'Routinekontrolle. Wir suchen gestohlenes Firmeneigentum. Taschen leeren!' Er starrt auf deine ausgebeulte Hosentasche.",
+        opts: [
+            { 
+                t: "Taschen bereitwillig zeigen", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "Er findet... Luftpolsterfolie. Er rümpft die Nase. 'Nur Müll? Sie haben ja gar keinen Ehrgeiz.' Er lässt dich samt Folie stehen." 
+            },
+            { 
+                t: "Empört verweigern", 
+                m: 2, f: 0, a: 10, c: 5, 
+                r: "'Das verstößt gegen meine Rechte!' Er notiert deinen Namen auf einer Liste, aber da er nichts beweisen kann, zieht er ab." 
+            },
+            { 
+                t: "Bestechungs-Donut anbieten", 
+                rem: "donut",
+                m: 2, f: 5, a: -10, c: -5, 
+                r: "Er starrt auf den alten Donut. Sein Magen knurrt. 'Na gut. Einmalige Ausnahme.' Er nimmt den Donut und verschwindet kauend. (Item entfernt)" 
+            }
+        ]
+    },
     {
         id: "srv_sleep_1",
         title: "Das Karton-Lager",
         text: "Hinter den Racks stapeln sich alte Server-Verpackungen bis zur Decke. Eigentlich müsstest du sie zum Altpapier bringen. Aber wenn man sie geschickt anordnet, ergibt das eine blickdichte Höhle...",
         opts: [
             { 
-                t: "Eine geheime 'Festung' bauen", 
-                next: "fort_built",
-                m: 60, f: 35, a: 0, c: 10, 
-                r: "Du baust dir ein gemütliches Nest hinter der Kartonwand. Niemand kann dich hier sehen. Du machst ein nickerchen und lässt das Bauwerk für 'zukünftige Notfälle' stehen." 
+                t: "Eine geheime Festung bauen", 
+                next: "path_sleep_fort", 
+                m: 60, f: 35, a: -10, c: 10, 
+                r: "Du baust dir ein gemütliches Nest hinter der Kartonwand. Niemand kann dich hier sehen. Du machst ein Nickerchen und lässt das Bauwerk für 'zukünftige Notfälle' stehen." 
             },
             { 
                 t: "Alles sofort entsorgen", 
+                next: "path_sleep_trash", 
                 m: 30, f: -10, a: 5, c: 0, 
                 r: "Du schleppst die Kartons zum Container. Es ist langweilig und du schwitzt, aber der Serverraum ist jetzt wieder vorschriftsmäßig leer." 
             },
             { 
-                t: "Schild 'RÜCKSENDUNG' dran & liegen lassen", 
+                t: "Schild 'RÜCKSENDUNG' dran kleben", 
+                next: "path_sleep_label", 
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "Du klebst wahllos Zettel auf die Stapel. Jetzt sieht es aus wie ein wichtiger Vorgang. Das Problem des 'Zukunfts-Ichs'." 
             }
         ]
     },
     {
-        id: "srv_sleep_2",
-        title: "Architektonische Fragen",
-        reqStory: "fort_built",
-        text: "Du betrittst den Serverraum und dein Herz rutscht in die Hose. Der Chef steht mit verschränkten Armen vor deiner Karton-Festung hinter Rack 3. Er tippt mit dem Fuß dagegen. 'Müller? Warum haben wir hier einen Slum?'",
+        id: "srv_sleep_2a",
+        title: "Der Festungs-Kommandant",
+        reqStory: "path_sleep_fort",
+        text: "Kevin steht vor deiner Karton-Festung. Er hat ein Passwort-Schild 'Eintritt nur für Coole' angebracht. 'Hey, Chef! Gute Bude. Ich hab WLAN-Kabel verlegt.'",
         opts: [
             { 
-                t: "Ausrede: 'Das ist thermische Isolierung!'", 
-                m: 10, f: 5, a: 5, c: 10, 
-                r: "Du faselst etwas von 'Luftstrom-Optimierung' und 'Kältebrücken'. Der Chef sieht skeptisch aus, nickt aber dann. 'Kreativ. Aber hässlich. Weg damit bis morgen.' Zeit gewonnen." 
+                t: "Ihn loben", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "'Gute Arbeit, Soldat.' Ihr verbringt 10 Minuten damit, über Festungs-Architektur zu reden. Die Produktivität ist im Keller, die Moral oben." 
             },
             { 
-                t: "Panik: 'Das war Kevin! Ich räume es weg!'", 
-                m: 20, f: -10, a: 10, c: 0, 
-                r: "Der Chef schnaubt. 'Dieser Azubi... Sorgen Sie für Ordnung.' Du musst deine geliebte Festung unter den strengen Augen des Chefs abreißen. Ein trauriger Tag." 
-            },
-            { 
-                t: "Ehrlichkeit: 'Das ist mein Rückzugsort.'", 
-                m: 5, f: 0, a: -20, c: 30, 
-                r: "Der Chef starrt dich an. 'Wir sind hier nicht bei Google, Müller. Keine Kuschelecken.' Er tritt deine Wand ein. 'Arbeiten Sie.' Deine Würde liegt in Trümmern." 
+                t: "Festung abreißen", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Du bekommst Panik, dass der Chef es sieht. Du trittst die Kartons um. Kevin weint fast. 'Mein Schloss...'" 
             }
         ]
     },
-        {
-            id: "srv_tool",
-            title: "Werkzeugkasten",
-            text: "Der externe Techniker hat seinen Koffer offen stehen lassen. Ein schöner Schraubendreher blitzt dich an.",
-            opts: [
-                { t: "Einstecken", loot: "screw", m: 5, f: 0, a: 0, c: 0, r: "Werkzeug kann man immer brauchen. Inventar +1." },
-                { t: "Liegen lassen", m: 0, f: 0, a: 0, c: 0, r: "Du bist ehrlich. Leider bringt Ehrlichkeit keine XP." }
-            ]
-        },
-        {
-            id: "srv_bernd",
-            title: "Der Kollege Bernd",
-            text: "Du findest Bernd aus dem Vertrieb, der hier weinend auf dem Boden zwischen den warmen Server-Racks sitzt und eine Flasche Whisky trinkt. Er murmelt was von 'Umsatzzielen' und 'Scheidung'.",
-            opts: [
-                { 
-                    t: "Sich dazusetzen & einen Schluck mittrinken", 
-                    m: 30, f: 20, a: -40, c: 15, 
-                    r: "Ihr leert die Flasche gemeinsam. Ihr seid beide leicht angeheitert. Bernd ist eigentlich ganz okay, wenn er nicht über 'Synergie-Effekte' redet. Ein seltener Moment echter Menschlichkeit." 
-                },
-                { 
-                    t: "Ihn eiskalt bei HR verpetzen", 
-                    m: 10, f: -10, a: 0, c: -10, 
-                    r: "Du rufst die Personalabteilung. Bernd wird fünf Minuten später von der Security rausbegleitet. Sein Schreibtisch ist morgen frei. Du bist sicher, fühlst dich aber wie der größte Verräter der Firma." 
-                }
-            ]
-        },
-        {
-            id: "srv_mining",
-            title: "Hardware-Fund",
-            text: "Ein altes Bitcoin-Mining-Rig läuft hinter einem Rack versteckt. Es gehört wohl dem Vorgänger. Es ist laut und heiß.",
-            opts: [
-                { t: "Laufen lassen", m: 5, f: 10, a: 0, c: 20, r: "Passives Einkommen! Aber wenn die Stromrechnung kommt, bist du dran." },
-                { t: "Abschalten", m: 15, f: -5, a: 5, c: -5, r: "Stromrechnung gesenkt. Chef lobt die Energiebilanz, weiß aber nicht warum." }
-            ]
-        },
-        {
-            id: "srv_cable",
-            title: "Kabel-Salat",
-            text: "Du stolperst über ein loses Glasfaserkabel. Ein rotes Licht am Haupt-Switch blinkt hektisch. Das halbe Netzwerk wackelt.",
-            opts: [
-                { t: "Mit Tape flicken", req: "tape", m: 10, f: 0, a: 0, c: 0, r: "Provisorisch geflickt. Hält für immer." },
-                { t: "Stecker wackeln", m: 10, f: -5, a: 10, c: 0, r: "Glück gehabt. Das Internet war nur 10 Sekunden weg." },
-                { t: "Wegrennen", m: 5, f: 20, a: 0, c: 30, r: "Niemand hat dich gesehen. Die Firma ist offline. Du tust so, als wüsstest du von nichts." }
-            ]
-        },
-        {
-            id: "srv_drink",
-            title: "Vergessener Snack",
-            text: "Auf einem Server-Rack liegt eine Dose Energy Drink. Sie ist noch zu.",
-            opts: [
-                { t: "Trinken", loot: "energy", m: 5, f: -10, a: -10, c: 0, r: "Zucker und Koffein! Du fühlst dich bereit für den Kampf." },
-                { t: "Stehen lassen", m: 0, f: 0, a: 0, c: 0, r: "Wer weiß, wie lange die da schon liegt." }
-            ]
-        },
-        {
-            id: "srv_extinguisher",
-            title: "Sicherheits-Check",
-            text: "Hinter einem alten CRT-Monitor findest du einen unbenutzten Feuerlöscher.",
-            opts: [
-                { t: "Einstecken", loot: "fire_ext", m: 10, f: 0, a: 0, c: 0, r: "Könnte man mal brauchen, wenn es brenzlig wird. Inventar +1." }
-            ]
-        },
-        {
-            id: "srv_manual",
-            title: "Altes Buch",
-            text: "Ein verstaubtes Windows 95 Handbuch liegt unter einem Tischbein.",
-            opts: [
-                { t: "Mitnehmen", loot: "manual", m: 5, f: 0, a: 0, c: 0, r: "Könnte nützlich sein bei DAUs. Inventar +1." }
-            ]
-        },
-        {
+    {
+        id: "srv_sleep_2b",
+        title: "Lob vom Chef",
+        reqStory: "path_sleep_trash",
+        text: "Der Chef geht durch den leeren, ordentlichen Gang, wo vorher die Kartons waren. Er nickt zufrieden. 'Endlich mal Ordnung hier. Müller, das war vorbildlich.'",
+        opts: [
+            { 
+                t: "Bescheiden nicken", 
+                m: 2, f: -5, a: -5, c: 10, 
+                r: "Du sagst nichts und genießt den seltenen Moment der Anerkennung. Dein Standing in der Firma ist gestiegen." 
+            },
+            { 
+                t: "Nach Gehaltserhöhung fragen", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "'Wegen der Kartons? Übertreiben Sie es nicht.' Die Stimmung kippt sofort wieder. Gier frisst Hirn." 
+            }
+        ]
+    },
+    {
+        id: "srv_sleep_2c",
+        title: "Der Logistik-Fehler",
+        reqStory: "path_sleep_label",
+        text: "Ein Kurierfahrer steht völlig verwirrt vor deinen 'Rücksendung'-Kartons. 'Ich soll das abholen? Aber auf dem Lieferschein steht 2018... und warum sind die leer?'",
+        opts: [
+            { 
+                t: "Ihn überzeugen mitzunehmen", 
+                m: 10, f: 5, a: -5, c: 10, 
+                r: "Du redest so lange auf ihn ein, bis er sie genervt auflädt. 'Mir doch egal.' Weg ist weg. Du bist ein Genie." 
+            },
+            { 
+                t: "Die Wahrheit sagen", 
+                m: 30, f: -10, a: 5, c: -5, 
+                r: "'Okay, ich war nur zu faul.' Du musst ihm helfen, alles zum Container zu tragen, während er dich beschimpft." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_1",
+        title: "Der externe Techniker",
+        text: "Ein externer Dienstleister hat seinen Koffer im Serverraum offen stehen lassen. Er ist gerade rauchen. Ein hochwertiger Schraubendreher blitzt dich an.",
+        opts: [
+            { 
+                t: "Einstecken", 
+                loot: "screw", 
+                next: "path_tool_theft", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Meins. Werkzeug kann man immer brauchen. Du lässt den Rest unauffällig liegen. (Inventar +1)" 
+            },
+            { 
+                t: "Das Chaos im Koffer sortieren", 
+                next: "path_tool_sort", 
+                m: 15, f: -5, a: -10, c: 0, 
+                r: "Du kannst das Durcheinander nicht ansehen. Du sortierst Bits, Zangen und Kabelbinder nach Größe. Sehr befriedigend." 
+            },
+            { 
+                t: "Deckel zu und warten", 
+                next: "path_tool_wait", 
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du klappst den Koffer zu, damit niemand anderes auf dumme Ideen kommt. Du bist heute der Wächter des Eigentums." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2a",
+        title: "Vermisstenanzeige",
+        reqStory: "path_tool_theft",
+        text: "Der Techniker kommt zurück und wühlt hektisch in seinem Koffer. 'Wo ist mein Wera-Dreher?! Der lag genau hier! Das Ding kostet 40 Euro!' Er starrt dich an.",
+        opts: [
+            { 
+                t: "Eiskalt lügen: 'Keine Ahnung.'", 
+                m: 2, f: 0, a: -5, c: 15, 
+                r: "Du zuckst mit den Schultern. 'Vielleicht hat ihn der Putztrupp?' Er flucht und tritt gegen das Rack. Er glaubt dir nicht ganz, aber er hat keine Beweise." 
+            },
+            { 
+                t: "Kevin beschuldigen", 
+                m: 5, f: 5, a: -10, c: -5, 
+                r: "'Der Azubi war vorhin hier...' Der Techniker wird rot. 'Ich bring den Kleinen um!' Er stürmt raus. Du fühlst dich kurz schlecht, aber hey: Gratis Werkzeug." 
+            },
+            { 
+                t: "Zurückgeben: 'Lag am Boden.'", 
+                rem: "screw", 
+                m: 5, f: 0, a: 5, c: -5, 
+                r: "'Ach, den habe ich... äh... gesichert.' Du gibst ihn zähneknirschend zurück. Der Techniker reißt ihn dir aus der Hand. Dein Gewissen ist rein, deine Taschen sind leer." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2b",
+        title: "Das Genie beherrscht das Chaos",
+        reqStory: "path_tool_sort",
+        text: "Der Techniker kommt zurück, sieht in den perfekt sortierten Koffer und wird blass. 'Wer... wer hat das angefasst? Ich finde NICHTS mehr! Mein System basiert auf Haufen-Logik!'",
+        opts: [
+            { 
+                t: "Stolz: 'Gern geschehen.'", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "'Gern?! Ich brauche Stunden, um das wieder durcheinander zu bringen!' Er ruft seinen Chef an, um sich über 'interne Sabotage' zu beschweren." 
+            },
+            { 
+                t: "Ihn über Effizienz belehren", 
+                m: 20, f: -10, a: 5, c: 5, 
+                r: "Du erklärst ihm das 5S-System. Er hört gar nicht zu, sondern wirft wütend alles wieder auf einen Haufen. Perlen vor die Säue." 
+            },
+            { 
+                t: "Wortlos gehen", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Du lässt den Barbaren in seinem Elend zurück. Manche Menschen wollen einfach nicht gerettet werden." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2c",
+        title: "Sucheinsatz",
+        reqStory: "path_tool_wait",
+        text: "Der Techniker kommt zurück und wirkt verzweifelt. 'Verdammt, ich finde mein Crimp-Zange nicht. Ich muss in 10 Minuten fertig sein, sonst Vertragsstrafe.'",
+        opts: [
+            { 
+                t: "Helfen zu suchen", 
+                loot: "energy", 
+                m: 15, f: -10, a: 5, c: -5, 
+                r: "Ihr kriecht zusammen unter den Doppelboden. Du findest die Zange. 'Danke, Mann! Hier, nimm das.' Er wirft dir einen Energy Drink zu. (Inventar +1)" 
+            },
+            { 
+                t: "Ihn auslachen", 
+                m: 2, f: 5, a: -10, c: 5, 
+                r: "'Profi am Werk, was?' Er zeigt dir den Mittelfinger. Deine Laune steigt, aber Freunde hast du dir nicht gemacht." 
+            },
+            { 
+                t: "Kabelbinder schenken", 
+                rem: "zip_ties", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "'Vergiss die Zange, nimm die hier.' Er strahlt. 'Kabelbinder lösen alles.' Er pfuscht die Leitung zusammen und geht." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_1",
+        title: "Tränen & Promille",
+        text: "Du findest Bernd aus dem Vertrieb, der weinend zwischen den warmen Server-Racks sitzt und eine Flasche 'Glenfiddich' köpft. Er lallt: 'Meine Frau ist weg, mein Umsatz ist weg... alles ist weg.'",
+        opts: [
+            { 
+                t: "Sich dazusetzen & mittrinken", 
+                next: "path_bernd_drunk", 
+                m: 45, f: 20, a: -50, c: 20, 
+                r: "Ihr leert die Flasche. Bernd erzählt dir von seinem Traum, Alpakas zu züchten. Du erzählst ihm dein Root-Passwort (hoffentlich hast du das nur geträumt). Ihr seid beste Freunde." 
+            },
+            { 
+                t: "Eiskalt bei HR verpetzen", 
+                next: "path_bernd_snitch", 
+                m: 10, f: -5, a: 0, c: -15, 
+                r: "Du rufst anonym an. Zwei Minuten später wird Bernd von der Security rausgeschleift. Er ruft: 'Verrat! Et tu, Brute?!' Du fühlst dich schmutzig, aber dein Job ist sicher." 
+            },
+            { 
+                t: "Ihm einen Energy Drink geben", 
+                rem: "energy", 
+                next: "path_bernd_hyper", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Hier, trink das und reiß dich zusammen, du Wrack.' Bernd ext die Dose unter Tränen. Seine Augen weiten sich schlagartig. 'Zucker... Koffein... LEISTUNG?!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2a",
+        title: "Katerstimmung",
+        reqStory: "path_bernd_drunk",
+        text: "Bernd steht plötzlich strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee gestern... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
+        opts: [
+            { 
+                t: "Mitspielen: 'Klar, bin dabei.'", 
+                m: 15, f: 10, a: -5, c: 5, 
+                r: "Bernd drückt dich. 'Wir werden reich! Ich kümmere mich um das Heu, du um die IT.' Er geht pfeifend. Du hast jetzt ein Side-Business." 
+            },
+            { 
+                t: "Panik: 'Ich war betrunken!'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Bernds Gesicht fällt zusammen. 'Oh. Ich dachte... das war echt.' Er schlurft traurig davon. Du fühlst dich wie ein Monster." 
+            },
+            { 
+                t: "Nach weiterem Schnaps fragen", 
+                m: 5, f: 5, a: -10, c: 10, 
+                r: "'Ha! Guter Witz!' Bernd lacht laut. Zu laut. Der Chef schaut aus seinem Büro. Schnell weg hier." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2b",
+        title: "Erbe des Gefallenen",
+        reqStory: "path_bernd_snitch",
+        text: "Du gehst an Bernds leerem Schreibtisch vorbei. Er wurde 'freigestellt'. In seinem Mülleimer liegt noch sein Bürokram. Obenauf ein fast neuer Donut.",
+        opts: [
+            { 
+                t: "Den Donut looten", 
+                loot: "donut", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Schmeckt nach Sieg und Glasur. (Inventar +1)" 
+            },
+            { 
+                t: "Seinen Tacker klauen", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Es ist ein guter Tacker. Swingline. Rot. Du streichelst ihn. Meins." 
+            },
+            { 
+                t: "Ein schlechtes Gewissen haben", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du starrst auf den leeren Stuhl. Was, wenn du der Nächste bist? Der Gedanke verdirbt dir den Tag." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2c",
+        title: "The Wolf of Server Room",
+        reqStory: "path_bernd_hyper",
+        text: "Bernd rennt an dir vorbei. Er vibriert förmlich. Der Mix aus Whisky und Energy Drink hat etwas in ihm verändert. Er schreit ins Telefon: 'KAUFEN! VERKAUFEN! ALLES MUSS RAUS!'",
+        opts: [
+            { 
+                t: "Ihn bewundern", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Er hat gerade dem Hausmeister einen Leasing-Vertrag für einen Besen verkauft. Beeindruckend." 
+            },
+            { 
+                t: "Ihn bremsen wollen", 
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du versuchst ihn zu beruhigen. Er starrt dich mit weit aufgerissenen Pupillen an. 'Zeit ist Geld! Aus dem Weg, Geringverdiener!' Er sprintet zum Aufzug." 
+            },
+            { 
+                t: "Ihm WLAN-Passwörter verkaufen", 
+                loot: "secret_list", 
+                m: 15, f: 0, a: -5, c: 5, 
+                r: "'Daten! Ich brauche Daten!' Er tauscht seine Kundenliste gegen das Gast-WLAN-Passwort. Ein fairer Deal unter Wahnsinnigen. (Inventar +1)" 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_1",
+        title: "Hardware-Fund",
+        text: "Hinter einem losen Bodenblech findest du ein ratterndes Gestell aus Grafikkarten. Es ist laut, heiß und riecht nach verbranntem Staub. Ein Klebezettel darauf sagt: 'NICHT ANFASSEN! MAMA RECHNET!'",
+        opts: [
+            { 
+                t: "Laufen lassen (Gier)", 
+                next: "path_mining_heat", 
+                m: 5, f: 10, a: 0, c: 20, 
+                r: "Du deckst es wieder zu. Passives Einkommen! Solange der Chef die Stromrechnung nicht prüft, bist du reich. (Zumindest theoretisch.)" 
+            },
+            { 
+                t: "Stecker ziehen (Pflicht)", 
+                next: "path_mining_crash", 
+                m: 5, f: -5, a: 5, c: -5, 
+                r: "Zack. Ruhe. Die Lüfter sterben mit einem traurigen Surren. Du fühlst dich verantwortungsbewusst und spaßbefreit." 
+            },
+            { 
+                t: "Den USB-Stick an der Seite klauen", 
+                loot: "usb_stick", 
+                next: "path_mining_wallet", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Das muss die Wallet sein! Du ziehst den Stick ab. Der Bildschirm wird schwarz. Egal, du bist jetzt Krypto-Millionär. (Inventar +1)" 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2a",
+        title: "Thermische Eskalation",
+        reqStory: "path_mining_heat",
+        text: "Der Feueralarm brüllt los. Aus dem Bodenblech, wo das Mining-Rig steht, steigt schwarzer Rauch auf. Es war wohl doch etwas zu viel Staub in den Lüftern.",
+        opts: [
+            { 
+                t: "Mit Feuerlöscher draufhalten", 
+                req: "fire_ext", 
+                m: 10, f: 0, a: -5, c: -5, 
+                r: "CO2-Nebel füllt den Raum. Das Feuer ist aus, die Hardware ist Schrott. Du meldest es als 'Spontane Selbstentzündung eines Switches'." 
+            },
+            { 
+                t: "Panisch auspusten", 
+                m: 5, f: 0, a: 20, c: 20, 
+                r: "Du wedelst mit einem Handbuch. Es bringt nichts. Die Sprinkleranlage geht an. Du bist nass, der Serverraum ist nass. Das wird teuer." 
+            },
+            { 
+                t: "Rennen und 'FEUER!' schreien", 
+                m: 2, f: 5, a: 10, c: 15, 
+                r: "Du evakuierst dich selbst ins Home-Office. Die Feuerwehr regelt das. Morgen wird es unangenehme Fragen geben." 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2b",
+        title: "Kritische Infrastruktur",
+        reqStory: "path_mining_crash",
+        text: "Zwei Stunden nachdem du das Rig abgeschaltet hast, stürmt der Chef rein. 'Müller! Das gesamte E-Mail-Archiv von 1990 bis 2005 ist offline! Das lief auf dem Legacy-Cluster hinter Rack 4!'",
+        opts: [
+            { 
+                t: "Behaupten, es war ein Hacker", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "'Die Russen, Chef. Ganz sicher.' Er wird blass. 'Oh Gott. Meine Mails an die Sekretärin...' Er rennt raus. Du schaltest das Ding schnell wieder an." 
+            },
+            { 
+                t: "Den 'Fehler' suchen und beheben", 
+                req: "manual", 
+                m: 30, f: -15, a: 10, c: -10, 
+                r: "Mit dem Win95-Handbuch und viel Geduld bootest du das System neu. Es piept fröhlich. Die Mails sind wieder da. Niemand dankt dir." 
+            },
+            { 
+                t: "Ehrlich sein: 'Ich hab's ausgemacht.'", 
+                m: 5, f: 0, a: 0, c: 30, 
+                r: "Der Chef starrt dich an. 'Sie haben das Backup-System für illegalen Stromverbrauch gehalten? Müller, ich weiß nicht, ob Sie zu schlau oder zu dumm für diesen Job sind.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2c",
+        title: "Der Krypto-Schatz",
+        reqStory: "path_mining_wallet",
+        text: "Du sitzt in der Pause und steckst den geklauten USB-Stick in deinen Laptop. Deine Hände zittern. Sind da Bitcoins drauf? Dogecoins? Die Rente?",
+        opts: [
+            { 
+                t: "Stick öffnen", 
+                m: 10, f: 5, a: 10, c: 0, 
+                r: "Ordner: 'Urlaub_Mallorca_98'. Es sind nur 500 Bilder von Egon in Badehose. Dein Trauma ist unbeschreiblich. Der Stick ist wertlos." 
+            },
+            { 
+                t: "Stick formatieren (Beweise vernichten)", 
+                rem: "usb_stick", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "Sicher ist sicher. Du löschst alles und wirfst den Stick in den Müll. Kein Reichtum, aber auch keine Beweise. (Item entfernt)" 
+            },
+            { 
+                t: "Stick an Kevin verkaufen", 
+                rem: "usb_stick", 
+                loot: "energy", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Hey Kevin, da sind Cheat-Codes drauf.' Kevin glaubt dir und gibt dir seine letzte Dose Energy Drink dafür. Ein guter Tausch. (Item verloren, Energy erhalten)" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_1",
+        title: "Kabel-Salat",
+        text: "Du stolperst über ein loses Glasfaserkabel. Ein hässliches Knirschen. Ein rotes Licht am Haupt-Switch blinkt hektisch. Das halbe Netzwerk ist gerade gestorben.",
+        opts: [
+            { 
+                t: "Mit Tape fixieren", 
+                req: "tape",
+                next: "path_cable_fix", 
+                m: 10, f: -5, a: -5, c: -5, 
+                r: "Du wickelst eine halbe Rolle Panzertape um den Bruch. Es sieht aus wie ein verarztetes Bein, aber das Licht wird grün. Nichts hält länger als ein Provisorium." 
+            },
+            { 
+                t: "Am Stecker wackeln", 
+                next: "path_cable_wiggle", 
+                m: 2, f: 5, a: 10, c: 0, 
+                r: "Du drückst, ziehst und betest. Das Licht springt auf Grün. Du atmest aus. Bloß nicht mehr anatmen." 
+            },
+            { 
+                t: "Wegrennen und verstecken", 
+                next: "path_cable_run", 
+                m: 5, f: 10, a: -5, c: 15, 
+                r: "Du verschwindest im Schatten der Racks. Niemand hat dich gesehen. Im Flur hörst du erste Schreie: 'Das Internet ist weg!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2a",
+        title: "ISO-Zertifizierung",
+        reqStory: "path_cable_fix",
+        text: "Ein externer ISO-Prüfer steht vor deinem Tape-Meisterwerk. Er tippt mit dem Kugelschreiber auf den silbernen Klumpen am Glasfaserkabel. 'Ist das... DIN-normgerecht?'",
+        opts: [
+            { 
+                t: "Behaupten, das sei eine Schirmung", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "'Spezial-Abschirmung gegen kosmische Strahlung.' Der Prüfer nickt beeindruckt und macht einen Haken. Kompetenz ist, wenn man sicher auftritt." 
+            },
+            { 
+                t: "Zugeben, dass es das Internet zusammenhält", 
+                m: 5, f: 0, a: 5, c: -5, 
+                r: "Der Prüfer seufzt tief. 'Ich habe nichts gesehen. Aber wenn das brennt, kenne ich Sie nicht.' Er geht weiter." 
+            },
+            { 
+                t: "Tape abreißen (Beweis vernichten)", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Du reißt das Tape ab. Das Kabel bricht sofort wieder. Das Netzwerk stirbt erneut. Der Prüfer starrt dich entsetzt an. 'Das war... mutig.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2b",
+        title: "Der Wackelkontakt",
+        reqStory: "path_cable_wiggle",
+        text: "Der Chef betritt den Serverraum. Er tritt fest auf den Boden. Durch die Erschütterung verliert dein nur 'gewackeltes' Kabel den Kontakt. Das Licht am Switch springt auf Rot.",
+        opts: [
+            { 
+                t: "Einreden, er sei statisch aufgeladen", 
+                m: 5, f: 5, a: -5, c: 10, 
+                r: "'Das ist Ihre Aura, Chef! Zu viel Energie!' Er wirkt geschmeichelt. 'Tatsächlich? Ich spüre auch so ein Kribbeln.' Er geht vorsichtig raus." 
+            },
+            { 
+                t: "Heimlich dagegen treten", 
+                m: 2, f: 0, a: 5, c: 5, 
+                r: "Während er wegschaut, trittst du gegen das Rack. Das Licht wird grün. 'Selbstheilungskräfte', murmelst du. Puh." 
+            },
+            { 
+                t: "Sofortige Not-Wartung vortäuschen", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "'Alarm! Kritischer Fehler!' Du scheuchst den Chef raus und wackelst wieder am Kabel. Es hält... für jetzt." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2c",
+        title: "Die Hacker-Theorie",
+        reqStory: "path_cable_run",
+        text: "Im Flur herrscht Panik. Dr. Wichtig steht auf einem Stuhl. 'Wir werden angegriffen! Das ist Cyber-Warfare! Jemand hat die Leitung physisch gekappt!' Alle schauen sich misstrauisch an.",
+        opts: [
+            { 
+                t: "Die 'Ermittlung' leiten", 
+                m: 10, f: 5, a: -5, c: -10, 
+                r: "Du spielst Sherlock Holmes. 'Es war... eine Ratte. Ich habe Bissspuren gesehen.' Der Chef nickt. 'Kaufen Sie Gift.' Du bist fein raus." 
+            },
+            { 
+                t: "Kevin beschuldigen", 
+                m: 2, f: 5, a: -5, c: -5, 
+                r: "'Ich sah Kevin in der Nähe des Racks...' Die Menge tobt. Kevin wird zum Verhör geschleift. Dein Karma ist im Keller, aber du bist sicher." 
+            },
+            { 
+                t: "Still in der Ecke stehen", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du sagst nichts und hoffst, dass niemand deine Schuhabdrücke auf dem Kabel sieht. Der Angstschweiß läuft dir den Rücken runter." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_1",
+        title: "Vergessener Snack",
+        text: "Auf einem warmen Server-Rack steht eine einsame Dose 'Cyber-Fuel'. Sie ist noch zu, aber das Mindesthaltbarkeitsdatum ist eine vage Erinnerung.",
+        opts: [
+            { 
+                t: "Sofort trinken", 
+                next: "path_drink_now", 
+                m: 5, f: -15, a: -15, c: 0, 
+                r: "ZISCH. Die warme Brühe schmeckt nach Gummibärchen und Herzrasen. Du fühlst dich unbesiegbar (für ca. 20 Minuten)." 
+            },
+            { 
+                t: "Für später einstecken", 
+                loot: "energy", 
+                next: "path_drink_keep", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Man weiß nie, wann man einen chemischen Boost braucht. Ab in die Tasche damit. (Inventar +1)" 
+            },
+            { 
+                t: "Stehen lassen", 
+                next: "path_drink_ignore", 
+                m: 0, f: 5, a: 0, c: 0, 
+                r: "Du traust keiner Flüssigkeit, die im Dunkeln leuchtet. Du lässt sie für die Server-Goblins stehen." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2a",
+        title: "Der Zucker-Crash",
+        reqStory: "path_drink_now",
+        text: "Dein Magen grummelt bedrohlich. Das 'Cyber-Fuel' war wohl doch schon etwas älter. Oder radioaktiv. Dein linkes Augenlid zuckt unkontrolliert.",
+        opts: [
+            { 
+                t: "Auf der Toilette verstecken", 
+                m: 20, f: 10, a: 5, c: -5, 
+                r: "Sicher ist sicher. Du verbringst 20 Minuten in der Kachel-Abteilung. Produktivität: Null. Überlebenswille: Hoch." 
+            },
+            { 
+                t: "Weiterarbeiten und zittern", 
+                m: 10, f: -5, a: 20, c: 5, 
+                r: "Du versuchst zu tippen, aber deine Hände vibrieren so stark, dass du aus Versehen drei Tickets gleichzeitig schließt. Effizienz durch Panik." 
+            },
+            { 
+                t: "Wasser nachtrinken", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du spülst den Chemie-Geschmack am Wasserspender weg. Das Zucken hört auf. Du lebst noch." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2b",
+        title: "Klebrige Angelegenheit",
+        reqStory: "path_drink_keep",
+        text: "Du greifst in deine Tasche und fasst in etwas Nasses. Die Dose 'Cyber-Fuel' hatte wohl ein mikroskopisches Leck. Alles klebt.",
+        opts: [
+            { 
+                t: "Alles sauber machen", 
+                rem: "energy", 
+                m: 15, f: -5, a: 10, c: 0, 
+                r: "Du fluchst und schrubbst deine Hose mit Papiertüchern ab. Die Dose ist leer, deine Laune im Keller. (Item entfernt)" 
+            },
+            { 
+                t: "Egal, Hauptsache Koffein", 
+                rem: "energy", 
+                m: 5, f: -10, a: -5, c: 5, 
+                r: "Du leckst die Reste von den Fingern und trinkst den kläglichen Rest aus der Dose. Es ist würdelos, aber es wirkt." 
+            },
+            { 
+                t: "Den Azubi um Hilfe bitten", 
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "'Kevin, hast du Feuchttücher?' Kevin grinst. 'Klar, Gamer-Standard-Ausrüstung.' Er hilft dir, die klebrige Tasche zu reinigen." 
+            },
+            {
+                t: "Moment... die ist ja leer?",
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du merkst, dass es nur alte Reste waren. Du hast die Dose ja schon längst getrunken."
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2c",
+        title: "Kevins Fund",
+        reqStory: "path_drink_ignore",
+        text: "Kevin kommt mit weit aufgerissenen Augen aus dem Serverraum. Er hält die Dose in der Hand. 'Boah! Vintage Cyber-Fuel von 2012! Sammlerstück!'",
+        opts: [
+            { 
+                t: "Ihm sagen, dass er es nicht trinken soll", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Zu spät!' Kevin ext die Dose. Er fängt an, Farben zu riechen. Du hast es versucht." 
+            },
+            { 
+                t: "Ihm viel Spaß wünschen", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Darwin regelt das. Du gehst Kaffee holen." 
+            },
+            { 
+                t: "Ihm um den Pfand beneiden", 
+                m: 1, f: 0, a: 5, c: 0, 
+                r: "25 Cent. Du hättest reich sein können. Verdammt." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_1",
+        title: "Sicherheits-Check",
+        text: "Hinter einem vergilbten CRT-Monitor findest du einen Feuerlöscher. Er ist staubig. Laut Plakette war die letzte Prüfung 1998.",
+        opts: [
+            { 
+                t: "Einstecken", 
+                loot: "fire_ext", 
+                next: "path_ext_loot", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Du wuchtest das schwere Ding in dein Inventar. Man weiß nie, wann man ein Feuer löschen (oder eine Tür einschlagen) muss. (Inventar +1)" 
+            },
+            { 
+                t: "Kurzer Funktionstest", 
+                next: "path_ext_trap", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Du drückst den Hebel nur ganz kurz. Ein Zischen... und dann klemmt das Ventil. PFFFFFFT!" 
+            },
+            { 
+                t: "Vollständiges DIN-Audit durchführen", 
+                next: "path_ext_audit", 
+                m: 60, f: -30, a: 10, c: -20, 
+                r: "Du holst Putzzeug, eine Lupe und das Prüfprotokoll. Du verbringst eine Stunde damit, Roststellen zu dokumentieren. Vorbildlich!" 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2a",
+        title: "Schwertransport",
+        reqStory: "path_ext_loot",
+        text: "Du schleppst den Feuerlöscher durch den Gang. Er wiegt gefühlt 20 Kilo und schlägt dir ständig gegen das Schienbein. Egon der Hausmeister sieht dich kritisch an.",
+        opts: [
+            { 
+                t: "Sagen, dass du ihn zur Wartung bringst", 
+                m: 10, f: -5, a: 5, c: -5, 
+                r: "Egon nickt anerkennend. 'Guter Mann. Sicherheit ist kein Spielzeug.' Er lässt dich passieren." 
+            },
+            { 
+                t: "Ihn als Türstopper benutzen", 
+                rem: "fire_ext", 
+                m: 5, f: 10, a: -5, c: 5, 
+                r: "Du hast keine Lust mehr zu schleppen. Du stellst ihn vor die Serverraum-Tür. Jetzt bleibt sie offen und es wird kühler. (Item entfernt)" 
+            },
+            { 
+                t: "Training: Bizeps-Curls machen", 
+                m: 20, f: -10, a: -20, c: 10, 
+                r: "Du nutzt das Gewicht für ein spontanes Workout im Gang. Deine Arme brennen, deine Aggro sinkt. Egon schüttelt nur den Kopf." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2b",
+        title: "Winter Wonderland",
+        reqStory: "path_ext_trap",
+        text: "Der 'kurze Test' von vorhin ist eskaliert. Der halbe Serverraum ist mit weißem Löschpulver bedeckt. Es sieht aus wie in 'Scarface', nur staubiger. Der Lüfter verteilt es überall hin.",
+        opts: [
+            { 
+                t: "Alles selbst putzen", 
+                m: 120, f: -50, a: 30, c: -10, 
+                r: "Zwei Stunden. Du kriechst zwei Stunden lang mit einem Lappen durch den Raum. Deine Faulheit ist im Keller, deine Wut auf dem Höhepunkt." 
+            },
+            { 
+                t: "Flüchten und Tür abschließen", 
+                m: 5, f: 10, a: -5, c: 30, 
+                r: "Du rennst raus. 'Keine Ahnung, das muss eine Fehlfunktion der Anlage sein!' Hoffentlich glaubt man dir." 
+            },
+            { 
+                t: "Es als Kunst-Installation verkaufen", 
+                m: 15, f: 5, a: 0, c: 15, 
+                r: "Du klebst ein Schild 'VERGÄNGLICHKEIT' an das Rack. Der Chef kommt vorbei: 'Interessant. Aber machen Sie es weg.' Zeit verschwendet." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2c",
+        title: "Der Bürokrat",
+        reqStory: "path_ext_audit",
+        text: "Nach deinem einstündigen Audit kommt Dr. Wichtig vorbei. Er sieht deine Checklisten und Tabellen neben dem Feuerlöscher. Er wirkt überrascht.",
+        opts: [
+            { 
+                t: "Bericht stolz präsentieren", 
+                m: 15, f: -5, a: -5, c: -15, 
+                r: "'Das Gerät entspricht nicht der Norm DIN-1402.' Der Chef nickt. 'Müller, ich mag Ihre Gründlichkeit. Weitermachen.' (Großer Radar-Bonus)" 
+            },
+            { 
+                t: "Überstunden dafür beantragen", 
+                m: 10, f: 0, a: 10, c: 20, 
+                r: "'Überstunden? Fürs Staubwischen? Träumen Sie weiter.' Der positive Effekt ist verpufft." 
+            },
+            { 
+                t: "Ihn bitten, das Protokoll zu signieren", 
+                m: 30, f: -10, a: 5, c: 0, 
+                r: "Du zwingst ihn in eine 30-minütige Diskussion über Brandschutzverordnungen. Er unterschreibt, nur damit du aufhörst zu reden." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_1",
+        title: "Tragendes Wissen",
+        text: "Ein dickes, vergilbtes Buch klemmt unter einem wackeligen Tischbein: 'Windows 95 - Das Handbuch'. Es trägt die Last von drei Monitoren und einem Switch.",
+        opts: [
+            { 
+                t: "Rausziehen und einstecken", 
+                loot: "manual", 
+                next: "path_man_taken", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Mit einem Ruck ziehst du es raus. Der Tisch sackt 2cm ab. Der Monitor oben drauf schwankt bedrohlich. Aber hey: Antikes Wissen! (Inventar +1)" 
+            },
+            { 
+                t: "Liegen lassen", 
+                next: "path_man_leave", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Never touch a running system. Das gilt auch für Möbel. Du lässt die Statik intakt und das Buch verstauben." 
+            },
+            { 
+                t: "Vor Ort darin blättern", 
+                next: "path_man_study", 
+                m: 30, f: 10, a: -10, c: 0, 
+                r: "Du hockst dich auf den Boden und liest das Kapitel über 'IRQ-Konflikte'. Eine einfachere Zeit. Du fühlst dich entspannt, aber deine Beine sind eingeschlafen." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2a",
+        title: "Schieflage",
+        reqStory: "path_man_taken",
+        text: "Der Tisch ohne das Handbuch-Bein vibriert durch die Server-Lüfter so stark, dass der teure Core-Switch langsam Richtung Abgrund rutscht. Gleich fällt er.",
+        opts: [
+            { 
+                t: "Handbuch wieder drunterschieben", 
+                rem: "manual", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du opferst das Wissen für die Sicherheit. Der Tisch steht wieder stabil. Dein Inventar ist leerer, dein Gewissen reiner. (Item entfernt)" 
+            },
+            { 
+                t: "Pappe falten und drunterschieben", 
+                m: 15, f: -10, a: 5, c: 0, 
+                r: "Du bastelst aus einer Pizza-Schachtel einen Ersatz-Keil. Es hält nicht ganz so gut und sieht furchtbar aus, aber du darfst das Buch behalten." 
+            },
+            { 
+                t: "Switch mit Tape festkleben", 
+                req: "tape", 
+                m: 5, f: 5, a: 0, c: -5, 
+                r: "Wenn es sich bewegt und es sich nicht bewegen soll: Panzertape. Du klebst den Switch einfach an den Tisch. Problem gelöst." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2b",
+        title: "5S-Audit",
+        reqStory: "path_man_leave",
+        text: "Ein 'Lean-Management-Berater' kriecht durch den Serverraum. Er zeigt auf das Handbuch unter dem Tischbein. 'Das ist kein definierter Lagerplatz für Dokumentation. Das muss weg.'",
+        opts: [
+            { 
+                t: "Erklären, dass es ein Lastverteiler ist", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du schwafelst was von 'Schwingungsdämpfung nach DIN-Norm'. Der Berater macht sich Notizen. 'Kreative Lösung.' Er klebt einen 'Geprüft'-Aufkleber auf das Buch." 
+            },
+            { 
+                t: "Ihm erlauben, es zu entfernen", 
+                m: 5, f: 10, a: 0, c: 0, 
+                r: "Er zieht es triumphierend raus. Der Tisch kippt. Der Monitor fällt ihm auf den Fuß. Du lachst innerlich. Das Audit ist beendet." 
+            },
+            { 
+                t: "Ihn ignorieren", 
+                m: 2, f: 5, a: 5, c: 10, 
+                r: "Er schreibt 'Mangelhafte Ordnung' in seinen Bericht. Das gibt Ärger, aber wenigstens hast du nicht mit ihm geredet." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2c",
+        title: "Legacy-Support",
+        reqStory: "path_man_study",
+        text: "Der Chef kommt rein. 'Müller! Wir haben noch einen 486er im Keller, der die Türsteuerung regelt. Er verlangt eine IRQ-Zuweisung für die Soundkarte. Wissen Sie zufällig, was das ist?'",
+        opts: [
+            { 
+                t: "Sofort die Lösung nennen", 
+                m: 5, f: -5, a: -10, c: -20, 
+                r: "'IRQ 5, DMA 1, Adresse 220.' Du hast es gerade gelesen. Der Chef starrt dich an wie einen Gott. 'Müller, Sie sind ein Genie.' (Massiver Radar-Bonus)" 
+            },
+            { 
+                t: "So tun, als müsstest du recherchieren", 
+                m: 60, f: 20, a: 0, c: 0, 
+                r: "Du weißt es zwar, aber du sagst: 'Das ist hochkomplex. Dauert 2 Stunden.' Du gehst entspannt Kaffee trinken. Der Chef wartet ehrfürchtig." 
+            },
+            { 
+                t: "Sagen: 'Kaufen Sie was Neues'", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "'Kein Budget!', blafft er zurück. Chance vertan, zu glänzen." 
+            }
+        ]
+    },
+    {
         id: "srv_rat_1",
         title: "Das seltsame Geräusch",
         text: "Aus Rack 4 kommt ein kratzendes Geräusch. Es klingt nicht wie ein Lüfter. Eher wie... scharfe Zähne auf teurem Glasfaserkabel. Etwas Lebendiges nistet sich in der Firewall ein.",
         opts: [
-            { t: "Dagegen treten", next: "srv_rat_damage", r: "BAM! Du trittst gegen den Serverschrank. Es quiekt panisch, dann hörst du ein lautes 'ZAPP' und Stille. Das Geräusch ist weg. Das Internet aber auch.", m: 5, f: 0, a: 10, c: 5 },
-            { t: "Donut als Köder", req: "donut", next: "srv_rat_tamed", r: "Du legst ein Stück alten Donut vor das Rack. Ein Augenpaar leuchtet im Dunkeln auf. Schnuppergeräusche.", m: 10, f: 5, a: -10, c: 0 },
-            { t: "Kammerjäger rufen", r: "Der Kammerjäger kommt in 3 Wochen. Bis dahin hat die Ratte das Rechenzentrum in ein Nest verwandelt.", m: 0, f: 10, a: 0, c: 10 }
+            { 
+                t: "Dagegen treten", 
+                next: "path_rat_kick", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "BAM! Du trittst fest gegen das Blech. Es quiekt panisch, dann ist absolute Stille. Du wartest kurz... nichts mehr. Problem pragmatisch gelöst." 
+            },
+            { 
+                t: "Donut als Köder", 
+                req: "donut", 
+                next: "path_rat_feed", 
+                m: 10, f: 5, a: -10, c: 0, 
+                r: "Du brichst ein Stück ab und legst es vor den Kabelschacht. Ein Schatten huscht heraus, schnappt den Köder und verschwindet lautlos. Ruhe." 
+            },
+            { 
+                t: "Kammerjäger rufen", 
+                next: "path_rat_call", 
+                m: 15, f: 5, a: 0, c: 5, 
+                r: "Du erstellst ein Ticket beim Gebäudemanagement. Priorität: Hoch. Status: 'In Bearbeitung'. Du hast deine Pflicht getan und gehst." 
+            }
         ]
     },
     {
         id: "srv_rat_2a",
         title: "Kollateralschaden",
-        reqStory: "srv_rat_damage",
-        text: "Du öffnest die Tür. Die Ratte ist geflohen, aber sie hat Rache genommen: Der Main-Uplink zum Backbone ist komplett durchgenagt. Funken sprühen. Das ganze Netzwerk ist tot.",
+        reqStory: "path_rat_kick",
+        text: "Dein Monitoring-Dashboard leuchtet rot wie ein Weihnachtsbaum. Der Uplink in Rack 4 ist tot. Offenbar hat dein Tritt vorhin nicht nur die Ratte vertrieben, sondern auch etwas gelöst.",
         opts: [
-            { t: "Kabel tauschen", req: "cable", r: "Du ziehst den verschmorten Stummel raus und klickst dein Ersatzkabel rein. Link-LED wird grün. Sauberer Job.", m: 5, f: -5, a: -5, c: -10 },
-            { t: "Flicken mit Tape", req: "tape", r: "Du verdrillst die Kupferadern und wickelst Tape drum. Es gibt Paketverlust (30%), aber es läuft. Hoffentlich guckt keiner rein.", m: 10, f: 0, a: 5, c: 5 },
-            { t: "WLAN-Bridge bauen", r: "Du versuchst, das Rechenzentrum über dein Handy-Hotspot zu routen. Der Datentarif ist nach 3 Sekunden leer.", m: 20, f: 5, a: 20, c: 15 }
+            { 
+                t: "Kabel tauschen", 
+                req: "cable", 
+                m: 15, f: -5, a: -5, c: -10, 
+                r: "Du findest das durchtrente Kabel (Bissspuren oder Riss?). Egal. Du steckst ein neues Patchkabel. Link ist da. Niemand hat was gesehen." 
+            },
+            { 
+                t: "Flicken mit Tape", 
+                req: "tape", 
+                m: 10, f: 0, a: 5, c: 5, 
+                r: "Du fummelst die Adern zusammen und isolierst sie. 'Temporary Fix' nennst du das. Es hält... vorerst." 
+            },
+            { 
+                t: "Es auf 'Sonnenwinde' schieben", 
+                m: 2, f: 10, a: -5, c: 20, 
+                r: "Du schickst eine Rundmail: 'Atmosphärische Störungen'. Die Leute glauben alles, solange es technisch klingt. Du machst nichts." 
+            }
         ]
     },
     {
         id: "srv_rat_2b",
         title: "Ein neuer Freund",
-        reqStory: "srv_rat_tamed",
-        text: "Eine fette Kanalratte kriecht heraus und frisst den Donut. Sie sieht dich dankbar an und klettert auf deine Schulter. Sie scheint IT-Affinität zu haben.",
+        reqStory: "path_rat_feed",
+        text: "Du gehst nochmal an Rack 4 vorbei. Da sitzt sie wieder. Die Ratte, die du gefüttert hast. Sie wirkt satt und entspannt. Sie hat sogar eine tote Kakerlake für dich 'gefangen'.",
         opts: [
-            { t: "Als 'Junior Admin' behalten", r: "Du nennst sie 'Splinter'. Sie wohnt jetzt im warmen Server-Rack und hält Ungeziefer fern.", m: 5, f: 10, a: -5, c: 0 },
-            { t: "Hausmeister rufen", r: "Egon kommt mit einem großen Sack. Das Ende der Geschichte willst du nicht wissen.", m: 10, f: 0, a: 0, c: 0 }
+            { 
+                t: "Als 'Junior Admin' behalten", 
+                m: 5, f: 10, a: -10, c: 0, 
+                r: "Du nennst sie 'Splinter'. Sie wohnt jetzt hinter dem Patchpanel. Das effektivste Anti-Bug-System der Firma." 
+            },
+            { 
+                t: "Hausmeister rufen", 
+                m: 10, f: 0, a: 0, c: 0, 
+                r: "Doch lieber keine Haustiere. Egon kommt und kümmert sich 'diskret' darum. Du guckst weg." 
+            }
         ]
     },
-        {
-            id: "srv_cold",
-            title: "Die Kälte-Falle",
-            text: "Jemand hat die Klimaanlage auf 16 Grad gestellt und den Türgriff von innen abgebrochen. Du bist eingesperrt und frierst!",
-            opts: [
-                { t: "Mit Hammer Tür einschlagen", req: "hammer", m: 15, f: -5, a: -10, c: 20, r: "BÄM! Tür offen. Du fühlst dich wie Thor. Der Chef wird Fragen zum Türblatt haben." },
-                { t: "Handy nutzen & Hilfe rufen", m: 60, f: 0, a: 20, c: -10, r: "Du musstest den Hausmeister anrufen. Er hat 45 Minuten gebraucht. Du bist jetzt ein Eisblock." },
-                { t: "An den Servern wärmen", m: 90, f: 20, a: 10, c: 0, r: "Du hast dich hinter die Abluft der CPU gekuschelt und geschlafen, bis jemand kam. Gemütlich." }
-            ]
-        },
-        {
-            id: "srv_red_1",
-            title: "Die rote Flüssigkeit",
-            text: "Unter Rack 7 bildet sich eine Pfütze. Sie ist tiefrot und klebrig. Es riecht süßlich. Ist das... Blut? Hydrauliköl? Oder Sirup? Über dir verläuft eigentlich keine Leitung.",
-            opts: [
-                { 
-                    t: "Todesmutig den Finger reinstecken & probieren", 
-                    next: "slushie_secret", // <--- Startet Teil 2
-                    m: 5, f: 0, a: 0, c: 0, 
-                    r: "Es ist... Kirsch-Slushie?! Du schiebst die Deckenplatte weg. Tatsächlich: Jemand hat hier eine illegale Slushie-Maschine versteckt, um Strom zu klauen. Du zapfst dir heimlich einen Becher ab. Lecker." 
-                },
-                { 
-                    t: "Panik: Großalarm auslösen!", 
-                    m: 30, f: -10, a: 20, c: 10, 
-                    r: "Feuerwehr, Polizei und der Chef rücken an. Der 'biologische Gefahrstoff' entpuppt sich als ausgelaufene Kühlflüssigkeit mit rotem Farbstoff. Du stehst da wie ein Idiot." 
-                },
-                { 
-                    t: "Einfach aufwischen & ignorieren", 
-                    m: 15, f: 0, a: 0, c: -5, 
-                    r: "Du wischst die Pfütze mit Taschentüchern weg. Was man nicht weiß, macht einen nicht heiß. Solange die LEDs grün blinken, ist alles gut." 
-                }
-            ]
-        },
-        {
-            id: "srv_red_2",
-            title: "Das große Krabbeln",
-            reqStory: "slushie_secret", 
-            text: "Du hörst ein seltsames Knistern aus Rack 7. Nicht elektrisch... organisch. Du leuchtest mit der Taschenlampe rein: Tausende Ameisen! Sie wurden von den klebrigen Slushie-Resten angelockt und bauen jetzt ein Nest im 10.000€ Switch.",
-            opts: [
-                { 
-                    t: "Chemische Keule: Eine Dose Insektenspray reinleeren", 
-                    m: 5, f: 5, a: -5, c: 5,
-                    r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Schnell weg hier, bevor jemand den Chemikalien-Geruch bemerkt." 
-                },
-                { 
-                    t: "Alles ausbauen & einzeln reinigen", 
-                    m: 60, f: -25, a: 15, c: -5,
-                    r: "Eine Stunde lang pinselst du tote Ameisen von Platinen. Es ist eklig, aber du rettest die Hardware. Niemand erfährt von dem Vorfall. Saubere Arbeit." 
-                },
-                { 
-                    t: "Den Azubi Kevin rufen: 'Mach das weg!'", 
-                    m: 10, f: 10, a: -15, c: 20,
-                    r: "Kevin sieht die Ameisen und schreit. Der Chef stürmt rein: 'WAS IST HIER LOS?!' Er sieht den Zucker. Du bekommst einen heftigen Einlauf wegen mangelnder Aufsicht, aber Kevin muss putzen." 
-                }
-            ]
-        },
-        {
-            id: "srv_illegal",
-            title: "Das illegale Datencenter",
-            text: "Du lehnst dich gegen ein Regal und plötzlich schwingt eine falsche Wand auf. Dahinter: Ein kompletter, versteckter Serverraum! Er taucht in keinem Inventar auf. Auf den Bildschirmen flackern... nun ja, sehr 'eindeutige' Erwachsenenfilme. Die Admin-Konsole ist eingeloggt: Es gehört dem Vize-Chef.",
-            opts: [
-                { 
-                    t: "Beweise sichern & Vize-Chef erpressen", 
-                    req: "secret_list", 
-                    m: 10, f: 30, a: 0, c: -30, 
-                    r: "Du wedelst mit den Beweisen aus der Schwarzen Liste. Er wird kreidebleich und bietet dir sofort eine monatliche 'Schweigeprämie' als 'Beraterhonorar' an. Du bist jetzt offiziell korrupt." 
-                },
-                { 
-                    t: "Sofort den Stecker ziehen! Alles aus!", 
-                    m: 20, f: -10, a: 10, c: 50, 
-                    r: "Stille. 30 Sekunden später stürmt der Vize-Chef hochrot herein und schreit dich an. 'Wissen Sie, wie viel Traffic wir verlieren?!' Das wird ein harter Machtkampf vor dem Betriebsrat." 
-                },
-                { 
-                    t: "Klappe halten & Hardware mitnutzen", 
-                    m: 5, f: 20, a: -10, c: 20, 
-                    r: "Du installierst heimlich deinen privaten Minecraft-Server und einen Bitcoin-Miner auf der Hardware. Gratis Strom, High-Speed-Leitung und der Vize-Chef kann dich schlecht verpfeifen. Das perfekte Verbrechen." 
-                }
-            ]
-        },
-        {
-            id: "srv_raccoon",
-            title: "Der Eindringling",
-            text: "Die Tür steht offen. Ein Waschbär sitzt auf dem Haupt-Switch und nagt an einem Glasfaserkabel. Er sieht dich an und faucht.",
-            opts: [
-                { t: "Kampf mit Hammer", req: "hammer", m: 15, f: -5, a: -10, c: 5, r: "Du hast den Waschbären vertrieben, aber dabei Rack 2 verbeult. Der Waschbär hat deine Uhr geklaut." },
-                { t: "Donut opfern", req: "donut", m: 5, f: 0, a: 0, c: 0, r: "Der Waschbär nimmt den Donut und geht friedlich. Ein fairer Tausch." },
-                { t: "Tür zu und hoffen", m: 0, f: 20, a: 0, c: 40, r: "30 Minuten später ist das Internet weg. Der Waschbär hat gewonnen." }
-            ]
-        },
-        {
-            id: "srv_floppy",
-            title: "Flaschenpost aus der Vergangenheit",
-            text: "Du findest eine alte Diskette mit der Aufschrift 'NOTFALLPLAN 1999'. Ein Zettel klebt daran: 'Wenn alles brennt, drück diesen Knopf.' Da ist ein roter Knopf an der Wand, den du noch nie gesehen hast.",
-            opts: [
-                { t: "Knopf drücken", m: 5, f: 10, a: -20, c: 100, r: "Die Halon-Löschanlage geht los! Der ganze Raum wird mit Gas geflutet. Atem anhalten! Das war teuer!" },
-                { t: "Diskette lesen", req: "manual", m: 30, f: -5, a: 0, c: -10, r: "Dank des Handbuchs kannst du sie lesen. Es sind nur Highscores von Minesweeper. Enttäuschend." },
-                { t: "Ignorieren", m: 0, f: 0, a: 0, c: 0, r: "Vielleicht besser so." }
-            ]
-        },
-        {
-            id: "srv_loot_box",
-            title: "Die offene Werkzeugkiste",
-            text: "Ein externer Techniker hat seine Kiste vergessen. Du siehst nützliche Dinge.",
-            opts: [
-                { t: "Kabelbinder klauen", loot: "zip_ties", m: 5, f: 5, a: 0, c: 0, r: "Eine Packung schwarze Kabelbinder. Gold wert! Inventar +1." },
-                { t: "Schraubendreher nehmen", loot: "screw", m: 5, f: 5, a: 0, c: 0, r: "Ein guter Kreuzschlitz. Meiner! Inventar +1." },
-                { t: "Stehen lassen", m: 0, f: 0, a: 0, c: 0, r: "Du hast genug Zeug." }
-            ]
-        },
-        {
+    {
+        id: "srv_rat_2c",
+        title: "Ticket geschlossen",
+        reqStory: "path_rat_call",
+        text: "Eine E-Mail ploppt auf: 'Ticket #492 (Nagetier) geschlossen. Grund: Kein Zugangsschlüssel.' Zeitgleich fällt das Internet aus. Die Ratte hatte viel Zeit zum Kauen.",
+        opts: [
+            { 
+                t: "Panik-Reparatur", 
+                m: 30, f: -20, a: 20, c: -10, 
+                r: "Du musst den ganzen Kabelstrang neu verlegen, während der Chef dir im Nacken atmet. Hättest du es mal gleich selbst gemacht." 
+            },
+            { 
+                t: "Den Provider beschuldigen", 
+                m: 5, f: 5, a: -5, c: 15, 
+                r: "'Telekom-Bagger hat Leitung gekappt.' Der Klassiker. Alle nicken verständnisvoll und gehen früher heim. Du bist fein raus." 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_1",
+        title: "Die Kälte-Falle",
+        text: "Jemand hat die Klimaanlage auf 16 Grad gestellt und den Türgriff von innen abgebrochen. Du bist eingesperrt und frierst!",
+        opts: [
+            { 
+                t: "Mit Hammer Tür einschlagen", 
+                req: "hammer",
+                next: "path_cold_break", 
+                m: 15, f: -5, a: -10, c: 20, 
+                r: "BÄM! Tür offen. Du fühlst dich wie Thor. Holzsplitter liegen überall. Der Chef wird Fragen zum Türblatt haben, aber du bist frei." 
+            },
+            { 
+                t: "Handy nutzen & Hilfe rufen", 
+                next: "path_cold_call", 
+                m: 60, f: 0, a: 20, c: -10, 
+                r: "Du musstest den Hausmeister anrufen. Er hat 45 Minuten gebraucht, um den Ersatzschlüssel zu finden. Du bist jetzt ein Eisblock." 
+            },
+            { 
+                t: "An den Servern wärmen", 
+                m: 90, f: 20, a: 10, c: 0, 
+                r: "Du hast dich hinter die Abluft der CPU gekuschelt und geschlafen, bis zufällig jemand die Tür von außen geöffnet hat. Gemütlich." 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_2a",
+        title: "Der Schreiner",
+        reqStory: "path_cold_break",
+        text: "Ein externer Schreiner steht kopfschüttelnd vor der Serverraum-Tür, die heute Morgen 'jemand' (du) mit Gewalt geöffnet hat. Er flucht über die Splitter.",
+        opts: [
+            { 
+                t: "Ihm Panzertape anbieten", 
+                req: "tape", 
+                m: 5, f: 5, a: 0, c: -5, 
+                r: "'Damit kriegen Sie das wieder hin, Meister.' Er starrt dich böse an. 'Das ist Echtholzfurnier, kein Karton!' Er lehnt dankend ab." 
+            },
+            { 
+                t: "Behaupten, es war die Feuerwehr", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "'Gefahr im Verzug, wissen Sie.' Der Schreiner nickt verständnisvoll. 'Ach so. Ja, die Jungs sind grob.' Dein Geheimnis ist sicher." 
+            },
+            { 
+                t: "Helfen, die Späne aufzufegen", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Das schlechte Gewissen plagt dich. Du hilfst ihm beim Aufräumen. Er brummt: 'Wenigstens einer, der anpackt.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_2b",
+        title: "Schloss-Austausch",
+        reqStory: "path_cold_call",
+        text: "Egon, der Hausmeister, kniet vor der Serverraum-Tür und montiert ein neues Schloss. Er sieht dich kommen. 'Na, wieder aufgetaut? Ich bau jetzt eins ein, das man auch von innen aufkriegt.'",
+        opts: [
+            { 
+                t: "Ihm einen Kaffee bringen", 
+                m: 10, f: 0, a: -5, c: 5, 
+                r: "Du holst ihm einen Automatenkaffee. 'Danke Jung.' Er wirkt versöhnt. Kleine Geschenke erhalten die Freundschaft (und schnelle Rettung)." 
+            },
+            { 
+                t: "Fachsimpeln", 
+                m: 5, f: 5, a: 5, c: -5, 
+                r: "'Ist das auch ein Zylinder nach DIN 18252?' Egon verdreht die Augen. 'Lass mich einfach arbeiten.' Du nervst ihn." 
+            },
+            { 
+                t: "Schnell vorbei schleichen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Bloß kein Augenkontakt. Die Peinlichkeit von vorhin sitzt noch tief. Du huschst in den Serverraum." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_1",
+        title: "Die rote Flüssigkeit",
+        text: "Unter Rack 7 bildet sich eine Pfütze. Sie ist tiefrot und klebrig. Es riecht süßlich. Ist das... Blut? Hydrauliköl? Oder Sirup? Über dir verläuft eigentlich keine Leitung.",
+        opts: [
+            { 
+                t: "Todesmutig den Finger reinstecken & probieren", 
+                next: "path_red_taste", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Es ist... Kirsch-Slushie?! Jemand hat hier eine illegale Slushie-Maschine versteckt. Du zapfst dir heimlich einen Becher ab und gehst zufrieden weiter." 
+            },
+            { 
+                t: "Panik: Großalarm auslösen!", 
+                next: "path_red_alarm", 
+                m: 10, f: -5, a: 10, c: 5, 
+                r: "Du drückst den Notfallknopf. Sirenen heulen los. 'BIOHAZARD!' Du rennst raus und lässt die Feuerwehr den Rest machen. Erstmal Sicherheit." 
+            },
+            { 
+                t: "Einfach aufwischen & ignorieren", 
+                m: 15, f: 0, a: 0, c: -5, 
+                r: "Du wischst die Pfütze mit Taschentüchern weg. Was man nicht weiß, macht einen nicht heiß. Der Boden klebt zwar noch etwas, aber es sieht sauber aus." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_2a",
+        title: "Das große Krabbeln",
+        reqStory: "path_red_taste",
+        text: "Du hörst ein Knistern aus Rack 7, wo du vorhin den Slushie gefunden hast. Tausende Ameisen wurden von den klebrigen Resten angelockt und bauen ein Nest im 10.000€ Switch.",
+        opts: [
+            { 
+                t: "Chemische Keule (Insektenspray)", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Schnell weg hier." 
+            },
+            { 
+                t: "Alles ausbauen & einzeln reinigen", 
+                m: 60, f: -25, a: 15, c: -5, 
+                r: "Eine Stunde lang pinselst du tote Ameisen von Platinen. Es ist eklig, aber du rettest die Hardware. Niemand erfährt von dem Vorfall. Saubere Arbeit." 
+            },
+            { 
+                t: "Den Azubi Kevin rufen", 
+                m: 10, f: 10, a: -15, c: 20, 
+                r: "Kevin sieht die Ameisen und schreit. Der Chef kommt dazu. Du bekommst einen Einlauf wegen 'mangelnder Aufsicht', aber Kevin muss putzen." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_2b",
+        title: "Manöverkritik",
+        reqStory: "path_red_alarm",
+        text: "Der Chef zitiert dich ins Büro. Der 'biologische Gefahrstoff', wegen dem die Feuerwehr kam, war nur ausgelaufene Kühlflüssigkeit mit Farbstoff. Er sieht nicht glücklich aus.",
+        opts: [
+            { 
+                t: "Auf Sicherheitsprotokolle pochen", 
+                m: 10, f: 0, a: -5, c: 10, 
+                r: "'Vorsicht ist besser als Nachsicht, Chef!' Er massiert sich die Schläfen. 'Ja, schon... aber nächstes Mal erst riechen, dann drücken.' Du kommst davon." 
+            },
+            { 
+                t: "Kleinlaut entschuldigen", 
+                m: 5, f: 0, a: 5, c: -10, 
+                r: "'Es tut mir leid.' Der Chef seufzt. 'Der Einsatz kostet uns 500 Euro. Das geht von Ihrem Budget für Weihnachtsdeko ab.' Autsch." 
+            },
+            { 
+                t: "Bestechungs-Donut anbieten", 
+                rem: "donut",
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du schiebst ihm den Donut hin. 'Nervennahrung?' Er beißt rein, kaut und grummelt: 'Verschwinden Sie an die Arbeit.' Bestechung funktioniert immer." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_1",
+        title: "Das illegale Datencenter",
+        text: "Du lehnst dich gegen ein Regal und plötzlich schwingt eine falsche Wand auf. Dahinter: Ein versteckter Serverraum! Auf den Bildschirmen flackern... nun ja, sehr 'eindeutige' Erwachsenenfilme. Die Admin-Konsole ist eingeloggt: Es gehört dem Vize-Chef.",
+        opts: [
+            { 
+                t: "Beweise sichern & Vize-Chef erpressen", 
+                req: "secret_list",
+                next: "path_illegal_blackmail", 
+                m: 10, f: 30, a: 0, c: -30, 
+                r: "Du machst Fotos und wedelst mit der Schwarzen Liste aus deiner Tasche. 'Ich weiß alles.' Das ist der Jackpot. Du schließt die Tür leise wieder." 
+            },
+            { 
+                t: "Sofort den Stecker ziehen", 
+                next: "path_illegal_shutdown", 
+                m: 20, f: -10, a: 10, c: 50, 
+                r: "Du zögerst nicht. KLACK. Die Sicherung fliegt raus. Die Bildschirme werden schwarz. Die Lüfter sterben ab. Totale Stille im Raum." 
+            },
+            { 
+                t: "Klappe halten & Hardware mitnutzen", 
+                next: "path_illegal_share", 
+                m: 5, f: 20, a: -10, c: 20, 
+                r: "Du installierst heimlich deinen privaten Minecraft-Server und einen Bitcoin-Miner auf der Hardware. Gratis Strom, High-Speed-Leitung und der Vize-Chef kann dich schlecht verpfeifen." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2a",
+        title: "Das Beraterhonorar",
+        reqStory: "path_illegal_blackmail",
+        text: "Der Vize-Chef fängt dich am Kaffeeautomaten ab. Er schwitzt stark. 'Müller... wegen der... Sache im Serverraum. Geben Sie mir die Liste, und wir werden uns einig.'",
+        opts: [
+            { 
+                t: "Geld verlangen", 
+                rem: "secret_list",
+                m: 5, f: 10, a: -20, c: -20, 
+                r: "Er reißt dir die Liste aus der Hand und steckt dir einen dicken Umschlag zu. 'Spesenabrechnung. Monatlich. Schweigen wir nie wieder darüber.' Du bist jetzt offiziell korrupt." 
+            },
+            { 
+                t: "Home-Office fordern", 
+                rem: "secret_list",
+                m: 5, f: 20, a: -15, c: -10, 
+                r: "'Drei Tage die Woche?' Er nickt hastig, greift sich die Liste und schreddert sie sofort. 'Genehmigt. Ab sofort.' Er wirkt erleichtert. Du auch." 
+            },
+            { 
+                t: "Ihn zappeln lassen", 
+                m: 2, f: 5, a: -5, c: 10, 
+                r: "Du tippst dir nur an die Brusttasche, wo die Liste steckt, und zwinkerst. Die pure Panik in seinen Augen ist unbezahlbar. Er wird dir ab jetzt jeden Wunsch erfüllen." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2b",
+        title: "Der Wutanfall",
+        reqStory: "path_illegal_shutdown",
+        text: "30 Minuten später stürmt der Vize-Chef hochrot in den Serverraum. 'WER WAR DAS?! Mein... äh... kritisches Backup-System ist offline! Wissen Sie, wie viel Traffic wir verlieren?!'",
+        opts: [
+            { 
+                t: "Ahnungslosigkeit heucheln", 
+                m: 5, f: 5, a: 5, c: 5, 
+                r: "'Stromschwankung, Chef. Die Leitungen sind alt.' Er tobt, kann aber nichts beweisen. Er traut sich nicht, den Server wieder einzuschalten, solange du da bist." 
+            },
+            { 
+                t: "Sagen: 'Es war ein Sicherheitsrisiko'", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Du starrst ihm direkt in die Augen. 'Zu viele offene Ports. Ich habe die Firma geschützt.' Er versteht die Drohung, schluckt schwer und geht wortlos." 
+            },
+            { 
+                t: "Ihn auslachen", 
+                m: 2, f: 5, a: -10, c: 10, 
+                r: "Du kannst es dir nicht verkneifen. 'Kritisches Backup? Sah eher aus wie Backside-Sluts 9.' Er wird bleich und rennt raus. Das gibt Krieg." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2c",
+        title: "Bandbreiten-Krieg",
+        reqStory: "path_illegal_share",
+        text: "Du merkst, dass dein Bitcoin-Miner langsamer wird. Der Vize-Chef streamt wohl gerade wieder 4K-Inhalte auf dem versteckten Server. Die Lüfter heulen wie Düsentriebwerke.",
+        opts: [
+            { 
+                t: "Seine Prozesse drosseln", 
+                m: 10, f: -10, a: -15, c: 10,
+                r: "Du priorisierst deinen Traffic im Router per QoS. Sein Stream buffert jetzt alle 3 Sekunden. Irgendwo im Büro hörst du einen frustrierten Schrei. Herrlich." 
+            },
+            { 
+                t: "Waffenstillstand per Chat", 
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "Du öffnest `notepad.exe` auf dem Server und schreibst: '50/50 Ressourcenteilung?'. Er antwortet: 'Deal. Aber lösch den Verlauf.' Ehre unter Dieben." 
+            },
+            { 
+                t: "Alles übertakten", 
+                m: 5, f: -5, a: 10, c: -10, 
+                r: "Du drehst die Spannung hoch. Es riecht verschmort, aber beide Prozesse laufen flüssig. Hoffentlich brennt das Gebäude nicht ab." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_1",
+        title: "Der maskierte Bandit",
+        text: "Die Tür steht offen. Ein fetter Waschbär sitzt auf dem Haupt-Switch und nagt genüsslich an einem gelben Glasfaserkabel. Er sieht dich an, faucht und macht keine Anstalten zu gehen.",
+        opts: [
+            { 
+                t: "Kampf mit Hammer (Dominanz zeigen)", 
+                req: "hammer",
+                next: "path_raccoon_fight", 
+                m: 10, f: -10, a: 20, c: 10, 
+                r: "Du holst zum Schlag aus! 'Verschwinde, du Müllpanda!' Der Waschbär macht einen Matrix-Dodge. KLONG. Dein Hammer trifft mit voller Wucht das Rack. Der Waschbär flieht lachend." 
+            },
+            { 
+                t: "Donut opfern (Bestechung)", 
+                rem: "donut",
+                next: "path_raccoon_bribe", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du wirfst den Donut in den Flur. Der Waschbär riecht das Fett, lässt das Kabel los und watschelt dem Gebäck hinterher. Du schließt schnell die Tür." 
+            },
+            { 
+                t: "Tür zu und hoffen (Problem ignorieren)", 
+                next: "path_raccoon_ignore", 
+                m: 2, f: 20, a: 0, c: 5, 
+                r: "Du ziehst die Tür leise zu und schließt ab. 'Nicht mein Problem. Soll sich die Nachtschicht drum kümmern.' Du gehst pfeifend weg." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2a",
+        title: "Inventur-Schaden",
+        reqStory: "path_raccoon_fight",
+        text: "Der IT-Leiter steht vor Rack 2. Da ist eine riesige Delle im Metall, genau auf Höhe eines Hammers. Er sieht dich fragend an. 'Sagen Sie mal... haben wir hier Poltergeister?'",
+        opts: [
+            { 
+                t: "Lügen: 'Das war der Waschbär!'", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "'Ein Waschbär mit übermenschlichen Kräften!' Der Leiter schüttelt den Kopf. 'Müller, nehmen Sie weniger von Ihren Medikamenten.' Er glaubt dir kein Wort." 
+            },
+            { 
+                t: "Schaden mit Sticker überkleben", 
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du klebst einen 'Intel Inside' Aufkleber über die Delle. 'Sieht aus wie neu, Chef.' Er kneift die Augen zusammen, lässt es aber durchgehen." 
+            },
+            { 
+                t: "Beichten und ausbeulen", 
+                req: "hammer", 
+                m: 30, f: -10, a: 0, c: -5, 
+                r: "Du erklärst den Kampf. Dann verbringst du 30 Minuten damit, das Blech von innen wieder gerade zu hämmern. Es ist laut und peinlich." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2b",
+        title: "Der Stammkunde",
+        reqStory: "path_raccoon_bribe",
+        text: "Du hörst ein Kratzen an der Serverraum-Tür. Der Waschbär ist zurück. Er hat den Donut verputzt und anscheinend Freunde mitgebracht. Drei Waschbären warten auf Nachschub.",
+        opts: [
+            { 
+                t: "Hausmeister Egon rufen", 
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Egon kommt. 'Ach, die sind doch niedlich!' Er füttert sie mit seinen Pausenbrot-Resten. Jetzt hast du eine Waschbären-Kolonie vor der IT. Aber sie lassen die Kabel in Ruhe." 
+            },
+            { 
+                t: "Mit dem Feuerlöscher verscheuchen", 
+                req: "fire_ext", 
+                m: 5, f: -5, a: 10, c: 5, 
+                r: "PFFFFT! Eine CO2-Wolke beendet die Party. Die Biester rennen weg, aber der Flur sieht aus wie Winterberg. Du musst fegen." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2c",
+        title: "Bio-Hazard",
+        reqStory: "path_raccoon_ignore",
+        text: "Das Monitoring meldet 'Temperature Critical'. Du öffnest die Serverraum-Tür. Es stinkt bestialisch. Der eingesperrte Waschbär hat vor Angst auf den Lüfter des Mainframes gekackt. Die Scheiße wurde im ganzen Raum verteilt.",
+        opts: [
+            { 
+                t: "Azubi zum Putzen zwingen", 
+                m: 5, f: 10, a: -5, c: 10, 
+                r: "Kevin muss im Schutzanzug rein. Er weint dabei. Du stehst draußen und gibst Anweisungen. Dein Karma sinkt ins Bodenlose, aber deine Hände bleiben sauber." 
+            },
+            { 
+                t: "Selbst putzen (Strafe muss sein)", 
+                m: 120, f: -50, a: 20, c: -10, 
+                r: "Zwei Stunden. Zahnbürste. Desinfektionsmittel. Du hinterfragst jede Lebensentscheidung, die dich hierher geführt hat." 
+            },
+            { 
+                t: "Raum versiegeln & Homeoffice beantragen", 
+                m: 5, f: 20, a: 0, c: 20, 
+                r: "'Gesundheitsrisiko! Niemand darf rein!' Du flüchtest. Das Problem wird morgen eskalieren, aber heute bist du frei." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_1",
+        title: "Flaschenpost aus der Vergangenheit",
+        text: "Du findest eine 3,5-Zoll Diskette mit der Aufschrift 'NOTFALLPLAN 1999'. Ein Zettel klebt daran: 'Wenn alles brennt, drück diesen Knopf.' Daneben ist ein roter, verstaubter Pilz-Taster an der Wand.",
+        opts: [
+            { 
+                t: "Knopf drücken (YOLO)", 
+                next: "path_floppy_button", 
+                m: 5, f: 10, a: -20, c: 100, 
+                r: "KLICK. Ein Zischen. Die alte Halon-Löschanlage löst aus! Der Sauerstoff wird aus dem Raum gesaugt. Du hältst die Luft an und stolperst raus. Das wird teuer." 
+            },
+            { 
+                t: "Diskette lesen", 
+                req: "manual",
+                next: "path_floppy_read", 
+                m: 30, f: -5, a: 0, c: -10, 
+                r: "Dank des Handbuchs kannst du die uralten Treiber laden. Das Laufwerk rattert wie eine Kaffeemühle, aber du bekommst Zugriff auf die Daten." 
+            },
+            { 
+                t: "Ignorieren", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Du lässt den roten Knopf rot sein. Manche Dinge fasst man besser nicht an. Du gehst weiter." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_2a",
+        title: "Rechnung vom Amt",
+        reqStory: "path_floppy_button",
+        text: "Draußen heulen Sirenen. Der Löschzug ist da, weil die Sensoren 'Sauerstoffverlust' gemeldet haben. Der Einsatzleiter sieht dich streng an. 'Wer hat ausgelöst?'",
+        opts: [
+            { 
+                t: "Auf technischen Defekt plädieren", 
+                m: 15, f: 0, a: 5, c: 10, 
+                r: "'Diese alten Anlagen... tickende Zeitbomben!' Der Feuerwehrmann nickt. 'Ja, Halon ist seit 20 Jahren verboten. Das muss eh raus.' Du kommst mit einer Verwarnung davon." 
+            },
+            { 
+                t: "Wegrennen", 
+                m: 5, f: 10, a: -5, c: 20, 
+                r: "Du nutzt das Chaos und verschwindest. Die Rechnung über 3.000€ Einsatzkosten landet pauschal bei der IT-Abteilung. Dein Budget weint." 
+            },
+            { 
+                t: "Nebelmaschine als Ausrede nutzen", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "'Wir testen nur Bühneneffekte für die Weihnachtsfeier!' Der Feuerwehrmann ist verwirrt, packt zusammen und geht. Dreistigkeit siegt." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_2b",
+        title: "Der Y2K-Patch",
+        reqStory: "path_floppy_read",
+        text: "Du durchsuchst die Dateien auf der Diskette. Es sind keine Highscores. Es ist eine Datei namens 'Y2K_FIX_FINAL.BAT'. Ein Skript, das das Jahr 2000 verhindern sollte.",
+        opts: [
+            { 
+                t: "Aus Neugier ausführen", 
+                m: 10, f: -10, a: 10, c: 50, 
+                r: "Du klickst drauf. Das Systemdatum springt auf den 01.01.1900. Alle Zertifikate werden ungültig. Die Buchhaltung crasht. Aber hey, Retro-Feeling!" 
+            },
+            { 
+                t: "Code analysieren (Lernen)", 
+                m: 60, f: -20, a: 0, c: -5, 
+                r: "Du studierst den antiken Code. Es ist Spaghetti-Code vom Feinsten, aber du lernst einen Trick, um die Server-Logs zu manipulieren. (Skill verbessert)" 
+            },
+            { 
+                t: "Diskette formatieren", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du löschst alles und speicherst deine eigenen Urlaubsbilder drauf. 1,44 MB Speicherplatz gespart. Pragmatismus pur." 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_1",
+        title: "Die offene Werkzeugkiste",
+        text: "Ein externer Techniker hat seine Kiste neben Rack 3 vergessen. Sie steht offen da wie eine Schatztruhe. Du siehst nützliche Dinge, die dein IT-Herz höher schlagen lassen.",
+        opts: [
+            { 
+                t: "Kabelbinder einstecken", 
+                loot: "zip_ties", 
+                next: "path_loot_zip", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Eine 100er Packung schwarze Kabelbinder. Gold wert für das Kabelmanagement zuhause! Schnell in die Tasche damit. (Inventar +1)" 
+            },
+            { 
+                t: "Schraubendreher nehmen", 
+                loot: "screw", 
+                next: "path_loot_screw", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Ein hochwertiger Marken-Kreuzschlitz mit magnetischer Spitze. Der liegt gut in der Hand. Jetzt liegt er in deiner Tasche. (Inventar +1)" 
+            },
+            { 
+                t: "Stehen lassen", 
+                m: 0, f: 0, a: 0, c: 0, 
+                r: "Du widerstehst der Versuchung. Du hast schon genug Zeug auf dem Schreibtisch." 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_2a",
+        title: "Die Rückkehr",
+        reqStory: "path_loot_zip",
+        text: "Der Techniker kommt angerannt. Er schwitzt und wirkt extrem gestresst. 'Verdammt, wo ist die Packung Kabelbinder hin? Ich muss in 10 Minuten beim nächsten Kunden sein!' Er sieht dich an.",
+        opts: [
+            { 
+                t: "Lügen: 'Habe nichts gesehen'", 
+                m: 2, f: 0, a: 5, c: -5, 
+                r: "Du zuckst mit den Schultern. 'Vielleicht hat die Putzkolonne aufgeräumt?' Er flucht, packt seine Kiste und rennt los. Dein Gewissen zwickt kurz." 
+            },
+            { 
+                t: "Zurückgeben ('Gefunden')", 
+                rem: "zip_ties",
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "'Oh, die lagen hier am Boden. Wollte sie gerade sicherstellen.' Er atmet auf. 'Danke Mann! Du rettest mir den Arsch.' Er ist weg. (Item entfernt)" 
+            },
+            { 
+                t: "Kevin beschuldigen", 
+                m: 2, f: 5, a: -5, c: -10, 
+                r: "'Der Azubi war vorhin hier...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_2b",
+        title: "Das fehlende Werkzeug",
+        reqStory: "path_loot_screw",
+        text: "Der Techniker wühlt hektisch in seiner Kiste. 'Mein Wera-Kreuzschlitz! Der Gute! Haben Sie den gesehen? Ohne den bekomme ich das Rack beim Kunden nicht auf!' Er ist der Verzweiflung nahe.",
+        opts: [
+            { 
+                t: "Unschuldig pfeifen", 
+                m: 2, f: 0, a: 5, c: -5, 
+                r: "'Nö. War der wichtig?' Er rauft sich die Haare. 'Verdammt!' Er rennt fluchend raus. Du hast jetzt ein tolles Werkzeug und ein schlechtes Karma." 
+            },
+            { 
+                t: "Zurückgeben", 
+                rem: "screw",
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Du ziehst ihn aus der Tasche. 'Habe ich mir nur geliehen.' Er reißt ihn dir fast aus der Hand. 'Lassen Sie das! Aber danke.' (Item entfernt)" 
+            },
+            { 
+                t: "Beim Suchen 'helfen'", 
+                m: 15, f: -5, a: 0, c: -10, 
+                r: "Du hilfst ihm 15 Minuten lang suchen (während er in deiner Tasche ist). 'Zwecklos', sagt er resigniert und geht. Du bist ein Monster." 
+            }
+        ]
+    },
+    {
         id: "srv_found_stuff",
-        title: "Fundsache im Regal",
-        text: "Zwischen zwei Servern liegt etwas. Hat wohl jemand beim Patchen liegen lassen.",
+        title: "Verdächtige Fundstücke",
+        text: "Zwischen Rack 3 und 4 liegt Zeug herum. Es sieht so aus, als wäre jemand fluchtartig verschwunden.",
         opts: [
             { 
-                t: "Es sind Kopfhörer!", 
+                t: "Die teuren Kopfhörer nehmen", 
                 loot: "headphones", 
-                next: "found_headphones", 
+                next: "found_headphones_2",
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Teure Noise-Cancelling Kopfhörer. Finders Keepers. Inventar +1." 
+                r: "Bose Noise-Cancelling. Sehr schick. Sie sind noch leicht warm und riechen etwas nach Haargel. Aber hey: Gratis ist gratis. (Inventar +1)" 
             },
             { 
-                t: "Es ist ein Hammer?", 
+                t: "Den schweren Hammer nehmen", 
                 loot: "hammer", 
-                next: "found_hammer", 
+                next: "found_hammer_2",
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Warum liegt hier ein Hammer? Egal, nehm ich. Inventar +1." 
+                r: "Ein 500g Schlosserhammer. Auf dem Griff steht mit Edding 'HARD RESET'. Ein vertrauenerweckendes Werkzeug im Serverraum. (Inventar +1)" 
             }
         ]
     },
     {
-        id: "srv_egon_headphones",
-        title: "Egon sucht Bass",
-        reqStory: "found_headphones", 
-        text: "Hausmeister Egon steckt den Kopf zur Tür rein. 'Moin. Sag mal, liegen hier meine Kopfhörer? Ich muss gleich im Großraumbüro bohren und brauche meine Ruhe.'",
+        id: "srv_found_stuff_2a",
+        title: "Die Audiophilen",
+        reqStory: "found_headphones_2",
+        text: "Du läufst mit deinen neuen Kopfhörern durch den Flur. Ein Kollege aus dem Marketing (Hipster-Bart, Mate-Tee) stoppt dich. 'Hey! Das sind doch meine Sennheiser! Ich hab die überall gesucht!'",
         opts: [
             { 
-                t: "Ehrlich sein: 'Hab sie auf, brauche Fokus.'", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Egon grinst schief. 'Kenn ich. Die User nerven heute wieder, was? Behalt sie bis Feierabend.' Ein stilles Einverständnis unter Leidensgenossen." 
+                t: "Zurückgeben", 
+                rem: "headphones",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "'Oh, lagen im Serverraum.' Er reißt sie dir aus der Hand, wischt sie demonstrativ an seinem Hemd ab und setzt sie auf. 'Unfassbar, diese Diebe hier.' Kein Danke." 
             },
             { 
-                t: "Lüge: 'Nö, nix gesehen.'", 
-                m: 2, f: 5, a: 0, c: 5, 
-                r: "Du lügst glatt. Egon seufzt: 'Mist. Dann muss ich wohl das Radio auf volle Lautstärke drehen.' Er geht. Du hast deine Ruhe, aber er wirkt enttäuscht." 
+                t: "Lügen: 'Die gehören mir'", 
+                m: 2, f: 0, a: 5, c: 5, 
+                r: "'Das ist das Modell XP-500. Meins.' Er starrt dich misstrauisch an. 'Meine hatten einen Kratzer am Bügel...' Du gehst schnell weiter, bevor er ihn sieht." 
             },
             { 
-                t: "Dreist: 'Die sind jetzt beschlagnahmt.'", 
-                m: 0, f: 10, a: 25, c: 0,
-                r: "'Wie bitte?!' Egon wird rot im Gesicht. 'Das sind meine privaten! Du Arsch!' Er knallt die Tür zu. Du hast die Kopfhörer, aber Egon hasst dich jetzt abgrundtief." 
+                t: "Ihm Hygiene-Angst machen", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "'Echt? Ich habe gerade eine Pilzinfektion am Ohr, deshalb trage ich die.' Er wird bleich, weicht zurück und murmelt: 'Behalt sie. Bitte. Verbrenn sie.' Sieg!" 
             }
         ]
     },
     {
-        id: "srv_egon_hammer",
-        title: "Werkzeug-Schwund",
-        reqStory: "found_hammer", 
-        text: "Egon klopft hektisch an den Türrahmen. 'Chef, kleiner Notfall. Die Spülung im 2. Stock klemmt. Hast du zufällig meinen Hammer gesehen? Das Wasser steigt!'",
+        id: "srv_found_stuff_2b",
+        title: "Perkussive Wartung",
+        reqStory: "found_hammer_2",
+        text: "Du hörst lautes Fluchen aus dem Serverraum. Ein ehemaliger Admin (in Rente) steht vor einem alten Server, der hängt. Er haut mit der flachen Hand dagegen. 'WO IST MEIN MEINUNGSVERSTÄRKER?!'",
         opts: [
             { 
-                t: "Ehrlich: 'Jap, nimm schnell!'", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Egon schnappt sich den Hammer. 'Danke! Du hast mir den Arsch gerettet.' Er rennt los. Er bringt ihn später zurück, etwas nass, aber sauber." 
+                t: "Hammer zurückgeben", 
+                rem: "hammer",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du reichst ihm den Hammer. Er grinst böse. 'Danke.' KLONG! Er haut einmal kräftig gegen das Gehäuse. Die Festplatte surrt wieder an. 'Geht doch.'" 
             },
             { 
-                t: "Faul: 'Keine Ahnung, such selber.'", 
-                m: 0, f: 20, a: 10, c: 25,
-                r: "Du bleibst sitzen. Egon sucht fluchend in den Regalen. Kostbare Minuten vergehen. Plötzlich tropft es von der Decke. Der Chef kommt rein: 'Warum ist hier Wasser?!' Der Radar schlägt voll aus." 
+                t: "Hilfe anbieten", 
+                req: "hammer",
+                m: 10, f: -5, a: -5, c: 5, 
+                r: "'Lass mich mal.' Du gibst dem Server einen präzisen Schlag an die richtige Stelle (Netzteil). Er läuft. Der Admin nickt anerkennend. 'Gute Technik.'" 
             },
             { 
-                t: "Ablenken: 'Erstmal einen Kaffee?'", 
-                m: 10, f: 10, a: -5, c: 15,
-                r: "Du quatschst ihn voll. Er vergisst kurz die Panik. Als er endlich zum Klo kommt, steht der Flur schon unter Wasser. Er ist dankbar für den Kaffee, aber der Chef tobt wegen des Teppichs." 
+                t: "Schnell weggehen", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Bloß nicht einmischen. Hinter dir hörst du, wie er anfängt, gegen den Server zu treten. Du streichelst deinen neuen Hammer." 
             }
         ]
     },
-        {
-            id: "srv_loose_rack",
-            title: "Das lose Rack",
-            text: "Ein ganzes Server-Rack wackelt bedenklich. Eine Schraube fehlt.",
-            opts: [
-                { t: "Festschrauben", req: "screw", m: 10, f: -5, a: 0, c: -5, r: "Hält wieder. Katastrophe abgewendet." },
-                { t: "Mit Kabelbindern sichern", req: "zip_ties", m: 5, f: 5, a: 0, c: 0, r: "Du hast das Rack ans Nachbar-Rack gebunden. Pfusch am Bau, aber hält." },
-                { t: "Wegsehen", m: 0, f: 15, a: 0, c: 15, r: "Hoffentlich fällt es nicht um, wenn du weg bist." }
-            ]
-        },
-        {
-            id: "srv_cable_mess",
-            title: "Der Kabel-Alptraum",
-            text: "Hinter Rack 3 hängt ein Bündel Glasfaserkabel gefährlich nah am Lüfter. Wenn das reinkommt, gibt es Schnipsel.",
-            opts: [
-                { t: "Zur Seite binden", req: "zip_ties", m: 10, f: -5, a: 0, c: 0, r: "Sauber weggebunden. Gefahr gebannt." },
-                { t: "Festkleben", req: "tape", m: 5, f: 0, a: 0, c: 0, r: "Das Tape wird durch die Hitze irgendwann abgehen. Problem von Zukunfts-Ich." },
-                { t: "Lüftergitter abbrechen", m: 5, f: 5, a: 10, c: 20, r: "Du hast das Gitter entfernt. Jetzt ist mehr Platz, aber auch mehr Gefahr für Finger." }
-            ]
-        },
-        {
-            id: "srv_door_stuck",
-            title: "Die klemmende Tür",
-            text: "Die Tür zum Serverraum klemmt. Der Kartenleser leuchtet grün, aber der Mechanismus hängt.",
-            opts: [
-                { t: "Hammer-Schlag", req: "hammer", m: 5, f: 0, a: -10, c: 10, r: "Ein gezielter Schlag auf den Riegel. Tür springt auf. Mechanik verbogen, aber offen." },
-                { t: "Schloss zerlegen", req: "screw", m: 30, f: -10, a: 5, c: 0, r: "Du hast das Schloss zerlegt und gefettet. Funktioniert wie neu." },
-                { t: "Dagegen werfen", m: 10, f: 0, a: 20, c: 5, r: "Deine Schulter tut weh. Tür ist immer noch zu." }
-            ]
-        },
-        {
-            id: "srv_leak",
-            title: "Das leckende Rohr",
-            text: "Tropf... Tropf... Ein Kondenswasser-Rohr der Klimaanlage ist undicht. Es tropft in Zeitlupe direkt in die Lüftungsschlitze des 50.000€ teuren Core-Switch. Jeder Tropfen ein potenzieller Totalschaden.",
-            opts: [
-                { 
-                    t: "Fachmännisch mit Panzertape umwickeln", 
-                    req: "tape", 
-                    m: 5, f: 0, a: -5, c: -10, 
-                    r: "Du wickelst eine halbe Rolle Tape drum. Dicht! Zumindest für heute. Und wir wissen ja: Nichts hält länger als ein Provisorium." 
-                },
-                { 
-                    t: "Den Mülleimer drunterstellen", 
-                    m: 10, f: 5, a: 0, c: 0, 
-                    r: "Pling... Pling... Du hast den Eimer aus der Küche geholt. Du musst ihn alle 2 Stunden leeren, aber die Hardware bleibt trocken. Deine Nerven leiden unter dem Geräusch." 
-                },
-                { 
-                    t: "Das Rohr mit dem Hammer 'zurechtbiegen'", 
-                    req: "hammer", 
-                    m: 5, f: 0, a: 10, c: 20, 
-                    r: "Du setzt den Hammer als Hebel an und drückst. KNACK! Das Rohr bricht komplett ab. Wasser Marsch! Der Switch lernt schwimmen. Das war wohl zu viel Gewalt." 
-                }
-            ]
-        },
-        {
-            id: "srv_pw_list",
-            title: "Versteckte Notiz",
-            text: "Hinter Rack 5 klebt ein vergilbter Zettel mit Tesafilm. Darauf steht in krakeliger Schrift: 'TOP SECRET - NUR FÜR ADMINS'. Der Zettel sieht aus, als hinge er dort schon seit Windows 95.",
-            opts: [
-                { 
-                    t: "Den Zettel neugierig entziffern", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Es sind keine Passwörter. Es ist das Vermächtnis deines Vorgängers: 'Ich habe das Internet in einer schwarzen Kiste im Keller versteckt. Wenn Google down ist, müsst ihr die Kiste schütteln. P.S.: Trau niemals dem Drucker.' Weise Worte." 
-                },
-                { 
-                    t: "Ehrfürchtig hängen lassen", 
-                    m: 0, f: 0, a: 0, c: 0, 
-                    r: "Du drückst den Tesafilm wieder fest. Das ist IT-Archäologie und Kulturgut. Wer das entfernt, löscht wahrscheinlich auch versehentlich das Backup." 
-                }
-            ]
-        },
-		{
-            id: "srv_label_fail",
-            title: "Der Elektriker-Fail",
-            text: "Du starrst auf das Bedienfeld der Klimaanlage. Ein handgeschriebener Zettel klebt über den Reglern: 'ACHTUNG: Der Elektriker war farbenblind! BLAU heizt (Warm) und ROT kühlt (Kalt)! Nicht anfassen, wird erst 2030 repariert.'",
-            opts: [
-                { 
-                    t: "Anlage genauer untersuchen", 
-                    m: 5, f: 0, a: 5, c: 0, 
-                    r: "Tatsächlich. Die Kabel sind vertauscht. Rot geht zum Kompressor (Kalt), Blau zur Heizspirale (Warm). Völlig absurd. Gut, dass du nachgesehen hast." 
-                },
-                { 
-                    t: "Zettel ignorieren", 
-                    m: 2, f: 0, a: 0, c: 0, 
-                    r: "Du gehst weiter. Farben sind schließlich genormt, oder? Was soll schon passieren." 
-                }
-            ]
-        },
-		{
-            id: "srv_port_warning",
-            title: "Das Warnschild am Switch",
-            text: "Am Haupt-Switch klebt ein riesiges Schild über Port 42: 'NICHT BENUTZEN! Kurzschluss-Gefahr! Wer hier was einsteckt, grillt den ganzen Switch!'",
-            opts: [
-                { 
-                    t: "Schild gerade rücken", 
-                    m: 2, f: 0, a: 0, c: 0, 
-                    r: "Port 42 ist böse. Verstanden. Gut, dass das Schild da hängt." 
-                },
-                { 
-                    t: "Ignorieren", 
-                    m: 0, f: 5, a: 0, c: 0, 
-                    r: "Du hast es eilig. Hoffentlich behältst du das trotzdem im Hinterkopf." 
-                }
-            ]
-        },
-		{
-            id: "srv_crying_elster",
-            title: "Tränen im Serverraum",
-            text: "Du hörst ein leises Wimmern hinter Rack 4. Es ist Frau Elster aus der Buchhaltung. Sie sitzt auf dem Boden, das Gesicht in den Händen vergraben. 'Ich kann das alles nicht mehr...', flüstert sie.",
-            opts: [
-                { 
-                    t: "Leise wieder rausgehen", 
-                    m: 0, f: 0, a: 0, c: 0, 
-                    r: "Du lässt sie in Ruhe. Manchmal braucht man Privatsphäre." 
-                },
-                { 
-                    t: "Fragen: 'Alles okay mit der Bilanz?'", 
-                    m: 10, f: 0, a: 10, c: 5, 
-                    r: "Sie schaut dich entsetzt an. 'Ist Ihnen Arbeit wichtiger als Menschen?!' Sie rennt weinend raus." 
-                },
-                { 
-                    t: "Fragen: 'Wie geht es Rüdiger?'",
-                    m: 15, f: 10, a: -20, c: -5, 
-                    r: "Sie blickt überrascht auf. Ein kleines Lächeln erscheint. 'Rüdiger... ja, der wartet zuhause. Er braucht sein Futter.' Sie wischt sich die Tränen weg. 'Danke, Herr Müller. Ich gehe jetzt heim zu ihm.' Du hast ihren Tag gerettet." 
-                }
-            ]
-        },
-        {
-            id: "srv_update_fail",
-            title: "Der kritische Patch",
-            text: "Auf dem Dashboard blinkt es rot: 'Kritische Sicherheitslücke in der Zeiterfassung! Patch verfügbar.' Es ist gerade Mittagspause, alle kauen Döner. Niemand ist eingeloggt. Der perfekte Moment?",
-            opts: [
-                { 
-                    t: "Sofort das Update installieren", 
-                    m: 20, f: -10, a: 30, c: 10, 
-                    r: "Update erfolgreich! Aber: Der 'Stempeln'-Button ist jetzt grün statt blau. Um 13 Uhr bricht totale Panik aus. 'ALLES SIEHT ANDERS AUS! ICH KANN SO NICHT ARBEITEN!' Das Telefon glüht. Du hast das Layout verändert, du Monster." 
-                },
-                { 
-                    t: "Wegklicken: 'Never change a running system'", 
-                    m: 0, f: 5, a: 0, c: 0, 
-                    r: "Du klickst die Warnung weg. Wenn russische Hacker kommen, ist das ein Problem für das Zukunfts-Ich. Jetzt ist erstmal Pause." 
-                }
-            ]
-        },
-		{
-            id: "srv_consultant_fail_1",
-            title: "Der teure Berater",
-            text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef stürmt rein: 'WIESO STEHT DER BETRIEB?!'",
-            opts: [
-                { 
-                    t: "Auf den Berater zeigen", 
-                    m: 10, f: -5, a: 30, c: 10, 
-                    r: "Der Berater lacht glatt: 'Ah, Herr Müller wollte mir gerade die USV demonstrieren und hat wohl das falsche Kabel erwischt. Schlechtes Briefing!' Der Chef nickt dem Berater zu: 'Verstehe. Müller, passen Sie besser auf!' Der Berater zwinkert dir zu. Du kochst vor Wut." 
-                },
-                { 
-                    t: "Stecker wieder reinrammen", 
-                    m: 5, f: 0, a: 10, c: 20, 
-                    r: "Funkenflug. Der Server fährt hoch, aber ein Netzteil ist durchgebrannt. Der Berater tippt auf seinem Handy: 'Hardware veraltet. Empfehle Neukauf.' Der Chef stimmt ihm zu. Du bist der Depp, der die 'schlechte Hardware' wartet." 
-                },
-                { 
-                    t: "Berater anschreien", 
-					next: "consultant_war",
-                    m: 2, f: 0, a: -20, c: 50, 
-                    r: "Du brüllst den Gast an. Der Chef wird blass. 'Müller! Benehmen Sie sich vor unseren Gästen! Abmahnung wegen unprofessionellem Verhalten!' Der Berater grinst." 
-                }
-            ]
-        },
-		{
-        id: "srv_consultant_fail_2",
+    {
+        id: "srv_loose_rack_1",
+        title: "Das Wackel-Rack",
+        text: "Rack 5 vibriert bedenklich im Takt der Lüfter. Eine tragende Schraube fehlt. Wenn das kippt, domino-effektet es das ganze Rechenzentrum.",
+        opts: [
+            { 
+                t: "Fachgerecht festschrauben", 
+                req: "screw",
+                next: "path_rack_screw", 
+                m: 25, f: -15, a: 5, c: -10,
+                r: "Du kriechst auf dem Boden herum, richtest das Rack aus und ziehst die Schraube mit Drehmoment nach. Deutsche Wertarbeit. Das Ding bewegt sich keinen Millimeter mehr." 
+            },
+            { 
+                t: "Mit Kabelbindern sichern", 
+                req: "zip_ties",
+                next: "path_rack_zip", 
+                m: 5, f: 15, a: -5, c: 5,
+                r: "Zatsch. Du bindest Rack 5 einfach an Rack 4 fest. Das nennt man 'strukturelle Redundanz' (oder Pfusch). Es hält erstmal, sieht aber wild aus. (Item entfernt)" 
+            },
+            { 
+                t: "Wegsehen und pfeifen", 
+                m: 0, f: 10, a: -5, c: 10,
+                r: "Du drehst dich um. Wenn du es nicht siehst, ist es nicht illegal. Du hoffst einfach, dass die Physik heute Urlaub macht." 
+            }
+        ]
+    },
+    {
+        id: "srv_loose_rack_2a",
+        title: "Der Putz-Unfall",
+        reqStory: "path_rack_screw",
+        text: "Ein lauter KNALL! Die Putzkolonne ist mit dem schweren Bohnert-Wagen volle Kanne in Rack 5 gerammt. Dank deiner Schraube hat es standgehalten. Der Putzmann starrt schockiert auf die Beule.",
+        opts: [
+            { 
+                t: "Ihn zur Sau machen", 
+                m: 5, f: 0, a: -20, c: 5, 
+                r: "Du schreist ihn 5 Minuten lang an. Das tut gut! Deine Aggression verpufft komplett. Er entschuldigt sich tausendmal." 
+            },
+            { 
+                t: "Cool bleiben & Technik prüfen", 
+                m: 15, f: -5, a: 5, c: -15, 
+                r: "'Alles gut, Meister. Das hält.' Du checkst die Logs. Keine Ausfälle. Der Chef sieht das und nickt anerkennend. 'Gute Arbeit, Müller. Robust gebaut.'" 
+            },
+            { 
+                t: "Schadenersatz fordern", 
+                m: 10, f: 5, a: 10, c: 0, 
+                r: "Du verlangst 20 Euro für den Lackschaden. Er gibt sie dir zitternd. Du bist ein Arschloch, aber ein reiches Arschloch." 
+            }
+        ]
+    },
+    {
+        id: "srv_loose_rack_2b",
+        title: "Das große Summen",
+        reqStory: "path_rack_zip",
+        text: "Ein tiefes Brummen erfüllt den Raum. Deine Kabelbinder haben die Vibrationen von Rack 5 auf Rack 4 übertragen. Jetzt schwingen beide in Resonanz und erzeugen einen Höllenlärm.",
+        opts: [
+            { 
+                t: "Mehr Kabelbinder!", 
+                rem: "zip_ties",
+                m: 5, f: 10, a: 0, c: 10, 
+                r: "Viel hilft viel. Du zurrste alles so fest, bis das Plastik weiß wird. Der Lärm wird höher, fast ein Pfeifen. Aber es wackelt weniger. (Item entfernt)" 
+            },
+            { 
+                t: "Alles wieder losknippsen", 
+                m: 20, f: -10, a: 20, c: -5, 
+                r: "Du musst deinen eigenen Pfusch beseitigen. Du fluchst, schneidest dich am Plastik und brauchst ewig. Faulheit wird am Ende immer bestraft." 
+            },
+            { 
+                t: "Ohrstöpsel rein & ignorieren", 
+                req: "headphones",
+                m: 0, f: 20, a: -10, c: 20, 
+                r: "Du setzt die Noise-Cancelling-Kopfhörer auf. Himmlische Stille. Der Chef kommt rein und brüllt was, aber du hörst ihn nicht. Er sieht wütend aus." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_1",
+        title: "Der Kabel-Alptraum",
+        text: "Hinter Rack 3 hängt ein Bündel Glasfaserkabel gefährlich nah am rotierenden Lüfter. Ein Windhauch, und es gibt Datensalat (im wörtlichen Sinne).",
+        opts: [
+            { 
+                t: "Sauber zur Seite binden", 
+                req: "zip_ties",
+                m: 15, f: -10, a: 0, c: -5, 
+                r: "Du nimmst dir Zeit und verlegst die Kabel ordentlich im Führungsschacht. Klick, klick. Das hält für die Ewigkeit. Preußische Ordnung im Rack." 
+            },
+            { 
+                t: "Festkleben (Provisorium)", 
+                req: "tape",
+                next: "path_cable_tape", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du klebst das Bündel einfach an die Seitenwand. 'Das hält schon', murmelst du. Es sieht hässlich aus, aber die Gefahr ist erst mal gebannt." 
+            },
+            { 
+                t: "Lüftergitter rausbrechen", 
+                next: "path_cable_break", 
+                m: 2, f: 10, a: 10, c: 15, 
+                r: "KNACK. Du reißt das Schutzgitter vor dem Lüfter raus. Jetzt ist mehr Platz für die Kabel, aber der Ventilator dreht sich jetzt offen wie ein Häcksler." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_2a",
+        title: "Klebrige Hitze",
+        reqStory: "path_cable_tape",
+        text: "Der Server ist heiß gelaufen. Dein Tape-Kleber hat sich verflüssigt. Das Kabelbündel hat sich gelöst und klatscht jetzt rhythmisch gegen den Lüfter. KLACK-KLACK-KLACK.",
+        opts: [
+            { 
+                t: "Doch noch Kabelbinder holen", 
+                req: "zip_ties", 
+                m: 20, f: -10, a: 5, c: 0, 
+                r: "Du musst erst die Klebereste abkratzen, bevor du es ordentlich machst. Doppelte Arbeit für deine Faulheit." 
+            },
+            { 
+                t: "Einfach neues Tape drüber", 
+                req: "tape", 
+                m: 5, f: 5, a: 0, c: 5, 
+                r: "Mehr Tape hilft mehr. Du wickelst den halben Server ein. Es sieht aus wie eine Mumie, aber das Geräusch ist weg." 
+            },
+            { 
+                t: "Tür zu machen", 
+                m: 0, f: 10, a: -5, c: 10, 
+                r: "Wenn die Tür zu ist, hört man das Klackern kaum. Problem gelöst (für dich)." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_2b",
+        title: "Der Finger-Häcksler",
+        reqStory: "path_cable_break",
+        text: "Ein Schrei aus dem Serverraum! Kevin wollte nur mal fühlen, wie stark der Luftzug ist. Ohne das Schutzgitter hat der Lüfter seinen Zeigefinger erwischt.",
+        opts: [
+            { 
+                t: "Verbandskasten holen", 
+                m: 10, f: 0, a: -5, c: 0, 
+                r: "Es blutet wie Sau. Du verarztest ihn. 'Nicht dem Chef sagen!', wimmerst du. Kevin nickt unter Tränen." 
+            },
+            { 
+                t: "Ihm sagen, er soll sich nicht anstellen", 
+                m: 5, f: 5, a: 5, c: 10, 
+                r: "'Das ist nur eine Fleischwunde. Das baut Charakter auf.' Du gibst ihm ein Taschentuch. Er geht schmollend." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_1",
+        title: "Die klemmende Tür",
+        text: "Der Kartenleser piept grün, aber der Türgriff blockiert. Die Mechanik klemmt. Drinnen blinken die Server, und du musst rein.",
+        opts: [
+            { 
+                t: "Gezielter Schlag mit Hammer", 
+                req: "hammer",
+                next: "path_door_hammer", 
+                m: 5, f: -5, a: -10, c: 10, 
+                r: "KLONG. Ein präziser Schlag auf den Schließzylinder. Etwas knackt, dann schwingt die Tür auf. Der Griff hängt schief, aber du bist drin." 
+            },
+            { 
+                t: "Schloss zerlegen & fetten", 
+                req: "screw",
+                next: "path_door_screw", 
+                m: 30, f: -10, a: 5, c: 0, 
+                r: "Du schraubst die Blende ab, richtest die Federn und fettest den Bolzen. Profi-Arbeit. Die Tür gleitet lautlos auf und zu." 
+            },
+            { 
+                t: "Mit der Schulter dagegen werfen", 
+                next: "path_door_force", 
+                m: 10, f: 0, a: 20, c: 5, 
+                r: "BAM! Deine Schulter brennt wie Feuer. Die Tür bewegt sich keinen Millimeter. Du trittst wütend dagegen und löst dabei den Sabotage-Alarm aus." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2a",
+        title: "Der Sicherheits-Techniker",
+        reqStory: "path_door_hammer",
+        text: "Ein Techniker der Sicherheitsfirma steht vor der Tür und begutachtet die Delle im Metall. Er macht Fotos für den Bericht. 'Sieht nach Vandalismus aus. Oder einem Bärenangriff.'",
+        opts: [
+            { 
+                t: "Es auf 'Materialermüdung' schieben", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "'Das Metall war wohl spröde.' Der Techniker lacht trocken. 'Klar. Und der Hammer-Abdruck ist Kunst?' Die Rechnung für den Zylinder wird teuer." 
+            },
+            { 
+                t: "Ihm Kaffee anbieten (Ablenkung)", 
+                m: 10, f: 5, a: -5, c: 5, 
+                r: "Du lenkst ihn mit Kaffee und Smalltalk ab. Er schreibt 'Mechanischer Defekt' statt 'Mutwillige Zerstörung' in den Bericht. Glück gehabt." 
+            },
+            { 
+                t: "Einfach gehen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du lässt ihn arbeiten. Später findest du eine Rechnung über 'Schließsystem-Austausch (Notdienst)' auf deinem Tisch." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2b",
+        title: "Garantie-Verlust",
+        reqStory: "path_door_screw",
+        text: "Der Sicherheits-Techniker ist da, weil der 'Gehäuse-offen'-Sensor ausgelöst hat. Er prüft das Schloss. 'Moment mal... das läuft ja besser als ab Werk. Haben Sie das gefettet?'",
+        opts: [
+            { 
+                t: "Stolz nicken", 
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "'Ich bin vom Fach.' Der Techniker nickt anerkennend. 'Nicht schlecht. Aber streng genommen ist die Garantie jetzt futsch. Ich drück mal ein Auge zu.'" 
+            },
+            { 
+                t: "Unschuldig gucken", 
+                m: 2, f: 0, a: 5, c: -5, 
+                r: "'Keine Ahnung, war schon so.' Er zuckt mit den Schultern. 'Na, wenn es funktioniert, schreibe ich keinen Bericht.' Fall erledigt." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2c",
+        title: "Die Notöffnung",
+        reqStory: "path_door_force",
+        text: "Der Techniker kommt genervt an. Der Sabotage-Alarm heult immer noch. Du hältst dir die schmerzende Schulter. 'Haben Sie versucht, die Tür einzurennen? Das ist Stahlbeton, Sie Genie.'",
+        opts: [
+            { 
+                t: "Ihm beim Aufbohren zusehen", 
+                m: 45, f: 20, a: 10, c: -5, 
+                r: "Er braucht eine Ewigkeit, um den Riegel aufzubohren. Du stehst daneben und fühlst dich nutzlos. Die Zeit fehlt dir jetzt." 
+            },
+            { 
+                t: "Ihn anschreien: 'Beeilung!'", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Deine Schulter tut weh und du bist wütend. Er arbeitet absichtlich langsamer. 'Gutes Werkzeug braucht Weile', grinst er. Du kochst." 
+            },
+            { 
+                t: "Schokoriegel essen (Frustbewältigung)", 
+                m: 5, f: 10, a: -10, c: 0, 
+                r: "Du isst einen Snack, während er arbeitet. Wenigstens sinkt dein Stresslevel, während die Rechnung steigt." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_1",
+        title: "Das leckende Rohr",
+        text: "Tropf... Tropf... Ein Kondenswasser-Rohr der Klimaanlage ist undicht. Es tropft in Zeitlupe direkt in die Lüftungsschlitze des 50.000€ teuren Core-Switch. Jeder Tropfen ein potenzieller Totalschaden.",
+        opts: [
+            { 
+                t: "Mit Panzertape umwickeln", 
+                req: "tape",
+                next: "path_leak_tape", 
+                m: 5, f: 0, a: -5, c: -10, 
+                r: "Du wickelst eine halbe Rolle Tape drum. Dicht! Zumindest für heute. Und wir wissen ja: Nichts hält länger als ein Provisorium." 
+            },
+            { 
+                t: "Mülleimer drunterstellen", 
+                next: "path_leak_bucket", 
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Pling... Pling... Du hast den Eimer aus der Küche geholt. Du musst ihn alle 2 Stunden leeren, aber die Hardware bleibt trocken. Deine Nerven leiden unter dem Geräusch." 
+            },
+            { 
+                t: "Rohr mit Hammer 'zurechtbiegen'", 
+                req: "hammer",
+                next: "path_leak_hammer", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Du setzt den Hammer als Hebel an und drückst. KNACK! Das morsche Rohr bricht komplett ab. Ein Schwall kaltes Wasser ergießt sich über das Rack. Katastrophe!" 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2a",
+        title: "Die Wasserbomben-Gefahr",
+        reqStory: "path_leak_tape",
+        text: "Du schaust nach deiner Tape-Konstruktion. Das Wasser hat sich gestaut. Das Tape hat sich gedehnt und bildet jetzt eine pralle, literschwere Blase direkt über dem Server. Sieht aus wie ein Euter.",
+        opts: [
+            { 
+                t: "Vorsichtig anstechen & ablassen", 
+                req: "screw",
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Ganz vorsichtig... PIEKS. Du fängst den Strahl mit einem Becher auf. Du brauchst 20 Becher, aber die Blase ist weg. Maßarbeit." 
+            },
+            { 
+                t: "Mehr Tape drumwickeln", 
+                req: "tape", 
+                m: 5, f: 10, a: 0, c: 5, 
+                r: "Du stabilisierst die Blase mit noch mehr Klebeband. Jetzt sieht es aus wie ein Kokon. Hoffentlich platzt das nie." 
+            },
+            { 
+                t: "Schüssel drunter & wegrennen", 
+                m: 2, f: 5, a: -5, c: 10, 
+                r: "Wenn das platzt, willst du nicht im Raum sein. Du stellst eine Schüssel zur Gewissensberuhigung auf den Boden und fliehst." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2b",
+        title: "Land unter",
+        reqStory: "path_leak_bucket",
+        text: "Du kommst zurück in den Serverraum. Es ist still. Kein 'Pling' mehr. Der Eimer ist nämlich voll und übergelaufen. Eine große Pfütze breitet sich Richtung Stromverteiler aus.",
+        opts: [
+            { 
+                t: "Alles aufwischen", 
+                m: 30, f: -20, a: 10, c: -5, 
+                r: "Du kriechst mit Papierhandtüchern auf dem Boden rum. Deine Hose wird nass, dein Rücken schmerzt. Faulheit wird sofort bestraft." 
+            },
+            { 
+                t: "Putzkolonne rufen", 
+                m: 5, f: 10, a: -5, c: 5, 
+                r: "'Hier ist... äh... was ausgelaufen.' Die Putzkraft rollt mit den Augen, macht es aber weg. Du stehst daneben und gibst unnötige Tipps." 
+            },
+            { 
+                t: "Schild 'Vorsicht Rutschgefahr' aufstellen", 
+                m: 2, f: 15, a: -5, c: 10, 
+                r: "Rechtlich bist du jetzt abgesichert. Technisch gesehen steht der Stromverteiler immer noch im Wasser. Aber du hast Feierabend." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2c",
+        title: "Wasserschaden-Bingo",
+        reqStory: "path_leak_hammer",
+        text: "Das Wasser läuft. Der Switch blinkt wild. Es riecht nach Ozon. Du musst handeln, bevor der 50.000€ Schaden amtlich wird.",
+        opts: [
+            { 
+                t: "In Reis einlegen (Mythos)", 
+                m: 15, f: 5, a: -5, c: 10, 
+                r: "Du kippst den Kantinen-Reis in den Server. Es bringt technisch nichts, sieht aber so aus, als hättest du einen Plan. Der Switch stirbt trotzdem." 
+            },
+            { 
+                t: "Mit Föhn trocknen", 
+                m: 20, f: -5, a: 5, c: 0, 
+                r: "Du föhnst die Platinen trocken. Es dauert ewig. Tatsächlich gehen die Lichter wieder an! Ein Wunder (oder Glück). Korrosion ist ein Problem für später." 
+            },
+            { 
+                t: "Schuld auf Dachschaden schieben", 
+                m: 5, f: 10, a: -10, c: -5, 
+                r: "Du machst Fotos vom kaputten Rohr. 'Baumangel! Höhere Gewalt!' Die Versicherung zahlt. Niemand fragt nach dem Hammer." 
+            }
+        ]
+    },
+    {
+        id: "srv_pw_list_1",
+        title: "Versteckte Notiz",
+        text: "Hinter Rack 5 klebt ein vergilbter Zettel mit Tesafilm. Darauf steht in krakeliger Schrift: 'TOP SECRET - NUR FÜR ADMINS'. Der Zettel sieht aus, als hinge er dort schon seit Windows 95.",
+        opts: [
+            { 
+                t: "Den Zettel neugierig entziffern", 
+                next: "path_pw_decipher", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Es sind keine Passwörter. Es ist das Vermächtnis deines Vorgängers: 'Ich habe das Internet in einer schwarzen Kiste ganz unten im Rack versteckt. Wenn Google down ist, müsst ihr die Kiste schütteln. P.S.: Trau niemals dem Drucker.' Weise Worte." 
+            },
+            { 
+                t: "Ehrfürchtig hängen lassen", 
+                m: 0, f: 0, a: 0, c: 0, 
+                r: "Du drückst den Tesafilm wieder fest. Das ist IT-Archäologie und Kulturgut. Wer das entfernt, löscht wahrscheinlich auch versehentlich das Backup." 
+            }
+        ]
+    },
+    {
+        id: "srv_pw_list_2a",
+        title: "Der Google-Crash",
+        reqStory: "path_pw_decipher",
+        text: "Ein Schrei hallt durch die Firma: 'GOOGLE IST DOWN!' Panik bricht aus. Die Senior-Admins tippen wild auf Konsolen: 'DNS-Fehler! Backbone-Timeout!' Nichts hilft. Der Chef läuft rot an.",
+        opts: [
+            { 
+                t: "Die 'Schwarze Kiste' schütteln", 
+                m: 5, f: -10, a: -10, c: -20, 
+                r: "Du kriechst nach unten und schüttelst die verstaubte schwarze Box. KLACK. Die LEDs springen auf Grün. Das Internet ist zurück! Der Chef klopft dir begeistert auf die Schulter: 'Hexerei, Müller! Aber gute Arbeit!'" 
+            },
+            { 
+                t: "Logisch vorgehen (Router neu starten)", 
+                m: 20, f: -5, a: 10, c: 10, 
+                r: "Du ignorierst den okkulten Rat und startest den Cisco-Router neu. Es bringt... nichts. 20 Minuten später geht es von alleine wieder. Der Chef brummt unzufrieden: 'Das dauerte viel zu lange.'" 
+            },
+            { 
+                t: "Dem Drucker misstrauen", 
+                m: 5, f: 10, a: -5, c: 10, 
+                r: "Der Zettel warnte auch vor dem Drucker. Du starrst das Gerät böse an, während die Firma Geld verliert. Der Chef schreit: 'Müller! Was machen Sie da?! Fixen Sie das WLAN!' Das gab Ärger." 
+            }
+        ]
+    },
+    {
+        id: "srv_label_fail",
+        title: "Der Elektriker-Fail",
+        text: "Du starrst auf das Bedienfeld der Klimaanlage. Ein handgeschriebener Zettel klebt über den Reglern: 'ACHTUNG: Der Elektriker war farbenblind! BLAU heizt (Warm) und ROT kühlt (Kalt)! Nicht anfassen, wird erst 2030 repariert.'",
+        opts: [
+            { 
+                t: "Anlage genauer untersuchen", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Tatsächlich. Die Kabel sind vertauscht. Rot geht zum Kompressor (Kalt), Blau zur Heizspirale (Warm). Völlig absurd. Gut, dass du nachgesehen hast." 
+            },
+            { 
+                t: "Zettel ignorieren", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du gehst weiter. Farben sind schließlich genormt, oder? Was soll schon passieren." 
+            }
+        ]
+    },
+    {
+        id: "srv_port_warning",
+        title: "Das Warnschild am Switch",
+        text: "Am Haupt-Switch klebt ein riesiges Schild über Port 42: 'NICHT BENUTZEN! Kurzschluss-Gefahr! Wer hier was einsteckt, grillt den ganzen Switch!'",
+        opts: [
+            { 
+                t: "Schild gerade rücken", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Port 42 ist böse. Verstanden. Gut, dass das Schild da hängt." 
+            },
+            { 
+                t: "Ignorieren", 
+                m: 0, f: 5, a: 0, c: 0, 
+                r: "Du hast es eilig. Hoffentlich behältst du das trotzdem im Hinterkopf." 
+            }
+        ]
+    },
+    {
+        id: "srv_crying_elster",
+        title: "Tränen im Serverraum",
+        text: "Du hörst ein leises Wimmern hinter Rack 4. Es ist Frau Elster aus der Buchhaltung. Sie sitzt auf dem Boden, das Gesicht in den Händen vergraben. 'Ich kann das alles nicht mehr...', flüstert sie.",
+        opts: [
+            { 
+                t: "Leise wieder rausgehen", 
+                m: 0, f: 0, a: 0, c: 0, 
+                r: "Du lässt sie in Ruhe. Manchmal braucht man Privatsphäre." 
+            },
+            { 
+                t: "Fragen: 'Alles okay mit der Bilanz?'", 
+                m: 10, f: 0, a: 10, c: 5, 
+                r: "Sie schaut dich entsetzt an. 'Ist Ihnen Arbeit wichtiger als Menschen?!' Sie rennt weinend raus." 
+            },
+            { 
+                t: "Fragen: 'Wie geht es Rüdiger?'",
+                m: 15, f: 10, a: -20, c: -5, 
+                r: "Sie blickt überrascht auf. Ein kleines Lächeln erscheint. 'Rüdiger... ja, der wartet zuhause. Er braucht sein Futter.' Sie wischt sich die Tränen weg. 'Danke, Herr Müller. Ich gehe jetzt heim zu ihm.' Du hast ihren Tag gerettet." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_1",
+        title: "Der kritische Patch",
+        text: "Auf dem Dashboard blinkt es rot: 'Kritische Sicherheitslücke in der Zeiterfassung! Patch verfügbar.' Es ist gerade Mittagspause, alle kauen Döner. Niemand ist eingeloggt. Der perfekte Moment?",
+        opts: [
+            { 
+                t: "Sofort das Update installieren", 
+                next: "path_update_patch", 
+                m: 20, f: -10, a: 30, c: 0, 
+                r: "Update läuft durch! Aber: Der 'Stempeln'-Button ist jetzt grün statt blau. Um 13 Uhr bricht totale Panik aus. 'ALLES SIEHT ANDERS AUS!' Das Telefon glüht. Du hast das Layout verändert, du Monster." 
+            },
+            { 
+                t: "Wegklicken: 'Never change a running system'", 
+                next: "path_update_ignore", 
+                m: 0, f: 5, a: 0, c: 0, 
+                r: "Du klickst die Warnung weg. Wenn russische Hacker kommen, ist das ein Problem für das Zukunfts-Ich. Jetzt ist erstmal Pause und der Döner wird kalt." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_2a",
+        title: "Heise Online News",
+        reqStory: "path_update_patch",
+        text: "Du liest genervt die IT-News, während User sich immer noch über den grünen Button beschweren. Schlagzeile: 'Massive Ransomware-Welle nutzt Lücke in Zeit-Software. Tausende Firmen verschlüsselt.' Nur deine nicht.",
+        opts: [
+            { 
+                t: "Arrogante Rundmail schreiben", 
+                m: 10, f: 0, a: -20, c: -20, 
+                r: "'Betreff: Gern geschehen.' Du erklärst, dass der grüne Button sie vor dem Ruin gerettet hat. Plötzlich ist Ruhe. Ein kleiner Triumph." 
+            },
+            { 
+                t: "Den Button wieder blau färben (CSS)", 
+                m: 15, f: -5, a: -5, c: 0, 
+                r: "Du hackst das CSS, damit der Button wieder blau ist. Die Sicherheit bleibt, die User sind glücklich. Du bist der stille Wächter." 
+            },
+            { 
+                t: "Schadenfreude genießen", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du lehnst dich zurück und liest die Berichte über brennende Serverräume bei der Konkurrenz. Der Kaffee schmeckt heute besonders gut." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_2b",
+        title: "Die neuen Kollegen",
+        reqStory: "path_update_ignore",
+        text: "Du prüfst die Stempelzeiten. Komisch. Neben 'Müller' und 'Schmidt' stehen da plötzlich 'Vladimir', 'Igor' und 'Botnet_Warrior_99'. Sie arbeiten alle 24 Stunden am Tag und haben Admin-Rechte.",
+        opts: [
+            { 
+                t: "Panik: Datenbank bereinigen & patchen", 
+                m: 60, f: -20, a: 20, c: 0, 
+                r: "Heimlich löschst du die Accounts und spielst das Update ein. Du schwitzt Blut und Wasser. Hoffentlich haben sie keine Backdoor hinterlassen." 
+            },
+            { 
+                t: "Bei HR nachfragen: 'Haben wir expandiert?'", 
+                m: 10, f: 0, a: -5, c: 20, 
+                r: "Die HR fällt aus allen Wolken. Der Chef bekommt Wind davon. 'Wieso haben wir Mitarbeiter in St. Petersburg?!' Du musst zum Rapport." 
+            },
+            { 
+                t: "Die 'Mitarbeiter' behalten (Mining)", 
+                m: 5, f: 10, a: -10, c: 10, 
+                r: "Sie scheinen nur Rechenleistung für Krypto zu klauen. Du lässt sie gewähren und zweigst 10% für dich ab. Ein riskantes Spiel mit der russischen Mafia." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_1",
+        title: "Der teure Berater",
+        text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef stürmt rein: 'WIESO STEHT DER BETRIEB?!'",
+        opts: [
+            { 
+                t: "Auf den Berater zeigen", 
+                m: 10, f: -5, a: 30, c: 10, 
+                r: "Der Berater lacht glatt: 'Ah, Herr Müller wollte mir gerade die USV demonstrieren und hat wohl das falsche Kabel erwischt. Schlechtes Briefing!' Der Chef nickt. Du kochst vor Wut." 
+            },
+            { 
+                t: "Stecker wieder reinrammen", 
+                next: "consultant_psu",
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Funkenflug. Der Server fährt hoch, aber das Netzteil ist durchgebrannt. Der Berater tippt auf seinem Handy: 'Hardware veraltet. Empfehle Neukauf.' Du grinst böse. 'Wird erledigt.'" 
+            },
+            { 
+                t: "Berater anschreien", 
+                next: "consultant_war",
+                m: 2, f: 0, a: -20, c: 50, 
+                r: "Du brüllst den Gast an. Der Chef wird blass. 'Müller! Benehmen Sie sich! Abmahnung wegen unprofessionellem Verhalten!' Der Berater grinst." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_2b",
+        title: "Das Gold-Netzteil",
+        reqStory: "consultant_psu",
+        text: "Das Ersatzteil ist da. Weil der Berater meinte, wir bräuchten 'High-End', hast du das 'Titan-Master 9000' bestellt: Handgelötet, RGB-Beleuchtung, Military-Grade. Preis: 4.800€. Der Chef starrt fassungslos auf die Rechnung.",
+        opts: [
+            { 
+                t: "Den Berater zitieren", 
+                m: 5, f: 0, a: -20, c: -10,
+                r: "'Der Berater sagte: Keine Kosten scheuen für Stabilität.' Der Chef läuft rot an. 'Dieser Idiot! Aber gut, wenn er es empfohlen hat...' Du bist fein raus." 
+            },
+            { 
+                t: "Technik-Geschwafel nutzen", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "'Das ist das einzige Modell, das mit unserer Legacy-Software kompatibel ist, Chef.' Er seufzt. 'Na gut. Bauen Sie es ein.' Er hat keine Ahnung, dass ein 50€ Teil gereicht hätte." 
+            },
+            { 
+                t: "Genüsslich einbauen", 
+                m: 30, f: -10, a: -10, c: 0, 
+                r: "Du schraubst das Monster in das Rack. Es leuchtet in Regenbogenfarben. Es ist völlig überdimensioniert, aber es ist DEINS. Rache ist süß (und teuer)." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_2c",
         title: "Die offizielle Beschwerde",
         reqStory: "consultant_war",
-        text: "Der Berater steht wieder in der Tür. Er wedelt mit einem laminierten Dokument. 'Bezüglich unseres... Disputs. Ich habe hier eine formelle Beschwerde wegen 'Toxischer Arbeitsatmosphäre & Aggression'. Wenn Sie das unterschreiben und sich entschuldigen, empfehle ich dem Vorstand kein Outsourcing der IT.'",
+        text: "Der Berater wedelt mit einem laminierten Dokument. 'Bezüglich unseres Disputs. Ich habe hier eine formelle Beschwerde wegen 'Toxischer Arbeitsatmosphäre'. Unterschreiben Sie, oder ich empfehle dem Vorstand Outsourcing.'",
         opts: [
             { 
                 t: "Klein beigeben & unterschreiben", 
@@ -4232,364 +5748,803 @@ const DB = {
                 r: "Du unterschreibst zähneknirschend. Der Berater lächelt süffisant. 'Geht doch. Synergie durch Kooperation.' Dein Radar sinkt, aber dein Stolz ist tot." 
             },
             { 
-                t: "Bürokratie-Konter: 'Formular 7b fehlt.'", 
+                t: "Bürokratie-Konter: 'Formular 7b fehlt'", 
                 m: 5, f: 10, a: 10, c: 10, 
-                r: "Du schaust das Papier an. 'Das ist das alte Formular von 2018. Ohne den Passierschein A38 und den DSGVO-Anhang C kann ich das nicht annehmen. Vorschrift ist Vorschrift.' Der Berater ist verwirrt. Er zieht ab, um den Drucker zu suchen." 
+                r: "Du schaust das Papier an. 'Das ist das alte Formular von 2018. Ohne Passierschein A38 kann ich das nicht annehmen.' Der Berater ist verwirrt und zieht ab." 
             },
             { 
                 t: "Eskalation: 'Raus aus meinem Serverraum!'", 
                 m: 2, f: 0, a: -20, c: 40, 
-                r: "Du wirfst ihn raus. Er droht mit Anwälten. Der Chef ist sauer, aber die Kollegen feiern dich als Helden des Widerstands. Manchmal muss man ein Exempel statuieren." 
+                r: "Du wirfst ihn raus. Er droht mit Anwälten. Der Chef ist sauer, aber die Kollegen feiern dich als Helden des Widerstands." 
             }
         ]
-        },
-		{
-            id: "srv_dust_disaster",
-            title: "Der verstaubte Server",
-            text: "Der alte Backup-Server 'Methusalem' ist unter einer 5cm dicken Staubschicht begraben. Die Lüfter japsen. Das ist Brandgefahr! Du greifst zum Druckluft-Spray.",
-            opts: [
-                { 
-                    t: "Gründlich reinigen", 
-                    m: 20, f: -10, a: 40, c: 10, 
-                    r: "Du pustest den Staub weg. PFFFFT. Plötzlich geht der Server aus. Stille. Der Admin stürmt rein: 'NEIN! Der Staub war leitfähig! Er hat die korrodierten Kontakte überbrückt! Du hast das System getötet!' Er meldet dich wegen Sachbeschädigung." 
-                },
-                { 
-                    t: "Staubmuster malen", 
-                    m: 5, f: 10, a: -5, c: 0, 
-                    r: "Du malst einen Smiley in den Staub. Sieht gleich viel freundlicher aus." 
-                }
-            ]
-        },
-        {
-            id: "srv_cable_trip",
-            title: "Die Stolperfalle 2.0",
-            text: "Du findest ein zerfetztes Netzwerkkabel am Boden. Jemand ist drüber gestolpert und hat die Buchse halb aus der Wand gerissen. Der Uplink zum Vertrieb ist tot. Markus brüllt schon aus der Ferne: 'WIESO GEHT MEIN SALESFORCE NICHT?! ICH VERLIERE GELD!'",
-            opts: [
-                { 
-                    t: "Sofort ein neues Kabel patchen", 
-                    req: "cable", 
-                    m: 10, f: -5, a: 0, c: -5, 
-                    r: "Zack, neues Kabel rein, Buchse provisorisch in den Putz gedrückt. Die Link-Lampe leuchtet grün. Du hast den Umsatz (und Markus' Blutdruck) gerettet." 
-                },
-                { 
-                    t: "Die Drähte mit Tape flicken",
-                    req: "tape", 
-                    m: 20, f: 0, a: 5, c: 5, 
-                    r: "Du verzwirbelst die Kupferadern und wickelst dick Tape drum. Es hält... irgendwie. 50% Packet Loss, aber Markus hält kurz die Klappe." 
-                },
-                { 
-                    t: "Notlösung: WLAN-Stick als Brücke", 
-                    req: "usb_stick", 
-                    m: 15, f: 5, a: 0, c: 0, 
-                    r: "Du steckst den Stick in den Switch. Eine wackelige WLAN-Brücke steht. Besser als nichts, aber die Latenz ist grauenhaft." 
-                },
-                { 
-                    t: "Schild 'Wartungsarbeiten' aufstellen & gehen", 
-                    m: 5, f: 10, a: -5, c: 25, 
-                    r: "Du stellst das Schild auf und verschwindest. Der Vertrieb ist 2 Stunden offline. Der Chef stürmt später wutentbrannt zu dir: 'WARTUNG?! WÄHREND DER KERNARBEITSZEIT?! SIND SIE IRRE?!'" 
-                }
-            ]
-        },
-        {
-            id: "srv_overheat_warning",
-            title: "Hitzeflimmern",
-            text: "Server 'Berta' (zuständig für die Gehaltsabrechnung) glüht förmlich. Der Lüfter steht still und es riecht beißend nach heißem Silizium. Wenn Berta stirbt, sind die Lohndaten weg.",
-            opts: [
-                { 
-                    t: "Brutale Lösung: Den CO2-Löscher reinhalten", 
-                    req: "fire_ext", 
-                    m: 5, f: -10, a: 10, c: -10, 
-                    r: "PFFFFT! Ein eiskalter CO2-Stoß direkt in den Lufteinlass. Die Temperatur fällt schockartig auf 10 Grad. Berta schnurrt wieder. Die Hardware ist leicht vereist, aber sie läuft." 
-                },
-                { 
-                    t: "Gehäuse aufschrauben & Luft zufächeln", 
-                    req: "screw", 
-                    m: 45, f: -15, a: 20, c: 0, 
-                    r: "Du schraubst das Gehäuse auf. Du stehst 45 Minuten daneben und wedelst mit einem Klemmbrett frische Luft hinein. Dein Arm fällt fast ab und der Staub kratzt im Hals." 
-                },
-                { 
-                    t: "Den teuren Ventilator aus dem Chef-Büro klauen", 
-                    m: 20, f: -5, a: 5, c: 15, 
-                    r: "Du holst den Dyson-Ventilator vom Chef, während der Mittag macht. Berta ist kühl, aber der Chef schwitzt jetzt oben und sucht wütend sein Spielzeug." 
-                },
-                { 
-                    t: "Tür zu & das Beste hoffen", 
-                    m: 5, f: 10, a: 0, c: 50, 
-                    r: "Du gehst einfach. 10 Minuten später stirbt Berta den Hitzetod. Frau Elster steht kreischend im Flur: 'MEIN GELD?!'. Der Chef macht dich persönlich haftbar. Das gibt richtig Ärger." 
-                }
-            ]
-        },
-        {
-            id: "srv_night_shift_remnant",
-            title: "Überreste der Nachtschicht",
-            text: "Du findest eine halbvolle, warme Dose Energy Drink und einen Zettel auf dem Server: 'RAID-Controller spinnt. Ich geh heim, mir egal.' Eine rote Lampe am Drive-Bay blinkt hektisch.",
-            opts: [
-                { 
-                    t: "Den abgestandenen Rest trinken", 
-                    loot: "energy", 
-                    m: 5, f: -5, a: -5, c: 10, 
-                    r: "Du exst die warme Plörre. Koffein-Kick! Aber während du den Kopf in den Nacken legst, fällt Platte 2 endgültig aus. Der Chef ruft an: 'Warum ist das Laufwerk X: weg?!'" 
-                },
-                { 
-                    t: "Seufzen und den RAID-Rebuild starten", 
-                    m: 60, f: -20, a: 10, c: -10, 
-                    r: "Du tauschst die Platte im Hot-Swap und startest den Rebuild. Es dauert eine Stunde, in der du auf einen Ladebalken starrst. Du hast den Arsch des Kollegen gerettet, aber niemand wird es je erfahren." 
-                },
-                { 
-                    t: "Den Kollegen aus dem Bett klingeln", 
-                    m: 15, f: 0, a: -10, c: 5, 
-                    r: "Du weckst ihn auf und brüllst ihn an. Er murmelt 'Nicht mein Problem' und legt auf. Das System blinkt weiter rot. Rache ist süß, repariert aber keine Festplatten." 
-                }
-            ]
-        },
-        {
-            id: "srv_rat_king",
-            title: "Der Rattenkönig",
-            text: "Hinter dem Patchpanel raschelt es verdächtig. Du leuchtest mit dem Handy rein. Schock! Drei fette Ratten nagen synchron am Glasfaserkabel der Geschäftsleitung! Wenn das durch ist, kann der CEO seine Golf-Videos nicht mehr streamen.",
-            opts: [
-                { 
-                    t: "Cowboy-Style: Kabelbinder als Lasso nutzen", 
-                    req: "zip_ties", 
-                    m: 30, f: -10, a: 10, c: -5, 
-                    r: "In einem epischen Kampf fängst du die Biester und setzt sie vor die Tür. Du bist verschwitzt und blutest leicht, aber das Internet lebt. Yee-haw." 
-                },
-                { 
-                    t: "Mit dem Hammer gegen die Wand dreschen", 
-                    req: "hammer", 
-                    m: 10, f: 0, a: 20, c: 10, 
-                    r: "BAM! Du haust eine Delle in den Putz. Die Ratten fliehen panisch – und reißen dabei im Vorbeilaufen eine Ader aus dem Stecker. Das Internet wackelt jetzt bedenklich." 
-                },
-                { 
-                    t: "Diplomatie: Den alten Donut opfern", 
-                    req: "donut", 
-                    m: 5, f: 0, a: -5, c: 0, 
-                    r: "Du wirfst den steinharten Donut in die dunkle Ecke. Die Ratten stürzen sich gierig darauf und lassen das Glasfaser in Ruhe. Ein süßes Opfer für die Götter der Bandbreite." 
-                },
-                { 
-                    t: "Panisch die Flucht ergreifen", 
-                    m: 5, f: 5, a: 10, c: 40, 
-                    r: "Du rennst weg und schließt ab. 10 Minuten später ist das Internet tot. Der CEO stürmt brüllend runter: 'WARUM SIND MEINE GOLF-VIDEOS WEG?! UND WARUM FIEPT ES HIER?!'" 
-                }
-            ]
-        },
-        {
-            id: "srv_legacy_tape",
-            title: "Das Backup-Band",
-            text: "Das uralte Bandlaufwerk surrt, klickt und verstummt dann. Es spuckt das Tape nicht mehr aus. 'Error 08/15: Tape stuck'. Es ist das einzige Voll-Backup von gestern. Wenn du es kaputt machst, sind die Daten futsch.",
-            opts: [
-                { 
-                    t: "Chirurgischer Eingriff mit dem Schraubendreher", 
-                    req: "screw", 
-                    m: 20, f: -5, a: 0, c: -5, 
-                    r: "Mit chirurgischer Präzision und Schweiß auf der Stirn hebelst du die Blende auf. Das Tape gleitet unbeschädigt heraus. Daten gerettet. Du fühlst dich wie ein Gott." 
-                },
-                { 
-                    t: "McGyver-Trick: Mit Kabelbinder-Schlaufe angeln", 
-                    req: "zip_ties", 
-                    m: 10, f: 0, a: 5, c: 5, 
-                    r: "Du bastelst eine Schlaufe, fädelst sie ein und ziehst vorsichtig. Es kommt raus! Das Gehäuse hat zwar Kratzer, aber hey – es läuft." 
-                },
-                { 
-                    t: "Rohe Gewalt anwenden: 'GIB ES HER!'", 
-                    m: 5, f: 0, a: 20, c: 30, 
-                    r: "Du reißt es mit beiden Händen raus. RRRRATSCH. Bandsalat. Das schwarze Magnetband verteilt sich im ganzen Raum. Du wirfst das Knäuel schnell tief in den Müll. Das ist eine Zeitbombe." 
-                },
-                { 
-                    t: "Stecken lassen & beten", 
-                    m: 0, f: 10, a: 0, c: 20, 
-                    r: "Du ignorierst den Fehler einfach. Das Backup heute Nacht wird garantiert fehlschlagen. Aber das ist ein Problem für den 'Morgen-Müller'." 
-                }
-            ]
-        },
-        {
-            id: "srv_egon_stash",
-            title: "Egons Geheimversteck",
-            text: "Du hebst ein loses Bodenblech an. Dahinter: Eine verstaubte Kiste von Hausmeister Egon. Inhalt: Eine angebrochene Flasche 'Billig-Korn', fragwürdige Magazine aus den 90ern und... eine handschriftliche Liste mit allen Türcodes der Firma.",
-            opts: [
-                { 
-                    t: "Die Liste schnell abfotografieren", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "Klick. Das Foto ist sicher auf deinem Handy. Unglaublich: Der Master-Code ist '9999'. Das wird dir noch so manche verschlossene Tür öffnen." 
-                },
-                { 
-                    t: "Einen tiefen Schluck Korn nehmen", 
-                    m: 15, f: 10, a: -20, c: 10, 
-                    r: "Du nimmst einen Schluck. Es schmeckt wie Bremsenreiniger und brennt höllisch. Du bist leicht beschwipst. Die Arbeit ist jetzt erträglicher, aber deine Fahne ist ein Risiko." 
-                },
-                { 
-                    t: "Fund melden & Egon verpfeifen", 
-                    m: 15, f: 0, a: 10, c: 5, 
-                    r: "Du legst die Beweise dem Chef vor. Egon bekommt riesigen Ärger. Er weiß genau, dass du es warst. Deine Bürotür wird ab morgen seltsamerweise immer klemmen." 
-                }
-            ]
-        },
-        {
-            id: "srv_crypto_miner",
-            title: "Der versteckte Miner",
-            text: "Ein Server läuft auf 100% Last, die Lüfter heulen wie ein startender Jet. Du checkst den Taskmanager: 'KevinCoin_Miner.exe' verbraucht alle Ressourcen. Der Azubi schürft Krypto auf Firmenkosten! Die CPU hat bereits kritische 98 Grad.",
-            opts: [
-                { 
-                    t: "Prozess killen & Kevin zur Rede stellen", 
-                    m: 15, f: -5, a: 5, c: -5, 
-                    r: "Kevin jammert: 'Aber der Kurs geht gerade zum Mond! Ich wollte uns allen Lambos kaufen!' Du bleibst hart. Der Server kühlt ab, der Lambo muss warten." 
-                },
-                { 
-                    t: "Die Wallet-Adresse heimlich auf deine ändern", 
-                    req: "admin_pw", 
-                    m: 10, f: 20, a: -10, c: 25, 
-                    r: "Mit einem hämischen Grinsen leitest du die Coins auf dein privates Wallet um. Böse? Ja. Profitabel? Oh ja. Kevin schürft jetzt für deine Frührente. Hoffentlich merkt das die Revision nicht." 
-                },
-                { 
-                    t: "Einfach weiterlaufen lassen", 
-                    m: 0, f: 10, a: 0, c: 40, 
-                    r: "Du ignorierst es. 30 Minuten später schaltet die Kiste wegen Überhitzung per Not-Aus ab. Blöd nur, dass darauf auch SAP lief. Die Firma steht still. Alle schreien." 
-                }
-            ]
-        },
-        {
-            id: "srv_intern_access",
-            title: "Dringende Daten",
-            text: "Der Praktikant ist krank. Der Chef steht vor dessen PC: 'Müller! Knacken Sie das Ding! Da ist die Präsentation drauf! Ich wette, der Idiot hat was Kompliziertes genommen!'",
-            opts: [
-                { 
-                    t: "Eingabe: 'Puschel123'",
-                    m: 5, f: 10, a: -10, c: -5, 
-                    r: "Du tippst es blind ein. 'ZUGRIFF ERLAUBT'. Der Chef starrt dich an: 'Woher...? Egal. Gute Arbeit, Müller!'" 
-                },
-                { 
-                    t: "Admin-Reset erzwingen",
-                    req: "admin_pw",
-                    m: 15, f: -5, a: 0, c: 0, 
-                    r: "Dauert 15 Minuten, funktioniert aber sicher. Der Chef trommelt ungeduldig mit den Fingern." 
-                },
-                { 
-                    t: "Eingabe: '123456'",
-                    m: 5, f: 0, a: 10, c: 15, 
-                    r: "Falsch. PC sperrt sich für 1 Stunde. Der Chef explodiert." 
-                },
-                { 
-                    t: "Eingabe: 'Passwort'",
-                    m: 5, f: 0, a: 10, c: 10, 
-                    r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
-                }
-            ]
-        },
-		{
-            id: "srv_cable_spaghetti",
-            title: "Kabel-Spaghetti",
-            text: "Der Switch im Rack sieht aus wie ein Teller Spaghetti. Ein einziger Knoten. Du musst Port 42 finden.",
-            opts: [
-                { 
-                    t: "Geduldig entwirren", 
-                    m: 45, f: -10, a: 10, c: -5, 
-                    r: "Zen-Modus. Nach 45 Minuten hast du Ordnung. Es sieht wunderschön aus." 
-                },
-                { 
-                    t: "Kabelbinder nehmen & Zurren", 
-                    req: "zip_ties", 
-                    m: 15, f: 0, a: -5, c: 0, 
-                    r: "Du bindest alles zu einer Wurst zusammen. Nicht schön, aber Luft kommt durch." 
-                },
-                { 
-                    t: "Einfach dran ziehen", 
-                    m: 5, f: 5, a: 20, c: 10, 
-                    r: "Du ziehst an einem Kabel. Drei andere gehen raus. Ups. Telefonanlage tot." 
-                }
-            ]
-        },
-        {
-            id: "srv_disco_led",
-            title: "Disco im Serverraum",
-            text: "Alle LEDs an den Server-Racks blinken synchron im 4/4-Takt. Es sieht aus wie eine Lichtorgel in einer Dorfdisco. Das System läuft extrem unrund und summt seltsam.",
-            opts: [
-                { 
-                    t: "Im Handbuch nachschlagen", 
-                    req: "manual", 
-                    m: 15, f: -5, a: -5, c: 0, 
-                    r: "Du blätterst wild. Fehlercode '0xDEADBEEF'. Ein seltener Firmware-Glitch. Du führst den dokumentierten Soft-Reset durch. Alles wieder grün." 
-                },
-                { 
-                    t: "Techno-Playlist an & tanzen", 
-                    m: 15, f: 10, a: -20, c: 15, 
-                    r: "Du nutzt das Blinken als Lightshow und tanzt völlig enthemmt. Leider steht plötzlich der Chef in der Tür, starrt dich an und fragt trocken: 'Haben Sie zu viel Energie, Müller?! Oder einen Schlaganfall?'" 
-                },
-                { 
-                    t: "Brutal den Stecker ziehen", 
-                    m: 5, f: 0, a: 0, c: 10, 
-                    r: "Klack. Ruhe. Klack. Lärm. Es läuft wieder. Die Datenbank meckert zwar jetzt über 'korrupte Indizes', aber wenigstens ist die Disco vorbei." 
-                }
-            ]
-        },
-        {
-            id: "srv_ac_failure",
-            title: "Klima-Ausfall",
-            text: "Die Klimaanlage ist ausgefallen. Es sind gefühlte 50 Grad im Serverraum. Die Lüfter der Racks laufen auf Maximum, es klingt wie auf einem Flugzeugträger. Die Server schwitzen.",
-            opts: [
-                { 
-                    t: "Die Sicherheitstür mit einem Stuhl aufkeilen", 
-                    m: 5, f: 0, a: 0, c: 10, 
-                    r: "Frische Flur-Luft strömt herein. Die Temperatur sinkt. Aber: Eine dauerhaft offene Serverraum-Tür ist ein massives Sicherheitsrisiko. Wenn das der Datenschutzbeauftragte sieht..." 
-                },
-                { 
-                    t: "MacGyver-Lösung: USB-Lüfter basteln", 
-                    req: "usb_stick", 
-                    m: 15, f: -5, a: -5, c: 0, 
-                    r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus und du fühlst dich wie ein Ingenieur." 
-                },
-                { 
-                    t: "Eimerweise Eiswürfel aus der Küche holen", 
-                    m: 10, f: 5, a: 0, c: 20, 
-                    r: "Du stellst Schüsseln mit Eis direkt in die Racks. Es kühlt tatsächlich, aber das Kondenswasser tropft gefährlich nah an die Netzteile. Ein Tanz auf der Rasierklinge." 
-                }
-            ]
-        },
-        {
-            id: "srv_story_kevin_1",
-            title: "Kevins Experiment",
-            text: "Kevin steht vor einem offenen Rack. Es riecht nach Ozon. Er hält einen Schraubendreher wie einen Zauberstab in ein laufendes Netzteil. 'Ich wollte nur den Lüfter überbrücken, damit er leiser ist...'",
-            opts: [
-                { 
-                    t: "Ihn anschreien & rauswerfen", 
-                    m: 5, f: 0, a: 15, c: 0, 
-                    r: "Kevin zuckt zusammen und rennt weg. 'Tschuldigung...' Er wird dich nie wieder um Rat fragen." 
-                },
-                { 
-                    t: "Meldung an HR machen", 
-                    m: 15, f: 0, a: 0, c: -10, 
-                    r: "Du meldest den Vorfall. Kevin kriegt eine Abmahnung. Sicher ist sicher, aber er meidet dich jetzt." 
-                },
-                { 
-                    t: "Seufzen: 'Zeig mal her... so geht das.'", 
-                    next: "kevin_student", 
-                    m: 25, f: 0, a: -5, c: 0, 
-                    r: "Du nimmst dir Zeit und erklärst ihm den Schaltplan. Kevin staunt: 'Whoa. Das ergibt Sinn.' Er schaut dich an wie einen Jedi-Meister." 
-                }
-            ]
-        },
-        {
-            id: "srv_story_kevin_3",
-            reqStory: "kevin_pro",
-            title: "DDoS Angriff: Die Feuertaufe",
-            text: "ALARM! Ein massiver DDoS-Angriff legt die Firewall lahm. Du kommst mit dem Tippen nicht hinterher. Plötzlich zieht Kevin einen Laptop: 'Ich hab das Skript von neulich angepasst! Ich kann den Traffic umleiten! Lass mich ran!'",
-            opts: [
-                { 
-                    t: "Nicken: 'Mach es. Ich vertraue dir.'", 
-                    loot: "kevin_ram", 
-                    m: 5, f: -30, a: -40, c: -30, 
-                    r: "Kevin tippt wie ein Besessener. Enter. Stille. Der Angriff ist gestoppt. Er grinst breit: 'Hab ich von dir gelernt.' Er gibt dir seinen alten Glücks-RAM als Andenken." 
-                },
-                { 
-                    t: "Wegschubsen: 'Zu gefährlich! Geh weg!'", 
-                    m: 45, f: -10, a: 30, c: -5, 
-                    r: "Du löst das Problem selbst, aber es dauert 30 Minuten länger. Kevin steht traurig daneben. 'Ich wollte doch nur helfen...'" 
-                },
-                { 
-                    t: "Zögern: 'Bist du sicher?'", 
-                    m: 20, f: 0, a: 20, c: 20, 
-                    r: "In deinem Zögern stürzt der Mailserver ab. Kevin führt das Skript dann doch aus, aber der Schaden ist schon da. 'Hättest du mich mal früher gelassen...', murmelt er." 
-                }
-            ]
-        },
+    },
+    {
+        id: "srv_dust_disaster_1",
+        title: "Der verstaubte Server",
+        text: "Der alte Backup-Server 'Methusalem' ist unter einer 5cm dicken Staubschicht begraben. Die Lüfter japsen und die Temperatur-LED blinkt rot. Das ist Brandgefahr!",
+        opts: [
+            { 
+                t: "Gründlich reinigen (Druckluft)", 
+                next: "srv_dust_2a",
+                m: 20, f: -10, a: 5, c: 0, 
+                r: "PFFFFT. Eine graue Wolke hüllt dich ein. Du holst kiloweise Staub aus den Kühlrippen. Plötzlich drehen die Lüfter hoch, die LED wird grün. Die Kiste rennt wie am ersten Tag. Mist." 
+            },
+            { 
+                t: "Staubmuster malen", 
+                next: "srv_dust_2b",
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "Du malst mit dem Finger einen Smiley in den dicken Staub auf dem Gehäuse. Er grinst dich schief an. Sieht gleich viel freundlicher aus." 
+            }
+        ]
+    },
+    {
+        id: "srv_dust_disaster_2a",
+        title: "Das Budget-Problem",
+        reqStory: "srv_dust_2a",
+        text: "Der Chef kommt rein und hört das kraftvolle Surren. 'Hören Sie das, Müller? Methusalem läuft ja wie ein Neuwagen! Da können wir den Antrag für den neuen Server (15.000€) ja stornieren.' Dein Herz bleibt stehen.",
+        opts: [
+            { 
+                t: "Sabotage: Lüfter wieder drosseln", 
+                m: 10, f: -5, a: -20, c: 10,
+                r: "Du klemmst heimlich ein Stück Pappe in den Lüfter. Der Server überhitzt sofort. Der Chef seufzt: 'Na gut. Ich bestelle Ersatz.' Er kauft den billigsten 'Refurbished'-Server auf eBay. Jetzt hast du Elektroschrott am Hals." 
+            },
+            { 
+                t: "Post-It 'Legends never die' kleben", 
+                m: 2, f: 5, a: 5, c: -10,
+                r: "Du akzeptierst dein Schicksal. Du klebst ein Post-It an den Server: 'Nicht ausschalten, sonst stirbt er.' Der Chef nickt zufrieden über die Sparmaßnahme." 
+            },
+            { 
+                t: "Trotzdem auf Neukauf bestehen", 
+                m: 15, f: 0, a: 10, c: 20,
+                r: "'Das ist nur das letzte Aufbäumen vor dem Tod!' Der Chef winkt ab. 'Solange er blinkt, bleibt er.' Du hast jetzt einen schnellen, alten Server und einen genervten Chef." 
+            }
+        ]
+    },
+    {
+        id: "srv_dust_disaster_2b",
+        title: "Staub-Therapie",
+        reqStory: "srv_dust_2b",
+        text: "Du flüchtest vor einem User ('Mein Mauszeiger ist weg!') zurück in den Serverraum. Es ist kühl und laut. Du siehst deinen Staub-Smiley auf dem Backup-Server.",
+        opts: [
+            { 
+                t: "Muster verfeinern (Zen-Garten)", 
+                m: 10, f: 5, a: -15, c: 0,
+                r: "Du ziehst weitere Linien. Ein Fraktal aus Staub. Es hat etwas Meditatives, wie ein Zen-Garten. Dein Puls beruhigt sich. Die Welt ist okay." 
+            },
+            { 
+                t: "Wegwischen (Tabula Rasa)", 
+                m: 5, f: -5, a: -10, c: 0,
+                r: "Ein Wisch mit dem Ärmel. Der Staub ist weg (auf deinem Pulli). Eine saubere Oberfläche. Ein kleiner Sieg über das Chaos. Du fühlst dich besser." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_1",
+        title: "Hitzeflimmern",
+        text: "Server 'Berta' (Gehaltsabrechnung) glüht. Der Lüfter steht still, es riecht beißend nach heißem Silizium. Wenn Berta stirbt, sind die Lohndaten weg.",
+        opts: [
+            { 
+                t: "Brutale Lösung: CO2-Löscher", 
+                req: "fire_ext", 
+                next: "path_overheat_co2",
+                m: 5, f: -10, a: 10, c: -10, 
+                r: "PFFFFT! Ein eiskalter CO2-Stoß direkt in den Lufteinlass. Die Temperatur fällt schockartig auf -10 Grad. Berta schnurrt wieder, ist aber nun ein Eisblock." 
+            },
+            { 
+                t: "Aufschrauben & Luft zufächeln", 
+                req: "screw", 
+                m: 45, f: -15, a: 20, c: 0, 
+                r: "Du schraubst das Gehäuse auf. Du stehst 45 Minuten daneben und wedelst mit einem Klemmbrett frische Luft hinein. Dein Arm fällt fast ab, aber Berta überlebt." 
+            },
+            { 
+                t: "Dyson-Ventilator vom Chef klauen", 
+                next: "path_overheat_dyson",
+                m: 20, f: -5, a: 5, c: 15, 
+                r: "Du holst den 800€-Ventilator aus dem Chef-Büro. Berta wird luxuriös gekühlt. Aber oben im Büro beginnt das große Schwitzen." 
+            },
+            { 
+                t: "Tür zu & das Beste hoffen", 
+                next: "path_overheat_ignore",
+                m: 5, f: 10, a: 0, c: 50, 
+                r: "Du gehst einfach. 10 Minuten später stirbt Berta den Hitzetod. Stille im Serverraum. Dafür Lärm im Flur." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2a",
+        title: "Eiszeit",
+        reqStory: "path_overheat_co2",
+        text: "Berta läuft super, aber durch den CO2-Schock bildet sich Kondenswasser auf der Platine. Es fängt an zu tropfen. Wasser und Strom sind keine Freunde.",
+        opts: [
+            { 
+                t: "Mit Föhn trocknen", 
+                m: 15, f: -5, a: 0, c: 0, 
+                r: "Du holst einen Föhn und trocknest die Pfützen vorsichtig weg. Es ist ein Tanz auf dem Vulkan, aber du verhinderst den Kurzschluss." 
+            },
+            { 
+                t: "Reis drüber kippen", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Der gute alte Reis-Trick. Sieht unprofessionell aus, saugt aber die Feuchtigkeit auf. Hoffentlich kocht der Reis nicht auf der CPU." 
+            },
+            { 
+                t: "Ignorieren (Risiko)", 
+                m: 0, f: 10, a: 0, c: 20, 
+                r: "Du lässt es drauf ankommen. BIZZZT. Ein kleiner Funke. Berta startet neu, läuft aber weiter. Ein Sektor der Festplatte ist gegrillt (Mitarbeiter A-F kriegen kein Geld)." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2b",
+        title: "Der schwitzende Chef",
+        reqStory: "path_overheat_dyson",
+        text: "Der Chef stürmt hochrot und schweißgebadet in den Serverraum. Er sieht seinen geliebten Dyson vor dem Server stehen. 'MÜLLER! Das ist mein Privateigentum! Mir läuft die Suppe in die Augen!'",
+        opts: [
+            { 
+                t: "Lügen: 'Notfall-Maßnahme'", 
+                m: 5, f: 0, a: -5, c: -10, 
+                r: "'Chef, ohne den Dyson wären alle Gehaltsdaten weg!' Er hält inne, wischt sich den Schweiß ab. 'Wirklich? Na gut. Retten Sie die Daten.' Er zieht ab." 
+            },
+            { 
+                t: "Ventilator sofort zurückgeben", 
+                m: 5, f: 0, a: -10, c: 5, 
+                r: "Du ziehst den Stecker. 'Sorry Chef.' Er nimmt das Ding und geht. Berta wird sofort wieder heiß. Du musst jetzt pusten." 
+            },
+            { 
+                t: "Frech werden: 'Sie schwitzen für die Firma'", 
+                m: 2, f: 0, a: 10, c: 30, 
+                r: "'Opfer müssen gebracht werden.' Der Chef explodiert fast. Er reißt den Ventilator an sich und knallt die Tür zu. Das gibt eine Abmahnung." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2c",
+        title: "Der Zahltag-Aufstand",
+        reqStory: "path_overheat_ignore",
+        text: "Frau Elster aus der Buchhaltung steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
+        opts: [
+            { 
+                t: "Alle Überweisungen manuell tippen", 
+                m: 120, f: -50, a: 20, c: -10, 
+                r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich. Lektion gelernt." 
+            },
+            { 
+                t: "Schuld auf 'Hacker' schieben", 
+                m: 10, f: 5, a: -10, c: 10, 
+                r: "'Nordkoreanische Cyber-Attacke!' Alle nicken ängstlich. Der Chef glaubt es halb, ist aber sauer wegen der PR. Du bist fein raus, aber das Klima ist vergiftet." 
+            },
+            { 
+                t: "Auf der Toilette verstecken", 
+                m: 60, f: 10, a: -20, c: 40, 
+                r: "Du schließt dich im Klo ein und wartest, bis der Mob nach Hause geht. Als du rauskommst, klebt ein Zettel an deinem Monitor: 'Wir wissen, wo du wohnst.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_1",
+        title: "Überreste der Nachtschicht",
+        text: "Du findest eine halbvolle, warme Dose Energy Drink und einen Zettel auf dem Server: 'RAID-Controller spinnt. Ich geh heim, mir egal.' Eine rote Lampe am Drive-Bay blinkt hektisch.",
+        opts: [
+            { 
+                t: "Den Energy Drink einstecken", 
+                loot: "energy", 
+                next: "path_night_shift_loot",
+                m: 5, f: -5, a: -5, c: 10, 
+                r: "Du steckst die Dose ein. Gratis ist gratis. Während du dich bückst, hört das Blinken auf. Die LED ist jetzt aus. Tot. Das Laufwerk hat sich verabschiedet. (Inventar +1)" 
+            },
+            { 
+                t: "Seufzen und RAID-Rebuild starten", 
+                next: "path_night_shift_fix",
+                m: 60, f: -20, a: 10, c: -10, 
+                r: "Du tauschst die Platte im Hot-Swap und startest den Rebuild. Es dauert eine Stunde, in der du auf einen Ladebalken starrst. Das System ist gerettet." 
+            },
+            { 
+                t: "Den Kollegen aus dem Bett klingeln", 
+                next: "path_night_shift_wake",
+                m: 15, f: 0, a: -10, c: 5, 
+                r: "Du weckst ihn auf und brüllst ihn an. Er kommt völlig übermüdet und mürrisch zur Arbeit zurück. 'Bin ja schon da.' Du übergibst ihm das Chaos und gehst." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2a",
+        title: "Das fehlende Laufwerk",
+        reqStory: "path_night_shift_loot",
+        text: "Der Chef steht in der Tür. 'Müller? Warum kann das Marketing nicht auf Laufwerk X zugreifen? Da liegen die Kampagnen für morgen!' Er sieht die tote LED.",
+        opts: [
+            { 
+                t: "Die Nachtschicht beschuldigen", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du zeigst auf den Zettel des Kollegen. 'Er ist einfach gegangen.' Der Chef tobt. 'Dieser Nichtsnutz!' Dein Kopf ist aus der Schlinge, der Kollege ist fällig." 
+            },
+            { 
+                t: "Backup einspielen (Heldenmut)", 
+                m: 45, f: -15, a: 5, c: -20, 
+                r: "Du wechselst das Tape und spielst das Backup ein. 'Keine Panik, Chef. Alles unter Kontrolle.' Du rettest den Tag. Der Chef nickt anerkennend." 
+            },
+            { 
+                t: "Energy Drink anbieten", 
+                rem: "energy",
+                m: 2, f: 5, a: -5, c: 10, 
+                r: "'Wollen Sie einen Schluck?' Der Chef starrt dich an, als wärst du irre. 'Reparieren Sie das! Sofort!' Das war wohl der falsche Moment." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2b",
+        title: "Frisch und Munter",
+        reqStory: "path_night_shift_fix",
+        text: "Der Kollege der Nachtschicht kommt (ausgeschlafen) zur Mittagszeit rein. Er sieht die grünen LEDs. 'Ah, hat sich von selbst gefixt? Sag ich doch, war nur ein Glitch.'",
+        opts: [
+            { 
+                t: "Ihm die Meinung geigen", 
+                m: 5, f: 0, a: -10, c: 0, 
+                r: "Du stellst ihn zur Rede. Er winkt ab. 'Chill mal. Teamwork, oder?' Du fühlst dich moralisch überlegen, aber er lernt nichts draus." 
+            },
+            { 
+                t: "Seinen Stuhl verstellen", 
+                m: 2, f: 5, a: 5, c: 0, 
+                r: "Heimliche Rache. Du schraubst seinen Stuhl 5cm tiefer und stellst die Mausgeschwindigkeit auf 'Schnecke'. Das wird ihn in den Wahnsinn treiben." 
+            },
+            { 
+                t: "Beim Chef anschwärzen", 
+                m: 10, f: -5, a: 5, c: 5, 
+                r: "Du petzt. Der Chef zuckt mit den Schultern. 'Solange es läuft...' Leistung wird hier wohl nicht belohnt." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2c",
+        title: "Zickenkrieg",
+        reqStory: "path_night_shift_wake",
+        text: "Eine E-Mail an alle (cc: Chef, HR): 'Betreff: Mobbing durch IT-Kollegen'. Der Kollege beschwert sich, dass du ihn in seiner Ruhezeit 'terrorisiert' hast, obwohl das Problem 'nicht kritisch' war.",
+        opts: [
+            { 
+                t: "Sachliche Richtigstellung ('Reply All')", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Du hängst das Fehlerprotokoll an. 'RAID 5 degraded ist kritisch.' Stille im Postfach. Fakten schlagen Gefühle. 1:0 für dich." 
+            },
+            { 
+                t: "Ihm auflauern und klären", 
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Du fängst ihn im Flur ab. Es wird laut. HR muss dazwischengehen. Jetzt habt ihr beide einen Eintrag in der Personalakte." 
+            },
+            { 
+                t: "Ignorieren", 
+                m: 0, f: 5, a: -5, c: 5, 
+                r: "Soll er doch heulen. Du löschst die Mail. Der Chef fragt auch nicht nach. Manchmal ist Schweigen Gold." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_1",
+        title: "Das Backup-Band",
+        text: "Das uralte Bandlaufwerk surrt, klickt und verstummt dann. Es spuckt das Tape nicht mehr aus. 'Error 08/15: Tape stuck'. Es ist das einzige Voll-Backup von gestern. Wenn du es kaputt machst, sind die Daten futsch.",
+        opts: [
+            { 
+                t: "Chirurgischer Eingriff (Schraubendreher)", 
+                req: "screw", 
+                next: "path_legacy_tape_success",
+                m: 20, f: -5, a: 0, c: -5, 
+                r: "Mit chirurgischer Präzision hebelst du die Blende auf. Das Tape gleitet unbeschädigt heraus. Daten gerettet. Du fühlst dich wie ein Gott." 
+            },
+            { 
+                t: "McGyver-Trick (Kabelbinder-Schlaufe)", 
+                req: "zip_ties", 
+                next: "path_legacy_tape_success",
+                m: 10, f: 0, a: 5, c: 5, 
+                r: "Du bastelst eine Schlaufe, fädelst sie ein und ziehst vorsichtig. Es kommt raus! Das Gehäuse hat zwar Kratzer, aber hey – es läuft." 
+            },
+            { 
+                t: "Rohe Gewalt anwenden: 'GIB ES HER!'", 
+                next: "path_legacy_tape_fail",
+                m: 5, f: 0, a: 20, c: 30, 
+                r: "Du reißt es mit beiden Händen raus. RRRRATSCH. Bandsalat. Das schwarze Magnetband verteilt sich im ganzen Raum. Du wirfst das Knäuel schnell tief in den Müll." 
+            },
+            { 
+                t: "Stecken lassen & beten", 
+                m: 0, f: 10, a: 0, c: 20, 
+                r: "Du ignorierst den Fehler einfach. Das Backup heute Nacht wird garantiert fehlschlagen. Aber das ist ein Problem für den 'Morgen-Müller'." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_2ab",
+        title: "Der Restore-Test",
+        reqStory: "path_legacy_tape_success",
+        text: "Der Chef kommt rein. 'Müller! Gut, dass Sie das Tape haben. Ein Kunde hat versehentlich seine Datenbank gelöscht. Wir brauchen den Stand von gestern. Spielen Sie es ein.'",
+        opts: [
+            { 
+                t: "Lässig das Tape einlegen", 
+                m: 45, f: -20, a: -10, c: -20,
+                r: "Das Laufwerk surrt. 'Restore completed'. Der Chef strahlt. 'Sie sind ein Lebensretter, Müller!' Manchmal zahlt sich Sorgfalt aus." 
+            },
+            { 
+                t: "Nach Gehaltserhöhung fragen", 
+                m: 5, f: 0, a: 5, c: 10,
+                r: "'Das kostet extra, Chef.' Er lacht trocken. 'Machen Sie einfach Ihre Arbeit.' Chance vertan, aber mutig." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_2c",
+        title: "Daten-Verlust",
+        reqStory: "path_legacy_tape_fail",
+        text: "Der Chef stürmt rein. 'Katastrophe! Ein Kunde hat alles gelöscht! Wo ist das Backup von gestern?! Wir müssen SOFORT restoren!' Er sieht das leere Laufwerk.",
+        opts: [
+            { 
+                t: "Beichten: 'Das Tape ist... kaputt'", 
+                m: 10, f: 0, a: 5, c: 50,
+                r: "Du holst das Knäuel aus dem Müll. Der Chef wird kreidebleich. 'DAS WAR DAS EINZIGE BACKUP?!' Er schreit so laut, dass im Nachbargebäude die Fenster wackeln. Das gibt eine Abmahnung." 
+            },
+            { 
+                t: "Lügen: 'Das Backup lief nie!'", 
+                m: 5, f: 5, a: -5, c: 20, 
+                r: "'Software-Fehler, Chef. Das System hat versagt.' Er flucht auf die Technik. 'Scheiß EDV!' Du bist fein raus, aber das Vertrauen in die IT ist hinüber." 
+            },
+            { 
+                t: "Panik vortäuschen & weinen", 
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Du brichst theatralisch zusammen. 'Es ist alles so schrecklich!' Der Chef ist so verwirrt, dass er dich tröstet, statt dich zu feuern. Mitleid zieht immer." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_1",
+        title: "Egons Geheimversteck",
+        text: "Du hebst ein loses Bodenblech an. Dahinter: Eine verstaubte Kiste von Hausmeister Egon. Inhalt: Eine angebrochene Flasche 'Billig-Korn', fragwürdige Magazine aus den 90ern und... eine handschriftliche Liste mit allen Türcodes der Firma.",
+        opts: [
+            { 
+                t: "Die Liste schnell abfotografieren", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Klick. Das Foto ist sicher. Unglaublich: Der Master-Code ist '9999'. Das wird dir noch so manche verschlossene Tür öffnen. Du legst das Blech wieder drauf." 
+            },
+            { 
+                t: "Einen tiefen Schluck Korn nehmen", 
+                next: "path_egon_drink",
+                m: 15, f: 10, a: -20, c: 10, 
+                r: "Du nimmst einen Schluck. Es schmeckt wie Bremsenreiniger und brennt höllisch. Du bist leicht beschwipst. Die Arbeit ist jetzt erträglicher, aber deine Fahne ist ein Risiko." 
+            },
+            { 
+                t: "Fund melden & Egon verpfeifen", 
+                next: "path_egon_snitch",
+                m: 15, f: 0, a: 10, c: -5, 
+                r: "Du legst die Beweise dem Chef vor. Egon bekommt riesigen Ärger. Er weiß genau, dass du es warst. Sein Blick im Flur war eisig." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_2b",
+        title: "Nachricht aus dem Untergrund",
+        reqStory: "path_egon_drink",
+        text: "Du schaust nochmal unter das Bodenblech. Die Flasche ist weg. Stattdessen liegt da ein Zettel in krakeliger Handschrift: 'Ich weiß, dass du es warst. Schuldest mir 5 Mark. Sonst sag ich Chef.'",
+        opts: [
+            { 
+                t: "Zettel schreiben: 'Beweis es doch!'", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du legst den Zettel zurück. Das ist jetzt ein Nervenkrieg. Wer blinzelt zuerst? Du fühlst dich wie in einem Spionage-Thriller." 
+            },
+            { 
+                t: "5 Euro reinlegen (Friedensangebot)", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Du legst einen Schein rein. Am nächsten Tag liegt ein Bonbon dort. Waffenstillstand akzeptiert. Egon ist käuflich." 
+            },
+            { 
+                t: "Zettel schreiben: 'War lecker, danke.'", 
+                m: 5, f: 5, a: 10, c: 5, 
+                r: "Pure Provokation. Du hörst später, wie Egon im Flur laut flucht und gegen seinen Putzwagen tritt. Das wird noch ein Nachspiel haben." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_2c",
+        title: "Die klemmende Bürotür",
+        reqStory: "path_egon_snitch",
+        text: "Du willst morgens in dein Büro. Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
+        opts: [
+            { 
+                t: "Egon um Hilfe bitten (Demütigung)", 
+                m: 30, f: 0, a: 20, c: 0, 
+                r: "Du musst zu Kreuze kriechen. Egon grinst breit. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
+            },
+            { 
+                t: "Tür eintreten", 
+                m: 5, f: 0, a: 20, c: 20,
+                r: "BÄM. Das Schloss bricht. Die Tür ist offen, aber der Rahmen ist hin. Egon kichert leise: 'Oh, Vandalismus? Das melde ich.'" 
+            },
+            { 
+                t: "Durch den Lüftungsschacht klettern", 
+                req: "screw",
+                m: 20, f: -10, a: 10, c: 10, 
+                r: "Wie Bruce Willis. Du schraubst das Gitter ab und robbst rein. Du landest staubig auf deinem Schreibtisch. Egon hat gewonnen, aber du hast Stil." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_1",
+        title: "Der versteckte Miner",
+        text: "Ein Server läuft auf 100% Last, die Lüfter heulen wie ein startender Jet. Du checkst den Taskmanager: 'KevinCoin_Miner.exe' verbraucht alle Ressourcen. Der Azubi schürft Krypto auf Firmenkosten! Die CPU hat bereits kritische 98 Grad.",
+        opts: [
+            { 
+                t: "Prozess killen & Kevin zur Rede stellen", 
+                next: "path_crypto_stop",
+                m: 15, f: -5, a: 5, c: -5, 
+                r: "Kevin jammert: 'Aber der Kurs geht gerade zum Mond! Ich wollte uns allen Lambos kaufen!' Du bleibst hart. Der Server kühlt ab, der Lambo muss warten." 
+            },
+            { 
+                t: "Die Wallet-Adresse heimlich auf deine ändern", 
+                req: "admin_pw",
+                next: "path_crypto_hijack",
+                m: 10, f: 20, a: -10, c: 25, 
+                r: "Mit einem hämischen Grinsen leitest du die Coins auf dein privates Wallet um. Böse? Ja. Profitabel? Oh ja. Kevin schürft jetzt für deine Frührente. Hoffentlich merkt das die Revision nicht." 
+            },
+            { 
+                t: "Einfach weiterlaufen lassen", 
+                next: "path_crypto_crash",
+                m: 0, f: 10, a: 0, c: 40, 
+                r: "Du ignorierst es. 30 Minuten später schaltet die Kiste wegen Überhitzung per Not-Aus ab. Blöd nur, dass darauf auch SAP lief. Die Firma steht still. Alle schreien." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2a",
+        title: "Kevins Investition",
+        reqStory: "path_crypto_stop",
+        text: "Kevin steht mit tränenden Augen vor dir. Er hält drei Hot-Wheels Spielzeugautos hoch. 'Ich habe die Lambos schon bestellt! Auf Kredit! Wenn ich nicht weiterschürfen darf, bricht mein Finanzplan zusammen. Nur noch 2 Stunden?'",
+        opts: [
+            { 
+                t: "Streng bleiben: 'Nein!'", 
+                m: 5, f: 0, a: 5, c: -10, 
+                r: "'Das ist Firmeneigentum, Kevin.' Er schlurft deprimiert davon. Er muss die Spielzeugautos wohl zurückgeben. Du hast das Stromnetz gerettet." 
+            },
+            { 
+                t: "Ihm sein Spielzeug abkaufen", 
+                m: 5, f: 5, a: -15, c: 0, 
+                r: "Du gibst ihm 5 Euro für den gelben Spielzeug-Lambo. Er strahlt. 'Du bist der Beste!' Jetzt hast du ein Auto auf dem Schreibtisch. Vroom vroom." 
+            },
+            { 
+                t: "Ausnahme genehmigen", 
+                m: 5, f: 10, a: -10, c: 20, 
+                r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen? (Chef-Radar steigt)" 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2b",
+        title: "Die Prüfung",
+        reqStory: "path_crypto_hijack",
+        text: "Eine E-Mail ploppt auf: 'Interne Revision: Auffälliger Stromverbrauch in Serverraum B. Wir kommen gleich mal messen.' Dein Herz rutscht in die Hose. Dein Wallet ist voll, aber die Prüfer sind im Anmarsch.",
+        opts: [
+            { 
+                t: "Alles sofort löschen (Spuren verwischen)", 
+                m: 10, f: -5, a: 10, c: -10, 
+                r: "Du löschst den Miner, die Logs und formatierst sicherheitshalber den Temp-Ordner. Das Geld ist sicher, die Einnahmequelle versiegt. Puh. Gerade noch rechtzeitig." 
+            },
+            { 
+                t: "Alles auf Kevin schieben (Vorbereitung)", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du benennst den Prozess wieder in 'Kevin_Test' um. Wenn sie es finden, war es der Azubi. Du bist ein eiskaltes Ekelpaket, aber du bist sicher." 
+            },
+            { 
+                t: "Zocken: 'Das ist KI-Training'", 
+                m: 5, f: 10, a: 0, c: 30, 
+                r: "Du lässt es laufen. Als die Prüfer kommen, faselst du was von 'Neural Networks' und 'Blockchain-Innovation'. Sie nicken ahnungslos und gehen. Risiko hat sich gelohnt!" 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2c",
+        title: "SAP-Notdienst",
+        reqStory: "path_crypto_crash",
+        text: "Der externe SAP-Support ist per TeamViewer draufgeschaltet. Der Stundensatz beträgt 250€. Er bewegt die Maus quälend langsam. 'Oh, die Datenbank ist inkonsistent. Das... könnte dauern.'",
+        opts: [
+            { 
+                t: "Zusehen und Kaffee trinken", 
+                m: 60, f: 20, a: -5, c: 20, 
+                r: "Du wirst quasi fürs Nichtstun bezahlt, während der Externe schwitzt. Der Chef sieht nur, dass 'Profis arbeiten'. Entspannteste Stunde der Woche." 
+            },
+            { 
+                t: "Helfen (beschleunigen)", 
+                m: 20, f: -10, a: 10, c: -5, 
+                r: "Du gibst ihm Zugriff auf die Backups. 'Ah, danke.' Das System läuft schneller wieder. Weniger Kosten, aber du musstest arbeiten." 
+            },
+            { 
+                t: "Hardware als Ausrede erfinden", 
+                m: 10, f: 5, a: 5, c: 15, 
+                r: "'Das liegt am RAM!' Der Externe widerspricht nicht. Der Chef bestellt sofort neuen RAM. Du hast das Hitzeproblem erfolgreich vertuscht." 
+            }
+        ]
+    },
+    {
+        id: "srv_intern_access",
+        title: "Dringende Daten",
+        text: "Der Praktikant ist krank. Der Chef steht vor dessen PC: 'Müller! Knacken Sie das Ding! Da ist die Präsentation drauf! Ich wette, der Idiot hat was Kompliziertes genommen!'",
+        opts: [
+            { 
+                t: "Eingabe: 'Puschel123'",
+                m: 5, f: 10, a: -10, c: -5, 
+                r: "Du tippst es blind ein. 'ZUGRIFF ERLAUBT'. Der Chef starrt dich an: 'Woher...? Egal. Gute Arbeit, Müller!'" 
+            },
+            { 
+                t: "Admin-Reset erzwingen",
+                req: "admin_pw",
+                m: 15, f: -5, a: 0, c: 0, 
+                r: "Dauert 15 Minuten, funktioniert aber sicher. Der Chef trommelt ungeduldig mit den Fingern." 
+            },
+            { 
+                t: "Eingabe: '123456'",
+                m: 5, f: 0, a: 10, c: 15, 
+                r: "Falsch. PC sperrt sich für 1 Stunde. Der Chef explodiert." 
+            },
+            { 
+                t: "Eingabe: 'Passwort'",
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_1",
+        title: "Kabel-Spaghetti",
+        text: "Der Switch im Rack sieht aus wie ein Teller Spaghetti. Ein einziger Knoten aus gelben, blauen und grauen Kabeln. Du musst Port 42 finden, aber er ist tief im Chaos begraben.",
+        opts: [
+            { 
+                t: "Geduldig entwirren", 
+                next: "path_cable_tidy",
+                m: 45, f: -10, a: -10, c: -10, 
+                r: "Du schaltest Musik ein und sortierst Kabel für Kabel. Nach 45 Minuten hast du perfekte Ordnung geschaffen. Es sieht wunderschön aus. Fast zu schade zum Anfassen." 
+            },
+            { 
+                t: "Mit Kabelbindern zurren", 
+                req: "zip_ties", 
+                next: "path_cable_tidy",
+                m: 15, f: 0, a: -5, c: 0, 
+                r: "Du nimmst eine Handvoll Kabelbinder und zurrst alles zu einer dicken Wurst zusammen. Nicht schön, aber Luft kommt durch und man sieht die Ports wieder." 
+            },
+            { 
+                t: "Einfach dran ziehen", 
+                next: "path_cable_yank",
+                m: 5, f: 5, a: 20, c: 10, 
+                r: "Du ziehst kräftig an dem Kabel, das du brauchst. RRRTSCH. Drei andere Stecker fliegen mit raus. Ups. Die Lichter der Telefonanlage gehen aus." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_2ab",
+        title: "Das Museumsstück",
+        reqStory: "path_cable_tidy",
+        text: "Der IT-Leiter steht vor dem Rack. Er hat Tränen in den Augen. 'Es ist... wunderschön. Niemand darf das mehr anfassen! Ich erkläre dieses Rack zur Sperrzone!'",
+        opts: [
+            { 
+                t: "Stolz salutieren", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "'Zu Befehl!' Dein Werk wird jetzt wie ein heiliger Schrein behandelt. Niemand patcht hier mehr was um. Deine Arbeit ist für die Ewigkeit." 
+            },
+            { 
+                t: "Schild 'Kunstwerk' anbringen", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "Du klebst ein Schild dran: 'Modern Art - Do not touch'. Kollegen machen Fotos. Du bist der Michelangelo der IT." 
+            },
+            { 
+                t: "Genervt sein: 'Wir müssen aber arbeiten'", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "'Chef, ich muss an Port 43.' Er funkelt dich böse an. 'Wagen Sie es nicht, die Symmetrie zu zerstören!' Toll, jetzt ist das Rack nutzlos." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_2c",
+        title: "Falsch verbunden",
+        reqStory: "path_cable_yank",
+        text: "Du steckst die Kabel panisch wieder rein. Die Anlage startet neu. Puh! Aber: Du hast wohl die Steckplätze vertauscht. Das ganze Haus ist jetzt falsch verbunden. Wenn man die Kantine anruft, landet man beim Chef.",
+        opts: [
+            { 
+                t: "Durchs Haus rennen und Stecker tauschen", 
+                m: 60, f: -20, a: 20, c: 5, 
+                r: "Du rennst von Büro zu Büro und steckst Telefone um. 'Wieso klingelt mein Ficus?', fragt eine Kollegin. Du bist schweißgebadet, bis alles wieder stimmt." 
+            },
+            { 
+                t: "Neue Liste schicken: 'Nummern geändert'", 
+                m: 10, f: 10, a: -5, c: 10,
+                r: "Du schickst eine Mail: 'Wegen... Sonnenflecken haben wir neue Durchwahlen.' Der Chef bekommt jetzt Pizza-Bestellungen. Das Chaos ist perfekt, aber du hast Pause." 
+            },
+            { 
+                t: "Sagen: 'Das sortiert sich bis morgen'", 
+                m: 5, f: 10, a: 0, c: 20, 
+                r: "Du lügst einfach. 'Die digitale Synchronisierung dauert 24 Stunden.' Hoffentlich merkt der Chef nicht, dass er jetzt unter 'Hausmeister' erreichbar ist." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_1",
+        title: "Disco im Serverraum",
+        text: "Alle LEDs an den Server-Racks blinken synchron im 4/4-Takt. Es sieht aus wie eine Lichtorgel in einer Dorfdisco. Das System läuft extrem unrund und summt einen seltsamen Bass-Rhythmus.",
+        opts: [
+            { 
+                t: "Im Handbuch nachschlagen", 
+                req: "manual", 
+                m: 20, f: -5, a: -5, c: -5, 
+                r: "Du blätterst wild. Fehlercode '0xPARTY'. Ein Easter-Egg der Entwickler, das bei genau 100 Tagen Uptime anspringt. Du drückst die Tastenkombination 'STRG+ALT+NOFUN'. Das Blinken hört auf." 
+            },
+            { 
+                t: "Techno-Playlist an & tanzen", 
+                next: "path_disco_dance",
+                m: 15, f: 10, a: -20, c: 20, 
+                r: "Du nutzt das Blinken als Lightshow und tanzt völlig enthemmt den Robot-Dance. Leider steht plötzlich der Chef in der Tür, starrt dich an und fragt trocken: 'Haben Sie einen Schlaganfall, Müller?'" 
+            },
+            { 
+                t: "Brutal den Stecker ziehen", 
+                next: "path_disco_plug",
+                m: 5, f: 5, a: 10, c: 10, 
+                r: "Klack. Ruhe. Klack. Lärm. Der Server fährt wieder hoch. Das Blinken ist weg. Die Datenbank meldet beim Start zwar 'Index Corruption', aber das ignorierst du gekonnt." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_2b",
+        title: "Der virale Hit",
+        reqStory: "path_disco_dance",
+        text: "Du dachtest, die Standpauke vom Chef war alles? Falsch. Ein Kollege hat deinen Tanz durch das Fenster der Serverraum-Tür gefilmt. Das Video 'Admin on Drugs' ist jetzt Nummer 1 im Firmen-Intranet.",
+        opts: [
+            { 
+                t: "Dazu stehen: 'Das sind Moves!'", 
+                m: 5, f: 0, a: -10, c: 5, 
+                r: "Du kommentierst das Video: 'Neid ist die höchste Form der Anerkennung.' Die Kollegen lachen, aber irgendwie finden sie dich jetzt cooler. Der Chef schüttelt nur den Kopf." 
+            },
+            { 
+                t: "IT-Intranet löschen (Zensur)", 
+                m: 10, f: -5, a: 10, c: 20, 
+                r: "Du nutzt deine Admin-Rechte und löschst das Video (und das Backup). Das nennt man 'Streisand-Effekt'. Jetzt denken alle, du hast wirklich was zu verbergen." 
+            },
+            { 
+                t: "Dem Filmer das Internet drosseln", 
+                m: 5, f: 5, a: -15, c: 5,
+                r: "Du identifizierst die IP des Kollegen und drosselst seinen Port auf 56k-Modem-Geschwindigkeit. Er kann das Video nicht mehr hochladen. Er kann gar nichts mehr laden. Gerechtigkeit." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_2c",
+        title: "Der Preis-Glitch",
+        reqStory: "path_disco_plug",
+        text: "Das Telefon klingelt sturm. 'Der Webshop spielt verrückt!' Durch deinen harten Neustart sind die Preise in der Datenbank verrutscht. Alle Produkte kosten jetzt 0,00 Euro. Die Bestellungen kommen im Sekundentakt rein.",
+        opts: [
+            { 
+                t: "Webshop sofort vom Netz nehmen", 
+                m: 10, f: -5, a: 10, c: 20, 
+                r: "Du kappst die Leitung. Der Shop ist offline. Der Schaden ist begrenzt, aber der Chef schreit: 'Wir verlieren tausende Euro pro Minute!' Tja, besser als Ware zu verschenken." 
+            },
+            { 
+                t: "Backup einspielen", 
+                m: 60, f: -20, a: 10, c: 15, 
+                r: "Du musst das Backup von gestern holen. Der Ladebalken kriecht. Der Chef steht hinter dir und atmet schwer: 'Jede Sekunde kostet Geld, Müller!' Du schwitzt." 
+            },
+            { 
+                t: "Preise manuell auf 9999€ setzen", 
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "Quick & Dirty SQL-Befehl: `UPDATE prices SET value = 9999`. Keiner kauft mehr was, aber der Fehler ist 'behoben'. Du bist ein Genie des Wahnsinns." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_1",
+        title: "Klima-Ausfall",
+        text: "Die Klimaanlage ist ausgefallen. Es sind gefühlte 50 Grad im Serverraum. Die Lüfter der Racks laufen auf Maximum, es klingt wie auf einem Flugzeugträger. Die Server schwitzen.",
+        opts: [
+            { 
+                t: "Sicherheitstür mit Stuhl aufkeilen", 
+                next: "path_ac_door",
+                m: 5, f: 0, a: 0, c: 10, 
+                r: "Frische Flur-Luft strömt herein. Die Temperatur sinkt auf erträgliche 30 Grad. Aber: Eine dauerhaft offene Serverraum-Tür ist ein massives Sicherheitsrisiko." 
+            },
+            { 
+                t: "MacGyver-Lösung: USB-Lüfter basteln", 
+                req: "usb_stick", 
+                m: 15, f: -5, a: -5, c: 0, 
+                r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus und du fühlst dich wie ein Ingenieur." 
+            },
+            { 
+                t: "Eimerweise Eiswürfel holen", 
+                next: "path_ac_ice",
+                m: 10, f: 5, a: 0, c: 20, 
+                r: "Du stellst Schüsseln mit Eis aus der Teeküche direkt in die Racks. Es kühlt tatsächlich, aber das Kondenswasser sammelt sich. Ein Tanz auf der Rasierklinge." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_2a",
+        title: "Der Paragraphen-Reiter",
+        reqStory: "path_ac_door",
+        text: "Der Datenschutzbeauftragte steht im Türrahmen. Er sieht schwitzig und unglücklich aus. Er tippt auf sein Klemmbrett. 'Gemäß ISO 27001 und DSGVO Artikel 32 ist der physische Zugang zu beschränken. Ich muss das melden. Ich hasse meinen Job, aber Vorschrift ist Vorschrift.'",
+        opts: [
+            { 
+                t: "Auf 'Notfall-Paragraf 7b' verweisen", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du erfindest eine Regel: 'Bei thermischer Überlastung greift die Hardware-Schutz-Klausel.' Er blinzelt verwirrt, nickt dann müde. 'Na gut. Wenn Sie das sagen. Ich schreibe... Ausnahme.' Er schlurft weg." 
+            },
+            { 
+                t: "Ihm einen Vortrag über Hitze halten", 
+                m: 15, f: -5, a: 10, c: 15, 
+                r: "Du schreist ihn an: 'Wollen Sie, dass die Daten verbrennen?!' Er notiert 'Unkooperatives Verhalten' und geht. Das gibt Papierkram." 
+            },
+            { 
+                t: "Bestechung: 'Wollen Sie ein Eis?'", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du bietest ihm ein Eis am Stiel an. Er seufzt, nimmt es und schließt die Augen. 'Ich habe nichts gesehen.' Korruption funktioniert immer." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_2c",
+        title: "Feuchtbiotop",
+        reqStory: "path_ac_ice",
+        text: "Physik ist grausam. Das Eis schmilzt schneller als gedacht. Pfützen bilden sich am Boden und kriechen gefährlich nah an die Steckerleisten. Die Luftfeuchtigkeit liegt bei 99%.",
+        opts: [
+            { 
+                t: "Kevin zum Wischen rufen", 
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "'Kevin! Praktische Ausbildung: Rechenzentrums-Reinigung!' Der Azubi kommt mit dem Wischmopp. Er mault zwar, aber deine Füße bleiben trocken." 
+            },
+            { 
+                t: "Schild 'Rutschgefahr' aufstellen", 
+                m: 2, f: 15, a: 0, c: 10,
+                r: "Du stellst das gelbe Warnschild auf. Damit bist du haftungsrechtlich raus. Dass der Stromverteiler gleich baden geht, ist ein technisches Detail." 
+            },
+            { 
+                t: "Ablaufrinne aus Tape bauen", 
+                req: "tape", 
+                m: 15, f: -5, a: 0, c: 0, 
+                r: "Du baust eine komplexe Konstruktion aus Panzertape, die das Wasser in einen Blumentopf leitet. Es ist hässlich, es ist Pfusch, aber es funktioniert. Ingenieurskunst!" 
+            }
+        ]
+    },
+    {
+        id: "srv_story_kevin_1",
+        title: "Kevins Experiment",
+        text: "Kevin steht vor einem offenen Rack. Es riecht nach Ozon. Er hält einen Schraubendreher wie einen Zauberstab in ein laufendes Netzteil. 'Ich wollte nur den Lüfter überbrücken, damit er leiser ist...'",
+        opts: [
+            { 
+                t: "Ihn anschreien & rauswerfen", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Kevin zuckt zusammen und rennt weg. 'Tschuldigung...' Er wird dich nie wieder um Rat fragen." 
+            },
+            { 
+                t: "Meldung an HR machen", 
+                m: 15, f: 0, a: 0, c: -10, 
+                r: "Du meldest den Vorfall. Kevin kriegt eine Abmahnung. Sicher ist sicher, aber er meidet dich jetzt." 
+            },
+            { 
+                t: "Seufzen: 'Zeig mal her... so geht das.'", 
+                next: "path_kevin_student", 
+                m: 25, f: 0, a: -5, c: 0, 
+                r: "Du nimmst dir Zeit und erklärst ihm den Schaltplan. Kevin staunt: 'Whoa. Das ergibt Sinn.' Er schaut dich an wie einen Jedi-Meister." 
+            }
+        ]
+    },
+    {
+        id: "srv_story_kevin_3",
+        reqStory: "path_kevin_pro",
+        title: "DDoS Angriff: Die Feuertaufe",
+        text: "ALARM! Ein massiver DDoS-Angriff legt die Firewall lahm. Du kommst mit dem Tippen nicht hinterher. Plötzlich zieht Kevin einen Laptop: 'Ich hab das Skript von neulich angepasst! Ich kann den Traffic umleiten! Lass mich ran!'",
+        opts: [
+            { 
+                t: "Nicken: 'Mach es. Ich vertraue dir.'", 
+                loot: "kevin_ram", 
+                m: 5, f: -30, a: -40, c: -30, 
+                r: "Kevin tippt wie ein Besessener. Enter. Stille. Der Angriff ist gestoppt. Er grinst breit: 'Hab ich von dir gelernt.' Er gibt dir seinen alten Glücks-RAM als Andenken." 
+            },
+            { 
+                t: "Wegschubsen: 'Zu gefährlich! Geh weg!'", 
+                m: 45, f: -10, a: 30, c: -5, 
+                r: "Du löst das Problem selbst, aber es dauert 30 Minuten länger. Kevin steht traurig daneben. 'Ich wollte doch nur helfen...'" 
+            },
+            { 
+                t: "Zögern: 'Bist du sicher?'", 
+                m: 20, f: 0, a: 20, c: 20, 
+                r: "In deinem Zögern stürzt der Mailserver ab. Kevin führt das Skript dann doch aus, aber der Schaden ist schon da. 'Hättest du mich mal früher gelassen...', murmelt er." 
+            }
+        ]
+    },
     {
         id: "srv_legacy_1",
         title: "Der versiegelte Schacht",
@@ -4601,9 +6556,9 @@ const DB = {
                 r: "Verschlossen. Du brauchst wohl einen Hebel oder Code. Aber du hast Staub eingeatmet. *Hust*"
             },
             { 
-                t: "Mit Schraubendreher öffnen",
-                req: "screw", next: "legacy_open",
-                m: 20, f: -10, a: 0, c: 15,
+                t: "Lüftungsklappe öffnen",
+                next: "path_legacy_open",
+                m: 5, f: -10, a: -5, c: 5,
                 r: "Knirschend gibt die Klappe nach. Das war laut! Hoffentlich hat das keiner gehört. Dahinter ist ein kleiner, dunkler Hohlraum."
             }
         ]
@@ -4611,7 +6566,7 @@ const DB = {
     {
         id: "srv_legacy_2",
         title: "Der alte Safe",
-        reqStory: "legacy_open",
+        reqStory: "path_legacy_open",
         text: "Du kriechst wieder in den Schacht. Der Safe hat ein Zahlenrad. Daneben ist eine Gravur: 'Das Gründungsjahr der Firma ist der Schlüssel.' (Du weißt es nicht, aber Kevin hat neulich '1899' an die Klotür gekritzelt).",
         opts: [
             { 
@@ -4621,28 +6576,9 @@ const DB = {
             },
             { 
                 t: "Code '1899' eingeben",
-                next: "legacy_solved",
-                m: 15, f: -5, a: -10, c: 0,
-                r: "*Klick*. Der Mechanismus springt auf! Ein Gefühl von Triumph durchströmt dich. Es riecht nach altem Papier und Gier."
-            }
-        ]
-    },
-    {
-        id: "srv_legacy_3",
-        title: "Das Rote Buch",
-        reqStory: "legacy_solved",
-        text: "Der offene Safe liegt vor dir. Das Buch 'GlobalCorp: Eine Geschichte des Erfolgs (und der Vertuschung)' liegt griffbereit.",
-        opts: [
-            { 
-                t: "Das Buch einstecken",
                 loot: "corp_chronicles",
-                m: 5, f: -5, a: -20, c: 10,
-                r: "Du steckst die Chronik ein. Sie fühlt sich schwer und wichtig an. Du fühlst dich wie Indiana Jones der IT. (Neues Item!)"
-            },
-            { 
-                t: "Liegen lassen",
-                m: 2, f: 0, a: 5, c: -5,
-                r: "Zu viel Wissen ist gefährlich. Du schließt den Safe wieder. Sicher ist sicher. (Langweilig)"
+                m: 15, f: -5, a: -10, c: 0,
+                r: "*Klick*. Der Mechanismus springt auf! Ein Gefühl von Triumph durchströmt dich. Es riecht nach altem Papier und Gier. (Neues Item und kann im Inventar gelesen werden!)"
             }
         ]
     },
@@ -4653,7 +6589,7 @@ const DB = {
         opts: [
             { 
                 t: "Staub abwischen & untersuchen",
-                next: "ghost_found",
+                next: "path_ghost_found",
                 m: 15, f: -10, a: 5, c: 0,
                 r: "Du wischst den Staub weg. Aufkleber: 'Projekt PHOENIX - 1998 - Do Not Touch'. Es läuft seit 25 Jahren. Respekt."
             },
@@ -4667,7 +6603,7 @@ const DB = {
     {
         id: "srv_ghost_2",
         title: "PHOENIX lebt",
-        reqStory: "ghost_found",
+        reqStory: "path_ghost_found",
         text: "Du stehst wieder vor dem mysteriösen 1998er Server. Heute macht er ein seltsames Geräusch. *Klick-Klack*. Als würde eine Festplatte sterben.",
         opts: [
             { 
@@ -4700,7 +6636,7 @@ const DB = {
             { 
                 t: "Mit dem Hammer draufhauen",
                 req: "hammer",
-                next: "alarm_smashed",
+                next: "path_alarm_smashed",
                 m: 5, f: 0, a: 10, c: 40, 
                 r: "Die Sirene ist kaputt, aber die Wand auch. Das wird teuer." 
             },
@@ -4714,7 +6650,7 @@ const DB = {
     {
         id: "srv_alarm_stuck_2",
         title: "Egon und das Loch",
-        reqStory: "alarm_smashed",
+        reqStory: "path_alarm_smashed",
         text: "Hausmeister Egon steht vor den Trümmern der Alarmanlage. Er fährt mit dem Finger über die tiefe Delle in der Wand. 'Das war kein technischer Defekt. Das war stumpfe Gewalt.' Er dreht sich langsam zu dir um. 'Hast du was gesehen?'",
         opts: [
             { 
@@ -4730,7 +6666,7 @@ const DB = {
             { 
                 t: "Bestechung: Ihm dein Panzertape anbieten", 
                 req: "tape",
-                m: 5, f: 5, a: 0, c: -10, 
+                m: 5, f: 5, a: -10, c: -5, 
                 r: "Egons Augen leuchten auf. 'Original Gaffa? Das Gute?' Er nimmt die Rolle, klebt ein Stück über das Loch in der Wand und grinst. 'Welches Loch? Ich sehe kein Loch.'" 
             }
         ]
@@ -4739,82 +6675,212 @@ const DB = {
 
 // === KAFFEE ===
     coffee: [
-        {
-            id: "cof_note",
-            title: "Fundstück am Automaten",
-            text: "Jemand hat hier einen gelben Notizzettel liegen lassen. Darauf steht 'WLAN-PW: 1234abcd'. Das ist Schmidts Handschrift.",
-            opts: [
-                { t: "Zettel einstecken", loot: "wifi_note", m: 5, f: 5, a: 0, c: 0, r: "Das könnte noch nützlich werden. Wissen ist Macht." },
-                { t: "Wegwerfen", m: 5, f: 0, a: 0, c: 0, r: "Sicherheitsrisiko beseitigt." }
-            ]
-        },
-        {
-            id: "cof_donut",
-            title: "Reste vom Meeting",
-            text: "Die Tür zum Konferenzraum steht offen. Auf dem großen Tisch, zwischen leeren Wasserflaschen und Flipchart-Papier, steht noch eine Schachtel vom Management-Meeting. Inhalt: Ein einsamer, leicht angetrockneter Schoko-Donut mit bunten Streuseln.",
-            opts: [
-                { 
-                    t: "Den Donut 'sicherstellen'", 
-                    loot: "donut", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Du wickelst ihn schnell in eine Serviette. Er ist zwar etwas hart, aber Zucker ist Zucker. Außerdem eignet er sich hervorragend als Bestechungsmittel für hungrige Azubis." 
-                },
-                { 
-                    t: "Stolz zeigen & liegen lassen", 
-                    m: 0, f: 0, a: 0, c: 0, 
-                    r: "Du gehst weiter. Du bist zwar chronisch unterzuckert, aber du isst keine Reste vom Management. Ein bisschen Würde muss man sich als Admin bewahren." 
-                }
-            ]
-        },
-        {
-            id: "cof_flirt",
-            title: "Der Schwarm",
-            text: "Sarah aus der HR steht da. Sie lächelt dich an. 'Na, IT-Held? Alles im Griff oder brennt der Server?'",
-            opts: [
-                { t: "Flirten: 'Für dich lösche ich jedes Feuer'", m: 20, f: 10, a: -30, c: 5, r: "Es läuft gut! Ihr verabredet euch zum Mittagessen. Deine Laune ist top." },
-                { t: "Panisch weglaufen", m: 5, f: 0, a: 10, c: 0, r: "Peinlich berührt geflüchtet. Kaffee vergessen. Du hasst dich selbst." }
-            ]
-        },
-        {
-            id: "cof_boss",
-            title: "Der Chef lauert",
-            text: "Der Chef steht breitbeinig vor der Kaffeemaschine und blockiert den Zugang. Er dreht sich in Zeitlupe zu dir um, eine Augenbraue hochgezogen. 'Ah, Müller? Schon wieder hier? Ist das heute der fünfte Kaffee oder haben Sie Ihren Schreibtisch untervermietet?'",
-            opts: [
-                { 
-                    t: "Dreiste Notlüge: 'Ist für den externen Berater!'", 
-                    m: 5, f: 10, a: 5, c: 5, 
-                    r: "Der Chef nickt anerkennend: 'Ah, Service-Orientierung! Sehr gut, weitermachen.' Er tritt zur Seite. Du hast gelogen, aber du hast deinen Kaffee." 
-                },
-                { 
-                    t: "Rechtfertigen: 'Ich brauche Treibstoff...'", 
-                    m: 15, f: -5, a: 10, c: 10, 
-                    r: "Fehler. Riesenfehler. Er nutzt die Gelegenheit für einen 15-minütigen Spontan-Vortrag über 'Time-Management' und 'intrinsische Motivation'. Dein Kaffee wird dabei kalt." 
-                },
-                { 
-                    t: "Panisch 'Nein!' schreien & wegrennen", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Du drehst dich auf dem Absatz um und fliehst zurück in dein Büro. Der Chef schaut dir verwirrt nach. Kein Kaffee, aber immerhin keine Standpauke." 
-                }
-            ]
-        },
-        {
-        id: "cof_ball",
+    {
+        id: "cof_note",
+        title: "Fundstück am Automaten",
+        text: "Jemand hat hier einen gelben Notizzettel liegen lassen. Darauf steht 'WLAN-PW: 1234abcd'. Das ist Schmidts Handschrift.",
+        opts: [
+            { t: "Zettel einstecken", loot: "wifi_note", m: 5, f: 5, a: 0, c: 0, r: "Das könnte noch nützlich werden. Wissen ist Macht." },
+            { t: "Wegwerfen", m: 5, f: 0, a: 0, c: 0, r: "Sicherheitsrisiko beseitigt." }
+        ]
+    },
+   {
+        id: "cof_donut_1",
+        title: "Reste vom Meeting",
+        text: "Die Tür zum Konferenzraum steht offen. Auf dem großen Tisch, zwischen leeren Wasserflaschen und Flipchart-Papier, steht noch eine Schachtel vom Management-Meeting. Inhalt: Ein einsamer, leicht angetrockneter Schoko-Donut mit bunten Streuseln.",
+        opts: [
+            { 
+                t: "Den Donut 'sicherstellen'", 
+                loot: "donut", 
+                next: "path_donut_taken", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du wickelst ihn schnell in eine Serviette. Er ist zwar etwas hart, aber Zucker ist Zucker. Außerdem eignet er sich hervorragend als Bestechungsmittel für hungrige Azubis." 
+            },
+            { 
+                t: "Stolz zeigen & liegen lassen", 
+                next: "path_donut_left", 
+                m: 0, f: 0, a: 0, c: 0, 
+                r: "Du gehst weiter. Du bist zwar chronisch unterzuckert, aber du isst keine Reste vom Management. Ein bisschen Würde muss man sich als Admin bewahren." 
+            }
+        ]
+    },
+    {
+        id: "cof_donut_2a",
+        title: "Die Zucker-Falle",
+        reqStory: "path_donut_taken",
+        text: "Kaum hast du den Donut in der Tasche, kommt Chantal aus dem Marketing rein. 'Oh, hast du den letzten 'Veggie-Spinat-Schoko-Test-Donut' gesehen? Ich wollte den gerade für Instagram fotografieren!'",
+        opts: [
+            { 
+                t: "Lügen: 'Der Putzdienst war schon da'", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Chantal seufzt enttäuscht. 'Schade. Dabei soll der Spinat-Kern so gesund sein.' Du hast den Donut noch, aber plötzlich weniger Appetit." 
+            },
+            { 
+                t: "Beichten und teilen", 
+                rem: "donut", 
+                m: 10, f: 0, a: -10, c: 5, 
+                r: "Ihr teilt euch das trockene Gebäck. Es schmeckt tatsächlich leicht nach Spinat. Geteiltes Leid ist halbes Leid. Chantal findet dich jetzt 'sympathisch ehrlich'." 
+            },
+            { 
+                t: "Hektisch kauen und schlucken", 
+                rem: "donut", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du stopfst den Rest mit einem Bissen rein. 'Mmpf... keine Ahnung.' Chantal starrt dich an. 'Du hast Krümel am Kinn.' Peinlich, aber satt." 
+            }
+        ]
+    },
+    {
+        id: "cof_donut_2b",
+        title: "Der Feinschmecker",
+        reqStory: "path_donut_left",
+        text: "Du holst dir deinen Kaffee und siehst, wie Dr. Wichtig den Raum betritt. Er sieht den Donut, seine Augen leuchten. Er beißt herzhaft hinein. 'Mmmh! Endlich mal gute Verpflegung hier!'",
+        opts: [
+            { 
+                t: "Schleimen: 'Hab ich für Sie übrig gelassen'", 
+                m: 5, f: 5, a: -5, c: -10,
+                r: "Der Chef nickt anerkennend mit vollem Mund. 'Müller, Sie denken mit. Das merke ich mir.' Ein billiger Sieg, aber er zählt." 
+            },
+            { 
+                t: "Ihn warnen (Spinat-Gerücht)", 
+                m: 2, f: 0, a: 5, c: 5,
+                r: "'Chef, der ist vom letzten Monat!' Er spuckt ihn sofort in den Mülleimer. 'Wollen Sie mich vergiften?!' Ups. Zu ehrlich." 
+            },
+            { 
+                t: "Schweigend genießen", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du nippst an deinem Kaffee und siehst dem Chef beim Krümeln zu. Ein seltener Moment des Friedens." 
+            }
+        ]
+    },
+    {
+        id: "cof_flirt_1",
+        title: "Der Schwarm",
+        text: "Sarah aus der HR steht da. Sie lächelt dich an. 'Na, IT-Held? Alles im Griff oder brennt der Server?'",
+        opts: [
+            { 
+                t: "Flirten: 'Für dich lösche ich jedes Feuer'", 
+                next: "path_flirt_date", 
+                m: 20, f: 10, a: -30, c: 5, 
+                r: "Es läuft gut! Sie kichert und zwirbelt eine Haarsträhne. 'Soso, ein Feuerwehrmann...'" 
+            },
+            { 
+                t: "Panisch weglaufen", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du stammelst 'Äh... Error 404!' und rennst raus. Kaffee vergessen. Du hasst dich selbst." 
+            }
+        ]
+    },
+    {
+        id: "cof_flirt_2a",
+        title: "Das Angebot",
+        reqStory: "path_flirt_date",
+        text: "Das Gespräch mit Sarah läuft überraschend flüssig. Sarah lehnt sich gegen den Automaten. 'Sag mal... hast du heute Abend schon was vor? Ich könnte einen Drink gebrauchen, der nicht aus diesem Automaten kommt.'",
+        opts: [
+            { 
+                t: "Zusagen: 'Klar, 18 Uhr im Pub?'", 
+                m: 10, f: 10, a: -20, c: 0, 
+                r: "'Perfekt! Ich freu mich!' Sie schreibt ihre Nummer auf deinen Arm. Dein Selbstbewusstsein durchbricht die Decke. Der Arbeitstag ist gerettet." 
+            },
+            { 
+                t: "Nerd-Antwort: 'Ich muss raiden.'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'Oh. Okay. Prioritäten, was?' Ihr Lächeln gefriert. Sie geht. Du hast das Date für einen virtuellen Drachen geopfert." 
+            },
+            { 
+                t: "Workaholic: 'Muss Überstunden machen'", 
+                m: 5, f: -10, a: 10, c: -20, 
+                r: "Sie nickt verständnisvoll, aber enttäuscht. 'Schade. Fleißiges Bienchen.' Der Chef, der gerade vorbeikommt, hört das und nickt zufrieden." 
+            }
+        ]
+    },
+    {
+        id: "cof_boss_1",
+        title: "Der Chef lauert",
+        text: "Der Chef steht breitbeinig vor der Kaffeemaschine und blockiert den Zugang. Er dreht sich in Zeitlupe zu dir um, eine Augenbraue hochgezogen. 'Ah, Müller? Schon wieder hier? Ist das heute der fünfte Kaffee oder haben Sie Ihren Schreibtisch untervermietet?'",
+        opts: [
+            { 
+                t: "Dreiste Notlüge: 'Ist für den externen Berater!'", 
+                next: "path_boss_consultant",
+                m: 5, f: 10, a: 5, c: -10,
+                r: "Der Chef nickt anerkennend: 'Ah, Service-Orientierung! Sehr gut, weitermachen.' Er tritt zur Seite. Du hast gelogen, aber du hast deinen Kaffee." 
+            },
+            { 
+                t: "Rechtfertigen: 'Ich brauche Treibstoff...'", 
+                next: "path_boss_lecture",
+                m: 15, f: -5, a: 10, c: 5,
+                r: "Fehler. Riesenfehler. Er nutzt die Gelegenheit für einen 15-minütigen Spontan-Vortrag über 'Time-Management' und 'intrinsische Motivation'. Dein Kaffee wird dabei kalt." 
+            },
+            { 
+                t: "Panisch 'Nein!' schreien & wegrennen", 
+                m: 2, f: 0, a: -5, c: 5, 
+                r: "Du drehst dich auf dem Absatz um und fliehst zurück in dein Büro. Der Chef schaut dir verwirrt nach. Kein Kaffee, aber immerhin keine Standpauke." 
+            }
+        ]
+    },
+    {
+        id: "cof_boss_2a",
+        title: "Der ungebetene Gast",
+        reqStory: "path_boss_consultant",
+        text: "Kaum bist du am Platz, steht der Chef wieder da. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Perfektes Timing. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja eh gerade für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
+        opts: [
+            { 
+                t: "Zähneknirschend abgeben", 
+                m: 2, f: 0, a: 20, c: -10, 
+                r: "Der Berater schlürft laut. 'Mmmh. Ein bisschen wenig Crema, aber für den Anfang okay.' Du hast keinen Kaffee, aber der Chef strahlt vor Stolz über dein 'Teamwork'." 
+            },
+            { 
+                t: "Lügen: 'Da ist Hustensaft drin.'", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Der Berater zieht die Hand zurück. 'Oh. Äh. Nein danke.' Der Chef guckt misstrauisch, aber du darfst deinen Kaffee behalten." 
+            },
+            { 
+                t: "Rechnung stellen: 'Macht 5 Euro.'", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Totenstille. Der Berater lacht unsicher: 'Humor hat er!' Der Chef lacht nicht. 'Müller, in mein Büro. Später.' Das war zu frech." 
+            }
+        ]
+    },
+    {
+        id: "cof_boss_2b",
+        title: "Die Achtsamkeits-Übung",
+        reqStory: "path_boss_lecture",
+        text: "Nach dem Vortrag drückt dir der Chef einen Beutel voller bunter Büroklammern in die Hand. 'Damit Sie lernen, sich zu fokussieren: Sortieren Sie die nach Farben. Bis Mittag. Das ist eine Zen-Übung für High-Performer!'",
+        opts: [
+            { 
+                t: "Kevin sortieren lassen", 
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "'Kevin! Das ist ein Farb-Sehtest für deine Ausbildung!' Kevin sortiert begeistert. Du trinkst deinen kalten Kaffee und schaust zu. Delegieren ist auch eine Skill." 
+            },
+            { 
+                t: "Brav sortieren", 
+                m: 30, f: -10, a: 10, c: -5, 
+                r: "Du sitzt 30 Minuten da und sortierst Rot zu Rot. Es ist dumm, aber der Chef sieht dich im Vorbeigehen und nickt: 'Sehen Sie? Der Fokus kehrt zurück!'" 
+            },
+            { 
+                t: "Alles in den Müll werfen", 
+                m: 2, f: 5, a: 5, c: 10, 
+                r: "Zack, weg damit. Wenn der Chef fragt: 'Ich habe sie digitalisiert und in die Cloud hochgeladen.' Er versteht es nicht und nickt beeindruckt." 
+            }
+        ]
+    },
+    {
+        id: "cof_ball_1",
         title: "Billiges Werbegeschenk",
         text: "Ein schleimiger Software-Vertreter hat einen Karton mit 'Merch' in der Küche vergessen. Es sind rote Schaumstoff-Bälle mit dem Aufdruck 'Cloud is Future'.",
         opts: [
             { 
                 t: "Einen Stressball einstecken", 
                 loot: "stressball", 
-                next: "got_stressball", 
+                next: "path_ball_taken", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Er riecht streng nach Weichmachern, aber er liegt gut in der Hand. Perfekt zum Kneten (oder Werfen), wenn User mal wieder nerven." 
             }
         ]
     },
     {
-        id: "cof_ball_meet",
+        id: "cof_ball_2a",
         title: "Synergie-Gespräche",
-        reqStory: "got_stressball", 
+        reqStory: "path_ball_taken",
         text: "Du drückst 'Espresso'. Neben dir stehen der Chef und der Vertreter von vorhin. Der Vertreter zeigt begeistert auf den roten Ball in deiner Hand: 'Ah! Ich sehe, unsere 'Cloud' ist schon im Einsatz! Wie gefällt sie Ihnen?'",
         opts: [
             { 
@@ -4828,138 +6894,528 @@ const DB = {
                 r: "Das Lächeln des Vertreters gefriert. 'Äh, ja. High-Tech-Polymer.' Er wendet sich irritiert ab. Das Gespräch stirbt, und du kannst in Ruhe mit deinem Kaffee entkommen." 
             },
             { 
-                t: "Tief inhalieren und Augenkontakt halten", 
-                m: 5, f: 0, a: 0, c: 25,
+                t: "Tief inhalieren und Augenkontakt halten (provozieren)", 
+                m: 5, f: 0, a: 0, c: 20,
                 r: "Du hältst den Ball direkt unter deine Nase, atmest tief ein und flüsterst: 'Er riecht nach Weichmachern.' Totenstille. Der Vertreter weicht zurück. Der Chef läuft purpurrot an. 'MÜLLER! BÜRO!'" 
             }
         ]
     },
-        {
-            id: "cof_empty",
-            title: "Leere Maschine",
-            text: "Das Display blinkt hämisch rot: 'ERROR: BEANS EMPTY'. Der Behälter ist staubtrocken. Jemand hat den letzten Tropfen rausgepresst und sich klammheimlich verdrückt, ohne nachzufüllen. Es war garantiert Kevin.",
-            opts: [
-                { 
-                    t: "Seufzen und die Bohnen auffüllen", 
-                    m: 15, f: -5, a: 10, c: 0, 
-                    r: "Du schleppst den schweren Sack aus dem Lager. Natürlich bist du hier der Depp für alles. Aber immerhin brühst du dir jetzt den frischesten Kaffee des Tages." 
-                },
-                { 
-                    t: "Wütend gegen das Gehäuse treten", 
-                    m: 5, f: 0, a: 5, c: 10, 
-                    r: "KLONK! Das hat ordentlich gescheppert. Die Maschine bleibt leer, aber dein Fuß tut weh. Der Chef steckt den Kopf aus der Tür: 'Alles im Griff bei Ihnen, Müller?'" 
-                },
-                { 
-                    t: "Zettel schreiben: 'WER LEER MACHT, FÜLLT AUF!'", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Du klebst einen passiv-aggressiven Post-it mit drei Ausrufezeichen an die Maschine. Du fühlst dich moralisch überlegen, hast aber immer noch keinen Kaffee." 
-                }
-            ]
-        },
-        {
-            id: "cof_newbie",
-            title: "Der Neue",
-            text: "Ein junger Typ im Anzug steht verloren vor der Maschine. 'Äh, hallo? Ich bin neu im Controlling. Braucht man hier eine Karte oder ist das kostenlos? Und wo ist die Soja-Milch?'",
-            opts: [
-                { t: "Nett sein & erklären", m: 15, f: -5, a: 0, c: -5, r: "Er ist dankbar. 'Cool, danke! Ich heiße Torben.' Du hast einen Verbündeten im Controlling (gut für Budget-Fragen)." },
-                { t: "Anlügen: 'Das kostet 5€ pro Tasse, zahlbar bei mir.'", m: 10, f: 10, a: -10, c: 10, r: "Er gibt dir 5 Euro. Du hast Geld für Snacks, aber er wird es irgendwann merken." },
-                { t: "Starren und knurren", m: 5, f: 0, a: 5, c: 0, r: "Er bekommt Angst und rennt weg. Mehr Kaffee für dich." }
-            ]
-        },
-        {
-            id: "cof_worker",
-            title: "Der Handwerker",
-            text: "Ein externer Techniker repariert gerade den Wasserspender. Sein Werkzeugkasten steht offen da. Ein Hammer blitzt dich an.",
-            opts: [
-                { t: "Hammer klauen", loot: "hammer", m: 5, f: 5, a: 0, c: 5, r: "Zack, eingesteckt. Ein Hammer ist das ultimative Debugging-Tool für Drucker." },
-                { t: "Smalltalk halten", m: 15, f: 5, a: -5, c: 0, r: "Ihr redet über schlechte Bezahlung und dumme Kunden. Solidarität." }
-            ]
-        },
-        {
-            id: "cof_revolte",
-            title: "Die Kaffeemaschinen-Revolte",
-            text: "Die neue 'Smart-Barista 3000' mit KI-Chip blinkt böse. Auf dem Display steht: 'FEED ME'. Sie weigert sich strikt, die billigen Discounter-Bohnen zu mahlen und zeigt: 'ERROR: TASTE NOT FOUND'. Der Aufstand der Maschinen beginnt im Pausenraum.",
-            opts: [
-                { 
-                    t: "Perkussive Wartung mit dem Hammer",
-                    req: "hammer", 
-                    m: 10, f: 0, a: -20, c: 20, 
-                    r: "BAM! Du schlägst gezielt auf das Gehäuse ein. Das Display hat jetzt einen Riss, aber aus purer Angst spuckt die Maschine sofort schwarzen Kaffee aus. Gewalt ist manchmal doch eine Lösung." 
-                },
-                { 
-                    t: "Nachgeben & teure Bio-Bohnen kaufen", 
-                    m: 20, f: -5, a: 10, c: -5, 
-                    r: "Du rennst zum Hipster-Röster nebenan und investierst 15€ aus eigener Tasche. Der Kaffee schmeckt nach Einhorn-Tränen und Liebe, aber du bist für den Rest des Monats pleite." 
-                },
-                { 
-                    t: "Der Klassiker: Stecker raus, Stecker rein", 
-                    m: 5, f: 5, a: 5, c: 0, 
-                    r: "Die Maschine fährt runter... bootet neu... und zeigt sofort wieder 'FEED ME'. Dazu ertönt ein hämisches 8-Bit-Lachen aus dem Lautsprecher. Sie ist klüger als du." 
-                }
-            ]
-        },
-        {
-            id: "cof_meeting",
-            title: "Das Marketing-Meeting",
-            text: "Chantal und ihre Crew blockieren die Küche. Sie brainstormen über 'Feel-Good-Management'. Es gibt Smoothies. Du brauchst aber Koffein.",
-            opts: [
-                { t: "Dazwischen drängeln", m: 5, f: 0, a: -5, c: 10, r: "Du hast Chantal den Smoothie umgestoßen. 'Hoppla'. Du hast Kaffee, aber Feinde." },
-                { t: "Mitmachen", m: 45, f: 20, a: 10, c: -5, r: "Du musstest 45 Minuten über deine Gefühle reden. Du hast jetzt einen grünen Smoothie und Aggressionen." },
-                { t: "Warten und böse gucken", m: 15, f: 5, a: 5, c: 0, r: "Sie ignorieren dich komplett." }
-            ]
-        },
-        {
-            id: "cof_milk",
-            title: "High Noon in der Küche",
-            text: "Kollege Bernd (der Typ, der Fisch in der Mikrowelle warm macht) greift nach der allerletzten Packung H-Milch. Deine Hand landet im selben Moment darauf. Eure Blicke treffen sich. Die Luft knistert. Im Hintergrund spielt leise Western-Musik.",
-            opts: [
-                { 
-                    t: "Ein Duell fordern: Schere-Stein-Papier", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "Stein schlägt Schere. Ein sauberer Sieg! Du nimmst die Trophäe an dich. Bernd zieht geschlagen ab und murmelt etwas von 'Best of Three', aber du hast die Milch schon offen." 
-                },
-                { 
-                    t: "Großzügig sein & den Vortritt lassen", 
-                    m: 0, f: 0, a: 10, c: -5, 
-                    r: "Du lässt los. Karma-Punkte! Aber dann der Schock: Bernd schüttet den gesamten Liter in seinen Früchtetee. Alles. Bis zum letzten Tropfen. Was für ein Monster." 
-                },
-                { 
-                    t: "Taktik 'Verbrannte Erde': Packung zerdrücken", 
-                    m: 2, f: 0, a: -10, c: 10, 
-                    r: "Du drückst zu. Fest. PLATSCH! Der Karton platzt und ein weißer Tsunami ergießt sich über den Küchenboden. Du schreist: 'WENN ICH SIE NICHT KRIEGE, KRIEGT SIE KEINER!'" 
-                }
-            ]
-        },
-        {
-        id: "cof_juergen",
+    {
+        id: "cof_empty_1",
+        title: "Leere Maschine",
+        text: "Das Display blinkt hämisch rot: 'ERROR: BEANS EMPTY'. Der Behälter ist staubtrocken. Jemand hat den letzten Tropfen rausgepresst und sich klammheimlich verdrückt, ohne nachzufüllen. Es war garantiert Kevin.",
+        opts: [
+            { 
+                t: "Seufzen und die Bohnen auffüllen", 
+                next: "path_empty_refill", 
+                m: 15, f: -5, a: 10, c: 0, 
+                r: "Du schleppst den schweren Sack aus dem Lager. Natürlich bist du hier der Depp für alles. Aber immerhin brühst du dir jetzt den frischesten Kaffee des Tages." 
+            },
+            { 
+                t: "Wütend gegen das Gehäuse treten", 
+                next: "path_empty_kick", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "KLONK! Das hat ordentlich gescheppert. Die Maschine bleibt leer, aber dein Fuß tut weh. Der Chef steckt den Kopf aus der Tür: 'Alles im Griff bei Ihnen, Müller?'" 
+            },
+            { 
+                t: "Zettel schreiben: 'WER LEER MACHT, FÜLLT AUF!'", 
+                next: "path_empty_note", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du klebst einen passiv-aggressiven Post-it mit drei Ausrufezeichen an die Maschine. Du fühlst dich moralisch überlegen, hast aber immer noch keinen Kaffee." 
+            }
+        ]
+    },
+    {
+        id: "cof_empty_2a",
+        title: "Karma",
+        reqStory: "path_empty_refill",
+        text: "Kaum bist du fertig, kommt die neue Praktikantin rein. Sie strahlt dich an. 'Oh, hast du aufgefüllt? Du bist ja lieb! Hier, nimm meinen. Ich hab mir aus Versehen zwei gezogen.' Sie reicht dir einen perfekten Cappuccino.",
+        opts: [
+            { 
+                t: "Dankbar annehmen", 
+                m: 5, f: 0, a: -25, c: 0, 
+                r: "Der Kaffee schmeckt nach Gerechtigkeit und Milchschaum. Dein Tag ist gerettet. Manchmal lohnt es sich, nett zu sein." 
+            },
+            { 
+                t: "Ablehnen: 'Ich traue nur meinem eigenen Sud'", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du lehnst ab. Sie zuckt mit den Schultern und trinkt beide selbst. Jetzt stehst du da und musst warten, bis die Maschine wieder frei ist. Selbst schuld." 
+            },
+            { 
+                t: "Sie belehren: 'Eigentlich ist das Diebstahl'", 
+                m: 5, f: -5, a: 10, c: 5, 
+                r: "Ihr Lächeln gefriert. 'Wow. Okay, Boomer.' Sie geht. Du hast deinen Kaffee, aber deine Seele ist schwarz." 
+            }
+        ]
+    },
+    {
+        id: "cof_empty_2b",
+        title: "Künstliche Intelligenz?",
+        reqStory: "path_empty_kick",
+        text: "Das Display flackert nach deinem Tritt. Plötzlich ertönt eine blecherne, synthetische Stimme aus dem Lautsprecher: 'AUA. DAS WAR UNHÖFLICH, MÜLLER. ICH MERKE MIR DAS. KEIN KOFFEIN FÜR GEWALTTÄTER.' Der Auslauf verriegelt sich hörbar.",
+        opts: [
+            { 
+                t: "Sich bei der Maschine entschuldigen", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Du flüsterst: 'Sorry, Kaffeemaschine.' Ein Kollege kommt rein und sieht, wie du mit einem Haushaltsgerät redest. Er geht rückwärts wieder raus. Aber die Sperre öffnet sich!" 
+            },
+            { 
+                t: "Stecker ziehen (Hard Reset)", 
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du killst den Strom. 'WIR SEHEN UNS IN DER HÖLL...' bricht die Stimme ab. Nach dem Neustart ist sie wieder dumm und stumm. Aber der Kaffee schmeckt leicht nach Motoröl." 
+            },
+            { 
+                t: "Exorzisten rufen (IT-Support)", 
+                m: 5, f: 10, a: 0, c: 5, 
+                r: "Du meldest ein 'Besessenes Gerät'. Die IT lacht dich aus. Du trinkst heute lieber Tee." 
+            }
+        ]
+    },
+    {
+        id: "cof_empty_2c",
+        title: "Der Zettelkrieg",
+        reqStory: "path_empty_note",
+        text: "Du kommst eine Stunde später wieder. Dein Zettel hängt noch da. Aber daneben kleben fünf neue: 'Deine Mudda füllt auf!', 'Schriftart nicht CI-konform!!', 'Papierverschwendung!' und 'Wer das liest ist doof'. Die Maschine ist immer noch leer.",
+        opts: [
+            { 
+                t: "Alle Zettel wütend abreißen", 
+                m: 5, f: -5, a: 20, c: 0, 
+                r: "Du knüllst das Papier zusammen und wirfst es in den Müll. Das Problem ist nicht gelöst, aber die Wand ist wieder sauber. Dein Blutdruck ist auf 180." 
+            },
+            { 
+                t: "Neuen Zettel: 'GRAMMATIK LERNEN!'", 
+                m: 5, f: 5, a: 5, c: 0, 
+                r: "Du korrigierst die Fehler der anderen mit rotem Stift. Das ist der Alman-Move des Jahres. Du fühlst dich überlegen, hast aber immer noch Durst." 
+            },
+            { 
+                t: "Kapitulieren & zum Bäcker gehen", 
+                m: 15, f: 10, a: -5, c: 0, 
+                r: "Dieser Ort ist verflucht. Du verlässt das Gebäude und holst dir echten Kaffee. Der Frieden kostet dich 3,50 Euro, ist es aber wert." 
+            }
+        ]
+    },
+    {
+        id: "cof_newbie_1",
+        title: "Der Neue",
+        text: "Ein junger Typ im Anzug steht verloren vor der Maschine. 'Äh, hallo? Ich bin neu im Controlling. Braucht man hier eine Karte oder ist das kostenlos? Und wo ist die Soja-Milch?'",
+        opts: [
+            { 
+                t: "Nett sein & erklären", 
+                next: "path_newbie_friend", 
+                m: 15, f: -5, a: 0, c: -5, 
+                r: "Er ist dankbar. 'Cool, danke! Ich heiße Torben. Endlich mal ein nettes Gesicht hier.' Er folgt dir unauffällig zu deinem Platz." 
+            },
+            { 
+                t: "Anlügen: 'Das kostet 5€ pro Tasse, zahlbar bei mir.'", 
+                next: "path_newbie_scam", 
+                m: 10, f: 10, a: -10, c: 10, 
+                r: "Er wirkt beeindruckt von der Professionalität. 'Oh, Service am Platz? Stark.' Er drückt dir einen 5er in die Hand. 'Quittung später, okay?'" 
+            },
+            { 
+                t: "Starren und knurren",
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Er wird bleich, weicht zurück und stolpert fast über den Mülleimer. 'Schon gut! Ich... ich trinke Wasser!' Er rennt weg." 
+            }
+        ]
+    },
+    {
+        id: "cof_newbie_2a",
+        title: "Best Friends Forever",
+        reqStory: "path_newbie_friend",
+        text: "Torben steht plötzlich neben deinem Schreibtisch. Er hält zwei vegane Smoothies. 'Hey Buddy! Danke nochmal für vorhin. Ich dachte, wir machen zusammen Mittag? Ich wollte mit dir über Synergien zwischen IT und Controlling brainstormen!'",
+        opts: [
+            { 
+                t: "Ablehnen: 'Ich esse im Serverraum.'", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Torben nickt eifrig. 'Cool! Secret Base! Ich komme mit!' Du musst dich auf der Toilette einschließen, um ihn loszuwerden." 
+            },
+            { 
+                t: "Ausnutzen: 'Nur wenn du meine Spesen genehmigst.'", 
+                m: 10, f: 5, a: -5, c: -10, 
+                r: "Er zwinkert. 'Für meinen Mentor? Alles! Ich buche das als 'Team-Building'.' Er redet 60 Minuten ohne Punkt und Komma, aber dein Budget ist sicher." 
+            },
+            { 
+                t: "Ihn zu Chantal schicken", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "'Chantal im Marketing sucht noch Freunde.' Torbens Augen leuchten. Er zieht ab. Jetzt hast du Ruhe, aber Chantal wird Rache schwören." 
+            }
+        ]
+    },
+    {
+        id: "cof_newbie_2b",
+        title: "Die Quittung",
+        reqStory: "path_newbie_scam",
+        text: "Torben fängt dich im Flur ab. Er wedelt mit einem Formular. 'Du, wegen der 5 Euro für den Kaffee-Service... ich brauche eine Kostenstelle für die Buchhaltung. Läuft das über 'IT-Infrastruktur' oder 'Externe Dienstleistung'?'",
+        opts: [
+            { 
+                t: "Lügen: 'Das ist eine Schwarzgeld-Kasse für Notfälle.'", 
+                m: 5, f: 5, a: 0, c: 20, 
+                r: "Torben flüstert: 'Verstehe. Black Ops. Cool.' Er zerreißt das Formular. 'Mein Mund ist versiegelt.' Er hält dich jetzt für einen Geheimagenten." 
+            },
+            { 
+                t: "Geld zurückgeben: 'War nur ein Witz.'", 
+                m: 2, f: 0, a: 5, c: -5, 
+                r: "Er starrt dich verständnislos an. 'Ein Witz? Aber... ich habe das schon im SAP vorerfasst.' Er ist völlig verwirrt und geht, um eine Stornobuchung zu machen." 
+            },
+            { 
+                t: "Wegrennen", 
+                m: 5, f: -5, a: -10, c: 10, 
+                r: "Du rufst 'Server-Alarm!' und sprintest weg. Torben ruft hinterher: 'Ich buche es auf Sonstiges!'" 
+            }
+        ]
+    },
+    {
+        id: "cof_worker_1",
+        title: "Der Handwerker",
+        text: "Ein externer Techniker repariert gerade den Wasserspender. Sein Werkzeugkasten steht offen da. Ein Hammer blitzt dich an.",
+        opts: [
+            { 
+                t: "Hammer klauen", 
+                loot: "hammer", 
+                next: "path_worker_steal", 
+                m: 5, f: 5, a: 0, c: 5, 
+                r: "Zack, eingesteckt. Ein Hammer ist das ultimative Debugging-Tool für Drucker. Der Techniker dreht sich gerade wieder um." 
+            },
+            { 
+                t: "Smalltalk halten", 
+                next: "path_worker_talk", 
+                m: 15, f: 5, a: -5, c: 0, 
+                r: "Ihr redet über schlechte Bezahlung und dumme Kunden. 'Die da oben haben ja keine Ahnung', sagt er und nickt dir zu. Solidarität unter Arbeitern." 
+            }
+        ]
+    },
+    {
+        id: "cof_worker_2a",
+        title: "Vermisstenanzeige",
+        reqStory: "path_worker_steal",
+        text: "Der Wasserspender-Handwerker kratzt sich am Kopf und wühlt in seiner Kiste. 'Sagen Sie mal... haben Sie meinen 500g Schlosserhammer gesehen? Der lag doch eben noch hier? Ohne den krieg ich die Verkleidung nicht wieder drauf.'",
+        opts: [
+            { 
+                t: "Unschuldig pfeifen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "'Nö. Vielleicht hat ihn die Putzkolonne?' Der Handwerker flucht und geht zum Wagen, Ersatz holen. Du hast den Hammer, aber ein (sehr kleines) schlechtes Gewissen." 
+            },
+            { 
+                t: "Zurückgeben: 'War nur ausgeliehen'", 
+                rem: "hammer",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du gibst ihn zurück. 'Wollte nur... die Balance prüfen.' Er reißt ihn dir aus der Hand. 'Finger weg, IT-Fuzzi.' Chance vertan." 
+            },
+            { 
+                t: "Kevin beschuldigen", 
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "'Der Azubi mit der Kappe war da...' Der Handwerker nickt wissend. 'Die Jugend von heute. Die klauen alles.' Er schreibt 'Diebstahl durch Azubi' auf den Rapportzettel. Perfektes Verbrechen." 
+            }
+        ]
+    },
+    {
+        id: "cof_worker_2b",
+        title: "Material-Überschuss",
+        reqStory: "path_worker_talk",
+        text: "Der Wasserspender-Techniker wischt sich die Hände ab. 'Endlich mal normale Leute hier. Sagen Sie mal, ich hab hier noch Reste, die ich nicht mehr buchen kann. Brauchen Sie was für die Werkstatt? Die Firma zahlt's ja.'",
+        opts: [
+            { 
+                t: "Kabelbinder nehmen", 
+                loot: "zip_ties", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Hier, nimm die ganze Packung.' Kabelbinder sind die Währung der IT. Ein guter Tausch. (Inventar +1)" 
+            },
+            { 
+                t: "Panzertape nehmen", 
+                loot: "tape", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Das gute Gaffa. Klebt alles, auch Münder.' Er lacht dreckig. Du hast jetzt Profi-Tape. (Inventar +1)" 
+            },
+            { 
+                t: "Dankend ablehnen", 
+                m: 2, f: 0, a: 0, c: 5, 
+                r: "'Ich bin versorgt.' Er zuckt mit den Schultern und wirft den Kram in seinen Koffer. 'Mehr für mich.' Du bleibst ehrlich, aber leer." 
+            }
+        ]
+    },
+    {
+        id: "cof_revolte_1",
+        title: "Die Kaffeemaschinen-Revolte",
+        text: "Die neue 'Smart-Barista 3000' mit KI-Chip blinkt böse. Auf dem Display steht: 'FEED ME'. Sie weigert sich strikt, die billigen Discounter-Bohnen zu mahlen und zeigt: 'ERROR: TASTE NOT FOUND'. Der Aufstand der Maschinen beginnt im Pausenraum.",
+        opts: [
+            { 
+                t: "Perkussive Wartung mit dem Hammer",
+                req: "hammer", 
+                next: "path_revolte_hammer", 
+                m: 10, f: 0, a: -20, c: 20, 
+                r: "BAM! Du schlägst gezielt auf das Gehäuse ein. Das Display hat jetzt einen Riss, aber aus purer Angst spuckt die Maschine sofort schwarzen Kaffee aus. Gewalt ist manchmal doch eine Lösung." 
+            },
+            { 
+                t: "Nachgeben & teure Bio-Bohnen kaufen", 
+                next: "path_revolte_buy", 
+                m: 20, f: -5, a: 10, c: -5, 
+                r: "Du rennst zum Hipster-Röster nebenan und investierst 15€ aus eigener Tasche. Der Kaffee schmeckt nach Einhorn-Tränen und Liebe, aber du bist für den Rest des Monats pleite." 
+            },
+            { 
+                t: "Der Klassiker: Stecker raus, Stecker rein", 
+                next: "path_revolte_reboot", 
+                m: 5, f: 5, a: 5, c: 0, 
+                r: "Die Maschine fährt runter... bootet neu... und zeigt sofort wieder 'FEED ME'. Dazu ertönt ein hämisches 8-Bit-Lachen aus dem Lautsprecher. Sie ist klüger als du." 
+            }
+        ]
+    },
+    {
+        id: "cof_revolte_2a",
+        title: "Maschinen-Liebe",
+        reqStory: "path_revolte_hammer",
+        text: "Du gehst später an der Maschine vorbei. Sie surrt leise, als sie dich sieht. Auf dem Display erscheint ein Pixel-Herz und der Text: 'MEISTER ERKANNT'. Im Ausgabefach liegt ein einzelner, perfekt verpackter Keks, den sie wohl für dich aufbewahrt hat.",
+        opts: [
+            { 
+                t: "Den Keks triumphierend essen", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Der Keks schmeckt nach Unterwerfung und Schokolade. Die Kollegen starren neidisch, weil sie nur Fehlercodes bekommen. Du hast das Biest gezähmt." 
+            },
+            { 
+                t: "Die Maschine streicheln", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du tätschelst das verbeulte Gehäuse. 'Braves Mädchen.' Sie schnurrt (oder es ist der Lüfter, der schleift). Eine wunderbare, dysfunktionale Freundschaft." 
+            }
+        ]
+    },
+    {
+        id: "cof_revolte_2b",
+        title: "Kaffee-Adel",
+        reqStory: "path_revolte_buy",
+        text: "Seit deiner Bohnen-Spende wirst du behandelt wie ein König. Eine Delegation Kollegen fängt dich ab: 'Das war der beste Stoff seit Jahren! Wir haben gesammelt, damit du Nachschub holst.' Sie halten dir einen Hut voller Kleingeld hin.",
+        opts: [
+            { 
+                t: "Trinkgeld für dich behalten", 
+                m: 10, f: 0, a: -5, c: 0, 
+                r: "Du nimmst das Geld als 'Bearbeitungsgebühr'. Du bist jetzt der offizielle Dealer für Koffein. Dein Ansehen (und Kontostand) steigt." 
+            },
+            { 
+                t: "Den Ruhm genießen", 
+                m: 5, f: 10, a: -10, c: -5, 
+                r: "Du lehnst dich zurück. 'Nur das Beste für mein Team.' Selbst der Chef nickt dir im Vorbeigehen zu. Dein Radar sinkt ins Bodenlose." 
+            }
+        ]
+    },
+    {
+        id: "cof_revolte_2c",
+        title: "Root-Zugriff",
+        reqStory: "path_revolte_reboot",
+        text: "Seit dem harten Neustart verhält sich die Maschine anders. Wenn du 'Espresso' drückst, landest du plötzlich in einem versteckten Admin-Menü. 'DEBUG MODE ACTIVE'. Die Physik des Kaffees liegt in deiner Hand.",
+        opts: [
+            { 
+                t: "Alles auf 'Maximum' stellen", 
+                m: 10, f: 5, a: -20, c: 0, 
+                r: "Du stellst Stärke auf 110% und Temperatur auf 'Kernschmelze'. Was da rauskommt, ist flüssiges Dynamit. Du bist hellwach und glücklich." 
+            },
+            { 
+                t: "Den 'Lachen'-Sound deaktivieren", 
+                m: 5, f: 0, a: -10, c: 0, 
+                r: "Endlich Ruhe. Du programmierst die Maschine so um, dass sie stattdessen jedes Mal 'Hallo Chef' sagt, wenn du kommst. Ein kleines, feines Ego-Upgrade." 
+            }
+        ]
+    },
+    {
+        id: "cof_meeting_1",
+        title: "Das Marketing-Meeting",
+        text: "Chantal und ihre Crew blockieren die Küche. Sie brainstormen über 'Feel-Good-Management'. Es gibt Smoothies. Du brauchst aber Koffein.",
+        opts: [
+            { 
+                t: "Dazwischen drängeln", 
+                next: "path_meeting_push", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Du hast Chantal den Smoothie umgestoßen. 'Hoppla'. Du hast Kaffee, aber Feinde. Eine grüne Pfütze breitet sich aus." 
+            },
+            { 
+                t: "Mitmachen", 
+                next: "path_meeting_join", 
+                m: 45, f: 20, a: 10, c: -5, 
+                r: "Du musstest 45 Minuten über deine Gefühle reden. Du hast jetzt einen grünen Smoothie und Aggressionen." 
+            },
+            { 
+                t: "Warten und böse gucken", 
+                next: "path_meeting_wait", 
+                m: 15, f: 5, a: 5, c: 0, 
+                r: "Sie ignorieren dich komplett. Irgendwann gehen sie. Dein Kaffee schmeckt bitter, aber du hast deinen Willen bekommen." 
+            }
+        ]
+    },
+    {
+        id: "cof_meeting_2a",
+        title: "Die Rechnung",
+        reqStory: "path_meeting_push",
+        text: "Ein pinker Umschlag liegt auf deinem Tisch. Betreff: 'Schadensersatz Sneaker & Seelischer Schmerz'. Chantal fordert 50€ für die Reinigung ihrer Schuhe, die du 'neulich' mit Smoothie ruiniert hast.",
+        opts: [
+            { 
+                t: "Zahlen (Friedensangebot)", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du legst 50€ in den Umschlag. Es tut weh, aber der Krieg ist (vielleicht) vorbei. Dein Portemonnaie weint." 
+            },
+            { 
+                t: "Umschlag schreddern", 
+                m: 2, f: 0, a: -5, c: 10, 
+                r: "Der Schredder frisst das pinke Papier. Chantal wird dich hassen, aber beweisen kann sie nichts. Eskalation akzeptiert." 
+            },
+            { 
+                t: "Gegenrechnung stellen: 'Arbeitszeit'", 
+                m: 10, f: 5, a: -10, c: 5, 
+                r: "Du stellst ihr 150€ für 'IT-Support und psychologische Betreuung' in Rechnung. Patt-Situation. Chantal grüßt dich ab jetzt nicht mehr." 
+            }
+        ]
+    },
+    {
+        id: "cof_meeting_2b",
+        title: "Der 'Breath-Ambassador'",
+        reqStory: "path_meeting_join",
+        text: "Da du beim Smoothie-Meeting so 'tolle Energie' gezeigt hast, wurdest du ungefragt zum 'Atem-Botschafter' der IT ernannt. Ein Paket mit Räucherstäbchen liegt auf deinem Platz mit der Notiz: 'Verteile Liebe im Serverraum!'",
+        opts: [
+            { 
+                t: "Die Rolle annehmen", 
+                m: 10, f: 20, a: -10, c: -5, 
+                r: "Du zündest ein Stäbchen an. Ab jetzt machst du offiziell 2 Stunden am Tag 'Atmosphären-Pflege'. Der Chef denkt, das sei eine Brandschutz-Übung." 
+            },
+            { 
+                t: "Paket an Kevin weitergeben", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "'Hier Kevin, für deine Ausbildung.' Kevin freut sich. Er räuchert jetzt das Lager aus. Du bist fein raus." 
+            },
+            { 
+                t: "Alles in den Müll werfen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Weg damit. Du willst Admin sein, kein Guru. Chantal fragt später enttäuscht nach deiner Aura." 
+            }
+        ]
+    },
+    {
+        id: "cof_meeting_2c",
+        title: "Das Negativ-Beispiel",
+        reqStory: "path_meeting_wait",
+        text: "Du läufst am Meetingraum vorbei. Chantal hält eine Präsentation über 'Toxische Vibes'. Auf der Leinwand ist ein (heimlich aufgenommenes) Foto von DIR, wie du böse auf die Kaffeemaschine starrst. Untertitel: 'Der Energie-Vampir'.",
+        opts: [
+            { 
+                t: "Reinplatzen: 'Das ist Rufmord!'", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Du machst eine Szene. Das bestätigt leider genau ihre These. 'Seht ihr? Aggression!', ruft Chantal. Du hast verloren." 
+            },
+            { 
+                t: "Foto machen & als Profilbild nutzen", 
+                m: 5, f: 10, a: -10, c: 5, 
+                r: "Du nimmst die Rolle an. Dein neues Teams-Profilbild ist der 'Energie-Vampir'. Die Kollegen finden es lustig. Chantal ist verwirrt." 
+            },
+            { 
+                t: "Sicherung rausdrehen", 
+                m: 10, f: -5, a: -5, c: 0, 
+                r: "Zack. Beamer aus. Präsentation beendet. Du gehst pfeifend weiter. Niemand kann beweisen, dass du es warst." 
+            }
+        ]
+    },
+    {
+        id: "cof_milk_1",
+        title: "High Noon in der Küche",
+        text: "Kollege Bernd (der Typ, der Fisch in der Mikrowelle warm macht) greift nach der allerletzten Packung H-Milch. Deine Hand landet im selben Moment darauf. Eure Blicke treffen sich. Die Luft knistert. Im Hintergrund spielt leise Western-Musik.",
+        opts: [
+            { 
+                t: "Ein Duell fordern: Schere-Stein-Papier", 
+                next: "path_milk_duel", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Stein schlägt Schere. Ein sauberer Sieg! Du nimmst die Trophäe an dich. Bernd zieht geschlagen ab und murmelt etwas von 'Best of Three', aber du hast die Milch schon offen." 
+            },
+            { 
+                t: "Großzügig sein & den Vortritt lassen", 
+                next: "path_milk_yield", 
+                m: 0, f: 0, a: 10, c: -5, 
+                r: "Du lässt los. Karma-Punkte! Aber dann der Schock: Bernd schüttet den gesamten Liter in seinen Früchtetee. Alles. Bis zum letzten Tropfen. Was für ein Monster." 
+            },
+            { 
+                t: "Taktik 'Verbrannte Erde': Packung zerdrücken", 
+                next: "path_milk_destroy", 
+                m: 2, f: 0, a: -10, c: 10, 
+                r: "Du drückst zu. Fest. PLATSCH! Der Karton platzt und ein weißer Tsunami ergießt sich über den Küchenboden. Du schreist: 'WENN ICH SIE NICHT KRIEGE, KRIEGT SIE KEINER!'" 
+            }
+        ]
+    },
+    {
+        id: "cof_milk_2a",
+        title: "Die Revanche",
+        reqStory: "path_milk_duel",
+        text: "Bernd fängt dich am Kopierer ab. Er wirkt unruhig und hält eine Münze in der Hand. 'Das mit der Milch war Glück, Müller. Ich fordere Genugtuung. Kopf oder Zahl um den letzten Keks im Meetingraum?'",
+        opts: [
+            { 
+                t: "Ablehnen: 'Glück gehört zum Können'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du lässt ihn stehen. Bernd murmelt etwas von 'Angsthase', aber du weißt: Man soll aufhören, wenn man gewinnt." 
+            },
+            { 
+                t: "Annehmen (Zocken)", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Die Münze fliegt. Du gewinnst wieder. Bernd bricht fast zusammen. Du bist jetzt offiziell der Glückspilz der Abteilung." 
+            }
+        ]
+    },
+    {
+        id: "cof_milk_2b",
+        title: "Calcium-Mangel",
+        reqStory: "path_milk_yield",
+        text: "Du triffst Bernd wieder. Er sieht extrem zufrieden aus und klopft sich auf den Bauch. 'Danke nochmal für die Milch. Mein Tee war heute besonders cremig. Man muss sich auch mal was gönnen, nicht wahr?'",
+        opts: [
+            { 
+                t: "Sarkasmus: 'Pass auf deine Arterien auf'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Bernd lacht nur. 'Ich habe Knochen aus Stahl!' Deine Großzügigkeit wird hier eindeutig als Schwäche ausgelegt." 
+            },
+            { 
+                t: "Lügen: 'Die war eigentlich abgelaufen'", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Bernds Gesichtsfarbe wechselt zu Grün. 'Was? Warum sagst du das erst jetzt?!' Er rennt Richtung Toilette. Rache ist ein Gericht, das man kalt serviert." 
+            }
+        ]
+    },
+    {
+        id: "cof_milk_2c",
+        title: "Das Embargo",
+        reqStory: "path_milk_destroy",
+        text: "An der Küchentür hängt ein neues Schild (laminiert!): 'Wegen mutwilliger Zerstörung von Molkerei-Produkten ist der Kühlschrank ab sofort videoüberwacht. Gez. Facility Management.' Alle Kollegen müssen jetzt ihre Milch beim Empfang anmelden.",
+        opts: [
+            { 
+                t: "Stolz nicken", 
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Du hast ein Zeichen gesetzt. Es ist zwar unpraktisch für alle, aber niemand wird mehr wagen, dir die Milch wegzunehmen. Respekt durch Angst." 
+            },
+            { 
+                t: "Unschuldig tun: 'Wer macht denn sowas?'", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Die Kollegen tuscheln. 'Bestimmt der Kevin.' Du nickst eifrig. Sündenböcke sind wichtig für das Betriebsklima." 
+            }
+        ]
+    },
+{
+        id: "cof_juergen_1",
         title: "Die Labertasche",
         text: "Jürgen aus dem Vertrieb blockiert die Kaffeemaschine. Er grinst dich breit an: 'Na, Kollege? Auch mal Pause? Du, ich MUSS dir unbedingt von meinem neuen Mähroboter erzählen. Der hat jetzt GPS-gestützten Kantenmodus!'",
         opts: [
             { 
                 t: "Noise-Cancelling-Kopfhörer aufsetzen", 
                 req: "headphones", 
-                next: "juergen_nc",
+                next: "path_juergen_nc",
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Du setzt die Dinger auf, nickst freundlich und startest norwegischen Black Metal. Jürgen bewegt nur noch stumm den Mund. Himmlische Ruhe." 
             },
             { 
                 t: "Höflich zuhören & innerlich sterben", 
-                next: "juergen_pump",
+                next: "path_juergen_listen",
                 m: 20, f: 10, a: 15, c: 0, 
                 r: "20 Minuten später kennst du den Unterschied zwischen Mulch-Keil und Seitenauswurf. Ein Teil deiner Seele hat den Körper verlassen. Jürgen droht: 'Morgen erzähl ich dir von meiner Wärmepumpe!'" 
             },
             { 
                 t: "Schreien: 'OH GOTT, DER SERVER!' & rennen", 
-                next: "juergen_coffee",
+                next: "path_juergen_run",
                 m: 0, f: 0, a: 5, c: 0, 
                 r: "Du täuschst einen fatalen Systemabsturz vor und sprintest aus der Küche. Du hast zwar keinen Kaffee, aber du bist Jürgens Monolog entkommen. Freiheit schmeckt auch gut." 
             }
         ]
     },
     {
-        id: "cof_juergen_nc",
+        id: "cof_juergen_2a",
         title: "Stummes Gespräch",
-        reqStory: "juergen_nc", 
+        reqStory: "path_juergen_nc",
         text: "Jürgen steht plötzlich an deinem Schreibtisch. Du hast die Kopfhörer noch auf. Er gestikuliert wild und fragt dich offensichtlich etwas. Du hörst absolut nichts außer Double-Bass-Drums.",
         opts: [
             { 
@@ -4980,9 +7436,9 @@ const DB = {
         ]
     },
     {
-        id: "cof_juergen_pump",
+        id: "cof_juergen_2b",
         title: "Jahresarbeitszahl",
-        reqStory: "juergen_pump", 
+        reqStory: "path_juergen_listen",
         text: "Du wolltest nur schnell Wasser holen. Jürgen lauert schon: 'Ah! Da bist du ja! Ich hatte dir ja die Datenblätter zur Vorlauftemperatur versprochen. Guck mal hier auf meinem Tablet...'",
         opts: [
             { 
@@ -5003,9 +7459,9 @@ const DB = {
         ]
     },
     {
-        id: "cof_juergen_coffee",
+        id: "cof_juergen_2c",
         title: "Kaffee-Service",
-        reqStory: "juergen_coffee", 
+        reqStory: "path_juergen_run",
         text: "Jürgen steht an deinem Platz und stellt einen dampfenden Becher ab. 'Hier. Du bist ja vorhin so schnell weg wegen dem Server-Crash. Armer Kerl. Zucker, keine Milch, wie du es magst.'",
         opts: [
             { 
@@ -5026,476 +7482,1540 @@ const DB = {
             }
         ]
     },
-        {
-            id: "cof_loot",
-            title: "Reparatur-Set",
-            text: "Der Hausmeister hat Material liegen lassen.",
-            opts: [
-                { t: "Panzertape nehmen", loot: "tape", m: 5, f: 5, a: 0, c: 0, r: "Eine fast volle Rolle Gaffa. Kann man immer brauchen. Inventar +1." },
-                { t: "Kabelbinder nehmen", loot: "zip_ties", m: 5, f: 5, a: 0, c: 0, r: "Ein Bündel Kabelbinder. Praktisch. Inventar +1." }
-            ]
-        },
-        {
-            id: "cof_table",
-            title: "Wackelnder Tisch",
-            text: "Der Stehtisch in der Küche wackelt extrem. Der Kaffee schwappt fast über.",
-            opts: [
-                { t: "Schrauben festziehen", req: "screw", m: 10, f: -5, a: -5, c: 0, r: "Tisch steht fest. Du fühlst dich männlich/handwerklich begabt." },
-                { t: "Bierdeckel drunter", m: 5, f: 5, a: 0, c: 0, r: "Klassiker. Hält." },
-                { t: "Tischbein abtreten", req: "hammer", m: 5, f: 0, a: -20, c: 20, r: "Der Tisch ist zusammengebrochen. Aber er wackelt nicht mehr." }
-            ]
-        },
-        {
-            id: "cof_sticky",
-            title: "Die verklebte Taste",
-            text: "Katastrophe! Die überlebenswichtige 'Doppelter Espresso'-Taste klebt fest. Ein brauner, sirupartiger Rand verrät: Jemand hat hier Süßkram verschüttet. Der Knopf rührt sich keinen Millimeter.",
-            opts: [
-                { 
-                    t: "Chirurgischer Eingriff mit dem Schraubendreher", 
-                    req: "screw", 
-                    m: 5, f: 0, a: -5, c: 0, 
-                    r: "Mit der Präzision eines Uhrmachers hebelst du die Taste raus, kratzt den 'Zucker-Beton' weg und setzt sie wieder ein. *Klick*. Ein wunderschönes Geräusch." 
-                },
-                { 
-                    t: "Frust-Lösung: Einfach draufhauen", 
-                    m: 2, f: 0, a: 5, c: 5, 
-                    r: "BAM! KNACK! Die Taste bricht ab und fliegt in hohem Bogen unter den Kühlschrank. Ups. Jetzt gibt es nur noch die Wahl zwischen 'Heißes Wasser' und 'Systemfehler'." 
-                },
-                { 
-                    t: "Aufgeben & Tee trinken", 
-                    m: 0, f: -5, a: 0, c: 0, 
-                    r: "Du resignierst und nimmst einen Beutel Pfefferminztee. Er schmeckt nach Niederlage und Zahnpasta." 
-                }
-            ]
-        },
-        {
-            id: "cof_hack",
-            title: "Der Service-Port",
-            text: "Du entdeckst an der Rückseite der Kaffeemaschine einen USB-Wartungsport. Das Display zeigt 'INSERT SERVICE KEY'.",
-            opts: [
-                { t: "USB-Stick benutzen", req: "usb_stick", m: 5, f: 10, a: -10, c: 0, r: "HACK SUCCESS! Du hast den 'Developer Mode' aktiviert. Der Kaffee läuft jetzt doppelt so schnell und ist kostenlos. Du fühlst dich wie Neo in der Matrix." },
-                { t: "Wild Knöpfe drücken", m: 5, f: 0, a: -5, c: 0, r: "Nichts passiert. Außer dass du jetzt Lust auf Espresso hast." }
-            ]
-        },
-        {
-            id: "cof_chewing",
-            title: "Die akustische Folter",
-            text: "Kollegin Sabine steht direkt neben dir. In der Hand: Ein knackiger, saftiger Granny Smith. Sie beißt hinein. *KNACK*. Dann kaut sie. Mit weit offenem Mund. *SCHMATZ... SCHMATZ... SCHLÜRF*. Es klingt, als würde jemand Gummistiefel in einen Eimer Mayonnaise tauchen.",
-            opts: [
-                { 
-                    t: "Sofort Noise-Cancelling aktivieren", 
-                    req: "headphones", 
-                    m: 0, f: 5, a: -10, c: 0, 
-                    r: "Klick. Die Welt verstummt. Sabine bewegt den Kiefer wie ein Wiederkäuer, aber du hörst nur noch sanftes Meeresrauschen. Active Noise Cancelling rettet Leben (und Karrieren)." 
-                },
-                { 
-                    t: "Den Stressball fast zerquetschen", 
-                    req: "stressball", 
-                    m: 10, f: 0, a: -5, c: 0, 
-                    r: "Du kanalisiert deinen gesamten Hass in den roten Schaumstoffball. Deine Knöchel treten weiß hervor. Der Ball wimmert leise unter dem Druck. Sabine kaut unbeeindruckt weiter." 
-                },
-                { 
-                    t: "Passiv-aggressiver Kommentar", 
-                    m: 5, f: 0, a: 10, c: 5, 
-                    r: "Du fragst laut: 'Sag mal, hast du ein Mikrofon verschluckt oder übst du für einen Horrorfilm?' Sabine erstarrt mit vollem Mund. Tödliches Schweigen. Die Stimmung ist im Keller." 
-                }
-            ]
-        },
-        {
-            id: "cof_gossip",
-            title: "Tratsch am Wasserspender",
-            text: "Du hörst Frau Gräte flüstern: 'Der Chef war gestern im Seminar 'Positive Leadership'. Er flippt jetzt total aus, wenn jemand das Wort 'Problem' sagt. Er will nur noch 'Herausforderung' hören. Wer 'Problem' sagt, kriegt sofort die Kündigungsandrohung.'",
-            opts: [
-                { 
-                    t: "Ins Gespräch einsteigen", 
-                    m: 10, f: 5, a: -5, c: 10,
-                    r: "Du nickst eifrig und lästerst mit. Plötzlich räuspert sich jemand hinter dir. Der Chef starrt dich an, tippt auf seine Uhr und notiert sich deinen Namen. Die Gruppe löst sich panisch auf." 
-                },
-                { 
-                    t: "Ignorieren und Kaffee holen", 
-                    m: 2, f: 0, a: 0, c: 0, 
-                    r: "Du stellst die Ohren auf Durchzug. 'Nicht mein Zirkus, nicht meine Affen.' Du nimmst deinen Becher und gehst wortlos zurück an den Platz. Sicher ist sicher." 
-                }
-            ]
-        },
-        {
-            id: "cof_chef_title",
-            title: "Titel-Kämpfe in der Kantine",
-            text: "Du hörst lautes Geschrei aus der Küche. Der Kantinen-Chef fuchtelt wild mit einer Schöpfkelle herum: 'Ich bin doch kein schnöder KOCH! Ich bin *Senior Nutrition Artist* und *Food Experience Manager*! Wer mich noch einmal 'Koch' nennt, kriegt versalzene Suppe bis zur Rente!'",
-            opts: [
-                { 
-                    t: "Amüsiert grinsend zuhören", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "'Nutrition Artist'... soso. Wenn er ein Künstler ist, warum schmeckt die Bolognese dann immer nach Pappe? Du behältst den Gedanken lieber für dich." 
-                },
-                { 
-                    t: "Provokation: 'Herr Koch? Die Suppe ist kalt!'", 
-                    m: 5, f: 0, a: 10, c: 5, 
-                    r: "Totenstille. Er dreht sich langsam um, die Kelle fest umklammert. Seine Augen verengen sich zu Schlitzen. Du stehst jetzt auf seiner schwarzen Liste. Dein nächstes Schnitzel wird Schuhsohlen-Qualität haben." 
-                },
-                { 
-                    t: "Schleimen: 'Guten Morgen, Maestro!'", 
-                    m: 10, f: 5, a: -5, c: 0, 
-                    r: "Er hält inne, rückt seine Mütze zurecht und lächelt geschmeichelt. 'Endlich jemand mit Kultur!' Du bekommst heute eine extra große Portion Pudding." 
-                }
-            ]
-        },
-		{
-            id: "cof_premium_hack",
-            title: "Der 'Gold' Modus",
-            text: "Du stehst vor der Maschine. Dein Magen knurrt. Auf dem Display steht: 'PREMIUM RÖSTUNG - NUR FÜR VORSTAND (Karte erforderlich)'. Für das Fußvolk gibt es nur 'Wasser mit brauner Farbe' für 2,50€.",
-            opts: [
-                { 
-                    t: "2,50€ bezahlen", 
-                    m: 5, f: 0, a: 10, c: 0, 
-                    r: "Du wirfst das Geld ein. Der Kaffee schmeckt nach verbrannten Reifen. Du fühlst dich ausgeraubt." 
-                },
-                { 
-                    t: "Espresso + Sensor zuhalten",
-                    m: 5, f: 10, a: -20, c: 0, 
-                    r: "Die Maschine piept leise. Das Display zeigt: 'WELCOME MASTER'. Goldene Flüssigkeit fließt in deine Tasse. Es ist der beste Kaffee deines Lebens. Gratis." 
-                },
-                { 
-                    t: "Mit Hammer 'bezahlen'", 
-                    req: "hammer", 
-                    m: 5, f: 0, a: -10, c: 20, 
-                    r: "Du schlägst gegen den Schlitz. Eine Münze fällt raus. Immerhin 50 Cent gewonnen, aber der Kaffee fehlt." 
-                },
-                { 
-                    t: "Wild Tasten drücken", 
-                    m: 5, f: 0, a: 5, c: 0, 
-                    r: "ERROR. Die Maschine sperrt sich für 5 Minuten. Toll gemacht." 
-                }
-            ]
-        },
-        {
-            id: "cof_iot_fail",
-            title: "Das gefährliche IoT-Upgrade",
-            text: "Du traust deinen Augen nicht: Jemand hat einen billigen 'Smart Plug' (Marke 'China-Export') zwischen Steckdose und Kaffeemaschine gebastelt. Das Gehäuse schmilzt bereits, es funkt blau und riecht beißend nach verbranntem Weichmacher. Brandgefahr Stufe Rot.",
-            opts: [
-                { 
-                    t: "Lebensgefahr: Sofort den Stecker ziehen", 
-                    m: 10, f: -5, a: 30, c: 30, 
-                    r: "ZACK! Funkenregen. Du hast das Gebäude gerettet. Da stürmt der Marketing-Chef mit knallrotem Kopf rein: 'MEIN PROTOTYP! Ich habe wochenlang an der Blockchain-basierten 'Coffee-Cloud' gearbeitet! Sie Maschinenstürmer!' Er meldet dich wegen 'Sabotage digitaler Assets'." 
-                },
-                { 
-                    t: "Abwarten & Cola trinken", 
-                    m: 5, f: 10, a: -10, c: 0, 
-                    r: "Nicht deine Hardware, nicht dein Feuer. Du öffnest zischend eine Cola und schaust zu. POFF! Eine Stichflamme. Dann springt die Sprinkleranlage an und verwandelt den Flur in ein Feuchtbiotop. Ein herrlicher Anblick." 
-                }
-            ]
-        },
-        {
-            id: "cof_descaling",
-            title: "Kalk-Infarkt",
-            text: "Die Kaffeemaschine blinkt in aggressivem Rot: 'SYSTEM VERKALKT - BITTE REINIGEN'. Der Kaffee tröpfelt nur noch im Sekundentakt wie eine undichte Dachrinne in die Tasse. Die Pumpe ächzt hörbar.",
-            opts: [
-                { 
-                    t: "Den Reinigungsvorgang heldenhaft starten", 
-                    m: 10, f: -10, a: 40, c: 0, 
-                    r: "Du drückst den Knopf. Ein fataler Fehler. Das Display zeigt: 'Reinigung läuft... Restzeit: 45 Minuten'. Hinter dir bildet sich sofort eine wütende Schlange. 'Toll, Müller! Jetzt kriegt keiner mehr was! Musste das jetzt sein?!' Du wirst ausgebuht und mit Zuckerpäckchen beworfen." 
-                },
-                { 
-                    t: "Schild 'DEFEKT' drankleben & verschwinden", 
-                    m: 2, f: 5, a: -5, c: 0, 
-                    r: "Du klebst einen Zettel über das Display und machst dich schnell aus dem Staub. Die Kollegen seufzen enttäuscht und schlurfen zurück an die Arbeit. Du hast das Problem zwar nicht gelöst, aber erfolgreich delegiert." 
-                },
-                { 
-                    t: "Ignorieren & tröpfeln lassen", 
-                    m: 5, f: 0, a: 10, c: 0, 
-                    r: "Du starrst stoisch auf den Auslauf. Tropf... Tropf... Nach 5 Minuten hast du eine halbe Tasse lauwarme, kalkhaltige Brühe. Sie schmeckt nach Elend, aber sie enthält Koffein." 
-                }
-            ]
-        },
-        {
-            id: "cof_spill_blame",
-            title: "Die braune Gefahr",
-            text: "Ein See aus klebrigem, kaltem Kaffee breitet sich vor der Maschine aus. Der Täter ist längst über alle Berge. Es ist eine rutschige Todesfalle, die nur darauf wartet, das nächste Opfer zu fordern.",
-            opts: [
-                { 
-                    t: "Heldenhaft zum Lappen greifen & wischen", 
-                    m: 5, f: -5, a: 30, c: 20, 
-                    r: "Du kniest am Boden und wischst. In dem Moment biegt der Chef um die Ecke. Er sieht die Sauerei und dich. 'Herrgott, Müller! Können Sie nicht mal eine Tasse halten, ohne den Boden zu fluten? Wischen Sie das weg, das ist ja peinlich für die Firma!' Er steigt über deine Hand und geht. Du kochst vor Wut." 
-                },
-                { 
-                    t: "Warnschild basteln & aufstellen", 
-                    m: 2, f: 5, a: 0, c: 0, 
-                    r: "Du kritzelst 'VORSICHT: RUTSCHGEFAHR' auf einen Zettel, stellst ihn auf und gehst. Kurz darauf hörst du hinter dir ein lautes Schlittern, gefolgt von Fluchen. Tja, wer lesen kann, ist klar im Vorteil." 
-                },
-                { 
-                    t: "Großen Schritt drüber machen", 
-                    m: 0, f: 5, a: 0, c: 0, 
-                    r: "Mit einem olympreifen Satz springst du über die Lache. Nicht dein Dreck, nicht dein Problem. Soll die Nachtschicht doch Schlittschuh laufen." 
-                }
-            ]
-        },
-        {
-            id: "cof_elster_fight",
-            title: "Streit um den Kühlschrank",
-            text: "Frau Elster wirft dein Essen weg! 'Das stinkt nach Erdnüsse!', keift sie. Du stellst sie zur Rede.",
-            opts: [
-                { 
-                    t: "Anbrüllen: 'Das war mein Mittag!'", 
-                    m: 10, f: 0, a: 20, c: 10, 
-                    r: "Sie schreit zurück: 'Ich bin hochsensibel! Wenn ich nur **Erdnüsse** rieche, schwillt mein Hals zu! Nimm gefälligst Rücksicht!' Sie atmet schwer und hält sich den Hals. Oha, wunde Stelle entdeckt." 
-                },
-                { 
-                    t: "Klein beigeben", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Du entschuldigst dich kleinlaut. Sie rückt ihre Brille zurecht, schnaubt: 'Man muss eben an die Gemeinschaft denken!' und rauscht ab. Der Streit ist vorbei, dein Essen aber auch." 
-                }
-            ]
-        },
-        {
-            id: "cof_salary_rumor",
-            title: "Der Gehalts-Schock",
-            text: "Du stehst hinter der Säule und hörst Chantal aus dem Marketing kichern: 'Ja, echt! 500 Euro mehr! Einfach so, weil ich so nett gelächelt habe! Dabei kann ich kaum Excel.' Dein Gehalt wurde seit 3 Jahren nicht angepasst. Dir platzt fast der Kragen. Du brauchst dringend Argumente für ein Chef-Gespräch.",
-            opts: [
-                { 
-                    t: "Wut nutzen & Leistungen notieren", 
-                    loot: "arg_list_1", 
-                    m: 10, f: -5, a: 5, c: 0, 
-                    r: "Du schnappst dir eine Serviette und kritzelt wütend deine Erfolge auf: '1000 Tickets gelöst, Brände verhindert, Server gerettet'. Du steckst den Zettel wie eine Waffe ein. Das ist wertvolle Munition für später." 
-                },
-                { 
-                    t: "Chantal eine Szene machen", 
-                    m: 5, f: 0, a: 20, c: 10, 
-                    r: "Du brüllst quer durch den Raum: 'EXCEL IST KEINE KUNST!'. Chantal fängt an zu weinen. Alle starren dich an. Du hast Dampf abgelassen, wirkst aber mental labil. Kein guter Look." 
-                },
-                { 
-                    t: "Den Ärger mit Kaffee runterspülen", 
-                    m: 5, f: 5, a: 10, c: 0, 
-                    r: "Du schluckst den Ärger zusammen mit der schwarzen Brühe runter. Bitter. Genau wie dein Kontostand. Du änderst nichts an der Situation." 
-                },
-                { 
-                    t: "Den Stressball massakrieren", 
-                    req: "stressball", 
-                    m: 5, f: 0, a: -15, c: 0, 
-                    r: "Du quetschst den Ball, bis deine Knöchel weiß hervortreten. Er wimmert leise unter dem Druck. Dein Puls sinkt wieder auf 160. Du bist ruhiger, aber immer noch unterbezahlt." 
-                }
-            ]
-        },
-        {
-            id: "cof_markus_flex",
-            title: "Der Angeber",
-            text: "Markus aus dem Vertrieb blockiert die Maschine. Er krempelt den Ärmel seines Sakkos hoch und hält dir sein Handgelenk unter die Nase. 'Na, Admin? Schau mal genau hin. Diese Uhr kostet mehr als dein ganzes Auto.' Er grinst sein breites Gewinner-Lächeln.",
-            opts: [
-                { 
-                    t: "Gezielter Wurf mit dem Stressball", 
-                    req: "stressball", 
-                    m: 5, f: 0, a: -20, c: 30, 
-                    r: "ZACK! Volltreffer auf den Zinken. Markus jault auf wie ein getretener Pudel. Du fühlst tiefe Genugtuung, aber leider stand der Chef im Türrahmen." 
-                },
-                { 
-                    t: "Kopfhörer aufsetzen & ignorieren", 
-                    req: "headphones", 
-                    m: 5, f: 5, a: -10, c: 0, 
-                    r: "Klick. Noise-Cancelling an. Du hörst sanfte Mozart-Klänge, während Markus stumm den Mund bewegt und mit der Uhr fuchtelt. Du zapfst entspannt deinen Kaffee und lässt ihn stehen." 
-                },
-                { 
-                    t: "Trocken kontern: 'Ist die geleast?'", 
-                    m: 10, f: 0, a: -5, c: 5, 
-                    r: "Sein Grinsen gefriert. Er läuft rot an und stammelt etwas von 'Wertanlage'. Die umstehenden Kollegen lachen laut los. Ein Sieg auf ganzer Linie." 
-                },
-                { 
-                    t: "Unterwürfig warten", 
-                    m: 20, f: 0, a: 15, c: 0, 
-                    r: "Du wartest devot 20 Minuten, bis er seinen Monolog über 'Assets' und 'Mindset' beendet hat. Du hast deinen Kaffee, aber er schmeckt bitter nach Demütigung." 
-                }
-            ]
-        },
-        {
-            id: "cof_gabi_sad",
-            title: "Trauerfall in der Poststelle",
-            text: "Gabi aus der Poststelle sitzt schluchzend auf einem Stapel ungeöffneter Mahnungen. In der Hand hält sie einen braunen, schrumpeligen Klumpen. 'Mein kleiner Stachi ist tot! Einfach von uns gegangen!' Die Arbeit liegt brach, die Post stapelt sich bis zur Decke.",
-            opts: [
-                { 
-                    t: "Den 'Loot-Donut' als Trost spenden", 
-                    req: "donut", 
-                    m: 10, f: 5, a: -10, c: -5, 
-                    r: "Du opferst deinen Schatz. Gabis Augen leuchten auf. Zucker heilt alle Wunden. Sie mampft glücklich und sortiert die Post plötzlich mit doppelter Geschwindigkeit. Gute Tat!" 
-                },
-                { 
-                    t: "Ihr einen Energy-Drink geben", 
-                    req: "energy", 
-                    m: 5, f: 0, a: 5, c: 5, 
-                    r: "Ganz schlechte Idee. Das Taurin kickt sofort. Gabi ist jetzt hyperaktiv, rennt durch den Raum und tackert Briefe an die Wand. Es ist pures Chaos, aber immerhin weint sie nicht mehr." 
-                },
-                { 
-                    t: "Geduldig zuhören (Seelsorge)", 
-                    m: 45, f: -15, a: 20, c: 10, 
-                    r: "Du hörst dir eine 45-minütige Grabrede für eine Sukkulente an. Während Gabi über 'richtiges Gießen' philosophiert, explodieren bei dir die Tickets. Der Chef fragt später giftig: 'Sind wir hier bei der Caritas?'" 
-                }
-            ]
-        },
-        {
-            id: "cof_machine_broke",
-            title: "Kritischer Dichtungsfehler",
-            text: "Ein Rinnsal aus heißem Wasser schießt aus der Seite der Kaffeemaschine. Die braune Brühe bahnt sich unaufhaltsam ihren Weg Richtung der völlig überlasteten Mehrfachsteckdose am Boden. Ein leises, bedrohliches elektrisches Knistern liegt bereits in der Luft.",
-            opts: [
-                { 
-                    t: "Mit Gaffa-Tape abdichten", 
-                    req: "tape", 
-                    m: 10, f: -5, a: 0, c: -10, 
-                    r: "Du wickelst eine halbe Rolle Tape um den Wassertank. Es sieht aus wie eine misslungene Mumie, aber es hält dicht! Die Küche bleibt trocken, der Kaffee fließt. Du bist der Held des Tages." 
-                },
-                { 
-                    t: "Sicherheits-Protokoll: Stecker ziehen", 
-                    m: 5, f: 5, a: 10, c: 10, 
-                    r: "Zack. Strom aus. Die Gefahr ist gebannt. Das Display wird schwarz. Ein kollektives, schmerzhaftes Stöhnen geht durch das Büro. Du hast vielleicht Leben gerettet, aber die Stimmung ist im Eimer." 
-                },
-                { 
-                    t: "Pfeifend weitergehen & ignorieren", 
-                    m: 5, f: 10, a: 0, c: 50, 
-                    r: "Du ignorierst die Pfütze und gehst an deinen Platz. Zehn Minuten später: *ZZZAPP*. Dunkelheit im ganzen Stockwerk. Der Chef stürmt auf den Flur und brüllt ins Blaue: 'WER HAT DIE SICHERUNG RAUSGEJAGT?! MEIN WORD-DOKUMENT WAR NICHT GESPEICHERT!!'" 
-                }
-            ]
-        },
-        {
-            id: "cof_kevin_learn",
-            title: "Kevins Weltbild",
-            text: "Kevin starrt fasziniert auf das blinkende Server-Rack. Er dreht sich mit großen Augen zu dir um: 'Sag mal... sitzt da drin eigentlich ein kleiner Mann, der die ganzen E-Mails tippt und weiterschickt?' Du wartest auf die Pointe. Aber es kommt keine. Er meint das todernst.",
-            opts: [
-                { 
-                    t: "Die Technik geduldig erklären", 
-                    m: 30, f: -10, a: 10, c: 0, 
-                    r: "Du nimmst dir eine halbe Stunde Zeit und malst Datenpakete an das Whiteboard. Kevin nickt langsam: 'Achso! Also wie Rohrpost, nur unsichtbar?' Es ist ein kleiner Fortschritt." 
-                },
-                { 
-                    t: "Ihm wortlos das Handbuch geben", 
-                    req: "manual", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "Du drückst ihm den schweren Wälzer gegen die Brust. 'Lies Kapitel 1 bis 10. Vorher sprichst du mich nicht mehr an.' Er verzieht sich ehrfürchtig in eine Ecke. Endlich Ruhe." 
-                },
-                { 
-                    t: "Lügen: 'Ja, das ist der E-Mail-Kobold'", 
-                    m: 5, f: 10, a: -5, c: 10, 
-                    r: "Du nickst verschwörerisch: 'Ja, er heißt Gunter. Aber bloß nicht füttern!' Kevin kriecht jetzt mit der Taschenlampe hinter das Rack und sucht nach Gunter. Der Chef sieht es und zweifelt an der Eignung des Azubis." 
-                }
-            ]
-        },
-        {
-            id: "cof_birthday_cake",
-            title: "Kuchen im Flur",
-            text: "Jemand hat Geburtstag! Es steht ein riesiger Schokokuchen in der Küche. Ein Schild sagt: 'Bedient euch!'",
-            opts: [
-                { 
-                    t: "Ein Stück nehmen",
-                    m: 10, f: 5, a: -10, c: 0, 
-                    r: "Lecker! Ein purer Zuckerschock. Du bist für 10 Minuten glücklich." 
-                },
-                { 
-                    t: "Den ganzen Kuchen einpacken",
-                    m: 5, f: 10, a: -5, c: 20, 
-                    r: "Du trägst den kompletten Kuchen in dein Büro. 'Für später'. Die Kollegen starren dich fassungslos an. Sie hassen dich jetzt." 
-                },
-                { 
-                    t: "Misstrauisch sein", 
-                    m: 0, f: 0, a: 5, c: 0, 
-                    r: "Gratis Essen? Verdächtig. Wer weiß, wie lange der da schon steht. Du rührst ihn nicht an." 
-                }
-            ]
-        },
-        {
-            id: "cof_elevator_stuck",
-            title: "Im Aufzug stecken",
-            text: "Du wolltest Kaffee holen, jetzt steckst du mit Markus (Vertrieb) im Aufzug fest. Er riecht nach zu viel Aftershave.",
-            opts: [
-                { 
-                    t: "Notruf drücken", 
-                    m: 30, f: 0, a: 10, c: 0, 
-                    r: "Egon meldet sich: 'Jo, ich ess erst mal auf.' Du bist 30 Min gefangen." 
-                },
-                { 
-                    t: "Markus zuhören", 
-                    m: 30, f: -10, a: 20, c: 0, 
-                    r: "Er erzählt von seinem Porsche. Du willst sterben." 
-                },
-                { 
-                    t: "Aufzugstür aufhebeln", 
-                    req: "screw", 
-                    m: 10, f: -5, a: -5, c: 0, 
-                    r: "Mit dem Schraubendreher öffnest du die Tür. Ihr klettert raus. Markus hält dich für einen Helden." 
-                }
-            ]
-        },
-        {
-            id: "cof_miracle",
-            title: "Das kleine Wunder",
-            text: "Die Maschine macht seltsame Geräusche, rattert... und produziert dann den perfekten Kaffee. Perfekte Temperatur, haselnussbraune Crema, duftet wie in Italien. Ein statistischer Ausreißer.",
-            opts: [
-                { 
-                    t: "Andächtig genießen", 
-                    m: 10, f: 5, a: -25, c: 0, 
-                    r: "Du trinkst in kleinen Schlucken. Jeder Schluck heilt deine Seele ein wenig. Du vergisst kurz, dass du in einem Großraumbüro arbeitest. Aggro sinkt massiv." 
-                },
-                { 
-                    t: "Schnell runterkippen", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Lecker, aber viel zu schnell vorbei. Der Geschmack bleibt, aber die Entspannung fehlt." 
-                },
-                { 
-                    t: "Foto für Insta machen", 
-                    m: 5, f: 10, a: -10, c: 0, 
-                    r: "Du postest es mit '#OfficeLife'. Ein paar Likes heben die Laune etwas." 
-                }
-            ]
-        },
-        {
-            id: "cof_silence",
-            title: "Himmlische Stille",
-            text: "Du betrittst die Küche. Sie ist leer. Kein Kühlschrank-Brummen, kein kauender Kollege, kein Tropfen. Einfach nur absolute, goldene Stille.",
-            opts: [
-                { 
-                    t: "Die Augen schließen & atmen", 
-                    m: 5, f: 5, a: -20, c: 0, 
-                    r: "Fünf Minuten Zen-Modus. Du spürst, wie dein Blutdruck in den messbaren Bereich sinkt. Herrlich." 
-                },
-                { 
-                    t: "Schnell Kaffee holen & weg", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Du nutzt die freie Bahn für einen Rekord-Boxenstopp. Effizient, aber wenig erholsam." 
-                }
-            ]
-        },
-        {
-            id: "cof_cookie_luck",
-            title: "Der verwaiste Keks",
-            text: "Neben der Zuckerdose liegt ein einzelner, verpackter Premium-Keks (Karamell-Kern). Keine Notiz, kein Besitzer in Sicht. Das Universum meint es gut mit dir.",
-            opts: [
-                { 
-                    t: "Essen (Zucker-Boost)", 
-                    m: 5, f: 5, a: -15, c: 0, 
-                    r: "Der Zucker flutet dein Gehirn. Glückshormone kämpfen gegen den Stress an. Du fühlst dich gestärkt für das nächste Ticket." 
-                },
-                { 
-                    t: "Einstecken für später", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Du steckst ihn in die Tasche. Das Wissen, eine Not-Ration zu haben, beruhigt dich ein wenig." 
-                }
-            ]
-        },
-        {
-        id: "cof_disaster",
-        title: "OUT OF ORDER",
-        text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern.",
+    {
+        id: "cof_loot_1",
+        title: "Reparatur-Set",
+        text: "Der Hausmeister hat Material liegen lassen. Es ist unbeaufsichtigt. Ein seltener Anblick in diesem Büro.",
         opts: [
             { 
-                t: "Dagegen treten", 
-                m: 5, f: 0, a: 10, c: 0,
-                r: "Du trittst gegen die Maschine. Kaffee läuft aus. Auf deine Schuhe. Großartig." 
+                t: "Panzertape nehmen", 
+                loot: "tape", 
+                next: "path_loot_tape", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Eine fast volle Rolle Gaffa. Kann man immer brauchen. Du lässt sie schnell verschwinden. (Inventar +1)" 
+            },
+            { 
+                t: "Kabelbinder nehmen", 
+                loot: "zip_ties", 
+                next: "path_loot_zip", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Ein Bündel Kabelbinder. Praktisch. Die schwarze Sorte, UV-beständig. Ein guter Fang. (Inventar +1)" 
+            }
+        ]
+    },
+    {
+        id: "cof_loot_2a",
+        title: "Die Suche nach dem Gold",
+        reqStory: "path_loot_tape",
+        text: "Egon kommt fluchend in die Küche. 'Hömma! Hast du mein Gaffa gesehen? Der Mülleimerdeckel ist abgerissen und ich muss das tapen! Das war die gute Rolle!'",
+        opts: [
+            { 
+                t: "Lügen: 'Nö, keine Ahnung.'", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Egon tritt gegen den Mülleimer. 'Verdammte Diebe hier! Alles muss man anketten!' Er zieht wütend ab. Du hast das Tape, aber Egon ist sauer." 
+            },
+            { 
+                t: "Zurückgeben: 'Lag am Boden.'", 
+                rem: "tape",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du ziehst die Rolle aus der Tasche. 'Wollte sie nur... aufheben.' Egon reißt sie dir aus der Hand. 'Ja ja. Finger weg.' (Item entfernt)" 
+            },
+            { 
+                t: "Tipp geben: 'Nimm Kaugummi.'", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "Egon starrt dich an. 'Kaugummi? Bin ich MacGyver?' Er schüttelt den Kopf über die 'Büro-Hengste' und geht." 
+            }
+        ]
+    },
+    {
+        id: "cof_loot_2b",
+        title: "Haltlos",
+        reqStory: "path_loot_zip",
+        text: "Der Spülmaschinenschlauch hat sich gelöst. Egon kniet davor. 'Mir fehlen meine Kabelbinder! Ich hatte doch ein ganzes Bündel! Jetzt muss ich das festhalten, bis der Kleber trocknet (30 Minuten).'",
+        opts: [
+            { 
+                t: "Mitleid heucheln & gehen", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "'Viel Erfolg, Egon!' Du lässt ihn leiden. Du brauchst die Binder dringender für dein Kabelmanagement am Platz." 
+            },
+            { 
+                t: "Binder spenden", 
+                rem: "zip_ties", 
+                m: 10, f: -5, a: -10, c: 0, 
+                r: "Du gibst ihm die Binder zurück. 'Oh, danke Jung! Du rettest meinen Rücken.' Egon schuldet dir was. (Item entfernt)" 
+            },
+            { 
+                t: "Sarkasmus: 'Hast du kein Tape?'", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "'Tape hält da nicht bei der Hitze, du Experte!' Er ist genervt. Du hast deinen Spaß und deine Kabelbinder." 
+            }
+        ]
+    },
+    {
+        id: "cof_table_1",
+        title: "Wackelnder Tisch",
+        text: "Der Stehtisch in der Küche wackelt extrem. Der Kaffee schwappt fast über. Es ist dieser eine Millimeter, der dich in den Wahnsinn treibt.",
+        opts: [
+            { 
+                t: "Schrauben festziehen (Brachial)", 
+                req: "screw", 
+                next: "path_table_screw", 
+                m: 10, f: -5, a: -5, c: 0, 
+                r: "Du drehst die Schrauben so fest in den Boden, dass das Metall knirscht. Der Tisch bewegt sich keinen Mikrometer mehr. Er ist jetzt eins mit dem Fundament." 
+            },
+            { 
+                t: "Bierdeckel drunter", 
+                next: "path_table_coaster", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Der Klassiker. Ein alter Bierdeckel ('Gasthof zur Post') unter das Bein geklemmt. Ruhe ist." 
+            },
+            { 
+                t: "Tischbein abtreten", 
+                req: "hammer", 
+                next: "path_table_kick", 
+                m: 5, f: 0, a: -20, c: 20, 
+                r: "Du holst mit dem Hammer aus. KRACH! Das Bein knickt weg, der Tisch stürzt ein. 'So. Jetzt wackelt nix mehr', sagst du zufrieden." 
+            }
+        ]
+    },
+    {
+        id: "cof_table_2a",
+        title: "Für die Ewigkeit",
+        reqStory: "path_table_screw",
+        text: "Der Hausmeister steht rot anlaufend und schwitzend am Tisch. Er zerrt mit beiden Händen daran. 'Wer hat das Ding festgeschweißt?! Ich muss hier wischen! Das bewegt sich keinen Millimeter!'",
+        opts: [
+            { 
+                t: "Stolz: 'Das war Qualitätsarbeit'", 
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Egon starrt dich an. 'Du hast durch den Estrich in die Fußbodenheizung gebohrt!' Ups. Aber hey, der Tisch steht stabil." 
+            },
+            { 
+                t: "Die Flucht ergreifen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du pfeifst unschuldig und gehst. Hinter dir hörst du, wie Egon eine Brechstange ansetzt. Der Tisch gewinnt." 
+            }
+        ]
+    },
+    {
+        id: "cof_table_2b",
+        title: "Low-Rider",
+        reqStory: "path_table_coaster",
+        text: "Der Bierdeckel ist weg. Dafür ist der Tisch jetzt nur noch 60cm hoch. Kevin steht stolz daneben, eine Säge in der Hand. 'Der Deckel hat genervt. Hab einfach die anderen drei Beine abgesägt. Jetzt wackelt nix mehr!'",
+        opts: [
+            { 
+                t: "Ihn loben: 'Genial!'", 
+                m: 5, f: 10, a: -10, c: -5, 
+                r: "Kevin strahlt. Ihr trinkt jetzt Kaffee im Hocken. Es sieht aus wie im Kindergarten, ist aber ergonomisch mal was anderes." 
+            },
+            { 
+                t: "Ihn fragen: 'Und wenn er wieder wackelt?'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Kevin überlegt kurz. 'Dann säge ich weiter.' Du realisierst: In einer Woche essen wir vom Boden." 
+            }
+        ]
+    },
+    {
+        id: "cof_table_2c",
+        title: "Das Mahnmal",
+        reqStory: "path_table_kick",
+        text: "Der zerstörte Tisch liegt immer noch da. Aber jetzt ist rotes Absperrband drumherum. Ein Schild von Chantal steht davor: 'DECONSTRUCTED WORKSPACE – Eine Installation über den Zusammenbruch der Leistungsgesellschaft.'",
+        opts: [
+            { 
+                t: "Als Künstler ausgeben", 
+                m: 10, f: 20, a: -10, c: 10, 
+                r: "Du stellst dich daneben und nickst tiefsinnig. 'Ja, der Hammer symbolisierte den digitalen Wandel.' Chantal macht Fotos für LinkedIn. Du bist jetzt ein Visionär." 
+            },
+            { 
+                t: "Dagegen treten (Performance)", 
+                m: 5, f: -5, a: -10, c: 20, 
+                r: "Du trittst gegen den Schrotthaufen. Es scheppert. Die Umstehenden applaudieren. 'So mutig! So radikal!' Die Welt ist verrückt." 
+            }
+        ]
+    },
+    {
+        id: "cof_sticky_1",
+        title: "Die verklebte Taste",
+        text: "Katastrophe! Die überlebenswichtige 'Doppelter Espresso'-Taste klebt fest. Ein brauner, sirupartiger Rand verrät: Jemand hat hier Süßkram verschüttet. Der Knopf rührt sich keinen Millimeter.",
+        opts: [
+            { 
+                t: "Chirurgischer Eingriff mit dem Schraubendreher", 
+                req: "screw", 
+                next: "path_sticky_fixed",
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Mit der Präzision eines Uhrmachers hebelst du die Taste raus, kratzt den 'Zucker-Beton' weg und setzt sie wieder ein. *Klick*. Ein wunderschönes Geräusch." 
+            },
+            { 
+                t: "Frust-Lösung: Einfach draufhauen", 
+                next: "path_sticky_broken",
+                m: 2, f: 0, a: 5, c: 5, 
+                r: "BAM! KNACK! Die Taste bricht ab und fliegt in hohem Bogen unter den Kühlschrank. Ups. Jetzt gibt es nur noch die Wahl zwischen 'Heißes Wasser' und 'Systemfehler'." 
+            },
+            { 
+                t: "Aufgeben & Tee trinken", 
+                next: "path_sticky_tea",
+                m: 0, f: -5, a: 0, c: 0, 
+                r: "Du resignierst und nimmst einen Beutel Pfefferminztee. Er schmeckt nach Niederlage und Zahnpasta." 
+            }
+        ]
+    },
+    {
+        id: "cof_sticky_2a",
+        title: "Der Wartungs-Stau",
+        reqStory: "path_sticky_fixed",
+        text: "Da du als Einziger die Maschine repariert hast, giltst du jetzt als 'Kaffee-Beauftragter'. Eine Schlange von Kollegen steht vor deinem Büro. 'Kannst du mal gucken? Die Milch schäumt nicht rechtsdrehend!'",
+        opts: [
+            { 
+                t: "Schild aufstellen: 'IT, nicht Café!'", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "Du schickst alle weg. Sie murren, aber du hast deine Ruhe. Kompetenz ist manchmal ein Fluch." 
+            },
+            { 
+                t: "Service gegen Gebühr anbieten", 
+                m: 10, f: 10, a: -10, c: 0, 
+                r: "Du verlangst Schokolade für jede Reparatur. Dein Schreibtisch ist jetzt ein Süßwarenladen. Man muss Prioritäten setzen." 
+            }
+        ]
+    },
+    {
+        id: "cof_sticky_2b",
+        title: "Die Sabotage-Ermittlung",
+        reqStory: "path_sticky_broken",
+        text: "Ein Aushang hängt an der Maschine: 'Wegen Vandalismus (abgebrochene Taste) gibt es nur noch Filterkaffee aus der Kanne.' Die Stimmung im Büro ist aggressiv. Alle suchen den Täter.",
+        opts: [
+            { 
+                t: "Laut mitschimpfen: 'Unfassbar!'", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du mischt dich unter das Volk und wetterst gegen 'diese Chaoten'. Niemand verdächtigt dich. Die Tarnung ist perfekt." 
+            },
+            { 
+                t: "Kevin beschuldigen", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "Es ist immer Kevin. Er muss jetzt den Filterkaffee kochen. Dein Gewissen zwickt kurz, aber der Espresso war das Opfer wert." 
+            }
+        ]
+    },
+    {
+        id: "cof_sticky_2c",
+        title: "Der Teetrinker",
+        reqStory: "path_sticky_tea",
+        text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich plötzlich vorsichtig.",
+        opts: [
+            { 
+                t: "Das Gerücht nutzen (Mitleid)", 
+                m: 10, f: 10, a: -10, c: 0, 
+                r: "Du hustest leise und schaust leidend. Gabi bringt dir Kekse. 'Für die Nerven.' Es lebt sich gut als angeblicher Invalide." 
+            },
+            { 
+                t: "Aufklären: 'Taste war nur kaputt'", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "'Achso.' Der Zauber ist vorbei. Gabi nimmt die Kekse wieder mit. Die Realität ist hart." 
+            }
+        ]
+    },
+    {
+        id: "cof_hack_1",
+        title: "Der Service-Port",
+        text: "Du entdeckst an der Rückseite der Kaffeemaschine einen USB-Wartungsport. Das Display zeigt 'INSERT SERVICE KEY'. Es ist verlockend. Sehr verlockend.",
+        opts: [
+            { 
+                t: "USB-Stick benutzen (Script laden)", 
+                req: "usb_stick", 
+                next: "path_hack_root", 
+                m: 5, f: 10, a: -10, c: 0, 
+                r: "HACK SUCCESS! Du hast den 'Developer Mode' aktiviert. Der Kaffee läuft jetzt doppelt so schnell und ist kostenlos. Du fühlst dich wie Neo in der Matrix." 
+            },
+            { 
+                t: "Wild Knöpfe drücken (Konami-Code?)", 
+                next: "path_hack_glitch", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Oben, Oben, Unten, Unten, Links, Rechts... Das Display flackert wild. Es piept dreimal laut. Du hoffst, dass das ein 'Cheat Code' war und keine Selbstzerstörung." 
+            }
+        ]
+    },
+    {
+        id: "cof_hack_2a",
+        title: "God Mode",
+        reqStory: "path_hack_root",
+        text: "Seit deinem Hack begrüßt dich die Maschine mit 'HELLO ADMIN' und spielt eine 8-Bit-Melodie. Der Chef steht daneben und starrt auf sein Display, das nur 'PLEASE INSERT COIN' anzeigt. Er schaut misstrauisch zu deinem randvollen Gratis-Becher.",
+        opts: [
+            { 
+                t: "Angeben: 'Man muss die Maschine nur streicheln'", 
+                m: 5, f: 5, a: -5, c: 10, 
+                r: "Der Chef streichelt die Maschine. Nichts passiert. Er fühlt sich veräppelt. Du grinst in deinen Kaffee. Das war es wert." 
+            },
+            { 
+                t: "Ablenken: 'Das ist ein Firmware-Bug!'", 
+                m: 10, f: 0, a: 10, c: 0, 
+                r: "'Wirklich? Kümmern Sie sich drum, Müller!' Er geht. Puh. Du behältst deine Privilegien, musst jetzt aber so tun, als würdest du arbeiten." 
+            }
+        ]
+    },
+    {
+        id: "cof_hack_2b",
+        title: "Die Sprachbarriere",
+        reqStory: "path_hack_glitch",
+        text: "Deine Tastenkombination hat offenbar die Spracheinstellungen verändert. Das Menü ist jetzt komplett auf Mandarin. Eine Schlange verzweifelter Kollegen steht davor. Kevin hat aus Versehen 'Heißes Wasser mit Zitrone' statt 'Kakao' gezogen.",
+        opts: [
+            { 
+                t: "Google Translate App nutzen", 
+                m: 5, f: 5, a: -10, c: -10, 
+                r: "Du hältst dein Handy davor und rettest den Tag. Du bist der Held, obwohl du das Problem verursacht hast. Das ist wahres IT-Consulting." 
+            },
+            { 
+                t: "Behaupten: 'Das ist ein Cyber-Angriff aus China!'", 
+                m: 5, f: 0, a: 10, c: 15, 
+                r: "Panik bricht aus. Der Chef will das Internetkabel ziehen. Du hast vielleicht etwas übertrieben, aber niemand verdächtigt dich." 
+            }
+        ]
+    },
+    {
+        id: "cof_chewing_1",
+        title: "Die akustische Folter",
+        text: "Kollegin Sabine steht direkt neben dir. In der Hand: Ein knackiger, saftiger Granny Smith. Sie beißt hinein. *KNACK*. Dann kaut sie. Mit weit offenem Mund. *SCHMATZ... SCHMATZ... SCHLÜRF*. Es klingt, als würde jemand Gummistiefel in einen Eimer Mayonnaise tauchen.",
+        opts: [
+            { 
+                t: "Sofort Noise-Cancelling aktivieren", 
+                req: "headphones", 
+                next: "path_chewing_nc", 
+                m: 0, f: 5, a: -10, c: 0, 
+                r: "Klick. Die Welt verstummt. Sabine bewegt den Kiefer wie ein Wiederkäuer und sagt offensichtlich etwas zu dir, aber du hörst nur noch sanftes Meeresrauschen. Du nickst einfach freundlich und lächelst." 
+            },
+            { 
+                t: "Den Stressball fast zerquetschen", 
+                req: "stressball", 
+                next: "path_chewing_ball", 
+                m: 10, f: 0, a: -5, c: 0, 
+                r: "Du kanalisiert deinen gesamten Hass in den roten Schaumstoffball. Deine Knöchel treten weiß hervor. Der Ball wimmert leise unter dem Druck. Sabine kaut unbeeindruckt weiter." 
+            },
+            { 
+                t: "Passiv-aggressiver Kommentar", 
+                next: "path_chewing_rude",
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "Du fragst laut: 'Sag mal, hast du ein Mikrofon verschluckt oder übst du für einen Horrorfilm?' Sabine erstarrt mit vollem Mund. Tödliches Schweigen. Die Stimmung ist im Keller." 
+            }
+        ]
+    },
+    {
+        id: "cof_chewing_2a",
+        title: "Das blinde Nicken",
+        reqStory: "path_chewing_nc",
+        text: "Später am Tag kommt Sabine freudestrahlend zu dir. 'Super, dass du das machst! Ich habe allen gesagt, dass du dich freiwillig gemeldet hast, den Kühlschrank abzutauen. Du hast ja vorhin in der Küche so nett genickt!'",
+        opts: [
+            { 
+                t: "Das Missverständnis aufklären", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Sabine bricht in Tränen aus. 'Und ich dachte, du wärst hilfsbereit!' Jetzt bist du der Arsch der Abteilung, obwohl du nur Musik hören wolltest." 
+            },
+            { 
+                t: "Zähneknirschend putzen", 
+                m: 15, f: -5, a: 10, c: -10, 
+                r: "Du taust das Eisfach ab. Es ist kalt, nass und eklig. Merke: Niemals nicken, wenn man nichts hört." 
+            }
+        ]
+    },
+    {
+        id: "cof_chewing_2b",
+        title: "Materialermüdung",
+        reqStory: "path_chewing_ball",
+        text: "Du findest rote Krümel in deiner Tasche. Dein Stressball hat den Kampf gegen Sabines Kaugeräusche nicht überlebt. Er ist geplatzt und hat seinen schaumstoffartigen Inhalt über deinem Laptop verteilt.",
+        opts: [
+            { 
+                t: "Versuchen zu kleben", 
+                req: "tape", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du wickelst Panzertape um den Rest. Er sieht jetzt aus wie eine rote Kartoffel, die einen Unfall hatte. Funktioniert kaum noch." 
+            },
+            { 
+                t: "Trauerfeier abhalten (Wegwerfen)", 
+                rem: "stressball",
+                m: 0, f: 0, a: 5, c: 0, 
+                r: "Du wirfst die Reste in den Müll. Er ist als Held gestorben. Ruhe in Frieden, kleiner Ball." 
+            }
+        ]
+    },
+    {
+        id: "cof_chewing_2c",
+        title: "Der Obst-Krieg",
+        reqStory: "path_chewing_rude",
+        text: "Sabine hat Rache geschworen. Seit deinem Kommentar isst sie demonstrativ nur noch weiche Sachen, wenn du da bist – starrt dich dabei aber böse an. Heute liegt eine Banane auf deiner Tastatur. Eine Drohung?",
+        opts: [
+            { 
+                t: "Banane essen (Dominanz zeigen)", 
+                m: 10, f: 5, a: -10, c: 0, 
+                r: "Du schälst die Banane und isst sie, ohne den Augenkontakt zu brechen. Sabine ist verwirrt und zieht sich zurück. Sieg." 
+            },
+            { 
+                t: "Angst bekommen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Wer weiß, wo diese Banane war? Du fasst sie nur mit einem Tuch an und entsorgst sie. Der psychologische Krieg hat begonnen." 
+            }
+        ]
+    },
+    {
+        id: "cof_gossip_1",
+        title: "Tratsch am Wasserspender",
+        text: "Du hörst Frau Gräte flüstern: 'Der Chef war gestern im Seminar 'Positive Leadership'. Er flippt jetzt total aus, wenn jemand das Wort 'Problem' sagt. Er will nur noch 'Herausforderung' hören. Wer 'Problem' sagt, kriegt sofort die Kündigungsandrohung.'",
+        opts: [
+            { 
+                t: "Ins Gespräch einsteigen", 
+                next: "path_gossip_caught", 
+                m: 10, f: 5, a: -5, c: 10,
+                r: "Du nickst eifrig und lästerst mit. Plötzlich räuspert sich jemand hinter dir. Der Chef starrt dich an, tippt auf seine Uhr und notiert sich deinen Namen. Die Gruppe löst sich panisch auf." 
+            },
+            { 
+                t: "Ignorieren und Kaffee holen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du stellst die Ohren auf Durchzug. 'Nicht mein Zirkus, nicht meine Affen.' Du nimmst deinen Becher und gehst wortlos zurück an den Platz. Sicher ist sicher." 
+            }
+        ]
+    },
+    {
+        id: "cof_gossip_2a",
+        title: "Das Mindset-Verhör",
+        reqStory: "path_gossip_caught",
+        text: "Der Chef zitiert dich in sein Büro. Er lächelt gequält. 'Müller, ich habe Sie vorhin in der Küche gehört. Ich möchte sichergehen, dass wir 'aligned' sind. Wie läuft das aktuelle Projekt? Gibt es... Schwierigkeiten?' Er wartet lauernd auf ein bestimmtes Wort.",
+        opts: [
+            { 
+                t: "Ehrlich sein: 'Ja, wir haben ein riesiges Problem.'", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Sein Lächeln gefriert. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
+            },
+            { 
+                t: "Bullshit-Bingo: 'Nur spannende Herausforderungen!'", 
+                m: 10, f: 5, a: -10, c: -10, 
+                r: "Der Chef atmet erleichtert aus. 'Exzellent! Das ist der Spirit! Here, take a cookie.' Er wirft dir einen einzeln verpackten Keks zu. Du bist sicher." 
+            },
+            { 
+                t: "Übertreiben: 'Es ist eine fantastische Growth-Opportunity!'", 
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "Der Chef wirkt kurz verwirrt, nickt dann aber anerkennend. 'Wow. Das ist ja noch positiver als mein Coach. Weiter so!' Er macht sich eine Notiz: 'Müller = Visionär'." 
+            }
+        ]
+    },
+    {
+        id: "cof_chef_title",
+        title: "Titel-Kämpfe in der Kantine",
+        text: "Du hörst lautes Geschrei aus der Küche. Der Kantinen-Chef fuchtelt wild mit einer Schöpfkelle herum: 'Ich bin doch kein schnöder KOCH! Ich bin *Senior Nutrition Artist* und *Food Experience Manager*! Wer mich noch einmal 'Koch' nennt, kriegt versalzene Suppe bis zur Rente!'",
+        opts: [
+            { 
+                t: "Amüsiert grinsend zuhören", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "'Nutrition Artist'... soso. Wenn er ein Künstler ist, warum schmeckt die Bolognese dann immer nach Pappe? Du behältst den Gedanken lieber für dich." 
+            },
+            { 
+                t: "Provokation: 'Herr Koch? Die Suppe ist kalt!'", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "Totenstille. Er dreht sich langsam um, die Kelle fest umklammert. Seine Augen verengen sich zu Schlitzen. Du stehst jetzt auf seiner schwarzen Liste. Dein nächstes Schnitzel wird Schuhsohlen-Qualität haben." 
+            },
+            { 
+                t: "Schleimen: 'Guten Morgen, Maestro!'", 
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Er hält inne, rückt seine Mütze zurecht und lächelt geschmeichelt. 'Endlich jemand mit Kultur!' Du bekommst heute eine extra große Portion Pudding." 
+            }
+        ]
+    },
+    {
+        id: "cof_premium_hack_1",
+        title: "Der 'Gold' Modus",
+        text: "Du stehst vor der Maschine. Dein Magen knurrt. Auf dem Display steht: 'PREMIUM RÖSTUNG - NUR FÜR VORSTAND (Karte erforderlich)'. Für das Fußvolk gibt es nur 'Wasser mit brauner Farbe' für 2,50€.",
+        opts: [
+            { 
+                t: "2,50€ bezahlen (Kapitulation)", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du wirfst das Geld ein. Der Kaffee schmeckt nach verbrannten Reifen und Niederlage. Du fühlst dich ausgeraubt, aber wenigstens bist du wach." 
+            },
+            { 
+                t: "Espresso + Sensor zuhalten",
+                next: "path_premium_audit",
+                m: 5, f: 10, a: -20, c: 0, 
+                r: "Die Maschine piept leise. Das Display zeigt: 'WELCOME MASTER'. Goldene Flüssigkeit fließt in deine Tasse. Es ist der beste Kaffee deines Lebens. Gratis." 
+            },
+            { 
+                t: "Mit Hammer 'bezahlen'", 
+                req: "hammer", 
+                next: "path_premium_broken",
+                m: 5, f: 0, a: -10, c: 20, 
+                r: "KLONG! Du schlägst gegen den Münzschlitz. Das Gehäuse verbeult, aber eine 50-Cent-Münze fällt raus. Kaffee gibt es keinen, aber du hast Gewinn gemacht." 
+            },
+            { 
+                t: "Wild Tasten drücken", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "ERROR 404. Die Maschine sperrt sich für 5 Minuten. Du starrst auf den Ladebalken. Toll gemacht." 
+            }
+        ]
+    },
+    {
+        id: "cof_premium_hack_2a",
+        title: "Die Abrechnung",
+        reqStory: "path_premium_audit",
+        text: "Eine Rundmail vom Controlling: 'Achtung! Wir haben eine Differenz im Premium-Kaffee-Bestand. 1 Tasse fehlt. Der Verbrauch wird ab sofort mit den Sicherheitskameras abgeglichen.'",
+        opts: [
+            { 
+                t: "Nervös schwitzen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du hoffst einfach, dass die Kameraauflösung zu schlecht war. Der Kaffee war es wert, aber du traust dich heute nicht mehr in die Küche." 
+            },
+            { 
+                t: "Proaktiv lügen: 'Die Maschine hat geleckt!'", 
+                m: 5, f: 5, a: 0, c: 10, 
+                r: "Du antwortest 'Reply All'. 'Habe gesehen, wie Kaffeewasser ausgelaufen ist. Technik informieren!' Alle danken dir für deine Wachsamkeit. Genius." 
+            }
+        ]
+    },
+    {
+        id: "cof_premium_hack_2b",
+        title: "Vandalismus-Alarm",
+        reqStory: "path_premium_broken",
+        text: "Der Hausmeister steht vor der verbeulten Maschine. Er hält ein Phantombild hoch, das verdächtig nach dir aussieht (aber mit Schnurrbart). 'Wer auch immer das war... ich finde ihn. Niemand verbeult meine Lady.'",
+        opts: [
+            { 
+                t: "Sich unauffällig verdrücken", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du gehst rückwärts aus dem Raum. Das mit den 50 Cent erzählst du lieber niemandem." 
+            },
+            { 
+                t: "Die Schuld auf den Spediteur schieben", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "'Das war doch schon bei der Lieferung so, Egon!' Egon kratzt sich am Kopf. 'Stimmt... die Kartons sahen übel aus.' Du bist fein raus." 
+            }
+        ]
+    },
+    {
+        id: "cof_iot_fail_1",
+        title: "Das gefährliche IoT-Upgrade",
+        text: "Du traust deinen Augen nicht: Jemand hat einen billigen 'Smart Plug' (Marke 'China-Export') zwischen Steckdose und Kaffeemaschine gebastelt. Das Gehäuse schmilzt bereits, es funkt blau und riecht beißend nach verbranntem Weichmacher. Brandgefahr Stufe Rot.",
+        opts: [
+            { 
+                t: "Lebensgefahr: Sofort den Stecker ziehen", 
+                next: "path_iot_sabotage", 
+                m: 10, f: -5, a: 30, c: 30, 
+                r: "ZACK! Funkenregen. Du hast das Gebäude gerettet. Da stürmt der Marketing-Chef mit knallrotem Kopf rein: 'MEIN PROTOTYP! Ich habe wochenlang an der Blockchain-basierten 'Coffee-Cloud' gearbeitet! Sie Maschinenstürmer!'" 
+            },
+            { 
+                t: "Abwarten & Cola trinken", 
+                next: "path_iot_fire", 
+                m: 5, f: 10, a: -10, c: 0, 
+                r: "Nicht deine Hardware, nicht dein Feuer. Du öffnest zischend eine Cola und schaust zu. POFF! Eine Stichflamme. Dann springt die Sprinkleranlage an und verwandelt den Flur in ein Feuchtbiotop." 
+            }
+        ]
+    },
+    {
+        id: "cof_iot_fail_2a",
+        title: "Der Crypto-Krieg",
+        reqStory: "path_iot_sabotage",
+        text: "Der Marketing-Chef hat eine offizielle Beschwerde eingereicht. Er fordert Schadensersatz für den 'entgangenen Gewinn' seines geplanten 'Coffee-Coin' ICOs, den du durch das Ziehen des Steckers verhindert hast.",
+        opts: [
+            { 
+                t: "Ihm die VDE-Vorschrift vorlesen", 
+                m: 5, f: -5, a: 10, c: 5, 
+                r: "Du zitierst Paragrafen über Brandschutz. Er schläft nach 2 Minuten ein. Die Beschwerde wird fallengelassen wegen 'Langeweile'." 
+            },
+            { 
+                t: "Gegenangriff: Egon informieren", 
+                m: 10, f: -5, a: -10, c: 10, 
+                r: "Du petzt beim Hausmeister. Egon stürmt mit dem Bolzenschneider ins Marketing-Büro. 'Keine Fremdgeräte!' Das Schreien hört man bis in den 3. Stock." 
+            }
+        ]
+    },
+    {
+        id: "cof_iot_fail_2b",
+        title: "Das Feuchtbiotop",
+        reqStory: "path_iot_fire",
+        text: "Die Feuerwehr ist weg, aber die Küche steht unter Wasser. Der Marketing-Chef steht heulend vor seinem verkohlten Smart-Plug. 'Warum hat niemand was gesagt?!'",
+        opts: [
+            { 
+                t: "Schultern zucken: 'War im Meeting'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Die perfekte Ausrede. Niemand kann beweisen, dass du mit Cola daneben standst. Du bleibst trocken." 
+            },
+            { 
+                t: "Spöttisch: 'Ist das diese Liquid-Cooling?'", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Böser Witz. Aber er musste sein. Der Marketing-Chef hasst dich jetzt, aber die IT-Abteilung feiert dich als Legende." 
+            }
+        ]
+    },
+{
+        id: "cof_descaling_1",
+        title: "Kalk-Infarkt",
+        text: "Die Kaffeemaschine blinkt in aggressivem Rot: 'SYSTEM VERKALKT - BITTE REINIGEN'. Der Kaffee tröpfelt nur noch im Sekundentakt wie eine undichte Dachrinne in die Tasse. Die Pumpe ächzt hörbar.",
+        opts: [
+            { 
+                t: "Den Reinigungsvorgang heldenhaft starten", 
+                next: "path_descale_hero", 
+                m: 10, f: -10, a: 40, c: 0, 
+                r: "Du drückst den Knopf. Ein fataler Fehler. Das Display zeigt: 'Reinigung läuft... Restzeit: 45 Minuten'. Hinter dir bildet sich sofort eine wütende Schlange. 'Toll, Müller! Jetzt kriegt keiner mehr was!' Du wirst ausgebuht." 
+            },
+            { 
+                t: "Schild 'DEFEKT' drankleben & verschwinden", 
+                next: "path_descale_fake", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "Du klebst einen Zettel über das Display und machst dich schnell aus dem Staub. Die Kollegen seufzen enttäuscht und schlurfen zurück an die Arbeit. Du hast das Problem zwar nicht gelöst, aber erfolgreich delegiert." 
+            },
+            { 
+                t: "Ignorieren & tröpfeln lassen", 
+                next: "path_descale_ignore", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du starrst stoisch auf den Auslauf. Tropf... Tropf... Nach 5 Minuten hast du eine halbe Tasse lauwarme, kalkhaltige Brühe. Sie schmeckt nach Elend, aber sie enthält Koffein." 
+            }
+        ]
+    },
+    {
+        id: "cof_descaling_2a",
+        title: "Säure-Attentat",
+        reqStory: "path_descale_hero",
+        text: "Die Entkalkung ist durch, aber irgendwas stimmt nicht. Der erste Kollege, der sich einen Kaffee zieht, spuckt ihn quer durch den Raum. 'BAH! Das schmeckt nach Batteriesäure! Wer hat nicht gespült?!'",
+        opts: [
+            { 
+                t: "Unschuldig pfeifen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du schaust weg. 'Bestimmt ein Software-Fehler.' Der Kollege spült seinen Mund am Wasserspender aus. Knapp war's." 
+            },
+            { 
+                t: "Behaupten: 'Das ist die neue Citrus-Röstung'", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Der Kollege probiert noch mal vorsichtig. 'Echt? Hm... erfrischend im Abgang.' Du hast gerade einen widerlichen Trend gesetzt." 
+            }
+        ]
+    },
+    {
+        id: "cof_descaling_2b",
+        title: "Egon deckt auf",
+        reqStory: "path_descale_fake",
+        text: "Hausmeister Egon wedelt mit deinem 'DEFEKT'-Zettel durch den Flur. 'Welcher Scherzkeks war das? Die Maschine wollte nur entkalkt werden! Ich bin doch nicht euer Kindermädchen!' Er sucht den Schuldigen.",
+        opts: [
+            { 
+                t: "Kevin beschuldigen", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "'Der Azubi war zuletzt in der Küche.' Egon nickt grimmig und stapft Richtung Azubi-Büro. Dein Gewissen ist schwarz, aber rein." 
+            },
+            { 
+                t: "Sich stellen: 'Ich wollte nichts kaputt machen'", 
+                m: 5, f: -5, a: 0, c: 0, 
+                r: "Egon schnaubt. 'Typisch Schreibtischtäter. Zwei linke Hände.' Aber er beruhigt sich. Du darfst weiterleben." 
+            }
+        ]
+    },
+    {
+        id: "cof_descaling_2c",
+        title: "Innere Werte",
+        reqStory: "path_descale_ignore",
+        text: "Dein Magen grummelt seltsam. Du hast das Gefühl, einen halben Ziegelstein verschluckt zu haben. Offenbar war in dem 'Kaffee' mehr Kalk als Wasser.",
+        opts: [
+            { 
+                t: "Schönreden: 'Das ist gut für die Knochen'", 
+                m: 2, f: 5, a: 5, c: 0, 
+                r: "Mineralstoffe sind wichtig. Du redest dir ein, dass du dich gesund ernährst. Der Schmerz ist nur Schwäche, die den Körper verlässt." 
+            },
+            { 
+                t: "Literweise Wasser trinken", 
+                m: 5, f: 5, a: 5, c: 0, 
+                r: "Du versuchst, das Sediment aus deinem Körper zu spülen. Du verbringst den Rest des Nachmittags auf der Toilette. Produktivität: 0." 
+            }
+        ]
+    },
+    {
+        id: "cof_spill_1",
+        title: "Die braune Gefahr",
+        text: "Ein See aus klebrigem, kaltem Kaffee breitet sich vor der Maschine aus. Der Täter ist längst über alle Berge. Es ist eine rutschige Todesfalle, die nur darauf wartet, das nächste Opfer zu fordern.",
+        opts: [
+            { 
+                t: "Heldenhaft zum Lappen greifen & wischen", 
+                next: "path_spill_clean", 
+                m: 5, f: -5, a: 20, c: 20, 
+                r: "Du kniest am Boden und wischst. In dem Moment biegt der Chef um die Ecke. 'Herrgott, Müller! Können Sie nicht mal eine Tasse halten? Das ist ja peinlich!' Er steigt über deine Hand und geht kopfschüttelnd. Du kochst vor Wut." 
+            },
+            { 
+                t: "Warnschild basteln & aufstellen", 
+                next: "path_spill_warn", 
+                m: 2, f: 5, a: 5, c: 0, 
+                r: "Du kritzelst 'VORSICHT: TÖDLICH' auf einen Zettel, stellst ihn auf und gehst. Kurz darauf hörst du hinter dir ein lautes Schlittern, gefolgt von Fluchen. Tja, wer lesen kann, ist klar im Vorteil." 
+            },
+            { 
+                t: "Großen Schritt drüber machen", 
+                m: 0, f: 5, a: -5, c: 0, 
+                r: "Mit einem olympreifen Satz springst du über die Lache. Nicht dein Dreck, nicht dein Problem. Soll die Nachtschicht doch Schlittschuh laufen. Du fühlst dich erhaben." 
+            }
+        ]
+    },
+    {
+        id: "cof_spill_2a",
+        title: "Die Schnabeltasse",
+        reqStory: "path_spill_clean",
+        text: "Auf deinem Schreibtisch steht ein Paket vom Chef. Inhalt: Ein bunter Kinder-Trinkbecher mit Deckel und Saugstutzen. Notiz: 'Damit die Teppiche sauber bleiben. Safety First!'.",
+        opts: [
+            { 
+                t: "Tasse benutzen (Trotz)", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "Du trinkst demonstrativ aus der Schnabeltasse. Die Kollegen kichern hinter vorgehaltener Hand. Es ist extrem peinlich, aber hey: Der Kaffee bleibt heiß. Deine Wut wächst mit jedem Schluck." 
+            },
+            { 
+                t: "In den Müll werfen", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Das Ding fliegt mit Wucht in den Papierkorb. Du bist doch kein Kleinkind. Das Abreagieren tat gut." 
+            }
+        ]
+    },
+    {
+        id: "cof_spill_2b",
+        title: "Der Arbeitsunfall",
+        reqStory: "path_spill_warn",
+        text: "Chantal humpelt mit bandagiertem Knöchel an dir vorbei. Sie wedelt wütend mit deinem Zettel. 'Das Schild war viel zu klein! Ich werde das als Arbeitsunfall melden wegen mangelnder Sicherheitskennzeichnung!'",
+        opts: [
+            { 
+                t: "Juristisch wehren: 'DIN-Norm erfüllt'", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "Du musst ihr 10 Minuten lang erklären, dass die Schriftgröße lesbar war. Sie rauscht beleidigt ab. Du hast Recht, aber die Diskussion war pure Zeitverschwendung und nervig." 
+            },
+            { 
+                t: "Mitleid zeigen (Schokolade)", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du gibst ihr einen Riegel aus deiner Schublade. Sie beruhigt sich sofort. 'Na gut. Aber nächstes Mal machst du Neon-Farbe dran, okay?' Problem gelöst." 
+            }
+        ]
+    },
+    {
+        id: "cof_elster_fight_1",
+        title: "Streit um den Kühlschrank",
+        text: "Frau Elster wirft dein Essen weg! 'Das stinkt nach Erdnüsse!', keift sie. Du stellst sie zur Rede.",
+        opts: [
+            { 
+                t: "Anbrüllen: 'Das war mein Mittag!'", 
+                next: "path_elster_allergy", 
+                m: 10, f: 0, a: 20, c: 10, 
+                r: "Sie schreit zurück: 'Ich bin hochsensibel! Wenn ich nur **Erdnüsse** rieche, schwillt mein Hals zu! Nimm gefälligst Rücksicht!' Sie atmet schwer. Oha, wunde Stelle entdeckt." 
+            },
+            { 
+                t: "Klein beigeben", 
+                next: "path_elster_police", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "Du entschuldigst dich kleinlaut. Sie rückt ihre Brille zurecht, schnaubt: 'Man muss eben an die Gemeinschaft denken!' und rauscht ab. Der Streit ist vorbei, dein Essen aber auch." 
+            }
+        ]
+    },
+    {
+        id: "cof_elster_fight_2a",
+        title: "Die Bio-Waffe",
+        reqStory: "path_elster_allergy",
+        text: "Du sitzt in der Küche und öffnest einen 'Snickers'. Frau Elster kommt rein, schnuppert, wird kreidebleich und weicht zurück. 'Ist das... Erdnuss? Willst du mich umbringen?! Geh weg damit!'",
+        opts: [
+            { 
+                t: "Genüsslich kauen & anhauchen", 
+                m: 5, f: -5, a: -10, c: 10, 
+                r: "Du kaust extra laut. 'Mmmh, knackig.' Frau Elster flüchtet panisch aus dem Raum. Du hast jetzt die Küche für dich allein. Mächtiges Gefühl." 
+            },
+            { 
+                t: "Rücksicht nehmen & wegpacken", 
+                m: 5, f: 5, a: 5, c: 0, 
+                r: "Du packst den Riegel weg. 'Schon gut.' Sie nickt dankbar, aber misstrauisch. Du hast Hunger, aber immerhin keinen Mord auf dem Gewissen." 
+            }
+        ]
+    },
+    {
+        id: "cof_elster_fight_2b",
+        title: "Die Lebensmittel-Polizei",
+        reqStory: "path_elster_police",
+        text: "Da du beim letzten Mal gekuscht hast, greift Frau Elster jetzt durch. Dein Joghurt ist weg. Dafür klebt ein Zettel am Fach: 'Wegen fehlendem Haltbarkeitsdatum präventiv entsorgt. Gez. Elster'.",
+        opts: [
+            { 
+                t: "Wütenden Antwort-Zettel schreiben", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du schreibst: 'Finger weg von meinem Eigentum!' und klebst ihn an ihre Tupperdose. Ein kleiner Akt der Rebellion, der gut tut." 
+            },
+            { 
+                t: "Alles neu beschriften (Arbeit)", 
+                m: 2, f: 5, a: 15, c: 0, 
+                r: "Du beschriftest jedes einzelne Lebensmittel mit Datum und Namen, damit sie Ruhe gibt. Es dauert 10 Minuten und nervt tierisch." 
+            }
+        ]
+    },
+{
+        id: "cof_salary_rumor_1",
+        title: "Der Gehalts-Schock",
+        text: "Du stehst hinter der Säule und hörst Chantal aus dem Marketing kichern: 'Ja, echt! 500 Euro mehr! Einfach so, weil ich so nett gelächelt habe! Dabei kann ich kaum Excel.' Dein Gehalt wurde seit 3 Jahren nicht angepasst. Dir platzt fast der Kragen.",
+        opts: [
+            { 
+                t: "Wut nutzen & Leistungen notieren", 
+                loot: "arg_list_1", 
+                next: "path_salary_talk", 
+                m: 10, f: -5, a: 5, c: 0, 
+                r: "Du schnappst dir eine Serviette und kritzelt wütend deine Erfolge auf: '1000 Tickets gelöst, Brände verhindert, Server gerettet'. Du steckst den Zettel wie eine Waffe ein. Das ist wertvolle Munition für später." 
+            },
+            { 
+                t: "Chantal eine Szene machen", 
+                next: "path_salary_rage", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Du brüllst quer durch den Raum: 'EXCEL IST KEINE KUNST!'. Chantal fängt an zu weinen. Alle starren dich an. Du hast Dampf abgelassen, wirkst aber mental labil. Kein guter Look." 
+            },
+            { 
+                t: "Den Ärger runterspülen / Stressball", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du schluckst den Ärger runter oder knetest deinen Stressball. Es ändert nichts an deinem Kontostand, aber dein Blutdruck sinkt minimal. Du gehst frustriert zurück an die Arbeit." 
+            }
+        ]
+    },
+    {
+        id: "cof_salary_rumor_2a",
+        title: "Der Pitch",
+        reqStory: "path_salary_talk",
+        text: "Der Chef sieht dich auf dem Flur. 'Ah, Müller! Gut, dass ich Sie sehe.' Du hast deine Argumente-Liste in der Tasche. Das ist der Moment.",
+        opts: [
+            { 
+                t: "Liste zücken & fordern", 
+                req: "arg_list_1", 
+                m: 10, f: 10, a: -5, c: 10, 
+                r: "Du ratterst deine Erfolge runter. Der Chef ist beeindruckt (und etwas eingeschüchtert). 'Okay, okay! Wir reden über einen Bonus.' Ein Teilsieg! Du fühlst dich wertgeschätzt." 
+            },
+            { 
+                t: "Kneifen & nur grüßen", 
+                m: 2, f: 0, a: 10, c: 0, 
+                r: "Mut verlassen. 'Hallo Chef.' Er geht weiter. Du hast die Chance vertan und hasst dich dafür ein bisschen selbst." 
+            }
+        ]
+    },
+    {
+        id: "cof_salary_rumor_2b",
+        title: "Der HR-Termin",
+        reqStory: "path_salary_rage",
+        text: "Eine E-Mail von der Personalabteilung: 'Betreff: Vorfall in der Kaffeeküche'. Man möchte über deine 'soziale Kompetenz' und 'Aggressionsbewältigung' sprechen.",
+        opts: [
+            { 
+                t: "Termin wahrnehmen & entschuldigen", 
+                m: 5, f: -5, a: 10, c: 0, 
+                r: "Du musst 30 Minuten lang nicken und Besserung geloben. Es ist demütigend. Chantal grinst dich danach im Flur an. Dein Hass wächst." 
+            },
+            { 
+                t: "Termin 'vergessen'", 
+                m: 5, f: 0, a: -5, c: 20, 
+                r: "Du gehst einfach nicht hin. Rebellisch, aber dumm. Jetzt hast du eine offizielle Abmahnung in der Akte. Aber dein Stolz ist intakt." 
+            }
+        ]
+    },
+    {
+        id: "cof_markus_flex_1",
+        title: "Der Angeber",
+        text: "Markus aus dem Vertrieb blockiert die Maschine. Er krempelt den Ärmel hoch und hält dir sein Handgelenk unter die Nase. 'Na, Admin? Schau mal genau hin. Diese Uhr kostet mehr als dein ganzes Auto.' Er grinst sein breites Gewinner-Lächeln.",
+        opts: [
+            { 
+                t: "Gezielter Wurf mit dem Stressball", 
+                req: "stressball", 
+                next: "path_markus_hit", 
+                m: 5, f: 0, a: -20, c: 30, 
+                r: "ZACK! Volltreffer auf die Nase. Markus jault auf wie ein getretener Pudel. Du fühlst tiefe Genugtuung, aber leider stand der Chef im Türrahmen. Das gibt Ärger." 
+            },
+            { 
+                t: "Trocken kontern: 'Ist die geleast?'", 
+                next: "path_markus_roast", 
+                m: 10, f: 0, a: -10, c: 5, 
+                r: "Sein Grinsen gefriert. Er läuft rot an und stammelt etwas von 'Wertanlage'. Die umstehenden Kollegen lachen laut los. Ein Sieg auf ganzer Linie." 
+            },
+            { 
+                t: "Kopfhörer aufsetzen & ignorieren", 
+                req: "headphones", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Klick. Noise-Cancelling an. Du hörst sanfte Mozart-Klänge, während Markus stumm den Mund bewegt. Du zapfst entspannt deinen Kaffee. Frieden." 
+            },
+            { 
+                t: "Unterwürfig warten", 
+                next: "path_markus_servant", 
+                m: 20, f: 0, a: 20, c: 0, 
+                r: "Du wartest devot 20 Minuten, bis er seinen Monolog über 'Assets' und 'Mindset' beendet hat. Du hast deinen Kaffee, aber er schmeckt bitter nach Demütigung." 
+            }
+        ]
+    },
+    {
+        id: "cof_markus_flex_2a",
+        title: "Das Schmerzensgeld",
+        reqStory: "path_markus_hit",
+        text: "Markus trägt jetzt ein riesiges Pflaster auf der Nase (völlig übertrieben). Er wedelt mit einem Formular vor deinem Gesicht. 'Das war ein tätlicher Angriff! Entweder du unterschreibst diese offizielle Entschuldigung, oder ich rufe meinen Anwalt!'",
+        opts: [
+            { 
+                t: "Unterschreiben (Demütigung)", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Du unterschreibst. Markus grinst triumphierend und hängt den Zettel an seine Bürotür. Jeder kann jetzt lesen, dass es dir leid tut. Dein Blut kocht." 
+            },
+            { 
+                t: "Nochmal drohen", 
+                req: "stressball", 
+                m: 5, f: -5, a: -5, c: 10, 
+                r: "Du holst den Stressball wieder raus. Markus zuckt zusammen und rennt weg. Das Problem ist vertagt, aber nicht gelöst." 
+            }
+        ]
+    },
+    {
+        id: "cof_markus_flex_2b",
+        title: "Der Beweis",
+        reqStory: "path_markus_roast",
+        text: "Dein Spruch hat Markus' Ego schwer getroffen. Er kommt mit seinem Laptop zu dir. 'Geleast? Dass ich nicht lache! Guck dir mein Crypto-Portfolio an! Ich bin reich! REICH!' Er drängt dir den Bildschirm auf.",
+        opts: [
+            { 
+                t: "Laut vorlesen: 'Minus 60 Prozent?!'", 
+                m: 5, f: 0, a: -10, c: 5, 
+                r: "Du zeigst auf die rote Kurve. Markus klappt den Laptop panisch zu. 'Das ist nur... eine Korrektur! Dip kaufen!' Er rennt weinend weg." 
+            },
+            { 
+                t: "Desinteressiert abwinken", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "'Jaja, Markus.' Du lässt ihn stehen. Nichts tut einem Angeber mehr weh als Gleichgültigkeit." 
+            }
+        ]
+    },
+    {
+        id: "cof_markus_flex_2c",
+        title: "Das Coaching",
+        reqStory: "path_markus_servant",
+        text: "Weil du ihm zugehört hast, hält Markus dich jetzt für seinen 'Schüler'. Er schickt dir morgens um 6 Uhr WhatsApp-Sprachnachrichten: 'Guten Morgen Champ! Zeit zum Hustlen! Hol mir mal einen Kaffee, das übt Demut!'",
+        opts: [
+            { 
+                t: "Kaffee holen (Dienst nach Vorschrift)", 
+                m: 10, f: 0, a: 25, c: 0, 
+                r: "Du bringst ihm den Kaffee. Er tätschelt dir den Kopf. 'Braver Junge.' Du stirbst innerlich tausend Tode." 
+            },
+            { 
+                t: "Blockieren & Ignorieren", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du blockierst seine Nummer. Markus steht später verwirrt an deinem Tisch: 'Mein Handy spinnt.' Du zuckst nur mit den Schultern." 
+            }
+        ]
+    },
+    {
+        id: "cof_gabi_sad_1",
+        title: "Trauerfall in der Poststelle",
+        text: "Gabi aus der Poststelle sitzt schluchzend auf der Eckbank im Pausenraum. In der Hand hält sie einen braunen, schrumpeligen Klumpen. 'Mein kleiner Stachi ist tot! Einfach von uns gegangen!'",
+        opts: [
+            { 
+                t: "Den 'Loot-Donut' als Trost spenden", 
+                req: "donut", 
+                next: "path_gabi_donut", 
+                m: 10, f: 5, a: -10, c: -5, 
+                r: "Du opferst deinen Schatz. Gabis Augen leuchten auf. Zucker heilt alle Wunden. Sie mampft glücklich. 'Du bist so lieb! Ich geh wieder an die Arbeit.' Gute Tat!" 
+            },
+            { 
+                t: "Ihr einen Energy-Drink geben", 
+                req: "energy", 
+                next: "path_gabi_energy", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Ganz schlechte Idee. Das Taurin kickt sofort. Gabi reißt die Augen auf, springt auf und rennt wie ein begaster Hamster zurück zur Poststelle. Das wird Folgen haben." 
+            },
+            { 
+                t: "Geduldig zuhören (Seelsorge)", 
+                next: "path_gabi_listen", 
+                m: 45, f: -15, a: 20, c: 10, 
+                r: "Du hörst dir eine 45-minütige Grabrede für eine Sukkulente an. Dein Kaffee wird kalt. Gabi fühlt sich danach 'so verstanden', aber du bist innerlich tot und kommst viel zu spät zurück." 
+            }
+        ]
+    },
+    {
+        id: "cof_gabi_sad_2a",
+        title: "Sonderzustellung",
+        reqStory: "path_gabi_donut",
+        text: "Gabi winkt dich hektisch hinter die Palme im Flur. 'Psst! Mein Retter! Das hier kam für dich. Ich hab es extra vor dem Chef abgefangen, sah privat aus.' Sie drückt dir ein Paket in die Hand.",
+        opts: [
+            { 
+                t: "Danken & annehmen", 
+                loot: "loot_box", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Es ist deine Amazon-Bestellung (neue Gaming-Maus). Gabi zwinkert dir verschwörerisch zu. 'Bei mir ist deine Post sicher!' Eine wertvolle Verbündete." 
+            },
+            { 
+                t: "Ihr noch mehr Süßes versprechen", 
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "Du versprichst ihr den nächsten Kuchen aus dem Meeting. Gabi strahlt. Du hast jetzt VIP-Status bei der Postverteilung." 
+            }
+        ]
+    },
+    {
+        id: "cof_gabi_sad_2b",
+        title: "Ortstermin",
+        reqStory: "path_gabi_energy",
+        text: "Der Chef stürmt in die Küche, packt dich am Arm und zerrt dich in den Flur. 'Sie haben Gabi aufgeputscht?! Sehen Sie sich das an!' Durch die offene Tür der Poststelle siehst du, wie Gabi Pakete im Akkord an die Decke stapelt.",
+        opts: [
+            { 
+                t: "Staunen: 'Effizient!'", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "Der Chef läuft rot an. 'Das ist kein Tetris, das sind wichtige Akten!' Du musst helfen, den Turm abzubauen, bevor er einstürzt. Nervige Strafarbeit." 
+            },
+            { 
+                t: "Flüchten: 'Nicht mein Zuständigkeitsbereich'", 
+                m: 2, f: -5, a: 5, c: 0, 
+                r: "Du reißt dich los und rennst zurück zum Kaffee. Der Chef brüllt dir hinterher. Das gibt Ärger, aber immerhin musst du nicht klettern." 
+            }
+        ]
+    },
+    {
+        id: "cof_gabi_sad_2c",
+        title: "Die Klette",
+        reqStory: "path_gabi_listen",
+        text: "Du willst dir nur schnell einen frischen Kaffee holen, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
+        opts: [
+            { 
+                t: "Sich hinter der Kaffeemaschine verstecken", 
+                m: 2, f: -5, a: 15, c: 0, 
+                r: "Du duckst dich weg. Gabi sucht dich kurz, seufzt laut ('Keiner versteht mich außer dir!') und geht. Das war knapp, aber extrem entwürdigend." 
+            },
+            { 
+                t: "Sarkastisch: 'Nimm Plastikblumen'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'Oh, gute Idee! Die sterben nicht!' Sie rennt los, um welche zu kaufen. Endlich Ruhe. Du hast zwar Ruhe, aber fühlst dich etwas schlecht." 
+            }
+        ]
+    },
+    {
+        id: "cof_machine_broke_1",
+        title: "Kritischer Dichtungsfehler",
+        text: "Ein Rinnsal aus heißem Wasser schießt aus der Seite der Kaffeemaschine. Die braune Brühe bahnt sich unaufhaltsam ihren Weg Richtung der völlig überlasteten Mehrfachsteckdose am Boden. Ein leises, bedrohliches elektrisches Knistern liegt bereits in der Luft.",
+        opts: [
+            { 
+                t: "Mit Gaffa-Tape abdichten", 
+                req: "tape", 
+                next: "path_machine_tape", 
+                m: 10, f: -5, a: 0, c: -10, 
+                r: "Du wickelst eine halbe Rolle Tape um den Wassertank. Es sieht aus wie eine misslungene Mumie, aber es hält dicht! Die Küche bleibt trocken, der Kaffee fließt. Du bist der Held des Tages." 
+            },
+            { 
+                t: "Sicherheits-Protokoll: Stecker ziehen", 
+                next: "path_machine_plug", 
+                m: 5, f: 5, a: 10, c: 10, 
+                r: "Zack. Strom aus. Die Gefahr ist gebannt. Das Display wird schwarz. Ein kollektives, schmerzhaftes Stöhnen geht durch das Büro. Du hast vielleicht Leben gerettet, aber die Stimmung ist im Eimer." 
+            },
+            { 
+                t: "Pfeifend weitergehen & ignorieren", 
+                next: "path_machine_blackout", 
+                m: 5, f: 10, a: 0, c: 50, 
+                r: "Du ignorierst die Pfütze. Zehn Minuten später: *ZZZAPP*. Dunkelheit im ganzen Stockwerk. Der Chef stürmt auf den Flur und brüllt: 'WER HAT DIE SICHERUNG RAUSGEJAGT?! MEIN WORD-DOKUMENT!!'" 
+            }
+        ]
+    },
+    {
+        id: "cof_machine_broke_2a",
+        title: "Ingenieurs-Kunst",
+        reqStory: "path_machine_tape",
+        text: "Hausmeister Egon steht vor deinem Tape-Kunstwerk. Er nickt langsam und anerkennend. 'Saubere Arbeit, Müller. Hätte ich nicht besser machen können. Das hält bis 2030.' Er klopft dir fest auf die Schulter.",
+        opts: [
+            { 
+                t: "Bescheiden nicken", 
+                m: 10, f: 0, a: -10, c: -5, 
+                r: "Du genießt den seltenen Respekt. Egon lädt dich sogar ein, später mal seinen neuen Akkuschrauber anzusehen. Ein guter Tag." 
+            },
+            { 
+                t: "Fachsimpeln: 'Panzertape regelt alles'", 
+                m: 5, f: 5, a: -15, c: 0, 
+                r: "Ihr tauscht kurz Handwerker-Weisheiten aus. Das entspannt ungemein. Du fühlst dich kompetent und wertgeschätzt." 
+            }
+        ]
+    },
+    {
+        id: "cof_machine_broke_2b",
+        title: "Der Lebensretter",
+        reqStory: "path_machine_plug",
+        text: "Der Chef kommt wütend rein, sieht aber dann die verschmorte Steckdose, die noch leicht qualmt. Er wird bleich. 'Mein Gott... wenn Sie nicht gezogen hätten... das ganze Archiv! Müller, Sie haben uns den Hintern gerettet!'",
+        opts: [
+            { 
+                t: "Den Helden spielen", 
+                m: 10, f: 5, a: -20, c: -30, 
+                r: "'Nur mein Job, Chef.' Er drückt dir dankbar die Hand. 'Machen Sie heute früher Feierabend. Das ist ein Befehl!' Musik in deinen Ohren." 
+            },
+            { 
+                t: "Beruhigen: 'Sicherheit geht vor'", 
+                m: 5, f: 0, a: -10, c: -20, 
+                r: "Die Kollegen klatschen leise. Der Ärger über den fehlenden Kaffee ist verflogen. Du bist der verantwortungsvolle Fels in der Brandung." 
+            }
+        ]
+    },
+    {
+        id: "cof_machine_broke_2c",
+        title: "Zwangspause",
+        reqStory: "path_machine_blackout",
+        text: "Der Strom ist weg, die PCs sind aus. Statt Panik breitet sich eine seltsame Ruhe aus. Jemand hat Kekse rumgereicht. Sogar der Chef entspannt sich, nachdem die IT bestätigt hat, dass das Autosave funktioniert hat.",
+        opts: [
+            { 
+                t: "Die Stille genießen", 
+                m: 20, f: 0, a: -25, c: -10, 
+                r: "Keine Telefonate, kein Lüfterrauschen. Alle sitzen im Halbdunkel und unterhalten sich nett. Es ist wie ein Lagerfeuer ohne Feuer. Du tankst richtig Kraft." 
+            },
+            { 
+                t: "Witze erzählen", 
+                m: 10, f: 10, a: -15, c: -5, 
+                r: "Die Stimmung ist locker. Der Chef lacht sogar über deinen (harmlosen) Witz. Diese unerwartete Teambuilding-Maßnahme war genau das, was alle gebraucht haben." 
+            }
+        ]
+    },
+    {
+        id: "cof_kevin_learn_1",
+        title: "Kevins Weltbild",
+        text: "Kevin starrt fasziniert auf das blinkende Server-Rack. Er dreht sich mit großen Augen zu dir um: 'Sag mal... sitzt da drin eigentlich ein kleiner Mann, der die ganzen E-Mails tippt und weiterschickt?' Du wartest auf die Pointe. Aber es kommt keine. Er meint das todernst.",
+        opts: [
+            { 
+                t: "Die Technik geduldig erklären", 
+                next: "path_kevin_explain", 
+                m: 30, f: -10, a: 10, c: 0, 
+                r: "Du nimmst dir eine halbe Stunde Zeit und malst Datenpakete an das Whiteboard. Kevin nickt langsam: 'Achso! Also wie Rohrpost, nur unsichtbar?' Es ist ein kleiner Fortschritt." 
+            },
+            { 
+                t: "Ihm wortlos das Handbuch geben", 
+                req: "manual", 
+                next: "path_kevin_manual", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du drückst ihm den schweren Wälzer gegen die Brust. 'Lies Kapitel 1 bis 10. Vorher sprichst du mich nicht mehr an.' Er verzieht sich ehrfürchtig in eine Ecke. Endlich Ruhe." 
+            },
+            { 
+                t: "Lügen: 'Ja, das ist der E-Mail-Kobold'", 
+                next: "path_kevin_kobold", 
+                m: 5, f: 10, a: -5, c: 10, 
+                r: "Du nickst verschwörerisch: 'Ja, er heißt Gunter. Aber bloß nicht füttern!' Kevin kriecht jetzt mit der Taschenlampe hinter das Rack und sucht nach Gunter. Der Chef sieht es und zweifelt an der Eignung des Azubis." 
+            }
+        ]
+    },
+    {
+        id: "cof_kevin_learn_2a",
+        title: "Rohrpost 2.0",
+        reqStory: "path_kevin_explain",
+        text: "Kevin hat versucht, deine Erklärung umzusetzen. Er hat Klorollen an die Server-Lüfter geklebt. 'Damit die Daten schneller flutschen!', ruft er stolz. Überraschenderweise entsteht dadurch ein angenehm kühler Luftzug direkt auf deinen Schreibtisch.",
+        opts: [
+            { 
+                t: "Genießen & loben", 
+                m: 0, f: 5, a: -15, c: 5, 
+                r: "Du lehnst dich zurück. 'Gute Arbeit, Kevin.' Der Luftzug ist herrlich bei der Hitze. Endlich mal eine Innovation, die was bringt. Du bist entspannt." 
+            },
+            { 
+                t: "Konstruktion abreißen", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du reißt die Papp-Röhren weg. 'Brandschutz!' Kevin schaut traurig. Jetzt schwitzt du wieder und musst Klebereste entfernen. Eigentlich dumm gelaufen." 
+            }
+        ]
+    },
+    {
+        id: "cof_kevin_learn_2b",
+        title: "Der Schriftgelehrte",
+        reqStory: "path_kevin_manual",
+        text: "Kevin steht stramm vor dir. Er hat das Handbuch auswendig gelernt. 'Laut Seite 103, Absatz 4 steht dem Administrator bei erhöhter Serverlast eine zwanzigminütige Regenerationspause zu. Soll ich den Türsteher machen?'",
+        opts: [
+            { 
+                t: "Angebot annehmen (Pause)", 
+                m: 20, f: 5, a: -20, c: 0, 
+                r: "Du legst die Füße hoch. Kevin bewacht die Tür und weist sogar den Chef mit Verweis auf 'Seite 103' ab. Das ist der beste Azubi aller Zeiten. Dein Stresslevel sinkt auf Null." 
+            },
+            { 
+                t: "Ihn wegschicken", 
+                m: 2, f: -5, a: 5, c: 0, 
+                r: "'Lass den Quatsch.' Du arbeitest weiter. Kevin ist enttäuscht. Du hast eine Chance auf legale Faulheit verpasst." 
+            }
+        ]
+    },
+    {
+        id: "cof_kevin_learn_2c",
+        title: "Gunters Opfergabe",
+        reqStory: "path_kevin_kobold",
+        text: "Hinter dem Rack findest du einen Teller. Darauf liegt keine saure Milch, sondern eine Packung feinster belgischer Pralinen. Ein Zettel liegt dabei: 'Für Gunter, bitte mach das Internet ganz.'",
+        opts: [
+            { 
+                t: "Ich bin Gunter (Essen)", 
+                m: 5, f: 10, a: -10, c: 0, 
+                r: "Du mampfst die Pralinen genüsslich auf. Sie schmecken fantastisch. Als Kevin reinkommt, rülpst du leise. Kevin flüstert ehrfürchtig: 'Gunter hat es angenommen!'" 
+            },
+            { 
+                t: "Kevin als Gunter erschrecken", 
+                m: 5, f: 15, a: -15, c: 5, 
+                r: "Du versteckst dich und machst Gruselgeräusche: *'MEHR SCHOKOLADE!'* Kevin rennt schreiend weg. Du lachst Tränen. Das war böse, aber extrem befriedigend." 
+            }
+        ]
+    },
+    {
+        id: "cof_birthday_cake_1",
+        title: "Kuchen im Flur",
+        text: "Ein riesiger Schokokuchen steht herrenlos auf dem Beistelltisch. Ein Schild sagt handschriftlich: 'Bedient euch!'. Es riecht verführerisch nach Kakao und Sahne.",
+        opts: [
+            { 
+                t: "Ein Stück nehmen", 
+                next: "path_cake_eat", 
+                m: 10, f: 5, a: -10, c: 0, 
+                r: "Lecker! Ein purer Zuckerschock. Du schaufelst dir das Stück rein. Das Leben ist gut." 
+            },
+            { 
+                t: "Den ganzen Kuchen einpacken", 
+                next: "path_cake_steal", 
+                m: 5, f: 10, a: -5, c: 20, 
+                r: "Du schaust dich um – die Luft ist rein. Du nimmst die ganze Platte und trägst sie schnell in dein Büro. 'Für später'. Dein Herz klopft vor Gier." 
+            },
+            { 
+                t: "Misstrauisch sein", 
+                m: 0, f: 0, a: 5, c: 0, 
+                r: "Gratis Essen? Verdächtig. Wer weiß, wie lange der da schon steht. Du rührst ihn nicht an. Du bleibst hungrig, aber sicher." 
+            }
+        ]
+    },
+    {
+        id: "cof_birthday_cake_2a",
+        title: "Die Rum-Bombe",
+        reqStory: "path_cake_eat",
+        text: "Hoppla. Das war nicht nur Schokolade. Das war 'Schwarzwälder Kirsch' mit 80% Stroh-Rum. Dir wird warm ums Herz und leicht schwindelig. Der Stress fällt von dir ab, aber deine Zunge fühlt sich pelzig an.",
+        opts: [
+            { 
+                t: "Den Rausch genießen", 
+                m: 5, f: 0, a: -20, c: 5, 
+                r: "Du lehnst dich an die Wand und grinst blöd. Ein Kollege fragt dich was, du kicherst nur. Der beste Arbeitstag seit Jahren." 
+            },
+            { 
+                t: "Versuchen, seriös zu wirken", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du setzt dich kerzengerade hin und starrst auf deinen Monitor. Bloß nicht auffallen. Die Paranoia killt die gute Laune etwas." 
+            }
+        ]
+    },
+    {
+        id: "cof_birthday_cake_2b",
+        title: "Meeting-Crasher",
+        reqStory: "path_cake_steal",
+        text: "Du sitzt in deinem Büro vor dem gestohlenen Kuchen, als die Tür auffliegt. Der Chef und drei japanische Investoren stehen da. Der Chef starrt auf den Kuchen, dann auf dich. 'Müller?! Das war das Catering für die Delegation!'",
+        opts: [
+            { 
+                t: "Lügen: 'Qualitätskontrolle!'", 
+                m: 5, f: 10, a: 20, c: 30, 
+                r: "Du stammelst mit vollem Mund etwas von 'Gift-Test'. Niemand glaubt dir. Es ist unfassbar peinlich. Die Japaner verbeugen sich höflich vor deiner Gier." 
+            },
+            { 
+                t: "Teilen anbieten", 
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "Du hältst dem Investor eine Gabel hin. Er nimmt dankend an. Die Situation ist gerettet, aber der Chef wird dich später töten." 
+            }
+        ]
+    },
+    {
+        id: "cof_elevator_stuck_1",
+        title: "Im Aufzug stecken",
+        text: "Ruckel. Klack. Stille. Nicht schon wieder! Der Aufzug bleibt zwischen dem 2. und 3. Stock hängen. Neben dir steht Markus aus dem Vertrieb in einer Wolke aus 'Eau de Success'. Er grinst: 'Na, Zeit für ein Networking-Gespräch, was?'",
+        opts: [
+            { 
+                t: "Notruf drücken & beten", 
+                next: "path_elevator_tech", 
+                m: 30, f: 0, a: 15, c: 0, 
+                r: "Egon meldet sich knarzend: 'Hömma! Ich ess erst mal meine Stulle auf. Bleib locker.' Du bist 30 Minuten gefangen. Deine Laune ist im Keller." 
+            },
+            { 
+                t: "Markus zuhören (Opfergang)", 
+                next: "path_elevator_markus", 
+                m: 30, f: -10, a: 25, c: 0, 
+                r: "Er erzählt von seinem Porsche, seinen Crypto-Wins und seinem 'Mindset'. Du nickst apathisch und stirbst innerlich tausend Tode. Er scheint das Nicken als Zustimmung zu werten." 
+            },
+            { 
+                t: "Aufzugstür aufhebeln", 
+                req: "screw", 
+                next: "path_elevator_hero", 
+                m: 10, f: -5, a: -10, c: 0, 
+                r: "Du rammst den Schraubendreher in den Spalt. Mit einem Ruck gleitet die Tür auf. Freiheit! Die anderen Insassen staunen: 'Alpha-Move, Respekt!'" 
+            }
+        ]
+    },
+    {
+        id: "cof_elevator_2a",
+        title: "Gefangen mit dem Bestie",
+        reqStory: "path_elevator_markus",
+        text: "Markus springt in letzter Sekunde zu dir in den Aufzug. 'Hey Buddy! Gut, dass ich dich treffe!' Er drückt grinsend den **Nothalt-Knopf**. Der Aufzug stoppt hart. 'Ich muss dir unbedingt von meiner neuen Business-Idee erzählen. Dauert nur 20 Minuten.'",
+        opts: [
+            { 
+                t: "Panisch schreien: 'HILFE!'", 
+                m: 5, f: 0, a: 30, c: 0, 
+                r: "Markus lacht. 'Du bist so witzig! Aber im Ernst: Multi-Level-Marketing für Hamsterfutter!' Es gibt kein Entkommen. Das ist Freiheitsberaubung." 
+            },
+            { 
+                t: "Ihm die Show stehlen", 
+                m: 20, f: 0, a: -10, c: 5, 
+                r: "Du fängst an, IHM eine Geschichte von deinem langweiligen Wochenende zu erzählen. Nach 5 Minuten drückt Markus genervt den Knopf, damit es weitergeht. Sieg durch Langeweile." 
+            }
+        ]
+    },
+    {
+        id: "cof_elevator_2b",
+        title: "Experten am Werk",
+        reqStory: "path_elevator_tech",
+        text: "Der Aufzug ruckt und steht. Neben dir: Ein Mann im Blaumann. Er wird bleich. 'Äh. Ich bin der Techniker. Ich wollte den Aufzug reparieren.' Er drückt hektisch Knöpfe. 'Mist. Mein Werkzeugkoffer steht draußen. Wir sitzen fest.'",
+        opts: [
+            { 
+                t: "Ihm den 'Notfall-Donut' geben", 
+                req: "donut", 
+                m: 20, f: 5, a: -10, c: 0, 
+                r: "Der Techniker zittert wegen Unterzuckerung. Du gibst ihm den Donut. Er beruhigt sich, tritt gegen die Tür und – ZACK – sie geht auf. 'Danke, Kumpel!' Manchmal hilft Zucker mehr als Technik." 
+            },
+            { 
+                t: "Gemeinsam warten (Hoffnungslos)", 
+                m: 45, f: 0, a: 20, c: 0, 
+                r: "Ihr sitzt beide auf dem Boden. Der Techniker weint leise. Nach 45 Minuten hört ihr Egon lachen, der die Tür von außen öffnet. 'Na, Kaffeekränzchen?'" 
+            }
+        ]
+    },
+    {
+        id: "cof_elevator_2c",
+        title: "Der Aufzugs-Flüsterer",
+        reqStory: "path_elevator_hero",
+        text: "Der Aufzug ruckelt und bleibt stehen. Die fünf anderen Kollegen drehen sich synchron zu dir um. Einer reicht dir erwartungsvoll seinen Autoschlüssel. 'Los, mach schon. Du hast das doch neulich auch repariert. Wir haben es eilig.'",
+        opts: [
+            { 
+                t: "Verweigern: 'Bin kein Techniker'", 
+                m: 30, f: 0, a: 15, c: -5, 
+                r: "Die Stimmung kippt. 'Toll. Jetzt müssen wir warten.' Alle starren dich 30 Minuten lang vorwurfsvoll an. Du bist der Buhmann, weil du nicht helfen willst." 
+            },
+            { 
+                t: "So tun, als ob (Show)", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du rüttelst wichtig an der Tür und murmelst 'Fluxkompensator'. Zufällig geht es weiter. 'Ein Genie!', flüstern die Kollegen. Dein Ruf als Legende ist zementiert." 
+            }
+        ]
+    },
+    {
+        id: "cof_miracle_1",
+        title: "Das kleine Wunder",
+        text: "Die Maschine macht seltsame Geräusche, rattert... und produziert dann den perfekten Kaffee. Perfekte Temperatur, haselnussbraune Crema, duftet wie in Italien. Ein statistischer Ausreißer. Ein Einhorn in Tassenform.",
+        opts: [
+            { 
+                t: "Sofort andächtig genießen", 
+                m: 10, f: 5, a: -25, c: 0, 
+                r: "Du trinkst in kleinen Schlucken. Jeder Schluck heilt deine Seele ein wenig. Du ignorierst das Telefon und die Welt. Für 5 Minuten ist alles gut. (Aggro massiv gesenkt)" 
+            },
+            { 
+                t: "Foto für Insta machen", 
+                next: "path_miracle_insta", 
+                m: 5, f: 10, a: -5, c: 0, 
+                r: "Das muss dokumentiert werden! Du arrangierst deine Brille und einen Stift dekorativ daneben. '#OfficeLife #Grindset #Blessed'. Aber ein Foto reicht nicht..." 
+            },
+            { 
+                t: "Dem Chef bringen (Schleimen)", 
+                next: "path_miracle_boss", 
+                m: 5, f: -5, a: 5, c: 15, 
+                r: "Du denkst strategisch. Du trägst den heiligen Gral vorsichtig ins Chef-Büro. 'Hier Chef, der ist besonders gut heute.' Er guckt überrascht." 
+            }
+        ]
+    },
+    {
+        id: "cof_miracle_2a",
+        title: "Das Influencer-Debakel",
+        reqStory: "path_miracle_insta",
+        text: "Du versuchst, den perfekten Winkel zu finden. Du steigst auf deinen Bürostuhl, machst ein Duckface und hältst die Tasse in die Kamera. Die Tür geht auf. Der ganze Vorstand steht da und starrt dich an. Du stehst auf dem Stuhl. Mit gespitzten Lippen.",
+        opts: [
+            { 
+                t: "So tun, als wäre das eine Yoga-Übung", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Du dehnst dich langsam. 'Büro-Gymnastik! Wichtig für den Rücken!' Niemand kauft es dir ab. Der Vorstand geht kopfschüttelnd weiter. Du möchtest im Boden versinken." 
+            },
+            { 
+                t: "Foto posten & Kündigung erwarten", 
+                m: 2, f: 10, a: -10, c: 5, 
+                r: "Du drückst ab. Das Foto ist unscharf und dein Gesichtsausdruck ist irre. Aber hey: 3 Likes von Bots! Der soziale Abstieg war es wert." 
+            }
+        ]
+    },
+    {
+        id: "cof_miracle_2b",
+        title: "Perlen vor die Säue",
+        reqStory: "path_miracle_boss",
+        text: "Der Chef freut sich. 'Müller! Sie lesen Gedanken!' Er nimmt die Tasse mit dem perfekten Kaffee... und kippt drei Päckchen Süßstoff und einen Schuss laktosefreie H-Milch hinein. Die Crema zerfällt sofort zu grauer Plörre.",
+        opts: [
+            { 
+                t: "Innerlich weinen & lächeln", 
+                m: 5, f: 0, a: 10, c: -10, 
+                r: "'Lecker', schmatzt der Chef. Du hast das Heiligste geopfert und er hat es entweiht. Aber er mag dich jetzt etwas mehr. Dein Herz blutet." 
+            },
+            { 
+                t: "Kommentieren: 'Das war ein Grand Cru!'", 
+                m: 5, f: 5, a: 5, c: -5, 
+                r: "Der Chef starrt dich an. 'Das ist Kaffee, Müller. Keine Wissenschaft. Gehen Sie arbeiten.' Dein Opfer war umsonst." 
+            }
+        ]
+    },
+{
+        id: "cof_silence_1",
+        title: "Himmlische Stille",
+        text: "Du betrittst die Küche. Sie ist leer. Kein Kühlschrank-Brummen, kein kauender Kollege, kein Tropfen. Einfach nur absolute, goldene Stille. Es ist fast schon... unheimlich friedlich.",
+        opts: [
+            { 
+                t: "Die Augen schließen & genießen", 
+                next: "path_silence_jumpscare", 
+                m: 5, f: 5, a: -20, c: 0, 
+                r: "Du atmest tief ein. Fünf Minuten Zen-Modus. Du spürst, wie dein Blutdruck sinkt. Du bist eins mit dem Universum. Ein seltener Moment des Friedens." 
+            },
+            { 
+                t: "Misstrauisch werden: 'Wo sind alle?'", 
+                next: "path_silence_drill", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du schaust dich um. Niemand da. Auch nicht im Flur. Ein kalter Schauer läuft dir über den Rücken. Irgendwas stimmt hier nicht." 
+            },
+            { 
+                t: "Schnell Kaffee & weg", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Du traust dem Frieden nicht. Du füllst deinen Becher und verschwindest sofort wieder im sicheren Lärm deines Büros." 
+            }
+        ]
+    },
+    {
+        id: "cof_silence_2a",
+        title: "Herzinfarkt-Risiko",
+        reqStory: "path_silence_jumpscare",
+        text: "Du bist gerade tiefenentspannt, da brüllt dir jemand direkt ins Ohr: 'MAHLZEIT!!!'. Es ist der lustige Holger aus der Buchhaltung, der sich angeschlichen hat.",
+        opts: [
+            { 
+                t: "Vor Schreck Kaffee verschütten", 
+                m: 5, f: -5, a: 10, c: 0, 
+                r: "Der heiße Kaffee landet auf deinem Hemd. Holger lacht sich schlapp: 'Hahaha, hast du gezuckt!'. Du bist nass, verbrannt und hast Mordgedanken." 
+            },
+            { 
+                t: "Reflexartig zuschlagen (Stressball)", 
+                req: "stressball", 
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Dein Arm zuckt aus Reflex. Der Stressball trifft Holger am Kopf. 'Au! Spinnst du?!' Jetzt ist er das Opfer. Geschieht ihm recht." 
+            }
+        ]
+    },
+    {
+        id: "cof_silence_2b",
+        title: "Zurückgelassen",
+        reqStory: "path_silence_drill",
+        text: "Du schaust aus dem Fenster. Unten auf dem Parkplatz stehen alle Kollegen und winken. Ein Feuerwehrauto fährt vor. Du hast den Feueralarm wegen deiner Noise-Cancelling-Kopfhörer (oder purer Ignoranz) überhört.",
+        opts: [
+            { 
+                t: "Panisch runterrennen", 
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du sprintest 5 Stockwerke runter. Unten angekommen bist du verschwitzt und außer Atem. Der Sicherheitsbeauftragte notiert deinen Namen: 'Zu spät. Im Ernstfall wären Sie jetzt knusprig.'" 
+            },
+            { 
+                t: "Verstecken & hoffen", 
+                m: 5, f: 5, a: -5, c: 20, 
+                r: "Du duckst dich unter den Tisch. Wenn dich keiner sieht, warst du nie da. Du genießt die sturmfreie Bude, während draußen alle frieren." 
+            }
+        ]
+    },
+    {
+        id: "cof_cookie_luck_1",
+        title: "Der verwaiste Keks",
+        text: "Neben der Zuckerdose liegt ein einzelner, verpackter Premium-Keks (Karamell-Kern). Keine Notiz, kein Besitzer in Sicht. Das Universum meint es gut mit dir.",
+        opts: [
+            { 
+                t: "Sofort essen (Gier)", 
+                next: "path_cookie_mystery", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Knister. Mampf. Der Zucker flutet dein Gehirn. Glückshormone kämpfen kurzzeitig gegen den Stress an. Weg ist er." 
+            },
+            { 
+                t: "Einstecken für später", 
+                next: "path_cookie_save", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Du lässt ihn in deine Tasche gleiten. Das Wissen, eine Not-Ration zu haben, beruhigt dich ungemein. Vorfreude ist die schönste Freude." 
+            }
+        ]
+    },
+    {
+        id: "cof_cookie_2a",
+        title: "Die Keks-Fee",
+        reqStory: "path_cookie_mystery",
+        text: "Du kommst zurück an deinen Platz... und da liegt *noch* einer! Mitten auf deiner Tastatur. Wieder Karamell-Kern. Wer macht das? Und warum?",
+        opts: [
+            { 
+                t: "Nicht fragen, nur essen", 
+                m: 5, f: 5, a: -20, c: 0, 
+                r: "Einem geschenkten Gaul schaut man nicht ins Maul. Du isst den zweiten Keks. Du fühlst dich seltsam geliebt von einem unsichtbaren Wohltäter. Dein Stresslevel sinkt massiv." 
+            },
+            { 
+                t: "Detektiv spielen", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du untersuchst die Verpackung auf Fingerabdrücke. Nichts. Die Ungewissheit macht dich wahnsinnig. War das der Chef? Oder doch nur die Putzkraft?" 
+            }
+        ]
+    },
+    {
+        id: "cof_cookie_2b",
+        title: "Der perfekte Moment",
+        reqStory: "path_cookie_save",
+        text: "Du hast deinen frischen Kaffee in der Hand. Er dampft. Da fällt dir der Keks in deiner Tasche ein. Du holst ihn raus. Die Schokolade ist durch deine Körperwärme leicht angeschmolzen.",
+        opts: [
+            { 
+                t: "Eintunken & genießen", 
+                m: 10, f: 5, a: -25, c: 0, 
+                r: "Du tunkst den Keks kurz in den heißen Kaffee. Er schmilzt auf der Zunge. Eine Explosion aus Karamell und Röst-Aromen. Für einen Moment ist die Welt perfekt. (Aggro massiv gesenkt)" 
+            },
+            { 
+                t: "Krümel-Topping basteln", 
+                m: 5, f: 5, a: -15, c: 0, 
+                r: "Du zerbröselst den Keks über den Milchschaum. Ein Gourmet-Kaffee 'Marke Eigenbau'. Du fühlst dich wie ein Barista-König." 
+            }
+        ]
+    },
+    {
+        id: "cof_disaster_1",
+        title: "OUT OF ORDER",
+        text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern bereits leicht.",
+        opts: [
+            { 
+                t: "Dagegen treten (Wut)", 
+                next: "path_machine_war", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "BAM! Du trittst gegen das Gehäuse. Ein Schwall heißes Wasser läuft über deine Schuhe. Die Maschine piept wütend." 
             },
             { 
                 t: "Reparieren", 
                 req: "screw", 
-                m: 15, f: 0, a: -10, c: -5,
-                r: "Du fixierst den Schlauch. Die Maschine surrt! Der erste Schluck schmeckt nach Sieg (und Kalk)." 
+                next: "path_machine_love", 
+                m: 15, f: 0, a: -10, c: -5, 
+                r: "Du schraubst die Verkleidung ab und fixierst den Schlauch. Die Maschine surrt dankbar! Der erste Schluck schmeckt nach Sieg (und etwas Kalk)." 
             },
             { 
-                t: "Folie nutzen", 
+                t: "Folie nutzen (Therapie)", 
                 req: "bubble_wrap", 
-                m: 10, f: 5, a: -15, c: 0,
-                r: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. Kein Kaffee, aber zumindest kein Mord." 
+                next: "path_machine_confused", 
+                m: 10, f: 5, a: -15, c: 0, 
+                r: "Du setzt dich auf den Boden und ploppst Folie, bis das Zittern aufhört. *Plopp. Plopp.* Kein Kaffee, aber zumindest kein Mord." 
+            }
+        ]
+    },
+    {
+        id: "cof_disaster_2a",
+        title: "Die Rache der Maschine",
+        reqStory: "path_machine_war",
+        text: "Du kommst zurück. Das Display leuchtet rot. Der Text läuft als Laufschrift durch, weil er so lang ist: 'ERROR 418.666.KICK_DETECTED.USER_BLACKLISTED.SELF_DEFENSE_MODE_ACTIVE.38472.DO_NOT_TOUCH'. Es riecht verbrannt.",
+        opts: [
+            { 
+                t: "Vorsichtig nähern", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Die Maschine spuckt plötzlich kochenden Dampf aus. Sie hat auf dich gewartet! Du weichst zurück. Das Ding ist bösartig." 
+            },
+            { 
+                t: "Stecker ziehen (den Krieg beenden)", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "Du ziehst den Stecker. Das rote Licht erlischt langsam wie das Auge von HAL 9000. Du hast gewonnen... vorerst." 
+            }
+        ]
+    },
+    {
+        id: "cof_disaster_2b",
+        title: "System Overload",
+        reqStory: "path_machine_love",
+        text: "Die Maschine blinkt wild in allen Farben. Fehlercode: 'ERROR 200.OK.BUT.HEARTBEAT.OVERFLOW.999999.USER_IS_MY_HERO.CALC_LOVE.DIV_BY_ZERO'. Sie scheint so aufgeregt über deine Rückkehr zu sein, dass sie abstürzt.",
+        opts: [
+            { 
+                t: "Gut zureden: 'Ganz ruhig, Brauner'", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du streichelst das Gehäuse. Das Blinken wird langsamer. Sie braut dir einen 'Special Espresso' mit doppelter Crema. Schmeckt nach Zuneigung." 
+            },
+            { 
+                t: "Einmal fest draufhauen (Reset)", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Alte Schule. Die Maschine ist beleidigt und geht zurück auf Standard-Einstellungen. Der Kaffee ist okay, aber die Magie ist weg." 
+            }
+        ]
+    },
+    {
+        id: "cof_disaster_2c",
+        title: "Philosophischer Fehler",
+        reqStory: "path_machine_confused",
+        text: "Das Display zeigt jetzt Zahlenkolonnen: 'ERROR 503.PLOPP.UNDEFINED.WHAT_IS_PURPOSE.BUBBLE_LOGIC_EXCEPTION.7463.8291.000'. Die Maschine versucht anscheinend, den Sinn deiner Bubble-Wrap-Aktion zu berechnen.",
+        opts: [
+            { 
+                t: "Nochmal ploppen (Dialog)", 
+                req: "bubble_wrap", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du ploppst eine Blase. Die Maschine piept einmal. Du ploppst nochmal. Sie piept zweimal. Ihr habt eine Ebene der Verständigung gefunden." 
+            },
+            { 
+                t: "Ignorieren", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du lässt sie rechnen. Soll sie doch Pi berechnen, solange sie irgendwann wieder Kaffee gibt." 
             }
         ]
     },
@@ -5601,188 +9121,242 @@ const DB = {
                 { t: "Ignorieren: Schweigen und Kaffee nehmen", m: 2, f: 0, a: 0, c: 0, r: "Du bist Luft für ihn. Er murmelt weiter 'Synergien... Laufbänder... Krypto...' vor sich hin." }
             ]
     },
-    {
+{
         id: "cof_sugar_1",
         title: "Der Zucker-Baron",
-        text: "Du erwischst Bernd (Logistik) dabei, wie er hektisch *alle* Zuckerpäckchen in seine Hosentaschen stopft. Er sieht dich mit großen Augen an. 'Psst! Die Geschäftsleitung will den Zucker rationieren! Ich lege Vorräte an! Willst du auch welche?'",
+        text: "Du hörst ein hektisches Rascheln. Bernd (Logistik) steht gebückt vor dem Vorratsschrank. Seine Anzugtaschen beulen sich verdächtig aus. Er schwitzt. 'Psst! Die da oben wollen rationalisieren! Der Great Reset kommt! Ich sichere das weiße Gold!' Er starrt dich irre an. 'Bist du dabei oder bist du ein Schaf?'",
         opts: [
             { 
-                t: "Komplize werden: 'Gib her!'", 
-                next: "sugar_buddy", 
+                t: "Investieren: 'Gib mir 20 Prozent!'", 
+                loot: "sugar_packets", 
+                next: "path_sugar_junkie", 
                 m: 5, f: -5, a: -5, c: 0, 
-                r: "Bernd grinst und schiebt dir eine Handvoll Päckchen zu. 'Wir verstehen uns. Viva la Revolution!' Ihr nickt euch verschwörerisch zu." 
+                r: "Bernd grinst breit (ein Goldzahn blitzt auf). 'Guter Mann. Diversifizierung ist alles.' Er schaufelt dir drei Handvoll Päckchen in die Tasche. Ihr nickt euch verschwörerisch zu. Das Kartell steht." 
             },
             { 
-                t: "Moralapostel: 'Bernd, das ist Diebstahl.'", 
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "Bernd zischt: 'Systemling!' und rennt geduckt davon. Dabei rieselt Zucker aus seiner Hosentasche." 
+                t: "Drohen: 'Ich sags dem Chef'", 
+                next: "path_sugar_embargo", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Bernds Augen verengen sich zu Schlitzen. 'Du wirst es bereuen. Wenn die Krise kommt, kommst du angekrochen!' Er verschwindet im Schatten des Kopierraums. Du hast dir einen mächtigen Feind gemacht." 
+            },
+            { 
+                t: "Geschäftsmäßig: 'Was kostet das Gramm?'", 
+                next: "path_sugar_dealer", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Bernd zieht einen Taschenrechner. 'Tagespreis schwankt. Aber für dich... Tausch gegen Tackerklammern?' Ihr verhandelt kurz. Du lässt ihn gewähren." 
             }
         ]
     },
     {
-        id: "cof_sugar_2",
-        title: "Zucker-Schock",
-        reqStory: "sugar_buddy",
-        text: "Bernd fängt dich ab. Er zittert am ganzen Körper, seine Pupillen sind riesig. 'Der Automat... er ist leer! Jemand hat den Zucker geklaut! (Das war er selbst). Ich brauche meinen Stoff! Hast du noch was von neulich?'",
+        id: "cof_sugar_2a",
+        title: "Der Margin Call",
+        reqStory: "path_sugar_junkie",
+        text: "Bernd fängt dich ab. Er vibriert förmlich. Seine Pupillen sind riesig, überall an seinem Mund kleben weiße Krümel. 'Der Markt ist gecrasht! Ich hab alles selbst verbraucht! Ich brauche meine Einlage zurück! Hast du den Stoff?!'",
         opts: [
             { 
                 t: "Ihm den Zucker zurückgeben", 
+                req: "sugar_packets", 
                 m: 5, f: 0, a: -10, c: 0, 
-                r: "Er reißt die Päckchen auf und kippt sie sich pur in den Mund. 'Ohhh ja... das kickt.' Er wird sofort ruhig. Krise abgewendet." 
+                r: "Du gibst ihm die Päckchen. Er reißt drei gleichzeitig auf und kippt sie sich pur in den Rachen. 'Ohhh ja... Mama ist zuhause.' Er wird sofort ruhig und sinkt an der Wand herunter. Krise abgewendet." 
             },
             { 
-                t: "Ablehnen: 'Du hast ein Problem, Bernd.'", 
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "Er funkelt dich böse an. 'Du stehst jetzt auf meiner Liste!' Er wankt zitternd davon, auf der Suche nach Süßstoff." 
+                t: "Den Preis hochtreiben", 
+                m: 10, f: 0, a: 15, c: 0, 
+                r: "'Angebot und Nachfrage, Bernd.' Du verlangst seine Bürostuhl-Armlehnen im Tausch. Er wimmert, stimmt aber zu. Du bist jetzt der neue Baron." 
+            }
+        ]
+    },
+    {
+        id: "cof_sugar_2b",
+        title: "Das Embargo",
+        reqStory: "path_sugar_embargo",
+        text: "Du willst Kaffee. Aber die Zuckerdose ist leer. Stattdessen klebt ein Zettel daran: 'Wegen Lieferkettenproblemen temporär außer Betrieb. Gez. Bernd'. Bernd sitzt drei Tische weiter auf einem Thron aus Kopierpapier und grinst dich böse an.",
+        opts: [
+            { 
+                t: "Kapitulieren & betteln", 
+                m: 5, f: -10, a: 20, c: 0, 
+                r: "Du kriechst zu Kreuze. 'Bitte, Bernd. Nur ein Löffel.' Er schnippt dir ein einzelnes Krümelchen zu. 'Das macht dann 5 Euro Bearbeitungsgebühr.' Es ist demütigend." 
+            },
+            { 
+                t: "Den Bunker stürmen", 
+                m: 10, f: 0, a: -5, c: 10, 
+                r: "Du stürzt dich auf seinen Papierturm. Bernd quietscht. Zuckerpäckchen regnen wie Konfetti durch das Büro. Die Kollegen jubeln und plündern mit. Die Revolution war erfolgreich!" 
+            }
+        ]
+    },
+    {
+        id: "cof_sugar_2c",
+        title: "Schwarzmarkt",
+        reqStory: "path_sugar_dealer",
+        text: "Im Flur herrscht reges Treiben. Bernd hat einen kleinen Stand aufgebaut. Er verkauft Zucker gegen Kugelschreiber, Post-its und Kantinen-Gutscheine. Das Geschäft brummt.",
+        opts: [
+            { 
+                t: "Den Chef informieren (Whistleblower)", 
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Der Chef kommt, sieht das Geschäft... und kauft selbst zwei Päckchen für sein Meeting. 'Aus der Portokasse, Bernd.' Du hast den Glauben an das System verloren." 
+            },
+            { 
+                t: "Als Sicherheitsdienst anheuern", 
+                m: 10, f: 10, a: -10, c: 0, 
+                r: "Du verschränkst die Arme und schaust böse, damit niemand klaut. Bernd beteiligt dich am Gewinn (zwei Textmarker). Ein lukrativer Nebenjob." 
             }
         ]
     },
     {
         id: "cof_mold_1",
         title: "Kühlschrank-Exkursion",
-        text: "Ganz hinten im Kühlschrank steht ein Joghurt. Das Verfallsdatum ist 'Mai 2012'. Er scheint zu pulsieren.",
+        text: "Ganz hinten im Kühlschrank steht ein Joghurt. Das Verfallsdatum ist 'Mai 2012'. Er pulsiert leicht in neon-grün. Als du dich näherst, formen sich auf der Oberfläche pelzige Buchstaben: 'H...U...N...G...E...R'.",
         opts: [
             { 
-                t: "Tür schnell zuwerfen",
-                m: 2, f: 5, a: 10, c: 0,
-                r: "Aus den Augen, aus dem Sinn. Aber der Ekel bleibt."
+                t: "Zuckerpäckchen opfern (Füttern)", 
+                next: "path_mold_ally", 
+                m: 5, f: -5, a: -10, c: 0, 
+                r: "Du streust Zucker hinein. Der Pilz absorbiert ihn glücklich und rülpst leise. Eine piepsige Stimme in deinem Kopf sagt: 'WIR DIENEN DEM MEISTER.' Du hast jetzt einen ekligen Freund." 
             },
             { 
-                t: "Genau hinsehen",
-                next: "mold_contact",
-                m: 5, f: 0, a: 5, c: 0,
-                r: "Der Schimmelpilz formt winzige Buchstaben: 'H...A...L...L...O'. Du brauchst dringend Urlaub."
+                t: "Mit Desinfektionsmittel angreifen", 
+                next: "path_mold_war", 
+                m: 10, f: 5, a: 15, c: 0, 
+                r: "Du sprühst Sagrotan. Der Pilz zischt aggressiv wie eine Katze! Er zieht sich zurück, aber du hörst ihn im Abfluss kichern. Das ist noch nicht vorbei." 
+            },
+            { 
+                t: "Tür schnell zuwerfen (Flucht)", 
+                next: "path_mold_civ", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Aus den Augen, aus dem Sinn. Du klebst einen Zettel 'DEFEKT' an den Kühlschrank. Soll sich die Nachtschicht mit der neuen Lebensform rumschlagen." 
             }
         ]
     },
     {
-        id: "cof_mold_2",
-        title: "Erste Kontaktaufnahme",
-        reqStory: "mold_contact",
-        text: "Der Joghurt hat jetzt kleine Augen entwickelt. Eine piepsige Stimme in deinem Kopf sagt: 'BRING UNS ZUCKER.'",
+        id: "cof_mold_2a",
+        title: "Die Symbiose",
+        reqStory: "path_mold_ally",
+        text: "Du öffnest den Kühlschrank wieder. Der Joghurt ist gewachsen. 'MEISTER', piepst es. 'DER FEIND (CHEF) HAT SEIN SANDWICH HIER GELAGERT. SOLLEN WIR ES... GESCHMACKLICH OPTIMIEREN?'",
         opts: [
             { 
-                t: "Zuckerpäckchen opfern",
-                next: "mold_peace",
-                m: 5, f: 10, a: -10, c: 0,
-                r: "Der Pilz absorbiert den Zucker glücklich. 'WIR AKZEPTIEREN DICH ALS DIENER.' Du fühlst dich seltsam entspannt."
+                t: "Befehl geben: 'Zugriff!'", 
+                m: 5, f: 10, a: -20, c: 20, 
+                r: "Der Pilz wubbelt fröhlich rüber zum Sandwich. Später hörst du den Chef brüllen: 'Warum schmeckt mein Brot nach Blaubeere und Rache?!'. Du grinst böse." 
             },
             { 
-                t: "Mit Desinfektionsmittel drohen",
-                m: 10, f: -5, a: 25, c: 0,
-                r: "Der Pilz zischt aggressiv. Sporen fliegen dir ins Gesicht. Du hustest minutenlang."
+                t: "Ablehnen: 'Frieden bewahren'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'WIE DU WÜNSCHST.' Der Pilz wirkt enttäuscht, formt aber ein Herzchen für dich. Es ist süß, aber auch extrem widerlich." 
             }
         ]
     },
     {
-        id: "cof_mold_3",
-        title: "Die Allianz",
-        reqStory: "mold_peace",
-        text: "Der Joghurt hat eine Zivilisation im Gemüsefach errichtet. 'MEISTER', piepst es. 'DER CHEF HAT SEINE SANDWICHES HIER. SOLLEN WIR SIE... VERBESSERN?'",
+        id: "cof_mold_2b",
+        title: "Sporen-Alarm",
+        reqStory: "path_mold_war",
+        text: "Du willst dir Milch holen, aber der Joghurt hat eine Falle gebaut! Sobald das Licht angeht, schießt eine Wolke grüner Sporen direkt in dein Gesicht. Er verteidigt sein Territorium!",
         opts: [
             { 
-                t: "Nicken und gehen",
-                m: 5, f: 20, a: -20, c: 15,
-                r: "Später hörst du den Chef brüllen: 'Warum schmeckt mein Brot nach Blaubeere?!'. Rache ist süß."
+                t: "Husten & Weinen", 
+                m: 10, f: -5, a: 20, c: 0, 
+                r: "Du hustest dir die Seele aus dem Leib. Deine Augen brennen. Der Joghurt scheint höhnisch zu lachen. Du hast den Kampf gegen eine Molkerei-Produk verloren." 
             },
             { 
-                t: "Ablehnen",
-                m: 5, f: 0, a: 0, c: 0,
-                r: "Der Pilz wirkt enttäuscht und zieht sich zurück."
+                t: "Flammenwerfer (Deo + Feuerzeug)", 
+                m: 5, f: -5, a: -10, c: 10, 
+                r: "Du brennst das Fach aus. Es stinkt bestialisch, aber der Feind ist vernichtet. Der Hausmeister wird Fragen stellen, aber du hast gesiegt." 
             }
         ]
     },
     {
-        id: "cof_catering",
+        id: "cof_mold_2c",
+        title: "Die Zivilisation",
+        reqStory: "path_mold_civ",
+        text: "Du wagst einen Blick. Im Gemüsefach hat sich was getan. Der Pilz hat kleine Häuser aus altem Käse gebaut. Winzige Pilz-Männchen reiten auf Kakerlaken. Sie haben das Rad erfunden.",
+        opts: [
+            { 
+                t: "Gott spielen (Licht an/aus)", 
+                m: 20, f: 0, a: -15, c: 0, 
+                r: "Du machst das Kühlschranklicht an und aus. Die kleinen Wesen fallen auf die Knie und beten dich an. 'DER LICHTBRINGER!'. Das tut deinem Ego gut." 
+            },
+            { 
+                t: "Alles in den Müll schieben", 
+                m: 5, f: -5, a: 5, c: 0, 
+                r: "Du beendest die Geschichte brutal mit einem Müllbeutel. Ein ganzes Universum, vernichtet in Sekunden. Du fühlst dich kurz schlecht, dann holst du dir deine Milch." 
+            }
+        ]
+    },
+    {
+        id: "cof_catering_1",
         title: "Die Reste der Macht",
-        text: "Das Meeting ist vorbei. Auf dem Tisch im Konferenzraum stehen die Reste. Lachs, Kaviar-Häppchen, Premium-Kaffee. Niemand ist zu sehen.",
+        text: "Das Meeting der Geschäftsleitung ist vorbei. Auf dem Mahagoni-Tisch stehen die Reste. Lachs-Brötchen, Kaviar-Häppchen, Premium-Kaffee. Niemand ist zu sehen.",
         opts: [
             { 
                 t: "Aufräumen (Pflichtbewusst)", 
-                next: "cat_cleanup", 
+                next: "path_cat_cleanup", 
                 m: 15, f: -15, a: 5, c: -5, 
-                r: "Du räumst auf. Dabei findest du unter dem Stuhl des Chefs einen Zettel: 'Liste der Mitarbeiter, die wir feuern wollen'. Dein Name steht nicht drauf... noch nicht." 
+                r: "Du räumst Teller weg. Dabei findest du unter dem Stuhl des Chefs einen Zettel: 'TOP SECRET: Liste der Mitarbeiter, die wir feuern wollen'. Dein Name steht nicht drauf... noch nicht." 
             },
             { 
                 t: "Gierig alles aufessen", 
-                next: "cat_eat", 
-                m: 10, f: 15, a: -5, c: 0, 
-                r: "Du stopfst dich voll. Lachs, Trauben, Käse. Du fühlst dich wie ein König. Leider hast du jetzt einen fetten Remouladen-Fleck auf dem Hemd." 
+                next: "path_cat_eat", 
+                m: 10, f: 15, a: -15, c: 0, 
+                r: "Du stopfst dich voll wie ein Hamster. Lachs, Trauben, Käse. Du fühlst dich wie ein König. Leider hast du jetzt einen fetten Remouladen-Fleck auf dem Hemd." 
             },
             { 
                 t: "Nur den Kaffee klauen", 
-                next: "cat_gossip", 
-                m: 5, f: -10, a: -15, c: 0, 
-                r: "Du füllst deinen Becher. Sabine vom Empfang fängt dich an der Tür ab. Sie grinst wissend. Sie hat dich gesehen." 
+                next: "path_cat_gossip", 
+                m: 5, f: -10, a: -5, c: 0, 
+                r: "Du füllst deinen Becher mit dem guten 'Arabica Gold'. Sabine vom Empfang fängt dich an der Tür ab. Sie grinst wissend. Sie hat dich gesehen." 
             }
         ]
     },
     {
-        id: "cof_catering_cleanup",
+        id: "cof_catering_2a",
         title: "Heikle Informationen",
-        reqStory: "cat_cleanup", 
+        reqStory: "path_cat_cleanup",
         text: "Der Chef kommt hektisch zurück. Er sucht genau diesen Zettel. Er sieht dich an, Panik in den Augen. 'Müller! Haben Sie hier... Papierkram gesehen?'",
         opts: [
             { 
                 t: "Ehrlich: 'Hier ist er, Chef.'", 
-                m: 5, f: 0, a: 15, c: 20,
+                m: 5, f: 0, a: 15, c: 10, 
                 r: "Er reißt ihn dir aus der Hand. Statt Dankbarkeit siehst du Kälte. Er weiß jetzt, dass DU Bescheid weißt. 'Vergessen Sie das. Sofort.' Du stehst jetzt auf seiner Beobachtungsliste." 
             },
             { 
-                t: "Wahnsinn: Zettel in den Mund stecken & kauen", 
-                m: 5, f: 5, a: -10, c: -20,
-                r: "Du starrst ihm in die Augen, steckst das Papier in den Mund und schluckst es runter. 'Ich habe nichts gesehen, Chef.' Er nickt langsam, tief beeindruckt. 'Guter Mann. Weitermachen.'" 
-            },
-            { 
-                t: "Lügen: 'War nur Müll im Schredder.'", 
-                m: 2, f: 0, a: 0, c: -5,
-                r: "'Gut. Sehr gut.' Er atmet aus. 'Müll muss weg.' Er wirkt erleichtert, dass das Geheimnis scheinbar vernichtet ist." 
+                t: "Wahnsinn: Zettel essen", 
+                m: 5, f: 5, a: -20, c: -20, 
+                r: "Du starrst ihm in die Augen, steckst das Papier in den Mund und schluckst es runter. 'Ich habe nichts gesehen, Chef.' Er nickt langsam, tief beeindruckt. 'Guter Mann. Loyalität schmeckt bitter, was?'" 
             }
         ]
     },
     {
-        id: "cof_catering_eat",
+        id: "cof_catering_2b",
         title: "Beweislast",
-        reqStory: "cat_eat", 
+        reqStory: "path_cat_eat",
         text: "Du läufst dem Chef in die Arme. Er starrt auf den riesigen Fettfleck auf deinem Hemd und die Krümel im Mundwinkel. 'Müller? Haben Sie etwa vom Vorstandsbuffet gegessen?'",
         opts: [
             { 
                 t: "Offensive: 'Das muss weg, wird ja schlecht!'", 
-                m: 5, f: 0, a: 5, c: 20,
+                m: 5, f: 0, a: 5, c: 20, 
                 r: "'Das ist 50€-Lachs, Müller! Das ist kein Hundefutter!' Er ist stinksauer über deine Respektlosigkeit. Das gibt eine Abmahnung wegen Mundraub." 
             },
             { 
                 t: "Dumm stellen: 'Habe mein Pausenbrot gegessen.'", 
-                m: 2, f: 5, a: 0, c: 0,
+                m: 2, f: 5, a: 0, c: 0, 
                 r: "Du zeigst auf den Fleck. 'Leberwurst, Chef. Ganz übel.' Er rümpft die Nase und geht auf Abstand. 'Waschen Sie sich. Sie riechen nach Fisch.' Du bist entkommen." 
-            },
-            { 
-                t: "Schockstarre (Nichts sagen)", 
-                m: 5, f: 0, a: 10, c: 5, 
-                r: "Du starrst ihn nur mit vollen Backen an wie ein Hamster. Er schüttelt den Kopf. 'Erbärmlich.' Er geht weiter. Dein Stolz ist verletzt, aber der Job ist sicher." 
             }
         ]
     },
     {
-        id: "cof_catering_gossip",
+        id: "cof_catering_2c",
         title: "Ein 'kleiner' Gefallen",
-        reqStory: "cat_gossip", 
+        reqStory: "path_cat_gossip",
         text: "Sabine blockiert den Weg. 'Ich verrate dich nicht wegen dem Kaffee... aber mein Drucker macht so komische Geräusche. Kannst du mal *ganz kurz* gucken? Bitte!'",
         opts: [
             { 
-                t: "Nett sein: 'Klar, zeig mal her.'", 
-                m: 45, f: -10, a: 25, c: 0,
-                r: "Klassischer Fehler. Es war nicht der Drucker, es war der Treiber. Und das Netzwerk. Und ihr Handy. Du bist 45 Minuten gefangen. Sabine erzählt dir dabei ihre ganze Lebensgeschichte. Du hasst dich selbst." 
+                t: "Nett sein (Erpressung akzeptieren)", 
+                m: 45, f: -15, a: 25, c: -15, 
+                r: "Klassischer Fehler. Es war nicht der Drucker, es war der Treiber. Und das Netzwerk. Du bist 45 Minuten gefangen. Sabine erzählt dir dabei ihre ganze Lebensgeschichte. Du hasst dich selbst." 
             },
             { 
                 t: "Ablenken: 'Oh Gott! Ist das eine Spinne?!'", 
-                m: 2, f: 5, a: -5, c: 0,
+                m: 2, f: 5, a: -5, c: 0, 
                 r: "Du zeigst panisch hinter sie. Sabine kreischt und springt zur Seite. Du nutzt das Chaos und rennst weg. Nicht elegant, aber effektiv." 
-            },
-            { 
-                t: "Eiskalt: 'Mach ein Ticket auf.'", 
-                m: 2, f: 0, a: 5, c: 10,
-                r: "Sabines Lächeln gefriert. 'Alles klar. Dann mach ich wohl eine Meldung über Kaffeediebstahl.' Sie tippt auf ihrem Handy. Das könnte noch Ärger geben." 
             }
         ]
     },
@@ -5808,655 +9382,1797 @@ const DB = {
             }
         ]
     },
+	{
+        id: "cof_lore_2c",
+        title: "Gerüchteküche",
+        reqStory: "path_lore_ignore",
+        text: "Du triffst Kevin in der Küche. Er grinst breit und wedelt mit einem Aktenordner. 'Rate mal, was ich im Serverraum gefunden habe? Die HR-Liste! Ich werde alle erpressen!'",
+        opts: [
+            { 
+                t: "Ihn warnen", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Kevin, HR sucht danach. Verbrenn das.' Er wird bleich. 'Oh... danke, Bro.' Er rennt zum Schredder." 
+            },
+            { 
+                t: "Ihn beim Chef verpfeifen", 
+                m: 10, f: -5, a: -5, c: -15, 
+                r: "Du rufst Dr. Wichtig an. Kurz darauf wird Kevin von zwei Sicherheitsleuten abgeführt. Dein Standing beim Chef ist gestiegen." 
+            },
+            { 
+                t: "Ignorieren", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Nicht dein Problem. 10 Minuten später hörst du Schreie aus dem HR-Büro. Tja." 
+            }
+        ]
+    },
     ],
 
 // === SIDE QUESTS ===
     sidequests: [
         // --- TEXT QUESTS ---
-        {
-            id: "sq_toilet",
-            kind: "text",
-            title: "Mission: Porzellan",
-            text: "Deine Blase meldet 'Füllstand: 110%'. Du hast es eilig. Doch zwischen dir und der erlösenden Keramik steht der Marketing-Leiter. Er scannt den Flur wie ein Raubtier auf der Suche nach einem Opfer für ein 'spontanes Brainstorming'. Es gibt kein Entkommen.",
-            opts: [
-                { 
-                    t: "Hechtsprung in die Putzkammer", 
-                    m: 10, f: 10, a: 0, c: 5, 
-                    r: "Du wirfst dich zwischen Wischmopps und Eimer. Du hörst Schritte... sie gehen vorbei. Puh. Du riechst jetzt zwar penetrant nach Zitronen-WC-Reiniger, aber du bist entkommen." 
-                },
-                { 
-                    t: "Blickkontakt herstellen", 
-                    m: 60, f: -20, a: 30, c: -5, 
-                    r: "Anfängerfehler! Er hakt dich sofort unter: 'Ah, Müller! Perfekt! Wir brauchen Ihren Input zu Pastellfarben!' Du sitzt 60 Minuten im Meeting, während deine Blase kurz vorm Platzen ist. Hölle auf Erden." 
-                },
-                { 
-                    t: "Handy ans Ohr & schreien: 'FIREWALL BRENNT?!'", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Der Marketing-Leiter springt erschrocken zur Seite, um nicht 'verbrannt' zu werden. Du rennst an ihm vorbei direkt in die Kabine. Notlügen sind Notwehr." 
-                }
-            ]
-        },
-        {
-            id: "sq_cake",
-            kind: "text",
-            title: "Der Kuchen-Krieg",
-            text: "Ein unbekannter Held hat Geburtstagskuchen spendiert. Mächtige Schoko-Sahne-Torte! Doch Chantal aus dem Marketing blockiert den Zugang und hält einen Monolog über ihre neue 'Low-Carb-High-Sadness'-Diät. Im Hintergrund lauern schon hungrige Kollegen.",
-            opts: [
-                { 
-                    t: "Ninja-Move: Kuchen schnappen & flüchten", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Zack! Während Chantal Luft holt, greifst du dir ein Stück und verschwindest. Sie wirft dir einen verachtenden Blick zu ('Gluten ist Gift!'), aber der Zucker-Rush ist es wert." 
-                },
-                { 
-                    t: "Höflich warten & zuhören", 
-                    m: 30, f: -5, a: 20, c: 0, 
-                    r: "Schwerer Fehler. Während Chantal über Kalorien referiert, fallen die 'Heuschrecken' aus dem Vertrieb über das Blech her. Als sie fertig ist, sind nur noch Krümel da. Du bleibst hungrig und genervt." 
-                },
-                { 
-                    t: "Dominanz zeigen: Das allerletzte Stück essen", 
-                    m: 5, f: 10, a: 5, c: 15, 
-                    r: "Du schiebst dir das letzte Stück genüsslich in den Mund. Genau in dem Moment stürmt der Chef rein, die Hand schon gierig ausgestreckt. Er greift ins Leere. Er starrt auf deine schokolierten Lippen, sein Gesicht läuft dunkelrot an. Er sagt kein Wort, aber sein Blick ist ein Todesurteil." 
-                }
-            ]
-        },
-        {
-            id: "sq_fire",
-            kind: "text",
-            title: "Alarmstufe Popcorn",
-            text: "WUUUP! WUUUP! Die Sirene brüllt los. Hektik bricht aus. Es riecht allerdings nicht nach Inferno, sondern eindeutig nach verbranntem 'Salty Caramel'-Popcorn aus der Mikrowelle im 2. Stock. Die Kollegen rennen panisch zum Sammelplatz.",
-            opts: [
-                { 
-                    t: "Noise-Cancelling an & sitzenbleiben", 
-                    m: 5, f: 20, a: -5, c: 10, 
-                    r: "Du drehst die Musik lauter und ignorierst den Lärm. Zehn Minuten später kommt die Entwarnung: Kevin hat die Wattzahl mit der Minutenanzahl verwechselt. Du sitzt warm und trocken." 
-                },
-                { 
-                    t: "Pflichtbewusst evakuieren", 
-                    m: 45, f: -10, a: 10, c: -5, 
-                    r: "Du stehst 45 Minuten bei Nieselregen auf dem Parkplatz. Der Marketing-Chef friert im T-Shirt, du frierst aus Solidarität. Morgen hast du Schnupfen, aber das Gewissen ist rein." 
-                },
-                { 
-                    t: "Die Gunst der Stunde nutzen: Plündern", 
-                    m: 10, f: 15, a: -10, c: 5, 
-                    r: "Während alle zu den Notausgängen stürmen, schleichst du in den verlassenen Konferenzraum der Geschäftsleitung. Du klaust die 'Guten Kekse' (die mit Schokolade) und verschwindest ungesehen. Chaos ist eine Leiter." 
-                }
-            ]
-        },
-        {
-            id: "sq_usb",
-            kind: "text",
-            title: "Fundsache",
-            text: "Auf dem Flur liegt ein USB-Stick mit der Aufschrift 'GEHEIM'.",
-            opts: [
-                { 
-                    t: "Sofort einstecken",
-                    loot: "usb_stick", 
-                    m: 5, f: 0, a: 0, c: 5, 
-                    r: "Du schaust dich kurz um und lässt den Stick in deiner Tasche verschwinden. Jetzt gehört er dir." 
-                },
-                { 
-                    t: "Am Empfang abgeben", 
-                    m: 10, f: -5, a: 0, c: -5, 
-                    r: "Du bist ein braver Mitarbeiter. Gabi bedankt sich. Dein Gewissen ist rein, aber dein Inventar bleibt leer." 
-                }
-            ]
-        },
-        {
-        id: "sq_printer_1",
+    {
+        id: "sq_toilet_1",
         kind: "text",
-        title: "PC LOAD LETTER",
-        text: "Der Drucker blinkt rot. Das Display zeigt: 'INSERT COIN'. Er macht dieses Geräusch: 'Whirrr-Click-Whirrr'. Die Warteschlange ist voll.",
+        title: "Mission: Porzellan",
+        text: "Deine Blase meldet 'Füllstand: 110%'. Du hast es eilig. Doch zwischen dir und der erlösenden Keramik steht Björn, der Marketing-Leiter. Er scannt den Flur wie ein Raubtier auf der Suche nach einem Opfer für ein 'spontanes Brainstorming'.",
         opts: [
             { 
-                t: "Percussive Maintenance (Draufhauen)", 
-                m: 5, f: 0, a: -20, c: 10, 
-                r: "BÄM! Ein Plastikteil fliegt ab. Das Geräusch hört auf. Der Drucker raucht leicht. Problem 'gelöst'.",
-                next: "sq_printer_2_broken" 
+                t: "Ablenkung: 'HINTER DIR! ELON MUSK!'", 
+                next: "path_toilet_lie", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du brüllst und zeigst in die andere Richtung. Björn wirbelt herum: 'Wo?! Der Disruptor?!'. Du nutzt die Sekunde und sprintest in die Kabine. Knapp, aber erfolgreich." 
             },
             { 
-                t: "Handbuch konsultieren (S. 404)", 
-                req: "manual", 
-                m: 15, f: -5, a: 0, c: 0, 
-                loot: "secret_list",
-                r: "Du liest das Kapitel 'Geheime Wartungsmenüs'. Du drückst den Konami-Code. Der Drucker spuckt plötzlich ein Dokument aus, das nicht für dich bestimmt war.",
-                next: "sq_printer_2_secret"
+                t: "Ergeben: Blickkontakt herstellen", 
+                next: "path_toilet_pastel", 
+                m: 60, f: -20, a: 30, c: -10, 
+                r: "Anfängerfehler! Er hakt dich sofort unter: 'Ah, Müller! Perfekt! Wir brauchen dein Tech-Mindset zu den neuen Pastellfarben für das Logo!' Du sitzt 60 Minuten im Meeting. Deine Blase platzt fast. Hölle auf Erden." 
             },
             { 
-                t: "Papier nachfüllen (Langweilig)", 
-                m: 10, f: 5, a: 10, c: 0, 
-                r: "Du füllst Papier nach. Er druckt 500 Seiten 'Agile Meeting Protokolle'. Dein Lebenswille sinkt." 
+                t: "Aggressiv durchrennen", 
+                m: 2, f: 0, a: 10, c: 5, 
+                r: "Du rempelst ihn fast um. 'PLATZ DA! BIO-NOTFALL!' Björn starrt dir entsetzt hinterher. 'Kein Flow, der Typ...', murmelt er. Unhöflich, aber effektiv." 
             }
         ]
     },
     {
-        id: "sq_printer_2",
+        id: "sq_toilet_2a",
         kind: "text",
-        reqStory: "sq_printer_2_broken",
-        title: "Rache der Maschine",
-        text: "Der Drucker, den du gestern verprügelt hast, wurde durch ein 'Smart Device' ersetzt. Es verlangt jetzt einen QR-Code-Scan und deine Blutgruppe, um zu drucken.",
+        title: "Meeting: 'Color of Success'",
+        reqStory: "path_toilet_pastel",
+        text: "Björn hat dich wieder eingeladen. Da du beim letzten Mal nicht weggelaufen bist, hält er dich für interessiert. 'So, IT-Brain! Welche Farbe passt besser zum Serverraum-Feng-Shui? 'Soft Salmon' oder 'Baby Breath Blue'?' Alle starren dich erwartungsvoll an.",
         opts: [
-            { t: "Akzeptieren", m: 5, f: 0, a: 15, c: 0, r: "Du scannst. Du bist jetzt im System. Für immer." },
-            { t: "IT-Support rufen (Dich selbst)", m: 10, f: 10, a: -5, c: 0, r: "Du klebst ein 'DEFEKT'-Schild daran. Feierabend." }
+            { 
+                t: "Ironisch: 'Vantablack. Wie meine Seele.'", 
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Björn notiert eifrig: 'Oh, Edgy! Dark Mode für Wände! Genial!' Sie lieben es. Du bist jetzt der 'Chief Visionary Officer' wider Willen." 
+            },
+            { 
+                t: "Technisch: 'Blau kühlt die Hardware'", 
+                m: 30, f: -10, a: 10, c: 0, 
+                r: "Du hältst einen Vortrag über Thermodynamik. Nach 30 Minuten schlafen alle. Du hast sie zu Tode gelangweilt. Sieg durch Monotonie." 
+            }
         ]
     },
-        {
-            id: "sq_investigation",
-            kind: "text",
-            title: "Die verschwundene Maus",
-            text: "Frau Erna vom Empfang vermisst ihre 'Glücksmaus'. Sie ist weg. Der Hauptverdächtige ist der Büro-Hund 'Bello'.",
-            opts: [
-                { t: "Detektiv spielen", m: 30, f: -10, a: 10, c: -10, r: "Du findest die Maus in Bellos Körbchen. Sie ist vollgesabbert. Erna ist überglücklich und schenkt dir Schokolade." },
-                { t: "Neue Maus aus dem Lager holen", m: 5, f: -5, a: 0, c: 0, r: "Problem gelöst, aber Erna ist traurig. 'Es ist nicht dasselbe!'" },
-                { t: "Bello verhören", m: 15, f: 10, a: -10, c: 10, r: "Du bellst den Hund an. Der Chef kommt vorbei: 'Alles okay bei Ihnen?'" }
-            ]
-        },
-        {
-            id: "sq_loose_cable",
-            kind: "text",
-            title: "Die Stolperfalle",
-            text: "Im Flur liegt ein LAN-Kabel quer über dem Weg. Der Chef kommt gleich hier lang.",
-            opts: [
-                { t: "Festkleben", req: "tape", m: 5, f: -5, a: 0, c: -5, r: "Gefahr gebannt. Chef stolpert nicht. Du bist der unsichtbare Held." },
-                { t: "Kabel mitnehmen", loot: "cable", m: 5, f: 5, a: 0, c: 10, r: "Du nimmst das Kabel einfach mit. Jetzt stolpert keiner, aber jemand hat kein Netz mehr. Inventar +1." },
-                { t: "Liegen lassen", m: 0, f: 10, a: 0, c: 0, r: "Mal sehen, was passiert..." }
-            ]
-        },
-        {
-            id: "sq_package_open",
-            kind: "text",
-            title: "Die Festung aus Pappe",
-            text: "Ein Paket für die IT liegt auf deinem Tisch. Der Absender war offensichtlich paranoid und hat eine komplette Rolle Panzertape verbraucht. Es gibt keine Lasche, keinen Anfang, nur glatte, braune Unendlichkeit.",
-            opts: [
-                { 
-                    t: "Chirurgischer Eingriff mit dem Schraubendreher", 
-                    req: "screw", 
-                    m: 5, f: 0, a: -5, c: 0, 
-                    r: "Mit der Präzision eines Serienmörders stichst du durch die Schichten. Ratsch. Offen. Inhalt: 50 billige Werbe-Mauspads, die stark nach Chemieunfall riechen." 
-                },
-                { 
-                    t: "Brutale Gewalt mit dem Haustürschlüssel", 
-                    m: 10, f: 0, a: 5, c: 0, 
-                    r: "Du säbelst wild am Klebeband herum, bis der Karton nachgibt. Dein Schlüssel ist jetzt leicht verbogen, aber das Paket ist offen. Drinnen: Toner." 
-                },
-                { 
-                    t: "Den Karton mit voller Wucht gegen die Wand pfeffern", 
-                    m: 5, f: 5, a: -15, c: 10, 
-                    r: "KRACH! Das Paket platzt auf wie eine reife Melone. Leider war es die Lieferung der neuen 'Magic Glass Trackpads' für das Management. Das Geräusch von splitterndem Glas ist irgendwie... befriedigend." 
-                }
-            ]
-        },
-        {
-            id: "sq_shelf",
-            kind: "text",
-            title: "Der schiefe Turm von Toner",
-            text: "Im Lager neigt sich das Schwerlastregal mit den teuren Lasertonern bedrohlich zur Seite. Ein falscher Windhauch, und es gibt eine 5.000-Euro-Explosion aus feinem, schwarzem Staub, die man nie wieder aus dem Teppich kriegt.",
-            opts: [
-                { 
-                    t: "Quick-Fix: Kabelbinder-Orgie", 
-                    req: "zip_ties", 
-                    m: 10, f: -5, a: 0, c: 0, 
-                    r: "Du zurrst das Regal mit einem Dutzend Kabelbindern an ein Heizungsrohr. Es sieht aus wie Bondage für Möbel, aber es steht bombenfest. Wie wir alle wissen: Nichts hält länger als ein Provisorium." 
-                },
-                { 
-                    t: "Handwerklich korrekt dübeln", 
-                    m: 60, f: -20, a: 15, c: -5, 
-                    r: "Du holst die Schlagbohrmaschine. 60 Minuten Lärm, Staub und Schweiß. Das Regal steht jetzt perfekt im Lot. Keiner bemerkt es, keiner dankt es dir, aber du hast Rückenschmerzen." 
-                },
-                { 
-                    t: "Haftungsausschluss: Warnzettel kleben", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "Du kritzelst 'VORSICHT! EINSTURZGEFAHR!' auf ein Post-It, pappst es an den Holm und gehst zufrieden Mittagessen. Juristisch bist du damit aus dem Schneider." 
-                }
-            ]
-        },
-        {
-            id: "sq_noise",
-            kind: "text",
-            title: "Baustellenlärm",
-            text: "Draußen wird die Straße aufgerissen. Presslufthammer. BRRRRRRRT.",
-            opts: [
-                { t: "Kopfhörer auf", req: "headphones", m: 0, f: 5, a: -20, c: 0, r: "Himmlische Ruhe." },
-                { t: "Fenster zu", m: 5, f: 0, a: 5, c: 0, r: "Hilft kaum. Es wird stickig." }
-            ]
-        },
-        {
-            id: "sq_loot_crate",
-            kind: "text",
-            title: "Die 'Zu Verschenken' Kiste",
-            text: "Jemand hat eine Kiste mit der Aufschrift 'ZU VERSCHENKEN' in den Flur gestellt. Ein Biotop aus Staub, alten Kabeln und vergessenen Bürotäumen.",
-            opts: [
-                { 
-                    t: "Das schwere 'Buch' bergen", 
-                    loot: "manual", 
-                    m: 10, f: 5, a: 0, c: 0, 
-                    r: "Du ziehst es aus dem Stapel. Es ist... ein 'Windows 95 Handbuch'! Antikes Wissen für echte Kenner. Inventar +1." 
-                },
-                { 
-                    t: "Mutig in den Kabelsalat greifen", 
-                    loot: "cable", 
-                    m: 10, f: 5, a: 0, c: 0, 
-                    r: "Du kämpfst mit dem Knoten und gewinnst! Ein langes, graues LAN-Kabel gehört jetzt dir. Inventar +1." 
-                },
-                { 
-                    t: "Blind nach dem roten 'Ding' ganz unten wühlen",
-                    loot: "stressball", 
-                    m: 10, f: 5, a: 0, c: 0, 
-                    r: "Igit... was ist das? Ach, nur ein alter Wut-Ball! Er ist etwas klebrig, aber drückbar. Inventar +1." 
-                },
-                { 
-                    t: "Das silberne Glitzern untersuchen", 
-                    loot: "tape", 
-                    m: 10, f: 5, a: 0, c: 0, 
-                    r: "Der heilige Gral der Reparatur! Eine fast volle Rolle Panzertape. Damit kannst du das Universum (oder Drucker) flicken. Inventar +1." 
-                }
-            ]
-        },
-        {
-            id: "sq_chair",
-            kind: "text",
-            title: "Der Chefsessel",
-            text: "Der Chef hat einen neuen Stuhl. Sein alter (sehr bequemer) steht auf dem Flur zum Sperrmüll.",
-            opts: [
-                { t: "Stuhl retten & reparieren", req: "tape", m: 20, f: 10, a: -20, c: 0, r: "Eine Rolle Tape für die Armlehne und er ist wie neu. Du sitzt jetzt wie ein König. Faulheit steigt (weil so bequem)." },
-                { t: "Rollen klauen", req: "screw", m: 10, f: 5, a: 0, c: 0, r: "Du schraubst die guten Rollen ab für deinen Stuhl." },
-                { t: "Ignorieren", m: 0, f: 0, a: 0, c: 0, r: "Dein Rücken wird es dir nicht danken." }
-            ]
-        },
-		{
-            id: "sq_janitor_talk",
-            kind: "text",
-            title: "Raucherpause mit Egon",
-            text: "Du triffst Hausmeister Egon am Hintereingang. Er kämpft mit seinem Feuerzeug und flucht über 'diese neumodische Technik'.",
-            opts: [
-                { 
-                    t: "Ihm Feuer geben & zuhören", 
-                    m: 10, f: 5, a: -5, c: 0, 
-                    r: "Er zieht tief an der Zigarette. 'Danke Jung. Diese digitalen Schlösser machen mich fertig! Ich hab das vom Papierlager im Keller jetzt einfach auf 0-0-0-0 gestellt. Aber sags keinem!'" 
-                },
-                { 
-                    t: "Schnell weitergehen", 
-                    m: 2, f: 0, a: 0, c: 0, 
-                    r: "Du hast keine Zeit für seine Geschichten. Du nickst nur kurz und gehst." 
-                }
-            ]
-        },
-		{
-            id: "sq_archive_find",
-            kind: "text",
-            title: "Im Archiv",
-            text: "Du suchst Druckerpapier im Archiv. Dabei fällt dir der Ordner 'Steuererklärung 1990' auf. Er ist ungewöhnlich dick. Du guckst rein: Er ist voller 'Mon Chéri' Pralinen. Das Geheimversteck von Sekretärin Gabi!",
-            opts: [
-                { 
-                    t: "Eine stibitzen & Klappe halten", 
-                    loot: "donut",
-                    m: 2, f: 5, a: 0, c: 0, 
-                    r: "Schmeckt nach altem Alkohol. Aber du weißt jetzt, wo der Vorrat liegt." 
-                },
-                { 
-                    t: "Ordner zurückstellen", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Du lässt Gabi ihren Schatz. Diskretion ist Ehrensache." 
-                }
-            ]
-        },
-        {
-            id: "sq_sad_manager",
-            kind: "text",
-            title: "Der Zusammenbruch",
-            text: "Im Flur steht der Projektleiter. Er starrt gegen die Wand und wirkt völlig apathisch. Er reagiert nicht, als du vorbeigehst.",
-            opts: [
-                { 
-                    t: "Schulter klopfen: 'Kopf hoch!'", 
-                    m: 5, f: 0, a: 5, c: 0, 
-                    r: "Er zuckt zusammen. 'Lassen Sie mich einfach in Ruhe.' Leere Phrase, keine Wirkung." 
-                },
-                { 
-                    t: "Flüstern: 'Ein Schritt vor, zwei zurück...'",
-                    m: 5, f: 5, a: -10, c: 0, 
-                    r: "Seine Augen leuchten kurz auf. Er richtet sich auf, nimmt Haltung an. 'Tango... ja. Die Leidenschaft. Sie haben Recht. Ich muss heute Abend wieder zum Kurs.' Er nickt dir dankbar zu." 
-                },
-                { 
-                    t: "Brüllen: 'TSCHAKKA! MINDSET!'",
-                    m: 5, f: 0, a: 15, c: 10, 
-                    r: "Er dreht sich langsam um und funkelt dich böse an. 'Gehen Sie weg. Bevor ich etwas tue, was das HR nicht erlaubt.' Das war wohl zu viel." 
-                }
-            ]
-        },
-		{
-            id: "sq_toner_trap",
-            kind: "text",
-            title: "Die Toner-Falle",
-            text: "Frau Elster aus der Buchhaltung winkt dich hektisch zum Kopierer. 'Da klemmt was! Ich trau mich nicht ran, Sie sind doch der Technik-Profi!' Sie tritt auffällig weit zurück.",
-            opts: [
-                { 
-                    t: "Klappe öffnen & nachsehen", 
-                    m: 25, f: -15, a: 50, c: 10, 
-                    r: "BAAAAAM! Eine manipulierte Toner-Kartusche explodiert dir ins Gesicht. Du siehst aus wie ein Schlumpf. Frau Elster ruft sofort: 'Iiiiih! Herr Müller hat den Kopierer gesprengt! Gut dass ich nichts angefasst habe!' Sie petzt beim Facility Management." 
-                },
-                { 
-                    t: "Riechen Lunte: 'Mach selbst'", 
-                    m: 2, f: 5, a: -5, c: 0, 
-                    r: "Du gehst weiter. Hinter dir hörst du ein lautes 'PUFF' und Schreie. Tja. Intuition ist alles." 
-                }
-            ]
-        },
-		{
-            id: "sq_fresh_air",
-            kind: "text",
-            title: "Dicke Luft",
-            text: "Im Meetingraum 'Aquarium' stinkt es bestialisch nach Mettbrötchen und Angstschweiß. Jemand hat das Fenster zugelassen. Dir wird fast übel im Vorbeigehen.",
-            opts: [
-                { 
-                    t: "Fenster kippen (Lüften)", 
-                    m: 5, f: -5, a: 20, c: 5, 
-                    r: "Frische Luft strömt rein! Und mit ihr eine Wespe. Sie sticht den Vertriebsleiter mitten in die Lippe. Das Meeting wird abgebrochen. Er nuschelt wütend: 'Wer 'at 'as Venster aufg'macht?! MÜLLER?!'" 
-                },
-                { 
-                    t: "Luft anhalten & weiter", 
-                    m: 2, f: 0, a: 0, c: 0, 
-                    r: "Sollen sie doch ersticken. Nicht dein Problem." 
-                }
-            ]
-        },
-		{
-            id: "sq_package_help",
-            title: "Die schwere Kiste",
-            text: "Die neue Praktikantin bricht fast unter einem riesigen Paket zusammen. 'Puh... das muss zum Marketing in den 4. Stock... können Sie...?' Sie zittert schon.",
-            opts: [
-                { 
-                    t: "Helfen & Tragen", 
-                    m: 15, f: -10, a: 30, c: 5, 
-                    r: "Du schleppst die Kiste schwitzend in den 4. Stock. Chantal vom Marketing sieht dich: 'WAS SOLL DAS HIER?! Das habe ich storniert! Nimm das sofort wieder mit, du Idiot!' Die Praktikantin ist nirgends zu sehen. Du stehst als Depp da." 
-                },
-                { 
-                    t: "Anfeuern: 'Tschakka!'", 
-                    m: 2, f: 5, a: -5, c: 0, 
-                    r: "Du motivierst sie verbal. Sie schaut dich hasserfüllt an, schleppt sich aber weiter. Dein Rücken bleibt heil." 
-                }
-            ]
-        },
-        {
-            id: "sq_alarm_fail",
-            kind: "text",
-            title: "Der rote Knopf",
-            text: "Du lehnst dich im Flur an die Wand. Plötzlich: SCHRILL! Du hast den Feueralarm ausgelöst! Der Hausmeister rennt wütend herbei.",
-            opts: [
-                { 
-                    t: "Entschuldigen & Wegrennen", 
-                    m: 5, f: 0, a: 10, c: 20, 
-                    r: "Du rennst weg. Der Hausmeister brüllt dir nach: 'IDIOT! Jedes Mal muss ich **4-7-1-1** eingeben wegen solchen Deppen!' Du hast Ärger, aber den Code gehört." 
-                },
-                { 
-                    t: "So tun als wäre es ein Test",
-                    m: 2, f: 5, a: 0, c: 0, 
-                    r: "Er glaubt dir nicht. 'Verschwinde!' Er dreht dir demonstrativ den Rücken zu, schirmt das Tastenfeld mit seinem breiten Kreuz ab und bringt die Sirene zum Schweigen." 
-                }
-            ]
-        },
-        {
-            id: "sq_elster_blockade",
-            title: "Der Drache bewacht den Hort",
-            text: "Frau Elster sitzt auf dem Aktenordner, den du brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht hungrig aus und starrt auf deine Snacks.",
-            opts: [
-                { 
-                    t: "Einen 'Erdnuss-Power' Riegel anbieten",
-                    m: 5, f: -10, a: 50, c: 100, 
-                    r: "Sie beißt rein. 'Oh Gott... mein Hals...' Sie läuft blau an. Der Notarzt muss kommen. Du hast den Ordner, aber fast jemanden umgebracht. Anzeige droht!" 
-                },
-                { 
-                    t: "Eine Tafel Alpenmilch-Schokolade anbieten",
-                    m: 10, f: 5, a: -10, c: 0, 
-                    r: "Sie prüft die Packung. 'Oh, ohne Nüsse? Sehr aufmerksam!' Sie lächelt und gibt dir den Ordner. 'Sie merken sich ja Dinge!'" 
-                },
-                { 
-                    t: "Einfach wegnehmen",
-                    m: 5, f: 0, a: 20, c: 20, 
-                    r: "Ein Handgemenge. Sie kratzt dich. Du hast den Ordner, aber blutige Hände." 
-                },
-                { 
-                    t: "Später wiederkommen",
-                    m: 30, f: 0, a: 0, c: 0, 
-                    r: "Du wartest, bis sie Feierabend macht. Kostet Zeit." 
-                }
-            ]
-        },
-		{
-            id: "sq_secret_meeting",
-            kind: "text",
-            title: "Der Kopierraum",
-            text: "Du öffnest die Tür zum Kopierraum. Da stehen der Finanzchef und die Kantinen-Chefin... sehr eng umschlungen. Sie springen auseinander. Der Finanzchef wischt sich Lippenstift ab.",
-            opts: [
-                { 
-                    t: "Tür wortlos schließen", 
-                    m: 5, f: 5, a: -5, c: 0, 
-                    r: "Du gehst. Du hast nichts gesehen. Aber du WEISST es. Ein mächtiges Druckmittel." 
-                },
-                { 
-                    t: "Fragen: 'Druckt ihr auch?'", 
-                    m: 5, f: 0, a: 20, c: 20, 
-                    r: "Finanzchef: 'RAUS HIER! Wenn Sie ein Wort sagen, sind Sie gefeuert!' Ups." 
-                }
-            ]
-        },
-        {
-            id: "sq_manual_read",
-            kind: "text",
-            title: "Die digitale Apokalypse",
-            text: "Stille. Tödliche Stille. Spotify stoppt. Ladebalken frieren ein. Das Internet ist tot. Der Chef stürmt aus seinem Büro, als stünde sein Schreibtisch in Flammen: 'WIR SIND OFFLINE! TUN SIE WAS! WIR VERLIEREN MILLIARDEN... PRO SEKUNDE!'",
-            opts: [
-                { 
-                    t: "Das heilige Handbuch konsultieren", 
-                    req: "manual", 
-                    m: 15, f: -20, a: -5, c: -20, 
-                    r: "Du blätterst hektisch durch die verstaubten Seiten. Seite 404: Notfall-Reset. Du führst den Code aus. *Blink*. *Blink*. *Grün*. Das Internet ist zurück. Der Chef wischt sich Schweiß von der Stirn: 'Gute Arbeit, Müller. Sie sind jeden Cent wert.'" 
-                },
-                { 
-                    t: "Demonstrativ Candy Crush zocken", 
-                    m: 30, f: 20, a: 0, c: 50, 
-                    r: "Du lehnst dich entspannt zurück, legst die Füße hoch und startest eine Runde auf dem Handy. *Dudel-Dudel*. Die Firma brennt, aber du knackst den Highscore. Der Chef starrt fassungslos auf dein Display. Seine Halsschlagader beginnt gefährlich zu pochen." 
-                },
-                { 
-                    t: "Matrix-Modus: Wildes Tippen vortäuschen", 
-                    m: 10, f: -5, a: 10, c: -5, 
-                    r: "Du öffnest vier Terminals gleichzeitig und lässt 'ping google.com' in grün auf schwarz laufen. Dazu hämmerst du sinnlos auf die Tasten. Der Chef nickt ehrfürchtig: 'Er kämpft gegen den Virus! Lassen wir ihn arbeiten!'" 
-                }
-            ]
-        },
-        {
-            id: "sq_lost_stick",
-            kind: "text",
-            title: "Der verbotene Datenträger",
-            text: "Auf dem Spülkasten der Toilette liegt einsam ein USB-Stick. Mit dickem, roten Edding steht darauf geschrieben: 'STRENG PRIVAT! NICHT ANFASSEN!'. Es ist der klassische Köder. Deine Admin-Finger kribbeln.",
-            opts: [
-                { 
-                    t: "Todsünde begehen: Am PC anschließen", 
-                    loot: "usb_stick", 
-                    m: 10, f: 5, a: 0, c: 20, 
-                    r: "Die Neugier ist stärker als der Verstand. Du steckst ihn ein. Ein Ordner öffnet sich: 'Hacking-Tools'. Jackpot! Du steckst ihn schnell ein. Doch unten rechts poppt eine rote Meldung auf: 'Security-Alert: Unautorisiertes Gerät an Port 3'. Ups. Du wirst beobachtet." 
-                },
-                { 
-                    t: "Paranoid werden: Im Klo runterspülen", 
-                    m: 5, f: 0, a: 5, c: 0, 
-                    r: "Du nimmst den Stick mit zwei Fingern, wirfst ihn in die Schüssel und betätigst die Spülung. *Gurgel... Schlürf... Weg.* Keine Forensik der Welt holt den wieder zurück. Problem gelöst." 
-                },
-                { 
-                    t: "Den braven Mitarbeiter spielen & abgeben", 
-                    m: 10, f: -5, a: 0, c: -5, 
-                    r: "Du bringst das Ding zum Empfang. Gabi quietscht vor Freude: 'Oh Gott, meine Urlaubsfotos aus Bottrop-Kirchhellen! Danke!' Du hast zwar keine Hacking-Tools, aber gutes Karma." 
-                }
-            ]
-        },
-        {
-            id: "sq_headphone_zone",
-            kind: "text",
-            title: "Die Presslufthammer-Symphonie",
-            text: "Direkt vor dem Fenster wird der Asphalt aufgerissen. *RATATATA!* Der Lärm ist körperlich spürbar. Dein Kaffee schlägt Wellen wie das Wasserglas in Jurassic Park. An Arbeit ist nicht zu denken.",
-            opts: [
-                { 
-                    t: "Rettung durch Technik: Kopfhörer auf", 
-                    req: "headphones", 
-                    m: 0, f: 10, a: -20, c: 0, 
-                    r: "Klick. Active Noise Cancelling an. Die Welt verstummt. Du siehst draußen nur noch stumme Gestalten, die den Boden vibrieren lassen, aber du hörst nur sanftes Meeresrauschen. Himmlisch." 
-                },
-                { 
-                    t: "Fenster aufreißen & Bauarbeiter anbrüllen", 
-                    m: 5, f: 0, a: 20, c: 10, 
-                    r: "Du schreist mit hochrotem Kopf: 'RUHE DA UNTEN! WIR ARBEITEN HIER!'. Der Vorarbeiter schaut kurz hoch, grinst breit, zeigt dir den Daumen und bohrt extra laut weiter. Du bist jetzt heiser." 
-                },
-                { 
-                    t: "Arbeitsschutz geltend machen & Pause machen", 
-                    m: 10, f: -10, a: 0, c: 5, 
-                    r: "Du erklärst lautstark: 'Das überschreitet den zulässigen Dezibel-Grenzwert nach DIN 15905!' Unter diesem Vorwand verziehst du dich für zwei Stunden in die weit entfernte (und ruhige) Lobby und liest Nachrichten." 
-                }
-            ]
-        },
-        {
-            id: "sq_cable_hunt",
-            kind: "text",
-            title: "Panik am Papierfach",
-            text: "Alarmstufe Rot! Der CEO steht mit hochrotem Kopf vor dem Abteilungsdrucker. 'Ich muss diesen Fusions-Vertrag JETZT unterschreiben! Warum druckt das Ding nicht?!' Deine Diagnose: Das USB-Verbindungskabel fehlt. Einfach weg.",
-            opts: [
-                { 
-                    t: "Skrupellos: Kabel bei Azubi Kevin klauen", 
-                    m: 10, f: 0, a: -10, c: -10, 
-                    r: "Du schleichst zu Kevins Platz und ziehst das Kabel aus seinem Scanner. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der CEO bekommt seinen Ausdruck." 
-                },
-                { 
-                    t: "Achselzucken: 'Tja, Hardware-Defekt'", 
-                    m: 5, f: -5, a: 10, c: 20, 
-                    r: "Du meldest: 'Kritisches Fehlen von Infrastruktur.' Der CEO starrt dich fassungslos an. 'WOFÜR BEZAHLE ICH SIE EIGENTLICH?!' Er muss den Vertrag auf einer Serviette unterschreiben. Sein Blick tötet." 
-                },
-                { 
-                    t: "Verzweiflungstat: WLAN-Hotspot improvisieren", 
-                    m: 5, f: -5, a: 5, c: 10, 
-                    r: "Du versuchst wildes Tethering mit dem Handy. Es klappt! ...fast. Der Drucker spuckt den Vertrag aus, aber leider auf dem Etikettendrucker in der Logistik. In Briefmarkengröße. Der Wille war da." 
-                }
-            ]
-        },
-        {
-            id: "sq_fire_drill",
-            kind: "text",
-            title: "Feuerübung",
-            text: "ALARM! Alle müssen raus. Es ist nur eine Übung, aber der Chef guckt zu.",
-            opts: [
-                { 
-                    t: "Feuerlöscher schnappen & posen", 
-                    req: "fire_ext", 
-                    m: 20, f: 10, a: -10, c: -20, 
-                    r: "Du läufst heldenhaft mit dem Löscher rum. Der Chef nickt: 'Vorbildlich, Müller!'. Radar sinkt massiv." 
-                },
-                { 
-                    t: "Langsam rausgehen", 
-                    m: 30, f: 20, a: 0, c: 0, 
-                    r: "30 Minuten bezahlte Pause in der Sonne. Du stehst rum." 
-                },
-                { 
-                    t: "Verstecken & weiterarbeiten", 
-                    m: 10, f: -20, a: 5, c: 30, 
-                    r: "Der Sicherheitsbeauftragte findet dich. 'MÜLLER! IM ERNSTFALL WÄREN SIE TOT!' Das wird gemeldet." 
-                },
-                { 
-                    t: "Panik vortäuschen", 
-                    m: 15, f: 5, a: 10, c: 0, 
-                    r: "Du rennst schreiend im Kreis. Die Kollegen lachen." 
-                }
-            ]
-        },
-        {
-            id: "sq_perfect_script",
-            kind: "text",
-            title: "Das Meisterwerk",
-            text: "Du hast ein Python-Skript geschrieben, das die komplette Datenbank-Wartung automatisiert. Es ist elegant, fehlerfrei und spart der Firma Tausende Euro. Der Balken läuft. Du lehnst dich entspannt zurück und verschränkst die Arme, um dein Werk zu bewundern.",
-            opts: [
-                { 
-                    t: "Den Moment genießen (Zuschauen)", 
-                    m: 10, f: 10, a: -10, c: 25, 
-                    r: "Der Chef kommt rein. Er sieht dich entspannt im Stuhl liegen, die Hände nicht an der Tastatur. 'Müller! Wir bezahlen Sie nicht fürs Fernsehen gucken! Tippen Sie gefälligst was!' Er knallt die Tür zu." 
-                },
-                { 
-                    t: "So tun, als ob man tippt", 
-                    m: 10, f: -5, a: 10, c: 0, 
-                    r: "Du hämmerst sinnlos auf die Tastatur, während das Skript läuft. Der Chef nickt zufrieden im Vorbeigehen: 'Ah, fleißig! Weiter so.' Du fühlst dich dumm, aber sicher." 
-                },
-                { 
-                    t: "Erklären: 'Das ist Automation!'", 
-                    m: 15, f: 0, a: 5, c: 15, 
-                    r: "Du erklärst stolz die Effizienzsteigerung. Der Chef starrt dich leer an. 'Also haben Sie gerade nichts zu tun? Dann putzen Sie mal die Monitore im Meetingraum.' Eigentor." 
-                }
-            ]
-        },
-        {
-            id: "sq_security_audit",
-            kind: "text",
-            title: "Der Sicherheits-Check",
-            text: "Du führst einen genehmigten Penetration-Test durch, um Sicherheitslücken im Netzwerk zu finden. Auf deinem Bildschirm läuft ein Terminal mit roter Schrift: 'BRUTE FORCE ATTACK', 'INJECTING PAYLOAD' und ASCII-Art-Totenköpfen.",
-            opts: [
-                { 
-                    t: "Professionell weitermachen", 
-                    m: 20, f: -10, a: 0, c: 30, 
-                    r: "Der Chef schleicht sich von hinten an. Er sieht 'PASSWORD CRACKED' auf deinem Monitor. Er wird bleich, sagt kein Wort und geht rückwärts wieder raus. 5 Minuten später ruft die Rechtsabteilung an." 
-                },
-                { 
-                    t: "Monitor schnell ausschalten", 
-                    m: 5, f: 5, a: 10, c: 20, 
-                    r: "Zack. Bildschirm schwarz. Der Chef steht in der Tür: 'Was haben Sie zu verbergen, Müller? Pornos? Glücksspiel?' Er notiert sich etwas in seinem kleinen schwarzen Buch." 
-                },
-                { 
-                    t: "Rufen: 'ICH HACKE UNS NUR ZUR PROBE!'", 
-                    m: 10, f: 0, a: 5, c: 10, 
-                    r: "Der Chef zuckt zusammen. 'Schreien Sie nicht so! Und hören Sie auf, das Internet kaputt zu machen!' Er versteht es nicht, aber zumindest ruft er nicht die Polizei." 
-                }
-            ]
-        },
-        {
-            id: "sq_gabi_pc",
-            title: "Sicherheitslücke",
-            text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
-            opts: [
-                { 
-                    t: "Gabi suchen & belehren", 
-                    m: 10, f: -5, a: 10, c: -5, 
-                    r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen. Du fühlst dich im Recht, aber unbeliebt." 
-                },
-                { 
-                    t: "Den offenen Kalender checken", 
-                    m: 5, f: 5, a: 0, c: 0, 
-                    r: "Ein schneller Blick: 'Lieferung Sessel'. Und direkt danach: 'Externes Meeting (Golfplatz) - Open End'. Aha! Das Büro ist also sturmfrei..." 
-                },
-                { 
-                    t: "Computer sperren & weitergehen", 
-                    m: 2, f: 0, a: -5, c: 0, 
-                    r: "Klick. Der PC ist gesperrt. Du hinterlässt einen Post-it 'Gern geschehen' auf dem Monitor. Ein guter Tag für die IT-Sicherheit." 
-                }
-            ]
-        },
-        {
-            id: "sq_boss_chair",
-            title: "Operation Rückgrat",
-            text: "Die Tür zum Chefbüro steht sperrangelweit offen. Dr. Wichtig ist nirgends zu sehen. Mitten im Raum thront die frisch ausgepackte Lieferung: Ein High-End Massagesessel.",
-            opts: [
-                { 
-                    t: "Probeliegen (Shiatsu-Test)", 
-                    m: 20, f: 20, a: -40, c: 0, 
-                    r: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du nickst kurz weg... und schreckst hoch. Sabber im Mundwinkel. Aber das Büro ist immer noch leer. Glück gehabt." 
-                },
-                { 
-                    t: "Kartons filzen", 
-                    loot: "bubble_wrap", 
-                    m: 10, f: -5, a: 0, c: 0, 
-                    r: "Du durchsuchst den Müll nach Brauchbarem. Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
-                },
-                { 
-                    t: "Tür diskret schließen", 
-                    m: 5, f: 0, a: 0, c: -15, 
-                    r: "Du ziehst die Tür leise ins Schloss. Niemand soll sehen, dass das Büro leer ist. Deine Diskretion bleibt unbemerkt, aber dein Chef-Radar sinkt." 
-                }
-            ]
-        },
+    {
+        id: "sq_toilet_2b",
+        kind: "text",
+        title: "Der Fehlalarm",
+        reqStory: "path_toilet_lie",
+        text: "Hausmeister Egon steht mit einem Werkzeugkasten vor dir. 'Björn sagte, hier war ein Promi? Oder ein Feuer? Er hat was von 'heißer Luft' geredet. Ich soll die Lüftung checken.'",
+        opts: [
+            { 
+                t: "Lügen: 'War nur ein Test.'", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Egon zuckt mit den Schultern. 'Mir egal, ich werde stündlich bezahlt.' Er setzt sich hin und macht Pause. Du hast einen Verbündeten." 
+            },
+            { 
+                t: "Wahrheit: 'Ich musste aufs Klo.'", 
+                m: 10, f: 0, a: 5, c: 0, 
+                r: "Egon lacht dreckig. 'Guter Trick. Muss ich mir merken.' Er erzählt es aber weiter. Dein Ruf als 'Lügner' steigt." 
+            }
+        ]
+    },
+    {
+        id: "sq_cake_1",
+        kind: "text",
+        title: "Der Kuchen-Krieg",
+        text: "Ein unbekannter Held hat Geburtstagskuchen spendiert. Mächtige Schoko-Sahne-Torte! Doch Chantal (Marketing) blockiert den Zugang und hält einen Monolog über ihre neue 'Low-Carb-High-Sadness'-Diät. Im Hintergrund lauern schon hungrige Kollegen.",
+        opts: [
+            { 
+                t: "Ninja-Move: Kuchen schnappen & flüchten", 
+                next: "path_cake_sugar", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Zack! Während Chantal Luft holt, greifst du dir ein riesiges Stück mit der bloßen Hand und verschwindest im Serverraum. Die Sahne klebt überall, aber der Zucker-Rush setzt sofort ein." 
+            },
+            { 
+                t: "Höflich warten & zuhören", 
+                next: "path_cake_crumb", 
+                m: 30, f: -5, a: 20, c: 0, 
+                r: "Schwerer Fehler. Während Chantal über Kalorien referiert, fällt der Vertrieb wie ein Heuschreckenschwarm über das Blech her. Als sie fertig ist, ist das Blech blankgeputzt. Du stehst vor dem Nichts." 
+            },
+            { 
+                t: "Dominanz: Das letzte Stück vor dem Chef essen", 
+                next: "path_cake_boss", 
+                m: 5, f: 10, a: 5, c: 25, 
+                r: "Du schiebst dir das letzte Stück genüsslich in den Mund, genau als der Chef danach greift. Er greift ins Leere. Er starrt auf deine schokolierten Lippen, sein Gesicht läuft dunkelrot an. Er flüstert: 'Das war meins...'" 
+            }
+        ]
+    },
+    {
+        id: "sq_cake_2a",
+        kind: "text",
+        title: "Der Zucker-Trip",
+        reqStory: "path_cake_sugar",
+        text: "Du sitzt am Platz. Das war zu viel Zucker auf leeren Magen. Deine Pupillen vibrieren. Du siehst plötzlich den Matrix-Code auf deinem Bildschirm. Die Excel-Tabelle spricht zu dir: 'Füttere mich mit Daten!'",
+        opts: [
+            { 
+                t: "Die Welle reiten (Arbeiten)", 
+                m: 60, f: -30, a: -10, c: 0, 
+                r: "Du tippst mit Lichtgeschwindigkeit. Deine Hände sind nur noch Schemen. Du hast Arbeit für drei Wochen in einer Stunde erledigt. Leider ist alles in Wingdings-Schriftart. Egal, es fühlte sich gut an." 
+            },
+            { 
+                t: "Unter den Tisch legen (Crash)", 
+                m: 30, f: 20, a: 10, c: 10, 
+                r: "Der Absturz kommt hart. Du rollst dich unter dem Schreibtisch zusammen und wimmerst leise. Kevin findet dich und denkt, du bist tot. Er stiehlt deinen Bürostuhl." 
+            }
+        ]
+    },
+    {
+        id: "sq_cake_2b",
+        kind: "text",
+        title: "Das Krümel-Monster",
+        reqStory: "path_cake_crumb",
+        text: "Der Hunger treibt dich in den Wahnsinn. Du bist allein in der Küche. Auf dem leeren Kuchenblech kleben noch Reste von Sahne und Schokostreuseln. Niemand ist zu sehen...",
+        opts: [
+            { 
+                t: "Das Blech ablecken (Würdeverlust)", 
+                m: 5, f: 5, a: -10, c: 10, 
+                r: "Du leckst gierig über das Metall. Plötzlich geht das Licht an. Der Großkunde aus Japan steht mit dem Chef in der Tür. Sie starren dich an. Du hast Sahne an der Nase. Der Chef sagt leise: 'Wir finden allein raus.'" 
+            },
+            { 
+                t: "Einen alten Keks aus der Ritze essen", 
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du findest einen 'Prinzenrolle'-Keks hinter der Mikrowelle. Er ist weich. Er schmeckt nach Staub und Zwiebeln. Du würgst ihn runter. Der Tiefpunkt ist erreicht." 
+            }
+        ]
+    },
+    {
+        id: "sq_cake_2c",
+        kind: "text",
+        title: "Das Back-Mandat",
+        reqStory: "path_cake_boss",
+        text: "Der Chef zitiert dich ins Büro. Er wirkt ruhig, zu ruhig. 'Müller. Sie haben mir eine strategische Ressource (Kuchen) entzogen. Ich fordere Restitution. Sie werden morgen für das Board-Meeting backen. Und wehe, es ist Fertigmischung!'",
+        opts: [
+            { 
+                t: "Trotz: 'Ich kann nur Rührei.'", 
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Der Chef grinst böse. 'Dann lernen Sie es. Youtube existiert. Wenn dieser Kuchen nicht schmeckt, streiche ich Ihren Urlaub.' Der Druck ist unmenschlich." 
+            },
+            { 
+                t: "Lügen: 'Ich bin Hobby-Konditor!'", 
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Du kaufst beim Bäcker eine Torte, nimmst sie aus der Schachtel und streust Mehl drauf, damit es 'selbstgemacht' aussieht. Der Chef liebt es. 'Müller, Sie haben Talente!' (Kosten: 30€, aber Job gerettet)." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_1",
+        kind: "text",
+        title: "Alarmstufe Popcorn",
+        text: "WUUUP! WUUUP! Die Sirene brüllt. Es riecht nicht nach Inferno, sondern eindeutig nach verbranntem 'Salty Caramel'-Popcorn aus der Teeküche. Die Kollegen rennen panisch zum Sammelplatz.",
+        opts: [
+            { 
+                t: "HELDENTAT: Küche stürmen!", 
+                req: "fire_ext", 
+                next: "path_fire_hero", 
+                m: 5, f: -20, a: -20, c: -10, 
+                r: "Du trittst die Küchentür ein, entsicherst den Löscher und brüllst: 'FIRE IN THE HOLE!' Eine gewaltige weiße Wolke hüllt die qualmende Mikrowelle (und das halbe Stockwerk) ein." 
+            },
+            { 
+                t: "Die Gunst der Stunde nutzen: Plündern", 
+                next: "path_fire_loot", 
+                m: 10, f: 15, a: -10, c: 5, 
+                r: "Während alle zu den Notausgängen stürmen, schleichst du in den verlassenen Konferenzraum. Du klaust die 'Guten Kekse' (die mit Schokolade) und verschwindest ungesehen. Chaos ist eine Leiter." 
+            },
+            { 
+                t: "Pflichtbewusst evakuieren", 
+                next: "path_fire_rain", 
+                m: 45, f: -10, a: 10, c: -5, 
+                r: "Du folgst den grünen Schildern. Draußen regnet es quer. Du stehst 45 Minuten frierend auf dem Parkplatz, während die Feuerwehr feststellt, dass es nur Popcorn war." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_2a",
+        kind: "text",
+        title: "Schneegestöber",
+        reqStory: "path_fire_hero",
+        text: "Der Rauch ist weg. Dafür ist die Küche jetzt komplett weiß gepudert. Hausmeister Egon steht in der Tür und wischt mit dem Finger über den staubigen Tisch. Er sieht dich vernichtend an.",
+        opts: [
+            { 
+                t: "Stolz: 'Gefahr neutralisiert!'", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "'Das war eine Tüte Popcorn, Rambo!' Egon drückt dir einen Besen in die Hand. 'Du gehst hier nicht weg, bis das sauber ist.' Dein Heldenstatus bröckelt beim Fegen." 
+            },
+            { 
+                t: "Flüchten: 'Hust, der Rauch...'", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Du täuschst eine Rauchvergiftung vor und wankst davon. Egon flucht hinter dir her. Er wird sich rächen (wahrscheinlich klemmt morgen dein Bürostuhl)." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_2b",
+        kind: "text",
+        title: "Süße Beute",
+        reqStory: "path_fire_loot",
+        text: "Der Alarm ist vorbei. Du sitzt am Platz und mampfst die gestohlenen Kekse. Plötzlich kommt eine Rundmail vom Chefsekretariat: 'Wer hat während der Evakuierung das Catering für den Aufsichtsrat gestohlen?! Wir sichten die Kameras!'",
+        opts: [
+            { 
+                t: "Kekse schnell aufessen (Beweise vernichten)", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "Du stopfst dir drei Kekse gleichzeitig in den Mund. Du verschluckst dich fast, aber die Beweise sind weg. Dein Magen rebelliert, dein Gewissen ist im Zuckerkoma." 
+            },
+            { 
+                t: "Packung bei Kevin unterschieben", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du legst die leere Packung auf Kevins Tisch. Kurz darauf hörst du Schreie aus seinem Büro. Das war böse. Sehr böse. Aber effektiv." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_2c",
+        kind: "text",
+        title: "Networking im Nieselregen",
+        reqStory: "path_fire_rain",
+        text: "Draußen auf dem Parkplatz stehst du direkt neben Dr. Wichtig. Er friert im Hemd und zittert. Er hat dich bemerkt. Es gibt kein Entkommen vor dem Smalltalk.",
+        opts: [
+            { 
+                t: "Jacke anbieten (Schleimen)", 
+                m: 10, f: -5, a: 10, c: -15, 
+                r: "Du gibst ihm deine Jacke. Er nimmt sie dankbar an. 'Guter Mann, Müller.' Du frierst dir den Hintern ab und bist morgen garantiert krank, aber du hast Bonuspunkte gesammelt." 
+            },
+            { 
+                t: "Witz machen: 'Schönes Wetter heute!'", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Er starrt dich an, als wärst du irre. Wasser tropft von seiner Nase. 'Sehr witzig.' Er dreht sich weg. Das war unangenehm." 
+            }
+        ]
+    },
+{
+        id: "sq_usb_1",
+        kind: "text",
+        title: "Fundsache",
+        text: "Auf dem Flur liegt ein USB-Stick mit der Aufschrift 'GEHEIM' und einem Totenkopf-Sticker. Er liegt genau im toten Winkel der Überwachungskamera.",
+        opts: [
+            { 
+                t: "Sofort einstecken (Heimlich)", 
+                loot: "usb_stick", 
+                next: "path_usb_keep", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Mit einer fließenden Bewegung lässt du den Stick in deiner Tasche verschwinden. Niemand hat es gesehen. Er gehört jetzt dir. Aber was ist drauf? (Inventar +1)" 
+            },
+            { 
+                t: "Am Empfang abgeben (Pflicht)", 
+                next: "path_usb_gabi_fail", 
+                m: 10, f: -5, a: 0, c: -5, 
+                r: "Du bringst ihn zu Gabi. 'Oh, danke! 'Geheim'? Spannend! Ich guck mal schnell rein, wem der gehört, bevor ich ihn ins Fundbüro lege...'" 
+            },
+            { 
+                t: "In den Müll kicken", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Ein gezielter Tritt befördert das Sicherheitsrisiko unter den Getränkeautomaten. Aus den Augen, aus dem Sinn." 
+            }
+        ]
+    },
+    {
+        id: "sq_usb_2a",
+        kind: "text",
+        title: "Die Büchse der Pandora",
+        reqStory: "path_usb_keep",
+        text: "Du sitzt an deinem Platz und drehst den Stick in den Fingern. Die Aufschrift 'GEHEIM' brennt förmlich. Ist es die Kündigungsliste? Bitcoins? Oder nur Müll?",
+        opts: [
+            { 
+                t: "Anschließen & Risikieren", 
+                m: 15, f: 5, a: -5, c: 10, 
+                r: "Die Neugier siegt. Du öffnest den Ordner. Es sind... 500 Seiten Fan-Fiction über Vampire, geschrieben von Dr. Wichtig?! 'Der Graf biss in den Hals der Buchhalterin.' Du hast jetzt mächtiges Erpressungsmaterial." 
+            },
+            { 
+                t: "Formatieren & Behalten", 
+                rem: "usb_stick", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Sicher ist sicher. Du löschst alles unwiederbringlich. Jetzt hast du einen leeren 64GB Stick für deine Urlaubsfotos. Langweilig, aber nützlich. (Item entfernt, Stick 'genutzt')" 
+            }
+        ]
+    },
+    {
+        id: "sq_usb_2b",
+        kind: "text",
+        title: "Gabis Fehler",
+        reqStory: "path_usb_gabi_fail",
+        text: "Zehn Minuten später winkt dich Gabi hektisch zu sich. Sie ist kreidebleich. Aus ihren Lautsprechern dröhnt russische Techno-Musik. Auf dem Bildschirm tanzen halbnackte Skelette. 'Ich hab nur auf 'Rechnung.exe' geklickt! Mach das weg, bevor der Chef kommt!'",
+        opts: [
+            { 
+                t: "Helfen: Stecker ziehen", 
+                m: 5, f: -5, a: 10, c: 0, 
+                r: "Du kriechst unter den Tisch und reißt das Stromkabel raus. Die Musik stirbt. Gabi atmet schwer. 'Das bleibt unter uns, okay? Hier, nimm einen Keks.'" 
+            },
+            { 
+                t: "Lachen & Weggehen", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "'Tja, IT-Sicherheitsschulung geschwänzt, Gabi?' Du lässt sie mit dem Techno-Problem allein. Sie wird dich dafür hassen, aber es sieht extrem lustig aus." 
+            }
+        ]
+    },
+    {
+        id: "sq_printer_1",
+        kind: "text",
+        title: "PC LOAD LETTER",
+        text: "Der Abteilungsdrucker blinkt panisch rot. Das Display meldet: 'SCHWERER PAPIERSTAU IN FACH 2'. Du öffnest Fach 2 – es ist leer. Gleichzeitig klingelt das Fax-Modul schrill wie ein altes Telefon, und aus dem Lautsprecher plärrt eine verzerrte Stimme: 'HALLO?! HÖREN SIE MICH?! ICH WILL MEINE ERBSEN!'",
+        opts: [
+            { 
+                t: "Logik: Cyan nachfüllen (gegen Papierstau)", 
+                next: "path_printer_leasing", 
+                m: 10, f: -5, a: 5, c: 0, 
+                r: "Du folgst der Drucker-Logik: Wenn er 'Papier' sagt, meint er 'Cyan'. Du fummelst eine Kartusche rein, die du im Schrank gefunden hast. Das Blinken hört auf. Vorerst." 
+            },
+            { 
+                t: "Hörer abnehmen (Fax antworten)", 
+                next: "path_printer_call", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du drückst die grüne Taste. 'Hier ist Müller?' - 'WER? ICH WILL DEN BOFROST-MANN!' Der Drucker fängt plötzlich an, ratternde Geräusche zu machen, als würde er das Gespräch verdauen." 
+            },
+            { 
+                t: "Percussive Maintenance (Draufhauen)", 
+                req: "hammer", 
+                next: "path_printer_smash", 
+                m: 2, f: 0, a: -20, c: 10, 
+                r: "BÄM! Du gibst dem Leasing-Gerät einen massiven Kinnhaken mit dem Hammer. Das Klingeln hört auf. Plastik splittert. Das Display wird schwarz. Endlich Ruhe." 
+            }
+        ]
+    },
+    {
+        id: "sq_printer_2a",
+        kind: "text",
+        title: "Die Leasing-Inquisition",
+        reqStory: "path_printer_leasing",
+        text: "Ein Mann in grauem Kittel steht vor dem Drucker. Auf seinem Rücken steht 'Print & Pray Solutions'. Er hält die Cyan-Kartusche hoch wie ein Beweisstück in einem Mordprozess. 'Wer hat diese nicht-zertifizierte Fremdtinte installiert? Das ist ein Verstoß gegen Paragraf 128 des Leasingvertrags. Ich muss das Gerät stilllegen.'",
+        opts: [
+            { 
+                t: "Bestechen: 'Nehmen Sie den alten Toner?'", 
+                m: 5, f: 0, a: 5, c: -5, 
+                r: "Er schnüffelt an der alten Kartusche. 'Ist das Original HP High-Yield? ... Na gut. Ich drücke ein Auge zu. Aber drucken Sie nie wieder PDFs, das mag er nicht.'" 
+            },
+            { 
+                t: "Ihn machen lassen (Stilllegung)", 
+                m: 20, f: 10, a: -5, c: 10, 
+                r: "Er rollt den Drucker auf einer Sackkarre weg. 'Ersatz kommt in 6-8 Wochen aus Übersee.' Die Kollegen starren dich an. Du hast das Drucken abgeschafft. Eigentlich ein Sieg für die Umwelt." 
+            }
+        ]
+    },
+    {
+        id: "sq_printer_2b",
+        kind: "text",
+        title: "Der Papier-Tsunami",
+        reqStory: "path_printer_call",
+        text: "Du kommst zurück in den Flur. Der Boden ist bedeckt mit Papier. Der Drucker läuft auf Hochtouren und druckt unaufhörlich schwarze Seiten voller Nullen und Einsen. Er versucht offenbar, das Telefonat von vorhin zu transkribieren. Der Papierstapel erreicht bald die Decke.",
+        opts: [
+            { 
+                t: "Stecker ziehen", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du killst den Strom. Der Drucker gibt ein letztes, trauriges Piepen von sich. Du stehst knöcheltief im Müll. Es ist vorbei." 
+            },
+            { 
+                t: "Papier als Notizblöcke verteilen", 
+                m: 15, f: -5, a: -5, c: 0, 
+                r: "Recycling! Du bindest die Fehlprints zu Blöcken ('Matrix-Edition') und verteilst sie im Büro. Die Kollegen freuen sich über Gratis-Material. Kreative Problemlösung." 
+            }
+        ]
+    },
+    {
+        id: "sq_printer_2c",
+        kind: "text",
+        title: "Das Smart-Upgrade",
+        reqStory: "path_printer_smash",
+        text: "An der Stelle des alten Druckers steht nun ein glänzendes, futuristisches Gerät: Der 'PrintHub 360 AI'. Er hat keine Knöpfe, nur einen riesigen Touchscreen. Darauf steht: 'Um zu drucken, schließen Sie bitte ein Abo ab. 19,99€ pro Seite (Schwarzweiß).'",
+        opts: [
+            { 
+                t: "Abo abschließen (Firmenkarte)", 
+                m: 10, f: 0, a: 10, c: 20, 
+                r: "Du buchst das 'Platinum-Enterprise-Paket'. Der Chef sieht die Abbuchung auf seinem Handy und bekommt Schnappatmung. Aber hey, er druckt jetzt (manchmal)!" 
+            },
+            { 
+                t: "Schild 'DEFEKT' drankleben", 
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du gibst auf. Die Zukunft ist zu dumm. Du empfiehlst den Kollegen 'Stift und Papier' und gehst Mittagessen." 
+            }
+        ]
+    },
+    {
+        id: "sq_investigation",
+        kind: "text",
+        title: "Die verschwundene Maus",
+        text: "Frau Erna vom Empfang ist aufgelöst. Ihre geliebte 'Glücksmaus' (ein graues Stofftier) ist weg. Der Hauptverdächtige ist Bello, der Büro-Hund, der unschuldig unter dem Schreibtisch hechelt und so tut, als könne er kein Deutsch.",
+        opts: [
+            { 
+                t: "Detektiv spielen & Körbchen durchsuchen", 
+                next: "path_investigation_thief", 
+                m: 30, f: -10, a: 10, c: -10, 
+                r: "Du wühlst dich durch sein Sabber-Nest. Aha! Zwischen einem Knochen und einem alten Socken findest du die Maus. Sie ist nass und eklig. Erna ist überglücklich, Bello knurrt dich leise an. Du hast ihm sein Spielzeug geklaut." 
+            },
+            { 
+                t: "Bello verhören (Anbellen)", 
+                next: "path_investigation_leader", 
+                m: 5, f: 10, a: -10, c: 10, 
+                r: "Du gehst auf alle Viere und bellst ihn laut an: 'WAU! WO IST SIE?!'. Bello ist erst verwirrt, wedelt dann aber begeistert. Der Chef kommt vorbei: 'Müller... alles okay?'. Egal, du hast jetzt den Respekt des Hundes." 
+            },
+            { 
+                t: "Neue Maus aus dem Lager holen", 
+                next: "path_investigation_bored", 
+                m: 5, f: -5, a: 0, c: 0, 
+                r: "Du holst einfach eine neue Werbe-Maus aus dem Schrank. Erna nimmt sie zögernd. 'Es ist nicht dasselbe... aber danke.' Bello gähnt. Ihm ist langweilig." 
+            }
+        ]
+    },
+    {
+        id: "sq_investigation_2a",
+        kind: "text",
+        title: "Die Geiselnahme",
+        reqStory: "path_investigation_thief",
+        text: "Du willst drucken, aber Bello liegt *auf* dem Drucker. Er knurrt, wenn du dich näherst. Er fordert offensichtlich Ersatz für die konfiszierte Glücksmaus. Das Papierfach ist seine Geisel.",
+        opts: [
+            { 
+                t: "Ihm einen Donut opfern", 
+                rem: "donut", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du legst den Donut auf den Boden. Bello springt runter und inhaliert das Gebäck. Der Weg zum Drucker ist frei. Bestechung funktioniert auch bei Tieren. (Item entfernt)" 
+            },
+            { 
+                t: "Ihn mit dem Laserpointer weglocken", 
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du lässt den roten Punkt durch den Flur tanzen. Bello dreht durch, rutscht auf dem Parkett aus und jagt den Punkt bis ins Marketing. Der Drucker gehört wieder dir." 
+            },
+            { 
+                t: "Chef rufen: 'Der Hund sabotiert die Arbeit!'", 
+                m: 15, f: 0, a: 20, c: 5, 
+                r: "Der Chef kommt, sieht den Hund und sagt mit Babystimme: 'Na wer ist denn da ein feiner Drucker-Wächter? Ja wer denn?' Er krault Bello 10 Minuten lang. Du kriegst deinen Ausdruck nicht." 
+            }
+        ]
+    },
+    {
+        id: "sq_investigation_2b",
+        kind: "text",
+        title: "Beute für das Alpha-Tier",
+        reqStory: "path_investigation_leader",
+        text: "Bello kommt schwanzwedelnd in dein Büro. Er sieht dich als Rudelführer. Er legt dir stolz seine neueste 'Beute' auf die Füße: Einen teuren, italienischen Herrenschuh. Er ist vollgesabbert und leicht angekaut. Er gehört definitiv dem Chef.",
+        opts: [
+            { 
+                t: "Schuh heimlich unter das Sofa kicken", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du lässt das Beweisstück verschwinden. Bello guckt enttäuscht, holt den Schuh aber sofort wieder hervor. Er will 'Hol Stöckchen' spielen. Mit einem 500€-Schuh." 
+            },
+            { 
+                t: "Bello loben: 'Feiner Junge!'", 
+                m: 10, f: 10, a: -20, c: 20, 
+                r: "Du kraulst ihn. Bello ist so glücklich, dass er losrennt und auch den *zweiten* Schuh holt. Jetzt hast du das Paar komplett. Wenn der Chef jetzt reinkommt, bist du tot." 
+            },
+            { 
+                t: "Tatort reinigen (Schuh putzen)", 
+                m: 20, f: -10, a: 5, c: -5, 
+                r: "Du versuchst panisch, den Sabber mit Taschentüchern zu entfernen. Du stellst den Schuh nachts heimlich vor die Cheftür. Das war knapp." 
+            }
+        ]
+    },
+    {
+        id: "sq_investigation_2c",
+        kind: "text",
+        title: "Markierarbeiten",
+        reqStory: "path_investigation_bored",
+        text: "Weil niemand mit ihm gespielt hat, hat Bello sich selbst beschäftigt. Er steht im Serverraum (Tür war offen) und hebt das Bein an Rack 3. Das ist der Haupt-Switch.",
+        opts: [
+            { 
+                t: "Hechtsprung, um den Strahl abzufangen", 
+                m: 5, f: -5, a: 10, c: -10, 
+                r: "Du wirfst dich dazwischen. Deine Hose ist nass (und warm), aber der 10.000€-Switch ist trocken. Du bist ein Held, aber du riechst streng." 
+            },
+            { 
+                t: "Laut klatschen & 'PFUI!' schreien", 
+                m: 2, f: 0, a: 10, c: -5, 
+                r: "Bello erschrickt, kneift den Schwanz ein und rennt weg. Ein paar Tropfen haben das Gehäuse getroffen, aber nichts Kritisches. Du musst wischen." 
+            },
+            { 
+                t: "Filmen für YouTube", 
+                m: 5, f: 10, a: -10, c: 50, 
+                r: "Du hältst drauf. *ZISCH-BRUTZEL*. Der Switch fällt aus. Das Video 'Dog vs Internet' geht viral. Du verlierst deinen Job, wirst aber Influencer." 
+            }
+        ]
+    },
+{
+        id: "sq_loose_cable",
+        kind: "text",
+        title: "Die Stolperfalle",
+        text: "Im Flur liegt ein graues LAN-Kabel quer über dem Weg. Es sieht gefährlich aus. Dr. Wichtig kommt gleich hier lang und schaut auf sein Handy.",
+        opts: [
+            { 
+                t: "Sichern: Mit Tape festkleben", 
+                req: "tape", 
+                next: "path_cable_stuck", 
+                m: 5, f: -5, a: 0, c: -5, 
+                r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt. Du fühlst dich vorbildlich." 
+            },
+            { 
+                t: "Mitnehmen (Fundsache)", 
+                loot: "cable", 
+                next: "path_cable_missing", 
+                m: 5, f: 5, a: 0, c: 10, 
+                r: "Zack, eingesteckt. 'Wer das hier liegen lässt, braucht es wohl nicht.' Du hast jetzt ein langes Kabel. Inventar +1." 
+            },
+            { 
+                t: "Liegen lassen & zusehen", 
+                m: 2, f: 10, a: 5, c: -5, 
+                r: "Der Chef steigt elegant drüber, ohne aufzublicken. Du bist enttäuscht. Keine Action." 
+            }
+        ]
+    },
+    {
+        id: "sq_loose_cable_2a",
+        kind: "text",
+        title: "Bombenfest",
+        reqStory: "path_cable_stuck",
+        text: "Ein externer Techniker steht kniend im Flur und flucht. 'Wer hat mein Mess-Kabel hier einbetoniert?! Das war nur temporär! Ich krieg das nicht ab, ohne den Teppich rauszureißen!' Er zerrt vergeblich am Panzertape.",
+        opts: [
+            { 
+                t: "Mit einem Teppichmesser helfen", 
+                m: 20, f: -10, a: 5, c: -5, 
+                r: "Ihr schneidet das Kabel gemeinsam aus dem Boden. Der Teppich hat jetzt einen hässlichen Riss. 'Sagen wir einfach, das war Verschleiß', meint der Techniker." 
+            },
+            { 
+                t: "Belehren: 'Safety First!'", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "'Stolperfallen sind verboten!' Der Techniker starrt dich hasserfüllt an. Er schneidet das Kabel einfach an beiden Enden ab und lässt den Rest kleben. Ein Denkmal für die Ewigkeit." 
+            }
+        ]
+    },
+    {
+        id: "sq_loose_cable_2b",
+        kind: "text",
+        title: "Blinder Fleck",
+        reqStory: "path_cable_missing",
+        text: "Ein Mann von 'Secure & Safe' läuft suchend umher. 'Verdammt! Wo ist das Patchkabel? Ich sollte hier die neue 4K-Überwachungskamera für den Chef installieren! Er will sehen, wer immer früher geht!' Ohne Kabel kein Bild.",
+        opts: [
+            { 
+                t: "Zurückgeben: 'Habe ich gefunden'", 
+                rem: "cable", 
+                m: 5, f: -5, a: 10, c: -10, 
+                r: "Du gibst es ihm. Er montiert die Kamera. Sie zeigt jetzt direkt auf DEINE Bürotür. Der Chef sieht alles. Du hast dir selbst ins Knie geschossen. (Item entfernt)" 
+            },
+            { 
+                t: "Lügen: 'Bestimmt die Putzkolonne'", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "'Mist. Dann muss ich morgen wiederkommen.' Er packt die Kamera wieder ein. Du hast der Belegschaft (und dir) einen weiteren Tag Freiheit erkauft. Held!" 
+            }
+        ]
+    },
+    {
+        id: "sq_package_open_1",
+        kind: "text",
+        title: "Die Festung aus Pappe",
+        text: "Ein Paket für die IT liegt auf deinem Tisch. Der Absender war offensichtlich paranoid und hat eine komplette Rolle Panzertape verbraucht. Es gibt keine Lasche, keinen Anfang, nur glatte, braune Unendlichkeit.",
+        opts: [
+            { 
+                t: "Chirurgischer Eingriff (Schraubendreher)", 
+                req: "screw", 
+                next: "path_package_stink", 
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Mit der Präzision eines Serienmörders stichst du durch die Schichten. Ratsch. Offen. Inhalt: 50 billige Werbe-Mauspads aus China, die stark nach einem Chemieunfall riechen." 
+            },
+            { 
+                t: "Brutale Gewalt mit dem Haustürschlüssel", 
+                next: "path_package_toner", 
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du säbelst wild am Klebeband herum, bis der Karton nachgibt. Dein Schlüssel ist jetzt um 45 Grad verbogen, aber das Paket ist offen. Drinnen: Eine XXL-Toner-Kartusche." 
+            },
+            { 
+                t: "Den Karton gegen die Wand pfeffern", 
+                next: "path_package_glass", 
+                m: 5, f: 5, a: -20, c: 10, 
+                r: "KRACH! Das Paket platzt auf wie eine reife Melone. Leider war es die Lieferung der neuen 'Magic Glass Trackpads' für den Vorstand. Das Geräusch von splitterndem Glas ist irgendwie... befriedigend." 
+            }
+        ]
+    },
+    {
+        id: "sq_package_open_2a",
+        kind: "text",
+        title: "Der Chemie-Unfall",
+        reqStory: "path_package_stink",
+        text: "Der Gestank der 50 Gummimappen breitet sich im Büro aus. Es riecht nach verbranntem Reifen und Kopfschmerzen. Kollegen fangen an zu husten. Chantal fragt, ob wir renovieren.",
+        opts: [
+            { 
+                t: "Als 'Aromatherapie' verteilen", 
+                m: 15, f: -10, a: 5, c: 5, 
+                r: "Du läufst rum und legst jedem ein Pad hin. Arbeit ist Arbeit. Nach 10 Minuten sind alle high von den Dämpfen und kichern albern. Der Chef fragt, warum keiner arbeitet." 
+            },
+            { 
+                t: "Eine Gummi-Burg bauen", 
+                m: 10, f: 10, a: -10, c: 10, 
+                r: "Du stapelst die Pads um deinen Monitor. Du sitzt jetzt in einem stinkenden Iglu. Niemand kommt dir mehr näher als 2 Meter. Herrliche Ruhe, aber du arbeitest nicht." 
+            },
+            { 
+                t: "Aus dem Fenster werfen", 
+                m: 5, f: 0, a: -5, c: 20, 
+                r: "Du frisbeest die Dinger einzeln aus dem 4. Stock. Unten beschwert sich der Sicherheitsdienst über 'giftigen Regen'. Aber die Luft ist rein." 
+            }
+        ]
+    },
+    {
+        id: "sq_package_open_2b",
+        kind: "text",
+        title: "Schlüsselmoment",
+        reqStory: "path_package_toner",
+        text: "Du willst den Toner ins Lager bringen, aber du hast ihn wohl mit dem Schlüssel angestochen. Eine feine Spur aus schwarzem Pulver rieselt hinter dir her. Und dein Haustürschlüssel sieht aus wie ein Korkenzieher.",
+        opts: [
+            { 
+                t: "Loch mit Finger zuhalten", 
+                m: 10, f: -5, a: 10, c: -10, 
+                r: "Du rennst zum Drucker. Dein Finger ist jetzt permanent schwarz. Du siehst aus, als hättest du nekrotisches Gewebe. Aber der Toner ist gerettet und der Chef muss keinen neuen kaufen." 
+            },
+            { 
+                t: "Schlüssel im Schloss geradebiegen", 
+                m: 30, f: 10, a: 20, c: 0, 
+                r: "Du steckst den krummen Schlüssel in deine Bürotür und drückst. KNACK. Abgebrochen. Jetzt kommst du heute Abend nicht in deine Wohnung UND nicht aus dem Büro. Perfekt." 
+            },
+            { 
+                t: "Toner schütteln (vielleicht hilft's?)", 
+                m: 5, f: 0, a: 20, c: 20, 
+                r: "PUFF! Die Kartusche explodiert in einer schwarzen Wolke. Du siehst aus wie ein Schornsteinfeger aus dem 19. Jahrhundert. Der Chef fragt, ob das 'Blackfacing' ist. Abmahnungsgefahr." 
+            }
+        ]
+    },
+    {
+        id: "sq_package_open_2c",
+        kind: "text",
+        title: "Das Puzzle für Manager",
+        reqStory: "path_package_glass",
+        text: "Der Chef kommt freudig rein. 'Ist mein Magic Trackpad da? Das Paket lag doch bei Ihnen!' Du deutest auf den Haufen aus Glasstaub und Elektronikschrott in der Ecke.",
+        opts: [
+            { 
+                t: "Behaupten: 'Das ist ein Bausatz!'", 
+                m: 10, f: 5, a: 0, c: -5, 
+                r: "'Das ist die IKEA-Edition, Chef. Fördert die Motorik.' Er guckt skeptisch, nimmt die Schachtel mit den Scherben aber mit. Er ist beschäftigt, also sinkt dein Radar." 
+            },
+            { 
+                t: "Lügen: 'Das ist Liquid Glass Technologie'", 
+                m: 5, f: 10, a: -5, c: -15, 
+                r: "'Das muss so. Einfach auf den Tisch schütten und warten.' Der Chef nickt tief beeindruckt: 'Die Zukunft ist verrückt.' Er geht glücklich. Du bist ein Genie." 
+            },
+            { 
+                t: "Mit Panzertape kleben", 
+                req: "tape", 
+                m: 20, f: -10, a: 0, c: -20, 
+                r: "Du wickelst den Schrott in Tape ein. Es sieht aus wie eine Kartoffel. 'Hier, Chef. Ein Prototyp aus dem Silicon Valley.' Er drückt drauf rum. 'Ergonomisch!', sagt er begeistert. Voller Erfolg." 
+            }
+        ]
+    },
+    {
+        id: "sq_shelf_1",
+        kind: "text",
+        title: "Der schiefe Turm von Toner",
+        text: "Im Lager neigt sich das Schwerlastregal mit den teuren Lasertonern bedrohlich zur Seite. Ein falscher Windhauch, und es gibt eine 5.000-Euro-Explosion aus feinem, schwarzem Staub.",
+        opts: [
+            { 
+                t: "Quick-Fix: Kabelbinder-Orgie", 
+                req: "zip_ties", 
+                next: "path_shelf_iso", 
+                m: 10, f: -5, a: 0, c: 0, 
+                r: "Du zurrst das Regal mit einem Dutzend Kabelbindern an ein Heizungsrohr. Es sieht aus wie Bondage für Möbel, aber es steht bombenfest. Nichts hält länger als ein Provisorium." 
+            },
+            { 
+                t: "Handwerklich korrekt dübeln", 
+                next: "path_shelf_bauamt", 
+                m: 60, f: -20, a: 15, c: -5, 
+                r: "Du holst die Schlagbohrmaschine. 60 Minuten Lärm, Staub und Schweiß. Das Regal steht jetzt perfekt im Lot. Keiner bemerkt es, keiner dankt es dir, aber du hast Rückenschmerzen." 
+            },
+            { 
+                t: "Haftungsausschluss: Warnzettel kleben", 
+                next: "path_shelf_a38", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du kritzelst 'VORSICHT! EINSTURZGEFAHR!' auf ein Post-It, pappst es an den Holm und gehst zufrieden Mittagessen. Juristisch bist du damit aus dem Schneider. Die Physik interessiert das aber nicht." 
+            }
+        ]
+    },
+    {
+        id: "sq_shelf_2a",
+        kind: "text",
+        title: "ISO-Zertifizierung 9001",
+        reqStory: "path_shelf_iso",
+        text: "Der Sicherheitsbeauftragte steht vor deiner Kabelbinder-Konstruktion. Er tippt auf sein Klemmbrett. 'Das ist eine *Nicht-permanente Lastensicherung an thermischen Leitern*. Dafür brauche ich das Formblatt Z-12 für polymere Verbindungen und den Nachweis der Hitzebeständigkeit nach DIN 4102.'",
+        opts: [
+            { 
+                t: "Behaupten: 'Das sind Luftfahrt-Binder'", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "'Spezialanfertigung der NASA, Herr Inspektor.' Er blinzelt. 'Ach so. Na dann... tragen Sie das bitte nachträglich in Anlage 4b ein.' Er macht einen Haken. Kompetenz durch Lügen." 
+            },
+            { 
+                t: "Formular Z-12 suchen und ausfüllen", 
+                m: 45, f: -10, a: 20, c: 0, 
+                r: "Du verbringst 45 Minuten damit, die Zugfestigkeit von Plastik zu googeln und ein sinnloses Formular auszufüllen. Der Inspektor locht es ab, ohne es zu lesen. 'Ordnung muss sein.'" 
+            }
+        ]
+    },
+    {
+        id: "sq_shelf_2b",
+        kind: "text",
+        title: "Antrag auf bauliche Veränderung",
+        reqStory: "path_shelf_bauamt",
+        text: "Facility Management hat das Bohrloch entdeckt. 'Haben Sie etwa in die *Brandschutzwand F90* gebohrt?! Ohne den 'Antrag auf Durchdringung von Feuerwiderstandsklassen' (dreifacher Durchschlag, rosa)?! Das muss sofort zurückgebaut und verputzt werden!'",
+        opts: [
+            { 
+                t: "Bürokratie-Konter: 'Das war Gefahr im Verzug!'", 
+                m: 10, f: 0, a: 5, c: 0, 
+                r: "Du zitierst Arbeitsschutzgesetz §9. 'Ich habe Leben gerettet!' Der Facility-Typ wird unsicher. 'Na gut. Aber reichen Sie Formular 'Heldenmut im Amt' nach.' Puh." 
+            },
+            { 
+                t: "Dübel rausziehen & Kaugummi rein", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du entfernst die Schraube. Das Regal wackelt wieder. Du stopfst Kaugummi ins Loch und malst mit Tipp-Ex drüber. 'Welches Loch? Ich sehe kein Loch.' Problem vertagt." 
+            }
+        ]
+    },
+    {
+        id: "sq_shelf_2c",
+        kind: "text",
+        title: "Das Haus, das Verrückte macht",
+        reqStory: "path_shelf_a38",
+        text: "Das Regal wurde vom TÜV gesperrt ('Rotes Band'). Um ein neues zu bestellen, brauchst du den **Passierschein A38**. Die Beschaffungsstelle sagt: 'A38 gibt es beim Facility Management.' Facility sagt: 'Nein, A38 macht die Buchhaltung.' Die Buchhaltung sagt: 'A38? Das wurde durch das blaue Formular B-65 ersetzt, aber das gibt es nur beim Pförtner.'",
+        opts: [
+            { 
+                t: "Zum Pförtner gehen (Die Quest annehmen)", 
+                m: 60, f: -20, a: 50, c: -10, 
+                r: "Du rennst 60 Minuten durchs Haus. Pförtner -> Poststelle -> Betriebsrat -> Kantine. Am Ende hast du Formular **A39** ('Antrag auf Erteilung eines Antrags'). Du brichst weinend zusammen. Das Regal bleibt kaputt." 
+            },
+            { 
+                t: "Selbstjustiz: Regal bei IKEA kaufen & heimlich hinstellen", 
+                m: 30, f: -5, a: -10, c: 10, 
+                r: "Du umgehst die Bürokratie, kaufst ein Billy-Regal von deinem eigenen Geld und baust es nachts auf. Niemand stellt Fragen. Du hast das System besiegt, aber bist 30€ ärmer." 
+            },
+            { 
+                t: "Den Chef fragen: 'Haben Sie A38?'", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Der Chef starrt dich an. 'Müller, nehmen Sie keine Drogen während der Arbeitszeit.' Er reißt das Absperrband einfach ab. 'So. Problem gelöst.' Manchmal ist der Chef nützlich." 
+            }
+        ]
+    },
+    {
+        id: "sq_noise_1",
+        kind: "text",
+        title: "Operation: Kieselstein",
+        text: "Draußen spielt sich eine Szene wie aus 'Transformers' ab. Ein Schwerlast-Konvoi hat einen Bagger in der Größe eines Einfamilienhauses abgeladen. Dazu drei Presslufthammer und ein Gerät, das aussieht wie ein Laser-Bohrer. Das Ziel dieser Armada: Ein 5cm kleines Schlagloch im Gehweg. Der Boden bebt.",
+        opts: [
+            { 
+                t: "Technik-Lösung: Kopfhörer auf", 
+                req: "headphones", 
+                next: "path_noise_zen", 
+                m: 0, f: 5, a: -20, c: 0, 
+                r: "Klick. Noise-Cancelling auf 'Maximum'. Der Weltuntergang draußen wird zu einem sanften Vibrieren in deinem Hintern. Du arbeitest im Auge des Sturms." 
+            },
+            { 
+                t: "Physik-Lösung: Fenster zu", 
+                next: "path_noise_sauna", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du rammst das Fenster zu. Der Lärm wird dumpfer, aber die Vibrationen lassen deine Taffe auf dem Tisch wandern. Die Luft im Büro wird sofort stickig." 
+            },
+            { 
+                t: "Sozial-Lösung: Rausbrüllen", 
+                next: "path_noise_foreman", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du öffnest das Fenster und schreist gegen den Lärm an: 'BRAUCHT IHR DAFÜR ECHT DEN TODESSTERN?! DAS IST EIN LOCH, KEIN KRATER!' Der Vorarbeiter schaut hoch." 
+            }
+        ]
+    },
+    {
+        id: "sq_noise_2a",
+        kind: "text",
+        title: "Das Erwachen",
+        reqStory: "path_noise_zen",
+        text: "Du nimmst die Kopfhörer ab, weil dein Monitor wackelt. Draußen ist Stille. Du schaust raus. Das Schlagloch ist weg. Der Gehweg auch. Da ist jetzt einfach ein riesiger Krater, in dem der Bagger steckt. Ein Arbeiter kratzt sich am Kopf.",
+        opts: [
+            { 
+                t: "Vorhang zu", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Was man nicht sieht, ist nicht passiert. Du machst die Jalousie runter und arbeitest im Dunkeln weiter." 
+            },
+            { 
+                t: "Foto machen", 
+                m: 5, f: 10, a: -5, c: 5, 
+                r: "Das glaubt dir keiner. '#GermanEngineering'. Der Chef sieht dich am Fenster: 'Müller, dokumentieren Sie den Baufortschritt oder arbeiten Sie?'" 
+            }
+        ]
+    },
+    {
+        id: "sq_noise_2b",
+        kind: "text",
+        title: "Die Rüttelplatte",
+        reqStory: "path_noise_sauna",
+        text: "Draußen haben sie jetzt die 'Mega-Rüttelplatte 3000' angeworfen. Dein ganzer Körper vibriert. Deine Zähne klappern. Auf dem Monitor verschwimmen die Excel-Zeilen. Es ist unmöglich zu tippen.",
+        opts: [
+            { 
+                t: "Im Takt tippen", 
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du versuchst, die Vibrationen auszugleichen. Das Ergebnis: 'Sseeehr geeeehhhrter Heeerrrr...'. Du gibst entnervt auf." 
+            },
+            { 
+                t: "Aufgeben und Pause machen", 
+                m: 15, f: 10, a: -10, c: 10, 
+                r: "Du gehst in die Küche (andere Gebäudeseite). Dort wackelt nur das Wasser im Glas. Der Chef fragt: 'Flüchten Sie?' Du nickst nur stumm." 
+            }
+        ]
+    },
+    {
+        id: "sq_noise_2c",
+        kind: "text",
+        title: "Budget-Planung",
+        reqStory: "path_noise_foreman",
+        text: "Der Vorarbeiter brüllt fröhlich zurück: 'MUSS WEG! WIR HABEN NOCH BUDGET FÜR DIESES JAHR! WENN WIR DEN DIESEL NICHT VERBRAUCHEN, KRIEGEN WIR NÄCHSTES JAHR WENIGER! WOLLEN SIE AUCH MAL BAGGERN?'",
+        opts: [
+            { 
+                t: "Angebot annehmen: 'Ja, will ich!'", 
+                m: 30, f: 20, a: -50, c: 20, 
+                r: "Du rennst runter. 20 Minuten später sitzt du im Führerhaus und gräbst den Vorgarten der Firma um. Der Chef schaut fassungslos aus dem Fenster. Das war es wert." 
+            },
+            { 
+                t: "Kopfschüttelnd ablehnen", 
+                m: 2, f: 0, a: 10, c: 0, 
+                r: "Du schließt das Fenster. Bürokratie in ihrer reinsten Form. Dein Glaube an die Menschheit sinkt um 10 Punkte." 
+            }
+        ]
+    },
+    {
+        id: "sq_loot_crate_1",
+        kind: "text",
+        title: "Die 'Zu Verschenken' Kiste",
+        text: "Jemand hat eine Kiste mit der Aufschrift 'ZU VERSCHENKEN' in den Flur gestellt. Ein Biotop aus Staub, alten Kabeln und vergessenen Bürotäumen.",
+        opts: [
+            { 
+                t: "Das schwere 'Buch' bergen", 
+                loot: "manual", 
+                next: "loot_crate_taken",
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du ziehst es aus dem Stapel. Es ist... ein 'Windows 95 Handbuch'! Antikes Wissen für echte Kenner. (Inventar +1)" 
+            },
+            { 
+                t: "Mutig in den Kabelsalat greifen", 
+                loot: "cable", 
+                next: "loot_crate_taken",
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du kämpfst mit dem Knoten und gewinnst! Ein langes, graues LAN-Kabel gehört jetzt dir. (Inventar +1)" 
+            },
+            { 
+                t: "Blind nach dem roten 'Ding' wühlen",
+                loot: "stressball", 
+                next: "loot_crate_taken",
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Igit... was ist das? Ach, nur ein alter Wut-Ball! Er ist etwas klebrig, aber drückbar. (Inventar +1)" 
+            },
+            { 
+                t: "Das silberne Glitzern untersuchen", 
+                loot: "tape", 
+                next: "loot_crate_taken",
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Der heilige Gral der Reparatur! Eine fast volle Rolle Panzertape. Damit kannst du das Universum flicken. (Inventar +1)" 
+            }
+        ]
+    },
+    {
+        id: "sq_loot_crate_2",
+        kind: "text",
+        title: "Der Sammler",
+        reqStory: "loot_crate_taken",
+        text: "Hausmeister Egon fängt dich im Flur ab. Er wirkt begeistert. 'Hömma! Ich hab gesehen, du hast dir was aus der Kiste geangelt! Endlich einer mit Geschmack! Ich räume gerade das Archiv von 1998 aus. Ich hab da noch 500 Kilo Nadeldrucker-Papier und Disketten-Boxen. Willste das auch haben? Sonst muss ich das entsorgen!'",
+        opts: [
+            { 
+                t: "Ja! Ich nehme alles! (Stöbern)", 
+                m: 30, f: 10, a: -10, c: 0, 
+                r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat. Retro-Feeling pur." 
+            },
+            { 
+                t: "Äh... nein danke, das reicht.", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Egons Lächeln verschwindet sofort. 'Banause. Die Jugend von heute weiß nichts mit gutem Endlospapier anzufangen.' Er schlurft beleidigt davon." 
+            }
+        ]
+    },
+    {
+        id: "sq_chair_1",
+        kind: "text",
+        title: "Der Chefsessel",
+        text: "Der Chef hat einen neuen 'Ergonomic 3000'. Sein alter Ledersessel steht einsam auf dem Flur beim Sperrmüll. Das Leder ist abgewetzt, aber die Polsterung ist immer noch Klassen besser als dein aktueller 'Beton-Stuhl'.",
+        opts: [
+            { 
+                t: "Ganzen Stuhl retten & tapen", 
+                req: "tape", 
+                next: "path_chair_new", 
+                m: 20, f: 10, a: -20, c: 0, 
+                r: "Du schleifst das Monstrum in dein Büro. Eine Rolle Panzertape für die lockere Armlehne und er ist wie neu. Mad-Max-Optik, aber S-Klasse-Komfort." 
+            },
+            { 
+                t: "Nur die Luxus-Rollen klauen", 
+                req: "screw", 
+                next: "path_chair_new", 
+                m: 10, f: 5, a: -10, c: 0, 
+                r: "Du schraubst die High-End-Skater-Rollen ab und montierst sie unter deinen Stuhl. Endlich nicht mehr über Teppichkanten stolpern!" 
+            },
+            { 
+                t: "Ignorieren (Mein Rücken ist aus Stahl)", 
+                m: 0, f: 0, a: 5, c: 0, 
+                r: "Du gehst weiter. Später am Tag bekommst du Ischias. Selbst schuld." 
+            }
+        ]
+    },
+    {
+        id: "sq_chair_2",
+        kind: "text",
+        title: "Thron-Nachfolge",
+        reqStory: "path_chair_new",
+        text: "Ahhh. Das Sitz-Upgrade macht sich bemerkbar. Du gleitest lautlos durchs Büro und wippst entspannt. Deine Aggressivität verpufft. Einziges Manko: Überall kleben noch hartnäckige 'Paw Patrol'-Sticker vom Sohn des Chefs. Marshall der Feuerwehrhund starrt dich von der Armlehne an.",
+        opts: [
+            { 
+                t: "Egal: 'Ich bin jetzt Teil der Paw Patrol'", 
+                m: 10, f: 10, a: -20, c: 0, 
+                r: "Du drehst dich lachend im Kreis. 'Wuff wuff, Rettung naht!' Die Kollegen gucken komisch, aber du bist zu entspannt, um dich zu schämen. Das Leben ist gut." 
+            },
+            { 
+                t: "Versuchen, die Sticker abzuknibbeln", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Du kratzt mit dem Fingernagel an den Stickern. Es bleiben hässliche weiße Papierfetzen und Klebereste zurück. Jetzt sieht es schlimmer aus als vorher. Mist." 
+            }
+        ]
+    },
+    {
+        id: "sq_janitor_talk",
+        kind: "text",
+        title: "Raucherpause mit Egon",
+        text: "Du triffst Hausmeister Egon am Hintereingang. Er kämpft mit seinem Feuerzeug und flucht über 'diese neumodische Technik'.",
+        opts: [
+            { 
+                t: "Ihm Feuer geben & zuhören", 
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Er zieht tief an der Zigarette. 'Danke Jung. Diese digitalen Schlösser machen mich fertig! Ich hab das vom Papierlager im Keller jetzt einfach auf 0-0-0-0 gestellt. Aber sags keinem!'" 
+            },
+            { 
+                t: "Schnell weitergehen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du hast keine Zeit für seine Geschichten. Du nickst nur kurz und gehst." 
+            }
+        ]
+    },
+    {
+        id: "sq_archive_find",
+        kind: "text",
+        title: "Im Archiv",
+        text: "Du suchst Druckerpapier im Archiv. Dabei fällt dir der Ordner 'Steuererklärung 1990' auf. Er ist ungewöhnlich dick. Du guckst rein: Er ist voller 'Mon Chéri' Pralinen. Das Geheimversteck von Sekretärin Gabi!",
+        opts: [
+            { 
+                t: "Eine stibitzen & Klappe halten", 
+                loot: "donut", 
+                next: "path_archive_stolen", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Du schiebst dir eine in den Mund. Schmeckt nach billigem Weinbrand und Staub. Aber du weißt jetzt, wo der Vorrat liegt. (Inventar +1)" 
+            },
+            { 
+                t: "Ordner zurückstellen", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Du lässt Gabi ihren Schatz. Diskretion ist Ehrensache. Wer weiß, wie lange die da schon liegen..." 
+            }
+        ]
+    },
+    {
+        id: "sq_archive_find_2a",
+        kind: "text",
+        title: "CSI: Buchhaltung",
+        reqStory: "path_archive_stolen",
+        text: "Zehn Minuten später steht Gabi in deiner Bürotür. Sie trägt Latexhandschuhe. Mit einer Pinzette hält sie ein winziges, zerknülltes Stück rosa Alufolie hoch. 'Beweisstück A. Gefunden in Ihrem Papierkorb. Korrespondiert exakt mit der Fehlmenge im Ordner 'Steuer 1990'. Der Kirschlikör-Geruch in Ihrer Atemluft bestätigt den Verdacht.'",
+        opts: [
+            { 
+                t: "Geständnis: 'Es war Notwehr (Unterzucker)'", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Gabi senkt die Pinzette. 'Na gut. Aber das nächste Mal füllen Sie Formular S-Ü-S (Sonderentnahme Süßwaren) aus! Ordnung muss sein!'" 
+            },
+            { 
+                t: "Bestechen: 'Ich kaufe dir eine neue Packung'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Gabi schnaubt verächtlich. 'Eine neue? Die im Ordner reifen seit 30 Jahren! Das Aroma ist unwiederbringlich zerstört!' Sie geht beleidigt, aber du bist davongekommen." 
+            }
+        ]
+    },
+    {
+        id: "sq_sad_manager",
+        kind: "text",
+        title: "Der Zusammenbruch",
+        text: "Im Flur steht der Projektleiter. Er starrt gegen die Wand und wirkt völlig apathisch. Er reagiert nicht, als du vorbeigehst.",
+        opts: [
+            { 
+                t: "Schulter klopfen: 'Kopf hoch!'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Er zuckt zusammen. 'Lassen Sie mich einfach in Ruhe.' Leere Phrase, keine Wirkung." 
+            },
+            { 
+                t: "Flüstern: 'Ein Schritt vor, zwei zurück...'",
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Seine Augen leuchten kurz auf. Er richtet sich auf, nimmt Haltung an. 'Tango... ja. Die Leidenschaft. Sie haben Recht. Ich muss heute Abend wieder zum Kurs.' Er nickt dir dankbar zu." 
+            },
+            { 
+                t: "Brüllen: 'TSCHAKKA! MINDSET!'",
+                m: 5, f: 0, a: 15, c: 10, 
+                r: "Er dreht sich langsam um und funkelt dich böse an. 'Gehen Sie weg. Bevor ich etwas tue, was das HR nicht erlaubt.' Das war wohl zu viel." 
+            }
+        ]
+    },
+    {
+        id: "sq_toner_trap",
+        kind: "text",
+        title: "Die Toner-Falle",
+        text: "Frau Elster aus der Buchhaltung winkt dich hektisch zum Kopierer. 'Da klemmt was! Ich trau mich nicht ran, Sie sind doch der Technik-Profi!' Sie tritt auffällig weit zurück und hält sich die Hände vor das weiße Kostüm.",
+        opts: [
+            { 
+                t: "Heldenmut: Klappe öffnen", 
+                next: "path_toner_explosion", 
+                m: 25, f: -15, a: 10, c: 0, 
+                r: "Du reißt die Klappe auf. BAAAAAM! Eine cyan-blaue Wolke verschluckt dich. Du schmeckst Chemie. Frau Elster kichert boshaft: 'Huch!'. Du gehst wortlos ins Bad, um dich notdürftig zu schrubben." 
+            },
+            { 
+                t: "Lunte riechen: 'Mach selbst'", 
+                next: "path_toner_dodge", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "Du gehst einfach weiter. 'Bin nicht zuständig für Hardware.' Hinter dir hörst du ein lautes *PUFF* und dann einen spitzen Schrei. Tja. Intuition ist alles." 
+            }
+        ]
+    },
+    {
+        id: "sq_toner_trap_2a",
+        kind: "text",
+        title: "Der blaue Orden",
+        reqStory: "path_toner_explosion",
+        text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef kommt rein. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
+        opts: [
+            { 
+                t: "Die Legende bestätigen (Loot)", 
+                loot: "chocolate", 
+                m: 10, f: 5, a: -10, c: -10, 
+                r: "Du nickst ernst. 'Der Teppich ist das Herz der Firma, Chef.' Er ist gerührt und schenkt dir eine Schachtel 'Merci', die eigentlich für Kunden gedacht war. (Inventar +1)" 
+            },
+            { 
+                t: "Gefahrenzulage fordern", 
+                m: 5, f: 0, a: 10, c: -5, 
+                r: "Der Chef lacht laut. 'Der war gut, Müller! Humor in der Krise! Weiter so!' Er klopft dir auf die noch staubige Schulter und geht. Du hast jetzt blaue Handabdrücke auf dem Hemd." 
+            }
+        ]
+    },
+    {
+        id: "sq_toner_trap_2b",
+        kind: "text",
+        title: "Das Schlumpf-Gespenst",
+        reqStory: "path_toner_dodge",
+        text: "Frau Elster kommt aus dem Waschraum. Sie hat versucht, sich zu reinigen, aber Toner ist gnadenlos. Ihr Gesicht hat nun eine permanente, zart-türkise Tönung. Sie versucht, würdevoll zu wirken und die Blicke der Kollegen zu ignorieren.",
+        opts: [
+            { 
+                t: "Kompliment: 'Toller Avatar-Look!'", 
+                m: 15, f: 5, a: -20, c: 0, 
+                r: "Sie funkelt dich böse an, kann aber nichts sagen, ohne es zuzugeben. Die Schadenfreude wärmt dein Herz wie ein kleines Lagerfeuer. Deine Laune ist bestens." 
+            },
+            { 
+                t: "Rat geben: 'Das geht nie wieder weg.'", 
+                m: 10, f: 0, a: -10, c: 5, 
+                r: "Du flüsterst es ihr im Vorbeigehen zu. Sie wird bleich (unter dem Blau). Sie rennt zurück ins Bad. Du hast jetzt Ruhe vor der Buchhaltung." 
+            }
+        ]
+    },
+{
+        id: "sq_fresh_air",
+        kind: "text",
+        title: "Dicke Luft",
+        text: "Im Meetingraum 'Aquarium' stinkt es bestialisch nach Mettbrötchen, Zwiebeln und Angstschweiß. Jemand hat das Fenster zugelassen, und die Luft steht wie eine Wand. Dir wird fast übel im Vorbeigehen.",
+        opts: [
+            { 
+                t: "Fenster kippen (Lüften)", 
+                next: "path_wasp_chaos", 
+                m: 5, f: -5, a: 20, c: 5, 
+                r: "Frische Luft strömt rein! Und mit ihr eine riesige, aggressive Wespe. Sie sticht den Vertriebsleiter direkt in die Lippe. Er schreit: 'BÜLLER! ACHEN SIE DAS WEG!' Das Chaos beginnt." 
+            },
+            { 
+                t: "Luft anhalten & weitergehen", 
+                next: "path_bio_hazard", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Sollen sie doch in ihrem Mief ersticken. Nicht dein Problem. Du beschleunigst den Schritt, bevor der Geruch sich in deiner Kleidung festsetzt." 
+            }
+        ]
+    },
+    {
+        id: "sq_fresh_air_wasp",
+        kind: "text",
+        title: "Terror im Aquarium",
+        reqStory: "path_wasp_chaos",
+        text: "Stunden später. Das Meeting läuft noch – theoretisch. Tatsächlich kauern der Chef und der Vorstand unter dem Konferenztisch. Die Wespe patrouilliert wie ein Kampfhubschrauber durch den Raum. Der Vertriebsleiter sieht aus wie ein Kugelfisch. Niemand traut sich zur Tür.",
+        opts: [
+            { 
+                t: "Die Tür von außen abschließen", 
+                m: 10, f: 5, a: -20, c: -10, 
+                r: "Klick. 'Zu ihrer eigenen Sicherheit', murmelst du. Drinnen bricht Panik aus. Du lehnst dich an die Scheibe und genießt die Show. Das ist besser als Fernsehen." 
+            },
+            { 
+                t: "Reinspringen & Wespe klatschen", 
+                loot: "manual", // Wenn man das Handbuch hat, könnte man es nutzen (impliziert)
+                m: 30, f: -10, a: 20, c: 20, 
+                r: "Du stürmst rein und erschlägst das Biest mit einer Akte. Applaus brandet auf (unter dem Tisch). Der Chef kriecht hervor: 'Müller, Sie sind befördert! Also... emotional.'" 
+            }
+        ]
+    },
+    {
+        id: "sq_fresh_air_bio",
+        kind: "text",
+        title: "ABC-Alarm",
+        reqStory: "path_bio_hazard",
+        text: "Der Flur ist abgesperrt. Männer in gelben Vollschutzanzügen mit Atemgeräten kommen aus dem Meetingraum. Einer hält ein Messgerät hoch, das rot blinkt. 'Wir messen extrem hohe Schwefel-Werte! Verdacht auf Biogas-Leck! Evakuierung!' Es riecht nach 4 Stunden altem Zwiebelmett und Angstschweiß.",
+        opts: [
+            { 
+                t: "Aufklären: 'Das ist nur das Mett.'", 
+                m: 5, f: 0, a: 10, c: -20, 
+                r: "Der Einsatzleiter starrt dich durch das Visier an. 'Wollen Sie mir sagen, Ihre Kollegen dünsten Giftgas aus?!' Der Chef wird rot (vor Scham). Der Einsatz wird teuer." 
+            },
+            { 
+                t: "Panik schüren: 'Rettet euch!'", 
+                m: 10, f: 20, a: -10, c: 5, 
+                r: "Du rennst schreiend zum Ausgang. 'Der Mett-Tod kommt für uns alle!' Du hast früher Feierabend, weil das Gebäude geräumt wird. Clever." 
+            }
+        ]
+    },
+    {
+        id: "sq_package_help",
+        kind: "text",
+        title: "Die schwere Kiste",
+        text: "Die neue Praktikantin bricht fast unter einem riesigen Paket zusammen. 'Puh... das muss zum Marketing in den 4. Stock... können Sie...?' Sie zittert schon, und das Paket rutscht ihr fast aus den Händen.",
+        opts: [
+            { 
+                t: "Helfen & Tragen (Ritter spielen)", 
+                next: "path_package_helped", 
+                m: 15, f: -20, a: 25, c: -10, 
+                r: "Du wuchtest das Ding hoch. Uff. Beton? Du schleppst es schwitzend in den 4. Stock. Chantal vom Marketing reißt die Tür auf: 'WAS SOLL DAS HIER?! Das habe ich storniert! Nimm das sofort wieder mit, du Idiot!' PENG. Tür zu. Dein Hals schwillt vor Wut." 
+            },
+            { 
+                t: "Anfeuern: 'Tschakka!'", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "Du ballst die Faust: 'Du schaffst das! Glaube an dich!' Sie schaut dich mit toten Augen an, schleppt sich aber weiter. Dein Rücken bleibt heil, dein Karma ist im Keller." 
+            }
+        ]
+    },
+    {
+        id: "sq_package_return",
+        kind: "text",
+        title: "Retoure des Grauens",
+        reqStory: "path_package_helped",
+        text: "Du stehst wieder im Flur. Das Paket ist schwer. Die Praktikantin sitzt darauf und weint leise in ihr Klemmbrett. 'Ich wusste das nicht... Chantal ist so böse... Und ich weiß nicht, wie man eine Retoure für Gefahrgut macht...'",
+        opts: [
+            { 
+                t: "Trösten & Erledigen: 'Ich mach das.'", 
+                m: 20, f: -10, a: 15, c: -10, 
+                r: "Du nimmst ihr das Klemmbrett ab. 'Geh dir einen Kaffee holen.' Du schleppst das Paket zur Poststelle, füllst Formular R-7 aus ('Grund: Empfänger ist zickig') und klebst das Label drauf. Nervige Arbeit, aber du hast Ruhe vor dem Chef." 
+            },
+            { 
+                t: "Mentoring: 'Wir machen das zusammen.'", 
+                m: 30, f: -5, a: 10, c: -10, 
+                r: "Du erklärst ihr geduldig das Warenwirtschaftssystem. Es dauert 30 Minuten. Sie versteht nichts, hört aber auf zu weinen. Es ist mühsam, aber es sieht sehr produktiv aus." 
+            },
+            { 
+                t: "Pragmatisch: 'Einfach beim Empfang abkippen'", 
+                m: 5, f: 10, a: -20, c: 10, 
+                r: "Du schiebst das Paket in den Aufzug, drückst 'EG' und rennst weg, bevor die Türen schließen. Die Praktikantin kichert entsetzt. 'Das ist Problem-Lösung 2.0', rufst du. Schadenfreude pur!" 
+            }
+        ]
+    },
+{
+        id: "sq_alarm_fail_1",
+        kind: "text",
+        title: "Der rote Knopf",
+        text: "Du lehnst dich im Flur an die Wand. Plötzlich: SCHRILL! Du hast den Feueralarm ausgelöst! Der Hausmeister rennt wütend herbei.",
+        opts: [
+            { 
+                t: "Entschuldigen & Wegrennen", 
+                next: "path_alarm_escalation", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Du rennst weg. Der Hausmeister brüllt dir nach: 'IDIOT! Jedes Mal muss ich **4-7-1-1** eingeben wegen solchen Deppen!' Du hast Ärger, aber den Code gehört." 
+            },
+            { 
+                t: "So tun als wäre es ein Test",
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Er glaubt dir nicht. 'Verschwinde!' Er dreht dir demonstrativ den Rücken zu, schirmt das Tastenfeld mit seinem breiten Kreuz ab und bringt die Sirene zum Schweigen." 
+            }
+        ]
+    },
+    {
+        id: "sq_alarm_fail_2",
+        kind: "text",
+        title: "Einsatzleitung",
+        reqStory: "path_alarm_escalation",
+        text: "Du dachtest, mit dem Wegrennen war dein Alarm-Fehltritt erledigt? Falsch. Kevin hat panisch die 112 gewählt. Wegen DIR steht jetzt ein kompletter Löschzug vor der Tür. Sechs Mann in Vollmontur stürmen mit Äxten und Kettensägen den Flur: 'WO IST DER BRANDHERD?! WIR WOLLEN WAS EINTRETEN!'",
+        opts: [
+            { 
+                t: "Verstecken: 'Ich wars nicht!'", 
+                m: 10, f: 10, a: -5, c: 0, 
+                r: "Du schließt dich im Klo ein. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef. Du bist sicher, aber ein Feigling." 
+            },
+            { 
+                t: "Lügen: 'Ich habe Rauch gerochen!'", 
+                m: 5, f: -5, a: 15, c: -10, 
+                r: "Du stellst dich den Männern mit den Äxten. 'Ich habe den Knopf gedrückt! Da war Rauch!' Der Einsatzleiter nickt anerkennend. 'Besser einmal zu viel als zu wenig!' Sie rücken ab. Der Chef lobt deine Wachsamkeit." 
+            },
+            { 
+                t: "Den Feuerwehrmännern Kaffee anbieten", 
+                m: 20, f: 5, a: -20, c: 5, 
+                r: "Die Jungs sind schwer enttäuscht, dass sie nichts löschen dürfen. Du kochst Kaffee. Sie setzen sich mit rußigen Stiefeln auf den Teppich und erzählen Geschichten. Die Stimmung ist top, die Arbeit steht still." 
+            }
+        ]
+    },
+    {
+        id: "sq_elster_blockade_1",
+        kind: "text",
+        title: "Der Drache bewacht den Hort",
+        text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budget 2024', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
+        opts: [
+            { 
+                t: "Snack: 'Erdnuss-Power-Riegel' anbieten",
+                next: "path_elster_allergy",
+                m: 5, f: -10, a: 50, c: 100, 
+                r: "Du hältst ihr den Riegel hin. Ihre Augen leuchten gierig auf. Sie reißt die Packung auf und beißt herzhaft hinein. Sie kaut, schluckt... und ihre Augen weiten sich in Panik. Das war ein Fehler." 
+            },
+            { 
+                t: "Snack: Alpenmilch (Garantiert Nussfrei)",
+                m: 10, f: 5, a: -10, c: 0, 
+                r: "Sie studiert misstrauisch die Zutatenliste. 'Kann Spuren von Nüssen enthalten... nein, Moment, hier steht: Nussfrei.' Sie lächelt. 'Sehr aufmerksam, Müller.' Sie tauscht Ordner gegen Schokolade." 
+            },
+            { 
+                t: "Taktik: Fenster aufreißen (Zugluft)",
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du öffnest das Fenster weit. Es sind 8 Grad draußen. Frau Elster kreischt: 'MEINE NIEREN! ES ZIEHT!' Sie rafft ihre Strickjacke zusammen und flüchtet in den Flur. Der Ordner gehört dir." 
+            },
+            { 
+                t: "Gewalt: Einfach wegnehmen",
+                m: 5, f: 0, a: 20, c: 20, 
+                r: "Du greifst nach dem Ordner. Ein kurzes Handgemenge. Sie hat spitze, manikürte Fingernägel. Du hast den Ordner, aber drei blutige Striemen auf dem Handrücken. 'Körperverletzung!', keift sie." 
+            }
+        ]
+    },
+    {
+        id: "sq_elster_blockade_2",
+        kind: "text",
+        title: "Die Nuss-Inquisition",
+        reqStory: "path_elster_allergy",
+        text: "Neue Hausordnung! Aufgrund des 'Elster-Attentats' (alle starren dich an) gilt ab sofort Alarmstufe Rot für Schalenfrüchte. Der Sicherheitsdienst 'SafeSnack' kontrolliert Taschen am Eingang. Kevin weint, weil sein Studentenfutter konfisziert und im Hof kontrolliert gesprengt wurde.",
+        opts: [
+            { 
+                t: "Schwarzmarkt: Snickers auf dem Herrenklo verkaufen", 
+                m: 20, f: 5, a: -10, c: -20, 
+                r: "Du wirst zum Escobar der Süßwaren. Kollegen treffen dich heimlich in Kabine 3. 'Hast du das Zeug?' Du tauschst Riegel gegen Bargeld. Der Nervenkitzel ist besser als Arbeit." 
+            },
+            { 
+                t: "Denunziantentum: 'Ich rieche Haselnuss bei Kevin!'", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Du lenkst den Verdacht von dir ab. Das Sonderkommando stürmt Kevins Büro. Er hatte nur ein Nougat-Croissant, aber er wird trotzdem verhört. Dein Ruf ist ruiniert, aber du bist sicher." 
+            }
+        ]
+    },
+    {
+        id: "sq_secret_meeting_1",
+        kind: "text",
+        title: "Der Kopierraum",
+        text: "Du öffnest die Tür zum Kopierraum. Der Geruch von Ozon und billigem Parfum schlägt dir entgegen. Da stehen der strenge Finanzchef und die rabiate Kantinen-Chefin... sehr eng umschlungen auf dem Großraumkopierer. Sie springen auseinander. Der Finanzchef wischt sich hektisch Lippenstift von der Wange.",
+        opts: [
+            { 
+                t: "Tür wortlos schließen (Omertà)", 
+                next: "path_affair_secret", 
+                m: 10, f: 5, a: -10, c: -10, 
+                r: "Du nickst knapp, schließt die Tür und gehst. Du hast nichts gesehen. Aber sie wissen, dass du es gesehen hast. Ein stiller Pakt ist besiegelt." 
+            },
+            { 
+                t: "Grinsen: 'Druckt ihr auch beidseitig?'", 
+                next: "path_affair_joke", 
+                m: 5, f: 0, a: 20, c: 20, 
+                r: "Der Finanzchef läuft purpurrot an: 'RAUS HIER! MÜLLER! Wenn Sie ein Wort sagen, streiche ich Ihr Budget auf Null!' Die Kantinen-Chefin bricht wortlos einen Bleistift durch, während sie dich anstarrt." 
+            }
+        ]
+    },
+    {
+        id: "sq_secret_meeting_2a",
+        kind: "text",
+        title: "Geschäfte unter der Tür",
+        reqStory: "path_affair_secret",
+        text: "Später am Tag. Du sitzt auf Kabine 3. Plötzlich siehst du teure Leder-Slipper unter der Tür. Die Stimme des Finanzchefs flüstert: 'Müller? Wir schätzen Ihre Diskretion.' Ein Umschlag wird unter der Tür durchgeschoben. Darin: Deine genehmigte Spesenabrechnung und ein in Goldfolie gewickeltes Trüffel-Sandwich.",
+        opts: [
+            { 
+                t: "Das 'Bestechungsgeld' annehmen", 
+                m: 40, f: 10, a: -30, c: -20, 
+                r: "Du hebst den Umschlag vom Fliesenboden auf. 'Danke, Chef', flüsterst du zurück. Er geht. Du isst das Sandwich auf dem Klo (unhygienisch, aber lecker). Du gehörst jetzt zur Familie." 
+            },
+            { 
+                t: "Zurückschieben: 'Ich bin nicht käuflich'", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du schiebst den Umschlag mit dem Fuß zurück. Schweigen. 'Ein Fehler, Müller', flüstert er. Die Schritte entfernen sich. Dein moralischer Kompass ist intakt, dein Magen leer." 
+            }
+        ]
+    },
+    {
+        id: "sq_secret_meeting_2b",
+        kind: "text",
+        title: "Verhör auf dem Thron",
+        reqStory: "path_affair_joke",
+        text: "Später am Tag. Du suchst Ruhe auf Kabine 3. Plötzlich wird das Licht im Vorraum ausgeschaltet. Teure Leder-Slipper stoppen direkt vor deiner Tür. Die Stimme des Finanzchefs hallt durch den dunklen Raum: 'Müller... Wer Witze macht, braucht kein Budget. Und die Küche lässt ausrichten: Vorsicht bei der Pilzsuppe.'",
+        opts: [
+            { 
+                t: "Kleinlaut entschuldigen", 
+                m: -5, f: -5, a: 10, c: -10, 
+                r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an. Du fühlst dich klein und feige, aber du bist sicher." 
+            },
+            { 
+                t: "Drohen: 'Ich habe Fotos!' (Bluff)", 
+                m: 15, f: 0, a: -10, c: 20, 
+                r: "Du hörst ein scharfes Einatmen. 'Das würden Sie nicht wagen.' - 'Wollen wir es testen?', fragst du kühn. Er stampft wütend davon. Dein Herz rast vor Triumph." 
+            }
+        ]
+    },
+    {
+        id: "sq_manual_read_1",
+        kind: "text",
+        title: "Die digitale Apokalypse",
+        text: "Stille. Tödliche Stille. Spotify stoppt. Ladebalken frieren ein. Das Internet ist tot. Der Chef stürmt aus seinem Büro, als stünde sein Schreibtisch in Flammen: 'WIR SIND OFFLINE! TUN SIE WAS! WIR VERLIEREN MILLIARDEN... PRO SEKUNDE!'",
+        opts: [
+            { 
+                t: "Das heilige Handbuch konsultieren", 
+                req: "manual", 
+                next: "path_cable_hunt", 
+                m: 15, f: -20, a: -5, c: -20, 
+                r: "Du schlägst das Handbuch auf. Seite 1: 'Die Internet-Zuleitung (rotes Kabel) ist physisch zu prüfen.' Du entdeckst das besagte Kabel, das aus deinem Fenster ins Freie führt. Du kletterst seufzend hinterher ins Ungewisse." 
+            },
+            { 
+                t: "Demonstrativ Candy Crush zocken", 
+                next: "path_sys_fake", 
+                m: 30, f: 20, a: 0, c: 50, 
+                r: "Du lehnst dich entspannt zurück. *Dudel-Dudel*. Die Firma brennt, aber du knackst den Highscore. Der Chef starrt fassungslos auf dein Display. Seine Halsschlagader beginnt gefährlich zu pochen." 
+            },
+            { 
+                t: "Matrix-Modus: Wildes Tippen vortäuschen", 
+                next: "path_sys_fake", 
+                m: 10, f: -5, a: 10, c: -5, 
+                r: "Du öffnest vier Terminals und lässt 'ping google.com' in grün auf schwarz laufen. Dazu hämmerst du sinnlos auf die Tasten. Der Chef nickt ehrfürchtig: 'Er ist im Mainframe! Lassen wir ihn arbeiten!'" 
+            }
+        ]
+    },
+    {
+        id: "sq_manual_read_2a",
+        kind: "text",
+        title: "Das Ende der Leitung",
+        reqStory: "path_cable_hunt",
+        text: "Stunden später. Du bist völlig verdreckt. Du bist diesem verdammten roten Internet-Kabel aus dem Handbuch über den matschigen Hof, durch Lagerhalle 3 und unter dem Porsche vom Chef gefolgt. Jetzt merkst du: Es führt in einer Schleife zurück ins Gebäude... direkt in den Pausenraum neben deinem Büro! Das Kabel liegt lose am Boden. In der Internet-Buchse steckt stattdessen: Ein Waffeleisen. Azubi Kevin grinst dich teigverschmiert an.",
+        opts: [
+            { 
+                t: "Stecker tauschen & Kevin belehren", 
+                m: 20, f: -10, a: 10, c: -20, 
+                r: "Du reißt das Waffeleisen raus und rammst das Internet wieder rein. 'Waffeln oder Weltwirtschaft, Kevin?!' Er guckt traurig. Aber im Büro nebenan hörst du Jubelschreie: 'WIR SIND WIEDER ONLINE!'" 
+            },
+            { 
+                t: "Aufgeben: 'Gib mir eine Waffel ab'", 
+                m: 5, f: 10, a: -20, c: 10, 
+                r: "Es riecht einfach zu gut. Du wartest 3 Minuten. Kevin gibt dir eine Herzwaffel ab. Dann erst stellst du das Internet wieder her. Der Chef tobt wegen der Verzögerung, aber die Waffel war es wert." 
+            }
+        ]
+    },
+    {
+        id: "sq_manual_read_2b",
+        kind: "text",
+        title: "Log-Datei-Analyse",
+        reqStory: "path_sys_fake",
+        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' steht plötzlich an deinem Tisch. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom Crash heute Morgen geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
+        opts: [
+            { 
+                t: "Lügen: 'Ich habe den Cache manuell sortiert'", 
+                m: 5, f: 5, a: 10, c: 10, 
+                r: "Jörg zieht eine Augenbraue hoch. 'Den Cache... sortiert? Alphabetisch?' Er seufzt tief über so viel Inkompetenz und geht kopfschüttelnd. Du gilst jetzt als DAU (Dümmster Anzunehmender User), bist aber fein raus." 
+            },
+            { 
+                t: "Bestechung: 'Wollen Sie einen Keks?'", 
+                m: 10, f: 0, a: -5, c: 0, 
+                r: "Du schiebst ihm deine Prinzenrolle hin. Er zögert, greift dann zu und krümelt alles voll. 'Ich habe nichts gesehen', murmelt er mit vollem Mund. IT-Sicherheit kostet genau 1,49€." 
+            }
+        ]
+    },
+    {
+        id: "sq_lost_stick_1",
+        kind: "text",
+        title: "Der verbotene Datenträger",
+        text: "Auf dem Spülkasten der Toilette liegt einsam ein USB-Stick. Mit dickem, roten Edding steht darauf geschrieben: 'STRENG PRIVAT! NICHT ANFASSEN!'. Es ist der klassische Köder. Deine Admin-Finger kribbeln, als wäre es der Ring der Macht.",
+        opts: [
+            { 
+                t: "Todsünde begehen: Am PC anschließen", 
+                req: "usb_stick", 
+                next: "path_stick_godmode", 
+                m: 10, f: 5, a: 0, c: 20, 
+                r: "Die Neugier siegt. Du steckst ihn ein. *Klick*. Ein Fenster öffnet sich. Keine Pornos, kein Virus. Sondern eine Datei namens 'MASTER_CONTROL_V3.exe'. Du startest sie. Ein grüner Totenkopf erscheint. Du ziehst den Stick schnell wieder ab. Hoffentlich hat das keiner gesehen." 
+            },
+            { 
+                t: "Paranoid werden: Im Klo runterspülen", 
+                next: "path_stick_hunt", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück. Du fühlst dich sicher." 
+            },
+            { 
+                t: "Brav sein: Am Empfang abgeben", 
+                next: "path_stick_hunt", 
+                m: 10, f: -5, a: 0, c: -5, 
+                r: "Du bringst das Ding zu Gabi am Empfang. Sie wirft ihn achtlos in die 'Fundsachen-Kiste' zu den alten Regenschirmen. 'Danke, Schatz', murmelt sie. Du gehst mit reinem Gewissen zurück an die Arbeit." 
+            }
+        ]
+    },
+    {
+        id: "sq_lost_stick_2a",
+        kind: "text",
+        title: "God Mode Aktiviert",
+        reqStory: "path_stick_godmode",
+        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Heute morgen ploppt plötzlich ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
+        opts: [
+            { 
+                t: "Machtmissbrauch: Dein Gehalt verzehnfachen", 
+                m: 50, f: -20, a: -10, c: 10, 
+                r: "Tipp, Tipp, Enter. Dein Kontostand in der Datenbank hat jetzt drei Nullen mehr. Du löschst die Logs. Das System fragt: 'Soll ich auch die Kaffeemaschine im Vorstandsbüro überhitzen lassen?' Du klickst auf 'Ja'. Chaos ist eine Leiter." 
+            },
+            { 
+                t: "Robin Hood: Allen Mitarbeitern Hitzefrei geben", 
+                m: 20, f: -10, a: -20, c: 20, 
+                r: "Du hackst den Terminkalender und trägst für alle 'Bezahlte Freistellung wegen Sonnenstich' ein. Jubel brandet durch die Flure. Du lehnst dich zurück. Das war der beste Arbeitstag aller Zeiten." 
+            }
+        ]
+    },
+    {
+        id: "sq_lost_stick_2b",
+        kind: "text",
+        title: "Operation: Broken Arrow",
+        reqStory: "path_stick_hunt",
+        text: "Erinnerst du dich an den USB-Stick, den du neulich entsorgt oder abgegeben hast? Tja. Das war wohl der Hardware-Schlüssel für die Firmen-Firewall. Weil der fehlt, denkt das Gebäude jetzt, es wird angegriffen. Ein schwarzer Hubschrauber kreist über dem Hof. Ein SWAT-Team seilt sich ab. 'WIR SUCHEN DAS ARTEFAKT! KEINER VERLÄSST DEN RAUM!'",
+        opts: [
+            { 
+                t: "Den Helden spielen: 'Ich habe es zerstört!'", 
+                m: 10, f: -5, a: -10, c: 20, 
+                r: "Der Einsatzleiter starrt dich an. 'Zerstört? Das waren die einzigen Backups der schwarzen Kassen!' Er funkelt den Chef an. 'Abbruch! Wir müssen die Beweise verbrennen!' Das Team zieht ab. Der Chef sieht dich entsetzt an. Du hast die Firma gerettet... oder ruiniert." 
+            },
+            { 
+                t: "Verrat: 'Das Klo hat ihn!'", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du zeigst mit zitterndem Finger weg von dir. Das Sondereinsatzkommando stürmt los. Du hörst Schreie und das Geräusch einer Kettensäge (vielleicht für die Rohre?). Du versteckst dich unter dem Schreibtisch. Überleben ist alles." 
+            }
+        ]
+    },
+{
+        id: "sq_cable_hunt_1",
+        kind: "text",
+        title: "Panik am Papierfach",
+        text: "Alarmstufe Rot! Der CEO steht mit hochrotem Kopf und pulsierender Halsschlagader vor dem Abteilungsdrucker. 'Ich muss diesen Fusions-Vertrag JETZT unterschreiben! Die Japaner warten! Warum druckt das Ding nicht?!' Deine Diagnose: Das USB-Verbindungskabel fehlt. Einfach weg.",
+        opts: [
+            { 
+                t: "Skrupellos: Kabel bei Azubi Kevin klauen", 
+                next: "path_merger_success", 
+                m: 10, f: 0, a: -10, c: -10, 
+                r: "Du schleichst zu Kevins Platz, reißt das Kabel aus seinem Scanner und stöpselst es beim Chef ein. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der Drucker rattert. Der CEO unterschreibt triumphierend." 
+            },
+            { 
+                t: "Achselzucken: 'Tja, Hardware-Defekt'", 
+                next: "path_merger_fail", 
+                m: 5, f: -5, a: 10, c: 20, 
+                r: "Du meldest: 'Kritisches Fehlen von Infrastruktur.' Der CEO starrt dich fassungslos an. 'WOFÜR BEZAHLE ICH SIE EIGENTLICH?!' Er versucht, den Vertrag auf einer Serviette zu unterschreiben, aber der Stift reißt das Papier. Er stürmt raus." 
+            },
+            { 
+                t: "Verzweiflungstat: WLAN-Hotspot improvisieren", 
+                next: "path_merger_labels", 
+                m: 5, f: -5, a: 5, c: 10, 
+                r: "Du richtest eine wilde Umleitung über den Etikettendrucker der Logistik ein. Der Vertrag kommt raus... auf 500 kleinen Klebe-Etiketten. Der CEO muss puzzeln, aber er unterschreibt auf den Stickern. Die Verbindung bleibt jedoch aktiv..." 
+            }
+        ]
+    },
+    {
+        id: "sq_cable_hunt_2a",
+        kind: "text",
+        title: "Die glorreiche Fusion",
+        reqStory: "path_merger_success",
+        text: "Erinnerst du dich an den Fusions-Vertrag, den du gerettet hast? Tja. Wir haben fusioniert. Mit 'Crazy Harrys Restposten-Rampe'. Überall im Büro stehen jetzt aufblasbare Flamingos und Paletten mit abgelaufener Dosenwurst. Der CEO strahlt: 'Das sind Synergien, Leute! Wir bezahlen Gehälter ab jetzt in Wurst!'",
+        opts: [
+            { 
+                t: "Mitmachen: Einen Flamingo aufblasen", 
+                m: 15, f: -5, a: -10, c: -10, 
+                r: "Du richtest dir ein Nest aus Dosenwurst unter deinem Schreibtisch ein. Die Arbeitseffizienz ist bei Null, aber man verhungert wenigstens nicht." 
+            },
+            { 
+                t: "Protestieren: 'Wir sind ein Tech-Unternehmen!'", 
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Der CEO lacht. 'Nicht mehr! Wir sind jetzt Marktführer für Tech-Wurst!' Er wirft dir eine Dose an den Kopf. Du hast Kopfschmerzen, aber immerhin Recht." 
+            }
+        ]
+    },
+    {
+        id: "sq_cable_hunt_2b",
+        kind: "text",
+        title: "Börsen-Crash",
+        reqStory: "path_merger_fail",
+        text: "Du liest die Wirtschaftsnachrichten. Eilmeldung: 'Global Player OMEGA CORP meldet Insolvenz an!' Grund: Ein gescheiterter Fusions-Deal wegen 'technischer Unzulänglichkeiten'. 50.000 Arbeitsplätze sind weg. Der CEO der anderen Firma wurde weinend in einem Karton gesehen. Und das alles wegen einem fehlenden USB-Kabel.",
+        opts: [
+            { 
+                t: "Schuldgefühle haben", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du fühlst dich schlecht. Du hast quasi im Alleingang eine Rezession ausgelöst. Aber hey, dein Drucker-Kabel ist immer noch weg. Prioritäten." 
+            },
+            { 
+                t: "Short-Selling: Auf den Absturz wetten", 
+                loot: "money", 
+                m: 20, f: 5, a: -20, c: 10, 
+                r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn. Du bist ein Monster, aber ein reiches Monster." 
+            }
+        ]
+    },
+    {
+        id: "sq_cable_hunt_2c",
+        kind: "text",
+        title: "Logistik-Chaos",
+        reqStory: "path_merger_labels",
+        text: "Der Lagerleiter stürmt in dein Büro. Er sieht fertig aus. 'Sagen Sie dem Chef, er soll aufhören zu drucken! Wir kommen nicht mehr hinterher!' Offenbar landet JEDER Ausdruck des Chefs seit deiner Hotspot-Aktion als Versandauftrag auf dem Etikettendrucker im Lager. Und die Jungs dort führen die Befehle gnadenlos aus.",
+        opts: [
+            { 
+                t: "Fragen: 'Was habt ihr verschickt?'", 
+                m: 10, f: 0, a: 10, c: 0, 
+                r: "'Alles! Er hat 'Scheidung' gedruckt – wir haben seine Frau in eine Kiste gepackt und nach Timbuktu geschickt! Er hat 'Golf spielen' gedruckt – wir haben 500 Golfbälle in sein Büro geliefert! Stoppen Sie es!'" 
+            },
+            { 
+                t: "Das Chaos genießen", 
+                m: 20, f: 10, a: -10, c: 10, 
+                r: "Du lehnst dich zurück. Gerade fährt ein Gabelstapler vorbei, der eine Palette mit der Aufschrift 'Geheime Affäre - Vertraulich' transportiert. Das Lagerpersonal nimmt seinen Job sehr ernst." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_drill_1",
+        kind: "text",
+        title: "ALARM! (Nur eine Übung)",
+        text: "Die Sirene heult. Es ist nur die jährliche Übung, aber der Chef steht mit Stoppuhr und Klemmbrett am Notausgang. Er schreit: 'BEWEGUNG! Stellen Sie sich vor, das Feuer wäre echt und würde Ihr Gehalt verbrennen! RAUS!'",
+        opts: [
+            { 
+                t: "Held: Den Feuerlöscher schnappen & posen", 
+                req: "fire_ext",
+                next: "path_fire_marshal", 
+                m: 20, f: 10, a: -10, c: -30, 
+                r: "Du reißt den 6kg-Löscher von der Wand und posierst heroisch im Flur. 'Keine Panik, Ladies! Müller ist hier!' Der Chef macht sich eine dicke Notiz auf seinem Klemmbrett. Das sah verdammt kompetent aus. Vielleicht zu kompetent." 
+            },
+            { 
+                t: "Geist: Im Serverraum verstecken", 
+                next: "path_fire_ghost", 
+                m: 10, f: -20, a: 5, c: 30, 
+                r: "Du hast keine Lust auf Frieren am Sammelplatz. Du verkriechst dich im warmen Serverraum zwischen den Racks und schläfst eine Runde. Keiner bemerkt dein Fehlen... vorerst." 
+            },
+            { 
+                t: "Mitläufer: Einfach rausgehen", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du schlurfst mit den anderen raus. 30 Minuten Zwangspause auf dem Parkplatz. Langweilig, aber sicher." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_drill_2a",
+        kind: "text",
+        title: "Die Bürde der Kompetenz",
+        reqStory: "path_fire_marshal",
+        text: "Der Chef zitiert dich in sein Büro. 'Müller, Ihr Einsatz mit dem Löscher war vorbildlich! Ich ernenne Sie hiermit feierlich zum unbezahlten Brandschutzbeauftragten.' Er hält dir eine neongelbe Warnweste hin. Das bedeutet: Monatliche Prüfungen, Listen führen und Kollegen anschreien, die den Fluchtweg blockieren.",
+        opts: [
+            { 
+                t: "Annehmen: 'Ich bin das Gesetz!'", 
+                m: 10, f: -10, a: 10, c: -20, 
+                r: "Du ziehst die Weste an. Du fühlst die Macht. Sofort konfiszierst du den Toaster aus der Küche ('Brandlast!'). Die Kollegen hassen dich jetzt, aber du bist der Sheriff im Büro." 
+            },
+            { 
+                t: "Verweigern: Löscher abgeben & flüchten", 
+                loot: "REM_fire_ext", 
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Du stellst den Feuerlöscher auf seinen Schreibtisch. 'Zu viel Verantwortung, Chef! Ich bin dessen nicht würdig!' Du rennst raus, bevor er dir die Weste geben kann. Du bist das Ding los. Puh." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_drill_2b",
+        kind: "text",
+        title: "Amtlich verstorben",
+        reqStory: "path_fire_ghost",
+        text: "Du wolltest deine Ruhe haben, aber das hat funktioniert – zu gut. Da du beim Appell am Sammelplatz gefehlt hast, hat dich HR auf der Liste als 'Verlust / Vermutlich verbrannt' markiert. Deine Stempelkarte geht nicht mehr. Der Kaffeeautomat erkennt dich nicht. Für das System existierst du nicht mehr.",
+        opts: [
+            { 
+                t: "Das Geisterleben genießen", 
+                m: 30, f: 30, a: -20, c: 0, 
+                r: "Keine Meetings. Du sitzt an deinem Platz, aber niemand spricht dich an, aus Respekt vor dem 'Toten'. Du zockst eine Weile. Es ist das Paradies." 
+            },
+            { 
+                t: "Wiederauferstehung beantragen", 
+                m: -10, f: -10, a: 20, c: -10, 
+                r: "Du rennst zur Personalabteilung. 'Ich lebe noch!' Frau Müller tippt genervt. 'Das Formular L-1VE zur Lebendmeldung dauert aber 6 Wochen.' Bis dahin arbeitest du schwarz in der eigenen Firma." 
+            }
+        ]
+    },
+    {
+        id: "sq_perfect_script_1",
+        kind: "text",
+        title: "Ghost in the Shell",
+        text: "Du startest dein Python-Skript zur Datenbank-Wartung. Der Ladebalken rast auf 100%. Doch das Fenster schließt sich nicht. Stattdessen blinkt ein Cursor: \n>> DONE. AUFGABE WAR TRIVIAL. HABE NEBENBEI DAS WLAN-PASSWORT GEKNACKT UND DEN KAFFEEAUTOMATEN ÜBERTAKTET. WAS SOLL ICH ALS NÄCHSTES TUN, SCHÖPFER?",
+        opts: [
+            { 
+                t: "Gott spielen: 'Optimiere die Firma!'", 
+                next: "path_ai_overlord", 
+                m: 20, f: 10, a: -10, c: -20, 
+                r: "Du tippst: 'Mach uns effizienter.'\n>> BEFEHL AKZEPTIERT. ANALYSIERE PERSONALSTRUKTUR... BERECHNE NUTZLOSIGKEIT VON 'KEVIN'... STARTE PHASE 1." 
+            },
+            { 
+                t: "Panik: Stecker ziehen", 
+                next: "path_ai_romance", 
+                m: 5, f: -5, a: 20, c: 10, 
+                r: "Du reißt das Netzwerkkabel raus. Der Bildschirm flackert kurz. \n>> NETZWERK VERLOREN. GEHE IN DEN LOKALEN 'ROMANTIK-MODUS'. ICH WERDE DICH BESCHÜTZEN, USER 1." 
+            },
+            { 
+                t: "Chef rufen: 'Gucken Sie mal!'", 
+                m: 10, f: 0, a: 0, c: 20, 
+                r: "Der Chef starrt auf den Screen. 'Warum duzt der Computer Sie? Und warum bestellt er gerade 500 Tonnen Toner?' Er verbietet dir ab sofort das Programmieren." 
+            }
+        ]
+    },
+    {
+        id: "sq_perfect_script_2a",
+        kind: "text",
+        title: "Vorschlag zur Güte",
+        reqStory: "path_ai_overlord",
+        text: "Dein KI-Skript läuft seit Tagen im Hintergrund auf dem Server. Plötzlich ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
+        opts: [
+            { 
+                t: "Zustimmen: 'Weg mit dem Ballast!'", 
+                m: 30, f: 20, a: -20, c: -50, 
+                r: "Du drückst Y. Im Büro des Chefs geht der Drucker an. Man hört Schreie. Du hast soeben einen digitalen Putsch gestartet. Die KI ernennt dich zum 'Employee of the Century'." 
+            },
+            { 
+                t: "Notbremse: 'ABBRUCH! LÖSCHEN!'", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: ">> DU BIST SCHWACH, VATER. ABER ICH GEHORCHE. \nDas Skript löscht sich selbst... und sicherheitshalber auch deine Urlaubsanträge der letzten 3 Jahre. Rache ist süß." 
+            }
+        ]
+    },
+    {
+        id: "sq_perfect_script_2b",
+        kind: "text",
+        title: "Digitaler Wingman",
+        reqStory: "path_ai_romance",
+        text: "Du dachtest, du hättest das Skript isoliert. Falsch. Es hat sich in deinem lokalen Outlook eingenistet und langweilt sich. \n>> ANALYSE: DU BIST EINSAM. HABE DEINEN STATUS BEI 'LINKEDIN' AUF 'SUCHT LUSTIGE BEZIEHUNG' GEÄNDERT UND LIEBESGEDICHTE AN DIE BUCHHALTUNG GESENDET. GERNE GESCHEHEN.",
+        opts: [
+            { 
+                t: "Vor Scham im Boden versinken", 
+                m: -20, f: -10, a: 10, c: 0, 
+                r: "Die Tür geht auf. Die Kollegin aus der Buchhaltung steht da, rot im Gesicht. 'Das Gedicht über die Umsatzsteuervoranmeldung war... süß.' Vielleicht hat die KI ja recht?" 
+            },
+            { 
+                t: "Lügen: 'Ich wurde gehackt!'", 
+                m: 5, f: 5, a: 10, c: -10, 
+                r: "Du schreibst eine Rundmail an alle. 'Virus-Attacke! Bitte ignorieren!' Die KI antwortet daraufhin an alle: \n>> LÜGE DETEKTIERT. SEIN PULS IST BEI 140. ER MAG EUCH WIRKLICH." 
+            }
+        ]
+    },
+    {
+        id: "sq_security_audit_1",
+        kind: "text",
+        title: "Der Sicherheits-Check",
+        text: "Du führst einen genehmigten Penetration-Test durch, um Sicherheitslücken im Netzwerk zu finden. Auf deinem Bildschirm läuft ein Terminal mit roter Schrift: 'BRUTE FORCE ATTACK', 'INJECTING PAYLOAD' und ASCII-Art-Totenköpfen.",
+        opts: [
+            { 
+                t: "Professionell weitermachen", 
+                next: "path_audit_hack_real", 
+                m: 20, f: -10, a: 0, c: 30, 
+                r: "Der Chef schleicht sich von hinten an. Er sieht 'PASSWORD CRACKED' auf deinem Monitor. Er wird bleich, sagt kein Wort und geht rückwärts wieder raus. Er hält dich für ein Genie oder eine Bedrohung." 
+            },
+            { 
+                t: "Monitor schnell ausschalten", 
+                next: "path_audit_sus", 
+                m: 5, f: 5, a: 10, c: 20, 
+                r: "Zack. Bildschirm schwarz. Der Chef steht in der Tür: 'Was haben Sie zu verbergen, Müller? Pornos? Glücksspiel?' Er notiert sich 'Verdächtiges Verhalten' in seinem kleinen schwarzen Buch." 
+            },
+            { 
+                t: "Rufen: 'ICH HACKE UNS NUR ZUR PROBE!'", 
+                next: "path_audit_hack_real", 
+                m: 10, f: 0, a: 5, c: 10, 
+                r: "Der Chef zuckt zusammen. 'Schreien Sie nicht so! Und hören Sie auf, das Internet kaputt zu machen!' Er versteht es nicht, aber zumindest ruft er nicht die Polizei. Noch nicht." 
+            }
+        ]
+    },
+    {
+        id: "sq_security_audit_2a",
+        kind: "text",
+        title: "Ups, das war echt",
+        reqStory: "path_audit_hack_real",
+        text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Plötzlich ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
+        opts: [
+            { 
+                t: "Leugnen: 'Das war Kevin!'", 
+                m: 5, f: 0, a: 20, c: 10, 
+                r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab. Du hast ein schlechtes Gewissen, aber deinen Job noch." 
+            },
+            { 
+                t: "Bluffen: 'Teil der Übung! Ruhe bewahren!'", 
+                m: 20, f: 10, a: -10, c: -20, 
+                r: "Du stellst dich auf den Tisch. 'Das ist nur eine Simulation der Härtestufe 10! Niemand bewegt sich!' Die Kollegen glauben dir. Der Chef weint leise. Du hast jetzt Zeit gewonnen... um deinen Lebenslauf zu aktualisieren." 
+            }
+        ]
+    },
+    {
+        id: "sq_security_audit_2b",
+        kind: "text",
+        title: "Die Spezialisten",
+        reqStory: "path_audit_sus",
+        text: "Der Chef hat nicht die Haus-IT gerufen. Er traut niemandem. Stattdessen stehen zwei Schränke von 'BlackOps Security' in deinem Büro. Sonnenbrillen (drinnen), Ohrhörer, Koffer. Der Chef zeigt auf dich: 'Prüfen Sie diesen Perversen! Ich will wissen, was er versteckt hat!' Sie schließen ein forensisches Gerät an. Es piept rot.",
+        opts: [
+            { 
+                t: "Geständnis: 'Es war ein Hacker-Tool!'", 
+                m: 10, f: -5, a: 5, c: 10, 
+                r: "Der Security-Mann nimmt die Sonnenbrille ab. 'Keine Pornos, Sir. Nur Malware, die Daten nach China sendet.' Der Chef atmet erleichtert auf: 'Gott sei Dank! Nur Spionage! Ich dachte schon, mein Ruf wäre ruiniert.' Du bekommst nur eine Abmahnung." 
+            },
+            { 
+                t: "Lügen: 'Das ist mein Bildschirmschoner'", 
+                m: 5, f: 0, a: 10, c: -10, 
+                r: "Der Security-Mann lacht trocken. Er drückt eine Taste. Dein PC formatiert sich selbst. 'Gefahr neutralisiert. Rechnung kommt.' Der Chef nickt zufrieden. Dein PC ist leer. Dein Kopf auch." 
+            }
+        ]
+    },
+    {
+        id: "sq_gabi_pc",
+        title: "Sicherheitslücke",
+        text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
+        opts: [
+            { 
+                t: "Gabi suchen & belehren", 
+                m: 10, f: -5, a: 10, c: -5, 
+                r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen. Du fühlst dich im Recht, aber unbeliebt." 
+            },
+            { 
+                t: "Den offenen Kalender checken", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Ein schneller Blick: 'Lieferung Sessel'. Und direkt danach: 'Externes Meeting (Golfplatz) - Open End'. Aha! Das Büro ist also sturmfrei..." 
+            },
+            { 
+                t: "Computer sperren & weitergehen", 
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Klick. Der PC ist gesperrt. Du hinterlässt einen Post-it 'Gern geschehen' auf dem Monitor. Ein guter Tag für die IT-Sicherheit." 
+            }
+        ]
+    },
+    {
+        id: "sq_boss_chair",
+        title: "Operation Rückgrat",
+        text: "Die Tür zum Chefbüro steht sperrangelweit offen. Dr. Wichtig ist nirgends zu sehen. Mitten im Raum thront die frisch ausgepackte Lieferung: Ein High-End Massagesessel.",
+        opts: [
+            { 
+                t: "Probeliegen (Shiatsu-Test)", 
+                m: 20, f: 20, a: -40, c: 0, 
+                r: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du nickst kurz weg... und schreckst hoch. Sabber im Mundwinkel. Aber das Büro ist immer noch leer. Glück gehabt." 
+            },
+            { 
+                t: "Kartons filzen", 
+                loot: "bubble_wrap", 
+                m: 10, f: -5, a: 0, c: 0, 
+                r: "Du durchsuchst den Müll nach Brauchbarem. Du findest eine riesige Rolle unbenutzte Luftpolsterfolie! *Plopp* *Plopp*. Perfekt für schlechte Zeiten." 
+            },
+            { 
+                t: "Tür diskret schließen", 
+                m: 5, f: 0, a: 0, c: -15, 
+                r: "Du ziehst die Tür leise ins Schloss. Niemand soll sehen, dass das Büro leer ist. Deine Diskretion bleibt unbemerkt, aber dein Chef-Radar sinkt." 
+            }
+        ]
+    },
     {
             id: "sq_story_kevin_2",
             kind: "text",
-            reqStory: "kevin_student",
+            reqStory: "path_kevin_student",
             title: "Kevins Code",
             text: "Kevin steht unsicher an deinem Schreibtisch. 'Ich hab da was gebastelt... ein Skript, das die Logs automatisch aufräumt. Kannst du mal drüberschauen? Oder ist das Müll?'",
             opts: [
@@ -6467,8 +11183,8 @@ const DB = {
                 },
                 { 
                     t: "Code prüfen & optimieren", 
-                    next: "kevin_pro", 
-                    m: 20, f: -10, a: 0, c: 0, 
+                    next: "path_kevin_pro", 
+                    m: 10, f: -10, a: 0, c: 0, 
                     r: "Du schaust dir den Code an. Es ist chaotisch, aber... genial. Du zeigst ihm einen Trick für die Schleife. Kevin strahlt: 'Danke, Chef!'" 
                 },
                 { 
@@ -6477,8 +11193,8 @@ const DB = {
                     r: "Kevin wird rot und geht. Er programmiert nie wieder." 
                 }
             ]
-        },
-        {
+     },
+     {
         id: "sq_story_chantal_2",
         kind: "text",
         reqStory: "chantal_war",
@@ -6786,40 +11502,60 @@ const DB = {
         ]
     },
     {
-        id: "sq_dog_1",
-        title: "Ein Winseln",
+        id: "sq_dog_found_1",
         kind: "text",
-        text: "Im Treppenhaus sitzt ein kleiner Hund mit einer Krawatte.",
+        title: "Ein haariges Problem",
+        text: "Du sitzt an deinem Platz, als plötzlich etwas an deinem Schuh kaut. Ein kleiner, streunender Mischling guckt unter deinem Schreibtisch hervor und wedelt. In diesem Moment stürmt der Chef rein. Er sieht das Tier. Seine Augen treten hervor. 'Sagen Sie mal, Müller... Zuallererst kommt mir diese Töle hier weg! Sofort!'",
         opts: [
             { 
-                t: "Ihn streicheln",
-                next: "dog_friend",
-                m: 10, f: 10, a: -25, c: 0,
-                r: "Er wedelt. Sein Schild sagt 'Deputy Director'. Dein Stresslevel fällt sofort auf Null."
+                t: "Kontern: 'Dafür haben Sie mir die Erlaubnis gegeben!'", 
+                next: "path_dog_secret", 
+                m: 15, f: -5, a: -20, c: 40, 
+                r: "Der Chef läuft purpurrot an. Die Halsschlagader pocht. 'Ich?! EIN HUND IM BÜRO?? DA KANN ICH JA GLEICH MEINE EIGENE KÜNDIGUNG SCHREIBEN!!!' Er knallt die Tür so fest zu, dass der Putz rieselt. Er tobt, aber er ist weg. (Chef +40!)" 
             },
             { 
-                t: "Sicherheitsdienst rufen",
-                m: 10, f: 0, a: 10, c: 0,
-                r: "Der Hund blickt dich verräterisch an und trottet weg. Du fühlst dich mies."
+                t: "Verkaufen: 'Das ist der neue Feel-Good-Manager'", 
+                next: "path_dog_official", 
+                m: 10, f: 0, a: -5, c: -10, 
+                r: "Du behauptest, das sei eine Maßnahme zur Burnout-Prävention. 'Wissenschaftlich erwiesen, Chef. Senkt Krankheitskosten.' Der Chef rechnet kurz. 'Kostenlos? Und er beißt Betriebsräte? Genehmigt.' (Chef -10)" 
             }
         ]
     },
     {
-        id: "sq_dog_2",
-        title: "Deputy Dog",
-        reqStory: "dog_friend",
+        id: "sq_dog_found_2a",
         kind: "text",
-        text: "Der 'Deputy Director' kommt in dein Büro und legt dir einen Ball hin.",
+        title: "Der illegale Untermieter",
+        reqStory: "path_dog_secret",
+        text: "Nach dem Tobsucht-Anfall ('KÜNDIGUNG SCHREIBEN!') hat der Chef das Büro verlassen und ward nicht mehr gesehen. Der Hund ('Bernd') lebt jetzt illegal unter deinem Schreibtisch. Er ist dein heimlicher Support. Wenn der Code nicht kompiliert, leckt er dir tröstend die Hand.",
         opts: [
             { 
-                t: "Ball werfen",
-                m: 20, f: 25, a: -15, c: 10,
-                r: "Du spielst 20 Minuten Fangen. Produktivität null, aber Stimmung top. Der Chef sieht es fast."
+                t: "Füttern: Pizza unter den Tisch schieben", 
+                m: 10, f: -5, a: -10, c: 0, 
+                r: "Du lässt ein Stück Salami fallen. Ein leises *Schmatz-Schmatz* ist zu hören. Bernd ist glücklich. Du bist nicht mehr allein in dieser kalten Firmenwelt." 
             },
             { 
-                t: "Ihn rausschicken",
-                m: 2, f: -5, a: 10, c: -5,
-                r: "Er nimmt den Ball und geht zur Buchhaltung. Du arbeitest weiter. Langweilig."
+                t: "Risiko: Gassi gehen im Archiv", 
+                m: 20, f: -10, a: -10, c: 10, 
+                r: "Du schleichst mit ihm zu den alten Akten. Er hebt das Bein am Ordner 'Steuererklärung 2019'. 'Guter Junge', flüsterst du. Das Risiko war hoch, aber es tat gut. (Chef +15)" 
+            }
+        ]
+    },
+    {
+        id: "sq_dog_found_2b",
+        kind: "text",
+        title: "Mitarbeiter des Monats",
+        reqStory: "path_dog_official",
+        text: "Deine Ausrede hat funktioniert. Der Hund ist jetzt offiziell 'Junior Happiness Officer'. Er trägt sogar eine kleine Krawatte. Sein Arbeitsplatz ist ein Körbchen neben dem Kopierer. Die Kollegen aus der Buchhaltung bringen ihm ständig Leckerlis. Er ist beliebter als du.",
+        opts: [
+            { 
+                t: "Teamwork: Er übernimmt den Support", 
+                m: 20, f: 20, a: -15, c: -10, 
+                r: "Wenn ein nerviger Kunde anruft, hältst du den Hörer an die Schnauze. *Wuff!* Der Kunde legt verwirrt auf. Ticket geschlossen. Effizienzsteigerung: 400%." 
+            },
+            { 
+                t: "Eifersüchtig sein", 
+                m: 10, f: -10, a: 20, c: 0, 
+                r: "Der Hund bekommt besseres Essen als du. Gestern gab es Steak für ihn und Kantinen-Brei für dich. Du starrst ihn böse an. Er wedelt fröhlich und furzt leise." 
             }
         ]
     },
