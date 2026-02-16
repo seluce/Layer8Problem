@@ -1,3 +1,8 @@
+\[2.2.0] - 2026-02-16
+* Ruf-System wurde eingeführt (findet man über "TEAM") für Koffee, Side-Quest Server und Calls
+* Ein kleiner Schluck bei Bernd zeigt, dass man nicht auf der Arbeit trinken sollte (Easter-Egg)
+* Gemeldete Fehler für Statuswerte wurden korrigiert (danke fürs Feedback!)
+
 \[2.1.0] - 2026-02-14
 
 * Das Sammelbuch (Archiv) lässt sich nun über das Start-Modal exportieren und importieren

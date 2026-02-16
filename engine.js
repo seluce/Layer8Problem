@@ -18,9 +18,11 @@ const engine = {
         // Stats & System
         achievements: [],
         achievedTitles: [],
+		reputation: {},
         coffeeConsumed: 0,
 		spamClicked: 0,
 		emailsIgnored: 0,
+		drunkEndTime: 0,
 
         // E-Mail System
 		emailTimer: null,
@@ -41,7 +43,19 @@ const engine = {
         archive: {
             items: [],
             achievements: [],
-            achievementDiffs: {}
+            achievementDiffs: {},
+            reputation: {}
+        },
+      
+        // Ruf-System (-100 bis +100)
+        reputation: {
+            "Kevin": 0,
+            "Chantal": 0,
+            "Egon": 0,
+            "Dr. Wichtig": 0,
+            "Gabi": 0,
+            "Frau Elster": 0,
+            "Markus": 0
         }
     },
 
@@ -49,23 +63,44 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.1.0 geladen. Warte auf User...");
+        this.log("System v2.2.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
     loadSystem: function() {
         const data = localStorage.getItem('layer8_archive');
+        
+        // Default-Werte für alle Charaktere setzen (Startwert 0)
+        // Das stellt sicher, dass 'this.state.reputation' immer definiert ist, auch ohne Savegame
+        DB.chars.forEach(char => {
+            this.state.reputation[char.name] = 0;
+        });
+
         if(data) {
             try {
+                // 1. Archiv laden
                 this.state.archive = JSON.parse(data);
-                // Fallback falls Struktur leer war
+                
+                // 2. Fallbacks für Datenstruktur (falls Savegame alt ist)
                 if(!this.state.archive.items) this.state.archive.items = [];
                 if(!this.state.archive.achievements) this.state.archive.achievements = [];
+                if(!this.state.archive.reputation) this.state.archive.reputation = {};
+
+                // 3. WICHTIG: Ruf aus dem Archiv in das aktive Spiel übertragen!
+                // Wir überschreiben die Nullen mit den gespeicherten Werten
+                for (let [name, val] of Object.entries(this.state.archive.reputation)) {
+                    this.state.reputation[name] = val;
+                }
+
             } catch(e) { console.error("Savegame Error", e); }
         }
     },
 
     saveSystem: function() {
+        // WICHTIG: Vor dem Speichern den aktuellen Ruf ins Archiv kopieren
+        this.state.archive.reputation = { ...this.state.reputation };
+        
+        // Dann ab in den LocalStorage
         localStorage.setItem('layer8_archive', JSON.stringify(this.state.archive));
     },
 
@@ -559,6 +594,30 @@ updateUI: function() {
         const tEl = document.getElementById('ticket-count');
         tEl.innerText = this.state.tickets;
         tEl.className = this.state.tickets > 7 ? "text-4xl font-black text-white ticket-counter ticket-pulse" : "text-4xl font-black text-white ticket-counter";
+		
+		// --- DRUNK EFFECT RENDERING ---
+        let blurVal = 0;
+        
+        if (this.state.drunkEndTime > this.state.time) {
+            const remaining = this.state.drunkEndTime - this.state.time;
+            // Skaliert von 6px runter auf 0px über 60 Minuten
+            blurVal = Math.max(0, (remaining / 60) * 3);
+        }
+
+        // Liste der Elemente, die unscharf werden sollen
+        const blurTargets = ['terminal', 'smartphone', 'email-modal'];
+
+        blurTargets.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (blurVal > 0.1) { // Kleine Toleranz, damit es nicht unnötig rechnet
+                    el.style.filter = `blur(${blurVal}px)`;
+                    el.style.transition = "filter 1s ease";
+                } else {
+                    el.style.filter = 'none';
+                }
+            }
+        });
 
         // --- INVENTAR UPDATE (Hauptansicht / Mini-Slots) ---
         const invGrid = document.getElementById('inventory-grid');
@@ -949,7 +1008,7 @@ trigger: function(type) {
         }
     },
 
-// --- TERMINAL & CALL SYSTEM (FINAL FIX) ---
+// --- TERMINAL & CALL SYSTEM ---
 
     renderTerminal: function(ev, type) {
 		// --- Event-Status für E-Mail-System speichern ---
@@ -1107,7 +1166,16 @@ trigger: function(type) {
                         clickAction = `onclick="engine.handleChainChoice('${opt.next}')"`;
                     } else {
                         let safeRes = opt.r ? opt.r.replace(/'/g, "\\'").replace(/\n/g, "<br>") : '';
-                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}', '${opt.rem||''}')"`;
+                        
+                        // NEU: Reputation Objekt sicher für HTML machen
+                        let safeRep = "null";
+                        if (opt.rep) {
+                            // Wir wandeln das Objekt in einen String um und ersetzen Anführungszeichen, damit das HTML nicht kaputt geht
+                            safeRep = JSON.stringify(opt.rep).replace(/"/g, "&quot;");
+                        }
+
+                        // Hier fügen wir 'safeRep' als letztes Argument hinzu
+                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}', '${opt.rem||''}', ${safeRep})"`;
                     }
                 }
 
@@ -1167,7 +1235,7 @@ trigger: function(type) {
         this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
     },
 
-resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem) { // <--- HIER: rem HINZUGEFÜGT
+resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) { // <--- HIER: rem HINZUGEFÜGT
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
             res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
@@ -1182,6 +1250,12 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem) { //
         // --------------------------------
 
         if(type === 'coffee') this.state.coffeeConsumed++;
+		
+		// Wenn man mit Bernd trinkt (ID aus data.js), startet der Effekt
+        if (next === 'path_bernd_drunk') {
+            this.state.drunkEndTime = this.state.time + m + 60; 
+            this.log("Alles dreht sich ein bisschen...", "text-purple-400 italic");
+        }
 
         // Zeit & Tickets
         let oldTimeChunk = Math.floor(this.state.time / 30);
@@ -1222,6 +1296,41 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem) { //
         if (f !== 0) this.showFloatingText('val-fl', f);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
+        
+        // --- REPUTATION LOGIK  ---
+        if (repData) {
+            // Falls repData als String kommt (durch HTML Attribute), parsen
+            if (typeof repData === 'string') {
+                try { repData = JSON.parse(repData.replace(/'/g, '"')); } catch(e) { console.error("Rep Parse Error", e); }
+            }
+
+            if (typeof repData === 'object') {
+                let changed = false; // Wir merken uns, ob sich was geändert hat
+                
+                for (let [charName, val] of Object.entries(repData)) {
+                    // Sicherstellen, dass der Charakter im State existiert
+                    if (this.state.reputation[charName] === undefined) {
+                        this.state.reputation[charName] = 0;
+                    }
+                    
+                    // Wert addieren
+                    this.state.reputation[charName] += val;
+                    
+                    // Begrenzen auf -100 bis +100
+                    this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
+                    
+                    // Optional: Floating Text Feedback (Nur wenn gewünscht)
+                    // if (val !== 0) this.showFloatingText('team-btn', val > 0 ? '💚' : '💔');
+
+                    changed = true;
+                }
+
+                // WENN sich der Ruf geändert hat: Sofort ins Archiv schreiben & speichern!
+                if (changed) {
+                    this.saveSystem(); 
+                }
+            }
+        }
 
         // Story Flag setzen
         if (next && next !== "") {
@@ -2118,44 +2227,101 @@ closeInventory: function() {
     },
 
     // --- TEAM / CHARAKTERE ---
-    openTeam: function() {
+openTeam: function() {
         const modal = document.getElementById('team-modal');
         const grid = document.getElementById('team-grid');
         grid.innerHTML = '';
-
+     
         DB.chars.forEach(char => {
             const card = document.createElement('div');
-            // Design der Karte (wie vorher)
-            card.className = "bg-slate-800 p-4 rounded-lg border border-slate-700 flex gap-4 hover:border-white transition-colors";
+            card.className = "bg-slate-800 p-4 rounded-lg border border-slate-700 flex flex-col gap-3 relative overflow-hidden group hover:border-slate-500 transition-colors overflow-visible"; 
             
-            // --- LOGIK: BILD ODER EMOJI? ---
-            let avatarHTML;
-            
-            if (char.img) {
-                // FALL A: Es gibt ein Bild -> Bild anzeigen
-                // 'object-cover' sorgt dafür, dass das Bild den Kreis füllt
-                avatarHTML = `<img src="${char.img}" class="w-full h-full object-cover" alt="${char.name}">`;
-            } else {
-                // FALL B: Kein Bild -> Emoji anzeigen
-                avatarHTML = char.icon;
+            // Prüfen, ob es der Spieler ist
+            const isPlayer = char.name.includes("Müller") || char.role === "SysAdmin";
+
+            // Ruf und Logik nur berechnen, wenn NICHT Spieler
+            let currentRep = 0;
+            let statusText = "NEUTRAL";
+            let barColor = "bg-slate-500";
+            let statusColor = "text-slate-400";
+            let fillPercent = 50;
+
+            if (!isPlayer) {
+                currentRep = this.state.reputation[char.name] || 0;
+                
+                if (currentRep >= 90) {
+                    statusText = "KOMPLIZE";
+                    barColor = "bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.6)]";
+                    statusColor = "text-purple-400";
+                } else if (currentRep >= 60) {
+                    statusText = "VERBÜNDET";
+                    barColor = "bg-emerald-500";
+                    statusColor = "text-emerald-400";
+                } else if (currentRep >= 20) {
+                    statusText = "FREUNDLICH";
+                    barColor = "bg-green-600";
+                    statusColor = "text-green-500";
+                } else if (currentRep <= -90) {
+                    statusText = "HASST DICH";
+                    barColor = "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.6)]";
+                    statusColor = "text-red-500";
+                } else if (currentRep <= -60) {
+                    statusText = "GENERVT";
+                    barColor = "bg-orange-600";
+                    statusColor = "text-orange-500";
+                } else if (currentRep <= -20) {
+                    statusText = "SKEPTISCH";
+                    barColor = "bg-yellow-600";
+                    statusColor = "text-yellow-600";
+                }
+                fillPercent = (currentRep + 100) / 2;
             }
 
-            // HTML zusammenbauen
+            // HTML Bausteine für Status & Balken (nur wenn nicht Müller)
+            const statusBadgeHTML = isPlayer ? '' : `
+                <span class="text-[10px] font-bold uppercase tracking-widest ${statusColor} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded ml-2 shrink-0">
+                    ${statusText}
+                </span>`;
+
+            const progressBarHTML = isPlayer ? '' : `
+                <div class="w-full h-1.5 bg-slate-900 rounded-full border border-slate-700 relative overflow-hidden mb-2">
+                    <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-600/50 z-20"></div>
+                    <div class="h-full ${barColor} transition-all duration-1000 ease-out relative z-10" style="width: ${fillPercent}%"></div>
+                </div>`;
+
+            // Avatar
+            let avatarHTML = char.img ? 
+                `<img src="${char.img}" class="w-full h-full object-cover" alt="${char.name}">` : 
+                char.icon;
+
             card.innerHTML = `
-                <div class="shrink-0 bg-slate-900 w-16 h-16 flex items-center justify-center rounded-full border border-slate-600 overflow-hidden text-4xl shadow-inner
-                            relative z-0 transition-transform duration-300 ease-out origin-center cursor-help
-                            md:hover:scale-[2.25] md:hover:z-50 md:hover:shadow-2xl md:hover:border-white">
-                    ${avatarHTML}
-                </div>
-                
-                <div> 
-                    <div class="flex items-baseline gap-2 mb-1">
-                        <h3 class="font-bold text-white text-lg">${char.name}</h3>
-                        <span class="text-[10px] text-slate-300 uppercase tracking-widest">${char.role}</span>
+                <div class="flex gap-4 items-start z-10">
+                    <div class="shrink-0 bg-slate-900 w-16 h-16 flex items-center justify-center rounded-full border border-slate-600 overflow-hidden text-3xl shadow-inner 
+                                relative z-0 transition-transform duration-300 ease-out origin-center cursor-help 
+                                md:hover:scale-[2.25] md:hover:z-50 md:hover:shadow-2xl md:hover:border-white">
+                        ${avatarHTML}
                     </div>
-                    <p class="text-xs text-slate-400 italic leading-relaxed">${char.desc}</p>
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-start mb-1">
+                            <div class="flex flex-col">
+                                <div class="flex items-baseline gap-2">
+                                    <h3 class="font-bold text-white text-lg truncate">${char.name}</h3>
+                                    <span class="text-[10px] text-slate-400 uppercase tracking-wider hidden md:inline-block pt-1">${char.role}</span>
+                                </div>
+                                <span class="text-[10px] text-slate-500 uppercase tracking-wider md:hidden">${char.role}</span>
+                            </div>
+                            
+                            ${statusBadgeHTML}
+                        </div>
+                        
+                        ${progressBarHTML}
+                        
+                        <p class="text-xs text-slate-400 leading-snug opacity-90 italic">${char.desc}</p>
+                    </div>
                 </div>
             `;
+            
             grid.appendChild(card);
         });
 
@@ -2394,7 +2560,7 @@ closeInventory: function() {
         // 1. Daten sammeln
         // Wir holen das aktuelle Archiv aus dem State UND den Tutorial-Status aus dem LocalStorage
         const data = {
-            arc: this.state.archive, // Dein Sammelalbum
+            arc: this.state.archive, // Enthält jetzt Items, Achievements UND Reputation
             // Falls du 'tutorialSeen' oder 'layer8_tutorial' nutzt (bitte Key prüfen!)
             tut: localStorage.getItem('tutorialSeen') || "false", 
             salt: Math.floor(Math.random() * 999999) // Macht den Code einzigartig

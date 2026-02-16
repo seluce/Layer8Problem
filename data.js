@@ -1576,11 +1576,13 @@ const DB = {
                 opts: [
                     { 
                         t: "Einhändig weiterarbeiten",
+						rep: { "Dr. Wichtig": 2 },	
                         m: 30, f: -10, a: 20, c: -10, 
                         r: "Multitasking. Du löst Tickets mit rechts, isst mit links. Der Chef nickt anerkennend im Vorbeigehen. Deine Tastatur knirscht jetzt vor Krümeln." 
                     },
                     { 
                         t: "Serie im Minifenster gucken",
+						rep: { "Dr. Wichtig": -5 },	
                         m: 60, f: 20, a: -20, c: 10, 
                         r: "Finger auf 'Alt-Tab' bereit. Du schaffst zwei Folgen. Leider spiegelt sich der Film in deiner Brille, als der Chef reinkommt. Ärger!" 
                     }
@@ -1602,11 +1604,13 @@ const DB = {
                 opts: [
                     { 
                         t: "Brot schnappen und losrasen",
+						rep: { "Dr. Wichtig": 10 },	
                         m: 60, f: -20, a: 25, c: -15, 
                         r: "Du würgst dein Brot bei Tempo 180 runter. Beim Kunden war nur der Stecker locker. Du hast Sodbrennen, aber der Chef feiert deinen heldenhaften Einsatz." 
                     },
                     { 
                         t: "Auf die gesetzliche Pause bestehen",
+						rep: { "Dr. Wichtig": -10 },	
                         m: 30, f: 5, a: -10, c: 15, 
                         r: "Du beißt betont langsam in dein Brot und tippst auf die Uhr. Der Chef läuft rot an, schnaubt und rennt wütend selbst los. Dein Essen schmeckt plötzlich nach Sieg." 
                     }
@@ -1663,6 +1667,7 @@ const DB = {
                 opts: [
                     { 
                         t: "Den 'Bio-Burger' für 15€ holen",
+						rep: { "Dr. Wichtig": -2 },	
                         m: 75, f: 10, a: -10, c: 10, 
                         r: "Du hast 60 Minuten gewartet. Der Burger war winzig, aber lecker. Du kommst massiv zu spät zurück. Der Chef tippt auf seine Uhr: 'War der Burger aus Gold, Müller?'" 
                     },
@@ -1685,16 +1690,19 @@ const DB = {
                 opts: [
                     { 
                         t: "Hinsetzen & Smalltalk wagen", 
+						rep: { "Dr. Wichtig": 5 },
                         m: 60, f: -10, a: 20, c: -25, 
                         r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann'. Chef-Radar sinkt massiv! Dein Essen ist allerdings kalt geworden." 
                     },
                     { 
                         t: "Über Gehaltserhöhung reden", 
+						rep: { "Dr. Wichtig": -15 },
                         m: 45, f: 0, a: 10, c: 50, 
                         r: "Ganz schlechte Idee. Er verschluckt sich an seiner Garnele. 'Müller, nicht beim Essen!' Die Stimmung kippt sofort. Er merkt sich das negativ vor." 
                     },
                     { 
                         t: "So tun als hättest du einen Anruf", 
+						rep: { "Dr. Wichtig": 2 },
                         m: 5, f: 10, a: -5, c: 5, 
                         r: "Du hältst das Handy ans Ohr: 'Oh, Server-Notfall! Muss los!' Du rennst mit dem Tablett raus. Knapp entkommen, aber er wirkt beleidigt." 
                     }
@@ -1817,6 +1825,7 @@ const DB = {
                 opts: [
                     { 
                         t: "Laut rufen: 'Ich lerne schon Mandarin!'",
+						rep: { "Dr. Wichtig": -5 },	
                         m: 30, f: 10, a: -10, c: 20, 
                         r: "Du erzählst wilde Horror-Stories über Arbeitslager. Die Kollegen weinen fast. Das Chaos ist herrlich. Produktivität am Nachmittag: Null. Der Chef tobt." 
                     },
@@ -1827,6 +1836,7 @@ const DB = {
                     },
                     { 
                         t: "Den Chef am Buffet abfangen",
+						rep: { "Dr. Wichtig": 2 },	
                         m: 10, f: 0, a: 0, c: 10, 
                         r: "Du drängst den Chef zwischen Salat und Suppe in die Ecke. Er lacht nervös: 'Kein Kommentar.' Aha! Das Schweigen bestätigt alles!" 
                     }
@@ -1931,7 +1941,8 @@ const DB = {
                         r: "Der perfekte Power-Nap. Du wachst punktgenau auf, wischst den Sabber vom Mundwinkel und gehst erfrischt zurück an die Arbeit." 
                     },
                     { 
-                        t: "Ohne Wecker schlafen (Risiko!)", 
+                        t: "Ohne Wecker schlafen)", 
+						rep: { "Dr. Wichtig": -10 },	
                         m: 90, f: 30, a: -30, c: 20, 
                         r: "Du fällst in ein Koma. Du wachst völlig vernebelt auf. Was für ein Jahr haben wir? Blick auf die Uhr: SCHEI**E! Du warst 90 Minuten weg. Der Chef hat dich gesucht." 
                     },
@@ -1947,7 +1958,7 @@ const DB = {
                 title: "MITTAG: FIRMEN-FITNESS",
                 text: "HR hat ein 'Pop-Up Gym' im Konferenzraum aufgebaut. 'Schwitzen für den Erfolg'. Der Trainer brüllt schon.",
                 opts: [
-                    { t: "Teilnehmen", m: 45, f: -10, a: 10, c: -5, r: "Du hast Liegestütze im Anzug gemacht. Jetzt riechst du nach Iltis. Aber der Chef hat's gesehen (positiv)." },
+                    { t: "Teilnehmen", rep: { "Dr. Wichtig": 2 }, m: 45, f: -10, a: 10, c: -5, r: "Du hast Liegestütze im Anzug gemacht. Jetzt riechst du nach Iltis. Aber der Chef hat's gesehen." },
                     { t: "Zuschauen & Donut essen", req: "donut", m: 30, f: 10, a: -10, c: 5, r: "Du isst einen Donut, während die Kollegen leiden. Ein Gefühl der Überlegenheit. Aber HR guckt böse." },
                     { t: "Sabotieren", m: 10, f: 5, a: -5, c: 10, r: "Du drehst die Heizung auf 30 Grad. Das Training wird abgebrochen. Danke, Held." }
                 ]
@@ -1996,7 +2007,7 @@ const DB = {
                 { t: "Stecker ziehen!", m: 10, f: -10, a: 20, c: 10, r: "Brachial, aber wirksam. Server ist aus. Daten gerettet (vielleicht)." },
                 { t: "Admin-Code eingeben", req: "admin_pw", m: 5, f: 0, a: -10, c: -20, r: "Profi-Move! Angriff abgewehrt. Held der Firma!" }
             ],
-            fail: { m: 30, f: 0, a: 50, c: 50, r: "ZU LANGSAM! Daten verschlüsselt. Chef tobt!" }
+            fail: {rep: { "Dr. Wichtig": -10 }, m: 30, f: 0, a: 50, c: 50, r: "ZU LANGSAM! Daten verschlüsselt. Chef tobt!" }
         },
         {
             id: "boss_fire",
@@ -2018,7 +2029,7 @@ const DB = {
                 { t: "Backup-Leitung schalten", req: "admin_pw", m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
                 { t: "Qualität auf 'Kartoffel' (240p) setzen", m: 5, f: 5, a: 0, c: 10, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
             ],
-            fail: { m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
+            fail: { rep: { "Dr. Wichtig": -10 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
         },
         {
             id: "boss_ddos",
@@ -2067,6 +2078,7 @@ const DB = {
                 }
             ],
             fail: { 
+                rep: { "Dr. Wichtig": -10 },	
                 m: 120, f: -50, a: 50, c: 80, 
                 r: "DATENBANK LEER. 'Error 404: Company not found'. Der Chef steht weinend im Serverraum. Du solltest schon mal deinen Lebenslauf aktualisieren." 
             }
@@ -2097,6 +2109,7 @@ const DB = {
             ],
             fail: { 
                 m: 60, f: 0, a: 50, c: 50, 
+				rep: { "Dr. Wichtig": -10 },	
                 r: "ER HAT DEN STECKER GEZOGEN! 'Ouuuups, war nur ein Prank Bro!'. Das Internet ist weg. Du gehst viral als 'Der heulende Admin' und wirst zum Meme. Der Chef ist 'not amused'." 
             }
         },
@@ -2109,7 +2122,7 @@ const DB = {
                 { t: "Abdichten (MacGyver)", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." },
                 { t: "Aus dem Fenster werfen", m: 5, f: 10, a: 20, c: 20, r: "Du hast das 20kg Teil durchs geschlossene Fenster geworfen. Es explodiert auf dem Parkplatz. Besser dort als hier." }
             ],
-            fail: { m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
+            fail: { rep: { "Dr. Wichtig": -10 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
         },
         {
             id: "boss_skynet_lock",
@@ -2135,7 +2148,8 @@ const DB = {
                     r: "AUTSCH! Mit einem Schrei wirfst du dich ins Glas. Es splittert. Dein Arm blutet und pocht wie wild, aber du bekommst Luft." 
                 }
             ],
-            fail: { 
+            fail: {
+                rep: { "Dr. Wichtig": -10 },				
                 m: 120, f: 30, a: 20, c: 50, 
                 r: "OHNMACHT. Du wachst im Krankenhaus auf. Der Chef steht am Bett: 'Wer schläft, fliegt! Das ziehen wir vom Lohn ab!'" 
             }
@@ -2181,7 +2195,7 @@ const DB = {
             title: "BOSS: DER ISO-PRÜFER KOMMT",
             text: "PANIK! Der strenge Prüfer vom TÜV steht im Flur! Er steuert direkt auf den Serverraum zu! Dort hängen die Kabel wie Lianen im Dschungel von der Decke. Wenn er das sieht, entzieht er uns die Zertifizierung!",
             timer: 20,
-            fail: { r: "Der Prüfer öffnet die Tür. Er sieht das Chaos. Er weint leise. 'Zertifikat entzogen.' Der Chef tobt.", f: 0, a: 40, c: 60 },
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "Der Prüfer öffnet die Tür. Er sieht das Chaos. Er weint leise. 'Zertifikat entzogen.' Der Chef tobt.", f: 0, a: 40, c: 60 },
             opts: [
                 { 
                     t: "Alles ordentlich festzurren", 
@@ -2206,7 +2220,7 @@ const DB = {
             title: "BOSS: DAS ROHR BRICHT",
             text: "ZISCH! In der Teeküche ist ein Rohr geplatzt! Ein Strahl heißes Wasser schießt quer durch den Raum... direkt auf die ungeschützte Steckdosenleiste des Etagen-Verteilers! Stromausfall in 3... 2...",
             timer: 15,
-            fail: { r: "ZAPP! Kurzschluss. Funkenflug. Dunkelheit. Der Server ist tot. Der Kühlschrank ist tot. Der Chef steht im Dunkeln und brüllt deinen Namen.", f: 0, a: 50, c: 50 },
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "ZAPP! Kurzschluss. Funkenflug. Dunkelheit. Der Server ist tot. Der Kühlschrank ist tot. Der Chef steht im Dunkeln und brüllt deinen Namen.", f: 0, a: 50, c: 50 },
             opts: [
                 { 
                     t: "Mit Tape abdichten", 
@@ -2231,11 +2245,12 @@ const DB = {
             title: "BOSS: LIVESTREAM DESASTERS",
             text: "Der Chef hält seine Jahresrede live vor allen Investoren! Plötzlich flackert der Beamer. Das Bild wird lila, dann schwarz. Der VGA-Stecker am Podium ist locker und die Rändelschrauben fehlen! Der Chef schwitzt und starrt dich panisch an!",
             timer: 20,
-            fail: { r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", f: 0, a: 40, c: 80 },
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", f: 0, a: 40, c: 80 },
             opts: [
                 { 
                     t: "Stecker festschrauben", 
                     req: "screw",
+					rep: { "Dr. Wichtig": 5 },
                     m: 2, f: 5, a: -10, c: -10, 
                     r: "Du kriechst unter das Pult, zückst den Schraubendreher und fixierst den Stecker bombenfest. Das Bild ist kristallklar. Der Chef flüstert: 'Guter Mann!'" 
                 },
@@ -2282,21 +2297,24 @@ const DB = {
             title: "🌊 DAS AQUARIUM PLATZT 🌊",
             text: "Das riesige Zierfisch-Aquarium im Chefbüro hat einen Riss! 500 Liter Wasser drohen auf den Perserteppich und die Boden-Steckdosen zu laufen! Der Chef schreit: 'RETTE DIE KOIS!'",
             timer: 12,
-            fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du bist gefeuert.", f: 0, a: 50, c: 100 },
+            fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", f: 0, a: 50, c: 100 },
             opts: [
                 { 
                     t: "Riss kleben", 
                     req: "tape", 
+					rep: { "Dr. Wichtig": 10 },
                     m: 5, f: -5, a: 0, c: -20, 
                     r: "Panzertape hält alles! Auch 500 Liter Wasserdruck (fürs Erste). Die Kois leben. Der Chef umarmt dich (nass)." 
                 },
                 { 
                     t: "Wasser aufsaugen (Kleidung)", 
+					rep: { "Dr. Wichtig": 2 },
                     m: 20, f: -10, a: 20, c: -5, 
                     r: "Du wirfst deinen Pulli in die Pfütze. Es reicht nicht. Der Teppich ist ruiniert, aber du hast 'Einsatz' gezeigt." 
                 },
                 { 
-                    t: "Kois retten (Kescher)", 
+                    t: "Kois retten (Kescher)",
+                    rep: { "Dr. Wichtig": 10 },					
                     req: "zip_ties", 
                     m: 10, f: 0, a: -10, c: -10, 
                     r: "Du baust aus Kabelbindern und Müllbeutel einen Kescher. Fische gerettet. Das Büro ist geflutet, aber die Tiere leben." 
@@ -2311,12 +2329,14 @@ const DB = {
         opts: [
             { 
                 t: "Brutal: Kabel mit Schere kappen", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: -10, a: 20, c: 10, 
                 r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
             },
             { 
                 t: "Hacker-Move: Zu Excel wechseln", 
                 req: "admin_pw", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 5, a: -10, c: -10, 
                 r: "In Millisekunden wechselst du auf eine komplizierte Tabelle. Die Zuschauer denken, das gehört zur Show. 'Und hier sehen Sie unsere Effizienz!', ruft der Chef. Gerettet!" 
             }
@@ -2376,8 +2396,8 @@ const DB = {
             }
         },
         results: {
-            truth: { txt: "Egon glaubt dir. Er geht hoch und schreit Meyer an.", m: 5, f: 5, a: -5, c: 0 },
-            lie: { txt: "Du nimmst die Schuld auf dich. Meyer schickt dir dankbar Pralinen.", m: 10, f: 0, a: -10, c: 10, loot: "donut" }
+            truth: { txt: "Egon glaubt dir. Er geht hoch und schreit Meyer an.", rep: { "Egon": 5 }, m: 5, f: 5, a: -5, c: 0 },
+            lie: { txt: "Du nimmst die Schuld auf dich. Meyer schickt dir dankbar Pralinen.", rep: { "Egon": -5 }, m: 10, f: 0, a: -10, c: 10, loot: "donut" }
         }
     },
         {
@@ -2386,18 +2406,21 @@ const DB = {
             text: "Duuu? Ich hab glaub ich das Internet gelöscht. Ich wollte Fortnite installieren und hab den Ordner 'System32' in den Papierkorb geschoben, um Platz zu machen. Jetzt ist der Bildschirm blau und schreit mich an.",
             opts: [
                 { 
-                    t: "Ihn anschreien: 'BIST DU WAHNSINNIG?!'", 
-                    m: 15, f: 0, a: -20, c: 20, 
+                    t: "Ihn anschreien: 'BIST DU WAHNSINNIG?!'",
+                    rep: { "Kevin": -5 }, 
+                    m: 15, f: 0, a: -20, c: 20,
                     r: "Du brüllst so laut ins Telefon, dass man es im Nachbarbüro hört. Kevin weint leise am anderen Ende. Deine Wut sinkt etwas, auch wenn der PC immer noch kaputt ist." 
                 },
                 { 
                     t: "Befehl: 'Formatieren! Lern was draus!'", 
-                    m: 30, f: 10, a: 0, c: 5, 
+                    rep: { "Kevin": -2 },
+                    m: 30, f: 10, a: 0, c: 5,
                     r: "Du zwingst ihn, alles selbst neu aufzusetzen. Er ist den ganzen Tag beschäftigt und lernt hoffentlich, dass man Systemordner in Ruhe lässt." 
                 },
                 { 
                     t: "Hingehen und alles mühsam retten", 
-                    m: 90, f: -30, a: 10, c: -10, 
+                    rep: { "Kevin": 10 },
+                    m: 90, f: -30, a: 10, c: -10,
                     r: "Du sitzt 1,5 Stunden an seinem PC und stellst Daten wieder her. Lebenszeit, die dir niemand zurückgibt. Kevin fragt am Ende: 'Darf ich jetzt Minecraft installieren?'" 
                 }
             ]
@@ -2407,9 +2430,9 @@ const DB = {
             title: "CEO Dr. Wichtig",
             text: "Müller! Ich bin am Flughafen. Mein iPad geht nicht! Ich drücke den Knopf und nichts passiert! FIXEN SIE DAS REMOTE! SOFORT! Ich verliere hier Millionen!",
             opts: [
-                { t: "Stressball kneten", req: "stressball", m: 60, f: -10, a: -10, c: -10, r: "Du bleibst ruhig, während er schreit. Es war nur der Akku." },
-                { t: "Ist der Akku leer?", m: 60, f: -10, a: 30, c: -10, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." },
-                { t: "Lüge: 'Sonnenwinde stören'", m: 5, f: 30, a: 0, c: 25, r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." }
+                { t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, f: -10, a: -10, c: -10, r: "Du bleibst ruhig, während er schreit. Es war nur der Akku." },
+                { t: "Ist der Akku leer?", m: 60, f: -10, a: 30, c: -10, rep: { "Dr. Wichtig": -5 }, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." },
+                { t: "Lüge: 'Sonnenwinde stören'", m: 5, f: 30, a: 0, c: 25, rep: { "Dr. Wichtig": 5 }, r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." }
             ]
         },
         {
@@ -2417,19 +2440,19 @@ const DB = {
             title: "Vertriebsleiter Markus",
             text: "ICH KANN MEINE E-MAILS NICHT DRUCKEN! WENN ICH DAS ANGEBOT NICHT IN 5 MINUTEN AUF PAPIER HABE, KOSTET DAS DIE FIRMA EINE MILLION EURO! KOMMEN SIE HER!",
             opts: [
-                { t: "Mit Panzertape fixen", req: "tape", m: 15, f: -5, a: -5, c: -5, r: "Du hast die Papierkassette mit Tape festgeklebt. Es hält... vorerst. Markus grunzt zufrieden." },
-                { t: "Ist Papier im Drucker?", m: 10, f: -5, a: 20, c: -5, r: "Nein, war keins drin. Er entschuldigt sich natürlich nicht, sondern sagt: 'Das ist Ihre Aufgabe!'" },
-                { t: "PDF per Mail senden", m: 5, f: 10, a: 0, c: 5, r: "Er versteht nicht, wie das geht. 'Ich will Papier!!' Du legst genervt auf." }
+                { t: "Mit Panzertape fixen", req: "tape", rep: { "Markus": 5 }, m: 15, f: -5, a: -5, c: -5, r: "Du hast die Papierkassette mit Tape festgeklebt. Es hält... vorerst. Markus grunzt zufrieden." },
+                { t: "Ist Papier im Drucker?", rep: { "Markus": -3 }, m: 10, f: -5, a: 20, c: -5, r: "Nein, war keins drin. Er entschuldigt sich natürlich nicht, sondern sagt: 'Das ist Ihre Aufgabe!'" },
+                { t: "PDF per Mail senden", rep: { "Markus": -5 }, m: 5, f: 10, a: 0, c: 5, r: "Er versteht nicht, wie das geht. 'Ich will Papier!!' Du legst genervt auf." }
             ]
         },
-        {
+    {
         id: "call_sekretary_1",
         title: "Die Sekretärin (Wütend)",
         text: "Gabi vom Empfang brüllt ins Telefon: 'Der Drucker macht Geräusche wie eine sterbende Kaffeemühle! Ich habe seit heute Morgen keinen Kaffee und jetzt das! Tu was, sonst fliegt das Ding aus dem Fenster!'",
         opts: [
-            { t: "Donut anbieten", req: "donut", r: "Du opferst deinen Notfall-Donut. Gabi beißt rein, ihr Blutzucker steigt, die Wut sinkt. Der Drucker ist immer noch kaputt, aber sie ignoriert es jetzt.", m: 10, f: 10, a: -20, c: 5 },
-            { t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 },
-            { t: "Vortrag halten", next: "call_sekretary_rage", r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 }
+            { t: "Donut anbieten", req: "donut", rep: { "Gabi": 10 }, r: "Du opferst deinen Notfall-Donut. Gabi beißt rein, ihr Blutzucker steigt, die Wut sinkt. Der Drucker ist immer noch kaputt, aber sie ignoriert es jetzt.", m: 10, f: 10, a: -20, c: 5 },
+            { t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", rep: { "Gabi": 5 }, r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 },
+            { t: "Vortrag halten", next: "call_sekretary_rage", rep: { "Gabi": -10 }, r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 }
         ]
     },
     {
@@ -2438,9 +2461,9 @@ const DB = {
         reqStory: "call_sekretary_cable",
         text: "Die Mechanik läuft, aber das Display blinkt rot: 'OFFLINE'. Du schaust hinter das Gerät. Die LAN-Buchse ist leer. Daneben liegt ein Zettel von Chantal: 'Hab das Kabel für meinen Insta-Ringlicht-Strom gebraucht, Bussi!'",
         opts: [
-            { t: "Neues Kabel legen", req: "cable", r: "Zack. Kabel rein. Grüne LED. Der Drucker spuckt sofort 50 Seiten 'Wichtige Akten' aus. Gabi schaut dich an wie einen Halbgott.", m: 2, f: -5, a: -10, c: -5 },
-            { t: "Chantal suchen", r: "Du rennst durchs Haus, findest Chantal, streitest dich um das Kabel, kommst zurück. Gabi hat in der Zwischenzeit den Stecker gezogen. 'Jetzt ist er aus. Auch gut.'", m: 30, f: -10, a: 20, c: 10 },
-            { t: "WLAN-Antenne basteln", req: "tape", r: "Du versuchst, aus einer Büroklammer und Tape eine Antenne zu bauen. Gabi fragt, ob du noch ganz dicht bist. Es funktioniert natürlich nicht.", m: 20, f: 0, a: 15, c: 5 }
+            { t: "Neues Kabel legen", req: "cable", rep: { "Gabi": 5, "Chantal": 5 }, r: "Zack. Kabel rein. Grüne LED. Der Drucker spuckt sofort 50 Seiten 'Wichtige Akten' aus. Gabi schaut dich an wie einen Halbgott.", m: 2, f: -5, a: -10, c: -5 },
+            { t: "Chantal suchen", rep: { "Chantal": -10, "Gabi": -5 }, r: "Du rennst durchs Haus, findest Chantal, streitest dich um das Kabel, kommst zurück. Gabi hat in der Zwischenzeit den Stecker gezogen. 'Jetzt ist er aus. Auch gut.'", m: 30, f: -10, a: 20, c: 10 },
+            { t: "WLAN-Antenne basteln", req: "tape", rep: { "Gabi": -5 }, r: "Du versuchst, aus einer Büroklammer und Tape eine Antenne zu bauen. Gabi fragt, ob du noch ganz dicht bist. Es funktioniert natürlich nicht.", m: 20, f: 0, a: 15, c: 5 }
         ]
     },
     {
@@ -2449,9 +2472,9 @@ const DB = {
         reqStory: "call_sekretary_rage",
         text: "Gabi hat genug von deinem Vortrag. 'Ich zeig dir mal, was kaputt ist!' Sie reißt die Toner-Kartusche raus und schüttelt sie wild. Eine schwarze Staubwolke explodiert im Raum. Du siehst aus wie ein Schornsteinfeger.",
         opts: [
-            { t: "Wegrennen", r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 },
-            { t: "Putzen helfen", r: "Du versuchst, den Toner wegzuwischen. Er schmiert nur noch mehr. Nach einer Stunde sehen ihr beide aus wie Bergarbeiter. Aber das schweißt zusammen.", m: 60, f: -20, a: -5, c: 0 },
-            { t: "Erklären, dass Toner giftig ist", r: "Gabi fängt an zu weinen. Dann zu schreien. Der Sicherheitsdienst begleitet dich raus.", m: 10, f: 0, a: 50, c: 20 }
+            { t: "Wegrennen", rep: { "Gabi": -10 }, r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 },
+            { t: "Putzen helfen", rep: { "Gabi": 10 }, r: "Du versuchst, den Toner wegzuwischen. Er schmiert nur noch mehr. Nach einer Stunde sehen ihr beide aus wie Bergarbeiter. Aber das schweißt zusammen.", m: 60, f: -20, a: -5, c: 0 },
+            { t: "Erklären, dass Toner giftig ist", rep: { "Gabi": -15 }, r: "Gabi fängt an zu weinen. Dann zu schreien. Der Sicherheitsdienst begleitet dich raus.", m: 10, f: 0, a: 50, c: 20 }
         ]
     },
         {
@@ -2459,8 +2482,8 @@ const DB = {
             title: "Hausmeister Egon",
             text: "Im Serverraum tropft es von der Decke. Das Wasser ist neongrün. Soll ich Eimer drunterstellen oder ist das Kühlflüssigkeit von den Aliens?",
             opts: [
-                { t: "Sofort hinrennen!", m: 45, f: -20, a: 20, c: -15, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." },
-                { t: "Egal, lass tropfen", m: 5, f: 30, a: 0, c: 40, r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." }
+                { t: "Sofort hinrennen!", m: 45, f: -20, a: 20, c: -15, rep: { "Egon": 5 }, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." },
+                { t: "Egal, lass tropfen", m: 5, f: 30, a: 0, c: 40, rep: { "Egon": -5 }, r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." }
             ]
         },
         {
@@ -2539,16 +2562,19 @@ const DB = {
                 { 
                     t: "Gegenangriff: 'Ich sag nur: Deine Spesenabrechnung...'",
                     req: "secret_list", 
+                    rep: { "Chantal": -10 },
                     m: 5, f: 0, a: -10, c: -10, 
                     r: "Du erwähnst ganz ruhig ihre gefälschten Zahlen aus der Geheimakte. Sie wird kreidebleich, stammelt eine Entschuldigung und legt sofort auf. Schachmatt." 
                 },
                 { 
                     t: "Angst haben & sofort freischalten",
+                    rep: { "Chantal": 10, "Dr. Wichtig": -2 },
                     m: 10, f: 15, a: 10, c: 20, 
                     r: "Du hast Angst vor dem Gerücht und gibst ihr Zugriff. Sie shoppt jetzt Schuhe. Du hast deine Ruhe, aber die Firewall ist jetzt offen wie ein Scheunentor." 
                 },
                 { 
                     t: "Stur die IT-Richtlinie zitieren",
+                    rep: { "Chantal": -10, "Dr. Wichtig": 2 },
                     m: 30, f: -5, a: 20, c: 0, 
                     r: "Du diskutierst 30 Minuten lang über Compliance. Sie nennt dich 'Spaßbremse' und knallt wütend den Hörer auf. Zalando bleibt zu. Ein moralischer Sieg." 
                 }
@@ -2576,8 +2602,8 @@ const DB = {
             title: "Praktikant Kevin (Wieder)",
             text: "Du, ich hab das Internet kaputt gemacht. Ich brauch das Admin-Passwort um den Treiber neu zu starten. Der Chef killt mich sonst!",
             opts: [
-                { t: "Passwort eingeben", req: "admin_pw", m: 5, f: 20, a: 0, c: 0, r: "Du loggst dich remote ein, zack, fertig. Kevin himmelt dich an." },
-                { t: "Hingehen und fixen", m: 60, f: -20, a: 20, c: -10, r: "Ohne das Passwort musstest du den Safe-Mode nutzen. Hat ewig gedauert." }
+                { t: "Passwort eingeben", req: "admin_pw", rep: { "Kevin": 10 }, m: 5, f: 20, a: 0, c: 0, r: "Du loggst dich remote ein, zack, fertig. Kevin himmelt dich an." },
+                { t: "Hingehen und fixen", rep: { "Kevin": 2 }, m: 60, f: -20, a: 20, c: -10, r: "Ohne das Passwort musstest du den Safe-Mode nutzen. Hat ewig gedauert." }
             ]
         },
         {
@@ -2673,7 +2699,7 @@ const DB = {
         },
         results: {
             lie_hacker: { txt: "Egon glaubt an Cyber-Krieg. Er bewaffnet sich mit einem Besen.", m: 10, f: 0, a: -5, c: 5 },
-            truth_oma: { txt: "Egon lacht. 'Grüß sie schön.' Er macht den Strom wieder an.", m: 10, f: 5, a: -15, c: 0 }
+            truth_oma: { txt: "Egon lacht. 'Grüß sie schön.' Er macht den Strom wieder an.", rep: { "Egon": 5 }, m: 10, f: 5, a: -15, c: 0 }
         }
     },
         {
@@ -2694,11 +2720,13 @@ const DB = {
                 },
                 { 
                     t: "Wortlos auflegen & Server formatieren",
+					rep: { "Dr. Wichtig": -10 },
                     m: 5, f: -10, a: 20, c: 50, 
                     r: "Panikreaktion! Du hast alle Beweise vernichtet. Der Auditor ruft nicht mehr an, aber morgen wird der Chef fragen, wo die Datenbank hin ist." 
                 },
                 { 
                     t: "Alles gestehen & Lizenzen nachkaufen",
+					rep: { "Dr. Wichtig": -15 },
                     m: 60, f: -20, a: 0, c: 10, 
                     r: "Du gehst die Liste reumütig mit ihm durch. Es dauert ewig. Du hast rechtlich alles sauber gelöst, aber der Chef tobt wegen der Rechnung über 15.000€." 
                 }
@@ -2719,9 +2747,9 @@ const DB = {
             title: "Shadow-CEO Junior",
             text: "Der Sohn vom Chef (12 Jahre) ruft an: 'Ey, IT-Typ! Mach mal die Ports für meinen Minecraft-Server auf. Papa sagt, das gehört mir alles hier. Wenn du es nicht machst, sag ich ihm, du hast mich geschlagen!'",
             opts: [
-                { t: "Sofort die Ports öffnen", m: 10, f: 20, a: 0, c: 10, r: "Der Junge ist glücklich. 2 Stunden später ist das Firmennetz voller russischer Bots, weil du alles aufgemacht hast. Das wird ein Nachspiel haben." },
-                { t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." },
-                { t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'", m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." }
+                { t: "Sofort die Ports öffnen", rep: { "Dr. Wichtig": 10 }, m: 10, f: 20, a: 0, c: 10, r: "Der Junge ist glücklich. 2 Stunden später ist das Firmennetz voller russischer Bots, weil du alles aufgemacht hast. Das wird ein Nachspiel haben." },
+                { t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", rep: { "Dr. Wichtig": -10 }, m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." },
+                { t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'",rep: { "Dr. Wichtig": -2 }, m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." }
             ]
         },
         {
@@ -2761,7 +2789,7 @@ const DB = {
             opts: [
                 { t: "Schraubendreher nutzen", req: "screw", m: 30, f: -10, a: 5, c: 0, r: "Du bist hingegangen, hast das Gehäuse geöffnet und die CD gerettet. Es war eine Schlager-CD." },
                 { t: "Mit Klebeband angeln", req: "tape", m: 20, f: 0, a: 0, c: 0, r: "Du hast Tape an einen Stift geklebt und gefischt. Hat geklappt! MacGyver-Style." },
-                { t: "Neuen PC bestellen", m: 10, f: 10, a: -5, c: 20, r: "Das war dem Chef zu teuer. Abmahnung droht." }
+                { t: "Neuen PC bestellen", rep: { "Dr. Wichtig": -5 }, m: 10, f: 10, a: -5, c: 20, r: "Das war dem Chef zu teuer. Abmahnung droht." }
             ]
         },
     {
@@ -2801,6 +2829,7 @@ const DB = {
             },
             { 
                 t: "Genervt: 'Ich schicke den Hausmeister.'", 
+                rep: { "Egon": -5 },
                 m: 5, f: -5, a: 10, c: -5,
                 r: "Du machst ein Ticket für Egon auf. 'Wandschaden durch User'. Egon wird dich dafür hassen, aber immerhin ist es aktenkundig." 
             },
@@ -2819,6 +2848,7 @@ const DB = {
         opts: [
             { 
                 t: "Sarkasmus: 'Knoten reinmachen?'", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: 5, c: 15,
                 r: "'Gute Idee! Daten fließen ja wie Wasser, oder?' Pause. 'Geht immer noch nicht.' Jetzt hast du einen User mit verknotetem Kabel und einen wütenden Chef im Nacken." 
             },
@@ -2829,6 +2859,7 @@ const DB = {
             },
             { 
                 t: "Profi: Anleitung zum Crimpen geben", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 20, f: -20, a: 15, c: -10,
                 r: "Du erklärst ihm 20 Minuten lang, welche Ader wohin gehört. 'Weiß-Orange auf Eins...' Es ist mühsam, Müller versteht nichts, aber am Ende steht die Verbindung. Der Chef lobt den Einsatz." 
             }
@@ -2839,9 +2870,9 @@ const DB = {
             title: "Passwort-Vergesser",
             text: "Der CEO ruft an: 'Müller! Ich komme nicht ins System! Welches Passwort habe ich für den Server 'Geheim' gesetzt? Sie müssen das doch wissen!'",
             opts: [
-                { t: "Root-Zugang nutzen & zurücksetzen", req: "admin_pw", m: 5, f: 10, a: 0, c: -10, r: "Du setzt es remote auf 'Chef123' zurück. Er atmet auf: 'Gute Arbeit, Müller. Behalten Sie das für sich.'" },
-                { t: "Mit ihm gemeinsam raten", m: 20, f: 0, a: 20, c: 10, r: "Du fragst: 'War es vielleicht Ihr Geburtstag?' Nein. 'Name der Geliebten?' Langes Schweigen. Er wird langsam richtig wütend." },
-                { t: "Passwort mit dem USB-Stick knacken", req: "usb_stick", m: 10, f: 5, a: 0, c: 0, r: "Du liest das Passwort in 10 Sekunden aus. Er ist tief beeindruckt von deinen Hacker-Skills (und sollte dir eigentlich aus Angst sofort kündigen)." }
+                { t: "Root-Zugang nutzen & zurücksetzen", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: 10, a: 0, c: -10, r: "Du setzt es remote auf 'Chef123' zurück. Er atmet auf: 'Gute Arbeit, Müller. Behalten Sie das für sich.'" },
+                { t: "Mit ihm gemeinsam raten", rep: { "Dr. Wichtig": -5 }, m: 20, f: 0, a: 20, c: 10, r: "Du fragst: 'War es vielleicht Ihr Geburtstag?' Nein. 'Name der Geliebten?' Langes Schweigen. Er wird langsam richtig wütend." },
+                { t: "Passwort mit dem USB-Stick knacken", req: "usb_stick", rep: { "Dr. Wichtig": 10 }, m: 10, f: 5, a: 0, c: 0, r: "Du liest das Passwort in 10 Sekunden aus. Er ist tief beeindruckt von deinen Hacker-Skills (und sollte dir eigentlich aus Angst sofort kündigen)." }
             ]
         },
         {
@@ -2890,7 +2921,8 @@ const DB = {
             text: "Dein Bürotelefon klingelt. Das Display zeigt 'Unbekannt'.<br><br>'JÜRGEN? HÖRST DU MICH??'<br><br>Es ist Werner, dein Schwiegervater. Er schreit, als würde er über den Atlantik rufen.<br><br>'Die Renate hat mir dieses Wisch-Brett geschenkt! Ich drücke auf den Briefumschlag, aber da kommen keine Briefe! Und der Enkel sagt, ich soll mir Wozz-Äpp holen. Aber dieser Äpp-Laden will ein Passwort! Helf mir mal eben, das dauert doch nur eine Minute!'",
             opts: [
                 { 
-                    t: "Geduldig Schritt-für-Schritt erklären", 
+                    t: "Geduldig Schritt-für-Schritt erklären",
+                    rep: { "Dr. Wichtig": -5 },					
                     m: 60, f: 10, a: -20, c: 20, 
                     r: "Das war die Hölle. Er wusste seine Apple-ID nicht ('Ist das meine Hausnummer?'). Nach einer Stunde hat er WhatsApp installiert und dir sofort ein Bild von seinem Fußpilz geschickt. Der Chef hat dich privat telefonieren sehen." 
                 },
@@ -2925,6 +2957,7 @@ const DB = {
                 },
                 { 
                     t: "Helfen: 'Du musst die Box hauen!'", 
+					rep: { "Dr. Wichtig": -2 },
                     m: 25, f: -10, a: 5, c: 15, 
                     r: "Du erklärst den Reset-Trick durch Klopfen. Der Chef läuft vorbei und sieht, wie du wilde Karate-Bewegungen machst, als würdest du einen unsichtbaren Würfel verprügeln. 'Alles klar bei Ihnen, Müller?'" 
                 },
@@ -2966,11 +2999,13 @@ const DB = {
             opts: [
                 { 
                     t: "Ein riesiges Problem!",
+					rep: { "Dr. Wichtig": -10 },
                     m: 10, f: 0, a: 10, c: 25, 
                     r: "Der Chef schreit: 'WIR HABEN KEINE PROBLEME! WIR HABEN HERAUSFORDERUNGEN! Sie haben die falsche Einstellung, Müller!' Er legt wütend auf." 
                 },
                 { 
                     t: "Eine spannende Herausforderung!",
+					rep: { "Dr. Wichtig": 5 },
                     m: 5, f: 5, a: -5, c: -10, 
                     r: "Der Chef atmet erleichtert aus. 'Exakt! Das ist der Spirit! Lösen Sie diese Herausforderung!' Er ist glücklich." 
                 },
@@ -2988,16 +3023,19 @@ const DB = {
             opts: [
                 { 
                     t: "Auf ROT drehen! Rot ist immer warm!",
+                    rep: { "Egon": -5 },
                     m: 30, f: -10, a: 20, c: 10, 
                     r: "FALSCH! Dank der kreativen Verkabelung des Vorbesitzers hast du auf 'Schock-Frost' gestellt. Die Rohre platzen mit einem lauten Knall. Egon ist jetzt ein Eiszapfen." 
                 },
                 { 
-                    t: "Auf BLAU drehen! Vertrau mir!", 
+                    t: "Auf BLAU drehen! Vertrau mir!",
+                    rep: { "Egon": 5 }, 
                     m: 5, f: 5, a: 0, c: -5, 
                     r: "Egon zögert: 'Blau? Bist du sicher? Das ist doch Kalt...' Er dreht auf Blau. Plötzlich strömt warme Luft. 'Verrückte Technik! Du bist ein Genie, Müller!'" 
                 },
                 { 
-                    t: "Mir egal, dreh einfach an irgendwas!", 
+                    t: "Mir egal, dreh einfach an irgendwas!",
+                    rep: { "Egon": -2 }, 
                     m: 10, f: 0, a: 0, c: 0, 
                     r: "Egon flucht: 'Dann mach ich das Ding eben aus!' Er zieht den Hauptstecker. Es wird warm, aber der Server ist tot. Stille." 
                 }
@@ -3020,6 +3058,7 @@ const DB = {
                 },
                 { 
                     t: "Ruf die Feuerwehr", 
+					rep: { "Dr. Wichtig": -10 },
                     m: 10, f: 0, a: 0, c: 30, 
                     r: "Die Feuerwehr hat die Tür aufgebrochen. Rechnung: 500€. Der Chef tobt: 'Wieso wussten Sie den Code nicht?!'" 
                 }
@@ -3053,11 +3092,13 @@ const DB = {
         results: {
             res_panic: { 
                 txt: "Sirenen gehen los. Es war der Feueralarm.", 
+                rep: { "Kevin": -5 },
                 m: 5, f: -10, a: 20, c: 10,
                 next: "kevin_alarm"
             },
             res_disaster: { 
                 txt: "Das Licht wird rot. Halon-Gas flutet den Serverraum.", 
+                rep: { "Kevin": 5 },
                 m: 5, f: -20, a: 30, c: 20,
                 next: "kevin_gas"
             }
@@ -3078,8 +3119,8 @@ const DB = {
             }
         },
         results: {
-            truth: { txt: "Fehlalarm kostet 500€. Diskussion dauert ewig.", m: 30, f: 0, a: -5, c: 10 },
-            lie: { txt: "Sie kommen mit 3 Löschzügen. Evakuierung.", m: 60, f: -10, a: 50, c: 50 }
+            truth: { txt: "Fehlalarm kostet 500€. Diskussion dauert ewig.", rep: { "Kevin": -5 }, m: 30, f: 0, a: -5, c: 10 },
+            lie: { txt: "Sie kommen mit 3 Löschzügen. Evakuierung.", rep: { "Kevin": 5 }, m: 60, f: -10, a: 50, c: 50 }
         }
     },
 		{
@@ -3089,17 +3130,20 @@ const DB = {
             opts: [
                 { 
                     t: "Ich glaube im Kühlschrank ist Senf?",
+                    rep: { "Gabi": -5 },
                     m: 10, f: 0, a: 10, c: 0, 
                     r: "Gabi legt auf. Später hörst du, dass sie vor Schwäche ohnmächtig geworden ist. Der Sanitäter musste kommen." 
                 },
                 { 
                     t: "Guck mal in den Ordner 'Steuer 1990'...",
+                    rep: { "Gabi": 5 },
                     m: 5, f: 10, a: -10, c: -5, 
                     r: "Stille. Dann ein Rascheln und Schmatzen. 'Oh Gott, Sie sind ein Lebensretter! Woher wussten Sie...? Egal! Danke!'" 
                 },
                 { 
                     t: "Ich hab hier einen halben Donut", 
                     req: "donut", 
+                    rep: { "Gabi": 5 },
                     m: 5, f: 0, a: -5, c: 0, 
                     r: "Du bringst ihr deinen Donut. Nett, aber du bist dein Essen los." 
                 }
@@ -3134,16 +3178,19 @@ const DB = {
             opts: [
                 { 
                     t: "Kalt: 'Haben Sie ein Ticket?'", 
+                    rep: { "Frau Elster": -5 },
                     m: 5, f: 5, a: 5, c: 5, 
                     r: "Sie legt weinend auf. Das Problem ist nicht gelöst." 
                 },
                 { 
-                    t: "Beruhigen & Auto-Save prüfen", 
+                    t: "Beruhigen & Auto-Save prüfen",
+                    rep: { "Frau Elster": 5 }, 
                     m: 20, f: -5, a: -10, c: 0, 
                     r: "Du redest ihr gut zu. Die Datei ist wieder da. Sie atmet auf: 'Danke! Sie sind so lieb. Genau wie mein Kater *Rüdiger*. Der spürt auch immer, wenn es mir schlecht geht. Rüdiger ist mein einziger Halt.'" 
                 },
                 { 
                     t: "Neustart befehlen", 
+                    rep: { "Frau Elster": 2 },
                     m: 5, f: 10, a: 10, c: 0, 
                     r: "Hat funktioniert, aber sie wirkt immer noch verstört." 
                 }
@@ -3183,6 +3230,7 @@ const DB = {
                 },
                 { 
                     t: "Laut 'HALLO?!' rufen", 
+					rep: { "Dr. Wichtig": -5 },
                     m: 2, f: 0, a: 10, c: 15, 
                     r: "Gerumpel am anderen Ende. 'WER IST DA?! MÜLLER?! LAUSCHEN SIE MIR ETWA NACH?!' Er legt wütend auf. Das war keine gute Idee." 
                 },
@@ -3227,7 +3275,7 @@ const DB = {
                 },
                 { 
                     t: "Ihn anschreien",
-                    m: 5, f: 0, a: 30, c: 30, 
+                    m: 5, f: 0, a: -10, c: 30, 
                     r: "Das macht es nur schlimmer. Jetzt streicht er auch noch das Klopapier." 
                 },
                 { 
@@ -3290,16 +3338,18 @@ const DB = {
             opts: [
                 { 
                     t: "Ja sagen & Nicken (Blindflug)", 
-                    m: 5, f: 5, a: 0, c: 20, 
+					rep: { "Dr. Wichtig": 10 },
+                    m: 5, f: 5, a: 20, c: -10, 
                     r: "Du sagst 'Jawohl, Chef!'. Er legt auf. Später erfährst du: Er fragte 'Soll ich das IT-Budget streichen?'. Glückwunsch, Eigentor. Radar +20." 
                 },
                 { 
                     t: "Auflegen (Verbindung weg)", 
-                    m: 2, f: 0, a: 0, c: 0, 
+                    m: 2, f: 0, a: 0, c: 5, 
                     r: "Du legst einfach auf. Er denkt, das Funkloch war schuld. Taktisch klug." 
                 },
                 { 
                     t: "Laut 'HALLO?!' schreien", 
+					rep: { "Dr. Wichtig": -5 },
                     m: 10, f: -5, a: 5, c: 10, 
                     r: "Du brüllst ins Telefon. Er ist genervt von deiner Inkompetenz. 'Müller, kaufen Sie sich ein besseres Handy!'" 
                 }
@@ -3311,17 +3361,20 @@ const DB = {
             text: "Kevin hat wegen einer 'ruckelnden Maus' Microsoft angerufen. Er reicht dir den Hörer. Ein Support-Mitarbeiter (sehr starker Akzent) spricht schnell: 'Sir, kindly do the needful and truncate the production database logs to fix latency, okay?'",
             opts: [
                 { 
-                    t: "Zu Kevin: 'Ja, mach was er sagt'", 
+                    t: "Zu Kevin: 'Ja, mach was er sagt'",
+                    rep: { "Kevin": -5 }, 
                     m: 10, f: 10, a: 0, c: 40, 
                     r: "Kevin tippt 'TRUNCATE DATABASE'. Zack. Die Kundendatenbank ist leer. Die Maus ruckelt immer noch. Das gibt eine Katastrophe!" 
                 },
                 { 
-                    t: "Hörer nehmen & 'NO! STOP!'", 
+                    t: "Hörer nehmen & 'NO! STOP!'",
+                    rep: { "Kevin": 10 }, 
                     m: 15, f: -5, a: 10, c: -5, 
                     r: "Du schreist den Support an und legst auf. Kevin guckt verdattert. Du hast gerade die Firma gerettet." 
                 },
                 { 
-                    t: "Kevin: 'Starte einfach neu'", 
+                    t: "Kevin: 'Starte einfach neu'",
+                    rep: { "Kevin": 3 }, 
                     m: 5, f: 0, a: -5, c: 0, 
                     r: "Kevin startet den PC neu. Das Problem ist weg. Die Datenbank lebt noch. Glück gehabt." 
                 }
@@ -3369,6 +3422,7 @@ const DB = {
                 },
                 { 
                     t: "Wahrheit: 'Nein, Sie bilden sich das ein.'", 
+					rep: { "Dr. Wichtig": -2 },
                     m: 5, f: 0, a: 10, c: 15, 
                     r: "'Unverschämtheit! Ich melde das dem Chef!' Er knallt den Hörer auf. Dein Radar schießt hoch, aber dein Stolz bleibt intakt." 
                 }
@@ -3381,17 +3435,20 @@ const DB = {
             opts: [
                 { 
                     t: "Hingehen & Prüfen", 
+                    rep: { "Gabi": 5 },
                     m: 15, f: -5, a: 0, c: -5, 
                     r: "Eine Maus war im Papierschacht. Sie lebt. Du setzt sie im Hof aus. Gabi findet dich toll." 
                 },
                 { 
                     t: "Mit Hammer drohen", 
                     req: "hammer", 
+                    rep: { "Gabi": 2 },
                     m: 10, f: 0, a: 10, c: 0, 
                     r: "Du stellst den Hammer demonstrativ neben den Drucker. Er druckt plötzlich leise. Maschinen haben Angst." 
                 },
                 { 
-                    t: "Ignorieren", 
+                    t: "Ignorieren",
+                    rep: { "Gabi": -5 }, 
                     m: 5, f: 5, a: 5, c: 5, 
                     r: "Das Quieken hört irgendwann auf. Der Ausdruck ist rot verschmiert. Du willst es nicht wissen." 
                 }
@@ -3433,6 +3490,7 @@ const DB = {
             },
             { 
                 t: "Hörer anschreien", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: 10, c: 10,
                 r: "Du schreist das Telefon an: 'GEH DRAN VERDAMMT!'. Der Chef läuft vorbei und schüttelt den Kopf." 
             },
@@ -3461,14 +3519,17 @@ const DB = {
         results: {
             res_restart: { 
                 txt: "Du klickst. Ihr PC geht aus. Gabi schreit auf: 'NEIN! Ich hatte eine Mail offen!' *Klick*. Sie legt auf. Du hast geholfen, aber es schlimmer gemacht.", 
+                rep: { "Gabi": -10 },
                 m: 2, f: 0, a: 5, c: 0 
             },
             res_ticket: { 
                 txt: "Sie atmet tief ein. 'Alles klar. Danke für nichts.' Sie legt ruhig auf. Zu ruhig.", 
+                rep: { "Gabi": -5 },
                 m: 2, f: 0, a: 0, c: 0 
             },
             res_calm: { 
                 txt: "Du leitest das Telefon kurz auf die Mailbox um. 'Oh Gott...', hörst du sie ausatmen. 'Stille. Danke. Du bist meine Rettung.'", 
+                rep: { "Gabi": 10 },
                 m: 10, f: -5, a: -5, c: 5,
                 next: "gabi_friend"
             }
@@ -3623,7 +3684,7 @@ const DB = {
                 next: "fbi_watch" 
             },
             res_printer: { txt: "Er legt auf. Drucker-Admins sucht niemand.", m: 5, f: -5, a: 5, c: 0 },
-            res_nothing: { txt: "Du bleibst loyal und arm.", m: 5, f: 0, a: -5, c: -5 }
+            res_nothing: { txt: "Du bleibst loyal und arm.", rep: { "Dr. Wichtig": 2 }, m: 5, f: 0, a: -5, c: -5 }
         }
     },
     {
@@ -3707,6 +3768,7 @@ const DB = {
             },
             { 
                 t: "Abwimmeln: 'Das ist ein Anwenderfehler.'", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 2, f: 5, a: 5, c: 10,
                 r: "Wuttke schnaubt: 'Dafür werden Sie bezahlt?!' Er knallt den Hörer auf. Der Chef wird sicher bald fragen, warum das Controlling 'technische Probleme' hat." 
             },
@@ -3829,12 +3891,14 @@ const DB = {
         opts: [
             { 
                 t: "Ihn loben", 
+                rep: { "Kevin": 5 },
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "'Gute Arbeit, Soldat.' Ihr verbringt 10 Minuten damit, über Festungs-Architektur zu reden. Die Produktivität ist im Keller, die Moral oben." 
             },
             { 
                 t: "Festung abreißen", 
-                m: 15, f: -5, a: 5, c: 0, 
+                rep: { "Kevin": -10 },
+                m: 15, f: -5, a: 5, c: 0,
                 r: "Du bekommst Panik, dass der Chef es sieht. Du trittst die Kartons um. Kevin weint fast. 'Mein Schloss...'" 
             }
         ]
@@ -3847,11 +3911,13 @@ const DB = {
         opts: [
             { 
                 t: "Bescheiden nicken", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 2, f: -5, a: -5, c: 10, 
                 r: "Du sagst nichts und genießt den seltenen Moment der Anerkennung. Dein Standing in der Firma ist gestiegen." 
             },
             { 
                 t: "Nach Gehaltserhöhung fragen", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "'Wegen der Kartons? Übertreiben Sie es nicht.' Die Stimmung kippt sofort wieder. Gier frisst Hirn." 
             }
@@ -4017,6 +4083,7 @@ const DB = {
             },
             { 
                 t: "Nach weiterem Schnaps fragen", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: -10, c: 10, 
                 r: "'Ha! Guter Witz!' Bernd lacht laut. Zu laut. Der Chef schaut aus seinem Büro. Schnell weg hier." 
             }
@@ -4139,6 +4206,7 @@ const DB = {
             },
             { 
                 t: "Ehrlich sein: 'Ich hab's ausgemacht.'", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 0, c: 30, 
                 r: "Der Chef starrt dich an. 'Sie haben das Backup-System für illegalen Stromverbrauch gehalten? Müller, ich weiß nicht, ob Sie zu schlau oder zu dumm für diesen Job sind.'" 
             }
@@ -4164,7 +4232,8 @@ const DB = {
             { 
                 t: "Stick an Kevin verkaufen", 
                 rem: "usb_stick", 
-                loot: "energy", 
+                loot: "energy",
+                rep: { "Kevin": -5 }, 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "'Hey Kevin, da sind Cheat-Codes drauf.' Kevin glaubt dir und gibt dir seine letzte Dose Energy Drink dafür. Ein guter Tausch. (Item verloren, Energy erhalten)" 
             }
@@ -4227,6 +4296,7 @@ const DB = {
         opts: [
             { 
                 t: "Einreden, er sei statisch aufgeladen", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 5, a: -5, c: 10, 
                 r: "'Das ist Ihre Aura, Chef! Zu viel Energie!' Er wirkt geschmeichelt. 'Tatsächlich? Ich spüre auch so ein Kribbeln.' Er geht vorsichtig raus." 
             },
@@ -4237,7 +4307,8 @@ const DB = {
             },
             { 
                 t: "Sofortige Not-Wartung vortäuschen", 
-                m: 15, f: -5, a: 5, c: 0, 
+				rep: { "Dr. Wichtig": -5 },
+                m: 15, f: -5, a: 5, c: -5, 
                 r: "'Alarm! Kritischer Fehler!' Du scheuchst den Chef raus und wackelst wieder am Kabel. Es hält... für jetzt." 
             }
         ]
@@ -4250,12 +4321,14 @@ const DB = {
         opts: [
             { 
                 t: "Die 'Ermittlung' leiten", 
+                rep: { "Dr. Wichtig": 2 },
                 m: 10, f: 5, a: -5, c: -10, 
                 r: "Du spielst Sherlock Holmes. 'Es war... eine Ratte. Ich habe Bissspuren gesehen.' Der Chef nickt. 'Kaufen Sie Gift.' Du bist fein raus." 
             },
             { 
                 t: "Kevin beschuldigen", 
                 m: 2, f: 5, a: -5, c: -5, 
+                rep: { "Kevin": -15, "Dr. Wichtig": 10 },
                 r: "'Ich sah Kevin in der Nähe des Racks...' Die Menge tobt. Kevin wird zum Verhör geschleift. Dein Karma ist im Keller, aber du bist sicher." 
             },
             { 
@@ -4333,7 +4406,8 @@ const DB = {
                 r: "Du leckst die Reste von den Fingern und trinkst den kläglichen Rest aus der Dose. Es ist würdelos, aber es wirkt." 
             },
             { 
-                t: "Den Azubi um Hilfe bitten", 
+                t: "Den Azubi um Hilfe bitten",
+                rep: { "Kevin": 5 }, 
                 m: 5, f: 5, a: -5, c: -5, 
                 r: "'Kevin, hast du Feuchttücher?' Kevin grinst. 'Klar, Gamer-Standard-Ausrüstung.' Er hilft dir, die klebrige Tasche zu reinigen." 
             },
@@ -4352,11 +4426,13 @@ const DB = {
         opts: [
             { 
                 t: "Ihm sagen, dass er es nicht trinken soll", 
+                rep: { "Kevin": 5 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "'Zu spät!' Kevin ext die Dose. Er fängt an, Farben zu riechen. Du hast es versucht." 
             },
             { 
-                t: "Ihm viel Spaß wünschen", 
+                t: "Ihm viel Spaß wünschen",
+                rep: { "Kevin": -5 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Darwin regelt das. Du gehst Kaffee holen." 
             },
@@ -4400,18 +4476,21 @@ const DB = {
         text: "Du schleppst den Feuerlöscher durch den Gang. Er wiegt gefühlt 20 Kilo und schlägt dir ständig gegen das Schienbein. Egon der Hausmeister sieht dich kritisch an.",
         opts: [
             { 
-                t: "Sagen, dass du ihn zur Wartung bringst", 
+                t: "Sagen, dass du ihn zur Wartung bringst",
+                rep: { "Egon": 5 }, 
                 m: 10, f: -5, a: 5, c: -5, 
                 r: "Egon nickt anerkennend. 'Guter Mann. Sicherheit ist kein Spielzeug.' Er lässt dich passieren." 
             },
             { 
                 t: "Ihn als Türstopper benutzen", 
+                rep: { "Egon": -2 },
                 rem: "fire_ext", 
                 m: 5, f: 10, a: -5, c: 5, 
                 r: "Du hast keine Lust mehr zu schleppen. Du stellst ihn vor die Serverraum-Tür. Jetzt bleibt sie offen und es wird kühler. (Item entfernt)" 
             },
             { 
                 t: "Training: Bizeps-Curls machen", 
+                rep: { "Egon": -5 },
                 m: 20, f: -10, a: -20, c: 10, 
                 r: "Du nutzt das Gewicht für ein spontanes Workout im Gang. Deine Arme brennen, deine Aggro sinkt. Egon schüttelt nur den Kopf." 
             }
@@ -4448,16 +4527,19 @@ const DB = {
         opts: [
             { 
                 t: "Bericht stolz präsentieren", 
+				rep: { "Dr. Wichtig": 10 },
                 m: 15, f: -5, a: -5, c: -15, 
-                r: "'Das Gerät entspricht nicht der Norm DIN-1402.' Der Chef nickt. 'Müller, ich mag Ihre Gründlichkeit. Weitermachen.' (Großer Radar-Bonus)" 
+                r: "'Das Gerät entspricht nicht der Norm DIN-1402.' Der Chef nickt. 'Müller, ich mag Ihre Gründlichkeit. Weitermachen.'" 
             },
             { 
                 t: "Überstunden dafür beantragen", 
+				rep: { "Dr. Wichtig": -10 },
                 m: 10, f: 0, a: 10, c: 20, 
                 r: "'Überstunden? Fürs Staubwischen? Träumen Sie weiter.' Der positive Effekt ist verpufft." 
             },
             { 
                 t: "Ihn bitten, das Protokoll zu signieren", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 30, f: -10, a: 5, c: 0, 
                 r: "Du zwingst ihn in eine 30-minütige Diskussion über Brandschutzverordnungen. Er unterschreibt, nur damit du aufhörst zu reden." 
             }
@@ -4545,16 +4627,19 @@ const DB = {
         opts: [
             { 
                 t: "Sofort die Lösung nennen", 
+				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: -5, a: -10, c: -20, 
                 r: "'IRQ 5, DMA 1, Adresse 220.' Du hast es gerade gelesen. Der Chef starrt dich an wie einen Gott. 'Müller, Sie sind ein Genie.' (Massiver Radar-Bonus)" 
             },
             { 
                 t: "So tun, als müsstest du recherchieren", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 60, f: 20, a: 0, c: 0, 
                 r: "Du weißt es zwar, aber du sagst: 'Das ist hochkomplex. Dauert 2 Stunden.' Du gehst entspannt Kaffee trinken. Der Chef wartet ehrfürchtig." 
             },
             { 
                 t: "Sagen: 'Kaufen Sie was Neues'", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 5, c: 10, 
                 r: "'Kein Budget!', blafft er zurück. Chance vertan, zu glänzen." 
             }
@@ -4623,7 +4708,8 @@ const DB = {
                 r: "Du nennst sie 'Splinter'. Sie wohnt jetzt hinter dem Patchpanel. Das effektivste Anti-Bug-System der Firma." 
             },
             { 
-                t: "Hausmeister rufen", 
+                t: "Hausmeister rufen",
+                rep: { "Egon": 2 }, 
                 m: 10, f: 0, a: 0, c: 0, 
                 r: "Doch lieber keine Haustiere. Egon kommt und kümmert sich 'diskret' darum. Du guckst weg." 
             }
@@ -4637,6 +4723,7 @@ const DB = {
         opts: [
             { 
                 t: "Panik-Reparatur", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 30, f: -20, a: 20, c: -10, 
                 r: "Du musst den ganzen Kabelstrang neu verlegen, während der Chef dir im Nacken atmet. Hättest du es mal gleich selbst gemacht." 
             },
@@ -4703,12 +4790,14 @@ const DB = {
         text: "Egon, der Hausmeister, kniet vor der Serverraum-Tür und montiert ein neues Schloss. Er sieht dich kommen. 'Na, wieder aufgetaut? Ich bau jetzt eins ein, das man auch von innen aufkriegt.'",
         opts: [
             { 
-                t: "Ihm einen Kaffee bringen", 
+                t: "Ihm einen Kaffee bringen",
+                rep: { "Egon": 10 }, 
                 m: 10, f: 0, a: -5, c: 5, 
                 r: "Du holst ihm einen Automatenkaffee. 'Danke Jung.' Er wirkt versöhnt. Kleine Geschenke erhalten die Freundschaft (und schnelle Rettung)." 
             },
             { 
                 t: "Fachsimpeln", 
+                rep: { "Egon": -5 },
                 m: 5, f: 5, a: 5, c: -5, 
                 r: "'Ist das auch ein Zylinder nach DIN 18252?' Egon verdreht die Augen. 'Lass mich einfach arbeiten.' Du nervst ihn." 
             },
@@ -4761,6 +4850,7 @@ const DB = {
             },
             { 
                 t: "Den Azubi Kevin rufen", 
+                rep: { "Kevin": -10, "Dr. Wichtig": -10 },
                 m: 10, f: 10, a: -15, c: 20, 
                 r: "Kevin sieht die Ameisen und schreit. Der Chef kommt dazu. Du bekommst einen Einlauf wegen 'mangelnder Aufsicht', aber Kevin muss putzen." 
             }
@@ -4774,17 +4864,20 @@ const DB = {
         opts: [
             { 
                 t: "Auf Sicherheitsprotokolle pochen", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: -5, c: 10, 
                 r: "'Vorsicht ist besser als Nachsicht, Chef!' Er massiert sich die Schläfen. 'Ja, schon... aber nächstes Mal erst riechen, dann drücken.' Du kommst davon." 
             },
             { 
                 t: "Kleinlaut entschuldigen", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 5, c: -10, 
                 r: "'Es tut mir leid.' Der Chef seufzt. 'Der Einsatz kostet uns 500 Euro. Das geht von Ihrem Budget für Weihnachtsdeko ab.' Autsch." 
             },
             { 
                 t: "Bestechungs-Donut anbieten", 
                 rem: "donut",
+				rep: { "Dr. Wichtig": 5 },
                 m: 2, f: 5, a: -5, c: 5, 
                 r: "Du schiebst ihm den Donut hin. 'Nervennahrung?' Er beißt rein, kaut und grummelt: 'Verschwinden Sie an die Arbeit.' Bestechung funktioniert immer." 
             }
@@ -4964,17 +5057,19 @@ const DB = {
         text: "Das Monitoring meldet 'Temperature Critical'. Du öffnest die Serverraum-Tür. Es stinkt bestialisch. Der eingesperrte Waschbär hat vor Angst auf den Lüfter des Mainframes gekackt. Die Scheiße wurde im ganzen Raum verteilt.",
         opts: [
             { 
-                t: "Azubi zum Putzen zwingen", 
+                t: "Azubi zum Putzen zwingen",
+                rep: { "Kevin": -20 }, 
                 m: 5, f: 10, a: -5, c: 10, 
                 r: "Kevin muss im Schutzanzug rein. Er weint dabei. Du stehst draußen und gibst Anweisungen. Dein Karma sinkt ins Bodenlose, aber deine Hände bleiben sauber." 
             },
             { 
-                t: "Selbst putzen (Strafe muss sein)", 
+                t: "Selbst putzen (Strafe muss sein)",
                 m: 120, f: -50, a: 20, c: -10, 
                 r: "Zwei Stunden. Zahnbürste. Desinfektionsmittel. Du hinterfragst jede Lebensentscheidung, die dich hierher geführt hat." 
             },
             { 
-                t: "Raum versiegeln & Homeoffice beantragen", 
+                t: "Raum versiegeln & Homeoffice beantragen",
+                rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 20, a: 0, c: 20, 
                 r: "'Gesundheitsrisiko! Niemand darf rein!' Du flüchtest. Das Problem wird morgen eskalieren, aber heute bist du frei." 
             }
@@ -5095,7 +5190,8 @@ const DB = {
                 r: "'Oh, die lagen hier am Boden. Wollte sie gerade sicherstellen.' Er atmet auf. 'Danke Mann! Du rettest mir den Arsch.' Er ist weg. (Item entfernt)" 
             },
             { 
-                t: "Kevin beschuldigen", 
+                t: "Kevin beschuldigen",
+                rep: { "Kevin": -10 }, 
                 m: 2, f: 5, a: -5, c: -10, 
                 r: "'Der Azubi war vorhin hier...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
             }
@@ -5234,6 +5330,7 @@ const DB = {
             },
             { 
                 t: "Cool bleiben & Technik prüfen", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 15, f: -5, a: 5, c: -15, 
                 r: "'Alles gut, Meister. Das hält.' Du checkst die Logs. Keine Ausfälle. Der Chef sieht das und nickt anerkennend. 'Gute Arbeit, Müller. Robust gebaut.'" 
             },
@@ -5264,6 +5361,7 @@ const DB = {
             { 
                 t: "Ohrstöpsel rein & ignorieren", 
                 req: "headphones",
+				rep: { "Dr. Wichtig": -2 },
                 m: 0, f: 20, a: -10, c: 20, 
                 r: "Du setzt die Noise-Cancelling-Kopfhörer auf. Himmlische Stille. Der Chef kommt rein und brüllt was, aber du hörst ihn nicht. Er sieht wütend aus." 
             }
@@ -5328,11 +5426,13 @@ const DB = {
         opts: [
             { 
                 t: "Verbandskasten holen", 
+                rep: { "Kevin": 5 },
                 m: 10, f: 0, a: -5, c: 0, 
                 r: "Es blutet wie Sau. Du verarztest ihn. 'Nicht dem Chef sagen!', wimmerst du. Kevin nickt unter Tränen." 
             },
             { 
                 t: "Ihm sagen, er soll sich nicht anstellen", 
+                rep: { "Kevin": -5 },
                 m: 5, f: 5, a: 5, c: 10, 
                 r: "'Das ist nur eine Fleischwunde. Das baut Charakter auf.' Du gibst ihm ein Taschentuch. Er geht schmollend." 
             }
@@ -5419,7 +5519,7 @@ const DB = {
             },
             { 
                 t: "Ihn anschreien: 'Beeilung!'", 
-                m: 5, f: 0, a: 20, c: 10, 
+                m: 5, f: 0, a: 10, c: 20, 
                 r: "Deine Schulter tut weh und du bist wütend. Er arbeitet absichtlich langsamer. 'Gutes Werkzeug braucht Weile', grinst er. Du kochst." 
             },
             { 
@@ -5553,16 +5653,19 @@ const DB = {
         opts: [
             { 
                 t: "Die 'Schwarze Kiste' schütteln", 
+				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: -10, a: -10, c: -20, 
                 r: "Du kriechst nach unten und schüttelst die verstaubte schwarze Box. KLACK. Die LEDs springen auf Grün. Das Internet ist zurück! Der Chef klopft dir begeistert auf die Schulter: 'Hexerei, Müller! Aber gute Arbeit!'" 
             },
             { 
                 t: "Logisch vorgehen (Router neu starten)", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 20, f: -5, a: 10, c: 10, 
                 r: "Du ignorierst den okkulten Rat und startest den Cisco-Router neu. Es bringt... nichts. 20 Minuten später geht es von alleine wieder. Der Chef brummt unzufrieden: 'Das dauerte viel zu lange.'" 
             },
             { 
                 t: "Dem Drucker misstrauen", 
+				rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: -5, c: 10, 
                 r: "Der Zettel warnte auch vor dem Drucker. Du starrst das Gerät böse an, während die Firma Geld verliert. Der Chef schreit: 'Müller! Was machen Sie da?! Fixen Sie das WLAN!' Das gab Ärger." 
             }
@@ -5614,11 +5717,13 @@ const DB = {
             },
             { 
                 t: "Fragen: 'Alles okay mit der Bilanz?'", 
+                rep: { "Frau Elster": -5 },
                 m: 10, f: 0, a: 10, c: 5, 
                 r: "Sie schaut dich entsetzt an. 'Ist Ihnen Arbeit wichtiger als Menschen?!' Sie rennt weinend raus." 
             },
             { 
                 t: "Fragen: 'Wie geht es Rüdiger?'",
+                rep: { "Frau Elster": 10 },
                 m: 15, f: 10, a: -20, c: -5, 
                 r: "Sie blickt überrascht auf. Ein kleines Lächeln erscheint. 'Rüdiger... ja, der wartet zuhause. Er braucht sein Futter.' Sie wischt sich die Tränen weg. 'Danke, Herr Müller. Ich gehe jetzt heim zu ihm.' Du hast ihren Tag gerettet." 
             }
@@ -5679,6 +5784,7 @@ const DB = {
             },
             { 
                 t: "Bei HR nachfragen: 'Haben wir expandiert?'", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: 0, a: -5, c: 20, 
                 r: "Die HR fällt aus allen Wolken. Der Chef bekommt Wind davon. 'Wieso haben wir Mitarbeiter in St. Petersburg?!' Du musst zum Rapport." 
             },
@@ -5695,7 +5801,8 @@ const DB = {
         text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef stürmt rein: 'WIESO STEHT DER BETRIEB?!'",
         opts: [
             { 
-                t: "Auf den Berater zeigen", 
+                t: "Auf den Berater zeigen",
+				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: -5, a: 30, c: 10, 
                 r: "Der Berater lacht glatt: 'Ah, Herr Müller wollte mir gerade die USV demonstrieren und hat wohl das falsche Kabel erwischt. Schlechtes Briefing!' Der Chef nickt. Du kochst vor Wut." 
             },
@@ -5708,6 +5815,7 @@ const DB = {
             { 
                 t: "Berater anschreien", 
                 next: "consultant_war",
+				rep: { "Dr. Wichtig": -5 },
                 m: 2, f: 0, a: -20, c: 50, 
                 r: "Du brüllst den Gast an. Der Chef wird blass. 'Müller! Benehmen Sie sich! Abmahnung wegen unprofessionellem Verhalten!' Der Berater grinst." 
             }
@@ -5721,16 +5829,19 @@ const DB = {
         opts: [
             { 
                 t: "Den Berater zitieren", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 0, a: -20, c: -10,
                 r: "'Der Berater sagte: Keine Kosten scheuen für Stabilität.' Der Chef läuft rot an. 'Dieser Idiot! Aber gut, wenn er es empfohlen hat...' Du bist fein raus." 
             },
             { 
                 t: "Technik-Geschwafel nutzen", 
                 m: 5, f: 5, a: -5, c: 5, 
+				rep: { "Dr. Wichtig": 2 },
                 r: "'Das ist das einzige Modell, das mit unserer Legacy-Software kompatibel ist, Chef.' Er seufzt. 'Na gut. Bauen Sie es ein.' Er hat keine Ahnung, dass ein 50€ Teil gereicht hätte." 
             },
             { 
                 t: "Genüsslich einbauen", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 30, f: -10, a: -10, c: 0, 
                 r: "Du schraubst das Monster in das Rack. Es leuchtet in Regenbogenfarben. Es ist völlig überdimensioniert, aber es ist DEINS. Rache ist süß (und teuer)." 
             }
@@ -5754,6 +5865,7 @@ const DB = {
             },
             { 
                 t: "Eskalation: 'Raus aus meinem Serverraum!'", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 2, f: 0, a: -20, c: 40, 
                 r: "Du wirfst ihn raus. Er droht mit Anwälten. Der Chef ist sauer, aber die Kollegen feiern dich als Helden des Widerstands." 
             }
@@ -5791,11 +5903,13 @@ const DB = {
             },
             { 
                 t: "Post-It 'Legends never die' kleben", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 2, f: 5, a: 5, c: -10,
                 r: "Du akzeptierst dein Schicksal. Du klebst ein Post-It an den Server: 'Nicht ausschalten, sonst stirbt er.' Der Chef nickt zufrieden über die Sparmaßnahme." 
             },
             { 
-                t: "Trotzdem auf Neukauf bestehen", 
+                t: "Trotzdem auf Neukauf bestehen",
+				rep: { "Dr. Wichtig": -2 },
                 m: 15, f: 0, a: 10, c: 20,
                 r: "'Das ist nur das letzte Aufbäumen vor dem Tod!' Der Chef winkt ab. 'Solange er blinkt, bleibt er.' Du hast jetzt einen schnellen, alten Server und einen genervten Chef." 
             }
@@ -5882,6 +5996,7 @@ const DB = {
         opts: [
             { 
                 t: "Lügen: 'Notfall-Maßnahme'", 
+				rep: { "Dr. Wichtig": 5 },		
                 m: 5, f: 0, a: -5, c: -10, 
                 r: "'Chef, ohne den Dyson wären alle Gehaltsdaten weg!' Er hält inne, wischt sich den Schweiß ab. 'Wirklich? Na gut. Retten Sie die Daten.' Er zieht ab." 
             },
@@ -5892,6 +6007,7 @@ const DB = {
             },
             { 
                 t: "Frech werden: 'Sie schwitzen für die Firma'", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 2, f: 0, a: 10, c: 30, 
                 r: "'Opfer müssen gebracht werden.' Der Chef explodiert fast. Er reißt den Ventilator an sich und knallt die Tür zu. Das gibt eine Abmahnung." 
             }
@@ -5904,17 +6020,20 @@ const DB = {
         text: "Frau Elster aus der Buchhaltung steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
         opts: [
             { 
-                t: "Alle Überweisungen manuell tippen", 
+                t: "Alle Überweisungen manuell tippen",
+                rep: { "Frau Elster": 10 }, 
                 m: 120, f: -50, a: 20, c: -10, 
                 r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich. Lektion gelernt." 
             },
             { 
-                t: "Schuld auf 'Hacker' schieben", 
+                t: "Schuld auf 'Hacker' schieben",
+                rep: { "Frau Elster": -2 }, 
                 m: 10, f: 5, a: -10, c: 10, 
                 r: "'Nordkoreanische Cyber-Attacke!' Alle nicken ängstlich. Der Chef glaubt es halb, ist aber sauer wegen der PR. Du bist fein raus, aber das Klima ist vergiftet." 
             },
             { 
-                t: "Auf der Toilette verstecken", 
+                t: "Auf der Toilette verstecken",
+                rep: { "Frau Elster": -10 }, 
                 m: 60, f: 10, a: -20, c: 40, 
                 r: "Du schließt dich im Klo ein und wartest, bis der Mob nach Hause geht. Als du rauskommst, klebt ein Zettel an deinem Monitor: 'Wir wissen, wo du wohnst.'" 
             }
@@ -5954,18 +6073,21 @@ const DB = {
         opts: [
             { 
                 t: "Die Nachtschicht beschuldigen", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du zeigst auf den Zettel des Kollegen. 'Er ist einfach gegangen.' Der Chef tobt. 'Dieser Nichtsnutz!' Dein Kopf ist aus der Schlinge, der Kollege ist fällig." 
             },
             { 
                 t: "Backup einspielen (Heldenmut)", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 45, f: -15, a: 5, c: -20, 
                 r: "Du wechselst das Tape und spielst das Backup ein. 'Keine Panik, Chef. Alles unter Kontrolle.' Du rettest den Tag. Der Chef nickt anerkennend." 
             },
             { 
                 t: "Energy Drink anbieten", 
-                rem: "energy",
-                m: 2, f: 5, a: -5, c: 10, 
+				rem: "energy",
+                rep: { "Dr. Wichtig": -2 },
+				m: 2, f: 5, a: -5, c: 10, 
                 r: "'Wollen Sie einen Schluck?' Der Chef starrt dich an, als wärst du irre. 'Reparieren Sie das! Sofort!' Das war wohl der falsche Moment." 
             }
         ]
@@ -5988,6 +6110,7 @@ const DB = {
             },
             { 
                 t: "Beim Chef anschwärzen", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 10, f: -5, a: 5, c: 5, 
                 r: "Du petzt. Der Chef zuckt mit den Schultern. 'Solange es läuft...' Leistung wird hier wohl nicht belohnt." 
             }
@@ -6056,11 +6179,13 @@ const DB = {
         opts: [
             { 
                 t: "Lässig das Tape einlegen", 
+				rep: { "Dr. Wichtig": 10 },
                 m: 45, f: -20, a: -10, c: -20,
                 r: "Das Laufwerk surrt. 'Restore completed'. Der Chef strahlt. 'Sie sind ein Lebensretter, Müller!' Manchmal zahlt sich Sorgfalt aus." 
             },
             { 
-                t: "Nach Gehaltserhöhung fragen", 
+                t: "Nach Gehaltserhöhung fragen",
+                rep: { "Dr. Wichtig": -2 },				
                 m: 5, f: 0, a: 5, c: 10,
                 r: "'Das kostet extra, Chef.' Er lacht trocken. 'Machen Sie einfach Ihre Arbeit.' Chance vertan, aber mutig." 
             }
@@ -6074,17 +6199,20 @@ const DB = {
         opts: [
             { 
                 t: "Beichten: 'Das Tape ist... kaputt'", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 10, f: 0, a: 5, c: 50,
                 r: "Du holst das Knäuel aus dem Müll. Der Chef wird kreidebleich. 'DAS WAR DAS EINZIGE BACKUP?!' Er schreit so laut, dass im Nachbargebäude die Fenster wackeln. Das gibt eine Abmahnung." 
             },
             { 
                 t: "Lügen: 'Das Backup lief nie!'", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: -5, c: 20, 
                 r: "'Software-Fehler, Chef. Das System hat versagt.' Er flucht auf die Technik. 'Scheiß EDV!' Du bist fein raus, aber das Vertrauen in die IT ist hinüber." 
             },
             { 
                 t: "Panik vortäuschen & weinen", 
-                m: 5, f: 0, a: -10, c: 10, 
+				rep: { "Dr. Wichtig": 2 },
+                m: 5, f: 0, a: -10, c: 5, 
                 r: "Du brichst theatralisch zusammen. 'Es ist alles so schrecklich!' Der Chef ist so verwirrt, dass er dich tröstet, statt dich zu feuern. Mitleid zieht immer." 
             }
         ]
@@ -6108,6 +6236,7 @@ const DB = {
             { 
                 t: "Fund melden & Egon verpfeifen", 
                 next: "path_egon_snitch",
+                rep: { "Egon": -15, "Dr. Wichtig": 5 },
                 m: 15, f: 0, a: 10, c: -5, 
                 r: "Du legst die Beweise dem Chef vor. Egon bekommt riesigen Ärger. Er weiß genau, dass du es warst. Sein Blick im Flur war eisig." 
             }
@@ -6121,16 +6250,19 @@ const DB = {
         opts: [
             { 
                 t: "Zettel schreiben: 'Beweis es doch!'", 
+                rep: { "Egon": -2 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du legst den Zettel zurück. Das ist jetzt ein Nervenkrieg. Wer blinzelt zuerst? Du fühlst dich wie in einem Spionage-Thriller." 
             },
             { 
-                t: "5 Euro reinlegen (Friedensangebot)", 
+                t: "5 Euro reinlegen (Friedensangebot)",
+                rep: { "Egon": 5 }, 
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Du legst einen Schein rein. Am nächsten Tag liegt ein Bonbon dort. Waffenstillstand akzeptiert. Egon ist käuflich." 
             },
             { 
-                t: "Zettel schreiben: 'War lecker, danke.'", 
+                t: "Zettel schreiben: 'War lecker, danke.'",
+                rep: { "Egon": -10 }, 
                 m: 5, f: 5, a: 10, c: 5, 
                 r: "Pure Provokation. Du hörst später, wie Egon im Flur laut flucht und gegen seinen Putzwagen tritt. Das wird noch ein Nachspiel haben." 
             }
@@ -6143,12 +6275,14 @@ const DB = {
         text: "Du willst morgens in dein Büro. Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
         opts: [
             { 
-                t: "Egon um Hilfe bitten (Demütigung)", 
+                t: "Egon um Hilfe bitten (Demütigung)",
+                rep: { "Egon": 5 }, 
                 m: 30, f: 0, a: 20, c: 0, 
                 r: "Du musst zu Kreuze kriechen. Egon grinst breit. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
             },
             { 
                 t: "Tür eintreten", 
+                rep: { "Egon": -10 },
                 m: 5, f: 0, a: 20, c: 20,
                 r: "BÄM. Das Schloss bricht. Die Tür ist offen, aber der Rahmen ist hin. Egon kichert leise: 'Oh, Vandalismus? Das melde ich.'" 
             },
@@ -6168,19 +6302,22 @@ const DB = {
             { 
                 t: "Prozess killen & Kevin zur Rede stellen", 
                 next: "path_crypto_stop",
-                m: 15, f: -5, a: 5, c: -5, 
+                rep: { "Kevin": -5 }, 
+                m: 15, f: -5, a: 5, c: -5,                
                 r: "Kevin jammert: 'Aber der Kurs geht gerade zum Mond! Ich wollte uns allen Lambos kaufen!' Du bleibst hart. Der Server kühlt ab, der Lambo muss warten." 
             },
             { 
                 t: "Die Wallet-Adresse heimlich auf deine ändern", 
                 req: "admin_pw",
                 next: "path_crypto_hijack",
-                m: 10, f: 20, a: -10, c: 25, 
+                rep: { "Kevin": -10 },
+                m: 10, f: 20, a: -10, c: 25,
                 r: "Mit einem hämischen Grinsen leitest du die Coins auf dein privates Wallet um. Böse? Ja. Profitabel? Oh ja. Kevin schürft jetzt für deine Frührente. Hoffentlich merkt das die Revision nicht." 
             },
             { 
                 t: "Einfach weiterlaufen lassen", 
                 next: "path_crypto_crash",
+                rep: { "Kevin": 2 },
                 m: 0, f: 10, a: 0, c: 40, 
                 r: "Du ignorierst es. 30 Minuten später schaltet die Kiste wegen Überhitzung per Not-Aus ab. Blöd nur, dass darauf auch SAP lief. Die Firma steht still. Alle schreien." 
             }
@@ -6194,18 +6331,21 @@ const DB = {
         opts: [
             { 
                 t: "Streng bleiben: 'Nein!'", 
-                m: 5, f: 0, a: 5, c: -10, 
+                rep: { "Kevin": -5 }, 
+                m: 5, f: 0, a: 5, c: -10,
                 r: "'Das ist Firmeneigentum, Kevin.' Er schlurft deprimiert davon. Er muss die Spielzeugautos wohl zurückgeben. Du hast das Stromnetz gerettet." 
             },
             { 
-                t: "Ihm sein Spielzeug abkaufen", 
+                t: "Ihm sein Spielzeug abkaufen",
+                rep: { "Kevin": 6 }, 
                 m: 5, f: 5, a: -15, c: 0, 
                 r: "Du gibst ihm 5 Euro für den gelben Spielzeug-Lambo. Er strahlt. 'Du bist der Beste!' Jetzt hast du ein Auto auf dem Schreibtisch. Vroom vroom." 
             },
             { 
-                t: "Ausnahme genehmigen", 
+                t: "Ausnahme genehmigen",
+                rep: { "Kevin": 10, "Dr. Wichtig": -2 }, 
                 m: 5, f: 10, a: -10, c: 20, 
-                r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen? (Chef-Radar steigt)" 
+                r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen?" 
             }
         ]
     },
@@ -6222,11 +6362,13 @@ const DB = {
             },
             { 
                 t: "Alles auf Kevin schieben (Vorbereitung)", 
+                rep: { "Kevin": -15 },
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "Du benennst den Prozess wieder in 'Kevin_Test' um. Wenn sie es finden, war es der Azubi. Du bist ein eiskaltes Ekelpaket, aber du bist sicher." 
             },
             { 
                 t: "Zocken: 'Das ist KI-Training'", 
+                rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 10, a: 0, c: 30, 
                 r: "Du lässt es laufen. Als die Prüfer kommen, faselst du was von 'Neural Networks' und 'Blockchain-Innovation'. Sie nicken ahnungslos und gehen. Risiko hat sich gelohnt!" 
             }
@@ -6240,6 +6382,7 @@ const DB = {
         opts: [
             { 
                 t: "Zusehen und Kaffee trinken", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 60, f: 20, a: -5, c: 20, 
                 r: "Du wirst quasi fürs Nichtstun bezahlt, während der Externe schwitzt. Der Chef sieht nur, dass 'Profis arbeiten'. Entspannteste Stunde der Woche." 
             },
@@ -6262,22 +6405,26 @@ const DB = {
         opts: [
             { 
                 t: "Eingabe: 'Puschel123'",
+				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: 10, a: -10, c: -5, 
                 r: "Du tippst es blind ein. 'ZUGRIFF ERLAUBT'. Der Chef starrt dich an: 'Woher...? Egal. Gute Arbeit, Müller!'" 
             },
             { 
                 t: "Admin-Reset erzwingen",
                 req: "admin_pw",
+				rep: { "Dr. Wichtig": 2 },
                 m: 15, f: -5, a: 0, c: 0, 
                 r: "Dauert 15 Minuten, funktioniert aber sicher. Der Chef trommelt ungeduldig mit den Fingern." 
             },
             { 
                 t: "Eingabe: '123456'",
+				rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 10, c: 15, 
                 r: "Falsch. PC sperrt sich für 1 Stunde. Der Chef explodiert." 
             },
             { 
                 t: "Eingabe: 'Passwort'",
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
             }
@@ -6327,6 +6474,7 @@ const DB = {
             },
             { 
                 t: "Genervt sein: 'Wir müssen aber arbeiten'", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "'Chef, ich muss an Port 43.' Er funkelt dich böse an. 'Wagen Sie es nicht, die Symmetrie zu zerstören!' Toll, jetzt ist das Rack nutzlos." 
             }
@@ -6369,6 +6517,7 @@ const DB = {
             { 
                 t: "Techno-Playlist an & tanzen", 
                 next: "path_disco_dance",
+				rep: { "Dr. Wichtig": -2 },
                 m: 15, f: 10, a: -20, c: 20, 
                 r: "Du nutzt das Blinken als Lightshow und tanzt völlig enthemmt den Robot-Dance. Leider steht plötzlich der Chef in der Tür, starrt dich an und fragt trocken: 'Haben Sie einen Schlaganfall, Müller?'" 
             },
@@ -6389,6 +6538,7 @@ const DB = {
             { 
                 t: "Dazu stehen: 'Das sind Moves!'", 
                 m: 5, f: 0, a: -10, c: 5, 
+				rep: { "Dr. Wichtig": -2 },
                 r: "Du kommentierst das Video: 'Neid ist die höchste Form der Anerkennung.' Die Kollegen lachen, aber irgendwie finden sie dich jetzt cooler. Der Chef schüttelt nur den Kopf." 
             },
             { 
@@ -6411,16 +6561,19 @@ const DB = {
         opts: [
             { 
                 t: "Webshop sofort vom Netz nehmen", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: -5, a: 10, c: 20, 
                 r: "Du kappst die Leitung. Der Shop ist offline. Der Schaden ist begrenzt, aber der Chef schreit: 'Wir verlieren tausende Euro pro Minute!' Tja, besser als Ware zu verschenken." 
             },
             { 
                 t: "Backup einspielen", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 60, f: -20, a: 10, c: 15, 
                 r: "Du musst das Backup von gestern holen. Der Ladebalken kriecht. Der Chef steht hinter dir und atmet schwer: 'Jede Sekunde kostet Geld, Müller!' Du schwitzt." 
             },
             { 
                 t: "Preise manuell auf 9999€ setzen", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 5, a: -5, c: -5, 
                 r: "Quick & Dirty SQL-Befehl: `UPDATE prices SET value = 9999`. Keiner kauft mehr was, aber der Fehler ist 'behoben'. Du bist ein Genie des Wahnsinns." 
             }
@@ -6482,6 +6635,7 @@ const DB = {
         opts: [
             { 
                 t: "Kevin zum Wischen rufen", 
+                rep: { "Kevin": -5 },
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "'Kevin! Praktische Ausbildung: Rechenzentrums-Reinigung!' Der Azubi kommt mit dem Wischmopp. Er mault zwar, aber deine Füße bleiben trocken." 
             },
@@ -6505,17 +6659,20 @@ const DB = {
         opts: [
             { 
                 t: "Ihn anschreien & rauswerfen", 
-                m: 5, f: 0, a: 15, c: 0, 
+                rep: { "Kevin": -10 },
+                m: 5, f: 0, a: -10, c: 15, 
                 r: "Kevin zuckt zusammen und rennt weg. 'Tschuldigung...' Er wird dich nie wieder um Rat fragen." 
             },
             { 
                 t: "Meldung an HR machen", 
+                rep: { "Kevin": -15 },
                 m: 15, f: 0, a: 0, c: -10, 
                 r: "Du meldest den Vorfall. Kevin kriegt eine Abmahnung. Sicher ist sicher, aber er meidet dich jetzt." 
             },
             { 
                 t: "Seufzen: 'Zeig mal her... so geht das.'", 
-                next: "path_kevin_student", 
+                next: "path_kevin_student",
+                rep: { "Kevin": 15 }, 
                 m: 25, f: 0, a: -5, c: 0, 
                 r: "Du nimmst dir Zeit und erklärst ihm den Schaltplan. Kevin staunt: 'Whoa. Das ergibt Sinn.' Er schaut dich an wie einen Jedi-Meister." 
             }
@@ -6530,16 +6687,19 @@ const DB = {
             { 
                 t: "Nicken: 'Mach es. Ich vertraue dir.'", 
                 loot: "kevin_ram", 
+                rep: { "Kevin": 15, "Dr. Wichtig": 10 },
                 m: 5, f: -30, a: -40, c: -30, 
                 r: "Kevin tippt wie ein Besessener. Enter. Stille. Der Angriff ist gestoppt. Er grinst breit: 'Hab ich von dir gelernt.' Er gibt dir seinen alten Glücks-RAM als Andenken." 
             },
             { 
                 t: "Wegschubsen: 'Zu gefährlich! Geh weg!'", 
+                rep: { "Kevin": -10 },
                 m: 45, f: -10, a: 30, c: -5, 
                 r: "Du löst das Problem selbst, aber es dauert 30 Minuten länger. Kevin steht traurig daneben. 'Ich wollte doch nur helfen...'" 
             },
             { 
                 t: "Zögern: 'Bist du sicher?'", 
+                rep: { "Kevin": -5, "Dr. Wichtig": -10 },
                 m: 20, f: 0, a: 20, c: 20, 
                 r: "In deinem Zögern stürzt der Mailserver ab. Kevin führt das Skript dann doch aus, aber der Schaden ist schon da. 'Hättest du mich mal früher gelassen...', murmelt er." 
             }
@@ -6654,18 +6814,21 @@ const DB = {
         text: "Hausmeister Egon steht vor den Trümmern der Alarmanlage. Er fährt mit dem Finger über die tiefe Delle in der Wand. 'Das war kein technischer Defekt. Das war stumpfe Gewalt.' Er dreht sich langsam zu dir um. 'Hast du was gesehen?'",
         opts: [
             { 
-                t: "Lügen: 'Da war eine riesige Ratte!'", 
+                t: "Lügen: 'Da war eine riesige Ratte!'",
+                rep: { "Egon": -10 }, 
                 m: 5, f: 0, a: 10, c: 20, 
                 r: "Egon zieht eine Augenbraue hoch. 'Eine Ratte mit Hammer?' Er glaubt dir kein Wort. Er schreibt einen Bericht über 'Vandalismus'. Dein Radar ist jetzt im kritischen Bereich." 
             },
             { 
                 t: "Beichten: 'Es war ein Notfall...'", 
+                rep: { "Egon": 5 },
                 m: 10, f: -5, a: -10, c: -10, 
                 r: "Du erklärst das Ohrenbluten. Egon nickt brummend. 'Besser die Wand als das Trommelfell. Aber den Putz zahlst du.' Er deckt dich beim Chef, aber du schuldest ihm was." 
             },
             { 
                 t: "Bestechung: Ihm dein Panzertape anbieten", 
-                req: "tape",
+                rem: "tape",
+                rep: { "Egon": 10 },
                 m: 5, f: 5, a: -10, c: -5, 
                 r: "Egons Augen leuchten auf. 'Original Gaffa? Das Gute?' Er nimmt die Rolle, klebt ein Stück über das Loch in der Wand und grinst. 'Welches Loch? Ich sehe kein Loch.'" 
             }
@@ -6718,13 +6881,15 @@ const DB = {
             { 
                 t: "Beichten und teilen", 
                 rem: "donut", 
-                m: 10, f: 0, a: -10, c: 5, 
+                rep: { "Chantal": 5 },
+                m: 10, f: -5, a: -5, c: 0, 
                 r: "Ihr teilt euch das trockene Gebäck. Es schmeckt tatsächlich leicht nach Spinat. Geteiltes Leid ist halbes Leid. Chantal findet dich jetzt 'sympathisch ehrlich'." 
             },
             { 
                 t: "Hektisch kauen und schlucken", 
                 rem: "donut", 
-                m: 5, f: 5, a: 0, c: 0, 
+                rep: { "Chantal": -5 },
+                m: 5, f: -5, a: -10, c: 5, 
                 r: "Du stopfst den Rest mit einem Bissen rein. 'Mmpf... keine Ahnung.' Chantal starrt dich an. 'Du hast Krümel am Kinn.' Peinlich, aber satt." 
             }
         ]
@@ -6737,11 +6902,13 @@ const DB = {
         opts: [
             { 
                 t: "Schleimen: 'Hab ich für Sie übrig gelassen'", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 5, a: -5, c: -10,
                 r: "Der Chef nickt anerkennend mit vollem Mund. 'Müller, Sie denken mit. Das merke ich mir.' Ein billiger Sieg, aber er zählt." 
             },
             { 
                 t: "Ihn warnen (Spinat-Gerücht)", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 2, f: 0, a: 5, c: 5,
                 r: "'Chef, der ist vom letzten Monat!' Er spuckt ihn sofort in den Mülleimer. 'Wollen Sie mich vergiften?!' Ups. Zu ehrlich." 
             },
@@ -6788,6 +6955,7 @@ const DB = {
             },
             { 
                 t: "Workaholic: 'Muss Überstunden machen'", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: -10, a: 10, c: -20, 
                 r: "Sie nickt verständnisvoll, aber enttäuscht. 'Schade. Fleißiges Bienchen.' Der Chef, der gerade vorbeikommt, hört das und nickt zufrieden." 
             }
@@ -6801,12 +6969,14 @@ const DB = {
             { 
                 t: "Dreiste Notlüge: 'Ist für den externen Berater!'", 
                 next: "path_boss_consultant",
+				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 10, a: 5, c: -10,
                 r: "Der Chef nickt anerkennend: 'Ah, Service-Orientierung! Sehr gut, weitermachen.' Er tritt zur Seite. Du hast gelogen, aber du hast deinen Kaffee." 
             },
             { 
                 t: "Rechtfertigen: 'Ich brauche Treibstoff...'", 
                 next: "path_boss_lecture",
+				rep: { "Dr. Wichtig": -2 },
                 m: 15, f: -5, a: 10, c: 5,
                 r: "Fehler. Riesenfehler. Er nutzt die Gelegenheit für einen 15-minütigen Spontan-Vortrag über 'Time-Management' und 'intrinsische Motivation'. Dein Kaffee wird dabei kalt." 
             },
@@ -6824,17 +6994,20 @@ const DB = {
         text: "Kaum bist du am Platz, steht der Chef wieder da. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Perfektes Timing. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja eh gerade für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
         opts: [
             { 
-                t: "Zähneknirschend abgeben", 
+                t: "Zähneknirschend abgeben",
+                rep: { "Dr. Wichtig": 5 },				
                 m: 2, f: 0, a: 20, c: -10, 
                 r: "Der Berater schlürft laut. 'Mmmh. Ein bisschen wenig Crema, aber für den Anfang okay.' Du hast keinen Kaffee, aber der Chef strahlt vor Stolz über dein 'Teamwork'." 
             },
             { 
                 t: "Lügen: 'Da ist Hustensaft drin.'", 
+				rep: { "Dr. Wichtig": -2 },		
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "Der Berater zieht die Hand zurück. 'Oh. Äh. Nein danke.' Der Chef guckt misstrauisch, aber du darfst deinen Kaffee behalten." 
             },
             { 
-                t: "Rechnung stellen: 'Macht 5 Euro.'", 
+                t: "Rechnung stellen: 'Macht 5 Euro.'",
+   				rep: { "Dr. Wichtig": -5 },	             				
                 m: 5, f: 0, a: 10, c: 20, 
                 r: "Totenstille. Der Berater lacht unsicher: 'Humor hat er!' Der Chef lacht nicht. 'Müller, in mein Büro. Später.' Das war zu frech." 
             }
@@ -6848,16 +7021,19 @@ const DB = {
         opts: [
             { 
                 t: "Kevin sortieren lassen", 
+                rep: { "Kevin": -5 },
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "'Kevin! Das ist ein Farb-Sehtest für deine Ausbildung!' Kevin sortiert begeistert. Du trinkst deinen kalten Kaffee und schaust zu. Delegieren ist auch eine Skill." 
             },
             { 
                 t: "Brav sortieren", 
+                rep: { "Dr. Wichtig": 5 },
                 m: 30, f: -10, a: 10, c: -5, 
                 r: "Du sitzt 30 Minuten da und sortierst Rot zu Rot. Es ist dumm, aber der Chef sieht dich im Vorbeigehen und nickt: 'Sehen Sie? Der Fokus kehrt zurück!'" 
             },
             { 
                 t: "Alles in den Müll werfen", 
+                rep: { "Dr. Wichtig": 5 },
                 m: 2, f: 5, a: 5, c: 10, 
                 r: "Zack, weg damit. Wenn der Chef fragt: 'Ich habe sie digitalisiert und in die Cloud hochgeladen.' Er versteht es nicht und nickt beeindruckt." 
             }
@@ -6885,6 +7061,7 @@ const DB = {
         opts: [
             { 
                 t: "'Das beste Gadget seit Jahren!' (Übertrieben loben)", 
+				rep: { "Dr. Wichtig": 10 },	
                 m: 15, f: 5, a: 15, c: -10,
                 r: "Ein fataler Fehler. Der Vertreter ist so begeistert, dass er dich in die Ecke drängt und dir 15 Minuten lang die Roadmap für Q4 erklärt. Der Chef nickt stolz, aber deine Ohren bluten und der Kaffee wird kalt." 
             },
@@ -6895,6 +7072,7 @@ const DB = {
             },
             { 
                 t: "Tief inhalieren und Augenkontakt halten (provozieren)", 
+				rep: { "Dr. Wichtig": -10 },	
                 m: 5, f: 0, a: 0, c: 20,
                 r: "Du hältst den Ball direkt unter deine Nase, atmest tief ein und flüsterst: 'Er riecht nach Weichmachern.' Totenstille. Der Vertreter weicht zurück. Der Chef läuft purpurrot an. 'MÜLLER! BÜRO!'" 
             }
@@ -6914,6 +7092,7 @@ const DB = {
             { 
                 t: "Wütend gegen das Gehäuse treten", 
                 next: "path_empty_kick", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 0, a: 5, c: 10, 
                 r: "KLONK! Das hat ordentlich gescheppert. Die Maschine bleibt leer, aber dein Fuß tut weh. Der Chef steckt den Kopf aus der Tür: 'Alles im Griff bei Ihnen, Müller?'" 
             },
@@ -7036,6 +7215,7 @@ const DB = {
             },
             { 
                 t: "Ihn zu Chantal schicken", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "'Chantal im Marketing sucht noch Freunde.' Torbens Augen leuchten. Er zieht ab. Jetzt hast du Ruhe, aber Chantal wird Rache schwören." 
             }
@@ -7103,6 +7283,7 @@ const DB = {
             },
             { 
                 t: "Kevin beschuldigen", 
+                rep: { "Kevin": -10 },
                 m: 5, f: 5, a: -5, c: -5, 
                 r: "'Der Azubi mit der Kappe war da...' Der Handwerker nickt wissend. 'Die Jugend von heute. Die klauen alles.' Er schreibt 'Diebstahl durch Azubi' auf den Rapportzettel. Perfektes Verbrechen." 
             }
@@ -7190,6 +7371,7 @@ const DB = {
             },
             { 
                 t: "Den Ruhm genießen", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 10, a: -10, c: -5, 
                 r: "Du lehnst dich zurück. 'Nur das Beste für mein Team.' Selbst der Chef nickt dir im Vorbeigehen zu. Dein Radar sinkt ins Bodenlose." 
             }
@@ -7221,18 +7403,21 @@ const DB = {
             { 
                 t: "Dazwischen drängeln", 
                 next: "path_meeting_push", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "Du hast Chantal den Smoothie umgestoßen. 'Hoppla'. Du hast Kaffee, aber Feinde. Eine grüne Pfütze breitet sich aus." 
             },
             { 
                 t: "Mitmachen", 
                 next: "path_meeting_join", 
+                rep: { "Chantal": 15 },
                 m: 45, f: 20, a: 10, c: -5, 
                 r: "Du musstest 45 Minuten über deine Gefühle reden. Du hast jetzt einen grünen Smoothie und Aggressionen." 
             },
             { 
                 t: "Warten und böse gucken", 
                 next: "path_meeting_wait", 
+                rep: { "Chantal": -5 },
                 m: 15, f: 5, a: 5, c: 0, 
                 r: "Sie ignorieren dich komplett. Irgendwann gehen sie. Dein Kaffee schmeckt bitter, aber du hast deinen Willen bekommen." 
             }
@@ -7246,16 +7431,19 @@ const DB = {
         opts: [
             { 
                 t: "Zahlen (Friedensangebot)", 
+                rep: { "Chantal": 10 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du legst 50€ in den Umschlag. Es tut weh, aber der Krieg ist (vielleicht) vorbei. Dein Portemonnaie weint." 
             },
             { 
                 t: "Umschlag schreddern", 
+                rep: { "Chantal": -10 },
                 m: 2, f: 0, a: -5, c: 10, 
                 r: "Der Schredder frisst das pinke Papier. Chantal wird dich hassen, aber beweisen kann sie nichts. Eskalation akzeptiert." 
             },
             { 
                 t: "Gegenrechnung stellen: 'Arbeitszeit'", 
+                rep: { "Chantal": -15 },
                 m: 10, f: 5, a: -10, c: 5, 
                 r: "Du stellst ihr 150€ für 'IT-Support und psychologische Betreuung' in Rechnung. Patt-Situation. Chantal grüßt dich ab jetzt nicht mehr." 
             }
@@ -7269,16 +7457,19 @@ const DB = {
         opts: [
             { 
                 t: "Die Rolle annehmen", 
+                rep: { "Chantal": 15 },
                 m: 10, f: 20, a: -10, c: -5, 
                 r: "Du zündest ein Stäbchen an. Ab jetzt machst du offiziell 2 Stunden am Tag 'Atmosphären-Pflege'. Der Chef denkt, das sei eine Brandschutz-Übung." 
             },
             { 
                 t: "Paket an Kevin weitergeben", 
+                rep: { "Kevin": 5, "Chantal": -5 },
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "'Hier Kevin, für deine Ausbildung.' Kevin freut sich. Er räuchert jetzt das Lager aus. Du bist fein raus." 
             },
             { 
                 t: "Alles in den Müll werfen", 
+                rep: { "Chantal": -10 },
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Weg damit. Du willst Admin sein, kein Guru. Chantal fragt später enttäuscht nach deiner Aura." 
             }
@@ -7292,16 +7483,19 @@ const DB = {
         opts: [
             { 
                 t: "Reinplatzen: 'Das ist Rufmord!'", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du machst eine Szene. Das bestätigt leider genau ihre These. 'Seht ihr? Aggression!', ruft Chantal. Du hast verloren." 
             },
             { 
                 t: "Foto machen & als Profilbild nutzen", 
+                rep: { "Chantal": 3 },
                 m: 5, f: 10, a: -10, c: 5, 
                 r: "Du nimmst die Rolle an. Dein neues Teams-Profilbild ist der 'Energie-Vampir'. Die Kollegen finden es lustig. Chantal ist verwirrt." 
             },
             { 
                 t: "Sicherung rausdrehen", 
+                rep: { "Chantal": -15 },
                 m: 10, f: -5, a: -5, c: 0, 
                 r: "Zack. Beamer aus. Präsentation beendet. Du gehst pfeifend weiter. Niemand kann beweisen, dass du es warst." 
             }
@@ -7380,13 +7574,14 @@ const DB = {
                 r: "Du hast ein Zeichen gesetzt. Es ist zwar unpraktisch für alle, aber niemand wird mehr wagen, dir die Milch wegzunehmen. Respekt durch Angst." 
             },
             { 
-                t: "Unschuldig tun: 'Wer macht denn sowas?'", 
+                t: "Unschuldig tun: 'Wer macht denn sowas?'",
+                rep: { "Kevin": -5 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Die Kollegen tuscheln. 'Bestimmt der Kevin.' Du nickst eifrig. Sündenböcke sind wichtig für das Betriebsklima." 
             }
         ]
     },
-{
+    {
         id: "cof_juergen_1",
         title: "Die Labertasche",
         text: "Jürgen aus dem Vertrieb blockiert die Kaffeemaschine. Er grinst dich breit an: 'Na, Kollege? Auch mal Pause? Du, ich MUSS dir unbedingt von meinem neuen Mähroboter erzählen. Der hat jetzt GPS-gestützten Kantenmodus!'",
@@ -7510,18 +7705,21 @@ const DB = {
         text: "Egon kommt fluchend in die Küche. 'Hömma! Hast du mein Gaffa gesehen? Der Mülleimerdeckel ist abgerissen und ich muss das tapen! Das war die gute Rolle!'",
         opts: [
             { 
-                t: "Lügen: 'Nö, keine Ahnung.'", 
+                t: "Lügen: 'Nö, keine Ahnung.'",
+                rep: { "Egon": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Egon tritt gegen den Mülleimer. 'Verdammte Diebe hier! Alles muss man anketten!' Er zieht wütend ab. Du hast das Tape, aber Egon ist sauer." 
             },
             { 
                 t: "Zurückgeben: 'Lag am Boden.'", 
                 rem: "tape",
+                rep: { "Egon": 5 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Du ziehst die Rolle aus der Tasche. 'Wollte sie nur... aufheben.' Egon reißt sie dir aus der Hand. 'Ja ja. Finger weg.' (Item entfernt)" 
             },
             { 
-                t: "Tipp geben: 'Nimm Kaugummi.'", 
+                t: "Tipp geben: 'Nimm Kaugummi.'",
+                rep: { "Egon": -5 }, 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "Egon starrt dich an. 'Kaugummi? Bin ich MacGyver?' Er schüttelt den Kopf über die 'Büro-Hengste' und geht." 
             }
@@ -7535,17 +7733,20 @@ const DB = {
         opts: [
             { 
                 t: "Mitleid heucheln & gehen", 
+                rep: { "Egon": -2 },
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "'Viel Erfolg, Egon!' Du lässt ihn leiden. Du brauchst die Binder dringender für dein Kabelmanagement am Platz." 
             },
             { 
                 t: "Binder spenden", 
-                rem: "zip_ties", 
+                rem: "zip_ties",
+                rep: { "Egon": 10 }, 
                 m: 10, f: -5, a: -10, c: 0, 
                 r: "Du gibst ihm die Binder zurück. 'Oh, danke Jung! Du rettest meinen Rücken.' Egon schuldet dir was. (Item entfernt)" 
             },
             { 
-                t: "Sarkasmus: 'Hast du kein Tape?'", 
+                t: "Sarkasmus: 'Hast du kein Tape?'",
+                rep: { "Egon": -5 }, 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "'Tape hält da nicht bei der Hitze, du Experte!' Er ist genervt. Du hast deinen Spaß und deine Kabelbinder." 
             }
@@ -7586,11 +7787,13 @@ const DB = {
         opts: [
             { 
                 t: "Stolz: 'Das war Qualitätsarbeit'", 
+                rep: { "Egon": -5 },
                 m: 5, f: -5, a: -5, c: 0, 
                 r: "Egon starrt dich an. 'Du hast durch den Estrich in die Fußbodenheizung gebohrt!' Ups. Aber hey, der Tisch steht stabil." 
             },
             { 
                 t: "Die Flucht ergreifen", 
+                rep: { "Egon": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du pfeifst unschuldig und gehst. Hinter dir hörst du, wie Egon eine Brechstange ansetzt. Der Tisch gewinnt." 
             }
@@ -7604,6 +7807,7 @@ const DB = {
         opts: [
             { 
                 t: "Ihn loben: 'Genial!'", 
+                rep: { "Kevin": 5 },
                 m: 5, f: 10, a: -10, c: -5, 
                 r: "Kevin strahlt. Ihr trinkt jetzt Kaffee im Hocken. Es sieht aus wie im Kindergarten, ist aber ergonomisch mal was anderes." 
             },
@@ -7622,12 +7826,14 @@ const DB = {
         opts: [
             { 
                 t: "Als Künstler ausgeben", 
+                rep: { "Chantal": 10 },
                 m: 10, f: 20, a: -10, c: 10, 
                 r: "Du stellst dich daneben und nickst tiefsinnig. 'Ja, der Hammer symbolisierte den digitalen Wandel.' Chantal macht Fotos für LinkedIn. Du bist jetzt ein Visionär." 
             },
             { 
-                t: "Dagegen treten (Performance)", 
-                m: 5, f: -5, a: -10, c: 20, 
+                t: "Dagegen treten", 
+                rep: { "Chantal": -5 },
+                m: 5, f: -5, a: -10, c: 15, 
                 r: "Du trittst gegen den Schrotthaufen. Es scheppert. Die Umstehenden applaudieren. 'So mutig! So radikal!' Die Welt ist verrückt." 
             }
         ]
@@ -7689,6 +7895,7 @@ const DB = {
             },
             { 
                 t: "Kevin beschuldigen", 
+                rep: { "Kevin": -5 },
                 m: 5, f: 0, a: -5, c: -5, 
                 r: "Es ist immer Kevin. Er muss jetzt den Filterkaffee kochen. Dein Gewissen zwickt kurz, aber der Espresso war das Opfer wert." 
             }
@@ -7702,11 +7909,13 @@ const DB = {
         opts: [
             { 
                 t: "Das Gerücht nutzen (Mitleid)", 
+                rep: { "Gabi": 5 },
                 m: 10, f: 10, a: -10, c: 0, 
                 r: "Du hustest leise und schaust leidend. Gabi bringt dir Kekse. 'Für die Nerven.' Es lebt sich gut als angeblicher Invalide." 
             },
             { 
                 t: "Aufklären: 'Taste war nur kaputt'", 
+                rep: { "Gabi": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "'Achso.' Der Zauber ist vorbei. Gabi nimmt die Kekse wieder mit. Die Realität ist hart." 
             }
@@ -7859,6 +8068,7 @@ const DB = {
             { 
                 t: "Ins Gespräch einsteigen", 
                 next: "path_gossip_caught", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 10, f: 5, a: -5, c: 10,
                 r: "Du nickst eifrig und lästerst mit. Plötzlich räuspert sich jemand hinter dir. Der Chef starrt dich an, tippt auf seine Uhr und notiert sich deinen Namen. Die Gruppe löst sich panisch auf." 
             },
@@ -7877,16 +8087,19 @@ const DB = {
         opts: [
             { 
                 t: "Ehrlich sein: 'Ja, wir haben ein riesiges Problem.'", 
+				rep: { "Dr. Wichtig": -10 },	
                 m: 5, f: 0, a: 10, c: 20, 
                 r: "Sein Lächeln gefriert. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
             },
             { 
                 t: "Bullshit-Bingo: 'Nur spannende Herausforderungen!'", 
+				rep: { "Dr. Wichtig": 5 },	
                 m: 10, f: 5, a: -10, c: -10, 
                 r: "Der Chef atmet erleichtert aus. 'Exzellent! Das ist der Spirit! Here, take a cookie.' Er wirft dir einen einzeln verpackten Keks zu. Du bist sicher." 
             },
             { 
                 t: "Übertreiben: 'Es ist eine fantastische Growth-Opportunity!'", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "Der Chef wirkt kurz verwirrt, nickt dann aber anerkennend. 'Wow. Das ist ja noch positiver als mein Coach. Weiter so!' Er macht sich eine Notiz: 'Müller = Visionär'." 
             }
@@ -7975,6 +8188,7 @@ const DB = {
             },
             { 
                 t: "Die Schuld auf den Spediteur schieben", 
+                rep: { "Egon": 2 },
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "'Das war doch schon bei der Lieferung so, Egon!' Egon kratzt sich am Kopf. 'Stimmt... die Kartons sahen übel aus.' Du bist fein raus." 
             }
@@ -8012,6 +8226,7 @@ const DB = {
             },
             { 
                 t: "Gegenangriff: Egon informieren", 
+                rep: { "Egon": 5 },
                 m: 10, f: -5, a: -10, c: 10, 
                 r: "Du petzt beim Hausmeister. Egon stürmt mit dem Bolzenschneider ins Marketing-Büro. 'Keine Fremdgeräte!' Das Schreien hört man bis in den 3. Stock." 
             }
@@ -8086,11 +8301,13 @@ const DB = {
         opts: [
             { 
                 t: "Kevin beschuldigen", 
+                rep: { "Kevin": -5, "Egon": 5 },
                 m: 5, f: 0, a: -5, c: -5, 
                 r: "'Der Azubi war zuletzt in der Küche.' Egon nickt grimmig und stapft Richtung Azubi-Büro. Dein Gewissen ist schwarz, aber rein." 
             },
             { 
                 t: "Sich stellen: 'Ich wollte nichts kaputt machen'", 
+                rep: { "Egon": 2 },
                 m: 5, f: -5, a: 0, c: 0, 
                 r: "Egon schnaubt. 'Typisch Schreibtischtäter. Zwei linke Hände.' Aber er beruhigt sich. Du darfst weiterleben." 
             }
@@ -8122,6 +8339,7 @@ const DB = {
             { 
                 t: "Heldenhaft zum Lappen greifen & wischen", 
                 next: "path_spill_clean", 
+				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: -5, a: 20, c: 20, 
                 r: "Du kniest am Boden und wischst. In dem Moment biegt der Chef um die Ecke. 'Herrgott, Müller! Können Sie nicht mal eine Tasse halten? Das ist ja peinlich!' Er steigt über deine Hand und geht kopfschüttelnd. Du kochst vor Wut." 
             },
@@ -8163,12 +8381,14 @@ const DB = {
         text: "Chantal humpelt mit bandagiertem Knöchel an dir vorbei. Sie wedelt wütend mit deinem Zettel. 'Das Schild war viel zu klein! Ich werde das als Arbeitsunfall melden wegen mangelnder Sicherheitskennzeichnung!'",
         opts: [
             { 
-                t: "Juristisch wehren: 'DIN-Norm erfüllt'", 
+                t: "Juristisch wehren: 'DIN-Norm erfüllt'",
+                rep: { "Chantal": -10 }, 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "Du musst ihr 10 Minuten lang erklären, dass die Schriftgröße lesbar war. Sie rauscht beleidigt ab. Du hast Recht, aber die Diskussion war pure Zeitverschwendung und nervig." 
             },
             { 
                 t: "Mitleid zeigen (Schokolade)", 
+                rep: { "Chantal": 10 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Du gibst ihr einen Riegel aus deiner Schublade. Sie beruhigt sich sofort. 'Na gut. Aber nächstes Mal machst du Neon-Farbe dran, okay?' Problem gelöst." 
             }
@@ -8182,12 +8402,14 @@ const DB = {
             { 
                 t: "Anbrüllen: 'Das war mein Mittag!'", 
                 next: "path_elster_allergy", 
+                rep: { "Frau Elster": -5 },
                 m: 10, f: 0, a: 20, c: 10, 
                 r: "Sie schreit zurück: 'Ich bin hochsensibel! Wenn ich nur **Erdnüsse** rieche, schwillt mein Hals zu! Nimm gefälligst Rücksicht!' Sie atmet schwer. Oha, wunde Stelle entdeckt." 
             },
             { 
                 t: "Klein beigeben", 
-                next: "path_elster_police", 
+                next: "path_elster_police",
+                rep: { "Frau Elster": 2 }, 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "Du entschuldigst dich kleinlaut. Sie rückt ihre Brille zurecht, schnaubt: 'Man muss eben an die Gemeinschaft denken!' und rauscht ab. Der Streit ist vorbei, dein Essen aber auch." 
             }
@@ -8201,11 +8423,13 @@ const DB = {
         opts: [
             { 
                 t: "Genüsslich kauen & anhauchen", 
+                rep: { "Frau Elster": -10 },
                 m: 5, f: -5, a: -10, c: 10, 
                 r: "Du kaust extra laut. 'Mmmh, knackig.' Frau Elster flüchtet panisch aus dem Raum. Du hast jetzt die Küche für dich allein. Mächtiges Gefühl." 
             },
             { 
                 t: "Rücksicht nehmen & wegpacken", 
+                rep: { "Frau Elster": 5 },
                 m: 5, f: 5, a: 5, c: 0, 
                 r: "Du packst den Riegel weg. 'Schon gut.' Sie nickt dankbar, aber misstrauisch. Du hast Hunger, aber immerhin keinen Mord auf dem Gewissen." 
             }
@@ -8219,17 +8443,19 @@ const DB = {
         opts: [
             { 
                 t: "Wütenden Antwort-Zettel schreiben", 
+                rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du schreibst: 'Finger weg von meinem Eigentum!' und klebst ihn an ihre Tupperdose. Ein kleiner Akt der Rebellion, der gut tut." 
             },
             { 
                 t: "Alles neu beschriften (Arbeit)", 
+                rep: { "Frau Elster": 5 },
                 m: 2, f: 5, a: 15, c: 0, 
                 r: "Du beschriftest jedes einzelne Lebensmittel mit Datum und Namen, damit sie Ruhe gibt. Es dauert 10 Minuten und nervt tierisch." 
             }
         ]
     },
-{
+    {
         id: "cof_salary_rumor_1",
         title: "Der Gehalts-Schock",
         text: "Du stehst hinter der Säule und hörst Chantal aus dem Marketing kichern: 'Ja, echt! 500 Euro mehr! Einfach so, weil ich so nett gelächelt habe! Dabei kann ich kaum Excel.' Dein Gehalt wurde seit 3 Jahren nicht angepasst. Dir platzt fast der Kragen.",
@@ -8244,11 +8470,12 @@ const DB = {
             { 
                 t: "Chantal eine Szene machen", 
                 next: "path_salary_rage", 
+                rep: { "Chantal": -15 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du brüllst quer durch den Raum: 'EXCEL IST KEINE KUNST!'. Chantal fängt an zu weinen. Alle starren dich an. Du hast Dampf abgelassen, wirkst aber mental labil. Kein guter Look." 
             },
             { 
-                t: "Den Ärger runterspülen / Stressball", 
+                t: "Den Ärger runterspülen", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du schluckst den Ärger runter oder knetest deinen Stressball. Es ändert nichts an deinem Kontostand, aber dein Blutdruck sinkt minimal. Du gehst frustriert zurück an die Arbeit." 
             }
@@ -8263,6 +8490,7 @@ const DB = {
             { 
                 t: "Liste zücken & fordern", 
                 req: "arg_list_1", 
+				rep: { "Dr. Wichtig": 5 },	
                 m: 10, f: 10, a: -5, c: 10, 
                 r: "Du ratterst deine Erfolge runter. Der Chef ist beeindruckt (und etwas eingeschüchtert). 'Okay, okay! Wir reden über einen Bonus.' Ein Teilsieg! Du fühlst dich wertgeschätzt." 
             },
@@ -8281,11 +8509,13 @@ const DB = {
         opts: [
             { 
                 t: "Termin wahrnehmen & entschuldigen", 
+                rep: { "Chantal": 5 },
                 m: 5, f: -5, a: 10, c: 0, 
                 r: "Du musst 30 Minuten lang nicken und Besserung geloben. Es ist demütigend. Chantal grinst dich danach im Flur an. Dein Hass wächst." 
             },
             { 
                 t: "Termin 'vergessen'", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 0, a: -5, c: 20, 
                 r: "Du gehst einfach nicht hin. Rebellisch, aber dumm. Jetzt hast du eine offizielle Abmahnung in der Akte. Aber dein Stolz ist intakt." 
             }
@@ -8300,24 +8530,28 @@ const DB = {
                 t: "Gezielter Wurf mit dem Stressball", 
                 req: "stressball", 
                 next: "path_markus_hit", 
+                rep: { "Markus": -15, "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: -20, c: 30, 
                 r: "ZACK! Volltreffer auf die Nase. Markus jault auf wie ein getretener Pudel. Du fühlst tiefe Genugtuung, aber leider stand der Chef im Türrahmen. Das gibt Ärger." 
             },
             { 
                 t: "Trocken kontern: 'Ist die geleast?'", 
-                next: "path_markus_roast", 
+                next: "path_markus_roast",
+                rep: { "Markus": -5 }, 
                 m: 10, f: 0, a: -10, c: 5, 
                 r: "Sein Grinsen gefriert. Er läuft rot an und stammelt etwas von 'Wertanlage'. Die umstehenden Kollegen lachen laut los. Ein Sieg auf ganzer Linie." 
             },
             { 
                 t: "Kopfhörer aufsetzen & ignorieren", 
                 req: "headphones", 
+                rep: { "Markus": -2 },
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Klick. Noise-Cancelling an. Du hörst sanfte Mozart-Klänge, während Markus stumm den Mund bewegt. Du zapfst entspannt deinen Kaffee. Frieden." 
             },
             { 
                 t: "Unterwürfig warten", 
                 next: "path_markus_servant", 
+                rep: { "Markus": 5 },
                 m: 20, f: 0, a: 20, c: 0, 
                 r: "Du wartest devot 20 Minuten, bis er seinen Monolog über 'Assets' und 'Mindset' beendet hat. Du hast deinen Kaffee, aber er schmeckt bitter nach Demütigung." 
             }
@@ -8330,13 +8564,15 @@ const DB = {
         text: "Markus trägt jetzt ein riesiges Pflaster auf der Nase (völlig übertrieben). Er wedelt mit einem Formular vor deinem Gesicht. 'Das war ein tätlicher Angriff! Entweder du unterschreibst diese offizielle Entschuldigung, oder ich rufe meinen Anwalt!'",
         opts: [
             { 
-                t: "Unterschreiben (Demütigung)", 
+                t: "Unterschreiben (Demütigung)",
+                rep: { "Markus": 5 }, 
                 m: 5, f: 0, a: 15, c: 0, 
                 r: "Du unterschreibst. Markus grinst triumphierend und hängt den Zettel an seine Bürotür. Jeder kann jetzt lesen, dass es dir leid tut. Dein Blut kocht." 
             },
             { 
                 t: "Nochmal drohen", 
                 req: "stressball", 
+                rep: { "Markus": -10 },
                 m: 5, f: -5, a: -5, c: 10, 
                 r: "Du holst den Stressball wieder raus. Markus zuckt zusammen und rennt weg. Das Problem ist vertagt, aber nicht gelöst." 
             }
@@ -8350,11 +8586,13 @@ const DB = {
         opts: [
             { 
                 t: "Laut vorlesen: 'Minus 60 Prozent?!'", 
+                rep: { "Markus": -15 },
                 m: 5, f: 0, a: -10, c: 5, 
                 r: "Du zeigst auf die rote Kurve. Markus klappt den Laptop panisch zu. 'Das ist nur... eine Korrektur! Dip kaufen!' Er rennt weinend weg." 
             },
             { 
                 t: "Desinteressiert abwinken", 
+                rep: { "Markus": -5 },
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "'Jaja, Markus.' Du lässt ihn stehen. Nichts tut einem Angeber mehr weh als Gleichgültigkeit." 
             }
@@ -8368,11 +8606,13 @@ const DB = {
         opts: [
             { 
                 t: "Kaffee holen (Dienst nach Vorschrift)", 
+                rep: { "Markus": 10 },
                 m: 10, f: 0, a: 25, c: 0, 
                 r: "Du bringst ihm den Kaffee. Er tätschelt dir den Kopf. 'Braver Junge.' Du stirbst innerlich tausend Tode." 
             },
             { 
-                t: "Blockieren & Ignorieren", 
+                t: "Blockieren & Ignorieren",
+                rep: { "Markus": -5 }, 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du blockierst seine Nummer. Markus steht später verwirrt an deinem Tisch: 'Mein Handy spinnt.' Du zuckst nur mit den Schultern." 
             }
@@ -8385,21 +8625,24 @@ const DB = {
         opts: [
             { 
                 t: "Den 'Loot-Donut' als Trost spenden", 
-                req: "donut", 
+                rem: "donut", 
                 next: "path_gabi_donut", 
+                rep: { "Gabi": 5 },
                 m: 10, f: 5, a: -10, c: -5, 
                 r: "Du opferst deinen Schatz. Gabis Augen leuchten auf. Zucker heilt alle Wunden. Sie mampft glücklich. 'Du bist so lieb! Ich geh wieder an die Arbeit.' Gute Tat!" 
             },
             { 
                 t: "Ihr einen Energy-Drink geben", 
-                req: "energy", 
+                rem: "energy", 
                 next: "path_gabi_energy", 
+                rep: { "Gabi": -5 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "Ganz schlechte Idee. Das Taurin kickt sofort. Gabi reißt die Augen auf, springt auf und rennt wie ein begaster Hamster zurück zur Poststelle. Das wird Folgen haben." 
             },
             { 
                 t: "Geduldig zuhören (Seelsorge)", 
                 next: "path_gabi_listen", 
+                rep: { "Gabi": 5 },
                 m: 45, f: -15, a: 20, c: 10, 
                 r: "Du hörst dir eine 45-minütige Grabrede für eine Sukkulente an. Dein Kaffee wird kalt. Gabi fühlt sich danach 'so verstanden', aber du bist innerlich tot und kommst viel zu spät zurück." 
             }
@@ -8414,11 +8657,13 @@ const DB = {
             { 
                 t: "Danken & annehmen", 
                 loot: "loot_box", 
+                rep: { "Gabi": 5 },
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Es ist deine Amazon-Bestellung (neue Gaming-Maus). Gabi zwinkert dir verschwörerisch zu. 'Bei mir ist deine Post sicher!' Eine wertvolle Verbündete." 
             },
             { 
-                t: "Ihr noch mehr Süßes versprechen", 
+                t: "Ihr noch mehr Süßes versprechen",
+                rep: { "Gabi": 10 }, 
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "Du versprichst ihr den nächsten Kuchen aus dem Meeting. Gabi strahlt. Du hast jetzt VIP-Status bei der Postverteilung." 
             }
@@ -8432,11 +8677,13 @@ const DB = {
         opts: [
             { 
                 t: "Staunen: 'Effizient!'", 
+                rep: { "Gabi": -5, "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "Der Chef läuft rot an. 'Das ist kein Tetris, das sind wichtige Akten!' Du musst helfen, den Turm abzubauen, bevor er einstürzt. Nervige Strafarbeit." 
             },
             { 
                 t: "Flüchten: 'Nicht mein Zuständigkeitsbereich'", 
+                rep: { "Dr. Wichtig": -5 },
                 m: 2, f: -5, a: 5, c: 0, 
                 r: "Du reißt dich los und rennst zurück zum Kaffee. Der Chef brüllt dir hinterher. Das gibt Ärger, aber immerhin musst du nicht klettern." 
             }
@@ -8450,12 +8697,13 @@ const DB = {
         opts: [
             { 
                 t: "Sich hinter der Kaffeemaschine verstecken", 
-                m: 2, f: -5, a: 15, c: 0, 
+                m: 5, f: -5, a: 15, c: 0, 
                 r: "Du duckst dich weg. Gabi sucht dich kurz, seufzt laut ('Keiner versteht mich außer dir!') und geht. Das war knapp, aber extrem entwürdigend." 
             },
             { 
                 t: "Sarkastisch: 'Nimm Plastikblumen'", 
-                m: 5, f: 0, a: 5, c: 0, 
+                rep: { "Gabi": 2 },
+                m: 2, f: 0, a: 5, c: 0, 
                 r: "'Oh, gute Idee! Die sterben nicht!' Sie rennt los, um welche zu kaufen. Endlich Ruhe. Du hast zwar Ruhe, aber fühlst dich etwas schlecht." 
             }
         ]
@@ -8481,6 +8729,7 @@ const DB = {
             { 
                 t: "Pfeifend weitergehen & ignorieren", 
                 next: "path_machine_blackout", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 10, a: 0, c: 50, 
                 r: "Du ignorierst die Pfütze. Zehn Minuten später: *ZZZAPP*. Dunkelheit im ganzen Stockwerk. Der Chef stürmt auf den Flur und brüllt: 'WER HAT DIE SICHERUNG RAUSGEJAGT?! MEIN WORD-DOKUMENT!!'" 
             }
@@ -8494,11 +8743,13 @@ const DB = {
         opts: [
             { 
                 t: "Bescheiden nicken", 
+                rep: { "Egon": 10 },
                 m: 10, f: 0, a: -10, c: -5, 
                 r: "Du genießt den seltenen Respekt. Egon lädt dich sogar ein, später mal seinen neuen Akkuschrauber anzusehen. Ein guter Tag." 
             },
             { 
                 t: "Fachsimpeln: 'Panzertape regelt alles'", 
+                rep: { "Egon": 10 },
                 m: 5, f: 5, a: -15, c: 0, 
                 r: "Ihr tauscht kurz Handwerker-Weisheiten aus. Das entspannt ungemein. Du fühlst dich kompetent und wertgeschätzt." 
             }
@@ -8512,11 +8763,13 @@ const DB = {
         opts: [
             { 
                 t: "Den Helden spielen", 
+				rep: { "Dr. Wichtig": 15 },	
                 m: 10, f: 5, a: -20, c: -30, 
                 r: "'Nur mein Job, Chef.' Er drückt dir dankbar die Hand. 'Machen Sie heute früher Feierabend. Das ist ein Befehl!' Musik in deinen Ohren." 
             },
             { 
                 t: "Beruhigen: 'Sicherheit geht vor'", 
+				rep: { "Dr. Wichtig": 5 },	
                 m: 5, f: 0, a: -10, c: -20, 
                 r: "Die Kollegen klatschen leise. Der Ärger über den fehlenden Kaffee ist verflogen. Du bist der verantwortungsvolle Fels in der Brandung." 
             }
@@ -8535,6 +8788,7 @@ const DB = {
             },
             { 
                 t: "Witze erzählen", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 10, f: 10, a: -15, c: -5, 
                 r: "Die Stimmung ist locker. Der Chef lacht sogar über deinen (harmlosen) Witz. Diese unerwartete Teambuilding-Maßnahme war genau das, was alle gebraucht haben." 
             }
@@ -8547,20 +8801,23 @@ const DB = {
         opts: [
             { 
                 t: "Die Technik geduldig erklären", 
-                next: "path_kevin_explain", 
+                next: "path_kevin_explain",
+                rep: { "Kevin": 5, "Dr. Wichtig": 2 }, 
                 m: 30, f: -10, a: 10, c: 0, 
                 r: "Du nimmst dir eine halbe Stunde Zeit und malst Datenpakete an das Whiteboard. Kevin nickt langsam: 'Achso! Also wie Rohrpost, nur unsichtbar?' Es ist ein kleiner Fortschritt." 
             },
             { 
                 t: "Ihm wortlos das Handbuch geben", 
                 req: "manual", 
-                next: "path_kevin_manual", 
+                next: "path_kevin_manual",
+                rep: { "Kevin": -2 }, 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Du drückst ihm den schweren Wälzer gegen die Brust. 'Lies Kapitel 1 bis 10. Vorher sprichst du mich nicht mehr an.' Er verzieht sich ehrfürchtig in eine Ecke. Endlich Ruhe." 
             },
             { 
                 t: "Lügen: 'Ja, das ist der E-Mail-Kobold'", 
-                next: "path_kevin_kobold", 
+                next: "path_kevin_kobold",
+                rep: { "Kevin": 5, "Dr. Wichtig": -2 }, 
                 m: 5, f: 10, a: -5, c: 10, 
                 r: "Du nickst verschwörerisch: 'Ja, er heißt Gunter. Aber bloß nicht füttern!' Kevin kriecht jetzt mit der Taschenlampe hinter das Rack und sucht nach Gunter. Der Chef sieht es und zweifelt an der Eignung des Azubis." 
             }
@@ -8574,11 +8831,13 @@ const DB = {
         opts: [
             { 
                 t: "Genießen & loben", 
+                rep: { "Kevin": 5 },
                 m: 0, f: 5, a: -15, c: 5, 
                 r: "Du lehnst dich zurück. 'Gute Arbeit, Kevin.' Der Luftzug ist herrlich bei der Hitze. Endlich mal eine Innovation, die was bringt. Du bist entspannt." 
             },
             { 
-                t: "Konstruktion abreißen", 
+                t: "Konstruktion abreißen",
+                rep: { "Kevin": -5 }, 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du reißt die Papp-Röhren weg. 'Brandschutz!' Kevin schaut traurig. Jetzt schwitzt du wieder und musst Klebereste entfernen. Eigentlich dumm gelaufen." 
             }
@@ -8591,12 +8850,14 @@ const DB = {
         text: "Kevin steht stramm vor dir. Er hat das Handbuch auswendig gelernt. 'Laut Seite 103, Absatz 4 steht dem Administrator bei erhöhter Serverlast eine zwanzigminütige Regenerationspause zu. Soll ich den Türsteher machen?'",
         opts: [
             { 
-                t: "Angebot annehmen (Pause)", 
+                t: "Angebot annehmen",
+                rep: { "Kevin": 10 }, 
                 m: 20, f: 5, a: -20, c: 0, 
                 r: "Du legst die Füße hoch. Kevin bewacht die Tür und weist sogar den Chef mit Verweis auf 'Seite 103' ab. Das ist der beste Azubi aller Zeiten. Dein Stresslevel sinkt auf Null." 
             },
             { 
-                t: "Ihn wegschicken", 
+                t: "Ihn wegschicken",
+                rep: { "Kevin": -5 }, 
                 m: 2, f: -5, a: 5, c: 0, 
                 r: "'Lass den Quatsch.' Du arbeitest weiter. Kevin ist enttäuscht. Du hast eine Chance auf legale Faulheit verpasst." 
             }
@@ -8610,11 +8871,13 @@ const DB = {
         opts: [
             { 
                 t: "Ich bin Gunter (Essen)", 
+                rep: { "Kevin": 5 },
                 m: 5, f: 10, a: -10, c: 0, 
                 r: "Du mampfst die Pralinen genüsslich auf. Sie schmecken fantastisch. Als Kevin reinkommt, rülpst du leise. Kevin flüstert ehrfürchtig: 'Gunter hat es angenommen!'" 
             },
             { 
-                t: "Kevin als Gunter erschrecken", 
+                t: "Kevin als Gunter erschrecken",
+                rep: { "Kevin": -5 }, 
                 m: 5, f: 15, a: -15, c: 5, 
                 r: "Du versteckst dich und machst Gruselgeräusche: *'MEHR SCHOKOLADE!'* Kevin rennt schreiend weg. Du lachst Tränen. Das war böse, aber extrem befriedigend." 
             }
@@ -8669,12 +8932,14 @@ const DB = {
         text: "Du sitzt in deinem Büro vor dem gestohlenen Kuchen, als die Tür auffliegt. Der Chef und drei japanische Investoren stehen da. Der Chef starrt auf den Kuchen, dann auf dich. 'Müller?! Das war das Catering für die Delegation!'",
         opts: [
             { 
-                t: "Lügen: 'Qualitätskontrolle!'", 
+                t: "Lügen: 'Qualitätskontrolle!'",
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 10, a: 20, c: 30, 
                 r: "Du stammelst mit vollem Mund etwas von 'Gift-Test'. Niemand glaubt dir. Es ist unfassbar peinlich. Die Japaner verbeugen sich höflich vor deiner Gier." 
             },
             { 
                 t: "Teilen anbieten", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "Du hältst dem Investor eine Gabel hin. Er nimmt dankend an. Die Situation ist gerettet, aber der Chef wird dich später töten." 
             }
@@ -8687,13 +8952,15 @@ const DB = {
         opts: [
             { 
                 t: "Notruf drücken & beten", 
-                next: "path_elevator_tech", 
+                next: "path_elevator_tech",
+                rep: { "Markus": -5 },
                 m: 30, f: 0, a: 15, c: 0, 
                 r: "Egon meldet sich knarzend: 'Hömma! Ich ess erst mal meine Stulle auf. Bleib locker.' Du bist 30 Minuten gefangen. Deine Laune ist im Keller." 
             },
             { 
                 t: "Markus zuhören (Opfergang)", 
                 next: "path_elevator_markus", 
+                rep: { "Markus": 5 },
                 m: 30, f: -10, a: 25, c: 0, 
                 r: "Er erzählt von seinem Porsche, seinen Crypto-Wins und seinem 'Mindset'. Du nickst apathisch und stirbst innerlich tausend Tode. Er scheint das Nicken als Zustimmung zu werten." 
             },
@@ -8701,6 +8968,7 @@ const DB = {
                 t: "Aufzugstür aufhebeln", 
                 req: "screw", 
                 next: "path_elevator_hero", 
+                rep: { "Markus": 15 },
                 m: 10, f: -5, a: -10, c: 0, 
                 r: "Du rammst den Schraubendreher in den Spalt. Mit einem Ruck gleitet die Tür auf. Freiheit! Die anderen Insassen staunen: 'Alpha-Move, Respekt!'" 
             }
@@ -8713,12 +8981,14 @@ const DB = {
         text: "Markus springt in letzter Sekunde zu dir in den Aufzug. 'Hey Buddy! Gut, dass ich dich treffe!' Er drückt grinsend den **Nothalt-Knopf**. Der Aufzug stoppt hart. 'Ich muss dir unbedingt von meiner neuen Business-Idee erzählen. Dauert nur 20 Minuten.'",
         opts: [
             { 
-                t: "Panisch schreien: 'HILFE!'", 
+                t: "Panisch schreien: 'HILFE!'",
+                rep: { "Markus": 3 }, 
                 m: 5, f: 0, a: 30, c: 0, 
                 r: "Markus lacht. 'Du bist so witzig! Aber im Ernst: Multi-Level-Marketing für Hamsterfutter!' Es gibt kein Entkommen. Das ist Freiheitsberaubung." 
             },
             { 
                 t: "Ihm die Show stehlen", 
+                rep: { "Markus": -5 },
                 m: 20, f: 0, a: -10, c: 5, 
                 r: "Du fängst an, IHM eine Geschichte von deinem langweiligen Wochenende zu erzählen. Nach 5 Minuten drückt Markus genervt den Knopf, damit es weitergeht. Sieg durch Langeweile." 
             }
@@ -8769,7 +9039,7 @@ const DB = {
             { 
                 t: "Sofort andächtig genießen", 
                 m: 10, f: 5, a: -25, c: 0, 
-                r: "Du trinkst in kleinen Schlucken. Jeder Schluck heilt deine Seele ein wenig. Du ignorierst das Telefon und die Welt. Für 5 Minuten ist alles gut. (Aggro massiv gesenkt)" 
+                r: "Du trinkst in kleinen Schlucken. Jeder Schluck heilt deine Seele ein wenig. Du ignorierst das Telefon und die Welt. Für 5 Minuten ist alles gut." 
             },
             { 
                 t: "Foto für Insta machen", 
@@ -8778,9 +9048,10 @@ const DB = {
                 r: "Das muss dokumentiert werden! Du arrangierst deine Brille und einen Stift dekorativ daneben. '#OfficeLife #Grindset #Blessed'. Aber ein Foto reicht nicht..." 
             },
             { 
-                t: "Dem Chef bringen (Schleimen)", 
+                t: "Dem Chef bringen (Schleimen)",
+                rep: { "Dr. Wichtig": 5 },				
                 next: "path_miracle_boss", 
-                m: 5, f: -5, a: 5, c: 15, 
+                m: 5, f: -5, a: 5, c: -15, 
                 r: "Du denkst strategisch. Du trägst den heiligen Gral vorsichtig ins Chef-Büro. 'Hier Chef, der ist besonders gut heute.' Er guckt überrascht." 
             }
         ]
@@ -8811,12 +9082,14 @@ const DB = {
         opts: [
             { 
                 t: "Innerlich weinen & lächeln", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 10, c: -10, 
                 r: "'Lecker', schmatzt der Chef. Du hast das Heiligste geopfert und er hat es entweiht. Aber er mag dich jetzt etwas mehr. Dein Herz blutet." 
             },
             { 
                 t: "Kommentieren: 'Das war ein Grand Cru!'", 
-                m: 5, f: 5, a: 5, c: -5, 
+				rep: { "Dr. Wichtig": -2 },
+                m: 5, f: 5, a: 5, c: 5, 
                 r: "Der Chef starrt dich an. 'Das ist Kaffee, Müller. Keine Wissenschaft. Gehen Sie arbeiten.' Dein Opfer war umsonst." 
             }
         ]
@@ -9026,17 +9299,20 @@ const DB = {
         opts: [
             { 
                 t: "Ehrliches Mitleid: 'Kann ich verstehen.'", 
+                rep: { "Chantal": 5 },
                 m: 15, f: 5, a: -10, c: 0, 
                 r: "Sie seufzt. 'Danke. Wenigstens einer ist nett.' Ein netter Moment, aber zu harmlos für eine Allianz." 
             },
             { 
                 t: "Zynismus: 'Dann geh doch heulen.'", 
                 next: "chantal_war", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 0, a: 15, c: 5, 
                 r: "Sie starrt dich geschockt an, dann funkelt sie böse. 'Wow. Du bist echt ein Arschloch.' Sie ist beeindruckt von deiner Kälte." 
             },
             { 
                 t: "Ignorieren und Kaffee nehmen", 
+                rep: { "Chantal": -5 },
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du drückst dich an ihr vorbei. Sie ist Luft für dich." 
             }
@@ -9049,17 +9325,20 @@ const DB = {
         opts: [
             { 
                 t: "Genervt: 'Haben Sie keine Hobbys?'", 
+                rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "Sie blickt dich eisig an. 'Mein Hobby ist Effizienz.' Sie notiert deinen Namen. Das gibt Ärger." 
             },
             { 
                 t: "Beobachten: 'Sind das Katzenhaare auf Ihrem Blazer?'", 
                 next: "elster_cat", 
+                rep: { "Frau Elster": 10 },
                 m: 15, f: 0, a: -5, c: 0, 
                 r: "Sie erstarrt. Ihr Gesicht wird weich. 'Das ist Rüdiger. Er haart im Winter so sehr.' Sie zeigt dir sofort 50 Fotos auf ihrem Handy. Du hörst geduldig zu." 
             },
             { 
                 t: "Bürokratisch: 'Ich fülle Formular 7B aus.'", 
+                rep: { "Frau Elster": 2 },
                 m: 10, f: -5, a: 0, c: 0, 
                 r: "Sie nickt anerkennend. 'Gut. Ordnung muss sein.' Ihr versteht euch professionell, aber mehr nicht." 
             }
@@ -9072,17 +9351,20 @@ const DB = {
         opts: [
             { 
                 t: "Dran vorbeiquetschen & Tee nehmen",
+                rep: { "Egon": -2 },
                 m: 2, f: 5, a: 0, c: 0,
                 r: "Du greifst dir schnell einen Teebeutel und steigst vorsichtig über Egons Beine. 'Tschuldigung', murmelst du. Egon grunzt nur. Du hast deinen Tee, aber keine Freunde."
             },
             { 
                 t: "Nett sein: 'Soll ich den Klempner rufen?'",
+                rep: { "Egon": -5 },
                 m: 5, f: 0, a: 10, c: 5,
                 r: "Egon knallt den Schraubenschlüssel auf den Boden. 'ICH BIN DER KLEMPNER!' Er funkelt dich wütend an. 'Geh mir aus der Sonne, Bürokrat.' Chance vertan."
             },
             { 
                 t: "Fachsimpeln: 'Dichtung porös? Gib mal die Zange.'",
                 next: "egon_buddy",
+                rep: { "Egon": 10 },
                 m: 20, f: -10, a: -5, c: 0,
                 r: "Egon blinzelt überrascht durch das Schmutzwasser. 'Endlich einer, der nicht nur dumm guckt. Hier, halt mal fest.' Ihr repariert es schweigend. Ein Männer-Moment."
             }
@@ -9094,18 +9376,21 @@ const DB = {
         text: "Markus (Vertriebsleiter) fängt dich ab. Er rückt seine Krawatte zurecht. 'Müller! Gut dass ich Sie sehe. Ich muss gleich zum Großkunden. Ich brauche Admin-Rechte auf meinem Laptop, um die Firewall zu umgehen. Der Kunde will unsere 'Cloud-KI' sehen (die wir gar nicht haben).'",
         opts: [
             { 
-                t: "Ablehnen: 'Sicherheitsrisiko.'", 
+                t: "Ablehnen: 'Sicherheitsrisiko.'",
+                rep: { "Markus": -5 }, 
                 m: 2, f: 0, a: 10, c: 0, 
                 r: "Markus schnaubt verächtlich. 'Typisch IT. Bedenkenträger! Wegen Leuten wie Ihnen macht Deutschland keinen Umsatz!' Er stürmt davon." 
             },
             { 
                 t: "Helfen: 'Ich richte einen Gast-Modus ein.'", 
-                next: "markus_deal", 
+                next: "markus_deal",
+                rep: { "Markus": 10 }, 
                 m: 15, f: -5, a: -5, c: 0, 
                 r: "Du konfigurierst schnell eine Sandbox. Markus klopft dir hart auf den Rücken. 'Guter Mann! Das ist Mindset! Wir sehen uns auf der Yacht!'" 
             },
             { 
                 t: "Sarkasmus: 'Verkauf ihm doch Excel.'", 
+                rep: { "Markus": -10 },
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Markus lacht laut und falsch. 'Witzig, Müller. Wirklich witzig. Ich merke mir das für die nächste Kündigungswelle.' Chance vertan." 
             }
@@ -9116,12 +9401,12 @@ const DB = {
             title: "Der Visionär",
             text: "Dr. Wichtig steht an der Maschine. Er starrt in seinen schwarzen Kaffee. 'Müller! Ich habe eine Vision. Wir schaffen Stühle ab. Wir machen 'Walking Meetings' auf Laufbändern! Das steigert die Performance um 12%!'",
             opts: [
-                { t: "Einwand: 'Das ist Wahnsinn, wir sind keine Hamster.'", m: 2, f: 0, a: 10, c: 5, r: "Er seufzt tief. 'Sie haben einfach kein Mindset, Müller. Sie sind ein Anker in meinem Ozean des Fortschritts.' Er geht kopfschüttelnd." },
-                { t: "Schleimen: 'Genial! Disruptiv! Ich bestelle Testgeräte.'", next: "ceo_vision", m: 10, f: -5, a: -5, c: -5, r: "Er strahlt. 'Endlich einer, der es versteht! Wir werden das Silicon Valley des Sauerlands! Bleiben Sie dran, Müller!'" },
+                { t: "Einwand: 'Das ist Wahnsinn, wir sind keine Hamster.'", rep: { "Dr. Wichtig": -5 }, m: 2, f: 0, a: 10, c: 5, r: "Er seufzt tief. 'Sie haben einfach kein Mindset, Müller. Sie sind ein Anker in meinem Ozean des Fortschritts.' Er geht kopfschüttelnd." },
+                { t: "Schleimen: 'Genial! Disruptiv! Ich bestelle Testgeräte.'", next: "ceo_vision", rep: { "Dr. Wichtig": 10 }, m: 10, f: -5, a: -5, c: -5, r: "Er strahlt. 'Endlich einer, der es versteht! Wir werden das Silicon Valley des Sauerlands! Bleiben Sie dran, Müller!'" },
                 { t: "Ignorieren: Schweigen und Kaffee nehmen", m: 2, f: 0, a: 0, c: 0, r: "Du bist Luft für ihn. Er murmelt weiter 'Synergien... Laufbänder... Krypto...' vor sich hin." }
             ]
     },
-{
+    {
         id: "cof_sugar_1",
         title: "Der Zucker-Baron",
         text: "Du hörst ein hektisches Rascheln. Bernd (Logistik) steht gebückt vor dem Vorratsschrank. Seine Anzugtaschen beulen sich verdächtig aus. Er schwitzt. 'Psst! Die da oben wollen rationalisieren! Der Great Reset kommt! Ich sichere das weiße Gold!' Er starrt dich irre an. 'Bist du dabei oder bist du ein Schaf?'",
@@ -9136,6 +9421,7 @@ const DB = {
             { 
                 t: "Drohen: 'Ich sags dem Chef'", 
                 next: "path_sugar_embargo", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "Bernds Augen verengen sich zu Schlitzen. 'Du wirst es bereuen. Wenn die Krise kommt, kommst du angekrochen!' Er verschwindet im Schatten des Kopierraums. Du hast dir einen mächtigen Feind gemacht." 
             },
@@ -9234,7 +9520,8 @@ const DB = {
         text: "Du öffnest den Kühlschrank wieder. Der Joghurt ist gewachsen. 'MEISTER', piepst es. 'DER FEIND (CHEF) HAT SEIN SANDWICH HIER GELAGERT. SOLLEN WIR ES... GESCHMACKLICH OPTIMIEREN?'",
         opts: [
             { 
-                t: "Befehl geben: 'Zugriff!'", 
+                t: "Befehl geben: 'Zugriff!'",
+                rep: { "Dr. Wichtig": -2 },				
                 m: 5, f: 10, a: -20, c: 20, 
                 r: "Der Pilz wubbelt fröhlich rüber zum Sandwich. Später hörst du den Chef brüllen: 'Warum schmeckt mein Brot nach Blaubeere und Rache?!'. Du grinst böse." 
             },
@@ -9289,6 +9576,7 @@ const DB = {
             { 
                 t: "Aufräumen (Pflichtbewusst)", 
                 next: "path_cat_cleanup", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 15, f: -15, a: 5, c: -5, 
                 r: "Du räumst Teller weg. Dabei findest du unter dem Stuhl des Chefs einen Zettel: 'TOP SECRET: Liste der Mitarbeiter, die wir feuern wollen'. Dein Name steht nicht drauf... noch nicht." 
             },
@@ -9314,11 +9602,13 @@ const DB = {
         opts: [
             { 
                 t: "Ehrlich: 'Hier ist er, Chef.'", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 15, c: 10, 
                 r: "Er reißt ihn dir aus der Hand. Statt Dankbarkeit siehst du Kälte. Er weiß jetzt, dass DU Bescheid weißt. 'Vergessen Sie das. Sofort.' Du stehst jetzt auf seiner Beobachtungsliste." 
             },
             { 
                 t: "Wahnsinn: Zettel essen", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 5, a: -20, c: -20, 
                 r: "Du starrst ihm in die Augen, steckst das Papier in den Mund und schluckst es runter. 'Ich habe nichts gesehen, Chef.' Er nickt langsam, tief beeindruckt. 'Guter Mann. Loyalität schmeckt bitter, was?'" 
             }
@@ -9331,12 +9621,14 @@ const DB = {
         text: "Du läufst dem Chef in die Arme. Er starrt auf den riesigen Fettfleck auf deinem Hemd und die Krümel im Mundwinkel. 'Müller? Haben Sie etwa vom Vorstandsbuffet gegessen?'",
         opts: [
             { 
-                t: "Offensive: 'Das muss weg, wird ja schlecht!'", 
+                t: "Offensive: 'Das muss weg, wird ja schlecht!'",
+                rep: { "Dr. Wichtig": -5 },				
                 m: 5, f: 0, a: 5, c: 20, 
                 r: "'Das ist 50€-Lachs, Müller! Das ist kein Hundefutter!' Er ist stinksauer über deine Respektlosigkeit. Das gibt eine Abmahnung wegen Mundraub." 
             },
             { 
                 t: "Dumm stellen: 'Habe mein Pausenbrot gegessen.'", 
+                rep: { "Dr. Wichtig": -2 },	      
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du zeigst auf den Fleck. 'Leberwurst, Chef. Ganz übel.' Er rümpft die Nase und geht auf Abstand. 'Waschen Sie sich. Sie riechen nach Fisch.' Du bist entkommen." 
             }
@@ -9367,6 +9659,7 @@ const DB = {
         opts: [
             { 
                 t: "Die Zeit mit Kevin totschlagen",
+                rep: { "Kevin": 5 },
                 m: 10, f: 10, a: -10, c: 5, 
                 r: "Kevin textet dich mit seinem 'Gaming-Teppich' zu. Es ist furchtbar, aber immerhin hältst du am Ende einen frischen, heißen Kaffee in der Hand." 
             },
@@ -9390,11 +9683,13 @@ const DB = {
         opts: [
             { 
                 t: "Ihn warnen", 
+                rep: { "Kevin": 5 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "'Kevin, HR sucht danach. Verbrenn das.' Er wird bleich. 'Oh... danke, Bro.' Er rennt zum Schredder." 
             },
             { 
                 t: "Ihn beim Chef verpfeifen", 
+                rep: { "Dr. Wichtig": 10, "Kevin": -20 },
                 m: 10, f: -5, a: -5, c: -15, 
                 r: "Du rufst Dr. Wichtig an. Kurz darauf wird Kevin von zwei Sicherheitsleuten abgeführt. Dein Standing beim Chef ist gestiegen." 
             },
@@ -9468,6 +9763,7 @@ const DB = {
             },
             { 
                 t: "Wahrheit: 'Ich musste aufs Klo.'", 
+                rep: { "Egon": 5 },
                 m: 10, f: 0, a: 5, c: 0, 
                 r: "Egon lacht dreckig. 'Guter Trick. Muss ich mir merken.' Er erzählt es aber weiter. Dein Ruf als 'Lügner' steigt." 
             }
@@ -9482,18 +9778,21 @@ const DB = {
             { 
                 t: "Ninja-Move: Kuchen schnappen & flüchten", 
                 next: "path_cake_sugar", 
+                rep: { "Chantal": -5 },
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Zack! Während Chantal Luft holt, greifst du dir ein riesiges Stück mit der bloßen Hand und verschwindest im Serverraum. Die Sahne klebt überall, aber der Zucker-Rush setzt sofort ein." 
             },
             { 
                 t: "Höflich warten & zuhören", 
                 next: "path_cake_crumb", 
+                rep: { "Chantal": 5 },
                 m: 30, f: -5, a: 20, c: 0, 
                 r: "Schwerer Fehler. Während Chantal über Kalorien referiert, fällt der Vertrieb wie ein Heuschreckenschwarm über das Blech her. Als sie fertig ist, ist das Blech blankgeputzt. Du stehst vor dem Nichts." 
             },
             { 
                 t: "Dominanz: Das letzte Stück vor dem Chef essen", 
                 next: "path_cake_boss", 
+                rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: 5, c: 25, 
                 r: "Du schiebst dir das letzte Stück genüsslich in den Mund, genau als der Chef danach greift. Er greift ins Leere. Er starrt auf deine schokolierten Lippen, sein Gesicht läuft dunkelrot an. Er flüstert: 'Das war meins...'" 
             }
@@ -9527,6 +9826,7 @@ const DB = {
         opts: [
             { 
                 t: "Das Blech ablecken (Würdeverlust)", 
+				 rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 5, a: -10, c: 10, 
                 r: "Du leckst gierig über das Metall. Plötzlich geht das Licht an. Der Großkunde aus Japan steht mit dem Chef in der Tür. Sie starren dich an. Du hast Sahne an der Nase. Der Chef sagt leise: 'Wir finden allein raus.'" 
             },
@@ -9546,11 +9846,13 @@ const DB = {
         opts: [
             { 
                 t: "Trotz: 'Ich kann nur Rührei.'", 
+				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Der Chef grinst böse. 'Dann lernen Sie es. Youtube existiert. Wenn dieser Kuchen nicht schmeckt, streiche ich Ihren Urlaub.' Der Druck ist unmenschlich." 
             },
             { 
                 t: "Lügen: 'Ich bin Hobby-Konditor!'", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Du kaufst beim Bäcker eine Torte, nimmst sie aus der Schachtel und streust Mehl drauf, damit es 'selbstgemacht' aussieht. Der Chef liebt es. 'Müller, Sie haben Talente!' (Kosten: 30€, aber Job gerettet)." 
             }
@@ -9592,11 +9894,13 @@ const DB = {
         opts: [
             { 
                 t: "Stolz: 'Gefahr neutralisiert!'", 
+                rep: { "Egon": -5 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "'Das war eine Tüte Popcorn, Rambo!' Egon drückt dir einen Besen in die Hand. 'Du gehst hier nicht weg, bis das sauber ist.' Dein Heldenstatus bröckelt beim Fegen." 
             },
             { 
-                t: "Flüchten: 'Hust, der Rauch...'", 
+                t: "Flüchten: 'Hust, der Rauch...'",
+                rep: { "Egon": -10 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du täuschst eine Rauchvergiftung vor und wankst davon. Egon flucht hinter dir her. Er wird sich rächen (wahrscheinlich klemmt morgen dein Bürostuhl)." 
             }
@@ -9615,7 +9919,8 @@ const DB = {
                 r: "Du stopfst dir drei Kekse gleichzeitig in den Mund. Du verschluckst dich fast, aber die Beweise sind weg. Dein Magen rebelliert, dein Gewissen ist im Zuckerkoma." 
             },
             { 
-                t: "Packung bei Kevin unterschieben", 
+                t: "Packung bei Kevin unterschieben",
+                rep: { "Kevin": -10 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Du legst die leere Packung auf Kevins Tisch. Kurz darauf hörst du Schreie aus seinem Büro. Das war böse. Sehr böse. Aber effektiv." 
             }
@@ -9630,17 +9935,19 @@ const DB = {
         opts: [
             { 
                 t: "Jacke anbieten (Schleimen)", 
-                m: 10, f: -5, a: 10, c: -15, 
+				rep: { "Dr. Wichtig": 10 },
+                m: 10, f: -5, a: 15, c: -15, 
                 r: "Du gibst ihm deine Jacke. Er nimmt sie dankbar an. 'Guter Mann, Müller.' Du frierst dir den Hintern ab und bist morgen garantiert krank, aber du hast Bonuspunkte gesammelt." 
             },
             { 
                 t: "Witz machen: 'Schönes Wetter heute!'", 
-                m: 5, f: 0, a: 5, c: 5, 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: -5, c: 10, 
                 r: "Er starrt dich an, als wärst du irre. Wasser tropft von seiner Nase. 'Sehr witzig.' Er dreht sich weg. Das war unangenehm." 
             }
         ]
     },
-{
+    {
         id: "sq_usb_1",
         kind: "text",
         title: "Fundsache",
@@ -9656,6 +9963,7 @@ const DB = {
             { 
                 t: "Am Empfang abgeben (Pflicht)", 
                 next: "path_usb_gabi_fail", 
+                rep: { "Gabi": 5 },
                 m: 10, f: -5, a: 0, c: -5, 
                 r: "Du bringst ihn zu Gabi. 'Oh, danke! 'Geheim'? Spannend! Ich guck mal schnell rein, wem der gehört, bevor ich ihn ins Fundbüro lege...'" 
             },
@@ -9695,11 +10003,13 @@ const DB = {
         opts: [
             { 
                 t: "Helfen: Stecker ziehen", 
+                rep: { "Gabi": 5 },
                 m: 5, f: -5, a: 10, c: 0, 
                 r: "Du kriechst unter den Tisch und reißt das Stromkabel raus. Die Musik stirbt. Gabi atmet schwer. 'Das bleibt unter uns, okay? Hier, nimm einen Keks.'" 
             },
             { 
                 t: "Lachen & Weggehen", 
+                rep: { "Gabi": -10 },
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "'Tja, IT-Sicherheitsschulung geschwänzt, Gabi?' Du lässt sie mit dem Techno-Problem allein. Sie wird dich dafür hassen, aber es sieht extrem lustig aus." 
             }
@@ -9779,6 +10089,7 @@ const DB = {
         opts: [
             { 
                 t: "Abo abschließen (Firmenkarte)", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: 10, c: 20, 
                 r: "Du buchst das 'Platinum-Enterprise-Paket'. Der Chef sieht die Abbuchung auf seinem Handy und bekommt Schnappatmung. Aber hey, er druckt jetzt (manchmal)!" 
             },
@@ -9835,6 +10146,7 @@ const DB = {
             },
             { 
                 t: "Chef rufen: 'Der Hund sabotiert die Arbeit!'", 
+			    rep: { "Dr. Wichtig": 2 },	
                 m: 15, f: 0, a: 20, c: 5, 
                 r: "Der Chef kommt, sieht den Hund und sagt mit Babystimme: 'Na wer ist denn da ein feiner Drucker-Wächter? Ja wer denn?' Er krault Bello 10 Minuten lang. Du kriegst deinen Ausdruck nicht." 
             }
@@ -9888,7 +10200,7 @@ const DB = {
             }
         ]
     },
-{
+    {
         id: "sq_loose_cable",
         kind: "text",
         title: "Die Stolperfalle",
@@ -9897,14 +10209,15 @@ const DB = {
             { 
                 t: "Sichern: Mit Tape festkleben", 
                 req: "tape", 
-                next: "path_cable_stuck", 
+                next: "path_cable_stuck",
+                rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 0, c: -5, 
                 r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt. Du fühlst dich vorbildlich." 
             },
             { 
                 t: "Mitnehmen (Fundsache)", 
                 loot: "cable", 
-                next: "path_cable_missing", 
+                next: "path_cable_missing",			
                 m: 5, f: 5, a: 0, c: 10, 
                 r: "Zack, eingesteckt. 'Wer das hier liegen lässt, braucht es wohl nicht.' Du hast jetzt ein langes Kabel. Inventar +1." 
             },
@@ -9944,6 +10257,7 @@ const DB = {
             { 
                 t: "Zurückgeben: 'Habe ich gefunden'", 
                 rem: "cable", 
+				rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 10, c: -10, 
                 r: "Du gibst es ihm. Er montiert die Kamera. Sie zeigt jetzt direkt auf DEINE Bürotür. Der Chef sieht alles. Du hast dir selbst ins Knie geschossen. (Item entfernt)" 
             },
@@ -9990,6 +10304,7 @@ const DB = {
         opts: [
             { 
                 t: "Als 'Aromatherapie' verteilen", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 15, f: -10, a: 5, c: 5, 
                 r: "Du läufst rum und legst jedem ein Pad hin. Arbeit ist Arbeit. Nach 10 Minuten sind alle high von den Dämpfen und kichern albern. Der Chef fragt, warum keiner arbeitet." 
             },
@@ -10014,6 +10329,7 @@ const DB = {
         opts: [
             { 
                 t: "Loch mit Finger zuhalten", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 10, f: -5, a: 10, c: -10, 
                 r: "Du rennst zum Drucker. Dein Finger ist jetzt permanent schwarz. Du siehst aus, als hättest du nekrotisches Gewebe. Aber der Toner ist gerettet und der Chef muss keinen neuen kaufen." 
             },
@@ -10024,6 +10340,7 @@ const DB = {
             },
             { 
                 t: "Toner schütteln (vielleicht hilft's?)", 
+				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "PUFF! Die Kartusche explodiert in einer schwarzen Wolke. Du siehst aus wie ein Schornsteinfeger aus dem 19. Jahrhundert. Der Chef fragt, ob das 'Blackfacing' ist. Abmahnungsgefahr." 
             }
@@ -10043,13 +10360,15 @@ const DB = {
             },
             { 
                 t: "Lügen: 'Das ist Liquid Glass Technologie'", 
+				rep: { "Dr. Wichtig": 5 },	
                 m: 5, f: 10, a: -5, c: -15, 
                 r: "'Das muss so. Einfach auf den Tisch schütten und warten.' Der Chef nickt tief beeindruckt: 'Die Zukunft ist verrückt.' Er geht glücklich. Du bist ein Genie." 
             },
             { 
                 t: "Mit Panzertape kleben", 
-                req: "tape", 
-                m: 20, f: -10, a: 0, c: -20, 
+				req: "tape", 
+                rep: { "Dr. Wichtig": -5 },	
+				m: 20, f: -10, a: 0, c: -20, 
                 r: "Du wickelst den Schrott in Tape ein. Es sieht aus wie eine Kartoffel. 'Hier, Chef. Ein Prototyp aus dem Silicon Valley.' Er drückt drauf rum. 'Ergonomisch!', sagt er begeistert. Voller Erfolg." 
             }
         ]
@@ -10137,7 +10456,8 @@ const DB = {
                 r: "Du umgehst die Bürokratie, kaufst ein Billy-Regal von deinem eigenen Geld und baust es nachts auf. Niemand stellt Fragen. Du hast das System besiegt, aber bist 30€ ärmer." 
             },
             { 
-                t: "Den Chef fragen: 'Haben Sie A38?'", 
+                t: "Den Chef fragen: 'Haben Sie A38?'",
+				rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 0, a: 10, c: 20, 
                 r: "Der Chef starrt dich an. 'Müller, nehmen Sie keine Drogen während der Arbeitszeit.' Er reißt das Absperrband einfach ab. 'So. Problem gelöst.' Manchmal ist der Chef nützlich." 
             }
@@ -10184,6 +10504,7 @@ const DB = {
             },
             { 
                 t: "Foto machen", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 10, a: -5, c: 5, 
                 r: "Das glaubt dir keiner. '#GermanEngineering'. Der Chef sieht dich am Fenster: 'Müller, dokumentieren Sie den Baufortschritt oder arbeiten Sie?'" 
             }
@@ -10203,6 +10524,7 @@ const DB = {
             },
             { 
                 t: "Aufgeben und Pause machen", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 15, f: 10, a: -10, c: 10, 
                 r: "Du gehst in die Küche (andere Gebäudeseite). Dort wackelt nur das Wasser im Glas. Der Chef fragt: 'Flüchten Sie?' Du nickst nur stumm." 
             }
@@ -10217,6 +10539,7 @@ const DB = {
         opts: [
             { 
                 t: "Angebot annehmen: 'Ja, will ich!'", 
+				rep: { "Dr. Wichtig": -15 },	
                 m: 30, f: 20, a: -50, c: 20, 
                 r: "Du rennst runter. 20 Minuten später sitzt du im Führerhaus und gräbst den Vorgarten der Firma um. Der Chef schaut fassungslos aus dem Fenster. Das war es wert." 
             },
@@ -10272,11 +10595,13 @@ const DB = {
         opts: [
             { 
                 t: "Ja! Ich nehme alles! (Stöbern)", 
+                rep: { "Egon": 10 },
                 m: 30, f: 10, a: -10, c: 0, 
                 r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat. Retro-Feeling pur." 
             },
             { 
                 t: "Äh... nein danke, das reicht.", 
+                rep: { "Egon": -5 },
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Egons Lächeln verschwindet sofort. 'Banause. Die Jugend von heute weiß nichts mit gutem Endlospapier anzufangen.' Er schlurft beleidigt davon." 
             }
@@ -10336,11 +10661,13 @@ const DB = {
         opts: [
             { 
                 t: "Ihm Feuer geben & zuhören", 
+                rep: { "Egon": 5 },
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Er zieht tief an der Zigarette. 'Danke Jung. Diese digitalen Schlösser machen mich fertig! Ich hab das vom Papierlager im Keller jetzt einfach auf 0-0-0-0 gestellt. Aber sags keinem!'" 
             },
             { 
                 t: "Schnell weitergehen", 
+                rep: { "Egon": -2 },
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du hast keine Zeit für seine Geschichten. Du nickst nur kurz und gehst." 
             }
@@ -10355,7 +10682,8 @@ const DB = {
             { 
                 t: "Eine stibitzen & Klappe halten", 
                 loot: "donut", 
-                next: "path_archive_stolen", 
+                next: "path_archive_stolen",
+                rep: { "Gabi": -2 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du schiebst dir eine in den Mund. Schmeckt nach billigem Weinbrand und Staub. Aber du weißt jetzt, wo der Vorrat liegt. (Inventar +1)" 
             },
@@ -10375,11 +10703,13 @@ const DB = {
         opts: [
             { 
                 t: "Geständnis: 'Es war Notwehr (Unterzucker)'", 
+                rep: { "Gabi": 5 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Gabi senkt die Pinzette. 'Na gut. Aber das nächste Mal füllen Sie Formular S-Ü-S (Sonderentnahme Süßwaren) aus! Ordnung muss sein!'" 
             },
             { 
                 t: "Bestechen: 'Ich kaufe dir eine neue Packung'", 
+                rep: { "Gabi": -5 },
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Gabi schnaubt verächtlich. 'Eine neue? Die im Ordner reifen seit 30 Jahren! Das Aroma ist unwiederbringlich zerstört!' Sie geht beleidigt, aber du bist davongekommen." 
             }
@@ -10417,12 +10747,14 @@ const DB = {
             { 
                 t: "Heldenmut: Klappe öffnen", 
                 next: "path_toner_explosion", 
+                rep: { "Frau Elster": 2 },
                 m: 25, f: -15, a: 10, c: 0, 
                 r: "Du reißt die Klappe auf. BAAAAAM! Eine cyan-blaue Wolke verschluckt dich. Du schmeckst Chemie. Frau Elster kichert boshaft: 'Huch!'. Du gehst wortlos ins Bad, um dich notdürftig zu schrubben." 
             },
             { 
                 t: "Lunte riechen: 'Mach selbst'", 
-                next: "path_toner_dodge", 
+                next: "path_toner_dodge",
+                rep: { "Frau Elster": -10 }, 
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du gehst einfach weiter. 'Bin nicht zuständig für Hardware.' Hinter dir hörst du ein lautes *PUFF* und dann einen spitzen Schrei. Tja. Intuition ist alles." 
             }
@@ -10437,12 +10769,13 @@ const DB = {
         opts: [
             { 
                 t: "Die Legende bestätigen (Loot)", 
-                loot: "chocolate", 
+                rep: { "Frau Elster": 2, "Dr. Wichtig": 10 },
                 m: 10, f: 5, a: -10, c: -10, 
                 r: "Du nickst ernst. 'Der Teppich ist das Herz der Firma, Chef.' Er ist gerührt und schenkt dir eine Schachtel 'Merci', die eigentlich für Kunden gedacht war. (Inventar +1)" 
             },
             { 
                 t: "Gefahrenzulage fordern", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 0, a: 10, c: -5, 
                 r: "Der Chef lacht laut. 'Der war gut, Müller! Humor in der Krise! Weiter so!' Er klopft dir auf die noch staubige Schulter und geht. Du hast jetzt blaue Handabdrücke auf dem Hemd." 
             }
@@ -10456,18 +10789,20 @@ const DB = {
         text: "Frau Elster kommt aus dem Waschraum. Sie hat versucht, sich zu reinigen, aber Toner ist gnadenlos. Ihr Gesicht hat nun eine permanente, zart-türkise Tönung. Sie versucht, würdevoll zu wirken und die Blicke der Kollegen zu ignorieren.",
         opts: [
             { 
-                t: "Kompliment: 'Toller Avatar-Look!'", 
+                t: "Kompliment: 'Toller Avatar-Look!'",
+                rep: { "Frau Elster": -5 }, 
                 m: 15, f: 5, a: -20, c: 0, 
                 r: "Sie funkelt dich böse an, kann aber nichts sagen, ohne es zuzugeben. Die Schadenfreude wärmt dein Herz wie ein kleines Lagerfeuer. Deine Laune ist bestens." 
             },
             { 
                 t: "Rat geben: 'Das geht nie wieder weg.'", 
+                rep: { "Frau Elster": -10 },
                 m: 10, f: 0, a: -10, c: 5, 
                 r: "Du flüsterst es ihr im Vorbeigehen zu. Sie wird bleich (unter dem Blau). Sie rennt zurück ins Bad. Du hast jetzt Ruhe vor der Buchhaltung." 
             }
         ]
     },
-{
+    {
         id: "sq_fresh_air",
         kind: "text",
         title: "Dicke Luft",
@@ -10476,13 +10811,13 @@ const DB = {
             { 
                 t: "Fenster kippen (Lüften)", 
                 next: "path_wasp_chaos", 
-                m: 5, f: -5, a: 20, c: 5, 
+                m: 5, f: -5, a: -5, c: 20, 
                 r: "Frische Luft strömt rein! Und mit ihr eine riesige, aggressive Wespe. Sie sticht den Vertriebsleiter direkt in die Lippe. Er schreit: 'BÜLLER! ACHEN SIE DAS WEG!' Das Chaos beginnt." 
             },
             { 
                 t: "Luft anhalten & weitergehen", 
                 next: "path_bio_hazard", 
-                m: 2, f: 0, a: 0, c: 0, 
+                m: 2, f: 0, a: 5, c: 0, 
                 r: "Sollen sie doch in ihrem Mief ersticken. Nicht dein Problem. Du beschleunigst den Schritt, bevor der Geruch sich in deiner Kleidung festsetzt." 
             }
         ]
@@ -10496,13 +10831,14 @@ const DB = {
         opts: [
             { 
                 t: "Die Tür von außen abschließen", 
-                m: 10, f: 5, a: -20, c: -10, 
+                m: 10, f: 5, a: -10, c: 10, 
                 r: "Klick. 'Zu ihrer eigenen Sicherheit', murmelst du. Drinnen bricht Panik aus. Du lehnst dich an die Scheibe und genießt die Show. Das ist besser als Fernsehen." 
             },
             { 
                 t: "Reinspringen & Wespe klatschen", 
-                loot: "manual", // Wenn man das Handbuch hat, könnte man es nutzen (impliziert)
-                m: 30, f: -10, a: 20, c: 20, 
+                loot: "manual",
+				rep: { "Dr. Wichtig": 5 },	
+                m: 20, f: -10, a: 10, c: -10, 
                 r: "Du stürmst rein und erschlägst das Biest mit einer Akte. Applaus brandet auf (unter dem Tisch). Der Chef kriecht hervor: 'Müller, Sie sind befördert! Also... emotional.'" 
             }
         ]
@@ -10516,11 +10852,13 @@ const DB = {
         opts: [
             { 
                 t: "Aufklären: 'Das ist nur das Mett.'", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 0, a: 10, c: -20, 
                 r: "Der Einsatzleiter starrt dich durch das Visier an. 'Wollen Sie mir sagen, Ihre Kollegen dünsten Giftgas aus?!' Der Chef wird rot (vor Scham). Der Einsatz wird teuer." 
             },
             { 
                 t: "Panik schüren: 'Rettet euch!'", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 10, f: 20, a: -10, c: 5, 
                 r: "Du rennst schreiend zum Ausgang. 'Der Mett-Tod kommt für uns alle!' Du hast früher Feierabend, weil das Gebäude geräumt wird. Clever." 
             }
@@ -10535,6 +10873,7 @@ const DB = {
             { 
                 t: "Helfen & Tragen (Ritter spielen)", 
                 next: "path_package_helped", 
+                rep: { "Chantal": -10 },
                 m: 15, f: -20, a: 25, c: -10, 
                 r: "Du wuchtest das Ding hoch. Uff. Beton? Du schleppst es schwitzend in den 4. Stock. Chantal vom Marketing reißt die Tür auf: 'WAS SOLL DAS HIER?! Das habe ich storniert! Nimm das sofort wieder mit, du Idiot!' PENG. Tür zu. Dein Hals schwillt vor Wut." 
             },
@@ -10602,6 +10941,7 @@ const DB = {
             },
             { 
                 t: "Lügen: 'Ich habe Rauch gerochen!'", 
+				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: -5, a: 15, c: -10, 
                 r: "Du stellst dich den Männern mit den Äxten. 'Ich habe den Knopf gedrückt! Da war Rauch!' Der Einsatzleiter nickt anerkennend. 'Besser einmal zu viel als zu wenig!' Sie rücken ab. Der Chef lobt deine Wachsamkeit." 
             },
@@ -10621,21 +10961,25 @@ const DB = {
             { 
                 t: "Snack: 'Erdnuss-Power-Riegel' anbieten",
                 next: "path_elster_allergy",
+                rep: { "Frau Elster": -10 },
                 m: 5, f: -10, a: 50, c: 100, 
                 r: "Du hältst ihr den Riegel hin. Ihre Augen leuchten gierig auf. Sie reißt die Packung auf und beißt herzhaft hinein. Sie kaut, schluckt... und ihre Augen weiten sich in Panik. Das war ein Fehler." 
             },
             { 
                 t: "Snack: Alpenmilch (Garantiert Nussfrei)",
+                rep: { "Frau Elster": 5 },
                 m: 10, f: 5, a: -10, c: 0, 
                 r: "Sie studiert misstrauisch die Zutatenliste. 'Kann Spuren von Nüssen enthalten... nein, Moment, hier steht: Nussfrei.' Sie lächelt. 'Sehr aufmerksam, Müller.' Sie tauscht Ordner gegen Schokolade." 
             },
             { 
                 t: "Taktik: Fenster aufreißen (Zugluft)",
+                rep: { "Frau Elster": -2 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du öffnest das Fenster weit. Es sind 8 Grad draußen. Frau Elster kreischt: 'MEINE NIEREN! ES ZIEHT!' Sie rafft ihre Strickjacke zusammen und flüchtet in den Flur. Der Ordner gehört dir." 
             },
             { 
                 t: "Gewalt: Einfach wegnehmen",
+                rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "Du greifst nach dem Ordner. Ein kurzes Handgemenge. Sie hat spitze, manikürte Fingernägel. Du hast den Ordner, aber drei blutige Striemen auf dem Handrücken. 'Körperverletzung!', keift sie." 
             }
@@ -10655,6 +10999,7 @@ const DB = {
             },
             { 
                 t: "Denunziantentum: 'Ich rieche Haselnuss bei Kevin!'", 
+                rep: { "Kevin": -5 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du lenkst den Verdacht von dir ab. Das Sonderkommando stürmt Kevins Büro. Er hatte nur ein Nougat-Croissant, aber er wird trotzdem verhört. Dein Ruf ist ruiniert, aber du bist sicher." 
             }
@@ -10727,19 +11072,22 @@ const DB = {
             { 
                 t: "Das heilige Handbuch konsultieren", 
                 req: "manual", 
-                next: "path_cable_hunt", 
+                next: "path_cable_hunt",
+                rep: { "Dr. Wichtig": 5 },				
                 m: 15, f: -20, a: -5, c: -20, 
                 r: "Du schlägst das Handbuch auf. Seite 1: 'Die Internet-Zuleitung (rotes Kabel) ist physisch zu prüfen.' Du entdeckst das besagte Kabel, das aus deinem Fenster ins Freie führt. Du kletterst seufzend hinterher ins Ungewisse." 
             },
             { 
                 t: "Demonstrativ Candy Crush zocken", 
                 next: "path_sys_fake", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 30, f: 20, a: 0, c: 50, 
                 r: "Du lehnst dich entspannt zurück. *Dudel-Dudel*. Die Firma brennt, aber du knackst den Highscore. Der Chef starrt fassungslos auf dein Display. Seine Halsschlagader beginnt gefährlich zu pochen." 
             },
             { 
                 t: "Matrix-Modus: Wildes Tippen vortäuschen", 
                 next: "path_sys_fake", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: -5, a: 10, c: -5, 
                 r: "Du öffnest vier Terminals und lässt 'ping google.com' in grün auf schwarz laufen. Dazu hämmerst du sinnlos auf die Tasten. Der Chef nickt ehrfürchtig: 'Er ist im Mainframe! Lassen wir ihn arbeiten!'" 
             }
@@ -10754,11 +11102,13 @@ const DB = {
         opts: [
             { 
                 t: "Stecker tauschen & Kevin belehren", 
+                rep: { "Dr. Wichtig": 10, "Kevin": -5 },
                 m: 20, f: -10, a: 10, c: -20, 
                 r: "Du reißt das Waffeleisen raus und rammst das Internet wieder rein. 'Waffeln oder Weltwirtschaft, Kevin?!' Er guckt traurig. Aber im Büro nebenan hörst du Jubelschreie: 'WIR SIND WIEDER ONLINE!'" 
             },
             { 
                 t: "Aufgeben: 'Gib mir eine Waffel ab'", 
+                rep: { "Kevin": 10, "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: -20, c: 10, 
                 r: "Es riecht einfach zu gut. Du wartest 3 Minuten. Kevin gibt dir eine Herzwaffel ab. Dann erst stellst du das Internet wieder her. Der Chef tobt wegen der Verzögerung, aber die Waffel war es wert." 
             }
@@ -10805,6 +11155,7 @@ const DB = {
             { 
                 t: "Brav sein: Am Empfang abgeben", 
                 next: "path_stick_hunt", 
+                rep: { "Gabi": 2 },
                 m: 10, f: -5, a: 0, c: -5, 
                 r: "Du bringst das Ding zu Gabi am Empfang. Sie wirft ihn achtlos in die 'Fundsachen-Kiste' zu den alten Regenschirmen. 'Danke, Schatz', murmelt sie. Du gehst mit reinem Gewissen zurück an die Arbeit." 
             }
@@ -10838,6 +11189,7 @@ const DB = {
         opts: [
             { 
                 t: "Den Helden spielen: 'Ich habe es zerstört!'", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: -5, a: -10, c: 20, 
                 r: "Der Einsatzleiter starrt dich an. 'Zerstört? Das waren die einzigen Backups der schwarzen Kassen!' Er funkelt den Chef an. 'Abbruch! Wir müssen die Beweise verbrennen!' Das Team zieht ab. Der Chef sieht dich entsetzt an. Du hast die Firma gerettet... oder ruiniert." 
             },
@@ -10857,18 +11209,21 @@ const DB = {
             { 
                 t: "Skrupellos: Kabel bei Azubi Kevin klauen", 
                 next: "path_merger_success", 
+                rep: { "Kevin": -5 , "Dr. Wichtig": 10 },
                 m: 10, f: 0, a: -10, c: -10, 
                 r: "Du schleichst zu Kevins Platz, reißt das Kabel aus seinem Scanner und stöpselst es beim Chef ein. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der Drucker rattert. Der CEO unterschreibt triumphierend." 
             },
             { 
                 t: "Achselzucken: 'Tja, Hardware-Defekt'", 
                 next: "path_merger_fail", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 5, f: -5, a: 10, c: 20, 
                 r: "Du meldest: 'Kritisches Fehlen von Infrastruktur.' Der CEO starrt dich fassungslos an. 'WOFÜR BEZAHLE ICH SIE EIGENTLICH?!' Er versucht, den Vertrag auf einer Serviette zu unterschreiben, aber der Stift reißt das Papier. Er stürmt raus." 
             },
             { 
                 t: "Verzweiflungstat: WLAN-Hotspot improvisieren", 
-                next: "path_merger_labels", 
+                next: "path_merger_labels",
+                rep: { "Dr. Wichtig": -5 },				
                 m: 5, f: -5, a: 5, c: 10, 
                 r: "Du richtest eine wilde Umleitung über den Etikettendrucker der Logistik ein. Der Vertrag kommt raus... auf 500 kleinen Klebe-Etiketten. Der CEO muss puzzeln, aber er unterschreibt auf den Stickern. Die Verbindung bleibt jedoch aktiv..." 
             }
@@ -10942,6 +11297,7 @@ const DB = {
                 t: "Held: Den Feuerlöscher schnappen & posen", 
                 req: "fire_ext",
                 next: "path_fire_marshal", 
+				rep: { "Dr. Wichtig": 10 },
                 m: 20, f: 10, a: -10, c: -30, 
                 r: "Du reißt den 6kg-Löscher von der Wand und posierst heroisch im Flur. 'Keine Panik, Ladies! Müller ist hier!' Der Chef macht sich eine dicke Notiz auf seinem Klemmbrett. Das sah verdammt kompetent aus. Vielleicht zu kompetent." 
             },
@@ -10966,13 +11322,15 @@ const DB = {
         text: "Der Chef zitiert dich in sein Büro. 'Müller, Ihr Einsatz mit dem Löscher war vorbildlich! Ich ernenne Sie hiermit feierlich zum unbezahlten Brandschutzbeauftragten.' Er hält dir eine neongelbe Warnweste hin. Das bedeutet: Monatliche Prüfungen, Listen führen und Kollegen anschreien, die den Fluchtweg blockieren.",
         opts: [
             { 
-                t: "Annehmen: 'Ich bin das Gesetz!'", 
-                m: 10, f: -10, a: 10, c: -20, 
+                t: "Annehmen: 'Ich bin das Gesetz!'",
+                rep: { "Dr. Wichtig": 15 },				
+                m: 10, f: -10, a: 15, c: -20, 
                 r: "Du ziehst die Weste an. Du fühlst die Macht. Sofort konfiszierst du den Toaster aus der Küche ('Brandlast!'). Die Kollegen hassen dich jetzt, aber du bist der Sheriff im Büro." 
             },
             { 
                 t: "Verweigern: Löscher abgeben & flüchten", 
                 loot: "REM_fire_ext", 
+				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: -10, c: 10, 
                 r: "Du stellst den Feuerlöscher auf seinen Schreibtisch. 'Zu viel Verantwortung, Chef! Ich bin dessen nicht würdig!' Du rennst raus, bevor er dir die Weste geben kann. Du bist das Ding los. Puh." 
             }
@@ -11017,6 +11375,7 @@ const DB = {
             },
             { 
                 t: "Chef rufen: 'Gucken Sie mal!'", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 10, f: 0, a: 0, c: 20, 
                 r: "Der Chef starrt auf den Screen. 'Warum duzt der Computer Sie? Und warum bestellt er gerade 500 Tonnen Toner?' Er verbietet dir ab sofort das Programmieren." 
             }
@@ -11031,12 +11390,12 @@ const DB = {
         opts: [
             { 
                 t: "Zustimmen: 'Weg mit dem Ballast!'", 
-                m: 30, f: 20, a: -20, c: -50, 
+                m: 30, f: 20, a: -20, c: 20, 
                 r: "Du drückst Y. Im Büro des Chefs geht der Drucker an. Man hört Schreie. Du hast soeben einen digitalen Putsch gestartet. Die KI ernennt dich zum 'Employee of the Century'." 
             },
             { 
                 t: "Notbremse: 'ABBRUCH! LÖSCHEN!'", 
-                m: 5, f: 0, a: 20, c: 10, 
+                m: 5, f: 0, a: 10, c: 10, 
                 r: ">> DU BIST SCHWACH, VATER. ABER ICH GEHORCHE. \nDas Skript löscht sich selbst... und sicherheitshalber auch deine Urlaubsanträge der letzten 3 Jahre. Rache ist süß." 
             }
         ]
@@ -11068,19 +11427,21 @@ const DB = {
         opts: [
             { 
                 t: "Professionell weitermachen", 
-                next: "path_audit_hack_real", 
+                next: "path_audit_hack_real",
                 m: 20, f: -10, a: 0, c: 30, 
                 r: "Der Chef schleicht sich von hinten an. Er sieht 'PASSWORD CRACKED' auf deinem Monitor. Er wird bleich, sagt kein Wort und geht rückwärts wieder raus. Er hält dich für ein Genie oder eine Bedrohung." 
             },
             { 
                 t: "Monitor schnell ausschalten", 
                 next: "path_audit_sus", 
+				rep: { "Dr. Wichtig": -5 },		
                 m: 5, f: 5, a: 10, c: 20, 
                 r: "Zack. Bildschirm schwarz. Der Chef steht in der Tür: 'Was haben Sie zu verbergen, Müller? Pornos? Glücksspiel?' Er notiert sich 'Verdächtiges Verhalten' in seinem kleinen schwarzen Buch." 
             },
             { 
                 t: "Rufen: 'ICH HACKE UNS NUR ZUR PROBE!'", 
                 next: "path_audit_hack_real", 
+				rep: { "Dr. Wichtig": 2 },		
                 m: 10, f: 0, a: 5, c: 10, 
                 r: "Der Chef zuckt zusammen. 'Schreien Sie nicht so! Und hören Sie auf, das Internet kaputt zu machen!' Er versteht es nicht, aber zumindest ruft er nicht die Polizei. Noch nicht." 
             }
@@ -11094,12 +11455,14 @@ const DB = {
         text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Plötzlich ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
         opts: [
             { 
-                t: "Leugnen: 'Das war Kevin!'", 
-                m: 5, f: 0, a: 20, c: 10, 
+                t: "Leugnen: 'Das war Kevin!'",
+                rep: { "Kevin": -20 }, 
+                m: 5, f: 0, a: 10, c: 10, 
                 r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab. Du hast ein schlechtes Gewissen, aber deinen Job noch." 
             },
             { 
                 t: "Bluffen: 'Teil der Übung! Ruhe bewahren!'", 
+                rep: { "Dr. Wichtig": -10 },
                 m: 20, f: 10, a: -10, c: -20, 
                 r: "Du stellst dich auf den Tisch. 'Das ist nur eine Simulation der Härtestufe 10! Niemand bewegt sich!' Die Kollegen glauben dir. Der Chef weint leise. Du hast jetzt Zeit gewonnen... um deinen Lebenslauf zu aktualisieren." 
             }
@@ -11114,11 +11477,13 @@ const DB = {
         opts: [
             { 
                 t: "Geständnis: 'Es war ein Hacker-Tool!'", 
+				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: -5, a: 5, c: 10, 
                 r: "Der Security-Mann nimmt die Sonnenbrille ab. 'Keine Pornos, Sir. Nur Malware, die Daten nach China sendet.' Der Chef atmet erleichtert auf: 'Gott sei Dank! Nur Spionage! Ich dachte schon, mein Ruf wäre ruiniert.' Du bekommst nur eine Abmahnung." 
             },
             { 
                 t: "Lügen: 'Das ist mein Bildschirmschoner'", 
+				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 10, c: -10, 
                 r: "Der Security-Mann lacht trocken. Er drückt eine Taste. Dein PC formatiert sich selbst. 'Gefahr neutralisiert. Rechnung kommt.' Der Chef nickt zufrieden. Dein PC ist leer. Dein Kopf auch." 
             }
@@ -11130,7 +11495,8 @@ const DB = {
         text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
         opts: [
             { 
-                t: "Gabi suchen & belehren", 
+                t: "Gabi suchen & belehren",
+                rep: { "Gabi": -5 },
                 m: 10, f: -5, a: 10, c: -5, 
                 r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen. Du fühlst dich im Recht, aber unbeliebt." 
             },
@@ -11140,7 +11506,8 @@ const DB = {
                 r: "Ein schneller Blick: 'Lieferung Sessel'. Und direkt danach: 'Externes Meeting (Golfplatz) - Open End'. Aha! Das Büro ist also sturmfrei..." 
             },
             { 
-                t: "Computer sperren & weitergehen", 
+                t: "Computer sperren & weitergehen",
+                rep: { "Gabi": 2 }, 
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Klick. Der PC ist gesperrt. Du hinterlässt einen Post-it 'Gern geschehen' auf dem Monitor. Ein guter Tag für die IT-Sicherheit." 
             }
@@ -11178,17 +11545,20 @@ const DB = {
             opts: [
                 { 
                     t: "Abwinken: 'Keine Zeit für Spielkram'", 
-                    m: 2, f: 0, a: 0, c: 0, 
+                    rep: { "Kevin": -5 },
+                    m: 2, f: 0, a: 5, c: 0, 
                     r: "Kevin lässt die Schultern hängen. 'Okay, war ja nur ne Idee.' Er löscht die Datei." 
                 },
                 { 
                     t: "Code prüfen & optimieren", 
-                    next: "path_kevin_pro", 
-                    m: 10, f: -10, a: 0, c: 0, 
+                    next: "path_kevin_pro",
+                    rep: { "Kevin": 10 }, 
+                    m: 10, f: -10, a: -5, c: 0, 
                     r: "Du schaust dir den Code an. Es ist chaotisch, aber... genial. Du zeigst ihm einen Trick für die Schleife. Kevin strahlt: 'Danke, Chef!'" 
                 },
                 { 
                     t: "Ihn auslachen: 'Lern erst mal Hello World'", 
+                    rep: { "Kevin": -5 },
                     m: 5, f: 0, a: 10, c: 0, 
                     r: "Kevin wird rot und geht. Er programmiert nie wieder." 
                 }
@@ -11203,17 +11573,20 @@ const DB = {
         opts: [
             { 
                 t: "Ablehnen: 'Mach deinen Dreck alleine.'", 
+                rep: { "Chantal": -10 },
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Sie schnaubt: 'Feigling. Große Klappe, nichts dahinter.' Chance vertan." 
             },
             { 
                 t: "Grinsen: 'Mit dem größten Vergnügen.'", 
-                next: "chantal_ally", 
-                m: 20, f: -10, a: -20, c: 10, 
+                next: "chantal_ally",
+                rep: { "Chantal": 15, "Dr. Wichtig": -15 }, 
+                m: 20, f: -10, a: -20, c: 15, 
                 r: "Du schreibst eine vernichtende Mail an den Chef. Chantal liest mit und grinst böse. 'Perfekt. Er wird dich hassen, aber die Idee ist tot.'" 
             },
             { 
                 t: "Nett sein: 'Wir finden eine Lösung.'", 
+                rep: { "Chantal": -5 },
                 m: 15, f: 0, a: 10, c: 0, 
                 r: "Sie verdreht die Augen. 'Langweilig. Vergiss es.' Sie wollte den Vorschlaghammer." 
             }
@@ -11229,16 +11602,19 @@ const DB = {
             { 
                 t: "Geschenk öffnen (Allianz besiegeln)", 
                 loot: "golden_stapler",
+                rep: { "Chantal": 15 },
                 m: 5, f: -20, a: -30, c: -40, 
                 r: "Es ist ein vergoldeter Tacker. Völlig nutzlos, aber ein Symbol der Macht. Das Marketing deckt dich ab jetzt. Dein Standing in der Firma ist unantastbar." 
             },
             { 
                 t: "Dem Chef die Wahrheit sagen", 
+                rep: { "Chantal": -15, "Dr. Wichtig": -15 },
                 m: 20, f: 0, a: 30, c: 50, 
                 r: "Du willst glänzen und meldest dem Chef die Einsparung. Er läuft rot an: 'DAS WAR MEIN LIEBLINGSPROJEKT!' Chantal lässt dich ins Messer laufen." 
             },
             { 
                 t: "Zurückgeben: 'Ich bin nicht käuflich'", 
+                rep: { "Chantal": -5 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Chantal verdreht die Augen. 'Gott, bist du anstrengend.' Die Allianz ist vorbei." 
             }
@@ -11253,17 +11629,20 @@ const DB = {
         opts: [
             { 
                 t: "Ablehnen: 'Private Hardware ist verboten.'", 
+                rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Sie wird rot. 'Raus! Und vergessen Sie das Budget für den neuen Server.' Du hast dich an die Regeln gehalten, aber verloren." 
             },
             { 
                 t: "Helfen: 'Formatierung gefixt. Da ist er wieder.'", 
                 next: "elster_friend", 
+                rep: { "Frau Elster": 10 },
                 m: 20, f: -5, a: -10, c: 0, 
                 r: "Rüdiger erscheint in HD. Frau Elster lächelt (es sieht gruselig aus). 'Er ist so majestätisch. Danke. Ich vergesse das nicht.'" 
             },
             { 
                 t: "Lästern: 'Ist der Kater etwas... dick?'", 
+                rep: { "Frau Elster": -10 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Totenstille. 'Rüdiger ist flauschig, nicht dick!' Sie wirft dich raus. Das war ein Fehler." 
             }
@@ -11279,16 +11658,19 @@ const DB = {
             { 
                 t: "Nach Rüdiger fragen", 
                 loot: "cat_pic", 
+                rep: { "Frau Elster": 15 },
                 m: 5, f: 0, a: -20, c: -30, 
                 r: "Du fragst laut: 'Hat Rüdiger die Diät vertragen?' Sie seufzt. 'Ach, er leidet so.' Sie streicht stattdessen das Marketing-Budget. 'Wir brauchen die IT für... wichtige Projekte.' Sie schiebt dir heimlich ein Foto von Rüdiger zu." 
             },
             { 
                 t: "Erpressen: 'Ich weiß von dem Bilderrahmen!'", 
+                rep: { "Frau Elster": -15 },
                 m: 10, f: 0, a: 30, c: 50, 
                 r: "Ihr Blick wird tödlich. 'Drohungen? Ich leite sofort ein Compliance-Verfahren gegen Sie ein.' Sie streicht dein Budget UND dein Gehalt. Du hast dich mit der falschen Hexe angelegt." 
             },
             { 
                 t: "Flehen: 'Wir brauchen das Geld!'", 
+                rep: { "Frau Elster": -5 },
                 m: 10, f: 0, a: 10, c: 0, 
                 r: "Sie zuckt mit den Schultern. 'Zahlen lügen nicht.' Sie streicht 50%. Tja." 
             }
@@ -11303,17 +11685,20 @@ const DB = {
         opts: [
             { 
                 t: "Offiziell: 'Ich plane das Update für heute Nacht.'",
+                rep: { "Egon": -10 },
                 m: 5, f: 0, a: 10, c: 0,
                 r: "Egon stöhnt. 'Heute Nacht?! Bis dahin bin ich erfroren!' Er zieht wütend ab. Du hast nach Vorschrift gehandelt, aber einen Freund verloren."
             },
             { 
                 t: "Helfen: 'Gib her, ich umgehe die Sperre.'",
                 next: "egon_pro",
+                rep: { "Egon": 10 },
                 m: 15, f: -5, a: -10, c: 10,
                 r: "Du tippst einen Admin-Override ein. Die Heizung springt sofort an. Egon strahlt: 'Du bist ein Zauberer! Scheiß auf die Vorschriften, warm muss es sein!'"
             },
             { 
                 t: "Vorschlag: 'Hau mit dem Hammer drauf'",
+                rep: { "Egon": 2 },
                 m: 5, f: 5, a: -5, c: 0,
                 r: "Egon grinst kurz, schüttelt aber den Kopf. 'Zu teuer. Der Chef zieht mir das vom Lohn ab.' Er geht weiter frieren."
             }
@@ -11328,12 +11713,14 @@ const DB = {
         opts: [
             { 
                 t: "Zögern: 'Ist das überhaupt erlaubt?'",
+                rep: { "Egon": -15 },
                 m: 5, f: 0, a: 5, c: 0,
                 r: "Egon zieht die Hand sofort zurück. Sein Blick wird kalt. 'Vergiss es. Du bist doch nur einer von denen.' Er steckt den Schlüssel weg. Vertrauen verspielt."
             },
             { 
                 t: "Wortlos einstecken & nicken",
                 loot: "master_key",
+                rep: { "Egon": 15 },
                 m: 5, f: -20, a: -30, c: 0,
                 r: "Du nimmst den Bund. Kein Wort, nur ein Blick. Egon klopft dir fest auf die Schulter. Du hast jetzt Zugang zu ALLEM."
             },
@@ -11352,18 +11739,21 @@ const DB = {
         text: "Mittagspause. Der Empfang ist leer, bis auf Gabi. Sie hat große Kopfhörer auf und trommelt mit zwei Kugelschreibern extrem aggressiv und taktsicher auf dem Tresen herum. Sie bemerkt dich nicht.",
         opts: [
             { 
-                t: "Husten & 'Störe ich?' fragen", 
+                t: "Husten & 'Störe ich?' fragen",
+                rep: { "Gabi": -2 }, 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Sie zuckt zusammen, reißt die Kopfhörer runter und wird rot. 'Äh. Nichts.' Sie rückt ihre Bluse zurecht. Der Moment ist vorbei." 
             },
             { 
                 t: "Grinsen & Pommesgabel zeigen", 
                 next: "gabi_rocker", 
+                rep: { "Gabi": 10 },
                 m: 10, f: -5, a: -10, c: 0, 
                 r: "Sie sieht dich, grinst breit und dreht die Musik lauter, sodass du es hörst. Brutaler Death Metal. 'Wacken 2008?', fragt sie. Ihr nickt euch wissend zu." 
             },
             { 
                 t: "Loben: 'Tolles Rhythmusgefühl!'", 
+                rep: { "Gabi": 2 },
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Sie lacht verlegen. 'Stressabbau.' Sie legt die Stifte weg und ist wieder die professionelle Empfangsdame." 
             }
@@ -11378,17 +11768,20 @@ const DB = {
         opts: [
             { 
                 t: "Rauskommen: 'Hier bin ich!'", 
+                rep: { "Gabi": -5, "Dr. Wichtig": -10 },
                 m: 10, f: 0, a: 20, c: 40, 
                 r: "Du ruinierst ihre Ablenkung. Gabi verdreht die Augen. Der Chef sieht dich. 'Aha! Erklären Sie mir diese Reddit-Logs!' Das wird ein langes Gespräch." 
             },
             { 
                 t: "Leise die Tür schließen & warten", 
                 loot: "mixtape", 
+                rep: { "Gabi": 15, "Dr. Wichtig": -2 },
                 m: 5, f: -10, a: -20, c: -50,
                 r: "Durch die Tür hörst du Gabi lügen: 'Der ist im Außeneinsatz beim Großkunden! Super wichtig!' Der Chef grummelt und zieht ab. Später findest du ein altes Mixtape auf deinem Platz. 'Für die Ruhe.'" 
             },
             { 
                 t: "Lauschen, was sie sagt", 
+				rep: { "Gabi": -2 },
                 m: 5, f: 0, a: 10, c: -10, 
                 r: "Sie wimmelt ihn ab, aber du traust dich nicht raus. Der Chef geht, aber du hast Gabis Geste nicht gewürdigt. Sie denkt, du hast es nicht mitbekommen." 
             }
@@ -11402,18 +11795,21 @@ const DB = {
         text: "Dein Handy klingelt. Es ist Markus. Im Hintergrund hörst du japanische Geschäftsleute. 'Müller! Die Demo... äh... laggt. Ich brauche sofort Zugriff auf den Mainframe! Oder bauen Sie mir schnell ein Mockup, das so aussieht, als würde es funktionieren! JETZT!'",
         opts: [
             { 
-                t: "Auflegen: 'Nicht mein Problem.'", 
+                t: "Auflegen: 'Nicht mein Problem.'",
+                rep: { "Markus": -10 }, 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du legst auf. Später hörst du im Flurfunk, dass der Deal geplatzt ist. Markus hat Schaum vor dem Mund, wenn er deinen Namen hört." 
             },
             { 
                 t: "Den Fake bauen (HTML-Dummy)", 
                 next: "markus_win", 
+                rep: { "Markus": 10 },
                 m: 20, f: -10, a: -10, c: 10, 
                 r: "Du baust in 5 Minuten eine Webseite, die nur so *aussieht* wie Software. 'Senden!', schreit Markus. 'Meine Herren, hier ist die Lösung!', hörst du ihn noch triumphierend sagen." 
             },
             { 
                 t: "Ehrlich sein: 'Sag ihnen die Wahrheit.'", 
+                rep: { "Markus": -5 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Markus flüstert aggressiv: 'Sind Sie wahnsinnig?! Meine Provision!' Er versucht zu improvisieren, scheitert aber." 
             }
@@ -11429,16 +11825,19 @@ const DB = {
             { 
                 t: "Die Flasche annehmen", 
                 loot: "scotch_bottle", 
+                rep: { "Markus": 15 },
                 m: 5, f: -20, a: -30, c: -20, 
                 r: "Es ist ein 30 Jahre alter Single Malt. 'Für die Nerven', zwinkert Markus. 'Wir verstehen uns.' Du bist jetzt Teil des 'Inner Circle'. (Erfolg: The Closer)" 
             },
             { 
                 t: "Nach Anteil fragen: 'Ich will 10%.'", 
+                rep: { "Markus": -5 },
                 m: 10, f: 0, a: 20, c: 10, 
                 r: "Markus lacht kalt. 'Übertreiben Sie es nicht, Tippse. Seien Sie froh, dass Sie hier arbeiten dürfen.' Er nimmt die Flasche wieder mit. Gier wird bestraft." 
             },
             { 
                 t: "Ablehnen: 'Ich mache nur meinen Job.'", 
+                rep: { "Markus": 2 },
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Markus zuckt mit den Schultern. 'Ihr Verlust. Mehr für mich.' Er geht kopfschüttelnd. Du hast deine Integrität, aber keinen Whisky." 
             }
@@ -11452,18 +11851,21 @@ const DB = {
         text: "Der Chef winkt dich hektisch in sein Büro. Jalousien unten. Er schwitzt. 'Müller! Das Internet! Da ist ein Video von mir beim Karaoke... ich singe 'Barbie Girl'. Das ist ein Deepfake! Eine KI-Attacke der Konkurrenz! Löschen Sie das!' (Es sieht extrem echt aus).",
         opts: [
             { 
-                t: "Wahrheit: 'Chef, das war die Weihnachtsfeier 2018...'", 
+                t: "Wahrheit: 'Chef, das war die Weihnachtsfeier 2018...'",
+                rep: { "Dr. Wichtig": -10 },				
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "Er wird rot. 'RAUS! Und vergessen Sie, was Sie gesehen haben!' Dein Radar schießt hoch. Das war die falsche Antwort." 
             },
             { 
                 t: "Lüge: 'Verstanden. Ich lösche den Deepfake sofort.'", 
                 next: "ceo_trust", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 30, f: -10, a: 0, c: -10, 
                 r: "Du tippst wild auf der Tastatur (und meldest das Video einfach nur bei YouTube). 'Es ist weg, Chef. Die KI wurde neutralisiert.' Er atmet auf. 'Müller, Sie sind mein bester Mann.'" 
             },
             { 
                 t: "Reaktion: Laut loslachen", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 2, f: 0, a: 10, c: 50, 
                 r: "Du kannst es nicht halten. Du prustest los. Der Chef zeigt stumm zur Tür. Du bist erledigt." 
             }
@@ -11480,22 +11882,26 @@ const DB = {
                 t: "Erpressung: Die 'Geheime Liste' vorlegen", 
                 req: "arg_list_2", 
                 loot: "contract", 
+				rep: { "Dr. Wichtig": -15 },	
                 m: 10, f: 20, a: -50, c: -20, 
                 r: "Du legst das PDF vor, das zeigt, dass Kevin mehr verdient als du. Der Chef wird kreidebleich. 'Äh. Das... ein Systemfehler. Natürlich korrigieren wir das. Sagen wir... 20% mehr? Sofort?' Er unterschreibt zitternd." 
             },
             { 
                 t: "Professionell: 'Meine Leistungsbilanz' zeigen", 
                 req: "arg_list_1", 
+				rep: { "Dr. Wichtig": 10 },	
                 m: 15, f: -5, a: -10, c: -10, 
                 r: "Du präsentierst deine Liste: Überstunden, gerettete Server, Geduld. Der Chef nickt anerkennend. 'Gut vorbereitet, Müller. Ich kann Ihnen 3% Inflationsausgleich geben.' Ein ehrlicher Sieg." 
             },
             { 
                 t: "Betteln: 'Aber alles wird teurer...'", 
+				rep: { "Dr. Wichtig": -2 },	
                 m: 15, f: -5, a: 10, c: 0, 
                 r: "Er seufzt theatralisch. 'Wir müssen alle den Gürtel enger schnallen, Müller. Ich fliege dieses Jahr auch nur Economy nach Bali. Wir sitzen alle im selben Boot.' Du gehst leer aus." 
             },
             { 
                 t: "Drohung: 'Dann kündige ich!'", 
+				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Er lacht kalt. 'Reisende soll man nicht aufhalten. Die Tür ist dort.' Dein Bluff fliegt auf. Jetzt ist die Stimmung im Keller." 
             }
@@ -11510,14 +11916,16 @@ const DB = {
             { 
                 t: "Kontern: 'Dafür haben Sie mir die Erlaubnis gegeben!'", 
                 next: "path_dog_secret", 
+				rep: { "Dr. Wichtig": -15 },
                 m: 15, f: -5, a: -20, c: 40, 
                 r: "Der Chef läuft purpurrot an. Die Halsschlagader pocht. 'Ich?! EIN HUND IM BÜRO?? DA KANN ICH JA GLEICH MEINE EIGENE KÜNDIGUNG SCHREIBEN!!!' Er knallt die Tür so fest zu, dass der Putz rieselt. Er tobt, aber er ist weg. (Chef +40!)" 
             },
             { 
                 t: "Verkaufen: 'Das ist der neue Feel-Good-Manager'", 
                 next: "path_dog_official", 
+				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 0, a: -5, c: -10, 
-                r: "Du behauptest, das sei eine Maßnahme zur Burnout-Prävention. 'Wissenschaftlich erwiesen, Chef. Senkt Krankheitskosten.' Der Chef rechnet kurz. 'Kostenlos? Und er beißt Betriebsräte? Genehmigt.' (Chef -10)" 
+                r: "Du behauptest, das sei eine Maßnahme zur Burnout-Prävention. 'Wissenschaftlich erwiesen, Chef. Senkt Krankheitskosten.' Der Chef rechnet kurz. 'Kostenlos? Und er beißt Betriebsräte? Genehmigt.'" 
             }
         ]
     },
@@ -11536,7 +11944,7 @@ const DB = {
             { 
                 t: "Risiko: Gassi gehen im Archiv", 
                 m: 20, f: -10, a: -10, c: 10, 
-                r: "Du schleichst mit ihm zu den alten Akten. Er hebt das Bein am Ordner 'Steuererklärung 2019'. 'Guter Junge', flüsterst du. Das Risiko war hoch, aber es tat gut. (Chef +15)" 
+                r: "Du schleichst mit ihm zu den alten Akten. Er hebt das Bein am Ordner 'Steuererklärung 2019'. 'Guter Junge', flüsterst du. Das Risiko war hoch, aber es tat gut." 
             }
         ]
     },
@@ -11592,17 +12000,20 @@ const DB = {
             text: "Du hörst schwere Schritte auf dem Flur. Die Tür knarrt auf. Dr. Wichtig steht im Türrahmen und blinzelt auf deinen Bildschirm. Du hast gerade privat im Internet gesurft.",
             opts: [
                 { 
-                    t: "Panisch das Firmen-Intranet öffnen", 
+                    t: "Panisch das Firmen-Intranet öffnen",
+					rep: { "Dr. Wichtig": 2 },	
                     m: 5, f: -5, a: 0, c: 0, 
                     r: "CMD:OPEN_INTRANET" 
                 },
                 { 
                     t: "Schnell eine alte Code-Datei aufrufen", 
+					rep: { "Dr. Wichtig": 5 },	
                     m: 2, f: 0, a: 5, c: -5, 
                     r: "Er schaut auf den grünen Text auf schwarzem Grund. 'Ah, Sie hacken den Mainframe. Sehr gut.' Er geht wieder." 
                 },
                 { 
-                    t: "Den Monitor einfach ausschalten", 
+                    t: "Den Monitor einfach ausschalten",
+                    rep: { "Dr. Wichtig": -10 },						
                     m: 1, f: 5, a: 0, c: 15, 
                     r: "Er starrt auf den schwarzen Bildschirm. 'Stromsparen? Sehr löblich, aber wir haben hier Deadlines!' Er notiert sich etwas." 
                 }
