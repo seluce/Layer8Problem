@@ -2170,7 +2170,6 @@ const DB = {
             title: "BOSS: DER DRUCKER DES TODES",
             text: "ALARM! Der Großraumdrucker rattert wie ein Maschinengewehr! Er spuckt hunderte schwarze Seiten aus, Rauch steigt auf. Das Display blinkt: 'FEED ME STRAY CAT'. Er droht zu überhitzen und die Sprinkleranlage auszulösen!",
             timer: 15,
-            fail: { r: "BOOOOM! Der Drucker ist explodiert. Die Sprinkler gehen an. Alles ist nass. Du bist nass. Der Tag ist gelaufen.", f: -10, a: 50, c: 50 },
             opts: [
                 { 
                     t: "PERCUSSIVE MAINTENANCE!", 
@@ -2188,14 +2187,14 @@ const DB = {
                     m: 5, f: 0, a: 10, c: 20, 
                     r: "Du kriechst unter den Tisch und reißt das Kabel raus. Dabei fährst du den PC der Sekretärin mit runter. Sie schreit. Der Drucker ist aus, aber der Ärger ist groß." 
                 }
-            ]
+            ],
+            fail: { r: "BOOOOM! Der Drucker ist explodiert. Die Sprinkler gehen an. Alles ist nass. Du bist nass. Der Tag ist gelaufen.", m: 60, f: -10, a: 50, c: 50 }
         },
 		{
             id: "boss_cable_mess",
             title: "BOSS: DER ISO-PRÜFER KOMMT",
             text: "PANIK! Der strenge Prüfer vom TÜV steht im Flur! Er steuert direkt auf den Serverraum zu! Dort hängen die Kabel wie Lianen im Dschungel von der Decke. Wenn er das sieht, entzieht er uns die Zertifizierung!",
             timer: 20,
-            fail: { rep: { "Dr. Wichtig": -10 }, r: "Der Prüfer öffnet die Tür. Er sieht das Chaos. Er weint leise. 'Zertifikat entzogen.' Der Chef tobt.", f: 0, a: 40, c: 60 },
             opts: [
                 { 
                     t: "Alles ordentlich festzurren", 
@@ -2213,14 +2212,14 @@ const DB = {
                     m: 5, f: 0, a: 0, c: 40, 
                     r: "Du drückst den Feuermelder. Alle müssen raus. Prüfung abgebrochen. Aber jetzt kommt die Feuerwehr (Kosten: 1000€). Der Chef sucht den Schuldigen." 
                 }
-            ]
+            ],
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "Der Prüfer öffnet die Tür. Er sieht das Chaos. Er weint leise. 'Zertifikat entzogen.' Der Chef tobt.", m: 60, f: 0, a: 40, c: 60 }
         },
 		{
             id: "boss_water_leak",
             title: "BOSS: DAS ROHR BRICHT",
             text: "ZISCH! In der Teeküche ist ein Rohr geplatzt! Ein Strahl heißes Wasser schießt quer durch den Raum... direkt auf die ungeschützte Steckdosenleiste des Etagen-Verteilers! Stromausfall in 3... 2...",
             timer: 15,
-            fail: { rep: { "Dr. Wichtig": -10 }, r: "ZAPP! Kurzschluss. Funkenflug. Dunkelheit. Der Server ist tot. Der Kühlschrank ist tot. Der Chef steht im Dunkeln und brüllt deinen Namen.", f: 0, a: 50, c: 50 },
             opts: [
                 { 
                     t: "Mit Tape abdichten", 
@@ -2238,14 +2237,14 @@ const DB = {
                     m: 5, f: 5, a: 0, c: 20, 
                     r: "Der Eimer ist sofort voll und läuft über. Das Wasser trifft die Steckdose. Kleiner Knall, Sicherung raus. Nicht ganz so schlimm wie ein Brand, aber peinlich." 
                 }
-            ]
+            ],
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "ZAPP! Kurzschluss. Funkenflug. Dunkelheit. Der Server ist tot. Der Kühlschrank ist tot. Der Chef steht im Dunkeln und brüllt deinen Namen.", m: 60, f: 0, a: 50, c: 50 }
         },
 		{
             id: "boss_vga_fail",
             title: "BOSS: LIVESTREAM DESASTERS",
             text: "Der Chef hält seine Jahresrede live vor allen Investoren! Plötzlich flackert der Beamer. Das Bild wird lila, dann schwarz. Der VGA-Stecker am Podium ist locker und die Rändelschrauben fehlen! Der Chef schwitzt und starrt dich panisch an!",
             timer: 20,
-            fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", f: 0, a: 40, c: 80 },
             opts: [
                 { 
                     t: "Stecker festschrauben", 
@@ -2264,14 +2263,14 @@ const DB = {
                     m: 5, f: 0, a: 10, c: 30, 
                     r: "Es geht kurz... dann wieder aus... dann an... Stroboskop-Effekt. Ein Investor bekommt einen epileptischen Anfall. Abbruch." 
                 }
-            ]
+            ],
+            fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
         },
         {
             id: "boss_audit",
             title: "📋 DER DATENSCHUTZ-AUDITOR 📋",
             text: "Ein externer Prüfer steht unangekündigt im Serverraum! Er will das 'Notfall-Handbuch' und das 'Lösch-Protokoll' sehen! Du hast beides nicht! Er zückt den roten Stift!",
             timer: 15,
-            fail: { r: "Durchgefallen! Bußgeld: 50.000€. Die Firma ist pleite. Du bist schuld.", f: -50, a: 50, c: 100 },
             opts: [
                 { 
                     t: "Altes Handbuch zeigen", 
@@ -2290,14 +2289,14 @@ const DB = {
                     m: 5, f: 0, a: 10, c: 30, 
                     r: "Du schlägst den Melder ein. Prüfung wegen Evakuierung abgebrochen. Radikal, aber effektiv." 
                 }
-            ]
+            ],
+            fail: { r: "Durchgefallen! Bußgeld: 50.000€. Die Firma ist pleite. Du bist schuld.", m: 60, f: -50, a: 50, c: 100 }
         },
         {
             id: "boss_flood",
             title: "🌊 DAS AQUARIUM PLATZT 🌊",
             text: "Das riesige Zierfisch-Aquarium im Chefbüro hat einen Riss! 500 Liter Wasser drohen auf den Perserteppich und die Boden-Steckdosen zu laufen! Der Chef schreit: 'RETTE DIE KOIS!'",
             timer: 12,
-            fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", f: 0, a: 50, c: 100 },
             opts: [
                 { 
                     t: "Riss kleben", 
@@ -2319,7 +2318,8 @@ const DB = {
                     m: 10, f: 0, a: -10, c: -10, 
                     r: "Du baust aus Kabelbindern und Müllbeutel einen Kescher. Fische gerettet. Das Büro ist geflutet, aber die Tiere leben." 
                 }
-            ]
+            ],
+             fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
         },
         {
         id: "boss_demo_fail",
@@ -11476,7 +11476,7 @@ const DB = {
         opts: [
             { 
                 t: "Kleinlaut entschuldigen", 
-                m: -5, f: -5, a: 10, c: -10, 
+                m: 5, f: -5, a: 10, c: -10, 
                 r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an. Du fühlst dich klein und feige, aber du bist sicher." 
             },
             { 
@@ -11773,7 +11773,7 @@ const DB = {
             },
             { 
                 t: "Wiederauferstehung beantragen", 
-                m: -10, f: -10, a: 20, c: -10, 
+                m: 10, f: -10, a: 20, c: -10, 
                 r: "Du rennst zur Personalabteilung. 'Ich lebe noch!' Frau Müller tippt genervt. 'Das Formular L-1VE zur Lebendmeldung dauert aber 6 Wochen.' Bis dahin arbeitest du schwarz in der eigenen Firma." 
             }
         ]
@@ -11832,7 +11832,7 @@ const DB = {
         opts: [
             { 
                 t: "Vor Scham im Boden versinken", 
-                m: -20, f: -10, a: 10, c: 0, 
+                m: 20, f: -10, a: 10, c: 0, 
                 r: "Die Tür geht auf. Die Kollegin aus der Buchhaltung steht da, rot im Gesicht. 'Das Gedicht über die Umsatzsteuervoranmeldung war... süß.' Vielleicht hat die KI ja recht?" 
             },
             { 

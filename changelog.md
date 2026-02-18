@@ -1,3 +1,7 @@
+\[2.3.1] - 2026-02-18
+* Kritischer Bugfix für Events, wenn Minuten nicht gesetzt waren (Spiel meldete NaN als Fehler)
+* Korrektur einiger Events, wo die Minuten gefehlt haben oder im falschen Format waren 
+
 \[2.3.0] - 2026-02-18
 * Bossfights Timer wurde nun in das Event eingebaut, damit es ein einheitliches Design hat
 * Verschiedene Fehlerkorrekturen für den Bossfight (Dauer der Animation und Logik wann Bossfights auftreten)

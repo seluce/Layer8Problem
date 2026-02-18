@@ -63,7 +63,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.3.0 geladen. Warte auf User...");
+        this.log("System v2.3.1 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1330,7 +1330,15 @@ trigger: function(type) {
         this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
     },
 
-resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) { // <--- HIER: rem HINZUGEFÜGT
+resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
+	
+        // --- BUGFIX START: Fallback für fehlende Werte ---
+        m = typeof m === 'number' ? m : 0;
+        f = typeof f === 'number' ? f : 0;
+        a = typeof a === 'number' ? a : 0;
+        c = typeof c === 'number' ? c : 0;
+        // --- BUGFIX ENDE ---
+	
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
             res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
