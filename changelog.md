@@ -1,5 +1,6 @@
 \[2.3.1] - 2026-02-18
-* Kritischer Bugfix für Events, wenn Minuten nicht gesetzt waren (Spiel meldete NaN als Fehler)
+* Bugfix für Events, wenn Minuten nicht gesetzt waren (Spiel meldete NaN als Fehler)
+* Es wurde immer ein Fail bei Bossfight ausgelöst, auch wenn eine Option gewählt wurde
 * Korrektur einiger Events, wo die Minuten gefehlt haben oder im falschen Format waren 
 
 \[2.3.0] - 2026-02-18

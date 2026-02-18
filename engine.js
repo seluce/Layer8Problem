@@ -1332,6 +1332,12 @@ trigger: function(type) {
 
 resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
 	
+        // --- BUGFIX: TIMER STOPPEN ---
+        if (this.state.bossTimer) {
+            clearInterval(this.state.bossTimer);
+            this.state.bossTimer = null;
+        }
+        
         // --- BUGFIX START: Fallback für fehlende Werte ---
         m = typeof m === 'number' ? m : 0;
         f = typeof f === 'number' ? f : 0;
