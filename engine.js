@@ -962,7 +962,7 @@ const engine = {
             if (possibleInterventions.length > 0 && Math.random() < 0.10) {
                 let intervention = possibleInterventions[Math.floor(Math.random() * possibleInterventions.length)];
                 
-                this.log(`⚠️ BEGEGNUNG: ${intervention.title}`, "text-yellow-400 font-bold");
+                this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
                 
                 // Wir rendern es mit dem Typ 'rep' für das goldene Design
                 this.renderTerminal(intervention, 'rep'); 

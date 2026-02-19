@@ -1,5 +1,6 @@
 \[2.3.3] - 2026-02-19
-* Events mit viel Text oder Optionen sind jetzt bei erhöhter Skalierung oder mit niedriger Auflösung lesbar
+* Events mit viel Text oder Optionen sind jetzt bei erhöhter Skalierung oder mit niedriger Auflösung am Desktop lesbar
+* Log-Beschreibung bei Reputations-Events (Begegnungen) sind nun einheitlich zum restlichen Log
 
 \[2.3.2] - 2026-02-19
 * E-Mails treten nicht mehr während eines Bossfight auf (Vermeidung von zwei gleichzeitigen Timer)
