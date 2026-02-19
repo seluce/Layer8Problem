@@ -63,7 +63,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.3.1 geladen. Warte auf User...");
+        this.log("System v2.3.2 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -111,7 +111,7 @@ const engine = {
         }
     },
 
-// --- ARCHIV UI (Sammelalbum) ---
+    // --- ARCHIV UI (Sammelalbum) ---
     openArchive: function() {
         const modal = document.getElementById('archive-modal');
         const content = document.getElementById('archive-content');
@@ -300,7 +300,7 @@ const engine = {
         }
     },
 
-// Setzt Schwierigkeit und startet dann erst den Loop (oder das Tutorial)
+    // Setzt Schwierigkeit und startet dann erst den Loop (oder das Tutorial)
     setDifficulty: function(level) {
         document.getElementById('difficulty-modal').style.display = 'none';
         
@@ -572,7 +572,7 @@ const engine = {
     },
 
     // --- CORE ---
-updateUI: function() {
+    updateUI: function() {
         this.state.fl = Math.max(0, Math.min(100, this.state.fl));
         this.state.al = Math.max(0, Math.min(100, this.state.al));
         this.state.cr = Math.max(0, Math.min(100, this.state.cr));
@@ -691,7 +691,7 @@ updateUI: function() {
         this.checkEndConditions();
     },
 
-checkAchievements: function() {
+    checkAchievements: function() {
         // --- PLAYSTYLE: EXTREME ---
         
         // 1. DER ASKET (Kein Kaffee) - Ab 16:00
@@ -814,7 +814,7 @@ checkAchievements: function() {
 
     hasAch: function(id) { return this.state.achievements.includes(id); },
 
-unlockAchievement: function(id, title, text) {
+    unlockAchievement: function(id, title, text) {
         // 1. Session-Check: Haben wir diesen Erfolg in DIESEM aktuellen Spiel schon?
         // Wenn ja -> Sofort abbrechen (verhindert Spam im Loop)
         if (this.state.achievements.includes(id)) {
@@ -920,7 +920,7 @@ unlockAchievement: function(id, title, text) {
         }
     },
 
-trigger: function(type) {
+    trigger: function(type) {
         // Blockieren, wenn schon ein Event offen ist
         if(this.state.activeEvent) return;
 
@@ -931,7 +931,7 @@ trigger: function(type) {
         // Wenn der Boss kommt, ist alles andere egal.
         let bossPool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
         
-        if (bossPool.length > 0 && Math.random() < 0.05) {
+        if (this.state.time > 540 && bossPool.length > 0 && Math.random() < 0.05) {
              this.triggerBossFight();
              return; // Unterbricht die eigentliche Aktion
         }
@@ -999,6 +999,24 @@ trigger: function(type) {
     },
 
     triggerBossFight: function() {
+		
+		// --- FIX: KEINE E-MAILS BEI BOSSFIGHTS ---
+        // Stoppt sofort jeden geplanten E-Mail-Timer
+        if (this.state.emailTimer) {
+            clearTimeout(this.state.emailTimer);
+            this.state.emailTimer = null;
+        }
+        this.state.emailPending = false;
+        
+        // Falls das Modal gerade schon halb offen war, hart schließen
+        const emailModal = document.getElementById('email-modal');
+        if (emailModal) {
+            emailModal.classList.add('hidden');
+            emailModal.classList.remove('flex');
+            this.state.isEmailOpen = false;
+        }
+        // ------------------------------------------
+		
         let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
         
         if(pool.length === 0) return; 
@@ -1081,7 +1099,7 @@ trigger: function(type) {
         }
     },
 
-// --- TERMINAL & CALL SYSTEM ---
+    // --- TERMINAL & CALL SYSTEM ---
 
     renderTerminal: function(ev, type) {
 		// --- Event-Status für E-Mail-System speichern ---
@@ -1149,32 +1167,40 @@ trigger: function(type) {
 
         switch(type) {
             case 'calls': 
+                typeName = 'ANRUF';
                 color = 'text-blue-400';
                 borderColor = 'border-blue-500';
                 icon = '📞';
                 break;
             case 'boss': 
+                typeName = 'NOTFALL';
                 color = 'text-red-500';
                 borderColor = 'border-red-500';
                 icon = '🚨';
                 break;
 			case 'rep':
+                typeName = 'BEGEGNUNG';			
                 color = 'text-yellow-300';
                 borderColor = 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]';
                 bgClass = "bg-gradient-to-b from-slate-900 to-slate-950";
-				icon = '💎';
+				icon = '📖';
                 break;
             case 'sidequest': 
+                typeName = 'DIENSTGANG';  
                 color = 'text-purple-400';
                 borderColor = 'border-purple-500';
                 icon = '🎲';
                 break;
             case 'server': 
+                typeName = 'SERVERRAUM';            
                 color = 'text-emerald-400';
                 borderColor = 'border-emerald-500';
                 icon = '💾';
                 break;
             case 'coffee': 
+                typeName = 'KAFFEE';            
+                color = 'text-amber-400';       
+                borderColor = 'border-amber-500';
                 icon = '☕';
                 break;
         }
@@ -1189,7 +1215,7 @@ trigger: function(type) {
                 <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
                     <span class="text-3xl">${icon}</span>
                     <div class="flex flex-col">
-                        <span class="${color} font-black uppercase tracking-widest text-sm">${type}</span>
+                        <span class="${color} font-black uppercase tracking-widest text-sm">${typeName}</span>
                         <h2 class="text-2xl font-bold text-slate-100">${title}</h2>
                     </div>
                 </div>
@@ -1330,7 +1356,7 @@ trigger: function(type) {
         this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
     },
 
-resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
+    resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
 	
         // --- BUGFIX: TIMER STOPPEN ---
         if (this.state.bossTimer) {
@@ -1456,18 +1482,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repD
             }
         }
         
-        // Items Logic: USED (Veraltet, aber wir lassen es sicherheitshalber drin)
-        if(usedItem && usedItem !== "") {
-            let itemObj = this.state.inventory.find(i => i.id === usedItem);
-            let dbItem = DB.items[usedItem];
-            if(itemObj) {
-                if (!dbItem || !dbItem.keep) {
-                    this.state.inventory = this.state.inventory.filter(i => i !== itemObj);
-                }
-            }
-        }
-
-        // --- FIX: ITEMS REMOVED (rem) ---
+        // --- ITEMS REMOVED (rem) ---
         // Hier nutzen wir jetzt die Variable 'rem', die oben übergeben wurde
         if (rem && rem !== "") {
             this.state.inventory = this.state.inventory.filter(i => i.id !== rem);
@@ -1575,7 +1590,7 @@ resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repD
         this.renderPhoneNode(ev.nodes[ev.startNode]);
     },
 	
-renderPhoneNode: function(node) {
+    renderPhoneNode: function(node) {
         // Sicherstellen, dass Content und Actions existieren
         const content = document.getElementById('app-content');
         const actions = document.getElementById('app-actions');
@@ -1642,7 +1657,7 @@ renderPhoneNode: function(node) {
         }, 100);
     },
 
-handlePhoneChoice: function(text, nextId) {
+    handlePhoneChoice: function(text, nextId) {
         const actions = document.getElementById('app-actions');
         
         // SPAM-SCHUTZ
@@ -1816,7 +1831,7 @@ handlePhoneChoice: function(text, nextId) {
         feed.innerHTML = `<div><span class="text-slate-500">[${time}]</span> <span class="${colorClass || ''}">${msg}</span></div>` + feed.innerHTML;
     },
 
-checkEndConditions: function() {
+    checkEndConditions: function() {
         // WICHTIG: Wenn schon ein Ende wartet, nicht nochmal prüfen (verhindert Dopplungen)
         if (this.state.pendingEnd) return;
 
@@ -2116,15 +2131,15 @@ checkEndConditions: function() {
         modal.classList.add('flex');
     },
 
-closeInventory: function() {
+    closeInventory: function() {
         const modal = document.getElementById('inventory-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     },
 		
-// --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
+    // --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
     
-// 1. Abfrage: Willst du wirklich?
+    // 1. Abfrage: Willst du wirklich?
     askUseItem: function(id) {
         // Cooldown Check VOR dem Modal
         if (id === 'stressball') {
@@ -2336,7 +2351,7 @@ closeInventory: function() {
     },
 
     // --- TEAM / CHARAKTERE ---
-openTeam: function() {
+    openTeam: function() {
         const modal = document.getElementById('team-modal');
         const grid = document.getElementById('team-grid');
         grid.innerHTML = '';
@@ -2762,7 +2777,7 @@ openTeam: function() {
         }
     },
 
-// Hilfsfunktion: Prüfsumme berechnen (Robuster Fix mit >>> 0)
+    // Hilfsfunktion: Prüfsumme berechnen (Robuster Fix mit >>> 0)
     calculateChecksum: function(str) {
         let a = 1, b = 0;
         for (let i = 0; i < str.length; i++) {
@@ -2903,7 +2918,7 @@ openTeam: function() {
         }
     },
 
-// --- REPORT SYSTEM ---
+    // --- REPORT SYSTEM ---
 
     openReportModal: function() {
         const modal = document.getElementById('report-modal');
@@ -2917,7 +2932,7 @@ openTeam: function() {
         modal.classList.remove('flex');
     },
 
-sendReportMail: function() {
+    sendReportMail: function() {
         try {
             // --- CONFIG ---
             const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc2uwIVCYnmsQ_MpJNpXjc7kX7DlXoHYXMUUZwAWjwrtTHJDg/viewform";

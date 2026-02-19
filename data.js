@@ -2007,7 +2007,7 @@ const DB = {
                 { t: "Stecker ziehen!", m: 10, f: -10, a: 20, c: 10, r: "Brachial, aber wirksam. Server ist aus. Daten gerettet (vielleicht)." },
                 { t: "Admin-Code eingeben", req: "admin_pw", m: 5, f: 0, a: -10, c: -20, r: "Profi-Move! Angriff abgewehrt. Held der Firma!" }
             ],
-            fail: {rep: { "Dr. Wichtig": -10 }, m: 30, f: 0, a: 50, c: 50, r: "ZU LANGSAM! Daten verschlüsselt. Chef tobt!" }
+            fail: {rep: { "Dr. Wichtig": -20 }, m: 30, f: 0, a: 50, c: 50, r: "ZU LANGSAM! Daten verschlüsselt. Chef tobt!" }
         },
         {
             id: "boss_fire",
@@ -2029,7 +2029,7 @@ const DB = {
                 { t: "Backup-Leitung schalten", req: "admin_pw", m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
                 { t: "Qualität auf 'Kartoffel' (240p) setzen", m: 5, f: 5, a: 0, c: 10, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
             ],
-            fail: { rep: { "Dr. Wichtig": -10 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
+            fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
         },
         {
             id: "boss_ddos",
@@ -2122,7 +2122,7 @@ const DB = {
                 { t: "Abdichten (MacGyver)", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." },
                 { t: "Aus dem Fenster werfen", m: 5, f: 10, a: 20, c: 20, r: "Du hast das 20kg Teil durchs geschlossene Fenster geworfen. Es explodiert auf dem Parkplatz. Besser dort als hier." }
             ],
-            fail: { rep: { "Dr. Wichtig": -10 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
+            fail: { rep: { "Dr. Wichtig": -20 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
         },
         {
             id: "boss_skynet_lock",
@@ -2290,7 +2290,7 @@ const DB = {
                     r: "Du schlägst den Melder ein. Prüfung wegen Evakuierung abgebrochen. Radikal, aber effektiv." 
                 }
             ],
-            fail: { r: "Durchgefallen! Bußgeld: 50.000€. Die Firma ist pleite. Du bist schuld.", m: 60, f: -50, a: 50, c: 100 }
+            fail: { r: "Durchgefallen! Bußgeld: 50.000€. Die Firma ist pleite. Du bist schuld.", m: 120, f: -50, a: 50, c: 100 }
         },
         {
             id: "boss_flood",
@@ -9207,32 +9207,6 @@ const DB = {
         ]
     },
     {
-        id: "cof_story_chantal_1",
-        title: "Chantal ohne Filter",
-        text: "Chantal steht an der Maschine. Sie sieht fertig aus. 'Boah, diese ganze Fake-Welt hier... alle lächeln, alle lügen. Manchmal will ich einfach schreien.'",
-        opts: [
-            { 
-                t: "Ehrliches Mitleid: 'Kann ich verstehen.'", 
-                rep: { "Chantal": 5 },
-                m: 15, f: 5, a: -10, c: 0, 
-                r: "Sie seufzt. 'Danke. Wenigstens einer ist nett.' Ein netter Moment, aber zu harmlos für eine Allianz." 
-            },
-            { 
-                t: "Zynismus: 'Dann geh doch heulen.'", 
-                next: "chantal_war", 
-                rep: { "Chantal": -10 },
-                m: 5, f: 0, a: 15, c: 5, 
-                r: "Sie starrt dich geschockt an, dann funkelt sie böse. 'Wow. Du bist echt ein Arschloch.' Sie ist beeindruckt von deiner Kälte." 
-            },
-            { 
-                t: "Ignorieren und Kaffee nehmen", 
-                rep: { "Chantal": -5 },
-                m: 2, f: 0, a: 0, c: 0, 
-                r: "Du drückst dich an ihr vorbei. Sie ist Luft für dich." 
-            }
-        ]
-    },
-    {
         id: "cof_sugar_1",
         title: "Der Zucker-Baron",
         text: "Du hörst ein hektisches Rascheln. Bernd (Logistik) steht gebückt vor dem Vorratsschrank. Seine Anzugtaschen beulen sich verdächtig aus. Er schwitzt. 'Psst! Die da oben wollen rationalisieren! Der Great Reset kommt! Ich sichere das weiße Gold!' Er starrt dich irre an. 'Bist du dabei oder bist du ein Schaf?'",
@@ -12679,37 +12653,31 @@ const DB = {
             "end_ignore": { txt: "Der Chef ist stinksauer, aber dein Karma feiert.", m: 5, fl: 15, al: 20, cr: -10 }
         }
     },
-    {
-        id: "sq_headhunter_1",
-        kind: "phone",
-        appName: "Anruf",
-        title: "Unbekannte Nummer",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Anruf eingehend... Eine sanfte Stimme: 'Herr Müller? Hier ist Elena von TechHunt. Wir suchen Talente, die... flexibel mit Informationen umgehen.'",
-                opts: [
-                    { t: "Auflegen", next: "hangup" },
-                    { t: "Zuhören", next: "headhunter_listen" }
-                ]
-            },
-            "hangup": {
-                text: "Kein Interesse. Ich sterbe hier lieber loyal.",
-                opts: [
-                    { t: "Ende", next: "res_loyal" }
-                ]
-            },
-            "headhunter_listen": {
-                text: "'Interessant. Wir rufen zurück, wenn Sie etwas... Hebelwirkung haben.'",
-                opts: [
-                    { t: "Okay...", next: "res_listen" }
-                ]
-            }
-        },
-        results: {
-            "res_loyal": { txt: "Aufgelegt.", m: 1, fl: 0, al: 5, cr: 0 },
-            "res_listen": { txt: "Sie legt auf. Du fühlst dich beobachtet.", m: 5, fl: 0, al: 0, cr: 5, next: "sq_headhunter_2_active" }
-        }
+{ 
+        id: "sq_headhunter_1", 
+        kind: "phone", 
+        appName: "Anruf", 
+        title: "Unbekannte Nummer", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Anruf eingehend... Eine sanfte Stimme: 'Herr Müller? Hier ist Elena von TechHunt. Wir suchen Talente, die... flexibel mit Informationen umgehen.'", 
+                opts: [ 
+                    { t: "Kein Interesse. Ich sterbe hier lieber loyal.", next: "res_loyal" }, 
+                    { t: "Zuhören", next: "headhunter_listen" } 
+                ] 
+            }, 
+            "headhunter_listen": { 
+                text: "'Interessant. Wir rufen zurück, wenn Sie etwas... Hebelwirkung haben.'", 
+                opts: [ 
+                    { t: "Okay...", next: "res_listen" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "res_loyal": { txt: "'Wow. Stockholm-Syndrom? Okay, bye.' *Klick*", m: 5, fl: 0, al: 5, cr: 0 }, 
+            "res_listen": { txt: "Sie legt auf. Du fühlst dich beobachtet.", m: 5, fl: 0, al: 0, cr: 5, next: "sq_headhunter_2_active" } 
+        } 
     },
     {
         id: "sq_headhunter_2",

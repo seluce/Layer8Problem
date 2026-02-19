@@ -52,7 +52,7 @@ const tutorial = {
         },
         {
             target: 'btn-sidequest', 
-            title: "Ablenkung (Sidequest)",
+            title: "Ablenkung (Dienstgang)",
             text: "Mach mal was anderes. Bringt oft Items oder senkt Stress, aber der Chef sieht es nicht gern."
         },
         {

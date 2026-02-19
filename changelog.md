@@ -1,3 +1,11 @@
+\[2.3.2] - 2026-02-19
+* E-Mails treten nicht mehr während eines Bossfight auf (Vermeidung von zwei gleichzeitigen Timer)
+* Bossfights werden jetzt erst ab 9:00 ausgelöst, um den Tag ruhiger zu starten
+* Aktive Events haben nun den Titel wie die ausgewählte Aktion (Kaffee, Dienstgang, Serverraum, Anruf)
+* Rep-Events (Begegnungen) haben nun standardmäßig das Buch als Icon
+* Schwierigkeits-Modal lässt sich nun auf mobilen Geräten wie das Start-Modal korrekt bedienen 
+* Einige Altasten und Korrekturen im Backend (engine.js) durchgeführt
+ 
 \[2.3.1] - 2026-02-18
 * Bugfix für Events, wenn Minuten nicht gesetzt waren (Spiel meldete NaN als Fehler)
 * Es wurde immer ein Fail bei Bossfight ausgelöst, auch wenn eine Option gewählt wurde
