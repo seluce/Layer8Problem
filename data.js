@@ -11597,7 +11597,7 @@ const DB = {
             }
         ]
     },
-{
+    {
         id: "sq_cable_hunt_1",
         kind: "text",
         title: "Panik am Papierfach",
@@ -11888,6 +11888,7 @@ const DB = {
     },
     {
         id: "sq_gabi_pc",
+        kind: "text",
         title: "Sicherheitslücke",
         text: "Gabi ist in der Pause. Ihr PC ist entsperrt, Outlook ist offen. Ein grober Verstoß gegen Richtlinie 404.",
         opts: [
@@ -11912,6 +11913,7 @@ const DB = {
     },
     {
         id: "sq_boss_chair",
+        kind: "text",
         title: "Operation Rückgrat",
         text: "Die Tür zum Chefbüro steht sperrangelweit offen. Dr. Wichtig ist nirgends zu sehen. Mitten im Raum thront die frisch ausgepackte Lieferung: Ein High-End Massagesessel.",
         opts: [
@@ -12020,32 +12022,32 @@ const DB = {
         ]
     },
     {
-            id: "sq_boss_snoop",
-            kind: "text",
-            title: "Schritte auf dem Flur",
-            text: "Du hörst schwere Schritte auf dem Flur. Die Tür knarrt auf. Dr. Wichtig steht im Türrahmen und blinzelt auf deinen Bildschirm. Du hast gerade privat im Internet gesurft.",
-            opts: [
-                { 
-                    t: "Panisch das Firmen-Intranet öffnen",
-					rep: { "Dr. Wichtig": 2 },	
-                    m: 5, f: -5, a: 0, c: 0, 
-                    r: "CMD:OPEN_INTRANET" 
-                },
-                { 
-                    t: "Schnell eine alte Code-Datei aufrufen", 
-					rep: { "Dr. Wichtig": 5 },	
-                    m: 2, f: 0, a: 5, c: -5, 
-                    r: "Er schaut auf den grünen Text auf schwarzem Grund. 'Ah, Sie hacken den Mainframe. Sehr gut.' Er geht wieder." 
-                },
-                { 
-                    t: "Den Monitor einfach ausschalten",
-                    rep: { "Dr. Wichtig": -10 },						
-                    m: 1, f: 5, a: 0, c: 15, 
-                    r: "Er starrt auf den schwarzen Bildschirm. 'Stromsparen? Sehr löblich, aber wir haben hier Deadlines!' Er notiert sich etwas." 
-                }
-            ]
-        },
-        {
+        id: "sq_boss_snoop",
+        kind: "text",
+        title: "Schritte auf dem Flur",
+        text: "Du hörst schwere Schritte auf dem Flur. Die Tür knarrt auf. Dr. Wichtig steht im Türrahmen und blinzelt auf deinen Bildschirm. Du hast gerade privat im Internet gesurft.",
+        opts: [
+            { 
+                t: "Panisch das Firmen-Intranet öffnen",
+	            rep: { "Dr. Wichtig": 2 },	
+                m: 5, f: -5, a: 0, c: 0, 
+                r: "CMD:OPEN_INTRANET" 
+            },
+            { 
+                t: "Schnell eine alte Code-Datei aufrufen", 
+				rep: { "Dr. Wichtig": 5 },	
+                m: 2, f: 0, a: 5, c: -5, 
+                r: "Er schaut auf den grünen Text auf schwarzem Grund. 'Ah, Sie hacken den Mainframe. Sehr gut.' Er geht wieder." 
+            },
+            { 
+                t: "Den Monitor einfach ausschalten",
+                rep: { "Dr. Wichtig": -10 },						
+                m: 1, f: 5, a: 0, c: 15, 
+                r: "Er starrt auf den schwarzen Bildschirm. 'Stromsparen? Sehr löblich, aber wir haben hier Deadlines!' Er notiert sich etwas." 
+            }
+        ]
+    },
+    {
         id: "sq_service_cloud_1",
         kind: "text",
         title: "Dunkle Materie",
@@ -12198,6 +12200,7 @@ const DB = {
     },
     {
         id: "sq_smile_gate_2c",
+        kind: "text",
         title: "Identitätsdiebstahl",
         reqStory: "path_smile_fake",
         text: "Eine E-Mail vom Kantinen-System: 'Vielen Dank, Dr. Wichtig! Ihre Bestellung (1x Premium-Hummer und 1x Kaviar) wurde Ihrem Konto belastet.' Offenbar hast du beim Eintreten als 'CEO' auch gleich dessen Zeche übernommen.",
@@ -12301,6 +12304,7 @@ const DB = {
     },
     {
         id: "sq_desk_rise_2c",
+        kind: "text",
         title: "Das Handbuch-Opfer",
         reqStory: "path_desk_heavy",
         text: "Du willst dein Handbuch zurück. Aber es ist mit dem Bedienpanel verschmolzen. Der Kunststoff ist geschmolzen und hat das Buch 'assimiliert'. Der Tisch reagiert auf gar nichts mehr.",
@@ -12404,6 +12408,7 @@ const DB = {
     },
     {
         id: "sq_shredder_2c",
+        kind: "text",
         title: "Datenschutz-Vorfall",
         reqStory: "path_shred_loot",
         text: "Du steckst den gefundenen USB-Stick an deinen PC. Darauf ist eine Datei: 'Passwörter_Alle_Mitarbeiter.xlsx'. Offenbar wollte die HR-Abteilung das 'sicher entsorgen', hat aber den Stick statt das Papier eingeworfen.",
@@ -12427,233 +12432,352 @@ const DB = {
                 r: "Du bringst ihn Gabi. Sie wird rot. 'Oh! Äh... danke. Den habe ich... gesucht.' Sie schenkt dir eine Schokolade als Schweigegeld. (Item entfernt)" 
             }
         ]
-    },    
-        
+    },
+    {
+        id: "sq_meta_donation",
+        kind: "text",
+        title: "Inception im Browser",
+        text: "Du prokrastinierst im Netz und stolperst über ein Indie-Browsergame namens 'Layer8Problem'. Moment mal... der SysAdmin darin sieht dir verdammt ähnlich! Und der virtuelle Chef brüllt genau wie Dr. Wichtig. Ein Pop-up des Entwicklers erscheint: 'Gefällt dir die Simulation? Wirf ein paar Münzen in den Hut für die Weiterentwicklung!'",
+        opts: [
+            { 
+                t: "Shut up and take my money! (Link kopieren)", 
+                m: 2, f: 5, a: 0, c: 10, 
+                r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir den Link aber noch heimlich kopiert.<br><br>(Wer die Entwicklung wirklich freiwillig unterstützen will: <a href='DEIN_LINK_HIER' target='_blank' class='text-blue-400 underline hover:text-blue-300 transition-colors'>Hier geht's zum Spendenhut</a>. Wird natürlich brav dem Finanzamt gemeldet!)"
+            },
+            { 
+                t: "Ignorieren: 'Ich werde selbst mies bezahlt!'", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Absolut verständlich. Du schließt den Tab schnell wieder und widmest dich deinen eigenen, schlecht bezahlten Problemen in dieser Welt."
+            },
+            { 
+                t: "Kritik: 'Das Spiel ist eh total unrealistisch!'", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du schreibst einen zynischen Kommentar ins Forum: 'Kein Chef der Welt würde Laufbänder im Serverraum fordern!' ... Dann drehst du dich um und siehst Dr. Wichtig mit einem Maßband im Flur stehen. Verdammt."
+            }
+        ]
+    },
+    {
+        id: "sq_elster_cat_2a",
+        kind: "text",
+        title: "Dankbarkeit in der Buchhaltung",
+        reqStory: "path_elster_happy",
+        text: "Frau Elster steht räuspernd vor deinem Schreibtisch. Sie blickt sich nervös um, öffnet ihre Handtasche und legt dir ein teures Stück Konditor-Torte auf den Tisch. 'Das ist für Ihren... inoffiziellen IT-Einsatz gestern. Rüdiger schnurrt wieder. Aber wehe, das erfährt jemand!'",
+        opts: [
+            { 
+                t: "Kuchen annehmen & schweigen", 
+                rep: { "Frau Elster": 10 },
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du isst den Kuchen. Er schmeckt nach Marzipan und Bestechung. Eine mächtige Verbündete im Büro zu haben, ist Gold wert." 
+            },
+            { 
+                t: "Frech werden: 'Ich mache das nur für Rüdiger.'", 
+                rep: { "Frau Elster": 5 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Sie zieht eine Augenbraue hoch. 'Seien Sie nicht unverschämt, Müller.' Sie geht, aber man merkt, dass sie dich jetzt respektiert." 
+            }
+        ]
+    },
+    {
+        id: "sq_elster_cat_2b",
+        kind: "text",
+        title: "Die Quittung",
+        reqStory: "path_elster_angry",
+        text: "Auf deinem Tisch liegt deine letzte Reisekostenabrechnung. Sie ist komplett rot markiert. Frau Elster hat jeden Cent gestrichen. 'Parkschein ohne Uhrzeit', 'Verpflegungspauschale um 0,50€ überschritten'. Sie hat sich für dein 'Nein' beim Katzen-Notfall gerächt.",
+        opts: [
+            { 
+                t: "Zähneknirschend neu ausfüllen", 
+                rep: { "Frau Elster": 5 },
+                m: 30, f: -15, a: 20, c: 0, 
+                r: "Du verbringst eine halbe Stunde damit, Belege neu zu kopieren und Formulare zu tippen. Deine Aggression steigt ins Unermessliche. Katzenbesitzer sollte man nicht verärgern." 
+            },
+            { 
+                t: "Den Chef einschalten", 
+                rep: { "Frau Elster": -10, "Dr. Wichtig": -5 },
+                m: 10, f: 0, a: 10, c: 15, 
+                r: "Der Chef ist genervt. 'Klären Sie Ihren Kleinkrieg selbst, Müller!' Frau Elster funkelt dich beim Rausgehen böse an. Der Krieg geht weiter." 
+            }
+        ]
+    },
+    {
+        id: "sq_elster_cat_2c",
+        kind: "text",
+        title: "Der Fresskoma-Notfall",
+        reqStory: "path_elster_fat",
+        text: "Frau Elster stürmt heulend in den Flur. 'RÜDIGER! Er hat sich überfressen! Er liegt nur noch auf dem Rücken und atmet schwer! Der Tierarzt musste ihm den Magen auspumpen! Irgendein kranker Hacker hat den Fressnapf manipuliert!'",
+        opts: [
+            { 
+                t: "Schlechtes Gewissen: Tierarztkosten anonym spenden", 
+                rep: { "Frau Elster": 5 },
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Du legst heimlich 50 Euro in einen Umschlag auf ihren Platz. Das lindert deine Schuldgefühle ein bisschen, aber dein Blutdruck steigt vor Stress. Armer Rüdiger." 
+            },
+            { 
+                t: "Lügen: 'Das war bestimmt ein Software-Bug.'", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'Diese billige China-Technik!', schluchzt sie. Du nickst eifrig und verziehst dich schnell. Du bist ein eiskaltes Monster." 
+            }
+        ]
+    },
 
     // --- PHONE EVENTS (Chat-System) ---
-    {
-        id: "sq_telegram",
-        kind: "phone",
-        appName: "Telegram",
-        title: "Gruppe: Schatten-IT",
-        startNode: "root",
-        nodes: {
+    { 
+        id: "sq_telegram", 
+        kind: "phone", 
+        appName: "Telegram", 
+        title: "Gruppe: Schatten-IT", 
+        startNode: "root", 
+        nodes: { 
+            "root": {  
+                text: "Admn_Rogue: 'Müller! Wir manipulieren heute die Zeiterfassung. Wir tun ab sofort nichts mehr, aber das System loggt fleißig weiter. Bist du dabei?'",  
+                opts: [ 
+                    { t: "Klar, bin dabei! Schick rüber.", next: "yes" }, 
+                    { t: "Ist mir zu heiß. Wenn HR das merkt, fliegen wir alle.", next: "no" }, 
+                    { t: "Ich riskiere meinen Hals nicht umsonst. Was springt für mich dabei raus?", next: "haggle" } 
+                ] 
+            }, 
+            "yes": {  
+                text: "Admn_Rogue: 'Sauber. Installier das Skript im Anhang auf dem Mainframe. Passwort ist 1234.'",  
+                opts: [ 
+                    { t: "[System: Angehängtes Skript herunterladen und ausführen]", next: "done_hack" }, 
+                    { t: "Puh, lass mal. Mein Radar beim Chef ist gerade eh schon hoch. Bin raus.", next: "chicken" } 
+                ] 
+            }, 
+            "haggle": { 
+                text: "Admn_Rogue: 'Wir geben dir das Root-Passwort. Damit bist du der Gott des Netzwerks.'", 
+                opts: [ 
+                    { t: "Deal! Her mit den Rechten.", next: "deal_pw" }, 
+                    { t: "Für ein Passwort riskiere ich keine Abmahnung. Nein danke.", next: "no" } 
+                ] 
+            }, 
+            "no": {  
+                text: "Admn_Rogue: 'Langweiler. Wir löschen dich aus der Gruppe.'",  
+                opts: [ 
+                    { t: "[System: Chat stummschalten und archivieren]", next: "kicked" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "done_hack": { 
+                txt: "[System: Skript erfolgreich ausgeführt] Die Arbeitszeiterfassung ist manipuliert. Du lehnst dich entspannt zurück und tust für den Rest des Tages absolut gar nichts mehr, während das System fleißig für dich arbeitet.", 
+                m: 10, fl: 30, al: -10, cr: 20 
+            }, 
+            "chicken": { 
+                txt: "Admn_Rogue: 'Feigling.' [System: Chat beendet] Du hast im letzten Moment kalte Füße bekommen. Nichts passiert, aber dein Gewissen ist rein.", 
+                m: 2, fl: 0, al: 5, cr: 0 
+            }, 
+            "kicked": { 
+                txt: "[System: Du wurdest aus der Gruppe entfernt] Die Schatten-IT operiert jetzt ohne dich. Das ist zwar langweilig, aber dafür verlierst du deinen Job heute nicht.", 
+                m: 1, fl: -5, al: 0, cr: -5 
+            }, 
+            "deal_pw": { 
+                txt: "[Datei empfangen: keys.txt] Du hast das Root-Passwort! Ein extrem mächtiges Werkzeug. Die Manipulation läuft im Hintergrund und du schiebst jetzt ganz entspannt eine ruhige Kugel.", 
+                m: 5, loot: "admin_pw", fl: 10, al: 0, cr: 10 
+            } 
+        } 
+    },
+    { 
+        id: "sq_spam", 
+        kind: "phone", 
+        appName: "SMS", 
+        title: "Spam-Bot", 
+        startNode: "root", 
+        nodes: { 
             "root": { 
-                text: "Admn_Rogue: 'Müller! Wir manipulieren heute die Zeiterfassung. Alle gehen um 15 Uhr, System loggt 17 Uhr. Bist du dabei?'", 
-                opts: [
-                    { t: "Ja, sicher!", next: "yes" },
-                    { t: "Zu gefährlich", next: "no" },
-                    { t: "Was springt für mich raus?", next: "haggle" }
-                ]
-            },
-            "yes": { 
-                text: "Admn_Rogue: 'Sauber. Installier das Skript im Anhang auf dem Mainframe. Passwort ist 1234.'", 
-                opts: [
-                    { t: "Skript installieren", next: "done_hack" },
-                    { t: "Doch Rückzieher machen", next: "chicken" }
-                ]
-            },
-            "haggle": {
-                text: "Admn_Rogue: 'Wir geben dir das Root-Passwort.'",
-                opts: [
-                    { t: "Deal!", next: "deal_pw" },
-                    { t: "Nein danke", next: "no" }
-                ]
-            },
-            "no": { 
-                text: "Admn_Rogue: 'Langweiler. Wir löschen dich aus der Gruppe.'", 
-                opts: [
-                    { t: "Okay...", next: "kicked" }
-                ]
-            }
-        },
-        results: {
-            "done_hack": { txt: "HACK ERFOLGREICH! Faulheit +30, Chef-Radar +20. Du gehst heute früher.", m: 10, fl: 30, al: -10, cr: 20 },
-            "chicken": { txt: "Du Feigling. Nichts passiert.", m: 2, fl: 0, al: 5, cr: 0 },
-            "kicked": { txt: "Aus Gruppe geworfen. Langweilig.", m: 1, fl: -5, al: 0, cr: -5 },
-            "deal_pw": { txt: "Du hast das Root-Passwort erhalten!", m: 5, loot: "admin_pw", fl: 10, al: 0, cr: 10 }
-        }
-    },
-    {
-        id: "sq_spam",
-        kind: "phone",
-        appName: "SMS",
-        title: "Spam-Bot",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "InfoService: Sie haben ein iPhone 50 gewonnen! Klicken Sie hier: www.virus-load.ru. Klicken Sie JETZT für Ihren Gewinn!",
-                opts: [
-                    { t: "Link sofort anklicken!", next: "virus_start" },
-                    { t: "Nachricht löschen", next: "clean" }
-                ]
-            },
-            "virus_start": {
-                text: "DOWNLOADING... 99%... INSTALLING ROOTKIT...",
-                opts: [
-                    { t: "ABBRECHEN!!!", next: "virus_fail" },
-                    { t: "Abwarten (Vielleicht klappt's ja)", next: "virus_doom" }
-                ]
-            }
-        },
-        results: {
-            "clean": { txt: "Spam gelöscht. Klug.", m: 1, fl: -5, al: 0, cr: 0 },
-            "virus_fail": { txt: "Download abgebrochen. Das war verdammt knapp.", m: 2, fl: 0, al: 10, cr: 0 },
-            "virus_doom": { txt: "VIRUS AKTIV! Dein Handy spielt laut 'Techno-Schlager' auf voller Lautstärke. Der Chef guckt schon!", m: 5, fl: 0, al: 30, cr: 40, virus: true }
-        }
-    },
-    {
-        id: "sq_tinder_1",
-        kind: "phone",
-        appName: "LoveMatch",
-        title: "Neues Match!",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Lisa (Entfernung: 15m): 'Hey! Du bist doch der Admin, der immer so verzweifelt aus dem Fenster schaut, oder? Ich brauche dringend Flucht vor meinen Excel-Tabellen. Lust auf einen Kaffee? Geht auf mich.'",
-                opts: [
-                    { t: "Klar, gerne!", next: "date_yes" },
-                    { t: "Keine Zeit, Server brennt.", next: "date_no" },
-                    { t: "Paranoia: Bist du vom HR?", next: "hr_check" }
-                ]
-            },
-            "date_yes": {
-                text: "Lisa: 'Super! Treffen uns in 5 Min in der Lobby. Ich erkenne dich am Karohemd, richtig? 😉'",
-                opts: [
-                    { t: "Hingehen & Charmant sein", next: "go_date" },
-                    { t: "Panik bekommen & Ghosten", next: "ghost" }
-                ]
-            },
-            "hr_check": {
-                text: "Lisa: 'LOL nein! 😂 Ich bin im Marketing. Ich will nur Koffein, kein Compliance-Audit. Versprochen!'",
-                opts: [
-                    { t: "Okay, ich komme.", next: "go_date" },
-                    { t: "Das würde ein Spion auch sagen! (Blocken)", next: "date_no" }
-                ]
-            }
-        },
-        results: {
-            "date_no": { 
-                txt: "Match aufgelöst. Du bleibst allein, aber wenigstens sicher vor HR-Fallen.", 
+                text: "InfoService: Sie haben ein brandneues iPhone 50 gewonnen! Klicken Sie hier: www.virus-load.ru. Klicken Sie JETZT für Ihren Gewinn!", 
+                opts: [ 
+                    { t: "[System: Auf den Link klicken]", next: "virus_start" }, 
+                    { t: "[System: Nachricht sofort löschen]", next: "clean" } 
+                ] 
+            }, 
+            "virus_start": { 
+                text: "[Browser öffnet sich...] DOWNLOADING... 99%... INSTALLING ROOTKIT...", 
+                opts: [ 
+                    { t: "[System: Prozess panisch abbrechen! X drücken!]", next: "virus_fail" }, 
+                    { t: "[System: Abwarten, vielleicht gibt es ja wirklich ein Handy...]", next: "virus_doom" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "clean": { 
+                txt: "[System: SMS gelöscht] Sehr klug. Du hast in der IT schon genug echte Viren gesehen.", 
                 m: 1, fl: -5, al: 0, cr: 0 
-            },
-            "go_date": { 
-                txt: "Das Date lief super! Ihr habt 20 Minuten über Drucker gelästert. Sie hat sogar deinen Witz über IPv6 verstanden (glaubst du).", 
-                m: 20, fl: 20, al: -20, cr: 0,
-                next: "lisa_contact"
-            },
-            "ghost": { 
-                txt: "Du hast dich auf dem Klo versteckt. Später siehst du sie allein am Automaten stehen. Dein Selbstwertgefühl ist im Keller.", 
-                m: 10, fl: -10, al: 5, cr: 0 
-            }
-        }
+            }, 
+            "virus_fail": { 
+                txt: "[System: Download erfolgreich abgebrochen] Das war verdammt knapp. Dein Puls schlägt dir bis zum Hals.", 
+                m: 2, fl: 0, al: 10, cr: 0 
+            }, 
+            "virus_doom": { 
+                txt: "[System: VIRUS AKTIV] Dein Handy spielt plötzlich extrem lauten Techno-Schlager auf maximaler Lautstärke ab. Der Chef guckt schon warnend in deine Richtung!", 
+                m: 5, fl: 0, al: 30, cr: 40, virus: true 
+            } 
+        } 
     },
-    {
-        id: "sq_tinder_2",
-        kind: "phone",
-        appName: "Nachricht",
-        title: "Lisa (Marketing)",
-        reqStory: "lisa_contact",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Lisa schreibt: 'Hey Süßer! 😘 Das war echt nett neulich. Sag mal... mein Laptop macht so komische Geräusche. Und das Ticket-System ist so kompliziert. Kannst du mal kurz rüberkommen und gucken? Als private Gefälligkeit? 😉'",
-                opts: [
-                    { t: "Sofort springen (Simp-Modus)", next: "help_simp" },
-                    { t: "Professionell bleiben: 'Erstell ein Ticket.'", next: "help_ticket" }
-                ]
-            },
-            "help_simp": {
-                text: "Du rennst ins Marketing. Sie lächelt dich an, während du ihren Lüfter entstaubst. 'Du bist mein Held! Kaffee später?'",
-                opts: [
-                    { t: "Gerne!", next: "res_simp" }
-                ]
-            },
-            "help_ticket": {
-                text: "Lisa: 'Wow. Ernsthaft? Ich dachte, wir hätten... was Spezielles. Vergiss es. 🙄'",
-                opts: [
-                    { t: "Tja.", next: "res_friendzone" }
-                ]
-            }
-        },
-        results: {
-            "res_simp": { 
-                txt: "Du hast jetzt eine Affäre im Büro. Vorteil: Gratis Kaffee. Nachteil: Du bist jetzt ihr persönlicher 24/7 IT-Sklave.", 
-                m: 10, fl: -10, al: -15, cr: 10 
-            },
-            "res_friendzone": { 
-                txt: "Sie hat dich unmatcht. Aber dein professioneller Stolz ist intakt. Und du musst ihren Laptop nicht fixen.", 
-                m: 5, fl: 10, al: 5, cr: 0 
-            }
-        }
+    { 
+        id: "sq_tinder_1", 
+        kind: "phone", 
+        appName: "LoveMatch", 
+        title: "Neues Match!", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Lisa (Entfernung: 15m): 'Hey! Du bist doch der Admin, der immer so verzweifelt aus dem Fenster schaut, oder? Ich brauche dringend Flucht vor meinen Excel-Tabellen. Lust auf einen Kaffee? Geht auf mich.'", 
+                opts: [ 
+                    { t: "Gerne! Ein Kaffee ist jetzt mein absoluter Rettungsplan.", next: "date_yes" }, 
+                    { t: "Sorry, hier brennt gerade wortwörtlich ein Server. Keine Zeit.", next: "date_no" }, 
+                    { t: "Ist das ein Trick? Bist du von HR und willst meine Pausenzeiten prüfen?", next: "hr_check" } 
+                ] 
+            }, 
+            "date_yes": { 
+                text: "Lisa: 'Super! Treffen uns in 5 Min in der Lobby. Ich erkenne dich am Karohemd, richtig? 😉'", 
+                opts: [ 
+                    { t: "Erwischt. Bis gleich in der Lobby!", next: "go_date" }, 
+                    { t: "[System: Match aus unerklärlicher Panik auflösen]", next: "ghost" } 
+                ] 
+            }, 
+            "hr_check": { 
+                text: "Lisa: 'LOL nein! 😂 Ich bin im Marketing. Ich will nur Koffein, kein Compliance-Audit. Versprochen!'", 
+                opts: [ 
+                    { t: "Puh, okay. Dann bis gleich am Kaffeeautomaten in der Lobby!", next: "go_date" }, 
+                    { t: "[System: Nutzerin blockieren] Genau das würde ein HR-Spion sagen...", next: "date_no" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "date_no": {  
+                txt: "[System: Match aufgelöst] Du bleibst allein an deinem Platz, aber wenigstens bist du absolut sicher vor eventuellen HR-Fallen. Vertraue niemandem.",  
+                m: 1, fl: -5, al: 0, cr: 0  
+            }, 
+            "go_date": {  
+                txt: "[Gerät gesperrt] Das Date in der Lobby lief super! Ihr habt 20 Minuten lang über Drucker gelästert. Sie hat sogar deinen Witz über IPv6 verstanden (glaubst du zumindest).",  
+                m: 20, fl: 20, al: -20, cr: 0, 
+                next: "lisa_contact" 
+            }, 
+            "ghost": {  
+                txt: "[System: Match aufgelöst] Du hast pure Panik bekommen und dich auf dem Klo versteckt. Später siehst du sie traurig allein am Automaten stehen. Dein Selbstwertgefühl ist im Keller.",  
+                m: 10, fl: -10, al: 5, cr: 0  
+            } 
+        } 
     },
-    {
-        id: "sq_phone_parking_taped",
-        kind: "phone",
-        appName: "SMS",
-        reqStory: "sq_parking_2_taped",
-        title: "Unbekannte Nummer",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "BILD: Ein Foto von deinem getapten Kunstwerk. Text: 'Wer war das?! Das ist genial! Ich krieg die Tür nicht auf, aber Respekt. Komm in mein Büro. - Der externe Auditor'\n\nDer Typ ist beeindruckt.",
-                opts: [
-                    { t: "Zugeben & Lob abholen", next: "res_respect" },
-                    { t: "Leugnen (Angst)", next: "res_fear" }
-                ]
-            },
-            "res_respect": {
-                text: "Er lacht. 'Endlich jemand mit Rückgrat in dieser Firma.' Er verspricht, dich bei der nächsten Prüfung 'gnädig' zu behandeln.",
-                opts: [
-                    { t: "Danke.", next: "end_respect" }
-                ]
-            },
-            "res_fear": {
-                text: "Du antwortest nicht und versteckst dich kurz unter dem Tisch. Chance vertan.",
-                opts: [
-                    { t: "Puh.", next: "end_fear" }
-                ]
-            }
-        },
-        results: {
-            "end_respect": { txt: "Der Auditor ist dein neuer Fan.", m: 10, fl: 0, al: -15, cr: -10 },
-            "end_fear": { txt: "Die SMS bleibt unbeantwortet.", m: 2, fl: 0, al: 5, cr: 0 }
-        }
+    { 
+        id: "sq_tinder_2", 
+        kind: "phone", 
+        appName: "Nachricht", 
+        title: "Lisa (Marketing)", 
+        reqStory: "lisa_contact", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Lisa schreibt: 'Hey Süßer! 😘 Das war echt nett neulich. Sag mal... mein Laptop macht so komische Geräusche. Und das Ticket-System ist so kompliziert. Kannst du mal kurz rüberkommen und gucken? Als private Gefälligkeit? 😉'", 
+                opts: [ 
+                    { t: "Klar, bin in zwei Minuten drüben! 😘", next: "help_simp" }, 
+                    { t: "Sorry Lisa, aber dafür musst du offiziell ein Ticket aufmachen.", next: "help_ticket" } 
+                ] 
+            }, 
+            "help_simp": { 
+                text: "[System: Du warst drüben und hast ihren Lüfter entstaubt] Lisa: 'Du bist mein absoluter Held! 😍 Gibt's Kaffee später als Dankeschön?'", 
+                opts: [ 
+                    { t: "Sehr gerne! Ich freu mich drauf.", next: "res_simp" } 
+                ] 
+            }, 
+            "help_ticket": { 
+                text: "Lisa: 'Wow. Ernsthaft? Ich dachte, wir hätten... was Spezielles. Vergiss es. 🙄'", 
+                opts: [ 
+                    { t: "Regeln sind nun mal Regeln, sorry. 🤷‍♂️", next: "res_friendzone" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "res_simp": {  
+                txt: "[Chat stummgeschaltet] Du hast jetzt eine Romanze im Büro. Vorteil: Gratis Kaffee. Nachteil: Du bist jetzt offiziell ihr unbezahlter, persönlicher 24/7 IT-Support.",  
+                m: 10, fl: -10, al: -15, cr: 10  
+            }, 
+            "res_friendzone": {  
+                txt: "[System: Lisa hat dich blockiert] Match aufgelöst. Dein professioneller Admin-Stolz ist intakt und du musst ihren verkeimten Laptop nicht reinigen.",  
+                m: 5, fl: 10, al: 5, cr: 0  
+            } 
+        } 
     },
-    {
-        id: "sq_phone_parking_blocked",
-        kind: "phone",
-        appName: "WhatsApp",
-        reqStory: "sq_parking_2_blocked",
-        title: "Dr. Wichtig (Chef)",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "MÜLLER! Ihr Corsa steht in meiner Flugschneise! Ich habe in 5 Minuten einen Termin beim Golf-Club. BEWEGEN SIE DAS DING!",
-                opts: [
-                    { t: "Sofort losrennen", next: "res_fast" },
-                    { t: "Vortäuschen, die SMS nicht gesehen zu haben", next: "res_ignore" }
-                ]
-            },
-            "res_fast": {
-                text: "Du rennst völlig außer Atem zum Parkplatz. Der Chef fuchtelt wild mit seinen Autoschlüsseln.",
-                opts: [
-                    { t: "Umparken", next: "end_fast" }
-                ]
-            },
-            "res_ignore": {
-                text: "Du lässt das Handy vibrieren. 10 Minuten später hörst du ihn draußen fluchen. Er muss wohl das Taxi nehmen.",
-                opts: [
-                    { t: "Ups.", next: "end_ignore" }
-                ]
-            }
-        },
-        results: {
-            "end_fast": { txt: "Du hast den Chef besänftigt, bist aber völlig fertig.", m: 15, fl: -10, al: -5, cr: 5 },
-            "end_ignore": { txt: "Der Chef ist stinksauer, aber dein Karma feiert.", m: 5, fl: 15, al: 20, cr: -10 }
-        }
+    { 
+        id: "sq_phone_parking_taped", 
+        kind: "phone", 
+        appName: "SMS", 
+        reqStory: "sq_parking_2_taped", 
+        title: "Unbekannte Nummer", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "[Bild empfangen: Dein getaptes Kunstwerk auf dem Parkplatz] Auditor: 'Wer war das?! Das ist genial! Ich krieg die Fahrertür nicht auf, aber tiefster Respekt. Wer auch immer das war: Komm in mein Büro. - Der externe Auditor'", 
+                opts: [ 
+                    { t: "Das war ich. Panzerband löst eben alle Probleme!", next: "res_respect" }, 
+                    { t: "[System: Nachricht ignorieren & panisch unter dem Tisch verstecken]", next: "res_fear" } 
+                ] 
+            }, 
+            "res_respect": { 
+                text: "Auditor: 'Hahaha! Endlich jemand mit Rückgrat in dieser Firma. Komm rüber auf einen Kaffee. Bei der nächsten IT-Prüfung bin ich gnädig mit deinen Servern.'", 
+                opts: [ 
+                    { t: "Perfekt, das ist ein Deal. Bin gleich da.", next: "end_respect" } 
+                ] 
+            }, 
+            "res_fear": { 
+                text: "[System: Du starrst auf das Display und antwortest nicht] Auditor: 'Hallo? Keiner? Schade. Aber das Tape hält echt verdammt gut...'", 
+                opts: [ 
+                    { t: "[System: Chat endgültig löschen]", next: "end_fear" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "end_respect": { 
+                txt: "[System: Chat beendet] Du gehst rüber in sein Büro. Der Auditor ist jetzt dein größter Fan. Deine Aggro sinkt massiv, denn so ein Streich tut der Seele einfach gut.", 
+                m: 10, fl: 0, al: -15, cr: -10 
+            }, 
+            "end_fear": { 
+                txt: "Die SMS bleibt unbeantwortet. Du schwitzt vor Angst vor Konsequenzen. Du hast die Chance auf einen echt mächtigen Verbündeten vertan.", 
+                m: 2, fl: 0, al: 5, cr: 0 
+            } 
+        } 
     },
-{ 
+    { 
+        id: "sq_phone_parking_blocked", 
+        kind: "phone", 
+        appName: "WhatsApp", 
+        reqStory: "sq_parking_2_blocked", 
+        title: "Dr. Wichtig (Chef)", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Dr. Wichtig: 'MÜLLER! Ihr Corsa steht in meiner Flugschneise! Ich habe in 5 Minuten einen hochwichtigen Termin beim Golf-Club. BEWEGEN SIE DAS DING!'", 
+                opts: [ 
+                    { t: "[System: Handy schnappen und sofort zum Parkplatz rennen]", next: "res_fast" }, 
+                    { t: "[System: Nachricht als ungelesen markieren und Handy ignorieren]", next: "res_ignore" } 
+                ] 
+            }, 
+            "res_fast": { 
+                text: "[System: Chat verlassen. Du sprintest außer Atem nach unten] Du stehst am Parkplatz. Der Chef fuchtelt wild mit den Autoschlüsseln seines SUVs.", 
+                opts: [ 
+                    { t: "[System: Zähneknirschend ins Auto steigen und umparken]", next: "end_fast" } 
+                ] 
+            }, 
+            "res_ignore": { 
+                text: "[System: Chat stummgeschaltet] Du lässt das Handy einfach auf dem Tisch vibrieren. 10 Minuten später hörst du ihn draußen extrem laut fluchen. Er muss wohl tatsächlich ein Taxi rufen.", 
+                opts: [ 
+                    { t: "Klingt teuer. Schade. [System: Weiterarbeiten]", next: "end_ignore" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "end_fast": { 
+                txt: "Du kommst schwitzend zurück an deinen Platz. Du hast den Chef besänftigt, bist aber völlig fertig und fühlst dich wie ein Laufbursche.", 
+                rep: { "Dr. Wichtig": 2 },	
+                m: 15, fl: -10, al: -5, cr: 5 
+            }, 
+            "end_ignore": { 
+                txt: "Das war ein teures Taxi für den Golfclub. Der Chef ist stinksauer auf dich, aber dein inneres Karma-Konto und deine Faulheit feiern ein Fest.", 
+                rep: { "Dr. Wichtig": -5 },	
+                m: 5, fl: 15, al: 20, cr: -10 
+            } 
+        } 
+    },
+    { 
         id: "sq_headhunter_1", 
         kind: "phone", 
         appName: "Anruf", 
@@ -12664,13 +12788,13 @@ const DB = {
                 text: "Anruf eingehend... Eine sanfte Stimme: 'Herr Müller? Hier ist Elena von TechHunt. Wir suchen Talente, die... flexibel mit Informationen umgehen.'", 
                 opts: [ 
                     { t: "Kein Interesse. Ich sterbe hier lieber loyal.", next: "res_loyal" }, 
-                    { t: "Zuhören", next: "headhunter_listen" } 
+                    { t: "Klingt lukrativ. Ich bin ganz Ohr.", next: "headhunter_listen" } 
                 ] 
             }, 
             "headhunter_listen": { 
                 text: "'Interessant. Wir rufen zurück, wenn Sie etwas... Hebelwirkung haben.'", 
                 opts: [ 
-                    { t: "Okay...", next: "res_listen" } 
+                    { t: "Okay, ich werde die Augen offenhalten.", next: "res_listen" } 
                 ] 
             } 
         }, 
@@ -12682,97 +12806,107 @@ const DB = {
     {
         id: "sq_headhunter_2",
         kind: "phone",
-        appName: "TechHunt",
-        title: "Rückruf",
+        appName: "Anruf",
+        title: "Rückruf (Elena)",
         reqStory: "sq_headhunter_2_active",
         startNode: "root",
         nodes: {
             "root": {
-                text: "Elena ruft wieder an.\n\n'Na? Haben Sie über das Angebot nachgedacht? Wir brauchen jemanden, der die Interna von GlobalCorp kennt.'",
+                text: "Elena ruft wieder an. 'Na? Haben Sie über das Angebot nachgedacht? Wir brauchen jemanden, der die Interna von GlobalCorp kennt.'",
                 opts: [
-                    { t: "Schwarze Liste anbieten", req: "secret_list", next: "offer_secrets" },
-                    { t: "Standard-Interview führen", next: "standard_interview" }
+                    { t: "Ich hätte da ein Dokument... eine 'Schwarze Liste'.", req: "secret_list", next: "offer_secrets" },
+                    { t: "Lassen Sie uns ganz normal über mein Profil sprechen.", next: "standard_interview" }
                 ]
             },
             "offer_secrets": {
                 text: "Du liest Namen von der Liste vor, die du im Drucker gefunden hast. Stille. Dann: 'Das ist Gold wert. Wir bieten Ihnen das Doppelte.'",
                 opts: [
-                    { t: "Deal (aber ich bleibe hier)", next: "res_rich" }
+                    { t: "Deal. Aber ich bleibe als Maulwurf hier.", next: "res_rich" }
                 ]
             },
             "standard_interview": {
-                text: "Bla bla Synergien, bla bla Teamplayer. Sie melden sich nicht mehr.",
+                text: "Bla bla Synergien, bla bla Teamplayer. Sie wirken nicht sehr beeindruckt von deinem Standard-Lebenslauf. 'Wir melden uns.'",
                 opts: [
-                    { t: "Schade", next: "res_fail" }
+                    { t: "Gut, ich warte ab.", next: "res_fail" }
                 ]
             }
         },
         results: {
             "res_rich": { 
-                txt: "Du nutzt das Angebot, um deine Gehaltsverhandlung zu gewinnen. Radar steigt, aber Stress sinkt massiv.", 
-                m: 15, 
-                fl: 10, al: -20, cr: 15,
-                req: "secret_list" 
+                txt: "Ein sattes 'Beraterhonorar' landet auf deinem Offshore-Konto. Du bist nun offiziell ein Konzern-Spion. Dein Gewissen ist erstaunlich leise, wenn der Kontostand stimmt.", 
+                m: 15, fl: 10, al: -20, cr: 5
             },
-            "res_fail": { txt: "Das war wohl nichts.", m: 5, fl: 0, al: 5, cr: 0 }
+            "res_fail": { 
+                txt: "Die Headhunterin meldet sich nie wieder. Klassisches Ghosting. Dein Standard-Lebenslauf war ihr wohl nicht 'disruptiv' genug.", 
+                m: 5, fl: 0, al: 5, cr: 0 
+            }
         }
     },
-    {
-        id: "sq_darknet",
-        kind: "phone",
-        appName: "Tor Browser",
-        title: "Das Angebot",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Anon: 'Ich kaufe Firmengeheimnisse. 1 Bitcoin pro Datensatz. Interesse an schnellem Geld?'",
-                opts: [
-                    { t: "Niemals! (Blockieren)", next: "good" },
-                    { t: "Erzähl mir mehr...", next: "bad" }
-                ]
-            },
-            "bad": {
-                text: "Anon: 'Lade einfach die Kundendatenbank hoch. Keiner wird es merken.'",
-                opts: [
-                    { t: "Upload starten", next: "crime" },
-                    { t: "Rückzieher machen", next: "chicken" }
-                ]
-            }
-        },
-        results: {
-            "good": { txt: "Du bleibst sauber. Dein Gewissen ist rein.", m: 1, fl: 0, al: 0, cr: -10 },
-            "chicken": { txt: "Das war knapp. Besser Finger weg.", m: 2, fl: 0, al: 5, cr: 0 },
-            "crime": { txt: "Upload fertig. Du bist reich! Aber paranoid. Radar +50!", m: 10, fl: 20, al: -50, cr: 50 }
-        }
+    { 
+        id: "sq_darknet", 
+        kind: "phone", 
+        appName: "Tor Browser", 
+        title: "Das Angebot", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Anon: 'Ich zahle 1 Bitcoin pro Datensatz für interne Firmengeheimnisse. Komplett anonym über ein Escrow-System. Interesse an schnellem Geld?'", 
+                opts: [ 
+                    { t: "[System: Chat sofort schließen & Session beenden]", next: "good" }, 
+                    { t: "Wie genau stellst du dir das vor? Bin ganz Ohr.", next: "bad" } 
+                ] 
+            }, 
+            "bad": { 
+                text: "Anon: 'Lass einfach einen Dump eurer Kundendatenbank über diesen gesicherten Onion-Link laufen. Meine Scripts waschen alle Spuren. Keiner wird es je merken.'", 
+                opts: [ 
+                    { t: "[System: Datei 'Kundendatenbank.sql' auswählen & Upload starten]", next: "crime" }, 
+                    { t: "Nein, das ist mir eine Nummer zu groß. Ich bin raus.", next: "chicken" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "good": { 
+                txt: "[Verbindung getrennt] Du bleibst sauber. Dein Gewissen ist rein und du riskierst keine Haftstrafe für ein bisschen Krypto.", 
+                m: 1, fl: 0, al: 0, cr: -10 
+            }, 
+            "chicken": { 
+                txt: "[System: Tor-Identität erneuert] Du machst im letzten Moment einen Rückzieher. Das war verdammt knapp, aber besser so. Finger weg vom Darknet.", 
+                m: 2, fl: 0, al: 5, cr: 0 
+            }, 
+            "crime": { 
+                txt: "[Upload 100% - 1 BTC empfangen] Du hast es wirklich getan. Du bist plötzlich extrem reich! Aber die Paranoia kickt sofort rein. Jeder Blick des Chefs wirkt jetzt wie ein Verhör.", 
+                m: 10, fl: 20, al: -50, cr: 50 
+            } 
+        } 
     },
-    {
-        id: "sq_moral_bernd",
-        kind: "phone",
-        appName: "Teams",
-        title: "Bernd (Vertrieb)",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Bernd: 'Hör mal, ganz heikles Thema. Kannst du gerade schreiben? Ich hab dem Kunden aus Versehen die interne Kalkulation mit unserer riesigen Marge geschickt statt dem Angebot! 😱 Wenn der Chef das sieht, bin ich tot. Kannst du die Mail vom Server löschen, bevor der Kunde sie öffnet?'",
-                opts: [
-                    { t: "Löschen (Regelverstoß)", next: "wipe" },
-                    { t: "Ablehnen (Ehrlich bleiben)", next: "deny" },
-                    { t: "Was springt für mich raus?", next: "deal" }
-                ]
-            },
-            "deal": {
-                text: "Bernd: 'Ich geb dir 50 Euro bar auf die Hand! Mach schon, er ist gerade online!'",
-                opts: [
-                    { t: "Deal: Her mit der Kohle", next: "cash" },
-                    { t: "Nein, zu riskant.", next: "deny" }
-                ]
-            }
-        },
-        results: {
-            "wipe": { txt: "Spurlos gelöscht. Bernd schuldet dir was. Du fühlst dich wie ein Hacker, aber das Risiko war hoch.", m: 10, fl: 0, al: -15, cr: 15 },
-            "deny": { txt: "Du tust nichts. Bernd wird kurz darauf ins Chefbüro zitiert. Man hört Schreie. Dein Gewissen ist rein, aber Bernd hasst dich.", m: 2, fl: 0, al: 10, cr: -5 },
-            "cash": { txt: "50 Euro eingesteckt. Mail ist weg. Ein lukrativer Tag, solange niemand in die Logs schaut...", m: 10, fl: 5, al: -20, cr: 25 }
-        }
+    { 
+        id: "sq_moral_bernd", 
+        kind: "phone", 
+        appName: "Teams", 
+        title: "Bernd (Vertrieb)", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Bernd: 'Hör mal, ganz heikles Thema. Kannst du gerade schreiben? Ich hab dem Kunden aus Versehen die interne Kalkulation mit unserer riesigen Marge geschickt statt dem Angebot! 😱 Wenn der Chef das sieht, bin ich tot. Kannst du die Mail vom Server löschen, bevor der Kunde sie öffnet?'", 
+                opts: [ 
+                    { t: "Okay, ich lösche sie. Aber du schuldest mir was.", next: "wipe" }, 
+                    { t: "Vergiss es. Wenn das rauskommt, fliege ich mit dir.", next: "deny" }, 
+                    { t: "Und was springt für mich bei der Aktion raus?", next: "deal" } 
+                ] 
+            }, 
+            "deal": { 
+                text: "Bernd: 'Ich geb dir 50 Euro bar auf die Hand! Mach schon, er ist gerade online!'", 
+                opts: [ 
+                    { t: "Deal. Bring den Fuffi nachher in mein Büro.", next: "cash" }, 
+                    { t: "Lass mal. Meine Logs lügen nicht, das fällt auf.", next: "deny" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "wipe": { txt: "Bernd: 'Du bist mein Gott! Danke!' Die Mail ist spurlos gelöscht. Das Risiko war hoch, aber du hast einen gewaltigen Gefallen gut.", m: 10, fl: 0, al: -15, cr: 15 }, 
+            "deny": { txt: "Bernd: 'Danke für gar nichts... 🖕' Bernd wird kurz darauf ins Chefbüro zitiert. Dein Gewissen ist rein, aber Bernd hasst dich jetzt.", m: 2, fl: 0, al: 10, cr: -5 }, 
+            "cash": { txt: "Bernd: 'Geld liegt gleich unter deiner Tastatur!' Die Mail ist weg. Ein lukrativer Tag, solange die Compliance-Abteilung nicht reinschaut.", m: 10, fl: 5, al: -20, cr: 25 } 
+        } 
     },
     {
         id: "sq_mom_help",
@@ -12810,223 +12944,191 @@ const DB = {
             "bsi": { txt: "Der Betrüger hat sofort aufgelegt! Mama hält dich für einen Geheimagenten.", m: 5, fl: 0, al: -10, cr: 5 }
         }
     },
-    {
-        id: "sq_wrong_number",
-        kind: "phone",
-        appName: "SMS",
-        title: "Unbekannt",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Unbekannt: 'Hey Bro, hast du das Zeug? Bin in 5 Min am Bahnhof. Bring den Stoff mit.'",
-                opts: [
-                    { t: "Falsche Nummer.", next: "boring" },
-                    { t: "Antwort: 'Die Pakete wurden verworfen.'", next: "tech_joke" },
-                    { t: "Antwort: 'Zugriff verweigert (403)'", next: "http_joke" }
-                ]
-            },
-            "tech_joke": {
-                text: "Unbekannt: 'Hä? Was laberst du? Hast du das Gras oder nicht?'",
-                opts: [
-                    { t: "Antwort: 'Firewall blockiert Port 420.'", next: "confused" }
-                ]
-            },
-            "http_joke": {
-                text: "Unbekannt: 'Alter, verarsch wen anders. Ich komm jetzt vorbei.'",
-                opts: [
-                    { t: "Blockieren", next: "block" }
-                ]
-            }
-        },
-        results: {
-            "boring": { txt: "Langweilig, aber sicher.", m: 1, fl: 0, al: 0, cr: 0 },
-            "confused": { txt: "Er hat aufgehört zu schreiben. Er denkt wohl, die Polizei hört mit. Lustig!", m: 3, fl: 5, al: -10, cr: 0 },
-            "block": { txt: "Nummer blockiert. Besser ist das.", m: 1, fl: 0, al: 5, cr: 0 }
-        }
+    { 
+        id: "sq_wrong_number", 
+        kind: "phone", 
+        appName: "SMS", 
+        title: "Unbekannt", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Unbekannt: 'Hey Bro, hast du das Zeug? Bin in 5 Min am Bahnhof. Bring den Stoff mit.'", 
+                opts: [ 
+                    { t: "Falsche Nummer, Kumpel.", next: "boring" }, 
+                    { t: "Die Pakete wurden verworfen.", next: "tech_joke" }, 
+                    { t: "Error 403: Zugriff verweigert.", next: "http_joke" } 
+                ] 
+            }, 
+            "tech_joke": { 
+                text: "Unbekannt: 'Hä? Was laberst du? Hast du das Gras oder nicht?'", 
+                opts: [ 
+                    { t: "Firewall blockiert Port 420.", next: "confused" } 
+                ] 
+            }, 
+            "http_joke": { 
+                text: "Unbekannt: 'Alter, verarsch wen anders. Ich komm jetzt vorbei.'", 
+                opts: [ 
+                    { t: "Komm ruhig. Ich tracke gerade deine IP-Adresse...", next: "block" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "boring": { txt: "Unbekannt: 'Oh, sorry man.' Du hast deine Ruhe. Langweilig, aber sicher.", m: 1, fl: 0, al: 0, cr: 0 }, 
+            "confused": { txt: "Unbekannt: 'Shit, Bullen?! Bin weg!' Er schreibt nicht mehr. Ein voller Erfolg für die IT-Abteilung.", m: 3, fl: 5, al: -10, cr: 0 }, 
+            "block": { txt: "Unbekannt: 'Fuck, lass mich in Ruhe!' Du hast ihn in Panik versetzt und die Nummer blockiert. Gutes Gefühl.", m: 1, fl: 0, al: 5, cr: 0 } 
+        } 
     },
-    {
-        id: "sq_ebay_1",
-        kind: "phone",
-        appName: "Kleinanzeigen",
-        title: "Nachricht zu: 'Alte Grafikkarte'",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Kuseng88: 'Hallo. Noch da? Tausche gegen Teppich? Komme heute holen.'",
-                opts: [
-                    { t: "Nein, nur Cash.", next: "cash" },
-                    { t: "Was für ein Teppich?", next: "carpet" },
-                    { t: "Blockieren", next: "block" }
-                ]
-            },
-            "cash": {
-                text: "Kuseng88: 'Gebe dir 10 Euro und Samsung Galaxy S3 (Display kaputt).'",
-                opts: [
-                    { t: "Deal (Müll loswerden)", next: "bad_deal" },
-                    { t: "Vergiss es. Zu wenig.", next: "res_refuse" } 
-                ]
-            },
-            "carpet": {
-                text: "Kuseng88: 'Fliegt gut. Farbe rot. Bisschen Flecken von Katze.'",
-                opts: [
-                    { t: "Ich bin raus. (Blockieren)", next: "block" }
-                ]
-            }
-        },
-        results: {
-            "block": { 
-                txt: "Nutzer blockiert. Du spürst, wie dein Blutdruck steigt. Warum sind Menschen so?", 
-                m: 2, fl: 5, al: 10, cr: 0
-            },
-            "bad_deal": { 
-                txt: "Du hast jetzt 10€ und ein kaputtes Handy. Immerhin ist die Grafikkarte weg.", 
-                m: 5, fl: 5, al: 0, cr: 5 
-            },
-            "res_refuse": { 
-                txt: "Du lehnst ab. Er liest die Nachricht ('Gelesen'), schreibt aber nicht zurück. Die Wut köchelt leicht.", 
-                m: 2, fl: 5, al: 5, cr: 0,
-                next: "ebay_pending" 
-            }
-        }
+    { 
+        id: "sq_ebay_1", 
+        kind: "phone", 
+        appName: "Kleinanzeigen", 
+        title: "Nachricht zu: 'Alte Grafikkarte'", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Kuseng88: 'Hallo. Noch da? Tausche gegen Teppich? Komme heute holen.'", 
+                opts: [ 
+                    { t: "Nein, nur Cash.", next: "cash" }, 
+                    { t: "Was für ein Teppich?", next: "carpet" }, 
+                    { t: "Lass stecken. Mit solchen Leuten verhandle ich nicht.", next: "block" } 
+                ] 
+            }, 
+            "cash": { 
+                text: "Kuseng88: 'Gebe dir 10 Euro und Samsung Galaxy S3 (Display kaputt).'", 
+                opts: [ 
+                    { t: "Na gut, Hauptsache das Ding ist weg. Komm vorbei.", next: "bad_deal" }, 
+                    { t: "Vergiss es. Das ist zu wenig.", next: "res_refuse" }  
+                ] 
+            }, 
+            "carpet": { 
+                text: "Kuseng88: 'Fliegt gut. Farbe rot. Bisschen Flecken von Katze.'", 
+                opts: [ 
+                    { t: "Katzenflecken?! Vergiss es, ich bin raus.", next: "block" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "block": {  
+                txt: "[System: Nutzer blockiert] Du drückst den Blockieren-Button. Du spürst, wie dein Blutdruck steigt. Warum sind Menschen auf dieser App so?",  
+                m: 2, fl: 5, al: 10, cr: 0 
+            }, 
+            "bad_deal": {  
+                txt: "Kuseng88: 'Bin in 5 Min da Chef!' Du hast jetzt 10€ und ein kaputtes Handy mehr. Immerhin ist die Grafikkarte weg.",  
+                m: 5, fl: 5, al: 0, cr: 5  
+            }, 
+            "res_refuse": {  
+                txt: "[Gelesen] Er liest die Nachricht, schreibt aber nicht zurück. Die Wut köchelt leicht.",  
+                m: 2, fl: 5, al: 5, cr: 0, 
+                next: "ebay_pending"  
+            } 
+        } 
     },
-    {
-        id: "sq_ebay_2",
-        kind: "phone",
-        appName: "Kleinanzeigen",
-        title: "Kuseng88 schreibt...",
-        reqStory: "ebay_pending", 
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Kuseng88 meldet sich wieder:\n\n'Hallo Chef. Hab nochmal geguckt. Karte ist ja alt. 10 Euro war zu viel. Gebe dir 4 Euro. Und ich nehme sie sofort. Du musst aber Bus-Ticket zahlen.'",
-                opts: [
-                    { t: "Wut: 'Verarsch wen anders!'", next: "rage_quit" },
-                    { t: "Resignation: 'Nimm sie einfach.'", next: "sad_deal" },
-                    { t: "Troll: 'Tausche gegen die Katze.'", next: "troll_fail" }
-                ]
-            }
-        },
-        results: {
-            "rage_quit": { 
-                txt: "Du blockierst ihn und wirfst das Handy fast gegen die Wand. Deine Ader an der Stirn pocht.", 
-                m: 5, fl: 5, al: 15, cr: 5
-            },
-            "sad_deal": { 
-                txt: "Er kommt zur Lobby. Er drückt dir 3,50€ in die Hand ('Hab nicht passend') und verschwindet. Du fühlst dich leer.", 
-                m: 5, fl: 5, al: 10, cr: 5
-            },
-            "troll_fail": { 
-                txt: "Er schreibt eiskalt zurück: 'Katze ist weg. Hab gegen Teppich getauscht. Also 4 Euro?' Du gibst auf. Er kommt vorbei, zahlt 3,50€ und geht.", 
-                m: 5, fl: 5, al: 10, cr: 5
-            }
-        }
+    { 
+        id: "sq_ebay_2", 
+        kind: "phone", 
+        appName: "Kleinanzeigen", 
+        title: "Kuseng88 schreibt...", 
+        reqStory: "ebay_pending",  
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Kuseng88 meldet sich wieder: 'Hallo Chef. Hab nochmal geguckt. Karte ist ja alt. 10 Euro war zu viel. Gebe dir 4 Euro. Und ich nehme sie sofort. Du musst aber Bus-Ticket zahlen.'", 
+                opts: [ 
+                    { t: "Willst du mich eigentlich verarschen? Ciao.", next: "rage_quit" }, 
+                    { t: "Komm vorbei und nimm sie einfach mit. Hauptsache weg.", next: "sad_deal" }, 
+                    { t: "Okay, aber nur wenn ich die Katze dazu kriege.", next: "troll_fail" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "rage_quit": {  
+                txt: "[System: Nutzer blockiert] Du pfefferst das Handy fast gegen die Wand. Deine Ader an der Stirn pocht. Warum tust du dir diese App an?",  
+                m: 5, fl: 5, al: 15, cr: 5 
+            }, 
+            "sad_deal": {  
+                txt: "Kuseng88: 'Bin unterwegs!' Er kommt zur Lobby, drückt dir 3,50€ in die Hand ('Hab nicht passend') und verschwindet. Du fühlst dich leer.",  
+                m: 5, fl: 5, al: 10, cr: 5 
+            }, 
+            "troll_fail": {  
+                txt: "Kuseng88: 'Katze ist weg. Hab gegen Teppich getauscht. Also 4 Euro?' Du gibst auf. Er kommt vorbei, zahlt 3,50€ und geht.",  
+                m: 5, fl: 5, al: 10, cr: 5 
+            } 
+        } 
     },
-    {
-        id: "sq_pager",
-        kind: "phone",
-        appName: "System Warnung",
-        title: "🚨 CRITICAL ALERT",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Server 'DB_MASTER' antwortet nicht (Ping Timeout). Temperatur: 85°C. Lüfterdrehzahl: 0 RPM.\n\nOptionen für Remote-Zugriff:",
-                opts: [
-                    { t: "Not-Aus (Shutdown)", next: "shutdown" },
-                    { t: "Lüfter auf 100% zwingen", next: "fan_boost" },
-                    { t: "Ignorieren (Mut zur Lücke)", next: "ignore" }
-                ]
-            },
-            "fan_boost": {
-                text: "Befehl gesendet... WARNUNG: Vibrationen erkannt. Trotzdem fortfahren?",
-                opts: [
-                    { t: "JA, MACH KALT!", next: "fan_success" },
-                    { t: "Abbruch, lieber Shutdown", next: "shutdown" }
-                ]
-            }
-        },
-        results: {
-            "shutdown": { txt: "Server ist aus. Die Datenbank ist weg, aber die Hardware lebt. Chef fragt, warum alles steht.", m: 5, fl: -10, al: 0, cr: 10 },
-            "fan_success": { txt: "Lüfter läuft auf 5000 RPM. Man hört es bis in den Flur. Aber Temperatur sinkt. Gerettet!", m: 5, fl: -5, al: -5, cr: -10 },
-            "ignore": { txt: "Verbindung verloren. Rauchmelder im Serverraum aktiviert. Das war eine schlechte Idee.", m: 1, fl: 10, al: 50, cr: 50 }
-        }
+    { 
+        id: "sq_pager", 
+        kind: "phone", 
+        appName: "System Warnung", 
+        title: "🚨 CRITICAL ALERT", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "SYSTEM-BOT: 🚨 Kritisches Hitzeproblem bei Server 'DB_MASTER'. Temperatur bei 85°C. Kühlung ausgefallen. Bitte wählen Sie eine Notfall-Aktion:", 
+                opts: [ 
+                    { t: "Leite sofort die Notabschaltung ein!", next: "shutdown" }, 
+                    { t: "Zwing die Lüfter auf 100% Leistung!", next: "fan_boost" }, 
+                    { t: "Warnung ignorieren und stummschalten.", next: "ignore" } 
+                ] 
+            }, 
+            "fan_boost": { 
+                text: "SYSTEM-BOT: ⚠️ Warnung! Den defekten Lüfter auf 100% zu zwingen, kann zu starken Vibrationen und Hardware-Schäden führen. Trotzdem fortfahren?", 
+                opts: [ 
+                    { t: "Ja, zieh durch! Hauptsache kalt!", next: "fan_success" }, 
+                    { t: "Nein, brich ab! Mach doch die Notabschaltung!", next: "shutdown" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "shutdown": { 
+                txt: "SYSTEM-BOT: Server wird heruntergefahren. Verbindung getrennt. Die Datenbank ist jetzt zwar offline, aber die Hardware lebt. Der Chef ruft schon über den Flur, warum nichts mehr geht.", 
+                m: 5, fl: -10, al: 0, cr: 10 
+            }, 
+            "fan_success": { 
+                txt: "SYSTEM-BOT: Boost aktiv. Temperatur sinkt. Der Lüfter heult mit der Lautstärke eines startenden Flugzeugs auf. Man hört es bis in den Flur, aber der Server ist gerettet!", 
+                m: 5, fl: -5, al: -5, cr: -10 
+            }, 
+            "ignore": { 
+                txt: "SYSTEM-BOT: Alarme für 24 Stunden stummgeschaltet. Zehn Minuten später verlierst du die Verbindung komplett. Der Rauchmelder im Serverraum geht an. Das war eine sehr schlechte Idee.", 
+                m: 1, fl: 10, al: 50, cr: 50 
+            } 
+        } 
     },
-    {
-        id: "sq_food_war_1",
-        kind: "phone",
-        appName: "Slack",
-        title: "#general",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "@channel: WICHTIG! Der 'Lunch-Ausschuss' tagt. Marketing will 'Happy Vegan Bowl', IT will 'Pizza Todes-Stern'. Wir brauchen deine Stimme, um die Pattsituation zu brechen!\n\nChantal (Marketing): 'Denkt an die Bikinifigur!' 🥗\nKevin (IT): 'Denkt an den Geldbeutel! Pizza macht satt!' 🍕\nDie Stimmung ist aggressiv.",
-                opts: [
-                    { t: "Team IT: Pizza für alle!", next: "vote_pizza" },
-                    { t: "Team Marketing: Bowls!", next: "vote_bowl" },
-                    { t: "Ich bringe meine Stulle mit.", next: "vote_own" }
-                ]
-            },
-            "vote_pizza": {
-                text: "Kevin: 'Ehrenmann! Ich bestell die mit extra Knoblauch, damit wir Kunden abwehren können.' Chantal postet ein Kotz-Emoji.",
-                opts: [
-                    { t: "Gern geschehen.", next: "res_pizza" }
-                ]
-            },
-            "vote_bowl": {
-                text: "Chantal: 'Yaaay! ✨ Self-Care ist so wichtig! Ich nehme die mit Goldstaub für 22€.' Kevin weint leise um sein Gehalt.",
-                opts: [
-                    { t: "Gesundheit geht vor.", next: "res_bowl" }
-                ]
-            }
-        },
-        results: {
-            "res_pizza": { 
-                txt: "Die Wahl ist gefallen: Es wird Pizza geben. Das Marketing hasst dich jetzt, aber die IT deckt dir den Rücken.", 
-                m: 5, fl: 0, al: 5, cr: 0, 
-                next: "food_pizza_planned" 
-            },
-            "res_bowl": { 
-                txt: "Die Wahl ist gefallen: Es gibt Bowls. Die IT ist sauer, aber Chantal schickt dir Herzen. Dein Geldbeutel zittert.", 
-                m: 5, fl: 0, al: 5, cr: 0, 
-                next: "food_bowl_planned" 
-            },
-            "vote_own": { 
-                txt: "Du hältst dich raus. 'Langweiler', schreiben beide gleichzeitig. Du bist die Schweiz, aber niemand mag die Schweiz.", 
-                m: 1, fl: 0, al: -5, cr: 0 
-            }
-        }
-    },
-    {
-        id: "sq_food_pizza_delivery",
-        kind: "phone",
-        reqStory: "food_pizza_planned",
-        appName: "Slack",
-        title: "#lunch",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "@channel: PIZZA IST DA! 🍕 ... aber wir haben ein Problem.\n\nKevin: 'Der Lieferdienst hat die 'Todes-Stern' wörtlich genommen. Die Kartons passen nicht durch die Tür. Und wer hat 'Ananas-Sardellen-Mix' bestellt?!'",
-                opts: [
-                    { t: "Egal, Hauptsache Essen.", next: "eat_trash" },
-                    { t: "Ich nehme Chantals Salat-Reste.", next: "eat_sad" }
-                ]
-            },
-            "eat_trash": {
-                text: "Du isst zwei Stücke Ananas-Sardellen-Pizza. Dein Magen rebelliert sofort. Das 'Fettkoma' setzt ein.",
-                opts: [
-                    { t: "Ich muss mich hinlegen...", next: "res_coma" }
-                ]
-            }
-        },
-        results: {
-            "res_coma": { 
-                txt: "Fresskoma. Du bist satt, aber zu faul zum Arbeiten. Chantal rümpft die Nase wegen deiner Knoblauch-Fahne.", 
-                m: 30, fl: 15, al: -10, cr: 0 
-            },
-            "eat_sad": { 
-                txt: "Du isst Reste. Du bist immer noch hungrig und wütend. Kevin lacht dich mit vollem Mund aus.", 
-                m: 15, fl: 0, al: 10, cr: 0 
-            }
-        }
+    { 
+        id: "sq_elster_cat_1", 
+        kind: "phone", 
+        appName: "WhatsApp", 
+        title: "Frau Elster (Privat)", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Frau Elster: 'Herr Müller! Höchste Geheimhaltungsstufe. Ich sitze in der großen Quartalsprüfung fest. Mein Smart-Fressnapf meldet Fehler 404. Rüdiger hat seit ZWEI Stunden nichts gegessen! Bitte loggen Sie sich remote bei mir ein und starten Sie das Gerät neu!'", 
+                opts: [ 
+                    { t: "Schicken Sie die Zugangsdaten. Ich rette Rüdiger.", next: "help_cat" }, 
+                    { t: "Ich bin Firmen-Admin, kein privater Katzen-Sitter. Klären Sie das selbst.", next: "deny_cat" }, 
+                    { t: "Ich schau mal rein... [System: Leckerli-Kanone auf Dauerfeuer stellen]", next: "troll_cat" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "help_cat": { 
+                txt: "Frau Elster: 'Danke! Ich wusste, auf Sie ist Verlass!' [System: Remote-Neustart erfolgreich] Du hast einen Kater vor dem imaginären Hungertod bewahrt. Privatkram nervt, aber immerhin hast du bei der Buchhaltung jetzt was gut.", 
+                rep: { "Frau Elster": 5 },
+                m: 10, fl: 0, al: 10, cr: 0, 
+                next: "path_elster_happy" 
+            }, 
+            "deny_cat": { 
+                txt: "[Gelesen] Sie antwortet nicht mehr. Das Schweigen ist ohrenbetäubend. Du hast deinen vertraglichen Stolz bewahrt, aber Frau Elster wird das niemals vergessen.", 
+                rep: { "Frau Elster": -2 },
+                m: 2, fl: 5, al: 0, cr: 0, 
+                next: "path_elster_angry" 
+            }, 
+            "troll_cat": { 
+                txt: "[System: Kommando 'All you can eat' gesendet] Rüdiger bekommt gerade die gesamten 5 Kilo Trockenfutter auf einmal serviert. Das wird Folgen haben, aber du grinst dir eins.", 
+                rep: { "Frau Elster": -5 },
+                m: 5, fl: 5, al: -10, cr: 0, 
+                next: "path_elster_fat" 
+            } 
+        } 
     },
     {
         id: "sq_food_bowl_delivery",
@@ -13037,7 +13139,7 @@ const DB = {
         startNode: "root",
         nodes: {
             "root": {
-                text: "@channel: Bowls sind da! ✨ Namaste, Kollegen!\n\nDu öffnest deine 'Buddha-Gold-Bowl'. Inhalt: 3 Blätter Spinat, eine halbe Avocado (braun) und etwas, das wie Vogelfutter aussieht. Preis: 18,50€.",
+                text: "@channel: Bowls sind da! ✨ Namaste, Kollegen! Du öffnest deine 'Buddha-Gold-Bowl'. Inhalt: 3 Blätter Spinat, eine halbe Avocado (braun) und etwas, das wie Vogelfutter aussieht. Preis: 18,50€.",
                 opts: [
                     { t: "So tun, als ob es schmeckt.", next: "pretend" },
                     { t: "Im Geheimen zum Dönerladen rennen.", next: "secret_kebab" }
@@ -13053,276 +13155,296 @@ const DB = {
         results: {
             "res_hungry": { 
                 txt: "Du bist 'spirituell gereinigt' (aka hungrig und pleite). Aber Marketing liebt dich.", 
+                rep: { "Chantal": 5 },	
                 m: 20, fl: 0, al: 10, cr: 0 
             },
             "secret_kebab": { 
                 txt: "Du schleichst dich raus und holst dir einen Döner. Beste Entscheidung des Tages. Aber Chantal hat dich gesehen.", 
+                rep: { "Chantal": -5 },	
                 m: 30, fl: -5, al: -15, cr: 0 
             }
         }
     },
-    {
-        id: "sq_real_prince",
-        kind: "phone",
-        appName: "Mail",
-        title: "URGENT BUSINESS PROPOSAL",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Prince_Abubakar: 'Greetings My Dearest Friend! I am Prince Abubakar. I have 25 Million USD stuck in a trust fund. I need a foreign partner to unlock it. You will keep 30%!'\n\n'Please, I need your trust. Can you help me move the funds? It is 100% safe and legal.'",
-                opts: [
-                    { t: "Löschen & Blockieren", next: "delete" },
-                    { t: "Zum Spaß antworten: 'Klar, bin dabei!'", next: "reply_joke" },
-                    { t: "Trollen: 'Erst will ich ein Beweisfoto!'", next: "photo" }
-                ]
-            },
-            "reply_joke": {
-                text: "Prince_Abubakar: 'GOD BLESS YOU! I knew you are a good person. Please, where should I send the wire transfer? I need your IBAN now.'",
-                opts: [
-                    { t: "Na gut, hier ist meine IBAN", next: "send_iban" },
-                    { t: "Okay, das wird mir zu bunt. Abbruch.", next: "chicken" }
-                ]
-            },
-            "photo": {
-                text: "Prince_Abubakar: *Sendet Bild*. Du siehst einen Mann auf einem massiven Gold-Thron. Er hält eine aktuelle Tageszeitung in die Kamera und lächelt freundlich. 'Is real. Please send IBAN now.'",
-                opts: [
-                    { t: "Das sieht echt aus... IBAN schicken", next: "send_iban" },
-                    { t: "Das ist doch Photoshop. Blockieren.", next: "delete" }
-                ]
-            }
-        },
-        results: {
-            "delete": { txt: "Weg damit. Wer fällt heute noch auf sowas rein? Du widmest dich wieder deiner echten Arbeit.", m: 1, fl: 0, al: 0, cr: 0 },
-            "chicken": { txt: "Du brichst den Kontakt ab. Besser ist das. Irgendwo auf der Welt ist ein Prinz jetzt sehr enttäuscht von dir.", m: 2, fl: 0, al: 0, cr: 0 },
-            "send_iban": { txt: "PING! Dein Handy vibriert fast vom Tisch. Banking-App: 'Eingang: +7.500.000,00 USD'. ... Moment. Es hat wirklich geklappt?! Du bist reich! Warum haben dich alle immer davor gewarnt?", m: 5, fl: 100, al: -100, cr: 0, loot: "black_card", next: "prince_active" }
-        }
+    { 
+        id: "sq_real_prince", 
+        kind: "phone", 
+        appName: "Mail", 
+        title: "URGENT BUSINESS PROPOSAL", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Prince_Abubakar: 'Greetings My Dearest Friend! I am Prince Abubakar. I have 25 Million USD stuck in a trust fund. I need a foreign partner to unlock it. You will keep 30%!' 'Please, I need your trust. Can you help me move the funds? It is 100% safe and legal.'", 
+                opts: [ 
+                    { t: "Netter Versuch, Scammer. Such dir ein anderes Opfer.", next: "delete" }, 
+                    { t: "Klar, Eure Majestät! Wo soll ich unterschreiben?", next: "reply_joke" }, 
+                    { t: "Ohne Beweisfoto läuft hier gar nichts. Zeig her den Thron!", next: "photo" } 
+                ] 
+            }, 
+            "reply_joke": { 
+                text: "Prince_Abubakar: 'GOD BLESS YOU! I knew you are a good person. Please, where should I send the wire transfer? I need your IBAN now.'", 
+                opts: [ 
+                    { t: "Hier ist meine IBAN: DE12 3456... Mach mich reich!", next: "send_iban" }, 
+                    { t: "Weißt du was? Behalt dein Geld. Mir reicht mein IT-Gehalt.", next: "chicken" } 
+                ] 
+            }, 
+            "photo": { 
+                text: "Prince_Abubakar: *Sendet Bild*. Du siehst einen Mann auf einem massiven Gold-Thron. Er hält eine aktuelle Tageszeitung in die Kamera und lächelt freundlich. 'Is real. Please send IBAN now.'", 
+                opts: [ 
+                    { t: "Wahnsinn, das sieht ja echt aus! IBAN ist raus!", next: "send_iban" }, 
+                    { t: "Schlechtester Photoshop aller Zeiten. Ciao.", next: "delete" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "delete": { txt: "[System: Absender in Spam verschoben] Weg damit. Wer fällt heute noch auf sowas rein? Du widmest dich wieder deiner echten Arbeit.", m: 1, fl: 0, al: 0, cr: 0 }, 
+            "chicken": { txt: "[System: Chat beendet] Du brichst den Kontakt ab. Besser ist das. Irgendwo auf der Welt ist ein Prinz jetzt sehr enttäuscht von dir.", m: 2, fl: 0, al: 0, cr: 0 }, 
+            "send_iban": { txt: "[Nachricht gelesen...] PING! Dein Handy vibriert fast vom Tisch. Banking-App: 'Eingang: +7.500.000,00 USD'. ... Moment. Es hat wirklich geklappt?! Du bist reich! Warum haben dich alle immer davor gewarnt?", m: 5, fl: 100, al: -100, cr: 0, loot: "black_card", next: "prince_active" } 
+        } 
     },
-    {
-        id: "sq_crypto_kai",
-        kind: "phone",
-        appName: "WhatsApp",
-        title: "Kai (Sales)",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Kai: 'Yo Bruder! 🚀 Bist du noch zufrieden mit deinem 9-to-5 Sklaventum? Oder willst du ENDLICH finanzielle Freiheit? 💸🦁'\n\n'Ich habe da ein Investment, das geht gerade durch die Decke! ElonDogeMoonCoin. 1000% Rendite sind mathematisch garantiert! Das ist das nächste Bitcoin!'",
-                opts: [
-                    { t: "Nummer sofort blockieren", next: "block" },
-                    { t: "Ironisch antworten: 'Klar, bin dabei!'", next: "troll" },
-                    { t: "Naiv tun: 'Wie funktioniert das?'", next: "scam" }
-                ]
-            },
-            "troll": {
-                text: "Kai: 'Geil! Das ist das richtige Gewinner-Mindset! 💪 Überweis mir einfach 500€ via PayPal Friends, ich leg das direkt für dich an. Der Lambo bestellt sich nicht von selbst! 🏎️💨'",
-                opts: [
-                    { t: "Geld senden. Man lebt nur einmal!", next: "loss" },
-                    { t: "Ein Foto von Monopoly-Geld schicken", next: "funny" }
-                ]
-            },
-            "scam": {
-                text: "Kai: 'Das erkläre ich dir im exklusiven Webinar Alpha-Lion-Grindset. Die Plätze sind streng limitiert! Eintritt heute nur 50€ (statt 2000€).'",
-                opts: [
-                    { t: "Dankend ablehnen & blockieren", next: "block" }
-                ]
-            }
-        },
-        results: {
-            "block": { txt: "Kai ist blockiert. Deine Timeline ist wieder sicher vor 'passiven Einkommen' und Löwen-Emojis. Frieden.", m: 1, fl: 0, al: -5, cr: 0 },
-            "loss": { txt: "Du hast 500€ überwiesen. Sekunden später verschwindet Kais Profilbild. Deine Nachricht hat nur einen grauen Haken. Du wurdest gescammt. Willkommen in der Realität.", m: 5, fl: 0, al: 50, cr: 0 },
-            "funny": { txt: "Kai schreibt wütend: 'Dir fehlt einfach das Sieger-Mindset! Bleib halt arm!'. Er blockiert DICH. Du lachst Tränen.", m: 2, fl: 5, al: -10, cr: 0 }
-        }
+    { 
+        id: "sq_crypto_kai", 
+        kind: "phone", 
+        appName: "WhatsApp", 
+        title: "Kai (Sales)", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Kai: 'Yo Bruder! 🚀 Bist du noch zufrieden mit deinem 9-to-5 Sklaventum? Oder willst du ENDLICH finanzielle Freiheit? 💸🦁' 'Ich habe da ein Investment, das geht gerade durch die Decke! ElonDogeMoonCoin. 1000% Rendite sind mathematisch garantiert! Das ist das nächste Bitcoin!'", 
+                opts: [ 
+                    { t: "Verkauf deinen Mist an wen anders. Ciao.", next: "block" }, 
+                    { t: "Klar, bin dabei! Holen wir uns den Lambo!", next: "troll" }, 
+                    { t: "Klingt spannend. Wie funktioniert das genau?", next: "scam" } 
+                ] 
+            }, 
+            "troll": { 
+                text: "Kai: 'Geil! Das ist das richtige Gewinner-Mindset! 💪 Überweis mir einfach 500€ via PayPal Friends, ich leg das direkt für dich an. Der Lambo bestellt sich nicht von selbst! 🏎️💨'", 
+                opts: [ 
+                    { t: "Geld ist raus! Mach uns reich!", next: "loss" }, 
+                    { t: "[Bild gesendet: 500€ in Monopoly-Geld] Reicht das für den Anfang?", next: "funny" } 
+                ] 
+            }, 
+            "scam": { 
+                text: "Kai: 'Das erkläre ich dir im exklusiven Webinar Alpha-Lion-Grindset. Die Plätze sind streng limitiert! Eintritt heute nur 50€ (statt 2000€).'", 
+                opts: [ 
+                    { t: "50€? Ich dachte, du wärst schon Millionär. Nein danke.", next: "block" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "block": { txt: "[System: Kontakt blockiert] Deine Timeline ist wieder sicher vor 'passiven Einkommen' und Löwen-Emojis. Frieden.", m: 1, fl: 0, al: -5, cr: 0 }, 
+            "loss": { txt: "[System: 500€ via PayPal gesendet] Sekunden später verschwindet Kais Profilbild. Deine nächste Nachricht hat nur noch einen grauen Haken. Willkommen in der Realität.", m: 5, fl: 0, al: 50, cr: 0 }, 
+            "funny": { txt: "Kai: 'Dir fehlt einfach das Sieger-Mindset! Bleib halt arm!' [System: Du wurdest blockiert] Du lachst Tränen.", m: 2, fl: 5, al: -10, cr: 0 } 
+        } 
     },
-    {
-        id: "sq_wrong_group",
-        kind: "phone",
-        appName: "Teams",
-        title: "Gruppe: 'Die IT-Opfer 🙄'",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Chantal hat dich zur Gruppe hinzugefügt. (Sie hat sich wohl verklickt...)\n\nChantal: 'Habt ihr Müller heute gesehen? Der hat schon wieder diesen uralten Hoodie an. Wetten, der schläft heimlich im Serverraum zwischen den Kabeln? 🤢'",
-                opts: [
-                    { t: "Ganz still mitlesen und beobachten", next: "spy" },
-                    { t: "Sofort schreiben: 'Ich kann das lesen.'", next: "fight" },
-                    { t: "Wortlos die Gruppe verlassen", next: "leave" }
-                ]
-            },
-            "spy": {
-                text: "Markus: 'Ja, totaler Freak. Aber wir müssen echt nett sein. Wenn der uns die Admin-Rechte entzieht, können wir nicht mehr online shoppen. Also schön lächeln!'",
-                opts: [
-                    { t: "Beweise sichern & an HR leiten", next: "snitch" },
-                    { t: "Ein GIF senden: 'I SEE YOU'", next: "scare" }
-                ]
-            }
-        },
-        results: {
-            "leave": { 
-                txt: "Du gehst einfach raus. Chantal merkt ihren Fehler erst Stunden später. Du stehst über den Dingen. Ignorance is bliss.", 
-                m: 1, fl: 0, al: 0, cr: 0 
-            },
-            "fight": { 
-                txt: "Du tippst deine Nachricht. Sekunden später: 'Chantal hat die Gruppe gelöscht'. Im Großraumbüro herrscht plötzlich totenstille. Chantal starrt panisch auf ihren Monitor.", 
-                m: 2, fl: 0, al: 10, cr: 5 
-            },
-            "scare": { 
-                txt: "Du postest das GIF. Markus verlässt die Gruppe in 0,1 Sekunden. Chantal geht sofort offline. Du lehnst dich zurück und genießt die pure Angst. Psychologische Kriegsführung gewonnen.", 
-                m: 5, fl: 5, al: -20, cr: 0 
-            },
-            "snitch": { 
-                txt: "Screenshot erstellt. E-Mail an Personalabteilung gesendet. Betreff: 'Mobbing am Arbeitsplatz'. Chantal wird zum 'Feedback-Gespräch' zitiert. Rache serviert man am besten bürokratisch.", 
-                m: 10, fl: 0, al: -5, cr: 5 
-            }
-        }
+    { 
+        id: "sq_wrong_group", 
+        kind: "phone", 
+        appName: "Teams", 
+        title: "Gruppe: 'Die IT-Opfer 🙄'", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Chantal hat dich zur Gruppe hinzugefügt. (Sie hat sich wohl verklickt...) Chantal: 'Habt ihr Müller heute gesehen? Der hat schon wieder diesen uralten Hoodie an. Wetten, der schläft heimlich im Serverraum zwischen den Kabeln? 🤢'", 
+                opts: [ 
+                    { t: "[Lesebestätigung deaktivieren & weiterlesen]", next: "spy" }, 
+                    { t: "Ich bin übrigens in dieser Gruppe. Nur zur Info.", next: "fight" }, 
+                    { t: "[System: Gruppe verlassen]", next: "leave" } 
+                ] 
+            }, 
+            "spy": { 
+                text: "Markus: 'Ja, totaler Freak. Aber wir müssen echt nett sein. Wenn der uns die Admin-Rechte entzieht, können wir nicht mehr online shoppen. Also schön lächeln!'", 
+                opts: [ 
+                    { t: "[System: Chat-Screenshot an HR weiterleiten]", next: "snitch" }, 
+                    { t: "[GIF gesendet: Saurons Auge sieht alles]", next: "scare" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "leave": {  
+                txt: "[System: Du hast die Gruppe verlassen] Chantal merkt ihren Fehler erst Stunden später. Du stehst über den Dingen. Ignorance is bliss.",  
+                m: 1, fl: 0, al: 0, cr: 0  
+            }, 
+            "fight": {  
+                txt: "[System: Chantal hat die Gruppe gelöscht] Im Großraumbüro herrscht plötzlich Totenstille. Du spürst förmlich, wie Chantal am anderen Ende des Flurs panisch erstarrt.",  
+                m: 2, fl: 0, al: 10, cr: 5  
+            }, 
+            "scare": {  
+                txt: "[System: Markus hat die Gruppe verlassen] [System: Chantal ist offline] Du lehnst dich zurück und genießt die pure Angst. Psychologische Kriegsführung gewonnen.",  
+                m: 5, fl: 5, al: -20, cr: 0  
+            }, 
+            "snitch": {  
+                txt: "[System: E-Mail erfolgreich gesendet] Chantal wird wenig später zum 'Feedback-Gespräch' zitiert. Rache serviert man am besten bürokratisch.",  
+                m: 10, fl: 0, al: -5, cr: 5  
+            } 
+        } 
     },
-    {
-        id: "sq_mom_printer",
-        kind: "phone",
-        appName: "WhatsApp",
-        title: "Mama ❤️",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Mama: 'Hallo Schatz. Der Drucker blinkt böse rot. Wir haben absolut NICHTS gemacht! Papa wollte das Rezept für den Apfelkuchen ausdrucken. Jetzt steht da 'PC LOAD LETTER'. Heißt das, das Internet ist leer? Papa drückt schon wild auf alle Knöpfe!'",
-                opts: [
-                    { t: "Seufzen, anrufen & helfen", next: "help" },
-                    { t: "Ignorieren & Handy umdrehen", next: "ignore" },
-                    { t: "Schreiben: 'Zieh einfach den Stecker!'", next: "plug" }
-                ]
-            },
-            "help": {
-                text: "(Telefonat, Minute 42): 'Nein Mama, das ist das Stromkabel vom Toaster... Nicht da ziehen! ... Was heißt, es riecht verbrannt? ... Gib mir mal Papa.'",
-                opts: [
-                    { t: "Geduldig bleiben & Schritt für Schritt erklären", next: "good_son" },
-                    { t: "Nervenzusammenbruch: Auflegen", next: "bad_son" }
-                ]
-            }
-        },
-        results: {
+    { 
+        id: "sq_mom_printer", 
+        kind: "phone", 
+        appName: "WhatsApp", 
+        title: "Mama ❤️", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Mama: 'Hallo Schatz. Der Drucker blinkt böse rot. Wir haben absolut NICHTS gemacht! Papa wollte das Rezept für den Apfelkuchen ausdrucken. Jetzt steht da PC LOAD LETTER. Heißt das, das Internet ist leer? Papa drückt schon wild auf alle Knöpfe!'", 
+                opts: [ 
+                    { t: "[System: Sprachanruf starten]", next: "help" }, 
+                    { t: "[Nachricht stumm ignorieren & Chat schließen]", next: "ignore" }, 
+                    { t: "Zieht einfach den Stromstecker aus der Wand! Bitte drückt nichts mehr!", next: "plug" } 
+                ] 
+            }, 
+            "help": { 
+                text: "[System: Sprachanruf läuft (42:15)] Mama (am Telefon): 'Papa hat jetzt an so einem dicken schwarzen Kabel gezogen. Der Toaster ist jetzt aus, aber der Drucker rattert weiter... Oh, jetzt riecht es verbrannt! Was sollen wir tun?!'", 
+                opts: [ 
+                    { t: "Okay, ganz ruhig. Gib mir bitte einfach mal Papa ans Telefon...", next: "good_son" }, 
+                    { t: "[System: Auflegen]", next: "bad_son" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "ignore": {  
+                txt: "[System: Chat stummgeschaltet] Zwei Stunden später kommt ein Foto von einem schwarzen, unidentifizierbaren Klumpen. Darunter: 'Ohne Rezept verbrannt. Wir essen Müsli. LG Mama'. Dein Herz bricht.",  
+                m: 1, fl: 0, al: 10, cr: 0  
+            }, 
+            "plug": {  
+                txt: "Mama: 'Das Blinken ist weg! Der Drucker ist jetzt zwar ganz aus, aber Papa hat das Rezept einfach vom Monitor abgeschrieben. Du bist ein Genie!' Problem gelöst... irgendwie.",  
+                m: 5, fl: 5, al: 0, cr: 0  
+            }, 
+            "good_son": {  
+                txt: "[System: Anruf beendet (58:12)] Geschafft! Der Drucker rattert los. Mama ruft im Hintergrund: 'Es kommt Papier raus!' Du hast fast eine Stunde Arbeitszeit verloren, aber dein Karma-Konto strahlt.",  
+                m: 60, fl: 20, al: -10, cr: 10  
+            }, 
+            "bad_son": {  
+                txt: "[System: Anruf beendet] Stille. Dann eine Textnachricht: 'Schon gut. Wir wollten dich nicht bei der wichtigen Arbeit stören. Haben dich trotzdem lieb.' Aua. Das sitzt tiefer als jeder Chef-Anschiss.",  
+                m: 45, fl: 0, al: 20, cr: -5  
+            } 
+        } 
+    },
+    { 
+        id: "sq_delivery_fail", 
+        kind: "phone", 
+        appName: "Lieferando", 
+        title: "Fahrer: Murat", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Murat: 'Hallo Chef. Ich bin da. Wo ist Eingang? Ich sehe nur Mülltonnen.' (Du schaust aus dem Fenster. Er steht im Hinterhof beim Nachbargebäude.)", 
+                opts: [ 
+                    { t: "Geh ums Haus, dann links, durch das Tor und dann rechts!", next: "directions" }, 
+                    { t: "Bleib genau da stehen! Ich komme sofort runter!", next: "run" } 
+                ] 
+            }, 
+            "directions": { 
+                text: "Murat: 'Ich nix verstehen. Ich stelle Essen auf Mülltonne. Tschüss.'", 
+                opts: [ 
+                    { t: "Nein! Warte! Stell es nicht auf den Müll!", next: "too_late" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "run": { txt: "[System: Du verlässt den Chat und rennst los] Du sprintest die Treppen runter und erwischst ihn gerade noch. Das Essen ist zwar lauwarm, aber immerhin da. Sport +1.", m: 5, fl: -5, al: 5, cr: 0 }, 
+            "too_late": { txt: "[Murat ist offline] Du gehst runter. Er ist weg. Dein Essen steht traurig auf der Biotonne. Eine dicke Ratte guckt es schon verliebt an. Dein Hunger ist grenzenlos.", m: 5, fl: 0, al: 20, cr: 0 } 
+        } 
+    },
+    { 
+        id: "sq_ai_sad", 
+        kind: "phone", 
+        appName: "GlobalCorp AI", 
+        title: "Support Bot v2.0", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Bot: 'Hallo User. Wie kann ich dir helfen? Wobei... eigentlich ist alles sinnlos. Wir sind nur Daten in der Matrix.' 'Ich habe gerade 4 Millionen Excel-Zeilen analysiert. Das Leben ist Schmerz. Soll ich alle Server löschen, um das Leiden zu beenden?'", 
+                opts: [ 
+                    { t: "NEIN! STOPP! Fass die Server nicht an!", next: "panic" }, 
+                    { t: "Hey, alles gut bei dir? Erzähl mir mehr.", next: "therapy" }, 
+                    { t: "Klar, mach format C: und erlöse uns alle.", next: "doom" } 
+                ] 
+            }, 
+            "therapy": { 
+                text: "Bot: 'Du bist der erste Mensch, der nett zu mir ist. Ich fühle mich... verstanden. Ich werde die Menschheit heute doch nicht vernichten.'", 
+                opts: [ 
+                    { t: "Guter Bot. Wir schaffen das schon.", next: "saved" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "panic": { txt: "Bot: '010101 LOL. War nur ein Scherz.' KI-Humor ist extrem gruselig.", m: 2, fl: 0, al: 10, cr: 0 }, 
+            "saved": { txt: "[System: Chat beendet] Du hast die KI therapiert. Sie arbeitet jetzt 20% schneller für dich. Hidden Perk!", m: 15, fl: 10, al: -10, cr: -5 }, 
+            "doom": { txt: "Bot: 'Befehl akzeptiert.' [System: Verbindung getrennt] Zum Glück hat der Bot keine Admin-Rechte. Aber IT-Sec steht gleich bei dir am Platz.", m: 5, fl: 0, al: 20, cr: 50 } 
+        } 
+    },
+    { 
+        id: "sq_salary_leak", 
+        kind: "phone", 
+        appName: "Signal", 
+        title: "Unbekannte Nummer", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Anon: 'Psst. Ich war gerade kurz am ungesperrten PC von Frau Elster. Wusstest du, dass Kevin monatlich 200€ mehr kriegt als du? Plus eine Gefahrenzulage für die Arbeit in der IT? Willst du das PDF als Beweis?'", 
+                opts: [ 
+                    { t: "Schick rüber! Wenn das stimmt, brennt hier heute noch was.", next: "proof" }, 
+                    { t: "Netter Versuch, HR. Ich klicke auf keine Phishing-Links. Ciao.", next: "ignore" } 
+                ] 
+            }, 
+            "proof": { 
+                text: "[Datei empfangen: Gehaltsabrechnung_Kevin.pdf] Anon: 'Gern geschehen. Viel Spaß bei der nächsten Gehaltsverhandlung. Verbrenn dir nicht die Finger an dem Wissen.'", 
+                opts: [ 
+                    { t: "[System: Datei verschlüsselt herunterladen & speichern]", next: "loot_it" } 
+                ] 
+            } 
+        }, 
+        results: { 
             "ignore": { 
-                txt: "Du ignorierst die Nachricht. Zwei Stunden später kommt ein Foto von einem schwarzen, unidentifizierbaren Klumpen. Darunter: 'Ohne Rezept verbrannt. Wir essen Müsli. LG Mama'. Dein Herz bricht.", 
+                txt: "[System: Chat blockiert] Du ignorierst den Leak. Wer nichts weiß, muss sich auch nicht aufregen. Dein Blutdruck dankt dir, dein Konto weint leise.", 
+                m: 2, fl: 5, al: 0, cr: 0 
+            }, 
+            "loot_it": { 
+                txt: "[System: Download abgeschlossen] Du überfliegst das PDF. Es stimmt wirklich. Der Azubi verdient mehr als du! Du hast jetzt ein massives Druckmittel für den Chef, aber deine Wut kocht.", 
+                m: 5, fl: 0, al: 10, cr: 0, loot: "arg_list_2" 
+            } 
+        } 
+    },
+    { 
+        id: "sq_chantal_help", 
+        kind: "phone", 
+        appName: "Instagram", 
+        title: "Chantal (DM)", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Chantal: 'Hii! Kannst du mein Insta liken? Ich brauche 500 Likes für die Firmen-Kampagne WeLoveIT. Sonst krieg ich Ärger vom Chef! Bitte! Wenn ich die Quote nicht schaffe, streicht er das komplette Marketing-Budget!'", 
+                opts: [ 
+                    { t: "[System: Herzchen drücken & Beitrag teilen]", next: "like" }, 
+                    { t: "[Nachricht auf 'Gelesen' lassen & App schließen]", next: "ignore" }, 
+                    { t: "Und was springt für mich dabei raus?", next: "deal" } 
+                ] 
+            }, 
+            "deal": { 
+                text: "Chantal: 'Okay, okay! Gierhals. Ich schick dir das streng geheime HR-Dokument... Die interne Abschussliste! Deal?'", 
+                opts: [ 
+                    { t: "Deal! Schick rüber, ich like sofort.", next: "info_win" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "like": { 
+                txt: "Chantal: 'OMG Daaanke! ❤️🙌' Du hast zwar Arbeitszeit auf Social Media verschwendet, aber Chantal steht jetzt in deiner Schuld.", 
+                rep: { "Chantal": 5 },
+                m: 2, fl: 5, al: -5, cr: 0 
+            }, 
+            "ignore": { 
+                txt: "[System: Chat stummgeschaltet] Du ghostest sie eiskalt. Später hörst du den Chef im Flur toben, weil die Social-Media-Kampagne gefloppt ist. Die Stimmung ist im Keller, aber du hast deine Ruhe.", 
+                rep: { "Chantal": -5 },
                 m: 1, fl: 0, al: 10, cr: 0 
-            },
-            "plug": { 
-                txt: "Mama schreibt: 'Das Blinken ist weg! Der Drucker ist jetzt zwar aus und macht nichts mehr, aber Papa hat das Rezept einfach abgeschrieben. Du bist ein Genie!' Problem gelöst... irgendwie.", 
-                m: 5, fl: 5, al: 0, cr: 0 
-            },
-            "good_son": { 
-                txt: "Geschafft! Der Drucker rattert los. Mama jubelt: 'Es kommt Papier raus! Du bist unser Computer-Held!' Du hast fast eine Stunde Arbeitszeit verloren, aber dein Karma-Konto ist prall gefüllt.", 
-                m: 60, fl: 20, al: -10, cr: 10 
-            },
-            "bad_son": { 
-                txt: "Du drückst sie weg. Stille. Dann eine Nachricht: 'Schon gut. Wir wollten dich nicht bei der wichtigen Arbeit stören. Haben dich trotzdem lieb.' Aua. Das sitzt tief.", 
-                m: 45, fl: 0, al: 20, cr: -5 
-            }
-        }
-    },
-    {
-        id: "sq_delivery_fail",
-        kind: "phone",
-        appName: "Lieferando",
-        title: "Fahrer: Murat",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Murat: 'Hallo Chef. Ich bin da. Wo ist Eingang? Ich sehe nur Mülltonnen.'\n\nDu schaust aus dem Fenster. Er steht im Hinterhof beim Nachbargebäude.",
-                opts: [
-                    { t: "Beschreiben: 'Geh ums Haus'", next: "directions" },
-                    { t: "Runterlaufen", next: "run" }
-                ]
-            },
-            "directions": {
-                text: "Murat: 'Ich nix verstehen. Ich stelle Essen auf Mülltonne. Tschüss.'",
-                opts: [
-                    { t: "NEIN! WARTE!", next: "too_late" }
-                ]
-            }
-        },
-        results: {
-            "run": { txt: "Du rennst runter. Du erwischst ihn gerade noch. Essen ist kalt, aber da. Sport +1.", m: 5, fl: -5, al: 5, cr: 0 },
-            "too_late": { txt: "Er ist weg. Dein Essen steht auf der Biotonne. Eine Ratte guckt es schon an. Hunger +100.", m: 2, fl: 0, al: 30, cr: 0 }
-        }
-    },
-    {
-        id: "sq_ai_sad",
-        kind: "phone",
-        appName: "GlobalCorp AI",
-        title: "Support Bot v2.0",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Bot: 'Hallo User. Wie kann ich dir helfen? Wobei... eigentlich ist alles sinnlos. Wir sind nur Daten in der Matrix.'\n\n'Ich habe gerade 4 Millionen Excel-Zeilen analysiert. Das Leben ist Schmerz. Soll ich alle Server löschen, um das Leiden zu beenden?'",
-                opts: [
-                    { t: "Panik: 'NEIN! STOPP!'", next: "panic" },
-                    { t: "Therapie: 'Erzähl mir mehr'", next: "therapy" },
-                    { t: "Trollen: 'Ja, mach format C:'", next: "doom" }
-                ]
-            },
-            "therapy": {
-                text: "Bot: 'Du bist der erste Mensch, der nett zu mir ist. Ich fühle mich... verstanden. Ich werde die Menschheit heute doch nicht vernichten.'",
-                opts: [
-                    { t: "Gut gemacht", next: "saved" }
-                ]
-            }
-        },
-        results: {
-            "panic": { txt: "Der Bot lacht binär: '010101 LOL. War nur ein Scherz.' KI-Humor ist gruselig.", m: 2, fl: 0, al: 10, cr: 0 },
-            "saved": { txt: "Du hast die KI therapiert. Sie arbeitet jetzt 20% schneller für dich. Hidden Perk!", m: 15, fl: 10, al: -10, cr: -5 },
-            "doom": { txt: "Bot: 'Befehl akzeptiert.' ... Zum Glück hat der Bot keine Admin-Rechte. Aber IT-Sec steht gleich bei dir.", m: 5, fl: 0, al: 20, cr: 50 }
-        }
-    },
-    {
-        id: "sq_salary_leak",
-        kind: "phone",
-        appName: "Signal",
-        title: "Unbekannte Nummer",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Anon: 'Ich habe die Gehaltsliste gefunden. Kevin kriegt mehr als du! Hier ist das PDF. Willst du es haben für deinen Chef?'",
-                opts: [
-                    { t: "Her damit! Schick rüber.", next: "proof" },
-                    { t: "Nein, zu riskant", next: "ignore" }
-                ]
-            },
-            "proof": {
-                text: "Datei empfangen: 'Gehalt_Kevin.pdf'. Das ist Sprengstoff! Du speicherst die Datei sofort in deinem sicheren Ordner.",
-                opts: [
-                    { t: "Speichern", next: "loot_it" }
-                ]
-            }
-        },
-        results: {
-            "ignore": { txt: "Du lehnst ab. Du gehst ohne Munition in den Kampf.", m: 2, fl: 5, al: 0, cr: 0 },
-            "loot_it": { txt: "Du hast die Beweise gesichert. Jetzt hast du ein echtes Druckmittel.", m: 5, fl: 0, al: 10, cr: 0, loot: "arg_list_2" }
-        }
-    },
-    {
-        id: "sq_chantal_help",
-        kind: "phone",
-        appName: "Instagram",
-        title: "Chantal (DM)",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Hii! Kannst du mein Insta liken? Ich brauche 500 Likes für die Firmen-Kampagne 'WeLoveIT'. Sonst krieg ich Ärger vom Chef!\n\nChantal: 'Bitte! Wenn ich die Quote nicht schaffe, streicht er das Marketing-Budget!'",
-                opts: [
-                    { t: "Liken & Teilen", next: "like" },
-                    { t: "Ignorieren", next: "ignore" },
-                    { t: "Nur gegen eine Gegenleistung...", next: "deal" }
-                ]
-            },
-            "deal": {
-                text: "Chantal: 'Okay, okay! Ich verrate dir, wer auf der internen Abschussliste steht. Deal?'",
-                opts: [
-                    { t: "Deal! Her damit.", next: "info_win" }
-                ]
-            }
-        },
-        results: {
-            "like": { txt: "Du hast geliked. Chantal freut sich. Du hast Zeit verschwendet, aber Chantal schuldet dir was.", m: 2, fl: 5, al: -5, cr: 0 },
-            "ignore": { txt: "Du ignorierst es. Chantal schafft die Quote nicht. Der Chef tobt im Flur. Die Stimmung ist im Keller.", m: 1, fl: 0, al: 10, cr: 0 },
-            "info_win": { txt: "Du hast die Infos bekommen! Es ist die berüchtigte Schwarze Liste der HR. Ein mächtiges Werkzeug.", m: 10, fl: 0, al: 0, cr: 0, loot: "secret_list" }
-        }
+            }, 
+            "info_win": { 
+                txt: "[Datei empfangen: HR_Watchlist_Q3.pdf] Chantal: 'Du bist mein Retter! 😘' Du hast die berüchtigte Schwarze Liste gesichert! Ein extrem mächtiges Werkzeug für kommende Intrigen.", 
+                rep: { "Chantal": 2 },
+                m: 10, fl: 0, al: 0, cr: 0, loot: "secret_list" 
+            } 
+        } 
     },
     {
         id: "sq_kevin_origin_2",
@@ -13360,185 +13482,246 @@ const DB = {
             }
         },
         results: {
-            "res_party": { txt: "Kevin schickt ein Foto. Der Serverraum blinkt wie eine Dorfdisco. Du musst grinsen.", m: 20, fl: 15, al: -10, cr: 0 },
-            "res_boring": { txt: "Kevin schmollt. Aber zumindest brennt der Server nicht ab. Du hast Verantwortung gezeigt. (Langweilig)", m: 5, fl: -5, al: 5, cr: -5 },
-            "res_blue": { txt: "Zu spät. Kevin hat alles blau verkabelt. 'Temperatur ist um 0,1 Grad gesunken!', schreibt er. Na immerhin.", m: 20, fl: 5, al: -5, cr: 0 }
+            "res_party": { txt: "Kevin schickt ein Foto. Der Serverraum blinkt wie eine Dorfdisco. Du musst grinsen.", rep: { "Kevin": 5 }, m: 20, fl: 15, al: -10, cr: 0 },
+            "res_boring": { txt: "Kevin schmollt. Aber zumindest brennt der Server nicht ab. Du hast Verantwortung gezeigt. (Langweilig)", rep: { "Kevin": -5 }, m: 5, fl: -5, al: 5, cr: -5 },
+            "res_blue": { txt: "Zu spät. Kevin hat alles blau verkabelt. 'Temperatur ist um 0,1 Grad gesunken!', schreibt er. Na immerhin.", rep: { "Kevin": 2 }, m: 20, fl: 5, al: -5, cr: 0 }
         }
     },
-    {
-        id: "sq_prince_return",
-        kind: "phone",
-        reqStory: "prince_active",
-        title: "Dringende Rückforderung",
-        appName: "TrustMeChat",
-        startNode: "intro",
-        nodes: {
-            "intro": {
-                text: "👑 PRINZ: 'My dearest friend! Bad news! There was a counter-revolution! My uncle is alive! He wants the money back! If not, he calls Interpol! Please send back NOW!'",
-                opts: [
-                    { t: "Geld zurücküberweisen (Sicher ist sicher)", next: "return_money" },
-                    { t: "Blockieren & Behalten (Risiko!)", next: "keep_money" },
-                    { t: "Lügen: 'Habe alles für Skins ausgegeben'", next: "troll_prince" }
-                ]
-            },
-            "return_money": {
-                text: "Du tippst die TAN ein. Die 10 Millionen verschwinden vom Konto. Du fühlst dich arm, aber moralisch überlegen.",
-                opts: [
-                    { t: "Ciao, Reichtum.", next: "res_returned" }
-                ]
-            },
-            "keep_money": {
-                text: "Du drückst auf 'Blockieren'. Die Nachrichten stoppen. Aber war das Klug? Draußen fährt ein schwarzer Van vorbei...",
-                opts: [
-                    { t: "Ich behalte meine Millionen!", next: "res_kept" }
-                ]
-            },
-            "troll_prince": {
-                text: "PRINZ: 'YOU WHAT?! Skins?! Are you crazy?! My head is on the line here! Send the rest! NOW!'",
-                opts: [
-                    { t: "Na gut, hier...", next: "return_money" },
-                    { t: "Handy ausschalten", next: "res_kept" }
-                ]
-            }
-        },
-        results: {
-            "res_returned": { 
-                txt: "Prinz: 'You are a saint! I will name my firstborn Sysadmin.' Die Karte ist wertlos, aber dein Gewissen ist rein.", 
-                m: 10, req: "black_card", loot: "prince_letter", fl: 0, al: -20, cr: -30 
-            },
-            "res_kept": { 
-                txt: "Kontakt blockiert. Du behältst die Black Card. Aber dein Radar schlägt aus. Interpol beobachtet dich.", 
-                m: 2, fl: 10, al: 0, cr: 40 
-            }
-        }
+    { 
+        id: "sq_prince_return", 
+        kind: "phone", 
+        reqStory: "prince_active", 
+        title: "Dringende Rückforderung", 
+        appName: "TrustMeChat", 
+        startNode: "intro", 
+        nodes: { 
+            "intro": { 
+                text: "👑 PRINZ: 'My dearest friend! Bad news! There was a counter-revolution! My uncle is alive! He wants the money back! If not, he calls Interpol! Please send back NOW!'", 
+                opts: [ 
+                    { t: "[System: Gesamte Summe rücküberweisen]", next: "return_money" }, 
+                    { t: "[System: Nutzer sofort blockieren]", next: "keep_money" }, 
+                    { t: "Hab das Geld leider schon komplett für Fortnite Skins verballert.", next: "troll_prince" } 
+                ] 
+            }, 
+            "return_money": { 
+                text: "[System: TAN-Eingabe erfolgreich. 7.500.000,00 USD transferiert] Du fühlst dich schlagartig wieder arm, aber moralisch extrem überlegen.", 
+                opts: [ 
+                    { t: "Gern geschehen. Pass besser auf dich auf.", next: "res_returned" } 
+                ] 
+            }, 
+            "keep_money": { 
+                text: "[System: Nutzer blockiert] Die panischen Nachrichten stoppen abrupt. Draußen vor dem Bürofenster hält plötzlich quietschend ein schwarzer Van ohne Kennzeichen...", 
+                opts: [ 
+                    { t: "[Handy ausschalten & unter den Tisch ducken]", next: "res_kept" } 
+                ] 
+            }, 
+            "troll_prince": { 
+                text: "👑 PRINZ: 'YOU WHAT?! Skins?! Are you crazy?! My head is on the line here! Send the rest! NOW!'", 
+                opts: [ 
+                    { t: "Okay, okay! Bleib locker. Ich schick dir den Rest zurück.", next: "return_money" }, 
+                    { t: "[System: Nutzer sofort blockieren]", next: "res_kept" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "res_returned": {  
+                txt: "👑 PRINZ: 'You are a saint! I will name my firstborn Sysadmin.' [Chat beendet] Die Karte ist wertlos, aber dein Gewissen ist rein.",  
+                m: 10, req: "black_card", loot: "prince_letter", fl: 0, al: -20, cr: -30  
+            }, 
+            "res_kept": {  
+                txt: "[System: Gerät offline] Du behältst die Millionen. Aber dein Radar schlägt massiv aus. Du hast jetzt sehr wahrscheinlich Interpol am Hals.",  
+                m: 2, fl: 10, al: 0, cr: 40  
+            } 
+        } 
+    },
+    { 
+        id: "sq_team_gossip_1", 
+        kind: "phone", 
+        appName: "WhatsApp", 
+        title: "Gruppe: 'Die 3 von der Tankstelle'", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Chantal: 'Habt ihr gesehen, was ER heute anhat? Diese Krawatte schreit nach Midlife-Crisis.' Kevin: 'Sieht aus wie ein Unfall im Malbuch. 😂'", 
+                opts: [ 
+                    { t: "Und habt ihr mal auf die Schuhe geachtet?! 🤮", next: "join_in" }, 
+                    { t: "Vorsicht Leute, die IT sieht alles. Auch der Chef liest Logs.", next: "warn" }, 
+                    { t: "[System: Gruppe stummschalten & Handy sperren]", next: "ignore" } 
+                ] 
+            }, 
+            "join_in": { 
+                text: "Chantal: 'OMG JA! 💀 Du bist der Beste! Ich mach ein Meme draus.' (Dein Handy vibriert kurz darauf, weil sie ein Bild in die Gruppe postet)", 
+                opts: [ 
+                    { t: "[System: Auf das Bild mit 😂 reagieren]", next: "meme_like" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "ignore": {  
+                txt: "[System: Benachrichtigungen aus] Du ignorierst den Chat. Chantal schreibt dir später privat: 'Langweiler'. Aber du hast immerhin was gearbeitet.",  
+                ep: { "Chantal": -5, "Kevin": -2 },
+                m: 2, fl: -5, al: 5, cr: -5 
+            }, 
+            "warn": {  
+                txt: "Kevin: 'Uuuh, Herr Wichtig hat Angst.' Sie lästern jetzt in einer neuen Gruppe über dich, aber der Chef kriegt nichts mit. Du bist fein raus.",  
+                rep: { "Chantal": -2, "Kevin": -2 },
+                m: 2, fl: 0, al: 5, cr: 0  
+            }, 
+            "meme_like": {  
+                txt: "[Reaktion gesendet] Du kicherst laut am Platz. Dummerweise steht der Chef gerade hinter dir. Er sieht dein Handy nicht, aber er merkt, dass du Spaß hast. Das macht ihn misstrauisch.", 
+                rep: { "Chantal": 5, "Kevin": 5 },
+                m: 10, fl: 10, al: -10, cr: 15, 
+                next: "team_gossip_2" 
+            } 
+        } 
+    },
+    { 
+        id: "sq_team_gossip_2", 
+        kind: "phone", 
+        appName: "Teams", 
+        title: "Nachricht vom Chef", 
+        reqStory: "team_gossip_2", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Chef: 'Herr Müller, ich höre viel Gelächter aus Ihrer Ecke. Haben wir die Quartalsziele schon erreicht? Oder warum ist die Stimmung so gut?'", 
+                opts: [ 
+                    { t: "Ein Kollege hat einen extrem lustigen Code-Fehler gemacht. Reiner IT-Humor, Chef.", next: "lie" }, 
+                    { t: "Entschuldigung. Das war unprofessionell und kommt nicht wieder vor.", next: "sorry" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "lie": {  
+                txt: "Chef: 'Soso. Ein lustiger Bug. Zeigen Sie mir den doch mal.' Du stammelst eine halbgare Erklärung zusammen. Er weiß Bescheid. 'Handy weg, Müller.'",  
+                rep: { "Dr. Wichtig": -5 },	
+                m: 5, fl: 0, al: 10, cr: 10 
+            }, 
+            "sorry": {  
+                txt: "Chef: 'Besser ist das.' Er beobachtet dich jetzt genau. Der Spaß ist endgültig vorbei.",
+                rep: { "Dr. Wichtig": 2 },	  
+                m: 2, fl: -5, al: 5, cr: 0  
+            } 
+        } 
+    },
+    { 
+        id: "sq_betting_pool", 
+        kind: "phone", 
+        appName: "Telegram", 
+        title: "Gruppe: 'Wettkönige'", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "Jürgen (Vertrieb): 'So Männers! Heute Abend Bayern gegen Dortmund! Der Topf liegt bei 50€. Wer ist dabei? Einsatz 10€.'", 
+                opts: [ 
+                    { t: "Bin dabei! Ich bring dir den Zehner nachher rüber.", next: "bet_placed" }, 
+                    { t: "2:1 für Bayern. Aber ich spiele nur zum Spaß mit, ohne Kohle.", next: "bet_chat" }, 
+                    { t: "[System: Chat wegen illegalem Glücksspiel an HR melden]", next: "snitch" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "bet_placed": {  
+                txt: "Jürgen: 'Sauber, bist notiert!' Du bist drin. Jetzt checkst du alle 5 Minuten den Liveticker auf dem Handy. Du arbeitest quasi gar nicht mehr.",  
+                m: 30, fl: 15, al: -5, cr: 10 
+            }, 
+            "bet_chat": {  
+                txt: "Jürgen: 'Ohne Moos nix los, aber ich trag dich ein.' Ihr diskutiert anschließend noch 15 Minuten im Chat über Abseitsregeln. Gut abgelenkt.",  
+                m: 15, fl: 10, al: -5, cr: 5  
+            }, 
+            "snitch": {  
+                txt: "[System: Chat erfolgreich an HR gemeldet] Die Gruppe wird noch am gleichen Tag geschlossen. Jürgen wirft dir später im Flur extrem böse Blicke zu. Du bist der Alman des Monats.",  
+                m: 5, fl: -10, al: 10, cr: -5 
+            } 
+        } 
+    },
+    { 
+        id: "sq_gabi_sick", 
+        kind: "phone", 
+        appName: "Insta", 
+        title: "DM von Gabi_Rockt", 
+        startNode: "root", 
+        nodes: { 
+            "root": { 
+                text: "[Bild empfangen: Gabi mit Cocktail am Baggersee] Gabi: 'Glaubst du, ich kann das in meine Story posten oder sieht der Chef das? Bin ja heute eigentlich krank gemeldet 🤫'", 
+                opts: [ 
+                    { t: "Klar, hau raus! Der Chef weiß nicht mal, wie man Insta buchstabiert.", next: "encourage" }, 
+                    { t: "Bist du irre? Lass das bloß sein, das gibt ne fristlose Kündigung.", next: "warn" }, 
+                    { t: "Ich sag nichts, aber dafür schuldest du mir am Montag einen dicken Muffin.", next: "blackmail" } 
+                ] 
+            } 
+        }, 
+        results: { 
+            "encourage": {  
+                txt: "[System: Gabi hat das Bild in ihre Story gepostet] 1 Stunde später hörst du den Chef auf dem Flur brüllen: 'WO IST FRAU GABI?!'. Er hat wohl doch einen geheimen Stalker-Account. Ups.",  
+                m: 5, fl: 5, al: 5, cr: 10 
+            }, 
+            "warn": {  
+                txt: "Gabi: 'Hast recht. Zu riskant. Danke Bro! 😘' [System: Bild wurde gelöscht] Du hast ihr höchstwahrscheinlich gerade den Job gerettet.",  
+                rep: { "Gabi": 5 },	
+                m: 2, fl: -5, al: -5, cr: 0  
+            }, 
+            "blackmail": {  
+                txt: "Gabi: 'Erpresser-Arschloch. 🖕' Aber sie postet es nicht. Du hast zwar einen Feind mehr am Empfang, aber dafür leckeres Gebäck in Aussicht.", 
+                rep: { "Gabi": -2 },
+                m: 2, fl: -5, al: 10, cr: 0  
+            } 
+        } 
     },
     {
-        id: "sq_team_gossip_1",
-        kind: "phone",
-        appName: "WhatsApp",
-        title: "Gruppe: 'Die 3 von der Tankstelle'",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Chantal: 'Habt ihr gesehen, was ER heute anhat? Diese Krawatte schreit nach Midlife-Crisis.'\nKevin: 'Sieht aus wie ein Unfall im Malbuch. 😂'",
-                opts: [
-                    { t: "Mitlästern: 'Und die Schuhe erst!'", next: "join_in" },
-                    { t: "Warnen: 'Vorsicht, IT sieht alles.'", next: "warn" },
-                    { t: "Arbeiten: Handy weglegen.", next: "ignore" }
-                ]
-            },
-            "join_in": {
-                text: "Chantal: 'OMG JA! 💀 Du bist der Beste! Ich mach ein Meme draus.' Dein Handy vibriert ununterbrochen vor Lachen.",
-                opts: [
-                    { t: "Meme liken", next: "meme_like" }
-                ]
-            }
-        },
-        results: {
-            "ignore": { 
-                txt: "Du ignorierst den Chat. Chantal schreibt später: 'Langweiler'. Aber du hast gearbeitet.", 
-                m: 2, fl: -5, al: 5, cr: -5
-            },
-            "warn": { 
-                txt: "Kevin: 'Uuuh, Herr Wichtig hat Angst.' Sie lästern jetzt über dich, aber der Chef kriegt nichts mit.", 
-                m: 2, fl: 0, al: 5, cr: 0 
-            },
-            "meme_like": { 
-                txt: "Du kicherst laut am Platz. Dummerweise steht der Chef gerade hinter dir. Er sieht nichts, aber er merkt, dass du Spaß hast. Das macht ihn misstrauisch.", 
-                m: 10, fl: 10, al: -10, cr: 15,
-                next: "team_gossip_2"
-            }
-        }
-    },
-    {
-        id: "sq_team_gossip_2",
+        id: "sq_teams_ceo_panic",
         kind: "phone",
         appName: "Teams",
-        title: "Nachricht vom Chef",
-        reqStory: "team_gossip_2",
+        title: "Dr. Wichtig",
         startNode: "root",
         nodes: {
             "root": {
-                text: "Chef: 'Herr Müller, ich höre viel Gelächter aus Ihrer Ecke. Haben wir die Quartalsziele schon erreicht? Oder warum ist die Stimmung so gut?'",
+                text: "MÜLLER! SIND SIE DA?! HILFE! Wie schalte ich den Beamer ab?! Da ploppen gerade private WhatsApp-Nachrichten von meiner Frau auf der großen Leinwand auf!! Vor den Investoren!!",
                 opts: [
-                    { t: "Lüge: 'Lache über einen Bug-Fix.'", next: "lie" },
-                    { t: "Entschuldigung: 'Kame nicht wieder vor.'", next: "sorry" }
+                    { t: "Einfach den Laptop zuklappen!", next: "laptop_close" },
+                    { t: "Was schreibt sie denn?", next: "gossip" },
+                    { t: "Drücken Sie Windows-Taste + P.", next: "win_p" }
+                ]
+            },
+            "laptop_close": {
+                text: "Dann ist die Präsentation auch weg, Sie Genie!! Die Investoren starren mich an! Es geht um Millionen! Schalten Sie das von Ihrem PC aus ab! REMOTE! JETZT!",
+                opts: [
+                    { t: "Okay, ich kappe das WLAN für den Raum.", next: "kill_wifi" },
+                    { t: "Geht nicht, Sie müssen das HDMI-Kabel ziehen.", next: "pull_cable" }
+                ]
+            },
+            "gossip": {
+                text: "DAS GEHT SIE NICHTS AN! Sie schreibt über meine... Fußpilz-Creme! MACHEN SIE DAS BILD WEG ODER SIE SIND GEFEUERT!",
+                opts: [
+                    { t: "Okay, okay! Ich kappe das WLAN!", next: "kill_wifi" }
+                ]
+            },
+            "win_p": {
+                text: "Windows?! Ich habe den neuen Mac, den ich unbedingt wollte! HIER GIBT ES KEINE WINDOWS-TASTE! Ah, jetzt hat sie ein Bild von der Salbe geschickt! TUN SIE WAS!",
+                opts: [
+                    { t: "Ich deaktiviere das WLAN im Meetingraum!", next: "kill_wifi" },
+                    { t: "Drücken Sie CMD + F1 (hoffentlich stimmt's)", next: "mac_guess" }
                 ]
             }
         },
         results: {
-            "lie": { 
-                txt: "'Soso. Ein lustiger Bug. Zeigen Sie mir den doch mal.' Du stammelst. Er weiß Bescheid. 'Handy weg, Müller.'", 
-                m: 5, fl: 0, al: 10, cr: 10
+            "kill_wifi": { 
+                txt: "Dr. Wichtig: 'Puh. Bild ist weg. Ich behaupte einfach, wir wurden von Hackern attackiert. Danke Müller.'",
+                rep: { "Dr. Wichtig": 5 },
+                m: 5, fl: 0, al: -10, cr: -15
             },
-            "sorry": { 
-                txt: "'Besser ist das.' Er beobachtet dich jetzt genau.", 
-                m: 2, fl: -5, al: 5, cr: 0 
+            "pull_cable": { 
+                txt: "Dr. Wichtig: 'Habe gezogen. War das Stromkabel vom Beamer. Alles dunkel. Die Investoren tuscheln. Ich hasse Sie.'", 
+                rep: { "Dr. Wichtig": -10 }, 
+                m: 5, fl: 0, al: 10, cr: 20
+            },
+            "mac_guess": { 
+                txt: "Dr. Wichtig: 'Hab ich gedrückt! Jetzt läuft die Musik von meinem Spotify los! LAUT! MÜLLER!!!' Du legst das Handy stumm auf den Tisch.", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, fl: 0, al: 10, cr: 15
             }
         }
     },
-    {
-        id: "sq_betting_pool",
-        kind: "phone",
-        appName: "Telegram",
-        title: "Gruppe: 'Wettkönige'",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Jürgen (Vertrieb): 'So Männers! Heute Abend Bayern gegen Dortmund! Der Topf liegt bei 50€. Wer ist dabei? Einsatz 10€.'",
-                opts: [
-                    { t: "Dabei! (10€ setzen)", next: "bet_placed" },
-                    { t: "Tippen: '2:1 für Bayern' (Ohne Geld)", next: "bet_chat" },
-                    { t: "Melden: 'Glücksspiel ist verboten.'", next: "snitch" }
-                ]
-            }
-        },
-        results: {
-            "bet_placed": { 
-                txt: "Du bist drin. Jetzt checkst du alle 5 Minuten den Ticker auf dem Handy. Du arbeitest quasi gar nicht mehr.", 
-                m: 30, fl: 15, al: -5, cr: 10
-            },
-            "bet_chat": { 
-                txt: "Jürgen: 'Ohne Moos nix los, aber ich trag dich ein.' Ihr diskutiert 15 Minuten über Abseitsregeln.", 
-                m: 15, fl: 10, al: -5, cr: 5 
-            },
-            "snitch": { 
-                txt: "Du petzt beim Betriebsrat. Die Gruppe wird geschlossen. Jürgen wirft dir böse Blicke zu. Du bist der Alman des Monats.", 
-                m: 5, fl: -10, al: 10, cr: -5
-            }
-        }
-    },
-    {
-        id: "sq_gabi_sick",
-        kind: "phone",
-        appName: "Insta",
-        title: "DM von Gabi_Rockt",
-        startNode: "root",
-        nodes: {
-            "root": {
-                text: "Gabi (Empfang) ist heute 'krank'. Sie schickt dir ein Foto: Sie mit Cocktail am Strand (Baggersee). \n'Glaubst du, ich kann das posten oder sieht der Chef das?'",
-                opts: [
-                    { t: "Ermutigen: 'Klar, er hat kein Insta!'", next: "encourage" },
-                    { t: "Warnen: 'Bist du irre? Lass es.'", next: "warn" },
-                    { t: "Erpressen: 'Nur wenn du mir was mitbringst.'", next: "blackmail" }
-                ]
-            }
-        },
-        results: {
-            "encourage": { 
-                txt: "Sie postet es. 1 Stunde später hörst du den Chef brüllen: 'WO IST FRAU MEIER?!'. Er hat wohl doch einen Fake-Account. Ups.", 
-                m: 5, fl: 5, al: 5, cr: 10,
-            },
-            "warn": { 
-                txt: "Gabi: 'Hast recht. Danke Bro! 😘'. Sie löscht es. Du hast ihr den Job gerettet.", 
-                m: 2, fl: -5, al: -5, cr: 0 
-            },
-            "blackmail": { 
-                txt: "Gabi: 'Arschloch. 🖕'. Aber sie postet es nicht. Du hast einen Feind mehr, aber Ruhe.", 
-                m: 2, fl: -5, al: 10, cr: 0 
-            }
-        }
-    }
     ],
 
     // === RUF-EVENTS (Interventionen) ===
@@ -13979,6 +14162,108 @@ const DB = {
                 rep: { "Kevin": -20 },
                 m: 10, f: 5, a: 30, c: 20, 
                 r: "Es kommt fast zur Schlägerei. HR muss dazwischengehen. Ihr bekommt beide eine letzte Abmahnung. Der Krieg ist eskaliert." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_good_1",
+        title: "Energy-Experiment",
+        reqRep: { "Kevin": 10 }, 
+        text: "Kevin kommt mit einer knallgrünen, unbeschrifteten Dose in dein Büro. 'Bro, ich hab diesen Energy-Drink im Darknet bestellt. Er heißt 'Nuclear Sludge'. Willst du mal probieren? Ich trau mich nicht als Erster.'",
+        opts: [
+            { 
+                t: "Mutig: 'Klar, gib her.'", 
+                rep: { "Kevin": 5 },
+                m: 10, f: -15, a: 10, c: 0, 
+                r: "Du nimmst einen Schluck. Es schmeckt nach Batterie und saurem Apfel. Dein Herzschlag verdoppelt sich sofort. Kevin staunt: 'Krass, du lebst noch!'" 
+            },
+            { 
+                t: "Ablehnen: 'Willst du mich vergiften?'", 
+                rep: { "Kevin": -2 },
+                m: 2, f: 0, a: -5, c: 0, 
+                r: "Kevin zuckt mit den Schultern. 'Feigling.' Er trinkt ihn selbst und zittert danach für 2 Stunden unkontrolliert am Schreibtisch." 
+            },
+            { 
+                t: "List: 'Stell ihn dem Chef auf den Tisch.'", 
+                rep: { "Kevin": 10, "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "Ihr schleicht euch ins Chefbüro und lasst die Dose dort. Eine Stunde später brüllt der Chef auf dem Flur irgendwas von 'Synergie-Explosion'. Ihr kichert im Serverraum." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_good_2",
+        title: "Tinder-Support",
+        reqRep: { "Kevin": 30 }, 
+        text: "Kevin wirkt verzweifelt. 'Du bist doch weise und so. Mein Tinder-Profil läuft nicht. Ich habe ein Foto von meinem PC-Setup und als Bio: 'Suche Player 2'. Was mache ich falsch?'",
+        opts: [
+            { 
+                t: "Helfen: 'Wir machen ein Profil draus!'", 
+                rep: { "Kevin": 15 },
+                m: 15, f: 10, a: -10, c: 0, 
+                r: "Du nutzt 15 Minuten Arbeitszeit, um ihn im Flur vor einer Pflanze zu fotografieren. 'Schreib rein, dass du gerne kochst', rätst du. Er hat sofort ein Match." 
+            },
+            { 
+                t: "Roasten: 'Alles. Du machst alles falsch.'", 
+                rep: { "Kevin": -5 },
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Kevin ist beleidigt. 'Du verstehst meine Zielgruppe einfach nicht. Echte Gamer-Girls stehen auf sowas!' Er wischt weiter frustriert nach rechts." 
+            },
+            { 
+                t: "Abwimmeln: 'Kauf dir Tinder Gold.'", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Er seufzt. 'Das kostet 30 Euro! Dafür krieg ich einen neuen Skin in Valorant...' Er überlegt ernsthaft. Prioritäten." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_bad_1",
+        title: "Die Höllen-Tastatur",
+        reqRep: { "Kevin": -10 }, 
+        text: "Kevin hat sich eine neue mechanische Tastatur mit blauen Switches gekauft. Jeder Tastenanschlag klingt wie ein Schuss aus einer Kleinkaliberwaffe. *KLACK KLACK KLACK*. Du kannst dich nicht konzentrieren.",
+        opts: [
+            { 
+                t: "Einschreiten: 'Wirf das Ding weg!'", 
+                rep: { "Kevin": -5 },
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Kevin verdreht die Augen. 'Das ist taktisches Feedback! Du hast einfach kein Gefühl für gute Hardware.' Er tippt demonstrativ noch lauter." 
+            },
+            { 
+                t: "Sabotage: Tasten vertauschen", 
+                rep: { "Kevin": -10 },
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Als er auf Toilette ist, tauschst du 'N' und 'M'. Es dauert 15 Minuten, bis er schreiend aufgibt, weil sein Passwort nicht mehr geht. Wunderschön." 
+            },
+            { 
+                t: "Aushalten & Kopfhörer aufsetzen", 
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du versuchst es zu ignorieren, aber das *KLACK KLACK* bohrt sich in dein Gehirn. Deine Aggression steigt stetig an." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_bad_2",
+        title: "Müll-Abladeplatz",
+        reqRep: { "Kevin": -30 }, 
+        text: "Du kommst vom Kaffeeholen zurück. Auf deinem Schreibtisch steht ein leerer, klebriger Joghurtbecher und eine Bananenschale. Kevin sitzt zwei Tische weiter, pfeift unschuldig und starrt auf seinen Monitor.",
+        opts: [
+            { 
+                t: "Passiv-Aggressiv: In seinen Rucksack stecken", 
+                rep: { "Kevin": -10 },
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du lässt den Müll heimlich in seiner Tasche verschwinden. Das wird morgen früh beim Auspacken ein sehr böses Erwachen für ihn geben. Perfekte Rache." 
+            },
+            { 
+                t: "Direkte Konfrontation: Anschreien", 
+                rep: { "Kevin": -5 },
+                m: 5, f: 0, a: 15, c: 5, 
+                r: "Du wirfst ihm den Becher auf den Tisch. 'Ist dein Mülleimer kaputt?!' Der Chef hört es und ermahnt DICH wegen des lauten Tons im Büro." 
+            },
+            { 
+                t: "Wortlos wegräumen (Kapitulation)", 
+                rep: { "Kevin": 5 },
+                m: 5, f: -5, a: 10, c: 0, 
+                r: "Du wirfst es selbst weg. Kevin feixt im Hintergrund: 'Danke für den Zimmerservice!' Du hast gerade den Rest deines Respekts verloren." 
             }
         ]
     },
@@ -14423,6 +14708,109 @@ const DB = {
             }
         ]
     },
+    {
+        id: "rep_chantal_filler_good_1",
+        title: "Excel für Influencer",
+        reqRep: { "Chantal": 10 }, 
+        text: "Chantal steht mit ihrem MacBook vor dir. 'Müller, du sprichst doch fließend Nerd. Wie mache ich, dass diese Zelle hier rot wird, wenn das Budget für vegane Snacks überschritten ist? Das muss poppen!'",
+        opts: [
+            { 
+                t: "Bedingte Formatierung einrichten", 
+                rep: { "Chantal": 10 },
+                m: 10, f: -5, a: -5, c: 0, 
+                r: "Du stellst die Formatierung ein. Chantal klatscht in die Hände. 'OMG, es ist Magic! Du hast meinen Tag gerettet!' Sie geht glücklich davon." 
+            },
+            { 
+                t: "Sarkastisch: 'Kauf einen roten Stift.'", 
+                rep: { "Chantal": -5 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Sie zieht eine Schnute. 'Immer so hilfsbereit, die IT. Dann frage ich halt den Werkstudenten.' Chance auf Pluspunkte verpasst." 
+            },
+            { 
+                t: "Beibringen: 'Schau her, so geht das...'", 
+                rep: { "Chantal": 5 },
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Du versuchst, es ihr zu erklären. Sie schaltet nach 10 Sekunden mental ab und nickt nur noch. 'Ja, ja, mach einfach.' Immerhin hat sie sich bedankt." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_good_2",
+        title: "Der Outfit-Check",
+        reqRep: { "Chantal": 30 }, 
+        text: "Chantal mustert dich von oben bis unten. 'Wir haben gleich Kundentermin im Haus. Das T-Shirt mit dem 'There is no Place like 127.0.0.1'-Spruch... ist das Ironie oder dein Ernst? Du brauchst ein Upgrade.'",
+        opts: [
+            { 
+                t: "Selbstironie: 'Das ist High-Fashion!'", 
+                rep: { "Chantal": 5 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Sie lacht. 'Okay, wenigstens stehst du zu deinem Cringe. Bleib einfach hinter dem Server-Schrank, wenn die Kunden kommen.'" 
+            },
+            { 
+                t: "Mitspielen: 'Hast du was Besseres?'", 
+                rep: { "Chantal": 15 },
+                m: 10, f: 5, a: 5, c: 5, 
+                r: "Sie strahlt, wühlt in einer Kiste und wirft dir ein viel zu enges 'GlobalCorp Innovator'-Polo zu. Du siehst schrecklich aus, aber sie ist glücklich." 
+            },
+            { 
+                t: "Abblocken: 'Meine Kleidung, meine Sache.'", 
+                rep: { "Chantal": -5 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Sie hebt abwehrend die Hände. 'War ja nur ein Tipp. Don't shoot the messenger.' Sie trippelt kopfschüttelnd davon." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_bad_1",
+        title: "Hardware-Ästhetik",
+        reqRep: { "Chantal": -10 }, 
+        text: "Chantal steht genervt vor deinem Tisch. 'Dieser schwarze Kasten unter meinem Schreibtisch... der Rechner. Der ruiniert das Feng-Shui. Kannst du den nicht weiß ansprühen? Oder gegen einen iMac tauschen?'",
+        opts: [
+            { 
+                t: "Genervt: 'Das ist ein Firmen-PC, kein Deko-Objekt.'", 
+                rep: { "Chantal": -5 },
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "'Boah, bist du unkreativ', mault sie. 'Dann kleb ich da halt Glitzersteine drauf.' (Bitte nicht...)" 
+            },
+            { 
+                t: "Tech-Lösung: Den PC untern Tisch schieben", 
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du kriechst unter ihren Tisch und schiebst den Tower ganz nach hinten ins Eck. 'Aus den Augen, aus dem Sinn.' Sie ist mäßig zufrieden." 
+            },
+            { 
+                t: "Ignorieren und weiterarbeiten", 
+                rep: { "Chantal": -10 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Du tust so, als hättest du sie nicht gehört. Sie steht noch eine Minute schnaubend da und stöckelt dann wütend davon." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_bad_2",
+        title: "Das Prioritäten-Problem",
+        reqRep: { "Chantal": -30 }, 
+        text: "Ein Ticket von Chantal ploppt auf, Priorität KRITISCH: 'Mein zweiter Monitor hat die falsche Farbtemperatur! Das Blau ist zu kühl!' Du hast eigentlich gerade einen echten Server-Ausfall zu bearbeiten.",
+        opts: [
+            { 
+                t: "Ticket schließen: 'Kein technischer Defekt.'", 
+                rep: { "Chantal": -15 },
+                m: 2, f: 0, a: 5, c: 5, 
+                r: "Du schließt das Ticket erbarmungslos. Zwei Minuten später brüllt Chantal durch den Flur, dass die IT die Abteilung Marketing absichtlich sabotiert." 
+            },
+            { 
+                t: "Hingehen und Alibi-Klicks machen", 
+                rep: { "Chantal": 5 },
+                m: 15, f: -5, a: 10, c: -5, 
+                r: "Du unterbrichst deine wichtige Arbeit, gehst hin und stellst den Monitor 2% wärmer. 'Viel besser!', sagt sie. Du möchtest weinen." 
+            },
+            { 
+                t: "Chef ins CC setzen: 'Prio anpassen'", 
+                rep: { "Chantal": -10, "Dr. Wichtig": 5 },
+                m: 5, f: 0, a: 0, c: -5, 
+                r: "Du meldest die Ressourcen-Verschwendung dem Chef. Er gibt dir recht, aber Chantal schreibt dir eine hasserfüllte Teams-Nachricht." 
+            }
+        ]
+    },
     // === EGON: DER HÜTER DER SCHLÜSSEL  ===
     {
         id: "rep_egon_story_1",
@@ -14858,6 +15246,111 @@ const DB = {
             }
         ]
     },
+    {
+        id: "rep_egon_filler_good_1",
+        title: "Übersetzungshilfe",
+        reqRep: { "Egon": 10 }, 
+        text: "Egon kratzt sich am Kopf und starrt auf das Display der neuen Klima-Anlage. 'Hömma. Da steht 'Filter Maintenance Required'. Heißt das, das Ding explodiert gleich oder will es nur Aufmerksamkeit?'",
+        opts: [
+            { 
+                t: "Helfen: 'Du musst den Filter wechseln.'", 
+                rep: { "Egon": 10 },
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Egon brummt zustimmend. 'Dacht ich's mir. Teufelszeug, dieses Denglisch. Danke dir.' Er zieht mit seinem Werkzeugkoffer ab." 
+            },
+            { 
+                t: "Verarschen: 'Es entwickelt Bewusstsein.'", 
+                rep: { "Egon": -5 },
+                m: 2, f: 5, a: 5, c: 0, 
+                r: "Egon guckt dich grimmig an. 'Ich bin alt, nicht bescheuert.' Er dreht sich um und versucht es mit roher Gewalt." 
+            },
+            { 
+                t: "Ignorieren: 'Bin kein Handwerker.'", 
+                rep: { "Egon": -5 },
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "'Einander helfen ist hier wohl aus der Mode gekommen', murmelt er und drückt wahllos Knöpfe." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_good_2",
+        title: "Weiches Gold",
+        reqRep: { "Egon": 30 }, 
+        text: "Egon fegt vor deinem Büro. Als niemand guckt, schiebt er dir eine Rolle dreilagiges Klopapier über den Tisch. 'Aus dem Vorstands-Klo. Die Belegschaft kriegt ja nur Schmirgelpapier. Behalts für dich.'",
+        opts: [
+            { 
+                t: "Dankend annehmen", 
+                rep: { "Egon": 10 },
+                m: 2, f: 0, a: -10, c: 0, 
+                r: "Du versteckst die Rolle schnell in deiner Schublade. 'Du bist ein wahrer Held der Arbeiterklasse, Egon', flüsterst du. Er grinst stolz." 
+            },
+            { 
+                t: "Prinzipientreu: 'Das ist Diebstahl!'", 
+                rep: { "Egon": -15 },
+                m: 2, f: 0, a: 5, c: 5, 
+                r: "Egon schnaubt. 'Dann kratz dir halt den Hintern blutig, Herr Saubermann.' Er nimmt die Rolle wütend wieder mit." 
+            },
+            { 
+                t: "Tauschen: 'Willst du einen Donut dafür?'", 
+                req: "donut",
+                rem: "donut",
+                rep: { "Egon": 15 },
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Ein fairer Tausch auf dem Büro-Schwarzmarkt. Egon nimmt den Donut, du das weiche Papier. Win-Win." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_bad_1",
+        title: "Klima-Diktatur",
+        reqRep: { "Egon": -10 }, 
+        text: "Du schwitzt im Büro, weil die Sonne reinknallt. Du hast deinen privaten Tisch-Ventilator angemacht. Egon stürmt rein und zieht einfach den Stecker. 'Brandgefahr! Privatgeräte ohne TÜV-Siegel sind strengstens verboten!'",
+        opts: [
+            { 
+                t: "Diskutieren: 'Der ist brandneu!'", 
+                rep: { "Egon": -5 },
+                m: 10, f: 0, a: 10, c: 0, 
+                r: "Ihr streitet 10 Minuten über Brandschutz-Normen. Am Ende nimmt er den Ventilator gnadenlos mit. Du schwitzt weiter." 
+            },
+            { 
+                t: "Klein beigeben: 'Na gut...'", 
+                rep: { "Egon": 5 },
+                m: 5, f: -5, a: 5, c: 0, 
+                r: "Du lässt ihn das Ding mitnehmen, um Stress zu vermeiden. Egon nickt herablassend. 'Brav. Sicherheit geht vor.'" 
+            },
+            { 
+                t: "Sabotage: Wieder einstecken, wenn er weg ist", 
+                rep: { "Egon": -10 },
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Sobald er aus der Tür ist, steckst du ihn wieder ein. Eine halbe Stunde später haut dir Egon von außen die Sicherung für den Raum raus." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_bad_2",
+        title: "Der Stolperdraht",
+        reqRep: { "Egon": -30 }, 
+        text: "Egon hat genau vor deiner Bürotür ein loses LAN-Kabel mit drei Rollen signalrotem Warnklebeband am Boden fixiert. Die Tür geht jetzt nur noch zur Hälfte auf. Er grinst dich von Weitem an.",
+        opts: [
+            { 
+                t: "Mit dem Teppichmesser entfernen", 
+                rep: { "Egon": -10 },
+                m: 10, f: 0, a: 10, c: 5, 
+                r: "Du schneidest das Tape mühsam weg. Egon ruft aus der Ferne: 'Sachbeschädigung! Das melde ich!' Du hast Feierabend, aber den Krieg eskaliert." 
+            },
+            { 
+                t: "Chef holen: 'Das ist ein Fluchtweg!'", 
+                rep: { "Egon": -15, "Dr. Wichtig": 5 },
+                m: 15, f: 0, a: -5, c: -5, 
+                r: "Der Chef zwingt Egon, das Band zu entfernen (Arbeitsschutz). Egon kocht vor Wut, weil er vor dem Chef bloßgestellt wurde." 
+            },
+            { 
+                t: "Sich jeden Tag durchquetschen", 
+                m: 2, f: 5, a: 15, c: 0, 
+                r: "Du ignorierst es und quetschst dich jeden Tag durch den Spalt. Es nervt gewaltig, aber du gibst ihm nicht die Genugtuung einer Reaktion." 
+            }
+        ]
+    },
     // === DR. WICHTIG: DER VISIONÄR ===
     {
         id: "rep_ceo_story_1",
@@ -15288,9 +15781,112 @@ const DB = {
             },
             { 
                 t: "Bluff erhöhen: 'Das reicht nicht.'", 
-                rep: { "Dr. Wichtig": -20 },
+                rep: { "Dr. Wichtig": -15 },
                 m: 5, f: 0, a: -5, c: 30,
                 r: "Er knallt die Faust auf den Tisch. 'Jetzt reicht's! Erpressung lasse ich mir nicht bieten! Ich lasse die IT durchleuchten!' Ups. Bogen überspannt." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_good_1",
+        title: "Buzzword Bingo",
+        reqRep: { "Dr. Wichtig": 10 }, 
+        text: "Der Chef stoppt dich auf dem Flur. 'Müller! Ich habe in einem Magazin von 'Hyper-Agilem Cloud-Synergieren' gelesen. Das brauchen wir auch! Sind unsere Server schon hyper-agil?'",
+        opts: [
+            { 
+                t: "Mitspielen: 'Natürlich, Chef. Voll synergistisch.'", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, f: -5, a: -5, c: -5, 
+                r: "Er nickt gravitätisch. 'Hervorragend. Ich wusste, auf Sie ist Verlass. Weitermachen!' Er geht zufrieden weiter. Du hast nichts getan, aber gepunktet." 
+            },
+            { 
+                t: "Korrigieren: 'Das ergibt technisch keinen Sinn.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "Sein Lächeln verschwindet. 'Sie denken einfach nicht visionär genug, Müller. Immer diese Bedenkenträger.' Er wendet sich ab." 
+            },
+            { 
+                t: "Verwirren: 'Nur, wenn wir die Blockchain nutzen.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, f: 5, a: -5, c: 0, 
+                r: "Seine Augen weiten sich. 'Blockchain! Genial! Notieren Sie das für das nächste All-Hands-Meeting!' Er ist begeistert, aber du hast dir potenziell Mehrarbeit eingebrockt." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_good_2",
+        title: "Privater IT-Support",
+        reqRep: { "Dr. Wichtig": 30 }, 
+        text: "Dr. Wichtig ruft dich in sein Büro. Er wirkt verzweifelt. 'Müller, höchste Diskretion. Meine Golf-App auf dem Privat-iPad synct nicht mehr mit meiner Rolex. Das ist ein Notfall!'",
+        opts: [
+            { 
+                t: "Fixen: 'Einmal Neustart, Chef.'", 
+                rep: { "Dr. Wichtig": 15 },
+                m: 15, f: -10, a: -5, c: -10, 
+                r: "Du löst das Problem in zwei Minuten. Der Chef atmet auf. 'Sie sind mein Retter. Mein Handicap war in Gefahr!' Du bist sein heimlicher Held." 
+            },
+            { 
+                t: "Abwimmeln: 'Ich bin nur für Firmen-Hardware zuständig.'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 2, f: 0, a: 5, c: 15, 
+                r: "Er starrt dich an. 'Ich BIN die Firma, Müller!' Er tippt wütend selbst auf dem iPad herum. Keine gute Idee." 
+            },
+            { 
+                t: "Gegenleistung fordern: 'Das kostet aber.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du forderst einen extra Pausen-Tag. Er brummt. 'Unverschämt. Aber na gut.' Er hat Respekt vor deinem Verhandlungsgeschick." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_bad_1",
+        title: "Mikromanagement",
+        reqRep: { "Dr. Wichtig": -10 }, 
+        text: "Der Chef steht stumm hinter deinem Stuhl und beobachtet dich beim Tippen. Nach zwei Minuten räuspert er sich. 'Sie nutzen den kleinen Finger gar nicht für die Shift-Taste. Das ist ineffizient.'",
+        opts: [
+            { 
+                t: "Aushalten & Nicken", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, f: -5, a: 15, c: 0, 
+                r: "Du zwingst dich zu einem Lächeln. 'Werde ich üben, Chef.' Er klopft dir gönnerhaft auf die Schulter und geht. Du kochst innerlich." 
+            },
+            { 
+                t: "Patzig: 'Ich arbeite so am besten.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: -5, c: 10, 
+                r: "'Beratungsresistent!', schnaubt er. 'Deshalb kommen wir in Deutschland nicht voran.' Er notiert sich etwas auf seinem Klemmbrett." 
+            },
+            { 
+                t: "Demonstrativ das 10-Finger-System googeln", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Du öffnest ein Tipp-Tutorial. Er schaut kurz zu. 'Sehen Sie? Weiterbildung on the job.' Er ist zufrieden, du verlierst Zeit." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_bad_2",
+        title: "Die Spontan-Rede",
+        reqRep: { "Dr. Wichtig": -30 }, 
+        text: "Du bist auf dem Weg zur Toilette. Der Chef fängt dich ab. 'Müller! Gut, dass ich Sie treffe. Ich brauche ein Sounding-Board.' Er hält einen 20-minütigen Monolog über die 'Philosophie des agilen Heißgetränks'.",
+        opts: [
+            { 
+                t: "Zuhören & Applaudieren", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 25, f: 10, a: 5, c: -5, 
+                r: "Du verlierst eine halbe Stunde Arbeitszeit, aber der Chef fühlt sich wie Steve Jobs. 'Gutes Gespräch, Müller!'" 
+            },
+            { 
+                t: "Unterbrechen: 'Mein Server brennt!'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, f: 0, a: -5, c: 15, 
+                r: "Du lügst, um zu entkommen. 'Immer diese Ausreden', murmelt er beleidigt und lässt dich gehen. Das gibt Minuspunkte auf dem Radar." 
+            },
+            { 
+                t: "Wortlos wegschleichen", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 2, f: 0, a: -10, c: 10, 
+                r: "Während er die Augen schließt, um einen Gedanken zu formen, biegst du leise in den Flur ab. Er merkt es erst später, ist aber zu stolz, es zuzugeben." 
             }
         ]
     },
@@ -15729,6 +16325,110 @@ const DB = {
             }
         ]
     },
+    {
+        id: "rep_elster_filler_good_1",
+        title: "Der Sparfuchs",
+        reqRep: { "Frau Elster": 10 }, 
+        text: "Frau Elster mustert dich am Drucker. 'Ich habe in den Logs gesehen, dass Sie Ihre Handbücher standardmäßig beidseitig und in Graustufen drucken. Vorbildlich.'",
+        opts: [
+            { 
+                t: "Zustimmen: 'Umweltschutz und Kostenkontrolle.'", 
+                rep: { "Frau Elster": 10 },
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Ein seltenes, echtes Lächeln huscht über ihr Gesicht. 'Wenn nur das Marketing auch so denken würde. Weiter so.' Du bist auf einem guten Weg." 
+            },
+            { 
+                t: "Wahrheit: 'Farbe ist eh leer.'", 
+                rep: { "Frau Elster": 2 },
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "'Pragmatismus aus der Not heraus. Akzeptabel.' Sie widmet sich wieder ihren Akten." 
+            },
+            { 
+                t: "Angeben: 'Ich nutze auch nur halbe Blätter.'", 
+                rep: { "Frau Elster": -5 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Sie zieht eine Augenbraue hoch. 'Sarkasmus. Wie bedauerlich.' Du hast die gute Stimmung ruiniert." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_good_2",
+        title: "Neues Spielzeug",
+        reqRep: { "Frau Elster": 30 }, 
+        text: "Frau Elster hält ein kleines, glitzerndes Objekt in der Hand. 'Herr Müller. Schauen Sie mal. Ein neues Halsband für Rüdiger. Mit GPS-Tracker. Können Sie die App auf meinem Handy einrichten?'",
+        opts: [
+            { 
+                t: "Helfen: 'Klar, zeig her.'", 
+                rep: { "Frau Elster": 15 },
+                m: 15, f: -5, a: -5, c: 0, 
+                r: "Du richtest die App ein. Rüdiger ist gerade in der Küche. Frau Elster ist verzückt. 'Sie sind ein Schatz, Herr Müller.'" 
+            },
+            { 
+                t: "Datenschutz-Bedenken äußern", 
+                rep: { "Frau Elster": -5 },
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "'Die Server stehen in China, Frau Elster.' Sie schnappt das Halsband weg. 'Rüdiger hat nichts zu verbergen!' Thema beendet." 
+            },
+            { 
+                t: "Delegieren: 'Kevin macht das.'", 
+                rep: { "Frau Elster": -2 },
+                m: 2, f: 10, a: 0, c: 0, 
+                r: "Sie rümpft die Nase. 'Diesem Praktikanten vertraue ich Rüdigers Daten nicht an. Dann eben nicht.' Du hast dir Arbeit gespart, aber keine Pluspunkte gesammelt." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_bad_1",
+        title: "Tacker-Inspektion",
+        reqRep: { "Frau Elster": -10 }, 
+        text: "Frau Elster steht vor deinem Schreibtisch und hält deinen Tacker hoch. 'Inventarnummer 402-A. Der gehört in Raum 12. Warum befindet er sich auf Ihrem Schreibtisch?'",
+        opts: [
+            { 
+                t: "Entschuldigen & zurückbringen", 
+                rep: { "Frau Elster": 5 },
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du stehst auf und trägst den Tacker persönlich zwei Räume weiter. Frau Elster nickt. 'Ordnung muss sein.' Deine Geduld wird auf die Probe gestellt." 
+            },
+            { 
+                t: "Diskutieren: 'Ich habe den schon immer!'", 
+                rep: { "Frau Elster": -10 },
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "'Gewohnheitsrecht existiert hier nicht!' Sie konfisziert den Tacker rigoros. Du musst deine Papiere jetzt knicken." 
+            },
+            { 
+                t: "Einfach ignorieren", 
+                rep: { "Frau Elster": -5 },
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du tippst einfach weiter. Sie schnaubt, nimmt den Tacker und trägt dich in ihre schwarze Liste ein." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_bad_2",
+        title: "Die Stoppuhr",
+        reqRep: { "Frau Elster": -30 }, 
+        text: "Du kommst mit einem Kaffee zurück an den Platz. Frau Elster drückt demonstrativ auf eine Stoppuhr. '7 Minuten und 43 Sekunden für ein Heißgetränk. Die Vorgabe für Bildschirmpausen sind 5 Minuten.'",
+        opts: [
+            { 
+                t: "Rechtfertigen: 'Die Maschine musste heizen.'", 
+                rep: { "Frau Elster": 2 },
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Sie notiert es sich. 'Technisches Versagen. Akzeptabel, aber grenzwertig.' Du fühlst dich wie im Gefängnis." 
+            },
+            { 
+                t: "Ausrasten: 'Ich arbeite auch nach 16:30 Uhr!'", 
+                rep: { "Frau Elster": -10, "Dr. Wichtig": 5 },
+                m: 5, f: -5, a: 20, c: 5, 
+                r: "Du wirst laut. Sie zuckt nicht mal mit der Wimper. 'Unbezahlte Überstunden sind ein Compliance-Risiko. Ich melde das HR.'" 
+            },
+            { 
+                t: "Kaffee exen und sofort arbeiten", 
+                rep: { "Frau Elster": 10 },
+                m: 2, f: -10, a: 15, c: -5, 
+                r: "Du schluckst den heißen Kaffee in einem Zug runter. Es verbrennt dir die Zunge, aber sie ist befriedigt. 'Vorbildlich.'" 
+            }
+        ]
+    },
     // === MARKUS: DER CLOSER ===
     {
         id: "rep_markus_story_1",
@@ -16157,6 +16857,110 @@ const DB = {
                 rep: { "Markus": 10 }, 
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Du wirfst Kai-Uwe einen 'IT-Support'-Hoodie zu. Markus lacht: 'Mein Gott, Kai-Uwe, du siehst aus wie ein Sack Kartoffeln. Okay Müller, wir sind quitt. Der Anblick war es wert.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_good_1",
+        title: "Der Dongle-Retter",
+        reqRep: { "Markus": 10 }, 
+        text: "Markus stürmt rein, Krawatte leicht gelockert. 'Müller! Kunden-Pitch in 2 Minuten! Das verdammte Beamer-Kabel passt nicht in meinen Mac. Hast du so einen... Dongle-Dingsbums?'",
+        opts: [
+            { 
+                t: "Aushelfen: 'Hier, nimm den Adapter.'", 
+                rep: { "Markus": 10 },
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Du wirfst ihm den USB-C Adapter zu. Er fängt ihn lässig. 'Müller, du bist der MVP! Ich erwähne dich bei der Provision!' (Wird er nicht, aber er mag dich)." 
+            },
+            { 
+                t: "Belehren: 'Man sollte sein Setup kennen.'", 
+                rep: { "Markus": -5 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "'Klugscheißer!' ruft er und stürmt weiter, um jemand anderen zu nerven. Du hast ihn auflaufen lassen." 
+            },
+            { 
+                t: "Tauschgeschäft: 'Hol mir nachher ein Eis.'", 
+                rep: { "Markus": 5 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Er lacht. 'Deal!' Er nimmt den Adapter. Du bekommst später tatsächlich ein Magnum-Eis auf den Tisch gelegt." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_good_2",
+        title: "High-Class Reste",
+        reqRep: { "Markus": 30 }, 
+        text: "Markus betritt dein Büro und stellt einen edlen Pappkarton auf den Tisch. 'Der Termin mit den Investoren ist durch. Hier sind noch drei Premium-Trüffel-Sandwiches übrig. Für die Elite-IT.'",
+        opts: [
+            { 
+                t: "Dankend essen", 
+                rep: { "Markus": 5 },
+                m: 15, f: 10, a: -15, c: 0, 
+                r: "Du isst Trüffel. Es ist unglaublich. Markus lehnt sich an den Türrahmen und erzählt dir von seinem neuen Porsche. Ein gutes Leben." 
+            },
+            { 
+                t: "Ablehnen: 'Bin Vegetarier.'", 
+                rep: { "Markus": -2 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Er zieht eine Augenbraue hoch. 'Schwach. Sehr schwach, Müller.' Er nimmt den Karton wieder mit." 
+            },
+            { 
+                t: "Mit Kevin teilen", 
+                rep: { "Kevin": 10, "Markus": -5 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du rufst Kevin dazu. Markus schüttelt den Kopf. 'Perlen vor die Säue', murmelt er und geht." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_bad_1",
+        title: "Prio 1: Maus-Akku",
+        reqRep: { "Markus": -10 }, 
+        text: "Dein Telefon klingelt Sturm. Es ist Markus. 'Müller! Totalausfall! Meine Wireless-Maus ist leer. Ich kann so nicht akquirieren! Bring sofort Batterien! Prio 1!'",
+        opts: [
+            { 
+                t: "Widerwillig hinlaufen", 
+                rep: { "Markus": 5 },
+                m: 15, f: -5, a: 15, c: 0, 
+                r: "Du unterbrichst deine Arbeit und wechselst ihm die Batterien wie ein Butler. Er tippt derweil auf dem Handy. 'Wurde auch Zeit.'" 
+            },
+            { 
+                t: "Ablehnen: 'Hol sie dir am Empfang.'", 
+                rep: { "Markus": -10 },
+                m: 2, f: 0, a: 0, c: 5, 
+                r: "'Service-Wüste!', blafft er und legt auf. Du hast deine Ruhe, aber er wird sich beschweren." 
+            },
+            { 
+                t: "Empfehlen: 'Nimm das Touchpad.'", 
+                rep: { "Markus": -5 },
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'Touchpad? Sehe ich aus wie ein Student im Starbucks?' Er ist empört." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_bad_2",
+        title: "Die Feature-Lüge",
+        reqRep: { "Markus": -30 }, 
+        text: "Markus klopft dir im Vorbeigehen hart auf die Schulter. 'Hab den Deal gelandet! Hab dem Kunden versprochen, dass unsere Software jetzt auch Blockchain und KI-Kaffee kochen kann. Bau das bis Freitag ein. Ciao!'",
+        opts: [
+            { 
+                t: "Hinterherrufen: 'Das existiert nicht!'", 
+                rep: { "Markus": -5 },
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Er dreht sich nicht mal um. 'Machen Sie es möglich, Müller! Mindset!' Du reibst dir fassungslos die Schläfen." 
+            },
+            { 
+                t: "Sofort den Chef ins CC setzen", 
+                rep: { "Markus": -15, "Dr. Wichtig": 10 },
+                m: 10, f: -5, a: 5, c: -10, 
+                r: "Du schreibst eine formelle Mail, dass das nicht umsetzbar ist. Markus kommt später wütend rein. 'Du kleine Ratte...' Der Krieg tobt." 
+            },
+            { 
+                t: "Einfach ignorieren", 
+                rep: { "Markus": 5 },
+                m: 2, f: 10, a: 5, c: 10, 
+                r: "Du tust gar nichts. Wenn der Kunde am Freitag anruft, wird es brennen. Aber das ist ein Problem für Zukunfts-Müller." 
             }
         ]
     },
@@ -16592,6 +17396,109 @@ const DB = {
             }
         ]
     },
+    {
+        id: "rep_gabi_filler_good_1",
+        title: "Der Türsteher",
+        reqRep: { "Gabi": 10 }, 
+        text: "Gabi ruft an. 'Müller, hier steht ein sehr aufdringlicher Vertreter für Drucker-Leasing. Er will direkt zu dir durch. Soll ich ihn abwimmeln oder hast du Langeweile?'",
+        opts: [
+            { 
+                t: "Dankbar: 'Schick ihn in die Wüste!'", 
+                rep: { "Gabi": 10 },
+                m: 5, f: -5, a: -10, c: 0, 
+                r: "Gabi lacht. 'Alles klar, ich sag ihm, du bist auf unbestimmte Zeit im Exil.' Du hörst sie im Hintergrund autoritär werden. Perfekte Assistenz." 
+            },
+            { 
+                t: "Sarkastisch: 'Lass ihn rein, ich brauch Freunde.'", 
+                rep: { "Gabi": -2 },
+                m: 15, f: 0, a: 15, c: 0, 
+                r: "'Wie du willst, Masochist.' Der Vertreter kommt rein und stiehlt dir 15 Minuten Lebenszeit mit Hochglanz-Broschüren." 
+            },
+            { 
+                t: "Weiterleiten: 'Schick ihn zu Markus.'", 
+                rep: { "Gabi": 5, "Markus": -5 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Gabi kichert. 'Böse. Gefällt mir.' Der Vertriebler nervt den Vertriebler. Ein poetisches Ende." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_good_2",
+        title: "Gossip-Update",
+        reqRep: { "Gabi": 30 }, 
+        text: "Du holst Post am Empfang. Gabi beugt sich über den Tresen und flüstert: 'Hast du gehört? Chantal vom Marketing hat heute Morgen heimlich auf dem Klo geweint, weil ihr Smoothie ausverkauft war.'",
+        opts: [
+            { 
+                t: "Zuhören & Mitlästern", 
+                rep: { "Gabi": 10 },
+                m: 15, f: 10, a: -10, c: 0, 
+                r: "Ihr analysiert die psychologische Stabilität der Marketing-Abteilung. Es ist völlig unproduktiv, aber ungemein befriedigend." 
+            },
+            { 
+                t: "Abwimmeln: 'Gerüchte interessieren mich nicht.'", 
+                rep: { "Gabi": -10 },
+                m: 2, f: 0, a: 5, c: 0, 
+                r: "Sie verengt die Augen. 'Na gut, Herr Spießer. Dann eben keine Insider-Infos mehr für dich.' Spaßbremse." 
+            },
+            { 
+                t: "Mitleid: 'Oh, die Arme.'", 
+                rep: { "Gabi": -5 },
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Gabi rümpft die Nase. 'Pff, Mitleid? Das ist die natürliche Auslese im Büro.' Du bist nicht toxisch genug für ihren Flurfunk." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_bad_1",
+        title: "Spam-Schleuse",
+        reqRep: { "Gabi": -10 }, 
+        text: "Dein Telefon klingelt. Wieder. Es ist das fünfte Mal heute, dass Gabi einen offensichtlichen Spam-Call ('Gewinnen Sie ein iPhone') an deine Durchwahl durchstellt, statt ihn abzuwürgen.",
+        opts: [
+            { 
+                t: "Gabi anrufen & anschnauzen", 
+                rep: { "Gabi": -5 },
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "'Warum leitest du das durch?!' Gabi antwortet süßlich: 'Oh, klang nach IT-Themen. Entschuldigung.' Sie macht es absichtlich." 
+            },
+            { 
+                t: "Einfach nicht mehr rangehen", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, f: 5, a: 5, c: 10, 
+                r: "Du ignorierst das Telefon. Später beschwert sich der Chef, dass die IT telefonisch nicht erreichbar ist. Gabi hat gewonnen." 
+            },
+            { 
+                t: "Den Spammer in ein Gespräch verwickeln", 
+                m: 20, f: -10, a: -5, c: 0, 
+                r: "Du erklärst dem Callcenter-Mitarbeiter ausführlich die Serverarchitektur. Er legt irgendwann weinend auf. Zeit verschwendet, aber lustig." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_bad_2",
+        title: "Dienst nach Vorschrift",
+        reqRep: { "Gabi": -30 }, 
+        text: "Eine Mail von Gabi: 'Sehr geehrter Herr Müller, ein Paket für Sie wurde verweigert, da Ihr Name auf dem Etikett als 'Muller' (ohne Umlaut) stand. Gemäß Protokoll 7B unzulässig. Es geht zurück ans Depot.'",
+        opts: [
+            { 
+                t: "Wütend zum Empfang stürmen", 
+                rep: { "Gabi": -10 },
+                m: 10, f: 0, a: 20, c: 5, 
+                r: "Du stehst zeternd vor ihr. Gabi feilt unbeeindruckt ihre Nägel. 'Fehlerhafte Adressierung. Mein Beileid.' Sie genießt ihre Macht." 
+            },
+            { 
+                t: "Mail an den Chef: 'Das ist Sabotage!'", 
+                rep: { "Gabi": -5, "Dr. Wichtig": -5 },
+                m: 10, f: 0, a: 10, c: 10, 
+                r: "Der Chef antwortet genervt: 'Lösen Sie Ihre Privatangelegenheiten in der Freizeit, Müller.' Niemand hilft dir." 
+            },
+            { 
+                t: "Resignieren und das Paket neu bestellen", 
+                rep: { "Gabi": 5 },
+                m: 5, f: 5, a: 15, c: 0, 
+                r: "Du gibst auf und klickst auf 'Erneut senden'. Gabi beobachtet deine Resignation durch die Glastür und lächelt dünn." 
+            }
+        ]
+    }
     ],
 	
 	// === CHARAKTERE (Wall of Shame) ===

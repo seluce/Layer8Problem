@@ -1,3 +1,10 @@
+\[2.4.0] - 2026-02-20
+* Rep-Events (Begegnungen) haben nun auch Filler-Standalone-Events, damit sich jeder Charakter lebendiger anfühlt
+* Viele Phone-Events wurden vom Text her überarbeitet, damit es sich mehr wie ein richtiger Chat anfühlt
+* Ruf-System greift nun auch bei Phone Events, wenn es im jeweiligen Event für ein Character vergeben wird
+* Ein paar Phone-Events wurden durch neue ersetzt, inklusive entsprechender Folge-Events
+* Eine Sidequest fürs Spenden wurde eingeführt und sich nahtlos ins Spiel integriert (es gibt kein Vorteil bei diesem Event)
+
 \[2.3.3] - 2026-02-19
 * Events mit viel Text oder Optionen sind jetzt bei erhöhter Skalierung oder mit niedriger Auflösung am Desktop lesbar
 * Log-Beschreibung bei Reputations-Events (Begegnungen) sind nun einheitlich zum restlichen Log

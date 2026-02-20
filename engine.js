@@ -63,7 +63,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.3.3 geladen. Warte auf User...");
+        this.log("System v2.4.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1730,6 +1730,30 @@ const engine = {
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
         // ------------------------------------
+        
+        // --- REPUTATION LOGIK FÜR PHONE ---
+        if (res.rep) {
+            let changed = false;
+            for (let [charName, val] of Object.entries(res.rep)) {
+                // Sicherstellen, dass der Charakter existiert
+                if (this.state.reputation[charName] === undefined) {
+                    this.state.reputation[charName] = 0;
+                }
+                
+                // Ruf addieren/abziehen
+                this.state.reputation[charName] += val;
+                
+                // Auf -100 bis +100 begrenzen
+                this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
+                changed = true;
+            }
+            
+            // Sofort speichern, wenn sich etwas geändert hat
+            if (changed) {
+                this.saveSystem();
+            }
+        }
+        // ----------------------------------
             
             // Simulation: Gegenüber tippt kurz, bevor er geht
             const loadingId = "typing-" + Date.now();
