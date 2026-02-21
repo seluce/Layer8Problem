@@ -91,6 +91,12 @@ const tutorial = {
         const askModal = document.getElementById('tut-ask-modal');
         askModal.classList.add('hidden');
         askModal.classList.remove('flex');
+        
+        // --- Buttons optisch freigeben, aber Klicks intern blockieren ---
+        if (typeof engine !== 'undefined') {
+            engine.disableButtons(false);
+            engine.state.activeEvent = true; // Verhindert Auslösen von Events
+        }
 
         // Tutorial Overlay an
         const overlay = document.getElementById('tutorial-overlay');

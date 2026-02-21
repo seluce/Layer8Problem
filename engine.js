@@ -64,7 +64,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.5.0 geladen. Warte auf User...");
+        this.log("System v2.5.1 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -86,7 +86,7 @@ const engine = {
                 if(!this.state.archive.items) this.state.archive.items = [];
                 if(!this.state.archive.achievements) this.state.archive.achievements = [];
                 if(!this.state.archive.reputation) this.state.archive.reputation = {};
-                if(!this.state.archive.stats) this.state.archive.stats = { daysSurvived: 0, daysFired: 0, coffeeDrank: 0, ticketsClosed: 0 };
+                if(!this.state.archive.stats) this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
                 // 3. WICHTIG: Ruf aus dem Archiv in das aktive Spiel übertragen!
                 // Wir überschreiben die Nullen mit den gespeicherten Werten
                 for (let [name, val] of Object.entries(this.state.archive.reputation)) {
@@ -107,7 +107,7 @@ const engine = {
     
     incrementStat: function(key) {
         if (!this.state.archive.stats) {
-            this.state.archive.stats = { daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
+            this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
         }
         this.state.archive.stats[key] = (this.state.archive.stats[key] || 0) + 1;
         this.saveSystem();
@@ -129,22 +129,16 @@ const engine = {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
 
-        // 1. STATISTIK BERECHNEN
-        const totalItems = Object.keys(DB.items).length;
-        const foundItems = this.state.archive.items.length;
-        const totalAchs = DB.achievements.length;
-        const unlockedAchs = this.state.archive.achievements.length;
-
-        const statItems = document.getElementById('stats-items');
-        const statAchs = document.getElementById('stats-achs');
-        if(statItems) statItems.innerText = `${foundItems} / ${totalItems}`;
-        if(statAchs) statAchs.innerText = `${unlockedAchs} / ${totalAchs}`;
-
-        // 2. ITEMS SORTIEREN
+        // 1. ITEMS SORTIEREN & ZÄHLEN
         let normalItems = [];
         let questItems = [];
+        let foundItems = 0; // Gesamt-Zähler
+        let totalItems = Object.keys(DB.items).length;
 
         for (const [id, item] of Object.entries(DB.items)) {
+            const isUnlocked = this.state.archive.items.includes(id);
+            if (isUnlocked) foundItems++;
+
             if (item.quest) {
                 questItems.push({id, item});
             } else {
@@ -152,21 +146,79 @@ const engine = {
             }
         }
 
-        // 3. INHALT RENDERN
+        const totalAchs = DB.achievements.length;
+        const unlockedAchs = this.state.archive.achievements.length;
+
+        // Prozentrechnung für die Fortschrittsbalken
+        const itemPercent = totalItems > 0 ? Math.round((foundItems / totalItems) * 100) : 0;
+        const achPercent = totalAchs > 0 ? Math.round((unlockedAchs / totalAchs) * 100) : 0;
+
+        // 2. INHALT RENDERN
         let html = '';
 
-        // --- A) NORMALE ITEMS ---
-        html += `<div class="mb-8"><h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">📦 GEFUNDENE AUSRÜSTUNG</h3>`;
-        html += `<div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
+        // --- DASHBOARD (Kompakt & Responsiv) ---
+        const s = this.state.archive.stats || { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
+        
+        html += `
+        <div class="mb-8 flex flex-col gap-3">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-end mb-1.5">
+                        <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">📦</span> Items</span>
+                        <span class="text-xs font-mono text-slate-300">${foundItems} / ${totalItems}</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div class="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-1000" style="width: ${itemPercent}%"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-end mb-1.5">
+                        <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">🏅</span> Erfolge</span>
+                        <span class="text-xs font-mono text-slate-300">${unlockedAchs} / ${totalAchs}</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+                        <div class="h-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-1000" style="width: ${achPercent}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner">
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Begonnen</span>
+                    <span class="font-bold text-slate-200 text-lg leading-tight mt-0.5">${s.daysStarted || 0}</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Überlebt</span>
+                    <span class="font-bold text-emerald-400 text-lg leading-tight mt-0.5">${s.daysSurvived || 0}</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Rage Quits</span>
+                    <span class="font-bold text-orange-400 text-lg leading-tight mt-0.5">${s.daysRageQuit || 0}</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Gefeuert</span>
+                    <span class="font-bold text-red-500 text-lg leading-tight mt-0.5">${s.daysFired || 0}</span>
+                </div>
+            </div>
+
+        </div>`;
+        // --------------------------------------
+
+        // --- A) NORMALE ITEMS (Wieder clean) ---
+        html += `<div class="mb-8">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">
+                GEFUNDENE AUSRÜSTUNG
+            </h3>
+            <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
         
         normalItems.forEach(({id, item}) => {
             const unlocked = this.state.archive.items.includes(id);
-            
             let borderClass = unlocked 
                 ? 'border-slate-500/50 text-slate-200 bg-slate-800' 
                 : 'border-slate-700 opacity-50 text-slate-600 bg-slate-900 border-dashed'; 
             
-            // --- BILD CHECK ---
             let contentContent = '?';
             if (unlocked) {
                 if (item.img) {
@@ -185,17 +237,18 @@ const engine = {
 
         // --- B) LEGENDÄRE TROPHÄEN ---
         if (questItems.length > 0) {
-            html += `<div class="mb-8"><h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">🏆 LEGENDÄRE TROPHÄEN</h3>`;
-            html += `<div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
+            html += `<div class="mb-8">
+                <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">
+                    LEGENDÄRE TROPHÄEN
+                </h3>
+                <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">`;
             
             questItems.forEach(({id, item}) => {
                 const unlocked = this.state.archive.items.includes(id);
-                
                 let borderClass = unlocked 
                     ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' 
                     : 'border-slate-700 opacity-50 text-slate-600 bg-slate-900 border-dashed';
 
-                // --- BILD CHECK ---
                 let contentContent = '?';
                 if (unlocked) {
                     if (item.img) {
@@ -214,34 +267,33 @@ const engine = {
         }
 
         // --- C) ERFOLGE ---
-        html += `<h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">🏅 ERRUNGENSCHAFTEN</h3>`;
-        html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
+        html += `<div>
+            <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">
+                ERRUNGENSCHAFTEN
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
 
         if(DB.achievements) {
             DB.achievements.forEach(ach => {
                 const unlocked = this.state.archive.achievements.includes(ach.id);
                 
-                // Schwierigkeit auslesen
                 let diff = "none";
                 if (this.state.archive.achievementDiffs) {
                     diff = this.state.archive.achievementDiffs[ach.id] || "easy";
                 }
 
-                // VARIABLEN VORBEREITEN
                 let borderClass = "";
                 let bgClass = "";
                 let badge = "";
-                let icon = ach.icon;   // Wir zeigen IMMER das Icon
-                let title = ach.title; // Wir zeigen IMMER den Titel
-                let desc = "";         // Text ist dynamisch
+                let icon = ach.icon;   
+                let title = ach.title; 
+                let desc = "";         
 
                 if (unlocked) {
-                    // --- ZUSTAND: FREIGESCHALTET ---
-                    desc = ach.desc; // Belohnungs-Text
+                    desc = ach.desc; 
                     borderClass = "opacity-100 border-solid"; 
                     bgClass = "bg-slate-900/40";
 
-                    // Farb-Codierung nach Schwierigkeit
                     if (diff === 'hard') {
                         borderClass += " border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]"; 
                         badge = '<span class="text-[9px] text-red-400 font-bold border border-red-500/30 px-1.5 rounded ml-auto bg-red-950/30">SCHWER</span>';
@@ -254,19 +306,12 @@ const engine = {
                     }
 
                 } else {
-                    // --- ZUSTAND: GESPERRT (HINT) ---
-                    // Hier nutzen wir den neuen Hint-Text aus der data.js
                     desc = ach.hint ? ach.hint : "???";
-                    
-                    // Design: Grayscale (Schwarz-Weiß), gestrichelt, etwas transparenter
                     borderClass = "border-slate-700 opacity-60 border-dashed grayscale"; 
                     bgClass = "bg-slate-950/30";
-                    
-                    // Badge für "Gesperrt"
-                    badge = '<span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded ml-auto">LOCKED</span>';
+                    badge = '<span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded ml-auto">GESPERRT</span>';
                 }
 
-                // --- RENDERING ---
                 html += `
                     <div class="flex gap-3 p-3 rounded border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group relative overflow-hidden">
                         
@@ -287,7 +332,7 @@ const engine = {
                 `;
             });
         }
-        html += `</div>`;
+        html += `</div></div>`;
         content.innerHTML = html;
     },
 
@@ -1560,6 +1605,7 @@ const engine = {
 		// --- Morgen-Routinen Abfang-Mechanismus ---
 		if (!this.state.morningMoodShown) {
             this.state.morningMoodShown = true;
+            this.incrementStat('daysStarted');
             this.triggerMorningMood();
             return;
         }
@@ -3190,14 +3236,6 @@ ${logText}
             document.getElementById('icon-hard-reset').className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
             resetBtn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm";
         }
-
-        // Statistik ins HTML schreiben (Kompakt in einer Zeile)
-        const s = this.state.archive.stats || { daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
-        document.getElementById('global-stats-container').innerHTML = `
-            <div class="flex flex-col"><span class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Überlebt</span><span class="font-bold text-emerald-400 text-xl">${s.daysSurvived || 0}</span></div>
-            <div class="flex flex-col"><span class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Rage Quits</span><span class="font-bold text-orange-400 text-xl">${s.daysRageQuit || 0}</span></div>
-            <div class="flex flex-col"><span class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Gefeuert</span><span class="font-bold text-red-500 text-xl">${s.daysFired || 0}</span></div>
-        `;
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');

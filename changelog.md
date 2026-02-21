@@ -1,3 +1,9 @@
+\[2.5.1] - 2026-02-21
+* Im aktiven Tutorial sind nun die Aktion Buttons nicht mehr deaktiviert 
+* Globale Statistiken sind von Menü ins Archiv umgezogen
+* Globale Statistiken sammelt nun auch begonnene Tage 
+* Leicht angepasstest Layout fürs Archiv
+
 \[2.5.0] - 2026-02-21
 * Es gibt jetzt ein globales Menü und es lässt sich via ESC öffnen / schließen
 * Es gibt nun ein Stimmungs-Modal, was die Stimmung von Herrn Müller zu Tagesbeginn erläutert
