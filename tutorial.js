@@ -123,7 +123,7 @@ const tutorial = {
         // Spiel manuell starten
         if (typeof engine !== 'undefined') {
             engine.log("Tutorial übersprungen. Viel Glück!", "text-slate-500");
-            engine.checkRandomEmail();
+            engine.reset();
         }
     },
 
@@ -214,10 +214,10 @@ const tutorial = {
         document.getElementById('tutorial-overlay').classList.remove('flex');
         window.removeEventListener('resize', this.reposition);
         localStorage.setItem('sysadmin_tutorial_done', 'true');
-        engine.log("Tutorial abgeschlossen. Viel Glück!", "text-green-400");
 
         if (typeof engine !== 'undefined') {
-            engine.checkRandomEmail();
+            engine.log("Tutorial abgeschlossen. Viel Glück!", "text-green-400");
+            engine.reset();
         }
     },
     
