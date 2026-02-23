@@ -1,3 +1,8 @@
+\[2.6.0] - 2026-02-24
+* Das Menü bietet jetzt weitere Spieleinstellungen zum Anpassen
+* Standardmäßg sind Pulsieren von Aggro / Wut und die Wiedergabe von Tönen aktiv
+* Die Darstellung der Kartine wurde für mobile Geräte optimiert
+
 \[2.5.2] - 2026-02-22
 * Das letzte Mood-Event wird nun gespeichert, sodass es nächsten Tag nicht nochmal erscheint
 * Weitere Mood-Events, um mehr Abwechslung bei den Events zu erhalten

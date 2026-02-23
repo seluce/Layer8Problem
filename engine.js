@@ -57,6 +57,91 @@ const engine = {
             "Gabi": 0,
             "Frau Elster": 0,
             "Markus": 0
+        },
+        
+        // Neue User-Einstellungen
+        visualFX: localStorage.getItem('layer8_fx') !== 'false',
+        audioEffects: localStorage.getItem('layer8_audio') !== 'false',
+        oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
+        fastChat: localStorage.getItem('layer8_fastchat') === 'true',
+        blindStats: localStorage.getItem('layer8_blindstats') === 'true',
+        blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
+    },
+    
+    // --- SYNTHETISCHER SOUND ---
+    audioCtx: null,
+    playAudio: function(type = 'ui') {
+        if (!this.state.audioEffects) return;
+        try {
+            if (!this.audioCtx) {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (this.audioCtx.state === 'suspended') {
+                this.audioCtx.resume();
+            }
+            
+            // 15ms Puffer (Lookahead) verhindert Aussetzer bei schnellen Klicks
+            const t = this.audioCtx.currentTime + 0.015; 
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+            
+            if (type === 'action') {
+                // Profil 1 & 2: Helles, schnelles Klicken (Auswahl/Menüs/Aktionen)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.02);
+                
+                gain.gain.setValueAtTime(0.15, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.02);
+                
+                osc.start(t);
+                osc.stop(t + 0.03);
+                
+            } else if (type === 'ui') {
+                // Profil 2: Helles, schnelles Klicken (Auswahl/Menüs)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, t);
+                osc.frequency.exponentialRampToValueAtTime(100, t + 0.02);
+                
+                gain.gain.setValueAtTime(0.15, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.02);
+                
+                osc.start(t);
+                osc.stop(t + 0.03);
+                
+            } else if (type === 'phone') {
+                // Profil 3: Moderner Messenger "Ding-Ding" (Doppel-Ton)
+                osc.type = 'sine';
+                
+                // Erster Ton (heller Anschlag)
+                osc.frequency.setValueAtTime(750, t); // 750 Hertz
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.15, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); // Klingt in 100ms ab
+                
+                // Zweiter Ton (kurz danach, etwas höher, längerer Nachhall)
+                osc.frequency.setValueAtTime(1000, t + 0.1); // 1000 Hertz (höher)
+                gain.gain.setValueAtTime(0, t + 0.1);
+                gain.gain.linearRampToValueAtTime(0.15, t + 0.11);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3); // Sanftes Ausklingen
+                
+                osc.start(t);
+                osc.stop(t + 0.35); // Nach 350ms ist alles ruhig
+            } else if (type === 'email') {
+                // Profil 4: Klassisches E-Mail "Bing" (Einzelner, klarer Ton)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(850, t); // Schöne, helle Frequenz
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.2, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4); // Klingt etwas länger aus
+                osc.start(t);
+                osc.stop(t + 0.45);
+            }
+        } catch(e) {
+            console.log("Audio Fehler:", e);
         }
     },
 
@@ -64,7 +149,7 @@ const engine = {
         this.loadSystem();
         document.getElementById('intro-modal').style.display = 'flex';
         this.updateUI();
-        this.log("System v2.5.2 geladen. Warte auf User...");
+        this.log("System v2.6.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -450,6 +535,7 @@ const engine = {
 
     // Öffnet das E-Mail Overlay
     triggerEmail: function(forcedId = null) {
+		this.playAudio('email');
         this.state.emailPending = false; 
 
         if(!DB.emails) return; 
@@ -576,6 +662,7 @@ const engine = {
     },
 
     resolveEmail: function(opt, timeout = false) {
+		this.playAudio('ui');
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         
         const modal = document.getElementById('email-modal');
@@ -648,15 +735,19 @@ const engine = {
         document.getElementById('clock').innerText = timeStr;
         document.getElementById('phone-clock').innerText = timeStr;
 
-        document.getElementById('val-fl').innerText = this.state.fl + "%";
+        // --- BLINDFLUG LOGIK FÜR STATS ---
+        document.getElementById('val-fl').innerText = this.state.blindStats ? "?%" : this.state.fl + "%";
         document.getElementById('bar-fl').style.width = this.state.fl + "%";
-        document.getElementById('val-al').innerText = this.state.al + "%";
+        
+        document.getElementById('val-al').innerText = this.state.blindStats ? "?%" : this.state.al + "%";
         document.getElementById('bar-al').style.width = this.state.al + "%";
-        document.getElementById('val-cr').innerText = this.state.cr + "%";
+        
+        document.getElementById('val-cr').innerText = this.state.blindStats ? "?%" : this.state.cr + "%";
         document.getElementById('bar-cr').style.width = this.state.cr + "%";
 
+        // --- BLINDFLUG LOGIK FÜR TICKETS ---
         const tEl = document.getElementById('ticket-count');
-        tEl.innerText = this.state.tickets;
+        tEl.innerText = this.state.blindTickets ? "?" : this.state.tickets;
         tEl.className = this.state.tickets > 7 ? "text-4xl font-black text-white ticket-counter ticket-pulse" : "text-4xl font-black text-white ticket-counter";
 		
 		// --- DRUNK EFFECT RENDERING ---
@@ -749,6 +840,25 @@ const engine = {
             invBadge.classList.remove('hidden');
         } else {
             invBadge.classList.add('hidden');
+        }
+        
+        // --- VISUELLE EFFEKTE (PULSIEREN) ---
+        const aggroEl = document.getElementById('stat-row-al');
+        const radarEl = document.getElementById('stat-row-cr');
+        
+        if (aggroEl && radarEl) {
+            if (this.state.visualFX) {
+                // Aggro blinkt ORANGE bei über 80%
+                if (this.state.al >= 80) aggroEl.classList.add('pulse-orange');
+                else aggroEl.classList.remove('pulse-orange');
+                
+                // Chef-Radar blinkt ROT bei über 80%
+                if (this.state.cr >= 80) radarEl.classList.add('pulse-red');
+                else radarEl.classList.remove('pulse-red');
+            } else {
+                aggroEl.classList.remove('pulse-orange');
+                radarEl.classList.remove('pulse-red');
+            }
         }
 
         this.checkAchievements();
@@ -985,6 +1095,7 @@ const engine = {
     },
 
     trigger: function(type) {
+		this.playAudio('action');
         // Blockieren, wenn schon ein Event offen ist
         if(this.state.activeEvent) return;
 
@@ -1388,6 +1499,7 @@ const engine = {
 
     // Logik für die Auswahl in Call-Ketten
     handleChainChoice: function(nextId) {
+		this.playAudio('ui');
         const ev = this.state.currentChainEvent;
 
         // Fall 1: Weiter im Text
@@ -1420,6 +1532,8 @@ const engine = {
     },
 
     resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
+	
+        this.playAudio('ui');
 	
         // --- BUGFIX: TIMER STOPPEN ---
         if (this.state.bossTimer) {
@@ -1598,6 +1712,7 @@ const engine = {
     },
 
     reset: function() {
+		this.playAudio('ui');
 		// --- Morgen-Routinen Abfang-Mechanismus ---
 		if (!this.state.morningMoodShown) {
             this.state.morningMoodShown = true;
@@ -1648,6 +1763,7 @@ const engine = {
 
     // --- PHONE SYSTEM ---
     openPhone: function() {
+		this.playAudio('phone');
         document.getElementById('phone-standby').classList.add('hidden');
         document.getElementById('phone-app').classList.remove('hidden');
         document.getElementById('phone-app').classList.add('flex');
@@ -1729,6 +1845,7 @@ const engine = {
     },
 
     handlePhoneChoice: function(text, nextId) {
+		this.playAudio('phone');
         const actions = document.getElementById('app-actions');
         
         // SPAM-SCHUTZ
@@ -1831,21 +1948,27 @@ const engine = {
         }
         // -----------------------------------
         
-            // Simulation: Gegenüber tippt kurz, bevor er geht
+        // --- FAST CHAT LOGIK FÜR FALL A ---
+            let typingTime = this.state.fastChat ? 0 : 1500;
+            let readTime = this.state.fastChat ? 3000 : 4500;
             const loadingId = "typing-" + Date.now();
-            content.innerHTML += `
-            <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
-                <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                </div>
-            </div>`;
-            setTimeout(() => {
-            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-            }, 50);
 
-            // Kurze Wartezeit vor dem Ergebnis (1.5 Sekunden)
+            // Nur rendern, wenn FastChat AUS ist
+            if (!this.state.fastChat) {
+                content.innerHTML += `
+                <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
+                    <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>`;
+                setTimeout(() => {
+                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+                }, 50);
+            }
+
+            // Timer (entweder 0 oder 1.5s)
             setTimeout(() => {
                 const loader = document.getElementById(loadingId);
                 if(loader) loader.remove();
@@ -1858,7 +1981,7 @@ const engine = {
                     </div>
                 </div>`;
                 setTimeout(() => {
-                content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
                 }, 50);
 
                 setTimeout(() => {
@@ -1874,30 +1997,32 @@ const engine = {
                         this.disableButtons(false);
                         this.checkRandomEmail(); 
                     }
-                }, 4000); // Zeit zum Lesen des Ergebnisses
-            }, 1500);
+                }, readTime); 
+            }, typingTime);
 
-        } 
+        }
         // FALL B: GESPRÄCH GEHT WEITER (Next Node)
         else if (ev.nodes[nextId]) {
             
-            // TIPP-ANIMATION (Bouncing Dots)
             const loadingId = "typing-" + Date.now();
-            content.innerHTML += `
-            <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
-                <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                     <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                </div>
-            </div>`;
-            setTimeout(() => {
-            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-            }, 50);
+            
+            // --- FAST CHAT LOGIK FÜR FALL B ---
+            if (!this.state.fastChat) {
+                content.innerHTML += `
+                <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
+                    <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    </div>
+                </div>`;
+                setTimeout(() => {
+                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+                }, 50);
+            }
 
-            // ZUFALLS-ZEIT: Zwischen 1.5 und 2.5 Sekunden
-            // Das wirkt organisch, mal schneller, mal langsamer.
-            let typingDuration = 1500 + Math.random() * 1000;
+            // Wenn FastChat an ist -> 0 Millisekunden. Sonst -> 1.5 bis 2.5 Sekunden
+            let typingDuration = this.state.fastChat ? 0 : (1500 + Math.random() * 1000);
 
             setTimeout(() => {
                 const loader = document.getElementById(loadingId);
@@ -2259,6 +2384,13 @@ const engine = {
             this.showLoreModal();
             return; // Modal wird nicht benötigt, wir zeigen das Lore-Fenster
         }
+        
+        // --- ONE-CLICK ITEM LOGIK ---
+        if (this.state.oneClickItem) {
+            this.state.pendingItem = id;
+            this.confirmUseItem();
+            return; // Beendet die Funktion sofort, Modal poppt nicht auf!
+        }
 
         // Daten holen
         let itemDB = DB.items[id];
@@ -2322,6 +2454,7 @@ const engine = {
 
     // 2. Bestätigung: Jetzt wirklich tun
     confirmUseItem: function() {
+		this.playAudio('ui');
         let id = this.state.pendingItem;
         if (!id) return;
 
@@ -2379,6 +2512,7 @@ const engine = {
     },
 
     closeItemConfirm: function() {
+		this.playAudio('ui');
         document.getElementById('item-confirm-modal').classList.add('hidden');
         document.getElementById('item-confirm-modal').classList.remove('flex');
         this.state.pendingItem = null;
@@ -2627,6 +2761,14 @@ const engine = {
         const floatEl = document.createElement('div');
         const sign = value > 0 ? '+' : '';
         floatEl.innerText = `${sign}${value}`;
+        
+        // --- BLINDFLUG CHECK ---
+        if (this.state.blindStats) {
+            floatEl.innerText = '?'; // Zeigt nur ein Fragezeichen
+        } else {
+            const sign = value > 0 ? '+' : '';
+            floatEl.innerText = `${sign}${value}`;
+        }
 
         // 2. Farbe festlegen (Abhängig vom Balken, unabhängig ob gut/schlecht)
         let color = 'text-white'; // Fallback
@@ -3292,26 +3434,71 @@ ${logText}
         }
     },
 
-    // --- SYSTEMSTEUERUNG / SETTINGS ---
     openSettings: function() {
         const modal = document.getElementById('settings-modal');
         const select = document.getElementById('setting-diff');
         
-        // Aktuelle Einstellung laden
-        const currentDef = localStorage.getItem('layer8_default_diff') || 'ask';
-        if(select) select.value = currentDef;
+        if(select) select.value = localStorage.getItem('layer8_default_diff') || 'ask';
         
-        // Reset the Hard-Reset button state
+        // --- Toggles aktualisieren ---
+        if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
+        if(document.getElementById('setting-oneclick')) document.getElementById('setting-oneclick').checked = this.state.oneClickItem;
+        if(document.getElementById('setting-fastchat')) document.getElementById('setting-fastchat').checked = this.state.fastChat;
+        
+        // NEU: Blindflug & Audio
+        if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
+        if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
+        if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
+        
         const resetBtn = document.getElementById('btn-hard-reset');
         if (resetBtn) {
             resetBtn.dataset.armed = "false";
             document.getElementById('text-hard-reset').innerText = "Spielstand löschen";
             document.getElementById('icon-hard-reset').className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm";
+            resetBtn.className = "w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm";
+        }
+
+        const mainView = document.getElementById('menu-main-view');
+        const settingsView = document.getElementById('menu-settings-view');
+        const title = document.getElementById('settings-title');
+        
+        if (mainView && settingsView && title) {
+            mainView.classList.remove('hidden');
+            settingsView.classList.add('hidden');
+            title.innerText = 'MENÜ';
         }
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+    },
+
+    toggleFX: function(isOn) {
+        this.state.visualFX = isOn;
+        localStorage.setItem('layer8_fx', isOn);
+        this.updateUI();
+    },
+    toggleOneClick: function(isOn) {
+        this.state.oneClickItem = isOn;
+        localStorage.setItem('layer8_oneclick', isOn);
+    },
+    toggleFastChat: function(isOn) {
+        this.state.fastChat = isOn;
+        localStorage.setItem('layer8_fastchat', isOn);
+    },
+    toggleBlindStats: function(isOn) {
+        this.state.blindStats = isOn;
+        localStorage.setItem('layer8_blindstats', isOn);
+        this.updateUI();
+    },
+    toggleBlindTickets: function(isOn) {
+        this.state.blindTickets = isOn;
+        localStorage.setItem('layer8_blindtickets', isOn);
+        this.updateUI();
+    },
+    toggleAudio: function(isOn) {
+        this.state.audioEffects = isOn;
+        localStorage.setItem('layer8_audio', isOn);
+        if(isOn) this.playAudio('ui');
     },
 
     // Blitzschneller Neustart ohne Page-Reload

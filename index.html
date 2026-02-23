@@ -126,6 +126,20 @@
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        
+        /* --- VISUELLE STRESS-EFFEKTE --- */
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); }
+        }
+        @keyframes pulse-orange {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+            50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); }
+        }
+        
+        .pulse-red { animation: pulse-red 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
+        .pulse-orange { animation: pulse-orange 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
+
     </style>
 </head>
 <body class="text-xs md:text-sm">
@@ -233,7 +247,7 @@
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
         <div id="terminal" class="flex-[2] neon-box p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v2.5.2</div>
+            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v2.6.0</div>
             
             <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40">
                 <div class="text-4xl md:text-6xl mb-4">🖥️</div>
@@ -729,52 +743,44 @@
 <div id="settings-modal" class="fixed inset-0 bg-black/90 z-[9999] hidden flex-col items-center justify-center p-4 fade-in">
     <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-md w-full shadow-2xl relative flex flex-col overflow-hidden">
 
-        <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative">
+        <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
                 <span class="text-xl text-slate-400">⚙️</span>
-                <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5">MENÜ</h2>
+                <h2 id="settings-title" class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5">MENÜ</h2>
             </div>
             <button onclick="engine.closeSettings()" class="text-slate-500 hover:text-white text-3xl font-light leading-none transition-colors px-2">&times;</button>
         </div>
 
-        <div class="p-5 space-y-7 overflow-y-auto max-h-[85vh]">
+        <div id="menu-main-view" class="p-5 space-y-6 overflow-y-auto max-h-[80vh] block">
             
             <div>
-                <h3 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2 px-1">Spielsteuerung</h3>
+                <h3 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-2 px-1">Spieleinstellungen</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="engine.softReset()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button onclick="engine.softReset()" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
                         <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🔄</span> 
                         Tag neu starten (08:00 Uhr)
                     </button>
                     
-                    <div class="px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm flex justify-between items-center transition-colors focus-within:border-blue-500 shadow-sm group">
-                        <span class="font-medium flex items-center gap-3">
-                            <span class="text-base grayscale opacity-70 group-hover:opacity-100 group-hover:grayscale-0 transition-all">⏱️</span>
-                            Start-Modus:
-                        </span>
-                        <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="bg-slate-900 border border-slate-600 text-white text-xs rounded px-2 py-1 focus:border-blue-500 focus:outline-none cursor-pointer outline-none shadow-inner">
-                            <option value="ask">Jeden Tag fragen</option>
-                            <option value="easy">Freitag (Leicht)</option>
-                            <option value="normal">Mittwoch (Normal)</option>
-                            <option value="hard">Montag (Schwer)</option>
-                        </select>
-                    </div>
+                    <button onclick="document.getElementById('menu-main-view').classList.add('hidden'); document.getElementById('menu-settings-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'EINSTELLUNGEN';" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-amber-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex justify-between items-center group shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🎛️</span> 
+                            Spieleinstellungen anpassen
+                        </div>
+                        <span class="text-slate-500 group-hover:text-amber-500 transition-colors">➤</span>
+                    </button>
                 </div>
             </div>
 
             <div>
                 <h3 class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-2 px-1">Sicherheit & Backups</h3>
                 <div class="flex flex-col gap-2">
-                    <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
-                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📤</span> 
-                        Spielstand exportieren
+                    <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📤</span> Spielstand exportieren
                     </button>
-                    <button onclick="engine.closeSettings(); engine.ui.openImportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
-                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📥</span> 
-                        Spielstand importieren
+                    <button onclick="engine.closeSettings(); engine.ui.openImportModal()" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-emerald-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📥</span> Spielstand importieren
                     </button>
-                    
-                    <button id="btn-hard-reset" onclick="engine.triggerHardReset(this)" data-armed="false" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button id="btn-hard-reset" onclick="engine.triggerHardReset(this)" data-armed="false" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm">
                         <span id="icon-hard-reset" class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">⚠️</span>
                         <span id="text-hard-reset">Spielstand löschen</span>
                     </button>
@@ -784,23 +790,130 @@
             <div>
                 <h3 class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-2 px-1">Community & Support</h3>
                 <div class="flex flex-col gap-2">
-                    <button id="btn-share" onclick="engine.shareGame(this)" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
-                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💌</span> 
-                        <span id="text-share">Spiel mit Freunden teilen</span>
+                    <button id="btn-share" onclick="engine.shareGame(this)" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💌</span> <span id="text-share">Spiel mit Freunden teilen</span>
                     </button>
-
-                    <button onclick="engine.closeSettings(); engine.openReportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
-                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🐞</span> 
-                        Fehler melden / Feedback
+                    <button onclick="engine.closeSettings(); engine.openReportModal()" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🐞</span> Fehler melden / Feedback
                     </button>
-                    
-                    <button onclick="window.open('https://github.com/seluce/Layer8Problem', '_blank')" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
-                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💻</span> 
-                        <span>GitHub Projektseite (seluce)</span>
+                    <button onclick="window.open('https://github.com/seluce/Layer8Problem', '_blank')" class="w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 rounded-lg transition-all text-slate-200 text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💻</span> <span>GitHub Projektseite</span>
                     </button>
                 </div>
             </div>
+        </div>
 
+        <div id="menu-settings-view" class="p-5 space-y-4 overflow-y-auto max-h-[80vh] hidden">
+            
+            <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'MENÜ';" class="w-full text-left px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-xs font-bold flex items-center gap-2 mb-2 shadow-sm">
+                <span>◀</span> Zurück zum Hauptmenü
+            </button>
+
+            <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 flex flex-col gap-5 shadow-inner">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group">
+                    <div class="flex items-start gap-3 flex-1 w-full">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⏱️</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Start-Schwierigkeit</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Legt den Modus für neue Tage fest.</span>
+                        </div>
+                    </div>
+                    <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded px-3 py-2 focus:border-amber-500 outline-none cursor-pointer shadow-sm shrink-0">
+                        <option value="ask">Täglich fragen</option>
+                        <option value="easy">Freitag (Leicht)</option>
+                        <option value="normal">Mittwoch (Normal)</option>
+                        <option value="hard">Montag (Schwer)</option>
+                    </select>
+                </div>
+
+                <div class="h-px bg-slate-700/50 w-full"></div> <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💓</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Warn-Pulsieren (>80%)</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Terminal-Rand leuchtet bei hohem Stress auf.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-fx" onchange="engine.toggleFX(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">❓</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Statuswerte verbergen</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Blendet die exakten %-Zahlen in den Balken aus.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-blindstats" onchange="engine.toggleBlindStats(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">❔</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Ticket-Zähler verbergen</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Blendet die Anzahl der offenen Tickets aus.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-blindtickets" onchange="engine.toggleBlindTickets(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="h-px bg-slate-700/50 w-full"></div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⌨️</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Tastatur-Sounds</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Spielt Sounds bei Aktionen, Entscheidungen und neuen Chat-Nachrichten ab.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-audio" onchange="engine.toggleAudio(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⚡</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Schnelle Items</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Nahrung im Rucksack ohne Bestätigung nutzen.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-oneclick" onchange="engine.toggleOneClick(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💬</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Smartphone-Animation</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Kein "Tippt..." Delay bei neuen Chat-Nachrichten.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>

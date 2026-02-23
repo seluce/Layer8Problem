@@ -29,48 +29,101 @@
     <div class="max-w-5xl mx-auto mt-8 px-4 pb-12">
         <h1 class="text-3xl font-black mb-8 text-white">Cafeteria: "The Agile Kitchen" 🥗</h1>
 
-        <div class="bg-slate-800 rounded-xl shadow-md border border-slate-700 overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-950 text-emerald-500 uppercase text-xs tracking-wider">
-                        <th class="p-4 font-bold w-1/4">Wochentag</th>
-                        <th class="p-4 font-bold w-3/8">Menü 1 (Classic)</th>
-                        <th class="p-4 font-bold w-3/8">Menü 2 (Vegetarisch)</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-700/50">
-                    <tr class="hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-slate-300">Montag</td>
-                        <td class="p-4"><strong>Spaghetti Bolognese</strong><br><span class="text-sm text-slate-500">Die Nudeln sind weich. Die Soße ist reichlich.</span></td>
-                        <td class="p-4"><strong>Linseneintopf</strong><br><span class="text-sm text-slate-500">Deftig, aber sehr salzarm. Dazu ein hartes Brötchen.</span></td>
-                    </tr>
-                    <tr class="bg-slate-800/30 hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-slate-300">Dienstag</td>
-                        <td class="p-4"><strong>Currywurst mit Pommes</strong><br><span class="text-sm text-slate-500">Der Klassiker. Die Pommes sind leider nicht mehr knusprig.</span></td>
-                        <td class="p-4"><strong>Gedünsteter Brokkoli mit Reis</strong><br><span class="text-sm text-slate-500">Ohne Soße. Sehr gesund. Sehr trocken.</span></td>
-                    </tr>
-                    <tr class="hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-slate-300">Mittwoch</td>
-                        <td class="p-4"><strong>Hähnchenbrust "Hawaii"</strong><br><span class="text-sm text-slate-500">Mit Ananas und Analogkäse überbacken.</span></td>
-                        <td class="p-4"><strong>Große Salat-Bowl</strong><br><span class="text-sm text-slate-500">Viel Eisbergsalat, drei Maiskörner. Essig/Öl-Dressing (ausverkauft).</span></td>
-                    </tr>
-                    <tr class="bg-slate-800/30 hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-slate-300">Donnerstag</td>
-                        <td class="p-4"><strong>Schnitzel "Wiener Art"</strong><br><span class="text-sm text-slate-500">Die Panade löst sich leicht. Kartoffelsalat aus dem Eimer.</span></td>
-                        <td class="p-4"><strong>Kartoffelsuppe</strong><br><span class="text-sm text-slate-500">Wässrig, aber wärmt von innen.</span></td>
-                    </tr>
-                    <tr class="hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-slate-300">Freitag</td>
-                        <td class="p-4"><strong>Fischstäbchen (4 Stück)</strong><br><span class="text-sm text-slate-500">Dazu Kartoffelpüree (Pulverbasis) und etwas Spinat.</span></td>
-                        <td class="p-4"><strong>Gemüse-Wraps</strong><br><span class="text-sm text-slate-500">Kalt serviert. Viel Frischkäse.</span></td>
-                    </tr>
-                    <tr class="bg-emerald-900/10 hover:bg-emerald-900/20">
-                        <td class="p-4 font-bold text-emerald-400">Samstag <br><span class="text-xs font-normal text-emerald-600 uppercase">Agiles Wochenende</span></td>
-                        <td class="p-4"><strong>Lauwarmer Filterkaffee</strong><br><span class="text-sm text-slate-500">Steht seit Freitag 15 Uhr auf der Heizplatte.</span></td>
-                        <td class="p-4"><strong>Trockener Marmorkuchen</strong><br><span class="text-sm text-slate-500">Reste vom Meeting der Geschäftsführung.</span></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="md:bg-slate-800 md:rounded-xl md:shadow-md md:border md:border-slate-700 md:overflow-hidden flex flex-col gap-4 md:gap-0 md:block">
+            
+            <div class="hidden md:grid md:grid-cols-5 bg-slate-950 text-emerald-500 uppercase text-xs tracking-wider border-b border-slate-700/50">
+                <div class="p-4 font-bold col-span-1">Wochentag</div>
+                <div class="p-4 font-bold col-span-2">Menü 1 (Classic)</div>
+                <div class="p-4 font-bold col-span-2">Menü 2 (Vegetarisch)</div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 md:bg-transparent rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">Montag</div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong>Spaghetti Bolognese</strong><br>
+                    <span class="text-sm text-slate-500">Die Nudeln sind weich. Die Soße ist reichlich.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong>Linseneintopf</strong><br>
+                    <span class="text-sm text-slate-500">Deftig, aber sehr salzarm. Dazu ein hartes Brötchen.</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 md:bg-slate-800/30 rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">Dienstag</div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong>Currywurst mit Pommes</strong><br>
+                    <span class="text-sm text-slate-500">Der Klassiker. Die Pommes sind leider nicht mehr knusprig.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong>Gedünsteter Brokkoli mit Reis</strong><br>
+                    <span class="text-sm text-slate-500">Ohne Soße. Sehr gesund. Sehr trocken.</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 md:bg-transparent rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">Mittwoch</div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong>Hähnchenbrust "Hawaii"</strong><br>
+                    <span class="text-sm text-slate-500">Mit Ananas und Analogkäse überbacken.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong>Große Salat-Bowl</strong><br>
+                    <span class="text-sm text-slate-500">Viel Eisbergsalat, drei Maiskörner. Essig/Öl-Dressing (ausverkauft).</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 md:bg-slate-800/30 rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">Donnerstag</div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong>Schnitzel "Wiener Art"</strong><br>
+                    <span class="text-sm text-slate-500">Die Panade löst sich leicht. Kartoffelsalat aus dem Eimer.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong>Kartoffelsuppe</strong><br>
+                    <span class="text-sm text-slate-500">Wässrig, aber wärmt von innen.</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 md:bg-transparent rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">Freitag</div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong>Fischstäbchen (4 Stück)</strong><br>
+                    <span class="text-sm text-slate-500">Dazu Kartoffelpüree (Pulverbasis) und etwas Spinat.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong>Gemüse-Wraps</strong><br>
+                    <span class="text-sm text-slate-500">Kalt serviert. Viel Frischkäse.</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:grid md:grid-cols-5 bg-emerald-900/20 md:bg-emerald-900/10 rounded-xl md:rounded-none border border-emerald-800/50 md:border-none hover:bg-emerald-900/30 p-4 md:p-0 gap-3 md:gap-0 shadow-sm md:shadow-none">
+                <div class="md:col-span-1 md:p-4 font-bold text-emerald-400 text-lg md:text-base border-b border-emerald-800/50 md:border-none pb-2 md:pb-0 flex flex-col md:justify-center">
+                    <span>Samstag</span>
+                    <span class="text-[10px] md:text-xs font-normal text-emerald-500 md:text-emerald-600 uppercase tracking-wider mt-0.5">Agiles Wochenende</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <strong class="text-emerald-300 md:text-white">Lauwarmer Filterkaffee</strong><br>
+                    <span class="text-sm text-emerald-600/80 md:text-slate-500">Steht seit Freitag 15 Uhr auf der Heizplatte.</span>
+                </div>
+                <div class="md:col-span-2 md:p-4">
+                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <strong class="text-emerald-300 md:text-white">Trockener Marmorkuchen</strong><br>
+                    <span class="text-sm text-emerald-600/80 md:text-slate-500">Reste vom Meeting der Geschäftsführung.</span>
+                </div>
+            </div>
+
         </div>
         
         <div class="mt-8 bg-slate-800 border border-red-900/50 p-6 rounded-xl border-l-4 border-l-red-500 shadow-md">
