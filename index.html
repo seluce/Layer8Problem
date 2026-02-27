@@ -64,31 +64,31 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
 
-    /* E-Mail Animation START
+        /* E-Mail Animation START
 	
-    @keyframes slide-up {
-        0% { transform: translateY(20px); opacity: 0; }
-        100% { transform: translateY(0); opacity: 1; }
-    }
-    .animate-slide-up {
-        animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
+        @keyframes slide-up {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-up {
+            animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
 	
-	/* Sanfte E-Mail Animation */
-	@keyframes pop-in {
-    0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
-	}
-	.animate-pop-in {
- 	   animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-	}
+        /* Sanfte E-Mail Animation */
+        @keyframes pop-in {
+        0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop-in {
+           animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
 	
-    /* E-Mail Animation END
+        /* E-Mail Animation END
 
         /* PHONE & CHAT */
         #smartphone {
             background: #000; border: 4px solid #334155; border-radius: 12px;
-            overflow: hidden; position: relative; display: flex; flex-direction: column;
+            overflow: hidden; position: relative;
             height: 100%; 
             min-height: 300px; /* Mindesthöhe für Mobile View */
         }
@@ -139,6 +139,18 @@
         
         .pulse-red { animation: pulse-red 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
         .pulse-orange { animation: pulse-orange 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
+
+        /* --- KOMPAKTMODUS --- */
+        body.compact-mode #action-bar { height: 3.5rem !important; }
+        body.compact-mode .action-btn { padding: 0.25rem !important; flex-direction: row; gap: 0.5rem; }
+        body.compact-mode .action-btn span:first-child { font-size: 1.25rem; }
+        body.compact-mode .neon-box { padding: 0.5rem !important; }
+        body.compact-mode #terminal { padding: 0.5rem 1rem !important; }
+        body.compact-mode #terminal button { padding: 0.4rem 1rem !important; margin-bottom: 0.25rem !important; font-size: 0.85rem !important; }
+        body.compact-mode #terminal button .text-xl { font-size: 1.1rem !important; }
+        body.compact-mode .text-2xl { font-size: 1.25rem !important; line-height: 1.5rem !important; }
+        body.compact-mode p.text-lg { font-size: 1rem !important; line-height: 1.6rem !important; margin-bottom: 0.5rem !important; }
+        body.compact-mode #clock-container, body.compact-mode #ticket-container { padding: 0.25rem !important; }
 
     </style>
 </head>
@@ -247,7 +259,7 @@
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
         <div id="terminal" class="flex-[2] neon-box p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v2.6.0</div>
+            <div class="absolute top-2 right-4 text-[10px] text-slate-600">TicketSystem v2.7.0</div>
             
             <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40">
                 <div class="text-4xl md:text-6xl mb-4">🖥️</div>
@@ -827,7 +839,53 @@
                     </select>
                 </div>
 
-                <div class="h-px bg-slate-700/50 w-full"></div> <div class="flex justify-between items-center gap-4 group">
+                <div class="h-px bg-slate-700/50 w-full"></div> 
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">🗜️</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Kompaktmodus</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Verkleinert Abstände. Ideal für Laptops oder kleine Bildschirme.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-compact" onchange="engine.toggleCompactMode(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">📱</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Handy aut. minimieren</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Blendet das Handy auf Mobile aus, wenn es inaktiv ist.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-autohide" onchange="engine.toggleAutoHidePhone(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="h-px bg-slate-700/50 w-full"></div> 
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⌨️</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Tastatur-Sounds</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Spielt Sounds bei Aktionen, Entscheidungen und neuen Chat-Nachrichten ab.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-audio" onchange="engine.toggleAudio(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex justify-between items-center gap-4 group">
                     <div class="flex items-start gap-3 flex-1">
                         <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💓</span>
                         <div class="flex flex-col">
@@ -837,6 +895,36 @@
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" id="setting-fx" onchange="engine.toggleFX(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+                
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💬</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Smartphone-Animation</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Kein "Tippt..." Delay bei neuen Chat-Nachrichten.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <div class="h-px bg-slate-700/50 w-full"></div> 
+
+                <div class="flex justify-between items-center gap-4 group">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⚡</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Schnelle Items</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Nahrung im Rucksack ohne Bestätigung nutzen.</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="setting-oneclick" onchange="engine.toggleOneClick(this.checked)" class="sr-only peer">
                         <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                     </label>
                 </div>
@@ -865,50 +953,6 @@
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
                         <input type="checkbox" id="setting-blindtickets" onchange="engine.toggleBlindTickets(this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                    </label>
-                </div>
-
-                <div class="h-px bg-slate-700/50 w-full"></div>
-
-                <div class="flex justify-between items-center gap-4 group">
-                    <div class="flex items-start gap-3 flex-1">
-                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⌨️</span>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium text-slate-200 leading-tight">Tastatur-Sounds</span>
-                            <span class="text-[10px] text-slate-500 mt-1">Spielt Sounds bei Aktionen, Entscheidungen und neuen Chat-Nachrichten ab.</span>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" id="setting-audio" onchange="engine.toggleAudio(this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                    </label>
-                </div>
-
-                <div class="flex justify-between items-center gap-4 group">
-                    <div class="flex items-start gap-3 flex-1">
-                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⚡</span>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium text-slate-200 leading-tight">Schnelle Items</span>
-                            <span class="text-[10px] text-slate-500 mt-1">Nahrung im Rucksack ohne Bestätigung nutzen.</span>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" id="setting-oneclick" onchange="engine.toggleOneClick(this.checked)" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                    </label>
-                </div>
-
-                <div class="flex justify-between items-center gap-4 group">
-                    <div class="flex items-start gap-3 flex-1">
-                        <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💬</span>
-                        <div class="flex flex-col">
-                            <span class="text-sm font-medium text-slate-200 leading-tight">Smartphone-Animation</span>
-                            <span class="text-[10px] text-slate-500 mt-1">Kein "Tippt..." Delay bei neuen Chat-Nachrichten.</span>
-                        </div>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                        <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
                         <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                     </label>
                 </div>

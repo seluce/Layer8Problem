@@ -12,6 +12,11 @@ const engine = {
         bossTimer: null,
         ticketWarning: false,
         morningMoodShown: false,
+        
+        // Partymode
+        isPartyMode: false,
+        partyProgress: 0,
+        currentPartyKey: null,
       
         // Schwierigkeitsgrad (Standard 1.0)
         difficultyMult: 1.0, 
@@ -66,6 +71,8 @@ const engine = {
         fastChat: localStorage.getItem('layer8_fastchat') === 'true',
         blindStats: localStorage.getItem('layer8_blindstats') === 'true',
         blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
+        autoHidePhone: localStorage.getItem('layer8_autohidephone') === 'true',
+        compactMode: localStorage.getItem('layer8_compact') === 'true',
     },
     
     // --- SYNTHETISCHER SOUND ---
@@ -147,9 +154,11 @@ const engine = {
 
     init: function() {
         this.loadSystem();
+        if (this.state.compactMode) document.body.classList.add('compact-mode');
         document.getElementById('intro-modal').style.display = 'flex';
+        document.body.classList.add('overflow-hidden');
         this.updateUI();
-        this.log("System v2.6.0 geladen. Warte auf User...");
+        this.log("System v2.7.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -213,6 +222,7 @@ const engine = {
         // Modal anzeigen
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
 
         // 1. ITEMS SORTIEREN & ZÄHLEN
         let normalItems = [];
@@ -424,6 +434,7 @@ const engine = {
     closeArchive: function() {
         document.getElementById('archive-modal').classList.add('hidden');
         document.getElementById('archive-modal').classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
     },
 
     // Startet das Spiel und prüft, ob ein Standard-Tag gesetzt ist
@@ -450,6 +461,7 @@ const engine = {
     // Setzt Schwierigkeit und startet dann erst den Loop (oder das Tutorial)
     setDifficulty: function(level) {
         document.getElementById('difficulty-modal').style.display = 'none';
+        document.body.classList.remove('overflow-hidden');
         
         // Buttons für die halbe Sekunde Ladezeit sperren
         this.disableButtons(true);
@@ -492,9 +504,11 @@ const engine = {
     // --- E-MAIL SYSTEM (Clean Light / Logik Fixes) ---
 
     checkRandomEmail: function() {
-        // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
+        	
+	    // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
         if(this.state.isEmailOpen || this.state.emailPending) return; // <--- Auch prüfen ob Pending!
         if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
+        if (this.state.isPartyMode) return;
 
         // --- ID-BASIERTE PRÜFUNG (WHITELIST & BLACKLIST) ---
         // Wir holen uns die ID des aktuellen Events (z.B. "srv_fire" oder "boss_hack")
@@ -697,7 +711,7 @@ const engine = {
             if(addedA) this.state.al += addedA;
             if(addedC) this.state.cr += addedC;
 
-            // --- NEU: Floating Text für E-Mails ---
+            // --- Floating Text für E-Mails ---
             if (addedF !== 0) this.showFloatingText('val-fl', addedF);
             if (addedA !== 0) this.showFloatingText('val-al', addedA);
             if (addedC !== 0) this.showFloatingText('val-cr', addedC);
@@ -863,6 +877,25 @@ const engine = {
 
         this.checkAchievements();
         this.checkEndConditions();
+        this.updatePhoneVisibility();
+    },
+    
+    updatePhoneVisibility: function() {
+        const phone = document.getElementById('smartphone'); 
+        if (!phone) return;
+
+        // Das Handy wird gebraucht, wenn ein Phone-Event aktiv in Bearbeitung ist
+        let isPhoneActive = this.state.currentPhoneEvent && this.state.activeEvent;
+
+        if (this.state.autoHidePhone && !isPhoneActive) {
+            // FIX: 'flex' entfernen, damit 'hidden' auch wirklich funktioniert!
+            phone.classList.remove('flex');
+            phone.classList.add('hidden', 'lg:flex'); 
+        } else {
+            // Wieder normal anzeigen
+            phone.classList.remove('hidden', 'lg:flex');
+            phone.classList.add('flex');
+        }
     },
 
     checkAchievements: function() {
@@ -1093,11 +1126,75 @@ const engine = {
             this.saveSystem(); // LocalStorage Update
         }
     },
+    
+    // --- PARTY SYSTEM ---
+    goToPartyStation: function(loc) {
+        this.playAudio('action');
+        let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
+        
+        if (pool.length === 0) {
+            this.log("Hier ist gerade nichts mehr los. Versuch einen anderen Ort.", "text-slate-500");
+            return;
+        }
+        
+        let ev = pool[Math.floor(Math.random() * pool.length)];
+        this.renderTerminal(ev, 'party');
+    },
+
+    finishParty: function(title, text) {
+        // 1. Erst im allerletzten Moment als gespielt abspeichern!
+        if (this.state.currentPartyKey) {
+            localStorage.setItem(this.state.currentPartyKey, 'true'); 
+        }
+        this.state.isPartyMode = false;
+        
+        // --- GALA-ERFOLG FREISCHALTEN ---
+        this.unlockAchievement('ach_party', '🎉 Synergy-Veteran', 'Du hast die legendäre Firmenfeier überlebt.');
+
+        // 2. Party-Report Box zusammenbauen
+        let diffName = "MITTWOCH (Normal)";
+        if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
+        if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
+
+        let statsHTML = `
+            <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
+                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">Party-Bilanz: <span class="text-white font-bold">${diffName}</span></div>
+                <div class="grid grid-cols-2 gap-2 text-center font-mono">
+                    <div class="flex flex-col">
+                        <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
+                        <span class="text-[10px] text-slate-400">CHILL-FAKTOR</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
+                        <span class="text-[10px] text-slate-400">FREMDSCHAM</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Die Erfolge des Tages abrufen
+        let achHTML = this.state.achievedTitles.length > 0 ? 
+            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Heutige Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>` 
+            : "";
+
+        let fullReport = statsHTML + achHTML;
+
+        // 3. Tagebuch generieren (inkl. des Party-Endes)
+        this.incrementStat('daysSurvived');
+        let diary = this.generateDiaryEntry("PARTY", text);
+
+        // 4. End-Modal aufrufen (Das versteckte [PARTY] triggert die Farbe!)
+        let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
+        this.showEnd("GALA VORBEI", subtitleHTML + "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.<br>" + fullReport + diary, true);
+    },
 
     trigger: function(type) {
 		this.playAudio('action');
+		// Blockieren, wenn Party
+		if (this.state.isPartyMode) return;
         // Blockieren, wenn schon ein Event offen ist
         if(this.state.activeEvent) return;
+        
 
         // ---------------------------------------------------------
         // 1. BOSS CHECK (Die "Katastrophe")
@@ -1269,6 +1366,17 @@ const engine = {
             document.getElementById('phone-notification').classList.remove('hidden');
             document.getElementById('phone-notification').classList.add('flex');
             this.log("Handy: " + ev.title);
+            
+            // --- Handy einblenden & hinscrollen ---
+            this.updatePhoneVisibility();
+            setTimeout(() => {
+                const phone = document.getElementById('smartphone');
+                // Nur auf kleinen Bildschirmen scrollen
+                if(phone && window.innerWidth < 1024) { 
+                    phone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+            
         } else {
             this.renderTerminal(ev, 'sidequest');
         }
@@ -1338,6 +1446,7 @@ const engine = {
         let formattedText = text ? text.replace(/\n/g, "<br>") : "";		
         
         // --- STYLE KONFIGURATION ---
+        let typeName = 'SYSTEM';
         let color = 'text-amber-400';       
         let borderColor = 'border-amber-500';
 		let bgClass = 'bg-slate-900';
@@ -1380,6 +1489,13 @@ const engine = {
                 color = 'text-amber-400';       
                 borderColor = 'border-amber-500';
                 icon = '☕';
+                break;
+            case 'party':
+                typeName = 'SYNERGY-GALA';
+                color = 'text-pink-400';
+                borderColor = 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]';
+                bgClass = "bg-gradient-to-b from-slate-900 to-slate-950";
+                icon = '🎉';
                 break;
         }
 
@@ -1444,6 +1560,16 @@ const engine = {
                         reqText = `(Benötigt: ${itemName})`;
                     }
                 }
+                
+                // --- POOL CHECK FÜR DIE PARTY ---
+                if (opt.checkPool && !locked) {
+                    // Sucht, ob es noch offene Events für diesen Ort gibt
+                    let pool = DB.party.filter(ev => ev.loc === opt.checkPool && !this.state.usedIDs.has(ev.id));
+                    if (pool.length === 0) {
+                        locked = true;
+                        reqText = "(Alles gesehen)"; // Das steht dann rot neben dem Button
+                    }
+                }
 
                 // STYLE
                 let btnClass = "";
@@ -1457,19 +1583,14 @@ const engine = {
                     btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
                     
-                    if (isChain) {
+                    // Direkte Aktionen (z.B. für Party-Navigation)
+                    if (opt.action) {
+                        clickAction = `onclick="${opt.action}"`;
+                    } else if (isChain) {
                         clickAction = `onclick="engine.handleChainChoice('${opt.next}')"`;
                     } else {
-                        let safeRes = opt.r ? opt.r.replace(/'/g, "\\'").replace(/\n/g, "<br>") : '';
-                        
-                        // NEU: Reputation Objekt sicher für HTML machen
-                        let safeRep = "null";
-                        if (opt.rep) {
-                            // Wir wandeln das Objekt in einen String um und ersetzen Anführungszeichen, damit das HTML nicht kaputt geht
-                            safeRep = JSON.stringify(opt.rep).replace(/"/g, "&quot;");
-                        }
-
-                        // Hier fügen wir 'safeRep' als letztes Argument hinzu
+                        let safeRes = opt.r ? opt.r.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "<br>") : '';
+                        let safeRep = opt.rep ? JSON.stringify(opt.rep).replace(/"/g, "&quot;") : "null";
                         clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}', '${opt.rem||''}', ${safeRep})"`;
                     }
                 }
@@ -1583,7 +1704,7 @@ const engine = {
         
         // Lunch Check
         let triggerLunch = false;
-        if (!this.state.lunchDone && this.state.time >= 12 * 60) {
+        if (!this.state.isPartyMode && !this.state.lunchDone && this.state.time >= 12 * 60) {
             triggerLunch = true;
             this.state.lunchDone = true;
         }
@@ -1648,6 +1769,11 @@ const engine = {
         if (next && next !== "") {
             this.state.storyFlags[next] = true;
         }
+        
+        // --- PARTY FORTSCHRITT ZÄHLEN ---
+        if (this.state.isPartyMode && type === 'party' && next === 'party_hub') {
+            this.state.partyProgress++;
+        }
 
         // Items Logic: LOOT
         if(loot && loot !== "") {
@@ -1679,13 +1805,21 @@ const engine = {
         let btnColor = "bg-blue-600 hover:bg-blue-500"; 
 
         if (this.state.pendingEnd) {
-            btnAction = "engine.finishGame()";
-            if (this.state.pendingEnd.isWin) {
-                btnText = "FEIERABEND MACHEN 🎉";
-                btnColor = "bg-green-600 hover:bg-green-500";
+            // --- Die getarnte Party-Falle ---
+            if (this.state.pendingEnd.isParty) {
+                btnAction = "engine.startParty()";
+                btnText = "FEIERABEND MACHEN 🎉"; // Gleicher Text wie beim normalen Sieg!
+                btnColor = "bg-pink-600 hover:bg-pink-500"; // Ein fieses Pink als kleiner Hinweis
             } else {
-                btnText = "DAS WAR'S... (GAME OVER)";
-                btnColor = "bg-red-600 hover:bg-red-500";
+                // --- Normales Ende ---
+                btnAction = "engine.finishGame()";
+                if (this.state.pendingEnd.isWin) {
+                    btnText = "FEIERABEND MACHEN 🎉";
+                    btnColor = "bg-green-600 hover:bg-green-500";
+                } else {
+                    btnText = "DAS WAR'S... (GAME OVER)";
+                    btnColor = "bg-red-600 hover:bg-red-500";
+                }
             }
         }
 
@@ -1713,6 +1847,31 @@ const engine = {
 
     reset: function() {
 		this.playAudio('ui');
+		
+        // --- 1. PARTY LOOP (Wenn die Party bereits läuft) ---
+        if (this.state.isPartyMode) {
+            this.state.activeEvent = true;
+            this.disableButtons(true);
+            
+            // Ab 8 Stationen kommt das dynamische Finale!
+            if (this.state.partyProgress >= 12) {
+                let finaleId = 'party_finale_standard';
+                if (this.state.al >= 100) finaleId = 'party_finale_rage';
+                else if (this.state.fl >= 100) finaleId = 'party_finale_houdini';
+                else if (this.state.al < 40 && this.state.fl < 40) finaleId = 'party_finale_hero';
+                else if (this.state.fl >= 50 && this.state.al <= 60) finaleId = 'party_finale_gossip';
+                
+                // --- UHRZEIT FÜRS FINALE AUF 23:00 UHR SETZEN ---
+                this.state.time = 23 * 60;
+                this.updateUI();
+                
+                this.renderTerminal(DB.party.find(e => e.id === finaleId), 'party');
+            } else {
+                this.renderTerminal(DB.party.find(e => e.id === 'party_hub'), 'party');
+            }
+            return;
+        }
+		
 		// --- Morgen-Routinen Abfang-Mechanismus ---
 		if (!this.state.morningMoodShown) {
             this.state.morningMoodShown = true;
@@ -1745,7 +1904,7 @@ const engine = {
                     </span>`;
         };
 
-        // 1. ZEIT (Neu: Als erstes Element anzeigen)
+        // 1. ZEIT (Als erstes Element anzeigen)
         // Wir zeigen nur an, wenn Zeit vergangen ist (m > 0)
         if (m > 0) {
             html += makePill(m, 'Minuten', 'text-blue-400');
@@ -1913,7 +2072,7 @@ const engine = {
         this.state.al += finalA;
         this.state.cr += finalC;
 
-        // --- NEU: Floating Text für Phone ---
+        // --- Floating Text für Phone ---
         if (finalF !== 0) this.showFloatingText('val-fl', finalF);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
@@ -2036,6 +2195,10 @@ const engine = {
         document.getElementById('phone-app').classList.add('hidden');
         document.getElementById('phone-app').classList.remove('flex');
         document.getElementById('phone-standby').classList.remove('hidden');
+        
+        // --- Event leeren und Sichtbarkeit prüfen ---
+        this.state.currentPhoneEvent = null; 
+        this.updatePhoneVisibility();
     },
 
     disableButtons: function(disable) {
@@ -2053,10 +2216,13 @@ const engine = {
         let h = Math.floor(this.state.time / 60);
         let m = this.state.time % 60;
         let time = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+        
         feed.innerHTML = `<div><span class="text-slate-500">[${time}]</span> <span class="${colorClass || ''}">${msg}</span></div>` + feed.innerHTML;
     },
 
     checkEndConditions: function() {
+		// Blockieren, wenn Party
+		if (this.state.isPartyMode) return;
         // WICHTIG: Wenn schon ein Ende wartet, nicht nochmal prüfen (verhindert Dopplungen)
         if (this.state.pendingEnd) return;
 
@@ -2127,15 +2293,49 @@ const engine = {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, sonst fliegst du!", false);
         }
-        // D. FEIERABEND (Zeit abgelaufen)
+        // D. FEIERABEND (Zeit abgelaufen) ODER PARTY-START
         else if(this.state.time >= 16*60+30) {
+            
+            // --- PARTY TRIGGER AM FEIERABEND ---
+            let currentDiffStr = "easy";
+            let currentDiffVal = 1;
+            if (this.state.difficultyMult === 1.0) { currentDiffStr = "normal"; currentDiffVal = 2; }
+            else if (this.state.difficultyMult > 1.0) { currentDiffStr = "hard"; currentDiffVal = 3; }
+
+            const reqAchs = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar', 'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
+            
+            const isVeteran = reqAchs.every(id => {
+                if (!this.state.archive.achievements || !this.state.archive.achievements.includes(id)) return false;
+                let achDiff = this.state.archive.achievementDiffs ? this.state.archive.achievementDiffs[id] : "easy";
+                let achDiffVal = 1;
+                if (achDiff === "normal") achDiffVal = 2;
+                if (achDiff === "hard") achDiffVal = 3;
+                return achDiffVal >= currentDiffVal; 
+            });
+
+            const partyKey = 'layer8_party_played_' + currentDiffStr;
+            const partyPlayed = localStorage.getItem(partyKey) === 'true';
+
+            // Wenn alle Bedingungen erfüllt sind -> PARTY STATT FEIERABEND
+            if (isVeteran && !partyPlayed) {
+                // Nicht sofort starten, sondern als "Pending" markieren!
+                this.state.pendingEnd = {
+                    isParty: true,
+                    partyKey: partyKey,
+                    diffStr: currentDiffStr
+                };
+                return; 
+            }
+            // --- ENDE PARTY TRIGGER ---
+
+
+            // Wenn keine Party stattfindet -> Ganz normaler Feierabend
 			this.incrementStat('daysSurvived');
-            // 1. Tagebuch generieren
             let diary = this.generateDiaryEntry("WIN");
 
             this.state.pendingEnd = { 
                 title: "FEIERABEND", 
-                text: "16:30! Du hast den Tag überlebt.<br>" + fullReport + diary, // <-- Hier + diary anhängen
+                text: "16:30! Du hast den Tag überlebt.<br>" + fullReport + diary,
                 isWin: true 
             };
         }
@@ -2176,19 +2376,26 @@ const engine = {
         const content = document.getElementById('modal-content');
         overlay.classList.remove('hidden');
         overlay.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
         
         let btnAction = 'location.reload()';
         let btnText = 'NEUSTART';
         
-        if(!isEnd && !title.includes("QUIT") && !title.includes("GEFEUERT") && !title.includes("FEIERABEND")) {
+        if(!isEnd && !title.includes("QUIT") && !title.includes("GEFEUERT") && !title.includes("FEIERABEND") && !title.includes("GALA VORBEI")) {
              btnAction = 'engine.closeModal()';
              btnText = 'VERSTANDEN';
         }
+        
+        // --- Dynamische Farbgebung des Titels ---
+        let titleColor = "text-red-500"; // Standard: Rot für Fehler/Kündigung
+        if (title.includes("FEIERABEND")) titleColor = "text-green-500"; // Grün für regulären Sieg
+        if (title.includes("GALA VORBEI")) titleColor = "text-pink-500"; // Pink für die Party!
+        // ---------------------------------------------
 
         content.innerHTML = `
-            <h1 class="text-4xl font-black text-red-500 mb-4">${title}</h1>
+            <h1 class="text-4xl font-black ${titleColor} mb-4">${title}</h1>
             <div class="text-lg text-slate-300 mb-8 italic">${text}</div>
-            <button onclick="${btnAction}" class="bg-white text-black px-8 py-3 rounded font-bold uppercase hover:bg-slate-200">
+            <button onclick="${btnAction}" class="bg-white text-black px-8 py-3 rounded font-bold uppercase hover:bg-slate-200 shadow-lg">
                 ${btnText}
             </button>
         `;
@@ -2197,6 +2404,7 @@ const engine = {
     closeModal: function() {
         document.getElementById('modal-overlay').classList.add('hidden');
         document.getElementById('modal-overlay').classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
         this.updateUI();
     },
 
@@ -2211,7 +2419,33 @@ const engine = {
             this.state.pendingEnd = null; // Reset
         }
     },
-
+    
+    startParty: function() {
+        this.playAudio('ui');
+        const endData = this.state.pendingEnd;
+        this.state.pendingEnd = null; // Den Marker wieder löschen
+        
+        // Party-Status aktivieren
+        this.state.isPartyMode = true;
+        this.state.partyProgress = 0;
+        this.state.currentPartyKey = endData.partyKey; 
+        
+        // Stats für die Party auf 0 setzen
+        this.state.al = 0;
+        this.state.fl = 0;
+        this.state.cr = 0;
+        
+        // Alle laufenden Timer killen
+        if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
+        if(this.state.bossTimer) clearInterval(this.state.bossTimer);
+        this.state.emailPending = false;
+        
+        this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");
+        
+        // Und jetzt geht die Falle zu: Das Party-Event wird gerendert!
+        this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
+    },
+    
     // Log auf/zuklappen für Mobile
     toggleLog: function() {
         const log = document.getElementById('log-feed');
@@ -2358,12 +2592,14 @@ const engine = {
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
     },
 
     closeInventory: function() {
         const modal = document.getElementById('inventory-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
     },
 		
     // --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
@@ -2450,6 +2686,7 @@ const engine = {
         // Modal anzeigen
         document.getElementById('item-confirm-modal').classList.remove('hidden');
         document.getElementById('item-confirm-modal').classList.add('flex');
+        document.body.classList.add('overflow-hidden');
     },
 
     // 2. Bestätigung: Jetzt wirklich tun
@@ -2515,6 +2752,7 @@ const engine = {
 		this.playAudio('ui');
         document.getElementById('item-confirm-modal').classList.add('hidden');
         document.getElementById('item-confirm-modal').classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
         this.state.pendingItem = null;
     },
 
@@ -2605,7 +2843,7 @@ const engine = {
                     </div>
 
                     <div class="p-6 bg-[#d7ccc8] border-t-4 border-[#8d6e63] flex justify-center">
-                        <button onclick="document.getElementById('lore-modal').remove()" class="bg-[#5d4037] hover:bg-[#3e2723] text-[#fdf6e3] px-10 py-3 rounded shadow-lg font-bold uppercase tracking-wider transition-transform hover:scale-105 border-2 border-[#8d6e63]">
+                        <button onclick="document.getElementById('lore-modal').remove(); document.body.classList.remove('overflow-hidden');" class="bg-[#5d4037] hover:bg-[#3e2723] text-[#fdf6e3] px-10 py-3 rounded shadow-lg font-bold uppercase tracking-wider transition-transform hover:scale-105 border-2 border-[#8d6e63]">
                             Buch schließen (und vergessen)
                         </button>
                     </div>
@@ -2615,12 +2853,14 @@ const engine = {
         `;
 
         document.body.insertAdjacentHTML('beforeend', html);
+        document.body.classList.add('overflow-hidden');
     },
 
     // --- TEAM / CHARAKTERE ---
     openTeam: function() {
         const modal = document.getElementById('team-modal');
         const grid = document.getElementById('team-grid');
+        document.body.classList.add('overflow-hidden');
         grid.innerHTML = '';
      
         DB.chars.forEach(char => {
@@ -2724,6 +2964,7 @@ const engine = {
         const modal = document.getElementById('team-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
     },
 
     // --- INTRANET SYSTEM ---
@@ -2735,19 +2976,14 @@ const engine = {
         
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
     },
 
     closeIntranet: function() {
         const modal = document.getElementById('intranet-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
-        
-        // --- ACHIEVEMENT CHECK ---
-        this.unlockAchievement(
-            'ach_intranet', 
-            '🌐 Meister des Internets', 
-            'Du hast die tiefsten, dunkelsten Tiefen des Firmen-Intranets erforscht.'
-        );
+        document.body.classList.remove('overflow-hidden');
     },
 
     // --- VISUELLES FEEDBACK (Floating Text) ---
@@ -2811,7 +3047,7 @@ const engine = {
     },
 
     // --- TAGEBUCH GENERATOR ---
-    generateDiaryEntry: function(endReason) {
+    generateDiaryEntry: function(endReason, partyText = "") {
         const state = this.state;
         
         // Hilfsfunktion: Baut aus ["A", "B", "C"] einen Satz "A, B und C"
@@ -2974,6 +3210,9 @@ const engine = {
                 "Die Uhr springt auf Feierabend. Ich klappe den Laptop zu und flüchte. Ein weiterer Tag in der IT-Hölle wurde erfolgreich überlebt.",
                 "Überlebt. Erschöpft, aber lebendig. Ich brauche jetzt dringend etwas, das weitaus stärker ist als Kaffee."
             ]);
+        } else if (endReason === "PARTY") {
+            // --- PARTY FINALE TEXT ---
+            p3 = "Dann kam 17:30 Uhr und die ominöse Synergy-Gala. " + partyText;
         }
 
         // ==========================================
@@ -3230,6 +3469,7 @@ const engine = {
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
         },
 
         // Öffnet das Import Fenster
@@ -3244,6 +3484,7 @@ const engine = {
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
         },
 
         // Schließt beide Fenster
@@ -3252,6 +3493,7 @@ const engine = {
             document.getElementById('save-export-modal').classList.remove('flex');
             document.getElementById('save-import-modal').classList.add('hidden');
             document.getElementById('save-import-modal').classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
         },
 
         // Kopier-Funktion
@@ -3351,12 +3593,14 @@ const engine = {
         const modal = document.getElementById('report-modal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
     },
 
     closeReportModal: function() {
         const modal = document.getElementById('report-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
     },
 
     sendReportMail: function() {
@@ -3438,17 +3682,19 @@ ${logText}
         const modal = document.getElementById('settings-modal');
         const select = document.getElementById('setting-diff');
         
+        document.body.classList.add('overflow-hidden');
+        
         if(select) select.value = localStorage.getItem('layer8_default_diff') || 'ask';
         
         // --- Toggles aktualisieren ---
         if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
         if(document.getElementById('setting-oneclick')) document.getElementById('setting-oneclick').checked = this.state.oneClickItem;
         if(document.getElementById('setting-fastchat')) document.getElementById('setting-fastchat').checked = this.state.fastChat;
-        
-        // NEU: Blindflug & Audio
         if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
         if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
         if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
+        if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
+        if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
         
         const resetBtn = document.getElementById('btn-hard-reset');
         if (resetBtn) {
@@ -3499,6 +3745,22 @@ ${logText}
         this.state.audioEffects = isOn;
         localStorage.setItem('layer8_audio', isOn);
         if(isOn) this.playAudio('ui');
+    },
+    
+    toggleAutoHidePhone: function(isOn) {
+        this.state.autoHidePhone = isOn;
+        localStorage.setItem('layer8_autohidephone', isOn);
+        this.updatePhoneVisibility();
+    },
+    
+    toggleCompactMode: function(isOn) {
+        this.state.compactMode = isOn;
+        localStorage.setItem('layer8_compact', isOn);
+        if (isOn) {
+            document.body.classList.add('compact-mode');
+        } else {
+            document.body.classList.remove('compact-mode');
+        }
     },
 
     // Blitzschneller Neustart ohne Page-Reload
@@ -3554,6 +3816,7 @@ ${logText}
         const modal = document.getElementById('settings-modal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
     },
 
     saveDefaultDifficulty: function(val) {

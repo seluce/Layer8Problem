@@ -1,3 +1,12 @@
+\[2.7.0] - 2026-02-27
+* Die große Firmenfeier startet, nachdem alle Character-Events erfolgreich gesammelt wurden sind
+* Internet-Archivment wurde durch das neue Synergy-Veteran Archivment ersetzt
+* Das Menü bietet jetzt weitere Spieleinstellungen zum Anpassen (Komptaktlayout und Handy minimieren)
+* Scroll-Chaining im aktiven Modal (z.b Intro, Teams, Menü, etc.) wurde behoben
+* Das Ergebnis beim Endergebnis wird jetzt in der richtigen Farbe dargestellt 
+* Alle Events mit 0 Minuten Optionen wurden auf 2 Minuten angehoben
+* Kleine weitere Fehlerkorrekturen für Events und im Backend
+
 \[2.6.0] - 2026-02-24
 * Das Menü bietet jetzt weitere Spieleinstellungen zum Anpassen
 * Standardmäßg sind Pulsieren von Aggro / Wut und die Wiedergabe von Tönen aktiv
