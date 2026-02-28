@@ -1,3 +1,10 @@
+\[2.8.0] - 2026-02-29
+* Folge-Events haben eine höhere Priorisierung (30%) im Pool, wenn diese freigeschaltet sind
+* Neue Events für Bossfights, Mittagessen, Kaffee, Dienstgang, Serverraum und Anruf 
+* Spieleinstellungen "Handy aut. minimieren" ist nun standardmäßig auf aktiv gesetzt
+* Phone-Events Werte werden nun in der data.js einheitlich definiert (anstatt fl,al,cr nun f,a,c)
+* Kleine Korrekturen von einigen Events, die gemeldet wurden sind
+
 \[2.7.0] - 2026-02-27
 * Die große Firmenfeier startet, nachdem alle Character-Events erfolgreich gesammelt wurden sind
 * Internet-Archivment wurde durch das neue Synergy-Veteran Archivment ersetzt

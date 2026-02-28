@@ -63,7 +63,7 @@ const tutorial = {
         {
             target: 'btn-calls', 
             title: "Anruf annehmen",
-            text: "Der schnellste Weg, Tickets abzubauen. Aber Vorsicht: Die User rauben dir den letzten Nerv."
+            text: "Der schnellste Weg, um offene Tickets abzubauen. Aber Vorsicht: Die User rauben dir den letzten Nerv."
         }
     ],
     currentStep: 0,

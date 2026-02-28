@@ -72,7 +72,7 @@ const engine = {
         blindStats: localStorage.getItem('layer8_blindstats') === 'true',
         blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
         autoHidePhone: localStorage.getItem('layer8_autohidephone') === 'true',
-        compactMode: localStorage.getItem('layer8_compact') === 'true',
+        compactMode: localStorage.getItem('layer8_compact') === 'false',
     },
     
     // --- SYNTHETISCHER SOUND ---
@@ -158,7 +158,7 @@ const engine = {
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
         this.updateUI();
-        this.log("System v2.7.0 geladen. Warte auf User...");
+        this.log("System v2.8.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1265,8 +1265,22 @@ const engine = {
             return; 
         }
         
+        // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
+        let followUps = pool.filter(ev => ev.reqStory);
+        let normalEvents = pool.filter(ev => !ev.reqStory);
+        let ev;
+
+        // Wenn ein Folge-Event freigeschaltet wurde, ziehe es mit 30% Wahrscheinlichkeit vor!
+        if (followUps.length > 0 && Math.random() < 0.30) {
+            ev = followUps[Math.floor(Math.random() * followUps.length)];
+        } else if (normalEvents.length > 0) {
+            ev = normalEvents[Math.floor(Math.random() * normalEvents.length)];
+        } else {
+            // Fallback: Wenn nur noch Folge-Events da sind
+            ev = followUps[Math.floor(Math.random() * followUps.length)];
+        }
+        
         // Event starten
-        let ev = pool[Math.floor(Math.random() * pool.length)];
         this.renderTerminal(ev, type);
     },
 
@@ -1354,7 +1368,19 @@ const engine = {
 
         if (pool.length === 0) { this.log("Gerade nichts los."); return; }
 
-        let ev = pool[Math.floor(Math.random() * pool.length)];
+        // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
+        let followUps = pool.filter(ev => ev.reqStory);
+        let normalEvents = pool.filter(ev => !ev.reqStory);
+        let ev;
+
+        if (followUps.length > 0 && Math.random() < 0.30) {
+            ev = followUps[Math.floor(Math.random() * followUps.length)];
+        } else if (normalEvents.length > 0) {
+            ev = normalEvents[Math.floor(Math.random() * normalEvents.length)];
+        } else {
+            ev = followUps[Math.floor(Math.random() * followUps.length)];
+        }
+        // ---------------------------------------------------
 
         if (ev.kind === 'phone') {
             this.state.activeEvent = true;
@@ -2064,9 +2090,9 @@ const engine = {
             }
             
         // Stats Update
-        let finalF = res.fl || 0;
-        let finalA = res.al || 0;
-        let finalC = res.cr || 0;
+        let finalF = res.f || 0;
+        let finalA = res.a || 0;
+        let finalC = res.c || 0;
 
         this.state.fl += finalF;
         this.state.al += finalA;
@@ -2291,7 +2317,7 @@ const engine = {
         // C. WARNUNG (Tickets >= 7) -> Das bleibt so!
         else if(this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
-            this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, sonst fliegst du!", false);
+            this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
         }
         // D. FEIERABEND (Zeit abgelaufen) ODER PARTY-START
         else if(this.state.time >= 16*60+30) {
