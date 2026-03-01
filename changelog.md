@@ -1,3 +1,7 @@
+\[2.8.1] - 2026-02-29
+* Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
+* Kritischer Bugfix bei Begegnungen-Events, welche nicht immer Folge-Events zuverlässig ausgelöst haben
+
 \[2.8.0] - 2026-02-29
 * Folge-Events haben eine höhere Priorisierung (30%) im Pool, wenn diese freigeschaltet sind
 * Neue Events für Bossfights, Mittagessen, Kaffee, Dienstgang, Serverraum und Anruf 

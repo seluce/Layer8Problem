@@ -158,7 +158,7 @@ const engine = {
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
         this.updateUI();
-        this.log("System v2.8.0 geladen. Warte auf User...");
+        this.log("System v2.8.1 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -1214,10 +1214,16 @@ const engine = {
         // Chance: 10%. Gilt ebenfalls für ALLE Buttons. Ein Charakter fängt dich ab.
         if (DB.reputation) {
             
-            // A. Sammle alle Events, für die der Spieler die Ruf-Voraussetzung erfüllt
+            // A. Sammle alle Events, die der Spieler sehen darf (Ruf oder reqStory)
             let possibleInterventions = DB.reputation.filter(ev => {
                 if (this.state.usedIDs.has(ev.id)) return false; 
+
+                // Wenn es eine Story-Fortsetzung ist: Prüfen, ob Story-Flag aktiv
+                if (ev.reqStory) {
+                    return !!this.state.storyFlags[ev.reqStory]; 
+                }
                 
+                // Wenn es ein Basis-Ruf-Event ist: Ruf-Werte prüfen
                 if (ev.reqRep) {
                     for (let [char, threshold] of Object.entries(ev.reqRep)) {
                         let currentRep = this.state.reputation[char] || 0;
@@ -1227,18 +1233,39 @@ const engine = {
                     }
                     return true;
                 }
+                
                 return false;
             });
 
-            // B. Würfeln: 10% Chance
+            // B. Würfeln: 10% Chance, dass überhaupt eine Begegnung stattfindet
             if (possibleInterventions.length > 0 && Math.random() < 0.10) {
-                let intervention = possibleInterventions[Math.floor(Math.random() * possibleInterventions.length)];
                 
-                this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
+                // 1. Array in Story-Events und Basis-Events aufteilen
+                let storyEvents = possibleInterventions.filter(e => e.reqStory);
+                let baseEvents = possibleInterventions.filter(e => !e.reqStory);
                 
-                // Wir rendern es mit dem Typ 'rep' für das goldene Design
-                this.renderTerminal(intervention, 'rep'); 
-                return; // Unterbricht die eigentliche Aktion
+                let intervention = null;
+
+                // 2. NEU: 30% Priorität für Story-Fortsetzungen, falls welche verfügbar sind!
+                if (storyEvents.length > 0 && Math.random() < 0.30) {
+                    intervention = storyEvents[Math.floor(Math.random() * storyEvents.length)];
+                } 
+                // 3. Wenn die 30% verfehlt wurden ODER keine Story-Events da sind -> Normales Ruf-Event
+                else if (baseEvents.length > 0) {
+                    intervention = baseEvents[Math.floor(Math.random() * baseEvents.length)];
+                }
+                // Fallback (z.B. wenn NUR Story-Events da sind, aber die 30% verfehlt wurden)
+                else {
+                    intervention = possibleInterventions[Math.floor(Math.random() * possibleInterventions.length)];
+                }
+                
+                if (intervention) {
+                    this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
+                    
+                    // Wir rendern es mit dem Typ 'rep' für das goldene Design
+                    this.renderTerminal(intervention, 'rep'); 
+                    return; // Unterbricht die eigentliche Aktion
+                }
             }
         }
 
