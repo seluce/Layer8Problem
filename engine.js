@@ -72,7 +72,7 @@ const engine = {
         blindStats: localStorage.getItem('layer8_blindstats') === 'true',
         blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
         autoHidePhone: localStorage.getItem('layer8_autohidephone') === 'true',
-        compactMode: localStorage.getItem('layer8_compact') === 'false',
+        compactMode: localStorage.getItem('layer8_compact') === 'true',
     },
     
     // --- SYNTHETISCHER SOUND ---

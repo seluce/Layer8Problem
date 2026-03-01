@@ -1,6 +1,7 @@
 \[2.8.1] - 2026-02-29
 * Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
 * Kritischer Bugfix bei Begegnungen-Events, welche nicht immer Folge-Events zuverlässig ausgelöst haben
+* Kompaktmodus merkt sich jetzt den aktivierten Zustand (zu finden in den Systemeinstellungen)
 
 \[2.8.0] - 2026-02-29
 * Folge-Events haben eine höhere Priorisierung (30%) im Pool, wenn diese freigeschaltet sind
