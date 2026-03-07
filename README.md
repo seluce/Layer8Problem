@@ -24,6 +24,8 @@ Dadurch hilfst du mir als Solo-Entwickler, neue Events, Quests und Funktionen au
 
 👉 **[Hier geht's zur Steam-Seite](https://store.steampowered.com/app/4487580/Layer8Problem/)**
 
+(Version 3.0 erscheint zeitnah mit dem Steam Release auch auf Github, in einer angepasster Version).
+
 ---
 
 ## 🎯 Worum geht es?
@@ -43,7 +45,7 @@ Nimm Anrufe an, eile in den Serverraum, überstehe sinnlose Dienstgänge und ign
 * **Entscheidungen mit Konsequenzen:** Hilfst du Chantal aus dem Marketing oder deckst du die illegalen Machenschaften von Hausmeister Egon? Deine Wahl triggert unberechenbare Kettenreaktionen über verschiedene Abteilungen hinweg, die dich Stunden später wieder einholen.
 * **Ressourcen-Management:** Finde überlebenswichtigen Loot. Ein Energy-Drink macht dich wach, Panzertape flickt den Server.
 * **Kein Stress... oder doch?** Wähle jeden Morgen deinen Tag: Entspannter "Freitag", normaler "Mittwoch" oder der absolute Albtraum "Montag".
-* **Anpassbare Steuerung:** Voller Tastatur-Support! Passe deine Hotkeys frei an, spiele bequem mit einer Hand oder nutze die Steuerung für eine nahtlose Controller-Erfahrung (via Steam Input).
+* **Anpassbare Steuerung:** es gibt Tastatur-Support! Passe deine Hotkeys frei an, spiele bequem mit einer Hand oder nutze die Steuerung für eine nahtlose Controller-Erfahrung.
 
 ## 🛠️ Technologie (Web-Version)
 
