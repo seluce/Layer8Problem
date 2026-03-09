@@ -1,8 +1,8 @@
-# 🖥️🔥 Layer 8 Problem: Der SysAdmin Survival Simulator
+# 🖥️🔥 Layer8Problem: Der SysAdmin Survival Simulator
 
 > **"Das Problem befindet sich in der Regel ca. 30 cm vor dem Bildschirm."**
 
-Willkommen bei GlobalCorp. Dein Traumjob in der IT-Hölle. **Layer 8 Problem** ist ein satirischer, textbasierter SysAdmin-Simulator, der dich an den Rand des Wahnsinns treiben wird. Du bist die letzte Bastion zwischen dem Firmennetzwerk und dem totalen Kollaps – gefangen zwischen inkompetenten Usern, cholerischen Chefs und einem Drucker, der *immer* Papierstau hat.
+Willkommen bei GlobalCorp. Dein Traumjob in der IT-Hölle. **Layer8Problem** ist ein satirischer, textbasierter SysAdmin-Simulator, der dich an den Rand des Wahnsinns treiben wird. Du bist die letzte Bastion zwischen dem Firmennetzwerk und dem totalen Kollaps – gefangen zwischen inkompetenten Usern, cholerischen Chefs und einem Drucker, der *immer* Papierstau hat.
 
 🌐 **[Klicke hier, um die Web-Version direkt im Browser zu spielen](https://seluce.github.io/Layer8Problem)**
 
