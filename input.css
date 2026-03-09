@@ -80,9 +80,23 @@
     .inv-slot {
         background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
         border-radius: 8px; display: flex; justify-content: center; align-items: center;
-        font-size: 20px; cursor: help; position: relative;
+        font-size: 20px; cursor: pointer; position: relative;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .inv-slot.used { opacity: 0.4; filter: grayscale(100%); }
+    
+    /* Der Hover-Effekt */
+    .inv-slot:not(.used):not(.empty):hover {
+        transform: scale(1.15); /* Drehung entfernt! Nur noch Skalierung. */
+        z-index: 50;
+        border-color: #f59e0b !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    .inv-slot:not(.used):active {
+        transform: scale(0.95);
+    }
+
+    .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
     .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 10px; color: #10b981; }
 
     /* BUTTONS */

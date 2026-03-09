@@ -6,13 +6,13 @@
 * Das Start-Modal wurde überarbeitet und schaut nun moderner aus und zeigt das Logo des Spieles
 * Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen Hover-Effekt
 * Die Character Portraits werden bei Characterbezogene Events jetzt vistuell mit dargestellt
-* Die Items bieten jetzt im Schnellinventar oder im Rucksack ebenfalls einen Hover-Effekt
+* Die Items bieten jetzt im im Rucksack ebenfalls einen Hover-Effekt mit Flavor-Texten.
 * Spenden-Event aus data.js entfernt (wer mich für wenig Geld unterstützen möchte, schaut gerne auf Steam!)
 * Ein Fehler wurde behoben, dass Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
 * E-Mail Performanceprobleme wurden behoben (ruckeln und träges Verhalten der auswählbaren Optionen)
 * Mittagessen hat nun ein eigenes Icon und ein eigenen farblichen Rahmen
 * Eine weitere Intranet-Seite (für das Intranet) wurde hinzugefügt und gilt es zu entdecken
-* Einige weitere Events wuden für die verschiedenen Aktionen hinzugefügt
+* Einige weitere Events wurden für die verschiedenen Aktionen hinzugefügt
 * Weitere, kleine Fehlerkorrekturen und Anpassungen im Backend
 
 \[2.8.1] - 2026-02-29

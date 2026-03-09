@@ -848,44 +848,39 @@ const engine = {
             
             if(itemData) {
                 let dbItem = DB.items[itemData.id];
+                slot.className = 'inv-slot relative group'; 
                 
-                // FIX: hover:scale-[1.4] statt [1.8] und der Schatten ist minimal sanfter!
-                slot.className = 'inv-slot relative group cursor-pointer bg-slate-800/50 border-slate-700 transition-all duration-300 ease-out origin-center hover:scale-[1.4] hover:z-50 hover:shadow-[0_0_15px_rgba(0,0,0,0.8)]'; 
-                slot.title = dbItem ? dbItem.name : 'Unbekannt';
-
-                // --- BILD VS ICON & LABEL ---
-                let mainContent = '?';
+                // --- BILD CHECK ---
                 if (dbItem && dbItem.img) {
-                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1.5 pointer-events-none" alt="${dbItem.name}">`;
+                    // Falls ein Bild existiert: Bild anzeigen (mit etwas Padding, damit es nicht klebt)
+                    slot.innerHTML = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${dbItem.name}">`;
                 } else {
-                    mainContent = `<div class="w-full h-full flex items-center justify-center text-xl pointer-events-none">${dbItem ? dbItem.icon : '?'}</div>`;
+                    // Fallback: Altes Icon nutzen
+                    slot.innerText = dbItem ? dbItem.icon : '?';
                 }
                 
-                // Das Label blendet sich sanft ein beim Hovern
-                let labelHtml = `<div class="absolute -bottom-5 w-full text-center text-[10px] font-bold text-white truncate opacity-0 transition-opacity duration-300 group-hover:opacity-100 drop-shadow-md pointer-events-none">${dbItem ? dbItem.name : '???'}</div>`;
-                
-                slot.innerHTML = mainContent + labelHtml;
+                slot.title = dbItem ? dbItem.name : 'Unbekannt';
 
                 // --- SPEZIAL LOGIK ---
                 if (itemData.id === 'stressball') {
                     let isReady = (this.state.time - this.state.lastStressballTime >= 60);
                     if(isReady) {
-                        slot.className += ' border-green-500 hover:bg-green-900/40 hover:border-green-400';
-                        slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>`;
+                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20';
+                        slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>`;
                         slot.onclick = () => this.askUseItem('stressball');
+                        slot.title += " (Benutzen)";
                     } else {
-                        slot.className += ' cursor-not-allowed grayscale';
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
                         slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-bold text-white text-xs select-none">${wait}</span></div>`;
+                        // HIER IST DEIN ORIGINAL TEXT:
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
                 }
                 else if (['energy', 'donut', 'sandwich', 'chocolate', 'bubble_wrap'].includes(itemData.id)) {
-                    slot.className += ' border-blue-500 hover:bg-blue-900/40 hover:border-blue-400';
+                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
                     slot.onclick = () => this.askUseItem(itemData.id);
                 }
                 else {
-                    // Fallback für alle anderen Items im Mini-Inventar (Öffnet das große Inventar)
                     slot.onclick = () => this.openInventory();
                 }
 
@@ -2614,41 +2609,71 @@ const engine = {
             }
         });
 
-        // --- HILFSFUNKTION ZUM RENDERN EINES SLOTS ---
-        const renderSlot = (itemData, isQuest) => {
+            // --- HILFSFUNKTION ZUM RENDERN EINES SLOTS ---
+        const renderSlot = (itemData, isQuest, index) => {
             let slot = document.createElement('div');
             let dbItem = DB.items[itemData.id];
             
             // Standard-Klassen
             let baseClass = isQuest 
                 ? 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' 
-                : 'inv-slot relative group cursor-default bg-slate-800/50 border-slate-700';
+                : 'inv-slot relative group cursor-default';
 
+            // SPEZIAL: Das Buch muss anklickbar sein, auch wenn es ein Quest-Item ist!
             if (itemData.id === 'corp_chronicles') {
-                baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20';
+                baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40 shadow-[0_0_15px_rgba(251,191,36,0.3)]';
             }
+            
+            slot.className = baseClass;
+            slot.style.marginBottom = "15px"; 
 
-            // HIER IST DER FIX: Die 1:1 Logik aus dem Team-Modal!
-            // Wir skalieren den GESAMTEN Slot (Rahmen, Hintergrund, Bild).
-            slot.className = baseClass + ' transition-all duration-300 ease-out origin-center hover:scale-[1.8] hover:z-50 hover:shadow-[0_0_25px_rgba(0,0,0,0.8)]';
-            slot.title = dbItem ? dbItem.name : 'Unbekannt';
-            slot.style.marginBottom = "20px"; // Etwas mehr Platz nach unten für das Label
-
-            // --- BILD VS ICON ---
+            // --- BILD VS ICON LOGIK ---
             let mainContent = '?';
+            let tooltipHtml = ''; 
             
             if (dbItem) {
                 if (dbItem.img) {
-                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1.5 pointer-events-none" alt="${dbItem.name}">`;
+                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${dbItem.name}">`;
                 } else {
-                    mainContent = `<div class="w-full h-full flex items-center justify-center text-3xl pointer-events-none">${dbItem.icon}</div>`;
+                    mainContent = dbItem.icon;
                 }
+
+                // --- POSITIONIERUNGS-TRICK FÜR DEN RAND ---
+                let posClass = "left-1/2 -translate-x-1/2"; // Standard: Zentriert
+                let arrowPos = "left-1/2 -translate-x-1/2"; 
+                
+                if (index !== undefined) {
+                    let col = index % 5; // Wir berechnen die Spalte (0 bis 4)
+                    
+                    if (col === 0) {
+                        // Ganz links: Tooltip links andocken, Pfeil auf 20px (left-5) schieben
+                        posClass = "left-0 translate-x-0";
+                        arrowPos = "left-5 translate-x-0"; 
+                    } else if (col === 4) {
+                        // Ganz rechts: Tooltip rechts andocken, Pfeil von rechts schieben
+                        posClass = "right-0 left-auto translate-x-0";
+                        arrowPos = "right-5 left-auto translate-x-0";
+                    }
+                }
+
+                // --- TOOLTIP GENERIEREN ---
+                let flavorText = dbItem.flavor ? dbItem.flavor : '"Keine weiteren Informationen."';
+
+                tooltipHtml = `
+                    <div class="absolute bottom-[110%] ${posClass} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[1000] pointer-events-none flex flex-col text-left">
+                        <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">${dbItem.name}</div>
+                        <div class="text-[10px] text-slate-300 italic leading-snug">${flavorText}</div>
+                        <div class="absolute top-full ${arrowPos} border-4 border-transparent border-t-slate-600"></div>
+                    </div>
+                `;
             }
 
-            // Label unten (wird leuchtend weiß beim Hovern)
-            let labelHtml = `<div class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-400 truncate transition-colors duration-300 group-hover:text-white">${dbItem ? dbItem.name : '???'}</div>`;
+            // Label unten (pointer-events-none verhindert, dass der Text die Maus blockiert!)
+            let labelHtml = `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate pointer-events-none">${dbItem ? dbItem.name : '???'}</div>`;
 
-            slot.innerHTML = mainContent + labelHtml;
+            // Inhalt setzen
+            slot.innerHTML = mainContent + tooltipHtml + labelHtml;
+            // -------------------------------
 
             // --- KLICK LOGIK ---
             if (!isQuest) {
@@ -2688,8 +2713,8 @@ const engine = {
         let gridNormal = document.createElement('div');
         gridNormal.className = "grid grid-cols-5 gap-4"; 
 
-        normalItems.forEach(item => {
-            gridNormal.appendChild(renderSlot(item, false));
+        normalItems.forEach((item, index) => {
+            gridNormal.appendChild(renderSlot(item, false, index));
         });
 
         // Leere Slots auffüllen (bis 10)
@@ -2709,8 +2734,8 @@ const engine = {
             let gridQuest = document.createElement('div');
             gridQuest.className = "grid grid-cols-5 gap-4"; 
 
-            questItems.forEach(item => {
-                gridQuest.appendChild(renderSlot(item, true));
+            questItems.forEach((item, index) => {
+                gridQuest.appendChild(renderSlot(item, true, index));
             });
             
             sectionQuest.appendChild(gridQuest);

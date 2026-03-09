@@ -711,13 +711,29 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  cursor: help;
+  cursor: pointer;
   position: relative;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Der Hover-Effekt */
+
+.inv-slot:not(.used):not(.empty):hover {
+  transform: scale(1.15);
+  /* Drehung entfernt! Nur noch Skalierung. */
+  z-index: 50;
+  border-color: #f59e0b !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.inv-slot:not(.used):active {
+  transform: scale(0.95);
 }
 
 .inv-slot.used {
   opacity: 0.4;
   filter: grayscale(100%);
+  cursor: not-allowed;
 }
 
 .inv-slot.used::after {
@@ -852,6 +868,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   pointer-events: auto;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .fixed {
   position: fixed;
 }
@@ -924,6 +944,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   bottom: 0.5rem;
 }
 
+.bottom-\[110\%\] {
+  bottom: 110%;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -940,6 +964,14 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   left: 1rem;
 }
 
+.left-5 {
+  left: 1.25rem;
+}
+
+.left-auto {
+  left: auto;
+}
+
 .right-0 {
   right: 0px;
 }
@@ -954,6 +986,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .right-4 {
   right: 1rem;
+}
+
+.right-5 {
+  right: 1.25rem;
 }
 
 .top-0 {
@@ -974,6 +1010,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .top-8 {
   top: 2rem;
+}
+
+.top-full {
+  top: 100%;
 }
 
 .z-0 {
@@ -1392,6 +1432,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   width: 1rem;
 }
 
+.w-56 {
+  width: 14rem;
+}
+
 .w-6 {
   width: 1.5rem;
 }
@@ -1492,6 +1536,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   transform-origin: left;
 }
 
+.-translate-x-1\/2 {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .-translate-y-1\/2 {
   --tw-translate-y: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1499,6 +1548,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .-translate-y-1\/4 {
   --tw-translate-y: -25%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.translate-x-0 {
+  --tw-translate-x: 0px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2162,6 +2216,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   border-color: rgb(20 184 166 / var(--tw-border-opacity, 1));
 }
 
+.border-transparent {
+  border-color: transparent;
+}
+
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
@@ -2185,6 +2243,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .border-l-slate-500 {
   --tw-border-opacity: 1;
   border-left-color: rgb(100 116 139 / var(--tw-border-opacity, 1));
+}
+
+.border-t-slate-600 {
+  --tw-border-opacity: 1;
+  border-top-color: rgb(71 85 105 / var(--tw-border-opacity, 1));
 }
 
 .\!bg-green-900\/30 {
@@ -3392,6 +3455,12 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-\[0_0_15px_rgba\(251\2c 191\2c 36\2c 0\.3\)\] {
+  --tw-shadow: 0 0 15px rgba(251,191,36,0.3);
+  --tw-shadow-colored: 0 0 15px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .shadow-\[0_0_20px_rgba\(37\2c 99\2c 235\2c 0\.3\)\] {
   --tw-shadow: 0 0 20px rgba(37,99,235,0.3);
   --tw-shadow-colored: 0 0 20px var(--tw-shadow-color);
@@ -3888,12 +3957,6 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.hover\:scale-\[1\.8\]:hover {
-  --tw-scale-x: 1.8;
-  --tw-scale-y: 1.8;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 .hover\:border-amber-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(252 211 77 / var(--tw-border-opacity, 1));
@@ -3981,6 +4044,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .hover\:bg-amber-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(245 158 11 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-amber-900\/40:hover {
+  background-color: rgb(120 53 15 / 0.4);
 }
 
 .hover\:bg-blue-500:hover {
@@ -4122,12 +4189,6 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.hover\:shadow-\[0_0_25px_rgba\(0\2c 0\2c 0\2c 0\.8\)\]:hover {
-  --tw-shadow: 0 0 25px rgba(0,0,0,0.8);
-  --tw-shadow-colored: 0 0 25px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
 .hover\:shadow-\[0_0_30px_rgba\(59\2c 130\2c 246\2c 0\.6\)\]:hover {
   --tw-shadow: 0 0 30px rgba(59,130,246,0.6);
   --tw-shadow-colored: 0 0 30px var(--tw-shadow-color);
@@ -4163,6 +4224,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .group[open] .group-open\:rotate-180 {
   --tw-rotate: 180deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group:hover .group-hover\:visible {
+  visibility: visible;
 }
 
 .group:hover .group-hover\:-rotate-45 {
