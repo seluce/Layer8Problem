@@ -14988,18 +14988,18 @@ const DB = {
     {
         id: "sq_meta_donation",
         kind: "text",
-        title: "Inception im Browser",
-        text: "Du prokrastinierst im Netz und stolperst über ein Indie-Browsergame namens 'Layer8Problem'. Moment mal... der SysAdmin darin sieht dir verdammt ähnlich! Und der virtuelle Chef brüllt genau wie Dr. Wichtig. Ein Pop-up des Entwicklers erscheint: 'Gefällt dir die Simulation? Wirf ein paar Münzen in den Hut für die Weiterentwicklung!'",
+        title: "Inception auf Steam",
+        text: "Du prokrastinierst in einer ruhigen Minute auf Steam und stöberst durch die Neuerscheinungen. Moment mal... da gibt es ein Indie-Spiel namens 'Layer8Problem'. Der SysAdmin auf den Screenshots sieht dir verdammt ähnlich! Und die Feature-Liste liest sich 1:1 wie ein Auszug aus deinem täglichen Wahnsinn. Es wirkt erschreckend echt, als hätte jemand eine Sitcom aus deinem Leid gemacht.",
         opts: [
             { 
-                t: "Shut up and take my money! (Link kopieren)", 
+                t: "Shut up and take my money! (Auf Steam anschauen)", 
                 m: 2, f: 5, a: 0, c: 10, 
-                r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir den Link aber noch heimlich kopiert.<br><br>(Wer die Entwicklung wirklich freiwillig unterstützen will: <a href='https://paypal.me/seluce' target='_blank' class='text-blue-400 underline hover:text-blue-300 transition-colors'>Hier geht's zum Spendenhut</a>. Wird natürlich brav dem Finanzamt gemeldet!)"
+                r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir die Shop-Seite aber noch heimlich gemerkt.<br><br>(Wer das Projekt unterstützen will: <a href='https://store.steampowered.com/app/4487580/' target='_blank' class='text-blue-400 underline hover:text-blue-300 transition-colors'>Hier geht's zur Steam-Version</a> mit Cloud-Saves und Achievements!)"
             },
             { 
-                t: "Ignorieren: 'Ich werde selbst mies bezahlt!'", 
+                t: "Ignorieren: 'Ich erlebe das jeden Tag, warum sollte ich es spielen?'", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Absolut verständlich. Du schließt den Tab schnell wieder und widmest dich deinen eigenen, schlecht bezahlten Problemen in dieser Welt."
+                r: "Absolut verständlich. Warum sollte man Geld ausgeben, um sich von digitalen Kollegen nerven zu lassen, wenn die echten Kollegen das völlig kostenlos machen? Du schließt den Tab kopfschüttelnd."
             },
             { 
                 t: "Kritik: 'Das Spiel ist eh total unrealistisch!'", 
