@@ -580,15 +580,26 @@ const engine = {
             // FIX: Sofort blockieren!
             this.state.emailPending = true; 
             
-            setTimeout(() => { 
+            // NEU: Alten Delay-Timer killen, falls noch einer läuft
+            if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
+            
+            // NEU: Timer in Variable speichern, damit wir ihn abbrechen können!
+            this.state.emailDelayTimer = setTimeout(() => { 
                 this.triggerEmail(); 
-                // Pending wird in triggerEmail (oder bei Fehler) wieder false gesetzt
             }, 2000);
         }
     },
 
     // Öffnet das E-Mail Overlay
     triggerEmail: function(forcedId = null) {
+		
+        // Wenn ein Bossfight läuft, darf diese Funktion gar nicht erst auslösen!
+        if (this.state.bossTimer || this.state.currentEventType === 'boss') {
+            this.state.emailPending = false;
+            return;
+        }
+        // -------------------------------
+		
 		this.playAudio('email');
         this.state.emailPending = false; 
 
@@ -1355,11 +1366,16 @@ const engine = {
 
     triggerBossFight: function() {
 		
-		// --- FIX: KEINE E-MAILS BEI BOSSFIGHTS ---
-        // Stoppt sofort jeden geplanten E-Mail-Timer
+        // --- FIX: KEINE E-MAILS BEI BOSSFIGHTS ---
+        // Stoppt den 15-Sekunden Ablauf-Timer der E-Mail
         if (this.state.emailTimer) {
             clearTimeout(this.state.emailTimer);
             this.state.emailTimer = null;
+        }
+        // NEU: Stoppt auch den 2-Sekunden Warte-Timer, falls die Mail gerade im Anflug war!
+        if (this.state.emailDelayTimer) {
+            clearTimeout(this.state.emailDelayTimer);
+            this.state.emailDelayTimer = null;
         }
         this.state.emailPending = false;
         
