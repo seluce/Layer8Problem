@@ -1894,22 +1894,47 @@ const engine = {
             this.state.partyProgress++;
         }
 
-        // Items Logic: LOOT
+        // --- ITEM LOGIK: LOOT ---
         if(loot && loot !== "") {
-            if(!this.state.inventory.find(i => i.id === loot)) {
+            let dbItem = DB.items[loot];
+            // Ist es ein dauerhaftes Werkzeug oder Quest-Item?
+            let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
+            // Haben wir es schon?
+            let alreadyHas = this.state.inventory.find(i => i.id === loot);
+            
+            // Rucksack Kapazität berechnen (nur normale Items zählen, keine Trophäen!)
+            let normalCount = this.state.inventory.filter(i => {
+                let db = DB.items[i.id];
+                return db && !db.quest;
+            }).length;
+
+            if (isPermanent && alreadyHas) {
+                // 1. Permanentes Item (z.B. Feuerlöscher) hat man schon -> Verfällt leise
+            } 
+            else if (!isPermanent && normalCount >= 10) {
+                // 2. Verbrauchsgegenstand, aber Rucksack ist voll (10/10) -> Nachricht an Spieler
+                let itemName = dbItem ? dbItem.name : loot;
+                this.log(`Rucksack voll (10/10)! ${itemName} musste liegen gelassen werden.`, "text-slate-500 italic");
+            } 
+            else {
+                // 3. Item hinzufügen! (Erlaubt auch den 2. oder 3. Donut)
                 this.state.inventory.push({ id: loot, used: false });
                 this.addToArchive('items', loot);
-                let itemName = DB.items[loot] ? DB.items[loot].name : loot; // Safety check
+                let itemName = dbItem ? dbItem.name : loot;
                 this.log(`ITEM: ${itemName}`, "text-yellow-400");
             }
         }
         
         // --- ITEMS REMOVED (rem) ---
-        // Hier nutzen wir jetzt die Variable 'rem', die oben übergeben wurde
         if (rem && rem !== "") {
-            this.state.inventory = this.state.inventory.filter(i => i.id !== rem);
-            let removedName = DB.items[rem] ? DB.items[rem].name : rem;
-            this.log(`Verloren: ${removedName}`, "text-orange-400");
+            // Finde den Index des ERSTEN passenden Items
+            let index = this.state.inventory.findIndex(i => i.id === rem);
+            if (index > -1) {
+                // Lösche exakt 1 Item an genau diesem Index
+                this.state.inventory.splice(index, 1);
+                let removedName = DB.items[rem] ? DB.items[rem].name : rem;
+                this.log(`Verloren: ${removedName}`, "text-orange-400");
+            }
         }
         // --------------------------------
 
