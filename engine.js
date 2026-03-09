@@ -67,12 +67,35 @@ const engine = {
         // Neue User-Einstellungen
         visualFX: localStorage.getItem('layer8_fx') !== 'false',
         audioEffects: localStorage.getItem('layer8_audio') !== 'false',
+        audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // Standard 50%
+        musicEnabled: localStorage.getItem('layer8_music') !== 'false',
+        musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // Standard: 20%
+        currentMusicTrack: null,
         oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
         fastChat: localStorage.getItem('layer8_fastchat') === 'true',
         blindStats: localStorage.getItem('layer8_blindstats') === 'true',
         blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
         autoHidePhone: localStorage.getItem('layer8_autohidephone') === 'true',
         compactMode: localStorage.getItem('layer8_compact') === 'true',
+        screenShake: localStorage.getItem('layer8_shake') !== 'false',
+        
+        // --- TASTATUR MAPPING ---
+        keyBinds: (() => {
+            let saved = JSON.parse(localStorage.getItem('layer8_keybinds')) || {};
+            const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+            
+            // Veraltete Keys aus alten Savegames gnadenlos löschen
+            for (let k in saved) {
+                if (!defaults.hasOwnProperty(k)) delete saved[k];
+            }
+            
+            // Fehlende Keys auffüllen
+            for (let k in defaults) { if (!saved[k]) saved[k] = defaults[k]; }
+            return saved;
+        })(),
+        isBindingKey: false,
+        actionToBind: null
+        
     },
     
     // --- SYNTHETISCHER SOUND ---
@@ -87,63 +110,61 @@ const engine = {
                 this.audioCtx.resume();
             }
             
-            // 15ms Puffer (Lookahead) verhindert Aussetzer bei schnellen Klicks
             const t = this.audioCtx.currentTime + 0.015; 
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
+            
+            // NEU: Den Slider-Wert auslesen (0.0 bis 1.0)
+            const vol = this.state.audioVolume;
             
             osc.connect(gain);
             gain.connect(this.audioCtx.destination);
             
             if (type === 'action') {
-                // Profil 1 & 2: Helles, schnelles Klicken (Auswahl/Menüs/Aktionen)
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, t);
                 osc.frequency.exponentialRampToValueAtTime(100, t + 0.02);
                 
-                gain.gain.setValueAtTime(0.15, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.02);
+                // MULTIPLIZIERT MIT vol
+                gain.gain.setValueAtTime(0.15 * vol, t);
+                gain.gain.exponentialRampToValueAtTime(0.01 * vol, t + 0.02);
                 
                 osc.start(t);
                 osc.stop(t + 0.03);
                 
             } else if (type === 'ui') {
-                // Profil 2: Helles, schnelles Klicken (Auswahl/Menüs)
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, t);
                 osc.frequency.exponentialRampToValueAtTime(100, t + 0.02);
                 
-                gain.gain.setValueAtTime(0.15, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.02);
+                gain.gain.setValueAtTime(0.15 * vol, t);
+                gain.gain.exponentialRampToValueAtTime(0.01 * vol, t + 0.02);
                 
                 osc.start(t);
                 osc.stop(t + 0.03);
                 
             } else if (type === 'phone') {
-                // Profil 3: Moderner Messenger "Ding-Ding" (Doppel-Ton)
                 osc.type = 'sine';
                 
-                // Erster Ton (heller Anschlag)
-                osc.frequency.setValueAtTime(750, t); // 750 Hertz
+                osc.frequency.setValueAtTime(750, t);
                 gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.15, t + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1); // Klingt in 100ms ab
+                gain.gain.linearRampToValueAtTime(0.15 * vol, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.01 * vol, t + 0.1); 
                 
-                // Zweiter Ton (kurz danach, etwas höher, längerer Nachhall)
-                osc.frequency.setValueAtTime(1000, t + 0.1); // 1000 Hertz (höher)
+                osc.frequency.setValueAtTime(1000, t + 0.1); 
                 gain.gain.setValueAtTime(0, t + 0.1);
-                gain.gain.linearRampToValueAtTime(0.15, t + 0.11);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3); // Sanftes Ausklingen
+                gain.gain.linearRampToValueAtTime(0.15 * vol, t + 0.11);
+                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.3); 
                 
                 osc.start(t);
-                osc.stop(t + 0.35); // Nach 350ms ist alles ruhig
+                osc.stop(t + 0.35); 
+                
             } else if (type === 'email') {
-                // Profil 4: Klassisches E-Mail "Bing" (Einzelner, klarer Ton)
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(850, t); // Schöne, helle Frequenz
+                osc.frequency.setValueAtTime(850, t); 
                 gain.gain.setValueAtTime(0, t);
-                gain.gain.linearRampToValueAtTime(0.2, t + 0.01);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4); // Klingt etwas länger aus
+                gain.gain.linearRampToValueAtTime(0.2 * vol, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.4); 
                 osc.start(t);
                 osc.stop(t + 0.45);
             }
@@ -158,7 +179,7 @@ const engine = {
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
         this.updateUI();
-        this.log("System v2.8.1 geladen. Warte auf User...");
+        this.log("System v3.0.0 geladen. Warte auf User...");
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
@@ -197,6 +218,10 @@ const engine = {
         
         // Dann ab in den LocalStorage
         localStorage.setItem('layer8_archive', JSON.stringify(this.state.archive));
+        
+        // Keybinds ebenfalls im LocalStorage speichern
+        localStorage.setItem('layer8_keybinds', JSON.stringify(this.state.keyBinds));
+        
     },
     
     incrementStat: function(key) {
@@ -380,7 +405,7 @@ const engine = {
                 let borderClass = "";
                 let bgClass = "";
                 let badge = "";
-                let icon = ach.icon;   
+                
                 let title = ach.title; 
                 let desc = "";         
 
@@ -407,11 +432,25 @@ const engine = {
                     badge = '<span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded ml-auto">GESPERRT</span>';
                 }
 
+                // --- BILD ODER ICON LOGIK ---
+                let iconContent = "";
+                let imgContainerClass = "";
+
+                if (ach.img) {
+                    iconContent = `<img src="${ach.img}" class="w-full h-full object-contain drop-shadow-md" alt="${title}">`;
+                    // Kein Hintergrund, kein Rand, aber starker Pop-Out-Hover-Effekt (wie beim Team)
+                    imgContainerClass = "w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50";
+                } else {
+                    iconContent = ach.icon;
+                    // Fallback für Emojis: Mit grauem Kreis
+                    imgContainerClass = "text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50";
+                }
+
                 html += `
-                    <div class="flex gap-3 p-3 rounded border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group relative overflow-hidden">
+                    <div class="flex gap-3 p-3 rounded border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group relative">
                         
-                        <div class="text-2xl shrink-0 group-hover:scale-110 transition-transform flex items-center justify-center w-10 h-10 bg-slate-900 rounded-full border border-slate-700/50">
-                            ${icon}
+                        <div class="${imgContainerClass}">
+                            ${iconContent}
                         </div>
                         
                         <div class="flex-1 min-w-0 flex flex-col justify-center">
@@ -439,6 +478,7 @@ const engine = {
 
     // Startet das Spiel und prüft, ob ein Standard-Tag gesetzt ist
     start: function() {
+		this.playMusic('elevator');
         document.getElementById('intro-modal').style.display = 'none';
         
         // Prüfen, ob der Spieler eine Standard-Schwierigkeit festgelegt hat
@@ -716,6 +756,8 @@ const engine = {
             if (addedA !== 0) this.showFloatingText('val-al', addedA);
             if (addedC !== 0) this.showFloatingText('val-cr', addedC);
             // --------------------------------------
+            
+            this.triggerShake(addedA, addedC);
 
             if(opt.txt) {
                 setTimeout(() => this.log(`Re: ${opt.txt}`, "text-slate-400 italic"), 500);
@@ -806,39 +848,44 @@ const engine = {
             
             if(itemData) {
                 let dbItem = DB.items[itemData.id];
-                slot.className = 'inv-slot relative group'; 
                 
-                // --- BILD CHECK ---
+                // FIX: hover:scale-[1.4] statt [1.8] und der Schatten ist minimal sanfter!
+                slot.className = 'inv-slot relative group cursor-pointer bg-slate-800/50 border-slate-700 transition-all duration-300 ease-out origin-center hover:scale-[1.4] hover:z-50 hover:shadow-[0_0_15px_rgba(0,0,0,0.8)]'; 
+                slot.title = dbItem ? dbItem.name : 'Unbekannt';
+
+                // --- BILD VS ICON & LABEL ---
+                let mainContent = '?';
                 if (dbItem && dbItem.img) {
-                    // Falls ein Bild existiert: Bild anzeigen (mit etwas Padding, damit es nicht klebt)
-                    slot.innerHTML = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${dbItem.name}">`;
+                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1.5 pointer-events-none" alt="${dbItem.name}">`;
                 } else {
-                    // Fallback: Altes Icon nutzen
-                    slot.innerText = dbItem ? dbItem.icon : '?';
+                    mainContent = `<div class="w-full h-full flex items-center justify-center text-xl pointer-events-none">${dbItem ? dbItem.icon : '?'}</div>`;
                 }
                 
-                slot.title = dbItem ? dbItem.name : 'Unbekannt';
+                // Das Label blendet sich sanft ein beim Hovern
+                let labelHtml = `<div class="absolute -bottom-5 w-full text-center text-[10px] font-bold text-white truncate opacity-0 transition-opacity duration-300 group-hover:opacity-100 drop-shadow-md pointer-events-none">${dbItem ? dbItem.name : '???'}</div>`;
+                
+                slot.innerHTML = mainContent + labelHtml;
 
                 // --- SPEZIAL LOGIK ---
                 if (itemData.id === 'stressball') {
                     let isReady = (this.state.time - this.state.lastStressballTime >= 60);
                     if(isReady) {
-                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20';
-                        slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>`;
+                        slot.className += ' border-green-500 hover:bg-green-900/40 hover:border-green-400';
+                        slot.innerHTML += `<div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>`;
                         slot.onclick = () => this.askUseItem('stressball');
-                        slot.title += " (Benutzen)";
                     } else {
+                        slot.className += ' cursor-not-allowed grayscale';
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
                         slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-bold text-white text-xs select-none">${wait}</span></div>`;
-                        // HIER IST DEIN ORIGINAL TEXT:
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
                 }
-                else if (['energy', 'donut', 'sandwich', 'chocolate'].includes(itemData.id)) {
-                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
+                else if (['energy', 'donut', 'sandwich', 'chocolate', 'bubble_wrap'].includes(itemData.id)) {
+                    slot.className += ' border-blue-500 hover:bg-blue-900/40 hover:border-blue-400';
                     slot.onclick = () => this.askUseItem(itemData.id);
                 }
                 else {
+                    // Fallback für alle anderen Items im Mini-Inventar (Öffnet das große Inventar)
                     slot.onclick = () => this.openInventory();
                 }
 
@@ -920,8 +967,8 @@ const engine = {
         }
 
         // 4. SCHWARZES LOCH (Volles Inventar)
-        // Erhöht auf 8 -> Man muss alles mitnehmen, auch Müll
-        if(this.state.inventory.length >= 8 && !this.hasAch('ach_hoarder')) {
+        // Angepasst auf 8 -> Man muss alles mitnehmen, auch Müll
+        if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
             this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
         }
 
@@ -1339,6 +1386,9 @@ const engine = {
         this.state.activeEvent = true;
         this.state.usedIDs.add(boss.id);
         this.disableButtons(true);
+		
+		// ---> MUSIK FÜR DEN BOSS STARTEN <---
+        this.playMusic('boss');
 
         const term = document.getElementById('terminal-content');
         
@@ -1442,7 +1492,7 @@ const engine = {
         this.state.currentEventId = ev.id;     // Damit wir wissen: "Für dieses Event schon gemailt?"
         this.state.currentEventType = type;    // Damit wir wissen: "Ist das ein Bossfight?"
         // -----------------------------------------------------
-		
+				
         this.state.activeEvent = true;
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
@@ -1477,7 +1527,8 @@ const engine = {
             ev.title || "Anruf", 
             node.text, 
             node.opts, 
-            true // isChain = true
+            true, // isChain = true
+            ev.char // <--- NEU: Charakter übergeben
         );
     },
 
@@ -1488,12 +1539,13 @@ const engine = {
             ev.title, 
             ev.text, 
             ev.opts, 
-            false // isChain = false
+            false, // isChain = false
+            ev.char // <--- NEU: Charakter übergeben
         );
     },
 
     // 3. GEMEINSAMES HTML-TEMPLATE
-    buildEventHTML: function(type, title, text, opts, isChain) {
+    buildEventHTML: function(type, title, text, opts, isChain, charName) {
 		
         // ---> Mache aus \n echte HTML-Zeilenumbrüche <---
         let formattedText = text ? text.replace(/\n/g, "<br>") : "";		
@@ -1550,8 +1602,32 @@ const engine = {
                 bgClass = "bg-gradient-to-b from-slate-900 to-slate-950";
                 icon = '🎉';
                 break;
+            case 'special':
+                typeName = 'MITTAGSPAUSE';
+                color = 'text-teal-400';
+                borderColor = 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]';
+                icon = '🍽️';
+                break;	
         }
 
+        // --- PORTRAIT LOGIK (Rechts neben der Textbox - Clean Version) ---
+        let portraitHTML = "";
+        if (charName && DB.chars) {
+            let dbChar = DB.chars.find(c => c.name === charName);
+            if (dbChar) {
+                // Bild oder Icon laden
+                let avatarContent = dbChar.img 
+                    ? `<img src="${dbChar.img}" class="w-full h-full object-cover scale-110" alt="${dbChar.name}">` 
+                    : `<div class="w-full h-full flex items-center justify-center text-5xl bg-slate-800/50">${dbChar.icon}</div>`;
+
+                // Nur die stylische Box, ohne extra Namens-Balken
+                portraitHTML = `
+                <div class="hidden sm:flex shrink-0 w-28 h-28 md:w-32 md:h-32 bg-slate-900 border border-slate-600 rounded-xl shadow-lg overflow-hidden items-center justify-center">
+                    ${avatarContent}
+                </div>`;
+            }
+        }
+        
         let html = `
             <div class="w-full max-w-2xl text-left fade-in ${bgClass} border ${borderColor} p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0 relative overflow-hidden">
                 
@@ -1564,33 +1640,32 @@ const engine = {
                 </div>
         `;
 
-        // === BOSS TIMER BALKEN (Integriert) ===
         if (type === 'boss') {
-            // FIX 3: 'transition-all' und 'duration-1000' ENTFERNT!
-            // Da JS jetzt alle 50ms updatet, brauchen wir keine CSS-Transition mehr.
-            // Das verhindert das "Springen".
             html += `
             <div class="w-full h-4 bg-red-950/50 rounded-full mb-6 border border-red-500/30 overflow-hidden relative">
                 <div id="integrated-boss-bar" class="h-full bg-gradient-to-r from-red-600 to-red-500 shadow-red-500/50 shadow-md ease-linear" style="width: 100%"></div>
             </div>
             `;
         }
-        // ==========================================
         
+        // --- TEXTBOX UND PORTRAIT NEBENEINANDER ---
         html += `
-                <div class="bg-black/40 p-5 rounded-lg border-l-4 ${borderColor} mb-8">
-                    <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${formattedText}"</p>
+                <div class="flex gap-4 md:gap-6 items-center mb-8">
+                    <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 ${borderColor} shadow-inner">
+                        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${formattedText}"</p>
+                    </div>
+                    ${portraitHTML}
                 </div>
 
                 <div class="space-y-2.5">
         `;
 
+        // Die Buttons
         if (opts) {
             opts.forEach(opt => {
                 let locked = false;
                 let reqText = "";
 
-                // Item Check
                 if (opt.req) {
                     let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
                     let onCooldown = false;
@@ -1604,7 +1679,6 @@ const engine = {
                     }
                 }
 				
-                // REM Check
                 if(opt.rem && !locked) {
                     let hasItem = this.state.inventory.find(i => i.id === opt.rem);
                     if(!hasItem) {
@@ -1614,17 +1688,14 @@ const engine = {
                     }
                 }
                 
-                // --- POOL CHECK FÜR DIE PARTY ---
                 if (opt.checkPool && !locked) {
-                    // Sucht, ob es noch offene Events für diesen Ort gibt
                     let pool = DB.party.filter(ev => ev.loc === opt.checkPool && !this.state.usedIDs.has(ev.id));
                     if (pool.length === 0) {
                         locked = true;
-                        reqText = "(Alles gesehen)"; // Das steht dann rot neben dem Button
+                        reqText = "(Alles gesehen)"; 
                     }
                 }
 
-                // STYLE
                 let btnClass = "";
                 let clickAction = "";
                 let iconBtn = "";
@@ -1636,7 +1707,6 @@ const engine = {
                     btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
                     
-                    // Direkte Aktionen (z.B. für Party-Navigation)
                     if (opt.action) {
                         clickAction = `onclick="${opt.action}"`;
                     } else if (isChain) {
@@ -1648,7 +1718,6 @@ const engine = {
                     }
                 }
 
-                // BADGE NUR NOCH FÜR KETTEN (Punkte ...), KEINE ZEIT MEHR
                 let badgeHTML = "";
                 if (isChain && !locked && !opt.next.startsWith('res_')) {
                      badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded ml-3 font-mono">...</span>`;
@@ -1783,6 +1852,8 @@ const engine = {
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
         
+        this.triggerShake(finalA, finalC);
+        
         // --- REPUTATION LOGIK  ---
         if (repData) {
             // Falls repData als String kommt (durch HTML Attribute), parsen
@@ -1906,7 +1977,7 @@ const engine = {
             this.state.activeEvent = true;
             this.disableButtons(true);
             
-            // Ab 8 Stationen kommt das dynamische Finale!
+            // Ab 12 Stationen kommt das dynamische Finale!
             if (this.state.partyProgress >= 12) {
                 let finaleId = 'party_finale_standard';
                 if (this.state.al >= 100) finaleId = 'party_finale_rage';
@@ -1933,6 +2004,9 @@ const engine = {
             return;
         }
         // -----------------------------------------
+		
+        this.playMusic('elevator');
+		
         this.state.activeEvent = false;
         this.disableButtons(false);
         const term = document.getElementById('terminal-content');
@@ -2130,6 +2204,8 @@ const engine = {
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
         // ------------------------------------
+        
+        this.triggerShake(finalA, finalC);
         
         // --- REPUTATION LOGIK FÜR PHONE ---
         if (res.rep) {
@@ -2494,6 +2570,9 @@ const engine = {
         this.state.emailPending = false;
         
         this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");
+		
+		// ---> GALA MUSIK STARTEN <---
+        this.playMusic('gala');
         
         // Und jetzt geht die Falle zu: Das Party-Event wird gerendert!
         this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
@@ -2543,63 +2622,58 @@ const engine = {
             // Standard-Klassen
             let baseClass = isQuest 
                 ? 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' 
-                : 'inv-slot relative group cursor-default';
+                : 'inv-slot relative group cursor-default bg-slate-800/50 border-slate-700';
 
-            // SPEZIAL: Das Buch muss anklickbar sein, auch wenn es ein Quest-Item ist!
             if (itemData.id === 'corp_chronicles') {
-                baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40 shadow-[0_0_15px_rgba(251,191,36,0.3)]';
+                baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20';
             }
 
-            slot.className = baseClass;
+            // HIER IST DER FIX: Die 1:1 Logik aus dem Team-Modal!
+            // Wir skalieren den GESAMTEN Slot (Rahmen, Hintergrund, Bild).
+            slot.className = baseClass + ' transition-all duration-300 ease-out origin-center hover:scale-[1.8] hover:z-50 hover:shadow-[0_0_25px_rgba(0,0,0,0.8)]';
             slot.title = dbItem ? dbItem.name : 'Unbekannt';
-            slot.style.marginBottom = "15px"; 
+            slot.style.marginBottom = "20px"; // Etwas mehr Platz nach unten für das Label
 
-            // --- BILD VS ICON LOGIK (NEU) ---
+            // --- BILD VS ICON ---
             let mainContent = '?';
             
             if (dbItem) {
                 if (dbItem.img) {
-                    // Falls Bild vorhanden: IMG Tag einfügen
-                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${dbItem.name}">`;
+                    mainContent = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1.5 pointer-events-none" alt="${dbItem.name}">`;
                 } else {
-                    // Sonst: Emoji Icon
-                    mainContent = dbItem.icon;
+                    mainContent = `<div class="w-full h-full flex items-center justify-center text-3xl pointer-events-none">${dbItem.icon}</div>`;
                 }
             }
 
-            // Label unten
-            let labelHtml = `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate">${dbItem ? dbItem.name : '???'}</div>`;
+            // Label unten (wird leuchtend weiß beim Hovern)
+            let labelHtml = `<div class="absolute -bottom-6 w-full text-center text-[10px] font-bold text-slate-400 truncate transition-colors duration-300 group-hover:text-white">${dbItem ? dbItem.name : '???'}</div>`;
 
-            // Inhalt setzen
             slot.innerHTML = mainContent + labelHtml;
-            // -------------------------------
 
             // --- KLICK LOGIK ---
-            
-            // 1. Normale Items (Oben)
             if (!isQuest) {
                 if (itemData.id === 'stressball') {
                     let isReady = (this.state.time - this.state.lastStressballTime >= 60);
                     if (isReady) {
-                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/20'; 
-                        slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>`; 
+                        slot.className += ' cursor-pointer border-green-500 hover:bg-green-900/40 hover:border-green-400'; 
+                        slot.innerHTML += `<div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></div>`; 
                         slot.onclick = () => this.askUseItem('stressball');
                     } else {
-                        slot.className += ' cursor-not-allowed'; 
+                        slot.className += ' cursor-not-allowed grayscale'; 
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                        // Overlay für Cooldown (wird einfach angehängt)
                         slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-black text-white text-xl">${wait}</span></div>`;
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
                 }
-               else if (['energy', 'donut', 'sandwich', 'chocolate'].includes(itemData.id)) {
-                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/20';
+               else if (['energy', 'donut', 'sandwich', 'chocolate', 'bubble_wrap'].includes(itemData.id)) {
+                    slot.className += ' cursor-pointer border-blue-500 hover:bg-blue-900/40 hover:border-blue-400';
                     slot.onclick = () => this.askUseItem(itemData.id);
                 }
             } 
-            // 2. Quest Items (Unten)
+            // Quest Items
             else {
                 if (itemData.id === 'corp_chronicles') {
+                    slot.className += ' hover:shadow-[0_0_20px_rgba(251,191,36,0.6)] hover:border-amber-300';
                     slot.onclick = () => this.showLoreModal();
                 } else {
                     slot.onclick = () => this.log(`Erinnerung: ${dbItem.name}`, "text-amber-400");
@@ -2819,12 +2893,12 @@ const engine = {
                 <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
                     
                     <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/wood-pattern.png')]"></div>
+                        <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('assets/textures/wood-pattern.png')]"></div>
                         <h2 class="text-3xl font-bold text-[#d7ccc8] uppercase tracking-[0.2em] mb-1 relative z-10">GlobalCorp Chronik</h2>
                         <span class="text-sm text-[#a1887f] italic font-serif relative z-10">"Tradition seit 1899. Wir verwalten das Chaos."</span>
                     </div>
 
-                    <div class="overflow-y-auto p-10 space-y-12 text-lg leading-relaxed bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]">
+                    <div class="overflow-y-auto p-10 space-y-12 text-lg leading-relaxed bg-[url('assets/textures/cream-paper.png')]">
                         
                         <div class="text-center border-b-2 border-[#d7ccc8] pb-6">
                             <p class="italic text-xl">
@@ -3097,6 +3171,20 @@ const engine = {
         setTimeout(() => {
             floatEl.remove();
         }, 3000);
+    },
+    
+    triggerShake: function(a, c) {
+        if (!this.state.screenShake) return;
+        // Wackelt nur, wenn eine Entscheidung massive Auswirkungen (>30) hat
+        if (a >= 30 || c >= 30) {
+            document.body.classList.remove('animate-shake');
+            void document.body.offsetWidth; // Force Reflow (damit die Animation neu startet)
+            document.body.classList.add('animate-shake');
+            
+            setTimeout(() => {
+                document.body.classList.remove('animate-shake');
+            }, 500);
+        }
     },
 
     // --- TAGEBUCH GENERATOR ---
@@ -3746,8 +3834,34 @@ ${logText}
         if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
         if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
         if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
+        if(document.getElementById('setting-volume')) document.getElementById('setting-volume').value = this.state.audioVolume;
+		if(document.getElementById('setting-music')) document.getElementById('setting-music').checked = this.state.musicEnabled;
+        if(document.getElementById('setting-music-volume')) document.getElementById('setting-music-volume').value = this.state.musicVolume;
         if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
         if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
+        if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
+        
+        // --- Soft-Reset Button Logik (Ausgrauen im Hauptmenü & Schwierigkeits-Wahl) ---
+        const softResetBtn = document.getElementById('btn-soft-reset');
+        const introModal = document.getElementById('intro-modal');
+        const diffModal = document.getElementById('difficulty-modal');
+        
+        if (softResetBtn) {
+            // Prüfen, ob das Intro ODER das Schwierigkeits-Modal gerade sichtbar sind
+            const isIntroOpen = introModal && introModal.style.display !== 'none';
+            const isDiffOpen = diffModal && (diffModal.style.display === 'flex' || !diffModal.classList.contains('hidden'));
+
+            if (isIntroOpen || isDiffOpen) {
+                // Sperren
+                softResetBtn.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
+                softResetBtn.disabled = true; 
+            } else {
+                // Freigeben
+                softResetBtn.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
+                softResetBtn.disabled = false; 
+            }
+        }
+        // -------------------------------------------------------------
         
         const resetBtn = document.getElementById('btn-hard-reset');
         if (resetBtn) {
@@ -3776,6 +3890,12 @@ ${logText}
         localStorage.setItem('layer8_fx', isOn);
         this.updateUI();
     },
+    
+    toggleShake: function(isOn) {
+        this.state.screenShake = isOn;
+        localStorage.setItem('layer8_shake', isOn);
+    },
+    
     toggleOneClick: function(isOn) {
         this.state.oneClickItem = isOn;
         localStorage.setItem('layer8_oneclick', isOn);
@@ -3799,6 +3919,78 @@ ${logText}
         localStorage.setItem('layer8_audio', isOn);
         if(isOn) this.playAudio('ui');
     },
+	
+	// --- MUSIK SYSTEM ---
+    bgmTracks: null,
+
+    initMusic: function() {
+        // Lädt die Audio-Dateien (wird erst beim ersten Play-Aufruf gestartet)
+        this.bgmTracks = {
+            'elevator': new Audio('assets/music/elevator.opus'),
+            'boss': new Audio('assets/music/boss.opus'),
+            'gala': new Audio('assets/music/gala.opus')
+        };
+        // Alles auf Dauerschleife stellen
+        for (let key in this.bgmTracks) {
+            this.bgmTracks[key].loop = true;
+        }
+    },
+
+    toggleMusic: function(isOn) {
+        this.state.musicEnabled = isOn;
+        localStorage.setItem('layer8_music', isOn);
+        if (isOn) {
+            this.playMusic(this.state.currentMusicTrack || 'elevator');
+        } else {
+            this.stopMusic();
+        }
+    },
+
+    setMusicVolume: function(val) {
+        this.state.musicVolume = parseFloat(val);
+        localStorage.setItem('layer8_music_volume', val);
+        if (this.bgmTracks) {
+            for (let key in this.bgmTracks) {
+                this.bgmTracks[key].volume = this.state.musicVolume;
+            }
+        }
+    },
+
+    playMusic: function(trackName) {
+        if (!this.state.musicEnabled) return;
+        
+        // BUGFIX: Prüfen, ob der Track WIRKLICH läuft (und nicht nur auf Pause steht)
+        if (this.state.currentMusicTrack === trackName) {
+            if (this.bgmTracks && this.bgmTracks[trackName] && !this.bgmTracks[trackName].paused) {
+                return; // Läuft bereits hörbar -> Abbruch, nicht neu starten!
+            }
+        }
+		
+        this.state.currentMusicTrack = trackName;
+        this.stopMusic(); // Stoppt alle anderen Tracks
+
+        if (!this.bgmTracks) this.initMusic();
+
+        let track = this.bgmTracks[trackName];
+        if (track) {
+            track.volume = this.state.musicVolume;
+            // Catch fängt Fehler ab, falls der Browser Autoplay blockiert
+            track.play().catch(e => console.log("Musik Autoplay blockiert:", e)); 
+        }
+    },
+
+    stopMusic: function() {
+        if (!this.bgmTracks) return;
+        for (let key in this.bgmTracks) {
+            this.bgmTracks[key].pause();
+        }
+    },
+    
+    setVolume: function(val) {
+        this.state.audioVolume = parseFloat(val);
+        localStorage.setItem('layer8_volume', val);
+        this.playAudio('ui');
+    },
     
     toggleAutoHidePhone: function(isOn) {
         this.state.autoHidePhone = isOn;
@@ -3818,6 +4010,7 @@ ${logText}
 
     // Blitzschneller Neustart ohne Page-Reload
     softReset: function() {
+		this.playMusic('elevator');
         // Alle Menüs schließen
         this.closeSettings();
         if (document.getElementById('modal-overlay')) {
@@ -3915,6 +4108,9 @@ ${logText}
             localStorage.removeItem('layer8_archive');
             localStorage.removeItem('layer8_default_diff');
             localStorage.removeItem('tutorialSeen');
+            localStorage.removeItem('layer8_party_played_easy');
+            localStorage.removeItem('layer8_party_played_normal');
+            localStorage.removeItem('layer8_party_played_hard');
             
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = "System wird neu gestartet...";
@@ -3942,22 +4138,270 @@ ${logText}
                 }
             }, 4000);
         }
-    }
+    },
+    
+    // --- KEYBINDING FUNKTIONEN ---
+    startBindingKey: function(action) {
+        if (this.state.isBindingKey) return;
+
+        this.state.isBindingKey = true;
+        this.state.actionToBind = action;
+        let btn = document.getElementById('bind-' + action);
+        if (btn) {
+            btn.innerText = "Drücke Taste...";
+            btn.className = "bg-amber-500 text-black px-4 py-2 rounded-lg font-bold text-xs uppercase animate-pulse shadow-lg";
+            btn.blur(); 
+        }
+    },
+
+    finishBindingKey: function(key) {
+        const forbiddenKeys = ['shift', 'control', 'alt', 'meta', 'capslock', 'tab'];
+        // NEU: Die hartcodierten Tasten für Fallbacks
+        const hardcodedKeys = ['4', '5', '6']; 
+        
+        if (forbiddenKeys.includes(key.toLowerCase())) return;
+
+        let pressedKey = key === " " ? "Space" : key;
+        const currentBind = this.state.keyBinds[this.state.actionToBind];
+        
+        // 1. Abbruch mit Escape oder derselben Taste
+        if (key.toLowerCase() === 'escape' || (currentBind && currentBind.toLowerCase() === pressedKey.toLowerCase())) {
+            this.state.isBindingKey = false;
+            this.state.actionToBind = null;
+            this.updateSettingsUI();
+            return;
+        }
+
+        // --- NEU: Sperre für 4, 5 und 6 mit visuellem Feedback ---
+        if (hardcodedKeys.includes(pressedKey)) {
+            let conflictBtn = document.getElementById('bind-' + this.state.actionToBind);
+            if (conflictBtn) {
+                conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
+                conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
+                conflictBtn.innerText = "RESERVIERT"; // Optischer Hinweis
+                
+                setTimeout(() => {
+                    conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
+                    conflictBtn.classList.add('bg-amber-500', 'text-black'); // Zurück zum gelben "Warte"-Design
+                    conflictBtn.innerText = "Drücke Taste...";
+                }, 800);
+            }
+            return; // Abbrechen, aber im Bind-Modus bleiben!
+        }
+        // ---------------------------------------------------------
+        
+        // 2. Doppelbelegung verhindern
+        for (let act in this.state.keyBinds) {
+            if (this.state.keyBinds[act].toLowerCase() === pressedKey.toLowerCase() && act !== this.state.actionToBind) {
+                let conflictBtn = document.getElementById('bind-' + act);
+                if (conflictBtn) {
+                    conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
+                    conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
+                    
+                    setTimeout(() => {
+                        conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
+                        conflictBtn.classList.add('bg-slate-800', 'border-slate-600', 'text-slate-300');
+                    }, 500);
+                }
+                return;
+            }
+        }
+
+        // 3. Erfolgreich speichern
+        this.state.keyBinds[this.state.actionToBind] = pressedKey;
+        this.state.isBindingKey = false;
+        this.state.actionToBind = null;
+        this.saveSystem(); 
+        this.updateSettingsUI();
+    },
+
+    updateSettingsUI: function() {
+        for (let act in this.state.keyBinds) {
+            let btn = document.getElementById('bind-' + act);
+            if (btn) {
+                let displayKey = this.state.keyBinds[act];
+                if(displayKey.startsWith('Arrow')) displayKey = displayKey.replace('Arrow', '');
+                
+                btn.innerText = displayKey.toUpperCase();
+                btn.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase transition-colors min-w-[80px]";
+            }
+        }
+    },
+    
+    openKeybinds: function() {
+        this.updateSettingsUI();
+        document.getElementById('keybind-modal').classList.remove('hidden');
+        document.getElementById('keybind-modal').classList.add('flex');
+    },
+
+    closeKeybinds: function() {
+        this.state.isBindingKey = false;
+        document.getElementById('keybind-modal').classList.add('hidden');
+        document.getElementById('keybind-modal').classList.remove('flex');
+    },
+    
+    resetKeybinds: function() {
+        // Auf Standard zurücksetzen
+        this.state.keyBinds = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+        this.state.isBindingKey = false;
+        this.state.actionToBind = null;
+        
+        this.saveSystem();
+        this.updateSettingsUI();
+        this.playAudio('ui');
+        
+        // Visuelles Feedback: Alle Buttons blinken kurz grün auf
+        const buttons = document.querySelectorAll('[id^="bind-"]');
+        buttons.forEach(btn => {
+            btn.classList.add('!bg-green-900/40', '!border-green-500', '!text-green-400');
+            setTimeout(() => {
+                btn.classList.remove('!bg-green-900/40', '!border-green-500', '!text-green-400');
+            }, 600);
+        });
+    },    
+    
 };
 
 engine.init();
 
-// Globaler Hotkey: ESC für das Menü
+// --- GLOBALE TASTATUR-STEUERUNG ---
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        const modal = document.getElementById('settings-modal');
-        if (modal) {
-            // Wenn versteckt -> Öffnen, ansonsten -> Schließen
-            if (modal.classList.contains('hidden')) {
-                engine.openSettings();
-            } else {
-                engine.closeSettings();
-            }
+    // 1. Fängt der Spieler gerade eine neue Taste ab?
+    if (engine.state.isBindingKey) {
+        event.preventDefault(); 
+        engine.finishBindingKey(event.key);
+        return;
+    }
+
+    // Ignoriere Eingaben in Formularen
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+    let key = event.key.toLowerCase();
+    if (key === ' ') key = 'space'; 
+
+    // 2. Intelligentes Escape-Verhalten (Schließt immer das oberste Fenster)
+    if (key === 'escape') {
+        
+        // Hilfsfunktion: Prüft, ob ein Element sichtbar ist
+        const isVisible = (id) => {
+            const el = document.getElementById(id);
+            return el && !el.classList.contains('hidden') && el.style.display !== 'none';
+        };
+
+        // A. Blockieren, falls Intro oder Schwierigkeits-Wahl offen ist (darf man nicht abbrechen!)
+        if (isVisible('intro-modal') || isVisible('difficulty-modal') || isVisible('tut-ask-modal')) return;
+
+        // B. Das dynamische Lore-Buch checken
+        const loreModal = document.getElementById('lore-modal');
+        if (loreModal) {
+            loreModal.remove();
+            document.body.classList.remove('overflow-hidden');
+            return;
         }
+
+        // C. Untermenüs und Overlays schließen (Hier passiert die Magie)
+        if (isVisible('item-confirm-modal')) { engine.closeItemConfirm(); return; }
+        if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
+        if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
+        if (isVisible('report-modal')) { engine.closeReportModal(); return; }
+        if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
+        
+        if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
+        if (isVisible('team-modal')) { engine.closeTeam(); return; }
+        if (isVisible('archive-modal')) { engine.closeArchive(); return; }
+        if (isVisible('intranet-modal')) { engine.closeIntranet(); return; }
+        if (isVisible('board-modal')) { engine.closeBoard(); return; }
+
+        // D. Abmahnungs-Modals (Nur schließen, wenn es kein "Game Over" ist!)
+        if (isVisible('modal-overlay')) {
+            const okBtn = document.querySelector('#modal-content button');
+            if (okBtn && okBtn.innerText === 'VERSTANDEN') {
+                engine.closeModal();
+            }
+            return; // Game-Over-Screens können mit ESC nicht geschlossen werden.
+        }
+
+        // E. Wenn KEIN Overlay offen ist -> Einstellungen umschalten
+        if (isVisible('settings-modal')) {
+            engine.closeSettings();
+        } else {
+            engine.openSettings();
+        }
+        return;
+    }
+
+    // --- NEU: BLOCKADE BEI OFFENEN HAUPTMENÜS ---
+    const introModal = document.getElementById('intro-modal');
+    const diffModal = document.getElementById('difficulty-modal');
+    if ((introModal && introModal.style.display !== 'none') || 
+        (diffModal && diffModal.style.display !== 'none')) {
+        return;
+    }
+
+    // 3. BESTÄTIGEN (Popups, Handy abnehmen, Weiter-Buttons)
+    if (key === engine.state.keyBinds.confirm.toLowerCase()) {
+        // A: Tutorial
+        const tutNextBtn = document.querySelector('#tut-text-box button');
+        if (tutNextBtn && tutNextBtn.offsetParent !== null) { tutNextBtn.click(); return; }
+        
+        // B: Modals (Abmahnung, Ende, Item-Confirm)
+        const okBtn = document.querySelector('#modal-content button');
+        if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
+        const itemUseBtn = document.querySelector('#item-confirm-modal button.bg-green-600');
+        if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
+
+        // C: Handy-Benachrichtigung annehmen
+        const phoneNotif = document.getElementById('phone-notification');
+        if (phoneNotif && phoneNotif.offsetParent !== null && !phoneNotif.classList.contains('hidden')) {
+            phoneNotif.click();
+            return;
+        }
+
+        // D: Terminal Weiter-Button
+        const terminalButtons = document.querySelectorAll('#terminal-content button');
+        if (terminalButtons.length === 1 && (!engine.state.activeEvent || engine.state.pendingEnd || terminalButtons[0].innerText.includes('MITTAGS') || terminalButtons[0].innerText.includes('WEITER'))) {
+             terminalButtons[0].click(); return;
+        }
+    }
+
+    // 4. AKTIONEN DIREKT WÄHLEN (Q, W, E, R)
+    if (!engine.state.activeEvent && !engine.state.isEmailOpen) {
+        if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { engine.trigger('coffee'); return; }
+        if (key === engine.state.keyBinds.actQuest.toLowerCase()) { engine.trigger('sidequest'); return; }
+        if (key === engine.state.keyBinds.actServer.toLowerCase()) { engine.trigger('server'); return; }
+        if (key === engine.state.keyBinds.actCall.toLowerCase()) { engine.trigger('calls'); return; }
+    }
+
+    // 5. AUSWAHL IN EVENTS & E-MAILS (1, 2, 3... und 4, 5, 6 für die Party)
+    if (engine.state.activeEvent || engine.state.isEmailOpen) {
+        let visibleOptions = [];
+        
+        // A: Ist eine E-Mail offen?
+        const emailModal = document.getElementById('email-modal');
+        if (emailModal && !emailModal.classList.contains('hidden')) {
+            const emailActions = document.getElementById('email-actions');
+            if (emailActions) {
+                visibleOptions = Array.from(emailActions.querySelectorAll('button'));
+            }
+            const ignoreBtn = document.querySelector('#email-modal > div > div:nth-child(3) > button');
+            if (ignoreBtn) visibleOptions.push(ignoreBtn);
+        }
+        // B: Check Phone
+        else if (document.getElementById('app-actions') && document.getElementById('app-actions').offsetParent !== null) {
+            visibleOptions = Array.from(document.querySelectorAll('#app-actions button'));
+        } 
+        // C: Check Terminal
+        else {
+            const termActions = document.querySelectorAll('#terminal-content button');
+            visibleOptions = Array.from(termActions).filter(b => !b.innerText.includes('WEITER'));
+        }
+
+        if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) visibleOptions[0].click();
+        if (key === engine.state.keyBinds.opt2.toLowerCase() && visibleOptions[1]) visibleOptions[1].click();
+        if (key === engine.state.keyBinds.opt3.toLowerCase() && visibleOptions[2]) visibleOptions[2].click();
+        
+        if (key === '4' && visibleOptions[3]) visibleOptions[3].click();
+        if (key === '5' && visibleOptions[4]) visibleOptions[4].click();
+        if (key === '6' && visibleOptions[5]) visibleOptions[5].click();
     }
 });

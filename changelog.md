@@ -1,3 +1,20 @@
+\[3.0.0] - 2026-02-30
+* Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken)
+* Offline-Mode ist nun möglich, wenn das gesamte Projekt heruntergeladen wird
+* Spieleinstellungen wurden überarbeitet und bietet jetzt mehr Sound und Tastaur-Einstellungen
+* Drei verschiedene Arten von Musik für Allgemein, Bossfights und für die Gala
+* Das Start-Modal wurde überarbeitet und schaut nun moderner aus und zeigt das Logo des Spieles
+* Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen Hover-Effekt
+* Die Character Portraits werden bei Characterbezogene Events jetzt vistuell mit dargestellt
+* Die Items bieten jetzt im Schnellinventar oder im Rucksack ebenfalls einen Hover-Effekt
+* Spenden-Event aus data.js entfernt (wer mich für wenig Geld unterstützen möchte, schaut gerne auf Steam!)
+* Ein Fehler wurde behoben, dass Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
+* E-Mail Performanceprobleme wurden behoben (ruckeln und träges Verhalten der auswählbaren Optionen)
+* Mittagessen hat nun ein eigenes Icon und ein eigenen farblichen Rahmen
+* Eine weitere Intranet-Seite (für das Intranet) wurde hinzugefügt und gilt es zu entdecken
+* Einige weitere Events wuden für die verschiedenen Aktionen hinzugefügt
+* Weitere, kleine Fehlerkorrekturen und Anpassungen im Backend
+
 \[2.8.1] - 2026-02-29
 * Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
 * Kritischer Bugfix bei Begegnungen-Events, welche nicht immer Folge-Events zuverlässig ausgelöst haben
