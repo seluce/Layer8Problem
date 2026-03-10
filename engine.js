@@ -791,6 +791,31 @@ const engine = {
 
     // --- CORE ---
     updateUI: function() {
+		
+        // --- AUTOMATISCHE INVENTAR-SORTIERUNG ---
+        this.state.inventory.sort((a, b) => {
+            let itemA = DB.items[a.id];
+            let itemB = DB.items[b.id];
+            
+            // Fallback, falls ein Item (warum auch immer) nicht in der DB ist
+            if (!itemA) return 1;
+            if (!itemB) return -1;
+
+            // Prioritäten definieren
+            const getPrio = (item, id) => {
+                if (id === 'stressball' || !item.keep) return 1; // Prio 1: Cooldowns & Verbrauch
+                if (item.keep && !item.quest) return 2;          // Prio 2: Werkzeuge
+                return 3;                                        // Prio 3: Quest-Items/Trophäen
+            };
+
+            let prioA = getPrio(itemA, a.id);
+            let prioB = getPrio(itemB, b.id);
+
+            // Nach Priorität sortieren (kleinere Zahl = weiter vorne)
+            return prioA - prioB;
+        });
+        // ----------------------------------------------
+		
         this.state.fl = Math.max(0, Math.min(100, this.state.fl));
         this.state.al = Math.max(0, Math.min(100, this.state.al));
         this.state.cr = Math.max(0, Math.min(100, this.state.cr));
@@ -4086,7 +4111,8 @@ ${logText}
 
         // Timer abbrechen
         if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
-        if (this.state.bossTimer) clearTimeout(this.state.bossTimer);
+        if (this.state.bossTimer) clearInterval(this.state.bossTimer);
+        if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
 
         // Memory auf 08:00 Uhr setzen (Wir behalten den difficultyMult bei!)
         this.state.time = 8 * 60;
@@ -4097,6 +4123,7 @@ ${logText}
         this.state.inventory = []; // Taschen werden am neuen Tag geleert
         this.state.usedIDs = new Set();
         this.state.usedEmails = new Set();
+        this.state.storyFlags = {};
         this.state.morningMoodShown = false;
         this.state.lunchDone = false;
         this.state.ticketWarning = false;

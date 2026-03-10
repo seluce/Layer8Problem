@@ -1,19 +1,26 @@
-\[3.0.0] - 2026-02-30
-* Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken)
-* Offline-Mode ist nun möglich, wenn das gesamte Projekt heruntergeladen wird
-* Spieleinstellungen wurden überarbeitet und bietet jetzt mehr Sound und Tastaur-Einstellungen
-* Drei verschiedene Arten von Musik für Allgemein, Bossfights und für die Gala
-* Das Start-Modal wurde überarbeitet und schaut nun moderner aus und zeigt das Logo des Spieles
-* Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen Hover-Effekt
-* Die Character Portraits werden bei Characterbezogene Events jetzt vistuell mit dargestellt
-* Die Items bieten jetzt im im Rucksack ebenfalls einen Hover-Effekt mit Flavor-Texten.
-* Spenden-Event aus data.js entfernt (wer mich für wenig Geld unterstützen möchte, schaut gerne auf Steam!)
-* Ein Fehler wurde behoben, dass Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
-* E-Mail Performanceprobleme wurden behoben (ruckeln und träges Verhalten der auswählbaren Optionen)
-* Mittagessen hat nun ein eigenes Icon und ein eigenen farblichen Rahmen
-* Eine weitere Intranet-Seite (für das Intranet) wurde hinzugefügt und gilt es zu entdecken
+[3.0.0] - 2026-03-10
+
+Neuerungen:
+* Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken lokal eingebunden)
+* Offline-Modus ist nun möglich, wenn das gesamte Projekt heruntergeladen wird
+* Die Spieleinstellungen wurden überarbeitet und bieten jetzt mehr Sound- und Tastatur-Einstellungen
+* Drei verschiedene Arten von Musik hinzugefügt (Allgemein, Bossfights und für die Gala)
+* Das Start-Modal wurde optisch überarbeitet, sieht nun moderner aus und zeigt das Logo des Spiels
+* Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen starken Hover-Effekt
+* Die Charakter-Porträts werden bei charakterbezogenen Events jetzt visuell im Terminal dargestellt
+* Die Items bieten im Rucksack nun ein detailliertes Tooltip-Fenster mit Flavor-Texten beim Hovern
+* Automatische Sortierung von Items im Schnell-Inventar und Rucksack (Verbrauchsgegenstände bleiben griffbereit)
+* Eine neue, geheime Intranet-Seite wurde hinzugefügt und wartet darauf, entdeckt zu werden
+* Das Mittagessen hat nun ein eigenes Icon und einen eigenen farblichen Rahmen
 * Einige weitere Events wurden für die verschiedenen Aktionen hinzugefügt
-* Weitere, kleine Fehlerkorrekturen und Anpassungen im Backend
+
+Fehlerkorrekturen:
+* Ein Fehler wurde behoben, durch den die Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
+* E-Mail Performance-Probleme wurden behoben (Ruckeln und träges Verhalten der auswählbaren Optionen)
+* Story-Flags (Folgeentscheidungen) werden bei "Tag neu starten" jetzt korrekt zurückgesetzt
+* Eintreffende E-Mails werden während eines Bossfights nun zuverlässig blockiert (falsches Timer-Verhalten behoben)
+* Ein Fehler bei der Item-Abgabe wurde behoben (es wird nun immer nur exakt ein Exemplar abgezogen, wenn man das Item mehrfach besitzt)
+* Weitere, kleine Fehlerkorrekturen und strukturelle Anpassungen im Backend
 
 \[2.8.1] - 2026-02-29
 * Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
