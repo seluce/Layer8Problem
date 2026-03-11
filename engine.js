@@ -3951,7 +3951,8 @@ const engine = {
     sendReportMail: function() {
         try {
             // --- CONFIG ---
-            const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc2uwIVCYnmsQ_MpJNpXjc7kX7DlXoHYXMUUZwAWjwrtTHJDg/viewform";
+            // WICHTIG: Aus /viewform am Ende wird /formResponse !
+            const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc2uwIVCYnmsQ_MpJNpXjc7kX7DlXoHYXMUUZwAWjwrtTHJDg/formResponse";
             const IDS = {
                 cat: "entry.1431680664",
                 desc: "entry.1740494219",
@@ -3961,6 +3962,12 @@ const engine = {
             // --- INPUTS LESEN ---
             const catVal = document.getElementById('report-category')?.value || "Unbekannt";
             const descVal = document.getElementById('report-desc')?.value || "";
+
+            // Leere Beschreibung abfangen (Optional, aber gut)
+            if (descVal.trim() === "") {
+                alert("Bitte gib eine kurze Beschreibung ein.");
+                return;
+            }
 
             // --- STATE DATEN ---
             const s = this.state || {}; 
@@ -3986,13 +3993,7 @@ const engine = {
             
             if (logEl && logEl.innerText.trim().length > 0) {
                 let rawText = logEl.innerText;
-                
-                // slice(-600) nimmt exakt die ersten 600 Zeichen vom Ende des Textes
-                if (rawText.length > 2000) {
-                    rawText = rawText.substring(0, 2000) + "...";
-                }
-                
-                // Zeilenumbrüche durch // ersetzen
+                if (rawText.length > 2000) rawText = rawText.substring(0, 2000) + "...";
                 logText = rawText.replace(/[\r\n]+/g, " // ");
             }
 
@@ -4008,18 +4009,66 @@ const engine = {
 ${logText}
 =====================`;
 
-            // --- SENDEN ---
-            const url = new URL(FORM_URL);
-            url.searchParams.append(IDS.cat, catVal);
-            url.searchParams.append(IDS.desc, descVal);
-            url.searchParams.append(IDS.debug, logData);
+            // --- UI FEEDBACK START (Button manipulieren) ---
+            const sendBtn = document.querySelector('#report-modal button.bg-blue-600');
+            let originalText = "";
+            if (sendBtn) {
+                originalText = sendBtn.innerHTML;
+                sendBtn.innerHTML = "<span>⏳</span> Sende...";
+                sendBtn.disabled = true;
+                sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
 
-            window.open(url.toString(), '_blank');
-            this.closeReportModal();
+            // --- PAYLOAD BAUEN ---
+            const formData = new URLSearchParams();
+            formData.append(IDS.cat, catVal);
+            formData.append(IDS.desc, descVal);
+            formData.append(IDS.debug, logData);
+
+            // --- SILENT POST REQUEST (Der magische No-Cors Trick) ---
+            fetch(FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Verhindert Sicherheits-Blockaden vom Browser
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            }).then(() => {
+                // UI Erfolgsmeldung
+                if (sendBtn) {
+                    sendBtn.innerHTML = "<span>✅</span> Gesendet!";
+                    sendBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
+                    sendBtn.classList.add('!bg-green-600');
+                }
+                
+                // Nach 1.5 Sekunden: Fenster zu und aufräumen
+                setTimeout(() => {
+                    this.closeReportModal();
+                    
+                    if (sendBtn) {
+                        sendBtn.innerHTML = originalText;
+                        sendBtn.disabled = false;
+                        sendBtn.classList.remove('opacity-50', 'cursor-not-allowed', '!bg-green-600');
+                        sendBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
+                    }
+                    // Textfeld für den nächsten Report leeren
+                    document.getElementById('report-desc').value = "";
+                    
+                }, 1500);
+
+            }).catch((err) => {
+                console.error("Fetch Error:", err);
+                alert("Fehler beim Senden. Bitte prüfe deine Internetverbindung.");
+                if (sendBtn) {
+                    sendBtn.innerHTML = originalText;
+                    sendBtn.disabled = false;
+                    sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            });
 
         } catch (e) {
             console.error("Report Error:", e);
-            alert("Fehler beim Öffnen des Formulars.");
+            alert("Ein unerwarteter Fehler ist aufgetreten.");
         }
     },
 
