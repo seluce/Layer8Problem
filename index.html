@@ -1075,6 +1075,17 @@
                     <button id="bind-confirm" onclick="engine.startBindingKey('confirm')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">SPACE</button>
                 </div>
             </div>
+			
+            <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mb-4 rounded-lg border border-slate-700/50">
+                <div class="flex flex-col flex-1">
+                    <span class="text-sm font-medium text-slate-200 leading-tight">Visuelle Hotkeys</span>
+                    <span class="text-[10px] text-slate-500 mt-1">Zeigt Tasten-Symbole auf den Antwort-Buttons an.</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" id="setting-showhotkeys" onchange="engine.toggleShowHotkeys(this.checked)" class="sr-only peer">
+                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                </label>
+            </div>
 
             <div class="grid grid-cols-2 gap-3 mt-4">
                 <button onclick="engine.resetKeybinds()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-sm">

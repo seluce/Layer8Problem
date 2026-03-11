@@ -80,6 +80,12 @@ const engine = {
         screenShake: localStorage.getItem('layer8_shake') !== 'false',
         
         // --- TASTATUR MAPPING ---
+        showHotkeys: (() => {
+            const saved = localStorage.getItem('layer8_showhotkeys');
+            if (saved !== null) return saved === 'true'; 
+            return !window.matchMedia("(pointer: coarse)").matches;
+        })(),
+		
         keyBinds: (() => {
             let saved = JSON.parse(localStorage.getItem('layer8_keybinds')) || {};
             const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
@@ -178,7 +184,9 @@ const engine = {
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
+		
         this.updateUI();
+        this.renderHotkeys();
         this.log("System v3.0.0 geladen. Warte auf User...");
     },
 
@@ -681,14 +689,34 @@ const engine = {
         actionContainer.innerHTML = '';
         
         if(email.opts) {
-            email.opts.forEach(opt => {
+            email.opts.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.type = "button"; 
-                btn.className = "w-full text-left px-3 py-2 bg-slate-800 hover:bg-blue-900/30 border border-slate-700 hover:border-blue-500/50 text-slate-300 hover:text-blue-300 rounded transition-colors flex items-center group font-medium text-xs";
+                btn.className = "w-full text-left px-3 py-2 bg-slate-800 hover:bg-blue-900/30 border border-slate-700 hover:border-blue-500/50 text-slate-300 hover:text-blue-300 rounded transition-colors flex items-center justify-between group font-medium text-xs";
+                
+                // NEU: Einheitliches Design & Fallbacks für 4 und 5
+                let hotkeyHTML = "";
+                
+                if (this.state.showHotkeys) {
+                
+                    let key = "";
+                    if (index < 3) key = this.state.keyBinds[`opt${index+1}`];
+                    else if (index === 3) key = "4";
+                    else if (index === 4) key = "5";
+
+                    if (key) {
+                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-blue-400 transition-colors">${key.toUpperCase()}</kbd>`;
+                    }
+                }
                 
                 btn.innerHTML = `
-                    <span class="mr-2 text-slate-500 group-hover:text-blue-400 transition-colors duration-75 text-base">➥</span>
-                    <span>${opt.btn}</span>
+                    <div class="flex items-center flex-1 mr-2">
+                        <span class="mr-2 text-slate-500 group-hover:text-blue-400 transition-colors duration-75 text-base shrink-0">➥</span>
+                        <span class="break-words leading-tight py-1">${opt.btn}</span>
+                    </div>
+                    <div class="shrink-0 flex items-center h-full">
+                        ${hotkeyHTML}
+                    </div>
                 `;
                 
                 btn.onclick = (e) => {
@@ -699,6 +727,41 @@ const engine = {
                 actionContainer.appendChild(btn);
             });
         }
+        
+        // --- NEU: Den fest verbauten Löschen-Button dynamisch updaten ---
+        const ignoreBtn = document.querySelector('#email-modal button[onclick*="resolveEmail(null, true)"]');
+        if (ignoreBtn) {
+            let optCount = email.opts ? email.opts.length : 0;
+            
+            ignoreBtn.className = "w-full text-left px-3 py-2 bg-slate-800 hover:bg-red-950/30 border border-slate-700 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded transition-colors duration-75 flex items-center justify-between group font-medium text-xs";
+            
+            // NEU: Identisches Basis-Design, aber bei Hover wird es Rot
+            let hotkeyHTML = "";
+            
+            if (this.state.showHotkeys) {
+                let key = "";
+                if (optCount === 0) key = this.state.keyBinds.opt1;
+                else if (optCount === 1) key = this.state.keyBinds.opt2;
+                else if (optCount === 2) key = this.state.keyBinds.opt3;
+                else if (optCount === 3) key = "4";
+                else if (optCount === 4) key = "5";
+
+                if (key) {
+                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-red-400 transition-colors">${key.toUpperCase()}</kbd>`;
+                }
+            }
+            
+            ignoreBtn.innerHTML = `
+                <div class="flex items-center flex-1 mr-2">
+                    <span class="mr-2 text-slate-600 group-hover:text-red-500 transition-colors duration-75 text-base shrink-0">🗑️</span>
+                    <span class="break-words leading-tight py-1">E-Mail löschen & ignorieren</span>
+                </div>
+                <div class="shrink-0 flex items-center h-full">
+                    ${hotkeyHTML}
+                </div>
+            `;
+        }
+        // -----------------------------------------------------
         
         // 5. ANZEIGEN
         modal.classList.remove('hidden');
@@ -1698,7 +1761,7 @@ const engine = {
 
         // Die Buttons
         if (opts) {
-            opts.forEach(opt => {
+            opts.forEach((opt, index) => {
                 let locked = false;
                 let reqText = "";
 
@@ -1761,13 +1824,33 @@ const engine = {
 
                 let warningSpan = locked ? `<span class="text-sm text-red-500 font-normal ml-2">${reqText}</span>` : "";
 
+                // --- NEU: HOTKEY BADGE FÜR DAS TERMINAL ---
+                let hotkeyHTML = "";
+                let key = "";
+                
+                if (this.state.showHotkeys) {
+                    if (index === 0) key = this.state.keyBinds.opt1;
+                    else if (index === 1) key = this.state.keyBinds.opt2;
+                    else if (index === 2) key = this.state.keyBinds.opt3;
+                    else if (index === 3) key = "4";
+                    else if (index === 4) key = "5";
+                    else if (index === 5) key = "6";
+
+                    if (key) {
+                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
+                    }
+                }
+                
                 html += `
                 <button class="${btnClass}" ${clickAction} ${locked ? 'disabled' : ''}>
-                    <div class="flex items-center">
-                        <span class="mr-3 text-xl">${iconBtn}</span>
-                        <span>${opt.t} ${warningSpan}</span>
+                    <div class="flex items-center flex-1 mr-2 min-w-0"> 
+                        <span class="mr-3 text-xl shrink-0">${iconBtn}</span>
+                        <span class="text-left break-words py-1">${opt.t} ${warningSpan}</span>
                     </div>
-                    ${badgeHTML}
+                    <div class="shrink-0 flex items-center h-full">
+                        ${badgeHTML}
+                        ${hotkeyHTML}
+                    </div>
                 </button>`;
             });
         }
@@ -2160,10 +2243,10 @@ const engine = {
         // Container Styling sicherstellen
         actions.className = "p-2 bg-slate-900 border-t border-slate-700 flex flex-col gap-2"; 
 
-        node.opts.forEach(opt => {
+        node.opts.forEach((opt, index) => {
             const btn = document.createElement('button');
-            // Neuer Button Look: Wie "Antwortvorschläge"
-            btn.className = "bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center gap-2 group";
+            // NEU: 'w-full' und 'justify-between' hinzugefügt
+            btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center justify-between group";
             
             // Requirements prüfen (z.B. Items)
             let locked = false;
@@ -2172,13 +2255,43 @@ const engine = {
                  if (!hasItem) locked = true;
             }
 
+            // NEU: Hotkey Logik (nur anzeigen, wenn Option max 3 ist und nicht gesperrt ist)
+            let hotkeyHTML = "";
+            let key = "";
+            
+            if (this.state.showHotkeys) {
+                if (index === 0) key = this.state.keyBinds.opt1;
+                else if (index === 1) key = this.state.keyBinds.opt2;
+                else if (index === 2) key = this.state.keyBinds.opt3;
+                else if (index === 3) key = "4";
+                else if (index === 4) key = "5";
+                else if (index === 5) key = "6";
+
+                if (key) {
+                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
+                }
+            }
+
             if (locked) {
                 btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = `<span class="text-red-500">🔒</span> ${opt.t} <span class="text-xs ml-auto">(Fehlt: ${opt.req})</span>`;
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2 flex-1 mr-2">
+                        <span class="text-red-500 shrink-0">🔒</span> 
+                        <span class="break-words leading-tight py-1">${opt.t}</span>
+                    </div>
+                    <div class="shrink-0 flex items-center h-full">
+                        <span class="text-[10px]">(Fehlt: ${opt.req})</span>
+                    </div>`;
             } else {
-                // Kleiner Pfeil im Button
-                btn.innerHTML = `<span class="opacity-50 group-hover:opacity-100">➤</span> ${opt.t}`;
-                // WICHTIG: Hier wird deine handlePhoneChoice aufgerufen
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2 flex-1 mr-2">
+                        <span class="opacity-50 group-hover:opacity-100 shrink-0">➤</span> 
+                        <span class="break-words leading-tight py-1">${opt.t}</span>
+                    </div>
+                    <div class="shrink-0 flex items-center h-full">
+                        ${hotkeyHTML}
+                    </div>
+                `;
                 btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next);
             }
             
@@ -4010,6 +4123,11 @@ ${logText}
         localStorage.setItem('layer8_audio', isOn);
         if(isOn) this.playAudio('ui');
     },
+	toggleShowHotkeys: function(isOn) {
+        this.state.showHotkeys = isOn;
+        localStorage.setItem('layer8_showhotkeys', isOn);
+        this.renderHotkeys(); // Aktualisiert die 4 Hauptbuttons sofort
+    },
 	
 	// --- MUSIK SYSTEM ---
     bgmTracks: null,
@@ -4319,10 +4437,16 @@ ${logText}
                 btn.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase transition-colors min-w-[80px]";
             }
         }
+        this.renderHotkeys();
     },
     
     openKeybinds: function() {
         this.updateSettingsUI();
+        
+        if(document.getElementById('setting-showhotkeys')) {
+            document.getElementById('setting-showhotkeys').checked = this.state.showHotkeys;
+        }
+        
         document.getElementById('keybind-modal').classList.remove('hidden');
         document.getElementById('keybind-modal').classList.add('flex');
     },
@@ -4351,7 +4475,145 @@ ${logText}
                 btn.classList.remove('!bg-green-900/40', '!border-green-500', '!text-green-400');
             }, 600);
         });
-    },    
+    },
+	
+    // --- NEU: VISUELLE HOTKEYS RENDERN ---
+    renderHotkeys: function() {
+        const map = {
+            'actCoffee': 'btn-coffee',
+            'actQuest': 'btn-sidequest',
+            'actServer': 'btn-server',
+            'actCall': 'btn-calls'
+        };
+
+        for (let [act, btnId] of Object.entries(map)) {
+            let btn = document.getElementById(btnId);
+            if (btn) {
+                
+                // Prüfen, ob schon ein Badge existiert
+                let kbd = btn.querySelector('.hotkey-badge');
+                
+                // --- NEU: Wenn deaktiviert, Badge löschen und überspringen ---
+                if (!this.state.showHotkeys) {
+                    if (kbd) kbd.remove();
+                    continue;
+                }
+                // -------------------------------------------------------------
+                
+                // Button auf 'relative' setzen für die absolute Positionierung des Badges
+                btn.classList.add('relative');
+                
+                if (!kbd) {
+                    kbd = document.createElement('kbd');
+                    // Styling: Oben rechts in die Ecke, leicht transparent
+                    kbd.className = 'hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded shadow-sm opacity-80 pointer-events-none';
+                    btn.appendChild(kbd);
+                }
+                
+                // Den Buchstaben formatieren (z.B. "ArrowUp" -> "UP", "Space" -> "SPACE")
+                let displayKey = this.state.keyBinds[act];
+                if(displayKey.startsWith('Arrow')) displayKey = displayKey.replace('Arrow', '');
+                
+                kbd.innerText = displayKey.toUpperCase();
+            }
+        }
+        
+        // --- DYNAMISCHE BUTTONS (Terminal, E-Mail, Handy) LIVE UPDATEN ---
+        const updateBadges = (containerId) => {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            let optIndex = 1;
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(btn => {
+                // Weiter-Buttons überspringen
+                if (btn.innerText.includes('WEITER') || btn.innerText.includes('MITTAGS')) return;
+
+                let kbd = btn.querySelector('kbd');
+                
+                // 1. Wenn Hotkeys AUS sind -> Löschen
+                if (!this.state.showHotkeys) {
+                    if (kbd) kbd.remove();
+                } 
+                // 2. Wenn Hotkeys AN sind -> Updaten oder Erstellen
+                else {
+                    let key = "";
+                    if (optIndex === 1) key = this.state.keyBinds.opt1;
+                    else if (optIndex === 2) key = this.state.keyBinds.opt2;
+                    else if (optIndex === 3) key = this.state.keyBinds.opt3;
+                    else if (optIndex === 4) key = "4";
+                    else if (optIndex === 5) key = "5";
+                    else if (optIndex === 6) key = "6";
+
+                    if (key) {
+                        if(key.startsWith('Arrow')) key = key.replace('Arrow', '');
+                        
+                        if (kbd) {
+                            kbd.innerText = key.toUpperCase(); // Nur Text updaten
+                        } else {
+                            // Badge existiert nicht? Neu erschaffen!
+                            kbd = document.createElement('kbd');
+                            // Standard-Klasse für Terminal/Phone
+                            kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors";
+                            
+                            // Email-Sonderfarbe
+                            if (containerId === 'email-actions') {
+                                kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-blue-400 transition-colors";
+                            }
+                            
+                            kbd.innerText = key.toUpperCase();
+                            
+                            // In den rechten Container packen
+                            const rightDiv = btn.querySelector('div.shrink-0.flex.items-center');
+                            if (rightDiv) rightDiv.appendChild(kbd);
+                        }
+                    }
+                }
+                optIndex++;
+            });
+        };
+
+        updateBadges('terminal-content');
+        updateBadges('app-actions');
+        updateBadges('email-actions');
+
+        // Sonderfall: Der fest verbaute Löschen-Button in der E-Mail
+        const emailModal = document.getElementById('email-modal');
+        if (emailModal && !emailModal.classList.contains('hidden')) {
+            const ignoreBtn = document.querySelector('#email-modal button[onclick*="resolveEmail(null, true)"]');
+            if (ignoreBtn) {
+                const kbd = ignoreBtn.querySelector('kbd');
+                
+                if (!this.state.showHotkeys) {
+                    if (kbd) kbd.remove();
+                } else {
+                    const emailActions = document.getElementById('email-actions');
+                    const optCount = emailActions ? emailActions.querySelectorAll('button').length : 0;
+                    
+                    let key = "";
+                    if (optCount === 0) key = this.state.keyBinds.opt1;
+                    else if (optCount === 1) key = this.state.keyBinds.opt2;
+                    else if (optCount === 2) key = this.state.keyBinds.opt3;
+                    else if (optCount === 3) key = "4";
+                    else if (optCount === 4) key = "5";
+
+                    if (key) {
+                        if(key.startsWith('Arrow')) key = key.replace('Arrow', '');
+                        
+                        if (kbd) {
+                            kbd.innerText = key.toUpperCase();
+                        } else {
+                            kbd = document.createElement('kbd');
+                            kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-red-400 transition-colors";
+                            kbd.innerText = key.toUpperCase();
+                            const rightDiv = ignoreBtn.querySelector('div.shrink-0.flex.items-center');
+                            if (rightDiv) rightDiv.appendChild(kbd);
+                        }
+                    }
+                }
+            }
+        }
+    },
     
 };
 
