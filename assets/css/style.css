@@ -1372,16 +1372,16 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   max-height: 40vh;
 }
 
-.max-h-\[80vh\] {
-  max-height: 80vh;
-}
-
 .max-h-\[85vh\] {
   max-height: 85vh;
 }
 
 .max-h-\[90vh\] {
   max-height: 90vh;
+}
+
+.max-h-\[95vh\] {
+  max-height: 95vh;
 }
 
 .min-h-0 {
@@ -2276,6 +2276,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .border-t-slate-600 {
   --tw-border-opacity: 1;
   border-top-color: rgb(71 85 105 / var(--tw-border-opacity, 1));
+}
+
+.\!bg-green-600 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1)) !important;
 }
 
 .\!bg-green-900\/30 {

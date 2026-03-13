@@ -628,7 +628,7 @@
 
 <!-- Systemsteuerung MODAL START -->
 <div id="settings-modal" class="fixed inset-0 bg-black/90 z-[9999] hidden flex-col items-center justify-center p-4 fade-in">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
 
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
@@ -638,7 +638,7 @@
             <button onclick="engine.closeSettings()" class="text-slate-500 hover:text-white text-3xl font-light leading-none transition-colors px-2">&times;</button>
         </div>
 
-        <div id="menu-main-view" class="p-4 sm:p-6 overflow-y-auto max-h-[85vh] w-full fade-in flex flex-col gap-6">
+        <div id="menu-main-view" class="p-4 sm:p-6 overflow-y-auto w-full fade-in space-y-6 flex-1 min-h-0">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
@@ -709,7 +709,7 @@
 
         </div>
 
-        <div id="menu-settings-view" class="hidden p-5 space-y-8 overflow-y-auto max-h-[80vh] w-full">
+        <div id="menu-settings-view" class="hidden p-5 space-y-8 overflow-y-auto w-full flex-1 min-h-0">
             
             <div>
                 <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'MENÜ';" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-sm">
@@ -1022,7 +1022,7 @@
 
 <!-- KEYBOAD BINDING MODAL START -->
 <div id="keybind-modal" class="fixed inset-0 bg-black/95 z-[10000] hidden items-center justify-center p-4 fade-in">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
@@ -1032,7 +1032,7 @@
             <button onclick="engine.closeKeybinds()" class="text-slate-500 hover:text-white text-3xl font-light leading-none transition-colors px-2">&times;</button>
         </div>
 
-        <div class="p-5 overflow-y-auto w-full space-y-4">
+        <div class="p-5 overflow-y-auto w-full space-y-4 flex-1 min-h-0">
             <p class="text-xs text-slate-400 mb-4">Klicke auf eine Taste, um sie neu zuzuweisen.</p>
             
             <div class="grid gap-3">
