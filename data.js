@@ -1,41 +1,42 @@
 const DB = {
+    
     // === ITEMS (Loot & Werkzeuge) ===
     items: {
         // VERBRAUCHSGEGENSTÄNDE (Einmalig)
-        "wifi_note": { icon: "🏷️", name: "WLAN-Zettel", img: "assets/items/wifi_note.webp"  },
-        "donut": { icon: "🍩", name: "Alter Donut", img: "assets/items/donut.webp" },
-        "energy": { icon: "⚡", name: "Energy Drink", img: "assets/items/energy.webp" },
-        "secret_list": { icon: "📁", name: "Schwarze Liste", img: "assets/items/secret_list.webp"  },
-		"arg_list_1": { icon: "📋", name: "Argumente (Ich)", img: "assets/items/arg_list_1.webp" }, 
-        "arg_list_2": { icon: "📑", name: "Argumente (Kevin)", img: "assets/items/arg_list_2.webp" },
-        "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie", img: "assets/items/bubble_wrap.webp" },
-        "sandwich": { icon: "🥪", name: "Belegtes Brötchen", img: "assets/items/sandwich.webp" },
-        "chocolate": { icon: "🍫", name: "Tafel Schokolade", img: "assets/items/chocolate.webp" },
+        "wifi_note": { icon: "🏷️", name: "WLAN-Zettel", flavor: '"Das Passwort lautet: 1234abcd. Bitte nicht weitergeben." - Egon. Wahrscheinlich klebt eine Kopie davon direkt am Router im Pausenraum.', img: "assets/items/wifi_note.webp" },
+        "donut": { icon: "🍩", name: "Alter Donut", flavor: '"Er ist hart wie Stein, aber Zucker bleibt Zucker. Ein zäher Überlebenskünstler vom letzten Management-Meeting vor drei Wochen."', img: "assets/items/donut.webp" },
+        "energy": { icon: "⚡", name: "Energy Drink", flavor: '"Schmeckt nach Gummibärchen und drohender Panikattacke. Nach dem Konsum kannst du Farben hören und die Zeit verlangsamt sich spürbar."', img: "assets/items/energy.webp" },
+        "secret_list": { icon: "📁", name: "Schwarze Liste", flavor: '"Wer auf dieser Liste steht, kann schon mal Kartons packen. Pures, unzensiertes Gold, für das HR töten würde."', img: "assets/items/secret_list.webp" },
+        "arg_list_1": { icon: "📋", name: "Argumente (Ich)", flavor: '"1000 Tickets gelöst. 0 Dankbarkeit. Das ändert sich heute. Mit diesen Fakten bist du bereit, das Büro des Chefs in Schutt und Asche zu legen."', img: "assets/items/arg_list_1.webp" }, 
+        "arg_list_2": { icon: "📑", name: "Argumente (Kevin)", flavor: '"Gefahrenzulage für IT-Azubis? Ein schlechter Scherz! Dieser Zettel beweist schwarz auf weiß, dass Kevin fürs Minecraft-Spielen fürstlich entlohnt wird."', img: "assets/items/arg_list_2.webp" },
+        "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie", flavor: '"Jedes *Plopp* ist ein stummgeschalteter User in deiner Fantasie. Die mit Abstand billigste und effektivste Therapie für leidgeprüfte Administratoren."', img: "assets/items/bubble_wrap.webp" },
+        "sandwich": { icon: "🥪", name: "Belegtes Brötchen", flavor: '"Käse, Remoulade und die salzigen Tränen des Vertriebs. Skrupellos aus dem Kühlschrank entwendet, schmeckt es wunderbar nach Anarchie."', img: "assets/items/sandwich.webp" },
+        "chocolate": { icon: "🍫", name: "Tafel Schokolade", flavor: '"Pures, quadratisches Glück auf Kakaobasis. Heimlich vor der gierigen Buchhaltung gerettet, ist sie der einzige Lichtblick am Montag."', img: "assets/items/chocolate.webp" },
         
         // WERKZEUGE (Dauerhaft -> keep: true)
-        "admin_pw": { icon: "🔑", name: "Root-Passwort", keep: true, img: "assets/items/admin_pw.webp"  },
-        "cable": { icon: "〰️", name: "LAN-Kabel", keep: true, img: "assets/items/cable.webp" },
-        "tape": { icon: "🩹", name: "Panzertape", keep: true, img: "assets/items/tape.webp" },
-        "screw": { icon: "🪛", name: "Schraubendreher", keep: true, img: "assets/items/screw.webp" },
-        "stressball": { icon: "🔴", name: "Anti-Stressball", keep: true, img: "assets/items/stressball.webp" },
-        "manual": { icon: "📖", name: "Win95 Handbuch", keep: true, img: "assets/items/manual.webp"  },
-        "usb_stick": { icon: "💾", name: "Boot-Stick", keep: true, img: "assets/items/usb_stick.webp" },
-        "fire_ext": { icon: "🧯", name: "Feuerlöscher", keep: true, img: "assets/items/fire_ext.webp" },
-        "hammer": { icon: "🔨", name: "Hammer", keep: true, img: "assets/items/hammer.webp" },
-        "zip_ties": { icon: "➰", name: "Kabelbinder", keep: true, img: "assets/items/zip_ties.webp" },
-        "headphones": { icon: "🎧", name: "NC-Kopfhörer", keep: true, img: "assets/items/headphones.webp" },
-        "black_card": { icon: "💳", name: "Schwarze Amex", keep: true, img: "assets/items/black_card.webp" },
+        "admin_pw": { icon: "🔑", name: "Root-Passwort", flavor: '"Mit großer Macht kommt... ein Haufen Verantwortung (und Ärger). Ein falscher Klick und die Kundendatenbank ist Geschichte."', keep: true, img: "assets/items/admin_pw.webp" },
+        "cable": { icon: "〰️", name: "LAN-Kabel", flavor: '"Cat7. Hält Daten und wackelige Racks verlässlich zusammen. Im absoluten Notfall auch hervorragend als Peitsche gegen aufmüpfige User einsetzbar."', keep: true, img: "assets/items/cable.webp" },
+        "tape": { icon: "🩹", name: "Panzertape", flavor: '"Die stärkste bekannte Kraft im Universum ist graues Klebeband. Repariert gebrochene Server, undichte Rohre und zwingt Kollegen zum Schweigen."', keep: true, img: "assets/items/tape.webp" },
+        "screw": { icon: "🪛", name: "Schraubendreher", flavor: '"Hochwertiger Kreuzschlitz. Auch zur Selbstverteidigung geeignet. Dein treuester Begleiter in den dunklen Eingeweiden uralter Hardware."', keep: true, img: "assets/items/screw.webp" },
+        "stressball": { icon: "🔴", name: "Anti-Stressball", flavor: '"Wird so oft gequetscht, dass er leise um Hilfe wimmert. Trägt bereits die permanenten Abdrücke deiner Finger als stummer Therapeut."', keep: true, img: "assets/items/stressball.webp" },
+        "manual": { icon: "📖", name: "Win95 Handbuch", flavor: '"Das heilige Buch der Vorväter. Eignet sich auch als Monitor-Stütze. Die Seiten kleben zusammen, aber das Wissen darin ist absolut zeitlos."', keep: true, img: "assets/items/manual.webp" },
+        "usb_stick": { icon: "💾", name: "Boot-Stick", flavor: '"Ein 64GB Stick, voll mit Skripten, Viren und Katzen-Memes. Dein digitales Schweizer Taschenmesser, um jedes zickige System zu zähmen."', keep: true, img: "assets/items/usb_stick.webp" },
+        "fire_ext": { icon: "🧯", name: "Feuerlöscher", flavor: '"CO2. Kalt, laut und extrem effektiv gegen rauchende Hardware. Auch bestens geeignet, um brennende Konflikte im Flur radikal abzukühlen."', keep: true, img: "assets/items/fire_ext.webp" },
+        "hammer": { icon: "🔨", name: "Hammer", flavor: '"Ein 500g Meinungsverstärker. Löst Hardware-Probleme sofort. Perkussive Wartung ist manchmal die einzige Sprache, die Drucker verstehen."', keep: true, img: "assets/items/hammer.webp" },
+        "zip_ties": { icon: "➰", name: "Kabelbinder", flavor: '"Schwarzes Plastik. Die unzerstörbaren Handschellen der IT. Zähmen den wildesten Kabelsalat und halten die Infrastruktur wortwörtlich zusammen."', keep: true, img: "assets/items/zip_ties.webp" },
+        "headphones": { icon: "🎧", name: "NC-Kopfhörer", flavor: '"Wenn du sie aufsetzt, existiert der Rest der Welt nicht mehr. Das ultimative Schutzschild gegen den Lärm der Marketingabteilung und Jürgens Monologe."', keep: true, img: "assets/items/headphones.webp" },
+        "black_card": { icon: "💳", name: "Schwarze Amex", flavor: '"Eigentum von Prinz Abubakar. Das Limit ist eine reine Illusion. Du könntest damit eine kleine Insel kaufen, aber heute reicht es wohl auch für Pizza."', keep: true, img: "assets/items/black_card.webp" },
 
         // QUEST ITEMS
-        "kevin_ram": { icon: "📟", name: "Kevins Glücks-RAM", keep: true, quest: true, img: "assets/items/kevin_ram.webp" },
-        "golden_stapler": { icon: "✨", name: "Goldener Tacker", keep: true, quest: true, img: "assets/items/golden_stapler.webp" },
-        "mixtape": { icon: "🤘", name: "Death Metal Tape", keep: true, quest: true, img: "assets/items/mixtape.webp" },
-        "cat_pic": { icon: "🐱", name: "Foto von Rüdiger", keep: true, quest: true, img: "assets/items/cat_pic.webp" },
-        "master_key": { icon: "🗝️", name: "Generalschlüssel", keep: true, quest: true, img: "assets/items/master_key.webp" },
-        "scotch_bottle": { icon: "🥃", name: "30-jähriger Scotch", keep: true, quest: true, img: "assets/items/scotch_bottle.webp" },
-        "contract": { icon: "📜", name: "Neuer Arbeitsvertrag", keep: true, quest: true, img: "assets/items/contract.webp" },
-        "corp_chronicles": { icon: "📕", name: "Die Firmenchronik", keep: true, quest: true, img: "assets/items/corp_chronicles.webp" },
-        "prince_letter": { icon: "💌", name: "Brief vom Prinzen", keep: true, quest: true,img: "assets/items/prince_letter.webp" },
+        "kevin_ram": { icon: "📟", name: "Kevins Glücks-RAM", flavor: '"Ein alter DDR3-Riegel. Kevin schwört, er macht den PC schneller. In Wahrheit ist er komplett durchgebrannt, genau wie die Synapsen des Azubis."', keep: true, quest: true, img: "assets/items/kevin_ram.webp" },
+        "golden_stapler": { icon: "✨", name: "Goldener Tacker", flavor: '"Schwer, protzig und völlig nutzlos. Wie das Marketing selbst. Eine erbeutete Trophäe, die an Chantals Tränen beim letzten Budget-Krieg erinnert."', keep: true, quest: true, img: "assets/items/golden_stapler.webp" },
+        "mixtape": { icon: "🤘", name: "Death Metal Tape", flavor: '"Seite A: Burn the Server. Seite B: User Error (Die). Der perfekte, knallharte Soundtrack für deinen täglichen Abstieg in den Corporate-Wahnsinn."', keep: true, quest: true, img: "assets/items/mixtape.webp" },
+        "cat_pic": { icon: "🐱", name: "Foto von Rüdiger", flavor: '"Ein flauschiger Kater mit dem psychopathischen Blick eines Killers. Der unangefochtene Liebling von Frau Elster und dein ultimativer Freifahrtschein."', keep: true, quest: true, img: "assets/items/cat_pic.webp" },
+        "master_key": { icon: "🗝️", name: "Generalschlüssel", flavor: '"Egons Meisterstück. Du hast die absolute Macht über das Gebäude. Keine Tür bleibt dir verschlossen, kein Geheimversteck ist mehr sicher vor dir."', keep: true, quest: true, img: "assets/items/master_key.webp" },
+        "scotch_bottle": { icon: "🥃", name: "30-jähriger Scotch", flavor: '"Riecht nach Torf, Eiche und einem exorbitant hohen Bonus. Das edle Getränk ist die einzige Möglichkeit, den Nachmittag schadlos zu überstehen."', keep: true, quest: true, img: "assets/items/scotch_bottle.webp" },
+        "contract": { icon: "📜", name: "Neuer Arbeitsvertrag", flavor: '"20% mehr Gehalt und der Parkplatz am Eingang. Schwarz auf weiß. Das Papier ist noch feucht von den bitteren Tränen, die der CEO vergossen hat."', keep: true, quest: true, img: "assets/items/contract.webp" },
+        "corp_chronicles": { icon: "📕", name: "Die Firmenchronik", flavor: '"Tradition seit 1899. Lächeln während der Arbeitszeit verboten. Ein Relikt aus einer Zeit, als die IT noch mit Dampf betrieben und Ausbeutung großgeschrieben wurde."', keep: true, quest: true, img: "assets/items/corp_chronicles.webp" },
+        "prince_letter": { icon: "💌", name: "Brief vom Prinzen", flavor: '"Ich werde meinen Erstgeborenen \'Müller\' nennen. In Liebe, der Prinz. Ein royales Dokument, das beweist, dass du mächtiger bist als der Vorstand."', keep: true, quest: true, img: "assets/items/prince_letter.webp" },
     },
     
     // === MÜLLERS MORGEN (Start-Bedingungen) ===
@@ -2239,28 +2240,6 @@ const DB = {
                     }
                 ]
             },
-            { 
-            id: "lunch_mandatory_walk", 
-            title: "MITTAG: DIE ZWANGS-RUNDE", 
-            text: "Du willst gerade reinbeißen, da greift dich der agile Projektleiter am Arm. 'So Müller, genug gesessen! Wir machen jetzt den Healthy-Brain-Walk um den Block! Kommen Sie, frische Luft macht produktiv!'", 
-            opts: [ 
-                {  
-                    t: "Mitlaufen (Gruppenzwang)",  
-                    m: 40, f: -15, a: 15, c: -5,  
-                    r: "Du latscht 40 Minuten im Stechschritt durchs Industriegebiet. Du kommst verschwitzt zurück, hast Blasen an den Füßen und bist hungriger als vorher. Aber immerhin: Das Team liebt dich für deine Anpassung."  
-                }, 
-                {  
-                    t: "Auf halber Strecke abseilen",  
-                    m: 20, f: 10, a: -5, c: 5,  
-                    r: "Als der Projektleiter einen Vogel fotografiert, biegst du heimlich zum Dönerladen ab. Du hast 20 Minuten gebraucht, aber du hast warmes Essen. Hoffentlich merkt er nicht, dass du in der zweiten Hälfte gefehlt hast."  
-                }, 
-                {  
-                    t: "Aggressiv ablehnen",  
-                    m: 5, f: 0, a: 10, c: 15,  
-                    r: "Du reißt dich los. 'Ich werde nicht fürs Spazierengehen bezahlt!' Er nennt dich später im Intranet passiv-aggressiv einen 'Bremser der Unternehmenskultur'. Aber hey, du bist in 5 Minuten wieder an deinem PC."  
-                } 
-            ] 
-        },
         { 
             id: "lunch_throat_singing", 
             title: "MITTAG: KULTURELLE PAUSE", 
@@ -3271,6 +3250,7 @@ const DB = {
     },
         {
             id: "call_kevin",
+            char: "Kevin",
             title: "Kevin (Azubi)",
             text: "Duuu? Ich hab glaub ich das Internet gelöscht. Ich wollte Fortnite installieren und hab den Ordner 'System32' in den Papierkorb geschoben, um Platz zu machen. Jetzt ist der Bildschirm blau und schreit mich an.",
             opts: [
@@ -3296,6 +3276,7 @@ const DB = {
         },
         {
             id: "call_ceo",
+            char: "Dr. Wichtig",
             title: "CEO Dr. Wichtig",
             text: "Müller! Ich bin am Flughafen. Mein iPad geht nicht! Ich drücke den Knopf und nichts passiert! FIXEN SIE DAS REMOTE! SOFORT! Ich verliere hier Millionen!",
             opts: [
@@ -3306,6 +3287,7 @@ const DB = {
         },
         {
             id: "call_markus",
+            char: "Markus",
             title: "Vertriebsleiter Markus",
             text: "ICH KANN MEINE E-MAILS NICHT DRUCKEN! WENN ICH DAS ANGEBOT NICHT IN 5 MINUTEN AUF PAPIER HABE, KOSTET DAS DIE FIRMA EINE MILLION EURO! KOMMEN SIE HER!",
             opts: [
@@ -3316,6 +3298,7 @@ const DB = {
         },
     {
         id: "call_sekretary_1",
+        char: "Gabi",
         title: "Die Sekretärin (Wütend)",
         text: "Gabi vom Empfang brüllt ins Telefon: 'Der Drucker macht Geräusche wie eine sterbende Kaffeemühle! Ich habe seit heute Morgen keinen Kaffee und jetzt das! Tu was, sonst fliegt das Ding aus dem Fenster!'",
         opts: [
@@ -3326,6 +3309,7 @@ const DB = {
     },
     {
         id: "call_sekretary_2a",
+        char: "Gabi",
         title: "Drucker: Fehler 404",
         reqStory: "call_sekretary_cable",
         text: "Die Mechanik läuft, aber das Display blinkt rot: 'OFFLINE'. Du schaust hinter das Gerät. Die LAN-Buchse ist leer. Daneben liegt ein Zettel von Chantal: 'Hab das Kabel für meinen Insta-Ringlicht-Strom gebraucht, Bussi!'",
@@ -3337,6 +3321,7 @@ const DB = {
     },
     {
         id: "call_sekretary_2b",
+        char: "Gabi",
         title: "Gabi sieht rot (und schwarz)",
         reqStory: "call_sekretary_rage",
         text: "Gabi hat genug von deinem Vortrag. 'Ich zeig dir mal, was kaputt ist!' Sie reißt die Toner-Kartusche raus und schüttelt sie wild. Eine schwarze Staubwolke explodiert im Raum. Du siehst aus wie ein Schornsteinfeger.",
@@ -3348,6 +3333,7 @@ const DB = {
     },
         {
             id: "call_egon",
+            char: "Egon",
             title: "Hausmeister Egon",
             text: "Im Serverraum tropft es von der Decke. Das Wasser ist neongrün. Soll ich Eimer drunterstellen oder ist das Kühlflüssigkeit von den Aliens?",
             opts: [
@@ -3425,6 +3411,7 @@ const DB = {
     },
         {
             id: "call_chantal",
+            char: "Chantal",
             title: "Chantal (Marketing)",
             text: "Wieso ist Zalando gesperrt? Ich muss... Recherche machen! Für Trends! Mach das auf, sonst sag ich dem Chef, du guckst Pornos auf der Arbeit!",
             opts: [
@@ -3468,6 +3455,7 @@ const DB = {
         },
         {
             id: "call_kevin2",
+            char: "Kevin",
             title: "Praktikant Kevin (Wieder)",
             text: "Du, ich hab das Internet kaputt gemacht. Ich brauch das Admin-Passwort um den Treiber neu zu starten. Der Chef killt mich sonst!",
             opts: [
@@ -3736,6 +3724,7 @@ const DB = {
     },
         {
             id: "call_pw_lost",
+			char: "Dr. Wichtig",
             title: "Passwort-Vergesser",
             text: "Der CEO ruft an: 'Müller! Ich komme nicht ins System! Welches Passwort habe ich für den Server 'Geheim' gesetzt? Sie müssen das doch wissen!'",
             opts: [
@@ -3863,6 +3852,7 @@ const DB = {
     },
 		{
             id: "call_boss_wording",
+			char: "Dr. Wichtig",
             title: "Der Chef (Hektisch)",
             text: "MÜLLER! Der Drucker im Flur qualmt! Das Papier ist alle und der Toner ist explodiert! Das ist ein riesiges... na, sagen Sie schon! Was haben wir da?!",
             opts: [
@@ -3887,6 +3877,7 @@ const DB = {
         },
         {
             id: "call_climate_emergency",
+			char: "Egon",
             title: "Hausmeister Egon (Frierend)",
             text: "Müller! Im Serverraum sind minus 10 Grad! Ich steh hier vor der Anlage. Meine Brille ist beschlagen, mir frieren die Zehen ab! Ich muss das Ding wärmer stellen! Soll ich den Regler in den roten oder den blauen Bereich drehen? Schnell!",
             opts: [
@@ -3935,6 +3926,7 @@ const DB = {
         },
         {
         id: "call_kevin_button_1",
+		char: "Kevin",
         title: "Kevin (Serverraum)",
         startNode: "root",
         nodes: {
@@ -3975,6 +3967,7 @@ const DB = {
     },
     {
         id: "call_kevin_button_2",
+		char: "Kevin",
         reqStory: "kevin_alarm",
         title: "Feuerwehr-Leitstelle",
         startNode: "root",
@@ -3994,6 +3987,7 @@ const DB = {
     },
 		{
             id: "call_gabi_sugar",
+			char: "Gabi",
             title: "Sekretärin Gabi (Zitternd)",
             text: "Herr Müller... mir ist so schwindelig... Unterzucker... Ich brauche Schokolade... sofort! Aber der Automat ist leer! Haben wir nirgendwo was Süßes?!",
             opts: [
@@ -4042,6 +4036,7 @@ const DB = {
         },
 		{
             id: "call_elster_excel",
+			char: "Frau Elster",
             title: "Frau Elster (Buchhaltung)",
             text: "Schluchz... 'Herr Müller? Meine Excel-Tabelle ist weg! Alles schwarz! Ich drücke Tasten, aber nichts passiert! Ich bin so zittrig heute...'",
             opts: [
@@ -4089,6 +4084,7 @@ const DB = {
         },
 		{
             id: "call_boss_pocket",
+			char: "Dr. Wichtig",
             title: "Anruf vom Chef (Handy)",
             text: "Du hörst nur Rascheln und Windgeräusche. Er hat wohl aus Versehen gewählt. Im Hintergrund hörst du ihn prahlen: '...diese Idioten in der Firma. Zahlen 2 Euro für die Plörre! Dabei hab ich die Maschine so eingestellt: Wenn man *Espresso* drückt und gleichzeitig den *Becher-Sensor* zuhält, gibt's den *Premium-Gold-Röstung* umsonst! Hahaha!'",
             opts: [
@@ -4202,6 +4198,7 @@ const DB = {
         },
         {
             id: "call_boss_tunnel",
+			char: "Dr. Wichtig",
             title: "Dr. Wichtig im Tunnel",
             text: "Der CEO ruft an. Rauschen. Hupen. 'Müller! ...wichtig! ...müssen sofort... *KCHHH* ...die Kosten... *KRRRK* ...streichen?!'",
             opts: [
@@ -4226,6 +4223,7 @@ const DB = {
         },
         {
             id: "call_kevin_microsoft",
+			char: "Kevin",
             title: "Kevins Ticket",
             text: "Kevin hat wegen einer 'ruckelnden Maus' Microsoft angerufen. Er reicht dir den Hörer. Ein Support-Mitarbeiter (sehr starker Akzent) spricht schnell: 'Sir, kindly do the needful and truncate the production database logs to fix latency, okay?'",
             opts: [
@@ -4299,6 +4297,7 @@ const DB = {
         },
         {
             id: "call_mouse_in_printer",
+			char: "Gabi",
             title: "Drucker macht Geräusche",
             text: "Sekretariat: 'Der Drucker quiekt so komisch beim Drucken.'",
             opts: [
@@ -4445,6 +4444,7 @@ const DB = {
     },
     {
         id: "call_time_1",
+		char: "Du (Müller)",
         title: "Anruf aus der Vergangenheit",
         text: "Es rauscht. 'Hier ist Müller! Ich warne mich selbst! Installiere NICHT das Update am Dienstag! Hörst du?!'",
         opts: [
@@ -4698,6 +4698,7 @@ const DB = {
     },
     {
         id: "call_markus_ambush_1",
+		char: "Markus",
         title: "Überfall auf Lautsprecher",
         text: "Du nimmst ab. Statt einer Begrüßung hörst du Markus' laute, extrem freundliche 'Verkäufer-Stimme', die leicht hallt. Er hat dich auf Freisprechen geschaltet!\n\n'Ah, und hier ist unser Head of IT, Herr Müller! Herr Müller, bitte bestätigen Sie Herrn Tanaka von der Großbank kurz: Unsere neue Datenbank kann Fax-Eingänge per Blockchain in Echtzeit als 3D-Hologramm rendern, absolut korrekt?'\n\nTotenstille im Konferenzraum. Du hörst die Investoren atmen.",
         opts: [
@@ -4723,6 +4724,7 @@ const DB = {
     },
     {
         id: "call_chantal_hostage_1",
+		char: "Chantal",
         title: "SOS aus dem Meeting",
         text: "Chantal ruft an. Sie flüstert panisch: 'Müller... rette mich. Ich sitze seit 40 Minuten in einem 1-on-1 mit dem Agilen Coach. Er redet ununterbrochen über sein Seelentier und zündet gerade ein Räucherstäbchen an. Ich sterbe.\n\nLass den Feueralarm losgehen oder ruf mich auf dem Handy an und sag, der Marketing-Server brennt!'",
         opts: [
@@ -4749,6 +4751,7 @@ const DB = {
     },
     {
         id: "call_boss_laser_1",
+		char: "Dr. Wichtig",
         title: "Präsentations-Panik",
         text: "Dr. Wichtig brüllt ins Telefon: 'Müller! Mein Mauszeiger ist weg! Ich bewege das Gerät über den Tisch, aber auf der Leinwand passiert absolut NICHTS! Die Investoren warten!\n\nIch habe schon die Batterien gewechselt und das rote Licht leuchtet, aber der Pfeil auf der Folie ist wie eingefroren!'",
         opts: [
@@ -4774,6 +4777,7 @@ const DB = {
     },
     {
         id: "call_elster_budget_trap_1",
+		char: "Frau Elster",
         title: "Fristablauf",
         text: "Frau Elster klingt eiskalt: 'Müller, Ihr Antrag für die neuen Server (15.000€) wird abgelehnt. Ihr digitales Zertifikat für die Unterschrift ist heute um 08:00 Uhr abgelaufen.\n\nDas Jahresbudget verfällt in exakt 10 Minuten. Machen Sie einen neuen Antrag über das offizielle Portal.'\n\nDu weißt ganz genau: Das Portal braucht 3 Werktage für die Freigabe. Deine Server sind weg.",
         opts: [
@@ -4799,6 +4803,7 @@ const DB = {
     },
     {
         id: "call_egon_cooling_trap_1",
+		char: "Egon",
         title: "Druckabfall",
         text: "Egon brüllt gegen ein lautes Rauschen an: 'Müller! Das Hauptventil der Server-Wasserkühlung im Keller ist gerissen! Ein dicker Strahl schießt quer durch den Raum direkt auf den Starkstrom-Verteilerkasten!\n\nIch muss das Wasser SOFORT abdrehen, sonst brennt die Hütte! Aber wenn ich das tue, fallen in 3 Minuten eure Server wegen Überhitzung aus! Abdrehen oder anlassen?!'",
         opts: [
@@ -4825,6 +4830,7 @@ const DB = {
     },
     {
         id: "call_gabi_gossip_1",
+		char: "Gabi",
         title: "Diplomatische Krise",
         text: "Gabi flüstert aufgeregt: 'Müller! Eure blöde Firewall blockiert 'Promi-Klatsch24.de'! Ich brauche das JETZT!\n\nDie Frau vom Aufsichtsratsvorsitzenden steht gleich hier. Ich muss wissen, ob ihr Hund gestorben ist oder ob sie sich scheiden lässt! Sonst trete ich beim Smalltalk ins Fettnäpfchen und wir sind beide dran!\n\nSchalt die Seite frei! Nur für 10 Minuten!'",
         opts: [
@@ -5017,6 +5023,7 @@ const DB = {
     },
     {
         id: "call_chantal_breakdown_1",
+		char: "Chantal",
         title: "Marketing-Notruf",
         text: "Chantal hyperventiliert am Telefon. '*Schnapp* Müller! Ich halte diesen Druck nicht aus! Mein neuer Insta-Post hat nach 10 Minuten erst zwei Likes! Mein Leben ist vorbei! Ich brauche sofort was zur Beruhigung, sonst kündige ich! MÜLLER!'",
         opts: [
@@ -5046,6 +5053,7 @@ const DB = {
     },
     {
         id: "call_chantal_breakdown_2a",
+		char: "Chantal",
         title: "Die neue Sucht",
         reqStory: "path_chantal_bubbles",
         text: "Chantal flüstert ins Telefon. Sie klingt zittrig. 'Müller... hast du... hast du noch mehr von diesem Plopp-Zeug? Ich habe die ganze Rolle gestern zerdrückt. Ich brauche mehr Plopp. Bitte! Wo hast du das her?'",
@@ -5065,6 +5073,7 @@ const DB = {
     },
     {
         id: "call_chantal_breakdown_2b",
+		char: "Chantal",
         title: "Die Seelsorger-Rechnung",
         reqStory: "path_chantal_listen",
         text: "Chantal ruft wieder an. 'Müller! Du bist so ein guter Zuhörer! Ich hab dich für unseren wöchentlichen 2-Stunden-Call 'Emotional Sync' eingebucht. Erste Session ist jetzt!'",
@@ -5084,6 +5093,7 @@ const DB = {
     },
     {
         id: "call_chantal_breakdown_2c",
+		char: "Chantal",
         title: "Die Beschwerde",
         reqStory: "path_chantal_ignored",
         text: "Das Telefon klingelt. Es ist Sabine von HR. 'Herr Müller, Frau Chantal sitzt weinend hier. Sie sagt, Sie hätten ihr während einer Panikattacke geraten, in eine Papiertüte zu atmen. Sie fühlt sich nicht ernst genommen.'",
@@ -5101,6 +5111,99 @@ const DB = {
                 r: "Du kriechst zu Kreuze und opferst dein Pausenbrot. Chantal nimmt es kauend an. 'Okay. Aber das nächste Mal bist du sensibler!' Die HR-Beschwerde wird fallen gelassen." 
             }
         ]
+    },
+    {
+        id: "call_workout_2b",
+        title: "Die Sanitäter",
+        reqStory: "path_workout_panic",
+        startNode: "root",
+        nodes: {
+            "root": {
+                text: "Sabine von HR ist am Apparat. 'Herr Müller, wegen Ihres 'Fehlalarms' vorhin. Die Sanitäter standen im Büro und haben Chantals Aura-Kristalle umgestoßen. Der Einsatz kostet 500 Euro. Wer zahlt das?'",
+                opts: [
+                    { t: "Auf Arbeitsschutz pochen!", next: "work_safety" },
+                    { t: "Lügen: 'Ich wurde von außen gehackt!'", next: "lie_hack" }
+                ]
+            },
+            "work_safety": {
+                text: "Sie seufzt tief. 'Gut. Es sah wohl wirklich wie ein Anfall aus. Wir buchen es als Betriebsunfall ab. Aber bitte rufen Sie nie wieder ungefragt Ärzte.'",
+                opts: [
+                    { t: "Verstanden.", next: "res_safe" }
+                ]
+            },
+            "lie_hack": {
+                text: "Sabine schweigt. 'Sie behaupten, ein russischer Hacker hat von Ihrem Apparat die 112 gewählt? Müller, das wird Konsequenzen haben.'",
+                opts: [
+                    { t: "Auflegen.", next: "res_fail" }
+                ]
+            }
+        },
+        results: {
+            "res_safe": { txt: "Du kommst ohne Kosten davon, aber HR hasst dich jetzt noch ein bisschen mehr.", m: 10, f: 0, a: 5, c: 10 },
+            "res_fail": { txt: "Das war eine extrem dumme Ausrede. Dein Radar beim Chef schießt nach oben.", m: 5, f: 0, a: 10, c: 25 }
+        }
+    },
+    {
+        id: "call_dance_2c",
+        title: "Die Produktionsfirma",
+        reqStory: "path_dance_donut",
+        startNode: "root",
+        nodes: {
+            "root": {
+                text: "Eine fremde, sehr wütende Stimme am Telefon. 'Hier spricht die Produktionsfirma des Investor-Streams! Jemand hat vorhin Backwaren auf unsere 8.000 Euro teure Sony-Kamera gedrückt! Die Linse ist voller Zuckerguss!'",
+                opts: [
+                    { t: "Auflegen.", next: "hangup_cam" },
+                    { t: "Lügen: 'Das war ein Fehler im 5G-Netz.'", next: "lie_cam" }
+                ]
+            },
+            "hangup_cam": {
+                text: "Du legst einfach auf. Zehn Minuten später erhält der Chef die Rechnung und sucht nach dem Täter.",
+                opts: [
+                    { t: "Uff.", next: "res_hangup" }
+                ]
+            },
+            "lie_cam": {
+                text: "Der Typ am Telefon atmet schwer. 'Ein 5G-Fehler... der Schokostreusel auf der Linse hinterlässt? Wollen Sie mich verarschen?!'",
+                opts: [
+                    { t: "Ja.", next: "res_lie" }
+                ]
+            }
+        },
+        results: {
+            "res_hangup": { txt: "Das Problem eskaliert auf Chef-Ebene. Dein Radar schlägt deutlich aus.", m: 2, f: 0, a: -5, c: 20 },
+            "res_lie": { txt: "Er legt schreiend auf. Es war den Versuch wert.", m: 5, f: 0, a: 5, c: 15 }
+        }
+    },
+    {
+        id: "call_awkward_2c",
+        title: "HR (Sabine)",
+        reqStory: "path_awkward_elster",
+        startNode: "root",
+        nodes: {
+            "root": {
+                text: "Sabine von HR ruft an. Sie klingt extrem formell. 'Herr Müller. Wir haben eine... Beschwerde von Frau Elster vorliegen. Es geht um unangemessenes Verhalten am Arbeitsplatz in Bezug auf Auszubildende.'",
+                opts: [
+                    { t: "Aufklären: 'Sein Pulli hing im Lüfter!'", next: "hr_explain" },
+                    { t: "Empört sein: 'Das ist Verleumdung!'", next: "hr_deny" }
+                ]
+            },
+            "hr_explain": {
+                text: "Sabine schweigt kurz. 'Ein Pulli... im Lüfter. Wissen Sie, wie das klingt? Wir buchen Sie und Kevin vorsorglich für das Seminar 'Professionelle Distanz im Büro'.' ",
+                opts: [
+                    { t: "Seufzen und zustimmen", next: "res_hr_seminar" }
+                ]
+            },
+            "hr_deny": {
+                text: "'Frau Elster hat es mit eigenen Augen gesehen, Müller! Ich vermerke: Keine Einsicht. Das geht an Dr. Wichtig.'",
+                opts: [
+                    { t: "Verdammt.", next: "res_hr_boss" }
+                ]
+            }
+        },
+        results: {
+            "res_hr_seminar": { txt: "Du hast bald ein sehr unangenehmes 4-Stunden-Seminar vor dir. Das Radar steigt.", m: 15, f: 0, a: 10, c: 20 },
+            "res_hr_boss": { txt: "Der Chef wird das nicht lustig finden. Die Gerüchte werden zur Aktennotiz.", m: 5, f: 0, a: 10, c: 30 }
+        }
     },
     ],
 
@@ -5209,6 +5312,7 @@ const DB = {
     {
         id: "srv_sleep_2a",
         title: "Der Festungs-Kommandant",
+		char: "Kevin",
         reqStory: "path_sleep_fort",
         text: "Kevin steht vor deiner Karton-Festung. Er hat ein Passwort-Schild 'Eintritt nur für Coole' angebracht. 'Hey, Chef! Gute Bude. Ich hab WLAN-Kabel verlegt.'",
         opts: [
@@ -5228,6 +5332,7 @@ const DB = {
     },
     {
         id: "srv_sleep_2b",
+		char: "Dr. Wichtig",
         title: "Lob vom Chef",
         reqStory: "path_sleep_trash",
         text: "Der Chef geht durch den leeren, ordentlichen Gang, wo vorher die Kartons waren. Er nickt zufrieden. 'Endlich mal Ordnung hier. Müller, das war vorbildlich.'",
@@ -5512,6 +5617,7 @@ const DB = {
     },
     {
         id: "srv_mining_2b",
+		char: "Dr. Wichtig",
         title: "Kritische Infrastruktur",
         reqStory: "path_mining_crash",
         text: "Zwei Stunden nachdem du das Rig abgeschaltet hast, stürmt der Chef rein. 'Müller! Das gesamte E-Mail-Archiv von 1990 bis 2005 ist offline! Das lief auf dem Legacy-Cluster hinter Rack 4!'",
@@ -5613,6 +5719,7 @@ const DB = {
     },
     {
         id: "srv_cable_2b",
+		char: "Dr. Wichtig",
         title: "Der Wackelkontakt",
         reqStory: "path_cable_wiggle",
         text: "Der Chef betritt den Serverraum. Er tritt fest auf den Boden. Durch die Erschütterung verliert dein nur 'gewackeltes' Kabel den Kontakt. Das Licht am Switch springt auf Rot.",
@@ -5743,6 +5850,7 @@ const DB = {
     },
     {
         id: "srv_drink_2c",
+		char: "Kevin",
         title: "Kevins Fund",
         reqStory: "path_drink_ignore",
         text: "Kevin kommt mit weit aufgerissenen Augen aus dem Serverraum. Er hält die Dose in der Hand. 'Boah! Vintage Cyber-Fuel von 2012! Sammlerstück!'",
@@ -5794,6 +5902,7 @@ const DB = {
     },
     {
         id: "srv_extinguisher_2a",
+		char: "Egon",
         title: "Schwertransport",
         reqStory: "path_ext_loot",
         text: "Du schleppst den Feuerlöscher durch den Gang. Er wiegt gefühlt 20 Kilo und schlägt dir ständig gegen das Schienbein. Egon der Hausmeister sieht dich kritisch an.",
@@ -5844,6 +5953,7 @@ const DB = {
     },
     {
         id: "srv_extinguisher_2c",
+		char: "Dr. Wichtig",
         title: "Der Bürokrat",
         reqStory: "path_ext_audit",
         text: "Nach deinem einstündigen Audit kommt Dr. Wichtig vorbei. Er sieht deine Checklisten und Tabellen neben dem Feuerlöscher. Er wirkt überrascht.",
@@ -5944,6 +6054,7 @@ const DB = {
     },
     {
         id: "srv_manual_2c",
+		char: "Dr. Wichtig",
         title: "Legacy-Support",
         reqStory: "path_man_study",
         text: "Der Chef kommt rein. 'Müller! Wir haben noch einen 486er im Keller, der die Türsteuerung regelt. Er verlangt eine IRQ-Zuweisung für die Soundkarte. Wissen Sie zufällig, was das ist?'",
@@ -6108,6 +6219,7 @@ const DB = {
     },
     {
         id: "srv_cold_2b",
+		char: "Egon",
         title: "Schloss-Austausch",
         reqStory: "path_cold_call",
         text: "Egon, der Hausmeister, kniet vor der Serverraum-Tür und montiert ein neues Schloss. Er sieht dich kommen. 'Na, wieder aufgetaut? Ich bau jetzt eins ein, das man auch von innen aufkriegt.'",
@@ -6181,6 +6293,7 @@ const DB = {
     },
     {
         id: "srv_red_2b",
+		char: "Dr. Wichtig",
         title: "Manöverkritik",
         reqStory: "path_red_alarm",
         text: "Der Chef zitiert dich ins Büro. Der 'biologische Gefahrstoff', wegen dem die Feuerwehr kam, war nur ausgelaufene Kühlflüssigkeit mit Farbstoff. Er sieht nicht glücklich aus.",
@@ -6743,6 +6856,7 @@ const DB = {
     },
     {
         id: "srv_cable_mess_2b",
+		char: "Kevin",
         title: "Der Finger-Häcksler",
         reqStory: "path_cable_break",
         text: "Ein Schrei aus dem Serverraum! Kevin wollte nur mal fühlen, wie stark der Luftzug ist. Ohne das Schutzgitter hat der Lüfter seinen Zeigefinger erwischt.",
@@ -6934,7 +7048,7 @@ const DB = {
         text: "Das Wasser läuft. Der Switch blinkt wild. Es riecht nach Ozon. Du musst handeln, bevor der 50.000€ Schaden amtlich wird.",
         opts: [
             { 
-                t: "In Reis einlegen (Mythos)", 
+                t: "In Reis einlegen", 
                 m: 15, f: 5, a: -5, c: 10, 
                 r: "Du kippst den Kantinen-Reis in den Server. Es bringt technisch nichts, sieht aber so aus, als hättest du einen Plan. Der Switch stirbt trotzdem." 
             },
@@ -6970,6 +7084,7 @@ const DB = {
     },
     {
         id: "srv_pw_list_2a",
+		char: "Dr. Wichtig",
         title: "Der Google-Crash",
         reqStory: "path_pw_decipher",
         text: "Ein Schrei hallt durch die Firma: 'GOOGLE IST DOWN!' Panik bricht aus. Die Senior-Admins tippen wild auf Konsolen: 'DNS-Fehler! Backbone-Timeout!' Nichts hilft. Der Chef läuft rot an.",
@@ -7030,6 +7145,7 @@ const DB = {
     },
     {
         id: "srv_crying_elster",
+		char: "Frau Elster",
         title: "Tränen im Serverraum",
         text: "Du hörst ein leises Wimmern hinter Rack 4. Es ist Frau Elster aus der Buchhaltung. Sie sitzt auf dem Boden, das Gesicht in den Händen vergraben. 'Ich kann das alles nicht mehr...', flüstert sie.",
         opts: [
@@ -7079,7 +7195,7 @@ const DB = {
         opts: [
             { 
                 t: "Arrogante Rundmail schreiben", 
-                m: 10, f: 0, a: -20, c: -20, 
+                m: 10, f: 0, a: -20, c: -5, 
                 r: "'Betreff: Gern geschehen.' Du erklärst, dass der grüne Button sie vor dem Ruin gerettet hat. Plötzlich ist Ruhe. Ein kleiner Triumph." 
             },
             { 
@@ -7215,6 +7331,7 @@ const DB = {
     },
     {
         id: "srv_dust_disaster_2a",
+		char: "Dr. Wichtig",
         title: "Das Budget-Problem",
         reqStory: "srv_dust_2a",
         text: "Der Chef kommt rein und hört das kraftvolle Surren. 'Hören Sie das, Müller? Methusalem läuft ja wie ein Neuwagen! Da können wir den Antrag für den neuen Server (15.000€) ja stornieren.' Dein Herz bleibt stehen.",
@@ -7313,6 +7430,7 @@ const DB = {
     },
     {
         id: "srv_overheat_warning_2b",
+		char: "Dr. Wichtig",
         title: "Der schwitzende Chef",
         reqStory: "path_overheat_dyson",
         text: "Der Chef stürmt hochrot und schweißgebadet in den Serverraum. Er sieht seinen geliebten Dyson vor dem Server stehen. 'MÜLLER! Das ist mein Privateigentum! Mir läuft die Suppe in die Augen!'",
@@ -7338,6 +7456,7 @@ const DB = {
     },
     {
         id: "srv_overheat_warning_2c",
+		char: "Frau Elster",
         title: "Der Zahltag-Aufstand",
         reqStory: "path_overheat_ignore",
         text: "Frau Elster aus der Buchhaltung steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
@@ -7390,6 +7509,7 @@ const DB = {
     },
     {
         id: "srv_night_shift_2a",
+		char: "Dr. Wichtig",
         title: "Das fehlende Laufwerk",
         reqStory: "path_night_shift_loot",
         text: "Der Chef steht in der Tür. 'Müller? Warum kann das Marketing nicht auf Laufwerk X zugreifen? Da liegen die Kampagnen für morgen!' Er sieht die tote LED.",
@@ -7496,6 +7616,7 @@ const DB = {
     },
     {
         id: "srv_legacy_tape_2ab",
+		char: "Dr. Wichtig",
         title: "Der Restore-Test",
         reqStory: "path_legacy_tape_success",
         text: "Der Chef kommt rein. 'Müller! Gut, dass Sie das Tape haben. Ein Kunde hat versehentlich seine Datenbank gelöscht. Wir brauchen den Stand von gestern. Spielen Sie es ein.'",
@@ -7516,6 +7637,7 @@ const DB = {
     },
     {
         id: "srv_legacy_tape_2c",
+		char: "Dr. Wichtig",
         title: "Daten-Verlust",
         reqStory: "path_legacy_tape_fail",
         text: "Der Chef stürmt rein. 'Katastrophe! Ein Kunde hat alles gelöscht! Wo ist das Backup von gestern?! Wir müssen SOFORT restoren!' Er sieht das leere Laufwerk.",
@@ -7542,6 +7664,7 @@ const DB = {
     },
     {
         id: "srv_egon_stash_1",
+		char: "Egon",
         title: "Egons Geheimversteck",
         text: "Du hebst ein loses Bodenblech an. Dahinter: Eine verstaubte Kiste von Hausmeister Egon. Inhalt: Eine angebrochene Flasche 'Billig-Korn', fragwürdige Magazine aus den 90ern und... eine handschriftliche Liste mit allen Türcodes der Firma.",
         opts: [
@@ -7567,6 +7690,7 @@ const DB = {
     },
     {
         id: "srv_egon_stash_2b",
+		char: "Egon",
         title: "Nachricht aus dem Untergrund",
         reqStory: "path_egon_drink",
         text: "Du schaust nochmal unter das Bodenblech. Die Flasche ist weg. Stattdessen liegt da ein Zettel in krakeliger Handschrift: 'Ich weiß, dass du es warst. Schuldest mir 5 Mark. Sonst sag ich Chef.'",
@@ -7593,6 +7717,7 @@ const DB = {
     },
     {
         id: "srv_egon_stash_2c",
+		char: "Egon",
         title: "Die klemmende Bürotür",
         reqStory: "path_egon_snitch",
         text: "Du willst morgens in dein Büro. Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
@@ -7619,6 +7744,7 @@ const DB = {
     },
     {
         id: "srv_crypto_miner_1",
+		char: "Kevin",
         title: "Der versteckte Miner",
         text: "Ein Server läuft auf 100% Last, die Lüfter heulen wie ein startender Jet. Du checkst den Taskmanager: 'KevinCoin_Miner.exe' verbraucht alle Ressourcen. Der Azubi schürft Krypto auf Firmenkosten! Die CPU hat bereits kritische 98 Grad.",
         opts: [
@@ -7648,6 +7774,7 @@ const DB = {
     },
     {
         id: "srv_crypto_miner_2a",
+		char: "Kevin",
         title: "Kevins Investition",
         reqStory: "path_crypto_stop",
         text: "Kevin steht mit tränenden Augen vor dir. Er hält drei Hot-Wheels Spielzeugautos hoch. 'Ich habe die Lambos schon bestellt! Auf Kredit! Wenn ich nicht weiterschürfen darf, bricht mein Finanzplan zusammen. Nur noch 2 Stunden?'",
@@ -7710,7 +7837,7 @@ const DB = {
                 r: "Du wirst quasi fürs Nichtstun bezahlt, während der Externe schwitzt. Der Chef sieht nur, dass 'Profis arbeiten'. Entspannteste Stunde der Woche." 
             },
             { 
-                t: "Helfen (beschleunigen)", 
+                t: "Versuchen ihm zu Helfen", 
                 m: 20, f: -10, a: 10, c: -5, 
                 r: "Du gibst ihm Zugriff auf die Backups. 'Ah, danke.' Das System läuft schneller wieder. Weniger Kosten, aber du musstest arbeiten." 
             },
@@ -8079,6 +8206,7 @@ const DB = {
     },
     {
         id: "srv_alarm_stuck_2",
+		char: "Egon",
         title: "Egon und das Loch",
         reqStory: "path_alarm_smashed",
         text: "Hausmeister Egon steht vor den Trümmern der Alarmanlage. Er fährt mit dem Finger über die tiefe Delle in der Wand. 'Das war kein technischer Defekt. Das war stumpfe Gewalt.' Er dreht sich langsam zu dir um. 'Hast du was gesehen?'",
@@ -8132,6 +8260,7 @@ const DB = {
     },
     {
         id: "srv_hdd_destroy_2a",
+		char: "Dr. Wichtig",
         title: "Muskelkater & Lob",
         reqStory: "path_hdd_kurbel",
         text: "Etwas später steht plötzlich der Chef in deinem Büro. 'Müller, ich habe vorhin die sauber entmagnetisierten Platten im Lager gesehen. Das nenne ich Fleiß! Echte Handarbeit!' Er klopft dir hart auf die Schulter. Dein Arm fällt fast ab.",
@@ -8157,6 +8286,7 @@ const DB = {
     },
     {
         id: "srv_hdd_destroy_2b",
+		char: "Egon",
         title: "Das Trümmerfeld",
         reqStory: "path_hdd_hammer",
         text: "Einige Zeit nach deiner Hammer-Aktion steht Hausmeister Egon bei seiner Runde kopfschüttelnd im Serverraum vor dem Berg aus zersplittertem Plastik und verbogenem Metall. Er ruft dich an: 'Wer hat hier gewütet?! Das kriege ich mit dem normalen Besen nie weg!'",
@@ -8317,6 +8447,7 @@ const DB = {
     },
     {
         id: "srv_acid_2a",
+		char: "Egon",
         title: "Putzdienst",
         reqStory: "path_acid_freeze",
         text: "Egon kommt in den Serverraum, um nach dem Rechten zu sehen. Er betrachtet den gefrorenen Säure-Block auf dem Boden. Er schnappt sich Handfeger und Schaufel und fegt den harmlosen Eisklumpen einfach auf.",
@@ -8350,6 +8481,7 @@ const DB = {
     },
     {
         id: "srv_acid_2c",
+		char: "Egon",
         title: "Egons Rache",
         reqStory: "path_acid_egon",
         text: "Egon hat den Säureschaden beseitigt, aber er hat dir eine Lektion hinterlassen. Er hat deinen Mülleimer im Büro mit einem Schloss verriegelt. Daran hängt ein Zettel: 'Gefahrgut-Entsorgung nur auf Antrag.'",
@@ -8415,6 +8547,7 @@ const DB = {
     },
     {
         id: "srv_rack_slip_2b",
+		char: "Kevin",
         title: "Das gepresste Buch",
         reqStory: "path_rack_manual",
         text: "Kevin entdeckt dein Stütz-Manöver. Er sieht, wie 500 Kilo Server das antike Win95-Handbuch zu einem massiven Papierziegelstein komprimiert haben. 'Krass. Das ist ja wie in so einer Hydraulik-Presse auf YouTube!'",
@@ -8452,257 +8585,6 @@ const DB = {
         ]
     },
     {
-        id: "srv_paywall_1",
-        title: "Die Ransomware vom Hersteller",
-        text: "Eine uralte, proprietäre Server-Software verlangt plötzlich eine Kreditkarten-Autorisierung für eine 'zwingende Lizenzverlängerung' (499€), sonst fährt sie in 5 Minuten runter. Der Chef sitzt im Flugzeug und ist nicht erreichbar. Die Buchhaltung hat schon Feierabend.",
-        opts: [
-            { 
-                t: "Die 'Schwarze Karte' einsetzen", 
-                req: "black_card", 
-                next: "path_paywall_card", 
-                m: 5, f: 5, a: -10, c: 0, 
-                r: "Du tippst die Daten des nigerianischen Prinzen ein. *Zahlung akzeptiert*. Irgendwo in Zamunda wird ein Offshore-Konto belastet. Der Server schnurrt brav weiter. Kein Ausfall." 
-            },
-            { 
-                t: "Den Timer immer wieder zurücksetzen (Hack)", 
-                req: "admin_pw", 
-                next: "path_paywall_hack", 
-                m: 20, f: -5, a: 15, c: 5, 
-                r: "Du schreibst ein fieses Skript, das die Systemzeit des Servers alle 4 Minuten wieder zurückdreht. Ein extrem wackeliger Hack, der dir morgen garantiert um die Ohren fliegen wird." 
-            },
-            { 
-                t: "Es runterfahren lassen", 
-                next: "path_paywall_down", 
-                m: 5, f: 10, a: 0, c: 30, 
-                r: "Ohne Moos nix los. Du lässt den Timer ablaufen. Der Server fährt runter. Die Abteilung Logistik kann heute keine Pakete mehr verschicken. Das wird morgen ein riesiges Drama geben." 
-            }
-        ]
-    },
-    {
-        id: "srv_paywall_2a",
-        title: "Rückfragen vom Support",
-        reqStory: "path_paywall_card",
-        text: "Das Telefon klingelt. Der Support der Server-Software ist dran. 'Vielen Dank für die Lizenzverlängerung. Aber wir müssen kurz nachfragen... warum hat Ihr Zahlungsdienstleister eine Rechnungsadresse in Lagos, Nigeria hinterlegt?'",
-        opts: [
-            { 
-                t: "Den Support einfach wegdrücken", 
-                m: 2, f: 5, a: 5, c: 0, 
-                r: "Die Lizenz ist bezahlt. Du musst mit niemandem darüber reden. Klick." 
-            },
-            { 
-                t: "Ablenken: 'Steueroptimierung!'", 
-                m: 5, f: 0, a: 0, c: 5, 
-                r: "'Achso', sagt der Support. 'Verstehe, wir stellen keine weiteren Fragen.' Die Corporate-Welt ist manchmal so simpel." 
-            }
-        ]
-    },
-    {
-        id: "srv_paywall_2b",
-        title: "Das Zeit-Paradoxon",
-        reqStory: "path_paywall_hack",
-        text: "Dein Zeitschleifen-Hack läuft. Leider hat sich der Mail-Server die manipulierte Systemzeit gezogen. Die gesamte Abteilung wundert sich gerade, warum alle frisch versendeten E-Mails das Datum '01.01.1970' tragen.",
-        opts: [
-            { 
-                t: "Den Hack panisch wieder abschalten", 
-                m: 20, f: -5, a: 15, c: 10, 
-                r: "Du hältst den Hack an und zwingst den Chef per SMS zur Zahlung. Die Mails haben wieder das richtige Datum, aber du hast massiv Ärger wegen deines Ausflugs in die Matrix." 
-            },
-            { 
-                t: "Ignorieren. Ist doch egal.", 
-                m: 5, f: 10, a: 5, c: 15, 
-                r: "Lass die Mails doch von 1970 sein. Hauptsache der Server läuft weiter ohne Lizenz." 
-            }
-        ]
-    },
-    {
-        id: "srv_paywall_2c",
-        title: "Logistik am Boden",
-        reqStory: "path_paywall_down",
-        text: "Der Logistik-Chef steht weinend bei dir im Büro. 'Die LKWs stauen sich bis auf die Landstraße! Der Barcode-Scanner-Server ist offline! Wir müssen die Pakete mit dem Edding beschriften!'" ,
-        opts: [
-            { 
-                t: "Mitleid heucheln: 'Chef hat nicht bezahlt.'", 
-                rep: { "Dr. Wichtig": -10 },
-                m: 5, f: 0, a: 5, c: 20, 
-                r: "Du wirfst den CEO unter den Bus. Der Logistik-Chef ruft wütend in der Geschäftsführung an. Du lehnst dich zurück. Nicht dein Budget, nicht dein Problem." 
-            },
-            { 
-                t: "Ihm einen Edding geben", 
-                m: 2, f: 5, a: 15, c: 10, 
-                r: "'Dann fangen Sie mal an zu malen', sagst du emotionslos. Er hasst dich abgrundtief." 
-            }
-        ]
-    },
-    {
-        id: "srv_acid_1",
-        title: "Ätzende Gefahr",
-        text: "Die alte Notstrombatterie (USV) hat ein Leck! Gelbliche Batteriesäure tropft auf den Doppelboden und zischt. Sie frisst sich qualmend durch das Metallgitter direkt in Richtung der ungeschützten Hauptstromkabel. Das ist kurz vor der Kernschmelze.",
-        opts: [
-            { 
-                t: "Den Feuerlöscher einsetzen", 
-                req: "fire_ext", 
-                next: "path_acid_freeze", 
-                m: 5, f: 0, a: -10, c: 0, 
-                r: "PFFFFT! Du sprühst CO2 direkt auf die Pfütze. Die Säure wird schockgefroren und erstarrt zu einem harmlosen, weißen Klumpen. Sauber, sicher, eiskalt gelöst." 
-            },
-            { 
-                t: "Mit Pappe und alten Kartons aufsaugen", 
-                next: "path_acid_cardboard", 
-                m: 25, f: -10, a: 25, c: 0, 
-                r: "Du wirfst Müll auf die Säure. Deine Finger brennen leicht, deine Schuhe haben jetzt weiße Flecken, aber die Hauptstromkabel sind erst einmal sicher. Ein gefährlicher Einsatz." 
-            },
-            { 
-                t: "Hausmeister Egon rufen", 
-                next: "path_acid_egon", 
-                rep: { "Egon": -5 },
-                m: 15, f: 5, a: 5, c: 5, 
-                r: "Du holst Egon. Er sieht die Säure, flucht 10 Minuten am Stück über 'diesen teuren Elektro-Schrott' und streut Katzenstreu darauf. Er hasst dich dafür." 
-            }
-        ]
-    },
-    {
-        id: "srv_acid_2a",
-        title: "Putzdienst",
-        reqStory: "path_acid_freeze",
-        text: "Egon kommt in den Serverraum, um nach dem Rechten zu sehen. Er betrachtet den gefrorenen Säure-Block auf dem Boden. Er schnappt sich Handfeger und Schaufel und fegt den harmlosen Eisklumpen einfach auf.",
-        opts: [
-            { 
-                t: "Sich stumm feiern lassen", 
-                rep: { "Egon": 5 },
-                m: 5, f: 5, a: -10, c: 0, 
-                r: "Egon nickt dir anerkennend zu. 'Clever gelöst, IT-Boy. Schön sauber.' Du genießt den Moment des handwerklichen Respekts." 
-            },
-            { 
-                t: "Ihm beim Fegen helfen", 
-                rep: { "Egon": 10 },
-                m: 10, f: -5, a: -5, c: 0, 
-                r: "Du packst mit an. Teamwork zwischen IT und Haustechnik ist extrem selten, aber Egon ist sichtlich gerührt." 
-            }
-        ]
-    },
-    {
-        id: "srv_acid_2b",
-        title: "Durchgefressen",
-        reqStory: "path_acid_cardboard",
-        text: "Die Kartons haben nicht gereicht. Die ätzende Flüssigkeit hat die Pappe zerfressen. Es tropft jetzt wieder. Schlimmer noch: Es tropft auf eine Netzwerk-Schiene. Zwei Rechner in der Buchhaltung verlieren die Verbindung.",
-        opts: [
-            { 
-                t: "Panisch mit Tape flicken", 
-                req: "tape",
-                m: 15, f: -5, a: 10, c: 5, 
-                r: "Du wickelst säureresistentes (?) Klebeband um die Leckage. Die Dämpfe beißen in der Nase. Du hast das Problem nur aufgeschoben, aber das Netzwerk läuft wieder." 
-            },
-            { 
-                t: "Zusehen, wie das Netzwerk stirbt", 
-                m: 10, f: 0, a: 15, c: 15, 
-                r: "Du kannst nichts mehr tun. Die Säure frisst sich durch das Kupfer. Frau Elster wird ein massives Ticket schreiben." 
-            }
-        ]
-    },
-    {
-        id: "srv_acid_2c",
-        title: "Egons Rache",
-        reqStory: "path_acid_egon",
-        text: "Egon hat den Säureschaden beseitigt, aber er hat dir eine Lektion hinterlassen. Er hat deinen Mülleimer im Büro mit einem Schloss verriegelt. Daran hängt ein Zettel: 'Gefahrgut-Entsorgung nur auf Antrag.'",
-        opts: [
-            { 
-                t: "Müllschlucker-Schraubendreher ansetzen", 
-                req: "screw", 
-                m: 10, f: -5, a: 5, c: 0, 
-                r: "Du knackst das billige Schloss in zwei Minuten. Egon ist unterschwellig beeindruckt, lässt den Eimer aber künftig einfach ungeleert stehen." 
-            },
-            { 
-                t: "Müll trotzig in den Flur werfen", 
-                rep: { "Egon": -10 },
-                m: 5, f: 5, a: 15, c: 5, 
-                r: "Du kippst deinen Papiermüll einfach vor die Tür. Der kalte Krieg zwischen dir und dem Facility Management ist eröffnet." 
-            }
-        ]
-    },
-    {
-        id: "srv_rack_slip_1",
-        title: "Extremes Gefälle",
-        text: "Jemand hat beim Staubsaugen die Stellfüße von Rack 2 touchiert. Das 500kg schwere Konstrukt hat Schlagseite und kippt quälend langsam nach vorne. Wenn es fällt, reißt es die dicke Glasfaser-Hauptleitung aus der Decke!",
-        opts: [
-            { 
-                t: "Als Lasso nutzen: LAN-Kabel", 
-                rem: "cable", 
-                next: "path_rack_cable", 
-                m: 10, f: -5, a: 5, c: -10, 
-                r: "Du wirfst das LAN-Kabel wie ein Cowboy um die Oberkante des Racks und zurrst das andere Ende an einem dicken Heizungsrohr fest. Das Gehäuse knirscht, aber es hält! (Item verbraucht)" 
-            },
-            { 
-                t: "Win95-Handbuch drunterklemmen", 
-                req: "manual", 
-                next: "path_rack_manual", 
-                m: 5, f: 5, a: 0, c: 0, 
-                r: "Du rammst den dicken Wälzer mit dem Fuß exakt unter die absinkende Ecke. Es stoppt den Fall auf den Millimeter genau. Historisches Wissen stützt moderne Technik." 
-            },
-            { 
-                t: "Mit bloßen Händen abstützen", 
-                next: "path_rack_hold", 
-                m: 45, f: -10, a: 30, c: 5, 
-                r: "Du drückst dich mit aller Kraft gegen das Rack, bis Egon endlich mit einem Wagenheber kommt. Du stehst 45 Minuten zitternd da. Dein Rücken ist danach absoluter Brei." 
-            }
-        ]
-    },
-    {
-        id: "srv_rack_slip_2a",
-        title: "ISO-Schmerz",
-        reqStory: "path_rack_cable",
-        text: "Ein externer ISO-Sicherheitsprüfer starrt am Nachmittag kopfschüttelnd auf das schwere Rack, das nur durch ein lächerliches graues LAN-Kabel am Heizungsrohr vor dem Umkippen bewahrt wird. Er weint leise.",
-        opts: [
-            { 
-                t: "Schulterzucken: 'Besser als Domino.'", 
-                m: 2, f: 5, a: 0, c: 10, 
-                r: "Er muss zähneknirschend zustimmen. Optisch ein Albtraum, praktisch eine Meisterleistung. Du kriegst trotzdem einen fetten Mangelbericht." 
-            },
-            { 
-                t: "Ernsthaft verteidigen: 'Das ist zertifiziertes Kabel!'", 
-                m: 5, f: 0, a: 10, c: 5, 
-                r: "Der Prüfer notiert sich deine Aussage kopfschüttelnd. Er fällt dich durch, aber du gehst mit erhobenem Haupt unter." 
-            }
-        ]
-    },
-    {
-        id: "srv_rack_slip_2b",
-        title: "Das gepresste Buch",
-        reqStory: "path_rack_manual",
-        text: "Kevin entdeckt dein Stütz-Manöver. Er sieht, wie 500 Kilo Server das antike Win95-Handbuch zu einem massiven Papierziegelstein komprimiert haben. 'Krass. Das ist ja wie in so einer Hydraulik-Presse auf YouTube!'",
-        opts: [
-            { 
-                t: "Die Kunst der Zerstörung bewundern", 
-                rep: { "Kevin": 5 },
-                m: 2, f: 0, a: -5, c: 0, 
-                r: "Kevin macht begeistert Fotos für Reddit. Du hast ein wertvolles Artefakt geopfert, aber dafür Ruhm im Internet geerntet." 
-            },
-            { 
-                t: "Versuchen, das Buch noch herauszuziehen", 
-                m: 10, f: 0, a: 20, c: 5, 
-                r: "Du zerrst am Buch. Das Rack schwankt lebensgefährlich auf dich zu. Du lässt sofort los. Das Handbuch gehört jetzt für immer zur Bausubstanz." 
-            }
-        ]
-    },
-    {
-        id: "srv_rack_slip_2c",
-        title: "Arbeitsunfall",
-        reqStory: "path_rack_hold",
-        text: "Dein heroischer Muskel-Einsatz fordert Tribut. Du liegst im Pausenraum flach auf dem Rücken auf dem Fußboden. Eine Mail von Sabine (HR) kommt auf dem Handy an: 'Herr Müller, füllen Sie für den Rückenschmerz Formular AU-22 aus. Im Stehen!'",
-        opts: [
-            { 
-                t: "Stöhnend auf dem Boden liegen bleiben", 
-                m: 20, f: 15, a: 10, c: 5, 
-                r: "Keine Chance. Du bleibst einfach unten. Jemand steigt in der Teeküche extrem ungeschickt über dich drüber." 
-            },
-            { 
-                t: "Mit Panzertape den Rücken tapen", 
-                req: "tape",
-                m: 10, f: -5, a: -10, c: 0, 
-                r: "Du wickelst dir heimlich Tape um die Lendenwirbelsäule wie eine stützende Korsage. Es hilft überraschend gut! Du kannst wieder humpeln." 
-            }
-        ]
-    },
-    {
         id: "srv_coffee_cup_1",
         title: "Lebensgefahr im Rack",
         text: "Du betrittst den Serverraum und dein Herz bleibt stehen. Jemand hat einen vollen, dampfenden Kaffeebecher direkt auf das Lüftungsgitter des Core-Routers gestellt.",
@@ -8729,6 +8611,7 @@ const DB = {
     },
     {
         id: "srv_coffee_cup_2a",
+		char: "Chantal",
         title: "Die Täterin",
         reqStory: "path_cup_slow",
         text: "Du willst den Becher gerade ins Waschbecken bringen, da kommt Chantal herein. 'Oh danke, Müller! Den hab ich da extra abgestellt, damit der Router ihn warmhält!'",
@@ -8878,7 +8761,7 @@ const DB = {
                 r: "Du wickelst Tape umwechselseitig an einen Stift und fischst blind herum. Du rettest 80% der Schrauben." 
             },
             { 
-                t: "Ein neues Schrauben-Set nehmen (Loot)", 
+                t: "Ein neues Schrauben-Set nehmen", 
                 loot: "screw", 
                 next: "path_screws_loot", 
                 m: 5, f: 0, a: -5, c: 0, 
@@ -8931,6 +8814,7 @@ const DB = {
     },
     {
         id: "srv_spilled_screws_2c",
+		char: "Egon",
         title: "Tretmine",
         reqStory: "path_screws_ignore",
         text: "Egon betritt den Serverraum und tritt genau auf eine der verbliebenen, scharfen Schrauben. Sie bohrt sich tief in seine dicke Arbeitsschuhsohle. Er brüllt den ganzen Flur zusammen.",
@@ -8946,6 +8830,56 @@ const DB = {
                 rep: { "Egon": -5 },
                 m: 5, f: 5, a: 5, c: 0, 
                 r: "Du gehst in Deckung, bis das Fluchen auf dem Flur leiser wird." 
+            }
+        ]
+    },
+    {
+        id: "srv_workout_2c",
+		char: "Dr. Wichtig",
+        title: "Der Beobachter",
+        reqStory: "path_workout_watch",
+        text: "Du stehst im Serverraum. Auf dem Monitor ploppt eine böse Mail vom Chef auf. 'Müller! Warum haben Sie vorhin 30 Minuten lang kauend im Flur gestanden und das Marketing angestarrt, während das Firmennetzwerk lahmt?!'",
+        opts: [
+            { 
+                t: "Antworten: 'Ich habe das WLAN kalibriert!'", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 10, f: 5, a: 0, c: -5, 
+                r: "Du antwortest blitzschnell mit technischen Fake-Fakten. Der Chef kauft es dir ab. 'WLAN kalibriert man also im Stehen. Verstanden.'" 
+            },
+            { 
+                t: "Mail demonstrativ löschen", 
+				rep: { "Dr. Wichtig": -10 },
+                m: 2, f: 5, a: 5, c: 15, 
+                r: "Aus den Augen, aus dem Sinn. Das gibt später garantiert noch einen verbalen Anschiss, aber jetzt hast du deine Ruhe." 
+            }
+        ]
+    },
+    {
+        id: "srv_awkward_1",
+		char: "Kevin",
+        title: "Eine ungünstige Position",
+        text: "Kevin ist im Serverraum unter das Rack 4 gekrochen und steckt fest. 'Chef, mein Pulli hat sich im Lüftergitter verfangen! Ich kriege den Arm nicht mehr vor!' Du musst ihm helfen. Du beugst dich tief über ihn und rüttelst an seinem Arm.",
+        opts: [
+            { 
+                t: "Kräftig ziehen und schnaufen", 
+                next: "path_awkward_elster", 
+                m: 10, f: 0, a: 5, c: 15, 
+                r: "Ihr keucht beide vor Anstrengung. Kevin stöhnt auf. In dem Moment öffnet sich die Tür. Frau Elster starrt euch an. Du hängst über Kevin. Sie wird kreidebleich, sagt 'Verzeihen Sie die Störung' und knallt die Tür wieder zu." 
+            },
+            { 
+                t: "Ein Skript vom Boot-Stick nutzen (Joker)", 
+                rep: { "Kevin": 5 },
+                req: "usb_stick",
+                next: "path_awkward_usb", 
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Du bootest den Server neu. Der Lüfter stoppt für 5 Sekunden. Kevin zieht den Arm raus. Kein peinliches Gerangel, keine Zuschauer. Perfekt gelöst." 
+            },
+            { 
+                t: "Ihn auslachen und Fotos machen", 
+                rep: { "Kevin": -10 },
+                next: "path_awkward_photo", 
+                m: 2, f: 10, a: -10, c: 5, 
+                r: "Du zückst das Handy. Kevin wimmert. 'Bitte nicht ins Intranet!' Das gibt ein tolles Meme für die Weihnachtsfeier." 
             }
         ]
     },
@@ -8984,6 +8918,7 @@ const DB = {
     },
     {
         id: "cof_donut_2a",
+		char: "Chantal",
         title: "Die Zucker-Falle",
         reqStory: "path_donut_taken",
         text: "Kaum hast du den Donut in der Tasche, kommt Chantal aus dem Marketing rein. 'Oh, hast du den letzten 'Veggie-Spinat-Schoko-Test-Donut' gesehen? Ich wollte den gerade für Instagram fotografieren!'",
@@ -9011,6 +8946,7 @@ const DB = {
     },
     {
         id: "cof_donut_2b",
+		char: "Dr. Wichtig",
         title: "Der Feinschmecker",
         reqStory: "path_donut_left",
         text: "Du holst dir deinen Kaffee und siehst, wie Dr. Wichtig den Raum betritt. Er sieht den Donut, seine Augen leuchten. Er beißt herzhaft hinein. 'Mmmh! Endlich mal gute Verpflegung hier!'",
@@ -9078,6 +9014,7 @@ const DB = {
     },
     {
         id: "cof_boss_1",
+		char: "Dr. Wichtig",
         title: "Der Chef lauert",
         text: "Der Chef steht breitbeinig vor der Kaffeemaschine und blockiert den Zugang. Er dreht sich in Zeitlupe zu dir um, eine Augenbraue hochgezogen. 'Ah, Müller? Schon wieder hier? Ist das heute der fünfte Kaffee oder haben Sie Ihren Schreibtisch untervermietet?'",
         opts: [
@@ -9104,6 +9041,7 @@ const DB = {
     },
     {
         id: "cof_boss_2a",
+		char: "Dr. Wichtig",
         title: "Der ungebetene Gast",
         reqStory: "path_boss_consultant",
         text: "Kaum bist du am Platz, steht der Chef wieder da. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Perfektes Timing. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja eh gerade für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
@@ -9130,6 +9068,7 @@ const DB = {
     },
     {
         id: "cof_boss_2b",
+		char: "Dr. Wichtig",
         title: "Die Achtsamkeits-Übung",
         reqStory: "path_boss_lecture",
         text: "Nach dem Vortrag drückt dir der Chef einen Beutel voller bunter Büroklammern in die Hand. 'Damit Sie lernen, sich zu fokussieren: Sortieren Sie die nach Farben. Bis Mittag. Das ist eine Zen-Übung für High-Performer!'",
@@ -9170,6 +9109,7 @@ const DB = {
     },
     {
         id: "cof_ball_2a",
+		char: "Dr. Wichtig",
         title: "Synergie-Gespräche",
         reqStory: "path_ball_taken",
         text: "Du drückst 'Espresso'. Neben dir stehen der Chef und der Vertreter von vorhin. Der Vertreter zeigt begeistert auf den roten Ball in deiner Hand: 'Ah! Ich sehe, unsere 'Cloud' ist schon im Einsatz! Wie gefällt sie Ihnen?'",
@@ -9254,12 +9194,12 @@ const DB = {
                 r: "Du flüsterst: 'Sorry, Kaffeemaschine.' Ein Kollege kommt rein und sieht, wie du mit einem Haushaltsgerät redest. Er geht rückwärts wieder raus. Aber die Sperre öffnet sich!" 
             },
             { 
-                t: "Stecker ziehen (Hard Reset)", 
+                t: "Stecker ziehen", 
                 m: 10, f: -5, a: 10, c: 0, 
                 r: "Du killst den Strom. 'WIR SEHEN UNS IN DER HÖLL...' bricht die Stimme ab. Nach dem Neustart ist sie wieder dumm und stumm. Aber der Kaffee schmeckt leicht nach Motoröl." 
             },
             { 
-                t: "Exorzisten rufen (IT-Support)", 
+                t: "Exorzisten rufen", 
                 m: 5, f: 10, a: 0, c: 5, 
                 r: "Du meldest ein 'Besessenes Gerät'. Die IT lacht dich aus. Du trinkst heute lieber Tee." 
             }
@@ -9475,6 +9415,7 @@ const DB = {
     },
     {
         id: "cof_revolte_2b",
+		char: "Dr. Wichtig",
         title: "Kaffee-Adel",
         reqStory: "path_revolte_buy",
         text: "Seit deiner Bohnen-Spende wirst du behandelt wie ein König. Eine Delegation Kollegen fängt dich ab: 'Das war der beste Stoff seit Jahren! Wir haben gesammelt, damit du Nachschub holst.' Sie halten dir einen Hut voller Kleingeld hin.",
@@ -9512,6 +9453,7 @@ const DB = {
     },
     {
         id: "cof_meeting_1",
+		char: "Chantal",
         title: "Das Marketing-Meeting",
         text: "Chantal und ihre Crew blockieren die Küche. Sie brainstormen über 'Feel-Good-Management'. Es gibt Smoothies. Du brauchst aber Koffein.",
         opts: [
@@ -9540,6 +9482,7 @@ const DB = {
     },
     {
         id: "cof_meeting_2a",
+		char: "Chantal",
         title: "Die Rechnung",
         reqStory: "path_meeting_push",
         text: "Ein pinker Umschlag liegt auf deinem Tisch. Betreff: 'Schadensersatz Sneaker & Seelischer Schmerz'. Chantal fordert 50€ für die Reinigung ihrer Schuhe, die du 'neulich' mit Smoothie ruiniert hast.",
@@ -9592,6 +9535,7 @@ const DB = {
     },
     {
         id: "cof_meeting_2c",
+		char: "Chantal",
         title: "Das Negativ-Beispiel",
         reqStory: "path_meeting_wait",
         text: "Du läufst am Meetingraum vorbei. Chantal hält eine Präsentation über 'Toxische Vibes'. Auf der Leinwand ist ein (heimlich aufgenommenes) Foto von DIR, wie du böse auf die Kaffeemaschine starrst. Untertitel: 'Der Energie-Vampir'.",
@@ -9815,6 +9759,7 @@ const DB = {
     },
     {
         id: "cof_loot_2a",
+		char: "Egon",
         title: "Die Suche nach dem Gold",
         reqStory: "path_loot_tape",
         text: "Egon kommt fluchend in die Küche. 'Hömma! Hast du mein Gaffa gesehen? Der Mülleimerdeckel ist abgerissen und ich muss das tapen! Das war die gute Rolle!'",
@@ -9842,6 +9787,7 @@ const DB = {
     },
     {
         id: "cof_loot_2b",
+		char: "Egon",
         title: "Haltlos",
         reqStory: "path_loot_zip",
         text: "Der Spülmaschinenschlauch hat sich gelöst. Egon kniet davor. 'Mir fehlen meine Kabelbinder! Ich hatte doch ein ganzes Bündel! Jetzt muss ich das festhalten, bis der Kleber trocknet (30 Minuten).'",
@@ -9896,6 +9842,7 @@ const DB = {
     },
     {
         id: "cof_table_2a",
+		char: "Egon",
         title: "Für die Ewigkeit",
         reqStory: "path_table_screw",
         text: "Der Hausmeister steht rot anlaufend und schwitzend am Tisch. Er zerrt mit beiden Händen daran. 'Wer hat das Ding festgeschweißt?! Ich muss hier wischen! Das bewegt sich keinen Millimeter!'",
@@ -9916,6 +9863,7 @@ const DB = {
     },
     {
         id: "cof_table_2b",
+		char: "Kevin",
         title: "Low-Rider",
         reqStory: "path_table_coaster",
         text: "Der Bierdeckel ist weg. Dafür ist der Tisch jetzt nur noch 60cm hoch. Kevin steht stolz daneben, eine Säge in der Hand. 'Der Deckel hat genervt. Hab einfach die anderen drei Beine abgesägt. Jetzt wackelt nix mehr!'",
@@ -9935,6 +9883,7 @@ const DB = {
     },
     {
         id: "cof_table_2c",
+		char: "Chantal",
         title: "Das Mahnmal",
         reqStory: "path_table_kick",
         text: "Der zerstörte Tisch liegt immer noch da. Aber jetzt ist rotes Absperrband drumherum. Ein Schild von Chantal steht davor: 'DECONSTRUCTED WORKSPACE – Eine Installation über den Zusammenbruch der Leistungsgesellschaft.'",
@@ -10018,12 +9967,13 @@ const DB = {
     },
     {
         id: "cof_sticky_2c",
+		char: "Gabi",
         title: "Der Teetrinker",
         reqStory: "path_sticky_tea",
         text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich plötzlich vorsichtig.",
         opts: [
             { 
-                t: "Das Gerücht nutzen (Mitleid)", 
+                t: "Das Gerücht nutzen", 
                 rep: { "Gabi": 5 },
                 m: 10, f: 10, a: -10, c: 0, 
                 r: "Du hustest leise und schaust leidend. Gabi bringt dir Kekse. 'Für die Nerven.' Es lebt sich gut als angeblicher Invalide." 
@@ -10196,6 +10146,7 @@ const DB = {
     },
     {
         id: "cof_gossip_2a",
+		char: "Dr. Wichtig",
         title: "Das Mindset-Verhör",
         reqStory: "path_gossip_caught",
         text: "Der Chef zitiert dich in sein Büro. Er lächelt gequält. 'Müller, ich habe Sie vorhin in der Küche gehört. Ich möchte sichergehen, dass wir 'aligned' sind. Wie läuft das aktuelle Projekt? Gibt es... Schwierigkeiten?' Er wartet lauernd auf ein bestimmtes Wort.",
@@ -10292,6 +10243,7 @@ const DB = {
     },
     {
         id: "cof_premium_hack_2b",
+		char: "Egon",
         title: "Vandalismus-Alarm",
         reqStory: "path_premium_broken",
         text: "Der Hausmeister steht vor der verbeulten Maschine. Er hält ein Phantombild hoch, das verdächtig nach dir aussieht (aber mit Schnurrbart). 'Wer auch immer das war... ich finde ihn. Niemand verbeult meine Lady.'",
@@ -10410,6 +10362,7 @@ const DB = {
     },
     {
         id: "cof_descaling_2b",
+		char: "Egon",
         title: "Egon deckt auf",
         reqStory: "path_descale_fake",
         text: "Hausmeister Egon wedelt mit deinem 'DEFEKT'-Zettel durch den Flur. 'Welcher Scherzkeks war das? Die Maschine wollte nur entkalkt werden! Ich bin doch nicht euer Kindermädchen!' Er sucht den Schuldigen.",
@@ -10478,7 +10431,7 @@ const DB = {
         text: "Auf deinem Schreibtisch steht ein Paket vom Chef. Inhalt: Ein bunter Kinder-Trinkbecher mit Deckel und Saugstutzen. Notiz: 'Damit die Teppiche sauber bleiben. Safety First!'.",
         opts: [
             { 
-                t: "Tasse benutzen (Trotz)", 
+                t: "Tasse aus Trotz benutzen", 
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "Du trinkst demonstrativ aus der Schnabeltasse. Die Kollegen kichern hinter vorgehaltener Hand. Es ist extrem peinlich, aber hey: Der Kaffee bleibt heiß. Deine Wut wächst mit jedem Schluck." 
             },
@@ -10491,6 +10444,7 @@ const DB = {
     },
     {
         id: "cof_spill_2b",
+		char: "Chantal",
         title: "Der Arbeitsunfall",
         reqStory: "path_spill_warn",
         text: "Chantal humpelt mit bandagiertem Knöchel an dir vorbei. Sie wedelt wütend mit deinem Zettel. 'Das Schild war viel zu klein! Ich werde das als Arbeitsunfall melden wegen mangelnder Sicherheitskennzeichnung!'",
@@ -10511,6 +10465,7 @@ const DB = {
     },
     {
         id: "cof_elster_fight_1",
+		char: "Frau Elster",
         title: "Streit um den Kühlschrank",
         text: "Frau Elster wirft dein Essen weg! 'Das stinkt nach Erdnüsse!', keift sie. Du stellst sie zur Rede.",
         opts: [
@@ -10532,6 +10487,7 @@ const DB = {
     },
     {
         id: "cof_elster_fight_2a",
+		char: "Frau Elster",
         title: "Die Bio-Waffe",
         reqStory: "path_elster_allergy",
         text: "Du sitzt in der Küche und öffnest einen 'Snickers'. Frau Elster kommt rein, schnuppert, wird kreidebleich und weicht zurück. 'Ist das... Erdnuss? Willst du mich umbringen?! Geh weg damit!'",
@@ -10552,6 +10508,7 @@ const DB = {
     },
     {
         id: "cof_elster_fight_2b",
+		char: "Frau Elster",
         title: "Die Lebensmittel-Polizei",
         reqStory: "path_elster_police",
         text: "Da du beim letzten Mal gekuscht hast, greift Frau Elster jetzt durch. Dein Joghurt ist weg. Dafür klebt ein Zettel am Fach: 'Wegen fehlendem Haltbarkeitsdatum präventiv entsorgt. Gez. Elster'.",
@@ -10572,6 +10529,7 @@ const DB = {
     },
     {
         id: "cof_salary_rumor_1",
+		char: "Chantal",
         title: "Der Gehalts-Schock",
         text: "Du stehst hinter der Säule und hörst Chantal aus dem Marketing kichern: 'Ja, echt! 500 Euro mehr! Einfach so, weil ich so nett gelächelt habe! Dabei kann ich kaum Excel.' Dein Gehalt wurde seit 3 Jahren nicht angepasst. Dir platzt fast der Kragen.",
         opts: [
@@ -10598,6 +10556,7 @@ const DB = {
     },
     {
         id: "cof_salary_rumor_2a",
+		char: "Dr. Wichtig",
         title: "Der Pitch",
         reqStory: "path_salary_talk",
         text: "Der Chef sieht dich auf dem Flur. 'Ah, Müller! Gut, dass ich Sie sehe.' Du hast deine Argumente-Liste in der Tasche. Das ist der Moment.",
@@ -10606,12 +10565,12 @@ const DB = {
                 t: "Liste zücken & fordern", 
                 req: "arg_list_1", 
 				rep: { "Dr. Wichtig": 5 },	
-                m: 10, f: 10, a: -5, c: 10, 
+                m: 10, f: -5, a: -10, c: 10, 
                 r: "Du ratterst deine Erfolge runter. Der Chef ist beeindruckt (und etwas eingeschüchtert). 'Okay, okay! Wir reden über einen Bonus.' Ein Teilsieg! Du fühlst dich wertgeschätzt." 
             },
             { 
                 t: "Kneifen & nur grüßen", 
-                m: 2, f: 0, a: 10, c: 0, 
+                m: 2, f: 5, a: 10, c: 0, 
                 r: "Mut verlassen. 'Hallo Chef.' Er geht weiter. Du hast die Chance vertan und hasst dich dafür ein bisschen selbst." 
             }
         ]
@@ -10638,6 +10597,7 @@ const DB = {
     },
     {
         id: "cof_markus_flex_1",
+		char: "Markus",
         title: "Der Angeber",
         text: "Markus aus dem Vertrieb blockiert die Maschine. Er krempelt den Ärmel hoch und hält dir sein Handgelenk unter die Nase. 'Na, Admin? Schau mal genau hin. Diese Uhr kostet mehr als dein ganzes Auto.' Er grinst sein breites Gewinner-Lächeln.",
         opts: [
@@ -10674,6 +10634,7 @@ const DB = {
     },
     {
         id: "cof_markus_flex_2a",
+		char: "Markus",
         title: "Das Schmerzensgeld",
         reqStory: "path_markus_hit",
         text: "Markus trägt jetzt ein riesiges Pflaster auf der Nase (völlig übertrieben). Er wedelt mit einem Formular vor deinem Gesicht. 'Das war ein tätlicher Angriff! Entweder du unterschreibst diese offizielle Entschuldigung, oder ich rufe meinen Anwalt!'",
@@ -10695,6 +10656,7 @@ const DB = {
     },
     {
         id: "cof_markus_flex_2b",
+		char: "Markus",
         title: "Der Beweis",
         reqStory: "path_markus_roast",
         text: "Dein Spruch hat Markus' Ego schwer getroffen. Er kommt mit seinem Laptop zu dir. 'Geleast? Dass ich nicht lache! Guck dir mein Crypto-Portfolio an! Ich bin reich! REICH!' Er drängt dir den Bildschirm auf.",
@@ -10715,6 +10677,7 @@ const DB = {
     },
     {
         id: "cof_markus_flex_2c",
+		char: "Markus",
         title: "Das Coaching",
         reqStory: "path_markus_servant",
         text: "Weil du ihm zugehört hast, hält Markus dich jetzt für seinen 'Schüler'. Er schickt dir morgens um 6 Uhr WhatsApp-Sprachnachrichten: 'Guten Morgen Champ! Zeit zum Hustlen! Hol mir mal einen Kaffee, das übt Demut!'",
@@ -10735,6 +10698,7 @@ const DB = {
     },
     {
         id: "cof_gabi_sad_1",
+		char: "Gabi",
         title: "Trauerfall in der Poststelle",
         text: "Gabi aus der Poststelle sitzt schluchzend auf der Eckbank im Pausenraum. In der Hand hält sie einen braunen, schrumpeligen Klumpen. 'Mein kleiner Stachi ist tot! Einfach von uns gegangen!'",
         opts: [
@@ -10765,6 +10729,7 @@ const DB = {
     },
     {
         id: "cof_gabi_sad_2a",
+		char: "Gabi",
         title: "Sonderzustellung",
         reqStory: "path_gabi_donut",
         text: "Gabi winkt dich hektisch hinter die Palme im Flur. 'Psst! Mein Retter! Das hier kam für dich. Ich hab es extra vor dem Chef abgefangen, sah privat aus.' Sie drückt dir ein Paket in die Hand.",
@@ -10786,6 +10751,7 @@ const DB = {
     },
     {
         id: "cof_gabi_sad_2b",
+		char: "Dr. Wichtig",
         title: "Ortstermin",
         reqStory: "path_gabi_energy",
         text: "Der Chef stürmt in die Küche, packt dich am Arm und zerrt dich in den Flur. 'Sie haben Gabi aufgeputscht?! Sehen Sie sich das an!' Durch die offene Tür der Poststelle siehst du, wie Gabi Pakete im Akkord an die Decke stapelt.",
@@ -10806,6 +10772,7 @@ const DB = {
     },
     {
         id: "cof_gabi_sad_2c",
+		char: "Gabi",
         title: "Die Klette",
         reqStory: "path_gabi_listen",
         text: "Du willst dir nur schnell einen frischen Kaffee holen, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
@@ -10852,6 +10819,7 @@ const DB = {
     },
     {
         id: "cof_machine_broke_2a",
+		char: "Egon",
         title: "Ingenieurs-Kunst",
         reqStory: "path_machine_tape",
         text: "Hausmeister Egon steht vor deinem Tape-Kunstwerk. Er nickt langsam und anerkennend. 'Saubere Arbeit, Müller. Hätte ich nicht besser machen können. Das hält bis 2030.' Er klopft dir fest auf die Schulter.",
@@ -10872,6 +10840,7 @@ const DB = {
     },
     {
         id: "cof_machine_broke_2b",
+		char: "Dr. Wichtig",
         title: "Der Lebensretter",
         reqStory: "path_machine_plug",
         text: "Der Chef kommt wütend rein, sieht aber dann die verschmorte Steckdose, die noch leicht qualmt. Er wird bleich. 'Mein Gott... wenn Sie nicht gezogen hätten... das ganze Archiv! Müller, Sie haben uns den Hintern gerettet!'",
@@ -10911,6 +10880,7 @@ const DB = {
     },
     {
         id: "cof_kevin_learn_1",
+		char: "Kevin",
         title: "Kevins Weltbild",
         text: "Kevin starrt fasziniert auf das blinkende Server-Rack. Er dreht sich mit großen Augen zu dir um: 'Sag mal... sitzt da drin eigentlich ein kleiner Mann, der die ganzen E-Mails tippt und weiterschickt?' Du wartest auf die Pointe. Aber es kommt keine. Er meint das todernst.",
         opts: [
@@ -10940,6 +10910,7 @@ const DB = {
     },
     {
         id: "cof_kevin_learn_2a",
+		char: "Kevin",
         title: "Rohrpost 2.0",
         reqStory: "path_kevin_explain",
         text: "Kevin hat versucht, deine Erklärung umzusetzen. Er hat Klorollen an die Server-Lüfter geklebt. 'Damit die Daten schneller flutschen!', ruft er stolz. Überraschenderweise entsteht dadurch ein angenehm kühler Luftzug direkt auf deinen Schreibtisch.",
@@ -10960,6 +10931,7 @@ const DB = {
     },
     {
         id: "cof_kevin_learn_2b",
+		char: "Kevin",
         title: "Der Schriftgelehrte",
         reqStory: "path_kevin_manual",
         text: "Kevin steht stramm vor dir. Er hat das Handbuch auswendig gelernt. 'Laut Seite 103, Absatz 4 steht dem Administrator bei erhöhter Serverlast eine zwanzigminütige Regenerationspause zu. Soll ich den Türsteher machen?'",
@@ -11043,6 +11015,7 @@ const DB = {
     },
     {
         id: "cof_birthday_cake_2b",
+		char: "Dr. Wichtig",
         title: "Meeting-Crasher",
         reqStory: "path_cake_steal",
         text: "Du sitzt in deinem Büro vor dem gestohlenen Kuchen, als die Tür auffliegt. Der Chef und drei japanische Investoren stehen da. Der Chef starrt auf den Kuchen, dann auf dich. 'Müller?! Das war das Catering für die Delegation!'",
@@ -11063,6 +11036,7 @@ const DB = {
     },
     {
         id: "cof_elevator_stuck_1",
+		char: "Markus",
         title: "Im Aufzug stecken",
         text: "Ruckel. Klack. Stille. Nicht schon wieder! Der Aufzug bleibt zwischen dem 2. und 3. Stock hängen. Neben dir steht Markus aus dem Vertrieb in einer Wolke aus 'Eau de Success'. Er grinst: 'Na, Zeit für ein Networking-Gespräch, was?'",
         opts: [
@@ -11092,6 +11066,7 @@ const DB = {
     },
     {
         id: "cof_elevator_2a",
+		char: "Markus",
         title: "Gefangen mit dem Bestie",
         reqStory: "path_elevator_markus",
         text: "Markus springt in letzter Sekunde zu dir in den Aufzug. 'Hey Buddy! Gut, dass ich dich treffe!' Er drückt grinsend den **Nothalt-Knopf**. Der Aufzug stoppt hart. 'Ich muss dir unbedingt von meiner neuen Business-Idee erzählen. Dauert nur 20 Minuten.'",
@@ -11192,6 +11167,7 @@ const DB = {
     },
     {
         id: "cof_miracle_2b",
+		char: "Dr. Wichtig",
         title: "Perlen vor die Säue",
         reqStory: "path_miracle_boss",
         text: "Der Chef freut sich. 'Müller! Sie lesen Gedanken!' Er nimmt die Tasse mit dem perfekten Kaffee... und kippt drei Päckchen Süßstoff und einen Schuss laktosefreie H-Milch hinein. Die Crema zerfällt sofort zu grauer Plörre.",
@@ -11210,7 +11186,7 @@ const DB = {
             }
         ]
     },
-{
+    {
         id: "cof_silence_1",
         title: "Himmlische Stille",
         text: "Du betrittst die Küche. Sie ist leer. Kein Kühlschrank-Brummen, kein kauender Kollege, kein Tropfen. Einfach nur absolute, goldene Stille. Es ist fast schon... unheimlich friedlich.",
@@ -11332,7 +11308,7 @@ const DB = {
         text: "Du brauchst Koffein. Dringend. Aber auf dem Display der Maschine steht nur: 'ERROR 418 - I'm a teapot'. Deine Hände zittern bereits leicht.",
         opts: [
             { 
-                t: "Dagegen treten (Wut)", 
+                t: "Dagegen treten", 
                 next: "path_machine_war", 
                 m: 5, f: 0, a: 15, c: 0, 
                 r: "BAM! Du trittst gegen das Gehäuse. Ein Schwall heißes Wasser läuft über deine Schuhe. Die Maschine piept wütend." 
@@ -11596,6 +11572,7 @@ const DB = {
     },
     {
         id: "cof_catering_2a",
+		char: "Dr. Wichtig",
         title: "Heikle Informationen",
         reqStory: "path_cat_cleanup",
         text: "Der Chef kommt hektisch zurück. Er sucht genau diesen Zettel. Er sieht dich an, Panik in den Augen. 'Müller! Haben Sie hier... Papierkram gesehen?'",
@@ -11616,6 +11593,7 @@ const DB = {
     },
     {
         id: "cof_catering_2b",
+		char: "Dr. Wichtig",
         title: "Beweislast",
         reqStory: "path_cat_eat",
         text: "Du läufst dem Chef in die Arme. Er starrt auf den riesigen Fettfleck auf deinem Hemd und die Krümel im Mundwinkel. 'Müller? Haben Sie etwa vom Vorstandsbuffet gegessen?'",
@@ -11677,6 +11655,7 @@ const DB = {
     },
 	{
         id: "cof_lore_2c",
+		char: "Kevin",
         title: "Gerüchteküche",
         reqStory: "path_lore_ignore",
         text: "Du triffst Kevin in der Küche. Er grinst breit und wedelt mit einem Aktenordner. 'Rate mal, was ich im Serverraum gefunden habe? Die HR-Liste! Ich werde alle erpressen!'",
@@ -11702,6 +11681,7 @@ const DB = {
     },
     {
         id: "cof_kevin_hack_1",
+		char: "Kevin",
         title: "Kevins Upgrade",
         text: "Kevin hat die Rückwand der Kaffeemaschine abgeschraubt und einen Raspberry Pi an die Platine gelötet. 'Ich installiere Doom auf dem Display. Und ich habe die Wassertemperatur auf 105 Grad übertaktet. Willst du den ersten Testlauf machen?'",
         opts: [
@@ -11786,6 +11766,7 @@ const DB = {
     },
     {
         id: "cof_chantal_tiktok_1",
+		char: "Chantal",
         title: "Content Creation",
         text: "Chantal hat ein Ringlicht vor der Kaffeemaschine aufgebaut. 'Hey! Kannst du kurz filmen? Ich mache die 'No-Sleep-Challenge'. Ich muss so tun, als würde ich den Kaffee inhalieren. Sei ästhetisch!'",
         opts: [
@@ -11814,6 +11795,7 @@ const DB = {
     },
     {
         id: "cof_chantal_tiktok_2a",
+		char: "Chantal",
         title: "Dankeschön",
         reqStory: "path_chantal_tiktok_help",
         text: "Chantal fängt dich ab. 'Das Video hat 300 Views! Hier, als Dankeschön.' Sie drückt dir einen Becher mit einer grünen Flüssigkeit in die Hand. 'Detox-Spinat-Matcha-Latte. Selbstgemacht.'",
@@ -11870,6 +11852,7 @@ const DB = {
     },
     {
         id: "cof_ceo_trap_1",
+		char: "Dr. Wichtig",
         title: "Die Honigfalle",
         text: "Dr. Wichtig steht lächelnd an der Maschine. Er hält zwei Becher. 'Ah, Müller! Perfektes Timing. Ich habe heute Spendierhosen an. Möchten Sie diesen doppelten Espresso? Aus meinem Privat-Vorrat. Geht aufs Haus.'",
         opts: [
@@ -11918,6 +11901,7 @@ const DB = {
     },
     {
         id: "cof_ceo_trap_2b",
+		char: "Markus",
         title: "Kollateralschaden",
         reqStory: "path_ceo_trap_denied",
         text: "Du siehst Markus im Flur. Er schleppt schwere Archiv-Kisten und schwitzt. 'Der Chef hat mich abgefangen', keucht er. 'Er meinte, wer Zeit für Kaffee hat, hat auch Zeit zum Schleppen. Hätte ich bloß abgelehnt...'",
@@ -11955,6 +11939,7 @@ const DB = {
     },
     {
         id: "cof_egon_fix_1",
+		char: "Egon",
         title: "Offene Operation",
         text: "Die Kaffeemaschine ist zerlegt. Egon stochert mit einem Schraubenzieher im Mahlwerk. 'Kalk. Überall Kalk. Und jemand hat Kaugummi reingeworfen. Das muss mechanisch gelöst werden.'",
         opts: [
@@ -12020,6 +12005,7 @@ const DB = {
     },
     {
         id: "cof_egon_fix_2c",
+		char: "Egon",
         title: "Handwerker-Ehre",
         reqStory: "path_egon_fix_help",
         text: "Die Maschine schnurrt wie ein Kätzchen. Egon steht im Flur und nickt dir zu. Er hat ein 'Reserviert'-Schild für dich an die Maschine gehängt.",
@@ -12039,6 +12025,7 @@ const DB = {
     },
     {
         id: "cof_elster_audit_1",
+		char: "Frau Elster",
         title: "Die Budget-Kontrolle",
         text: "Frau Elster steht mit einem Klemmbrett vor der Kaffeemaschine. Sie notiert jede Tasse. 'Herr Müller! Der Bohnenverbrauch ist im Q3 um 4,2% gestiegen. Haben Sie das Entnahme-Formular K-7 ausgefüllt?'",
         opts: [
@@ -12067,6 +12054,7 @@ const DB = {
     },
     {
         id: "cof_elster_audit_2a",
+		char: "Frau Elster",
         title: "Rationierung",
         reqStory: "path_elster_audit_fight",
         text: "Du willst dir einen Kaffee holen. Das Display zeigt: 'LIMIT ERREICHT'. Ein Zettel von Frau Elster hängt daneben: 'Wegen Verschwendungssucht wurde Abteilung IT auf 2 Tassen pro Tag gedrosselt.'",
@@ -12107,6 +12095,7 @@ const DB = {
 
     {
         id: "cof_elster_audit_2c",
+		char: "Frau Elster",
         title: "Tee-Zwang",
         reqStory: "path_elster_audit_lie",
         text: "Frau Elster lauert dir wieder auf. 'Herr Müller! Ich habe gesehen, wie Sie Richtung Kaffeebohnen geschielt haben. Bleiben wir doch bei unserem gesunden Wasser, nicht wahr?' Sie beobachtet dich streng.",
@@ -12127,6 +12116,7 @@ const DB = {
     },
     {
         id: "cof_markus_pitch_1",
+		char: "Markus",
         title: "Networking",
         text: "Markus fängt dich ab. Er lehnt lässig an der Maschine und blockiert den Ausguss. 'Müller! Kaffee ist für Closer. Apropos... hast du mal über passives Einkommen nachgedacht? Krypto? NFTs von gelangweilten Katzen? Ich kann dich ins inner Circle holen.'",
         opts: [
@@ -12174,6 +12164,7 @@ const DB = {
     },
     {
         id: "cof_markus_pitch_2b",
+		char: "Markus",
         title: "Rufmord",
         reqStory: "path_markus_pitch_hate",
         text: "Du hörst Markus in der Küche lästern. 'Müller? Totaler Low-Performer. Bremst den Umsatz. Hat Angst vor Erfolg.' Gabi und Chantal hören zu.",
@@ -12193,6 +12184,7 @@ const DB = {
     },
     {
         id: "cof_markus_pitch_2c",
+		char: "Markus",
         title: "Der Mentor",
         reqStory: "path_markus_pitch_alpha",
         text: "Markus kommt zu dir an den Tisch. Er legt dir ein Buch hin: 'Die 4-Stunden-Woche'. 'Für dich, Tiger. Wir Wölfe müssen zusammenhalten.'",
@@ -12211,6 +12203,7 @@ const DB = {
     },
     {
         id: "cof_gabi_break_1",
+		char: "Gabi",
         title: "Versteckspiel",
         text: "Gabi hockt hinter der großen Topfpflanze neben der Kaffeemaschine. Sie flüstert: 'Psst! Ich verstecke mich vor dem UPS-Mann. Der hat ein Paket, das 30kg wiegt. Sag nichts!'",
         opts: [
@@ -12240,6 +12233,7 @@ const DB = {
 
     {
         id: "cof_gabi_break_2a",
+		char: "Gabi",
         title: "Post-Rache",
         reqStory: "path_gabi_break_snitch",
         text: "Du wartest auf ein dringendes Paket. Gabi grinst dich am Empfang an. 'Oh, das? Das habe ich zurückgeschickt. 'Empfänger unbekannt verzogen'. Tja. Pech.'",
@@ -12260,6 +12254,7 @@ const DB = {
 
     {
         id: "cof_gabi_break_2b",
+		char: "Gabi",
         title: "Frühwarnsystem",
         reqStory: "path_gabi_break_help",
         text: "Dein Telefon klingelt einmal kurz, gerade als du aufstehen wolltest. Gabi: 'Code Rot. Dr. Wichtig ist auf dem Weg zu dir. Er sieht sauer aus. Tu beschäftigt.'",
@@ -12280,6 +12275,7 @@ const DB = {
 
     {
         id: "cof_gabi_break_2c",
+		char: "Gabi",
         title: "Schulden begleichen",
         reqStory: "path_gabi_break_deal",
         text: "Gabi knallt dir einen Schokoriegel auf den Tisch. 'Hier. Dein Schweigegeld. Ich hoffe, er schmeckt nach Verrat.'",
@@ -12332,7 +12328,7 @@ const DB = {
         opts: [
             { 
                 t: "Den ersten Kaffee andächtig zapfen", 
-                m: 10, f: 10, a: -30, c: 0, 
+                m: 10, f: 10, a: -20, c: 0, 
                 r: "Dein erster gezapfter Kaffee ist eine Offenbarung. Perfekte Crema, perfekte Temperatur. Dieser Kaffee heilt Wunden. Deine Wut sinkt massiv." 
             },
             { 
@@ -12343,13 +12339,14 @@ const DB = {
             { 
                 t: "Den Kaffee für 5€ an Chantal verkaufen", 
                 rep: { "Chantal": -5 },
-                m: 5, f: 0, a: 5, c: 0, 
+                m: 5, f: 0, a: -10, c: 0, 
                 r: "Du verkaufst den perfekten 'First Brew' an die Koffein-süchtige Chantal. Sie zahlt grummelnd. Du bist reich, aber sie hasst deinen Kapitalismus." 
             }
         ]
     },
     {
         id: "cof_descale_absurd_2b",
+		char: "Markus",
         title: "Brocken im Becher",
         reqStory: "path_descale_screw",
         text: "Stunden nach deiner Schraubendreher-Aktion kommt Markus vom Vertrieb mit einem Becher zu dir ins Büro. Er spuckt fast. 'Sag mal, was ist mit dem Kaffee los?! Da schwimmen weiße Bröckchen drin! Ist das Kokain oder Gift?!'",
@@ -12375,6 +12372,7 @@ const DB = {
     },
     {
         id: "cof_descale_absurd_2c",
+		char: "Dr. Wichtig",
         title: "Salatdressing",
         reqStory: "path_descale_vinegar",
         text: "Einige Zeit ist vergangen. Plötzlich stürmt der Chef aus seinem Büro. Er würgt. 'Müller! Was ist in der Kaffeemaschine?! Ich wollte einen Espresso und es schmeckt wie lauwarmer Gurkensalat! Der ganze Flur riecht nach Essig!'",
@@ -12426,6 +12424,7 @@ const DB = {
     },
     {
         id: "cof_swiss_choc_2a",
+		char: "Frau Elster",
         title: "Der Süßwaren-Dieb",
         reqStory: "path_choc_steal",
         text: "Frau Elster hängt einen weinerlichen Zettel an die Küchentür: 'Wer hat meine Diät-Ausnahme-Schokolade gestohlen? Ich bin zutiefst enttäuscht von diesem Team!'",
@@ -12512,6 +12511,7 @@ const DB = {
     },
     {
         id: "cof_stolen_sandwich_2a",
+		char: "Markus",
         title: "Der hungrige Wolf",
         reqStory: "path_sandwich_steal",
         text: "Markus brüllt im Flur. 'WER WAR AN MEINEM PASTRAMI?! ICH HABE EINEN LOW-BLOOD-SUGAR-CRASH! MEINE DEALS PLATZEN!' Er sieht aus, als würde er gleich weinen.",
@@ -12533,6 +12533,7 @@ const DB = {
     },
     {
         id: "cof_stolen_sandwich_2b",
+		char: "Markus",
         title: "Der Namens-Krieg",
         reqStory: "path_sandwich_prank",
         text: "Markus und Egon stehen sich in der Teeküche gegenüber. Egon beißt gerade herzhaft in das Pastrami-Sandwich. 'Da stand mein Name drauf, Anzugträger!' sagt Egon schmatzend. Markus schnappt nach Luft.",
@@ -12552,6 +12553,7 @@ const DB = {
     },
     {
         id: "cof_stolen_sandwich_2c",
+		char: "Markus",
         title: "Verdorben",
         reqStory: "path_sandwich_leave",
         text: "Markus war gestern außer Haus. Das sündhaft teure Sandwich liegt heute immer noch im Kühlschrank. Das Brot ist komplett aufgeweicht und sieht grau aus.",
@@ -12649,7 +12651,53 @@ const DB = {
                 r: "Du rufst den Hausmeister. Egon sieht das Pulver an der Decke und verliert jeglichen Glauben an die Menschheit." 
             }
         ]
-    }
+    },
+    {
+        id: "cof_workout_2a",
+		char: "Chantal",
+        title: "Muskelkater",
+        reqStory: "path_workout_join",
+        text: "Du schleppst dich zur Kaffeemaschine. Der 90-minütige Pilates-Kurs auf dem Boden fordert Tribut. Du kannst deine Arme vor Schmerzen kaum heben, um nach dem Becher zu greifen. Chantal steht superfit und frisch daneben.",
+        opts: [
+            { 
+                t: "Sie bitten, dir den Kaffee zu reichen", 
+                rep: { "Chantal": 10 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Chantal lacht. 'Haha, Anfänger! Aber du hast Potenzial.' Sie gibt dir den Becher. Du hast eine Freundin gewonnen, auch wenn du dich wie 80 Jahre alt fühlst." 
+            },
+            { 
+                t: "Unter Schmerzen selbst zapfen", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Du presst die Zähne zusammen und hebst zitternd den Arm. Jeder Muskel brennt. Du hast deinen Kaffee, aber bist extrem reizbar." 
+            }
+        ]
+    },
+    {
+        id: "cof_dance_1",
+        title: "Smooth Criminal",
+        text: "Du holst dir einen Kaffee. Der Raum ist leer. Du hast einen absoluten Ohrwurm von 'Billie Jean' und lässt dich treiben. Du ziehst einen perfekten Moonwalk ab, greifst in den Schritt und machst eine wilde Drehung. Als du die Augen aufmachst, starrst du direkt in eine laufende Kameralinse. Der Chef gibt dahinter gerade ein Live-Interview für den 'GlobalCorp Investor Day'.",
+        opts: [
+            { 
+                t: "Völlige Panik: Sofort wegrennen", 
+                next: "path_dance_flee", 
+                m: 5, f: 0, a: 30, c: 10, 
+                r: "Du reißt die Augen auf, kreischt leise und sprintest aus dem Bild. Ein unfassbar peinlicher Abgang, der jetzt für immer im Firmen-Archiv und im Internet steht." 
+            },
+            { 
+                t: "Durchziehen: Den Tanz perfekt beenden", 
+                next: "path_dance_finish", 
+                m: 10, f: 10, a: -10, c: 15, 
+                r: "Wenn schon, denn schon! Du tippst dir an den imaginären Hut, gleitest rückwärts aus dem Bild und verschwindest cool. Die Investoren im Stream eskalieren vor Begeisterung." 
+            },
+            { 
+                t: "Sabotage: Linse mit Donut abdecken", 
+                rem: "donut", 
+                next: "path_dance_donut", 
+                m: 5, f: 0, a: 10, c: 20, 
+                r: "Du drückst deinen klebrigen Donut in Panik direkt auf die sündhaft teure Linse des Kameramanns. Bild schwarz. Beweise (teilweise) vernichtet, Kameramann tobt. (Item verbraucht)" 
+            }
+        ]
+    },
     ],
 
 // === SIDE QUESTS ===
@@ -12701,6 +12749,7 @@ const DB = {
     },
     {
         id: "sq_toilet_2b",
+		char: "Egon",
         kind: "text",
         title: "Der Fehlalarm",
         reqStory: "path_toilet_lie",
@@ -12789,6 +12838,7 @@ const DB = {
     },
     {
         id: "sq_cake_2c",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Das Back-Mandat",
         reqStory: "path_cake_boss",
@@ -12837,6 +12887,7 @@ const DB = {
     },
     {
         id: "sq_fire_2a",
+		char: "Egon",
         kind: "text",
         title: "Schneegestöber",
         reqStory: "path_fire_hero",
@@ -12878,6 +12929,7 @@ const DB = {
     },
     {
         id: "sq_fire_2c",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Networking im Nieselregen",
         reqStory: "path_fire_rain",
@@ -12946,6 +12998,7 @@ const DB = {
     },
     {
         id: "sq_usb_2b",
+		char: "Gabi",
         kind: "text",
         title: "Gabis Fehler",
         reqStory: "path_usb_gabi_fail",
@@ -13298,6 +13351,7 @@ const DB = {
     },
     {
         id: "sq_package_open_2c",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Das Puzzle für Manager",
         reqStory: "path_package_glass",
@@ -13538,6 +13592,7 @@ const DB = {
     },
     {
         id: "sq_loot_crate_2",
+		char: "Egon",
         kind: "text",
         title: "Der Sammler",
         reqStory: "loot_crate_taken",
@@ -13605,6 +13660,7 @@ const DB = {
     },
     {
         id: "sq_janitor_talk",
+		char: "Egon",
         kind: "text",
         title: "Raucherpause mit Egon",
         text: "Du triffst Hausmeister Egon am Hintereingang. Er kämpft mit seinem Feuerzeug und flucht über 'diese neumodische Technik'.",
@@ -13646,6 +13702,7 @@ const DB = {
     },
     {
         id: "sq_archive_find_2a",
+		char: "Gabi",
         kind: "text",
         title: "CSI: Buchhaltung",
         reqStory: "path_archive_stolen",
@@ -13690,6 +13747,7 @@ const DB = {
     },
     {
         id: "sq_toner_trap",
+		char: "Frau Elster",
         kind: "text",
         title: "Die Toner-Falle",
         text: "Frau Elster aus der Buchhaltung winkt dich hektisch zum Kopierer. 'Da klemmt was! Ich trau mich nicht ran, Sie sind doch der Technik-Profi!' Sie tritt auffällig weit zurück und hält sich die Hände vor das weiße Kostüm.",
@@ -13712,20 +13770,21 @@ const DB = {
     },
     {
         id: "sq_toner_trap_2a",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Der blaue Orden",
         reqStory: "path_toner_explosion",
         text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef kommt rein. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
         opts: [
             { 
-                t: "Die Legende bestätigen (Loot)", 
+                t: "Die Legende bestätigen", 
                 rep: { "Frau Elster": 2, "Dr. Wichtig": 10 },
                 m: 10, f: 5, a: -10, c: -10, 
                 r: "Du nickst ernst. 'Der Teppich ist das Herz der Firma, Chef.' Er ist gerührt und schenkt dir eine Schachtel 'Merci', die eigentlich für Kunden gedacht war. (Inventar +1)" 
             },
             { 
                 t: "Gefahrenzulage fordern", 
-				rep: { "Dr. Wichtig": 2 },	
+				rep: { "Dr. Wichtig": 5 },	
                 m: 5, f: 0, a: 10, c: -5, 
                 r: "Der Chef lacht laut. 'Der war gut, Müller! Humor in der Krise! Weiter so!' Er klopft dir auf die noch staubige Schulter und geht. Du hast jetzt blaue Handabdrücke auf dem Hemd." 
             }
@@ -13733,6 +13792,7 @@ const DB = {
     },
     {
         id: "sq_toner_trap_2b",
+		char: "Frau Elster",
         kind: "text",
         title: "Das Schlumpf-Gespenst",
         reqStory: "path_toner_dodge",
@@ -13904,6 +13964,7 @@ const DB = {
     },
     {
         id: "sq_elster_blockade_1",
+		char: "Frau Elster",
         kind: "text",
         title: "Der Drache bewacht den Hort",
         text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budget 2024', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
@@ -14152,6 +14213,7 @@ const DB = {
     },
     {
         id: "sq_cable_hunt_1",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Panik am Papierfach",
         text: "Alarmstufe Rot! Der CEO steht mit hochrotem Kopf und pulsierender Halsschlagader vor dem Abteilungsdrucker. 'Ich muss diesen Fusions-Vertrag JETZT unterschreiben! Die Japaner warten! Warum druckt das Ding nicht?!' Deine Diagnose: Das USB-Verbindungskabel fehlt. Einfach weg.",
@@ -14265,6 +14327,7 @@ const DB = {
     },
     {
         id: "sq_fire_drill_2a",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Die Bürde der Kompetenz",
         reqStory: "path_fire_marshal",
@@ -14575,6 +14638,7 @@ const DB = {
     },
     {
         id: "sq_boss_snoop",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Schritte auf dem Flur",
         text: "Du hörst schwere Schritte auf dem Flur. Die Tür knarrt auf. Dr. Wichtig steht im Türrahmen und blinzelt auf deinen Bildschirm. Du hast gerade privat im Internet gesurft.",
@@ -14632,7 +14696,7 @@ const DB = {
         text: "Dein Telefon klingelt. 'Hier ist der Cloud-Support. Wir haben die Logs geprüft. Dass die Seiten schwarz sind, ist völlig normal.' Du fragst verdutzt nach dem Grund.",
         opts: [
             { 
-                t: "Zuhören (Ungläubig)", 
+                t: "Ihm ungläubig zuhören", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "'Unsere Server stehen in Tokio. Dort ist es gerade Nacht. Cloud-Printing spiegelt die lokale Zeit wider. Versuchen Sie es morgen früh wieder, dann sind die Seiten weiß.' Er legt auf. Du starrst das Telefon an." 
             },
@@ -14966,7 +15030,7 @@ const DB = {
         text: "Du steckst den gefundenen USB-Stick an deinen PC. Darauf ist eine Datei: 'Passwörter_Alle_Mitarbeiter.xlsx'. Offenbar wollte die HR-Abteilung das 'sicher entsorgen', hat aber den Stick statt das Papier eingeworfen.",
         opts: [
             { 
-                t: "Stick behalten (Macht)", 
+                t: "Stick behalten", 
                 m: 5, f: 5, a: -10, c: 20, 
                 r: "Du hast jetzt Zugriff auf alles. Sogar auf das Netflix-Konto vom Chef. Du fühlst dich mächtig (und kriminell). Du steckst den Stick tief in deine Tasche." 
             },
@@ -15010,6 +15074,7 @@ const DB = {
     },
     {
         id: "sq_elster_cat_2a",
+		char: "Frau Elster",
         kind: "text",
         title: "Dankbarkeit in der Buchhaltung",
         reqStory: "path_elster_happy",
@@ -15031,6 +15096,7 @@ const DB = {
     },
     {
         id: "sq_elster_cat_2b",
+		char: "Frau Elster",
         kind: "text",
         title: "Die Quittung",
         reqStory: "path_elster_angry",
@@ -15052,6 +15118,7 @@ const DB = {
     },
     {
         id: "sq_elster_cat_2c",
+		char: "Frau Elster",
         kind: "text",
         title: "Der Fresskoma-Notfall",
         reqStory: "path_elster_fat",
@@ -15072,6 +15139,7 @@ const DB = {
     },
     {
         id: "sq_shredder_puzzle_1",
+		char: "Frau Elster",
         kind: "text",
         title: "Das Puzzle des Todes",
         text: "Frau Elster kniet weinend vor dem Papierschredder. 'Ich habe aus Versehen den original unterschriebenen Leasing-Vertrag geschreddert! Wenn der Chef das sieht, bin ich tot! Wir müssen das wieder zusammensetzen!' Vor ihr liegt ein Berg Konfetti.",
@@ -15103,13 +15171,14 @@ const DB = {
     },
     {
         id: "sq_shredder_puzzle_2a",
+		char: "Frau Elster",
         kind: "text",
         title: "Ewige Dankbarkeit",
         reqStory: "path_shredder_puzzle",
         text: "Später kommt Frau Elster an deinen Platz geschlendert. Der Stress von vorhin ist komplett verflogen. Sie legt eine goldene Schachtel Pralinen und einen unterschriebenen Blanko-Spesenbeleg auf deinen Tisch. 'Sie haben mein Leben gerettet, Herr Müller.'",
         opts: [
             { 
-                t: "Gnade annehmen (Loot)", 
+                t: "Gnade annehmen", 
                 loot: "chocolate",
                 m: 5, f: 0, a: -20, c: -10, 
                 r: "Das war es wert. Der Chef-Radar sinkt, weil Frau Elster jetzt überall in den höchsten Tönen von dir schwärmt. Und du hast Schokolade. (Inventar +1)" 
@@ -15130,6 +15199,7 @@ const DB = {
     },
     {
         id: "sq_shredder_puzzle_2b",
+		char: "Frau Elster",
         kind: "text",
         title: "Der Leasing-Rückläufer",
         reqStory: "path_shredder_tape",
@@ -15157,6 +15227,7 @@ const DB = {
     },
     {
         id: "sq_shredder_puzzle_2c",
+		char: "Frau Elster",
         kind: "text",
         title: "Der kalte Entzug",
         reqStory: "path_shredder_ignore",
@@ -15305,13 +15376,14 @@ const DB = {
         opts: [
             { 
                 t: "In die Hand schauen", 
-                m: 5, f: 10, a: -30, c: -10, 
+                m: 5, f: 10, a: -25, c: -10, 
                 r: "Es ist ein 50-Euro-Schein! Einfach so. Trinkgeld in der IT? Ein historischer Moment. Deine Laune ist auf dem absoluten Höhepunkt." 
             }
         ]
     },
     {
         id: "sq_investor_wifi_2b",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Der Reboot-Rückschlag",
         reqStory: "path_investor_reboot",
@@ -15436,6 +15508,7 @@ const DB = {
     },
     {
         id: "sq_boss_fight_hallway_1",
+		char: "Markus",
         kind: "text",
         title: "Clash der Titanen",
         text: "Der Vertriebsleiter Markus und Björn vom Marketing stehen Stirn an Stirn auf dem Flur und brüllen sich an. Es geht um den letzten freien Meetingraum. Die Spucke fliegt, die Gesichter sind purpurrot. Niemand traut sich an den beiden vorbei.",
@@ -15464,6 +15537,7 @@ const DB = {
     },
     {
         id: "sq_boss_fight_hallway_2a",
+		char: "Markus",
         kind: "text",
         title: "Der Guru",
         reqStory: "path_hallway_ball",
@@ -15478,6 +15552,7 @@ const DB = {
     },
     {
         id: "sq_boss_fight_hallway_2b",
+		char: "Markus",
         kind: "text",
         title: "Vereinte Feinde",
         reqStory: "path_hallway_peace",
@@ -15502,351 +15577,6 @@ const DB = {
         title: "Der Keller-Fund",
         reqStory: "path_hallway_detour",
         text: "Weil du den Umweg durch den alten Keller genommen hast, entdeckst du eine verstaubte Kiste im Heizungsraum. Darin liegt völlig unbenutztes, altes IT-Werkzeug, das jemand vor Jahren vergessen hat.",
-        opts: [
-            { 
-                t: "Schraubendreher einstecken", 
-                loot: "screw", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Ein erstklassiger Kreuzschlitz. Das Universum belohnt den Weg des geringsten Widerstands. (Inventar +1)" 
-            },
-            { 
-                t: "Kabelbinder mitnehmen", 
-                loot: "zip_ties", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Eine halbe Packung schwarze Kabelbinder. Immer gut zu gebrauchen. (Inventar +1)" 
-            }
-        ]
-    },
-    {
-        id: "sq_fragile_drive_1",
-        kind: "text",
-        title: "Gefahrgut-Transport",
-        text: "Du musst eine unersetzliche, völlig unverpackte Festplatte mit den Bauplänen der Firma in den 4. Stock bringen. Der Aufzug ist kaputt. Die Treppen sind frisch gewischt und extrem rutschig. Ein falscher Schritt und die Existenz der Firma zerschellt auf den Fliesen.",
-        opts: [
-            { 
-                t: "Luftpolsterfolie als Airbag nutzen", 
-                rem: "bubble_wrap", 
-                next: "path_drive_wrap", 
-                m: 10, f: 0, a: -10, c: -5, 
-                r: "Du wickelst die Festplatte dick in deine geliebte Knallfolie ein. Du rutschst tatsächlich auf der Treppe aus, aber die Folie dämpft den Sturz perfekt. Daten gerettet, Folie weg." 
-            },
-            { 
-                t: "Vorsichtig wie auf rohen Eiern gehen", 
-                next: "path_drive_careful", 
-                m: 30, f: -10, a: 20, c: 0, 
-                r: "Du brauchst ewig. Jede Treppenstufe ist ein mentaler Kraftakt. Dein Puls rast, aber die Platte kommt heile oben an. Du bist völlig erschöpft." 
-            },
-            { 
-                t: "Keine Zeit! Rennen!", 
-                next: "path_drive_run",
-                m: 5, f: 5, a: 30, c: 10, 
-                r: "Du sprintest los. Du fängst dich auf der Treppe gerade noch ab und zerrst dir massiv den Rücken. Die Platte ist heile, aber du läufst heute wie der Glöckner von Notre-Dame." 
-            }
-        ]
-    },
-    {
-        id: "sq_fragile_drive_2a",
-        kind: "text",
-        title: "Therapie für andere",
-        reqStory: "path_drive_wrap",
-        text: "Du kommst oben an und übergibst die eingewickelte Festplatte. Die Kollegin packt sie aus und fängt sofort an, genüsslich deine alte Luftpolsterfolie zu ploppen. 'Ohhh, danke Müller! Das entspannt total!'",
-        opts: [
-            { 
-                t: "Folie entreißen: 'Das war nicht geschenkt!'", 
-                loot: "bubble_wrap",
-                m: 2, f: 0, a: 5, c: 0, 
-                r: "Du nimmst ihr das Plastik eiskalt wieder aus den Händen. 'Das ist IT-Eigentum!' Sie guckt dich an, als hättest du ihr gerade Weihnachten gestrichen, aber du hast deinen Schatz zurück." 
-            },
-            { 
-                t: "Traurig zusehen, wie sie geploppt wird", 
-                m: 2, f: 0, a: -5, c: 0, 
-                r: "Du hast nicht das Herz, ihr die Freude zu nehmen. Das Ploppen hallt leise den Flur hinunter." 
-            }
-        ]
-    },
-    {
-        id: "sq_fragile_drive_2b",
-        kind: "text",
-        title: "Die Schnecke",
-        reqStory: "path_drive_careful",
-        text: "Weil du auf der Treppe so extrem langsam warst, hat das Projekt-Team im 4. Stock die Deadline für die Baupläne knapp verfehlt. Der Projektleiter steht schnaubend vor dir. 'Haben Sie die Festplatte getragen oder persönlich hochgerollt?!'",
-        opts: [
-            { 
-                t: "Den Anschiss regungslos über sich ergehen lassen", 
-                m: 10, f: 0, a: 10, c: 5, 
-                r: "Du hast die Daten geschützt, jetzt musst du eben die verbale Prügel kassieren. So ist das Admin-Leben." 
-            },
-            { 
-                t: "Zurückbrüllen: 'Daten sind wichtiger als Zeit!'", 
-                m: 5, f: -5, a: 20, c: 10, 
-                r: "Du gehst in den Gegenangriff. Er ist perplex, lässt dich aber stehen. Der Flurfunk wird das definitiv aufgreifen." 
-            }
-        ]
-    },
-    {
-        id: "sq_fragile_drive_2c",
-        kind: "text",
-        title: "Der Hexenschuss",
-        reqStory: "path_drive_run",
-        text: "Die Quittung für deinen Treppen-Sprint: Du stehst am Kopierer und plötzlich blockiert dein unterer Rücken komplett. Du hängst in einem 90-Grad-Winkel fest. Chantal kommt vorbei und starrt dich an. 'Machst du Yoga?'",
-        opts: [
-            { 
-                t: "Nach Schmerzmitteln schnorren", 
-                rep: { "Chantal": 5 },
-                m: 15, f: 0, a: -10, c: 0, 
-                r: "Chantal hat immer Ibuprofen in der Handtasche. Sie rettet dir buchstäblich den Tag." 
-            },
-            { 
-                t: "Unter Schmerzen den Rest des Tages ertragen", 
-                m: 10, f: 5, a: 15, c: 0, 
-                r: "Du kriechst gebückt zurück in dein Büro. Du arbeitest den restlichen Tag im Liegen unterm Schreibtisch." 
-            }
-        ]
-    },
-    {
-        id: "sq_investor_wifi_1",
-        kind: "text",
-        title: "Der VIP-Wutanfall",
-        text: "Auf dem Flur steht ein wichtiger, wutentbrannter Investor im Maßanzug. Er brüllt in sein Handy. 'Das blöde VIP-WLAN geht nicht! Wenn ich in zwei Minuten meine Aktienkurse nicht laden kann, ziehe ich meine Millionen ab!' Er sieht dich. 'SIE! MACHEN SIE DAS INTERNET AN!'",
-        opts: [
-            { 
-                t: "Den Gäste-WLAN Zettel geben", 
-                rem: "wifi_note", 
-                next: "path_investor_note", 
-                rep: { "Dr. Wichtig": 15 },
-                m: 2, f: 5, a: -10, c: -10, 
-                r: "Du drückst ihm wortlos den zerknitterten, gelben Zettel in die Hand. Er loggt sich ein, atmet tief durch und nickt dir dankbar zu. Firma gerettet." 
-            },
-            { 
-                t: "VIP-Router manuell neu starten", 
-                next: "path_investor_reboot", 
-                m: 15, f: -10, a: 20, c: 5, 
-                r: "Du sprintest zum Verteilerkasten und bootest den Router neu. Als du zurückkommst, hat der Investor in der Zwischenzeit den Chef rundgemacht." 
-            },
-            { 
-                t: "Hinter der Kaffeemaschine verstecken", 
-                next: "path_investor_hide", 
-                m: 10, f: 5, a: 0, c: 15, 
-                r: "Investoren sind Chef-Sache. Du versteckst dich feige, bis das Geschrei auf dem Flur leiser wird und der Mann wütend abzieht." 
-            }
-        ]
-    },
-    {
-        id: "sq_investor_wifi_2a",
-        kind: "text",
-        title: "Reich belohnt",
-        reqStory: "path_investor_note",
-        text: "Der Investor hat sein Meeting beendet. Er klopft dir im Vorbeigehen auf die Schulter. 'Schnelle und unbürokratische Lösung vorhin mit dem Zettel. So was mag ich.' Er drückt dir etwas in die Hand und geht.",
-        opts: [
-            { 
-                t: "Fassungslos in die Hand schauen", 
-                m: 5, f: 10, a: -30, c: -10, 
-                r: "Es ist ein 50-Euro-Schein! Einfach so. Trinkgeld in der IT? Ein historischer Moment. Deine Laune ist auf dem absoluten Höhepunkt." 
-            },
-            { 
-                t: "Es ablehnen: 'Bestechung nehme ich nicht.'", 
-                m: 5, f: 0, a: 20, c: -5, 
-                r: "Er lacht laut auf, behält das Geld und geht. Du bereust deine Integrität in der Sekunde, in der er sich umdreht." 
-            }
-        ]
-    },
-    {
-        id: "sq_investor_wifi_2b",
-        kind: "text",
-        title: "Der Reboot-Rückschlag",
-        reqStory: "path_investor_reboot",
-        text: "Der Chef stürmt in dein Büro. 'Müller! Warum haben Sie den VIP-Router neugestartet?! Der Investor hatte gerade eine laufende Verbindung zu seiner Bank in Singapur! Die Order ist abgebrochen!'",
-        opts: [
-            { 
-                t: "Den Zorn des CEOs demütig akzeptieren", 
-                rep: { "Dr. Wichtig": -10 },
-                m: 10, f: 0, a: 15, c: 20, 
-                r: "Du hast keine Ausrede. Der Chef tobt minutenlang. Das VIP-WLAN fasst du so schnell nicht mehr freiwillig an." 
-            },
-            { 
-                t: "Lügen: 'Automatisches Firmware-Update!'", 
-                rep: { "Dr. Wichtig": 5 },
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "Du schiebst es skrupellos auf den Hersteller Cisco. Der Chef atmet tief durch. 'Immer diese Updates.' Er kauft es dir ab." 
-            }
-        ]
-    },
-    {
-        id: "sq_investor_wifi_2c",
-        kind: "text",
-        title: "Das Versteckspiel fliegt auf",
-        reqStory: "path_investor_hide",
-        text: "Du sitzt immer noch geduckt hinter der Kaffeemaschine. Plötzlich blickt der Investor über den Tresen direkt auf dich herab. 'Was machen Sie da unten? Suchen Sie das verdammte WLAN?'",
-        opts: [
-            { 
-                t: "Erbärmlich antworten: 'Ich meditiere.'", 
-                m: 5, f: 0, a: 15, c: 5, 
-                r: "'Innovative Unternehmenskultur', murmelt der Investor und geht sichtlich angewidert. Peinlich, aber er vergisst das WLAN." 
-            },
-            { 
-                t: "Panisch antworten: 'Ich suche meine Kontaktlinse!'", 
-                m: 5, f: 0, a: 10, c: 0, 
-                r: "Er schüttelt den Kopf und verlässt kopfschüttelnd die Lobby. Du hast dich komplett zum Affen gemacht." 
-            }
-        ]
-    },
-    {
-        id: "sq_sleeping_guard_1",
-        kind: "text",
-        title: "Tiefschlaf am Empfang",
-        text: "Du willst durch den Hintereingang, aber der Sicherheitsmann schnarcht tief und fest. Sein Kopf liegt auf einem Kreuzworträtsel. Draußen hämmert ein gestresster Express-Bote gegen die Scheibe und will dringend ein wichtiges Server-Ersatzteil abgeben.",
-        opts: [
-            { 
-                t: "Energy Drink unter die Nase halten", 
-                rem: "energy", 
-                next: "path_guard_energy", 
-                m: 5, f: 5, a: -5, c: 0, 
-                r: "ZISCH. Du öffnest die Dose direkt an seinem Ohr. Er schreckt hoch, greift reflexartig nach der Dose, ext sie und öffnet hellwach die Tür für den Boten. Perfekt." 
-            },
-            { 
-                t: "Tür selbst öffnen & Paket annehmen", 
-                next: "path_guard_package", 
-                m: 15, f: -5, a: 5, c: 10, 
-                r: "Du öffnest die Tür selbst und unterschreibst das Formular mit 'Mickey Mouse'. Du trägst das schwere Teil selbst rein. Der Wachmann schläft friedlich weiter." 
-            },
-            { 
-                t: "Ihn anschreien: 'ALARM!'", 
-                next: "path_guard_scream", 
-                m: 5, f: 0, a: 15, c: -5, 
-                r: "Er fällt vor Schreck vom Stuhl und reißt seinen Kaffee um. Er hasst dich jetzt, macht aber fluchend die Tür auf." 
-            }
-        ]
-    },
-    {
-        id: "sq_sleeping_guard_2a",
-        kind: "text",
-        title: "Der hyperaktive Wächter",
-        reqStory: "path_guard_energy",
-        text: "Das Taurin aus deinem Energy Drink zeigt volle Wirkung. Der Wachmann patrouilliert jetzt mit aufgerissenen Augen und 150 Puls durch die Flure. Er hat bereits zwei harmlose Praktikanten an die Wand gestellt und nach dem Ausweis gefragt.",
-        opts: [
-            { 
-                t: "Ihn einfach machen lassen. Sicherheit geht vor.", 
-                m: 5, f: 5, a: -5, c: 0, 
-                r: "Der Flur ist heute extrem sicher. Du fühlst dich gut bewacht, auch wenn die Praktikanten leise weinen." 
-            },
-            { 
-                t: "Ihn bitten, etwas herunterzufahren", 
-                m: 5, f: 0, a: 10, c: 0, 
-                r: "'ICH BIN ENTSPANNT!' brüllt er dich an. Okay, verstanden. Keine Einmischung mehr." 
-            }
-        ]
-    },
-    {
-        id: "sq_sleeping_guard_2b",
-        kind: "text",
-        title: "Urkundenfälschung",
-        reqStory: "path_guard_package",
-        text: "Eine Rundmail von HR: 'Ein wichtiges Paket wurde heute Morgen von 'Mickey Mouse' quittiert. Wer war das? Das Paket enthielt keine Hardware, sondern die neuen Firmen-Smartphones. Wir leiten rechtliche Schritte ein!'",
-        opts: [
-            { 
-                t: "Sich stellen: 'Ich wollte nur helfen!'", 
-                rep: { "Dr. Wichtig": 5 },
-                m: 20, f: -5, a: 10, c: 10, 
-                r: "Du klärst das Missverständnis auf. HR meckert lange wegen der falschen Unterschrift, aber der Chef ist froh, dass die teuren Geräte da sind." 
-            },
-            { 
-                t: "Den Wachmann anonym beschuldigen", 
-                m: 10, f: 0, a: 10, c: -10, 
-                r: "Du meldest anonym, dass der Wachmann die Unterschrift gefälscht hat, weil er schlief. Furchtbares Karma, aber du entkommst dem Ärger." 
-            }
-        ]
-    },
-    {
-        id: "sq_sleeping_guard_2c",
-        kind: "text",
-        title: "Die Schikane",
-        reqStory: "path_guard_scream",
-        text: "Du willst nach der Pause wieder ins Gebäude. Der Wachmann von vorhin steht an der Tür. Er erkennt dich. 'Halt. Ausweiskontrolle. Und Taschenkontrolle. Ich muss den Laptop auf Seriennummer prüfen.'",
-        opts: [
-            { 
-                t: "Brav mitmachen (Deeskalation)", 
-                m: 15, f: 0, a: 20, c: 0, 
-                r: "Du holst tief Luft und packst alles aus. Er lässt sich extrem viel Zeit. Die pure Rache für deinen Schrei vorhin." 
-            },
-            { 
-                t: "Ausrasten und HR drohen", 
-                m: 10, f: 0, a: 30, c: 5, 
-                r: "'Ich arbeite hier seit 5 Jahren!', brüllst du. Er grinst kalt und lässt dich absichtlich noch 10 Minuten länger in der Kälte stehen." 
-            }
-        ]
-    },
-    {
-        id: "sq_boss_fight_hallway_1",
-        kind: "text",
-        title: "Clash der Titanen",
-        text: "Der Vertriebsleiter Markus und Björn vom Marketing stehen Stirn an Stirn auf dem Flur und brüllen sich an. Es geht um den letzten freien Meetingraum. Die Spucke fliegt, die Gesichter sind purpurrot. Niemand traut sich an den beiden vorbei.",
-        opts: [
-            { 
-                t: "Den Stressball einsetzen", 
-                req: "stressball", 
-                next: "path_hallway_ball", 
-                rep: { "Markus": 5 },
-                m: 5, f: 5, a: -20, c: -5, 
-                r: "Du gehst stumm dazwischen. Du drückst erst Markus den Ball in die Hand – er quetscht reflexartig. Dann gibst du ihn Björn. *Quietsch*. Du nimmst den Ball wortlos wieder an dich und gehst weiter. Beide schauen dir völlig verwirrt hinterher. Situation entspannt." 
-            },
-            { 
-                t: "Vernünftig dazwischengehen", 
-                next: "path_hallway_peace", 
-                m: 10, f: -5, a: 20, c: 5, 
-                r: "Du versuchst zu schlichten. Beide drehen sich synchron zu dir um und brüllen: 'HALT DICH DA RAUS, IT!' Du ziehst dich fast traumatisiert in dein Büro zurück." 
-            },
-            { 
-                t: "Umweg über das Treppenhaus nehmen", 
-                next: "path_hallway_detour", 
-                m: 15, f: 10, a: 0, c: 0, 
-                r: "Du hast auf so ein Drama absolut keine Lust. Du gehst den langen Weg durch den Keller. Dauert länger, schont aber die Nerven." 
-            }
-        ]
-    },
-    {
-        id: "sq_boss_fight_hallway_2a",
-        kind: "text",
-        title: "Der Guru",
-        reqStory: "path_hallway_ball",
-        text: "Du siehst Markus und Björn später friedlich bei einem Kaffee zusammenstehen. Als du vorbeigehst, flüstert Markus zu Björn: 'Sagen Sie mal... was war das vorhin mit Müller und dem roten Ball?' - 'Keine Ahnung. Aber mein Puls war danach auf 60. Der Mann hat eine Aura.'",
-        opts: [
-            { 
-                t: "Mystisch nicken", 
-                m: 2, f: 5, a: -10, c: -5, 
-                r: "Du nickst den beiden wissend zu, sagst nichts und gehst weiter. Du bist jetzt eine Legende im Flurfunk." 
-            },
-            { 
-                t: "Den Ball provokant noch einmal quietschen lassen", 
-                m: 2, f: 0, a: -5, c: 0, 
-                r: "*Quietsch*. Beide weichen ehrfürchtig einen Schritt zurück. Macht fühlt sich gut an." 
-            }
-        ]
-    },
-    {
-        id: "sq_boss_fight_hallway_2b",
-        kind: "text",
-        title: "Vereinte Feinde",
-        reqStory: "path_hallway_peace",
-        text: "Dein Schlichtungsversuch hat einen bizarren Effekt: Markus und Björn haben sich über ihren gemeinsamen Hass auf die IT verbündet. Beide blockieren jetzt deine Bug-Reports. 'IT hat keine Prio', sagt Markus lachend zu Björn im Flur.",
-        opts: [
-            { 
-                t: "Die neue Allianz der Hölle ertragen", 
-                m: 5, f: 0, a: 15, c: 0, 
-                r: "Das hast du nun von deiner Einmischung. Du wirst den restlichen Tag von beiden Abteilungen boykottiert." 
-            },
-            { 
-                t: "Rache: Beide Geräte drosseln", 
-                m: 10, f: -5, a: 10, c: 5, 
-                r: "Du drosselst die Bandbreite für ihre MacBooks auf ISDN-Niveau. Lästert weiter, aber ladet eure PowerPoints in 4 Stunden hoch!" 
-            }
-        ]
-    },
-    {
-        id: "sq_boss_fight_hallway_2c",
-        kind: "text",
-        title: "Der Keller-Fund",
-        reqStory: "path_hallway_detour",
-        text: "Weil du den Umweg durch den alten Keller genommen hast, entdeckst du eine verstaubte Kiste im Heizungsraum. Darin liegt völlig unbenutztes IT-Werkzeug, das jemand vor Jahren vergessen hat.",
         opts: [
             { 
                 t: "Schraubendreher einstecken", 
@@ -15891,6 +15621,7 @@ const DB = {
     },
     {
         id: "sq_printer_jam_2a",
+		char: "Dr. Wichtig",
         kind: "text",
         title: "Schwarze Hände",
         reqStory: "path_printer_fix",
@@ -16062,6 +15793,7 @@ const DB = {
     },
     {
         id: "sq_wrong_delivery_2a",
+		char: "Frau Elster",
         kind: "text",
         title: "Die hungrige Elster",
         reqStory: "path_delivery_keep",
@@ -16202,6 +15934,208 @@ const DB = {
                 t: "Sich die Hände daran wärmen", 
                 m: 10, f: 10, a: -5, c: 5, 
                 r: "Du verbringst 10 Minuten an der warmen Quelle. Herrlich." 
+            }
+        ]
+    },
+    {
+        id: "sq_elearning_1",
+        kind: "text",
+        title: "E-Learning des Todes",
+        text: "Sabine von HR schickt eine System-Sperre. 'Das jährliche Compliance-Training 'Synergetisches Sitzen' ist überfällig!' Ein unüberspringbares Video-Modul startet auf deinem Hauptmonitor. Es dauert exakt 90 Minuten und prüft alle 5 Minuten per Klick, ob du noch wach bist.",
+        opts: [
+            { 
+                t: "Die 90 Minuten ehrlich absitzen", 
+                next: "path_elearn_honest", 
+                m: 90, f: -15, a: 30, c: -10, 
+                r: "Du starrst 90 Minuten auf einen Mann im Rollkragenpullover, der über Lendenwirbel redet. Alle 5 Minuten klickst du 'Ich bin noch da'. Deine Aggression brodelt, aber HR ist glücklich." 
+            },
+            { 
+                t: "Mit Root-Passwort Zertifikat fälschen", 
+                req: "admin_pw", 
+                next: "path_elearn_hack", 
+                m: 5, f: 15, a: -5, c: 20, 
+                r: "Du loggst dich ins Backend ein und setzt den Wert bei deinem Namen auf 'Bestanden'. Dauert 5 Minuten. Wenn das bei einem Audit auffliegt, bist du geliefert." 
+            },
+            { 
+                t: "Maus-Wackler nutzen & schlafen", 
+                next: "path_elearn_sleep", 
+                m: 90, f: 30, a: -10, c: 10, 
+                r: "Du klemmst deine Uhr an die Maus, legst die Füße auf den Tisch und pennst. Die 90 Minuten vergehen wie im Traum. Du fühlst dich herrlich entspannt." 
+            }
+        ]
+    },
+    {
+        id: "sq_elearning_2a",
+		char: "Dr. Wichtig",
+        kind: "text",
+        title: "Ergonomie-Experte",
+        reqStory: "path_elearn_honest",
+        text: "Der Chef kommt in dein Büro. 'Müller, HR berichtet, dass Sie bei den Reflex-Tests des Videos 100% erreicht haben. Sie müssen ein Meister des ergonomischen Sitzens sein!'",
+        opts: [
+            { 
+                t: "Rücken gerade machen & nicken", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 2, f: 0, a: -10, c: -5, 
+                r: "Du nimmst Haltung an. Der Chef nickt anerkennend. Der Schmerz der 90 Minuten war zumindest gut fürs Image." 
+            },
+            { 
+                t: "Sarkasmus: 'Dafür habe ich meine Seele verkauft.'", 
+                m: 5, f: -5, a: 10, c: 5, 
+                r: "Er winkt ab. 'Gesundheit geht vor, Müller.' Du verdrehst die Augen." 
+            }
+        ]
+    },
+    {
+        id: "sq_elearning_2b",
+        kind: "text",
+        title: "Das Audit",
+        reqStory: "path_elearn_hack",
+        text: "Sabine (HR) ruft an. 'Herr Müller? Unser System zeigt, dass Sie das 90-minütige Video in exakt 14 Sekunden absolviert haben. Haben Sie etwa die Software gehackt?'",
+        opts: [
+            { 
+                t: "Tech-Ausrede: 'Cache-Synchronisation!'", 
+                m: 10, f: 0, a: 10, c: -10, 
+                r: "Du faselst was von 'Asynchronen Zeitstempeln im Server'. Sabine versteht nichts und gibt auf. 'Die IT und ihre Fehler...', seufzt sie. Puh." 
+            },
+            { 
+                t: "Ablenken: 'Ihr System ist veraltet!'", 
+                m: 5, f: 0, a: 5, c: 15, 
+                r: "Du kritisierst die HR-Software scharf. Sie ist beleidigt und leitet es an den Chef weiter. Das Radar steigt." 
+            }
+        ]
+    },
+    {
+        id: "sq_elearning_2c",
+		char: "Markus",
+        kind: "text",
+        title: "Der Schnarcher",
+        reqStory: "path_elearn_sleep",
+        text: "Du dachtest, du wärst unbemerkt geblieben. Markus vom Vertrieb lehnt grinsend im Türrahmen. 'Hatte einen schönen Schlaf, Dornröschen? Ich habe dich beim Vorbeigehen schnarchen hören. Was ist mir mein Schweigen wert?'",
+        opts: [
+            { 
+                t: "Ihm einen alten Donut geben", 
+                req: "donut",
+                rem: "donut",
+                rep: { "Markus": 5 },
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "Markus nimmt den Donut. 'Bestechung? Akzeptiert.' Er beißt rein und geht. (Item entfernt)" 
+            },
+            { 
+                t: "Gegenangriff: 'Ich lösche deine Leads.'", 
+                rep: { "Markus": -10 },
+                m: 5, f: -5, a: 15, c: 10, 
+                r: "Du drohst zurück. Markus hebt die Hände. 'Wow, ganz ruhig, Tiger. War nur ein Witz.' Er geht, aber das Verhältnis ist vergiftet." 
+            }
+        ]
+    },
+    {
+        id: "sq_workout_1",
+        kind: "text",
+        title: "Exorzismus im Büro",
+        text: "Du bist auf einem Dienstgang im 3. Stock. Als du ins Marketing-Büro schaust, gefriert dir das Blut in den Adern. Die halbe Abteilung liegt auf dem Boden, zuckt wild, verdreht die Augen und stöhnt laut. Es sieht aus wie ein massiver medizinischer Notfall oder eine kollektive Dämonenbeschwörung!",
+        opts: [
+            { 
+                t: "Panik: Den Notarzt rufen!", 
+                next: "path_workout_panic", 
+                m: 15, f: 0, a: 25, c: 5, 
+                r: "Du brüllst 'SANITÄTER!' und wählst die 112. Plötzlich setzt sich Chantal genervt auf. 'Spinnst du?! Das ist 'Agile Floor Pilates'! Du ruinierst unseren Flow!' Peinlich." 
+            },
+            { 
+                t: "Sich fasziniert dazulegen", 
+                next: "path_workout_join", 
+                m: 90, f: 35, a: -15, c: 10, 
+                r: "Du legst dich einfach dazu. 90 Minuten lang zuckst und dehnst du dich unproduktiv auf dem Teppichboden. Es ist bizarr, die Zeit rast vorbei, aber dein Rücken knackt befreiend." 
+            },
+            { 
+                t: "Schokolade essen & zuschauen", 
+                rem: "chocolate",
+                next: "path_workout_watch", 
+                m: 30, f: 15, a: -10, c: 0, 
+                r: "Du lehnst dich an den Türrahmen, beißt in deine Schokolade und guckst dir das absurde Spektakel 30 Minuten lang in aller Ruhe wie eine Doku an. (Item verbraucht)" 
+            }
+        ]
+    },
+    {
+        id: "sq_dance_2a",
+        kind: "text",
+        title: "Der Flucht-Tänzer",
+        reqStory: "path_dance_flee",
+        text: "Du gehst geduckt und beschämt über den Flur. Ein Kollege aus dem Vertrieb zeigt auf dich und lacht so laut, dass er keine Luft kriegt. 'Da ist er! Der Flucht-Tänzer! Das GIF von deinem Panik-Gesicht nach dem Moonwalk hat schon 10.000 Views auf LinkedIn!'",
+        opts: [
+            { 
+                t: "Mitlachen (Selbstironie)", 
+                m: 15, f: 5, a: -15, c: 0, 
+                r: "Du machst gute Miene zum bösen Spiel und lachst mit. Das nimmt dem Witz die Schärfe. Die Leute respektieren, dass du über dich selbst lachen kannst." 
+            },
+            { 
+                t: "Böse anstarren und weggehen", 
+                m: 5, f: 0, a: 15, c: 0, 
+                r: "Du zeigst ihm den Mittelfinger und gehst. Die Leute lachen jetzt hinter deinem Rücken. Du kochst vor Wut." 
+            }
+        ]
+    },
+    {
+        id: "sq_dance_2b",
+		char: "Chantal",
+        kind: "text",
+        title: "Der neue Star",
+        reqStory: "path_dance_finish",
+        text: "Chantal vom Marketing springt dir auf dem Flur fast in die Arme. 'Müller! Dein Tanz! Die Investoren lieben unsere junge, dynamische Kultur. Der Clip geht komplett viral! Der Chef hat gesagt, du sollst PR-Arbeit machen!'",
+        opts: [
+            { 
+                t: "Zeitfresser: Autogramme und PR-Termine", 
+                rep: { "Chantal": 20, "Dr. Wichtig": 15 },
+                m: 60, f: 20, a: -15, c: -10, 
+                r: "Du wirst zum Maskottchen. Du verbringst eine geschlagene Stunde damit, in Kameras zu winken und Selfies zu machen. Eine riesige Zeitverschwendung, aber dein Ego und der Chef lieben es." 
+            },
+            { 
+                t: "Ruhm ablehnen: 'Lass mich in Ruhe.'", 
+                rep: { "Chantal": -10, "Dr. Wichtig": -5 },
+                m: 5, f: -5, a: 10, c: 5, 
+                r: "Du stößt Chantal weg und flüchtest zurück an die echte Arbeit. Du hast einen epischen Karriere-Boost weggeworfen." 
+            }
+        ]
+    },
+    {
+        id: "sq_awkward_2a",
+		char: "Chantal",
+        kind: "text",
+        title: "Das heiße Gerücht",
+        reqStory: "path_awkward_elster",
+        text: "Chantal flüstert lautstark am Wasserspender, als du vorbeigehst: '...und dann hat Frau Elster die beiden im Serverraum erwischt! Auf dem Boden! Der arme Kevin, das ist ja Missbrauch von Abhängigkeitsverhältnissen!' Sie sieht dich und verstummt schockiert.",
+        opts: [
+            { 
+                t: "Dazwischengehen: 'Er steckte fest!'", 
+                rep: { "Chantal": -5 },
+                m: 10, f: 0, a: 15, c: 5, 
+                r: "Du versuchst, es zu erklären. Chantal nickt langsam. 'Klar... 'festgesteckt'. Sehr kreativ, Müller.' Niemand glaubt dir. Dein Ruf ist angeschlagen." 
+            },
+            { 
+                t: "Wegrennen (Fluchtreflex)", 
+                m: 5, f: 5, a: 10, c: 15, 
+                r: "Du drehst dich um und flüchtest. Das wirkt natürlich wie ein Schuldeingeständnis. Die Gerüchteküche explodiert jetzt richtig." 
+            }
+        ]
+    },
+    {
+        id: "sq_awkward_2b",
+		char: "Kevin",
+        kind: "text",
+        title: "Der Erpresser",
+        reqStory: "path_awkward_photo",
+        text: "Du stehst in der Lobby. Kevin fängt dich ab. Er wirkt ungewohnt selbstbewusst. 'Dieses Foto... lösch das. Sonst sag ich dem Chef, dass du mich gestern gezwungen hast, deine Tastatur mit einer Zahnbürste zu reinigen.'",
+        opts: [
+            { 
+                t: "Foto löschen (Kapitulieren)", 
+                rep: { "Kevin": 5 },
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Du drückst auf 'Löschen'. Kevin nickt cool. 'Gute Wahl, Boomer.' Der Azubi hat dich gerade dominiert." 
+            },
+            { 
+                t: "Lachen: 'Mach doch!'", 
+                rep: { "Kevin": -15, "Dr. Wichtig": -5 },
+                m: 10, f: 0, a: -5, c: 20, 
+                r: "'Versuch's, Kleiner!' Kevin rennt tatsächlich zum Chef. Du darfst das Foto behalten, kriegst aber später Ärger wegen 'Machtmissbrauch'." 
             }
         ]
     },
@@ -17971,6 +17905,7 @@ const DB = {
 	 // === KEVIN: DER AZUBI ===
 	{
         id: "rep_kevin_story_1",
+	    char: "Kevin",
         title: "Kevins Geheimnis",
         reqRep: { "Kevin": 60 },
         text: "Kevin zieht dich nervös in eine Ecke. 'Bro, ich muss dir was zeigen. Ich hab aus Langeweile ein Skript geschrieben, das die Firewall-Logs automatisch bereinigt und optimiert. Ist das... illegal? Oder gut?' Er zeigt dir den Code. Es ist chaotisch, aber im Kern genial.",
@@ -18000,6 +17935,7 @@ const DB = {
     },
     {
         id: "rep_kevin_story_2a",
+		char: "Kevin",
         title: "Finale: Der Cyber-Angriff",
         reqRep: { "Kevin": 80 },
         reqStory: "path_kevin_mentor",
@@ -18028,6 +17964,7 @@ const DB = {
     },
     {
         id: "rep_kevin_story_2b",
+		char: "Kevin",
         title: "Finale: Die Endlosschleife",
         reqRep: { "Kevin": 80 },
         reqStory: "path_kevin_lazy",
@@ -18056,6 +17993,7 @@ const DB = {
     },
     {
         id: "rep_kevin_story_2c",
+		char: "Kevin",
         title: "Finale: Die Prüfung",
         reqRep: { "Kevin": 80 },
         reqStory: "path_kevin_strict",
@@ -18083,6 +18021,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_good_1",
+		char: "Kevin",
         title: "Der Twitch-Tipp",
         reqRep: { "Kevin": 20 },
         text: "Kevin lehnt sich verschwörerisch zu dir rüber. 'Du, Chef? Ich will meinen Stream professionalisieren. Meinst du, das Shure SM7B Mikrofon lohnt sich, oder reicht mein altes Headset? Du hast doch Ahnung von Technik.'",
@@ -18112,6 +18051,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_good_2a",
+		char: "Kevin",
         title: "Loot Sharing",
         reqRep: { "Kevin": 40 },
         reqStory: "path_kevin_tech_tip",
@@ -18139,6 +18079,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_good_2b",
+		char: "Kevin",
         title: "Der Energy-Deal",
         reqRep: { "Kevin": 40 },
         reqStory: "path_kevin_game_night",
@@ -18167,6 +18108,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_good_2c",
+		char: "Kevin",
         title: "AliExpress-Desaster",
         reqRep: { "Kevin": 40 },
         reqStory: "path_kevin_tech_fail",
@@ -18194,6 +18136,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_bad_1",
+		char: "Kevin",
         title: "TikTok im Serverraum",
         reqRep: { "Kevin": -20 },
         text: "Du kommst in den Serverraum. Kevin tanzt vor den blinkenden Lichtern. Er hält sein Handy hoch und filmt. Als er dich sieht, schwenkt er die Kamera voll auf dein genervtes Gesicht. 'Und hier ist der Griesgram-Admin in seinem natürlichen Habitat! Say Hi!'",
@@ -18223,6 +18166,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_bad_2a",
+		char: "Kevin",
         title: "Der Kabel-Dieb",
         reqRep: { "Kevin": -40 },
         reqStory: "path_kevin_war",
@@ -18250,6 +18194,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_bad_2b",
+		char: "Kevin",
         title: "Desktop-Terror",
         reqRep: { "Kevin": -40 },
         reqStory: "path_kevin_troll",
@@ -18275,6 +18220,7 @@ const DB = {
     },
     {
         id: "rep_kevin_simple_bad_2c",
+		char: "Kevin",
         title: "Das Meme",
         reqRep: { "Kevin": -40 },
         reqStory: "path_kevin_viral",
@@ -18302,6 +18248,7 @@ const DB = {
     },
     {
         id: "rep_kevin_nemesis_1",
+		char: "Kevin",
         title: "Der Putschversuch",
         reqRep: { "Kevin": -60 },
         text: "Du kommst ins Büro. Kevin hat seinen Schreibtisch in den Flur geschoben. Darüber hängt ein Schild: 'BESSERE IT-HILFE (Ohne Boomer-Laune)'. Eine Schlange von Kollegen steht bei ihm an. Er verteilt Admin-Passwörter wie Bonbons.",
@@ -18330,6 +18277,7 @@ const DB = {
     },
     {
         id: "rep_kevin_nemesis_2a",
+		char: "Kevin",
         title: "Die Klebstoff-Falle",
         reqRep: { "Kevin": -80 },
         reqStory: "path_kevin_glue",
@@ -18357,6 +18305,7 @@ const DB = {
     },
     {
         id: "rep_kevin_nemesis_2b",
+		char: "Kevin",
         title: "Skript-Kiddie Rache",
         reqRep: { "Kevin": -80 },
         reqStory: "path_kevin_ddos_kid",
@@ -18383,6 +18332,7 @@ const DB = {
     },
     {
         id: "rep_kevin_nemesis_2c",
+		char: "Kevin",
         title: "Die Petition",
         reqRep: { "Kevin": -80 },
         reqStory: "path_kevin_trap",
@@ -18409,6 +18359,7 @@ const DB = {
     },
     {
         id: "rep_kevin_filler_good_1",
+		char: "Kevin",
         title: "Energy-Experiment",
         reqRep: { "Kevin": 10 }, 
         text: "Kevin kommt mit einer knallgrünen, unbeschrifteten Dose in dein Büro. 'Bro, ich hab diesen Energy-Drink im Darknet bestellt. Er heißt 'Nuclear Sludge'. Willst du mal probieren? Ich trau mich nicht als Erster.'",
@@ -18435,6 +18386,7 @@ const DB = {
     },
     {
         id: "rep_kevin_filler_good_2",
+		char: "Kevin",
         title: "Tinder-Support",
         reqRep: { "Kevin": 30 }, 
         text: "Kevin wirkt verzweifelt. 'Du bist doch weise und so. Mein Tinder-Profil läuft nicht. Ich habe ein Foto von meinem PC-Setup und als Bio: 'Suche Player 2'. Was mache ich falsch?'",
@@ -18460,6 +18412,7 @@ const DB = {
     },
     {
         id: "rep_kevin_filler_bad_1",
+		char: "Kevin",
         title: "Die Höllen-Tastatur",
         reqRep: { "Kevin": -10 }, 
         text: "Kevin hat sich eine neue mechanische Tastatur mit blauen Switches gekauft. Jeder Tastenanschlag klingt wie ein Schuss aus einer Kleinkaliberwaffe. *KLACK KLACK KLACK*. Du kannst dich nicht konzentrieren.",
@@ -18485,6 +18438,7 @@ const DB = {
     },
     {
         id: "rep_kevin_filler_bad_2",
+		char: "Kevin",
         title: "Müll-Abladeplatz",
         reqRep: { "Kevin": -30 }, 
         text: "Du kommst vom Kaffeeholen zurück. Auf deinem Schreibtisch steht ein leerer, klebriger Joghurtbecher und eine Bananenschale. Kevin sitzt zwei Tische weiter, pfeift unschuldig und starrt auf seinen Monitor.",
@@ -18512,6 +18466,7 @@ const DB = {
     // === CHANTAL: DIE MARKETING-QUEEN  ===
     {
         id: "rep_chantal_story_1",
+		char: "Chantal",
         title: "Chantal ohne Filter",
         reqRep: { "Chantal": 60 },
         text: "Chantal steht an der Maschine. Sie sieht fertig aus. Die Maske fällt. 'Boah, diese ganze Fake-Welt hier... alle lächeln, alle lügen. Manchmal will ich einfach schreien. Der Chef will, dass ich seine dumme 'Blockchain-Klobrillen'-Idee als 'Innovation' verkaufe. Ich kann nicht mehr.'",
@@ -18541,6 +18496,7 @@ const DB = {
     },
     {
         id: "rep_chantal_story_2a",
+		char: "Chantal",
         title: "Finale: Die Sabotage",
         reqRep: { "Chantal": 80 },
         reqStory: "path_chantal_ally",
@@ -18569,6 +18525,7 @@ const DB = {
     },
     {
         id: "rep_chantal_story_2b",
+		char: "Chantal",
         title: "Finale: Eine Hand wäscht die andere",
         reqRep: { "Chantal": 70 },
         reqStory: "path_chantal_user",
@@ -18597,6 +18554,7 @@ const DB = {
     },
     {
         id: "rep_chantal_story_2c",
+		char: "Chantal",
         title: "Finale: Das Bauernopfer",
         reqRep: { "Chantal": 60 },
         reqStory: "path_chantal_enemy",
@@ -18624,6 +18582,7 @@ const DB = {
     },
     {
         id: "rep_chantal_simple_good_1",
+		char: "Chantal",
         title: "Der Filter-Notfall",
         reqRep: { "Chantal": 20 },
         text: "Chantal stürmt an deinen Schreibtisch. Sie hält ihr Tablet wie einen Spiegel. 'Müller! Notfall! Mein Bild im Teams-Meeting sieht total fahl aus. Das Licht hier ist Neon-Hölle! Kannst du mir einen 'Glow-Up'-Filter fest in die Webcam programmieren? Ich hab gleich Call mit New York!'",
@@ -18653,6 +18612,7 @@ const DB = {
     },
     {
         id: "rep_chantal_simple_good_2a",
+		char: "Chantal",
         title: "Health Food",
         reqRep: { "Chantal": 40 },
         reqStory: "path_chantal_flatter",
@@ -18680,6 +18640,7 @@ const DB = {
     },
     {
         id: "rep_chantal_simple_good_2b",
+		char: "Chantal",
         title: "Das Unboxing",
         reqRep: { "Chantal": 40 },
         reqStory: "path_chantal_gadget",
@@ -18708,6 +18669,7 @@ const DB = {
     },
     {
         id: "rep_chantal_simple_good_2c",
+		char: "Chantal",
         title: "Der Klebeband-Fail",
         reqRep: { "Chantal": 30 },
         reqStory: "path_chantal_tape",
@@ -18735,6 +18697,7 @@ const DB = {
     },
     {
         id: "rep_chantal_bad_1",
+		char: "Chantal",
         title: "Die Insta-Story",
         reqRep: { "Chantal": -20 },
         text: "Chantal steht unangekündigt in deinem Büro und filmt mit dem Handy. 'Und hier, meine Lieben, ist die Höhle der IT-Goblins! Es riecht hier nach Verzweiflung und kaltem Pizza-Rand. Sag mal Hallo zu meinen Followern!' Sie hält dir die Kamera direkt ins Gesicht.",
@@ -18764,6 +18727,7 @@ const DB = {
     },
     {
         id: "rep_chantal_bad_2a",
+		char: "Chantal",
         title: "Der Glitzer-Anschlag",
         reqRep: { "Chantal": -40 },
         reqStory: "path_chantal_glitter",
@@ -18792,6 +18756,7 @@ const DB = {
     },
     {
         id: "rep_chantal_bad_2b",
+		char: "Chantal",
         title: "Digitaler Gegenangriff",
         reqRep: { "Chantal": -40 },
         reqStory: "path_chantal_offline",
@@ -18817,6 +18782,7 @@ const DB = {
     },
     {
         id: "rep_chantal_bad_2c",
+		char: "Chantal",
         title: "Der virale Cringe",
         reqStory: "path_chantal_sellout",
         text: "Chantal stürmt begeistert rein. 'Müller! Dein Peace-Zeichen hat 500 Likes! Die Leute lieben den 'Grumpy Cat'-Vibe! Komm, wir machen jetzt einen TikTok-Tanz zu 'Savage Love'! Der Chef guckt auch zu!'",
@@ -18843,6 +18809,7 @@ const DB = {
     },
     {
         id: "rep_chantal_nemesis_1",
+		char: "Chantal",
         title: "Der Shitstorm",
         reqRep: { "Chantal": -60 },
         text: "Du kommst ins Büro. Überall hängen Plakate mit einem unvorteilhaften Foto von dir (du isst Döner mit offenem Mund). Darunter steht in pinker Schrift: 'IT blockiert Innovation! #Bremser #Boomer #SadVibes'. Chantal steht daneben und filmt deine Reaktion live für Insta.",
@@ -18873,6 +18840,7 @@ const DB = {
     },
     {
         id: "rep_chantal_nemesis_2a",
+		char: "Chantal",
         title: "Das Tribunal",
         reqRep: { "Chantal": -70 },
         reqStory: "path_chantal_war",
@@ -18899,6 +18867,7 @@ const DB = {
     },
     {
         id: "rep_chantal_nemesis_2b",
+		char: "Chantal",
         title: "Der Marketing-Blackout",
         reqRep: { "Chantal": -70 },
         reqStory: "path_chantal_ban",
@@ -18925,6 +18894,7 @@ const DB = {
     },
     {
         id: "rep_chantal_nemesis_2c",
+		char: "Chantal",
         title: "Projekt: Glow-Up",
         reqRep: { "Chantal": -50 },
         reqStory: "path_chantal_makeover",
@@ -18952,6 +18922,7 @@ const DB = {
     },
     {
         id: "rep_chantal_filler_good_1",
+		char: "Chantal",
         title: "Excel für Influencer",
         reqRep: { "Chantal": 10 }, 
         text: "Chantal steht mit ihrem MacBook vor dir. 'Müller, du sprichst doch fließend Nerd. Wie mache ich, dass diese Zelle hier rot wird, wenn das Budget für vegane Snacks überschritten ist? Das muss poppen!'",
@@ -18978,6 +18949,7 @@ const DB = {
     },
     {
         id: "rep_chantal_filler_good_2",
+		char: "Chantal",
         title: "Der Outfit-Check",
         reqRep: { "Chantal": 30 }, 
         text: "Chantal mustert dich von oben bis unten. 'Wir haben gleich Kundentermin im Haus. Das T-Shirt mit dem 'There is no Place like 127.0.0.1'-Spruch... ist das Ironie oder dein Ernst? Du brauchst ein Upgrade.'",
@@ -19004,6 +18976,7 @@ const DB = {
     },
     {
         id: "rep_chantal_filler_bad_1",
+		char: "Chantal",
         title: "Hardware-Ästhetik",
         reqRep: { "Chantal": -10 }, 
         text: "Chantal steht genervt vor deinem Tisch. 'Dieser schwarze Kasten unter meinem Schreibtisch... der Rechner. Der ruiniert das Feng-Shui. Kannst du den nicht weiß ansprühen? Oder gegen einen iMac tauschen?'",
@@ -19029,6 +19002,7 @@ const DB = {
     },
     {
         id: "rep_chantal_filler_bad_2",
+		char: "Chantal",
         title: "Das Prioritäten-Problem",
         reqRep: { "Chantal": -30 }, 
         text: "Ein Ticket von Chantal ploppt auf, Priorität KRITISCH: 'Mein zweiter Monitor hat die falsche Farbtemperatur! Das Blau ist zu kühl!' Du hast eigentlich gerade einen echten Server-Ausfall zu bearbeiten.",
@@ -19056,6 +19030,7 @@ const DB = {
     // === EGON: DER HÜTER DER SCHLÜSSEL  ===
     {
         id: "rep_egon_story_1",
+		char: "Egon",
         title: "Land unter",
         reqRep: { "Egon": 60 },
         text: "Du kommst in die Teeküche. Egon liegt rücklings unter der Spüle im Dreckwasser. Er flucht leise. Die Kaffeemaschine ist durch seine Beine blockiert. Er schaut dich prüfend an.",
@@ -19085,6 +19060,7 @@ const DB = {
     },
     {
         id: "rep_egon_story_2a",
+		char: "Egon",
         title: "Finale: Vertrauenssache",
         reqRep: { "Egon": 80 },
         reqStory: "path_egon_handyman",
@@ -19112,6 +19088,7 @@ const DB = {
     },
     {
         id: "rep_egon_story_2b",
+		char: "Egon",
         title: "Finale: Egon und das Tablet",
         reqRep: { "Egon": 60 },
         reqStory: "path_egon_official",
@@ -19140,6 +19117,7 @@ const DB = {
     },
     {
         id: "rep_egon_story_2c",
+		char: "Egon",
         title: "Finale: Das 'defekte' Ventil",
         reqRep: { "Egon": 50 },
         reqStory: "path_egon_snob",
@@ -19167,6 +19145,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_good_1",
+		char: "Egon",
         title: "Das Kreuzworträtsel",
         reqRep: { "Egon": 20 },
         text: "Egon sitzt im Heizungskeller auf einer Kiste und kaut an einem Bleistift. 'Hömma, du bist doch studiert. 6 Waagerecht: 'Antiker Rechenschieber'. 6 Buchstaben. Ich hab 'HANDY' versucht, passt aber nicht.'",
@@ -19196,6 +19175,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_good_2a",
+		char: "Egon",
         title: "Der Gewinn",
         reqRep: { "Egon": 40 },
         reqStory: "path_egon_smart",
@@ -19223,6 +19203,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_good_2b",
+		char: "Egon",
         title: "Geheimes Wissen",
         reqRep: { "Egon": 40 },
         reqStory: "path_egon_joke",
@@ -19249,6 +19230,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_good_2c",
+		char: "Egon",
         title: "Neuland",
         reqRep: { "Egon": 30 },
         reqStory: "path_egon_google",
@@ -19275,6 +19257,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_bad_1",
+		char: "Egon",
         title: "Frisch gewischt",
         reqRep: { "Egon": -20 },
         text: "Du hast es eilig zum Serverraum. Aber Egon versperrt den Gang mit seinem Wischmopp. Der Boden ist trocken, aber das gelbe Warnschild steht da. 'Kein Durchgang. Trocknungszeit: 20 Minuten.' Er grinst fies.",
@@ -19303,6 +19286,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_bad_2a",
+		char: "Egon",
         title: "Müll-Streik",
         reqRep: { "Egon": -40 },
         reqStory: "path_egon_mess",
@@ -19328,6 +19312,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_bad_2b",
+		char: "Egon",
         title: "Strom-Spar-Maßnahme",
         reqRep: { "Egon": -40 },
         reqStory: "path_egon_lecture",
@@ -19353,6 +19338,7 @@ const DB = {
     },
     {
         id: "rep_egon_simple_bad_2c",
+		char: "Egon",
         title: "Das Warnschild",
         reqRep: { "Egon": -30 }, 
         reqStory: "path_egon_fail",
@@ -19380,6 +19366,7 @@ const DB = {
     },
     {
         id: "rep_egon_nemesis_1",
+		char: "Egon",
         title: "Eiszeit",
         reqRep: { "Egon": -60 },
         text: "Es sind 8 Grad in deinem Büro. Die Heizung wurde physisch abmontiert. Auf dem Boden liegt nur ein Zettel: 'Wartungsarbeiten. Dauer: Unbekannt.' Egon steht im Flur, löffelt eine heiße Suppe und grinst dich an.",
@@ -19410,6 +19397,7 @@ const DB = {
     },
     {
         id: "rep_egon_nemesis_2a",
+		char: "Egon",
         title: "Eingemauert",
         reqRep: { "Egon": -80 },
         reqStory: "path_egon_war",
@@ -19437,6 +19425,7 @@ const DB = {
     },
     {
         id: "rep_egon_nemesis_2b",
+		char: "Egon",
         title: "Müll-Lawine",
         reqRep: { "Egon": -80 },
         reqStory: "path_egon_sabotage",
@@ -19463,6 +19452,7 @@ const DB = {
     },
     {
         id: "rep_egon_nemesis_2c",
+		char: "Egon",
         title: "Mülltrennung 2.0",
         reqRep: { "Egon": -50 },
         reqStory: "path_egon_recycling",
@@ -19490,6 +19480,7 @@ const DB = {
     },
     {
         id: "rep_egon_filler_good_1",
+		char: "Egon",
         title: "Übersetzungshilfe",
         reqRep: { "Egon": 10 }, 
         text: "Egon kratzt sich am Kopf und starrt auf das Display der neuen Klima-Anlage. 'Hömma. Da steht 'Filter Maintenance Required'. Heißt das, das Ding explodiert gleich oder will es nur Aufmerksamkeit?'",
@@ -19516,6 +19507,7 @@ const DB = {
     },
     {
         id: "rep_egon_filler_good_2",
+		char: "Egon",
         title: "Weiches Gold",
         reqRep: { "Egon": 30 }, 
         text: "Egon fegt vor deinem Büro. Als niemand guckt, schiebt er dir eine Rolle dreilagiges Klopapier über den Tisch. 'Aus dem Vorstands-Klo. Die Belegschaft kriegt ja nur Schmirgelpapier. Behalts für dich.'",
@@ -19544,6 +19536,7 @@ const DB = {
     },
     {
         id: "rep_egon_filler_bad_1",
+		char: "Egon",
         title: "Klima-Diktatur",
         reqRep: { "Egon": -10 }, 
         text: "Du schwitzt im Büro, weil die Sonne reinknallt. Du hast deinen privaten Tisch-Ventilator angemacht. Egon stürmt rein und zieht einfach den Stecker. 'Brandgefahr! Privatgeräte ohne TÜV-Siegel sind strengstens verboten!'",
@@ -19570,6 +19563,7 @@ const DB = {
     },
     {
         id: "rep_egon_filler_bad_2",
+		char: "Egon",
         title: "Der Stolperdraht",
         reqRep: { "Egon": -30 }, 
         text: "Egon hat genau vor deiner Bürotür ein loses LAN-Kabel mit drei Rollen signalrotem Warnklebeband am Boden fixiert. Die Tür geht jetzt nur noch zur Hälfte auf. Er grinst dich von Weitem an.",
@@ -19596,6 +19590,7 @@ const DB = {
     // === DR. WICHTIG: DER VISIONÄR ===
     {
         id: "rep_ceo_story_1",
+		char: "Dr. Wichtig",
         title: "Vision & Panik",
         reqRep: { "Dr. Wichtig": 60 },
         text: "Dr. Wichtig winkt dich in sein Büro. 'Müller! Ich habe eine Vision: Walking-Meetings auf Laufbändern!' Plötzlich wird er blass und starrt auf sein Tablet. 'Oh Gott... Das Internet! Da ist ein Video... ich singe 'Barbie Girl'?! Das ist ein Deepfake-Angriff der Konkurrenz! Müller, tun Sie was!'",
@@ -19625,6 +19620,7 @@ const DB = {
     },
     {
         id: "rep_ceo_story_2a",
+		char: "Dr. Wichtig",
         title: "Finale: Das Jahresgespräch",
         reqRep: { "Dr. Wichtig": 80 },
         reqStory: "path_ceo_saved",
@@ -19656,6 +19652,7 @@ const DB = {
     },
     {
         id: "rep_ceo_story_2b",
+		char: "Dr. Wichtig",
         title: "Finale: Operation 'Men in Black'",
         reqRep: { "Dr. Wichtig": 50 },
         reqStory: "path_ceo_shame",
@@ -19682,6 +19679,7 @@ const DB = {
     },
     {
         id: "rep_ceo_story_2c",
+		char: "Dr. Wichtig",
         title: "Finale: Der Unfall",
         reqRep: { "Dr. Wichtig": 60 },
         reqStory: "path_ceo_treadmill",
@@ -19707,6 +19705,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_good_1",
+		char: "Dr. Wichtig",
         title: "Das Big Picture",
         reqRep: { "Dr. Wichtig": 20 },
         text: "Dr. Wichtig fängt dich ab. 'Müller! Ich brauche ein Dashboard für den Vorstand. One-Pager. High Level. Ampel-System. Ich will sehen, dass alles grün ist. Verstehen Sie? Alles. Grün.' Seine Augen zucken leicht.",
@@ -19736,6 +19735,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_good_2a",
+		char: "Dr. Wichtig",
         title: "Die Präsentation",
         reqRep: { "Dr. Wichtig": 40 },
         reqStory: "path_ceo_fake_green",
@@ -19763,6 +19763,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_good_2b",
+		char: "Dr. Wichtig",
         title: "Panikraum",
         reqRep: { "Dr. Wichtig": 40 },
         reqStory: "path_ceo_real_panic",
@@ -19790,6 +19791,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_good_2c",
+		char: "Dr. Wichtig",
         title: "Der Auserwählte",
         reqRep: { "Dr. Wichtig": 40 },
         reqStory: "path_ceo_cyber",
@@ -19818,6 +19820,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_bad_1",
+		char: "Dr. Wichtig",
         title: "Die Zeitstudie",
         reqRep: { "Dr. Wichtig": -20 },
         text: "Dr. Wichtig steht mit einer Stoppuhr direkt hinter deinem Bürostuhl. Er atmet dir in den Nacken. 'Müller, ich habe gelesen, dass ein Mausklick nur 0,4 Sekunden dauern darf. Sie brauchten gerade 1,2 Sekunden. Wir müssen an Ihrer Effizienz arbeiten.'",
@@ -19846,6 +19849,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_bad_2a",
+		char: "Dr. Wichtig",
         title: "Motivations-Offensive",
         reqRep: { "Dr. Wichtig": -40 },
         reqStory: "path_ceo_poster",
@@ -19871,6 +19875,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_bad_2b",
+		char: "Dr. Wichtig",
         title: "Das Upgrade",
         reqRep: { "Dr. Wichtig": -30 },
         reqStory: "path_ceo_mouse",
@@ -19897,6 +19902,7 @@ const DB = {
     },
     {
         id: "rep_ceo_simple_bad_2c",
+		char: "Dr. Wichtig",
         title: "Das Klick-Protokoll",
         reqRep: { "Dr. Wichtig": -30 },
         reqStory: "path_ceo_log",
@@ -19922,6 +19928,7 @@ const DB = {
     },
     {
         id: "rep_ceo_nemesis_1",
+		char: "Dr. Wichtig",
         title: "Die Kündigung",
         reqRep: { "Dr. Wichtig": -60 },
         text: "Dr. Wichtig legt ein Blatt Papier auf deinen Tisch. 'Die fristlose Kündigung. Schon unterschrieben. Ich muss nur noch das Datum eintragen. Nennen Sie mir einen EINZIGEN Grund, warum ich das nicht jetzt sofort tun sollte. Und kommen Sie mir nicht mit 'Kompetenz'.' Er zückt seinen Füller.",
@@ -19951,6 +19958,7 @@ const DB = {
     },
     {
         id: "rep_ceo_nemesis_2a",
+		char: "Dr. Wichtig",
         title: "Der Belastungstest",
         reqRep: { "Dr. Wichtig": -80 },
         reqStory: "path_ceo_sabotage",
@@ -19977,6 +19985,7 @@ const DB = {
     },
     {
         id: "rep_ceo_nemesis_2b",
+		char: "Dr. Wichtig",
         title: "Der Lakai",
         reqRep: { "Dr. Wichtig": -50 },
         reqStory: "path_ceo_slave",
@@ -20004,6 +20013,7 @@ const DB = {
     },
     {
         id: "rep_ceo_nemesis_2c",
+		char: "Dr. Wichtig",
         title: "Das Schweigegeld",
         reqRep: { "Dr. Wichtig": -70 },
         reqStory: "path_ceo_blackmail",
@@ -20031,6 +20041,7 @@ const DB = {
     },
     {
         id: "rep_ceo_filler_good_1",
+		char: "Dr. Wichtig",
         title: "Buzzword Bingo",
         reqRep: { "Dr. Wichtig": 10 }, 
         text: "Der Chef stoppt dich auf dem Flur. 'Müller! Ich habe in einem Magazin von 'Hyper-Agilem Cloud-Synergieren' gelesen. Das brauchen wir auch! Sind unsere Server schon hyper-agil?'",
@@ -20057,6 +20068,7 @@ const DB = {
     },
     {
         id: "rep_ceo_filler_good_2",
+		char: "Dr. Wichtig",
         title: "Privater IT-Support",
         reqRep: { "Dr. Wichtig": 30 }, 
         text: "Dr. Wichtig ruft dich in sein Büro. Er wirkt verzweifelt. 'Müller, höchste Diskretion. Meine Golf-App auf dem Privat-iPad synct nicht mehr mit meiner Rolex. Das ist ein Notfall!'",
@@ -20083,6 +20095,7 @@ const DB = {
     },
     {
         id: "rep_ceo_filler_bad_1",
+		char: "Dr. Wichtig",
         title: "Mikromanagement",
         reqRep: { "Dr. Wichtig": -10 }, 
         text: "Der Chef steht stumm hinter deinem Stuhl und beobachtet dich beim Tippen. Nach zwei Minuten räuspert er sich. 'Sie nutzen den kleinen Finger gar nicht für die Shift-Taste. Das ist ineffizient.'",
@@ -20108,6 +20121,7 @@ const DB = {
     },
     {
         id: "rep_ceo_filler_bad_2",
+		char: "Dr. Wichtig",
         title: "Die Spontan-Rede",
         reqRep: { "Dr. Wichtig": -30 }, 
         text: "Du bist auf dem Weg zur Toilette. Der Chef fängt dich ab. 'Müller! Gut, dass ich Sie treffe. Ich brauche ein Sounding-Board.' Er hält einen 20-minütigen Monolog über die 'Philosophie des agilen Heißgetränks'.",
@@ -20135,6 +20149,7 @@ const DB = {
     // === FRAU ELSTER: DIE HÜTERIN DER ZAHLEN ===
     {
         id: "rep_elster_story_1",
+		char: "Frau Elster",
         title: "Die Inventur",
         reqRep: { "Frau Elster": 60 },
         text: "Frau Elster steht mit einer Lupe an der Kaffeemaschine. 'Die Kaffeebohnen-Ratio entspricht nicht der Norm DIN-404. Das ist Verschwendung!' Sie zückt ihr schwarzes Notizbuch. Du bemerkst feine weiße Haare auf ihrem sonst perfekten Blazer.",
@@ -20164,6 +20179,7 @@ const DB = {
     },
     {
         id: "rep_elster_story_2a",
+		char: "Frau Elster",
         title: "Finale: Der Rotstift",
         reqRep: { "Frau Elster": 80 },
         reqStory: "path_elster_cat",
@@ -20192,6 +20208,7 @@ const DB = {
     },
     {
         id: "rep_elster_story_2b",
+		char: "Frau Elster",
         title: "Finale: Vertrauliche Angelegenheit",
         reqRep: { "Frau Elster": 70 },
         reqStory: "path_elster_frame",
@@ -20219,6 +20236,7 @@ const DB = {
     },
     {
         id: "rep_elster_story_2c",
+		char: "Frau Elster",
         title: "Finale: Die Sonderprüfung",
         reqRep: { "Frau Elster": 50 },
         reqStory: "path_elster_audit",
@@ -20245,6 +20263,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_good_1",
+		char: "Frau Elster",
         title: "Der Cent-Krimi",
         reqRep: { "Frau Elster": 20 },
         text: "Frau Elster steht völlig aufgelöst im Flur. Sie rauft sich die Haare (eine Strähne hat sich gelöst!). 'Müller! Die Portokasse! Es fehlen 0,02 Euro! Ich habe schon dreimal nachgezählt. Wenn die Bilanz nicht stimmt, kann ich nicht schlafen!'",
@@ -20273,6 +20292,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_good_2a",
+		char: "Frau Elster",
         title: "Excel-Magie",
         reqRep: { "Frau Elster": 40 },
         reqStory: "path_elster_excel",
@@ -20301,6 +20321,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_good_2b",
+		char: "Frau Elster",
         title: "Buchungssatz",
         reqRep: { "Frau Elster": 30 },
         reqStory: "path_elster_coin",
@@ -20328,6 +20349,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_good_2c",
+		char: "Frau Elster",
         title: "Katzen-Content",
         reqRep: { "Frau Elster": 40 },
         reqStory: "path_elster_chill",
@@ -20354,6 +20376,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_bad_1",
+		char: "Frau Elster",
         title: "Der fehlende Beleg",
         reqRep: { "Frau Elster": -20 },
         text: "Frau Elster blockiert deinen Weg. Sie wedelt mit einem Aktenordner. 'Müller! In Ihrer Reisekostenabrechnung von 2019 fehlt ein Parkschein über 1,50 Euro! Das ist Steuerbetrug! Wenn Sie den nicht bis Mittag beibringen, leite ich eine Sonderprüfung ein!'",
@@ -20382,6 +20405,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_bad_2a",
+		char: "Frau Elster",
         title: "Die Abmahnung",
         reqRep: { "Frau Elster": -40 },
         reqStory: "path_elster_coins",
@@ -20408,6 +20432,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_bad_2b",
+		char: "Frau Elster",
         title: "CSI: Buchhaltung",
         reqRep: { "Frau Elster": -30 },
         reqStory: "path_elster_fake",
@@ -20433,6 +20458,7 @@ const DB = {
     },
     {
         id: "rep_elster_simple_bad_2c",
+		char: "Frau Elster",
         title: "Papierkram",
         reqRep: { "Frau Elster": -30 },
         reqStory: "path_elster_dust",
@@ -20460,6 +20486,7 @@ const DB = {
     },
     {
         id: "rep_elster_nemesis_1",
+		char: "Frau Elster",
         title: "Das Budget-Embargo",
         reqRep: { "Frau Elster": -60 },
         text: "Eine E-Mail von Frau Elster (CC: Chef, HR, Hausmeister): 'Aufgrund chaotischer Zustände in der IT ist das Budget bis auf Weiteres gesperrt. Jeder Bleistift muss einzeln bei mir beantragt werden (Formular 12-B, dreifache Ausfertigung).'",
@@ -20489,6 +20516,7 @@ const DB = {
     },
     {
         id: "rep_elster_nemesis_2a",
+		char: "Frau Elster",
         title: "Die Nadel im Heuhaufen",
         reqRep: { "Frau Elster": -80 },
         reqStory: "path_elster_spam",
@@ -20515,6 +20543,7 @@ const DB = {
     },
     {
         id: "rep_elster_nemesis_2b",
+		char: "Frau Elster",
         title: "Taschenkontrolle",
         reqRep: { "Frau Elster": -80 },
         reqStory: "path_elster_theft",
@@ -20542,6 +20571,7 @@ const DB = {
     },
     {
         id: "rep_elster_nemesis_2c",
+		char: "Frau Elster",
         title: "Formfehler",
         reqRep: { "Frau Elster": -50 },
         reqStory: "path_elster_forms",
@@ -20569,6 +20599,7 @@ const DB = {
     },
     {
         id: "rep_elster_filler_good_1",
+		char: "Frau Elster",
         title: "Der Sparfuchs",
         reqRep: { "Frau Elster": 10 }, 
         text: "Frau Elster mustert dich am Drucker. 'Ich habe in den Logs gesehen, dass Sie Ihre Handbücher standardmäßig beidseitig und in Graustufen drucken. Vorbildlich.'",
@@ -20595,6 +20626,7 @@ const DB = {
     },
     {
         id: "rep_elster_filler_good_2",
+		char: "Frau Elster",
         title: "Neues Spielzeug",
         reqRep: { "Frau Elster": 30 }, 
         text: "Frau Elster hält ein kleines, glitzerndes Objekt in der Hand. 'Herr Müller. Schauen Sie mal. Ein neues Halsband für Rüdiger. Mit GPS-Tracker. Können Sie die App auf meinem Handy einrichten?'",
@@ -20621,6 +20653,7 @@ const DB = {
     },
     {
         id: "rep_elster_filler_bad_1",
+		char: "Frau Elster",
         title: "Tacker-Inspektion",
         reqRep: { "Frau Elster": -10 }, 
         text: "Frau Elster steht vor deinem Schreibtisch und hält deinen Tacker hoch. 'Inventarnummer 402-A. Der gehört in Raum 12. Warum befindet er sich auf Ihrem Schreibtisch?'",
@@ -20647,6 +20680,7 @@ const DB = {
     },
     {
         id: "rep_elster_filler_bad_2",
+		char: "Frau Elster",
         title: "Die Stoppuhr",
         reqRep: { "Frau Elster": -30 }, 
         text: "Du kommst mit einem Kaffee zurück an den Platz. Frau Elster drückt demonstrativ auf eine Stoppuhr. '7 Minuten und 43 Sekunden für ein Heißgetränk. Die Vorgabe für Bildschirmpausen sind 5 Minuten.'",
@@ -20674,6 +20708,7 @@ const DB = {
     // === MARKUS: DER CLOSER ===
     {
         id: "rep_markus_story_1",
+		char: "Markus",
         title: "Markus im Angriffsmodus",
         reqRep: { "Markus": 60 },
         text: "Markus fängt dich ab und rückt seine Krawatte zurecht. 'Müller! Gut, dass ich Sie sehe. Ich muss gleich zum Großkunden. Ich brauche Admin-Rechte, um die Firewall zu umgehen. Der Kunde will unsere 'Cloud-KI' sehen (die wir gar nicht haben). Bauen Sie mir was!'",
@@ -20703,6 +20738,7 @@ const DB = {
     },
     {
         id: "rep_markus_story_2a",
+		char: "Markus",
         title: "Finale: Provision",
         reqRep: { "Markus": 80 },
         reqStory: "path_markus_success",
@@ -20731,6 +20767,7 @@ const DB = {
     },
     {
         id: "rep_markus_story_2b",
+		char: "Markus",
         title: "Finale: Entgangener Gewinn",
         reqRep: { "Markus": 50 },
         reqStory: "path_markus_failure",
@@ -20757,6 +20794,7 @@ const DB = {
     },
     {
         id: "rep_markus_story_2c",
+		char: "Markus",
         title: "Finale: Quantum Sheets",
         reqRep: { "Markus": 65 },
         reqStory: "path_markus_joke",
@@ -20784,6 +20822,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_good_1",
+		char: "Markus",
         title: "Der Laser-Notfall",
         reqRep: { "Markus": 20 },
         text: "Markus steht hektisch klickend vor dir. 'Müller! Mein Presenter ist tot! In 5 Minuten pitche ich vor dem Vorstand! Ohne den Laserpointer bin ich nackt! Mach, dass es leuchtet!'",
@@ -20812,6 +20851,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_good_2a",
+		char: "Markus",
         title: "Die VIP-Lounge",
         reqRep: { "Markus": 40 },
         reqStory: "path_markus_battery",
@@ -20839,6 +20879,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_good_2b",
+		char: "Markus",
         title: "Digital Native",
         reqRep: { "Markus": 40 },
         reqStory: "path_markus_app",
@@ -20865,6 +20906,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_good_2c",
+		char: "Markus",
         title: "Der Side-Hustle",
         reqRep: { "Markus": 40 },
         reqStory: "path_markus_cash",
@@ -20892,6 +20934,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_bad_1",
+		char: "Markus",
         title: "Das Phantom-Feature",
         reqRep: { "Markus": -20 },
         text: "Markus stürmt rein. Er schwitzt. 'Müller! Ich habe dem Kunden gerade 'Voice Control 3000' verkauft. Für die alte Datenbank. Der Vertrag ist unterschrieben. Du hast bis morgen früh Zeit, das zu programmieren. Sonst sind wir beide dran.'",
@@ -20920,6 +20963,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_bad_2a",
+		char: "Markus",
         title: "Der Sündenbock",
         reqRep: { "Markus": -40 },
         reqStory: "path_markus_bus",
@@ -20945,6 +20989,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_bad_2b",
+		char: "Markus",
         title: "Der Vorführeffekt",
         reqRep: { "Markus": -30 },
         reqStory: "path_markus_demo",
@@ -20970,6 +21015,7 @@ const DB = {
     },
     {
         id: "rep_markus_simple_bad_2c",
+		char: "Markus",
         title: "Scope Creep",
         reqRep: { "Markus": -30 },
         reqStory: "path_markus_more",
@@ -20996,6 +21042,7 @@ const DB = {
     },
     {
         id: "rep_markus_nemesis_1",
+		char: "Markus",
         title: "Die Ablösung",
         reqRep: { "Markus": -60 },
         text: "Markus kommt nicht allein. Er hat einen jungen Mann im Slim-Fit-Anzug dabei. 'Müller. Das ist Kai-Uwe von 'Cloud-Force'. Er wird deine Aufgaben übernehmen. Er ist agil. Du bist... Legacy-Code. Pack deine Sachen.'",
@@ -21025,6 +21072,7 @@ const DB = {
     },
     {
         id: "rep_markus_nemesis_2a",
+		char: "Markus",
         title: "Budget-Kürzung",
         reqRep: { "Markus": -80 },
         reqStory: "path_markus_outsourcing",
@@ -21051,6 +21099,7 @@ const DB = {
     },
     {
         id: "rep_markus_nemesis_2b",
+		char: "Markus",
         title: "Black Hat Ops",
         reqRep: { "Markus": -50 },
         reqStory: "path_markus_blackhat",
@@ -21077,6 +21126,7 @@ const DB = {
     },
     {
         id: "rep_markus_nemesis_2c",
+		char: "Markus",
         title: "Die Rechnung",
         reqRep: { "Markus": -70 },
         reqStory: "path_markus_coffee",
@@ -21104,6 +21154,7 @@ const DB = {
     },
     {
         id: "rep_markus_filler_good_1",
+		char: "Markus",
         title: "Der Dongle-Retter",
         reqRep: { "Markus": 10 }, 
         text: "Markus stürmt rein, Krawatte leicht gelockert. 'Müller! Kunden-Pitch in 2 Minuten! Das verdammte Beamer-Kabel passt nicht in meinen Mac. Hast du so einen... Dongle-Dingsbums?'",
@@ -21130,6 +21181,7 @@ const DB = {
     },
     {
         id: "rep_markus_filler_good_2",
+		char: "Markus",
         title: "High-Class Reste",
         reqRep: { "Markus": 30 }, 
         text: "Markus betritt dein Büro und stellt einen edlen Pappkarton auf den Tisch. 'Der Termin mit den Investoren ist durch. Hier sind noch drei Premium-Trüffel-Sandwiches übrig. Für die Elite-IT.'",
@@ -21156,6 +21208,7 @@ const DB = {
     },
     {
         id: "rep_markus_filler_bad_1",
+		char: "Markus",
         title: "Prio 1: Maus-Akku",
         reqRep: { "Markus": -10 }, 
         text: "Dein Telefon klingelt Sturm. Es ist Markus. 'Müller! Totalausfall! Meine Wireless-Maus ist leer. Ich kann so nicht akquirieren! Bring sofort Batterien! Prio 1!'",
@@ -21182,6 +21235,7 @@ const DB = {
     },
     {
         id: "rep_markus_filler_bad_2",
+		char: "Markus",
         title: "Die Feature-Lüge",
         reqRep: { "Markus": -30 }, 
         text: "Markus klopft dir im Vorbeigehen hart auf die Schulter. 'Hab den Deal gelandet! Hab dem Kunden versprochen, dass unsere Software jetzt auch Blockchain und KI-Kaffee kochen kann. Bau das bis Freitag ein. Ciao!'",
@@ -21209,6 +21263,7 @@ const DB = {
     // === GABI: DIE SEELE DER FIRMA ===
     {
         id: "rep_gabi_story_1",
+		char: "Gabi",
         title: "Notruf vom Empfang",
         reqRep: { "Gabi": 60 },
         text: "Das Telefon klingelt. Gabi ist dran, ihre Stimme zittert gefährlich. 'Hier stehen fünf Kuriere, das Telefon klingelt ununterbrochen und mein Outlook hängt. Wenn jetzt noch einer fragt, wo die Toilette ist, fange ich an zu schreien.'",
@@ -21236,8 +21291,9 @@ const DB = {
             }
         ]
     },
-{
+    {
         id: "rep_gabi_story_2a",
+		char: "Gabi",
         title: "Finale: Lärmschutz",
         reqRep: { "Gabi": 75 },
         reqStory: "path_gabi_rocker",
@@ -21266,6 +21322,7 @@ const DB = {
     },
     {
         id: "rep_gabi_story_2b",
+		char: "Gabi",
         title: "Finale: Passierschein A38",
         reqRep: { "Gabi": 55 },
         reqStory: "path_gabi_ticket",
@@ -21293,6 +21350,7 @@ const DB = {
     },
     {
         id: "rep_gabi_story_2c",
+		char: "Gabi",
         title: "Finale: Unerreichbar",
         reqRep: { "Gabi": 45 },
         reqStory: "path_gabi_anger",
@@ -21320,6 +21378,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_good_1",
+		char: "Gabi",
         title: "Das Privat-Paket",
         reqRep: { "Gabi": 20 },
         text: "Gabi winkt dich heran. Sie schaut sich verschwörerisch um. 'Psst. Hier ist ein Amazon-Paket für dich. Eigentlich ist private Post verboten und ich müsste es zurückschicken oder verbrennen. Aber es rasselt so interessant.'",
@@ -21348,6 +21407,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_good_2a",
+		char: "Gabi",
         title: "Der Flurfunk",
         reqRep: { "Gabi": 40 },
         reqStory: "path_gabi_secret",
@@ -21374,6 +21434,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_good_2b",
+		char: "Gabi",
         title: "Die Reste-Verwertung",
         reqRep: { "Gabi": 40 },
         reqStory: "path_gabi_candy",
@@ -21399,6 +21460,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_good_2c",
+		char: "Gabi",
         title: "Der VIP-Besuch",
         reqRep: { "Gabi": 30 },
         reqStory: "path_gabi_rule",
@@ -21426,6 +21488,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_bad_1",
+		char: "Gabi",
         title: "Die Paket-Geisel",
         reqRep: { "Gabi": -20 },
         text: "Du siehst ein Amazon-Paket mit deinem Namen hinter dem Tresen. Gabi legt schützend die Hand darauf. 'Tja, Herr Müller. Laut Hausordnung §4 ist private Post untersagt. Ich werde das wohl... thermisch verwerten müssen. Oder an 'Bedürftige' spenden.'",
@@ -21454,6 +21517,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_bad_2a",
+		char: "Gabi",
         title: "Annahme verweigert",
         reqRep: { "Gabi": -40 },
         reqStory: "path_gabi_denied",
@@ -21479,6 +21543,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_bad_2b",
+		char: "Gabi",
         title: "Passierschein A38",
         reqRep: { "Gabi": -30 },
         reqStory: "path_gabi_beg",
@@ -21505,6 +21570,7 @@ const DB = {
     },
     {
         id: "rep_gabi_simple_bad_2c",
+		char: "Gabi",
         title: "Candid Camera",
         reqRep: { "Gabi": -30 },
         reqStory: "path_gabi_cam",
@@ -21532,6 +21598,7 @@ const DB = {
     },
     {
         id: "rep_gabi_nemesis_1",
+		char: "Gabi",
         title: "Kommunikations-Sperre",
         reqRep: { "Gabi": -60 },
         text: "Du wunderst dich, warum dein Telefon tot ist. Gabi hat deine Durchwahl auf 'Nummer nicht vergeben' umgeleitet. Auch Besucher für die IT werden abgewimmelt mit: 'Herr Müller? Der ist leider verstorben.'",
@@ -21561,6 +21628,7 @@ const DB = {
     },
     {
         id: "rep_gabi_nemesis_2a",
+		char: "Gabi",
         title: "Durchsage für Herrn Müller",
         reqRep: { "Gabi": -80 },
         reqStory: "path_gabi_war",
@@ -21586,6 +21654,7 @@ const DB = {
     },
     {
         id: "rep_gabi_nemesis_2b",
+		char: "Gabi",
         title: "Empfangsdame Müller",
         reqRep: { "Gabi": -50 },
         reqStory: "path_gabi_sub",
@@ -21613,6 +21682,7 @@ const DB = {
     },
     {
         id: "rep_gabi_nemesis_2c",
+		char: "Gabi",
         title: "Das Schwarze Buch",
         reqRep: { "Gabi": -50 },
         reqStory: "path_gabi_spy",
@@ -21640,6 +21710,7 @@ const DB = {
     },
     {
         id: "rep_gabi_filler_good_1",
+		char: "Gabi",
         title: "Der Türsteher",
         reqRep: { "Gabi": 10 }, 
         text: "Gabi ruft an. 'Müller, hier steht ein sehr aufdringlicher Vertreter für Drucker-Leasing. Er will direkt zu dir durch. Soll ich ihn abwimmeln oder hast du Langeweile?'",
@@ -21666,6 +21737,7 @@ const DB = {
     },
     {
         id: "rep_gabi_filler_good_2",
+		char: "Gabi",
         title: "Gossip-Update",
         reqRep: { "Gabi": 30 }, 
         text: "Du holst Post am Empfang. Gabi beugt sich über den Tresen und flüstert: 'Hast du gehört? Chantal vom Marketing hat heute Morgen heimlich auf dem Klo geweint, weil ihr Smoothie ausverkauft war.'",
@@ -21692,6 +21764,7 @@ const DB = {
     },
     {
         id: "rep_gabi_filler_bad_1",
+		char: "Gabi",
         title: "Spam-Schleuse",
         reqRep: { "Gabi": -10 }, 
         text: "Dein Telefon klingelt. Wieder. Es ist das fünfte Mal heute, dass Gabi einen offensichtlichen Spam-Call ('Gewinnen Sie ein iPhone') an deine Durchwahl durchstellt, statt ihn abzuwürgen.",
@@ -21717,6 +21790,7 @@ const DB = {
     },
     {
         id: "rep_gabi_filler_bad_2",
+		char: "Gabi",
         title: "Dienst nach Vorschrift",
         reqRep: { "Gabi": -30 }, 
         text: "Eine Mail von Gabi: 'Sehr geehrter Herr Müller, ein Paket für Sie wurde verweigert, da Ihr Name auf dem Etikett als 'Muller' (ohne Umlaut) stand. Gemäß Protokoll 7B unzulässig. Es geht zurück ans Depot.'",
@@ -21772,6 +21846,7 @@ const DB = {
 // --- BAR EVENTS (7) ---
         {
             id: 'party_bar_1', loc: 'bar',
+			char: "Markus",
             title: 'Die Krypto-Predigt',
             text: 'Du näherst dich der Bar. Markus aus dem Vertrieb hat Azubi Kevin in die Ecke gedrängt. Markus hat offensichtlich schon den dritten Scotch intus und erklärt dem völlig überforderten Praktikanten lautstark, wie man "High-Ticket-Synergien" in neue Krypto-Coins investiert. Kevin sieht aus, als würde er gleich anfangen zu weinen oder sich übergeben.',
             opts: [
@@ -21846,6 +21921,7 @@ const DB = {
         // --- BUFFET EVENTS (7) ---
         {
             id: 'party_buffet_1', loc: 'buffet',
+			char: "Egon",
             title: 'Der Mett-Wächter',
             text: 'Hausmeister Egon bewacht das Buffet. Er hat ein wachsames Auge auf den gigantischen Mett-Igel. "Halt! Jeder nur ein Brötchen! Die Geschäftsführung hat noch nicht gegessen!", knurrt er.',
             opts: [
@@ -21856,6 +21932,7 @@ const DB = {
         },
         {
             id: 'party_buffet_2', loc: 'buffet',
+			char: "Frau Elster",
             title: 'Die Tupper-Mafia',
             text: 'Frau Elster hockt halb hinter einer Tischdecke und schaufelt heimlich, aber extrem schnell, Unmengen an teuren Scampi in eine riesige Plastikdose. Als sie dich bemerkt, erstarrt sie.',
             opts: [
@@ -21876,6 +21953,7 @@ const DB = {
         },
         {
             id: 'party_buffet_4', loc: 'buffet',
+			char: "Kevin",
             title: 'Das Schokobrunnen-Drama',
             text: 'Der Schokobrunnen läuft über! Kevin hat ein gigantisches Stück Melone reingeworfen, das den Abfluss blockiert. Die klebrige Flut nähert sich dem weißen Teppich.',
             opts: [
@@ -21906,6 +21984,7 @@ const DB = {
         },
         {
             id: 'party_buffet_7', loc: 'buffet',
+			char: "Kevin",
             title: 'Deko-Fresser',
             text: 'Du siehst, wie Kevin verzweifelt auf einem Stück Deko-Zitrone mit Schale herumkaut, weil er denkt, es gehöre zum Hauptgericht. Er sieht aus, als würde er gleich weinen.',
             opts: [
@@ -21918,6 +21997,7 @@ const DB = {
         // --- DANCEFLOOR EVENTS (7) ---
         {
             id: 'party_dance_1', loc: 'dance',
+			char: "Chantal",
             title: 'Der Agile Flashmob',
             text: 'Chantal hat das Mikrofon gekapert und versucht, einen einstudierten "Corporate-Tanz" zur Förderung der Synergien zu starten. Sie winkt dich aggressiv auf die Tanzfläche.',
             opts: [
@@ -21928,6 +22008,7 @@ const DB = {
         },
         {
             id: 'party_dance_2', loc: 'dance',
+			char: "Dr. Wichtig",
             title: 'Der Chef eskaliert',
             text: 'Dr. Wichtig hat sich seine Krawatte wie Rambo um den Kopf gebunden und versucht sich in der Mitte des Kreises an Breakdance. Es sieht gefährlich nach Bandscheibenvorfall aus.',
             opts: [
@@ -21962,7 +22043,7 @@ const DB = {
             text: 'Das Licht wird gedimmt. Plötzlich läuft "Careless Whisper". Eine leicht angetrunkene Kollegin aus der Buchhaltung steuert zielstrebig und mit schmachtendem Blick auf dich zu.',
             opts: [
                 { t: 'Auf die Toilette flüchten', f: 15, a: 5, r: 'Du drehst dich auf dem Absatz um und sprintest im Dauerlauf Richtung Herrentoilette. Die Kollegin ist verwirrt und krallt sich stattdessen den völlig perplexen Hausmeister Egon für den Engtanz.', next: 'party_hub' },
-                { t: 'Mit ihr tanzen (Purer Cringe)', a: 40, f: -10, r: 'Du wiegst dich eine gefühlte Ewigkeit lang steif wie ein Brett mit ihr hin und her. Sie lallt dir ins Ohr und tritt dir dabei dreimal schmerzhaft auf den Fuß. Die reinste Folter.', next: 'party_hub' },
+                { t: 'Mit ihr tanzen', a: 40, f: -10, r: 'Du wiegst dich eine gefühlte Ewigkeit lang steif wie ein Brett mit ihr hin und her. Sie lallt dir ins Ohr und tritt dir dabei dreimal schmerzhaft auf den Fuß. Die reinste Folter.', next: 'party_hub' },
                 { t: 'Kevin als Ersatzopfer vorschieben', f: 10, a: -5, r: 'Du packst den Azubi am Kragen und stellst ihn exakt zwischen dich und die Kollegin. Sie umschlingt sofort Kevin. Er blickt panisch drein, aber du bist frei und holst dir ein Bier.', next: 'party_hub' }
             ]
         },
@@ -21990,6 +22071,7 @@ const DB = {
         // --- LOUNGE EVENTS (7) ---
         {
             id: 'party_lounge_1', loc: 'lounge',
+			char: "Gabi",
             title: 'Gabis Gossip-Ecke',
             text: 'Gabi sitzt in einem Ohrensessel. "Weißt du eigentlich, warum der Vertriebsleiter heute so schwitzt? Er hat sein Firmenauto geschrottet und es noch nicht gemeldet."',
             opts: [
@@ -22179,6 +22261,7 @@ const DB = {
         },
         {
             id: 'party_toilet_6', loc: 'toilet',
+			char: "Kevin",
             title: 'Der Axe-Effekt',
             text: 'Zwei Azubis (darunter Kevin) haben sich vor dem Spiegel offenbar mit einer kompletten Dose Bodyspray eingenebelt. Die Luft flimmert. Es riecht nach Moschus und Erstickungstod.',
             opts: [
@@ -22321,40 +22404,40 @@ const DB = {
     // === ERFOLGE (Für das Sammelalbum) ===
     achievements: [
         // EXTREME PLAYSTYLE
-        { id: "ach_ascetic", icon: "🧘", title: "Der Asket", desc: "16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.", hint: "Überstehe fast den ganzen Tag, ohne das 'schwarze Gold' anzurühren." },
-        { id: "ach_coffee", icon: "🫀", title: "Herzrasen", desc: "8 Tassen getrunken. Du kannst Farben hören und die Zeit anhalten.", hint: "Trinke eine medizinisch bedenkliche Menge Kaffee an einem Tag." },
-        { id: "ach_ignore", icon: "👻", title: "Ghosting-Profi", desc: "5 Mails ignoriert. Deine 'Entf'-Taste glüht.", hint: "Lass deinen Posteingang links liegen und ignoriere Anfragen konsequent." },
-        { id: "ach_hoarder", icon: "🛒", title: "Loot-Goblin", desc: "8 Items im Inventar. Dein Rucksack platzt.", hint: "Sammle alles ein, was nicht niet- und nagelfest ist, bis nichts mehr passt." },
+        { id: "ach_ascetic", icon: "🧘", img: "assets/achievements/ach_ascetic.png", title: "Der Asket", desc: "16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.", hint: "Überstehe fast den ganzen Tag, ohne das 'schwarze Gold' anzurühren." },
+        { id: "ach_coffee", icon: "🫀", img: "assets/achievements/ach_coffee.png", title: "Herzrasen", desc: "8 Tassen getrunken. Du kannst Farben hören und die Zeit anhalten.", hint: "Trinke eine medizinisch bedenkliche Menge Kaffee an einem Tag." },
+        { id: "ach_ignore", icon: "👻", img: "assets/achievements/ach_ignore.png", title: "Ghosting-Profi", desc: "5 Mails ignoriert. Deine 'Entf'-Taste glüht.", hint: "Lass deinen Posteingang links liegen und ignoriere Anfragen konsequent." },
+        { id: "ach_hoarder", icon: "🛒", img: "assets/achievements/ach_hoarder.png", title: "Loot-Goblin", desc: "5 Items im Inventar. Dein Rucksack platzt.", hint: "Sammle alles ein, was nicht niet- und nagelfest ist, bis nichts mehr passt." },
 
         // STATS
-        { id: "ach_lazy", icon: "🦥", title: "Faulpelz", desc: "80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben.", hint: "Vermeide Arbeit so lange, bis deine Produktivität gegen Null geht." },
-        { id: "ach_rage", icon: "🤬", title: "180 Puls", desc: "Nur noch ein dummer Anruf und es knallt. (95% Aggro)", hint: "Lass dich reizen, bis du kurz vor dem totalen Ausraster stehst." },
+        { id: "ach_lazy", icon: "🦥", img: "assets/achievements/ach_lazy.png", title: "Faulpelz", desc: "80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben.", hint: "Vermeide Arbeit so lange, bis deine Produktivität gegen Null geht." },
+        { id: "ach_rage", icon: "🤬", img: "assets/achievements/ach_rage.png", title: "180 Puls", desc: "Nur noch ein dummer Anruf und es knallt. (95% Aggro)", hint: "Lass dich reizen, bis du kurz vor dem totalen Ausraster stehst." },
 
         // ITEMS & SKILLS
-        { id: "ach_macgyver", icon: "🛠️", title: "MacGyver", desc: "Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi.", hint: "Sammle das komplette Werkzeug-Set für technische Notfälle." },
-        { id: "ach_rich", icon: "💸", title: "Der Millionär", desc: "Du hast dem Prinzen vertraut. Kündigung ist raus!", hint: "Ignoriere den gesunden Menschenverstand und den Spam-Filter." },
-        { id: "ach_hacker", icon: "💻", title: "Mr. Robot", desc: "Root-Rechte erhalten. Jetzt gehört das Netzwerk dir.", hint: "Finde einen Weg, dir illegale Admin-Rechte zu verschaffen." },
+        { id: "ach_macgyver", icon: "🛠️", img: "assets/achievements/ach_macgyver.png", title: "MacGyver", desc: "Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi.", hint: "Sammle das komplette Werkzeug-Set für technische Notfälle." },
+        { id: "ach_rich", icon: "💸", img: "assets/achievements/ach_rich.png", title: "Der Millionär", desc: "Du hast dem Prinzen vertraut. Kündigung ist raus!", hint: "Ignoriere den gesunden Menschenverstand und den Spam-Filter." },
+        { id: "ach_hacker", icon: "💻", img: "assets/achievements/ach_hacker.png", title: "Mr. Robot", desc: "Root-Rechte erhalten. Jetzt gehört das Netzwerk dir.", hint: "Finde einen Weg, dir illegale Admin-Rechte zu verschaffen." },
 
         // END GAME / ZEITABHÄNGIG
-        { id: "ach_ninja", icon: "🥷", title: "Ninja", desc: "Fast unsichtbar für den Chef (bis 14 Uhr unbemerkt).", hint: "Bleib bis zum frühen Nachmittag komplett unter dem Radar." },
-        { id: "ach_zen", icon: "🕊️", title: "Zen-Meister", desc: "15 Uhr und die Ruhe selbst (0 Aggro). Bist du überhaupt wach?", hint: "Erreiche den Nachmittag mit absoluter innerer Seelenruhe." },
-        { id: "ach_workaholic", icon: "👔", title: "Streber", desc: "Bis 16 Uhr fast keine Faulheit. Du machst uns anderen schlecht!", hint: "Arbeite hart und halte deine Faulheit bis kurz vor Feierabend extrem niedrig." },
-        { id: "ach_risk", icon: "🎢", title: "Drahtseilakt", desc: "Feierabend mit 9 offenen Tickets. Das war verdammt knapp.", hint: "Beende den Tag am absoluten Limit der erlaubten offenen Tickets." },
-        { id: "ach_clean", icon: "✨", title: "Inbox Zero", desc: "Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.", hint: "Abarbeiten! Der Ticket-Zähler muss leer sein." },
-        { id: "ach_survivor", icon: "🌋", title: "Tanz auf dem Vulkan", desc: "Maximaler Stress (90/90) kurz vor Feierabend. Du brauchst Urlaub.", hint: "Beende den Tag mit gleichzeitig maximalem Stress und maximaler Wut." },
+        { id: "ach_ninja", icon: "🥷", img: "assets/achievements/ach_ninja.png", title: "Ninja", desc: "Fast unsichtbar für den Chef (bis 14 Uhr unbemerkt).", hint: "Bleib bis zum frühen Nachmittag komplett unter dem Radar." },
+        { id: "ach_zen", icon: "🕊️", img: "assets/achievements/ach_zen.png", title: "Zen-Meister", desc: "15 Uhr und die Ruhe selbst (0 Aggro). Bist du überhaupt wach?", hint: "Erreiche den Nachmittag mit absoluter innerer Seelenruhe." },
+        { id: "ach_workaholic", icon: "👔", img: "assets/achievements/ach_workaholic.png", title: "Streber", desc: "Bis 16 Uhr fast keine Faulheit. Du machst uns anderen schlecht!", hint: "Arbeite hart und halte deine Faulheit bis kurz vor Feierabend extrem niedrig." },
+        { id: "ach_risk", icon: "🎢", img: "assets/achievements/ach_risk.png", title: "Drahtseilakt", desc: "Feierabend mit 9 offenen Tickets. Das war verdammt knapp.", hint: "Beende den Tag am absoluten Limit der erlaubten offenen Tickets." },
+        { id: "ach_clean", icon: "✨", img: "assets/achievements/ach_clean.png", title: "Inbox Zero", desc: "Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.", hint: "Abarbeiten! Der Ticket-Zähler muss leer sein." },
+        { id: "ach_survivor", icon: "🌋", img: "assets/achievements/ach_survivor.png", title: "Tanz auf dem Vulkan", desc: "Maximaler Stress (90/90) kurz vor Feierabend. Du brauchst Urlaub.", hint: "Beende den Tag mit gleichzeitig maximalem Stress und maximaler Wut." },
 
         // STORY ACHIEVEMENTS
-        { id: "ach_mentor", icon: "👨‍👦", title: "Der Mentor", desc: "Du und Kevin: Vom Chaos-Azubi zum echten Admin.", hint: "Hilf dem Azubi aus der IT aus einer brenzligen Lage." },
-        { id: "ach_ally", icon: "🤝", title: "Marketing-Allianz", desc: "Du und Chantal: Ein tödliches Team. Das Budget gehört euch.", hint: "Schließe einen Pakt mit der Marketing-Abteilung." },
-        { id: "ach_rockstar", icon: "🤘", title: "Metal Queen", desc: "Du und Gabi: Laut, schnell und gegen den Rest der Welt.", hint: "Rette den Empfang vor dem nervlichen Zusammenbruch." },
-        { id: "ach_keymaster", icon: "🚪", title: "Keymaster", desc: "Du und Egon: Ein stilles Bündnis. Dir stehen alle Türen offen.", hint: "Gewinne das Vertrauen des Hausmeisters." },
-        { id: "ach_closer", icon: "💼", title: "The Closer", desc: "Du und Markus: Geld schläft nicht. Ihr habt den Deal gerettet.", hint: "Hilf dem Sales-Team beim Abschluss, wenn es drauf ankommt." },
-        { id: "ach_cat_whisperer", icon: "🐈", title: "Katzenflüsterer", desc: "Du und Frau Elster: Freunde fürs Leben (und für Rüdiger).", hint: "Löse das Katzen-Problem der Buchhaltung." },
-        { id: "ach_lore", icon: "🕯️", title: "Der Historiker", desc: "Du hast die Chronik gelesen. Jetzt weißt du, warum wir Disketten anbeten.", hint: "Finde und lies die geheime Geschichte der Firma." },
-        { id: "ach_wolf", icon: "📈", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. Der Vertrag gehört dir.", hint: "Gewinne die harte Verhandlung gegen den Endgegner." },
+        { id: "ach_mentor", icon: "👨‍👦", img: "assets/achievements/ach_mentor.png", title: "Der Mentor", desc: "Du und Kevin: Vom Chaos-Azubi zum echten Admin.", hint: "Hilf dem Azubi aus der IT aus einer brenzligen Lage." },
+        { id: "ach_ally", icon: "🤝", img: "assets/achievements/ach_ally.png", title: "Marketing-Allianz", desc: "Du und Chantal: Ein tödliches Team. Das Budget gehört euch.", hint: "Schließe einen Pakt mit der Marketing-Abteilung." },
+        { id: "ach_rockstar", icon: "🤘", img: "assets/achievements/ach_rockstar.png", title: "Metal Queen", desc: "Du und Gabi: Laut, schnell und gegen den Rest der Welt.", hint: "Rette den Empfang vor dem nervlichen Zusammenbruch." },
+        { id: "ach_keymaster", icon: "🚪", img: "assets/achievements/ach_keymaster.png", title: "Keymaster", desc: "Du und Egon: Ein stilles Bündnis. Dir stehen alle Türen offen.", hint: "Gewinne das Vertrauen des Hausmeisters." },
+        { id: "ach_closer", icon: "💼", img: "assets/achievements/ach_closer.png", title: "The Closer", desc: "Du und Markus: Geld schläft nicht. Ihr habt den Deal gerettet.", hint: "Hilf dem Sales-Team beim Abschluss, wenn es drauf ankommt." },
+        { id: "ach_cat_whisperer", icon: "🐈", img: "assets/achievements/ach_cat_whisperer.png", title: "Katzenflüsterer", desc: "Du und Frau Elster: Freunde fürs Leben (und für Rüdiger).", hint: "Löse das Katzen-Problem der Buchhaltung." },
+        { id: "ach_lore", icon: "🕯️", img: "assets/achievements/ach_lore.png", title: "Der Historiker", desc: "Du hast die Chronik gelesen. Jetzt weißt du, warum wir Disketten anbeten.", hint: "Finde und lies die geheime Geschichte der Firma." },
+        { id: "ach_wolf", icon: "📈", img: "assets/achievements/ach_wolf.png", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. Der Vertrag gehört dir.", hint: "Gewinne die harte Verhandlung gegen den Endgegner." },
 
         // GALA PARTY
-        { id: "ach_party", icon: "🎉", title: "Synergy-Veteran", desc: "Du hast die legendäre Firmenfeier überlebt und bist in die Geschichte eingegangen.", hint: "Beweise dich auf allen Ebenen, um die ultimative Einladung zu erhalten." }
-],
+        { id: "ach_party", icon: "🎉", img: "assets/achievements/ach_party.png", title: "Synergy-Veteran", desc: "Du hast die legendäre Firmenfeier überlebt und bist in die Geschichte eingegangen.", hint: "Beweise dich auf allen Ebenen, um die ultimative Einladung zu erhalten." }
+    ],
 	
 };

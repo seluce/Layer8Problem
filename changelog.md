@@ -1,3 +1,41 @@
+[3.0.0] - 2026-03-18
+
+Neuerungen:
+* Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken lokal eingebunden)
+* Offline-Modus ist nun möglich, wenn das gesamte Projekt heruntergeladen wird
+* Die Spieleinstellungen wurden überarbeitet und bieten jetzt mehr Sound- und Tastatur-Einstellungen
+* Drei verschiedene Arten von Musik hinzugefügt (Allgemein, Bossfights und für die Gala)
+* Das Start-Modal wurde optisch überarbeitet, sieht nun moderner aus und zeigt das Logo des Spiels
+* Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen starken Hover-Effekt
+* Die Charakter-Porträts werden bei charakterbezogenen Events jetzt visuell im Terminal dargestellt
+* Die Items bieten im Rucksack nun ein detailliertes Tooltip-Fenster mit Flavor-Texten beim Hovern
+* Automatische Sortierung von Items im Schnell-Inventar und Rucksack (Verbrauchsgegenstände bleiben griffbereit)
+* Verbrauchsgegenstände (wie z. B. Donuts oder Energy Drinks) können nun mehrfach gesammelt und im Inventar gehalten werden
+* Eine neue, geheime Intranet-Seite wurde hinzugefügt und wartet darauf, entdeckt zu werden
+* Das Mittagessen hat nun ein eigenes Icon und einen eigenen farblichen Rahmen
+* Einige weitere Events wurden für die verschiedenen Aktionen hinzugefügt
+
+Fehlerkorrekturen:
+* Ein Fehler wurde behoben, durch den die Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
+* E-Mail Performance-Probleme wurden behoben (Ruckeln und träges Verhalten der auswählbaren Optionen)
+* Story-Flags (Folgeentscheidungen) werden bei "Tag neu starten" jetzt korrekt zurückgesetzt
+* Eintreffende E-Mails werden während eines Bossfights nun zuverlässig blockiert (falsches Timer-Verhalten behoben)
+* Ein Anzeige-Fehler wurde behoben, bei dem im Tagesbericht noch Erfolge aus einem vorherigen, abgebrochenen Spieldurchlauf aufgelistet wurden
+* Ein kritischer Fehler wurde behoben, der das Spiel einfrieren ließ, wenn kurz vor Feierabend (und gleichzeitigem Start der Gala) eine E-Mail oder ein Anruf beendet wurde
+* Ein Exploit beim Morgen-Ereignis "Verschlafen" wurde behoben, sodass der Zeitverlust von 30 Minuten nun ordnungsgemäß mit einem Support-Ticket bestraft wird
+* Ein Fehler wurde behoben, bei dem sich E-Mail-Fenster fälschlicherweise mitten in der Synergy-Gala öffnen konnten, da Hintergrund-Timer nicht korrekt gestoppt wurden
+* Ein Fehler wurde behoben, bei dem unsichtbare Hintergrund-Timer weiterliefen, was dazu führen konnte, dass Ereignisse während des Game-Over-Bildschirms ausgelöst wurden
+* Ein Fehler wurde behoben, bei dem verzögerte Folge-E-Mails nach einem Neustart ("Tag neu starten") fälschlicherweise im neuen Spieldurchlauf auftauchen konnten
+* Ein Fehler wurde behoben, bei dem unsichtbare Hintergrund-Timer des Handys nach einem Abbruch weiterliefen und im neuen Tag versehentlich Aktionen auslösten
+* Ein Logikfehler von Items wurde behoben. Wenn das Inventar voll war, konnten Items verloren gehen, selbst wenn im selben Schritt Items verloren hat
+* Ein Logikfehler im E-Mail-Spamfilter wurde korrigiert, der nach einem Neustart des Tages versehentlich legitime Nachrichten blockieren konnte
+* Ein Logikfehler wurde behoben, bei dem Gegenstände, die man über das Handy erhalten hat, das reguläre Inventar-Limit ignorieren konnten
+* E-Mail-Ketten werden nicht mehr durch zufällige Mails unterbrochen und es gibt einen kurzen Cooldown nach dem Schließen des Fensters
+* Ein kritischer Fehler wurde behoben, der dafür sorgte, dass der Party-Modus nach einem Neustart aktiv blieb und das Spiel blockierte
+* Ein Fehler wurde behoben, durch den Items mit Abklingzeit (z. B. der Stressball) nach einem Neustart dauerhaft gesperrt bleiben konnten
+* Ein Fehler beim "Tag neu starten" wurde korrigiert, sodass die Abmahnung vom Chef nun ordnungsgemäß zurückgesetzt wird
+* Weitere, kleine Fehlerkorrekturen und strukturelle Anpassungen im Backend
+
 \[2.8.1] - 2026-02-29
 * Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
 * Kritischer Bugfix bei Begegnungen-Events, welche nicht immer Folge-Events zuverlässig ausgelöst haben

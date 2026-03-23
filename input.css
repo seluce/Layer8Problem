@@ -1,0 +1,164 @@
+/* --- LOKALE SCHRIFTARTEN --- */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../fonts/JetBrainsMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('../fonts/JetBrainsMono-ExtraBold.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 1. DEINE STANDARDS (Schrift, Hintergrund, Abstände) */
+@layer base {
+    body { 
+        font-family: 'JetBrains Mono', monospace;
+        background-color: #020617; 
+        color: #e2e8f0; 
+        height: 100vh; 
+        overflow: hidden; 
+        display: flex; 
+        flex-direction: column; 
+        padding: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        body { height: auto; overflow-y: auto; }
+    }
+}
+
+/* 2. DEINE BAUTEILE (Lassen sich durch Tailwind-Klassen überschreiben) */
+@layer components {
+    /* NEON LOOK */
+    .neon-box {
+        background: #0f172a; border: 1px solid #1e293b;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); border-radius: 0.75rem; position: relative;
+    }
+    .border-blue { border-top: 3px solid #3b82f6; }
+    .border-green { border-top: 3px solid #10b981; }
+    .border-orange { border-top: 3px solid #f97316; }
+    .border-red { border-top: 3px solid #ef4444; }
+    .border-purple { border-top: 3px solid #a855f7; }
+
+    /* ACHIEVEMENTS */
+    #achievement-container {
+        position: fixed; bottom: 100px; right: 20px; z-index: 100;
+        display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+    }
+    .achievement-toast {
+        background: rgba(16, 185, 129, 0.95); color: white;
+        border: 2px solid #059669; border-radius: 8px;
+        padding: 12px 16px; min-width: 250px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+        animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4s forwards;
+        display: flex; align-items: center; gap: 12px;
+    }
+
+    /* PHONE & CHAT */
+    #smartphone {
+        background: #000; border: 4px solid #334155; border-radius: 12px;
+        overflow: hidden; position: relative;
+        height: 100%; 
+        min-height: 300px;
+    }
+    .chat-bubble { padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; font-size: 0.75rem; max-width: 90%; }
+    .chat-in { background: #1e293b; border-left: 3px solid #6366f1; align-self: flex-start; }
+    .chat-out { background: #3b82f6; color: white; align-self: flex-end; }
+    .chat-system { background: #0f172a; border: 1px solid #334155; color: #94a3b8; align-self: center; text-align: center; font-size: 0.65rem; margin-top: 5px; padding: 5px; border-radius: 5px;}
+
+    /* INVENTORY */
+    .inv-slot {
+        background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
+        border-radius: 8px; display: flex; justify-content: center; align-items: center;
+        font-size: 20px; cursor: pointer; position: relative;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    /* Der Hover-Effekt */
+    .inv-slot:not(.used):not(.empty):hover {
+        transform: scale(1.15); /* Drehung entfernt! Nur noch Skalierung. */
+        z-index: 50;
+        border-color: #f59e0b !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    
+    .inv-slot:not(.used):active {
+        transform: scale(0.95);
+    }
+
+    .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
+    .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 10px; color: #10b981; }
+
+    /* BUTTONS */
+    .action-btn {
+        background: #1e293b; border: 1px solid #334155; transition: all 0.1s;
+        border-radius: 0.75rem; display: flex; flex-direction: column; 
+        align-items: center; justify-content: center; cursor: pointer; padding: 10px;
+    }
+    .action-btn:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
+    .action-btn:active { transform: translateY(0); }
+    .action-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    .choice-btn {
+        width: 100%; background: #1e293b; border: 1px solid #475569; padding: 1rem;
+        text-align: left; transition: all 0.2s; border-radius: 0.5rem; margin-bottom: 0.5rem;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .choice-btn:hover { border-color: #3b82f6; background: #0f172a; }
+    .choice-btn.locked { opacity: 0.5; border-color: #ef4444; cursor: not-allowed; background: #1a1a1a; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+    /* KOMPAKTMODUS */
+    body.compact-mode #action-bar { height: 3.5rem !important; }
+    body.compact-mode .action-btn { padding: 0.25rem !important; flex-direction: row; gap: 0.5rem; }
+    body.compact-mode .action-btn span:first-child { font-size: 1.25rem; }
+    body.compact-mode .neon-box { padding: 0.5rem !important; }
+    body.compact-mode #terminal { padding: 0.5rem 1rem !important; }
+    body.compact-mode #terminal button { padding: 0.4rem 1rem !important; margin-bottom: 0.25rem !important; font-size: 0.85rem !important; }
+    body.compact-mode #terminal button .text-xl { font-size: 1.1rem !important; }
+    body.compact-mode .text-2xl { font-size: 1.25rem !important; line-height: 1.5rem !important; }
+    body.compact-mode p.text-lg { font-size: 1rem !important; line-height: 1.6rem !important; margin-bottom: 0.5rem !important; }
+    body.compact-mode #clock-container, body.compact-mode #ticket-container { padding: 0.25rem !important; }
+}
+
+/* 3. EFFEKTE (Brauchen die absolute Prio für Animationen) */
+@layer utilities {
+    .ticket-pulse { animation: pulse-red 1s infinite; color: #ef4444; }
+    .pulse-red { animation: pulse-red-border 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
+    .pulse-orange { animation: pulse-orange-border 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
+    .animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+}
+
+/* 4. KEYFRAMES (Ohne Layer, ganz normal) */
+@keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+@keyframes pulse-red-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); } }
+@keyframes pulse-orange-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); } }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
+@keyframes slide-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes pop-in { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* --- SCREEN SHAKE EFFEKT --- */
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+  40%, 60% { transform: translate3d(8px, 0, 0); }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
