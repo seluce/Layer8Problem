@@ -1,4 +1,21 @@
-[3.0.0] - 2026-03-18
+[3.1.0] - 2026-03-26
+
+Neuerungen:
+* Beim manuellen "Tag neu starten" gibt es nun eine atmosphärische Boot-Sequenz inklusive klassischem PC-Beep, die das System spürbar hochfährt
+* Items können in Smartphone-Events nun auch direkt bei der Antwortauswahl als Voraussetzung gefordert oder verbraucht werden 
+* Kassiert man eine Abmahnung vom Chef, prangt nun ein unübersehbarer roter Stempel auf der eigenen Profilkarte im Team-Modal
+* Eine geführte, interaktive Simulation bringt neuen SysAdmins die Überlebensgrundlagen bei GlobalCorp nun im Tutorial bei
+* Der GlobalCorp News-Ticker informiert am Terminal nun sporadisch über firmeninterne Neuigkeiten
+* Das Firmen-Intranet wurde um eine versteckte, streng vertrauliche HR-Akte erweitert
+
+System & Stabilität:
+* Das Speichersystem (Export und Import) wurde massiv gehärtet und ist nun zukunftssicher
+* Veraltete Spielinhalte werden beim Laden älterer Speicherstände nun automatisch bereinigt
+
+Fehlerkorrekturen:
+* Ein kritischer Absturz-Fehler beim Importieren von älteren Speicherständen wurde behoben
+
+[3.0.0] - 2026-03-23
 
 Neuerungen:
 * Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken lokal eingebunden)

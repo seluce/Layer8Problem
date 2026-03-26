@@ -4,6 +4,7 @@ module.exports = {
     "./index.html",
     "./engine.js",
     "./data.js", 
+    "./tutorial.js", 
     "./assets/intranet/*.html"
   ],
   theme: {

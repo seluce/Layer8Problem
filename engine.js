@@ -1,4 +1,6 @@
 const engine = {
+    VERSION: "v3.1.0",	
+	
     state: {
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
@@ -42,6 +44,10 @@ const engine = {
 		
         // Speichert das Ende, damit wir es verzögert anzeigen können
         pendingEnd: null,
+		
+        // News Ticker
+        lastNewsTime: 0,
+        activeNewsText: null,
 
         // Aktive Items
         lastStressballTime: -100,
@@ -174,10 +180,109 @@ const engine = {
                 gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.4); 
                 osc.start(t);
                 osc.stop(t + 0.45);
+            } else if (type === 'boot') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(1000, t);
+                
+                gain.gain.setValueAtTime(0, t);
+                gain.gain.linearRampToValueAtTime(0.1 * vol, t + 0.01);
+                gain.gain.setValueAtTime(0.1 * vol, t + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.2);
+                
+                osc.start(t);
+                osc.stop(t + 0.25);
             }
         } catch(e) {
             console.log("Audio Fehler:", e);
         }
+    },
+	
+    // --- NEWS TICKER ---
+    checkForNews: function() {
+        if (this.state.activeNewsText !== null) return;
+        
+        if (typeof DB === 'undefined' || !DB.newsTicker) return;
+
+        // Cooldown: 90 Ingame-Minuten
+        if (this.state.time - this.state.lastNewsTime < 90) return;
+
+        // 5% Chance
+        if (Math.random() <= 0.05) {
+            const randomIndex = Math.floor(Math.random() * DB.newsTicker.length);
+            this.state.activeNewsText = DB.newsTicker[randomIndex];
+            this.state.lastNewsTime = this.state.time;
+            this.renderHeader(); 
+        }
+    },
+
+    renderHeader: function() {
+        const header = document.getElementById('terminal-header-right');
+        if (!header) return;
+
+        if (this.state.activeNewsText) {
+            header.style.opacity = '0';
+            header.style.filter = 'blur(4px)';
+
+            setTimeout(() => {
+                // LOGIK-FIX: Nutzt jetzt einfach w-full, da der Parent in der index.html die volle Breite erlaubt!
+                header.innerHTML = `
+                    <style>
+                        @keyframes newsScroll {
+                            0% { transform: translateX(0); }
+                            100% { transform: translateX(-100%); }
+                        }
+                    </style>
+                    <div class="w-full h-4 overflow-hidden flex items-center" style="-webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent); mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);">
+                        <div class="whitespace-nowrap inline-block" style="padding-left: 100%; animation: newsScroll 30s linear forwards;">
+                            <span class="text-amber-500 font-bold mr-2">[GLOBAL CORP BROADCAST]</span>
+                            <span class="text-slate-300 font-normal uppercase tracking-wide">${this.state.activeNewsText}</span>
+                        </div>
+                    </div>
+                `;
+                
+                header.style.opacity = '1';
+                header.style.filter = 'blur(0px)';
+
+                if (this.state.newsTimer) clearTimeout(this.state.newsTimer);
+                this.state.newsTimer = setTimeout(() => {
+                    header.style.opacity = '0';
+                    header.style.filter = 'blur(4px)';
+                    
+                    setTimeout(() => {
+                        this.state.activeNewsText = null;
+                        this.renderHeader();
+                        header.style.opacity = '1';
+                        header.style.filter = 'blur(0px)';
+                    }, 500); 
+                }, 30000); // 30 Sekunden Laufzeit
+
+            }, 500);
+
+        } else {
+            // Standard Ansicht
+            header.innerHTML = `TicketSystem ${this.VERSION}`;
+        }
+    },
+    // -------------------
+    
+    // --- HILFSFUNKTION FÜR SICHERES SPEICHERN/LADEN ---
+    deepMerge: function(target, source) {
+        for (const key in source) {
+            // Arrays überschreiben wir direkt (fürs Inventar etc. meist das sicherste)
+            if (Array.isArray(source[key])) {
+                target[key] = [...source[key]];
+            } 
+            // Objekte werden rekursiv tiefenkopiert
+            else if (source[key] !== null && typeof source[key] === 'object') {
+                if (!target[key]) target[key] = {};
+                this.deepMerge(target[key], source[key]);
+            } 
+            // Primitive Werte (Zahlen, Strings, Booleans) einfach zuweisen
+            else {
+                target[key] = source[key];
+            }
+        }
+        return target;
     },
 
     init: function() {
@@ -186,33 +291,49 @@ const engine = {
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
 		
+        this.renderHeader();
         this.updateUI();
         this.renderHotkeys();
-        this.log("System v3.0.0 geladen. Warte auf User...");
+        this.log(`System ${this.VERSION} geladen. Warte auf User...`);
     },
 
     // --- PERSISTENZ (Speichern & Laden) ---
     loadSystem: function() {
         const data = localStorage.getItem('layer8_archive');
         
-        // Default-Werte für alle Charaktere setzen (Startwert 0)
-        // Das stellt sicher, dass 'this.state.reputation' immer definiert ist, auch ohne Savegame
         DB.chars.forEach(char => {
             this.state.reputation[char.name] = 0;
         });
 
         if(data) {
             try {
-                // 1. Archiv laden
-                this.state.archive = JSON.parse(data);
+                const loadedArchive = JSON.parse(data);
+                // NEU: Deep Merge verhindert, dass alte Speicherstände neue Features löschen!
+                this.state.archive = this.deepMerge(this.state.archive, loadedArchive);
                 
-                // 2. Fallbacks für Datenstruktur (falls Savegame alt ist)
                 if(!this.state.archive.items) this.state.archive.items = [];
                 if(!this.state.archive.achievements) this.state.archive.achievements = [];
                 if(!this.state.archive.reputation) this.state.archive.reputation = {};
                 if(!this.state.archive.stats) this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
-                // 3. WICHTIG: Ruf aus dem Archiv in das aktive Spiel übertragen!
-                // Wir überschreiben die Nullen mit den gespeicherten Werten
+                
+                // --- NEU: GARBAGE COLLECTION (Bereinigung alter Daten) ---
+                if (typeof DB !== 'undefined' && DB.items) {
+                    this.state.archive.items = this.state.archive.items.filter(id => DB.items[id]);
+                }
+                if (typeof DB !== 'undefined' && DB.achievements) {
+                    this.state.archive.achievements = this.state.archive.achievements.filter(id => 
+                        DB.achievements.find(ach => ach.id === id)
+                    );
+                }
+                if (typeof DB !== 'undefined' && DB.chars) {
+                    for (let charName in this.state.archive.reputation) {
+                        if (!DB.chars.find(c => c.name === charName)) {
+                            delete this.state.archive.reputation[charName];
+                        }
+                    }
+                }
+                // ---------------------------------------------------------
+
                 for (let [name, val] of Object.entries(this.state.archive.reputation)) {
                     this.state.reputation[name] = val;
                 }
@@ -532,19 +653,12 @@ const engine = {
 
         // Tutorial starten (Verzögert, damit UI fertig gerendert ist)
         setTimeout(() => {
-            if (typeof tutorial !== 'undefined') {
-                // Wir versuchen, das Tutorial zu starten.
+            // Wir prüfen direkt über den Speicher, ob das Tutorial schon gemacht wurde!
+            if (typeof tutorial !== 'undefined' && localStorage.getItem('sysadmin_tutorial_done') !== 'true') {
+                // Tutorial ist neu -> Zeigt das Modal. Das Spiel wartet auf den Klick.
                 tutorial.start();
-                
-                // JETZT prüfen wir: Läuft das Tutorial gerade?
-                // Falls NEIN (weil schon gesehen oder übersprungen), starten wir das Spiel sofort.
-                if (!tutorial.isActive) {
-                    this.reset();
-                }
-                // Falls JA (isActive == true), macht diese Funktion hier nichts mehr.
-                // Das Spiel wird dann später von tutorial.finish() per engine.reset() gestartet.
             } else {
-                // Fallback: Falls die tutorial.js fehlt, Spiel einfach starten
+                // Tutorial ist bereits abgeschlossen oder fehlt -> Direktes Spiel
                 this.reset();
             }
         }, 500);
@@ -1367,12 +1481,25 @@ const engine = {
         // Blockieren, wenn schon ein Event offen ist
         if(this.state.activeEvent) return;
         
+        // --- TUTORIAL HOOK ---
+        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+            // Wir ziehen das exakte Event für den aktuellen Schritt aus DB.tutorial
+            let tutEvent = DB.tutorial.find(e => e.type === type && e.step === tutorial.step);
+            if (tutEvent) {
+				tutorial.hidePointer();
+                this.renderTerminal(tutEvent, type);
+            } else {
+                this.log("H.A.L.G.E.R.D.: Diese Aktion ist in der aktuellen Simulationsphase nicht vorgesehen.", "text-red-500");
+            }
+            return; // Normalen Trigger abbrechen!
+        }
+        
         // --- Neuen Tag erst jetzt offiziell zählen! ---
         if (!this.state.dayActive) {
             this.state.dayActive = true;
             this.incrementStat('daysStarted');
         }
-
+        
         // ---------------------------------------------------------
         // 1. BOSS CHECK (Die "Katastrophe")
         // ---------------------------------------------------------
@@ -2173,6 +2300,18 @@ const engine = {
             }
             return;
         }
+        
+        // --- TUTORIAL HOOK ---
+        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+            this.state.activeEvent = false;
+            const term = document.getElementById('terminal-content');
+            term.className = "flex-1 flex flex-col justify-center items-center text-center opacity-40";
+            term.innerHTML = `<div class="text-4xl md:text-6xl mb-4">🤖</div><h1 class="text-2xl font-bold text-cyan-400">H.A.L.G.E.R.D. BEREIT</h1><p>Warte auf Eingabe...</p>`;
+            
+            tutorial.advance();
+            return; // Verhindert, dass Mails, News oder der Morgen triggern
+        }
+        // -----------------------------------------------------------------
 		
 		// --- Morgen-Routinen Abfang-Mechanismus ---
 		if (!this.state.morningMoodShown) {
@@ -2191,6 +2330,7 @@ const engine = {
         term.innerHTML = `<div class="text-6xl mb-4">🖥️</div><h1 class="text-2xl font-bold">SYSTEM BEREIT</h1><p>Wähle eine Aktion unten.</p>`;
         
         this.checkRandomEmail();
+        this.checkForNews(); // Prüft auf News im Leerlauf
     },
 
     // --- UI HELPER: Stat Summary ---
@@ -2281,11 +2421,23 @@ const engine = {
             // NEU: 'w-full' und 'justify-between' hinzugefügt
             btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center justify-between group";
             
-            // Requirements prüfen (z.B. Items)
+            // Requirements & Removal prüfen (Vereint wie im Terminal)
             let locked = false;
+            let missingItem = "";
+
             if (opt.req) {
-                 const hasItem = this.state.inventory.some(i => (typeof i === 'string' ? i : i.id) === opt.req);
-                 if (!hasItem) locked = true;
+                 const hasItem = this.state.inventory.find(i => i.id === opt.req);
+                 if (!hasItem) {
+                     locked = true;
+                     missingItem = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
+                 }
+            }
+            if (opt.rem && !locked) {
+                 const hasItem = this.state.inventory.find(i => i.id === opt.rem);
+                 if (!hasItem) {
+                     locked = true;
+                     missingItem = DB.items[opt.rem] ? DB.items[opt.rem].name : opt.rem;
+                 }
             }
 
             // NEU: Hotkey Logik (nur anzeigen, wenn Option max 3 ist und nicht gesperrt ist)
@@ -2313,7 +2465,7 @@ const engine = {
                         <span class="break-words leading-tight py-1">${opt.t}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
-                        <span class="text-[10px]">(Fehlt: ${opt.req})</span>
+                        <span class="text-[10px]">(Fehlt: ${missingItem})</span>
                     </div>`;
             } else {
                 btn.innerHTML = `
@@ -2325,7 +2477,7 @@ const engine = {
                         ${hotkeyHTML}
                     </div>
                 `;
-                btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next);
+                btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next, opt.rem);
             }
             
             actions.appendChild(btn);
@@ -2337,7 +2489,7 @@ const engine = {
         }, 100);
     },
 
-    handlePhoneChoice: function(text, nextId) {
+    handlePhoneChoice: function(text, nextId, remId) {
 		this.playAudio('phone');
         const actions = document.getElementById('app-actions');
         
@@ -2357,6 +2509,18 @@ const engine = {
                 <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>
             </div>
         </div>`;
+        
+        // --- REM ITEM SOFORT ENTFERNEN ---
+        if (remId) {
+            let itemIndex = this.state.inventory.findIndex(i => i.id === remId);
+            if (itemIndex > -1) {
+                let itemName = DB.items[remId] ? DB.items[remId].name : remId;
+                this.state.inventory.splice(itemIndex, 1);
+                this.log(`Verloren: ${itemName}`, "text-orange-400");
+                this.updateUI(); // Inventar sofort in der UI aktualisieren
+            }
+        }
+        // -----------------------------------------------
         
         setTimeout(() => {
         content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
@@ -2391,21 +2555,12 @@ const engine = {
 
                 if (!isPermanent && normalCount >= 10) {
                     let itemName = dbItem ? dbItem.name : res.loot;
-                    this.log(`Rucksack voll (10/10)! ${itemName} musste liegen gelassen werden.`, "text-slate-500 italic");
+                    this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
                 } else {
                     this.state.inventory.push({ id: res.loot, used: false });
                     this.addToArchive('items', res.loot);
                     let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
                     this.log("ERHALTEN: " + itemName, "text-yellow-400");
-                }
-            }
-
-            if(res.req) {
-                let itemIndex = this.state.inventory.findIndex(i => i.id === res.req);
-                if(itemIndex > -1) {
-                    let itemName = DB.items[res.req] ? DB.items[res.req].name : res.req;
-                    this.state.inventory.splice(itemIndex, 1);
-                    this.log("VERLOREN: " + itemName, "text-red-400");
                 }
             }
             
@@ -2779,6 +2934,7 @@ const engine = {
             if(this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
             if(this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             if(this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
+            if(this.state.newsTimer) clearTimeout(this.state.newsTimer);
             this.state.emailPending = false;
             // --------------------------------------------------------------------------
             
@@ -3263,10 +3419,23 @@ const engine = {
      
         DB.chars.forEach(char => {
             const card = document.createElement('div');
-            card.className = "bg-slate-800 p-4 rounded-lg border border-slate-700 flex flex-col gap-3 relative overflow-hidden group hover:border-slate-500 transition-colors overflow-visible"; 
+            card.className = "bg-slate-800 p-4 rounded-lg border border-slate-700 flex flex-col gap-3 relative group hover:border-slate-500 transition-colors overflow-visible"; 
             
             // Prüfen, ob es der Spieler ist
             const isPlayer = char.name.includes("Müller") || char.role === "SysAdmin";
+
+            // --- NEU: DER ABMAHNUNGS-STEMPEL ---
+            let warningStampHTML = "";
+            // Prüfen: Ist es Müller UND hat er die Abmahnung (warningReceived) schon kassiert?
+            if (isPlayer && this.state.warningReceived) {
+                warningStampHTML = `
+                <div class="absolute top-2 right-2 md:right-4 transform rotate-12 pointer-events-none z-50">
+                    <span class="inline-block border-[3px] border-red-600 text-red-600 font-black text-lg md:text-xl tracking-widest uppercase px-2 py-0.5 rounded opacity-90 shadow-md bg-slate-900/80 backdrop-blur-sm">
+                        ABGEMAHNT
+                    </span>
+                </div>`;
+            }
+            // -----------------------------------
 
             // Ruf und Logik nur berechnen, wenn NICHT Spieler
             let currentRep = 0;
@@ -3324,7 +3493,7 @@ const engine = {
                 char.icon;
 
             card.innerHTML = `
-                <div class="flex gap-4 items-start z-10">
+                ${warningStampHTML} <div class="flex gap-4 items-start z-10">
                     <div class="shrink-0 bg-slate-900 w-16 h-16 flex items-center justify-center rounded-full border border-slate-600 overflow-hidden text-3xl shadow-inner 
                                 relative z-0 transition-transform duration-300 ease-out origin-center cursor-help 
                                 md:hover:scale-[2.25] md:hover:z-50 md:hover:shadow-2xl md:hover:border-white">
@@ -3670,6 +3839,9 @@ const engine = {
             return;
         }
         
+        // --- Musik nach der Boot-Sequenz wieder starten ---
+        this.playMusic('elevator');
+        
         // Buttons für die halbe Sekunde Ladezeit freigeben
         this.disableButtons(false);
         this.state.activeEvent = false;
@@ -3762,9 +3934,11 @@ const engine = {
         // 1. Daten sammeln
         // Wir holen das aktuelle Archiv aus dem State UND den Tutorial-Status aus dem LocalStorage
         const data = {
-            arc: this.state.archive, // Enthält jetzt Items, Achievements UND Reputation
-            // Falls du 'tutorialSeen' oder 'layer8_tutorial' nutzt (bitte Key prüfen!)
+            arc: this.state.archive,
             tut: localStorage.getItem('tutorialSeen') || "false", 
+            party_easy: localStorage.getItem('layer8_party_played_easy') || "false",
+            party_normal: localStorage.getItem('layer8_party_played_normal') || "false",
+            party_hard: localStorage.getItem('layer8_party_played_hard') || "false",
             salt: Math.floor(Math.random() * 999999) // Macht den Code einzigartig
         };
 
@@ -3822,14 +3996,24 @@ const engine = {
             }
 
             // 5. Wiederherstellen
+            // --- Sicherer Merge (verhindert Reference Error!) ---
+            const currentTemplate = JSON.parse(JSON.stringify(this.state.archive));
+            const mergedArchive = this.deepMerge(currentTemplate, data.arc);
+            // ---------------------------------------------------------
+
             // A) Archiv in LocalStorage schreiben
-            localStorage.setItem('layer8_archive', JSON.stringify(data.arc));
+            localStorage.setItem('layer8_archive', JSON.stringify(mergedArchive));
             
             // B) Tutorial Status wiederherstellen (falls vorhanden)
             if (data.tut) {
                 localStorage.setItem('tutorialSeen', data.tut);
             }
-
+            
+            // C) Party-Flags wiederherstellen
+            if (data.party_easy) localStorage.setItem('layer8_party_played_easy', data.party_easy);
+            if (data.party_normal) localStorage.setItem('layer8_party_played_normal', data.party_normal);
+            if (data.party_hard) localStorage.setItem('layer8_party_played_hard', data.party_hard);
+            
             alert("✅ Import erfolgreich! Die Seite wird neu geladen.");
             location.reload(); // Wichtig: Neustart erzwingen, damit init() die neuen Daten lädt
 
@@ -3980,9 +4164,19 @@ const engine = {
                     throw new Error("Datenstruktur fehlerhaft.");
                 }
 
-                // Speichern
-                localStorage.setItem('layer8_archive', JSON.stringify(data.arc));
+                // --- NEU: SICHERER MERGE ---
+                // Holt das aktuelle, fehlerfreie 3.1+ Archiv-Gerüst
+                const currentTemplate = JSON.parse(JSON.stringify(engine.state.archive));
+                // Verschmilzt das alte Savegame schonend mit dem neuen Gerüst
+                const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
+
+                // Speichern des reparierten/gemergten Archivs
+                localStorage.setItem('layer8_archive', JSON.stringify(mergedArchive));
                 if (data.tut) localStorage.setItem('tutorialSeen', data.tut);
+                
+                if (data.party_easy) localStorage.setItem('layer8_party_played_easy', data.party_easy);
+                if (data.party_normal) localStorage.setItem('layer8_party_played_normal', data.party_normal);
+                if (data.party_hard) localStorage.setItem('layer8_party_played_hard', data.party_hard);
 
                 msg.innerText = "Erfolg! Neustart...";
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
@@ -4333,10 +4527,55 @@ ${logText}
             document.body.classList.remove('compact-mode');
         }
     },
+    
+        playBootSequence: function(callback) {
+        this.playAudio('boot');
+        this.state.activeEvent = true;
+        this.disableButtons(true);
+
+        const term = document.getElementById('terminal-content');
+        
+        // Etwas weicheres, aber immer noch retro-mäßiges Design (Emerald statt grellem Grün)
+        term.className = "flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner";
+        term.innerHTML = "";
+
+        // Weniger "Nerd-Linux", mehr "GlobalCorp Satire"
+        const bootLines = [
+            `GlobalCorp OS - Version ${this.VERSION}`,
+            `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
+            `----------------------------------------------`,
+            "Verbinde mit Serverraum (Keller)... [OK]",
+            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
+            "Lade Ausreden-Datenbank (Modul 42)... [OK]",
+            "Synchronisiere Chef-Radar... [OK]",
+            "Ignoriere wartende User-Anfragen: 4.815... [ERLEDIGT]",
+            "Initialisiere TicketSystem... Viel Glück."
+        ];
+
+        let i = 0;
+        
+        const printLine = () => {
+            if (i < bootLines.length) {
+                term.innerHTML += `<div class="fade-in mb-1">> ${bootLines[i]}</div>`;
+                i++;
+                // Verlangsamt: Zwischen 300 und 600 Millisekunden pro Zeile
+                setTimeout(printLine, 300 + Math.random() * 300);
+            } else {
+                // Am Ende 1,5 Sekunden stehen lassen, damit man den letzten Satz in Ruhe lesen kann
+                setTimeout(() => {
+                    this.state.activeEvent = false;
+                    this.disableButtons(false);
+                    if (callback) callback();
+                }, 1500);
+            }
+        };
+
+        printLine();
+    },
 
     // Blitzschneller Neustart ohne Page-Reload
     softReset: function() {
-		this.playMusic('elevator');
+		this.stopMusic();
         // Alle Menüs schließen
         this.closeSettings();
         if (document.getElementById('modal-overlay')) {
@@ -4352,6 +4591,7 @@ ${logText}
         if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
         if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
         if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
+        if (this.state.newsTimer) clearTimeout(this.state.newsTimer);
 
         // Memory auf 08:00 Uhr setzen (Wir behalten den difficultyMult bei!)
         this.state.time = 8 * 60;
@@ -4384,6 +4624,11 @@ ${logText}
         this.state.lastEmailEventId = null;
         this.state.currentEventId = null;
         this.state.currentEventType = null;
+        this.state.lastNewsTime = 0;
+        this.state.activeNewsText = null;
+        
+        // Ticker News Header sofort auf Standard zurücksetzen
+        this.renderHeader();
         
         // UI Aufräumen (Phone, Email, Log)
         document.getElementById('email-modal')?.classList.add('hidden');
@@ -4398,7 +4643,11 @@ ${logText}
         
         // Spiel über den Morgen-Verteiler normal neu starten
         this.updateUI();
-        this.reset();
+        
+        // --- Boot-Sequenz dazwischenschalten ---
+        this.playBootSequence(() => {
+            this.reset(); // Erst wenn die Boot-Sequenz fertig ist, startet der neue Tag!
+        });
     },
 
     closeSettings: function() {
@@ -4828,8 +5077,19 @@ document.addEventListener('keydown', (event) => {
     // 3. BESTÄTIGEN (Popups, Handy abnehmen, Weiter-Buttons)
     if (key === engine.state.keyBinds.confirm.toLowerCase()) {
         // A: Tutorial
-        const tutNextBtn = document.querySelector('#tut-text-box button');
-        if (tutNextBtn && tutNextBtn.offsetParent !== null) { tutNextBtn.click(); return; }
+        const tutPointer = document.getElementById('tut-pointer');
+        if (tutPointer && !tutPointer.classList.contains('hidden')) {
+            // Sucht den "Verstanden" Button im Tooltip
+            const verstandenBtn = document.querySelector('#tut-pointer-desc div[onclick="tutorial.advance()"]');
+            if (verstandenBtn) { verstandenBtn.click(); return; }
+        }
+        
+        const tutModal = document.getElementById('tut-ask-modal');
+        if (tutModal && !tutModal.classList.contains('hidden')) {
+            // Sucht den "Arbeitstag starten" Button am Ende
+            const finishBtn = document.querySelector('#tut-ask-modal button[onclick="tutorial.finish()"]');
+            if (finishBtn) { finishBtn.click(); return; }
+        }
         
         // B: Modals (Abmahnung, Ende, Item-Confirm)
         const okBtn = document.querySelector('#modal-content button');

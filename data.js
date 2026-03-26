@@ -5205,6 +5205,53 @@ const DB = {
             "res_hr_boss": { txt: "Der Chef wird das nicht lustig finden. Die Gerüchte werden zur Aktennotiz.", m: 5, f: 0, a: 10, c: 30 }
         }
     },
+    {
+        id: "call_ergonomic_mouse_1",
+        title: "Herr Wuttke (Buchhaltung)",
+        startNode: "root",
+        nodes: {
+            "root": {
+                text: "Wuttke klingt genervt: 'Herr IT! Diese neue, senkrechte Ergonomie-Maus, die Sie mir hingelegt haben, ist eine komplette Fehlkonstruktion! Sie liegt furchtbar in der Hand, der rote Laser blendet total und der Mauszeiger bewegt sich keinen Millimeter! Und jedes Mal, wenn ich klicke, macht sie unfassbar laut *BIEP*!'",
+                opts: [
+                    { t: "Trocken: 'Das ist der Barcode-Scanner fürs Lager.'", next: "wuttke_truth" },
+                    { t: "Zynismus: 'Die kalibriert sich noch. Scannen Sie mal Ihre Kaffeepackung.'", next: "wuttke_troll" }
+                ]
+            },
+            "wuttke_truth": {
+                text: "Stille am anderen Ende. Dann ein leises Rascheln. 'Oh. Das... erklärt die Form. Und das Kabel. Ich lege ihn dann mal wieder in den Karton. Vergessen Sie, dass ich angerufen habe.'",
+                opts: [
+                    { t: "Seufzen und auflegen.", next: "res_wuttke_solved" }
+                ]
+            },
+            "wuttke_troll": {
+                text: "Du hörst ein lautes *BIEP*. Wuttke: 'Ah! Das Lämpchen hat kurz geblinkt! Und jetzt?'",
+                opts: [
+                    { t: "Weitermachen: 'Jetzt noch den Locher scannen.'", next: "wuttke_troll_deep" },
+                    { t: "Erlösen: 'Das war ein Scherz, Wuttke. Das ist ein Scanner.'", next: "res_wuttke_mad" }
+                ]
+            },
+            "wuttke_troll_deep": {
+                text: "Wieder ein *BIEP*. Wuttke klingt jetzt begeistert: 'Wahnsinn, diese moderne Technik! Die Maus lernt meine Umgebung kennen! Soll ich den Monitor auch noch...?'",
+                opts: [
+                    { t: "Lachen verkneifen und auflegen.", next: "res_wuttke_fun" }
+                ]
+            }
+        },
+        results: {
+            "res_wuttke_solved": { 
+                txt: "Ein alltäglicher, geräuschloser Sieg der IT. Du lehnst dich zufrieden zurück und nimmst einen entspannten Schluck Kaffee.", 
+                m: 5, f: 5, a: -5, c: 0 
+            },
+            "res_wuttke_mad": { 
+                txt: "Wuttke schnaubt wütend auf: 'Ich lasse mich hier nicht zum Narren halten!' Er knallt den Hörer auf die Gabel. Eine offizielle Beschwerde ist dir vermutlich sicher, aber der Spaß war es absolut wert.", 
+                m: 5, f: 0, a: -5, c: 20 
+            },
+            "res_wuttke_fun": { 
+                txt: "Du hörst im Hintergrund noch ein drittes *BIEP*, bevor du leise auflegst. Wuttke scannt wahrscheinlich gerade sein Locher-Konfetti. Du musst dir eine Lachträne aus dem Gesicht wischen.", 
+                m: 10, f: 10, a: -15, c: 5 
+            }
+        }
+    },
     ],
 
     // === SERVERRAUM ===
@@ -16139,6 +16186,96 @@ const DB = {
             }
         ]
     },
+    {
+        id: "sq_fire_ext_1",
+        kind: "text",
+        title: "Tatort Büro 312",
+        text: "Auf deinem Rundgang betrittst du Büro 312. Der Raum ist leer, aber es riecht beißend nach geschmolzenem Plastik und verbranntem Käse. Mitten im Raum steht verlassen ein Feuerlöscher. Auf dem Schreibtisch raucht ein komplett zerstörter, illegaler Sandwich-Toaster vor sich hin. Der Täter hat offenbar panisch gelöscht und ist geflohen.",
+        opts: [
+            { 
+                t: "Unauffällig den Feuerlöscher einstecken", 
+                loot: "fire_ext", 
+                next: "path_sq_ext_loot", 
+                m: 5, f: -5, a: -5, c: 0, 
+                r: "Man weiß nie, wann man das Ding mal braucht. Du lässt die rote Flasche unauffällig in deinem Rucksack verschwinden. Lieber schnell weg hier, bevor dich noch jemand entdeckt." 
+            },
+            { 
+                t: "Den Toaster weiter mit Pulver beschießen", 
+                next: "path_sq_ext_spray", 
+                m: 15, f: 10, a: -15, c: 5, 
+                r: "Sicher ist sicher! Du entsicherst den Hebel und hüllst den Toaster (und den halben Schreibtisch) in eine dicke, weiße Schneelandschaft aus CO2-Pulver. Das hat extrem gutgetan!" 
+            },
+            { 
+                t: "Vorschriftsmäßig an den Haken hängen", 
+                next: "path_sq_ext_order", 
+                m: 10, f: -10, a: 5, c: -10, 
+                r: "Ordnung muss sein! Du trägst das schwere Gerät auf den Flur und hängst es akkurat an die rote Halterung zurück. Du bist der unbesungene Held der Arbeitssicherheit." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_ext_2a",
+        kind: "text",
+        char: "Kevin",
+        title: "Der Brandstifter",
+        reqStory: "path_sq_ext_loot",
+        text: "Kevin stürmt panisch auf dich zu. 'Chef! Hast du zufällig den Feuerlöscher aus Büro 312 gesehen?! Ich hab mir da heimlich ein Käse-Toast gemacht und es hat gebrannt. Ich wollte ihn gerade zurückhängen, damit Hausmeister Egon nichts merkt, aber er ist weg!'",
+        opts: [
+            { 
+                t: "IT-Paranoia: 'Die neuen Löscher haben GPS-Tracker.'", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Kevin reißt die Augen auf. 'GPS?! Oh Gott, HR weiß genau, dass er zuletzt bei mir war!' Er vergisst die Suche sofort und sprintet los, um sich ein wasserdichtes Alibi für die Tatzeit zu überlegen. Du grinst in dich hinein." 
+            },
+            { 
+                t: "Lügen: 'Egon hat ihn schon mitgenommen.'", 
+                rep: { "Kevin": 5 },
+                m: 5, f: 5, a: 0, c: 10, 
+                r: "Kevin wird kreidebleich. 'Oh mein Gott. Ich bin tot. Egon wird mich im Heizungskeller einmauern!' Er rennt weinend weg. Du hast deine Ruhe und dein neues Werkzeug ist sicher." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_ext_2b",
+        kind: "text",
+        char: "Egon",
+        title: "Winter in Büro 312",
+        reqStory: "path_sq_ext_spray",
+        text: "Hausmeister Egon tobt auf dem Flur. Er hat Büro 312 entdeckt. 'WER ZUM TEUFEL HAT HIER 10 KILO LÖSCHPULVER VERSPRÜHT?! Der Toaster war doch schon aus! Der ganze Teppich ist ruiniert! Ich hole die Security, wir werten die Kameras aus!'",
+        opts: [
+            { 
+                t: "Panik: Die Kameraaufnahmen heimlich löschen", 
+                req: "admin_pw",
+                m: 15, f: -5, a: 10, c: -20, 
+                r: "Du loggst dich schnell mit deinen Root-Rechten ins System ein und löschst die Video-Files von heute Morgen. Egon findet nichts. Du hast einen Herzinfarkt knapp überlebt." 
+            },
+            { 
+                t: "Mit einstimmen: 'Unfassbar, diese Vandalen!'", 
+                rep: { "Egon": 5 },
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Du stellst dich neben ihn und schüttelst theatralisch den Kopf. 'Egon, Sie haben mein volles Mitleid. Richtig asozial.' Egon nickt brummend. Tarnung ist alles." 
+            }
+        ]
+    },
+    {
+        id: "sq_fire_ext_2c",
+        kind: "text",
+        title: "Das gebrochene Siegel",
+        reqStory: "path_sq_ext_order",
+        text: "Der Brandschutzbeauftragte steht vor dem Feuerlöscher, den du so vorbildlich zurückgehängt hast. Er notiert etwas auf seinem Klemmbrett. 'Herr Müller! Gut, dass das Gerät am Platz hängt. ABER: Das Schutzsiegel ist gebrochen und er ist halb leer! Haben Sie das nicht geprüft?!'",
+        opts: [
+            { 
+                t: "Ausrede: 'Ich bin nicht der Hausmeister!'", 
+                m: 10, f: 0, a: 10, c: -5, 
+                r: "Du argumentierst, dass du nur die physische Rückführung übernommen hast. Er seufzt. 'Immer diese Ausreden in der IT. Ich muss einen Wartungsauftrag schreiben.' Nervig." 
+            },
+            { 
+                t: "Kevin die Schuld geben", 
+                rep: { "Kevin": -15 },
+                m: 5, f: 5, a: 0, c: 5, 
+                r: "'Das war Kevins Toaster-Brand!', verrätst du eiskalt. Der Prüfer stürmt sofort los, um den Azubi zur Schnecke zu machen. Du hast nach Vorschrift gehandelt." 
+            }
+        ]
+    },
 
     // --- PHONE EVENTS (Chat-System) ---
     { 
@@ -17147,11 +17284,11 @@ const DB = {
         results: { 
             "res_returned": {  
                 txt: "👑 PRINZ: 'You are a saint! I will name my firstborn Sysadmin.' [Chat beendet] Die Karte ist wertlos, aber dein Gewissen ist rein.",  
-                m: 10, req: "black_card", loot: "prince_letter", f: 0, a: -20, c: -30  
+                m: 10, rem: "black_card", loot: "prince_letter", f: 0, a: -15, c: -20  
             }, 
             "res_kept": {  
                 txt: "[System: Gerät offline] Du behältst die Millionen. Aber dein Radar schlägt massiv aus. Du hast jetzt sehr wahrscheinlich Interpol am Hals.",  
-                m: 2, f: 10, a: 0, c: 40  
+                m: 2, f: 10, a: 0, c: 35  
             } 
         } 
     },
@@ -22340,6 +22477,94 @@ const DB = {
             ]
         }
     ],
+    
+    tutorial: [
+        // SCHRITT 1: Anruf
+        {
+            id: 'tut_call_1',
+            type: 'calls',
+            step: 1,
+            title: 'Der Klassiker',
+            text: 'Das Telefon klingelt schrill. Ein User beschwert sich lautstark, dass sein "Internet gelöscht" wurde, weil das blaue E auf dem Desktop fehlt. Dein Ticket-Zähler tickt gnadenlos weiter.',
+            opts: [
+                {
+                    t: 'Tief durchatmen und eine Verknüpfung anlegen.',
+                    m: 15, f: 5, a: 15, c: 0,
+                    r: 'Du hast wertvolle Lebenszeit verschwendet, aber das Ticket ist geschlossen. Die schiere Dummheit der Anfrage hat deinen Puls dennoch spürbar erhöht.'
+                },
+                {
+                    t: 'Ihm sagen, dass das Internet heute wegen Wartungsarbeiten geschlossen ist.',
+                    m: 5, f: 0, a: 30, c: 10,
+                    r: 'Der User ist verwirrt, aber ruhig. Das ging schnell! Dein Puls steigt jedoch massiv, da du weißt, dass diese Aussage Konsequenzen haben wird.'
+                }
+            ]
+        },
+        
+        // SCHRITT 2: Kaffee
+        {
+            id: 'tut_coffee_1',
+            type: 'coffee',
+            step: 4,
+            title: 'Schwarzes Gold',
+            text: 'Du stehst vor der Maschine im Pausenraum. Die Plörre riecht nach verbrannter Erde und Verzweiflung, aber es ist deine einzige Chance, den Puls wieder unter 180 zu kriegen.',
+            opts: [
+                {
+                    t: 'Augen zu und runter damit.',
+                    m: 5, f: 0, a: -15, c: 5,
+                    r: 'Dein Magen krampft kurz, aber die Mordlust gegenüber dem letzten Anrufer lässt spürbar nach. Das System registriert deine Abwesenheit.'
+                },
+                {
+                    t: 'Sich beim Trinken ausgiebig bei Kollegen beschweren.',
+                    m: 20, f: 15, a: -25, c: 0,
+                    r: 'Die spontane Therapie-Sitzung hat geholfen. Das System wertet diesen ausgedehnten Plausch allerdings als gepflegte Arbeitsverweigerung.'
+                }
+            ]
+        },
+
+        // SCHRITT 3: Dienstgang
+        {
+            id: 'tut_sq_1',
+            type: 'sidequest',
+            step: 5,
+            title: 'Die verlassene Küche',
+            text: 'Du schleichst dich in die Teeküche. Jemand hat eine halbe Schachtel Donuts stehen lassen. Ein Kollege nähert sich.',
+            opts: [
+                {
+                    t: 'Schnell einen Donut greifen und verschwinden.',
+                    m: 5, f: 5, a: 0, c: 5,
+                    loot: 'donut', // <-- Garantiert den Donut
+                    r: 'Du hast dir einen Donut gesichert, wurdest aber leicht komisch angeschaut.'
+                },
+                {
+                    t: 'Den Kollegen in ein Gespräch verwickeln und unauffällig zugreifen.',
+                    m: 10, f: 10, a: 0, c: 0,
+                    loot: 'donut', // <-- Garantiert den Donut
+                    r: 'Das Gespräch war quälend langweilig, aber der Donut gehört dir!'
+                }
+            ]
+        },
+
+        // SCHRITT 4: Serverraum
+        {
+            id: 'tut_srv_1',
+            type: 'server',
+            step: 6,
+            title: 'Das Heiligtum',
+            text: 'Die dicke Sicherheitstür fällt ins Schloss. Das konstante, laute Rauschen der Lüfter übertönt das Klagen der User. Es ist eiskalt, dunkel und absolut friedlich.',
+            opts: [
+                {
+                    t: 'Die heilige Ruhe genießen und atmen.',
+                    m: 15, f: 15, a: -20, c: 0,
+                    r: 'Du lehnst dich an ein 19-Zoll-Rack und spürst, wie dein Blutdruck sinkt. Die Entspannung ist herrlich, aber deine Faulheits-Metrik schießt nach oben.'
+                },
+                {
+                    t: 'In der Grabbelkiste nach Hardware wühlen.',
+                    m: 10, f: 0, a: 0, c: 0, loot: 'wifi_note',
+                    r: 'Du findest einen abgegriffenen WLAN-Zettel. Könnte nützlich sein, um später andere Abteilungen zu bestechen.'
+                }
+            ]
+        }
+    ],
 	
 	// === CHARAKTERE (Wall of Shame) ===
     chars: [
@@ -22439,5 +22664,39 @@ const DB = {
         // GALA PARTY
         { id: "ach_party", icon: "🎉", img: "assets/achievements/ach_party.png", title: "Synergy-Veteran", desc: "Du hast die legendäre Firmenfeier überlebt und bist in die Geschichte eingegangen.", hint: "Beweise dich auf allen Ebenen, um die ultimative Einladung zu erhalten." }
     ],
+	
+	// === NEUER NEWS TICKER ===
+    newsTicker: [
+        "System-Info an unseren neuen Junior Assistant, Justus-Aurelius: Da Frau Müller, die normalerweise das Onboarding macht, im Burnout-Klinikum weilt und ich absolut keine Ahnung habe, wie ihr reguläres System funktioniert, erhalten Sie Ihre Zugangsdaten heute über das Broadcast-System. Login: j_schnoesel / Pass: Synergy2026! Bitte ändern Sie das Passwort nie, das verwirrt die Datenbank.",
+        "Zur Erreichung unserer Nachhaltigkeitsziele ('Green Synergy 2030') bitten wir alle Mitarbeiter, freiwillig auf ihren Parkplatz zu verzichten. Die frei werdenden Flächen werden ab sofort höchst lukrativ an die benachbarte Anwaltskanzlei untervermietet. Win-Win für die Umwelt und unsere Aktionäre!",
+        "Interne Mitteilung: Nach Auswertung der Quartalszahlen wird das geplante Budget für ergonomische Bürostühle restlos gestrichen. Die Mittel fließen stattdessen als Sonderbonus in das neue Taskforce-Projekt 'Agile Mindset 4.0' des Vorstands.",
+        "Global Corp feiert den erfolgreichen Rollout der neuen KI-gestützten HR-Software 'FireBot 3000'. In diesem Zuge verabschieden wir uns von 40% der Belegschaft im 3. Stock. Den verbleibenden Mitarbeitern wünschen wir einen produktiven 'Do-More-With-Less'-Dienstag!",
+        "Wichtige Information der Facility-Leitung: Das Leitungswasser im Gebäude B wurde von der Gesundheitsbehörde vorübergehend als 'nicht trinkbar' eingestuft. Global Corp Premium-Mineralwasser ist ab sofort in der Cafeteria für nur 4,50 Euro pro Flasche erhältlich.",
+        "Erinnerung der Personalabteilung: Krankschreibungen wegen 'allgemeiner Erschöpfung' werden ab sofort erst nach Vorlage eines notariell beglaubigten Belastungs-EKGs akzeptiert. Nutzen Sie stattdessen die kostenlosen Meditations-Podcasts im Intranet (nur in der unbezahlten Freizeit anzuhören).",
+        "Wir begrüßen die überlebenden Mitarbeiter unseres ehemals größten Konkurrenten 'InnovaTech', der gestern feindlich übernommen wurde. Das Re-Onboarding findet am Wochenende statt. Die Teilnahme ist freiwillig, aber Voraussetzung für die Auszahlung des nächsten Gehalts.",
+        "Pilotprojekt gestartet: Die Toilettenkabinen im Erdgeschoss sind ab sofort mit Münzeinwurf (1 Euro) oder per GlobalCorp-Kreditkarte zugänglich. Die Einnahmen kommen direkt dem Bonus-Pool des Vorstands zugute. Wir danken für Ihre finanzielle Unterstützung!",
+        "Supply-Chain-Update: Aufgrund von 'Lieferengpässen' ist das Druckkontingent auf 3 Seiten pro Woche und Mitarbeiter beschränkt. Eigene Druckerpatronen von zu Hause mitzubringen, gilt als Diebstahl von Firmenzeit und wird abgemahnt.",
+        "Liebe Belegschaft, um das Quartalsziel zu erreichen, wird das kommende Wochenende offiziell zum 'Synergy-Sprint' erklärt. Anwesenheit ist Ehrensache. Als Dankeschön spendiert das Management am Sonntagabend um 23 Uhr eine halbe Margherita-Pizza für alle verbleibenden Teams.",
+        "IT-Sicherheitswarnung: Es ist strengstens untersagt, die sensiblen Kundendatenbanken für private Zwecke zu kopieren. Der lukrative Verkauf von Datensätzen auf dem Schwarzmarkt ist ausschließlich dem Senior Management und autorisierten Partnern vorbehalten.",
+        "Der 'Bring-Your-Dog-To-Work-Day' wurde fristlos gestrichen, nachdem der CEO-Pudel 'Sir Reginald' von einem Aktenvernichter traumatisiert wurde. Sämtliche Tierhaare an der Kleidung von Mitarbeitern führen ab morgen zu sofortigen Abzügen beim Weihnachts-Bonus.",
+        "Neue Dresscode-Richtlinie: Der 'Casual Friday' wird durch den 'Corporate Identity Friday' ersetzt. Das Tragen des kratzigen, synthetischen Global Corp-Pullovers (Kaufpreis: 89,90 Euro, wird automatisch vom Gehalt abgezogen) ist freitags nun zwingend erforderlich.",
+        "Wartungs-News: Der Aufzug für die Etagen 1 bis 5 ist bis auf Weiteres für das reguläre Fußvolk gesperrt und dient ab sofort als privater Express-Lift für den Vorstand. Bitte nutzen Sie das Treppenhaus. Die tägliche Bewegung fördert nachweislich die Produktivität!",
+        "Um Energiekosten zu senken, wurde die Raumtemperatur im gesamten Gebäude permanent auf 16 Grad Celsius fixiert. Heizlüfter sind aus Brandschutzgründen verboten. Global Corp Fleece-Jacken sind im Fanshop mit 5% Mitarbeiterrabatt erhältlich.",
+        "Transparenz-Initiative: Die neuen Kameras in den Pausenräumen dienen ausschließlich Ihrer eigenen Sicherheit und der detaillierten Aufzeichnung von unproduktiven Gesprächspausen. Wer nichts zu verbergen hat, muss das leise Surren der Linsen nicht fürchten.",
+        "Das für morgen geplante Treffen zur potenziellen Gründung eines Betriebsrats muss leider entfallen, da der gebuchte Konferenzraum spontan für eine Yoga-Klasse der Abteilungsleiter benötigt wird. Der Organisator des Treffens wurde zudem überraschend in unsere Filiale nach Sibirien versetzt.",
+        "Erinnerung an das obligatorische Team-Building-Event 'Survival im Stadtpark'. Wer das Zielschießen mit Büroklammern verliert, übernimmt für die nächsten vier Wochen den Kaffeedienst für den Vorstand. Die Teilnahme ist selbstverständlich absolute Pflicht.",
+        "Liebe Kollegen, um die Inflation auszugleichen, haben wir uns gegen eine unpersönliche Gehaltserhöhung entschieden. Stattdessen gibt es ab sofort einen virtuellen 'High-Five'-Button im Intranet. Zeigt euren Kollegen, wie sehr ihr sie wertschätzt!",
+        "Facility-Update: Um störende Spiegelungen auf den Monitoren zu reduzieren, wurden alle Fenster im Großraumbüro dauerhaft schwarz foliert. Die nun fehlende UV-Strahlung kann durch den Erwerb von hauseigenen Vitamin-D-Präparaten im Firmen-Shop kompensiert werden.",
+		"Die Kantine serviert ab sofort den neuen 'Synergy-Eintopf'. Die genauen Zutaten unterliegen der Geheimhaltungsstufe 4. Verzehr auf eigene Gefahr und nur nach vorheriger Unterzeichnung des Haftungsausschlusses im Intranet.",
+        "Das jährliche Gesundheits-Screening ist ab sofort kostenpflichtig. Wer den vom Vorstand definierten BMI-Grenzwert überschreitet, verliert seinen Anspruch auf die Aufzugnutzung und das zweilagige Toilettenpapier.",
+        "Unser neues Produktivitäts-Tracking 'Eye-in-the-Sky' ist nun aktiv. Es misst die Tastenanschläge pro Minute. Fällt der Wert unter 80, wird der Monitor zur Motivation für zehn Minuten auf maximale Helligkeit gestellt.",
+        "Wir gratulieren der Abteilung 'Legal' zum Sieg beim monatlichen Paintball-Turnier. Die unterlegene Abteilung 'Customer Support' wird zur Strafe in den nächsten zwei Wochen den Telefondienst im Stehen absolvieren.",
+        "Urlaubsanträge für die Sommermonate werden ab sofort in einem Battle-Royale-Verfahren vergeben. Die Anmeldung für die Arena im Keller öffnet am Freitag um 18:00 Uhr. Bringen Sie bitte eigene Schutzausrüstung mit.",
+        "Die Nutzung von Textmarkern in anderen Farben als dem offiziellen 'Global Corp Blau' gilt ab sofort als passiv-aggressiver Akt der Rebellion und wird mit dem sofortigen Entzug der Kaffee-Privilegien geahndet.",
+        "Der neue Chief Visionary Officer hat beschlossen, dass das Wort 'Problem' ab sofort durch 'unmonetarisierte Synergie-Chance' zu ersetzen ist. Zuwiderhandlungen kosten 5 Euro in die Phrasensau des Vorstands.",
+        "Aufgrund von Budgetkürzungen wurden die Feuerlöscher im 4. Stock durch ansprechende Motivationsposter ersetzt. Im Brandfall bewahren Sie bitte Ruhe und evaluieren Sie die Situation agil und lösungsorientiert.",
+        "Das Jobticket für den Nahverkehr wurde durch ein 'Job-Fahrrad-Abonnement' ersetzt. Die Räder haben bewusst keine Sättel, um die Verweildauer auf dem Rad zu minimieren und die Ankunftszeit im Büro zu optimieren.",
+        "Wir verabschieden uns von Herrn Schmidt (Buchhaltung), der das Unternehmen 'auf eigenen Wunsch' verlassen hat, nachdem er dreimal in Folge beim Gähnen erwischt wurde. Sein ergonomischer Stuhl wird ab 14 Uhr meistbietend im Intranet versteigert."		
+    ]
 	
 };
