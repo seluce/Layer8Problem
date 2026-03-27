@@ -1,12 +1,13 @@
 const engine = {
-    VERSION: "v3.1.0",	
+    VERSION: "v3.1.1",	
 	
     state: {
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
         tickets: 0,
         inventory: [], 
-        warningReceived: false,
+        chefWarningReceived: false,
+        rageWarningReceived: false,
         activeEvent: null,
         currentPhoneEvent: null,
         usedIDs: new Set(),
@@ -2778,15 +2779,34 @@ const engine = {
 
         // A. RAGE QUIT (Aggro >= 100)
         if(this.state.al >= 100) {
-			this.incrementStat('daysRageQuit');
-            // 1. Tagebuch generieren
-            let diary = this.generateDiaryEntry("RAGE"); 
             
-            this.state.pendingEnd = { 
-                title: "RAGE QUIT", 
-                text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary, // <-- Hier + diary anhängen
-                isWin: false 
-            };
+            // Logik für das "Ventil" basierend auf Schwierigkeit
+            let resetTo = 50; // Standard (Mittwoch)
+            if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
+            if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
+
+            // Prüfen, ob der Spieler heute schon ausgerastet ist
+            if(!this.state.rageWarningReceived) {
+                this.state.rageWarningReceived = true;
+                
+                // Setze Aggro zurück
+                this.state.al = resetTo; 
+                
+                let warningText = `Ohne ein weiteres Wort drehst du dich um, marschierst in die nächste Besenkammer und brüllst deine Wut in einen Wischmopp. Kurz Zeit später kehrst du zurück, als wäre nichts gewesen. (Aggro auf ${resetTo}% gesetzt).`;
+                if(this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
+                
+                this.showModal("VENTIL GEÖFFNET", warningText, false);
+            } else {
+                // Das ist der zweite Ausraster -> Game Over
+                this.incrementStat('daysRageQuit');
+                let diary = this.generateDiaryEntry("RAGE"); 
+                
+                this.state.pendingEnd = { 
+                    title: "RAGE QUIT", 
+                    text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary,
+                    isWin: false 
+                };
+            }
         }
         // B. TICKET LAWINE (Zu viele Tickets)
         else if(this.state.tickets >= 10) {
@@ -2859,8 +2879,8 @@ const engine = {
             if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
             if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
 
-            if(!this.state.warningReceived) {
-                this.state.warningReceived = true;
+            if(!this.state.chefWarningReceived) {
+                this.state.chefWarningReceived = true;
                 
                 // Setze Radar zurück basierend auf Schwierigkeit
                 this.state.cr = resetTo; 
@@ -4620,7 +4640,8 @@ ${logText}
         this.state.activeEvent = false;
         this.state.isEmailOpen = false;
         this.state.emailPending = false;
-        this.state.warningReceived = false;
+        this.state.chefWarningReceived = false;
+        this.state.rageWarningReceived = false;
         this.state.lastStressballTime = -100;
         this.state.isPartyMode = false;
         this.state.partyProgress = 0;
