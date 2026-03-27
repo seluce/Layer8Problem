@@ -2094,8 +2094,14 @@ const engine = {
 
         // Zeit & Tickets
         let oldTimeChunk = Math.floor(this.state.time / 30);
-        let newTimeChunk = Math.floor((this.state.time + m) / 30);
-        let newTickets = newTimeChunk - oldTimeChunk;
+
+        // BUGFIX: Offene Tickets nur bis Feierabend zählen 16:30 (16 * 60 + 30 = 990)
+        const SHIFT_END_TIME = 16 * 60 + 30; 
+        let cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
+
+        let newTimeChunk = Math.floor(cappedTime / 30);
+        let newTickets = Math.max(0, newTimeChunk - oldTimeChunk); 
+
         this.state.tickets += newTickets;
         
         if (type === 'calls') { 
