@@ -885,7 +885,7 @@ const engine = {
         
         // 6. TIMER
         const timerBar = document.getElementById('email-timer-bar');
-        const DURATION = 15000; 
+        const DURATION = 20000; 
         
         if(timerBar) {
             timerBar.style.transition = 'none';
