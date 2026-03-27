@@ -2792,7 +2792,22 @@ const engine = {
                 // Setze Aggro zurück
                 this.state.al = resetTo; 
                 
-                let warningText = `Ohne ein weiteres Wort drehst du dich um, marschierst in die nächste Besenkammer und brüllst deine Wut in einen Wischmopp. Kurz Zeit später kehrst du zurück, als wäre nichts gewesen. (Aggro auf ${resetTo}% gesetzt).`;
+                // --- 10 allgemeine Ausraster-Texte ---
+                const rageTexts = [
+                    "Du gehst in die Teeküche und starrst regungslos die rotierende Mikrowelle an. Nachdem du dir bildhaft vorgestellt hast, wie alles brennt, kehrst du an deinen Platz zurück.",
+                    "Du schließt dich im Kopierraum ein und schreist deine Wut in ein Paket frisches Druckerpapier. Es dämpft den Ton hervorragend. Du richtest deine Krawatte.",
+                    "Dir reißt endgültig der Geduldsfaden. Du schnappst dir einen leeren Kaffeebecher und zerdrückst ihn langsam und genüsslich in deiner Faust. Das musste jetzt sein.",
+                    "Du flüchtest auf die Toilette, wäschst dir eiskalt das Gesicht und starrst dein Spiegelbild an. Du murmelst dir mehrfach vor, dass Mord immer noch strafbar ist.",
+                    "Du starrst auf die Fehlermeldung, stehst auf und trittst mit voller Wucht gegen den Mülleimer. Bevor jemand reagieren kann, sitzt du wieder und tippst stoisch weiter.",
+                    "Du reißt das Fenster auf und brüllst ein langes Geräusch in den Innenhof. Eine Taube fällt vor Schreck fast vom Sims. Du schließt das Fenster. Der Puls sinkt.",
+                    "Ein leises Knacken durchbricht die Stille. Du hast so fest auf deinen Kugelschreiber gebissen, dass er splittert. Mit etwas Tinte an den Zähnen arbeitest du weiter.",
+                    "Du meldest dich kurz ab und gehst ins staubige Archiv. Aus purer Frustration baust du einen Turm aus alten Ordnern, nur um ihn mit einem gezielten Kick zu zerstören.",
+                    "Tock. Tock. Tock. Du lässt deine Stirn dreimal sanft, aber bestimmt auf die Tischplatte fallen. Die Kollegen entscheiden sich kollektiv, diesen Vorfall zu ignorieren.",
+                    "In blinder Wut tippst du eine extrem beleidigende E-Mail an den 'Alle-Mitarbeiter'-Verteiler. Dein Finger schwebt über dem Senden-Button, bevor du seufzend alles löschst."
+                ];
+                let randomRage = rageTexts[Math.floor(Math.random() * rageTexts.length)];
+                
+                let warningText = `${randomRage} (Aggro auf ${resetTo}% gesetzt).`;
                 if(this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
                 
                 this.showModal("VENTIL GEÖFFNET", warningText, false);
@@ -2885,8 +2900,24 @@ const engine = {
                 // Setze Radar zurück basierend auf Schwierigkeit
                 this.state.cr = resetTo; 
                 
-                let warningText = `Der Chef tobt: 'Das war Ihre LETZTE Warnung!' (Radar auf ${resetTo}% gesetzt).`;
-                if(this.state.difficultyMult > 1.2) warningText += " Er beobachtet dich jetzt genau!";
+                // --- 10 allgemeine Boss-Warnungen ---
+                const bossTexts = [
+                    "Das Telefon klingelt sturm, bevor die Tür aufgerissen wird. Der Chef steht schnaufend im Rahmen: 'Müller! Noch so ein Ding und Sie können Ihre Kaffeetasse packen!'",
+                    "Eine E-Mail vom Chef ploppt auf, komplett in roter Schrift und Comic Sans: 'MÜLLER! IN MEIN BÜRO! SOFORT!' Nach einem ohrenbetäubenden Anschiss kehrst du an den Platz zurück.",
+                    "Dr. Wichtig stürmt an deinen Schreibtisch und knallt einen dicken Aktenordner auf die Tastatur. 'Ihre Arbeitsweise ist inakzeptabel! Beim nächsten Mal fliegt hier jemand!'",
+                    "Der Chef fängt dich auf dem Flur ab. 'Müller, Sie kosten mich mehr Nerven als meine Scheidung! Das ist eine offizielle Abmahnung!'",
+                    "Die HR-Abteilung ruft an. 'Herr Müller, der Geschäftsführer hat gerade einen Locher nach seinem Monitor geworfen. Es ging um Sie. Bitte reißen Sie sich zusammen!'",
+                    "Der Chef baut sich bedrohlich hinter dir auf. 'Wenn das so weitergeht, lasse ich Sie zur Strafe das gesamte Intranet ausdrucken und abheften! Letzte Warnung!'",
+                    "Eine wütende Sprachnachricht vom Chef: 'Müller, wenn mein Puls wegen Ihnen noch weiter steigt, stelle ich Ihnen meine Arztkosten in Rechnung! Benehmen Sie sich!'",
+                    "Dr. Wichtig trommelt ungeduldig mit den Fingern auf deinen Schreibtisch. 'Ich habe schon Praktikanten gesehen, die weniger Chaos anrichten. Überlegen Sie sich gut, was Sie heute noch tun!'",
+                    "Das Haustelefon klingelt. Es ist der Chef. Er brüllt so laut in den Hörer, dass du ihn einen halben Meter vom Ohr weghalten musst, um keinen Hörsturz zu erleiden.",
+                    "Der Chef schickt dir kommentarlos einen Link zu einem Stellenportal für ungelernte Aushilfskräfte mit dem Betreff 'Zur Vorbereitung'. Die Botschaft ist überdeutlich."
+                ];
+                let randomBoss = bossTexts[Math.floor(Math.random() * bossTexts.length)];
+                
+                // Der Text wirkt nun natürlich und schließt direkt mit dem Systemwert ab.
+                let warningText = `${randomBoss} (Radar auf ${resetTo}% gesetzt).`;
+                if(this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
                 
                 this.showModal("ABMAHNUNG", warningText, false);
             } else {
@@ -2906,6 +2937,7 @@ const engine = {
     showModal: function(title, text, isEnd) {
         const overlay = document.getElementById('modal-overlay');
         const content = document.getElementById('modal-content');
+        
         overlay.classList.remove('hidden');
         overlay.classList.add('flex');
         document.body.classList.add('overflow-hidden');
@@ -2918,12 +2950,25 @@ const engine = {
              btnText = 'VERSTANDEN';
         }
         
-        // --- Dynamische Farbgebung des Titels ---
-        let titleColor = "text-red-500"; // Standard: Rot für Fehler/Kündigung
-        if (title.includes("FEIERABEND")) titleColor = "text-green-500"; // Grün für regulären Sieg
-        if (title.includes("GALA VORBEI")) titleColor = "text-pink-500"; // Pink für die Party!
-        // ---------------------------------------------
+        // --- Dynamische Farbgebung für Text UND Rahmen ---
+        let titleColor = "text-red-500"; 
+        let themeColor = "border-red-600"; // Standard: Rot
+        
+        if (title.includes("FEIERABEND")) {
+            titleColor = "text-green-500";
+            themeColor = "border-green-500";
+        } else if (title.includes("GALA VORBEI")) {
+            titleColor = "text-pink-500";
+            themeColor = "border-pink-500";
+        } else if (title.includes("VENTIL") || title.includes("RAGE")) {
+            titleColor = "text-orange-500";
+            themeColor = "border-orange-500";
+        }
 
+        // Aktualisiert die Box-Klassen mit der korrekten Rahmenfarbe
+        content.className = `max-w-xl w-full bg-slate-900 border-2 ${themeColor} p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto`;
+
+        // 1:1 dein Original HTML-Aufbau für den Inhalt!
         content.innerHTML = `
             <h1 class="text-4xl font-black ${titleColor} mb-4">${title}</h1>
             <div class="text-lg text-slate-300 mb-8 italic">${text}</div>
