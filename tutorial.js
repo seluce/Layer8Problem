@@ -206,7 +206,7 @@ const tutorial = {
             this.highlightAction('btn-server', 'Serverraum', 'Dein Rückzugsort vor dem alltäglichen Wahnsinn. Zwischen blinkenden Racks und surrenden Lüftern passieren oft interessante Dinge – und manchmal wartet hier wertvoller Loot auf dich.');
         }
         else if (this.step === 7) {
-            this.highlightInfo(['stat-row-fl', 'stat-row-al', 'stat-row-cr'], 'Deine Parameter', '<b>FAULHEIT:</b> Je fauler du bist, umso mehr verärgert es den Chef bei Fehlern.<br><br><b>AGGRO:</b> Ab 100% wirfst du den Monitor aus dem Fenster (Rage-Quit).<br><br><b>CHEF-RADAR:</b> Ab 100% gibt es eine Abmahnung, danach die Kündigung.');
+            this.highlightInfo(['stat-row-fl', 'stat-row-al', 'stat-row-cr'], 'Deine Parameter', '<b>FAULHEIT:</b> Je fauler du bist, umso mehr verärgert es den Chef bei Fehlern.<br><br><b>AGGRO:</b> Ab 100% musst du einmalig Dampf ablassen, beim zweiten Mal folgt der Rage-Quit.<br><br><b>CHEF-RADAR:</b> Ab 100% gibt es eine Abmahnung, danach die Kündigung.');
         }
         else if (this.step === 8) {
             let hasDonut = engine.state.inventory.find(i => i.id === 'donut');

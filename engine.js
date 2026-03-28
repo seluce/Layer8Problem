@@ -78,6 +78,7 @@ const engine = {
         audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // Standard 50%
         musicEnabled: localStorage.getItem('layer8_music') !== 'false',
         musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // Standard: 20%
+        musicStyle: localStorage.getItem('layer8_music_style') || 'elevator',
         currentMusicTrack: null,
         oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
         fastChat: localStorage.getItem('layer8_fastchat') === 'true',
@@ -116,6 +117,12 @@ const engine = {
     audioCtx: null,
     playAudio: function(type = 'ui') {
         if (!this.state.audioEffects) return;
+        
+        // BUGFIX: Bei Lautstärke 0 gar nicht erst versuchen, Töne zu erzeugen!
+        // Das verhindert den "exponentialRampToValueAtTime" Fehler in der Web Audio API.
+        const vol = this.state.audioVolume;
+        if (vol <= 0) return;
+        
         try {
             if (!this.audioCtx) {
                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -128,9 +135,7 @@ const engine = {
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
             
-            // NEU: Den Slider-Wert auslesen (0.0 bis 1.0)
-            const vol = this.state.audioVolume;
-            
+            // Den Slider-Wert auslesen (0.0 bis 1.0)
             osc.connect(gain);
             gain.connect(this.audioCtx.destination);
             
@@ -4425,6 +4430,7 @@ ${logText}
         if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
         if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
         if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
+        const styleSelect = document.getElementById('setting-music-style'); if(styleSelect) styleSelect.value = this.state.musicStyle;
         
         // --- Soft-Reset Button Logik (Ausgrauen im Hauptmenü & Schwierigkeits-Wahl) ---
         const softResetBtn = document.getElementById('btn-soft-reset');
@@ -4515,13 +4521,12 @@ ${logText}
     bgmTracks: null,
 
     initMusic: function() {
-        // Lädt die Audio-Dateien (wird erst beim ersten Play-Aufruf gestartet)
         this.bgmTracks = {
             'elevator': new Audio('assets/music/elevator.opus'),
+            'lofi': new Audio('assets/music/chillwave.opus'),
             'boss': new Audio('assets/music/boss.opus'),
             'gala': new Audio('assets/music/gala.opus')
         };
-        // Alles auf Dauerschleife stellen
         for (let key in this.bgmTracks) {
             this.bgmTracks[key].loop = true;
         }
@@ -4534,6 +4539,16 @@ ${logText}
             this.playMusic(this.state.currentMusicTrack || 'elevator');
         } else {
             this.stopMusic();
+        }
+    },
+    
+    changeMusicStyle: function(style) {
+        this.state.musicStyle = style;
+        localStorage.setItem('layer8_music_style', style);
+        
+        // Wenn Musik an ist und wir nicht im Bossfight/Gala sind, direkt live wechseln
+        if (this.state.musicEnabled && this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
+            this.playMusic('elevator'); 
         }
     },
 
@@ -4550,23 +4565,27 @@ ${logText}
     playMusic: function(trackName) {
         if (!this.state.musicEnabled) return;
         
-        // BUGFIX: Prüfen, ob der Track WIRKLICH läuft (und nicht nur auf Pause steht)
-        if (this.state.currentMusicTrack === trackName) {
-            if (this.bgmTracks && this.bgmTracks[trackName] && !this.bgmTracks[trackName].paused) {
-                return; // Läuft bereits hörbar -> Abbruch, nicht neu starten!
+        // --- Den Standard-Track durch den gewählten Stil ersetzen ---
+        let actualTrack = trackName;
+        if (trackName === 'elevator') {
+            actualTrack = this.state.musicStyle;
+        }
+
+        if (this.state.currentMusicTrack === actualTrack) {
+            if (this.bgmTracks && this.bgmTracks[actualTrack] && !this.bgmTracks[actualTrack].paused) {
+                return; // Läuft bereits hörbar -> Abbruch
             }
         }
-		
-        this.state.currentMusicTrack = trackName;
+
+        this.state.currentMusicTrack = actualTrack;
         this.stopMusic(); // Stoppt alle anderen Tracks
 
         if (!this.bgmTracks) this.initMusic();
 
-        let track = this.bgmTracks[trackName];
+        let track = this.bgmTracks[actualTrack];
         if (track) {
             track.volume = this.state.musicVolume;
-            // Catch fängt Fehler ab, falls der Browser Autoplay blockiert
-            track.play().catch(e => console.log("Musik Autoplay blockiert:", e)); 
+            track.play().catch(e => console.log("Musik Autoplay blockiert:", e));
         }
     },
 

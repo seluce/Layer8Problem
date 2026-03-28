@@ -772,6 +772,20 @@
                             <span class="text-[10px] text-slate-500">🔊</span>
                         </div>
                     </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
+                        <div class="flex items-start gap-3 flex-1 w-full">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">📻</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Musik-Stil</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Wähle deinen musikalischen Wahnsinn.</span>
+                            </div>
+                        </div>
+                        <select id="setting-music-style" onchange="engine.changeMusicStyle(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded px-2 py-1.5 focus:border-amber-500 outline-none cursor-pointer shadow-sm shrink-0">
+                            <option value="elevator">Fahrstuhl (klassisch)</option>
+                            <option value="lofi">Lofi (entspannt)</option>
+                        </select>
+                    </div>
 
                 </div>
             </div>
@@ -923,7 +937,7 @@
                 <div class="bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-3 font-mono leading-relaxed">
                     <p><strong class="text-slate-300 font-sans">Entwicklung & Design:</strong><br> Schnaftikus Games</p>
                     <p><strong class="text-slate-300 font-sans">Musik Lizenzen (Creative Commons BY 4.0):</strong><br>
-                        "Local Forecast - Elevator", "Movement Proposition", "Disco con Tutti" <br>
+                        "Local Forecast - Elevator", "Chill Wave", "Movement Proposition", "Disco con Tutti" <br>
                         by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">incompetech.com</a>).<br>
                         Licensed under Creative Commons: By Attribution 4.0 License <br>
                         <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">http://creativecommons.org/licenses/by/4.0/</a>
