@@ -2199,6 +2199,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   border-color: rgb(249 115 22 / 0.2);
 }
 
+.border-orange-500\/50 {
+  border-color: rgb(249 115 22 / 0.5);
+}
+
 .border-pink-500 {
   --tw-border-opacity: 1;
   border-color: rgb(236 72 153 / var(--tw-border-opacity, 1));
@@ -2548,6 +2552,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .bg-orange-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 88 12 / var(--tw-bg-opacity, 1));
+}
+
+.bg-orange-950\/50 {
+  background-color: rgb(67 20 7 / 0.5);
 }
 
 .bg-pink-500 {
@@ -3321,6 +3329,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .text-green-500 {
   --tw-text-opacity: 1;
   color: rgb(34 197 94 / var(--tw-text-opacity, 1));
+}
+
+.text-orange-300\/90 {
+  color: rgb(253 186 116 / 0.9);
 }
 
 .text-orange-400 {

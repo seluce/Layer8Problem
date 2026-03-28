@@ -1,5 +1,5 @@
 const engine = {
-    VERSION: "v3.1.1",	
+    VERSION: "v3.2.0",	
 	
     state: {
         time: 8 * 60,
@@ -2751,22 +2751,28 @@ const engine = {
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
 
+        // --- Warnungs-Badges für das End-Modal ---
+        let rageBadge = this.state.rageWarningReceived ? '<div class="text-[9px] text-orange-400 bg-orange-950/50 border border-orange-500/50 rounded px-1 mt-1 inline-block">VENTIL GENUTZT</div>' : '';
+        let chefBadge = this.state.chefWarningReceived ? '<div class="text-[9px] text-red-500 bg-red-950/50 border border-red-500/50 rounded px-1 mt-1 inline-block">ABGEMAHNT</div>' : '';
+
         // Stats-Box bauen
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
                 <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Tagesbericht: <span class="text-white font-bold">${diffName}</span></div>
                 <div class="grid grid-cols-3 gap-2 text-center font-mono">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
                         <span class="text-[10px] text-slate-400">FAULHEIT</span>
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
                         <span class="text-[10px] text-slate-400">AGGRO</span>
+                        ${rageBadge}
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-red-500 font-bold text-xl">${Math.round(this.state.cr)}%</span>
                         <span class="text-[10px] text-slate-400">RADAR</span>
+                        ${chefBadge}
                     </div>
                 </div>
             </div>
@@ -3002,6 +3008,9 @@ const engine = {
                 this.startParty();
                 return;
             }
+            
+            // Musik zurücksetzen: Schaltet die Boss-Musik aus und kehrt zum gewählten Büro-Vibe zurück
+            this.playMusic('elevator');
             
             // --- Alle Hintergrund-Aktivitäten beim echten Ende einfrieren ---
             if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
@@ -3839,6 +3848,33 @@ const engine = {
         }
 
         // ==========================================
+        // ABSATZ 2.5: Warnungen (Abmahnung & Ventil)
+        // ==========================================
+        let pWarn = "";
+        let warnings = [];
+        
+        if (state.rageWarningReceived) {
+            warnings.push(pick([
+                "ich zwischendurch einen halben Nervenzusammenbruch in der Besenkammer hatte",
+                "ich heute schon einmal kurz davor war, komplett die Kontrolle zu verlieren",
+                "ich meine Wut heute bereits an harmlosem Büromaterial auslassen musste"
+            ]));
+        }
+        
+        if (state.chefWarningReceived) {
+            warnings.push(pick([
+                "der Chef mir heute bereits mit dem Rauswurf gedroht hat",
+                "ich nur haarscharf an einer fristlosen Kündigung vorbeigeschrammt bin",
+                "ich heute schon eine hochoffizielle und sehr laute Abmahnung kassiert habe"
+            ]));
+        }
+
+        if (warnings.length > 0) {
+            let warnConn = (encounters.length > 0 || habits.length > 0) ? pick(["Ach ja, und erwähnenswert ist auch, dass ", "Fast vergessen: Dazu kommt, dass ", "Zu allem Überfluss sei noch gesagt, dass "]) : pick(["Besonders heikel war heute, dass ", "Ein absoluter Tiefpunkt war, dass "]);
+            pWarn = `${warnConn}${formatList(warnings)}.`;
+        }
+
+        // ==========================================
         // ABSATZ 3: Das Finale (Game Over / Win)
         // ==========================================
         let p3 = "";
@@ -3868,7 +3904,7 @@ const engine = {
             ]);
         } else if (endReason === "PARTY") {
             // --- PARTY FINALE TEXT ---
-            p3 = "Dann kam 17:30 Uhr und die ominöse Synergy-Gala. " + partyText;
+            p3 = "Dann kam 16:30 Uhr und die ominöse Synergy-Gala. " + partyText;
         }
 
         // ==========================================
@@ -3888,6 +3924,7 @@ const engine = {
                     <div class="space-y-4">
                         <p class="leading-relaxed">"${p1}"</p>
                         ${p2 ? `<p class="leading-relaxed">"${p2}"</p>` : ''}
+                        ${pWarn ? `<p class="leading-relaxed text-orange-300/90">"${pWarn}"</p>` : ''}
                         <p class="leading-relaxed font-bold text-white border-t border-slate-800 pt-3">"${p3}"</p>
                     </div>
                 </div>
@@ -4755,7 +4792,7 @@ ${logText}
 
     shareGame: function(btn) {
         const shareData = {
-            title: 'Layer 8 Problem - Der SysAdmin Simulator',
+            title: 'Layer8Problem - Der SysAdmin Simulator',
             text: 'Ich versuche gerade als SysAdmin bei GlobalCorp zu überleben. Hilf mir oder mach es besser!',
             url: window.location.href
         };
