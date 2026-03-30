@@ -1,12 +1,13 @@
 const engine = {
-    VERSION: "v3.1.0",	
+    VERSION: "v3.2.0",	
 	
     state: {
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
         tickets: 0,
         inventory: [], 
-        warningReceived: false,
+        chefWarningReceived: false,
+        rageWarningReceived: false,
         activeEvent: null,
         currentPhoneEvent: null,
         usedIDs: new Set(),
@@ -77,6 +78,7 @@ const engine = {
         audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // Standard 50%
         musicEnabled: localStorage.getItem('layer8_music') !== 'false',
         musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // Standard: 20%
+        musicStyle: localStorage.getItem('layer8_music_style') || 'radio',
         currentMusicTrack: null,
         oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
         fastChat: localStorage.getItem('layer8_fastchat') === 'true',
@@ -115,6 +117,12 @@ const engine = {
     audioCtx: null,
     playAudio: function(type = 'ui') {
         if (!this.state.audioEffects) return;
+        
+        // BUGFIX: Bei Lautstärke 0 gar nicht erst versuchen, Töne zu erzeugen!
+        // Das verhindert den "exponentialRampToValueAtTime" Fehler in der Web Audio API.
+        const vol = this.state.audioVolume;
+        if (vol <= 0) return;
+        
         try {
             if (!this.audioCtx) {
                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -127,9 +135,7 @@ const engine = {
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
             
-            // NEU: Den Slider-Wert auslesen (0.0 bis 1.0)
-            const vol = this.state.audioVolume;
-            
+            // Den Slider-Wert auslesen (0.0 bis 1.0)
             osc.connect(gain);
             gain.connect(this.audioCtx.destination);
             
@@ -608,7 +614,7 @@ const engine = {
 
     // Startet das Spiel und prüft, ob ein Standard-Tag gesetzt ist
     start: function() {
-		this.playMusic('elevator');
+		this.playMusic('office');
         document.getElementById('intro-modal').style.display = 'none';
         
         // Prüfen, ob der Spieler eine Standard-Schwierigkeit festgelegt hat
@@ -885,7 +891,7 @@ const engine = {
         
         // 6. TIMER
         const timerBar = document.getElementById('email-timer-bar');
-        const DURATION = 15000; 
+        const DURATION = 20000; 
         
         if(timerBar) {
             timerBar.style.transition = 'none';
@@ -2094,8 +2100,14 @@ const engine = {
 
         // Zeit & Tickets
         let oldTimeChunk = Math.floor(this.state.time / 30);
-        let newTimeChunk = Math.floor((this.state.time + m) / 30);
-        let newTickets = newTimeChunk - oldTimeChunk;
+
+        // BUGFIX: Offene Tickets nur bis Feierabend zählen 16:30 (16 * 60 + 30 = 990)
+        const SHIFT_END_TIME = 16 * 60 + 30; 
+        let cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
+
+        let newTimeChunk = Math.floor(cappedTime / 30);
+        let newTickets = Math.max(0, newTimeChunk - oldTimeChunk); 
+
         this.state.tickets += newTickets;
         
         if (type === 'calls') { 
@@ -2321,7 +2333,7 @@ const engine = {
         }
         // -----------------------------------------
 		
-        this.playMusic('elevator');
+        this.playMusic('office');
 		
         this.state.activeEvent = false;
         this.disableButtons(false);
@@ -2739,22 +2751,28 @@ const engine = {
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
 
+        // --- Warnungs-Badges für das End-Modal --- 
+        let rageBadge = this.state.rageWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-orange-400 bg-orange-950/30 border-2 border-orange-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block -rotate-3 shadow-[0_0_8px_rgba(249,115,22,0.3)] pointer-events-none">VENTIL GENUTZT</div>' : ''; 
+        let chefBadge = this.state.chefWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-red-500 bg-red-950/30 border-2 border-red-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block rotate-2 shadow-[0_0_8px_rgba(239,68,68,0.3)] pointer-events-none">ABGEMAHNT</div>' : '';
+
         // Stats-Box bauen
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
                 <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Tagesbericht: <span class="text-white font-bold">${diffName}</span></div>
                 <div class="grid grid-cols-3 gap-2 text-center font-mono">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
                         <span class="text-[10px] text-slate-400">FAULHEIT</span>
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
                         <span class="text-[10px] text-slate-400">AGGRO</span>
+                        ${rageBadge}
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col items-center">
                         <span class="text-red-500 font-bold text-xl">${Math.round(this.state.cr)}%</span>
                         <span class="text-[10px] text-slate-400">RADAR</span>
+                        ${chefBadge}
                     </div>
                 </div>
             </div>
@@ -2772,15 +2790,49 @@ const engine = {
 
         // A. RAGE QUIT (Aggro >= 100)
         if(this.state.al >= 100) {
-			this.incrementStat('daysRageQuit');
-            // 1. Tagebuch generieren
-            let diary = this.generateDiaryEntry("RAGE"); 
             
-            this.state.pendingEnd = { 
-                title: "RAGE QUIT", 
-                text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary, // <-- Hier + diary anhängen
-                isWin: false 
-            };
+            // Logik für das "Ventil" basierend auf Schwierigkeit
+            let resetTo = 50; // Standard (Mittwoch)
+            if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
+            if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
+
+            // Prüfen, ob der Spieler heute schon ausgerastet ist
+            if(!this.state.rageWarningReceived) {
+                this.state.rageWarningReceived = true;
+                
+                // Setze Aggro zurück
+                this.state.al = resetTo; 
+                
+                // --- 10 allgemeine Ausraster-Texte ---
+                const rageTexts = [
+                    "Du gehst in die Teeküche und starrst regungslos die rotierende Mikrowelle an. Nachdem du dir bildhaft vorgestellt hast, wie alles brennt, kehrst du an deinen Platz zurück.",
+                    "Du schließt dich im Kopierraum ein und schreist deine Wut in ein Paket frisches Druckerpapier. Es dämpft den Ton hervorragend. Du richtest deine Krawatte.",
+                    "Dir reißt endgültig der Geduldsfaden. Du schnappst dir einen leeren Kaffeebecher und zerdrückst ihn langsam und genüsslich in deiner Faust. Das musste jetzt sein.",
+                    "Du flüchtest auf die Toilette, wäschst dir eiskalt das Gesicht und starrst dein Spiegelbild an. Du murmelst dir mehrfach vor, dass Mord immer noch strafbar ist.",
+                    "Du starrst auf die Fehlermeldung, stehst auf und trittst mit voller Wucht gegen den Mülleimer. Bevor jemand reagieren kann, sitzt du wieder und tippst stoisch weiter.",
+                    "Du reißt das Fenster auf und brüllst ein langes Geräusch in den Innenhof. Eine Taube fällt vor Schreck fast vom Sims. Du schließt das Fenster. Der Puls sinkt.",
+                    "Ein leises Knacken durchbricht die Stille. Du hast so fest auf deinen Kugelschreiber gebissen, dass er splittert. Mit etwas Tinte an den Zähnen arbeitest du weiter.",
+                    "Du meldest dich kurz ab und gehst ins staubige Archiv. Aus purer Frustration baust du einen Turm aus alten Ordnern, nur um ihn mit einem gezielten Kick zu zerstören.",
+                    "Tock. Tock. Tock. Du lässt deine Stirn dreimal sanft, aber bestimmt auf die Tischplatte fallen. Die Kollegen entscheiden sich kollektiv, diesen Vorfall zu ignorieren.",
+                    "In blinder Wut tippst du eine extrem beleidigende E-Mail an den 'Alle-Mitarbeiter'-Verteiler. Dein Finger schwebt über dem Senden-Button, bevor du seufzend alles löschst."
+                ];
+                let randomRage = rageTexts[Math.floor(Math.random() * rageTexts.length)];
+                
+                let warningText = `${randomRage} (Aggro auf ${resetTo}% gesetzt).`;
+                if(this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
+                
+                this.showModal("VENTIL GEÖFFNET", warningText, false);
+            } else {
+                // Das ist der zweite Ausraster -> Game Over
+                this.incrementStat('daysRageQuit');
+                let diary = this.generateDiaryEntry("RAGE"); 
+                
+                this.state.pendingEnd = { 
+                    title: "RAGE QUIT", 
+                    text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary,
+                    isWin: false 
+                };
+            }
         }
         // B. TICKET LAWINE (Zu viele Tickets)
         else if(this.state.tickets >= 10) {
@@ -2853,14 +2905,30 @@ const engine = {
             if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
             if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
 
-            if(!this.state.warningReceived) {
-                this.state.warningReceived = true;
+            if(!this.state.chefWarningReceived) {
+                this.state.chefWarningReceived = true;
                 
                 // Setze Radar zurück basierend auf Schwierigkeit
                 this.state.cr = resetTo; 
                 
-                let warningText = `Der Chef tobt: 'Das war Ihre LETZTE Warnung!' (Radar auf ${resetTo}% gesetzt).`;
-                if(this.state.difficultyMult > 1.2) warningText += " Er beobachtet dich jetzt genau!";
+                // --- 10 allgemeine Boss-Warnungen ---
+                const bossTexts = [
+                    "Das Telefon klingelt sturm, bevor die Tür aufgerissen wird. Der Chef steht schnaufend im Rahmen: 'Müller! Noch so ein Ding und Sie können Ihre Kaffeetasse packen!'",
+                    "Eine E-Mail vom Chef ploppt auf, komplett in roter Schrift und Comic Sans: 'MÜLLER! IN MEIN BÜRO! SOFORT!' Nach einem ohrenbetäubenden Anschiss kehrst du an den Platz zurück.",
+                    "Dr. Wichtig stürmt an deinen Schreibtisch und knallt einen dicken Aktenordner auf die Tastatur. 'Ihre Arbeitsweise ist inakzeptabel! Beim nächsten Mal fliegt hier jemand!'",
+                    "Der Chef fängt dich auf dem Flur ab. 'Müller, Sie kosten mich mehr Nerven als meine Scheidung! Das ist eine offizielle Abmahnung!'",
+                    "Die HR-Abteilung ruft an. 'Herr Müller, der Geschäftsführer hat gerade einen Locher nach seinem Monitor geworfen. Es ging um Sie. Bitte reißen Sie sich zusammen!'",
+                    "Der Chef baut sich bedrohlich hinter dir auf. 'Wenn das so weitergeht, lasse ich Sie zur Strafe das gesamte Intranet ausdrucken und abheften! Letzte Warnung!'",
+                    "Eine wütende Sprachnachricht vom Chef: 'Müller, wenn mein Puls wegen Ihnen noch weiter steigt, stelle ich Ihnen meine Arztkosten in Rechnung! Benehmen Sie sich!'",
+                    "Dr. Wichtig trommelt ungeduldig mit den Fingern auf deinen Schreibtisch. 'Ich habe schon Praktikanten gesehen, die weniger Chaos anrichten. Überlegen Sie sich gut, was Sie heute noch tun!'",
+                    "Das Haustelefon klingelt. Es ist der Chef. Er brüllt so laut in den Hörer, dass du ihn einen halben Meter vom Ohr weghalten musst, um keinen Hörsturz zu erleiden.",
+                    "Der Chef schickt dir kommentarlos einen Link zu einem Stellenportal für ungelernte Aushilfskräfte mit dem Betreff 'Zur Vorbereitung'. Die Botschaft ist überdeutlich."
+                ];
+                let randomBoss = bossTexts[Math.floor(Math.random() * bossTexts.length)];
+                
+                // Der Text wirkt nun natürlich und schließt direkt mit dem Systemwert ab.
+                let warningText = `${randomBoss} (Radar auf ${resetTo}% gesetzt).`;
+                if(this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
                 
                 this.showModal("ABMAHNUNG", warningText, false);
             } else {
@@ -2880,6 +2948,7 @@ const engine = {
     showModal: function(title, text, isEnd) {
         const overlay = document.getElementById('modal-overlay');
         const content = document.getElementById('modal-content');
+        
         overlay.classList.remove('hidden');
         overlay.classList.add('flex');
         document.body.classList.add('overflow-hidden');
@@ -2892,12 +2961,25 @@ const engine = {
              btnText = 'VERSTANDEN';
         }
         
-        // --- Dynamische Farbgebung des Titels ---
-        let titleColor = "text-red-500"; // Standard: Rot für Fehler/Kündigung
-        if (title.includes("FEIERABEND")) titleColor = "text-green-500"; // Grün für regulären Sieg
-        if (title.includes("GALA VORBEI")) titleColor = "text-pink-500"; // Pink für die Party!
-        // ---------------------------------------------
+        // --- Dynamische Farbgebung für Text UND Rahmen ---
+        let titleColor = "text-red-500"; 
+        let themeColor = "border-red-600"; // Standard: Rot
+        
+        if (title.includes("FEIERABEND")) {
+            titleColor = "text-green-500";
+            themeColor = "border-green-500";
+        } else if (title.includes("GALA VORBEI")) {
+            titleColor = "text-pink-500";
+            themeColor = "border-pink-500";
+        } else if (title.includes("VENTIL") || title.includes("RAGE")) {
+            titleColor = "text-orange-500";
+            themeColor = "border-orange-500";
+        }
 
+        // Aktualisiert die Box-Klassen mit der korrekten Rahmenfarbe
+        content.className = `max-w-xl w-full bg-slate-900 border-2 ${themeColor} p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto`;
+
+        // 1:1 dein Original HTML-Aufbau für den Inhalt!
         content.innerHTML = `
             <h1 class="text-4xl font-black ${titleColor} mb-4">${title}</h1>
             <div class="text-lg text-slate-300 mb-8 italic">${text}</div>
@@ -2926,6 +3008,9 @@ const engine = {
                 this.startParty();
                 return;
             }
+            
+            // Musik zurücksetzen: Schaltet die Boss-Musik aus und kehrt zum gewählten Büro-Vibe zurück
+            this.playMusic('office');
             
             // --- Alle Hintergrund-Aktivitäten beim echten Ende einfrieren ---
             if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
@@ -3205,7 +3290,7 @@ const engine = {
 
         // --- FLAVOR TEXTE ---
         if (id === 'stressball') {
-            desc = "Senkt AGGRO sofort um -10 Punkte. *Quietsch*";
+            desc = "Senkt AGGRO sofort um -5 Punkte. *Quietsch*";
             warn = "Material-Ermüdung! Nach dem Kneten ist der Ball für 60 Minuten platt und nutzlos.";
         } 
         else if (id === 'energy') {
@@ -3260,10 +3345,10 @@ const engine = {
         
         // A. Kein Verbrauch (nur Cooldown)
         if (id === 'stressball') {
-            this.state.al = Math.max(0, this.state.al - 10);
+            this.state.al = Math.max(0, this.state.al - 5);
             
             this.state.lastStressballTime = this.state.time;
-            this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -10)", "text-green-400");
+            this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -5)", "text-green-400");
         }
 
         // B. VERBRAUCHSGÜTER
@@ -3763,6 +3848,33 @@ const engine = {
         }
 
         // ==========================================
+        // ABSATZ 2.5: Warnungen (Abmahnung & Ventil)
+        // ==========================================
+        let pWarn = "";
+        let warnings = [];
+        
+        if (state.rageWarningReceived) {
+            warnings.push(pick([
+                "ich zwischendurch einen halben Nervenzusammenbruch in der Besenkammer hatte",
+                "ich heute schon einmal kurz davor war, komplett die Kontrolle zu verlieren",
+                "ich meine Wut heute bereits an harmlosem Büromaterial auslassen musste"
+            ]));
+        }
+        
+        if (state.chefWarningReceived) {
+            warnings.push(pick([
+                "der Chef mir heute bereits mit dem Rauswurf gedroht hat",
+                "ich nur haarscharf an einer fristlosen Kündigung vorbeigeschrammt bin",
+                "ich heute schon eine hochoffizielle und sehr laute Abmahnung kassiert habe"
+            ]));
+        }
+
+        if (warnings.length > 0) {
+            let warnConn = (encounters.length > 0 || habits.length > 0) ? pick(["Ach ja, und erwähnenswert ist auch, dass ", "Fast vergessen: Dazu kommt, dass ", "Zu allem Überfluss sei noch gesagt, dass "]) : pick(["Besonders heikel war heute, dass ", "Ein absoluter Tiefpunkt war, dass "]);
+            pWarn = `${warnConn}${formatList(warnings)}.`;
+        }
+
+        // ==========================================
         // ABSATZ 3: Das Finale (Game Over / Win)
         // ==========================================
         let p3 = "";
@@ -3792,7 +3904,7 @@ const engine = {
             ]);
         } else if (endReason === "PARTY") {
             // --- PARTY FINALE TEXT ---
-            p3 = "Dann kam 17:30 Uhr und die ominöse Synergy-Gala. " + partyText;
+            p3 = "Dann kam 16:30 Uhr und die ominöse Synergy-Gala. " + partyText;
         }
 
         // ==========================================
@@ -3812,6 +3924,7 @@ const engine = {
                     <div class="space-y-4">
                         <p class="leading-relaxed">"${p1}"</p>
                         ${p2 ? `<p class="leading-relaxed">"${p2}"</p>` : ''}
+                        ${pWarn ? `<p class="leading-relaxed text-orange-300/90">"${pWarn}"</p>` : ''}
                         <p class="leading-relaxed font-bold text-white border-t border-slate-800 pt-3">"${p3}"</p>
                     </div>
                 </div>
@@ -3840,7 +3953,7 @@ const engine = {
         }
         
         // --- Musik nach der Boot-Sequenz wieder starten ---
-        this.playMusic('elevator');
+        this.playMusic('office');
         
         // Buttons für die halbe Sekunde Ladezeit freigeben
         this.disableButtons(false);
@@ -4354,6 +4467,7 @@ ${logText}
         if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
         if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
         if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
+        const styleSelect = document.getElementById('setting-music-style'); if(styleSelect) styleSelect.value = this.state.musicStyle;
         
         // --- Soft-Reset Button Logik (Ausgrauen im Hauptmenü & Schwierigkeits-Wahl) ---
         const softResetBtn = document.getElementById('btn-soft-reset');
@@ -4444,15 +4558,39 @@ ${logText}
     bgmTracks: null,
 
     initMusic: function() {
-        // Lädt die Audio-Dateien (wird erst beim ersten Play-Aufruf gestartet)
         this.bgmTracks = {
             'elevator': new Audio('assets/music/elevator.opus'),
-            'boss': new Audio('assets/music/boss.opus'),
-            'gala': new Audio('assets/music/gala.opus')
+            'lofi': new Audio('assets/music/chillwave.opus'),
+            'detective': new Audio('assets/music/hardboiled.opus'),
+            'bossa': new Audio('assets/music/bossaantiqua.opus'),
+            'boss': new Audio('assets/music/movementproposition.opus'),
+            'gala': new Audio('assets/music/discocontutti.opus')
         };
-        // Alles auf Dauerschleife stellen
+        
+        const officeTracks = ['elevator', 'lofi', 'synth', 'sneaky'];
+
         for (let key in this.bgmTracks) {
-            this.bgmTracks[key].loop = true;
+            if (key === 'boss' || key === 'gala') {
+                this.bgmTracks[key].loop = true; // Boss & Gala loopen endlos
+            } else {
+                this.bgmTracks[key].loop = false; // Office Tracks werden manuell gesteuert
+                
+                // Event-Listener: Was passiert, wenn das Lied zu Ende ist?
+                this.bgmTracks[key].addEventListener('ended', () => {
+                    if (this.state.musicStyle === 'radio') {
+                        // Radio-Modus: Ein neues, zufälliges Lied aussuchen
+                        let nextTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
+                        // Verhindern, dass dasselbe Lied zweimal hintereinander läuft
+                        while(nextTrack === key) {
+                            nextTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
+                        }
+                        this.playMusic(nextTrack); 
+                    } else {
+                        // Dauerschleife-Modus (z.B. User hat explizit 'lofi' gewählt): Lied neu starten
+                        this.bgmTracks[key].play().catch(e => console.log(e));
+                    }
+                });
+            }
         }
     },
 
@@ -4463,6 +4601,16 @@ ${logText}
             this.playMusic(this.state.currentMusicTrack || 'elevator');
         } else {
             this.stopMusic();
+        }
+    },
+    
+    changeMusicStyle: function(style) {
+        this.state.musicStyle = style;
+        localStorage.setItem('layer8_music_style', style);
+        
+        // Wenn Musik an ist und wir nicht im Bossfight/Gala sind, direkt live wechseln
+        if (this.state.musicEnabled && this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
+            this.playMusic('office'); 
         }
     },
 
@@ -4479,23 +4627,42 @@ ${logText}
     playMusic: function(trackName) {
         if (!this.state.musicEnabled) return;
         
-        // BUGFIX: Prüfen, ob der Track WIRKLICH läuft (und nicht nur auf Pause steht)
-        if (this.state.currentMusicTrack === trackName) {
-            if (this.bgmTracks && this.bgmTracks[trackName] && !this.bgmTracks[trackName].paused) {
-                return; // Läuft bereits hörbar -> Abbruch, nicht neu starten!
+        // --- NEU: Das Signal 'office' verarbeiten ---
+        let actualTrack = trackName;
+        const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
+
+        if (trackName === 'office') {
+            if (this.state.musicStyle === 'radio') {
+                // Radio-Modus: Wenn bereits ein Office-Track läuft, lass ihn einfach weiterlaufen!
+                if (officeTracks.includes(this.state.currentMusicTrack) && 
+                    this.bgmTracks && 
+                    this.bgmTracks[this.state.currentMusicTrack] && 
+                    !this.bgmTracks[this.state.currentMusicTrack].paused) {
+                    return; 
+                }
+                // Ansonsten: Zufälligen Start-Track wählen
+                actualTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
+            } else {
+                // Ein fester Stil (z.B. 'lofi') ist in den Optionen gewählt
+                actualTrack = this.state.musicStyle;
             }
         }
-		
-        this.state.currentMusicTrack = trackName;
+
+        if (this.state.currentMusicTrack === actualTrack) {
+            if (this.bgmTracks && this.bgmTracks[actualTrack] && !this.bgmTracks[actualTrack].paused) {
+                return; // Läuft bereits hörbar -> Abbruch
+            }
+        }
+
+        this.state.currentMusicTrack = actualTrack;
         this.stopMusic(); // Stoppt alle anderen Tracks
 
         if (!this.bgmTracks) this.initMusic();
 
-        let track = this.bgmTracks[trackName];
+        let track = this.bgmTracks[actualTrack];
         if (track) {
             track.volume = this.state.musicVolume;
-            // Catch fängt Fehler ab, falls der Browser Autoplay blockiert
-            track.play().catch(e => console.log("Musik Autoplay blockiert:", e)); 
+            track.play().catch(e => console.log("Musik Autoplay blockiert:", e));
         }
     },
 
@@ -4614,7 +4781,8 @@ ${logText}
         this.state.activeEvent = false;
         this.state.isEmailOpen = false;
         this.state.emailPending = false;
-        this.state.warningReceived = false;
+        this.state.chefWarningReceived = false;
+        this.state.rageWarningReceived = false;
         this.state.lastStressballTime = -100;
         this.state.isPartyMode = false;
         this.state.partyProgress = 0;
@@ -4664,7 +4832,7 @@ ${logText}
 
     shareGame: function(btn) {
         const shareData = {
-            title: 'Layer 8 Problem - Der SysAdmin Simulator',
+            title: 'Layer8Problem - Der SysAdmin Simulator',
             text: 'Ich versuche gerade als SysAdmin bei GlobalCorp zu überleben. Hilf mir oder mach es besser!',
             url: window.location.href
         };

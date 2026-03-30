@@ -1,3 +1,21 @@
+[3.2.0] - 2026-03-28
+
+Neuerungen:
+* Der neue Radio-Modus spielt verschiedene Tracks (inklusive neuer Lofi- und Jazz-Beats) abwechselnd ab. Alternativ lässt sich jeder Track auch weiterhin einzeln auf Dauerschleife stellen.
+* Ein Rage Quit bei 100% Aggro beendet das Spiel nicht mehr sofort. Beim ersten Ausraster zieht sich Müller nun kurz zurück, um Dampf abzulassen.
+* Die Warnungen für das Chef-Radar und das neue Aggro-Ventil sind nicht mehr statisch. Es gibt nun jeweils 10 wechselnde Varianten, die per Zufall abgespielt werden.
+
+Anzeige & Layout:
+* Wurde das Aggro-Ventil genutzt oder eine Abmahnung kassiert, wird dies nun am Ende des Tages als Warn-Badge auf dem Tagesbericht und im persönlichen Logbuch verewigt.
+* Das End-Modal passt sich nun optisch mit eigenen Akzentfarben dem jeweiligen Ausgang des Tages an (Feierabend, Rage Quit, Kündigung).
+
+Balancing & Fehlerkorrekturen:
+* Die Dauer des Timers beim Lesen von E-Mails wurde von 15 auf 20 Sekunden erhöht, um unnötige Hektik bei einer eingehenden E-Mail zu nehmen.
+* Offene Tickets werden bei der Endabrechnung nur noch bis 16:30 Uhr gezählt. Späte Ereignisse generieren keine Tickets mehr nach Schichtende.
+* Nach einem Bosskampf läuft die dramatische Musik im Tagesbericht nicht mehr unpassend weiter, sondern wechselt nahtlos zurück zur normalen Büromusik.
+* Materialermüdung: Der Anti-Stressball verliert etwas an Wirkung und senkt die Aggro nun stündlich um 5 Punkte (zuvor 10).
+* Weitere kleine Fehlerkorrekturen im Hintergrund, Behebung von Tippfehlern und Textanpassungen.
+
 [3.1.0] - 2026-03-26
 
 Neuerungen:

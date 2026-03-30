@@ -20,7 +20,7 @@
     
     <div id="achievement-container"></div>
 
-	<div id="intro-modal" class="fixed inset-0 bg-black/95 z-[999] flex items-center justify-center p-4 md:p-8">
+	<div id="intro-modal" class="fixed inset-0 bg-black/90 z-[999] flex items-center justify-center p-4 md:p-8">
 		<div class="neon-box border-blue bg-slate-900 max-w-5xl w-full p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row gap-8 lg:gap-12 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
 			
 			<div class="flex-1 flex flex-col">
@@ -76,7 +76,7 @@
                     <div class="space-y-6 flex-1 flex flex-col justify-center">
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">📩</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-purple-400 tracking-wider mb-0.5">TICKETS</strong><span class="text-slate-400 leading-snug">Alle 30 Min kommt eins. Ab 10 ist Game Over!</span></div>
+                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-purple-400 tracking-wider mb-0.5">TICKETS</strong><span class="text-slate-400 leading-snug">Alle 30 Min kommt ein Ticket dazu. Ab 10 offenen Tickets ist Game Over!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
@@ -86,12 +86,12 @@
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">😡</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-orange-400 tracking-wider mb-0.5">AGGRO</strong><span class="text-slate-400 leading-snug">Bei 100% rastest du komplett aus. Kündigung!</span></div>
+                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-orange-400 tracking-wider mb-0.5">AGGRO</strong><span class="text-slate-400 leading-snug">Bei 100% öffnest du einmalig dein Ventil. Danach folgt der Rage-Quit!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-red-500/10 text-red-400 border border-red-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">👁️</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-red-500 tracking-wider mb-0.5">CHEF-RADAR</strong><span class="text-slate-400 leading-snug">Bei 100% gibt es eine Abmahnung. Dann Rauswurf.</span></div>
+                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-red-500 tracking-wider mb-0.5">CHEF-RADAR</strong><span class="text-slate-400 leading-snug">Bei 100% gibt es eine Abmahnung vom Chef. Danach folgt die Kündigung!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
@@ -217,12 +217,12 @@
         </button>
     </div>
 
-    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/95 z-50 flex items-center justify-center p-8">
+    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/90 z-50 flex items-center justify-center p-8">
         <div id="modal-content" class="max-w-xl w-full bg-slate-900 border-2 border-red-600 p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto"></div>
     </div>
 
 <!-- INVENTAR MODAL START -->		
-	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/95 z-[1100] items-center justify-center p-4">
+	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/90 z-[1100] items-center justify-center p-4">
         <div class="neon-box border-amber-500 bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
             <button onclick="engine.closeInventory()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
             <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2">🎒 DEIN RUCKSACK</h2>
@@ -237,7 +237,7 @@
 <!-- INVENTAR MODAL END -->	
 
 <!-- ITEM CONFIRM MODAL START -->	
-    <div id="item-confirm-modal" class="fixed inset-0 bg-black/95 z-[1200] hidden items-center justify-center p-6">
+    <div id="item-confirm-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-6">
         <div class="neon-box border-white bg-slate-900 max-w-sm w-full p-6 shadow-2xl relative text-center flex flex-col items-center">
             
             <div id="item-confirm-icon" class="text-6xl mb-4 bg-slate-800 w-24 h-24 flex items-center justify-center rounded-xl border border-slate-600 shadow-lg">
@@ -268,7 +268,7 @@
 <!-- ITEM CONFIRM MODAL END -->	
 
 <!-- KOLLEGIUM / TEAM MODAL START -->	
-	<div id="team-modal" class="fixed inset-0 hidden bg-black/95 z-[1100] items-center justify-center p-4">
+	<div id="team-modal" class="fixed inset-0 hidden bg-black/90 z-[1100] items-center justify-center p-4">
         <div class="neon-box border-white bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="engine.closeTeam()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
             <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">👥 DAS KOLLEGIUM (Die Verdächtigen)</h2>
@@ -359,7 +359,7 @@
 <!-- E-MAIL MODAL END -->
 
 <!-- SCHWIERIGKEIT MODAL START -->
-    <div id="difficulty-modal" class="fixed inset-0 bg-black/95 z-[1000] hidden items-center justify-center p-4">
+    <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-[1000] hidden items-center justify-center p-4">
         <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
             <p class="text-slate-400 mb-8">Wie sehr hasst du dein Leben heute?</p>
@@ -372,7 +372,7 @@
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
                         <li class="text-green-500">✔ Weniger Tickets</li>
                         <li class="text-green-500">✔ Kollegen sind entspannt</li>
-                        <li class="text-green-500">✔ Aggro steigt langsam (0.8x)</li>
+                        <li class="text-green-500">✔ Geringerer Multiplikator (0.8x)</li>
                     </ul>
                 </button>
 
@@ -393,8 +393,8 @@
                     <div class="text-xs text-slate-300 italic mb-4">"Warum tue ich mir das an?"</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
                         <li class="text-red-500">⚠ Startet mit 2 Tickets</li>
-                        <li class="text-red-500">⚠ Fehler werden härter bestraft</li>
-                        <li class="text-red-500">⚠ Boss ruft öfter an (1.25x)</li>
+                        <li class="text-red-500">⚠ Erhöhte Ticket-Rate</li>
+                        <li class="text-red-500">⚠ Erhöhter Multiplikator (1.25x)</li>
                     </ul>
                 </button>
             </div>
@@ -403,7 +403,7 @@
 <!-- SCHWIERIGKEIT MODAL END -->
 
 <!-- TUTORIAL MODAL START -->
-    <div id="tut-ask-modal" class="fixed inset-0 z-[2100] hidden items-center justify-center bg-black/95 fade-in">
+    <div id="tut-ask-modal" class="fixed inset-0 z-[2100] hidden items-center justify-center bg-black/90 fade-in">
         <div class="bg-slate-900 border-2 border-cyan-500/50 p-6 md:p-8 rounded-xl max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)] text-center mx-4 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
             
@@ -758,7 +758,7 @@
                                 <span class="text-xl opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">🎵</span>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium text-slate-200 leading-tight">Musik</span>
-                                    <span class="text-[10px] text-slate-500 mt-1">Fahrstuhl-Gedudel & Boss-Beats</span>
+                                    <span class="text-[10px] text-slate-500 mt-1">Hintergrund-Gedudel & Boss-Beats</span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
@@ -768,9 +768,26 @@
                         </div>
                         <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
                             <span class="text-[10px] text-slate-500">🔈</span>
-                            <input type="range" id="setting-music-volume" min="0" max="1" step="0.05" onchange="engine.setMusicVolume(this.value)" oninput="engine.setMusicVolume(this.value)" class="flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                            <input type="range" id="setting-music-volume" min="0" max="1" step="0.01" onchange="engine.setMusicVolume(this.value)" oninput="engine.setMusicVolume(this.value)" class="flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500">
                             <span class="text-[10px] text-slate-500">🔊</span>
                         </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
+                        <div class="flex items-start gap-3 flex-1 w-full">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">📻</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Musik-Stil</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Wähle deinen musikalischen Wahnsinn.</span>
+                            </div>
+                        </div>
+                        <select id="setting-music-style" onchange="engine.changeMusicStyle(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded px-2 py-1.5 focus:border-amber-500 outline-none cursor-pointer shadow-sm shrink-0">
+                            <option value="radio">Radio (Abwechselnd)</option>
+                            <option value="elevator">Fahrstuhl (Klassisch)</option>
+                            <option value="lofi">Lofi (Entspannt)</option>
+                            <option value="detective">Detektiv (Noir)</option>
+                            <option value="bossa">Lounge (Bossa)</option>
+                        </select>
                     </div>
 
                 </div>
@@ -923,7 +940,7 @@
                 <div class="bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-3 font-mono leading-relaxed">
                     <p><strong class="text-slate-300 font-sans">Entwicklung & Design:</strong><br> Schnaftikus Games</p>
                     <p><strong class="text-slate-300 font-sans">Musik Lizenzen (Creative Commons BY 4.0):</strong><br>
-                        "Local Forecast - Elevator", "Movement Proposition", "Disco con Tutti" <br>
+                        "Local Forecast - Elevator", "Chill Wave", "Movement Proposition", "Disco con Tutti", "Hard Boiled", "Bossa Antiqua" <br>
                         by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">incompetech.com</a>).<br>
                         Licensed under Creative Commons: By Attribution 4.0 License <br>
                         <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">http://creativecommons.org/licenses/by/4.0/</a>
@@ -938,7 +955,7 @@
 
 <!-- EXPORT IMPORT MODAL START -->
 
-<div id="save-export-modal" class="fixed inset-0 bg-black/95 z-[1200] hidden items-center justify-center p-4">
+<div id="save-export-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-4">
     <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
         <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
@@ -956,7 +973,7 @@
     </div>
 </div>
 
-<div id="save-import-modal" class="fixed inset-0 bg-black/95 z-[1200] hidden items-center justify-center p-4">
+<div id="save-import-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-4">
     <div class="neon-box border-red bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
         <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
@@ -1020,7 +1037,7 @@
 <!-- REPORT MODAL END -->
 
 <!-- KEYBOAD BINDING MODAL START -->
-<div id="keybind-modal" class="fixed inset-0 bg-black/95 z-[10000] hidden items-center justify-center p-4 fade-in">
+<div id="keybind-modal" class="fixed inset-0 bg-black/90 z-[10000] hidden items-center justify-center p-4 fade-in">
     <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
