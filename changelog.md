@@ -1,3 +1,17 @@
+[3.2.1] - 2026-04-04
+
+Neuerungen:
+E-Mails haben nun einen Ingame-Cooldown von 25 Minuten, um ständiges Dauerfeuer zu vermeiden. Zudem verbrauchen Antworten nun dynamisch Ingame-Zeit und können Items (Loot) gewähren.
+
+Anzeige & Layout:
+* Neu erbeutete Items "fliegen" nun mit einer kurzen Animation in den Rucksack, damit Trophäen im Inventar besser wahrgenommen werden.
+
+Fehlerkorrekturen:
+* Ein Fehler im Radio-Modus (Hintergrundmusik) wurde behoben, durch den die automatische Wiedergabe des nächsten Titels im Leerlauf abbrach.
+* Ein Darstellungsfehler wurde behoben, durch den der "Löschen & Ignorieren"-Button bei aktiven Hotkey-Overlays manchmal nicht gerendert wurde.
+* Das E-Mail-System wurde von harten Code-Abhängigkeiten befreit. Dadurch entstehen keine doppelten "Löschen"-Optionen mehr.
+* Weitere kleine Fehlerkorrekturen im Hintergrund, Behebung von Tippfehlern und Textanpassungen.
+
 [3.2.0] - 2026-03-28
 
 Neuerungen:

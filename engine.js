@@ -1,5 +1,5 @@
 const engine = {
-    VERSION: "v3.2.0",	
+    VERSION: "v3.2.1",	
 	
     state: {
         time: 8 * 60,
@@ -39,6 +39,7 @@ const engine = {
         usedEmails: new Set(),
 		isEmailOpen: false,
 		emailPending: false,
+		lastEmailTime: 0,
 		
         // Story-Entscheidungen
         storyFlags: {},
@@ -673,46 +674,50 @@ const engine = {
     // --- E-MAIL SYSTEM (Clean Light / Logik Fixes) ---
 
     checkRandomEmail: function() {
-        	
-	    // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
-        if(this.state.isEmailOpen || this.state.emailPending) return; // <--- Auch prüfen ob Pending!
+        // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
+        if(this.state.isEmailOpen || this.state.emailPending) return; 
         if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
         if (this.state.isPartyMode) return;
 
-        // --- ID-BASIERTE PRÜFUNG (WHITELIST & BLACKLIST) ---
-        // Wir holen uns die ID des aktuellen Events (z.B. "srv_fire" oder "boss_hack")
-        const id = this.state.currentEventId || "";
+        // --- INGAME-ZEIT COOLDOWN ---
+        // Wenn in den letzten 25 Ingame-Minuten schon eine Mail kam -> blockieren
+        if (this.state.lastEmailTime && (this.state.time - this.state.lastEmailTime < 25)) return;
+        // ---------------------------------
 
-        // A) WHITELIST: Nur erlauben, wenn die ID eines dieser Kürzel enthält
-        // call = Anrufe, srv_ = Server, cof_ = Kaffee, sq_ = Sidequest
+        // --- ID-BASIERTE PRÜFUNG (WHITELIST & BLACKLIST) ---
+        const id = this.state.currentEventId || "";
         const isAllowed = id.includes('srv_') || 
                           id.includes('cof_') || 
                           id.includes('sq_')  || 
                           id.includes('call_');
 
-        if (!isAllowed) return; // Abbruch, wenn es kein Standard-Event ist
-
-        // B) BLACKLIST: Spezielle Situationen blockieren
+        if (!isAllowed) return; 
         if (id.includes('boss')) return;
         if (id.includes('lunch')) return;
 
         // 3. SPAM-SCHUTZ (Letztes Event)
         if (this.state.lastEmailEventId === this.state.currentEventId) return;
 
-        // 4. Wahrscheinlichkeit
-        let baseChance = 0.2 * this.state.difficultyMult; 
-        let chance = baseChance + (this.state.tickets * 0.05); 
+        // 4. Wahrscheinlichkeit (vorher 20%, jetzt 15% Basis)
+        let baseChance = 0.15 * this.state.difficultyMult; 
+        // Vorher +5% pro Ticket, jetzt +3% pro Ticket.
+        let chance = baseChance + (this.state.tickets * 0.04); 
+        
+        // Deckelung: Egal wie viele Tickets, die Chance pro Klick wird nie höher als 35%
+        chance = Math.min(0.35, chance);
         
         if(Math.random() < chance) {
             this.state.lastEmailEventId = this.state.currentEventId;
             
-            // FIX: Sofort blockieren!
+            // --- Aktuelle Uhrzeit für den Cooldown merken ---
+            this.state.lastEmailTime = this.state.time;
+            
             this.state.emailPending = true; 
             
-            // NEU: Alten Delay-Timer killen, falls noch einer läuft
+            // Alten Delay-Timer killen, falls noch einer läuft
             if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
             
-            // NEU: Timer in Variable speichern, damit wir ihn abbrechen können!
+            // Timer in Variable speichern, damit wir ihn abbrechen können!
             this.state.emailDelayTimer = setTimeout(() => { 
                 this.triggerEmail(); 
             }, 2000);
@@ -813,26 +818,38 @@ const engine = {
             email.opts.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.type = "button"; 
-                btn.className = "w-full text-left px-3 py-2 bg-slate-800 hover:bg-blue-900/30 border border-slate-700 hover:border-blue-500/50 text-slate-300 hover:text-blue-300 rounded transition-colors flex items-center justify-between group font-medium text-xs";
                 
-                // NEU: Einheitliches Design & Fallbacks für 4 und 5
+                // --- NEU: Prüfen, ob es der Löschen-Button ist ---
+                const isDelete = opt.ignoreEmail;
+
+                // Dynamische Farben zuweisen
+                const hoverBg = isDelete ? "hover:bg-red-950/30 hover:border-red-500/50" : "hover:bg-blue-900/30 hover:border-blue-500/50";
+                const textColor = isDelete ? "text-slate-400 hover:text-red-400" : "text-slate-300 hover:text-blue-300";
+                const iconColor = isDelete ? "text-slate-600 group-hover:text-red-500" : "text-slate-500 group-hover:text-blue-400";
+                const kbdHover = isDelete ? "group-hover:text-red-400" : "group-hover:text-blue-400";
+                const iconText = isDelete ? "🗑️" : "➥";
+
+                btn.className = `w-full text-left px-3 py-2 bg-slate-800 border border-slate-700 ${hoverBg} ${textColor} rounded transition-colors flex items-center justify-between group font-medium text-xs`;
+                
                 let hotkeyHTML = "";
                 
                 if (this.state.showHotkeys) {
-                
                     let key = "";
-                    if (index < 3) key = this.state.keyBinds[`opt${index+1}`];
+                    if (index === 0) key = this.state.keyBinds.opt1;
+                    else if (index === 1) key = this.state.keyBinds.opt2;
+                    else if (index === 2) key = this.state.keyBinds.opt3;
                     else if (index === 3) key = "4";
                     else if (index === 4) key = "5";
+                    else if (index === 5) key = "6";
 
                     if (key) {
-                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-blue-400 transition-colors">${key.toUpperCase()}</kbd>`;
+                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner ${kbdHover} transition-colors">${key.toUpperCase()}</kbd>`;
                     }
                 }
                 
                 btn.innerHTML = `
                     <div class="flex items-center flex-1 mr-2">
-                        <span class="mr-2 text-slate-500 group-hover:text-blue-400 transition-colors duration-75 text-base shrink-0">➥</span>
+                        <span class="mr-2 ${iconColor} transition-colors duration-75 text-base shrink-0">${iconText}</span>
                         <span class="break-words leading-tight py-1">${opt.btn}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
@@ -848,42 +865,7 @@ const engine = {
                 actionContainer.appendChild(btn);
             });
         }
-        
-        // --- NEU: Den fest verbauten Löschen-Button dynamisch updaten ---
-        const ignoreBtn = document.querySelector('#email-modal button[onclick*="resolveEmail(null, true)"]');
-        if (ignoreBtn) {
-            let optCount = email.opts ? email.opts.length : 0;
-            
-            ignoreBtn.className = "w-full text-left px-3 py-2 bg-slate-800 hover:bg-red-950/30 border border-slate-700 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded transition-colors duration-75 flex items-center justify-between group font-medium text-xs";
-            
-            // NEU: Identisches Basis-Design, aber bei Hover wird es Rot
-            let hotkeyHTML = "";
-            
-            if (this.state.showHotkeys) {
-                let key = "";
-                if (optCount === 0) key = this.state.keyBinds.opt1;
-                else if (optCount === 1) key = this.state.keyBinds.opt2;
-                else if (optCount === 2) key = this.state.keyBinds.opt3;
-                else if (optCount === 3) key = "4";
-                else if (optCount === 4) key = "5";
-
-                if (key) {
-                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-red-400 transition-colors">${key.toUpperCase()}</kbd>`;
-                }
-            }
-            
-            ignoreBtn.innerHTML = `
-                <div class="flex items-center flex-1 mr-2">
-                    <span class="mr-2 text-slate-600 group-hover:text-red-500 transition-colors duration-75 text-base shrink-0">🗑️</span>
-                    <span class="break-words leading-tight py-1">E-Mail löschen & ignorieren</span>
-                </div>
-                <div class="shrink-0 flex items-center h-full">
-                    ${hotkeyHTML}
-                </div>
-            `;
-        }
-        // -----------------------------------------------------
-        
+               
         // 5. ANZEIGEN
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -949,9 +931,16 @@ const engine = {
             message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
             color = "text-red-500 font-bold";
         } else if(opt) {
-            message = `Gesendet: "${opt.btn}"`;
-            color = "text-blue-400";
-            
+            if (opt.ignoreEmail) {
+                // Dynamisch berechnen, ob es eine Strafe gab, um sie im Log anzuzeigen
+                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.state.difficultyMult)}%` : "";
+                message = `E-MAIL IGNORIERT!${penaltyText}`;
+                color = "text-red-500 font-bold";
+            } else {
+                message = `Gesendet: "${opt.btn}"`;
+                color = "text-blue-400";
+            }
+
             let mult = this.state.difficultyMult;
             
             // Zwischenspeichern der finalen Werte für die Animation
@@ -969,10 +958,65 @@ const engine = {
             if (addedC !== 0) this.showFloatingText('val-cr', addedC);
             // --------------------------------------
             
+            // Wenn der ignore-Flag in der data.js gesetzt ist, zähle den Ghosting-Stat hoch!
+            if(opt.ignoreEmail) this.state.emailsIgnored++;
+            
             this.triggerShake(addedA, addedC);
 
-            if(opt.txt) {
-                setTimeout(() => this.log(`Re: ${opt.txt}`, "text-slate-400 italic"), 500);
+            // 1. LOOT LOGIK für E-Mails
+            if (opt.loot && opt.loot !== "") {
+                let dbItem = DB.items[opt.loot];
+                let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
+                let alreadyHas = this.state.inventory.find(i => i.id === opt.loot);
+                
+                let normalCount = this.state.inventory.filter(i => {
+                    let db = DB.items[i.id];
+                    return db && !db.quest;
+                }).length;
+
+                if (isPermanent && alreadyHas) {
+                    // Hat man schon (passiert nichts weiter)
+                } else if (!isPermanent && normalCount >= 10) {
+                    let itemName = dbItem ? dbItem.name : opt.loot;
+                    this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+                } else {
+                    this.state.inventory.push({ id: opt.loot, used: false });
+                    this.addToArchive('items', opt.loot);
+                    
+                    let itemName = dbItem ? dbItem.name : opt.loot;
+                    this.log(`ERHALTEN: ${itemName}`, "text-yellow-400");
+                    
+                    // Die neue Rucksack-Animation aufrufen
+                    if (dbItem && dbItem.img && typeof this.animateItemToBackpack === 'function') {
+                        this.animateItemToBackpack(dbItem.img);
+                    }
+                }
+            }
+
+            // 2. ZEIT LOGIK (opt.m)
+            if (opt.m) {
+                this.state.time += opt.m;
+            }
+
+            // 3. RUF LOGIK (opt.rep)
+            if (opt.rep) {
+                let changed = false;
+                for (let [charName, val] of Object.entries(opt.rep)) {
+                    if (this.state.reputation[charName] === undefined) this.state.reputation[charName] = 0;
+                    this.state.reputation[charName] += val;
+                    this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
+                    changed = true;
+                }
+                if (changed) this.saveSystem();
+            }
+
+            // 4. TEXT LOGIK (opt.r)
+            if (opt.r) {
+                if (opt.ignoreEmail) {
+                    setTimeout(() => this.log(`${opt.r}`, "text-slate-500 italic"), 500);
+                } else {
+                    setTimeout(() => this.log(`Re: ${opt.r}`, "text-slate-400 italic"), 500);
+                }
             }
 
             if (opt.nextEmail) {
@@ -986,7 +1030,7 @@ const engine = {
             }
         }
         
-        // --- NEUER COOLDOWN-TIMER (Die Atempause) ---
+        // --- SYSTEM FREIGEBEN ---
         // Wenn es keine Option gibt (Timeout/Ignorieren) oder keine Folge-Mail ansteht
         if (!opt || !opt.nextEmail) {
             if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
@@ -1170,6 +1214,57 @@ const engine = {
         this.checkAchievements();
         this.checkEndConditions();
         this.updatePhoneVisibility();
+    },
+    
+    // --- VISUELLES FEEDBACK: ITEM FLIEGT IN DEN RUCKSACK ---
+    animateItemToBackpack: function(imgUrl) {
+        if (!imgUrl) return;
+
+        // Das Ziel: Dein Rucksack-Button in der Navigation
+        const target = document.getElementById('btn-inventory'); 
+        if (!target) return;
+
+        // 1. Positionen berechnen
+        const targetRect = target.getBoundingClientRect();
+
+        // Ziel-Mittelpunkt (Mitte des Rucksack-Buttons)
+        const targetX = targetRect.left + (targetRect.width / 2);
+        const targetY = targetRect.top + (targetRect.height / 2);
+
+        // Start-Mittelpunkt (ca. 60px direkt über dem Rucksack)
+        const startX = targetX;
+        const startY = targetY - 60;
+
+        // 2. Geist-Bild erstellen
+        const ghost = document.createElement('img');
+        ghost.src = imgUrl;
+        // Etwas flüssigere Dauer (z.B. duration-500 oder 700)
+        ghost.className = 'fixed w-16 h-16 z-[9999] object-contain pointer-events-none transition-all duration-1000 ease-in-out';
+        
+        // Zentriert auf den Startpunkt setzen
+        ghost.style.left = (startX - 32) + 'px'; 
+        ghost.style.top = (startY - 32) + 'px';
+        ghost.style.opacity = '1';
+        ghost.style.transform = 'scale(1) translateY(0)';
+
+        document.body.appendChild(ghost);
+
+        // Reflow erzwingen, damit der Startpunkt vom Browser registriert wird
+        void ghost.offsetWidth; 
+
+        // 3. Animation starten
+        setTimeout(() => {
+            // Bewegt sich 60px nach unten (genau auf den Button), skaliert runter und wird unsichtbar
+            ghost.style.opacity = '0'; 
+            ghost.style.transform = `translateY(60px) scale(0.1)`;
+        }, 10);
+
+        // 4. Aufräumen & Rucksack wackeln lassen
+        ghost.addEventListener('transitionend', () => {
+            ghost.remove();
+            target.classList.add('scale-110', 'brightness-125', 'transition-all');
+            setTimeout(() => target.classList.remove('scale-110', 'brightness-125'), 300);
+        });
     },
     
     updatePhoneVisibility: function() {
@@ -2224,7 +2319,7 @@ const engine = {
             else if (!isPermanent && normalCount >= 10) {
                 // 2. Verbrauchsgegenstand, aber Rucksack ist voll (10/10) -> Nachricht an Spieler
                 let itemName = dbItem ? dbItem.name : loot;
-                this.log(`Rucksack voll (10/10)! ${itemName} musste liegen gelassen werden.`, "text-slate-500 italic");
+                this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
             } 
             else {
                 // 3. Item hinzufügen! (Erlaubt auch den 2. oder 3. Donut)
@@ -2232,6 +2327,7 @@ const engine = {
                 this.addToArchive('items', loot);
                 let itemName = dbItem ? dbItem.name : loot;
                 this.log(`ITEM: ${itemName}`, "text-yellow-400");
+                if (DB.items[loot] && DB.items[loot].img) { this.animateItemToBackpack(DB.items[loot].img); }
             }
         }
         
@@ -2573,6 +2669,7 @@ const engine = {
                     this.addToArchive('items', res.loot);
                     let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
                     this.log("ERHALTEN: " + itemName, "text-yellow-400");
+                    if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
                 }
             }
             
@@ -2809,7 +2906,7 @@ const engine = {
                     "Du schließt dich im Kopierraum ein und schreist deine Wut in ein Paket frisches Druckerpapier. Es dämpft den Ton hervorragend. Du richtest deine Krawatte.",
                     "Dir reißt endgültig der Geduldsfaden. Du schnappst dir einen leeren Kaffeebecher und zerdrückst ihn langsam und genüsslich in deiner Faust. Das musste jetzt sein.",
                     "Du flüchtest auf die Toilette, wäschst dir eiskalt das Gesicht und starrst dein Spiegelbild an. Du murmelst dir mehrfach vor, dass Mord immer noch strafbar ist.",
-                    "Du starrst auf die Fehlermeldung, stehst auf und trittst mit voller Wucht gegen den Mülleimer. Bevor jemand reagieren kann, sitzt du wieder und tippst stoisch weiter.",
+                    "Ein unsichtbarer Geduldsfaden reißt. Du stehst wortlos auf und trittst mit voller Wucht gegen den Mülleimer. Bevor jemand reagieren kann, sitzt du wieder und starrst stoisch in die Leere.",
                     "Du reißt das Fenster auf und brüllst ein langes Geräusch in den Innenhof. Eine Taube fällt vor Schreck fast vom Sims. Du schließt das Fenster. Der Puls sinkt.",
                     "Ein leises Knacken durchbricht die Stille. Du hast so fest auf deinen Kugelschreiber gebissen, dass er splittert. Mit etwas Tinte an den Zähnen arbeitest du weiter.",
                     "Du meldest dich kurz ab und gehst ins staubige Archiv. Aus purer Frustration baust du einen Turm aus alten Ordnern, nur um ihn mit einem gezielten Kick zu zerstören.",
@@ -3044,8 +3141,8 @@ const engine = {
         this.state.cr = 0;
         
         // Alle laufenden Timer killen
-        if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         if(this.state.bossTimer) clearInterval(this.state.bossTimer);
+        if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         if(this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
         if(this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
         if(this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
@@ -3996,6 +4093,7 @@ const engine = {
             this.addToArchive('items', rItem);
             let itemName = DB.items[rItem] ? DB.items[rItem].name : rItem;
             statHtml = `<span class='text-yellow-400 font-bold'>Inventar: ${itemName} erhalten!</span>`;
+            if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
         }
 
         // GUI sofort aktualisieren, damit die Balken/Uhrzeit richtig stehen
@@ -4567,7 +4665,7 @@ ${logText}
             'gala': new Audio('assets/music/discocontutti.opus')
         };
         
-        const officeTracks = ['elevator', 'lofi', 'synth', 'sneaky'];
+        const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
 
         for (let key in this.bgmTracks) {
             if (key === 'boss' || key === 'gala') {
@@ -4751,8 +4849,8 @@ ${logText}
         }
 
         // Timer abbrechen
-        if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
         if (this.state.bossTimer) clearInterval(this.state.bossTimer);
+        if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
         if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
         if (this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
         if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
@@ -4790,6 +4888,7 @@ ${logText}
         this.state.achievements = [];
         this.state.achievedTitles = [];
         this.state.lastEmailEventId = null;
+        this.state.lastEmailTime = 0;
         this.state.currentEventId = null;
         this.state.currentEventType = null;
         this.state.lastNewsTime = 0;
@@ -5125,43 +5224,6 @@ ${logText}
         updateBadges('terminal-content');
         updateBadges('app-actions');
         updateBadges('email-actions');
-
-        // Sonderfall: Der fest verbaute Löschen-Button in der E-Mail
-        const emailModal = document.getElementById('email-modal');
-        if (emailModal && !emailModal.classList.contains('hidden')) {
-            const ignoreBtn = document.querySelector('#email-modal button[onclick*="resolveEmail(null, true)"]');
-            if (ignoreBtn) {
-                const kbd = ignoreBtn.querySelector('kbd');
-                
-                if (!this.state.showHotkeys) {
-                    if (kbd) kbd.remove();
-                } else {
-                    const emailActions = document.getElementById('email-actions');
-                    const optCount = emailActions ? emailActions.querySelectorAll('button').length : 0;
-                    
-                    let key = "";
-                    if (optCount === 0) key = this.state.keyBinds.opt1;
-                    else if (optCount === 1) key = this.state.keyBinds.opt2;
-                    else if (optCount === 2) key = this.state.keyBinds.opt3;
-                    else if (optCount === 3) key = "4";
-                    else if (optCount === 4) key = "5";
-
-                    if (key) {
-                        if(key.startsWith('Arrow')) key = key.replace('Arrow', '');
-                        
-                        if (kbd) {
-                            kbd.innerText = key.toUpperCase();
-                        } else {
-                            kbd = document.createElement('kbd');
-                            kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-red-400 transition-colors";
-                            kbd.innerText = key.toUpperCase();
-                            const rightDiv = ignoreBtn.querySelector('div.shrink-0.flex.items-center');
-                            if (rightDiv) rightDiv.appendChild(kbd);
-                        }
-                    }
-                }
-            }
-        }
     },
     
 };
@@ -5289,7 +5351,8 @@ document.addEventListener('keydown', (event) => {
     }
 
     // 5. AUSWAHL IN EVENTS & E-MAILS (1, 2, 3... und 4, 5, 6 für die Party)
-    if ((engine.state.activeEvent || engine.state.isEmailOpen) && !document.body.classList.contains('overflow-hidden')) {
+    // E-Mails setzen overflow-hidden, also müssen wir das explizit erlauben!
+    if ((engine.state.activeEvent && !document.body.classList.contains('overflow-hidden')) || engine.state.isEmailOpen) {
         let visibleOptions = [];
         
         // A: Ist eine E-Mail offen?
@@ -5297,10 +5360,9 @@ document.addEventListener('keydown', (event) => {
         if (emailModal && !emailModal.classList.contains('hidden')) {
             const emailActions = document.getElementById('email-actions');
             if (emailActions) {
+                // Da der Löschen-Button jetzt normal generiert wird, ist er hier automatisch mit drin!
                 visibleOptions = Array.from(emailActions.querySelectorAll('button'));
             }
-            const ignoreBtn = document.querySelector('#email-modal > div > div:nth-child(3) > button');
-            if (ignoreBtn) visibleOptions.push(ignoreBtn);
         }
         // B: Check Phone
         else if (document.getElementById('app-actions') && document.getElementById('app-actions').offsetParent !== null) {
