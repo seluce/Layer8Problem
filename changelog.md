@@ -1,7 +1,7 @@
 [3.2.1] - 2026-04-04
 
 Neuerungen:
-E-Mails haben nun einen Ingame-Cooldown von 25 Minuten, um ständiges Dauerfeuer zu vermeiden. Zudem verbrauchen Antworten nun dynamisch Ingame-Zeit und können Items (Loot) gewähren.
+* E-Mails haben nun einen Ingame-Cooldown von 25 Minuten, um ständiges Dauerfeuer zu vermeiden. Zudem verbrauchen Antworten nun dynamisch Ingame-Zeit und können Items (Loot) gewähren.
 
 Anzeige & Layout:
 * Neu erbeutete Items "fliegen" nun mit einer kurzen Animation in den Rucksack, damit Trophäen im Inventar besser wahrgenommen werden.
