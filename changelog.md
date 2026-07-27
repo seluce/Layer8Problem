@@ -1,3 +1,18 @@
+[3.2.3] - 2026-07-27
+
+System & Stabilität:
+* Der Menüpunkt "Spielstand löschen" setzt nun auch das Tutorial korrekt zurück. Bisher blieb es nach einem vollständigen Reset als "bereits gespielt" markiert und startete nicht erneut.
+* Der Tutorial-Fortschritt wird beim Export und Import eines Speicherstands nun tatsächlich mit übertragen. Bislang meldete jeder exportierte Code das Tutorial fälschlicherweise als nicht absolviert.
+* Alle Speicher-Schlüssel wurden an einer zentralen Stelle zusammengefasst, damit sich Tippfehler dieser Art nicht wiederholen können.
+
+Fehlerkorrekturen:
+* Beim Brandschutz-Ereignis wurde die Antwort "Löscher abgeben & flüchten" korrigiert. Der Feuerlöscher blieb bisher trotz der Ansage im Rucksack, stattdessen landete ein leerer Platzhalter-Gegenstand im Inventar.
+* Eine fehlerhafte Prüfsummen-Variante im Speichersystem wurde entfernt, die unter bestimmten Umständen gültige Speicher-Codes hätte ablehnen können.
+
+Für Entwickler:
+* Neues Prüfwerkzeug "tools/lint-data.mjs": findet doppelte Event-IDs, kaputte Item-Verweise, unerreichbare Dialog-Zweige und tote Story-Verzweigungen. Aufruf über "npm run lint:data".
+* Nicht mehr verwendeter Code aus dem Speichersystem und der Tastatursteuerung wurde entfernt.
+
 [3.2.2] - 2026-04-08
 
 Neuerungen:

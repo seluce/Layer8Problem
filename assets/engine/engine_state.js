@@ -3,7 +3,7 @@ export const state = {
     time: 8 * 60,
     fl: 0, al: 0, cr: 0,
     tickets: 0,
-    inventory: [], 
+    inventory: [],
     chefWarningReceived: false,
     rageWarningReceived: false,
     activeEvent: null,
@@ -15,47 +15,45 @@ export const state = {
     morningMoodShown: false,
     dayActive: false,
 
-    // Partymode
+    // Party mode
     isPartyMode: false,
     partyProgress: 0,
     currentPartyKey: null,
 
-    // Schwierigkeitsgrad (Standard 1.0)
-    difficultyMult: 1.0, 
+    // Difficulty multiplier (1.0 = default / "Mittwoch")
+    difficultyMult: 1.0,
 
-    // Ausreden-System
+    // Excuse system
     excusesLeft: 0,
 
-    // Stats & System
+    // Stats & system
     achievements: [],
     achievedTitles: [],
-    reputation: {},
     coffeeConsumed: 0,
-    spamClicked: 0,
     emailsIgnored: 0,
     drunkEndTime: 0,
 
-    // E-Mail System
+    // Email system
     emailTimer: null,
     usedEmails: new Set(),
     isEmailOpen: false,
     emailPending: false,
     lastEmailTime: 0,
 
-    // Story-Entscheidungen
+    // Story decisions
     storyFlags: {},
 
-    // Speichert das Ende, damit wir es verzögert anzeigen können
+    // Holds the pending ending so it can be shown with a delay
     pendingEnd: null,
 
-    // News Ticker
+    // News ticker
     lastNewsTime: 0,
     activeNewsText: null,
 
-    // Aktive Items
+    // Active items
     lastStressballTime: -100,
 
-    // Dauerhaftes Archiv
+    // Persistent archive (survives a day restart, mirrored into localStorage)
     archive: {
         items: [],
         achievements: [],
@@ -63,7 +61,8 @@ export const state = {
         reputation: {}
     },
 
-    // Ruf-System (-100 bis +100)
+    // Reputation system (-100 to +100).
+    // Re-seeded from DB.chars in core.loadSystem(); these are only the defaults.
     reputation: {
         "Kevin": 0,
         "Chantal": 0,
@@ -74,12 +73,12 @@ export const state = {
         "Markus": 0
     },
 
-    // Neue User-Einstellungen
+    // User settings
     visualFX: localStorage.getItem('layer8_fx') !== 'false',
     audioEffects: localStorage.getItem('layer8_audio') !== 'false',
-    audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // Standard 50%
+    audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // default 50%
     musicEnabled: localStorage.getItem('layer8_music') !== 'false',
-    musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // Standard: 20%
+    musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // default 20%
     musicStyle: localStorage.getItem('layer8_music_style') || 'radio',
     currentMusicTrack: null,
     oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
@@ -90,23 +89,24 @@ export const state = {
     compactMode: localStorage.getItem('layer8_compact') === 'true',
     screenShake: localStorage.getItem('layer8_shake') !== 'false',
 
-    // --- TASTATUR MAPPING ---
+    // --- KEYBOARD MAPPING ---
     showHotkeys: (() => {
         const saved = localStorage.getItem('layer8_showhotkeys');
-        if (saved !== null) return saved === 'true'; 
+        if (saved !== null) return saved === 'true';
+        // Default: hide hotkey badges on touch devices
         return !window.matchMedia("(pointer: coarse)").matches;
     })(),
 
     keyBinds: (() => {
         let saved = JSON.parse(localStorage.getItem('layer8_keybinds')) || {};
         const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
-        
-        // Veraltete Keys aus alten Savegames gnadenlos löschen
+
+        // Drop obsolete keys left over from older savegames
         for (let k in saved) {
             if (!defaults.hasOwnProperty(k)) delete saved[k];
         }
-        
-        // Fehlende Keys auffüllen
+
+        // Fill in missing keys
         for (let k in defaults) { if (!saved[k]) saved[k] = defaults[k]; }
         return saved;
     })(),

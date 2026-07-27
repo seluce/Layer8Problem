@@ -7,7 +7,7 @@ const tutorial = {
     scrollAttached: false,
 
     start: function() {
-        if (localStorage.getItem('sysadmin_tutorial_done') === 'true') return;
+        if (localStorage.getItem(engine.KEYS.tutorialDone) === 'true') return;
         
         if (typeof engine !== 'undefined') {
             engine.state.morningMoodShown = true; 
@@ -161,7 +161,7 @@ const tutorial = {
             document.body.classList.remove('overflow-hidden');
         }
 
-        localStorage.setItem('sysadmin_tutorial_done', 'true');
+        localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         this.isActive = false;
 
         engine.state.morningMoodShown = false;
@@ -397,7 +397,7 @@ const tutorial = {
 
     finish: function() {
         this.isActive = false;
-        localStorage.setItem('sysadmin_tutorial_done', 'true');
+        localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
@@ -419,8 +419,8 @@ const tutorial = {
     },
 
     debug: function() {
-        localStorage.removeItem('sysadmin_tutorial_done');
-        console.log("Tutorial-Flag gelöscht. Neustart...");
+        localStorage.removeItem(engine.KEYS.tutorialDone);
+        console.log("Tutorial flag cleared. Reloading...");
         location.reload();
     }
 };

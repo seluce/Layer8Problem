@@ -1219,12 +1219,17 @@ export const ui = {
                 const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
 
                 // Speichern des reparierten/gemergten Archivs
-                localStorage.setItem('layer8_archive', JSON.stringify(mergedArchive));
-                if (data.tut) localStorage.setItem('tutorialSeen', data.tut);
-                
-                if (data.party_easy) localStorage.setItem('layer8_party_played_easy', data.party_easy);
-                if (data.party_normal) localStorage.setItem('layer8_party_played_normal', data.party_normal);
-                if (data.party_hard) localStorage.setItem('layer8_party_played_hard', data.party_hard);
+                localStorage.setItem(engine.KEYS.archive, JSON.stringify(mergedArchive));
+
+                // Only ever raise the tutorial flag, never lower it.
+                // data.tut is the STRING "false" for players who skipped the
+                // tutorial, and a non-empty string is truthy — a plain
+                // `if (data.tut)` would reset the flag on every import.
+                if (data.tut === 'true') localStorage.setItem(engine.KEYS.tutorialDone, 'true');
+
+                if (data.party_easy) localStorage.setItem(engine.KEYS.partyPlayed.easy, data.party_easy);
+                if (data.party_normal) localStorage.setItem(engine.KEYS.partyPlayed.normal, data.party_normal);
+                if (data.party_hard) localStorage.setItem(engine.KEYS.partyPlayed.hard, data.party_hard);
 
                 msg.innerText = "Erfolg! Neustart...";
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
@@ -1241,31 +1246,17 @@ export const ui = {
         }
     },
     
-    // UI-Helper für den Export-Button (Kopieren in Zwischenablage)
-    triggerExportUI: function() {
-        const code = this.exportSaveGame();
-        if(code) {
-            // Versuch, es direkt in die Zwischenablage zu kopieren
-            navigator.clipboard.writeText(code).then(() => {
-                alert("💾 Code in die Zwischenablage kopiert!\n(Bewahre ihn sicher auf)");
-            }).catch(() => {
-                // Fallback, falls Clipboard blockiert ist
-                prompt("Dein Speicher-Code (bitte kopieren):", code);
-            });
-        } else {
-            alert("Fehler beim Erstellen des Backups.");
-        }
-    },
-    
     triggerHardReset: function(btn) {
         if (btn.dataset.armed === "true") {
-            // Schritt 2: Ausführen
-            localStorage.removeItem('layer8_archive');
-            localStorage.removeItem('layer8_default_diff');
-            localStorage.removeItem('tutorialSeen');
-            localStorage.removeItem('layer8_party_played_easy');
-            localStorage.removeItem('layer8_party_played_normal');
-            localStorage.removeItem('layer8_party_played_hard');
+            // Step 2: execute.
+            // This used to remove a non-existent 'tutorialSeen' key, which meant a
+            // hard reset wiped the archive but left the tutorial marked as done.
+            localStorage.removeItem(engine.KEYS.archive);
+            localStorage.removeItem(engine.KEYS.defaultDiff);
+            localStorage.removeItem(engine.KEYS.tutorialDone);
+            localStorage.removeItem(engine.KEYS.partyPlayed.easy);
+            localStorage.removeItem(engine.KEYS.partyPlayed.normal);
+            localStorage.removeItem(engine.KEYS.partyPlayed.hard);
             
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = "System wird neu gestartet...";
@@ -1301,7 +1292,7 @@ export const ui = {
         
         document.body.classList.add('overflow-hidden');
         
-        if(select) select.value = localStorage.getItem('layer8_default_diff') || 'ask';
+        if(select) select.value = localStorage.getItem(engine.KEYS.defaultDiff) || 'ask';
         
         // --- Toggles aktualisieren ---
         if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
@@ -1427,7 +1418,7 @@ export const ui = {
     },
     
     saveDefaultDifficulty: function(val) {
-        localStorage.setItem('layer8_default_diff', val);
+        localStorage.setItem(engine.KEYS.defaultDiff, val);
         this.log(`Start-Modus geändert auf: ${val.toUpperCase()}`, "text-blue-400");
     },
 

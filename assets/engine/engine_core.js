@@ -2,7 +2,20 @@ import { DB } from '../../data.js';
 
 export const core = {
 
-    // --- HILFSFUNKTION FÜR SICHERES SPEICHERN/LADEN ---
+    // Single source of truth for every localStorage key the game touches.
+    // Keeping them here prevents typo-keys that silently read/write nothing —
+    // which is exactly how the tutorial flag got out of sync before.
+    KEYS: {
+        archive:      'layer8_archive',
+        keyBinds:     'layer8_keybinds',
+        defaultDiff:  'layer8_default_diff',
+        tutorialDone: 'sysadmin_tutorial_done',
+        partyPlayed:  { easy: 'layer8_party_played_easy',
+                        normal: 'layer8_party_played_normal',
+                        hard: 'layer8_party_played_hard' }
+    },
+
+    // --- HELPER FOR SAFE SAVE/LOAD MERGING ---
     deepMerge: function(target, source) {
         for (const key in source) {
             // Arrays überschreiben wir direkt (fürs Inventar etc. meist das sicherste)
@@ -36,7 +49,7 @@ export const core = {
 
     // --- PERSISTENZ (Speichern & Laden) ---
     loadSystem: function() {
-        const data = localStorage.getItem('layer8_archive');
+        const data = localStorage.getItem(this.KEYS.archive);
         
         DB.chars.forEach(char => {
             this.state.reputation[char.name] = 0;
@@ -84,10 +97,10 @@ export const core = {
         this.state.archive.reputation = { ...this.state.reputation };
         
         // Dann ab in den LocalStorage
-        localStorage.setItem('layer8_archive', JSON.stringify(this.state.archive));
+        localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
         
         // Keybinds ebenfalls im LocalStorage speichern
-        localStorage.setItem('layer8_keybinds', JSON.stringify(this.state.keyBinds));
+        localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
         
     },
     
@@ -112,7 +125,7 @@ export const core = {
         document.getElementById('intro-modal').style.display = 'none';
         
         // Prüfen, ob der Spieler eine Standard-Schwierigkeit festgelegt hat
-        const defaultDiff = localStorage.getItem('layer8_default_diff') || 'ask';
+        const defaultDiff = localStorage.getItem(this.KEYS.defaultDiff) || 'ask';
         
         if (defaultDiff !== 'ask') {
             // Modal überspringen und direkt mit der gespeicherten Auswahl starten!
@@ -157,7 +170,7 @@ export const core = {
         // Tutorial starten (Verzögert, damit UI fertig gerendert ist)
         setTimeout(() => {
             // Wir prüfen direkt über den Speicher, ob das Tutorial schon gemacht wurde!
-            if (typeof tutorial !== 'undefined' && localStorage.getItem('sysadmin_tutorial_done') !== 'true') {
+            if (typeof tutorial !== 'undefined' && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
                 // Tutorial ist neu -> Zeigt das Modal. Das Spiel wartet auf den Klick.
                 tutorial.start();
             } else {
@@ -668,7 +681,7 @@ export const core = {
                 return achDiffVal >= currentDiffVal; 
             });
 
-            const partyKey = 'layer8_party_played_' + currentDiffStr;
+            const partyKey = this.KEYS.partyPlayed[currentDiffStr];
             const partyPlayed = localStorage.getItem(partyKey) === 'true';
 
             // Wenn alle Bedingungen erfüllt sind -> PARTY STATT FEIERABEND
@@ -806,38 +819,31 @@ export const core = {
     
     // --- SPEICHERSTAND EXPORT / IMPORT SYSTEM ---
 
-    // Hilfsfunktion: Prüfsumme berechnen (gegen Tippfehler)
+    // Adler-32 checksum used to detect corrupted save codes.
+    // The `>>> 0` forces an unsigned 32-bit integer, otherwise the hex
+    // string would carry a minus sign and never match on import.
     calculateChecksum: function(str) {
         let a = 1, b = 0;
         for (let i = 0; i < str.length; i++) {
             a = (a + str.charCodeAt(i)) % 65521;
             b = (b + a) % 65521;
         }
-        return (b << 16 | a).toString(16);
-    },
-    
-    // Hilfsfunktion: Prüfsumme berechnen (Robuster Fix mit >>> 0)
-    calculateChecksum: function(str) {
-        let a = 1, b = 0;
-        for (let i = 0; i < str.length; i++) {
-            a = (a + str.charCodeAt(i)) % 65521;
-            b = (b + a) % 65521;
-        }
-        // >>> 0 erzwingt eine vorzeichenlose 32-Bit-Ganzzahl (wichtig für Hex-Vergleich!)
         return ((b << 16 | a) >>> 0).toString(16);
     },
     
-    // EXPORT: Generiert den Code
+    // EXPORT: builds the transferable save code
     exportSaveGame: function() {
-        // 1. Daten sammeln
-        // Wir holen das aktuelle Archiv aus dem State UND den Tutorial-Status aus dem LocalStorage
+        // Collect the in-memory archive plus the flags that only live in localStorage.
+        // NOTE: the tutorial flag is 'sysadmin_tutorial_done' — this used to read a
+        // key named 'tutorialSeen' that nothing ever wrote, so every export claimed
+        // the tutorial had not been played.
         const data = {
             arc: this.state.archive,
-            tut: localStorage.getItem('tutorialSeen') || "false", 
-            party_easy: localStorage.getItem('layer8_party_played_easy') || "false",
-            party_normal: localStorage.getItem('layer8_party_played_normal') || "false",
-            party_hard: localStorage.getItem('layer8_party_played_hard') || "false",
-            salt: Math.floor(Math.random() * 999999) // Macht den Code einzigartig
+            tut: localStorage.getItem(this.KEYS.tutorialDone) || "false", 
+            party_easy: localStorage.getItem(this.KEYS.partyPlayed.easy) || "false",
+            party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
+            party_hard: localStorage.getItem(this.KEYS.partyPlayed.hard) || "false",
+            salt: Math.floor(Math.random() * 999999) // makes every exported code unique
         };
 
         try {
@@ -862,65 +868,6 @@ export const core = {
         }
     },
 
-    // IMPORT: Liest den Code und überschreibt Daten
-    importSaveGame: function() {
-        // Promt für Code-Eingabe
-        const codeString = prompt("Bitte den Speicher-Code hier einfügen:");
-        if (!codeString) return;
-
-        try {
-            // 1. Format prüfen
-            const parts = codeString.trim().split("-");
-            if (parts.length !== 2) throw new Error("Format ungültig.");
-
-            const base64 = parts[0];
-            const checksum = parts[1];
-
-            // 2. Prüfziffer validieren
-            if (this.calculateChecksum(base64) !== checksum) {
-                throw new Error("Code ist beschädigt oder falsch kopiert.");
-            }
-
-            // 3. Decoding
-            const jsonString = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-
-            const data = JSON.parse(jsonString);
-
-            // 4. Validierung: Ist das Archiv vorhanden?
-            if (!data.arc || !Array.isArray(data.arc.items)) {
-                throw new Error("Keine gültigen Archiv-Daten gefunden.");
-            }
-
-            // 5. Wiederherstellen
-            // --- Sicherer Merge (verhindert Reference Error!) ---
-            const currentTemplate = JSON.parse(JSON.stringify(this.state.archive));
-            const mergedArchive = this.deepMerge(currentTemplate, data.arc);
-            // ---------------------------------------------------------
-
-            // A) Archiv in LocalStorage schreiben
-            localStorage.setItem('layer8_archive', JSON.stringify(mergedArchive));
-            
-            // B) Tutorial Status wiederherstellen (falls vorhanden)
-            if (data.tut) {
-                localStorage.setItem('tutorialSeen', data.tut);
-            }
-            
-            // C) Party-Flags wiederherstellen
-            if (data.party_easy) localStorage.setItem('layer8_party_played_easy', data.party_easy);
-            if (data.party_normal) localStorage.setItem('layer8_party_played_normal', data.party_normal);
-            if (data.party_hard) localStorage.setItem('layer8_party_played_hard', data.party_hard);
-            
-            alert("✅ Import erfolgreich! Die Seite wird neu geladen.");
-            location.reload(); // Wichtig: Neustart erzwingen, damit init() die neuen Daten lädt
-
-        } catch (e) {
-            console.error(e);
-            alert("❌ Fehler: " + e.message);
-        }
-    },
-    
     // --- TAGEBUCH GENERATOR ---
     generateDiaryEntry: function(endReason, partyText = "") {
         const state = this.state;

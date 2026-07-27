@@ -7,12 +7,14 @@ import { inventory } from './assets/engine/engine_inventory.js';
 import { ui } from './assets/engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.2.2",
-    
-    // 1. Den State einhängen
+    VERSION: "v3.2.3",
+
+    // 1. Attach the mutable game state
     state: state,
-    
-    // 2. Ausgelagerte Module in die Engine integrieren
+
+    // 2. Merge the extracted modules into the engine.
+    //    Note: these are spread into one flat object, so two modules must never
+    //    export the same function name — the later one would silently win.
     ...audio,
     ...core,
     ...events,
@@ -20,10 +22,10 @@ const engine = {
     ...ui
 };
 
-// engine global verfügbar machen
+// Expose the engine globally (inline onclick handlers in index.html rely on this)
 window.engine = engine;
 
-// Spiel starten
+// Boot the game
 engine.init();
 
 // --- GLOBALE TASTATUR-STEUERUNG ---
@@ -66,8 +68,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
         if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
-        if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
-        
+
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }
         if (isVisible('archive-modal')) { engine.closeArchive(); return; }

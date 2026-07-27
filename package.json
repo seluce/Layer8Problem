@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "lint:data": "node tools/lint-data.mjs"
+  },
   "devDependencies": {
     "tailwindcss": "^3.4.19"
   }

@@ -1638,7 +1638,7 @@ export const sidequests = [
             },
             { 
                 t: "Verweigern: Löscher abgeben & flüchten", 
-                loot: "REM_fire_ext", 
+                rem: "fire_ext", 
 				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: -10, c: 10, 
                 r: "Du stellst den Feuerlöscher auf seinen Schreibtisch. 'Zu viel Verantwortung, Chef! Ich bin dessen nicht würdig!' Du rennst raus, bevor er dir die Weste geben kann. Du bist das Ding los. Puh." 
