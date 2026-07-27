@@ -1,8 +1,45 @@
 {
+  "name": "layer8problem",
+  "version": "3.2.3",
+  "description": "Layer8Problem - SysAdmin Survival Simulator",
+  "main": "main.js",
   "scripts": {
-    "lint:data": "node tools/lint-data.mjs"
+    "lint:data": "node tools/lint-data.mjs",
+    "css": "tailwindcss -i input.css -o assets/css/style.css",
+    "css:build": "tailwindcss -i input.css -o assets/css/style.css --minify",
+    "start": "electron .",
+    "build:win": "electron-builder --win --x64",
+    "build:linux": "electron-builder --linux --x64"
+  },
+  "build": {
+    "appId": "com.layer8problem.game",
+    "productName": "Layer8Problem",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "**/*",
+      "!tools${/*}",
+      "!input.css",
+      "!tailwind.config.js",
+      "!changelog.md",
+      "!README.md"
+    ],
+    "win": {
+      "target": "dir",
+      "icon": "assets/logo/logo.ico"
+    },
+    "linux": {
+      "target": "dir",
+      "icon": "assets/logo/logo.png"
+    }
   },
   "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1",
     "tailwindcss": "^3.4.19"
+  },
+  "dependencies": {
+    "steamworks.js": "^0.4.0"
   }
 }
