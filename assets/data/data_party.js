@@ -15,12 +15,12 @@ export const party = [
 		title: 'Der Party-Hub',
 		text: 'Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Die Luft ist stickig, der Lärm ohrenbetäubend. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?',
 		opts: [
-			{ t: '🍻 Zur Bar (Markus, Kevin & Co.)', action: "engine.goToPartyStation('bar')", checkPool: 'bar' },
-			{ t: '🥗 Zum Buffet (Essen & Überleben)', action: "engine.goToPartyStation('buffet')", checkPool: 'buffet' },
-			{ t: '🕺 Zur Tanzfläche (Lärm & Peinlichkeiten)', action: "engine.goToPartyStation('dance')", checkPool: 'dance' },
-			{ t: '🪴 In die Lounge (Gabi & Gerüchte)', action: "engine.goToPartyStation('lounge')", checkPool: 'lounge' },
-			{ t: '🚬 Vor die Tür (Raucher-Ecke)', action: "engine.goToPartyStation('outside')", checkPool: 'outside' },
-			{ t: '🚽 Auf die Toilette flüchten', action: "engine.goToPartyStation('toilet')", checkPool: 'toilet' }
+			{ t: '🍻 Zur Bar (Markus, Kevin & Co.)', action: { fn: "goToPartyStation", args: ["bar"] }, checkPool: 'bar' },
+			{ t: '🥗 Zum Buffet (Essen & Überleben)', action: { fn: "goToPartyStation", args: ["buffet"] }, checkPool: 'buffet' },
+			{ t: '🕺 Zur Tanzfläche (Lärm & Peinlichkeiten)', action: { fn: "goToPartyStation", args: ["dance"] }, checkPool: 'dance' },
+			{ t: '🪴 In die Lounge (Gabi & Gerüchte)', action: { fn: "goToPartyStation", args: ["lounge"] }, checkPool: 'lounge' },
+			{ t: '🚬 Vor die Tür (Raucher-Ecke)', action: { fn: "goToPartyStation", args: ["outside"] }, checkPool: 'outside' },
+			{ t: '🚽 Auf die Toilette flüchten', action: { fn: "goToPartyStation", args: ["toilet"] }, checkPool: 'toilet' }
 		]
 	},
         
@@ -472,7 +472,7 @@ export const party = [
 		opts: [
 			{ 
 				t: 'Die epische Tirade (Rage-Quit)', 
-				action: "engine.finishParty('LEGENDE', 'Dein Puls ist auf 180. Das Maß ist voll. Du schnappst dir das batteriebetriebene Notstrom-Mikrofon des DJs. Du brüllst eine dreiminütige, epische Tirade in die absolute Dunkelheit. Du erzählst von der geballten Inkompetenz der Belegschaft, rezitierst die absurdesten Browser-Verläufe aus dem Kopf und nennst den CEO einen glorifizierten Krawattenständer. Du lässt das Mikrofon fallen und verlässt wortlos durch den Notausgang die Halle. Niemand wird diesen Abend je vergessen. Eine Legende ward geboren.')"
+				action: { fn: "finishParty", args: ["LEGENDE", "Dein Puls ist auf 180. Das Maß ist voll. Du schnappst dir das batteriebetriebene Notstrom-Mikrofon des DJs. Du brüllst eine dreiminütige, epische Tirade in die absolute Dunkelheit. Du erzählst von der geballten Inkompetenz der Belegschaft, rezitierst die absurdesten Browser-Verläufe aus dem Kopf und nennst den CEO einen glorifizierten Krawattenständer. Du lässt das Mikrofon fallen und verlässt wortlos durch den Notausgang die Halle. Niemand wird diesen Abend je vergessen. Eine Legende ward geboren."] }
 			}
 		]
 	},
@@ -483,7 +483,7 @@ export const party = [
 		opts: [
 			{ 
 				t: 'Im Dunkeln verschwinden (Houdini)', 
-				action: "engine.finishParty('HOUDINI', 'Während alle im Dunkeln übereinander stolpern, schreien und den Notausgang suchen, nutzt du das Chaos meisterhaft aus. Du ziehst die Schultern hoch, robbst lautlos unter dem Catering-Buffet durch, schnappst dir im Vorbeigehen blind eine volle Flasche Sekt und gleitest wie ein Schatten durch die Nebentür. Um 23:15 Uhr liegst du bereits mit Jogginghose auf deiner Couch. Perfekte Flucht. Niemand wird je beweisen können, wann genau du gegangen bist.')"
+				action: { fn: "finishParty", args: ["HOUDINI", "Während alle im Dunkeln übereinander stolpern, schreien und den Notausgang suchen, nutzt du das Chaos meisterhaft aus. Du ziehst die Schultern hoch, robbst lautlos unter dem Catering-Buffet durch, schnappst dir im Vorbeigehen blind eine volle Flasche Sekt und gleitest wie ein Schatten durch die Nebentür. Um 23:15 Uhr liegst du bereits mit Jogginghose auf deiner Couch. Perfekte Flucht. Niemand wird je beweisen können, wann genau du gegangen bist."] }
 			}
 		]
 	},
@@ -494,7 +494,7 @@ export const party = [
 		opts: [
 			{ 
 				t: 'Die Sicherung blind überbrücken', 
-				action: "engine.finishParty('HELD DER ARBEIT', 'Du tastest dich blind und zielsicher durch die schreiende Menge zum Verteilerkasten an der Rückwand. Du fühlst die Kontakte, biegst eine Büroklammer aus deiner Tasche zurecht und brückst die Sicherung. Ein Klicken. Das Licht flackert und springt wieder an. Die Menge verstummt. Dann bricht ohrenbetäubender Jubel aus. Selbst Dr. Wichtig steht auf einem Stuhl und klatscht. Du hast die Party gerettet. Du kriegst zwar kein Geld dafür, aber an diesem Abend bist du der absolute Held der Firma.')"
+				action: { fn: "finishParty", args: ["HELD DER ARBEIT", "Du tastest dich blind und zielsicher durch die schreiende Menge zum Verteilerkasten an der Rückwand. Du fühlst die Kontakte, biegst eine Büroklammer aus deiner Tasche zurecht und brückst die Sicherung. Ein Klicken. Das Licht flackert und springt wieder an. Die Menge verstummt. Dann bricht ohrenbetäubender Jubel aus. Selbst Dr. Wichtig steht auf einem Stuhl und klatscht. Du hast die Party gerettet. Du kriegst zwar kein Geld dafür, aber an diesem Abend bist du der absolute Held der Firma."] }
 			}
 		]
 	},
@@ -505,7 +505,7 @@ export const party = [
 		opts: [
 			{ 
 				t: 'Die VIP-Ecke kapern', 
-				action: "engine.finishParty('INSIDER', 'Du räusperst dich leise im Dunkeln. Der Chef erstarrt. \"Wer ist da?\" Du antwortest extrem gelassen: \"Nur die IT, Chef. Keine Sorge, mein Schweigen kann man kaufen.\" Ein leises Lachen ertönt von Frau Elster. Du gesellst dich im Dunkeln einfach in den inneren Zirkel der Macht. Ihr tauscht im Schutz der Finsternis Intrigen und Geheimnisse aus, bis der Strom wieder da ist. Du bist jetzt unangreifbar. Du hast absolute Macht im Büro erlangt.')"
+				action: { fn: "finishParty", args: ["INSIDER", "Du räusperst dich leise im Dunkeln. Der Chef erstarrt. \"Wer ist da?\" Du antwortest extrem gelassen: \"Nur die IT, Chef. Keine Sorge, mein Schweigen kann man kaufen.\" Ein leises Lachen ertönt von Frau Elster. Du gesellst dich im Dunkeln einfach in den inneren Zirkel der Macht. Ihr tauscht im Schutz der Finsternis Intrigen und Geheimnisse aus, bis der Strom wieder da ist. Du bist jetzt unangreifbar. Du hast absolute Macht im Büro erlangt."] }
 			}
 		]
 	},
@@ -516,7 +516,7 @@ export const party = [
 		opts: [
 			{ 
 				t: 'Im Dunkeln mitsingen', 
-				action: "engine.finishParty('TEAMPLAYER', 'Eigentlich willst du schreien, aber irgendwie hat dich der Wahnsinn angesteckt. Du fängst leise an mitzusingen. Nach und nach stimmt die ganze Belegschaft im Dunkeln ein. Ein bizarrer, fast schon magischer Teambuilding-Moment in der stockfinsteren Halle entsteht. Du stehst zwischen Kevin und Chantal, ihr wiegt euch im Takt und du merkst: Irgendwie magst du diese Vollidioten doch. Ein fast schon versöhnliches Ende eines furchtbaren Arbeitstages.')"
+				action: { fn: "finishParty", args: ["TEAMPLAYER", "Eigentlich willst du schreien, aber irgendwie hat dich der Wahnsinn angesteckt. Du fängst leise an mitzusingen. Nach und nach stimmt die ganze Belegschaft im Dunkeln ein. Ein bizarrer, fast schon magischer Teambuilding-Moment in der stockfinsteren Halle entsteht. Du stehst zwischen Kevin und Chantal, ihr wiegt euch im Takt und du merkst: Irgendwie magst du diese Vollidioten doch. Ein fast schon versöhnliches Ende eines furchtbaren Arbeitstages."] }
 			}
 		]
 	}

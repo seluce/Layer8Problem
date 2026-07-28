@@ -623,7 +623,7 @@ export const events = {
     },
 
     resolveBossFail: function(failData) {
-        this.resolveTerminal(failData.r, failData.m, failData.f, failData.a, failData.c, null, null, 'boss');
+        this.resolveTerminal(failData, 'boss');
     },
     
     handleSideQuest: function() {
@@ -740,7 +740,54 @@ export const events = {
     },
 
     // 3. GEMEINSAMES HTML-TEMPLATE
+    // One delegated listener for every option button in the terminal, instead
+    // of an inline handler per button. Attached once; survives every re-render
+    // because it sits on the container, not on the buttons.
+    initTerminalDelegation: function() {
+        const root = document.getElementById('terminal-content');
+        if (!root || root.dataset.delegated) return;
+        root.dataset.delegated = 'true';
+
+        root.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-opt]');
+            if (!btn || btn.disabled) return;
+
+            const opt = this._terminal.opts[Number(btn.dataset.opt)];
+            if (!opt) return;
+
+            this.chooseOption(opt);
+        });
+    },
+
+    // Routes a chosen option to whatever handles it.
+    chooseOption: function(opt) {
+        if (opt.action) return this.runAction(opt.action);
+        if (this._terminal.isChain) return this.handleChainChoice(opt.next);
+        return this.resolveTerminal(opt, this._terminal.type);
+    },
+
+    // Calls an engine method named by the data.
+    // Deliberately a lookup and not eval(): the data describes WHICH method to
+    // call, it does not carry executable code.
+    runAction: function(action) {
+        if (typeof action !== 'object' || !action.fn) {
+            console.error("Invalid action, expected { fn, args }:", action);
+            return;
+        }
+        const fn = this[action.fn];
+        if (typeof fn !== 'function') {
+            console.error(`Unknown action: ${action.fn}`);
+            return;
+        }
+        return fn.apply(this, action.args || []);
+    },
+
+    // View state for the delegated click handler. Replaced on every render, so
+    // the indices in the markup always refer to the options currently on screen.
+    _terminal: { opts: [], type: null, isChain: false },
+
     buildEventHTML: function(type, title, text, opts, isChain, charName) {
+        this._terminal = { opts: opts || [], type: type, isChain: !!isChain };
 		
         // ---> Mache aus \n echte HTML-Zeilenumbrüche <---
         let formattedText = text ? text.replace(/\n/g, "<br>") : "";		
@@ -897,7 +944,6 @@ export const events = {
                 }
 
                 let btnClass = "";
-                let clickAction = "";
                 let iconBtn = "";
 
                 if (locked) {
@@ -906,17 +952,13 @@ export const events = {
                 } else {
                     btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
-                    
-                    if (opt.action) {
-                        clickAction = `onclick="${opt.action}"`;
-                    } else if (isChain) {
-                        clickAction = `onclick="engine.handleChainChoice('${opt.next}')"`;
-                    } else {
-                        let safeRes = opt.r ? opt.r.replace(/'/g, "\\'").replace(/"/g, "&quot;").replace(/\n/g, "<br>") : '';
-                        let safeRep = opt.rep ? JSON.stringify(opt.rep).replace(/"/g, "&quot;") : "null";
-                        clickAction = `onclick="engine.resolveTerminal('${safeRes}', ${opt.m||0}, ${opt.f||0}, ${opt.a||0}, ${opt.c||0}, '${opt.loot||''}', '${opt.req||''}', '${type}', '${opt.next||''}', '${opt.rem||''}', ${safeRep})"`;
-                    }
                 }
+
+                // The option itself never enters the markup — only its index.
+                // Serialising it into an inline onclick meant escaping for the
+                // HTML parser and the JS parser at once, by hand; a single quote
+                // or apostrophe in the prose broke the handler silently.
+                const clickAction = locked ? '' : `data-opt="${index}"`;
 
                 let badgeHTML = "";
                 if (isChain && !locked && opt.next && !opt.next.startsWith('res_')) {
@@ -985,28 +1027,52 @@ export const events = {
         // Fall 2: Ergebnis (Ende)
         if (ev.results && ev.results[nextId]) {
             const res = ev.results[nextId];
-            this.resolveTerminal(
-                res.txt,
-                res.min || res.m || 0,
-                res.fl || res.f || 0,
-                res.al || res.a || 0,
-                res.cr || res.c || 0,
-                res.loot || null,
-                null, 
-                this.state.currentChainType,
-                res.next || null,
-                res.rem || null
-            );
+            // Chain results use their own field names (txt/min/fl/al/cr);
+            // map them onto the option shape resolveTerminal expects.
+            this.resolveTerminal({
+                r:    res.txt,
+                m:    res.min || res.m || 0,
+                f:    res.fl  || res.f || 0,
+                a:    res.al  || res.a || 0,
+                c:    res.cr  || res.c || 0,
+                loot: res.loot || null,
+                rem:  res.rem  || null,
+                next: res.next || null,
+                rep:  res.rep  || null
+            }, this.state.currentChainType);
             this.state.currentChainEvent = null;
             return;
         }
 
         console.error("Chain Error: Ziel nicht gefunden", nextId);
-        this.resolveTerminal("Verbindung unterbrochen.", 0, 0, 0, 0, null, null, "calls", null);
+        this.resolveTerminal({ r: "Verbindung unterbrochen." }, "calls");
     },
 
-    resolveTerminal: function(res, m, f, a, c, loot, usedItem, type, next, rem, repData) {
-	
+    /**
+     * Applies a chosen option and advances the day.
+     *
+     * Used to take eleven positional parameters, hand-serialised into an inline
+     * onclick. A missing comma shifted every value after it, and the reputation
+     * object had to be JSON-parsed back out of an HTML attribute. It now takes
+     * the option object as authored in the data files.
+     *
+     * @param {object} opt  { r, m, f, a, c, loot, rem, next, rep }
+     * @param {string} type event pool the option came from
+     */
+    resolveTerminal: function(opt, type) {
+        opt = opt || {};
+        let res = opt.r;
+        const loot = opt.loot || null;
+        const rem  = opt.rem  || null;
+        const next = opt.next || null;
+        const repData = opt.rep || null;
+
+        // Numeric fallbacks: data files omit values that are zero.
+        const m = typeof opt.m === 'number' ? opt.m : 0;
+        const f = typeof opt.f === 'number' ? opt.f : 0;
+        const a = typeof opt.a === 'number' ? opt.a : 0;
+        const c = typeof opt.c === 'number' ? opt.c : 0;
+
         this.playAudio('ui');
 	
         // --- BUGFIX: TIMER STOPPEN ---
@@ -1015,12 +1081,6 @@ export const events = {
             this.state.bossTimer = null;
         }
         
-        // --- BUGFIX START: Fallback für fehlende Werte ---
-        m = typeof m === 'number' ? m : 0;
-        f = typeof f === 'number' ? f : 0;
-        a = typeof a === 'number' ? a : 0;
-        c = typeof c === 'number' ? c : 0;
-        // --- BUGFIX ENDE ---
 	
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
@@ -1092,12 +1152,9 @@ export const events = {
         this.triggerShake(finalA, finalC);
         
         // --- REPUTATION LOGIK  ---
+        // repData arrives as the object straight from the data file. It used to
+        // travel through an HTML attribute and be JSON-parsed back out here.
         if (repData) {
-            // Falls repData als String kommt (durch HTML Attribute), parsen
-            if (typeof repData === 'string') {
-                try { repData = JSON.parse(repData.replace(/'/g, '"')); } catch(e) { console.error("Rep Parse Error", e); }
-            }
-
             if (typeof repData === 'object') {
                 let changed = false; // Wir merken uns, ob sich was geändert hat
                 

@@ -41,6 +41,7 @@ export const core = {
     // local archive is read. On the web platform.load() resolves immediately.
     init: async function() {
         applyPlatformVisibility();
+        this.initTerminalDelegation();
         await this.loadCloudSave();
         this.loadSystem();
         if (this.state.compactMode) document.body.classList.add('compact-mode');

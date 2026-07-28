@@ -1,3 +1,18 @@
+[3.5.0] - 2026-07-28
+
+Fehlerkorrekturen:
+* Das Party-Ende "INSIDER" ließ sich nicht abschließen. Der Ergebnistext enthält wörtliche Rede, wodurch die zugehörige Schaltfläche technisch unbrauchbar wurde und schlicht nicht reagierte. Wer dieses Finale erreichte, kam nicht mehr weiter.
+* Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
+
+System & Stabilität:
+* Die Antwortmöglichkeiten in Ereignissen werden nicht mehr als Text in die Seite geschrieben, sondern direkt weitergereicht. Sonderzeichen wie Apostrophe, Anführungszeichen oder Schrägstriche in den Ereignistexten können dadurch keine Schaltfläche mehr unbrauchbar machen.
+
+Für Entwickler:
+* buildEventHTML() setzt nur noch ein data-opt-Attribut je Schaltfläche; ein einzelner Listener auf dem Terminal übernimmt sämtliche Klicks.
+* resolveTerminal() nimmt das Options-Objekt entgegen statt elf Positionsparametern. Die Rückumwandlung der Ruf-Daten aus einem HTML-Attribut entfällt.
+* Die action-Einträge in data_party.js sind strukturierte Objekte ({ fn, args }) statt ausführbarer Zeichenketten. Aufgelöst wird über eine Methodensuche, nicht über eval.
+* Der ungenutzte Parameter usedItem wurde entfernt.
+
 [3.4.1] - 2026-07-28
 
 System & Stabilität:
