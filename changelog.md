@@ -1,3 +1,23 @@
+[3.3.0] - 2026-07-28
+
+Neuerungen:
+* Web-Version und Steam-Version laufen ab sofort auf identischem Code. Beide Fassungen wurden zu einem gemeinsamen Stand zusammengeführt, wodurch künftige Korrekturen automatisch in beiden Versionen ankommen.
+* Rund 20 Nebenaufgaben, die bisher nur in der Steam-Fassung enthalten waren, stehen nun auch im Browser zur Verfügung.
+
+System & Stabilität:
+* Sechzehn Ereignisse teilten sich versehentlich eine Kennung mit einem anderen Ereignis. Da pro Tag jede Kennung nur einmal vorkommen kann, sperrten sich diese Paare gegenseitig aus, sodass immer nur die Hälfte des Inhalts erreichbar war. Betroffen waren die Ketten rund um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
+* Ein Formatfehler in den Nebenaufgaben-Daten hinterließ eine Lücke in der Ereignisliste.
+* Zwei Optionen verwiesen auf einen Gegenstand namens "screws" statt "screw" und blieben dadurch wirkungslos.
+* Der Tutorial-Fortschritt wird beim Abgleich mit der Steam Cloud jetzt ausschließlich freigeschaltet und nie mehr zurückgesetzt.
+
+Anzeige & Layout:
+* Der Verweis auf die Steam-Fassung erscheint nur noch in der Browser-Version. Wer das Spiel über Steam gekauft hat, bekommt keine Kaufaufforderung mehr angezeigt.
+
+Für Entwickler:
+* Neue Plattform-Schicht (platform.js / platform_steam.js): Cloud-Speicher, Erfolge, Statistiken, Status in der Freundesliste, Vollbild und externe Links laufen über eine gemeinsame Schnittstelle. Die Engine kennt Electron und Steam nicht mehr direkt.
+* init() ist asynchron, damit der Desktop-Build seinen Cloud-Speicherstand abwarten kann, bevor das lokale Archiv gelesen wird.
+* Speicherstand-Export und Cloud-Abgleich nutzen mit buildCloudPayload() dieselbe Quelle und können nicht mehr auseinanderlaufen.
+
 [3.2.3] - 2026-07-27
 
 System & Stabilität:

@@ -1,4 +1,5 @@
 import { DB } from '../../data.js';
+import { platform } from '../../platform.js';
 
 export const ui = {
 
@@ -1246,6 +1247,198 @@ export const ui = {
         }
     },
     
+    // Fullscreen is handled by the shell. In a browser the user has F11,
+    // so the button that calls this is hidden there anyway.
+    toggleFullscreen: function() {
+        platform.fullscreen();
+    },
+
+    openGlobalStats: function() {
+        this.closeSettings();
+
+        const modal = document.getElementById('global-stats-modal');
+        const content = document.getElementById('global-stats-content');
+        if (!modal || !content) return;
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+        content.innerHTML = '<div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm">Verbinde mit Steam-Servern...</div>';
+
+        platform.globalStats()
+            .then(data => this.renderGlobalStats(data))
+            .catch(() => {
+                content.innerHTML = '<div class="text-center text-red-500 py-10 font-bold">Fehler beim Abrufen der Daten.</div>';
+            });
+    },
+
+    closeGlobalStats: function() {
+        const modal = document.getElementById('global-stats-modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    },
+
+    renderGlobalStats: function(globalData) {
+        const content = document.getElementById('global-stats-content');
+        
+        // Hole die lokalen Stats als Basis
+        const s = this.state.archive.stats || {};
+        const started = s.daysStarted || 0;
+        const surv = s.daysSurvived || 0;
+        const rage = s.daysRageQuit || 0;
+        const fired = s.daysFired || 0;
+
+        // --- NEU: SICHERHEITSNETZ FÜR 'UNDEFINED' ---
+        // Wenn Steam noch keine aggregierten Daten hat (undefined) oder leer antwortet
+        if (!globalData || typeof globalData !== 'object' || Object.keys(globalData).length === 0) {
+            content.innerHTML = `
+                <div class="text-center py-12 px-4 fade-in">
+                    <div class="text-5xl mb-4 opacity-50">📡</div>
+                    <h3 class="text-lg font-bold text-slate-300 mb-2">Daten werden noch gesammelt</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed max-w-sm mx-auto">
+                        Die Steam-Server berechnen die weltweiten Statistiken aktuell noch.<br><br>
+                        <span class="text-xs opacity-70 italic">Diese Anzeige aktualisiert sich in der Regel einmal täglich. Schau später noch einmal vorbei!</span>
+                    </p>
+                    <button onclick="engine.closeGlobalStats()" class="mt-8 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg transition-colors uppercase tracking-widest text-xs">Zurück</button>
+                </div>
+            `;
+            return;
+        }
+
+        // Helfer zum Auslesen der Steam-Zahlen (Bulletproof für verschiedene API Formate)
+        const getStat = (name) => {
+            let val = globalData[name];
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'object' && val.total !== undefined) return parseInt(val.total) || 0;
+            return parseInt(val) || 0;
+        };
+        
+        const gStart = getStat('stat_started');
+        const gSurv = getStat('stat_survived');
+        const gRage = getStat('stat_ragequit');
+        const gFired = getStat('stat_fired');
+
+        // --- Nur beendete Tage als Basis nehmen! ---
+        const totalCompleted = surv + rage + fired;
+        const gTotalCompleted = gSurv + gRage + gFired;
+        
+        // --- BERECHNUNG DER QUOTEN (%) ---
+        const mySurvRate = totalCompleted > 0 ? (surv / totalCompleted) : 0;
+        const gSurvRate = gTotalCompleted > 0 ? (gSurv / gTotalCompleted) : 0;
+        
+        const myRageRate = totalCompleted > 0 ? (rage / totalCompleted) : 0;
+        const gRageRate = gTotalCompleted > 0 ? (gRage / gTotalCompleted) : 0;
+        
+        const myFiredRate = totalCompleted > 0 ? (fired / totalCompleted) : 0;
+        const gFiredRate = gTotalCompleted > 0 ? (gFired / gTotalCompleted) : 0;
+
+        const formatRate = (rate) => (isNaN(rate) ? 0 : Math.round(rate * 100)) + '%';
+        const fmt = (num) => Number(num).toLocaleString('de-DE');
+
+        // --- DIE DIAGNOSE (Spielstil-Analyse) ---
+        let diffSurv = mySurvRate - gSurvRate;
+        let diffRage = myRageRate - gRageRate;
+        let diffFired = myFiredRate - gFiredRate;
+        
+        let diagnosisTitle = "";
+        let diagnosisText = "";
+        let diagnosisColor = "";
+
+        if (diffRage > diffSurv && diffRage > diffFired && myRageRate > 0) {
+            diagnosisTitle = "🧨 Diagnose: Choleriker";
+            diagnosisText = "Deine Zündschnur ist messbar kürzer als die der meisten. Du neigst extrem zum Rage Quit. Kauf dir mehr Stressbälle!";
+            diagnosisColor = "text-orange-400";
+        } else if (diffFired > diffSurv && diffFired > diffRage && myFiredRate > 0) {
+            diagnosisTitle = "🎯 Diagnose: Chef-Magnet";
+            diagnosisText = "Du ziehst Kündigungen geradezu magisch an. Im weltweiten Vergleich pfuschst du deutlich riskanter als andere.";
+            diagnosisColor = "text-red-500";
+        } else if (diffSurv > diffRage && diffSurv > diffFired && mySurvRate > 0) {
+            diagnosisTitle = "💼 Diagnose: Firmen-Inventar";
+            diagnosisText = "Wahnsinn. Du hältst den Büro-Alltag länger durch als der Großteil der restlichen Welt. Respekt (und Beileid).";
+            diagnosisColor = "text-emerald-400";
+        } else {
+            diagnosisTitle = "⚖️ Diagnose: Durchschnitts-Admin";
+            diagnosisText = "Dein Leidensweg und deine Entscheidungen entsprechen fast exakt dem weltweiten IT-Standard.";
+            diagnosisColor = "text-blue-400";
+        }
+
+        const survComment = mySurvRate >= gSurvRate ? 'Du bist resistenter gegen den Wahnsinn als der Rest.' : 'Für dich ist "Feierabend" eher ein theoretisches Konzept.';
+        const rageComment = myRageRate >= gRageRate ? 'Dein Monitor fliegt öfter aus dem Fenster als beim globalen Schnitt.' : 'Erstaunlich. Du rastest seltener aus als andere ITler.';
+        const firedComment = myFiredRate >= gFiredRate ? 'Du kassierst Kündigungen weitaus enthusiastischer als andere.' : 'Du fliegst extrem elegant unter dem Radar des Managements.';
+
+        let html = `
+            <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl shadow-inner mb-4">
+                <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 border-b border-slate-700 pb-2">
+                    Kumulierte Steam-Werte (Weltweit)
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono">
+                    <div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Begonnen</div><div class="text-xl font-bold text-white">${fmt(gStart)}</div></div>
+                    <div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Überlebt</div><div class="text-xl font-bold text-emerald-400">${fmt(gSurv)}</div></div>
+                    <div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Rage Quits</div><div class="text-xl font-bold text-orange-400">${fmt(gRage)}</div></div>
+                    <div><div class="text-[10px] text-slate-500 uppercase tracking-widest">Gefeuert</div><div class="text-xl font-bold text-red-500">${fmt(gFired)}</div></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/50 border border-slate-700 p-4 sm:p-5 rounded-xl shadow-inner">
+                
+                <div class="bg-slate-900 border border-slate-700 rounded-lg p-3 mb-6 shadow-md relative overflow-hidden">
+                    <div class="font-bold text-sm mb-1 ${diagnosisColor}">${diagnosisTitle}</div>
+                    <div class="text-xs text-slate-300 italic leading-snug">"${diagnosisText}"</div>
+                </div>
+
+                <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-5 border-b border-slate-700 pb-2 flex items-center justify-between">
+                    <span>Dein SysAdmin-Profil</span>
+                    <span class="text-[9px] text-slate-500 font-normal hidden sm:inline">Der weiße Strich zeigt den weltweiten Durchschnitt.</span>
+                </h3>
+                
+                <div class="space-y-5">
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-emerald-400 flex items-center gap-1"><span class="text-sm">✨</span> Überlebens-Tendenz</span>
+                            <span class="text-slate-300 font-mono">Du: <span class="text-white">${formatRate(mySurvRate)}</span> | Welt: ${formatRate(gSurvRate)}</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex relative border border-slate-700">
+                            <div class="absolute top-0 bottom-0 w-1 bg-white z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)]" style="left: ${gSurvRate * 100}%; margin-left:-2px;"></div>
+                            <div class="bg-emerald-500 h-full transition-all duration-1000" style="width: ${mySurvRate * 100}%"></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 italic mt-0.5">${survComment}</div>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-orange-400 flex items-center gap-1"><span class="text-sm">🤬</span> Rage-Quit-Tendenz</span>
+                            <span class="text-slate-300 font-mono">Du: <span class="text-white">${formatRate(myRageRate)}</span> | Welt: ${formatRate(gRageRate)}</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex relative border border-slate-700">
+                            <div class="absolute top-0 bottom-0 w-1 bg-white z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)]" style="left: ${gRageRate * 100}%; margin-left:-2px;"></div>
+                            <div class="bg-orange-500 h-full transition-all duration-1000" style="width: ${myRageRate * 100}%"></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 italic mt-0.5">${rageComment}</div>
+                    </div>
+
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-red-500 flex items-center gap-1"><span class="text-sm">🚨</span> Kündigungs-Tendenz</span>
+                            <span class="text-slate-300 font-mono">Du: <span class="text-white">${formatRate(myFiredRate)}</span> | Welt: ${formatRate(gFiredRate)}</span>
+                        </div>
+                        <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex relative border border-slate-700">
+                            <div class="absolute top-0 bottom-0 w-1 bg-white z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)]" style="left: ${gFiredRate * 100}%; margin-left:-2px;"></div>
+                            <div class="bg-red-600 h-full transition-all duration-1000" style="width: ${myFiredRate * 100}%"></div>
+                        </div>
+                        <div class="text-[10px] text-slate-400 italic mt-0.5">${firedComment}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="w-full">
+                <button onclick="engine.closeGlobalStats()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-colors uppercase tracking-widest text-xs">Zurück</button>
+            </div>
+        `;
+        content.innerHTML = html;
+    },
+
     triggerHardReset: function(btn) {
         if (btn.dataset.armed === "true") {
             // Step 2: execute.
@@ -1257,6 +1450,11 @@ export const ui = {
             localStorage.removeItem(engine.KEYS.partyPlayed.easy);
             localStorage.removeItem(engine.KEYS.partyPlayed.normal);
             localStorage.removeItem(engine.KEYS.partyPlayed.hard);
+
+            // Push the emptied state to cloud storage as well, otherwise the
+            // next launch would pull the old archive straight back in.
+            engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
+            platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = "System wird neu gestartet...";
@@ -1423,10 +1621,13 @@ export const ui = {
     },
 
     shareGame: function(btn) {
+        // Desktop hands out the store page, the browser its own URL.
+        const shareUrl = platform.shareUrl();
+
         const shareData = {
             title: 'Layer8Problem - Der SysAdmin Simulator',
             text: 'Ich versuche gerade als SysAdmin bei GlobalCorp zu überleben. Hilf mir oder mach es besser!',
-            url: window.location.href
+            url: shareUrl
         };
         
         const textSpan = btn.querySelector('#text-share') || btn;
@@ -1435,7 +1636,7 @@ export const ui = {
         if (navigator.share) {
             navigator.share(shareData).catch(err => console.log("Teilen abgebrochen:", err));
         } else {
-            navigator.clipboard.writeText(window.location.href).then(() => {
+            navigator.clipboard.writeText(shareUrl).then(() => {
                 textSpan.innerText = "Link erfolgreich kopiert!";
                 btn.classList.add('!bg-green-900/30', '!border-green-500', '!text-green-400');
                 

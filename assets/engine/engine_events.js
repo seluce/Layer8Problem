@@ -1,4 +1,5 @@
 import { DB } from '../../data.js';
+import { platform } from '../../platform.js';
 
 export const events = {
 
@@ -490,6 +491,8 @@ export const events = {
         let pool = DB[type].filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
             if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            // webOnly events point at the store page - pointless once bought
+            if (ev.webOnly && platform.isDesktop) return false;
             return true;
         });
 
@@ -552,6 +555,7 @@ export const events = {
 		
 		// ---> MUSIK FÜR DEN BOSS STARTEN <---
         this.playMusic('boss');
+        this.updatePresence('boss');
 
         const term = document.getElementById('terminal-content');
         
@@ -603,6 +607,8 @@ export const events = {
         let pool = DB.sidequests.filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
             if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            // webOnly events point at the store page - pointless once bought
+            if (ev.webOnly && platform.isDesktop) return false;
             return true;
         });
 
@@ -652,8 +658,9 @@ export const events = {
 
     renderTerminal: function(ev, type) {
 		// --- Event-Status für E-Mail-System speichern ---
-        this.state.currentEventId = ev.id;     // Damit wir wissen: "Für dieses Event schon gemailt?"
-        this.state.currentEventType = type;    // Damit wir wissen: "Ist das ein Bossfight?"
+        this.state.currentEventId = ev.id;     // "did we already mail for this event?"
+        this.state.currentEventType = type;    // "is this a boss fight?"
+        this.updatePresence(type);
         // -----------------------------------------------------
 				
         this.state.activeEvent = true;

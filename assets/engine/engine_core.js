@@ -1,4 +1,5 @@
 import { DB } from '../../data.js';
+import { platform } from '../../platform.js';
 
 export const core = {
 
@@ -35,19 +36,77 @@ export const core = {
         return target;
     },
 
-    init: function() {
+    // async because the desktop build has to await its cloud save before the
+    // local archive is read. On the web platform.load() resolves immediately.
+    init: async function() {
+        await this.loadCloudSave();
         this.loadSystem();
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
-		
+
+        this.updatePresence('system');
+
         this.renderHeader();
         this.updateUI();
         this.renderHotkeys();
         this.log(`System ${this.VERSION} geladen. Warte auf User...`);
     },
 
-    // --- PERSISTENZ (Speichern & Laden) ---
+    // --- PERSISTENCE ---
+
+    // Pulls a cloud save (desktop only) into localStorage before loadSystem()
+    // reads it, so both shells go through exactly the same load path afterwards.
+    loadCloudSave: async function() {
+        const cloud = await platform.load();
+        if (!cloud) return;
+
+        if (cloud.archive) {
+            const template = JSON.parse(JSON.stringify(this.state.archive));
+            const merged = this.deepMerge(template, cloud.archive);
+            localStorage.setItem(this.KEYS.archive, JSON.stringify(merged));
+        }
+
+        // Only ever raise the tutorial flag, never lower it. cloud.tutorial is
+        // the STRING "false" for players who skipped it, and a non-empty string
+        // is truthy — a plain truthiness check would replay the tutorial on
+        // every single launch.
+        if (cloud.tutorial === 'true') localStorage.setItem(this.KEYS.tutorialDone, 'true');
+
+        if (cloud.party_easy)   localStorage.setItem(this.KEYS.partyPlayed.easy,   cloud.party_easy);
+        if (cloud.party_normal) localStorage.setItem(this.KEYS.partyPlayed.normal, cloud.party_normal);
+        if (cloud.party_hard)   localStorage.setItem(this.KEYS.partyPlayed.hard,   cloud.party_hard);
+    },
+
+    // Everything worth carrying across devices. Settings stay local on purpose:
+    // volume and keybinds belong to the machine, not to the player's progress.
+    buildCloudPayload: function() {
+        return {
+            archive:      this.state.archive,
+            tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
+            party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
+            party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
+            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false"
+        };
+    },
+
+    // Maps the current activity onto the status line friends can see.
+    // No-op outside the desktop build.
+    updatePresence: function(type) {
+        const TEXTS = {
+            coffee:    "Holt sich (noch) einen Kaffee",
+            sidequest: "Ist auf Dienstgang unterwegs",
+            server:    "Versteckt sich im Serverraum",
+            calls:     "Schlägt sich mit User-Problemen rum",
+            boss:      "Steckt in einer absoluten Katastrophe!",
+            rep:       "Unterhält sich mit dem Kollegium",
+            special:   "Macht gerade Mittagspause",
+            party:     "Überlebt die Synergy-Gala",
+            system:    "Starrt mit leerem Blick auf den Monitor"
+        };
+        platform.presence(TEXTS[type] || "Verzweifelt am IT-Support");
+    },
+
     loadSystem: function() {
         const data = localStorage.getItem(this.KEYS.archive);
         
@@ -101,6 +160,9 @@ export const core = {
         
         // Keybinds ebenfalls im LocalStorage speichern
         localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
+
+        // Mirror progress to cloud storage (desktop only, no-op on the web).
+        platform.save(this.buildCloudPayload());
         
     },
     
@@ -110,6 +172,7 @@ export const core = {
         }
         this.state.archive.stats[key] = (this.state.archive.stats[key] || 0) + 1;
         this.saveSystem();
+        platform.stat(key, this.state.archive.stats[key]);
     },
 
     addToArchive: function(type, id) {
@@ -228,7 +291,8 @@ export const core = {
         // -----------------------------------------
 		
         this.playMusic('office');
-		
+        this.updatePresence('system');
+
         this.state.activeEvent = false;
         this.disableButtons(false);
         const term = document.getElementById('terminal-content');
@@ -476,9 +540,13 @@ export const core = {
         // ENTSCHEIDUNG: Nur Benachrichtigen, wenn NEU (0) oder BESSER als vorher
         let isNewOrBetter = (savedDiffVal === 0) || (currentDiffVal > savedDiffVal);
 
-        // In die aktuelle Session aufnehmen (damit Check 1 beim nächsten Frame greift)
+        // Record it for this session so check 1 catches it on the next frame
         this.state.achievements.push(id);
         this.state.achievedTitles.push(title);
+
+        // Always report it, even when the local archive already knows the
+        // achievement — the backend may be out of sync with this machine.
+        platform.achievement(id);
 
         // NUR wenn es neu oder ein Upgrade ist: Feedback geben (Log & Toast)
         if (isNewOrBetter) {
@@ -812,6 +880,7 @@ export const core = {
 		
 		// ---> GALA MUSIK STARTEN <---
         this.playMusic('gala');
+        this.updatePresence('party');
         
         // Und jetzt geht die Falle zu: Das Party-Event wird gerendert!
         this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
@@ -831,19 +900,19 @@ export const core = {
         return ((b << 16 | a) >>> 0).toString(16);
     },
     
-    // EXPORT: builds the transferable save code
+    // EXPORT: builds the transferable save code.
+    // Shares buildCloudPayload() with the desktop cloud sync so both paths can
+    // never disagree about what counts as progress.
     exportSaveGame: function() {
-        // Collect the in-memory archive plus the flags that only live in localStorage.
-        // NOTE: the tutorial flag is 'sysadmin_tutorial_done' — this used to read a
-        // key named 'tutorialSeen' that nothing ever wrote, so every export claimed
-        // the tutorial had not been played.
+        // Field names are part of the public save-code format and must stay
+        // stable — older codes in circulation still use them.
         const data = {
-            arc: this.state.archive,
-            tut: localStorage.getItem(this.KEYS.tutorialDone) || "false", 
-            party_easy: localStorage.getItem(this.KEYS.partyPlayed.easy) || "false",
+            arc:          this.state.archive,
+            tut:          localStorage.getItem(this.KEYS.tutorialDone) || "false",
+            party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
             party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
-            party_hard: localStorage.getItem(this.KEYS.partyPlayed.hard) || "false",
-            salt: Math.floor(Math.random() * 999999) // makes every exported code unique
+            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
+            salt:         Math.floor(Math.random() * 999999) // makes every code unique
         };
 
         try {

@@ -7,7 +7,7 @@ import { inventory } from './assets/engine/engine_inventory.js';
 import { ui } from './assets/engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.2.3",
+    VERSION: "v3.3.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -25,7 +25,9 @@ const engine = {
 // Expose the engine globally (inline onclick handlers in index.html rely on this)
 window.engine = engine;
 
-// Boot the game
+// Boot the game.
+// init() is async because the desktop build awaits its cloud save first;
+// nothing after this needs to wait, so the promise is intentionally floating.
 engine.init();
 
 // --- GLOBALE TASTATUR-STEUERUNG ---
@@ -68,6 +70,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
         if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
+        if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
 
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }
