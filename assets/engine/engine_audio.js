@@ -5,8 +5,8 @@ export const audio = {
     playAudio: function(type = 'ui') {
         if (!this.state.audioEffects) return;
         
-        // BUGFIX: Bei Lautstärke 0 gar nicht erst versuchen, Töne zu erzeugen!
-        // Das verhindert den "exponentialRampToValueAtTime" Fehler in der Web Audio API.
+        // At volume 0, do not create tones at all.
+        // exponentialRampToValueAtTime throws on a zero target value.
         const vol = this.state.audioVolume;
         if (vol <= 0) return;
         
@@ -116,10 +116,10 @@ export const audio = {
             } else {
                 this.bgmTracks[key].loop = false; // Office Tracks werden manuell gesteuert
                 
-                // Event-Listener: Was passiert, wenn das Lied zu Ende ist?
+                // What happens once the track finishes?
                 this.bgmTracks[key].addEventListener('ended', () => {
                     if (this.state.musicStyle === 'radio') {
-                        // Radio-Modus: Ein neues, zufälliges Lied aussuchen
+                        // Radio mode: pick another track at random
                         // Pick from the other tracks directly instead of
                         // re-rolling until it differs - a while loop here would
                         // spin forever if officeTracks ever shrank to one entry.
@@ -129,7 +129,7 @@ export const audio = {
                             : key;
                         this.playMusic(nextTrack); 
                     } else {
-                        // Dauerschleife-Modus (z.B. User hat explizit 'lofi' gewählt): Lied neu starten
+                        // Single-style mode (the player picked e.g. 'lofi'): restart it
                         this.bgmTracks[key].play().catch(e => console.log(e));
                     }
                 });
@@ -141,8 +141,8 @@ export const audio = {
         this.state.musicEnabled = isOn;
         localStorage.setItem('layer8_music', isOn);
         if (isOn) {
-            // Prüfen, ob gerade ein spezieller Event-Track (Boss/Gala) aktiv sein sollte.
-            // Falls nicht, fordern wir generisch 'office' an, damit playMusic() den aktuellen Style frisch auswertet.
+            // Check whether a special track (boss/gala) should be playing.
+            // Otherwise ask for 'office' so playMusic() re-evaluates the current style.
             if (this.state.currentMusicTrack === 'boss' || this.state.currentMusicTrack === 'gala') {
                 this.playMusic(this.state.currentMusicTrack);
             } else {
@@ -157,14 +157,14 @@ export const audio = {
         this.state.musicStyle = style;
         localStorage.setItem('layer8_music_style', style);
         
-        // Wenn wir nicht im Bossfight/Gala sind, müssen wir den Track updaten
+        // Outside boss fight and gala the track has to follow the setting
         if (this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
             if (this.state.musicEnabled) {
-                // Musik ist an: Direkt live wechseln
+                // Music on: switch immediately
                 this.playMusic('office'); 
             } else {
-                // Musik ist aus: Wir setzen den aktuellen Track zurück.
-                // Dadurch wird beim nächsten Einschalten garantiert der neue Stil geladen.
+                // Music off: reset the current track so the next
+                // switch-on is guaranteed to pick up the new style.
                 this.state.currentMusicTrack = null;
             }
         }
@@ -183,30 +183,30 @@ export const audio = {
     playMusic: function(trackName) {
         if (!this.state.musicEnabled) return;
         
-        // --- NEU: Das Signal 'office' verarbeiten ---
+        // --- Handle the generic 'office' request ---
         let actualTrack = trackName;
         const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
 
         if (trackName === 'office') {
             if (this.state.musicStyle === 'radio') {
-                // Radio-Modus: Wenn bereits ein Office-Track läuft, lass ihn einfach weiterlaufen!
+                // Radio mode: if an office track is already playing, leave it alone
                 if (officeTracks.includes(this.state.currentMusicTrack) && 
                     this.bgmTracks && 
                     this.bgmTracks[this.state.currentMusicTrack] && 
                     !this.bgmTracks[this.state.currentMusicTrack].paused) {
                     return; 
                 }
-                // Ansonsten: Zufälligen Start-Track wählen
+                // Otherwise pick a random starting track
                 actualTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
             } else {
-                // Ein fester Stil (z.B. 'lofi') ist in den Optionen gewählt
+                // A fixed style (e.g. 'lofi') was chosen in the settings
                 actualTrack = this.state.musicStyle;
             }
         }
 
         if (this.state.currentMusicTrack === actualTrack) {
             if (this.bgmTracks && this.bgmTracks[actualTrack] && !this.bgmTracks[actualTrack].paused) {
-                return; // Läuft bereits hörbar -> Abbruch
+                return; // already audible, nothing to do
             }
         }
 

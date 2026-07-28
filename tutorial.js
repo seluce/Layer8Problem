@@ -80,10 +80,10 @@ const tutorial = {
             const origAskUseItem = engine.askUseItem;
             engine.askUseItem = function(id) {
                 if (tutorial.isActive) {
-                    // Wenn wir in Schritt 8 sind, NUR den Donut erlauben
+                    // During step 8 only the donut may be used
                     if (tutorial.step === 8 && id !== 'donut') {
                         engine.log("H.A.L.G.E.R.D.: Fokus, Mitarbeiter #404! Klicke auf den Donut.", "text-red-500 font-bold");
-                        return; // Modal wird blockiert
+                        return; // modal stays closed
                     }
                     // Ansonsten: Modal darf aufgehen -> Hintergrund leise schalten
                     tutorial.hidePointer();
@@ -141,7 +141,7 @@ const tutorial = {
         engine.state.cr = 0;
         engine.updateUI();
         
-        // Monitor sofort auf H.A.L.G.E.R.D. umstellen
+        // Switch the monitor over to H.A.L.G.E.R.D. right away
         const term = document.getElementById('terminal-content');
         if (term) {
             term.className = "flex-1 flex flex-col justify-center items-center text-center opacity-40";
@@ -177,10 +177,10 @@ const tutorial = {
     applyStepLogic: function() {
         engine.disableButtons(true);
         
-        // Wir nutzen unsere neue Funktion, um alles sauber zu machen, bevor wir einen Step rendern
+        // Clean up before rendering the next step
         this.clearGlows();
         
-        // Die Buttons wieder transparent machen (Opacity)
+        // Restore button opacity
         const buttons = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls'];
         buttons.forEach(id => {
             let el = document.getElementById(id);
@@ -269,10 +269,10 @@ const tutorial = {
         
         if (this.pointerTimeout) clearTimeout(this.pointerTimeout);
         
-        // 1. Ziel für das Scrollen merken
+        // 1. Remember the scroll target
         this.currentTarget = targetEl; 
         
-        // 2. Element weich ins Bild scrollen, falls es auf Mobile off-screen ist!
+        // 2. Scroll it into view - on mobile it is often off-screen
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         document.getElementById('tut-pointer-title').innerText = title;
@@ -294,7 +294,7 @@ const tutorial = {
         // 3. Position sofort einmal berechnen
         this.updatePosition();
 
-        // 4. Dem Browser sagen: "Wenn gescrollt wird, berechne die Position neu!"
+        // 4. Recalculate the position whenever the page scrolls
         if (!this.scrollAttached) {
             window.addEventListener('scroll', () => this.updatePosition(), { passive: true });
             window.addEventListener('resize', () => this.updatePosition(), { passive: true });
@@ -304,10 +304,10 @@ const tutorial = {
         setTimeout(() => pointer.classList.remove('opacity-0'), 10);
     },
 
-    // NEU: Die ausgelagerte Berechnungs-Logik
+    // Extracted positioning logic
     updatePosition: function() {
         const pointer = document.getElementById('tut-pointer');
-        // Wenn kein Pointer da ist, das Tutorial versteckt ist oder kein Ziel existiert -> Abbruch
+        // No pointer, hidden tutorial or missing target -> nothing to position
         if (!pointer || !this.currentTarget || pointer.classList.contains('hidden')) return;
 
         const rect = this.currentTarget.getBoundingClientRect();
@@ -357,7 +357,7 @@ const tutorial = {
             this.pointerTimeout = setTimeout(() => {
                 pointer.classList.add('hidden');
                 pointer.classList.remove('flex');
-                this.currentTarget = null; // Ziel löschen, wenn versteckt
+                this.currentTarget = null; // clear the target while hidden
             }, 300);
         }
     },
@@ -408,7 +408,7 @@ const tutorial = {
         
         this.clearGlows();
         
-        // --- Die abgedunkelten Buttons wieder aufwecken ---
+        // --- Restore the dimmed buttons ---
         const buttons = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls'];
         buttons.forEach(id => {
             let el = document.getElementById(id);

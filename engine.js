@@ -7,7 +7,7 @@ import { inventory } from './assets/engine/engine_inventory.js';
 import { ui } from './assets/engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.5.0",
+    VERSION: "v3.5.1",
 
     // 1. Attach the mutable game state
     state: state,
@@ -67,7 +67,7 @@ engine.init();
 
 // --- GLOBALE TASTATUR-STEUERUNG ---
 document.addEventListener('keydown', (event) => {
-    // 1. Fängt der Spieler gerade eine neue Taste ab?
+    // 1. Is the player currently rebinding a key?
     if (engine.state.isBindingKey) {
         event.preventDefault(); // Verhindert z.B. Scrollen bei Leertaste
         engine.finishBindingKey(event.key);
@@ -80,19 +80,19 @@ document.addEventListener('keydown', (event) => {
     let key = event.key.toLowerCase();
     if (key === ' ') key = 'space'; // Leertaste normalisieren
 
-    // 2. Intelligentes Escape-Verhalten (Schließt immer das oberste Fenster)
+    // 2. Escape always closes the topmost overlay
     if (key === 'escape') {
         
-        // Hilfsfunktion: Prüft, ob ein Element sichtbar ist
+        // Is the element present and visible?
         const isVisible = (id) => {
             const el = document.getElementById(id);
             return el && !el.classList.contains('hidden') && el.style.display !== 'none';
         };
 
-        // A. Blockieren, falls Intro oder Schwierigkeits-Wahl offen ist (darf man nicht abbrechen!)
+        // A. Intro and difficulty choice must not be dismissible
         if (isVisible('intro-modal') || isVisible('difficulty-modal') || isVisible('tut-ask-modal')) return;
 
-        // B. Das dynamische Lore-Buch checken
+        // B. The dynamically created lore book
         const loreModal = document.getElementById('lore-modal');
         if (loreModal) {
             loreModal.remove();
@@ -100,7 +100,7 @@ document.addEventListener('keydown', (event) => {
             return;
         }
 
-        // C. Untermenüs und Overlays schließen (Hier passiert die Magie)
+        // C. Close submenus and overlays, innermost first
         if (isVisible('item-confirm-modal')) { engine.closeItemConfirm(); return; }
         if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
         if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
@@ -115,16 +115,16 @@ document.addEventListener('keydown', (event) => {
         
         if (isVisible('excuse-modal')) { engine.closeExcuseModal(); return; }
 
-        // D. Abmahnungs-Modals (Nur schließen, wenn es kein "Game Over" ist!)
+        // D. Warning modals - closable, unlike a game over screen
         if (isVisible('modal-overlay')) {
             const okBtn = document.querySelector('#modal-content button');
             if (okBtn && okBtn.innerText === 'VERSTANDEN') {
                 engine.closeModal();
             }
-            return; // Game-Over-Screens können mit ESC nicht geschlossen werden.
+            return; // Game over screens cannot be dismissed with ESC
         }
 
-        // E. Wenn KEIN Overlay offen ist -> Einstellungen umschalten
+        // E. Nothing open at all -> toggle the settings menu
         if (isVisible('settings-modal')) {
             engine.closeSettings();
         } else {
@@ -133,8 +133,8 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
-    // --- NEU: BLOCKADE BEI OFFENEN HAUPTMENÜS ---
-    // Wenn das Intro oder das Schwierigkeits-Modal offen ist, blockieren wir alle anderen Hotkeys (außer Enter/Bestätigen für Popups)
+    // --- HOTKEY BLOCKING WHILE A MAIN MENU IS OPEN ---
+    // While intro or difficulty selection is up, every hotkey except confirm is blocked
     const introModal = document.getElementById('intro-modal');
     const diffModal = document.getElementById('difficulty-modal');
     if ((introModal && introModal.style.display !== 'none') || 
@@ -142,7 +142,7 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
-    // 3. BESTÄTIGEN (Popups, Handy abnehmen, Weiter-Buttons)
+    // 3. CONFIRM (popups, answering the phone, continue buttons)
     if (key === engine.state.keyBinds.confirm.toLowerCase()) {
         // A: Tutorial
         const tutPointer = document.getElementById('tut-pointer');
@@ -162,7 +162,7 @@ document.addEventListener('keydown', (event) => {
         // B: Modals (Abmahnung, Ende, Item-Confirm)
         const okBtn = document.querySelector('#modal-content button');
         if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
-        // Checkt das Item-Nutzen-Modal (Der grüne "BENUTZEN"-Button ist der zweite Button im Grid)
+        // The item confirmation modal - the green "use" button is the second one in the grid
         const itemUseBtn = document.querySelector('#item-confirm-modal button.bg-green-600');
         if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
 
@@ -180,8 +180,8 @@ document.addEventListener('keydown', (event) => {
         }
     }
 
-    // 4. AKTIONEN DIREKT WÄHLEN (Q, W, E, R)
-    // Nur ausführen, wenn kein Event aktiv ist, keine E-Mail offen ist und kein Fullscreen-Modal!
+    // 4. ACTION SHORTCUTS (Q, W, E, R)
+    // Only while no event, no open mail and no fullscreen modal is active
     if (!engine.state.activeEvent && !engine.state.isEmailOpen && !document.body.classList.contains('overflow-hidden')) {
         if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { engine.trigger('coffee'); return; }
         if (key === engine.state.keyBinds.actQuest.toLowerCase()) { engine.trigger('sidequest'); return; }
@@ -189,25 +189,25 @@ document.addEventListener('keydown', (event) => {
         if (key === engine.state.keyBinds.actCall.toLowerCase()) { engine.trigger('calls'); return; }
     }
 
-    // 5. AUSWAHL IN EVENTS & E-MAILS (1, 2, 3... und 4, 5, 6 für die Party)
-    // E-Mails setzen overflow-hidden, also müssen wir das explizit erlauben!
+    // 5. OPTION SHORTCUTS (1, 2, 3 - plus 4, 5, 6 during the party)
+    // Mails set overflow-hidden, so that case needs an explicit exception
     if ((engine.state.activeEvent && !document.body.classList.contains('overflow-hidden')) || engine.state.isEmailOpen) {
         let visibleOptions = [];
         
-        // A: Ist eine E-Mail offen?
+        // A: is a mail open?
         const emailModal = document.getElementById('email-modal');
         if (emailModal && !emailModal.classList.contains('hidden')) {
             const emailActions = document.getElementById('email-actions');
             if (emailActions) {
-                // Da der Löschen-Button jetzt normal generiert wird, ist er hier automatisch mit drin!
+                // The delete button is generated like any other, so it is included automatically
                 visibleOptions = Array.from(emailActions.querySelectorAll('button'));
             }
         }
-        // B: Check Phone
+        // B: the phone
         else if (document.getElementById('app-actions') && document.getElementById('app-actions').offsetParent !== null) {
             visibleOptions = Array.from(document.querySelectorAll('#app-actions button'));
         } 
-        // C: Check Terminal
+        // C: the terminal
         else {
             const termActions = document.querySelectorAll('#terminal-content button');
             visibleOptions = Array.from(termActions).filter(b => !b.innerText.includes('WEITER'));

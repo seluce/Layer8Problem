@@ -11,11 +11,11 @@ export const events = {
         if (this.state.isPartyMode) return;
 
         // --- INGAME-ZEIT COOLDOWN ---
-        // Wenn in den letzten 25 Ingame-Minuten schon eine Mail kam -> blockieren
+        // Block if a mail already arrived within the last 25 in-game minutes
         if (this.state.lastEmailTime && (this.state.time - this.state.lastEmailTime < 25)) return;
         // ---------------------------------
 
-        // --- ID-BASIERTE PRÜFUNG (WHITELIST & BLACKLIST) ---
+        // --- ID BASED CHECK (WHITELIST & BLACKLIST) ---
         const id = this.state.currentEventId || "";
         const isAllowed = id.includes('srv_') || 
                           id.includes('cof_') || 
@@ -34,33 +34,33 @@ export const events = {
         // Vorher +5% pro Ticket, jetzt +4% pro Ticket.
         let chance = baseChance + (this.state.tickets * 0.04); 
         
-        // Deckelung: Egal wie viele Tickets, die Chance pro Klick wird nie höher als 35%
+        // Cap: no matter how many tickets, the per-click chance never exceeds 35%
         chance = Math.min(0.35, chance);
         
         if(Math.random() < chance) {
             this.state.lastEmailEventId = this.state.currentEventId;
             
-            // --- Aktuelle Uhrzeit für den Cooldown merken ---
+            // --- Remember the time for the cooldown ---
             this.state.lastEmailTime = this.state.time;
             
             this.state.emailPending = true; 
             
-            // Alten Delay-Timer killen, falls noch einer läuft
+            // Kill any delay timer still running
             if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
             
-            // Timer in Variable speichern, damit wir ihn abbrechen können!
+            // Keep the handle so it can be cancelled
             this.state.emailDelayTimer = setTimeout(() => { 
                 this.triggerEmail(); 
             }, 2000);
         }
     },
 
-    // Öffnet das E-Mail Overlay
+    // Opens the mail overlay
     // async: the mail pool loads on demand, see data.js
     triggerEmail: async function(forcedId = null) {
         await ensure('emails');
 		
-        // Wenn ein Bossfight läuft, darf diese Funktion gar nicht erst auslösen!
+        // Never fire during a boss fight
         if (this.state.bossTimer || this.state.currentEventType === 'boss') {
             this.state.emailPending = false;
             return;
@@ -128,13 +128,13 @@ export const events = {
         else if(s.includes('buchhaltung') || s.includes('elster')) ccText = "Finanzamt; Controlling";
         else if(s.includes('hr') || s.includes('personal')) ccText = "Betriebsrat";
         else if(s.includes('sicherheit') || s.includes('wachschutz')) ccText = "Polizei (Notruf)";
-        else if(s.includes('prinz')) ccText = ""; // Betrüger haben oft kein CC
+        else if(s.includes('prinz')) ccText = ""; // scammers rarely CC anyone
 
-        // Element füllen (Falls ID vorhanden)
+        // Fill the element if it exists
         const ccEl = document.getElementById('email-cc');
         if(ccEl) {
             ccEl.innerText = ccText;
-            // Wenn leer, ganze Zeile ausblenden? Optional. Hier lassen wir es einfach leer.
+            // Left empty rather than hiding the whole row
             ccEl.parentElement.style.display = ccText ? 'flex' : 'none';
         }
         // -----------------------------------
@@ -152,7 +152,7 @@ export const events = {
                 const btn = document.createElement('button');
                 btn.type = "button"; 
                 
-                // --- NEU: Prüfen, ob es der Löschen-Button ist ---
+                // --- Is this the delete button? ---
                 const isDelete = opt.ignoreEmail;
 
                 // Dynamische Farben zuweisen
@@ -231,7 +231,7 @@ export const events = {
         if (!this.state.isEmailOpen) return;
         // -------------------------
         
-        // --- Neuen Tag erst jetzt offiziell zählen! ---
+        // --- Only now does the day officially count as started ---
         if (!this.state.dayActive) {
             this.state.dayActive = true;
             this.incrementStat('daysStarted');
@@ -265,7 +265,7 @@ export const events = {
             color = "text-red-500 font-bold";
         } else if(opt) {
             if (opt.ignoreEmail) {
-                // Dynamisch berechnen, ob es eine Strafe gab, um sie im Log anzuzeigen
+                // Work out whether a penalty applied, so the log can mention it
                 let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.state.difficultyMult)}%` : "";
                 message = `E-MAIL IGNORIERT!${penaltyText}`;
                 color = "text-red-500 font-bold";
@@ -276,7 +276,7 @@ export const events = {
 
             let mult = this.state.difficultyMult;
             
-            // Zwischenspeichern der finalen Werte für die Animation
+            // Cache the final values for the animation
             let addedF = opt.f || 0;
             let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
             let addedC = opt.c ? Math.ceil(opt.c * mult) : 0;
@@ -285,18 +285,18 @@ export const events = {
             if(addedA) this.state.al += addedA;
             if(addedC) this.state.cr += addedC;
 
-            // --- Floating Text für E-Mails ---
+            // --- Floating text for mails ---
             if (addedF !== 0) this.showFloatingText('val-fl', addedF);
             if (addedA !== 0) this.showFloatingText('val-al', addedA);
             if (addedC !== 0) this.showFloatingText('val-cr', addedC);
             // --------------------------------------
             
-            // Wenn der ignore-Flag in der data.js gesetzt ist, zähle den Ghosting-Stat hoch!
+            // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
             
             this.triggerShake(addedA, addedC);
 
-            // 1. LOOT LOGIK für E-Mails
+            // 1. LOOT HANDLING FOR MAILS
             if (opt.loot && opt.loot !== "") {
                 let dbItem = DB.items[opt.loot];
                 let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
@@ -308,7 +308,7 @@ export const events = {
                 }).length;
 
                 if (isPermanent && alreadyHas) {
-                    // Hat man schon (passiert nichts weiter)
+                    // Already owned, nothing happens
                 } else if (!isPermanent && normalCount >= 10) {
                     let itemName = dbItem ? dbItem.name : opt.loot;
                     this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
@@ -319,7 +319,7 @@ export const events = {
                     let itemName = dbItem ? dbItem.name : opt.loot;
                     this.log(`ERHALTEN: ${itemName}`, "text-yellow-400");
                     
-                    // Die neue Rucksack-Animation aufrufen
+                    // Play the backpack animation
                     if (dbItem && dbItem.img && typeof this.animateItemToBackpack === 'function') {
                         this.animateItemToBackpack(dbItem.img);
                     }
@@ -364,11 +364,11 @@ export const events = {
         }
         
         // --- SYSTEM FREIGEBEN ---
-        // Wenn es keine Option gibt (Timeout/Ignorieren) oder keine Folge-Mail ansteht
+        // No option chosen (timeout or ignore) and no follow-up queued
         if (!opt || !opt.nextEmail) {
             if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
             
-            // Gibt das E-Mail-System erst nach 5 Sekunden wieder frei
+            // Unblocks the mail system after five seconds
             this.state.emailCooldownTimer = setTimeout(() => {
                 this.state.emailPending = false;
             }, 5000); 
@@ -383,14 +383,14 @@ export const events = {
     // async: the event pools load on demand, see data.js
     trigger: async function(type) {
 		this.playAudio('action');
-		// Blockieren, wenn Party
+		// Blocked during the party
 		if (this.state.isPartyMode) return;
-        // Blockieren, wenn schon ein Event offen ist
+        // Blocked while an event is already open
         if(this.state.activeEvent) return;
         
         // --- TUTORIAL HOOK ---
         if (typeof tutorial !== 'undefined' && tutorial.isActive) {
-            // Wir ziehen das exakte Event für den aktuellen Schritt aus DB.tutorial
+            // Pull the exact event for the current tutorial step
             let tutEvent = DB.tutorial.find(e => e.type === type && e.step === tutorial.step);
             if (tutEvent) {
 				tutorial.hidePointer();
@@ -401,7 +401,7 @@ export const events = {
             return; // Normalen Trigger abbrechen!
         }
         
-        // --- Neuen Tag erst jetzt offiziell zählen! ---
+        // --- Only now does the day officially count as started ---
         if (!this.state.dayActive) {
             this.state.dayActive = true;
             this.incrementStat('daysStarted');
@@ -430,37 +430,37 @@ export const events = {
         }
 
         // ---------------------------------------------------------
-        // 1. BOSS CHECK (Die "Katastrophe")
+        // 1. BOSS CHECK (the "disaster")
         // ---------------------------------------------------------
-        // Chance: 5%. Gilt für ALLE Buttons (auch Calls & Sidequests).
-        // Wenn der Boss kommt, ist alles andere egal.
+        // 5% chance, on every button including calls and sidequests.
+        // If the boss shows up, nothing else matters.
         let bossPool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
         
         if (this.state.time > 540 && bossPool.length > 0 && Math.random() < 0.05) {
              this.triggerBossFight();
-             return; // Unterbricht die eigentliche Aktion
+             return; // pre-empts the intended action
         }
 
         // ---------------------------------------------------------
         // 2. INTERVENTION CHECK (Ruf-System)
         // ---------------------------------------------------------
-        // Chance: 10%. Gilt ebenfalls für ALLE Buttons. Ein Charakter fängt dich ab.
+        // 10% chance, also on every button: a colleague intercepts you.
         if (DB.reputation) {
             
-            // A. Sammle alle Events, die der Spieler sehen darf (Ruf oder reqStory)
+            // A. Collect every event the player is eligible for (reputation or story flag)
             let possibleInterventions = DB.reputation.filter(ev => {
                 if (this.state.usedIDs.has(ev.id)) return false; 
 
-                // Wenn es eine Story-Fortsetzung ist: Prüfen, ob Story-Flag aktiv
+                // Story continuation: is the flag set?
                 if (ev.reqStory) {
                     return !!this.state.storyFlags[ev.reqStory]; 
                 }
                 
-                // Wenn es ein Basis-Ruf-Event ist: Ruf-Werte prüfen
+                // Plain reputation event: check the thresholds
                 if (ev.reqRep) {
                     for (let [char, threshold] of Object.entries(ev.reqRep)) {
                         let currentRep = this.state.reputation[char] || 0;
-                        // Logik: Positiv = Mindestens X / Negativ = Höchstens X
+                        // Positive threshold means at least X, negative means at most X
                         if (threshold > 0 && currentRep < threshold) return false;
                         if (threshold < 0 && currentRep > threshold) return false;
                     }
@@ -470,24 +470,24 @@ export const events = {
                 return false;
             });
 
-            // B. Würfeln: 10% Chance, dass überhaupt eine Begegnung stattfindet
+            // B. Roll: 10% chance an encounter happens at all
             if (possibleInterventions.length > 0 && Math.random() < 0.10) {
                 
-                // 1. Array in Story-Events und Basis-Events aufteilen
+                // 1. Split into story continuations and base events
                 let storyEvents = possibleInterventions.filter(e => e.reqStory);
                 let baseEvents = possibleInterventions.filter(e => !e.reqStory);
                 
                 let intervention = null;
 
-                // 2. NEU: 30% Priorität für Story-Fortsetzungen, falls welche verfügbar sind!
+                // 2. Story continuations get 30% priority when available
                 if (storyEvents.length > 0 && Math.random() < 0.30) {
                     intervention = storyEvents[Math.floor(Math.random() * storyEvents.length)];
                 } 
-                // 3. Wenn die 30% verfehlt wurden ODER keine Story-Events da sind -> Normales Ruf-Event
+                // 3. Missed the 30% or nothing pending -> ordinary reputation event
                 else if (baseEvents.length > 0) {
                     intervention = baseEvents[Math.floor(Math.random() * baseEvents.length)];
                 }
-                // Fallback (z.B. wenn NUR Story-Events da sind, aber die 30% verfehlt wurden)
+                // Fallback: only story events exist but the 30% roll failed
                 else {
                     intervention = possibleInterventions[Math.floor(Math.random() * possibleInterventions.length)];
                 }
@@ -495,15 +495,15 @@ export const events = {
                 if (intervention) {
                     this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
                     
-                    // Wir rendern es mit dem Typ 'rep' für das goldene Design
+                    // Rendered as type 'rep' for the golden styling
                     this.renderTerminal(intervention, 'rep'); 
-                    return; // Unterbricht die eigentliche Aktion
+                    return; // pre-empts the intended action
                 }
             }
         }
 
         // ---------------------------------------------------------
-        // 3. EIGENTLICHE AKTION (Wenn keine Unterbrechung kam)
+        // 3. THE ACTUAL ACTION (nothing intercepted it)
         // ---------------------------------------------------------
         
         // Sonderfall: Handy/Sidequest Logik
@@ -512,7 +512,7 @@ export const events = {
             return; 
         }
 
-        // Standard: Zufälliges Event aus dem gewählten Pool (coffee, server, calls)
+        // Default: a random event from the chosen pool (coffee, server, calls)
         let pool = DB[type].filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
             if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
@@ -521,7 +521,7 @@ export const events = {
             return true;
         });
 
-        // Fallback, wenn Pool leer ist
+        // Fallback for an exhausted pool
         if (pool.length === 0) { 
             this.renderTerminal(DB.special.empty_pool, type); 
             return; 
@@ -532,13 +532,13 @@ export const events = {
         let normalEvents = pool.filter(ev => !ev.reqStory);
         let ev;
 
-        // Wenn ein Folge-Event freigeschaltet wurde, ziehe es mit 30% Wahrscheinlichkeit vor!
+        // An unlocked follow-up jumps the queue 30% of the time
         if (followUps.length > 0 && Math.random() < 0.30) {
             ev = followUps[Math.floor(Math.random() * followUps.length)];
         } else if (normalEvents.length > 0) {
             ev = normalEvents[Math.floor(Math.random() * normalEvents.length)];
         } else {
-            // Fallback: Wenn nur noch Folge-Events da sind
+            // Fallback: only follow-ups left
             ev = followUps[Math.floor(Math.random() * followUps.length)];
         }
         
@@ -558,7 +558,7 @@ export const events = {
         this.state.emailDelayTimer = null;
         this.state.emailPending = false;
         
-        // Falls das Modal gerade schon halb offen war, hart schließen
+        // Force the modal shut if it was mid-open
         const emailModal = document.getElementById('email-modal');
         if (emailModal) {
             emailModal.classList.add('hidden');
@@ -578,23 +578,23 @@ export const events = {
         this.state.usedIDs.add(boss.id);
         this.disableButtons(true);
 		
-		// ---> MUSIK FÜR DEN BOSS STARTEN <---
+		// ---> Boss music <---
         this.playMusic('boss');
         this.updatePresence('boss');
 
         const term = document.getElementById('terminal-content');
         
         // FIX 1: OPACITY ENTFERNEN!
-        // Wir setzen die Klasse genau so wie bei 'renderTerminal', damit es hell wird.
+        // Same class as renderTerminal so the panel lights up identically.
         term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
 
         // Event rendern
         this.renderEventHTML(boss, 'boss', term);
 
-        // Wir rechnen in Millisekunden, damit der Balken flüssig läuft
+        // Milliseconds, so the bar animates smoothly
         let totalTimeMs = boss.timer * 1000;
         let currentTimeMs = totalTimeMs;
-        const updateInterval = 50; // Update alle 50ms für flüssige Animation
+        const updateInterval = 50; // 50ms steps keep the bar fluid
 
         this.state.bossTimer = setInterval(() => {
             currentTimeMs -= updateInterval;
@@ -606,7 +606,7 @@ export const events = {
                 let percent = (currentTimeMs / totalTimeMs * 100);
                 bar.style.width = percent + "%";
                 
-                // Pulsieren, wenn es knapp wird (unter 30%)
+                // Pulse once it gets tight, below 30%
                 if(percent < 30) {
                     bar.classList.add('animate-pulse');
                     // Optional: Farbe intensivieren
@@ -668,7 +668,7 @@ export const events = {
             this.updatePhoneVisibility();
             setTimeout(() => {
                 const phone = document.getElementById('smartphone');
-                // Nur auf kleinen Bildschirmen scrollen
+                // Only scroll on small screens
                 if(phone && window.innerWidth < 1024) { 
                     phone.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -682,7 +682,7 @@ export const events = {
     // --- TERMINAL & CALL SYSTEM ---
 
     renderTerminal: function(ev, type) {
-		// --- Event-Status für E-Mail-System speichern ---
+		// --- Record the event for the mail system ---
         this.state.currentEventId = ev.id;     // "did we already mail for this event?"
         this.state.currentEventType = type;    // "is this a boss fight?"
         this.updatePresence(type);
@@ -694,10 +694,10 @@ export const events = {
 
         const term = document.getElementById('terminal-content');
         
-        // WICHTIG: Container-Styling für Zentrierung
+        // Container styling handles the centring
         term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
 
-        // ENTSCHEIDUNG: Neu (Nodes) oder Alt (Opts)?
+        // Chain event (nodes) or simple event (opts)?
         if (ev.nodes && ev.startNode) {
             this.state.currentChainEvent = ev;
             this.state.currentChainType = type;
@@ -723,7 +723,7 @@ export const events = {
             node.text, 
             node.opts, 
             true, // isChain = true
-            ev.char // <--- NEU: Charakter übergeben
+            ev.char
         );
     },
 
@@ -735,7 +735,7 @@ export const events = {
             ev.text, 
             ev.opts, 
             false, // isChain = false
-            ev.char // <--- NEU: Charakter übergeben
+            ev.char
         );
     },
 
@@ -789,7 +789,7 @@ export const events = {
     buildEventHTML: function(type, title, text, opts, isChain, charName) {
         this._terminal = { opts: opts || [], type: type, isChain: !!isChain };
 		
-        // ---> Mache aus \n echte HTML-Zeilenumbrüche <---
+        // Turn \n into real line breaks
         let formattedText = text ? text.replace(/\n/g, "<br>") : "";		
         
         // --- STYLE KONFIGURATION ---
@@ -852,7 +852,7 @@ export const events = {
                 break;	
         }
 
-        // --- PORTRAIT LOGIK (Rechts neben der Textbox - Clean Version) ---
+        // --- PORTRAIT, shown beside the text box ---
         let portraitHTML = "";
         if (charName && DB.chars) {
             let dbChar = DB.chars.find(c => c.name === charName);
@@ -862,7 +862,7 @@ export const events = {
                     ? `<img src="${dbChar.img}" class="w-full h-full object-cover scale-110" alt="${dbChar.name}">` 
                     : `<div class="w-full h-full flex items-center justify-center text-5xl bg-slate-800/50">${dbChar.icon}</div>`;
 
-                // Nur die stylische Box, ohne extra Namens-Balken
+                // Just the framed box, no separate name bar
                 portraitHTML = `
                 <div class="hidden sm:flex shrink-0 w-28 h-28 md:w-32 md:h-32 bg-slate-900 border border-slate-600 rounded-xl shadow-lg overflow-hidden items-center justify-center">
                     ${avatarContent}
@@ -907,7 +907,7 @@ export const events = {
                 <div class="space-y-2.5">
         `;
 
-        // Die Buttons
+        // The option buttons
         if (opts) {
             opts.forEach((opt, index) => {
                 let locked = false;
@@ -967,7 +967,7 @@ export const events = {
 
                 let warningSpan = locked ? `<span class="text-sm text-red-500 font-normal ml-2">${reqText}</span>` : "";
 
-                // --- NEU: HOTKEY BADGE FÜR DAS TERMINAL ---
+                // --- Hotkey badge ---
                 let hotkeyHTML = "";
                 let key = "";
                 
@@ -998,7 +998,7 @@ export const events = {
             });
         }
         
-        // Ausreden-Button wird GANZ UNTEN rechts platziert
+        // The excuse button sits bottom right
         if (showExcuseButton) {
             html += `
                 <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
@@ -1013,18 +1013,18 @@ export const events = {
         return html;
     },
 
-    // Logik für die Auswahl in Call-Ketten
+    // Handles a choice inside a call chain
     handleChainChoice: function(nextId) {
 		this.playAudio('ui');
         const ev = this.state.currentChainEvent;
 
-        // Fall 1: Weiter im Text
+        // Case 1: another node
         if (ev.nodes && ev.nodes[nextId]) {
             this.renderChainNode(nextId);
             return;
         }
 
-        // Fall 2: Ergebnis (Ende)
+        // Case 2: a result, ending the chain
         if (ev.results && ev.results[nextId]) {
             const res = ev.results[nextId];
             // Chain results use their own field names (txt/min/fl/al/cr);
@@ -1097,7 +1097,7 @@ export const events = {
 
         if(type === 'coffee') this.state.coffeeConsumed++;
 		
-		// Wenn man mit Bernd trinkt ODER den Rum-Kuchen genießt
+		// Drinking with Bernd, or the rum cake
         if (next === 'path_bernd_drunk' || next === 'path_cake_drunk') {
             this.state.drunkEndTime = this.state.time + m + 60; 
             this.log("Alles dreht sich ein bisschen...", "text-purple-400 italic");
@@ -1106,7 +1106,7 @@ export const events = {
         // Zeit & Tickets
         let oldTimeChunk = Math.floor(this.state.time / 30);
 
-        // BUGFIX: Offene Tickets nur bis Feierabend zählen 16:30 (16 * 60 + 30 = 990)
+        // Tickets only accrue up to closing time at 16:30
         const SHIFT_END_TIME = 16 * 60 + 30; 
         let cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
 
@@ -1156,10 +1156,10 @@ export const events = {
         // travel through an HTML attribute and be JSON-parsed back out here.
         if (repData) {
             if (typeof repData === 'object') {
-                let changed = false; // Wir merken uns, ob sich was geändert hat
+                let changed = false; // did anything actually move?
                 
                 for (let [charName, val] of Object.entries(repData)) {
-                    // Sicherstellen, dass der Charakter im State existiert
+                    // Make sure the character exists in the state
                     if (this.state.reputation[charName] === undefined) {
                         this.state.reputation[charName] = 0;
                     }
@@ -1170,13 +1170,13 @@ export const events = {
                     // Begrenzen auf -100 bis +100
                     this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
                     
-                    // Optional: Floating Text Feedback (Nur wenn gewünscht)
+                    // Optional floating text feedback
                     // if (val !== 0) this.showFloatingText('team-btn', val > 0 ? '💚' : '💔');
 
                     changed = true;
                 }
 
-                // WENN sich der Ruf geändert hat: Sofort ins Archiv schreiben & speichern!
+                // Reputation moved: mirror it into the archive and persist
                 if (changed) {
                     this.saveSystem(); 
                 }
@@ -1188,17 +1188,17 @@ export const events = {
             this.state.storyFlags[next] = true;
         }
         
-        // --- PARTY FORTSCHRITT ZÄHLEN ---
+        // --- COUNT PARTY PROGRESS ---
         if (this.state.isPartyMode && type === 'party' && next === 'party_hub') {
             this.state.partyProgress++;
         }
         
         // --- ITEMS REMOVED (rem) ---
         if (rem && rem !== "") {
-            // Finde den Index des ERSTEN passenden Items
+            // Index of the first matching item
             let index = this.state.inventory.findIndex(i => i.id === rem);
             if (index > -1) {
-                // Lösche exakt 1 Item an genau diesem Index
+                // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
                 let removedName = DB.items[rem] ? DB.items[rem].name : rem;
                 this.log(`Verloren: ${removedName}`, "text-orange-400");
@@ -1209,27 +1209,27 @@ export const events = {
         // --- ITEM LOGIK: LOOT ---
         if(loot && loot !== "") {
             let dbItem = DB.items[loot];
-            // Ist es ein dauerhaftes Werkzeug oder Quest-Item?
+            // Permanent tool or quest item?
             let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
-            // Haben wir es schon?
+            // Already owned?
             let alreadyHas = this.state.inventory.find(i => i.id === loot);
             
-            // Rucksack Kapazität berechnen (nur normale Items zählen, keine Trophäen!)
+            // Capacity counts ordinary items only, not trophies
             let normalCount = this.state.inventory.filter(i => {
                 let db = DB.items[i.id];
                 return db && !db.quest;
             }).length;
 
             if (isPermanent && alreadyHas) {
-                // 1. Permanentes Item (z.B. Feuerlöscher) hat man schon -> Verfällt leise
+                // 1. Permanent item already owned -> quietly discarded
             } 
             else if (!isPermanent && normalCount >= 10) {
-                // 2. Verbrauchsgegenstand, aber Rucksack ist voll (10/10) -> Nachricht an Spieler
+                // 2. Consumable but the backpack is full -> tell the player
                 let itemName = dbItem ? dbItem.name : loot;
                 this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
             } 
             else {
-                // 3. Item hinzufügen! (Erlaubt auch den 2. oder 3. Donut)
+                // 3. Add it. A second or third donut is fine.
                 this.state.inventory.push({ id: loot, used: false });
                 this.addToArchive('items', loot);
                 let itemName = dbItem ? dbItem.name : loot;
@@ -1249,10 +1249,10 @@ export const events = {
         let btnColor = "bg-blue-600 hover:bg-blue-500"; 
 
         if (this.state.pendingEnd) {
-            // --- Die getarnte Party-Falle ---
+            // --- The disguised party trap ---
             if (this.state.pendingEnd.isParty) {
                 btnAction = "engine.startParty()";
-                btnText = "FEIERABEND MACHEN 🎉"; // Gleicher Text wie beim normalen Sieg!
+                btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // Ein fieses Pink als kleiner Hinweis
             } else {
                 // --- Normales Ende ---
@@ -1290,27 +1290,27 @@ export const events = {
     },
 
     triggerMorningMood: function() {
-        // Fallback, falls die Kategorie in der data.js fehlt
+        // Fallback for a category missing from the data files
         if (!DB.moods || DB.moods.length === 0) {
             this.reset();
             return;
         }
         
-        // --- Musik nach der Boot-Sequenz wieder starten ---
+        // --- Resume music after the boot sequence ---
         this.playMusic('office');
         
-        // Buttons für die halbe Sekunde Ladezeit freigeben
+        // Release the buttons after the brief setup
         this.disableButtons(false);
         this.state.activeEvent = false;
 
-        // 1. Zufälliges Morgen-Ereignis ziehen (mit Anti-Repeat-Schutz)
+        // 1. Draw a random morning mood, avoiding an immediate repeat
         let availableMoods = DB.moods.filter(m => m.id !== this.state.lastMoodId);
         
-        // Fallback, falls (theoretisch) nur noch einer übrig ist
+        // Fallback for the theoretical case of a single remaining entry
         if (availableMoods.length === 0) availableMoods = DB.moods; 
         
         let mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
-        this.state.lastMoodId = mood.id; // Fürs nächste Mal merken
+        this.state.lastMoodId = mood.id; // remembered for next time
         
         // 2. Mechanik sicher anwenden
         let statHtml = "";
@@ -1326,14 +1326,14 @@ export const events = {
         else if (mood.effect === "lazy") {
             this.state.fl += 15;
             this.state.time += 30; // Zeitverlust wegen Verschlafen
-            this.state.tickets += 1; // FIX: Strafe für die verlorenen 30 Minuten!
+            this.state.tickets += 1; // penalty for the thirty minutes lost
             statHtml = "<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +15% Faulheit</span>";
         } 
         else if (mood.effect === "normal") {
             statHtml = "<span class='text-slate-400 font-bold'>Neutral. Der ganz normale Wahnsinn beginnt.</span>";
         } 
         else if (mood.effect === "snack") {
-            // Nur Snacks als Loot!
+            // Snacks only
             const possibleItems = ["energy", "donut", "sandwich", "chocolate"];
             const rItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
             this.state.inventory.push({ id: rItem, used: false });
@@ -1343,10 +1343,10 @@ export const events = {
             if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
         }
 
-        // GUI sofort aktualisieren, damit die Balken/Uhrzeit richtig stehen
+        // Refresh immediately so bars and clock are correct
         this.updateUI();
 
-        // 3. Im Terminal wunderschön im "Special Event" Design rendern
+        // 3. Render in the terminal using the special event styling
         const term = document.getElementById('terminal-content');
         term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
         
@@ -1391,7 +1391,7 @@ export const events = {
     },
 
     finishParty: function(title, text) {
-        // 1. Erst im allerletzten Moment als gespielt abspeichern!
+        // 1. Only mark it as played at the very last moment
         if (this.state.currentPartyKey) {
             localStorage.setItem(this.state.currentPartyKey, 'true'); 
         }
@@ -1421,7 +1421,7 @@ export const events = {
             </div>
         `;
 
-        // Die Erfolge des Tages abrufen
+        // Collect the day's achievements
         let achHTML = this.state.achievedTitles.length > 0 ? 
             `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Heutige Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>` 
             : "";
@@ -1432,7 +1432,7 @@ export const events = {
         this.incrementStat('daysSurvived');
         let diary = this.generateDiaryEntry("PARTY", text);
 
-        // 4. End-Modal aufrufen (Das versteckte [PARTY] triggert die Farbe!)
+        // 4. Show the end modal - the hidden [PARTY] marker drives the colour
         let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
         this.showEnd("GALA VORBEI", subtitleHTML + "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.<br>" + fullReport + diary, true);
     },
@@ -1454,20 +1454,20 @@ export const events = {
     },
 	
     renderPhoneNode: function(node) {
-        // Sicherstellen, dass Content und Actions existieren
+        // Make sure content and action containers exist
         const content = document.getElementById('app-content');
         const actions = document.getElementById('app-actions');
         
         if (!content || !actions) return;
 
         // Avatar basierend auf App-Name oder Titel (Default: ?)
-        // Wir nehmen einfach den ersten Buchstaben des Titels als "Avatar"
+        // First letter of the title doubles as the avatar
         let ev = this.state.currentPhoneEvent;
         let avatarLetter = ev.title ? ev.title.charAt(0).toUpperCase() : "?";
         let senderName = ev.title || "Unbekannt";
 
-        // HTML für EINGEHENDE Nachricht (Links, Grau, Modern)
-        // Hier wird der Text aus der Data.js (node.text) eingefügt
+        // Incoming message: left aligned, grey
+        // node.text comes straight from the data files
         content.innerHTML += `
         <div class="w-full flex justify-start mb-4 fade-in">
             <div class="flex items-end gap-2 max-w-[85%]">
@@ -1484,17 +1484,17 @@ export const events = {
             </div>
         </div>`;
 
-        // Buttons rendern (Deine Antwortmöglichkeiten)
+        // Render the reply options
         actions.innerHTML = '';
         // Container Styling sicherstellen
         actions.className = "p-2 bg-slate-900 border-t border-slate-700 flex flex-col gap-2"; 
 
         node.opts.forEach((opt, index) => {
             const btn = document.createElement('button');
-            // NEU: 'w-full' und 'justify-between' hinzugefügt
+            
             btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center justify-between group";
             
-            // Requirements & Removal prüfen (Vereint wie im Terminal)
+            // Requirement and removal checks, same rules as the terminal
             let locked = false;
             let missingItem = "";
 
@@ -1513,7 +1513,7 @@ export const events = {
                  }
             }
 
-            // NEU: Hotkey Logik (nur anzeigen, wenn Option max 3 ist und nicht gesperrt ist)
+            // Hotkeys, shown for the first three unlocked options only
             let hotkeyHTML = "";
             let key = "";
             
@@ -1556,7 +1556,7 @@ export const events = {
             actions.appendChild(btn);
         });
         
-        // AUTO SCROLL (Sanft nach unten)
+        // Auto scroll, smoothly
         setTimeout(() => {
             content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
         }, 100);
@@ -1590,7 +1590,7 @@ export const events = {
                 let itemName = DB.items[remId] ? DB.items[remId].name : remId;
                 this.state.inventory.splice(itemIndex, 1);
                 this.log(`Verloren: ${itemName}`, "text-orange-400");
-                this.updateUI(); // Inventar sofort in der UI aktualisieren
+                this.updateUI(); // reflect the inventory change right away
             }
         }
         // -----------------------------------------------
@@ -1647,7 +1647,7 @@ export const events = {
         this.state.al += finalA;
         this.state.cr += finalC;
 
-        // --- Floating Text für Phone ---
+        // --- Floating text for the phone ---
         if (finalF !== 0) this.showFloatingText('val-fl', finalF);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
@@ -1655,11 +1655,11 @@ export const events = {
         
         this.triggerShake(finalA, finalC);
         
-        // --- REPUTATION LOGIK FÜR PHONE ---
+        // --- REPUTATION HANDLING FOR THE PHONE ---
         if (res.rep) {
             let changed = false;
             for (let [charName, val] of Object.entries(res.rep)) {
-                // Sicherstellen, dass der Charakter existiert
+                // Make sure the character exists
                 if (this.state.reputation[charName] === undefined) {
                     this.state.reputation[charName] = 0;
                 }
@@ -1672,24 +1672,24 @@ export const events = {
                 changed = true;
             }
             
-            // Sofort speichern, wenn sich etwas geändert hat
+            // Persist immediately when something moved
             if (changed) {
                 this.saveSystem();
             }
         }
         
-        // --- STORY FLAG FÜR PHONE SETZEN ---
+        // --- SET THE STORY FLAG ---
         if (res.next && res.next !== "") {
             this.state.storyFlags[res.next] = true;
         }
         // -----------------------------------
         
-        // --- FAST CHAT LOGIK FÜR FALL A ---
+        // --- Fast chat handling, case A ---
             let typingTime = this.state.fastChat ? 0 : 1500;
             let readTime = this.state.fastChat ? 3000 : 4500;
             const loadingId = "typing-" + Date.now();
 
-            // Nur rendern, wenn FastChat AUS ist
+            // Only render when fast chat is off
             if (!this.state.fastChat) {
                 content.innerHTML += `
                 <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
@@ -1739,12 +1739,12 @@ export const events = {
             }, typingTime);
 
         }
-        // FALL B: GESPRÄCH GEHT WEITER (Next Node)
+        // CASE B: the conversation continues
         else if (ev.nodes[nextId]) {
             
             const loadingId = "typing-" + Date.now();
             
-            // --- FAST CHAT LOGIK FÜR FALL B ---
+            // --- Fast chat handling, case B ---
             if (!this.state.fastChat) {
                 content.innerHTML += `
                 <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
@@ -1759,7 +1759,7 @@ export const events = {
                 }, 50);
             }
 
-            // Wenn FastChat an ist -> 0 Millisekunden. Sonst -> 1.5 bis 2.5 Sekunden
+            // Fast chat: no delay. Otherwise 1.5 to 2.5 seconds.
             let typingDuration = this.state.fastChat ? 0 : (1500 + Math.random() * 1000);
 
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
@@ -1776,7 +1776,7 @@ export const events = {
         document.getElementById('phone-app').classList.remove('flex');
         document.getElementById('phone-standby').classList.remove('hidden');
         
-        // --- Event leeren und Sichtbarkeit prüfen ---
+        // --- Clear the event and re-check visibility ---
         this.state.currentPhoneEvent = null; 
         this.updatePhoneVisibility();
     },

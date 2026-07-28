@@ -3,7 +3,7 @@
 @font-face {
   font-family: 'JetBrains Mono';
 
-  src: url('../fonts/JetBrainsMono-Regular.ttf') format('truetype');
+  src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('truetype');
 
   font-weight: 400;
 
@@ -15,7 +15,7 @@
 @font-face {
   font-family: 'JetBrains Mono';
 
-  src: url('../fonts/JetBrainsMono-ExtraBold.ttf') format('truetype');
+  src: url('../fonts/jetbrains-mono-v25-latin-800.woff2') format('truetype');
 
   font-weight: 800;
 
@@ -892,6 +892,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   pointer-events: auto;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .invisible {
   visibility: hidden;
 }
@@ -1173,6 +1177,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   margin-bottom: 1rem;
 }
 
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -1282,6 +1290,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .inline-block {
   display: inline-block;
+}
+
+.inline {
+  display: inline;
 }
 
 .flex {
@@ -1422,6 +1434,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .w-0\.5 {
   width: 0.125rem;
+}
+
+.w-1 {
+  width: 0.25rem;
 }
 
 .w-1\.5 {
@@ -1889,6 +1905,12 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
 }
 
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
@@ -2953,6 +2975,16 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   padding-bottom: 0.375rem;
 }
 
+.py-10 {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -3403,6 +3435,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   color: rgb(239 68 68 / var(--tw-text-opacity, 1));
 }
 
+.text-red-500\/80 {
+  color: rgb(239 68 68 / 0.8);
+}
+
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity, 1));
@@ -3643,6 +3679,12 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-\[0_0_5px_rgba\(255\2c 255\2c 255\2c 0\.8\)\] {
+  --tw-shadow: 0 0 5px rgba(255,255,255,0.8);
+  --tw-shadow-colored: 0 0 5px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .shadow-\[0_0_8px_rgba\(239\2c 68\2c 68\2c 0\.3\)\] {
   --tw-shadow: 0 0 8px rgba(239,68,68,0.3);
   --tw-shadow-colored: 0 0 8px var(--tw-shadow-color);
@@ -3750,6 +3792,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .drop-shadow-\[0_0_10px_rgba\(251\2c 146\2c 60\2c 0\.8\)\] {
   --tw-drop-shadow: drop-shadow(0 0 10px rgba(251,146,60,0.8));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.drop-shadow-\[0_0_10px_rgba\(59\2c 130\2c 246\2c 0\.8\)\] {
+  --tw-drop-shadow: drop-shadow(0 0 10px rgba(59,130,246,0.8));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -4182,6 +4229,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   border-color: rgb(59 130 246 / 0.5);
 }
 
+.hover\:border-cyan-500:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(6 182 212 / var(--tw-border-opacity, 1));
+}
+
 .hover\:border-emerald-500\/60:hover {
   border-color: rgb(16 185 129 / 0.6);
 }
@@ -4202,6 +4254,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
 .hover\:border-red-500\/50:hover {
   border-color: rgb(239 68 68 / 0.5);
+}
+
+.hover\:border-red-500\/60:hover {
+  border-color: rgb(239 68 68 / 0.6);
 }
 
 .hover\:border-red-500\/70:hover {
@@ -4320,6 +4376,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   background-color: rgb(226 232 240 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-slate-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(71 85 105 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:bg-slate-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(51 65 85 / var(--tw-bg-opacity, 1));
@@ -4341,6 +4402,11 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 .hover\:text-blue-300:hover {
   --tw-text-opacity: 1;
   color: rgb(147 197 253 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-cyan-400:hover {
+  --tw-text-opacity: 1;
+  color: rgb(34 211 238 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-red-400:hover {
@@ -4444,6 +4510,12 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.group:hover .group-hover\:scale-125 {
+  --tw-scale-x: 1.25;
+  --tw-scale-y: 1.25;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .group:hover .group-hover\:text-amber-400 {
   --tw-text-opacity: 1;
   color: rgb(251 191 36 / var(--tw-text-opacity, 1));
@@ -4516,6 +4588,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 }
 
 @media (min-width: 640px) {
+  .sm\:inline {
+    display: inline;
+  }
+
   .sm\:flex {
     display: flex;
   }
@@ -4528,6 +4604,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .sm\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -4538,6 +4618,10 @@ body.compact-mode #clock-container, body.compact-mode #ticket-container {
 
   .sm\:gap-4 {
     gap: 1rem;
+  }
+
+  .sm\:p-5 {
+    padding: 1.25rem;
   }
 
   .sm\:p-6 {

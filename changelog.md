@@ -1,3 +1,8 @@
+[3.5.1] - 2026-07-28
+
+System & Stabilität:
+* Die Schriftart wird jetzt im modernen WOFF2-Format ausgeliefert statt als TTF. Die zu ladende Datenmenge sinkt dadurch von 540 auf 41 Kilobyte, was den ersten Aufruf des Spiels spürbar beschleunigt - besonders bei langsamer Verbindung.
+
 [3.5.0] - 2026-07-28
 
 Fehlerkorrekturen:

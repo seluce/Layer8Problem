@@ -33,7 +33,7 @@ export const ui = {
             header.style.filter = 'blur(4px)';
 
             setTimeout(() => {
-                // LOGIK-FIX: Nutzt jetzt einfach w-full, da der Parent in der index.html die volle Breite erlaubt!
+                // w-full is enough here - the parent in index.html already spans the full width
                 header.innerHTML = `
                     <!-- keyframes newsScroll lives in index.html, not re-injected per news item -->
                     <div class="w-full h-4 overflow-hidden flex items-center" style="-webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent); mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);">
@@ -77,21 +77,21 @@ export const ui = {
             let itemA = DB.items[a.id];
             let itemB = DB.items[b.id];
             
-            // Fallback, falls ein Item (warum auch immer) nicht in der DB ist
+            // Fallback for an item missing from the database
             if (!itemA) return 1;
             if (!itemB) return -1;
 
-            // Prioritäten definieren
+            // Sort priorities
             const getPrio = (item, id) => {
                 if (id === 'stressball' || !item.keep) return 1; // Prio 1: Cooldowns & Verbrauch
                 if (item.keep && !item.quest) return 2;          // Prio 2: Werkzeuge
-                return 3;                                        // Prio 3: Quest-Items/Trophäen
+                return 3;                                        // 3: quest items and trophies
             };
 
             let prioA = getPrio(itemA, a.id);
             let prioB = getPrio(itemB, b.id);
 
-            // Nach Priorität sortieren (kleinere Zahl = weiter vorne)
+            // Lower number sorts first
             return prioA - prioB;
         });
         // ----------------------------------------------
@@ -107,7 +107,7 @@ export const ui = {
         document.getElementById('clock').innerText = timeStr;
         document.getElementById('phone-clock').innerText = timeStr;
 
-        // --- BLINDFLUG LOGIK FÜR STATS ---
+        // --- BLIND MODE: STATS ---
         document.getElementById('val-fl').innerText = this.state.blindStats ? "?%" : this.state.fl + "%";
         document.getElementById('bar-fl').style.width = this.state.fl + "%";
         
@@ -117,7 +117,7 @@ export const ui = {
         document.getElementById('val-cr').innerText = this.state.blindStats ? "?%" : this.state.cr + "%";
         document.getElementById('bar-cr').style.width = this.state.cr + "%";
 
-        // --- BLINDFLUG LOGIK FÜR TICKETS ---
+        // --- BLIND MODE: TICKETS ---
         const tEl = document.getElementById('ticket-count');
         tEl.innerText = this.state.blindTickets ? "?" : this.state.tickets;
         tEl.className = this.state.tickets > 7 ? "text-4xl font-black text-white ticket-counter ticket-pulse" : "text-4xl font-black text-white ticket-counter";
@@ -127,17 +127,17 @@ export const ui = {
         
         if (this.state.drunkEndTime > this.state.time) {
             const remaining = this.state.drunkEndTime - this.state.time;
-            // Skaliert von 6px runter auf 0px über 60 Minuten
+            // Scales from 6px down to 0px over sixty minutes
             blurVal = Math.max(0, (remaining / 60) * 3);
         }
 
-        // Liste der Elemente, die unscharf werden sollen
+        // Elements that get blurred
         const blurTargets = ['terminal', 'smartphone', 'email-modal'];
 
         blurTargets.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                if (blurVal > 0.1) { // Kleine Toleranz, damit es nicht unnötig rechnet
+                if (blurVal > 0.1) { // small tolerance avoids pointless work
                     el.style.filter = `blur(${blurVal}px)`;
                     el.style.transition = "filter 1s ease";
                 } else {
@@ -151,13 +151,13 @@ export const ui = {
         const invBadge = document.getElementById('inv-badge');
         invGrid.innerHTML = '';
         
-        // 1. Filtere Quest-Items für die Mini-Ansicht RAUS
+        // 1. Quest items are hidden from the mini view
         let visibleItems = this.state.inventory.filter(i => {
             let dbItem = DB.items[i.id];
             return dbItem && !dbItem.quest; 
         });
 
-        // Zeige die ersten 5 der SICHTBAREN Items
+        // Show the first five visible items
         for(let i=0; i < 5; i++) {
             let itemData = visibleItems[i]; 
             let slot = document.createElement('div');
@@ -168,7 +168,7 @@ export const ui = {
                 
                 // --- BILD CHECK ---
                 if (dbItem && dbItem.img) {
-                    // Falls ein Bild existiert: Bild anzeigen (mit etwas Padding, damit es nicht klebt)
+                    // With an image, show it with a little padding
                     slot.innerHTML = `<img src="${dbItem.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${dbItem.name}">`;
                 } else {
                     // Fallback: Altes Icon nutzen
@@ -220,11 +220,11 @@ export const ui = {
         
         if (aggroEl && radarEl) {
             if (this.state.visualFX) {
-                // Aggro blinkt ORANGE bei über 80%
+                // Aggro flashes orange above 80%
                 if (this.state.al >= 80) aggroEl.classList.add('pulse-orange');
                 else aggroEl.classList.remove('pulse-orange');
                 
-                // Chef-Radar blinkt ROT bei über 80%
+                // Boss radar flashes red above 80%
                 if (this.state.cr >= 80) radarEl.classList.add('pulse-red');
                 else radarEl.classList.remove('pulse-red');
             } else {
@@ -242,7 +242,7 @@ export const ui = {
     animateItemToBackpack: function(imgUrl) {
         if (!imgUrl) return;
 
-        // Das Ziel: Dein Rucksack-Button in der Navigation
+        // Target: the backpack button in the navigation
         const target = document.getElementById('btn-inventory'); 
         if (!target) return;
 
@@ -253,17 +253,17 @@ export const ui = {
         const targetX = targetRect.left + (targetRect.width / 2);
         const targetY = targetRect.top + (targetRect.height / 2);
 
-        // Start-Mittelpunkt (ca. 60px direkt über dem Rucksack)
+        // Start point, roughly 60px above the backpack
         const startX = targetX;
         const startY = targetY - 60;
 
         // 2. Geist-Bild erstellen
         const ghost = document.createElement('img');
         ghost.src = imgUrl;
-        // Etwas flüssigere Dauer (z.B. duration-500 oder 700)
+        
         ghost.className = 'fixed w-16 h-16 z-[9999] object-contain pointer-events-none transition-all duration-1000 ease-in-out';
         
-        // Zentriert auf den Startpunkt setzen
+        // Centre it on the start point
         ghost.style.left = (startX - 32) + 'px'; 
         ghost.style.top = (startY - 32) + 'px';
         ghost.style.opacity = '1';
@@ -271,12 +271,12 @@ export const ui = {
 
         document.body.appendChild(ghost);
 
-        // Reflow erzwingen, damit der Startpunkt vom Browser registriert wird
+        // Force a reflow so the browser registers the start position
         void ghost.offsetWidth; 
 
         // 3. Animation starten
         setTimeout(() => {
-            // Bewegt sich 60px nach unten (genau auf den Button), skaliert runter und wird unsichtbar
+            // Drops 60px onto the button while shrinking and fading out
             ghost.style.opacity = '0'; 
             ghost.style.transform = `translateY(60px) scale(0.1)`;
         }, 10);
@@ -305,11 +305,11 @@ export const ui = {
         const phone = document.getElementById('smartphone'); 
         if (!phone) return;
 
-        // Das Handy wird gebraucht, wenn ein Phone-Event aktiv in Bearbeitung ist
+        // The phone is needed while a phone event is being handled
         let isPhoneActive = this.state.currentPhoneEvent && this.state.activeEvent;
 
         if (this.state.autoHidePhone && !isPhoneActive) {
-            // FIX: 'flex' entfernen, damit 'hidden' auch wirklich funktioniert!
+            // Remove 'flex', otherwise 'hidden' has no effect
             phone.classList.remove('flex');
             phone.classList.add('hidden', 'lg:flex'); 
         } else {
@@ -323,7 +323,7 @@ export const ui = {
     buildStatSummary: function(m, f, a, c) {
         let html = '';
         
-        // Helfer für einzelne Pillen
+        // Builds a single pill
         const makePill = (val, label, colorClass) => {
             let num = val || 0; 
             const sign = num > 0 ? '+' : '';
@@ -335,7 +335,7 @@ export const ui = {
         };
 
         // 1. ZEIT (Als erstes Element anzeigen)
-        // Wir zeigen nur an, wenn Zeit vergangen ist (m > 0)
+        // Only shown when time actually passed
         if (m > 0) {
             html += makePill(m, 'Minuten', 'text-blue-400');
         }
@@ -358,8 +358,8 @@ export const ui = {
     },
 
     log: function(msg, colorClass) {
-        // SPAM-SCHUTZ: Wenn die Nachricht identisch zur vorherigen ist, ignorieren.
-        // Das verhindert, dass das Log explodiert, wenn man wie wild klickt.
+        // Skip a message identical to the previous one - stops the log
+        // exploding when the player hammers a button.
         if (this.state.lastLogMsg === msg) return;
         this.state.lastLogMsg = msg;
 
@@ -382,7 +382,7 @@ export const ui = {
         while (feed.children.length > LOG_MAX_ENTRIES) feed.lastElementChild.remove();
     },
     
-    // Log auf/zuklappen für Mobile
+    // Collapse or expand the log on mobile
     toggleLog: function() {
         const log = document.getElementById('log-feed');
         const arrow = document.getElementById('log-arrow');
@@ -412,7 +412,7 @@ export const ui = {
              btnText = 'VERSTANDEN';
         }
         
-        // --- Dynamische Farbgebung für Text UND Rahmen ---
+        // --- Colour drives both text and border ---
         let titleColor = "text-red-500"; 
         let themeColor = "border-red-600"; // Standard: Rot
         
@@ -427,10 +427,10 @@ export const ui = {
             themeColor = "border-orange-500";
         }
 
-        // Aktualisiert die Box-Klassen mit der korrekten Rahmenfarbe
+        // Apply the matching border colour to the box
         content.className = `max-w-xl w-full bg-slate-900 border-2 ${themeColor} p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto`;
 
-        // 1:1 dein Original HTML-Aufbau für den Inhalt!
+        
         content.innerHTML = `
             <h1 class="text-4xl font-black ${titleColor} mb-4">${title}</h1>
             <div class="text-lg text-slate-300 mb-8 italic">${text}</div>
@@ -459,7 +459,7 @@ export const ui = {
         const textEl = document.getElementById('excuse-text');
         
         if (modal && textEl) {
-            // Zufällige Ausrede holen aus DB.excuses
+            // Random excuse from DB.excuses
             let randomExcuse = "Sorry, mein Router hat einen schlechten Tag.";
             if (DB.excuses && DB.excuses.length > 0) {
                 randomExcuse = DB.excuses[Math.floor(Math.random() * DB.excuses.length)];
@@ -496,7 +496,7 @@ export const ui = {
         this.closeExcuseModal();
         this.log("Ausrede erfolgreich! Du bist entkommen.", "text-blue-400 italic");
         
-        // Zurück zum Idle
+        // Back to idle
         this.state.activeEvent = false;
         this.disableButtons(false);
         const term = document.getElementById('terminal-content');
@@ -519,10 +519,10 @@ export const ui = {
         modal.classList.add('flex');
         document.body.classList.add('overflow-hidden');
 
-        // 1. ITEMS SORTIEREN & ZÄHLEN
+        // 1. SORT AND COUNT ITEMS
         let normalItems = [];
         let questItems = [];
-        let foundItems = 0; // Gesamt-Zähler
+        let foundItems = 0; // running total
         let totalItems = Object.keys(DB.items).length;
 
         for (const [id, item] of Object.entries(DB.items)) {
@@ -539,7 +539,7 @@ export const ui = {
         const totalAchs = DB.achievements.length;
         const unlockedAchs = this.state.archive.achievements.length;
 
-        // Prozentrechnung für die Fortschrittsbalken
+        // Percentages for the progress bars
         const itemPercent = totalItems > 0 ? Math.round((foundItems / totalItems) * 100) : 0;
         const achPercent = totalAchs > 0 ? Math.round((unlockedAchs / totalAchs) * 100) : 0;
 
@@ -625,7 +625,7 @@ export const ui = {
         });
         html += `</div></div>`;
 
-        // --- B) LEGENDÄRE TROPHÄEN ---
+        // --- B) LEGENDARY TROPHIES ---
         if (questItems.length > 0) {
             html += `<div class="mb-8">
                 <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">
@@ -708,11 +708,11 @@ export const ui = {
 
                 if (ach.img) {
                     iconContent = `<img src="${ach.img}" class="w-full h-full object-contain drop-shadow-md" alt="${title}">`;
-                    // Kein Hintergrund, kein Rand, aber starker Pop-Out-Hover-Effekt (wie beim Team)
+                    // No background or border, but a strong hover pop-out, as on the team view
                     imgContainerClass = "w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50";
                 } else {
                     iconContent = ach.icon;
-                    // Fallback für Emojis: Mit grauem Kreis
+                    // Emoji fallback, on a grey circle
                     imgContainerClass = "text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50";
                 }
 
@@ -857,12 +857,12 @@ export const ui = {
             const card = document.createElement('div');
             card.className = "bg-slate-800 p-4 rounded-lg border border-slate-700 flex flex-col gap-3 relative group hover:border-slate-500 transition-colors overflow-visible"; 
             
-            // Prüfen, ob es der Spieler ist
+            // Is this the player?
             const isPlayer = char.name.includes("Müller") || char.role === "SysAdmin";
 
             // --- NEU: DER ABMAHNUNGS-STEMPEL ---
             let warningStampHTML = "";
-            // Prüfen: Ist es Müller UND hat er die Abmahnung (warningReceived) schon kassiert?
+            // Müller specifically, and has he already been reprimanded?
             if (isPlayer && this.state.warningReceived) {
                 warningStampHTML = `
                 <div class="absolute top-2 right-2 md:right-4 transform rotate-12 pointer-events-none z-50">
@@ -873,7 +873,7 @@ export const ui = {
             }
             // -----------------------------------
 
-            // Ruf und Logik nur berechnen, wenn NICHT Spieler
+            // Reputation only matters for everyone except the player
             let currentRep = 0;
             let statusText = "NEUTRAL";
             let barColor = "bg-slate-500";
@@ -911,7 +911,7 @@ export const ui = {
                 fillPercent = (currentRep + 100) / 2;
             }
 
-            // HTML Bausteine für Status & Balken (nur wenn nicht Müller)
+            // Status and bar markup, skipped for Müller
             const statusBadgeHTML = isPlayer ? '' : `
                 <span class="text-[10px] font-bold uppercase tracking-widest ${statusColor} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded ml-2 shrink-0">
                     ${statusText}
@@ -973,7 +973,7 @@ export const ui = {
     // --- INTRANET SYSTEM ---
     openIntranet: function() {
         const modal = document.getElementById('intranet-modal');
-        // iFrame bei jedem Öffnen auf die Startseite zurücksetzen (Optional, aber gut)
+        // Reset the iframe to the start page on every open
         const frame = document.getElementById('intranet-frame');
         if(frame) frame.src = "assets/intranet/index.html"; 
         
@@ -1016,15 +1016,15 @@ export const ui = {
         
         // --- BLINDFLUG CHECK ---
         if (this.state.blindStats) {
-            floatEl.innerText = '?'; // Zeigt nur ein Fragezeichen
+            floatEl.innerText = '?'; // blind mode shows only a question mark
         } else {
             floatEl.innerText = `${sign}${value}`;
         }
 
-        // 2. Farbe festlegen (Abhängig vom Balken, unabhängig ob gut/schlecht)
+        // 2. Colour follows the bar, regardless of good or bad
         let color = 'text-white'; // Fallback
         if (elementId === 'val-fl') {
-            // Faulheit = Immer Grün
+            // Laziness is always green
             color = 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]';
         } else if (elementId === 'val-al') {
             // Aggro = Immer Orange
@@ -1046,16 +1046,16 @@ export const ui = {
 
         document.body.appendChild(floatEl);
 
-        // 4. Animation auslösen (Schwebt nach oben, verblasst langsam)
+        // 4. Float upwards and fade out
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                // Schwebt ruhig 40px nach oben
+                // drifts 40px up
                 floatEl.style.transform = 'translate(-50%, -40px) scale(1)';
                 floatEl.style.opacity = '0';
             });
         });
 
-        // 5. Müllabfuhr (Element nach 3 Sekunden löschen)
+        // 5. Clean up after three seconds
         setTimeout(() => {
             floatEl.remove();
         }, 3000);
@@ -1063,10 +1063,10 @@ export const ui = {
     
     triggerShake: function(a, c) {
         if (!this.state.screenShake) return;
-        // Wackelt nur, wenn eine Entscheidung massive Auswirkungen (>30) hat
+        // Only shakes for decisions with heavy consequences, above 30
         if (a >= 30 || c >= 30) {
             document.body.classList.remove('animate-shake');
-            void document.body.offsetWidth; // Force Reflow (damit die Animation neu startet)
+            void document.body.offsetWidth; // force a reflow so the animation restarts
             document.body.classList.add('animate-shake');
             
             setTimeout(() => {
@@ -1082,7 +1082,7 @@ export const ui = {
 
         const term = document.getElementById('terminal-content');
         
-        // Etwas weicheres, aber immer noch retro-mäßiges Design (Emerald statt grellem Grün)
+        // Softer than the classic terminal green, still retro
         term.className = "flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner";
         term.innerHTML = "";
 
@@ -1105,10 +1105,10 @@ export const ui = {
             if (i < bootLines.length) {
                 term.innerHTML += `<div class="fade-in mb-1">> ${bootLines[i]}</div>`;
                 i++;
-                // Verlangsamt: Zwischen 300 und 600 Millisekunden pro Zeile
+                // Between 300 and 600 milliseconds per line
                 setTimeout(printLine, 300 + Math.random() * 300);
             } else {
-                // Am Ende 1,5 Sekunden stehen lassen, damit man den letzten Satz in Ruhe lesen kann
+                // Hold for 1.5 seconds so the last line can be read
                 setTimeout(() => {
                     this.state.activeEvent = false;
                     this.disableButtons(false);
@@ -1120,9 +1120,9 @@ export const ui = {
         printLine();
     },
     
-    // --- UI HELPER FÜR SAVEGAME ---
+    // --- SAVEGAME UI HELPERS ---
     ui: {
-        // Öffnet das Export Fenster
+        // Opens the export dialog
         openExportModal: function() {
             const modal = document.getElementById('save-export-modal');
             const area = document.getElementById('export-area');
@@ -1138,7 +1138,7 @@ export const ui = {
             document.body.classList.add('overflow-hidden');
         },
 
-        // Öffnet das Import Fenster
+        // Opens the import dialog
         openImportModal: function() {
             const modal = document.getElementById('save-import-modal');
             const area = document.getElementById('import-area');
@@ -1153,7 +1153,7 @@ export const ui = {
             document.body.classList.add('overflow-hidden');
         },
 
-        // Schließt beide Fenster
+        // Closes both dialogs
         closeModals: function() {
             document.getElementById('save-export-modal').classList.add('hidden');
             document.getElementById('save-export-modal').classList.remove('flex');
@@ -1187,7 +1187,7 @@ export const ui = {
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
             
-            // 1. Säubern: Leerzeichen vorne/hinten und unsichtbare Zeichen entfernen
+            // 1. Trim whitespace and strip invisible characters
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
@@ -1215,7 +1215,7 @@ export const ui = {
                     throw new Error("Format ungültig (Kein Trennzeichen gefunden).");
                 }
 
-                // Checksumme prüfen
+                // Verify the checksum
                 const calcedSum = engine.calculateChecksum(base64);
                 if (calcedSum !== checksum) {
                     console.error("Checksum Mismatch:", calcedSum, "vs", checksum);
@@ -1235,9 +1235,9 @@ export const ui = {
                 }
 
                 // --- NEU: SICHERER MERGE ---
-                // Holt das aktuelle, fehlerfreie 3.1+ Archiv-Gerüst
+                // Start from the current archive template
                 const currentTemplate = JSON.parse(JSON.stringify(engine.state.archive));
-                // Verschmilzt das alte Savegame schonend mit dem neuen Gerüst
+                // Merge the imported save into it without losing new fields
                 const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
 
                 // Speichern des reparierten/gemergten Archivs
@@ -1316,15 +1316,15 @@ export const ui = {
     renderGlobalStats: function(globalData) {
         const content = document.getElementById('global-stats-content');
         
-        // Hole die lokalen Stats als Basis
+        // Local stats form the baseline
         const s = this.state.archive.stats || {};
         const started = s.daysStarted || 0;
         const surv = s.daysSurvived || 0;
         const rage = s.daysRageQuit || 0;
         const fired = s.daysFired || 0;
 
-        // --- NEU: SICHERHEITSNETZ FÜR 'UNDEFINED' ---
-        // Wenn Steam noch keine aggregierten Daten hat (undefined) oder leer antwortet
+        // --- Guard against missing data ---
+        // Steam has not aggregated anything yet, or replied empty
         if (!globalData || typeof globalData !== 'object' || Object.keys(globalData).length === 0) {
             content.innerHTML = `
                 <div class="text-center py-12 px-4 fade-in">
@@ -1340,7 +1340,7 @@ export const ui = {
             return;
         }
 
-        // Helfer zum Auslesen der Steam-Zahlen (Bulletproof für verschiedene API Formate)
+        // Reads a Steam figure, tolerating the different shapes the API returns
         const getStat = (name) => {
             let val = globalData[name];
             if (val === undefined || val === null) return 0;
@@ -1353,7 +1353,7 @@ export const ui = {
         const gRage = getStat('stat_ragequit');
         const gFired = getStat('stat_fired');
 
-        // --- Nur beendete Tage als Basis nehmen! ---
+        // --- Only completed days count ---
         const totalCompleted = surv + rage + fired;
         const gTotalCompleted = gSurv + gRage + gFired;
         
@@ -1540,13 +1540,13 @@ export const ui = {
         if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
         const styleSelect = document.getElementById('setting-music-style'); if(styleSelect) styleSelect.value = this.state.musicStyle;
         
-        // --- Soft-Reset Button Logik (Ausgrauen im Hauptmenü & Schwierigkeits-Wahl) ---
+        // --- Soft reset button, greyed out in the main menu and difficulty picker ---
         const softResetBtn = document.getElementById('btn-soft-reset');
         const introModal = document.getElementById('intro-modal');
         const diffModal = document.getElementById('difficulty-modal');
         
         if (softResetBtn) {
-            // Prüfen, ob das Intro, das Schwierigkeits-Modal oder das Tutorial gerade aktiv ist
+            // Is the intro, the difficulty modal or the tutorial currently active?
             const isIntroOpen = introModal && introModal.style.display !== 'none';
             const isDiffOpen = diffModal && (diffModal.style.display === 'flex' || !diffModal.classList.contains('hidden'));
             const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
@@ -1629,7 +1629,7 @@ export const ui = {
 	toggleShowHotkeys: function(isOn) {
         this.state.showHotkeys = isOn;
         localStorage.setItem('layer8_showhotkeys', isOn);
-        this.renderHotkeys(); // Aktualisiert die 4 Hauptbuttons sofort
+        this.renderHotkeys(); // refresh the four main buttons at once
     },
 	    
     toggleAutoHidePhone: function(isOn) {
@@ -1704,7 +1704,7 @@ export const ui = {
 
     finishBindingKey: function(key) {
         const forbiddenKeys = ['shift', 'control', 'alt', 'meta', 'capslock', 'tab'];
-        // NEU: Die hartcodierten Tasten für Fallbacks
+        // Keys that cannot be rebound
         const hardcodedKeys = ['4', '5', '6']; 
         
         if (forbiddenKeys.includes(key.toLowerCase())) return;
@@ -1712,7 +1712,7 @@ export const ui = {
         let pressedKey = key === " " ? "Space" : key;
         const currentBind = this.state.keyBinds[this.state.actionToBind];
         
-        // 1. Abbruch mit Escape oder derselben Taste
+        // 1. Cancel with escape or by pressing the same key again
         if (key.toLowerCase() === 'escape' || (currentBind && currentBind.toLowerCase() === pressedKey.toLowerCase())) {
             this.state.isBindingKey = false;
             this.state.actionToBind = null;
@@ -1720,7 +1720,7 @@ export const ui = {
             return;
         }
 
-        // --- NEU: Sperre für 4, 5 und 6 mit visuellem Feedback ---
+        // --- 4, 5 and 6 are reserved, with visual feedback ---
         if (hardcodedKeys.includes(pressedKey)) {
             let conflictBtn = document.getElementById('bind-' + this.state.actionToBind);
             if (conflictBtn) {
@@ -1730,11 +1730,11 @@ export const ui = {
                 
                 setTimeout(() => {
                     conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                    conflictBtn.classList.add('bg-amber-500', 'text-black'); // Zurück zum gelben "Warte"-Design
+                    conflictBtn.classList.add('bg-amber-500', 'text-black'); // back to the amber "waiting" state
                     conflictBtn.innerText = "Drücke Taste...";
                 }, 800);
             }
-            return; // Abbrechen, aber im Bind-Modus bleiben!
+            return; // reject the key but stay in binding mode
         }
         // ---------------------------------------------------------
         
@@ -1795,7 +1795,7 @@ export const ui = {
     },
     
     resetKeybinds: function() {
-        // Auf Standard zurücksetzen
+        // Restore the defaults
         this.state.keyBinds = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
@@ -1804,7 +1804,7 @@ export const ui = {
         this.updateSettingsUI();
         this.playAudio('ui');
         
-        // Visuelles Feedback: Alle Buttons blinken kurz grün auf
+        // Visual feedback: every button flashes green briefly
         const buttons = document.querySelectorAll('[id^="bind-"]');
         buttons.forEach(btn => {
             btn.classList.add('!bg-green-900/40', '!border-green-500', '!text-green-400');
@@ -1827,22 +1827,22 @@ export const ui = {
             let btn = document.getElementById(btnId);
             if (btn) {
                 
-                // Prüfen, ob schon ein Badge existiert
+                // Does a badge already exist?
                 let kbd = btn.querySelector('.hotkey-badge');
                 
-                // --- NEU: Wenn deaktiviert, Badge löschen und überspringen ---
+                // --- Disabled: remove the badge and move on ---
                 if (!this.state.showHotkeys) {
                     if (kbd) kbd.remove();
                     continue;
                 }
                 // -------------------------------------------------------------
                 
-                // Button auf 'relative' setzen für die absolute Positionierung des Badges
+                // The button needs position:relative to anchor the badge
                 btn.classList.add('relative');
                 
                 if (!kbd) {
                     kbd = document.createElement('kbd');
-                    // Styling: Oben rechts in die Ecke, leicht transparent
+                    // Top right corner, slightly transparent
                     kbd.className = 'hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded shadow-sm opacity-80 pointer-events-none';
                     btn.appendChild(kbd);
                 }
@@ -1863,16 +1863,16 @@ export const ui = {
             let optIndex = 1;
             const buttons = container.querySelectorAll('button');
             buttons.forEach(btn => {
-                // Weiter-Buttons überspringen
+                // Skip continue buttons
                 if (btn.innerText.includes('WEITER') || btn.innerText.includes('MITTAGS')) return;
 
                 let kbd = btn.querySelector('kbd');
                 
-                // 1. Wenn Hotkeys AUS sind -> Löschen
+                // 1. Hotkeys off -> remove
                 if (!this.state.showHotkeys) {
                     if (kbd) kbd.remove();
                 } 
-                // 2. Wenn Hotkeys AN sind -> Updaten oder Erstellen
+                // 2. Hotkeys on -> update or create
                 else {
                     let key = "";
                     if (optIndex === 1) key = this.state.keyBinds.opt1;
@@ -1886,11 +1886,11 @@ export const ui = {
                         if(key.startsWith('Arrow')) key = key.replace('Arrow', '');
                         
                         if (kbd) {
-                            kbd.innerText = key.toUpperCase(); // Nur Text updaten
+                            kbd.innerText = key.toUpperCase(); // text only
                         } else {
-                            // Badge existiert nicht? Neu erschaffen!
+                            // No badge yet, build one
                             kbd = document.createElement('kbd');
-                            // Standard-Klasse für Terminal/Phone
+                            // Default styling for terminal and phone
                             kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors";
                             
                             // Email-Sonderfarbe
@@ -1900,7 +1900,7 @@ export const ui = {
                             
                             kbd.innerText = key.toUpperCase();
                             
-                            // In den rechten Container packen
+                            // Into the right-hand container
                             const rightDiv = btn.querySelector('div.shrink-0.flex.items-center');
                             if (rightDiv) rightDiv.appendChild(kbd);
                         }
@@ -1934,7 +1934,7 @@ export const ui = {
     sendReportMail: function() {
         try {
             // --- CONFIG ---
-            // WICHTIG: Aus /viewform am Ende wird /formResponse !
+            // The trailing /viewform has to become /formResponse
             const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc2uwIVCYnmsQ_MpJNpXjc7kX7DlXoHYXMUUZwAWjwrtTHJDg/formResponse";
             const IDS = {
                 cat: "entry.1431680664",
@@ -2008,7 +2008,7 @@ ${logText}
             formData.append(IDS.desc, descVal);
             formData.append(IDS.debug, logData);
 
-            // --- SILENT POST REQUEST (Der magische No-Cors Trick) ---
+            // --- Silent POST via no-cors: the response is opaque, which is fine ---
             fetch(FORM_URL, {
                 method: 'POST',
                 mode: 'no-cors', // Verhindert Sicherheits-Blockaden vom Browser
@@ -2024,7 +2024,7 @@ ${logText}
                     sendBtn.classList.add('!bg-green-600');
                 }
                 
-                // Nach 1.5 Sekunden: Fenster zu und aufräumen
+                // Close and clean up after 1.5 seconds
                 setTimeout(() => {
                     this.closeReportModal();
                     
@@ -2034,7 +2034,7 @@ ${logText}
                         sendBtn.classList.remove('opacity-50', 'cursor-not-allowed', '!bg-green-600');
                         sendBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
                     }
-                    // Textfeld für den nächsten Report leeren
+                    // Clear the field for the next report
                     document.getElementById('report-desc').value = "";
                     
                 }, 1500);

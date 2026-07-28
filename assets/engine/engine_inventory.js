@@ -7,7 +7,7 @@ export const inventory = {
         const modal = document.getElementById('inventory-modal');
         const grid = document.getElementById('full-inventory-grid');
         
-        // Grid leeren und Layout für 2 Sektionen vorbereiten
+        // Clear the grid and prepare the two-section layout
         grid.innerHTML = '';
         grid.className = "flex flex-col gap-6 w-full"; 
 
@@ -34,7 +34,7 @@ export const inventory = {
                 ? 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' 
                 : 'inv-slot relative group cursor-default';
 
-            // SPEZIAL: Das Buch muss anklickbar sein, auch wenn es ein Quest-Item ist!
+            // Special case: the book stays clickable even though it is a quest item
             if (itemData.id === 'corp_chronicles') {
                 baseClass = 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40 shadow-[0_0_15px_rgba(251,191,36,0.3)]';
             }
@@ -53,19 +53,19 @@ export const inventory = {
                     mainContent = dbItem.icon;
                 }
 
-                // --- POSITIONIERUNGS-TRICK FÜR DEN RAND ---
+                // --- EDGE HANDLING FOR THE TOOLTIP ---
                 let posClass = "left-1/2 -translate-x-1/2"; // Standard: Zentriert
                 let arrowPos = "left-1/2 -translate-x-1/2"; 
                 
                 if (index !== undefined) {
-                    let col = index % 5; // Wir berechnen die Spalte (0 bis 4)
+                    let col = index % 5; // column, 0 to 4
                     
                     if (col === 0) {
-                        // Ganz links: Tooltip links andocken, Pfeil auf 20px (left-5) schieben
+                        // Leftmost: anchor the tooltip left, move the arrow to 20px
                         posClass = "left-0 translate-x-0";
                         arrowPos = "left-5 translate-x-0"; 
                     } else if (col === 4) {
-                        // Ganz rechts: Tooltip rechts andocken, Pfeil von rechts schieben
+                        // Rightmost: anchor the tooltip right, move the arrow in from the right
                         posClass = "right-0 left-auto translate-x-0";
                         arrowPos = "right-5 left-auto translate-x-0";
                     }
@@ -83,7 +83,7 @@ export const inventory = {
                 `;
             }
 
-            // Label unten (pointer-events-none verhindert, dass der Text die Maus blockiert!)
+            // Label underneath. pointer-events-none keeps it from swallowing hovers.
             let labelHtml = `<div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate pointer-events-none">${dbItem ? dbItem.name : '???'}</div>`;
 
             // Inhalt setzen
@@ -103,7 +103,7 @@ export const inventory = {
                     } else {
                         slot.className += ' cursor-not-allowed'; 
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                        // Overlay für Cooldown (wird einfach angehängt)
+                        // Cooldown overlay, simply appended
                         slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-black text-white text-xl">${wait}</span></div>`;
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
@@ -134,7 +134,7 @@ export const inventory = {
             gridNormal.appendChild(renderSlot(item, false, index));
         });
 
-        // Leere Slots auffüllen (bis 10)
+        // Pad the grid with empty slots (up to 10)
         let fillCount = Math.max(0, 10 - normalItems.length);
         for(let i=0; i<fillCount; i++) {
             let slot = document.createElement('div');
@@ -187,14 +187,14 @@ export const inventory = {
         // --- LORE ITEM CHECK ---
         if (id === 'corp_chronicles') {
             this.showLoreModal();
-            return; // Modal wird nicht benötigt, wir zeigen das Lore-Fenster
+            return; // no modal needed, the lore window takes over
         }
         
         // --- ONE-CLICK ITEM LOGIK ---
         if (this.state.oneClickItem) {
             this.state.pendingItem = id;
             this.confirmUseItem();
-            return; // Beendet die Funktion sofort, Modal poppt nicht auf!
+            return; // stop here, no modal
         }
 
         // Daten holen
@@ -205,10 +205,10 @@ export const inventory = {
         let displayContent = "❓";
         if (itemDB) {
             if (itemDB.img) {
-                // Wenn ein Bild existiert, bauen wir einen IMG-Tag mit passenden Tailwind-Klassen
+                // With an image, build an img tag carrying the matching classes
                 displayContent = `<img src="${itemDB.img}" class="w-full h-full object-contain drop-shadow-md" alt="${itemDB.name}">`;
             } else {
-                // Fallback auf das Emoji
+                // Fall back to the emoji
                 displayContent = itemDB.icon;
             }
         }
@@ -242,10 +242,10 @@ export const inventory = {
             warn = "Einweg-Therapie! Wenn alle Blasen geplatzt sind, ist der Spaß vorbei.";
         }
 
-        // Modal befüllen
+        // Fill the modal
         this.state.pendingItem = id; 
         
-        // WICHTIG: Hier innerHTML nutzen, damit das Bild gerendert wird!
+        // innerHTML on purpose: the content contains an img tag
         document.getElementById('item-confirm-icon').innerHTML = displayContent;
         
         document.getElementById('item-confirm-title').innerText = title;
@@ -258,7 +258,7 @@ export const inventory = {
         document.body.classList.add('overflow-hidden');
     },
 
-    // 2. Bestätigung: Jetzt wirklich tun
+    // 2. Confirmed - actually do it
     confirmUseItem: function() {
 		this.playAudio('ui');
         let id = this.state.pendingItem;
@@ -266,7 +266,7 @@ export const inventory = {
 
         this.closeItemConfirm(); // Fenster zu
         
-        // Helper: Prüfen, ob Inventar offen ist (für Refresh der Anzeige)
+        // Is the inventory open? Decides whether the view needs refreshing.
         const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
 
         // --- LOGIK ---
@@ -279,12 +279,12 @@ export const inventory = {
             this.log("Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -5)", "text-green-400");
         }
 
-        // B. VERBRAUCHSGÜTER
+        // B. CONSUMABLES
         else if (['energy', 'donut', 'bubble_wrap', 'sandwich', 'chocolate'].includes(id)) {
             let index = this.state.inventory.findIndex(i => i.id === id);
             
             if (index > -1) {
-                this.state.inventory.splice(index, 1); // Item aus Array löschen
+                this.state.inventory.splice(index, 1); // drop it from the inventory
                 
                 if (id === 'energy') {
                     this.state.fl = Math.max(0, this.state.fl - 15);

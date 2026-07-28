@@ -20,7 +20,7 @@ export const core = {
     // --- HELPER FOR SAFE SAVE/LOAD MERGING ---
     deepMerge: function(target, source) {
         for (const key in source) {
-            // Arrays überschreiben wir direkt (fürs Inventar etc. meist das sicherste)
+            // Arrays are replaced wholesale - safest for the inventory and similar lists
             if (Array.isArray(source[key])) {
                 target[key] = [...source[key]];
             } 
@@ -124,7 +124,7 @@ export const core = {
         if(data) {
             try {
                 const loadedArchive = JSON.parse(data);
-                // NEU: Deep Merge verhindert, dass alte Speicherstände neue Features löschen!
+                // Deep merge so an older save cannot wipe fields added since
                 this.state.archive = this.deepMerge(this.state.archive, loadedArchive);
                 
                 if(!this.state.archive.items) this.state.archive.items = [];
@@ -159,13 +159,13 @@ export const core = {
     },
 
     saveSystem: function() {
-        // WICHTIG: Vor dem Speichern den aktuellen Ruf ins Archiv kopieren
+        // Copy the current reputation into the archive before writing
         this.state.archive.reputation = { ...this.state.reputation };
         
-        // Dann ab in den LocalStorage
+        // Then persist
         localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
         
-        // Keybinds ebenfalls im LocalStorage speichern
+        // Key bindings are persisted too
         localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
 
         // Mirror progress to cloud storage (desktop only, no-op on the web).
@@ -189,19 +189,19 @@ export const core = {
         }
     },
     
-    // Startet das Spiel und prüft, ob ein Standard-Tag gesetzt ist
+    // Starts the game, honouring a saved default difficulty
     start: function() {
 		this.playMusic('office');
         document.getElementById('intro-modal').style.display = 'none';
         
-        // Prüfen, ob der Spieler eine Standard-Schwierigkeit festgelegt hat
+        // Did the player pin a default difficulty?
         const defaultDiff = localStorage.getItem(this.KEYS.defaultDiff) || 'ask';
         
         if (defaultDiff !== 'ask') {
-            // Modal überspringen und direkt mit der gespeicherten Auswahl starten!
+            // Skip the dialog and go straight in
             this.setDifficulty(defaultDiff);
         } else {
-            // Ganz normal das Auswähl-Modal zeigen
+            // Otherwise show the picker
             const diffModal = document.getElementById('difficulty-modal');
             if(diffModal) {
                 diffModal.style.display = 'flex';
@@ -211,12 +211,12 @@ export const core = {
         }
     },
 
-    // Setzt Schwierigkeit und startet dann erst den Loop (oder das Tutorial)
+    // Applies the difficulty, then starts the day (or the tutorial)
     setDifficulty: function(level) {
         document.getElementById('difficulty-modal').style.display = 'none';
         document.body.classList.remove('overflow-hidden');
         
-        // Buttons für die halbe Sekunde Ladezeit sperren
+        // Lock the buttons for the half second of setup
         this.disableButtons(true);
         
         if (level === 'easy') {
@@ -237,14 +237,14 @@ export const core = {
         
         this.updateUI();
 
-        // Tutorial starten (Verzögert, damit UI fertig gerendert ist)
+        // Start the tutorial, delayed so the UI has finished rendering
         setTimeout(() => {
-            // Wir prüfen direkt über den Speicher, ob das Tutorial schon gemacht wurde!
+            // Read the flag straight from storage
             if (typeof tutorial !== 'undefined' && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
-                // Tutorial ist neu -> Zeigt das Modal. Das Spiel wartet auf den Klick.
+                // Not played yet -> show the modal, the game waits for the click
                 tutorial.start();
             } else {
-                // Tutorial ist bereits abgeschlossen oder fehlt -> Direktes Spiel
+                // Already done or unavailable -> straight into the day
                 this.reset();
             }
         }, 500);
@@ -253,12 +253,12 @@ export const core = {
     reset: function() {
 		this.playAudio('ui');
 		
-        // --- 1. PARTY LOOP (Wenn die Party bereits läuft) ---
+        // --- 1. PARTY LOOP (only once the gala is running) ---
         if (this.state.isPartyMode) {
             this.state.activeEvent = true;
             this.disableButtons(true);
             
-            // Ab 12 Stationen kommt das dynamische Finale!
+            // After 12 stations the finale kicks in
             if (this.state.partyProgress >= 12) {
                 let finaleId = 'party_finale_standard';
                 if (this.state.al >= 100) finaleId = 'party_finale_rage';
@@ -266,7 +266,7 @@ export const core = {
                 else if (this.state.al < 40 && this.state.fl < 40) finaleId = 'party_finale_hero';
                 else if (this.state.fl >= 50 && this.state.al <= 60) finaleId = 'party_finale_gossip';
                 
-                // --- UHRZEIT FÜRS FINALE AUF 23:00 UHR SETZEN ---
+                // --- The finale happens at 23:00 ---
                 this.state.time = 23 * 60;
                 this.updateUI();
                 
@@ -285,7 +285,7 @@ export const core = {
             term.innerHTML = `<div class="text-4xl md:text-6xl mb-4">🤖</div><h1 class="text-2xl font-bold text-cyan-400">H.A.L.G.E.R.D. BEREIT</h1><p>Warte auf Eingabe...</p>`;
             
             tutorial.advance();
-            return; // Verhindert, dass Mails, News oder der Morgen triggern
+            return; // keeps mail, news and the morning mood out of the party
         }
         // -----------------------------------------------------------------
 		
@@ -307,7 +307,7 @@ export const core = {
         term.innerHTML = `<div class="text-6xl mb-4">🖥️</div><h1 class="text-2xl font-bold">SYSTEM BEREIT</h1><p>Wähle eine Aktion unten.</p>`;
         
         this.checkRandomEmail();
-        this.checkForNews(); // Prüft auf News im Leerlauf
+        this.checkForNews(); // news only fires while idle
     },
 
     // Blitzschneller Neustart ohne Page-Reload
@@ -339,10 +339,10 @@ export const core = {
         // newly added field can never be forgotten here.
         Object.assign(this.state, freshDay(this.state.difficultyMult));
 
-        // Ticker News Header sofort auf Standard zurücksetzen
+        // Reset the ticker header immediately
         this.renderHeader();
         
-        // UI Aufräumen (Phone, Email, Log)
+        // Clean up phone, mail and log
         document.getElementById('email-modal')?.classList.add('hidden');
         document.getElementById('phone-app')?.classList.add('hidden');
         document.getElementById('phone-standby')?.classList.remove('hidden');
@@ -353,61 +353,61 @@ export const core = {
         this.state.lastLogMsg = "";
         this.log("System-Neustart initiiert...", "text-blue-400");
         
-        // Spiel über den Morgen-Verteiler normal neu starten
+        // Restart through the normal morning path
         this.updateUI();
         
         // --- Boot-Sequenz dazwischenschalten ---
         this.playBootSequence(() => {
-            this.reset(); // Erst wenn die Boot-Sequenz fertig ist, startet der neue Tag!
+            this.reset(); // the new day starts only after the boot sequence
         });
     },
 
     checkAchievements: function() {
-        // --- PLAYSTYLE: EXTREME ---
+        // --- PLAYSTYLE: EXTREMES ---
         
         // 1. DER ASKET (Kein Kaffee) - Ab 16:00
-        // Belohnt das Aushalten von Aggro ohne Hilfsmittel
+        // Rewards enduring the aggro without help
         if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
             this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
         }
 
         // 2. KOFFEIN-SCHOCK (Zu viel Kaffee)
-        // Erhöht auf 8 -> Man muss fast jede Stunde zur Maschine rennen
+        // Raised to 8 - roughly one trip to the machine per hour
         if(this.state.coffeeConsumed >= 8 && !this.hasAch('ach_coffee')) {
             this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
         }
 
         // 3. GHOSTING (Mails ignorieren)
-        // Erhöht auf 5 -> Das ist richtig gefährlich für den Radar-Wert
+        // Raised to 5 - genuinely dangerous for the radar value
         if(this.state.emailsIgnored >= 5 && !this.hasAch('ach_ignore')) {
             this.unlockAchievement('ach_ignore', '👻 Ghosting-Profi', '5 Mails ignoriert. Deine "Entf"-Taste glüht.');
         }
 
         // 4. SCHWARZES LOCH (Volles Inventar)
-        // Angepasst auf 8 -> Man muss alles mitnehmen, auch Müll
+        // Set to 8 - you have to hoard even the junk
         if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
             this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
         }
 
-        // --- STATS STATUS ---
+        // --- STAT THRESHOLDS ---
         if(this.state.fl >= 80 && this.state.fl < 100 && !this.hasAch('ach_lazy')) {
             this.unlockAchievement('ach_lazy', '🦥 Faulpelz', '80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben.');
         }
         
-        if (this.state.al >= 95 && !this.hasAch('ach_rage')) { // Auf 95% erhöht -> Riskanter
+        if (this.state.al >= 95 && !this.hasAch('ach_rage')) { // raised to 95% - riskier
             this.unlockAchievement('ach_rage', '🤬 180 Puls', 'Nur noch ein dummer Anruf und es knallt. (95% Aggro)');
         }
 
-        // --- ITEM SETS  ---
+        // --- ITEM SETS ---
         
-        // MACGYVER (Prüfe: Tape, Schraubendreher, Kabel, Handbuch)
+        // MACGYVER (needs tape, screwdriver, cable, manual)
         const tools = ['tape', 'screw', 'kabel', 'manual'];
         const hasAllTools = tools.every(toolId => this.state.inventory.find(i => i.id === toolId));
         if(hasAllTools && !this.hasAch('ach_macgyver')) {
             this.unlockAchievement('ach_macgyver', '🛠️ MacGyver', 'Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi.');
         }
         
-        // MILLIONÄR
+        // MILLIONAIRE
         if(this.state.inventory.find(i => i.id === 'black_card') && !this.hasAch('ach_rich')) {
             this.unlockAchievement('ach_rich', '💸 Der Millionär', 'Du hast dem Prinzen vertraut. Kündigung ist raus!');
         }
@@ -421,7 +421,7 @@ export const core = {
             this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
         }
 
-        // --- END GAME CHALLENGES (Zeitabhängig) ---
+        // --- LATE GAME CHALLENGES (time dependent) ---
         
         // NINJA (Heimlich faul) - Ab 14:00
         if(this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
@@ -438,7 +438,7 @@ export const core = {
             this.unlockAchievement('ach_workaholic', '👔 Streber', 'Du hast tatsächlich gearbeitet? Du machst uns anderen schlecht!');
         }
 
-        // Man hat genau 9 Tickets (Limit ist 10). Ein Anruf mehr und Game Over.
+        // Exactly 9 tickets, one below the limit. One more call would end it.
         if (this.state.time >= 975 && this.state.tickets === 9 && !this.hasAch('ach_risk')) {
             this.unlockAchievement('ach_risk', '🎢 Drahtseilakt', 'Feierabend mit 9 offenen Tickets. Das war verdammt knapp.');
         }
@@ -486,37 +486,37 @@ export const core = {
     hasAch: function(id) { return this.state.achievements.includes(id); },
 
     unlockAchievement: function(id, title, text) {
-        // 1. Session-Check: Haben wir diesen Erfolg in DIESEM aktuellen Spiel schon?
-        // Wenn ja -> Sofort abbrechen (verhindert Spam im Loop)
+        // 1. Session check: already earned during THIS run?
+        // If so, bail out immediately - stops it spamming inside the loop
         if (this.state.achievements.includes(id)) {
             return;
         }
 
-        // 2. Archiv-Check: Haben wir ihn früher schon mal geschafft? Und wenn ja, wie schwer?
+        // 2. Archive check: earned before? And if so, on which difficulty?
         
-        // Aktueller Schwierigkeitsgrad ermitteln (1=Easy, 2=Normal, 3=Hard)
+        // Current difficulty as a number (1 easy, 2 normal, 3 hard)
         let currentDiffVal = 1;
         if (this.state.difficultyMult >= 1.0) currentDiffVal = 2; // Mittwoch
         if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
 
-        // Gespeicherter Grad aus dem Archiv holen
+        // Pull the stored difficulty
         let savedDiffVal = 0; // 0 = Noch nie geschafft
         
-        // Sicherheits-Check: Existiert das Archiv korrekt?
+        // Guard against a malformed archive
         if (this.state.archive && this.state.archive.achievements && this.state.archive.achievements.includes(id)) {
             let savedDiffName = "easy";
-            // Prüfen ob wir die Schwierigkeit gespeichert haben
+            // Was a difficulty recorded?
             if (this.state.archive.achievementDiffs) {
                 savedDiffName = this.state.archive.achievementDiffs[id] || "easy";
             }
             
-            // Text zu Zahl umwandeln für Vergleich
+            // Map the name onto a comparable number
             if (savedDiffName === "normal") savedDiffVal = 2;
             else if (savedDiffName === "hard") savedDiffVal = 3;
             else savedDiffVal = 1; 
         }
 
-        // ENTSCHEIDUNG: Nur Benachrichtigen, wenn NEU (0) oder BESSER als vorher
+        // Only notify when new (0) or better than before
         let isNewOrBetter = (savedDiffVal === 0) || (currentDiffVal > savedDiffVal);
 
         // Record it for this session so check 1 catches it on the next frame
@@ -527,15 +527,15 @@ export const core = {
         // achievement — the backend may be out of sync with this machine.
         platform.achievement(id);
 
-        // NUR wenn es neu oder ein Upgrade ist: Feedback geben (Log & Toast)
+        // Feedback (log and toast) only for a new entry or an upgrade
         if (isNewOrBetter) {
             
-            // Text für Log vorbereiten
+            // Prepare the log line
             let logText = `ERFOLG FREIGESCHALTET: ${title}`;
             let logColor = "text-yellow-400 font-bold"; // Standard Gold
             let toastDesc = text;
 
-            // Falls es ein Upgrade war (z.B. Easy -> Hard)
+            // Upgrade case, e.g. easy -> hard
             if (savedDiffVal > 0) {
                 const diffNames = ["", "FREITAG", "MITTWOCH", "MONTAG"];
                 logText = `🏆 ERFOLG AUFGEWERTET: ${title} (${diffNames[currentDiffVal]})`;
@@ -543,10 +543,10 @@ export const core = {
                 toastDesc = `Upgrade auf ${diffNames[currentDiffVal]}!`;
             }
 
-            // A. Log schreiben
+            // A. Write the log line
             this.log(logText, logColor);
 
-            // B. Toast anzeigen
+            // B. Show the toast
             const container = document.getElementById('achievement-container');
             if(container) {
                 const toast = document.createElement('div');
@@ -554,36 +554,36 @@ export const core = {
                 toast.innerHTML = `<div class="ach-icon">🏆</div><div class="ach-text"><span class="ach-title">${title}</span><br><span class="ach-desc">${toastDesc}</span></div>`;
                 container.appendChild(toast);
                 
-                // Nach 5 Sekunden entfernen
+                // Remove after five seconds
                 setTimeout(() => { 
                     if(toast.parentNode) toast.remove(); 
                 }, 5000);
             }
         }
 
-        // 3. Im Hintergrund immer speichern (falls Upgrade nötig)
+        // 3. Always persist in the background, in case this was an upgrade
         this.saveAchievementToArchive(id, currentDiffVal);
     },
 
-    // Hilfsfunktion zum Speichern mit Schwierigkeitsgrad
+    // Stores an achievement together with the difficulty it was earned on
     saveAchievementToArchive: function(id, currentDiffVal) {
-        // Sicherstellen, dass Strukturen existieren
+        // Make sure the structures exist
         if (!this.state.archive.achievements) this.state.archive.achievements = [];
         if (!this.state.archive.achievementDiffs) this.state.archive.achievementDiffs = {};
 
-        // Mapping Zahl -> Name
+        // Number back to name
         let diffName = "easy";
         if (currentDiffVal === 2) diffName = "normal";
         if (currentDiffVal === 3) diffName = "hard";
 
-        // Prüfen was gespeichert ist
+        // What is on record?
         let savedDiffName = this.state.archive.achievementDiffs[id] || "none";
         let savedDiffVal = 0;
         if (savedDiffName === "easy") savedDiffVal = 1;
         if (savedDiffName === "normal") savedDiffVal = 2;
         if (savedDiffName === "hard") savedDiffVal = 3;
 
-        // Speichern wenn neu oder besser
+        // Write when new or better
         if (!this.state.archive.achievements.includes(id) || currentDiffVal > savedDiffVal) {
             
             if (!this.state.archive.achievements.includes(id)) {
@@ -648,19 +648,19 @@ export const core = {
         // A. RAGE QUIT (Aggro >= 100)
         if(this.state.al >= 100) {
             
-            // Logik für das "Ventil" basierend auf Schwierigkeit
+            // Where the "release valve" drops aggro back to, per difficulty
             let resetTo = 50; // Standard (Mittwoch)
             if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
             if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
 
-            // Prüfen, ob der Spieler heute schon ausgerastet ist
+            // Has the player already blown up today?
             if(!this.state.rageWarningReceived) {
                 this.state.rageWarningReceived = true;
                 
-                // Setze Aggro zurück
+                // Reset aggro
                 this.state.al = resetTo; 
                 
-                // --- 10 allgemeine Ausraster-Texte ---
+                // --- Ten generic blow-up texts ---
                 const rageTexts = [
                     "Du gehst in die Teeküche und starrst regungslos die rotierende Mikrowelle an. Nachdem du dir bildhaft vorgestellt hast, wie alles brennt, kehrst du an deinen Platz zurück.",
                     "Du schließt dich im Kopierraum ein und schreist deine Wut in ein Paket frisches Druckerpapier. Es dämpft den Ton hervorragend. Du richtest deine Krawatte.",
@@ -680,7 +680,7 @@ export const core = {
                 
                 this.showModal("VENTIL GEÖFFNET", warningText, false);
             } else {
-                // Das ist der zweite Ausraster -> Game Over
+                // Second blow-up -> game over
                 this.incrementStat('daysRageQuit');
                 let diary = this.generateDiaryEntry("RAGE"); 
                 
@@ -699,11 +699,11 @@ export const core = {
 
             this.state.pendingEnd = { 
                 title: "GEFEUERT", 
-                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + this.buildDayReport() + diary, // <-- Hier + diary anhängen
+                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + this.buildDayReport() + diary, 
                 isWin: false 
             };
         }
-        // C. WARNUNG (Tickets >= 7) -> Das bleibt so!
+        // C. WARNING at 7 tickets
         else if(this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
@@ -711,7 +711,7 @@ export const core = {
         // D. FEIERABEND (Zeit abgelaufen) ODER PARTY-START
         else if(this.state.time >= 16*60+30) {
             
-            // --- PARTY TRIGGER AM FEIERABEND ---
+            // --- PARTY TRIGGER AT CLOSING TIME ---
             let currentDiffStr = "easy";
             let currentDiffVal = 1;
             if (this.state.difficultyMult === 1.0) { currentDiffStr = "normal"; currentDiffVal = 2; }
@@ -731,9 +731,9 @@ export const core = {
             const partyKey = this.KEYS.partyPlayed[currentDiffStr];
             const partyPlayed = localStorage.getItem(partyKey) === 'true';
 
-            // Wenn alle Bedingungen erfüllt sind -> PARTY STATT FEIERABEND
+            // All conditions met -> the gala replaces the normal end of day
             if (isVeteran && !partyPlayed) {
-                // Nicht sofort starten, sondern als "Pending" markieren!
+                // Do not start it here, queue it as pending
                 this.state.pendingEnd = {
                     isParty: true,
                     partyKey: partyKey,
@@ -741,10 +741,10 @@ export const core = {
                 };
                 return; 
             }
-            // --- ENDE PARTY TRIGGER ---
+            // --- END PARTY TRIGGER ---
 
 
-            // Wenn keine Party stattfindet -> Ganz normaler Feierabend
+            // No party -> ordinary end of day
 			this.incrementStat('daysSurvived');
             let diary = this.generateDiaryEntry("WIN");
 
@@ -757,7 +757,7 @@ export const core = {
         // E. GEFEUERT (Chef-Radar >= 100)
         else if(this.state.cr >= 100) {
 			            
-            // Logik für die "Zweite Chance" basierend auf Schwierigkeit
+            // Where the "second chance" drops the radar back to, per difficulty
             let resetTo = 50; // Standard (Mittwoch)
             if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
             if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
@@ -765,10 +765,10 @@ export const core = {
             if(!this.state.chefWarningReceived) {
                 this.state.chefWarningReceived = true;
                 
-                // Setze Radar zurück basierend auf Schwierigkeit
+                // Reset the radar per difficulty
                 this.state.cr = resetTo; 
                 
-                // --- 10 allgemeine Boss-Warnungen ---
+                // --- Ten generic boss warnings ---
                 const bossTexts = [
                     "Das Telefon klingelt sturm, bevor die Tür aufgerissen wird. Der Chef steht schnaufend im Rahmen: 'Müller! Noch so ein Ding und Sie können Ihre Kaffeetasse packen!'",
                     "Eine E-Mail vom Chef ploppt auf, komplett in roter Schrift und Comic Sans: 'MÜLLER! IN MEIN BÜRO! SOFORT!' Nach einem ohrenbetäubenden Anschiss kehrst du an den Platz zurück.",
@@ -783,7 +783,7 @@ export const core = {
                 ];
                 let randomBoss = bossTexts[Math.floor(Math.random() * bossTexts.length)];
                 
-                // Der Text wirkt nun natürlich und schließt direkt mit dem Systemwert ab.
+                // Reads naturally and ends on the concrete system value.
                 let warningText = `${randomBoss} (Radar auf ${resetTo}% gesetzt).`;
                 if(this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
                 
@@ -795,7 +795,7 @@ export const core = {
 
                 this.state.pendingEnd = { 
                     title: "GEFEUERT", 
-                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + this.buildDayReport() + diary, // <-- Hier + diary anhängen
+                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + this.buildDayReport() + diary, 
                     isWin: false 
                 };
             }
@@ -811,7 +811,7 @@ export const core = {
                 return;
             }
             
-            // Musik zurücksetzen: Schaltet die Boss-Musik aus und kehrt zum gewählten Büro-Vibe zurück
+            // Drop the boss music and return to the chosen office style
             this.playMusic('office');
             
             // Freeze every background activity once the day is really over
@@ -829,14 +829,14 @@ export const core = {
         await ensure('party');
         this.playAudio('ui');
         const endData = this.state.pendingEnd;
-        this.state.pendingEnd = null; // Den Marker wieder löschen
+        this.state.pendingEnd = null; // clear the marker
         
-        // Party-Status aktivieren
+        // Switch into party mode
         this.state.isPartyMode = true;
         this.state.partyProgress = 0;
         this.state.currentPartyKey = endData.partyKey; 
         
-        // Stats für die Party auf 0 setzen
+        // The party starts from a clean slate
         this.state.al = 0;
         this.state.fl = 0;
         this.state.cr = 0;
@@ -851,7 +851,7 @@ export const core = {
         this.playMusic('gala');
         this.updatePresence('party');
         
-        // Und jetzt geht die Falle zu: Das Party-Event wird gerendert!
+        // And the trap closes: render the opening party event
         this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
     },
     
@@ -888,16 +888,16 @@ export const core = {
             // 2. JSON Stringify
             const jsonString = JSON.stringify(data);
 
-            // 3. Base64 Encoding (UTF-8 Safe für Emojis 🏆)
+            // 3. Base64, UTF-8 safe so emoji survive
             const base64 = btoa(encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g,
                 function toSolidBytes(match, p1) {
                     return String.fromCharCode('0x' + p1);
             }));
 
-            // 4. Prüfziffer berechnen
+            // 4. Checksum
             const checksum = this.calculateChecksum(base64);
 
-            // 5. Code zurückgeben: "BASE64-CHECKSUM"
+            // 5. Return "BASE64-CHECKSUM"
             return `${base64}-${checksum}`;
 
         } catch (e) {
@@ -910,7 +910,7 @@ export const core = {
     generateDiaryEntry: function(endReason, partyText = "") {
         const state = this.state;
         
-        // Hilfsfunktion: Baut aus ["A", "B", "C"] einen Satz "A, B und C"
+        // Turns ["A", "B", "C"] into the phrase "A, B und C"
         const formatList = (arr) => {
             if (arr.length === 0) return "";
             if (arr.length === 1) return arr[0];
@@ -918,21 +918,21 @@ export const core = {
             return arr.join(", ") + " und " + last;
         };
 
-        // ZUFALLS-GENERATOR: Wählt einen zufälligen Textbaustein aus einem Array
+        // Picks one phrasing at random
         const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-        // 1. EVENT-ANALYSE (Orte)
+        // 1. EVENT ANALYSIS (locations)
         const usedArray = Array.from(state.usedIDs);
         const serverVisits = usedArray.filter(id => id.startsWith('srv_')).length;
         const callVisits = usedArray.filter(id => id.startsWith('call_')).length;
         const questVisits = usedArray.filter(id => id.startsWith('sq_')).length;
 
         // ==========================================
-        // ABSATZ 1: Die Grundstimmung & der Ort
+        // PARAGRAPH 1: overall mood and location
         // ==========================================
         let p1 = "";
         
-        // Grundstimmung (Achievements)
+        // Overall mood, driven by achievements
         if (state.achievements.includes('ach_rage')) {
             p1 += pick([
                 "Heute war ich ein wandelndes Pulverfass. Ein falsches Wort und ich hätte den Router angezündet. ",
@@ -971,7 +971,7 @@ export const core = {
             ]);
         }
 
-        // Haupt-Aufenthaltsort
+        // Where the day was mostly spent
         if (questVisits > serverVisits && questVisits > callVisits) {
             p1 += pick([
                 "Anstatt mich um echte Probleme zu kümmern, bin ich lieber ziellos durch die Flure gegeistert.",
@@ -999,14 +999,14 @@ export const core = {
         }
 
         // ==========================================
-        // ABSATZ 2: Begegnungen (Achievements & Lore Items)
+        // PARAGRAPH 2: encounters (achievements and lore items)
         // ==========================================
         let p2 = "";
         let encounters = [];
         const hasAch = (id) => state.achievements.includes(id);
         const hasItem = (id) => state.inventory.some(i => i.id === id);
 
-        // Story-Erfolge mit 3 Variationen
+        // Story achievements, three phrasings each
         if (hasAch('ach_mentor')) encounters.push(pick(["ich Azubi Kevin vor dem totalen IT-Kollaps bewahrt habe", "ich Kevins Haut gerettet habe", "Kevin mir nun auf ewig etwas schuldig ist"]));
         if (hasAch('ach_ally')) encounters.push(pick(["ich eine unheilige Allianz mit Chantal aus dem Marketing geschmiedet habe", "Chantal und ich jetzt ein tödliches Team sind", "das Marketing nun in meiner Schuld steht"]));
         if (hasAch('ach_rockstar')) encounters.push(pick(["mir Gabi ihr feinstes Death-Metal-Mixtape anvertraut hat", "ich mit Gabi musikalisch voll auf einer Wellenlänge war", "Gabi und ich den Empfang gerockt haben"]));
@@ -1017,7 +1017,7 @@ export const core = {
         if (hasAch('ach_hacker')) encounters.push(pick(["ich mir illegale Admin-Rechte im System verschafft habe", "ich mich unbemerkt ins Root-Verzeichnis gehackt habe", "ich dank Root-Passwort jetzt der absolute Gott im Netzwerk bin"]));
         if (hasAch('ach_rich')) encounters.push(pick(["ich dem nigerianischen Prinzen mein Vertrauen geschenkt habe", "ich unfassbar reich werde (falls der Scam echt ist)", "ich bald Millionen auf dem Konto habe (hoffentlich)"]));
         
-        // Lore Items mit 3 Variationen
+        // Lore items, three phrasings each
         if (hasItem('corp_chronicles')) encounters.push(pick(["ich die verbotene Firmenchronik studiert habe", "ich finstere Wahrheiten in einem alten Buch entdeckt habe", "ich die düsteren Geheimnisse des Gründers in der Chronik gelesen habe"]));
         if (hasItem('prince_letter')) encounters.push(pick(["ich diesen absurden Prinzen-Brief mit mir herumschleppe", "ich heute königliche Post erhalten habe", "mir ein echter Brief von einem Prinzen in die Hände gefallen ist"]));
 
@@ -1029,7 +1029,7 @@ export const core = {
             ]);
         }
 
-        // Gewohnheiten mit 3 Variationen
+        // Habits, three phrasings each
         let habits = [];
         if (hasAch('ach_ignore')) habits.push(pick(["die Entf-Taste bei E-Mails mein absoluter bester Freund war", "ich das Ignorieren von Mails zur Kunst erhoben habe", "ich heute einen Rekord im Löschen ungelesener E-Mails aufgestellt habe"]));
         if (hasAch('ach_hoarder')) habits.push(pick(["ich meinen Rucksack mit absolutem Müll vollgestopft habe", "ich heute alles eingesteckt habe, was nicht niet- und nagelfest war", "ich wie ein echter Loot-Goblin jeden Schrott im Büro gesammelt habe"]));
@@ -1043,7 +1043,7 @@ export const core = {
         }
 
         // ==========================================
-        // ABSATZ 2.5: Warnungen (Abmahnung & Ventil)
+        // PARAGRAPH 2.5: warnings (reprimand and release valve)
         // ==========================================
         let pWarn = "";
         let warnings = [];
@@ -1070,7 +1070,7 @@ export const core = {
         }
 
         // ==========================================
-        // ABSATZ 3: Das Finale (Game Over / Win)
+        // PARAGRAPH 3: the ending
         // ==========================================
         let p3 = "";
         if (endReason === "RAGE") {
@@ -1103,7 +1103,7 @@ export const core = {
         }
 
         // ==========================================
-        // HTML ZUSAMMENBAUEN
+        // ASSEMBLE THE HTML
         // ==========================================
         return `
             <details class='mt-6 group text-left'>
