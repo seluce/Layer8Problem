@@ -20,6 +20,13 @@
            web build never flashes buttons it does not support; engine.init()
            strips the class on desktop and removes the .platform-web elements. */
         .platform-desktop { display: none !important; }
+
+        /* News ticker. Was injected into the header on every news item, which
+           re-created the rule dozens of times per day. */
+        @keyframes newsScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
     </style>
 </head>
 <body class="text-xs md:text-sm">

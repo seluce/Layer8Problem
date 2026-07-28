@@ -1,6 +1,9 @@
 import { DB } from '../../data.js';
 import { platform } from '../../platform.js';
 
+// Maximum number of lines kept in the activity log.
+const LOG_MAX_ENTRIES = 50;
+
 export const ui = {
 
     // --- NEWS TICKER ---
@@ -32,12 +35,7 @@ export const ui = {
             setTimeout(() => {
                 // LOGIK-FIX: Nutzt jetzt einfach w-full, da der Parent in der index.html die volle Breite erlaubt!
                 header.innerHTML = `
-                    <style>
-                        @keyframes newsScroll {
-                            0% { transform: translateX(0); }
-                            100% { transform: translateX(-100%); }
-                        }
-                    </style>
+                    <!-- keyframes newsScroll lives in index.html, not re-injected per news item -->
                     <div class="w-full h-4 overflow-hidden flex items-center" style="-webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent); mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);">
                         <div class="whitespace-nowrap inline-block" style="padding-left: 100%; animation: newsScroll 30s linear forwards;">
                             <span class="text-amber-500 font-bold mr-2">[GLOBAL CORP BROADCAST]</span>
@@ -283,12 +281,24 @@ export const ui = {
             ghost.style.transform = `translateY(60px) scale(0.1)`;
         }, 10);
 
-        // 4. Aufräumen & Rucksack wackeln lassen
-        ghost.addEventListener('transitionend', () => {
+        // 4. Clean up and bump the backpack icon.
+        //
+        // Two problems with relying on transitionend alone: it fires once per
+        // animated property (opacity AND transform), and it never fires at all
+        // when the tab is in the background - which left the ghost image in the
+        // DOM forever. finish() is idempotent and a timer backs it up.
+        let finished = false;
+        const finish = () => {
+            if (finished) return;
+            finished = true;
+            clearTimeout(fallback);
             ghost.remove();
             target.classList.add('scale-110', 'brightness-125', 'transition-all');
             setTimeout(() => target.classList.remove('scale-110', 'brightness-125'), 300);
-        });
+        };
+
+        const fallback = setTimeout(finish, 1500); // transition is 1000ms
+        ghost.addEventListener('transitionend', finish, { once: true });
     },
     
     updatePhoneVisibility: function() {
@@ -358,7 +368,18 @@ export const ui = {
         let m = this.state.time % 60;
         let time = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
         
-        feed.innerHTML = `<div><span class="text-slate-500">[${time}]</span> <span class="${colorClass || ''}">${msg}</span></div>` + feed.innerHTML;
+        if (!feed) return;
+
+        // insertAdjacentHTML instead of rebuilding innerHTML: the old version
+        // re-parsed the entire log on every entry, which is O(n^2) over a full
+        // workday and destroyed every existing node - killing running CSS
+        // animations and any text the player had selected.
+        feed.insertAdjacentHTML('afterbegin',
+            `<div><span class="text-slate-500">[${time}]</span> <span class="${colorClass || ''}">${msg}</span></div>`);
+
+        // Cap the backlog. Nobody scrolls back 200 lines, and an unbounded log
+        // just grows the DOM for the rest of the day.
+        while (feed.children.length > LOG_MAX_ENTRIES) feed.lastElementChild.remove();
     },
     
     // Log auf/zuklappen für Mobile

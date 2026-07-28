@@ -1,3 +1,14 @@
+[3.4.1] - 2026-07-28
+
+System & Stabilität:
+* Das Aktivitätsprotokoll wird nun beim Anhängen nicht mehr vollständig neu aufgebaut. Bei langen Arbeitstagen führte das zu spürbaren Verzögerungen, unterbrach laufende Animationen und hob eine bestehende Textmarkierung auf. Zusätzlich ist das Protokoll auf die letzten 50 Einträge begrenzt.
+* Das eingesammelte Gegenstandsbild verschwand gelegentlich nicht mehr vom Bildschirm, wenn das Spiel während der Animation in den Hintergrund geriet. Die Aufräumlogik greift jetzt in jedem Fall.
+* Der Tagesbericht wurde bisher nach jeder einzelnen Aktion im Hintergrund erzeugt, obwohl er nur beim Feierabend oder einer Niederlage sichtbar wird.
+
+Anzeige & Layout:
+* Die Musikstücke werden erst geladen, wenn sie tatsächlich abgespielt werden. Bisher lud der Browser beim Start alle sechs Titel gleichzeitig herunter, einschließlich der Musik für Katastrophen und die Gala.
+* Die Animation des Nachrichtentickers wird nicht mehr bei jeder Meldung neu in die Seite geschrieben.
+
 [3.4.0] - 2026-07-28
 
 System & Stabilität:

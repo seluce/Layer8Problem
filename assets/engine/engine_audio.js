@@ -102,10 +102,15 @@ export const audio = {
             'boss': new Audio('assets/music/movementproposition.opus'),
             'gala': new Audio('assets/music/discocontutti.opus')
         };
-        
+
         const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
 
         for (let key in this.bgmTracks) {
+            // Without this the browser starts downloading all six tracks the
+            // moment they are constructed - including the boss and gala themes
+            // most players never hear. They now load on first play().
+            this.bgmTracks[key].preload = 'none';
+
             if (key === 'boss' || key === 'gala') {
                 this.bgmTracks[key].loop = true; // Boss & Gala loopen endlos
             } else {
@@ -115,11 +120,13 @@ export const audio = {
                 this.bgmTracks[key].addEventListener('ended', () => {
                     if (this.state.musicStyle === 'radio') {
                         // Radio-Modus: Ein neues, zufälliges Lied aussuchen
-                        let nextTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
-                        // Verhindern, dass dasselbe Lied zweimal hintereinander läuft
-                        while(nextTrack === key) {
-                            nextTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
-                        }
+                        // Pick from the other tracks directly instead of
+                        // re-rolling until it differs - a while loop here would
+                        // spin forever if officeTracks ever shrank to one entry.
+                        const others = officeTracks.filter(t => t !== key);
+                        const nextTrack = others.length
+                            ? others[Math.floor(Math.random() * others.length)]
+                            : key;
                         this.playMusic(nextTrack); 
                     } else {
                         // Dauerschleife-Modus (z.B. User hat explizit 'lofi' gewählt): Lied neu starten

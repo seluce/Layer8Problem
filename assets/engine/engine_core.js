@@ -594,25 +594,21 @@ export const core = {
         }
     },
     
-    checkEndConditions: function() {
-		// Blockieren, wenn Party
-		if (this.state.isPartyMode) return;
-        // WICHTIG: Wenn schon ein Ende wartet, nicht nochmal prüfen (verhindert Dopplungen)
-        if (this.state.pendingEnd) return;
-
-        // 1. BERICHT GENERIEREN
-        
-        // Schwierigkeit ermitteln
+    // Builds the end-of-day report card.
+    //
+    // Used to be inlined at the top of checkEndConditions(), which runs from
+    // updateUI() after every single action - so this HTML was assembled dozens
+    // of times per day and thrown away every time. Now it is only called from
+    // the branches that actually show it.
+    buildDayReport: function() {
         let diffName = "MITTWOCH (Normal)";
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
 
-        // --- Warnungs-Badges für das End-Modal --- 
-        let rageBadge = this.state.rageWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-orange-400 bg-orange-950/30 border-2 border-orange-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block -rotate-3 shadow-[0_0_8px_rgba(249,115,22,0.3)] pointer-events-none">VENTIL GENUTZT</div>' : ''; 
-        let chefBadge = this.state.chefWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-red-500 bg-red-950/30 border-2 border-red-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block rotate-2 shadow-[0_0_8px_rgba(239,68,68,0.3)] pointer-events-none">ABGEMAHNT</div>' : '';
+        const rageBadge = this.state.rageWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-orange-400 bg-orange-950/30 border-2 border-orange-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block -rotate-3 shadow-[0_0_8px_rgba(249,115,22,0.3)] pointer-events-none">VENTIL GENUTZT</div>' : '';
+        const chefBadge = this.state.chefWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-red-500 bg-red-950/30 border-2 border-red-500/80 rounded-sm px-1.5 py-0.5 mt-2 inline-block rotate-2 shadow-[0_0_8px_rgba(239,68,68,0.3)] pointer-events-none">ABGEMAHNT</div>' : '';
 
-        // Stats-Box bauen
-        let statsHTML = `
+        const statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
                 <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Tagesbericht: <span class="text-white font-bold">${diffName}</span></div>
                 <div class="grid grid-cols-3 gap-2 text-center font-mono">
@@ -634,15 +630,19 @@ export const core = {
             </div>
         `;
 
-        // Achievements auflisten
-        let achHTML = this.state.achievedTitles.length > 0 ? 
-            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>` 
+        const achHTML = this.state.achievedTitles.length > 0
+            ? `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>`
             : "";
 
-        // Der komplette HTML Block für das Modal
-        let fullReport = statsHTML + achHTML;
+        return statsHTML + achHTML;
+    },
 
-        // 2. END-BEDINGUNGEN PRÜFEN
+    // Runs from updateUI() after every action, so it stays cheap: no report is
+    // built until a branch actually needs one.
+    checkEndConditions: function() {
+        if (this.state.isPartyMode) return;
+        // An ending is already queued - checking again would duplicate it
+        if (this.state.pendingEnd) return;
 
         // A. RAGE QUIT (Aggro >= 100)
         if(this.state.al >= 100) {
@@ -685,7 +685,7 @@ export const core = {
                 
                 this.state.pendingEnd = { 
                     title: "RAGE QUIT", 
-                    text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + fullReport + diary,
+                    text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + this.buildDayReport() + diary,
                     isWin: false 
                 };
             }
@@ -698,7 +698,7 @@ export const core = {
 
             this.state.pendingEnd = { 
                 title: "GEFEUERT", 
-                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + fullReport + diary, // <-- Hier + diary anhängen
+                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + this.buildDayReport() + diary, // <-- Hier + diary anhängen
                 isWin: false 
             };
         }
@@ -749,7 +749,7 @@ export const core = {
 
             this.state.pendingEnd = { 
                 title: "FEIERABEND", 
-                text: "16:30! Du hast den Tag überlebt.<br>" + fullReport + diary,
+                text: "16:30! Du hast den Tag überlebt.<br>" + this.buildDayReport() + diary,
                 isWin: true 
             };
         }
@@ -794,7 +794,7 @@ export const core = {
 
                 this.state.pendingEnd = { 
                     title: "GEFEUERT", 
-                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + fullReport + diary, // <-- Hier + diary anhängen
+                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + this.buildDayReport() + diary, // <-- Hier + diary anhängen
                     isWin: false 
                 };
             }
