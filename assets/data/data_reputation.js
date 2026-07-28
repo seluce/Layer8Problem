@@ -1362,7 +1362,7 @@ export const reputation = [
         text: "Du hast es eilig zum Serverraum. Aber Egon versperrt den Gang mit seinem Wischmopp. Der Boden ist trocken, aber das gelbe Warnschild steht da. 'Kein Durchgang. Trocknungszeit: 20 Minuten.' Er grinst fies.",
         opts: [
             { 
-                t: "Einfach durchlaufen ", 
+                t: "Einfach durchlaufen", 
                 next: "path_egon_mess",
                 rep: { "Egon": -10 },
                 m: 5, f: 0, a: 5, c: 5, 

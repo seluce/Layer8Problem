@@ -3662,7 +3662,6 @@ export const server = [
                 t: "Ein Skript vom Boot-Stick nutzen (Joker)", 
                 rep: { "Kevin": 5 },
                 req: "usb_stick",
-                next: "path_awkward_usb", 
                 m: 5, f: -5, a: -5, c: 0, 
                 r: "Du bootest den Server neu. Der Lüfter stoppt für 5 Sekunden. Kevin zieht den Arm raus. Kein peinliches Gerangel, keine Zuschauer. Perfekt gelöst." 
             },

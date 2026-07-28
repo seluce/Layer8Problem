@@ -790,6 +790,46 @@ export const calls = [
             lie: { txt: "Sie kommen mit 3 Löschzügen. Evakuierung.", rep: { "Kevin": 5 }, m: 60, f: -10, a: 50, c: 50 }
         }
     },
+    {
+        id: "call_kevin_button_3",
+		char: "Kevin",
+        reqStory: "kevin_gas",
+        title: "Brandschutz Nord GmbH",
+        startNode: "root",
+        nodes: {
+            root: {
+                text: "'Guten Tag, Ihre Löschanlage in Raum 4 hat ausgelöst. Wir sehen das hier live auf der Fernwartung.'\n\nEine Pause.\n\n'Ihr Mitarbeiter steht übrigens noch drin und filmt das mit dem Handy. Das Zeug ist nicht giftig, aber die Neubefüllung kostet 8.400 Euro netto.'",
+                opts: [
+                    { t: "Kevin sofort rausholen.", next: "rescue" },
+                    { t: "'Kann man das nicht zurückpumpen?'", next: "refund" },
+                    { t: "Als geplanten Anlagentest verbuchen.", next: "cover" }
+                ]
+            },
+            rescue: {
+                text: "Du rennst runter. Kevin steht mitten im Nebel und dreht ein Video. 'Bro, das sieht aus wie in Silent Hill!'\n\nDu ziehst ihn am Kragen raus. Auf dem Flur schaut euch die halbe Buchhaltung zu.",
+                opts: [
+                    { t: "'Wir reden nachher.'", next: "res_rescue" }
+                ]
+            },
+            refund: {
+                text: "'...Nein. Das ist Löschgas, kein Luftballon.' Der Techniker klingt, als wäre das nicht die erste Firma, die das fragt.",
+                opts: [
+                    { t: "War einen Versuch wert.", next: "res_refund" }
+                ]
+            },
+            cover: {
+                text: "'Ein Test. Verstehe.' Du hörst Tastaturklappern. 'Ich trage das so ein. Der Wartungsbericht geht wie üblich in Kopie an Ihre Geschäftsführung.'\n\nDaran hattest du nicht gedacht.",
+                opts: [
+                    { t: "Natürlich. Danke.", next: "res_cover" }
+                ]
+            }
+        },
+        results: {
+            res_rescue: { txt: "Kevin ist unversehrt und um eine Anekdote reicher. Die Rechnung landet trotzdem auf deinem Tisch.", rep: { "Kevin": 10 }, m: 35, f: -5, a: 25, c: 30 },
+            res_refund: { txt: "Die Anlage wird neu befüllt. 8.400 Euro, die in keinem Budget stehen. Frau Elster wird das finden.", rep: { "Frau Elster": -10 }, m: 25, f: 0, a: 20, c: 35 },
+            res_cover: { txt: "Offiziell war es ein Test. Der Bericht ist unterwegs zur Geschäftsführung, und darin steht das Wort 'Fehlauslösung'.", rep: { "Kevin": 5, "Dr. Wichtig": -10 }, m: 20, f: 10, a: 15, c: 55 }
+        }
+    },
 	{
 		id: "call_gabi_sugar",
 		char: "Gabi",
@@ -1993,7 +2033,7 @@ export const calls = [
                 ]
             },
             "hr_explain": {
-                text: "Sabine schweigt kurz. 'Ein Pulli... im Lüfter. Wissen Sie, wie das klingt? Wir buchen Sie und Kevin vorsorglich für das Seminar 'Professionelle Distanz im Büro'.' ",
+                text: "Sabine schweigt kurz. 'Ein Pulli... im Lüfter. Wissen Sie, wie das klingt? Wir buchen Sie und Kevin vorsorglich für das Seminar 'Professionelle Distanz im Büro'.'",
                 opts: [
                     { t: "Seufzen und zustimmen", next: "res_hr_seminar" }
                 ]

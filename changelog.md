@@ -1,3 +1,13 @@
+[3.6.2] - 2026-07-28
+
+Neuerungen:
+* Neues Ereignis: Löst Kevin im Serverraum die Löschanlage aus, meldet sich nun die Brandschutzfirma. Bisher endete dieser Zweig ohne Folgen, während der Feueralarm-Zweig eine Fortsetzung hatte.
+
+Für Entwickler:
+* Der Daten-Prüfer erkennt nun auch Story-Verzweigungen, die zwar gesetzt, aber von keinem Ereignis aufgegriffen werden - also Entscheidungen, die ins Leere laufen. Verzweigungen, die die Spiel-Engine selbst auswertet, werden dabei korrekt als genutzt erkannt.
+* Neue Textprüfungen: Platzhalter, leere oder auffällig kurze Texte, unpaarige Anführungszeichen, doppelte Leerzeichen und mehrfach verwendete Ergebnistexte.
+* 86 Textfelder hatten führende oder folgende Leerzeichen; bereinigt.
+
 [3.6.1] - 2026-07-28
 
 Anzeige & Layout:

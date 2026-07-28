@@ -5876,7 +5876,7 @@ export const sidequests = [
         id: "sq_bday_2c",
         title: "Das Geburtstagskind",
         reqStory: "path_cake_hide",
-        text: "Boss Dr. Wichtig tobt durch die Gänge. 'Wer hat meinen laktosefreien Veggie-Kuchen zum 50. weggeworfen?!' ",
+        text: "Boss Dr. Wichtig tobt durch die Gänge. 'Wer hat meinen laktosefreien Veggie-Kuchen zum 50. weggeworfen?!'",
         opts: [
             { 
                 t: "Kevin war's!", 
