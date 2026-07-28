@@ -71,7 +71,9 @@
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
+                    <!-- Web build only: the desktop version reaches export and import
+                         through its settings menu, which the intro can open directly. -->
+                    <div class="platform-web grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
                         <button onclick="engine.ui.openExportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
                             <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💾</span> Export
                         </button>

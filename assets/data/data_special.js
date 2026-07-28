@@ -471,7 +471,7 @@ export const special = {
 					t: "Mit Donut bestechen & vordrängeln", 
 					req: "donut",
 					m: 15, f: 5, a: -10, c: 0, 
-					r: "Du gibst dem Typen vor dir den Donut. Er lässt dich vor. In 15 Minuten bist du satt und entspannt. Ein Hoch auf die Korruption! (Item entfernt)" 
+					r: "Du gibst dem Typen vor dir den Donut. Er lässt dich vor. In 15 Minuten bist du satt und entspannt. Ein Hoch auf die Korruption!" 
 				},
 				{ 
 					t: "Die Nudeln eiskalt essen", 
@@ -611,7 +611,7 @@ export const special = {
 					t: "Gesundes Sandwich auspacken", 
 					rem: "sandwich", 
 					m: 30, f: -15, a: -5, c: 0,  
-					r: "'Gönn dir, Markus. Du siehst blass aus.' Du öffnest deinen Rucksack und beißt genüsslich in dein eigenes, perfektes Pastrami-Sandwich. Er ist völlig perplex von deiner Großzügigkeit, während du auf Wolke sieben kaust. (Item verbraucht)"  
+					r: "'Gönn dir, Markus. Du siehst blass aus.' Du öffnest deinen Rucksack und beißt genüsslich in dein eigenes, perfektes Pastrami-Sandwich. Er ist völlig perplex von deiner Großzügigkeit, während du auf Wolke sieben kaust."  
 				}, 
 				{  
 					t: "Extrem laut über den Topf niesen",  
@@ -677,7 +677,7 @@ export const special = {
 					t: "Energy Drink exen und sie vernichten", 
 					rem: "energy", 
 					m: 30, f: -15, a: -10, c: 5,  
-					r: "Das Taurin kickt heftig. Deine Reaktionen verzehnfachen sich. Du spielst wie ein entfesselter Gott und vernichtest sie 10:0. Sie stehen schweigend und gedemütigt da. Die Ehre der IT strahlt heller denn je. (Item verbraucht)"  
+					r: "Das Taurin kickt heftig. Deine Reaktionen verzehnfachen sich. Du spielst wie ein entfesselter Gott und vernichtest sie 10:0. Sie stehen schweigend und gedemütigt da. Die Ehre der IT strahlt heller denn je."  
 				}, 
 				{  
 					t: "Absichtlich extrem schlecht spielen",  
@@ -711,7 +711,7 @@ export const special = {
 					t: "Lieber Schokolade aus dem Vorrat essen", 
 					rem: "chocolate", 
 					m: 30, f: -15, a: -5, c: 0,  
-					r: "Du riskierst nicht dein Leben für einen Büro-Snack. Du ignorierst die tickende biologische Zeitbombe und greifst stattdessen zu deinem eigenen, haltbaren Zucker-Vorrat. Sicher ist sicher. (Item verbraucht)"  
+					r: "Du riskierst nicht dein Leben für einen Büro-Snack. Du ignorierst die tickende biologische Zeitbombe und greifst stattdessen zu deinem eigenen, haltbaren Zucker-Vorrat. Sicher ist sicher."  
 				} 
 			] 
 		},
@@ -802,7 +802,7 @@ export const special = {
 					t: "Einen Donut opfern und entspannen", 
 					rem: "donut", 
 					m: 30, f: -15, a: -15, c: 0,  
-					r: "Kühle, gefilterte Luft, das hypnotische Rauschen schwerer Maschinen und der pure, ungesunde Zucker in deinen Adern. Du hast dich abgekapselt und bist im absoluten SysAdmin-Himmel angekommen. (Item verbraucht)"  
+					r: "Kühle, gefilterte Luft, das hypnotische Rauschen schwerer Maschinen und der pure, ungesunde Zucker in deinen Adern. Du hast dich abgekapselt und bist im absoluten SysAdmin-Himmel angekommen."  
 				}, 
 				{  
 					t: "Auf dem Boden sitzen und ins Leere starren",  
@@ -832,7 +832,7 @@ export const special = {
 					t: "Dein Gourmet-Sandwich auspacken", 
 					rem: "sandwich", 
 					m: 30, f: -15, a: -10, c: 0,  
-					r: "Du ziehst dich demonstrativ aus dem Gerangel zurück und beißt grinsend in dein exzellentes Pastrami-Sandwich. Während sich die anderen um traurige Reste streiten, bist du dem System meisterhaft entkommen. (Item verbraucht)"  
+					r: "Du ziehst dich demonstrativ aus dem Gerangel zurück und beißt grinsend in dein exzellentes Pastrami-Sandwich. Während sich die anderen um traurige Reste streiten, bist du dem System meisterhaft entkommen."  
 				} 
 			] 
 		},

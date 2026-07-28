@@ -257,7 +257,7 @@ export const sidequests = [
                 loot: "usb_stick", 
                 next: "path_usb_keep", 
                 m: 5, f: 0, a: 0, c: 0, 
-                r: "Mit einer fließenden Bewegung lässt du den Stick in deiner Tasche verschwinden. Niemand hat es gesehen. Er gehört jetzt dir. Aber was ist drauf? (Inventar +1)" 
+                r: "Mit einer fließenden Bewegung lässt du den Stick in deiner Tasche verschwinden. Niemand hat es gesehen. Er gehört jetzt dir. Aber was ist drauf?" 
             },
             { 
                 t: "Am Empfang abgeben (Pflicht)", 
@@ -437,7 +437,7 @@ export const sidequests = [
                 t: "Ihm einen Donut opfern", 
                 rem: "donut", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Du legst den Donut auf den Boden. Bello springt runter und inhaliert das Gebäck. Der Weg zum Drucker ist frei. Bestechung funktioniert auch bei Tieren. (Item entfernt)" 
+                r: "Du legst den Donut auf den Boden. Bello springt runter und inhaliert das Gebäck. Der Weg zum Drucker ist frei. Bestechung funktioniert auch bei Tieren." 
             },
             { 
                 t: "Ihn mit dem Laserpointer weglocken", 
@@ -559,7 +559,7 @@ export const sidequests = [
                 rem: "cable", 
 				rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 10, c: -10, 
-                r: "Du gibst es ihm. Er montiert die Kamera. Sie zeigt jetzt direkt auf DEINE Bürotür. Der Chef sieht alles. Du hast dir selbst ins Knie geschossen. (Item entfernt)" 
+                r: "Du gibst es ihm. Er montiert die Kamera. Sie zeigt jetzt direkt auf DEINE Bürotür. Der Chef sieht alles. Du hast dir selbst ins Knie geschossen." 
             },
             { 
                 t: "Lügen: 'Bestimmt die Putzkolonne'", 
@@ -862,28 +862,28 @@ export const sidequests = [
                 loot: "manual", 
                 next: "loot_crate_taken",
                 m: 10, f: 5, a: 0, c: 0, 
-                r: "Du ziehst es aus dem Stapel. Es ist... ein 'Windows 95 Handbuch'! Antikes Wissen für echte Kenner. (Inventar +1)" 
+                r: "Du ziehst es aus dem Stapel. Es ist... ein 'Windows 95 Handbuch'! Antikes Wissen für echte Kenner." 
             },
             { 
                 t: "Mutig in den Kabelsalat greifen", 
                 loot: "cable", 
                 next: "loot_crate_taken",
                 m: 10, f: 5, a: 0, c: 0, 
-                r: "Du kämpfst mit dem Knoten und gewinnst! Ein langes, graues LAN-Kabel gehört jetzt dir. (Inventar +1)" 
+                r: "Du kämpfst mit dem Knoten und gewinnst! Ein langes, graues LAN-Kabel gehört jetzt dir." 
             },
             { 
                 t: "Blind nach dem roten 'Ding' wühlen",
                 loot: "stressball", 
                 next: "loot_crate_taken",
                 m: 10, f: 5, a: 0, c: 0, 
-                r: "Igit... was ist das? Ach, nur ein alter Wut-Ball! Er ist etwas klebrig, aber drückbar. (Inventar +1)" 
+                r: "Igit... was ist das? Ach, nur ein alter Wut-Ball! Er ist etwas klebrig, aber drückbar." 
             },
             { 
                 t: "Das silberne Glitzern untersuchen", 
                 loot: "tape", 
                 next: "loot_crate_taken",
                 m: 10, f: 5, a: 0, c: 0, 
-                r: "Der heilige Gral der Reparatur! Eine fast volle Rolle Panzertape. Damit kannst du das Universum flicken. (Inventar +1)" 
+                r: "Der heilige Gral der Reparatur! Eine fast volle Rolle Panzertape. Damit kannst du das Universum flicken." 
             }
         ]
     },
@@ -988,7 +988,7 @@ export const sidequests = [
                 next: "path_archive_stolen",
                 rep: { "Gabi": -2 }, 
                 m: 2, f: 5, a: 0, c: 0, 
-                r: "Du schiebst dir eine in den Mund. Schmeckt nach billigem Weinbrand und Staub. Aber du weißt jetzt, wo der Vorrat liegt. (Inventar +1)" 
+                r: "Du schiebst dir eine in den Mund. Schmeckt nach billigem Weinbrand und Staub. Aber du weißt jetzt, wo der Vorrat liegt." 
             },
             { 
                 t: "Ordner zurückstellen", 
@@ -1077,7 +1077,7 @@ export const sidequests = [
                 t: "Die Legende bestätigen", 
                 rep: { "Frau Elster": 2, "Dr. Wichtig": 10 },
                 m: 10, f: 5, a: -10, c: -10, 
-                r: "Du nickst ernst. 'Der Teppich ist das Herz der Firma, Chef.' Er ist gerührt und schenkt dir eine Schachtel 'Merci', die eigentlich für Kunden gedacht war. (Inventar +1)" 
+                r: "Du nickst ernst. 'Der Teppich ist das Herz der Firma, Chef.' Er ist gerührt und schenkt dir eine Schachtel 'Merci', die eigentlich für Kunden gedacht war." 
             },
             { 
                 t: "Gefahrenzulage fordern", 
@@ -1858,7 +1858,7 @@ export const sidequests = [
                 next: "path_dog_secret", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 15, f: -5, a: -20, c: 40, 
-                r: "Der Chef läuft purpurrot an. Die Halsschlagader pocht. 'Ich?! EIN HUND IM BÜRO?? DA KANN ICH JA GLEICH MEINE EIGENE KÜNDIGUNG SCHREIBEN!!!' Er knallt die Tür so fest zu, dass der Putz rieselt. Er tobt, aber er ist weg. (Chef +40!)" 
+                r: "Der Chef läuft purpurrot an. Die Halsschlagader pocht. 'Ich?! EIN HUND IM BÜRO?? DA KANN ICH JA GLEICH MEINE EIGENE KÜNDIGUNG SCHREIBEN!!!' Er knallt die Tür so fest zu, dass der Putz rieselt. Er tobt, aber er ist weg." 
             },
             { 
                 t: "Verkaufen: 'Das ist der neue Feel-Good-Manager'", 
@@ -2147,7 +2147,7 @@ export const sidequests = [
                 loot: "cable",
                 next: "path_desk_unplug", 
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du wirfst dich unter den Tisch. Zwischen Staubmäusen und alten Kaugummis reißt du das Stromkabel raus. Der Tisch stoppt abrupt auf 1,80m Höhe. Dabei findest du ein vergessenes LAN-Kabel! (Item erhalten!)" 
+                r: "Du wirfst dich unter den Tisch. Zwischen Staubmäusen und alten Kaugummis reißt du das Stromkabel raus. Der Tisch stoppt abrupt auf 1,80m Höhe. Dabei findest du ein vergessenes LAN-Kabel!" 
             },
             { 
                 t: "Gegengewicht: Draufsetzen", 
@@ -2265,7 +2265,7 @@ export const sidequests = [
                 loot: "usb_stick",
                 next: "path_shred_loot", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Vielleicht ist der Sensor voll? Du öffnest die Klappe unten. Im Papiermüll liegt ein USB-Stick, den wohl jemand versehentlich 'geschreddert' hat. Er sieht noch ganz aus! (Item erhalten!)" 
+                r: "Vielleicht ist der Sensor voll? Du öffnest die Klappe unten. Im Papiermüll liegt ein USB-Stick, den wohl jemand versehentlich 'geschreddert' hat. Er sieht noch ganz aus!" 
             }
         ]
     },
@@ -2342,7 +2342,7 @@ export const sidequests = [
                 rem: "usb_stick",
                 rep: { "Gabi": 10 },
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Du bringst ihn Gabi. Sie wird rot. 'Oh! Äh... danke. Den habe ich... gesucht.' Sie schenkt dir eine Schokolade als Schweigegeld. (Item entfernt)" 
+                r: "Du bringst ihn Gabi. Sie wird rot. 'Oh! Äh... danke. Den habe ich... gesucht.' Sie schenkt dir eine Schokolade als Schweigegeld." 
             }
         ]
     },
@@ -2455,7 +2455,7 @@ export const sidequests = [
                 t: "Gnade annehmen", 
                 loot: "chocolate",
                 m: 5, f: 0, a: -20, c: -10, 
-                r: "Das war es wert. Der Chef-Radar sinkt, weil Frau Elster jetzt überall in den höchsten Tönen von dir schwärmt. Und du hast Schokolade. (Inventar +1)" 
+                r: "Das war es wert. Der Chef-Radar sinkt, weil Frau Elster jetzt überall in den höchsten Tönen von dir schwärmt. Und du hast Schokolade." 
             },
             { 
                 t: "Gierig: 'Haben Sie auch noch Kaffee dazu?'", 
@@ -2856,13 +2856,13 @@ export const sidequests = [
                 t: "Schraubendreher einstecken", 
                 loot: "screw", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Ein erstklassiger Kreuzschlitz. Das Universum belohnt den Weg des geringsten Widerstands. (Inventar +1)" 
+                r: "Ein erstklassiger Kreuzschlitz. Das Universum belohnt den Weg des geringsten Widerstands." 
             },
             { 
                 t: "Kabelbinder mitnehmen", 
                 loot: "zip_ties", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Eine halbe Packung schwarze Kabelbinder. Immer gut zu gebrauchen. (Inventar +1)" 
+                r: "Eine halbe Packung schwarze Kabelbinder. Immer gut zu gebrauchen." 
             }
         ]
     },
@@ -2964,7 +2964,7 @@ export const sidequests = [
                 next: "path_intern_choc", 
                 rep: { "Kevin": 15 },
                 m: 10, f: 0, a: -10, c: 0, 
-                r: "Du drückst ihm die Schokolade in die Hand. Das Kauen beruhigt ihn sofort und er hört auf zu weinen. (Item verbraucht)" 
+                r: "Du drückst ihm die Schokolade in die Hand. Das Kauen beruhigt ihn sofort und er hört auf zu weinen." 
             },
             { 
                 t: "Tief in die Trickkiste greifen (Recovery)", 
@@ -3048,7 +3048,7 @@ export const sidequests = [
                 loot: "sandwich", 
                 next: "path_delivery_keep", 
                 m: 2, f: -5, a: -5, c: 5, 
-                r: "Du nimmst das Essen an dich. Gratis-Lunch auf Firmenkosten! (Inventar +1)" 
+                r: "Du nimmst das Essen an dich. Gratis-Lunch auf Firmenkosten!" 
             },
             { 
                 t: "Im dritten Stock nach dem Besitzer suchen", 
@@ -3292,7 +3292,7 @@ export const sidequests = [
                 rem: "donut",
                 rep: { "Markus": 5 },
                 m: 5, f: 5, a: -5, c: -5, 
-                r: "Markus nimmt den Donut. 'Bestechung? Akzeptiert.' Er beißt rein und geht. (Item entfernt)" 
+                r: "Markus nimmt den Donut. 'Bestechung? Akzeptiert.' Er beißt rein und geht." 
             },
             { 
                 t: "Gegenangriff: 'Ich lösche deine Leads.'", 
@@ -3325,7 +3325,7 @@ export const sidequests = [
                 rem: "chocolate",
                 next: "path_workout_watch", 
                 m: 30, f: 15, a: -10, c: 0, 
-                r: "Du lehnst dich an den Türrahmen, beißt in deine Schokolade und guckst dir das absurde Spektakel 30 Minuten lang in aller Ruhe wie eine Doku an. (Item verbraucht)" 
+                r: "Du lehnst dich an den Türrahmen, beißt in deine Schokolade und guckst dir das absurde Spektakel 30 Minuten lang in aller Ruhe wie eine Doku an." 
             }
         ]
     },
@@ -5383,7 +5383,7 @@ export const sidequests = [
                 req: "donut", 
                 next: "path_plant_donut", 
                 m: 5, f: -5, a: 5, c: 5, 
-                r: "Du stopfst das gezuckerte Gebäck tief in die Erde. Innovativ, aber vermutlich biologisch verheerend. (Item verbraucht)" 
+                r: "Du stopfst das gezuckerte Gebäck tief in die Erde. Innovativ, aber vermutlich biologisch verheerend." 
             },
             { 
                 t: "Den Rest alten Kaffee reinkippen", 
@@ -5571,7 +5571,7 @@ export const sidequests = [
                 req: "tape", 
                 next: "path_temp_tape", 
                 m: 10, f: 10, a: -10, c: -5, 
-                r: "Ein mächtiges Stück Panzertape sichert deine Wunschtemperatur. Absolute Dominanz. (Item verbraucht)" 
+                r: "Ein mächtiges Stück Panzertape sichert deine Wunschtemperatur. Absolute Dominanz." 
             }
         ]
     },

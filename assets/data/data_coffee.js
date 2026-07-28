@@ -467,13 +467,13 @@ export const coffee = [
                 t: "Kabelbinder nehmen", 
                 loot: "zip_ties", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "'Hier, nimm die ganze Packung.' Kabelbinder sind die Währung der IT. Ein guter Tausch. (Inventar +1)" 
+                r: "'Hier, nimm die ganze Packung.' Kabelbinder sind die Währung der IT. Ein guter Tausch." 
             },
             { 
                 t: "Panzertape nehmen", 
                 loot: "tape", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "'Das gute Gaffa. Klebt alles, auch Münder.' Er lacht dreckig. Du hast jetzt Profi-Tape. (Inventar +1)" 
+                r: "'Das gute Gaffa. Klebt alles, auch Münder.' Er lacht dreckig. Du hast jetzt Profi-Tape." 
             },
             { 
                 t: "Dankend ablehnen", 
@@ -834,7 +834,7 @@ export const coffee = [
             { 
                 t: "Dankbar annehmen & trinken", 
                 m: 15, f: -5, a: -10, c: 0, 
-                r: "Der Kaffee weckt deine Lebensgeister (+Energy). Leider setzt sich Jürgen auf deinen Schreibtisch: 'Also, wo war ich... genau, der Mähroboter!' Du hörst zu, weil du in seiner Schuld stehst." 
+                r: "Der Kaffee weckt deine Lebensgeister. Leider setzt sich Jürgen auf deinen Schreibtisch: 'Also, wo war ich... genau, der Mähroboter!' Du hörst zu, weil du in seiner Schuld stehst." 
             },
             { 
                 t: "Misstrauisch: 'Was willst du?'", 
@@ -859,14 +859,14 @@ export const coffee = [
                 loot: "tape", 
                 next: "path_loot_tape", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Eine fast volle Rolle Gaffa. Kann man immer brauchen. Du lässt sie schnell verschwinden. (Inventar +1)" 
+                r: "Eine fast volle Rolle Gaffa. Kann man immer brauchen. Du lässt sie schnell verschwinden." 
             },
             { 
                 t: "Kabelbinder nehmen", 
                 loot: "zip_ties", 
                 next: "path_loot_zip", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Ein Bündel Kabelbinder. Praktisch. Die schwarze Sorte, UV-beständig. Ein guter Fang. (Inventar +1)" 
+                r: "Ein Bündel Kabelbinder. Praktisch. Die schwarze Sorte, UV-beständig. Ein guter Fang." 
             }
         ]
     },
@@ -888,7 +888,7 @@ export const coffee = [
                 rem: "tape",
                 rep: { "Egon": 5 },
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Du ziehst die Rolle aus der Tasche. 'Wollte sie nur... aufheben.' Egon reißt sie dir aus der Hand. 'Ja ja. Finger weg.' (Item entfernt)" 
+                r: "Du ziehst die Rolle aus der Tasche. 'Wollte sie nur... aufheben.' Egon reißt sie dir aus der Hand. 'Ja ja. Finger weg.'" 
             },
             { 
                 t: "Tipp geben: 'Nimm Kaugummi.'",
@@ -916,7 +916,7 @@ export const coffee = [
                 rem: "zip_ties",
                 rep: { "Egon": 10 }, 
                 m: 10, f: -5, a: -10, c: 0, 
-                r: "Du gibst ihm die Binder zurück. 'Oh, danke Jung! Du rettest meinen Rücken.' Egon schuldet dir was. (Item entfernt)" 
+                r: "Du gibst ihm die Binder zurück. 'Oh, danke Jung! Du rettest meinen Rücken.' Egon schuldet dir was." 
             },
             { 
                 t: "Sarkasmus: 'Hast du kein Tape?'",
@@ -2405,7 +2405,7 @@ export const coffee = [
             { 
                 t: "Eintunken & genießen", 
                 m: 10, f: 5, a: -25, c: 0, 
-                r: "Du tunkst den Keks kurz in den heißen Kaffee. Er schmilzt auf der Zunge. Eine Explosion aus Karamell und Röst-Aromen. Für einen Moment ist die Welt perfekt. (Aggro massiv gesenkt)" 
+                r: "Du tunkst den Keks kurz in den heißen Kaffee. Er schmilzt auf der Zunge. Eine Explosion aus Karamell und Röst-Aromen. Für einen Moment ist die Welt perfekt." 
             },
             { 
                 t: "Krümel-Topping basteln", 
@@ -3806,7 +3806,7 @@ export const coffee = [
                 rem: "donut", 
                 next: "path_dance_donut", 
                 m: 5, f: 0, a: 10, c: 20, 
-                r: "Du drückst deinen klebrigen Donut in Panik direkt auf die sündhaft teure Linse des Kameramanns. Bild schwarz. Beweise (teilweise) vernichtet, Kameramann tobt. (Item verbraucht)" 
+                r: "Du drückst deinen klebrigen Donut in Panik direkt auf die sündhaft teure Linse des Kameramanns. Bild schwarz. Beweise (teilweise) vernichtet, Kameramann tobt." 
             }
         ]
     },

@@ -44,7 +44,7 @@ export const reputation = [
                 loot: "kevin_ram", 
                 rep: { "Kevin": 20, "Dr. Wichtig": 10 },
                 m: 5, f: -5, a: -40, c: -20, 
-                r: "Kevin tippt wie ein junger Gott. Enter. Stille. Der Angriff ist gestoppt. Er grinst breit: 'Hab ich von dir gelernt, Bro.' Er schenkt dir seinen alten RAM-Riegel als Glücksbringer. (Item erhalten!)" 
+                r: "Kevin tippt wie ein junger Gott. Enter. Stille. Der Angriff ist gestoppt. Er grinst breit: 'Hab ich von dir gelernt, Bro.' Er schenkt dir seinen alten RAM-Riegel als Glücksbringer." 
             },
             { 
                 t: "Micromanagement: 'Okay, aber ich gucke zu!'", 
@@ -79,7 +79,7 @@ export const reputation = [
                 loot: "energy",
                 rep: { "Kevin": 10 },
                 m: 30, f: -15, a: -10, c: 0, 
-                r: "Ihr setzt euch zusammen und debuggt den Wahnsinn bei einer Dose Energy. Ihr lacht Tränen über die generierten Mails. 'Wenigstens haben wir jetzt keine offenen Tickets mehr.' (Inventar +1)" 
+                r: "Ihr setzt euch zusammen und debuggt den Wahnsinn bei einer Dose Energy. Ihr lacht Tränen über die generierten Mails. 'Wenigstens haben wir jetzt keine offenen Tickets mehr.'" 
             },
             { 
                 t: "Schuld auf Virus schieben", 
@@ -160,7 +160,7 @@ export const reputation = [
                 loot: "donut", 
                 rep: { "Kevin": 5 },
                 m: 5, f: 5, a: -10, c: 0, 
-                r: "Ein frischer Donut! Kevin nickt dir zu. 'Wir Techies müssen zusammenhalten.' (Inventar +1)" 
+                r: "Ein frischer Donut! Kevin nickt dir zu. 'Wir Techies müssen zusammenhalten.'" 
             },
             { 
                 t: "Ablehnen: 'Bin auf Diät.'", 
@@ -188,7 +188,7 @@ export const reputation = [
                 loot: "energy",
                 rep: { "Kevin": 5 }, 
                 m: 2, f: 0, a: -5, c: 0, 
-                r: "ZISCH. 'Das ist der gute Stoff', flüstert Kevin. Du fühlst dich wieder bereit für den Kampf gegen die Tickets. (Inventar +1)" 
+                r: "ZISCH. 'Das ist der gute Stoff', flüstert Kevin. Du fühlst dich wieder bereit für den Kampf gegen die Tickets." 
             },
             { 
                 t: "Gegenleistung anbieten: 'Ich übernehm ein Ticket'", 
@@ -606,7 +606,7 @@ export const reputation = [
                 loot: "golden_stapler", 
                 rep: { "Chantal": 20, "Dr. Wichtig": -5 },
                 m: 5, f: -20, a: -30, c: -10, 
-                r: "Es ist ein massiv vergoldeter Tacker. 'Vom Marketing-Budget abgezweigt', zwinkert sie. 'Niemand legt sich mit uns an.' Du hast jetzt die mächtigste Verbündete der Firma. (Item erhalten!)" 
+                r: "Es ist ein massiv vergoldeter Tacker. 'Vom Marketing-Budget abgezweigt', zwinkert sie. 'Niemand legt sich mit uns an.' Du hast jetzt die mächtigste Verbündete der Firma." 
             },
             { 
                 t: "Bescheiden bleiben: 'War mir ein Vergnügen.'", 
@@ -762,7 +762,7 @@ export const reputation = [
                 loot: "donut",
                 rep: { "Chantal": 5 },
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "'Die Flasche behalt mal, aber ich nehme den Donut, den du da hast.' Chantal lacht. 'Deal. Du bist echt verfressen.' (Inventar +1)" 
+                r: "'Die Flasche behalt mal, aber ich nehme den Donut, den du da hast.' Chantal lacht. 'Deal. Du bist echt verfressen.'" 
             }
         ]
     },
@@ -1170,7 +1170,7 @@ export const reputation = [
                 loot: "master_key", 
                 rep: { "Egon": 20 },
                 m: 5, f: -20, a: -30, c: 0, 
-                r: "Du nimmst den Bund. Egon klopft dir fest auf die Schulter. 'Pass gut auf den Laden auf.' Du hast jetzt Zugang zu ALLEM. (Item erhalten!)" 
+                r: "Du nimmst den Bund. Egon klopft dir fest auf die Schulter. 'Pass gut auf den Laden auf.' Du hast jetzt Zugang zu ALLEM." 
             },
             { 
                 t: "Ablehnen: 'Zu viel Verantwortung.'", 
@@ -1285,7 +1285,7 @@ export const reputation = [
                 loot: "tape",
                 rep: { "Egon": 5 },
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Er drückt dir eine Rolle Premium-Panzertape in die Hand. 'War im Heimwerker-Set. Ich hab genug davon. Nimm.' (Inventar +1)" 
+                r: "Er drückt dir eine Rolle Premium-Panzertape in die Hand. 'War im Heimwerker-Set. Ich hab genug davon. Nimm.'" 
             },
             { 
                 t: "Ablehnen: 'Behalt es ruhig'", 
@@ -1901,7 +1901,7 @@ export const reputation = [
                 loot: "energy",
                 rep: { "Dr. Wichtig": 15 },
                 m: 5, f: 10, a: 10, c: -15,
-                r: "Du tippst `ping google.de`. Er staunt. 'Wahnsinn.' Er wirft dir eine Dose Energy zu. 'Treibstoff für den Mainframe.' (Inventar +1)" 
+                r: "Du tippst `ping google.de`. Er staunt. 'Wahnsinn.' Er wirft dir eine Dose Energy zu. 'Treibstoff für den Mainframe.'" 
             },
             { 
                 t: "Realitätscheck: 'Nehmen Sie die Brille ab.'", 
@@ -2289,7 +2289,7 @@ export const reputation = [
                 loot: "cat_pic", 
                 rep: { "Frau Elster": 20, "Dr. Wichtig": 5 },
                 m: 5, f: 0, a: -20, c: -10, 
-                r: "Du fragst laut: 'Hat Rüdiger die Diät vertragen?' Sie seufzt theatralisch. 'Ach, er leidet so!' Sie streicht stattdessen das Marketing-Budget. 'Die IT ist essenziell.' Sie schiebt dir heimlich ein Foto von Rüdiger zu. (Item erhalten!)" 
+                r: "Du fragst laut: 'Hat Rüdiger die Diät vertragen?' Sie seufzt theatralisch. 'Ach, er leidet so!' Sie streicht stattdessen das Marketing-Budget. 'Die IT ist essenziell.' Sie schiebt dir heimlich ein Foto von Rüdiger zu." 
             },
             { 
                 t: "Erpressen: 'Ich weiß von Ihren Privat-Telefonaten!'", 
@@ -2402,7 +2402,7 @@ export const reputation = [
                 loot: "energy",
                 rep: { "Frau Elster": 5 },
                 m: 5, f: 0, a: -5, c: -5, 
-                r: "'Hier, nehmen Sie diesen Energy Drink. Den habe ich von Kevin konfisziert. Sie brauchen Treibstoff für dieses Gehirn.' (Inventar +1)" 
+                r: "'Hier, nehmen Sie diesen Energy Drink. Den habe ich von Kevin konfisziert. Sie brauchen Treibstoff für dieses Gehirn.'" 
             },
             { 
                 t: "Übertreiben: 'Nennen Sie mich den Zahlen-Flüsterer.'", 
@@ -2848,7 +2848,7 @@ export const reputation = [
                 loot: "scotch_bottle", 
                 rep: { "Markus": 20 },
                 m: 5, f: -20, a: -30, c: -20, 
-                r: "Es ist ein 30 Jahre alter Single Malt. 'Für die Nerven', zwinkert Markus. 'Wir verstehen uns.' Du bist jetzt Teil des 'Inner Circle'. (Item erhalten!)" 
+                r: "Es ist ein 30 Jahre alter Single Malt. 'Für die Nerven', zwinkert Markus. 'Wir verstehen uns.' Du bist jetzt Teil des 'Inner Circle'." 
             },
             { 
                 t: "Nach Anteil fragen: 'Ich will 10%.'", 
@@ -2972,7 +2972,7 @@ export const reputation = [
                 loot: "stressball",
                 rep: { "Markus": 5 },
                 m: 10, f: 5, a: -5, c: 0, 
-                r: "'Klar! Hier, nimm den Stressball vom letzten Messe-Auftritt. 'Squeeze the Deal'. Passt zu dir.' (Inventar +1)" 
+                r: "'Klar! Hier, nimm den Stressball vom letzten Messe-Auftritt. 'Squeeze the Deal'. Passt zu dir.'" 
             }
         ]
     },
@@ -3016,7 +3016,7 @@ export const reputation = [
                 loot: "headphones",
                 rep: { "Markus": 2 },
                 m: 30, f: -10, a: -10, c: -10, 
-                r: "Du nimmst die Kiste. 'Ich schau mal rein.' Markus grinst. 'Mein Partner.' Du behältst das beste Headset für dich selbst. (Inventar +1)" 
+                r: "Du nimmst die Kiste. 'Ich schau mal rein.' Markus grinst. 'Mein Partner.' Du behältst das beste Headset für dich selbst." 
             },
             { 
                 t: "Ablehnen", 
@@ -3403,7 +3403,7 @@ export const reputation = [
                 loot: "mixtape",
                 rep: { "Gabi": 15, "Dr. Wichtig": -10 },
                 m: 5, f: 5, a: -30, c: 15,
-                r: "Du schüttelst deine Mähne. Der Chef starrt euch entsetzt an. 'Ein Irrenhaus...', murmelt er und flüchtet. Gabi lacht dreckig: 'Soulmate! Hier, nimm das Tape. Das versteht nur die Elite.' (Item erhalten!)" 
+                r: "Du schüttelst deine Mähne. Der Chef starrt euch entsetzt an. 'Ein Irrenhaus...', murmelt er und flüchtet. Gabi lacht dreckig: 'Soulmate! Hier, nimm das Tape. Das versteht nur die Elite.'" 
             },
             { 
                 t: "Solidarität: 'Das war mein Server-Test!'", 

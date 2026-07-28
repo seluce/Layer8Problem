@@ -10,14 +10,14 @@ export const server = [
                 loot: "secret_list", 
                 next: "path_lore_list", 
                 m: 20, f: 5, a: 0, c: 5, 
-                r: "Du wühlst dich durch staubige Rechnungen, bis du sie findest: Die 'Schwarze Liste' der HR. Das ist pures Dynamit. Du steckst sie schnell ein. (Inventar +1)" 
+                r: "Du wühlst dich durch staubige Rechnungen, bis du sie findest: Die 'Schwarze Liste' der HR. Das ist pures Dynamit. Du steckst sie schnell ein." 
             },
             { 
                 t: "Die Luftpolsterfolie nehmen", 
                 loot: "bubble_wrap", 
                 next: "path_lore_bubble", 
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "Du entscheidest dich für das einfache Vergnügen. Die Folie wandert in deine Tasche. Manchmal ist Plastik besser als Wissen. (Inventar +1)" 
+                r: "Du entscheidest dich für das einfache Vergnügen. Die Folie wandert in deine Tasche. Manchmal ist Plastik besser als Wissen." 
             },
             { 
                 t: "Nichts anfassen und gehen", 
@@ -42,7 +42,7 @@ export const server = [
                 t: "Liste zurückgeben", 
                 rem: "secret_list",
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Du fängst ihn ab. 'Habe ich gefunden. Lag da einfach rum.' Er nimmt sie wortlos, nickt dir zu und geht. Keine Beweise, kein Ärger. (Item entfernt)" 
+                r: "Du fängst ihn ab. 'Habe ich gefunden. Lag da einfach rum.' Er nimmt sie wortlos, nickt dir zu und geht. Keine Beweise, kein Ärger." 
             },
             { 
                 t: "Mit Feuerlöscher ablenken", 
@@ -72,7 +72,7 @@ export const server = [
                 t: "Bestechungs-Donut anbieten", 
                 rem: "donut",
                 m: 2, f: 5, a: -10, c: -5, 
-                r: "Er starrt auf den alten Donut. Sein Magen knurrt. 'Na gut. Einmalige Ausnahme.' Er nimmt den Donut und verschwindet kauend. (Item entfernt)" 
+                r: "Er starrt auf den alten Donut. Sein Magen knurrt. 'Na gut. Einmalige Ausnahme.' Er nimmt den Donut und verschwindet kauend." 
             }
         ]
     },
@@ -171,7 +171,7 @@ export const server = [
                 loot: "screw", 
                 next: "path_tool_theft", 
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Meins. Werkzeug kann man immer brauchen. Du lässt den Rest unauffällig liegen. (Inventar +1)" 
+                r: "Meins. Werkzeug kann man immer brauchen. Du lässt den Rest unauffällig liegen." 
             },
             { 
                 t: "Das Chaos im Koffer sortieren", 
@@ -244,7 +244,7 @@ export const server = [
                 t: "Helfen zu suchen", 
                 loot: "energy", 
                 m: 15, f: -10, a: 5, c: -5, 
-                r: "Ihr kriecht zusammen unter den Doppelboden. Du findest die Zange. 'Danke, Mann! Hier, nimm das.' Er wirft dir einen Energy Drink zu. (Inventar +1)" 
+                r: "Ihr kriecht zusammen unter den Doppelboden. Du findest die Zange. 'Danke, Mann! Hier, nimm das.' Er wirft dir einen Energy Drink zu." 
             },
             { 
                 t: "Ihn auslachen", 
@@ -319,7 +319,7 @@ export const server = [
                 t: "Den Donut looten", 
                 loot: "donut", 
                 m: 2, f: 5, a: 0, c: 0, 
-                r: "Schmeckt nach Sieg und Glasur. (Inventar +1)" 
+                r: "Schmeckt nach Sieg und Glasur." 
             },
             { 
                 t: "Seinen Tacker klauen", 
@@ -353,7 +353,7 @@ export const server = [
                 t: "Ihm WLAN-Passwörter verkaufen", 
                 loot: "secret_list", 
                 m: 15, f: 0, a: -5, c: 5, 
-                r: "'Daten! Ich brauche Daten!' Er tauscht seine Kundenliste gegen das Gast-WLAN-Passwort. Ein fairer Deal unter Wahnsinnigen. (Inventar +1)" 
+                r: "'Daten! Ich brauche Daten!' Er tauscht seine Kundenliste gegen das Gast-WLAN-Passwort. Ein fairer Deal unter Wahnsinnigen." 
             }
         ]
     },
@@ -379,7 +379,7 @@ export const server = [
                 loot: "usb_stick", 
                 next: "path_mining_wallet", 
                 m: 5, f: 0, a: -5, c: 10, 
-                r: "Das muss die Wallet sein! Du ziehst den Stick ab. Der Bildschirm wird schwarz. Egal, du bist jetzt Krypto-Millionär. (Inventar +1)" 
+                r: "Das muss die Wallet sein! Du ziehst den Stick ab. Der Bildschirm wird schwarz. Egal, du bist jetzt Krypto-Millionär." 
             }
         ]
     },
@@ -448,7 +448,7 @@ export const server = [
                 t: "Stick formatieren (Beweise vernichten)", 
                 rem: "usb_stick", 
                 m: 5, f: 0, a: -5, c: -5, 
-                r: "Sicher ist sicher. Du löschst alles und wirfst den Stick in den Müll. Kein Reichtum, aber auch keine Beweise. (Item entfernt)" 
+                r: "Sicher ist sicher. Du löschst alles und wirfst den Stick in den Müll. Kein Reichtum, aber auch keine Beweise." 
             },
             { 
                 t: "Stick an Kevin verkaufen", 
@@ -576,7 +576,7 @@ export const server = [
                 loot: "energy", 
                 next: "path_drink_keep", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Man weiß nie, wann man einen chemischen Boost braucht. Ab in die Tasche damit. (Inventar +1)" 
+                r: "Man weiß nie, wann man einen chemischen Boost braucht. Ab in die Tasche damit." 
             },
             { 
                 t: "Stehen lassen", 
@@ -619,7 +619,7 @@ export const server = [
                 t: "Alles sauber machen", 
                 rem: "energy", 
                 m: 15, f: -5, a: 10, c: 0, 
-                r: "Du fluchst und schrubbst deine Hose mit Papiertüchern ab. Die Dose ist leer, deine Laune im Keller. (Item entfernt)" 
+                r: "Du fluchst und schrubbst deine Hose mit Papiertüchern ab. Die Dose ist leer, deine Laune im Keller." 
             },
             { 
                 t: "Egal, Hauptsache Koffein", 
@@ -676,7 +676,7 @@ export const server = [
                 loot: "fire_ext", 
                 next: "path_ext_loot", 
                 m: 5, f: 0, a: 0, c: 0, 
-                r: "Du wuchtest das schwere Ding in dein Inventar. Man weiß nie, wann man ein Feuer löschen (oder eine Tür einschlagen) muss. (Inventar +1)" 
+                r: "Du wuchtest das schwere Ding in dein Inventar. Man weiß nie, wann man ein Feuer löschen (oder eine Tür einschlagen) muss." 
             },
             { 
                 t: "Kurzer Funktionstest", 
@@ -710,7 +710,7 @@ export const server = [
                 rep: { "Egon": -2 },
                 rem: "fire_ext", 
                 m: 5, f: 10, a: -5, c: 5, 
-                r: "Du hast keine Lust mehr zu schleppen. Du stellst ihn vor die Serverraum-Tür. Jetzt bleibt sie offen und es wird kühler. (Item entfernt)" 
+                r: "Du hast keine Lust mehr zu schleppen. Du stellst ihn vor die Serverraum-Tür. Jetzt bleibt sie offen und es wird kühler." 
             },
             { 
                 t: "Training: Bizeps-Curls machen", 
@@ -780,7 +780,7 @@ export const server = [
                 loot: "manual", 
                 next: "path_man_taken", 
                 m: 5, f: 0, a: 0, c: 0, 
-                r: "Mit einem Ruck ziehst du es raus. Der Tisch sackt 2cm ab. Der Monitor oben drauf schwankt bedrohlich. Aber hey: Antikes Wissen! (Inventar +1)" 
+                r: "Mit einem Ruck ziehst du es raus. Der Tisch sackt 2cm ab. Der Monitor oben drauf schwankt bedrohlich. Aber hey: Antikes Wissen!" 
             },
             { 
                 t: "Liegen lassen", 
@@ -806,7 +806,7 @@ export const server = [
                 t: "Handbuch wieder drunterschieben", 
                 rem: "manual", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Du opferst das Wissen für die Sicherheit. Der Tisch steht wieder stabil. Dein Inventar ist leerer, dein Gewissen reiner. (Item entfernt)" 
+                r: "Du opferst das Wissen für die Sicherheit. Der Tisch steht wieder stabil. Dein Inventar ist leerer, dein Gewissen reiner." 
             },
             { 
                 t: "Pappe falten und drunterschieben", 
@@ -1384,14 +1384,14 @@ export const server = [
                 loot: "zip_ties", 
                 next: "path_loot_zip", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Eine 100er Packung schwarze Kabelbinder. Gold wert für das Kabelmanagement zuhause! Schnell in die Tasche damit. (Inventar +1)" 
+                r: "Eine 100er Packung schwarze Kabelbinder. Gold wert für das Kabelmanagement zuhause! Schnell in die Tasche damit." 
             },
             { 
                 t: "Schraubendreher nehmen", 
                 loot: "screw", 
                 next: "path_loot_screw", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Ein hochwertiger Marken-Kreuzschlitz mit magnetischer Spitze. Der liegt gut in der Hand. Jetzt liegt er in deiner Tasche. (Inventar +1)" 
+                r: "Ein hochwertiger Marken-Kreuzschlitz mit magnetischer Spitze. Der liegt gut in der Hand. Jetzt liegt er in deiner Tasche." 
             },
             { 
                 t: "Stehen lassen", 
@@ -1415,7 +1415,7 @@ export const server = [
                 t: "Zurückgeben ('Gefunden')", 
                 rem: "zip_ties",
                 m: 5, f: 0, a: -5, c: 10, 
-                r: "'Oh, die lagen hier am Boden. Wollte sie gerade sicherstellen.' Er atmet auf. 'Danke Mann! Du rettest mir den Arsch.' Er ist weg. (Item entfernt)" 
+                r: "'Oh, die lagen hier am Boden. Wollte sie gerade sicherstellen.' Er atmet auf. 'Danke Mann! Du rettest mir den Arsch.' Er ist weg." 
             },
             { 
                 t: "Kevin beschuldigen",
@@ -1440,7 +1440,7 @@ export const server = [
                 t: "Zurückgeben", 
                 rem: "screw",
                 m: 5, f: 0, a: -5, c: 10, 
-                r: "Du ziehst ihn aus der Tasche. 'Habe ich mir nur geliehen.' Er reißt ihn dir fast aus der Hand. 'Lassen Sie das! Aber danke.' (Item entfernt)" 
+                r: "Du ziehst ihn aus der Tasche. 'Habe ich mir nur geliehen.' Er reißt ihn dir fast aus der Hand. 'Lassen Sie das! Aber danke.'" 
             },
             { 
                 t: "Beim Suchen 'helfen'", 
@@ -1459,14 +1459,14 @@ export const server = [
                 loot: "headphones", 
                 next: "found_headphones_2",
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Bose Noise-Cancelling. Sehr schick. Sie sind noch leicht warm und riechen etwas nach Haargel. Aber hey: Gratis ist gratis. (Inventar +1)" 
+                r: "Bose Noise-Cancelling. Sehr schick. Sie sind noch leicht warm und riechen etwas nach Haargel. Aber hey: Gratis ist gratis." 
             },
             { 
                 t: "Den schweren Hammer nehmen", 
                 loot: "hammer", 
                 next: "found_hammer_2",
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Ein 500g Schlosserhammer. Auf dem Griff steht mit Edding 'HARD RESET'. Ein vertrauenerweckendes Werkzeug im Serverraum. (Inventar +1)" 
+                r: "Ein 500g Schlosserhammer. Auf dem Griff steht mit Edding 'HARD RESET'. Ein vertrauenerweckendes Werkzeug im Serverraum." 
             }
         ]
     },
@@ -1536,7 +1536,7 @@ export const server = [
                 req: "zip_ties",
                 next: "path_rack_zip", 
                 m: 5, f: 15, a: -5, c: 5,
-                r: "Zatsch. Du bindest Rack 5 einfach an Rack 4 fest. Das nennt man 'strukturelle Redundanz' (oder Pfusch). Es hält erstmal, sieht aber wild aus. (Item entfernt)" 
+                r: "Zatsch. Du bindest Rack 5 einfach an Rack 4 fest. Das nennt man 'strukturelle Redundanz' (oder Pfusch). Es hält erstmal, sieht aber wild aus." 
             },
             { 
                 t: "Wegsehen und pfeifen", 
@@ -1579,7 +1579,7 @@ export const server = [
                 t: "Mehr Kabelbinder!", 
                 rem: "zip_ties",
                 m: 5, f: 10, a: 0, c: 10, 
-                r: "Viel hilft viel. Du zurrste alles so fest, bis das Plastik weiß wird. Der Lärm wird höher, fast ein Pfeifen. Aber es wackelt weniger. (Item entfernt)" 
+                r: "Viel hilft viel. Du zurrste alles so fest, bis das Plastik weiß wird. Der Lärm wird höher, fast ein Pfeifen. Aber es wackelt weniger." 
             },
             { 
                 t: "Alles wieder losknippsen", 
@@ -2283,7 +2283,7 @@ export const server = [
                 loot: "energy", 
                 next: "path_night_shift_loot",
                 m: 5, f: -5, a: -5, c: 10, 
-                r: "Du steckst die Dose ein. Gratis ist gratis. Während du dich bückst, hört das Blinken auf. Die LED ist jetzt aus. Tot. Das Laufwerk hat sich verabschiedet. (Inventar +1)" 
+                r: "Du steckst die Dose ein. Gratis ist gratis. Während du dich bückst, hört das Blinken auf. Die LED ist jetzt aus. Tot. Das Laufwerk hat sich verabschiedet." 
             },
             { 
                 t: "Seufzen und RAID-Rebuild starten", 
@@ -3302,7 +3302,7 @@ export const server = [
                 rem: "cable", 
                 next: "path_rack_cable", 
                 m: 10, f: -5, a: 5, c: -10, 
-                r: "Du wirfst das LAN-Kabel wie ein Cowboy um die Oberkante des Racks und zurrst das andere Ende an einem dicken Heizungsrohr fest. Das Gehäuse knirscht, aber es hält! (Item verbraucht)" 
+                r: "Du wirfst das LAN-Kabel wie ein Cowboy um die Oberkante des Racks und zurrst das andere Ende an einem dicken Heizungsrohr fest. Das Gehäuse knirscht, aber es hält!" 
             },
             { 
                 t: "Win95-Handbuch drunterklemmen", 
@@ -3557,7 +3557,7 @@ export const server = [
                 loot: "screw", 
                 next: "path_screws_loot", 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Egal. Du greifst ins Regal und nimmst dir einfach eine neue Packung. Das Leben ist zu kurz zum Suchen. (Inventar +1)" 
+                r: "Egal. Du greifst ins Regal und nimmst dir einfach eine neue Packung. Das Leben ist zu kurz zum Suchen." 
             },
             { 
                 t: "Fluchen und alles liegen lassen", 

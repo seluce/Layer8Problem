@@ -432,7 +432,7 @@ export const bossfights = [
                 t: "Das LAN-Kabel der KI physisch ziehen", 
                 rem: "cable", 
                 m: 10, f: 0, a: 5, c: -10, 
-                r: "Du reißt das dicke Patchkabel raus. Die Mail-Flut stoppt sofort. (Item verbraucht)" 
+                r: "Du reißt das dicke Patchkabel raus. Die Mail-Flut stoppt sofort." 
             },
             { 
                 t: "Einen Server-Neustart erzwingen", 
@@ -507,7 +507,7 @@ export const bossfights = [
                 t: "Mit dem Feuerlöscher schockfrosten", 
                 rem: "fire_ext", 
                 m: 5, f: 0, a: 5, c: -10, 
-                r: "Du jagst CO2 in die Ansaugstutzen. Die Temperatur stürzt ab. Teuer, aber lebensrettend. (Item verbraucht)" 
+                r: "Du jagst CO2 in die Ansaugstutzen. Die Temperatur stürzt ab. Teuer, aber lebensrettend." 
             },
             { 
                 t: "Unwichtige Server sofort herunterfahren", 
@@ -557,7 +557,7 @@ export const bossfights = [
                 t: "LTE-Router mit Gäste-WLAN aktivieren", 
                 rem: "wifi_note", 
                 m: 30, f: 5, a: 5, c: -10, 
-                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online. (Item verbraucht)" 
+                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online." 
             },
             { 
                 t: "Feierabend für alle ausrufen!", 
@@ -583,7 +583,7 @@ export const bossfights = [
                 t: "Energy Drink exen und die Nacht durcharbeiten", 
                 rem: "energy", 
                 m: 120, f: -10, a: 5, c: -20, 
-                r: "Du pumpst dich mit Taurin voll und stellst alles fehlerfrei wieder her. (Item verbraucht)" 
+                r: "Du pumpst dich mit Taurin voll und stellst alles fehlerfrei wieder her." 
             },
             { 
                 t: "Altes Backup blind drüberbügeln", 
@@ -608,7 +608,7 @@ export const bossfights = [
                 t: "USB-Wipe-Skript am Mining-PC ausführen", 
                 rem: "usb_stick", 
                 m: 10, f: 0, a: 15, c: 5, 
-                r: "Du löschst Kevins Beweise restlos. Die Polizei findet nichts. (Item verbraucht)" 
+                r: "Du löschst Kevins Beweise restlos. Die Polizei findet nichts." 
             },
             { 
                 t: "Azubi Kevin eiskalt ausliefern", 
@@ -660,7 +660,7 @@ export const bossfights = [
                 t: "Einen Donut zur Beruhigung essen", 
                 rem: "donut", 
                 m: 5, f: -5, a: -5, c: 0, 
-                r: "Du rettest deine eigene Stimmung mit Zucker, während die Welt brennt. (Item verbraucht)" 
+                r: "Du rettest deine eigene Stimmung mit Zucker, während die Welt brennt." 
             },
             { 
                 t: "Notfall-Ration (Löslich) im Flur aufbrühen", 

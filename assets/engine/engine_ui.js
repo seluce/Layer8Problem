@@ -612,7 +612,7 @@ export const ui = {
             let contentContent = '?';
             if (unlocked) {
                 if (item.img) {
-                    contentContent = `<img src="${item.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${item.name}">`;
+                    contentContent = `<img src="${item.img}" loading="lazy" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt="${item.name}">`;
                 } else {
                     contentContent = item.icon;
                 }
@@ -642,7 +642,7 @@ export const ui = {
                 let contentContent = '?';
                 if (unlocked) {
                     if (item.img) {
-                        contentContent = `<img src="${item.img}" class="w-full h-full object-contain p-1 pointer-events-none" alt="${item.name}">`;
+                        contentContent = `<img src="${item.img}" loading="lazy" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt="${item.name}">`;
                     } else {
                         contentContent = item.icon;
                     }
@@ -707,7 +707,9 @@ export const ui = {
                 let imgContainerClass = "";
 
                 if (ach.img) {
-                    iconContent = `<img src="${ach.img}" class="w-full h-full object-contain drop-shadow-md" alt="${title}">`;
+                    // loading="lazy": the archive holds two dozen of these and only
+                    // the first few are on screen when it opens.
+                    iconContent = `<img src="${ach.img}" loading="lazy" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt="${title}">`;
                     // No background or border, but a strong hover pop-out, as on the team view
                     imgContainerClass = "w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50";
                 } else {
@@ -925,7 +927,7 @@ export const ui = {
 
             // Avatar
             let avatarHTML = char.img ? 
-                `<img src="${char.img}" class="w-full h-full object-cover" alt="${char.name}">` : 
+                `<img src="${char.img}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="${char.name}">` : 
                 char.icon;
 
             card.innerHTML = `

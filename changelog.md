@@ -1,3 +1,13 @@
+[3.6.1] - 2026-07-28
+
+Anzeige & Layout:
+* Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)" oder "(Item verbraucht)". Diese Angaben doppelten lediglich, was ohnehin schon sichtbar ist: die aufsteigenden Zahlen an den Balken, die Rucksack-Animation und der Eintrag im Protokoll. 86 Stellen bereinigt.
+* Die Bilder im Archiv und in der Kollegen-Übersicht laden erst, wenn sie tatsächlich sichtbar werden. Das Öffnen des Archivs zog bisher zwei Dutzend Bilder auf einmal.
+* Die Erfolgs-Bilder liegen nun als WebP vor, wie die Gegenstände auch.
+
+System & Stabilität:
+* Export und Import erscheinen im Startbildschirm nur noch in der Browser-Fassung. Die Steam-Fassung erreicht beides weiterhin über die Einstellungen, die sich auch direkt aus dem Startbildschirm öffnen lassen.
+
 [3.6.0] - 2026-07-28
 
 Neuerungen:

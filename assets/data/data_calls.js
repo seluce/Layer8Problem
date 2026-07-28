@@ -1085,7 +1085,7 @@ export const calls = [
 			{ 
 				t: "Logik: 'Capslock hat nichts mit der Maus zu tun.'", 
 				m: 15, f: -10, a: 5, c: 5, 
-				r: "Du erklärst ihm geduldig Computer-Architektur. Er hört nicht zu. 'Ich starte lieber neu, bevor Sie noch mehr kaputt machen.' Er hält dich für inkompetent (Karriere sinkt leicht), aber er lässt dich in Ruhe." 
+				r: "Du erklärst ihm geduldig Computer-Architektur. Er hört nicht zu. 'Ich starte lieber neu, bevor Sie noch mehr kaputt machen.' Er hält dich für inkompetent, aber er lässt dich in Ruhe." 
 			},
 			{ 
 				t: "Placebo: 'Ich kalibriere den Sensor neu...'", 
