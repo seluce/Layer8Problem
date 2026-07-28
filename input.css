@@ -3,7 +3,10 @@
    41 KB for both weights, down from 540 KB as ttf.
    The format() hint has to match the actual file: browsers may skip a
    format they cannot handle without downloading it, so declaring woff2
-   as truetype risks a silent fallback to the generic monospace font. */
+   as truetype risks a silent fallback to the generic monospace font.
+
+   Kept outside any @layer: @font-face is not a style rule and does not
+   participate in the cascade, so a layer would only obscure things. */
 @font-face {
     font-family: 'JetBrains Mono';
     src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
@@ -20,20 +23,44 @@
     font-display: swap;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind 4 replaces the three @tailwind directives and the JS config file.
+   source(none) turns off automatic file discovery so the @source list below
+   is the single source of truth — same set of files the old
+   tailwind.config.js listed under `content`. */
+@import "tailwindcss" source(none);
 
-/* 1. DEINE STANDARDS (Schrift, Hintergrund, Abstände) */
+@source "./index.html";
+@source "./engine.js";
+@source "./data.js";
+@source "./tutorial.js";
+@source "./assets/intranet/*.html";
+@source "./assets/data/*.js";
+@source "./assets/engine/*.js";
+
+/* Tailwind 4 defaults the border colour to currentcolor; v3 used gray-200.
+   This keeps every element that relies on the old default looking the same.
+   To drop this block later, every such element needs an explicit border
+   colour utility. */
 @layer base {
-    body { 
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+}
+
+/* 1. BASELINE (font, background, spacing) */
+@layer base {
+    body {
         font-family: 'JetBrains Mono', monospace;
-        background-color: #020617; 
-        color: #e2e8f0; 
-        height: 100vh; 
-        overflow: hidden; 
-        display: flex; 
-        flex-direction: column; 
+        background-color: #020617;
+        color: #e2e8f0;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
         padding: 1rem;
     }
 
@@ -42,7 +69,13 @@
     }
 }
 
-/* 2. DEINE BAUTEILE (Lassen sich durch Tailwind-Klassen überschreiben) */
+/* 2. COMPONENTS
+   These stay plain CSS inside @layer components rather than becoming
+   @utility rules. In Tailwind 4 @utility registers a real utility that
+   participates in variant generation and sorting — wrong for component
+   classes like .neon-box, and actively harmful for the compact mode, which
+   overrides Tailwind's own .text-xl and .text-2xl.
+   Cascade order is unchanged: utilities still override components. */
 @layer components {
     /* NEON LOOK */
     .neon-box {
@@ -73,13 +106,12 @@
     #smartphone {
         background: #000; border: 4px solid #334155; border-radius: 12px;
         overflow: hidden; position: relative;
-        height: 100%; 
+        height: 100%;
         min-height: 300px;
     }
-    .chat-bubble { padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; font-size: 0.75rem; max-width: 90%; }
-    .chat-in { background: #1e293b; border-left: 3px solid #6366f1; align-self: flex-start; }
-    .chat-out { background: #3b82f6; color: white; align-self: flex-end; }
-    .chat-system { background: #0f172a; border: 1px solid #334155; color: #94a3b8; align-self: center; text-align: center; font-size: 0.65rem; margin-top: 5px; padding: 5px; border-radius: 5px;}
+    /* .chat-* removed: unused since the phone switched to its own markup.
+       Tailwind 3 purged them silently; Tailwind 4 passes @layer components
+       through untouched, so they would have become dead weight in the build. */
 
     /* INVENTORY */
     .inv-slot {
@@ -88,15 +120,14 @@
         font-size: 20px; cursor: pointer; position: relative;
         transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    
-    /* Der Hover-Effekt */
+
     .inv-slot:not(.used):not(.empty):hover {
-        transform: scale(1.15); /* Drehung entfernt! Nur noch Skalierung. */
+        transform: scale(1.15);
         z-index: 50;
         border-color: #f59e0b !important;
         box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    
+
     .inv-slot:not(.used):active {
         transform: scale(0.95);
     }
@@ -107,7 +138,7 @@
     /* BUTTONS */
     .action-btn {
         background: #1e293b; border: 1px solid #334155; transition: all 0.1s;
-        border-radius: 0.75rem; display: flex; flex-direction: column; 
+        border-radius: 0.75rem; display: flex; flex-direction: column;
         align-items: center; justify-content: center; cursor: pointer; padding: 10px;
     }
     .action-btn:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
@@ -125,7 +156,10 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
-    /* KOMPAKTMODUS */
+    /* COMPACT MODE
+       Written flat on purpose. Nesting these under & produced invalid
+       selectors such as `:is(.compact-mode)body #action-bar`, which browsers
+       drop silently — a type selector cannot follow a pseudo-class. */
     body.compact-mode #action-bar { height: 3.5rem !important; }
     body.compact-mode .action-btn { padding: 0.25rem !important; flex-direction: row; gap: 0.5rem; }
     body.compact-mode .action-btn span:first-child { font-size: 1.25rem; }
@@ -138,16 +172,18 @@
     body.compact-mode #clock-container, body.compact-mode #ticket-container { padding: 0.25rem !important; }
 }
 
-/* 3. EFFEKTE (Brauchen die absolute Prio für Animationen) */
-@layer utilities {
-    .ticket-pulse { animation: pulse-red 1s infinite; color: #ef4444; }
-    .pulse-red { animation: pulse-red-border 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
-    .pulse-orange { animation: pulse-orange-border 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
-    .animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-}
+/* 3. EFFECTS
+   These are genuine utilities, so @utility is the right tool here: it makes
+   them sortable and usable with variants, and they land in the utilities
+   layer where they can override the components above. */
+@utility ticket-pulse { animation: pulse-red 1s infinite; color: #ef4444; }
+@utility pulse-red { animation: pulse-red-border 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
+@utility pulse-orange { animation: pulse-orange-border 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
+@utility animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@utility animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@utility animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
 
-/* 4. KEYFRAMES (Ohne Layer, ganz normal) */
+/* 4. KEYFRAMES (no layer, plain CSS) */
 @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 @keyframes pulse-red-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); } }
 @keyframes pulse-orange-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); } }
@@ -156,14 +192,9 @@
 @keyframes slide-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes pop-in { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
-/* --- SCREEN SHAKE EFFEKT --- */
 @keyframes shake {
   10%, 90% { transform: translate3d(-2px, 0, 0); }
   20%, 80% { transform: translate3d(4px, 0, 0); }
   30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
   40%, 60% { transform: translate3d(8px, 0, 0); }
-}
-
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }

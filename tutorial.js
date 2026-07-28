@@ -28,7 +28,7 @@ const tutorial = {
         allElements.forEach(id => {
             let el = document.getElementById(id);
             if(el) {
-                el.classList.remove('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-[2500]', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+                el.classList.remove('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
             }
         });
     },
@@ -230,7 +230,7 @@ const tutorial = {
         if(btn) {
             btn.disabled = false;
             btn.classList.remove('opacity-50');
-            btn.classList.add('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-[2500]', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+            btn.classList.add('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
             
             setTimeout(() => {
                 this.showPointer(btn, title, desc, false);
@@ -246,7 +246,7 @@ const tutorial = {
             let el = document.getElementById(id);
             if(el) {
                 el.classList.remove('opacity-50');
-                el.classList.add('ring-2', 'ring-cyan-500', 'z-[2500]', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+                el.classList.add('ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
                 
                 if (id === 'stat-row-al' || id === 'btn-inventory' || !anchorEl) {
                     anchorEl = el;
@@ -280,7 +280,7 @@ const tutorial = {
         let descHtml = desc;
         if (isInfoStep) {
             descHtml += `<div class="mt-4 border-t border-cyan-800 pt-3 pointer-events-auto">
-                            <div onclick="tutorial.advance()" class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-2 px-2 rounded border border-cyan-700 transition-colors uppercase tracking-widest text-[10px] flex items-center justify-center gap-1 shadow-md">
+                            <div onclick="tutorial.advance()" class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-2 px-2 rounded-sm border border-cyan-700 transition-colors uppercase tracking-widest text-[10px] flex items-center justify-center gap-1 shadow-md">
                                 <span>▶</span> Verstanden
                             </div>
                          </div>`;
@@ -383,7 +383,7 @@ const tutorial = {
             const btnContainer = askModal.querySelector('.grid.gap-3');
             if (btnContainer) {
                 btnContainer.innerHTML = `
-                    <button onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
+                    <button onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
                         <span class="text-lg">▶</span> Arbeitstag starten
                     </button>
                 `;

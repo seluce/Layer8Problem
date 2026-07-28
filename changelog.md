@@ -1,3 +1,15 @@
+[3.7.0] - 2026-07-28
+
+System & Stabilität:
+* Das Projekt nutzt nun Tailwind CSS 4 statt der Vorgängerversion. Für Spielende ändert sich nichts am Aussehen; die Grundlage ist damit aber wieder aktuell und wird weiter gepflegt.
+
+Für Entwickler:
+* Die Datei tailwind.config.js entfällt. Die Quellpfade stehen jetzt direkt in input.css.
+* Sämtliche Klassennamen wurden auf die Tailwind-4-Schreibweise gebracht (31 Umbenennungen). Der erzeugte Stylesheet enthält exakt dieselben 891 Klassen wie zuvor.
+* Vier ungenutzte Chat-Klassen entfernt, die seit dem Umbau der Handy-Ansicht niemand mehr verwendet.
+* Die Bildlaufleisten in den Intranet-Seiten funktionieren jetzt tatsächlich. Die dafür genutzten Klassen waren zuvor wirkungslos, weil das zugehörige Zusatzpaket nie eingebunden war.
+* Neues Werkzeug tools/migrate-tailwind4.mjs für Dateien, die nicht Teil der ersten Migration waren.
+
 [3.6.2] - 2026-07-28
 
 Neuerungen:

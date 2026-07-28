@@ -162,7 +162,7 @@ export const events = {
                 const kbdHover = isDelete ? "group-hover:text-red-400" : "group-hover:text-blue-400";
                 const iconText = isDelete ? "🗑️" : "➥";
 
-                btn.className = `w-full text-left px-3 py-2 bg-slate-800 border border-slate-700 ${hoverBg} ${textColor} rounded transition-colors flex items-center justify-between group font-medium text-xs`;
+                btn.className = `w-full text-left px-3 py-2 bg-slate-800 border border-slate-700 ${hoverBg} ${textColor} rounded-sm transition-colors flex items-center justify-between group font-medium text-xs`;
                 
                 let hotkeyHTML = "";
                 
@@ -176,14 +176,14 @@ export const events = {
                     else if (index === 5) key = "6";
 
                     if (key) {
-                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner ${kbdHover} transition-colors">${key.toUpperCase()}</kbd>`;
+                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner ${kbdHover} transition-colors">${key.toUpperCase()}</kbd>`;
                     }
                 }
                 
                 btn.innerHTML = `
                     <div class="flex items-center flex-1 mr-2">
                         <span class="mr-2 ${iconColor} transition-colors duration-75 text-base shrink-0">${iconText}</span>
-                        <span class="break-words leading-tight py-1">${opt.btn}</span>
+                        <span class="wrap-break-word leading-tight py-1">${opt.btn}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
                         ${hotkeyHTML}
@@ -816,7 +816,7 @@ export const events = {
                 typeName = 'BEGEGNUNG';			
                 color = 'text-yellow-300';
                 borderColor = 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]';
-                bgClass = "bg-gradient-to-b from-slate-900 to-slate-950";
+                bgClass = "bg-linear-to-b from-slate-900 to-slate-950";
 				icon = '📖';
                 break;
             case 'sidequest': 
@@ -841,7 +841,7 @@ export const events = {
                 typeName = 'SYNERGY-GALA';
                 color = 'text-pink-400';
                 borderColor = 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]';
-                bgClass = "bg-gradient-to-b from-slate-900 to-slate-950";
+                bgClass = "bg-linear-to-b from-slate-900 to-slate-950";
                 icon = '🎉';
                 break;
             case 'special':
@@ -879,8 +879,8 @@ export const events = {
                 <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
                     <span class="text-3xl shrink-0">${icon}</span>
                     <div class="flex flex-col min-w-0">
-                        <span class="${color} font-black uppercase tracking-widest text-sm break-words">${typeName}</span>
-                        <h2 class="text-xl md:text-2xl font-bold text-slate-100 break-words">${title}</h2>
+                        <span class="${color} font-black uppercase tracking-widest text-sm wrap-break-word">${typeName}</span>
+                        <h2 class="text-xl md:text-2xl font-bold text-slate-100 wrap-break-word">${title}</h2>
                     </div>
                 </div>
 
@@ -890,7 +890,7 @@ export const events = {
         if (type === 'boss') {
             html += `
             <div class="w-full h-4 bg-red-950/50 rounded-full mb-6 border border-red-500/30 overflow-hidden relative">
-                <div id="integrated-boss-bar" class="h-full bg-gradient-to-r from-red-600 to-red-500 shadow-red-500/50 shadow-md ease-linear" style="width: 100%"></div>
+                <div id="integrated-boss-bar" class="h-full bg-linear-to-r from-red-600 to-red-500 shadow-red-500/50 shadow-md ease-linear" style="width: 100%"></div>
             </div>
             `;
         }
@@ -947,10 +947,10 @@ export const events = {
                 let iconBtn = "";
 
                 if (locked) {
-                    btnClass = "w-full text-left p-2.5 rounded border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
+                    btnClass = "w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
                     iconBtn = "🔒";
                 } else {
-                    btnClass = "w-full text-left p-2.5 rounded border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
+                    btnClass = "w-full text-left p-2.5 rounded-sm border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
                     iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
                 }
 
@@ -962,7 +962,7 @@ export const events = {
 
                 let badgeHTML = "";
                 if (isChain && !locked && opt.next && !opt.next.startsWith('res_')) {
-                     badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded ml-3 font-mono">...</span>`;
+                     badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded-sm ml-3 font-mono">...</span>`;
                 }
 
                 let warningSpan = locked ? `<span class="text-sm text-red-500 font-normal ml-2">${reqText}</span>` : "";
@@ -980,7 +980,7 @@ export const events = {
                     else if (index === 5) key = "6";
 
                     if (key) {
-                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
+                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
                     }
                 }
                 
@@ -988,7 +988,7 @@ export const events = {
                 <button class="${btnClass}" ${clickAction} ${locked ? 'disabled' : ''}>
                     <div class="flex items-center flex-1 mr-2 min-w-0"> 
                         <span class="mr-3 text-xl shrink-0">${iconBtn}</span>
-                        <span class="text-left break-words py-1">${opt.t} ${warningSpan}</span>
+                        <span class="text-left wrap-break-word py-1">${opt.t} ${warningSpan}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
                         ${badgeHTML}
@@ -1002,7 +1002,7 @@ export const events = {
         if (showExcuseButton) {
             html += `
                 <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
-                    <button onclick="engine.openExcuseModal()" class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700 rounded transition-all shadow-md flex items-center gap-2 group">
+                    <button onclick="engine.openExcuseModal()" class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700 rounded-sm transition-all shadow-md flex items-center gap-2 group">
                         <span>Ausrede nutzen (${this.state.excusesLeft} übrig)</span>
                     </button>
                 </div>
@@ -1364,7 +1364,7 @@ export const events = {
                     <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${mood.text}"</p>
                 </div>
                 
-                <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded shadow-inner">
+                <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
                     Startbedingungen: ${statHtml}
                 </div>
 
@@ -1492,7 +1492,7 @@ export const events = {
         node.opts.forEach((opt, index) => {
             const btn = document.createElement('button');
             
-            btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-sm flex items-center justify-between group";
+            btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-xs flex items-center justify-between group";
             
             // Requirement and removal checks, same rules as the terminal
             let locked = false;
@@ -1526,7 +1526,7 @@ export const events = {
                 else if (index === 5) key = "6";
 
                 if (key) {
-                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
+                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
                 }
             }
 
@@ -1535,7 +1535,7 @@ export const events = {
                 btn.innerHTML = `
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         <span class="text-red-500 shrink-0">🔒</span> 
-                        <span class="break-words leading-tight py-1">${opt.t}</span>
+                        <span class="wrap-break-word leading-tight py-1">${opt.t}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
                         <span class="text-[10px]">(Fehlt: ${missingItem})</span>
@@ -1544,7 +1544,7 @@ export const events = {
                 btn.innerHTML = `
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         <span class="opacity-50 group-hover:opacity-100 shrink-0">➤</span> 
-                        <span class="break-words leading-tight py-1">${opt.t}</span>
+                        <span class="wrap-break-word leading-tight py-1">${opt.t}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full">
                         ${hotkeyHTML}
@@ -1713,7 +1713,7 @@ export const events = {
                 // System Nachricht (Grau, Zentriert)
                 content.innerHTML += `
                 <div class="w-full flex justify-center my-4 fade-in">
-                    <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-sm">
+                    <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-xs">
                         ${res.txt}
                     </div>
                 </div>`;

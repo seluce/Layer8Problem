@@ -187,7 +187,7 @@ export const ui = {
                         slot.title += " (Benutzen)";
                     } else {
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
-                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-bold text-white text-xs select-none">${wait}</span></div>`;
+                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded-sm flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-bold text-white text-xs select-none">${wait}</span></div>`;
                         // HIER IST DEIN ORIGINAL TEXT:
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
@@ -261,7 +261,7 @@ export const ui = {
         const ghost = document.createElement('img');
         ghost.src = imgUrl;
         
-        ghost.className = 'fixed w-16 h-16 z-[9999] object-contain pointer-events-none transition-all duration-1000 ease-in-out';
+        ghost.className = 'fixed w-16 h-16 z-9999 object-contain pointer-events-none transition-all duration-1000 ease-in-out';
         
         // Centre it on the start point
         ghost.style.left = (startX - 32) + 'px'; 
@@ -328,7 +328,7 @@ export const ui = {
             let num = val || 0; 
             const sign = num > 0 ? '+' : '';
             
-            return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-slate-800 border border-slate-700">
+            return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-bold bg-slate-800 border border-slate-700">
                         <span class="${colorClass}">${label}</span> 
                         <span class="text-white ml-0.5">${sign}${num}</span>
                     </span>`;
@@ -434,7 +434,7 @@ export const ui = {
         content.innerHTML = `
             <h1 class="text-4xl font-black ${titleColor} mb-4">${title}</h1>
             <div class="text-lg text-slate-300 mb-8 italic">${text}</div>
-            <button onclick="${btnAction}" class="bg-white text-black px-8 py-3 rounded font-bold uppercase hover:bg-slate-200 shadow-lg">
+            <button onclick="${btnAction}" class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg">
                 ${btnText}
             </button>
         `;
@@ -553,41 +553,41 @@ export const ui = {
         <div class="mb-8 flex flex-col gap-3">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-sm">
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                     <div class="flex justify-between items-end mb-1.5">
                         <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">📦</span> Items</span>
                         <span class="text-xs font-mono text-slate-300">${foundItems} / ${totalItems}</span>
                     </div>
                     <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                        <div class="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-1000" style="width: ${itemPercent}%"></div>
+                        <div class="h-full bg-linear-to-r from-amber-600 to-amber-400 transition-all duration-1000" style="width: ${itemPercent}%"></div>
                     </div>
                 </div>
                 
-                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-sm">
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                     <div class="flex justify-between items-end mb-1.5">
                         <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">🏅</span> Erfolge</span>
                         <span class="text-xs font-mono text-slate-300">${unlockedAchs} / ${totalAchs}</span>
                     </div>
                     <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
-                        <div class="h-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-1000" style="width: ${achPercent}%"></div>
+                        <div class="h-full bg-linear-to-r from-purple-600 to-purple-400 transition-all duration-1000" style="width: ${achPercent}%"></div>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner">
-                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
                     <span class="text-[9px] text-slate-500 uppercase tracking-widest">Begonnen</span>
                     <span class="font-bold text-slate-200 text-lg leading-tight mt-0.5">${s.daysStarted || 0}</span>
                 </div>
-                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
                     <span class="text-[9px] text-slate-500 uppercase tracking-widest">Überlebt</span>
                     <span class="font-bold text-emerald-400 text-lg leading-tight mt-0.5">${s.daysSurvived || 0}</span>
                 </div>
-                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
                     <span class="text-[9px] text-slate-500 uppercase tracking-widest">Rage Quits</span>
                     <span class="font-bold text-orange-400 text-lg leading-tight mt-0.5">${s.daysRageQuit || 0}</span>
                 </div>
-                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded border border-slate-700/30">
+                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
                     <span class="text-[9px] text-slate-500 uppercase tracking-widest">Gefeuert</span>
                     <span class="font-bold text-red-500 text-lg leading-tight mt-0.5">${s.daysFired || 0}</span>
                 </div>
@@ -619,7 +619,7 @@ export const ui = {
             }
 
             html += `
-                <div class="aspect-square rounded border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all relative group" title="${unlocked ? item.name : 'Unbekannt' }">
+                <div class="aspect-square rounded-sm border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all relative group" title="${unlocked ? item.name : 'Unbekannt' }">
                     ${contentContent}
                 </div>`;
         });
@@ -649,7 +649,7 @@ export const ui = {
                 }
 
                 html += `
-                    <div class="aspect-square rounded border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all relative group" title="${unlocked ? item.name : '???' }">
+                    <div class="aspect-square rounded-sm border ${borderClass} flex items-center justify-center text-xl cursor-help transition-all relative group" title="${unlocked ? item.name : '???' }">
                         ${contentContent}
                     </div>`;
             });
@@ -686,20 +686,20 @@ export const ui = {
 
                     if (diff === 'hard') {
                         borderClass += " border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]"; 
-                        badge = '<span class="text-[9px] text-red-400 font-bold border border-red-500/30 px-1.5 rounded ml-auto bg-red-950/30">SCHWER</span>';
+                        badge = '<span class="text-[9px] text-red-400 font-bold border border-red-500/30 px-1.5 rounded-sm ml-auto bg-red-950/30">SCHWER</span>';
                     } else if (diff === 'normal') {
                         borderClass += " border-blue-500/50 bg-blue-900/10"; 
-                        badge = '<span class="text-[9px] text-blue-400 font-bold border border-blue-500/30 px-1.5 rounded ml-auto bg-blue-950/30">MITTEL</span>';
+                        badge = '<span class="text-[9px] text-blue-400 font-bold border border-blue-500/30 px-1.5 rounded-sm ml-auto bg-blue-950/30">MITTEL</span>';
                     } else {
                         borderClass += " border-green-500/50 bg-green-900/10"; 
-                        badge = '<span class="text-[9px] text-green-400 font-bold border border-green-500/30 px-1.5 rounded ml-auto bg-green-950/30">EINFACH</span>';
+                        badge = '<span class="text-[9px] text-green-400 font-bold border border-green-500/30 px-1.5 rounded-sm ml-auto bg-green-950/30">EINFACH</span>';
                     }
 
                 } else {
                     desc = ach.hint ? ach.hint : "???";
                     borderClass = "border-slate-700 opacity-60 border-dashed grayscale"; 
                     bgClass = "bg-slate-950/30";
-                    badge = '<span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded ml-auto">GESPERRT</span>';
+                    badge = '<span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto">GESPERRT</span>';
                 }
 
                 // --- BILD ODER ICON LOGIK ---
@@ -719,7 +719,7 @@ export const ui = {
                 }
 
                 html += `
-                    <div class="flex gap-3 p-3 rounded border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group relative">
+                    <div class="flex gap-3 p-3 rounded-sm border ${borderClass} ${bgClass} transition-all hover:bg-slate-800 group relative">
                         
                         <div class="${imgContainerClass}">
                             ${iconContent}
@@ -754,7 +754,7 @@ export const ui = {
         if(oldModal) oldModal.remove();
 
         const html = `
-            <div id="lore-modal" class="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4 fade-in">
+            <div id="lore-modal" class="fixed inset-0 bg-black/90 z-9999 flex items-center justify-center p-4 fade-in">
                 <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
                     
                     <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
@@ -772,7 +772,7 @@ export const ui = {
                         </div>
 
                         <div class="relative pl-8 border-l-4 border-[#8d6e63]">
-                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1899</div>
+                            <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1899</div>
                             <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Der Baron und die Dampf-Bürokratie</h3>
                             <p class="mb-4">
                                 Baron Wilhelm von Gier gründete GlobalCorp ursprünglich im Sauerland als <strong>"Kaiserliche Manufaktur für Formulare & Selbstzweck"</strong>. Seine Vision war revolutionär: Er wollte Probleme verkaufen, für die nur er die Lösung hatte.
@@ -783,7 +783,7 @@ export const ui = {
                         </div>
 
                         <div class="relative pl-8 border-l-4 border-[#8d6e63]">
-                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1955</div>
+                            <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1955</div>
                             <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Das Beton-Zeitalter</h3>
                             <p class="mb-4">
                                 Im Wirtschaftswunder erkannte GlobalCorp, dass glückliche Mitarbeiter unproduktiv sind (weil sie zu viel reden). Die Lösung war die Erfindung des <strong>Grautons "RAL 7035"</strong>.
@@ -794,7 +794,7 @@ export const ui = {
                         </div>
 
                         <div class="relative pl-8 border-l-4 border-[#8d6e63]">
-                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1982</div>
+                            <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1982</div>
                             <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Die Fax-Revolution</h3>
                             <p class="mb-4">
                                 GlobalCorp vernetzte die Welt. Zumindest alle Teile der Welt, die ein piepsendes Modem besaßen. Das Management führte die "Krawatten-Pflicht" auch für Telefonate ein, da man glaubte, man könne "Kompetenz durch die Leitung hören".
@@ -805,7 +805,7 @@ export const ui = {
                         </div>
 
                         <div class="relative pl-8 border-l-4 border-[#8d6e63]">
-                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1999</div>
+                            <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">1999</div>
                             <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Das Internet-Missverständnis</h3>
                             <p class="mb-4">
                                 Dr. Wichtig Sr. kaufte für 500 Millionen Mark "das Internet". Er erhielt eine AOL-CD-ROM und ein 56k-Modem. Um das Gesicht zu wahren, wurde die "Cloud" erfunden.
@@ -816,7 +816,7 @@ export const ui = {
                         </div>
 
                         <div class="relative pl-8 border-l-4 border-[#8d6e63]">
-                            <div class="absolute -left-[2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">2024</div>
+                            <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">2024</div>
                             <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">Synergie & KI-Wahnsinn</h3>
                             <p class="mb-4">
                                 Heute sind wir "Agil". Das bedeutet: Wir rennen im Kreis, schreien "Sprint!" und hoffen, dass niemand merkt, dass wir kein Ziel haben.
@@ -826,7 +826,7 @@ export const ui = {
                             </p>
                         </div>
 
-                        <div class="bg-[#efebe9] p-6 rounded border border-[#d7ccc8] italic text-center mt-12 shadow-inner">
+                        <div class="bg-[#efebe9] p-6 rounded-sm border border-[#d7ccc8] italic text-center mt-12 shadow-inner">
                             "Wir sind nicht hier, um die Welt zu verbessern. Wir sind hier, damit die Quartalszahlen stimmen. Gehen Sie jetzt wieder an die Arbeit."
                             <br>
                             <span class="font-bold not-italic text-sm mt-3 block uppercase tracking-widest text-[#5d4037]">- Dr. Wichtig, CEO</span>
@@ -835,7 +835,7 @@ export const ui = {
                     </div>
 
                     <div class="p-6 bg-[#d7ccc8] border-t-4 border-[#8d6e63] flex justify-center">
-                        <button onclick="document.getElementById('lore-modal').remove(); document.body.classList.remove('overflow-hidden');" class="bg-[#5d4037] hover:bg-[#3e2723] text-[#fdf6e3] px-10 py-3 rounded shadow-lg font-bold uppercase tracking-wider transition-transform hover:scale-105 border-2 border-[#8d6e63]">
+                        <button onclick="document.getElementById('lore-modal').remove(); document.body.classList.remove('overflow-hidden');" class="bg-[#5d4037] hover:bg-[#3e2723] text-[#fdf6e3] px-10 py-3 rounded-sm shadow-lg font-bold uppercase tracking-wider transition-transform hover:scale-105 border-2 border-[#8d6e63]">
                             Buch schließen (und vergessen)
                         </button>
                     </div>
@@ -868,7 +868,7 @@ export const ui = {
             if (isPlayer && this.state.warningReceived) {
                 warningStampHTML = `
                 <div class="absolute top-2 right-2 md:right-4 transform rotate-12 pointer-events-none z-50">
-                    <span class="inline-block border-[3px] border-red-600 text-red-600 font-black text-lg md:text-xl tracking-widest uppercase px-2 py-0.5 rounded opacity-90 shadow-md bg-slate-900/80 backdrop-blur-sm">
+                    <span class="inline-block border-[3px] border-red-600 text-red-600 font-black text-lg md:text-xl tracking-widest uppercase px-2 py-0.5 rounded-sm opacity-90 shadow-md bg-slate-900/80 backdrop-blur-xs">
                         ABGEMAHNT
                     </span>
                 </div>`;
@@ -915,7 +915,7 @@ export const ui = {
 
             // Status and bar markup, skipped for Müller
             const statusBadgeHTML = isPlayer ? '' : `
-                <span class="text-[10px] font-bold uppercase tracking-widest ${statusColor} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded ml-2 shrink-0">
+                <span class="text-[10px] font-bold uppercase tracking-widest ${statusColor} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded-sm ml-2 shrink-0">
                     ${statusText}
                 </span>`;
 
@@ -1037,7 +1037,7 @@ export const ui = {
         }
 
         // Styling (Start-Zustand) - Jetzt noch langsamer: 3000ms (3 Sekunden)
-        floatEl.className = `fixed font-normal text-xl z-[9999] pointer-events-none transition-all duration-[3000ms] ease-out ${color}`;
+        floatEl.className = `fixed font-normal text-xl z-9999 pointer-events-none transition-all duration-3000 ease-out ${color}`;
 
         // 3. Start-Position berechnen
         const rect = target.getBoundingClientRect();
@@ -1506,14 +1506,14 @@ export const ui = {
             textSpan.innerText = "Bist du dir sicher?";
             iconSpan.className = "text-base"; 
             
-            btn.className = "w-full text-left px-4 py-3 bg-red-950/30 border border-red-500 rounded-lg transition-all text-red-400 text-sm font-bold flex items-center gap-3 mt-2 animate-pulse shadow-sm";
+            btn.className = "w-full text-left px-4 py-3 bg-red-950/30 border border-red-500 rounded-lg transition-all text-red-400 text-sm font-bold flex items-center gap-3 mt-2 animate-pulse shadow-xs";
             
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
                     btn.dataset.armed = "false";
                     textSpan.innerText = "Spielstand löschen";
                     iconSpan.className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-                    btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm";
+                    btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
                 }
             }, 4000);
         }
@@ -1570,7 +1570,7 @@ export const ui = {
             resetBtn.dataset.armed = "false";
             document.getElementById('text-hard-reset').innerText = "Spielstand löschen";
             document.getElementById('icon-hard-reset').className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-sm";
+            resetBtn.className = "w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
         }
 
         const mainView = document.getElementById('menu-main-view');
@@ -1673,11 +1673,11 @@ export const ui = {
         } else {
             navigator.clipboard.writeText(shareUrl).then(() => {
                 textSpan.innerText = "Link erfolgreich kopiert!";
-                btn.classList.add('!bg-green-900/30', '!border-green-500', '!text-green-400');
+                btn.classList.add('bg-green-900/30!', 'border-green-500!', 'text-green-400!');
                 
                 setTimeout(() => {
                     textSpan.innerText = originalText;
-                    btn.classList.remove('!bg-green-900/30', '!border-green-500', '!text-green-400');
+                    btn.classList.remove('bg-green-900/30!', 'border-green-500!', 'text-green-400!');
                 }, 3000);
             }).catch(() => {
                 textSpan.innerText = "Kopieren fehlgeschlagen.";
@@ -1809,9 +1809,9 @@ export const ui = {
         // Visual feedback: every button flashes green briefly
         const buttons = document.querySelectorAll('[id^="bind-"]');
         buttons.forEach(btn => {
-            btn.classList.add('!bg-green-900/40', '!border-green-500', '!text-green-400');
+            btn.classList.add('bg-green-900/40!', 'border-green-500!', 'text-green-400!');
             setTimeout(() => {
-                btn.classList.remove('!bg-green-900/40', '!border-green-500', '!text-green-400');
+                btn.classList.remove('bg-green-900/40!', 'border-green-500!', 'text-green-400!');
             }, 600);
         });
     },
@@ -1845,7 +1845,7 @@ export const ui = {
                 if (!kbd) {
                     kbd = document.createElement('kbd');
                     // Top right corner, slightly transparent
-                    kbd.className = 'hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded shadow-sm opacity-80 pointer-events-none';
+                    kbd.className = 'hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded-sm shadow-xs opacity-80 pointer-events-none';
                     btn.appendChild(kbd);
                 }
                 
@@ -1893,11 +1893,11 @@ export const ui = {
                             // No badge yet, build one
                             kbd = document.createElement('kbd');
                             // Default styling for terminal and phone
-                            kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors";
+                            kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors";
                             
                             // Email-Sonderfarbe
                             if (containerId === 'email-actions') {
-                                kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded text-slate-500 font-mono shadow-inner group-hover:text-blue-400 transition-colors";
+                                kbd.className = "shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner group-hover:text-blue-400 transition-colors";
                             }
                             
                             kbd.innerText = key.toUpperCase();
@@ -2023,7 +2023,7 @@ ${logText}
                 if (sendBtn) {
                     sendBtn.innerHTML = "<span>✅</span> Gesendet!";
                     sendBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
-                    sendBtn.classList.add('!bg-green-600');
+                    sendBtn.classList.add('bg-green-600!');
                 }
                 
                 // Close and clean up after 1.5 seconds
@@ -2033,7 +2033,7 @@ ${logText}
                     if (sendBtn) {
                         sendBtn.innerHTML = originalText;
                         sendBtn.disabled = false;
-                        sendBtn.classList.remove('opacity-50', 'cursor-not-allowed', '!bg-green-600');
+                        sendBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-green-600!');
                         sendBtn.classList.add('bg-blue-600', 'hover:bg-blue-500');
                     }
                     // Clear the field for the next report

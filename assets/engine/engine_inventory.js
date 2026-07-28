@@ -75,7 +75,7 @@ export const inventory = {
                 let flavorText = dbItem.flavor ? dbItem.flavor : '"Keine weiteren Informationen."';
 
                 tooltipHtml = `
-                    <div class="absolute bottom-[110%] ${posClass} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[1000] pointer-events-none flex flex-col text-left">
+                    <div class="absolute bottom-[110%] ${posClass} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-1000 pointer-events-none flex flex-col text-left">
                         <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">${dbItem.name}</div>
                         <div class="text-[10px] text-slate-300 italic leading-snug">${flavorText}</div>
                         <div class="absolute top-full ${arrowPos} border-4 border-transparent border-t-slate-600"></div>
@@ -104,7 +104,7 @@ export const inventory = {
                         slot.className += ' cursor-not-allowed'; 
                         let wait = 60 - (this.state.time - this.state.lastStressballTime);
                         // Cooldown overlay, simply appended
-                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-black text-white text-xl">${wait}</span></div>`;
+                        slot.innerHTML += `<div class="absolute inset-0 bg-slate-900/70 rounded-sm flex items-center justify-center z-10 backdrop-blur-[1px]"><span class="font-black text-white text-xl">${wait}</span></div>`;
                         slot.onclick = () => this.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${wait} Min)`, "text-slate-500");
                     }
                 }
