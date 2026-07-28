@@ -7,7 +7,7 @@ import { inventory } from './assets/engine/engine_inventory.js';
 import { ui } from './assets/engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.3.1",
+    VERSION: "v3.3.2",
 
     // 1. Attach the mutable game state
     state: state,
@@ -24,6 +24,41 @@ const engine = {
 
 // Expose the engine globally (inline onclick handlers in index.html rely on this)
 window.engine = engine;
+
+/**
+ * Global safety net.
+ *
+ * The game has no mid-day save. An uncaught exception during an action used to
+ * leave activeEvent stuck on true with every button disabled, so the player had
+ * to reload and lost the whole workday. Recovering the UI is almost always
+ * better than freezing it.
+ *
+ * The error is still reported to the console — this catches the fallout, it does
+ * not hide the cause.
+ */
+let lastRecovery = 0;
+
+function recoverFromError(err) {
+    console.error("Uncaught error:", err);
+
+    // Repeated failures usually mean the same broken action retriggering.
+    // Recovering once every few seconds is enough and keeps the log readable.
+    const now = Date.now();
+    if (now - lastRecovery < 3000) return;
+    lastRecovery = now;
+
+    try {
+        engine.state.activeEvent = false;
+        engine.disableButtons(false);
+        engine.log("H.A.L.G.E.R.D.: Interner Fehler abgefangen. Weitermachen.", "text-red-500");
+    } catch (recoveryError) {
+        // Engine not far enough along to recover — nothing sensible left to do.
+        console.error("Recovery failed:", recoveryError);
+    }
+}
+
+window.addEventListener('error', (e) => recoverFromError(e.error || e.message));
+window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason));
 
 // Boot the game.
 // init() is async because the desktop build awaits its cloud save first;

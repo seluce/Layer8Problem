@@ -1,3 +1,93 @@
+/**
+ * Everything that belongs to a single workday.
+ *
+ * softReset() used to null out ~40 fields by hand, which meant every new piece
+ * of per-day state was one more thing to remember. Fields that were forgotten
+ * survived the restart: a pending phone event would pop up again mid-morning,
+ * an unfinished call chain stayed loaded, and expired timer handles stayed
+ * truthy and blocked new emails.
+ *
+ * Anything scoped to one day belongs in here. Anything that must outlive the
+ * day - settings, archive, difficulty - must NOT.
+ *
+ * @param {number} mult Difficulty multiplier (0.8 easy / 1.0 normal / 1.25 hard)
+ */
+export function freshDay(mult = 1.0) {
+    return {
+        // Clock & core stats
+        time: 8 * 60,
+        fl: 0, al: 0, cr: 0,
+        tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
+        excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
+
+        // Progress
+        inventory: [],
+        usedIDs: new Set(),
+        usedEmails: new Set(),
+        storyFlags: {},
+        achievements: [],
+        achievedTitles: [],
+        coffeeConsumed: 0,
+        emailsIgnored: 0,
+
+        // Day flow
+        activeEvent: false,
+        dayActive: false,
+        lunchDone: false,
+        morningMoodShown: false,
+        ticketWarning: false,
+        chefWarningReceived: false,
+        rageWarningReceived: false,
+        pendingEnd: null,
+        drunkEndTime: 0,
+        lastStressballTime: -100,
+
+        // Currently open event. These four are the ones that used to leak:
+        // a stale currentPhoneEvent reappears as soon as any new event sets
+        // activeEvent back to true.
+        currentEventId: null,
+        currentEventType: null,
+        currentPhoneEvent: null,
+        currentChainEvent: null,
+        currentChainType: null,
+        pendingItem: null,
+
+        // Email system
+        isEmailOpen: false,
+        emailPending: false,
+        lastEmailTime: 0,
+        lastEmailEventId: null,
+
+        // News ticker
+        lastNewsTime: 0,
+        activeNewsText: null,
+        lastMoodId: null,
+        lastLogMsg: "",
+
+        // Party mode
+        isPartyMode: false,
+        partyProgress: 0,
+        currentPartyKey: null,
+
+        // Timer handles. Nulled rather than left dangling — an expired handle
+        // is still truthy, and triggerEmail() treats that as "timer running".
+        bossTimer: null,
+        emailTimer: null,
+        emailDelayTimer: null,
+        emailChainTimer: null,
+        emailCooldownTimer: null,
+        phoneTypeTimer: null,
+        phoneReadTimer: null,
+        newsTimer: null
+    };
+}
+
+/** Timer fields cleared on every day restart. Kept next to the factory so the two stay in sync. */
+export const DAY_TIMERS = [
+    'bossTimer', 'emailTimer', 'emailDelayTimer', 'emailChainTimer',
+    'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer'
+];
+
 export const state = {
 
     time: 8 * 60,

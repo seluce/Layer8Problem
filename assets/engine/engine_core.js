@@ -1,5 +1,6 @@
 import { DB } from '../../data.js';
 import { platform, applyPlatformVisibility } from '../../platform.js';
+import { freshDay, DAY_TIMERS } from './engine_state.js';
 
 export const core = {
 
@@ -305,62 +306,34 @@ export const core = {
     },
 
     // Blitzschneller Neustart ohne Page-Reload
+    // Stops every per-day timer and nulls the handle. Nulling matters: an
+    // expired handle is still truthy, and triggerEmail() reads it as "a timer
+    // is already running" and stops scheduling mail for the rest of the day.
+    clearDayTimers: function() {
+        for (const key of DAY_TIMERS) {
+            clearTimeout(this.state[key]);
+            clearInterval(this.state[key]);
+            this.state[key] = null;
+        }
+    },
+
+    // Restarts the workday without touching settings, archive or difficulty.
     softReset: function() {
-		this.stopMusic();
-        // Alle Menüs schließen
+        this.stopMusic();
+        this.clearDayTimers();
+
+        // Close every menu
         this.closeSettings();
-        if (document.getElementById('modal-overlay')) {
-            document.getElementById('modal-overlay').classList.add('hidden');
-            document.getElementById('modal-overlay').classList.remove('flex');
+        const overlay = document.getElementById('modal-overlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
         }
 
-        // Timer abbrechen
-        if (this.state.bossTimer) clearInterval(this.state.bossTimer);
-        if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
-        if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
-        if (this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
-        if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
-        if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
-        if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
-        if (this.state.newsTimer) clearTimeout(this.state.newsTimer);
+        // Replace the whole day rather than resetting fields one by one, so a
+        // newly added field can never be forgotten here.
+        Object.assign(this.state, freshDay(this.state.difficultyMult));
 
-        // Memory auf 08:00 Uhr setzen (Wir behalten den difficultyMult bei!)
-        this.state.time = 8 * 60;
-        this.state.fl = 0;
-        this.state.al = 0;
-        this.state.cr = 0;
-        this.state.tickets = this.state.difficultyMult > 1.0 ? 2 : 0; // Montag startet mit 2 Tickets
-        this.state.excusesLeft = this.state.difficultyMult < 1.0 ? 3 : (this.state.difficultyMult > 1.0 ? 1 : 2);
-        this.state.inventory = []; // Taschen werden am neuen Tag geleert
-        this.state.usedIDs = new Set();
-        this.state.usedEmails = new Set();
-        this.state.storyFlags = {};
-        this.state.morningMoodShown = false;
-        this.state.dayActive = false;
-        this.state.lunchDone = false;
-        this.state.ticketWarning = false;
-        this.state.pendingEnd = null;
-        this.state.coffeeConsumed = 0;
-        this.state.emailsIgnored = 0;
-        this.state.drunkEndTime = 0;
-        this.state.activeEvent = false;
-        this.state.isEmailOpen = false;
-        this.state.emailPending = false;
-        this.state.chefWarningReceived = false;
-        this.state.rageWarningReceived = false;
-        this.state.lastStressballTime = -100;
-        this.state.isPartyMode = false;
-        this.state.partyProgress = 0;
-        this.state.currentPartyKey = null;
-        this.state.achievements = [];
-        this.state.achievedTitles = [];
-        this.state.lastEmailEventId = null;
-        this.state.lastEmailTime = 0;
-        this.state.currentEventId = null;
-        this.state.currentEventType = null;
-        this.state.lastNewsTime = 0;
-        this.state.activeNewsText = null;
-        
         // Ticker News Header sofort auf Standard zurücksetzen
         this.renderHeader();
         
@@ -836,16 +809,9 @@ export const core = {
             // Musik zurücksetzen: Schaltet die Boss-Musik aus und kehrt zum gewählten Büro-Vibe zurück
             this.playMusic('office');
             
-            // --- Alle Hintergrund-Aktivitäten beim echten Ende einfrieren ---
-            if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
-            if(this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
-            if(this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
-            if(this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
-            if(this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
-            if(this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
-            if(this.state.newsTimer) clearTimeout(this.state.newsTimer);
+            // Freeze every background activity once the day is really over
+            this.clearDayTimers();
             this.state.emailPending = false;
-            // --------------------------------------------------------------------------
             
             this.showEnd(end.title, end.text, end.isWin);
             this.state.pendingEnd = null; // Reset
@@ -867,14 +833,8 @@ export const core = {
         this.state.fl = 0;
         this.state.cr = 0;
         
-        // Alle laufenden Timer killen
-        if(this.state.bossTimer) clearInterval(this.state.bossTimer);
-        if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
-        if(this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
-        if(this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
-        if(this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
-        if(this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
-        if(this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
+        // Kill everything still running from the workday
+        this.clearDayTimers();
         this.state.emailPending = false;
         
         this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");

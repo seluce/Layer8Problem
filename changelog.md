@@ -1,3 +1,14 @@
+[3.3.2] - 2026-07-28
+
+System & Stabilität:
+* Beim Neustart eines Tages blieben bisher einzelne Zustände aus dem vorherigen Durchlauf erhalten. Eine noch offene Handy-Nachricht oder ein angefangenes Telefongespräch tauchte dadurch mitten am neuen Vormittag wieder auf. Der Tagesneustart setzt nun sämtliche Tageswerte geschlossen zurück.
+* Bereits abgelaufene Hintergrund-Zeitgeber wurden zwar gestoppt, aber nicht vollständig gelöst. Das konnte dazu führen, dass für den Rest des Tages keine E-Mails mehr eintrafen.
+* Neu: Tritt im Spiel ein unerwarteter Fehler auf, wird die Bedienung jetzt automatisch wieder freigegeben, statt den laufenden Tag einzufrieren. Zuvor half in einem solchen Fall nur ein Neuladen der Seite, wodurch der gesamte Arbeitstag verloren ging.
+
+Für Entwickler:
+* Neue Fabrikfunktion freshDay() in engine_state.js liefert den kompletten Tageszustand. softReset() ersetzt den Zustand nun in einem Schritt, statt rund 45 Felder einzeln zurückzusetzen - ein neu hinzugefügtes Feld kann dabei nicht mehr vergessen werden.
+* clearDayTimers() bündelt das Stoppen aller Tages-Zeitgeber. Die zuvor an drei Stellen duplizierte Liste entfällt.
+
 [3.3.1] - 2026-07-28
 
 System & Stabilität:
