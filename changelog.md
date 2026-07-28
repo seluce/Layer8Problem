@@ -1,3 +1,14 @@
+[3.4.0] - 2026-07-28
+
+System & Stabilität:
+* Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite auf einmal geladen, auch die des Party-Finales, das die meisten nie zu sehen bekommen. Nun lädt zunächst nur das Nötigste; der Rest kommt im Hintergrund nach, während der Startbildschirm gelesen wird.
+* Die zu ladende Datenmenge beim Seitenaufruf sinkt dadurch um rund 92 Prozent.
+* Sollte ein Nachladen einmal fehlschlagen, meldet sich das System im Log und die Aktion lässt sich einfach erneut auslösen, statt dass das Spiel hängen bleibt.
+
+Für Entwickler:
+* data.js trennt zwischen sofort benötigten Daten und nachladbaren Ereignis-Pools. Die Funktion ensure() stellt vor jedem Zugriff sicher, dass der jeweilige Pool vorhanden ist, prefetchAll() wärmt den Rest im Leerlauf vor.
+* trigger(), triggerEmail(), startParty() und goToPartyStation() sind asynchron. Ein neues Zustandsfeld isLoadingPool verhindert, dass ein zweiter Klick während des allerersten Nachladens ein doppeltes Ereignis auslöst.
+
 [3.3.2] - 2026-07-28
 
 System & Stabilität:

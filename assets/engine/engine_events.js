@@ -1,4 +1,4 @@
-import { DB } from '../../data.js';
+import { DB, ensure } from '../../data.js';
 import { platform } from '../../platform.js';
 
 export const events = {
@@ -56,7 +56,9 @@ export const events = {
     },
 
     // Öffnet das E-Mail Overlay
-    triggerEmail: function(forcedId = null) {
+    // async: the mail pool loads on demand, see data.js
+    triggerEmail: async function(forcedId = null) {
+        await ensure('emails');
 		
         // Wenn ein Bossfight läuft, darf diese Funktion gar nicht erst auslösen!
         if (this.state.bossTimer || this.state.currentEventType === 'boss') {
@@ -378,7 +380,8 @@ export const events = {
         if (this.state.pendingEnd) this.finishGame();
     },
     
-    trigger: function(type) {
+    // async: the event pools load on demand, see data.js
+    trigger: async function(type) {
 		this.playAudio('action');
 		// Blockieren, wenn Party
 		if (this.state.isPartyMode) return;
@@ -404,6 +407,28 @@ export const events = {
             this.incrementStat('daysStarted');
         }
         
+        // Make sure everything this function touches is in memory. Resolves
+        // instantly once loaded, so calling it every time costs nothing.
+        //
+        // activeEvent is only set later, inside renderTerminal — during the very
+        // first load that leaves a window in which a second click would slip
+        // past the guard above and trigger two events. isLoadingPool closes it.
+        const poolName = (type === 'sidequest') ? 'sidequests' : type;
+        if (!DB[poolName] || !DB.bossfights || !DB.reputation) {
+            if (this.state.isLoadingPool) return;
+            this.state.isLoadingPool = true;
+            this.disableButtons(true);
+            try {
+                await ensure(poolName, 'bossfights', 'reputation');
+            } catch (err) {
+                this.log("H.A.L.G.E.R.D.: Daten konnten nicht geladen werden. Bitte erneut versuchen.", "text-red-500");
+                return;
+            } finally {
+                this.state.isLoadingPool = false;
+                this.disableButtons(false);
+            }
+        }
+
         // ---------------------------------------------------------
         // 1. BOSS CHECK (Die "Katastrophe")
         // ---------------------------------------------------------
@@ -864,7 +889,7 @@ export const events = {
                 }
                 
                 if (opt.checkPool && !locked) {
-                    let pool = DB.party.filter(ev => ev.loc === opt.checkPool && !this.state.usedIDs.has(ev.id));
+                    let pool = (DB.party || []).filter(ev => ev.loc === opt.checkPool && !this.state.usedIDs.has(ev.id));
                     if (pool.length === 0) {
                         locked = true;
                         reqText = "(Alles gesehen)"; 
@@ -1294,7 +1319,8 @@ export const events = {
     },
 
     // --- PARTY SYSTEM ---
-    goToPartyStation: function(loc) {
+    goToPartyStation: async function(loc) {
+        await ensure('party');
         this.playAudio('action');
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         

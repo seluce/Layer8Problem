@@ -32,6 +32,7 @@ export function freshDay(mult = 1.0) {
 
         // Day flow
         activeEvent: false,
+        isLoadingPool: false,   // guards the async gap while a data pool loads
         dayActive: false,
         lunchDone: false,
         morningMoodShown: false,

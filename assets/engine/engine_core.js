@@ -1,4 +1,4 @@
-import { DB } from '../../data.js';
+import { DB, ensure, prefetchAll } from '../../data.js';
 import { platform, applyPlatformVisibility } from '../../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.js';
 
@@ -48,6 +48,10 @@ export const core = {
         document.body.classList.add('overflow-hidden');
 
         this.updatePresence('system');
+
+        // The intro modal is up and the player reads it for several seconds —
+        // more than enough to warm the remaining pools before the first click.
+        prefetchAll();
 
         this.renderHeader();
         this.updateUI();
@@ -818,7 +822,10 @@ export const core = {
         }
     },
     
-    startParty: function() {
+    // async: the party pool is only fetched when the finale actually happens,
+    // which most players never reach.
+    startParty: async function() {
+        await ensure('party');
         this.playAudio('ui');
         const endData = this.state.pendingEnd;
         this.state.pendingEnd = null; // Den Marker wieder löschen
