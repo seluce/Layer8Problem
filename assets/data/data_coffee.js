@@ -1849,7 +1849,6 @@ export const coffee = [
         opts: [
             { 
                 t: "Danken & annehmen", 
-                loot: "loot_box", 
                 rep: { "Gabi": 5 },
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Es ist deine Amazon-Bestellung (neue Gaming-Maus). Gabi zwinkert dir verschwörerisch zu. 'Bei mir ist deine Post sicher!' Eine wertvolle Verbündete." 

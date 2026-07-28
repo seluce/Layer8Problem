@@ -1042,7 +1042,7 @@ export const emails = [
         id: "mail_salary_honest",
         linked: true,
         sender: "HR System",
-        subj: "Danke",
+        subj: "Vielen Dank für Ihre Meldung",
         body: "Danke für die Ehrlichkeit. Als Belohnung bekommen Sie einen Firmen-Kugelschreiber (sobald ausreichend Budget da ist).",
         opts: [
             { btn: "Juhu...", r: "Du fühlst dich moralisch überlegen, aber arm.", m: 2, f: 0, a: 0, c: -5 },

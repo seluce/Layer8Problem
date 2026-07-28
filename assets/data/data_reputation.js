@@ -411,6 +411,7 @@ export const reputation = [
         opts: [
             { 
                 t: "Kevin verpfeifen: 'ER WAR DAS!'", 
+                next: "path_kevin_trap", 
                 rep: { "Kevin": -20, "Dr. Wichtig": 10 },
                 m: 5, f: 5, a: 15, c: -20, 
                 r: "Der Chef sieht Kevin am Laptop. Kevin wird gefeuert (oder fast). Er wird dich dafür richtig hassen. Das war der Point of no Return." 
@@ -1553,7 +1554,7 @@ export const reputation = [
 		char: "Egon",
         title: "Mülltrennung 2.0",
         reqRep: { "Egon": -50 },
-        reqStory: "path_egon_recycling",
+        reqStory: "path_egon_slave",
         text: "Egon kommt mit einem Karton voller Batterien, Kabel und Bananenschalen. 'Da du so gerne aufräumst: Hier. Trenn das. Aber richtig! Wehe, eine Batterie landet im Bio-Müll.' Er verschränkt die Arme und wartet.",
         opts: [
             { 

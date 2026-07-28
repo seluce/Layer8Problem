@@ -5264,6 +5264,115 @@ export const sidequests = [
     },
 
     // CHAIN 1: Die Büropflanze
+    // CHAIN: Die Bowl-Bestellung (Vorlauf zu sq_food_bowl_delivery)
+    {
+        id: "sq_food_bowl_order",
+        kind: "phone",
+        appName: "Slack",
+        title: "#lunch",
+        startNode: "root",
+        nodes: {
+            root: {
+                text: "CHANTAL: '@channel Team! \u2728 Ich sammle für die Buddha-Gold-Bowls vom neuen Superfood-Lieferservice. 18,50\u20ac pro Person. Wer ist dabei? Denkt an eure Chakren!'",
+                opts: [
+                    { t: "Mitbestellen. Teamgeist und so.", next: "join" },
+                    { t: "Höflich ablehnen.", next: "decline" },
+                    { t: "'Machen wir nicht lieber Pizza?'", next: "pizza" }
+                ]
+            },
+            join: {
+                text: "CHANTAL: 'Yes! Wusste ich doch, dass du auf deine Energie achtest. Ich trag dich ein. \ud83d\ude4f'",
+                opts: [
+                    { t: "18,50\u20ac. Für Salat. Okay.", next: "res_joined" }
+                ]
+            },
+            decline: {
+                text: "CHANTAL: 'Schade... aber okay. Nicht jeder ist schon so weit auf seiner Reise.' Drei Leute reagieren mit einem Daumen-runter-Emoji auf deine Absage.",
+                opts: [
+                    { t: "Damit kann ich leben.", next: "res_declined" }
+                ]
+            },
+            pizza: {
+                text: "CHANTAL: 'PIZZA?! Weißt du, wie viele leere Kohlenhydrate da drin sind?' Markus antwortet mit \ud83c\udf55\ud83c\udf55\ud83c\udf55. Der Kanal explodiert. Es folgen 47 Nachrichten.",
+                opts: [
+                    { t: "Ich hab hier nur Chaos gestiftet.", next: "res_pizza" }
+                ]
+            }
+        },
+        results: {
+            res_joined: {
+                txt: "Du bist auf der Liste. Dein Konto ist 18,50\u20ac leichter, deine Erwartungshaltung noch nicht.",
+                next: "food_bowl_planned",
+                rep: { "Chantal": 5 },
+                m: 10, f: 0, a: 0, c: 0
+            },
+            res_declined: {
+                txt: "Kein Salat, kein Chakra, keine 18,50\u20ac weg. Du holst dir später etwas vom Bäcker. Marketing schweigt vielsagend.",
+                rep: { "Chantal": -5 },
+                m: 5, f: 5, a: -5, c: 0
+            },
+            res_pizza: {
+                txt: "Der #lunch-Kanal ist jetzt ein Schlachtfeld. Markus feiert dich, Chantal nicht. Gegessen hat am Ende niemand.",
+                rep: { "Chantal": -10, "Markus": 10 },
+                m: 15, f: 5, a: 5, c: 0
+            }
+        }
+    },
+    // CHAIN: Kevin bekommt Verantwortung (Vorlauf zu sq_kevin_origin_2)
+    {
+        id: "sq_kevin_origin_1",
+        kind: "phone",
+        appName: "BroChat",
+        title: "Kevins Angebot",
+        startNode: "intro",
+        nodes: {
+            intro: {
+                text: "KEVIN: 'Bro, mal ehrlich. Ich sitz hier den ganzen Tag und darf nur Toner wechseln. Lass mich doch mal was Richtiges machen! Ich könnte die Kabel im Rack ordentlich verlegen. Hab YouTube geguckt.'",
+                opts: [
+                    { t: "Okay Kevin. Zeig, was du kannst.", next: "trust" },
+                    { t: "Auf keinen Fall. Serverraum ist tabu.", next: "deny" },
+                    { t: "Erst räumst du das Lager auf.", next: "test" }
+                ]
+            },
+            trust: {
+                text: "KEVIN: 'ECHT JETZT?! Bro, ich enttäusch dich nicht! Ich mach das so sauber, da weint der Chef vor Freude!' Er schickt 14 Feuer-Emojis hinterher.",
+                opts: [
+                    { t: "Ich hoffe, ich bereue das nicht.", next: "res_trust" }
+                ]
+            },
+            deny: {
+                text: "KEVIN: 'Man... immer das Gleiche. Wie soll ich denn was lernen, wenn ich nix machen darf?' Er hat nicht ganz unrecht, und das weißt du auch.",
+                opts: [
+                    { t: "Sicherheit geht vor.", next: "res_deny" }
+                ]
+            },
+            test: {
+                text: "KEVIN: 'Das Lager? Da war seit 2019 keiner mehr drin.' Zwei Stunden später schickt er ein Foto: alles sortiert, beschriftet, nach Kabeltyp gruppiert. Du bist ehrlich beeindruckt.",
+                opts: [
+                    { t: "Respekt. Dann darfst du auch ans Rack.", next: "res_test" }
+                ]
+            }
+        },
+        results: {
+            res_trust: {
+                txt: "Kevin hat jetzt Zugang zum Serverraum. Du hast ein gutes Gefühl. Meistens.",
+                next: "kevin_trust",
+                rep: { "Kevin": 15 },
+                m: 10, f: 0, a: 0, c: 5
+            },
+            res_deny: {
+                txt: "Der Serverraum bleibt deine Festung. Kevin bleibt Toner-Beauftragter. Beide seid ihr nicht ganz glücklich damit.",
+                rep: { "Kevin": -10 },
+                m: 5, f: 0, a: 5, c: -5
+            },
+            res_test: {
+                txt: "Kevin hat sich das Vertrauen tatsächlich verdient. Das Lager sieht besser aus als dein Schreibtisch.",
+                next: "kevin_trust",
+                rep: { "Kevin": 20 },
+                m: 25, f: -5, a: -10, c: 0
+            }
+        }
+    },
     {
         id: "sq_plant_1",
         title: "Flora in Not",
@@ -5278,7 +5387,6 @@ export const sidequests = [
             },
             { 
                 t: "Den Rest alten Kaffee reinkippen", 
-                loot: "coffee",
                 next: "path_plant_coffee", 
                 m: 10, f: 0, a: -5, c: 0, 
                 r: "Wenn Koffein dich am Leben hält, funktioniert es sicher auch bei Pflanzen. Du opferst deinen halbleeren Becher." 
@@ -5480,7 +5588,6 @@ export const sidequests = [
             },
             { 
                 t: "Einen heißen Kaffee spendieren", 
-                req: "coffee", 
                 rep: { "Gabi": 10 },
                 m: 15, f: 0, a: -10, c: 0, 
                 r: "Diplomatie rettet den Tag. Du gibst ihr Kaffee als Frostschutz. Milde gestimmt." 
@@ -5629,8 +5736,7 @@ export const sidequests = [
                 r: "Du nimmst dir die Kartusche, fixierst dein eigenes Problem und ignorierst den Rest." 
             },
             { 
-                t: "Kartusche in deinem Büro bunkern (Loot!)", 
-                loot: "toner", 
+                t: "Kartusche in deinem Büro bunkern", 
                 next: "path_printer_hoard", 
                 m: 10, f: 10, a: -10, c: 0, 
                 r: "Du klemmst dir das schwere Paket unter den Arm und lagerst es im dunklen IT-Schrank. Wer drucken will, muss betteln." 

@@ -1,3 +1,16 @@
+[3.6.0] - 2026-07-28
+
+Neuerungen:
+* Zwei neue Ereignisse: Die Bowl-Bestellung im #lunch-Kanal und Kevins Bitte um mehr Verantwortung. Beide entscheiden darüber, ob die jeweiligen Folgeereignisse später am Tag überhaupt auftreten.
+
+Fehlerkorrekturen:
+* Fünf Ereignisse waren im Spiel gar nicht erreichbar, weil die Voraussetzung dafür nirgends erfüllt werden konnte. Betroffen waren die Gerüchteküche rund um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
+* Beim Serverraum-Ereignis um die alte Liste blieb die Entscheidung "Nichts anfassen und gehen" ohne Folgen. Sie führt nun wie vorgesehen dazu, dass Kevin die Liste stattdessen selbst findet.
+* Kevins Petition erscheint jetzt als Folge davon, ihn beim Chef angeschwärzt zu haben - zuvor war sie an eine Entscheidung geknüpft, die den Ruf in die falsche Richtung bewegte.
+* Vier Antwortmöglichkeiten versprachen Gegenstände, die es gar nicht gibt. Das Paket von Gabi, der Kaffee für die Pflanze und die gebunkerte Tonerkartusche landeten dadurch nie im Rucksack.
+* Die Option, Gabi einen heißen Kaffee zu spendieren, war dauerhaft gesperrt, weil sie einen nicht existierenden Gegenstand verlangte. Sie steht jetzt zur Verfügung.
+* Zwei E-Mails trugen denselben Betreff und blockierten sich gegenseitig, sodass pro Tag nur eine von beiden eintreffen konnte.
+
 [3.5.1] - 2026-07-28
 
 System & Stabilität:

@@ -7,7 +7,7 @@ import { inventory } from './assets/engine/engine_inventory.js';
 import { ui } from './assets/engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.5.1",
+    VERSION: "v3.6.0",
 
     // 1. Attach the mutable game state
     state: state,

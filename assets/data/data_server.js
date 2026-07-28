@@ -21,6 +21,7 @@ export const server = [
             },
             { 
                 t: "Nichts anfassen und gehen", 
+                next: "path_lore_ignore", 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du lässt die Geister der Vergangenheit ruhen. Manche Türen bleiben besser verschlossen." 
             }
