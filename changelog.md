@@ -1,3 +1,17 @@
+[3.3.1] - 2026-07-28
+
+System & Stabilität:
+* Browser- und Desktop-Fassung teilen sich nun auch dieselbe Startseite. Zuvor existierten zwei getrennte HTML-Dateien, die sich in Menüaufbau und Schaltflächen unterschieden.
+* Menüpunkte, die nur zur jeweiligen Fassung passen, blenden sich selbstständig ein oder aus: Vollbild, "Spiel beenden" und die globalen Statistiken erscheinen ausschließlich in der Steam-Fassung, der Verweis auf die GitHub-Projektseite ausschließlich im Browser.
+
+Anzeige & Layout:
+* Die Steam-Fassung zeigt im Startbildschirm jetzt zusätzlich zu Vollbild und Beenden auch die Schaltflächen für Export und Import an, die dort bisher fehlten.
+
+Für Entwickler:
+* main.js liegt im gemeinsamen Projekt und wird von der Browser-Fassung schlicht ignoriert.
+* Externe Verweise laufen über engine.openExternal() und landen dadurch in der Steam-Fassung korrekt im Overlay statt in einem leeren Fenster.
+* Sämtliche Kommentare in main.js wurden auf Englisch übertragen.
+
 [3.3.0] - 2026-07-28
 
 Neuerungen:

@@ -1247,6 +1247,18 @@ export const ui = {
         }
     },
     
+    // Closes the game. A browser tab cannot reliably close itself, so the
+    // button that calls this is web-hidden anyway.
+    quitGame: function() {
+        platform.quit();
+    },
+
+    // Opens a link outside the game. On desktop this goes through the main
+    // process so it lands in the Steam overlay instead of a blank Electron window.
+    openExternal: function(url) {
+        platform.openExternal(url);
+    },
+
     // Fullscreen is handled by the shell. In a browser the user has F11,
     // so the button that calls this is hidden there anyway.
     toggleFullscreen: function() {

@@ -1,6 +1,6 @@
 {
   "name": "layer8problem",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Layer8Problem - SysAdmin Survival Simulator",
   "main": "main.js",
   "scripts": {
@@ -40,6 +40,7 @@
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
+    "jsdom": "^30.0.0",
     "steamworks.js": "^0.4.0"
   }
 }

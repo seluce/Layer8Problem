@@ -1,5 +1,5 @@
 import { DB } from '../../data.js';
-import { platform } from '../../platform.js';
+import { platform, applyPlatformVisibility } from '../../platform.js';
 
 export const core = {
 
@@ -39,6 +39,7 @@ export const core = {
     // async because the desktop build has to await its cloud save before the
     // local archive is read. On the web platform.load() resolves immediately.
     init: async function() {
+        applyPlatformVisibility();
         await this.loadCloudSave();
         this.loadSystem();
         if (this.state.compactMode) document.body.classList.add('compact-mode');

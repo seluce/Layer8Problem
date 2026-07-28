@@ -64,3 +64,21 @@ if (typeof require !== 'undefined') {
         console.warn("Desktop bridge unavailable, continuing with web defaults.", err);
     }
 }
+
+/**
+ * Strips the platform markers from the DOM.
+ *
+ * Elements tagged .platform-desktop or .platform-web only belong to one shell.
+ * The ones for the wrong shell are removed outright; the ones for the current
+ * shell lose the marker class so their normal layout classes take over again
+ * (.platform-desktop is display:none by default, see the style block in
+ * index.html).
+ *
+ * Called once from engine.init().
+ */
+export function applyPlatformVisibility() {
+    const keep = platform.isDesktop ? 'platform-desktop' : 'platform-web';
+    const drop = platform.isDesktop ? 'platform-web' : 'platform-desktop';
+    document.querySelectorAll('.' + drop).forEach(el => el.remove());
+    document.querySelectorAll('.' + keep).forEach(el => el.classList.remove(keep));
+}

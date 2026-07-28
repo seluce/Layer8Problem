@@ -15,6 +15,12 @@
 
     <link href="assets/css/style.css" rel="stylesheet">
 
+    <style>
+        /* Platform-conditional blocks. .platform-desktop starts hidden so the
+           web build never flashes buttons it does not support; engine.init()
+           strips the class on desktop and removes the .platform-web elements. */
+        .platform-desktop { display: none !important; }
+    </style>
 </head>
 <body class="text-xs md:text-sm">
     
@@ -60,6 +66,16 @@
                         </button>
                         <button onclick="engine.ui.openImportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
                             <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📂</span> Import
+                        </button>
+                    </div>
+
+                    <!-- Desktop build only: the browser has F11 and a tab close button -->
+                    <div class="platform-desktop grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
+                        <button onclick="engine.toggleFullscreen()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 border border-slate-600 hover:border-cyan-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🔲</span> Vollbild
+                        </button>
+                        <button onclick="engine.quitGame()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-red-950/40 text-slate-400 hover:text-red-400 border border-slate-600 hover:border-red-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <span class="text-base group-hover:scale-125 transition-transform text-red-500/80 group-hover:text-red-500">⏻</span> Beenden
                         </button>
                     </div>
 				</div>
@@ -657,6 +673,12 @@
                 <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                     <span class="text-sm">💾</span> Sicherheit & Backups
                 </h3>
+
+                <!-- Desktop build only -->
+                <button onclick="engine.toggleFullscreen()" class="platform-desktop w-full mb-3 text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm relative z-10">
+                    <span class="text-base text-slate-500 group-hover:text-emerald-400 transition-colors">🔲</span> 
+                    Vollbild / Fenstermodus umschalten
+                </button>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 relative z-10">
                     <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
@@ -691,14 +713,28 @@
                         Fehler melden / Feedback geben
                     </button>
 
-                    <button onclick="window.open('https://github.com/seluce/Layer8Problem', '_blank')" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-sm">
+                    <!-- Web build only: the desktop version links to the store page instead -->
+                    <button onclick="engine.openExternal('https://github.com/seluce/Layer8Problem')" class="platform-web w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-sm">
                         <div class="flex items-center gap-3">
                             <span class="text-base text-slate-500 group-hover:text-purple-400 transition-colors">💻</span> 
                             <span>GitHub Projektseite ansehen</span>
                         </div>
                         <span class="text-xs text-slate-500 group-hover:text-white transition-colors">↗</span>
                     </button>
+
+                    <!-- Desktop build only: aggregated Steam statistics -->
+                    <button onclick="engine.openGlobalStats()" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                        <span class="text-xl text-slate-500 group-hover:text-purple-400 transition-colors">🌍</span> 
+                        Globale Statistiken & Vergleich
+                    </button>
                 </div>
+            </div>
+
+            <!-- Desktop build only: a browser tab cannot close itself reliably -->
+            <div class="platform-desktop pt-2">
+                <button onclick="engine.quitGame()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/60 rounded-lg transition-all text-slate-300 hover:text-red-400 text-sm font-medium flex items-center justify-center group shadow-sm">
+                    <span class="tracking-widest uppercase font-bold">Spiel beenden</span>
+                </button>
             </div>
 
         </div>
@@ -1147,7 +1183,35 @@
 </div>
 <!-- KEYBOAD BINDING MODAL END -->
 
+<!-- GLOBALE STATISTIKEN MODAL START -->
+
+<div id="global-stats-modal" class="fixed inset-0 bg-black/90 z-[10000] hidden items-center justify-center p-4 fade-in">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+        
+        <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">🌍</span>
+                <div class="flex flex-col">
+                    <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight">Globale Statistiken</h2>
+                    <span class="text-[10px] text-blue-400 font-mono">Wie schlägst du dich gegen den Rest der Welt?</span>
+                </div>
+            </div>
+            <button onclick="engine.closeGlobalStats()" class="text-slate-500 hover:text-white text-3xl font-light leading-none transition-colors px-2">&times;</button>
+        </div>
+
+        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6">
+            <div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm">
+                Verbinde mit Steam-Servern...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GLOBALE STATISTIKEN MODAL END -->
+
     <script type="module" src="engine.js"></script>
-    <script src="tutorial.js"></script>
+
+
+<script src="tutorial.js"></script>
 </body>
 </html>
