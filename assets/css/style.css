@@ -1,9 +1,14 @@
-/* --- LOKALE SCHRIFTARTEN --- */
+/* --- LOCAL FONTS ---
+   JetBrains Mono, latin subset, self-hosted as woff2 (gwfh.mranftl.com).
+   41 KB for both weights, down from 540 KB as ttf.
+   The format() hint has to match the actual file: browsers may skip a
+   format they cannot handle without downloading it, so declaring woff2
+   as truetype risks a silent fallback to the generic monospace font. */
 
 @font-face {
   font-family: 'JetBrains Mono';
 
-  src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('truetype');
+  src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
 
   font-weight: 400;
 
@@ -15,7 +20,7 @@
 @font-face {
   font-family: 'JetBrains Mono';
 
-  src: url('../fonts/jetbrains-mono-v25-latin-800.woff2') format('truetype');
+  src: url('../fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
 
   font-weight: 800;
 

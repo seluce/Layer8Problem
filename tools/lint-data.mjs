@@ -16,7 +16,10 @@
  *  - Zeichen in opt.r, die den inline-onclick-String zerlegen können
  */
 
-import { DB } from '../data.js';
+import { DB, ensure } from '../data.js';
+
+// The event pools load lazily at runtime (see data.js); pull them all in first.
+await ensure('bossfights', 'calls', 'coffee', 'emails', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
