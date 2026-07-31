@@ -6,10 +6,13 @@
    as truetype risks a silent fallback to the generic monospace font.
 
    Kept outside any @layer: @font-face is not a style rule and does not
-   participate in the cascade, so a layer would only obscure things. */
+   participate in the cascade, so a layer would only obscure things.
+
+   The files live in src/assets/fonts/ so Vite fingerprints them and rewrites
+   the URL for whichever base the build targets. */
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
+    src: url('./assets/fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -17,7 +20,7 @@
 
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url('../fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
+    src: url('./assets/fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
     font-weight: 800;
     font-style: normal;
     font-display: swap;
@@ -29,13 +32,17 @@
    tailwind.config.js listed under `content`. */
 @import "tailwindcss" source(none);
 
-@source "./index.html";
+/* Paths are relative to THIS file, which lives in src/. index.html sits one
+   level up and the intranet pages are served from public/. */
+@source "../index.html";
+@source "./main.js";
 @source "./engine.js";
 @source "./data.js";
 @source "./tutorial.js";
-@source "./assets/intranet/*.html";
-@source "./assets/data/*.js";
-@source "./assets/engine/*.js";
+@source "./components/**/*.svelte";
+@source "./engine/*.js";
+@source "./data/*.js";
+@source "../public/assets/intranet/*.html";
 
 /* Tailwind 4 defaults the border colour to currentcolor; v3 used gray-200.
    This keeps every element that relies on the old default looking the same.
@@ -98,7 +105,7 @@
         border: 2px solid #059669; border-radius: 8px;
         padding: 12px 16px; min-width: 250px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
-        animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4s forwards;
+        /* Enter and exit are Svelte transitions, see AchievementToasts.svelte */
         display: flex; align-items: center; gap: 12px;
     }
 
@@ -156,6 +163,15 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
 
+    /* TEXTURES
+       Declared here rather than as bg-[url(...)] utilities: Tailwind writes
+       arbitrary URLs into the stylesheet verbatim, and the stylesheet ends up
+       one directory deeper than index.html, so the relative path would break.
+       Going through app.css lets Vite resolve and fingerprint them. */
+    .bg-cork        { background-image: url('./assets/img/textures/cork-1.png'); }
+    .bg-cream-paper { background-image: url('./assets/img/textures/cream-paper.png'); }
+    .bg-wood        { background-image: url('./assets/img/textures/wood-pattern.png'); }
+
     /* COMPACT MODE
        Written flat on purpose. Nesting these under & produced invalid
        selectors such as `:is(.compact-mode)body #action-bar`, which browsers
@@ -187,8 +203,6 @@
 @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 @keyframes pulse-red-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); } }
 @keyframes pulse-orange-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); } }
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
 @keyframes slide-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes pop-in { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 

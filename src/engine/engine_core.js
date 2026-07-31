@@ -546,7 +546,7 @@ export const core = {
             setTimeout(() => {
                 const k = this.state.toasts.findIndex(t => t.id === toastId);
                 if (k > -1) this.state.toasts.splice(k, 1);
-            }, 5000);
+            }, 4000);   // Svelte plays the exit animation after this
         }
 
         // 3. Always persist in the background, in case this was an upgrade

@@ -6,6 +6,7 @@ Anzeige & Layout:
 * Antwortmöglichkeiten zeigen jetzt an, wenn sie einen Gegenstand verbrauchen - und zwar solange sie noch wählbar sind. Bisher war der Unterschied zwischen "wird gebraucht" und "wird aufgebraucht" nur an gesperrten Optionen angedeutet, wo er keine Rolle mehr spielt.
 * Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>". Zuvor stand dort je nach Feld "Fehlt" oder "Benötigt", obwohl beides denselben Zustand beschrieb.
 * Der Hinweis auf den noch nicht einsatzbereiten Stressball heißt jetzt "Noch nicht bereit" statt "Cooldown".
+* Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
 
 Fehlerkorrekturen:
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
