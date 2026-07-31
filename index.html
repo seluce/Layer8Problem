@@ -7,13 +7,16 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
+    <!-- apple-mobile-web-app-capable is deprecated; the standard name is
+         mobile-web-app-capable. Both are kept so older iOS versions,
+         which only understand the Apple prefix, still install cleanly. -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Layer8Problem">
 
     <meta name="theme-color" content="#020617">
 
-    <link href="assets/css/style.css" rel="stylesheet">
 
     <style>
         /* Platform-conditional blocks. .platform-desktop starts hidden so the
@@ -33,7 +36,7 @@
     
     <div id="achievement-container"></div>
 
-	<div id="intro-modal" class="fixed inset-0 bg-black/90 z-[999] flex items-center justify-center p-4 md:p-8">
+	<div id="intro-modal" class="fixed inset-0 bg-black/90 z-999 flex items-center justify-center p-4 md:p-8">
 		<div class="neon-box border-blue bg-slate-900 max-w-5xl w-full p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row gap-8 lg:gap-12 rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
 			
 			<div class="flex-1 flex flex-col">
@@ -58,30 +61,32 @@
 					
                     <div class="grid grid-cols-2 gap-3">
                         <button onclick="engine.openArchive()" 
-                            class="bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white py-3.5 rounded-xl w-full font-bold uppercase transition-all text-xs tracking-widest flex items-center justify-center gap-2 shadow-sm">
+                            class="bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white py-3.5 rounded-xl w-full font-bold uppercase transition-all text-xs tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-lg">🏆</span> Archiv
                         </button>
                         <button onclick="engine.openSettings()" 
-                            class="bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-white py-3.5 rounded-xl w-full font-bold uppercase transition-all text-xs tracking-widest flex items-center justify-center gap-2 shadow-sm">
+                            class="bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-white py-3.5 rounded-xl w-full font-bold uppercase transition-all text-xs tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-lg">⚙️</span> Optionen
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
-                        <button onclick="engine.ui.openExportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <!-- Web build only: the desktop version reaches export and import
+                         through its settings menu, which the intro can open directly. -->
+                    <div class="platform-web grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
+                        <button onclick="engine.ui.openExportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">💾</span> Export
                         </button>
-                        <button onclick="engine.ui.openImportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <button onclick="engine.ui.openImportModal()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-600 hover:border-slate-400 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">📂</span> Import
                         </button>
                     </div>
 
                     <!-- Desktop build only: the browser has F11 and a tab close button -->
                     <div class="platform-desktop grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-slate-700/50">
-                        <button onclick="engine.toggleFullscreen()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 border border-slate-600 hover:border-cyan-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <button onclick="engine.toggleFullscreen()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-cyan-400 border border-slate-600 hover:border-cyan-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">🔲</span> Vollbild
                         </button>
-                        <button onclick="engine.quitGame()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-red-950/40 text-slate-400 hover:text-red-400 border border-slate-600 hover:border-red-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <button onclick="engine.quitGame()" class="group text-[10px] font-bold uppercase tracking-widest bg-slate-800 hover:bg-red-950/40 text-slate-400 hover:text-red-400 border border-slate-600 hover:border-red-500 py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xs">
                             <span class="text-base group-hover:scale-125 transition-transform text-red-500/80 group-hover:text-red-500">⏻</span> Beenden
                         </button>
                     </div>
@@ -99,27 +104,27 @@
                     <div class="space-y-6 flex-1 flex flex-col justify-center">
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">📩</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-purple-400 tracking-wider mb-0.5">TICKETS</strong><span class="text-slate-400 leading-snug">Alle 30 Min kommt ein Ticket dazu. Ab 10 offenen Tickets ist Game Over!</span></div>
+                            <div class="flex flex-col justify-center min-h-12"><strong class="text-purple-400 tracking-wider mb-0.5">TICKETS</strong><span class="text-slate-400 leading-snug">Alle 30 Min kommt ein Ticket dazu. Ab 10 offenen Tickets ist Game Over!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">⚡</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-emerald-400 tracking-wider mb-0.5">FAULHEIT</strong><span class="text-slate-400 leading-snug">Zu hoch? Der Chef bestraft Fehler härter.</span></div>
+                            <div class="flex flex-col justify-center min-h-12"><strong class="text-emerald-400 tracking-wider mb-0.5">FAULHEIT</strong><span class="text-slate-400 leading-snug">Zu hoch? Der Chef bestraft Fehler härter.</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-orange-500/10 text-orange-400 border border-orange-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">😡</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-orange-400 tracking-wider mb-0.5">AGGRO</strong><span class="text-slate-400 leading-snug">Bei 100% öffnest du einmalig dein Ventil. Danach folgt der Rage-Quit!</span></div>
+                            <div class="flex flex-col justify-center min-h-12"><strong class="text-orange-400 tracking-wider mb-0.5">AGGRO</strong><span class="text-slate-400 leading-snug">Bei 100% öffnest du einmalig dein Ventil. Danach folgt der Rage-Quit!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-red-500/10 text-red-400 border border-red-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">👁️</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-red-500 tracking-wider mb-0.5">CHEF-RADAR</strong><span class="text-slate-400 leading-snug">Bei 100% gibt es eine Abmahnung vom Chef. Danach folgt die Kündigung!</span></div>
+                            <div class="flex flex-col justify-center min-h-12"><strong class="text-red-500 tracking-wider mb-0.5">CHEF-RADAR</strong><span class="text-slate-400 leading-snug">Bei 100% gibt es eine Abmahnung vom Chef. Danach folgt die Kündigung!</span></div>
                         </div>
                         
                         <div class="flex gap-4 items-start group">
                             <div class="text-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 w-12 h-12 flex items-center justify-center rounded-lg shrink-0 group-hover:scale-110 transition-transform">🎒</div>
-                            <div class="flex flex-col justify-center min-h-[3rem]"><strong class="text-amber-400 tracking-wider mb-0.5">LOOT</strong><span class="text-slate-400 leading-snug">Finde Items, um Probleme kreativ zu lösen.</span></div>
+                            <div class="flex flex-col justify-center min-h-12"><strong class="text-amber-400 tracking-wider mb-0.5">LOOT</strong><span class="text-slate-400 leading-snug">Finde Items, um Probleme kreativ zu lösen.</span></div>
                         </div>
                     </div>
 
@@ -128,84 +133,44 @@
 		</div>
 	</div>
 	
-    <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4 h-auto lg:h-24 mb-4 shrink-0">
-        <div id="clock-container" class="neon-box border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
-            <span class="text-[10px] text-blue-400 font-bold uppercase">Uhrzeit</span>
-            <div id="clock" class="text-3xl lg:text-4xl font-black text-white">08:00</div>
-        </div>
-        
-        <div id="ticket-container" class="neon-box border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
-            <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">OFFENE TICKETS</span>
-            <div id="ticket-count" class="text-3xl lg:text-4xl font-black text-white">0</div>
-            <div class="text-[8px] text-slate-500">Max: 10</div>
-        </div>
-
-        <div id="stat-row-fl" class="neon-box border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
-            <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400"><span>FAULHEIT</span><span id="val-fl">0%</span></div>
-            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-fl" class="h-full bg-emerald-500 transition-all duration-[800ms] ease-out" style="width: 0%"></div></div>
-        </div>
-        <div id="stat-row-al" class="neon-box border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
-            <div class="flex justify-between text-xs font-bold mb-1 text-orange-400"><span>AGGRO</span><span id="val-al">0%</span></div>
-            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-al" class="h-full bg-orange-500 transition-all duration-[800ms] ease-out" style="width: 0%"></div></div>
-        </div>
-        <div id="stat-row-cr" class="neon-box border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
-            <div class="flex justify-between text-xs font-bold mb-1 text-red-500"><span>CHEF-RADAR</span><span id="val-cr">0%</span></div>
-            <div class="h-2 bg-slate-800 rounded-full"><div id="bar-cr" class="h-full bg-red-600 transition-all duration-[800ms] ease-out" style="width: 0%"></div></div>
-        </div>
-    </div>
+    <!-- Rendered by src/components/StatsHeader.svelte. The grid classes stay
+         here so the component can render the five boxes directly into it. -->
+    <div id="stats-header" class="grid grid-cols-2 lg:grid-cols-5 gap-2 lg:gap-4 h-auto lg:h-24 mb-4 shrink-0"></div>
 
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
-        <div id="terminal" class="flex-[2] neon-box p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 text-right text-[10px] text-slate-600 transition-all duration-500">System lädt...</div>
+        <div id="terminal" class="flex-2 neon-box p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
+            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 text-right text-[10px] text-slate-600 transition-all duration-500"><!-- Rendered by src/components/TerminalHeader.svelte --></div>
             
-            <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40">
-                <div class="text-4xl md:text-6xl mb-4">🖥️</div>
-                <h1 class="text-xl md:text-2xl font-bold">SYSTEM BEREIT</h1>
-                <p>Wähle eine Aktion unten.</p>
-            </div>
+            <!-- Rendered by src/components/Terminal.svelte -->
+            <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40"></div>
         </div>
 
         <div class="flex-1 flex flex-col gap-4 min-w-0 lg:min-w-[350px] h-full overflow-hidden">
             
-            <div id="smartphone" class="flex-[2] shrink-0 min-h-[300px] flex flex-col">
-                <div class="phone-notch shrink-0"><div class="w-12 h-1 bg-slate-600 rounded-full"></div></div>
-                
-                <div id="phone-standby" class="flex-1 flex flex-col justify-center items-center bg-slate-900 text-white">
-                    <div class="text-5xl font-thin mb-2" id="phone-clock">08:00</div>
-                    <div id="phone-notification" class="hidden mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse" onclick="engine.openPhone()">
-                        <div class="text-xl">📩</div>
-                        <div><div class="text-[10px] font-bold">NEUE NACHRICHT</div><div class="text-[9px]">Jetzt lesen...</div></div>
-                    </div>
-                </div>
-
-                <div id="phone-app" class="hidden flex-1 bg-slate-800 flex-col h-full overflow-hidden">
-                    <div class="bg-indigo-600 p-2 text-xs font-bold text-white flex justify-between shrink-0">
-                        <span id="app-title">Nachricht</span>
-                    </div>
-                    <div id="app-content" class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0"></div>
-                    <div id="app-actions" class="p-2 bg-slate-900 border-t border-slate-700 grid grid-cols-1 gap-1 shrink-0"></div>
-                </div>
+            <div id="smartphone" class="flex-2 shrink-0 min-h-[300px] flex flex-col">
+                <!-- Rendered by src/components/PhoneView.svelte -->
             </div>
             
-            <div class="flex-[2] neon-box p-3 flex flex-col min-h-0 overflow-hidden shrink-0">
+            <div class="flex-2 neon-box p-3 flex flex-col min-h-0 overflow-hidden shrink-0">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2 shrink-0">
                     <div class="flex gap-4">
-                        <div id="btn-inventory" onclick="engine.openInventory()" class="cursor-pointer hover:bg-slate-800 rounded px-1 -ml-1 transition-colors flex items-center gap-2">
+                        <div id="btn-inventory" onclick="engine.openInventory()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 -ml-1 transition-colors flex items-center gap-2">
                             <span class="text-[10px] text-amber-500 font-bold">INVENTAR</span>
-                            <span id="inv-badge" class="hidden bg-amber-500 text-black text-[9px] font-bold px-1.5 rounded-full">+0</span>
+                            <!-- Rendered by src/components/InventoryBadge.svelte -->
+                            <span id="inv-badge"></span>
                             <span class="text-[10px] text-slate-600">🔍</span>
                         </div>
 
-                        <div id="btn-team" onclick="engine.openTeam()" class="cursor-pointer hover:bg-slate-800 rounded px-1 transition-colors flex items-center gap-2">
+                        <div id="btn-team" onclick="engine.openTeam()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
                             <span class="text-[10px] text-white font-bold">👥 TEAM</span>
                         </div>
 
-                        <div onclick="engine.openArchive()" class="cursor-pointer hover:bg-slate-800 rounded px-1 transition-colors flex items-center gap-2">
+                        <div onclick="engine.openArchive()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
                             <span class="text-[10px] text-purple-400 font-bold">🏆 ARCHIV</span>
                         </div>
 
-                        <div onclick="engine.openSettings()" class="cursor-pointer hover:bg-slate-800 rounded px-1 transition-colors flex items-center gap-1.5">
+                        <div onclick="engine.openSettings()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-1.5">
                             <span class="text-[10px] text-slate-400 font-bold">⚙️ MENÜ</span>
                         </div>
                     </div>
@@ -217,50 +182,37 @@
                 
                 <div id="inventory-grid" class="grid grid-cols-5 gap-2 mb-4 shrink-0"></div>
                 
+                <!-- Entries rendered by src/components/LogFeed.svelte -->
                 <div id="log-feed" class="hidden lg:block flex-1 overflow-y-auto font-mono text-[10px] space-y-1 text-slate-400 border-t border-slate-800 pt-2 min-h-0"></div>
             </div>
         </div>
     </div>
 
-<div id="action-bar" class="h-20 grid grid-cols-4 gap-2 lg:gap-4 shrink-0">
-        <button id="btn-coffee" onclick="engine.trigger('coffee')" class="action-btn text-amber-500">
-            <span class="text-xl">☕</span><span class="text-[10px] md:text-xs font-bold">KAFFEE</span>
-        </button>
-        
-        <button id="btn-sidequest" onclick="engine.trigger('sidequest')" class="action-btn text-purple-500">
-            <span class="text-xl">🎲</span><span class="text-[10px] md:text-xs font-bold">DIENSTGANG</span>
-        </button>
-        
-        <button id="btn-server" onclick="engine.trigger('server')" class="action-btn text-emerald-500">
-            <span class="text-xl">💾</span><span class="text-[10px] md:text-xs font-bold">SERVERRAUM</span>
-        </button>
-        
-        <button id="btn-calls" onclick="engine.trigger('calls')" class="action-btn bg-blue-900/30 text-blue-400 border-blue-800">
-            <span class="text-xl">📞</span><span class="text-[10px] md:text-xs font-bold">ANRUF</span>
-        </button>
-    </div>
+<!-- Buttons rendered by src/components/ActionBar.svelte -->
+    <div id="action-bar" class="h-20 grid grid-cols-4 gap-2 lg:gap-4 shrink-0"></div>
 
     <div id="modal-overlay" class="fixed inset-0 hidden bg-black/90 z-50 flex items-center justify-center p-8">
-        <div id="modal-content" class="max-w-xl w-full bg-slate-900 border-2 border-red-600 p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto"></div>
+        <!-- Rendered by src/components/EndModal.svelte -->
     </div>
 
 <!-- INVENTAR MODAL START -->		
-	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/90 z-[1100] items-center justify-center p-4">
+	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box border-amber-500 bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
             <button onclick="engine.closeInventory()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
             <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2">🎒 DEIN RUCKSACK</h2>
             
-            <div id="full-inventory-grid" class="grid grid-cols-5 gap-3"></div>
+            <!-- Rendered by src/components/InventoryFull.svelte -->
+            <div id="full-inventory-grid"></div>
             
             <div class="mt-6 text-center">
-                <button onclick="engine.closeInventory()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded text-xs font-bold uppercase">Schließen</button>
+                <button onclick="engine.closeInventory()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded-sm text-xs font-bold uppercase">Schließen</button>
             </div>
         </div>
     </div>
 <!-- INVENTAR MODAL END -->	
 
 <!-- ITEM CONFIRM MODAL START -->	
-    <div id="item-confirm-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-6">
+    <div id="item-confirm-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-6">
         <div class="neon-box border-white bg-slate-900 max-w-sm w-full p-6 shadow-2xl relative text-center flex flex-col items-center">
             
             <div id="item-confirm-icon" class="text-6xl mb-4 bg-slate-800 w-24 h-24 flex items-center justify-center rounded-xl border border-slate-600 shadow-lg">
@@ -291,7 +243,7 @@
 <!-- ITEM CONFIRM MODAL END -->	
 
 <!-- KOLLEGIUM / TEAM MODAL START -->	
-	<div id="team-modal" class="fixed inset-0 hidden bg-black/90 z-[1100] items-center justify-center p-4">
+	<div id="team-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box border-white bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="engine.closeTeam()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
             <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">👥 DAS KOLLEGIUM (Die Verdächtigen)</h2>
@@ -300,19 +252,22 @@
                 </div>
             
             <div class="mt-6 text-center">
-                <button onclick="engine.closeTeam()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded text-xs font-bold uppercase">Zurück an die Arbeit</button>
+                <button onclick="engine.closeTeam()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded-sm text-xs font-bold uppercase">Zurück an die Arbeit</button>
             </div>
         </div>
     </div>
 <!-- KOLLEGIUM / TEAM MODAL END -->	
 
 <!-- ARCHIV MODAL START -->
-    <div id="archive-modal" class="fixed inset-0 bg-black/90 z-[9999] hidden flex-col items-center justify-center p-4 fade-in">
+    <!-- Rendered by src/components/LoreView.svelte -->
+    <div id="lore-root"></div>
+
+    <div id="archive-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
         <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
             <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
                 <div class="flex flex-col mt-1">
-                    <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 uppercase tracking-widest mb-1">
+                    <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-blue-400 uppercase tracking-widest mb-1">
                         Karriere-Fortschritt
                     </h2>
                     <p class="text-xs md:text-sm text-slate-400 font-mono">Deine gesammelten Werke des Wahnsinns.</p>
@@ -328,56 +283,13 @@
 <!-- ARCHIV MODAL END -->
 	
 <!-- E-MAIL MODAL START -->
-<div id="email-modal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black/90 p-4">
-    
-    <div class="w-full max-w-lg bg-slate-900 border border-slate-600 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col font-sans text-slate-200 overflow-hidden relative animate-pop-in">
-        
-        <div class="px-5 py-4 border-b border-slate-700 bg-slate-800/50">
-            <h2 id="email-subject" class="text-lg font-bold text-white mb-3 leading-tight tracking-wide">Betreff Platzhalter</h2>
-            
-            <div class="flex items-start gap-4">
-                <div id="email-avatar" class="w-10 h-10 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-lg shrink-0 border border-blue-500/50">
-                    A
-                </div>
-                
-                <div class="flex flex-col w-full min-w-0 justify-center">
-                    <div class="flex items-baseline justify-between mb-1">
-                        <span id="email-sender" class="font-bold text-blue-400 text-sm truncate">Absender Name</span>
-                        <span id="email-timestamp" class="text-xs font-mono text-slate-400">00:00</span>
-                    </div>
-                    
-                    <div class="flex flex-col text-xs text-slate-400 leading-tight">
-                        <div class="flex gap-2">
-                            <span class="w-6 text-slate-500 font-bold text-right">An:</span>
-                            <span class="text-slate-300">Mich (SysAdmin)</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <span class="w-6 text-slate-500 font-bold text-right">CC:</span>
-                            <span id="email-cc" class="text-slate-500">Management; IT-Verteiler</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Contents rendered by src/components/EmailView.svelte -->
+<div id="email-modal" class="fixed inset-0 z-2000 hidden items-center justify-center bg-black/90 p-4"></div>
 
-        <div class="p-5 bg-slate-950/50 text-sm leading-relaxed text-slate-300 min-h-[100px] max-h-[40vh] overflow-y-auto border-b border-slate-800 shadow-inner">
-            <p id="email-body">Laden...</p>
-        </div>
-
-        <div class="p-3 bg-slate-900 flex flex-col gap-2">
-            <div id="email-actions" class="grid gap-2">
-                </div>
-        </div>
-
-        <div class="w-full h-1 bg-slate-800">
-            <div id="email-timer-bar" class="h-full bg-amber-600 w-full shadow-[0_0_10px_rgba(217,119,6,0.5)]"></div>
-        </div>
-    </div>
-</div>
 <!-- E-MAIL MODAL END -->
 
 <!-- SCHWIERIGKEIT MODAL START -->
-    <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-[1000] hidden items-center justify-center p-4">
+    <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
             <p class="text-slate-400 mb-8">Wie sehr hasst du dein Leben heute?</p>
@@ -421,9 +333,9 @@
 <!-- SCHWIERIGKEIT MODAL END -->
 
 <!-- TUTORIAL MODAL START -->
-    <div id="tut-ask-modal" class="fixed inset-0 z-[2100] hidden items-center justify-center bg-black/90 fade-in">
+    <div id="tut-ask-modal" class="fixed inset-0 z-2100 hidden items-center justify-center bg-black/90 fade-in">
         <div class="bg-slate-900 border-2 border-cyan-500/50 p-6 md:p-8 rounded-xl max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)] text-center mx-4 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+            <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent"></div>
             
             <div class="text-5xl mb-4 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">🤖</div>
             <h3 class="text-xl font-black text-cyan-400 mb-2 uppercase tracking-widest">Systemmeldung: H.A.L.G.E.R.D.</h3>
@@ -436,28 +348,23 @@
             </div>
             
             <div class="grid gap-3">
-                <button onclick="tutorial.run()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
+                <button onclick="tutorial.run()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
                     <span class="text-lg">▶</span> Simulation starten (Empfohlen)
                 </button>
-                <button onclick="tutorial.skip()" class="w-full bg-transparent hover:bg-red-950/40 text-slate-500 hover:text-red-400 font-bold py-2 px-4 rounded border border-slate-800 hover:border-red-900 transition-colors">
+                <button onclick="tutorial.skip()" class="w-full bg-transparent hover:bg-red-950/40 text-slate-500 hover:text-red-400 font-bold py-2 px-4 rounded-sm border border-slate-800 hover:border-red-900 transition-colors">
                     Ablauf ignorieren (Auf eigene Gefahr)
                 </button>
             </div>
         </div>
     </div>
     
-    <div id="tut-pointer" class="fixed z-[3000] hidden flex-col pointer-events-auto transition-opacity duration-300 opacity-0 w-[280px] max-w-[90vw]">
-        <div class="bg-slate-900 border border-cyan-500 p-4 rounded-xl shadow-[0_0_30px_rgba(6,182,212,0.4)] text-white text-center relative pointer-events-auto z-10">
-            <h4 id="tut-pointer-title" class="font-black text-cyan-400 mb-1 uppercase tracking-widest text-xs">Aktion</h4>
-            <p id="tut-pointer-desc" class="text-xs text-slate-300 leading-relaxed pointer-events-auto">Erklärungstext</p>
-        </div>
-        <div id="tut-arrow" class="w-4 h-4 bg-slate-900 absolute rotate-45 border-cyan-500 z-0 shadow-[0_0_10px_rgba(6,182,212,0.2)]"></div>
-    </div>
+    <!-- Rendered by src/components/TutorialPointer.svelte -->
+    <div id="tut-pointer-root"></div>
     
 <!-- TUTORIAL MODAL END -->
 
 <!-- INTRANET MODAL START -->
-<div id="intranet-modal" class="fixed inset-0 hidden bg-black/90 z-[1200] items-center justify-center p-2 md:p-8">
+<div id="intranet-modal" class="fixed inset-0 hidden bg-black/90 z-1200 items-center justify-center p-2 md:p-8">
     
     <div class="bg-slate-900 w-[95vw] max-w-[1400px] h-[95vh] flex flex-col rounded-lg shadow-2xl overflow-hidden ring-1 ring-slate-700">
         
@@ -475,7 +382,7 @@
             </div>
 
             <div class="ml-auto mt-2">
-                <button onclick="engine.closeIntranet()" class="text-slate-400 hover:bg-red-600 hover:text-white px-3 py-1 rounded transition-colors flex items-center justify-center">
+                <button onclick="engine.closeIntranet()" class="text-slate-400 hover:bg-red-600 hover:text-white px-3 py-1 rounded-sm transition-colors flex items-center justify-center">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -492,17 +399,17 @@
 <!-- INTRANET MODAL END -->
 
 <!-- SCHWARZES BRETT MODAL START -->
-<div id="board-modal" class="fixed inset-0 hidden bg-black/90 z-[1300] items-center justify-center p-0 md:p-8 fade-in overflow-hidden">
+<div id="board-modal" class="fixed inset-0 hidden bg-black/90 z-1300 items-center justify-center p-0 md:p-8 fade-in overflow-hidden">
     
     <div class="relative w-full h-full md:max-w-6xl md:h-[90vh] bg-[#dcbfa3] md:rounded-lg shadow-2xl border-x-0 md:border-8 border-[#5d4037] flex flex-col">
         
-        <div class="absolute inset-0 opacity-30 pointer-events-none z-0" style="background-image: url('assets/img/textures/cork-1.png');"></div>
+        <div class="absolute inset-0 opacity-30 pointer-events-none z-0 bg-cork"></div>
 
         <div class="relative z-20 bg-[#5d4037] text-[#fdf6e3] text-center py-3 shadow-md border-b-4 border-[#3e2723] shrink-0">
             <h2 class="text-xl md:text-2xl font-black uppercase tracking-[0.2em] drop-shadow-md">GlobalCorp • Community Board</h2>
             <span class="text-[10px] md:text-xs text-[#a1887f] block font-serif opacity-80">"Kommunikation ist der Schlüssel (der leider klemmt)."</span>
             
-            <button onclick="engine.closeBoard()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded shadow-inner transition-colors font-bold tracking-wider">
+            <button onclick="engine.closeBoard()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded-sm shadow-inner transition-colors font-bold tracking-wider">
                 SCHLIESSEN
             </button>
         </div>
@@ -512,7 +419,7 @@
             <div class="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
 
                 <div class="bg-yellow-100 p-5 shadow-md rotate-1 break-inside-avoid relative group">
-                    <div class="w-3 h-3 rounded-full bg-red-600 absolute -top-1.5 left-1/2 shadow-sm"></div>
+                    <div class="w-3 h-3 rounded-full bg-red-600 absolute -top-1.5 left-1/2 shadow-xs"></div>
                     <p class="font-bold text-red-700 underline mb-2 uppercase text-sm">AN DEN JOGHURT-DIEB!!!</p>
                     <p class="text-sm font-serif leading-relaxed text-slate-800">
                         Wer auch immer meinen <strong>Bi-Fi Roll</strong> aus dem Kühlschrank genommen hat: <br>
@@ -522,7 +429,7 @@
                     <p class="mt-2 text-xs font-bold text-right">- Kevin (IT)</p>
                 </div>
 
-                <div class="bg-blue-50 p-4 shadow-sm -rotate-2 break-inside-avoid relative mt-[-10px] ml-4 group">
+                <div class="bg-blue-50 p-4 shadow-xs -rotate-2 break-inside-avoid relative mt-[-10px] ml-4 group">
                     <div class="w-12 h-3 bg-slate-200/50 absolute -top-2 left-10 rotate-1"></div> <p class="text-xs font-mono text-blue-900">
                         Lieber Kevin,<br>
                         1. Das war kein Bi-Fi, das war ein Experiment der Biologie-Abteilung (Schimmelpilz-Kultur 'Delta-9').<br>
@@ -532,7 +439,7 @@
                 </div>
 
                 <div class="bg-[#fef9c3] p-6 shadow-md -rotate-1 transform hover:scale-105 transition-transform relative max-w-sm mx-auto font-mono text-sm text-slate-800 break-inside-avoid">
-                    <div class="w-4 h-4 rounded-full bg-green-700 absolute -top-2 left-4 shadow-sm"></div> 
+                    <div class="w-4 h-4 rounded-full bg-green-700 absolute -top-2 left-4 shadow-xs"></div> 
                     <h3 class="font-bold underline mb-2">Betr: Projekt "Quanten-Cloud"</h3>
                     <p class="leading-relaxed text-xs">
                         "Sehr geehrtes Sales-Team,<br>
@@ -545,7 +452,7 @@
                 </div>
 
                 <div class="bg-white p-6 shadow-lg rotate-0 break-inside-avoid relative border border-slate-300">
-                    <div class="w-4 h-4 rounded-full bg-blue-900 absolute top-2 right-2 shadow-sm"></div>
+                    <div class="w-4 h-4 rounded-full bg-blue-900 absolute top-2 right-2 shadow-xs"></div>
                     <div class="border-b-2 border-blue-900 mb-3 pb-1">
                         <span class="text-xl">⚖️</span>
                         <span class="font-bold text-blue-900 text-xs uppercase tracking-widest">HR Management</span>
@@ -589,7 +496,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#e5e7eb] p-4 shadow-sm rotate-0 break-inside-avoid relative">
+                <div class="bg-[#e5e7eb] p-4 shadow-xs rotate-0 break-inside-avoid relative">
                     <div class="w-12 h-12 bg-yellow-600/10 rounded-full absolute -top-2 -left-2 blur-md pointer-events-none"></div> 
                     <div class="w-3 h-3 rounded-full bg-slate-800 absolute top-1 left-1/2"></div>
                     
@@ -600,7 +507,7 @@
                         Der visionäre Gründer Dr. Wichtig erklärte heute, dass Drucker bald nur noch im Museum zu finden sein werden. "Wir setzen voll auf Disketten und Gedankenübertragung", so der CEO bei der Eröffnung der neuen Zentrale im Moor.
                     </p>
                     
-                    <div class="mt-3 text-[10px] font-bold text-red-600 -rotate-3 border-2 border-red-600 inline-block px-2 py-0.5 rounded-sm transform origin-left">
+                    <div class="mt-3 text-[10px] font-bold text-red-600 -rotate-3 border-2 border-red-600 inline-block px-2 py-0.5 rounded-xs transform origin-left">
                         Gut gealtert. - Kevin
                     </div>
                 </div>
@@ -644,7 +551,7 @@
 <!-- SCHWARZES BRETT MODAL END-->
 
 <!-- Systemsteuerung MODAL START -->
-<div id="settings-modal" class="fixed inset-0 bg-black/90 z-[9999] hidden flex-col items-center justify-center p-4 fade-in">
+<div id="settings-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
     <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
 
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -659,14 +566,14 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
-                <button id="btn-soft-reset" onclick="engine.softReset()" class="group relative flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-blue-500 rounded-xl transition-all shadow-lg overflow-hidden">
+                <button id="btn-soft-reset" onclick="engine.softReset()" class="group relative flex flex-col items-center justify-center p-6 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-blue-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -right-4 -top-4 text-7xl opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none">🔄</div>
                     <span class="text-3xl mb-2 text-slate-400 group-hover:text-blue-400 transition-colors drop-shadow-md">🔄</span>
                     <span class="font-bold text-white text-lg relative z-10 text-center leading-tight">Tag neu starten</span>
                     <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10">(08:00 Uhr)</span>
                 </button>
 
-                <button onclick="document.getElementById('menu-main-view').classList.add('hidden'); document.getElementById('menu-settings-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'EINSTELLUNGEN';" class="group relative flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl transition-all shadow-lg overflow-hidden">
+                <button onclick="document.getElementById('menu-main-view').classList.add('hidden'); document.getElementById('menu-settings-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'EINSTELLUNGEN';" class="group relative flex flex-col items-center justify-center p-6 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -left-4 -bottom-4 text-7xl opacity-5 group-hover:-rotate-45 transition-transform duration-500 pointer-events-none">🎛️</div>
                     <span class="text-3xl mb-2 text-slate-400 group-hover:text-amber-400 transition-colors drop-shadow-md">🎛️</span>
                     <span class="font-bold text-white text-lg relative z-10 text-center leading-tight">Spieleinstellungen</span>
@@ -682,23 +589,23 @@
                 </h3>
 
                 <!-- Desktop build only -->
-                <button onclick="engine.toggleFullscreen()" class="platform-desktop w-full mb-3 text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm relative z-10">
+                <button onclick="engine.toggleFullscreen()" class="platform-desktop w-full mb-3 text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs relative z-10">
                     <span class="text-base text-slate-500 group-hover:text-emerald-400 transition-colors">🔲</span> 
                     Vollbild / Fenstermodus umschalten
                 </button>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 relative z-10">
-                    <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <span class="text-base text-slate-500 group-hover:text-emerald-400 transition-colors">📤</span> 
                         Spielstand exportieren
                     </button>
-                    <button onclick="engine.closeSettings(); engine.ui.openImportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button onclick="engine.closeSettings(); engine.ui.openImportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <span class="text-base text-slate-500 group-hover:text-emerald-400 transition-colors">📥</span> 
                         Spielstand importieren
                     </button>
                 </div>
                 
-                <button id="btn-hard-reset" onclick="engine.triggerHardReset(this)" data-armed="false" class="w-full relative z-10 text-left px-4 py-3 bg-slate-800/50 hover:bg-red-950/40 border border-slate-700 hover:border-red-500/70 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center justify-center gap-3 group shadow-sm">
+                <button id="btn-hard-reset" onclick="engine.triggerHardReset(this)" data-armed="false" class="w-full relative z-10 text-left px-4 py-3 bg-slate-800/50 hover:bg-red-950/40 border border-slate-700 hover:border-red-500/70 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center justify-center gap-3 group shadow-xs">
                     <span id="icon-hard-reset" class="text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">⚠️</span>
                     <span id="text-hard-reset">Spielstand unwiderruflich löschen</span>
                 </button>
@@ -710,18 +617,18 @@
                 </h3>
                 
                 <div class="flex flex-col gap-2">
-                    <button id="btn-share" onclick="engine.shareGame(this)" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button id="btn-share" onclick="engine.shareGame(this)" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <span class="text-base text-slate-500 group-hover:text-purple-400 transition-colors">💌</span> 
                         <span id="text-share">Spiel mit Freunden teilen</span>
                     </button>
                     
-                    <button onclick="engine.closeSettings(); engine.openReportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button onclick="engine.closeSettings(); engine.openReportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <span class="text-base text-slate-500 group-hover:text-purple-400 transition-colors">🐞</span> 
                         Fehler melden / Feedback geben
                     </button>
 
                     <!-- Web build only: the desktop version links to the store page instead -->
-                    <button onclick="engine.openExternal('https://github.com/seluce/Layer8Problem')" class="platform-web w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-sm">
+                    <button onclick="engine.openExternal('https://github.com/seluce/Layer8Problem')" class="platform-web w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-xs">
                         <div class="flex items-center gap-3">
                             <span class="text-base text-slate-500 group-hover:text-purple-400 transition-colors">💻</span> 
                             <span>GitHub Projektseite ansehen</span>
@@ -730,7 +637,7 @@
                     </button>
 
                     <!-- Desktop build only: aggregated Steam statistics -->
-                    <button onclick="engine.openGlobalStats()" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                    <button onclick="engine.openGlobalStats()" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <span class="text-xl text-slate-500 group-hover:text-purple-400 transition-colors">🌍</span> 
                         Globale Statistiken & Vergleich
                     </button>
@@ -739,7 +646,7 @@
 
             <!-- Desktop build only: a browser tab cannot close itself reliably -->
             <div class="platform-desktop pt-2">
-                <button onclick="engine.quitGame()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/60 rounded-lg transition-all text-slate-300 hover:text-red-400 text-sm font-medium flex items-center justify-center group shadow-sm">
+                <button onclick="engine.quitGame()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/60 rounded-lg transition-all text-slate-300 hover:text-red-400 text-sm font-medium flex items-center justify-center group shadow-xs">
                     <span class="tracking-widest uppercase font-bold">Spiel beenden</span>
                 </button>
             </div>
@@ -749,14 +656,14 @@
         <div id="menu-settings-view" class="hidden p-5 space-y-8 overflow-y-auto w-full flex-1 min-h-0">
             
             <div>
-                <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'MENÜ';" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-sm">
+                <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'MENÜ';" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
                     <span>◀</span> Zurück zum Hauptmenü
                 </button>
             </div>
             
             <div>
                 <h3 class="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Tastatur & Eingabe</h3>
-                <button onclick="engine.openKeybinds()" class="w-full text-left px-4 py-3 bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-amber-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-sm">
+                <button onclick="engine.openKeybinds()" class="w-full text-left px-4 py-3 bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-amber-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                     <span class="text-xl opacity-70 group-hover:opacity-100 group-hover:text-amber-400 transition-all mt-0.5">⌨️</span>
                     <div class="flex flex-col">
                         <span class="font-medium leading-tight">Tastenbelegung anpassen</span>
@@ -780,7 +687,7 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                 <input type="checkbox" id="setting-audio" onchange="engine.toggleAudio(this.checked)" class="sr-only peer">
-                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                             </label>
                         </div>
                         <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
@@ -801,7 +708,7 @@
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                 <input type="checkbox" id="setting-music" onchange="engine.toggleMusic(this.checked)" class="sr-only peer">
-                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                             </label>
                         </div>
                         <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
@@ -819,7 +726,7 @@
                                 <span class="text-[10px] text-slate-500 mt-1">Wähle deinen musikalischen Wahnsinn.</span>
                             </div>
                         </div>
-                        <select id="setting-music-style" onchange="engine.changeMusicStyle(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded px-2 py-1.5 focus:border-amber-500 outline-none cursor-pointer shadow-sm shrink-0">
+                        <select id="setting-music-style" onchange="engine.changeMusicStyle(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 focus:border-amber-500 outline-hidden cursor-pointer shadow-xs shrink-0">
                             <option value="radio">Radio (Abwechselnd)</option>
                             <option value="elevator">Fahrstuhl (Klassisch)</option>
                             <option value="lofi">Lofi (Entspannt)</option>
@@ -845,7 +752,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-compact" onchange="engine.toggleCompactMode(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -859,7 +766,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-autohide" onchange="engine.toggleAutoHidePhone(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -878,7 +785,7 @@
                                 <span class="text-[10px] text-slate-500 mt-1">Legt den Modus für neue Tage fest.</span>
                             </div>
                         </div>
-                        <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded px-2 py-1.5 focus:border-emerald-500 outline-none cursor-pointer shadow-sm shrink-0">
+                        <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 focus:border-emerald-500 outline-hidden cursor-pointer shadow-xs shrink-0">
                             <option value="ask">Täglich fragen</option>
                             <option value="easy">Freitag (Leicht)</option>
                             <option value="normal">Mittwoch (Normal)</option>
@@ -896,7 +803,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-fx" onchange="engine.toggleFX(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -910,7 +817,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-shake" onchange="engine.toggleShake(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -924,7 +831,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-oneclick" onchange="engine.toggleOneClick(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -938,7 +845,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -952,7 +859,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-blindstats" onchange="engine.toggleBlindStats(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -966,7 +873,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
                             <input type="checkbox" id="setting-blindtickets" onchange="engine.toggleBlindTickets(this.checked)" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
@@ -993,17 +900,17 @@
 
 <!-- EXPORT IMPORT MODAL START -->
 
-<div id="save-export-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-4">
+<div id="save-export-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
         <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
         <h2 class="text-xl font-black text-blue-400 mb-2 flex items-center gap-2">💾 SPIELSTAND SICHERN</h2>
         <p class="text-xs text-slate-400 mb-4">Kopiere diesen Code, um deinen Fortschritt auf einem anderen Gerät wiederherzustellen.</p>
 
-        <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded p-3 text-xs font-mono text-slate-300 focus:outline-none resize-none custom-scrollbar break-all mb-4 selection:bg-blue-500/30" readonly></textarea>
+        <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-sm p-3 text-xs font-mono text-slate-300 focus:outline-hidden resize-none custom-scrollbar break-all mb-4 selection:bg-blue-500/30" readonly></textarea>
         
         <div class="flex flex-col gap-2">
-            <button onclick="engine.ui.copyToClipboard()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded text-xs font-bold uppercase flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]">
+            <button onclick="engine.ui.copyToClipboard()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-sm text-xs font-bold uppercase flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]">
                 <span>📋</span> In Zwischenablage kopieren
             </button>
             <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4">Code kopiert!</div>
@@ -1011,17 +918,17 @@
     </div>
 </div>
 
-<div id="save-import-modal" class="fixed inset-0 bg-black/90 z-[1200] hidden items-center justify-center p-4">
+<div id="save-import-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box border-red bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
         <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
         
         <h2 class="text-xl font-black text-red-400 mb-2 flex items-center gap-2">📂 SPIELSTAND LADEN</h2>
         <p class="text-xs text-slate-400 mb-4">Füge hier deinen Speicher-Code ein. <strong class="text-red-500">Achtung: Dein aktueller Fortschritt wird überschrieben!</strong></p>
 
-        <textarea id="import-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-red-500 resize-none custom-scrollbar break-all mb-4 selection:bg-red-500/30" placeholder="Code hier einfügen..."></textarea>
+        <textarea id="import-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-sm p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-red-500 resize-none custom-scrollbar break-all mb-4 selection:bg-red-500/30" placeholder="Code hier einfügen..."></textarea>
         
         <div class="flex flex-col gap-2">
-            <button onclick="engine.ui.performImport()" class="w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded text-xs font-bold uppercase shadow-lg transition-transform hover:scale-[1.02]">
+            <button onclick="engine.ui.performImport()" class="w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded-sm text-xs font-bold uppercase shadow-lg transition-transform hover:scale-[1.02]">
                 SPIELSTAND LADEN
             </button>
             <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4">Fehler!</div>
@@ -1032,7 +939,7 @@
 <!-- EXPORT IMPORT MODAL END -->
 
 <!-- EXCUSE MODAL START -->
-<div id="excuse-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[10000]">
+<div id="excuse-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
 	<div class="bg-slate-900 border-2 border-slate-600 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
 		<button onclick="engine.closeExcuseModal()"
 			class="absolute top-2 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
@@ -1042,9 +949,8 @@
 		</h2>
 		
 		<div class="bg-slate-800 p-4 border border-slate-700 rounded-md mb-6">
-			<p id="excuse-text" class="text-base text-slate-300 italic">
-				"..."
-			</p>
+			<!-- Rendered by src/components/ExcuseText.svelte -->
+			<div id="excuse-text-root"></div>
 		</div>
 
 		<p class="text-sm text-slate-400 mb-6">
@@ -1054,20 +960,20 @@
 
 		<div class="flex justify-end gap-3 mt-4 border-t border-slate-700 pt-4">
 			<button onclick="engine.closeExcuseModal()"
-				class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 text-sm rounded transition-colors">
+				class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 text-sm rounded-sm transition-colors">
 				Abbrechen
 			</button>
 			<button onclick="engine.confirmExcuse()"
-				class="px-4 py-2 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded transition-colors border border-blue-500">
+				class="px-4 py-2 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-sm transition-colors border border-blue-500">
 				Bestätigen und fliehen
 			</button>
 		</div>
 	</div>
 </div>
-<!-- EXCUSE MODAL END -
+<!-- EXCUSE MODAL END -->
 
 <!-- REPORT MODAL START -->
-<div id="report-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-[10000]">
+<div id="report-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
     <div class="bg-slate-900 border-2 border-slate-600 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
         <button onclick="engine.closeReportModal()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
         
@@ -1078,7 +984,7 @@
         <div class="space-y-4">
             <div>
                 <label class="block text-slate-400 text-xs uppercase mb-1">Kategorie</label>
-                <select id="report-category" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded focus:outline-none focus:border-blue-500">
+                <select id="report-category" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500">
                     <option value="Fehler">🐛 Fehler / Absturz</option>
                     <option value="Rechtschreibfehler">📝 Rechtschreibfehler</option>
                     <option value="Logik">🤯 Unlogischer Inhalt</option>
@@ -1089,10 +995,10 @@
 
             <div>
                 <label class="block text-slate-400 text-xs uppercase mb-1">Beschreibung</label>
-                <textarea id="report-desc" rows="4" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded focus:outline-none focus:border-blue-500" placeholder="Was ist passiert? Welches Event war komisch?"></textarea>
+                <textarea id="report-desc" rows="4" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500" placeholder="Was ist passiert? Welches Event war komisch?"></textarea>
             </div>
 
-            <div class="bg-slate-800/50 p-2 rounded border border-slate-700/50">
+            <div class="bg-slate-800/50 p-2 rounded-sm border border-slate-700/50">
                 <p class="text-[10px] text-slate-500">
                     ℹ️ Das System hängt zur Fehleranalyse automatisch aktuelle Diagnosedaten (letztes Event, Uhrzeit, Inventar & Log-Auszug) an dein Ticket an.
                 </p>
@@ -1101,7 +1007,7 @@
 
         <div class="flex justify-end gap-2 mt-6">
             <button onclick="engine.closeReportModal()" class="px-4 py-2 text-slate-300 hover:text-white text-sm">Abbrechen</button>
-            <button onclick="engine.sendReportMail()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold shadow-lg flex items-center gap-2">
+            <button onclick="engine.sendReportMail()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-sm font-bold shadow-lg flex items-center gap-2">
                 <span>📧</span> Ticket eröffnen 
             </button>
         </div>
@@ -1110,7 +1016,7 @@
 <!-- REPORT MODAL END -->
 
 <!-- KEYBOAD BINDING MODAL START -->
-<div id="keybind-modal" class="fixed inset-0 bg-black/90 z-[10000] hidden items-center justify-center p-4 fade-in">
+<div id="keybind-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
     <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -1172,12 +1078,12 @@
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer shrink-0">
                     <input type="checkbox" id="setting-showhotkeys" onchange="engine.toggleShowHotkeys(this.checked)" class="sr-only peer">
-                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                 </label>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mt-4">
-                <button onclick="engine.resetKeybinds()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-sm">
+                <button onclick="engine.resetKeybinds()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-xs">
                     Standard
                 </button>
                 <button onclick="engine.closeKeybinds()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-lg">
@@ -1192,7 +1098,7 @@
 
 <!-- GLOBALE STATISTIKEN MODAL START -->
 
-<div id="global-stats-modal" class="fixed inset-0 bg-black/90 z-[10000] hidden items-center justify-center p-4 fade-in">
+<div id="global-stats-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
     <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -1216,9 +1122,8 @@
 
 <!-- GLOBALE STATISTIKEN MODAL END -->
 
-    <script type="module" src="engine.js"></script>
 
 
-<script src="tutorial.js"></script>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>

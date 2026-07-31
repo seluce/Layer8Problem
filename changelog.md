@@ -1,3 +1,67 @@
+[4.0.0] - 2026-07-29
+
+Diese Version ist ein technischer Umbau. Am Spiel selbst ändert sich nichts, aber die Grundlage darunter wurde vollständig erneuert - damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind.
+
+Fehlerkorrekturen:
+* Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
+* Dasselbe galt für den Ruhebildschirm des Terminals: Nach der ersten Rückkehr dorthin passte sich die Schriftgröße nicht mehr an die Bildschirmbreite an.
+* Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen.
+* Während der Synergy-Gala konnte weiterhin eine Büro-Nachricht im Nachrichtenticker erscheinen.
+* Die Statusbalken zeigten volle Länge an, sobald ein Wert unter null fiel.
+* Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
+
+Für Entwickler:
+* Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht nun aus 22 Komponenten statt aus zusammengesetzten HTML-Zeichenketten.
+* Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.
+* Rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
+* Die Ereignis-Pools werden von Vite automatisch aufgeteilt und bei Bedarf nachgeladen; ensure() und prefetchAll() entfallen damit mittelfristig.
+* Der Electron-Hauptprozess liegt unter electron/main.cjs und lädt dist/. Für GitHub Pages wird ebenfalls dist/ veröffentlicht.
+
+[3.7.0] - 2026-07-28
+
+System & Stabilität:
+* Das Projekt nutzt nun Tailwind CSS 4 statt der Vorgängerversion. Für Spielende ändert sich nichts am Aussehen; die Grundlage ist damit aber wieder aktuell und wird weiter gepflegt.
+
+Für Entwickler:
+* Die Datei tailwind.config.js entfällt. Die Quellpfade stehen jetzt direkt in input.css.
+* Sämtliche Klassennamen wurden auf die Tailwind-4-Schreibweise gebracht (31 Umbenennungen). Der erzeugte Stylesheet enthält exakt dieselben 891 Klassen wie zuvor.
+* Vier ungenutzte Chat-Klassen entfernt, die seit dem Umbau der Handy-Ansicht niemand mehr verwendet.
+* Die Bildlaufleisten in den Intranet-Seiten funktionieren jetzt tatsächlich. Die dafür genutzten Klassen waren zuvor wirkungslos, weil das zugehörige Zusatzpaket nie eingebunden war.
+* Neues Werkzeug tools/migrate-tailwind4.mjs für Dateien, die nicht Teil der ersten Migration waren.
+
+[3.6.2] - 2026-07-28
+
+Neuerungen:
+* Neues Ereignis: Löst Kevin im Serverraum die Löschanlage aus, meldet sich nun die Brandschutzfirma. Bisher endete dieser Zweig ohne Folgen, während der Feueralarm-Zweig eine Fortsetzung hatte.
+
+Für Entwickler:
+* Der Daten-Prüfer erkennt nun auch Story-Verzweigungen, die zwar gesetzt, aber von keinem Ereignis aufgegriffen werden - also Entscheidungen, die ins Leere laufen. Verzweigungen, die die Spiel-Engine selbst auswertet, werden dabei korrekt als genutzt erkannt.
+* Neue Textprüfungen: Platzhalter, leere oder auffällig kurze Texte, unpaarige Anführungszeichen, doppelte Leerzeichen und mehrfach verwendete Ergebnistexte.
+* 86 Textfelder hatten führende oder folgende Leerzeichen; bereinigt.
+
+[3.6.1] - 2026-07-28
+
+Anzeige & Layout:
+* Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)" oder "(Item verbraucht)". Diese Angaben doppelten lediglich, was ohnehin schon sichtbar ist: die aufsteigenden Zahlen an den Balken, die Rucksack-Animation und der Eintrag im Protokoll. 86 Stellen bereinigt.
+* Die Bilder im Archiv und in der Kollegen-Übersicht laden erst, wenn sie tatsächlich sichtbar werden. Das Öffnen des Archivs zog bisher zwei Dutzend Bilder auf einmal.
+* Die Erfolgs-Bilder liegen nun als WebP vor, wie die Gegenstände auch.
+
+System & Stabilität:
+* Export und Import erscheinen im Startbildschirm nur noch in der Browser-Fassung. Die Steam-Fassung erreicht beides weiterhin über die Einstellungen, die sich auch direkt aus dem Startbildschirm öffnen lassen.
+
+[3.6.0] - 2026-07-28
+
+Neuerungen:
+* Zwei neue Ereignisse: Die Bowl-Bestellung im #lunch-Kanal und Kevins Bitte um mehr Verantwortung. Beide entscheiden darüber, ob die jeweiligen Folgeereignisse später am Tag überhaupt auftreten.
+
+Fehlerkorrekturen:
+* Fünf Ereignisse waren im Spiel gar nicht erreichbar, weil die Voraussetzung dafür nirgends erfüllt werden konnte. Betroffen waren die Gerüchteküche rund um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
+* Beim Serverraum-Ereignis um die alte Liste blieb die Entscheidung "Nichts anfassen und gehen" ohne Folgen. Sie führt nun wie vorgesehen dazu, dass Kevin die Liste stattdessen selbst findet.
+* Kevins Petition erscheint jetzt als Folge davon, ihn beim Chef angeschwärzt zu haben - zuvor war sie an eine Entscheidung geknüpft, die den Ruf in die falsche Richtung bewegte.
+* Vier Antwortmöglichkeiten versprachen Gegenstände, die es gar nicht gibt. Das Paket von Gabi, der Kaffee für die Pflanze und die gebunkerte Tonerkartusche landeten dadurch nie im Rucksack.
+* Die Option, Gabi einen heißen Kaffee zu spendieren, war dauerhaft gesperrt, weil sie einen nicht existierenden Gegenstand verlangte. Sie steht jetzt zur Verfügung.
+* Zwei E-Mails trugen denselben Betreff und blockierten sich gegenseitig, sodass pro Tag nur eine von beiden eintreffen konnte.
+
 [3.5.1] - 2026-07-28
 
 System & Stabilität:

@@ -1,0 +1,216 @@
+/* --- LOCAL FONTS ---
+   JetBrains Mono, latin subset, self-hosted as woff2 (gwfh.mranftl.com).
+   41 KB for both weights, down from 540 KB as ttf.
+   The format() hint has to match the actual file: browsers may skip a
+   format they cannot handle without downloading it, so declaring woff2
+   as truetype risks a silent fallback to the generic monospace font.
+
+   Kept outside any @layer: @font-face is not a style rule and does not
+   participate in the cascade, so a layer would only obscure things.
+
+   The files live in src/assets/fonts/ so Vite fingerprints them and rewrites
+   the URL for whichever base the build targets. */
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('./assets/fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    src: url('./assets/fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Tailwind 4 replaces the three @tailwind directives and the JS config file.
+   source(none) turns off automatic file discovery so the @source list below
+   is the single source of truth — same set of files the old
+   tailwind.config.js listed under `content`. */
+@import "tailwindcss" source(none);
+
+/* Paths are relative to THIS file, which lives in src/. index.html sits one
+   level up and the intranet pages are served from public/. */
+@source "../index.html";
+@source "./main.js";
+@source "./engine.js";
+@source "./data.js";
+@source "./tutorial.js";
+@source "./components/**/*.svelte";
+@source "./engine/*.js";
+@source "./data/*.js";
+@source "../public/assets/intranet/*.html";
+
+/* Tailwind 4 defaults the border colour to currentcolor; v3 used gray-200.
+   This keeps every element that relies on the old default looking the same.
+   To drop this block later, every such element needs an explicit border
+   colour utility. */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+}
+
+/* 1. BASELINE (font, background, spacing) */
+@layer base {
+    body {
+        font-family: 'JetBrains Mono', monospace;
+        background-color: #020617;
+        color: #e2e8f0;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        body { height: auto; overflow-y: auto; }
+    }
+}
+
+/* 2. COMPONENTS
+   These stay plain CSS inside @layer components rather than becoming
+   @utility rules. In Tailwind 4 @utility registers a real utility that
+   participates in variant generation and sorting — wrong for component
+   classes like .neon-box, and actively harmful for the compact mode, which
+   overrides Tailwind's own .text-xl and .text-2xl.
+   Cascade order is unchanged: utilities still override components. */
+@layer components {
+    /* NEON LOOK */
+    .neon-box {
+        background: #0f172a; border: 1px solid #1e293b;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); border-radius: 0.75rem; position: relative;
+    }
+    .border-blue { border-top: 3px solid #3b82f6; }
+    .border-green { border-top: 3px solid #10b981; }
+    .border-orange { border-top: 3px solid #f97316; }
+    .border-red { border-top: 3px solid #ef4444; }
+    .border-purple { border-top: 3px solid #a855f7; }
+
+    /* ACHIEVEMENTS */
+    #achievement-container {
+        position: fixed; bottom: 100px; right: 20px; z-index: 100;
+        display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+    }
+    .achievement-toast {
+        background: rgba(16, 185, 129, 0.95); color: white;
+        border: 2px solid #059669; border-radius: 8px;
+        padding: 12px 16px; min-width: 250px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
+        animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4s forwards;
+        display: flex; align-items: center; gap: 12px;
+    }
+
+    /* PHONE & CHAT */
+    #smartphone {
+        background: #000; border: 4px solid #334155; border-radius: 12px;
+        overflow: hidden; position: relative;
+        height: 100%;
+        min-height: 300px;
+    }
+    /* .chat-* removed: unused since the phone switched to its own markup.
+       Tailwind 3 purged them silently; Tailwind 4 passes @layer components
+       through untouched, so they would have become dead weight in the build. */
+
+    /* INVENTORY */
+    .inv-slot {
+        background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
+        border-radius: 8px; display: flex; justify-content: center; align-items: center;
+        font-size: 20px; cursor: pointer; position: relative;
+        transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .inv-slot:not(.used):not(.empty):hover {
+        transform: scale(1.15);
+        z-index: 50;
+        border-color: #f59e0b !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .inv-slot:not(.used):active {
+        transform: scale(0.95);
+    }
+
+    .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
+    .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 10px; color: #10b981; }
+
+    /* BUTTONS */
+    .action-btn {
+        background: #1e293b; border: 1px solid #334155; transition: all 0.1s;
+        border-radius: 0.75rem; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; cursor: pointer; padding: 10px;
+    }
+    .action-btn:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
+    .action-btn:active { transform: translateY(0); }
+    .action-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+    .choice-btn {
+        width: 100%; background: #1e293b; border: 1px solid #475569; padding: 1rem;
+        text-align: left; transition: all 0.2s; border-radius: 0.5rem; margin-bottom: 0.5rem;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .choice-btn:hover { border-color: #3b82f6; background: #0f172a; }
+    .choice-btn.locked { opacity: 0.5; border-color: #ef4444; cursor: not-allowed; background: #1a1a1a; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+    /* TEXTURES
+       Declared here rather than as bg-[url(...)] utilities: Tailwind writes
+       arbitrary URLs into the stylesheet verbatim, and the stylesheet ends up
+       one directory deeper than index.html, so the relative path would break.
+       Going through app.css lets Vite resolve and fingerprint them. */
+    .bg-cork        { background-image: url('./assets/img/textures/cork-1.png'); }
+    .bg-cream-paper { background-image: url('./assets/img/textures/cream-paper.png'); }
+    .bg-wood        { background-image: url('./assets/img/textures/wood-pattern.png'); }
+
+    /* COMPACT MODE
+       Written flat on purpose. Nesting these under & produced invalid
+       selectors such as `:is(.compact-mode)body #action-bar`, which browsers
+       drop silently — a type selector cannot follow a pseudo-class. */
+    body.compact-mode #action-bar { height: 3.5rem !important; }
+    body.compact-mode .action-btn { padding: 0.25rem !important; flex-direction: row; gap: 0.5rem; }
+    body.compact-mode .action-btn span:first-child { font-size: 1.25rem; }
+    body.compact-mode .neon-box { padding: 0.5rem !important; }
+    body.compact-mode #terminal { padding: 0.5rem 1rem !important; }
+    body.compact-mode #terminal button { padding: 0.4rem 1rem !important; margin-bottom: 0.25rem !important; font-size: 0.85rem !important; }
+    body.compact-mode #terminal button .text-xl { font-size: 1.1rem !important; }
+    body.compact-mode .text-2xl { font-size: 1.25rem !important; line-height: 1.5rem !important; }
+    body.compact-mode p.text-lg { font-size: 1rem !important; line-height: 1.6rem !important; margin-bottom: 0.5rem !important; }
+    body.compact-mode #clock-container, body.compact-mode #ticket-container { padding: 0.25rem !important; }
+}
+
+/* 3. EFFECTS
+   These are genuine utilities, so @utility is the right tool here: it makes
+   them sortable and usable with variants, and they land in the utilities
+   layer where they can override the components above. */
+@utility ticket-pulse { animation: pulse-red 1s infinite; color: #ef4444; }
+@utility pulse-red { animation: pulse-red-border 1.5s infinite; border-color: rgba(239, 68, 68, 0.6) !important; }
+@utility pulse-orange { animation: pulse-orange-border 1.5s infinite; border-color: rgba(249, 115, 22, 0.6) !important; }
+@utility animate-slide-up { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@utility animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@utility animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+/* 4. KEYFRAMES (no layer, plain CSS) */
+@keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+@keyframes pulse-red-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); } }
+@keyframes pulse-orange-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); } }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(10px); } }
+@keyframes slide-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes pop-in { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
+  40%, 60% { transform: translate3d(8px, 0, 0); }
+}
