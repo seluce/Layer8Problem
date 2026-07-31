@@ -26,8 +26,16 @@
         { id: 'btn-coffee',    type: 'coffee',    bind: 'actCoffee', icon: '☕', label: 'KAFFEE',     tone: 'text-amber-500' },
         { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'DIENSTGANG', tone: 'text-purple-500' },
         { id: 'btn-server',    type: 'server',    bind: 'actServer', icon: '💾', label: 'SERVERRAUM', tone: 'text-emerald-500' },
-        { id: 'btn-calls',     type: 'calls',     bind: 'actCall',   icon: '📞', label: 'ANRUF',      tone: 'bg-blue-900/30 text-blue-400 border-blue-800' }
+        { id: 'btn-calls',     type: 'calls',     bind: 'actCall',   icon: '📞', label: 'ANRUF',      tone: 'text-blue-400' }
     ];
+
+    // Calls are the only way to work tickets off, but that does not make them
+    // the default choice — the game is about the mix. So the emphasis is not
+    // permanent: it appears once the tickets get dangerous, at the same
+    // threshold the counter starts pulsing at. Then it says something true and
+    // actionable instead of just "this one is important".
+    const TICKET_WARNING = 7;
+    const urgent = $derived(state.tickets >= TICKET_WARNING);
 
     // "ArrowUp" reads better as "UP" on a badge that is nine pixels wide.
     const keyLabel = (bind) => {
@@ -41,8 +49,14 @@
             class="action-btn relative {action.tone}"
             disabled={state.buttonsDisabled}
             onclick={() => engine.trigger(action.type)}>
-        <span class="text-xl">{action.icon}</span>
-        <span class="text-[10px] md:text-xs font-bold">{action.label}</span>
+        {#if urgent && action.type === 'calls'}
+            <!-- An overlay rather than a conditional class: the button's class
+                 attribute has to stay free of state, see the note above. -->
+            <span class="absolute inset-0 bg-blue-900/30 border border-blue-800 pointer-events-none" style="border-radius: inherit"></span>
+        {/if}
+
+        <span class="text-xl relative">{action.icon}</span>
+        <span class="text-[10px] md:text-xs font-bold relative">{action.label}</span>
 
         {#if state.showHotkeys}
             <kbd class="hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded-sm shadow-xs opacity-80 pointer-events-none">

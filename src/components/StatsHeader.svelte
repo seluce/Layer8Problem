@@ -35,12 +35,12 @@
     const radarPulse = $derived(state.visualFX && state.cr >= 80 ? 'pulse-red' : '');
 </script>
 
-<div id="clock-container" class="neon-box border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
+<div id="clock-container" class="neon-box panel-raised border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
     <span class="text-[10px] text-blue-400 font-bold uppercase">Uhrzeit</span>
     <div id="clock" class="text-3xl lg:text-4xl font-black text-white">{clock}</div>
 </div>
 
-<div id="ticket-container" class="neon-box border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
+<div id="ticket-container" class="neon-box panel-raised border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
     <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">OFFENE TICKETS</span>
     <!--
       The old updateUI() rewrote className here and dropped the responsive
@@ -55,7 +55,7 @@
     <div class="text-[8px] text-slate-500">Max: 10</div>
 </div>
 
-<div id="stat-row-fl" class="neon-box border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
+<div id="stat-row-fl" class="neon-box panel-raised border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
     <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400">
         <span>FAULHEIT</span><span id="val-fl">{flText}</span>
     </div>
@@ -64,7 +64,7 @@
     </div>
 </div>
 
-<div id="stat-row-al" class="neon-box border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {aggroPulse}">
+<div id="stat-row-al" class="neon-box panel-raised border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {aggroPulse}">
     <div class="flex justify-between text-xs font-bold mb-1 text-orange-400">
         <span>AGGRO</span><span id="val-al">{alText}</span>
     </div>
@@ -73,7 +73,7 @@
     </div>
 </div>
 
-<div id="stat-row-cr" class="neon-box border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {radarPulse}">
+<div id="stat-row-cr" class="neon-box panel-raised border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {radarPulse}">
     <div class="flex justify-between text-xs font-bold mb-1 text-red-500">
         <span>CHEF-RADAR</span><span id="val-cr">{crText}</span>
     </div>

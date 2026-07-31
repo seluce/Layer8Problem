@@ -32,6 +32,24 @@
    tailwind.config.js listed under `content`. */
 @import "tailwindcss" source(none);
 
+/* Radius scale, sharpened.
+   Tailwind ships 8px for rounded-lg and 12px for rounded-xl — that is current
+   web design, not the software this game is set in. Redefining the scale here
+   hits every rounded-* class at once instead of editing 200 usages, and it is
+   one place to tune if it turns out too sharp.
+
+   rounded-full is untouched: it is for pills and avatars, which should stay
+   round. */
+@theme {
+    --radius-xs: 0px;
+    --radius-sm: 1px;
+    --radius-md: 2px;
+    --radius-lg: 2px;
+    --radius-xl: 3px;
+    --radius-2xl: 4px;
+    --radius-3xl: 6px;
+}
+
 /* Paths are relative to THIS file, which lives in src/. index.html sits one
    level up and the intranet pages are served from public/. */
 @source "../index.html";
@@ -84,16 +102,49 @@
    overrides Tailwind's own .text-xl and .text-2xl.
    Cascade order is unchanged: utilities still override components. */
 @layer components {
-    /* NEON LOOK */
+    /* PANELS
+       Every panel carries a coloured top edge — the one element of this design
+       that is not generic. It comes from a variable so the terminal can change
+       its accent with the event type, and so a panel without an accent class
+       still has the same silhouette instead of a different one. */
     .neon-box {
-        background: #0f172a; border: 1px solid #1e293b;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); border-radius: 0.75rem; position: relative;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-top: 3px solid var(--panel-accent, #334155);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        border-radius: 3px;
+        position: relative;
     }
-    .border-blue { border-top: 3px solid #3b82f6; }
-    .border-green { border-top: 3px solid #10b981; }
-    .border-orange { border-top: 3px solid #f97316; }
-    .border-red { border-top: 3px solid #ef4444; }
-    .border-purple { border-top: 3px solid #a855f7; }
+
+    .accent-blue   { --panel-accent: #3b82f6; }
+    .accent-green  { --panel-accent: #10b981; }
+    .accent-orange { --panel-accent: #f97316; }
+    .accent-red    { --panel-accent: #ef4444; }
+    .accent-purple { --panel-accent: #a855f7; }
+    .accent-amber  { --panel-accent: #f59e0b; }
+    .accent-pink   { --panel-accent: #ec4899; }
+    .accent-cyan   { --panel-accent: #06b6d4; }
+    .accent-slate  { --panel-accent: #94a3b8; }
+
+    /* Kept as aliases: the old names are still in index.html and read fine. */
+    .border-blue   { --panel-accent: #3b82f6; }
+    .border-green  { --panel-accent: #10b981; }
+    .border-orange { --panel-accent: #f97316; }
+    .border-red    { --panel-accent: #ef4444; }
+    .border-purple { --panel-accent: #a855f7; }
+
+    /* DEPTH
+       The terminal is where the game happens, so it sits below the surface:
+       darker, recessed, no drop shadow. The status header sits on top of it.
+       Same panel, different plane — the eye goes to the screen. */
+    .panel-sunken {
+        background: #020617;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .panel-raised {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+    }
 
     /* ACHIEVEMENTS */
     #achievement-container {
@@ -102,7 +153,7 @@
     }
     .achievement-toast {
         background: rgba(16, 185, 129, 0.95); color: white;
-        border: 2px solid #059669; border-radius: 8px;
+        border: 2px solid #059669; border-radius: 2px;
         padding: 12px 16px; min-width: 250px;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
         /* Enter and exit are Svelte transitions, see AchievementToasts.svelte */
@@ -111,7 +162,7 @@
 
     /* PHONE & CHAT */
     #smartphone {
-        background: #000; border: 4px solid #334155; border-radius: 12px;
+        background: #000; border: 4px solid #334155; border-radius: 3px;
         overflow: hidden; position: relative;
         height: 100%;
         min-height: 300px;
@@ -123,7 +174,7 @@
     /* INVENTORY */
     .inv-slot {
         background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
-        border-radius: 8px; display: flex; justify-content: center; align-items: center;
+        border-radius: 2px; display: flex; justify-content: center; align-items: center;
         font-size: 20px; cursor: pointer; position: relative;
         transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -145,7 +196,7 @@
     /* BUTTONS */
     .action-btn {
         background: #1e293b; border: 1px solid #334155; transition: all 0.1s;
-        border-radius: 0.75rem; display: flex; flex-direction: column;
+        border-radius: 2px; display: flex; flex-direction: column;
         align-items: center; justify-content: center; cursor: pointer; padding: 10px;
     }
     .action-btn:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
@@ -154,7 +205,7 @@
 
     .choice-btn {
         width: 100%; background: #1e293b; border: 1px solid #475569; padding: 1rem;
-        text-align: left; transition: all 0.2s; border-radius: 0.5rem; margin-bottom: 0.5rem;
+        text-align: left; transition: all 0.2s; border-radius: 2px; margin-bottom: 0.5rem;
         display: flex; justify-content: space-between; align-items: center;
     }
     .choice-btn:hover { border-color: #3b82f6; background: #0f172a; }

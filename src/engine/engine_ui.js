@@ -192,10 +192,26 @@ export const ui = {
     //
     // Nothing outside these functions may touch that element.
 
+    // Top edge of the terminal panel, by event type. Matches the colours
+    // EventView uses inside, so the panel and its contents read as one thing.
+    TERMINAL_ACCENTS: {
+        calls: '#3b82f6', boss: '#ef4444', rep: '#eab308', sidequest: '#a855f7',
+        server: '#10b981', coffee: '#f59e0b', party: '#ec4899', special: '#14b8a6'
+    },
+
     _setTerminal: function(className, extra) {
         this.state.terminal = { variant: 'system', className, ...extra };
+
         const term = document.getElementById('terminal-content');
         if (term) term.className = className;
+
+        // The panel belongs to index.html, so its accent is set here rather
+        // than by the component rendering inside it.
+        const panel = document.getElementById('terminal');
+        if (panel) {
+            const type = extra?.event?.type;
+            panel.style.setProperty('--panel-accent', this.TERMINAL_ACCENTS[type] ?? '#334155');
+        }
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',

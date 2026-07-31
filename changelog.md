@@ -3,6 +3,10 @@
 Diese Version ist ein technischer Umbau. Am Spiel selbst ändert sich nichts, aber die Grundlage darunter wurde vollständig erneuert - damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind.
 
 Anzeige & Layout:
+* Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
+* Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
+* Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben, was ihn wie die naheliegende Wahl aussehen ließ - dabei geht es im Spiel gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint jetzt erst, wenn die Tickets kritisch werden.
+* Terminal und Statusleiste liegen nun auf zwei Ebenen: Das Terminal ist eingelassen und dunkler, die Statusleiste liegt darüber. Der Blick geht dorthin, wo etwas passiert.
 * Antwortmöglichkeiten zeigen jetzt an, wenn sie einen Gegenstand verbrauchen - und zwar solange sie noch wählbar sind. Bisher war der Unterschied zwischen "wird gebraucht" und "wird aufgebraucht" nur an gesperrten Optionen angedeutet, wo er keine Rolle mehr spielt.
 * Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>". Zuvor stand dort je nach Feld "Fehlt" oder "Benötigt", obwohl beides denselben Zustand beschrieb.
 * Der Hinweis auf den noch nicht einsatzbereiten Stressball heißt jetzt "Noch nicht bereit" statt "Cooldown".
