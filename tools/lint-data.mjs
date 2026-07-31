@@ -17,7 +17,7 @@
  */
 
 import { readFileSync, readdirSync } from 'fs';
-import { DB, ensure } from '../src/data.js';
+import { DB, ensure } from '../data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
 await ensure('bossfights', 'calls', 'coffee', 'emails', 'party', 'reputation', 'server', 'sidequests');
@@ -140,8 +140,8 @@ for (const [flag, ctxs] of flagsReq) {
 // 'party_hub' jumps back to the party hub, 'path_cake_drunk' starts the drunk
 // timer. Rather than maintaining an exception list, scan the engine sources for
 // the literal flag name; anything that appears there is in use.
-const engineSource = ['src/engine.js', 'src/tutorial.js']
-    .concat(readdirSync('src/engine').map(f => 'src/engine/' + f))
+const engineSource = ['engine.js', 'tutorial.js']
+    .concat(readdirSync('assets/engine').map(f => 'assets/engine/' + f))
     .map(f => readFileSync(f, 'utf8'))
     .join('\n');
 

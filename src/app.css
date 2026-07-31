@@ -6,13 +6,10 @@
    as truetype risks a silent fallback to the generic monospace font.
 
    Kept outside any @layer: @font-face is not a style rule and does not
-   participate in the cascade, so a layer would only obscure things.
-
-   The files live in src/assets/fonts/ so Vite fingerprints them and rewrites
-   the URL for whichever base the build targets. */
+   participate in the cascade, so a layer would only obscure things. */
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url('./assets/fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
+    src: url('../fonts/jetbrains-mono-v25-latin-regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -20,7 +17,7 @@
 
 @font-face {
     font-family: 'JetBrains Mono';
-    src: url('./assets/fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
+    src: url('../fonts/jetbrains-mono-v25-latin-800.woff2') format('woff2');
     font-weight: 800;
     font-style: normal;
     font-display: swap;
@@ -32,17 +29,13 @@
    tailwind.config.js listed under `content`. */
 @import "tailwindcss" source(none);
 
-/* Paths are relative to THIS file, which lives in src/. index.html sits one
-   level up and the intranet pages are served from public/. */
-@source "../index.html";
-@source "./main.js";
+@source "./index.html";
 @source "./engine.js";
 @source "./data.js";
 @source "./tutorial.js";
-@source "./components/**/*.svelte";
-@source "./engine/*.js";
-@source "./data/*.js";
-@source "../public/assets/intranet/*.html";
+@source "./assets/intranet/*.html";
+@source "./assets/data/*.js";
+@source "./assets/engine/*.js";
 
 /* Tailwind 4 defaults the border colour to currentcolor; v3 used gray-200.
    This keeps every element that relies on the old default looking the same.
@@ -162,15 +155,6 @@
 
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-
-    /* TEXTURES
-       Declared here rather than as bg-[url(...)] utilities: Tailwind writes
-       arbitrary URLs into the stylesheet verbatim, and the stylesheet ends up
-       one directory deeper than index.html, so the relative path would break.
-       Going through app.css lets Vite resolve and fingerprint them. */
-    .bg-cork        { background-image: url('./assets/img/textures/cork-1.png'); }
-    .bg-cream-paper { background-image: url('./assets/img/textures/cream-paper.png'); }
-    .bg-wood        { background-image: url('./assets/img/textures/wood-pattern.png'); }
 
     /* COMPACT MODE
        Written flat on purpose. Nesting these under & produced invalid
