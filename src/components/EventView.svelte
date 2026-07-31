@@ -53,22 +53,39 @@
         return key.replace(/^Arrow/, '').toUpperCase();
     };
 
-    /** Why an option cannot be taken, or null when it can. */
+    const itemName = (id) => DB.items[id]?.name ?? id;
+
+    /**
+     * Why an option cannot be taken, or null when it can.
+     *
+     * req and rem both require the item; they differ in whether it survives.
+     * For a locked option that difference is irrelevant — you do not have it
+     * either way — so both say the same thing. The distinction belongs on the
+     * options you CAN take, see consumes() below.
+     */
     function lockReason(opt) {
         if (opt.req) {
-            const owned = state.inventory.find(i => i.id === opt.req && !i.used);
-            if (!owned) return `(Fehlt: ${DB.items[opt.req]?.name ?? opt.req})`;
-            if (opt.req === 'stressball' && state.time - state.lastStressballTime < STRESSBALL_COOLDOWN) return '(Cooldown)';
+            if (!state.inventory.find(i => i.id === opt.req && !i.used)) return `Fehlt: ${itemName(opt.req)}`;
+            if (opt.req === 'stressball' && state.time - state.lastStressballTime < STRESSBALL_COOLDOWN) return 'Noch nicht bereit';
         }
         if (opt.rem && !state.inventory.find(i => i.id === opt.rem)) {
-            return `(Benötigt: ${DB.items[opt.rem]?.name ?? opt.rem})`;
+            return `Fehlt: ${itemName(opt.rem)}`;
         }
         if (opt.checkPool) {
             const left = (DB.party ?? []).filter(e => e.loc === opt.checkPool && !state.usedIDs.has(e.id));
-            if (left.length === 0) return '(Alles gesehen)';
+            if (left.length === 0) return 'Alles gesehen';
         }
         return null;
     }
+
+    /**
+     * The item this option spends, if any.
+     *
+     * Shown on available options, because that is when it matters: whether a
+     * choice costs you the cable is something to know before clicking, not
+     * after the option turned out to be locked.
+     */
+    const consumes = (opt) => (opt.rem ? itemName(opt.rem) : null);
 
     const options = $derived(
         (ev.opts ?? []).map((opt, index) => {
@@ -78,6 +95,7 @@
                 // A chain option pointing at another node continues the
                 // conversation; one pointing at a result ends it.
                 continues: ev.isChain && !locked && opt.next && !opt.next.startsWith('res_'),
+                consumes: locked ? null : consumes(opt),
                 key: hotkey(index)
             };
         })
@@ -133,15 +151,20 @@
                     </span>
                     <span class="text-left wrap-break-word py-1">
                         {o.opt.t}
-                        {#if o.locked}<span class="text-sm text-red-500 font-normal ml-2">{o.locked}</span>{/if}
+                        {#if o.locked}<span class="text-sm text-red-500 font-normal ml-2">({o.locked})</span>{/if}
                     </span>
                 </div>
-                <div class="shrink-0 flex items-center h-full">
+                <div class="shrink-0 flex items-center h-full gap-2">
+                    {#if o.consumes}
+                        <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">
+                            −{o.consumes}
+                        </span>
+                    {/if}
                     {#if o.continues}
-                        <span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded-sm ml-3 font-mono">...</span>
+                        <span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded-sm font-mono">...</span>
                     {/if}
                     {#if o.key}
-                        <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors ml-2">{o.key}</kbd>
+                        <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">{o.key}</kbd>
                     {/if}
                 </div>
             </button>

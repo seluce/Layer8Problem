@@ -17,6 +17,13 @@ export default defineConfig({
     build: {
         outDir: 'dist',
         emptyOutDir: true,
+
+        // Bundled output goes to dist/build/, not the default dist/assets/.
+        // public/assets/ is copied verbatim into dist/assets/, so the default
+        // would mix generated bundles and static files in one directory —
+        // and a public file could in principle shadow a generated one.
+        assetsDir: 'build',
+
         // The game data is roughly 1.2 MB of prose split across eight pools that
         // load on demand. Vite warns about chunk size by default; that warning
         // is noise here because the split is deliberate.

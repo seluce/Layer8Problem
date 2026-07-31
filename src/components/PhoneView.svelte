@@ -24,21 +24,25 @@
         return key.replace(/^Arrow/, '').toUpperCase();
     };
 
+    const itemName = (id) => DB.items[id]?.name ?? id;
+
     /** Name of the item an option needs but the player does not have. */
     function missingItem(opt) {
         for (const field of ['req', 'rem']) {
             const id = opt[field];
-            if (id && !state.inventory.find(i => i.id === id)) {
-                return DB.items[id]?.name ?? id;
-            }
+            if (id && !state.inventory.find(i => i.id === id)) return itemName(id);
         }
         return null;
     }
+
+    /** The item this option spends. Only rem consumes; req just has to be there. */
+    const consumes = (opt) => (opt.rem ? itemName(opt.rem) : null);
 
     const options = $derived(
         (phone.options ?? []).map((opt, index) => ({
             opt, index,
             missing: missingItem(opt),
+            consumes: missingItem(opt) ? null : consumes(opt),
             key: hotkey(index)
         }))
     );
@@ -132,10 +136,15 @@
                         {/if}
                         <span class="wrap-break-word leading-tight py-1">{o.opt.t}</span>
                     </div>
-                    <div class="shrink-0 flex items-center h-full">
+                    <div class="shrink-0 flex items-center h-full gap-2">
                         {#if o.missing}
                             <span class="text-[10px]">(Fehlt: {o.missing})</span>
-                        {:else if o.key}
+                        {:else}
+                            {#if o.consumes}
+                                <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">−{o.consumes}</span>
+                            {/if}
+                        {/if}
+                        {#if !o.missing && o.key}
                             <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner group-hover:text-white transition-colors">{o.key}</kbd>
                         {/if}
                     </div>

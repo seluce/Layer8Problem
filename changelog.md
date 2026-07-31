@@ -1,6 +1,11 @@
-[4.0.0] - 2026-07-29
+[4.0.0] - unveröffentlicht
 
 Diese Version ist ein technischer Umbau. Am Spiel selbst ändert sich nichts, aber die Grundlage darunter wurde vollständig erneuert - damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind.
+
+Anzeige & Layout:
+* Antwortmöglichkeiten zeigen jetzt an, wenn sie einen Gegenstand verbrauchen - und zwar solange sie noch wählbar sind. Bisher war der Unterschied zwischen "wird gebraucht" und "wird aufgebraucht" nur an gesperrten Optionen angedeutet, wo er keine Rolle mehr spielt.
+* Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>". Zuvor stand dort je nach Feld "Fehlt" oder "Benötigt", obwohl beides denselben Zustand beschrieb.
+* Der Hinweis auf den noch nicht einsatzbereiten Stressball heißt jetzt "Noch nicht bereit" statt "Cooldown".
 
 Fehlerkorrekturen:
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
@@ -16,6 +21,8 @@ Für Entwickler:
 * Rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
 * Die Ereignis-Pools werden von Vite automatisch aufgeteilt und bei Bedarf nachgeladen; ensure() und prefetchAll() entfallen damit mittelfristig.
 * Der Electron-Hauptprozess liegt unter electron/main.cjs und lädt dist/. Für GitHub Pages wird ebenfalls dist/ veröffentlicht.
+* Der Build landet in dist/build/ statt dist/assets/. Zuvor mischten sich dort erzeugte Bündel und die unverändert kopierten Dateien aus public/assets/.
+* STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
 
 [3.7.0] - 2026-07-28
 
