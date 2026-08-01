@@ -951,11 +951,15 @@ export const ui = {
     toggleBlindStats: function(isOn) {
         this.state.blindStats = isOn;
         localStorage.setItem(KEYS.blindStats, isOn);
+        // Wer mitten im Tag an den Zahlen dreht, hat nicht blind gespielt.
+        this.state.blindRun = false;
         this.updateUI();
     },
     toggleBlindTickets: function(isOn) {
         this.state.blindTickets = isOn;
         localStorage.setItem(KEYS.blindTickets, isOn);
+        // Wer mitten im Tag an den Zahlen dreht, hat nicht blind gespielt.
+        this.state.blindRun = false;
         this.updateUI();
     },
     toggleAudio: function(isOn) {

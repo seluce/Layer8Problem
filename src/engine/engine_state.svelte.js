@@ -20,6 +20,11 @@ export function freshDay(mult = 1.0) {
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
 
+        // Blindflug: Wurde der Tag von der ersten Minute an ohne Zahlen
+        // gespielt? engine_core setzt den Wert beim Tagesstart, die beiden
+        // Schalter löschen ihn, sobald jemand mittendrin nachjustiert.
+        blindRun: false,
+
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,
         // ~40 steps a day) so it can travel into the archive later if wanted.

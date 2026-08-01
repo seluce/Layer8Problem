@@ -331,6 +331,11 @@ export const core = {
         // newly added field can never be forgotten here.
         Object.assign(this.state, freshDay(this.state.difficultyMult));
 
+        // Nur wer schon um acht Uhr blind fliegt, fliegt blind. Wer die
+        // Zahlen später ausblendet, hat den Vormittag über gesehen, wie es
+        // um ihn steht — das zählt nicht.
+        this.state.blindRun = this.state.blindStats && this.state.blindTickets;
+
         // Reset the ticker header immediately
         this.renderHeader();
         
@@ -1067,10 +1072,43 @@ export const core = {
         }
 
         // ==========================================
+        // NACHSATZ: DER BLINDFLUG
+        // ==========================================
+        // Kein Erfolg, keine Trophäe — eine Randnotiz. Wer den ganzen Tag
+        // ohne Zahlen gearbeitet hat, hat ihn anders erlebt als alle
+        // anderen, und genau das gehört ins Logbuch. Nur bei überstandenen
+        // Tagen: Ein Blindflug, der im Rage Quit endet, kommentiert sich
+        // von selbst.
+        let pBlind = "";
+        if (state.blindRun && (endReason === "WIN" || endReason === "PARTY")) {
+            const hard   = state.difficultyMult > 1.0;
+            const easy   = state.difficultyMult < 1.0;
+
+            if (hard) {
+                pBlind = pick([
+                    "Nachtrag: Ich habe den ganzen Montag über keine einzige Zahl gesehen. Keine Prozente, keine Ticketstände, nichts. Nur Gesichter, Tonfall und das Geräusch, das die Kaffeemaschine macht, wenn es zu spät ist. Ich habe ihn trotzdem überstanden. Ich weiß bis jetzt nicht, wie knapp es war, und ich will es auch nicht wissen.",
+                    "Nachtrag: Montag, blind. Ich habe den Tag gelesen wie ein Seemann das Wetter — an der Art, wie Gabi 'guten Morgen' sagt, daran, wie lange Markus in der Tür stehen bleibt, daran, ob die Tür vom Chef offen war. Es hat funktioniert. Ich bin selbst am meisten überrascht.",
+                    "Nachtrag: Kein einziger Balken, kein einziger Zähler, und dann auch noch ein Montag. Irgendwann hört man auf zu rechnen und fängt an zu spüren, wie der Laden steht. Das ist entweder Erfahrung oder die erste Stufe des Wahnsinns. Vermutlich beides."
+                ]);
+            } else if (easy) {
+                pBlind = pick([
+                    "Nachtrag: Ich habe heute alle Anzeigen ausgeblendet. Kein Prozentwert, kein Ticketstand. An einem Freitag ist das kein Kunststück, aber es war erstaunlich ruhig im Kopf, wenn niemand einem ständig vorrechnet, wie es um einen steht.",
+                    "Nachtrag: Der ganze Tag ohne Zahlen. Man merkt schnell, dass die Kollegen die ehrlicheren Messgeräte sind — die Zahlen sagen einem nur, wie schlimm es ist, die Kollegen sagen einem, warum."
+                ]);
+            } else {
+                pBlind = pick([
+                    "Nachtrag: Heute habe ich sämtliche Anzeigen abgeschaltet und den Tag nach Gefühl gearbeitet. Keine Prozente, keine offenen Zähler, nur der Laden und ich. Rückblickend die klarste Sicht, die ich seit Monaten hatte.",
+                    "Nachtrag: Ein ganzer Arbeitstag ohne eine einzige Kennzahl. Kein Dashboard, kein Zähler, kein Balken, der langsam rot wird. Nur Menschen, Geräusche und Erfahrung. Man sollte das öfter machen. Man wird es nicht öfter machen.",
+                    "Nachtrag: Blind gearbeitet, von acht bis Feierabend. Als jemand mittags fragte, wie es denn stehe, konnte ich zum ersten Mal ehrlich antworten: keine Ahnung. Und es war trotzdem in Ordnung."
+                ]);
+            }
+        }
+
+        // ==========================================
         // ASSEMBLE THE HTML
         // ==========================================
         // Absätze als Daten; die Papier-Optik macht components/DiaryEntry.svelte.
-        return { p1, p2, pWarn, p3 };
+        return { p1, p2, pWarn, pBlind, p3 };
     },
 
 };

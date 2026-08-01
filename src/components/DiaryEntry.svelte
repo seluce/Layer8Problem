@@ -22,10 +22,17 @@
     ];
     const weekday = $derived(WEEKDAY.find(d => d.test(game.difficultyMult)).label);
 
+    // Der Blindflug-Nachsatz steht bewusst vor dem Schlusssatz und trägt
+    // eine eigene Auszeichnung: nachträglich hinzugefügt, wie eine Notiz,
+    // die einem erst beim Zuklappen des Buches noch eingefallen ist.
     const paragraphs = $derived(
-        [diary?.p1, diary?.p2, diary?.pWarn, diary?.p3]
-            .map((text, i) => ({ text, warn: i === 2, final: i === 3 }))
-            .filter(p => p.text)
+        [
+            { text: diary?.p1 },
+            { text: diary?.p2 },
+            { text: diary?.pWarn,  warn: true },
+            { text: diary?.pBlind, note: true },
+            { text: diary?.p3,     final: true }
+        ].filter(p => p.text)
     );
 </script>
 
@@ -45,11 +52,17 @@
 
             <div class="space-y-3 font-serif text-[13px] leading-[28px]">
                 {#each paragraphs as p, i (i)}
-                    <p class:font-semibold={p.final}
-                       class:text-amber-900={p.warn}
-                       class="{p.final ? 'border-t border-[#d8cdb4] pt-2' : ''}">
-                        {p.text}
-                    </p>
+                    {#if p.note}
+                        <p class="text-[12px] leading-[26px] text-slate-700 border-l-2 border-[#c8b99b] pl-3 ml-1">
+                            {p.text}
+                        </p>
+                    {:else}
+                        <p class:font-semibold={p.final}
+                           class:text-amber-900={p.warn}
+                           class="{p.final ? 'border-t border-[#d8cdb4] pt-2' : ''}">
+                            {p.text}
+                        </p>
+                    {/if}
                 {/each}
             </div>
 
