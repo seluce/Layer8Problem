@@ -17,6 +17,7 @@ Spielbalance:
 * Vier Antworten hatten negative Minuten und drehten damit die Uhr zurück - drei durch ein falsches Vorzeichen, eine als gewollte Belohnung im Koffein-Wahn. Zeit läuft jetzt nirgends mehr rückwärts; der Hyper-Fokus bleibt stark, schenkt aber keine Arbeitszeit mehr.
 
 Anzeige & Layout:
+* Der Inventar-Eintrag in der Schnellleiste trägt sein Symbol jetzt links vom Text - so wie Team, Archiv und Menü auch. Statt der Lupe zeigt er den Rucksack, der das Inventar auch überall sonst repräsentiert.
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
 * Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
 * Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben, was ihn wie die naheliegende Wahl aussehen ließ - dabei geht es im Spiel gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint jetzt erst, wenn die Tickets kritisch werden.
