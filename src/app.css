@@ -222,6 +222,14 @@
             linear-gradient(180deg, #0e1727 0%, #0a111d 100%);
     }
 
+    /* Die Statuszeile auf dem Bildschirm (Versionsnummer bzw. der
+       Broadcast-Ticker) liegt direkt auf Scanlines und Glimmen. Eine
+       feine dunkle Unterlegung hebt den Text ab, ohne ihn hervorzuheben -
+       es bleibt eine Statuszeile, kein Inhalt. */
+    #terminal-header-right {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+
     .panel-raised {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
     }
