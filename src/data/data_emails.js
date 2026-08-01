@@ -646,7 +646,7 @@ export const emails = [
         subj: "SOFORTIGE VORLADUNG",
         body: "Herr Müller, erscheinen Sie sofort im Büro. Bringen Sie Ihren Anwalt mit. Und einen Karton für Ihre Sachen.",
         opts: [
-            { btn: "War schön mit euch.", r: "Maximaler Stress.", m: 5, f: -20, a: 30, c: 40 },
+            { btn: "War schön mit euch.", r: "Du schreibst zurück, dass es schön war mit ihnen, und drückst auf Senden, bevor die Vernunft eingreifen kann. Die nächsten zwanzig Minuten starrst du auf das Postfach und wartest auf eine Antwort, die nicht kommt.", m: 5, f: -20, a: 30, c: 40 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1067,7 +1067,7 @@ export const emails = [
         subj: "E-Ladesäule blockiert",
         body: "Ein alter Diesel-Golf blockiert die einzige Ladesäule für E-Autos. Kennzeichen: DU-MM 123.",
         opts: [
-            { btn: "Abschleppdienst rufen", r: "Ordnung muss sein!", m: 5, f: -5, a: -5, c: 0, nextEmail: "mail_charging_tow" },
+            { btn: "Abschleppdienst rufen", r: "Der Abschleppwagen ist schneller da als jeder Techniker, den du je bestellt hast. Der Golf hängt bereits am Haken, als der Fahrer aus dem Gebäude gerannt kommt - es ist der neue Kollege aus dem Vertrieb. Er weiß jetzt, wo die Ladesäule ist. Und wer die IT ist.", m: 5, f: -5, a: -5, c: 0, nextEmail: "mail_charging_tow" },
             { btn: "Zettel dran: 'Idiot'", r: "Passiv-aggressiv ist dein Stil.", m: 5, f: 0, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
@@ -1123,7 +1123,7 @@ export const emails = [
         subj: "Frage zu 'DELETE ALL'",
         body: "Chef? Wenn da steht 'Wollen Sie wirklich die Kundendatenbank löschen?', muss ich da auf 'Ja' klicken, damit das Fenster weggeht? Es nervt.",
         opts: [
-            { btn: "NEIN!!! UM GOTTES WILLEN!", r: "Du rennst los.", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_intern_db_panic" },
+            { btn: "NEIN!!! UM GOTTES WILLEN!", r: "Du tippst drei Zeilen Großbuchstaben und rennst gleichzeitig los. Zwei Stockwerke, ein Flur, eine Tür - Kevin sitzt vor dem Dialog, den Mauszeiger schwebend über dem Ja-Knopf, und dreht sich fragend um.", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_intern_db_panic" },
             { btn: "Sarkasmus: 'Klar, mach mal.'", r: "Du denkst, er versteht den Witz.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_intern_db_fail" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
@@ -1146,7 +1146,7 @@ export const emails = [
         subj: "DATABASE EMPTY",
         body: "Tabelle 'Customers' enthält 0 Einträge. Letztes Backup: 1999.",
         opts: [
-            { btn: "Ich kündige.", r: "Pack deine Sachen.", m: 10, f: 0, a: 50, c: -20 },
+            { btn: "Ich kündige.", r: "Du schreibst die kürzeste Mail deiner Laufbahn: zwei Wörter, kein Betreff. Das letzte Backup ist von 1999, die Kundendatenbank ist leer, und irgendwo im Haus erklärt gerade ein Azubi, dass da ja auch eine Sicherheitsabfrage stand.", m: 10, f: 0, a: 50, c: -20 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1431,7 +1431,7 @@ export const emails = [
         subj: "Danke...",
         body: "Danke für die Rückgabe. Warum waren die alle angekaut?! Wir werfen sie weg.",
         opts: [
-            { btn: "Ich war nervös.", r: "Peinlich.", m: 2, f: 0, a: 5, c: 0 },
+            { btn: "Ich war nervös.", r: "Du antwortest wahrheitsgemäß, dass du nervös warst. Eine Antwort kommt nicht mehr. Stattdessen steht am nächsten Morgen eine ungeöffnete Packung Kugelschreiber auf deinem Schreibtisch, mit einem Post-it: Für Sie. Bitte behalten.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1486,7 +1486,7 @@ export const emails = [
         subj: "Ergebnis",
         body: "Sie gehen zu oft. Wir empfehlen einen Katheter am Arbeitsplatz, um die Effizienz um 2% zu steigern.",
         opts: [
-            { btn: "Ich kündige gleich.", r: "Aggro am Limit.", m: 2, f: 0, a: 20, c: 0 },
+            { btn: "Ich kündige gleich.", r: "Du beginnst drei Antworten und löschst alle drei. Die vierte besteht nur aus dem Wort Katheter und einem Fragezeichen. Auch die löschst du. Der Berater wird nie erfahren, wie knapp er davongekommen ist.", m: 2, f: 0, a: 20, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1496,7 +1496,7 @@ export const emails = [
         subj: "Erbschaft aus Nigeria",
         body: "Ihr ferner Onkel ist gestorben. Er hinterlässt Ihnen eine Diamantenmine. Bitte überweisen Sie 500€ Gebühr.",
         opts: [
-            { btn: "Seems legit. (Zahlen)", r: "Du bist so dumm.", m: 2, f: 0, a: 20, c: -20 },
+            { btn: "Seems legit. (Zahlen)", r: "Fünfhundert Euro, überwiesen an einen Prinzen mit Diamantenmine. Die Bestätigungsmail kommt binnen Sekunden, die Diamanten nie. Immerhin hast du jetzt eine Anekdote, die du niemandem erzählen wirst.", m: 2, f: 0, a: 20, c: -20 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du bist ja nicht blöd.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },

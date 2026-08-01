@@ -9,6 +9,12 @@
   until someone actually looks.
 -->
 <script>
+    /* Bilder laden hier bewusst sofort (loading="eager"), nicht verzögert.
+       Das Archiv ist ein Modal, das man öffnet, um zu blättern — mit
+       verzögertem Laden erschienen beim Scrollen erst leere Kästen, weil der
+       Browser die Dateien erst beim Sichtbarwerden anfordert. Es sind
+       wenige, kleine WebP-Dateien; sie alle auf einmal zu holen ist der
+       schnellere Weg. Gleiches gilt für TeamView. */
     import { state } from '../engine/engine_state.svelte.js';
     import { DB } from '../data.js';
 
@@ -103,7 +109,7 @@
                      title={entry.unlocked ? entry.item.name : 'Unbekannt'}>
                     {#if !entry.unlocked}?
                     {:else if entry.item.img}
-                        <img src={entry.item.img} loading="lazy" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
+                        <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
                     {:else}{entry.item.icon}{/if}
                 </div>
             {/each}
@@ -119,7 +125,7 @@
                          title={entry.unlocked ? entry.item.name : '???'}>
                         {#if !entry.unlocked}?
                         {:else if entry.item.img}
-                            <img src={entry.item.img} loading="lazy" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
+                            <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
                         {:else}{entry.item.icon}{/if}
                     </div>
                 {/each}
@@ -137,7 +143,7 @@
                         ? 'w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50'
                         : 'text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50'}>
                         {#if row.ach.img}
-                            <img src={row.ach.img} loading="lazy" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt={row.ach.title}>
+                            <img src={row.ach.img} loading="eager" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt={row.ach.title}>
                         {:else}{row.ach.icon}{/if}
                     </div>
 

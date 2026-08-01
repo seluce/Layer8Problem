@@ -22,6 +22,17 @@
     ]);
 
     const sign = (n) => (n > 0 ? '+' : '') + n;
+
+    // Ergebnistexte sind Klartext, kein HTML — so kann kein Datenfeld
+    // versehentlich Markup ins Dokument tragen. Damit Verweise trotzdem
+    // anklickbar sind, werden reine URLs erkannt und in Links verwandelt.
+    const URL_RE = /(https?:\/\/[^\s)]+)/g;
+    const parts = $derived(
+        String(view.text ?? '').split(URL_RE).map(chunk => ({
+            text: chunk,
+            href: /^https?:\/\//.test(chunk) ? chunk : null
+        }))
+    );
 </script>
 
 <div class="w-full max-w-2xl text-left fade-in my-auto shrink-0 mx-auto
@@ -34,7 +45,7 @@
     </div>
 
     <div class="bg-black/40 p-5 rounded-lg border-l-4 border-emerald-500/60 shadow-inner">
-        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{view.text}"</p>
+        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{#each parts as part}{#if part.href}<a href={part.href} target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300 not-italic">{part.text}</a>{:else}{part.text}{/if}{/each}"</p>
     </div>
 
     <div class="flex flex-wrap gap-2 mt-4">

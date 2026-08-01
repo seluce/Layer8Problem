@@ -55,7 +55,7 @@
                         relative z-0 transition-transform duration-300 ease-out origin-center cursor-help
                         md:hover:scale-[2.25] md:hover:z-50 md:hover:shadow-2xl md:hover:border-white">
                 {#if member.char.img}
-                    <img src={member.char.img} loading="lazy" decoding="async" class="w-full h-full object-cover" alt={member.char.name}>
+                    <img src={member.char.img} loading="eager" decoding="async" class="w-full h-full object-cover" alt={member.char.name}>
                 {:else}{member.char.icon}{/if}
             </div>
 

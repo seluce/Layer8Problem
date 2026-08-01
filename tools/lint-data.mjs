@@ -219,7 +219,10 @@ const checkText = (ctx, field, txt) => {
     // Only prose gets a length check. Button labels are supposed to be terse
     // ("Auflegen.", "Ignorieren") and would otherwise drown the report.
     const isProse = /\.(r|txt|text|body)$|^(text|body)$/.test(field) || field.endsWith('.text');
-    if (isProse && t.length < 20) info(`${ctx} ${field}: sehr kurz ("${t}")`);
+    // CMD:-Werte sind Steuerbefehle an die Engine (Intranet/Schwarzes Brett
+    // öffnen), keine Sätze — sie sollen kurz sein.
+    const isCommand = /^CMD:[A-Z_]+$/.test(t);
+    if (isProse && !isCommand && t.length < 20) info(`${ctx} ${field}: sehr kurz ("${t}")`);
 
     // Unpaarige Anführungszeichen deuten auf einen abgeschnittenen Satz hin
     for (const q of ['"', '„', '»']) {
@@ -283,9 +286,13 @@ for (const p of POOLS) {
   for (const ev of DB[p]) {
     for (const o of ev.opts ?? []) {
       if (typeof o.r !== 'string') continue;
-      if (o.r.includes('\\')) warn(`[${p}/${ev.id}] opt.r enthält Backslash -> zerlegt den onclick-String`);
-      if (/<[a-zA-Z/]/.test(o.r)) warn(`[${p}/${ev.id}] opt.r enthält HTML-Tag`);
-      if (o.r.includes('&') && !/&(amp|quot|lt|gt|nbsp|#\d+);/.test(o.r)) warn(`[${p}/${ev.id}] opt.r enthält nacktes "&"`);
+      // Ergebnistexte rendert components/ResultView.svelte als Klartext.
+      // Deshalb ist "&" darin völlig unkritisch (früher eine Warnung, seit
+      // der Svelte-Umstellung ein Fehlalarm), Markup dagegen sinnlos: Es
+      // würde wörtlich im Terminal stehen. URLs müssen nicht verlinkt
+      // werden, das erledigt die Komponente selbst.
+      if (o.r.includes('\\')) warn(`[${p}/${ev.id}] opt.r enthält Backslash`);
+      if (/<[a-zA-Z/]/.test(o.r)) err(`[${p}/${ev.id}] opt.r enthält HTML-Tag — Ergebnistexte werden als Klartext ausgegeben, das Markup wäre sichtbar`);
     }
   }
 }

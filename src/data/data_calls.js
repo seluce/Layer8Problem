@@ -574,8 +574,8 @@ export const calls = [
 		text: "Unter dem Tisch des neuen Kollegen sieht es aus wie Spaghetti. Er tritt ständig den Stecker raus.",
 		opts: [
 			{ t: "Kabelbinder-Einsatz", req: "zip_ties", m: 20, f: -5, a: -10, c: 0, r: "Alles sauber gebündelt und hochgebunden. r/CablePorn Material." },
-			{ t: "Tape an Tisch", req: "tape", m: 10, f: 0, a: 0, c: 0, r: "Hält auch." },
-			{ t: "Ihn belehren", m: 15, f: 0, a: 10, c: 0, r: "Er hört nicht zu." }
+			{ t: "Tape an Tisch", req: "tape", m: 10, f: 0, a: 0, c: 0, r: "Vier Streifen Panzertape quer über die Tischkante, fertig. Es sieht aus wie ein Verband nach einem Arbeitsunfall, aber der Stecker bleibt drin. Bis jemand den Tisch verschiebt." },
+			{ t: "Ihn belehren", m: 15, f: 0, a: 10, c: 0, r: "Du erklärst geduldig Zugentlastung, Kabelkanäle und warum ein Stecker kein Stolperseil ist. Er nickt durchgehend und tritt noch während deiner Erklärung das Netzkabel aus der Buchse." }
 		]
 	},
 	{

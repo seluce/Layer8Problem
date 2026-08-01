@@ -39,6 +39,9 @@ Anzeige & Layout:
 * Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
 
 Fehlerkorrekturen:
+* Der Hinweis auf die Steam-Version wurde als roher Quelltext angezeigt statt als Link - ein Überbleibsel der Oberflächen-Umstellung. Ergebnistexte enthalten jetzt keinen Quelltext mehr, dafür erkennt das Spiel Internetadressen von selbst und macht sie anklickbar.
+* Zehn Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen. Sie sind jetzt ausgeschrieben - etwa die abgeschleppte Ladesäule, an der ausgerechnet der neue Vertriebskollege steht.
+* Im Archiv und in der Team-Übersicht erschienen beim Blättern zunächst leere Kästen: Die Bilder wurden erst angefordert, wenn sie in den Sichtbereich gescrollt wurden. Jetzt lädt beim Öffnen alles auf einmal - es sind wenige, kleine Dateien.
 * Die Bestätigen-Taste funktioniert jetzt auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
 * Drei Tastatur-Regressionen aus der Svelte-Umstellung behoben: Die Bestätigen-Taste nimmt eingehende Handy-Benachrichtigungen wieder an und klickt das Tutorial wieder weiter (beides suchte noch nach Elementen der alten Oberfläche), und Escape schließt das Fenster für Spielstand-Export und -Import wieder, statt still einen internen Fehler auszulösen.
 * Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest und kam aus dem Ereignis nicht mehr heraus.

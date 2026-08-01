@@ -6296,7 +6296,7 @@ export const sidequests = [
             { 
                 t: "Shut up and take my money! (Auf Steam anschauen)", 
                 m: 2, f: 5, a: 0, c: 10, 
-                r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir die Shop-Seite aber noch heimlich gemerkt.<br><br>(Wer das Projekt unterstützen will: <a href='https://store.steampowered.com/app/4487580/' target='_blank' class='text-blue-400 underline hover:text-blue-300 transition-colors'>Hier geht's zur Steam-Version</a> mit Cloud-Saves und Achievements! Ich freue mich über Bewertungen!)."
+                r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir die Shop-Seite aber noch heimlich gemerkt. Falls du das Projekt unterstützen willst: Die Steam-Version mit Cloud-Speicherstand und Erfolgen findest du unter https://store.steampowered.com/app/4487580/ - über eine Bewertung freue ich mich sehr."
             },
             { 
                 t: "Ignorieren: 'Ich erlebe das jeden Tag, warum sollte ich es spielen?'", 
