@@ -1545,4 +1545,409 @@ export const emails = [
         ]
     },
 
+
+/* ============================================================
+   MAIL-WELLE (v4.0.0)
+   Frau Elster bekommt ihre ersten Mails überhaupt (Beleg-Saga
+   und die Inventur mit Kontrollposition 87), Markus seine
+   Siri-Diktate und den CC-Loop, Kevin den Anhang-Klassiker.
+   Dazu charakterfreie Büro-Post: Reply-All-Lasagne, der
+   Phishing-Test der Konzernzentrale, die 14-Ebenen-Weiterleitung
+   und die Abwesenheitsnotiz-Endlosschleife. Sechs Ketten via
+   nextEmail. Erstmals tragen Mails kleine Ruf-Werte (±3-5).
+   ============================================================ */
+
+{
+    id: "mail_markus_siri",
+    sender: "Vertriebsleiter Markus",
+    subj: "WICHTIG AUS DEM AUTO",
+    body: "HALLO MÜLLER AUSRUFEZEICHEN ich brauche DRINGEND die zahlen für Techni Plast KOMMA die vom letzten Quartal PUNKT neuer Absatz\n\nnicht die alten zahlen sondern die NEUEN alten PUNKT\n\ngesendet von meinem iPhone während der Fahrt Siri du kannst jetzt aufhören Siri STOP",
+    opts: [
+        {
+            btn: "Präzise nachfragen: WELCHE Zahlen?",
+            nextEmail: "mail_markus_siri_2",
+            m: 2, f: 0, a: 5, c: 0,
+            r: "Du formulierst eine glasklare Rückfrage mit drei Auswahlmöglichkeiten. Die Antwort wird wieder aus dem Auto kommen. Du weißt das. Du fragst trotzdem. Hoffnung ist ein Arbeitsprinzip."
+        },
+        {
+            btn: "Die wahrscheinlichsten Zahlen einfach schicken",
+            rep: { "Markus": 3 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Du rätst dich durch den Vertriebs-Dschungel und schickst die Quartalsauswertung TechniPlast. Zwanzig Minuten später: 'PERFEKT DANKE AUSRUFEZEICHEN'. Es waren die richtigen. Diesmal."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 10,
+            r: "Was aus dem Auto kommt, kann im Auto bleiben. Die Mail verschwindet. Markus wird sich melden, sobald er parkt. Also nie."
+        }
+    ]
+},
+{
+    id: "mail_markus_siri_2",
+    linked: true,
+    sender: "Vertriebsleiter Markus",
+    subj: "Re: WICHTIG AUS DEM AUTO",
+    body: "NA DIE ZAHLEN HALT AUSRUFEZEICHEN die wo der kunde meinte dass die komisch sind PUNKT\n\nfrag GABI die weiß sowas\n\nSiri sende an Müller nein NICHT an Müller Berger an MÜLLER",
+    opts: [
+        {
+            btn: "Gabi fragen (natürlich weiß sie es)",
+            rep: { "Gabi": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Gabi weiß es sofort: 'Die Rabattstaffel. Die ist seit März falsch verlinkt, das meint er.' Du schickst die korrigierte Datei. Zwei Menschen in diesem Haus verstehen den Vertrieb: Gabi und niemand sonst."
+        },
+        {
+            btn: "'Ruf mich an, wenn du geparkt hast'",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Die Antwort kommt vier Stunden später: 'BIN GEPARKT wer bist du nochmal FRAGEZEICHEN'. Siri hat den Verlauf gefressen. Das Thema hat sich, wie so vieles bei Markus, unterwegs von selbst erledigt."
+        }
+    ]
+},
+
+{
+    id: "mail_markus_loop",
+    sender: "Vertriebsleiter Markus",
+    subj: "WG: WG: Kundenbeschwerde TechniPlast - NUR DAMIT ALLE IM LOOP SIND",
+    body: "Team,\n\nich leite das mal an ALLE weiter, volle Transparenz.\n\n@IT: Bitte kurz erklären, warum das System 'langsam' ist.\n@Chef: FYI.\n@Buchhaltung: FYI.\n@Empfang: FYI.\n\nZeit ist Geld!\nM.\n\n[CC: 74 Empfänger, darunter Dr. Wichtig]",
+    opts: [
+        {
+            btn: "Allen antworten, sachlich und endgültig",
+            m: 10, f: 0, a: 10, c: -5,
+            r: "Du erklärst dem gesamten Verteiler in drei nüchternen Sätzen die Ursache (der Kunde nutzt den Client von 2019). Es ist korrekt, transparent und wird von exakt niemandem gelesen. Aber es steht im Loop, und der Loop ist heilig."
+        },
+        {
+            btn: "Nur Markus antworten: 'Sowas klären wir zu zweit'",
+            rep: { "Markus": -3 },
+            m: 5, f: 0, a: -5, c: 0,
+            r: "Er antwortet - selbstverständlich an alle: 'Die IT möchte das bilateral klären AUSRUFEZEICHEN Transparenz sieht anders aus.' Du hast verloren, indem du vernünftig warst. Der Klassiker dieses Hauses."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 10,
+            r: "Der Loop rauscht ohne dich weiter. In Mail vierzehn der Kette wird jemand vorschlagen, 'das in einem Termin zu besprechen'. Du wirst eingeladen werden. Man entkommt dem Loop nicht. Man vertagt ihn."
+        }
+    ]
+},
+
+{
+    id: "mail_elster_349",
+    sender: "Frau Elster (Buchhaltung)",
+    subj: "Fehlender Beleg: 3,49 EUR (USB-Kabel) - 3. Erinnerung",
+    body: "Sehr geehrter Herr Müller,\n\nzum dritten Mal erinnere ich an den fehlenden Originalbeleg zur Barauslage vom 12.06. (USB-Kabel, 3,49 EUR).\n\nOhne Beleg keine Erstattung. Ohne Klärung kein sauberer Jahresabschluss.\n\nFristsetzung: Freitag, 12:00 Uhr.\n\nMit freundlichen Grüßen\nE. Elster\n\n(Diese E-Mail wurde vor dem Versand auf Rechtschreibung geprüft.)",
+    opts: [
+        {
+            btn: "Die Schreibtisch-Archäologie beginnen",
+            nextEmail: "mail_elster_349_2",
+            m: 15, f: -5, a: 10, c: 0,
+            r: "Nach einer Viertelstunde Grabung durch drei Schubladen-Schichten: Der Beleg klebt an einem Hustenbonbon. Er ist verknittert, aber lesbar. Du scannst ihn mit der Sorgfalt eines Restaurators und reichst ihn ein."
+        },
+        {
+            btn: "'Vergessen wir die 3,49 einfach'",
+            rep: { "Frau Elster": -5 },
+            m: 2, f: 5, a: 0, c: 5,
+            r: "Fataler Irrtum. Es geht nicht um 3,49 Euro. Es ging NIE um 3,49 Euro. Es geht um das Prinzip, und das Prinzip führt jetzt einen offenen Posten mit deinem Namen. Ihre Antwort: 'Verzicht ist buchhalterisch KEINE Klärung.'"
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 10,
+            r: "Die vierte Erinnerung wird per Hauspost kommen. Ausgedruckt. Mit beigelegtem Lesebestätigungs-Formular. Es gibt Gegner, gegen die Ignorieren keine Strategie ist, sondern nur eine Fristverlängerung."
+        }
+    ]
+},
+{
+    id: "mail_elster_349_2",
+    linked: true,
+    sender: "Frau Elster (Buchhaltung)",
+    subj: "Re: Fehlender Beleg - ERLEDIGT",
+    body: "Sehr geehrter Herr Müller,\n\nder Beleg ist eingegangen und verbucht. Der Vorgang ist geschlossen.\n\nAnbei zur Kenntnis: Ihre Erstattung (3,49 EUR) sowie 0,12 EUR Verzugsausgleich, den Sie nicht beantragt haben, der Ihnen jedoch zusteht.\n\nOrdnung ist keine Schikane.\nE. Elster",
+    opts: [
+        {
+            btn: "Die 12 Cent gebührend würdigen",
+            rep: { "Frau Elster": 5 },
+            m: 2, f: 0, a: -5, c: 0,
+            r: "Du antwortest: 'Die 12 Cent haben meinen Tag gerettet.' Ihre Antwort kommt nach neunzig Sekunden: 'Das war der Zweck.' Irgendwo hinter den Aktenbergen hat Frau Elster gelächelt. Davon ist auszugehen."
+        },
+        {
+            btn: "Kommentarlos abheften",
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Vorgang geschlossen, Ablage, fertig. Die 12 Cent bleiben unkommentiert. Es war eine ausgestreckte Hand in Centbeträgen, und du hast sie übersehen. Buchhalterisch korrekt. Menschlich verbesserungsfähig."
+        }
+    ]
+},
+
+{
+    id: "mail_elster_inventur",
+    sender: "Frau Elster (Buchhaltung)",
+    subj: "Jahresinventur IT: Bestätigung Anlagennummern (214 Positionen)",
+    body: "Sehr geehrter Herr Müller,\n\nanbei die Anlagenliste der IT (214 Positionen). Bitte prüfen Sie JEDE Position auf tatsächliches Vorhandensein und bestätigen Sie bis Monatsende.\n\nStichprobenkontrollen behalte ich mir vor.\n\nMit freundlichen Grüßen\nE. Elster",
+    opts: [
+        {
+            btn: "Gewissenhaft prüfen, Auffälligkeiten melden",
+            nextEmail: "mail_elster_inventur_2a",
+            m: 25, f: -10, a: 15, c: 0,
+            r: "Ein Nachmittag zwischen Racks, Schränken und Egons Kellerregalen. 209 Positionen: vorhanden. Vier: verschollen. Und Position 87, 'Quantenrechner QX-1, Anschaffung 1997', kann unmöglich existieren. Du meldest exakt das - samt der Frage, was ein Quantenrechner 1997 gekostet haben soll."
+        },
+        {
+            btn: "Alle 214 blind bestätigen",
+            nextEmail: "mail_elster_inventur_2b",
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Zweihundertvierzehn Häkchen in vier Minuten - ein neuer Hausrekord. Die Liste geht bestätigt zurück an die Buchhaltung, wo Frau Elster sie mit einem ganz bestimmten Blick öffnen wird."
+        },
+        {
+            btn: "An Kevin delegieren: Inventur-Praxis!",
+            rep: { "Kevin": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Kevin zieht begeistert mit Klemmbrett los. Rückmeldung nach drei Stunden: '213 gefunden! Und was ist ein Quantenrechner?' Der Junge hat die Kontrollposition entdeckt, ohne zu ahnen, dass es eine war. Instinkt kann man nicht lehren."
+        }
+    ]
+},
+{
+    id: "mail_elster_inventur_2a",
+    linked: true,
+    sender: "Frau Elster (Buchhaltung)",
+    subj: "Re: Jahresinventur - Position 87",
+    body: "Sehr geehrter Herr Müller,\n\nPosition 87 war eine Kontrollposition.\n\nSie sind der Erste seit Einführung dieser Praxis (2011), der sie beanstandet hat.\n\nIch habe Sie auf die Liste der prüfungssicheren Ansprechpartner gesetzt. Diese Liste umfasst nunmehr zwei Namen.\n\nE. Elster",
+    opts: [
+        {
+            btn: "'Wer ist der andere Name?'",
+            rep: { "Frau Elster": 5 },
+            m: 2, f: 0, a: 0, c: 0,
+            r: "Die Antwort kommt umgehend und besteht aus einem Wort: 'Ich.' Mehr Ehre passt in dieser Firma nicht in eine Zeile. Du druckst die Mail nicht aus. Aber es war knapp."
+        },
+        {
+            btn: "Still stolz sein",
+            rep: { "Frau Elster": 3 },
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Manche Auszeichnungen brauchen keine Antwort. Du bist jetzt prüfungssicher - ein Adelstitel, den es offiziell nicht gibt und der in diesem Haus trotzdem mehr wiegt als jede Beförderung."
+        }
+    ]
+},
+{
+    id: "mail_elster_inventur_2b",
+    linked: true,
+    sender: "Frau Elster (Buchhaltung)",
+    subj: "Re: Jahresinventur - Rückfrage zu Position 87",
+    body: "Sehr geehrter Herr Müller,\n\nSie bestätigen das Vorhandensein von Position 87: 'Quantenrechner QX-1, Anschaffung 1997'.\n\nDiese Position habe ich zu Kontrollzwecken erfunden.\n\nIch schlage vor, Sie prüfen die Liste erneut. Diesmal mit den Augen.\n\nE. Elster",
+    opts: [
+        {
+            btn: "Zerknirscht wirklich prüfen",
+            rep: { "Frau Elster": 3 },
+            m: 25, f: -5, a: 15, c: 0,
+            r: "Die zweite Runde machst du richtig: jede Position, jeder Raum, Egons Keller inklusive. Vier Geräte bleiben verschollen, der Rest stimmt. Ihre Antwort auf deine korrigierte Liste: 'Sehen Sie. Ging doch.' Es klingt fast mütterlich. Fast."
+        },
+        {
+            btn: "'Der Quantenrechner steht bei Egon im Keller'",
+            rep: { "Frau Elster": -5 },
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Humor ist bei Kontrollpositionen nicht vorgesehen. Ihre Antwort besteht aus einem Satz: 'Ich habe Egon gefragt.' Du hast verloren. Egon übrigens auch - er hat gesagt: 'Kann sein.' Jetzt sucht die Buchhaltung einen Quantenrechner von 1997."
+        }
+    ]
+},
+
+{
+    id: "mail_kevin_anhang",
+    sender: "Kevin (Azubi)",
+    subj: "die datei",
+    body: "hier die datei die du wolltest\n\nlg kevin",
+    opts: [
+        {
+            btn: "'Kevin. Der Anhang.'",
+            nextEmail: "mail_kevin_anhang_2",
+            m: 2, f: 0, a: 5, c: 0,
+            r: "Du antwortest mit drei Wörtern. Mehr braucht es nicht. Mehr würde auch nichts ändern."
+        },
+        {
+            btn: "Selbst per Fernwartung nachsehen",
+            m: 10, f: 5, a: 5, c: 0,
+            r: "Du findest die Datei auf seinem Desktop. Sie heißt 'endgültig_final_NEU(3).xlsx' und liegt direkt neben 'endgültig_final_NEU(2).xlsx' und 'endgültig_final.xlsx'. Du nimmst die mit der höchsten Zahl. Hoffentlich zählt Kevin so wie der Rest der Menschheit."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 5,
+            r: "Wenn es wichtig ist, kommt es wieder. Bei Kevin kommt es immer wieder. Meistens dreifach und mit Emoji."
+        }
+    ]
+},
+{
+    id: "mail_kevin_anhang_2",
+    linked: true,
+    sender: "Kevin (Azubi)",
+    subj: "Re: die datei",
+    body: "omg sorry 🙈 jetzt aber wirklich\n\nlg kevin",
+    opts: [
+        {
+            btn: "Schweigend warten - er merkt es selbst",
+            nextEmail: "mail_kevin_anhang_3",
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Wieder kein Anhang. Du antwortest nicht. Kevin wird es selbst bemerken - erfahrungsgemäß nach elf Minuten, wenn die Scham durch die Kopfhörer sickert."
+        },
+        {
+            btn: "Anrufen und es beenden",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Ach DESHALB ging die Mail so schnell raus!' Vierzig Sekunden Telefon lösen, was zwei Mails nicht konnten. Die Datei kommt an. Als Download-Link. Immerhin."
+        }
+    ]
+},
+{
+    id: "mail_kevin_anhang_3",
+    linked: true,
+    sender: "Kevin (Azubi)",
+    subj: "Re: Re: die datei",
+    body: "ok JETZT hab ichs gecheckt 😅 anbei!!\n\nlg kevin\n\n[Anhang: IMG_20260801_1337.jpg, 4,2 MB]",
+    opts: [
+        {
+            btn: "Das Foto für die Ewigkeit sichern",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Der Anhang ist ein Foto seines Bildschirms, auf dem die geöffnete Datei zu sehen ist. Scharf fotografiert immerhin. Das Bild wandert in deinen Ordner 'Beweise'. Bei seiner Abschlussfeier wird es eine Diashow geben. Du sammelst bereits."
+        },
+        {
+            btn: "Hingehen und die Anhang-Schulung halten",
+            rep: { "Kevin": 5 },
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Du zeigst ihm das Büroklammer-Symbol. Kevin: 'DA ist das!' Er notiert es sich - als Sprachnachricht an sich selbst, aber er notiert es. Die Datei kommt zwei Minuten später an. Als echter Anhang. Es ist Wachstum. Irgendeine Form davon."
+        }
+    ]
+},
+
+{
+    id: "mail_allhands_lasagne",
+    sender: "Bernd (Vertrieb)",
+    subj: "WER hat meine Lasagne aus dem Kühlschrank genommen???",
+    body: "Liebe 'Kollegen',\n\nmeine Lasagne (BESCHRIFTET!) ist aus dem Kühlschrank verschwunden. Die Tupperdose war ein Geschenk meiner Mutter.\n\nIch erwarte Aufklärung.\n\n- Bernd (2. OG)\n\n[An: Alle. Es liegen bereits 23 Antworten an alle vor.]",
+    opts: [
+        {
+            btn: "Die 23 Antworten genüsslich lesen",
+            m: 10, f: 10, a: -10, c: 0,
+            r: "Die Kette enthält: zwei gegenseitige Verdächtigungen, eine Grundsatzdebatte über Kühlschrank-Ethik, ein Meme und Frau Elsters trockenen Verweis auf die Kühlschrankordnung. Beste Unterhaltung des Tages, völlig kostenlos. Also fast: Es war Arbeitszeit."
+        },
+        {
+            btn: "Die IT-Karte spielen: 'Ich kann die Küchen-Logs prüfen'",
+            nextEmail: "mail_allhands_lasagne_2",
+            m: 5, f: 5, a: -5, c: 5,
+            r: "Es gibt keine Küchen-Logs. Aber das weiß der Verteiler nicht. Deine Mail erzeugt im Thread eine sofortige, fast hörbare Stille. Macht fühlt sich exakt so an."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 5,
+            r: "Die Lawine rollt auch ohne dich. Morgen ist Bernds Lasagne Flurfolklore, übermorgen Legende, und in einem Jahr schwören drei Zeugen, es sei eine Königsberger-Klopse-Affäre gewesen."
+        }
+    ]
+},
+{
+    id: "mail_allhands_lasagne_2",
+    linked: true,
+    sender: "Jürgen (Vertrieb)",
+    subj: "Re: WER hat meine Lasagne... (PRIVAT)",
+    body: "Herr Müller,\n\nkurze private Nachfrage unter uns: Diese 'Küchen-Logs'... was genau loggen die? Und seit wann?\n\nRein interessehalber.\n\n- Jürgen (3. OG)",
+    opts: [
+        {
+            btn: "'Alles. Seit 2019.'",
+            m: 2, f: 5, a: -10, c: 0,
+            r: "Eine Stunde später steht eine neue, versiegelte Lasagne im Kühlschrank. Daneben ein Zettel: 'Für Bernd. Von einem Freund.' Fall geschlossen - ohne Urteil, ohne Beweis, ohne ein einziges echtes Log. Justiz durch Bluff. Die günstigste Form."
+        },
+        {
+            btn: "'Jürgen. Wir beide wissen es.'",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "Jürgen antwortet nicht. Muss er auch nicht. In der Kantine stellt er dir fortan wortlos den Nachtisch mit aufs Tablett. Schweigegeld in Puddingform. Du nimmst es an. Man muss auch nehmen können."
+        }
+    ]
+},
+
+{
+    id: "mail_security_test",
+    sender: "IT-Security (Konzernzentrale)",
+    subj: "Ihre Paketzustellung wartet! Jetzt Zustellgebühr zahlen (1,99 EUR)",
+    body: "Sehr geehrter Kunde,\n\nIhr Paket Nr. DE-8471-B kann nicht zugestellt werden. Bitte bestätigen Sie die Zustellgebühr über den folgenden Link.\n\n[Klassische Phishing-Optik in schlechtem Deutsch. Aber der Mail-Header verrät dem geübten Auge: Absender ist die eigene Konzern-Security. Es ist der jährliche Phishing-TEST.]",
+    opts: [
+        {
+            btn: "Vorbildlich als Phishing melden",
+            m: 2, f: 0, a: 0, c: -5,
+            r: "Der Musterknaben-Klick. Sekunden später: 'Glückwunsch! Sie haben den Test bestanden.' Du bist jetzt Teil einer Statistik, die in einer Vorstandsfolie enden wird. Immerhin auf der grünen Balkenseite."
+        },
+        {
+            btn: "Absichtlich klicken - Forschungszwecke",
+            nextEmail: "mail_security_test_2",
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Wissenschaftliche Neugier: Was passiert bei Klick? Der Link führt auf eine Belehrungsseite mit trauriger Schild-Grafik ('Das hätte ein echter Angriff sein können!') - und einer automatischen Konsequenz, die du eine Sekunde zu spät liest."
+        },
+        {
+            btn: "Die halbe Firma vorwarnen",
+            m: 5, f: 5, a: -5, c: 5,
+            r: "Deine Flurfunk-Warnung lotst Dutzende Kollegen sicher durch den Test. Die Konzern-Security staunt über die beste Quote der Firmengeschichte - 98 Prozent - und kündigt an, 'die Testmethodik zu überprüfen'. Du hast eine Statistik geheilt und sie dadurch verdächtig gemacht."
+        }
+    ]
+},
+{
+    id: "mail_security_test_2",
+    linked: true,
+    sender: "IT-Security (Konzernzentrale)",
+    subj: "Pflichtschulung: Phishing erkennen - Grundlagen (45 Min.)",
+    body: "Sehr geehrter Herr Müller,\n\naufgrund Ihres Klickverhaltens wurden Sie automatisch für die Schulung 'Phishing erkennen - Grundlagen' angemeldet.\n\nDie Teilnahme ist verpflichtend und wird protokolliert.\n\nIhre IT-Security",
+    opts: [
+        {
+            btn: "Die 45 Minuten würdevoll absitzen",
+            m: 30, f: 10, a: 15, c: 0,
+            r: "Du - hauptberuflich der Mensch, der diese Schulung halten könnte - klickst dich durch Module wie 'Was ist ein Link?'. Das Abschlusszertifikat druckst du aus und hängst es ins Büro. Als Mahnung. Oder Trophäe. Die Grenze ist fließend."
+        },
+        {
+            btn: "Widerspruch: 'Ich BIN die IT'",
+            m: 10, f: 0, a: 10, c: 5,
+            r: "Die Antwort der Konzern-Security kommt formvollendet: 'Gerade Administratoren sind ein Hochrisiko-Ziel. Die Teilnahme bleibt verpflichtend.' Sie haben recht, und das ist das Ärgerlichste daran. Die Schulung wartet. Sie wartet geduldig."
+        }
+    ]
+},
+
+{
+    id: "mail_treiber_kette",
+    sender: "Kollegin Petra",
+    subj: "WG: WG: AW: WG: Re: AW: Drucker 3. OG",
+    body: "Hallo IT,\n\nkönnen Sie da mal draufschauen? Kam gerade so rein, keiner weiß mehr, worum es ursprünglich ging.\n\nVG Petra\n\n[Darunter: vierzehn Weiterleitungsebenen aus drei Wochen, sieben Signaturen, zwei automatische Abwesenheitsnotizen]",
+    opts: [
+        {
+            btn: "Mail-Archäologie: bis zur Urfrage graben",
+            m: 15, f: -5, a: 10, c: 0,
+            r: "Vierzehn Ebenen tiefer, datiert vor drei Wochen, findest du die Urfrage: 'Ist der Drucker im 3. OG eigentlich neu?' Er war neu. Er ist es nicht mehr. Die Frage hat sich durch reine Weiterleitungsdauer selbst beantwortet. Du dokumentierst den Fund wie ein Höhlenforscher."
+        },
+        {
+            btn: "Ganz oben antworten: 'Was ist die Frage?'",
+            m: 2, f: 0, a: 5, c: 0,
+            r: "Deine Gegenfrage wird umgehend an vier Personen weitergeleitet, von denen zwei abwesend sind. Die Kette wächst um drei Ebenen. Du bist jetzt Teil des Problems, das du lösen wolltest. So vermehrt sich Bürokratie: durch Berührung."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 0, a: 0, c: 5,
+            r: "Die Kette wird auch ohne dich weiterwachsen. Irgendwann erreicht sie kritische Masse und kollabiert unter ihrem eigenen Gewicht zu einem Meeting. So enden sie alle."
+        }
+    ]
+},
+
+{
+    id: "mail_ooo_loop",
+    sender: "Systembenachrichtigung",
+    subj: "[WARNUNG] Postfach-Volumen: 3.412 neue Nachrichten seit 11:02 Uhr",
+    body: "Automatische Meldung:\n\nZwei Abwesenheitsnotizen (H. Bergmann / K. Winter) beantworten einander seit 11:02 Uhr.\n\nSie sind als Postmaster im CC jeder einzelnen Nachricht.\n\nAktuelle Rate: 14 Mails/Minute. Tendenz: steigend.",
+    opts: [
+        {
+            btn: "Die Schleife serverseitig töten",
+            m: 10, f: -5, a: 5, c: -5,
+            r: "Zwei Mail-Regeln, ein Neustart des Auto-Responders: Stille. Danach löschst du 3.412 Systemmails mit einem einzigen, zutiefst befriedigenden Klick. Bergmann und Winter kehren irgendwann aus dem Urlaub zurück und werden nie erfahren, welchen Sturm ihre Höflichkeit entfacht hat."
+        },
+        {
+            btn: "Erst noch zuschauen, wie weit es geht",
+            m: 5, f: 10, a: -5, c: 5,
+            r: "Es hat etwas Meditatives: zwei Maschinen, die einander unermüdlich versichern, gerade nicht da zu sein. Bei fünftausend greifst du ein. Der Screenshot des Zählers bei 4.999 hängt jetzt in deinem Ordner für besondere Momente."
+        },
+        {
+            btn: "Physik entscheiden lassen: Speicher ist endlich",
+            m: 2, f: 10, a: 0, c: 10,
+            r: "Irgendwann ist jeder Speicher voll, das regelt sich also von selbst. Leider gehört der Speicher der Firma, und das Monitoring der Konzernzentrale sieht ihn in Echtzeit volllaufen. Die Nachfrage von oben ist schneller als der Überlauf. Deutlich schneller."
+        }
+    ]
+},
+
 ];
