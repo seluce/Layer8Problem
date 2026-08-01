@@ -145,7 +145,7 @@
                             {/if}
                         {/if}
                         {#if !o.missing && o.key}
-                            <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner group-hover:text-white transition-colors">{o.key}</kbd>
+                            <kbd class="key-hint shrink-0">{o.key}</kbd>
                         {/if}
                     </div>
                 </button>
@@ -157,7 +157,9 @@
         <div class="text-5xl font-thin mb-2">{clock}</div>
 
         {#if phone.notification}
-            <div class="mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse"
+            <!-- The id is a hook for the global confirm key in engine.js -->
+            <div id="phone-notification"
+                 class="mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse"
                  onclick={() => engine.openPhone()}>
                 <div class="text-xl">📩</div>
                 <div>

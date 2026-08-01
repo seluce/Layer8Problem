@@ -1,13 +1,13 @@
 import { DB } from './data.js';
-import { state } from './assets/engine/engine_state.js';
-import { audio } from './assets/engine/engine_audio.js';
-import { core } from './assets/engine/engine_core.js';
-import { events } from './assets/engine/engine_events.js';
-import { inventory } from './assets/engine/engine_inventory.js';
-import { ui } from './assets/engine/engine_ui.js';
+import { state } from './engine/engine_state.svelte.js';
+import { audio } from './engine/engine_audio.js';
+import { core } from './engine/engine_core.js';
+import { events } from './engine/engine_events.js';
+import { inventory } from './engine/engine_inventory.js';
+import { ui } from './engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v3.7.0",
+    VERSION: "v4.0.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -60,6 +60,11 @@ function recoverFromError(err) {
 window.addEventListener('error', (e) => recoverFromError(e.error || e.message));
 window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason));
 
+// Also exported so components can import it instead of reaching for the
+// global. window.engine stays for the inline handlers still left in
+// index.html.
+export { engine };
+
 // Boot the game.
 // init() is async because the desktop build awaits its cloud save first;
 // nothing after this needs to wait, so the promise is intentionally floating.
@@ -92,18 +97,16 @@ document.addEventListener('keydown', (event) => {
         // A. Intro and difficulty choice must not be dismissible
         if (isVisible('intro-modal') || isVisible('difficulty-modal') || isVisible('tut-ask-modal')) return;
 
-        // B. The dynamically created lore book
-        const loreModal = document.getElementById('lore-modal');
-        if (loreModal) {
-            loreModal.remove();
-            document.body.classList.remove('overflow-hidden');
+        // B. The lore book
+        if (engine.state.loreOpen) {
+            engine.closeLoreModal();
             return;
         }
 
         // C. Close submenus and overlays, innermost first
         if (isVisible('item-confirm-modal')) { engine.closeItemConfirm(); return; }
         if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
-        if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
+        if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
         if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
 
@@ -147,8 +150,10 @@ document.addEventListener('keydown', (event) => {
         // A: Tutorial
         const tutPointer = document.getElementById('tut-pointer');
         if (tutPointer && !tutPointer.classList.contains('hidden')) {
-            // Sucht den "Verstanden" Button im Tooltip
-            const verstandenBtn = document.querySelector('#tut-pointer-desc div[onclick="tutorial.advance()"]');
+            // The "Verstanden" button in the tooltip. TutorialPointer.svelte
+            // attaches its handler the Svelte way, so there is no onclick
+            // attribute left to select on — a stable id does the job instead.
+            const verstandenBtn = document.getElementById('tut-advance-btn');
             if (verstandenBtn) { verstandenBtn.click(); return; }
         }
         
