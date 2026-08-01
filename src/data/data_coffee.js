@@ -1217,6 +1217,11 @@ export const coffee = [
                 rem: "stressball",
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du wirfst die Reste in den Müll. Er ist als Held gestorben. Ruhe in Frieden, kleiner Ball." 
+            },
+            { 
+                t: "Die Reste einfach wegpusten", 
+                m: 3, f: 2, a: 3, c: 0, 
+                r: "Du pustest die Schaumstoffkrümel vom Laptop. Eine kleine rote Wolke segelt durchs Großraumbüro, ein Krümel landet in Sabines Kaffee. Sie kaut unbeeindruckt weiter." 
             }
         ]
     },
@@ -3810,5 +3815,33 @@ export const coffee = [
             }
         ]
     },
-    
+
+    {
+    id: "cof_advent_july",
+    title: "Vorfreude",
+    text: "Chantal steht in der Küche vor einem geöffneten Karton mit Weihnachtsdeko. Es ist Juli.\n\n'Ich dachte, wir starten dieses Jahr mal FRÜH! Positive Energie im Team! Ich brauch nur jemanden, der die Lichterkette anbringt.'\n\nSie schaut dich an. Nur dich.",
+    char: "Chantal",
+    opts: [
+        {
+            t: "Auf den Stuhl steigen und aufhängen.",
+            loot: "zip_ties",
+            m: 25, f: -10, a: 15, c: 0,
+            rep: { "Chantal": 10 },
+            r: "Zwanzig Minuten auf einem Bürostuhl balancierend. Die Kette hängt schief. Chantal ist begeistert. Du behältst die übrigen Kabelbinder — die braucht sie im Juli sicher nicht mehr."
+        },
+        {
+            t: "'Ich brauche erstmal einen Hammer dafür.'",
+            loot: "hammer",
+            m: 10, f: 10, a: 0, c: 0,
+            rep: { "Chantal": -5 },
+            r: "Du holst einen Hammer aus dem Lager, kommst zurück, und Chantal ist in einem Meeting. Der Karton steht noch da. Der Hammer bleibt bei dir. Manchmal löst sich ein Problem von selbst."
+        },
+        {
+            t: "'Chantal. Es ist Juli.'",
+            m: 5, f: 0, a: 5, c: 0,
+            rep: { "Chantal": -10 },
+            r: "'Und? Freude kennt keinen Kalender.' Sie sagt das ohne jede Ironie. Der Karton steht drei Wochen später immer noch da, halb ausgepackt, wie ein Mahnmal für gute Absichten."
+        }
+    ]
+},
 ];

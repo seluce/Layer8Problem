@@ -6269,5 +6269,56 @@ export const sidequests = [
                 r: "Du schreibst einen zynischen Kommentar ins Forum: 'Kein Chef der Welt würde Laufbänder im Serverraum fordern!' ... Dann drehst du dich um und siehst Dr. Wichtig mit einem Maßband im Flur stehen. Verdammt."
             }
         ]
-    }
+    },
+
+    {
+    id: "sq_moving_box",
+    title: "Der Karton",
+    text: "Auf dem Flur steht seit Monaten ein Umzugskarton. Darauf klebt ein vergilbter Zettel: 'NICHT WEGWERFEN — R. Schmidt'.\n\nRüdiger Schmidt hat 2019 gekündigt. Niemand traut sich, den Karton anzufassen. Er ist praktisch ein Denkmal.",
+    opts: [
+        {
+            t: "Kurz reinschauen. Nur ganz kurz.",
+            loot: "screw",
+            m: 8, f: 5, a: 0, c: 5,
+            r: "Zwei Kaffeetassen mit eingetrocknetem Inhalt, ein Aktenordner 'Q3 2018' und ganz unten ein Schraubendreher. Du nimmst den Schraubendreher. Die Tassen lässt du drin, aus Respekt."
+        },
+        {
+            t: "Unter den Ordnern weiterwühlen.",
+            loot: "manual",
+            m: 15, f: 0, a: 5, c: 5,
+            r: "Ganz unten, unter einer Lage Werbekugelschreiber, liegt ein Windows-95-Handbuch. Rüdiger hat auf die erste Seite geschrieben: 'Falls doch nochmal jemand fragt.' Er wusste Bescheid."
+        },
+        {
+            t: "Den Karton endlich entsorgen.",
+            m: 20, f: -10, a: 10, c: 10,
+            rep: { "Frau Elster": 5 },
+            r: "Du trägst ihn zum Container. Auf halbem Weg kommt Frau Elster vorbei und nickt dir anerkennend zu. Zwei Stunden später steht auf dem Flur ein neuer Karton. Darauf: 'NICHT WEGWERFEN'."
+        }
+    ]
+},
+
+    {
+    id: "sq_empty_desk",
+    title: "Der freie Platz",
+    text: "Ein Schreibtisch im Großraum steht leer. Bildschirm dunkel, Stuhl ordentlich rangeschoben. Die oberste Schublade ist einen Spalt offen.\n\nDarin: Panzertape, ein USB-Stick und eine Packung Traubenzucker.",
+    opts: [
+        {
+            t: "Das Tape nehmen. Der sitzt hier eh nicht mehr.",
+            loot: "tape",
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Eingesteckt. In dem Moment kommt jemand mit einem Kaffeebecher um die Ecke, setzt sich an genau diesen Schreibtisch und fährt den Rechner hoch. Er war in der Mittagspause. Ihr schaut euch an. Niemand sagt etwas."
+        },
+        {
+            t: "Den unbeschrifteten Stick einstecken.",
+            loot: "usb_stick",
+            m: 5, f: 5, a: 5, c: 10,
+            r: "Ein unbeschrifteter Stick. Könnte ein Boot-Stick sein, könnte auch die private Fotosammlung von jemandem sein. Du steckst ihn ein und beschließt, das nie herauszufinden."
+        },
+        {
+            t: "Schublade zuschieben und weitergehen.",
+            m: 3, f: 0, a: -5, c: -5,
+            r: "Du schiebst sie zu. Später am Tag hörst du jemanden fluchen, weil sein Tape verschwunden ist. Nicht deins. Zum ersten Mal heute fühlst du dich moralisch überlegen."
+        }
+    ]
+},
 ];

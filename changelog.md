@@ -15,6 +15,7 @@ Anzeige & Layout:
 * Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
 
 Fehlerkorrekturen:
+* Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest und kam aus dem Ereignis nicht mehr heraus.
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
 * Dasselbe galt für den Ruhebildschirm des Terminals: Nach der ersten Rückkehr dorthin passte sich die Schriftgröße nicht mehr an die Bildschirmbreite an.
 * Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen.
@@ -31,6 +32,7 @@ Für Entwickler:
 * Der Build landet in dist/build/ statt dist/assets/. Zuvor mischten sich dort erzeugte Bündel und die unverändert kopierten Dateien aus public/assets/.
 * STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
 * Das E-Mail-System merkt sich bereits eingetroffene Mails jetzt anhand ihrer ID statt anhand des Betreffs - dieselbe Logik wie bei allen anderen Ereignissen. Zwei Mails mit gleichem Betreff hätten sich bislang stillschweigend gegenseitig blockiert, eine davon wäre nie erschienen. Der Daten-Prüfer meldet doppelte Mail-IDs deshalb nun als Fehler; gleiche Betreffs sind nur noch ein kosmetischer Hinweis.
+* Der Daten-Prüfer schlägt jetzt Alarm, wenn sämtliche Antworten eines Ereignisses einen Gegenstand voraussetzen oder verbrauchen - genau die Konstellation, die ein Ereignis unlösbar machen kann. Die Prüfung greift auch in den Zwischenschritten verzweigter Ereignisse.
 
 [3.7.0] - 2026-07-28
 

@@ -3675,4 +3675,28 @@ export const server = [
         ]
     },
 
+    {
+    id: "srv_tool_desk",
+    title: "Werkzeugausgabe",
+    text: "Im Serverraum hängt seit Neuestem ein Schild: 'WERKZEUGENTNAHME NUR ÜBER FORMULAR WZ-4'.\n\nDaneben ein Kasten mit Schloss. Daneben ein Stapel Formulare. Daneben ein Kugelschreiber an einer Kette.",
+    opts: [
+        {
+            t: "Formular WZ-4 korrekt ausfüllen.",
+            m: 25, f: -5, a: 20, c: -5,
+            r: "Du füllst es aus. Feld 7 verlangt die Unterschrift des Werkzeugbeauftragten. Werkzeugbeauftragter ist laut Aushang Herr Brunner. Herr Brunner ist bis Ende des Monats im Sabbatical. Das Formular liegt jetzt in einem Fach, das niemand leert."
+        },
+        {
+            t: "Den Kasten einfach aufmachen.",
+            loot: "hammer",
+            m: 5, f: 10, a: -5, c: 10,
+            r: "Das Schloss ist nicht abgeschlossen. Es war nie abgeschlossen. Du nimmst einen Hammer und legst das Formular ordentlich zurück auf den Stapel — man muss ja nicht respektlos sein."
+        },
+        {
+            t: "Schauen, was sonst noch drin ist.",
+            loot: "screw",
+            m: 10, f: 5, a: 0, c: 10,
+            r: "Ein Satz Schraubendreher, eine Rolle Isolierband und, aus Gründen, ein einzelner Herrenschuh. Du nimmst den Schraubendreher. Den Schuh lässt du liegen, aber er beschäftigt dich noch eine Weile."
+        }
+    ]
+},
 ];
