@@ -4252,4 +4252,524 @@ export const server = [
     ]
 },
 
+
+/* ============================================================
+   SERVERRAUM-WELLE 2 (v4.0.0)
+   USV, Egons Schattenwirtschaft, Patchpanel, der fremde Stick
+   und das Doku-To-do. Neue Loot-Quellen für fire_ext (2x),
+   cable und usb_stick; Gates auf cable und headphones.
+   Gabi und Kevin bekommen mehr (überwiegend positive) Ruf-Stellen.
+   ============================================================ */
+
+{
+    id: "srv_usv_beep",
+    title: "Das Piepen",
+    text: "Die USV piept. Alle dreißig Sekunden, exakt. Kein Fehlercode, keine rote Lampe, nur dieses eine, präzise Piep. Es ist Tag drei. Niemand sonst scheint es zu hören. Du hörst es inzwischen sogar zuhause.",
+    opts: [
+        {
+            t: "Systematische Fehlersuche",
+            next: "path_usv_debug",
+            m: 30, f: -10, a: 10, c: -5,
+            r: "Du gehst Kabel für Kabel, Log für Log durch. Nach einer halben Stunde die Erkenntnis: Batterie-Selbsttest fehlgeschlagen. Die Batterie ist so alt wie deine Anstellung. Es braucht Ersatz, und zwar bald."
+        },
+        {
+            t: "Den Piepser mit Watte stopfen",
+            next: "path_usv_mute",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du stopfst Watte in den Lautsprecher. Stille. Herrliche, verantwortungslose Stille. Die USV meldet weiterhin pflichtbewusst ihren Notfall. Nur eben an niemanden mehr."
+        },
+        {
+            t: "Kopfhörer auf und weiterleben",
+            req: "headphones",
+            next: "path_usv_ignore",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Mit Noise-Cancelling existiert das Piepen einfach nicht mehr. Eine elegante Lösung für dich persönlich. Die USV und ihr Problem bleiben allerdings Teil der objektiven Realität."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2a",
+    title: "Die Ersatzbatterie",
+    reqStory: "path_usv_debug",
+    text: "Die Recherche ergibt zwei Optionen: Originalbatterie für 340 Euro mit sechs Wochen Lieferzeit, oder ein Nachbau vom Online-Händler mit Bewertungen wie 'kam warm an, funktioniert aber'. Die USV piept dazu im Takt.",
+    opts: [
+        {
+            t: "Original bestellen, Formular-Marathon",
+            rep: { "Frau Elster": 3 },
+            m: 20, f: 0, a: 10, c: -5,
+            r: "Formular, Freigabe, Bestellnummer - alles korrekt. Frau Elster nickt anerkennend, als der Antrag über ihren Tisch geht. Sechs Wochen Piepen noch, aber mit reinem Gewissen."
+        },
+        {
+            t: "Den warmen Nachbau riskieren",
+            m: 10, f: 5, a: 0, c: 5,
+            r: "Zwei Tage Lieferzeit, halber Preis, keine Bestellnummer. Du kaufst auf Firmenkosten am Prozess vorbei. Das Piepen endet bald - die Frage, was bei der nächsten Inventur auffällt, beginnt dafür."
+        },
+        {
+            t: "Kevin eine Batterie 'organisieren' lassen",
+            rep: { "Kevin": -5 },
+            m: 5, f: 10, a: 5, c: 0,
+            r: "Kevin kennt 'einen, der einen kennt'. Am nächsten Tag steht eine gebrauchte Autobatterie mit Starthilfekabeln neben der USV. Du wirst das auf keinen Fall anschließen. Hoffst du."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2b",
+    title: "Der stille Alarm",
+    reqStory: "path_usv_mute",
+    text: "Kurzer Stromwackler im Gebäude. Die USV übernimmt heldenhaft - für elf Sekunden. Dann ist ihre müde Batterie leer, und Rack 5 geht einfach aus. Die Watte im Lautsprecher hat derweil zuverlässig jede Warnung geschluckt.",
+    opts: [
+        {
+            t: "Alles hochfahren, Ursache verschweigen",
+            m: 20, f: 10, a: 10, c: 5,
+            r: "Vierzig Minuten Boot-Reihenfolge, Dienste prüfen, Daumen drücken. Läuft wieder. Offizielle Ursache: 'Netzschwankung'. Die Watte nimmst du unauffällig wieder raus. Sie hat genug angerichtet."
+        },
+        {
+            t: "Den Vorfall ehrlich dokumentieren",
+            m: 15, f: -5, a: 5, c: 10,
+            r: "Du schreibst einen sauberen Vorfallsbericht, inklusive der Watte. Ehrlichkeit ist dokumentierte Schuld, und Dr. Wichtig liest Vorfallsberichte neuerdings persönlich. Aber beim nächsten Audit rettet dich genau dieses Blatt."
+        },
+        {
+            t: "Egon nach einer Ersatzbatterie fragen",
+            rep: { "Egon": 5 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Egon verschwindet wortlos im Keller und kommt mit einer Batterie zurück, auf der noch 'VEB' zu lesen ist. 'Hält länger als die Firma.' Du glaubst ihm aufs Wort."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2c",
+    title: "Objektive Realität",
+    reqStory: "path_usv_ignore",
+    text: "Gabi steht in der Tür: 'Sag mal, piept das bei dir? Ich hör das bis zum Empfang, durch den Lüftungsschacht. Frau Elster hat schon eine Beschwerde-Mail vorformuliert. Ich wollte dich nur vorwarnen.'",
+    opts: [
+        {
+            t: "Gabi danken und sofort handeln",
+            rep: { "Gabi": 5 },
+            m: 15, f: 0, a: 10, c: -5,
+            r: "Du ziehst die Kopfhörer ab und kümmerst dich. Das Piepen ist tatsächlich unerträglich, sobald man es wieder zulässt. Gabi hält Frau Elsters Mail auf. Du schuldest ihr schon wieder etwas."
+        },
+        {
+            t: "'Welches Piepen?'",
+            rep: { "Gabi": -5 },
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Gabi schaut auf deine Kopfhörer. Dann auf dich. 'Verstehe.' Sie geht. Die vorformulierte Mail von Frau Elster wird um deinen Namen ergänzt werden, da bist du dir sicher."
+        },
+        {
+            t: "Gabi die Kopfhörer schenken",
+            rem: "headphones",
+            rep: { "Gabi": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "'Für den Empfang. Gegen den Lärm.' Gabi ist ehrlich gerührt und setzt sie sofort auf. Das Piepen existiert weiter, die Beschwerde-Mail auch - aber die wichtigste Nachrichtenzentrale der Firma hört ab jetzt nichts mehr davon."
+        }
+    ]
+},
+
+{
+    id: "srv_egon_deal",
+    char: "Egon",
+    title: "Kantinenware",
+    text: "Egon steht mit einem fabrikneuen Feuerlöscher im Serverraum. 'Deiner is abgelaufen. Nimm den hier. Aber pssst - der is eigentlich für die Kantine. Die kriegen nächste Woche eh neue, das weiß nur noch keiner.'",
+    opts: [
+        {
+            t: "Annehmen und keine Fragen stellen",
+            loot: "fire_ext",
+            rep: { "Egon": 5 },
+            next: "path_exting_gift",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du nimmst den Löscher entgegen. Egon nickt zufrieden - ein Geschäft unter Männern, die wissen, wie Gebäude wirklich funktionieren. Die Kantine wird ihren Bestand allerdings irgendwann zählen."
+        },
+        {
+            t: "Ablehnen: Vorschrift ist Vorschrift",
+            rep: { "Egon": -5 },
+            next: "path_exting_rules",
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Egon schaut dich an, als hättest du ihm ein Formular geschenkt. 'Vorschrift.' Er trägt den Löscher kopfschüttelnd davon. Dein abgelaufener bleibt hängen - den Ersatz musst du jetzt offiziell beantragen."
+        },
+        {
+            t: "Fragen, was er sonst noch 'organisiert'",
+            rep: { "Egon": 5 },
+            next: "path_exting_lager",
+            m: 15, f: 10, a: -5, c: 0,
+            r: "Egon mustert dich lange. Dann, ganz leise: 'Komm nachher mal mit runter. Raum K3.' Du hast gerade eine Tür geöffnet, von der du nicht wusstest, dass es sie gibt."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2a",
+    title: "Inventurdifferenz",
+    reqStory: "path_exting_gift",
+    text: "Rundmail von Frau Elster: 'Bei der Zwischeninventur der Kantine fehlt ein Feuerlöscher (Inventarnummer K-FL-02). Sachdienliche Hinweise bitte an die Buchhaltung.' Der Löscher steht neben deinem Rack. Mit Inventarnummer.",
+    opts: [
+        {
+            t: "Das Etikett unauffällig 'aktualisieren'",
+            m: 10, f: 10, a: 0, c: 5,
+            r: "Ein frisches Etikett, eine erfundene Nummer, ein Hauch Kriminalität. Der Löscher heißt jetzt SRV-FL-01. Solange niemand die Etiketten gegen das Anlagenverzeichnis prüft, ist alles gut. Frau Elster prüft gerne Etiketten."
+        },
+        {
+            t: "Die Umlagerung melden, ohne Namen",
+            rep: { "Frau Elster": 3 },
+            m: 15, f: 0, a: 5, c: 5,
+            r: "Du gestehst eine 'pragmatische Sofortmaßnahme' - Egons Name fällt nicht. Frau Elster korrigiert die Listen mit spitzen Fingern. 'Beim nächsten Mal: VORHER melden.' Der Vorgang hat jetzt einen Aktenvermerk."
+        },
+        {
+            t: "Egon vorwarnen",
+            rep: { "Egon": 5 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Egon hört zu, nickt: 'Kümmer ich mich.' Am nächsten Morgen hat die Kantine wieder einen Löscher, niemand weiß woher, und die Inventur stimmt auf wundersame Weise. Du fragst besser nicht nach."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2b",
+    title: "Der Beschaffungsantrag",
+    reqStory: "path_exting_rules",
+    text: "Formular B-27: 'Beschaffung sicherheitsrelevanter Ausstattung'. Drei Unterschriften nötig, eine davon von Dr. Wichtig. Der abgelaufene Löscher hängt derweil neben dem Rack und wird jeden Tag ein bisschen dekorativer.",
+    opts: [
+        {
+            t: "Den Antrag komplett durchziehen",
+            m: 35, f: -10, a: 10, c: -5,
+            r: "Drei Büros, drei Unterschriften, ein halber Nachmittag. Aber am Ende hältst du eine genehmigte Beschaffung in der Hand: vorschriftsgemäß, feuerfest, unangreifbar. Fast ein Kunstwerk der Verwaltung."
+        },
+        {
+            t: "Antrag 'vorbereiten' und liegen lassen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Das Formular liegt jetzt ausgefüllt in deiner Schublade, nur die Unterschriften fehlen. Damit ist es offiziell 'in Bearbeitung' - ein Zustand, der in dieser Firma Jahre halten kann. Der abgelaufene Löscher hängt derweil weiter."
+        },
+        {
+            t: "Doch nochmal bei Egon anklopfen",
+            loot: "fire_ext",
+            m: 10, f: 5, a: 5, c: 0,
+            r: "Egon grinst breit. 'Ach. DOCH kein Formular?' Er lässt dich exakt eine Minute zappeln, dann holt er den Kantinen-Löscher wieder hervor. Du bezahlst mit einem Stück Würde. Es war es wert."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2c",
+    title: "Raum K3",
+    reqStory: "path_exting_lager",
+    text: "Du findest einen Vorwand für den Keller. Raum K3: Regale bis zur Decke. Toner von 2011, Röhrenmonitore, ein Overheadprojektor, drei Kaffeemaschinen und Dinge aus der Gründerzeit der Firma. Egon lehnt am Türrahmen: 'Mein Archiv.'",
+    opts: [
+        {
+            t: "Respektvoll staunen",
+            rep: { "Egon": 5 },
+            m: 10, f: 5, a: -5, c: 0,
+            r: "'Alles hier hat die Firma mal weggeworfen. Und alles hier hat sie irgendwann wieder gebraucht.' Egon klopft auf ein Regal. Du verstehst gerade, warum in diesem Gebäude nie etwas endgültig kaputt ist."
+        },
+        {
+            t: "Nach Ersatzteilen für den Serverraum fragen",
+            loot: "cable",
+            rep: { "Egon": 3 },
+            m: 15, f: 0, a: -5, c: 0,
+            r: "Egon wühlt kurz und drückt dir ein originalverpacktes Netzwerkkabel in die Hand. 'Cat 5. Reicht für alles.' Es reicht nicht für alles, aber geschenktes Kabel zählt doppelt. Der Rest des Regals bleibt Verhandlungsmasse."
+        },
+        {
+            t: "Vorsichtig nach der Inventarliste fragen",
+            rep: { "Egon": -5 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "Egons Blick wird arktisch. 'Inventar.' Er schiebt dich sanft, aber endgültig aus dem Raum. Die Tür von K3 wird für dich ab jetzt immer zufällig abgeschlossen sein."
+        }
+    ]
+},
+
+{
+    id: "srv_patch23",
+    title: "Port 23",
+    text: "Ticket: 'Kein Netz an Arbeitsplatz 14.' Die Spur führt zum Patchpanel: Port 23 ist tot, und das Kabel dahinter hat die Konsistenz von altem Lakritz. Es ist an zwei Stellen geknickt und an einer dritten... angeknabbert?",
+    opts: [
+        {
+            t: "Ordentlich neu patchen",
+            req: "cable",
+            rem: "cable",
+            next: "path_patch_neu",
+            m: 10, f: 0, a: -5, c: -5,
+            r: "Neues Kabel, sauber verlegt, beschriftet mit Datum. Arbeitsplatz 14 hat wieder Netz, und zum ersten Mal seit Jahren stimmt an diesem Panel eine Beschriftung. Die Frage nach den Bissspuren bleibt allerdings offen."
+        },
+        {
+            t: "Das Kabel aus Port 24 umstecken",
+            next: "path_patch_swap",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Port 24 sah unbenutzt aus. Arbeitsplatz 14 ist online, das Ticket geschlossen. Was auch immer an Port 24 hing: Du wirst es erfahren, sobald es jemandem fehlt."
+        },
+        {
+            t: "Den Lakritz-Rest mit Gefühl nachdrücken",
+            next: "path_patch_wackel",
+            m: 15, f: 5, a: 10, c: 0,
+            r: "Nach einer Viertelstunde Millimeterarbeit rastet der Stecker mit einem müden Klick ein. Die Verbindung steht. Sie steht so, wie ein Kartenhaus steht: technisch ja, moralisch nein."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2a",
+    title: "Die Bissspuren",
+    reqStory: "path_patch_neu",
+    text: "Das alte Kabel liegt auf deinem Tisch. Die Bissspuren sind eindeutig: klein, gleichmäßig, gründlich. Irgendetwas lebt hinter dem Patchpanel. Und es hat Geschmack an Netzwerkinfrastruktur gefunden.",
+    opts: [
+        {
+            t: "Eine Lebendfalle aufstellen",
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Du baust eine Falle mit Erdnussbutter auf. Am nächsten Morgen: Erdnussbutter weg, Falle leer, ein weiteres Kabel angeknabbert. Du spielst hier gegen einen Gegner mit Heimvorteil."
+        },
+        {
+            t: "Alle Kabel in Schutzrohre legen",
+            m: 30, f: -10, a: 10, c: -5,
+            r: "Eine halbe Stunde Kabelkanal-Tetris. Danach ist das Panel nagesicher, ordentlich und beinahe schön. Was auch immer dort lebt, braucht jetzt ein neues Hobby. Du hoffst, es wird nicht die Stromverteilung."
+        },
+        {
+            t: "Egon Bescheid geben - sein Revier",
+            rep: { "Egon": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Egon betrachtet die Bissspuren wie ein Förster. 'Kenn ich. Der wohnt hier länger als du.' Er sagt DER - mit einer Vertrautheit, die keine Rückfragen zulässt. Das Problem ist jetzt Chefsache. Egon-Chefsache."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2b",
+    title: "Port 24",
+    reqStory: "path_patch_swap",
+    text: "Frau Elster steht in der Tür, ungewohnt aufgelöst: 'Das Fax geht nicht. Das FAX, Herr Müller. Der Jahresabschluss-Beleg muss heute ans Finanzamt, und das Amt akzeptiert: Fax.' An Port 24 hing das Fax. Natürlich hing dort das Fax.",
+    opts: [
+        {
+            t: "Sofort zurückpatchen und beichten",
+            rep: { "Frau Elster": 3 },
+            m: 10, f: 0, a: 5, c: 5,
+            r: "Du gestehst die Umsteckerei und stellst alles wieder her. Das Fax röchelt, wählt und überträgt. Frau Elster notiert nichts in ihrem kleinen Buch. Das ist ihr höchstes Lob."
+        },
+        {
+            t: "'Störung beim Anbieter' behaupten",
+            rep: { "Frau Elster": -5 },
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Frau Elster hört sich die Ausrede an, ohne zu blinzeln. 'Beim Anbieter. Soso.' Das Fax funktioniert eine Stunde später 'von selbst' wieder - exakt nachdem du heimlich zurückgepatcht hast. Sie weiß es. Natürlich weiß sie es."
+        },
+        {
+            t: "Arbeitsplatz 14 wieder opfern",
+            m: 5, f: 5, a: 5, c: 5,
+            r: "Du steckst zurück: Das Fax läuft, Arbeitsplatz 14 ist wieder offline, und das alte Ticket öffnet sich wie ein müder Vorhang. Du hast ein Problem im Kreis verschoben und dabei zwei Abteilungen näher kennengelernt."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2c",
+    title: "Kartenhaus",
+    reqStory: "path_patch_wackel",
+    text: "14 Uhr, Anruf von Arbeitsplatz 14: 'Das Netz ist wieder weg. Es ging kurz, dann kam ein Knacken.' Das Lakritz-Kabel hat aufgegeben, diesmal endgültig - beim Rausziehen bleibt der Steckerkopf im Port stecken.",
+    opts: [
+        {
+            t: "Den Steckerrest herausoperieren",
+            m: 20, f: -5, a: 15, c: 0,
+            r: "Mit Pinzette, Taschenlampe und angehaltenem Atem operierst du den abgebrochenen Kopf aus Port 23. Es ist Feinmechanik am offenen Herzen, und du fluchst leise in drei Sprachen. Aber der Port lebt."
+        },
+        {
+            t: "Port 23 für tot erklären",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du klebst ein Kreuz aus Isolierband über den Port und nimmst Port 25. Das Panel hat jetzt ein Mahnmal. Irgendwann wird jemand fragen, warum Port 23 ein Grab hat. Aber nicht heute."
+        },
+        {
+            t: "Arbeitsplatz 14 auf WLAN umstellen",
+            m: 10, f: 5, a: 0, c: 10,
+            r: "'Vorübergehend', sagst du. WLAN im Büro bedeutet: Der Kollege friert ab jetzt in jeder Videokonferenz ein und macht dich dafür verantwortlich. Aber das Ticket ist zu, und heute zählt nur heute."
+        }
+    ]
+},
+
+{
+    id: "srv_fremder_stick",
+    title: "Der fremde Stick",
+    text: "In Server 3 steckt ein USB-Stick, der da gestern noch nicht war. Handbeschriftet: 'PRIVAT!! NICHT ÖFFNEN!!' Zwei Ausrufezeichen. Wer auch immer ihn dort vergessen hat, meinte es wirklich ernst.",
+    opts: [
+        {
+            t: "Abziehen und in Quarantäne scannen",
+            loot: "usb_stick",
+            next: "path_usbfund_scan",
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Der Scan läuft sauber durch: keine Schadsoftware, nur vierhundert Selfies von Markus vor verschiedenen Firmenwagen. Du löschst pflichtbewusst alles und behältst den frisch formatierten Stick. Sein Besitzer wird ihn suchen."
+        },
+        {
+            t: "Öffnen. Direkt am Server. Neugier siegt.",
+            next: "path_usbfund_open",
+            m: 10, f: 5, a: 0, c: 10,
+            r: "Du öffnest einen unbekannten Datenträger an einem Produktivsystem - jede Sicherheitsschulung der Welt schreit leise auf. Der Inhalt: keine Malware, sondern Ordner mit Namen wie 'Schluessel_Verleih_2009.xlsx'. Das wird interessant."
+        },
+        {
+            t: "Stecken lassen. Nicht dein Zirkus.",
+            next: "path_usbfund_leave",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Du beschließt, dass fremde Sticks fremde Probleme sind. Der Stick bleibt, wo er ist - eingesteckt in deinen Server, in deinem Raum, in deiner Verantwortung. Aber sonst: absolut nicht dein Zirkus."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2a",
+    title: "Vermisstenanzeige",
+    reqStory: "path_usbfund_scan",
+    text: "Markus durchkämmt den Serverraum wie einen Tatort. 'Müller! Hast du hier einen Stick gesehen? Schwarz, beschriftet, PRIVAT. Da sind... Vertriebsunterlagen drauf. Sehr wichtige Vertriebsunterlagen.' Er meint die Selfies.",
+    opts: [
+        {
+            t: "Zurückgeben und die Löschung gestehen",
+            rem: "usb_stick",
+            rep: { "Markus": -5 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Der war... da waren doch...' Markus starrt auf den frisch formatierten Stick. Du zuckst mit den Schultern: 'Quarantäne-Standardprozess.' Er trauert um vierhundert Selfies. Der Vertrieb wird heute ungewohnt still sein."
+        },
+        {
+            t: "'Nie gesehen'",
+            m: 2, f: 5, a: 0, c: 5,
+            r: "Markus zieht weiter durchs Gebäude und verdächtigt inzwischen die Putzkolonne. Der formatierte Stick liegt derweil in deiner Schublade und gehört jetzt einfach... dem Serverraum. So funktioniert Inventar hier ja offenbar."
+        },
+        {
+            t: "Ein Ersatz-Fotoshooting organisieren",
+            rep: { "Markus": 10, "Chantal": 3 },
+            m: 20, f: 10, a: 5, c: 0,
+            r: "Du organisierst mit Chantals Ringlicht ein Shooting auf dem Parkplatz. Markus posiert vor jedem Firmenwagen, inklusive dem des Chefs. Die neuen Bilder sind objektiv besser. Du hast einen Freund fürs Leben und keinerlei erledigte Arbeit."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2b",
+    title: "Schluessel_Verleih_2009",
+    reqStory: "path_usbfund_open",
+    text: "Die Tabelle ist penibel geführt: wer wann welchen Schlüssel bekommen hat, von 2009 bis 2014. Spalte D: 'Zweitschlüssel Serverraum - E.' Danach bricht die Liste ab. Der Stick gehörte offenbar deinem Vorgänger. Und der wusste Dinge.",
+    opts: [
+        {
+            t: "Ausdrucken und sicher verwahren",
+            m: 10, f: -5, a: 0, c: 5,
+            r: "Wissen ist Macht, Papier ist geduldig. Der Ausdruck wandert in deine private Ablage, von deren Existenz niemand weiß. Du fühlst dich ein Prozent mehr wie dein Vorgänger. Unklar, ob das ein gutes Zeichen ist."
+        },
+        {
+            t: "Egon mit Spalte D konfrontieren",
+            rep: { "Egon": -5 },
+            m: 10, f: 0, a: 10, c: 0,
+            r: "'Wo hast du DAS her.' Es ist keine Frage. Egon nimmt dir den Stick nicht weg - er schaut ihn nur an, und der Stick fühlt sich sichtbar unwohl. 'Manche Listen', sagt er im Gehen, 'sind aus gutem Grund abgebrochen.'"
+        },
+        {
+            t: "Formatieren und nie davon gewusst haben",
+            m: 5, f: 5, a: -5, c: 0,
+            r: "Manche Türen lässt man zu. Du formatierst den Stick und beschließt, nie von einer Liste gewusst zu haben. Das Gefühl, beim Vorbeigehen am Keller beobachtet zu werden, hält sich trotzdem noch ein paar Tage."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2c",
+    title: "Autoplay",
+    reqStory: "path_usbfund_leave",
+    text: "Server 3 verhält sich seit heute... musikalisch. Bei jedem Dienst-Neustart dudelt kurz ein Schlager aus dem internen Lautsprecher. Der fremde Stick hat eine Autostart-Datei, und die hat Heimweh nach 1978.",
+    opts: [
+        {
+            t: "Den Stick jetzt doch ordentlich entfernen",
+            loot: "usb_stick",
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Du ziehst den Stick, scannst ihn sauber und beendest das Konzert. Darauf: eine einzige MP3 und viel freier Speicher. Den kann man ja jetzt sinnvoll nutzen. Server 3 klingt wieder wie ein Server."
+        },
+        {
+            t: "Den Lautsprecher abklemmen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du kappst den kleinen Piezo-Lautsprecher. Problem gelöst, auf die schlechteste denkbare Art: Der Server kann jetzt auch keine Warntöne mehr von sich geben. Aber immerhin auch keinen Schlager."
+        },
+        {
+            t: "Herausfinden, wessen Musikgeschmack das ist",
+            rep: { "Gabi": 5 },
+            m: 15, f: 0, a: -5, c: 0,
+            r: "Du fragst die einzige Person, die alles weiß: Gabi. Sie hört zwei Takte und sagt sofort: 'Egons Lieblingslied. Lief auf jeder Weihnachtsfeier bis 2019.' Der Fall ist gelöst - warum Egons Musik auf einem fremden Stick in deinem Server steckt, allerdings noch lange nicht."
+        }
+    ]
+},
+
+{
+    id: "srv_doku_todo",
+    title: "Das To-do von Januar",
+    text: "Beim Aufräumen fällt dir ein Zettel in deiner eigenen Handschrift entgegen: 'Serverraum dokumentieren!!! WICHTIG!!! Anfang Januar!!!' Es ist längst nicht mehr Januar. Der Zettel hat mehr Ausrufezeichen, als die Doku Seiten hat.",
+    opts: [
+        {
+            t: "Jetzt. Sofort. Komplett.",
+            next: "path_doku_jetzt",
+            m: 35, f: -10, a: 10, c: -10,
+            r: "Du dokumentierst jedes Rack, jeden Port, jedes Passwort-Versteck. Nach einer guten halben Stunde existiert zum ersten Mal eine Wahrheit über diesen Raum, die nicht nur in deinem Kopf wohnt. Es fühlt sich gefährlich erwachsen an."
+        },
+        {
+            t: "Neuen Zettel schreiben: 'September!!!'",
+            next: "path_doku_september",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Du überträgst die Aufgabe feierlich auf einen frischen Zettel mit neuem Datum. Das ist keine Prokrastination, das ist Terminmanagement. Der alte Zettel kommt in den Müll, wo er nicht mehr anklagend gucken kann."
+        },
+        {
+            t: "Kevin zum 'Doku-Projekt' befördern",
+            rep: { "Kevin": 3 },
+            next: "path_doku_kevin",
+            m: 10, f: 5, a: 0, c: 5,
+            r: "Kevin nimmt den Auftrag entgegen wie einen Ritterschlag. 'Ich mach das RICHTIG gut!' Du glaubst ihm sogar. Die Frage ist nur, was 'richtig gut' in Kevins Koordinatensystem bedeutet."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2a",
+    title: "Die Wahrheit über Rack 5",
+    reqStory: "path_doku_jetzt",
+    text: "Beim Dokumentieren ist es dir aufgefallen, und jetzt lässt es dich nicht mehr los: In Rack 5 läuft ein Server, den niemand kennt. Kein Eintrag, kein Ticket, keine Beschriftung. Laufzeit: 743 Tage. Irgendjemand bezahlt seinen Strom.",
+    opts: [
+        {
+            t: "Vorsichtig analysieren, was er tut",
+            m: 25, f: -5, a: 5, c: -5,
+            r: "Netzwerkverkehr, Prozesse, offene Ports - du näherst dich dem Ding wie einem schlafenden Tier. Ergebnis: Er hostet eine Minecraft-Welt. Eine sehr große, sehr gepflegte Minecraft-Welt. Mit Spielern. Jeden Abend ab 18 Uhr."
+        },
+        {
+            t: "Sofort vom Netz nehmen",
+            m: 5, f: 0, a: 5, c: -5,
+            r: "Du ziehst den Stecker. Irgendwo in dieser Firma ist gerade eine Welt untergegangen, und du wirst nie erfahren, wessen. Rack 5 ist wieder still. Zu still, findest du plötzlich."
+        },
+        {
+            t: "Als 'Legacy-System' in die Doku eintragen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Legacy-System, Funktion: historisch gewachsen.' Dieser Satz deckt in dieser Firma alles. Der geheime Server läuft weiter, jetzt eben mit Papieren. Du hast ihn nicht legalisiert, nur laminiert."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2b",
+    title: "Der Zettel-Effekt",
+    reqStory: "path_doku_september",
+    text: "Dr. Wichtig, im Vorbeigehen, beiläufig wie ein Fallbeil: 'Müller, die Versicherung fragt nach unserer IT-Dokumentation. Schicken Sie mir die bis Freitag.' Der September-Zettel in deiner Tasche wird schlagartig sehr schwer.",
+    opts: [
+        {
+            t: "Schnelldurchlauf: Doku in einem Rutsch",
+            m: 30, f: -5, a: 15, c: -5,
+            r: "Du hämmerst eine Dokumentation zusammen, die zu achtzig Prozent stimmt. Die restlichen zwanzig Prozent formulierst du so vage, dass sie nicht falsch sein können. Die Versicherung bekommt Papier. Papier beruhigt."
+        },
+        {
+            t: "Kevin und Gabi als Notfall-Team rekrutieren",
+            rep: { "Kevin": 3, "Gabi": 3 },
+            m: 20, f: 0, a: 5, c: 0,
+            r: "Kevin fotografiert jedes Rack, Gabi - die ohnehin alles weiß - diktiert, wer woran hängt. Nach kurzer Zeit existiert ein Dokument, das erschreckend gut ist. Der Empfang kennt diese Firma besser als jedes Organigramm."
+        },
+        {
+            t: "'Die Doku liegt in der Cloud' sagen",
+            m: 5, f: 10, a: 0, c: 10,
+            r: "Es gibt keine Cloud. Es gibt keine Doku. Es gibt jetzt aber eine Aussage gegenüber dem Chef, die beides behauptet - und eine Versicherung, die nachfragen wird. Du hast Zeit gekauft. Der Zinssatz ist unbekannt."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2c",
+    title: "Ein Foto",
+    reqStory: "path_doku_kevin",
+    text: "Kevin präsentiert stolz das Ergebnis seines Doku-Projekts: ein Foto. Ein einziges Foto. Verwackelt, vom halben Serverraum, mit seinem Daumen im Bild. Dateiname: 'doku_final_FERTIG(1).jpg'. 'Und?', strahlt er.",
+    opts: [
+        {
+            t: "Loben und heimlich selbst dokumentieren",
+            rep: { "Kevin": 5 },
+            m: 25, f: -5, a: 10, c: 0,
+            r: "'Starker Anfang, Kevin.' Er zieht glücklich ab, du dokumentierst still hinterher. Die Wahrheit existiert jetzt in zwei Versionen: einer richtigen und einer mit Daumen. Kevin wird seine für immer für die echte halten."
+        },
+        {
+            t: "Ehrliches Feedback geben",
+            rep: { "Kevin": 3 },
+            m: 15, f: 0, a: 5, c: 0,
+            r: "Du erklärst ihm, was eine Doku braucht: Struktur, Beschriftung, mehr als einen Daumen. Kevin nickt ernst und macht sich Notizen. In sein Handy. In die Notiz-App. Als Sprachnachricht an sich selbst. Es ist ein Anfang."
+        },
+        {
+            t: "Das Foto als offizielle Doku einreichen",
+            m: 2, f: 10, a: 0, c: 10,
+            r: "Du legst 'doku_final_FERTIG(1).jpg' in den Doku-Ordner und schließt das Kapitel. Sollte jemals jemand die Dokumentation brauchen, findet er einen Daumen vor. Das Problem ist vertagt, und Vertagen hat hier Tradition."
+        }
+    ]
+},
+
 ];

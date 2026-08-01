@@ -3,7 +3,7 @@
 Diese Version ist in erster Linie ein technischer Umbau: Die Grundlage unter dem Spiel wurde vollständig erneuert, damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind. Obendrauf gibt es die erste Welle neuer Ereignisse.
 
 Neuerungen:
-* Einundzwanzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
+* Einundvierzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Dazu kommen die piepende USV, Egons Schattenlager im Keller, ein angeknabbertes Patchpanel, ein fremder USB-Stick und das überfällige Doku-To-do von Januar. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
 
 Spielbalance:
 * Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
