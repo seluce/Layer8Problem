@@ -1,15 +1,18 @@
 {
   "name": "layer8problem",
-  "version": "3.7.0",
+  "version": "4.0.0",
   "description": "Layer8Problem - SysAdmin Survival Simulator",
-  "main": "main.js",
+  "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint:data": "node tools/lint-data.mjs",
-    "css": "tailwindcss -i input.css -o assets/css/style.css",
-    "css:build": "tailwindcss -i input.css -o assets/css/style.css --minify",
-    "start": "electron .",
-    "build:win": "electron-builder --win --x64",
-    "build:linux": "electron-builder --linux --x64"
+    "start": "npm run build && electron .",
+    "start:dev": "electron .",
+    "build:win": "npm run build && electron-builder --win --x64",
+    "build:linux": "npm run build && electron-builder --linux --x64"
   },
   "build": {
     "appId": "com.layer8problem.game",
@@ -18,29 +21,29 @@
       "output": "release"
     },
     "files": [
-      "**/*",
-      "!tools${/*}",
-      "!input.css",
-      "!changelog.md",
-      "!README.md"
+      "docs/**/*",
+      "electron/**/*",
+      "package.json"
     ],
     "win": {
       "target": "dir",
-      "icon": "assets/logo/logo.ico"
+      "icon": "build/logo.ico"
     },
     "linux": {
       "target": "dir",
-      "icon": "assets/logo/logo.png"
+      "icon": "build/logo.png"
     }
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.3.3",
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@tailwindcss/vite": "^4.3.3",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
-    "tailwindcss": "^4.3.3"
+    "svelte": "^5.56.8",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.1.5"
   },
   "dependencies": {
-    "jsdom": "^30.0.0",
     "steamworks.js": "^0.4.0"
   }
 }

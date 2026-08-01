@@ -121,11 +121,11 @@ function createWindow () {
     }
   });
 
-  // Vite builds to dist/. In development, `npm run dev` serves the game and
+  // Vite builds to docs/ (served by GitHub Pages straight from the branch). In development, `npm run dev` serves the game and
   // ELECTRON_START_URL points here instead, which keeps hot reload working.
   const devServer = process.env.ELECTRON_START_URL;
   if (devServer) win.loadURL(devServer);
-  else win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  else win.loadFile(path.join(__dirname, '..', 'docs', 'index.html'));
 
   // Suppress the default browser shortcuts for reload, devtools, fullscreen and zoom
   win.webContents.on('before-input-event', (event, input) => {

@@ -44,6 +44,7 @@ Fehlerkorrekturen:
 * Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
 
 Für Entwickler:
+* Der Build landet jetzt in docs/ statt dist/, weil GitHub Pages direkt aus dem Branch ausliefert (Deploy from a branch, main + /docs). Der Build wird mitcommittet; Electron-Loader, Paketierung und Strukturdoku sind entsprechend umgestellt.
 * Die Weiter-Knöpfe im Terminal (Weiter, Mittagspause, Feierabend, Arbeitstag starten) tragen jetzt ein data-continue-Attribut. Die Tastatursteuerung erkannte sie bisher am Beschriftungstext - eine umformulierte Beschriftung hätte die Taste lautlos abgeklemmt. Nebenbei können die Zifferntasten Weiter-Knöpfe nicht mehr versehentlich als Antwort treffen, und vier Konsolen-Ausgaben wurden auf Warnstufe gehoben oder entfernt.
 * Sämtliche localStorage-Schlüssel wohnen jetzt in einem eigenen Modul (keys.js), das Zustand, Oberfläche und Audio gemeinsam importieren - bislang waren 29 Lese- und Schreibstellen in drei Dateien als nackte Zeichenketten verstreut, exakt die Fehlerklasse, die früher den Tutorial-Merker aus dem Tritt gebracht hat. Der Hard-Reset dokumentiert nun außerdem ausdrücklich, dass Einstellungen, Audio-Werte und Tastenbelegung ihn bewusst überleben.
 * Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht nun aus 22 Komponenten statt aus zusammengesetzten HTML-Zeichenketten.
