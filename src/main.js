@@ -1,9 +1,12 @@
 /**
  * Application entry point.
  *
- * Migration in progress. The vanilla engine still owns most of the DOM; Svelte
- * components take over one region at a time and mount into the placeholder
- * their markup used to occupy.
+ * The Svelte migration is complete: every part of the screen that changes
+ * during play is a component. What the engine still owns is the static shell
+ * in index.html — modals, the quick bar, the settings dialog — which it drives
+ * with plain getElementById and inline onclick handlers. That split is the
+ * architecture, not a leftover: components render state, the engine renders
+ * chrome.
  *
  * Order matters: tutorial.js publishes window.tutorial, which engine.init()
  * checks for, and the engine has to exist before components read its state.
