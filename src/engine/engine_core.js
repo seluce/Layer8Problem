@@ -40,6 +40,8 @@ export const core = {
         await this.loadCloudSave();
         this.loadSystem();
         if (this.state.compactMode) document.body.classList.add('compact-mode');
+        if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
+        if (!this.state.scanlines) document.body.classList.add('no-scanlines');
         document.getElementById('intro-modal').style.display = 'flex';
         document.body.classList.add('overflow-hidden');
 

@@ -223,6 +223,9 @@ export const state = $state({
     blindTickets: localStorage.getItem(KEYS.blindTickets) === 'true',
     autoHidePhone: localStorage.getItem(KEYS.autoHidePhone) === 'true',
     compactMode: localStorage.getItem(KEYS.compactMode) === 'true',
+    textSize: localStorage.getItem(KEYS.textSize) || 'normal',
+    scanlines: localStorage.getItem(KEYS.scanlines) !== 'false',
+    autoChart: localStorage.getItem(KEYS.autoChart) === 'true',
     screenShake: localStorage.getItem(KEYS.screenShake) !== 'false',
 
     // --- KEYBOARD MAPPING ---

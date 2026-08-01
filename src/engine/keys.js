@@ -30,6 +30,9 @@ export const KEYS = {
     showHotkeys:   'layer8_showhotkeys',
     autoHidePhone: 'layer8_autohidephone',
     compactMode:   'layer8_compact',
+    textSize:      'layer8_textsize',
+    scanlines:     'layer8_scanlines',
+    autoChart:     'layer8_autochart',
 
     // --- Audio & Musik (überleben den Hard-Reset ebenfalls) ---
     audioVolume:   'layer8_volume',

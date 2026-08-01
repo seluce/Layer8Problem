@@ -22,7 +22,8 @@
 
     const modal = $derived(game.modal);
 
-    let showChart = $state(false);
+    // Wer die Kurve immer sehen will, stellt das in den Einstellungen ein.
+    let showChart = $state(game.autoChart ?? false);
     let showDiary = $state(false);
 
     // First match wins; red is the default.

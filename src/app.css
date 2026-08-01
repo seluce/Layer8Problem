@@ -163,7 +163,6 @@
     }
 
     body.compact-mode .key-hint { font-size: 10px; padding: 2px 5px 3px; }
-
     /* PANELS
        Every panel carries a coloured top edge — the one element of this design
        that is not generic. It comes from a variable so the terminal can change
@@ -210,6 +209,12 @@
        eine Bürolampe aufzuhellen: feine Scanlines, ein schwaches
        Phosphor-Glimmen aus der Bildmitte und ein minimal angehobener
        Verlauf. Alles statisch - kein Flackern, keine Animation. */
+    /* Abschaltbar über die Einstellungen: Manche empfinden die Textur als
+       unruhig, dann bleibt die Fläche glatt. */
+    body.no-scanlines .terminal-screen {
+        background-image: linear-gradient(180deg, #0e1727 0%, #0a111d 100%);
+    }
+
     .terminal-screen {
         background-image:
             repeating-linear-gradient(0deg,
@@ -351,3 +356,15 @@
   30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
   40%, 60% { transform: translate3d(8px, 0, 0); }
 }
+
+/* ============================================================
+   TEXTGRÖSSE
+   Bewusst außerhalb der @layer-Blöcke: Tailwinds Utilities liegen in
+   einer späteren Ebene und schlagen sonst jede Regel, egal wie
+   spezifisch sie ist. Und bewusst an der Wurzel-Schriftgröße statt an
+   einzelnen Elementen — Tailwind bemisst Schriftgrößen in rem, also
+   relativ zu genau diesem Wert. So wächst alles gleichmäßig mit:
+   Ereignisse, Handy, Postfach, Team, Archiv und die Menüs.
+   ============================================================ */
+html.text-size-large  { font-size: 17px; }
+html.text-size-xlarge { font-size: 18.5px; }

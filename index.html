@@ -740,7 +740,21 @@
             <div>
                 <h3 class="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Anzeige & Layout</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
+                        <div class="flex items-start gap-3 flex-1 w-full">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">🔠</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Textgröße</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Dieses Spiel ist zum Lesen da. Nimm die Größe, die dir liegt.</span>
+                            </div>
+                        </div>
+                        <select id="setting-textsize" onchange="engine.setTextSize(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 focus:border-cyan-500 outline-hidden cursor-pointer shadow-xs shrink-0">
+                            <option value="normal">Normal</option>
+                            <option value="large">Groß</option>
+                            <option value="xlarge">Sehr groß</option>
+                        </select>
+                    </div>
+
                     <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
                         <div class="flex items-start gap-3 flex-1">
                             <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">🗜️</span>
@@ -769,34 +783,11 @@
                         </label>
                     </div>
 
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Gameplay & Komfort</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
-                        <div class="flex items-start gap-3 flex-1 w-full">
-                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⏱️</span>
-                            <div class="flex flex-col">
-                                <span class="text-sm font-medium text-slate-200 leading-tight">Start-Schwierigkeit</span>
-                                <span class="text-[10px] text-slate-500 mt-1">Legt den Modus für neue Tage fest.</span>
-                            </div>
-                        </div>
-                        <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 focus:border-emerald-500 outline-hidden cursor-pointer shadow-xs shrink-0">
-                            <option value="ask">Täglich fragen</option>
-                            <option value="easy">Freitag (Leicht)</option>
-                            <option value="normal">Mittwoch (Normal)</option>
-                            <option value="hard">Montag (Schwer)</option>
-                        </select>
-                    </div>
-					
                     <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
                         <div class="flex items-start gap-3 flex-1">
                             <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💓</span>
                             <div class="flex flex-col">
-                                <span class="text-sm font-medium text-slate-200 leading-tight">Warn-Pulsieren (>80%)</span>
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Warn-Pulsieren (&gt;80%)</span>
                                 <span class="text-[10px] text-slate-500 mt-1">Terminal-Rand leuchtet bei hohem Stress rot auf.</span>
                             </div>
                         </div>
@@ -822,6 +813,56 @@
 
                     <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
                         <div class="flex items-start gap-3 flex-1">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💬</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Smartphone-Animation</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Kein "Tippt..." Delay bei Chats.</span>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <div class="flex items-start gap-3 flex-1">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">📺</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Bildschirm-Textur</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Feine Scanlines und Glimmen auf dem Terminal.</span>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input type="checkbox" id="setting-scanlines" onchange="engine.toggleScanlines(this.checked)" class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Gameplay & Komfort</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
+                        <div class="flex items-start gap-3 flex-1 w-full">
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⏱️</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Start-Schwierigkeit</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Legt den Modus für neue Tage fest.</span>
+                            </div>
+                        </div>
+                        <select id="setting-diff" onchange="engine.saveDefaultDifficulty(this.value)" class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 focus:border-emerald-500 outline-hidden cursor-pointer shadow-xs shrink-0">
+                            <option value="ask">Täglich fragen</option>
+                            <option value="easy">Freitag (Leicht)</option>
+                            <option value="normal">Mittwoch (Normal)</option>
+                            <option value="hard">Montag (Schwer)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <div class="flex items-start gap-3 flex-1">
                             <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">⚡</span>
                             <div class="flex flex-col">
                                 <span class="text-sm font-medium text-slate-200 leading-tight">Schnelle Items</span>
@@ -836,18 +877,24 @@
 
                     <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
                         <div class="flex items-start gap-3 flex-1">
-                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">💬</span>
+                            <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">📈</span>
                             <div class="flex flex-col">
-                                <span class="text-sm font-medium text-slate-200 leading-tight">Smartphone-Animation</span>
-                                <span class="text-[10px] text-slate-500 mt-1">Kein "Tippt..." Delay bei Chats.</span>
+                                <span class="text-sm font-medium text-slate-200 leading-tight">Verlauf sofort zeigen</span>
+                                <span class="text-[10px] text-slate-500 mt-1">Öffnet die Tageskurve im Endbildschirm automatisch.</span>
                             </div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                            <input type="checkbox" id="setting-fastchat" onchange="engine.toggleFastChat(this.checked)" class="sr-only peer">
+                            <input type="checkbox" id="setting-autochart" onchange="engine.toggleAutoChart(this.checked)" class="sr-only peer">
                             <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
                         </label>
                     </div>
 
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Herausforderung</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
                         <div class="flex items-start gap-3 flex-1">
                             <span class="text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5">❓</span>
@@ -876,6 +923,21 @@
                         </label>
                     </div>
 
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">Einstellungen verwalten</h3>
+                <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-start gap-3 flex-1">
+                        <span class="text-base opacity-70 mt-0.5">♻️</span>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-200 leading-tight">Auf Standard zurücksetzen</span>
+                            <span class="text-[10px] text-slate-500 mt-1">Setzt alle Optionen dieser Seite zurück. Spielstand, Archiv und Erfolge bleiben unangetastet.</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="engine.confirmResetSettings(this)"
+                            class="shrink-0 text-[11px] font-bold uppercase tracking-widest text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-700 border border-slate-600 hover:border-slate-400 rounded-sm px-4 py-2 transition-colors min-w-[7.5rem]">Zurücksetzen</button>
                 </div>
             </div>
 

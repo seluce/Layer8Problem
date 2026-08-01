@@ -462,7 +462,15 @@ export const ui = {
         const modal = document.getElementById('intranet-modal');
         // Reset the iframe to the start page on every open
         const frame = document.getElementById('intranet-frame');
-        if(frame) frame.src = "assets/intranet/index.html"; 
+        if (frame) {
+            frame.src = "assets/intranet/index.html";
+            // Das Intranet ist ein eigenes Dokument im Rahmen — die Wurzel-
+            // Schriftgröße des Spiels wirkt dort nicht hinein. Deshalb wird
+            // die gewählte Textgröße beim Laden übertragen. Über zoom, weil
+            // die Firmenseiten ihr eigenes Stylesheet mitbringen und nicht
+            // zwingend in rem rechnen.
+            frame.onload = () => this.applyIntranetTextSize(frame);
+        }
         
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -858,6 +866,9 @@ export const ui = {
         if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
         if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
         if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
+        if(document.getElementById('setting-textsize')) document.getElementById('setting-textsize').value = this.state.textSize ?? 'normal';
+        if(document.getElementById('setting-scanlines')) document.getElementById('setting-scanlines').checked = this.state.scanlines !== false;
+        if(document.getElementById('setting-autochart')) document.getElementById('setting-autochart').checked = !!this.state.autoChart;
         if(document.getElementById('setting-volume')) document.getElementById('setting-volume').value = this.state.audioVolume;
 		if(document.getElementById('setting-music')) document.getElementById('setting-music').checked = this.state.musicEnabled;
         if(document.getElementById('setting-music-volume')) document.getElementById('setting-music-volume').value = this.state.musicVolume;
@@ -963,6 +974,130 @@ export const ui = {
         this.updatePhoneVisibility();
     },
     
+    /**
+     * Textgröße der Spielinhalte. Das Spiel besteht zu großen Teilen aus
+     * Lesestoff — wer die Ereignistexte lieber größer hat, soll das können,
+     * ohne den ganzen Browser zu zoomen. Die Klassen liegen in app.css.
+     */
+    setTextSize: function(size) {
+        const SIZES = ['normal', 'large', 'xlarge'];
+        const value = SIZES.includes(size) ? size : 'normal';
+        this.state.textSize = value;
+        localStorage.setItem(KEYS.textSize, value);
+        // An <html>, nicht an <body>: Die Regel verstellt die Wurzel-
+        // Schriftgröße, auf die sich sämtliche rem-Angaben beziehen.
+        document.documentElement.classList.remove('text-size-large', 'text-size-xlarge');
+        if (value !== 'normal') document.documentElement.classList.add('text-size-' + value);
+        this.applyIntranetTextSize();
+        if (this.playAudio) this.playAudio('ui');
+    },
+
+    /**
+     * Setzt alle Optionen der Einstellungsseite auf Auslieferungszustand.
+     *
+     * Bewusst OHNE Neuladen der Seite: Der Arbeitstag läuft weiter, ein
+     * Reload würde ihn vernichten. Stattdessen laufen alle Werte durch die
+     * regulären Setter, die Zustand, Speicher und Oberfläche gemeinsam
+     * nachziehen. Auch bewusst ohne Browser-Dialog — im Steam-Build wäre
+     * ein confirm() ein Fremdkörper; die Rückfrage passiert am Knopf selbst.
+     *
+     * Nicht betroffen: Spielstand, Archiv, Erfolge und der laufende Tag.
+     */
+    resetSettings: function() {
+        // Anzeige & Layout
+        this.setTextSize('normal');
+        this.toggleCompactMode(false);
+        this.toggleAutoHidePhone(false);
+        this.toggleFX(true);
+        this.toggleShake(true);
+        this.toggleFastChat(false);
+        this.toggleScanlines(true);
+
+        // Gameplay
+        this.saveDefaultDifficulty('ask');
+        this.toggleOneClick(false);
+        this.toggleAutoChart(false);
+
+        // Herausforderung
+        this.toggleBlindStats(false);
+        this.toggleBlindTickets(false);
+
+        // Audio
+        this.toggleAudio(true);
+        this.setVolume(0.5);
+        this.toggleMusic(true);
+        this.setMusicVolume(0.2);
+        this.changeMusicStyle('radio');
+
+        // Tastatur: Belegung und Anzeige der Tastenkappen
+        this.resetKeybinds();
+        this.toggleShowHotkeys(!window.matchMedia('(pointer: coarse)').matches);
+
+        this.updateSettingsUI();
+        this.playAudio('ui');
+    },
+
+    /**
+     * Überträgt die Textgröße in den Intranet-Rahmen. Wird beim Öffnen und
+     * bei jeder Änderung aufgerufen; scheitert still, falls der Rahmen
+     * gerade nicht bereit ist.
+     */
+    applyIntranetTextSize: function(frame) {
+        const el = frame ?? document.getElementById('intranet-frame');
+        const ZOOM = { normal: '', large: '1.08', xlarge: '1.18' };
+        try {
+            const doc = el?.contentDocument;
+            if (doc?.body) doc.body.style.zoom = ZOOM[this.state.textSize ?? 'normal'] ?? '';
+        } catch { /* Rahmen noch nicht geladen — beim nächsten Öffnen erneut */ }
+    },
+
+    /**
+     * Zweistufige Bestätigung direkt am Knopf statt eines Browser-Dialogs.
+     * Der erste Klick fragt, der zweite führt aus; nach fünf Sekunden ohne
+     * Antwort fällt der Knopf in den Ruhezustand zurück.
+     */
+    confirmResetSettings: function(btn) {
+        if (btn.dataset.armed === 'true') {
+            clearTimeout(this._resetArmTimer);
+            btn.dataset.armed = 'false';
+            btn.textContent = btn.dataset.label;
+            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+            this.resetSettings();
+            return;
+        }
+        btn.dataset.label = btn.dataset.label || btn.textContent.trim();
+        btn.dataset.armed = 'true';
+        btn.textContent = 'Wirklich?';
+        btn.classList.add('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+        this.playAudio('ui');
+
+        clearTimeout(this._resetArmTimer);
+        this._resetArmTimer = setTimeout(() => {
+            btn.dataset.armed = 'false';
+            btn.textContent = btn.dataset.label;
+            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+        }, 5000);
+    },
+
+    /**
+     * Die Bildschirm-Textur des Terminals (Scanlines und Glimmen). Wer sie
+     * als unruhig empfindet, bekommt eine glatte Fläche.
+     */
+    toggleScanlines: function(isOn) {
+        this.state.scanlines = isOn;
+        localStorage.setItem(KEYS.scanlines, isOn);
+        document.body.classList.toggle('no-scanlines', !isOn);
+    },
+
+    /**
+     * Öffnet den Tagesverlauf im Endbildschirm sofort, statt ihn hinter
+     * einem Knopf zu lassen. Für alle, die ohnehin immer nachsehen.
+     */
+    toggleAutoChart: function(isOn) {
+        this.state.autoChart = isOn;
+        localStorage.setItem(KEYS.autoChart, isOn);
+    },
+
     toggleCompactMode: function(isOn) {
         this.state.compactMode = isOn;
         localStorage.setItem(KEYS.compactMode, isOn);
