@@ -25,6 +25,9 @@ export function freshDay(mult = 1.0) {
         // Schalter löschen ihn, sobald jemand mittendrin nachjustiert.
         blindRun: false,
 
+        // Wurde der 13:37-Moment heute schon gezeigt? (siehe checkLeetMoment)
+        leetSeen: false,
+
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,
         // ~40 steps a day) so it can travel into the archive later if wanted.

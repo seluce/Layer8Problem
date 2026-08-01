@@ -55,3 +55,21 @@ mount(ExcuseText,     { target: document.getElementById('excuse-text-root') });
 mount(InventoryFull,  { target: document.getElementById('full-inventory-grid') });
 mount(AchievementToasts, { target: document.getElementById('achievement-container') });
 mount(TerminalHeader, { target: document.getElementById('terminal-header-right') });
+
+/* ============================================================
+   Für die, die nachsehen.
+
+   Wer in einem Spiel über Systemadministration die Entwicklerkonsole
+   öffnet, gehört zur Zielgruppe und darf begrüßt werden. Die einzige
+   bewusste Konsolenausgabe des Spiels — alles andere dort ist Diagnose.
+   ============================================================ */
+console.log(
+    '%c H.A.L.G.E.R.D. %c\n\n' +
+    'Sie haben die Konsole geöffnet.\n' +
+    'Natürlich haben Sie die Konsole geöffnet.\n\n' +
+    'Ich protokolliere das nicht. Ich protokolliere gar nichts.\n' +
+    'Das ist eine Zusicherung, keine Tatsachenbehauptung.\n\n' +
+    'Schönen Arbeitstag, Mitarbeiter 404.\n',
+    'background:#f59e0b;color:#0f172a;font-weight:bold;padding:2px 8px;border-radius:2px',
+    'color:#94a3b8;font-family:monospace;line-height:1.5'
+);

@@ -724,7 +724,9 @@ export const events = {
             this.state.tickets = Math.max(0, this.state.tickets - 1);
         }
 
+        const timeBefore = this.state.time;
         this.state.time += m;
+        this.checkLeetMoment(timeBefore);
         
         // Lunch Check
         let triggerLunch = false;
@@ -905,6 +907,30 @@ export const events = {
      * Abmahnung) in der Kurve als das sichtbar werden, was sie sind. Mehr
      * als 200 Punkte kann ein Tag kaum erzeugen; die Grenze ist Vorsicht.
      */
+    /**
+     * 13:37 Uhr.
+     *
+     * Die Uhr springt in Minutensprüngen, trifft die Minute also fast nie
+     * genau — deshalb wird geprüft, ob sie im letzten Schritt daran
+     * vorbeigekommen ist. Einmal am Tag, rein zur Zierde: keine Werte, keine
+     * Folgen, nur eine Zeile im Protokoll für die, die hinsehen.
+     */
+    checkLeetMoment: function(timeBefore) {
+        const LEET = 13 * 60 + 37;
+        if (this.state.leetSeen) return;
+        if (timeBefore >= LEET || this.state.time < LEET) return;
+
+        this.state.leetSeen = true;
+        const lines = [
+            "13:37 Uhr. Für den Bruchteil einer Sekunde läuft alles rund. Kein Ticket, kein Anruf, kein Chef. Dann ist es 13:38.",
+            "13:37 Uhr. Sämtliche LEDs im Serverraum blinken für einen Moment im selben Takt. Du bist der einzige Mensch im Gebäude, dem das etwas bedeutet.",
+            "13:37 Uhr. Die Uhr steht kurz still, das Gebäude atmet aus, und irgendwo öffnet sich eine Datei ohne Zutun. Vermutlich Einbildung.",
+            "13:37 Uhr. Du blickst auf die Uhr und nickst anerkennend. Niemand nickt zurück. Niemand hat es gesehen.",
+            "13:37 Uhr. Der Drucker im dritten Stock gibt ein einzelnes, wohlklingendes Piepen von sich und schweigt für den Rest des Tages."
+        ];
+        this.log(lines[Math.floor(Math.random() * lines.length)], "text-cyan-400 italic");
+    },
+
     recordStatPoint: function() {
         const h = this.state.statHistory;
         if (!h || h.length > 200) return;
