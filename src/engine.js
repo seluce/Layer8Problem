@@ -106,7 +106,7 @@ document.addEventListener('keydown', (event) => {
         // C. Close submenus and overlays, innermost first
         if (isVisible('item-confirm-modal')) { engine.closeItemConfirm(); return; }
         if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
-        if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.closeModals(); return; }
+        if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
         if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
 

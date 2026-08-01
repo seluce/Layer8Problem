@@ -403,7 +403,9 @@ export const ui = {
         this.disableButtons(false);
         this.setTerminalIdle();
         
-        this.updateSteamStatus('system');
+        // Hieß früher updateSteamStatus; die Funktion trägt heute den
+        // plattformneutralen Namen, weil sie über platform.presence läuft.
+        this.updatePresence('system');
         this.updateUI();
     },
     
