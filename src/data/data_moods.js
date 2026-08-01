@@ -133,14 +133,6 @@ export const moods = [
 	{ id: "mood_bonus_3", effect: "excuse_plus", title: "Serverraum-Nebel", text: "Die Klimaanlage im Serverraum hat heute Morgen kurz Nebel produziert. Völlig harmlos, längst behoben - aber die Geschichte ist zu gut, um sie nicht den ganzen Tag über nachwirken zu lassen." },
 	{ id: "mood_bonus_4", effect: "excuse_plus", title: "Der Chef ist unterwegs", text: "Dr. Wichtig ist bis mittags auf einem Kongress namens 'Leadership im Zeitalter der Disruption'. Was auch immer er dort lernt: Bis er es anwenden kann, hast du einen halben Tag Vorsprung." },
 	{ id: "mood_bonus_5", effect: "excuse_plus", title: "Gabis Deckung", text: "'Wenn dich heute jemand sucht, warst du im Keller bei der Verkabelung', sagt Gabi und zwinkert. Sie hat es bereits zweimal jemandem erzählt, bevor überhaupt jemand gefragt hat." },
-	{ id: "mood_bonus_6", effect: "excuse_plus", title: "Das defekte Telefon", text: "Deine Durchwahl hat heute Nacht angefangen, Anrufer sporadisch ins Nichts zu leiten. Ein Fehler, ganz klar. Ein Fehler, den zu beheben du dir für morgen fest vorgenommen hast." },
-
-	// --- FRÜHER DA: Der seltene Morgen, an dem alles passt ---
-	{ id: "mood_early_1", effect: "early", title: "Grüne Welle", text: "Jede Ampel auf dem Weg war grün, der Parkplatz direkt vor dem Eingang frei. Du stehst eine halbe Stunde zu früh im leeren Büro und weißt kurz nicht, was du mit so viel Stille anfangen sollst." },
-	{ id: "mood_early_2", effect: "early", title: "Zu früh wach", text: "Du bist zwanzig Minuten vor dem Wecker aufgewacht, hellwach und ohne Grund. Statt zu grübeln bist du einfach losgefahren. Der Morgen gehört heute ausnahmsweise dir." },
-	{ id: "mood_early_3", effect: "early", title: "Die stille Stunde", text: "Vor acht Uhr ist dieses Gebäude ein anderer Ort: kein Telefon, keine Schritte, kein Markus. Nur du, der Serverraum und das Summen der Lüfter. So müsste Arbeit immer sein." },
-	{ id: "mood_early_4", effect: "early", title: "Frühdienst-Solidarität", text: "Egon war schon da und hat die Kaffeemaschine für dich mit angeworfen. Kein Wort, kein Aufheben - nur eine volle Kanne und ein Nicken. Der beste Kollege, den dieses Haus je hatte." },
-	{ id: "mood_early_5", effect: "early", title: "Vor dem Sturm", text: "Du bist früh dran und nutzt die Zeit, um die Ticketliste zu sortieren, bevor sie sich wehren kann. Es fühlt sich verdächtig nach Kontrolle an. Genieß es, es hält nie lange." },
-	{ id: "mood_early_6", effect: "early", title: "Der Schlüsseldienst", text: "Du bist der Erste im Trakt und schließt selbst auf. Für eine halbe Stunde gehört dieses Gebäude dir allein - inklusive aller Räume, die dir sonst niemand aufsperren würde." }
+	{ id: "mood_bonus_6", effect: "excuse_plus", title: "Das defekte Telefon", text: "Deine Durchwahl hat heute Nacht angefangen, Anrufer sporadisch ins Nichts zu leiten. Ein Fehler, ganz klar. Ein Fehler, den zu beheben du dir für morgen fest vorgenommen hast." }
 
 ];

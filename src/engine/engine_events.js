@@ -969,12 +969,7 @@ export const events = {
             this.state.excusesLeft++;
             statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
         }
-        // --- Früher da: mehr Zeit, aber der Tag ist deshalb nicht kürzer ---
-        else if (mood.effect === "early") {
-            this.state.time -= 30;
-            this.state.fl -= 5;
-            statHtml = "<span class='text-cyan-400 font-bold'>Start 07:30 Uhr & -5% Faulheit</span>";
-        } 
+
         else if (mood.effect === "normal") {
             statHtml = "<span class='text-slate-400 font-bold'>Neutral. Der ganz normale Wahnsinn beginnt.</span>";
         } 
