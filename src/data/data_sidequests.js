@@ -2076,7 +2076,7 @@ export const sidequests = [
             },
             { 
                 t: "Auf dem Klo verstecken und massieren", 
-                m: 15, f: -5, a: 0, c: 0, 
+                m: 15, f: 10, a: 0, c: 5, 
                 r: "Du rennst raus. 'Muss mal!' Im Bad knetest du deine Wangen, bis der Krampf sich löst. Du hast das Meeting verpasst, aber du siehst wieder aus wie ein normaler, depressiver Angestellter." 
             },
             { 
@@ -2875,7 +2875,7 @@ export const sidequests = [
             { 
                 t: "Die Klappe mutig öffnen und reingreifen", 
                 next: "path_printer_fix", 
-                m: 15, f: 0, a: 5, c: 0, 
+                m: 15, f: -5, a: 10, c: 0, 
                 r: "Du ziehst tief im Inneren an zerrissenen Papierfetzen. Deine Hände sind voller Toner, aber die Maschine druckt wieder." 
             },
             { 
@@ -5475,7 +5475,7 @@ export const sidequests = [
             { 
                 t: "Auf dem ungemütlichen Holzstuhl leiden", 
                 next: "path_chair_suffer", 
-                m: -5, f: -10, a: -10, c: 0, 
+                m: 5, f: -10, a: -10, c: 0, 
                 r: "Dein Rücken schmerzt ab der ersten Minute. Aber du bewahrst dir deine moralische Überlegenheit." 
             },
             { 
@@ -5887,7 +5887,7 @@ export const sidequests = [
             { 
                 t: "Zugeben: Es war aus Hygiene-Gründen", 
                 rep: { "Dr. Wichtig": -10 },
-                m: -5, f: 0, a: 10, c: 10, 
+                m: 5, f: 0, a: 10, c: 10, 
                 r: "Zugeben ist bei Management-Themen gefährlich. Der Chef hasst dich inständig für deine Dreistigkeit." 
             }
         ]
@@ -6112,7 +6112,7 @@ export const sidequests = [
             { 
                 t: "Leise weinen und zitternd gestehen", 
                 rep: { "Dr. Wichtig": -10 },
-                m: -5, f: 0, a: 10, c: 15, 
+                m: 5, f: 0, a: 10, c: 15, 
                 r: "Er lacht grausam und erteilt dir eine Rüge. Deine Schwäche widert ihn an." 
             }
         ]

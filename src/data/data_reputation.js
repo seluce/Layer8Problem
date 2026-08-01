@@ -3609,7 +3609,7 @@ export const reputation = [
             { 
                 t: "List: Warten, bis sie auf Toilette geht", 
                 next: "path_gabi_cam",
-                m: 15, f: 5, a: 0, c: 0, 
+                m: 15, f: 10, a: 0, c: 0, 
                 r: "Du lauerst 15 Minuten hinter einer Pflanze. Als sie weg ist, schnappst du das Paket und rennst. Der perfekte Raub. Denkst du." 
             }
         ]

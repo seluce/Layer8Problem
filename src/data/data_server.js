@@ -1054,7 +1054,7 @@ export const server = [
             },
             { 
                 t: "Einfach aufwischen & ignorieren", 
-                m: 15, f: 0, a: 0, c: -5, 
+                m: 15, f: 10, a: 0, c: -5, 
                 r: "Du wischst die Pfütze mit Taschentüchern weg. Was man nicht weiß, macht einen nicht heiß. Der Boden klebt zwar noch etwas, aber es sieht sauber aus." 
             }
         ]
@@ -2205,7 +2205,7 @@ export const server = [
         opts: [
             { 
                 t: "Mit Föhn trocknen", 
-                m: 15, f: -5, a: 0, c: 0, 
+                m: 15, f: -5, a: 10, c: 0, 
                 r: "Du holst einen Föhn und trocknest die Pfützen vorsichtig weg. Es ist ein Tanz auf dem Vulkan, aber du verhinderst den Kurzschluss." 
             },
             { 
@@ -2687,7 +2687,7 @@ export const server = [
                 t: "Mit Kabelbindern zurren", 
                 req: "zip_ties", 
                 next: "path_cable_tidy",
-                m: 15, f: 0, a: -5, c: 0, 
+                m: 15, f: 5, a: -5, c: 0, 
                 r: "Du nimmst eine Handvoll Kabelbinder und zurrst alles zu einer dicken Wurst zusammen. Nicht schön, aber Luft kommt durch und man sieht die Ports wieder." 
             },
             { 
@@ -2889,7 +2889,7 @@ export const server = [
             { 
                 t: "Ablaufrinne aus Tape bauen", 
                 req: "tape", 
-                m: 15, f: -5, a: 0, c: 0, 
+                m: 15, f: -5, a: 5, c: 5, 
                 r: "Du baust eine komplexe Konstruktion aus Panzertape, die das Wasser in einen Blumentopf leitet. Es ist hässlich, es ist Pfusch, aber es funktioniert. Ingenieurskunst!" 
             }
         ]
@@ -3416,7 +3416,8 @@ export const server = [
             },
             { 
                 t: "Einen Vortrag über Hardware-Preise halten", 
-                m: 15, f: 0, a: 5, c: 0, 
+                rep: { "Chantal": -3 },
+                m: 15, f: 0, a: 10, c: 0, 
                 r: "Du rechnest ihr 15 Minuten lang vor, was ein Core-Router kostet. Sie scrollt dabei genervt auf Insta." 
             }
         ]

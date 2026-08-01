@@ -9,6 +9,8 @@ Spielbalance:
 * Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
 * Lange Aktionen haben jetzt durchgehend spürbare Folgen. Wer sich zwanzig Minuten aus einer Situation herausredet, kassiert dafür Faulheit; wer Nerviges erledigt, Aggro; wer dem Chef auffällt, Radar. Zeit absitzen ohne Konsequenz gibt es nicht mehr.
 * Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.
+* Zehn Antworten im Altbestand kosteten viel Zeit, blieben aber praktisch folgenlos - vom Klebeband-Angeln im Lüftungsschlitz bis zum geschwänzten Meeting. Alle zehn haben jetzt spürbare Konsequenzen: Rausreden gibt Faulheit, Gefrickel gibt Aggro, sichtbarer Pfusch fällt dem Chef auf.
+* Drei Antworten schenkten durch ein falsches Vorzeichen versehentlich Zeit, statt welche zu kosten. Die eine bewusste Zeit-Belohnung bleibt unangetastet: Wer im Koffein-Wahn alte Tickets abarbeitet, gewinnt weiterhin Arbeitszeit.
 
 Anzeige & Layout:
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
