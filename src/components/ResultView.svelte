@@ -1,8 +1,11 @@
 <!--
-  The result of a chosen option.
+  The result of a chosen option, styled as the sibling of the event card it
+  concludes: same width, same header anatomy, the same black quote panel with
+  a colored left edge - emerald, the tone of "done". The continue button is
+  part of the card now instead of floating detached below it.
 
-  The pills below the text repeat what the floating numbers already showed, but
-  they stay put long enough to read.
+  The pills repeat what the floating numbers already showed, but they stay
+  put long enough to read.
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
@@ -21,23 +24,30 @@
     const sign = (n) => (n > 0 ? '+' : '') + n;
 </script>
 
-<div class="w-full max-w-xl text-left fade-in flex flex-col my-auto shrink-0">
-    <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 shadow-xl">
-        <h3 class="font-bold text-white mb-2 uppercase text-xs tracking-widest text-emerald-500">Ergebnis</h3>
-        <p class="text-slate-300 italic text-lg leading-relaxed">"{view.text}"</p>
+<div class="w-full max-w-2xl text-left fade-in my-auto shrink-0 mx-auto
+            bg-slate-900 border border-emerald-500/40 rounded-xl p-4 md:p-6
+            shadow-[0_0_12px_rgba(16,185,129,0.12)]">
 
-        <div class="flex flex-wrap gap-2 mt-4 fade-in">
-            {#each pills as pill (pill.label)}
-                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-bold bg-slate-800 border border-slate-700">
-                    <span class={pill.tone}>{pill.label}</span>
-                    <span class="text-white ml-0.5">{sign(pill.value)}</span>
-                </span>
-            {/each}
-        </div>
+    <div class="flex items-center gap-3 mb-4 border-b border-slate-600 pb-3">
+        <span class="text-2xl shrink-0">📋</span>
+        <span class="text-emerald-500 font-black uppercase tracking-widest text-sm">Ergebnis</span>
+    </div>
+
+    <div class="bg-black/40 p-5 rounded-lg border-l-4 border-emerald-500/60 shadow-inner">
+        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{view.text}"</p>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-4">
+        {#each pills as pill (pill.label)}
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-bold bg-slate-950/70 border border-slate-700">
+                <span class={pill.tone}>{pill.label}</span>
+                <span class="text-white font-mono ml-0.5">{sign(pill.value)}</span>
+            </span>
+        {/each}
     </div>
 
     <button data-continue onclick={() => engine.runAction({ fn: view.action })}
-            class="{view.buttonColor} text-white w-full py-4 rounded-xl font-bold uppercase transition-all shadow-lg border border-slate-700/50">
+            class="{view.buttonColor} text-white w-full py-3.5 mt-6 rounded-lg font-bold uppercase tracking-wider transition-all shadow-lg">
         {view.buttonText}
     </button>
 </div>
