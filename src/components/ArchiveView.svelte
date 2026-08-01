@@ -108,9 +108,14 @@
                 <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, false)} flex items-center justify-center text-xl cursor-help transition-all relative group"
                      title={entry.unlocked ? entry.item.name : 'Unbekannt'}>
                     {#if !entry.unlocked}?
-                    {:else if entry.item.img}
-                        <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
-                    {:else}{entry.item.icon}{/if}
+                    {:else}
+                        <!-- Das Symbol liegt darunter: Fehlt die Bilddatei, entfernt sich
+                             das Bild selbst und der Platz bleibt nicht leer. -->
+                        <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
+                        {#if entry.item.img}
+                            <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
+                        {/if}
+                    {/if}
                 </div>
             {/each}
         </div>
@@ -124,9 +129,14 @@
                     <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, true)} flex items-center justify-center text-xl cursor-help transition-all relative group"
                          title={entry.unlocked ? entry.item.name : '???'}>
                         {#if !entry.unlocked}?
-                        {:else if entry.item.img}
-                            <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name}>
-                        {:else}{entry.item.icon}{/if}
+                        {:else}
+                            <!-- Das Symbol liegt darunter: Fehlt die Bilddatei, entfernt sich
+                                 das Bild selbst und der Platz bleibt nicht leer. -->
+                            <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
+                            {#if entry.item.img}
+                                <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
+                            {/if}
+                        {/if}
                     </div>
                 {/each}
             </div>

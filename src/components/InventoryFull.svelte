@@ -95,7 +95,7 @@
          aria-label={row.item?.name ?? row.entry.id}
          onclick={() => activate(row)} onkeydown={(e) => keyActivate(e, row)}>
         {#if row.item?.img}
-            <img src={row.item.img} class="w-full h-full object-contain p-1 pointer-events-none" alt={row.item.name}>
+            <img src={row.item.img} class="w-full h-full object-contain p-1 pointer-events-none" alt={row.item.name} onerror={(e) => e.currentTarget.remove()}>
         {:else}{row.item?.icon ?? '?'}{/if}
 
         {#if row.item}

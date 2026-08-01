@@ -90,7 +90,7 @@
          onclick={() => activate(slot)} onkeydown={(e) => keyActivate(e, slot)}>
         {#if slot}
             {#if slot.item?.img}
-                <img src={slot.item.img} class="w-full h-full object-contain p-1 pointer-events-none" alt={slot.name}>
+                <img src={slot.item.img} class="w-full h-full object-contain p-1 pointer-events-none" alt={slot.name} onerror={(e) => e.currentTarget.remove()}>
             {:else}
                 {slot.item?.icon ?? '?'}
             {/if}
