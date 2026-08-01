@@ -109,5 +109,38 @@ export const moods = [
 	{ id: "mood_normal_58", effect: "normal", title: "Veteranen-Status", text: "Dein mausgraues Mauspad rollt sich an den unteren Ecken langsam aber sicher auf. Ein sichtbares, stolzes Zeichen von jahrelangem, unerbittlichem und hartem Dienst an der IT-Front." },
 	{ id: "mood_normal_59", effect: "normal", title: "Kommunikation", text: "Der Kollege dir gegenüber starrt auf seinen Bildschirm und seufzt extrem tief und laut. Du antwortest mit einem verständnisvollen, langgezogenen 'Tja'. Das war definitiv genug soziale Konversation für heute." },
 	{ id: "mood_normal_60", effect: "normal", title: "Das Ritual", text: "Du klickst nach dem Booten routiniert dreimal auf 'Aktualisieren' auf dem völlig leeren Desktop, obwohl es absolut nichts bringt. Ein wichtiges, psychologisches Startritual für jeden echten SysAdmin." }
+,
+
+	// --- TICKET-RÜCKSTAND: Der Tag hat schon angefangen, ohne dich ---
+	{ id: "mood_tickets_1", effect: "tickets", title: "Die Nachtschicht", text: "Über Nacht ist der Backup-Server dreimal neu gestartet und hat bei jedem Versuch brav ein Ticket erzeugt. Die Warteschlange begrüßt dich also bereits mit einer kleinen, unerledigten Familie." },
+	{ id: "mood_tickets_2", effect: "tickets", title: "Der Wochenend-Held", text: "Jemand hat am Sonntag 'nur mal kurz' etwas im Netzwerk umgesteckt. Wer, wird sich nie klären lassen. Die Folgen dieses Kurzbesuchs liegen fein säuberlich in deiner Warteschlange." },
+	{ id: "mood_tickets_3", effect: "tickets", title: "Automatische Eskalation", text: "Das Ticketsystem hat um 6:00 Uhr eigenmächtig mehrere alte Vorgänge 'wegen Fristüberschreitung reaktiviert'. Es meint es nicht böse. Es kennt nur keine Gnade." },
+	{ id: "mood_tickets_4", effect: "tickets", title: "Der Rundmail-Effekt", text: "Gestern Abend ging eine Rundmail über 'Probleme mit dem Drucker' raus. Seither meldet jeder im Haus vorsorglich seinen eigenen Drucker. Vorsorglich." },
+	{ id: "mood_tickets_5", effect: "tickets", title: "Urlaubsübergabe", text: "Der Kollege aus der Verwaltung ist ab heute drei Wochen weg und hat vor dem Abflug noch schnell 'ein paar Kleinigkeiten' an die IT übergeben. Sie sind weder klein noch Kleinigkeiten." },
+	{ id: "mood_tickets_6", effect: "tickets", title: "Update-Nacht", text: "Die zentrale Update-Verteilung lief um 3 Uhr durch. Erfolgreich, meldet der Bericht. Die Rechner, die seither nicht mehr hochfahren, melden es anders - in deiner Warteschlange." },
+
+	// --- AUSREDEN GESTRICHEN: Heute wird jede Ausflucht teurer ---
+	{ id: "mood_noexcuse_1", effect: "excuse_minus", title: "Compliance-Woche", text: "Ein Aushang im Flur verkündet die 'Woche der Transparenz'. Führungskräfte sind angehalten, Aussagen von Mitarbeitenden 'stichprobenartig zu verifizieren'. Heute ist ein schlechter Tag für kreative Wahrheiten." },
+	{ id: "mood_noexcuse_2", effect: "excuse_minus", title: "Der Kalender lügt nicht", text: "Dr. Wichtig hat sich über Nacht Zugriff auf alle Abteilungskalender geben lassen. Er sieht jetzt in Echtzeit, wer wann angeblich wo ist. Deine bewährten Termine sind plötzlich überprüfbar." },
+	{ id: "mood_noexcuse_3", effect: "excuse_minus", title: "Einer zu viel", text: "Gestern hast du eine Ausrede zweimal benutzt. Bei derselben Person. Sie hat nichts gesagt, nur kurz die Augenbrauen gehoben. Dieses Repertoire ist bis auf Weiteres verbrannt." },
+	{ id: "mood_noexcuse_4", effect: "excuse_minus", title: "Der aufmerksame Praktikant", text: "Kevin hat angefangen, deine Sätze mitzuschreiben - 'zum Lernen, wie man professionell kommuniziert'. Sein Heft ist jetzt eine lückenlose Chronik deiner Notlügen. Er zeigt es gern herum." },
+	{ id: "mood_noexcuse_5", effect: "excuse_minus", title: "Gabis Frühwarnung", text: "'Sei heute vorsichtig', flüstert Gabi beim Reinkommen. 'Die von oben sind auf Ausreden geeicht. Frag nicht, woher ich das weiß.' Du fragst nicht. Du weißt, dass sie recht hat." },
+	{ id: "mood_noexcuse_6", effect: "excuse_minus", title: "Krankenstand", text: "Drei Kollegen haben sich heute Morgen krankgemeldet, zwei davon 'überraschend'. Die Geduld der Geschäftsleitung mit spontanen Verhinderungen ist damit für heute vollständig aufgebraucht." },
+
+	// --- AUSREDE EXTRA: Manchmal spielt das Haus für dich ---
+	{ id: "mood_bonus_1", effect: "excuse_plus", title: "Alibi frei Haus", text: "In deinem Kalender steht ein ganztägiger Termin, den du nie angenommen hast: 'IT-Sicherheitsaudit (extern)'. Es gibt kein Audit. Aber es steht da, und es steht da für alle sichtbar." },
+	{ id: "mood_bonus_2", effect: "excuse_plus", title: "Der Vorschuss", text: "Du hast gestern spätabends unbezahlt zwei Stunden ein Backup gerettet. Niemand hat es angeordnet, aber alle wissen es. So etwas ergibt in diesem Haus ein stilles Guthaben." },
+	{ id: "mood_bonus_3", effect: "excuse_plus", title: "Serverraum-Nebel", text: "Die Klimaanlage im Serverraum hat heute Morgen kurz Nebel produziert. Völlig harmlos, längst behoben - aber die Geschichte ist zu gut, um sie nicht den ganzen Tag über nachwirken zu lassen." },
+	{ id: "mood_bonus_4", effect: "excuse_plus", title: "Der Chef ist unterwegs", text: "Dr. Wichtig ist bis mittags auf einem Kongress namens 'Leadership im Zeitalter der Disruption'. Was auch immer er dort lernt: Bis er es anwenden kann, hast du einen halben Tag Vorsprung." },
+	{ id: "mood_bonus_5", effect: "excuse_plus", title: "Gabis Deckung", text: "'Wenn dich heute jemand sucht, warst du im Keller bei der Verkabelung', sagt Gabi und zwinkert. Sie hat es bereits zweimal jemandem erzählt, bevor überhaupt jemand gefragt hat." },
+	{ id: "mood_bonus_6", effect: "excuse_plus", title: "Das defekte Telefon", text: "Deine Durchwahl hat heute Nacht angefangen, Anrufer sporadisch ins Nichts zu leiten. Ein Fehler, ganz klar. Ein Fehler, den zu beheben du dir für morgen fest vorgenommen hast." },
+
+	// --- FRÜHER DA: Der seltene Morgen, an dem alles passt ---
+	{ id: "mood_early_1", effect: "early", title: "Grüne Welle", text: "Jede Ampel auf dem Weg war grün, der Parkplatz direkt vor dem Eingang frei. Du stehst eine halbe Stunde zu früh im leeren Büro und weißt kurz nicht, was du mit so viel Stille anfangen sollst." },
+	{ id: "mood_early_2", effect: "early", title: "Zu früh wach", text: "Du bist zwanzig Minuten vor dem Wecker aufgewacht, hellwach und ohne Grund. Statt zu grübeln bist du einfach losgefahren. Der Morgen gehört heute ausnahmsweise dir." },
+	{ id: "mood_early_3", effect: "early", title: "Die stille Stunde", text: "Vor acht Uhr ist dieses Gebäude ein anderer Ort: kein Telefon, keine Schritte, kein Markus. Nur du, der Serverraum und das Summen der Lüfter. So müsste Arbeit immer sein." },
+	{ id: "mood_early_4", effect: "early", title: "Frühdienst-Solidarität", text: "Egon war schon da und hat die Kaffeemaschine für dich mit angeworfen. Kein Wort, kein Aufheben - nur eine volle Kanne und ein Nicken. Der beste Kollege, den dieses Haus je hatte." },
+	{ id: "mood_early_5", effect: "early", title: "Vor dem Sturm", text: "Du bist früh dran und nutzt die Zeit, um die Ticketliste zu sortieren, bevor sie sich wehren kann. Es fühlt sich verdächtig nach Kontrolle an. Genieß es, es hält nie lange." },
+	{ id: "mood_early_6", effect: "early", title: "Der Schlüsseldienst", text: "Du bist der Erste im Trakt und schließt selbst auf. Für eine halbe Stunde gehört dieses Gebäude dir allein - inklusive aller Räume, die dir sonst niemand aufsperren würde." }
 
 ];

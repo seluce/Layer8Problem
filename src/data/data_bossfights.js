@@ -18,7 +18,7 @@ export const bossfights = [
 		timer: 8,
 		opts: [
 			{ t: "Feuerlöscher benutzen", req: "fire_ext", m: 30, f: -10, a: 10, c: -20, r: "Feuer gelöscht. Du hustest, aber bist ein Held." },
-			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 0, c: 10, r: "Feuerwehr kommt. Büro evakuiert. Du hast Pause." }
+			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 10, c: 25, r: "Feuerwehr kommt. Büro evakuiert. Du hast Pause." }
 		],
 		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Alles ist nass. Totalschaden." }
 	},
@@ -29,7 +29,7 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ t: "Backup-Leitung schalten", req: "admin_pw", m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
-			{ t: "Qualität auf 'Kartoffel' (240p) setzen", m: 5, f: 5, a: 0, c: 10, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
+			{ t: "Qualität auf 'Kartoffel' (240p) setzen", m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
 	},
@@ -51,7 +51,7 @@ export const bossfights = [
 		timer: 10,
 		opts: [
 			{ t: "Fenster einschlagen", req: "hammer", m: 5, f: 0, a: 20, c: 10, r: "Klirr! Eiskalte Luft strömt herein (und ein paar Tauben). Hardware gerettet, Fenster kaputt." },
-			{ t: "Not-Aus drücken", m: 5, f: 5, a: 0, c: 15, r: "Alles fährt runter. Die Stille ist gespenstisch. Hardware sicher, aber die Firma steht still." }
+			{ t: "Not-Aus drücken", m: 5, f: 5, a: 10, c: 25, r: "Alles fährt runter. Die Stille ist gespenstisch. Hardware sicher, aber die Firma steht still." }
 		],
 		fail: { m: 120, f: -20, a: 50, c: 50, r: "KERN-SCHMELZE! Es riecht nach verschmortem Plastik. Der Feuermelder geht los. Renn!" }
 	},
@@ -163,7 +163,7 @@ export const bossfights = [
 		timer: 9,
 		opts: [
 			{ t: "Überdruckventil öffnen", req: "screw", m: 5, f: -5, a: -10, c: -5, r: "Pfeifend entweicht der Druck. Du bist der Held der Belegschaft. Applaus im Flur!" },
-			{ t: "Stecker ziehen & wegrennen", m: 5, f: 10, a: 10, c: 10, r: "Die Maschine beruhigt sich langsam. Aber: KEIN KAFFEE MEHR HEUTE. Die Kollegen schauen dich mit mordlustigen Augen an." }
+			{ t: "Stecker ziehen & wegrennen", m: 5, f: 10, a: 25, c: 10, r: "Die Maschine beruhigt sich langsam. Aber: KEIN KAFFEE MEHR HEUTE. Die Kollegen schauen dich mit mordlustigen Augen an." }
 		],
 		fail: { m: 60, f: 0, a: 50, c: 20, r: "KA-WUMM! Die Küche ist voller Kaffeesatz. Die Maschine ist Schrott. Die Moral der Firma sinkt auf 0. Es herrschen anarchische Zustände." }
 	},
@@ -282,7 +282,7 @@ export const bossfights = [
 			},
 			{ 
 				t: "Ablenken (Kaffee)", 
-				m: 10, f: 5, a: 0, c: 10, 
+				m: 10, f: 5, a: 5, c: 25, 
 				r: "Du lädst ihn zum Kaffee ein. Er vergisst das Protokoll, aber beschwert sich über den Geschmack. Prüfung bestanden (knapp)." 
 			},
 			{ 
@@ -332,7 +332,7 @@ export const bossfights = [
 		{ 
 			t: "Brutal: Kabel mit Schere kappen", 
 			rep: { "Dr. Wichtig": -2 },
-			m: 5, f: -10, a: 20, c: 10, 
+			m: 5, f: -10, a: 25, c: 20, 
 			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
 		},
 		{ 
@@ -394,7 +394,7 @@ export const bossfights = [
                 r: "Ein historischer Moment für den Flurfunk. Dein Chef-Radar explodiert allerdings kurz danach." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 20, c: 20, r: "ZU SPÄT! Jemand hat Screenshots gemacht. Das Meme geht viral auf LinkedIn. Der Chef ist am Boden zerstört." }
+        fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 30, c: 40, r: "ZU SPÄT! Jemand hat Screenshots gemacht. Das Meme geht viral auf LinkedIn. Der Chef ist am Boden zerstört." }
     },
     {
         id: "boss_water_leak_1",
@@ -470,7 +470,7 @@ export const bossfights = [
                 r: "Du fällst in allen Punkten durch. Die Geschäftsführung kriegt einen katastrophalen Mängelbericht." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -15 }, m: 45, f: 10, a: 20, c: 20, r: "STAMMERN! Deine Sprachlosigkeit wird als Schuldeingeständnis gewertet. Fette Abmahnung für das Team!" }
+        fail: { rep: { "Dr. Wichtig": -15 }, m: 45, f: 10, a: 25, c: 45, r: "STAMMERN! Deine Sprachlosigkeit wird als Schuldeingeständnis gewertet. Fette Abmahnung für das Team!" }
     },
     {
         id: "boss_lockdown_1",
@@ -545,7 +545,7 @@ export const bossfights = [
                 r: "Sollen die Hacker doch machen. Du hast Feierabend im Kopf, während die Firma brennt." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -15 }, m: 60, f: 0, a: 30, c: 20, r: "FREEZE! Der Core-Router stürzt unter der Last ab. Es dauert ewig, ihn neu zu booten. Kunden sind wütend." }
+        fail: { rep: { "Dr. Wichtig": -15 }, m: 60, f: 0, a: 40, c: 30, r: "FREEZE! Der Core-Router stürzt unter der Last ab. Es dauert ewig, ihn neu zu booten. Kunden sind wütend." }
     },
     {
         id: "boss_excavator_1",
@@ -673,7 +673,7 @@ export const bossfights = [
                 r: "Du sicherst die Tür und wartest, bis der Entzug bei den Kollegen nachlässt." 
             }
         ],
-        fail: { m: 180, f: 30, a: 30, c: 10, r: "MEUTEREI! Das Büro verfällt in Lethargie. Du schläfst vor Erschöpfung fast am Schreibtisch ein." }
+        fail: { m: 180, f: 30, a: 45, c: 15, r: "MEUTEREI! Das Büro verfällt in Lethargie. Du schläfst vor Erschöpfung fast am Schreibtisch ein." }
     }
 
 ];

@@ -836,6 +836,84 @@ export const special = {
 				} 
 			] 
 		},
+		{
+			id: "lunch_sponsorenlauf",
+			title: "MITTAG: DAS BUFFET DER PARTNER",
+			text: "In der Kantine ist ein Buffet aufgebaut: 'Kostenlos für alle Mitarbeitenden - präsentiert von unserem neuen IT-Dienstleister!' Es gibt Rinderfilet, drei Sorten Dessert und einen Aufsteller mit dem Logo einer Firma, die letzte Woche ein Angebot für die Ablösung der internen IT abgegeben hat. Also für deine Ablösung.",
+			opts: [
+				{
+					t: "Kostenlos ist kostenlos - zugreifen",
+					m: 45, f: 10, a: -15, c: 30,
+					r: "Das Filet ist hervorragend, und genau in dem Moment, in dem du dir nachnimmst, macht der Vertriebler des Dienstleisters ein Foto 'für die Doku'. Es taucht später in seiner Präsentation auf, Folie 12: 'Die IT-Abteilung freut sich bereits auf die Zusammenarbeit.' Dr. Wichtig hat diese Folie gesehen."
+				},
+				{
+					t: "Demonstrativ am Buffet vorbeigehen",
+					m: 30, f: 0, a: 20, c: -10,
+					r: "Du holst dir ein Brötchen aus dem Automaten und isst es sichtbar neben dem Aufsteller. Eine Geste, die niemand versteht außer dir - und dem Vertriebler, der sie sehr wohl versteht und dich fortan meidet. Hunger und Haltung sind selten dasselbe."
+				},
+				{
+					t: "Den Vertriebler in ein Fachgespräch verwickeln",
+					m: 60, f: -10, a: 10, c: -15,
+					r: "Du fragst nach Migrationspfaden, Altsystem-Schnittstellen und der Betreuung von Fachanwendungen aus 2009. Nach vierzig Minuten ist er sichtlich zermürbt und du kennst ihre Schwachstellen. Das Essen hast du komplett verpasst. Aber du hast Munition."
+				},
+				{
+					t: "Alles fotografieren und Frau Elster schicken",
+					req: "black_card",
+					m: 20, f: 0, a: -5, c: -20,
+					r: "Du dokumentierst das Buffet wie ein Gutachter und schickst die Bilder an die Buchhaltung mit der Frage nach der Zuwendungsgrenze. Frau Elsters Antwort kommt binnen Minuten: 'Ich übernehme.' Am Nachmittag wird das Buffet 'aus formalen Gründen' abgebaut. Der Dienstleister hat noch nichts verkauft und schon einen Feind."
+				}
+			]
+		},
+		{
+			id: "lunch_thermomix",
+			title: "MITTAG: DIE VORFÜHRUNG",
+			text: "Jemand aus der Verwaltung hat einen Küchen-Vollautomaten mitgebracht und kocht damit in der Teeküche für alle. Es riecht fantastisch. Es gibt aber einen Haken: Das Gerät hängt an der einzigen freien Steckdose der Küche - und der Kühlschrank mit dem Insulin einer Kollegin an einer Mehrfachleiste, die dadurch spürbar warm wird.",
+			opts: [
+				{
+					t: "Mitessen, das regelt sich schon",
+					m: 45, f: 15, a: 10, c: 25,
+					r: "Das Essen ist ausgezeichnet. Die Mehrfachleiste gibt um 13:40 Uhr auf, der Kühlschrank steht zwei Stunden unbemerkt still, und die Frage, warum die IT das nicht gesehen hat, wird von genau der Kollegin gestellt, deren Medikament darin lag. Es ist noch einmal gutgegangen. Der Satz 'die IT hat mitgegessen' bleibt trotzdem im Raum."
+				},
+				{
+					t: "Erst die Stromverteilung retten, dann essen",
+					m: 30, f: -10, a: 5, c: -10,
+					r: "Du legst ein Verlängerungskabel aus dem Flur, hängst das Gerät auf einen eigenen Stromkreis und beschriftest die Kühlschrank-Leitung. Zehn Minuten Arbeit in der Pause - und ein Teller, der noch warm ist, als du dich endlich setzt. Niemand hat gemerkt, dass hier gerade etwas nicht passiert ist."
+				},
+				{
+					t: "Die Vorführung abbrechen lassen",
+					m: 15, f: 0, a: 30, c: 0,
+					r: "Du ziehst den Stecker und erklärst die Leitungslage. Fachlich unangreifbar, sozial eine Katastrophe: Zwölf hungrige Menschen sehen zu, wie ihr Mittagessen halbgar erkaltet, und die Verwaltungskollegin packt wortlos ein. Du hast recht. Du isst allein."
+				}
+			]
+		},
+		{
+			id: "lunch_gruppenfoto",
+			title: "MITTAG: DAS GRUPPENFOTO",
+			text: "Chantal fängt dich mit dem Teller in der Hand ab: 'Wir machen JETZT das Team-Foto für die Karriereseite! Alle sind schon draußen im Innenhof!' Draußen sind es sechs Grad. Dein Essen ist warm. Beides wird sich in den nächsten zwanzig Minuten ändern.",
+			opts: [
+				{
+					t: "Mitkommen und mitlächeln",
+					m: 40, f: -5, a: 20, c: -10,
+					r: "Zwanzig Minuten Innenhof, achtzig Aufnahmen, weil Markus auf jeder blinzelt. Dein Essen ist kalt, deine Finger sind klamm, und auf dem finalen Bild stehst du hinten links halb hinter Kevin. Auf der Karriereseite steht darunter: 'Ein Team, das zusammenhält.'"
+				},
+				{
+					t: "Ablehnen: Pause ist Pause",
+					m: 5, f: 5, a: -10, c: 20,
+					r: "Du isst in Ruhe zu Ende. Auf dem Foto fehlt die IT vollständig - was niemandem auffällt, bis Dr. Wichtig es sechs Wochen später auf der fertigen Karriereseite bemerkt und in der Abteilungsrunde fragt, ob 'die IT sich nicht als Teil des Teams sieht'. Die Frage klingt harmlos. Sie ist es nicht."
+				},
+				{
+					t: "Kevin vorschicken, er hat mehr Haare",
+					m: 10, f: 10, a: 0, c: 10,
+					r: "Kevin ist begeistert und steht auf dem finalen Bild in der vordersten Reihe, Bildunterschrift: 'Unsere IT'. Er ist im dritten Lehrmonat. Auf der Karriereseite ist er jetzt das Gesicht deiner Abteilung, und zwei Bewerbungen kommen mit der Anrede 'Sehr geehrter Herr Kevin' herein."
+				},
+				{
+					t: "Mit Kopfhörern so tun, als hättest du nichts gehört",
+					req: "headphones",
+					m: 5, f: 15, a: -15, c: 5,
+					r: "Der älteste Trick des Großraumbüros, ausgeführt mit der Ruhe eines Profis: Blick auf den Bildschirm, Kopfhörer auf, leicht im Takt nickend. Chantal winkt zweimal, zuckt mit den Schultern und zieht weiter. Du isst warm, in Frieden, und niemand kann dir etwas vorwerfen. Nur du weißt, dass du jedes Wort gehört hast."
+				}
+			]
+		},
 	],
 	empty_pool: {
 		id: "fallback_empty",

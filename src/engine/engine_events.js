@@ -884,7 +884,16 @@ export const events = {
         this.renderTerminal(randomLunch, 'special');
     },
 
-    triggerMorningMood: function() {
+    /**
+     * Der Morgen-Bildschirm.
+     *
+     * `forceEffect` ist ausschließlich zum Testen gedacht: Es beschränkt die
+     * Ziehung auf eine Kategorie, damit sich ein Effekt gezielt auslösen
+     * lässt, statt ihn zu erwürfeln. Beispiel in der Entwicklerkonsole:
+     *     engine.triggerMorningMood('tickets')
+     * Der reguläre Aufruf bleibt parameterlos und damit zufällig.
+     */
+    triggerMorningMood: function(forceEffect = null) {
         // Fallback for a category missing from the data files
         if (!DB.moods || DB.moods.length === 0) {
             this.reset();
@@ -903,6 +912,17 @@ export const events = {
         
         // Fallback for the theoretical case of a single remaining entry
         if (availableMoods.length === 0) availableMoods = DB.moods; 
+
+        // Test-Weg: auf eine Kategorie einschränken (siehe Kommentar oben)
+        if (forceEffect) {
+            const forced = DB.moods.filter(m => m.effect === forceEffect);
+            if (forced.length) {
+                availableMoods = forced;
+            } else {
+                const known = [...new Set(DB.moods.map(m => m.effect))].join(', ');
+                console.warn(`Unbekannte Morgen-Kategorie "${forceEffect}". Vorhanden: ${known}`);
+            }
+        }
         
         let mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
         this.state.lastMoodId = mood.id; // remembered for next time
@@ -910,19 +930,50 @@ export const events = {
         // 2. Mechanik sicher anwenden
         let statHtml = "";
         
+        // Der Morgen skaliert mit dem Wochentag: Freitag verzeiht, Montag
+        // nicht. 15 Punkte werden zu 12 / 15 / 19.
+        const moodVal = Math.round(15 * this.state.difficultyMult);
+
         if (mood.effect === "aggro") {
-            this.state.al += 15;
-            statHtml = "<span class='text-orange-400 font-bold'>+15% Aggro</span>";
+            this.state.al += moodVal;
+            statHtml = `<span class='text-orange-400 font-bold'>+${moodVal}% Aggro</span>`;
         } 
         else if (mood.effect === "radar") {
-            this.state.cr += 15;
-            statHtml = "<span class='text-red-500 font-bold'>+15% Chef-Radar</span>";
+            this.state.cr += moodVal;
+            statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
         } 
         else if (mood.effect === "lazy") {
-            this.state.fl += 15;
+            this.state.fl += moodVal;
             this.state.time += 30; // Zeitverlust wegen Verschlafen
             this.state.tickets += 1; // penalty for the thirty minutes lost
-            statHtml = "<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +15% Faulheit</span>";
+            statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
+        } 
+        // --- Morgen mit Vorgeschichte: Tickets, die über Nacht aufliefen ---
+        else if (mood.effect === "tickets") {
+            const extra = this.state.difficultyMult > 1.0 ? 3 : (this.state.difficultyMult < 1.0 ? 1 : 2);
+            this.state.tickets += extra;
+            statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
+        }
+        // --- Ausreden: der Vorrat an Notlügen ist keine Konstante mehr ---
+        else if (mood.effect === "excuse_minus") {
+            if (this.state.excusesLeft > 0) {
+                this.state.excusesLeft--;
+                statHtml = "<span class='text-red-400 font-bold'>Eine Ausrede weniger als sonst</span>";
+            } else {
+                // Nichts mehr zu streichen - der Tag beginnt trotzdem schief
+                this.state.cr += moodVal;
+                statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
+            }
+        }
+        else if (mood.effect === "excuse_plus") {
+            this.state.excusesLeft++;
+            statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+        }
+        // --- Früher da: mehr Zeit, aber der Tag ist deshalb nicht kürzer ---
+        else if (mood.effect === "early") {
+            this.state.time -= 30;
+            this.state.fl -= 5;
+            statHtml = "<span class='text-cyan-400 font-bold'>Start 07:30 Uhr & -5% Faulheit</span>";
         } 
         else if (mood.effect === "normal") {
             statHtml = "<span class='text-slate-400 font-bold'>Neutral. Der ganz normale Wahnsinn beginnt.</span>";
