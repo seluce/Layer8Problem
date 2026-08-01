@@ -6,6 +6,8 @@ Anzeige & Layout:
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
 * Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
 * Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben, was ihn wie die naheliegende Wahl aussehen ließ - dabei geht es im Spiel gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint jetzt erst, wenn die Tickets kritisch werden.
+* Der Nachrichtenticker läuft jetzt gleichmäßig schnell. Bislang brauchte jede Meldung dieselben 30 Sekunden, unabhängig von ihrer Länge - die längsten liefen dadurch fast doppelt so schnell wie die kürzesten und waren kaum lesbar. Außerdem ist die Schrift etwas größer und nicht mehr durchgehend in Großbuchstaben.
+* Der Seitenhintergrund ist eine Spur heller. Zuvor hatte er exakt dieselbe Farbe wie das eingelassene Terminal, wodurch dessen Vertiefung nur gegenüber den Feldern daneben sichtbar war.
 * Terminal und Statusleiste liegen nun auf zwei Ebenen: Das Terminal ist eingelassen und dunkler, die Statusleiste liegt darüber. Der Blick geht dorthin, wo etwas passiert.
 * Antwortmöglichkeiten zeigen jetzt an, wenn sie einen Gegenstand verbrauchen - und zwar solange sie noch wählbar sind. Bisher war der Unterschied zwischen "wird gebraucht" und "wird aufgebraucht" nur an gesperrten Optionen angedeutet, wo er keine Rolle mehr spielt.
 * Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>". Zuvor stand dort je nach Feld "Fehlt" oder "Benötigt", obwohl beides denselben Zustand beschrieb.
@@ -28,6 +30,7 @@ Für Entwickler:
 * Der Electron-Hauptprozess liegt unter electron/main.cjs und lädt dist/. Für GitHub Pages wird ebenfalls dist/ veröffentlicht.
 * Der Build landet in dist/build/ statt dist/assets/. Zuvor mischten sich dort erzeugte Bündel und die unverändert kopierten Dateien aus public/assets/.
 * STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
+* Das E-Mail-System merkt sich bereits eingetroffene Mails jetzt anhand ihrer ID statt anhand des Betreffs - dieselbe Logik wie bei allen anderen Ereignissen. Zwei Mails mit gleichem Betreff hätten sich bislang stillschweigend gegenseitig blockiert, eine davon wäre nie erschienen. Der Daten-Prüfer meldet doppelte Mail-IDs deshalb nun als Fehler; gleiche Betreffs sind nur noch ein kosmetischer Hinweis.
 
 [3.7.0] - 2026-07-28
 

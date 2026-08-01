@@ -12,12 +12,12 @@
  *  - char/reqRep/rep-Namen, die nicht in DB.chars stehen
  *  - Story-Flags, die gefordert, aber nie gesetzt werden (= toter Content)
  *  - Chain-Events: next -> ins Leere, unerreichbare Nodes/Results, Sackgassen
- *  - nextEmail -> nicht existierende Mail, doppelte Mail-Betreffs
+ *  - nextEmail -> nicht existierende Mail, doppelte Mail-IDs/-Betreffs
  *  - Zeichen in opt.r, die den inline-onclick-String zerlegen können
  */
 
 import { readFileSync, readdirSync } from 'fs';
-import { DB, ensure } from '../data.js';
+import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
 await ensure('bossfights', 'calls', 'coffee', 'emails', 'party', 'reputation', 'server', 'sidequests');
@@ -113,10 +113,13 @@ for (const p of POOLS) {
 }
 
 /* ---------- 3) E-Mails ---------- */
+const mailIdSeen = new Map();
 const subjSeen = new Map();
 for (const e of DB.emails) {
   const ctx = `[emails/${e.id ?? e.subj}]`;
-  if (!e.subj) err(`${ctx}: kein subj — usedEmails nutzt subj als Schlüssel!`);
+  if (!e.id) err(`${ctx}: keine id — usedEmails nutzt die id als Schlüssel!`);
+  else mailIdSeen.set(e.id, (mailIdSeen.get(e.id) ?? 0) + 1);
+  if (!e.subj) err(`${ctx}: kein subj — die Mail hätte keinen Betreff im Posteingang`);
   else subjSeen.set(e.subj, (subjSeen.get(e.subj) ?? 0) + 1);
   for (const o of e.opts ?? []) {
     checkOpt(o, ctx);
@@ -124,7 +127,8 @@ for (const e of DB.emails) {
     if (o.nextEmail && !DB.emails.some(x => x.id === o.nextEmail)) err(`${ctx}: nextEmail "${o.nextEmail}" existiert nicht`);
   }
 }
-for (const [s, c] of subjSeen) if (c > 1) warn(`Doppelter Mail-Betreff "${s}" (${c}x) — blockiert sich gegenseitig über usedEmails`);
+for (const [id, c] of mailIdSeen) if (c > 1) err(`Doppelte Mail-ID "${id}" (${c}x) — usedEmails blockiert beide, nextEmail trifft die falsche`);
+for (const [s, c] of subjSeen) if (c > 1) warn(`Doppelter Mail-Betreff "${s}" (${c}x) — nur kosmetisch, wirkt im Spiel aber wie dieselbe Mail`);
 
 /* ---------- 4) Tote Story-Flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
@@ -140,8 +144,8 @@ for (const [flag, ctxs] of flagsReq) {
 // 'party_hub' jumps back to the party hub, 'path_cake_drunk' starts the drunk
 // timer. Rather than maintaining an exception list, scan the engine sources for
 // the literal flag name; anything that appears there is in use.
-const engineSource = ['engine.js', 'tutorial.js']
-    .concat(readdirSync('assets/engine').map(f => 'assets/engine/' + f))
+const engineSource = ['src/engine.js', 'src/tutorial.js']
+    .concat(readdirSync('src/engine').map(f => 'src/engine/' + f))
     .map(f => readFileSync(f, 'utf8'))
     .join('\n');
 

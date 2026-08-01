@@ -1,5 +1,5 @@
-import { DB, ensure } from '../../data.js';
-import { platform } from '../../platform.js';
+import { DB, ensure } from '../data.js';
+import { platform } from '../platform.js';
 
 export const events = {
 
@@ -77,7 +77,7 @@ export const events = {
             email = DB.emails.find(e => e.id === forcedId);
         } else {
             let availableEmails = DB.emails.filter(e => 
-                !this.state.usedEmails.has(e.subj) && !e.linked
+                !this.state.usedEmails.has(e.id) && !e.linked
             );
             if(availableEmails.length === 0) {
                 this.state.usedEmails.clear(); 
@@ -89,137 +89,24 @@ export const events = {
         if (!email) return;
 
         // 1. FREEZE & STATUS
-        this.state.usedEmails.add(email.subj);
+        this.state.usedEmails.add(email.id);
         this.state.isEmailOpen = true; 
 
         // 2. UI REFERENZEN
+        // Everything the window shows comes from here; components/
+        // EmailView.svelte does the rendering, including the countdown bar.
+        this.state.email = email;
+
+        // The overlay itself belongs to index.html, so its visibility is still
+        // toggled here. EmailView.svelte only renders the contents.
         const modal = document.getElementById('email-modal');
-        if (!modal) return;
-
-        // Animation Reset
-        const container = modal.firstElementChild; 
-        if(container) {
-            container.classList.remove('animate-pop-in');
-            void container.offsetWidth; 
-            container.classList.add('animate-pop-in');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
-
-        // 3. DATEN SETZEN
-        document.getElementById('email-sender').innerText = email.sender;
-        document.getElementById('email-subject').innerText = email.subj;
-        
-        // Uhrzeit
-        let h = Math.floor(this.state.time / 60);
-        let m = this.state.time % 60;
-        let timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-        document.getElementById('email-timestamp').innerText = timeStr;
-
-        // Avatar
-        let initial = email.sender.charAt(0).toUpperCase();
-        document.getElementById('email-avatar').innerText = initial;
-
-        // --- Dynamisches CC (Humor) ---
-        let ccText = "IT-Verteiler"; // Standard
-        const s = email.sender.toLowerCase();
-        
-        if(s.includes('chef') || s.includes('management')) ccText = "Rechtsabteilung; HR";
-        else if(s.includes('kevin')) ccText = "Mama; World_of_Warcraft_Gilde";
-        else if(s.includes('marketing') || s.includes('chantal')) ccText = "Alle Mitarbeiter (ALL); Presse";
-        else if(s.includes('buchhaltung') || s.includes('elster')) ccText = "Finanzamt; Controlling";
-        else if(s.includes('hr') || s.includes('personal')) ccText = "Betriebsrat";
-        else if(s.includes('sicherheit') || s.includes('wachschutz')) ccText = "Polizei (Notruf)";
-        else if(s.includes('prinz')) ccText = ""; // scammers rarely CC anyone
-
-        // Fill the element if it exists
-        const ccEl = document.getElementById('email-cc');
-        if(ccEl) {
-            ccEl.innerText = ccText;
-            // Left empty rather than hiding the whole row
-            ccEl.parentElement.style.display = ccText ? 'flex' : 'none';
-        }
-        // -----------------------------------
-
-        // Body
-        const bodyEl = document.getElementById('email-body');
-        if(bodyEl) bodyEl.innerHTML = (email.body || "").replace(/\n/g, "<br>");
-
-        // 4. BUTTONS
-        const actionContainer = document.getElementById('email-actions');
-        actionContainer.innerHTML = '';
-        
-        if(email.opts) {
-            email.opts.forEach((opt, index) => {
-                const btn = document.createElement('button');
-                btn.type = "button"; 
-                
-                // --- Is this the delete button? ---
-                const isDelete = opt.ignoreEmail;
-
-                // Dynamische Farben zuweisen
-                const hoverBg = isDelete ? "hover:bg-red-950/30 hover:border-red-500/50" : "hover:bg-blue-900/30 hover:border-blue-500/50";
-                const textColor = isDelete ? "text-slate-400 hover:text-red-400" : "text-slate-300 hover:text-blue-300";
-                const iconColor = isDelete ? "text-slate-600 group-hover:text-red-500" : "text-slate-500 group-hover:text-blue-400";
-                const kbdHover = isDelete ? "group-hover:text-red-400" : "group-hover:text-blue-400";
-                const iconText = isDelete ? "🗑️" : "➥";
-
-                btn.className = `w-full text-left px-3 py-2 bg-slate-800 border border-slate-700 ${hoverBg} ${textColor} rounded-sm transition-colors flex items-center justify-between group font-medium text-xs`;
-                
-                let hotkeyHTML = "";
-                
-                if (this.state.showHotkeys) {
-                    let key = "";
-                    if (index === 0) key = this.state.keyBinds.opt1;
-                    else if (index === 1) key = this.state.keyBinds.opt2;
-                    else if (index === 2) key = this.state.keyBinds.opt3;
-                    else if (index === 3) key = "4";
-                    else if (index === 4) key = "5";
-                    else if (index === 5) key = "6";
-
-                    if (key) {
-                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner ${kbdHover} transition-colors">${key.toUpperCase()}</kbd>`;
-                    }
-                }
-                
-                btn.innerHTML = `
-                    <div class="flex items-center flex-1 mr-2">
-                        <span class="mr-2 ${iconColor} transition-colors duration-75 text-base shrink-0">${iconText}</span>
-                        <span class="wrap-break-word leading-tight py-1">${opt.btn}</span>
-                    </div>
-                    <div class="shrink-0 flex items-center h-full">
-                        ${hotkeyHTML}
-                    </div>
-                `;
-                
-                btn.onclick = (e) => {
-                    e.stopPropagation(); 
-                    e.preventDefault();  
-                    this.resolveEmail(opt, false);
-                };
-                actionContainer.appendChild(btn);
-            });
-        }
-               
-        // 5. ANZEIGEN
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
         document.body.classList.add('overflow-hidden');
-        
-        // 6. TIMER
-        const timerBar = document.getElementById('email-timer-bar');
-        const DURATION = 20000; 
-        
-        if(timerBar) {
-            timerBar.style.transition = 'none';
-            timerBar.style.width = '100%';
-            
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    timerBar.style.transition = `width ${DURATION}ms linear`;
-                    timerBar.style.width = '0%';
-                });
-            });
-        }
 
+        const DURATION = 20000;
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         this.state.emailTimer = setTimeout(() => {
             this.resolveEmail(null, true); 
@@ -582,14 +469,10 @@ export const events = {
         this.playMusic('boss');
         this.updatePresence('boss');
 
-        const term = document.getElementById('terminal-content');
-        
-        // FIX 1: OPACITY ENTFERNEN!
-        // Same class as renderTerminal so the panel lights up identically.
-        term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
-
-        // Event rendern
-        this.renderEventHTML(boss, 'boss', term);
+        // Reset before rendering: the bar is shared state and would otherwise
+        // start at whatever the previous fight left behind.
+        this.state.bossBarPercent = 100;
+        this.renderEventHTML(boss, 'boss');
 
         // Milliseconds, so the bar animates smoothly
         let totalTimeMs = boss.timer * 1000;
@@ -599,21 +482,9 @@ export const events = {
         this.state.bossTimer = setInterval(() => {
             currentTimeMs -= updateInterval;
             
-            const bar = document.getElementById('integrated-boss-bar');
-            
-            if(bar) {
-                // Prozent berechnen
-                let percent = (currentTimeMs / totalTimeMs * 100);
-                bar.style.width = percent + "%";
-                
-                // Pulse once it gets tight, below 30%
-                if(percent < 30) {
-                    bar.classList.add('animate-pulse');
-                    // Optional: Farbe intensivieren
-                    bar.classList.remove('from-red-600', 'to-red-500');
-                    bar.classList.add('bg-red-600'); 
-                }
-            }
+            // The bar reads this from state; EventView.svelte also switches to
+            // the pulsing red below 30% on its own.
+            this.state.bossBarPercent = Math.max(0, currentTimeMs / totalTimeMs * 100);
             
             if(currentTimeMs <= 0) {
                 clearInterval(this.state.bossTimer);
@@ -660,8 +531,7 @@ export const events = {
             this.disableButtons(true);
             
             // Notification anzeigen
-            document.getElementById('phone-notification').classList.remove('hidden');
-            document.getElementById('phone-notification').classList.add('flex');
+            this.state.phone.notification = true;
             this.log("Handy: " + ev.title);
             
             // --- Handy einblenden & hinscrollen ---
@@ -692,10 +562,7 @@ export const events = {
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
 
-        const term = document.getElementById('terminal-content');
-        
-        // Container styling handles the centring
-        term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
+
 
         // Chain event (nodes) or simple event (opts)?
         if (ev.nodes && ev.startNode) {
@@ -703,7 +570,7 @@ export const events = {
             this.state.currentChainType = type;
             this.renderChainNode(ev.startNode);
         } else {
-            this.renderEventHTML(ev, type, term);
+            this.renderEventHTML(ev, type);
         }
     },
 
@@ -712,58 +579,25 @@ export const events = {
         const ev = this.state.currentChainEvent;
         const type = this.state.currentChainType;
         const node = ev.nodes[nodeId];
-        const term = document.getElementById('terminal-content');
-
         if (!node) { console.error("Node not found:", nodeId); return; }
 
         // Gemeinsames HTML generieren
-        term.innerHTML = this.buildEventHTML(
-            type, 
-            ev.title || "Anruf", 
-            node.text, 
-            node.opts, 
-            true, // isChain = true
-            ev.char
-        );
+        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char);
     },
 
     // 2. ALTES SYSTEM (Einfache Events)
-    renderEventHTML: function(ev, type, container) {
-        container.innerHTML = this.buildEventHTML(
-            type, 
-            ev.title, 
-            ev.text, 
-            ev.opts, 
-            false, // isChain = false
-            ev.char
-        );
+    // Hands the event to the terminal component, which renders it.
+    renderEventHTML: function(ev, type) {
+        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, ev.char);
     },
 
     // 3. GEMEINSAMES HTML-TEMPLATE
-    // One delegated listener for every option button in the terminal, instead
-    // of an inline handler per button. Attached once; survives every re-render
-    // because it sits on the container, not on the buttons.
-    initTerminalDelegation: function() {
-        const root = document.getElementById('terminal-content');
-        if (!root || root.dataset.delegated) return;
-        root.dataset.delegated = 'true';
-
-        root.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-opt]');
-            if (!btn || btn.disabled) return;
-
-            const opt = this._terminal.opts[Number(btn.dataset.opt)];
-            if (!opt) return;
-
-            this.chooseOption(opt);
-        });
-    },
-
     // Routes a chosen option to whatever handles it.
     chooseOption: function(opt) {
+        const ev = this.state.terminal.event ?? {};
         if (opt.action) return this.runAction(opt.action);
-        if (this._terminal.isChain) return this.handleChainChoice(opt.next);
-        return this.resolveTerminal(opt, this._terminal.type);
+        if (ev.isChain) return this.handleChainChoice(opt.next);
+        return this.resolveTerminal(opt, ev.type);
     },
 
     // Calls an engine method named by the data.
@@ -782,238 +616,7 @@ export const events = {
         return fn.apply(this, action.args || []);
     },
 
-    // View state for the delegated click handler. Replaced on every render, so
-    // the indices in the markup always refer to the options currently on screen.
-    _terminal: { opts: [], type: null, isChain: false },
 
-    buildEventHTML: function(type, title, text, opts, isChain, charName) {
-        this._terminal = { opts: opts || [], type: type, isChain: !!isChain };
-		
-        // Turn \n into real line breaks
-        let formattedText = text ? text.replace(/\n/g, "<br>") : "";		
-        
-        // --- STYLE KONFIGURATION ---
-        let typeName = 'SYSTEM';
-        let color = 'text-amber-400';       
-        let borderColor = 'border-amber-500';
-		let bgClass = 'bg-slate-900';
-        let icon = '⚡'; 
-
-        switch(type) {
-            case 'calls': 
-                typeName = 'ANRUF';
-                color = 'text-blue-400';
-                borderColor = 'border-blue-500';
-                icon = '📞';
-                break;
-            case 'boss': 
-                typeName = 'NOTFALL';
-                color = 'text-red-500';
-                borderColor = 'border-red-500';
-                icon = '🚨';
-                break;
-			case 'rep':
-                typeName = 'BEGEGNUNG';			
-                color = 'text-yellow-300';
-                borderColor = 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]';
-                bgClass = "bg-linear-to-b from-slate-900 to-slate-950";
-				icon = '📖';
-                break;
-            case 'sidequest': 
-                typeName = 'DIENSTGANG';  
-                color = 'text-purple-400';
-                borderColor = 'border-purple-500';
-                icon = '🎲';
-                break;
-            case 'server': 
-                typeName = 'SERVERRAUM';            
-                color = 'text-emerald-400';
-                borderColor = 'border-emerald-500';
-                icon = '💾';
-                break;
-            case 'coffee': 
-                typeName = 'KAFFEE';            
-                color = 'text-amber-400';       
-                borderColor = 'border-amber-500';
-                icon = '☕';
-                break;
-            case 'party':
-                typeName = 'SYNERGY-GALA';
-                color = 'text-pink-400';
-                borderColor = 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]';
-                bgClass = "bg-linear-to-b from-slate-900 to-slate-950";
-                icon = '🎉';
-                break;
-            case 'special':
-                typeName = 'MITTAGSPAUSE';
-                color = 'text-teal-400';
-                borderColor = 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]';
-                icon = '🍽️';
-                break;	
-        }
-
-        // --- PORTRAIT, shown beside the text box ---
-        let portraitHTML = "";
-        if (charName && DB.chars) {
-            let dbChar = DB.chars.find(c => c.name === charName);
-            if (dbChar) {
-                // Bild oder Icon laden
-                let avatarContent = dbChar.img 
-                    ? `<img src="${dbChar.img}" class="w-full h-full object-cover scale-110" alt="${dbChar.name}">` 
-                    : `<div class="w-full h-full flex items-center justify-center text-5xl bg-slate-800/50">${dbChar.icon}</div>`;
-
-                // Just the framed box, no separate name bar
-                portraitHTML = `
-                <div class="hidden sm:flex shrink-0 w-28 h-28 md:w-32 md:h-32 bg-slate-900 border border-slate-600 rounded-xl shadow-lg overflow-hidden items-center justify-center">
-                    ${avatarContent}
-                </div>`;
-            }
-        }
-        
-        let allowedExcuseTypes = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
-        let isTutorial = typeof tutorial !== 'undefined' && tutorial.isActive;
-        let showExcuseButton = allowedExcuseTypes.includes(type) && this.state.excusesLeft > 0 && !isTutorial;
-
-        let html = `
-            <div class="w-full max-w-2xl text-left fade-in ${bgClass} border ${borderColor} p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0 relative overflow-hidden">
-                <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
-                    <span class="text-3xl shrink-0">${icon}</span>
-                    <div class="flex flex-col min-w-0">
-                        <span class="${color} font-black uppercase tracking-widest text-sm wrap-break-word">${typeName}</span>
-                        <h2 class="text-xl md:text-2xl font-bold text-slate-100 wrap-break-word">${title}</h2>
-                    </div>
-                </div>
-
-
-        `;
-
-        if (type === 'boss') {
-            html += `
-            <div class="w-full h-4 bg-red-950/50 rounded-full mb-6 border border-red-500/30 overflow-hidden relative">
-                <div id="integrated-boss-bar" class="h-full bg-linear-to-r from-red-600 to-red-500 shadow-red-500/50 shadow-md ease-linear" style="width: 100%"></div>
-            </div>
-            `;
-        }
-        
-        // --- TEXTBOX UND PORTRAIT NEBENEINANDER ---
-        html += `
-                <div class="flex gap-4 md:gap-6 items-center mb-8">
-                    <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 ${borderColor} shadow-inner">
-                        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${formattedText}"</p>
-                    </div>
-                    ${portraitHTML}
-                </div>
-
-                <div class="space-y-2.5">
-        `;
-
-        // The option buttons
-        if (opts) {
-            opts.forEach((opt, index) => {
-                let locked = false;
-                let reqText = "";
-
-                if (opt.req) {
-                    let hasItem = this.state.inventory.find(i => i.id === opt.req && !i.used);
-                    let onCooldown = false;
-                    if (opt.req === 'stressball' && (this.state.time - this.state.lastStressballTime < 60)) onCooldown = true;
-
-                    if (!hasItem || onCooldown) {
-                        locked = true;
-                        let itemName = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
-                        if(!hasItem) reqText = `(Fehlt: ${itemName})`;
-                        if(onCooldown) reqText = `(Cooldown)`;
-                    }
-                }
-				
-                if(opt.rem && !locked) {
-                    let hasItem = this.state.inventory.find(i => i.id === opt.rem);
-                    if(!hasItem) {
-                        locked = true;
-                        let itemName = DB.items[opt.rem] ? DB.items[opt.rem].name : opt.rem;
-                        reqText = `(Benötigt: ${itemName})`;
-                    }
-                }
-                
-                if (opt.checkPool && !locked) {
-                    let pool = (DB.party || []).filter(ev => ev.loc === opt.checkPool && !this.state.usedIDs.has(ev.id));
-                    if (pool.length === 0) {
-                        locked = true;
-                        reqText = "(Alles gesehen)"; 
-                    }
-                }
-
-                let btnClass = "";
-                let iconBtn = "";
-
-                if (locked) {
-                    btnClass = "w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70";
-                    iconBtn = "🔒";
-                } else {
-                    btnClass = "w-full text-left p-2.5 rounded-sm border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group";
-                    iconBtn = `<span class="${color} group-hover:text-white transition-colors">➤</span>`;
-                }
-
-                // The option itself never enters the markup — only its index.
-                // Serialising it into an inline onclick meant escaping for the
-                // HTML parser and the JS parser at once, by hand; a single quote
-                // or apostrophe in the prose broke the handler silently.
-                const clickAction = locked ? '' : `data-opt="${index}"`;
-
-                let badgeHTML = "";
-                if (isChain && !locked && opt.next && !opt.next.startsWith('res_')) {
-                     badgeHTML = `<span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded-sm ml-3 font-mono">...</span>`;
-                }
-
-                let warningSpan = locked ? `<span class="text-sm text-red-500 font-normal ml-2">${reqText}</span>` : "";
-
-                // --- Hotkey badge ---
-                let hotkeyHTML = "";
-                let key = "";
-                
-                if (this.state.showHotkeys) {
-                    if (index === 0) key = this.state.keyBinds.opt1;
-                    else if (index === 1) key = this.state.keyBinds.opt2;
-                    else if (index === 2) key = this.state.keyBinds.opt3;
-                    else if (index === 3) key = "4";
-                    else if (index === 4) key = "5";
-                    else if (index === 5) key = "6";
-
-                    if (key) {
-                        hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
-                    }
-                }
-                
-                html += `
-                <button class="${btnClass}" ${clickAction} ${locked ? 'disabled' : ''}>
-                    <div class="flex items-center flex-1 mr-2 min-w-0"> 
-                        <span class="mr-3 text-xl shrink-0">${iconBtn}</span>
-                        <span class="text-left wrap-break-word py-1">${opt.t} ${warningSpan}</span>
-                    </div>
-                    <div class="shrink-0 flex items-center h-full">
-                        ${badgeHTML}
-                        ${hotkeyHTML}
-                    </div>
-                </button>`;
-            });
-        }
-        
-        // The excuse button sits bottom right
-        if (showExcuseButton) {
-            html += `
-                <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
-                    <button onclick="engine.openExcuseModal()" class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-500 hover:bg-slate-700 rounded-sm transition-all shadow-md flex items-center gap-2 group">
-                        <span>Ausrede nutzen (${this.state.excusesLeft} übrig)</span>
-                    </button>
-                </div>
-            `;
-        }
-        
-        html += `</div></div>`;
-        return html;
-    },
-
-    // Handles a choice inside a call chain
     handleChainChoice: function(nextId) {
 		this.playAudio('ui');
         const ev = this.state.currentChainEvent;
@@ -1242,21 +845,19 @@ export const events = {
         this.updateUI();
 
         // UI Rendern
-        const term = document.getElementById('terminal-content');
-        
-        let btnAction = triggerLunch ? "engine.triggerLunch()" : "engine.reset()";
+        let btnAction = triggerLunch ? "triggerLunch" : "reset";
         let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : "WEITER";
-        let btnColor = "bg-blue-600 hover:bg-blue-500"; 
+        let btnColor = "bg-blue-600 hover:bg-blue-500";
 
         if (this.state.pendingEnd) {
             // --- The disguised party trap ---
             if (this.state.pendingEnd.isParty) {
-                btnAction = "engine.startParty()";
+                btnAction = "startParty";
                 btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // Ein fieses Pink als kleiner Hinweis
             } else {
                 // --- Normales Ende ---
-                btnAction = "engine.finishGame()";
+                btnAction = "finishGame";
                 if (this.state.pendingEnd.isWin) {
                     btnText = "FEIERABEND MACHEN 🎉";
                     btnColor = "bg-green-600 hover:bg-green-500";
@@ -1267,20 +868,7 @@ export const events = {
             }
         }
 
-        let statSummaryHTML = this.buildStatSummary(m, f, finalA, finalC);
-
-        term.innerHTML = `
-            <div class="w-full max-w-xl text-left fade-in flex flex-col my-auto shrink-0">
-                <div class="bg-slate-800 p-6 rounded-xl border border-slate-600 mb-8 shadow-xl">
-                    <h3 class="font-bold text-white mb-2 uppercase text-xs tracking-widest text-emerald-500">Ergebnis</h3>
-                    <p class="text-slate-300 italic text-lg leading-relaxed">"${res}"</p>
-                    ${statSummaryHTML}
-                </div>
-                <button onclick="${btnAction}" class="${btnColor} text-white w-full py-4 rounded-xl font-bold uppercase transition-all shadow-lg border border-slate-700/50">
-                    ${btnText}
-                </button>
-            </div>
-        `;
+        this.setTerminalResult(res, m, f, finalA, finalC, btnAction, btnText, btnColor);
     },
 
     triggerLunch: function() {
@@ -1346,33 +934,8 @@ export const events = {
         // Refresh immediately so bars and clock are correct
         this.updateUI();
 
-        // 3. Render in the terminal using the special event styling
-        const term = document.getElementById('terminal-content');
-        term.className = "flex-1 flex flex-col items-center py-3 w-full min-h-full";
-        
-        term.innerHTML = `
-            <div class="w-full max-w-2xl text-left fade-in bg-slate-900 border border-slate-400 p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0 relative overflow-hidden">
-                <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
-                    <span class="text-3xl">🌅</span>
-                    <div class="flex flex-col">
-                        <span class="text-slate-400 font-black uppercase tracking-widest text-sm">DER MORGEN DANACH</span>
-                        <h2 class="text-2xl font-bold text-white">${mood.title}</h2>
-                    </div>
-                </div>
-                
-                <div class="bg-black/40 p-5 rounded-lg border-l-4 border-slate-400 mb-6">
-                    <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"${mood.text}"</p>
-                </div>
-                
-                <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
-                    Startbedingungen: ${statHtml}
-                </div>
-
-                <button onclick="engine.reset()" class="w-full text-center p-4 rounded-xl border border-slate-500 bg-slate-800 hover:bg-slate-700 hover:border-slate-300 hover:shadow-lg hover:text-white transition-all text-slate-200 font-bold shadow-md uppercase tracking-widest">
-                    Den Arbeitstag beginnen
-                </button>
-            </div>
-        `;
+        // 3. Rendered by components/MorningView.svelte
+        this.setTerminalMorning(mood.title, mood.text, statHtml);
     },
 
     // --- PARTY SYSTEM ---
@@ -1439,151 +1002,62 @@ export const events = {
 
     // --- PHONE SYSTEM ---
     openPhone: function() {
-		this.playAudio('phone');
-        document.getElementById('phone-standby').classList.add('hidden');
-        document.getElementById('phone-app').classList.remove('hidden');
-        document.getElementById('phone-app').classList.add('flex');
-        document.getElementById('phone-notification').classList.add('hidden');
-        document.getElementById('phone-notification').classList.remove('flex');
+        this.playAudio('phone');
 
-        let ev = this.state.currentPhoneEvent;
-        document.getElementById('app-title').innerText = ev.appName;
-        
-        document.getElementById('app-content').innerHTML = '';
+        const ev = this.state.currentPhoneEvent;
+        this.state.phone = {
+            open: true,
+            notification: false,
+            appName: ev.appName,
+            messages: [],
+            options: []
+        };
+
         this.renderPhoneNode(ev.nodes[ev.startNode]);
     },
-	
+
+    // --- PHONE CONVERSATION ---
+    //
+    // Every bubble goes through here. `side` decides how PhoneView.svelte
+    // renders it: in, out, typing, system or error.
+    // The returned id is what removePhoneMessage() needs - the typing indicator
+    // is the only bubble that gets taken away again.
+    addPhoneMessage: function(msg) {
+        const id = this._phoneMsgId = (this._phoneMsgId || 0) + 1;
+        this.state.phone.messages.push({ id, ...msg });
+        return id;
+    },
+
+    removePhoneMessage: function(id) {
+        const i = this.state.phone.messages.findIndex(m => m.id === id);
+        if (i > -1) this.state.phone.messages.splice(i, 1);
+    },
+
+    // Appends the incoming message and offers the node's replies.
+    // components/PhoneView.svelte renders both.
     renderPhoneNode: function(node) {
-        // Make sure content and action containers exist
-        const content = document.getElementById('app-content');
-        const actions = document.getElementById('app-actions');
-        
-        if (!content || !actions) return;
+        const ev = this.state.currentPhoneEvent;
+        const sender = ev.title || "Unbekannt";
 
-        // Avatar basierend auf App-Name oder Titel (Default: ?)
-        // First letter of the title doubles as the avatar
-        let ev = this.state.currentPhoneEvent;
-        let avatarLetter = ev.title ? ev.title.charAt(0).toUpperCase() : "?";
-        let senderName = ev.title || "Unbekannt";
-
-        // Incoming message: left aligned, grey
-        // node.text comes straight from the data files
-        content.innerHTML += `
-        <div class="w-full flex justify-start mb-4 fade-in">
-            <div class="flex items-end gap-2 max-w-[85%]">
-                <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0 border border-slate-500">
-                    ${avatarLetter}
-                </div>
-                
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-slate-400 ml-1 mb-0.5">${senderName}</span>
-                    <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed border border-slate-600 relative">
-                        ${node.text}
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
-        // Render the reply options
-        actions.innerHTML = '';
-        // Container Styling sicherstellen
-        actions.className = "p-2 bg-slate-900 border-t border-slate-700 flex flex-col gap-2"; 
-
-        node.opts.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            
-            btn.className = "w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 py-1 px-2 rounded-xl text-sm font-medium transition-all text-left shadow-xs flex items-center justify-between group";
-            
-            // Requirement and removal checks, same rules as the terminal
-            let locked = false;
-            let missingItem = "";
-
-            if (opt.req) {
-                 const hasItem = this.state.inventory.find(i => i.id === opt.req);
-                 if (!hasItem) {
-                     locked = true;
-                     missingItem = DB.items[opt.req] ? DB.items[opt.req].name : opt.req;
-                 }
-            }
-            if (opt.rem && !locked) {
-                 const hasItem = this.state.inventory.find(i => i.id === opt.rem);
-                 if (!hasItem) {
-                     locked = true;
-                     missingItem = DB.items[opt.rem] ? DB.items[opt.rem].name : opt.rem;
-                 }
-            }
-
-            // Hotkeys, shown for the first three unlocked options only
-            let hotkeyHTML = "";
-            let key = "";
-            
-            if (this.state.showHotkeys) {
-                if (index === 0) key = this.state.keyBinds.opt1;
-                else if (index === 1) key = this.state.keyBinds.opt2;
-                else if (index === 2) key = this.state.keyBinds.opt3;
-                else if (index === 3) key = "4";
-                else if (index === 4) key = "5";
-                else if (index === 5) key = "6";
-
-                if (key) {
-                    hotkeyHTML = `<kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">${key.toUpperCase()}</kbd>`;
-                }
-            }
-
-            if (locked) {
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 mr-2">
-                        <span class="text-red-500 shrink-0">🔒</span> 
-                        <span class="wrap-break-word leading-tight py-1">${opt.t}</span>
-                    </div>
-                    <div class="shrink-0 flex items-center h-full">
-                        <span class="text-[10px]">(Fehlt: ${missingItem})</span>
-                    </div>`;
-            } else {
-                btn.innerHTML = `
-                    <div class="flex items-center gap-2 flex-1 mr-2">
-                        <span class="opacity-50 group-hover:opacity-100 shrink-0">➤</span> 
-                        <span class="wrap-break-word leading-tight py-1">${opt.t}</span>
-                    </div>
-                    <div class="shrink-0 flex items-center h-full">
-                        ${hotkeyHTML}
-                    </div>
-                `;
-                btn.onclick = () => this.handlePhoneChoice(opt.t, opt.next, opt.rem);
-            }
-            
-            actions.appendChild(btn);
+        this.addPhoneMessage({
+            side: 'in',
+            text: node.text,
+            sender,
+            avatar: sender.charAt(0).toUpperCase()
         });
-        
-        // Auto scroll, smoothly
-        setTimeout(() => {
-            content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-        }, 100);
+
+        this.state.phone.options = node.opts || [];
     },
 
     handlePhoneChoice: function(text, nextId, remId) {
 		this.playAudio('phone');
-        const actions = document.getElementById('app-actions');
-        
-        // SPAM-SCHUTZ
-        if (!actions || actions.innerHTML.trim() === '') return;
-        actions.innerHTML = ''; 
+        // Re-entrance guard: no options on screen means a reply is already in
+        // flight. Used to be a check on the buttons' innerHTML.
+        if (this.state.phone.options.length === 0) return;
+        this.state.phone.options = [];
 
-        const content = document.getElementById('app-content');
-        
-        // 1. DEINE NACHRICHT (Rechts, Blau)
-        content.innerHTML += `
-        <div class="w-full flex justify-end mb-4 fade-in">
-            <div class="max-w-[85%] flex flex-col items-end">
-                <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed border border-blue-500 relative">
-                    ${text}
-                </div>
-                <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>
-            </div>
-        </div>`;
-        
-        // --- REM ITEM SOFORT ENTFERNEN ---
+        this.addPhoneMessage({ side: 'out', text });
+
         if (remId) {
             let itemIndex = this.state.inventory.findIndex(i => i.id === remId);
             if (itemIndex > -1) {
@@ -1595,16 +1069,13 @@ export const events = {
         }
         // -----------------------------------------------
         
-        setTimeout(() => {
-        content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-        }, 50);
 
         let ev = this.state.currentPhoneEvent;
         let validNext = (ev.results && ev.results[nextId]) || (ev.nodes && ev.nodes[nextId]);
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
-            content.innerHTML += `<div class="text-center text-xs text-red-500 my-2">- Verbindung abgebrochen -</div>`;
+            this.addPhoneMessage({ side: 'error', text: '- Verbindung abgebrochen -' });
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -1687,39 +1158,20 @@ export const events = {
         // --- Fast chat handling, case A ---
             let typingTime = this.state.fastChat ? 0 : 1500;
             let readTime = this.state.fastChat ? 3000 : 4500;
-            const loadingId = "typing-" + Date.now();
+            let loadingId = null;   // set when the typing bubble is shown
 
             // Only render when fast chat is off
             if (!this.state.fastChat) {
-                content.innerHTML += `
-                <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
-                    <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    </div>
-                </div>`;
-                setTimeout(() => {
-                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-                }, 50);
+                loadingId = this.addPhoneMessage({ side: 'typing' });
             }
 
             // Timer (entweder 0 oder 1.5s)
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             this.state.phoneTypeTimer = setTimeout(() => {
-                const loader = document.getElementById(loadingId);
-                if(loader) loader.remove();
+                if (loadingId) this.removePhoneMessage(loadingId);
 
-                // System Nachricht (Grau, Zentriert)
-                content.innerHTML += `
-                <div class="w-full flex justify-center my-4 fade-in">
-                    <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-xs">
-                        ${res.txt}
-                    </div>
-                </div>`;
-                setTimeout(() => {
-                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-                }, 50);
+                // System message, centred and grey
+                this.addPhoneMessage({ side: 'system', text: res.txt });
 
                 if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
                 this.state.phoneReadTimer = setTimeout(() => {
@@ -1742,21 +1194,11 @@ export const events = {
         // CASE B: the conversation continues
         else if (ev.nodes[nextId]) {
             
-            const loadingId = "typing-" + Date.now();
+            let loadingId = null;   // set when the typing bubble is shown
             
             // --- Fast chat handling, case B ---
             if (!this.state.fastChat) {
-                content.innerHTML += `
-                <div id="${loadingId}" class="w-full flex justify-start mb-2 fade-in">
-                    <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                         <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    </div>
-                </div>`;
-                setTimeout(() => {
-                    content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
-                }, 50);
+                loadingId = this.addPhoneMessage({ side: 'typing' });
             }
 
             // Fast chat: no delay. Otherwise 1.5 to 2.5 seconds.
@@ -1764,17 +1206,15 @@ export const events = {
 
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             this.state.phoneTypeTimer = setTimeout(() => {
-                const loader = document.getElementById(loadingId);
-                if(loader) loader.remove();
+                if (loadingId) this.removePhoneMessage(loadingId);
                 this.renderPhoneNode(ev.nodes[nextId]);
             }, typingDuration);
         }
     },
 
     closePhone: function() {
-        document.getElementById('phone-app').classList.add('hidden');
-        document.getElementById('phone-app').classList.remove('flex');
-        document.getElementById('phone-standby').classList.remove('hidden');
+        this.state.phone.open = false;
+        this.state.phone.notification = false;
         
         // --- Clear the event and re-check visibility ---
         this.state.currentPhoneEvent = null; 
