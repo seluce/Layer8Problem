@@ -88,7 +88,7 @@ export const audio = {
                 osc.stop(t + 0.25);
             }
         } catch(e) {
-            console.log("Audio Fehler:", e);
+            console.warn("Audio Fehler:", e);
         }
     },
 	
@@ -132,7 +132,7 @@ export const audio = {
                         this.playMusic(nextTrack); 
                     } else {
                         // Single-style mode (the player picked e.g. 'lofi'): restart it
-                        this.bgmTracks[key].play().catch(e => console.log(e));
+                        this.bgmTracks[key].play().catch(e => console.warn("Musik konnte nicht starten:", e));
                     }
                 });
             }
@@ -220,7 +220,7 @@ export const audio = {
         let track = this.bgmTracks[actualTrack];
         if (track) {
             track.volume = this.state.musicVolume;
-            track.play().catch(e => console.log("Musik Autoplay blockiert:", e));
+            track.play().catch(e => console.warn("Musik Autoplay blockiert:", e));
         }
     },
 

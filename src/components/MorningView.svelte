@@ -28,7 +28,7 @@
         Startbedingungen: {@html view.conditions ?? ''}
     </div>
 
-    <button onclick={() => engine.reset()}
+    <button data-continue onclick={() => engine.reset()}
             class="w-full text-center p-4 rounded-xl border border-slate-500 bg-slate-800 hover:bg-slate-700 hover:border-white transition-all font-bold uppercase tracking-wider">
         Den Arbeitstag beginnen
     </button>

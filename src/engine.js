@@ -159,9 +159,14 @@ document.addEventListener('keydown', (event) => {
         
         const tutModal = document.getElementById('tut-ask-modal');
         if (tutModal && !tutModal.classList.contains('hidden')) {
-            // Sucht den "Arbeitstag starten" Button am Ende
-            const finishBtn = document.querySelector('#tut-ask-modal button[onclick="tutorial.finish()"]');
+            // End screen first ("Arbeitstag starten", injected by
+            // tutorial.js), otherwise the start screen — confirm always
+            // triggers the recommended button. Both carry stable ids now
+            // instead of onclick-attribute lookups.
+            const finishBtn = document.getElementById('tut-finish-btn');
             if (finishBtn) { finishBtn.click(); return; }
+            const startBtn = document.getElementById('tut-start-btn');
+            if (startBtn) { startBtn.click(); return; }
         }
         
         // B: Modals (Abmahnung, Ende, Item-Confirm)
@@ -178,11 +183,13 @@ document.addEventListener('keydown', (event) => {
             return;
         }
 
-        // D: Terminal Weiter-Button
-        const terminalButtons = document.querySelectorAll('#terminal-content button');
-        if (terminalButtons.length === 1 && (!engine.state.activeEvent || engine.state.pendingEnd || terminalButtons[0].innerText.includes('MITTAGS') || terminalButtons[0].innerText.includes('WEITER'))) {
-             terminalButtons[0].click(); return;
-        }
+        // D: Terminal continue button (Weiter / Mittagspause / Feierabend /
+        // morning start). ResultView and MorningView mark theirs with a
+        // data-continue attribute — matching on the caption text broke as
+        // soon as a label was reworded, and "exactly one button on screen"
+        // was only ever a proxy for the same idea.
+        const contBtn = document.querySelector('#terminal-content button[data-continue]');
+        if (contBtn) { contBtn.click(); return; }
     }
 
     // 4. ACTION SHORTCUTS (Q, W, E, R)
@@ -215,7 +222,7 @@ document.addEventListener('keydown', (event) => {
         // C: the terminal
         else {
             const termActions = document.querySelectorAll('#terminal-content button');
-            visibleOptions = Array.from(termActions).filter(b => !b.innerText.includes('WEITER'));
+            visibleOptions = Array.from(termActions).filter(b => !b.hasAttribute('data-continue'));
         }
 
         if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) visibleOptions[0].click();

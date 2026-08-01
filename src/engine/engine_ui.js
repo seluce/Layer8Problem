@@ -968,7 +968,7 @@ export const ui = {
         const originalText = textSpan.innerText;
 
         if (navigator.share) {
-            navigator.share(shareData).catch(err => console.log("Teilen abgebrochen:", err));
+            navigator.share(shareData).catch(() => { /* Der Mensch hat den Teilen-Dialog geschlossen - kein Fehler. */ });
         } else {
             navigator.clipboard.writeText(shareUrl).then(() => {
                 textSpan.innerText = "Link erfolgreich kopiert!";

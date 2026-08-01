@@ -31,6 +31,7 @@ Anzeige & Layout:
 * Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
 
 Fehlerkorrekturen:
+* Die Bestätigen-Taste funktioniert jetzt auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
 * Drei Tastatur-Regressionen aus der Svelte-Umstellung behoben: Die Bestätigen-Taste nimmt eingehende Handy-Benachrichtigungen wieder an und klickt das Tutorial wieder weiter (beides suchte noch nach Elementen der alten Oberfläche), und Escape schließt das Fenster für Spielstand-Export und -Import wieder, statt still einen internen Fehler auszulösen.
 * Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest und kam aus dem Ereignis nicht mehr heraus.
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
@@ -41,6 +42,7 @@ Fehlerkorrekturen:
 * Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
 
 Für Entwickler:
+* Die Weiter-Knöpfe im Terminal (Weiter, Mittagspause, Feierabend, Arbeitstag starten) tragen jetzt ein data-continue-Attribut. Die Tastatursteuerung erkannte sie bisher am Beschriftungstext - eine umformulierte Beschriftung hätte die Taste lautlos abgeklemmt. Nebenbei können die Zifferntasten Weiter-Knöpfe nicht mehr versehentlich als Antwort treffen, und vier Konsolen-Ausgaben wurden auf Warnstufe gehoben oder entfernt.
 * Sämtliche localStorage-Schlüssel wohnen jetzt in einem eigenen Modul (keys.js), das Zustand, Oberfläche und Audio gemeinsam importieren - bislang waren 29 Lese- und Schreibstellen in drei Dateien als nackte Zeichenketten verstreut, exakt die Fehlerklasse, die früher den Tutorial-Merker aus dem Tritt gebracht hat. Der Hard-Reset dokumentiert nun außerdem ausdrücklich, dass Einstellungen, Audio-Werte und Tastenbelegung ihn bewusst überleben.
 * Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht nun aus 22 Komponenten statt aus zusammengesetzten HTML-Zeichenketten.
 * Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.

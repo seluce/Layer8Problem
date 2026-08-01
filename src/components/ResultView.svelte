@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <button onclick={() => engine.runAction({ fn: view.action })}
+    <button data-continue onclick={() => engine.runAction({ fn: view.action })}
             class="{view.buttonColor} text-white w-full py-4 rounded-xl font-bold uppercase transition-all shadow-lg border border-slate-700/50">
         {view.buttonText}
     </button>

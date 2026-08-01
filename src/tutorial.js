@@ -23,16 +23,6 @@ const tutorial = {
     },
 
     // NEU: Eine zentrale Funktion, um alle Lichter auszuknipsen
-    // The glow rings stay classList work on purpose.
-    //
-    // They land on elements that belong to different components — action
-    // buttons, stat rows, the inventory grid. Driving them from state would
-    // mean every one of those components has to know about the tutorial. Worse,
-    // ActionBar deliberately keeps nothing state-derived in its class
-    // attribute, because Svelte rewrites the whole attribute on update and
-    // would wipe these rings out.
-    //
-    // Adding and removing classes from outside is the lighter coupling here.
     clearGlows: function() {
         const allElements = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls', 'ticket-container', 'clock-container', 'stat-row-fl', 'stat-row-al', 'stat-row-cr', 'stats-container', 'btn-inventory', 'btn-team', 'inventory-grid'];
         allElements.forEach(id => {
@@ -272,40 +262,51 @@ const tutorial = {
     },
 
     showPointer: function(targetEl, title, desc, isInfoStep) {
-        if (!targetEl) return;
-
+        const pointer = document.getElementById('tut-pointer');
+        if(!pointer || !targetEl) return;
+        
         if (this.pointerTimeout) clearTimeout(this.pointerTimeout);
-        this.currentTarget = targetEl;
-
+        
+        // 1. Remember the scroll target
+        this.currentTarget = targetEl; 
+        
+        // 2. Scroll it into view - on mobile it is often off-screen
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        // Contents go through the state; components/TutorialPointer.svelte
-        // renders them.
-        engine.state.tutorialPointer = {
-            visible: true,
-            faded: true,
-            title,
-            desc,
-            confirmable: !!isInfoStep
-        };
+        document.getElementById('tut-pointer-title').innerText = title;
+        
+        let descHtml = desc;
+        if (isInfoStep) {
+            descHtml += `<div class="mt-4 border-t border-cyan-800 pt-3 pointer-events-auto">
+                            <div onclick="tutorial.advance()" class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-2 px-2 rounded-sm border border-cyan-700 transition-colors uppercase tracking-widest text-[10px] flex items-center justify-center gap-1 shadow-md">
+                                <span>▶</span> Verstanden
+                            </div>
+                         </div>`;
+        }
+        
+        document.getElementById('tut-pointer-desc').innerHTML = descHtml;
+        
+        pointer.classList.remove('hidden');
+        pointer.classList.add('flex');
+        
+        // 3. Position sofort einmal berechnen
+        this.updatePosition();
 
-        // Position after the bubble exists, otherwise offsetWidth is zero.
-        requestAnimationFrame(() => {
-            this.updatePosition();
-            engine.state.tutorialPointer.faded = false;
-        });
-
+        // 4. Recalculate the position whenever the page scrolls
         if (!this.scrollAttached) {
             window.addEventListener('scroll', () => this.updatePosition(), { passive: true });
             window.addEventListener('resize', () => this.updatePosition(), { passive: true });
             this.scrollAttached = true;
         }
+        
+        setTimeout(() => pointer.classList.remove('opacity-0'), 10);
     },
 
+    // Extracted positioning logic
     updatePosition: function() {
         const pointer = document.getElementById('tut-pointer');
         // No pointer, hidden tutorial or missing target -> nothing to position
-        if (!pointer || !this.currentTarget || !engine.state.tutorialPointer.visible) return;
+        if (!pointer || !this.currentTarget || pointer.classList.contains('hidden')) return;
 
         const rect = this.currentTarget.getBoundingClientRect();
         const ptrWidth = pointer.offsetWidth;
@@ -348,11 +349,15 @@ const tutorial = {
     },
 
     hidePointer: function() {
-        engine.state.tutorialPointer.faded = true;
-        this.pointerTimeout = setTimeout(() => {
-            engine.state.tutorialPointer.visible = false;
-            this.currentTarget = null;   // clear the target while hidden
-        }, 300);
+        const pointer = document.getElementById('tut-pointer');
+        if(pointer) {
+            pointer.classList.add('opacity-0');
+            this.pointerTimeout = setTimeout(() => {
+                pointer.classList.add('hidden');
+                pointer.classList.remove('flex');
+                this.currentTarget = null; // clear the target while hidden
+            }, 300);
+        }
     },
 
     advance: function() {
@@ -376,7 +381,7 @@ const tutorial = {
             const btnContainer = askModal.querySelector('.grid.gap-3');
             if (btnContainer) {
                 btnContainer.innerHTML = `
-                    <button onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
+                    <button id="tut-finish-btn" onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
                         <span class="text-lg">▶</span> Arbeitstag starten
                     </button>
                 `;
