@@ -112,6 +112,24 @@ for (const p of POOLS) {
   }
 }
 
+/* ---------- 2b) Sperr-Sicherheit: item-freie Optionen ---------- */
+// Ein Event, dessen sämtliche Optionen req oder rem tragen, kann sich komplett
+// sperren, sobald die Gegenstände fehlen — Inventar resettet täglich, und bei
+// vollem Rucksack lassen sich Items wegwerfen. Fatal, deshalb Fehler.
+// Genau eine freie Option ist per Design erlaubt (1-2 sind das Ziel).
+for (const p of POOLS) {
+  for (const ev of DB[p]) {
+    const ctx = `[${p}/${ev.id}]`;
+    const checkFree = (opts, where) => {
+      if (!opts?.length) return;
+      if (opts.every(o => o.req || o.rem))
+        err(`${where}: ALLE ${opts.length} Optionen brauchen ein Item -> Event kann sich komplett sperren`);
+    };
+    checkFree(ev.opts, ctx);
+    for (const [nid, node] of Object.entries(ev.nodes ?? {})) checkFree(node.opts, `${ctx}#${nid}`);
+  }
+}
+
 /* ---------- 3) E-Mails ---------- */
 const mailIdSeen = new Map();
 const subjSeen = new Map();
