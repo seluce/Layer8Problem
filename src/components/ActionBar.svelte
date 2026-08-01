@@ -59,7 +59,7 @@
         <span class="text-[10px] md:text-xs font-bold relative">{action.label}</span>
 
         {#if state.showHotkeys}
-            <kbd class="hotkey-badge absolute top-1 right-1.5 text-[8px] md:text-[9px] font-mono text-slate-400 bg-slate-900 border border-slate-700 px-1 rounded-sm shadow-xs opacity-80 pointer-events-none">
+            <kbd class="key-hint absolute top-1.5 right-1.5">
                 {keyLabel(action.bind)}
             </kbd>
         {/if}

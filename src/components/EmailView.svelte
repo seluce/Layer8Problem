@@ -112,8 +112,7 @@
                 </div>
                 <div class="shrink-0 flex items-center h-full">
                     {#if o.key}
-                        <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-700 px-1.5 py-0.5 rounded-sm text-slate-500 font-mono shadow-inner transition-colors
-                                    {o.isDelete ? 'group-hover:text-red-400' : 'group-hover:text-blue-400'}">{o.key}</kbd>
+                        <kbd class="key-hint shrink-0 {o.isDelete ? 'group-hover:text-red-400' : 'group-hover:text-blue-400'}">{o.key}</kbd>
                     {/if}
                 </div>
             </button>

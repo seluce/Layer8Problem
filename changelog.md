@@ -18,6 +18,7 @@ Spielbalance:
 
 Anzeige & Layout:
 * Der Inventar-Eintrag in der Schnellleiste trägt sein Symbol jetzt links vom Text - so wie Team, Archiv und Menü auch. Statt der Lupe zeigt er den Rucksack, der das Inventar auch überall sonst repräsentiert.
+* Die Tastatur-Hinweise sehen jetzt aus wie kleine Tastenkappen statt wie graue Kästchen: mit Lichtkante, Sockel und einer Beschriftung, die beim Überfahren im Bernstein der Oberfläche aufleuchtet. Drückt man den Button, fährt die Taste sichtbar mit in den Sockel. Die Darstellung ist jetzt an allen vier Orten identisch - Aktionsleiste, Ereignis-Antworten, Handy und Postfach hatten bisher jeweils leicht andere Kästchen. Im Postfach bleibt die Ausnahme mit Bedeutung: Die Lösch-Taste leuchtet rot, Antworten blau. Wer die Hinweise in den Einstellungen ausgeblendet hat, merkt von alledem nichts.
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
 * Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
 * Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben, was ihn wie die naheliegende Wahl aussehen ließ - dabei geht es im Spiel gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint jetzt erst, wenn die Tickets kritisch werden.
@@ -30,6 +31,7 @@ Anzeige & Layout:
 * Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
 
 Fehlerkorrekturen:
+* Drei Tastatur-Regressionen aus der Svelte-Umstellung behoben: Die Bestätigen-Taste nimmt eingehende Handy-Benachrichtigungen wieder an und klickt das Tutorial wieder weiter (beides suchte noch nach Elementen der alten Oberfläche), und Escape schließt das Fenster für Spielstand-Export und -Import wieder, statt still einen internen Fehler auszulösen.
 * Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest und kam aus dem Ereignis nicht mehr heraus.
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
 * Dasselbe galt für den Ruhebildschirm des Terminals: Nach der ersten Rückkehr dorthin passte sich die Schriftgröße nicht mehr an die Bildschirmbreite an.
@@ -39,6 +41,7 @@ Fehlerkorrekturen:
 * Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
 
 Für Entwickler:
+* Sämtliche localStorage-Schlüssel wohnen jetzt in einem eigenen Modul (keys.js), das Zustand, Oberfläche und Audio gemeinsam importieren - bislang waren 29 Lese- und Schreibstellen in drei Dateien als nackte Zeichenketten verstreut, exakt die Fehlerklasse, die früher den Tutorial-Merker aus dem Tritt gebracht hat. Der Hard-Reset dokumentiert nun außerdem ausdrücklich, dass Einstellungen, Audio-Werte und Tastenbelegung ihn bewusst überleben.
 * Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht nun aus 22 Komponenten statt aus zusammengesetzten HTML-Zeichenketten.
 * Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.
 * Rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).

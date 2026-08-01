@@ -164,7 +164,7 @@
                         <span class="text-xs text-blue-400 bg-blue-900/20 border border-blue-900/50 px-2 py-1 rounded-sm font-mono">...</span>
                     {/if}
                     {#if o.key}
-                        <kbd class="shrink-0 text-[9px] bg-slate-900 border border-slate-600 px-1.5 py-0.5 rounded-sm text-slate-400 font-mono shadow-inner group-hover:text-white transition-colors">{o.key}</kbd>
+                        <kbd class="key-hint shrink-0">{o.key}</kbd>
                     {/if}
                 </div>
             </button>

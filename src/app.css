@@ -76,11 +76,26 @@
     }
 }
 
+/* Depth scale, darkest to lightest.
+   The terminal sits at the bottom, the page above it, panels above that,
+   interactive elements on top. Keeping the four steps named makes the
+   relationship visible — and adjustable in one place.
+
+   The page used to be #020617, the same value as the sunken terminal, so the
+   terminal only read as recessed against the panels beside it and merged with
+   the page behind it. */
+:root {
+    --depth-sunken: #020617;   /* the terminal */
+    --depth-page:   #080e20;   /* the page behind everything */
+    --depth-panel:  #0f172a;   /* panels: stats, log, phone, modals */
+    --depth-raised: #1e293b;   /* buttons, slots, anything you can click */
+}
+
 /* 1. BASELINE (font, background, spacing) */
 @layer base {
     body {
         font-family: 'JetBrains Mono', monospace;
-        background-color: #020617;
+        background-color: var(--depth-page);
         color: #e2e8f0;
         height: 100vh;
         overflow: hidden;
@@ -102,13 +117,60 @@
    overrides Tailwind's own .text-xl and .text-2xl.
    Cascade order is unchanged: utilities still override components. */
 @layer components {
+    /* TASTENKAPPEN (Shortcut-Hinweise)
+       Eine kleine mechanische Taste statt grauem Kästchen — Model-M-
+       Gedächtnis, passend zum Haus. Lichtkante oben, 2px Sockel unten,
+       und die Kappe drückt mit, wenn ihr Button gedrückt wird.
+       Zentrale Definition für Aktionsleiste, Ereignis-Optionen, Handy
+       und Postfach; abweichende Hover-Akzente (z. B. Rot fürs Löschen
+       im Postfach) setzen die Komponenten per Utility-Klasse, die den
+       Components-Layer regulär überstimmt. */
+    .key-hint {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.6em;
+        padding: 3px 6px 4px;
+        font-family: var(--font-mono, ui-monospace), monospace;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.03em;
+        color: #cbd5e1;
+        background: linear-gradient(180deg, #3e4a5e 0%, #2a3548 55%, #202b3d 100%);
+        border: 1px solid #0f172a;
+        border-radius: 3px;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.14),
+            0 2px 0 #0b1120,
+            0 2px 3px rgba(0, 0, 0, 0.45);
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+        pointer-events: none;
+        user-select: none;
+        transition: transform 0.06s ease, box-shadow 0.06s ease, color 0.15s ease;
+    }
+
+    /* Beim Überfahren des Buttons leuchtet die Beschriftung im Haus-Bernstein. */
+    button:hover .key-hint { color: #fbbf24; }
+
+    /* Die Kappe fährt beim Drücken des Buttons in den Sockel. */
+    button:active .key-hint {
+        transform: translateY(1px);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 1px 0 #0b1120,
+            0 1px 2px rgba(0, 0, 0, 0.45);
+    }
+
+    body.compact-mode .key-hint { font-size: 10px; padding: 2px 5px 3px; }
+
     /* PANELS
        Every panel carries a coloured top edge — the one element of this design
        that is not generic. It comes from a variable so the terminal can change
        its accent with the event type, and so a panel without an accent class
        still has the same silhouette instead of a different one. */
     .neon-box {
-        background: #0f172a;
+        background: var(--depth-panel);
         border: 1px solid #1e293b;
         border-top: 3px solid var(--panel-accent, #334155);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
@@ -138,7 +200,7 @@
        darker, recessed, no drop shadow. The status header sits on top of it.
        Same panel, different plane — the eye goes to the screen. */
     .panel-sunken {
-        background: #020617;
+        background: var(--depth-sunken);
         box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
