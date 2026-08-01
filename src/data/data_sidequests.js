@@ -5375,6 +5375,7 @@ export const sidequests = [
     },
     {
         id: "sq_plant_1",
+        kind: "text",
         title: "Flora in Not",
         text: "Die teure Ficus-Pflanze im Flur, ein Geschenk des Vorstands, lässt die Blätter hängen. Die Erde ist staubtrocken. Jemand hat ein Post-It daran geklebt: 'Wasser-Beauftragter gesucht'.",
         opts: [
@@ -5401,6 +5402,7 @@ export const sidequests = [
     },
     {
         id: "sq_plant_2a",
+        kind: "text",
         title: "Fliegen-Invasion",
         reqStory: "path_plant_donut",
         text: "Dein Donut-Dünger hat eine gewaltige Fruchtfliegen-Plage ausgelöst. Frau Elster wedelt panisch mit einer Zeitung im Flur herum.",
@@ -5420,6 +5422,7 @@ export const sidequests = [
     },
     {
         id: "sq_plant_2b",
+        kind: "text",
         title: "Mutierter Ficus",
         reqStory: "path_plant_coffee",
         text: "Der Kaffee hat Wunder gewirkt! Der Ficus ist förmlich explodiert, die Blätter glänzen und ragen bis zur Decke. Der Chef bestaunt das Wunderwerk.",
@@ -5440,6 +5443,7 @@ export const sidequests = [
     },
     {
         id: "sq_plant_2c",
+        kind: "text",
         title: "Totholz",
         reqStory: "path_plant_ignore",
         text: "Der Ficus ist komplett vertrocknet. Traurig steht der kahle Stamm im Flur. Egon ist dabei, ihn wütend aus dem Topf zu reißen.",
@@ -5463,6 +5467,7 @@ export const sidequests = [
     // CHAIN 2: Der Stuhl
     {
         id: "sq_furniture_1",
+        kind: "text",
         title: "Büro-Mobiliar-Krieg",
         text: "Du kommst aus dem Meeting zurück und dein sündhaft teurer, ergonomischer 1000-Euro-Bürostuhl ist weg! Stattdessen steht da ein knarrender, zerschlissener Holzstuhl aus den 90ern.",
         opts: [
@@ -5489,6 +5494,7 @@ export const sidequests = [
     },
     {
         id: "sq_chair_2a",
+        kind: "text",
         title: "Stolzer Dieb",
         reqStory: "path_chair_steal",
         text: "Das Marketing-Team hat bemerkt, dass ihr bester Stuhl fehlt. Sie durchsuchen die Büros und stehen plötzlich kopfschüttelnd in deiner Tür.",
@@ -5508,6 +5514,7 @@ export const sidequests = [
     },
     {
         id: "sq_chair_2b",
+        kind: "text",
         title: "Der Krumme",
         reqStory: "path_chair_suffer",
         text: "Dein Rücken schmerzt extrem. Du läufst wie der Glöckner von Notre-Dame durch den Flur. Der Chef kommt dir entgegen.",
@@ -5528,6 +5535,7 @@ export const sidequests = [
     },
     {
         id: "sq_chair_2c",
+        kind: "text",
         title: "Kevins Ermittlungen",
         reqStory: "path_chair_kevin",
         text: "Kevin kommt triumphierend zurück. Er hat den originalen Stuhl im Pausenraum gefunden, wo Markus ihn offenbar als Fußablage benutzt.",
@@ -5550,6 +5558,7 @@ export const sidequests = [
     // CHAIN 3: Thermostat
     {
         id: "sq_temp_1",
+        kind: "text",
         title: "Krieg der Knöpfe",
         text: "Jemand hat das Thermostat im Serverraum-Vorraum auf kuschelige 26 Grad gestellt. Die Server lüften lautstark, und dir rinnt der Schweiß. Gabi liebt die Wärme.",
         opts: [
@@ -5577,6 +5586,7 @@ export const sidequests = [
     },
     {
         id: "sq_temp_2a",
+        kind: "text",
         title: "Frostbeulen",
         reqStory: "path_temp_freeze",
         text: "Gabi sitzt mit Winterjacke und Schal an ihrem Platz. Sie schnieft. Sie sieht dich an, als hättest du ihr persönlich den Sommer gestohlen.",
@@ -5596,6 +5606,7 @@ export const sidequests = [
     },
     {
         id: "sq_temp_2b",
+        kind: "text",
         title: "Rache der Sekretärin",
         reqStory: "path_temp_lecture",
         text: "Deine Standpauke hat Konsequenzen. Gabi hat sämtliche eingehende Anrufe von schwierigen Kunden kommentarlos direkt auf dein Telefon durchgestellt.",
@@ -5615,6 +5626,7 @@ export const sidequests = [
     },
     {
         id: "sq_temp_2c",
+        kind: "text",
         title: "Das Siegel der IT",
         reqStory: "path_temp_tape",
         text: "Hausmeister Egon starrt auf das mit Tape versiegelte Thermostat. 'Ist das Vorschrift nach ISO-9001?'",
@@ -5637,6 +5649,7 @@ export const sidequests = [
     // CHAIN 4: Verschlossene Kabine
     {
         id: "sq_wc_1",
+        kind: "text",
         title: "Stilles Örtchen",
         text: "Auf der Toilette ist die einzige Kabine seit 45 Minuten verschlossen. Es riecht verdächtig nach Handyspielen und entspannter Ignoranz.",
         opts: [
@@ -5662,6 +5675,7 @@ export const sidequests = [
     },
     {
         id: "sq_wc_2a",
+        kind: "text",
         title: "Der Kollege enthüllt",
         reqStory: "path_toilet_knock",
         text: "Die Tür öffnet sich endlich. Markus vom Vertrieb kommt mit eingeschlafenen Beinen, das Ladekabel noch in der Hand, heraus.",
@@ -5683,6 +5697,7 @@ export const sidequests = [
     },
     {
         id: "sq_wc_2b",
+        kind: "text",
         title: "Premium-Ärger",
         reqStory: "path_toilet_hr",
         text: "Du wurdest auf der HR-Toilette erwischt! Frau Elster pflaumt dich an, dass diese Anlagen nur für Gäste und das C-Level vorgesehen sind.",
@@ -5704,6 +5719,7 @@ export const sidequests = [
     },
     {
         id: "sq_toilet_2c",
+        kind: "text",
         title: "Blinde Angst",
         reqStory: "path_toilet_dark",
         text: "Durch deinen Licht-Ausschalt-Trick stolperte Kevin weinend und panisch aus der Kabine in einen Mülleimer. Er weigert sich heute den Flur zu putzen.",
@@ -5726,6 +5742,7 @@ export const sidequests = [
     // CHAIN 5: Toner-Mafia
     {
         id: "sq_toner_1",
+        kind: "text",
         title: "Toner-Knappheit",
         text: "Der große Abteilungsdrucker heult, weil das Magenta leer ist. Es gibt nur noch eine Ersatzkartusche, und das Controlling will diese Woche keine neue bestellen.",
         opts: [
@@ -5751,6 +5768,7 @@ export const sidequests = [
     },
     {
         id: "sq_toner_2a",
+        kind: "text",
         title: "Leere Kartusche",
         reqStory: "path_printer_swap",
         text: "Die alte, leere Kartusche steht noch neben dem Drucker herum. Jemand ist voll reingetreten und hat Magenta-Staub im ganzen Flur verteilt.",
@@ -5770,6 +5788,7 @@ export const sidequests = [
     },
     {
         id: "sq_toner_2b",
+        kind: "text",
         title: "Betteln um Farben",
         reqStory: "path_printer_hoard",
         text: "Marketing ist verzweifelt. Sie brauchen Farbe für den Pitch. Sie stehen vor deiner Bürotür und bieten alles, um einen Toner zu kriegen.",
@@ -5788,6 +5807,7 @@ export const sidequests = [
     },
     {
         id: "sq_toner_2c",
+        kind: "text",
         title: "Tristesse in Schwarz-Weiß",
         reqStory: "path_printer_bw",
         text: "Der Chef ist absolut außer sich, weil seine Jahresbilanz-Charts komplett grau in 50 Shades gedruckt wurden. 'Wer war das?!'",
@@ -5808,6 +5828,7 @@ export const sidequests = [
 // CHAIN 6: Der mysteriöse Kuchen
     {
         id: "sq_bday_1",
+        kind: "text",
         title: "Kuchen-Falle?",
         text: "Im Empfangsbereich steht ein gigantischer Kuchen mit rosa Zuckerguss. Kein Zettel, kein Hinweis. Gabi starrt ihn misstrauisch an: 'Ist der sicher?'",
         opts: [
@@ -5834,6 +5855,7 @@ export const sidequests = [
     },
     {
         id: "sq_bday_2a",
+        kind: "text",
         title: "Überraschung",
         reqStory: "path_cake_eat",
         text: "Eine Stunde später tanzt der gesamte Vertrieb im Kreis. Der Kuchen war anscheinend 'Spezial-Gebäck' von Jürgens Amsterdam-Urlaub.",
@@ -5854,6 +5876,7 @@ export const sidequests = [
     },
     {
         id: "sq_bday_2b",
+        kind: "text",
         title: "Gabis Panik",
         reqStory: "path_cake_panic",
         text: "Gabi hat den Sicherheitsdienst gerufen. Zwei schlecht gelaunte Wachmänner haben den Kuchen wie eine Bombe untersucht und weggeworfen.",
@@ -5874,6 +5897,7 @@ export const sidequests = [
     },
     {
         id: "sq_bday_2c",
+        kind: "text",
         title: "Das Geburtstagskind",
         reqStory: "path_cake_hide",
         text: "Boss Dr. Wichtig tobt durch die Gänge. 'Wer hat meinen laktosefreien Veggie-Kuchen zum 50. weggeworfen?!'",
@@ -5896,6 +5920,7 @@ export const sidequests = [
     // CHAIN 7: Brennender Papierkorb
     {
         id: "sq_smoke_1",
+        kind: "text",
         title: "Brenzlige Situation",
         text: "Aus dem Mülleimer neben deinem Schreibtisch steigt leichter Qualm auf. Jemand hat wohl eine noch glimmende Kippe reingeworfen.",
         opts: [
@@ -5922,6 +5947,7 @@ export const sidequests = [
     },
     {
         id: "sq_smoke_2a",
+        kind: "text",
         title: "Wintergewitter",
         reqStory: "path_fire_extinguisher",
         text: "Der Chef kommt niesend ins Büro. Alles ist weiß bestäubt. 'MÜLLER! Warum sieht es hier aus wie nach einem Schneesturm im August?!'",
@@ -5942,6 +5968,7 @@ export const sidequests = [
     },
     {
         id: "sq_smoke_2b",
+        kind: "text",
         title: "Der Asche-Geruch",
         reqStory: "path_fire_water",
         text: "Es riecht penetrant nach kaltem Lagerfeuer im Flur. Kollegen schauen herüber, als wärst du ein marodierender Pfadfinder.",
@@ -5960,6 +5987,7 @@ export const sidequests = [
     },
     {
         id: "sq_smoke_2c",
+        kind: "text",
         title: "Kevins Heldentat",
         reqStory: "path_fire_kevin",
         text: "Kevin hat den qualmenden Mülleimer stolz bis nach draußen gebracht. Jetzt steht er im Intranet-Newsletter als 'Mitarbeiter des Monats'.",
@@ -5982,6 +6010,7 @@ export const sidequests = [
     // CHAIN 8: Das verschwundene Paket
     {
         id: "sq_delivery_1",
+        kind: "text",
         title: "Paket Diebstahl",
         text: "Deine private Amazon-Bestellung (teure Noise-Cancelling Headphones) wurde angeblich von 'Egon' entgegengenommen. Aber Egon schwört, dass er nichts hat.",
         opts: [
@@ -6009,6 +6038,7 @@ export const sidequests = [
     },
     {
         id: "sq_delivery_2a",
+        kind: "text",
         title: "Egons Groll",
         reqStory: "path_delivery_egon",
         text: "Egon ist am Kochen. Er verweigert nun jede Reparatur für dich.",
@@ -6030,6 +6060,7 @@ export const sidequests = [
     },
     {
         id: "sq_delivery_2b",
+        kind: "text",
         title: "Telekom Trance",
         reqStory: "path_delivery_call",
         text: "Nach 45 Minuten 'Für Elise' als Wartemusik meldet sich ein verwirrter Mitarbeiter. Das Paket wurde dem Post-Boy 'Kevin' übergeben, nicht Egon.",
@@ -6050,6 +6081,7 @@ export const sidequests = [
     },
     {
         id: "sq_delivery_2c",
+        kind: "text",
         title: "Der Karton-Berg",
         reqStory: "path_delivery_search",
         text: "Deine Suche im HR-Bereich war verdächtig. Frau Elster ermahnt dich: 'Die Flure sind kein Privat-Detektivbüro, Müller!'",
@@ -6072,6 +6104,7 @@ export const sidequests = [
     // CHAIN 9: Der Kabel-Salat
     {
         id: "sq_cable_1",
+        kind: "text",
         title: "Das Spaghetti-Monster",
         text: "Du willst deinen Monitor im Büro umstecken, aber unter deinem Tisch sieht es aus, als hätte jemand Spaghettinester geflochten. Hunderte Kabel kreuzen sich im Chaos.",
         opts: [
@@ -6099,6 +6132,7 @@ export const sidequests = [
     },
     {
         id: "sq_cable_2a",
+        kind: "text",
         title: "Stromausfall",
         reqStory: "path_cable_pull",
         text: "Dein 'Ruck' hat anscheinend die Unterbrechungsfreie Stromversorgung deines Chefs vom Netz genommen. Sein Rechner ist aus, er rennt wütend durch den Flur.",
@@ -6119,6 +6153,7 @@ export const sidequests = [
     },
     {
         id: "sq_cable_2b",
+        kind: "text",
         title: "Sauberkeits-Inspektion",
         reqStory: "path_cable_order",
         text: "Egon stolpert ins Büro und sieht die Perfektion unter deinem Tisch. 'Sagenhaft... das ist... Kabel-Poesie!'",
@@ -6139,6 +6174,7 @@ export const sidequests = [
     },
     {
         id: "sq_cable_2c",
+        kind: "text",
         title: "Kevins Trauma in der Dunkelheit",
         reqStory: "path_cable_kevin",
         text: "Kevin hat eine Stauballergie bekommen und niesst im Minutentakt. Er fordert Urlaub.",
@@ -6161,6 +6197,7 @@ export const sidequests = [
     // CHAIN 10: Der Fensterstreit
     {
         id: "sq_window_1",
+        kind: "text",
         title: "Sturmflut im Büro",
         text: "Frau Elster hat das Flurfenster komplett aufgerissen. Es ist Dezember. Der eiskalte Wind weht deine Notizen vom Tisch.",
         opts: [
@@ -6187,6 +6224,7 @@ export const sidequests = [
     },
     {
         id: "sq_window_2a",
+        kind: "text",
         title: "Kriegserklärung von HR",
         reqStory: "path_window_close",
         text: "Frau Elster hat dein Büro als Strafmaßnahme für das 'Zuknallen' komplett von der Kaffee-Bestellung ausgeschlossen.",
@@ -6208,6 +6246,7 @@ export const sidequests = [
     },
     {
         id: "sq_window_2b",
+        kind: "text",
         title: "Schnee im Serverraum",
         reqStory: "path_window_suffer",
         text: "Deine Passivität führt dazu, dass auch Flokies ins Büro wehen. Der Chef lacht laut über dein Polarforscher-Outfit.",
@@ -6228,6 +6267,7 @@ export const sidequests = [
     },
     {
         id: "sq_window_2c",
+        kind: "text",
         title: "Hitzschlag",
         reqStory: "path_window_heat",
         text: "Egon kriegt einen Wutanfall, als er deine auf Anschlag gedrehten Heizkörper bemerkt. 'Wollen Sie uns in den Ruin treiben?!'",
@@ -6273,6 +6313,7 @@ export const sidequests = [
 
     {
     id: "sq_moving_box",
+    kind: "text",
     title: "Der Karton",
     text: "Auf dem Flur steht seit Monaten ein Umzugskarton. Darauf klebt ein vergilbter Zettel: 'NICHT WEGWERFEN — R. Schmidt'.\n\nRüdiger Schmidt hat 2019 gekündigt. Niemand traut sich, den Karton anzufassen. Er ist praktisch ein Denkmal.",
     opts: [
@@ -6299,6 +6340,7 @@ export const sidequests = [
 
     {
     id: "sq_empty_desk",
+    kind: "text",
     title: "Der freie Platz",
     text: "Ein Schreibtisch im Großraum steht leer. Bildschirm dunkel, Stuhl ordentlich rangeschoben. Die oberste Schublade ist einen Spalt offen.\n\nDarin: Panzertape, ein USB-Stick und eine Packung Traubenzucker.",
     opts: [
@@ -6321,4 +6363,826 @@ export const sidequests = [
         }
     ]
 },
+
+/* ============================================================
+   DIENSTGANG-WELLE (v4.0.0)
+   Fünf Streifzüge durchs Gebäude für die im Pool dünnen
+   Charaktere Markus, Dr. Wichtig und Chantal, plus zwei
+   charakterfreie Mysterien (Projekt Phoenix, der Kopierer-
+   Karton). Verzahnt mit der Egon-Lore der anderen Wellen.
+   Gates auf stressball und zip_ties, Loot: manual, stressball.
+   ============================================================ */
+
+{
+    id: "sq_raum_phoenix",
+    kind: "text",
+    title: "Projekt Phoenix",
+    text: "Raum 'Kreativ 2' ist im Buchungssystem seit vier Monaten durchgehend belegt: 'Projekt Phoenix, ganztägig, Serientermin'. Du kommst auf deinem Dienstgang daran vorbei. Der Raum ist leer. Er ist immer leer. Und niemand im ganzen Haus hat je von einem Projekt Phoenix gehört.",
+    opts: [
+        {
+            t: "Die Serienbuchung stornieren",
+            next: "path_phoenix_storno",
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Vier Monate Blockade, beendet mit drei Klicks. Der Raum ist frei und innerhalb einer Stunde dreifach überbucht. Und irgendwo in diesem Gebäude hat soeben jemand bemerkt, dass sein Tarnschild verschwunden ist."
+        },
+        {
+            t: "Den leeren Raum heimlich selbst nutzen",
+            next: "path_phoenix_nutzen",
+            m: 15, f: 10, a: -10, c: 0,
+            r: "Ein dauerhaft gebuchter, dauerhaft leerer Raum ist der ruhigste Ort der Firma. Du erledigst dort ungestört eine Stunde Papierkram in himmlischer Stille. Wer auch immer Phoenix ist: Ihr teilt jetzt ein Versteck, ohne euch zu kennen."
+        },
+        {
+            t: "Gabi fragen, was Phoenix ist",
+            rep: { "Gabi": 3 },
+            next: "path_phoenix_gabi",
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Gabi schaut nach links, nach rechts, und senkt die Stimme: 'Frag nicht nach Phoenix. Aber WENN du fragst: Es hat mit dem dritten Stock zu tun. Und mit Herrn Rademacher.' Es gibt keinen Herrn Rademacher in dieser Firma. Nicht mehr."
+        }
+    ]
+},
+{
+    id: "sq_raum_phoenix_2a",
+    kind: "text",
+    title: "Der Phönix meldet sich",
+    reqStory: "path_phoenix_storno",
+    text: "Am nächsten Morgen klebt ein Post-it an deinem Monitor. Saubere Blockschrift: 'Die Buchung war ABSICHT. Sie wissen nicht, was Sie getan haben. - P.' Kein Absender, keine Zeugen, und die Kamera im Flur zeigt exakt in die falsche Richtung. Natürlich tut sie das.",
+    opts: [
+        {
+            t: "Im Raum auf der Lauer liegen",
+            m: 25, f: 5, a: 10, c: 0,
+            r: "Du verbringst deine Mittagspause versteckt hinter dem Flipchart in Kreativ 2. Niemand kommt. Natürlich kommt niemand. Als du entnervt aufgibst und gehst, liegt auf dem Tisch ein zweites Post-it: 'Nett versucht.' Es war vorhin noch nicht da."
+        },
+        {
+            t: "Die Buchung gehorsam wiederherstellen",
+            m: 5, f: 10, a: 5, c: 0,
+            r: "Du gehorchst einem Post-it. Die Serienbuchung läuft wieder, der Raum ist wieder offiziell belegt und tatsächlich leer, die Ordnung der Dinge ist wiederhergestellt. Am Nachmittag liegt ein Stück eingeschweißter Streuselkuchen auf deiner Tastatur. Phoenix bedankt sich."
+        },
+        {
+            t: "Das Post-it demonstrativ ignorieren",
+            m: 2, f: 5, a: 0, c: 5,
+            r: "Du lässt dich von Schreibwaren nicht einschüchtern. Der Raum bleibt frei. In den folgenden Tagen fallen Kleinigkeiten auf: Dein Bürostuhl ist morgens anders eingestellt. Deine Fenster-Jalousie klemmt. Dein Name im Buchungssystem hat plötzlich einen Tippfehler. Krieg hat viele Formen."
+        }
+    ]
+},
+{
+    id: "sq_raum_phoenix_2b",
+    kind: "text",
+    title: "Doppelbelegung",
+    reqStory: "path_phoenix_nutzen",
+    text: "Du sitzt gerade wieder im stillen Phoenix-Raum, da öffnet sich die Tür: Egon. Mit Thermoskanne, Zeitung und der Selbstverständlichkeit eines Mannes, der einen festen Termin hat. Ihr starrt euch an. 'Du', sagt Egon langsam, 'bist nicht Rademacher.'",
+    opts: [
+        {
+            t: "Ein Schweigeabkommen schließen",
+            rep: { "Egon": 5 },
+            m: 10, f: 5, a: -5, c: 0,
+            r: "Ihr einigt euch ohne viele Worte: Egon behält seine Mittagsruhe, du bekommst den Raum dienstags und donnerstags. Wie er über den Account eines Mannes bucht, der 2016 gegangen ist, fragst du nicht. Manche Verträge funktionieren nur unbefragt."
+        },
+        {
+            t: "Ihn hochnehmen: 'DAS ist Projekt Phoenix?'",
+            rep: { "Egon": -5 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Vier Monate Serienbuchung für Mittagsschlaf, Egon?' Er faltet die Zeitung, steht auf und geht wortlos. Ab nächster Woche ist der Raum wirklich frei. Dafür 'klemmt' die Heizung in deinem Büro neuerdings auffällig oft, und Egon hat leider gerade nie Zeit."
+        },
+        {
+            t: "Den Raum respektvoll abtreten",
+            rep: { "Egon": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Der Mann herrscht seit Jahrzehnten über dieses Gebäude - er hat sich einen ruhigen Raum schlicht verdient. Du packst deine Sachen. An der Tür sagt Egon, ohne aufzublicken: 'Mittwochs bin ich nich da.' Es ist eine Einladung. Die größte, die er zu vergeben hat."
+        }
+    ]
+},
+{
+    id: "sq_raum_phoenix_2c",
+    kind: "text",
+    title: "Herr Rademacher",
+    reqStory: "path_phoenix_gabi",
+    text: "Du gräbst nach: Rademacher, IT-Leitung bis 2016, dein Vor-Vorgänger. Sein Benutzerkonto ist nie stillgelegt worden. Es bucht Räume. Es hat gültige Zugänge. Und laut Protokoll hat es vor neun Tagen eine Mail beantwortet.",
+    opts: [
+        {
+            t: "Das Konto endlich ordnungsgemäß stilllegen",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Bei der Stilllegung findest du: 4.213 ungelesene Mails, eine Weiterleitungsregel an eine externe Adresse und einen Kalender voller Serientermine bis 2031. Du beendest alles, dokumentierst sauber und fühlst dich, als hättest du ein Gespenst pensioniert."
+        },
+        {
+            t: "Rademacher eine Mail schreiben",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "'Sehr geehrter Herr Rademacher, wer nutzt dieses Konto?' Keine Antwort. Den ganzen Tag nicht. Um 17:58 Uhr dann eine automatische Abwesenheitsnotiz: 'Bin im Meeting. Raum Kreativ 2.' Du beschließt, für heute keine weiteren Fragen an das Gebäude zu haben."
+        },
+        {
+            t: "Gabi den Fund melden",
+            rep: { "Gabi": 5 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Gabi hört zu und wird eine Spur blasser. 'Also doch.' Mehr sagt sie nicht. Auf dem Rückweg fällt dir ein, dass Gabi grundsätzlich alles weiß und grundsätzlich alles erzählt - nur bei diesem einen Thema nicht. Diese Information ist selbst eine Information."
+        }
+    ]
+},
+
+{
+    id: "sq_gemba_walk",
+    kind: "text",
+    char: "Dr. Wichtig",
+    title: "Der Gemba Walk",
+    text: "Dr. Wichtig hat ein Buch gelesen. 'Ich mache heute einen GEMBA WALK, Müller. Japanische Führungsmethode. Ich beobachte die Wertströme. Tun Sie einfach, als wäre ich nicht da.' Er postiert sich einen Meter hinter dir. Mit Klemmbrett. Man hört ihn atmen und in unregelmäßigen Abständen notieren.",
+    opts: [
+        {
+            t: "Einfach normal weiterarbeiten",
+            next: "path_gemba_normal",
+            m: 15, f: 0, a: 15, c: -5,
+            r: "Du arbeitest unter Beobachtung. Jeder Tastendruck fühlt sich an wie eine Prüfung, jede Fehlermeldung wie ein Geständnis. Nach einer Viertelstunde notiert er etwas auffallend Langes. Du wirst nie erfahren wollen, was."
+        },
+        {
+            t: "Eindrucksvolle Fake-Aktivität abziehen",
+            next: "path_gemba_show",
+            m: 10, f: 10, a: 0, c: -5,
+            r: "Du öffnest drei Terminals, lässt beeindruckende Logs durchrauschen und murmelst Dinge wie 'Latenz-Anomalie im Ostcluster'. Es gibt keinen Ostcluster. Dr. Wichtig notiert begeistert. Du hast nichts gearbeitet, aber es sah aus wie die Zukunft."
+        },
+        {
+            t: "Ihn einbinden: 'Wollen Sie mal patchen?'",
+            rep: { "Dr. Wichtig": 5 },
+            next: "path_gemba_patch",
+            m: 15, f: 0, a: 5, c: 0,
+            r: "Dr. Wichtig steckt unter deiner Anleitung ein Netzwerkkabel. Es klickt. Er strahlt wie ein Kind am Wasserwerk. 'Ich habe die Infrastruktur BERÜHRT, Müller.' Dieser Satz wird Konsequenzen haben. Gute? Unklar."
+        },
+        {
+            t: "Stressball kneten und ihn ausblenden",
+            req: "stressball",
+            next: "path_gemba_ball",
+            m: 10, f: 5, a: -10, c: 0,
+            r: "Der Ball absorbiert, was der Atem hinter dir produziert. Du arbeitest seelenruhig weiter, als wäre der Meter hinter dir unbewohnt. Dr. Wichtig notiert: 'Mitarbeiter wirkt auffällig gelassen.' Auch das wird im Bericht landen."
+        }
+    ]
+},
+{
+    id: "sq_gemba_walk_2a",
+    kind: "text",
+    title: "Der Beobachtungsbericht",
+    reqStory: "path_gemba_normal",
+    text: "Die Rundmail 'Erkenntnisse aus dem Gemba Walk' ist da. Kernbefund zur IT: 'Der Mitarbeiter verbringt geschätzt 40% der Zeit mit dem WARTEN auf Fortschrittsbalken. Vorschlag: schnellere Balken beschaffen.' Der Vorschlag ist ernst gemeint. Der Verteiler ist die ganze Firma.",
+    opts: [
+        {
+            t: "Den Balken-Vorschlag ernsthaft beantworten",
+            m: 15, f: -5, a: 10, c: 0,
+            r: "Du erklärst in einer sachlichen Antwort den Unterschied zwischen Anzeige und Ursache. Es ist die höflichste Mail deines Lebens über die Natur der Zeit. Dr. Wichtig antwortet: 'Verstehe. Also schnellere Ursachen.' Du gibst auf. Würdevoll."
+        },
+        {
+            t: "Zustimmen und daraus SSD-Budget machen",
+            m: 10, f: 5, a: 0, c: -5,
+            r: "'Exzellente Beobachtung. Schnellere Balken erfordern schnellere Datenträger.' Zwei Tage später ist ein Budget für SSDs genehmigt, das du seit zwei Jahren beantragst. Manchmal muss man die Sprache des Managements einfach als Verschlüsselung akzeptieren."
+        },
+        {
+            t: "Den Bericht kommentarlos abheften",
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Der Bericht wandert in den Ordner zu den anderen Berichten. Dort liegt bereits die 'Digitalisierungs-Roadmap 2023' und das Konzept 'Papierloses Büro' (18 Seiten, ausgedruckt). Schweigen ist auch eine Antwort. Nur merkt sie sich der Chef."
+        }
+    ]
+},
+{
+    id: "sq_gemba_walk_2b",
+    kind: "text",
+    title: "Best Practice",
+    reqStory: "path_gemba_show",
+    text: "Deine Fake-Aktivität ist im Vorstand als 'Musterbeispiel für Fokus-Arbeit' präsentiert worden - inklusive Foto von dir vor drei Terminals. Andere Abteilungen sollen jetzt 'das Terminal-Prinzip nach Müller' übernehmen. Es gibt bereits Rückfragen, was das Terminal-Prinzip ist.",
+    opts: [
+        {
+            t: "Die angefragte Schulung tatsächlich halten",
+            m: 25, f: 10, a: 10, c: 0,
+            r: "Du schulst zwölf Verwaltungskräfte darin, beeindruckend beschäftigt auszusehen. Getarnt als 'Fokus-Techniken' ist es die ehrlichste Fortbildung der Firmengeschichte, denn genau das üben hier ohnehin alle. Die Bewertungsbögen: hervorragend."
+        },
+        {
+            t: "Dr. Wichtig den Schwindel gestehen",
+            rep: { "Dr. Wichtig": -5 },
+            m: 10, f: 0, a: 5, c: 10,
+            r: "'Das war... Theater?' Dr. Wichtig schaut betroffen auf sein Klemmbrett, auf dem das Musterbeispiel steht. 'Ich habe es dem BOARD gezeigt, Müller.' Ehrlichkeit hat ihren Preis, und der Wechselkurs zum Vorstand ist gerade schlecht."
+        },
+        {
+            t: "Chantal ein 'Deep-Work-Format' draus machen lassen",
+            rep: { "Chantal": 5 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Chantal verwandelt das Missverständnis in ein Produkt: 'Deep-Work-Sessions powered by IT', mit Anmeldeliste und Playlist. Die Leute sitzen jetzt freiwillig still vor Bildschirmen und nennen es Fortbildung. Alle sind zufrieden. Niemand arbeitet. Business as usual."
+        }
+    ]
+},
+{
+    id: "sq_gemba_walk_2c",
+    kind: "text",
+    title: "Der Chef, der patchte",
+    reqStory: "path_gemba_patch",
+    text: "Dr. Wichtig erzählt die Geschichte vom Netzwerkkabel inzwischen in jeder Runde ('Es hat GEKLICKT, meine Herren'). Jetzt steht er wieder in der Tür: Er wünscht eine 'monatliche Hands-on-Stunde in der Infrastruktur'. Er hat bereits einen eigenen kleinen Schraubendreher gekauft. Er zeigt ihn dir.",
+    opts: [
+        {
+            t: "Die Hands-on-Stunde einführen",
+            rep: { "Dr. Wichtig": 5 },
+            m: 20, f: 0, a: 10, c: -5,
+            r: "Einmal im Monat steckt der CEO unter Aufsicht ungefährliche Kabel und ist danach ansprechbar wie nie. Nebenwirkung: Wer dem Chef beim Patchen zusieht, bekommt plötzlich jedes IT-Budget durchgewunken. Die teuerste Stunde des Monats ist zugleich die rentabelste."
+        },
+        {
+            t: "Abwimmeln: 'Sicherheitsrichtlinie'",
+            rep: { "Dr. Wichtig": -3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "'Zutritt nur für zertifiziertes Personal, Herr Doktor. Versicherungsauflage.' Er zieht enttäuscht ab, den kleinen Schraubendreher noch in der Hand. Du hast das Richtige getan und fühlst dich trotzdem, als hättest du einem Kind den Zoo abgesagt."
+        },
+        {
+            t: "Kevin als seinen 'Patch-Buddy' einteilen",
+            rep: { "Kevin": 5 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Kevin und Dr. Wichtig, gemeinsam am Patchpanel: eine Allianz aus grenzenloser Begeisterung und null Ahnung, in beide Richtungen. Sie verstehen sich prächtig. Kevin nennt ihn inzwischen 'Doc'. Du hast entweder etwas Wunderbares erschaffen oder ein Monster. Vermutlich beides."
+        }
+    ]
+},
+{
+    id: "sq_gemba_walk_2d",
+    kind: "text",
+    title: "Auffällig gelassen",
+    reqStory: "path_gemba_ball",
+    text: "Der Gemba-Bericht hat Folgen: Deine notierte Gelassenheit ist der Personalabteilung aufgefallen. 'Wir planen einen Resilienz-Workshop', säuselt die Mail, 'und würden Sie gern als internen Impulsgeber gewinnen. Was ist Ihr Geheimnis, Herr Müller?'",
+    opts: [
+        {
+            t: "Das Geheimnis offenlegen: der Ball",
+            loot: "stressball",
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Du präsentierst den Stressball. Die Personalabteilung ist begeistert von der 'niederschwelligen Lösung' und bestellt zweihundert Stück mit Firmenlogo. Als Impulsgeber bekommst du das erste Exemplar überreicht. Er quietscht leicht. Der alte war besser. Aber jetzt hast du zwei."
+        },
+        {
+            t: "Ein Fake-Framework erfinden",
+            m: 15, f: 10, a: 0, c: -5,
+            r: "Du skizzierst die 'Müller-Methode': vier Quadranten, ein Kreislaufdiagramm, das Wort 'Achtsamkeit' an strategischen Stellen. Die Personalabteilung ist elektrisiert. Es gibt jetzt Folien mit deinem Namen drauf, die Dinge behaupten, die du frei erfunden hast. So entstehen Managementmethoden. Alle."
+        },
+        {
+            t: "Den Workshop höflich ablehnen",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Mein Geheimnis ist, dass ich zum Arbeiten komme.' Die Personalabteilung findet die Antwort 'erfrischend authentisch' und notiert dich für ein künftiges Format namens 'Radikale Ehrlichkeit'. Man entkommt hier keinem Workshop. Man wählt nur seinen Titel."
+        }
+    ]
+},
+
+{
+    id: "sq_starthilfe",
+    kind: "text",
+    char: "Markus",
+    title: "Das müde Klicken",
+    text: "Auf dem Parkplatz winkt dich Markus heran, untypisch kleinlaut. Sein Sportwagen antwortet auf den Schlüssel nur noch mit einem müden Klicken. 'Batterie. KOMPLETT tot. Und ich muss in zwanzig Minuten beim Kunden sein, Müller. ZWANZIG.' Er schaut auf das Auto wie auf einen Kollegen, der ihn verraten hat.",
+    opts: [
+        {
+            t: "Egon und sein Starthilfe-Arsenal holen",
+            rep: { "Markus": 5, "Egon": 3 },
+            next: "path_start_egon",
+            m: 15, f: 5, a: 0, c: 0,
+            r: "Egon erscheint mit einem Starthilfegerät, das aussieht, als wäre es aus einem U-Boot ausgebaut worden. Zwei Handgriffe, ein Funke, der Motor röhrt. Markus rast vom Hof. Egon sieht ihm nach: 'Batterie war's nich. Der Junge fährt zu viel Kurzstrecke.' Egon weiß solche Dinge einfach."
+        },
+        {
+            t: "Ihm nüchtern ein Taxi rufen",
+            rep: { "Markus": 3 },
+            next: "path_start_taxi",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "Markus im Taxi ist ein Anblick für die Geschichtsbücher: ein Mann, dessen Selbstbild auf 280 PS gebaut ist, auf der Rückbank eines Diesel-Kombis. Er schafft den Termin. Das Foto, das du nicht gemacht hast, wäre unbezahlbar gewesen."
+        },
+        {
+            t: "'Termine verschieben gehört zum Business'",
+            rep: { "Markus": -5 },
+            next: "path_start_absage",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Falscher Satz, falscher Mann, falscher Moment. 'VERSCHIEBEN?' Markus' Stimme kippt eine Oktave. 'Man verschiebt keine ABSCHLÜSSE!' Er rennt davon, um irgendjemand anderen aufzutreiben. Du hast soeben ein Grundprinzip seiner Religion beleidigt."
+        }
+    ]
+},
+{
+    id: "sq_starthilfe_2a",
+    kind: "text",
+    title: "Die Ehrenschuld",
+    reqStory: "path_start_egon",
+    text: "Markus ist zurück, der Abschluss ist durch, und jetzt will er 'dem Hausmeister-Kollegen was Gutes tun'. Er hält eine Flasche Weinbrand hoch, teuer, mit Schleife. 'Aber du kennst ihn, Müller. Übergib du das. Von Mann zu Mann. Ich bin nicht gut in... sowas.'",
+    opts: [
+        {
+            t: "Die Übergabe würdevoll vermitteln",
+            rep: { "Markus": 3, "Egon": 5 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Egon nimmt die Flasche, prüft das Etikett mit der Miene eines Zollbeamten und nickt dann langsam. 'Kann man trinken.' Es ist die höchste Auszeichnung, die sein Haus zu vergeben hat. Zwei Männerwelten haben sich für einen Moment berührt, und du warst der Dolmetscher."
+        },
+        {
+            t: "Markus zwingen, es selbst zu tun",
+            rep: { "Markus": 5 },
+            m: 10, f: 0, a: 5, c: 0,
+            r: "'Von Mann zu Mann heißt: selbst, Markus.' Er atmet durch wie vor einem Kundentermin und marschiert in den Keller. Die Übergabe dauert vier Minuten und wirkt aus der Ferne wie ein Staatsbesuch. Danach ist Markus seltsam still. 'Der Mann', sagt er schließlich, 'hat Hände wie Schraubstöcke. Respekt.'"
+        },
+        {
+            t: "Dich raushalten",
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Nicht dein Geschenk, nicht dein Ritual. Die Flasche steht am nächsten Tag unbeholfen mit einem Post-it ('Danke! M.') vor der Kellertür. Egon nimmt sie kommentarlos herein. Ob sie als Geschenk oder als Fundsache verbucht wurde, wirst du nie erfahren."
+        }
+    ]
+},
+{
+    id: "sq_starthilfe_2b",
+    kind: "text",
+    title: "Die Rückbank-Erkenntnis",
+    reqStory: "path_start_taxi",
+    text: "Markus kommt nachdenklich zurück. Nicht siegreich, nicht wütend: nachdenklich. 'Der Taxifahrer, Müller. Zwölf Stunden am Tag fährt der. SIEBEN Tage die Woche. Und der war... zufrieden?' Er setzt sich. 'Wir jammern hier auf ziemlich hohem Niveau, oder?' Ein nachdenklicher Markus ist das Beunruhigendste, was dieses Gebäude zu bieten hat.",
+    opts: [
+        {
+            t: "Das Gespräch ernsthaft führen",
+            rep: { "Markus": 5 },
+            m: 15, f: 5, a: -5, c: 0,
+            r: "Ihr redet eine Viertelstunde über Arbeit, Sinn und die Frage, warum niemand mehr einfach zufrieden ist. Markus hört mehr zu, als er redet - ein Novum. Am Ende steht er auf: 'Gutes Meeting.' Er meint es ernst. Es war das erste ehrliche Meeting des Jahres."
+        },
+        {
+            t: "Mit einem Witz die Ordnung wiederherstellen",
+            rep: { "Markus": 3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Wer zufrieden ist, closed nicht, Markus.' Er schaut kurz irritiert - dann bricht die Erleichterung durch: 'STIMMT!' Er lacht, klopft dir auf die Schulter und ist wieder ganz der Alte. Du hast eine Sinnkrise mit einem Kalauer beendet. Irgendwo weint ein Coach."
+        },
+        {
+            t: "Chantal vom 'Taxi-Mindset' erzählen",
+            rep: { "Chantal": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Chantal ist elektrisiert: 'Das ist ja PURE Demut-Journey!' Zwei Tage später hängt ein Aushang: 'Perspektivwechsel-Workshop: Ein Tag im Taxi (Anmeldung beim Marketing)'. Der Taxifahrer, kontaktiert als Referent, hat abgelehnt. Er muss arbeiten."
+        }
+    ]
+},
+{
+    id: "sq_starthilfe_2c",
+    kind: "text",
+    title: "Der Ersatzfahrer",
+    reqStory: "path_start_absage",
+    text: "Markus hat einen Fahrer gefunden: Kevin. Mit dem Firmentransporter. Kevin hat den Führerschein seit drei Wochen. Sie kommen gemeinsam zurück - der Transporter hat einen neuen, langen Kratzer, die beiden haben sichtlich ein Schweigegelübde, und der Deal ist trotzdem geplatzt. Es war, alles in allem, kein guter Ausflug.",
+    opts: [
+        {
+            t: "Den Kratzer ordnungsgemäß melden",
+            rep: { "Kevin": -5, "Markus": -5 },
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Du meldest den Schaden ans Fuhrparkmanagement, sachlich und mit Datum. Es ist das Richtige, und beide wissen es. Trotzdem behandeln dich Kevin und Markus eine Woche lang wie einen Wetterumschwung. Korrektheit hat selten Applaus."
+        },
+        {
+            t: "Mitschweigen",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Du hast nichts gesehen. Der Kratzer war 'schon immer da', wie alle Kratzer dieser Welt. Das Schweigegelübde hat jetzt drei Mitglieder, und Schweigegelübde mit drei Mitgliedern halten statistisch elf Tage. Die Uhr läuft."
+        },
+        {
+            t: "Egon den Kratzer verschwinden lassen",
+            rep: { "Egon": 3 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Egon begutachtet den Kratzer, holt wortlos Politur aus einer Blechdose ohne Etikett und lässt ihn in zwanzig Minuten verschwinden. Er stellt keine Fragen. Er addiert nur still zwei Namen in sein inneres Schuldbuch. Kevin und Markus ahnen nicht, was sie ihm jetzt schulden. Du schon."
+        }
+    ]
+},
+
+{
+    id: "sq_lichterkette",
+    kind: "text",
+    char: "Chantal",
+    title: "Die Achtsamkeits-Ecke",
+    text: "Im Flur der zweiten Etage entsteht etwas: Chantal drapiert eine Lichterkette um einen Sessel, dazu ein Schild ('ACHTSAMKEITS-ECKE - hier darfst du SEIN') und eine Duftkerze. Die Lichterkette bezieht ihren Strom aus einer Steckdose im geöffneten Netzwerkschrank. Der Etagen-Switch daneben ist aus. Die halbe Etage ist offline. Chantal strahlt: 'Schön, oder?'",
+    opts: [
+        {
+            t: "Switch rein, Lichterkette raus",
+            rep: { "Chantal": -5 },
+            next: "path_licht_hart",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "Du stellst die Infrastruktur wieder her. Chantal hält die stromlose Lichterkette wie ein verletztes Tier: 'Du hast die Energie des Ortes getötet.' Die Etage ist wieder online und beschwert sich bereits über andere Dinge. Ökosystem Büro."
+        },
+        {
+            t: "Einen Mehrfachstecker-Kompromiss bauen",
+            rep: { "Chantal": 5 },
+            next: "path_licht_deal",
+            m: 10, f: 5, a: -5, c: 5,
+            r: "Beides läuft jetzt: Switch und Stimmung. Der Mehrfachstecker im Netzwerkschrank verstößt gegen ungefähr vier Richtlinien, aber Chantal umarmt dich beinahe, und die Etage merkt von allem nichts. Provisorien halten in diesem Haus bekanntlich am längsten."
+        },
+        {
+            t: "Fachgerechte Dauerlösung mit Kabelbindern",
+            req: "zip_ties",
+            rem: "zip_ties",
+            rep: { "Chantal": 3 },
+            next: "path_licht_sauber",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Du verlegst die Lichterkette sauber zur nächsten Bürosteckdose, zurrst alles mit Kabelbindern fest und schließt den Netzwerkschrank ab. Die Ecke leuchtet, der Switch läuft - und zum ersten Mal hängt in diesem Flur Deko, die eine Elektroprüfung überstehen würde."
+        }
+    ]
+},
+{
+    id: "sq_lichterkette_2a",
+    kind: "text",
+    title: "Die Trauerfeier",
+    reqStory: "path_licht_hart",
+    text: "Chantal hat der verstorbenen Ecke eine Story gewidmet: ein Foto der dunklen Lichterkette, dazu der Text 'Manche Menschen haben Angst vor Energie. #officevibes #rip'. Du bist nicht markiert. Es wissen trotzdem alle. Kollegen schauen dich im Flur an wie einen Kerzenausbläser.",
+    opts: [
+        {
+            t: "Aussitzen - Storys leben 24 Stunden",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "Du überlebst den Tag als 'der, der die Vibes gelöscht hat'. Am nächsten Morgen ist die Story weg und die Empörung weitergezogen, zur Kantine, die den Milchreis gestrichen hat. Der Flurfunk hat die Halbwertszeit einer Fruchtfliege. Zum Glück."
+        },
+        {
+            t: "Friedensangebot: Batterie-Lichterkette schenken",
+            rep: { "Chantal": 5 },
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Du überreichst eine LED-Kette mit Batteriefach: 'Gleiche Vibes, null Infrastruktur.' Chantal ist gerührt ('Du VERSTEHST es ja doch!') und baut die Ecke neu auf, diesmal stromnetzunabhängig. Die Story bekommt ein Happy-End-Update. Du wirst markiert. Als 'Energie-Retter'. Es ist okay."
+        },
+        {
+            t: "Eine trockene Gegendarstellung posten",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du antwortest im Firmenchat mit einem Foto des Etagen-Switches und dem Text 'Auch er darf SEIN.' Die Techniker-Fraktion feiert, die Feel-Good-Fraktion nicht. Du hast aus einer Deko-Frage eine Lagerbildung gemacht. Der Flur hat jetzt zwei Meinungen und keine Lichterkette."
+        }
+    ]
+},
+{
+    id: "sq_lichterkette_2b",
+    kind: "text",
+    title: "Das Provisorium lebt",
+    reqStory: "path_licht_deal",
+    text: "Der Mehrfachstecker im Netzwerkschrank hat Zuwachs bekommen: zwei Handy-Ladegeräte, ein USB-Ventilator und eine Lavalampe, Herkunft unbekannt. Der Schrank steht offen, davor lädt jemand sein E-Bike-Akku. Deine Infrastruktur ist zur öffentlichen Steckdosenleiste geworden.",
+    opts: [
+        {
+            t: "Alles rausreißen, Schrank abschließen",
+            rep: { "Chantal": -3 },
+            m: 10, f: 0, a: 10, c: -5,
+            r: "Du räumst den Schrank leer und schließt ihn ab. Die Enteigneten murren, Chantal spricht von 'Rückschritt', und die Lavalampe steht verwaist im Flur wie ein Mahnmal. Aber der Switch hängt wieder allein am Strom, so wie es die Elektroplanung von 2009 vorsah."
+        },
+        {
+            t: "Eine offizielle Ladestation aufstellen",
+            m: 20, f: -10, a: 5, c: -5,
+            r: "Du besorgst eine Steckdosenleiste mit eigenem Stromkreis, montierst sie GEGENÜBER dem Netzwerkschrank und beschriftest sie: 'Ladepunkt 2. OG'. Die Geräte ziehen freiwillig um. Menschen folgen Infrastruktur wie Wasser dem Gefälle. Man muss das Gefälle nur richtig bauen."
+        },
+        {
+            t: "Die Lavalampe konfiszieren",
+            m: 5, f: 5, a: -5, c: 0,
+            r: "Kraft deines Amtes beschlagnahmst du die Lavalampe als 'nicht zertifiziertes Wärmegerät'. Sie steht jetzt im Serverraum. Auf deinem Schreibtisch. Sie blubbert beruhigend. Der Rest des Provisoriums bleibt, aber das war es dir wert. Manche Amtshandlungen sind Selbstfürsorge."
+        }
+    ]
+},
+{
+    id: "sq_lichterkette_2c",
+    kind: "text",
+    title: "Die Vorzeige-Ecke",
+    reqStory: "path_licht_sauber",
+    text: "Dr. Wichtig ist auf seinem Weg durchs Haus vor der fachgerecht installierten Achtsamkeits-Ecke stehen geblieben. Er begutachtet die sauber verlegte Lichterkette, den abgeschlossenen Schrank, das Schild. 'Endlich mal proaktive Raumgestaltung mit SYSTEM. Wer ist hier verantwortlich?'",
+    opts: [
+        {
+            t: "Chantal den vollen Ruhm geben",
+            rep: { "Chantal": 5 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "'Konzept: Marketing. Frau Chantal.' Sie wird zur 'Feel-Good-Beauftragten' ernannt, inklusive kleinem Budget. Ihre erste Amtshandlung: eine zweite Ecke im Erdgeschoss - für die sie diesmal ganz offiziell die IT um 'Strom-Beratung' bittet. Du hast einen Prozess erschaffen. Aus einer Lichterkette."
+        },
+        {
+            t: "Die eigene Arbeit erwähnen",
+            rep: { "Dr. Wichtig": 3 },
+            m: 5, f: 0, a: 5, c: -5,
+            r: "'Installation: IT.' Dr. Wichtig nickt anerkennend: 'Ein Admin mit Auge für Atmosphäre. Selten.' Du stehst jetzt auf seiner mentalen Liste für 'Menschen, die Dinge fertig machen'. Diese Liste ist Fluch und Ritterschlag zugleich, und man kommt nie wieder runter."
+        },
+        {
+            t: "Schweigen und weitergehen",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Niemand meldet sich. Dr. Wichtig notiert die Ecke als 'Initiative unklarer Herkunft' - und lässt ihr eine eigene Kostenstelle einrichten, 'damit das Projekt skalieren kann'. Es gibt jetzt ein Phantomprojekt mit Budget und ohne Menschen. Es wird das effizienteste Projekt des Jahres werden."
+        }
+    ]
+},
+
+{
+    id: "sq_kopierer_karton",
+    kind: "text",
+    title: "Der Karton",
+    text: "Im Flur vor dem Kopierraum steht seit sechs Wochen ein mannshoher Karton: der neue Kopierer. Geliefert, quittiert, nie aufgebaut - denn 'Aufbau ist nicht Teil des Liefervertrags', und seither klärt ein Mail-Verteiler mit vierzehn Teilnehmern die Zuständigkeit. Der Karton hat inzwischen einen Spitznamen und dient als Stehtisch.",
+    opts: [
+        {
+            t: "Das Ding einfach selbst aufbauen",
+            loot: "manual",
+            next: "path_karton_aufbau",
+            m: 25, f: -10, a: 10, c: -5,
+            r: "Du schneidest den Karton auf und baust den Kopierer Schritt für Schritt nach dem beiliegenden Handbuch auf, das du anschließend einsteckst - so ein Handbuch ist im Haus Goldstaub. Das Gerät läuft. Der Zuständigkeits-Verteiler diskutiert unterdessen weiter. Niemand hat bemerkt, dass sein Thema soeben verschwunden ist."
+        },
+        {
+            t: "Die Zuständigkeit offiziell klären",
+            next: "path_karton_prozess",
+            m: 15, f: 0, a: 10, c: 5,
+            r: "Du antwortest dem Verteiler mit einer sauberen Zuständigkeitsmatrix. Es folgen: drei Rückfragen, zwei Abwesenheitsnotizen und eine Terminanfrage für ein 'Alignment'. Der Karton bleibt stehen. Aber jetzt mit Vorgangsnummer."
+        },
+        {
+            t: "Den Karton-Stehtisch offiziell machen",
+            next: "path_karton_kult",
+            m: 5, f: 10, a: -5, c: 0,
+            r: "Du platzierst zwei Untersetzer und ein Schild: 'Meetingpoint K1'. Der Karton ist damit Einrichtung. Die Firma hat einen neuen Lieblingsort, und der Kopierer darin nähert sich seinem Garantieende in würdevoller Ruhe."
+        }
+    ]
+},
+{
+    id: "sq_kopierer_karton_2a",
+    kind: "text",
+    title: "Der laufende Beweis",
+    reqStory: "path_karton_aufbau",
+    text: "Der alte Kopierer ist eine Woche später endgültig gestorben - und weil der neue heimlich längst läuft, hat es kaum jemand gemerkt. Nur der Zuständigkeits-Verteiler eskaliert: 'Angesichts des Ausfalls beantragen wir die beschleunigte Beschaffung eines DRITTEN Geräts.' Vierzehn Menschen planen den Kauf eines Kopierers, während sie ihre Anträge auf dem neuen kopieren.",
+    opts: [
+        {
+            t: "Den Verteiler über die Lage aufklären",
+            m: 10, f: 0, a: 5, c: 5,
+            r: "Deine Mail ('Das Gerät läuft seit letzter Woche, Aufbau erfolgt') beendet einen sechswöchigen Thread mit einem Absatz. Vierzehn Menschen erfahren gleichzeitig, dass ihr Thema nie eins war. Drei bedanken sich. Einer fragt, wer den Aufbau genehmigt hat. Es ist immer dieser eine."
+        },
+        {
+            t: "Schweigen und kopieren",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Du sagst nichts. Der Antrag für das dritte Gerät nimmt seinen Lauf durch die Instanzen. Wenn er durchgeht, steht in einem halben Jahr wieder ein Karton im Flur, und der Kreislauf des Lebens beginnt von vorn. Du wirst dann bereit sein. Mit Untersetzern."
+        },
+        {
+            t: "Den Verteiler feierlich auflösen",
+            m: 10, f: -5, a: 10, c: 0,
+            r: "Du schreibst die letzte Mail des Threads: Sachstand, Dank, 'dieser Verteiler wird geschlossen'. Es ist ein kleiner Tod und eine große Erlösung. Einen Mail-Verteiler offiziell zu beenden, fühlt sich an wie Drachentöten. Es passiert ungefähr genauso selten."
+        }
+    ]
+},
+{
+    id: "sq_kopierer_karton_2b",
+    kind: "text",
+    title: "Das Alignment",
+    reqStory: "path_karton_prozess",
+    text: "Der Termin findet statt: acht Personen, ein Beamer, eine Agenda mit dem einzigen Punkt 'Kopierer (Karton)'. Nach fünfundvierzig Minuten steht das Ergebnis fest: Es braucht einen Folgetermin. Mit erweitertem Teilnehmerkreis. Der Karton wurde in der gesamten Sitzung nicht einmal erwähnt.",
+    opts: [
+        {
+            t: "Den Wahnsinn komplett absitzen",
+            m: 30, f: 10, a: 15, c: 0,
+            r: "Du erlebst fünfundvierzig Minuten Verwaltungstheater in Reinkultur, inklusive einer Folie mit dem Titel 'Stakeholder-Landkarte Kopierer'. Am Ende weißt du nichts Neues, aber du warst dabei, und Dabeisein wird hier protokolliert. Anwesenheit ist die härteste Währung der Bürokratie."
+        },
+        {
+            t: "Dr. Wichtig um eine Machtentscheidung bitten",
+            m: 10, f: 0, a: 5, c: 10,
+            r: "Du schilderst ihm den Fall in zwei Sätzen. Er entscheidet in zehn Sekunden: 'Der Admin baut auf. Erledigt.' Der Verteiler verstummt schlagartig - Entscheidungen von oben werden hier nicht diskutiert, nur erlitten. Der Admin bist übrigens du. Das war der Preis der Effizienz."
+        },
+        {
+            t: "Während des Folgetermins mit Kevin aufbauen",
+            rep: { "Kevin": 5 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Während acht Menschen im Folgetermin die 'Roadmap Aufbau' diskutieren, bauen Kevin und du das Gerät in vierzig Minuten einfach auf. Als die Einladung zum dritten Termin verschickt wird, druckt der Kopierer sie bereits aus. Kevin findet das 'wie ein Heist-Movie'. Er hat nicht ganz unrecht."
+        }
+    ]
+},
+{
+    id: "sq_kopierer_karton_2c",
+    kind: "text",
+    title: "Meetingpoint K1",
+    reqStory: "path_karton_kult",
+    text: "Der Kult ist eskaliert: Gabi hat die Geburtstagsrunden zum Karton verlegt, Chantal shootet dort Content ('so raw, so real'), und jemand hat eine Topfpflanze daraufgestellt. Nun mailt der Hersteller: Die Garantie des Geräts läuft in einer Woche ab. Ungeöffnet keine Prüfung, keine Prüfung keine Garantie.",
+    opts: [
+        {
+            t: "Aufbauen und den Kult beenden",
+            m: 25, f: -5, a: 10, c: -5,
+            r: "Du opferst den Meetingpoint der Vernunft. Der Kopierer läuft, die Garantie ist gesichert, die Topfpflanze zieht auf die Fensterbank um. Die Firma trauert drei Tage um K1, dann versammeln sich die Geburtstagsrunden eben um den Kopierer. Rituale suchen sich ihre Orte selbst."
+        },
+        {
+            t: "Garantieverzicht dokumentieren, Kult behalten",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du dokumentierst formell den 'bewussten Verzicht auf Inbetriebnahme zugunsten der Standortkultur'. Die Firma entscheidet sich amtlich für ein Möbel und gegen einen Kopierer, den sie bezahlt hat. Irgendwann wird ein Wirtschaftsprüfer diesen Vermerk finden und einen langen Tag haben."
+        },
+        {
+            t: "Die Hersteller-Mail an den Verteiler weiterleiten",
+            m: 5, f: 5, a: -5, c: 0,
+            r: "Du wirfst die Garantie-Deadline wie ein Stück Fleisch in den Zuständigkeits-Verteiler und lehnst dich zurück. Die Eskalation ist ein Naturschauspiel: 14 Menschen, eine Frist, keine Zuständigkeit. Popcorn wäre angemessen. Am Ende baut ihn vermutlich doch Egon auf. Wortlos. Nachts."
+        }
+    ]
+},
+
+
+/* ============================================================
+   HANDY-NACHRICHTEN (v4.0.0, Ergänzung zur Dienstgang-Welle)
+   Drei neue kind:"phone"-Ereignisse im Messenger-Format:
+   Markus' Alpha Circle, Kevins Sprachnachrichten-Lawine und
+   Gabis Frühwarnsystem. Je ein Ergebnis-Pfad setzt ein Flag
+   mit fertiger Text-Fortsetzung.
+   ============================================================ */
+
+{
+    id: "sq_phone_alpha",
+    kind: "phone",
+    appName: "BroChat",
+    title: "ALPHA CIRCLE 💪🔥",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Markus hat dich zur Gruppe 'ALPHA CIRCLE 💪🔥' hinzugefügt.\n\nMarkus: 'Willkommen im inneren Zirkel, Müller! Hier teilen wir SIGNALS. Erste Regel: 5 Uhr aufstehen. Zweite Regel: Über den Circle wird nicht geredet, nur PERFORMT.'\n\nSteve_Hustle: 'LFG 🚀🚀🚀'\n\nMarkus: 'Sag kurz hallo, Bro.'",
+            opts: [
+                { t: "[System: Gruppe für immer stummschalten]", next: "mute" },
+                { t: "Höflich austreten, mit Begründung", next: "exit" },
+                { t: "'Bin dabei 💪'", next: "join" }
+            ]
+        },
+        mute: {
+            text: "[System: 'ALPHA CIRCLE 💪🔥' wurde stummgeschaltet]\n\nDie Gruppe produziert ab sofort lautlos Nachrichten. Der Zähler steht nach einer Stunde bei 47. Niemand bemerkt dein Schweigen - im Alpha Circle hört ohnehin jeder nur sich selbst.",
+            opts: [
+                { t: "Zufrieden weiterarbeiten [System: Chat schließen]", next: "end_mute" }
+            ]
+        },
+        exit: {
+            text: "Du: 'Danke Markus, aber Gruppen mit Flammen-Emoji sind nichts für mich. Viel Erfolg euch!'\n\n[System: Du hast die Gruppe verlassen]\n\nMarkus (privat): 'Respekt. Ehrliches Feedback. Nicht jeder ist ready für den Circle. 💪 Kein Ding, Bro.'",
+            opts: [
+                { t: "'Kein Ding, Markus.' [System: Chat schließen]", next: "end_exit" }
+            ]
+        },
+        join: {
+            text: "Markus: 'WUSSTE es! 🔥'\n\nSteve_Hustle: 'Welcome Bro 🚀'\n\nMarkus: 'Morgen 5 Uhr kommt das erste SIGNAL. Sei ready.'\n\nDu bist jetzt Mitglied einer Gruppe, deren Zweck du nicht kennst, mit Menschen, die du nicht kennst, und einem Wecker, den du nicht stellen wirst.",
+            opts: [
+                { t: "'Ready. 💪' [System: Handy weglegen]", next: "end_join" }
+            ]
+        }
+    },
+    results: {
+        end_mute: {
+            txt: "Die eleganteste Lösung der Digitalmoderne: dabei sein, ohne dabei zu sein. Die Gruppe glaubt, du liest mit. Du glaubst, du hast Ruhe. Beide Seiten sind glücklich, und keine hat recht.",
+            m: 5, f: 5, a: -5, c: 0
+        },
+        end_exit: {
+            txt: "Ein sauberer Abgang mit erhobenem Haupt. Markus respektiert Klartext mehr als Zustimmung - das ist das Paradox seines Berufs. Im Circle wird dein Austritt als 'Beta-Move' diskutiert. Von vier Leuten. Um fünf Uhr morgens.",
+            rep: { "Markus": 3 },
+            m: 5, f: 0, a: 5, c: 0
+        },
+        end_join: {
+            txt: "Du bist jetzt offiziell Alpha. Was das bedeutet, wirst du morgen um Punkt fünf Uhr erfahren, wenn dein Handy vibriert. Und übermorgen. Und jeden Tag danach. Der Circle vergisst nie.",
+            rep: { "Markus": 5 },
+            m: 5, f: 5, a: 0, c: 0,
+            next: "path_alpha_member"
+        }
+    }
+},
+{
+    id: "sq_alpha_2a",
+    kind: "text",
+    title: "Das 5-Uhr-Signal",
+    reqStory: "path_alpha_member",
+    text: "Es ist eingetreten: Jeden Morgen um Punkt fünf Uhr vibriert dein Handy. Das SIGNAL ist immer ein Foto von Markus im Fitnessstudio, dazu ein Spruch ('Während du schläfst, trainiert dein Wettbewerb'). Heute Morgen waren es zwei Fotos. Der Circle skaliert.",
+    opts: [
+        {
+            t: "Die Gruppe endlich stummschalten",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Drei Wochen zu spät, aber die Stille ist himmlisch. Markus wird nie erfahren, dass seine Signale ins Leere senden - im Circle gilt fehlende Antwort als 'Grind-Modus'. Du grindest jetzt offiziell. Im Schlaf."
+        },
+        {
+            t: "Um 4:30 ein Gegen-Signal senden",
+            rep: { "Markus": 5 },
+            m: 10, f: 5, a: -5, c: 0,
+            r: "Du schickst ein Foto vom nächtlichen Server-Monitoring mit dem Spruch 'Während du trainierst, patcht deine IT'. Der Circle explodiert vor Ehrfurcht. Markus ernennt dich zum 'Tech-Alpha'. Du hast das Spiel nicht verlassen. Du hast es übernommen."
+        },
+        {
+            t: "Das Handy nachts komplett ausschalten",
+            m: 2, f: 5, a: 0, c: 5,
+            r: "Kein Signal, kein Vibrieren, endlich Schlaf. Allerdings ist dein Handy auch die Rufbereitschafts-Nummer - sollte nachts wirklich mal ein Server brennen, klingelt es jetzt bei niemandem. Du tauschst Markus gegen ein Restrisiko. Der Kurs wirkt fair. Noch."
+        }
+    ]
+},
+
+{
+    id: "sq_phone_kevin_voice",
+    kind: "phone",
+    appName: "WhatsApp",
+    title: "Kevin (Azubi)",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Kevin: [Sprachnachricht 0:47]\n\nKevin: [Sprachnachricht 1:12]\n\nKevin: [Sprachnachricht 0:58]\n\nKevin: 'ach und'\n\nKevin: [Sprachnachricht 1:35]\n\nGesamtlänge: 4 Minuten 32 Sekunden. Betreff: unbekannt. Dringlichkeit: unbekannt. Es könnte alles sein, von 'Drucker piept' bis 'Serverraum brennt'.",
+            opts: [
+                { t: "[System: Alle vier Nachrichten anhören]", next: "listen" },
+                { t: "'SCHREIB. ES. BITTE. AUF.'", next: "schreib" },
+                { t: "[System: In doppelter Geschwindigkeit anhören]", next: "speed" }
+            ]
+        },
+        listen: {
+            text: "Viereinhalb Minuten später kennst du: Kevins Schulweg heute Morgen, die Meinung seines Kumpels zu Energydrinks, eine Anekdote über seinen Nachbarn - und ganz am Ende, beiläufig: 'ach ja und mein Bildschirm ist voll komisch.' Das ist die gesamte technische Information. 'Komisch.'",
+            opts: [
+                { t: "'Ich komme vorbei.' [System: Chat schließen]", next: "end_listen" }
+            ]
+        },
+        schreib: {
+            text: "Kevin: [Sprachnachricht 0:21]\n\nEr hat auf die Bitte, zu schreiben, mit einer Sprachnachricht geantwortet. Inhalt: 'okay sorry, also, schreiben, ja, also es geht um meinen Bildschirm, der ist...' - die Nachricht bricht ab.\n\nKevin: [Sprachnachricht 0:44]",
+            opts: [
+                { t: "[System: Kapitulieren und anhören]", next: "end_kapit" },
+                { t: "[System: Ihn einfach anrufen]", next: "end_anruf" }
+            ]
+        },
+        speed: {
+            text: "Kevin klingt in doppelter Geschwindigkeit wie ein aufgeregtes Eichhörnchen mit Meinungen zu Energydrinks. Die technische Information am Ende bleibt identisch: Der Bildschirm ist 'komisch'. Du hast zwei Minuten und sechzehn Sekunden gespart und trotzdem nichts erfahren.",
+            opts: [
+                { t: "'Komisch WIE, Kevin?' [System: Chat schließen]", next: "end_speed" }
+            ]
+        }
+    },
+    results: {
+        end_listen: {
+            txt: "Du gehst hin. Der Bildschirm ist 'komisch', weil die Helligkeit auf Minimum steht - vermutlich seit Tagen, vermutlich durch Kevin selbst. Zwei Tastendrücke. Kevin ist überwältigt: 'DU bist echt der Beste.' Viereinhalb Minuten Audio für zwei Sekunden Lösung. Die Bilanz des Azubi-Supports.",
+            m: 10, f: 0, a: 10, c: 0,
+            next: "path_kevin_tutorial"
+        },
+        end_kapit: {
+            txt: "Du hörst also doch alles an. Das Problem: Bildschirmhelligkeit auf Minimum. Die Lösung dauert kürzer als die kürzeste seiner Sprachnachrichten. Du löst es per Fernwartung, ohne ein Wort. Manchmal ist Schweigen die letzte verbliebene Sprache.",
+            m: 10, f: 5, a: 10, c: 0
+        },
+        end_anruf: {
+            txt: "Revolutionäre Technologie: der Anruf. Vierzig Sekunden Gespräch klären, was viereinhalb Minuten Audio nicht konnten. Bildschirmhelligkeit, Minimum, zwei Tasten, erledigt. Kevin ist beeindruckt: 'Krass, telefonieren ist ja voll effizient.' Eine Generation entdeckt das Rad.",
+            m: 5, f: 0, a: 5, c: 0
+        },
+        end_speed: {
+            txt: "Kevins Antwort kommt prompt: [Sprachnachricht 1:07]. Du gibst auf, gehst hin und stellst die Bildschirmhelligkeit hoch, die er selbst runtergedreht hat. Auf dem Rückweg beschließt du, Sprachnachrichten in der IT-Richtlinie zu erwähnen. Gleich nach dem Verbot von Kaffee über Tastaturen.",
+            m: 10, f: 5, a: 5, c: 0
+        }
+    }
+},
+{
+    id: "sq_kevin_voice_2a",
+    kind: "text",
+    title: "Das Tutorial",
+    reqStory: "path_kevin_tutorial",
+    text: "Kevin will sich revanchieren und hat 'ein Tutorial aufgenommen, damit du es den anderen schicken kannst': eine einzelne Sprachnachricht, neun Minuten lang, über das Einstellen der Bildschirmhelligkeit. Inklusive Intro ('Yo, hier ist Kevin von der IT') und Verabschiedung ('Peace').",
+    opts: [
+        {
+            t: "Das Tutorial ins Wiki verschriftlichen",
+            rep: { "Kevin": 5 },
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Du tippst Kevins neun Minuten in fünf nüchterne Wiki-Sätze und setzt ihn als Co-Autor drauf. Es ist der erste Artikel im IT-Wiki überhaupt. Kevin druckt ihn aus und hängt ihn über sein Bett, vermutest du. 'Kevin von der IT' hat jetzt ein Vermächtnis."
+        },
+        {
+            t: "Kommentarlos archivieren",
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Die Datei wandert in einen Ordner namens 'Kevin_Audio', der eines Tages ein bedeutendes Zeitdokument sein wird. Kevin fragt zweimal nach, ob du es 'schon verteilt' hast. Du antwortest wahrheitsgemäß: 'Es ist gesichert.' Alles an diesem Satz stimmt."
+        },
+        {
+            t: "Chantal das Format als 'Voice-Content' anbieten",
+            rep: { "Chantal": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Chantal ist begeistert: 'IT zum HÖREN! So nahbar!' Sie plant eine Serie: 'Tech-Talk mit Kevin', jeden Freitag. Du hast aus einem Problem ein Format gemacht und aus Kevin einen Podcaster. Die Firma wird es lieben. Die Richtigkeit der Inhalte wird niemand prüfen."
+        }
+    ]
+},
+
+{
+    id: "sq_phone_gabi_intel",
+    kind: "phone",
+    appName: "Messages",
+    title: "Gabi (Empfang)",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Gabi: 'Nur zur Info: Der Chef ist heute SO einer Laune.'\n\nGabi: 'Um 14 Uhr Meeting wegen der IT-Kosten. Der Finanzchef hat eine Liste dabei.'\n\nGabi: 'Du bist nicht eingeladen.'\n\nGabi: 'Noch nicht. 🙃'",
+            opts: [
+                { t: "'Was genau weißt du?'", next: "info" },
+                { t: "'Kannst du mich da reinbekommen?'", next: "rein" },
+                { t: "'Danke. Ich will es gar nicht wissen.'", next: "end_ruhe" }
+            ]
+        },
+        info: {
+            text: "Gabi: 'Punkt 1 ist die neue Kaffeemaschine (frag nicht).'\n\nGabi: 'Punkt 2 die Reisekosten vom Vertrieb.'\n\nGabi: 'Punkt 3 bist du. Wörtlich: \"Kostenstelle IT - Handlungsbedarf\".'\n\nGabi: 'Du hast bis 14 Uhr. 🙃'",
+            opts: [
+                { t: "[System: Sofort Zahlen und Belege sammeln]", next: "end_prep" },
+                { t: "[System: Abwarten, wird schon nichts werden]", next: "end_warten" }
+            ]
+        },
+        rein: {
+            text: "Gabi: 'Einladen kann ich dich nicht.'\n\nGabi: 'ABER: Die Protokollführung für 14 Uhr ist noch unbesetzt. Ich verwalte die Liste. 🙃'\n\nGabi: 'Willst du wirklich in einem Meeting sitzen, in dem es um dich geht - als der, der mitschreibt?'",
+            opts: [
+                { t: "'Setz mich drauf.'", next: "end_protokoll" },
+                { t: "'Nein. Doch nicht. Vergiss es.'", next: "end_kneifen" }
+            ]
+        }
+    },
+    results: {
+        end_ruhe: {
+            txt: "Gabi: 'Ok. Viel Glück um 14 Uhr. 🙃' - Der Smiley arbeitet. Du versuchst weiterzuarbeiten, aber ab 13:30 schaust du im Fünf-Minuten-Takt auf die Uhr. Nichtwissen ist auch nur eine anstrengendere Form des Wartens.",
+            m: 2, f: 5, a: 5, c: 5
+        },
+        end_prep: {
+            txt: "Zwei Stunden konzentrierte Vorbereitung: Kostenaufstellung, eingesparte Ausfälle, der Gegenwert jedes Servers. Um 13:55 legst du unaufgefordert eine Ein-Seiten-Übersicht in den Meetingraum - auf jeden Platz. Punkt 3 wird um 14:20 vertagt, 'da offenbar bereits Transparenz besteht'. Gabis Vorwarnung war Gold wert.",
+            m: 20, f: -10, a: 10, c: -5,
+            rep: { "Gabi": 3 }
+        },
+        end_warten: {
+            txt: "Du wartest ab. Um 14:40 kommt die Mail: 'Bitte bis Freitag eine detaillierte Aufstellung aller IT-Kosten der letzten 24 Monate vorlegen.' Das Meeting hat ohne dich über dich entschieden. So funktionieren Meetings, zu denen man nicht geht.",
+            m: 2, f: 10, a: 0, c: 10
+        },
+        end_protokoll: {
+            txt: "Gabi: 'Erledigt. 14 Uhr, Raum Konferenz 1. Bring einen Stift mit, das wirkt echter. 🙃' - Du bist jetzt offizieller Protokollführer eines Meetings über deine eigene Abschaffung. Es gibt schlechtere Logenplätze.",
+            m: 5, f: 0, a: 5, c: 0,
+            rep: { "Gabi": 5 },
+            next: "path_intel_protokoll"
+        },
+        end_kneifen: {
+            txt: "Gabi: 'Verstehe. 🙃' - Drei Smileys in einem Chat sind bei Gabi eine Ansage. Du wirst nie erfahren, was um 14 Uhr besprochen wurde. Beziehungsweise: Du wirst es von Gabi erfahren, morgen, in der Version mit Ausschmückungen.",
+            m: 2, f: 5, a: 0, c: 5
+        }
+    }
+},
+{
+    id: "sq_intel_2a",
+    kind: "text",
+    title: "Der Protokollführer",
+    reqStory: "path_intel_protokoll",
+    text: "14 Uhr, Konferenz 1. Der Finanzchef referiert über 'Kostenstelle IT - Handlungsbedarf' und benutzt dabei Zahlen von 2023. Niemand am Tisch weiß, dass der Mann mit dem Stift, der alles mitschreibt, die Kostenstelle persönlich ist. Du hast die einzige Position im Raum, die niemand verdächtigt und jeder zitiert.",
+    opts: [
+        {
+            t: "Neutral protokollieren, Zahlen still korrigieren",
+            m: 20, f: -5, a: 10, c: -10,
+            r: "Du protokollierst jede Aussage korrekt - und ergänzt in Klammern die aktuellen Zahlen ('Anm. d. Protokolls: Stand 2026 abweichend'). Das Protokoll geht an alle, inklusive Dr. Wichtig. Die Anmerkungen wirken wie ein stiller Anwalt. Punkt 3 stirbt in der nächsten Sitzung leise an Faktenlage."
+        },
+        {
+            t: "Sich als Betroffener zu erkennen geben",
+            m: 10, f: 0, a: 5, c: 10,
+            r: "'Als Protokollführer und Kostenstelle möchte ich anmerken...' Der Raum erstarrt. Der Finanzchef spricht von 'Befangenheit', Dr. Wichtig von 'unkonventionell, aber mutig'. Das Meeting endet ergebnislos, und du stehst jetzt auf zwei Listen: der des Finanzchefs und der mentalen des Chefs. Nur eine davon ist gut."
+        },
+        {
+            t: "Kreativ protokollieren",
+            m: 10, f: 10, a: 0, c: 5,
+            r: "'Punkt 3 wurde kontrovers gewürdigt und zur weiteren Beobachtung empfohlen.' Kein Wort davon ist falsch, keins bedeutet etwas. Das Protokoll passiert alle Instanzen unbeanstandet. Du hast Verwaltungsdeutsch als Tarnkappe benutzt. Frau Elster hätte es bemerkt. Der Finanzchef ist nicht Frau Elster."
+        }
+    ]
+},
+
 ];

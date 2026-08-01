@@ -68,6 +68,8 @@ const checkOpt = (o, ctx) => {
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     const ctx = `[${p}/${ev.id}]`;
+    if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
+      warn(`${ctx}: kind fehlt oder unbekannt ("${ev.kind}") — Dienstgänge brauchen "text" oder "phone"`);
     if (ev.reqStory) (flagsReq.get(ev.reqStory) ?? flagsReq.set(ev.reqStory, []).get(ev.reqStory)).push(ctx);
     if (ev.char && !charNames.has(ev.char)) err(`${ctx}: char "${ev.char}" nicht in DB.chars`);
     if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" nicht in DB.chars`);
