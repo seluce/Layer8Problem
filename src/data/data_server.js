@@ -3454,8 +3454,8 @@ export const server = [
             },
             { 
                 t: "Den Hyper-Fokus für Tickets nutzen", 
-                m: -20, f: -10, a: 15, c: 0, 
-                r: "Du schließt im Wahn fünf alte Tickets ab. Du bist fertig mit den Nerven, gewinnst aber wertvolle Arbeitszeit!" 
+                m: 5, f: -10, a: 15, c: 0, 
+                r: "Du schließt im Wahn fünf alte Tickets ab, bevor das Zittern einsetzt. Du bist fertig mit den Nerven, aber der Stapel ist spürbar geschrumpft." 
             }
         ]
     },

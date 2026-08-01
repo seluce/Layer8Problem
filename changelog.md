@@ -10,7 +10,7 @@ Spielbalance:
 * Lange Aktionen haben jetzt durchgehend spürbare Folgen. Wer sich zwanzig Minuten aus einer Situation herausredet, kassiert dafür Faulheit; wer Nerviges erledigt, Aggro; wer dem Chef auffällt, Radar. Zeit absitzen ohne Konsequenz gibt es nicht mehr.
 * Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.
 * Zehn Antworten im Altbestand kosteten viel Zeit, blieben aber praktisch folgenlos - vom Klebeband-Angeln im Lüftungsschlitz bis zum geschwänzten Meeting. Alle zehn haben jetzt spürbare Konsequenzen: Rausreden gibt Faulheit, Gefrickel gibt Aggro, sichtbarer Pfusch fällt dem Chef auf.
-* Drei Antworten schenkten durch ein falsches Vorzeichen versehentlich Zeit, statt welche zu kosten. Die eine bewusste Zeit-Belohnung bleibt unangetastet: Wer im Koffein-Wahn alte Tickets abarbeitet, gewinnt weiterhin Arbeitszeit.
+* Vier Antworten hatten negative Minuten und drehten damit die Uhr zurück - drei durch ein falsches Vorzeichen, eine als gewollte Belohnung im Koffein-Wahn. Zeit läuft jetzt nirgends mehr rückwärts; der Hyper-Fokus bleibt stark, schenkt aber keine Arbeitszeit mehr.
 
 Anzeige & Layout:
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
@@ -43,7 +43,7 @@ Für Entwickler:
 * STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
 * Das E-Mail-System merkt sich bereits eingetroffene Mails jetzt anhand ihrer ID statt anhand des Betreffs - dieselbe Logik wie bei allen anderen Ereignissen. Zwei Mails mit gleichem Betreff hätten sich bislang stillschweigend gegenseitig blockiert, eine davon wäre nie erschienen. Der Daten-Prüfer meldet doppelte Mail-IDs deshalb nun als Fehler; gleiche Betreffs sind nur noch ein kosmetischer Hinweis.
 * Der Daten-Prüfer schlägt jetzt Alarm, wenn sämtliche Antworten eines Ereignisses einen Gegenstand voraussetzen oder verbrauchen - genau die Konstellation, die ein Ereignis unlösbar machen kann. Die Prüfung greift auch in den Zwischenschritten verzweigter Ereignisse.
-* Der Daten-Prüfer wacht außerdem über die Balancing-Grundregeln: Statusänderungen im 5er-Raster, Mindestdauer von zwei Minuten und keine teuren Antworten ohne spürbare Wirkung. Zeit-Gutschriften als bewusste Belohnung bleiben erlaubt und werden nur aufgelistet.
+* Der Daten-Prüfer wacht außerdem über die Balancing-Grundregeln: Statusänderungen im 5er-Raster, Mindestdauer von zwei Minuten (Zeit läuft nie rückwärts, negative Minuten sind ein Fehler) und keine teuren Antworten ohne spürbare Wirkung.
 
 [3.7.0] - 2026-07-28
 

@@ -141,8 +141,7 @@ const numCheck = (o, ctx) => {
     if (typeof v === 'number' && v % 5 !== 0) warn(`${ctx}: ${k}:${v} liegt nicht im 5er-Raster`);
   }
   if (typeof m === 'number') {
-    if (m < 0) info(`${ctx}: m:${m} — Zeit-Gutschrift (absichtliche Belohnung?)`);
-    else if (m < 2) err(`${ctx}: m:${m} — keine Aktion dauert unter 2 Minuten`);
+    if (m < 2) err(`${ctx}: m:${m} — keine Aktion dauert unter 2 Minuten, und Zeit läuft nie rückwärts`);
     const impact = Math.abs(o.f || 0) + Math.abs(o.a || 0) + Math.abs(o.c || 0);
     if (m >= 15 && impact < 10 && !o.loot && !o.rep)
       warn(`${ctx}: m:${m} bei Gesamtwirkung ${impact} — Gratis-Vorspuler ohne Konsequenz`);
