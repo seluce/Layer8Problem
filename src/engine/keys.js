@@ -12,6 +12,7 @@
 export const KEYS = {
     // --- Spielstand & Fortschritt (werden vom Hard-Reset gelöscht) ---
     archive:      'layer8_archive',
+    dayState:     'layer8_day',        // laufender Arbeitstag, siehe engine_core.saveDay()
     defaultDiff:  'layer8_default_diff',
     tutorialDone: 'sysadmin_tutorial_done',
     partyPlayed:  { easy:   'layer8_party_played_easy',

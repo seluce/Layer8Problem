@@ -154,6 +154,111 @@ export const core = {
         }
     },
 
+    /**
+     * Sichert den laufenden Arbeitstag.
+     *
+     * Gespeichert wird ausschließlich im Ruhezustand — also dann, wenn gerade
+     * kein Ereignis offen ist. Ein halb beantwortetes Gespräch wiederherzu-
+     * stellen wäre aufwendig und fehleranfällig; so verliert man im
+     * schlimmsten Fall das eine Ereignis, das gerade auf dem Schirm stand,
+     * statt des ganzen Vormittags.
+     *
+     * Welche Felder zum Tag gehören, bestimmt freshDay() — dieselbe Quelle,
+     * die den Tag auch anlegt. Damit kann ein neu hinzugefügtes Tagesfeld
+     * hier nicht vergessen werden. Sets werden für JSON zu Listen.
+     */
+    saveDay: function() {
+        if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
+
+        try {
+            const day = {};
+            for (const key of Object.keys(freshDay())) {
+                // Laufende Timer sind Kennzahlen dieser Sitzung; nach einem
+                // Neuladen zeigen sie ins Leere. Sie bleiben draußen und
+                // starten beim Fortsetzen ohnehin neu.
+                if (DAY_TIMERS.includes(key)) continue;
+                const value = this.state[key];
+                day[key] = value instanceof Set ? [...value] : value;
+            }
+            // Nicht Teil von freshDay, gehören aber zum Tag:
+            day.difficultyMult = this.state.difficultyMult;
+            day.reputation = { ...this.state.reputation };
+            day.savedAt = Date.now();
+
+            localStorage.setItem(this.KEYS.dayState, JSON.stringify(day));
+        } catch (e) {
+            // Voller Speicher oder privater Modus: Der Tag läuft weiter,
+            // er ist dann eben nicht gesichert.
+            console.warn('Tag konnte nicht gesichert werden:', e);
+        }
+    },
+
+    /** Gibt es einen unterbrochenen Tag? Liefert ihn oder null. */
+    loadDay: function() {
+        try {
+            const raw = localStorage.getItem(this.KEYS.dayState);
+            if (!raw) return null;
+            const day = JSON.parse(raw);
+            // Ein Tag, der bereits vorbei war, wird nicht angeboten.
+            if (!day || day.time >= 16 * 60 + 30) return null;
+            return day;
+        } catch {
+            return null;
+        }
+    },
+
+    /** Stellt einen gesicherten Tag wieder her und macht im Ruhezustand weiter. */
+    resumeDay: function() {
+        const day = this.loadDay();
+        if (!day) { this.reset(); return; }
+
+        const SETS = ['usedIDs', 'usedEmails'];
+        for (const [key, value] of Object.entries(day)) {
+            if (key === 'savedAt') continue;
+            this.state[key] = SETS.includes(key) ? new Set(value ?? []) : value;
+        }
+
+        // Der Log-Zähler lebt auf dem Engine-Objekt, nicht im Tageszustand —
+        // nach einem Neuladen stünde er wieder auf null und würde IDs
+        // vergeben, die die geladenen Einträge schon tragen. Svelte quittiert
+        // das im LogFeed mit doppelten Schlüsseln.
+        this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
+
+        // Anzeige und Ablauf wieder aufsetzen
+        for (const key of DAY_TIMERS) this.state[key] = null;
+        this.state.activeEvent = false;
+        this.state.pendingEnd = null;
+        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+
+        document.getElementById('difficulty-modal').style.display = 'none';
+        document.getElementById('resume-modal')?.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+
+        this.renderHeader();
+        this.updateUI();
+        this.disableButtons(false);
+        this.setTerminalIdle();
+        this.log("Sitzung wiederhergestellt. Wo waren wir...", "text-blue-400");
+        this.playMusic('office');
+        this.updatePresence('system');
+    },
+
+    /** Aus dem Fortsetzen-Dialog: Zwischenstand wegwerfen, neu anfangen. */
+    discardDay: function() {
+        this.clearDay();
+        const modal = document.getElementById('resume-modal');
+        modal?.classList.add('hidden');
+        modal?.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        this.playAudio('ui');
+        this.start();
+    },
+
+    /** Verwirft den gesicherten Tag (Tagesende oder bewusster Neustart). */
+    clearDay: function() {
+        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* egal */ }
+    },
+
     saveSystem: function() {
         // Copy the current reputation into the archive before writing
         this.state.archive.reputation = { ...this.state.reputation };
@@ -189,7 +294,25 @@ export const core = {
     start: function() {
 		this.playMusic('office');
         document.getElementById('intro-modal').style.display = 'none';
-        
+
+        // Liegt ein unterbrochener Arbeitstag vor? Dann hat die Frage danach
+        // Vorrang vor der Tageswahl — sonst wäre der Zwischenstand mit dem
+        // ersten Klick verloren.
+        const saved = this.loadDay();
+        const resumeModal = document.getElementById('resume-modal');
+        if (saved && resumeModal) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
+            const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
+                       : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
+            const info = document.getElementById('resume-info');
+            if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
+            resumeModal.classList.remove('hidden');
+            resumeModal.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            return;
+        }
+
         // Did the player pin a default difficulty?
         const defaultDiff = localStorage.getItem(this.KEYS.defaultDiff) || 'ask';
         
@@ -335,6 +458,9 @@ export const core = {
         // Zahlen später ausblendet, hat den Vormittag über gesehen, wie es
         // um ihn steht — das zählt nicht.
         this.state.blindRun = this.state.blindStats && this.state.blindTickets;
+
+        // Ein neuer Tag ersetzt jeden gesicherten Zwischenstand.
+        this.clearDay();
 
         // Reset the ticker header immediately
         this.renderHeader();
@@ -787,6 +913,8 @@ export const core = {
             this.clearDayTimers();
             this.state.emailPending = false;
             
+            // Der Tag ist vorbei — der Zwischenstand darf weg.
+            this.clearDay();
             this.showEnd(end);
             this.state.pendingEnd = null; // Reset
         }

@@ -237,6 +237,9 @@ export const ui = {
     // prompt and the H.A.L.G.E.R.D. one shown during the tutorial.
     setTerminalIdle: function(variant = 'system') {
         this._setTerminal(this.IDLE_CLASS, { mode: 'idle', variant });
+        // Ruhezustand ist der sichere Punkt zum Sichern: kein offenes
+        // Ereignis, das man halb wiederherstellen müsste.
+        this.saveDay?.();
     },
 
     // Shows an event. components/EventView.svelte renders it from the view model.

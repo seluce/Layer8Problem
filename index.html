@@ -288,6 +288,29 @@
 <!-- E-MAIL MODAL END -->
 
 <!-- SCHWIERIGKEIT MODAL START -->
+    <!-- Unterbrochener Arbeitstag: erscheint vor der Tageswahl, wenn ein
+         gesicherter Zwischenstand vorliegt (siehe engine_core.saveDay). -->
+    <div id="resume-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
+        <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
+            <div class="text-4xl mb-3">🕗</div>
+            <h2 class="text-2xl font-black text-white mb-2">SITZUNG UNTERBROCHEN</h2>
+            <p class="text-slate-400 text-sm mb-1">Dein letzter Arbeitstag wurde nicht zu Ende gebracht.</p>
+            <p id="resume-info" class="text-[11px] font-mono text-blue-400 mb-6"></p>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="engine.resumeDay()"
+                        class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors shadow-lg">
+                    Weiterarbeiten
+                </button>
+                <button onclick="engine.discardDay()"
+                        class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors">
+                    Neuer Tag
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-4">Ein neuer Tag verwirft den Zwischenstand.</p>
+        </div>
+    </div>
+
     <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
