@@ -585,42 +585,6 @@ export const core = {
     // updateUI() after every single action - so this HTML was assembled dozens
     // of times per day and thrown away every time. Now it is only called from
     // the branches that actually show it.
-    buildDayReport: function() {
-        let diffName = "MITTWOCH (Normal)";
-        if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
-        if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
-
-        const rageBadge = this.state.rageWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-orange-400 bg-orange-950/30 border-2 border-orange-500/80 rounded-xs px-1.5 py-0.5 mt-2 inline-block -rotate-3 shadow-[0_0_8px_rgba(249,115,22,0.3)] pointer-events-none">VENTIL GENUTZT</div>' : '';
-        const chefBadge = this.state.chefWarningReceived ? '<div class="text-[8px] font-mono font-bold tracking-widest text-red-500 bg-red-950/30 border-2 border-red-500/80 rounded-xs px-1.5 py-0.5 mt-2 inline-block rotate-2 shadow-[0_0_8px_rgba(239,68,68,0.3)] pointer-events-none">ABGEMAHNT</div>' : '';
-
-        const statsHTML = `
-            <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
-                <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-2">Tagesbericht: <span class="text-white font-bold">${diffName}</span></div>
-                <div class="grid grid-cols-3 gap-2 text-center font-mono">
-                    <div class="flex flex-col items-center">
-                        <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
-                        <span class="text-[10px] text-slate-400">FAULHEIT</span>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
-                        <span class="text-[10px] text-slate-400">AGGRO</span>
-                        ${rageBadge}
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <span class="text-red-500 font-bold text-xl">${Math.round(this.state.cr)}%</span>
-                        <span class="text-[10px] text-slate-400">RADAR</span>
-                        ${chefBadge}
-                    </div>
-                </div>
-            </div>
-        `;
-
-        const achHTML = this.state.achievedTitles.length > 0
-            ? `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>`
-            : "";
-
-        return statsHTML + achHTML;
-    },
 
     // Runs from updateUI() after every action, so it stays cheap: no report is
     // built until a branch actually needs one.
@@ -643,6 +607,9 @@ export const core = {
                 
                 // Reset aggro
                 this.state.al = resetTo; 
+                // Zwei Punkte: der Höchststand und der Reset direkt danach —
+                // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
+                this.recordStatPoint();
                 
                 // --- Ten generic blow-up texts ---
                 const rageTexts = [
@@ -670,7 +637,9 @@ export const core = {
                 
                 this.state.pendingEnd = { 
                     title: "RAGE QUIT", 
-                    text: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.<br>" + this.buildDayReport() + diary,
+                    lead: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.",
+                    cause: "rage",
+                    diary,
                     isWin: false 
                 };
             }
@@ -683,7 +652,9 @@ export const core = {
 
             this.state.pendingEnd = { 
                 title: "GEFEUERT", 
-                text: "Zu viele offene Tickets! Das System ist kollabiert.<br>" + this.buildDayReport() + diary, 
+                lead: "Zu viele offene Tickets! Das System ist kollabiert.",
+                cause: "tickets",
+                diary,
                 isWin: false 
             };
         }
@@ -734,7 +705,9 @@ export const core = {
 
             this.state.pendingEnd = { 
                 title: "FEIERABEND", 
-                text: "16:30! Du hast den Tag überlebt.<br>" + this.buildDayReport() + diary,
+                lead: "16:30! Du hast den Tag überlebt.",
+                cause: "time",
+                diary,
                 isWin: true 
             };
         }
@@ -751,6 +724,9 @@ export const core = {
                 
                 // Reset the radar per difficulty
                 this.state.cr = resetTo; 
+                // Zwei Punkte: der Höchststand und der Reset direkt danach —
+                // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
+                this.recordStatPoint();
                 
                 // --- Ten generic boss warnings ---
                 const bossTexts = [
@@ -779,7 +755,9 @@ export const core = {
 
                 this.state.pendingEnd = { 
                     title: "GEFEUERT", 
-                    text: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.<br>" + this.buildDayReport() + diary, 
+                    lead: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.",
+                    cause: "chef",
+                    diary,
                     isWin: false 
                 };
             }
@@ -802,7 +780,7 @@ export const core = {
             this.clearDayTimers();
             this.state.emailPending = false;
             
-            this.showEnd(end.title, end.text, end.isWin);
+            this.showEnd(end);
             this.state.pendingEnd = null; // Reset
         }
     },
@@ -1089,26 +1067,8 @@ export const core = {
         // ==========================================
         // ASSEMBLE THE HTML
         // ==========================================
-        return `
-            <details class='mt-6 group text-left'>
-                <summary class='cursor-pointer list-none bg-slate-900 hover:bg-slate-800 border border-slate-700 p-3 rounded-lg flex justify-between items-center transition-colors shadow-xs'>
-                    <span class='text-slate-300 font-bold uppercase tracking-widest text-xs flex items-center gap-2'>
-                        <span class="text-xl">📖</span> 
-                        Persönliches Logbuch lesen
-                    </span>
-                    <span class='text-slate-500 group-open:rotate-180 transition-transform duration-300'>▼</span>
-                </summary>
-                
-                <div class='mt-2 p-5 bg-slate-950 border border-slate-800 border-l-4 border-l-slate-500 rounded-b-lg text-slate-300 italic font-serif text-sm shadow-inner relative'>
-                    <div class="space-y-4">
-                        <p class="leading-relaxed">"${p1}"</p>
-                        ${p2 ? `<p class="leading-relaxed">"${p2}"</p>` : ''}
-                        ${pWarn ? `<p class="leading-relaxed text-orange-300/90">"${pWarn}"</p>` : ''}
-                        <p class="leading-relaxed font-bold text-white border-t border-slate-800 pt-3">"${p3}"</p>
-                    </div>
-                </div>
-            </details>
-        `;
+        // Absätze als Daten; die Papier-Optik macht components/DiaryEntry.svelte.
+        return { p1, p2, pWarn, p3 };
     },
 
 };

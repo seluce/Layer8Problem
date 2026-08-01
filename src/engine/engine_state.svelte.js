@@ -19,6 +19,11 @@ export function freshDay(mult = 1.0) {
         // Clock & core stats
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
+
+        // Stat curve of the day, one point per decision. The end screen draws
+        // it; nothing else reads it. Kept flat and tiny (four numbers a step,
+        // ~40 steps a day) so it can travel into the archive later if wanted.
+        statHistory: [{ t: 8 * 60, f: 0, a: 0, c: 0 }],
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
 
@@ -169,7 +174,7 @@ export const state = $state({
     loreOpen: false,
 
     // The big centre modal. components/EndModal.svelte renders it.
-    modal: { open: false, title: '', text: '', isEnd: false },
+    modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null },
 
     // Achievement notifications currently on screen.
     // components/AchievementToasts.svelte renders them.

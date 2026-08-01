@@ -760,6 +760,9 @@ export const events = {
         if (finalC !== 0) this.showFloatingText('val-cr', finalC);
         
         this.triggerShake(finalA, finalC);
+
+        // Punkt für die Tageskurve im Endbildschirm festhalten.
+        this.recordStatPoint();
         
         // --- REPUTATION LOGIK  ---
         // repData arrives as the object straight from the data file. It used to
@@ -893,6 +896,24 @@ export const events = {
      *     engine.triggerMorningMood('tickets')
      * Der reguläre Aufruf bleibt parameterlos und damit zufällig.
      */
+    /**
+     * Hält den aktuellen Stand für die Tageskurve fest.
+     *
+     * Wird nach jeder Wirkung aufgerufen, damit Sprünge (Ausraster,
+     * Abmahnung) in der Kurve als das sichtbar werden, was sie sind. Mehr
+     * als 200 Punkte kann ein Tag kaum erzeugen; die Grenze ist Vorsicht.
+     */
+    recordStatPoint: function() {
+        const h = this.state.statHistory;
+        if (!h || h.length > 200) return;
+        h.push({
+            t: this.state.time,
+            f: Math.round(this.state.fl),
+            a: Math.round(this.state.al),
+            c: Math.round(this.state.cr)
+        });
+    },
+
     triggerMorningMood: function(forceEffect = null) {
         // Fallback for a category missing from the data files
         if (!DB.moods || DB.moods.length === 0) {
@@ -988,6 +1009,10 @@ export const events = {
         this.updateUI();
 
         // 3. Rendered by components/MorningView.svelte
+        // Der Morgen setzt Startwerte (Ärger, Radar, Verschlafen) — ohne
+        // eigenen Punkt begänne die Kurve fälschlich bei null.
+        this.recordStatPoint();
+
         this.setTerminalMorning(mood.title, mood.text, statHtml);
     },
 
@@ -1050,7 +1075,14 @@ export const events = {
 
         // 4. Show the end modal - the hidden [PARTY] marker drives the colour
         let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
-        this.showEnd("GALA VORBEI", subtitleHTML + "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.<br>" + fullReport + diary, true);
+        this.showEnd({
+            title: "GALA VORBEI",
+            lead: "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.",
+            text: subtitleHTML + fullReport,   // Party-eigene Zusammenfassung
+            cause: "party",
+            diary,
+            isWin: true
+        });
     },
 
     // --- PHONE SYSTEM ---
@@ -1178,6 +1210,9 @@ export const events = {
         // ------------------------------------
         
         this.triggerShake(finalA, finalC);
+
+        // Punkt für die Tageskurve im Endbildschirm festhalten.
+        this.recordStatPoint();
         
         // --- REPUTATION HANDLING FOR THE PHONE ---
         if (res.rep) {

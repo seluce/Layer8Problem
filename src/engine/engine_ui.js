@@ -312,8 +312,13 @@ export const ui = {
     
     // Rendered by components/EndModal.svelte, which derives theme and button
     // from the title.
+    /**
+     * Zwischenmeldung (Warnung, Ventil) — Titel und ein Satz Text.
+     * Das Tagesende läuft über showEnd und trägt strukturierte Felder.
+     */
     showModal: function(title, text, isEnd) {
-        this.state.modal = { open: true, title, text, isEnd: !!isEnd };
+        this.state.modal = { open: true, title, text, isEnd: !!isEnd,
+                             lead: '', cause: null, diary: null };
         const overlay = document.getElementById('modal-overlay');
         overlay.classList.remove('hidden');
         overlay.classList.add('flex');
@@ -321,15 +326,34 @@ export const ui = {
     },
 
     closeModal: function() {
-        this.state.modal = { open: false, title: '', text: '', isEnd: false };
+        this.state.modal = { open: false, title: '', text: '', isEnd: false,
+                             lead: '', cause: null, diary: null };
         document.getElementById('modal-overlay').classList.add('hidden');
         document.getElementById('modal-overlay').classList.remove('flex');
         document.body.classList.remove('overflow-hidden');
         this.updateUI();
     },
 
-    showEnd: function(title, text, isWin) {
-        this.showModal(title, text, true);
+    /**
+     * Das Tagesende. Anders als showModal bekommt es keine fertige HTML-Zeile,
+     * sondern die Bestandteile: den Satz zum Ausgang (lead), die Ursache für
+     * die Hervorhebung in der Bilanz (cause) und die Tagebuch-Absätze.
+     * components/EndModal.svelte setzt daraus den Bildschirm zusammen.
+     */
+    showEnd: function(end) {
+        this.state.modal = {
+            open: true,
+            title: end.title,
+            text: end.text ?? '',      // nur noch die Party nutzt freien Text
+            lead: end.lead ?? '',
+            cause: end.cause ?? null,
+            diary: end.diary ?? null,
+            isEnd: true
+        };
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
     },
     
     // --- AUSREDEN SYSTEM ---
