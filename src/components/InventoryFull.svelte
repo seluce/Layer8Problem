@@ -76,11 +76,24 @@
 
         if (CONSUMABLES.includes(id)) engine.askUseItem(id);
     }
+    // Tastaturbedienung für die Slots. Sie bleiben Container statt Buttons,
+    // weil sie Tooltip-Boxen und Overlays enthalten - Flow-Content, der in
+    // einem <button> nicht stehen darf. stopPropagation hält Enter und Leer-
+    // taste von der globalen Tastatursteuerung in engine.js fern, damit ein
+    // fokussierter Slot nicht zusätzlich die Bestätigen-Aktion auslöst.
+    function keyActivate(event, target) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        event.stopPropagation();
+        activate(target);
+    }
 </script>
 
 {#snippet slot(row, index)}
     {@const pos = tooltipPosition(index)}
-    <div class={slotClass(row)} style="margin-bottom: 15px" onclick={() => activate(row)}>
+    <div class={slotClass(row)} style="margin-bottom: 15px" role="button" tabindex="0"
+         aria-label={row.item?.name ?? row.entry.id}
+         onclick={() => activate(row)} onkeydown={(e) => keyActivate(e, row)}>
         {#if row.item?.img}
             <img src={row.item.img} class="w-full h-full object-contain p-1 pointer-events-none" alt={row.item.name}>
         {:else}{row.item?.icon ?? '?'}{/if}

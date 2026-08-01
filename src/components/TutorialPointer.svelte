@@ -32,10 +32,10 @@
                 <!-- Info steps have nothing to click on the board, so they carry
                      their own way onward. -->
                 <span class="block mt-4 border-t border-cyan-800 pt-3 pointer-events-auto">
-                    <span id="tut-advance-btn" onclick={() => tutorial.advance()}
+                    <button type="button" id="tut-advance-btn" onclick={() => tutorial.advance()}
                           class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-800/60 border border-cyan-700 rounded-lg py-2 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors">
                         <span>▶</span> Verstanden
-                    </span>
+                    </button>
                 </span>
             {/if}
         </p>

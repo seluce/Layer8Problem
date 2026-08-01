@@ -157,16 +157,19 @@
         <div class="text-5xl font-thin mb-2">{clock}</div>
 
         {#if phone.notification}
-            <!-- The id is a hook for the global confirm key in engine.js -->
-            <div id="phone-notification"
-                 class="mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse"
+            <!-- The id is a hook for the global confirm key in engine.js.
+                 A real button so the notification is reachable by keyboard;
+                 the inner elements are spans because a button may only
+                 contain phrasing content. -->
+            <button type="button" id="phone-notification"
+                 class="mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse text-left"
                  onclick={() => engine.openPhone()}>
-                <div class="text-xl">📩</div>
-                <div>
-                    <div class="text-[10px] font-bold">NEUE NACHRICHT</div>
-                    <div class="text-[9px]">Jetzt lesen...</div>
-                </div>
-            </div>
+                <span class="text-xl">📩</span>
+                <span class="block">
+                    <span class="block text-[10px] font-bold">NEUE NACHRICHT</span>
+                    <span class="block text-[9px]">Jetzt lesen...</span>
+                </span>
+            </button>
         {/if}
     </div>
 {/if}

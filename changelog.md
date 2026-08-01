@@ -49,6 +49,7 @@ Fehlerkorrekturen:
 * Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
 
 Für Entwickler:
+* Die vier Zugänglichkeits-Warnungen des Svelte-Compilers sind behoben: Der Tutorial-Knopf und die Handy-Benachrichtigung sind jetzt echte Schaltflächen, die Inventarplätze tragen eine Rolle, sind mit der Tabulatortaste erreichbar und lassen sich mit Enter oder Leertaste auslösen. Sie bleiben Container statt Schaltflächen, weil ihre Kurzinfo-Boxen in einem Knopf nicht stehen dürften.
 * Neues Werkzeug tools/simulate-day.mjs (npm run sim): spielt komplette Arbeitstage gegen die echten Datenpools mit den exakten Engine-Formeln durch - vier Spielertypen, drei Schwierigkeiten, Gegenvarianten per Parameter (--valves, --lazydiv, --decay u.a.). Beide Balance-Änderungen dieser Version sind damit gegengerechnet statt geraten.
 * Der Build landet jetzt in docs/ statt dist/, weil GitHub Pages direkt aus dem Branch ausliefert (Deploy from a branch, main + /docs). Der Build wird mitcommittet; Electron-Loader, Paketierung und Strukturdoku sind entsprechend umgestellt.
 * Die Weiter-Knöpfe im Terminal (Weiter, Mittagspause, Feierabend, Arbeitstag starten) tragen jetzt ein data-continue-Attribut. Die Tastatursteuerung erkannte sie bisher am Beschriftungstext - eine umformulierte Beschriftung hätte die Taste lautlos abgeklemmt. Nebenbei können die Zifferntasten Weiter-Knöpfe nicht mehr versehentlich als Antwort treffen, und vier Konsolen-Ausgaben wurden auf Warnstufe gehoben oder entfernt.
