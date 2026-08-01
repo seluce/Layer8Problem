@@ -409,9 +409,9 @@ export const calls = [
 		title: "Shadow-CEO Junior",
 		text: "Der Sohn vom Chef (12 Jahre) ruft an: 'Ey, IT-Typ! Mach mal die Ports für meinen Minecraft-Server auf. Papa sagt, das gehört mir alles hier. Wenn du es nicht machst, sag ich ihm, du hast mich geschlagen!'",
 		opts: [
-			{ t: "Sofort die Ports öffnen", rep: { "Dr. Wichtig": 10 }, m: 10, f: 20, a: 0, c: 10, r: "Der Junge ist glücklich. 2 Stunden später ist das Firmennetz voller russischer Bots, weil du alles aufgemacht hast. Das wird ein Nachspiel haben." },
-			{ t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", rep: { "Dr. Wichtig": -10 }, m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." },
-			{ t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'",rep: { "Dr. Wichtig": -2 }, m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." }
+			{ t: "Sofort die Ports öffnen", next: "path_junior_ports", rep: { "Dr. Wichtig": 10 }, m: 10, f: 20, a: 0, c: 10, r: "Der Junge ist glücklich. 2 Stunden später ist das Firmennetz voller russischer Bots, weil du alles aufgemacht hast. Das wird ein Nachspiel haben." },
+			{ t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", next: "path_junior_eskal", rep: { "Dr. Wichtig": -10 }, m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." },
+			{ t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'", next: "path_junior_matrix",rep: { "Dr. Wichtig": -2 }, m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." }
 		]
 	},
 	{
@@ -429,9 +429,9 @@ export const calls = [
 		title: "Phishing Live-Test",
 		text: "Eine sehr freundliche Dame mit Akzent: 'Hallo, hier ist Microsoft Support Windows. Ihr Computer hat Virus. Bitte geben Sie mir Fernzugriff und Kreditkarte für Reinigung.'",
 		opts: [
-			{ t: "Sich dumm stellen & Zeit schinden", m: 45, f: 20, a: -20, c: 5, r: "Du tust so, als wärst du der dümmste User der Welt. 'Ist die Any-Key Taste vorne oder hinten?' Nach 45 Minuten legt sie wütend auf. Ein Fest!" },
+			{ t: "Sich dumm stellen & Zeit schinden", next: "path_phish_troll", m: 45, f: 20, a: -20, c: 5, r: "Du tust so, als wärst du der dümmste User der Welt. 'Ist die Any-Key Taste vorne oder hinten?' Nach 45 Minuten legt sie wütend auf. Ein Fest!" },
 			{ t: "Trillerpfeife ins Mikrofon blasen", m: 2, f: 0, a: -10, c: 0, r: "Du pfeifst mit 120 Dezibel in den Hörer. Das Trommelfell am anderen Ende dürfte hinüber sein. Kurzer Prozess." },
-			{ t: "Ihr gutgläubig die Kreditkarte geben", m: 10, f: 10, a: 30, c: 80, r: "Du hast ihr wirklich die Firmenkarte gegeben?! Bist du wahnsinnig? Das Konto ist in Sekunden leergeräumt. Die Kündigung droht!" }
+			{ t: "Ihr gutgläubig die Kreditkarte geben", next: "path_phish_karte", m: 10, f: 10, a: 30, c: 80, r: "Du hast ihr wirklich die Firmenkarte gegeben?! Bist du wahnsinnig? Das Konto ist in Sekunden leergeräumt. Die Kündigung droht!" }
 		]
 	},
 	{
@@ -886,13 +886,13 @@ export const calls = [
 		text: "Schluchz... 'Herr Müller? Meine Excel-Tabelle ist weg! Alles schwarz! Ich drücke Tasten, aber nichts passiert! Ich bin so zittrig heute...'",
 		opts: [
 			{ 
-				t: "Kalt: 'Haben Sie ein Ticket?'", 
+				t: "Kalt: 'Haben Sie ein Ticket?'", next: "path_excel_ticket", 
 				rep: { "Frau Elster": -5 },
 				m: 5, f: 5, a: 5, c: 5, 
 				r: "Sie legt weinend auf. Das Problem ist nicht gelöst." 
 			},
 			{ 
-				t: "Beruhigen & Auto-Save prüfen",
+				t: "Beruhigen & Auto-Save prüfen", next: "path_excel_retterin",
 				rep: { "Frau Elster": 5 }, 
 				m: 20, f: -5, a: -10, c: 0, 
 				r: "Du redest ihr gut zu. Die Datei ist wieder da. Sie atmet auf: 'Danke! Sie sind so lieb. Genau wie mein Kater *Rüdiger*. Der spürt auch immer, wenn es mir schlecht geht. Rüdiger ist mein einziger Halt.'" 
@@ -1048,13 +1048,13 @@ export const calls = [
 		text: "Der CEO ruft an. Rauschen. Hupen. 'Müller! ...wichtig! ...müssen sofort... *KCHHH* ...die Kosten... *KRRRK* ...streichen?!'",
 		opts: [
 			{ 
-				t: "Ja sagen & Nicken (Blindflug)", 
+				t: "Ja sagen & Nicken (Blindflug)", next: "path_tunnel_ja", 
 				rep: { "Dr. Wichtig": 10 },
 				m: 5, f: 5, a: 20, c: -10, 
 				r: "Du sagst 'Jawohl, Chef!'. Er legt auf. Später erfährst du: Er fragte 'Soll ich das IT-Budget streichen?'. Glückwunsch, Eigentor. Radar +20." 
 			},
 			{ 
-				t: "Auflegen (Verbindung weg)", 
+				t: "Auflegen (Verbindung weg)", next: "path_tunnel_klick", 
 				m: 2, f: 0, a: 0, c: 5, 
 				r: "Du legst einfach auf. Er denkt, das Funkloch war schuld. Taktisch klug." 
 			},
@@ -2097,5 +2097,464 @@ export const calls = [
             }
         }
     },
+
+
+/* ============================================================
+   ANRUFE-WELLE (v4.0.0)
+   Zwei neue Basis-Anrufe (Markus live beim Kunden als
+   Node-Gespräch, die Provider-Warteschleife) plus die
+   Fortsetzungen für neun nachgerüstete Pfade in den
+   Bestands-Anrufen call_junior, call_boss_tunnel,
+   call_elster_excel und call_phish. Der Anruf-Pool hatte
+   71 Prozent Sackgassen - das hier ist der Anfang vom Ende.
+   ============================================================ */
+
+{
+    id: "call_markus_demo",
+    title: "Markus (Flüstermodus)",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Markus, geflüstert, im Hintergrund Konferenzraum-Gemurmel: 'Müller. NOTFALL. Ich steh beim Kunden, der Beamer läuft, und das Demo-System sagt PASSWORT ABGELAUFEN. Zwölf Leute gucken mich an. Was drück ich?!'",
+            opts: [
+                { t: "'Ruhig. Ich setze es remote zurück.'", next: "remote" },
+                { t: "'Welches Demo-System denn genau?'", next: "welches" }
+            ]
+        },
+        remote: {
+            text: "Du loggst dich ein. Das Demo-System wurde seit acht Monaten nicht angefasst: 47 Updates ausstehend, Zertifikat abgelaufen. 'Markus, kauf mir zwei Minuten.' Man hört ihn laut in den Raum sagen: 'Wir nutzen die Zeit für FRAGEN!'",
+            opts: [
+                { t: "Nur den Login fixen, Rest ignorieren", next: "res_quickfix" },
+                { t: "Die sauberen zwei Minuten investieren", next: "res_repair" }
+            ]
+        },
+        welches: {
+            text: "'Na DAS Demo! Das mit den Balken! Den BLAUEN Balken!' Es gibt vier Systeme mit blauen Balken. Im Hintergrund fragt jemand hörbar, ob es noch lange dauert.",
+            opts: [
+                { t: "Alle vier Demo-Systeme parallel entsperren", next: "res_shotgun" },
+                { t: "Ihn geduldig das Fenster beschreiben lassen", next: "res_describe" }
+            ]
+        }
+    },
+    results: {
+        res_quickfix: {
+            txt: "Login läuft, die Demo startet, der Kunde nickt. Das System dahinter ist weiterhin acht Monate alt und ungepatcht - aber das ist ein Problem für einen anderen Tag. Hoffentlich für einen sehr fernen.",
+            m: 10, f: 5, a: 5, c: 0,
+            next: "path_demo_quick"
+        },
+        res_repair: {
+            txt: "Login neu, kritische Patches drauf, Zertifikat verlängert - in zwei Minuten und vierzig Sekunden. Markus überbrückt mit einer Anekdote über Golf. Die Demo läuft anschließend butterweich. Er wird das nie vergessen. Wirklich nie. Das könnte anstrengend werden.",
+            m: 15, f: -5, a: 5, c: 0,
+            rep: { "Markus": 5 },
+            next: "path_demo_clean"
+        },
+        res_shotgun: {
+            txt: "Vier Systeme, vier Notfall-Entsperrungen, eins davon war das richtige. Die Demo läuft. Die anderen drei stehen jetzt allerdings offen im Netz wie Scheunentore. Irgendein Auto-Alert wird das merken.",
+            m: 10, f: 10, a: 5, c: 5,
+            next: "path_demo_shotgun"
+        },
+        res_describe: {
+            txt: "'Blau. Mit so nem... Ding oben. Und da steht was mit E.' Nach quälenden Minuten identifizierst du das System anhand des Firmenlogos, das er als 'Kringel' beschreibt. Es klappt am Ende. Knapp. Deine Lebenszeit klappt mit.",
+            m: 15, f: 0, a: 10, c: 0
+        }
+    }
+},
+{
+    id: "call_markus_demo_2a",
+    title: "Der Befund",
+    reqStory: "path_demo_quick",
+    text: "Mail von der IT des Kunden, höflich im Ton, vernichtend im Inhalt: 'Ihre Demo-Umgebung hat bei unserem Standard-Scan 214 Findings ausgelöst. Anbei der Bericht (PDF, 38 Seiten). Wir freuen uns auf Ihre Stellungnahme.'",
+    opts: [
+        {
+            t: "Alles patchen und sauber Stellung nehmen",
+            m: 25, f: -10, a: 10, c: -5,
+            r: "Du arbeitest die 38 Seiten ab, patchst das System auf Stand und antwortest mit einem Maßnahmenbericht. Die Kunden-IT ist beeindruckt: 'So schnell hat noch kein Anbieter reagiert.' Peinlichkeit, in Kompetenz umgewandelt. Alchemie des Admin-Alltags."
+        },
+        {
+            t: "'Das ist ein reines Vertriebssystem'",
+            rep: { "Markus": -5 },
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du schiebst die Verantwortung elegant Richtung Vertrieb. Die Kunden-IT antwortet trocken: 'Dann sollte der Vertrieb es nicht in unser Netz stellen.' Markus bekommt die Mail in Kopie und versteht nur, dass du ihn verkauft hast."
+        },
+        {
+            t: "Das Demo-System endgültig abschalten",
+            m: 10, f: 0, a: -5, c: 5,
+            r: "Du ziehst den Stecker: kein System, keine Findings, keine Stellungnahme. Sauber gelöst - bis der Vertrieb das nächste Mal spontan eine Demo braucht und du erklären darfst, warum es 'die kaputte Kiste' nicht mehr gibt."
+        }
+    ]
+},
+{
+    id: "call_markus_demo_2b",
+    title: "Die Zwei-Minuten-Legende",
+    reqStory: "path_demo_clean",
+    text: "Markus hat den Deal geholt und erzählt seitdem überall die Geschichte von der 'Live-Rettung in zwei Minuten'. Mit jeder Version wird sie dramatischer. In der aktuellen Fassung hast du dich 'ins System gehackt, während der Kunde schon aufstehen wollte'.",
+    opts: [
+        {
+            t: "Den Ruhm einfach mitnehmen",
+            rep: { "Markus": 5 },
+            m: 5, f: 5, a: -5, c: 0,
+            r: "Du widersprichst nicht. Im Vertrieb bist du jetzt 'der Hacker', und Markus schuldet dir offiziell 'ein Bier pro Version der Geschichte'. Bei aktuellem Erzähltempo entspricht das einem Kasten pro Quartal."
+        },
+        {
+            t: "Alle Demo-Systeme in die Wartung aufnehmen",
+            m: 20, f: -10, a: 5, c: -5,
+            r: "Du nutzt den Rückenwind und setzt durch, was seit Jahren fehlt: Demo-Systeme mit Update-Plan, Passwort-Rotation, Verantwortlichem. Es ist unspektakuläre Arbeit, die verhindert, dass es je wieder eine Zwei-Minuten-Legende braucht. Die beste Sorte Arbeit."
+        },
+        {
+            t: "Pedantisch korrigieren: 'Es waren 2:40'",
+            rep: { "Markus": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'ZWEI MINUTEN klingt besser, Müller!' Markus ist ehrlich gekränkt - du hast an seiner Geschichte herumgeschraubt, und Geschichten sind sein Betriebskapital. Die Legende erzählt er weiter. Nur kommst du darin jetzt etwas weniger heldenhaft vor."
+        }
+    ]
+},
+{
+    id: "call_markus_demo_2c",
+    title: "Vier offene Türen",
+    reqStory: "path_demo_shotgun",
+    text: "Der Auto-Alert der Sicherheitssoftware schlägt an: 'Vier Systeme mit Notfall-Zugang ohne Ablaufdatum erkannt.' Die drei überflüssig entsperrten Demo-Maschinen stehen seit Stunden offen im Netz. Der Alert ging auch an einen Verteiler. Du weißt nicht, wer in dem Verteiler ist.",
+    opts: [
+        {
+            t: "Sofort alles dichtmachen und dokumentieren",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Zugänge geschlossen, Ablaufdaten gesetzt, Vorfall sauber dokumentiert, bevor jemand fragt. Als die Nachfrage aus dem Verteiler kommt, existiert bereits ein Bericht mit Zeitstempel. Wer schneller dokumentiert, als andere eskalieren, gewinnt."
+        },
+        {
+            t: "Die Systeme zu 'Honeypots' erklären",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Das sind absichtlich exponierte Fallen zur Angreifer-Analyse.' Die Antwort klingt so professionell, dass niemand nachhakt. Du hast jetzt allerdings offiziell ein Honeypot-Programm. Irgendwer wird irgendwann Ergebnisse sehen wollen."
+        },
+        {
+            t: "Kevin eine Demo-Inventur machen lassen",
+            rep: { "Kevin": 3 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Kevin zieht mit Klemmbrett los und erfasst jede Demo-Maschine im Haus. Er findet sieben. Es sollten vier sein. Zwei der drei zusätzlichen laufen unter Schreibtischen von Leuten, die 'nur mal was testen wollten'. Die Inventur war überfällig."
+        }
+    ]
+},
+
+{
+    id: "call_hotline_queue",
+    title: "Anrufer Nummer 38",
+    text: "Die Internetleitung flackert seit dem Morgen, und die Diagnose ist eindeutig: Das Problem liegt draußen, beim Provider. Es gibt nur einen Weg. Du wählst die Business-Hotline. 'Herzlich willkommen. Alle unsere Mitarbeitenden sind derzeit im Gespräch. Sie sind Anrufer Nummer... ACHTUNDDREISSIG.'",
+    opts: [
+        {
+            t: "Durchhalten. Koste es, was es wolle.",
+            next: "path_queue_warten",
+            m: 30, f: -5, a: 15, c: 0,
+            r: "Dreißig Minuten Panflöten-Version von 'Africa', unterbrochen von der Versicherung, dein Anruf sei wichtig. Dann, endlich: 'Störungsstelle, Denis?' Und Denis ist - du traust deinen Ohren kaum - kompetent."
+        },
+        {
+            t: "Den Rückruf-Service aktivieren",
+            next: "path_queue_callback",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Wir rufen Sie zurück, sobald ein Mitarbeitender frei ist. Ihre Wartezeit bleibt erhalten.' Du legst auf und fühlst dich modern. Der Rückruf wird kommen. Rückrufe kommen immer. Immer im dümmsten Moment."
+        },
+        {
+            t: "Die Störung einfach aussitzen",
+            next: "path_queue_aussitzen",
+            m: 2, f: 10, a: 5, c: 5,
+            r: "Flackernde Leitungen beruhigen sich manchmal von selbst, sagst du dir. Die ersten Tickets über 'langsames Internet' trudeln bereits ein. Du markierst sie als 'in Beobachtung'. Beobachten kannst du gut."
+        }
+    ]
+},
+{
+    id: "call_hotline_queue_2a",
+    title: "Denis",
+    reqStory: "path_queue_warten",
+    text: "Denis findet den Fehler in vier Minuten ('Port hängt, ich resette... läuft's?'), erklärt die Ursache verständlich und sagt dann, halblaut, das Unfassbare: 'Ich geb Ihnen mal meine Durchwahl. Für Business-Störungen. Aber sagen Sie NIEMANDEM, dass Sie die haben.'",
+    opts: [
+        {
+            t: "Die Durchwahl notieren und hüten",
+            m: 5, f: 0, a: -10, c: 0,
+            r: "Du schreibst die Nummer auf einen Zettel, laminierst ihn gedanklich und legst ihn an einen Ort, den nicht mal Kevin findet. Eine direkte Durchwahl zur Störungsstelle. Es gibt Admins, die dafür töten würden. Du kennst welche."
+        },
+        {
+            t: "Ein Lob-Fax an Denis' Firma senden",
+            m: 10, f: 5, a: -5, c: 0,
+            r: "Du schreibst eine förmliche Belobigung. Drei Wochen später hat Denis eine Beförderung - zum Teamleiter, weg von der Hotline. Seine Durchwahl führt jetzt auf eine Mailbox. Du hast das einzig Gute an diesem Provider wegbefördert. Mit einem Fax."
+        },
+        {
+            t: "Skeptisch bleiben, Ticketnummer verlangen",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Vertrauen ist gut, Ticketnummern sind besser. Denis diktiert sie dir mit hörbarem Bedauern - du hast gerade das Du-Angebot der Provider-Welt ausgeschlagen. Die Nummer wird funktionieren. Die Durchwahl hätte Wunder gewirkt."
+        }
+    ]
+},
+{
+    id: "call_hotline_queue_2b",
+    title: "Der Rückruf",
+    reqStory: "path_queue_callback",
+    text: "Es ist so weit: Dein Handy klingelt - exakt in dem Moment, in dem Dr. Wichtig neben deinem Schreibtisch steht und dir 'nur kurz etwas Strategisches' erklären will. Das Display zeigt die Provider-Nummer. Wartezeit-Rang: gerettet. Timing: katastrophal.",
+    opts: [
+        {
+            t: "Rangehen, den Chef warten lassen",
+            m: 15, f: -5, a: 5, c: 10,
+            r: "'Entschuldigung, Störungsstelle, das MUSS ich nehmen.' Dr. Wichtig wartet mit der Miene eines Mannes, der noch nie gewartet hat. Aber die Leitung wird im Gespräch repariert. Du hast Internet gegen Chef-Wohlwollen getauscht. Vermutlich ein fairer Kurs."
+        },
+        {
+            t: "Wegdrücken, der Chef geht vor",
+            m: 10, f: 10, a: 10, c: -5,
+            r: "Du drückst den Rückruf weg und lauschst fünfzehn strategischen Minuten über 'Synergien im Digitalraum'. Danach rufst du die Hotline erneut an: 'Sie sind Anrufer Nummer... EINUNDVIERZIG.' Die Warteschleife kennt keine Gnade und kein Gestern."
+        },
+        {
+            t: "Den Chef einbeziehen: 'Live-Eskalation!'",
+            rep: { "Dr. Wichtig": 3 },
+            m: 10, f: 5, a: 0, c: -5,
+            r: "'Sehen Sie, Herr Doktor - ich eskaliere die Störung gerade PERSÖNLICH beim Anbieter.' Du stellst auf laut. Dr. Wichtig beobachtet fasziniert, wie du einen Techniker dirigierst, und flüstert: 'DAS ist Hands-on-Mentalität.' Die Leitung läuft, der Eindruck sitzt."
+        }
+    ]
+},
+{
+    id: "call_hotline_queue_2c",
+    title: "14 Uhr",
+    reqStory: "path_queue_aussitzen",
+    text: "Um Punkt 14 Uhr hört das Flackern auf. Nicht, weil es besser wird - die Leitung ist jetzt komplett tot. Die halbe Firma ist offline, im Treppenhaus brüllt Markus, dass er 'MITTEN im Abschluss' war, und die Ticketflut hat einen eigenen Rhythmus entwickelt.",
+    opts: [
+        {
+            t: "Jetzt doch die Hotline - bei Vollausfall",
+            m: 30, f: 0, a: 15, c: 5,
+            r: "'Sie sind Anrufer Nummer... DREIUNDSECHZIG.' Der Vollausfall hat offenbar jeden Business-Kunden der Region an die Hotline getrieben. Als du endlich durchkommst, ist die Störung 'bekannt und in Bearbeitung'. Das hättest du um neun auch haben können. Für weniger."
+        },
+        {
+            t: "Einen LTE-Notfall-Hotspot aufbauen",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Firmenhandy, Datenvolumen, ein strategisch platzierter Router: Die wichtigsten zehn Arbeitsplätze sind wieder online, priorisiert nach Lautstärke der Beschwerde. Es ist Behelf, es ist langsam, aber es ist DEIN Behelf. Improvisation ist auch Infrastruktur."
+        },
+        {
+            t: "Rundmail: 'Geplante Wartung des Anbieters'",
+            m: 5, f: 10, a: 0, c: 10,
+            r: "Aus einer verschleppten Störung wird per Rundmail eine 'angekündigte Wartung'. Die Beschwerden verstummen - gegen Geplantes beschwert man sich nicht. Nur Frau Elster antwortet: 'Angekündigt? Wo?' Sie archiviert Ankündigungen. Alle."
+        }
+    ]
+},
+
+{
+    id: "call_junior_2a",
+    title: "Die Bot-Flut",
+    reqStory: "path_junior_ports",
+    text: "Das Firmennetz hat die Nacht nicht gut überstanden: Die offenen Ports haben Besuch aus aller Welt angezogen. Und während du noch aufräumst, ruft Junior wieder an: 'Ey! Mein Server LAGGT voll! Mach mal schneller das Internet!'",
+    opts: [
+        {
+            t: "Ports dicht, Netz säubern, Wahrheit ertragen",
+            m: 25, f: -10, a: 10, c: -5,
+            r: "Du schließt alles, wirfst die Bots raus und härtest die Firewall. Juniors Server ist damit auch offline, und sein Wutschrei durchs Telefon erreicht Frequenzen, die nur Hunde vollständig würdigen können. Aber das Netz ist wieder sauber."
+        },
+        {
+            t: "Ihm einen sauber isolierten Privat-Port bauen",
+            rep: { "Dr. Wichtig": 5 },
+            m: 15, f: 5, a: 5, c: 0,
+            r: "Du baust Junior eine abgeschottete Lösung: ein Port, ein Server, null Kontakt zum Firmennetz. Er ist zufrieden, sein Vater hört davon ('Mein Sohn sagt, Sie sind der Einzige hier, der was kann') - und du fragst dich beiläufig, wo Juniors Server eigentlich physisch steht. Er kommt dir bekannt vor."
+        },
+        {
+            t: "Das Problem an Kevin 'delegieren'",
+            rep: { "Kevin": -5 },
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Kevin, kümmer dich mal um den Sohn vom Chef.' Zwei Stunden später haben Kevin und Junior gemeinsam einen zweiten Server aufgesetzt und streiten über Mods. Du hast das Problem nicht gelöst. Du hast es verdoppelt und ihm einen Freund gegeben."
+        }
+    ]
+},
+{
+    id: "call_junior_2b",
+    title: "Das Vier-Augen-Gespräch",
+    reqStory: "path_junior_eskal",
+    text: "Dr. Wichtig bittet dich ins Büro und schließt die Tür. 'Mein Sohn behauptet, Sie hätten ihn geschlagen. Durch das Telefon.' Pause. 'Ich bin Vater, Müller, aber ich bin nicht verrückt. Was ist wirklich passiert?'",
+    opts: [
+        {
+            t: "Die ungeschminkte Wahrheit erzählen",
+            rep: { "Dr. Wichtig": 5 },
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Du schilderst das Gespräch wortgetreu, inklusive Erpressungsversuch. Dr. Wichtig hört zu, nickt langsam und sagt dann etwas Erstaunliches: 'Der Junge braucht Grenzen. Nicht unbedingt von Ihnen. Aber Grenzen.' Ihr versteht euch kurz. Es ist irritierend."
+        },
+        {
+            t: "Sich winden und pauschal entschuldigen",
+            rep: { "Dr. Wichtig": -5 },
+            m: 5, f: 5, a: 5, c: 10,
+            r: "Du entschuldigst dich für etwas, das du nicht getan hast. Dr. Wichtig registriert das mit dem Blick eines Mannes, der beruflich Schwäche wittert. 'Interessant. Mein Sohn übertreibt also NICHT.' Du hast gerade ein Schuldeingeständnis für ein Fantasiedelikt abgegeben."
+        },
+        {
+            t: "Kontern: 'Ihr Sohn erpresst Mitarbeiter'",
+            rep: { "Dr. Wichtig": -5 },
+            m: 5, f: 0, a: -5, c: 10,
+            r: "Das Wort 'erpresst' hängt schwer im Raum. Dr. Wichtig wird sehr still. 'Das ist eine ernste Anschuldigung gegen ein Kind, Müller.' Es ist auch eine wahre. Aber Wahrheit über den Erben trägt in diesem Büro keine Früchte. Du fühlst dich trotzdem großartig."
+        }
+    ]
+},
+{
+    id: "call_junior_2c",
+    title: "Negative Polarität",
+    reqStory: "path_junior_matrix",
+    text: "Dr. Wichtig fängt dich im Flur ab. 'Mein Sohn erzählt, unsere Firewall hätte eine NEGATIVE POLARITÄT. Warum erfahre ich sowas von einem Zwölfjährigen? Wie ernst ist es? Was kostet die Behebung?' Dein eigener Bluff steht vor dir und trägt einen Maßanzug.",
+    opts: [
+        {
+            t: "Ein 'Projekt Polaritätsumkehr' aufsetzen",
+            rep: { "Dr. Wichtig": 3 },
+            m: 15, f: 10, a: 0, c: -5,
+            r: "Du skizzierst mit ernster Miene einen Dreiphasenplan. Dr. Wichtig genehmigt Budget für Dinge, die du ohnehin kaufen wolltest: neue Switches, USV-Batterie, ordentliche Kabel. Die Polarität wird quartalsweise 'rekalibriert'. Es ist das ehrlichste unehrliche Projekt der Firmengeschichte."
+        },
+        {
+            t: "Auflösen: Es war ein Trick gegen Junior",
+            rep: { "Dr. Wichtig": 3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "Du gestehst den Bluff. Dr. Wichtig schaut dich lange an - dann zuckt sein Mundwinkel. 'Sie haben meinen Sohn... verwaltet.' Er geht kopfschüttelnd, aber der Mundwinkel war da. Du hast ihn gesehen. Zeugen gibt es keine."
+        },
+        {
+            t: "'Bereits behoben. Keine Kosten entstanden.'",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Die Antwort, die Chefs am liebsten hören: erledigt und gratis. Dr. Wichtig nickt zufrieden. Allerdings gilt die Polarität damit als reales, gelöstes Problem - und wird in seiner nächsten Vorstandspräsentation als Beispiel für 'proaktive IT-Exzellenz' auftauchen. Mit deinem Namen."
+        }
+    ]
+},
+
+{
+    id: "call_boss_tunnel_2a",
+    title: "Die Streichung",
+    reqStory: "path_tunnel_ja",
+    text: "Die Rundmail kommt um 15 Uhr: 'Auf Empfehlung der IT-Abteilung wird das IT-Budget zum Monatsende optimiert (-40%).' Auf Empfehlung. Der IT. Du hast im Tunnel 'Jawohl' zu deiner eigenen Kürzung gesagt.",
+    opts: [
+        {
+            t: "Termin beim Chef: das Missverständnis aufklären",
+            rep: { "Dr. Wichtig": -3 },
+            m: 15, f: 0, a: 10, c: 5,
+            r: "'Sie haben aber JAWOHL gesagt, Müller. Ich habe Zeugen. Den Tunnel.' Dr. Wichtig nimmt Rückzieher persönlich. Am Ende handelst du die Kürzung auf zwanzig Prozent herunter - offiziell 'nach konstruktivem Dialog'. Es fühlt sich an wie ein Sieg. Es ist keiner."
+        },
+        {
+            t: "Stoisch mit dem Nichts arbeiten",
+            m: 10, f: 5, a: 10, c: -5,
+            r: "Kein neues Budget heißt: Egons Keller wird zur Beschaffungsabteilung, Kabel werden geflickt statt getauscht, und jede Anschaffung heißt jetzt 'Reparatur'. Es ist würdelos und funktioniert erschreckend gut. Das ist das Deprimierendste daran."
+        },
+        {
+            t: "Frau Elster nach Formfehlern suchen lassen",
+            rep: { "Frau Elster": 5 },
+            m: 15, f: 0, a: 5, c: 0,
+            r: "Frau Elster liest die Streichungs-Mail zweimal und lächelt dünn: 'Budgetänderungen bedürfen der Schriftform nach Anlage 7. Eine Tunneldurchsage ist keine Schriftform.' Der Vorgang wird 'zur formalen Prüfung' eingefroren. Bürokratie, endlich einmal auf deiner Seite."
+        }
+    ]
+},
+{
+    id: "call_boss_tunnel_2b",
+    title: "Der nächste Tunnel",
+    reqStory: "path_tunnel_klick",
+    text: "Er ruft wieder an. Es rauscht wieder - der Mann findet Tunnel wie andere Leute Parkplätze. 'Müller! Endlich! Also, WIE BESPROCHEN: Sie kümmern sich um *KRRRK* ... bis Freitag! Sind wir *KCHHH* ...einig?!' Es wurde nie etwas besprochen. Es gibt kein Besprochen.",
+    opts: [
+        {
+            t: "'Schlechte Leitung - ich fasse per Mail zusammen'",
+            m: 10, f: -5, a: 5, c: -5,
+            r: "Der älteste Trick der Verwaltung: Verschriftlichung. Deine Mail ('Um sicherzugehen, dass ich Sie richtig verstanden habe...') zwingt ihn, den Auftrag selbst zu formulieren. Seine Antwort: 'Passt so.' Auf eine Mail mit drei Deutungsoffenheiten. Aber du hast es schriftlich."
+        },
+        {
+            t: "Nochmal auflegen - der Tunnel war's",
+            m: 2, f: 10, a: 0, c: 10,
+            r: "Zweimal Funkloch am selben Tag strapaziert die Glaubwürdigkeit der Physik. Beim dritten Anruf ist der Tunnel zu Ende und die Stimme sehr klar: 'Müller. Ihr Telefon. Reparieren. SOFORT.' Dein Telefon ist in Ordnung. Das ist jetzt das Problem."
+        },
+        {
+            t: "Raten und beherzt zustimmen",
+            m: 5, f: 5, a: 15, c: 5,
+            r: "'Jawohl, bis Freitag!' Du hast keine Ahnung, wozu. Bis Freitag wirst du präventiv alles erledigen, was er gemeint haben könnte: Berichte, Backups, den wackelnden Beamer im Vorstandsraum. Eine Woche Arbeit gegen einen Satz Rauschen. Der Tunnel gewinnt immer."
+        }
+    ]
+},
+
+{
+    id: "call_elster_excel_2a",
+    title: "Ticket #4711",
+    reqStory: "path_excel_ticket",
+    text: "Frau Elster hat geliefert: Ticket #4711, formvollendet. Vierzehn Anhänge, ein Fehlerprotokoll in Tabellenform, Zeugenliste, Eskalationsstufe 'hoch'. Im CC: Dr. Wichtig. Der letzte Satz: 'Um zeitnahe Bearbeitung gemäß Servicevereinbarung wird gebeten.' Es gibt keine Servicevereinbarung. Jetzt vielleicht schon.",
+    opts: [
+        {
+            t: "Das Ticket mustergültig abarbeiten",
+            rep: { "Frau Elster": 3 },
+            m: 20, f: -5, a: 10, c: -5,
+            r: "Du beantwortest jeden Anhang, dokumentierst die Lösung und schließt formvollendet. Frau Elster antwortet mit einem Satz: 'So geht es also doch.' Es ist Tadel und Anerkennung in fünf Wörtern. Mehr Nähe lässt das Ticketsystem nicht zu."
+        },
+        {
+            t: "Schließen: 'Nicht reproduzierbar'",
+            rep: { "Frau Elster": -5 },
+            m: 5, f: 10, a: 0, c: 10,
+            r: "Der Klassiker der Ticketbestattung. Nur: Frau Elster reproduziert. Sie eröffnet #4712 mit Verweis auf #4711, Bildschirmfotos im Minutentakt und der neuen Eskalationsstufe 'kritisch'. Dr. Wichtig, weiterhin im CC, hat inzwischen eine Lesebestätigung gesendet."
+        },
+        {
+            t: "Kevin als Ersthelfer hinschicken",
+            rep: { "Kevin": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Kevin zieht mit dem Werkzeugkoffer los und kommt nach einer Stunde verändert zurück: ordentlich gekämmt, mit einem Stück Kuchen in Folie. 'Frau Elster ist voll nett?! Wir haben alles neu gestartet und über ihren Kater geredet.' Das Ticket ist zu. Kevin hat jetzt eine Verbündete."
+        }
+    ]
+},
+{
+    id: "call_elster_excel_2b",
+    title: "Der Dankeskuchen",
+    reqStory: "path_excel_retterin",
+    text: "Frau Elster steht im Serverraum - mit einer Kuchenplatte. 'Marmorkuchen. Selbstgebacken. Sie haben gestern meine Bilanzen gerettet, Herr Müller.' Sie stellt die Platte ab und bleibt dann einfach stehen, als hätte sie noch etwas zu sagen und wüsste nicht, wie.",
+    opts: [
+        {
+            t: "Kuchen und Zeit annehmen",
+            rep: { "Frau Elster": 5 },
+            m: 15, f: 10, a: -10, c: 0,
+            r: "Ihr esst Marmorkuchen zwischen den Racks, und Frau Elster erzählt: von Rüdiger, vom früheren Chef, davon, dass sie seit elf Jahren die Einzige ist, die die Bilanzen versteht. 'Sie sind der Erste aus der IT, der nicht seufzt, wenn ich anrufe.' Du seufzt innerlich. Aber nie wieder hörbar."
+        },
+        {
+            t: "Höflich abkürzen: viel zu tun",
+            rep: { "Frau Elster": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Vielen Dank, Frau Elster, ich muss leider...' Sie nickt sofort, zu schnell, nimmt die Platte und lässt dir ein einzelnes Stück auf einem Zettel da. Der Zettel ist eine Serviette mit aufgedrucktem Kater. Der Kuchen schmeckt hervorragend. Das macht es nicht besser."
+        },
+        {
+            t: "Nach einem Foto von Rüdiger fragen",
+            rep: { "Frau Elster": 5 },
+            m: 10, f: 5, a: -5, c: 0,
+            r: "Ihr Gesicht leuchtet auf wie ein frisch gepatchter Server. Es folgen: 34 Fotos, zwei Videos ('Da war er noch klein!') und die Information, dass Rüdiger Diabetiker ist, aber tapfer. Zehn Minuten deines Lebens, ein Verbündeter fürs Leben. In der Buchhaltung."
+        }
+    ]
+},
+
+{
+    id: "call_phish_2a",
+    title: "Der Rückruf der Rache",
+    reqStory: "path_phish_troll",
+    text: "Sie haben nicht vergessen. 'Herr Müller' - sie kennen jetzt deinen Namen - 'Ihr Computer hat JETZT WIRKLICH Virus. Sehr schlimm.' Seit dem Vormittag klingeln reihum die Durchwahlen der Firma. Die Anruferin klingt persönlich gekränkt. 45 Minuten Any-Key-Taste hinterlassen Spuren.",
+    opts: [
+        {
+            t: "Firmenweite Warnung plus Nummernsperre",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Rundmail mit Beispielsätzen der Masche, Sperrliste in der Telefonanlage, kurze Ansage an die üblichen Verdächtigen ('Chantal: NIEMANDEM Fernzugriff geben. Niemandem.'). Die Anrufwelle läuft ins Leere. Unspektakulär, wirksam, erwachsen. Fast schade."
+        },
+        {
+            t: "Gabi briefen und übernehmen lassen",
+            rep: { "Gabi": 5 },
+            m: 10, f: 5, a: -10, c: 0,
+            r: "Gabi hört sich die Masche an und lächelt das Lächeln einer Frau, die dreißig Jahre Empfang hinter sich hat. Ab sofort landen alle 'Microsoft'-Anrufe bei ihr. Ihr Rekord am Ende der Woche: 73 Minuten, inklusive erfundener Modemgeräusche mit dem Mund. Die Anrufe hören danach für immer auf."
+        },
+        {
+            t: "Ignorieren, wird sich schon totlaufen",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Wird es vermutlich. Irgendwann. Bis dahin klingeln die Durchwahlen weiter, und irgendwo in diesem Gebäude sitzt garantiert jemand, der 'nur mal kurz helfen lassen' wollte. Du kennst dieses Gebäude. Du kennst diesen Jemand noch nicht. Aber ihr werdet euch treffen."
+        }
+    ]
+},
+{
+    id: "call_phish_2b",
+    title: "Der Schadensfall",
+    reqStory: "path_phish_karte",
+    text: "Die Firmenkarte ist leergeräumt, die Bank hat den Fall, und in deinem Kalender steht ein Termin, der nur 'Klärung' heißt. Teilnehmer: Dr. Wichtig, Frau Elster, du. Es gibt Meetings, aus denen kommt man kleiner heraus, als man hineingegangen ist.",
+    opts: [
+        {
+            t: "Volle Offenlegung plus Strafanzeige",
+            m: 25, f: -5, a: 15, c: -10,
+            r: "Du legst alles auf den Tisch: Hergang, Zeitpunkte, eigene Schuld, erstattete Anzeige, eingeleitete Kartensperrung. Es ist das unangenehmste Meeting deines Jahres - und das einzige Vorgehen, das dich am Ende glaubwürdig zurücklässt. Dr. Wichtig sagt nur: 'Wenigstens vertuschen Sie nicht.' Das muss reichen."
+        },
+        {
+            t: "Vertuschen: 'unklare Abbuchung'",
+            m: 10, f: 10, a: 5, c: 15,
+            r: "Du sprichst von 'ungeklärten Buchungsvorgängen' und hoffst auf Nebel. Aber am Tisch sitzt Frau Elster, und Frau Elster hat die Abbuchungen längst minutengenau mit deiner Anrufliste abgeglichen. Sie sagt nichts. Sie legt nur einen Ausdruck auf den Tisch. Der Nebel lichtet sich sehr schnell."
+        },
+        {
+            t: "Frau Elster vorab um Hilfe bitten",
+            rep: { "Frau Elster": 5 },
+            m: 15, f: 0, a: 5, c: -5,
+            r: "Frau Elster hört sich das Desaster an, seufzt einmal tief - und greift zum Hörer. Sie kennt bei der Bank eine Frau Krämer, persönlich, seit 2009. Acht Minuten später ist die Rückbuchung eingeleitet. 'Beim nächsten Mal', sagt sie beim Auflegen, 'rufen Sie ERST mich an.' Jawohl."
+        }
+    ]
+},
 
 ];
