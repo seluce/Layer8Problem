@@ -274,6 +274,51 @@ export const core = {
         
     },
     
+    /** Kurzname des Wochentags aus dem Schwierigkeitsgrad. */
+    difficultyKey: function() {
+        if (this.state.difficultyMult < 1.0) return 'easy';
+        if (this.state.difficultyMult > 1.0) return 'hard';
+        return 'normal';
+    },
+
+    /**
+     * Schreibt fest, wie ein Arbeitstag ausgegangen ist.
+     *
+     * Ersetzt die einzelnen incrementStat-Aufrufe am Tagesende, weil zum
+     * Ergebnis mehr gehört als ein Zähler: die Serie überstandener Tage, die
+     * Aufschlüsselung nach Wochentag und die Frage, ob die beiden Notventile
+     * den Tag noch gerettet haben. Alles landet im Archiv und überlebt
+     * damit den Neustart.
+     */
+    recordDayResult: function(outcome) {
+        const st = this.state.archive.stats ?? (this.state.archive.stats = {});
+        const diff = this.difficultyKey();
+        // Jeder erhöhte Zähler geht denselben Weg wie bei incrementStat:
+        // hoch, dann an die Plattform melden. Die Steam-Schicht kennt eine
+        // feste Liste (STAT_NAMES) und ignoriert alles andere still — die
+        // neuen Felder wie survived_hard oder ventSaves landen also im
+        // Archiv, aber nicht bei Steam. Das ist gewollt.
+        const bump = (key) => {
+            st[key] = (st[key] || 0) + 1;
+            platform.stat(key, st[key]);
+        };
+
+        if (outcome === 'survived') {
+            bump('daysSurvived');
+            bump('survived_' + diff);
+            st.streak = (st.streak || 0) + 1;
+            if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
+        } else {
+            bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
+            st.streak = 0;   // Eine Serie endet, wo der Tag endet.
+        }
+
+        if (this.state.rageWarningReceived) bump('ventSaves');
+        if (this.state.chefWarningReceived) bump('warningsChef');
+
+        this.saveSystem();
+    },
+
     incrementStat: function(key) {
         if (!this.state.archive.stats) {
             this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
@@ -765,7 +810,7 @@ export const core = {
                 this.showModal("VENTIL GEÖFFNET", warningText, false);
             } else {
                 // Second blow-up -> game over
-                this.incrementStat('daysRageQuit');
+                this.recordDayResult('rage');
                 let diary = this.generateDiaryEntry("RAGE"); 
                 
                 this.state.pendingEnd = { 
@@ -779,7 +824,7 @@ export const core = {
         }
         // B. TICKET LAWINE (Zu viele Tickets)
         else if(this.state.tickets >= 10) {
-			this.incrementStat('daysFired');
+			this.recordDayResult('tickets');
             // 1. Tagebuch generieren
             let diary = this.generateDiaryEntry("TICKETS");
 
@@ -833,7 +878,7 @@ export const core = {
 
 
             // No party -> ordinary end of day
-			this.incrementStat('daysSurvived');
+			this.recordDayResult('survived');
             let diary = this.generateDiaryEntry("WIN");
 
             this.state.pendingEnd = { 
@@ -882,7 +927,7 @@ export const core = {
                 
                 this.showModal("ABMAHNUNG", warningText, false);
             } else {
-				this.incrementStat('daysFired');
+				this.recordDayResult('chef');
                 // 1. Tagebuch generieren
                 let diary = this.generateDiaryEntry("FIRED");
 

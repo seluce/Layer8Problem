@@ -40,6 +40,33 @@
         { key: 'daysFired',    label: 'Gefeuert',   tone: 'text-red-500' }
     ];
 
+    // Die Wochentage sagen mehr als eine Gesamtquote: Wer zehn Freitage
+    // überlebt hat, aber keinen Montag, sieht genau das.
+    const WEEKDAYS = [
+        { key: 'easy',   label: 'Freitag',  bar: 'bg-green-500' },
+        { key: 'normal', label: 'Mittwoch', bar: 'bg-blue-500' },
+        { key: 'hard',   label: 'Montag',   bar: 'bg-red-500' }
+    ];
+
+    const weekdays = $derived(WEEKDAYS.map(d => {
+        const started  = stats['started_'  + d.key] ?? 0;
+        const survived = stats['survived_' + d.key] ?? 0;
+        return { ...d, started, survived,
+                 percent: started ? Math.round(survived / started * 100) : 0 };
+    }));
+
+    const hasWeekdays = $derived(weekdays.some(d => d.started > 0));
+    const streak      = $derived(stats.streak ?? 0);
+    const streakBest  = $derived(stats.streakBest ?? 0);
+
+    // Kleingedrucktes: nur zeigen, was tatsächlich passiert ist. Die Zahlen
+    // tragen die Farbe ihres Wertes — orange fürs Ventil, rot für den Chef —,
+    // damit die Zeile ohne Anstrengung lesbar bleibt.
+    const footnotes = $derived([
+        stats.ventSaves    ? { value: stats.ventSaves,    text: 'durch das Ventil gerettet', tone: 'text-orange-400' } : null,
+        stats.warningsChef ? { value: stats.warningsChef, text: 'abgemahnt',                 tone: 'text-red-500' } : null
+    ].filter(Boolean));
+
     // How hard it was when the achievement was earned. Anything recorded before
     // the difficulty was tracked counts as easy.
     const DIFFICULTY = {
@@ -91,13 +118,56 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner">
-            {#each DAY_STATS as stat (stat.key)}
-                <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">{stat.label}</span>
-                    <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{stats[stat.key] ?? 0}</span>
+        <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner space-y-2.5">
+
+            <!-- Serie zuerst: die einzige Zahl, die morgen anders aussieht,
+                 wenn man heute aufhört. -->
+            {#if streakBest > 0}
+                <div class="flex items-center justify-between px-2 py-1.5 bg-slate-800/40 rounded-sm border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Serie</span>
+                    <span class="font-mono text-sm">
+                        <span class="{streak > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">{streak}</span>
+                        <span class="text-slate-600 mx-1.5">·</span>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-widest">Rekord</span>
+                        <span class="text-slate-300 font-bold ml-1">{streakBest}</span>
+                    </span>
                 </div>
-            {/each}
+            {/if}
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {#each DAY_STATS as stat (stat.key)}
+                    <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
+                        <span class="text-[9px] text-slate-500 uppercase tracking-widest">{stat.label}</span>
+                        <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{stats[stat.key] ?? 0}</span>
+                    </div>
+                {/each}
+            </div>
+
+            <!-- Nach Wochentag: ersetzt eine nichtssagende Gesamtquote. -->
+            {#if hasWeekdays}
+                <div class="space-y-1 px-1 pt-0.5">
+                    {#each weekdays as day (day.key)}
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-14 shrink-0">{day.label}</span>
+                            <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full {day.bar} rounded-full transition-all" style="width: {day.percent}%"></div>
+                            </div>
+                            <span class="font-mono text-[10px] text-slate-400 w-14 text-right shrink-0">
+                                {day.survived}/{day.started}
+                            </span>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
+
+            {#if footnotes.length}
+                <p class="text-[11px] text-slate-400 text-center pt-1 flex items-center justify-center gap-2 flex-wrap">
+                    {#each footnotes as note, i (note.text)}
+                        {#if i > 0}<span class="text-slate-600">·</span>{/if}
+                        <span><span class="font-bold font-mono {note.tone}">{note.value}×</span> {note.text}</span>
+                    {/each}
+                </p>
+            {/if}
         </div>
     </div>
 

@@ -122,6 +122,7 @@ export const events = {
         if (!this.state.dayActive) {
             this.state.dayActive = true;
             this.incrementStat('daysStarted');
+            this.incrementStat('started_' + this.difficultyKey());
         }
         // ---------------------------------------------
 		
@@ -292,6 +293,7 @@ export const events = {
         if (!this.state.dayActive) {
             this.state.dayActive = true;
             this.incrementStat('daysStarted');
+            this.incrementStat('started_' + this.difficultyKey());
         }
         
         // Make sure everything this function touches is in memory. Resolves
@@ -1070,7 +1072,7 @@ export const events = {
         let fullReport = statsHTML + achHTML;
 
         // 3. Tagebuch generieren (inkl. des Party-Endes)
-        this.incrementStat('daysSurvived');
+        this.recordDayResult('survived');
         let diary = this.generateDiaryEntry("PARTY", text);
 
         // 4. Show the end modal - the hidden [PARTY] marker drives the colour
