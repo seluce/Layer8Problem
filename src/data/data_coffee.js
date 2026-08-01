@@ -3844,4 +3844,559 @@ export const coffee = [
         }
     ]
 },
+
+/* ============================================================
+   KAFFEE-WELLE (v4.0.0)
+   Frau Elster und Dr. Wichtig waren im Kaffee-Pool fast unsichtbar
+   (3 bzw. 2 Events), Markus hatte nur den Krypto-Clown-Ruf
+   (+68/-117) - hier bekommt er seine verletzliche Seite.
+   Verzahnt mit der Server-Welle (TechniPlast). Kurze Zeiten,
+   viel Aggro-Handel - der Pool bleibt der Erholungs-Pool,
+   aber nichts ist mehr gratis.
+   ============================================================ */
+
+{
+    id: "cof_elster_razzia",
+    char: "Frau Elster",
+    title: "Die Razzia",
+    text: "Frau Elster steht mit Gummihandschuhen und einer Liste vor dem offenen Kühlschrank. Auf dem Tisch: eine Reihe von Behältern wie auf einer Anklagebank. 'Verfallsdaten-Kontrolle, Herr Müller. Und DAS hier', sie hebt einen Joghurt, 'ist mit Ihrem Namen beschriftet. Dreizehnter Juli.'",
+    opts: [
+        {
+            t: "Schuldbewusst bei der Razzia helfen",
+            loot: "chocolate",
+            rep: { "Frau Elster": 5 },
+            next: "path_razzia_helfen",
+            m: 10, f: 0, a: 10, c: -5,
+            r: "Du opferst den Joghurt und assistierst bei der Kontrolle. Zum Dank drückt sie dir eine konfiszierte, aber einwandfreie Tafel Schokolade in die Hand: 'MHD ist eine Empfehlung. Bei Schokolade.' Es ist das netteste, was sie je gesagt hat."
+        },
+        {
+            t: "Den Joghurt verteidigen: 'Der lebt noch'",
+            rep: { "Frau Elster": -5 },
+            next: "path_razzia_protest",
+            m: 5, f: 5, a: -5, c: 0,
+            r: "'Joghurt IST Bakterienkultur, Frau Elster. Der wird nur besser.' Sie starrt dich an, als hättest du das Finanzamt beleidigt. Der Joghurt wandert trotzdem in den Müll. Aber du hast Haltung gezeigt, und das wird Folgen haben."
+        },
+        {
+            t: "Den Joghurt heimlich evakuieren",
+            next: "path_razzia_schmuggel",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Ein Ablenkungsmanöver ('Ist das da hinten Schimmel?'), ein schneller Griff, und der Joghurt steckt in deiner Jackentasche. Du hast soeben Lebensmittel vor der Buchhaltung gerettet. Jetzt musst du nur noch daran denken, dass er in deiner Tasche ist."
+        }
+    ]
+},
+{
+    id: "cof_elster_razzia_2a",
+    title: "Das Artefakt",
+    reqStory: "path_razzia_helfen",
+    text: "Ganz hinten im untersten Fach findet ihr es: einen beschlagenen Behälter ohne Beschriftung. Frau Elster hält ihn mit ausgestrecktem Arm ins Licht. 'Der stand schon hier, als ich angefangen habe.' Sie hat 2019 angefangen. Ihr schaut euch an.",
+    opts: [
+        {
+            t: "Öffnen. Jemand muss es tun.",
+            m: 5, f: 0, a: 15, c: 0,
+            r: "Der Deckel löst sich mit einem Zischen, das nicht von dieser Welt ist. Der Geruch erreicht Ecken der Küche, die nie ein Geruch erreicht hat. Frau Elster reißt das Fenster auf. Ihr sprecht nie wieder darüber. Es gibt Dinge zwischen euch jetzt."
+        },
+        {
+            t: "Ungeöffnet in doppelter Tüte entsorgen",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "Manche Wahrheiten gehören in zwei Tüten und dann in die Restmülltonne auf dem Hof. Ihr tragt den Behälter gemeinsam hinaus, würdevoll wie bei einer Seebestattung. Was darin war, bleibt für immer Theorie."
+        },
+        {
+            t: "Egon übergeben - der kennt sowas",
+            rep: { "Egon": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Egon betrachtet den Behälter, schüttelt ihn kurz und nickt: 'Kenn ich. Der is von Krause. Der is 2016 gegangen.' Er nimmt ihn mit in den Keller. Du fragst nicht, ob in Raum K3 ein Fach für sowas existiert. Es existiert."
+        }
+    ]
+},
+{
+    id: "cof_elster_razzia_2b",
+    title: "Die Liste",
+    reqStory: "path_razzia_protest",
+    text: "Am Kühlschrank hängt ein neuer Aushang: 'Säumige Lebensmittel und ihre Halter'. Ein Name steht darauf. Deiner. Daneben, in Klammern und Elsters akkurater Handschrift: '(uneinsichtig)'.",
+    opts: [
+        {
+            t: "Entschuldigen und Frieden schließen",
+            rep: { "Frau Elster": 5 },
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Du bringst ihr einen frischen Joghurt mit heutigem Datum als Friedensangebot. Sie prüft das MHD, nickt und nimmt deinen Namen von der Liste. 'Einsicht', sagt sie, 'ist der erste Schritt zur Ordnung.'"
+        },
+        {
+            t: "Formellen Widerspruch einlegen",
+            rep: { "Frau Elster": -3 },
+            m: 15, f: -5, a: 10, c: 0,
+            r: "Du verfasst einen Widerspruch mit Betreff, Aktenzeichen und Fußnoten. Frau Elster liest ihn zweimal und heftet ihn ab - in einen Ordner namens 'Vorgänge M.' Dass dieser Ordner existiert, hättest du gern nicht gewusst. Aber der Widerspruch läuft."
+        },
+        {
+            t: "Den Aushang 'verlieren'",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Der Aushang fällt tragisch hinter den Kühlschrank, wo das Reinigungspersonal seit 2015 nicht hinkommt. Frau Elster wird das Fehlen bemerken. Frau Elster bemerkt alles. Die Frage ist nur, was Version zwei der Liste enthalten wird."
+        }
+    ]
+},
+{
+    id: "cof_elster_razzia_2c",
+    title: "Der Flüchtling",
+    reqStory: "path_razzia_schmuggel",
+    text: "Ein süßlicher Geruch weht durchs Büro. Die Quelle: deine Jacke. Der evakuierte Joghurt hat den Druck der Freiheit nicht ausgehalten und sich in deiner Innentasche entfaltet. Großflächig.",
+    opts: [
+        {
+            t: "Großreinigung der Jacke",
+            m: 15, f: -5, a: 10, c: 0,
+            r: "Fünfzehn Minuten mit Spülmittel und Papierhandtüchern am Waschbecken. Die Jacke überlebt, dein Stolz nicht ganz. Der Joghurt hat am Ende doch gewonnen. Frau Elster hätte ihre Freude an dieser Pointe."
+        },
+        {
+            t: "Die Jacke einfach zulassen",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Reißverschluss zu, Problem versiegelt. Du riechst jetzt dezent nach Erdbeer-Vanille mit einer Kopfnote von Verwesung. Kollegen halten beim Vorbeigehen unauffällig die Luft an. Der Chef hat heute noch einen Termin mit dir."
+        },
+        {
+            t: "Die Jacke Kevin 'vererben'",
+            rep: { "Kevin": -5 },
+            m: 5, f: 10, a: 0, c: 0,
+            r: "'Kevin, die ist mir zu klein. Willst du?' Kevin strahlt und zieht sie sofort an. Der Geruch erreicht ihn nach exakt vier Minuten. Er trägt sie trotzdem weiter, aus Stolz. Du bist offiziell ein schlechter Mensch."
+        }
+    ]
+},
+
+{
+    id: "cof_ceo_maschine",
+    char: "Dr. Wichtig",
+    title: "Das Übliche",
+    text: "Dr. Wichtig steht ratlos vor der Kaffeemaschine. 'Müller. Diese Maschine hat zwei Knöpfe. Im Vorstand haben wir eine mit vierzehn. Machen Sie mir das, was ich immer trinke.' Du weißt nicht, was er immer trinkt. Niemand weiß das. Vermutlich nicht einmal er.",
+    opts: [
+        {
+            t: "Knopf 1 drücken und souverän servieren",
+            rep: { "Dr. Wichtig": 3 },
+            next: "path_ueblich_bluff",
+            m: 2, f: 5, a: 0, c: -5,
+            r: "Du drückst Knopf 1 und reichst die Tasse mit der Miene eines Sommeliers. Er nippt. 'Exakt richtig.' Es war Knopf 1. Es ist immer Knopf 1. Diese Information ist jetzt dein Kapital."
+        },
+        {
+            t: "Ehrlich fragen, was er denn trinkt",
+            rep: { "Dr. Wichtig": -3 },
+            next: "path_ueblich_frage",
+            m: 5, f: 0, a: 5, c: 5,
+            r: "'Das... Übliche. Mit der Crema-Signatur.' Er wird sichtlich ungeduldig - Führungskräfte erklären nicht, sie erwarten. Du drückst irgendeinen Knopf. Er trinkt wortlos und geht. Das war kein Bestehen des Tests."
+        },
+        {
+            t: "Eine Barista-Show abziehen",
+            rep: { "Dr. Wichtig": 5 },
+            next: "path_ueblich_show",
+            m: 15, f: 10, a: 5, c: 0,
+            r: "Du schäumst Milch im Wasserkocher auf, klopfst fachmännisch gegen die Tasse und servierst 'einen Flat White nach Melbourne-Art'. Es ist Knopf 1 mit Schaum. Dr. Wichtig ist begeistert. Zu begeistert. Das wird er wieder wollen."
+        }
+    ]
+},
+{
+    id: "cof_ceo_maschine_2a",
+    title: "Kaffee-Briefing 9:15",
+    reqStory: "path_ueblich_bluff",
+    text: "In deinem Kalender steht ein neuer Serientermin: 'Kaffee-Briefing mit Dr. W., täglich 9:15, Küche'. Eingeladen: du. Agenda: keine. Du bist jetzt offenbar der offizielle Übersetzer zwischen dem Chef und Knopf 1.",
+    opts: [
+        {
+            t: "Den Termin einfach hinnehmen",
+            rep: { "Dr. Wichtig": 3 },
+            m: 10, f: 0, a: 10, c: -5,
+            r: "Jeden Morgen zehn Minuten Kaffee reichen und Smalltalk über 'Visionen'. Es ist absurd, aber es ist auch die kürzeste Verbindung zum Chef, die je ein Admin hatte. Man munkelt, Markus wäre neidisch auf den Termin."
+        },
+        {
+            t: "Gabi einweihen und übergeben",
+            rep: { "Gabi": 5 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Gabi hört sich das Geheimnis von Knopf 1 an und lächelt milde: 'Ich mach das seit Jahren mit seinem Tee.' Ab morgen übernimmt der Empfang das Briefing. Dr. Wichtig bemerkt den Unterschied nicht. Natürlich nicht."
+        },
+        {
+            t: "Eine Thermoskanne 'kalibrieren'",
+            m: 15, f: -5, a: 0, c: -5,
+            r: "Du deponierst jeden Morgen eine vorbereitete Thermoskanne mit dem Etikett 'DAS ÜBLICHE - KALIBRIERT'. Dr. Wichtig ist tief beeindruckt von der Prozessoptimierung. Der Termin verschwindet aus dem Kalender, die Legende bleibt."
+        }
+    ]
+},
+{
+    id: "cof_ceo_maschine_2b",
+    title: "Vierzehn Knöpfe",
+    reqStory: "path_ueblich_frage",
+    text: "Vor der Küche steht eine Palette. Dr. Wichtig hat 'zur Behebung des Kompetenzgefälles' die Vorstandsmaschine bestellen lassen: vierzehn Knöpfe, sieben Sprachen, ein Touchdisplay. Frau Elster steht daneben und hält eine Rechnung wie eine Kriegserklärung.",
+    opts: [
+        {
+            t: "Alle Kollegen einweisen",
+            m: 20, f: 0, a: 10, c: -5,
+            r: "Zwanzig Minuten Schulung, vierzehn Knöpfe, null Verständnis. Am Ende trinken trotzdem alle 'Café Crème', weil das der erste Knopf ist. Aber die Einweisung ist dokumentiert, und dokumentiert schlägt sinnvoll. Immer."
+        },
+        {
+            t: "Die Maschine heimlich 'vereinfachen'",
+            m: 10, f: 10, a: 0, c: 5,
+            r: "Du konfigurierst alle vierzehn Knöpfe auf dasselbe Getränk: Knopf 1 der alten Maschine. Die Kollegen schwärmen von der 'Konsistenz auf Vorstandsniveau'. Sollte je ein Techniker die Konfiguration auslesen, wirst du Erklärungsbedarf haben."
+        },
+        {
+            t: "Frau Elster die Rechnung erklären müssen",
+            rep: { "Frau Elster": -3 },
+            m: 10, f: 0, a: 10, c: 0,
+            r: "'VIERTAUSEND Euro, Herr Müller. Für KAFFEE.' Du erklärst, dass du nur eine Frage gestellt hast. Frau Elster notiert etwas in ihrem kleinen Buch. Verursachungsprinzip: Die Rechnung mag der Chef bestellt haben, aber die Frage kam von dir."
+        }
+    ]
+},
+{
+    id: "cof_ceo_maschine_2c",
+    title: "Der Vorstands-Barista",
+    reqStory: "path_ueblich_show",
+    text: "Eine Mail vom Vorstandssekretariat: 'Dr. Wichtig wünscht für das Board-Meeting am Nachmittag Ihre Kaffee-Spezialitäten (Melbourne-Art) für acht Personen.' Es gibt keine Melbourne-Art. Es gibt Knopf 1 und einen Wasserkocher.",
+    opts: [
+        {
+            t: "Das Catering durchziehen",
+            rep: { "Dr. Wichtig": 5 },
+            m: 25, f: 10, a: 10, c: 0,
+            r: "Acht Tassen Knopf 1, acht Hauben Wasserkocher-Schaum, ein improvisiertes Tablett. Der Vorstand ist entzückt, einer fragt nach der 'Bohnen-Provenienz'. Du sagst 'Single Origin, Automat drei'. Niemand lacht. Alle nicken."
+        },
+        {
+            t: "Chantal ein 'Event' daraus machen lassen",
+            rep: { "Chantal": 5 },
+            m: 10, f: 5, a: 0, c: 5,
+            r: "Chantal übernimmt mit Feuereifer: Sie nennt es 'Coffee Experience', druckt Menükarten und stellt eine Duftkerze auf. Der Kaffee ist immer noch Knopf 1. Die Bewertung des Meetings: 'bestes Catering seit Jahren'. Marketing funktioniert."
+        },
+        {
+            t: "Absagen: Du bist Admin, kein Barista",
+            rep: { "Dr. Wichtig": -5 },
+            m: 5, f: 0, a: 5, c: 5,
+            r: "Deine höfliche Absage wird im Sekretariat 'zur Kenntnis genommen'. Dr. Wichtig erwähnt beim nächsten Vorbeigehen beiläufig, dass 'Servicebereitschaft ein Führungskriterium' sei. Du bist keine Führungskraft. Eben, sagt sein Blick."
+        }
+    ]
+},
+
+{
+    id: "cof_entkalken",
+    title: "ENTKALKEN",
+    text: "Die Kaffeemaschine zeigt in roten Großbuchstaben: 'ENTKALKEN'. Sie verweigert jede weitere Ausgabe. In zwanzig Minuten beginnt die Frühstückspause, und dann steht hier eine Menschenmenge mit leeren Tassen und schwindender Geduld. Du kennst diese Menge. Du fürchtest diese Menge.",
+    opts: [
+        {
+            t: "Ordnungsgemäß entkalken",
+            next: "path_kalk_pflege",
+            m: 20, f: -5, a: 10, c: -5,
+            r: "Entkalker ansetzen, Programm starten, drei Spülgänge abwarten - während draußen die ersten Tassen klirren. Aber die Maschine läuft danach wie am ersten Tag. Vielleicht sogar etwas zu gut."
+        },
+        {
+            t: "Die Meldung wegdrücken (Knopf halten)",
+            next: "path_kalk_ignor",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Acht Sekunden Knopf halten, Meldung weg, Maschine läuft. Ein Trick, den dir mal ein Servicetechniker gezeigt hat - mit den Worten 'aber nur im Notfall'. Es ist jetzt jedes Mal ein Notfall. Der Kalk sammelt Zinsen."
+        },
+        {
+            t: "Mit Küchen-Essig improvisieren",
+            next: "path_kalk_essig",
+            m: 10, f: 5, a: 5, c: 0,
+            r: "Kein Entkalker im Haus, aber Essig-Essenz aus dem Putzschrank. Die Maschine gurgelt beleidigt, läuft aber wieder. Der erste Kaffee danach hat eine Kopfnote, die man höflich als 'Vinaigrette' beschreiben könnte."
+        }
+    ]
+},
+{
+    id: "cof_entkalken_2a",
+    title: "Zu gut gewartet",
+    reqStory: "path_kalk_pflege",
+    text: "Die entkalkte Maschine läuft mit dem Druck ihrer Jugend - und dosiert plötzlich deutlich stärker als in den letzten drei Jahren. Die halbe Firma ist überkoffeiniert. Chantal hat seit elf Uhr vier Meetings angesetzt, Kevin spricht ausschließlich in Ausrufezeichen.",
+    opts: [
+        {
+            t: "Die Dosierung sanft runterregeln",
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Du stellst die Maschine schrittweise zurück auf das gewohnte Niveau von 'braunem Wasser mit Absichten'. Die Firma beruhigt sich im Lauf des Nachmittags. Niemand dankt dir. Niemand weiß überhaupt, was du verhindert hast."
+        },
+        {
+            t: "Laufen lassen - Produktivität!",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Die Firma vibriert. Die Ticketzahlen sinken, die Lautstärke steigt, jemand hat um 14 Uhr das Treppenhaus gebohnert, freiwillig. Das kann unmöglich gesund enden, aber bis dahin ist es beeindruckend anzusehen."
+        },
+        {
+            t: "Ein Warnschild aufstellen",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "'ACHTUNG: STARK. Dosierung beachten.' Das Schild wird fotografiert, in drei Chatgruppen geteilt und komplett ignoriert. Aber es hängt da. Im Zweifel hast du gewarnt, und 'im Zweifel gewarnt' ist die halbe Miete in dieser Firma."
+        }
+    ]
+},
+{
+    id: "cof_entkalken_2b",
+    title: "Der Maschinensturz",
+    reqStory: "path_kalk_ignor",
+    text: "Es ist passiert: Die Maschine ist mitten im Bezug verstummt. Endgültig, mit einem letzten Rasseln, das nach Kalk und Vorwurf klang. Vor ihr bildet sich eine Schlange. Kevin hat seinen Rucksack geöffnet und flüstert: 'Ich hätte da Instant. Fünfzig Cent der Becher.'",
+    opts: [
+        {
+            t: "Notoperation an der Maschine",
+            m: 20, f: -5, a: 15, c: -5,
+            r: "Du zerlegst den Brühkopf vor Publikum. Der Kalkbrocken, den du herausoperierst, hat die Größe einer Walnuss und wird von der Schlange mit ehrfürchtigem Raunen quittiert. Die Maschine lebt wieder. Du bist für heute ein Held. Für heute."
+        },
+        {
+            t: "Kevins Instant-Imperium dulden",
+            rep: { "Kevin": 3 },
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Kevin macht das Geschäft seines Lebens. Er hat Wechselgeld, einen Wasserkocher und ab der zweiten Stunde ein Treueprogramm ('Der zehnte Becher gratis'). Der Kaffee ist furchtbar. Der Unternehmergeist ist es nicht."
+        },
+        {
+            t: "Zettel: 'DEFEKT - Techniker informiert'",
+            m: 2, f: 10, a: 5, c: 5,
+            r: "Der Zettel ist geduldig, die Schlange nicht. Es ist kein Techniker informiert - der Zettel IST die Maßnahme. Die Kollegen pilgern murrend zur Tankstelle gegenüber. Irgendwer wird fragen, wann der Techniker denn kommt. Täglich."
+        }
+    ]
+},
+{
+    id: "cof_entkalken_2c",
+    title: "Vinaigrette",
+    reqStory: "path_kalk_essig",
+    text: "Der Essig hält sich hartnäckiger als geplant. Auch der fünfte Kaffee des Tages schmeckt nach Salatdressing, und die Beschwerden werden kreativer. Chantal hingegen hat eine Story gepostet: 'Unser Office macht jetzt DETOX-Kaffee! So clean!' Vierzig Likes.",
+    opts: [
+        {
+            t: "Gründlich nachspülen, bis es vorbei ist",
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Sechs Spülgänge, zwei Kannen Frischwasser, ein Opfer-Espresso zur Probe. Der Essig kapituliert. Der Kaffee schmeckt wieder nach Kaffee, also nach fast nichts, und alle sind zufrieden. Normalität ist unterschätzt."
+        },
+        {
+            t: "Chantals Detox-Framing unterstützen",
+            rep: { "Chantal": 5 },
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Du bestätigst auf Nachfrage 'ja, Apfelessig-Infusion, sehr angesagt'. Chantal verlinkt dich als 'unseren Wellness-Admin'. Drei Kollegen trinken jetzt ÜBERZEUGT davon. Der Essig verfliegt von selbst, die Legende nicht."
+        },
+        {
+            t: "Es zur Premium-Innovation erklären",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Cold-Brew-Cleansing-Zyklus, läuft noch bis Freitag.' Die Beschwerden verstummen - gegen Innovation kann man sich in dieser Firma nicht beschweren, das wäre ja rückständig. Sollte Dr. Wichtig davon Wind bekommen, will er es ins Portfolio aufnehmen."
+        }
+    ]
+},
+
+{
+    id: "cof_markus_termin",
+    char: "Markus",
+    title: "Elf Uhr",
+    text: "Markus steht untypisch still an der Kaffeemaschine und rührt seit Minuten in einer leeren Tasse. 'Müller. Heute, elf Uhr. TechniPlast, Vorstandspräsentation. Wenn das klappt, ist das Quartal gerettet.' Kein 'Zeit ist Geld', kein Alpha-Gehabe. Er sieht zum ersten Mal aus wie jemand, der nicht an sich glaubt.",
+    opts: [
+        {
+            t: "Den Pitch anhören und mitschärfen",
+            rep: { "Markus": 10 },
+            next: "path_lampen_coach",
+            m: 20, f: 10, a: 5, c: 0,
+            r: "Er pitcht dir die Präsentation, du reparierst die Technik-Folien: aus 'unendlich skalierbar' wird 'skalierbar', aus 'militärische Verschlüsselung' wird 'Stand der Technik'. Markus hört zu. Wirklich zu. Zwanzig Minuten deiner Arbeitszeit, gut angelegt. Wahrscheinlich."
+        },
+        {
+            t: "'Wird schon schiefgehen'",
+            rep: { "Markus": -3 },
+            next: "path_lampen_floskel",
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Die Floskel fällt zu Boden wie ein nasser Lappen. Markus nickt mechanisch: 'Ja. Klar. Wird schon.' Er nimmt seinen Kaffee und geht. Du hättest zwei Minuten investieren können. Du hast zwei Wörter investiert."
+        },
+        {
+            t: "Einen Glücks-Kaffee brühen: Knopf 2",
+            rep: { "Markus": 5 },
+            next: "path_lampen_kaffee",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "'Knopf 2, doppelte Crema. Den trinken hier nur Leute, die gewinnen.' Kompletter Unsinn, aber Markus umklammert die Tasse wie einen Talisman. 'Knopf 2', wiederholt er ernst. Rituale schlagen Wahrheit, immer schon."
+        }
+    ]
+},
+{
+    id: "cof_markus_termin_2a",
+    title: "Der Technik-Mann",
+    reqStory: "path_lampen_coach",
+    text: "Gebrüll aus dem Flur, aber diesmal das gute: 'ABSCHLUSS! TechniPlast hat unterschrieben!' Markus stürmt in die Küche, deutet auf dich und verkündet der versammelten Frühstücksrunde: 'MEIN Technik-Mann! Ohne den wär das nichts geworden!' Alle schauen dich an.",
+    opts: [
+        {
+            t: "Den Ruhm annehmen",
+            rep: { "Markus": 5 },
+            m: 5, f: 0, a: 5, c: -5,
+            r: "Du nimmst den Applaus mit einem Nicken entgegen. 'Technik-Mann' ist ab jetzt dein Titel im Vertrieb - was bedeutet: Der Vertrieb hat ab jetzt deine Durchwahl. Ruhm ist in dieser Firma nur ein anderes Wort für Erreichbarkeit."
+        },
+        {
+            t: "Klarstellen: einmalige Aktion",
+            rep: { "Markus": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Einmalig, Markus. Ich hab auch einen Job.' Er winkt großzügig ab: 'Klar, klar. Einmalig.' Ihr wisst beide, dass er in zwei Wochen wieder an der Maschine steht. Aber die Grenze ist gezogen, fürs Protokoll."
+        },
+        {
+            t: "Frech eine Provision fordern",
+            rep: { "Markus": 5 },
+            m: 5, f: 5, a: -5, c: 0,
+            r: "'Zwei Prozent, Markus.' Er starrt dich an - dann bricht er in dröhnendes Gelächter aus: 'VERHANDELN! Ich hab dich gut erzogen!' Es gibt keine zwei Prozent. Es gibt einen Kaffee aufs Haus und seinen Respekt. Letzterer ist seltener."
+        }
+    ]
+},
+{
+    id: "cof_markus_termin_2b",
+    title: "Nicht sein Tag",
+    reqStory: "path_lampen_floskel",
+    text: "Markus kommt am Nachmittag zurück, die Krawatte gelockert, die Schultern tief. 'Vertagt. Die wollen nochmal drüber schlafen.' Er setzt sich auf die Küchenzeile, was er sonst nie tut. 'Ich hab beim Technik-Teil geschwommen, Müller. Richtig geschwommen.'",
+    opts: [
+        {
+            t: "Kaffee ausgeben und zuhören",
+            rep: { "Markus": 10 },
+            m: 15, f: 5, a: -5, c: 0,
+            r: "Du drückst ihm einen Kaffee in die Hand und hörst zu. Eine Viertelstunde lang ist Markus kein Vertriebler, sondern ein Mensch mit Selbstzweifeln und einer Tochter, die BWL studiert. Am Ende steht er auf: 'Nächstes Mal machst du die Technik-Folien.' Es klingt nicht wie ein Befehl. Es klingt wie eine Bitte."
+        },
+        {
+            t: "'Beim nächsten Mal klappt's'",
+            rep: { "Markus": -5 },
+            m: 2, f: 5, a: 0, c: 0,
+            r: "Die zweite Floskel des Tages. Markus schaut dich kurz an, und in diesem Blick liegt die exakte Buchführung darüber, wer da war, als es zählte, und wer Kalendersprüche verteilt hat. Er nickt und geht. Das Konto ist im Minus."
+        },
+        {
+            t: "Anbieten, das Feedback zu analysieren",
+            rep: { "Markus": 5 },
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Ihr geht das Kundenfeedback gemeinsam durch. Die Einwände sind fast alle technisch - und fast alle lösbar. Markus macht sich Notizen, echte, auf Papier. 'Vertagt heißt nicht verloren', sagt er beim Gehen. Es klingt schon wieder fast wie er."
+        }
+    ]
+},
+{
+    id: "cof_markus_termin_2c",
+    title: "Der Glücksknopf",
+    reqStory: "path_lampen_kaffee",
+    text: "Der Deal ist durch, und Markus hat die Geschichte vom Glücks-Kaffee im ganzen Vertrieb erzählt. Seitdem drückt die komplette Abteilung ausschließlich Knopf 2. Vor jedem Kundentermin bildet sich eine kleine Prozession. Knopf 2 beginnt bereits, müde zu klemmen.",
+    opts: [
+        {
+            t: "Den Mythos beenden: Es ist nur Kaffee",
+            rep: { "Markus": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Das war ein Witz, Leute. Knopf 2 ist Knopf 1 mit mehr Wasser.' Betretenes Schweigen im Vertrieb. Markus schüttelt enttäuscht den Kopf: 'Manche Dinge zerredet man nicht, Müller.' Die Prozession geht trotzdem weiter. Nur ohne dich."
+        },
+        {
+            t: "Den Mythos pflegen und den Knopf warten",
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Du tauschst heimlich die Feder unter Knopf 2 und polierst ihn. Der Glaube braucht funktionierende Infrastruktur. Der Vertrieb hat dieses Quartal die besten Zahlen seit Jahren. Korrelation, Kausalität - wen interessiert das an Knopf 2."
+        },
+        {
+            t: "Chantal von 'Knopf 2' erzählen",
+            rep: { "Chantal": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Chantal wittert Content und produziert einen Insta-Post: 'Der Erfolgs-Espresso - nur bei uns.' Es folgen Sticker, ein Hashtag und die Idee, Knopf 2 auf Firmenevents 'erlebbar zu machen'. Du hast einen Bürowitz in eine Marke verwandelt. Möge sie dir nie gehören."
+        }
+    ]
+},
+
+{
+    id: "cof_kaffeekasse",
+    title: "Die Vertrauenskasse",
+    text: "Die Kaffeekasse ist leer. Die Strichliste daneben zählt 34 Kaffee seit Montag, das Sparschwein enthält: einen Knopf, eine Büroklammer und einen Kassenzettel von 2023. Gabi lehnt im Türrahmen: 'Ich weiß, wer es war. Aber ich sag nur so viel: Es ist komplizierter, als du denkst.'",
+    opts: [
+        {
+            t: "Gabi ausfragen - sie weiß alles",
+            rep: { "Gabi": 3 },
+            next: "path_kasse_spur",
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Gabi erzählt in konzentrischen Kreisen: erst über das Wetter, dann über die Kantine, dann über 'jemanden, der es immer zurücklegt. Meistens.' Am Ende weißt du: Es ist kein Diebstahl. Es ist etwas Traurigeres. Und du weißt noch nicht, wer."
+        },
+        {
+            t: "Eine Kamera-Attrappe installieren",
+            next: "path_kasse_kamera",
+            m: 10, f: 5, a: 0, c: 5,
+            r: "Eine alte Webcam ohne Kabel, mit rotem LED-Sticker, direkt über der Kasse. Abschreckung durch Theater. Noch am selben Tag liegen wieder Münzen im Schwein. Und noch am selben Tag fragt jemand nach der Datenschutz-Folgenabschätzung."
+        },
+        {
+            t: "Wortlos selbst auffüllen",
+            next: "path_kasse_engel",
+            m: 5, f: 5, a: -5, c: 0,
+            r: "Du wirfst eigenes Geld hinein. Frieden ist billiger als Wahrheit, und ehrlich gesagt willst du gar nicht wissen, welcher Kollege an der Kaffeekasse scheitert. Das Schwein klimpert wieder. Fürs Erste."
+        },
+        {
+            t: "Die Kasse mit der Schwarzen Amex 'sponsern'",
+            req: "black_card",
+            next: "path_kasse_amex",
+            m: 5, f: 0, a: -10, c: 5,
+            r: "Du hältst Prinz Abubakars Karte feierlich an das Sparschwein. Es gibt kein Terminal. Es wird nie ein Terminal geben. Du legst stattdessen Bargeld ein, aber mit der Geste eines Mannes, dessen Limit eine reine Illusion ist. Zwei Kollegen haben es gesehen. Das wird Gerüchte geben."
+        }
+    ]
+},
+{
+    id: "cof_kaffeekasse_2a",
+    title: "Ende des Monats",
+    reqStory: "path_kasse_spur",
+    text: "Die Spur führt zu einer Erkenntnis, die du lieber nicht gehabt hättest: Es ist Kevin. Azubi-Gehalt, Ende des Monats, und die Kaffeekasse als stiller Überbrückungskredit. Er legt es am Ersten immer zurück. Meistens. Gabi wusste es die ganze Zeit und hat geschwiegen. Jetzt weißt du es auch.",
+    opts: [
+        {
+            t: "Diskret einen 'IT-Fonds' einrichten",
+            rep: { "Kevin": 10 },
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Du stellst eine zweite Dose auf: 'IT-Notfallkasse - bedient euch, zahlt zurück, keine Fragen.' Kevin versteht die Botschaft, ohne dass je ein Wort fällt. Ab dem nächsten Monat stimmt die Kaffeekasse wieder. Die Notfallkasse hat Schwankungen. Das ist okay. Dafür ist sie da."
+        },
+        {
+            t: "Kevin sanft darauf ansprechen",
+            rep: { "Kevin": 5 },
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Kevin wird rot bis unter die Kappe. 'Ich leg es IMMER zurück!' Stimmt fast. Ihr redet kurz über Azubi-Gehälter und die Preise in der Kantine. Am Ende leihst du ihm bis zum Ersten einen Zwanziger - offiziell, unter Männern. Er zahlt pünktlich zurück. Darauf ist er jetzt stolz."
+        },
+        {
+            t: "Korrekt an Frau Elster melden",
+            rep: { "Kevin": -10, "Frau Elster": 3 },
+            m: 5, f: 0, a: 5, c: -5,
+            r: "Frau Elster nimmt die Meldung entgegen und behandelt den Fall 'nach Vorschrift': Ermahnung, Aktenvermerk, Rückzahlungsplan über vier Wochen. Alles korrekt. Kevin grüßt dich auf dem Flur nicht mehr. Auch das ist korrekt."
+        }
+    ]
+},
+{
+    id: "cof_kaffeekasse_2b",
+    title: "Die Folgenabschätzung",
+    reqStory: "path_kasse_kamera",
+    text: "Chantal hat die Kamera-Attrappe entdeckt und einen Termin einberufen: 'Awareness-Runde: Überwachung am Arbeitsplatz'. Sie hat Folien. Sie hat den Betriebsrat in CC. Die Kamera hat kein Kabel, aber das weiß außer dir niemand.",
+    opts: [
+        {
+            t: "Auflösen: Es ist eine Attrappe",
+            m: 10, f: 0, a: 10, c: 0,
+            r: "Du hältst die kabellose Kamera hoch wie ein Beweisstück. Erleichterung, Gelächter, ein einzelner Vorwurf ('Psychologische Überwachung ist AUCH Überwachung!'). Der Termin endet nach zehn Minuten. Die Kasse bleibt seither voll. Theater wirkt, auch enttarnt."
+        },
+        {
+            t: "Den Termin komplett aussitzen",
+            m: 15, f: 10, a: 10, c: 0,
+            r: "Fünfundvierzig Folien über Datenschutz-Grundverordnung, vorgetragen von jemandem, der PDFs nicht öffnen kann. Du sagst nichts. Die Attrappe bleibt hängen, ihr Geheimnis auch. Manchmal ist Schweigen die effizienteste Lüge."
+        },
+        {
+            t: "Chantal zur 'Datenschutz-Botschafterin' machen",
+            rep: { "Chantal": 5 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "'Chantal, das Thema braucht ein Gesicht. Deins.' Sie nimmt die Mission an, entwirft ein Badge und vergisst die Kamera darüber vollständig. Die Attrappe hängt weiter, jetzt quasi unter dem Schutz der Botschafterin selbst. Eleganter geht Ablenkung nicht."
+        }
+    ]
+},
+{
+    id: "cof_kaffeekasse_2c",
+    title: "Der Verdacht",
+    reqStory: "path_kasse_engel",
+    text: "Jemand hat dich beim Geldeinwerfen beobachtet - von hinten, halb, im Vorbeigehen. Das Ergebnis kursiert bereits als Flurfunk: 'Müller stopft die Kasse auf. Warum wohl? Weil ER sie leert und ein schlechtes Gewissen hat.' Du bist jetzt der Verdächtige deiner eigenen guten Tat.",
+    opts: [
+        {
+            t: "Öffentlich richtigstellen",
+            m: 10, f: 0, a: 10, c: 0,
+            r: "Du erklärst in der Frühstücksrunde den tatsächlichen Hergang. Die Hälfte glaubt dir. Die andere Hälfte findet, genau DAS würde der Kassendieb sagen. Wahrheit skaliert schlecht gegen eine gute Geschichte. Aber die Hälfte ist immerhin die Hälfte."
+        },
+        {
+            t: "Den Ruf einfach tragen",
+            m: 2, f: 10, a: 5, c: 5,
+            r: "Sollen sie reden. Du weißt, was stimmt, und Erklärungen adeln nur das Gerücht. Der Flurfunk verliert nach zwei Tagen das Interesse - es bleibt aber ein Rest. Es bleibt immer ein Rest. Der Chef hört solche Reste gern."
+        },
+        {
+            t: "Gabi um ein Gegen-Gerücht bitten",
+            rep: { "Gabi": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Gabi hört sich das Problem an und nickt fachfraulich: 'Bis Donnerstag redet keiner mehr davon.' Am Mittwoch spricht die ganze Firma über die angebliche Verlobung in der Buchhaltung. Deine Geschichte ist tot. Frag nie, was sie dafür in Umlauf gebracht hat."
+        }
+    ]
+},
+{
+    id: "cof_kaffeekasse_2d",
+    title: "Der Prinz von der IT",
+    reqStory: "path_kasse_amex",
+    text: "Das Gerücht hat über Nacht Fahrt aufgenommen: Müller besitzt eine Schwarze Amex. Müller ist heimlich vermögend. Müller macht den Admin-Job 'nur aus Leidenschaft'. Markus fängt dich an der Maschine ab, die Augen glänzend: 'Wir müssen über dein Portfolio reden.'",
+    opts: [
+        {
+            t: "Nüchtern dementieren",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Die Karte gehört einem nigerianischen Prinzen, Markus.' Er lacht dröhnend und klopft dir auf die Schulter: 'DISKRETION! Verstehe. Old Money redet nicht.' Das Dementi hat das Gerücht soeben bestätigt. So funktionieren Gerüchte."
+        },
+        {
+            t: "Markus auflaufen lassen",
+            rep: { "Markus": -5 },
+            m: 10, f: 5, a: -10, c: 0,
+            r: "Du lässt dir eine Viertelstunde lang 'exklusive Anlagechancen' präsentieren, nickst wissend und sagst am Ende: 'Mein Family Office regelt das.' Markus zieht ehrfürchtig ab, um zu googeln, was ein Family Office ist. Es war herrlich."
+        },
+        {
+            t: "Die Legende aktiv pflegen",
+            m: 5, f: 10, a: -5, c: 10,
+            r: "Du dementierst nichts, lächelst rätselhaft und zahlst dein Kantinenessen betont beiläufig in Münzen. Die Legende wächst. Leute halten dir Türen auf. Irgendwann wird Dr. Wichtig fragen, warum ein vermögender Mann seine Gehaltsstufe nicht neu verhandelt - oder Frau Elster, woher das Vermögen stammt."
+        }
+    ]
+},
+
 ];

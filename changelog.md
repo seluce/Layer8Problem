@@ -4,6 +4,7 @@ Diese Version ist in erster Linie ein technischer Umbau: Die Grundlage unter dem
 
 Neuerungen:
 * Einundvierzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Dazu kommen die piepende USV, Egons Schattenlager im Keller, ein angeknabbertes Patchpanel, ein fremder USB-Stick und das überfällige Doku-To-do von Januar. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
+* Einundzwanzig neue Ereignisse an der Kaffeemaschine: Frau Elsters Verfallsdaten-Razzia, Dr. Wichtig vor zwei Knöpfen ('Machen Sie mir das, was ich immer trinke'), die ENTKALKEN-Krise samt Kevins Instant-Schwarzmarkt, die leergeräumte Vertrauenskasse - und Markus, der vor einem echten Kundentermin zum ersten Mal aussieht wie ein Mensch. Wer die Schwarze Amex besitzt, kann an der Kaffeekasse außerdem eine Legende begründen.
 
 Spielbalance:
 * Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
