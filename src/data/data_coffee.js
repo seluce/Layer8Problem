@@ -4399,4 +4399,78 @@ export const coffee = [
     ]
 },
 
+
+/* ============================================================
+   FALLEN (v4.0.0): Ereignisse, bei denen die Antwort, die
+   vernünftig KLINGT, nicht die ist, die vernünftig IST.
+   Kein kostenloser Ausweg - Zwickmühlen mit Köder.
+   ============================================================ */
+
+{
+    id: "cof_falle_bio",
+    char: "Chantal",
+    title: "Die Bio-Bohnen",
+    text: "Chantal stellt feierlich eine Tüte auf die Maschine: 'Bio! Fairtrade! Single Origin! Die füllen wir jetzt ein, ja? Für die Werte.' Die Tüte glänzt ölig. Die Maschine ist Baujahr 2014 und hat schon normale Bohnen nur widerwillig akzeptiert.",
+    opts: [
+        {
+            t: "Gern - Werte muss man leben",
+            m: 10, f: 0, a: 15, c: 10,
+            r: "Die öligen Bohnen verkleben das Mahlwerk nach vier Bezügen vollständig. Die Maschine steht, die Schlange wächst, und Chantal erzählt jedem, DU hättest 'die Umstellung gemacht'. Werte muss man leben. Reparieren auch."
+        },
+        {
+            t: "Ablehnen: Die Maschine verträgt das nicht",
+            m: 5, f: 5, a: 10, c: 0,
+            r: "Fachlich korrekt, sozial ein Minenfeld. Chantal notiert dich innerlich als 'Fortschrittsverweigerer', und die Diskussion über Maschinenverträglichkeit von Idealen kostet dich eine Viertelstunde Lebensfreude in fünf Minuten."
+        },
+        {
+            t: "Heimlich alte Bohnen in die Bio-Tüte füllen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Der Discounter-Kaffee schmeckt im Bio-Gewand 'sooo viel runder' (Chantal). Der Betrug funktioniert perfekt - und genau das ist das Problem: Du musst ihn jetzt jede Woche wiederholen, für immer, und irgendwann steht jemand daneben, wenn du umfüllst."
+        }
+    ]
+},
+{
+    id: "cof_falle_letzte_tasse",
+    title: "Die letzte Tasse",
+    text: "Die Kanne ist fast leer - ein Rest für ungefähr eine dreiviertel Tasse. Das Hausgesetz ist eindeutig: Wer die letzte nimmt, kocht neu. Auf dem Flur nähern sich Schritte. Du hast etwa vier Sekunden für eine Entscheidung.",
+    opts: [
+        {
+            t: "Clever: nur einen halben Schluck nehmen",
+            m: 2, f: 5, a: 10, c: 10,
+            r: "Der älteste Trick der Bürowelt - und exakt in diesem Moment betritt Frau Elster die Küche und sieht dich mit der Kanne in der Hand einen strategischen Restschluck lassen. Ihr Blick katalogisiert dich neu. Der Rest-Zentimeter Kaffee steht dort noch drei Tage als Mahnmal."
+        },
+        {
+            t: "Die letzte nehmen und neu aufsetzen",
+            m: 15, f: 0, a: 10, c: 0,
+            r: "Regelkonform und ehrenhaft: Du nimmst die letzte und kochst neu. Es dauert, die Maschine gluckert, drei Wartende schauen dir dabei zu wie einem Baustellenkran, und einer fragt, ob das 'noch lange' dauert. Ehre ist ein Zeitfresser."
+        },
+        {
+            t: "Verzichten und ohne Kaffee zurückgehen",
+            m: 2, f: 5, a: 10, c: 0,
+            r: "Du gehst mit leerer Tasse und vollem Prinzip. Der Nachmittag ohne Koffein zieht sich wie ein Alignment-Termin, und hinter dir hörst du, wie jemand anders seelenruhig die letzte Tasse nimmt und NICHT neu kocht. Es gibt keine Gerechtigkeit. Nur Kaffee, und den hast du nicht."
+        }
+    ]
+},
+{
+    id: "cof_falle_spende",
+    title: "Der Spendenlauf",
+    text: "Bernd aus dem Vertrieb steht mit einer Liste an der Maschine: 'Ich lauf beim Firmenlauf mit! Für den guten Zweck! Trägst du dich ein? Zwei Euro pro Kilometer, sind ja nur zehn Kilometer.' Zwanzig Euro. Die Liste ist gut gefüllt. Alle schauen.",
+    opts: [
+        {
+            t: "Großzügig eintragen - für den guten Zweck",
+            m: 5, f: 0, a: 10, c: 5,
+            r: "Zwanzig Euro, ein gutes Gefühl - und ein Eintrag in ein unsichtbares Register: Du giltst jetzt als 'spendet immer'. In den nächsten Wochen finden dich der Kuchenbasar, die Tombola, das Trikot-Sponsoring und Bernds zweiter Lauf. Großzügigkeit ist in diesem Haus ein Abo."
+        },
+        {
+            t: "Symbolisch fünf Euro geben",
+            m: 2, f: 0, a: 5, c: 5,
+            r: "Der Kompromiss-Klassiker. Bernd sagt 'auch fünf Euro helfen!' in einem Ton, der das Gegenteil bedeutet, und neben deinem Namen steht jetzt für alle sichtbar die kleinste Zahl der Liste. Du hast bezahlt UND giltst als knauserig. Das Schlechteste aus beiden Welten, zum Sonderpreis."
+        },
+        {
+            t: "Höflich ablehnen",
+            m: 2, f: 5, a: 10, c: 0,
+            r: "'Diesen Monat schlecht, sorry.' Bernd nickt verständnisvoll und erzählt es verständnisvoll weiter. Beim Firmenlauf werden Fotos gemacht, es gibt eine Dankes-Rundmail mit allen Spendernamen, und deiner fehlt. Niemand sagt etwas. Alle wissen es."
+        }
+    ]
+},
 ];

@@ -732,7 +732,14 @@ export const events = {
         }
 
         // --- SCHWIERIGKEIT & FAULHEIT LOGIK ---
-        let diffMult = this.state.difficultyMult;
+        // Mittwoch-Härtung: Die Datenwerte sind für Normal etwas zu weich
+        // kalibriert (Tages-Simulation: 87% Siegquote beim mitlesenden
+        // Gelegenheitsspieler). Ein Aufschlag von 10% nur auf die Formeln
+        // bringt ihn auf ~75%, ohne den Optimalspieler zu treffen (94%).
+        // WICHTIG: state.difficultyMult bleibt 1.0 - der Wert dient überall
+        // sonst als Identitätsgrenze (> 1.0 = Montag: Start-Tickets,
+        // Ausreden, Achievements). Nur hier wird der Stat-Wert abgeleitet.
+        let diffMult = this.state.difficultyMult === 1.0 ? 1.1 : this.state.difficultyMult;
         let lazyMult = 1 + (this.state.fl / 200);
 
         this.state.fl += f;

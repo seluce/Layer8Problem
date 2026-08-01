@@ -1950,4 +1950,81 @@ export const emails = [
     ]
 },
 
+
+/* ============================================================
+   FALLEN (v4.0.0): Postfach-Köder - die dienstbeflissene
+   Antwort ist die teure.
+   ============================================================ */
+
+{
+    id: "mail_falle_fuenf_minuten",
+    sender: "Dr. Wichtig (CEO)",
+    subj: "Kurze Frage",
+    body: "Herr Müller,\n\nhaben Sie nachher fünf Minuten für mich?\n\nW.",
+    opts: [
+        {
+            btn: "'Selbstverständlich, jederzeit!'",
+            m: 20, f: 5, a: 10, c: 0,
+            r: "Die fünf Minuten beginnen um 14 Uhr und enden als Projektskizze: Dr. Wichtig möchte 'die Digitalisierung nochmal ganz neu denken', und weil du so bereitwillig Zeit hattest, denkst du sie jetzt mit. Erste Arbeitsfassung: bis Freitag. Fünf Minuten sind in Chefzeit eine Währung mit sehr eigenem Wechselkurs."
+        },
+        {
+            btn: "'Worum geht es denn?'",
+            m: 2, f: 0, a: 5, c: 15,
+            r: "Eine völlig vernünftige Rückfrage - nur liest sie sich auf Vorstandsebene anders: Wer nach dem Thema fragt, verhandelt über seine Verfügbarkeit. Die Antwort kommt nach vier Stunden und besteht aus einem einzigen Satz: 'Um fünf Minuten, Herr Müller.' Der Termin steht jetzt trotzdem. Die Verstimmung auch."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 5, a: 0, c: 15,
+            r: "Man ignoriert keine Zweizeiler vom CEO - Zweizeiler vom CEO sind keine Mails, sie sind Vorladungen in Zivilkleidung. Um 15:30 Uhr steht er persönlich an deinem Schreibtisch: 'Sie haben meine Mail sicher übersehen.' Das Wort 'sicher' trägt die gesamte Beweislast des Satzes."
+        }
+    ]
+},
+{
+    id: "mail_falle_richtlinie",
+    sender: "IT-Compliance (Konzernzentrale)",
+    subj: "Aktualisierte IT-Richtlinie - Bestätigung erforderlich (1 Klick)",
+    body: "Sehr geehrte Mitarbeitende,\n\ndie IT-Nutzungsrichtlinie wurde aktualisiert (Anhang, 14 Seiten). Bitte bestätigen Sie die Kenntnisnahme mit einem Klick.\n\nDie Bestätigung ist bis Freitag verpflichtend.\n\nIhre Konzern-Compliance",
+    opts: [
+        {
+            btn: "Sofort bestätigen - ist ja nur ein Klick",
+            m: 2, f: 5, a: 15, c: 5,
+            r: "Ein Klick, erledigt, brav. Drei Wochen später beruft sich die Zentrale auf Ziffer 14b der von dir bestätigten Fassung: 'Administratoren stellen die Erreichbarkeit an Wochenenden im Rahmen des Zumutbaren sicher.' Du hast das gelesen. Steht ja in deiner Bestätigung. Das Zumutbare definiert übrigens nicht der Zumutende."
+        },
+        {
+            btn: "Erst die 14 Seiten wirklich lesen",
+            m: 20, f: 0, a: 10, c: 0,
+            r: "Zwanzig Minuten Verwaltungsprosa, und du findest sie: Ziffer 14b, Wochenend-Erreichbarkeit, geschickt zwischen Passwortregeln und Druckerrichtlinie versteckt. Dein formeller Widerspruch geht noch am selben Tag raus. Ob er etwas ändert, ist offen - aber niemand kann je behaupten, du hättest zugestimmt. Lesen: unbezahlbar. Und unbezahlt."
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            ignoreEmail: true,
+            m: 2, f: 5, a: 5, c: 10,
+            r: "Ab Montag kommt die Erinnerung täglich um 8:01 Uhr, ab Mittwoch mit deinem Vorgesetzten in Kopie, und die Betreffzeile wächst mit jedem Tag um ein weiteres 'ERINNERUNG:'. Compliance-Systeme kennen keine Müdigkeit. Nur Eskalationsstufen."
+        }
+    ]
+},
+{
+    id: "mail_falle_mentor",
+    sender: "Personalabteilung",
+    subj: "Herzlichen Glückwunsch - Sie wurden nominiert!",
+    body: "Sehr geehrter Herr Müller,\n\nwir freuen uns, Ihnen mitzuteilen, dass Sie für das neue MENTOREN-PROGRAMM nominiert wurden! Sie begleiten künftig drei Nachwuchskräfte auf ihrem Weg.\n\nDas Programm startet nächste Woche. Wir gratulieren herzlich!\n\nIhre Personalabteilung",
+    opts: [
+        {
+            btn: "Geehrt annehmen - eine Auszeichnung!",
+            m: 10, f: 5, a: 10, c: 0,
+            r: "Die Auszeichnung entpuppt sich als Stundenplan: drei Nachwuchskräfte, wöchentliche 'Sparring-Sessions', Entwicklungsbögen in dreifacher Ausfertigung - alles zusätzlich zur eigentlichen Arbeit, versteht sich, denn 'Mentoring ist ja eine Ehre'. Ehren sind in diesem Haus grundsätzlich unbezahlt und terminiert."
+        },
+        {
+            btn: "Höflich ablehnen: keine Kapazität",
+            m: 5, f: 0, a: 5, c: 10,
+            r: "Deine sachliche Absage wird 'mit Bedauern zur Kenntnis genommen' und wandert als Vermerk in die Personalakte: 'Entwicklungsbereitschaft: eingeschränkt.' Beim nächsten Gehaltsgespräch wird genau dieses Wort auf dem Tisch liegen. Man kann in diesem Haus Ehren ablehnen. Aber nicht kostenlos."
+        },
+        {
+            btn: "Nachfragen: Wer hat mich nominiert?",
+            m: 5, f: 5, a: 5, c: 5,
+            r: "Die Antwort kommt strahlend: 'Herr Markus aus dem Vertrieb - als Dank für Ihre großartige Unterstützung!' Markus wollte dir etwas Gutes tun und hat dir drei Auszubildende geschenkt. Die Nominierung zurückzuziehen würde ihn kränken und die Personalabteilung verwirren. Du bist jetzt Mentor. Aus Dankbarkeit. Seiner."
+        }
+    ]
+},
 ];

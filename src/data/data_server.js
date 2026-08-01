@@ -4772,4 +4772,77 @@ export const server = [
     ]
 },
 
+
+/* ============================================================
+   FALLEN (v4.0.0): Die vernünftig klingende Antwort ist die
+   teure. Kein kostenloser Ausweg.
+   ============================================================ */
+
+{
+    id: "srv_falle_update",
+    title: "Das kleine Update",
+    text: "Auf der Verwaltungskonsole erscheint ein Hinweis: 'Kritisches Sicherheitsupdate verfügbar. Installationsdauer: ca. 2 Minuten. Jetzt installieren?' Zwei Minuten. Sicherheit geht vor. Was soll bei zwei Minuten schon passieren.",
+    opts: [
+        {
+            t: "Sofort installieren - Sicherheit geht vor",
+            m: 25, f: 0, a: 15, c: 10,
+            r: "Die zwei Minuten sind eine Schätzung des Herstellers, gemessen auf Hardware, die es hier nicht gibt. Das Update hängt bei 67 Prozent, startet dreimal neu und nimmt dabei den Dateiserver mit. Fünf Anrufe später läuft alles wieder. Die Lektion: 'ca. 2 Minuten' ist keine Zeitangabe, sondern ein Horoskop."
+        },
+        {
+            t: "Auf später verschieben",
+            m: 2, f: 5, a: 0, c: 10,
+            r: "Du klickst auf 'Später erinnern' - der ehrlichste Button der IT-Geschichte, denn erinnert wird sich nie. Das System vermerkt die Verschiebung allerdings im Compliance-Bericht, den die Konzernzentrale liest. 'Kritische Updates: 1 ausstehend' leuchtet dort jetzt in einem unangenehmen Orange."
+        },
+        {
+            t: "Ordentliches Wartungsfenster für heute Nacht planen",
+            m: 10, f: 0, a: 5, c: 5,
+            r: "Der Lehrbuch-Weg: Ankündigung, Zeitfenster, Rollback-Plan. Kostet dich jetzt Planungszeit, eine Rundmail und die Rückfrage von drei Personen, ob 'heute Nacht' auch wirklich nachts ist. Und um 23 Uhr sitzt du dann zuhause am Laptop. Aber es ist der richtige Weg. Leider ist der richtige Weg nie der angenehme."
+        }
+    ]
+},
+{
+    id: "srv_falle_tape",
+    title: "Der Tropfen",
+    text: "Über Rack 3 hat sich an der Kühlleitung ein Kondenswassertropfen gebildet. Alle vierzig Sekunden fällt einer, noch trifft er den Kabelkanal. Du kennst dieses Gebäude: Aus einem Tropfen wird ein Rinnsal, aus einem Rinnsal ein Ticket mit dem Wort 'unerklärlich' darin.",
+    opts: [
+        {
+            t: "Bewährt: Panzertape um die Leitung",
+            rem: "tape",
+            m: 5, f: 5, a: 15, c: 10,
+            r: "Der Reflex jedes Admins - nur hält auf einer kondensfeuchten Kühlleitung kein Klebeband der Welt. Das Tape löst sich binnen einer Stunde, sammelt dabei das Wasser wie eine Rinne und leitet es zielsicher in den Lüfter von Rack 3. Das Panzertape ist weg, das Problem ist größer, und der Lüfter klingt jetzt nach Espressomaschine."
+        },
+        {
+            t: "Eimer drunter, Zettel dran",
+            m: 5, f: 10, a: 10, c: 0,
+            r: "Das ehrliche Provisorium. Der Eimer füllt sich langsamer als dein schlechtes Gewissen, der Zettel ('NICHT ENTFERNEN') vergilbt vor deinen Augen, und jeder, der den Serverraum betritt, fragt dich ab jetzt nach 'dem Eimer-Ding'. Provisorien haben hier bekanntlich die längste Lebenserwartung im Haus."
+        },
+        {
+            t: "Facility Management offiziell beauftragen",
+            m: 15, f: 0, a: 5, c: 10,
+            r: "Der Dienstweg: Formular FM-12, Priorität, Kostenstelle. Die Rückmeldung kommt prompt: 'Kältetechnik ist Fremdgewerk, Termin in 3-5 Werktagen.' Bis dahin bist du gebeten, 'geeignete Sofortmaßnahmen' zu treffen - was exakt die beiden anderen Antworten sind. Der Kreis schließt sich. Der Tropfen fällt."
+        }
+    ]
+},
+{
+    id: "srv_falle_gruen",
+    title: "Alles grün",
+    text: "Ein seltener Anblick: Jede einzelne LED im Raum leuchtet grün. Kein Blinken, kein Orange, kein einziges rotes Auge. Das Monitoring-Dashboard zeigt null offene Meldungen. Es ist der friedlichste Serverraum, den du je gesehen hast. Verdächtig friedlich.",
+    opts: [
+        {
+            t: "Den Moment genießen und nichts anfassen",
+            m: 5, f: 10, a: 10, c: 15,
+            r: "Weisheit, denkst du. Bis am Nachmittag herauskommt, warum nichts meldete: Der Monitoring-Dienst selbst war seit dem Morgen tot - null Meldungen, weil null Überwachung. Zwei Ausfälle blieben stundenlang unbemerkt, und die Frage 'Warum hat da niemand draufgeschaut?' hat eine sehr kurze Antwort mit deinem Namen."
+        },
+        {
+            t: "Misstrauisch das Monitoring selbst prüfen",
+            m: 15, f: 0, a: 10, c: 0,
+            r: "Paranoia zahlt sich aus: Der Monitoring-Dienst hängt seit 6:42 Uhr - das Grün war das Grün eines abgeschalteten Rauchmelders. Du startest ihn neu und siehst zu, wie das Dashboard binnen Sekunden auf sieben echte Meldungen springt. Der friedlichste Raum des Jahres war eine Viertelstunde Arbeit im Tarnanzug."
+        },
+        {
+            t: "Einen Testalarm auslösen, um sicherzugehen",
+            m: 10, f: 0, a: 5, c: 10,
+            r: "Gründlich: Du wirfst einen Testalarm. Er funktioniert - und landet, wie sich herausstellt, ungefiltert im Eskalations-Verteiler der Konzernzentrale, wo um diese Uhrzeit jemand sehr Echtes sehr echt reagiert. Die Entwarnung dauert länger als jede Störung. Aber immerhin: Das Monitoring lebt. Jetzt wissen es alle."
+        }
+    ]
+},
 ];

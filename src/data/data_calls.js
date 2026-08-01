@@ -2557,4 +2557,54 @@ export const calls = [
     ]
 },
 
+
+/* ============================================================
+   FALLEN (v4.0.0): Anrufe, bei denen Pflichtbewusstsein der
+   teuerste Reflex ist.
+   ============================================================ */
+
+{
+    id: "call_falle_umfrage",
+    title: "Die Mitarbeiterbefragung",
+    text: "'Guten Tag, hier ist das Institut für Arbeitsklima im Auftrag Ihrer Konzernzentrale. Die Befragung dauert nur drei Minuten und ist selbstverständlich anonym.' Das Wort 'selbstverständlich' trägt dabei eine Betonung, die man nur als Warnung bezeichnen kann.",
+    opts: [
+        {
+            t: "Ehrlich und ausführlich antworten",
+            m: 10, f: 0, a: 5, c: 20,
+            r: "Du sprichst offen über Budget, Personaldecke und die Kaffeemaschine. Drei Wochen später zitiert Dr. Wichtig in der Abteilungsrunde wörtlich aus 'einer anonymen Rückmeldung aus der IT'. Die IT besteht aus dir. Anonymität ist bei einer Stichprobengröße von eins ein mathematisch anspruchsvolles Konzept."
+        },
+        {
+            t: "Höflich abwimmeln: keine Zeit",
+            m: 2, f: 5, a: 5, c: 10,
+            r: "Drei Minuten waren dir zu viel - dem Bericht ist das eine eigene Kategorie wert: 'Teilnahmeverweigerung: IT (100%)'. Die Zentrale interpretiert Schweigen erfahrungsgemäß nicht als Zeitmangel, sondern als Zustand. Es wird ein Folgegespräch 'zur Aktivierung' angeboten werden. Verpflichtend."
+        },
+        {
+            t: "Überall Bestnoten vergeben, schnell fertig",
+            m: 5, f: 10, a: 10, c: 0,
+            r: "Fünf Sterne auf alles, keine Rückfragen, aufgelegt. Der Bericht attestiert der IT daraufhin 'herausragende Zufriedenheit trotz schlanker Ausstattung' - womit amtlich bewiesen ist, dass die schlanke Ausstattung reicht. Dein nächster Budgetantrag wird mit deiner eigenen Bestnote abgelehnt werden."
+        }
+    ]
+},
+{
+    id: "call_falle_vorstand",
+    title: "Verpasster Anruf",
+    text: "Das Display zeigt: 1 verpasster Anruf, Vorstandssekretariat, vor sechs Minuten. Keine Nachricht, keine Mail, nur die nackte Nummer. Sechs Minuten. In Vorstandszeit sind das entweder drei Sekunden oder eine Ewigkeit, und du weißt nicht, welches von beidem.",
+    opts: [
+        {
+            t: "Pflichtbewusst sofort zurückrufen",
+            m: 5, f: 0, a: 10, c: 15,
+            r: "Du rufst zurück - mitten in die laufende Vorstandssitzung, in der das Sekretariatstelefon auf Lautsprecher liegt, weil gleich eine Konferenzschaltung ansteht. Acht Führungskräfte hören dein 'Ja hallo, hier Müller, Sie hatten versucht...?'. Es ging um einen Beamer. Es klang, als gingest du unter."
+        },
+        {
+            t: "Abwarten, bis die sich wieder melden",
+            m: 5, f: 5, a: 10, c: 5,
+            r: "Strategische Geduld - nur arbeitet dein Kopf nicht mit: Zwei Stunden lang komponierst du innerlich Szenarien von Kündigung bis Beförderung. Als das Sekretariat um 15 Uhr erneut anruft, geht es um einen Beamer. Der Puls der zwei Stunden steht in keiner Statistik. Er war trotzdem da."
+        },
+        {
+            t: "Erst Gabi anrufen: Worum geht es?",
+            m: 5, f: 5, a: 5, c: 5,
+            r: "Gabi weiß es natürlich: 'Beamer für Raum 1, der flackert. Und sag nicht, dass du es von mir hast.' Der Rückruf verläuft dann souverän - aber die fünf Minuten Aufklärungsarbeit über zwei Ecken für einen Beamer sind auch eine Aussage über dieses Haus. Und über dich. Und über Beamer."
+        }
+    ]
+},
 ];

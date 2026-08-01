@@ -7185,4 +7185,102 @@ export const sidequests = [
     ]
 },
 
+
+/* ============================================================
+   FALLEN (v4.0.0): Auf dem Flur ist Anstand der teuerste
+   Reflex. Kein kostenloser Ausweg.
+   ============================================================ */
+
+{
+    id: "sq_falle_tuer",
+    kind: "text",
+    title: "Die aufgehaltene Tür",
+    text: "Du gehst durch die Sicherheitstür zum Bürotrakt, als hinter dir jemand mit vollen Händen angeeilt kommt: Anzug, Aktenkoffer, freundliches Nicken, kein sichtbarer Ausweis. Der Anstand sagt: aufhalten. Die Sicherheitsschulung sagt: niemals. Beide sagen es sehr laut.",
+    opts: [
+        {
+            t: "Die Tür aufhalten - Anstand ist Anstand",
+            m: 2, f: 0, a: 5, c: 15,
+            r: "Der Herr bedankt sich charmant. Zwanzig Minuten später stellt er sich in der Abteilungsrunde vor: externer Sicherheitsauditor, und sein erster Befund steht bereits fest - 'Zutritt ohne Ausweisprüfung durch einen Mitarbeiter der IT, ausgerechnet'. Das Wort 'ausgerechnet' wird im Bericht kursiv gesetzt sein."
+        },
+        {
+            t: "Die Tür zufallen lassen - Regeln sind Regeln",
+            m: 2, f: 0, a: 10, c: 5,
+            r: "Die Tür klickt ins Schloss, der Herr steht davor und klingelt. Es ist der neue Finanzchef, zweiter Arbeitstag, Ausweis noch in der Personalabteilung. Er wird korrekt hereingelassen, korrekt begrüßt und merkt sich korrekt ein Gesicht. Deins. Du hast alles richtig gemacht. Das hilft überhaupt nichts."
+        },
+        {
+            t: "Freundlich nach dem Ausweis fragen",
+            m: 5, f: 0, a: 10, c: 0,
+            r: "Der Lehrbuch-Weg, live durchgeführt: 'Dürfte ich kurz Ihren Ausweis sehen?' Der Moment friert ein. Es folgen betretenes Kramen, eine Rechtfertigung, dein Entschuldigen fürs Nachfragen, sein Entschuldigen fürs Kramen - zwei Minuten sozialer Nahkampf. Sicherheit hat gewonnen. Angenehm war es für niemanden."
+        }
+    ]
+},
+{
+    id: "sq_falle_kuchen",
+    kind: "text",
+    title: "Kuchen im Flur",
+    text: "Auf dem Flurtisch vor den Meetingräumen: eine unberührte Kuchenplatte, dreißig Stücke, makellos. Daneben ein handschriftlicher Zettel: 'Bedient euch! :)'. Kein Name, kein Anlass. Dreißig Stücke Kuchen fragen nicht, woher sie kommen. Du vielleicht schon.",
+    opts: [
+        {
+            t: "Zugreifen - dafür steht er ja da",
+            m: 2, f: 5, a: 0, c: 15,
+            r: "Du nimmst ein Stück. Es ist exzellent. Es ist auch das Catering für die Vorstandssitzung in Raum 1, falsch abgestellt - der Zettel gehörte zu einer längst leergegessenen Platte von gestern. Als das Sekretariat die angebrochene Platte hereinträgt, fehlt genau ein Stück, und am Mundwinkel eines Admins klebt Beweismaterial."
+        },
+        {
+            t: "Widerstehen und weitergehen",
+            m: 2, f: 5, a: 10, c: 0,
+            r: "Disziplin. Du gehst vorbei, und der Kuchen geht mit - im Kopf, den Rest des Vormittags. Bei deinem nächsten Flurgang ist die Platte leer bis auf Krümel und den höhnischen Zettel. Irgendjemand hatte weniger Charakter und mehr Kuchen. Die Bilanz fühlt sich falsch an."
+        },
+        {
+            t: "Erst klären, wem der Kuchen gehört",
+            m: 10, f: 0, a: 5, c: 5,
+            r: "Du fragst dich durch drei Büros. Niemand weiß etwas, aber alle finden gut, 'dass sich mal jemand kümmert' - und exakt damit bist du es jetzt: der Kuchen-Verantwortliche. Das Sekretariat übergibt dir später die Klärung der Catering-Verwechslung 'weil Sie ja schon involviert sind'. Du wolltest ein Stück Kuchen. Du hast einen Vorgang."
+        }
+    ]
+},
+{
+    id: "sq_falle_meeting",
+    kind: "text",
+    title: "Nur ganz kurz",
+    text: "Die Tür von Raum 2 steht offen, drinnen tagt irgendetwas mit Beamer. Als du vorbeigehst, winkt dich jemand herein: 'Müller! Perfekt! Nur ganz kurz deine Einschätzung zu einer Sache, dauert zwei Minuten.' Sieben Gesichter drehen sich zu dir. Die Tür ist noch offen. Noch.",
+    opts: [
+        {
+            t: "Kurz reingehen - zwei Minuten hat man",
+            m: 25, f: 0, a: 10, c: 5,
+            r: "Die zwei Minuten sind nach vierzig vorbei. Deine 'Einschätzung' steht inzwischen auf einer Folie, im Protokoll bist du unter 'Beteiligte Fachseite' geführt, und beim Verabschieden sagt jemand den tödlichsten Satz des Bürolebens: 'Dann nehmen wir dich für den Folgetermin mit auf.' Die Tür war eine Falltür."
+        },
+        {
+            t: "Ablehnen: 'Bin auf dem Weg zu einem Termin'",
+            m: 2, f: 5, a: 0, c: 10,
+            r: "Die Notlüge sitzt - bis dein Blick beim Weitergehen den Tisch streift: Am Kopfende sitzt Dr. Wichtig, der sehr genau weiß, dass in deinem Kalender heute nichts steht, weil er ihn heute Morgen eingesehen hat. Er sagt nichts. Er notiert. Männer wie er vergessen keine Termine, die es nie gab."
+        },
+        {
+            t: "'Schickt mir das schriftlich, ich schaue drauf'",
+            m: 2, f: 5, a: 10, c: 0,
+            r: "Souverän delegiert - dachtest du. Die Mail kommt um 16:41 Uhr: vierzehn Anhänge, drei Fragenkataloge und der Satz 'wie besprochen bis morgen früh'. Es war nie etwas besprochen. Aber es steht jetzt so da, schriftlich, mit dir im Empfängerfeld. Du hast um die Schriftform gebeten. Sie kam."
+        }
+    ]
+},
+{
+    id: "sq_falle_pflanze",
+    kind: "text",
+    title: "Die durstige Pflanze",
+    text: "Auf dem Fensterbrett im zweiten Stock lässt eine großblättrige Zimmerpflanze dramatisch die Blätter hängen. Die Erde ist staubtrocken. Kein Gießkännchen weit und breit, aber die Teeküche ist zwei Türen weiter. Irgendjemand muss sich doch kümmern.",
+    opts: [
+        {
+            t: "Wasser holen und gründlich gießen",
+            m: 5, f: 0, a: 10, c: 10,
+            r: "Barmherzigkeit mit Nebenwirkungen: Der Übertopf hat kein Loch, aber der Untersetzer einen Riss - das Wasser findet die Fensterbank, die Fensterbank findet die Steckdosenleiste darunter. Und die Pflanze gehört, wie sich beim Aufwischen herausstellt, Frau Elster, die die 'kontrollierte Trockenphase' ihrer Orchidee seit drei Wochen dokumentiert. Du hast ein Experiment bewässert."
+        },
+        {
+            t: "Nicht dein Bereich - weitergehen",
+            m: 2, f: 5, a: 5, c: 5,
+            r: "Zuständigkeit ist eine Festung, und du bleibst in deiner. Zwei Tage später hängt am Fensterbrett ein Aushang: 'Wer sah, wie diese Pflanze verdurstete, und tat NICHTS?' - mit einem Foto der toten Pflanze im Stil einer Vermisstenanzeige. Der Flur hat ein neues Gesprächsthema, und du warst nachweislich der Letzte am Tatort."
+        },
+        {
+            t: "Ordnungsgemäß dem Facility Management melden",
+            m: 5, f: 0, a: 5, c: 5,
+            r: "Du meldest eine durstige Pflanze über das offizielle Formular. Die Antwort des Systems: 'Vorgang FM-4471 angelegt, Kategorie: Grünpflege, Bearbeitung in 3-5 Werktagen.' Die Rundmail-Antwort eines Kollegen, versehentlich an alle: 'Der meldet PFLANZEN jetzt per Ticket. PFLANZEN.' Der Flur lacht eine Woche. Die Pflanze übrigens: längst hinüber."
+        }
+    ]
+},
 ];
