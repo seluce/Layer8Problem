@@ -174,7 +174,7 @@ export const calls = [
 		results: {
 			res_hangup: { 
 				txt: "Du hast aufgelegt. Das war mutig... oder dumm.", 
-				m: 1, f: 0, a: 5, c: 0,
+				m: 2, f: 0, a: 5, c: 0,
 				next: "vip_angry" 
 			},
 			res_sorry: { 
@@ -652,7 +652,7 @@ export const calls = [
         },
         results: {
             res_weird: { txt: "Das war seltsam. Vielleicht war es der Chef?", m: 3, f: 0, a: 10, c: 0 },
-            hello: { txt: "Aufgelegt.", m: 1, f: 0, a: 0, c: 0 }
+            hello: { txt: "Aufgelegt.", m: 2, f: 0, a: 0, c: 0 }
         }
     },
 	{
@@ -946,7 +946,7 @@ export const calls = [
 			},
 			{ 
 				t: "Sofort auflegen", 
-				m: 1, f: 0, a: 0, c: 0, 
+				m: 2, f: 0, a: 0, c: 0, 
 				r: "Besser nichts riskieren. Du hast nichts gehört (und nichts gelernt)." 
 			}
 		]

@@ -1955,7 +1955,7 @@ export const sidequests = [
             { 
                 t: "Den Monitor einfach ausschalten",
                 rep: { "Dr. Wichtig": -10 },						
-                m: 1, f: 5, a: 0, c: 15, 
+                m: 2, f: 5, a: 0, c: 15, 
                 r: "Er starrt auf den schwarzen Bildschirm. 'Stromsparen? Sehr löblich, aber wir haben hier Deadlines!' Er notiert sich etwas." 
             }
         ]
@@ -3552,7 +3552,7 @@ export const sidequests = [
             }, 
             "kicked": { 
                 txt: "[System: Du wurdest aus der Gruppe entfernt] Die Schatten-IT operiert jetzt ohne dich. Das ist zwar langweilig, aber dafür verlierst du deinen Job heute nicht.", 
-                m: 1, f: -5, a: 0, c: -5 
+                m: 2, f: -5, a: 0, c: -5 
             }, 
             "deal_pw": { 
                 txt: "[Datei empfangen: keys.txt] Du hast das Root-Passwort! Ein extrem mächtiges Werkzeug. Die Manipulation läuft im Hintergrund und du schiebst jetzt ganz entspannt eine ruhige Kugel.", 
@@ -3585,7 +3585,7 @@ export const sidequests = [
         results: { 
             "clean": { 
                 txt: "[System: SMS gelöscht] Sehr klug. Du hast in der IT schon genug echte Viren gesehen.", 
-                m: 1, f: -5, a: 0, c: 0 
+                m: 2, f: -5, a: 0, c: 0 
             }, 
             "virus_fail": { 
                 txt: "[System: Download erfolgreich abgebrochen] Das war verdammt knapp. Dein Puls schlägt dir bis zum Hals.", 
@@ -3630,7 +3630,7 @@ export const sidequests = [
         results: { 
             "date_no": {  
                 txt: "[System: Match aufgelöst] Du bleibst allein an deinem Platz, aber wenigstens bist du absolut sicher vor eventuellen HR-Fallen. Vertraue niemandem.",  
-                m: 1, f: -5, a: 0, c: 0  
+                m: 2, f: -5, a: 0, c: 0  
             }, 
             "go_date": {  
                 txt: "[Gerät gesperrt] Das Date in der Lobby lief super! Ihr habt 20 Minuten lang über Drucker gelästert. Sie hat sogar deinen Witz über IPv6 verstanden (glaubst du zumindest).",  
@@ -3852,7 +3852,7 @@ export const sidequests = [
         results: { 
             "good": { 
                 txt: "[Verbindung getrennt] Du bleibst sauber. Dein Gewissen ist rein und du riskierst keine Haftstrafe für ein bisschen Krypto.", 
-                m: 1, f: 0, a: 0, c: -10 
+                m: 2, f: 0, a: 0, c: -10 
             }, 
             "chicken": { 
                 txt: "[System: Tor-Identität erneuert] Du machst im letzten Moment einen Rückzieher. Das war verdammt knapp, aber besser so. Finger weg vom Darknet.", 
@@ -3925,7 +3925,7 @@ export const sidequests = [
         results: {
             "pull_plug": { txt: "Sie hat den Stecker gezogen. PC aus. Geld sicher. Du bist ein guter Sohn/Tochter.", m: 5, f: -5, a: 5, c: 0 },
             "warn": { txt: "Zu spät. Sie sucht schon die TAN-Liste. Das gibt ein langes Telefonat heute Abend.", m: 10, f: 0, a: 20, c: 0 },
-            "ignore": { txt: "Du ignorierst es. Dein Erbe ist gerade um 500€ geschrumpft.", m: 1, f: 5, a: 0, c: 0 },
+            "ignore": { txt: "Du ignorierst es. Dein Erbe ist gerade um 500€ geschrumpft.", m: 2, f: 5, a: 0, c: 0 },
             "bsi": { txt: "Der Betrüger hat sofort aufgelegt! Mama hält dich für einen Geheimagenten.", m: 5, f: 0, a: -10, c: 5 }
         }
     },
@@ -3958,9 +3958,9 @@ export const sidequests = [
             } 
         }, 
         results: { 
-            "boring": { txt: "Unbekannt: 'Oh, sorry man.' Du hast deine Ruhe. Langweilig, aber sicher.", m: 1, f: 0, a: 0, c: 0 }, 
+            "boring": { txt: "Unbekannt: 'Oh, sorry man.' Du hast deine Ruhe. Langweilig, aber sicher.", m: 2, f: 0, a: 0, c: 0 }, 
             "confused": { txt: "Unbekannt: 'Shit, Bullen?! Bin weg!' Er schreibt nicht mehr. Ein voller Erfolg für die IT-Abteilung.", m: 3, f: 5, a: -10, c: 0 }, 
-            "block": { txt: "Unbekannt: 'Fuck, lass mich in Ruhe!' Du hast ihn in Panik versetzt und die Nummer blockiert. Gutes Gefühl.", m: 1, f: 0, a: 5, c: 0 } 
+            "block": { txt: "Unbekannt: 'Fuck, lass mich in Ruhe!' Du hast ihn in Panik versetzt und die Nummer blockiert. Gutes Gefühl.", m: 2, f: 0, a: 5, c: 0 } 
         } 
     },
     { 
@@ -4074,7 +4074,7 @@ export const sidequests = [
             }, 
             "ignore": { 
                 txt: "SYSTEM-BOT: Alarme für 24 Stunden stummgeschaltet. Zehn Minuten später verlierst du die Verbindung komplett. Der Rauchmelder im Serverraum geht an. Das war eine sehr schlechte Idee.", 
-                m: 1, f: 10, a: 50, c: 50 
+                m: 2, f: 10, a: 50, c: 50 
             } 
         } 
     },
@@ -4181,7 +4181,7 @@ export const sidequests = [
             } 
         }, 
         results: { 
-            "delete": { txt: "[System: Absender in Spam verschoben] Weg damit. Wer fällt heute noch auf sowas rein? Du widmest dich wieder deiner echten Arbeit.", m: 1, f: 0, a: 0, c: 0 }, 
+            "delete": { txt: "[System: Absender in Spam verschoben] Weg damit. Wer fällt heute noch auf sowas rein? Du widmest dich wieder deiner echten Arbeit.", m: 2, f: 0, a: 0, c: 0 }, 
             "chicken": { txt: "[System: Chat beendet] Du brichst den Kontakt ab. Besser ist das. Irgendwo auf der Welt ist ein Prinz jetzt sehr enttäuscht von dir.", m: 2, f: 0, a: 0, c: 0 }, 
             "send_iban": { txt: "[Nachricht gelesen...] PING! Dein Handy vibriert fast vom Tisch. Banking-App: 'Eingang: +7.500.000,00 USD'. ... Moment. Es hat wirklich geklappt?! Du bist reich! Warum haben dich alle immer davor gewarnt?", m: 5, f: 100, a: -100, c: 0, loot: "black_card", next: "prince_active" } 
         } 
@@ -4216,7 +4216,7 @@ export const sidequests = [
             } 
         }, 
         results: { 
-            "block": { txt: "[System: Kontakt blockiert] Deine Timeline ist wieder sicher vor 'passiven Einkommen' und Löwen-Emojis. Frieden.", m: 1, f: 0, a: -5, c: 0 }, 
+            "block": { txt: "[System: Kontakt blockiert] Deine Timeline ist wieder sicher vor 'passiven Einkommen' und Löwen-Emojis. Frieden.", m: 2, f: 0, a: -5, c: 0 }, 
             "loss": { txt: "[System: 500€ via PayPal gesendet] Sekunden später verschwindet Kais Profilbild. Deine nächste Nachricht hat nur noch einen grauen Haken. Willkommen in der Realität.", m: 5, f: 0, a: 50, c: 0 }, 
             "funny": { txt: "Kai: 'Dir fehlt einfach das Sieger-Mindset! Bleib halt arm!' [System: Du wurdest blockiert] Du lachst Tränen.", m: 2, f: 5, a: -10, c: 0 } 
         } 
@@ -4247,7 +4247,7 @@ export const sidequests = [
         results: { 
             "leave": {  
                 txt: "[System: Du hast die Gruppe verlassen] Chantal merkt ihren Fehler erst Stunden später. Du stehst über den Dingen. Ignorance is bliss.",  
-                m: 1, f: 0, a: 0, c: 0  
+                m: 2, f: 0, a: 0, c: 0  
             }, 
             "fight": {  
                 txt: "[System: Chantal hat die Gruppe gelöscht] Im Großraumbüro herrscht plötzlich Totenstille. Du spürst förmlich, wie Chantal am anderen Ende des Flurs panisch erstarrt.",  
@@ -4289,7 +4289,7 @@ export const sidequests = [
         results: { 
             "ignore": {  
                 txt: "[System: Chat stummgeschaltet] Zwei Stunden später kommt ein Foto von einem schwarzen, unidentifizierbaren Klumpen. Darunter: 'Ohne Rezept verbrannt. Wir essen Müsli. LG Mama'. Dein Herz bricht.",  
-                m: 1, f: 0, a: 10, c: 0  
+                m: 2, f: 0, a: 10, c: 0  
             }, 
             "plug": {  
                 txt: "Mama: 'Das Blinken ist weg! Der Drucker ist jetzt zwar ganz aus, aber Papa hat das Rezept einfach vom Monitor abgeschrieben. Du bist ein Genie!' Problem gelöst... irgendwie.",  
@@ -4422,7 +4422,7 @@ export const sidequests = [
             "ignore": { 
                 txt: "[System: Chat stummgeschaltet] Du ghostest sie eiskalt. Später hörst du den Chef im Flur toben, weil die Social-Media-Kampagne gefloppt ist. Die Stimmung ist im Keller, aber du hast deine Ruhe.", 
                 rep: { "Chantal": -5 },
-                m: 1, f: 0, a: 10, c: 0 
+                m: 2, f: 0, a: 10, c: 0 
             }, 
             "info_win": { 
                 txt: "[Datei empfangen: HR_Watchlist_Q3.pdf] Chantal: 'Du bist mein Retter! 😘' Du hast die berüchtigte Schwarze Liste gesichert! Ein extrem mächtiges Werkzeug für kommende Intrigen.", 

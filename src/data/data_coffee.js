@@ -1220,7 +1220,7 @@ export const coffee = [
             },
             { 
                 t: "Die Reste einfach wegpusten", 
-                m: 3, f: 2, a: 3, c: 0, 
+                m: 3, f: 5, a: 5, c: 0, 
                 r: "Du pustest die Schaumstoffkrümel vom Laptop. Eine kleine rote Wolke segelt durchs Großraumbüro, ein Krümel landet in Sabines Kaffee. Sie kaut unbeeindruckt weiter." 
             }
         ]
@@ -2760,7 +2760,7 @@ export const coffee = [
             },
             { 
                 t: "Ungeduldig wippen & zurückrennen", 
-                m: 1, f: -5, a: 2, c: 0, 
+                m: 2, f: -5, a: 5, c: 0, 
                 r: "Du hältst es nicht mehr aus und reißt den Becher weg. Ein heißer Tropfen landet auf deinem Hemd, aber du bist sofort wieder am Platz." 
             },
             { 

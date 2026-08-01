@@ -661,7 +661,7 @@ export const server = [
             },
             { 
                 t: "Ihm um den Pfand beneiden", 
-                m: 1, f: 0, a: 5, c: 0, 
+                m: 2, f: 0, a: 5, c: 0, 
                 r: "25 Cent. Du hättest reich sein können. Verdammt." 
             }
         ]
@@ -3732,7 +3732,7 @@ export const server = [
             t: "Kleine Tech-Tour geben, ohne Kamera",
             rep: { "Chantal": 3 },
             next: "path_reel_tour",
-            m: 10, f: 0, a: -3, c: 0,
+            m: 10, f: 0, a: -5, c: 0,
             r: "Du erklärst ihr, warum die Lämpchen blinken. Chantal hört tatsächlich zu. 'Das ist ja wie ein Organismus!', sagt sie andächtig. Sie wird diesen Satz irgendwo wiederverwenden, so viel ist sicher."
         }
     ]
@@ -3745,18 +3745,18 @@ export const server = [
     opts: [
         {
             t: "Alles Gefilmte absichern",
-            m: 25, f: -5, a: 5, c: -5,
+            m: 25, f: -5, a: 10, c: -5,
             r: "Du änderst jedes Passwort und jede Beschriftung, die im Video zu sehen war. Zwei Stunden Arbeit für fünfzehn Sekunden Ruhm. Aber jetzt kann der Kommentar dir nichts mehr."
         },
         {
             t: "Kommentar melden und beten",
-            m: 3, f: 8, a: 0, c: 5,
+            m: 5, f: 10, a: 0, c: 5,
             r: "Du meldest den Kommentar als 'Spam' und hoffst, dass es ein Scherz war. Falls nicht, wirst du es früh genug merken. Wahrscheinlich zum ungünstigsten Zeitpunkt."
         },
         {
             t: "Chantal um Löschung bitten",
             rep: { "Chantal": -3 },
-            m: 8, f: 0, a: 3, c: 0,
+            m: 10, f: 0, a: 5, c: 0,
             r: "Sie löscht es. Unter Protest. '40.000 Aufrufe, Müller. VIERZIGTAUSEND. Weißt du, was Reichweite kostet?' Du weißt, was ein Sicherheitsvorfall kostet, aber das Argument sparst du dir."
         }
     ]
@@ -3775,14 +3775,14 @@ export const server = [
         },
         {
             t: "Nichts sagen, nichts wissen",
-            m: 2, f: 5, a: 0, c: 3,
+            m: 2, f: 5, a: 0, c: 5,
             r: "Vielleicht merkt es niemand. Das Video hat ja erst ein paar hundert Aufrufe. Und Gehälter interessieren ja niemanden. In keiner Firma. Nie."
         },
         {
             t: "Anbieten, das Video zu schneiden",
             rep: { "Chantal": 5 },
             next: "path_reel_cutter",
-            m: 20, f: 0, a: 3, c: 3,
+            m: 20, f: 10, a: 0, c: 5,
             r: "Du schneidest die Gehaltsliste raus, legst Musik drunter und exportierst in drei Formaten. Chantal ist begeistert: 'Du bist jetzt mein Schnitt-Bro!' Dieser Titel wird Folgen haben."
         }
     ]
@@ -3796,19 +3796,19 @@ export const server = [
         {
             t: "Den Vortrag halten",
             rep: { "Chantal": 3 },
-            m: 25, f: 0, a: 5, c: -5,
+            m: 25, f: 0, a: 10, c: -5,
             r: "Du erklärst dreißig Leuten, was ein Server macht. Zwei hören zu, einer davon bist du. Aber Dr. Wichtig nickt die ganze Zeit wohlwollend, und das ist in dieser Firma die härteste Währung."
         },
         {
             t: "Kevin als Referenten vorschicken",
             rep: { "Kevin": -3 },
-            m: 5, f: 5, a: 0, c: 3,
+            m: 5, f: 5, a: 0, c: 5,
             r: "Kevin referiert voller Stolz über den 'Turbo-Modus' und die 'Wetter-Cloud'. Das Publikum applaudiert. Fachlich war das ein Totalschaden, und irgendwann fällt der auf dich zurück."
         },
         {
             t: "Den Titel 'Server-Flüsterer' ablehnen",
             rep: { "Chantal": -2 },
-            m: 5, f: 0, a: 3, c: 0,
+            m: 5, f: 0, a: 5, c: 0,
             r: "'Aber Personal Branding, Müller!' Chantal ist enttäuscht, akzeptiert es aber. Auf der Meeting-Folie steht jetzt nur noch 'IT'. Immerhin ehrlich."
         }
     ]
@@ -3822,13 +3822,13 @@ export const server = [
         {
             t: "Klare Grenze ziehen",
             rep: { "Chantal": -3 },
-            m: 5, f: 0, a: 3, c: 0,
+            m: 5, f: 0, a: 5, c: 0,
             r: "'Einmalige Sache, Chantal.' Sie seufzt theatralisch, nimmt ihre Speicherkarten und geht. An der Tür dreht sie sich um: 'Falls du es dir anders überlegst: Ich hab auch Material von der Weihnachtsfeier.' Das war eine Drohung."
         },
         {
             t: "Ein Video machen, gegen Gefallen",
             rep: { "Chantal": 4 },
-            m: 20, f: 3, a: 0, c: 3,
+            m: 20, f: 10, a: 0, c: 5,
             r: "Du schneidest das Sommerfest-Video, dafür schuldet dir das Marketing jetzt offiziell einen Gefallen. Chantal besiegelt den Deal per Handschlag. In dieser Firma ist das bindender als jeder Vertrag."
         }
     ]
@@ -3844,14 +3844,14 @@ export const server = [
             t: "Den Backup-Server als Cloud präsentieren",
             rep: { "Markus": 5 },
             next: "path_cloud_demo",
-            m: 10, f: 5, a: 0, c: 3,
+            m: 10, f: 5, a: 0, c: 5,
             r: "'DAS ist sie?' Markus fotografiert den Backup-Server von allen Seiten wie einen Neuwagen. 'Sieht teuer aus. Perfekt.' Er schickt die Fotos direkt an den Kunden. Direkt. An den Kunden."
         },
         {
             t: "Die Wahrheit sagen: Wir haben keine",
             rep: { "Markus": -5 },
             next: "path_cloud_truth",
-            m: 8, f: 0, a: 5, c: 0,
+            m: 10, f: 0, a: 5, c: 0,
             r: "'Details, Müller. DETAILS.' Markus winkt ab. 'Der Vertrag ist unterschrieben. Zeit ist Geld.' Er verlässt telefonierend den Raum. Du ahnst bereits, auf wessen Schreibtisch dieses Problem landen wird."
         },
         {
@@ -3860,7 +3860,7 @@ export const server = [
             rem: "usb_stick",
             rep: { "Markus": 7 },
             next: "path_cloud_stick",
-            m: 5, f: 3, a: -3, c: 0,
+            m: 5, f: 5, a: -5, c: 0,
             r: "Du beschriftest einen USB-Stick mit 'CLOUD – PREMIUM' und überreichst ihn feierlich. Markus nimmt ihn entgegen wie einen Firmenwagen-Schlüssel. 'DESHALB bist du der Techniker.' Der Stick ist jetzt in Vertriebshand. Was soll schon passieren."
         }
     ]
@@ -3874,7 +3874,7 @@ export const server = [
         {
             t: "Rack 2 zur Vorzeige-Cloud ausbauen",
             rep: { "Markus": 4 },
-            m: 20, f: 5, a: 0, c: 5,
+            m: 20, f: 5, a: -5, c: 5,
             r: "Du montierst ein gebürstetes Schild ('PRIVATE CLOUD – ZUTRITT NUR FÜR PREMIUM'), räumst die Kabel auf und stellst blaues LED-Licht dazu. Es ist Theater. Aber es ist verdammt gutes Theater."
         },
         {
@@ -3885,7 +3885,7 @@ export const server = [
         },
         {
             t: "Kurzfristig ein Wartungsfenster ansetzen",
-            m: 5, f: 8, a: 0, c: 3,
+            m: 5, f: 10, a: 0, c: 5,
             r: "'Bedauerlicherweise ist die Cloud morgen in Wartung. Sicherheitsupdates, Sie verstehen.' Der Termin wird verschoben. Das Problem nicht. Es reift nur."
         }
     ]
@@ -3898,19 +3898,19 @@ export const server = [
     opts: [
         {
             t: "Heimlich eine echte Cloud aufsetzen",
-            m: 30, f: -5, a: 5, c: -5,
+            m: 30, f: -10, a: 5, c: -5,
             r: "Drei Stunden später läuft auf dem Backup-Server eine saubere Cloud-Lösung mit Kundenzugang. Es IST jetzt technisch eine Private Cloud. Markus hatte am Ende einfach recht, und das ist das Schlimmste daran."
         },
         {
             t: "Das Ticket an Markus weiterleiten",
             rep: { "Markus": -3 },
-            m: 3, f: 5, a: 0, c: 3,
+            m: 5, f: 5, a: 0, c: 5,
             r: "'Zuständigkeit: Vertrieb.' Klick. Markus wird das Ticket mit einem Rabattgutschein und purem Charme beantworten. Gelöst ist damit nichts, aber es ist jetzt offiziell nicht mehr dein Nichts."
         },
         {
             t: "Dem Kunden ehrlich antworten",
             rep: { "Dr. Wichtig": -4 },
-            m: 10, f: 0, a: 3, c: 8,
+            m: 10, f: 0, a: 5, c: 10,
             r: "Du schreibst eine höfliche, wahrheitsgemäße Antwort. Zwei Minuten später kommt eine Ein-Wort-Mail von Dr. Wichtig: 'Büro. Gleich.' Der CC war wirklich keine gute Idee."
         }
     ]
@@ -3923,7 +3923,7 @@ export const server = [
     opts: [
         {
             t: "Geduldig durch die Anmeldung führen",
-            m: 20, f: 0, a: 8, c: -3,
+            m: 20, f: 0, a: 10, c: -5,
             r: "Fünfundvierzig Minuten Telefon-Support. Bei Minute dreißig sagt der Kunde: 'Ach, USB! Sagen Sie das doch gleich.' Du hast es gleich gesagt. Dreimal. Aber der Kunde ist jetzt glücklich, und nur das zählt. Angeblich."
         },
         {
@@ -3934,7 +3934,7 @@ export const server = [
         },
         {
             t: "Eine bebilderte Anleitung bauen",
-            m: 15, f: 0, a: -3, c: -2,
+            m: 15, f: -5, a: -5, c: -5,
             r: "Du erstellst eine Schritt-für-Schritt-Anleitung mit Screenshots und großen roten Pfeilen. Der Kunde bedankt sich überschwänglich. Die Anleitung wird dich überleben. Sie wird alle überleben."
         }
     ]
@@ -3957,14 +3957,14 @@ export const server = [
             t: "Erklären, was die LEDs wirklich bedeuten",
             rep: { "Dr. Wichtig": -3 },
             next: "path_led_lecture",
-            m: 15, f: 0, a: 3, c: 5,
+            m: 15, f: 0, a: 5, c: 5,
             r: "Nach neunzig Sekunden Fachvortrag hebt er die Hand. 'Ich habe verstanden. Die roten sind die wichtigen.' Das hast du nicht gesagt. Aber das hat er verstanden. Da kommt etwas auf dich zu."
         },
         {
             t: "Kevin holen: 'Der Kollege erklärt das'",
             rep: { "Kevin": -4 },
             next: "path_led_kevin",
-            m: 5, f: 3, a: 0, c: 3,
+            m: 5, f: 5, a: 0, c: 5,
             r: "Kevin erklärt strahlend, Rot sei der 'Turbo-Modus'. Dr. Wichtig ist begeistert. Kevin ist stolz. Du hast ein schlechtes Gewissen und demnächst ein deutlich größeres Problem."
         }
     ]
@@ -3978,19 +3978,19 @@ export const server = [
         {
             t: "Vier Seiten Nichts schreiben",
             rep: { "Dr. Wichtig": 5 },
-            m: 30, f: 5, a: 0, c: -5,
+            m: 30, f: 10, a: 5, c: -5,
             r: "Du schreibst über 'proaktive visuelle Infrastruktur-Governance' und 'signalbasierte Führungskultur'. Kein Satz bedeutet etwas. Es wird das meistzitierte Dokument deiner Karriere werden."
         },
         {
             t: "Ablehnen und eine Grenze ziehen",
             rep: { "Dr. Wichtig": -5 },
-            m: 8, f: 0, a: 3, c: 5,
+            m: 10, f: 0, a: 5, c: 5,
             r: "'Ein Whitepaper über einen Aus-Knopf kann ich nicht verantworten.' Dr. Wichtig schaut dich lange an. 'Verantwortung. Interessantes Wort für jemanden in Ihrer Gehaltsklasse.' Das Gespräch ist beendet."
         },
         {
             t: "Chantal schreiben lassen",
             rep: { "Chantal": 4 },
-            m: 10, f: 3, a: 0, c: 0,
+            m: 10, f: 5, a: 0, c: 0,
             r: "Chantal liefert acht Seiten mit Infografiken, einem Zitat von Steve Jobs und dem Wort 'Journey' in jeder zweiten Zeile. Es ist objektiv furchtbar und exakt das, was alle wollten. Sie ist glücklich, du bist raus."
         }
     ]
@@ -4003,17 +4003,17 @@ export const server = [
     opts: [
         {
             t: "Ein Dashboard bauen, das immer Grün zeigt",
-            m: 25, f: 5, a: 0, c: -8,
+            m: 25, f: 5, a: 0, c: -10,
             r: "Das Dashboard zeigt permanent grüne Kreise, das Logo und den Schriftzug 'ALLES IM GRIFF'. Es ist mit nichts verbunden. Dr. Wichtig prüft es jeden Morgen. Es ist das beruhigendste Werkzeug der Firmengeschichte."
         },
         {
             t: "Ein echtes Monitoring aufsetzen",
-            m: 35, f: -10, a: 3, c: -5,
+            m: 35, f: -10, a: 5, c: -5,
             r: "Du nimmst dir den halben Nachmittag und baust ein sauberes Monitoring mit Ampel-Ansicht. Dr. Wichtig sieht nur die Ampeln, du siehst endlich alles. Diese Investition wird sich noch auszahlen."
         },
         {
             t: "'Steht auf der Cloud-Roadmap' antworten",
-            m: 3, f: 8, a: 0, c: 3,
+            m: 5, f: 10, a: 0, c: 5,
             r: "'Roadmap' ist das Zauberwort, mit dem in dieser Firma Wünsche eingeschläfert werden. Dr. Wichtig antwortet mit einem Daumen-hoch. Das Thema wird wiederkommen. Themen kommen immer wieder."
         }
     ]
@@ -4026,7 +4026,7 @@ export const server = [
     opts: [
         {
             t: "Eine 'Turbo-Taste' für alle bauen",
-            m: 15, f: 5, a: -5, c: 3,
+            m: 15, f: 5, a: -5, c: 5,
             r: "Du verteilst eine Desktop-Verknüpfung namens 'TURBO-MODUS'. Sie ändert das Hintergrundbild auf einen roten Farbverlauf. Die gefühlte Systemgeschwindigkeit steigt firmenweit um dreißig Prozent. Placebo ist auch Performance."
         },
         {
@@ -4038,7 +4038,7 @@ export const server = [
         {
             t: "Kevin zum Turbo-Beauftragten machen",
             rep: { "Kevin": 4 },
-            m: 5, f: 5, a: 0, c: 3,
+            m: 5, f: 5, a: 0, c: 5,
             r: "Kevin beantwortet ab sofort alle Turbo-Anfragen. Mit Begeisterung, eigener Mail-Signatur ('Turbo-Beauftragter') und komplett erfundenen Fakten. Er ist beschäftigt, glücklich und erstaunlich überzeugend."
         }
     ]
@@ -4054,21 +4054,21 @@ export const server = [
             t: "Sofort die Wartungsfirma anrufen",
             rep: { "Gabi": 5 },
             next: "path_klima_call",
-            m: 20, f: 0, a: -3, c: -3,
+            m: 20, f: 0, a: 5, c: -5,
             r: "Die Firma verlängert telefonisch, 'die Unterschrift reichen Sie einfach nach'. Gabi zwinkert und verschwindet. Du schuldest ihr etwas. Und der Buchhaltung eine Erklärung, warum du am offiziellen Weg vorbei bestellt hast."
         },
         {
             t: "'Danke, kümmere ich mich später drum'",
             rep: { "Gabi": -3 },
             next: "path_klima_later",
-            m: 2, f: 8, a: 0, c: 0,
+            m: 2, f: 10, a: 0, c: 0,
             r: "Gabi zieht eine Augenbraue hoch. 'Später. Klar.' Sie kennt dieses 'Später'. Die Klimaanlage summt derweil ahnungslos vor sich hin. Noch."
         },
         {
             t: "Mit Egon einen Plan B vorbereiten",
             rep: { "Egon": 4 },
             next: "path_klima_egon",
-            m: 10, f: 0, a: 2, c: 0,
+            m: 10, f: 5, a: 0, c: 0,
             r: "Egon hört sich das Problem an und nickt langsam. 'Klimaanlage. Neumodischer Kram.' Er verschwindet Richtung Keller. Was auch immer er dort holt: Es ist von 1987, und es wird funktionieren."
         }
     ]
@@ -4082,19 +4082,19 @@ export const server = [
         {
             t: "Zerknirscht alle Formulare nachreichen",
             rep: { "Frau Elster": 4 },
-            m: 15, f: 0, a: 3, c: -2,
+            m: 15, f: 0, a: 5, c: -5,
             r: "Du füllst das Beschaffungsformular aus, rückwirkend und in dreifacher Ausfertigung. Frau Elster prüft jede Zeile und nickt schließlich. 'Ordnung ist keine Schikane, Herr Müller. Ordnung ist Fürsorge.' Fast hätte sie gelächelt."
         },
         {
             t: "'Es war ein NOTFALL'",
             rep: { "Frau Elster": -5 },
-            m: 5, f: 3, a: 2, c: 3,
+            m: 5, f: 5, a: 0, c: 5,
             r: "'Ein Notfall.' Sie notiert etwas in einem kleinen Buch. Du hast dieses Buch noch nie gesehen, aber du weißt sofort: In diesem Buch will man nicht stehen."
         },
         {
             t: "Gabi als Quelle benennen",
             rep: { "Gabi": -4, "Frau Elster": -2 },
-            m: 5, f: 3, a: 0, c: 0,
+            m: 5, f: 5, a: 0, c: 0,
             r: "'Vom Empfang wussten Sie das also.' Frau Elster zieht ab, um einer anderen Spur zu folgen. Du hast gerade deine beste Informationsquelle verraten. Gabi grüßt dich ab jetzt nur noch dienstlich."
         }
     ]
@@ -4107,17 +4107,17 @@ export const server = [
     opts: [
         {
             t: "Türen auf, Ventilatoren-Notaufbau",
-            m: 20, f: -5, a: 8, c: 5,
+            m: 20, f: -5, a: 10, c: 5,
             r: "Du organisierst jeden Ventilator des Gebäudes und baust eine Windschneise. Es sieht aus wie eine Kunstinstallation, aber die Temperatur fällt. Der halbe Flur fragt, was hier los ist. Gute Frage."
         },
         {
             t: "Not-Verlängerung zum Wucherpreis",
-            m: 10, f: 0, a: 3, c: 8,
+            m: 10, f: 0, a: 5, c: 10,
             r: "Die Wartungsfirma kennt ihre Verhandlungsposition genau: Expresszuschlag, Wochenendpauschale, 'Reaktivierungsgebühr'. Du unterschreibst alles. Diese Rechnung wird in der Buchhaltung Fragen aufwerfen. Laute Fragen."
         },
         {
             t: "Server 3 kontrolliert herunterfahren",
-            m: 8, f: 0, a: -3, c: 10,
+            m: 10, f: 0, a: -5, c: 10,
             r: "Weniger Last, weniger Hitze, sauber gelöst. Allerdings hat der halbe Vertrieb jetzt 'kein System'. Du zählst innerlich rückwärts, bis Markus persönlich anruft. Drei. Zwei. Eins."
         }
     ]
@@ -4137,13 +4137,13 @@ export const server = [
         {
             t: "Egon zur Drosselung überreden",
             rep: { "Egon": -3 },
-            m: 10, f: 0, a: 3, c: 0,
+            m: 10, f: 0, a: 5, c: 0,
             r: "'Drosseln? Der läuft auf EINS von DREI.' Egon dreht widerwillig an einem Bakelit-Knopf. Es wird leiser. Egon murmelt etwas über Leute, die früher auch schon alles besser wussten."
         },
         {
             t: "Den Lärm als Feature verkaufen",
             rep: { "Chantal": 3 },
-            m: 5, f: 3, a: 0, c: 0,
+            m: 5, f: 5, a: 0, c: 0,
             r: "Chantal kommt vorbei, hört den Lüfter und ist elektrisiert: 'Das ist ja total industrial! Wie ein Techno-Club!' Sie überlegt laut, ob man hier 'Deep-Work-Sessions' anbieten könnte. Der Lärm bleibt. Er hat jetzt Branding."
         }
     ]
@@ -4158,19 +4158,19 @@ export const server = [
             t: "Durchblättern",
             loot: "admin_pw",
             next: "path_folder_read",
-            m: 15, f: -3, a: 0, c: -2,
+            m: 15, f: -5, a: 5, c: 0,
             r: "Zwischen Faxanleitungen und einem Evakuierungsplan mit eingezeichneter Raucherecke klebt ein Post-it: 'root-PW – NICHT VERLIEREN!!'. Es hat siebzehn Jahre überlebt. Es funktioniert noch. Natürlich funktioniert es noch."
         },
         {
             t: "Ungelesen schreddern (Datenschutz)",
             next: "path_folder_shred",
-            m: 8, f: 0, a: -2, c: -3,
+            m: 10, f: 0, a: -5, c: -5,
             r: "Du führst den Ordner fachgerecht der Datenvernichtung zu. Sehr professionell, sehr endgültig. Allerdings führt irgendjemand in dieser Firma Buch über registrierte Akten. Du weißt auch schon, wer."
         },
         {
             t: "Zurückklemmen: ein Fall für Später-Müller",
             next: "path_folder_later",
-            m: 1, f: 5, a: 0, c: 0,
+            m: 2, f: 10, a: 0, c: 0,
             r: "Der Ordner verschwindet wieder hinter dem Rack. Später-Müller wird sich darum kümmern. Später-Müller hasst dich jetzt schon. Und du bist nicht der Einzige, der hier unten gelegentlich herumstöbert."
         }
     ]
@@ -4183,18 +4183,18 @@ export const server = [
     opts: [
         {
             t: "Auf einen Stuhl steigen und nachsehen",
-            m: 10, f: 0, a: 3, c: 0,
+            m: 10, f: 0, a: 5, c: 0,
             r: "Kein Schlüssel. Nur eine Zettelnotiz in säuberlicher Handschrift: 'Verliehen an E.' Das E ist mit Bleistift dreimal nachgezogen. E wie Egon. Der wahre Herrscher des Gebäudes, seit Jahrzehnten amtierend."
         },
         {
             t: "Die Decke Decke sein lassen",
-            m: 1, f: 3, a: 0, c: 0,
+            m: 2, f: 5, a: 0, c: 0,
             r: "Manche Dinge sollen schief bleiben. Du hast genug Baustellen auf Bodenhöhe. Aber jedes Mal, wenn du den Raum betrittst, wird Platte 4 dich ansehen. Schief."
         },
         {
             t: "Egon beiläufig auf 2009 ansprechen",
             rep: { "Egon": 5 },
-            m: 20, f: 0, a: -3, c: 0,
+            m: 20, f: 10, a: -5, c: 0,
             r: "Egon lehnt sich an den Türrahmen und erzählt zwanzig Minuten von 2009. Vom alten Chef, vom Hochwasser im Keller, vom Kollegen, 'der mit dem Fax konnte'. Du erfährst nebenbei mehr über diese Firma als aus jedem Organigramm."
         }
     ]
@@ -4208,19 +4208,19 @@ export const server = [
         {
             t: "Das Protokoll ordnungsgemäß nachreichen",
             rep: { "Frau Elster": 4 },
-            m: 15, f: 0, a: 3, c: -2,
+            m: 15, f: 0, a: 5, c: -5,
             r: "Formular DV-7, dreifach, mit Datum, Uhrzeit und Zeugenfeld. Du lässt das Zeugenfeld frei und Frau Elster trägt sich selbst ein. 'Ich habe es ja quasi miterlebt.' Bürokratie kann auch Komplizenschaft sein."
         },
         {
             t: "'Welcher Ordner?'",
             rep: { "Frau Elster": -5 },
-            m: 3, f: 3, a: 2, c: 3,
+            m: 2, f: 5, a: 0, c: 5,
             r: "Frau Elster sieht dich an. Dann zückt sie ein kleines Buch und notiert etwas, ohne den Blick zu senken. Das war ein Fehler. Man lügt Frau Elster nicht ins Gesicht. Man lügt Frau Elster überhaupt nicht an."
         },
         {
             t: "Sie auf einen Kaffee einladen und alles erklären",
             rep: { "Frau Elster": 6 },
-            m: 20, f: 0, a: -5, c: 0,
+            m: 20, f: 10, a: -10, c: 0,
             r: "Bei einem Kaffee erklärst du die Sache mit dem Datenschutz. Frau Elster taut auf, erzählt von früheren Aktenbergen und irgendwann, ganz beiläufig, von Rüdiger. Am Ende sagt sie: 'Das Protokoll reichen Sie trotzdem nach.' Aber sie lächelt dabei."
         }
     ]
@@ -4234,18 +4234,18 @@ export const server = [
         {
             t: "Kevin SOFORT suchen",
             rep: { "Kevin": -3 },
-            m: 15, f: 0, a: 5, c: 0,
+            m: 15, f: -5, a: 5, c: 0,
             r: "Du findest ihn in der Teeküche, den Ordner auf Seite 34 aufgeschlagen. 'Wusstest du, dass es einen Zweitschlüssel gibt?', ruft er quer durch den Raum. Jetzt weiß es die ganze Teeküche. Die Teeküche weiß ab jetzt alles."
         },
         {
             t: "Abwarten, was passiert",
-            m: 2, f: 8, a: 0, c: 3,
+            m: 2, f: 10, a: 0, c: 5,
             r: "Kevin. Ein Ordner voller Altlasten. Keine Aufsicht. Du entscheidest dich aktiv dafür, das nicht zu deinem Problem zu machen. Es wird trotzdem dein Problem werden, nur eben später und größer."
         },
         {
             t: "Ihm den Ordner offiziell übergeben",
             rep: { "Kevin": 4 },
-            m: 10, f: 3, a: 0, c: 0,
+            m: 10, f: 5, a: 0, c: 0,
             r: "'Kevin, das ist jetzt dein Projekt: Digitalisierung des Notfallplans.' Kevin strahlt und scannt ab sofort jede Seite einzeln. Als eigene PDF. Einzeln. Er ist beschäftigt, stolz und für Wochen komplett harmlos."
         }
     ]

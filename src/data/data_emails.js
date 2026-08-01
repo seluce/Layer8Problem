@@ -7,8 +7,8 @@ export const emails = [
 		body: "Liebe alle,\n\nIch habe veganen, glutenfreien Zucchini-Kuchen gebacken! Bedient euch!\n\n(Bitte nur 1 Stück pro Person!)",
 		opts: [
 			{ btn: "Ein Stück nehmen", r: "Schmeckt nach Pappe und Traurigkeit.", m: 2, f: 0, a: 5, c: 0 },
-			{ btn: "Allen antworten: 'Wo ist das Mett?'", r: "Du schickst den Witz an den ganzen Verteiler.", m: 1, f: 5, a: -5, c: 5, nextEmail: "mail_cake_2" },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Allen antworten: 'Wo ist das Mett?'", r: "Du schickst den Witz an den ganzen Verteiler.", m: 2, f: 5, a: -5, c: 5, nextEmail: "mail_cake_2" },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -19,7 +19,7 @@ export const emails = [
 		body: "Das finde ich überhaupt nicht lustig, Herr Müller!\n\nWir versuchen hier, eine inklusive Atmosphäre zu schaffen! Ich habe Ihren Namen auf die 'Kein-Weihnachtsgeld'-Liste gesetzt.",
 		opts: [
 			{ btn: "Das war es wert.", r: "Du holst dir heimlich ein Mettbrötchen.", m: 5, f: -5, a: -5, c: 5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -28,9 +28,9 @@ export const emails = [
 		subj: "TICKET #9942: Maus brennt.",
 		body: "PRIORITY: CRITICAL \nUSER: Gabi (Empfang) \nDESCRIPTION: 'Hilfe, aus meiner Maus kommt Rauch und es riecht nach verbranntem Plastik. Ich habe versucht, sie mit Kaffee zu löschen, jetzt funkt es blau.' \nSTATUS: OPEN",
 		opts: [
-			{ btn: "Ticket löschen", r: "Gelöscht. Problem gelöst (für dich).", m: 1, f: 5, a: 0, c: 5 },
+			{ btn: "Ticket löschen", r: "Gelöscht. Problem gelöst (für dich).", m: 2, f: 5, a: 0, c: 5 },
 			{ btn: "Feuerwehr rufen", r: "Großeinsatz. Es war nur eine LED.", m: 2, f: -5, a: -5, c: 10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -40,8 +40,8 @@ export const emails = [
 		body: "Namaste liebe Mit-Sklaven... äh Mitarbeiter. \n\nWir laden ein zum Workshop 'Atmen gegen den Burnout'. Wir lernen gemeinsam, wie man Wut in CO2 umwandelt. Es gibt vegane Dinkel-Kekse (glutenfrei, zuckerfrei, geschmacksneutral). Anwesenheit wird empfohlen.",
 		opts: [
 			{ btn: "Teilnehmen", r: "Du atmest. 30 Minuten nichts getan.", m: 30, f: 15, a: -10, c: 5 },
-			{ btn: "Als Spam markieren", r: "Weg damit. Zeit ist Geld.", m: 1, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Als Spam markieren", r: "Weg damit. Zeit ist Geld.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -52,7 +52,7 @@ export const emails = [
 		opts: [
 			{ btn: "Allen antworten: 'Das kommt vom Sparzwang!'", r: "Du zettelst einen Aufstand gegen das Management an.", m: 2, f: 5, a: 10, c: 5, nextEmail: "mail_toilet_revolution" },
 			{ btn: "Allen antworten: 'Danke Grüne!!!11'", r: "Du startest eine wilde politische Debatte ohne Sinn.", m: 2, f: 5, a: 10, c: 5, nextEmail: "mail_toilet_politics" },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -63,7 +63,7 @@ export const emails = [
 		body: "KAMERADEN! Müller hat Recht!\n\nDas 1-lagige Papier ist ein Verbrechen an der Menschlichkeit! Das Management nutzt wahrscheinlich Seide!\n\nWir fordern: 4 Lagen für alle! Ab morgen: GENERALSTREIK vor dem Klo!",
 		opts: [
 			{ btn: "Solidarität bekunden.", r: "Du hast versehentlich eine kommunistische Revolution im 3. Stock gestartet.", m: 2, f: 10, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -74,7 +74,7 @@ export const emails = [
 		body: "System-Nachricht: Dieser E-Mail-Thread hat 400 neue Antworten.\n\nBetreffs enthalten: 'Klimawandel', 'Flache Erde', 'Tempolimit', 'Schnitzel-Verbot'.\n\nDer Mail-Server raucht. Niemand arbeitet mehr.",
 		opts: [
 			{ btn: "Popcorn holen.", r: "Die Firma brennt, aber du bist gut unterhalten.", m: 2, f: 15, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -85,7 +85,7 @@ export const emails = [
 		opts: [
 			{ btn: "Sofort klicken!", r: "TEST NICHT BESTANDEN! Ein rotes Fenster poppt auf: 'SIEHST DU NICHT, DASS DAS FAKE IST?!' Meldung an Chef ging raus.", m: 2, f: 0, a: 10, c: 20 },
 			{ btn: "Als Phishing melden", r: "Vorbildlich. Die IT schickt dir einen Daumen-hoch-Smiley zurück.", m: 2, f: 0, a: 0, c: -5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -96,7 +96,7 @@ export const emails = [
 		opts: [
 			{ btn: "Antwort: 'Lauf weg!'", r: "Kevin rennt schreiend raus.", m: 2, f: 5, a: 0, c: 5 },
 			{ btn: "Hingehen", r: "Es war der Lüfter. Du hast es gefixt.", m: 5, f: -5, a: -5, c: -5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -106,7 +106,7 @@ export const emails = [
 		body: "An: Vorstand\nCc: (Versehentlich) Alle Mitarbeiter\n\nMeine Herren, anbei die Liste der 50 Mitarbeiter, die wir nächsten Montag feuern. Bitte diskret behandeln.\n\n[Anhang: Liste_FINAL_v3.pdf]",
 		opts: [
 			{ btn: "Allen antworten: 'BIN ICH AUCH DRAUF?!'", r: "Du hast an den gesamten Verteiler geantwortet. Panik bricht aus.", m: 2, f: -10, a: 10, c: 5, nextEmail: "mail_leak_2" },
-			{ btn: "️️🗑️ Löschen & Ignorieren", r: "Du tust so, als hättest du nichts gesehen. Dein Herz rast.", m: 1, f: 0, a: 5, c: -5 }
+			{ btn: "️️🗑️ Löschen & Ignorieren", r: "Du tust so, als hättest du nichts gesehen. Dein Herz rast.", m: 2, f: 0, a: 5, c: -5 }
 		]
 	},
 	{
@@ -117,7 +117,7 @@ export const emails = [
 		body: "MÜLLER?! \n\nWie können Sie es wagen?! Das war ein Test! Um... die Loyalität zu prüfen! Kommen Sie SOFORT in mein Büro!\n\n(Das wird ein langes Gespräch...)",
 		opts: [
 			{ btn: "Ups...", r: "Der Chef brüllt dich 20 Minuten lang an.", m: 20, f: 0, a: 20, c: 10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -128,7 +128,7 @@ export const emails = [
 		opts: [
 			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Du leitest die Mail kommentarlos an den Chef weiter. Eiskalt.", m: 2, f: 0, a: -10, c: -20, nextEmail: "mail_chantal_boss_reply" },
 			{ btn: "Antworten: 'Ich weiß alles. Schweigegeld?'", r: "Du nutzt ihr Missgeschick gnadenlos aus.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_chantal_panic" },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -139,7 +139,7 @@ export const emails = [
 		body: "Herr Müller,\n\nExzellente Wachsamkeit. Faulheit ist ein Geschwür in dieser Firma.\n\nIch habe Frau Chantal soeben 'zum Gespräch' gebeten. Nehmen Sie sich einen Keks aus ihrem Büro, solange sie weg ist.\n\nWeitermachen.",
 		opts: [
 			{ btn: "Der Keks schmeckt nach Verrat.", r: "Du fühlst dich sicher, aber einsam.", m: 2, f: 0, a: -5, c: -10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -150,7 +150,7 @@ export const emails = [
 		body: "OMG MÜLLER?! 😱😱😱\n\nBitte sag nix!! Das war für... äh... meine Oma! Wenn du die Klappe hältst, mach ich deine PowerPoint für morgen hübsch! Und du kriegst alle Cookies! DEAL?!",
 		opts: [
 			{ btn: "Deal.", r: "Chantal arbeitet jetzt für dich. Das Leben ist schön.", m: 2, f: 15, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -161,7 +161,7 @@ export const emails = [
 		opts: [
 			{ btn: "Video laufen lassen", r: "Du lässt das Video im Hintergrund laufen. Der Ton nervt, aber du bist compliant.", m: 5, f: 10, a: 5, c: -5 },
 			{ btn: "Als 'Erledigt' markieren", r: "Du manipulierst die Datenbank. Risiko, aber spart Zeit.", m: 2, f: 0, a: -5, c: 5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Die nächste Mahnung kommt bestimmt.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Die nächste Mahnung kommt bestimmt.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -170,9 +170,9 @@ export const emails = [
 		subj: "AW: AW: AW: Wer vermisst 'Mimi'?",
 		body: "BITTE NEHMEN SIE MICH AUS DIESEM VERTEILER!!!! ICH HABE KEINE KATZE!!! DAS IST EINE ARBEITSE-MAIL!!! (Vorherige Nachricht von Gabi: 'Oh wie süß, ist die flauschig!'). (Vorherige Nachricht von Klaus: 'Mimi ist wieder da, danke an alle!').",
 		opts: [
-			{ btn: "Reply-All: 'RUHE!'", r: "Du hast zur Eskalation beigetragen. Jetzt antworten 50 Leute 'Hör auf, an alle zu antworten!'. Der Mailserver raucht.", m: 1, f: 0, a: 20, c: 10 },
+			{ btn: "Reply-All: 'RUHE!'", r: "Du hast zur Eskalation beigetragen. Jetzt antworten 50 Leute 'Hör auf, an alle zu antworten!'. Der Mailserver raucht.", m: 2, f: 0, a: 20, c: 10 },
 			{ btn: "Filter-Regel erstellen", r: "Du filterst 'Mimi' direkt in den Papierkorb. Himmlische Ruhe.", m: 5, f: -5, a: -10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -183,7 +183,7 @@ export const emails = [
 		opts: [
 			{ btn: "Antwort: 'Perfekt!'", r: "Du hast den Unsinn durchgewunken. Die IT-Community wird uns auslachen, aber Chantal ist glücklich.", m: 2, f: 10, a: -5, c: 0 },
 			{ btn: "Den Text korrigieren", r: "Du erklärst ihr mühsam, dass es keine WLAN-Kabel gibt. Sie versteht es nicht. 'Aber das klingt doch gut!'", m: 5, f: -10, a: 10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -193,7 +193,7 @@ export const emails = [
 		body: "Moin. Ich habe im Kühlschrank eine Tupperdose gefunden, auf der steht 'Mittagessen 2019'. Der Inhalt hat mittlerweile Pelz und knurrt mich an, wenn ich das Licht anmache. Der Besitzer möge sich bitte mit einem Flammenwerfer bei mir melden, sonst entsorge ich das samt Kühlschrank.",
 		opts: [
 			{ btn: "Das ist meins!", r: "Du rettest dein... was auch immer das war. Es riecht übel.", m: 2, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Problem. Soll es doch brennen.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Problem. Soll es doch brennen.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -204,7 +204,7 @@ export const emails = [
 		opts: [
 			{ btn: "ChatGPT nutzen", r: "Du lässt eine KI das Bullshit-Konzept schreiben. Der Chef ist begeistert: 'Visionär!'", m: 5, f: 10, a: -5, c: -10 },
 			{ btn: "Ehrlich antworten", r: "Du schreibst: 'Das ist Unsinn.' Der Chef merkt sich deinen Namen und war nicht begeistert.", m: 5, f: 0, a: 10, c: 20 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Hoffentlich vergisst er es wieder.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Hoffentlich vergisst er es wieder.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -215,7 +215,7 @@ export const emails = [
 		opts: [
 			{ btn: "Ticket verlangen", r: "Du schreibst zurück: 'Bitte Ticket aufmachen.' Eiskalt.", m: 2, f: 5, a: -5, c: 5 },
 			{ btn: "Hingehen", r: "Er saß auf der 'Entf'-Taste. Problem gelöst in 2 Sekunden.", m: 5, f: -10, a: 10, c: -5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -225,8 +225,8 @@ export const emails = [
 		body: "Liebe Kollegen, aufgrund des hohen Stresslevels bieten wir heute einen Stuhlkreis an. Wir werden gemeinsam atmen und unsere Namen tanzen. Es gibt vegane Dinkelkekse. Teilnahme ist freiwillig (aber wird notiert).",
 		opts: [
 			{ btn: "Hingehen", r: "Du hast 30 Minuten geatmet und die paar Kekse waren trocken.", m: 30, f: 20, a: -10, c: 5 },
-			{ btn: "Als Spam markieren", r: "Weg damit. Ich habe echte Arbeit.", m: 1, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Als Spam markieren", r: "Weg damit. Ich habe echte Arbeit.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -235,9 +235,9 @@ export const emails = [
 		subj: "Dringend: Ihr Passwort läuft ab!",
 		body: "Hallo User,\n\nihr Passwort ist zu alt. Klicken Sie HIER um es zu ändern und erhalten Sie 500€ Amazon-Gutschein als Belohnung!\n\nLink: http://bit.ly/hacker-klaus",
 		opts: [
-			{ btn: "Link anklicken", r: "Du klickst auf den Link. Ein rotes Fenster öffnet sich.", m: 1, f: 5, a: 0, c: 0, nextEmail: "mail_phish_2" },
-			{ btn: "Als Phishing melden", r: "Gut gemacht. IT-Sec ist stolz.", m: 1, f: 0, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Link anklicken", r: "Du klickst auf den Link. Ein rotes Fenster öffnet sich.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_phish_2" },
+			{ btn: "Als Phishing melden", r: "Gut gemacht. IT-Sec ist stolz.", m: 2, f: 0, a: -5, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -247,8 +247,8 @@ export const emails = [
 		subj: "ALERT: SIE HABEN VERSAGT",
 		body: "Dies war ein interner Sicherheitstest.\nSie sind durchgefallen.\n\nKonsequenz: Ihr Internet-Zugang wurde auf 'Modem-Geschwindigkeit' gedrosselt, bis Sie die Schulung 'Maus-Bedienung für Anfänger' absolviert haben.",
 		opts: [
-			{ btn: "Verdammt.", r: "Alles lädt jetzt super langsam. Deine Aggro steigt.", m: 1, f: -5, a: 10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Verdammt.", r: "Alles lädt jetzt super langsam. Deine Aggro steigt.", m: 2, f: -5, a: 10, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -259,7 +259,7 @@ export const emails = [
 		opts: [
 			{ btn: "Anhang öffnen", r: "VIRUS-ALARM! Es war Malware. Der Scanner schreit. Du musst den PC bereinigen.", m: 10, f: -20, a: 20, c: 20 },
 			{ btn: "Nett antworten und lügen", r: "Du lügst: 'Haha, sehr lustig Tante Erna.'", m: 2, f: 0, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -271,7 +271,7 @@ export const emails = [
 			{ btn: "Webseite öffnen", r: "Phishing-Seite! Du hast fast deine Daten eingegeben. IT-Sec hat es gemerkt.", m: 2, f: 0, a: 10, c: 15 },
 			{ btn: "Als Spam markieren", r: "Netter Versuch.", m: 2, f: 0, a: 0, c: 0 },
 			{ btn: "Antworten: 'Behaltet es'", r: "Die Mail kam zurück (Mail Delivery Failure).", m: 2, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -281,8 +281,8 @@ export const emails = [
 		body: "Gulasch Rezept einfach schnell ohne Paprika",
 		opts: [
 			{ btn: "Antworten: 'Horst, das ist Outlook.'", r: "Du klärst ihn auf. Hoffentlich versteht er es.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_wuttke_ai" },
-			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Eiskalt. Du meldest die private Nutzung sofort.", m: 1, f: 0, a: -5, c: -10, nextEmail: "mail_wuttke_boss" },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Eiskalt. Du meldest die private Nutzung sofort.", m: 2, f: 0, a: -5, c: -10, nextEmail: "mail_wuttke_boss" },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -293,7 +293,7 @@ export const emails = [
 		body: "Danke Outlook.\n\nBestell bitte auch 2 Becher Sahne und Nudeln. Aber nicht die Spiralnudeln, die mag meine Frau nicht.\n\nSenden.",
 		opts: [
 			{ btn: "Du willst es nicht verstehen, oder?.", r: "Du starrst auf den Bildschirm. Gegen diese Dummheit gibt es keinen Patch.", m: 2, f: 5, a: 10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{
@@ -304,7 +304,7 @@ export const emails = [
 		body: "Müller,\n\ndanke für die Weiterleitung.\n\nSagen Sie Wuttke, er soll Paprika reinmachen, sonst schmeckt das nicht. Und wenn er schon kocht, soll er mir eine Portion in den 4. Stock bringen.\n\n(Sie kriegen nichts, Verräter mag niemand.)",
 		opts: [
 			{ btn: "Na toll..", r: "Der Chef kriegt Gulasch, Wuttke kriegt Lob, du kriegst gar nichts.", m: 2, f: 0, a: 15, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -314,7 +314,7 @@ export const emails = [
 		body: "Das ist jetzt das dritte Mal! Meine rote Dose mit dem Aufkleber 'SABINE' ist weg! Ich durchsuche jetzt alle Schreibtische! Wenn ich sie finde, gnade euch Gott! Ich rufe die Polizei!",
 		opts: [
 			{ btn: "Reply-All: 'Chill mal'", r: "Fehler! Sabine rastet aus. Sie wirft einen Tacker durchs Büro. Du musst dich unter dem Tisch verstecken.", m: 2, f: 0, a: 20, c: 10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Problem. Sollen sie sich doch prügeln.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Problem. Sollen sie sich doch prügeln.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -325,7 +325,7 @@ export const emails = [
 		opts: [
 			{ btn: "Account sofort sperren", r: "Du hast den CEO mitten in einer Videokonferenz rausgeworfen. Er ist sauer, aber du hast die Firma vor Nordkorea gerettet. Held!", m: 5, f: -10, a: 0, c: -20 },
 			{ btn: "Als VPN-Fehler abtun", r: "Es war kein VPN. Alle Firmendaten sind jetzt im Darknet. Der Aktienkurs fällt schlagartig auf 0.", m: 2, f: 0, a: 50, c: 100 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -336,7 +336,7 @@ export const emails = [
 		opts: [
 			{ btn: "Einfach das Passwort eingeben", r: "ZACK. Ransomware. Alles verschlüsselt. Ein Totenkopf lacht auf deinem Monitor. Das war wohl kein Fehlalarm.", m: 2, f: 0, a: 30, c: 50 },
 			{ btn: "Hingehen & 'Nein' sagen", r: "Du erklärst ihm Sicherheit. Er hört zwar nicht zu, aber du hast die Installation verhindert.", m: 5, f: -10, a: 10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -346,7 +346,7 @@ export const emails = [
 		body: "Um die Moral zu heben, treffen wir uns alle im Flur zum synchronen Lachen! 'Hahaha hihihi'! Wer nicht lacht, kriegt einen Eintrag in die Akte wegen negativer Einstellung! 😊😊😊",
 		opts: [
 			{ btn: "Hingehen & mitmachen", r: "Du stehst im Flur und machst 'Hahaha'. Du stirbst innerlich, aber HR ist zufrieden.", m: 10, f: 10, a: 20, c: -5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du arbeitest weiter. Später fragt HR, warum du so negativ bist.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du arbeitest weiter. Später fragt HR, warum du so negativ bist.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -357,7 +357,7 @@ export const emails = [
 		opts: [
 			{ btn: "Einfach bestellen", r: "Du hast 5000€ Budget verbrannt. Chantal nutzt die Rechenpower nun für Instagram-Filter. Der Finanz-Chef hasst dich.", m: 5, f: 10, a: -10, c: 20 },
 			{ btn: "Task-Manager aufräumen", r: "Du schließt 'Sims 4' und 48 Chrome-Tabs. PC läuft wieder flüssig. Chantal schmollt.", m: 5, f: -5, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -368,7 +368,7 @@ export const emails = [
 		opts: [
 			{ btn: "Die Logs prüfen", r: "Es war der Azubi Kevin. Du lässt ihn die 900€ vom Taschengeld zahlen. Lektion gelernt.", m: 10, f: -10, a: 0, c: -5 },
 			{ btn: "Sofort alle Spuren löschen", r: "Du löscht die Beweise. Jetzt haftet die Firma, weil kein Täter ermittelt werden kann. Der Chef muss zahlen und tobt.", m: 5, f: 0, a: 10, c: 30 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -379,7 +379,7 @@ export const emails = [
 		opts: [
 			{ btn: "Fenster heimlich öffnen", r: "Du sorgst für Frischluft. Frau Frost niest und wirft dir böse Blicke zu.", m: 5, f: 5, a: 5, c: 0 },
 			{ btn: "In Badehose arbeiten", r: "Es sind 35 Grad im Büro. Du schwitzt. Die Produktivität liegt bei Null.", m: 2, f: 10, a: 10, c: 5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -388,9 +388,9 @@ export const emails = [
 		subj: "FWD: FWD: Unbedingt lesen sonst Unglück!!!",
 		body: "Das ist der Geist des toten Servers! 👻 Schicke diese Mail an 10 Kollegen, oder dein WLAN wird für immer langsam sein! Ignorier das nicht, meinem Cousin ist das passiert!!!",
 		opts: [
-			{ btn: "An Alle weiterleiten", r: "Du hast den Mailserver lahmgelegt. 500 Leute hassen dich jetzt.", m: 1, f: 0, a: 20, c: 20 },
+			{ btn: "An Alle weiterleiten", r: "Du hast den Mailserver lahmgelegt. 500 Leute hassen dich jetzt.", m: 2, f: 0, a: 20, c: 20 },
 			{ btn: "Bernd sperren", r: "Bernd landet auf der Blacklist. Endlich Ruhe.", m: 2, f: 0, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -401,7 +401,7 @@ export const emails = [
 		opts: [
 			{ btn: "Mail ausdrucken & verbrennen", r: "Das kleine Feuer im Mülleimer wärmt dein kaltes Herz. Deine Aggro sinkt leicht.", m: 5, f: 5, a: -5, c: 0 },
 			{ btn: "Dankesmail schreiben", r: "Du schleimst dich ein. Die Kollegen nennen dich 'Verräter', aber der Chef merkt es sich positiv.", m: 2, f: 0, a: 10, c: -10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -412,7 +412,7 @@ export const emails = [
 		opts: [
 			{ btn: "KLICKEN! Her damit!", r: "Ein Fenster poppt auf: 'DIES WAR EIN PHISHING-TEST DER IT! SIE SIND DURCHGEFALLEN!' Du musst jetzt ein 20 Minuten langes Security-Video gucken. Dein Tag ist gelaufen.", m: 20, f: -10, a: 50, c: 20 },
 			{ btn: "Als Phishing melden", r: "Die IT antwortet: 'Gut gemacht, Müller. Sie haben als einziger nicht geklickt.' Ein Fleißsternchen im System.", m: 2, f: 0, a: -5, c: -10 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -423,7 +423,7 @@ export const emails = [
 		opts: [
 			{ btn: "Mutig entsorgen", r: "Du öffnest die Dose. Der Gestank ist so bestialisch, dass du dich fast übergeben musst. Du bist für den Rest des Tages grün im Gesicht. Aber die Gefahr ist gebannt.", m: 5, f: -5, a: 20, c: 0 },
 			{ btn: "Kühlschranktür versiegeln", r: "Du klebst die Tür einfach zu und schreibst 'DEFEKT' drauf. Problem für die Ewigkeit konserviert.", m: 5, f: 5, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Essen, nicht dein Pilz.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Nicht dein Essen, nicht dein Pilz.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -434,7 +434,7 @@ export const emails = [
 		opts: [
 			{ btn: "Abschleppdienst rufen!", r: "Der Abschlepper kommt und zieht den Porsche weg. Du fühlst Genugtuung. 10 Min später brüllt der CEO: 'WER HAT MEINEN LEIHWAGEN ABSCHLEPPEN LASSEN?!' Oh Mist...", m: 10, f: 0, a: 50, c: 80 },
 			{ btn: "Scheibenwischer hochklappen", r: "Ein kleiner, passiv-aggressiver Racheakt. Fühlt sich gut an und keiner hat's gesehen.", m: 5, f: 0, a: -10, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -445,7 +445,7 @@ export const emails = [
 		opts: [
 			{ btn: "Hingehen & 'Drucki McDruckface' vorschlagen", r: "Alle starren dich an. Chantal findet es 'uninspiriert'. Du hast 15 Minuten Lebenszeit verschwendet.", m: 15, f: 10, a: 15, c: 0 },
 			{ btn: "Antworten: 'Papierstau-Paulus'", r: "Deine E-Mail wird ignoriert, aber du musstest wenigstens nicht aufstehen.", m: 2, f: 5, a: -5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -456,7 +456,7 @@ export const emails = [
 		opts: [
 			{ btn: "Alles senden (inkl. Chat-Logs)", r: "Du schickst ihm wirklich alles. Auch die Logs, wo der Chef ihn 'Niete' nennt. Er verklagt die Firma wegen Mobbing. Der Chef tobt.", m: 10, f: -10, a: 20, c: 60 },
 			{ btn: "Standard-Textbaustein senden", r: "Du schickst ein nichtssagendes PDF: 'Wir haben leider keine relevanten Daten mehr'. Er gibt Ruhe. Bürokratie besiegt.", m: 2, f: 5, a: -5, c: -5 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -465,10 +465,10 @@ export const emails = [
 		subj: "Weihnachtsfeier: Bowling oder Oper?",
 		body: "Liebe Kollegen, für die diesjährige Feier haben wir zwei Optionen: \n1. 'Cosmic Bowling' (mit Schwarzlicht und Dosenbier) \n2. 'Die Zauberflöte' (3,5 Stunden, Anzugpflicht). \nBitte abstimmen!",
 		opts: [
-			{ btn: "Team 'Bowling'", r: "Du stimmst für Bowling. Die IT jubelt. Chantal ist entsetzt ('Meine Schuhe!'). Stimmung +1.", m: 1, f: 5, a: -5, c: 0 },
-			{ btn: "Team 'Oper'", r: "Du stimmst für Kultur. Niemand mag dich mehr. Kevin nennt dich 'Streber'.", m: 1, f: 0, a: 5, c: 5 },
-			{ btn: "Reply-All: 'Saufen!'", r: "Egon antwortet: 'Mein Mann!'. Der Chef mahnt dich ab wegen 'unprofessioneller Kommunikation'.", m: 1, f: 0, a: 10, c: 15 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Dir egal. Hauptsache es gibt Essen.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Team 'Bowling'", r: "Du stimmst für Bowling. Die IT jubelt. Chantal ist entsetzt ('Meine Schuhe!'). Stimmung +1.", m: 2, f: 5, a: -5, c: 0 },
+			{ btn: "Team 'Oper'", r: "Du stimmst für Kultur. Niemand mag dich mehr. Kevin nennt dich 'Streber'.", m: 2, f: 0, a: 5, c: 5 },
+			{ btn: "Reply-All: 'Saufen!'", r: "Egon antwortet: 'Mein Mann!'. Der Chef mahnt dich ab wegen 'unprofessioneller Kommunikation'.", m: 2, f: 0, a: 10, c: 15 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Dir egal. Hauptsache es gibt Essen.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -478,8 +478,8 @@ export const emails = [
 		body: "Moin. Hab beim Fegen so nen roten Knet-Ball gefunden. Klebt unterm Heizkörper im Flur. Vermisst den wer? Wenn nicht, kriegt ihn mein Dackel.",
 		opts: [
 			{ btn: "Antwort: 'MEINER! Ich hol ihn ab!'", loot: "stressball", r: "Du rennst schnell runter zu Egon, bevor der Hund zuschnappt. Der Ball ist voller Staub, aber noch gut.", m: 5, f: 0, a: -5, c: 0, },
-			{ btn: "Antwort: 'Gönn ihn dem Dackel'", r: "Egon freut sich: 'Der Waldi dankt!'. Du hast ein gutes Werk getan. Der Dackel liebt dich jetzt.", m: 1, f: 5, a: 0, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Der Ball verschwindet im Dackel. Chance vertan.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Antwort: 'Gönn ihn dem Dackel'", r: "Egon freut sich: 'Der Waldi dankt!'. Du hast ein gutes Werk getan. Der Dackel liebt dich jetzt.", m: 2, f: 5, a: 0, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Der Ball verschwindet im Dackel. Chance vertan.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -490,8 +490,8 @@ export const emails = [
 		opts: [
 			{ btn: "Widerspruch einlegen", r: "Du schreibst eine zweiseitige Mail mit Gesetzes-Auszügen. HR antwortet nicht, aber du fühlst dich im Recht.", m: 15, f: -10, a: 20, c: 10 },
 			{ btn: "Krankenschein planen", r: "Wenn du nicht frei kriegst, bist du halt 'krank'. Du grinst böse und planst deinen 'Husten'.", m: 5, f: 10, a: -10, c: 0 },
-			{ btn: "Stillschweigend hinnehmen", r: "Du starrst die Wand an. Die Wand starrt zurück. Deine Seele stirbt ein wenig.", m: 1, f: 0, a: 10, c: -5, },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Stillschweigend hinnehmen", r: "Du starrst die Wand an. Die Wand starrt zurück. Deine Seele stirbt ein wenig.", m: 2, f: 0, a: 10, c: -5, },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -502,7 +502,7 @@ export const emails = [
 		opts: [
 			{ btn: "NEIN! Statische Aufladung!", r: "Du rennst hin. Katze weg, aber Server voller Haare. Chantal schmollt: 'Du hasst Tiere!'", m: 5, f: 0, a: 10, c: 0 },
 			{ btn: "Antwort: 'Klar, sieht super aus!'", r: "Das Bild geht viral. 'Firma setzt auf Cat-Content'. Kunden finden es unprofessionell, aber der Traffic steigt massiv. Der Chef ist verwirrt.", m: 2, f: 10, a: -5, c: 20 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Sie lädt es einfach hoch. Der Server überhitzt kurz darauf wegen Katzenhaaren im Lüfter. Du musst es später fixen.", m: 1, f: 0, a: 0, c: 20, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Sie lädt es einfach hoch. Der Server überhitzt kurz darauf wegen Katzenhaaren im Lüfter. Du musst es später fixen.", m: 2, f: 0, a: 0, c: 20, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -513,7 +513,7 @@ export const emails = [
 		opts: [
 			{ btn: "Mir selbst 5 Sterne geben", r: "Du klopfst dir selbst auf die Schulter. 'Guter Mann, dieser Müller.' Das System speichert: 'Exzellenter Mitarbeiter'.", m: 2, f: 5, a: -5, c: 0 },
 			{ btn: "Mir selbst 1 Stern geben", r: "Du bist ehrlich zu dir selbst. Das war ziemlicher Pfusch. Aber immerhin brennt es nicht mehr.", m: 2, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -524,7 +524,7 @@ export const emails = [
 		opts: [
 			{ btn: "Antwort: 'Das ist technisch unmöglich'", r: "Er nennt dich enttäuscht eine 'Innovationsbremse'. Dein Radar steigt, weil du 'keine Visionen hast'.",  m: 2, f: 0, a: 10, c: 10 },
 			{ btn: "Antwort: 'Geniale Idee, wird umgesetzt!'", r: "Du klebst einfach einen Sticker 'Blockchain Certified' auf den Wassertank. Er merkt den Unterschied nicht, findet den Kaffee aber plötzlich 'dezentraler'.", m: 2, f: 10, a: 0, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du tust so, als hättest du die Mail nie bekommen. Riskant. Wenn er morgen nachfragt, hast du ein echtes Problem.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du tust so, als hättest du die Mail nie bekommen. Riskant. Wenn er morgen nachfragt, hast du ein echtes Problem.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
 	{ 
@@ -534,8 +534,8 @@ export const emails = [
 		body: "Mo: Grünkohl mit Nutella \nDi: Pizza 'Hawaii' (nur Ananas, kein Schinken) \nMi: Überraschungseintopf (Reste von Mo+Di) \nDo: Schnitzel (vegan, aus Pappe) \nFr: Fischstäbchen-Auflauf",
 		opts: [
 			{ btn: "Ausdrucken & Warnen", r: "Du hängst den Plan als Warnung im Flur auf. Du hast Leben gerettet.", m: 2, f: 0, a: 5, c: 0,  },
-			{ btn: "Fastenwoche planen", r: "Du beschließt, diese Woche nichts zu essen. Dein Magen knurrt alleine an diesem Gedanken.", m: 1, f: 0, a: 5, c: 0 },
-			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+			{ btn: "Fastenwoche planen", r: "Du beschließt, diese Woche nichts zu essen. Dein Magen knurrt alleine an diesem Gedanken.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
     {
@@ -546,7 +546,7 @@ export const emails = [
         opts: [
             { btn: "Geständnis: 'Ich hatte Unterzucker.'", r: "Sandra schreit durch den Flur. Aber sie schätzt die Ehrlichkeit.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_yogurt_2" },
             { btn: "Lüge: 'Das war der Putzmann.'", r: "Du schiebst es auf Unschuldige. Dein Radar steigt.", m: 2, f: 0, a: -5, c: 10 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -557,7 +557,7 @@ export const emails = [
         body: "Unterzucker?! Das war mein Mittagessen! Du schuldest mir einen Döner. Mit Schafskäse. Sofort.",
         opts: [
             { btn: "Einen Döner anbieten", r: "Du wirst ihr in der nächsten Mittagspause einen Döner kaufen müssen. Frieden ist teuer.", m: 2, f: -5, a: -10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -568,7 +568,7 @@ export const emails = [
         opts: [
             { btn: "Die Musik leiser machen", r: "Du bist rücksichtsvoll. Langweilig, aber nett.", m: 2, f: 0, a: -5, c: 0 },
             { btn: "Die Musik Lauter drehen", r: "Jetzt hören sie es wenigstens in guter Qualität.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_noise_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -579,7 +579,7 @@ export const emails = [
         body: "Okay, das reicht. Ich habe gerade dein LAN-Kabel durchgeschnitten. Genieße die Stille.",
         opts: [
             { btn: "Mist.", r: "Kein Internet. Du musst so tun als würde es dich nicht stören.", m: 2, f: -5, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -591,7 +591,7 @@ export const emails = [
         opts: [
             { btn: "Ich setze auf 'Heute'", r: "Du bist dabei. Risiko!", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_bet_win" },
             { btn: "Ich setze auf 'Niemals'", r: "Optimist. Du verlierst sofort.", m: 2, f: 0, a: 0, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -602,7 +602,7 @@ export const emails = [
         body: "Alter! Er hat gerade im Meeting geweint, weil der Beamer nicht ging! Du hast den Pott gewonnen! Hier sind 20€ (in Kantinen-Gutscheinen).",
         opts: [
             { btn: "Das war leichter als gedacht.", r: "Du fühlst dich wie ein Orakel.", m: 2, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -614,7 +614,7 @@ export const emails = [
         opts: [
             { btn: "Ich wollte nur helfen!", r: "Kaffee ist doch Dünger, oder?", m: 2, f: 0, a: 0, c: 5, nextEmail: "mail_plant_2" },
             { btn: "Ich war's nicht.", r: "Lüge. Dein Becher steht noch daneben.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -624,8 +624,8 @@ export const emails = [
         subj: "Re: Mein Bonsai 🌳",
         body: "Du hast ihn umgebracht! Das war ein Erbstück! Er war 40 Jahre alt! Du Monster!",
         opts: [
-            { btn: "Ups.", r: "Gabi spricht nicht mehr mit dir. Endlich Ruhe am Empfang. Hoffentlich für eine Weile", m: 1, f: 5, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Ups.", r: "Gabi spricht nicht mehr mit dir. Endlich Ruhe am Empfang. Hoffentlich für eine Weile", m: 2, f: 5, a: 5, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -636,7 +636,7 @@ export const emails = [
         body: "Hallo Team, hier ist der Plan, wie wir die Kunden über den Tisch ziehen. Bitte NICHT weiterleiten!",
         opts: [
             { btn: "Reply All: 'Klingt illegal.'", r: "Du hast das an alle Kunden im CC geschickt...", m: 2, f: 0, a: 20, c: 20, nextEmail: "mail_cc_fail_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 5, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 5, ignoreEmail: true }
         ]
     },
     {
@@ -647,7 +647,7 @@ export const emails = [
         body: "Herr Müller, erscheinen Sie sofort im Büro. Bringen Sie Ihren Anwalt mit. Und einen Karton für Ihre Sachen.",
         opts: [
             { btn: "War schön mit euch.", r: "Maximaler Stress.", m: 5, f: -20, a: 30, c: 40 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -659,7 +659,7 @@ export const emails = [
         opts: [
             { btn: "Ich bin der glücklickste Mitarbeiter hier. 10!", r: "Du lügst das System an. Der Bot freut sich.", f: 5, a: -5, c: 0, nextEmail: "mail_survey_2" },
             { btn: "Ich warte immer noch auf den Termin des Betriebs-Therapeuten. 1!", r: "Fehler: Wert nicht zulässig.", f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -670,7 +670,7 @@ export const emails = [
         body: "Toll! Da Sie so glücklich sind, haben wir Ihre Gehaltserhöhung gestrichen. Glückliche Mitarbeiter brauchen kein Geld!",
         opts: [
             { btn: "Ich hasse euch.", r: "Ironie des Schicksals.", m: 2, f: 0, a: 15, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -682,7 +682,7 @@ export const emails = [
         opts: [
             { btn: "Ich repariere das.", r: "Du opferst dich für das Team.", m: 10, f: -10, a: -10, c: 0, nextEmail: "mail_coffee_2" },
             { btn: "Ich trinke Tee.", r: "Du Monster.", m: 2, f: 5, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -692,8 +692,8 @@ export const emails = [
         subj: "DANKE!!",
         body: "Du bist unser Held! Der Kaffee fließt wieder! Wir würden dir ein Denkmal bauen, haben aber kein Budget.",
         opts: [
-            { btn: "Gern geschehen.", r: "Du fühlst dich gebraucht. Du fühlst dich für den Moment besser.", m: 1, f: 0, a: -20, c: -10 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Gern geschehen.", r: "Du fühlst dich gebraucht. Du fühlst dich für den Moment besser.", m: 2, f: 0, a: -20, c: -10 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -705,7 +705,7 @@ export const emails = [
         opts: [
             { btn: "Bin dabei! (10€)", r: "Die Hoffnung stirbt zuletzt.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_lottery_2" },
             { btn: "Glücksspiel ist Sünde.", r: "Du sparst Geld und Spaß.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -715,8 +715,8 @@ export const emails = [
         subj: "Ergebnis...",
         body: "Wir haben gewonnen! ... 12,50€. Jeder bekommt 40 Cent zurück. Wir bleiben wohl doch hier. Arbeitet weiter.",
         opts: [
-            { btn: "Na toll.", r: "Die Realität kickt rein.", m: 1, f: -5, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Na toll.", r: "Die Realität kickt rein.", m: 2, f: -5, a: 5, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -726,9 +726,9 @@ export const emails = [
         subj: "Tacker ausgeliehen",
         body: "Hii, hab mir kurz deinen Tacker geborgt. Meiner ist... irgendwie explodiert. Bringe ihn gleich zurück!",
         opts: [
-            { btn: "Das war gestern!", r: "Du forderst dein Eigentum zurück.", m: 1, f: 0, a: 5, c: 0, nextEmail: "mail_borrow_2" },
-            { btn: "Behalt ihn.", r: "Du hast eh nichts zu tackern und das Ding noch nie verwendet.", m: 1, f: 5, a: 0, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Das war gestern!", r: "Du forderst dein Eigentum zurück.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_borrow_2" },
+            { btn: "Behalt ihn.", r: "Du hast eh nichts zu tackern und das Ding noch nie verwendet.", m: 2, f: 5, a: 0, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -738,8 +738,8 @@ export const emails = [
         subj: "Re: Tacker ausgeliehen",
         body: "Ups... 😬 Er ist mir ins Klo gefallen. Sorryyy! Ich kauf dir einen neuen! (Irgendwann)",
         opts: [
-            { btn: "Atmen...", r: "Deine Aggro steigt leicht. Chantal ist dein Erzfeind.", m: 1, f: 0, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Atmen...", r: "Deine Aggro steigt leicht. Chantal ist dein Erzfeind.", m: 2, f: 0, a: 10, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -749,7 +749,7 @@ export const emails = [
         body: "Hallo, ich musste Staubsaugen. Habe den Stecker von dem lauten Kasten mit den vielen Lichtern gezogen. Ist jetzt schön leise. Hoffe okay?",
         opts: [
             { btn: "Lauf zum Serverraum!", r: "Panik! Das war der Hauptserver!", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_cleaner_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Wahrscheinlich war es nur die Kaffeemaschine.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Wahrscheinlich war es nur die Kaffeemaschine.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -760,7 +760,7 @@ export const emails = [
         body: "Server 'BACKUP_MASTER' nicht erreichbar. Uptime: 0 Sekunden. Datenverlust droht.",
         opts: [
             { btn: "Weinen.", r: "Der Tag ist gelaufen. Olga hat die Firma gelöscht.", m: 5, f: -20, a: 20, c: 20 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -771,8 +771,8 @@ export const emails = [
         body: "Hallo Herr Müller, ich sitze in einem geheimen Meeting. Bitte kaufen Sie sofort 10x 100€ Apple Gift Cards und schicken Sie mir die Codes. Sagen Sie niemandem etwas!",
         opts: [
             { btn: "Alles klar, Chef! Die Codes kommen gleich", r: "Du fällst auf den ältesten Trick rein.", m: 5, f: 0, a: 5, c: 5, nextEmail: "mail_ceo_scam_fail" },
-            { btn: "Antwort: 'Netter Versuch.'", r: "Du hast den Betrüger durchschaut.", m: 1, f: 0, a: -5, c: 0, nextEmail: "mail_ceo_scam_win" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Antwort: 'Netter Versuch.'", r: "Du hast den Betrüger durchschaut.", m: 2, f: 0, a: -5, c: 0, nextEmail: "mail_ceo_scam_win" },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -783,7 +783,7 @@ export const emails = [
         body: "Warum bucht die Buchhaltung 1000€ von Ihrer Kostenstelle ab?! Kommen Sie in mein Büro. Sofort.",
         opts: [
             { btn: "Oh nein.", r: "Das wird teuer für dich.", m: 2, f: 0, a: 20, c: 20 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -794,7 +794,7 @@ export const emails = [
         body: "F*** dich du kleiner IT-Nerd! Ich finde dich!",
         opts: [
             { btn: "Zufrieden lächeln und Daumen Hoch antworten.", r: "Ein Sieg für die Intelligenz.", m: 2, f: 5, a: -5, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -805,8 +805,8 @@ export const emails = [
         body: "Einladung: Wir wollen 20 Minuten lang über unsere Gefühle tanzen. Anwesenheitspflicht für alle!",
         opts: [
             { btn: "Teilnehmen", r: "Du tanzt deinen Namen. Es ist erniedrigend, aber entspannend. Der Chef sucht dich währenddessen", m: 20, f: 20, a: -10, c: 20, nextEmail: "mail_meeting_2" },
-            { btn: "Absagen: 'Server brennt'", r: "Du drückst dich vor der Arbeit.", m: 1, f: 0, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Absagen: 'Server brennt'", r: "Du drückst dich vor der Arbeit.", m: 2, f: 0, a: 0, c: 5 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -816,8 +816,8 @@ export const emails = [
         subj: "Feedback Runde",
         body: "Toll, wie du dich geöffnet hast! Deine Aura war sehr... grau. Wir müssen an deinem Chakra arbeiten.",
         opts: [
-            { btn: "Lass mich in Ruhe.", r: "Nie wieder.", m: 1, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Lass mich in Ruhe.", r: "Nie wieder.", m: 2, f: 0, a: 5, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -829,7 +829,7 @@ export const emails = [
         opts: [
             { btn: "Ansehen", r: "Du lachst. Aber das Netzwerk lahmt.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "Absender sperren", r: "Das Netzwerk ist dir heilig. Der User ist sauer.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_video_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -840,7 +840,7 @@ export const emails = [
         body: "Ich kann keine Mails mehr senden! Hast du was gemacht? Ich wollte nur Freude verbreiten!",
         opts: [
             { btn: "Freude ist verboten. Wie schreibst du mir überhaupt, wenn du geblockt bist?", r: "Du fühlst dich wie ein Diktator. Gut.", m: 2, f: 0, a: -5, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -852,7 +852,7 @@ export const emails = [
         opts: [
             { btn: "Hose ausziehen", r: "Unter dem Tisch sieht es keiner. (Hoffentlich).", m: 2, f: 10, a: -5, c: 10, nextEmail: "mail_ac_pants" },
             { btn: "Leiden", r: "Du schwitzt auf die Tastatur.", m: 2, f: -10, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -862,8 +862,8 @@ export const emails = [
         subj: "Kleiderordnung",
         body: "Herr Müller, wir haben Beschwerden erhalten. Bitte ziehen Sie Ihre Hose wieder an. Das hier ist kein FKK-Strand.",
         opts: [
-            { btn: "Schade.", r: "Es war so schön luftig.", m: 1, f: -5, a: 5, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Schade.", r: "Es war so schön luftig.", m: 2, f: -5, a: 5, c: 5 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -874,8 +874,8 @@ export const emails = [
         body: "Ein Schlüsselbund mit einem 'My Little Pony' Anhänger wurde gefunden. Wem gehört der?",
         opts: [
             { btn: "Das ist meiner!", r: "Peinlich. Du holst ihn rot angelaufen ab.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_key_2" },
-            { btn: "Schweigen", r: "Du kommst heute nicht in deine Wohnung.", m: 1, f: 0, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Schweigen", r: "Du kommst heute nicht in deine Wohnung.", m: 2, f: 0, a: 10, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -885,8 +885,8 @@ export const emails = [
         subj: "Re: Schlüssel gefunden",
         body: "Hier ist er. Süßer Anhänger. Passt zu dir. *kicher*",
         opts: [
-            { btn: "Er gehört meiner Nichte!", r: "Lüge. Gabi glaubt dir kein Wort.", m: 1, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Er gehört meiner Nichte!", r: "Lüge. Gabi glaubt dir kein Wort.", m: 2, f: 0, a: 5, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -898,7 +898,7 @@ export const emails = [
         opts: [
             { btn: "Alles in S/W drucken", r: "Die Welt ist grau. Deine Seele auch.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Trotzdem Farbe drucken", r: "Rebellion! Du druckst ein Regenbogen-Bild.", m: 2, f: 5, a: -5, c: 5, nextEmail: "mail_print_color_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -908,8 +908,8 @@ export const emails = [
         subj: "Gehaltsabrechnung Korrektur",
         body: "Abzug für private Farbdrucke (Motiv: Regenbogen): 0,05€. Wir haben Sie im Auge.",
         opts: [
-            { btn: "Das war es wert.", r: "Du hängst das Bild stolz auf.", m: 1, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Das war es wert.", r: "Du hängst das Bild stolz auf.", m: 2, f: 5, a: -5, c: 0 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -921,7 +921,7 @@ export const emails = [
         opts: [
             { btn: "Ja, ich liebe Hunde!", r: "Bello kommt. Er riecht streng.", m: 2, f: 5, a: -5, c: 0, nextEmail: "mail_dog_bite" },
             { btn: "Nein, Allergie.", r: "Chantal ist beleidigt.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -932,7 +932,7 @@ export const emails = [
         body: "Sorry, dass er dein LAN-Kabel gefressen und dich gebissen hat. Er hat wohl deine Angst (vor Arbeit) gerochen!",
         opts: [
             { btn: "Arzt rufen.", r: "Du brauchst ein Pflaster und ein neues Kabel.", m: 2, f: -10, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -944,7 +944,7 @@ export const emails = [
         opts: [
             { btn: "Meine Dose holen", r: "Du entsorgst das Experiment in Bio-Hazard Manier.", m: 5, f: -5, a: 0, c: 0, nextEmail: "mail_fridge_2" },
             { btn: "Nicht mein Problem", r: "Du hoffst, dass es nicht deine Dose ist.", m: 2, f: 0, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -955,7 +955,7 @@ export const emails = [
         body: "Danke fürs Entsorgen. Wir dachten kurz, es greift uns an. Der Kühlschrank ist wieder sicher.",
         opts: [
             { btn: "Held der Arbeit.", r: "Du hast die Menschheit gerettet.", m: 2, f: 5, a: -5, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -967,7 +967,7 @@ export const emails = [
         opts: [
             { btn: "PC sofort vom Netz nehmen!", r: "Du rennst zu Horst und ziehst den Stecker.", m: 5, f: -10, a: 10, c: -10, nextEmail: "mail_software_2" },
             { btn: "Mach nur...", r: "Du willst die Welt brennen sehen.", m: 2, f: 5, a: -10, c: 20 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -978,7 +978,7 @@ export const emails = [
         body: "145 Viren, 20 Trojaner und 1 Krypto-Miner entfernt. Horst hat Schreibverbot für 24 Stunden.",
         opts: [
             { btn: "Gut so.", r: "Ein weiterer Sieg für die IT.", m: 2, f: 0, a: -5, c: -10 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -989,7 +989,7 @@ export const emails = [
         opts: [
             { btn: "Ich bin mutig! (Essen)", r: "Es schmeckt nach Fisch und Pudding.", m: 5, f: 0, a: 10, c: 0, nextEmail: "mail_canteen_2" },
             { btn: "Ich faste lieber.", r: "Du hungerst. Dein Magen knurrt laut.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1000,7 +1000,7 @@ export const emails = [
         body: "Kleine Warnung: Falls Sie Halluzinationen bekommen, das ist normal. Das liegt am Pilz-Risotto vom Montag.",
         opts: [
             { btn: "Die Wände schmelzen...", r: "Du bist für 30 Minuten 'arbeitsunfähig' (high).", m: 30, f: 15, a: -5, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -1012,7 +1012,7 @@ export const emails = [
         opts: [
             { btn: "Mitmachen (Tanzen)", r: "Du machst dich zum Affen. Chantal filmt alles.", m: 10, f: 5, a: 5, c: 0, nextEmail: "mail_tiktok_2" },
             { btn: "Verstecken", r: "Du schließt dich im Klo ein.", m: 10, f: 0, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1023,7 +1023,7 @@ export const emails = [
         body: "OMG! Dein 'Roboter-Tanz' hat 1 Million Views! Die Kommentare fragen, ob wir Hilfe brauchen. Aber: Fame ist Fame!",
         opts: [
             { btn: "Ich will Tantiemen.", r: "Du bist jetzt das Gesicht der Firma (leider).", m: 2, f: 0, a: -10, c: 10 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -1035,7 +1035,7 @@ export const emails = [
         opts: [
             { btn: "Sofort zurücküberweisen", r: "Ehrlich währt am längsten. Langweiler.", m: 2, f: 0, a: -5, c: 5, nextEmail: "mail_salary_honest" },
             { btn: "Geld behalten & schweigen", r: "Du buchst sofort einen Flug auf die Malediven.", m: 2, f: 0, a: 0, c: -20, nextEmail: "mail_salary_fraud" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1046,7 +1046,7 @@ export const emails = [
         body: "Danke für die Ehrlichkeit. Als Belohnung bekommen Sie einen Firmen-Kugelschreiber (sobald ausreichend Budget da ist).",
         opts: [
             { btn: "Juhu...", r: "Du fühlst dich moralisch überlegen, aber arm.", m: 2, f: 0, a: 0, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1057,7 +1057,7 @@ export const emails = [
         body: "Wir wissen, dass Sie das Geld haben. Wir pfänden jetzt Ihren Bürostuhl und Ihre Kaffeetasse.",
         opts: [
             { btn: "Mist.", r: "Du sitzt jetzt auf dem Boden.", m: 2, f: -5, a: 15, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -1069,7 +1069,7 @@ export const emails = [
         opts: [
             { btn: "Abschleppdienst rufen", r: "Ordnung muss sein!", m: 5, f: -5, a: -5, c: 0, nextEmail: "mail_charging_tow" },
             { btn: "Zettel dran: 'Idiot'", r: "Passiv-aggressiv ist dein Stil.", m: 5, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1080,7 +1080,7 @@ export const emails = [
         body: "Hömma! Wer hat meine Karre abschleppen lassen?! Ich wollte doch nur kurz Brötchen holen! Komm du mir nach unten!",
         opts: [
             { btn: "Verstecken.", r: "Du hast dich mit Egon angelegt. Schlechte Idee.", m: 10, f: 5, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 
@@ -1092,7 +1092,7 @@ export const emails = [
         opts: [
             { btn: "Modus: 'Disco Strobe'", r: "Alles blinkt bunt. Kollegen bekommen Anfälle.", m: 2, f: 10, a: -5, c: 0, nextEmail: "mail_lights_disco" },
             { btn: "Modus: 'Dunkelkammer'", r: "Licht aus. Zeit für ein Nickerchen.", m: 2, f: 15, a: 0, c: 5, nextEmail: "mail_lights_dark" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1103,7 +1103,7 @@ export const emails = [
         body: "Wer macht hier Party?! Ich versuche zu telefonieren! Schalten Sie das sofort aus, oder ich schalte SIE aus!",
         opts: [
             { btn: "Sorry, Finger abgerutscht.", r: "Schnell wieder auf 'Langweilig-Weiß' stellen.", m: 2, f: 0, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1114,7 +1114,7 @@ export const emails = [
         body: "Es ist stockdunkel. Ich bin gerade gegen den Kopierer gelaufen. Bist du noch da?",
         opts: [
             { btn: "Pscht, ich schlafe.", r: "Du genießt die Dunkelheit.", m: 2, f: 10, a: 0, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1125,7 +1125,7 @@ export const emails = [
         opts: [
             { btn: "NEIN!!! UM GOTTES WILLEN!", r: "Du rennst los.", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_intern_db_panic" },
             { btn: "Sarkasmus: 'Klar, mach mal.'", r: "Du denkst, er versteht den Witz.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_intern_db_fail" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1136,7 +1136,7 @@ export const emails = [
         body: "Puh, okay. Hab auf 'Abbrechen' geklickt. Aber jetzt ist der Bildschirm blau. Ist das gut?",
         opts: [
             { btn: "Besser als gelöscht.", r: "Nur ein Absturz. Glück gehabt.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1147,7 +1147,7 @@ export const emails = [
         body: "Tabelle 'Customers' enthält 0 Einträge. Letztes Backup: 1999.",
         opts: [
             { btn: "Ich kündige.", r: "Pack deine Sachen.", m: 10, f: 0, a: 50, c: -20 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1158,7 +1158,7 @@ export const emails = [
         opts: [
             { btn: "Akzeptieren", r: "Du schläfst für einen Moment ein.", m: 15, f: 10, a: 0, c: 0 },
             { btn: "Schmuggelware organisieren", r: "Du dealst mit Red Bull auf dem Herrenklo.", m: 5, f: -5, a: -5, c: 10, nextEmail: "mail_coffee_decaf_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1169,7 +1169,7 @@ export const emails = [
         body: "Ich hab gehört, du hast echtes Koffein? Ich zahle jeden Preis! Meine Hände zittern schon!",
         opts: [
             { btn: "5€ pro Dose.", r: "Du wirst zum Drogenbaron des Büros.", m: 2, f: 0, a: -10, c: 15 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1180,7 +1180,7 @@ export const emails = [
         opts: [
             { btn: "Zettel essen", r: "Beweismittel vernichtet. Schmeckt nach Papier und Angst.", m: 2, f: 0, a: 5, c: -5, nextEmail: "mail_dsgvo_eaten" },
             { btn: "Lüge: 'Das ist ein WLAN-Code'", r: "Er glaubt es nicht, aber lässt dich in Ruhe.", m: 2, f: 0, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1190,8 +1190,8 @@ export const emails = [
         subj: "Re: DSGVO Verstoß",
         body: "Haben Sie den Zettel gerade... verschluckt? Ich bin beeindruckt von Ihrer Hingabe. Fall geschlossen.",
         opts: [
-            { btn: "*Rülps*", r: "Verdauungsstörungen, aber der Job ist sicher.", m: 1, f: 0, a: -5, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "*Rülps*", r: "Verdauungsstörungen, aber der Job ist sicher.", m: 2, f: 0, a: -5, c: -5 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1202,7 +1202,7 @@ export const emails = [
         opts: [
             { btn: "Antwort: 'Bullshit-Bingo!'", r: "Du schickst ihm eine ausgefüllte Bingokarte.", m: 2, f: 5, a: -5, c: 5, nextEmail: "mail_buzzword_fail" },
             { btn: "Antwort: 'Bin total committed.'", r: "Du stirbst innerlich, aber er ist glücklich.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1212,8 +1212,8 @@ export const emails = [
         subj: "Re: Quick Sync",
         body: "Sehr witzig. Deine Attitude ist nicht gerade 'Customer Centric'. Wir sprechen uns im Jahresgespräch.",
         opts: [
-            { btn: "Whatever.", r: "Buzzwords können dir nichts anhaben.", m: 1, f: 0, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Whatever.", r: "Buzzwords können dir nichts anhaben.", m: 2, f: 0, a: 0, c: 5 },
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1224,7 +1224,7 @@ export const emails = [
         opts: [
             { btn: "Ich bin erst 28?!", r: "Du mailst wütend zurück.", m: 2, f: 0, a: 10, c: 0, nextEmail: "mail_birthday_fix" },
             { btn: "Apfel holen", r: "Gratis ist Gratis. Auch wenn du jetzt offiziell alt bist.", m: 5, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1235,7 +1235,7 @@ export const emails = [
         body: "Änderung des Geburtsdatums erfordert Formular A38, notariell beglaubigt. Bearbeitungszeit: 6 Monate.",
         opts: [
             { btn: "Ich hasse euch.", r: "Du gibst auf und alterst vor Stress.", m: 2, f: 0, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1246,7 +1246,7 @@ export const emails = [
         opts: [
             { btn: "Ernsthaft? 'Leg sie hin.'", r: "Du erklärst ihm die Physik.", m: 5, f: 0, a: 5, c: 0, nextEmail: "mail_mouse_2" },
             { btn: "Kauf dir eine neue.", r: "Nicht dein Budget, nicht dein Problem.", m: 2, f: 5, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1257,7 +1257,7 @@ export const emails = [
         body: "Es geht!! Sie sind ein Magier! Ich dachte, das ist wie bei der Fernbedienung!",
         opts: [
             { btn: "Kopf -> Tisch.", r: "Der Glaube an die Menschheit sinkt.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1268,7 +1268,7 @@ export const emails = [
         opts: [
             { btn: "Fenster bleibt auf!", r: "Frischluft ist ein Menschenrecht.", m: 2, f: 0, a: -5, c: 5, nextEmail: "mail_temperature_war" },
             { btn: "Fenster zu (Erstickunsgefahr)", r: "Der Sauerstoffgehalt sinkt auf 0%. Du wirst müde.", m: 10, f: 10, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1279,7 +1279,7 @@ export const emails = [
         body: "Dann drehe ich die Heizung auf 5! Das hast du davon!",
         opts: [
             { btn: "Sauna-Krieg.", r: "Es beginnt. Keiner arbeitet mehr, alle schwitzen.", m: 2, f: 5, a: 15, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1290,7 +1290,7 @@ export const emails = [
         opts: [
             { btn: "Drucki McPrintface", r: "Klassiker. Alle lachen.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "The Beast", r: "Passend. Er sieht böse aus.", m: 2, f: 0, a: 0, c: 0, nextEmail: "mail_printer_beast" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1301,7 +1301,7 @@ export const emails = [
         body: "Der Drucker heißt jetzt 'The Beast'. Er hat zur Feier des Tages sofort Toner auf den Teppich gespuckt.",
         opts: [
             { btn: "Passender Name.", r: "Du nickst respektvoll.", m: 2, f: 0, a: 0, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1312,7 +1312,7 @@ export const emails = [
         opts: [
             { btn: "JA! MEINE AUGEN!", r: "Endlich nicht mehr schneeblind.", m: 2, f: 5, a: -5, c: 0, nextEmail: "mail_darkmode_win" },
             { btn: "Nein, ich mag Weiß.", r: "Du Monster. Alle Entwickler hassen dich.", m: 2, f: 0, a: 5, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1323,7 +1323,7 @@ export const emails = [
         body: "Alles ist jetzt schwarz. Leider auch die Schriftfarbe. Wir arbeiten dran.",
         opts: [
             { btn: "Ich sehe nichts..", r: "Aber es sieht cool aus.", m: 2, f: 10, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1334,7 +1334,7 @@ export const emails = [
         opts: [
             { btn: "Klopapier einpacken", r: "Ein praktisches Geschenk. Mutig.", m: 5, f: 0, a: -5, c: 10, nextEmail: "mail_santa_fail" },
             { btn: "Schokolade kaufen", r: "Langweilig, aber sicher.", m: 5, f: -5, a: 0, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1345,7 +1345,7 @@ export const emails = [
         body: "Müller? War das eine Anspielung auf meine Arbeitsweise? Kommen Sie in mein Büro.",
         opts: [
             { btn: "Ups.", r: "Das war vielleicht zu mutig.", m: 5, f: 0, a: 20, c: 10 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1355,7 +1355,7 @@ export const emails = [
         body: "Hallo mein Freund. Ich habe 50 Millionen Goldbarren. Ich brauche dein Konto. 50/50 Split?",
         opts: [
             { btn: "Antwort: 'Schick erst Probe!'", r: "Du trollst den Scammer.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_scam_prince_2" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1366,7 +1366,7 @@ export const emails = [
         body: "Okay, ich habe dir 1 Cent überwiesen. Vertraust du mir jetzt? Bitte Sende Passwort.",
         opts: [
             { btn: "Er hat wirklich überwiesen!", r: "Du bist 1 Cent reicher. Profit.", m: 2, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1377,7 +1377,7 @@ export const emails = [
         opts: [
             { btn: "Das ist mein Dienstwagen.", r: "Du bist zu faul zum Laufen.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_parking_scooter_2" },
             { btn: "Rausschmeißen", r: "Du wirfst den Roller aus dem Fenster.", m: 5, f: 0, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1388,7 +1388,7 @@ export const emails = [
         body: "Hab ihn ans WLAN angeschlossen. Er lädt jetzt Updates runter und blockiert die Leitung. Dein Problem.",
         opts: [
             { btn: "Mist.", r: "Das Internet ist tot wegen eines Rollers.", m: 2, f: -5, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1399,7 +1399,7 @@ export const emails = [
         opts: [
             { btn: "NIEMALS! (Pro Schnitzel)", r: "Du kämpfst für dein Fleisch. Die IT steht hinter dir.", m: 2, f: 0, a: -5, c: 0, nextEmail: "mail_vegan_schnitzel" },
             { btn: "Ja, Tofu ist super.", r: "Alle hassen dich. Wirklich alle.", m: 2, f: 0, a: 15, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1410,7 +1410,7 @@ export const emails = [
         body: "Das Schnitzel bleibt! Aber es kostet jetzt 9,50€ (Klimazuschlag).",
         opts: [
             { btn: "Ein teurer Sieg.", r: "Hauptsache paniert.", m: 2, f: 5, a: 0, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1421,7 +1421,7 @@ export const emails = [
         opts: [
             { btn: "Meine 40 Stück zurückgeben", r: "Du leerst deine Schublade. Es klappert laut.", m: 5, f: 0, a: 0, c: 5, nextEmail: "mail_pen_thief_2" },
             { btn: "Ich weiß von nichts.", r: "Du baust eine Burg aus Stiften.", m: 2, f: 5, a: 0, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1432,7 +1432,7 @@ export const emails = [
         body: "Danke für die Rückgabe. Warum waren die alle angekaut?! Wir werfen sie weg.",
         opts: [
             { btn: "Ich war nervös.", r: "Peinlich.", m: 2, f: 0, a: 5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1443,7 +1443,7 @@ export const emails = [
         opts: [
             { btn: "Ohrstöpsel rein", r: "Du ignorierst alles. Profi.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "Um 14:00 'FEUER!' schreien", r: "Du sorgst für realistische Bedingungen.", m: 5, f: 0, a: 0, c: 10, nextEmail: "mail_fire_chaos" },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1454,7 +1454,7 @@ export const emails = [
         body: "Dank Herrn Müller sind 3 Kollegen in den Brunnen gesprungen. Die Übung war ein 'voller Erfolg'.",
         opts: [
             { btn: "Gern geschehen.", r: "Sicherheit geht vor.", m: 2, f: 0, a: -10, c: -5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1465,7 +1465,7 @@ export const emails = [
         opts: [
             { btn: "Fake-Lachen antworten", r: "Du schreibst 'LOL Günther!'. Deine Seele stirbt.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Günther blockieren", r: "Endlich Ruhe.", m: 2, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1476,7 +1476,7 @@ export const emails = [
         opts: [
             { btn: "Excel ausfüllen", r: "Du tippst: '09:00 - Pipi'. Erniedrigend.", m: 5, f: -10, a: 15, c: 0, nextEmail: "mail_consultant_2" },
             { btn: "Excel fälschen", r: "Du schreibst, du gehst nie. Du bist ein Roboter.", m: 2, f: 5, a: 0, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1487,7 +1487,7 @@ export const emails = [
         body: "Sie gehen zu oft. Wir empfehlen einen Katheter am Arbeitsplatz, um die Effizienz um 2% zu steigern.",
         opts: [
             { btn: "Ich kündige gleich.", r: "Aggro am Limit.", m: 2, f: 0, a: 20, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1497,7 +1497,7 @@ export const emails = [
         body: "Ihr ferner Onkel ist gestorben. Er hinterlässt Ihnen eine Diamantenmine. Bitte überweisen Sie 500€ Gebühr.",
         opts: [
             { btn: "Seems legit. (Zahlen)", r: "Du bist so dumm.", m: 2, f: 0, a: 20, c: -20 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du bist ja nicht blöd.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du bist ja nicht blöd.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1508,7 +1508,7 @@ export const emails = [
         opts: [
             { btn: "Rieche ich das?", r: "Du schnupperst an dir. Vielleicht?", m: 2, f: 0, a: 5, c: 5, nextEmail: "mail_smell_2" },
             { btn: "Das ist Kevin.", r: "Es ist immer Kevin.", m: 2, f: 5, a: -5, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1519,7 +1519,7 @@ export const emails = [
         body: "Ja, Sie sind es. Deo hilft. Danke.",
         opts: [
             { btn: "Autsch.", r: "Das hat wehgetan. Selbstwertgefühl sinkt.", m: 2, f: 0, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1530,7 +1530,7 @@ export const emails = [
         opts: [
             { btn: "Krankmelden", r: "Plötzlich hast du 'Rücken'.", m: 2, f: 10, a: -5, c: 0 },
             { btn: "Ich nehme ein Messer mit.", r: "Du bist bereit für die 'Hunger Games'.", m: 2, f: 0, a: 5, c: 5 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
     {
@@ -1541,7 +1541,7 @@ export const emails = [
         opts: [
             { btn: "Drucker schlagen", r: "Es hilft nicht, aber tut gut.", m: 5, f: 0, a: 5, c: 0 },
             { btn: "Mit Kugelschreiber abschreiben", r: "Zurück ins Mittelalter.", m: 10, f: -10, a: 10, c: 0 },
-            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 1, f: 0, a: 0, c: 10, ignoreEmail: true }
+            { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
 

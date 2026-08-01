@@ -130,6 +130,34 @@ for (const p of POOLS) {
   }
 }
 
+/* ---------- 2c) Zahlen-Raster + Zeit-Wirkung ---------- */
+// Die Statusbalken bewegen sich in 5er-Schritten (Ruf darf feiner sein),
+// keine Aktion dauert unter 2 Minuten, und teure Zeit ohne spürbare Wirkung
+// ist ein Gratis-Vorspuler Richtung Feierabend — Balancing-Gift im Roguelike.
+const numCheck = (o, ctx) => {
+  const m = o.m ?? o.min;
+  for (const k of ['f', 'a', 'c']) {
+    const v = o[k];
+    if (typeof v === 'number' && v % 5 !== 0) warn(`${ctx}: ${k}:${v} liegt nicht im 5er-Raster`);
+  }
+  if (typeof m === 'number') {
+    if (m < 0) info(`${ctx}: m:${m} — Zeit-Gutschrift (absichtliche Belohnung?)`);
+    else if (m < 2) err(`${ctx}: m:${m} — keine Aktion dauert unter 2 Minuten`);
+    const impact = Math.abs(o.f || 0) + Math.abs(o.a || 0) + Math.abs(o.c || 0);
+    if (m >= 15 && impact < 10 && !o.loot && !o.rep)
+      warn(`${ctx}: m:${m} bei Gesamtwirkung ${impact} — Gratis-Vorspuler ohne Konsequenz`);
+  }
+};
+for (const p of POOLS) {
+  for (const ev of DB[p]) {
+    const ctx = `[${p}/${ev.id}]`;
+    (ev.opts ?? []).forEach((o, i) => numCheck(o, `${ctx} opts[${i}]`));
+    for (const [nid, node] of Object.entries(ev.nodes ?? {})) (node.opts ?? []).forEach((o, i) => numCheck(o, `${ctx}#${nid}[${i}]`));
+    for (const [rid, res] of Object.entries(ev.results ?? {})) numCheck(res, `${ctx}!${rid}`);
+  }
+}
+for (const e of DB.emails) (e.opts ?? []).forEach((o, i) => numCheck(o, `[emails/${e.id}] opts[${i}]`));
+
 /* ---------- 3) E-Mails ---------- */
 const mailIdSeen = new Map();
 const subjSeen = new Map();

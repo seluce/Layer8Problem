@@ -5,6 +5,11 @@ Diese Version ist in erster Linie ein technischer Umbau: Die Grundlage unter dem
 Neuerungen:
 * Einundzwanzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
 
+Spielbalance:
+* Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
+* Lange Aktionen haben jetzt durchgehend spürbare Folgen. Wer sich zwanzig Minuten aus einer Situation herausredet, kassiert dafür Faulheit; wer Nerviges erledigt, Aggro; wer dem Chef auffällt, Radar. Zeit absitzen ohne Konsequenz gibt es nicht mehr.
+* Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.
+
 Anzeige & Layout:
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
 * Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
@@ -36,6 +41,7 @@ Für Entwickler:
 * STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
 * Das E-Mail-System merkt sich bereits eingetroffene Mails jetzt anhand ihrer ID statt anhand des Betreffs - dieselbe Logik wie bei allen anderen Ereignissen. Zwei Mails mit gleichem Betreff hätten sich bislang stillschweigend gegenseitig blockiert, eine davon wäre nie erschienen. Der Daten-Prüfer meldet doppelte Mail-IDs deshalb nun als Fehler; gleiche Betreffs sind nur noch ein kosmetischer Hinweis.
 * Der Daten-Prüfer schlägt jetzt Alarm, wenn sämtliche Antworten eines Ereignisses einen Gegenstand voraussetzen oder verbrauchen - genau die Konstellation, die ein Ereignis unlösbar machen kann. Die Prüfung greift auch in den Zwischenschritten verzweigter Ereignisse.
+* Der Daten-Prüfer wacht außerdem über die Balancing-Grundregeln: Statusänderungen im 5er-Raster, Mindestdauer von zwei Minuten und keine teuren Antworten ohne spürbare Wirkung. Zeit-Gutschriften als bewusste Belohnung bleiben erlaubt und werden nur aufgelistet.
 
 [3.7.0] - 2026-07-28
 
