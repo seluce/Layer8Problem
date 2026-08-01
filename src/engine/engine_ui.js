@@ -1,3 +1,4 @@
+import { KEYS } from './keys.js';
 import { DB } from '../data.js';
 import { platform } from '../platform.js';
 
@@ -20,8 +21,23 @@ export const ui = {
             const randomIndex = Math.floor(Math.random() * DB.newsTicker.length);
             this.state.activeNewsText = DB.newsTicker[randomIndex];
             this.state.lastNewsTime = this.state.time;
-            this.renderHeader(); 
+            this.renderHeader();
         }
+    },
+
+    // How long a ticker takes to cross the screen.
+    //
+    // It used to be a flat 30 seconds regardless of length, so the longest
+    // headline (386 characters) scrolled almost twice as fast as the shortest
+    // (206) — exactly backwards for reading. Scaling with the text keeps the
+    // speed constant instead.
+    //
+    // Both the animation and the timeout that clears the news read this, so
+    // they cannot drift apart.
+    newsDuration: function(text) {
+        const BASE_MS = 7000;        // time to traverse the empty panel
+        const MS_PER_CHAR = 95;      // roughly 6px per character at 65px/s
+        return BASE_MS + (text?.length ?? 0) * MS_PER_CHAR;
     },
 
     // The header line is components/TerminalHeader.svelte; this only decides
@@ -32,7 +48,7 @@ export const ui = {
         if (this.state.newsTimer) clearTimeout(this.state.newsTimer);
         this.state.newsTimer = setTimeout(() => {
             this.state.activeNewsText = null;
-        }, 30000);
+        }, this.newsDuration(this.state.activeNewsText));
     },
 
     updateUI: function() {
@@ -760,6 +776,9 @@ export const ui = {
             // Step 2: execute.
             // This used to remove a non-existent 'tutorialSeen' key, which meant a
             // hard reset wiped the archive but left the tutorial marked as done.
+            // Bewusst NICHT entfernt: keyBinds und sämtliche Einstellungs-
+            // und Audio-Keys (siehe keys.js). Ein Hard-Reset löscht den
+            // Spielstand — nicht die Vorlieben des Menschen davor.
             localStorage.removeItem(engine.KEYS.archive);
             localStorage.removeItem(engine.KEYS.defaultDiff);
             localStorage.removeItem(engine.KEYS.tutorialDone);
@@ -877,52 +896,52 @@ export const ui = {
 
     toggleFX: function(isOn) {
         this.state.visualFX = isOn;
-        localStorage.setItem('layer8_fx', isOn);
+        localStorage.setItem(KEYS.visualFX, isOn);
         this.updateUI();
     },
     
     toggleShake: function(isOn) {
         this.state.screenShake = isOn;
-        localStorage.setItem('layer8_shake', isOn);
+        localStorage.setItem(KEYS.screenShake, isOn);
     },
     
     toggleOneClick: function(isOn) {
         this.state.oneClickItem = isOn;
-        localStorage.setItem('layer8_oneclick', isOn);
+        localStorage.setItem(KEYS.oneClickItem, isOn);
     },
     toggleFastChat: function(isOn) {
         this.state.fastChat = isOn;
-        localStorage.setItem('layer8_fastchat', isOn);
+        localStorage.setItem(KEYS.fastChat, isOn);
     },
     toggleBlindStats: function(isOn) {
         this.state.blindStats = isOn;
-        localStorage.setItem('layer8_blindstats', isOn);
+        localStorage.setItem(KEYS.blindStats, isOn);
         this.updateUI();
     },
     toggleBlindTickets: function(isOn) {
         this.state.blindTickets = isOn;
-        localStorage.setItem('layer8_blindtickets', isOn);
+        localStorage.setItem(KEYS.blindTickets, isOn);
         this.updateUI();
     },
     toggleAudio: function(isOn) {
         this.state.audioEffects = isOn;
-        localStorage.setItem('layer8_audio', isOn);
+        localStorage.setItem(KEYS.audioEffects, isOn);
         if(isOn) this.playAudio('ui');
     },
 	toggleShowHotkeys: function(isOn) {
         this.state.showHotkeys = isOn;
-        localStorage.setItem('layer8_showhotkeys', isOn);
+        localStorage.setItem(KEYS.showHotkeys, isOn);
     },
 	    
     toggleAutoHidePhone: function(isOn) {
         this.state.autoHidePhone = isOn;
-        localStorage.setItem('layer8_autohidephone', isOn);
+        localStorage.setItem(KEYS.autoHidePhone, isOn);
         this.updatePhoneVisibility();
     },
     
     toggleCompactMode: function(isOn) {
         this.state.compactMode = isOn;
-        localStorage.setItem('layer8_compact', isOn);
+        localStorage.setItem(KEYS.compactMode, isOn);
         if (isOn) {
             document.body.classList.add('compact-mode');
         } else {

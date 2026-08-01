@@ -1,3 +1,5 @@
+import { KEYS } from './keys.js';
+
 import { DB, ensure, prefetchAll } from '../data.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
@@ -5,17 +7,11 @@ import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
 export const core = {
 
     // Single source of truth for every localStorage key the game touches.
-    // Keeping them here prevents typo-keys that silently read/write nothing —
-    // which is exactly how the tutorial flag got out of sync before.
-    KEYS: {
-        archive:      'layer8_archive',
-        keyBinds:     'layer8_keybinds',
-        defaultDiff:  'layer8_default_diff',
-        tutorialDone: 'sysadmin_tutorial_done',
-        partyPlayed:  { easy: 'layer8_party_played_easy',
-                        normal: 'layer8_party_played_normal',
-                        hard: 'layer8_party_played_hard' }
-    },
+    // The actual strings live in keys.js — the single source of truth,
+    // shared with engine_state, engine_ui and engine_audio. Keeping every
+    // key in one place prevents typo-keys that silently read/write
+    // nothing, which is exactly how the tutorial flag got out of sync.
+    KEYS,
 
     // --- HELPER FOR SAFE SAVE/LOAD MERGING ---
     deepMerge: function(target, source) {

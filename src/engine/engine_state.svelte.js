@@ -1,3 +1,5 @@
+import { KEYS } from './keys.js';
+
 /**
  * Everything that belongs to a single workday.
  *
@@ -203,31 +205,31 @@ export const state = $state({
     },
 
     // User settings
-    visualFX: localStorage.getItem('layer8_fx') !== 'false',
-    audioEffects: localStorage.getItem('layer8_audio') !== 'false',
-    audioVolume: parseFloat(localStorage.getItem('layer8_volume') || '0.5'), // default 50%
-    musicEnabled: localStorage.getItem('layer8_music') !== 'false',
-    musicVolume: parseFloat(localStorage.getItem('layer8_music_volume') || '0.2'), // default 20%
-    musicStyle: localStorage.getItem('layer8_music_style') || 'radio',
+    visualFX: localStorage.getItem(KEYS.visualFX) !== 'false',
+    audioEffects: localStorage.getItem(KEYS.audioEffects) !== 'false',
+    audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || '0.5'), // default 50%
+    musicEnabled: localStorage.getItem(KEYS.musicEnabled) !== 'false',
+    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || '0.2'), // default 20%
+    musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
     currentMusicTrack: null,
-    oneClickItem: localStorage.getItem('layer8_oneclick') === 'true',
-    fastChat: localStorage.getItem('layer8_fastchat') === 'true',
-    blindStats: localStorage.getItem('layer8_blindstats') === 'true',
-    blindTickets: localStorage.getItem('layer8_blindtickets') === 'true',
-    autoHidePhone: localStorage.getItem('layer8_autohidephone') === 'true',
-    compactMode: localStorage.getItem('layer8_compact') === 'true',
-    screenShake: localStorage.getItem('layer8_shake') !== 'false',
+    oneClickItem: localStorage.getItem(KEYS.oneClickItem) === 'true',
+    fastChat: localStorage.getItem(KEYS.fastChat) === 'true',
+    blindStats: localStorage.getItem(KEYS.blindStats) === 'true',
+    blindTickets: localStorage.getItem(KEYS.blindTickets) === 'true',
+    autoHidePhone: localStorage.getItem(KEYS.autoHidePhone) === 'true',
+    compactMode: localStorage.getItem(KEYS.compactMode) === 'true',
+    screenShake: localStorage.getItem(KEYS.screenShake) !== 'false',
 
     // --- KEYBOARD MAPPING ---
     showHotkeys: (() => {
-        const saved = localStorage.getItem('layer8_showhotkeys');
+        const saved = localStorage.getItem(KEYS.showHotkeys);
         if (saved !== null) return saved === 'true';
         // Default: hide hotkey badges on touch devices
         return !window.matchMedia("(pointer: coarse)").matches;
     })(),
 
     keyBinds: (() => {
-        let saved = JSON.parse(localStorage.getItem('layer8_keybinds')) || {};
+        let saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};
         const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
 
         // Drop obsolete keys left over from older savegames

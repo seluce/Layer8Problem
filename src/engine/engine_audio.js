@@ -1,3 +1,5 @@
+import { KEYS } from './keys.js';
+
 export const audio = {
 
    // --- SYNTHETISCHER SOUND ---
@@ -139,7 +141,7 @@ export const audio = {
 
     toggleMusic: function(isOn) {
         this.state.musicEnabled = isOn;
-        localStorage.setItem('layer8_music', isOn);
+        localStorage.setItem(KEYS.musicEnabled, isOn);
         if (isOn) {
             // Check whether a special track (boss/gala) should be playing.
             // Otherwise ask for 'office' so playMusic() re-evaluates the current style.
@@ -155,7 +157,7 @@ export const audio = {
     
     changeMusicStyle: function(style) {
         this.state.musicStyle = style;
-        localStorage.setItem('layer8_music_style', style);
+        localStorage.setItem(KEYS.musicStyle, style);
         
         // Outside boss fight and gala the track has to follow the setting
         if (this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
@@ -172,7 +174,7 @@ export const audio = {
 
     setMusicVolume: function(val) {
         this.state.musicVolume = parseFloat(val);
-        localStorage.setItem('layer8_music_volume', val);
+        localStorage.setItem(KEYS.musicVolume, val);
         if (this.bgmTracks) {
             for (let key in this.bgmTracks) {
                 this.bgmTracks[key].volume = this.state.musicVolume;
@@ -231,7 +233,7 @@ export const audio = {
     
     setVolume: function(val) {
         this.state.audioVolume = parseFloat(val);
-        localStorage.setItem('layer8_volume', val);
+        localStorage.setItem(KEYS.audioVolume, val);
         this.playAudio('ui');
     },
 
