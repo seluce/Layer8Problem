@@ -4414,7 +4414,7 @@ export const coffee = [
     opts: [
         {
             t: "Gern - Werte muss man leben",
-            m: 10, f: 0, a: 15, c: 10,
+            m: 10, f: 0, a: 30, c: 10,
             r: "Die öligen Bohnen verkleben das Mahlwerk nach vier Bezügen vollständig. Die Maschine steht, die Schlange wächst, und Chantal erzählt jedem, DU hättest 'die Umstellung gemacht'. Werte muss man leben. Reparieren auch."
         },
         {
@@ -4436,7 +4436,7 @@ export const coffee = [
     opts: [
         {
             t: "Clever: nur einen halben Schluck nehmen",
-            m: 2, f: 5, a: 10, c: 10,
+            m: 2, f: 5, a: 10, c: 25,
             r: "Der älteste Trick der Bürowelt - und exakt in diesem Moment betritt Frau Elster die Küche und sieht dich mit der Kanne in der Hand einen strategischen Restschluck lassen. Ihr Blick katalogisiert dich neu. Der Rest-Zentimeter Kaffee steht dort noch drei Tage als Mahnmal."
         },
         {
@@ -4458,7 +4458,7 @@ export const coffee = [
     opts: [
         {
             t: "Großzügig eintragen - für den guten Zweck",
-            m: 5, f: 0, a: 10, c: 5,
+            m: 5, f: 0, a: 10, c: 20,
             r: "Zwanzig Euro, ein gutes Gefühl - und ein Eintrag in ein unsichtbares Register: Du giltst jetzt als 'spendet immer'. In den nächsten Wochen finden dich der Kuchenbasar, die Tombola, das Trikot-Sponsoring und Bernds zweiter Lauf. Großzügigkeit ist in diesem Haus ein Abo."
         },
         {

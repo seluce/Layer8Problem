@@ -11,7 +11,7 @@ Neuerungen:
 
 Spielbalance:
 * Der Mittwoch hat angezogen: Statuswirkungen fallen auf dem normalen Schwierigkeitsgrad um zehn Prozent kräftiger aus. Die neue Tages-Simulation zeigte, dass ein aufmerksamer Spieler den Mittwoch mit 87 Prozent Siegquote fast risikofrei überstand - jetzt sind es rund 77, während sehr gute Spieler kaum etwas davon spüren. Freitag und Montag bleiben unverändert.
-* Fünfzehn neue Ereignisse sind Fallen: Situationen, in denen die Antwort, die vernünftig klingt, nicht die ist, die vernünftig ist. Ein kritisches Zwei-Minuten-Update, eine aufgehaltene Tür, herrenloser Kuchen im Flur, eine kurze Frage vom Chef. Mehr wird nicht verraten - genau das ist der Punkt.
+* Fünfzehn neue Ereignisse sind Fallen: Situationen, in denen die Antwort, die vernünftig klingt, nicht die ist, die vernünftig ist. Ein kritisches Zwei-Minuten-Update, eine aufgehaltene Tür, herrenloser Kuchen im Flur, eine kurze Frage vom Chef. Acht davon können den Bildschirm wackeln lassen - wer in den Köder tritt, merkt es sofort. Mehr wird nicht verraten, genau das ist der Punkt.
 * Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
 * Lange Aktionen haben jetzt durchgehend spürbare Folgen. Wer sich zwanzig Minuten aus einer Situation herausredet, kassiert dafür Faulheit; wer Nerviges erledigt, Aggro; wer dem Chef auffällt, Radar. Zeit absitzen ohne Konsequenz gibt es nicht mehr.
 * Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.

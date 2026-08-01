@@ -1964,7 +1964,7 @@ export const emails = [
     opts: [
         {
             btn: "'Selbstverständlich, jederzeit!'",
-            m: 20, f: 5, a: 10, c: 0,
+            m: 25, f: 5, a: 25, c: 0,
             r: "Die fünf Minuten beginnen um 14 Uhr und enden als Projektskizze: Dr. Wichtig möchte 'die Digitalisierung nochmal ganz neu denken', und weil du so bereitwillig Zeit hattest, denkst du sie jetzt mit. Erste Arbeitsfassung: bis Freitag. Fünf Minuten sind in Chefzeit eine Währung mit sehr eigenem Wechselkurs."
         },
         {
@@ -1988,7 +1988,7 @@ export const emails = [
     opts: [
         {
             btn: "Sofort bestätigen - ist ja nur ein Klick",
-            m: 2, f: 5, a: 15, c: 5,
+            m: 2, f: 5, a: 30, c: 5,
             r: "Ein Klick, erledigt, brav. Drei Wochen später beruft sich die Zentrale auf Ziffer 14b der von dir bestätigten Fassung: 'Administratoren stellen die Erreichbarkeit an Wochenenden im Rahmen des Zumutbaren sicher.' Du hast das gelesen. Steht ja in deiner Bestätigung. Das Zumutbare definiert übrigens nicht der Zumutende."
         },
         {
@@ -2012,7 +2012,7 @@ export const emails = [
     opts: [
         {
             btn: "Geehrt annehmen - eine Auszeichnung!",
-            m: 10, f: 5, a: 10, c: 0,
+            m: 10, f: 10, a: 25, c: 0,
             r: "Die Auszeichnung entpuppt sich als Stundenplan: drei Nachwuchskräfte, wöchentliche 'Sparring-Sessions', Entwicklungsbögen in dreifacher Ausfertigung - alles zusätzlich zur eigentlichen Arbeit, versteht sich, denn 'Mentoring ist ja eine Ehre'. Ehren sind in diesem Haus grundsätzlich unbezahlt und terminiert."
         },
         {

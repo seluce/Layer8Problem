@@ -4785,7 +4785,7 @@ export const server = [
     opts: [
         {
             t: "Sofort installieren - Sicherheit geht vor",
-            m: 25, f: 0, a: 15, c: 10,
+            m: 25, f: 0, a: 35, c: 15,
             r: "Die zwei Minuten sind eine Schätzung des Herstellers, gemessen auf Hardware, die es hier nicht gibt. Das Update hängt bei 67 Prozent, startet dreimal neu und nimmt dabei den Dateiserver mit. Fünf Anrufe später läuft alles wieder. Die Lektion: 'ca. 2 Minuten' ist keine Zeitangabe, sondern ein Horoskop."
         },
         {
@@ -4808,7 +4808,7 @@ export const server = [
         {
             t: "Bewährt: Panzertape um die Leitung",
             rem: "tape",
-            m: 5, f: 5, a: 15, c: 10,
+            m: 5, f: 5, a: 30, c: 10,
             r: "Der Reflex jedes Admins - nur hält auf einer kondensfeuchten Kühlleitung kein Klebeband der Welt. Das Tape löst sich binnen einer Stunde, sammelt dabei das Wasser wie eine Rinne und leitet es zielsicher in den Lüfter von Rack 3. Das Panzertape ist weg, das Problem ist größer, und der Lüfter klingt jetzt nach Espressomaschine."
         },
         {
@@ -4830,7 +4830,7 @@ export const server = [
     opts: [
         {
             t: "Den Moment genießen und nichts anfassen",
-            m: 5, f: 10, a: 10, c: 15,
+            m: 5, f: 10, a: 15, c: 35,
             r: "Weisheit, denkst du. Bis am Nachmittag herauskommt, warum nichts meldete: Der Monitoring-Dienst selbst war seit dem Morgen tot - null Meldungen, weil null Überwachung. Zwei Ausfälle blieben stundenlang unbemerkt, und die Frage 'Warum hat da niemand draufgeschaut?' hat eine sehr kurze Antwort mit deinem Namen."
         },
         {

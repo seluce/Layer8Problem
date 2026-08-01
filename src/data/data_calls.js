@@ -2570,7 +2570,7 @@ export const calls = [
     opts: [
         {
             t: "Ehrlich und ausführlich antworten",
-            m: 10, f: 0, a: 5, c: 20,
+            m: 10, f: 0, a: 5, c: 35,
             r: "Du sprichst offen über Budget, Personaldecke und die Kaffeemaschine. Drei Wochen später zitiert Dr. Wichtig in der Abteilungsrunde wörtlich aus 'einer anonymen Rückmeldung aus der IT'. Die IT besteht aus dir. Anonymität ist bei einer Stichprobengröße von eins ein mathematisch anspruchsvolles Konzept."
         },
         {
@@ -2592,7 +2592,7 @@ export const calls = [
     opts: [
         {
             t: "Pflichtbewusst sofort zurückrufen",
-            m: 5, f: 0, a: 10, c: 15,
+            m: 5, f: 0, a: 10, c: 30,
             r: "Du rufst zurück - mitten in die laufende Vorstandssitzung, in der das Sekretariatstelefon auf Lautsprecher liegt, weil gleich eine Konferenzschaltung ansteht. Acht Führungskräfte hören dein 'Ja hallo, hier Müller, Sie hatten versucht...?'. Es ging um einen Beamer. Es klang, als gingest du unter."
         },
         {

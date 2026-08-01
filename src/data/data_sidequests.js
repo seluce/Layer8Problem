@@ -7199,7 +7199,7 @@ export const sidequests = [
     opts: [
         {
             t: "Die Tür aufhalten - Anstand ist Anstand",
-            m: 2, f: 0, a: 5, c: 15,
+            m: 2, f: 0, a: 5, c: 35,
             r: "Der Herr bedankt sich charmant. Zwanzig Minuten später stellt er sich in der Abteilungsrunde vor: externer Sicherheitsauditor, und sein erster Befund steht bereits fest - 'Zutritt ohne Ausweisprüfung durch einen Mitarbeiter der IT, ausgerechnet'. Das Wort 'ausgerechnet' wird im Bericht kursiv gesetzt sein."
         },
         {
@@ -7222,7 +7222,7 @@ export const sidequests = [
     opts: [
         {
             t: "Zugreifen - dafür steht er ja da",
-            m: 2, f: 5, a: 0, c: 15,
+            m: 2, f: 5, a: 5, c: 25,
             r: "Du nimmst ein Stück. Es ist exzellent. Es ist auch das Catering für die Vorstandssitzung in Raum 1, falsch abgestellt - der Zettel gehörte zu einer längst leergegessenen Platte von gestern. Als das Sekretariat die angebrochene Platte hereinträgt, fehlt genau ein Stück, und am Mundwinkel eines Admins klebt Beweismaterial."
         },
         {
@@ -7245,7 +7245,7 @@ export const sidequests = [
     opts: [
         {
             t: "Kurz reingehen - zwei Minuten hat man",
-            m: 25, f: 0, a: 10, c: 5,
+            m: 30, f: 0, a: 20, c: 10,
             r: "Die zwei Minuten sind nach vierzig vorbei. Deine 'Einschätzung' steht inzwischen auf einer Folie, im Protokoll bist du unter 'Beteiligte Fachseite' geführt, und beim Verabschieden sagt jemand den tödlichsten Satz des Bürolebens: 'Dann nehmen wir dich für den Folgetermin mit auf.' Die Tür war eine Falltür."
         },
         {
@@ -7268,7 +7268,7 @@ export const sidequests = [
     opts: [
         {
             t: "Wasser holen und gründlich gießen",
-            m: 5, f: 0, a: 10, c: 10,
+            m: 5, f: 0, a: 25, c: 10,
             r: "Barmherzigkeit mit Nebenwirkungen: Der Übertopf hat kein Loch, aber der Untersetzer einen Riss - das Wasser findet die Fensterbank, die Fensterbank findet die Steckdosenleiste darunter. Und die Pflanze gehört, wie sich beim Aufwischen herausstellt, Frau Elster, die die 'kontrollierte Trockenphase' ihrer Orchidee seit drei Wochen dokumentiert. Du hast ein Experiment bewässert."
         },
         {
