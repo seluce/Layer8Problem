@@ -1,6 +1,9 @@
 [4.0.0] - unveröffentlicht
 
-Diese Version ist ein technischer Umbau. Am Spiel selbst ändert sich nichts, aber die Grundlage darunter wurde vollständig erneuert - damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind.
+Diese Version ist in erster Linie ein technischer Umbau: Die Grundlage unter dem Spiel wurde vollständig erneuert, damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind. Obendrauf gibt es die erste Welle neuer Ereignisse.
+
+Neuerungen:
+* Einundzwanzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
 
 Anzeige & Layout:
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
