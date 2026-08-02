@@ -12,6 +12,17 @@
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
+    // Müller's own additions at the back of the book. The chronicle belongs to
+    // GlobalCorp and would never devote a chapter to a systems administrator -
+    // but he found the volume, the last entry is from 2012, and there is space
+    // left on the page.
+    const written = $derived(state.archive?.chronicle ?? []);
+    const doneToday = $derived(engine.chronicleWrittenToday?.() ?? false);
+
+    function addLine() {
+        engine.addChronicleEntry();
+    }
+
     const CHRONICLE = [
     {
         year: '1899',
@@ -83,6 +94,51 @@
                         {/each}
                     </div>
                 {/each}
+
+                <!-- The last page: nothing official has been recorded here for
+                     years, and the volume is currently in Müller's hands. -->
+                <div class="relative pl-8 border-l-4 border-dashed border-[#c8b99b] mt-12">
+                    <div class="absolute left-[-2.3rem] top-0 bg-[#d7ccc8] text-[#5d4037] w-14 h-14 flex items-center justify-center rounded-full font-bold text-sm shadow-lg border-2 border-dashed border-[#a1887f]">?</div>
+
+                    <h3 class="font-bold text-2xl mb-2 text-[#8d6e63]">Die letzten Seiten</h3>
+                    <p class="text-[#6d4c41] italic mb-6">
+                        Hier hört die offizielle Chronik auf. Der letzte Eintrag der
+                        Unternehmenskommunikation ist Jahre alt — es scheint seit
+                        Längerem nichts mehr passiert zu sein, das jemand für
+                        festhaltenswert hielt. Die restlichen Seiten sind leer.
+                    </p>
+
+                    {#each written as entry (entry.day)}
+                        <!-- Handwriting: another ink, a slight tilt, ruled lines -->
+                        <div class="mb-5 pl-4 py-2 border-l-2 border-[#7a6a52]"
+                             style="rotate:-0.4deg">
+                            <p class="text-[#33475b] text-[17px] leading-[30px]"
+                               style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                                {entry.text}
+                            </p>
+                            <span class="block text-right text-[11px] text-[#7a6a52] mt-1"
+                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                                — M., Arbeitstag {entry.day}
+                            </span>
+                        </div>
+                    {/each}
+
+                    <div class="mt-4">
+                        {#if doneToday}
+                            <p class="text-[13px] text-[#8d6e63] italic">
+                                Für heute steht genug drin. Die Tinte muss ohnehin trocknen.
+                            </p>
+                        {:else}
+                            <button type="button" onclick={addLine}
+                                    class="text-sm font-serif text-[#5d4037] bg-[#efebe9] hover:bg-[#e0d8d0] border-2 border-dashed border-[#a1887f] rounded-sm px-5 py-2.5 transition-colors shadow-sm">
+                                🖊️ Etwas hinzufügen
+                            </button>
+                            <p class="text-[11px] text-[#8d6e63] italic mt-2">
+                                Niemand hat es dir erlaubt. Niemand hat es dir verboten.
+                            </p>
+                        {/if}
+                    </div>
+                </div>
 
                 <div class="bg-[#efebe9] p-6 rounded-sm border border-[#d7ccc8] italic text-center mt-12 shadow-inner">
                     "Wir sind nicht hier, um die Welt zu verbessern. Wir sind hier, damit die Quartalszahlen stimmen. Gehen Sie jetzt wieder an die Arbeit."

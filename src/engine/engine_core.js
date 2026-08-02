@@ -272,6 +272,133 @@ export const core = {
         
     },
     
+    /**
+     * Writes Müller's line into the chronicle and keeps it.
+     *
+     * Refused when today's entry already exists - the point is a book that
+     * fills up across many workdays, not a page that can be spammed in one
+     * sitting. Lives in the archive, so it survives restarts and travels to
+     * the cloud with everything else.
+     */
+    addChronicleEntry: function() {
+        const archive = this.state.archive;
+        archive.chronicle ??= [];
+
+        const dayNo = archive.stats?.daysStarted ?? 1;
+        if (archive.chronicle.some(e => e.day === dayNo)) return false;
+
+        archive.chronicle.push({ day: dayNo, text: this.composeChronicleLine() });
+        // Twelve is plenty: the book should look used, not like a diary.
+        if (archive.chronicle.length > 12) archive.chronicle.shift();
+
+        this.saveSystem();
+        this.playAudio('ui');
+        return true;
+    },
+
+    /** Has today's line already been written? Drives the button state. */
+    chronicleWrittenToday: function() {
+        const dayNo = this.state.archive.stats?.daysStarted ?? 1;
+        return (this.state.archive.chronicle ?? []).some(e => e.day === dayNo);
+    },
+
+    /**
+     * A handwritten line added to the company chronicle.
+     *
+     * The chronicle belongs to GlobalCorp and would never devote a chapter to
+     * a systems administrator. But Müller is holding the book, the last entry
+     * is old, and there is space at the bottom of the page. What he writes
+     * depends on what the day - and the days before it - actually did to him.
+     *
+     * One entry per workday, kept in the archive so the book fills up over
+     * time and survives a restart.
+     */
+    composeChronicleLine: function() {
+        const st = this.state.archive.stats ?? {};
+        const rep = this.state.reputation ?? {};
+        const flags = this.state.storyFlags ?? {};
+        const survived = st.daysSurvived ?? 0;
+        const rage = st.daysRageQuit ?? 0;
+        const fired = st.daysFired ?? 0;
+        const streak = st.streakBest ?? 0;
+
+        const pool = [];
+
+        // --- The very first entry ---
+        if ((st.daysStarted ?? 0) <= 1 && !survived) {
+            pool.push(
+                "Ich habe dieses Buch im Serverraum gefunden, hinter einem Rack, unter einer Staubschicht von zwei Jahrzehnten. Der letzte Eintrag ist von 2012. Ich weiß nicht, ob mir jemand die Erlaubnis erteilt hat, hier etwas zu ergänzen. Ich weiß auch nicht, wen ich fragen sollte.",
+                "Erster Eintrag. Ich bin seit Kurzem für die IT zuständig. Es gibt keine Übergabe, keine Dokumentation und niemanden, der mir sagen könnte, warum in Rack 5 ein Server läuft, den keiner bestellt hat. Ich fange trotzdem an."
+            );
+        }
+
+        // --- Meltdowns ---
+        if (rage >= 3) {
+            pool.push(
+                `Zur Vollständigkeit: Ich habe an ${rage} Tagen dieses Gebäude verlassen, ohne mich zu verabschieden. Die Chronik führt keine Rubrik dafür. Ich lege hiermit eine an.`,
+                "Nachtrag zur Firmengeschichte: Es gibt einen Punkt, an dem ein Mensch aufhört, Tickets zu lesen. Er liegt näher, als die Geschäftsleitung vermutet. Ich habe ihn mehrfach vermessen."
+            );
+        } else if (rage > 0) {
+            pool.push("Ich sollte erwähnen, dass ich einmal gegangen bin, bevor der Tag zu Ende war. Es steht in keiner Akte. Es steht jetzt hier.");
+        }
+
+        // --- Dismissals ---
+        if (fired >= 2) {
+            pool.push(`Man hat mich ${fired} Mal aus diesem Haus begleitet. Ich bin ${fired} Mal wiedergekommen. Über eine der beiden Seiten sagt das mehr aus als über die andere.`);
+        }
+
+        // --- Endurance ---
+        if (survived >= 20) {
+            pool.push(
+                `${survived} überstandene Arbeitstage. In der Chronik steht viel über Visionen, Meilensteine und Wachstum. Über das Durchhalten steht nichts. Es ist die einzige Fähigkeit, die hier tatsächlich gebraucht wird.`,
+                "Ich habe in diesem Haus mehr Arbeitstage überlebt als der Betriebsrat Sitzungen hatte. Beides hat ungefähr gleich viel verändert."
+            );
+        } else if (survived >= 8) {
+            pool.push(`Zwischenstand: ${survived} Tage. Das Gebäude hat aufgehört, mich zu überraschen, und das ist die beunruhigendste Entwicklung bisher.`);
+        }
+        if (streak >= 5) {
+            pool.push(`Persönliche Bestmarke: ${streak} Tage in Folge ohne Zwischenfall. Meine Familie hält mich inzwischen für berufstätig.`);
+        }
+
+        // --- How things stand with the boss ---
+        const chef = rep['Dr. Wichtig'] ?? 0;
+        if (chef >= 40) {
+            pool.push("Der CEO grüßt mich seit Neuestem mit Namen. Ich bin unsicher, ob das eine Auszeichnung ist oder der Beginn von etwas, das ich nicht überblicke.");
+        } else if (chef <= -40) {
+            pool.push("Zur Sachlage: Die Geschäftsleitung und ich haben ein professionelles Verhältnis. Das heißt, wir schweigen uns in unterschiedlichen Stockwerken an.");
+        }
+
+        // --- The colleagues ---
+        const kevin = rep['Kevin'] ?? 0;
+        if (kevin >= 50) {
+            pool.push("Der Azubi hat heute etwas repariert, ohne zu fragen, und es war richtig. Sollte diese Chronik je jemand weiterführen: Er wird es sein.");
+        }
+        const egon = rep['Egon'] ?? 0;
+        if (egon >= 50) {
+            pool.push("Der Hausmeister kennt jeden Raum dieses Hauses, auch die, die im Grundriss fehlen. Er steht in keiner Chronik. Er sollte am Anfang stehen.");
+        }
+        const elster = rep['Frau Elster'] ?? 0;
+        if (elster >= 50) {
+            pool.push("Die Buchhaltung hat mir heute Kuchen gebracht. Ich vermerke das hier, weil es sonst niemand glauben wird.");
+        }
+
+        // --- Traces of specific events ---
+        if (flags['path_phoenix_gabi'] || flags['path_phoenix_nutzen']) {
+            pool.push("Anmerkung für spätere Leser: Es gibt in diesem Haus einen Raum, der seit Jahren gebucht und nie belegt ist, und einen Benutzerzugang, der einem Mann gehört, der 2016 gegangen ist. Ich habe aufgehört, danach zu fragen.");
+        }
+        if (flags['path_doku_todo'] || flags['path_doku_start']) {
+            pool.push("Ich habe angefangen zu dokumentieren. Nach zwei Stunden war klar: Die Dokumentation wäre umfangreicher als die Anlage, die sie beschreibt. Ich habe trotzdem weitergemacht.");
+        }
+
+        // --- The fallback, always available ---
+        pool.push(
+            "Es ist wieder ein Tag vergangen. Die Anlage läuft, die Tickets sind offen, das Haus steht. Mehr wird von dieser Chronik auch in den letzten hundert Jahren nicht berichtet worden sein.",
+            "Nichts Bemerkenswertes. Ich schreibe es trotzdem auf, damit später jemand weiß, dass hier jemand war."
+        );
+
+        return pool[Math.floor(Math.random() * pool.length)];
+    },
+
     /** Kurzname des Wochentags aus dem Schwierigkeitsgrad. */
     difficultyKey: function() {
         if (this.state.difficultyMult < 1.0) return 'easy';
