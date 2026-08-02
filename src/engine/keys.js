@@ -41,3 +41,24 @@ export const KEYS = {
     musicVolume:   'layer8_music_volume',
     musicStyle:    'layer8_music_style',
 };
+
+/**
+ * Alles, was ein vollständiges Zurücksetzen entfernen muss.
+ *
+ * Existiert, weil genau hier schon zweimal etwas vergessen wurde: erst der
+ * tutorialSeen-Phantomschlüssel, dann der laufende Arbeitstag, der ein Zurück-
+ * setzen überlebte und danach anbot, mit der Reputation des gelöschten Stands
+ * weiterzumachen. Beides kam daher, dass die Löschliste von Hand geführt wurde.
+ *
+ * Ein neuer Fortschrittsschlüssel gehört in diese Liste - und ist damit
+ * überall berücksichtigt, wo zurückgesetzt wird. Einstellungen, Audio und
+ * Tastenbelegung stehen bewusst NICHT hier: ein Zurücksetzen löscht den
+ * Spielstand, nicht die Vorlieben der Person vor dem Bildschirm.
+ */
+export const PROGRESS_KEYS = [
+    KEYS.archive,
+    KEYS.dayState,
+    KEYS.defaultDiff,
+    KEYS.tutorialDone,
+    ...Object.values(KEYS.partyPlayed)
+];
