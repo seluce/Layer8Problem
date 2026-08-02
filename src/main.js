@@ -36,6 +36,7 @@ import ExcuseText from './components/ExcuseText.svelte';
 import InventoryFull from './components/InventoryFull.svelte';
 import AchievementToasts from './components/AchievementToasts.svelte';
 import TerminalHeader from './components/TerminalHeader.svelte';
+import BoardView from './components/BoardView.svelte';
 
 mount(StatsHeader, { target: document.getElementById('stats-header') });
 mount(LogFeed,     { target: document.getElementById('log-feed') });
@@ -55,6 +56,7 @@ mount(ExcuseText,     { target: document.getElementById('excuse-text-root') });
 mount(InventoryFull,  { target: document.getElementById('full-inventory-grid') });
 mount(AchievementToasts, { target: document.getElementById('achievement-container') });
 mount(TerminalHeader, { target: document.getElementById('terminal-header-right') });
+mount(BoardView,      { target: document.getElementById('board-notes') });
 
 /* ============================================================
    Für die, die nachsehen.

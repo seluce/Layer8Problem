@@ -38,6 +38,7 @@ export const DB = {
 // Loaders for the deferred pools. The dynamic import() is what lets the browser
 // fetch these separately instead of bundling them into the first parse.
 const LOADERS = {
+    board:      () => import('./data/data_board.js'),
     bossfights: () => import('./data/data_bossfights.js'),
     calls:      () => import('./data/data_calls.js'),
     coffee:     () => import('./data/data_coffee.js'),

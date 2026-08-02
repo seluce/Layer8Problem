@@ -28,6 +28,11 @@ export function freshDay(mult = 1.0) {
         // nothing about whether you are getting it right just now.
         repAtStart: {},
 
+        // Which notes are pinned to the board today. Drawn once by
+        // engine_ui.openBoard(); reopening must not reshuffle them, or the
+        // wall stops feeling like a place.
+        boardNotes: [],
+
         blindRun: false,
 
         // Wurde der 13:37-Moment heute schon gezeigt? (siehe checkLeetMoment)

@@ -1,5 +1,5 @@
 import { KEYS } from './keys.js';
-import { DB } from '../data.js';
+import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 
 // Maximum number of lines kept in the activity log.
@@ -497,9 +497,28 @@ export const ui = {
     },
 
     // --- BULLETIN BOARD ---
-    openBoard: function() {
-        const modal = document.getElementById('board-modal');
-        this.showOverlay(modal, false);
+    /**
+     * The community board.
+     *
+     * Draws today's notes on first open: a handful of general ones plus every
+     * reactive note whose story flag the player has actually tripped. Those
+     * come first - a wall that comments on this morning is worth more than one
+     * that repeats itself.
+     */
+    openBoard: async function() {
+        await ensure('board');
+        const pool = DB.board ?? [];
+
+        if (!this.state.boardNotes?.length && pool.length) {
+            const flags = this.state.storyFlags ?? {};
+            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory]);
+            const general = pool.filter(n => !n.reqStory)
+                                .sort(() => Math.random() - 0.5)
+                                .slice(0, Math.max(4, 8 - reactive.length));
+            this.state.boardNotes = [...reactive, ...general];
+        }
+
+        this.showOverlay('board-modal', false);
     },
 
     closeBoard: function() {
