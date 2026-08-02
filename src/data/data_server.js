@@ -1166,7 +1166,7 @@ export const server = [
         id: "srv_illegal_2b",
         title: "Der Wutanfall",
         reqStory: "path_illegal_shutdown",
-        text: "30 Minuten später stürmt der Vize-Chef hochrot in den Serverraum. 'WER WAR DAS?! Mein... äh... kritisches Backup-System ist offline! Wissen Sie, wie viel Traffic wir verlieren?!'",
+        text: "Es dauert eine Weile, bis es jemandem auffällt. Dann aber stürmt der Vize-Chef hochrot in den Serverraum. 'WER WAR DAS?! Mein... äh... kritisches Backup-System ist offline! Wissen Sie, wie viel Traffic wir verlieren?!'",
         opts: [
             { 
                 t: "Ahnungslosigkeit heucheln", 

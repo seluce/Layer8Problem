@@ -34,7 +34,7 @@ export const coffee = [
 		char: "Chantal",
         title: "Die Zucker-Falle",
         reqStory: "path_donut_taken",
-        text: "Kaum hast du den Donut in der Tasche, kommt Chantal aus dem Marketing rein. 'Oh, hast du den letzten 'Veggie-Spinat-Schoko-Test-Donut' gesehen? Ich wollte den gerade für Instagram fotografieren!'",
+        text: "Irgendwann steht Chantal aus dem Marketing in der Küche und sucht etwas. 'Oh, hast du den letzten 'Veggie-Spinat-Schoko-Test-Donut' gesehen? Ich wollte den gerade für Instagram fotografieren!'",
         opts: [
             { 
                 t: "Lügen: 'Der Putzdienst war schon da'", 
@@ -157,7 +157,7 @@ export const coffee = [
 		char: "Dr. Wichtig",
         title: "Der ungebetene Gast",
         reqStory: "path_boss_consultant",
-        text: "Kaum bist du am Platz, steht der Chef wieder da. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Perfektes Timing. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja eh gerade für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
+        text: "Irgendwann steht der Chef an deinem Platz. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Da sind Sie ja. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja ohnehin schon mal für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
         opts: [
             { 
                 t: "Zähneknirschend abgeben",
@@ -276,7 +276,7 @@ export const coffee = [
         id: "cof_empty_2a",
         title: "Karma",
         reqStory: "path_empty_refill",
-        text: "Kaum bist du fertig, kommt die neue Praktikantin rein. Sie strahlt dich an. 'Oh, hast du aufgefüllt? Du bist ja lieb! Hier, nimm meinen. Ich hab mir aus Versehen zwei gezogen.' Sie reicht dir einen perfekten Cappuccino.",
+        text: "Als du wieder einmal in die Küche kommst, steht dort die neue Praktikantin. Sie strahlt dich an. 'Oh, warst du das mit dem Auffüllen? Du bist ja lieb! Hier, nimm meinen. Ich hab mir aus Versehen zwei gezogen.' Sie reicht dir einen perfekten Cappuccino.",
         opts: [
             { 
                 t: "Dankbar annehmen", 

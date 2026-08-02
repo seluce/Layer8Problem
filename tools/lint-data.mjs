@@ -68,6 +68,12 @@ const checkOpt = (o, ctx) => {
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     const ctx = `[${p}/${ev.id}]`;
+    // Folge-Ereignisse können Stunden nach dem Auslöser kommen - oder nie.
+    // Texte, die unmittelbare Nähe behaupten, stimmen dann nicht.
+    if (ev.reqStory && ev.text) {
+      const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
+      if (m) warn(`${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
+    }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
       warn(`${ctx}: kind fehlt oder unbekannt ("${ev.kind}") — Dienstgänge brauchen "text" oder "phone"`);
     if (ev.reqStory) (flagsReq.get(ev.reqStory) ?? flagsReq.set(ev.reqStory, []).get(ev.reqStory)).push(ctx);

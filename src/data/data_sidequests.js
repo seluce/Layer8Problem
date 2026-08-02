@@ -299,7 +299,7 @@ export const sidequests = [
         kind: "text",
         title: "Gabis Fehler",
         reqStory: "path_usb_gabi_fail",
-        text: "Zehn Minuten später winkt dich Gabi hektisch zu sich. Sie ist kreidebleich. Aus ihren Lautsprechern dröhnt russische Techno-Musik. Auf dem Bildschirm tanzen halbnackte Skelette. 'Ich hab nur auf 'Rechnung.exe' geklickt! Mach das weg, bevor der Chef kommt!'",
+        text: "Irgendwann winkt dich Gabi hektisch zu sich. Sie ist kreidebleich. Aus ihren Lautsprechern dröhnt russische Techno-Musik. Auf dem Bildschirm tanzen halbnackte Skelette. 'Ich hab nur auf 'Rechnung.exe' geklickt! Mach das weg, bevor der Chef kommt!'",
         opts: [
             { 
                 t: "Helfen: Stecker ziehen", 
@@ -1003,7 +1003,7 @@ export const sidequests = [
         kind: "text",
         title: "CSI: Buchhaltung",
         reqStory: "path_archive_stolen",
-        text: "Zehn Minuten später steht Gabi in deiner Bürotür. Sie trägt Latexhandschuhe. Mit einer Pinzette hält sie ein winziges, zerknülltes Stück rosa Alufolie hoch. 'Beweisstück A. Gefunden in Ihrem Papierkorb. Korrespondiert exakt mit der Fehlmenge im Ordner 'Steuer 1990'. Der Kirschlikör-Geruch in Ihrer Atemluft bestätigt den Verdacht.'",
+        text: "Irgendwann steht Gabi in deiner Bürotür. Sie trägt Latexhandschuhe. Mit einer Pinzette hält sie ein winziges, zerknülltes Stück rosa Alufolie hoch. 'Beweisstück A. Gefunden in Ihrem Papierkorb. Korrespondiert exakt mit der Fehlmenge im Ordner 'Steuer 1990'. Der Kirschlikör-Geruch in Ihrer Atemluft bestätigt den Verdacht.'",
         opts: [
             { 
                 t: "Geständnis: 'Es war Notwehr (Unterzucker)'", 
@@ -5678,7 +5678,7 @@ export const sidequests = [
         kind: "text",
         title: "Der Kollege enthüllt",
         reqStory: "path_toilet_knock",
-        text: "Die Tür öffnet sich endlich. Markus vom Vertrieb kommt mit eingeschlafenen Beinen, das Ladekabel noch in der Hand, heraus.",
+        text: "Als du das nächste Mal dort vorbeikommst, öffnet sich die Tür. Markus vom Vertrieb kommt mit eingeschlafenen Beinen heraus, das Ladekabel in der Hand.",
         opts: [
             { 
                 t: "Ihm verächtlich das Ladekabel entreißen", 
