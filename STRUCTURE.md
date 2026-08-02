@@ -17,9 +17,9 @@ src/
   platform.js           Plattform-Schnittstelle, Web-Fassung
   platform_steam.js     Steam-Bridge, lädt sich nur unter Electron nach
 
-  components/           22 Svelte-Komponenten
+  components/           34 Svelte-Komponenten, davon 8 fürs Intranet
   engine/               Engine-Module, engine_state.svelte.js hält den Zustand
-  data/                 16 Datendateien
+  data/                 19 Datendateien
   assets/               von Vite verarbeitet, siehe unten
 
 public/
@@ -27,6 +27,7 @@ public/
 
 tools/
   lint-data.mjs         Datenprüfung, npm run lint:data
+  simulate-day.mjs      Tages-Simulation, npm run sim
 ```
 
 ## src/assets/ oder public/assets/
@@ -46,8 +47,11 @@ Dort liegen: die beiden Schriftschnitte und die drei Texturen — alle aus
 kann `assets/img/items/${id}.webp` auflösen, weil `id` erst im Spiel bekannt
 ist. Diese Dateien werden unverändert kopiert und behalten ihren Pfad.
 
-Dort liegen: alle Item-, Charakter- und Erfolgsbilder, die Musik und die
-Intranet-Seiten.
+Dort liegen: alle Item-, Charakter- und Erfolgsbilder sowie die Musik. Die
+Intranet-Seiten lagen bis v4.0.0 ebenfalls dort — als eigenständige HTML-Dateien
+in einem iframe, die dafür eine handkopierte Fassung des Stylesheets brauchten.
+Sie sind jetzt Komponenten unter `components/intranet/` und teilen sich den
+Build des Spiels.
 
 Kurz: **Verweis im Code sichtbar → `src/`. Pfad zur Laufzeit gebaut → `public/`.**
 
