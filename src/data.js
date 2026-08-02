@@ -42,6 +42,7 @@ const LOADERS = {
     calls:      () => import('./data/data_calls.js'),
     coffee:     () => import('./data/data_coffee.js'),
     emails:     () => import('./data/data_emails.js'),
+    lunch:      () => import('./data/data_lunch.js'),
     party:      () => import('./data/data_party.js'),
     reputation: () => import('./data/data_reputation.js'),
     server:     () => import('./data/data_server.js'),

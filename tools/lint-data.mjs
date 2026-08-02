@@ -20,12 +20,12 @@ import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('bossfights', 'calls', 'coffee', 'emails', 'party', 'reputation', 'server', 'sidequests');
+await ensure('bossfights', 'calls', 'coffee', 'emails', 'lunch', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
 
-const POOLS = ['bossfights', 'calls', 'coffee', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
+const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
 const itemIds = new Set(Object.keys(DB.items));
 const charNames = new Set(DB.chars.map(c => c.name));
 

@@ -53,7 +53,7 @@ export const ui = {
 
     updateUI: function() {
 		
-        // --- AUTOMATISCHE INVENTAR-SORTIERUNG ---
+        // --- AUTOMATIC INVENTORY SORTING ---
         this.state.inventory.sort((a, b) => {
             let itemA = DB.items[a.id];
             let itemB = DB.items[b.id];
@@ -109,7 +109,7 @@ export const ui = {
             }
         });
 
-        // --- INVENTAR UPDATE (Hauptansicht / Mini-Slots) ---
+        // --- INVENTORY UPDATE (full view and mini slots) ---
         
         // The five slots and the +N badge are rendered by
         // components/InventorySlots.svelte and InventoryBadge.svelte.
@@ -119,7 +119,7 @@ export const ui = {
         this.updatePhoneVisibility();
     },
     
-    // --- VISUELLES FEEDBACK: ITEM FLIEGT IN DEN RUCKSACK ---
+    // --- VISUAL FEEDBACK: item flies into the backpack ---
     animateItemToBackpack: function(imgUrl) {
         if (!imgUrl) return;
 
@@ -212,7 +212,7 @@ export const ui = {
     // EventView uses inside, so the panel and its contents read as one thing.
     TERMINAL_ACCENTS: {
         calls: '#3b82f6', boss: '#ef4444', rep: '#eab308', sidequest: '#a855f7',
-        server: '#10b981', coffee: '#f59e0b', party: '#ec4899', special: '#14b8a6'
+        server: '#10b981', coffee: '#f59e0b', party: '#ec4899', lunch: '#14b8a6'
     },
 
     _setTerminal: function(className, extra) {
@@ -237,8 +237,8 @@ export const ui = {
     // prompt and the H.A.L.G.E.R.D. one shown during the tutorial.
     setTerminalIdle: function(variant = 'system') {
         this._setTerminal(this.IDLE_CLASS, { mode: 'idle', variant });
-        // Ruhezustand ist der sichere Punkt zum Sichern: kein offenes
-        // Ereignis, das man halb wiederherstellen müsste.
+        // Idle is the safe moment to save: no open event that would have to
+        // be restored half-finished.
         this.saveDay?.();
     },
 
@@ -359,8 +359,7 @@ export const ui = {
         document.body.classList.add('overflow-hidden');
     },
     
-    // --- AUSREDEN SYSTEM ---
-    // --- AUSREDEN SYSTEM ---
+    // --- EXCUSE SYSTEM ---
     // The text itself is components/ExcuseText.svelte.
     openExcuseModal: function() {
         if (this.state.excusesLeft <= 0) return;
@@ -406,14 +405,13 @@ export const ui = {
         this.disableButtons(false);
         this.setTerminalIdle();
         
-        // Hieß früher updateSteamStatus; die Funktion trägt heute den
-        // plattformneutralen Namen, weil sie über platform.presence läuft.
+        // Was updateSteamStatus; the name is platform-neutral now because it
+        // goes through platform.presence.
         this.updatePresence('system');
         this.updateUI();
     },
     
-    // --- ARCHIV UI (Sammelalbum) ---
-    // --- ARCHIV UI (Sammelalbum) ---
+    // --- ARCHIVE UI (collection) ---
     // Contents are rendered by components/ArchiveView.svelte from
     // state.archive; this only opens the window.
     openArchive: function() {
@@ -432,7 +430,6 @@ export const ui = {
     },
     
     // --- LORE SYSTEM ---
-    // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
     showLoreModal: function() {
         this.state.loreOpen = true;
@@ -444,8 +441,7 @@ export const ui = {
         document.body.classList.remove('overflow-hidden');
     },
 
-    // --- TEAM / CHARAKTERE ---
-    // --- TEAM / CHARAKTERE ---
+    // --- TEAM AND CHARACTERS ---
     // The cards are rendered by components/TeamView.svelte from
     // state.reputation; this only opens the window.
     openTeam: function() {
@@ -469,11 +465,10 @@ export const ui = {
         const frame = document.getElementById('intranet-frame');
         if (frame) {
             frame.src = "assets/intranet/index.html";
-            // Das Intranet ist ein eigenes Dokument im Rahmen — die Wurzel-
-            // Schriftgröße des Spiels wirkt dort nicht hinein. Deshalb wird
-            // die gewählte Textgröße beim Laden übertragen. Über zoom, weil
-            // die Firmenseiten ihr eigenes Stylesheet mitbringen und nicht
-            // zwingend in rem rechnen.
+            // The intranet is its own document inside the frame, so the game's
+            // root font size does not reach it. The chosen text size is passed
+            // in on load - via zoom, because the company pages bring their own
+            // stylesheet and do not necessarily work in rem.
             frame.onload = () => this.applyIntranetTextSize(frame);
         }
         
@@ -489,7 +484,7 @@ export const ui = {
         document.body.classList.remove('overflow-hidden');
     },
 
-    // --- SCHWARZES BRETT ---
+    // --- BULLETIN BOARD ---
     openBoard: function() {
         const modal = document.getElementById('board-modal');
         modal.classList.remove('hidden');
@@ -502,7 +497,7 @@ export const ui = {
         modal.classList.remove('flex');
     },
 
-    // --- VISUELLES FEEDBACK (Floating Text) ---
+    // --- VISUAL FEEDBACK (floating text) ---
     showFloatingText: function(elementId, value) {
         if (value === 0) return; // Nichts anzeigen bei 0
 
@@ -514,7 +509,7 @@ export const ui = {
         const sign = value > 0 ? '+' : '';
         floatEl.innerText = `${sign}${value}`;
         
-        // --- BLINDFLUG CHECK ---
+        // --- BLIND RUN CHECK ---
         if (this.state.blindStats) {
             floatEl.innerText = '?'; // blind mode shows only a question mark
         } else {
@@ -534,7 +529,8 @@ export const ui = {
             color = 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]';
         }
 
-        // Styling (Start-Zustand) - Jetzt noch langsamer: 3000ms (3 Sekunden)
+        // Starting state. Deliberately slow at 3000ms so the item is readable
+        // on its way into the backpack.
         floatEl.className = `fixed font-normal text-xl z-9999 pointer-events-none transition-all duration-3000 ease-out ${color}`;
 
         // 3. Start-Position berechnen
@@ -732,7 +728,7 @@ export const ui = {
                     throw new Error("Datenstruktur fehlerhaft.");
                 }
 
-                // --- NEU: SICHERER MERGE ---
+                // --- SAFE MERGE ---
                 // Start from the current archive template
                 const currentTemplate = JSON.parse(JSON.stringify(engine.state.archive));
                 // Merge the imported save into it without losing new fields
@@ -813,9 +809,9 @@ export const ui = {
             // Step 2: execute.
             // This used to remove a non-existent 'tutorialSeen' key, which meant a
             // hard reset wiped the archive but left the tutorial marked as done.
-            // Bewusst NICHT entfernt: keyBinds und sämtliche Einstellungs-
-            // und Audio-Keys (siehe keys.js). Ein Hard-Reset löscht den
-            // Spielstand — nicht die Vorlieben des Menschen davor.
+            // Deliberately NOT removed: keyBinds and every settings and audio
+            // key (see keys.js). A hard reset wipes the save, not the
+            // preferences of the person in front of the screen.
             localStorage.removeItem(engine.KEYS.archive);
             localStorage.removeItem(engine.KEYS.defaultDiff);
             localStorage.removeItem(engine.KEYS.tutorialDone);
@@ -864,7 +860,7 @@ export const ui = {
         
         if(select) select.value = localStorage.getItem(engine.KEYS.defaultDiff) || 'ask';
         
-        // --- Toggles aktualisieren ---
+        // --- Refresh the toggles ---
         if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
         if(document.getElementById('setting-oneclick')) document.getElementById('setting-oneclick').checked = this.state.oneClickItem;
         if(document.getElementById('setting-fastchat')) document.getElementById('setting-fastchat').checked = this.state.fastChat;
@@ -956,14 +952,14 @@ export const ui = {
     toggleBlindStats: function(isOn) {
         this.state.blindStats = isOn;
         localStorage.setItem(KEYS.blindStats, isOn);
-        // Wer mitten im Tag an den Zahlen dreht, hat nicht blind gespielt.
+        // Changing the readouts mid-day means the run was not played blind.
         this.state.blindRun = false;
         this.updateUI();
     },
     toggleBlindTickets: function(isOn) {
         this.state.blindTickets = isOn;
         localStorage.setItem(KEYS.blindTickets, isOn);
-        // Wer mitten im Tag an den Zahlen dreht, hat nicht blind gespielt.
+        // Changing the readouts mid-day means the run was not played blind.
         this.state.blindRun = false;
         this.updateUI();
     },
@@ -993,8 +989,8 @@ export const ui = {
         const value = SIZES.includes(size) ? size : 'normal';
         this.state.textSize = value;
         localStorage.setItem(KEYS.textSize, value);
-        // An <html>, nicht an <body>: Die Regel verstellt die Wurzel-
-        // Schriftgröße, auf die sich sämtliche rem-Angaben beziehen.
+        // On <html>, not <body>: the rule changes the root font size that
+        // every rem value refers to.
         document.documentElement.classList.remove('text-size-large', 'text-size-xlarge');
         if (value !== 'normal') document.documentElement.classList.add('text-size-' + value);
         this.applyIntranetTextSize();
@@ -1038,7 +1034,7 @@ export const ui = {
         this.setMusicVolume(0.2);
         this.changeMusicStyle('radio');
 
-        // Tastatur: Belegung und Anzeige der Tastenkappen
+        // Keyboard: bindings and the key cap hints
         this.resetKeybinds();
         this.toggleShowHotkeys(!window.matchMedia('(pointer: coarse)').matches);
 
@@ -1157,7 +1153,7 @@ export const ui = {
         }
     },
     
-    // --- KEYBINDING FUNKTIONEN ---
+    // --- KEYBINDING FUNCTIONS ---
     startBindingKey: function(action) {
         if (this.state.isBindingKey) return;
 
@@ -1282,7 +1278,7 @@ export const ui = {
         });
     },
 	
-    // --- NEU: VISUELLE HOTKEYS RENDERN ---
+    // --- RENDER THE VISUAL HOTKEYS ---
     // --- REPORT SYSTEM ---
 
     openReportModal: function() {
@@ -1310,7 +1306,7 @@ export const ui = {
                 debug: "entry.1066861594"
             };
 
-            // --- INPUTS LESEN ---
+            // --- READ INPUTS ---
             const catVal = document.getElementById('report-category')?.value || "Unbekannt";
             const descVal = document.getElementById('report-desc')?.value || "";
 
@@ -1320,7 +1316,7 @@ export const ui = {
                 return;
             }
 
-            // --- STATE DATEN ---
+            // --- STATE DATA ---
             const s = this.state || {}; 
             const min = s.time || 480;
             const hh = Math.floor(min / 60).toString().padStart(2, '0');
@@ -1335,7 +1331,7 @@ export const ui = {
                        : s.difficultyMult > 1.0 ? "Montag (Schwer)"
                        : "Mittwoch (Normal)";
 
-            // --- LETZTES EVENT ERMITTELN ---
+            // --- FIND THE LAST EVENT ---
             let lastEventID = "Keine Daten";
             if (s.activeEvent?.id) lastEventID = s.activeEvent.id + " (Aktiv)";
             else if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (Phone)";
@@ -1344,7 +1340,7 @@ export const ui = {
                 lastEventID = flags[flags.length - 1] + " (Letztes Flag)";
             }
 
-            // --- LOG FEED (DIE LETZTEN 600 ZEICHEN) ---
+            // --- LOG FEED (last 600 characters) ---
             let logText = "(Log leer)";
 
             if (this.state.logEntries.length > 0) {
@@ -1354,7 +1350,7 @@ export const ui = {
                 logText = rawText;
             }
 
-            // --- ZUSAMMENBAUEN ---
+            // --- ASSEMBLE ---
             const logData = 
 `=== STATUS ===
 📍 Event:     ${lastEventID}
@@ -1366,7 +1362,7 @@ export const ui = {
 ${logText}
 =====================`;
 
-            // --- UI FEEDBACK START (Button manipulieren) ---
+            // --- UI FEEDBACK START (button state) ---
             const sendBtn = document.querySelector('#report-modal button.bg-blue-600');
             let originalText = "";
             if (sendBtn) {
@@ -1376,7 +1372,7 @@ ${logText}
                 sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
 
-            // --- PAYLOAD BAUEN ---
+            // --- BUILD THE PAYLOAD ---
             const formData = new URLSearchParams();
             formData.append(IDS.cat, catVal);
             formData.append(IDS.desc, descVal);

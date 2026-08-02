@@ -20,7 +20,7 @@
  */
 import { DB, ensure } from '../src/data.js';
 
-await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 'special');
+await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 'lunch');
 
 const DAYS = parseInt(process.argv[2] ?? '1500', 10);
 
@@ -230,7 +230,7 @@ function playDay(diffCfg, stratName) {
         // Mittagspause beim Überschreiten von 12:00
         if (!s.lunchDone && s.time >= 720) {
             s.lunchDone = true;
-            const lunch = rnd(DB.special.lunchEvents);
+            const lunch = rnd(DB.lunch);
             if (lunch.opts?.length) apply(s, pick(unlocked(lunch.opts, s.inv), s) ?? lunch.opts[0], 'lunch');
             end = checkEnd(s);
             if (end) { s.end = end; break; }

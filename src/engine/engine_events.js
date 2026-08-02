@@ -846,10 +846,21 @@ export const events = {
         this.setTerminalResult(res, m, f, finalA, finalC, btnAction, btnText, btnColor);
     },
 
-    triggerLunch: function() {
-        let lunchOptions = DB.special.lunchEvents;
-        let randomLunch = lunchOptions[Math.floor(Math.random() * lunchOptions.length)];
-        this.renderTerminal(randomLunch, 'special');
+    // async: die Mittagspause ist ein eigener Pool und wird wie die anderen
+    // erst bei Bedarf geladen. prefetchAll() holt sie im Hintergrund, lange
+    // bevor es zwölf Uhr wird — das await hier ist die Absicherung für den
+    // Fall, dass jemand schneller war als die Leitung.
+    triggerLunch: async function() {
+        await ensure('lunch');
+        const pool = DB.lunch ?? [];
+        if (!pool.length) {
+            // Sollte nie eintreten; lieber ohne Pause weiterspielen als hängen.
+            console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
+            this.reset();
+            return;
+        }
+        const randomLunch = pool[Math.floor(Math.random() * pool.length)];
+        this.renderTerminal(randomLunch, 'lunch');
     },
 
     /**

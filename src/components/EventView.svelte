@@ -23,7 +23,7 @@
         server:    { name: 'SERVERRAUM',    color: 'text-emerald-400', border: 'border-emerald-500', icon: '💾', bg: 'bg-slate-900' },
         coffee:    { name: 'KAFFEE',        color: 'text-amber-400',   border: 'border-amber-500',   icon: '☕', bg: 'bg-slate-900' },
         party:     { name: 'SYNERGY-GALA',  color: 'text-pink-400',    border: 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]',  icon: '🎉', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
-        special:   { name: 'MITTAGSPAUSE',  color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', bg: 'bg-slate-900' }
+        lunch:     { name: 'MITTAGSPAUSE',  color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', bg: 'bg-slate-900' }
     };
     const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', bg: 'bg-slate-900' };
 

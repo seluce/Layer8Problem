@@ -103,7 +103,7 @@ export const core = {
             calls:     "Schlägt sich mit User-Problemen rum",
             boss:      "Steckt in einer absoluten Katastrophe!",
             rep:       "Unterhält sich mit dem Kollegium",
-            special:   "Macht gerade Mittagspause",
+            lunch:     "Macht gerade Mittagspause",
             party:     "Überlebt die Synergy-Gala",
             system:    "Starrt mit leerem Blick auf den Monitor"
         };
@@ -157,15 +157,14 @@ export const core = {
     /**
      * Sichert den laufenden Arbeitstag.
      *
-     * Gespeichert wird ausschließlich im Ruhezustand — also dann, wenn gerade
-     * kein Ereignis offen ist. Ein halb beantwortetes Gespräch wiederherzu-
-     * stellen wäre aufwendig und fehleranfällig; so verliert man im
-     * schlimmsten Fall das eine Ereignis, das gerade auf dem Schirm stand,
-     * statt des ganzen Vormittags.
+     * Saved only while idle - that is, with no event open. Restoring a
+     * half-answered conversation would be involved and error-prone; this way
+     * the worst case is losing the one event that was on screen, not the
+     * whole morning.
      *
-     * Welche Felder zum Tag gehören, bestimmt freshDay() — dieselbe Quelle,
-     * die den Tag auch anlegt. Damit kann ein neu hinzugefügtes Tagesfeld
-     * hier nicht vergessen werden. Sets werden für JSON zu Listen.
+     * freshDay() decides which fields belong to a day - the same source that
+     * creates it. A newly added day field therefore cannot be forgotten here.
+     * Sets become arrays for JSON.
      */
     saveDay: function() {
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
@@ -173,22 +172,21 @@ export const core = {
         try {
             const day = {};
             for (const key of Object.keys(freshDay())) {
-                // Laufende Timer sind Kennzahlen dieser Sitzung; nach einem
-                // Neuladen zeigen sie ins Leere. Sie bleiben draußen und
-                // starten beim Fortsetzen ohnehin neu.
+                // Running timers belong to this session; after a reload they
+                // point nowhere. They stay out and restart on resume anyway.
                 if (DAY_TIMERS.includes(key)) continue;
                 const value = this.state[key];
                 day[key] = value instanceof Set ? [...value] : value;
             }
-            // Nicht Teil von freshDay, gehören aber zum Tag:
+            // Not part of freshDay, but still part of the day:
             day.difficultyMult = this.state.difficultyMult;
             day.reputation = { ...this.state.reputation };
             day.savedAt = Date.now();
 
             localStorage.setItem(this.KEYS.dayState, JSON.stringify(day));
         } catch (e) {
-            // Voller Speicher oder privater Modus: Der Tag läuft weiter,
-            // er ist dann eben nicht gesichert.
+            // Storage full or private mode: the day carries on, it simply is
+            // not saved.
             console.warn('Tag konnte nicht gesichert werden:', e);
         }
     },
@@ -199,7 +197,7 @@ export const core = {
             const raw = localStorage.getItem(this.KEYS.dayState);
             if (!raw) return null;
             const day = JSON.parse(raw);
-            // Ein Tag, der bereits vorbei war, wird nicht angeboten.
+            // A day that was already over is not offered.
             if (!day || day.time >= 16 * 60 + 30) return null;
             return day;
         } catch {
@@ -218,10 +216,10 @@ export const core = {
             this.state[key] = SETS.includes(key) ? new Set(value ?? []) : value;
         }
 
-        // Der Log-Zähler lebt auf dem Engine-Objekt, nicht im Tageszustand —
-        // nach einem Neuladen stünde er wieder auf null und würde IDs
-        // vergeben, die die geladenen Einträge schon tragen. Svelte quittiert
-        // das im LogFeed mit doppelten Schlüsseln.
+        // The log counter lives on the engine object, not in the day state:
+        // after a reload it would start at zero again and hand out ids the
+        // restored entries already carry. Svelte answers that with duplicate
+        // keys in the LogFeed.
         this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
 
         // Anzeige und Ablauf wieder aufsetzen
@@ -284,20 +282,18 @@ export const core = {
     /**
      * Schreibt fest, wie ein Arbeitstag ausgegangen ist.
      *
-     * Ersetzt die einzelnen incrementStat-Aufrufe am Tagesende, weil zum
-     * Ergebnis mehr gehört als ein Zähler: die Serie überstandener Tage, die
-     * Aufschlüsselung nach Wochentag und die Frage, ob die beiden Notventile
-     * den Tag noch gerettet haben. Alles landet im Archiv und überlebt
-     * damit den Neustart.
+     * Replaces the individual incrementStat calls at the end of a day: the
+     * outcome is more than one counter. The streak of days survived, the
+     * breakdown per weekday and whether either safety valve saved the day all
+     * belong to it. Everything lands in the archive and survives a restart.
      */
     recordDayResult: function(outcome) {
         const st = this.state.archive.stats ?? (this.state.archive.stats = {});
         const diff = this.difficultyKey();
-        // Jeder erhöhte Zähler geht denselben Weg wie bei incrementStat:
-        // hoch, dann an die Plattform melden. Die Steam-Schicht kennt eine
-        // feste Liste (STAT_NAMES) und ignoriert alles andere still — die
-        // neuen Felder wie survived_hard oder ventSaves landen also im
-        // Archiv, aber nicht bei Steam. Das ist gewollt.
+        // Every counter takes the same route as in incrementStat: raise it,
+        // then report it. The Steam layer knows a fixed list (STAT_NAMES) and
+        // silently ignores the rest, so fields like survived_hard or ventSaves
+        // reach the archive but not Steam. That is intended.
         const bump = (key) => {
             st[key] = (st[key] || 0) + 1;
             platform.stat(key, st[key]);
@@ -340,9 +336,8 @@ export const core = {
 		this.playMusic('office');
         document.getElementById('intro-modal').style.display = 'none';
 
-        // Liegt ein unterbrochener Arbeitstag vor? Dann hat die Frage danach
-        // Vorrang vor der Tageswahl — sonst wäre der Zwischenstand mit dem
-        // ersten Klick verloren.
+        // Is there an interrupted workday? Asking about it comes before the
+        // difficulty picker, otherwise the first click would discard it.
         const saved = this.loadDay();
         const resumeModal = document.getElementById('resume-modal');
         if (saved && resumeModal) {
@@ -499,13 +494,13 @@ export const core = {
         // newly added field can never be forgotten here.
         Object.assign(this.state, freshDay(this.state.difficultyMult));
 
-        // Nur wer schon um acht Uhr blind fliegt, fliegt blind. Wer die
-        // Zahlen später ausblendet, hat den Vormittag über gesehen, wie es
-        // um ihn steht — das zählt nicht.
+        // Only someone flying blind from eight is flying blind. Hiding the
+        // readouts later means having watched the morning with full sight -
+        // that does not count.
         this.state.blindRun = this.state.blindStats && this.state.blindTickets;
 
-        // Nach dem Ersetzen des Tages: Der Ruf kommt aus dem Archiv und
-        // überlebt, hier wird sein Ausgangsstand für heute festgehalten.
+        // After the day is replaced: reputation comes from the archive and
+        // persists, so this records where it stood at the start of today.
         this.state.repAtStart = { ...this.state.reputation };
 
         // Ein neuer Tag ersetzt jeden gesicherten Zwischenstand.
@@ -771,8 +766,8 @@ export const core = {
     // Runs from updateUI() after every action, so it stays cheap: no report is
     // built until a branch actually needs one.
     /**
-     * Wohin die beiden Notventile zurücksetzen — je Wochentag verschieden.
-     * Stand zweimal wortgleich in checkEndConditions.
+     * Where the two safety valves reset to, per weekday. Used to sit in
+     * checkEndConditions twice, word for word.
      */
     valveResetValue: function() {
         if (this.state.difficultyMult < 1.0) return 30;   // Freitag
@@ -783,9 +778,9 @@ export const core = {
     /**
      * Stellt ein Tagesende in die Warteschlange.
      *
-     * Die vier Enden unterschieden sich nur in Titel, Satz und Ursache — die
-     * Abfolge (Ergebnis festschreiben, Tagebuch erzeugen, pendingEnd setzen)
-     * war viermal dieselbe. finishGame() holt es später ab.
+     * The four endings only differed in title, line and cause - the sequence
+     * (record the outcome, build the diary, set pendingEnd) was the same all
+     * four times. finishGame() picks it up later.
      */
     queueEnd: function({ title, lead, cause, outcome, diaryKey, isWin }) {
         this.recordDayResult(outcome);
@@ -796,8 +791,8 @@ export const core = {
     },
 
     /**
-     * Das Aggro-Ventil: einmal pro Tag lässt sich Dampf ab, danach ist Schluss.
-     * Liefert true, wenn der Tag weitergeht.
+     * The aggro valve: once a day you can let off steam, after that it is
+     * over. Returns true when the day carries on.
      */
     openRageValve: function() {
         if (this.state.rageWarningReceived) return false;
@@ -805,8 +800,8 @@ export const core = {
         this.state.rageWarningReceived = true;
         const resetTo = this.valveResetValue();
         this.state.al = resetTo;
-        // Zwei Punkte: der Höchststand und der Reset direkt danach —
-        // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
+        // Two points: the peak and the reset right after it, so the curve on
+        // the end screen drops vertically instead of sloping.
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.rage;
@@ -818,8 +813,8 @@ export const core = {
     },
 
     /**
-     * Die Abmahnung: dasselbe Prinzip für den Chef-Radar.
-     * Liefert true, wenn der Tag weitergeht.
+     * The written warning: same principle for the boss radar.
+     * Returns true when the day carries on.
      */
     issueChefWarning: function() {
         if (this.state.chefWarningReceived) return false;
@@ -838,11 +833,11 @@ export const core = {
     },
 
     /**
-     * Steht statt des Feierabends die Gala an?
+     * Is the gala due instead of clocking off?
      *
-     * Bedingung: alle acht Ruf-Erfolge liegen vor, und zwar auf mindestens
-     * dem heute gespielten Schwierigkeitsgrad — wer sie am Freitag geholt
-     * hat, bekommt am Montag keine Party geschenkt. Und einmal pro Grad.
+     * Condition: all eight reputation achievements are in, each earned at
+     * least on the difficulty being played today - collecting them on Friday
+     * does not hand you the party on Monday. And once per difficulty.
      */
     partyInvitation: function() {
         const DIFF_RANK = { easy: 1, normal: 2, hard: 3 };
@@ -863,12 +858,11 @@ export const core = {
     },
 
     /**
-     * Prüft nach jeder Aktion, ob der Arbeitstag zu Ende ist.
+     * Checks after every action whether the workday is over.
      *
-     * Die Reihenfolge ist Absicht und nicht beliebig: Ein Ausraster schlägt
-     * den Ticket-Kollaps, der Ticket-Kollaps den Feierabend, und der Chef
-     * kommt zuletzt — wer um 16:30 mit vollem Radar den Feierabend erreicht,
-     * hat ihn sich verdient.
+     * The order is deliberate: a meltdown beats the ticket collapse, the
+     * ticket collapse beats clocking off, and the boss comes last - reaching
+     * half past four with a full radar means you earned it.
      */
     checkEndConditions: function() {
         if (this.state.isPartyMode) return;
@@ -897,7 +891,7 @@ export const core = {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
         }
-        // D. FEIERABEND — oder die Gala, wenn alles dafür erfüllt ist
+        // D. CLOCKING OFF - or the gala, when everything for it is in place
         else if (this.state.time >= 16 * 60 + 30) {
             const party = this.partyInvitation();
             if (party) { this.state.pendingEnd = party; return; }
@@ -935,7 +929,7 @@ export const core = {
             this.clearDayTimers();
             this.state.emailPending = false;
             
-            // Der Tag ist vorbei — der Zwischenstand darf weg.
+            // The day is over, the saved progress can go.
             this.clearDay();
             this.showEnd(end);
             this.state.pendingEnd = null; // Reset
@@ -1224,11 +1218,10 @@ export const core = {
         // ==========================================
         // NACHSATZ: DER BLINDFLUG
         // ==========================================
-        // Kein Erfolg, keine Trophäe — eine Randnotiz. Wer den ganzen Tag
-        // ohne Zahlen gearbeitet hat, hat ihn anders erlebt als alle
-        // anderen, und genau das gehört ins Logbuch. Nur bei überstandenen
-        // Tagen: Ein Blindflug, der im Rage Quit endet, kommentiert sich
-        // von selbst.
+        // No achievement, no trophy - a marginal note. Working a whole day
+        // without readouts is a different experience from everyone else's,
+        // and that belongs in the logbook. Only for days survived: a blind
+        // run ending in a rage quit comments on itself.
         let pBlind = "";
         if (state.blindRun && (endReason === "WIN" || endReason === "PARTY")) {
             const hard   = state.difficultyMult > 1.0;
@@ -1257,7 +1250,7 @@ export const core = {
         // ==========================================
         // ASSEMBLE THE HTML
         // ==========================================
-        // Absätze als Daten; die Papier-Optik macht components/DiaryEntry.svelte.
+        // Paragraphs as data; components/DiaryEntry.svelte does the paper look.
         return { p1, p2, pWarn, pBlind, p3 };
     },
 
