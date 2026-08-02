@@ -190,7 +190,7 @@ export const calls = [
 		startNode: "root",
 		nodes: {
 			root: {
-				text: "Das Telefon klingelt aggressiv. Du weißt genau, wer das ist..\n\n'Haben Sie... HABEN SIE GERADE AUFGELEGT?!'",
+				text: "Das Telefon klingelt aggressiv. Du weißt genau, wer das ist...\n\n'Haben Sie... HABEN SIE GERADE AUFGELEGT?!'",
 				opts: [
 					{ t: "Lüge: 'Tunnel! Funkloch!'", next: "lie_tunnel" },
 					{ t: "Wahrheit: 'Sie haben geschrien.'", next: "truth" }
@@ -581,7 +581,7 @@ export const calls = [
 	{
 		id: "call_werner_tablet",
 		title: "Privatanruf: Schwiegerpapa Werner",
-		text: "Dein Bürotelefon klingelt. Das Display zeigt 'Unbekannt'.<br><br>'JÜRGEN? HÖRST DU MICH??'<br><br>Es ist Werner, dein Schwiegervater. Er schreit, als würde er über den Atlantik rufen.<br><br>'Die Renate hat mir dieses Wisch-Brett geschenkt! Ich drücke auf den Briefumschlag, aber da kommen keine Briefe! Und der Enkel sagt, ich soll mir Wozz-Äpp holen. Aber dieser Äpp-Laden will ein Passwort! Helf mir mal eben, das dauert doch nur eine Minute!'",
+		text: "Dein Bürotelefon klingelt. Das Display zeigt 'Unbekannt'.\n\n'JÜRGEN? HÖRST DU MICH??'\n\nEs ist Werner, dein Schwiegervater. Er schreit, als würde er über den Atlantik rufen.\n\n'Die Renate hat mir dieses Wisch-Brett geschenkt! Ich drücke auf den Briefumschlag, aber da kommen keine Briefe! Und der Enkel sagt, ich soll mir Wozz-Äpp holen. Aber dieser Äpp-Laden will ein Passwort! Helf mir mal eben, das dauert doch nur eine Minute!'",
 		opts: [
 			{ 
 				t: "Geduldig Schritt-für-Schritt erklären",

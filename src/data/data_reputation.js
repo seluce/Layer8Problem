@@ -50,7 +50,7 @@ export const reputation = [
                 t: "Micromanagement: 'Okay, aber ich gucke zu!'", 
                 rep: { "Kevin": -5, "Dr. Wichtig": 5 },
                 m: 15, f: -10, a: 10, c: -10, 
-                r: "Du stehst hinter ihm und korrigierst jeden Tippfehler. 'Nicht so schnell! Syntax!' Der Angriff wird gestoppt, aber Kevin ist genervt. 'Ich hätte das auch alleine geschafft, Chef..'" 
+                r: "Du stehst hinter ihm und korrigierst jeden Tippfehler. 'Nicht so schnell! Syntax!' Der Angriff wird gestoppt, aber Kevin ist genervt. 'Ich hätte das auch alleine geschafft, Chef...'" 
             },
             { 
                 t: "Misstrauen: 'Weg da, zu gefährlich!'", 
@@ -749,7 +749,7 @@ export const reputation = [
                 t: "Geschenk annehmen", 
                 rep: { "Chantal": 5 }, 
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "'Cool, danke.' Es ist eine 80€ Wasserflasche. Du hackst die Firmware und stellst das Leuchten auf 'Matrix-Grün'. Ein nettes Spielzeug, was nach wenigen Minuten kaputt gegangen ist.." 
+                r: "'Cool, danke.' Es ist eine 80€ Wasserflasche. Du hackst die Firmware und stellst das Leuchten auf 'Matrix-Grün'. Ein nettes Spielzeug, was nach wenigen Minuten kaputt gegangen ist..." 
             },
             { 
                 t: "Ablehnen: 'Elektroschrott.'", 

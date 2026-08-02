@@ -303,7 +303,7 @@ export const emails = [
 		subj: "WG: (Kein Betreff)",
 		body: "Müller,\n\ndanke für die Weiterleitung.\n\nSagen Sie Wuttke, er soll Paprika reinmachen, sonst schmeckt das nicht. Und wenn er schon kocht, soll er mir eine Portion in den 4. Stock bringen.\n\n(Sie kriegen nichts, Verräter mag niemand.)",
 		opts: [
-			{ btn: "Na toll..", r: "Der Chef kriegt Gulasch, Wuttke kriegt Lob, du kriegst gar nichts.", m: 2, f: 0, a: 15, c: 0 },
+			{ btn: "Na toll...", r: "Der Chef kriegt Gulasch, Wuttke kriegt Lob, du kriegst gar nichts.", m: 2, f: 0, a: 15, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -1322,7 +1322,7 @@ export const emails = [
         subj: "Welcome to the Dark Side",
         body: "Alles ist jetzt schwarz. Leider auch die Schriftfarbe. Wir arbeiten dran.",
         opts: [
-            { btn: "Ich sehe nichts..", r: "Aber es sieht cool aus.", m: 2, f: 10, a: 5, c: 0 },
+            { btn: "Ich sehe nichts...", r: "Aber es sieht cool aus.", m: 2, f: 10, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
