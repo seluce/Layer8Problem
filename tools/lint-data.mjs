@@ -12,6 +12,7 @@
  *  - char/reqRep/rep names missing from DB.chars
  *  - story flags that are required but never set (= dead content)
  *  - reqStory on the bulletin board and in the intranet, same check
+ *  - markup in fields that are rendered as plain text (would be readable)
  *  - chain events: next going nowhere, unreachable nodes/results, dead ends
  *  - nextEmail pointing at a missing mail, duplicate mail ids and subjects
  *  - characters in opt.r that could break the inline onclick string
@@ -246,6 +247,18 @@ const checkText = (ctx, field, txt) => {
 
     const t = txt.trim();
     if (t.length === 0) { err(`${ctx} ${field}: leerer Text`); return; }
+
+    // Markup in fields that are rendered as plain text.
+    // Event and mail texts go through EventView/EmailView, which split them on
+    // \n and print them as text - a <br> in there is not a line break, it is
+    // four characters the player gets to read. Only the bulletin board, the
+    // intranet, the tutorial and the morning moods go through {@html}, and
+    // none of them passes through here.
+    const markup = t.match(/<\/?(br|b|i|u|p|em|strong|span|div|ul|ol|li|h[1-6])\b[^>]*>/i);
+    if (markup) err(`${ctx} ${field}: Auszeichnung "${markup[0]}" in einem Feld, das als reiner Text ausgegeben wird — benutze \\n für einen Absatz`);
+
+    // Two dots are neither a full stop nor an ellipsis, they are a typo.
+    if (/(?<!\.)\.\.(?!\.)/.test(t)) warn(`${ctx} ${field}: doppelter Punkt (".." statt "..." oder ".")`);
 
     // Only prose gets a length check. Button labels are supposed to be terse
     // ("Auflegen.", "Ignorieren") and would otherwise drown the report.
