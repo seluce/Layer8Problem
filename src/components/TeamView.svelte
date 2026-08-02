@@ -29,9 +29,15 @@
         DB.chars.map(char => {
             const player = isPlayer(char);
             const rep = player ? 0 : (state.reputation[char.name] ?? 0);
+            // Was hat der heutige Tag bewegt? Der absolute Wert allein sagt
+            // nicht, ob man gerade etwas richtig oder falsch macht.
+            const today = player ? 0 : rep - (state.repAtStart?.[char.name] ?? rep);
+            const level = LEVELS.find(l => rep >= l.min) ?? LEVELS[3];
+            const nextUp = LEVELS.filter(l => l.min > rep).at(-1);
             return {
-                char, player, rep,
-                level: LEVELS.find(l => rep >= l.min) ?? LEVELS[3],
+                char, player, rep, level, today,
+                // Wie weit ist es noch bis zur nächsten Stufe nach oben?
+                toNext: nextUp ? { text: nextUp.text, gap: nextUp.min - rep } : null,
                 // -100..100 mapped onto 0..100 so the centre line sits at 50%.
                 fill: (rep + 100) / 2
             };
@@ -70,8 +76,16 @@
                     </div>
 
                     {#if !member.player}
-                        <span class="text-[10px] font-bold uppercase tracking-widest {member.level.tone} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded-sm ml-2 shrink-0">
-                            {member.level.text}
+                        <span class="flex items-center gap-1.5 ml-2 shrink-0">
+                            {#if member.today !== 0}
+                                <!-- Nur heute Bewegtes; ohne Veränderung bleibt die Zeile ruhig. -->
+                                <span class="text-[10px] font-mono font-bold {member.today > 0 ? 'text-emerald-400' : 'text-red-400'}">
+                                    {member.today > 0 ? '▲' : '▼'}{Math.abs(member.today)}
+                                </span>
+                            {/if}
+                            <span class="text-[10px] font-bold uppercase tracking-widest {member.level.tone} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded-sm">
+                                {member.level.text}
+                            </span>
                         </span>
                     {/if}
                 </div>
@@ -81,6 +95,12 @@
                         <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-600/50 z-20"></div>
                         <div class="h-full {member.level.bar} transition-all duration-1000 ease-out relative z-10" style="width: {member.fill}%"></div>
                     </div>
+
+                    {#if member.toNext && !state.blindStats}
+                        <p class="text-[9px] text-slate-500 -mt-1 mb-1.5 font-mono">
+                            noch {member.toNext.gap} bis {member.toNext.text}
+                        </p>
+                    {/if}
                 {/if}
 
                 <p class="text-xs text-slate-400 leading-snug opacity-90 italic">{member.char.desc}</p>

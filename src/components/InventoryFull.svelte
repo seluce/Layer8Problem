@@ -102,6 +102,14 @@
             <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 text-left">
                 <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{row.item.name}</div>
                 <div class="text-[10px] text-slate-300 italic leading-snug">{row.item.flavor ?? '"Keine weiteren Informationen."'}</div>
+                <!-- Ob ein Gegenstand den Einsatz überlebt, stand bisher
+                     nirgends - man erfuhr es erst, wenn er weg war. -->
+                <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
+                            {row.quest ? 'text-amber-500' : row.item.keep ? 'text-sky-400' : 'text-slate-500'}">
+                    {#if row.quest}Trophäe · bleibt für immer
+                    {:else if row.item.keep}Wiederverwendbar
+                    {:else}Verbraucht sich bei Nutzung{/if}
+                </div>
                 <div class="absolute top-full {pos.arrow} border-4 border-transparent border-t-slate-600"></div>
             </div>
         {/if}
