@@ -16,6 +16,14 @@
     import { state as game } from '../../engine/engine_state.svelte.js';
 
     const data = $derived(game.intranetData);
+
+    // Whole class names, mapped from a key that comes out of the data file.
+    const STATUS_TONE = {
+        good:    'text-emerald-400 bg-emerald-900/20',
+        warn:    'text-amber-400 bg-amber-900/20',
+        bad:     'text-red-400 bg-red-900/20',
+        neutral: 'text-slate-400 bg-slate-700/40'
+    };
 </script>
 
 <div class="max-w-6xl mx-auto mt-8 px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -70,16 +78,19 @@
     <div class="space-y-8">
         <div class="bg-blue-900/30 border border-blue-800/50 p-6 rounded-xl shadow-lg relative overflow-hidden">
             <h3 class="font-bold mb-4 text-blue-400 uppercase tracking-widest text-xs">Vision des Tages</h3>
-            <blockquote class="italic text-lg font-serif leading-relaxed mb-4 text-slate-300">"Wir bauen keine Software. Wir weben das digitale Gewand der Zukunft, in dem der Mensch nur noch ein Plugin ist."</blockquote>
+            <blockquote class="italic text-lg font-serif leading-relaxed mb-4 text-slate-300">"{data?.vision_quote ?? 'Wir bauen keine Software. Wir weben das digitale Gewand der Zukunft, in dem der Mensch nur noch ein Plugin ist.'}"</blockquote>
             <p class="text-sm font-bold text-slate-400">— Dr. Wichtig, CEO</p>
         </div>
 
         <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
             <h3 class="font-bold mb-4 text-white">System-Status</h3>
             <ul class="space-y-3 text-sm">
-                <li class="flex justify-between items-center"><span class="text-slate-400">Kaffeemaschine (IT):</span> <span class="text-red-400 font-bold bg-red-900/20 px-2 py-1 rounded-sm">Defekt</span></li>
-                <li class="flex justify-between items-center"><span class="text-slate-400">Kaffeemaschine (Sales):</span> <span class="text-emerald-400 font-bold bg-emerald-900/20 px-2 py-1 rounded-sm">Gewartet</span></li>
-                <li class="flex justify-between items-center"><span class="text-slate-400">Main Server:</span> <span class="text-amber-400 font-bold bg-amber-900/20 px-2 py-1 rounded-sm">Raucht leicht</span></li>
+                {#each data?.status ?? [] as row (row.label)}
+                    <li class="flex justify-between items-center gap-3">
+                        <span class="text-slate-400">{row.label}:</span>
+                        <span class="{STATUS_TONE[row.tone]} font-bold px-2 py-1 rounded-sm shrink-0">{row.value}</span>
+                    </li>
+                {/each}
             </ul>
 
             {#if data?.incident}
@@ -92,5 +103,20 @@
                 </div>
             {/if}
         </div>
+
+        {#if data?.kpi}
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
+                <h3 class="font-bold mb-4 text-white">Kennzahl des Tages</h3>
+                <div class="flex items-baseline justify-between gap-3">
+                    <span class="text-slate-400 text-sm">Offener Ticketbestand</span>
+                    <span class="font-black text-3xl text-blue-400">{data.kpi.value}</span>
+                </div>
+                <div class="flex items-baseline justify-between gap-3 mt-1">
+                    <span class="text-slate-500 text-xs uppercase tracking-wider">Zielwert</span>
+                    <span class="font-bold text-slate-400">0</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-3 italic leading-relaxed">{data.kpi.text}</p>
+            </div>
+        {/if}
     </div>
 </div>

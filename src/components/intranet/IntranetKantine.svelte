@@ -117,6 +117,6 @@
 
     <div class="mt-8 bg-slate-800 border border-red-900/50 p-6 rounded-xl border-l-4 border-l-red-500 shadow-md">
         <h3 class="font-bold mb-2 text-white">⚠️ HYGIENE-HINWEIS VON EGON</h3>
-        <p class="text-sm text-slate-400">Die Mikrowelle im Ostflügel bleibt bis auf Weiteres gesperrt. Jemand hat versucht, tiefgefrorenen Fisch auf Stufe "Auftauen" für 45 Minuten zu garen. Der Geruch hat sich in der Wandfarbe festgesetzt.</p>
+        <p class="text-sm text-slate-400">{kantine?.hygiene ?? 'Die Mikrowelle im Ostflügel bleibt bis auf Weiteres gesperrt.'}</p>
     </div>
 </div>

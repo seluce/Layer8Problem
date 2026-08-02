@@ -6,8 +6,8 @@
   for every account and has never changed it - the policy note on the login
   card says so outright, and the IT is to blame for it, which is to say: you
   are. The account name for the second file is in the support line at the
-  bottom of Schnösel's record; several spellings are accepted, because this is
-  a joke and not a riddle.
+  bottom of Schnösel's record - and in the onboarding mail that reaches the
+  wrong inbox.
 
   Müller's file reads the archive: reprimands, days left without notice,
   survived workdays. Everything the company keeps on you.
@@ -24,11 +24,7 @@
     const PASSWORD = 'Synergy2026!';
     const ACCOUNTS = {
         j_schnoesel: 'schnoesel',
-        mueller:     'mueller',
-        m_mueller:   'mueller',
-        admin:       'mueller',
-        sysadmin:    'mueller',
-        it:          'mueller'
+        mueller:     'mueller'
     };
 
     const NOTE_TONE = { good: 'text-emerald-500', bad: 'text-red-500', neutral: 'text-amber-500' };

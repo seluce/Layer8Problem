@@ -2027,4 +2027,55 @@ export const emails = [
         }
     ]
 },
+
+{
+    id: "mail_onboarding_wrong",
+    sender: "Personalentwicklung",
+    subj: "Zugangsdaten für unseren neuen Kollegen (bitte weiterleiten)",
+    body: "Guten Morgen Herr Müller,\n\nda Frau Müller aus dem Onboarding weiterhin ausfällt und Sie in unserer Verteilerliste direkt über ihr stehen, senden wir Ihnen die Zugangsdaten für unseren neuen Junior Assistant. Sie arbeiten ja ohnehin den ganzen Tag mit Computern.\n\nLogin: j_schnoesel\nPasswort: Synergy2026!\n\nHinweis der IT: Das Initialpasswort ist für sämtliche Konten im Haus identisch und darf nicht geändert werden, das verwirrt die Datenbank.\n\nBitte leiten Sie die Mail an ihn weiter. Ein Postfach hat er noch nicht.",
+    opts: [
+        {
+            btn: "Antworten: 'Falscher Empfänger, mein Konto heißt mueller.'",
+            r: "Du erklärst in zwei Sätzen, dass du nicht Schnösel bist, dass dein Konto schlicht 'mueller' heißt und dass Zugangsdaten nicht per Mail durchs Haus wandern sollten. Absenden. Niemand wird das lesen.",
+            m: 5, f: 0, a: 5, c: 0,
+            nextEmail: "mail_onboarding_reply"
+        },
+        {
+            btn: "Ausdrucken und Schnösel auf den Tisch legen",
+            r: "Du druckst die Zugangsdaten aus und legst den Zettel auf Schnösels Tastatur. Der Ausdruck bleibt dort drei Wochen liegen, mit dem Passwort nach oben. Immerhin hat er ihn dann.",
+            m: 10, f: 0, a: -5, c: 0
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            r: "E-Mail kommentarlos gelöscht.",
+            m: 2, f: 0, a: 0, c: 10,
+            ignoreEmail: true
+        }
+    ]
+},
+{
+    id: "mail_onboarding_reply",
+    linked: true,
+    sender: "Personalentwicklung",
+    subj: "Re: Zugangsdaten für unseren neuen Kollegen (bitte weiterleiten)",
+    body: "Sehr geehrter Herr Müller,\n\nvielen Dank für Ihren Hinweis. Sie waren tatsächlich nicht der vorgesehene Empfänger.\n\nWir bitten Sie daher, die vorangegangene E-Mail aus datenschutzrechtlichen Gründen unverzüglich und vollständig zu löschen. Eine schriftliche Bestätigung der Löschung ist erforderlich.\n\nIhr Konto mueller ist von dem Vorgang selbstverständlich nicht betroffen. Es verwendet dasselbe Passwort.",
+    opts: [
+        {
+            btn: "Löschung schriftlich bestätigen",
+            r: "Du bestätigst schriftlich die Löschung einer E-Mail, die noch offen vor dir liegt. Der Vorgang gilt damit als abgeschlossen. Die Datenschutzquote des Hauses steigt.",
+            m: 5, f: 5, a: 0, c: 0
+        },
+        {
+            btn: "Den letzten Satz zweimal lesen",
+            r: "Es verwendet dasselbe Passwort. Alle Konten verwenden dasselbe Passwort. Ticket #4711, offen seit 2019, zuständig: du.",
+            m: 2, f: 0, a: 5, c: 0
+        },
+        {
+            btn: "Löschen & Ignorieren",
+            r: "E-Mail kommentarlos gelöscht.",
+            m: 2, f: 0, a: 0, c: 10,
+            ignoreEmail: true
+        }
+    ]
+},
 ];

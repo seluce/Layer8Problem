@@ -536,6 +536,18 @@ export const ui = {
         const streak = stats.streak ?? 0;
         const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
 
+        // Everything drawn fresh on every visit, so a second look at the same
+        // page is not the same page.
+        const draw = (pool) => pool[Math.floor(Math.random() * pool.length)];
+
+        // Kennzahl des Tages. Anyone playing without a ticket counter must not
+        // get it back here - the company simply withholds the figure, which is
+        // exactly what it would do.
+        const tickets = this.state.tickets ?? 0;
+        const kpi = this.state.blindTickets
+            ? { value: src.kpi.blind.value, text: src.kpi.blind.text }
+            : { value: String(tickets), text: (src.kpi.levels.find(l => tickets >= l.min) ?? src.kpi.levels.at(-1)).text };
+
         // The canteen plan hangs there all week; only the issue line knows the
         // time of day.
         const t = this.state.time ?? 0;
@@ -572,8 +584,14 @@ export const ui = {
             employee,
             feed,
             incident: { days: streak, note: incident.note },
+            vision_quote: draw(src.visions),
+            status: [...src.status].sort(() => Math.random() - 0.5).slice(0, 3),
+            kpi,
 
-            chantal: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
+            chantal: {
+                top: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
+                older: draw(src.chantal.older)
+            },
 
             vision: {
                 extra: done.includes('ach_wolf') ? src.vision.boss
@@ -593,6 +611,7 @@ export const ui = {
             kantine: {
                 today,
                 service,
+                hygiene: draw(src.hygiene),
                 done: this.state.lunchDone ? src.service.done : null
             },
 

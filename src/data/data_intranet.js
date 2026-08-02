@@ -114,6 +114,51 @@ export const intranet = {
             initials: 'DW', tone: '#34d399',
             text: 'Kurzer Gedanke aus der Lounge in Zürich: Wenn wir alle nur zehn Prozent mehr Mut hätten, bräuchten wir halb so viele Backups. Denkt mal drüber nach.'
         },
+        {
+            id: 'feed_rack5', author: 'Kevin', handle: '@IT_Nachwuchs',
+            initials: 'KE', tone: '#4ade80',
+            text: 'Kurze Frage in die Runde: Weiß jemand, wofür der Server in Rack 5 zuständig ist? Ich frage für einen Freund. Der Freund bin ich. Es ist dringend.'
+        },
+        {
+            id: 'feed_abkuerzung', author: 'Egon', handle: '@Facility',
+            initials: 'EG', tone: '#94a3b8',
+            text: 'Der Durchgang zum Lager K3 ist kein Weg zur Kantine. Er ist auch keine Abkürzung. Er ist ein Lager.'
+        },
+        {
+            id: 'feed_obstkorb', author: 'Chantal', handle: '@HR_FeelGood',
+            initials: 'CH', tone: '#f472b6',
+            text: 'Kleine Erinnerung an unser Obstkorb-Konzept: Wer eine Birne findet, darf sie behalten, muss sie aber wegen des geldwerten Vorteils hier eintragen. Bisherige Einträge: keine. Verschwundene Birnen: elf. 🍐'
+        },
+        {
+            id: 'feed_telefon', author: 'Gabi', handle: '@Empfang',
+            initials: 'GA', tone: '#38bdf8',
+            text: 'Es hat heute erneut jemand die Zentrale angerufen, um zu fragen, ob das Telefon funktioniert. Wir konnten das im Gespräch klären.'
+        },
+        {
+            id: 'feed_belege', author: 'Frau Elster', handle: '@Buchhaltung',
+            initials: 'FE', tone: '#a78bfa',
+            text: 'Ich weise erneut darauf hin: Ein Beleg ohne Datum ist kein Beleg. Er ist Papier. Papier wird nicht erstattet.'
+        },
+        {
+            id: 'feed_adapter', author: 'Markus', handle: '@Sales',
+            initials: 'MA', tone: '#fbbf24',
+            text: 'SUCHE DRINGEND Adapter HDMI auf irgendwas. Kundentermin in zwanzig Minuten. Bitte direkt an mein Handy, ich lese hier nicht mit.'
+        },
+        {
+            id: 'feed_aufzug', author: 'Dr. Wichtig', handle: '@CEO',
+            initials: 'DW', tone: '#34d399',
+            text: 'Ich bin heute Morgen mit dem Aufzug gefahren und habe dabei drei Mitarbeitende gesehen, die nicht gelächelt haben. Ich schreibe das hier ohne Wertung. Ich schreibe es nur auf.'
+        },
+        {
+            id: 'feed_schild', author: 'Facility Management', handle: '@Betriebstechnik',
+            initials: 'FM', tone: '#fb923c',
+            text: 'Die Beschriftung "BITTE NICHT ABSCHALTEN" an den Geräten im Technikraum ist keine Empfehlung. Sie ist eine Beschriftung.'
+        },
+        {
+            id: 'feed_halgerd', author: 'H.A.L.G.E.R.D.', handle: '@Systemüberwachung',
+            initials: 'HD', tone: '#22d3ee',
+            text: 'Ihre durchschnittliche Reaktionszeit hat sich im laufenden Quartal um 12% verbessert. Der Zielwert wurde daraufhin um 15% angepasst. Herzlichen Glückwunsch.'
+        },
 
         // ---------- Reagiert auf den heutigen Tag ----------
         {
@@ -167,7 +212,79 @@ export const intranet = {
     ],
 
     /* ================================================================
+       VISION DES TAGES
+       One quote per visit. The panel is the most prominent thing on the
+       start page, and a page that greets you with the same sentence
+       forever stops being a place after the second visit.
+       ================================================================ */
+    visions: [
+        'Wir bauen keine Software. Wir weben das digitale Gewand der Zukunft, in dem der Mensch nur noch ein Plugin ist.',
+        'Ein Problem ist nur eine Lösung, die noch niemand in Rechnung gestellt hat.',
+        'Ich lese keine Berichte. Ich spüre Zahlen.',
+        'Wer Pausen braucht, hat sein Warum noch nicht gefunden.',
+        'Scheitern ist ein Geschenk. Verpacken Sie es und legen Sie es mir auf den Tisch. Ich verkaufe es weiter.',
+        'Unsere Kunden kaufen kein Produkt. Sie kaufen die Erlaubnis, dazuzugehören.',
+        'Ich habe keine Strategie. Ich habe eine Richtung, und die ändert sich mit dem Licht.',
+        'Feierabend ist ein Gerücht, das sich hartnäckig hält.',
+        'Innovation entsteht nicht im Budget. Deshalb kürzen wir es.',
+        'Wenn Sie nachts wach liegen und an unsere Quartalsziele denken: Das beruhigt mich sehr.',
+        'Unsere Hierarchie ist flach. Meine ist am flachsten, weil ich oben stehe.',
+        'Daten sind das neue Öl. Und wie beim Öl fragt niemand, wo genau es herkommt.',
+        'Ein Backup ist im Grunde ein Misstrauensvotum gegen die Zukunft.',
+        'Ich delegiere Verantwortung, aber keine Befugnis. Alles andere wäre fahrlässig.',
+        'Der Kunde hat immer recht. Ab dem Moment, in dem er unterschrieben hat, hat er es besonders.',
+        'Work-Life-Balance bedeutet, dass beides am selben Ort stattfindet.',
+        'Wir sind kein Unternehmen. Wir sind eine Erzählung mit Umsatzsteuer-Identifikationsnummer.',
+        'Man muss die Menschen dort abholen, wo sie stehen. Meistens stehen sie im Weg.',
+        'Ich glaube an flache Prozesse, kurze Wege und lange Arbeitstage.',
+        'Nachhaltigkeit heißt für uns vor allem: Wir halten das durch.'
+    ],
+
+    /* ================================================================
        SYSTEM-STATUS
+       Three of these per visit. `tone` is a key; whole class names live
+       in the component.
+       ================================================================ */
+    status: [
+        { label: 'Kaffeemaschine (IT)',      value: 'Defekt',            tone: 'bad' },
+        { label: 'Kaffeemaschine (Sales)',   value: 'Gewartet',          tone: 'good' },
+        { label: 'Main Server',              value: 'Raucht leicht',     tone: 'warn' },
+        { label: 'Drucker (3. OG)',          value: 'Ersatzteil ab 2021', tone: 'warn' },
+        { label: 'Datensicherung',           value: 'Läuft ungeprüft',   tone: 'warn' },
+        { label: 'Gäste-WLAN',               value: 'Passwort: gast',    tone: 'bad' },
+        { label: 'Telefonanlage',            value: 'Erreichbar',        tone: 'good' },
+        { label: 'Faxgerät (Empfang)',       value: 'Betriebsbereit',    tone: 'good' },
+        { label: 'Klima (Serverraum)',       value: 'Fenster offen',     tone: 'warn' },
+        { label: 'Ticketsystem',             value: 'Verfügbar',         tone: 'good' },
+        { label: 'Zeiterfassung',            value: 'Immer verfügbar',   tone: 'good' },
+        { label: 'Intranet-Suche',           value: 'Deaktiviert',       tone: 'bad' },
+        { label: 'Notstromversorgung',       value: 'Ungetestet',        tone: 'warn' },
+        { label: 'Tür (Serverraum)',         value: 'Klemmt',            tone: 'warn' },
+        { label: 'Passwortrichtlinie',       value: 'Seit 2019 in Kraft', tone: 'neutral' }
+    ],
+
+    /* ================================================================
+       KENNZAHL DES TAGES
+       The one place where the intranet reads the running workday rather
+       than the save. Anyone playing without a ticket counter must not
+       get it back through the back door - the company then simply does
+       not disclose the figure, which is entirely in character.
+       ================================================================ */
+    kpi: {
+        blind: {
+            value: '—',
+            text: 'Der Bestand wird auf Wunsch der Bereichsleitung derzeit nicht ausgewiesen. Die Kennzahl bleibt selbstverständlich erfasst.'
+        },
+        levels: [
+            { min: 7, text: 'Der Bestand liegt deutlich über Zielwert. Als Sofortmaßnahme wurde die Kennzahl auf "beobachtend" gesetzt.' },
+            { min: 4, text: 'Die Abweichung wurde an die Bereichsleitung gemeldet. Eine Rückmeldung ist nicht vorgesehen.' },
+            { min: 1, text: 'Abweichung im Rahmen. Es besteht derzeit kein Handlungsbedarf.' },
+            { min: 0, text: 'Der Zielwert wurde erreicht. Die Kennzahl wird zur Vermeidung von Erwartungshaltungen ab sofort nicht mehr erhoben.' }
+        ]
+    },
+
+    /* ================================================================
+       SYSTEM-STATUS (Zähler)
        The counter beside "Tage ohne Vorfall im Serverraum" reads the
        streak from the archive, so for most players it says zero. That is
        the joke; the remarks make it one.
@@ -185,6 +302,56 @@ export const intranet = {
        team view (+20 / -20) the ordinary post stays in place.
        ================================================================ */
     chantal: {
+        // Der ältere Beitrag darunter, einer pro Besuch.
+        older: [
+            {
+                title: 'Die Kraft der stummen Meetings 🤫',
+                time: 'Gepostet vor 3 Wochen',
+                paragraphs: [
+                    'Guten Morgen Corporate-Family!',
+                    'Unser Pilotprojekt "Silent Sync" war ein riesiger Erfolg. Zwölf Mitarbeitende aus Sales und Marketing haben sich eine Stunde in Konferenzraum B getroffen, ohne ein einziges Wort zu wechseln. Wir haben ausschließlich über telepathische Mind-Maps und energetische Präsenz kommuniziert.',
+                    'Das Ergebnis war atemberaubend: Niemand hat sich gestritten, es gab keine sinnlosen Fragen, und die Aura im Raum war extrem agil. Wir rollen das Format ab sofort für alle Quartalsberichte aus.',
+                    'Denkt daran: Wer schweigt, stimmt zu!'
+                ]
+            },
+            {
+                title: 'Der Stuhlkreis der Wertschätzung 🪑',
+                time: 'Gepostet vor 2 Wochen',
+                paragraphs: [
+                    'Ihr Lieben!',
+                    'Am Donnerstag haben wir uns im Kreis aufgestellt und jeder durfte einer anderen Person sagen, was er an ihr schätzt. Es war sehr bewegend. Ein Kollege aus dem Vertrieb hat geweint, was ich als großen Fortschritt werte, auch wenn er später sagte, es habe an der Klimaanlage gelegen.',
+                    'Aus organisatorischen Gründen fand der Kreis in der Mittagspause statt. Wertschätzung soll ja nicht die Produktivität belasten. 💫'
+                ]
+            },
+            {
+                title: 'Warum "Nein" nur ein unfertiges "Ja" ist 🌱',
+                time: 'Gepostet vor 4 Wochen',
+                paragraphs: [
+                    'Namaste, ihr Strahlenden.',
+                    'Ich beobachte in letzter Zeit sehr viel "Nein" im Haus. "Nein, das geht nicht." "Nein, dafür ist kein Budget da." "Nein, das ist physikalisch unmöglich."',
+                    'Aber ist ein Nein nicht einfach nur ein Ja, dem noch die Begeisterung fehlt? Ich lade euch ein, diese Woche kein einziges Mal Nein zu sagen. Beobachtet, was passiert. Ich verspreche euch: Es passiert eine Menge.'
+                ]
+            },
+            {
+                title: 'Unsere neue Duz-Kultur – ab sofort verbindlich 🤝',
+                time: 'Gepostet vor 6 Wochen',
+                paragraphs: [
+                    'Hallo ihr Lieben — und ja, ich sage bewusst "ihr"!',
+                    'Ab sofort duzen wir uns im ganzen Haus. Flache Hierarchien beginnen in der Sprache! Ausgenommen ist selbstverständlich die Geschäftsleitung, die weiterhin gesiezt wird, um die Wertschätzung nicht zu verwässern.',
+                    'Wer sich mit dem Du schwertut, kann sich vertrauensvoll an mich wenden. Ich melde das dann weiter.'
+                ]
+            },
+            {
+                title: 'Digital Detox: Unser bildschirmfreier Freitagnachmittag ☀️',
+                time: 'Gepostet vor 5 Wochen',
+                paragraphs: [
+                    'Ihr Wundervollen,',
+                    'ab sofort gilt freitags ab 15 Uhr: Bildschirme aus, Köpfe frei! Wir nennen es "Analoge Stunde". Geht spazieren, malt etwas, atmet.',
+                    'Die Bearbeitung eingehender Anfragen bleibt davon selbstverständlich unberührt. Wir bitten euch, diese in der Analogen Stunde einfach mobil zu erledigen. 🌞'
+                ]
+            }
+        ],
+
         high: {
             title: 'Ein Hoch auf unsere stillen Held:innen! 🙌',
             time: 'Gepostet heute, 11:40',
@@ -277,6 +444,17 @@ export const intranet = {
        The plan hangs on the wall for the whole week, so it does not
        change with the clock - only the issue line above it does.
        ================================================================ */
+    hygiene: [
+        'Die Mikrowelle im Ostflügel bleibt bis auf Weiteres gesperrt. Jemand hat versucht, tiefgefrorenen Fisch auf Stufe "Auftauen" für 45 Minuten zu garen. Der Geruch hat sich in der Wandfarbe festgesetzt.',
+        'Der Kühlschrank in der Kantine wurde abgetaut. Ein Teil des Inhalts war älter als der Kühlschrank. Der Rest wurde nicht identifiziert.',
+        'Wer Fisch in der Mikrowelle erwärmt, ist im Haus bekannt. Nicht namentlich. Aber bekannt.',
+        'Die Kanne auf der Heizplatte ist kein Vorrat. Sie ist ein Zustand. Wer sie leert, setzt bitte eine neue auf.',
+        'Der Wasserspender im Foyer wurde abgeklemmt. Jemand hat versucht, ihn direkt an die Kaffeemaschine anzuschließen. Die Idee war nicht dumm. Die Ausführung schon.',
+        'Essensreste gehören nicht in den Papierkorb unter dem Schreibtisch. Auch nicht in den Papierkorb eines Kollegen. Auch nicht in den Serverraum.',
+        'Die Spülmaschine ist keine Ablage. Ihr Programm läuft 84 Minuten und nicht "gleich".',
+        'Der Toaster im 2. OG wurde aus dem Verkehr gezogen. Die Begründung liegt der Geschäftsführung vor. Sie ist zwei Seiten lang.'
+    ],
+
     service: {
         before: { label: 'Ausgabe ab 11:45 Uhr', note: 'Die Schlange beginnt erfahrungsgemäß um 11:31 Uhr.', tone: 'wait' },
         open:   { label: 'Ausgabe läuft', note: 'Voraussichtliche Wartezeit laut System: 8 Minuten.', tone: 'open' },
