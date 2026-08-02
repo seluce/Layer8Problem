@@ -1,30 +1,47 @@
 <!--
   Human Capital, vormals public/assets/intranet/hr.html.
 
-  The login is the same one as before: the credentials are broadcast over the
-  news ticker, and the file behind it belongs to Schnösel. Müller's own file
-  comes in the next step - GlobalCorp hands out one password for every
-  account and has never changed it, which is what makes a second file
-  reachable at all.
+  Two files sit behind one password. The credentials are broadcast over the
+  news ticker for Schnösel, but GlobalCorp hands out the same initial password
+  for every account and has never changed it - the policy note on the login
+  card says so outright, and the IT is to blame for it, which is to say: you
+  are. The account name for the second file is in the support line at the
+  bottom of Schnösel's record; several spellings are accepted, because this is
+  a joke and not a riddle.
 
-  The login state lives in the component, so leaving the page and coming back
-  asks again. That is the same behaviour the old page had, where switching
-  pages meant a full document load.
+  Müller's file reads the archive: reprimands, days left without notice,
+  survived workdays. Everything the company keeps on you.
+
+  CAUTION: `state` is imported as `game`, otherwise the $state rune below
+  would compile to a store access. See STRUCTURE.md.
 -->
 <script>
+    import { state as game } from '../../engine/engine_state.svelte.js';
+
+    const data = $derived(game.intranetData?.hr ?? null);
+
+    // Ein Passwort für alle. Das ist der Witz, und es ist auch die Regel.
+    const PASSWORD = 'Synergy2026!';
     const ACCOUNTS = {
-        j_schnoesel: 'Synergy2026!'
+        j_schnoesel: 'schnoesel',
+        mueller:     'mueller',
+        m_mueller:   'mueller',
+        admin:       'mueller',
+        sysadmin:    'mueller',
+        it:          'mueller'
     };
+
+    const NOTE_TONE = { good: 'text-emerald-500', bad: 'text-red-500', neutral: 'text-amber-500' };
 
     let user = $state('');
     let pass = $state('');
     let failed = $state(false);
-    let loggedIn = $state(false);
+    let file = $state(null);
 
     function attemptLogin() {
         const name = user.trim().toLowerCase();
-        if (ACCOUNTS[name] && ACCOUNTS[name] === pass.trim()) {
-            loggedIn = true;
+        if (ACCOUNTS[name] && pass.trim() === PASSWORD) {
+            file = ACCOUNTS[name];
             failed = false;
         } else {
             failed = true;
@@ -36,7 +53,7 @@
         user = '';
         pass = '';
         failed = false;
-        loggedIn = false;
+        file = null;
     }
 
     // Enter submits, as on any login form. No <form> element: the game runs in
@@ -48,7 +65,7 @@
 
 <div class="max-w-4xl mx-auto mt-8 px-4">
 
-    {#if !loggedIn}
+    {#if !file}
         <div class="max-w-md mx-auto mt-20">
             <div class="bg-slate-800 p-8 rounded-xl border border-slate-700 shadow-xl relative overflow-hidden">
                 <h2 class="text-2xl font-bold text-white mb-2">Restricted Access</h2>
@@ -69,9 +86,13 @@
                     <button type="button" onclick={attemptLogin}
                             class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-sm transition-colors mt-2">LOGIN</button>
                 </div>
+
+                {#if data?.policy}
+                    <p class="mt-6 pt-4 border-t border-slate-700 text-[0.625rem] text-slate-500 leading-relaxed">{data.policy}</p>
+                {/if}
             </div>
         </div>
-    {:else}
+    {:else if file === 'schnoesel'}
         <div class="mt-8">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-3xl font-black text-white tracking-tight">Mitarbeiterakte <span class="text-purple-500">#8472-B</span></h1>
@@ -94,7 +115,7 @@
                         <ul class="space-y-3 text-sm text-slate-300">
                             <li><span class="block text-xs text-slate-500 uppercase">Vereinbartes Gehalt</span>
                             <span class="font-mono text-amber-400">2.411,00 € Brutto / Monat</span><br>
-                            <span class="text-[10px] text-slate-500">(40-Stunden-Woche. Zzgl. bis zu 80 unvergütete Pflicht-Überstunden pro Monat)</span></li>
+                            <span class="text-[0.625rem] text-slate-500">(40-Stunden-Woche. Zzgl. bis zu 80 unvergütete Pflicht-Überstunden pro Monat)</span></li>
                             <li><span class="block text-xs text-slate-500 uppercase mt-2">Wohnort</span>
                             Hinterwald-Süd 4<br>17398 Nirgendwo</li>
                             <li><span class="block text-xs text-slate-500 uppercase mt-2">Pendelzeit</span>
@@ -177,6 +198,107 @@
                                     Hat seinen privaten Streaming-Account erfolgreich gekündigt, um sich abends fokussierter auf unbezahlte Überstunden vorbereiten zu können. Dies wurde mit einem virtuellen High-Five im Intranet belohnt.
                                 </div>
                             </li>
+                        </ul>
+                    </div>
+
+                    {#if data?.support}
+                        <p class="text-[0.625rem] text-slate-600 text-right">{data.support}</p>
+                    {/if}
+                </div>
+
+            </div>
+        </div>
+
+    {:else if data}
+        <!-- Die eigene Akte. Dieselbe Vorlage, andere Zahlen - und die Zahlen
+             stammen aus dem Archiv. -->
+        <div class="mt-8">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-black text-white tracking-tight">Mitarbeiterakte <span class="text-purple-500">#0404-A</span></h1>
+                <button type="button" onclick={logout}
+                        class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 border border-slate-600 rounded-sm transition-colors">Abmelden</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div class="md:col-span-1 space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center text-5xl mb-4 border-4 border-slate-600">💀</div>
+                        <h2 class="font-bold text-xl text-white">Müller</h2>
+                        <p class="text-purple-400 font-bold text-sm mb-2">Systemadministration</p>
+                        <span class="bg-amber-900/40 text-amber-400 border border-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Status: Probezeit (Monat {data.probation}/14)</span>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
+                        <h3 class="font-bold mb-3 text-white border-b border-slate-700 pb-2">Stammdaten</h3>
+                        <ul class="space-y-3 text-sm text-slate-300">
+                            <li><span class="block text-xs text-slate-500 uppercase">Vereinbartes Gehalt</span>
+                            <span class="font-mono text-amber-400">{data.salary}</span><br>
+                            <span class="text-[0.625rem] text-slate-500">{data.salaryNote}</span></li>
+                            <li><span class="block text-xs text-slate-500 uppercase mt-2">Rufbereitschaft</span>
+                            <span class="text-red-400">Nicht vereinbart. Faktisch durchgehend.</span></li>
+                            <li><span class="block text-xs text-slate-500 uppercase mt-2">Urlaubsanspruch</span>
+                            14 Tage / Jahr<br>
+                            <span class="text-[0.625rem] text-slate-500">(Davon 14 Tage an den Betriebsurlaub gebunden.)</span></li>
+                            <li><span class="block text-xs text-slate-500 uppercase mt-2">Loyalitätsindex</span>
+                            <span class="font-bold text-slate-200">{data.loyalty.label}</span><br>
+                            <span class="text-[0.625rem] text-slate-500 leading-relaxed">{data.loyalty.text}</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 space-y-6">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
+                        <h3 class="font-bold mb-4 text-white flex items-center gap-2">
+                            <span class="text-amber-500">📁</span> Persönliche Dokumente
+                        </h3>
+
+                        <div class="space-y-3">
+                            {#each data.documents as doc (doc.id)}
+                                <details class="group bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
+                                    <summary class="px-4 py-3 cursor-pointer font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex justify-between items-center">
+                                        <span class="flex items-center gap-2"><span class="text-xl">{doc.icon}</span> {doc.name}</span>
+                                        <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+                                    </summary>
+                                    <div class="p-4 border-t border-slate-700 text-sm text-slate-300 space-y-4 bg-slate-950/50">
+                                        <p class="font-bold text-red-400 uppercase text-xs">{doc.intro}</p>
+                                        {#if doc.lead}
+                                            <p class="text-xs text-slate-400 mb-2">{doc.lead}</p>
+                                        {/if}
+                                        {#if doc.items}
+                                            <ul class="list-decimal pl-5 space-y-3">
+                                                {#each doc.items as item, i (i)}
+                                                    <li>{@html item}</li>
+                                                {/each}
+                                            </ul>
+                                        {/if}
+                                        {#if doc.paragraphs}
+                                            <div class="space-y-3 text-slate-400 italic">
+                                                {#each doc.paragraphs as text, i (i)}
+                                                    <p>{@html text}</p>
+                                                {/each}
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </details>
+                            {/each}
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md">
+                        <h3 class="font-bold mb-4 text-white flex items-center gap-2">
+                            <span class="text-emerald-500">📊</span> Verhaltensanalyse &amp; Arbeitsweise
+                        </h3>
+                        <ul class="space-y-4 text-sm text-slate-300">
+                            {#each data.notes as note (note.title)}
+                                <li class="flex gap-3">
+                                    <span class="{NOTE_TONE[note.tone]} mt-1">■</span>
+                                    <div>
+                                        <strong class="text-slate-200 block">{note.title}</strong>
+                                        {note.text}
+                                    </div>
+                                </li>
+                            {/each}
                         </ul>
                     </div>
                 </div>

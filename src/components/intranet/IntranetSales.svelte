@@ -9,6 +9,20 @@
   them. Never assembled from parts.
 -->
 <script>
+    import { state as game } from '../../engine/engine_state.svelte.js';
+
+    // Der zusätzliche Eintrag richtet sich nach Markus' Verhältnis zu dir,
+    // der stornierte Serientermin nach dem Story-Flag von heute.
+    const extra = $derived([game.intranetData?.sales?.extra, game.intranetData?.sales?.phoenix].filter(Boolean));
+
+    // Whole class names, mapped from a key. Never assembled from parts, and
+    // never written in the data file - the scanner would not find them there.
+    const TONES = {
+        good: 'bg-emerald-900/30 text-emerald-400 border border-emerald-800',
+        bad:  'bg-red-900/30 text-red-400 border border-red-800',
+        dead: 'bg-slate-700 text-slate-400 border border-slate-600'
+    };
+
     const DEALS = [
         {
             icon: '🤝',
@@ -82,6 +96,26 @@
     </div>
 
     <div class="space-y-6">
+        {#each extra as deal (deal.customer)}
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.tone === 'dead' ? 'opacity-75' : ''}">
+                <div class="flex flex-col justify-center shrink-0">
+                    <span class="text-5xl">{deal.icon}</span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="font-bold text-xl text-white">Kunde: {deal.customer}</h3>
+                        <span class="{TONES[deal.tone]} text-xs font-bold px-2 py-0.5 rounded-sm uppercase">{deal.badge}</span>
+                    </div>
+                    <p class="text-slate-300 mb-4 font-medium text-lg border-b border-slate-700 pb-4">Verkauftes Produkt: "{deal.product}"</p>
+                    <div class="text-sm text-slate-400 space-y-2">
+                        {#each deal.rows as row (row.label)}
+                            <p><span class="font-bold text-slate-300">{row.label}</span> {row.text}</p>
+                        {/each}
+                    </div>
+                </div>
+            </div>
+        {/each}
+
         {#each DEALS as deal (deal.customer)}
             <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.dim ? 'opacity-75' : ''}">
                 <div class="flex flex-col justify-center shrink-0">

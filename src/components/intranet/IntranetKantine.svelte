@@ -11,6 +11,16 @@
   already suffered through carries a note.
 -->
 <script>
+    import { state as game } from '../../engine/engine_state.svelte.js';
+
+    const kantine = $derived(game.intranetData?.kantine ?? null);
+
+    const SERVICE_TONE = {
+        wait:   'border-l-amber-500 text-amber-200/90 bg-amber-900/20',
+        open:   'border-l-emerald-500 text-emerald-200/90 bg-emerald-900/20',
+        closed: 'border-l-slate-500 text-slate-400 bg-slate-800/60'
+    };
+
     const MENU = [
         {
             day: 'Montag',
@@ -43,6 +53,16 @@
 <div class="max-w-5xl mx-auto mt-8 px-4 pb-12">
     <h1 class="text-3xl font-black mb-8 text-white">Cafeteria: "The Agile Kitchen" 🥗</h1>
 
+    {#if kantine?.service}
+        <div class="mb-6 border-l-4 p-4 rounded-sm text-sm {SERVICE_TONE[kantine.service.tone]}">
+            <span class="font-bold uppercase tracking-wide">{kantine.service.label}</span>
+            <span class="opacity-80"> — {kantine.service.note}</span>
+            {#if kantine.done}
+                <span class="opacity-80"> {kantine.done}</span>
+            {/if}
+        </div>
+    {/if}
+
     <div class="md:bg-slate-800 md:rounded-xl md:shadow-md md:border md:border-slate-700 md:overflow-hidden flex flex-col gap-4 md:gap-0 md:block">
 
         <div class="hidden md:grid md:grid-cols-5 bg-slate-950 text-emerald-500 uppercase text-xs tracking-wider border-b border-slate-700/50">
@@ -52,15 +72,24 @@
         </div>
 
         {#each MENU as row, i (row.day)}
-            <div class="flex flex-col md:grid md:grid-cols-5 bg-slate-800 {i % 2 === 0 ? 'md:bg-transparent' : 'md:bg-slate-800/30'} rounded-xl md:rounded-none border border-slate-700 md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-xs md:shadow-none">
-                <div class="md:col-span-1 md:p-4 font-bold text-slate-300 text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex items-center">{row.day}</div>
+            <div class="flex flex-col md:grid md:grid-cols-5 rounded-xl md:rounded-none border md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-xs md:shadow-none
+                        {row.day === kantine?.today
+                            ? 'bg-amber-900/20 md:bg-amber-900/10 border-amber-800/50'
+                            : `bg-slate-800 border-slate-700 ${i % 2 === 0 ? 'md:bg-transparent' : 'md:bg-slate-800/30'}`}">
+                <div class="md:col-span-1 md:p-4 font-bold text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex flex-col md:justify-center
+                            {row.day === kantine?.today ? 'text-amber-400' : 'text-slate-300'}">
+                    <span>{row.day}</span>
+                    {#if row.day === kantine?.today}
+                        <span class="text-[0.625rem] md:text-xs font-normal text-amber-500/80 uppercase tracking-wider mt-0.5">Heute</span>
+                    {/if}
+                </div>
                 <div class="md:col-span-2 md:p-4">
-                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                    <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
                     <strong>{row.classic.name}</strong><br>
                     <span class="text-sm text-slate-500">{row.classic.note}</span>
                 </div>
                 <div class="md:col-span-2 md:p-4">
-                    <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                    <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
                     <strong>{row.veggie.name}</strong><br>
                     <span class="text-sm text-slate-500">{row.veggie.note}</span>
                 </div>
@@ -70,15 +99,15 @@
         <div class="flex flex-col md:grid md:grid-cols-5 bg-emerald-900/20 md:bg-emerald-900/10 rounded-xl md:rounded-none border border-emerald-800/50 md:border-none hover:bg-emerald-900/30 p-4 md:p-0 gap-3 md:gap-0 shadow-xs md:shadow-none">
             <div class="md:col-span-1 md:p-4 font-bold text-emerald-400 text-lg md:text-base border-b border-emerald-800/50 md:border-none pb-2 md:pb-0 flex flex-col md:justify-center">
                 <span>Samstag</span>
-                <span class="text-[10px] md:text-xs font-normal text-emerald-500 md:text-emerald-600 uppercase tracking-wider mt-0.5">Agiles Wochenende</span>
+                <span class="text-[0.625rem] md:text-xs font-normal text-emerald-500 md:text-emerald-600 uppercase tracking-wider mt-0.5">Agiles Wochenende</span>
             </div>
             <div class="md:col-span-2 md:p-4">
-                <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
+                <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 1 (Classic)</div>
                 <strong class="text-emerald-300 md:text-white">Lauwarmer Filterkaffee</strong><br>
                 <span class="text-sm text-emerald-600/80 md:text-slate-500">Steht seit Freitag 15 Uhr auf der Heizplatte.</span>
             </div>
             <div class="md:col-span-2 md:p-4">
-                <div class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
+                <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">Menü 2 (Vegetarisch)</div>
                 <strong class="text-emerald-300 md:text-white">Trockener Marmorkuchen</strong><br>
                 <span class="text-sm text-emerald-600/80 md:text-slate-500">Reste vom Meeting der Geschäftsführung.</span>
             </div>

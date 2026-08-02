@@ -11,6 +11,7 @@
  *  - loot/req/rem pointing at items that do not exist
  *  - char/reqRep/rep names missing from DB.chars
  *  - story flags that are required but never set (= dead content)
+ *  - reqStory on the bulletin board and in the intranet, same check
  *  - chain events: next going nowhere, unreachable nodes/results, dead ends
  *  - nextEmail pointing at a missing mail, duplicate mail ids and subjects
  *  - characters in opt.r that could break the inline onclick string
@@ -20,7 +21,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('bossfights', 'calls', 'coffee', 'emails', 'lunch', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -164,6 +165,30 @@ for (const p of POOLS) {
   }
 }
 for (const e of DB.emails) (e.opts ?? []).forEach((o, i) => numCheck(o, `[emails/${e.id}] opts[${i}]`));
+
+/* ---------- 2d) Schwarzes Brett & Intranet ---------- */
+// Neither is an event pool, so none of the checks above sees them - but both
+// filter their content by reqStory, and a typo there fails silently: the note
+// or the post simply never appears, on any save, forever. Feeding their flags
+// into flagsReq puts them under the same dead-flag check as everything else.
+const reactive = [
+  ['board',    (DB.board ?? [])],
+  ['intranet', (DB.intranet?.feed ?? [])]
+];
+for (const [where, entries] of reactive) {
+  const seen = new Map();
+  for (const e of entries) {
+    const ctx = `[${where}/${e.id ?? '(ohne id)'}]`;
+    if (!e.id) err(`${ctx}: Eintrag ohne id`);
+    else seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
+    if (e.reqStory) (flagsReq.get(e.reqStory) ?? flagsReq.set(e.reqStory, []).get(e.reqStory)).push(ctx);
+  }
+  for (const [id, c] of seen) if (c > 1) err(`Doppelte ID "${id}" in ${where} (${c}x)`);
+}
+
+// Every character named as employee of the month has to exist.
+for (const name of Object.keys(DB.intranet?.employee ?? {}))
+  if (!charNames.has(name)) err(`[intranet/employee] "${name}" nicht in DB.chars`);
 
 /* ---------- 3) E-Mails ---------- */
 const mailIdSeen = new Map();

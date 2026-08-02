@@ -1,10 +1,18 @@
 <!--
   Impressum & AGB, vormals public/assets/intranet/impressum.html.
 
-  Migrated unchanged. Later this page carries a version number that climbs
-  with the days played - the text stays the length it is, only the count of
-  amendments nobody was told about goes up.
+  Two things react here, and one of them deliberately does not grow: the
+  version number climbs with every workday started, while the extra clauses
+  replace one another at fixed thresholds instead of stacking. A legal page
+  that gets longer every day would be unreadable within a week - and the
+  better joke is a document that is amended constantly without anyone ever
+  learning what changed.
 -->
+<script>
+    import { state as game } from '../../engine/engine_state.svelte.js';
+
+    const legal = $derived(game.intranetData?.impressum ?? null);
+</script>
 
 <div class="max-w-4xl mx-auto mt-12 px-4 pb-12">
     <div class="bg-slate-800 p-8 md:p-12 rounded-2xl shadow-md border border-slate-700">
@@ -56,9 +64,22 @@
                 <p>Die am Arbeitsplatz bereitgestellte Hardware ist exklusives Firmeneigentum. Mausklicks und Tastaturanschläge betrachten wir als endliche Ressourcen. Exzessives Scrollen, unnötiges Doppelklicken oder das rein private Aktualisieren von Webseiten führt zu vorzeitigem Hardware-Verschleiß. Ab dem 10.000. Mausklick pro Kalendermonat behält sich GlobalCorp vor, eine Abnutzungsgebühr von 0,02 € pro Klick direkt vom Nettogehalt einzubehalten.</p>
             </div>
 
+            {#if legal?.clause}
+                <div>
+                    <h2 class="text-lg font-bold text-purple-400 uppercase tracking-widest mb-2 border-l-4 border-purple-500 pl-3">{legal.clause.title}</h2>
+                    <p>{legal.clause.text}</p>
+                </div>
+            {/if}
+
             <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 italic text-slate-500 text-xs">
                 <p><strong class="text-slate-300">§5 Salvatorische Klausel:</strong> Sollten einzelne Bestimmungen dieser AGB unwirksam oder undurchführbar sein, wird die Geschäftsführung Sie solange anschreien, bis Sie zustimmen, dass sie doch wirksam sind. Gerichtsstand ist das Büro von Dr. Wichtig.</p>
             </div>
+
+            {#if legal}
+                <p class="text-xs text-slate-600 text-center pt-4">
+                    Fassung {legal.version}. Zuletzt geändert heute. {legal.note}
+                </p>
+            {/if}
 
         </div>
     </div>

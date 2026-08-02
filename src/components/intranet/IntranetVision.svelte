@@ -1,9 +1,18 @@
 <!--
   Das CEO-Interview, vormals public/assets/intranet/ceo_interview.html.
 
-  Migrated unchanged. The interview is a fixed text; later it gains one more
-  question that depends on how the day with Dr. Wichtig went.
+  The printed interview is fixed. What changes is one additional question,
+  and it sits BEFORE the closing one - nothing follows "letzte Frage". It only
+  exists if there is something to ask about: a negotiation that did not go his
+  way, or the question of whether GlobalCorp uses its own technology in-house,
+  which leads to an IT department Dr. Wichtig either praises or has to think
+  about first. Anyone with root on the network also finds an editorial note.
 -->
+<script>
+    import { state as game } from '../../engine/engine_state.svelte.js';
+
+    const vision = $derived(game.intranetData?.vision ?? null);
+</script>
 
 <div class="max-w-4xl mx-auto mt-8 px-4 pb-12">
     <div class="bg-slate-800 p-8 md:p-12 rounded-2xl shadow-md border border-slate-700">
@@ -59,6 +68,17 @@
                 <p>Meine Tür steht immer offen. Jederzeit. <em>(Anmerkung der Redaktion: Dr. Wichtig arbeitet derzeit von seiner Yacht auf den Bahamas aus)</em>. Wir sind hier keine Firma. Wir sind ein Organismus. Wenn eine Zelle im Organismus 80 Stunden arbeiten muss, dann tut sie das, weil die DNA der Disruption es verlangt! Und zur Kaffeemaschine: Wir evaluieren gerade ein Liquid-Food-Startup, das Nährstoffe direkt über die Klimaanlage vernebelt. Das spart den Weg in die Küche.</p>
             </div>
 
+            {#if vision?.extra}
+                <div>
+                    <p class="font-sans font-bold text-sm text-slate-500 uppercase tracking-wide mb-2">Interviewer</p>
+                    <p class="font-bold text-slate-200">{vision.extra.question}</p>
+                </div>
+
+                <div class="pl-6 border-l-4 border-blue-500">
+                    <p>{@html vision.extra.answer}</p>
+                </div>
+            {/if}
+
             <div>
                 <p class="font-sans font-bold text-sm text-slate-500 uppercase tracking-wide mb-2">Interviewer</p>
                 <p class="font-bold text-slate-200">Letzte Frage: Wo sehen Sie GlobalCorp in fünf Jahren?</p>
@@ -69,5 +89,9 @@
             </div>
 
         </div>
+
+        {#if vision?.note}
+            <p class="mt-12 pt-6 border-t border-slate-700 text-xs text-slate-500 italic leading-relaxed">{vision.note}</p>
+        {/if}
     </div>
 </div>

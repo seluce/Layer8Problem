@@ -480,9 +480,139 @@ export const ui = {
     // needed a hand-copied stylesheet to look like anything; inside the game
     // document the pages share the one build and the text size works through
     // rem like everywhere else.
-    openIntranet: function() {
+    openIntranet: async function() {
+        await ensure('intranet');
+        this.buildIntranet();
         this.state.intranetOpen = true;
         document.body.classList.add('overflow-hidden');
+    },
+
+    /**
+     * Was das Intranet heute über dich schreibt.
+     *
+     * Rebuilt on every open, unlike the bulletin board, which draws its notes
+     * once a day and keeps them. A wall is a place and should not reshuffle
+     * while you are standing in front of it; a company page is a page, and a
+     * page that ignores what happened an hour ago is just wrong.
+     *
+     * The engine picks, the components render - same split as everywhere else.
+     */
+    buildIntranet: function() {
+        const src = DB.intranet;
+        if (!src) return;
+
+        const rep = this.state.reputation ?? {};
+        const flags = this.state.storyFlags ?? {};
+        const stats = this.state.archive?.stats ?? {};
+        const done = this.state.archive?.achievements ?? [];
+
+        // Reputation of the seven colleagues. Müller is the player and has no
+        // entry of his own, so DB.chars is not the right list here.
+        const names = Object.keys(src.employee);
+        const values = names.map(n => rep[n] ?? 0);
+        const best = names.reduce((a, b) => ((rep[b] ?? 0) > (rep[a] ?? 0) ? b : a), names[0]);
+        const average = values.reduce((a, b) => a + b, 0) / (values.length || 1);
+
+        // Employee of the month. 20 is the FRIENDLY threshold the team view
+        // uses; below it the award is not given. If the whole house is on your
+        // side, the jury runs out of alternatives.
+        let employee;
+        if (values.every(v => v >= 20)) {
+            employee = { ...src.employeeSelf, self: true };
+        } else if ((rep[best] ?? 0) >= 20) {
+            employee = { name: best, ...src.employee[best] };
+        } else {
+            employee = { name: src.employeeNone.title, role: '', reason: src.employeeNone.reason, none: true };
+        }
+
+        // Feed: everything you caused today first, filled up to four.
+        const reactive = src.feed.filter(p => p.reqStory && flags[p.reqStory]);
+        const general = src.feed.filter(p => !p.reqStory)
+                                .sort(() => Math.random() - 0.5)
+                                .slice(0, Math.max(2, 4 - reactive.length));
+        const feed = [...reactive, ...general].slice(0, 4);
+
+        // Days without an incident in the server room. Zero on most days.
+        const streak = stats.streak ?? 0;
+        const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
+
+        // The canteen plan hangs there all week; only the issue line knows the
+        // time of day.
+        const t = this.state.time ?? 0;
+        const service = { ...(t < 11 * 60 + 45 ? src.service.before
+                            : t <= 13 * 60 + 15 ? src.service.open
+                            : src.service.after) };
+
+        const dayKey = this.difficultyKey();
+        const today = dayKey === 'easy' ? 'Freitag' : dayKey === 'hard' ? 'Montag' : 'Mittwoch';
+
+        // Human Capital: Müllers eigene Akte.
+        const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
+        const notes = [];
+        const push = (tone, title, text) => notes.push({ tone, title, text });
+
+        if (stats.warningsChef)
+            push('bad', `Abmahnungen: ${stats.warningsChef}`,
+                 'Sämtlich mündlich ausgesprochen und nachträglich schriftlich vermerkt. Ein Widerspruch ist nicht eingegangen, da über die Vermerke nicht informiert wurde.');
+        if (stats.daysRageQuit)
+            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${stats.daysRageQuit}`,
+                 'Der Mitarbeiter hat das Gebäude vor Dienstschluss verlassen, ohne sich abzumelden. In allen Fällen war er am Folgetag pünktlich wieder anwesend, was die Personalabteilung als Reue wertet.');
+        if (stats.ventSaves)
+            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${stats.ventSaves} Teilnahmen`,
+                 'Der Mitarbeiter hat wiederholt von der betrieblichen Möglichkeit Gebrauch gemacht, sich vor einer Eskalation kurz zurückzuziehen. Die Maßnahme gilt damit als wirksam und wird nicht ausgebaut.');
+        if ((stats.streakBest ?? 0) >= 3)
+            push('good', `Längste Phase ohne Zwischenfall: ${stats.streakBest} Arbeitstage`,
+                 'Ein auffällig ruhiger Zeitraum. Die Personalabteilung prüft, ob in dieser Phase eine Unterauslastung vorlag.');
+        if (stats.daysSurvived)
+            push('good', `Regulär beendete Arbeitstage: ${stats.daysSurvived}`,
+                 'Der Mitarbeiter hat das Gebäude an diesen Tagen zur vorgesehenen Zeit verlassen. Eine gesonderte Würdigung ist nicht vorgesehen, da dies dem Vertrag entspricht.');
+        if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
+
+        this.state.intranetData = {
+            employee,
+            feed,
+            incident: { days: streak, note: incident.note },
+
+            chantal: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
+
+            vision: {
+                extra: done.includes('ach_wolf') ? src.vision.boss
+                     : (rep['Dr. Wichtig'] ?? 0) >= 20 ? src.vision.good
+                     : (rep['Dr. Wichtig'] ?? 0) <= -20 ? src.vision.bad
+                     : null,
+                note: done.includes('ach_hacker') ? src.vision.editorNote : null
+            },
+
+            sales: {
+                extra: (rep['Markus'] ?? 0) >= 20 ? src.sales.good
+                     : (rep['Markus'] ?? 0) <= -20 ? src.sales.bad
+                     : null,
+                phoenix: flags['path_phoenix_storno'] ? src.sales.phoenix : null
+            },
+
+            kantine: {
+                today,
+                service,
+                done: this.state.lunchDone ? src.service.done : null
+            },
+
+            impressum: {
+                version: src.impressum.baseVersion + (stats.daysStarted ?? 0),
+                note: src.impressum.versionNote,
+                clause: src.impressum.clauses.find(c => (stats.daysRageQuit ?? 0) >= c.minRage) ?? null
+            },
+
+            hr: {
+                policy: src.hr.policy,
+                support: src.hr.support,
+                probation: Math.min(14, Math.max(1, stats.daysStarted ?? 1)),
+                salary: src.hr.salary,
+                salaryNote: src.hr.salaryNote,
+                loyalty,
+                notes,
+                documents: src.hr.documents
+            }
+        };
     },
 
     closeIntranet: function() {
