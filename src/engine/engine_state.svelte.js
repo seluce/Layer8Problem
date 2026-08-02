@@ -23,6 +23,11 @@ export function freshDay(mult = 1.0) {
         // Blindflug: Wurde der Tag von der ersten Minute an ohne Zahlen
         // gespielt? engine_core setzt den Wert beim Tagesstart, die beiden
         // Schalter löschen ihn, sobald jemand mittendrin nachjustiert.
+        // Ruf-Stand bei Tagesbeginn. Die Team-Ansicht zeigt daraus, was der
+        // heutige Tag bei den Kollegen bewegt hat — der absolute Wert allein
+        // sagt nichts darüber, ob man gerade etwas richtig oder falsch macht.
+        repAtStart: {},
+
         blindRun: false,
 
         // Wurde der 13:37-Moment heute schon gezeigt? (siehe checkLeetMoment)
@@ -245,7 +250,16 @@ export const state = $state({
     })(),
 
     keyBinds: (() => {
-        let saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};
+        // Ohne Absicherung: Ein beschädigter Eintrag lässt diesen Ausdruck
+        // werfen — und weil er beim Laden des Moduls ausgewertet wird, startet
+        // dann das ganze Spiel nicht mehr. Im Zweifel lieber Standardbelegung.
+        let saved = {};
+        try {
+            saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};
+            if (typeof saved !== 'object' || Array.isArray(saved)) saved = {};
+        } catch {
+            saved = {};
+        }
         const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
 
         // Drop obsolete keys left over from older savegames

@@ -504,6 +504,10 @@ export const core = {
         // um ihn steht — das zählt nicht.
         this.state.blindRun = this.state.blindStats && this.state.blindTickets;
 
+        // Nach dem Ersetzen des Tages: Der Ruf kommt aus dem Archiv und
+        // überlebt, hier wird sein Ausgangsstand für heute festgehalten.
+        this.state.repAtStart = { ...this.state.reputation };
+
         // Ein neuer Tag ersetzt jeden gesicherten Zwischenstand.
         this.clearDay();
 
