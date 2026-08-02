@@ -29,14 +29,14 @@
         DB.chars.map(char => {
             const player = isPlayer(char);
             const rep = player ? 0 : (state.reputation[char.name] ?? 0);
-            // Was hat der heutige Tag bewegt? Der absolute Wert allein sagt
-            // nicht, ob man gerade etwas richtig oder falsch macht.
+            // What did today move? The absolute value alone does not say
+            // whether you are getting it right just now.
             const today = player ? 0 : rep - (state.repAtStart?.[char.name] ?? rep);
             const level = LEVELS.find(l => rep >= l.min) ?? LEVELS[3];
             const nextUp = LEVELS.filter(l => l.min > rep).at(-1);
             return {
                 char, player, rep, level, today,
-                // Wie weit ist es noch bis zur nächsten Stufe nach oben?
+                // How far is it to the next level up?
                 toNext: nextUp ? { text: nextUp.text, gap: nextUp.min - rep } : null,
                 // -100..100 mapped onto 0..100 so the centre line sits at 50%.
                 fill: (rep + 100) / 2

@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 /**
- * Layer8Problem – Daten-Linter
+ * Layer8Problem - data linter
  * ---------------------------------------------------------------
- * Ablage:  tools/lint-data.mjs   (im Repo-Root ausführen)
- * Aufruf:  node tools/lint-data.mjs
- * Exit 1 bei Fehlern -> direkt als GitHub-Action verwendbar.
+ * Location: tools/lint-data.mjs   (run from the repository root)
+ * Usage:    node tools/lint-data.mjs
+ * Exits 1 on errors, so it works as a GitHub action as is.
  *
- * Prüft alles, was zur Laufzeit still fehlschlägt:
- *  - doppelte Event-IDs (usedIDs ist EIN globales Set über alle Pools!)
- *  - loot/req/rem, die auf nicht existierende Items zeigen
- *  - char/reqRep/rep-Namen, die nicht in DB.chars stehen
- *  - Story-Flags, die gefordert, aber nie gesetzt werden (= toter Content)
- *  - Chain-Events: next -> ins Leere, unerreichbare Nodes/Results, Sackgassen
- *  - nextEmail -> nicht existierende Mail, doppelte Mail-IDs/-Betreffs
- *  - Zeichen in opt.r, die den inline-onclick-String zerlegen können
+ * Checks everything that fails silently at runtime:
+ *  - duplicate event ids (usedIDs is ONE global set across all pools)
+ *  - loot/req/rem pointing at items that do not exist
+ *  - char/reqRep/rep names missing from DB.chars
+ *  - story flags that are required but never set (= dead content)
+ *  - chain events: next going nowhere, unreachable nodes/results, dead ends
+ *  - nextEmail pointing at a missing mail, duplicate mail ids and subjects
+ *  - characters in opt.r that could break the inline onclick string
  */
 
 import { readFileSync, readdirSync } from 'fs';
@@ -68,8 +68,8 @@ const checkOpt = (o, ctx) => {
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     const ctx = `[${p}/${ev.id}]`;
-    // Folge-Ereignisse können Stunden nach dem Auslöser kommen - oder nie.
-    // Texte, die unmittelbare Nähe behaupten, stimmen dann nicht.
+    // Follow-up events can arrive hours after their trigger, or never. Texts
+    // claiming immediate proximity are wrong in that case.
     if (ev.reqStory && ev.text) {
       const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
       if (m) warn(`${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
@@ -121,10 +121,10 @@ for (const p of POOLS) {
 }
 
 /* ---------- 2b) Sperr-Sicherheit: item-freie Optionen ---------- */
-// Ein Event, dessen sämtliche Optionen req oder rem tragen, kann sich komplett
-// sperren, sobald die Gegenstände fehlen — Inventar resettet täglich, und bei
-// vollem Rucksack lassen sich Items wegwerfen. Fatal, deshalb Fehler.
-// Genau eine freie Option ist per Design erlaubt (1-2 sind das Ziel).
+// An event whose options all carry req or rem can lock itself completely once
+// the items are missing - the inventory resets daily, and in a chain the
+// player would be stuck.
+// Exactly one free option is allowed by design (one to two is the target).
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     const ctx = `[${p}/${ev.id}]`;
@@ -139,9 +139,9 @@ for (const p of POOLS) {
 }
 
 /* ---------- 2c) Zahlen-Raster + Zeit-Wirkung ---------- */
-// Die Statusbalken bewegen sich in 5er-Schritten (Ruf darf feiner sein),
-// keine Aktion dauert unter 2 Minuten, und teure Zeit ohne spürbare Wirkung
-// ist ein Gratis-Vorspuler Richtung Feierabend — Balancing-Gift im Roguelike.
+// The stat bars move in steps of five (reputation may be finer), no action
+// takes less than two minutes, and expensive time without noticeable effect is
+// a free fast-forward.
 const numCheck = (o, ctx) => {
   const m = o.m ?? o.min;
   for (const k of ['f', 'a', 'c']) {
@@ -225,12 +225,12 @@ const checkText = (ctx, field, txt) => {
     // Only prose gets a length check. Button labels are supposed to be terse
     // ("Auflegen.", "Ignorieren") and would otherwise drown the report.
     const isProse = /\.(r|txt|text|body)$|^(text|body)$/.test(field) || field.endsWith('.text');
-    // CMD:-Werte sind Steuerbefehle an die Engine (Intranet/Schwarzes Brett
-    // öffnen), keine Sätze — sie sollen kurz sein.
+    // CMD: values are control commands for the engine (open the intranet or
+    // the bulletin board), not sentences - they are meant to be short.
     const isCommand = /^CMD:[A-Z_]+$/.test(t);
     if (isProse && !isCommand && t.length < 20) info(`${ctx} ${field}: sehr kurz ("${t}")`);
 
-    // Unpaarige Anführungszeichen deuten auf einen abgeschnittenen Satz hin
+    // Unbalanced quotation marks suggest a truncated sentence
     for (const q of ['"', '„', '»']) {
         const close = { '"': '"', '„': '“', '»': '«' }[q];
         const open  = (t.match(new RegExp(q === '"' ? '"' : q, 'g')) || []).length;
@@ -292,14 +292,14 @@ for (const p of POOLS) {
   for (const ev of DB[p]) {
     for (const o of ev.opts ?? []) {
       if (typeof o.r !== 'string') continue;
-      // Ergebnistexte rendert components/ResultView.svelte als Klartext.
-      // Deshalb ist "&" darin völlig unkritisch (früher eine Warnung, seit
-      // der Svelte-Umstellung ein Fehlalarm), Markup dagegen sinnlos: Es
-      // würde wörtlich im Terminal stehen. URLs müssen nicht verlinkt
-      // werden, das erledigt die Komponente selbst.
-      // Quest-Gegenstände sind Trophäen: ausschließlich lootbar, nie
-      // Voraussetzung. Wer sie als Bedingung setzt, sperrt die Option für
-      // alle, die den zugehörigen Ruf-Strang nicht gespielt haben.
+      // components/ResultView.svelte renders result texts as plain text, so
+      // "&" is entirely harmless in them (it used to warn, which became a
+      // false alarm with the Svelte rewrite). Markup, on the other hand, is
+      // pointless: it would appear literally in the terminal. URLs need no
+      // markup either, the component handles those itself.
+      // Quest items are trophies: lootable only, never a requirement. Using
+      // one as a condition locks the option for everyone who has not played
+      // the matching reputation strand.
       for (const key of ['req', 'rem'])
         if (o[key] && DB.items[o[key]]?.quest)
           err(`[${p}/${ev.id}] opt.${key} verlangt den Quest-Gegenstand "${o[key]}" — Trophäen sind nur lootbar`);

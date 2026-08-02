@@ -71,11 +71,11 @@
         if (slot.isConsumable) engine.askUseItem(slot.id);
         else engine.openInventory();
     }
-    // Tastaturbedienung für die Slots. Sie bleiben Container statt Buttons,
-    // weil sie Tooltip-Boxen und Overlays enthalten - Flow-Content, der in
-    // einem <button> nicht stehen darf. stopPropagation hält Enter und Leer-
-    // taste von der globalen Tastatursteuerung in engine.js fern, damit ein
-    // fokussierter Slot nicht zusätzlich die Bestätigen-Aktion auslöst.
+    // Keyboard support for the slots. They stay containers rather than
+    // buttons because they hold tooltip boxes and overlays - flow content,
+    // which may not sit inside a <button>. stopPropagation keeps Enter and
+    // Space away from the global key handling in engine.js, so a focused slot
+    // does not also fire the confirm action.
     function keyActivate(event, target) {
         if (event.key !== 'Enter' && event.key !== ' ') return;
         event.preventDefault();

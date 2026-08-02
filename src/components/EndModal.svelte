@@ -12,8 +12,8 @@
   eigene Zusammenfassung mit.
 -->
 <script>
-    // Umbenannt, damit die Rune $state in dieser Datei nutzbar bleibt —
-    // siehe Fallstrick in STRUCTURE.md.
+    // Renamed so the $state rune stays usable in this file - see the pitfall
+    // noted in STRUCTURE.md.
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import DayChart from './DayChart.svelte';
@@ -22,7 +22,7 @@
 
     const modal = $derived(game.modal);
 
-    // Wer die Kurve immer sehen will, stellt das in den Einstellungen ein.
+    // Anyone who always wants the curve can set that in the options.
     let showChart = $state(game.autoChart ?? false);
     let showDiary = $state(false);
 
@@ -46,8 +46,8 @@
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
 
-    // Einordnung: Was der Tag in der Laufbahn bedeutet. Die Zähler stehen im
-    // Archiv und überleben den Neustart — das macht aus Einzeltagen eine Serie.
+    // Context: what this day means for the career. The counters live in the
+    // archive and survive a restart, which turns single days into a run.
     const stats = $derived(game.archive?.stats ?? {});
     const tally = $derived(
         (stats.daysStarted ?? 0) > 1

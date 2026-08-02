@@ -10,7 +10,7 @@
  * (state.visualFX <-> KEYS.visualFX), so read and write sites line up.
  */
 export const KEYS = {
-    // --- Spielstand & Fortschritt (werden vom Hard-Reset gelöscht) ---
+    // --- Save and progress (removed by the hard reset) ---
     archive:      'layer8_archive',
     dayState:     'layer8_day',        // laufender Arbeitstag, siehe engine_core.saveDay()
     defaultDiff:  'layer8_default_diff',
@@ -19,7 +19,7 @@ export const KEYS = {
                     normal: 'layer8_party_played_normal',
                     hard:   'layer8_party_played_hard' },
 
-    // --- Einstellungen (überleben den Hard-Reset bewusst) ---
+    // --- Settings (deliberately survive the hard reset) ---
     keyBinds:      'layer8_keybinds',
     visualFX:      'layer8_fx',
     screenShake:   'layer8_shake',
@@ -35,7 +35,7 @@ export const KEYS = {
     scanlines:     'layer8_scanlines',
     autoChart:     'layer8_autochart',
 
-    // --- Audio & Musik (überleben den Hard-Reset ebenfalls) ---
+    // --- Audio and music (survive the hard reset as well) ---
     audioVolume:   'layer8_volume',
     musicEnabled:  'layer8_music',
     musicVolume:   'layer8_music_volume',

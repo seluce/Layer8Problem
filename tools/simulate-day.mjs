@@ -1,8 +1,8 @@
 /**
- * Tages-Simulator für das Balancing.
+ * Day simulator for balancing.
  *
- * Spielt komplette Arbeitstage (8:00 bis 16:30) gegen die echten Datenpools
- * durch und bildet die Engine-Formeln exakt nach:
+ * Plays whole workdays (8:00 to 16:30) against the real data pools and
+ * reproduces the engine formulas exactly:
  *   - fl += f                                (Faulheit ungebremst)
  *   - al += a > 0 ? ceil(a * diff) : a       (Aggro-Anstieg skaliert)
  *   - cr += c > 0 ? ceil(c * diff * (1 + fl/200)) : c   (Radar doppelt skaliert)
@@ -13,7 +13,7 @@
  *
  * Bewusste Vereinfachungen (alle zugunsten von Vergleichbarkeit):
  *   - keine Ruf-Interventionen (bei frischem Profil ohnehin kaum erreichbar)
- *   - keine Ausreden (Ergebnis ist damit die Untergrenze der Überlebensrate)
+ *   - no excuses (results are therefore a lower bound on the survival rate)
  *   - kein Alkohol-/Spezialeffekt, kein Tutorial, keine Party
  *
  * Aufruf: node tools/simulate-day.mjs [Tage-pro-Zelle, Standard 1500]
@@ -24,7 +24,7 @@ await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 
 
 const DAYS = parseInt(process.argv[2] ?? '1500', 10);
 
-// Experimentier-Parameter für Gegenvarianten (Standard = Ist-Zustand):
+// Experiment parameters for counter-variants (defaults = current state):
 //   --lazydiv=300     lazyMult = 1 + fl/300 statt fl/200
 //   --lazycap=1.3     lazyMult nach oben deckeln
 //   --nolazyeasy      lazyMult auf Leicht deaktivieren
@@ -37,15 +37,15 @@ const LAZY_DIV  = ARG('lazydiv', 200);
 const LAZY_CAP  = ARG('lazycap', 99);
 const MAIL_BASE = ARG('mailbase', 0.15);
 const NO_LAZY_EASY = process.argv.includes('--nolazyeasy');
-//   --valves=25,40,50 Ventil-Resets je Schwierigkeit überschreiben
+//   --valves=25,40,50 override the valve resets per difficulty
 //   --decay=1         Radar sinkt passiv um N je 30 Minuten (Chef beruhigt sich)
 const VALVES = (() => {
     const hit = process.argv.find(a => a.startsWith('--valves='));
     return hit ? hit.split('=')[1].split(',').map(Number) : null;
 })();
 const DECAY = ARG('decay', 0);
-//   --normmult=1.1    Schwierigkeits-Multiplikator für Mittwoch überschreiben
-//   --excuses=3,1,1   Ausreden je Schwierigkeit überschreiben
+//   --normmult=1.1    override the difficulty multiplier for Wednesday
+//   --excuses=3,1,1   override the number of excuses per difficulty
 const NORM_MULT = ARG('normmult', 1.1);   // Engine-Stand: Mittwoch-Härtung x1.1
 const EXCUSES = (() => {
     const hit = process.argv.find(a => a.startsWith('--excuses='));
@@ -83,15 +83,15 @@ function danger(o, s) {
 }
 
 const STRATEGIES = {
-    // Klickt irgendwas - die Untergrenze des Spielverständnisses.
+    // Clicks anything - the lower bound of understanding the game.
     zufall: (opts, s) => rnd(opts),
 
-    // Gewichtet die echte Gefahr: Radar zählt doppelt, nach verbrauchtem
-    // Ventil dreifach; Faulheit zählt als künftiger Radar-Verstärker mit.
+    // Weighs the real danger: radar counts double, triple once the valve is
+    // spent; laziness counts as a future radar amplifier.
     vernunft: (opts, s) => opts.reduce((a, b) => danger(a, s) <= danger(b, s) ? a : b),
 
-    // Liest mit, meidet nur die offensichtlich schlechteste Antwort und
-    // wählt unter dem Rest zufällig - der realistische Gelegenheitsspieler.
+    // Reads along, avoids only the obviously worst answer and picks randomly
+    // among the rest - the realistic casual player.
     gelegenheit: (opts, s) => {
         if (opts.length <= 1) return opts[0];
         const sorted = [...opts].sort((x, y) => danger(x, s) - danger(y, s));
@@ -99,7 +99,7 @@ const STRATEGIES = {
         return rest[Math.floor(Math.random() * rest.length)];
     },
 
-    // Nimmt immer die schnellste Antwort - Zeit ist alles.
+    // Always takes the fastest answer - time is everything.
     speed: (opts, s) => opts.reduce((a, b) => ((a.m ?? 99) <= (b.m ?? 99) ? a : b)),
 };
 
@@ -130,7 +130,7 @@ function apply(s, o, poolType) {
     if (o.rem) s.inv.delete(o.rem);
 }
 
-// Node-Gespräche (Anruf-Ketten, Handy): Knoten wählen bis zum Ergebnis.
+// Node conversations (call chains, phone): pick nodes until a result.
 function playNodes(s, ev, pick) {
     let node = ev.nodes[ev.startNode];
     for (let depth = 0; depth < 8 && node; depth++) {
@@ -208,8 +208,8 @@ function playDay(diffCfg, stratName) {
         s.currentPool = poolType;
         if (poolType === 'calls') s.callsDone++;
 
-        // Ausrede: Wer mitdenkt, flieht aus einem Ereignis, dessen beste
-        // Antwort trotzdem übel ist (Engine: Ereignis endet, kleine Pause).
+        // Excuse: a thinking player escapes an event whose best answer is
+        // still bad (engine: the event ends, short pause).
         const canExcuse = s.excusesLeft > 0 && poolType !== 'boss'
             && (stratName === 'vernunft' || stratName === 'gelegenheit');
         if (canExcuse && ev.opts?.length) {
@@ -227,7 +227,7 @@ function playDay(diffCfg, stratName) {
         let end = checkEnd(s);
         if (end) { s.end = end; break; }
 
-        // Mittagspause beim Überschreiten von 12:00
+        // Lunch break when passing 12:00
         if (!s.lunchDone && s.time >= 720) {
             s.lunchDone = true;
             const lunch = rnd(DB.lunch);
@@ -236,7 +236,7 @@ function playDay(diffCfg, stratName) {
             if (end) { s.end = end; break; }
         }
 
-        // Mail-Prüfung wie in der Engine (je Aktion, Ingame-Cooldown 25 min)
+        // Mail check as in the engine (per action, 25 in-game minutes apart)
         if (s.time - s.lastMail >= 25) {
             const chance = Math.min(0.35, MAIL_BASE * s.diff + s.tickets * 0.04);
             if (Math.random() < chance) {
@@ -265,8 +265,8 @@ function playDay(diffCfg, stratName) {
 // ---------- Auswertung ----------
 console.log(`Simulation: ${DAYS} Tage je Zelle, 3 Schwierigkeiten x 3 Spielertypen\n`);
 if (VALVES) DIFFS.forEach((d, i) => d.valveReset = VALVES[i]);
-// Stat-Multiplikator wie in engine_events: nur die Formeln, nicht die
-// Identität (Mail-Chance, Tickets, Ausreden laufen weiter über mult).
+// Stat multiplier as in engine_events: formulas only, not identity (mail
+// chance, tickets and excuses still go through mult).
 const statMult = (s) => s.diff === 1.0 ? NORM_MULT : s.diff;
 for (const diff of DIFFS) {
     console.log(`=== ${diff.name} (x${diff.mult}) ===`);

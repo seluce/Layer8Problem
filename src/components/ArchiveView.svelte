@@ -40,8 +40,8 @@
         { key: 'daysFired',    label: 'Gefeuert',   tone: 'text-red-500' }
     ];
 
-    // Die Wochentage sagen mehr als eine Gesamtquote: Wer zehn Freitage
-    // überlebt hat, aber keinen Montag, sieht genau das.
+    // Weekdays say more than one overall rate: someone who survived ten
+    // Fridays but no Monday sees exactly that.
     const WEEKDAYS = [
         { key: 'easy',   label: 'Freitag',  bar: 'bg-green-500' },
         { key: 'normal', label: 'Mittwoch', bar: 'bg-blue-500' },
@@ -59,9 +59,9 @@
     const streak      = $derived(stats.streak ?? 0);
     const streakBest  = $derived(stats.streakBest ?? 0);
 
-    // Kleingedrucktes: nur zeigen, was tatsächlich passiert ist. Die Zahlen
-    // tragen die Farbe ihres Wertes — orange fürs Ventil, rot für den Chef —,
-    // damit die Zeile ohne Anstrengung lesbar bleibt.
+    // Small print: only show what actually happened. The numbers carry the
+    // colour of their stat - orange for the valve, red for the boss - so the
+    // line stays readable without effort.
     const footnotes = $derived([
         stats.ventSaves    ? { value: stats.ventSaves,    text: 'durch das Ventil gerettet', tone: 'text-orange-400' } : null,
         stats.warningsChef ? { value: stats.warningsChef, text: 'abgemahnt',                 tone: 'text-red-500' } : null

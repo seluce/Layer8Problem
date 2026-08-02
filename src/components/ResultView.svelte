@@ -23,9 +23,9 @@
 
     const sign = (n) => (n > 0 ? '+' : '') + n;
 
-    // Ergebnistexte sind Klartext, kein HTML — so kann kein Datenfeld
-    // versehentlich Markup ins Dokument tragen. Damit Verweise trotzdem
-    // anklickbar sind, werden reine URLs erkannt und in Links verwandelt.
+    // Result texts are plain text, not HTML, so no data field can carry
+    // markup into the document by accident. To keep links usable anyway, bare
+    // URLs are detected and turned into anchors.
     const URL_RE = /(https?:\/\/[^\s)]+)/g;
     const parts = $derived(
         String(view.text ?? '').split(URL_RE).map(chunk => ({

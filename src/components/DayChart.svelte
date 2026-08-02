@@ -12,14 +12,14 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
 
-    // Zeichenfläche in Nutzerkoordinaten; das SVG skaliert per viewBox mit.
+    // Drawing area in user units; the SVG scales along via viewBox.
     const W = 520, H = 180;
     const PAD = { l: 30, r: 10, t: 12, b: 22 };
 
     const points = $derived(state.statHistory ?? []);
 
-    // Der Tag läuft von 8:00 bis mindestens 16:30 — außer jemand hat länger
-    // gemacht, dann wächst die Achse mit.
+    // The day runs from 8:00 to at least 16:30 - unless someone stayed
+    // longer, in which case the axis grows with it.
     const tMin = 8 * 60;
     const tMax = $derived(Math.max(16 * 60 + 30, ...points.map(p => p.t)));
 
@@ -34,7 +34,7 @@
         { key: 'c', label: 'Chef',     color: '#ef4444' }
     ];
 
-    // Volle Stunden als Zeitachse, damit man den Tag wiedererkennt.
+    // Full hours as the time axis, so the day is recognisable.
     const hours = $derived(
         Array.from({ length: Math.floor(tMax / 60) - 7 }, (_, i) => (8 + i) * 60)
             .filter(t => t <= tMax)

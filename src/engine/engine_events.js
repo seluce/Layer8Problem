@@ -114,8 +114,8 @@ export const events = {
     },
 
     /**
-     * Der Tag zählt erst als begonnen, wenn der Mensch etwas entschieden hat -
-     * nicht schon beim Öffnen der Seite. Stand wortgleich an zwei Stellen.
+     * A day only counts as started once the player has decided something, not
+     * when the page opens. Used to sit in two places, word for word.
      */
     markDayStarted: function() {
         if (this.state.dayActive) return;
@@ -125,13 +125,12 @@ export const events = {
     },
 
     /**
-     * Legt einen Gegenstand in den Rucksack — mit allen Sonderfällen:
-     * Dauerhaftes und Trophäen gibt es nur einmal, Verbrauchsgegenstände
-     * passen zehnmal hinein, und wer voll ist, lässt liegen.
+     * Puts an item into the backpack, with every special case: permanent
+     * items and trophies exist once, consumables fit ten times over, and a
+     * full backpack means leaving things behind.
      *
-     * Stand bis v4.0.0 zweimal fast wortgleich in der Datei (Postfach und
-     * Terminal), was bereits einmal dazu geführt hat, dass eine der beiden
-     * Fassungen eine Regel nicht kannte.
+     * Until v4.0.0 this sat in the file twice, almost word for word (mail and
+     * terminal), which had already led to one copy not knowing a rule.
      */
     grantItem: function(itemId, logLabel = 'ITEM') {
         if (!itemId) return;
@@ -140,7 +139,7 @@ export const events = {
         const alreadyHas = this.state.inventory.some(i => i.id === itemId);
         const itemName = dbItem ? dbItem.name : itemId;
 
-        // Trophäen und Werkzeug zählen nicht gegen die Kapazität
+        // Trophies and permanent tools do not count towards capacity
         const normalCount = this.state.inventory.filter(i => {
             const db = DB.items[i.id];
             return db && !db.quest;
@@ -162,8 +161,8 @@ export const events = {
     },
 
     /**
-     * Verrechnet Ruf-Änderungen und hält sie in den Grenzen -100 bis 100.
-     * Stand an drei Stellen; eine davon hatte den Speicheraufruf vergessen.
+     * Applies reputation changes and keeps them within -100 to 100. Used to
+     * exist in three places; one of them had forgotten the save call.
      */
     applyReputation: function(rep) {
         if (!rep) return false;
@@ -753,13 +752,13 @@ export const events = {
         }
 
         // --- SCHWIERIGKEIT & FAULHEIT LOGIK ---
-        // Mittwoch-Härtung: Die Datenwerte sind für Normal etwas zu weich
-        // kalibriert (Tages-Simulation: 87% Siegquote beim mitlesenden
-        // Gelegenheitsspieler). Ein Aufschlag von 10% nur auf die Formeln
-        // bringt ihn auf ~75%, ohne den Optimalspieler zu treffen (94%).
-        // WICHTIG: state.difficultyMult bleibt 1.0 - der Wert dient überall
-        // sonst als Identitätsgrenze (> 1.0 = Montag: Start-Tickets,
-        // Ausreden, Achievements). Nur hier wird der Stat-Wert abgeleitet.
+        // Wednesday hardening: the data values are calibrated a little too
+        // softly for normal (day simulation: 87% win rate for an attentive
+        // casual player). A 10% surcharge on the formulas alone brings that to
+        // roughly 75% without touching the optimal player (94%).
+        // IMPORTANT: state.difficultyMult stays 1.0 - everywhere else that
+        // value is an identity check (> 1.0 = Monday: starting tickets,
+        // excuses, achievements). The stat multiplier is derived only here.
         let diffMult = this.state.difficultyMult === 1.0 ? 1.1 : this.state.difficultyMult;
         let lazyMult = 1 + (this.state.fl / 200);
 
@@ -782,7 +781,7 @@ export const events = {
         
         this.triggerShake(finalA, finalC);
 
-        // Punkt für die Tageskurve im Endbildschirm festhalten.
+        // Record a point for the day curve on the end screen.
         this.recordStatPoint();
         
         // --- REPUTATION LOGIK  ---
@@ -846,15 +845,14 @@ export const events = {
         this.setTerminalResult(res, m, f, finalA, finalC, btnAction, btnText, btnColor);
     },
 
-    // async: die Mittagspause ist ein eigener Pool und wird wie die anderen
-    // erst bei Bedarf geladen. prefetchAll() holt sie im Hintergrund, lange
-    // bevor es zwölf Uhr wird — das await hier ist die Absicherung für den
-    // Fall, dass jemand schneller war als die Leitung.
+    // async: lunch is its own pool and loads on demand like the others.
+    // prefetchAll() fetches it in the background long before noon; the await
+    // here covers the case of someone being faster than the connection.
     triggerLunch: async function() {
         await ensure('lunch');
         const pool = DB.lunch ?? [];
         if (!pool.length) {
-            // Sollte nie eintreten; lieber ohne Pause weiterspielen als hängen.
+            // Should never happen; better to skip the break than to hang.
             console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
             this.reset();
             return;
@@ -866,26 +864,26 @@ export const events = {
     /**
      * Der Morgen-Bildschirm.
      *
-     * `forceEffect` ist ausschließlich zum Testen gedacht: Es beschränkt die
-     * Ziehung auf eine Kategorie, damit sich ein Effekt gezielt auslösen
-     * lässt, statt ihn zu erwürfeln. Beispiel in der Entwicklerkonsole:
+     * `forceEffect` is for testing only: it narrows the draw to one category
+     * so an effect can be triggered on purpose instead of rolled for. From the
+     * developer console:
      *     engine.triggerMorningMood('tickets')
-     * Der reguläre Aufruf bleibt parameterlos und damit zufällig.
+     * The regular call stays parameterless and therefore random.
      */
     /**
-     * Hält den aktuellen Stand für die Tageskurve fest.
+     * Records the current standing for the day curve.
      *
-     * Wird nach jeder Wirkung aufgerufen, damit Sprünge (Ausraster,
-     * Abmahnung) in der Kurve als das sichtbar werden, was sie sind. Mehr
-     * als 200 Punkte kann ein Tag kaum erzeugen; die Grenze ist Vorsicht.
+     * Called after every effect so that jumps (meltdown, written warning) show
+     * up in the curve as what they are. A day can hardly produce more than 200
+     * points; the cap is pure caution.
      */
     /**
      * 13:37 Uhr.
      *
-     * Die Uhr springt in Minutensprüngen, trifft die Minute also fast nie
-     * genau — deshalb wird geprüft, ob sie im letzten Schritt daran
-     * vorbeigekommen ist. Einmal am Tag, rein zur Zierde: keine Werte, keine
-     * Folgen, nur eine Zeile im Protokoll für die, die hinsehen.
+     * The clock moves in jumps and therefore almost never lands on the minute
+     * exactly, so this checks whether it passed the mark in the last step.
+     * Once a day, purely decorative: no values, no consequences, just a line
+     * in the log for those who look.
      */
     checkLeetMoment: function(timeBefore) {
         const LEET = 13 * 60 + 37;
@@ -934,7 +932,7 @@ export const events = {
         // Fallback for the theoretical case of a single remaining entry
         if (availableMoods.length === 0) availableMoods = DB.moods; 
 
-        // Test-Weg: auf eine Kategorie einschränken (siehe Kommentar oben)
+        // Test path: narrow to one category (see the comment above)
         if (forceEffect) {
             const forced = DB.moods.filter(m => m.effect === forceEffect);
             if (forced.length) {
@@ -951,8 +949,8 @@ export const events = {
         // 2. Mechanik sicher anwenden
         let statHtml = "";
         
-        // Der Morgen skaliert mit dem Wochentag: Freitag verzeiht, Montag
-        // nicht. 15 Punkte werden zu 12 / 15 / 19.
+        // The morning scales with the weekday: Friday forgives, Monday does
+        // not. 15 points become 12 / 15 / 19.
         const moodVal = Math.round(15 * this.state.difficultyMult);
 
         if (mood.effect === "aggro") {
@@ -969,13 +967,13 @@ export const events = {
             this.state.tickets += 1; // penalty for the thirty minutes lost
             statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
         } 
-        // --- Morgen mit Vorgeschichte: Tickets, die über Nacht aufliefen ---
+        // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
             const extra = this.state.difficultyMult > 1.0 ? 3 : (this.state.difficultyMult < 1.0 ? 1 : 2);
             this.state.tickets += extra;
             statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
         }
-        // --- Ausreden: der Vorrat an Notlügen ist keine Konstante mehr ---
+        // --- Excuses: the stock of white lies is no longer a constant ---
         else if (mood.effect === "excuse_minus") {
             if (this.state.excusesLeft > 0) {
                 this.state.excusesLeft--;
@@ -1009,8 +1007,8 @@ export const events = {
         this.updateUI();
 
         // 3. Rendered by components/MorningView.svelte
-        // Der Morgen setzt Startwerte (Ärger, Radar, Verschlafen) — ohne
-        // eigenen Punkt begänne die Kurve fälschlich bei null.
+        // The morning sets starting values (anger, radar, oversleeping);
+        // without its own point the curve would wrongly begin at zero.
         this.recordStatPoint();
 
         this.setTerminalMorning(mood.title, mood.text, statHtml);
@@ -1211,7 +1209,7 @@ export const events = {
         
         this.triggerShake(finalA, finalC);
 
-        // Punkt für die Tageskurve im Endbildschirm festhalten.
+        // Record a point for the day curve on the end screen.
         this.recordStatPoint();
         
         // --- REPUTATION HANDLING FOR THE PHONE ---

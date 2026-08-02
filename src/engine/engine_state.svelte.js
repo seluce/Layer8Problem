@@ -20,12 +20,12 @@ export function freshDay(mult = 1.0) {
         time: 8 * 60,
         fl: 0, al: 0, cr: 0,
 
-        // Blindflug: Wurde der Tag von der ersten Minute an ohne Zahlen
-        // gespielt? engine_core setzt den Wert beim Tagesstart, die beiden
-        // Schalter löschen ihn, sobald jemand mittendrin nachjustiert.
-        // Ruf-Stand bei Tagesbeginn. Die Team-Ansicht zeigt daraus, was der
-        // heutige Tag bei den Kollegen bewegt hat — der absolute Wert allein
-        // sagt nichts darüber, ob man gerade etwas richtig oder falsch macht.
+        // Blind run: was the day played without readouts from the first
+        // minute? engine_core sets this at the start of a day; both toggles
+        // clear it the moment someone adjusts them mid-day.
+        // Reputation as it stood at the start of the day. The team view uses
+        // it to show what today moved: the absolute value on its own says
+        // nothing about whether you are getting it right just now.
         repAtStart: {},
 
         blindRun: false,
@@ -250,9 +250,9 @@ export const state = $state({
     })(),
 
     keyBinds: (() => {
-        // Ohne Absicherung: Ein beschädigter Eintrag lässt diesen Ausdruck
-        // werfen — und weil er beim Laden des Moduls ausgewertet wird, startet
-        // dann das ganze Spiel nicht mehr. Im Zweifel lieber Standardbelegung.
+        // Unguarded, a corrupted entry makes this expression throw - and
+        // because it is evaluated while the module loads, the whole game would
+        // fail to start. When in doubt, fall back to the default bindings.
         let saved = {};
         try {
             saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};

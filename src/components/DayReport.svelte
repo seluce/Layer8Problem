@@ -18,8 +18,8 @@
     ];
     const diffName = $derived(DIFF.find(d => d.test(game.difficultyMult)).label);
 
-    // Welcher Wert hat den Tag beendet? Nur diese drei Ursachen zeigen auf
-    // einen Balken; Feierabend und Party haben keinen Schuldigen.
+    // Which value ended the day? Only these causes point at a bar; clocking
+    // off and the party have no culprit.
     const CULPRIT = { rage: 'al', chef: 'cr' };
 
     const stats = $derived([

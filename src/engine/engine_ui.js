@@ -316,8 +316,8 @@ export const ui = {
     // Rendered by components/EndModal.svelte, which derives theme and button
     // from the title.
     /**
-     * Zwischenmeldung (Warnung, Ventil) — Titel und ein Satz Text.
-     * Das Tagesende läuft über showEnd und trägt strukturierte Felder.
+     * Interstitial notice (warning, valve): a title and one line of text.
+     * The end of a day goes through showEnd and carries structured fields.
      */
     showModal: function(title, text, isEnd) {
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
@@ -338,10 +338,10 @@ export const ui = {
     },
 
     /**
-     * Das Tagesende. Anders als showModal bekommt es keine fertige HTML-Zeile,
-     * sondern die Bestandteile: den Satz zum Ausgang (lead), die Ursache für
-     * die Hervorhebung in der Bilanz (cause) und die Tagebuch-Absätze.
-     * components/EndModal.svelte setzt daraus den Bildschirm zusammen.
+     * The end of a day. Unlike showModal it does not receive a finished line
+     * of HTML but the parts: the closing line (lead), the cause used to
+     * highlight the right value in the summary, and the diary paragraphs.
+     * components/EndModal.svelte assembles the screen from those.
      */
     showEnd: function(end) {
         this.state.modal = {
@@ -980,9 +980,9 @@ export const ui = {
     },
     
     /**
-     * Textgröße der Spielinhalte. Das Spiel besteht zu großen Teilen aus
-     * Lesestoff — wer die Ereignistexte lieber größer hat, soll das können,
-     * ohne den ganzen Browser zu zoomen. Die Klassen liegen in app.css.
+     * Text size for the game content. This game is largely something to read,
+     * so anyone who wants the event texts bigger should be able to have that
+     * without zooming the whole browser. The classes live in app.css.
      */
     setTextSize: function(size) {
         const SIZES = ['normal', 'large', 'xlarge'];
@@ -1000,13 +1000,13 @@ export const ui = {
     /**
      * Setzt alle Optionen der Einstellungsseite auf Auslieferungszustand.
      *
-     * Bewusst OHNE Neuladen der Seite: Der Arbeitstag läuft weiter, ein
-     * Reload würde ihn vernichten. Stattdessen laufen alle Werte durch die
-     * regulären Setter, die Zustand, Speicher und Oberfläche gemeinsam
-     * nachziehen. Auch bewusst ohne Browser-Dialog — im Steam-Build wäre
-     * ein confirm() ein Fremdkörper; die Rückfrage passiert am Knopf selbst.
+     * Deliberately WITHOUT reloading the page: the workday carries on, and a
+     * reload would destroy it. Instead every value goes through the regular
+     * setters, which update state, storage and interface together. Also
+     * deliberately without a browser dialog - in the Steam build a confirm()
+     * would be a foreign object; the question is asked on the button itself.
      *
-     * Nicht betroffen: Spielstand, Archiv, Erfolge und der laufende Tag.
+     * Untouched: the save, the archive, achievements and the running day.
      */
     resetSettings: function() {
         // Anzeige & Layout
@@ -1043,9 +1043,8 @@ export const ui = {
     },
 
     /**
-     * Überträgt die Textgröße in den Intranet-Rahmen. Wird beim Öffnen und
-     * bei jeder Änderung aufgerufen; scheitert still, falls der Rahmen
-     * gerade nicht bereit ist.
+     * Passes the text size into the intranet frame. Called on open and on
+     * every change; fails silently if the frame is not ready yet.
      */
     applyIntranetTextSize: function(frame) {
         const el = frame ?? document.getElementById('intranet-frame');
@@ -1057,9 +1056,9 @@ export const ui = {
     },
 
     /**
-     * Zweistufige Bestätigung direkt am Knopf statt eines Browser-Dialogs.
-     * Der erste Klick fragt, der zweite führt aus; nach fünf Sekunden ohne
-     * Antwort fällt der Knopf in den Ruhezustand zurück.
+     * Two-step confirmation on the button itself instead of a browser dialog.
+     * The first click asks, the second acts; after five seconds without an
+     * answer the button returns to its resting state.
      */
     confirmResetSettings: function(btn) {
         if (btn.dataset.armed === 'true') {
@@ -1085,8 +1084,8 @@ export const ui = {
     },
 
     /**
-     * Die Bildschirm-Textur des Terminals (Scanlines und Glimmen). Wer sie
-     * als unruhig empfindet, bekommt eine glatte Fläche.
+     * The terminal's screen texture (scanlines and glow). Anyone who finds it
+     * restless gets a flat surface instead.
      */
     toggleScanlines: function(isOn) {
         this.state.scanlines = isOn;
@@ -1095,8 +1094,8 @@ export const ui = {
     },
 
     /**
-     * Öffnet den Tagesverlauf im Endbildschirm sofort, statt ihn hinter
-     * einem Knopf zu lassen. Für alle, die ohnehin immer nachsehen.
+     * Opens the day curve on the end screen straight away instead of leaving
+     * it behind a button. For everyone who looks every time anyway.
      */
     toggleAutoChart: function(isOn) {
         this.state.autoChart = isOn;

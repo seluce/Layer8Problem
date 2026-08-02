@@ -13,8 +13,8 @@
 
     let { diary } = $props();
 
-    // Der Wochentag ergibt sich aus dem Schwierigkeitsgrad — so heißen die
-    // Grade im Spiel, und das Tagebuch spielt das Spiel mit.
+    // The weekday follows from the difficulty - that is what the levels are
+    // called in the game, and the diary plays along.
     const WEEKDAY = [
         { test: (m) => m < 1.0, label: 'Freitag' },
         { test: (m) => m > 1.0, label: 'Montag' },
@@ -22,9 +22,9 @@
     ];
     const weekday = $derived(WEEKDAY.find(d => d.test(game.difficultyMult)).label);
 
-    // Der Blindflug-Nachsatz steht bewusst vor dem Schlusssatz und trägt
-    // eine eigene Auszeichnung: nachträglich hinzugefügt, wie eine Notiz,
-    // die einem erst beim Zuklappen des Buches noch eingefallen ist.
+    // The blind-run postscript deliberately sits before the closing line and
+    // gets its own styling: added afterwards, like a note that only occurred
+    // to you as you were shutting the book.
     const paragraphs = $derived(
         [
             { text: diary?.p1 },
