@@ -54,6 +54,7 @@ Anzeige & Layout:
 * Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)" oder "(Item verbraucht)". Diese Angaben doppelten nur, was ohnehin sichtbar ist: die Zahlen an den Balken, die Rucksack-Animation und der Eintrag im Protokoll. 86 Stellen bereinigt.
 * Der Nachrichtenticker läuft gleichmäßig schnell. Bislang brauchte jede Meldung dieselben 30 Sekunden, unabhängig von ihrer Länge - die längsten liefen dadurch fast doppelt so schnell wie die kürzesten und waren kaum lesbar. Außerdem ist die Schrift etwas größer und nicht mehr durchgehend in Großbuchstaben.
 * Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben.
+* Modale, Ereignis-Karten und die Startsequenz blenden jetzt weich ein, statt hart aufzuspringen.
 
 Einstellungen:
 * Aufgeräumt: Warn-Pulsieren, Kamera-Wackeln und das Handy-Tempo standen unter "Gameplay & Komfort", obwohl sie reine Anzeigesachen sind. Die beiden Verbergen-Optionen haben einen eigenen Abschnitt "Herausforderung" bekommen, denn sie sind kein Komfort, sondern ein Schwierigkeitsgrad.
