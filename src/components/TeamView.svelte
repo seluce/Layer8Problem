@@ -48,7 +48,7 @@
 {#each team as member (member.char.name)}
     <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 flex flex-col gap-3 relative group hover:border-slate-500 transition-colors overflow-visible">
 
-        {#if member.player && state.warningReceived}
+        {#if member.player && state.chefWarningReceived}
             <div class="absolute top-2 right-2 md:right-4 transform rotate-12 pointer-events-none z-50">
                 <span class="inline-block border-[3px] border-red-600 text-red-600 font-black text-lg md:text-xl tracking-widest uppercase px-2 py-0.5 rounded-sm opacity-90 shadow-md bg-slate-900/80 backdrop-blur-xs">
                     ABGEMAHNT
@@ -66,24 +66,28 @@
             </div>
 
             <div class="flex-1 min-w-0">
-                <div class="flex justify-between items-start mb-1">
-                    <div class="flex flex-col">
-                        <div class="flex items-baseline gap-2">
-                            <h3 class="font-bold text-white text-lg truncate">{member.char.name}</h3>
-                            <span class="text-[10px] text-slate-400 uppercase tracking-wider hidden md:inline-block pt-1">{member.char.role}</span>
-                        </div>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-wider md:hidden">{member.char.role}</span>
+                <!-- Kopfzeile: links Name über Rolle, rechts Bewegung und Stufe.
+                     Die Rolle steht auf allen Breiten unter dem Namen, nicht
+                     mehr daneben. Nebeneinander konkurrierten vier Angaben um
+                     dieselbe Zeile, und bei "MARKETING & FEEL GOOD" neben
+                     "HASST DICH" gab der Name nach - aus Chantal wurde
+                     "Chant…". Untereinander ist für beides Platz. -->
+                <div class="flex justify-between items-start gap-2 mb-1">
+                    <div class="flex flex-col min-w-0">
+                        <h3 class="font-bold text-white text-lg truncate">{member.char.name}</h3>
+                        <span class="text-[0.625rem] text-slate-400 uppercase tracking-wider truncate">{member.char.role}</span>
                     </div>
 
                     {#if !member.player}
-                        <span class="flex items-center gap-1.5 ml-2 shrink-0">
+                        <span class="flex items-center gap-1.5 shrink-0">
                             {#if member.today !== 0}
                                 <!-- Nur heute Bewegtes; ohne Veränderung bleibt die Zeile ruhig. -->
-                                <span class="text-[10px] font-mono font-bold {member.today > 0 ? 'text-emerald-400' : 'text-red-400'}">
+                                <span class="text-[0.625rem] font-mono font-bold {member.today > 0 ? 'text-emerald-400' : 'text-red-400'}"
+                                      title="Veränderung seit heute Morgen">
                                     {member.today > 0 ? '▲' : '▼'}{Math.abs(member.today)}
                                 </span>
                             {/if}
-                            <span class="text-[10px] font-bold uppercase tracking-widest {member.level.tone} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded-sm">
+                            <span class="text-[0.625rem] font-bold uppercase tracking-widest {member.level.tone} border border-slate-700 bg-slate-900/50 px-2 py-0.5 rounded-sm">
                                 {member.level.text}
                             </span>
                         </span>
@@ -97,7 +101,7 @@
                     </div>
 
                     {#if member.toNext && !state.blindStats}
-                        <p class="text-[9px] text-slate-500 -mt-1 mb-1.5 font-mono">
+                        <p class="text-[0.5625rem] text-slate-500 -mt-1 mb-1.5 font-mono">
                             noch {member.toNext.gap} bis {member.toNext.text}
                         </p>
                     {/if}
