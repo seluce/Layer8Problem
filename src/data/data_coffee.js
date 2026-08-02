@@ -3903,7 +3903,7 @@ export const coffee = [
         {
             t: "Egon übergeben - der kennt sowas",
             rep: { "Egon": 3 },
-            m: 5, f: 5, a: 0, c: 0,
+            m: 5, f: 5, a: -10, c: 0,
             r: "Egon betrachtet den Behälter, schüttelt ihn kurz und nickt: 'Kenn ich. Der is von Krause. Der is 2016 gegangen.' Er nimmt ihn mit in den Keller. Du fragst nicht, ob in Raum K3 ein Fach für sowas existiert. Es existiert."
         }
     ]
@@ -4007,7 +4007,7 @@ export const coffee = [
         },
         {
             t: "Eine Thermoskanne 'kalibrieren'",
-            m: 15, f: -5, a: 0, c: -5,
+            m: 15, f: -5, a: -10, c: -5,
             r: "Du deponierst jeden Morgen eine vorbereitete Thermoskanne mit dem Etikett 'DAS ÜBLICHE - KALIBRIERT'. Dr. Wichtig ist tief beeindruckt von der Prozessoptimierung. Der Termin verschwindet aus dem Kalender, die Legende bleibt."
         }
     ]
@@ -4096,7 +4096,7 @@ export const coffee = [
     opts: [
         {
             t: "Die Dosierung sanft runterregeln",
-            m: 10, f: -5, a: 5, c: 0,
+            m: 10, f: -5, a: -5, c: 0,
             r: "Du stellst die Maschine schrittweise zurück auf das gewohnte Niveau von 'braunem Wasser mit Absichten'. Die Firma beruhigt sich im Lauf des Nachmittags. Niemand dankt dir. Niemand weiß überhaupt, was du verhindert hast."
         },
         {
@@ -4143,7 +4143,7 @@ export const coffee = [
     opts: [
         {
             t: "Gründlich nachspülen, bis es vorbei ist",
-            m: 15, f: -5, a: 5, c: 0,
+            m: 15, f: -5, a: -10, c: 0,
             r: "Sechs Spülgänge, zwei Kannen Frischwasser, ein Opfer-Espresso zur Probe. Der Essig kapituliert. Der Kaffee schmeckt wieder nach Kaffee, also nach fast nichts, und alle sind zufrieden. Normalität ist unterschätzt."
         },
         {
@@ -4255,7 +4255,7 @@ export const coffee = [
         },
         {
             t: "Den Mythos pflegen und den Knopf warten",
-            m: 10, f: 5, a: 0, c: 0,
+            m: 10, f: 5, a: -10, c: 0,
             r: "Du tauschst heimlich die Feder unter Knopf 2 und polierst ihn. Der Glaube braucht funktionierende Infrastruktur. Der Vertrieb hat dieses Quartal die besten Zahlen seit Jahren. Korrelation, Kausalität - wen interessiert das an Knopf 2."
         },
         {
@@ -4446,7 +4446,7 @@ export const coffee = [
         },
         {
             t: "Verzichten und ohne Kaffee zurückgehen",
-            m: 2, f: 5, a: 10, c: 0,
+            m: 2, f: 5, a: 15, c: 0,
             r: "Du gehst mit leerer Tasse und vollem Prinzip. Der Nachmittag ohne Koffein zieht sich wie ein Alignment-Termin, und hinter dir hörst du, wie jemand anders seelenruhig die letzte Tasse nimmt und NICHT neu kocht. Es gibt keine Gerechtigkeit. Nur Kaffee, und den hast du nicht."
         }
     ]

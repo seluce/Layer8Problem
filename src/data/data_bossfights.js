@@ -479,10 +479,10 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
-                t: "Den Generalschlüssel nutzen", 
-                req: "master_key", 
+                t: "Egon holen - der hat für alles einen Schlüssel", 
                 m: 15, f: 5, a: 0, c: -10, 
-                r: "Analog besiegt Digital. Du schließt die Türen manuell auf und wirst als Held gefeiert." 
+                rep: { "Egon": 5 },
+                r: "Egon kommt mit einem Bund, das aussieht wie das Inventar einer Kathedrale, und schließt jede Tür einzeln auf. Analog besiegt Digital, und der Mann, den sonst niemand grüßt, ist für zehn Minuten der wichtigste Mensch im Haus." 
             },
             { 
                 t: "Türsteuerung mit dem Laptop hacken", 

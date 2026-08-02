@@ -4845,4 +4845,56 @@ export const server = [
         }
     ]
 },
+
+{
+    id: "srv_praktikant_zettel",
+    title: "Der Zettel unter der Tastatur",
+    text: "Am Ersatzarbeitsplatz im Serverraum klemmt ein Zettel unter der Tastatur. Darauf in ordentlicher Handschrift: die Zugangsdaten des Administrator-Kontos, dazu das Datum der letzten Änderung. Es ist vier Jahre her. Daneben steht: 'BITTE NICHT ÄNDERN - sonst geht die Buchhaltung nicht mehr.'",
+    opts: [
+        {
+            t: "Zettel einstecken - das gehört hier nicht hin",
+            loot: "admin_pw",
+            next: "path_zettel_mit",
+            m: 5, f: 0, a: 0, c: -5,
+            r: "Du nimmst den Zettel an dich. Das Kennwort ist damit nicht sicherer, aber es hängt wenigstens nicht mehr öffentlich aus. Die Buchhaltung wird weiterlaufen, denn geändert hast du nichts - du bist ja nicht wahnsinnig."
+        },
+        {
+            t: "Kennwort ändern, wie es sich gehört",
+            m: 20, f: -10, a: 15, c: 10,
+            r: "Fachlich korrekt, praktisch eine Lawine: Vier Fachanwendungen, zwei Schnittstellen und ein Drucker im dritten Stock kannten dieses Kennwort. Die Buchhaltung meldet sich nach elf Minuten. Der Zettel hatte recht."
+        },
+        {
+            t: "Foto machen und liegen lassen",
+            next: "path_zettel_foto",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du fotografierst den Zettel für den Notfall und lässt ihn, wo er ist. Jetzt existiert das Kennwort an zwei Orten statt an einem. Sicherheitstechnisch ist das die schlechteste aller Welten, aber du hast es griffbereit."
+        }
+    ]
+},
+{
+    id: "srv_praktikant_zettel_2a",
+    title: "Die Suche nach dem Zettel",
+    reqStory: "path_zettel_mit",
+    text: "Ein junger Mann steht ratlos vor dem Ersatzarbeitsplatz und hebt die Tastatur an. Wieder. Und wieder. Es ist der Werkstudent aus der Buchhaltung, den niemand vorgestellt hat. 'Hier war ein Zettel', sagt er, mehr zu sich selbst. 'Da war immer ein Zettel.'",
+    opts: [
+        {
+            t: "Aufklären und ihm einen eigenen Zugang einrichten",
+            rem: "admin_pw",
+            m: 25, f: -10, a: 10, c: -10,
+            r: "Du erklärst ihm, warum der Zettel weg ist, und richtest ihm einen eigenen Zugang mit den Rechten ein, die er tatsächlich braucht. Es kostet dich eine halbe Stunde und behebt ein Problem, das seit vier Jahren als Möbelstück galt. Niemand wird es je bemerken."
+        },
+        {
+            t: "Nichts sagen und ihn suchen lassen",
+            m: 5, f: 10, a: 5, c: 10,
+            r: "Du schaust auf deinen Bildschirm, während er zum dritten Mal die Tastatur anhebt. Nach zehn Minuten geht er und meldet der Buchhaltungsleitung, dass 'die Zugangsdaten verschwunden' seien. Diese Meldung nimmt ihren Weg. Sie nimmt ihn nach oben."
+        },
+        {
+            t: "Ihm das Kennwort einfach sagen",
+            rep: { "Frau Elster": -5 },
+            m: 5, f: 5, a: 0, c: 15,
+            r: "Du nennst ihm das Kennwort im Vorbeigehen, mündlich, im Serverraum, wo es außer euch niemand hört. Außer Frau Elster, die exakt in diesem Moment in der Tür steht, weil sie einen Beleg sucht. Sie sagt nichts. Sie schreibt sich etwas auf."
+        }
+    ]
+},
+
 ];

@@ -291,6 +291,12 @@ for (const p of POOLS) {
       // der Svelte-Umstellung ein Fehlalarm), Markup dagegen sinnlos: Es
       // würde wörtlich im Terminal stehen. URLs müssen nicht verlinkt
       // werden, das erledigt die Komponente selbst.
+      // Quest-Gegenstände sind Trophäen: ausschließlich lootbar, nie
+      // Voraussetzung. Wer sie als Bedingung setzt, sperrt die Option für
+      // alle, die den zugehörigen Ruf-Strang nicht gespielt haben.
+      for (const key of ['req', 'rem'])
+        if (o[key] && DB.items[o[key]]?.quest)
+          err(`[${p}/${ev.id}] opt.${key} verlangt den Quest-Gegenstand "${o[key]}" — Trophäen sind nur lootbar`);
       if (o.r.includes('\\')) warn(`[${p}/${ev.id}] opt.r enthält Backslash`);
       if (/<[a-zA-Z/]/.test(o.r)) err(`[${p}/${ev.id}] opt.r enthält HTML-Tag — Ergebnistexte werden als Klartext ausgegeben, das Markup wäre sichtbar`);
     }

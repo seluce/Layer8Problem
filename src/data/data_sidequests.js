@@ -7283,4 +7283,120 @@ export const sidequests = [
         }
     ]
 },
+
+/* ============================================================
+   FUNDSTELLEN MIT NACHSPIEL (v4.0.0)
+   Panzertape, Kopfhörer und das Admin-Kennwort werden häufig
+   verlangt, aber selten gefunden. Diese Ereignisse schaffen
+   Nachschub - und schicken jeweils jemanden hinterher, der sein
+   Eigentum wiederhaben will. Wer abgibt, bleibt sauber. Wer
+   behält, hat das Werkzeug und ein Problem.
+   ============================================================ */
+
+{
+    id: "sq_handwerker_wagen",
+    kind: "text",
+    title: "Der offene Werkzeugwagen",
+    text: "Im Treppenhaus steht ein Werkzeugwagen einer Fremdfirma, unbeaufsichtigt, die obere Schublade offen. Darin: drei Rollen Panzertape, nagelneu, noch in Folie. Die Handwerker sind irgendwo im dritten Stock und diskutieren lautstark über einen Estrich.",
+    opts: [
+        {
+            t: "Eine Rolle mitnehmen",
+            loot: "tape",
+            next: "path_tapeklau_ja",
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Die Rolle wandert in deine Tasche, bevor du zu Ende gedacht hast. Panzertape ist in diesem Haus keine Ware, sondern eine Währung, und du hattest gerade einen guten Wechselkurs. Der Estrich wird weiter diskutiert."
+        },
+        {
+            t: "Fragen gehen - die sind ja oben",
+            next: "path_tapeklau_fragen",
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Zwei Stockwerke hoch, warten, bis die Estrich-Frage geklärt ist, dann fragen. Der Vorarbeiter schaut dich an wie ein seltenes Tier - jemand, der fragt - und drückt dir zwei Rollen in die Hand. 'Nimm gleich zwei. Sonst kommste ja wieder.'"
+        },
+        {
+            t: "Den Wagen zuschieben und weitergehen",
+            m: 5, f: 0, a: 5, c: -5,
+            r: "Du schiebst die Schublade zu und gehst weiter. Kein Tape, kein Problem, keine Geschichte. Später wirst du an einem klemmenden Kabelkanal stehen und genau an diese drei Rollen denken."
+        }
+    ]
+},
+{
+    id: "sq_handwerker_wagen_2a",
+    kind: "text",
+    title: "Der Vorarbeiter",
+    reqStory: "path_tapeklau_ja",
+    text: "Ein Mann in Warnweste steht in deiner Tür, Klemmbrett in der Hand, freundlich, aber sehr bestimmt. 'Kollege. Ich hab hier ne Kamera im Treppenhaus und einen Materialschein, der nicht aufgeht.' Er schaut nicht auf dich, sondern auf deinen Schreibtisch, wo die Rolle liegt.",
+    opts: [
+        {
+            t: "Rolle zurückgeben und entschuldigen",
+            rem: "tape",
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Du gibst zurück und entschuldigst dich ohne Ausrede. Der Vorarbeiter nickt langsam. 'Passiert. Beim nächsten Mal fragste.' Er geht, ohne es zu melden, und du hast eine Lektion darüber gelernt, wie billig Ehrlichkeit gewesen wäre."
+        },
+        {
+            t: "Abstreiten - Tape sieht alles gleich aus",
+            rep: { "Dr. Wichtig": -5 },
+            m: 10, f: 5, a: 10, c: 20,
+            r: "'Das ist meins, das sieht nur so aus.' Der Vorarbeiter sagt nichts weiter, dreht sich um und geht direkt ins Chefbüro. Nach einer Fremdfirmen-Beschwerde wegen Materialschwund fragt niemand mehr nach Details. Es geht dann nur noch um dich."
+        },
+        {
+            t: "Freikaufen: Kaffee und ein Ohr",
+            m: 20, f: -5, a: -10, c: 0,
+            r: "Du bietest Kaffee an und hörst dir zwanzig Minuten die Estrich-Geschichte an, inklusive Bauleitung, Zeitplan und einem Kollegen namens Ferhat, der 'einfach nicht mitdenkt'. Am Ende darfst du die Rolle behalten. Er wollte nur, dass ihm mal jemand zuhört."
+        }
+    ]
+},
+{
+    id: "sq_kopfhoerer_fund",
+    kind: "text",
+    title: "Die Kopfhörer im Besprechungsraum",
+    text: "In Raum 2 liegen hochwertige Over-Ear-Kopfhörer auf dem Tisch. Der Raum war vormittags an eine externe Beraterin vergeben, die längst weg ist. Kein Name, kein Zettel, kein Fundbüro - dieses Haus hat kein Fundbüro, es hat nur Schubladen.",
+    opts: [
+        {
+            t: "Einstecken. Wer sie vergisst, braucht sie nicht.",
+            loot: "headphones",
+            next: "path_kopfhoerer_behalten",
+            m: 5, f: 5, a: -5, c: 5,
+            r: "Sie sind bequem, sie dämpfen, und sie retten dir vermutlich den Nachmittag. Ganz hinten in deinem Kopf sitzt trotzdem die leise Stimme, die daran erinnert, dass 'vergessen' nicht 'weggeworfen' heißt."
+        },
+        {
+            t: "Bei Gabi am Empfang abgeben",
+            rep: { "Gabi": 5 },
+            next: "path_kopfhoerer_abgeben",
+            m: 10, f: -5, a: 0, c: -5,
+            r: "Gabi nimmt sie entgegen, notiert Raum und Uhrzeit und legt sie in die Schublade, die es offiziell nicht gibt. 'Wenn sie sich bis Freitag nicht meldet', sagt sie beiläufig, 'reden wir nochmal.' Gabi ist die einzige Instanz in diesem Haus, die funktioniert."
+        },
+        {
+            t: "Liegen lassen. Nicht dein Raum.",
+            m: 2, f: 10, a: 5, c: 0,
+            r: "Du lässt sie liegen und schließt die Tür. Am nächsten Morgen sind sie weg, und niemand weiß, wohin. In einem Gebäude mit dreihundert Menschen ist Nichtstun auch eine Entscheidung darüber, wer es bekommt."
+        }
+    ]
+},
+{
+    id: "sq_kopfhoerer_fund_2a",
+    kind: "text",
+    title: "Die Beraterin kommt zurück",
+    reqStory: "path_kopfhoerer_behalten",
+    text: "Am Nachmittag steht eine Frau im Businesskostüm vor deinem Schreibtisch. 'Entschuldigung - der Empfang meinte, Sie hätten heute Vormittag in Raum 2 zu tun gehabt?' Ihr Blick wandert zu den Kopfhörern neben deiner Tastatur. Es sind eindeutig ihre. Sie sagt es nicht. Sie schaut nur.",
+    opts: [
+        {
+            t: "Sofort rausrücken: 'Die lagen da, ich wollte sie sichern'",
+            rem: "headphones",
+            m: 5, f: 0, a: 0, c: -5,
+            r: "Du reichst sie über den Tisch, bevor der Satz zu Ende ist. Sie lächelt professionell: 'Danke, dass Sie sie sichergestellt haben.' Beide wisst ihr, was 'sichergestellt' heißt. Beide lasst ihr es dabei. So funktioniert Diplomatie."
+        },
+        {
+            t: "Ahnungslos bleiben und wegschauen",
+            rep: { "Dr. Wichtig": -5 },
+            m: 10, f: 10, a: 5, c: 20,
+            r: "'Kopfhörer? Nee, keine Ahnung.' Sie schaut noch zwei Sekunden auf den Tisch, sagt freundlich 'Kein Problem' und geht. Ihr Abschlussbericht an die Geschäftsleitung enthält später einen Absatz über 'Beobachtungen zur Unternehmenskultur'. Nur einen. Er reicht."
+        },
+        {
+            t: "Ehrlich sein und um Aufschub bitten",
+            m: 15, f: -5, a: -10, c: 0,
+            r: "Du gibst zu, dass du sie eingesteckt hast, und fragst, ob du sie bis Feierabend behalten darfst - Großraumbüro, Kopfschmerzen, Sie verstehen. Sie lacht überrascht und sagt ja. Ehrlichkeit ist so selten in diesem Gebäude, dass sie wie ein Trick wirkt."
+        }
+    ]
+},
+
 ];
