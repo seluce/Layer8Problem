@@ -125,7 +125,7 @@
 <div class="flex flex-col gap-6 w-full">
     <div>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">AUSRÜSTUNG</h3>
-        <div class="grid grid-cols-5 gap-4 pb-4">
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
             {#each normal as row, i (row.key)}
                 {@render slot(row, i)}
             {/each}
@@ -138,7 +138,7 @@
     {#if quest.length > 0}
         <div>
             <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">TROPHÄEN & ERINNERUNGEN</h3>
-            <div class="grid grid-cols-5 gap-4 pb-4">
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
                 {#each quest as row, i (row.key)}
                     {@render slot(row, i)}
                 {/each}
