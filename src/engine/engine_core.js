@@ -770,179 +770,152 @@ export const core = {
 
     // Runs from updateUI() after every action, so it stays cheap: no report is
     // built until a branch actually needs one.
+    /**
+     * Wohin die beiden Notventile zurücksetzen — je Wochentag verschieden.
+     * Stand zweimal wortgleich in checkEndConditions.
+     */
+    valveResetValue: function() {
+        if (this.state.difficultyMult < 1.0) return 30;   // Freitag
+        if (this.state.difficultyMult > 1.2) return 60;   // Montag
+        return 50;                                        // Mittwoch
+    },
+
+    /**
+     * Stellt ein Tagesende in die Warteschlange.
+     *
+     * Die vier Enden unterschieden sich nur in Titel, Satz und Ursache — die
+     * Abfolge (Ergebnis festschreiben, Tagebuch erzeugen, pendingEnd setzen)
+     * war viermal dieselbe. finishGame() holt es später ab.
+     */
+    queueEnd: function({ title, lead, cause, outcome, diaryKey, isWin }) {
+        this.recordDayResult(outcome);
+        this.state.pendingEnd = {
+            title, lead, cause, isWin,
+            diary: this.generateDiaryEntry(diaryKey)
+        };
+    },
+
+    /**
+     * Das Aggro-Ventil: einmal pro Tag lässt sich Dampf ab, danach ist Schluss.
+     * Liefert true, wenn der Tag weitergeht.
+     */
+    openRageValve: function() {
+        if (this.state.rageWarningReceived) return false;
+
+        this.state.rageWarningReceived = true;
+        const resetTo = this.valveResetValue();
+        this.state.al = resetTo;
+        // Zwei Punkte: der Höchststand und der Reset direkt danach —
+        // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
+        this.recordStatPoint();
+
+        const texts = DB.special.valveTexts.rage;
+        let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Aggro auf ${resetTo}% gesetzt).`;
+        if (this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
+
+        this.showModal("VENTIL GEÖFFNET", warningText, false);
+        return true;
+    },
+
+    /**
+     * Die Abmahnung: dasselbe Prinzip für den Chef-Radar.
+     * Liefert true, wenn der Tag weitergeht.
+     */
+    issueChefWarning: function() {
+        if (this.state.chefWarningReceived) return false;
+
+        this.state.chefWarningReceived = true;
+        const resetTo = this.valveResetValue();
+        this.state.cr = resetTo;
+        this.recordStatPoint();
+
+        const texts = DB.special.valveTexts.chef;
+        let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Radar auf ${resetTo}% gesetzt).`;
+        if (this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
+
+        this.showModal("ABMAHNUNG", warningText, false);
+        return true;
+    },
+
+    /**
+     * Steht statt des Feierabends die Gala an?
+     *
+     * Bedingung: alle acht Ruf-Erfolge liegen vor, und zwar auf mindestens
+     * dem heute gespielten Schwierigkeitsgrad — wer sie am Freitag geholt
+     * hat, bekommt am Montag keine Party geschenkt. Und einmal pro Grad.
+     */
+    partyInvitation: function() {
+        const DIFF_RANK = { easy: 1, normal: 2, hard: 3 };
+        const diffStr = this.difficultyKey();
+        const needed = DIFF_RANK[diffStr];
+
+        const REQUIRED = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
+                          'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
+        const unlocked = this.state.archive.achievements ?? [];
+        const diffs = this.state.archive.achievementDiffs ?? {};
+
+        const isVeteran = REQUIRED.every(id =>
+            unlocked.includes(id) && (DIFF_RANK[diffs[id]] ?? 1) >= needed);
+
+        const partyKey = this.KEYS.partyPlayed[diffStr];
+        if (!isVeteran || localStorage.getItem(partyKey) === 'true') return null;
+        return { isParty: true, partyKey, diffStr };
+    },
+
+    /**
+     * Prüft nach jeder Aktion, ob der Arbeitstag zu Ende ist.
+     *
+     * Die Reihenfolge ist Absicht und nicht beliebig: Ein Ausraster schlägt
+     * den Ticket-Kollaps, der Ticket-Kollaps den Feierabend, und der Chef
+     * kommt zuletzt — wer um 16:30 mit vollem Radar den Feierabend erreicht,
+     * hat ihn sich verdient.
+     */
     checkEndConditions: function() {
         if (this.state.isPartyMode) return;
         // An ending is already queued - checking again would duplicate it
         if (this.state.pendingEnd) return;
 
-        // A. RAGE QUIT (Aggro >= 100)
-        if(this.state.al >= 100) {
-            
-            // Where the "release valve" drops aggro back to, per difficulty
-            let resetTo = 50; // Standard (Mittwoch)
-            if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
-            if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
-
-            // Has the player already blown up today?
-            if(!this.state.rageWarningReceived) {
-                this.state.rageWarningReceived = true;
-                
-                // Reset aggro
-                this.state.al = resetTo; 
-                // Zwei Punkte: der Höchststand und der Reset direkt danach —
-                // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
-                this.recordStatPoint();
-                
-                // --- Ten generic blow-up texts ---
-                const rageTexts = [
-                    "Du gehst in die Teeküche und starrst regungslos die rotierende Mikrowelle an. Nachdem du dir bildhaft vorgestellt hast, wie alles brennt, kehrst du an deinen Platz zurück.",
-                    "Du schließt dich im Kopierraum ein und schreist deine Wut in ein Paket frisches Druckerpapier. Es dämpft den Ton hervorragend. Du richtest deine Krawatte.",
-                    "Dir reißt endgültig der Geduldsfaden. Du schnappst dir einen leeren Kaffeebecher und zerdrückst ihn langsam und genüsslich in deiner Faust. Das musste jetzt sein.",
-                    "Du flüchtest auf die Toilette, wäschst dir eiskalt das Gesicht und starrst dein Spiegelbild an. Du murmelst dir mehrfach vor, dass Mord immer noch strafbar ist.",
-                    "Ein unsichtbarer Geduldsfaden reißt. Du stehst wortlos auf und trittst mit voller Wucht gegen den Mülleimer. Bevor jemand reagieren kann, sitzt du wieder und starrst stoisch in die Leere.",
-                    "Du reißt das Fenster auf und brüllst ein langes Geräusch in den Innenhof. Eine Taube fällt vor Schreck fast vom Sims. Du schließt das Fenster. Der Puls sinkt.",
-                    "Ein leises Knacken durchbricht die Stille. Du hast so fest auf deinen Kugelschreiber gebissen, dass er splittert. Mit etwas Tinte an den Zähnen arbeitest du weiter.",
-                    "Du meldest dich kurz ab und gehst ins staubige Archiv. Aus purer Frustration baust du einen Turm aus alten Ordnern, nur um ihn mit einem gezielten Kick zu zerstören.",
-                    "Tock. Tock. Tock. Du lässt deine Stirn dreimal sanft, aber bestimmt auf die Tischplatte fallen. Die Kollegen entscheiden sich kollektiv, diesen Vorfall zu ignorieren.",
-                    "In blinder Wut tippst du eine extrem beleidigende E-Mail an den 'Alle-Mitarbeiter'-Verteiler. Dein Finger schwebt über dem Senden-Button, bevor du seufzend alles löschst."
-                ];
-                let randomRage = rageTexts[Math.floor(Math.random() * rageTexts.length)];
-                
-                let warningText = `${randomRage} (Aggro auf ${resetTo}% gesetzt).`;
-                if(this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
-                
-                this.showModal("VENTIL GEÖFFNET", warningText, false);
-            } else {
-                // Second blow-up -> game over
-                this.recordDayResult('rage');
-                let diary = this.generateDiaryEntry("RAGE"); 
-                
-                this.state.pendingEnd = { 
-                    title: "RAGE QUIT", 
-                    lead: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.",
-                    cause: "rage",
-                    diary,
-                    isWin: false 
-                };
-            }
+        // A. AUSRASTER
+        if (this.state.al >= 100) {
+            if (this.openRageValve()) return;
+            this.queueEnd({
+                title: "RAGE QUIT",
+                lead: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.",
+                cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
+            });
         }
-        // B. TICKET LAWINE (Zu viele Tickets)
-        else if(this.state.tickets >= 10) {
-			this.recordDayResult('tickets');
-            // 1. Tagebuch generieren
-            let diary = this.generateDiaryEntry("TICKETS");
-
-            this.state.pendingEnd = { 
-                title: "GEFEUERT", 
+        // B. TICKET-LAWINE
+        else if (this.state.tickets >= 10) {
+            this.queueEnd({
+                title: "GEFEUERT",
                 lead: "Zu viele offene Tickets! Das System ist kollabiert.",
-                cause: "tickets",
-                diary,
-                isWin: false 
-            };
+                cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
+            });
         }
-        // C. WARNING at 7 tickets
-        else if(this.state.tickets >= 7 && !this.state.ticketWarning) {
+        // C. Vorwarnung bei sieben Tickets
+        else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
         }
-        // D. FEIERABEND (Zeit abgelaufen) ODER PARTY-START
-        else if(this.state.time >= 16*60+30) {
-            
-            // --- PARTY TRIGGER AT CLOSING TIME ---
-            let currentDiffStr = "easy";
-            let currentDiffVal = 1;
-            if (this.state.difficultyMult === 1.0) { currentDiffStr = "normal"; currentDiffVal = 2; }
-            else if (this.state.difficultyMult > 1.0) { currentDiffStr = "hard"; currentDiffVal = 3; }
+        // D. FEIERABEND — oder die Gala, wenn alles dafür erfüllt ist
+        else if (this.state.time >= 16 * 60 + 30) {
+            const party = this.partyInvitation();
+            if (party) { this.state.pendingEnd = party; return; }
 
-            const reqAchs = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar', 'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
-            
-            const isVeteran = reqAchs.every(id => {
-                if (!this.state.archive.achievements || !this.state.archive.achievements.includes(id)) return false;
-                let achDiff = this.state.archive.achievementDiffs ? this.state.archive.achievementDiffs[id] : "easy";
-                let achDiffVal = 1;
-                if (achDiff === "normal") achDiffVal = 2;
-                if (achDiff === "hard") achDiffVal = 3;
-                return achDiffVal >= currentDiffVal; 
-            });
-
-            const partyKey = this.KEYS.partyPlayed[currentDiffStr];
-            const partyPlayed = localStorage.getItem(partyKey) === 'true';
-
-            // All conditions met -> the gala replaces the normal end of day
-            if (isVeteran && !partyPlayed) {
-                // Do not start it here, queue it as pending
-                this.state.pendingEnd = {
-                    isParty: true,
-                    partyKey: partyKey,
-                    diffStr: currentDiffStr
-                };
-                return; 
-            }
-            // --- END PARTY TRIGGER ---
-
-
-            // No party -> ordinary end of day
-			this.recordDayResult('survived');
-            let diary = this.generateDiaryEntry("WIN");
-
-            this.state.pendingEnd = { 
-                title: "FEIERABEND", 
+            this.queueEnd({
+                title: "FEIERABEND",
                 lead: "16:30! Du hast den Tag überlebt.",
-                cause: "time",
-                diary,
-                isWin: true 
-            };
+                cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
+            });
         }
-        // E. GEFEUERT (Chef-Radar >= 100)
-        else if(this.state.cr >= 100) {
-			            
-            // Where the "second chance" drops the radar back to, per difficulty
-            let resetTo = 50; // Standard (Mittwoch)
-            if (this.state.difficultyMult < 1.0) resetTo = 30; // Freitag
-            if (this.state.difficultyMult > 1.2) resetTo = 60; // Montag
-
-            if(!this.state.chefWarningReceived) {
-                this.state.chefWarningReceived = true;
-                
-                // Reset the radar per difficulty
-                this.state.cr = resetTo; 
-                // Zwei Punkte: der Höchststand und der Reset direkt danach —
-                // so fällt die Kurve im Endbildschirm senkrecht statt schräg.
-                this.recordStatPoint();
-                
-                // --- Ten generic boss warnings ---
-                const bossTexts = [
-                    "Das Telefon klingelt sturm, bevor die Tür aufgerissen wird. Der Chef steht schnaufend im Rahmen: 'Müller! Noch so ein Ding und Sie können Ihre Kaffeetasse packen!'",
-                    "Eine E-Mail vom Chef ploppt auf, komplett in roter Schrift und Comic Sans: 'MÜLLER! IN MEIN BÜRO! SOFORT!' Nach einem ohrenbetäubenden Anschiss kehrst du an den Platz zurück.",
-                    "Dr. Wichtig stürmt an deinen Schreibtisch und knallt einen dicken Aktenordner auf die Tastatur. 'Ihre Arbeitsweise ist inakzeptabel! Beim nächsten Mal fliegt hier jemand!'",
-                    "Der Chef fängt dich auf dem Flur ab. 'Müller, Sie kosten mich mehr Nerven als meine Scheidung! Das ist eine offizielle Abmahnung!'",
-                    "Die HR-Abteilung ruft an. 'Herr Müller, der Geschäftsführer hat gerade einen Locher nach seinem Monitor geworfen. Es ging um Sie. Bitte reißen Sie sich zusammen!'",
-                    "Der Chef baut sich bedrohlich hinter dir auf. 'Wenn das so weitergeht, lasse ich Sie zur Strafe das gesamte Intranet ausdrucken und abheften! Letzte Warnung!'",
-                    "Eine wütende Sprachnachricht vom Chef: 'Müller, wenn mein Puls wegen Ihnen noch weiter steigt, stelle ich Ihnen meine Arztkosten in Rechnung! Benehmen Sie sich!'",
-                    "Dr. Wichtig trommelt ungeduldig mit den Fingern auf deinen Schreibtisch. 'Ich habe schon Praktikanten gesehen, die weniger Chaos anrichten. Überlegen Sie sich gut, was Sie heute noch tun!'",
-                    "Das Haustelefon klingelt. Es ist der Chef. Er brüllt so laut in den Hörer, dass du ihn einen halben Meter vom Ohr weghalten musst, um keinen Hörsturz zu erleiden.",
-                    "Der Chef schickt dir kommentarlos einen Link zu einem Stellenportal für ungelernte Aushilfskräfte mit dem Betreff 'Zur Vorbereitung'. Die Botschaft ist überdeutlich."
-                ];
-                let randomBoss = bossTexts[Math.floor(Math.random() * bossTexts.length)];
-                
-                // Reads naturally and ends on the concrete system value.
-                let warningText = `${randomBoss} (Radar auf ${resetTo}% gesetzt).`;
-                if(this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
-                
-                this.showModal("ABMAHNUNG", warningText, false);
-            } else {
-				this.recordDayResult('chef');
-                // 1. Tagebuch generieren
-                let diary = this.generateDiaryEntry("FIRED");
-
-                this.state.pendingEnd = { 
-                    title: "GEFEUERT", 
-                    lead: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.",
-                    cause: "chef",
-                    diary,
-                    isWin: false 
-                };
-            }
+        // E. CHEF-RADAR
+        else if (this.state.cr >= 100) {
+            if (this.issueChefWarning()) return;
+            this.queueEnd({
+                title: "GEFEUERT",
+                lead: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.",
+                cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
+            });
         }
     },
     
