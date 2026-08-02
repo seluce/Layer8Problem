@@ -915,6 +915,11 @@ export const ui = {
                 if (data.party_normal) localStorage.setItem(engine.KEYS.partyPlayed.normal, data.party_normal);
                 if (data.party_hard) localStorage.setItem(engine.KEYS.partyPlayed.hard, data.party_hard);
 
+                // Same reason as in the hard reset: a running day belongs to
+                // the save that was just replaced. Resuming it would mix the
+                // imported archive with the reputation of a foreign workday.
+                engine.clearDay();
+
                 msg.innerText = "Erfolg! Neustart...";
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
@@ -982,6 +987,12 @@ export const ui = {
             localStorage.removeItem(engine.KEYS.partyPlayed.easy);
             localStorage.removeItem(engine.KEYS.partyPlayed.normal);
             localStorage.removeItem(engine.KEYS.partyPlayed.hard);
+
+            // The interrupted workday goes too. Without this the reload would
+            // offer to resume a day that belongs to the save just wiped - and
+            // the day carries its own copy of the reputation, so finishing it
+            // would write part of the old progress back into the empty archive.
+            engine.clearDay();
 
             // Push the emptied state to cloud storage as well, otherwise the
             // next launch would pull the old archive straight back in.

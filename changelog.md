@@ -63,6 +63,8 @@ Einstellungen:
 * Die Bestätigen-Taste funktioniert auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
 
 Fehlerkorrekturen:
+* Das vollständige Zurücksetzen verwirft jetzt auch einen unterbrochenen Arbeitstag. Bislang bot das Spiel nach dem Zurücksetzen an, den laufenden Tag fortzusetzen - und weil dieser Zwischenstand seine eigene Kopie des Verhältnisses zu den Kollegen mitführt, wanderte damit ein Teil des gelöschten Fortschritts wieder zurück. Dasselbe galt beim Einspielen eines fremden Spielstands.
+* In einem Privatanruf standen Formatierungszeichen mitten im Text.
 * Sechzehn Ereignisse teilten sich versehentlich eine Kennung mit einem anderen Ereignis. Da pro Tag jede Kennung nur einmal vorkommen kann, sperrten sich diese Paare gegenseitig aus, sodass immer nur die Hälfte des Inhalts erreichbar war. Betroffen waren die Ketten rund um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
 * Fünf Ereignisse waren gar nicht erreichbar, weil die Voraussetzung dafür nirgends erfüllt werden konnte: die Gerüchteküche rund um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
 * Das Party-Ende "INSIDER" ließ sich nicht abschließen. Der Ergebnistext enthält wörtliche Rede, wodurch die zugehörige Schaltfläche technisch unbrauchbar wurde und schlicht nicht reagierte. Wer dieses Finale erreichte, kam nicht mehr weiter. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
