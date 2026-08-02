@@ -4473,4 +4473,38 @@ export const coffee = [
         }
     ]
 },
+
+/* ============================================================
+   SCHACHT 7 (v4.0.0)
+   Eine Kette über drei Bereiche des Hauses. Wer sie beginnt,
+   merkt erst beim dritten Mal, dass er das Problem ist.
+   ============================================================ */
+
+{
+    id: "cof_schacht_1",
+    char: "Frau Elster",
+    title: "Position sieben",
+    text: "Frau Elster fängt dich an der Kaffeemaschine ab, Ordner im Arm, und geht ihre Liste durch. 'Herr Müller, die Buchungen sind fast alle zugeordnet. Nur Position sieben ist noch offen. Position sieben. Immer diese sieben.'",
+    opts: [
+        {
+            t: "Ihr beim Zuordnen helfen",
+            rep: { "Frau Elster": 3 },
+            next: "path_schacht_1",
+            m: 15, f: -5, a: 5, c: -5,
+            r: "Ihr geht die Liste gemeinsam durch, Position sieben ist ein falsch kontierter Druckertoner. Als sie sich verabschiedet, sagt sie noch etwas - und du bist für den Bruchteil einer Sekunde sicher, sie habe 'Der Schacht vergisst nicht' gesagt. Du hast gestern zu lange ferngesehen. Vier Folgen. Das rächt sich."
+        },
+        {
+            t: "Auf die Buchhaltung verweisen",
+            next: "path_schacht_1",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Das ist eher was für die Buchhaltung, Frau Elster.' Sie IST die Buchhaltung. Beim Weggehen murmelt sie etwas, das nach 'Was unten liegt, bleibt nicht unten' klingt. Muss an dir liegen. Vier Folgen SCHACHT 7 an einem Abend waren vielleicht zu viel."
+        },
+        {
+            t: "Freundlich vertrösten",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du versprichst, dich später zu kümmern, und meinst es sogar so. Frau Elster nickt und zieht weiter, den Ordner wie ein Schutzschild vor der Brust. Ein völlig normaler Vorgang an einem völlig normalen Vormittag."
+        }
+    ]
+},
+
 ];

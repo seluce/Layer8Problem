@@ -7399,4 +7399,88 @@ export const sidequests = [
     ]
 },
 
+
+{
+    id: "sq_schacht_2",
+    kind: "text",
+    title: "Der Kellerabgang",
+    reqStory: "path_schacht_1",
+    text: "Auf dem Weg zum Archiv triffst du Egon am Kellerabgang. Er wuchtet einen Karton die Treppe hoch, stellt ihn ab und schnauft. 'Der Kram da unten', sagt er und deutet mit dem Daumen nach hinten, 'der kommt immer wieder hoch. Egal wie oft de den runterbringst.'",
+    opts: [
+        {
+            t: "Mit anpacken",
+            rep: { "Egon": 5 },
+            next: "path_schacht_2",
+            m: 15, f: -5, a: 0, c: -5,
+            r: "Ihr tragt den Karton gemeinsam hoch. Oben angekommen sagt Egon: 'Siehste. Der Keller gibt nix her, ohne dass er was zurückwill.' Du bleibst auf der obersten Stufe stehen. Das ist wortwörtlich ein Satz aus Folge drei. Wörtlich. Er kann die Serie unmöglich schauen. Oder?"
+        },
+        {
+            t: "Fragen, was in dem Karton ist",
+            next: "path_schacht_2",
+            m: 10, f: 0, a: 5, c: 0,
+            r: "'Akten. Von früher.' Mehr sagt er nicht, aber beim Weggehen kommt noch ein Nachsatz über die Schulter: 'Die Frage is nich, was drin is. Die Frage is, wann.' Du stehst da wie festgewachsen. Das ist der Satz. Das ist wortwörtlich DER Satz aus dem Vorspann."
+        },
+        {
+            t: "Vorbeigehen, du hast zu tun",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du nickst im Vorbeigehen und gehst weiter ins Archiv. Egon schnauft hinter dir weiter die Treppe hoch. Ein Hausmeister mit einem Karton, mehr ist da nicht, und es gibt in diesem Haus wahrhaftig genug echte Rätsel."
+        }
+    ]
+},
+
+
+{
+    id: "sq_handwerker_wagen_2b",
+    kind: "text",
+    title: "Die Gegenleistung",
+    reqStory: "path_tapeklau_fragen",
+    text: "Der Vorarbeiter steht in deiner Tür, dieselbe Warnweste, dasselbe Klemmbrett - aber diesmal verlegen. 'Kollege. Sie sind doch der mit den Computern.' Er hält ein Tablet hoch, auf dem die Bauleitungs-App seit dem Morgen dieselbe Fehlermeldung zeigt. 'Ferhat sagt, das liegt am WLAN. Ferhat sagt viel.'",
+    opts: [
+        {
+            t: "Kurz draufschauen - Tape ist Tape",
+            rep: { "Egon": 3 },
+            m: 15, f: -5, a: 0, c: -5,
+            r: "Die App hatte sich schlicht am Gäste-WLAN festgebissen. Zwei Minuten, erledigt. Der Vorarbeiter ist so dankbar, dass er dir seine Nummer aufschreibt: 'Wenn Sie mal was brauchen. Material, Werkzeug, egal.' Egon erfährt davon noch am selben Tag und nickt anerkennend. Beziehungen zu Handwerkern sind in diesem Haus die härtere Währung."
+        },
+        {
+            t: "Freundlich ablehnen: Fremdgerät, keine Zuständigkeit",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "Formal völlig korrekt: Fremdfirma, Fremdgerät, keine Handhabe. Er nickt und zieht ab. Die zwei Rollen Tape lagen trotzdem geschenkt in deiner Schublade, und das weiß er auch. Manche Rechnungen bleiben offen, ohne dass jemand sie stellt."
+        },
+        {
+            t: "An Kevin weiterreichen - der übt gern",
+            rep: { "Kevin": 3 },
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Kevin stürzt sich auf das Tablet wie auf ein Geburtstagsgeschenk und löst das Problem in zwölf Minuten, von denen zehn aus Erzählen bestehen. Der Vorarbeiter hört geduldig zu. Beide sind danach hochzufrieden, und du hast in der Zeit tatsächlich gearbeitet."
+        }
+    ]
+},
+{
+    id: "sq_kopfhoerer_fund_2b",
+    kind: "text",
+    title: "Freitag ist noch weit",
+    reqStory: "path_kopfhoerer_abgeben",
+    text: "Gabi winkt dich zum Empfang. Die Kopfhörer liegen vor ihr auf dem Tresen. 'Die Dame hat sich gemeldet. Sie kommt erst nächsten Monat wieder und meinte, wer sie gefunden hat, soll sie behalten.' Sie schiebt sie dir zu. 'Ich hab gesagt, ich frag mal rum. Ich hab nicht gesagt, wen.'",
+    opts: [
+        {
+            t: "Annehmen. Ehrlich währt am längsten.",
+            loot: "headphones",
+            rep: { "Gabi": 3 },
+            m: 5, f: 0, a: -5, c: 0,
+            r: "Du nimmst sie und weißt genau, dass du sie nur deshalb behalten darfst, weil du sie abgegeben hast. Das ist die Art von Gerechtigkeit, die in diesem Gebäude eigentlich nicht vorkommt. Gabi zwinkert und geht ans Telefon. Sie hat schon wieder recht behalten."
+        },
+        {
+            t: "Gabi soll sie behalten",
+            rep: { "Gabi": 10 },
+            m: 5, f: 0, a: -5, c: 0,
+            r: "'Behalt sie, du sitzt hier vorne im Lärm.' Gabi schaut dich an, als hättest du ihr einen Heiratsantrag gemacht, und sagt dann nur: 'Also gut.' Ab diesem Tag erfährst du Dinge, die andere erst zwei Tage später hören. Manche Investitionen zahlen sich in Informationen aus."
+        },
+        {
+            t: "Ins Fundbüro-Regal legen, wo sie hingehören",
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Du bestehst darauf, dass sie ins Regal kommen. Gabi seufzt und legt sie in die Schublade zurück. Drei Wochen später sind sie weg, und niemand weiß, wohin. Korrektheit hat in diesem Haus eine erschreckend kurze Halbwertszeit."
+        }
+    ]
+},
+
 ];

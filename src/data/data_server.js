@@ -4897,4 +4897,61 @@ export const server = [
     ]
 },
 
+
+{
+    id: "srv_schacht_3",
+    title: "Rack 7",
+    reqStory: "path_schacht_2",
+    text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft seit gestern anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seit heute Morgen nichts anderes mehr gehört. Es ist 15:40 Uhr, du hast vier Folgen im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
+    opts: [
+        {
+            t: "'Der Schacht vergisst nicht, Kevin.'",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Es rutscht dir raus, im vollen Ernst, mit der Stimme des Erzählers. Kevin sieht dich zwei Sekunden lang an - und dann leuchtet sein Gesicht auf: 'DU SCHAUST DAS AUCH?!' Ihr steht die nächsten zehn Minuten zwischen den Racks und redet über Folge vier. Das Rack-Problem war ein Neustart der Zeitsynchronisierung. Um kurz nach drei. Wie jede Nacht."
+        },
+        {
+            t: "'Die Frage ist nicht, warum. Die Frage ist, wann.'",
+            rep: { "Kevin": 5 },
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Kevin nickt langsam und macht sich eine Notiz. 'Boah. Krass gedacht.' Er wird die Frage tatsächlich beantworten: kurz nach drei, jede Nacht, die Zeitsynchronisierung. Du hast ihn mit einem Serienzitat zur richtigen Diagnose geführt und wirst das niemals jemandem erzählen können."
+        },
+        {
+            t: "Dem Chef davon erzählen - der muss das wissen",
+            rep: { "Dr. Wichtig": -5 },
+            m: 15, f: 0, a: 5, c: 25,
+            r: "Du erklärst Dr. Wichtig, in Rack sieben passiere etwas, das sich der Erklärung entziehe, und die Logs hörten nachts um drei auf zu existieren. Du benutzt dabei das Wort 'Schacht'. Zweimal. Er hört sich alles an, bedankt sich freundlich und schließt hinter dir die Tür. Am Nachmittag erkundigt er sich bei der Personalabteilung, ob es Angebote zur Stressprävention gibt. Für Mitarbeiter. Namentlich."
+        },
+        {
+            t: "Kurz die Augen zumachen und normal antworten",
+            m: 10, f: -5, a: 10, c: -5,
+            r: "Du atmest einmal durch, schiebst die vier Folgen beiseite und antwortest wie ein Fachmann: Zeitsynchronisierung prüfen, Logrotation ansehen, gut ist. Kevin zieht ab. Es kostet dich mehr Kraft als der gesamte restliche Nachmittag, und du weißt jetzt, dass du heute Abend Folge fünf schauen wirst. Sofort nach Feierabend."
+        }
+    ]
+},
+
+
+{
+    id: "srv_praktikant_zettel_2b",
+    title: "Das Foto in der Cloud",
+    reqStory: "path_zettel_foto",
+    text: "Eine Benachrichtigung auf deinem Diensthandy: 'Ihre Fotos wurden erfolgreich gesichert. 1 neues Bild.' Die automatische Sicherung läuft. Sie läuft seit Jahren. Und sie hat soeben das Administrator-Kennwort dieses Hauses in ein Rechenzentrum in Irland hochgeladen.",
+    opts: [
+        {
+            t: "Foto löschen und Sicherung für die Kamera abschalten",
+            m: 20, f: -10, a: 10, c: -5,
+            r: "Löschen, aus dem Papierkorb löschen, aus der Cloud löschen, Sicherung abschalten, Papierkorb der Cloud leeren. Zwanzig Minuten für einen Fehler, der zwei Sekunden gedauert hat. So sieht Sicherheitsarbeit tatsächlich aus: unsichtbar, mühsam und ohne Applaus."
+        },
+        {
+            t: "Ist doch verschlüsselt, wird schon",
+            m: 2, f: 10, a: 0, c: 15,
+            r: "Ende-zu-Ende, Serverstandort EU, alles korrekt - und trotzdem liegt das Administrator-Kennwort jetzt in einem fremden Rechenzentrum, weil du zu bequem warst. Sollte je ein Audit die Gerätesicherungen prüfen, beginnt ein sehr unangenehmes Gespräch mit genau diesem Bild."
+        },
+        {
+            t: "Das Kennwort endlich ändern - jetzt gibt es einen Grund",
+            m: 25, f: -10, a: 20, c: 0,
+            r: "Wenn es schon draußen ist, taugt es nichts mehr. Du änderst es, benachrichtigst vorher alle Fachbereiche und arbeitest den Nachmittag lang die vier Anwendungen ab, die daran hingen. Es ist die richtige Entscheidung. Sie fühlt sich trotzdem an wie eine Strafe."
+        }
+    ]
+},
+
 ];
