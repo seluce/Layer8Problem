@@ -113,17 +113,74 @@ export const events = {
         }, DURATION);
     },
 
+    /**
+     * Der Tag zählt erst als begonnen, wenn der Mensch etwas entschieden hat -
+     * nicht schon beim Öffnen der Seite. Stand wortgleich an zwei Stellen.
+     */
+    markDayStarted: function() {
+        if (this.state.dayActive) return;
+        this.state.dayActive = true;
+        this.incrementStat('daysStarted');
+        this.incrementStat('started_' + this.difficultyKey());
+    },
+
+    /**
+     * Legt einen Gegenstand in den Rucksack — mit allen Sonderfällen:
+     * Dauerhaftes und Trophäen gibt es nur einmal, Verbrauchsgegenstände
+     * passen zehnmal hinein, und wer voll ist, lässt liegen.
+     *
+     * Stand bis v4.0.0 zweimal fast wortgleich in der Datei (Postfach und
+     * Terminal), was bereits einmal dazu geführt hat, dass eine der beiden
+     * Fassungen eine Regel nicht kannte.
+     */
+    grantItem: function(itemId, logLabel = 'ITEM') {
+        if (!itemId) return;
+        const dbItem = DB.items[itemId];
+        const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
+        const alreadyHas = this.state.inventory.some(i => i.id === itemId);
+        const itemName = dbItem ? dbItem.name : itemId;
+
+        // Trophäen und Werkzeug zählen nicht gegen die Kapazität
+        const normalCount = this.state.inventory.filter(i => {
+            const db = DB.items[i.id];
+            return db && !db.quest;
+        }).length;
+
+        if (isPermanent && alreadyHas) return;   // still verworfen
+
+        if (!isPermanent && normalCount >= 10) {
+            this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+            return;
+        }
+
+        this.state.inventory.push({ id: itemId, used: false });
+        this.addToArchive('items', itemId);
+        this.log(`${logLabel}: ${itemName}`, "text-yellow-400");
+        if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
+            this.animateItemToBackpack(dbItem.img);
+        }
+    },
+
+    /**
+     * Verrechnet Ruf-Änderungen und hält sie in den Grenzen -100 bis 100.
+     * Stand an drei Stellen; eine davon hatte den Speicheraufruf vergessen.
+     */
+    applyReputation: function(rep) {
+        if (!rep) return false;
+        for (const [charName, val] of Object.entries(rep)) {
+            const current = this.state.reputation[charName] ?? 0;
+            this.state.reputation[charName] = Math.max(-100, Math.min(100, current + val));
+        }
+        this.saveSystem();
+        return true;
+    },
+
     resolveEmail: function(opt, timeout = false) {
         // NEUER SPAM-SCHUTZ ---
         if (!this.state.isEmailOpen) return;
         // -------------------------
         
-        // --- Only now does the day officially count as started ---
-        if (!this.state.dayActive) {
-            this.state.dayActive = true;
-            this.incrementStat('daysStarted');
-            this.incrementStat('started_' + this.difficultyKey());
-        }
+        this.markDayStarted();
         // ---------------------------------------------
 		
         this.playAudio('ui');
@@ -184,35 +241,7 @@ export const events = {
             
             this.triggerShake(addedA, addedC);
 
-            // 1. LOOT HANDLING FOR MAILS
-            if (opt.loot && opt.loot !== "") {
-                let dbItem = DB.items[opt.loot];
-                let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
-                let alreadyHas = this.state.inventory.find(i => i.id === opt.loot);
-                
-                let normalCount = this.state.inventory.filter(i => {
-                    let db = DB.items[i.id];
-                    return db && !db.quest;
-                }).length;
-
-                if (isPermanent && alreadyHas) {
-                    // Already owned, nothing happens
-                } else if (!isPermanent && normalCount >= 10) {
-                    let itemName = dbItem ? dbItem.name : opt.loot;
-                    this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
-                } else {
-                    this.state.inventory.push({ id: opt.loot, used: false });
-                    this.addToArchive('items', opt.loot);
-                    
-                    let itemName = dbItem ? dbItem.name : opt.loot;
-                    this.log(`ERHALTEN: ${itemName}`, "text-yellow-400");
-                    
-                    // Play the backpack animation
-                    if (dbItem && dbItem.img && typeof this.animateItemToBackpack === 'function') {
-                        this.animateItemToBackpack(dbItem.img);
-                    }
-                }
-            }
+            this.grantItem(opt.loot, 'ERHALTEN');
 
             // 2. ZEIT LOGIK (opt.m)
             if (opt.m) {
@@ -222,16 +251,7 @@ export const events = {
             }
 
             // 3. RUF LOGIK (opt.rep)
-            if (opt.rep) {
-                let changed = false;
-                for (let [charName, val] of Object.entries(opt.rep)) {
-                    if (this.state.reputation[charName] === undefined) this.state.reputation[charName] = 0;
-                    this.state.reputation[charName] += val;
-                    this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
-                    changed = true;
-                }
-                if (changed) this.saveSystem();
-            }
+            this.applyReputation(opt.rep);
 
             // 4. TEXT LOGIK (opt.r)
             if (opt.r) {
@@ -291,12 +311,7 @@ export const events = {
             return; // Normalen Trigger abbrechen!
         }
         
-        // --- Only now does the day officially count as started ---
-        if (!this.state.dayActive) {
-            this.state.dayActive = true;
-            this.incrementStat('daysStarted');
-            this.incrementStat('started_' + this.difficultyKey());
-        }
+        this.markDayStarted();
         
         // Make sure everything this function touches is in memory. Resolves
         // instantly once loaded, so calling it every time costs nothing.
@@ -773,34 +788,7 @@ export const events = {
         // --- REPUTATION LOGIK  ---
         // repData arrives as the object straight from the data file. It used to
         // travel through an HTML attribute and be JSON-parsed back out here.
-        if (repData) {
-            if (typeof repData === 'object') {
-                let changed = false; // did anything actually move?
-                
-                for (let [charName, val] of Object.entries(repData)) {
-                    // Make sure the character exists in the state
-                    if (this.state.reputation[charName] === undefined) {
-                        this.state.reputation[charName] = 0;
-                    }
-                    
-                    // Wert addieren
-                    this.state.reputation[charName] += val;
-                    
-                    // Begrenzen auf -100 bis +100
-                    this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
-                    
-                    // Optional floating text feedback
-                    // if (val !== 0) this.showFloatingText('team-btn', val > 0 ? '💚' : '💔');
-
-                    changed = true;
-                }
-
-                // Reputation moved: mirror it into the archive and persist
-                if (changed) {
-                    this.saveSystem(); 
-                }
-            }
-        }
+        if (repData && typeof repData === 'object') this.applyReputation(repData);
 
         // Story Flag setzen
         if (next && next !== "") {
@@ -826,36 +814,7 @@ export const events = {
         // --------------------------------
 
         // --- ITEM LOGIK: LOOT ---
-        if(loot && loot !== "") {
-            let dbItem = DB.items[loot];
-            // Permanent tool or quest item?
-            let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
-            // Already owned?
-            let alreadyHas = this.state.inventory.find(i => i.id === loot);
-            
-            // Capacity counts ordinary items only, not trophies
-            let normalCount = this.state.inventory.filter(i => {
-                let db = DB.items[i.id];
-                return db && !db.quest;
-            }).length;
-
-            if (isPermanent && alreadyHas) {
-                // 1. Permanent item already owned -> quietly discarded
-            } 
-            else if (!isPermanent && normalCount >= 10) {
-                // 2. Consumable but the backpack is full -> tell the player
-                let itemName = dbItem ? dbItem.name : loot;
-                this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
-            } 
-            else {
-                // 3. Add it. A second or third donut is fine.
-                this.state.inventory.push({ id: loot, used: false });
-                this.addToArchive('items', loot);
-                let itemName = dbItem ? dbItem.name : loot;
-                this.log(`ITEM: ${itemName}`, "text-yellow-400");
-                if (DB.items[loot] && DB.items[loot].img) { this.animateItemToBackpack(DB.items[loot].img); }
-            }
-        }
+        this.grantItem(loot, 'ITEM');
         
         this.log(res);
         this.updateUI();
@@ -1245,27 +1204,7 @@ export const events = {
         this.recordStatPoint();
         
         // --- REPUTATION HANDLING FOR THE PHONE ---
-        if (res.rep) {
-            let changed = false;
-            for (let [charName, val] of Object.entries(res.rep)) {
-                // Make sure the character exists
-                if (this.state.reputation[charName] === undefined) {
-                    this.state.reputation[charName] = 0;
-                }
-                
-                // Ruf addieren/abziehen
-                this.state.reputation[charName] += val;
-                
-                // Auf -100 bis +100 begrenzen
-                this.state.reputation[charName] = Math.max(-100, Math.min(100, this.state.reputation[charName]));
-                changed = true;
-            }
-            
-            // Persist immediately when something moved
-            if (changed) {
-                this.saveSystem();
-            }
-        }
+        this.applyReputation(res.rep);
         
         // --- SET THE STORY FLAG ---
         if (res.next && res.next !== "") {

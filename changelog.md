@@ -87,6 +87,7 @@ System & Stabilität:
 * Browser- und Desktop-Fassung teilen sich dieselbe Startseite. Menüpunkte, die nur zur jeweiligen Fassung passen, blenden sich selbstständig ein oder aus: Vollbild, "Spiel beenden" und die globalen Statistiken erscheinen ausschließlich in der Steam-Fassung, der Verweis auf die Projektseite ausschließlich im Browser. Wer das Spiel über Steam gekauft hat, bekommt keine Kaufaufforderung mehr angezeigt.
 
 Für Entwickler:
+* Die Engine wurde entflochten. checkEndConditions (176 Zeilen mit zwei wortgleichen Duplikaten und zwanzig Textblöcken mitten in der Ablauflogik) besteht jetzt aus einer 46-zeiligen Weiche und fünf benannten Funktionen; die Ventil- und Abmahnungstexte liegen bei den Daten. Für Gegenstände, Ruf-Änderungen und den Tagesbeginn gibt es je eine gemeinsame Funktion statt bisher zwei bis drei fast gleicher Fassungen - eine davon hatte eine Regel nicht gekannt.
 * Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht aus 25 Komponenten statt aus zusammengesetzten HTML-Zeichenketten; rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
 * Das Projekt nutzt außerdem Tailwind CSS 4 statt der Vorgängerversion. Am Aussehen ändert sich dadurch nichts; die Grundlage ist wieder aktuell und wird weiter gepflegt.
 * Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.
