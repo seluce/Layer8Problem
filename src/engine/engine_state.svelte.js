@@ -191,6 +191,10 @@ export const state = $state({
     // someone opens it.
     loreOpen: false,
 
+    // Das Firmen-Intranet. components/intranet/IntranetView.svelte renders the
+    // browser window and the pages inside it; nothing exists until it opens.
+    intranetOpen: false,
+
     // The big centre modal. components/EndModal.svelte renders it.
     modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null },
 

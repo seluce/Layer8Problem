@@ -37,6 +37,7 @@ import InventoryFull from './components/InventoryFull.svelte';
 import AchievementToasts from './components/AchievementToasts.svelte';
 import TerminalHeader from './components/TerminalHeader.svelte';
 import BoardView from './components/BoardView.svelte';
+import IntranetView from './components/intranet/IntranetView.svelte';
 
 mount(StatsHeader, { target: document.getElementById('stats-header') });
 mount(LogFeed,     { target: document.getElementById('log-feed') });
@@ -57,6 +58,7 @@ mount(InventoryFull,  { target: document.getElementById('full-inventory-grid') }
 mount(AchievementToasts, { target: document.getElementById('achievement-container') });
 mount(TerminalHeader, { target: document.getElementById('terminal-header-right') });
 mount(BoardView,      { target: document.getElementById('board-notes') });
+mount(IntranetView,   { target: document.getElementById('intranet-root') });
 
 /* ============================================================
    Für die, die nachsehen.

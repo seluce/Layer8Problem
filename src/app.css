@@ -51,7 +51,7 @@
 }
 
 /* Paths are relative to THIS file, which lives in src/. index.html sits one
-   level up and the intranet pages are served from public/. */
+   level up. */
 @source "../index.html";
 @source "./main.js";
 @source "./engine.js";
@@ -60,7 +60,6 @@
 @source "./components/**/*.svelte";
 @source "./engine/*.js";
 @source "./data/*.js";
-@source "../public/assets/intranet/*.html";
 
 /* Tailwind 4 defaults the border colour to currentcolor; v3 used gray-200.
    This keeps every element that relies on the old default looking the same.

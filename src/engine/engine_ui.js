@@ -475,25 +475,19 @@ export const ui = {
     },
 
     // --- INTRANET SYSTEM ---
+    // Browser window and pages are components/intranet/IntranetView.svelte.
+    // Until v4.0.0 this was an iframe over public/assets/intranet/, which
+    // needed a hand-copied stylesheet to look like anything; inside the game
+    // document the pages share the one build and the text size works through
+    // rem like everywhere else.
     openIntranet: function() {
-        const modal = document.getElementById('intranet-modal');
-        // Reset the iframe to the start page on every open
-        const frame = document.getElementById('intranet-frame');
-        if (frame) {
-            frame.src = "assets/intranet/index.html";
-            // The intranet is its own document inside the frame, so the game's
-            // root font size does not reach it. The chosen text size is passed
-            // in on load - via zoom, because the company pages bring their own
-            // stylesheet and do not necessarily work in rem.
-            frame.onload = () => this.applyIntranetTextSize(frame);
-        }
-        
-        this.showOverlay(modal);
+        this.state.intranetOpen = true;
+        document.body.classList.add('overflow-hidden');
     },
 
     closeIntranet: function() {
-        const modal = document.getElementById('intranet-modal');
-        this.hideOverlay(modal);
+        this.state.intranetOpen = false;
+        document.body.classList.remove('overflow-hidden');
     },
 
     // --- BULLETIN BOARD ---
@@ -1011,7 +1005,6 @@ export const ui = {
         // every rem value refers to.
         document.documentElement.classList.remove('text-size-large', 'text-size-xlarge');
         if (value !== 'normal') document.documentElement.classList.add('text-size-' + value);
-        this.applyIntranetTextSize();
         if (this.playAudio) this.playAudio('ui');
     },
 
@@ -1058,19 +1051,6 @@ export const ui = {
 
         this.updateSettingsUI();
         this.playAudio('ui');
-    },
-
-    /**
-     * Passes the text size into the intranet frame. Called on open and on
-     * every change; fails silently if the frame is not ready yet.
-     */
-    applyIntranetTextSize: function(frame) {
-        const el = frame ?? document.getElementById('intranet-frame');
-        const ZOOM = { normal: '', large: '1.08', xlarge: '1.18' };
-        try {
-            const doc = el?.contentDocument;
-            if (doc?.body) doc.body.style.zoom = ZOOM[this.state.textSize ?? 'normal'] ?? '';
-        } catch { /* Rahmen noch nicht geladen — beim nächsten Öffnen erneut */ }
     },
 
     /**

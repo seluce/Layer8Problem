@@ -113,7 +113,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }
         if (isVisible('archive-modal')) { engine.closeArchive(); return; }
-        if (isVisible('intranet-modal')) { engine.closeIntranet(); return; }
+        if (engine.state.intranetOpen) { engine.closeIntranet(); return; }
         if (isVisible('board-modal')) { engine.closeBoard(); return; }
         
         if (isVisible('excuse-modal')) { engine.closeExcuseModal(); return; }
