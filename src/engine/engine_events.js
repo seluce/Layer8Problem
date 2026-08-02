@@ -216,7 +216,9 @@ export const events = {
 
             // 2. ZEIT LOGIK (opt.m)
             if (opt.m) {
+                const before = this.state.time;
                 this.state.time += opt.m;
+                this.checkLeetMoment(before);
             }
 
             // 3. RUF LOGIK (opt.rep)
@@ -1293,7 +1295,9 @@ export const events = {
                 this.state.phoneReadTimer = setTimeout(() => {
                     this.closePhone();
                     this.log("Handy: " + res.txt);
-                    this.state.time += 15; 
+                    const beforePhone = this.state.time;
+                    this.state.time += 15;
+                    this.checkLeetMoment(beforePhone);
                     this.updateUI();
                     
                     if (this.state.pendingEnd) {

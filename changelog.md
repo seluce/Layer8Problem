@@ -1,227 +1,101 @@
 [4.0.0] - unveröffentlicht
 
-Diese Version ist in erster Linie ein technischer Umbau: Die Grundlage unter dem Spiel wurde vollständig erneuert, damit künftige Erweiterungen schneller und mit weniger Fehlern möglich sind. Obendrauf gibt es die erste Welle neuer Ereignisse.
+Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der
+Oberfläche wurde die gesamte Grundlage erneuert, darüber sind über 120 neue
+Ereignisse dazugekommen, und dazwischen wurde an so vielen Stellen
+nachgeschärft, dass sich ein vertrauter Arbeitstag deutlich anders anfühlt.
+Wer zuletzt Version 3.2.2 gespielt hat, findet ein anderes Spiel vor.
 
 Neuerungen:
+* Über 120 neue Ereignisse verteilt auf alle fünf Bereiche des Arbeitstags.
+* Einundvierzig davon im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Dazu kommen die piepende USV, Egons Schattenlager im Keller, ein angeknabbertes Patchpanel, ein fremder USB-Stick und das überfällige Doku-To-do von Januar.
+* Einundzwanzig neue Ereignisse an der Kaffeemaschine: Frau Elsters Verfallsdaten-Razzia, Dr. Wichtig vor zwei Knöpfen ("Machen Sie mir das, was ich immer trinke"), die ENTKALKEN-Krise samt Kevins Instant-Schwarzmarkt, die leergeräumte Vertrauenskasse - und Markus, der vor einem echten Kundentermin zum ersten Mal aussieht wie ein Mensch.
+* Siebzehn neue Ereignisse rund ums Telefon, darunter Markus im Flüstermodus live beim Kunden und die Warteschleifen-Odyssee beim Provider (Sie sind Anrufer Nummer 38). Dazu haben vier bekannte Anrufe erstmals Konsequenzen: der Sohn vom Chef, der Tunnel-Anruf, Frau Elsters Excel-Drama und der Microsoft-Betrugsanruf - bis hin zum Vier-Augen-Gespräch mit Dr. Wichtig und Gabis 73-Minuten-Rekord gegen die Betrüger.
+* Siebenundzwanzig neue Ereignisse auf dem Dienstgang: das Rätsel um "Projekt Phoenix" und den nie stillgelegten Zugang von Herrn Rademacher, Dr. Wichtigs Gemba Walk (er beobachtet nur - mit Klemmbrett), Markus mit leerer Autobatterie und zwanzig Minuten bis zum Kundentermin, Chantals Achtsamkeits-Ecke am Strom des Etagen-Switches und der Kopierer, der seit sechs Wochen im Karton auf seine Zuständigkeit wartet. Auch das Handy meldet sich öfter: der "ALPHA CIRCLE", Kevins vier Sprachnachrichten (4:32 Minuten, Inhalt: der Bildschirm ist "komisch") und Gabis Frühwarnsystem.
+* Siebzehn neue E-Mails. Frau Elster schreibt zum ersten Mal überhaupt - unter anderem die dritte Erinnerung wegen 3,49 Euro und eine Inventurliste mit einer erfundenen Kontrollposition. Dazu Markus' Siri-Diktate aus dem Auto ("AUSRUFEZEICHEN"), Kevins Datei ohne Anhang, die Reply-All-Lasagne, der Phishing-Test der Konzernzentrale samt Pflichtschulung für den Admin und die Abwesenheitsnotiz-Endlosschleife mit 14 Mails pro Minute.
+* Rund zwanzig Nebenaufgaben, die bisher nur in der Steam-Fassung enthalten waren, stehen jetzt auch im Browser zur Verfügung. Beide Fassungen laufen ab sofort auf demselben Stand.
+* Ein unterbrochener Arbeitstag ist nicht mehr verloren. Das Spiel sichert den Stand nach jedem abgeschlossenen Ereignis; wer den Browser schließt, versehentlich neu lädt oder abstürzt, wird beim nächsten Start gefragt, ob er weiterarbeiten möchte - mit Wochentag, Uhrzeit und offenen Tickets als Gedächtnisstütze.
+* Der Endbildschirm wurde neu gebaut. Er zeigt oben, der wievielte Arbeitstag das war und wie viele davon überstanden wurden, hebt in der Bilanz den Wert hervor, an dem der Tag zerbrochen ist ("hier war Schluss"), und bietet zwei Dinge zum Aufklappen: den Tagesverlauf als Kurve von Faulheit, Aggro und Chef-Radar über den ganzen Tag - man sieht endlich, dass der Ausraster um kurz vor zwei schon um halb elf angelegt war - und das persönliche Logbuch, das nun als beschriebenes Blatt Papier auf dem Tisch liegt.
+* Das Archiv zählt nicht mehr nur vier Zahlen. Oben steht die Serie überstandener Tage samt Rekord, darunter zeigen drei Balken, wie es um Freitag, Mittwoch und Montag einzeln steht; wer zehn Freitage überlebt hat, aber keinen Montag, sieht genau das. Eine Fußzeile nennt Ventil-Rettungen und Abmahnungen.
+* Wer einen Arbeitstag von der ersten Minute an im Blindflug übersteht - ohne Prozentwerte, ohne Ticketzähler -, findet im Logbuch einen Nachtrag dazu. Wer die Zahlen erst mittags ausblendet, bekommt ihn nicht; und an einem Montag liest er sich anders als an einem Freitag.
 * Zwei Kleinigkeiten für Leute, die genau hinsehen: Einmal pro Arbeitstag passiert um Punkt 13:37 Uhr etwas im Protokoll, das niemandem auffallen muss. Und wer im Browser die Entwicklerkonsole öffnet, wird dort von H.A.L.G.E.R.D. persönlich begrüßt.
-* Das Archiv zählt nicht mehr nur vier Zahlen. Oben steht jetzt die Serie überstandener Tage samt Rekord - die einzige Zahl, die morgen anders aussieht, wenn man heute aufhört. Darunter zeigen drei Balken, wie es um Freitag, Mittwoch und Montag einzeln steht; wer zehn Freitage überlebt hat, aber keinen Montag, sieht genau das. Und in einer kleinen Fußzeile steht, wie oft das Ventil den Tag noch gerettet hat und wie viele Abmahnungen man kassiert hat.
-* Ein unterbrochener Arbeitstag ist nicht mehr verloren. Das Spiel sichert den Stand nach jedem abgeschlossenen Ereignis; wer den Browser schließt, versehentlich neu lädt oder abstürzt, wird beim nächsten Start gefragt, ob er weiterarbeiten möchte - mit Wochentag, Uhrzeit und offenen Tickets als Gedächtnisstütze. Wer lieber neu anfängt, verwirft den Stand mit einem Klick.
-* Einundvierzig neue Ereignisse im Serverraum. Erstmals verirren sich auch Chantal, Markus, Gabi und Dr. Wichtig dorthin - bislang war der Raum fest in der Hand von Kevin und Egon. Dazu kommen die piepende USV, Egons Schattenlager im Keller, ein angeknabbertes Patchpanel, ein fremder USB-Stick und das überfällige Doku-To-do von Januar. Jede Entscheidung setzt eine mögliche Fortsetzung in Gang, die im Laufe des Tages nachkommen kann. Oder auch erst beim nächsten Versuch. Oder nie.
-* Einundzwanzig neue Ereignisse an der Kaffeemaschine: Frau Elsters Verfallsdaten-Razzia, Dr. Wichtig vor zwei Knöpfen ('Machen Sie mir das, was ich immer trinke'), die ENTKALKEN-Krise samt Kevins Instant-Schwarzmarkt, die leergeräumte Vertrauenskasse - und Markus, der vor einem echten Kundentermin zum ersten Mal aussieht wie ein Mensch. Wer die Schwarze Amex besitzt, kann an der Kaffeekasse außerdem eine Legende begründen.
-* Siebzehn neue Ereignisse rund ums Telefon, darunter Markus im Flüstermodus live beim Kunden und die Warteschleifen-Odyssee beim Provider (Sie sind Anrufer Nummer 38). Dazu haben vier bekannte Anrufe erstmals Konsequenzen: Der Sohn vom Chef, der Tunnel-Anruf, Frau Elsters Excel-Drama und der Microsoft-Betrugsanruf wirken jetzt nach - bis hin zum Vier-Augen-Gespräch mit Dr. Wichtig und Gabis 73-Minuten-Rekord gegen die Betrüger.
-* Siebenundzwanzig neue Ereignisse auf dem Dienstgang: das Rätsel um 'Projekt Phoenix' und den nie stillgelegten Account von Herrn Rademacher, Dr. Wichtigs Gemba Walk (er beobachtet nur - mit Klemmbrett), Markus mit leerer Autobatterie und zwanzig Minuten bis zum Kundentermin, Chantals Achtsamkeits-Ecke am Strom des Etagen-Switches und der Kopierer, der seit sechs Wochen im Karton auf seine Zuständigkeit wartet. Auch das Handy meldet sich öfter: Markus fügt dich dem 'ALPHA CIRCLE' hinzu, Kevin erklärt sein Problem in vier Sprachnachrichten (4:32 Minuten, Inhalt: der Bildschirm ist 'komisch'), und Gabis Frühwarnsystem bietet dir an, als Protokollführer in einem Meeting über deine eigene Kostenstelle zu sitzen.
-* Siebzehn neue E-Mails. Frau Elster schreibt zum ersten Mal überhaupt - unter anderem die dritte Erinnerung wegen 3,49 Euro und eine Inventurliste mit einer erfundenen Kontrollposition, auf die seit 2011 niemand hereingefallen ist außer... nun ja. Dazu Markus' Siri-Diktate aus dem Auto ('AUSRUFEZEICHEN'), Kevins Datei ohne Anhang (dreiteilige Saga mit Foto-Finale), die Reply-All-Lasagne, der Phishing-Test der Konzernzentrale samt Pflichtschulung für den Admin und die Abwesenheitsnotiz-Endlosschleife mit 14 Mails pro Minute.
 
 Spielbalance:
-* Der Mittwoch hat angezogen: Statuswirkungen fallen auf dem normalen Schwierigkeitsgrad um zehn Prozent kräftiger aus. Die neue Tages-Simulation zeigte, dass ein aufmerksamer Spieler den Mittwoch mit 87 Prozent Siegquote fast risikofrei überstand - jetzt sind es rund 77, während sehr gute Spieler kaum etwas davon spüren. Freitag und Montag bleiben unverändert.
-* Der Morgen entscheidet mehr als bisher. Neben Ärger, Chef-Aufmerksamkeit und Verschlafen gibt es jetzt drei weitere Arten, in den Tag zu starten: Tickets, die über Nacht aufgelaufen sind, ein gestrichenes Kontingent an Ausreden (Compliance-Woche, Gabis Frühwarnung, Kevins Mitschrift) - und eine Ausrede extra, wenn das Haus ausnahmsweise für dich spielt. Achtzehn neue Morgentexte, und die Werte richten sich jetzt nach dem Wochentag: Freitag verzeiht, Montag nicht.
-* Drei neue Mittagspausen, darunter zwei mit doppeltem Boden: ein kostenloses Buffet, gesponsert ausgerechnet von dem Dienstleister, der die interne IT ablösen will, und eine Kochvorführung, die an der falschen Steckdose hängt. Wer die richtigen Dinge dabeihat, kommt in beiden Fällen eleganter davon.
-* Die Katastrophen (Bossfights) sind unnachgiebiger: Wer den Countdown verstreichen lässt, fährt jetzt bei jeder der dreißig Katastrophen schlechter als mit der schlechtesten aktiven Entscheidung - bislang war Nichtstun in vier Fällen die bequemere Wahl. Außerdem kosten die Notlösungen ohne passendes Werkzeug dort mehr, wo die Folgen offensichtlich waren: Ein Vorstands-Livestream in 240p bleibt eben ein blamierter Vorstand.
-* Fünfzehn neue Ereignisse sind Fallen: Situationen, in denen die Antwort, die vernünftig klingt, nicht die ist, die vernünftig ist. Ein kritisches Zwei-Minuten-Update, eine aufgehaltene Tür, herrenloser Kuchen im Flur, eine kurze Frage vom Chef. Acht davon können den Bildschirm wackeln lassen - wer in den Köder tritt, merkt es sofort. Mehr wird nicht verraten, genau das ist der Punkt.
+* Der Mittwoch hat angezogen: Statuswirkungen fallen auf dem normalen Schwierigkeitsgrad um zehn Prozent kräftiger aus. Eine eigens gebaute Tages-Simulation zeigte, dass ein aufmerksamer Spieler den Mittwoch fast risikofrei überstand. Freitag und Montag bleiben unverändert.
+* Fünfzehn neue Ereignisse sind Fallen: Situationen, in denen die Antwort, die vernünftig klingt, nicht die ist, die vernünftig ist. Ein kritisches Zwei-Minuten-Update, eine aufgehaltene Tür, herrenloser Kuchen im Flur, eine kurze Frage vom Chef. Acht davon können den Bildschirm wackeln lassen - wer in den Köder tritt, merkt es sofort.
+* Der Morgen entscheidet mehr als bisher. Neben Ärger, Chef-Aufmerksamkeit und Verschlafen gibt es drei weitere Arten, in den Tag zu starten: Tickets, die über Nacht aufgelaufen sind, ein gestrichenes Kontingent an Ausreden - und eine Ausrede extra, wenn das Haus ausnahmsweise für dich spielt. Achtzehn neue Morgentexte, und die Werte richten sich jetzt nach dem Wochentag: Freitag verzeiht, Montag nicht.
+* Drei neue Mittagspausen, darunter zwei mit doppeltem Boden: ein kostenloses Buffet, gesponsert ausgerechnet von dem Dienstleister, der die interne IT ablösen will, und eine Kochvorführung, die an der falschen Steckdose hängt.
+* Die Katastrophen sind unnachgiebiger: Wer den Countdown verstreichen lässt, fährt jetzt bei jeder der dreißig schlechter als mit der schlechtesten aktiven Entscheidung - bislang war Nichtstun in vier Fällen die bequemere Wahl. Außerdem kosten Notlösungen ohne passendes Werkzeug dort mehr, wo die Folgen offensichtlich waren: Ein Vorstands-Livestream in 240p bleibt eben ein blamierter Vorstand.
 * Keine Aktion dauert mehr unter zwei Minuten. Knapp 190 Antworten - vor allem im Postfach - kosteten bislang nur eine Minute und waren damit fast umsonst.
 * Lange Aktionen haben jetzt durchgehend spürbare Folgen. Wer sich zwanzig Minuten aus einer Situation herausredet, kassiert dafür Faulheit; wer Nerviges erledigt, Aggro; wer dem Chef auffällt, Radar. Zeit absitzen ohne Konsequenz gibt es nicht mehr.
+* Zehn Antworten im Altbestand kosteten viel Zeit, blieben aber praktisch folgenlos - vom Klebeband-Angeln im Lüftungsschlitz bis zum geschwänzten Meeting. Alle zehn haben jetzt Konsequenzen.
+* Vier Antworten hatten negative Minuten und drehten damit die Uhr zurück. Zeit läuft jetzt nirgends mehr rückwärts; der Hyper-Fokus im Koffein-Wahn bleibt stark, schenkt aber keine Arbeitszeit mehr.
 * Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.
-* Zehn Antworten im Altbestand kosteten viel Zeit, blieben aber praktisch folgenlos - vom Klebeband-Angeln im Lüftungsschlitz bis zum geschwänzten Meeting. Alle zehn haben jetzt spürbare Konsequenzen: Rausreden gibt Faulheit, Gefrickel gibt Aggro, sichtbarer Pfusch fällt dem Chef auf.
-* Vier Antworten hatten negative Minuten und drehten damit die Uhr zurück - drei durch ein falsches Vorzeichen, eine als gewollte Belohnung im Koffein-Wahn. Zeit läuft jetzt nirgends mehr rückwärts; der Hyper-Fokus bleibt stark, schenkt aber keine Arbeitszeit mehr.
 
 Anzeige & Layout:
-* Die Einstellungen sind aufgeräumt: Warn-Pulsieren, Kamera-Wackeln und das Handy-Tempo standen unter "Gameplay & Komfort", obwohl sie reine Anzeigesachen sind - sie stehen jetzt bei "Anzeige & Layout". Die beiden Verbergen-Optionen haben einen eigenen Abschnitt "Herausforderung" bekommen, denn sie sind kein Komfort, sondern ein Schwierigkeitsgrad.
-* Vier neue Optionen: eine Textgröße in drei Stufen (das Spiel ist zum Lesen da, und nicht jeder mag die kleinste Stufe), ein Schalter für die Bildschirm-Textur des Terminals (wem Scanlines und Glimmen zu unruhig sind, bekommt eine glatte Fläche), die Möglichkeit, die Tageskurve im Endbildschirm gleich geöffnet zu bekommen - und ein Knopf, der alle Einstellungen auf Standard zurücksetzt. Der laufende Arbeitstag geht dabei nicht verloren; Spielstand, Archiv und Erfolge bleiben ohnehin unangetastet.
-* Wer einen Arbeitstag von der ersten Minute an im Blindflug übersteht - ohne Prozentwerte, ohne Ticketzähler -, findet im Logbuch einen Nachtrag dazu. Wer die Zahlen erst mittags ausblendet, bekommt ihn nicht; und an einem Montag liest er sich anders als an einem Freitag.
-* Der Endbildschirm wurde neu gebaut. Er zeigt jetzt oben, der wievielte Arbeitstag das war und wie viele davon überstanden wurden, hebt in der Bilanz den Wert hervor, an dem der Tag zerbrochen ist ("hier war Schluss"), und bietet darunter zwei Dinge zum Aufklappen an: den Tagesverlauf als Kurve von Faulheit, Aggro und Chef-Radar über den ganzen Tag - man sieht endlich, dass der Ausraster um kurz vor zwei schon um halb elf angelegt war - und das persönliche Logbuch, das nun als beschriebenes Blatt Papier auf dem Tisch liegt statt in einem grauen Kasten zu stehen.
-* Das Terminal ist keine schwarze Leere mehr: Die Bildfläche hat jetzt einen Hauch Röhrenmonitor - feine Scanlines, ein schwaches Glimmen aus der Bildmitte und einen minimal helleren Verlauf. Alles statisch, nichts flackert.
-* Die Ergebnis-Anzeige ist nun das Geschwister der Ereignis-Karte statt eines schwebenden grauen Kastens: gleiche Breite, gleiche Kopfzeile, dasselbe Zitat-Feld mit farbiger Kante (smaragdgrün als Farbe des Erledigten) - und der Weiter-Knopf gehört jetzt zur Karte, statt mit Abstand darunter zu schweben. Die Werte-Plaketten haben endlich einen sichtbaren Hintergrund.
-* Der Inventar-Eintrag in der Schnellleiste trägt sein Symbol jetzt links vom Text - so wie Team, Archiv und Menü auch. Statt der Lupe zeigt er den Rucksack, der das Inventar auch überall sonst repräsentiert.
-* Die Tastatur-Hinweise sehen jetzt aus wie kleine Tastenkappen statt wie graue Kästchen: mit Lichtkante, Sockel und einer Beschriftung, die beim Überfahren im Bernstein der Oberfläche aufleuchtet. Drückt man den Button, fährt die Taste sichtbar mit in den Sockel. Die Darstellung ist jetzt an allen vier Orten identisch - Aktionsleiste, Ereignis-Antworten, Handy und Postfach hatten bisher jeweils leicht andere Kästchen. Im Postfach bleibt die Ausnahme mit Bedeutung: Die Lösch-Taste leuchtet rot, Antworten blau. Wer die Hinweise in den Einstellungen ausgeblendet hat, merkt von alledem nichts.
+* Das Terminal ist keine schwarze Leere mehr: Die Bildfläche hat jetzt einen Hauch Röhrenmonitor - feine Scanlines, ein schwaches Glimmen aus der Bildmitte und einen minimal helleren Verlauf. Alles statisch, nichts flackert. Wem das zu unruhig ist, schaltet es in den Einstellungen ab.
+* Terminal und Statusleiste liegen nun auf zwei Ebenen: Das Terminal ist eingelassen und dunkler, die Statusleiste liegt darüber. Der Blick geht dorthin, wo etwas passiert. Der Seitenhintergrund ist dafür eine Spur heller.
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
 * Die farbige Oberkante gibt es jetzt auf allen Feldern, nicht nur auf den fünf oben. Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung.
+* Die Ergebnis-Anzeige ist das Geschwister der Ereignis-Karte statt eines schwebenden grauen Kastens: gleiche Breite, gleiche Kopfzeile, dasselbe Zitat-Feld mit farbiger Kante - und der Weiter-Knopf gehört zur Karte, statt darunter zu schweben.
+* Die Tastatur-Hinweise sehen aus wie kleine Tastenkappen statt wie graue Kästchen: mit Lichtkante, Sockel und einer Beschriftung, die beim Überfahren aufleuchtet. Drückt man den Knopf, fährt die Taste sichtbar mit in den Sockel. Die Darstellung ist an allen vier Orten identisch - Aktionsleiste, Ereignis-Antworten, Handy und Postfach hatten bisher leicht andere Kästchen.
 * Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben, was ihn wie die naheliegende Wahl aussehen ließ - dabei geht es im Spiel gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint jetzt erst, wenn die Tickets kritisch werden.
-* Der Nachrichtenticker läuft jetzt gleichmäßig schnell. Bislang brauchte jede Meldung dieselben 30 Sekunden, unabhängig von ihrer Länge - die längsten liefen dadurch fast doppelt so schnell wie die kürzesten und waren kaum lesbar. Außerdem ist die Schrift etwas größer und nicht mehr durchgehend in Großbuchstaben.
-* Der Seitenhintergrund ist eine Spur heller. Zuvor hatte er exakt dieselbe Farbe wie das eingelassene Terminal, wodurch dessen Vertiefung nur gegenüber den Feldern daneben sichtbar war.
-* Terminal und Statusleiste liegen nun auf zwei Ebenen: Das Terminal ist eingelassen und dunkler, die Statusleiste liegt darüber. Der Blick geht dorthin, wo etwas passiert.
-* Antwortmöglichkeiten zeigen jetzt an, wenn sie einen Gegenstand verbrauchen - und zwar solange sie noch wählbar sind. Bisher war der Unterschied zwischen "wird gebraucht" und "wird aufgebraucht" nur an gesperrten Optionen angedeutet, wo er keine Rolle mehr spielt.
-* Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>". Zuvor stand dort je nach Feld "Fehlt" oder "Benötigt", obwohl beides denselben Zustand beschrieb.
-* Der Hinweis auf den noch nicht einsatzbereiten Stressball heißt jetzt "Noch nicht bereit" statt "Cooldown".
-* Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben. Ein- und Ausblenden werden nun an einer Stelle festgelegt statt an zweien, die auseinandergelaufen waren.
+* Der Inventar-Eintrag in der Schnellleiste trägt sein Symbol links vom Text - so wie Team, Archiv und Menü auch - und zeigt den Rucksack statt einer Lupe.
+* Antwortmöglichkeiten zeigen an, wenn sie einen Gegenstand verbrauchen, und zwar solange sie noch wählbar sind. Gesperrte Antworten melden einheitlich "Fehlt: <Gegenstand>", zuvor stand dort je nach Feld "Fehlt" oder "Benötigt". Der Hinweis auf den noch nicht einsatzbereiten Stressball heißt jetzt "Noch nicht bereit" statt "Cooldown".
+* Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)" oder "(Item verbraucht)". Diese Angaben doppelten nur, was ohnehin sichtbar ist: die Zahlen an den Balken, die Rucksack-Animation und der Eintrag im Protokoll. 86 Stellen bereinigt.
+* Der Nachrichtenticker läuft gleichmäßig schnell. Bislang brauchte jede Meldung dieselben 30 Sekunden, unabhängig von ihrer Länge - die längsten liefen dadurch fast doppelt so schnell wie die kürzesten und waren kaum lesbar. Außerdem ist die Schrift etwas größer und nicht mehr durchgehend in Großbuchstaben.
+* Erfolgs-Meldungen blenden sauber aus, statt eine halbe Sekunde unsichtbar stehenzubleiben.
+
+Einstellungen:
+* Aufgeräumt: Warn-Pulsieren, Kamera-Wackeln und das Handy-Tempo standen unter "Gameplay & Komfort", obwohl sie reine Anzeigesachen sind. Die beiden Verbergen-Optionen haben einen eigenen Abschnitt "Herausforderung" bekommen, denn sie sind kein Komfort, sondern ein Schwierigkeitsgrad.
+* Neu: eine Textgröße in drei Stufen (das Spiel ist zum Lesen da, und nicht jeder mag die kleinste Stufe), ein Schalter für die Bildschirm-Textur des Terminals, die Möglichkeit, die Tageskurve im Endbildschirm gleich geöffnet zu bekommen - und ein Knopf, der alle Einstellungen auf Standard zurücksetzt. Der laufende Arbeitstag geht dabei nicht verloren; Spielstand, Archiv und Erfolge bleiben ohnehin unangetastet.
+* Die Inventarplätze lassen sich jetzt auch mit der Tastatur bedienen: mit der Tabulatortaste erreichbar, mit Enter oder Leertaste auszulösen.
+* Die Bestätigen-Taste funktioniert auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
 
 Fehlerkorrekturen:
-* Der Hinweis auf die Steam-Version wurde als roher Quelltext angezeigt statt als Link - ein Überbleibsel der Oberflächen-Umstellung. Ergebnistexte enthalten jetzt keinen Quelltext mehr, dafür erkennt das Spiel Internetadressen von selbst und macht sie anklickbar.
-* Zehn Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen. Sie sind jetzt ausgeschrieben - etwa die abgeschleppte Ladesäule, an der ausgerechnet der neue Vertriebskollege steht.
-* Im Archiv und in der Team-Übersicht erschienen beim Blättern zunächst leere Kästen: Die Bilder wurden erst angefordert, wenn sie in den Sichtbereich gescrollt wurden. Jetzt lädt beim Öffnen alles auf einmal - es sind wenige, kleine Dateien.
-* Die Bestätigen-Taste funktioniert jetzt auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
-* Drei Tastatur-Regressionen aus der Svelte-Umstellung behoben: Die Bestätigen-Taste nimmt eingehende Handy-Benachrichtigungen wieder an und klickt das Tutorial wieder weiter (beides suchte noch nach Elementen der alten Oberfläche), und Escape schließt das Fenster für Spielstand-Export und -Import wieder, statt still einen internen Fehler auszulösen.
-* Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest und kam aus dem Ereignis nicht mehr heraus.
-* Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben, weil seine Schriftgröße bei jeder Aktualisierung überschrieben wurde.
-* Dasselbe galt für den Ruhebildschirm des Terminals: Nach der ersten Rückkehr dorthin passte sich die Schriftgröße nicht mehr an die Bildschirmbreite an.
+* Sechzehn Ereignisse teilten sich versehentlich eine Kennung mit einem anderen Ereignis. Da pro Tag jede Kennung nur einmal vorkommen kann, sperrten sich diese Paare gegenseitig aus, sodass immer nur die Hälfte des Inhalts erreichbar war. Betroffen waren die Ketten rund um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
+* Fünf Ereignisse waren gar nicht erreichbar, weil die Voraussetzung dafür nirgends erfüllt werden konnte: die Gerüchteküche rund um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
+* Das Party-Ende "INSIDER" ließ sich nicht abschließen. Der Ergebnistext enthält wörtliche Rede, wodurch die zugehörige Schaltfläche technisch unbrauchbar wurde und schlicht nicht reagierte. Wer dieses Finale erreichte, kam nicht mehr weiter. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
+* Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
+* Vier Antwortmöglichkeiten versprachen Gegenstände, die es gar nicht gibt. Das Paket von Gabi, der Kaffee für die Pflanze und die gebunkerte Tonerkartusche landeten dadurch nie im Rucksack. Zwei weitere Optionen verwiesen auf einen Gegenstand namens "screws" statt "screw" und blieben wirkungslos.
+* Die Option, Gabi einen heißen Kaffee zu spendieren, war dauerhaft gesperrt, weil sie einen nicht existierenden Gegenstand verlangte.
+* Beim Brandschutz-Ereignis blieb der Feuerlöscher trotz der Ansage "Löscher abgeben & flüchten" im Rucksack, stattdessen landete ein leerer Platzhalter im Inventar.
+* Beim Serverraum-Ereignis um die alte Liste blieb die Entscheidung "Nichts anfassen und gehen" ohne Folgen. Sie führt nun wie vorgesehen dazu, dass Kevin die Liste stattdessen selbst findet. Kevins Petition erscheint jetzt als Folge davon, ihn beim Chef angeschwärzt zu haben.
+* Zwei E-Mails trugen denselben Betreff und blockierten sich gegenseitig, sodass pro Tag nur eine von beiden eintreffen konnte. Das Postfach unterscheidet Mails jetzt an ihrer Kennung statt am Betreff - so kann diese Art von Blockade nicht mehr entstehen.
+* Das Ereignis "Materialermüdung" (der geplatzte Stressball) hat eine dritte Antwort bekommen, die keinen Gegenstand braucht. Wer den Stressball zuvor weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest.
+* Der Menüpunkt "Spielstand löschen" setzt nun auch das Tutorial korrekt zurück. Bisher blieb es nach einem vollständigen Reset als "bereits gespielt" markiert.
+* Der Tutorial-Fortschritt wird beim Export und Import eines Speicherstands tatsächlich mit übertragen. Bislang meldete jeder exportierte Code das Tutorial fälschlicherweise als nicht absolviert. Beim Abgleich mit der Steam Cloud wird er außerdem nur noch freigeschaltet und nie mehr zurückgesetzt.
+* Eine fehlerhafte Prüfsummen-Variante im Speichersystem wurde entfernt, die unter bestimmten Umständen gültige Speicher-Codes hätte ablehnen können.
+* Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben. Dasselbe galt für den Ruhebildschirm des Terminals: Nach der ersten Rückkehr dorthin passte sich die Schriftgröße nicht mehr an die Bildschirmbreite an.
 * Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen.
 * Während der Synergy-Gala konnte weiterhin eine Büro-Nachricht im Nachrichtenticker erscheinen.
-* Die Statusbalken zeigten volle Länge an, sobald ein Wert unter null fiel.
+* Zehn Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen. Sie sind jetzt ausgeschrieben.
 * Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde unabhängig vom gewählten Tag immer als "Normal" gemeldet.
-
-Für Entwickler:
-* Die vier Zugänglichkeits-Warnungen des Svelte-Compilers sind behoben: Der Tutorial-Knopf und die Handy-Benachrichtigung sind jetzt echte Schaltflächen, die Inventarplätze tragen eine Rolle, sind mit der Tabulatortaste erreichbar und lassen sich mit Enter oder Leertaste auslösen. Sie bleiben Container statt Schaltflächen, weil ihre Kurzinfo-Boxen in einem Knopf nicht stehen dürften.
-* Neues Werkzeug tools/simulate-day.mjs (npm run sim): spielt komplette Arbeitstage gegen die echten Datenpools mit den exakten Engine-Formeln durch - vier Spielertypen, drei Schwierigkeiten, Gegenvarianten per Parameter (--valves, --lazydiv, --decay u.a.). Beide Balance-Änderungen dieser Version sind damit gegengerechnet statt geraten.
-* Der Build landet jetzt in docs/ statt dist/, weil GitHub Pages direkt aus dem Branch ausliefert (Deploy from a branch, main + /docs). Der Build wird mitcommittet; Electron-Loader, Paketierung und Strukturdoku sind entsprechend umgestellt.
-* Die Weiter-Knöpfe im Terminal (Weiter, Mittagspause, Feierabend, Arbeitstag starten) tragen jetzt ein data-continue-Attribut. Die Tastatursteuerung erkannte sie bisher am Beschriftungstext - eine umformulierte Beschriftung hätte die Taste lautlos abgeklemmt. Nebenbei können die Zifferntasten Weiter-Knöpfe nicht mehr versehentlich als Antwort treffen, und vier Konsolen-Ausgaben wurden auf Warnstufe gehoben oder entfernt.
-* Sämtliche localStorage-Schlüssel wohnen jetzt in einem eigenen Modul (keys.js), das Zustand, Oberfläche und Audio gemeinsam importieren - bislang waren 29 Lese- und Schreibstellen in drei Dateien als nackte Zeichenketten verstreut, exakt die Fehlerklasse, die früher den Tutorial-Merker aus dem Tritt gebracht hat. Der Hard-Reset dokumentiert nun außerdem ausdrücklich, dass Einstellungen, Audio-Werte und Tastenbelegung ihn bewusst überleben.
-* Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht nun aus 22 Komponenten statt aus zusammengesetzten HTML-Zeichenketten.
-* Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.
-* Rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
-* Die Ereignis-Pools werden von Vite automatisch aufgeteilt und bei Bedarf nachgeladen; ensure() und prefetchAll() entfallen damit mittelfristig.
-* Der Electron-Hauptprozess liegt unter electron/main.cjs und lädt dist/. Für GitHub Pages wird ebenfalls dist/ veröffentlicht.
-* Der Build landet in dist/build/ statt dist/assets/. Zuvor mischten sich dort erzeugte Bündel und die unverändert kopierten Dateien aus public/assets/.
-* STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
-* Das E-Mail-System merkt sich bereits eingetroffene Mails jetzt anhand ihrer ID statt anhand des Betreffs - dieselbe Logik wie bei allen anderen Ereignissen. Zwei Mails mit gleichem Betreff hätten sich bislang stillschweigend gegenseitig blockiert, eine davon wäre nie erschienen. Der Daten-Prüfer meldet doppelte Mail-IDs deshalb nun als Fehler; gleiche Betreffs sind nur noch ein kosmetischer Hinweis.
-* Der Daten-Prüfer schlägt jetzt Alarm, wenn sämtliche Antworten eines Ereignisses einen Gegenstand voraussetzen oder verbrauchen - genau die Konstellation, die ein Ereignis unlösbar machen kann. Die Prüfung greift auch in den Zwischenschritten verzweigter Ereignisse.
-* Der Daten-Prüfer wacht außerdem über die Balancing-Grundregeln: Statusänderungen im 5er-Raster, Mindestdauer von zwei Minuten (Zeit läuft nie rückwärts, negative Minuten sind ein Fehler) und keine teuren Antworten ohne spürbare Wirkung.
-* Jedes Dienstgang-Ereignis deklariert jetzt ausdrücklich seine Art (kind: text oder phone) - bislang fehlte die Angabe bei 63 Ereignissen und die Engine unterschied nur implizit. Der Daten-Prüfer meldet fehlende oder unbekannte Angaben ab sofort.
-
-[3.7.0] - 2026-07-28
+* Die Bildlaufleisten in den Intranet-Seiten funktionieren jetzt tatsächlich.
 
 System & Stabilität:
-* Das Projekt nutzt nun Tailwind CSS 4 statt der Vorgängerversion. Für Spielende ändert sich nichts am Aussehen; die Grundlage ist damit aber wieder aktuell und wird weiter gepflegt.
-
-Für Entwickler:
-* Die Datei tailwind.config.js entfällt. Die Quellpfade stehen jetzt direkt in input.css.
-* Sämtliche Klassennamen wurden auf die Tailwind-4-Schreibweise gebracht (31 Umbenennungen). Der erzeugte Stylesheet enthält exakt dieselben 891 Klassen wie zuvor.
-* Vier ungenutzte Chat-Klassen entfernt, die seit dem Umbau der Handy-Ansicht niemand mehr verwendet.
-* Die Bildlaufleisten in den Intranet-Seiten funktionieren jetzt tatsächlich. Die dafür genutzten Klassen waren zuvor wirkungslos, weil das zugehörige Zusatzpaket nie eingebunden war.
-* Neues Werkzeug tools/migrate-tailwind4.mjs für Dateien, die nicht Teil der ersten Migration waren.
-
-[3.6.2] - 2026-07-28
-
-Neuerungen:
-* Neues Ereignis: Löst Kevin im Serverraum die Löschanlage aus, meldet sich nun die Brandschutzfirma. Bisher endete dieser Zweig ohne Folgen, während der Feueralarm-Zweig eine Fortsetzung hatte.
-
-Für Entwickler:
-* Der Daten-Prüfer erkennt nun auch Story-Verzweigungen, die zwar gesetzt, aber von keinem Ereignis aufgegriffen werden - also Entscheidungen, die ins Leere laufen. Verzweigungen, die die Spiel-Engine selbst auswertet, werden dabei korrekt als genutzt erkannt.
-* Neue Textprüfungen: Platzhalter, leere oder auffällig kurze Texte, unpaarige Anführungszeichen, doppelte Leerzeichen und mehrfach verwendete Ergebnistexte.
-* 86 Textfelder hatten führende oder folgende Leerzeichen; bereinigt.
-
-[3.6.1] - 2026-07-28
-
-Anzeige & Layout:
-* Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)" oder "(Item verbraucht)". Diese Angaben doppelten lediglich, was ohnehin schon sichtbar ist: die aufsteigenden Zahlen an den Balken, die Rucksack-Animation und der Eintrag im Protokoll. 86 Stellen bereinigt.
-* Die Bilder im Archiv und in der Kollegen-Übersicht laden erst, wenn sie tatsächlich sichtbar werden. Das Öffnen des Archivs zog bisher zwei Dutzend Bilder auf einmal.
-* Die Erfolgs-Bilder liegen nun als WebP vor, wie die Gegenstände auch.
-
-System & Stabilität:
-* Export und Import erscheinen im Startbildschirm nur noch in der Browser-Fassung. Die Steam-Fassung erreicht beides weiterhin über die Einstellungen, die sich auch direkt aus dem Startbildschirm öffnen lassen.
-
-[3.6.0] - 2026-07-28
-
-Neuerungen:
-* Zwei neue Ereignisse: Die Bowl-Bestellung im #lunch-Kanal und Kevins Bitte um mehr Verantwortung. Beide entscheiden darüber, ob die jeweiligen Folgeereignisse später am Tag überhaupt auftreten.
-
-Fehlerkorrekturen:
-* Fünf Ereignisse waren im Spiel gar nicht erreichbar, weil die Voraussetzung dafür nirgends erfüllt werden konnte. Betroffen waren die Gerüchteküche rund um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
-* Beim Serverraum-Ereignis um die alte Liste blieb die Entscheidung "Nichts anfassen und gehen" ohne Folgen. Sie führt nun wie vorgesehen dazu, dass Kevin die Liste stattdessen selbst findet.
-* Kevins Petition erscheint jetzt als Folge davon, ihn beim Chef angeschwärzt zu haben - zuvor war sie an eine Entscheidung geknüpft, die den Ruf in die falsche Richtung bewegte.
-* Vier Antwortmöglichkeiten versprachen Gegenstände, die es gar nicht gibt. Das Paket von Gabi, der Kaffee für die Pflanze und die gebunkerte Tonerkartusche landeten dadurch nie im Rucksack.
-* Die Option, Gabi einen heißen Kaffee zu spendieren, war dauerhaft gesperrt, weil sie einen nicht existierenden Gegenstand verlangte. Sie steht jetzt zur Verfügung.
-* Zwei E-Mails trugen denselben Betreff und blockierten sich gegenseitig, sodass pro Tag nur eine von beiden eintreffen konnte.
-
-[3.5.1] - 2026-07-28
-
-System & Stabilität:
-* Die Schriftart wird jetzt im modernen WOFF2-Format ausgeliefert statt als TTF. Die zu ladende Datenmenge sinkt dadurch von 540 auf 41 Kilobyte, was den ersten Aufruf des Spiels spürbar beschleunigt - besonders bei langsamer Verbindung.
-
-[3.5.0] - 2026-07-28
-
-Fehlerkorrekturen:
-* Das Party-Ende "INSIDER" ließ sich nicht abschließen. Der Ergebnistext enthält wörtliche Rede, wodurch die zugehörige Schaltfläche technisch unbrauchbar wurde und schlicht nicht reagierte. Wer dieses Finale erreichte, kam nicht mehr weiter.
-* Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
-
-System & Stabilität:
-* Die Antwortmöglichkeiten in Ereignissen werden nicht mehr als Text in die Seite geschrieben, sondern direkt weitergereicht. Sonderzeichen wie Apostrophe, Anführungszeichen oder Schrägstriche in den Ereignistexten können dadurch keine Schaltfläche mehr unbrauchbar machen.
-
-Für Entwickler:
-* buildEventHTML() setzt nur noch ein data-opt-Attribut je Schaltfläche; ein einzelner Listener auf dem Terminal übernimmt sämtliche Klicks.
-* resolveTerminal() nimmt das Options-Objekt entgegen statt elf Positionsparametern. Die Rückumwandlung der Ruf-Daten aus einem HTML-Attribut entfällt.
-* Die action-Einträge in data_party.js sind strukturierte Objekte ({ fn, args }) statt ausführbarer Zeichenketten. Aufgelöst wird über eine Methodensuche, nicht über eval.
-* Der ungenutzte Parameter usedItem wurde entfernt.
-
-[3.4.1] - 2026-07-28
-
-System & Stabilität:
-* Das Aktivitätsprotokoll wird nun beim Anhängen nicht mehr vollständig neu aufgebaut. Bei langen Arbeitstagen führte das zu spürbaren Verzögerungen, unterbrach laufende Animationen und hob eine bestehende Textmarkierung auf. Zusätzlich ist das Protokoll auf die letzten 50 Einträge begrenzt.
-* Das eingesammelte Gegenstandsbild verschwand gelegentlich nicht mehr vom Bildschirm, wenn das Spiel während der Animation in den Hintergrund geriet. Die Aufräumlogik greift jetzt in jedem Fall.
-* Der Tagesbericht wurde bisher nach jeder einzelnen Aktion im Hintergrund erzeugt, obwohl er nur beim Feierabend oder einer Niederlage sichtbar wird.
-
-Anzeige & Layout:
+* Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite auf einmal geladen, auch die des Party-Finales, das die meisten nie zu sehen bekommen. Nun lädt zunächst nur das Nötigste; der Rest kommt im Hintergrund nach, während der Startbildschirm gelesen wird. Die zu ladende Datenmenge sinkt dadurch um rund 92 Prozent.
+* Die Schriftart wird im modernen WOFF2-Format ausgeliefert statt als TTF: 41 statt 540 Kilobyte. Die Erfolgs-Bilder liegen nun ebenfalls als WebP vor.
 * Die Musikstücke werden erst geladen, wenn sie tatsächlich abgespielt werden. Bisher lud der Browser beim Start alle sechs Titel gleichzeitig herunter, einschließlich der Musik für Katastrophen und die Gala.
-* Die Animation des Nachrichtentickers wird nicht mehr bei jeder Meldung neu in die Seite geschrieben.
-
-[3.4.0] - 2026-07-28
-
-System & Stabilität:
-* Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite auf einmal geladen, auch die des Party-Finales, das die meisten nie zu sehen bekommen. Nun lädt zunächst nur das Nötigste; der Rest kommt im Hintergrund nach, während der Startbildschirm gelesen wird.
-* Die zu ladende Datenmenge beim Seitenaufruf sinkt dadurch um rund 92 Prozent.
-* Sollte ein Nachladen einmal fehlschlagen, meldet sich das System im Log und die Aktion lässt sich einfach erneut auslösen, statt dass das Spiel hängen bleibt.
+* Tritt im Spiel ein unerwarteter Fehler auf, wird die Bedienung automatisch wieder freigegeben, statt den laufenden Tag einzufrieren. Zuvor half nur ein Neuladen der Seite, wodurch der gesamte Arbeitstag verloren ging.
+* Beim Neustart eines Tages blieben bisher einzelne Zustände aus dem vorherigen Durchlauf erhalten. Eine noch offene Handy-Nachricht oder ein angefangenes Telefongespräch tauchte dadurch mitten am neuen Vormittag wieder auf. Auch abgelaufene Hintergrund-Zeitgeber wurden nicht vollständig gelöst, was dazu führen konnte, dass für den Rest des Tages keine E-Mails mehr eintrafen.
+* Das Aktivitätsprotokoll wird beim Anhängen nicht mehr vollständig neu aufgebaut. Bei langen Arbeitstagen führte das zu Verzögerungen, unterbrach Animationen und hob eine bestehende Textmarkierung auf. Zusätzlich ist es auf die letzten 50 Einträge begrenzt.
+* Das eingesammelte Gegenstandsbild verschwand gelegentlich nicht mehr vom Bildschirm, wenn das Spiel während der Animation in den Hintergrund geriet.
+* Browser- und Desktop-Fassung teilen sich dieselbe Startseite. Menüpunkte, die nur zur jeweiligen Fassung passen, blenden sich selbstständig ein oder aus: Vollbild, "Spiel beenden" und die globalen Statistiken erscheinen ausschließlich in der Steam-Fassung, der Verweis auf die Projektseite ausschließlich im Browser. Wer das Spiel über Steam gekauft hat, bekommt keine Kaufaufforderung mehr angezeigt.
 
 Für Entwickler:
-* data.js trennt zwischen sofort benötigten Daten und nachladbaren Ereignis-Pools. Die Funktion ensure() stellt vor jedem Zugriff sicher, dass der jeweilige Pool vorhanden ist, prefetchAll() wärmt den Rest im Leerlauf vor.
-* trigger(), triggerEmail(), startParty() und goToPartyStation() sind asynchron. Ein neues Zustandsfeld isLoadingPool verhindert, dass ein zweiter Klick während des allerersten Nachladens ein doppeltes Ereignis auslöst.
-
-[3.3.2] - 2026-07-28
-
-System & Stabilität:
-* Beim Neustart eines Tages blieben bisher einzelne Zustände aus dem vorherigen Durchlauf erhalten. Eine noch offene Handy-Nachricht oder ein angefangenes Telefongespräch tauchte dadurch mitten am neuen Vormittag wieder auf. Der Tagesneustart setzt nun sämtliche Tageswerte geschlossen zurück.
-* Bereits abgelaufene Hintergrund-Zeitgeber wurden zwar gestoppt, aber nicht vollständig gelöst. Das konnte dazu führen, dass für den Rest des Tages keine E-Mails mehr eintrafen.
-* Neu: Tritt im Spiel ein unerwarteter Fehler auf, wird die Bedienung jetzt automatisch wieder freigegeben, statt den laufenden Tag einzufrieren. Zuvor half in einem solchen Fall nur ein Neuladen der Seite, wodurch der gesamte Arbeitstag verloren ging.
-
-Für Entwickler:
-* Neue Fabrikfunktion freshDay() in engine_state.js liefert den kompletten Tageszustand. softReset() ersetzt den Zustand nun in einem Schritt, statt rund 45 Felder einzeln zurückzusetzen - ein neu hinzugefügtes Feld kann dabei nicht mehr vergessen werden.
-* clearDayTimers() bündelt das Stoppen aller Tages-Zeitgeber. Die zuvor an drei Stellen duplizierte Liste entfällt.
-
-[3.3.1] - 2026-07-28
-
-System & Stabilität:
-* Browser- und Desktop-Fassung teilen sich nun auch dieselbe Startseite. Zuvor existierten zwei getrennte HTML-Dateien, die sich in Menüaufbau und Schaltflächen unterschieden.
-* Menüpunkte, die nur zur jeweiligen Fassung passen, blenden sich selbstständig ein oder aus: Vollbild, "Spiel beenden" und die globalen Statistiken erscheinen ausschließlich in der Steam-Fassung, der Verweis auf die GitHub-Projektseite ausschließlich im Browser.
-
-Anzeige & Layout:
-* Die Steam-Fassung zeigt im Startbildschirm jetzt zusätzlich zu Vollbild und Beenden auch die Schaltflächen für Export und Import an, die dort bisher fehlten.
-
-Für Entwickler:
-* main.js liegt im gemeinsamen Projekt und wird von der Browser-Fassung schlicht ignoriert.
-* Externe Verweise laufen über engine.openExternal() und landen dadurch in der Steam-Fassung korrekt im Overlay statt in einem leeren Fenster.
-* Sämtliche Kommentare in main.js wurden auf Englisch übertragen.
-
-[3.3.0] - 2026-07-28
-
-Neuerungen:
-* Web-Version und Steam-Version laufen ab sofort auf identischem Code. Beide Fassungen wurden zu einem gemeinsamen Stand zusammengeführt, wodurch künftige Korrekturen automatisch in beiden Versionen ankommen.
-* Rund 20 Nebenaufgaben, die bisher nur in der Steam-Fassung enthalten waren, stehen nun auch im Browser zur Verfügung.
-
-System & Stabilität:
-* Sechzehn Ereignisse teilten sich versehentlich eine Kennung mit einem anderen Ereignis. Da pro Tag jede Kennung nur einmal vorkommen kann, sperrten sich diese Paare gegenseitig aus, sodass immer nur die Hälfte des Inhalts erreichbar war. Betroffen waren die Ketten rund um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
-* Ein Formatfehler in den Nebenaufgaben-Daten hinterließ eine Lücke in der Ereignisliste.
-* Zwei Optionen verwiesen auf einen Gegenstand namens "screws" statt "screw" und blieben dadurch wirkungslos.
-* Der Tutorial-Fortschritt wird beim Abgleich mit der Steam Cloud jetzt ausschließlich freigeschaltet und nie mehr zurückgesetzt.
-
-Anzeige & Layout:
-* Der Verweis auf die Steam-Fassung erscheint nur noch in der Browser-Version. Wer das Spiel über Steam gekauft hat, bekommt keine Kaufaufforderung mehr angezeigt.
-
-Für Entwickler:
+* Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht aus 25 Komponenten statt aus zusammengesetzten HTML-Zeichenketten; rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
+* Das Projekt nutzt außerdem Tailwind CSS 4 statt der Vorgängerversion. Am Aussehen ändert sich dadurch nichts; die Grundlage ist wieder aktuell und wird weiter gepflegt.
+* Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor; die Anzeige folgt von selbst.
 * Neue Plattform-Schicht (platform.js / platform_steam.js): Cloud-Speicher, Erfolge, Statistiken, Status in der Freundesliste, Vollbild und externe Links laufen über eine gemeinsame Schnittstelle. Die Engine kennt Electron und Steam nicht mehr direkt.
-* init() ist asynchron, damit der Desktop-Build seinen Cloud-Speicherstand abwarten kann, bevor das lokale Archiv gelesen wird.
-* Speicherstand-Export und Cloud-Abgleich nutzen mit buildCloudPayload() dieselbe Quelle und können nicht mehr auseinanderlaufen.
-
-[3.2.3] - 2026-07-27
-
-System & Stabilität:
-* Der Menüpunkt "Spielstand löschen" setzt nun auch das Tutorial korrekt zurück. Bisher blieb es nach einem vollständigen Reset als "bereits gespielt" markiert und startete nicht erneut.
-* Der Tutorial-Fortschritt wird beim Export und Import eines Speicherstands nun tatsächlich mit übertragen. Bislang meldete jeder exportierte Code das Tutorial fälschlicherweise als nicht absolviert.
-* Alle Speicher-Schlüssel wurden an einer zentralen Stelle zusammengefasst, damit sich Tippfehler dieser Art nicht wiederholen können.
-
-Fehlerkorrekturen:
-* Beim Brandschutz-Ereignis wurde die Antwort "Löscher abgeben & flüchten" korrigiert. Der Feuerlöscher blieb bisher trotz der Ansage im Rucksack, stattdessen landete ein leerer Platzhalter-Gegenstand im Inventar.
-* Eine fehlerhafte Prüfsummen-Variante im Speichersystem wurde entfernt, die unter bestimmten Umständen gültige Speicher-Codes hätte ablehnen können.
-
-Für Entwickler:
-* Neues Prüfwerkzeug "tools/lint-data.mjs": findet doppelte Event-IDs, kaputte Item-Verweise, unerreichbare Dialog-Zweige und tote Story-Verzweigungen. Aufruf über "npm run lint:data".
-* Nicht mehr verwendeter Code aus dem Speichersystem und der Tastatursteuerung wurde entfernt.
+* Sämtliche localStorage-Schlüssel wohnen in einem eigenen Modul (keys.js), das Zustand, Oberfläche und Audio gemeinsam importieren. Zuvor waren die Schlüssel als nackte Zeichenketten über mehrere Dateien verstreut - exakt die Fehlerklasse, die den Tutorial-Merker aus dem Tritt gebracht hatte.
+* Neue Fabrikfunktion freshDay() liefert den kompletten Tageszustand; der Tagesneustart ersetzt ihn in einem Schritt, statt rund 45 Felder einzeln zurückzusetzen. Ein neu hinzugefügtes Feld kann dabei nicht mehr vergessen werden - dieselbe Quelle bestimmt auch, was in den Zwischenstand gesichert wird.
+* Neues Prüfwerkzeug tools/lint-data.mjs (npm run lint:data): findet doppelte Kennungen, kaputte Gegenstandsverweise, unerreichbare Dialogzweige, tote Story-Verzweigungen, Textprobleme sowie Verstöße gegen die Balancing-Grundregeln (5er-Raster, Mindestdauer, keine teuren Antworten ohne Wirkung). Es meldet außerdem Ereignisse, bei denen sämtliche Antworten einen Gegenstand voraussetzen - die Konstellation, die ein Ereignis unlösbar macht.
+* Neues Werkzeug tools/simulate-day.mjs (npm run sim): spielt komplette Arbeitstage gegen die echten Datenpools mit den exakten Engine-Formeln durch - vier Spielertypen, drei Schwierigkeiten, Gegenvarianten per Parameter. Die Balance-Änderungen dieser Version sind damit gegengerechnet statt geraten.
+* Jedes Dienstgang-Ereignis deklariert ausdrücklich seine Art (kind: text oder phone); bislang fehlte die Angabe bei 63 Ereignissen.
+* Die Antwortmöglichkeiten werden nicht mehr als Text in die Seite geschrieben, sondern direkt weitergereicht. Die action-Einträge in data_party.js sind strukturierte Objekte statt ausführbarer Zeichenketten; aufgelöst wird über eine Methodensuche, nicht über eval.
+* Der Build landet in docs/, weil GitHub Pages direkt aus dem Branch ausliefert (Deploy from a branch, main + /docs). Der Build wird mitcommittet; Electron-Loader und Paketierung ziehen ebenfalls auf docs/.
+* STRUCTURE.md beschreibt den Aufbau des Projekts und erklärt, wann eine Datei nach src/assets/ und wann nach public/assets/ gehört.
 
 [3.2.2] - 2026-04-08
 
