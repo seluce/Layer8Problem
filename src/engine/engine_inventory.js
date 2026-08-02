@@ -8,16 +8,12 @@ export const inventory = {
     openInventory: function() {
         const modal = document.getElementById('inventory-modal');
         if (!modal) return;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
     },
 
     closeInventory: function() {
         const modal = document.getElementById('inventory-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 		
     // --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---

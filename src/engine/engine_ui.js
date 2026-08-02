@@ -319,13 +319,41 @@ export const ui = {
      * Interstitial notice (warning, valve): a title and one line of text.
      * The end of a day goes through showEnd and carries structured fields.
      */
+
+    /**
+     * Shows a full-screen overlay and locks the page behind it.
+     *
+     * The three lines this replaces (drop "hidden", add "flex", lock scrolling)
+     * appeared in 33 places across the engine. Whenever one of them forgot the
+     * scroll lock, the page scrolled underneath the dialog.
+     *
+     * Accepts an element or an id, because half the call sites already hold
+     * the element and the other half only know its name.
+     */
+    showOverlay: function(target, lockScroll = true) {
+        const el = typeof target === 'string' ? document.getElementById(target) : target;
+        if (!el) return null;
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+        if (lockScroll) document.body.classList.add('overflow-hidden');
+        return el;
+    },
+
+    /** Counterpart to showOverlay. */
+    hideOverlay: function(target, unlockScroll = true) {
+        const el = typeof target === 'string' ? document.getElementById(target) : target;
+        if (!el) return null;
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+        if (unlockScroll) document.body.classList.remove('overflow-hidden');
+        return el;
+    },
+
     showModal: function(title, text, isEnd) {
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
                              lead: '', cause: null, diary: null };
         const overlay = document.getElementById('modal-overlay');
-        overlay.classList.remove('hidden');
-        overlay.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(overlay);
     },
 
     closeModal: function() {
@@ -354,9 +382,7 @@ export const ui = {
             isEnd: true
         };
         const overlay = document.getElementById('modal-overlay');
-        overlay.classList.remove('hidden');
-        overlay.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(overlay);
     },
     
     // --- EXCUSE SYSTEM ---
@@ -371,17 +397,13 @@ export const ui = {
             ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
             : "Sorry, mein Router hat einen schlechten Tag.";
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
     },
 
     closeExcuseModal: function() {
         const modal = document.getElementById('excuse-modal');
         if (modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            this.hideOverlay(modal);
         }
     },
 
@@ -416,9 +438,7 @@ export const ui = {
     // state.archive; this only opens the window.
     openArchive: function() {
         const modal = document.getElementById('archive-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
         this.state.archiveOpen = true;
     },
 
@@ -446,16 +466,12 @@ export const ui = {
     // state.reputation; this only opens the window.
     openTeam: function() {
         const modal = document.getElementById('team-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
     },
 
     closeTeam: function() {
         const modal = document.getElementById('team-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 
     // --- INTRANET SYSTEM ---
@@ -472,29 +488,23 @@ export const ui = {
             frame.onload = () => this.applyIntranetTextSize(frame);
         }
         
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
     },
 
     closeIntranet: function() {
         const modal = document.getElementById('intranet-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 
     // --- BULLETIN BOARD ---
     openBoard: function() {
         const modal = document.getElementById('board-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        this.showOverlay(modal, false);
     },
 
     closeBoard: function() {
         const modal = document.getElementById('board-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        this.hideOverlay(modal, false);
     },
 
     // --- VISUAL FEEDBACK (floating text) ---
@@ -627,9 +637,7 @@ export const ui = {
             area.value = code || "Fehler beim Erstellen.";
             msg.style.opacity = '0'; // Reset Message
 
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+            this.showOverlay(modal);
         },
 
         // Opens the import dialog
@@ -642,9 +650,7 @@ export const ui = {
             msg.style.opacity = '0'; 
             msg.innerText = "";
 
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+            this.showOverlay(modal);
         },
 
         // Closes both dialogs
@@ -786,9 +792,7 @@ export const ui = {
 
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
 
         this.state.globalStats = { data: null, loading: true, failed: false };
         platform.globalStats()
@@ -799,9 +803,7 @@ export const ui = {
     closeGlobalStats: function() {
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 
     triggerHardReset: function(btn) {
@@ -919,15 +921,12 @@ export const ui = {
             title.innerText = 'MENÜ';
         }
 
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        this.showOverlay(modal, false);
     },
     
     closeSettings: function() {
         const modal = document.getElementById('settings-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 
     toggleFX: function(isOn) {
@@ -1282,16 +1281,12 @@ export const ui = {
 
     openReportModal: function() {
         const modal = document.getElementById('report-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay(modal);
     },
 
     closeReportModal: function() {
         const modal = document.getElementById('report-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay(modal);
     },
 
     sendReportMail: function() {

@@ -16,9 +16,7 @@ const tutorial = {
         
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
-            askModal.classList.remove('hidden');
-            askModal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+            engine.showOverlay(askModal);
         }
     },
 
@@ -36,9 +34,7 @@ const tutorial = {
     run: function() {
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
-            askModal.classList.add('hidden');
-            askModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            engine.hideOverlay(askModal);
         }
         
         this.isActive = true;
@@ -154,9 +150,7 @@ const tutorial = {
     skip: function() {
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
-            askModal.classList.add('hidden');
-            askModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            engine.hideOverlay(askModal);
         }
 
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
@@ -286,8 +280,7 @@ const tutorial = {
         
         document.getElementById('tut-pointer-desc').innerHTML = descHtml;
         
-        pointer.classList.remove('hidden');
-        pointer.classList.add('flex');
+        engine.showOverlay(pointer, false);
         
         // 3. Position sofort einmal berechnen
         this.updatePosition();
@@ -353,8 +346,7 @@ const tutorial = {
         if(pointer) {
             pointer.classList.add('opacity-0');
             this.pointerTimeout = setTimeout(() => {
-                pointer.classList.add('hidden');
-                pointer.classList.remove('flex');
+                engine.hideOverlay(pointer, false);
                 this.currentTarget = null; // clear the target while hidden
             }, 300);
         }
@@ -387,9 +379,7 @@ const tutorial = {
                 `;
             }
 
-            askModal.classList.remove('hidden');
-            askModal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+            engine.showOverlay(askModal);
         }
     },
 
@@ -399,9 +389,7 @@ const tutorial = {
         
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
-            askModal.classList.add('hidden');
-            askModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            engine.hideOverlay(askModal);
         }
         
         this.clearGlows();

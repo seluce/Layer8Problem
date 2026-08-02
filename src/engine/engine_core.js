@@ -347,9 +347,7 @@ export const core = {
                        : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
             const info = document.getElementById('resume-info');
             if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
-            resumeModal.classList.remove('hidden');
-            resumeModal.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
+            this.showOverlay(resumeModal);
             return;
         }
 
@@ -486,8 +484,7 @@ export const core = {
         this.closeSettings();
         const overlay = document.getElementById('modal-overlay');
         if (overlay) {
-            overlay.classList.add('hidden');
-            overlay.classList.remove('flex');
+            this.hideOverlay(overlay, false);
         }
 
         // Replace the whole day rather than resetting fields one by one, so a

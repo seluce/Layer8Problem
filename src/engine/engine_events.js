@@ -3,6 +3,9 @@ import { platform } from '../platform.js';
 
 export const events = {
 
+    // How often an unlocked follow-up beats a fresh event. See pickFromPool.
+    FOLLOWUP_CHANCE: 0.30,
+
     // --- E-MAIL SYSTEM (Clean Light / Logik Fixes) ---
     checkRandomEmail: function() {
         // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
@@ -101,8 +104,7 @@ export const events = {
         // toggled here. EmailView.svelte only renders the contents.
         const modal = document.getElementById('email-modal');
         if (modal) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            this.showOverlay(modal, false);
         }
         document.body.classList.add('overflow-hidden');
 
@@ -111,6 +113,25 @@ export const events = {
         this.state.emailTimer = setTimeout(() => {
             this.resolveEmail(null, true); 
         }, DURATION);
+    },
+
+    /**
+     * Picks one event from a pool, giving unlocked follow-ups priority.
+     *
+     * Follow-ups jump the queue 30% of the time. That number is the whole
+     * pacing of a day: too high and every thread resolves within minutes, too
+     * low and half the written follow-ups are never seen. It lived in three
+     * places, so changing it meant changing it three times.
+     */
+    pickFromPool: function(pool) {
+        if (!pool?.length) return null;
+        const followUps = pool.filter(ev => ev.reqStory);
+        const base = pool.filter(ev => !ev.reqStory);
+        const draw = (list) => list[Math.floor(Math.random() * list.length)];
+
+        if (followUps.length && Math.random() < this.FOLLOWUP_CHANCE) return draw(followUps);
+        if (base.length) return draw(base);
+        return followUps.length ? draw(followUps) : null;   // only follow-ups left
     },
 
     /**
@@ -187,9 +208,7 @@ export const events = {
         
         const modal = document.getElementById('email-modal');
         if(modal) {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            this.hideOverlay(modal);
         }
         
         // --- ANPASSUNG 1: System sofort blockieren ---
@@ -384,11 +403,11 @@ export const events = {
                 
                 let intervention = null;
 
-                // 2. Story continuations get 30% priority when available
-                if (storyEvents.length > 0 && Math.random() < 0.30) {
+                // Same rule as the action pools: continuations first, then
+                // ordinary encounters.
+                if (storyEvents.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
                     intervention = storyEvents[Math.floor(Math.random() * storyEvents.length)];
                 } 
-                // 3. Missed the 30% or nothing pending -> ordinary reputation event
                 else if (baseEvents.length > 0) {
                     intervention = baseEvents[Math.floor(Math.random() * baseEvents.length)];
                 }
@@ -433,19 +452,7 @@ export const events = {
         }
         
         // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
-        let followUps = pool.filter(ev => ev.reqStory);
-        let normalEvents = pool.filter(ev => !ev.reqStory);
-        let ev;
-
-        // An unlocked follow-up jumps the queue 30% of the time
-        if (followUps.length > 0 && Math.random() < 0.30) {
-            ev = followUps[Math.floor(Math.random() * followUps.length)];
-        } else if (normalEvents.length > 0) {
-            ev = normalEvents[Math.floor(Math.random() * normalEvents.length)];
-        } else {
-            // Fallback: only follow-ups left
-            ev = followUps[Math.floor(Math.random() * followUps.length)];
-        }
+        const ev = this.pickFromPool(pool);
         
         // Event starten
         this.renderTerminal(ev, type);
@@ -466,9 +473,7 @@ export const events = {
         // Force the modal shut if it was mid-open
         const emailModal = document.getElementById('email-modal');
         if (emailModal) {
-            emailModal.classList.add('hidden');
-            emailModal.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            this.hideOverlay(emailModal);
             this.state.isEmailOpen = false;
         }
         // ------------------------------------------
@@ -528,19 +533,7 @@ export const events = {
 
         if (pool.length === 0) { this.log("Gerade nichts los."); return; }
 
-        // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
-        let followUps = pool.filter(ev => ev.reqStory);
-        let normalEvents = pool.filter(ev => !ev.reqStory);
-        let ev;
-
-        if (followUps.length > 0 && Math.random() < 0.30) {
-            ev = followUps[Math.floor(Math.random() * followUps.length)];
-        } else if (normalEvents.length > 0) {
-            ev = normalEvents[Math.floor(Math.random() * normalEvents.length)];
-        } else {
-            ev = followUps[Math.floor(Math.random() * followUps.length)];
-        }
-        // ---------------------------------------------------
+        const ev = this.pickFromPool(pool);
 
         if (ev.kind === 'phone') {
             this.state.activeEvent = true;
