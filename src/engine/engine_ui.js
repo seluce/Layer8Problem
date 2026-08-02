@@ -1259,9 +1259,17 @@ export const ui = {
         }
     },
     
+    /**
+     * Welcher Wochentag beim Start vorausgewählt ist.
+     *
+     * Deliberately without a log entry. The activity log is the record of the
+     * workday - what happened at the desk - and a setting is not part of it.
+     * No other setter writes there either, and the entry said "HARD" in a game
+     * that speaks German. The dropdown shows the choice; that is the feedback.
+     */
     saveDefaultDifficulty: function(val) {
         localStorage.setItem(engine.KEYS.defaultDiff, val);
-        this.log(`Start-Modus geändert auf: ${val.toUpperCase()}`, "text-blue-400");
+        this.playAudio('ui');
     },
 
     shareGame: function(btn) {
