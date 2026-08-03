@@ -59,6 +59,11 @@ export const server = [
         text: "Der 'Cleaner' von HR fängt dich im Flur ab. 'Routinekontrolle. Wir suchen gestohlenes Firmeneigentum. Taschen leeren!' Er starrt auf deine ausgebeulte Hosentasche.",
         opts: [
             { 
+                t: "Taschen bereitwillig zeigen", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "Er findet... Luftpolsterfolie. Er rümpft die Nase. 'Nur Müll? Sie haben ja gar keinen Ehrgeiz.' Er lässt dich samt Folie stehen." 
+            },
+            { 
                 t: "Empört verweigern", 
                 m: 2, f: 0, a: 10, c: 5, 
                 r: "'Das verstößt gegen meine Rechte!' Er notiert deinen Namen auf einer Liste, aber da er nichts beweisen kann, zieht er ab." 
@@ -68,11 +73,6 @@ export const server = [
                 rem: "donut",
                 m: 2, f: 5, a: -10, c: -5, 
                 r: "Er starrt auf den alten Donut. Sein Magen knurrt. 'Na gut. Einmalige Ausnahme.' Er nimmt den Donut und verschwindet kauend." 
-            },
-            { 
-                t: "Taschen bereitwillig zeigen", 
-                m: 5, f: 0, a: -5, c: -5, 
-                r: "Er findet... Luftpolsterfolie. Er rümpft die Nase. 'Nur Müll? Sie haben ja gar keinen Ehrgeiz.' Er lässt dich samt Folie stehen." 
             }
         ]
     },
@@ -292,11 +292,6 @@ export const server = [
         text: "Bernd steht plötzlich strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
         opts: [
             { 
-                t: "Mitspielen: 'Klar, bin dabei.'", 
-                m: 15, f: 10, a: -5, c: 5, 
-                r: "Bernd drückt dich. 'Wir werden reich! Ich kümmere mich um das Heu, du um die IT.' Er geht pfeifend. Du hast jetzt ein Side-Business." 
-            },
-            { 
                 t: "Panik: 'Ich war betrunken!'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Bernds Gesicht fällt zusammen. 'Oh. Ich dachte... das war echt.' Er schlurft traurig davon. Du fühlst dich wie ein Monster." 
@@ -306,6 +301,11 @@ export const server = [
 				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: -10, c: 10, 
                 r: "'Ha! Guter Witz!' Bernd lacht laut. Zu laut. Der Chef schaut aus seinem Büro. Schnell weg hier." 
+            },
+            { 
+                t: "Mitspielen: 'Klar, bin dabei.'", 
+                m: 15, f: 10, a: -5, c: 5, 
+                r: "Bernd drückt dich. 'Wir werden reich! Ich kümmere mich um das Heu, du um die IT.' Er geht pfeifend. Du hast jetzt ein Side-Business." 
             }
         ]
     },
@@ -992,6 +992,11 @@ export const server = [
         text: "Ein externer Schreiner steht kopfschüttelnd vor der Serverraum-Tür, die heute Morgen 'jemand' (du) mit Gewalt geöffnet hat. Er flucht über die Splitter.",
         opts: [
             { 
+                t: "Helfen, die Späne aufzufegen", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Das schlechte Gewissen plagt dich. Du hilfst ihm beim Aufräumen. Er brummt: 'Wenigstens einer, der anpackt.'" 
+            },
+            { 
                 t: "Ihm Panzertape anbieten", 
                 req: "tape", 
                 m: 5, f: 5, a: 0, c: -5, 
@@ -1001,11 +1006,6 @@ export const server = [
                 t: "Behaupten, es war die Feuerwehr", 
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "'Gefahr im Verzug, wissen Sie.' Der Schreiner nickt verständnisvoll. 'Ach so. Ja, die Jungs sind grob.' Dein Geheimnis ist sicher." 
-            },
-            { 
-                t: "Helfen, die Späne aufzufegen", 
-                m: 15, f: -5, a: 5, c: 0, 
-                r: "Das schlechte Gewissen plagt dich. Du hilfst ihm beim Aufräumen. Er brummt: 'Wenigstens einer, der anpackt.'" 
             }
         ]
     },
@@ -1455,18 +1455,18 @@ export const server = [
         text: "Zwischen Rack 3 und 4 liegt Zeug herum. Es sieht so aus, als wäre jemand fluchtartig verschwunden.",
         opts: [
             { 
-                t: "Die teuren Kopfhörer nehmen", 
-                loot: "headphones", 
-                next: "found_headphones_2",
-                m: 5, f: 5, a: 0, c: 0, 
-                r: "Bose Noise-Cancelling. Sehr schick. Sie sind noch leicht warm und riechen etwas nach Haargel. Aber hey: Gratis ist gratis." 
-            },
-            { 
                 t: "Den schweren Hammer nehmen", 
                 loot: "hammer", 
                 next: "found_hammer_2",
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Ein 500g Schlosserhammer. Auf dem Griff steht mit Edding 'HARD RESET'. Ein vertrauenerweckendes Werkzeug im Serverraum." 
+            },
+            { 
+                t: "Die teuren Kopfhörer nehmen", 
+                loot: "headphones", 
+                next: "found_headphones_2",
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Bose Noise-Cancelling. Sehr schick. Sie sind noch leicht warm und riechen etwas nach Haargel. Aber hey: Gratis ist gratis." 
             }
         ]
     },
@@ -1552,11 +1552,6 @@ export const server = [
         text: "Ein lauter KNALL! Die Putzkolonne ist mit dem schweren Bohnert-Wagen volle Kanne in Rack 5 gerammt. Dank deiner Schraube hat es standgehalten. Der Putzmann starrt schockiert auf die Beule.",
         opts: [
             { 
-                t: "Schadenersatz fordern", 
-                m: 10, f: 5, a: 10, c: 0, 
-                r: "Du verlangst 20 Euro für den Lackschaden. Er gibt sie dir zitternd. Du bist ein Arschloch, aber ein reiches Arschloch." 
-            },
-            { 
                 t: "Ihn zur Sau machen", 
                 m: 5, f: 0, a: -20, c: 5, 
                 r: "Du schreist ihn 5 Minuten lang an. Das tut gut! Deine Aggression verpufft komplett. Er entschuldigt sich tausendmal." 
@@ -1566,6 +1561,11 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 15, f: -5, a: 5, c: -15, 
                 r: "'Alles gut, Meister. Das hält.' Du checkst die Logs. Keine Ausfälle. Der Chef sieht das und nickt anerkennend. 'Gute Arbeit, Müller. Robust gebaut.'" 
+            },
+            { 
+                t: "Schadenersatz fordern", 
+                m: 10, f: 5, a: 10, c: 0, 
+                r: "Du verlangst 20 Euro für den Lackschaden. Er gibt sie dir zitternd. Du bist ein Arschloch, aber ein reiches Arschloch." 
             }
         ]
     },
@@ -2032,12 +2032,6 @@ export const server = [
         text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef stürmt rein: 'WIESO STEHT DER BETRIEB?!'",
         opts: [
             { 
-                t: "Auf den Berater zeigen",
-				rep: { "Dr. Wichtig": -2 },
-                m: 10, f: -5, a: 30, c: 10, 
-                r: "Der Berater lacht glatt: 'Ah, Herr Müller wollte mir gerade die USV demonstrieren und hat wohl das falsche Kabel erwischt. Schlechtes Briefing!' Der Chef nickt. Du kochst vor Wut." 
-            },
-            { 
                 t: "Stecker wieder reinrammen", 
                 next: "consultant_psu",
                 m: 5, f: 0, a: 10, c: 20, 
@@ -2049,6 +2043,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -5 },
                 m: 2, f: 0, a: -20, c: 50, 
                 r: "Du brüllst den Gast an. Der Chef wird blass. 'Müller! Benehmen Sie sich! Abmahnung wegen unprofessionellem Verhalten!' Der Berater grinst." 
+            },
+            { 
+                t: "Auf den Berater zeigen",
+				rep: { "Dr. Wichtig": -2 },
+                m: 10, f: -5, a: 30, c: 10, 
+                r: "Der Berater lacht glatt: 'Ah, Herr Müller wollte mir gerade die USV demonstrieren und hat wohl das falsche Kabel erwischt. Schlechtes Briefing!' Der Chef nickt. Du kochst vor Wut." 
             }
         ]
     },
@@ -2646,12 +2646,6 @@ export const server = [
         text: "Der Praktikant ist krank. Der Chef steht vor dessen PC: 'Müller! Knacken Sie das Ding! Da ist die Präsentation drauf! Ich wette, der Idiot hat was Kompliziertes genommen!'",
         opts: [
             { 
-                t: "Eingabe: 'Passwort'",
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 10, c: 10, 
-                r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
-            },
-            { 
                 t: "Eingabe: 'Puschel123'",
 				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: 10, a: -10, c: -5, 
@@ -2669,6 +2663,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 10, c: 15, 
                 r: "Falsch. PC sperrt sich für 1 Stunde. Der Chef explodiert." 
+            },
+            { 
+                t: "Eingabe: 'Passwort'",
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
             }
         ]
     },
@@ -2876,6 +2876,12 @@ export const server = [
         text: "Physik ist grausam. Das Eis schmilzt schneller als gedacht. Pfützen bilden sich am Boden und kriechen gefährlich nah an die Steckerleisten. Die Luftfeuchtigkeit liegt bei 99%.",
         opts: [
             { 
+                t: "Ablaufrinne aus Tape bauen", 
+                req: "tape", 
+                m: 15, f: -5, a: 5, c: 5, 
+                r: "Du baust eine komplexe Konstruktion aus Panzertape, die das Wasser in einen Blumentopf leitet. Es ist hässlich, es ist Pfusch, aber es funktioniert. Ingenieurskunst!" 
+            },
+            { 
                 t: "Kevin zum Wischen rufen", 
                 rep: { "Kevin": -5 },
                 m: 5, f: 10, a: -5, c: 0, 
@@ -2885,12 +2891,6 @@ export const server = [
                 t: "Schild 'Rutschgefahr' aufstellen", 
                 m: 2, f: 15, a: 0, c: 10,
                 r: "Du stellst das gelbe Warnschild auf. Damit bist du haftungsrechtlich raus. Dass der Stromverteiler gleich baden geht, ist ein technisches Detail." 
-            },
-            { 
-                t: "Ablaufrinne aus Tape bauen", 
-                req: "tape", 
-                m: 15, f: -5, a: 5, c: 5, 
-                r: "Du baust eine komplexe Konstruktion aus Panzertape, die das Wasser in einen Blumentopf leitet. Es ist hässlich, es ist Pfusch, aber es funktioniert. Ingenieurskunst!" 
             }
         ]
     },
@@ -3409,16 +3409,16 @@ export const server = [
         text: "Du willst den Becher gerade ins Waschbecken bringen, da kommt Chantal herein. 'Oh danke, Müller! Den hab ich da extra abgestellt, damit der Router ihn warmhält!'",
         opts: [
             { 
-                t: "Ihr den Becher wortlos in die Hand drücken", 
-                rep: { "Chantal": -5 },
-                m: 5, f: 0, a: 10, c: 0, 
-                r: "Dein Blick ist tödlich. Sie nimmt den Kaffee und flüchtet." 
-            },
-            { 
                 t: "Einen Vortrag über Hardware-Preise halten", 
                 rep: { "Chantal": -3 },
                 m: 15, f: 0, a: 10, c: 0, 
                 r: "Du rechnest ihr 15 Minuten lang vor, was ein Core-Router kostet. Sie scrollt dabei genervt auf Insta." 
+            },
+            { 
+                t: "Ihr den Becher wortlos in die Hand drücken", 
+                rep: { "Chantal": -5 },
+                m: 5, f: 0, a: 10, c: 0, 
+                r: "Dein Blick ist tödlich. Sie nimmt den Kaffee und flüchtet." 
             }
         ]
     },
@@ -3575,14 +3575,14 @@ export const server = [
         text: "Deine Klebe-Angel hat neben den Schrauben auch ein paar tote Insekten und riesige, schwarze Staubmäuse aus dem Unterboden geholt. Deine Hände sind extrem dreckig.",
         opts: [
             { 
-                t: "Gründlich im Bad Hände waschen", 
-                m: 10, f: 5, a: 0, c: 0, 
-                r: "Du investierst Arbeitszeit in Hygiene. Sehr löblich." 
-            },
-            { 
                 t: "Einfach an der Hose abwischen", 
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du siehst jetzt aus wie ein KFZ-Mechaniker. Der Admin-Look schlechthin." 
+            },
+            { 
+                t: "Gründlich im Bad Hände waschen", 
+                m: 10, f: 5, a: 0, c: 0, 
+                r: "Du investierst Arbeitszeit in Hygiene. Sehr löblich." 
             }
         ]
     },
@@ -3795,6 +3795,12 @@ export const server = [
     text: "Im Marketing-Meeting hat Chantal dich zitiert: 'Unser Server ist ein lebender Organismus.' Sie hat dich dabei als 'unseren Server-Flüsterer' angekündigt. Dr. Wichtig fand das 'visionär' und wünscht einen Vortrag. Für alle.",
     opts: [
         {
+            t: "Den Titel 'Server-Flüsterer' ablehnen",
+            rep: { "Chantal": -2 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Aber Personal Branding, Müller!' Chantal ist enttäuscht, akzeptiert es aber. Auf der Meeting-Folie steht jetzt nur noch 'IT'. Immerhin ehrlich."
+        },
+        {
             t: "Den Vortrag halten",
             rep: { "Chantal": 3 },
             m: 25, f: 0, a: 10, c: -5,
@@ -3805,12 +3811,6 @@ export const server = [
             rep: { "Kevin": -3 },
             m: 5, f: 5, a: 0, c: 5,
             r: "Kevin referiert voller Stolz über den 'Turbo-Modus' und die 'Wetter-Cloud'. Das Publikum applaudiert. Fachlich war das ein Totalschaden, und irgendwann fällt der auf dich zurück."
-        },
-        {
-            t: "Den Titel 'Server-Flüsterer' ablehnen",
-            rep: { "Chantal": -2 },
-            m: 5, f: 0, a: 5, c: 0,
-            r: "'Aber Personal Branding, Müller!' Chantal ist enttäuscht, akzeptiert es aber. Auf der Meeting-Folie steht jetzt nur noch 'IT'. Immerhin ehrlich."
         }
     ]
 },
@@ -3873,11 +3873,6 @@ export const server = [
     text: "Markus platzt herein: 'Kleines Update: TechniPlast will die Cloud BESICHTIGEN. Morgen. Mit ihrer Fachabteilung.' Er sagt 'Fachabteilung' wie andere Leute 'Steuerprüfung' sagen.",
     opts: [
         {
-            t: "Kurzfristig ein Wartungsfenster ansetzen",
-            m: 5, f: 10, a: 0, c: 5,
-            r: "'Bedauerlicherweise ist die Cloud morgen in Wartung. Sicherheitsupdates, Sie verstehen.' Der Termin wird verschoben. Das Problem nicht. Es reift nur."
-        },
-        {
             t: "Rack 2 zur Vorzeige-Cloud ausbauen",
             rep: { "Markus": 4 },
             m: 20, f: 5, a: -5, c: 5,
@@ -3888,6 +3883,11 @@ export const server = [
             rep: { "Markus": -4 },
             m: 10, f: 0, a: 5, c: 0,
             r: "'Auffliegen? Müller, ich verkaufe seit zwanzig Jahren Dinge, die es nicht gibt. Die Fachabteilung will nur blinkende Lichter sehen.' Das Beunruhigende ist: Er hat vermutlich recht."
+        },
+        {
+            t: "Kurzfristig ein Wartungsfenster ansetzen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Bedauerlicherweise ist die Cloud morgen in Wartung. Sicherheitsupdates, Sie verstehen.' Der Termin wird verschoben. Das Problem nicht. Es reift nur."
         }
     ]
 },
@@ -4729,11 +4729,6 @@ export const server = [
     text: "Dr. Wichtig, im Vorbeigehen, beiläufig wie ein Fallbeil: 'Müller, die Versicherung fragt nach unserer IT-Dokumentation. Schicken Sie mir die bis Freitag.' Der September-Zettel in deiner Tasche wird schlagartig sehr schwer.",
     opts: [
         {
-            t: "'Die Doku liegt in der Cloud' sagen",
-            m: 5, f: 10, a: 0, c: 10,
-            r: "Es gibt keine Cloud. Es gibt keine Doku. Es gibt jetzt aber eine Aussage gegenüber dem Chef, die beides behauptet - und eine Versicherung, die nachfragen wird. Du hast Zeit gekauft. Der Zinssatz ist unbekannt."
-        },
-        {
             t: "Schnelldurchlauf: Doku in einem Rutsch",
             m: 30, f: -5, a: 15, c: -5,
             r: "Du hämmerst eine Dokumentation zusammen, die zu achtzig Prozent stimmt. Die restlichen zwanzig Prozent formulierst du so vage, dass sie nicht falsch sein können. Die Versicherung bekommt Papier. Papier beruhigt."
@@ -4743,6 +4738,11 @@ export const server = [
             rep: { "Kevin": 3, "Gabi": 3 },
             m: 20, f: 0, a: 5, c: 0,
             r: "Kevin fotografiert jedes Rack, Gabi - die ohnehin alles weiß - diktiert, wer woran hängt. Nach kurzer Zeit existiert ein Dokument, das erschreckend gut ist. Der Empfang kennt diese Firma besser als jedes Organigramm."
+        },
+        {
+            t: "'Die Doku liegt in der Cloud' sagen",
+            m: 5, f: 10, a: 0, c: 10,
+            r: "Es gibt keine Cloud. Es gibt keine Doku. Es gibt jetzt aber eine Aussage gegenüber dem Chef, die beides behauptet - und eine Versicherung, die nachfragen wird. Du hast Zeit gekauft. Der Zinssatz ist unbekannt."
         }
     ]
 },
@@ -4753,12 +4753,6 @@ export const server = [
     text: "Kevin präsentiert stolz das Ergebnis seines Doku-Projekts: ein Foto. Ein einziges Foto. Verwackelt, vom halben Serverraum, mit seinem Daumen im Bild. Dateiname: 'doku_final_FERTIG(1).jpg'. 'Und?', strahlt er.",
     opts: [
         {
-            t: "Loben und heimlich selbst dokumentieren",
-            rep: { "Kevin": 5 },
-            m: 25, f: -5, a: 10, c: 0,
-            r: "'Starker Anfang, Kevin.' Er zieht glücklich ab, du dokumentierst still hinterher. Die Wahrheit existiert jetzt in zwei Versionen: einer richtigen und einer mit Daumen. Kevin wird seine für immer für die echte halten."
-        },
-        {
             t: "Ehrliches Feedback geben",
             rep: { "Kevin": 3 },
             m: 15, f: 0, a: 5, c: 0,
@@ -4768,6 +4762,12 @@ export const server = [
             t: "Das Foto als offizielle Doku einreichen",
             m: 2, f: 10, a: 0, c: 10,
             r: "Du legst 'doku_final_FERTIG(1).jpg' in den Doku-Ordner und schließt das Kapitel. Sollte jemals jemand die Dokumentation brauchen, findet er einen Daumen vor. Das Problem ist vertagt, und Vertagen hat hier Tradition."
+        },
+        {
+            t: "Loben und heimlich selbst dokumentieren",
+            rep: { "Kevin": 5 },
+            m: 25, f: -5, a: 10, c: 0,
+            r: "'Starker Anfang, Kevin.' Er zieht glücklich ab, du dokumentierst still hinterher. Die Wahrheit existiert jetzt in zwei Versionen: einer richtigen und einer mit Daumen. Kevin wird seine für immer für die echte halten."
         }
     ]
 },

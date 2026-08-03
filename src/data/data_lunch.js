@@ -14,14 +14,14 @@ export const lunch = [
 			text: "Es gibt heute 'Jägerschnitzel Surprise'. Die Meute drängelt am Buffet. Was tust du?",
 			opts: [
 				{ 
-					t: "Zu den Kollegen setzen", 
-					m: 45, f: -5, a: 10, c: -5, 
-					r: "Du hörst dir Geschichten über Chantals Katze an. Langweilig, aber man hat dich gesehen. Gut für das 'Team-Gefühl'." 
-				},
-				{ 
 					t: "Kopfhörer auf & ab in die Ecke",
 					m: 30, f: 5, a: -10, c: 0, 
 					r: "Du schirmst dich ab, scrollst durch Memes und ignorierst die Welt. Herrliche Ruhe." 
+				},
+				{ 
+					t: "Zu den Kollegen setzen", 
+					m: 45, f: -5, a: 10, c: -5, 
+					r: "Du hörst dir Geschichten über Chantals Katze an. Langweilig, aber man hat dich gesehen. Gut für das 'Team-Gefühl'." 
 				}
 			]
 		},
@@ -31,16 +31,16 @@ export const lunch = [
 			text: "Du bleibst im Büro, um Menschen zu meiden. Vor dir liegt ein trauriges Pausenbrot, das schon leicht wellig ist.",
 			opts: [
 				{ 
-					t: "Einhändig weiterarbeiten",
-					rep: { "Dr. Wichtig": 2 },	
-					m: 30, f: -10, a: 20, c: -10, 
-					r: "Multitasking. Du löst Tickets mit rechts, isst mit links. Der Chef nickt anerkennend im Vorbeigehen. Deine Tastatur knirscht jetzt vor Krümeln." 
-				},
-				{ 
 					t: "Serie im Minifenster gucken",
 					rep: { "Dr. Wichtig": -5 },	
 					m: 60, f: 20, a: -20, c: 10, 
 					r: "Finger auf 'Alt-Tab' bereit. Du schaffst zwei Folgen. Leider spiegelt sich der Film in deiner Brille, als der Chef reinkommt. Ärger!" 
+				},
+				{ 
+					t: "Einhändig weiterarbeiten",
+					rep: { "Dr. Wichtig": 2 },	
+					m: 30, f: -10, a: 20, c: -10, 
+					r: "Multitasking. Du löst Tickets mit rechts, isst mit links. Der Chef nickt anerkennend im Vorbeigehen. Deine Tastatur knirscht jetzt vor Krümeln." 
 				}
 			]
 		},
@@ -49,8 +49,8 @@ export const lunch = [
 			title: "MITTAG: VEGANER TAG",
 			text: "In der Kantine gibt es nur Tofu-Klumpen. Die Stimmung im Team ist aggressiv.",
 			opts: [
-				{ t: "Mitessen und meckern", m: 45, f: 0, a: 15, c: 0, r: "Gemeinsames Meckern verbindet das Team." },
-				{ t: "Zum Döner-Mann rennen", m: 45, f: 5, a: -20, c: 5, r: "Du kommst mit Knoblauchfahne zurück. Du bist glücklich, die Kollegen rümpfen die Nase." }
+				{ t: "Zum Döner-Mann rennen", m: 45, f: 5, a: -20, c: 5, r: "Du kommst mit Knoblauchfahne zurück. Du bist glücklich, die Kollegen rümpfen die Nase." },
+				{ t: "Mitessen und meckern", m: 45, f: 0, a: 15, c: 0, r: "Gemeinsames Meckern verbindet das Team." }
 			]
 		},
 		{
@@ -59,16 +59,16 @@ export const lunch = [
 			text: "Du packst gerade dein Brot aus, da steht der Chef atemlos vor dir. 'Müller! Kunde Schmitz hat totalen Internet-Ausfall! Sie müssen SOFORT hin! Das ist ein Notfall! Das Brot können Sie im Auto essen!'",
 			opts: [
 				{ 
-					t: "Brot schnappen und losrasen",
-					rep: { "Dr. Wichtig": 10 },	
-					m: 60, f: -20, a: 25, c: -15, 
-					r: "Du würgst dein Brot bei Tempo 180 runter. Beim Kunden war nur der Stecker locker. Du hast Sodbrennen, aber der Chef feiert deinen heldenhaften Einsatz." 
-				},
-				{ 
 					t: "Auf die gesetzliche Pause bestehen",
 					rep: { "Dr. Wichtig": -10 },	
 					m: 30, f: 5, a: -10, c: 15, 
 					r: "Du beißt betont langsam in dein Brot und tippst auf die Uhr. Der Chef läuft rot an, schnaubt und rennt wütend selbst los. Dein Essen schmeckt plötzlich nach Sieg." 
+				},
+				{ 
+					t: "Brot schnappen und losrasen",
+					rep: { "Dr. Wichtig": 10 },	
+					m: 60, f: -20, a: 25, c: -15, 
+					r: "Du würgst dein Brot bei Tempo 180 runter. Beim Kunden war nur der Stecker locker. Du hast Sodbrennen, aber der Chef feiert deinen heldenhaften Einsatz." 
 				}
 			]
 		},
@@ -77,8 +77,8 @@ export const lunch = [
 			title: "MITTAG: PIZZA-DISKUSSION",
 			text: "Das Team will Pizza bestellen. Die Diskussion dauert schon 20 Minuten. 'Ananas gehört nicht drauf!' vs 'Ich bin laktoseintolerant!'. Deine Pause verrinnt.",
 			opts: [
-				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Aggro steigt durch das Gemecker." },
-				{ t: "Aussteigen & Brot essen", m: 30, f: 10, a: -10, c: 0, r: "Du isst dein trockenes Brot, während die anderen noch streiten. Friedlich, aber traurig." }
+				{ t: "Aussteigen & Brot essen", m: 30, f: 10, a: -10, c: 0, r: "Du isst dein trockenes Brot, während die anderen noch streiten. Friedlich, aber traurig." },
+				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Aggro steigt durch das Gemecker." }
 			]
 		},
 		{
@@ -86,8 +86,8 @@ export const lunch = [
 			title: "MITTAG: GESCHÄFTSESSEN",
 			text: "Ein schmieriger Vertreter lädt dich zum Lunch ein. Es gibt teures Sushi. Er will dir aber eigentlich nur eine völlig überteuerte Firewall-Lösung andrehen.",
 			opts: [
-				{ t: "Dankend ablehnen", m: 30, f: -5, a: 0, c: 5, r: "Du bleibst im Büro. Deine Integrität ist gewahrt, aber dein Magen knurrt." },
-				{ t: "Gratis Essen abgreifen", m: 90, f: 20, a: -10, c: -5, r: "Das Sushi war göttlich. Du hast ihm versprochen, 'mal drüber nachzudenken' (Lüge). Pause überzogen." }
+				{ t: "Gratis Essen abgreifen", m: 90, f: 20, a: -10, c: -5, r: "Das Sushi war göttlich. Du hast ihm versprochen, 'mal drüber nachzudenken' (Lüge). Pause überzogen." },
+				{ t: "Dankend ablehnen", m: 30, f: -5, a: 0, c: 5, r: "Du bleibst im Büro. Deine Integrität ist gewahrt, aber dein Magen knurrt." }
 			]
 		},
 		{
@@ -96,14 +96,14 @@ export const lunch = [
 			text: "Der Döner-Laden um die Ecke hat Jubiläum. Döner für 2,50€. Die Schlange geht bis auf die Straße. Der Duft ist verführerisch.",
 			opts: [
 				{ 
-					t: "Anstellen! 2,50€ sind unschlagbar!", 
-					m: 50, f: 10, a: 15, c: 5, 
-					r: "Du hast 40 Minuten gewartet und alles in 5 Minuten runtergeschlungen. Du kommst zu spät und dünstest Knoblauch aus. Aber du hast gespart!" 
-				},
-				{ 
 					t: "Lieber zum Bäcker gehen", 
 					m: 20, f: 5, a: 5, c: 5, 
 					r: "Du holst dir ein trockenes Käsebrötchen. Es schmeckt nach Pappe und Verantwortung. Der Neid auf die Döner-Esser nagt an dir." 
+				},
+				{ 
+					t: "Anstellen! 2,50€ sind unschlagbar!", 
+					m: 50, f: 10, a: 15, c: 5, 
+					r: "Du hast 40 Minuten gewartet und alles in 5 Minuten runtergeschlungen. Du kommst zu spät und dünstest Knoblauch aus. Aber du hast gespart!" 
 				}
 			]
 		},
@@ -112,8 +112,8 @@ export const lunch = [
 			title: "MITTAG: SUPPENKOMA",
 			text: "Du hast zu viel gegessen. Das 'Schnitzel-Koma' setzt ein. Deine Augenlider wiegen Tonnen. Der Serverraum ist schön kühl...",
 			opts: [
-				{ t: "Doppelter Espresso", m: 10, f: -5, a: 5, c: 0, r: "Das Herz rasen setzt ein. Du bist wach, aber deine Hände zittern. Produktivität: Fragwürdig." },
-				{ t: "Power-Nap im Serverraum", m: 45, f: 25, a: -20, c: 10, r: "Du bist eingeschlafen! Du wachst mit Tastatur-Abdruck im Gesicht auf. Hoffentlich hat dich keiner gesehen." }
+				{ t: "Power-Nap im Serverraum", m: 45, f: 25, a: -20, c: 10, r: "Du bist eingeschlafen! Du wachst mit Tastatur-Abdruck im Gesicht auf. Hoffentlich hat dich keiner gesehen." },
+				{ t: "Doppelter Espresso", m: 10, f: -5, a: 5, c: 0, r: "Das Herz rasen setzt ein. Du bist wach, aber deine Hände zittern. Produktivität: Fragwürdig." }
 			]
 		},
 		{
@@ -729,12 +729,6 @@ export const lunch = [
 			text: "Du liegst auf der Couch im dunklen Pausenraum und schläfst fast ein. Plötzlich stürmt Chantal herein, macht das extrem grelle Licht an und nimmt lautstark Sprachnachrichten auf.", 
 			opts: [ 
 				{  
-					t: "Mit Panzertape eine Schlafmaske bauen", 
-					req: "tape", 
-					m: 45, f: -15, a: 5, c: 0,  
-					r: "Streiten kostet nur Energie. Du reißt dir Tape ab und klebst es dir als Maske über die Augen. Chantal macht ein kicherndes Foto von dir für Instagram, aber das ist dir egal – du kannst weiter schlafen."  
-				}, 
-				{  
 					t: "Aufstehen und sie anknurren", 
 					rep: { "Chantal": -10 }, 
 					m: 15, f: 5, a: 15, c: 0,  
@@ -745,6 +739,12 @@ export const lunch = [
 					req: "stressball", 
 					m: 30, f: -10, a: -5, c: 5,  
 					r: "ZACK! Ein perfekter, blinder Wurf. Der Ball knallt auf den Schalter und das Licht geht aus. Chantal quiekt panisch auf und flüchtet vor dem vermeintlichen 'Poltergeist'. Du sinkst grinsend zurück in den Schlaf."  
+				}, 
+				{  
+					t: "Mit Panzertape eine Schlafmaske bauen", 
+					req: "tape", 
+					m: 45, f: -15, a: 5, c: 0,  
+					r: "Streiten kostet nur Energie. Du reißt dir Tape ab und klebst es dir als Maske über die Augen. Chantal macht ein kicherndes Foto von dir für Instagram, aber das ist dir egal – du kannst weiter schlafen."  
 				} 
 			] 
 		},
@@ -900,6 +900,11 @@ export const lunch = [
 			text: "Chantal fängt dich mit dem Teller in der Hand ab: 'Wir machen JETZT das Team-Foto für die Karriereseite! Alle sind schon draußen im Innenhof!' Draußen sind es sechs Grad. Dein Essen ist warm. Beides wird sich in den nächsten zwanzig Minuten ändern.",
 			opts: [
 				{
+					t: "Kevin vorschicken, er hat mehr Haare",
+					m: 10, f: 10, a: 0, c: 10,
+					r: "Kevin ist begeistert und steht auf dem finalen Bild in der vordersten Reihe, Bildunterschrift: 'Unsere IT'. Er ist im dritten Lehrmonat. Auf der Karriereseite ist er jetzt das Gesicht deiner Abteilung, und zwei Bewerbungen kommen mit der Anrede 'Sehr geehrter Herr Kevin' herein."
+				},
+				{
 					t: "Mit Kopfhörern so tun, als hättest du nichts gehört",
 					req: "headphones",
 					m: 5, f: 15, a: -15, c: 5,
@@ -914,11 +919,6 @@ export const lunch = [
 					t: "Ablehnen: Pause ist Pause",
 					m: 5, f: 5, a: -10, c: 20,
 					r: "Du isst in Ruhe zu Ende. Auf dem Foto fehlt die IT vollständig - was niemandem auffällt, bis Dr. Wichtig es sechs Wochen später auf der fertigen Karriereseite bemerkt und in der Abteilungsrunde fragt, ob 'die IT sich nicht als Teil des Teams sieht'. Die Frage klingt harmlos. Sie ist es nicht."
-				},
-				{
-					t: "Kevin vorschicken, er hat mehr Haare",
-					m: 10, f: 10, a: 0, c: 10,
-					r: "Kevin ist begeistert und steht auf dem finalen Bild in der vordersten Reihe, Bildunterschrift: 'Unsere IT'. Er ist im dritten Lehrmonat. Auf der Karriereseite ist er jetzt das Gesicht deiner Abteilung, und zwei Bewerbungen kommen mit der Anrede 'Sehr geehrter Herr Kevin' herein."
 				}
 			]
 		},

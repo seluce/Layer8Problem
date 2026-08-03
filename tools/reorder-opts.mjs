@@ -32,6 +32,10 @@ const DATEIEN = [
 
 // Was unten bleibt. Bewusst am Anfang des Textes verankert, damit
 // "Ignorieren" trifft, aber "Ignorieren ist keine Option" nicht.
+/** Die Pools benennen die Beschriftung unterschiedlich: Ereignisse nutzen t,
+ *  E-Mails btn. Wer nur eines liest, behandelt eine ganze Datei blind. */
+const beschriftung = (o) => o.t ?? o.btn ?? '';
+
 const ABBRUCH = /^\s*\[?\s*(System:\s*)?(Ignorieren|Löschen|Auflegen|Abbrechen|Wegwerfen|Nichts tun|Nichts sagen|Weitergehen|Wortlos auflegen|Sofort auflegen|Kommentarlos|Zuklappen|Schließen|Abwimmeln|Vorbeigehen|Nicht antworten|Nicht mehr antworten)/i;
 
 /** Zerlegt den Inhalt eines Array-Literals in seine Elemente, ohne die
@@ -117,7 +121,7 @@ for (const datei of DATEIEN) {
         const teile = roh.map(zerlegen);
         const feste = [], frei = [];
         ev.opts.forEach((o, i) => {
-            const abbruch = o.ignoreEmail === true || ABBRUCH.test(o.t ?? '');
+            const abbruch = o.ignoreEmail === true || ABBRUCH.test(beschriftung(o));
             (abbruch ? feste : frei).push(i);
         });
         angenagelt += feste.length;
@@ -127,8 +131,18 @@ for (const datei of DATEIEN) {
         let neu = frei;
         if (frei.length >= 2) {
             // Günstigste Option: geringste Summe aus Faulheit, Aggro und Radar.
+            //
+            // Bei Gleichstand entscheidet der Text, nicht die Position. Das ist
+            // der Unterschied zwischen "wiederholbar" und "wandert bei jedem
+            // Lauf weiter": Nähme man einfach die erste der gleich teuren
+            // Optionen, wäre das nach der ersten Rotation eine andere, und der
+            // nächste Lauf würde erneut drehen. So bleibt es dieselbe Option,
+            // egal wo sie gerade steht.
             const kosten = frei.map(i => (ev.opts[i].f ?? 0) + (ev.opts[i].a ?? 0) + (ev.opts[i].c ?? 0));
-            const beste = kosten.indexOf(Math.min(...kosten));
+            const min = Math.min(...kosten);
+            const gleichauf = frei.map((_, k) => k).filter(k => kosten[k] === min);
+            const beste = gleichauf.reduce((a, b) =>
+                beschriftung(ev.opts[frei[a]]) <= beschriftung(ev.opts[frei[b]]) ? a : b);
 
             const n = frei.length;
             zaehler[n] = (zaehler[n] ?? 0);

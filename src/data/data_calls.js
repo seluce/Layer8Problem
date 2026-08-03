@@ -110,9 +110,9 @@ export const calls = [
 		title: "Die Sekretärin (Wütend)",
 		text: "Gabi vom Empfang brüllt ins Telefon: 'Der Drucker macht Geräusche wie eine sterbende Kaffeemühle! Ich habe seit heute Morgen keinen Kaffee und jetzt das! Tu was, sonst fliegt das Ding aus dem Fenster!'",
 		opts: [
-			{ t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", rep: { "Gabi": 5 }, r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 },
 			{ t: "Vortrag halten", next: "call_sekretary_rage", rep: { "Gabi": -10 }, r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 },
-			{ t: "Donut anbieten", req: "donut", rep: { "Gabi": 10 }, r: "Du opferst deinen Notfall-Donut. Gabi beißt rein, ihr Blutzucker steigt, die Wut sinkt. Der Drucker ist immer noch kaputt, aber sie ignoriert es jetzt.", m: 10, f: 10, a: -20, c: 5 }
+			{ t: "Donut anbieten", req: "donut", rep: { "Gabi": 10 }, r: "Du opferst deinen Notfall-Donut. Gabi beißt rein, ihr Blutzucker steigt, die Wut sinkt. Der Drucker ist immer noch kaputt, aber sie ignoriert es jetzt.", m: 10, f: 10, a: -20, c: 5 },
+			{ t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", rep: { "Gabi": 5 }, r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 }
 		]
 	},
 	{
@@ -377,6 +377,12 @@ export const calls = [
 		text: "Eine eiskalte Stimme: 'Hier ist Müller-Lüdenscheid von der KPMG. Wir prüfen Ihre Lizenzierung. Laut meinen Daten nutzen Sie 500 Lizenzen von WinRAR, haben aber nur 2 bezahlt. Erklären Sie das, bevor ich den Bericht an Ihren Vorstand sende.'",
 		opts: [
 			{ 
+				t: "Bestechung: 'Möchten Sie einen Donut?'",
+				req: "donut", 
+				m: 10, f: 0, a: 0, c: -10, 
+				r: "Er zögert am Telefon. Du hörst ihn schlucken. 'Ist das... Schoko-Guss?' ... Das Thema ist plötzlich vom Tisch. Ein billiger Preis für Freiheit." 
+			},
+			{ 
 				t: "Behaupten: 'Das sind alles nur Test-Server!'",
 				m: 20, f: 10, a: 10, c: 20, 
 				next: "path_audit_testserver",
@@ -387,12 +393,6 @@ export const calls = [
 				rep: { "Dr. Wichtig": -15 },
 				m: 60, f: -20, a: 0, c: 10, 
 				r: "Du gehst die Liste reumütig mit ihm durch. Es dauert ewig. Du hast rechtlich alles sauber gelöst, aber der Chef tobt wegen der Rechnung über 15.000€." 
-			},
-			{ 
-				t: "Bestechung: 'Möchten Sie einen Donut?'",
-				req: "donut", 
-				m: 10, f: 0, a: 0, c: -10, 
-				r: "Er zögert am Telefon. Du hörst ihn schlucken. 'Ist das... Schoko-Guss?' ... Das Thema ist plötzlich vom Tisch. Ein billiger Preis für Freiheit." 
 			},
 			{ 
 				t: "Wortlos auflegen & Server formatieren",
@@ -469,12 +469,6 @@ export const calls = [
 		text: "Müller am Apparat: 'Mein Internet geht immer an und aus wenn ich atme! Das Kabel wackelt in der Dose. Können Sie nicht herkommen?' Du hast keine Lust auf Laufen.",
 		opts: [
 			{ 
-				t: "Anweisung: 'Kabelbinder am Tischbein.'", 
-				next: "loose_tied",
-				m: 5, f: 0, a: 0, c: 0, 
-				r: "'Moment...' Rascheln. 'Okay, ich habe es am Tischbein festgezurrt. Zugentlastung, wie Sie sagten.' Es scheint zu halten." 
-			},
-			{ 
 				t: "Lüge: 'Wir schalten auf WLAN-Strom um.'", 
 				m: 2, f: 10, a: 10, c: 5,
 				r: "'Ach, moderne Technik!' Müller ist begeistert. 'Dann brauche ich das Kabel ja nicht mehr.' *Klick*. Er legt auf. Hoffentlich zieht er es nicht wirklich ab." 
@@ -484,6 +478,12 @@ export const calls = [
 				next: "loose_taped",
 				m: 5, f: 5, a: -5, c: 0, 
 				r: "'Panzertape? Habe ich da.' Du hörst ein reißendes Geräusch am Telefon. 'So. Das ganze Paket ist drauf. Das bewegt sich nie wieder.' Müller scheint zufrieden." 
+			},
+			{ 
+				t: "Anweisung: 'Kabelbinder am Tischbein.'", 
+				next: "loose_tied",
+				m: 5, f: 0, a: 0, c: 0, 
+				r: "'Moment...' Rascheln. 'Okay, ich habe es am Tischbein festgezurrt. Zugentlastung, wie Sie sagten.' Es scheint zu halten." 
 			}
 		]
 	},
@@ -2408,12 +2408,6 @@ export const calls = [
     text: "Dr. Wichtig fängt dich im Flur ab. 'Mein Sohn erzählt, unsere Firewall hätte eine NEGATIVE POLARITÄT. Warum erfahre ich sowas von einem Zwölfjährigen? Wie ernst ist es? Was kostet die Behebung?' Dein eigener Bluff steht vor dir und trägt einen Maßanzug.",
     opts: [
         {
-            t: "Ein 'Projekt Polaritätsumkehr' aufsetzen",
-            rep: { "Dr. Wichtig": 3 },
-            m: 15, f: 10, a: 0, c: -5,
-            r: "Du skizzierst mit ernster Miene einen Dreiphasenplan. Dr. Wichtig genehmigt Budget für Dinge, die du ohnehin kaufen wolltest: neue Switches, USV-Batterie, ordentliche Kabel. Die Polarität wird quartalsweise 'rekalibriert'. Es ist das ehrlichste unehrliche Projekt der Firmengeschichte."
-        },
-        {
             t: "Auflösen: Es war ein Trick gegen Junior",
             rep: { "Dr. Wichtig": 3 },
             m: 5, f: 0, a: 5, c: 0,
@@ -2423,6 +2417,12 @@ export const calls = [
             t: "'Bereits behoben. Keine Kosten entstanden.'",
             m: 5, f: 10, a: 0, c: 5,
             r: "Die Antwort, die Chefs am liebsten hören: erledigt und gratis. Dr. Wichtig nickt zufrieden. Allerdings gilt die Polarität damit als reales, gelöstes Problem - und wird in seiner nächsten Vorstandspräsentation als Beispiel für 'proaktive IT-Exzellenz' auftauchen. Mit deinem Namen."
+        },
+        {
+            t: "Ein 'Projekt Polaritätsumkehr' aufsetzen",
+            rep: { "Dr. Wichtig": 3 },
+            m: 15, f: 10, a: 0, c: -5,
+            r: "Du skizzierst mit ernster Miene einen Dreiphasenplan. Dr. Wichtig genehmigt Budget für Dinge, die du ohnehin kaufen wolltest: neue Switches, USV-Batterie, ordentliche Kabel. Die Polarität wird quartalsweise 'rekalibriert'. Es ist das ehrlichste unehrliche Projekt der Firmengeschichte."
         }
     ]
 },
@@ -2560,6 +2560,11 @@ export const calls = [
     text: "Die Firmenkarte ist leergeräumt, die Bank hat den Fall, und in deinem Kalender steht ein Termin, der nur 'Klärung' heißt. Teilnehmer: Dr. Wichtig, Frau Elster, du. Es gibt Meetings, aus denen kommt man kleiner heraus, als man hineingegangen ist.",
     opts: [
         {
+            t: "Volle Offenlegung plus Strafanzeige",
+            m: 25, f: -5, a: 15, c: -10,
+            r: "Du legst alles auf den Tisch: Hergang, Zeitpunkte, eigene Schuld, erstattete Anzeige, eingeleitete Kartensperrung. Es ist das unangenehmste Meeting deines Jahres - und das einzige Vorgehen, das dich am Ende glaubwürdig zurücklässt. Dr. Wichtig sagt nur: 'Wenigstens vertuschen Sie nicht.' Das muss reichen."
+        },
+        {
             t: "Vertuschen: 'unklare Abbuchung'",
             m: 10, f: 10, a: 5, c: 15,
             r: "Du sprichst von 'ungeklärten Buchungsvorgängen' und hoffst auf Nebel. Aber am Tisch sitzt Frau Elster, und Frau Elster hat die Abbuchungen längst minutengenau mit deiner Anrufliste abgeglichen. Sie sagt nichts. Sie legt nur einen Ausdruck auf den Tisch. Der Nebel lichtet sich sehr schnell."
@@ -2569,11 +2574,6 @@ export const calls = [
             rep: { "Frau Elster": 5 },
             m: 15, f: 0, a: 5, c: -5,
             r: "Frau Elster hört sich das Desaster an, seufzt einmal tief - und greift zum Hörer. Sie kennt bei der Bank eine Frau Krämer, persönlich, seit 2009. Acht Minuten später ist die Rückbuchung eingeleitet. 'Beim nächsten Mal', sagt sie beim Auflegen, 'rufen Sie ERST mich an.' Jawohl."
-        },
-        {
-            t: "Volle Offenlegung plus Strafanzeige",
-            m: 25, f: -5, a: 15, c: -10,
-            r: "Du legst alles auf den Tisch: Hergang, Zeitpunkte, eigene Schuld, erstattete Anzeige, eingeleitete Kartensperrung. Es ist das unangenehmste Meeting deines Jahres - und das einzige Vorgehen, das dich am Ende glaubwürdig zurücklässt. Dr. Wichtig sagt nur: 'Wenigstens vertuschen Sie nicht.' Das muss reichen."
         }
     ]
 },
@@ -3481,14 +3481,14 @@ export const calls = [
 		text: "'Vier Leute aus der alten Verteilerliste haben gemerkt, dass der Termin weg ist, und einen neuen angelegt. Er heißt \"Abstimmung (neu)\" und geht an dreiundzwanzig Personen. Sie haben mich in cc gesetzt und schreiben, die IT habe den alten versehentlich gelöscht.'\n\nVersehentlich war es nicht.",
 		opts: [
 			{
-				t: "Anbieten, an der Runde teilzunehmen",
-				m: 20, f: -5, a: 15, c: -10,
-				r: "Du gehst einmal hin. Es geht vierzig Minuten um Zuständigkeiten, dann zwanzig Minuten um den Kaffee. Am Ende bittet man dich, künftig regelmäßig zu kommen, weil deine Anwesenheit die Runde aufgewertet habe."
-			},
-			{
 				t: "Richtigstellen, dass die Serie verwaist war",
 				m: 15, f: -5, a: 10, c: -5,
 				r: "Du antwortest allen dreiundzwanzig sachlich, dass der Organisator die Firma 2022 verlassen hat. Zwei Leute bedanken sich, einer widerspricht, und der Termin bleibt trotzdem bestehen. Er hat jetzt eine Geschichte, und das reicht."
+			},
+			{
+				t: "Anbieten, an der Runde teilzunehmen",
+				m: 20, f: -5, a: 15, c: -10,
+				r: "Du gehst einmal hin. Es geht vierzig Minuten um Zuständigkeiten, dann zwanzig Minuten um den Kaffee. Am Ende bittet man dich, künftig regelmäßig zu kommen, weil deine Anwesenheit die Runde aufgewertet habe."
 			},
 			{
 				t: "Nichts sagen, der Termin ist harmlos",

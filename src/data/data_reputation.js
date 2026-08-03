@@ -98,12 +98,6 @@ export const reputation = [
         text: "Ein externer Sicherheits-Auditor versucht, sich als 'Telekom-Techniker' ins Gebäude zu schleichen (Social Engineering). Niemand schöpft Verdacht... außer Kevin. Er blockiert den Weg und verlangt Passierschein A38, genau wie du es ihm beigebracht hast.",
         opts: [
             { 
-                t: "Einschreiten & selbst übernehmen", 
-                rep: { "Kevin": -15, "Dr. Wichtig": 5 },
-                m: 5, f: -10, a: 10, c: -5, 
-                r: "Du schiebst Kevin zur Seite. 'Lass die Profis ran.' Du entlarvst den Auditor selbst. Der Chef lobt dich, aber Kevin murmelt: 'Toll, ich hatte ihn doch schon...' Er fühlt sich nutzlos." 
-            },
-            { 
                 t: "Stolz eingreifen: 'Er hat Recht.'", 
                 rep: { "Dr. Wichtig": 15, "Kevin": 10 },
                 m: 10, f: 0, a: -5, c: -10, 
@@ -114,6 +108,12 @@ export const reputation = [
                 rep: { "Kevin": 20, "Dr. Wichtig": 5 },
                 m: 5, f: 5, a: -10, c: -10, 
                 r: "Du lehnst dich zurück und schaust zu, wie Kevin den Auditor mit Vorschriften zermürbt. Der Mann geht fast weinend. Kevin kommt zu dir: 'Hab ich das gut gemacht?' Ja, hat er." 
+            },
+            { 
+                t: "Einschreiten & selbst übernehmen", 
+                rep: { "Kevin": -15, "Dr. Wichtig": 5 },
+                m: 5, f: -10, a: 10, c: -5, 
+                r: "Du schiebst Kevin zur Seite. 'Lass die Profis ran.' Du entlarvst den Auditor selbst. Der Chef lobt dich, aber Kevin murmelt: 'Toll, ich hatte ihn doch schon...' Er fühlt sich nutzlos." 
             }
         ]
     },
@@ -271,12 +271,6 @@ export const reputation = [
         text: "Dein zweiter Monitor bleibt schwarz. Das HDMI-Kabel fehlt. Du blickst rüber zu Kevin. Er hat jetzt drei Monitore aufgebaut und zockt 'Fortnite'. Dein Kabel steckt offensichtlich in seiner Konsole.",
         opts: [
             { 
-                t: "Sein WLAN-Passwort ändern", 
-                rep: { "Kevin": -10 },
-                m: 5, f: 5, a: -10, c: 0, 
-                r: "Du sperrst seine MAC-Adresse. Er behält das Kabel, aber ohne Internet bringt ihm das nichts. Er flucht lautstark. Gerechtigkeit." 
-            },
-            { 
                 t: "Kabel wortlos zurückholen (Gewalt)", 
                 rep: { "Kevin": -5 },
                 m: 5, f: 0, a: 10, c: 0, 
@@ -287,6 +281,12 @@ export const reputation = [
                 rep: { "Kevin": -20, "Dr. Wichtig": 5 },
                 m: 15, f: 0, a: -5, c: 0, 
                 r: "Der Chef kommt und faltet Kevin zusammen. Kevin muss das Kabel zurückbringen und sich entschuldigen. Er flüstert dir beim Rausgehen zu: 'Snitch.'" 
+            },
+            { 
+                t: "Sein WLAN-Passwort ändern", 
+                rep: { "Kevin": -10 },
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du sperrst seine MAC-Adresse. Er behält das Kabel, aber ohne Internet bringt ihm das nichts. Er flucht lautstark. Gerechtigkeit." 
             }
         ]
     },
@@ -464,12 +464,6 @@ export const reputation = [
         text: "Kevin kommt mit einer knallgrünen, unbeschrifteten Dose in dein Büro. 'Bro, ich hab diesen Energy-Drink im Darknet bestellt. Er heißt 'Nuclear Sludge'. Willst du mal probieren? Ich trau mich nicht als Erster.'",
         opts: [
             { 
-                t: "List: 'Stell ihn dem Chef auf den Tisch.'", 
-                rep: { "Kevin": 10, "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 5, c: 10, 
-                r: "Ihr schleicht euch ins Chefbüro und lasst die Dose dort. Eine Stunde später brüllt der Chef auf dem Flur irgendwas von 'Synergie-Explosion'. Ihr kichert im Serverraum." 
-            },
-            { 
                 t: "Mutig: 'Klar, gib her.'", 
                 rep: { "Kevin": 5 },
                 m: 10, f: -15, a: 10, c: 0, 
@@ -480,6 +474,12 @@ export const reputation = [
                 rep: { "Kevin": -2 },
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Kevin zuckt mit den Schultern. 'Feigling.' Er trinkt ihn selbst und zittert danach für 2 Stunden unkontrolliert am Schreibtisch." 
+            },
+            { 
+                t: "List: 'Stell ihn dem Chef auf den Tisch.'", 
+                rep: { "Kevin": 10, "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "Ihr schleicht euch ins Chefbüro und lasst die Dose dort. Eine Stunde später brüllt der Chef auf dem Flur irgendwas von 'Synergie-Explosion'. Ihr kichert im Serverraum." 
             }
         ]
     },
@@ -718,11 +718,6 @@ export const reputation = [
         text: "Chantal kommt mit zwei Bechern vorbei. 'Hey! Hier ist ein 'Green-Detox-Matcha-Latte' für dich. Wegen neulich. Du hattest Recht, mein Teint war super im Call. New York war begeistert.'",
         opts: [
             { 
-                t: "Ablehnen: 'Lieber Kaffee.'", 
-                m: 2, f: 0, a: 0, c: 0, 
-                r: "Chantal zuckt mit den Schultern. 'Dein Verlust. Dann kriegt ihn der Hund.' Sie geht weiter. Du bleibst bei deiner schwarzen Plörre." 
-            },
-            { 
                 t: "Fragen: 'Ist das Bio?'", 
                 rep: { "Chantal": 5 },
                 m: 10, f: 10, a: -10, c: 5, 
@@ -734,6 +729,11 @@ export const reputation = [
                 rep: { "Chantal": 5 },
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Es schmeckt nach Wiese und Algen. Aber Chantal lächelt erwartungsvoll. 'Mmmh, gesund!', lügst du. Du fühlst dich seltsam energiegeladen.)" 
+            },
+            { 
+                t: "Ablehnen: 'Lieber Kaffee.'", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Chantal zuckt mit den Schultern. 'Dein Verlust. Dann kriegt ihn der Hund.' Sie geht weiter. Du bleibst bei deiner schwarzen Plörre." 
             }
         ]
     },
@@ -1418,11 +1418,6 @@ export const reputation = [
         text: "Dein zweiter Monitor ist schwarz. Der Stecker wurde gezogen und mit einem Kabelbinder gesichert. Daran klebt ein Zettel von Egon: 'Nicht genehmigter Verbraucher. Siehe Hausordnung §9.'",
         opts: [
             { 
-                t: "Verlängerungskabel aus dem Flur holen", 
-                m: 5, f: 5, a: -5, c: 0, 
-                r: "Du legst eine fliegende Leitung quer durch den Flur. Jetzt ist es eine Stolperfalle. Egon wird toben, aber du hast Strom." 
-            },
-            { 
                 t: "Beschwerde beim Chef", 
                 rep: { "Egon": -5 },
                 m: 15, f: 0, a: 5, c: -5, 
@@ -1432,6 +1427,11 @@ export const reputation = [
                 t: "Kabelbinder aufschneiden", 
                 m: 10, f: 0, a: 10, c: 0, 
                 r: "Du fummelst 10 Minuten mit der Schere rum. Du hast den Monitor wieder, aber Egon hat erreicht, was er wollte: Dich nerven." 
+            },
+            { 
+                t: "Verlängerungskabel aus dem Flur holen", 
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du legst eine fliegende Leitung quer durch den Flur. Jetzt ist es eine Stolperfalle. Egon wird toben, aber du hast Strom." 
             }
         ]
     },
@@ -1444,6 +1444,12 @@ export const reputation = [
         text: "Vor deinem Büro steht jetzt permanent ein gelbes Warnschild 'Vorsicht Rutschgefahr'. Egon hat zusätzlich ein Strichmännchen draufgemalt, das auf die Nase fällt. Es sieht dir ähnlich.",
         opts: [
             { 
+                t: "Schild verstecken",
+                rep: { "Egon": -2 }, 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du stellst es in die Besenkammer. 5 Minuten später steht es wieder da. Egon hat mehr Ausdauer als du." 
+            },
+            { 
                 t: "Bild übermalen", 
                 rep: { "Egon": -5 },
                 m: 5, f: 5, a: -5, c: 5, 
@@ -1454,12 +1460,6 @@ export const reputation = [
                 rep: { "Egon": 5 },
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du grinst Egon an: 'Gut getroffen.' Er brummt überrascht: 'Humor hat er zumindest.' Das Eis taut minimal." 
-            },
-            { 
-                t: "Schild verstecken",
-                rep: { "Egon": -2 }, 
-                m: 2, f: 0, a: 0, c: 0, 
-                r: "Du stellst es in die Besenkammer. 5 Minuten später steht es wieder da. Egon hat mehr Ausdauer als du." 
             }
         ]
     },
@@ -2200,12 +2200,6 @@ export const reputation = [
         text: "Der Chef steht stumm hinter deinem Stuhl und beobachtet dich beim Tippen. Nach zwei Minuten räuspert er sich. 'Sie nutzen den kleinen Finger gar nicht für die Shift-Taste. Das ist ineffizient.'",
         opts: [
             { 
-                t: "Aushalten & Nicken", 
-                rep: { "Dr. Wichtig": 5 },
-                m: 10, f: -5, a: 15, c: 0, 
-                r: "Du zwingst dich zu einem Lächeln. 'Werde ich üben, Chef.' Er klopft dir gönnerhaft auf die Schulter und geht. Du kochst innerlich." 
-            },
-            { 
                 t: "Patzig: 'Ich arbeite so am besten.'", 
                 rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: -5, c: 10, 
@@ -2215,6 +2209,12 @@ export const reputation = [
                 t: "Demonstrativ das 10-Finger-System googeln", 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Du öffnest ein Tipp-Tutorial. Er schaut kurz zu. 'Sehen Sie? Weiterbildung on the job.' Er ist zufrieden, du verlierst Zeit." 
+            },
+            { 
+                t: "Aushalten & Nicken", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, f: -5, a: 15, c: 0, 
+                r: "Du zwingst dich zu einem Lächeln. 'Werde ich üben, Chef.' Er klopft dir gönnerhaft auf die Schulter und geht. Du kochst innerlich." 
             }
         ]
     },
@@ -2314,12 +2314,6 @@ export const reputation = [
         text: "Frau Elster winkt dich in ihr Büro und schließt die Jalousien. 'Das bleibt unter uns. Mein digitaler Bilderrahmen... er zeigt Rüdiger nicht mehr an. Wenn ich Rüdiger nicht sehe, werde ich... ungemütlich. Das ist ein nicht-autorisiertes Privatgerät. Helfen Sie mir.'",
         opts: [
             { 
-                t: "Helfen: 'Formatierung gefixt. Da ist er wieder.'", 
-                rep: { "Frau Elster": 15 },
-                m: 20, f: -5, a: 10, c: -5, 
-                r: "Rüdiger erscheint in HD. Frau Elster lächelt (es sieht gruselig aus). 'Er ist so majestätisch. Danke. Ich werde Ihre nächste Spesenabrechnung... wohlwollend prüfen.'" 
-            },
-            { 
                 t: "Ablehnen: 'Private Hardware ist verboten.'", 
                 rep: { "Frau Elster": -10 },
                 m: 5, f: 0, a: 5, c: -5, 
@@ -2330,6 +2324,12 @@ export const reputation = [
                 rep: { "Frau Elster": -20 },
                 m: 5, f: 0, a: -10, c: 10, 
                 r: "Totenstille. 'Rüdiger ist flauschig, nicht dick!' Sie wirft dich raus. Das war ein fataler Fehler." 
+            },
+            { 
+                t: "Helfen: 'Formatierung gefixt. Da ist er wieder.'", 
+                rep: { "Frau Elster": 15 },
+                m: 20, f: -5, a: 10, c: -5, 
+                r: "Rüdiger erscheint in HD. Frau Elster lächelt (es sieht gruselig aus). 'Er ist so majestätisch. Danke. Ich werde Ihre nächste Spesenabrechnung... wohlwollend prüfen.'" 
             }
         ]
     },
@@ -2564,12 +2564,6 @@ export const reputation = [
         text: "Du legst den verknitterten, staubigen Parkschein triumphierend auf ihren Tisch. 'Hier! 1,50 Euro! Sind Sie jetzt zufrieden?' Frau Elster nimmt ihn mit spitzen Fingern. 'Er ist geknickt. Und da ist ein Kaffeefleck. Den muss ich erst bügeln, bevor ich ihn abhefte.'",
         opts: [
             { 
-                t: "Schreien: 'HEFTEN SIE IHN EINFACH AB!'", 
-                rep: { "Frau Elster": -5, "Dr. Wichtig": -2 },
-                m: 5, f: 0, a: -10, c: 10, 
-                r: "Du verlierst die Nerven. Sie zuckt zusammen. 'Kein Grund für diesen Ton.' Sie locht ihn ein (schief). Rache im Kleinen." 
-            },
-            { 
                 t: "Kommentar: 'Rüdiger würde ihn fressen.'", 
                 rep: { "Frau Elster": 5 },
                 m: 5, f: 5, a: -5, c: 0, 
@@ -2580,6 +2574,12 @@ export const reputation = [
                 rep: { "Frau Elster": 10 },
                 m: 10, f: -10, a: 15, c: 0,
                 r: "Du stehst im Pausenraum und bügelst einen Kassenzettel. Die Kollegen lachen dich aus. Elster nickt zufrieden: 'Sehr ordentlich, Müller.'" 
+            },
+            { 
+                t: "Schreien: 'HEFTEN SIE IHN EINFACH AB!'", 
+                rep: { "Frau Elster": -5, "Dr. Wichtig": -2 },
+                m: 5, f: 0, a: -10, c: 10, 
+                r: "Du verlierst die Nerven. Sie zuckt zusammen. 'Kein Grund für diesen Ton.' Sie locht ihn ein (schief). Rache im Kleinen." 
             }
         ]
     },
@@ -2758,6 +2758,12 @@ export const reputation = [
         text: "Frau Elster steht vor deinem Schreibtisch und hält deinen Tacker hoch. 'Inventarnummer 402-A. Der gehört in Raum 12. Warum befindet er sich auf Ihrem Schreibtisch?'",
         opts: [
             { 
+                t: "Entschuldigen & zurückbringen", 
+                rep: { "Frau Elster": 5 },
+                m: 10, f: -5, a: 10, c: 0, 
+                r: "Du stehst auf und trägst den Tacker persönlich zwei Räume weiter. Frau Elster nickt. 'Ordnung muss sein.' Deine Geduld wird auf die Probe gestellt." 
+            },
+            { 
                 t: "Diskutieren: 'Ich habe den schon immer!'", 
                 rep: { "Frau Elster": -10 },
                 m: 5, f: 0, a: 10, c: 5, 
@@ -2768,12 +2774,6 @@ export const reputation = [
                 rep: { "Frau Elster": -5 },
                 m: 2, f: 5, a: -5, c: 5, 
                 r: "Du tippst einfach weiter. Sie schnaubt, nimmt den Tacker und trägt dich in ihre schwarze Liste ein." 
-            },
-            { 
-                t: "Entschuldigen & zurückbringen", 
-                rep: { "Frau Elster": 5 },
-                m: 10, f: -5, a: 10, c: 0, 
-                r: "Du stehst auf und trägst den Tacker persönlich zwei Räume weiter. Frau Elster nickt. 'Ordnung muss sein.' Deine Geduld wird auf die Probe gestellt." 
             }
         ]
     },
@@ -2873,6 +2873,12 @@ export const reputation = [
         text: "Markus stürmt rein. Er knallt seine Mappe auf deinen Tisch. 'Der Kunde hat abgesagt. Er wollte Innovation sehen, ich konnte ihm nur Sicherheitsprotokolle zeigen. Wissen Sie, was Sie der Firma gerade gekostet haben?!'",
         opts: [
             { 
+                t: "Spöttisch: 'Tja, kein Skill, kein Deal.'", 
+                rep: { "Markus": -20 },
+                m: 5, f: 5, a: -10, c: 10, 
+                r: "Das war zu viel. 'Passen Sie auf, Müller. Der Wind kann sich drehen.' Du hast jetzt einen Feind im Vertrieb." 
+            },
+            { 
                 t: "Entschuldigen: 'Vorschrift ist Vorschrift.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Markus winkt ab. 'Langweiler.' Er geht, um jemanden beim Golfspielen zu bestechen." 
@@ -2882,12 +2888,6 @@ export const reputation = [
                 rep: { "Dr. Wichtig": 5, "Markus": -5 },
                 m: 10, f: 0, a: 10, c: -5, 
                 r: "'Pff. Juristen-Geschwätz. Erfolg braucht Risiko!' Er ist immer noch sauer, aber dein Argument sitzt." 
-            },
-            { 
-                t: "Spöttisch: 'Tja, kein Skill, kein Deal.'", 
-                rep: { "Markus": -20 },
-                m: 5, f: 5, a: -10, c: 10, 
-                r: "Das war zu viel. 'Passen Sie auf, Müller. Der Wind kann sich drehen.' Du hast jetzt einen Feind im Vertrieb." 
             }
         ]
     },
@@ -2900,6 +2900,12 @@ export const reputation = [
         text: "Markus lehnt an der Tür. 'Müller! Excel war der Hammer! Der Kunde dachte, die bunten Zellen sind neuronale Netze. Wir haben den Vertrag! Aber jetzt müssen wir das wirklich bauen. Können Sie Excel KI beibringen?'",
         opts: [
             { 
+                t: "Kevin beauftragen", 
+                rep: { "Kevin": -10, "Markus": 5 },
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "'Kevin macht das.' Kevin sitzt jetzt weinend vor einer Tabelle mit 10.000 Zeilen. Markus ist zufrieden." 
+            },
+            { 
                 t: "Lügen: 'Klar, dauert aber 2 Jahre.'", 
                 rep: { "Markus": 10 },
                 m: 5, f: 10, a: -5, c: 0, 
@@ -2910,12 +2916,6 @@ export const reputation = [
                 rep: { "Markus": -5 },
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "'Nicht witzig. Jetzt muss ich dem Kunden erklären, warum die KI abstürzt, wenn man durch Null teilt.' Er geht gestresst." 
-            },
-            { 
-                t: "Kevin beauftragen", 
-                rep: { "Kevin": -10, "Markus": 5 },
-                m: 5, f: 5, a: 0, c: 0, 
-                r: "'Kevin macht das.' Kevin sitzt jetzt weinend vor einer Tabelle mit 10.000 Zeilen. Markus ist zufrieden." 
             }
         ]
     },
@@ -3483,13 +3483,6 @@ export const reputation = [
         text: "Gabi winkt dich heran. Sie schaut sich verschwörerisch um. 'Psst. Hier ist ein Amazon-Paket für dich. Eigentlich ist private Post verboten und ich müsste es zurückschicken oder verbrennen. Aber es rasselt so interessant.'",
         opts: [
             { 
-                t: "Annehmen & Danken", 
-                next: "path_gabi_secret",
-                rep: { "Gabi": 5 },
-                m: 5, f: 5, a: -5, c: 5,
-                r: "'Danke Gabi!' Du lässt es schnell verschwinden. Gabi zwinkert. 'Ich habe nichts gesehen.'" 
-            },
-            { 
                 t: "Teilen: 'Ist Schokolade drin.'", 
                 next: "path_gabi_candy",
                 rep: { "Gabi": 10 },
@@ -3501,6 +3494,13 @@ export const reputation = [
                 next: "path_gabi_rule",
                 m: 5, f: 0, a: 5, c: -5,
                 r: "Gabi rollt mit den Augen. 'Langweiler. Dann fülle ich eben das Retouren-Formular aus.' Sie stempelt es aggressiv ab." 
+            },
+            { 
+                t: "Annehmen & Danken", 
+                next: "path_gabi_secret",
+                rep: { "Gabi": 5 },
+                m: 5, f: 5, a: -5, c: 5,
+                r: "'Danke Gabi!' Du lässt es schnell verschwinden. Gabi zwinkert. 'Ich habe nichts gesehen.'" 
             }
         ]
     },
@@ -3623,6 +3623,11 @@ export const reputation = [
         text: "Du wartest dringend auf Ersatzteile für den Server. Du fragst am Empfang nach. Gabi feilt sich die Nägel. 'Ach, der UPS-Mann? Den habe ich weggeschickt. 'Empfänger unbekannt'. Sie sind hier ja kaum am Platz, da dachte ich, Sie arbeiten gar nicht mehr hier.'",
         opts: [
             { 
+                t: "Selbst zum Depot fahren", 
+                m: 60, f: -20, a: 20, c: 0,
+                r: "Du fährst 1 Stunde durch die Stadt, um das Paket zu holen. Du hast das Teil, aber dein Tag ist gelaufen." 
+            },
+            { 
                 t: "Toben & Schreien", 
                 rep: { "Gabi": -5, "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: -10, c: 10,
@@ -3632,11 +3637,6 @@ export const reputation = [
                 t: "Beim Chef beschweren", 
                 m: 10, f: 0, a: 5, c: 0, 
                 r: "Der Chef zuckt mit den Schultern. 'Gabi macht nur ihren Job. Klären Sie das. Ich brauche Harmonie im Foyer.'" 
-            },
-            { 
-                t: "Selbst zum Depot fahren", 
-                m: 60, f: -20, a: 20, c: 0,
-                r: "Du fährst 1 Stunde durch die Stadt, um das Paket zu holen. Du hast das Teil, aber dein Tag ist gelaufen." 
             }
         ]
     },
@@ -3676,12 +3676,6 @@ export const reputation = [
         text: "Eine E-Mail von Gabi: Betreff: 'Dieb im Foyer'. Im Anhang ein körniges Überwachungsvideo, wie du hinter der Pflanze hervorspringst und das Paket nimmst. Text: 'Soll ich das an HR weiterleiten oder bringen Sie mir Schokolade?'",
         opts: [
             { 
-                t: "Gegenangriff: 'Filmen ist illegal!'", 
-                rep: { "Gabi": -10, "Dr. Wichtig": -5 },
-                m: 10, f: 0, a: 5, c: 10, 
-                r: "Du drohst mit dem Betriebsrat. Gabi wird blass, aber sie hasst dich jetzt abgrundtief. 'Passen Sie bloß auf, Müller...'" 
-            },
-            { 
                 t: "Schokolade bringen (Erpressung)", 
                 rep: { "Gabi": 5 },
                 m: 10, f: 0, a: 10, c: 0, 
@@ -3692,6 +3686,12 @@ export const reputation = [
                 rep: { "Gabi": -5 },
                 m: 5, f: 5, a: 0, c: 5, 
                 r: "'Netter Versuch.' Sie behält das Video. Du bist jetzt erpressbar. Das wird noch nachhallen." 
+            },
+            { 
+                t: "Gegenangriff: 'Filmen ist illegal!'", 
+                rep: { "Gabi": -10, "Dr. Wichtig": -5 },
+                m: 10, f: 0, a: 5, c: 10, 
+                r: "Du drohst mit dem Betriebsrat. Gabi wird blass, aber sie hasst dich jetzt abgrundtief. 'Passen Sie bloß auf, Müller...'" 
             }
         ]
     },
@@ -3702,6 +3702,13 @@ export const reputation = [
         reqRep: { "Gabi": -60 },
         text: "Du wunderst dich, warum dein Telefon tot ist. Gabi hat deine Durchwahl auf 'Nummer nicht vergeben' umgeleitet. Auch Besucher für die IT werden abgewimmelt mit: 'Herr Müller? Der ist leider verstorben.'",
         opts: [
+            { 
+                t: "Angebot: 'Ich weiß, wer die Milch klaut.'", 
+                next: "path_gabi_spy",
+                rep: { "Gabi": 10 },
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Gabi hält inne. Ihre Augen blitzen. 'Informationen? Interessant. Komm in mein Büro. Wir müssen reden.'" 
+            },
             { 
                 t: "Tech-Krieg: Ihre Telefonanlage hacken", 
                 next: "path_gabi_war",
@@ -3715,13 +3722,6 @@ export const reputation = [
                 rep: { "Gabi": 5 },
                 m: 15, f: 0, a: 10, c: 0, 
                 r: "Du kaufst einen Strauß an der Tanke. Gabi rümpft die Nase. 'Nelken? Bin ich tot? Aber gut, ich schalte die Leitung wieder frei. Zur Probe.'" 
-            },
-            { 
-                t: "Angebot: 'Ich weiß, wer die Milch klaut.'", 
-                next: "path_gabi_spy",
-                rep: { "Gabi": 10 },
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Gabi hält inne. Ihre Augen blitzen. 'Informationen? Interessant. Komm in mein Büro. Wir müssen reden.'" 
             }
         ]
     },
@@ -3734,11 +3734,6 @@ export const reputation = [
         text: "Die Lautsprecheranlage knackt. Gabis Stimme hallt durch das ganze Gebäude: 'Achtung! Herr Müller aus der IT lädt alle Kollegen zu Freibier und Pizza ein! Jetzt sofort in seinem Büro! Danke, Herr Müller!'",
         opts: [
             { 
-                t: "Flucht durchs Fenster", 
-                m: 5, f: 10, a: 0, c: 0, 
-                r: "Du kletterst raus. Feierabend. Sollen die doch suchen." 
-            },
-            { 
                 t: "Tür verbarrikadieren", 
                 m: 10, f: 5, a: 20, c: 0, 
                 r: "Die Horde rüttelt an deiner Tür. 'Bier! Bier!' Du sitzt im Dunkeln und schwitzt. Gabi hat gewonnen." 
@@ -3748,6 +3743,11 @@ export const reputation = [
                 rep: { "Gabi": -20, "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: -10, c: 20,
                 r: "Du hackst dich ins PA-System. 'Korrektur! Gabi feiert ihren Lotto-Gewinn am Empfang!' Jetzt rennen alle zu ihr. Chaos pur." 
+            },
+            { 
+                t: "Flucht durchs Fenster", 
+                m: 5, f: 10, a: 0, c: 0, 
+                r: "Du kletterst raus. Feierabend. Sollen die doch suchen." 
             }
         ]
     },
@@ -3842,16 +3842,16 @@ export const reputation = [
         text: "Du holst Post am Empfang. Gabi beugt sich über den Tresen und flüstert: 'Hast du gehört? Chantal vom Marketing hat heute Morgen heimlich auf dem Klo geweint, weil ihr Smoothie ausverkauft war.'",
         opts: [
             { 
-                t: "Zuhören & Mitlästern", 
-                rep: { "Gabi": 10 },
-                m: 15, f: 10, a: -10, c: 0, 
-                r: "Ihr analysiert die psychologische Stabilität der Marketing-Abteilung. Es ist völlig unproduktiv, aber ungemein befriedigend." 
-            },
-            { 
                 t: "Mitleid: 'Oh, die Arme.'", 
                 rep: { "Gabi": -5 },
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Gabi rümpft die Nase. 'Pff, Mitleid? Das ist die natürliche Auslese im Büro.' Du bist nicht toxisch genug für ihren Flurfunk." 
+            },
+            { 
+                t: "Zuhören & Mitlästern", 
+                rep: { "Gabi": 10 },
+                m: 15, f: 10, a: -10, c: 0, 
+                r: "Ihr analysiert die psychologische Stabilität der Marketing-Abteilung. Es ist völlig unproduktiv, aber ungemein befriedigend." 
             },
             { 
                 t: "Abwimmeln: 'Gerüchte interessieren mich nicht.'", 
