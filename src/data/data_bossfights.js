@@ -29,8 +29,8 @@ export const bossfights = [
 		text: "Der CEO präsentiert live vor 5000 Investoren. Das Bild friert ein! Er ruft dich auf dem Handy an und brüllt: 'MACHEN SIE DASS ES GEHT! JETZT SOFORT!'",
 		timer: 12,
 		opts: [
-			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
-			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
+			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." },
+			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
 	},
@@ -51,8 +51,8 @@ export const bossfights = [
 		text: "Stille im Serverraum. Die Kühlung ist tot. Die Temperatur steigt rasant! 40°C... 45°C... Bei 50°C schmelzen die CPUs!",
 		timer: 10,
 		opts: [
-			{ t: "Fenster einschlagen", req: "hammer", m: 5, f: 0, a: 20, c: 10, r: "Klirr! Eiskalte Luft strömt herein (und ein paar Tauben). Hardware gerettet, Fenster kaputt." },
-			{ t: "Not-Aus drücken", m: 5, f: 5, a: 10, c: 25, r: "Alles fährt runter. Die Stille ist gespenstisch. Hardware sicher, aber die Firma steht still." }
+			{ t: "Not-Aus drücken", m: 5, f: 5, a: 10, c: 25, r: "Alles fährt runter. Die Stille ist gespenstisch. Hardware sicher, aber die Firma steht still." },
+			{ t: "Fenster einschlagen", req: "hammer", m: 5, f: 0, a: 20, c: 10, r: "Klirr! Eiskalte Luft strömt herein (und ein paar Tauben). Hardware gerettet, Fenster kaputt." }
 		],
 		fail: { m: 120, f: -20, a: 50, c: 50, r: "KERN-SCHMELZE! Es riecht nach verschmortem Plastik. Der Feuermelder geht los. Renn!" }
 	},
@@ -134,12 +134,6 @@ export const bossfights = [
 		timer: 10,
 		opts: [
 			{ 
-				t: "Tür aufschrauben", 
-				req: "screw", 
-				m: 10, f: -10, a: 0, c: 0, 
-				r: "In Rekordzeit hast du das Panel abgeschraubt und die Drähte kurzgeschlossen. Tür offen. Du lebst!" 
-			},
-			{ 
 				t: "Scheibe mit Hammer einschlagen", 
 				req: "hammer", 
 				m: 5, f: 0, a: 10, c: 10, 
@@ -149,6 +143,12 @@ export const bossfights = [
 				t: "Scheibe mit dem Ellbogen rammen", 
 				m: 5, f: 0, a: 30, c: 10, 
 				r: "AUTSCH! Mit einem Schrei wirfst du dich ins Glas. Es splittert. Dein Arm blutet und pocht wie wild, aber du bekommst Luft." 
+			},
+			{ 
+				t: "Tür aufschrauben", 
+				req: "screw", 
+				m: 10, f: -10, a: 0, c: 0, 
+				r: "In Rekordzeit hast du das Panel abgeschraubt und die Drähte kurzgeschlossen. Tür offen. Du lebst!" 
 			}
 		],
 		fail: {
@@ -163,8 +163,8 @@ export const bossfights = [
 		text: "NICHT DER SERVERRAUM! SCHLIMMER! Die Industriemaschine in der Küche vibriert und sprüht heißen Dampf! Der Druckkessel steht kurz vor dem Bersten! Ohne Kaffee stirbt die Abteilung!",
 		timer: 9,
 		opts: [
-			{ t: "Überdruckventil öffnen", req: "screw", m: 5, f: -5, a: -10, c: -5, r: "Pfeifend entweicht der Druck. Du bist der Held der Belegschaft. Applaus im Flur!" },
-			{ t: "Stecker ziehen & wegrennen", m: 5, f: 10, a: 25, c: 10, r: "Die Maschine beruhigt sich langsam. Aber: KEIN KAFFEE MEHR HEUTE. Die Kollegen schauen dich mit mordlustigen Augen an." }
+			{ t: "Stecker ziehen & wegrennen", m: 5, f: 10, a: 25, c: 10, r: "Die Maschine beruhigt sich langsam. Aber: KEIN KAFFEE MEHR HEUTE. Die Kollegen schauen dich mit mordlustigen Augen an." },
+			{ t: "Überdruckventil öffnen", req: "screw", m: 5, f: -5, a: -10, c: -5, r: "Pfeifend entweicht der Druck. Du bist der Held der Belegschaft. Applaus im Flur!" }
 		],
 		fail: { m: 60, f: 0, a: 50, c: 20, r: "KA-WUMM! Die Küche ist voller Kaffeesatz. Die Maschine ist Schrott. Die Moral der Firma sinkt auf 0. Es herrschen anarchische Zustände." }
 	},
@@ -175,6 +175,11 @@ export const bossfights = [
 		timer: 15,
 		opts: [
 			{ 
+				t: "Stecker ziehen", 
+				m: 5, f: 0, a: 10, c: 20, 
+				r: "Du kriechst unter den Tisch und reißt das Kabel raus. Dabei fährst du den PC der Sekretärin mit runter. Sie schreit. Der Drucker ist aus, aber der Ärger ist groß." 
+			},
+			{ 
 				t: "PERCUSSIVE MAINTENANCE!", 
 				req: "hammer",
 				m: 5, f: 5, a: -20, c: 0, 
@@ -184,11 +189,6 @@ export const bossfights = [
 				t: "Papierstau suchen", 
 				m: 10, f: -5, a: 20, c: 10, 
 				r: "Du greifst in die Mechanik. Der Drucker beißt dich! Du hast Tinte im Gesicht und Verbrennungen an den Fingern. Er hört von alleine auf, weil das Papier alle ist." 
-			},
-			{ 
-				t: "Stecker ziehen", 
-				m: 5, f: 0, a: 10, c: 20, 
-				r: "Du kriechst unter den Tisch und reißt das Kabel raus. Dabei fährst du den PC der Sekretärin mit runter. Sie schreit. Der Drucker ist aus, aber der Ärger ist groß." 
 			}
 		],
 		fail: { r: "BOOOOM! Der Drucker ist explodiert. Die Sprinkler gehen an. Alles ist nass. Du bist nass. Der Tag ist gelaufen.", m: 60, f: -10, a: 50, c: 50 }
@@ -225,12 +225,6 @@ export const bossfights = [
 		timer: 15,
 		opts: [
 			{ 
-				t: "Mit Tape abdichten", 
-				req: "tape",
-				m: 5, f: 0, a: -10, c: 0, 
-				r: "Du wickelst eine halbe Rolle Tape um das Rohr. Es hält! Es tropft nur noch leicht. Das Provisorium wird hier die nächsten 10 Jahre bleiben." 
-			},
-			{ 
 				t: "Daumen draufhalten", 
 				m: 60, f: -20, a: 30, c: 0, 
 				r: "Du hältst das Loch zu. Du stehst da 60 Minuten, bis der Klempner kommt. Dein Daumen ist verbrüht, deine Laune im Keller. Aber der Server lebt." 
@@ -239,6 +233,12 @@ export const bossfights = [
 				t: "Eimer drunterstellen", 
 				m: 5, f: 5, a: 0, c: 20, 
 				r: "Der Eimer ist sofort voll und läuft über. Das Wasser trifft die Steckdose. Kleiner Knall, Sicherung raus. Nicht ganz so schlimm wie ein Brand, aber peinlich." 
+			},
+			{ 
+				t: "Mit Tape abdichten", 
+				req: "tape",
+				m: 5, f: 0, a: -10, c: 0, 
+				r: "Du wickelst eine halbe Rolle Tape um das Rohr. Es hält! Es tropft nur noch leicht. Das Provisorium wird hier die nächsten 10 Jahre bleiben." 
 			}
 		],
 		fail: { rep: { "Dr. Wichtig": -10 }, r: "ZAPP! Kurzschluss. Funkenflug. Dunkelheit. Der Server ist tot. Der Kühlschrank ist tot. Der Chef steht im Dunkeln und brüllt deinen Namen.", m: 60, f: 0, a: 50, c: 50 }
@@ -250,6 +250,11 @@ export const bossfights = [
 		timer: 20,
 		opts: [
 			{ 
+				t: "Wackeln & Beten", 
+				m: 5, f: 0, a: 10, c: 30, 
+				r: "Es geht kurz... dann wieder aus... dann an... Stroboskop-Effekt. Ein Investor bekommt einen epileptischen Anfall. Abbruch." 
+			},
+			{ 
 				t: "Stecker festschrauben", 
 				req: "screw",
 				rep: { "Dr. Wichtig": 5 },
@@ -260,11 +265,6 @@ export const bossfights = [
 				t: "Kabel festhalten (Human Tripod)", 
 				m: 45, f: -15, a: 20, c: 0, 
 				r: "Du musst das Kabel die restlichen 45 Minuten der Präsentation in einem bestimmten Winkel festhalten. Deine Hand krampft. Du bist im Bild des Livestreams zu sehen. Peinlich." 
-			},
-			{ 
-				t: "Wackeln & Beten", 
-				m: 5, f: 0, a: 10, c: 30, 
-				r: "Es geht kurz... dann wieder aus... dann an... Stroboskop-Effekt. Ein Investor bekommt einen epileptischen Anfall. Abbruch." 
 			}
 		],
 		fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
@@ -302,13 +302,6 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ 
-				t: "Riss kleben", 
-				req: "tape", 
-				rep: { "Dr. Wichtig": 10 },
-				m: 5, f: -5, a: 0, c: -20, 
-				r: "Panzertape hält alles! Auch 500 Liter Wasserdruck (fürs Erste). Die Kois leben. Der Chef umarmt dich (nass)." 
-			},
-			{ 
 				t: "Wasser aufsaugen (Kleidung)", 
 				rep: { "Dr. Wichtig": 2 },
 				m: 20, f: -10, a: 20, c: -5, 
@@ -320,6 +313,13 @@ export const bossfights = [
 				req: "zip_ties", 
 				m: 10, f: 0, a: -10, c: -10, 
 				r: "Du baust aus Kabelbindern und Müllbeutel einen Kescher. Fische gerettet. Das Büro ist geflutet, aber die Tiere leben." 
+			},
+			{ 
+				t: "Riss kleben", 
+				req: "tape", 
+				rep: { "Dr. Wichtig": 10 },
+				m: 5, f: -5, a: 0, c: -20, 
+				r: "Panzertape hält alles! Auch 500 Liter Wasserdruck (fürs Erste). Die Kois leben. Der Chef umarmt dich (nass)." 
 			}
 		],
 		 fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
@@ -331,17 +331,17 @@ export const bossfights = [
 	timer: 10,
 	opts: [
 		{ 
-			t: "Brutal: Kabel mit Schere kappen", 
-			rep: { "Dr. Wichtig": -2 },
-			m: 5, f: -10, a: 25, c: 20, 
-			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
-		},
-		{ 
 			t: "Hacker-Move: Zu Excel wechseln", 
 			req: "admin_pw", 
 			rep: { "Dr. Wichtig": 2 },
 			m: 5, f: 5, a: -10, c: -10, 
 			r: "In Millisekunden wechselst du auf eine komplizierte Tabelle. Die Zuschauer denken, das gehört zur Show. 'Und hier sehen Sie unsere Effizienz!', ruft der Chef. Gerettet!" 
+		},
+		{ 
+			t: "Brutal: Kabel mit Schere kappen", 
+			rep: { "Dr. Wichtig": -2 },
+			m: 5, f: -10, a: 25, c: 20, 
+			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
 		}
 	],
 	fail: { m: 60, f: 0, a: 50, c: 80, r: "ZU LANGSAM! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
@@ -353,6 +353,11 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
+                t: "Mit den Hackern verhandeln (Zeit schinden)", 
+                m: 120, f: 20, a: 15, c: -5, 
+                r: "Du schreibst im Chat-Fenster der Ransomware mit den Angreifern. Sie geben euch 24 Stunden Aufschub. Ein schwacher Sieg." 
+            },
+            { 
                 t: "Root-Zugriff nutzen und Subnetze killen", 
                 req: "admin_pw", 
                 m: 60, f: 10, a: 10, c: -15, 
@@ -362,11 +367,6 @@ export const bossfights = [
                 t: "Stecker des Hauptservers ziehen", 
                 m: 10, f: -5, a: 20, c: 20, 
                 r: "Brachiale Methode. Das Dateisystem ist hinüber, aber die Verschlüsselung stoppt sofort." 
-            },
-            { 
-                t: "Mit den Hackern verhandeln (Zeit schinden)", 
-                m: 120, f: 20, a: 15, c: -5, 
-                r: "Du schreibst im Chat-Fenster der Ransomware mit den Angreifern. Sie geben euch 24 Stunden Aufschub. Ein schwacher Sieg." 
             }
         ],
         fail: { rep: { "Dr. Wichtig": -30 }, m: 180, f: 0, a: 40, c: 50, r: "PANIK-STARRE! Die Zeit läuft ab und die gesamte Firmen-Cloud ist unlesbar. Der CEO feuert dich beinahe!" }
@@ -404,12 +404,6 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
-                t: "Das Rohr mit Tape abdichten", 
-                req: "tape", 
-                m: 30, f: 10, a: 10, c: -5, 
-                r: "Du kletterst auf eine wackelige Leiter und wickelst das Tape um das nasse Rohr. Klitschnass, aber es hält dicht." 
-            },
-            { 
                 t: "Den großen Mülleimer aus dem Flur holen", 
                 m: 15, f: -5, a: 15, c: 5, 
                 r: "Du schiebst den Mülleimer direkt unter das Leck. Die Server bleiben trocken, aber du musst ihn alle 10 Minuten leeren." 
@@ -419,6 +413,12 @@ export const bossfights = [
                 rep: { "Egon": 5 },
                 m: 45, f: 0, a: 15, c: 15, 
                 r: "Bis Egon das Wasser abstellt, funkt es im Rack. Zwei Switches sterben den Wassertod." 
+            },
+            { 
+                t: "Das Rohr mit Tape abdichten", 
+                req: "tape", 
+                m: 30, f: 10, a: 10, c: -5, 
+                r: "Du kletterst auf eine wackelige Leiter und wickelst das Tape um das nasse Rohr. Klitschnass, aber es hält dicht." 
             }
         ],
         fail: { m: 90, f: -10, a: 30, c: 40, r: "ZEIT ABGELAUFEN! *BZZZZT*. Das Wasser erreicht den Switch. Ein Kurzschluss legt das gesamte Gebäude lahm." }
@@ -430,6 +430,11 @@ export const bossfights = [
         timer: 15,
         opts: [
             { 
+                t: "Nur deine eigene Kündigung abfangen", 
+                m: 20, f: 5, a: 15, c: 10, 
+                r: "Du schützt nur dich selbst. Der Rest der Firma brennt. Egoistisch, aber clever." 
+            },
+            { 
                 t: "Das LAN-Kabel der KI physisch ziehen", 
                 rem: "cable", 
                 m: 10, f: 0, a: 5, c: -10, 
@@ -439,11 +444,6 @@ export const bossfights = [
                 t: "Einen Server-Neustart erzwingen", 
                 m: 45, f: 5, a: 10, c: 5, 
                 r: "Hunderte Mitarbeiter denken jetzt, sie seien arbeitslos, bevor du das System gestoppt hast. Pures Chaos." 
-            },
-            { 
-                t: "Nur deine eigene Kündigung abfangen", 
-                m: 20, f: 5, a: 15, c: 10, 
-                r: "Du schützt nur dich selbst. Der Rest der Firma brennt. Egoistisch, aber clever." 
             }
         ],
         fail: { rep: { "Dr. Wichtig": -20 }, m: 120, f: 0, a: 25, c: 30, r: "DIE KI GEWINNT! 400 Leute haben die Kündigung im Postfach. Das HR-Telefonnetz bricht unter der Last zusammen." }
@@ -480,12 +480,6 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
-                t: "Egon holen - der hat für alles einen Schlüssel", 
-                m: 15, f: 5, a: 0, c: -10, 
-                rep: { "Egon": 5 },
-                r: "Egon kommt mit einem Bund, das aussieht wie das Inventar einer Kathedrale, und schließt jede Tür einzeln auf. Analog besiegt Digital, und der Mann, den sonst niemand grüßt, ist für zehn Minuten der wichtigste Mensch im Haus." 
-            },
-            { 
                 t: "Türsteuerung mit dem Laptop hacken", 
                 m: 30, f: 10, a: 5, c: 0, 
                 r: "Du schließt dich direkt an den Controller an und überschreibst den Sperrcode. Die Türen surren auf." 
@@ -494,6 +488,12 @@ export const bossfights = [
                 t: "Auf den Techniker warten", 
                 m: 120, f: 30, a: 25, c: 5, 
                 r: "Zwei Stunden Gefangenschaft. Die Kollegen fangen an, sich gegenseitig anzuknurren." 
+            },
+            { 
+                t: "Egon holen - der hat für alles einen Schlüssel", 
+                m: 15, f: 5, a: 0, c: -10, 
+                rep: { "Egon": 5 },
+                r: "Egon kommt mit einem Bund, das aussieht wie das Inventar einer Kathedrale, und schließt jede Tür einzeln auf. Analog besiegt Digital, und der Mann, den sonst niemand grüßt, ist für zehn Minuten der wichtigste Mensch im Haus." 
             }
         ],
         fail: { m: 180, f: 20, a: 40, c: 15, r: "GEFANGEN! Jemand ruft in Panik die echte Feuerwehr. Die brechen das Haupttor auf. Riesen-Drama!" }
@@ -505,6 +505,11 @@ export const bossfights = [
         timer: 10,
         opts: [
             { 
+                t: "Die Türen aufreißen und hoffen", 
+                m: 60, f: 15, a: 15, c: 10, 
+                r: "Die warme Büroluft strömt rein. Einige Server stürzen ab, der Core überlebt gerade so." 
+            },
+            { 
                 t: "Mit dem Feuerlöscher schockfrosten", 
                 rem: "fire_ext", 
                 m: 5, f: 0, a: 5, c: -10, 
@@ -514,11 +519,6 @@ export const bossfights = [
                 t: "Unwichtige Server sofort herunterfahren", 
                 m: 20, f: 10, a: 10, c: 5, 
                 r: "Du schaltest 50% der Hardware ab. Die Temperatur stabilisiert sich, aber viele Abteilungen sind offline." 
-            },
-            { 
-                t: "Die Türen aufreißen und hoffen", 
-                m: 60, f: 15, a: 15, c: 10, 
-                r: "Die warme Büroluft strömt rein. Einige Server stürzen ab, der Core überlebt gerade so." 
             }
         ],
         fail: { m: 120, f: -10, a: 40, c: 60, r: "KERN-SCHMELZE! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
@@ -555,12 +555,6 @@ export const bossfights = [
         timer: 15,
         opts: [
             { 
-                t: "LTE-Router mit Gäste-WLAN aktivieren", 
-                rem: "wifi_note", 
-                m: 30, f: 5, a: 5, c: -10, 
-                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online." 
-            },
-            { 
                 t: "Feierabend für alle ausrufen!", 
                 m: 10, f: -20, a: 15, c: 30, 
                 r: "'Ohne Netz keine Arbeit!' Die Belegschaft jubelt, der CEO kriegt fast einen Herzinfarkt." 
@@ -570,6 +564,12 @@ export const bossfights = [
                 rep: { "Egon": -15 },
                 m: 15, f: 0, a: -5, c: 10, 
                 r: "Das Netz ist zwar down, aber dein Frust-Schrei hat therapeutische Wirkung." 
+            },
+            { 
+                t: "LTE-Router mit Gäste-WLAN aktivieren", 
+                rem: "wifi_note", 
+                m: 30, f: 5, a: 5, c: -10, 
+                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online." 
             }
         ],
         fail: { m: 240, f: 20, a: 20, c: 30, r: "OHNE INTERNET! Die Kollegen schicken sich Zettel auf den Fluren. Ein furchtbarer Arbeitstag beginnt." }
@@ -581,6 +581,11 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
+                t: "Schuld auf ein Windows-Update schieben", 
+                m: 15, f: 5, a: 15, c: 15, 
+                r: "Niemand kann das Gegenteil beweisen. Du kommst davon, aber die Firma verliert Geld." 
+            },
+            { 
                 t: "Energy Drink exen und die Nacht durcharbeiten", 
                 rem: "energy", 
                 m: 120, f: -10, a: 5, c: -20, 
@@ -590,11 +595,6 @@ export const bossfights = [
                 t: "Altes Backup blind drüberbügeln", 
                 m: 20, f: 0, a: 10, c: 10, 
                 r: "Die fehlenden Tage muss Frau Elster eben per Hand neu eintippen. Sie wird dich dafür hassen." 
-            },
-            { 
-                t: "Schuld auf ein Windows-Update schieben", 
-                m: 15, f: 5, a: 15, c: 15, 
-                r: "Niemand kann das Gegenteil beweisen. Du kommst davon, aber die Firma verliert Geld." 
             }
         ],
         fail: { rep: { "Frau Elster": -30, "Dr. Wichtig": -20 }, m: 60, f: 0, a: 30, c: 30, r: "ZÖGERN! Die Datenbank schmiert komplett ab. Die Wirtschaftsprüfer werden das Unternehmen zerfleischen." }
@@ -606,12 +606,6 @@ export const bossfights = [
         timer: 10,
         opts: [
             { 
-                t: "USB-Wipe-Skript am Mining-PC ausführen", 
-                rem: "usb_stick", 
-                m: 10, f: 0, a: 15, c: 5, 
-                r: "Du löschst Kevins Beweise restlos. Die Polizei findet nichts." 
-            },
-            { 
                 t: "Azubi Kevin eiskalt ausliefern", 
                 rep: { "Kevin": -30 },
                 m: 30, f: 0, a: -10, c: 10, 
@@ -621,6 +615,12 @@ export const bossfights = [
                 t: "Kooperieren und Türen öffnen", 
                 m: 180, f: 30, a: 25, c: 25, 
                 r: "Sie nehmen drei Racks mit. Die Firma steht still. Ein riesiger Skandal." 
+            },
+            { 
+                t: "USB-Wipe-Skript am Mining-PC ausführen", 
+                rem: "usb_stick", 
+                m: 10, f: 0, a: 15, c: 5, 
+                r: "Du löschst Kevins Beweise restlos. Die Polizei findet nichts." 
             }
         ],
         fail: { m: 240, f: 0, a: 40, c: 50, r: "DURCHSUCHUNG! Die Beamten stürmen vorbei, reißen Kabel aus der Wand und nehmen alles mit. Totalschaden!" }
@@ -632,12 +632,6 @@ export const bossfights = [
         timer: 8,
         opts: [
             { 
-                t: "Mit Schraubendreher den Switch killen", 
-                req: "screw", 
-                m: 10, f: 0, a: -5, c: 10, 
-                r: "Du reißt das Netzteil aus dem Switch. Alles offline, aber die Daten sind sicher!" 
-            },
-            { 
                 t: "Den CEO anrufen und ihn anschreien", 
                 rep: { "Dr. Wichtig": -20 },
                 m: 10, f: -10, a: 15, c: 5, 
@@ -647,6 +641,12 @@ export const bossfights = [
                 t: "Schreiend im Kreis rennen", 
                 m: 45, f: 20, a: 25, c: 20, 
                 r: "Du siehst weinend zu, wie 10 Jahre Firmenhistorie gelöscht werden." 
+            },
+            { 
+                t: "Mit Schraubendreher den Switch killen", 
+                req: "screw", 
+                m: 10, f: 0, a: -5, c: 10, 
+                r: "Du reißt das Netzteil aus dem Switch. Alles offline, aber die Daten sind sicher!" 
             }
         ],
         fail: { rep: { "Dr. Wichtig": -10 }, m: 60, f: 0, a: 30, c: 40, r: "ALLES WEG! Die Festplatte ist leer. Die Backups sind auch infiziert. Ihr beginnt wieder bei null." }
@@ -658,6 +658,11 @@ export const bossfights = [
         timer: 15,
         opts: [
             { 
+                t: "Im Serverraum verbarrikadieren", 
+                m: 60, f: 10, a: 15, c: 5, 
+                r: "Du sicherst die Tür und wartest, bis der Entzug bei den Kollegen nachlässt." 
+            },
+            { 
                 t: "Einen Donut zur Beruhigung essen", 
                 rem: "donut", 
                 m: 5, f: -5, a: -5, c: 0, 
@@ -667,11 +672,6 @@ export const bossfights = [
                 t: "Notfall-Ration (Löslich) im Flur aufbrühen", 
                 m: 30, f: 10, a: 15, c: -5, 
                 r: "Es schmeckt wie Asche, aber die Meute wird ruhig gestellt. Du opferst dich für das Team." 
-            },
-            { 
-                t: "Im Serverraum verbarrikadieren", 
-                m: 60, f: 10, a: 15, c: 5, 
-                r: "Du sicherst die Tür und wartest, bis der Entzug bei den Kollegen nachlässt." 
             }
         ],
         fail: { m: 180, f: 30, a: 45, c: 15, r: "MEUTEREI! Das Büro verfällt in Lethargie. Du schläfst vor Erschöpfung fast am Schreibtisch ein." }

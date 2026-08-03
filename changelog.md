@@ -43,6 +43,7 @@ Spielbalance:
 * Eine Antwort am Schwarzen Brett bewegte die Statuswerte außerhalb des üblichen 5er-Rasters; angeglichen.
 
 Anzeige & Layout:
+* Die Reihenfolge der Antwortmöglichkeiten ist neu verteilt. Bisher stand in über der Hälfte aller Ereignisse die günstigste Antwort ganz oben — wer das einmal bemerkt hatte, klickte fortan die erste Zeile, und die Entscheidung, um die es eigentlich geht, fand nicht mehr statt. Jetzt liegt die beste Wahl gleich verteilt auf allen Plätzen, quer durch Anrufe, Serverraum, Teeküche, Dienstgänge, E-Mails, Mittagspause, Bossfights, Ruf-Ereignisse und die Gala. Abbrechen, Ignorieren, Auflegen und Löschen bleiben dort, wo man sie sucht: ganz unten.
 * Das Terminal ist keine schwarze Leere mehr: Die Bildfläche hat jetzt einen Hauch Röhrenmonitor - feine Scanlines, ein schwaches Glimmen aus der Bildmitte und einen minimal helleren Verlauf. Alles statisch, nichts flackert. Wem das zu unruhig ist, schaltet es in den Einstellungen ab.
 * Terminal und Statusleiste liegen nun auf zwei Ebenen: Das Terminal ist eingelassen und dunkler, die Statusleiste liegt darüber. Der Blick geht dorthin, wo etwas passiert. Der Seitenhintergrund ist dafür eine Spur heller.
 * Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.

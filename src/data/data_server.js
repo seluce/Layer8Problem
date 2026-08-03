@@ -34,11 +34,6 @@ export const server = [
         text: "Du hörst schwere Schritte im Gang. Es ist 'Der Cleaner' von der HR-Abteilung. Er sucht nach undichten Stellen. Die 'Schwarze Liste' in deiner Tasche fühlt sich plötzlich tonnenschwer an.",
         opts: [
             { 
-                t: "Im Kabelschacht verstecken", 
-                m: 15, f: -5, a: 15, c: -5, 
-                r: "Du quetschst dich zwischen staubige Kabelstränge. Er geht vorbei, schnüffelt kurz in der Luft, verschwindet aber wieder. Dein Herz hämmert." 
-            },
-            { 
                 t: "Liste zurückgeben", 
                 rem: "secret_list",
                 m: 5, f: 0, a: -5, c: 0, 
@@ -49,6 +44,11 @@ export const server = [
                 req: "fire_ext",
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Ein kurzer Stoß CO2 sorgt für Nebel und Verwirrung. 'Feueralarm? Ich bin weg!' ruft er und rennt. Chaos ist dein Freund." 
+            },
+            { 
+                t: "Im Kabelschacht verstecken", 
+                m: 15, f: -5, a: 15, c: -5, 
+                r: "Du quetschst dich zwischen staubige Kabelstränge. Er geht vorbei, schnüffelt kurz in der Luft, verschwindet aber wieder. Dein Herz hämmert." 
             }
         ]
     },
@@ -59,11 +59,6 @@ export const server = [
         text: "Der 'Cleaner' von HR fängt dich im Flur ab. 'Routinekontrolle. Wir suchen gestohlenes Firmeneigentum. Taschen leeren!' Er starrt auf deine ausgebeulte Hosentasche.",
         opts: [
             { 
-                t: "Taschen bereitwillig zeigen", 
-                m: 5, f: 0, a: -5, c: -5, 
-                r: "Er findet... Luftpolsterfolie. Er rümpft die Nase. 'Nur Müll? Sie haben ja gar keinen Ehrgeiz.' Er lässt dich samt Folie stehen." 
-            },
-            { 
                 t: "Empört verweigern", 
                 m: 2, f: 0, a: 10, c: 5, 
                 r: "'Das verstößt gegen meine Rechte!' Er notiert deinen Namen auf einer Liste, aber da er nichts beweisen kann, zieht er ab." 
@@ -73,6 +68,11 @@ export const server = [
                 rem: "donut",
                 m: 2, f: 5, a: -10, c: -5, 
                 r: "Er starrt auf den alten Donut. Sein Magen knurrt. 'Na gut. Einmalige Ausnahme.' Er nimmt den Donut und verschwindet kauend." 
+            },
+            { 
+                t: "Taschen bereitwillig zeigen", 
+                m: 5, f: 0, a: -5, c: -5, 
+                r: "Er findet... Luftpolsterfolie. Er rümpft die Nase. 'Nur Müll? Sie haben ja gar keinen Ehrgeiz.' Er lässt dich samt Folie stehen." 
             }
         ]
     },
@@ -167,13 +167,6 @@ export const server = [
         text: "Ein externer Dienstleister hat seinen Koffer im Serverraum offen stehen lassen. Er ist gerade rauchen. Ein hochwertiger Schraubendreher blitzt dich an.",
         opts: [
             { 
-                t: "Einstecken", 
-                loot: "screw", 
-                next: "path_tool_theft", 
-                m: 5, f: 0, a: -5, c: 5, 
-                r: "Meins. Werkzeug kann man immer brauchen. Du lässt den Rest unauffällig liegen." 
-            },
-            { 
                 t: "Das Chaos im Koffer sortieren", 
                 next: "path_tool_sort", 
                 m: 15, f: -5, a: -10, c: 0, 
@@ -184,6 +177,13 @@ export const server = [
                 next: "path_tool_wait", 
                 m: 10, f: 5, a: 0, c: 0, 
                 r: "Du klappst den Koffer zu, damit niemand anderes auf dumme Ideen kommt. Du bist heute der Wächter des Eigentums." 
+            },
+            { 
+                t: "Einstecken", 
+                loot: "screw", 
+                next: "path_tool_theft", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Meins. Werkzeug kann man immer brauchen. Du lässt den Rest unauffällig liegen." 
             }
         ]
     },
@@ -194,6 +194,12 @@ export const server = [
         text: "Der Techniker kommt zurück und wühlt hektisch in seinem Koffer. 'Wo ist mein Wera-Dreher?! Der lag genau hier! Das Ding kostet 40 Euro!' Er starrt dich an.",
         opts: [
             { 
+                t: "Zurückgeben: 'Lag am Boden.'", 
+                rem: "screw", 
+                m: 5, f: 0, a: 5, c: -5, 
+                r: "'Ach, den habe ich... äh... gesichert.' Du gibst ihn zähneknirschend zurück. Der Techniker reißt ihn dir aus der Hand. Dein Gewissen ist rein, deine Taschen sind leer." 
+            },
+            { 
                 t: "Eiskalt lügen: 'Keine Ahnung.'", 
                 m: 2, f: 0, a: -5, c: 15, 
                 r: "Du zuckst mit den Schultern. 'Vielleicht hat ihn der Putztrupp?' Er flucht und tritt gegen das Rack. Er glaubt dir nicht ganz, aber er hat keine Beweise." 
@@ -202,12 +208,6 @@ export const server = [
                 t: "Kevin beschuldigen", 
                 m: 5, f: 5, a: -10, c: -5, 
                 r: "'Der Azubi war vorhin hier...' Der Techniker wird rot. 'Ich bring den Kleinen um!' Er stürmt raus. Du fühlst dich kurz schlecht, aber hey: Gratis Werkzeug." 
-            },
-            { 
-                t: "Zurückgeben: 'Lag am Boden.'", 
-                rem: "screw", 
-                m: 5, f: 0, a: 5, c: -5, 
-                r: "'Ach, den habe ich... äh... gesichert.' Du gibst ihn zähneknirschend zurück. Der Techniker reißt ihn dir aus der Hand. Dein Gewissen ist rein, deine Taschen sind leer." 
             }
         ]
     },
@@ -265,6 +265,13 @@ export const server = [
         text: "Du findest Bernd aus dem Vertrieb, der weinend zwischen den warmen Server-Racks sitzt und eine Flasche 'Glenfiddich' köpft. Er lallt: 'Meine Frau ist weg, mein Umsatz ist weg... alles ist weg.'",
         opts: [
             { 
+                t: "Ihm einen Energy Drink geben", 
+                rem: "energy", 
+                next: "path_bernd_hyper", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "'Hier, trink das und reiß dich zusammen, du Wrack.' Bernd ext die Dose unter Tränen. Seine Augen weiten sich schlagartig. 'Zucker... Koffein... LEISTUNG?!'" 
+            },
+            { 
                 t: "Sich dazusetzen & mittrinken", 
                 next: "path_bernd_drunk", 
                 m: 45, f: 20, a: -50, c: 20, 
@@ -275,13 +282,6 @@ export const server = [
                 next: "path_bernd_snitch", 
                 m: 10, f: -5, a: 0, c: -15, 
                 r: "Du rufst anonym an. Zwei Minuten später wird Bernd von der Security rausgeschleift. Er ruft: 'Verrat! Et tu, Brute?!' Du fühlst dich schmutzig, aber dein Job ist sicher." 
-            },
-            { 
-                t: "Ihm einen Energy Drink geben", 
-                rem: "energy", 
-                next: "path_bernd_hyper", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "'Hier, trink das und reiß dich zusammen, du Wrack.' Bernd ext die Dose unter Tränen. Seine Augen weiten sich schlagartig. 'Zucker... Koffein... LEISTUNG?!'" 
             }
         ]
     },
@@ -316,12 +316,6 @@ export const server = [
         text: "Du gehst an Bernds leerem Schreibtisch vorbei. Er wurde 'freigestellt'. In seinem Mülleimer liegt noch sein Bürokram. Obenauf ein fast neuer Donut.",
         opts: [
             { 
-                t: "Den Donut looten", 
-                loot: "donut", 
-                m: 2, f: 5, a: 0, c: 0, 
-                r: "Schmeckt nach Sieg und Glasur." 
-            },
-            { 
                 t: "Seinen Tacker klauen", 
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Es ist ein guter Tacker. Swingline. Rot. Du streichelst ihn. Meins." 
@@ -330,6 +324,12 @@ export const server = [
                 t: "Ein schlechtes Gewissen haben", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du starrst auf den leeren Stuhl. Was, wenn du der Nächste bist? Der Gedanke verdirbt dir den Tag." 
+            },
+            { 
+                t: "Den Donut looten", 
+                loot: "donut", 
+                m: 2, f: 5, a: 0, c: 0, 
+                r: "Schmeckt nach Sieg und Glasur." 
             }
         ]
     },
@@ -340,11 +340,6 @@ export const server = [
         text: "Bernd rennt an dir vorbei. Er vibriert förmlich. Der Mix aus Whisky und Energy Drink hat etwas in ihm verändert. Er schreit ins Telefon: 'KAUFEN! VERKAUFEN! ALLES MUSS RAUS!'",
         opts: [
             { 
-                t: "Ihn bewundern", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Er hat gerade dem Hausmeister einen Leasing-Vertrag für einen Besen verkauft. Beeindruckend." 
-            },
-            { 
                 t: "Ihn bremsen wollen", 
                 m: 10, f: -5, a: 10, c: 0, 
                 r: "Du versuchst ihn zu beruhigen. Er starrt dich mit weit aufgerissenen Pupillen an. 'Zeit ist Geld! Aus dem Weg, Geringverdiener!' Er sprintet zum Aufzug." 
@@ -354,6 +349,11 @@ export const server = [
                 loot: "secret_list", 
                 m: 15, f: 0, a: -5, c: 5, 
                 r: "'Daten! Ich brauche Daten!' Er tauscht seine Kundenliste gegen das Gast-WLAN-Passwort. Ein fairer Deal unter Wahnsinnigen." 
+            },
+            { 
+                t: "Ihn bewundern", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Er hat gerade dem Hausmeister einen Leasing-Vertrag für einen Besen verkauft. Beeindruckend." 
             }
         ]
     },
@@ -415,6 +415,12 @@ export const server = [
         text: "Zwei Stunden nachdem du das Rig abgeschaltet hast, stürmt der Chef rein. 'Müller! Das gesamte E-Mail-Archiv von 1990 bis 2005 ist offline! Das lief auf dem Legacy-Cluster hinter Rack 4!'",
         opts: [
             { 
+                t: "Ehrlich sein: 'Ich hab's ausgemacht.'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 0, c: 30, 
+                r: "Der Chef starrt dich an. 'Sie haben das Backup-System für illegalen Stromverbrauch gehalten? Müller, ich weiß nicht, ob Sie zu schlau oder zu dumm für diesen Job sind.'" 
+            },
+            { 
                 t: "Behaupten, es war ein Hacker", 
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "'Die Russen, Chef. Ganz sicher.' Er wird blass. 'Oh Gott. Meine Mails an die Sekretärin...' Er rennt raus. Du schaltest das Ding schnell wieder an." 
@@ -424,12 +430,6 @@ export const server = [
                 req: "manual", 
                 m: 30, f: -15, a: 10, c: -10, 
                 r: "Mit dem Win95-Handbuch und viel Geduld bootest du das System neu. Es piept fröhlich. Die Mails sind wieder da. Niemand dankt dir." 
-            },
-            { 
-                t: "Ehrlich sein: 'Ich hab's ausgemacht.'", 
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 0, c: 30, 
-                r: "Der Chef starrt dich an. 'Sie haben das Backup-System für illegalen Stromverbrauch gehalten? Müller, ich weiß nicht, ob Sie zu schlau oder zu dumm für diesen Job sind.'" 
             }
         ]
     },
@@ -493,11 +493,6 @@ export const server = [
         text: "Ein externer ISO-Prüfer steht vor deinem Tape-Meisterwerk. Er tippt mit dem Kugelschreiber auf den silbernen Klumpen am Glasfaserkabel. 'Ist das... DIN-normgerecht?'",
         opts: [
             { 
-                t: "Behaupten, das sei eine Schirmung", 
-                m: 5, f: 0, a: -5, c: 5, 
-                r: "'Spezial-Abschirmung gegen kosmische Strahlung.' Der Prüfer nickt beeindruckt und macht einen Haken. Kompetenz ist, wenn man sicher auftritt." 
-            },
-            { 
                 t: "Zugeben, dass es das Internet zusammenhält", 
                 m: 5, f: 0, a: 5, c: -5, 
                 r: "Der Prüfer seufzt tief. 'Ich habe nichts gesehen. Aber wenn das brennt, kenne ich Sie nicht.' Er geht weiter." 
@@ -506,6 +501,11 @@ export const server = [
                 t: "Tape abreißen (Beweis vernichten)", 
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du reißt das Tape ab. Das Kabel bricht sofort wieder. Das Netzwerk stirbt erneut. Der Prüfer starrt dich entsetzt an. 'Das war... mutig.'" 
+            },
+            { 
+                t: "Behaupten, das sei eine Schirmung", 
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "'Spezial-Abschirmung gegen kosmische Strahlung.' Der Prüfer nickt beeindruckt und macht einen Haken. Kompetenz ist, wenn man sicher auftritt." 
             }
         ]
     },
@@ -517,12 +517,6 @@ export const server = [
         text: "Der Chef betritt den Serverraum. Er tritt fest auf den Boden. Durch die Erschütterung verliert dein nur 'gewackeltes' Kabel den Kontakt. Das Licht am Switch springt auf Rot.",
         opts: [
             { 
-                t: "Einreden, er sei statisch aufgeladen", 
-				rep: { "Dr. Wichtig": 5 },
-                m: 5, f: 5, a: -5, c: 10, 
-                r: "'Das ist Ihre Aura, Chef! Zu viel Energie!' Er wirkt geschmeichelt. 'Tatsächlich? Ich spüre auch so ein Kribbeln.' Er geht vorsichtig raus." 
-            },
-            { 
                 t: "Heimlich dagegen treten", 
                 m: 2, f: 0, a: 5, c: 5, 
                 r: "Während er wegschaut, trittst du gegen das Rack. Das Licht wird grün. 'Selbstheilungskräfte', murmelst du. Puh." 
@@ -532,6 +526,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -5 },
                 m: 15, f: -5, a: 5, c: -5, 
                 r: "'Alarm! Kritischer Fehler!' Du scheuchst den Chef raus und wackelst wieder am Kabel. Es hält... für jetzt." 
+            },
+            { 
+                t: "Einreden, er sei statisch aufgeladen", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 5, f: 5, a: -5, c: 10, 
+                r: "'Das ist Ihre Aura, Chef! Zu viel Energie!' Er wirkt geschmeichelt. 'Tatsächlich? Ich spüre auch so ein Kribbeln.' Er geht vorsichtig raus." 
             }
         ]
     },
@@ -566,12 +566,6 @@ export const server = [
         text: "Auf einem warmen Server-Rack steht eine einsame Dose 'Cyber-Fuel'. Sie ist noch zu, aber das Mindesthaltbarkeitsdatum ist eine vage Erinnerung.",
         opts: [
             { 
-                t: "Sofort trinken", 
-                next: "path_drink_now", 
-                m: 5, f: -15, a: -15, c: 0, 
-                r: "ZISCH. Die warme Brühe schmeckt nach Gummibärchen und Herzrasen. Du fühlst dich unbesiegbar (für ca. 20 Minuten)." 
-            },
-            { 
                 t: "Für später einstecken", 
                 loot: "energy", 
                 next: "path_drink_keep", 
@@ -583,6 +577,12 @@ export const server = [
                 next: "path_drink_ignore", 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du traust keiner Flüssigkeit, die im Dunkeln leuchtet. Du lässt sie für die Server-Goblins stehen." 
+            },
+            { 
+                t: "Sofort trinken", 
+                next: "path_drink_now", 
+                m: 5, f: -15, a: -15, c: 0, 
+                r: "ZISCH. Die warme Brühe schmeckt nach Gummibärchen und Herzrasen. Du fühlst dich unbesiegbar (für ca. 20 Minuten)." 
             }
         ]
     },
@@ -593,11 +593,6 @@ export const server = [
         text: "Dein Magen grummelt bedrohlich. Das 'Cyber-Fuel' war wohl doch schon etwas älter. Oder radioaktiv. Dein linkes Augenlid zuckt unkontrolliert.",
         opts: [
             { 
-                t: "Auf der Toilette verstecken", 
-                m: 20, f: 10, a: 5, c: -5, 
-                r: "Sicher ist sicher. Du verbringst 20 Minuten in der Kachel-Abteilung. Produktivität: Null. Überlebenswille: Hoch." 
-            },
-            { 
                 t: "Weiterarbeiten und zittern", 
                 m: 10, f: -5, a: 20, c: 5, 
                 r: "Du versuchst zu tippen, aber deine Hände vibrieren so stark, dass du aus Versehen drei Tickets gleichzeitig schließt. Effizienz durch Panik." 
@@ -606,6 +601,11 @@ export const server = [
                 t: "Wasser nachtrinken", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du spülst den Chemie-Geschmack am Wasserspender weg. Das Zucken hört auf. Du lebst noch." 
+            },
+            { 
+                t: "Auf der Toilette verstecken", 
+                m: 20, f: 10, a: 5, c: -5, 
+                r: "Sicher ist sicher. Du verbringst 20 Minuten in der Kachel-Abteilung. Produktivität: Null. Überlebenswille: Hoch." 
             }
         ]
     },
@@ -615,12 +615,6 @@ export const server = [
         reqStory: "path_drink_keep",
         text: "Du greifst in deine Tasche und fasst in etwas Nasses. Die Dose 'Cyber-Fuel' hatte wohl ein mikroskopisches Leck. Alles klebt.",
         opts: [
-            { 
-                t: "Alles sauber machen", 
-                rem: "energy", 
-                m: 15, f: -5, a: 10, c: 0, 
-                r: "Du fluchst und schrubbst deine Hose mit Papiertüchern ab. Die Dose ist leer, deine Laune im Keller." 
-            },
             { 
                 t: "Egal, Hauptsache Koffein", 
                 rem: "energy", 
@@ -637,6 +631,12 @@ export const server = [
                 t: "Moment... die ist ja leer?",
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du merkst, dass es nur alte Reste waren. Du hast die Dose ja schon längst getrunken."
+            },
+            { 
+                t: "Alles sauber machen", 
+                rem: "energy", 
+                m: 15, f: -5, a: 10, c: 0, 
+                r: "Du fluchst und schrubbst deine Hose mit Papiertüchern ab. Die Dose ist leer, deine Laune im Keller." 
             }
         ]
     },
@@ -700,12 +700,6 @@ export const server = [
         text: "Du schleppst den Feuerlöscher durch den Gang. Er wiegt gefühlt 20 Kilo und schlägt dir ständig gegen das Schienbein. Egon der Hausmeister sieht dich kritisch an.",
         opts: [
             { 
-                t: "Sagen, dass du ihn zur Wartung bringst",
-                rep: { "Egon": 5 }, 
-                m: 10, f: -5, a: 5, c: -5, 
-                r: "Egon nickt anerkennend. 'Guter Mann. Sicherheit ist kein Spielzeug.' Er lässt dich passieren." 
-            },
-            { 
                 t: "Ihn als Türstopper benutzen", 
                 rep: { "Egon": -2 },
                 rem: "fire_ext", 
@@ -717,6 +711,12 @@ export const server = [
                 rep: { "Egon": -5 },
                 m: 20, f: -10, a: -20, c: 10, 
                 r: "Du nutzt das Gewicht für ein spontanes Workout im Gang. Deine Arme brennen, deine Aggro sinkt. Egon schüttelt nur den Kopf." 
+            },
+            { 
+                t: "Sagen, dass du ihn zur Wartung bringst",
+                rep: { "Egon": 5 }, 
+                m: 10, f: -5, a: 5, c: -5, 
+                r: "Egon nickt anerkennend. 'Guter Mann. Sicherheit ist kein Spielzeug.' Er lässt dich passieren." 
             }
         ]
     },
@@ -751,12 +751,6 @@ export const server = [
         text: "Nach deinem einstündigen Audit kommt Dr. Wichtig vorbei. Er sieht deine Checklisten und Tabellen neben dem Feuerlöscher. Er wirkt überrascht.",
         opts: [
             { 
-                t: "Bericht stolz präsentieren", 
-				rep: { "Dr. Wichtig": 10 },
-                m: 15, f: -5, a: -5, c: -15, 
-                r: "'Das Gerät entspricht nicht der Norm DIN-1402.' Der Chef nickt. 'Müller, ich mag Ihre Gründlichkeit. Weitermachen.'" 
-            },
-            { 
                 t: "Überstunden dafür beantragen", 
 				rep: { "Dr. Wichtig": -10 },
                 m: 10, f: 0, a: 10, c: 20, 
@@ -767,6 +761,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -5 },
                 m: 30, f: -10, a: 5, c: 0, 
                 r: "Du zwingst ihn in eine 30-minütige Diskussion über Brandschutzverordnungen. Er unterschreibt, nur damit du aufhörst zu reden." 
+            },
+            { 
+                t: "Bericht stolz präsentieren", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 15, f: -5, a: -5, c: -15, 
+                r: "'Das Gerät entspricht nicht der Norm DIN-1402.' Der Chef nickt. 'Müller, ich mag Ihre Gründlichkeit. Weitermachen.'" 
             }
         ]
     },
@@ -775,6 +775,12 @@ export const server = [
         title: "Tragendes Wissen",
         text: "Ein dickes, vergilbtes Buch klemmt unter einem wackeligen Tischbein: 'Windows 95 - Das Handbuch'. Es trägt die Last von drei Monitoren und einem Switch.",
         opts: [
+            { 
+                t: "Vor Ort darin blättern", 
+                next: "path_man_study", 
+                m: 30, f: 10, a: -10, c: 0, 
+                r: "Du hockst dich auf den Boden und liest das Kapitel über 'IRQ-Konflikte'. Eine einfachere Zeit. Du fühlst dich entspannt, aber deine Beine sind eingeschlafen." 
+            },
             { 
                 t: "Rausziehen und einstecken", 
                 loot: "manual", 
@@ -787,12 +793,6 @@ export const server = [
                 next: "path_man_leave", 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Never touch a running system. Das gilt auch für Möbel. Du lässt die Statik intakt und das Buch verstauben." 
-            },
-            { 
-                t: "Vor Ort darin blättern", 
-                next: "path_man_study", 
-                m: 30, f: 10, a: -10, c: 0, 
-                r: "Du hockst dich auf den Boden und liest das Kapitel über 'IRQ-Konflikte'. Eine einfachere Zeit. Du fühlst dich entspannt, aber deine Beine sind eingeschlafen." 
             }
         ]
     },
@@ -803,12 +803,6 @@ export const server = [
         text: "Der Tisch ohne das Handbuch-Bein vibriert durch die Server-Lüfter so stark, dass der teure Core-Switch langsam Richtung Abgrund rutscht. Gleich fällt er.",
         opts: [
             { 
-                t: "Handbuch wieder drunterschieben", 
-                rem: "manual", 
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "Du opferst das Wissen für die Sicherheit. Der Tisch steht wieder stabil. Dein Inventar ist leerer, dein Gewissen reiner." 
-            },
-            { 
                 t: "Pappe falten und drunterschieben", 
                 m: 15, f: -10, a: 5, c: 0, 
                 r: "Du bastelst aus einer Pizza-Schachtel einen Ersatz-Keil. Es hält nicht ganz so gut und sieht furchtbar aus, aber du darfst das Buch behalten." 
@@ -818,6 +812,12 @@ export const server = [
                 req: "tape", 
                 m: 5, f: 5, a: 0, c: -5, 
                 r: "Wenn es sich bewegt und es sich nicht bewegen soll: Panzertape. Du klebst den Switch einfach an den Tisch. Problem gelöst." 
+            },
+            { 
+                t: "Handbuch wieder drunterschieben", 
+                rem: "manual", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Du opferst das Wissen für die Sicherheit. Der Tisch steht wieder stabil. Dein Inventar ist leerer, dein Gewissen reiner." 
             }
         ]
     },
@@ -828,11 +828,6 @@ export const server = [
         text: "Ein 'Lean-Management-Berater' kriecht durch den Serverraum. Er zeigt auf das Handbuch unter dem Tischbein. 'Das ist kein definierter Lagerplatz für Dokumentation. Das muss weg.'",
         opts: [
             { 
-                t: "Erklären, dass es ein Lastverteiler ist", 
-                m: 5, f: 5, a: -5, c: 5, 
-                r: "Du schwafelst was von 'Schwingungsdämpfung nach DIN-Norm'. Der Berater macht sich Notizen. 'Kreative Lösung.' Er klebt einen 'Geprüft'-Aufkleber auf das Buch." 
-            },
-            { 
                 t: "Ihm erlauben, es zu entfernen", 
                 m: 5, f: 10, a: 0, c: 0, 
                 r: "Er zieht es triumphierend raus. Der Tisch kippt. Der Monitor fällt ihm auf den Fuß. Du lachst innerlich. Das Audit ist beendet." 
@@ -841,6 +836,11 @@ export const server = [
                 t: "Ihn ignorieren", 
                 m: 2, f: 5, a: 5, c: 10, 
                 r: "Er schreibt 'Mangelhafte Ordnung' in seinen Bericht. Das gibt Ärger, aber wenigstens hast du nicht mit ihm geredet." 
+            },
+            { 
+                t: "Erklären, dass es ein Lastverteiler ist", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du schwafelst was von 'Schwingungsdämpfung nach DIN-Norm'. Der Berater macht sich Notizen. 'Kreative Lösung.' Er klebt einen 'Geprüft'-Aufkleber auf das Buch." 
             }
         ]
     },
@@ -852,6 +852,12 @@ export const server = [
         text: "Der Chef kommt rein. 'Müller! Wir haben noch einen 486er im Keller, der die Türsteuerung regelt. Er verlangt eine IRQ-Zuweisung für die Soundkarte. Wissen Sie zufällig, was das ist?'",
         opts: [
             { 
+                t: "Sagen: 'Kaufen Sie was Neues'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "'Kein Budget!', blafft er zurück. Chance vertan, zu glänzen." 
+            },
+            { 
                 t: "Sofort die Lösung nennen", 
 				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: -5, a: -10, c: -20, 
@@ -862,12 +868,6 @@ export const server = [
 				rep: { "Dr. Wichtig": 5 },
                 m: 60, f: 20, a: 0, c: 0, 
                 r: "Du weißt es zwar, aber du sagst: 'Das ist hochkomplex. Dauert 2 Stunden.' Du gehst entspannt Kaffee trinken. Der Chef wartet ehrfürchtig." 
-            },
-            { 
-                t: "Sagen: 'Kaufen Sie was Neues'", 
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 5, c: 10, 
-                r: "'Kein Budget!', blafft er zurück. Chance vertan, zu glänzen." 
             }
         ]
     },
@@ -876,12 +876,6 @@ export const server = [
         title: "Das seltsame Geräusch",
         text: "Aus Rack 4 kommt ein kratzendes Geräusch. Es klingt nicht wie ein Lüfter. Eher wie... scharfe Zähne auf teurem Glasfaserkabel. Etwas Lebendiges nistet sich in der Firewall ein.",
         opts: [
-            { 
-                t: "Dagegen treten", 
-                next: "path_rat_kick", 
-                m: 5, f: 0, a: 10, c: 5, 
-                r: "BAM! Du trittst fest gegen das Blech. Es quiekt panisch, dann ist absolute Stille. Du wartest kurz... nichts mehr. Problem pragmatisch gelöst." 
-            },
             { 
                 t: "Donut als Köder", 
                 req: "donut", 
@@ -894,6 +888,12 @@ export const server = [
                 next: "path_rat_call", 
                 m: 15, f: 5, a: 0, c: 5, 
                 r: "Du erstellst ein Ticket beim Gebäudemanagement. Priorität: Hoch. Status: 'In Bearbeitung'. Du hast deine Pflicht getan und gehst." 
+            },
+            { 
+                t: "Dagegen treten", 
+                next: "path_rat_kick", 
+                m: 5, f: 0, a: 10, c: 5, 
+                r: "BAM! Du trittst fest gegen das Blech. Es quiekt panisch, dann ist absolute Stille. Du wartest kurz... nichts mehr. Problem pragmatisch gelöst." 
             }
         ]
     },
@@ -904,12 +904,6 @@ export const server = [
         text: "Dein Monitoring-Dashboard leuchtet rot wie ein Weihnachtsbaum. Der Uplink in Rack 4 ist tot. Offenbar hat dein Tritt vorhin nicht nur die Ratte vertrieben, sondern auch etwas gelöst.",
         opts: [
             { 
-                t: "Kabel tauschen", 
-                req: "cable", 
-                m: 15, f: -5, a: -5, c: -10, 
-                r: "Du findest das durchtrente Kabel (Bissspuren oder Riss?). Egal. Du steckst ein neues Patchkabel. Link ist da. Niemand hat was gesehen." 
-            },
-            { 
                 t: "Flicken mit Tape", 
                 req: "tape", 
                 m: 10, f: 0, a: 5, c: 5, 
@@ -919,6 +913,12 @@ export const server = [
                 t: "Es auf 'Sonnenwinde' schieben", 
                 m: 2, f: 10, a: -5, c: 20, 
                 r: "Du schickst eine Rundmail: 'Atmosphärische Störungen'. Die Leute glauben alles, solange es technisch klingt. Du machst nichts." 
+            },
+            { 
+                t: "Kabel tauschen", 
+                req: "cable", 
+                m: 15, f: -5, a: -5, c: -10, 
+                r: "Du findest das durchtrente Kabel (Bissspuren oder Riss?). Egal. Du steckst ein neues Patchkabel. Link ist da. Niemand hat was gesehen." 
             }
         ]
     },
@@ -948,15 +948,15 @@ export const server = [
         text: "Eine E-Mail ploppt auf: 'Ticket #492 (Nagetier) geschlossen. Grund: Kein Zugangsschlüssel.' Zeitgleich fällt das Internet aus. Die Ratte hatte viel Zeit zum Kauen.",
         opts: [
             { 
+                t: "Den Provider beschuldigen", 
+                m: 5, f: 5, a: -5, c: 15, 
+                r: "'Telekom-Bagger hat Leitung gekappt.' Der Klassiker. Alle nicken verständnisvoll und gehen früher heim. Du bist fein raus." 
+            },
+            { 
                 t: "Panik-Reparatur", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 30, f: -20, a: 20, c: -10, 
                 r: "Du musst den ganzen Kabelstrang neu verlegen, während der Chef dir im Nacken atmet. Hättest du es mal gleich selbst gemacht." 
-            },
-            { 
-                t: "Den Provider beschuldigen", 
-                m: 5, f: 5, a: -5, c: 15, 
-                r: "'Telekom-Bagger hat Leitung gekappt.' Der Klassiker. Alle nicken verständnisvoll und gehen früher heim. Du bist fein raus." 
             }
         ]
     },
@@ -965,6 +965,11 @@ export const server = [
         title: "Die Kälte-Falle",
         text: "Jemand hat die Klimaanlage auf 16 Grad gestellt und den Türgriff von innen abgebrochen. Du bist eingesperrt und frierst!",
         opts: [
+            { 
+                t: "An den Servern wärmen", 
+                m: 90, f: 20, a: 10, c: 0, 
+                r: "Du hast dich hinter die Abluft der CPU gekuschelt und geschlafen, bis zufällig jemand die Tür von außen geöffnet hat. Gemütlich." 
+            },
             { 
                 t: "Mit Hammer Tür einschlagen", 
                 req: "hammer",
@@ -977,11 +982,6 @@ export const server = [
                 next: "path_cold_call", 
                 m: 60, f: 0, a: 20, c: -10, 
                 r: "Du musstest den Hausmeister anrufen. Er hat 45 Minuten gebraucht, um den Ersatzschlüssel zu finden. Du bist jetzt ein Eisblock." 
-            },
-            { 
-                t: "An den Servern wärmen", 
-                m: 90, f: 20, a: 10, c: 0, 
-                r: "Du hast dich hinter die Abluft der CPU gekuschelt und geschlafen, bis zufällig jemand die Tür von außen geöffnet hat. Gemütlich." 
             }
         ]
     },
@@ -1017,12 +1017,6 @@ export const server = [
         text: "Egon, der Hausmeister, kniet vor der Serverraum-Tür und montiert ein neues Schloss. Er sieht dich kommen. 'Na, wieder aufgetaut? Ich bau jetzt eins ein, das man auch von innen aufkriegt.'",
         opts: [
             { 
-                t: "Ihm einen Kaffee bringen",
-                rep: { "Egon": 10 }, 
-                m: 10, f: 0, a: -5, c: 5, 
-                r: "Du holst ihm einen Automatenkaffee. 'Danke Jung.' Er wirkt versöhnt. Kleine Geschenke erhalten die Freundschaft (und schnelle Rettung)." 
-            },
-            { 
                 t: "Fachsimpeln", 
                 rep: { "Egon": -5 },
                 m: 5, f: 5, a: 5, c: -5, 
@@ -1032,6 +1026,12 @@ export const server = [
                 t: "Schnell vorbei schleichen", 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Bloß kein Augenkontakt. Die Peinlichkeit von vorhin sitzt noch tief. Du huschst in den Serverraum." 
+            },
+            { 
+                t: "Ihm einen Kaffee bringen",
+                rep: { "Egon": 10 }, 
+                m: 10, f: 0, a: -5, c: 5, 
+                r: "Du holst ihm einen Automatenkaffee. 'Danke Jung.' Er wirkt versöhnt. Kleine Geschenke erhalten die Freundschaft (und schnelle Rettung)." 
             }
         ]
     },
@@ -1040,6 +1040,11 @@ export const server = [
         title: "Die rote Flüssigkeit",
         text: "Unter Rack 7 bildet sich eine Pfütze. Sie ist tiefrot und klebrig. Es riecht süßlich. Ist das... Blut? Hydrauliköl? Oder Sirup? Über dir verläuft eigentlich keine Leitung.",
         opts: [
+            { 
+                t: "Einfach aufwischen & ignorieren", 
+                m: 15, f: 10, a: 0, c: -5, 
+                r: "Du wischst die Pfütze mit Taschentüchern weg. Was man nicht weiß, macht einen nicht heiß. Der Boden klebt zwar noch etwas, aber es sieht sauber aus." 
+            },
             { 
                 t: "Todesmutig den Finger reinstecken & probieren", 
                 next: "path_red_taste", 
@@ -1051,11 +1056,6 @@ export const server = [
                 next: "path_red_alarm", 
                 m: 10, f: -5, a: 10, c: 5, 
                 r: "Du drückst den Notfallknopf. Sirenen heulen los. 'BIOHAZARD!' Du rennst raus und lässt die Feuerwehr den Rest machen. Erstmal Sicherheit." 
-            },
-            { 
-                t: "Einfach aufwischen & ignorieren", 
-                m: 15, f: 10, a: 0, c: -5, 
-                r: "Du wischst die Pfütze mit Taschentüchern weg. Was man nicht weiß, macht einen nicht heiß. Der Boden klebt zwar noch etwas, aber es sieht sauber aus." 
             }
         ]
     },
@@ -1066,11 +1066,6 @@ export const server = [
         text: "Du hörst ein Knistern aus Rack 7, wo du vorhin den Slushie gefunden hast. Tausende Ameisen wurden von den klebrigen Resten angelockt und bauen ein Nest im 10.000€ Switch.",
         opts: [
             { 
-                t: "Chemische Keule (Insektenspray)", 
-                m: 5, f: 5, a: -5, c: 5, 
-                r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Schnell weg hier." 
-            },
-            { 
                 t: "Alles ausbauen & einzeln reinigen", 
                 m: 60, f: -25, a: 15, c: -5, 
                 r: "Eine Stunde lang pinselst du tote Ameisen von Platinen. Es ist eklig, aber du rettest die Hardware. Niemand erfährt von dem Vorfall. Saubere Arbeit." 
@@ -1080,6 +1075,11 @@ export const server = [
                 rep: { "Kevin": -10, "Dr. Wichtig": -10 },
                 m: 10, f: 10, a: -15, c: 20, 
                 r: "Kevin sieht die Ameisen und schreit. Der Chef kommt dazu. Du bekommst einen Einlauf wegen 'mangelnder Aufsicht', aber Kevin muss putzen." 
+            },
+            { 
+                t: "Chemische Keule (Insektenspray)", 
+                m: 5, f: 5, a: -5, c: 5, 
+                r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Schnell weg hier." 
             }
         ]
     },
@@ -1091,6 +1091,13 @@ export const server = [
         text: "Der Chef zitiert dich ins Büro. Der 'biologische Gefahrstoff', wegen dem die Feuerwehr kam, war nur ausgelaufene Kühlflüssigkeit mit Farbstoff. Er sieht nicht glücklich aus.",
         opts: [
             { 
+                t: "Bestechungs-Donut anbieten", 
+                rem: "donut",
+				rep: { "Dr. Wichtig": 5 },
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du schiebst ihm den Donut hin. 'Nervennahrung?' Er beißt rein, kaut und grummelt: 'Verschwinden Sie an die Arbeit.' Bestechung funktioniert immer." 
+            },
+            { 
                 t: "Auf Sicherheitsprotokolle pochen", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: -5, c: 10, 
@@ -1101,13 +1108,6 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 5, c: -10, 
                 r: "'Es tut mir leid.' Der Chef seufzt. 'Der Einsatz kostet uns 500 Euro. Das geht von Ihrem Budget für Weihnachtsdeko ab.' Autsch." 
-            },
-            { 
-                t: "Bestechungs-Donut anbieten", 
-                rem: "donut",
-				rep: { "Dr. Wichtig": 5 },
-                m: 2, f: 5, a: -5, c: 5, 
-                r: "Du schiebst ihm den Donut hin. 'Nervennahrung?' Er beißt rein, kaut und grummelt: 'Verschwinden Sie an die Arbeit.' Bestechung funktioniert immer." 
             }
         ]
     },
@@ -1116,6 +1116,12 @@ export const server = [
         title: "Das illegale Datencenter",
         text: "Du lehnst dich gegen ein Regal und plötzlich schwingt eine falsche Wand auf. Dahinter: Ein versteckter Serverraum! Auf den Bildschirmen flackern... nun ja, sehr 'eindeutige' Erwachsenenfilme. Die Admin-Konsole ist eingeloggt: Es gehört dem Vize-Chef.",
         opts: [
+            { 
+                t: "Klappe halten & Hardware mitnutzen", 
+                next: "path_illegal_share", 
+                m: 5, f: 20, a: -10, c: 20, 
+                r: "Du installierst heimlich deinen privaten Minecraft-Server und einen Bitcoin-Miner auf der Hardware. Gratis Strom, High-Speed-Leitung und der Vize-Chef kann dich schlecht verpfeifen." 
+            },
             { 
                 t: "Beweise sichern & Vize-Chef erpressen", 
                 req: "secret_list",
@@ -1128,12 +1134,6 @@ export const server = [
                 next: "path_illegal_shutdown", 
                 m: 20, f: -10, a: 10, c: 50, 
                 r: "Du zögerst nicht. KLACK. Die Sicherung fliegt raus. Die Bildschirme werden schwarz. Die Lüfter sterben ab. Totale Stille im Raum." 
-            },
-            { 
-                t: "Klappe halten & Hardware mitnutzen", 
-                next: "path_illegal_share", 
-                m: 5, f: 20, a: -10, c: 20, 
-                r: "Du installierst heimlich deinen privaten Minecraft-Server und einen Bitcoin-Miner auf der Hardware. Gratis Strom, High-Speed-Leitung und der Vize-Chef kann dich schlecht verpfeifen." 
             }
         ]
     },
@@ -1192,6 +1192,11 @@ export const server = [
         text: "Du merkst, dass dein Bitcoin-Miner langsamer wird. Der Vize-Chef streamt wohl gerade wieder 4K-Inhalte auf dem versteckten Server. Die Lüfter heulen wie Düsentriebwerke.",
         opts: [
             { 
+                t: "Alles übertakten", 
+                m: 5, f: -5, a: 10, c: -10, 
+                r: "Du drehst die Spannung hoch. Es riecht verschmort, aber beide Prozesse laufen flüssig. Hoffentlich brennt das Gebäude nicht ab." 
+            },
+            { 
                 t: "Seine Prozesse drosseln", 
                 m: 10, f: -10, a: -15, c: 10,
                 r: "Du priorisierst deinen Traffic im Router per QoS. Sein Stream buffert jetzt alle 3 Sekunden. Irgendwo im Büro hörst du einen frustrierten Schrei. Herrlich." 
@@ -1200,11 +1205,6 @@ export const server = [
                 t: "Waffenstillstand per Chat", 
                 m: 5, f: 5, a: -5, c: -5, 
                 r: "Du öffnest `notepad.exe` auf dem Server und schreibst: '50/50 Ressourcenteilung?'. Er antwortet: 'Deal. Aber lösch den Verlauf.' Ehre unter Dieben." 
-            },
-            { 
-                t: "Alles übertakten", 
-                m: 5, f: -5, a: 10, c: -10, 
-                r: "Du drehst die Spannung hoch. Es riecht verschmort, aber beide Prozesse laufen flüssig. Hoffentlich brennt das Gebäude nicht ab." 
             }
         ]
     },
@@ -1213,13 +1213,6 @@ export const server = [
         title: "Der maskierte Bandit",
         text: "Die Tür steht offen. Ein fetter Waschbär sitzt auf dem Haupt-Switch und nagt genüsslich an einem gelben Glasfaserkabel. Er sieht dich an, faucht und macht keine Anstalten zu gehen.",
         opts: [
-            { 
-                t: "Kampf mit Hammer (Dominanz zeigen)", 
-                req: "hammer",
-                next: "path_raccoon_fight", 
-                m: 10, f: -10, a: 20, c: 10, 
-                r: "Du holst zum Schlag aus! 'Verschwinde, du Müllpanda!' Der Waschbär macht einen Matrix-Dodge. KLONG. Dein Hammer trifft mit voller Wucht das Rack. Der Waschbär flieht lachend." 
-            },
             { 
                 t: "Donut opfern (Bestechung)", 
                 rem: "donut",
@@ -1232,6 +1225,13 @@ export const server = [
                 next: "path_raccoon_ignore", 
                 m: 2, f: 20, a: 0, c: 5, 
                 r: "Du ziehst die Tür leise zu und schließt ab. 'Nicht mein Problem. Soll sich die Nachtschicht drum kümmern.' Du gehst pfeifend weg." 
+            },
+            { 
+                t: "Kampf mit Hammer (Dominanz zeigen)", 
+                req: "hammer",
+                next: "path_raccoon_fight", 
+                m: 10, f: -10, a: 20, c: 10, 
+                r: "Du holst zum Schlag aus! 'Verschwinde, du Müllpanda!' Der Waschbär macht einen Matrix-Dodge. KLONG. Dein Hammer trifft mit voller Wucht das Rack. Der Waschbär flieht lachend." 
             }
         ]
     },
@@ -1358,6 +1358,11 @@ export const server = [
         text: "Du durchsuchst die Dateien auf der Diskette. Es sind keine Highscores. Es ist eine Datei namens 'Y2K_FIX_FINAL.BAT'. Ein Skript, das das Jahr 2000 verhindern sollte.",
         opts: [
             { 
+                t: "Diskette formatieren", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Du löschst alles und speicherst deine eigenen Urlaubsbilder drauf. 1,44 MB Speicherplatz gespart. Pragmatismus pur." 
+            },
+            { 
                 t: "Aus Neugier ausführen", 
                 m: 10, f: -10, a: 10, c: 50, 
                 r: "Du klickst drauf. Das Systemdatum springt auf den 01.01.1900. Alle Zertifikate werden ungültig. Die Buchhaltung crasht. Aber hey, Retro-Feeling!" 
@@ -1366,11 +1371,6 @@ export const server = [
                 t: "Code analysieren (Lernen)", 
                 m: 60, f: -20, a: 0, c: -5, 
                 r: "Du studierst den antiken Code. Es ist Spaghetti-Code vom Feinsten, aber du lernst einen Trick, um die Server-Logs zu manipulieren. (Skill verbessert)" 
-            },
-            { 
-                t: "Diskette formatieren", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Du löschst alles und speicherst deine eigenen Urlaubsbilder drauf. 1,44 MB Speicherplatz gespart. Pragmatismus pur." 
             }
         ]
     },
@@ -1379,13 +1379,6 @@ export const server = [
         title: "Die offene Werkzeugkiste",
         text: "Ein externer Techniker hat seine Kiste neben Rack 3 vergessen. Sie steht offen da wie eine Schatztruhe. Du siehst nützliche Dinge, die dein IT-Herz höher schlagen lassen.",
         opts: [
-            { 
-                t: "Kabelbinder einstecken", 
-                loot: "zip_ties", 
-                next: "path_loot_zip", 
-                m: 5, f: 5, a: 0, c: 0, 
-                r: "Eine 100er Packung schwarze Kabelbinder. Gold wert für das Kabelmanagement zuhause! Schnell in die Tasche damit." 
-            },
             { 
                 t: "Schraubendreher nehmen", 
                 loot: "screw", 
@@ -1397,6 +1390,13 @@ export const server = [
                 t: "Stehen lassen", 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du widerstehst der Versuchung. Du hast schon genug Zeug auf dem Schreibtisch." 
+            },
+            { 
+                t: "Kabelbinder einstecken", 
+                loot: "zip_ties", 
+                next: "path_loot_zip", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Eine 100er Packung schwarze Kabelbinder. Gold wert für das Kabelmanagement zuhause! Schnell in die Tasche damit." 
             }
         ]
     },
@@ -1407,6 +1407,12 @@ export const server = [
         text: "Der Techniker kommt angerannt. Er schwitzt und wirkt extrem gestresst. 'Verdammt, wo ist die Packung Kabelbinder hin? Ich muss in 10 Minuten beim nächsten Kunden sein!' Er sieht dich an.",
         opts: [
             { 
+                t: "Kevin beschuldigen",
+                rep: { "Kevin": -10 }, 
+                m: 2, f: 5, a: -5, c: -10, 
+                r: "'Der Azubi war vorhin hier...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
+            },
+            { 
                 t: "Lügen: 'Habe nichts gesehen'", 
                 m: 2, f: 0, a: 5, c: -5, 
                 r: "Du zuckst mit den Schultern. 'Vielleicht hat die Putzkolonne aufgeräumt?' Er flucht, packt seine Kiste und rennt los. Dein Gewissen zwickt kurz." 
@@ -1416,12 +1422,6 @@ export const server = [
                 rem: "zip_ties",
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "'Oh, die lagen hier am Boden. Wollte sie gerade sicherstellen.' Er atmet auf. 'Danke Mann! Du rettest mir den Arsch.' Er ist weg." 
-            },
-            { 
-                t: "Kevin beschuldigen",
-                rep: { "Kevin": -10 }, 
-                m: 2, f: 5, a: -5, c: -10, 
-                r: "'Der Azubi war vorhin hier...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
             }
         ]
     },
@@ -1477,6 +1477,11 @@ export const server = [
         text: "Du läufst mit deinen neuen Kopfhörern durch den Flur. Ein Kollege aus dem Marketing (Hipster-Bart, Mate-Tee) stoppt dich. 'Hey! Das sind doch meine Sennheiser! Ich hab die überall gesucht!'",
         opts: [
             { 
+                t: "Ihm Hygiene-Angst machen", 
+                m: 5, f: 5, a: 10, c: 0, 
+                r: "'Echt? Ich habe gerade eine Pilzinfektion am Ohr, deshalb trage ich die.' Er wird bleich, weicht zurück und murmelt: 'Behalt sie. Bitte. Verbrenn sie.' Sieg!" 
+            },
+            { 
                 t: "Zurückgeben", 
                 rem: "headphones",
                 m: 5, f: 0, a: -5, c: 5, 
@@ -1486,11 +1491,6 @@ export const server = [
                 t: "Lügen: 'Die gehören mir'", 
                 m: 2, f: 0, a: 5, c: 5, 
                 r: "'Das ist das Modell XP-500. Meins.' Er starrt dich misstrauisch an. 'Meine hatten einen Kratzer am Bügel...' Du gehst schnell weiter, bevor er ihn sieht." 
-            },
-            { 
-                t: "Ihm Hygiene-Angst machen", 
-                m: 5, f: 5, a: 10, c: 0, 
-                r: "'Echt? Ich habe gerade eine Pilzinfektion am Ohr, deshalb trage ich die.' Er wird bleich, weicht zurück und murmelt: 'Behalt sie. Bitte. Verbrenn sie.' Sieg!" 
             }
         ]
     },
@@ -1501,12 +1501,6 @@ export const server = [
         text: "Du hörst lautes Fluchen aus dem Serverraum. Ein ehemaliger Admin (in Rente) steht vor einem alten Server, der hängt. Er haut mit der flachen Hand dagegen. 'WO IST MEIN MEINUNGSVERSTÄRKER?!'",
         opts: [
             { 
-                t: "Hammer zurückgeben", 
-                rem: "hammer",
-                m: 5, f: 0, a: -5, c: 5, 
-                r: "Du reichst ihm den Hammer. Er grinst böse. 'Danke.' KLONG! Er haut einmal kräftig gegen das Gehäuse. Die Festplatte surrt wieder an. 'Geht doch.'" 
-            },
-            { 
                 t: "Hilfe anbieten", 
                 req: "hammer",
                 m: 10, f: -5, a: -5, c: 5, 
@@ -1516,6 +1510,12 @@ export const server = [
                 t: "Schnell weggehen", 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Bloß nicht einmischen. Hinter dir hörst du, wie er anfängt, gegen den Server zu treten. Du streichelst deinen neuen Hammer." 
+            },
+            { 
+                t: "Hammer zurückgeben", 
+                rem: "hammer",
+                m: 5, f: 0, a: -5, c: 5, 
+                r: "Du reichst ihm den Hammer. Er grinst böse. 'Danke.' KLONG! Er haut einmal kräftig gegen das Gehäuse. Die Festplatte surrt wieder an. 'Geht doch.'" 
             }
         ]
     },
@@ -1524,13 +1524,6 @@ export const server = [
         title: "Das Wackel-Rack",
         text: "Rack 5 vibriert bedenklich im Takt der Lüfter. Eine tragende Schraube fehlt. Wenn das kippt, domino-effektet es das ganze Rechenzentrum.",
         opts: [
-            { 
-                t: "Fachgerecht festschrauben", 
-                req: "screw",
-                next: "path_rack_screw", 
-                m: 25, f: -15, a: 5, c: -10,
-                r: "Du kriechst auf dem Boden herum, richtest das Rack aus und ziehst die Schraube mit Drehmoment nach. Deutsche Wertarbeit. Das Ding bewegt sich keinen Millimeter mehr." 
-            },
             { 
                 t: "Mit Kabelbindern sichern", 
                 req: "zip_ties",
@@ -1542,6 +1535,13 @@ export const server = [
                 t: "Wegsehen und pfeifen", 
                 m: 2, f: 10, a: -5, c: 10,
                 r: "Du drehst dich um. Wenn du es nicht siehst, ist es nicht illegal. Du hoffst einfach, dass die Physik heute Urlaub macht." 
+            },
+            { 
+                t: "Fachgerecht festschrauben", 
+                req: "screw",
+                next: "path_rack_screw", 
+                m: 25, f: -15, a: 5, c: -10,
+                r: "Du kriechst auf dem Boden herum, richtest das Rack aus und ziehst die Schraube mit Drehmoment nach. Deutsche Wertarbeit. Das Ding bewegt sich keinen Millimeter mehr." 
             }
         ]
     },
@@ -1552,6 +1552,11 @@ export const server = [
         text: "Ein lauter KNALL! Die Putzkolonne ist mit dem schweren Bohnert-Wagen volle Kanne in Rack 5 gerammt. Dank deiner Schraube hat es standgehalten. Der Putzmann starrt schockiert auf die Beule.",
         opts: [
             { 
+                t: "Schadenersatz fordern", 
+                m: 10, f: 5, a: 10, c: 0, 
+                r: "Du verlangst 20 Euro für den Lackschaden. Er gibt sie dir zitternd. Du bist ein Arschloch, aber ein reiches Arschloch." 
+            },
+            { 
                 t: "Ihn zur Sau machen", 
                 m: 5, f: 0, a: -20, c: 5, 
                 r: "Du schreist ihn 5 Minuten lang an. Das tut gut! Deine Aggression verpufft komplett. Er entschuldigt sich tausendmal." 
@@ -1561,11 +1566,6 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 15, f: -5, a: 5, c: -15, 
                 r: "'Alles gut, Meister. Das hält.' Du checkst die Logs. Keine Ausfälle. Der Chef sieht das und nickt anerkennend. 'Gute Arbeit, Müller. Robust gebaut.'" 
-            },
-            { 
-                t: "Schadenersatz fordern", 
-                m: 10, f: 5, a: 10, c: 0, 
-                r: "Du verlangst 20 Euro für den Lackschaden. Er gibt sie dir zitternd. Du bist ein Arschloch, aber ein reiches Arschloch." 
             }
         ]
     },
@@ -1575,12 +1575,6 @@ export const server = [
         reqStory: "path_rack_zip",
         text: "Ein tiefes Brummen erfüllt den Raum. Deine Kabelbinder haben die Vibrationen von Rack 5 auf Rack 4 übertragen. Jetzt schwingen beide in Resonanz und erzeugen einen Höllenlärm.",
         opts: [
-            { 
-                t: "Mehr Kabelbinder!", 
-                rem: "zip_ties",
-                m: 5, f: 10, a: 0, c: 10, 
-                r: "Viel hilft viel. Du zurrste alles so fest, bis das Plastik weiß wird. Der Lärm wird höher, fast ein Pfeifen. Aber es wackelt weniger." 
-            },
             { 
                 t: "Alles wieder losknippsen", 
                 m: 20, f: -10, a: 20, c: -5, 
@@ -1592,6 +1586,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -2 },
                 m: 2, f: 20, a: -10, c: 20, 
                 r: "Du setzt die Noise-Cancelling-Kopfhörer auf. Himmlische Stille. Der Chef kommt rein und brüllt was, aber du hörst ihn nicht. Er sieht wütend aus." 
+            },
+            { 
+                t: "Mehr Kabelbinder!", 
+                rem: "zip_ties",
+                m: 5, f: 10, a: 0, c: 10, 
+                r: "Viel hilft viel. Du zurrste alles so fest, bis das Plastik weiß wird. Der Lärm wird höher, fast ein Pfeifen. Aber es wackelt weniger." 
             }
         ]
     },
@@ -1600,12 +1600,6 @@ export const server = [
         title: "Der Kabel-Alptraum",
         text: "Hinter Rack 3 hängt ein Bündel Glasfaserkabel gefährlich nah am rotierenden Lüfter. Ein Windhauch, und es gibt Datensalat (im wörtlichen Sinne).",
         opts: [
-            { 
-                t: "Sauber zur Seite binden", 
-                req: "zip_ties",
-                m: 15, f: -10, a: 0, c: -5, 
-                r: "Du nimmst dir Zeit und verlegst die Kabel ordentlich im Führungsschacht. Klick, klick. Das hält für die Ewigkeit. Preußische Ordnung im Rack." 
-            },
             { 
                 t: "Festkleben (Provisorium)", 
                 req: "tape",
@@ -1618,6 +1612,12 @@ export const server = [
                 next: "path_cable_break", 
                 m: 2, f: 10, a: 10, c: 15, 
                 r: "KNACK. Du reißt das Schutzgitter vor dem Lüfter raus. Jetzt ist mehr Platz für die Kabel, aber der Ventilator dreht sich jetzt offen wie ein Häcksler." 
+            },
+            { 
+                t: "Sauber zur Seite binden", 
+                req: "zip_ties",
+                m: 15, f: -10, a: 0, c: -5, 
+                r: "Du nimmst dir Zeit und verlegst die Kabel ordentlich im Führungsschacht. Klick, klick. Das hält für die Ewigkeit. Preußische Ordnung im Rack." 
             }
         ]
     },
@@ -1627,6 +1627,11 @@ export const server = [
         reqStory: "path_cable_tape",
         text: "Der Server ist heiß gelaufen. Dein Tape-Kleber hat sich verflüssigt. Das Kabelbündel hat sich gelöst und klatscht jetzt rhythmisch gegen den Lüfter. KLACK-KLACK-KLACK.",
         opts: [
+            { 
+                t: "Tür zu machen", 
+                m: 2, f: 10, a: -5, c: 10, 
+                r: "Wenn die Tür zu ist, hört man das Klackern kaum. Problem gelöst (für dich)." 
+            },
             { 
                 t: "Doch noch Kabelbinder holen", 
                 req: "zip_ties", 
@@ -1638,11 +1643,6 @@ export const server = [
                 req: "tape", 
                 m: 5, f: 5, a: 0, c: 5, 
                 r: "Mehr Tape hilft mehr. Du wickelst den halben Server ein. Es sieht aus wie eine Mumie, aber das Geräusch ist weg." 
-            },
-            { 
-                t: "Tür zu machen", 
-                m: 2, f: 10, a: -5, c: 10, 
-                r: "Wenn die Tür zu ist, hört man das Klackern kaum. Problem gelöst (für dich)." 
             }
         ]
     },
@@ -1654,16 +1654,16 @@ export const server = [
         text: "Ein Schrei aus dem Serverraum! Kevin wollte nur mal fühlen, wie stark der Luftzug ist. Ohne das Schutzgitter hat der Lüfter seinen Zeigefinger erwischt.",
         opts: [
             { 
-                t: "Verbandskasten holen", 
-                rep: { "Kevin": 5 },
-                m: 10, f: 0, a: -5, c: 0, 
-                r: "Es blutet wie Sau. Du verarztest ihn. 'Nicht dem Chef sagen!', wimmerst du. Kevin nickt unter Tränen." 
-            },
-            { 
                 t: "Ihm sagen, er soll sich nicht anstellen", 
                 rep: { "Kevin": -5 },
                 m: 5, f: 5, a: 5, c: 10, 
                 r: "'Das ist nur eine Fleischwunde. Das baut Charakter auf.' Du gibst ihm ein Taschentuch. Er geht schmollend." 
+            },
+            { 
+                t: "Verbandskasten holen", 
+                rep: { "Kevin": 5 },
+                m: 10, f: 0, a: -5, c: 0, 
+                r: "Es blutet wie Sau. Du verarztest ihn. 'Nicht dem Chef sagen!', wimmerst du. Kevin nickt unter Tränen." 
             }
         ]
     },
@@ -1742,11 +1742,6 @@ export const server = [
         text: "Der Techniker kommt genervt an. Der Sabotage-Alarm heult immer noch. Du hältst dir die schmerzende Schulter. 'Haben Sie versucht, die Tür einzurennen? Das ist Stahlbeton, Sie Genie.'",
         opts: [
             { 
-                t: "Ihm beim Aufbohren zusehen", 
-                m: 45, f: 20, a: 10, c: -5, 
-                r: "Er braucht eine Ewigkeit, um den Riegel aufzubohren. Du stehst daneben und fühlst dich nutzlos. Die Zeit fehlt dir jetzt." 
-            },
-            { 
                 t: "Ihn anschreien: 'Beeilung!'", 
                 m: 5, f: 0, a: 10, c: 20, 
                 r: "Deine Schulter tut weh und du bist wütend. Er arbeitet absichtlich langsamer. 'Gutes Werkzeug braucht Weile', grinst er. Du kochst." 
@@ -1755,6 +1750,11 @@ export const server = [
                 t: "Schokoriegel essen (Frustbewältigung)", 
                 m: 5, f: 10, a: -10, c: 0, 
                 r: "Du isst einen Snack, während er arbeitet. Wenigstens sinkt dein Stresslevel, während die Rechnung steigt." 
+            },
+            { 
+                t: "Ihm beim Aufbohren zusehen", 
+                m: 45, f: 20, a: 10, c: -5, 
+                r: "Er braucht eine Ewigkeit, um den Riegel aufzubohren. Du stehst daneben und fühlst dich nutzlos. Die Zeit fehlt dir jetzt." 
             }
         ]
     },
@@ -1792,12 +1792,6 @@ export const server = [
         text: "Du schaust nach deiner Tape-Konstruktion. Das Wasser hat sich gestaut. Das Tape hat sich gedehnt und bildet jetzt eine pralle, literschwere Blase direkt über dem Server. Sieht aus wie ein Euter.",
         opts: [
             { 
-                t: "Vorsichtig anstechen & ablassen", 
-                req: "screw",
-                m: 15, f: -5, a: 5, c: 0, 
-                r: "Ganz vorsichtig... PIEKS. Du fängst den Strahl mit einem Becher auf. Du brauchst 20 Becher, aber die Blase ist weg. Maßarbeit." 
-            },
-            { 
                 t: "Mehr Tape drumwickeln", 
                 req: "tape", 
                 m: 5, f: 10, a: 0, c: 5, 
@@ -1807,6 +1801,12 @@ export const server = [
                 t: "Schüssel drunter & wegrennen", 
                 m: 2, f: 5, a: -5, c: 10, 
                 r: "Wenn das platzt, willst du nicht im Raum sein. Du stellst eine Schüssel zur Gewissensberuhigung auf den Boden und fliehst." 
+            },
+            { 
+                t: "Vorsichtig anstechen & ablassen", 
+                req: "screw",
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Ganz vorsichtig... PIEKS. Du fängst den Strahl mit einem Becher auf. Du brauchst 20 Becher, aber die Blase ist weg. Maßarbeit." 
             }
         ]
     },
@@ -1817,6 +1817,11 @@ export const server = [
         text: "Du kommst zurück in den Serverraum. Es ist still. Kein 'Pling' mehr. Der Eimer ist nämlich voll und übergelaufen. Eine große Pfütze breitet sich Richtung Stromverteiler aus.",
         opts: [
             { 
+                t: "Schild 'Vorsicht Rutschgefahr' aufstellen", 
+                m: 2, f: 15, a: -5, c: 10, 
+                r: "Rechtlich bist du jetzt abgesichert. Technisch gesehen steht der Stromverteiler immer noch im Wasser. Aber du hast Feierabend." 
+            },
+            { 
                 t: "Alles aufwischen", 
                 m: 30, f: -20, a: 10, c: -5, 
                 r: "Du kriechst mit Papierhandtüchern auf dem Boden rum. Deine Hose wird nass, dein Rücken schmerzt. Faulheit wird sofort bestraft." 
@@ -1825,11 +1830,6 @@ export const server = [
                 t: "Putzkolonne rufen", 
                 m: 5, f: 10, a: -5, c: 5, 
                 r: "'Hier ist... äh... was ausgelaufen.' Die Putzkraft rollt mit den Augen, macht es aber weg. Du stehst daneben und gibst unnötige Tipps." 
-            },
-            { 
-                t: "Schild 'Vorsicht Rutschgefahr' aufstellen", 
-                m: 2, f: 15, a: -5, c: 10, 
-                r: "Rechtlich bist du jetzt abgesichert. Technisch gesehen steht der Stromverteiler immer noch im Wasser. Aber du hast Feierabend." 
             }
         ]
     },
@@ -1840,6 +1840,11 @@ export const server = [
         text: "Das Wasser läuft. Der Switch blinkt wild. Es riecht nach Ozon. Du musst handeln, bevor der 50.000€ Schaden amtlich wird.",
         opts: [
             { 
+                t: "Schuld auf Dachschaden schieben", 
+                m: 5, f: 10, a: -10, c: -5, 
+                r: "Du machst Fotos vom kaputten Rohr. 'Baumangel! Höhere Gewalt!' Die Versicherung zahlt. Niemand fragt nach dem Hammer." 
+            },
+            { 
                 t: "In Reis einlegen", 
                 m: 15, f: 5, a: -5, c: 10, 
                 r: "Du kippst den Kantinen-Reis in den Server. Es bringt technisch nichts, sieht aber so aus, als hättest du einen Plan. Der Switch stirbt trotzdem." 
@@ -1848,11 +1853,6 @@ export const server = [
                 t: "Mit Föhn trocknen", 
                 m: 20, f: -5, a: 5, c: 0, 
                 r: "Du föhnst die Platinen trocken. Es dauert ewig. Tatsächlich gehen die Lichter wieder an! Ein Wunder (oder Glück). Korrosion ist ein Problem für später." 
-            },
-            { 
-                t: "Schuld auf Dachschaden schieben", 
-                m: 5, f: 10, a: -10, c: -5, 
-                r: "Du machst Fotos vom kaputten Rohr. 'Baumangel! Höhere Gewalt!' Die Versicherung zahlt. Niemand fragt nach dem Hammer." 
             }
         ]
     },
@@ -1862,15 +1862,15 @@ export const server = [
         text: "Hinter Rack 5 klebt ein vergilbter Zettel mit Tesafilm. Darauf steht in krakeliger Schrift: 'TOP SECRET - NUR FÜR ADMINS'. Der Zettel sieht aus, als hinge er dort schon seit Windows 95.",
         opts: [
             { 
+                t: "Ehrfürchtig hängen lassen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du drückst den Tesafilm wieder fest. Das ist IT-Archäologie und Kulturgut. Wer das entfernt, löscht wahrscheinlich auch versehentlich das Backup." 
+            },
+            { 
                 t: "Den Zettel neugierig entziffern", 
                 next: "path_pw_decipher", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Es sind keine Passwörter. Es ist das Vermächtnis deines Vorgängers: 'Ich habe das Internet in einer schwarzen Kiste ganz unten im Rack versteckt. Wenn Google down ist, müsst ihr die Kiste schütteln. P.S.: Trau niemals dem Drucker.' Weise Worte." 
-            },
-            { 
-                t: "Ehrfürchtig hängen lassen", 
-                m: 2, f: 0, a: 0, c: 0, 
-                r: "Du drückst den Tesafilm wieder fest. Das ist IT-Archäologie und Kulturgut. Wer das entfernt, löscht wahrscheinlich auch versehentlich das Backup." 
             }
         ]
     },
@@ -1882,12 +1882,6 @@ export const server = [
         text: "Ein Schrei hallt durch die Firma: 'GOOGLE IST DOWN!' Panik bricht aus. Die Senior-Admins tippen wild auf Konsolen: 'DNS-Fehler! Backbone-Timeout!' Nichts hilft. Der Chef läuft rot an.",
         opts: [
             { 
-                t: "Die 'Schwarze Kiste' schütteln", 
-				rep: { "Dr. Wichtig": 10 },
-                m: 5, f: -10, a: -10, c: -20, 
-                r: "Du kriechst nach unten und schüttelst die verstaubte schwarze Box. KLACK. Die LEDs springen auf Grün. Das Internet ist zurück! Der Chef klopft dir begeistert auf die Schulter: 'Hexerei, Müller! Aber gute Arbeit!'" 
-            },
-            { 
                 t: "Logisch vorgehen (Router neu starten)", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 20, f: -5, a: 10, c: 10, 
@@ -1898,6 +1892,12 @@ export const server = [
 				rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: -5, c: 10, 
                 r: "Der Zettel warnte auch vor dem Drucker. Du starrst das Gerät böse an, während die Firma Geld verliert. Der Chef schreit: 'Müller! Was machen Sie da?! Fixen Sie das WLAN!' Das gab Ärger." 
+            },
+            { 
+                t: "Die 'Schwarze Kiste' schütteln", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 5, f: -10, a: -10, c: -20, 
+                r: "Du kriechst nach unten und schüttelst die verstaubte schwarze Box. KLACK. Die LEDs springen auf Grün. Das Internet ist zurück! Der Chef klopft dir begeistert auf die Schulter: 'Hexerei, Müller! Aber gute Arbeit!'" 
             }
         ]
     },
@@ -1907,14 +1907,14 @@ export const server = [
         text: "Du starrst auf das Bedienfeld der Klimaanlage. Ein handgeschriebener Zettel klebt über den Reglern: 'ACHTUNG: Der Elektriker war farbenblind! BLAU heizt (Warm) und ROT kühlt (Kalt)! Nicht anfassen, wird erst 2030 repariert.'",
         opts: [
             { 
-                t: "Anlage genauer untersuchen", 
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "Tatsächlich. Die Kabel sind vertauscht. Rot geht zum Kompressor (Kalt), Blau zur Heizspirale (Warm). Völlig absurd. Gut, dass du nachgesehen hast." 
-            },
-            { 
                 t: "Zettel ignorieren", 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Du gehst weiter. Farben sind schließlich genormt, oder? Was soll schon passieren." 
+            },
+            { 
+                t: "Anlage genauer untersuchen", 
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "Tatsächlich. Die Kabel sind vertauscht. Rot geht zum Kompressor (Kalt), Blau zur Heizspirale (Warm). Völlig absurd. Gut, dass du nachgesehen hast." 
             }
         ]
     },
@@ -1942,11 +1942,6 @@ export const server = [
         text: "Du hörst ein leises Wimmern hinter Rack 4. Es ist Frau Elster aus der Buchhaltung. Sie sitzt auf dem Boden, das Gesicht in den Händen vergraben. 'Ich kann das alles nicht mehr...', flüstert sie.",
         opts: [
             { 
-                t: "Leise wieder rausgehen", 
-                m: 2, f: 0, a: 0, c: 0, 
-                r: "Du lässt sie in Ruhe. Manchmal braucht man Privatsphäre." 
-            },
-            { 
                 t: "Fragen: 'Alles okay mit der Bilanz?'", 
                 rep: { "Frau Elster": -5 },
                 m: 10, f: 0, a: 10, c: 5, 
@@ -1957,6 +1952,11 @@ export const server = [
                 rep: { "Frau Elster": 10 },
                 m: 15, f: 10, a: -20, c: -5, 
                 r: "Sie blickt überrascht auf. Ein kleines Lächeln erscheint. 'Rüdiger... ja, der wartet zuhause. Er braucht sein Futter.' Sie wischt sich die Tränen weg. 'Danke, Herr Müller. Ich gehe jetzt heim zu ihm.' Du hast ihren Tag gerettet." 
+            },
+            { 
+                t: "Leise wieder rausgehen", 
+                m: 2, f: 0, a: 0, c: 0, 
+                r: "Du lässt sie in Ruhe. Manchmal braucht man Privatsphäre." 
             }
         ]
     },
@@ -2009,11 +2009,6 @@ export const server = [
         text: "Du prüfst die Stempelzeiten. Komisch. Neben 'Müller' und 'Schmidt' stehen da plötzlich 'Vladimir', 'Igor' und 'Botnet_Warrior_99'. Sie arbeiten alle 24 Stunden am Tag und haben Admin-Rechte.",
         opts: [
             { 
-                t: "Panik: Datenbank bereinigen & patchen", 
-                m: 60, f: -20, a: 20, c: 0, 
-                r: "Heimlich löschst du die Accounts und spielst das Update ein. Du schwitzt Blut und Wasser. Hoffentlich haben sie keine Backdoor hinterlassen." 
-            },
-            { 
                 t: "Bei HR nachfragen: 'Haben wir expandiert?'", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: 0, a: -5, c: 20, 
@@ -2023,6 +2018,11 @@ export const server = [
                 t: "Die 'Mitarbeiter' behalten (Mining)", 
                 m: 5, f: 10, a: -10, c: 10, 
                 r: "Sie scheinen nur Rechenleistung für Krypto zu klauen. Du lässt sie gewähren und zweigst 10% für dich ab. Ein riskantes Spiel mit der russischen Mafia." 
+            },
+            { 
+                t: "Panik: Datenbank bereinigen & patchen", 
+                m: 60, f: -20, a: 20, c: 0, 
+                r: "Heimlich löschst du die Accounts und spielst das Update ein. Du schwitzt Blut und Wasser. Hoffentlich haben sie keine Backdoor hinterlassen." 
             }
         ]
     },
@@ -2085,11 +2085,6 @@ export const server = [
         text: "Der Berater wedelt mit einem laminierten Dokument. 'Bezüglich unseres Disputs. Ich habe hier eine formelle Beschwerde wegen 'Toxischer Arbeitsatmosphäre'. Unterschreiben Sie, oder ich empfehle dem Vorstand Outsourcing.'",
         opts: [
             { 
-                t: "Klein beigeben & unterschreiben", 
-                m: 10, f: 5, a: -10, c: -20, 
-                r: "Du unterschreibst zähneknirschend. Der Berater lächelt süffisant. 'Geht doch. Synergie durch Kooperation.' Dein Radar sinkt, aber dein Stolz ist tot." 
-            },
-            { 
                 t: "Bürokratie-Konter: 'Formular 7b fehlt'", 
                 m: 5, f: 10, a: 10, c: 10, 
                 r: "Du schaust das Papier an. 'Das ist das alte Formular von 2018. Ohne Passierschein A38 kann ich das nicht annehmen.' Der Berater ist verwirrt und zieht ab." 
@@ -2099,6 +2094,11 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 2, f: 0, a: -20, c: 40, 
                 r: "Du wirfst ihn raus. Er droht mit Anwälten. Der Chef ist sauer, aber die Kollegen feiern dich als Helden des Widerstands." 
+            },
+            { 
+                t: "Klein beigeben & unterschreiben", 
+                m: 10, f: 5, a: -10, c: -20, 
+                r: "Du unterschreibst zähneknirschend. Der Berater lächelt süffisant. 'Geht doch. Synergie durch Kooperation.' Dein Radar sinkt, aber dein Stolz ist tot." 
             }
         ]
     },
@@ -2129,6 +2129,12 @@ export const server = [
         text: "Der Chef kommt rein und hört das kraftvolle Surren. 'Hören Sie das, Müller? Methusalem läuft ja wie ein Neuwagen! Da können wir den Antrag für den neuen Server (15.000€) ja stornieren.' Dein Herz bleibt stehen.",
         opts: [
             { 
+                t: "Trotzdem auf Neukauf bestehen",
+				rep: { "Dr. Wichtig": -2 },
+                m: 15, f: 0, a: 10, c: 20,
+                r: "'Das ist nur das letzte Aufbäumen vor dem Tod!' Der Chef winkt ab. 'Solange er blinkt, bleibt er.' Du hast jetzt einen schnellen, alten Server und einen genervten Chef." 
+            },
+            { 
                 t: "Sabotage: Lüfter wieder drosseln", 
                 m: 10, f: -5, a: -20, c: 10,
                 r: "Du klemmst heimlich ein Stück Pappe in den Lüfter. Der Server überhitzt sofort. Der Chef seufzt: 'Na gut. Ich bestelle Ersatz.' Er kauft den billigsten 'Refurbished'-Server auf eBay. Jetzt hast du Elektroschrott am Hals." 
@@ -2138,12 +2144,6 @@ export const server = [
 				rep: { "Dr. Wichtig": 5 },
                 m: 2, f: 5, a: 5, c: -10,
                 r: "Du akzeptierst dein Schicksal. Du klebst ein Post-It an den Server: 'Nicht ausschalten, sonst stirbt er.' Der Chef nickt zufrieden über die Sparmaßnahme." 
-            },
-            { 
-                t: "Trotzdem auf Neukauf bestehen",
-				rep: { "Dr. Wichtig": -2 },
-                m: 15, f: 0, a: 10, c: 20,
-                r: "'Das ist nur das letzte Aufbäumen vor dem Tod!' Der Chef winkt ab. 'Solange er blinkt, bleibt er.' Du hast jetzt einen schnellen, alten Server und einen genervten Chef." 
             }
         ]
     },
@@ -2171,13 +2171,6 @@ export const server = [
         text: "Server 'Berta' (Gehaltsabrechnung) glüht. Der Lüfter steht still, es riecht beißend nach heißem Silizium. Wenn Berta stirbt, sind die Lohndaten weg.",
         opts: [
             { 
-                t: "Brutale Lösung: CO2-Löscher", 
-                req: "fire_ext", 
-                next: "path_overheat_co2",
-                m: 5, f: -10, a: 10, c: -10, 
-                r: "PFFFFT! Ein eiskalter CO2-Stoß direkt in den Lufteinlass. Die Temperatur fällt schockartig auf -10 Grad. Berta schnurrt wieder, ist aber nun ein Eisblock." 
-            },
-            { 
                 t: "Aufschrauben & Luft zufächeln", 
                 req: "screw", 
                 m: 45, f: -15, a: 20, c: 0, 
@@ -2194,6 +2187,13 @@ export const server = [
                 next: "path_overheat_ignore",
                 m: 5, f: 10, a: 0, c: 50, 
                 r: "Du gehst einfach. 10 Minuten später stirbt Berta den Hitzetod. Stille im Serverraum. Dafür Lärm im Flur." 
+            },
+            { 
+                t: "Brutale Lösung: CO2-Löscher", 
+                req: "fire_ext", 
+                next: "path_overheat_co2",
+                m: 5, f: -10, a: 10, c: -10, 
+                r: "PFFFFT! Ein eiskalter CO2-Stoß direkt in den Lufteinlass. Die Temperatur fällt schockartig auf -10 Grad. Berta schnurrt wieder, ist aber nun ein Eisblock." 
             }
         ]
     },
@@ -2254,12 +2254,6 @@ export const server = [
         text: "Frau Elster aus der Buchhaltung steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
         opts: [
             { 
-                t: "Alle Überweisungen manuell tippen",
-                rep: { "Frau Elster": 10 }, 
-                m: 120, f: -50, a: 20, c: -10, 
-                r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich. Lektion gelernt." 
-            },
-            { 
                 t: "Schuld auf 'Hacker' schieben",
                 rep: { "Frau Elster": -2 }, 
                 m: 10, f: 5, a: -10, c: 10, 
@@ -2270,6 +2264,12 @@ export const server = [
                 rep: { "Frau Elster": -10 }, 
                 m: 60, f: 10, a: -20, c: 40, 
                 r: "Du schließt dich im Klo ein und wartest, bis der Mob nach Hause geht. Als du rauskommst, klebt ein Zettel an deinem Monitor: 'Wir wissen, wo du wohnst.'" 
+            },
+            { 
+                t: "Alle Überweisungen manuell tippen",
+                rep: { "Frau Elster": 10 }, 
+                m: 120, f: -50, a: 20, c: -10, 
+                r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich. Lektion gelernt." 
             }
         ]
     },
@@ -2307,12 +2307,6 @@ export const server = [
         text: "Der Chef steht in der Tür. 'Müller? Warum kann das Marketing nicht auf Laufwerk X zugreifen? Da liegen die Kampagnen für morgen!' Er sieht die tote LED.",
         opts: [
             { 
-                t: "Die Nachtschicht beschuldigen", 
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 5, a: -5, c: 0, 
-                r: "Du zeigst auf den Zettel des Kollegen. 'Er ist einfach gegangen.' Der Chef tobt. 'Dieser Nichtsnutz!' Dein Kopf ist aus der Schlinge, der Kollege ist fällig." 
-            },
-            { 
                 t: "Backup einspielen (Heldenmut)", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 45, f: -15, a: 5, c: -20, 
@@ -2324,6 +2318,12 @@ export const server = [
                 rep: { "Dr. Wichtig": -2 },
 				m: 2, f: 5, a: -5, c: 10, 
                 r: "'Wollen Sie einen Schluck?' Der Chef starrt dich an, als wärst du irre. 'Reparieren Sie das! Sofort!' Das war wohl der falsche Moment." 
+            },
+            { 
+                t: "Die Nachtschicht beschuldigen", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 5, a: -5, c: 0, 
+                r: "Du zeigst auf den Zettel des Kollegen. 'Er ist einfach gegangen.' Der Chef tobt. 'Dieser Nichtsnutz!' Dein Kopf ist aus der Schlinge, der Kollege ist fällig." 
             }
         ]
     },
@@ -2334,11 +2334,6 @@ export const server = [
         text: "Der Kollege der Nachtschicht kommt (ausgeschlafen) zur Mittagszeit rein. Er sieht die grünen LEDs. 'Ah, hat sich von selbst gefixt? Sag ich doch, war nur ein Glitch.'",
         opts: [
             { 
-                t: "Ihm die Meinung geigen", 
-                m: 5, f: 0, a: -10, c: 0, 
-                r: "Du stellst ihn zur Rede. Er winkt ab. 'Chill mal. Teamwork, oder?' Du fühlst dich moralisch überlegen, aber er lernt nichts draus." 
-            },
-            { 
                 t: "Seinen Stuhl verstellen", 
                 m: 2, f: 5, a: 5, c: 0, 
                 r: "Heimliche Rache. Du schraubst seinen Stuhl 5cm tiefer und stellst die Mausgeschwindigkeit auf 'Schnecke'. Das wird ihn in den Wahnsinn treiben." 
@@ -2348,6 +2343,11 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 10, f: -5, a: 5, c: 5, 
                 r: "Du petzt. Der Chef zuckt mit den Schultern. 'Solange es läuft...' Leistung wird hier wohl nicht belohnt." 
+            },
+            { 
+                t: "Ihm die Meinung geigen", 
+                m: 5, f: 0, a: -10, c: 0, 
+                r: "Du stellst ihn zur Rede. Er winkt ab. 'Chill mal. Teamwork, oder?' Du fühlst dich moralisch überlegen, aber er lernt nichts draus." 
             }
         ]
     },
@@ -2358,14 +2358,14 @@ export const server = [
         text: "Eine E-Mail an alle (cc: Chef, HR): 'Betreff: Mobbing durch IT-Kollegen'. Der Kollege beschwert sich, dass du ihn in seiner Ruhezeit 'terrorisiert' hast, obwohl das Problem 'nicht kritisch' war.",
         opts: [
             { 
-                t: "Sachliche Richtigstellung ('Reply All')", 
-                m: 15, f: -5, a: 5, c: 0, 
-                r: "Du hängst das Fehlerprotokoll an. 'RAID 5 degraded ist kritisch.' Stille im Postfach. Fakten schlagen Gefühle. 1:0 für dich." 
-            },
-            { 
                 t: "Ihm auflauern und klären", 
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Du fängst ihn im Flur ab. Es wird laut. HR muss dazwischengehen. Jetzt habt ihr beide einen Eintrag in der Personalakte." 
+            },
+            { 
+                t: "Sachliche Richtigstellung ('Reply All')", 
+                m: 15, f: -5, a: 5, c: 0, 
+                r: "Du hängst das Fehlerprotokoll an. 'RAID 5 degraded ist kritisch.' Stille im Postfach. Fakten schlagen Gefühle. 1:0 für dich." 
             },
             { 
                 t: "Ignorieren", 
@@ -2380,6 +2380,17 @@ export const server = [
         text: "Das uralte Bandlaufwerk surrt, klickt und verstummt dann. Es spuckt das Tape nicht mehr aus. 'Error 08/15: Tape stuck'. Es ist das einzige Voll-Backup von gestern. Wenn du es kaputt machst, sind die Daten futsch.",
         opts: [
             { 
+                t: "Rohe Gewalt anwenden: 'GIB ES HER!'", 
+                next: "path_legacy_tape_fail",
+                m: 5, f: 0, a: 20, c: 30, 
+                r: "Du reißt es mit beiden Händen raus. RRRRATSCH. Bandsalat. Das schwarze Magnetband verteilt sich im ganzen Raum. Du wirfst das Knäuel schnell tief in den Müll." 
+            },
+            { 
+                t: "Stecken lassen & beten", 
+                m: 2, f: 10, a: 0, c: 20, 
+                r: "Du ignorierst den Fehler einfach. Das Backup heute Nacht wird garantiert fehlschlagen. Aber das ist ein Problem für den 'Morgen-Müller'." 
+            },
+            { 
                 t: "Chirurgischer Eingriff (Schraubendreher)", 
                 req: "screw", 
                 next: "path_legacy_tape_success",
@@ -2392,17 +2403,6 @@ export const server = [
                 next: "path_legacy_tape_success",
                 m: 10, f: 0, a: 5, c: 5, 
                 r: "Du bastelst eine Schlaufe, fädelst sie ein und ziehst vorsichtig. Es kommt raus! Das Gehäuse hat zwar Kratzer, aber hey – es läuft." 
-            },
-            { 
-                t: "Rohe Gewalt anwenden: 'GIB ES HER!'", 
-                next: "path_legacy_tape_fail",
-                m: 5, f: 0, a: 20, c: 30, 
-                r: "Du reißt es mit beiden Händen raus. RRRRATSCH. Bandsalat. Das schwarze Magnetband verteilt sich im ganzen Raum. Du wirfst das Knäuel schnell tief in den Müll." 
-            },
-            { 
-                t: "Stecken lassen & beten", 
-                m: 2, f: 10, a: 0, c: 20, 
-                r: "Du ignorierst den Fehler einfach. Das Backup heute Nacht wird garantiert fehlschlagen. Aber das ist ein Problem für den 'Morgen-Müller'." 
             }
         ]
     },
@@ -2435,12 +2435,6 @@ export const server = [
         text: "Der Chef stürmt rein. 'Katastrophe! Ein Kunde hat alles gelöscht! Wo ist das Backup von gestern?! Wir müssen SOFORT restoren!' Er sieht das leere Laufwerk.",
         opts: [
             { 
-                t: "Beichten: 'Das Tape ist... kaputt'", 
-				rep: { "Dr. Wichtig": -15 },
-                m: 10, f: 0, a: 5, c: 50,
-                r: "Du holst das Knäuel aus dem Müll. Der Chef wird kreidebleich. 'DAS WAR DAS EINZIGE BACKUP?!' Er schreit so laut, dass im Nachbargebäude die Fenster wackeln. Das gibt eine Abmahnung." 
-            },
-            { 
                 t: "Lügen: 'Das Backup lief nie!'", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: -5, c: 20, 
@@ -2451,6 +2445,12 @@ export const server = [
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: -10, c: 5, 
                 r: "Du brichst theatralisch zusammen. 'Es ist alles so schrecklich!' Der Chef ist so verwirrt, dass er dich tröstet, statt dich zu feuern. Mitleid zieht immer." 
+            },
+            { 
+                t: "Beichten: 'Das Tape ist... kaputt'", 
+				rep: { "Dr. Wichtig": -15 },
+                m: 10, f: 0, a: 5, c: 50,
+                r: "Du holst das Knäuel aus dem Müll. Der Chef wird kreidebleich. 'DAS WAR DAS EINZIGE BACKUP?!' Er schreit so laut, dass im Nachbargebäude die Fenster wackeln. Das gibt eine Abmahnung." 
             }
         ]
     },
@@ -2460,11 +2460,6 @@ export const server = [
         title: "Egons Geheimversteck",
         text: "Du hebst ein loses Bodenblech an. Dahinter: Eine verstaubte Kiste von Hausmeister Egon. Inhalt: Eine angebrochene Flasche 'Billig-Korn', fragwürdige Magazine aus den 90ern und... eine handschriftliche Liste mit allen Türcodes der Firma.",
         opts: [
-            { 
-                t: "Die Liste schnell abfotografieren", 
-                m: 5, f: 5, a: 0, c: 0, 
-                r: "Klick. Das Foto ist sicher. Unglaublich: Der Master-Code ist '9999'. Das wird dir noch so manche verschlossene Tür öffnen. Du legst das Blech wieder drauf." 
-            },
             { 
                 t: "Einen tiefen Schluck Korn nehmen", 
                 next: "path_egon_drink",
@@ -2477,6 +2472,11 @@ export const server = [
                 rep: { "Egon": -15, "Dr. Wichtig": 5 },
                 m: 15, f: 0, a: 10, c: -5, 
                 r: "Du legst die Beweise dem Chef vor. Egon bekommt riesigen Ärger. Er weiß genau, dass du es warst. Sein Blick im Flur war eisig." 
+            },
+            { 
+                t: "Die Liste schnell abfotografieren", 
+                m: 5, f: 5, a: 0, c: 0, 
+                r: "Klick. Das Foto ist sicher. Unglaublich: Der Master-Code ist '9999'. Das wird dir noch so manche verschlossene Tür öffnen. Du legst das Blech wieder drauf." 
             }
         ]
     },
@@ -2488,6 +2488,12 @@ export const server = [
         text: "Du schaust nochmal unter das Bodenblech. Die Flasche ist weg. Stattdessen liegt da ein Zettel in krakeliger Handschrift: 'Ich weiß, dass du es warst. Schuldest mir 5 Mark. Sonst sag ich Chef.'",
         opts: [
             { 
+                t: "Zettel schreiben: 'War lecker, danke.'",
+                rep: { "Egon": -10 }, 
+                m: 5, f: 5, a: 10, c: 5, 
+                r: "Pure Provokation. Du hörst später, wie Egon im Flur laut flucht und gegen seinen Putzwagen tritt. Das wird noch ein Nachspiel haben." 
+            },
+            { 
                 t: "Zettel schreiben: 'Beweis es doch!'", 
                 rep: { "Egon": -2 },
                 m: 5, f: 0, a: 10, c: 0, 
@@ -2498,12 +2504,6 @@ export const server = [
                 rep: { "Egon": 5 }, 
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Du legst einen Schein rein. Am nächsten Tag liegt ein Bonbon dort. Waffenstillstand akzeptiert. Egon ist käuflich." 
-            },
-            { 
-                t: "Zettel schreiben: 'War lecker, danke.'",
-                rep: { "Egon": -10 }, 
-                m: 5, f: 5, a: 10, c: 5, 
-                r: "Pure Provokation. Du hörst später, wie Egon im Flur laut flucht und gegen seinen Putzwagen tritt. Das wird noch ein Nachspiel haben." 
             }
         ]
     },
@@ -2515,12 +2515,6 @@ export const server = [
         text: "Du willst morgens in dein Büro. Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
         opts: [
             { 
-                t: "Egon um Hilfe bitten (Demütigung)",
-                rep: { "Egon": 5 }, 
-                m: 30, f: 0, a: 20, c: 0, 
-                r: "Du musst zu Kreuze kriechen. Egon grinst breit. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
-            },
-            { 
                 t: "Tür eintreten", 
                 rep: { "Egon": -10 },
                 m: 5, f: 0, a: 20, c: 20,
@@ -2531,6 +2525,12 @@ export const server = [
                 req: "screw",
                 m: 20, f: -10, a: 10, c: 10, 
                 r: "Wie Bruce Willis. Du schraubst das Gitter ab und robbst rein. Du landest staubig auf deinem Schreibtisch. Egon hat gewonnen, aber du hast Stil." 
+            },
+            { 
+                t: "Egon um Hilfe bitten (Demütigung)",
+                rep: { "Egon": 5 }, 
+                m: 30, f: 0, a: 20, c: 0, 
+                r: "Du musst zu Kreuze kriechen. Egon grinst breit. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
             }
         ]
     },
@@ -2572,6 +2572,12 @@ export const server = [
         text: "Kevin steht mit tränenden Augen vor dir. Er hält drei Hot-Wheels Spielzeugautos hoch. 'Ich habe die Lambos schon bestellt! Auf Kredit! Wenn ich nicht weiterschürfen darf, bricht mein Finanzplan zusammen. Nur noch 2 Stunden?'",
         opts: [
             { 
+                t: "Ausnahme genehmigen",
+                rep: { "Kevin": 10, "Dr. Wichtig": -2 }, 
+                m: 5, f: 10, a: -10, c: 20, 
+                r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen?" 
+            },
+            { 
                 t: "Streng bleiben: 'Nein!'", 
                 rep: { "Kevin": -5 }, 
                 m: 5, f: 0, a: 5, c: -10,
@@ -2582,12 +2588,6 @@ export const server = [
                 rep: { "Kevin": 6 }, 
                 m: 5, f: 5, a: -15, c: 0, 
                 r: "Du gibst ihm 5 Euro für den gelben Spielzeug-Lambo. Er strahlt. 'Du bist der Beste!' Jetzt hast du ein Auto auf dem Schreibtisch. Vroom vroom." 
-            },
-            { 
-                t: "Ausnahme genehmigen",
-                rep: { "Kevin": 10, "Dr. Wichtig": -2 }, 
-                m: 5, f: 10, a: -10, c: 20, 
-                r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen?" 
             }
         ]
     },
@@ -2598,6 +2598,12 @@ export const server = [
         text: "Eine E-Mail ploppt auf: 'Interne Revision: Auffälliger Stromverbrauch in Serverraum B. Wir kommen gleich mal messen.' Dein Herz rutscht in die Hose. Dein Wallet ist voll, aber die Prüfer sind im Anmarsch.",
         opts: [
             { 
+                t: "Zocken: 'Das ist KI-Training'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 5, f: 10, a: 0, c: 30, 
+                r: "Du lässt es laufen. Als die Prüfer kommen, faselst du was von 'Neural Networks' und 'Blockchain-Innovation'. Sie nicken ahnungslos und gehen. Risiko hat sich gelohnt!" 
+            },
+            { 
                 t: "Alles sofort löschen (Spuren verwischen)", 
                 m: 10, f: -5, a: 10, c: -10, 
                 r: "Du löschst den Miner, die Logs und formatierst sicherheitshalber den Temp-Ordner. Das Geld ist sicher, die Einnahmequelle versiegt. Puh. Gerade noch rechtzeitig." 
@@ -2607,12 +2613,6 @@ export const server = [
                 rep: { "Kevin": -15 },
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "Du benennst den Prozess wieder in 'Kevin_Test' um. Wenn sie es finden, war es der Azubi. Du bist ein eiskaltes Ekelpaket, aber du bist sicher." 
-            },
-            { 
-                t: "Zocken: 'Das ist KI-Training'", 
-                rep: { "Dr. Wichtig": 5 },
-                m: 5, f: 10, a: 0, c: 30, 
-                r: "Du lässt es laufen. Als die Prüfer kommen, faselst du was von 'Neural Networks' und 'Blockchain-Innovation'. Sie nicken ahnungslos und gehen. Risiko hat sich gelohnt!" 
             }
         ]
     },
@@ -2623,12 +2623,6 @@ export const server = [
         text: "Der externe SAP-Support ist per TeamViewer draufgeschaltet. Der Stundensatz beträgt 250€. Er bewegt die Maus quälend langsam. 'Oh, die Datenbank ist inkonsistent. Das... könnte dauern.'",
         opts: [
             { 
-                t: "Zusehen und Kaffee trinken", 
-				rep: { "Dr. Wichtig": -2 },
-                m: 60, f: 20, a: -5, c: 20, 
-                r: "Du wirst quasi fürs Nichtstun bezahlt, während der Externe schwitzt. Der Chef sieht nur, dass 'Profis arbeiten'. Entspannteste Stunde der Woche." 
-            },
-            { 
                 t: "Versuchen ihm zu Helfen", 
                 m: 20, f: -10, a: 10, c: -5, 
                 r: "Du gibst ihm Zugriff auf die Backups. 'Ah, danke.' Das System läuft schneller wieder. Weniger Kosten, aber du musstest arbeiten." 
@@ -2637,6 +2631,12 @@ export const server = [
                 t: "Hardware als Ausrede erfinden", 
                 m: 10, f: 5, a: 5, c: 15, 
                 r: "'Das liegt am RAM!' Der Externe widerspricht nicht. Der Chef bestellt sofort neuen RAM. Du hast das Hitzeproblem erfolgreich vertuscht." 
+            },
+            { 
+                t: "Zusehen und Kaffee trinken", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 60, f: 20, a: -5, c: 20, 
+                r: "Du wirst quasi fürs Nichtstun bezahlt, während der Externe schwitzt. Der Chef sieht nur, dass 'Profis arbeiten'. Entspannteste Stunde der Woche." 
             }
         ]
     },
@@ -2645,6 +2645,12 @@ export const server = [
         title: "Dringende Daten",
         text: "Der Praktikant ist krank. Der Chef steht vor dessen PC: 'Müller! Knacken Sie das Ding! Da ist die Präsentation drauf! Ich wette, der Idiot hat was Kompliziertes genommen!'",
         opts: [
+            { 
+                t: "Eingabe: 'Passwort'",
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 10, c: 10, 
+                r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
+            },
             { 
                 t: "Eingabe: 'Puschel123'",
 				rep: { "Dr. Wichtig": 10 },
@@ -2663,12 +2669,6 @@ export const server = [
 				rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 10, c: 15, 
                 r: "Falsch. PC sperrt sich für 1 Stunde. Der Chef explodiert." 
-            },
-            { 
-                t: "Eingabe: 'Passwort'",
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 10, c: 10, 
-                r: "Natürlich nicht. Der Chef schüttelt den Kopf: 'Halten Sie mich für blöd? Probieren Sie was Richtiges!'" 
             }
         ]
     },
@@ -2677,12 +2677,6 @@ export const server = [
         title: "Kabel-Spaghetti",
         text: "Der Switch im Rack sieht aus wie ein Teller Spaghetti. Ein einziger Knoten aus gelben, blauen und grauen Kabeln. Du musst Port 42 finden, aber er ist tief im Chaos begraben.",
         opts: [
-            { 
-                t: "Geduldig entwirren", 
-                next: "path_cable_tidy",
-                m: 45, f: -10, a: -10, c: -10, 
-                r: "Du schaltest Musik ein und sortierst Kabel für Kabel. Nach 45 Minuten hast du perfekte Ordnung geschaffen. Es sieht wunderschön aus. Fast zu schade zum Anfassen." 
-            },
             { 
                 t: "Mit Kabelbindern zurren", 
                 req: "zip_ties", 
@@ -2695,6 +2689,12 @@ export const server = [
                 next: "path_cable_yank",
                 m: 5, f: 5, a: 20, c: 10, 
                 r: "Du ziehst kräftig an dem Kabel, das du brauchst. RRRTSCH. Drei andere Stecker fliegen mit raus. Ups. Die Lichter der Telefonanlage gehen aus." 
+            },
+            { 
+                t: "Geduldig entwirren", 
+                next: "path_cable_tidy",
+                m: 45, f: -10, a: -10, c: -10, 
+                r: "Du schaltest Musik ein und sortierst Kabel für Kabel. Nach 45 Minuten hast du perfekte Ordnung geschaffen. Es sieht wunderschön aus. Fast zu schade zum Anfassen." 
             }
         ]
     },
@@ -2705,6 +2705,12 @@ export const server = [
         text: "Der IT-Leiter steht vor dem Rack. Er hat Tränen in den Augen. 'Es ist... wunderschön. Niemand darf das mehr anfassen! Ich erkläre dieses Rack zur Sperrzone!'",
         opts: [
             { 
+                t: "Genervt sein: 'Wir müssen aber arbeiten'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, f: 0, a: 5, c: 5, 
+                r: "'Chef, ich muss an Port 43.' Er funkelt dich böse an. 'Wagen Sie es nicht, die Symmetrie zu zerstören!' Toll, jetzt ist das Rack nutzlos." 
+            },
+            { 
                 t: "Stolz salutieren", 
                 m: 5, f: 0, a: -5, c: -5, 
                 r: "'Zu Befehl!' Dein Werk wird jetzt wie ein heiliger Schrein behandelt. Niemand patcht hier mehr was um. Deine Arbeit ist für die Ewigkeit." 
@@ -2713,12 +2719,6 @@ export const server = [
                 t: "Schild 'Kunstwerk' anbringen", 
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du klebst ein Schild dran: 'Modern Art - Do not touch'. Kollegen machen Fotos. Du bist der Michelangelo der IT." 
-            },
-            { 
-                t: "Genervt sein: 'Wir müssen aber arbeiten'", 
-				rep: { "Dr. Wichtig": -5 },
-                m: 5, f: 0, a: 5, c: 5, 
-                r: "'Chef, ich muss an Port 43.' Er funkelt dich böse an. 'Wagen Sie es nicht, die Symmetrie zu zerstören!' Toll, jetzt ist das Rack nutzlos." 
             }
         ]
     },
@@ -2751,12 +2751,6 @@ export const server = [
         text: "Alle LEDs an den Server-Racks blinken synchron im 4/4-Takt. Es sieht aus wie eine Lichtorgel in einer Dorfdisco. Das System läuft extrem unrund und summt einen seltsamen Bass-Rhythmus.",
         opts: [
             { 
-                t: "Im Handbuch nachschlagen", 
-                req: "manual", 
-                m: 20, f: -5, a: -5, c: -5, 
-                r: "Du blätterst wild. Fehlercode '0xPARTY'. Ein Easter-Egg der Entwickler, das bei genau 100 Tagen Uptime anspringt. Du drückst die Tastenkombination 'STRG+ALT+NOFUN'. Das Blinken hört auf." 
-            },
-            { 
                 t: "Techno-Playlist an & tanzen", 
                 next: "path_disco_dance",
 				rep: { "Dr. Wichtig": -2 },
@@ -2768,6 +2762,12 @@ export const server = [
                 next: "path_disco_plug",
                 m: 5, f: 5, a: 10, c: 10, 
                 r: "Klack. Ruhe. Klack. Lärm. Der Server fährt wieder hoch. Das Blinken ist weg. Die Datenbank meldet beim Start zwar 'Index Corruption', aber das ignorierst du gekonnt." 
+            },
+            { 
+                t: "Im Handbuch nachschlagen", 
+                req: "manual", 
+                m: 20, f: -5, a: -5, c: -5, 
+                r: "Du blätterst wild. Fehlercode '0xPARTY'. Ein Easter-Egg der Entwickler, das bei genau 100 Tagen Uptime anspringt. Du drückst die Tastenkombination 'STRG+ALT+NOFUN'. Das Blinken hört auf." 
             }
         ]
     },
@@ -2778,6 +2778,11 @@ export const server = [
         text: "Du dachtest, die Standpauke vom Chef war alles? Falsch. Ein Kollege hat deinen Tanz durch das Fenster der Serverraum-Tür gefilmt. Das Video 'Admin on Drugs' ist jetzt Nummer 1 im Firmen-Intranet.",
         opts: [
             { 
+                t: "Dem Filmer das Internet drosseln", 
+                m: 5, f: 5, a: -15, c: 5,
+                r: "Du identifizierst die IP des Kollegen und drosselst seinen Port auf 56k-Modem-Geschwindigkeit. Er kann das Video nicht mehr hochladen. Er kann gar nichts mehr laden. Gerechtigkeit." 
+            },
+            { 
                 t: "Dazu stehen: 'Das sind Moves!'", 
                 m: 5, f: 0, a: -10, c: 5, 
 				rep: { "Dr. Wichtig": -2 },
@@ -2787,11 +2792,6 @@ export const server = [
                 t: "IT-Intranet löschen", 
                 m: 10, f: -5, a: 10, c: 20, 
                 r: "Du nutzt deine Admin-Rechte und löschst das Video (und das Backup). Das nennt man 'Streisand-Effekt'. Jetzt denken alle, du hast wirklich was zu verbergen." 
-            },
-            { 
-                t: "Dem Filmer das Internet drosseln", 
-                m: 5, f: 5, a: -15, c: 5,
-                r: "Du identifizierst die IP des Kollegen und drosselst seinen Port auf 56k-Modem-Geschwindigkeit. Er kann das Video nicht mehr hochladen. Er kann gar nichts mehr laden. Gerechtigkeit." 
             }
         ]
     },
@@ -2801,6 +2801,12 @@ export const server = [
         reqStory: "path_disco_plug",
         text: "Das Telefon klingelt sturm. 'Der Webshop spielt verrückt!' Durch deinen harten Neustart sind die Preise in der Datenbank verrutscht. Alle Produkte kosten jetzt 0,00 Euro. Die Bestellungen kommen im Sekundentakt rein.",
         opts: [
+            { 
+                t: "Preise manuell auf 9999€ setzen", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 5, f: 5, a: -5, c: -5, 
+                r: "Quick & Dirty SQL-Befehl: `UPDATE prices SET value = 9999`. Keiner kauft mehr was, aber der Fehler ist 'behoben'. Du bist ein Genie des Wahnsinns." 
+            },
             { 
                 t: "Webshop sofort vom Netz nehmen", 
 				rep: { "Dr. Wichtig": -2 },
@@ -2812,12 +2818,6 @@ export const server = [
 				rep: { "Dr. Wichtig": -2 },
                 m: 60, f: -20, a: 10, c: 15, 
                 r: "Du musst das Backup von gestern holen. Der Ladebalken kriecht. Der Chef steht hinter dir und atmet schwer: 'Jede Sekunde kostet Geld, Müller!' Du schwitzt." 
-            },
-            { 
-                t: "Preise manuell auf 9999€ setzen", 
-				rep: { "Dr. Wichtig": 2 },
-                m: 5, f: 5, a: -5, c: -5, 
-                r: "Quick & Dirty SQL-Befehl: `UPDATE prices SET value = 9999`. Keiner kauft mehr was, aber der Fehler ist 'behoben'. Du bist ein Genie des Wahnsinns." 
             }
         ]
     },
@@ -2826,6 +2826,12 @@ export const server = [
         title: "Klima-Ausfall",
         text: "Die Klimaanlage ist ausgefallen. Es sind gefühlte 50 Grad im Serverraum. Die Lüfter der Racks laufen auf Maximum, es klingt wie auf einem Flugzeugträger. Die Server schwitzen.",
         opts: [
+            { 
+                t: "Eimerweise Eiswürfel holen", 
+                next: "path_ac_ice",
+                m: 10, f: 5, a: 0, c: 20, 
+                r: "Du stellst Schüsseln mit Eis aus der Teeküche direkt in die Racks. Es kühlt tatsächlich, aber das Kondenswasser sammelt sich. Ein Tanz auf der Rasierklinge." 
+            },
             { 
                 t: "Sicherheitstür mit Stuhl aufkeilen", 
                 next: "path_ac_door",
@@ -2837,12 +2843,6 @@ export const server = [
                 req: "usb_stick", 
                 m: 15, f: -5, a: -5, c: 0, 
                 r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus und du fühlst dich wie ein Ingenieur." 
-            },
-            { 
-                t: "Eimerweise Eiswürfel holen", 
-                next: "path_ac_ice",
-                m: 10, f: 5, a: 0, c: 20, 
-                r: "Du stellst Schüsseln mit Eis aus der Teeküche direkt in die Racks. Es kühlt tatsächlich, aber das Kondenswasser sammelt sich. Ein Tanz auf der Rasierklinge." 
             }
         ]
     },
@@ -2853,6 +2853,11 @@ export const server = [
         text: "Der Datenschutzbeauftragte steht im Türrahmen. Er sieht schwitzig und unglücklich aus. Er tippt auf sein Klemmbrett. 'Gemäß ISO 27001 und DSGVO Artikel 32 ist der physische Zugang zu beschränken. Ich muss das melden. Ich hasse meinen Job, aber Vorschrift ist Vorschrift.'",
         opts: [
             { 
+                t: "Bestechung: 'Wollen Sie ein Eis?'", 
+                m: 5, f: 5, a: -10, c: 0, 
+                r: "Du bietest ihm ein Eis am Stiel an. Er seufzt, nimmt es und schließt die Augen. 'Ich habe nichts gesehen.' Korruption funktioniert immer." 
+            },
+            { 
                 t: "Auf 'Notfall-Paragraf 7b' verweisen", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du erfindest eine Regel: 'Bei thermischer Überlastung greift die Hardware-Schutz-Klausel.' Er blinzelt verwirrt, nickt dann müde. 'Na gut. Wenn Sie das sagen. Ich schreibe... Ausnahme.' Er schlurft weg." 
@@ -2861,11 +2866,6 @@ export const server = [
                 t: "Ihm einen Vortrag über Hitze halten", 
                 m: 15, f: -5, a: 10, c: 15, 
                 r: "Du schreist ihn an: 'Wollen Sie, dass die Daten verbrennen?!' Er notiert 'Unkooperatives Verhalten' und geht. Das gibt Papierkram." 
-            },
-            { 
-                t: "Bestechung: 'Wollen Sie ein Eis?'", 
-                m: 5, f: 5, a: -10, c: 0, 
-                r: "Du bietest ihm ein Eis am Stiel an. Er seufzt, nimmt es und schließt die Augen. 'Ich habe nichts gesehen.' Korruption funktioniert immer." 
             }
         ]
     },
@@ -2919,15 +2919,15 @@ export const server = [
         text: "Du kriechst wieder in den Schacht. Der Safe hat ein Zahlenrad. Daneben ist eine Gravur: 'Das Gründungsjahr der Firma ist der Schlüssel.' (Du weißt es nicht, aber Kevin hat neulich '1899' an die Klotür gekritzelt).",
         opts: [
             { 
-                t: "Code '1234' probieren",
-                m: 10, f: 0, a: 15, c: 0,
-                r: "Nichts passiert. Du trittst wütend gegen den Safe. Dein Zeh schmerzt."
-            },
-            { 
                 t: "Code '1899' eingeben",
                 loot: "corp_chronicles",
                 m: 15, f: -5, a: -10, c: 0,
                 r: "*Klick*. Der Mechanismus springt auf! Ein Gefühl von Triumph durchströmt dich. Es riecht nach altem Papier und Gier. (Neues Item und kann im Inventar gelesen werden!)"
+            },
+            { 
+                t: "Code '1234' probieren",
+                m: 10, f: 0, a: 15, c: 0,
+                r: "Nichts passiert. Du trittst wütend gegen den Safe. Dein Zeh schmerzt."
             }
         ]
     },
@@ -2956,14 +2956,14 @@ export const server = [
         text: "Du stehst wieder vor dem mysteriösen 1998er Server. Heute macht er ein seltsames Geräusch. *Klick-Klack*. Als würde eine Festplatte sterben.",
         opts: [
             { 
-                t: "Monitor anschließen & fixen",
-                m: 45, f: -25, a: 10, c: -10,
-                r: "Du verbringst 45 Minuten damit, Sektoren zu reparieren. Es... es hostet die private Fan-Fiction-Seite des Gründers?! Egal, es läuft wieder."
-            },
-            { 
                 t: "Percussive Maintenance (Draufhauen)",
                 m: 5, f: 5, a: -15, c: 20,
                 r: "BÄM. Das Klicken hört auf. Das Summen wird ruhiger. Nichts entspannt so sehr wie Gewalt gegen Hardware."
+            },
+            { 
+                t: "Monitor anschließen & fixen",
+                m: 45, f: -25, a: 10, c: -10,
+                r: "Du verbringst 45 Minuten damit, Sektoren zu reparieren. Es... es hostet die private Fan-Fiction-Seite des Gründers?! Egal, es läuft wieder."
             }
         ]
     },
@@ -2972,11 +2972,6 @@ export const server = [
         title: "OHRENBLUTEN!",
         text: "Ein Fehlalarm im Serverraum! Die Sirene dröhnt mit 120 Dezibel. Du kannst nicht denken. Das Tastenfeld an der Wand blinkt: 'CODE EINGEBEN ZUM DEAKTIVIEREN'.",
         opts: [
-            { 
-                t: "Code: 0000",
-                m: 5, f: 0, a: 20, c: 0, 
-                r: "FALSCH. Die Sirene wird noch lauter. Deine Ohren klingeln für Stunden." 
-            },
             { 
                 t: "Code: 4711",
                 m: 5, f: 5, a: -20, c: -10, 
@@ -2993,6 +2988,11 @@ export const server = [
                 t: "Rausrennen",
                 m: 30, f: 0, a: 10, c: 10, 
                 r: "Du wartest draußen 30 Minuten auf die Feuerwehr. Es war nur Staub im Sensor." 
+            },
+            { 
+                t: "Code: 0000",
+                m: 5, f: 0, a: 20, c: 0, 
+                r: "FALSCH. Die Sirene wird noch lauter. Deine Ohren klingeln für Stunden." 
             }
         ]
     },
@@ -3004,6 +3004,13 @@ export const server = [
         text: "Hausmeister Egon steht vor den Trümmern der Alarmanlage. Er fährt mit dem Finger über die tiefe Delle in der Wand. 'Das war kein technischer Defekt. Das war stumpfe Gewalt.' Er dreht sich langsam zu dir um. 'Hast du was gesehen?'",
         opts: [
             { 
+                t: "Bestechung: Ihm dein Panzertape anbieten", 
+                rem: "tape",
+                rep: { "Egon": 10 },
+                m: 5, f: 5, a: -10, c: -5, 
+                r: "Egons Augen leuchten auf. 'Original Gaffa? Das Gute?' Er nimmt die Rolle, klebt ein Stück über das Loch in der Wand und grinst. 'Welches Loch? Ich sehe kein Loch.'" 
+            },
+            { 
                 t: "Lügen: 'Da war eine riesige Ratte!'",
                 rep: { "Egon": -10 }, 
                 m: 5, f: 0, a: 10, c: 20, 
@@ -3014,13 +3021,6 @@ export const server = [
                 rep: { "Egon": 5 },
                 m: 10, f: -5, a: -10, c: -10, 
                 r: "Du erklärst das Ohrenbluten. Egon nickt brummend. 'Besser die Wand als das Trommelfell. Aber den Putz zahlst du.' Er deckt dich beim Chef, aber du schuldest ihm was." 
-            },
-            { 
-                t: "Bestechung: Ihm dein Panzertape anbieten", 
-                rem: "tape",
-                rep: { "Egon": 10 },
-                m: 5, f: 5, a: -10, c: -5, 
-                r: "Egons Augen leuchten auf. 'Original Gaffa? Das Gute?' Er nimmt die Rolle, klebt ein Stück über das Loch in der Wand und grinst. 'Welches Loch? Ich sehe kein Loch.'" 
             }
         ]
     },
@@ -3091,16 +3091,16 @@ export const server = [
                 r: "'Ich stell dir nachher eine Dose hin, Egon.' Er brummt. 'Na gut. Aber mach das nie wieder.' Dein Hammer-Massaker bleibt unbestraft." 
             },
             { 
-                t: "Ignorieren: 'Das war der Datenschutz-Troll'",
-                rep: { "Egon": -10 }, 
-                m: 2, f: 5, a: 5, c: 5, 
-                r: "Egon flucht lautstark am Telefon über die IT. Du hast dir wieder etwas Zeit gespart, aber Egon ist stinksauer auf dich." 
-            },
-            { 
                 t: "Ihn anmotzen: 'Dafür wirst du bezahlt!'",
                 rep: { "Egon": -15 }, 
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Egon legt wortlos auf. Keine 10 Minuten später geht in deinem Büro grundlos das Licht und die Heizung aus. Lege dich niemals mit Egon an." 
+            },
+            { 
+                t: "Ignorieren: 'Das war der Datenschutz-Troll'",
+                rep: { "Egon": -10 }, 
+                m: 2, f: 5, a: 5, c: 5, 
+                r: "Egon flucht lautstark am Telefon über die IT. Du hast dir wieder etwas Zeit gespart, aber Egon ist stinksauer auf dich." 
             }
         ]
     },
@@ -3111,6 +3111,11 @@ export const server = [
         text: "Es ist einiges an Zeit vergangen, seit du den Müll entsorgt hast. Plötzlich eine panische Mail vom Compliance-Officer: 'Auf dem Hof fliegen alte Festplatten herum! Jemand hat die Tonne durchwühlt! Wer hat die nicht vernichtet?!'",
         opts: [
             { 
+                t: "Lügen: 'Ich habe Zertifikate über die Vernichtung!'", 
+                m: 5, f: 0, a: 10, c: 30, 
+                r: "Das war dumm. Der Compliance-Officer verlangt sofort die Dokumente. Du hast dir dein eigenes Grab geschaufelt." 
+            },
+            { 
                 t: "Azubi Kevin vorschieben", 
                 rep: { "Kevin": -15 },
                 m: 10, f: 5, a: 10, c: 20, 
@@ -3120,11 +3125,6 @@ export const server = [
                 t: "Rausrennen und Platten aufsammeln", 
                 m: 30, f: -15, a: 20, c: 10, 
                 r: "Du hetzt auf den Hof, kriechst auf dem Asphalt herum und sammelst die Laufwerke wieder ein. Schlimmste Demütigung, aber du verhinderst den ultimativen Super-GAU." 
-            },
-            { 
-                t: "Lügen: 'Ich habe Zertifikate über die Vernichtung!'", 
-                m: 5, f: 0, a: 10, c: 30, 
-                r: "Das war dumm. Der Compliance-Officer verlangt sofort die Dokumente. Du hast dir dein eigenes Grab geschaufelt." 
             }
         ]
     },
@@ -3133,6 +3133,12 @@ export const server = [
         title: "Die Ransomware vom Hersteller",
         text: "Eine uralte, proprietäre Server-Software verlangt plötzlich eine Kreditkarten-Autorisierung für eine 'zwingende Lizenzverlängerung' (499€), sonst fährt sie in 5 Minuten runter. Der Chef sitzt im Flugzeug und ist nicht erreichbar. Die Buchhaltung hat schon Feierabend.",
         opts: [
+            { 
+                t: "Es runterfahren lassen", 
+                next: "path_paywall_down", 
+                m: 5, f: 10, a: 0, c: 30, 
+                r: "Ohne Moos nix los. Du lässt den Timer ablaufen. Der Server fährt runter. Die Abteilung Logistik kann heute keine Pakete mehr verschicken. Das wird morgen ein riesiges Drama geben." 
+            },
             { 
                 t: "Die 'Schwarze Karte' einsetzen", 
                 req: "black_card", 
@@ -3146,12 +3152,6 @@ export const server = [
                 next: "path_paywall_hack", 
                 m: 20, f: -5, a: 15, c: 5, 
                 r: "Du schreibst ein fieses Skript, das die Systemzeit des Servers alle 4 Minuten wieder zurückdreht. Ein extrem wackeliger Hack, der dir morgen garantiert um die Ohren fliegen wird." 
-            },
-            { 
-                t: "Es runterfahren lassen", 
-                next: "path_paywall_down", 
-                m: 5, f: 10, a: 0, c: 30, 
-                r: "Ohne Moos nix los. Du lässt den Timer ablaufen. Der Server fährt runter. Die Abteilung Logistik kann heute keine Pakete mehr verschicken. Das wird morgen ein riesiges Drama geben." 
             }
         ]
     },
@@ -3180,14 +3180,14 @@ export const server = [
         text: "Dein Zeitschleifen-Hack läuft. Leider hat sich der Mail-Server die manipulierte Systemzeit gezogen. Die gesamte Abteilung wundert sich gerade, warum alle frisch versendeten E-Mails das Datum '01.01.1970' tragen.",
         opts: [
             { 
-                t: "Ignorieren: 'Das ist ein Feature.'", 
-                m: 5, f: 10, a: 5, c: 10, 
-                r: "Du behauptest, das sei eine 'Retro-Verschlüsselungsmethode'. Einige wenige Kollegen glauben es. Der Rest hält die IT für einen kompletten Witz." 
-            },
-            { 
                 t: "Skript beenden & zahlen", 
                 m: 20, f: -5, a: 15, c: 10, 
                 r: "Du hältst den Hack an und zwingst den Chef per SMS zur Zahlung. Die Mails haben wieder das richtige Datum, aber du hast massiv Ärger wegen des Hacks." 
+            },
+            { 
+                t: "Ignorieren: 'Das ist ein Feature.'", 
+                m: 5, f: 10, a: 5, c: 10, 
+                r: "Du behauptest, das sei eine 'Retro-Verschlüsselungsmethode'. Einige wenige Kollegen glauben es. Der Rest hält die IT für einen kompletten Witz." 
             }
         ]
     },
@@ -3298,13 +3298,6 @@ export const server = [
         text: "Jemand hat beim Staubsaugen die Stellfüße von Rack 2 touchiert. Das 500kg schwere Konstrukt hat Schlagseite und kippt quälend langsam nach vorne. Wenn es fällt, reißt es die dicke Glasfaser-Hauptleitung aus der Decke!",
         opts: [
             { 
-                t: "Als Lasso nutzen: LAN-Kabel", 
-                rem: "cable", 
-                next: "path_rack_cable", 
-                m: 10, f: -5, a: 5, c: -10, 
-                r: "Du wirfst das LAN-Kabel wie ein Cowboy um die Oberkante des Racks und zurrst das andere Ende an einem dicken Heizungsrohr fest. Das Gehäuse knirscht, aber es hält!" 
-            },
-            { 
                 t: "Win95-Handbuch drunterklemmen", 
                 req: "manual", 
                 next: "path_rack_manual", 
@@ -3316,6 +3309,13 @@ export const server = [
                 next: "path_rack_hold", 
                 m: 45, f: -10, a: 30, c: 5, 
                 r: "Du drückst dich mit aller Kraft gegen das Rack, bis Egon endlich mit einem Wagenheber kommt. Du stehst 45 Minuten zitternd da. Dein Rücken ist danach absoluter Brei." 
+            },
+            { 
+                t: "Als Lasso nutzen: LAN-Kabel", 
+                rem: "cable", 
+                next: "path_rack_cable", 
+                m: 10, f: -5, a: 5, c: -10, 
+                r: "Du wirfst das LAN-Kabel wie ein Cowboy um die Oberkante des Racks und zurrst das andere Ende an einem dicken Heizungsrohr fest. Das Gehäuse knirscht, aber es hält!" 
             }
         ]
     },
@@ -3326,14 +3326,14 @@ export const server = [
         text: "Ein externer ISO-Sicherheitsprüfer starrt am Nachmittag kopfschüttelnd auf das schwere Rack, das nur durch ein lächerliches graues LAN-Kabel am Heizungsrohr vor dem Umkippen bewahrt wird. Er weint leise.",
         opts: [
             { 
-                t: "Erklären: 'Das ist Cat7. Das hält.'", 
-                m: 5, f: 0, a: 5, c: 10, 
-                r: "Der Prüfer macht sich zitternd Notizen. 'Traglast von Datenkabeln... nicht genormt.' Er fällt dich beim Audit durch, aber du hast einen Server-Crash verhindert." 
-            },
-            { 
                 t: "Schulterzucken: 'Besser als Domino.'", 
                 m: 2, f: 5, a: 0, c: 5, 
                 r: "Er muss zähneknirschend zustimmen. Optisch ein Albtraum, praktisch eine Meisterleistung." 
+            },
+            { 
+                t: "Erklären: 'Das ist Cat7. Das hält.'", 
+                m: 5, f: 0, a: 5, c: 10, 
+                r: "Der Prüfer macht sich zitternd Notizen. 'Traglast von Datenkabeln... nicht genormt.' Er fällt dich beim Audit durch, aber du hast einen Server-Crash verhindert." 
             }
         ]
     },
@@ -3345,15 +3345,15 @@ export const server = [
         text: "Kevin entdeckt dein Stütz-Manöver. Er sieht, wie 500 Kilo Server das antike Win95-Handbuch zu einem massiven Papierziegelstein komprimiert haben. 'Krass. Das ist ja wie in so einer Hydraulik-Presse auf YouTube!'",
         opts: [
             { 
+                t: "Buch bergen wollen (Gefahr)", 
+                m: 10, f: 0, a: 15, c: 5, 
+                r: "Du trittst gegen das Buch, um es zu befreien. Das Rack wackelt bedrohlich auf. Du lässt es lieber. Das Handbuch ist jetzt ein ewiges Fundament der IT." 
+            },
+            { 
                 t: "Es Kevin überlassen", 
                 rep: { "Kevin": 5 },
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Kevin ist begeistert von der Zerstörung. Er macht Fotos für Reddit. Du lässt ihm die Freude." 
-            },
-            { 
-                t: "Buch bergen wollen (Gefahr)", 
-                m: 10, f: 0, a: 15, c: 5, 
-                r: "Du trittst gegen das Buch, um es zu befreien. Das Rack wackelt bedrohlich auf. Du lässt es lieber. Das Handbuch ist jetzt ein ewiges Fundament der IT." 
             }
         ]
     },
@@ -3364,15 +3364,15 @@ export const server = [
         text: "Dein heroischer Muskel-Einsatz fordert Tribut. Du liegst im Pausenraum flach auf dem Rücken auf dem Fußboden. Eine Mail von Sabine (HR) kommt auf dem Handy an: 'Herr Müller, füllen Sie für den Rückenschmerz Formular AU-22 aus. Im Stehen!'",
         opts: [
             { 
-                t: "Ignorieren und weiterliegen", 
-                m: 20, f: 15, a: 10, c: 5, 
-                r: "Du bleibst einfach auf dem Boden liegen. Eine halbe Stunde bezahlte Pause. Jemand steigt ungeschickt über dich drüber." 
-            },
-            { 
                 t: "Mit Panzertape den Rücken tapen", 
                 req: "tape",
                 m: 10, f: -5, a: -10, c: 0, 
                 r: "Du wickelst dir heimlich Panzertape um die Lendenwirbelsäule wie eine stützende Korsage. Es hilft überraschend gut! Du kannst wieder humpeln." 
+            },
+            { 
+                t: "Ignorieren und weiterliegen", 
+                m: 20, f: 15, a: 10, c: 5, 
+                r: "Du bleibst einfach auf dem Boden liegen. Eine halbe Stunde bezahlte Pause. Jemand steigt ungeschickt über dich drüber." 
             }
         ]
     },
@@ -3381,12 +3381,6 @@ export const server = [
         title: "Lebensgefahr im Rack",
         text: "Du betrittst den Serverraum und dein Herz bleibt stehen. Jemand hat einen vollen, dampfenden Kaffeebecher direkt auf das Lüftungsgitter des Core-Routers gestellt.",
         opts: [
-            { 
-                t: "Den Becher in Zeitlupe entfernen", 
-                next: "path_cup_slow", 
-                m: 10, f: 0, a: 15, c: 0, 
-                r: "Deine Hände zittern, aber du hebst das Ding vorsichtig hoch. Der Core-Router ist vor dem Flüssigkeitstod gerettet." 
-            },
             { 
                 t: "Vor Wut gegen die Wand schlagen", 
                 next: "path_cup_rage", 
@@ -3398,6 +3392,12 @@ export const server = [
                 next: "path_cup_drink", 
                 m: 2, f: -5, a: -10, c: 5, 
                 r: "Kaffee ist Kaffee. Du ext ihn. Er schmeckt nach Haselnuss, IT-Gefahr und Feigheit." 
+            },
+            { 
+                t: "Den Becher in Zeitlupe entfernen", 
+                next: "path_cup_slow", 
+                m: 10, f: 0, a: 15, c: 0, 
+                r: "Deine Hände zittern, aber du hebst das Ding vorsichtig hoch. Der Core-Router ist vor dem Flüssigkeitstod gerettet." 
             }
         ]
     },
@@ -3429,14 +3429,14 @@ export const server = [
         text: "Dein Wutanfall wurde von der Überwachungskamera im Serverraum aufgezeichnet. HR schickt dir eine Mail wegen 'aggressiven Verhaltens am Arbeitsplatz' und fordert eine Stellungnahme.",
         opts: [
             { 
-                t: "Auf Notwehr plädieren (Gefahr im Verzug)", 
-                m: 10, f: 0, a: 5, c: 5, 
-                r: "Du schreibst einen dramatischen Report über Hardware-Sicherheit. HR versteht kein Wort und lässt die Sache fallen." 
-            },
-            { 
                 t: "Sich zähneknirschend entschuldigen", 
                 m: 5, f: 0, a: 15, c: -5, 
                 r: "Du schluckst deinen Stolz runter. HR ist zufrieden, aber du hast miese Laune." 
+            },
+            { 
+                t: "Auf Notwehr plädieren (Gefahr im Verzug)", 
+                m: 10, f: 0, a: 5, c: 5, 
+                r: "Du schreibst einen dramatischen Report über Hardware-Sicherheit. HR versteht kein Wort und lässt die Sache fallen." 
             }
         ]
     },
@@ -3493,15 +3493,15 @@ export const server = [
         text: "Die Ratte scheint deinen Donut geliebt zu haben. Als du am Nachmittag wieder in den Serverraum gehst, sitzt sie genau an derselben Stelle und starrt dich erwartungsvoll an.",
         opts: [
             { 
+                t: "Ihr einen Namen geben und sie ignorieren", 
+                m: 5, f: 10, a: -5, c: 5, 
+                r: "Du nennst sie 'Cisco' und lässt sie in Frieden. Solange sie keine Kabel frisst, seid ihr Kumpels." 
+            },
+            { 
                 t: "Egon mit einer Mausefalle holen", 
                 rep: { "Egon": 5 },
                 m: 15, f: 0, a: 5, c: 0, 
                 r: "Egon stellt gnadenlos Fallen auf. Du fühlst dich ein bisschen wie ein Verräter." 
-            },
-            { 
-                t: "Ihr einen Namen geben und sie ignorieren", 
-                m: 5, f: 10, a: -5, c: 5, 
-                r: "Du nennst sie 'Cisco' und lässt sie in Frieden. Solange sie keine Kabel frisst, seid ihr Kumpels." 
             }
         ]
     },
@@ -3530,14 +3530,14 @@ export const server = [
         text: "Deine Ignoranz wird hart bestraft. Die Ratte hat das Glasfaserkabel tatsächlich durchgebissen. Der komplette 2. Stock ist offline und das Telefon klingelt im Sekundentakt.",
         opts: [
             { 
-                t: "Das Kabel mühsam spleißen (flicken)", 
-                m: 45, f: -10, a: 25, c: 0, 
-                r: "Du kriechst auf dem Boden herum und flickst die filigrane Faser. Dein Rücken schmerzt, aber das Netz läuft wieder." 
-            },
-            { 
                 t: "Behaupten, der Provider hat eine Störung", 
                 m: 5, f: 5, a: 5, c: 15, 
                 r: "Du lügst den kompletten 2. Stock an. Die Leute beruhigen sich vorerst, aber das Problem bleibt bestehen." 
+            },
+            { 
+                t: "Das Kabel mühsam spleißen (flicken)", 
+                m: 45, f: -10, a: 25, c: 0, 
+                r: "Du kriechst auf dem Boden herum und flickst die filigrane Faser. Dein Rücken schmerzt, aber das Netz läuft wieder." 
             }
         ]
     },
@@ -3546,6 +3546,12 @@ export const server = [
         title: "Das Schrauben-Massaker",
         text: "Du stolperst über ein Stromkabel und eine offene Kiste mit winzigen Gehäuseschrauben ergießt sich über den Gitterboden. Die meisten fallen klappernd nach unten in die Dunkelheit.",
         opts: [
+            { 
+                t: "Fluchen und alles liegen lassen", 
+                next: "path_screws_ignore", 
+                m: 2, f: 5, a: 15, c: 5, 
+                r: "Dann fehlen eben ein paar Schrauben am nächsten Server. Das Rack wird schon nicht zusammenbrechen." 
+            },
             { 
                 t: "Mit Panzertape eine Angel basteln", 
                 req: "tape", 
@@ -3559,12 +3565,6 @@ export const server = [
                 next: "path_screws_loot", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Egal. Du greifst ins Regal und nimmst dir einfach eine neue Packung. Das Leben ist zu kurz zum Suchen." 
-            },
-            { 
-                t: "Fluchen und alles liegen lassen", 
-                next: "path_screws_ignore", 
-                m: 2, f: 5, a: 15, c: 5, 
-                r: "Dann fehlen eben ein paar Schrauben am nächsten Server. Das Rack wird schon nicht zusammenbrechen." 
             }
         ]
     },
@@ -3593,15 +3593,15 @@ export const server = [
         text: "Du hast die neue Schraubenpackung genommen. Leider war das das allerletzte Set! Später beim Rack-Umbau fehlt dir nun exakt eine Schraube, um die Schiene zu fixieren.",
         opts: [
             { 
+                t: "Das Gehäuse wackeln lassen", 
+                m: 2, f: 5, a: 10, c: 5, 
+                r: "Das Blech vibriert nun bei jeder Festplatten-Aktivität. Klingt furchtbar." 
+            },
+            { 
                 t: "Einen Kabelbinder als Ersatz nehmen", 
                 req: "zip_ties", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du zurrst das schwere Blech mit Plastik fest. Pfusch am Bau, aber es wackelt nicht." 
-            },
-            { 
-                t: "Das Gehäuse wackeln lassen", 
-                m: 2, f: 5, a: 10, c: 5, 
-                r: "Das Blech vibriert nun bei jeder Festplatten-Aktivität. Klingt furchtbar." 
             }
         ]
     },
@@ -3634,16 +3634,16 @@ export const server = [
         text: "Du stehst im Serverraum. Auf dem Monitor ploppt eine böse Mail vom Chef auf. 'Müller! Warum haben Sie vorhin 30 Minuten lang kauend im Flur gestanden und das Marketing angestarrt, während das Firmennetzwerk lahmt?!'",
         opts: [
             { 
-                t: "Antworten: 'Ich habe das WLAN kalibriert!'", 
-				rep: { "Dr. Wichtig": 5 },
-                m: 10, f: 5, a: 0, c: -5, 
-                r: "Du antwortest blitzschnell mit technischen Fake-Fakten. Der Chef kauft es dir ab. 'WLAN kalibriert man also im Stehen. Verstanden.'" 
-            },
-            { 
                 t: "Mail demonstrativ löschen", 
 				rep: { "Dr. Wichtig": -10 },
                 m: 2, f: 5, a: 5, c: 15, 
                 r: "Aus den Augen, aus dem Sinn. Das gibt später garantiert noch einen verbalen Anschiss, aber jetzt hast du deine Ruhe." 
+            },
+            { 
+                t: "Antworten: 'Ich habe das WLAN kalibriert!'", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 10, f: 5, a: 0, c: -5, 
+                r: "Du antwortest blitzschnell mit technischen Fake-Fakten. Der Chef kauft es dir ab. 'WLAN kalibriert man also im Stehen. Verstanden.'" 
             }
         ]
     },
@@ -3745,6 +3745,12 @@ export const server = [
     text: "Chantals Reel hat über Nacht 40.000 Aufrufe. Der Ton ist ein Trend-Sound, die Kommentare sind begeistert. Bis auf einen: 'Nettes Patchpanel, sehr gut lesbar. Grüße, euer freundlicher Pentester.'",
     opts: [
         {
+            t: "Chantal um Löschung bitten",
+            rep: { "Chantal": -3 },
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Sie löscht es. Unter Protest. '40.000 Aufrufe, Müller. VIERZIGTAUSEND. Weißt du, was Reichweite kostet?' Du weißt, was ein Sicherheitsvorfall kostet, aber das Argument sparst du dir."
+        },
+        {
             t: "Alles Gefilmte absichern",
             m: 25, f: -5, a: 10, c: -5,
             r: "Du änderst jedes Passwort und jede Beschriftung, die im Video zu sehen war. Zwei Stunden Arbeit für fünfzehn Sekunden Ruhm. Aber jetzt kann der Kommentar dir nichts mehr."
@@ -3753,12 +3759,6 @@ export const server = [
             t: "Kommentar melden und beten",
             m: 5, f: 10, a: 0, c: 5,
             r: "Du meldest den Kommentar als 'Spam' und hoffst, dass es ein Scherz war. Falls nicht, wirst du es früh genug merken. Wahrscheinlich zum ungünstigsten Zeitpunkt."
-        },
-        {
-            t: "Chantal um Löschung bitten",
-            rep: { "Chantal": -3 },
-            m: 10, f: 0, a: 5, c: 0,
-            r: "Sie löscht es. Unter Protest. '40.000 Aufrufe, Müller. VIERZIGTAUSEND. Weißt du, was Reichweite kostet?' Du weißt, was ein Sicherheitsvorfall kostet, aber das Argument sparst du dir."
         }
     ]
 },
@@ -3775,16 +3775,16 @@ export const server = [
             r: "Frau Elster wird blass, dann sehr ruhig. 'Danke, Herr Müller.' Sie greift zum Hörer. Was auch immer sie jetzt mit Chantal bespricht: Du bist froh, nicht Chantal zu sein."
         },
         {
-            t: "Nichts sagen, nichts wissen",
-            m: 2, f: 5, a: 0, c: 5,
-            r: "Vielleicht merkt es niemand. Das Video hat ja erst ein paar hundert Aufrufe. Und Gehälter interessieren ja niemanden. In keiner Firma. Nie."
-        },
-        {
             t: "Anbieten, das Video zu schneiden",
             rep: { "Chantal": 5 },
             next: "path_reel_cutter",
             m: 20, f: 10, a: 0, c: 5,
             r: "Du schneidest die Gehaltsliste raus, legst Musik drunter und exportierst in drei Formaten. Chantal ist begeistert: 'Du bist jetzt mein Schnitt-Bro!' Dieser Titel wird Folgen haben."
+        },
+        {
+            t: "Nichts sagen, nichts wissen",
+            m: 2, f: 5, a: 0, c: 5,
+            r: "Vielleicht merkt es niemand. Das Video hat ja erst ein paar hundert Aufrufe. Und Gehälter interessieren ja niemanden. In keiner Firma. Nie."
         }
     ]
 },
@@ -3821,16 +3821,16 @@ export const server = [
     text: "Chantal steht wieder in der Tür, diesmal mit vier Speicherkarten. 'Schnitt-Bro! Ich hab da noch Material vom Sommerfest, vom Onboarding und vom Team-Event. Du machst das doch SO gut.'",
     opts: [
         {
-            t: "Klare Grenze ziehen",
-            rep: { "Chantal": -3 },
-            m: 5, f: 0, a: 5, c: 0,
-            r: "'Einmalige Sache, Chantal.' Sie seufzt theatralisch, nimmt ihre Speicherkarten und geht. An der Tür dreht sie sich um: 'Falls du es dir anders überlegst: Ich hab auch Material von der Weihnachtsfeier.' Das war eine Drohung."
-        },
-        {
             t: "Ein Video machen, gegen Gefallen",
             rep: { "Chantal": 4 },
             m: 20, f: 10, a: 0, c: 5,
             r: "Du schneidest das Sommerfest-Video, dafür schuldet dir das Marketing jetzt offiziell einen Gefallen. Chantal besiegelt den Deal per Handschlag. In dieser Firma ist das bindender als jeder Vertrag."
+        },
+        {
+            t: "Klare Grenze ziehen",
+            rep: { "Chantal": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Einmalige Sache, Chantal.' Sie seufzt theatralisch, nimmt ihre Speicherkarten und geht. An der Tür dreht sie sich um: 'Falls du es dir anders überlegst: Ich hab auch Material von der Weihnachtsfeier.' Das war eine Drohung."
         }
     ]
 },
@@ -3873,6 +3873,11 @@ export const server = [
     text: "Markus platzt herein: 'Kleines Update: TechniPlast will die Cloud BESICHTIGEN. Morgen. Mit ihrer Fachabteilung.' Er sagt 'Fachabteilung' wie andere Leute 'Steuerprüfung' sagen.",
     opts: [
         {
+            t: "Kurzfristig ein Wartungsfenster ansetzen",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Bedauerlicherweise ist die Cloud morgen in Wartung. Sicherheitsupdates, Sie verstehen.' Der Termin wird verschoben. Das Problem nicht. Es reift nur."
+        },
+        {
             t: "Rack 2 zur Vorzeige-Cloud ausbauen",
             rep: { "Markus": 4 },
             m: 20, f: 5, a: -5, c: 5,
@@ -3883,11 +3888,6 @@ export const server = [
             rep: { "Markus": -4 },
             m: 10, f: 0, a: 5, c: 0,
             r: "'Auffliegen? Müller, ich verkaufe seit zwanzig Jahren Dinge, die es nicht gibt. Die Fachabteilung will nur blinkende Lichter sehen.' Das Beunruhigende ist: Er hat vermutlich recht."
-        },
-        {
-            t: "Kurzfristig ein Wartungsfenster ansetzen",
-            m: 5, f: 10, a: 0, c: 5,
-            r: "'Bedauerlicherweise ist die Cloud morgen in Wartung. Sicherheitsupdates, Sie verstehen.' Der Termin wird verschoben. Das Problem nicht. Es reift nur."
         }
     ]
 },
@@ -3948,6 +3948,13 @@ export const server = [
     text: "Dr. Wichtig steht unangekündigt im Serverraum und mustert die Racks wie eine schlechte Quartalsbilanz. 'Müller. Warum blinkt hier alles ROT? Rot ist die Farbe des Misserfolgs. Ich will, dass hier alles GRÜN blinkt. Bis zum Board-Meeting.'",
     opts: [
         {
+            t: "Kevin holen: 'Der Kollege erklärt das'",
+            rep: { "Kevin": -4 },
+            next: "path_led_kevin",
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Kevin erklärt strahlend, Rot sei der 'Turbo-Modus'. Dr. Wichtig ist begeistert. Kevin ist stolz. Du hast ein schlechtes Gewissen und demnächst ein deutlich größeres Problem."
+        },
+        {
             t: "Die LEDs feierlich 'kalibrieren'",
             rep: { "Dr. Wichtig": 4 },
             next: "path_led_placebo",
@@ -3960,13 +3967,6 @@ export const server = [
             next: "path_led_lecture",
             m: 15, f: 0, a: 5, c: 5,
             r: "Nach neunzig Sekunden Fachvortrag hebt er die Hand. 'Ich habe verstanden. Die roten sind die wichtigen.' Das hast du nicht gesagt. Aber das hat er verstanden. Da kommt etwas auf dich zu."
-        },
-        {
-            t: "Kevin holen: 'Der Kollege erklärt das'",
-            rep: { "Kevin": -4 },
-            next: "path_led_kevin",
-            m: 5, f: 5, a: 0, c: 5,
-            r: "Kevin erklärt strahlend, Rot sei der 'Turbo-Modus'. Dr. Wichtig ist begeistert. Kevin ist stolz. Du hast ein schlechtes Gewissen und demnächst ein deutlich größeres Problem."
         }
     ]
 },
@@ -3976,6 +3976,12 @@ export const server = [
     reqStory: "path_led_placebo",
     text: "Dr. Wichtig hat im Board-Meeting die 'LED-Kalibrierung nach der Müller-Methode' präsentiert. Die Investoren waren begeistert. Jetzt wünschen sie ein Whitepaper. Über die Methode. Die es nicht gibt.",
     opts: [
+        {
+            t: "Chantal schreiben lassen",
+            rep: { "Chantal": 4 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Chantal liefert acht Seiten mit Infografiken, einem Zitat von Steve Jobs und dem Wort 'Journey' in jeder zweiten Zeile. Es ist objektiv furchtbar und exakt das, was alle wollten. Sie ist glücklich, du bist raus."
+        },
         {
             t: "Vier Seiten Nichts schreiben",
             rep: { "Dr. Wichtig": 5 },
@@ -3987,12 +3993,6 @@ export const server = [
             rep: { "Dr. Wichtig": -5 },
             m: 10, f: 0, a: 5, c: 5,
             r: "'Ein Whitepaper über einen Aus-Knopf kann ich nicht verantworten.' Dr. Wichtig schaut dich lange an. 'Verantwortung. Interessantes Wort für jemanden in Ihrer Gehaltsklasse.' Das Gespräch ist beendet."
-        },
-        {
-            t: "Chantal schreiben lassen",
-            rep: { "Chantal": 4 },
-            m: 10, f: 5, a: 0, c: 0,
-            r: "Chantal liefert acht Seiten mit Infografiken, einem Zitat von Steve Jobs und dem Wort 'Journey' in jeder zweiten Zeile. Es ist objektiv furchtbar und exakt das, was alle wollten. Sie ist glücklich, du bist raus."
         }
     ]
 },
@@ -4003,6 +4003,11 @@ export const server = [
     text: "Eine Mail von Dr. Wichtig: 'Wie besprochen benötige ich ein Dashboard mit allen roten Lämpchen. Aber in Grün. Mit Firmenlogo. Für mein Tablet.' Es gibt keinen Kontext, in dem dieser Satz Sinn ergibt.",
     opts: [
         {
+            t: "'Steht auf der Cloud-Roadmap' antworten",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "'Roadmap' ist das Zauberwort, mit dem in dieser Firma Wünsche eingeschläfert werden. Dr. Wichtig antwortet mit einem Daumen-hoch. Das Thema wird wiederkommen. Themen kommen immer wieder."
+        },
+        {
             t: "Ein Dashboard bauen, das immer Grün zeigt",
             m: 25, f: 5, a: 0, c: -10,
             r: "Das Dashboard zeigt permanent grüne Kreise, das Logo und den Schriftzug 'ALLES IM GRIFF'. Es ist mit nichts verbunden. Dr. Wichtig prüft es jeden Morgen. Es ist das beruhigendste Werkzeug der Firmengeschichte."
@@ -4011,11 +4016,6 @@ export const server = [
             t: "Ein echtes Monitoring aufsetzen",
             m: 35, f: -10, a: 5, c: -5,
             r: "Du nimmst dir den halben Nachmittag und baust ein sauberes Monitoring mit Ampel-Ansicht. Dr. Wichtig sieht nur die Ampeln, du siehst endlich alles. Diese Investition wird sich noch auszahlen."
-        },
-        {
-            t: "'Steht auf der Cloud-Roadmap' antworten",
-            m: 5, f: 10, a: 0, c: 5,
-            r: "'Roadmap' ist das Zauberwort, mit dem in dieser Firma Wünsche eingeschläfert werden. Dr. Wichtig antwortet mit einem Daumen-hoch. Das Thema wird wiederkommen. Themen kommen immer wieder."
         }
     ]
 },
@@ -4026,6 +4026,12 @@ export const server = [
     text: "Dr. Wichtig hat eine Rundmail verschickt: Ab sofort sollen alle Systeme 'im Turbo-Modus laufen wie im Serverraum'. Der Vertrieb fragt bereits, wo man den einschaltet. Gabi hat drei Anrufe dazu durchgestellt.",
     opts: [
         {
+            t: "Kevin zum Turbo-Beauftragten machen",
+            rep: { "Kevin": 4 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Kevin beantwortet ab sofort alle Turbo-Anfragen. Mit Begeisterung, eigener Mail-Signatur ('Turbo-Beauftragter') und komplett erfundenen Fakten. Er ist beschäftigt, glücklich und erstaunlich überzeugend."
+        },
+        {
             t: "Eine 'Turbo-Taste' für alle bauen",
             m: 15, f: 5, a: -5, c: 5,
             r: "Du verteilst eine Desktop-Verknüpfung namens 'TURBO-MODUS'. Sie ändert das Hintergrundbild auf einen roten Farbverlauf. Die gefühlte Systemgeschwindigkeit steigt firmenweit um dreißig Prozent. Placebo ist auch Performance."
@@ -4035,12 +4041,6 @@ export const server = [
             rep: { "Dr. Wichtig": -4 },
             m: 10, f: 0, a: 5, c: 5,
             r: "Deine Antwort an alle beginnt mit 'Kleine technische Einordnung' und endet mit betretenem Schweigen im Verteiler. Dr. Wichtig hat sie gelesen. Korrigiert werden gehört nicht zu seinen Hobbys."
-        },
-        {
-            t: "Kevin zum Turbo-Beauftragten machen",
-            rep: { "Kevin": 4 },
-            m: 5, f: 5, a: 0, c: 5,
-            r: "Kevin beantwortet ab sofort alle Turbo-Anfragen. Mit Begeisterung, eigener Mail-Signatur ('Turbo-Beauftragter') und komplett erfundenen Fakten. Er ist beschäftigt, glücklich und erstaunlich überzeugend."
         }
     ]
 },
@@ -4081,12 +4081,6 @@ export const server = [
     text: "Frau Elster steht mit der nachgereichten Rechnung im Serverraum. Sie hält sie mit zwei Fingern, wie ein Beweisstück. 'Herr Müller. Bestellungen laufen über MICH. Ich finde hier keine Bestellnummer. Möchten Sie mir etwas erzählen?'",
     opts: [
         {
-            t: "Zerknirscht alle Formulare nachreichen",
-            rep: { "Frau Elster": 4 },
-            m: 15, f: 0, a: 5, c: -5,
-            r: "Du füllst das Beschaffungsformular aus, rückwirkend und in dreifacher Ausfertigung. Frau Elster prüft jede Zeile und nickt schließlich. 'Ordnung ist keine Schikane, Herr Müller. Ordnung ist Fürsorge.' Fast hätte sie gelächelt."
-        },
-        {
             t: "'Es war ein NOTFALL'",
             rep: { "Frau Elster": -5 },
             m: 5, f: 5, a: 0, c: 5,
@@ -4097,6 +4091,12 @@ export const server = [
             rep: { "Gabi": -4, "Frau Elster": -2 },
             m: 5, f: 5, a: 0, c: 0,
             r: "'Vom Empfang wussten Sie das also.' Frau Elster zieht ab, um einer anderen Spur zu folgen. Du hast gerade deine beste Informationsquelle verraten. Gabi grüßt dich ab jetzt nur noch dienstlich."
+        },
+        {
+            t: "Zerknirscht alle Formulare nachreichen",
+            rep: { "Frau Elster": 4 },
+            m: 15, f: 0, a: 5, c: -5,
+            r: "Du füllst das Beschaffungsformular aus, rückwirkend und in dreifacher Ausfertigung. Frau Elster prüft jede Zeile und nickt schließlich. 'Ordnung ist keine Schikane, Herr Müller. Ordnung ist Fürsorge.' Fast hätte sie gelächelt."
         }
     ]
 },
@@ -4107,11 +4107,6 @@ export const server = [
     text: "Es ist warm geworden. Sehr warm. Rack 3 klingt wie ein startender Airbus, das Thermometer zeigt 32 Grad, und irgendwo piept etwas, das vorher nie gepiept hat.",
     opts: [
         {
-            t: "Türen auf, Ventilatoren-Notaufbau",
-            m: 20, f: -5, a: 10, c: 5,
-            r: "Du organisierst jeden Ventilator des Gebäudes und baust eine Windschneise. Es sieht aus wie eine Kunstinstallation, aber die Temperatur fällt. Der halbe Flur fragt, was hier los ist. Gute Frage."
-        },
-        {
             t: "Not-Verlängerung zum Wucherpreis",
             m: 10, f: 0, a: 5, c: 10,
             r: "Die Wartungsfirma kennt ihre Verhandlungsposition genau: Expresszuschlag, Wochenendpauschale, 'Reaktivierungsgebühr'. Du unterschreibst alles. Diese Rechnung wird in der Buchhaltung Fragen aufwerfen. Laute Fragen."
@@ -4120,6 +4115,11 @@ export const server = [
             t: "Server 3 kontrolliert herunterfahren",
             m: 10, f: 0, a: -5, c: 10,
             r: "Weniger Last, weniger Hitze, sauber gelöst. Allerdings hat der halbe Vertrieb jetzt 'kein System'. Du zählst innerlich rückwärts, bis Markus persönlich anruft. Drei. Zwei. Eins."
+        },
+        {
+            t: "Türen auf, Ventilatoren-Notaufbau",
+            m: 20, f: -5, a: 10, c: 5,
+            r: "Du organisierst jeden Ventilator des Gebäudes und baust eine Windschneise. Es sieht aus wie eine Kunstinstallation, aber die Temperatur fällt. Der halbe Flur fragt, was hier los ist. Gute Frage."
         }
     ]
 },
@@ -4156,6 +4156,12 @@ export const server = [
     text: "Hinter dem Rack klemmt ein verstaubter Aktenordner: 'NOTFALLPLAN 2009 – STRENG VERTRAULICH'. Dein Vorgänger hat ihn dort offenbar deponiert. Oder versteckt. Der Unterschied ist in dieser Firma fließend.",
     opts: [
         {
+            t: "Zurückklemmen: ein Fall für Später-Müller",
+            next: "path_folder_later",
+            m: 2, f: 10, a: 0, c: 0,
+            r: "Der Ordner verschwindet wieder hinter dem Rack. Später-Müller wird sich darum kümmern. Später-Müller hasst dich jetzt schon. Und du bist nicht der Einzige, der hier unten gelegentlich herumstöbert."
+        },
+        {
             t: "Durchblättern",
             loot: "admin_pw",
             next: "path_folder_read",
@@ -4167,12 +4173,6 @@ export const server = [
             next: "path_folder_shred",
             m: 10, f: 0, a: -5, c: -5,
             r: "Du führst den Ordner fachgerecht der Datenvernichtung zu. Sehr professionell, sehr endgültig. Allerdings führt irgendjemand in dieser Firma Buch über registrierte Akten. Du weißt auch schon, wer."
-        },
-        {
-            t: "Zurückklemmen: ein Fall für Später-Müller",
-            next: "path_folder_later",
-            m: 2, f: 10, a: 0, c: 0,
-            r: "Der Ordner verschwindet wieder hinter dem Rack. Später-Müller wird sich darum kümmern. Später-Müller hasst dich jetzt schon. Und du bist nicht der Einzige, der hier unten gelegentlich herumstöbert."
         }
     ]
 },
@@ -4183,6 +4183,12 @@ export const server = [
     text: "Im Anhang des Notfallplans: ein vergilbter Lageplan mit der Markierung 'Zweitschlüssel Serverraum – Deckenplatte 4'. Du schaust nach oben. Deckenplatte 4 sitzt schief. Sie sitzt schon immer schief.",
     opts: [
         {
+            t: "Egon beiläufig auf 2009 ansprechen",
+            rep: { "Egon": 5 },
+            m: 20, f: 10, a: -5, c: 0,
+            r: "Egon lehnt sich an den Türrahmen und erzählt zwanzig Minuten von 2009. Vom alten Chef, vom Hochwasser im Keller, vom Kollegen, 'der mit dem Fax konnte'. Du erfährst nebenbei mehr über diese Firma als aus jedem Organigramm."
+        },
+        {
             t: "Auf einen Stuhl steigen und nachsehen",
             m: 10, f: 0, a: 5, c: 0,
             r: "Kein Schlüssel. Nur eine Zettelnotiz in säuberlicher Handschrift: 'Verliehen an E.' Das E ist mit Bleistift dreimal nachgezogen. E wie Egon. Der wahre Herrscher des Gebäudes, seit Jahrzehnten amtierend."
@@ -4191,12 +4197,6 @@ export const server = [
             t: "Die Decke Decke sein lassen",
             m: 2, f: 5, a: 0, c: 0,
             r: "Manche Dinge sollen schief bleiben. Du hast genug Baustellen auf Bodenhöhe. Aber jedes Mal, wenn du den Raum betrittst, wird Platte 4 dich ansehen. Schief."
-        },
-        {
-            t: "Egon beiläufig auf 2009 ansprechen",
-            rep: { "Egon": 5 },
-            m: 20, f: 10, a: -5, c: 0,
-            r: "Egon lehnt sich an den Türrahmen und erzählt zwanzig Minuten von 2009. Vom alten Chef, vom Hochwasser im Keller, vom Kollegen, 'der mit dem Fax konnte'. Du erfährst nebenbei mehr über diese Firma als aus jedem Organigramm."
         }
     ]
 },
@@ -4233,12 +4233,6 @@ export const server = [
     text: "Der Ordner ist weg. An seiner Stelle klemmt jetzt eine Haftnotiz: 'Spannende Lektüre! Hab ihn mir mal ausgeliehen. LG Kevin :)' Der Smiley ist mit besonders viel Schwung gemalt.",
     opts: [
         {
-            t: "Kevin SOFORT suchen",
-            rep: { "Kevin": -3 },
-            m: 15, f: -5, a: 5, c: 0,
-            r: "Du findest ihn in der Teeküche, den Ordner auf Seite 34 aufgeschlagen. 'Wusstest du, dass es einen Zweitschlüssel gibt?', ruft er quer durch den Raum. Jetzt weiß es die ganze Teeküche. Die Teeküche weiß ab jetzt alles."
-        },
-        {
             t: "Abwarten, was passiert",
             m: 2, f: 10, a: 0, c: 5,
             r: "Kevin. Ein Ordner voller Altlasten. Keine Aufsicht. Du entscheidest dich aktiv dafür, das nicht zu deinem Problem zu machen. Es wird trotzdem dein Problem werden, nur eben später und größer."
@@ -4248,6 +4242,12 @@ export const server = [
             rep: { "Kevin": 4 },
             m: 10, f: 5, a: 0, c: 0,
             r: "'Kevin, das ist jetzt dein Projekt: Digitalisierung des Notfallplans.' Kevin strahlt und scannt ab sofort jede Seite einzeln. Als eigene PDF. Einzeln. Er ist beschäftigt, stolz und für Wochen komplett harmlos."
+        },
+        {
+            t: "Kevin SOFORT suchen",
+            rep: { "Kevin": -3 },
+            m: 15, f: -5, a: 5, c: 0,
+            r: "Du findest ihn in der Teeküche, den Ordner auf Seite 34 aufgeschlagen. 'Wusstest du, dass es einen Zweitschlüssel gibt?', ruft er quer durch den Raum. Jetzt weiß es die ganze Teeküche. Die Teeküche weiß ab jetzt alles."
         }
     ]
 },
@@ -4267,6 +4267,13 @@ export const server = [
     text: "Die USV piept. Alle dreißig Sekunden, exakt. Kein Fehlercode, keine rote Lampe, nur dieses eine, präzise Piep. Es ist Tag drei. Niemand sonst scheint es zu hören. Du hörst es inzwischen sogar zuhause.",
     opts: [
         {
+            t: "Kopfhörer auf und weiterleben",
+            req: "headphones",
+            next: "path_usv_ignore",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Mit Noise-Cancelling existiert das Piepen einfach nicht mehr. Eine elegante Lösung für dich persönlich. Die USV und ihr Problem bleiben allerdings Teil der objektiven Realität."
+        },
+        {
             t: "Systematische Fehlersuche",
             next: "path_usv_debug",
             m: 30, f: -10, a: 10, c: -5,
@@ -4277,13 +4284,6 @@ export const server = [
             next: "path_usv_mute",
             m: 5, f: 10, a: 0, c: 5,
             r: "Du stopfst Watte in den Lautsprecher. Stille. Herrliche, verantwortungslose Stille. Die USV meldet weiterhin pflichtbewusst ihren Notfall. Nur eben an niemanden mehr."
-        },
-        {
-            t: "Kopfhörer auf und weiterleben",
-            req: "headphones",
-            next: "path_usv_ignore",
-            m: 2, f: 5, a: -5, c: 0,
-            r: "Mit Noise-Cancelling existiert das Piepen einfach nicht mehr. Eine elegante Lösung für dich persönlich. Die USV und ihr Problem bleiben allerdings Teil der objektiven Realität."
         }
     ]
 },
@@ -4343,6 +4343,13 @@ export const server = [
     text: "Gabi steht in der Tür: 'Sag mal, piept das bei dir? Ich hör das bis zum Empfang, durch den Lüftungsschacht. Frau Elster hat schon eine Beschwerde-Mail vorformuliert. Ich wollte dich nur vorwarnen.'",
     opts: [
         {
+            t: "Gabi die Kopfhörer schenken",
+            rem: "headphones",
+            rep: { "Gabi": 3 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "'Für den Empfang. Gegen den Lärm.' Gabi ist ehrlich gerührt und setzt sie sofort auf. Das Piepen existiert weiter, die Beschwerde-Mail auch - aber die wichtigste Nachrichtenzentrale der Firma hört ab jetzt nichts mehr davon."
+        },
+        {
             t: "Gabi danken und sofort handeln",
             rep: { "Gabi": 5 },
             m: 15, f: 0, a: 10, c: -5,
@@ -4353,13 +4360,6 @@ export const server = [
             rep: { "Gabi": -5 },
             m: 2, f: 10, a: 0, c: 5,
             r: "Gabi schaut auf deine Kopfhörer. Dann auf dich. 'Verstehe.' Sie geht. Die vorformulierte Mail von Frau Elster wird um deinen Namen ergänzt werden, da bist du dir sicher."
-        },
-        {
-            t: "Gabi die Kopfhörer schenken",
-            rem: "headphones",
-            rep: { "Gabi": 3 },
-            m: 5, f: 5, a: 0, c: 5,
-            r: "'Für den Empfang. Gegen den Lärm.' Gabi ist ehrlich gerührt und setzt sie sofort auf. Das Piepen existiert weiter, die Beschwerde-Mail auch - aber die wichtigste Nachrichtenzentrale der Firma hört ab jetzt nichts mehr davon."
         }
     ]
 },
@@ -4370,14 +4370,6 @@ export const server = [
     title: "Kantinenware",
     text: "Egon steht mit einem fabrikneuen Feuerlöscher im Serverraum. 'Deiner is abgelaufen. Nimm den hier. Aber pssst - der is eigentlich für die Kantine. Die kriegen nächste Woche eh neue, das weiß nur noch keiner.'",
     opts: [
-        {
-            t: "Annehmen und keine Fragen stellen",
-            loot: "fire_ext",
-            rep: { "Egon": 5 },
-            next: "path_exting_gift",
-            m: 5, f: 5, a: 0, c: 0,
-            r: "Du nimmst den Löscher entgegen. Egon nickt zufrieden - ein Geschäft unter Männern, die wissen, wie Gebäude wirklich funktionieren. Die Kantine wird ihren Bestand allerdings irgendwann zählen."
-        },
         {
             t: "Ablehnen: Vorschrift ist Vorschrift",
             rep: { "Egon": -5 },
@@ -4391,6 +4383,14 @@ export const server = [
             next: "path_exting_lager",
             m: 15, f: 10, a: -5, c: 0,
             r: "Egon mustert dich lange. Dann, ganz leise: 'Komm nachher mal mit runter. Raum K3.' Du hast gerade eine Tür geöffnet, von der du nicht wusstest, dass es sie gibt."
+        },
+        {
+            t: "Annehmen und keine Fragen stellen",
+            loot: "fire_ext",
+            rep: { "Egon": 5 },
+            next: "path_exting_gift",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du nimmst den Löscher entgegen. Egon nickt zufrieden - ein Geschäft unter Männern, die wissen, wie Gebäude wirklich funktionieren. Die Kantine wird ihren Bestand allerdings irgendwann zählen."
         }
     ]
 },
@@ -4401,6 +4401,12 @@ export const server = [
     text: "Rundmail von Frau Elster: 'Bei der Zwischeninventur der Kantine fehlt ein Feuerlöscher (Inventarnummer K-FL-02). Sachdienliche Hinweise bitte an die Buchhaltung.' Der Löscher steht neben deinem Rack. Mit Inventarnummer.",
     opts: [
         {
+            t: "Egon vorwarnen",
+            rep: { "Egon": 5 },
+            m: 5, f: 5, a: 0, c: 5,
+            r: "Egon hört zu, nickt: 'Kümmer ich mich.' Am nächsten Morgen hat die Kantine wieder einen Löscher, niemand weiß woher, und die Inventur stimmt auf wundersame Weise. Du fragst besser nicht nach."
+        },
+        {
             t: "Das Etikett unauffällig 'aktualisieren'",
             m: 10, f: 10, a: 0, c: 5,
             r: "Ein frisches Etikett, eine erfundene Nummer, ein Hauch Kriminalität. Der Löscher heißt jetzt SRV-FL-01. Solange niemand die Etiketten gegen das Anlagenverzeichnis prüft, ist alles gut. Frau Elster prüft gerne Etiketten."
@@ -4410,12 +4416,6 @@ export const server = [
             rep: { "Frau Elster": 3 },
             m: 15, f: 0, a: 5, c: 5,
             r: "Du gestehst eine 'pragmatische Sofortmaßnahme' - Egons Name fällt nicht. Frau Elster korrigiert die Listen mit spitzen Fingern. 'Beim nächsten Mal: VORHER melden.' Der Vorgang hat jetzt einen Aktenvermerk."
-        },
-        {
-            t: "Egon vorwarnen",
-            rep: { "Egon": 5 },
-            m: 5, f: 5, a: 0, c: 5,
-            r: "Egon hört zu, nickt: 'Kümmer ich mich.' Am nächsten Morgen hat die Kantine wieder einen Löscher, niemand weiß woher, und die Inventur stimmt auf wundersame Weise. Du fragst besser nicht nach."
         }
     ]
 },
@@ -4426,6 +4426,12 @@ export const server = [
     text: "Formular B-27: 'Beschaffung sicherheitsrelevanter Ausstattung'. Drei Unterschriften nötig, eine davon von Dr. Wichtig. Der abgelaufene Löscher hängt derweil neben dem Rack und wird jeden Tag ein bisschen dekorativer.",
     opts: [
         {
+            t: "Doch nochmal bei Egon anklopfen",
+            loot: "fire_ext",
+            m: 10, f: 5, a: 5, c: 0,
+            r: "Egon grinst breit. 'Ach. DOCH kein Formular?' Er lässt dich exakt eine Minute zappeln, dann holt er den Kantinen-Löscher wieder hervor. Du bezahlst mit einem Stück Würde. Es war es wert."
+        },
+        {
             t: "Den Antrag komplett durchziehen",
             m: 35, f: -10, a: 10, c: -5,
             r: "Drei Büros, drei Unterschriften, ein halber Nachmittag. Aber am Ende hältst du eine genehmigte Beschaffung in der Hand: vorschriftsgemäß, feuerfest, unangreifbar. Fast ein Kunstwerk der Verwaltung."
@@ -4434,12 +4440,6 @@ export const server = [
             t: "Antrag 'vorbereiten' und liegen lassen",
             m: 5, f: 10, a: 0, c: 5,
             r: "Das Formular liegt jetzt ausgefüllt in deiner Schublade, nur die Unterschriften fehlen. Damit ist es offiziell 'in Bearbeitung' - ein Zustand, der in dieser Firma Jahre halten kann. Der abgelaufene Löscher hängt derweil weiter."
-        },
-        {
-            t: "Doch nochmal bei Egon anklopfen",
-            loot: "fire_ext",
-            m: 10, f: 5, a: 5, c: 0,
-            r: "Egon grinst breit. 'Ach. DOCH kein Formular?' Er lässt dich exakt eine Minute zappeln, dann holt er den Kantinen-Löscher wieder hervor. Du bezahlst mit einem Stück Würde. Es war es wert."
         }
     ]
 },
@@ -4449,12 +4449,6 @@ export const server = [
     reqStory: "path_exting_lager",
     text: "Du findest einen Vorwand für den Keller. Raum K3: Regale bis zur Decke. Toner von 2011, Röhrenmonitore, ein Overheadprojektor, drei Kaffeemaschinen und Dinge aus der Gründerzeit der Firma. Egon lehnt am Türrahmen: 'Mein Archiv.'",
     opts: [
-        {
-            t: "Respektvoll staunen",
-            rep: { "Egon": 5 },
-            m: 10, f: 5, a: -5, c: 0,
-            r: "'Alles hier hat die Firma mal weggeworfen. Und alles hier hat sie irgendwann wieder gebraucht.' Egon klopft auf ein Regal. Du verstehst gerade, warum in diesem Gebäude nie etwas endgültig kaputt ist."
-        },
         {
             t: "Nach Ersatzteilen für den Serverraum fragen",
             loot: "cable",
@@ -4467,6 +4461,12 @@ export const server = [
             rep: { "Egon": -5 },
             m: 5, f: 0, a: 5, c: 0,
             r: "Egons Blick wird arktisch. 'Inventar.' Er schiebt dich sanft, aber endgültig aus dem Raum. Die Tür von K3 wird für dich ab jetzt immer zufällig abgeschlossen sein."
+        },
+        {
+            t: "Respektvoll staunen",
+            rep: { "Egon": 5 },
+            m: 10, f: 5, a: -5, c: 0,
+            r: "'Alles hier hat die Firma mal weggeworfen. Und alles hier hat sie irgendwann wieder gebraucht.' Egon klopft auf ein Regal. Du verstehst gerade, warum in diesem Gebäude nie etwas endgültig kaputt ist."
         }
     ]
 },
@@ -4476,14 +4476,6 @@ export const server = [
     title: "Port 23",
     text: "Ticket: 'Kein Netz an Arbeitsplatz 14.' Die Spur führt zum Patchpanel: Port 23 ist tot, und das Kabel dahinter hat die Konsistenz von altem Lakritz. Es ist an zwei Stellen geknickt und an einer dritten... angeknabbert?",
     opts: [
-        {
-            t: "Ordentlich neu patchen",
-            req: "cable",
-            rem: "cable",
-            next: "path_patch_neu",
-            m: 10, f: 0, a: -5, c: -5,
-            r: "Neues Kabel, sauber verlegt, beschriftet mit Datum. Arbeitsplatz 14 hat wieder Netz, und zum ersten Mal seit Jahren stimmt an diesem Panel eine Beschriftung. Die Frage nach den Bissspuren bleibt allerdings offen."
-        },
         {
             t: "Das Kabel aus Port 24 umstecken",
             next: "path_patch_swap",
@@ -4495,6 +4487,14 @@ export const server = [
             next: "path_patch_wackel",
             m: 15, f: 5, a: 10, c: 0,
             r: "Nach einer Viertelstunde Millimeterarbeit rastet der Stecker mit einem müden Klick ein. Die Verbindung steht. Sie steht so, wie ein Kartenhaus steht: technisch ja, moralisch nein."
+        },
+        {
+            t: "Ordentlich neu patchen",
+            req: "cable",
+            rem: "cable",
+            next: "path_patch_neu",
+            m: 10, f: 0, a: -5, c: -5,
+            r: "Neues Kabel, sauber verlegt, beschriftet mit Datum. Arbeitsplatz 14 hat wieder Netz, und zum ersten Mal seit Jahren stimmt an diesem Panel eine Beschriftung. Die Frage nach den Bissspuren bleibt allerdings offen."
         }
     ]
 },
@@ -4554,11 +4554,6 @@ export const server = [
     text: "14 Uhr, Anruf von Arbeitsplatz 14: 'Das Netz ist wieder weg. Es ging kurz, dann kam ein Knacken.' Das Lakritz-Kabel hat aufgegeben, diesmal endgültig - beim Rausziehen bleibt der Steckerkopf im Port stecken.",
     opts: [
         {
-            t: "Den Steckerrest herausoperieren",
-            m: 20, f: -5, a: 15, c: 0,
-            r: "Mit Pinzette, Taschenlampe und angehaltenem Atem operierst du den abgebrochenen Kopf aus Port 23. Es ist Feinmechanik am offenen Herzen, und du fluchst leise in drei Sprachen. Aber der Port lebt."
-        },
-        {
             t: "Port 23 für tot erklären",
             m: 5, f: 10, a: 0, c: 5,
             r: "Du klebst ein Kreuz aus Isolierband über den Port und nimmst Port 25. Das Panel hat jetzt ein Mahnmal. Irgendwann wird jemand fragen, warum Port 23 ein Grab hat. Aber nicht heute."
@@ -4567,6 +4562,11 @@ export const server = [
             t: "Arbeitsplatz 14 auf WLAN umstellen",
             m: 10, f: 5, a: 0, c: 10,
             r: "'Vorübergehend', sagst du. WLAN im Büro bedeutet: Der Kollege friert ab jetzt in jeder Videokonferenz ein und macht dich dafür verantwortlich. Aber das Ticket ist zu, und heute zählt nur heute."
+        },
+        {
+            t: "Den Steckerrest herausoperieren",
+            m: 20, f: -5, a: 15, c: 0,
+            r: "Mit Pinzette, Taschenlampe und angehaltenem Atem operierst du den abgebrochenen Kopf aus Port 23. Es ist Feinmechanik am offenen Herzen, und du fluchst leise in drei Sprachen. Aber der Port lebt."
         }
     ]
 },
@@ -4576,6 +4576,12 @@ export const server = [
     title: "Der fremde Stick",
     text: "In Server 3 steckt ein USB-Stick, der da gestern noch nicht war. Handbeschriftet: 'PRIVAT!! NICHT ÖFFNEN!!' Zwei Ausrufezeichen. Wer auch immer ihn dort vergessen hat, meinte es wirklich ernst.",
     opts: [
+        {
+            t: "Stecken lassen. Nicht dein Zirkus.",
+            next: "path_usbfund_leave",
+            m: 2, f: 10, a: 0, c: 5,
+            r: "Du beschließt, dass fremde Sticks fremde Probleme sind. Der Stick bleibt, wo er ist - eingesteckt in deinen Server, in deinem Raum, in deiner Verantwortung. Aber sonst: absolut nicht dein Zirkus."
+        },
         {
             t: "Abziehen und in Quarantäne scannen",
             loot: "usb_stick",
@@ -4588,12 +4594,6 @@ export const server = [
             next: "path_usbfund_open",
             m: 10, f: 5, a: 0, c: 10,
             r: "Du öffnest einen unbekannten Datenträger an einem Produktivsystem - jede Sicherheitsschulung der Welt schreit leise auf. Der Inhalt: keine Malware, sondern Ordner mit Namen wie 'Schluessel_Verleih_2009.xlsx'. Das wird interessant."
-        },
-        {
-            t: "Stecken lassen. Nicht dein Zirkus.",
-            next: "path_usbfund_leave",
-            m: 2, f: 10, a: 0, c: 5,
-            r: "Du beschließt, dass fremde Sticks fremde Probleme sind. Der Stick bleibt, wo er ist - eingesteckt in deinen Server, in deinem Raum, in deiner Verantwortung. Aber sonst: absolut nicht dein Zirkus."
         }
     ]
 },
@@ -4630,11 +4630,6 @@ export const server = [
     text: "Die Tabelle ist penibel geführt: wer wann welchen Schlüssel bekommen hat, von 2009 bis 2014. Spalte D: 'Zweitschlüssel Serverraum - E.' Danach bricht die Liste ab. Der Stick gehörte offenbar deinem Vorgänger. Und der wusste Dinge.",
     opts: [
         {
-            t: "Ausdrucken und sicher verwahren",
-            m: 10, f: -5, a: 0, c: 5,
-            r: "Wissen ist Macht, Papier ist geduldig. Der Ausdruck wandert in deine private Ablage, von deren Existenz niemand weiß. Du fühlst dich ein Prozent mehr wie dein Vorgänger. Unklar, ob das ein gutes Zeichen ist."
-        },
-        {
             t: "Egon mit Spalte D konfrontieren",
             rep: { "Egon": -5 },
             m: 10, f: 0, a: 10, c: 0,
@@ -4644,6 +4639,11 @@ export const server = [
             t: "Formatieren und nie davon gewusst haben",
             m: 5, f: 5, a: -5, c: 0,
             r: "Manche Türen lässt man zu. Du formatierst den Stick und beschließt, nie von einer Liste gewusst zu haben. Das Gefühl, beim Vorbeigehen am Keller beobachtet zu werden, hält sich trotzdem noch ein paar Tage."
+        },
+        {
+            t: "Ausdrucken und sicher verwahren",
+            m: 10, f: -5, a: 0, c: 5,
+            r: "Wissen ist Macht, Papier ist geduldig. Der Ausdruck wandert in deine private Ablage, von deren Existenz niemand weiß. Du fühlst dich ein Prozent mehr wie dein Vorgänger. Unklar, ob das ein gutes Zeichen ist."
         }
     ]
 },
@@ -4654,12 +4654,6 @@ export const server = [
     text: "Server 3 verhält sich seit heute... musikalisch. Bei jedem Dienst-Neustart dudelt kurz ein Schlager aus dem internen Lautsprecher. Der fremde Stick hat eine Autostart-Datei, und die hat Heimweh nach 1978.",
     opts: [
         {
-            t: "Den Stick jetzt doch ordentlich entfernen",
-            loot: "usb_stick",
-            m: 10, f: 0, a: 5, c: 0,
-            r: "Du ziehst den Stick, scannst ihn sauber und beendest das Konzert. Darauf: eine einzige MP3 und viel freier Speicher. Den kann man ja jetzt sinnvoll nutzen. Server 3 klingt wieder wie ein Server."
-        },
-        {
             t: "Den Lautsprecher abklemmen",
             m: 5, f: 10, a: 0, c: 5,
             r: "Du kappst den kleinen Piezo-Lautsprecher. Problem gelöst, auf die schlechteste denkbare Art: Der Server kann jetzt auch keine Warntöne mehr von sich geben. Aber immerhin auch keinen Schlager."
@@ -4669,6 +4663,12 @@ export const server = [
             rep: { "Gabi": 5 },
             m: 15, f: 0, a: -5, c: 0,
             r: "Du fragst die einzige Person, die alles weiß: Gabi. Sie hört zwei Takte und sagt sofort: 'Egons Lieblingslied. Lief auf jeder Weihnachtsfeier bis 2019.' Der Fall ist gelöst - warum Egons Musik auf einem fremden Stick in deinem Server steckt, allerdings noch lange nicht."
+        },
+        {
+            t: "Den Stick jetzt doch ordentlich entfernen",
+            loot: "usb_stick",
+            m: 10, f: 0, a: 5, c: 0,
+            r: "Du ziehst den Stick, scannst ihn sauber und beendest das Konzert. Darauf: eine einzige MP3 und viel freier Speicher. Den kann man ja jetzt sinnvoll nutzen. Server 3 klingt wieder wie ein Server."
         }
     ]
 },
@@ -4706,11 +4706,6 @@ export const server = [
     text: "Beim Dokumentieren ist es dir aufgefallen, und jetzt lässt es dich nicht mehr los: In Rack 5 läuft ein Server, den niemand kennt. Kein Eintrag, kein Ticket, keine Beschriftung. Laufzeit: 743 Tage. Irgendjemand bezahlt seinen Strom.",
     opts: [
         {
-            t: "Vorsichtig analysieren, was er tut",
-            m: 25, f: -5, a: 5, c: -5,
-            r: "Netzwerkverkehr, Prozesse, offene Ports - du näherst dich dem Ding wie einem schlafenden Tier. Ergebnis: Er hostet eine Minecraft-Welt. Eine sehr große, sehr gepflegte Minecraft-Welt. Mit Spielern. Jeden Abend ab 18 Uhr."
-        },
-        {
             t: "Sofort vom Netz nehmen",
             m: 5, f: 0, a: 5, c: -5,
             r: "Du ziehst den Stecker. Irgendwo in dieser Firma ist gerade eine Welt untergegangen, und du wirst nie erfahren, wessen. Rack 5 ist wieder still. Zu still, findest du plötzlich."
@@ -4719,6 +4714,11 @@ export const server = [
             t: "Als 'Legacy-System' in die Doku eintragen",
             m: 5, f: 10, a: 0, c: 5,
             r: "'Legacy-System, Funktion: historisch gewachsen.' Dieser Satz deckt in dieser Firma alles. Der geheime Server läuft weiter, jetzt eben mit Papieren. Du hast ihn nicht legalisiert, nur laminiert."
+        },
+        {
+            t: "Vorsichtig analysieren, was er tut",
+            m: 25, f: -5, a: 5, c: -5,
+            r: "Netzwerkverkehr, Prozesse, offene Ports - du näherst dich dem Ding wie einem schlafenden Tier. Ergebnis: Er hostet eine Minecraft-Welt. Eine sehr große, sehr gepflegte Minecraft-Welt. Mit Spielern. Jeden Abend ab 18 Uhr."
         }
     ]
 },
@@ -4729,6 +4729,11 @@ export const server = [
     text: "Dr. Wichtig, im Vorbeigehen, beiläufig wie ein Fallbeil: 'Müller, die Versicherung fragt nach unserer IT-Dokumentation. Schicken Sie mir die bis Freitag.' Der September-Zettel in deiner Tasche wird schlagartig sehr schwer.",
     opts: [
         {
+            t: "'Die Doku liegt in der Cloud' sagen",
+            m: 5, f: 10, a: 0, c: 10,
+            r: "Es gibt keine Cloud. Es gibt keine Doku. Es gibt jetzt aber eine Aussage gegenüber dem Chef, die beides behauptet - und eine Versicherung, die nachfragen wird. Du hast Zeit gekauft. Der Zinssatz ist unbekannt."
+        },
+        {
             t: "Schnelldurchlauf: Doku in einem Rutsch",
             m: 30, f: -5, a: 15, c: -5,
             r: "Du hämmerst eine Dokumentation zusammen, die zu achtzig Prozent stimmt. Die restlichen zwanzig Prozent formulierst du so vage, dass sie nicht falsch sein können. Die Versicherung bekommt Papier. Papier beruhigt."
@@ -4738,11 +4743,6 @@ export const server = [
             rep: { "Kevin": 3, "Gabi": 3 },
             m: 20, f: 0, a: 5, c: 0,
             r: "Kevin fotografiert jedes Rack, Gabi - die ohnehin alles weiß - diktiert, wer woran hängt. Nach kurzer Zeit existiert ein Dokument, das erschreckend gut ist. Der Empfang kennt diese Firma besser als jedes Organigramm."
-        },
-        {
-            t: "'Die Doku liegt in der Cloud' sagen",
-            m: 5, f: 10, a: 0, c: 10,
-            r: "Es gibt keine Cloud. Es gibt keine Doku. Es gibt jetzt aber eine Aussage gegenüber dem Chef, die beides behauptet - und eine Versicherung, die nachfragen wird. Du hast Zeit gekauft. Der Zinssatz ist unbekannt."
         }
     ]
 },
@@ -4806,12 +4806,6 @@ export const server = [
     text: "Über Rack 3 hat sich an der Kühlleitung ein Kondenswassertropfen gebildet. Alle vierzig Sekunden fällt einer, noch trifft er den Kabelkanal. Du kennst dieses Gebäude: Aus einem Tropfen wird ein Rinnsal, aus einem Rinnsal ein Ticket mit dem Wort 'unerklärlich' darin.",
     opts: [
         {
-            t: "Bewährt: Panzertape um die Leitung",
-            rem: "tape",
-            m: 5, f: 5, a: 30, c: 10,
-            r: "Der Reflex jedes Admins - nur hält auf einer kondensfeuchten Kühlleitung kein Klebeband der Welt. Das Tape löst sich binnen einer Stunde, sammelt dabei das Wasser wie eine Rinne und leitet es zielsicher in den Lüfter von Rack 3. Das Panzertape ist weg, das Problem ist größer, und der Lüfter klingt jetzt nach Espressomaschine."
-        },
-        {
             t: "Eimer drunter, Zettel dran",
             m: 5, f: 10, a: 10, c: 0,
             r: "Das ehrliche Provisorium. Der Eimer füllt sich langsamer als dein schlechtes Gewissen, der Zettel ('NICHT ENTFERNEN') vergilbt vor deinen Augen, und jeder, der den Serverraum betritt, fragt dich ab jetzt nach 'dem Eimer-Ding'. Provisorien haben hier bekanntlich die längste Lebenserwartung im Haus."
@@ -4820,6 +4814,12 @@ export const server = [
             t: "Facility Management offiziell beauftragen",
             m: 15, f: 0, a: 5, c: 10,
             r: "Der Dienstweg: Formular FM-12, Priorität, Kostenstelle. Die Rückmeldung kommt prompt: 'Kältetechnik ist Fremdgewerk, Termin in 3-5 Werktagen.' Bis dahin bist du gebeten, 'geeignete Sofortmaßnahmen' zu treffen - was exakt die beiden anderen Antworten sind. Der Kreis schließt sich. Der Tropfen fällt."
+        },
+        {
+            t: "Bewährt: Panzertape um die Leitung",
+            rem: "tape",
+            m: 5, f: 5, a: 30, c: 10,
+            r: "Der Reflex jedes Admins - nur hält auf einer kondensfeuchten Kühlleitung kein Klebeband der Welt. Das Tape löst sich binnen einer Stunde, sammelt dabei das Wasser wie eine Rinne und leitet es zielsicher in den Lüfter von Rack 3. Das Panzertape ist weg, das Problem ist größer, und der Lüfter klingt jetzt nach Espressomaschine."
         }
     ]
 },
@@ -4829,11 +4829,6 @@ export const server = [
     text: "Ein seltener Anblick: Jede einzelne LED im Raum leuchtet grün. Kein Blinken, kein Orange, kein einziges rotes Auge. Das Monitoring-Dashboard zeigt null offene Meldungen. Es ist der friedlichste Serverraum, den du je gesehen hast. Verdächtig friedlich.",
     opts: [
         {
-            t: "Den Moment genießen und nichts anfassen",
-            m: 5, f: 10, a: 15, c: 35,
-            r: "Weisheit, denkst du. Bis am Nachmittag herauskommt, warum nichts meldete: Der Monitoring-Dienst selbst war seit dem Morgen tot - null Meldungen, weil null Überwachung. Zwei Ausfälle blieben stundenlang unbemerkt, und die Frage 'Warum hat da niemand draufgeschaut?' hat eine sehr kurze Antwort mit deinem Namen."
-        },
-        {
             t: "Misstrauisch das Monitoring selbst prüfen",
             m: 15, f: 0, a: 10, c: 0,
             r: "Paranoia zahlt sich aus: Der Monitoring-Dienst hängt seit 6:42 Uhr - das Grün war das Grün eines abgeschalteten Rauchmelders. Du startest ihn neu und siehst zu, wie das Dashboard binnen Sekunden auf sieben echte Meldungen springt. Der friedlichste Raum des Jahres war eine Viertelstunde Arbeit im Tarnanzug."
@@ -4842,6 +4837,11 @@ export const server = [
             t: "Einen Testalarm auslösen, um sicherzugehen",
             m: 10, f: 0, a: 5, c: 10,
             r: "Gründlich: Du wirfst einen Testalarm. Er funktioniert - und landet, wie sich herausstellt, ungefiltert im Eskalations-Verteiler der Konzernzentrale, wo um diese Uhrzeit jemand sehr Echtes sehr echt reagiert. Die Entwarnung dauert länger als jede Störung. Aber immerhin: Das Monitoring lebt. Jetzt wissen es alle."
+        },
+        {
+            t: "Den Moment genießen und nichts anfassen",
+            m: 5, f: 10, a: 15, c: 35,
+            r: "Weisheit, denkst du. Bis am Nachmittag herauskommt, warum nichts meldete: Der Monitoring-Dienst selbst war seit dem Morgen tot - null Meldungen, weil null Überwachung. Zwei Ausfälle blieben stundenlang unbemerkt, und die Frage 'Warum hat da niemand draufgeschaut?' hat eine sehr kurze Antwort mit deinem Namen."
         }
     ]
 },
@@ -4852,13 +4852,6 @@ export const server = [
     text: "Am Ersatzarbeitsplatz im Serverraum klemmt ein Zettel unter der Tastatur. Darauf in ordentlicher Handschrift: die Zugangsdaten des Administrator-Kontos, dazu das Datum der letzten Änderung. Es ist vier Jahre her. Daneben steht: 'BITTE NICHT ÄNDERN - sonst geht die Buchhaltung nicht mehr.'",
     opts: [
         {
-            t: "Zettel einstecken - das gehört hier nicht hin",
-            loot: "admin_pw",
-            next: "path_zettel_mit",
-            m: 5, f: 0, a: 0, c: -5,
-            r: "Du nimmst den Zettel an dich. Das Kennwort ist damit nicht sicherer, aber es hängt wenigstens nicht mehr öffentlich aus. Die Buchhaltung wird weiterlaufen, denn geändert hast du nichts - du bist ja nicht wahnsinnig."
-        },
-        {
             t: "Kennwort ändern, wie es sich gehört",
             m: 20, f: -10, a: 15, c: 10,
             r: "Fachlich korrekt, praktisch eine Lawine: Vier Fachanwendungen, zwei Schnittstellen und ein Drucker im dritten Stock kannten dieses Kennwort. Die Buchhaltung meldet sich nach elf Minuten. Der Zettel hatte recht."
@@ -4868,6 +4861,13 @@ export const server = [
             next: "path_zettel_foto",
             m: 5, f: 10, a: 0, c: 5,
             r: "Du fotografierst den Zettel für den Notfall und lässt ihn, wo er ist. Jetzt existiert das Kennwort an zwei Orten statt an einem. Sicherheitstechnisch ist das die schlechteste aller Welten, aber du hast es griffbereit."
+        },
+        {
+            t: "Zettel einstecken - das gehört hier nicht hin",
+            loot: "admin_pw",
+            next: "path_zettel_mit",
+            m: 5, f: 0, a: 0, c: -5,
+            r: "Du nimmst den Zettel an dich. Das Kennwort ist damit nicht sicherer, aber es hängt wenigstens nicht mehr öffentlich aus. Die Buchhaltung wird weiterlaufen, denn geändert hast du nichts - du bist ja nicht wahnsinnig."
         }
     ]
 },
@@ -4884,15 +4884,15 @@ export const server = [
             r: "Du erklärst ihm, warum der Zettel weg ist, und richtest ihm einen eigenen Zugang mit den Rechten ein, die er tatsächlich braucht. Es kostet dich eine halbe Stunde und behebt ein Problem, das seit vier Jahren als Möbelstück galt. Niemand wird es je bemerken."
         },
         {
-            t: "Nichts sagen und ihn suchen lassen",
-            m: 5, f: 10, a: 5, c: 10,
-            r: "Du schaust auf deinen Bildschirm, während er zum dritten Mal die Tastatur anhebt. Nach zehn Minuten geht er und meldet der Buchhaltungsleitung, dass 'die Zugangsdaten verschwunden' seien. Diese Meldung nimmt ihren Weg. Sie nimmt ihn nach oben."
-        },
-        {
             t: "Ihm das Kennwort einfach sagen",
             rep: { "Frau Elster": -5 },
             m: 5, f: 5, a: 0, c: 15,
             r: "Du nennst ihm das Kennwort im Vorbeigehen, mündlich, im Serverraum, wo es außer euch niemand hört. Außer Frau Elster, die exakt in diesem Moment in der Tür steht, weil sie einen Beleg sucht. Sie sagt nichts. Sie schreibt sich etwas auf."
+        },
+        {
+            t: "Nichts sagen und ihn suchen lassen",
+            m: 5, f: 10, a: 5, c: 10,
+            r: "Du schaust auf deinen Bildschirm, während er zum dritten Mal die Tastatur anhebt. Nach zehn Minuten geht er und meldet der Buchhaltungsleitung, dass 'die Zugangsdaten verschwunden' seien. Diese Meldung nimmt ihren Weg. Sie nimmt ihn nach oben."
         }
     ]
 },
@@ -4905,17 +4905,6 @@ export const server = [
     text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft neuerdings anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seit heute Morgen nichts anderes mehr gehört. Es ist 15:40 Uhr, du hast vier Folgen im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
     opts: [
         {
-            t: "'Der Schacht vergisst nicht, Kevin.'",
-            m: 5, f: 5, a: 0, c: 0,
-            r: "Es rutscht dir raus, im vollen Ernst, mit der Stimme des Erzählers. Kevin sieht dich zwei Sekunden lang an - und dann leuchtet sein Gesicht auf: 'DU SCHAUST DAS AUCH?!' Ihr steht die nächsten zehn Minuten zwischen den Racks und redet über Folge vier. Das Rack-Problem war ein Neustart der Zeitsynchronisierung. Um kurz nach drei. Wie jede Nacht."
-        },
-        {
-            t: "'Die Frage ist nicht, warum. Die Frage ist, wann.'",
-            rep: { "Kevin": 5 },
-            m: 10, f: 0, a: -5, c: 0,
-            r: "Kevin nickt langsam und macht sich eine Notiz. 'Boah. Krass gedacht.' Er wird die Frage tatsächlich beantworten: kurz nach drei, jede Nacht, die Zeitsynchronisierung. Du hast ihn mit einem Serienzitat zur richtigen Diagnose geführt und wirst das niemals jemandem erzählen können."
-        },
-        {
             t: "Dem Chef davon erzählen - der muss das wissen",
             rep: { "Dr. Wichtig": -5 },
             m: 15, f: 0, a: 5, c: 25,
@@ -4925,6 +4914,17 @@ export const server = [
             t: "Kurz die Augen zumachen und normal antworten",
             m: 10, f: -5, a: 10, c: -5,
             r: "Du atmest einmal durch, schiebst die vier Folgen beiseite und antwortest wie ein Fachmann: Zeitsynchronisierung prüfen, Logrotation ansehen, gut ist. Kevin zieht ab. Es kostet dich mehr Kraft als der gesamte restliche Nachmittag, und du weißt jetzt, dass du heute Abend Folge fünf schauen wirst. Sofort nach Feierabend."
+        },
+        {
+            t: "'Der Schacht vergisst nicht, Kevin.'",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Es rutscht dir raus, im vollen Ernst, mit der Stimme des Erzählers. Kevin sieht dich zwei Sekunden lang an - und dann leuchtet sein Gesicht auf: 'DU SCHAUST DAS AUCH?!' Ihr steht die nächsten zehn Minuten zwischen den Racks und redet über Folge vier. Das Rack-Problem war ein Neustart der Zeitsynchronisierung. Um kurz nach drei. Wie jede Nacht."
+        },
+        {
+            t: "'Die Frage ist nicht, warum. Die Frage ist, wann.'",
+            rep: { "Kevin": 5 },
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Kevin nickt langsam und macht sich eine Notiz. 'Boah. Krass gedacht.' Er wird die Frage tatsächlich beantworten: kurz nach drei, jede Nacht, die Zeitsynchronisierung. Du hast ihn mit einem Serienzitat zur richtigen Diagnose geführt und wirst das niemals jemandem erzählen können."
         }
     ]
 },
@@ -4937,6 +4937,11 @@ export const server = [
     text: "Eine Benachrichtigung auf deinem Diensthandy: 'Ihre Fotos wurden erfolgreich gesichert. 1 neues Bild.' Die automatische Sicherung läuft. Sie läuft seit Jahren. Und sie hat soeben das Administrator-Kennwort dieses Hauses in ein Rechenzentrum in Irland hochgeladen.",
     opts: [
         {
+            t: "Das Kennwort endlich ändern - jetzt gibt es einen Grund",
+            m: 25, f: -10, a: 20, c: 0,
+            r: "Wenn es schon draußen ist, taugt es nichts mehr. Du änderst es, benachrichtigst vorher alle Fachbereiche und arbeitest den Nachmittag lang die vier Anwendungen ab, die daran hingen. Es ist die richtige Entscheidung. Sie fühlt sich trotzdem an wie eine Strafe."
+        },
+        {
             t: "Foto löschen und Sicherung für die Kamera abschalten",
             m: 20, f: -10, a: 10, c: -5,
             r: "Löschen, aus dem Papierkorb löschen, aus der Cloud löschen, Sicherung abschalten, Papierkorb der Cloud leeren. Zwanzig Minuten für einen Fehler, der zwei Sekunden gedauert hat. So sieht Sicherheitsarbeit tatsächlich aus: unsichtbar, mühsam und ohne Applaus."
@@ -4945,11 +4950,6 @@ export const server = [
             t: "Ist doch verschlüsselt, wird schon",
             m: 2, f: 10, a: 0, c: 15,
             r: "Ende-zu-Ende, Serverstandort EU, alles korrekt - und trotzdem liegt das Administrator-Kennwort jetzt in einem fremden Rechenzentrum, weil du zu bequem warst. Sollte je ein Audit die Gerätesicherungen prüfen, beginnt ein sehr unangenehmes Gespräch mit genau diesem Bild."
-        },
-        {
-            t: "Das Kennwort endlich ändern - jetzt gibt es einen Grund",
-            m: 25, f: -10, a: 20, c: 0,
-            r: "Wenn es schon draußen ist, taugt es nichts mehr. Du änderst es, benachrichtigst vorher alle Fachbereiche und arbeitest den Nachmittag lang die vier Anwendungen ab, die daran hingen. Es ist die richtige Entscheidung. Sie fühlt sich trotzdem an wie eine Strafe."
         }
     ]
 },
@@ -4962,6 +4962,11 @@ export const server = [
         title: "Ein Rechner zu viel",
         text: "Im Rack unter dem Switch steht ein Gehäuse, das dort nicht hingehört. Ein Aufkleber mit einem Drachen klebt drauf. Es läuft, es ist verkabelt, und es hat eine Adresse im Serversegment.\n\nEs ist Kevins Rechner. Er wollte 'kurze Wege zum Netzwerk'.",
         opts: [
+            {
+                t: "Stehen lassen, läuft ja",
+                m: 5, f: 15, a: -5, c: 20,
+                r: "Das Gehäuse mit dem Drachen bleibt im Rack. Es fällt niemandem auf, weil im Serverraum nie jemand nachschaut außer dir. Genau das ist das Beruhigende daran und gleichzeitig das Problem."
+            },
             {
                 t: "Netzwerkkabel ziehen und den Rechner mitnehmen",
                 m: 15, f: -5, a: 5, c: -10,
@@ -4978,11 +4983,6 @@ export const server = [
                 t: "Prüfen, was auf dem Ding überhaupt läuft",
                 m: 30, f: -15, a: 10, c: -10,
                 r: "Ein Betriebssystem unklarer Herkunft, kein Virenschutz, dafür ein Programm, das im Hintergrund Rechenleistung an eine Adresse in Übersee verkauft. Kevin hat es für ein Wartungswerkzeug gehalten."
-            },
-            {
-                t: "Stehen lassen, läuft ja",
-                m: 5, f: 15, a: -5, c: 20,
-                r: "Das Gehäuse mit dem Drachen bleibt im Rack. Es fällt niemandem auf, weil im Serverraum nie jemand nachschaut außer dir. Genau das ist das Beruhigende daran und gleichzeitig das Problem."
             }
         ]
     },
@@ -5020,6 +5020,12 @@ export const server = [
         text: "Auf der Suche nach Platz für die Disketten-Abbilder stehst du vor dem alten Bandarchiv. Vierzig Kassetten, beschriftet mit Kürzeln, die niemand mehr auflösen kann.\n\nGanz unten liegt eine, auf der 'FRÄSE / NICHT WEGWERFEN' steht. In derselben Handschrift wie Egons Zettel.",
         opts: [
             {
+                t: "Das Archiv ist Elektroschrott",
+                m: 15, f: 10, a: -5, c: 15,
+                rep: { "Egon": -10 },
+                r: "Du meldest die vierzig Kassetten zur Entsorgung. Es sind vierzig Kilo weniger im Raum und die einzige Sicherung von Maschinen, die noch produzieren. Auffallen wird das erst beim nächsten Ausfall."
+            },
+            {
                 t: "Das Band einlesen",
                 m: 40, f: -20, a: 10, c: -20,
                 rep: { "Egon": 5 },
@@ -5034,12 +5040,6 @@ export const server = [
                 t: "Nur die eine Kassette mitnehmen",
                 m: 10, f: 0, a: 0, c: -5,
                 r: "Du nimmst das Band mit der Fräse mit und lässt den Rest stehen. Die Produktion ist damit abgesichert, das Archiv bleibt ein Rätsel, und beides ist heute die richtige Entscheidung."
-            },
-            {
-                t: "Das Archiv ist Elektroschrott",
-                m: 15, f: 10, a: -5, c: 15,
-                rep: { "Egon": -10 },
-                r: "Du meldest die vierzig Kassetten zur Entsorgung. Es sind vierzig Kilo weniger im Raum und die einzige Sicherung von Maschinen, die noch produzieren. Auffallen wird das erst beim nächsten Ausfall."
             }
         ]
     },
