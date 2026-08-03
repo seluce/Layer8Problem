@@ -281,6 +281,15 @@ const checkText = (ctx, field, txt) => {
     const markup = t.match(/<\/?(br|b|i|u|p|em|strong|span|div|ul|ol|li|h[1-6])\b[^>]*>/i);
     if (markup) err(`${ctx} ${field}: Auszeichnung "${markup[0]}" in einem Feld, das als reiner Text ausgegeben wird — benutze \\n für einen Absatz`);
 
+    // Anführungszeichen erster Ordnung sind im ganzen Spiel einfach: 'so'.
+    // Doppelte gehören nur in ein Zitat innerhalb eines Zitats. Ein Text mit
+    // doppelten und ohne einfache ist deshalb immer erste Ordnung und weicht
+    // von der Hausregel ab. Der Bestand schreibt das in 96% der Texte so; die
+    // Ausnahmen entstanden dort, wo eine Datei im Quelltext einfach gequotet
+    // war und man im Text bequem " tippen konnte.
+    if (t.includes('"') && !t.includes("'"))
+        warn(`${ctx} ${field}: doppelte Anführungszeichen in erster Ordnung — im Spieltext gilt 'so', doppelte nur verschachtelt`);
+
     // Two dots are neither a full stop nor an ellipsis, they are a typo.
     if (/(?<!\.)\.\.(?!\.)/.test(t)) warn(`${ctx} ${field}: doppelter Punkt (".." statt "..." oder ".")`);
 

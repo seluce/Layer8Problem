@@ -37,7 +37,7 @@ export const intranet = {
         },
         "Chantal": {
             role: "Marketing & Feel-Good-Management",
-            reason: "Für die Einführung des Begriffs \"Intensive Wachstumschance\". Die Zahl der gemeldeten Stressfälle ist seitdem auf null gesunken."
+            reason: "Für die Einführung des Begriffs 'Intensive Wachstumschance'. Die Zahl der gemeldeten Stressfälle ist seitdem auf null gesunken."
         },
         "Egon": {
             role: "Facility Management",
@@ -152,7 +152,7 @@ export const intranet = {
         {
             id: "feed_schild", author: "Facility Management", handle: "@Betriebstechnik",
             initials: "FM", tone: "#fb923c",
-            text: "Die Beschriftung \"BITTE NICHT ABSCHALTEN\" an den Geräten im Technikraum ist keine Empfehlung. Sie ist eine Beschriftung."
+            text: "Die Beschriftung 'BITTE NICHT ABSCHALTEN' an den Geräten im Technikraum ist keine Empfehlung. Sie ist eine Beschriftung."
         },
         {
             id: "feed_halgerd", author: "H.A.L.G.E.R.D.", handle: "@Systemüberwachung",
@@ -183,13 +183,13 @@ export const intranet = {
             id: "feed_licht", reqStory: "path_licht_hart",
             author: "Chantal", handle: "@HR_FeelGood",
             initials: "CH", tone: "#f472b6",
-            text: "Die Achtsamkeits-Ecke im 2. OG wurde heute aus \"infrastrukturellen Gründen\" zurückgebaut. Ich möchte niemanden beschuldigen. Ich möchte nur festhalten, dass die Energie dieser Etage seitdem messbar anders ist. 🕯️"
+            text: "Die Achtsamkeits-Ecke im 2. OG wurde heute aus 'infrastrukturellen Gründen' zurückgebaut. Ich möchte niemanden beschuldigen. Ich möchte nur festhalten, dass die Energie dieser Etage seitdem messbar anders ist. 🕯️"
         },
         {
             id: "feed_phoenix", reqStory: "path_phoenix_storno",
             author: "Konzernrevision", handle: "@Compliance",
             initials: "KR", tone: "#f87171",
-            text: "Die Serientermin-Buchung des Raums \"Kreativ 2\" wurde ohne Freigabe aufgelöst. Wir bitten die verantwortliche Stelle für Projekt Phoenix um Rückmeldung, damit der Vorgang zugeordnet werden kann. Bisherige Rückmeldungen: keine."
+            text: "Die Serientermin-Buchung des Raums 'Kreativ 2' wurde ohne Freigabe aufgelöst. Wir bitten die verantwortliche Stelle für Projekt Phoenix um Rückmeldung, damit der Vorgang zugeordnet werden kann. Bisherige Rückmeldungen: keine."
         },
         {
             id: "feed_exting", reqStory: "path_exting_lager",
@@ -276,7 +276,7 @@ export const intranet = {
             text: "Der Bestand wird auf Wunsch der Bereichsleitung derzeit nicht ausgewiesen. Die Kennzahl bleibt selbstverständlich erfasst."
         },
         levels: [
-            { min: 7, text: "Der Bestand liegt deutlich über Zielwert. Als Sofortmaßnahme wurde die Kennzahl auf \"beobachtend\" gesetzt." },
+            { min: 7, text: "Der Bestand liegt deutlich über Zielwert. Als Sofortmaßnahme wurde die Kennzahl auf 'beobachtend' gesetzt." },
             { min: 4, text: "Die Abweichung wurde an die Bereichsleitung gemeldet. Eine Rückmeldung ist nicht vorgesehen." },
             { min: 1, text: "Abweichung im Rahmen. Es besteht derzeit kein Handlungsbedarf." },
             { min: 0, text: "Der Zielwert wurde erreicht. Die Kennzahl wird zur Vermeidung von Erwartungshaltungen ab sofort nicht mehr erhoben." }
@@ -309,7 +309,7 @@ export const intranet = {
                 time: "Gepostet vor 3 Wochen",
                 paragraphs: [
                     "Guten Morgen Corporate-Family!",
-                    "Unser Pilotprojekt \"Silent Sync\" war ein riesiger Erfolg. Zwölf Mitarbeitende aus Sales und Marketing haben sich eine Stunde in Konferenzraum B getroffen, ohne ein einziges Wort zu wechseln. Wir haben ausschließlich über telepathische Mind-Maps und energetische Präsenz kommuniziert.",
+                    "Unser Pilotprojekt 'Silent Sync' war ein riesiger Erfolg. Zwölf Mitarbeitende aus Sales und Marketing haben sich eine Stunde in Konferenzraum B getroffen, ohne ein einziges Wort zu wechseln. Wir haben ausschließlich über telepathische Mind-Maps und energetische Präsenz kommuniziert.",
                     "Das Ergebnis war atemberaubend: Niemand hat sich gestritten, es gab keine sinnlosen Fragen, und die Aura im Raum war extrem agil. Wir rollen das Format ab sofort für alle Quartalsberichte aus.",
                     "Denkt daran: Wer schweigt, stimmt zu!"
                 ]
@@ -324,11 +324,11 @@ export const intranet = {
                 ]
             },
             {
-                title: "Warum \"Nein\" nur ein unfertiges \"Ja\" ist 🌱",
+                title: "Warum 'Nein' nur ein unfertiges 'Ja' ist 🌱",
                 time: "Gepostet vor 4 Wochen",
                 paragraphs: [
                     "Namaste, ihr Strahlenden.",
-                    "Ich beobachte in letzter Zeit sehr viel \"Nein\" im Haus. \"Nein, das geht nicht.\" \"Nein, dafür ist kein Budget da.\" \"Nein, das ist physikalisch unmöglich.\"",
+                    "Ich beobachte in letzter Zeit sehr viel 'Nein' im Haus. 'Nein, das geht nicht.' 'Nein, dafür ist kein Budget da.' 'Nein, das ist physikalisch unmöglich.'",
                     "Aber ist ein Nein nicht einfach nur ein Ja, dem noch die Begeisterung fehlt? Ich lade euch ein, diese Woche kein einziges Mal Nein zu sagen. Beobachtet, was passiert. Ich verspreche euch: Es passiert eine Menge."
                 ]
             },
@@ -336,7 +336,7 @@ export const intranet = {
                 title: "Unsere neue Duz-Kultur – ab sofort verbindlich 🤝",
                 time: "Gepostet vor 6 Wochen",
                 paragraphs: [
-                    "Hallo ihr Lieben — und ja, ich sage bewusst \"ihr\"!",
+                    "Hallo ihr Lieben — und ja, ich sage bewusst 'ihr'!",
                     "Ab sofort duzen wir uns im ganzen Haus. Flache Hierarchien beginnen in der Sprache! Ausgenommen ist selbstverständlich die Geschäftsleitung, die weiterhin gesiezt wird, um die Wertschätzung nicht zu verwässern.",
                     "Wer sich mit dem Du schwertut, kann sich vertrauensvoll an mich wenden. Ich melde das dann weiter."
                 ]
@@ -346,7 +346,7 @@ export const intranet = {
                 time: "Gepostet vor 5 Wochen",
                 paragraphs: [
                     "Ihr Wundervollen,",
-                    "ab sofort gilt freitags ab 15 Uhr: Bildschirme aus, Köpfe frei! Wir nennen es \"Analoge Stunde\". Geht spazieren, malt etwas, atmet.",
+                    "ab sofort gilt freitags ab 15 Uhr: Bildschirme aus, Köpfe frei! Wir nennen es 'Analoge Stunde'. Geht spazieren, malt etwas, atmet.",
                     "Die Bearbeitung eingehender Anfragen bleibt davon selbstverständlich unberührt. Wir bitten euch, diese in der Analogen Stunde einfach mobil zu erledigen. 🌞"
                 ]
             }
@@ -363,11 +363,11 @@ export const intranet = {
             ]
         },
         low: {
-            title: "Über Menschen, die \"keine Zeit\" haben ⏳",
+            title: "Über Menschen, die 'keine Zeit' haben ⏳",
             time: "Gepostet heute, 11:40",
             paragraphs: [
                 "Namaste, ihr Wundervollen.",
-                "Ich möchte heute über ein Wort sprechen, das mir in letzter Zeit sehr oft begegnet ist: <em>\"gleich\"</em>. Manche Abteilungen benutzen dieses Wort wie ein Möbelstück. Man stellt es in den Raum und hofft, dass es die Lücke füllt.",
+                "Ich möchte heute über ein Wort sprechen, das mir in letzter Zeit sehr oft begegnet ist: <em>'gleich'</em>. Manche Abteilungen benutzen dieses Wort wie ein Möbelstück. Man stellt es in den Raum und hofft, dass es die Lücke füllt.",
                 "Ich nenne bewusst keine Namen und keine Abteilungen. Ich sage nur: Wer Technik versteht, versteht noch lange keine Menschen. Und wer Menschen nicht versteht, sollte vielleicht weniger mit Kabeln arbeiten und mehr mit sich selbst.",
                 "Ich bin nicht wütend. Ich bin energetisch enttäuscht. 🙏"
             ]
@@ -412,7 +412,7 @@ export const intranet = {
             product: "Ausfallsichere Echtzeit-Synchronisation",
             rows: [
                 { label: "Vertraglich zugesichert:", text: "Der Kunde erhält eine dauerhaft verfügbare Anbindung ohne Wartungsfenster." },
-                { label: "Markus' Erfolgsnotiz:", text: "\"Der Kunde stand kurz vorm Absprung, ich hab das Ding im Alleingang aus dem Feuer geholt. Manchmal braucht es einfach jemanden, der Verantwortung übernimmt.\"" }
+                { label: "Markus' Erfolgsnotiz:", text: "'Der Kunde stand kurz vorm Absprung, ich hab das Ding im Alleingang aus dem Feuer geholt. Manchmal braucht es einfach jemanden, der Verantwortung übernimmt.'" }
             ]
         },
         bad: {
@@ -434,7 +434,7 @@ export const intranet = {
             product: "nicht ermittelbar",
             rows: [
                 { label: "Vertraglich zugesichert:", text: "Im System sind keine Leistungen hinterlegt. Ein Kunde ist nicht hinterlegt. Ein Budget ist hinterlegt." },
-                { label: "Status:", text: "Der Serientermin in Raum \"Kreativ 2\" wurde heute aufgelöst. Der Vorgang bleibt offen, bis sich jemand zuständig meldet. Er ist seit vier Monaten offen." }
+                { label: "Status:", text: "Der Serientermin in Raum 'Kreativ 2' wurde heute aufgelöst. Der Vorgang bleibt offen, bis sich jemand zuständig meldet. Er ist seit vier Monaten offen." }
             ]
         }
     },
@@ -445,13 +445,13 @@ export const intranet = {
        change with the clock - only the issue line above it does.
        ================================================================ */
     hygiene: [
-        "Die Mikrowelle im Ostflügel bleibt bis auf Weiteres gesperrt. Jemand hat versucht, tiefgefrorenen Fisch auf Stufe \"Auftauen\" für 45 Minuten zu garen. Der Geruch hat sich in der Wandfarbe festgesetzt.",
+        "Die Mikrowelle im Ostflügel bleibt bis auf Weiteres gesperrt. Jemand hat versucht, tiefgefrorenen Fisch auf Stufe 'Auftauen' für 45 Minuten zu garen. Der Geruch hat sich in der Wandfarbe festgesetzt.",
         "Der Kühlschrank in der Kantine wurde abgetaut. Ein Teil des Inhalts war älter als der Kühlschrank. Der Rest wurde nicht identifiziert.",
         "Wer Fisch in der Mikrowelle erwärmt, ist im Haus bekannt. Nicht namentlich. Aber bekannt.",
         "Die Kanne auf der Heizplatte ist kein Vorrat. Sie ist ein Zustand. Wer sie leert, setzt bitte eine neue auf.",
         "Der Wasserspender im Foyer wurde abgeklemmt. Jemand hat versucht, ihn direkt an die Kaffeemaschine anzuschließen. Die Idee war nicht dumm. Die Ausführung schon.",
         "Essensreste gehören nicht in den Papierkorb unter dem Schreibtisch. Auch nicht in den Papierkorb eines Kollegen. Auch nicht in den Serverraum.",
-        "Die Spülmaschine ist keine Ablage. Ihr Programm läuft 84 Minuten und nicht \"gleich\".",
+        "Die Spülmaschine ist keine Ablage. Ihr Programm läuft 84 Minuten und nicht 'gleich'.",
         "Der Toaster im 2. OG wurde aus dem Verkehr gezogen. Die Begründung liegt der Geschäftsführung vor. Sie ist zwei Seiten lang."
     ],
 
@@ -474,7 +474,7 @@ export const intranet = {
             {
                 minRage: 10,
                 title: "§2c Mobile Mitarbeitende",
-                text: "Mitarbeitende, die das Betriebsgelände mehr als zehnmal ohne Abmeldung verlassen haben, gelten arbeitsrechtlich als \"mobil\". Für mobile Mitarbeitende entfällt der Anspruch auf einen festen Arbeitsplatz. Der Stuhl wird im laufenden Quartal eingezogen."
+                text: "Mitarbeitende, die das Betriebsgelände mehr als zehnmal ohne Abmeldung verlassen haben, gelten arbeitsrechtlich als 'mobil'. Für mobile Mitarbeitende entfällt der Anspruch auf einen festen Arbeitsplatz. Der Stuhl wird im laufenden Quartal eingezogen."
             },
             {
                 minRage: 3,
@@ -544,9 +544,9 @@ export const intranet = {
                 name: "Kuendigungsschreiben_ENTWURF_final_v3.docx",
                 intro: "Zuletzt geändert vor 14 Monaten. Nicht abgesendet.",
                 paragraphs: [
-                    "\"Sehr geehrter Herr Dr. Wichtig,",
-                    "hiermit kündige ich das bestehende Arbeitsverhältnis ordentlich und fristgerecht zum\"",
-                    "<em>Der Satz endet hier. Das Dokument liegt im persönlichen Ordner des Mitarbeiters und wurde seither dreimal geöffnet, aber nicht verändert. Die Systemüberwachung protokolliert jede dieser Sitzungen und wertet sie als \"Beschäftigung mit der eigenen Zukunft\" positiv.</em>"
+                    "'Sehr geehrter Herr Dr. Wichtig,",
+                    "hiermit kündige ich das bestehende Arbeitsverhältnis ordentlich und fristgerecht zum'",
+                    "<em>Der Satz endet hier. Das Dokument liegt im persönlichen Ordner des Mitarbeiters und wurde seither dreimal geöffnet, aber nicht verändert. Die Systemüberwachung protokolliert jede dieser Sitzungen und wertet sie als 'Beschäftigung mit der eigenen Zukunft' positiv.</em>"
                 ]
             }
         ]
