@@ -24,12 +24,13 @@ export const bossfights = [
 	},
 	{
 		id: "boss_stream",
+		char: "Dr. Wichtig",
 		title: "☠️ CEO LIVE-STREAM FAIL ☠️",
 		text: "Der CEO präsentiert live vor 5000 Investoren. Das Bild friert ein! Er ruft dich auf dem Handy an und brüllt: 'MACHEN SIE DASS ES GEHT! JETZT SOFORT!'",
 		timer: 12,
 		opts: [
-			{ t: "Backup-Leitung schalten", req: "admin_pw", m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
-			{ t: "Qualität auf 'Kartoffel' (240p) setzen", m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
+			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
+			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
 	},

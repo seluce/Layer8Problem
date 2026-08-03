@@ -141,6 +141,7 @@ export const lunch = [
 		},
 		{
 			id: "lunch_ceo_table",
+			char: "Dr. Wichtig",
 			title: "MITTAG: DER CEO WINKT",
 			text: "Du betrittst die Kantine mit deinem Tablett (Linseneintopf). Plötzlich winkt Dr. Wichtig vom 'Vorstands-Tisch' zu dir. 'Müller! Setzen Sie sich zu mir! Wir müssen uns mal unterhalten.' Alle im Raum starren dich an.",
 			opts: [

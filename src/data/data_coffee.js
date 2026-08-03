@@ -3313,6 +3313,7 @@ export const coffee = [
             },
             { 
                 t: "Lesen", 
+                rep: { "Markus": 5 },
                 m: 30, f: 20, a: 5, c: 0, 
                 r: "Du liest drei Seiten. Es geht nur darum, Arbeit an andere auszulagern. Du fühlst dich schmutzig." 
             }
@@ -4414,11 +4415,13 @@ export const coffee = [
     opts: [
         {
             t: "Gern - Werte muss man leben",
+            rep: { "Chantal": 5 },
             m: 10, f: 0, a: 30, c: 10,
             r: "Die öligen Bohnen verkleben das Mahlwerk nach vier Bezügen vollständig. Die Maschine steht, die Schlange wächst, und Chantal erzählt jedem, DU hättest 'die Umstellung gemacht'. Werte muss man leben. Reparieren auch."
         },
         {
             t: "Ablehnen: Die Maschine verträgt das nicht",
+            rep: { "Chantal": -5 },
             m: 5, f: 5, a: 10, c: 0,
             r: "Fachlich korrekt, sozial ein Minenfeld. Chantal notiert dich innerlich als 'Fortschrittsverweigerer', und die Diskussion über Maschinenverträglichkeit von Idealen kostet dich eine Viertelstunde Lebensfreude in fünf Minuten."
         },
@@ -4517,7 +4520,6 @@ export const coffee = [
             {
                 t: "Anstellen und mitmachen",
                 m: 20, f: 10, a: -10, c: 10,
-                rep: { "Kevin": 5 },
                 r: "Zwanzig Minuten in der Schlange, dafür der beste Kaffee, den dieses Haus zu bieten hat. Die Wut sinkt merklich. Der Zeitverlust ist der Preis, und heute zahlst du ihn gern."
             },
             {

@@ -36,6 +36,7 @@ export const calls = [
 	},
 	{
 		id: "call_meyer_2",
+		char: "Egon",
 		reqStory: "meyer_blackout",
 		title: "Hausmeister Egon",
 		startNode: "root",
@@ -352,6 +353,7 @@ export const calls = [
 	},
 	{
 		id: "call_grandma_2",
+		char: "Egon",
 		reqStory: "grandma_darkness",
 		title: "Hausmeister Egon",
 		startNode: "root",
@@ -412,6 +414,7 @@ export const calls = [
 	},
 	{
 		id: "call_junior",
+		char: "Dr. Wichtig",
 		title: "Shadow-CEO Junior",
 		text: "Der Sohn vom Chef (12 Jahre) ruft an: 'Ey, IT-Typ! Mach mal die Ports für meinen Minecraft-Server auf. Papa sagt, das gehört mir alles hier. Wenn du es nicht machst, sag ich ihm, du hast mich geschlagen!'",
 		opts: [
@@ -1777,6 +1780,7 @@ export const calls = [
     },
     {
         id: "call_domain_2c",
+        char: "Dr. Wichtig",
         title: "Dr. Wichtig (Aus dem Auto)",
         reqStory: "path_domain_lost",
         text: "Der Chef brüllt über die Freisprechanlage seines Autos: 'MÜLLER! Warum leitet unsere Firmenwebseite plötzlich auf ein thailändisches Online-Casino um?! Und warum kriege ich Mails von @globalcorp-casino.net?! WAS IST DA LOS?!'",
@@ -1823,6 +1827,7 @@ export const calls = [
     },
     {
         id: "call_fridge_2a",
+        char: "Egon",
         title: "Hausmeister Egon",
         reqStory: "path_fridge_wifi",
         text: "'Müller! Beweg deinen Hintern zum Empfang!' Egon flucht lautstark im Hintergrund. 'Hier stehen fünf Paletten H-Milch! Der Spediteur sagt, der Kühlschrank hat bestellt! Auf Express-Rechnung! Wer hat dem Ding Internet gegeben?!'",
@@ -1861,6 +1866,7 @@ export const calls = [
     },
     {
         id: "call_fridge_2c",
+        char: "Dr. Wichtig",
         title: "Der Chef ist hungrig",
         reqStory: "path_fridge_angry",
         text: "'Müller?!' Der Chef klingt weinerlich und wütend zugleich. 'Jemand hat den Kühlschrank auf minus 20 Grad gestellt! Mein Lachs-Carpaccio ist ein massiver Eisblock! Die Maschine sagt: NOTFALL-MODUS WEGEN OFFLINE. Fixen Sie das!'",
@@ -2125,6 +2131,7 @@ export const calls = [
 
 {
     id: "call_markus_demo",
+    char: "Markus",
     title: "Markus (Flüstermodus)",
     startNode: "root",
     nodes: {

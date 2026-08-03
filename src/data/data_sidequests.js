@@ -911,6 +911,7 @@ export const sidequests = [
     },
     {
         id: "sq_chair_1",
+        char: "Dr. Wichtig",
         kind: "text",
         title: "Der Chefsessel",
         text: "Der Chef hat einen neuen 'Ergonomic 3000'. Sein alter Ledersessel steht einsam auf dem Flur beim Sperrmüll. Das Leder ist abgewetzt, aber die Polsterung ist immer noch Klassen besser als dein aktueller 'Beton-Stuhl'.",
@@ -918,6 +919,7 @@ export const sidequests = [
             { 
                 t: "Ganzen Stuhl retten & tapen", 
                 req: "tape", 
+                rep: { "Dr. Wichtig": -5 },
                 next: "path_chair_new", 
                 m: 20, f: 10, a: -20, c: 0, 
                 r: "Du schleifst das Monstrum in dein Büro. Eine Rolle Panzertape für die lockere Armlehne und er ist wie neu. Mad-Max-Optik, aber S-Klasse-Komfort." 
@@ -925,6 +927,7 @@ export const sidequests = [
             { 
                 t: "Nur die Luxus-Rollen klauen", 
                 req: "screw", 
+                rep: { "Dr. Wichtig": -5 },
                 next: "path_chair_new", 
                 m: 10, f: 5, a: -10, c: 0, 
                 r: "Du schraubst die High-End-Skater-Rollen ab und montierst sie unter deinen Stuhl. Endlich nicht mehr über Teppichkanten stolpern!" 
@@ -2818,7 +2821,7 @@ export const sidequests = [
         text: "Du siehst Markus und Björn später friedlich bei einem Kaffee zusammenstehen. Als du vorbeigehst, flüstert Markus zu Björn: 'Sagen Sie mal... was war das vorhin mit Müller und dem roten Ball?' - 'Keine Ahnung. Aber mein Puls war danach sofort auf 60. Der Mann hat eine Aura.'",
         opts: [
             { 
-                t: "Mystisch nicken", 
+                t: "Mystisch nicken", rep: { "Markus": 5 }, 
                 m: 2, f: 5, a: -10, c: -5, 
                 r: "Du nickst den beiden wissend zu, sagst nichts und gehst weiter. Du bist jetzt eine Legende im Flurfunk." 
             }
@@ -3723,6 +3726,7 @@ export const sidequests = [
     },
     { 
         id: "sq_phone_parking_blocked", 
+        char: "Dr. Wichtig",
         kind: "phone", 
         appName: "WhatsApp", 
         reqStory: "sq_parking_2_blocked", 
@@ -4080,6 +4084,7 @@ export const sidequests = [
     },
     { 
         id: "sq_elster_cat_1", 
+        char: "Frau Elster",
         kind: "phone", 
         appName: "WhatsApp", 
         title: "Frau Elster (Privat)", 
@@ -4223,6 +4228,7 @@ export const sidequests = [
     },
     { 
         id: "sq_wrong_group", 
+        char: "Chantal",
         kind: "phone", 
         appName: "Teams", 
         title: "Gruppe: 'Die IT-Opfer 🙄'", 
@@ -4393,6 +4399,7 @@ export const sidequests = [
     },
     { 
         id: "sq_chantal_help", 
+        char: "Chantal",
         kind: "phone", 
         appName: "Instagram", 
         title: "Chantal (DM)", 
@@ -4433,6 +4440,7 @@ export const sidequests = [
     },
     {
         id: "sq_kevin_origin_2",
+        char: "Kevin",
         kind: "phone",
         reqStory: "kevin_trust",
         title: "Kevins geniale Idee",
@@ -4521,6 +4529,7 @@ export const sidequests = [
     },
     { 
         id: "sq_team_gossip_1", 
+        char: "Chantal",
         kind: "phone", 
         appName: "WhatsApp", 
         title: "Gruppe: 'Die 3 von der Tankstelle'", 
@@ -4562,6 +4571,7 @@ export const sidequests = [
     },
     { 
         id: "sq_team_gossip_2", 
+        char: "Dr. Wichtig",
         kind: "phone", 
         appName: "Teams", 
         title: "Nachricht vom Chef", 
@@ -4622,6 +4632,7 @@ export const sidequests = [
     },
     { 
         id: "sq_gabi_sick", 
+        char: "Gabi",
         kind: "phone", 
         appName: "Insta", 
         title: "DM von Gabi_Rockt", 
@@ -4655,6 +4666,7 @@ export const sidequests = [
     },
     {
         id: "sq_teams_ceo_panic",
+        char: "Dr. Wichtig",
         kind: "phone",
         appName: "Teams",
         title: "Dr. Wichtig",
@@ -4709,6 +4721,7 @@ export const sidequests = [
     },
     {
         id: "sq_phone_kevin_crypto",
+        char: "Kevin",
         kind: "phone",
         title: "Kevin (Azubi)",
         appName: "Chat",
@@ -4779,6 +4792,7 @@ export const sidequests = [
     },
     {
         id: "sq_phone_ceo_smarthome",
+        char: "Dr. Wichtig",
         kind: "phone",
         title: "Dr. Wichtig (Privat)",
         appName: "Chat",
@@ -4812,6 +4826,7 @@ export const sidequests = [
     },
     {
         id: "sq_phone_egon_cable",
+        char: "Egon",
         kind: "phone",
         title: "Egon (Hausmeister)",
         appName: "Chat",
@@ -5102,6 +5117,7 @@ export const sidequests = [
     },
     {
         id: "sq_phone_chantal_home",
+        char: "Chantal",
         kind: "phone",
         title: "Chantal (Marketing)",
         appName: "Chat",
@@ -5321,6 +5337,7 @@ export const sidequests = [
     // CHAIN: Kevin bekommt Verantwortung (Vorlauf zu sq_kevin_origin_2)
     {
         id: "sq_kevin_origin_1",
+        char: "Kevin",
         kind: "phone",
         appName: "BroChat",
         title: "Kevins Angebot",
@@ -5535,6 +5552,7 @@ export const sidequests = [
     },
     {
         id: "sq_chair_2c",
+        char: "Kevin",
         kind: "text",
         title: "Kevins Ermittlungen",
         reqStory: "path_chair_kevin",
@@ -5876,6 +5894,7 @@ export const sidequests = [
     },
     {
         id: "sq_bday_2b",
+        char: "Gabi",
         kind: "text",
         title: "Gabis Panik",
         reqStory: "path_cake_panic",
@@ -5987,6 +6006,7 @@ export const sidequests = [
     },
     {
         id: "sq_smoke_2c",
+        char: "Kevin",
         kind: "text",
         title: "Kevins Heldentat",
         reqStory: "path_fire_kevin",
@@ -6010,6 +6030,7 @@ export const sidequests = [
     // CHAIN 8: Das verschwundene Paket
     {
         id: "sq_delivery_1",
+        char: "Egon",
         kind: "text",
         title: "Paket Diebstahl",
         text: "Deine private Amazon-Bestellung (teure Noise-Cancelling Headphones) wurde angeblich von 'Egon' entgegengenommen. Aber Egon schwört, dass er nichts hat.",
@@ -6038,6 +6059,7 @@ export const sidequests = [
     },
     {
         id: "sq_delivery_2a",
+        char: "Egon",
         kind: "text",
         title: "Egons Groll",
         reqStory: "path_delivery_egon",
@@ -6174,6 +6196,7 @@ export const sidequests = [
     },
     {
         id: "sq_cable_2c",
+        char: "Kevin",
         kind: "text",
         title: "Kevins Trauma in der Dunkelheit",
         reqStory: "path_cable_kevin",
@@ -6426,6 +6449,7 @@ export const sidequests = [
 },
 {
     id: "sq_raum_phoenix_2b",
+    char: "Egon",
     kind: "text",
     title: "Doppelbelegung",
     reqStory: "path_phoenix_nutzen",
@@ -6564,6 +6588,7 @@ export const sidequests = [
 },
 {
     id: "sq_gemba_walk_2c",
+    char: "Dr. Wichtig",
     kind: "text",
     title: "Der Chef, der patchte",
     reqStory: "path_gemba_patch",
@@ -6673,6 +6698,7 @@ export const sidequests = [
 },
 {
     id: "sq_starthilfe_2b",
+    char: "Markus",
     kind: "text",
     title: "Die Rückbank-Erkenntnis",
     reqStory: "path_start_taxi",
@@ -6700,6 +6726,7 @@ export const sidequests = [
 },
 {
     id: "sq_starthilfe_2c",
+    char: "Kevin",
     kind: "text",
     title: "Der Ersatzfahrer",
     reqStory: "path_start_absage",
@@ -6946,6 +6973,7 @@ export const sidequests = [
 
 {
     id: "sq_phone_alpha",
+    char: "Markus",
     kind: "phone",
     appName: "BroChat",
     title: "ALPHA CIRCLE 💪🔥",
@@ -6986,7 +7014,8 @@ export const sidequests = [
         end_exit: {
             txt: "Ein sauberer Abgang mit erhobenem Haupt. Markus respektiert Klartext mehr als Zustimmung - das ist das Paradox seines Berufs. Im Circle wird dein Austritt als 'Beta-Move' diskutiert. Von vier Leuten. Um fünf Uhr morgens.",
             rep: { "Markus": 3 },
-            m: 5, f: 0, a: 5, c: 0
+            m: 5, f: 0, a: 5, c: 0,
+            rep: { "Markus": 5 }
         },
         end_join: {
             txt: "Du bist jetzt offiziell Alpha. Was das bedeutet, wirst du morgen um Punkt fünf Uhr erfahren, wenn dein Handy vibriert. Und übermorgen. Und jeden Tag danach. Der Circle vergisst nie.",
@@ -7024,6 +7053,7 @@ export const sidequests = [
 
 {
     id: "sq_phone_kevin_voice",
+    char: "Kevin",
     kind: "phone",
     appName: "WhatsApp",
     title: "Kevin (Azubi)",
@@ -7061,11 +7091,13 @@ export const sidequests = [
         end_listen: {
             txt: "Du gehst hin. Der Bildschirm ist 'komisch', weil die Helligkeit auf Minimum steht - vermutlich seit Tagen, vermutlich durch Kevin selbst. Zwei Tastendrücke. Kevin ist überwältigt: 'DU bist echt der Beste.' Viereinhalb Minuten Audio für zwei Sekunden Lösung. Die Bilanz des Azubi-Supports.",
             m: 10, f: 0, a: 10, c: 0,
+            rep: { "Kevin": 5 },
             next: "path_kevin_tutorial"
         },
         end_kapit: {
             txt: "Du hörst also doch alles an. Das Problem: Bildschirmhelligkeit auf Minimum. Die Lösung dauert kürzer als die kürzeste seiner Sprachnachrichten. Du löst es per Fernwartung, ohne ein Wort. Manchmal ist Schweigen die letzte verbliebene Sprache.",
-            m: 10, f: 5, a: 10, c: 0
+            m: 10, f: 5, a: 10, c: 0,
+            rep: { "Kevin": -5 }
         },
         end_anruf: {
             txt: "Revolutionäre Technologie: der Anruf. Vierzig Sekunden Gespräch klären, was viereinhalb Minuten Audio nicht konnten. Bildschirmhelligkeit, Minimum, zwei Tasten, erledigt. Kevin ist beeindruckt: 'Krass, telefonieren ist ja voll effizient.' Eine Generation entdeckt das Rad.",
@@ -7079,6 +7111,7 @@ export const sidequests = [
 },
 {
     id: "sq_kevin_voice_2a",
+    char: "Kevin",
     kind: "text",
     title: "Das Tutorial",
     reqStory: "path_kevin_tutorial",
@@ -7106,6 +7139,7 @@ export const sidequests = [
 
 {
     id: "sq_phone_gabi_intel",
+    char: "Gabi",
     kind: "phone",
     appName: "Messages",
     title: "Gabi (Empfang)",

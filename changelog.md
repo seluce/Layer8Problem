@@ -64,6 +64,7 @@ Einstellungen:
 * Die Bestätigen-Taste funktioniert auch im Tutorial-Auswahlfenster beim Spielstart und wählt dort die empfohlene Antwort.
 
 Fehlerkorrekturen:
+* Bei 38 Ereignissen fehlte das Bild des Kollegen, um den es dort ging — Kevins Sprachnachrichten, Egons Groll, Gabis Panik, der Chefsessel und Markus' Alpha-Circle zeigten eine leere Karte. Außerdem wirken jetzt vier Ereignisse auf das Verhältnis zu dem Kollegen, um den es die ganze Zeit ging, und in einem Fall bekam der Falsche die Anerkennung: Wer den Alpha-Circle mit erhobenem Haupt verließ, verbesserte sein Verhältnis zu Kevin, obwohl Markus es war, der den Klartext respektierte.
 * Das vollständige Zurücksetzen verwirft jetzt auch einen unterbrochenen Arbeitstag. Bislang bot das Spiel nach dem Zurücksetzen an, den laufenden Tag fortzusetzen - und weil dieser Zwischenstand seine eigene Kopie des Verhältnisses zu den Kollegen mitführt, wanderte damit ein Teil des gelöschten Fortschritts wieder zurück. Dasselbe galt beim Einspielen eines fremden Spielstands.
 * In einem Privatanruf standen Formatierungszeichen mitten im Text.
 * 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen Ereignis. Da pro Tag jede Kennung nur einmal vorkommen kann, sperrten sich diese Paare gegenseitig aus, sodass immer nur die Hälfte des Inhalts erreichbar war. Betroffen waren die Ketten rund um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
