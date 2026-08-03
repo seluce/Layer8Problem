@@ -6,8 +6,8 @@ export const emails = [
 		subj: "Kuchen in der Küche! 🍰",
 		body: "Liebe alle,\n\nIch habe veganen, glutenfreien Zucchini-Kuchen gebacken! Bedient euch!\n\n(Bitte nur 1 Stück pro Person!)",
 		opts: [
-			{ btn: "Ein Stück nehmen", r: "Schmeckt nach Pappe und Traurigkeit.", m: 2, f: 0, a: 5, c: 0 },
 			{ btn: "Allen antworten: 'Wo ist das Mett?'", r: "Du schickst den Witz an den ganzen Verteiler.", m: 2, f: 5, a: -5, c: 5, nextEmail: "mail_cake_2" },
+			{ btn: "Ein Stück nehmen", r: "Schmeckt nach Pappe und Traurigkeit.", m: 2, f: 0, a: 5, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -39,8 +39,8 @@ export const emails = [
 		subj: "Einladung: 'Richtig Atmen am Arbeitsplatz'",
 		body: "Namaste liebe Mit-Sklaven... äh Mitarbeiter. \n\nWir laden ein zum Workshop 'Atmen gegen den Burnout'. Wir lernen gemeinsam, wie man Wut in CO2 umwandelt. Es gibt vegane Dinkel-Kekse (glutenfrei, zuckerfrei, geschmacksneutral). Anwesenheit wird empfohlen.",
 		opts: [
-			{ btn: "Teilnehmen", r: "Du atmest. 30 Minuten nichts getan.", m: 30, f: 15, a: -10, c: 5 },
 			{ btn: "Als Spam markieren", r: "Weg damit. Zeit ist Geld.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Teilnehmen", r: "Du atmest. 30 Minuten nichts getan.", m: 30, f: 15, a: -10, c: 5 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -83,8 +83,8 @@ export const emails = [
 		subj: "Phishing-Test: Bitte hier klicken für Bonus!",
 		body: "Lieber Mitarbeiter. \n\nWir haben festgestellt, dass Ihr Gehalt zu niedrig ist. Um Ihren sofortigen Bonus von 5.000 EUR zu erhalten, geben Sie bitte Ihr Windows-Passwort und den Namen Ihres ersten Haustiers auf der folgenden Seite ein: \n[Change-MyPassword.ru]",
 		opts: [
-			{ btn: "Sofort klicken!", r: "TEST NICHT BESTANDEN! Ein rotes Fenster poppt auf: 'SIEHST DU NICHT, DASS DAS FAKE IST?!' Meldung an Chef ging raus.", m: 2, f: 0, a: 10, c: 20 },
 			{ btn: "Als Phishing melden", r: "Vorbildlich. Die IT schickt dir einen Daumen-hoch-Smiley zurück.", m: 2, f: 0, a: 0, c: -5 },
+			{ btn: "Sofort klicken!", r: "TEST NICHT BESTANDEN! Ein rotes Fenster poppt auf: 'SIEHST DU NICHT, DASS DAS FAKE IST?!' Meldung an Chef ging raus.", m: 2, f: 0, a: 10, c: 20 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -105,8 +105,8 @@ export const emails = [
 		subj: "WG: Kündigungswelle Q4 (VERTRAULICH)",
 		body: "An: Vorstand\nCc: (Versehentlich) Alle Mitarbeiter\n\nMeine Herren, anbei die Liste der 50 Mitarbeiter, die wir nächsten Montag feuern. Bitte diskret behandeln.\n\n[Anhang: Liste_FINAL_v3.pdf]",
 		opts: [
-			{ btn: "Allen antworten: 'BIN ICH AUCH DRAUF?!'", r: "Du hast an den gesamten Verteiler geantwortet. Panik bricht aus.", m: 2, f: -10, a: 10, c: 5, nextEmail: "mail_leak_2" },
-			{ btn: "️️🗑️ Löschen & Ignorieren", r: "Du tust so, als hättest du nichts gesehen. Dein Herz rast.", m: 2, f: 0, a: 5, c: -5 }
+			{ btn: "️️🗑️ Löschen & Ignorieren", r: "Du tust so, als hättest du nichts gesehen. Dein Herz rast.", m: 2, f: 0, a: 5, c: -5 },
+			{ btn: "Allen antworten: 'BIN ICH AUCH DRAUF?!'", r: "Du hast an den gesamten Verteiler geantwortet. Panik bricht aus.", m: 2, f: -10, a: 10, c: 5, nextEmail: "mail_leak_2" }
 		]
 	},
 	{
@@ -126,8 +126,8 @@ export const emails = [
 		subj: "Re: Wochenende",
 		body: "Hey Hasi 🐰, der Chef nervt so hart. Treffen wir uns in 5 Min im Archiv? Ich habe Kaffee und diese geilen Schoko-Cookies geschmuggelt. Niemand findet uns zwischen den Akten von 1990. 😘",
 		opts: [
-			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Du leitest die Mail kommentarlos an den Chef weiter. Eiskalt.", m: 2, f: 0, a: -10, c: -20, nextEmail: "mail_chantal_boss_reply" },
 			{ btn: "Antworten: 'Ich weiß alles. Schweigegeld?'", r: "Du nutzt ihr Missgeschick gnadenlos aus.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_chantal_panic" },
+			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Du leitest die Mail kommentarlos an den Chef weiter. Eiskalt.", m: 2, f: 0, a: -10, c: -20, nextEmail: "mail_chantal_boss_reply" },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -159,8 +159,8 @@ export const emails = [
 		subj: "DRINGEND: E-Learning 'Richtiges Sitzen' überfällig",
 		body: "Sehr geehrter Mitarbeiter, unser System zeigt an, dass Sie das Pflichtmodul 'Ergonomie am Arbeitsplatz Teil 4b: Der perfekte 90-Grad-Winkel' noch nicht absolviert haben. Das Video dauert 45 Minuten und kann nicht übersprungen werden. Bitte erledigen Sie dies bis EOB, andernfalls wird Ihr Zugang gesperrt.",
 		opts: [
-			{ btn: "Video laufen lassen", r: "Du lässt das Video im Hintergrund laufen. Der Ton nervt, aber du bist compliant.", m: 5, f: 10, a: 5, c: -5 },
 			{ btn: "Als 'Erledigt' markieren", r: "Du manipulierst die Datenbank. Risiko, aber spart Zeit.", m: 2, f: 0, a: -5, c: 5 },
+			{ btn: "Video laufen lassen", r: "Du lässt das Video im Hintergrund laufen. Der Ton nervt, aber du bist compliant.", m: 5, f: 10, a: 5, c: -5 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Die nächste Mahnung kommt bestimmt.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -181,8 +181,8 @@ export const emails = [
 		subj: "Wording Check - ASAP!!!",
 		body: "Hiiii! 👋 Wir drucken gleich die Flyer für die Messe. Kannst du kurz drüberschauen? Da steht: 'Unsere Cloud-Lösung synergiert mit der Blockchain-KI, um das WLAN-Kabel zu optimieren.' Klingt das techy genug? Brauche das GO in 2 Minuten!!! 😘",
 		opts: [
-			{ btn: "Antwort: 'Perfekt!'", r: "Du hast den Unsinn durchgewunken. Die IT-Community wird uns auslachen, aber Chantal ist glücklich.", m: 2, f: 10, a: -5, c: 0 },
 			{ btn: "Den Text korrigieren", r: "Du erklärst ihr mühsam, dass es keine WLAN-Kabel gibt. Sie versteht es nicht. 'Aber das klingt doch gut!'", m: 5, f: -10, a: 10, c: 0 },
+			{ btn: "Antwort: 'Perfekt!'", r: "Du hast den Unsinn durchgewunken. Die IT-Community wird uns auslachen, aber Chantal ist glücklich.", m: 2, f: 10, a: -5, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -202,8 +202,8 @@ export const emails = [
 		subj: "Vision 2030 - Ihre Ideen!",
 		body: "Liebes Team, ich hatte heute Nacht im Wellness-Retreat eine Vision. Wir müssen 'Agiler' werden. Ich möchte, dass jeder von Ihnen mir bis 12 Uhr ein 10-seitiges Konzept schickt, wie wir KI nutzen können, um Kaffee zu sparen. Denken Sie 'Out of the Box'! Go, Go, Go!",
 		opts: [
-			{ btn: "ChatGPT nutzen", r: "Du lässt eine KI das Bullshit-Konzept schreiben. Der Chef ist begeistert: 'Visionär!'", m: 5, f: 10, a: -5, c: -10 },
 			{ btn: "Ehrlich antworten", r: "Du schreibst: 'Das ist Unsinn.' Der Chef merkt sich deinen Namen und war nicht begeistert.", m: 5, f: 0, a: 10, c: 20 },
+			{ btn: "ChatGPT nutzen", r: "Du lässt eine KI das Bullshit-Konzept schreiben. Der Chef ist begeistert: 'Visionär!'", m: 5, f: 10, a: -5, c: -10 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Hoffentlich vergisst er es wieder.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -213,8 +213,8 @@ export const emails = [
 		subj: "HILFE! EXCEL IST ROT!",
 		body: "Herr IT!!! Ich habe nichts gemacht, ehrlich! Ich wollte nur die Spalte G löschen und jetzt ist alles rot und blinkt! Die Bilanz muss in 10 Minuten raus! Wenn das weg ist, bin ich tot! Kommen Sie sofort her! Warum passiert das immer mir?!",
 		opts: [
-			{ btn: "Ticket verlangen", r: "Du schreibst zurück: 'Bitte Ticket aufmachen.' Eiskalt.", m: 2, f: 5, a: -5, c: 5 },
 			{ btn: "Hingehen", r: "Er saß auf der 'Entf'-Taste. Problem gelöst in 2 Sekunden.", m: 5, f: -10, a: 10, c: -5 },
+			{ btn: "Ticket verlangen", r: "Du schreibst zurück: 'Bitte Ticket aufmachen.' Eiskalt.", m: 2, f: 5, a: -5, c: 5 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -235,8 +235,8 @@ export const emails = [
 		subj: "Dringend: Ihr Passwort läuft ab!",
 		body: "Hallo User,\n\nihr Passwort ist zu alt. Klicken Sie HIER um es zu ändern und erhalten Sie 500€ Amazon-Gutschein als Belohnung!\n\nLink: http://bit.ly/hacker-klaus",
 		opts: [
-			{ btn: "Link anklicken", r: "Du klickst auf den Link. Ein rotes Fenster öffnet sich.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_phish_2" },
 			{ btn: "Als Phishing melden", r: "Gut gemacht. IT-Sec ist stolz.", m: 2, f: 0, a: -5, c: 0 },
+			{ btn: "Link anklicken", r: "Du klickst auf den Link. Ein rotes Fenster öffnet sich.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_phish_2" },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -268,9 +268,9 @@ export const emails = [
 		subj: "Ihr Paket konnte nicht zugestellt werden",
 		body: "Hallo Kunde. Ihr Paket liegt im Zoll. Bitte überweisen Sie 2,50€ Gebühr über diesen Link, sonst verbrennen wir ihr Paket. Link: www.totally-legit-dhl-scam.ru",
 		opts: [
+			{ btn: "Antworten: 'Behaltet es'", r: "Die Mail kam zurück (Mail Delivery Failure).", m: 2, f: 0, a: 5, c: 0 },
 			{ btn: "Webseite öffnen", r: "Phishing-Seite! Du hast fast deine Daten eingegeben. IT-Sec hat es gemerkt.", m: 2, f: 0, a: 10, c: 15 },
 			{ btn: "Als Spam markieren", r: "Netter Versuch.", m: 2, f: 0, a: 0, c: 0 },
-			{ btn: "Antworten: 'Behaltet es'", r: "Die Mail kam zurück (Mail Delivery Failure).", m: 2, f: 0, a: 5, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -280,8 +280,8 @@ export const emails = [
 		subj: "(Kein Betreff)",
 		body: "Gulasch Rezept einfach schnell ohne Paprika",
 		opts: [
-			{ btn: "Antworten: 'Horst, das ist Outlook.'", r: "Du klärst ihn auf. Hoffentlich versteht er es.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_wuttke_ai" },
 			{ btn: "Weiterleiten an: Dr. Wichtig", r: "Eiskalt. Du meldest die private Nutzung sofort.", m: 2, f: 0, a: -5, c: -10, nextEmail: "mail_wuttke_boss" },
+			{ btn: "Antworten: 'Horst, das ist Outlook.'", r: "Du klärst ihn auf. Hoffentlich versteht er es.", m: 2, f: 0, a: 5, c: 0, nextEmail: "mail_wuttke_ai" },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -323,8 +323,8 @@ export const emails = [
 		subj: "CRITICAL: Suspicious Login (CEO Account)",
 		body: "Detected Login attempt for user 'CEO' from IP Address: 192.168.x.x (Location: Pyongyang, North Korea). Success: TRUE. \nAction required immediately!",
 		opts: [
-			{ btn: "Account sofort sperren", r: "Du hast den CEO mitten in einer Videokonferenz rausgeworfen. Er ist sauer, aber du hast die Firma vor Nordkorea gerettet. Held!", m: 5, f: -10, a: 0, c: -20 },
 			{ btn: "Als VPN-Fehler abtun", r: "Es war kein VPN. Alle Firmendaten sind jetzt im Darknet. Der Aktienkurs fällt schlagartig auf 0.", m: 2, f: 0, a: 50, c: 100 },
+			{ btn: "Account sofort sperren", r: "Du hast den CEO mitten in einer Videokonferenz rausgeworfen. Er ist sauer, aber du hast die Firma vor Nordkorea gerettet. Held!", m: 5, f: -10, a: 0, c: -20 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -334,8 +334,8 @@ export const emails = [
 		subj: "Brauche Admin-Rechte GANZ SCHNELL",
 		body: "Ich muss dieses PDF für den Kunden umwandeln. Hab da so ein Tool gefunden 'Free_PDF_Converter_Pro_Cracked.exe'. Windows meckert rum wegen Virus, aber das ist Fehlalarm. Gib mal Passwort, Kunde wartet!!!",
 		opts: [
-			{ btn: "Einfach das Passwort eingeben", r: "ZACK. Ransomware. Alles verschlüsselt. Ein Totenkopf lacht auf deinem Monitor. Das war wohl kein Fehlalarm.", m: 2, f: 0, a: 30, c: 50 },
 			{ btn: "Hingehen & 'Nein' sagen", r: "Du erklärst ihm Sicherheit. Er hört zwar nicht zu, aber du hast die Installation verhindert.", m: 5, f: -10, a: 10, c: 0 },
+			{ btn: "Einfach das Passwort eingeben", r: "ZACK. Ransomware. Alles verschlüsselt. Ein Totenkopf lacht auf deinem Monitor. Das war wohl kein Fehlalarm.", m: 2, f: 0, a: 30, c: 50 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -377,8 +377,8 @@ export const emails = [
 		subj: "HEIZUNG AUF 5!!!",
 		body: "Mir ist kalt! Ich habe die Heizung jetzt auf 5 gedreht und den Knauf abgebrochen, damit es so bleibt! Wer das Fenster aufmacht, fängt sich eine! LG, Frau Frost (aus der Buchhaltung)",
 		opts: [
-			{ btn: "Fenster heimlich öffnen", r: "Du sorgst für Frischluft. Frau Frost niest und wirft dir böse Blicke zu.", m: 5, f: 5, a: 5, c: 0 },
 			{ btn: "In Badehose arbeiten", r: "Es sind 35 Grad im Büro. Du schwitzt. Die Produktivität liegt bei Null.", m: 2, f: 10, a: 10, c: 5 },
+			{ btn: "Fenster heimlich öffnen", r: "Du sorgst für Frischluft. Frau Frost niest und wirft dir böse Blicke zu.", m: 5, f: 5, a: 5, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -388,8 +388,8 @@ export const emails = [
 		subj: "FWD: FWD: Unbedingt lesen sonst Unglück!!!",
 		body: "Das ist der Geist des toten Servers! 👻 Schicke diese Mail an 10 Kollegen, oder dein WLAN wird für immer langsam sein! Ignorier das nicht, meinem Cousin ist das passiert!!!",
 		opts: [
-			{ btn: "An Alle weiterleiten", r: "Du hast den Mailserver lahmgelegt. 500 Leute hassen dich jetzt.", m: 2, f: 0, a: 20, c: 20 },
 			{ btn: "Bernd sperren", r: "Bernd landet auf der Blacklist. Endlich Ruhe.", m: 2, f: 0, a: -5, c: 0 },
+			{ btn: "An Alle weiterleiten", r: "Du hast den Mailserver lahmgelegt. 500 Leute hassen dich jetzt.", m: 2, f: 0, a: 20, c: 20 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -410,8 +410,8 @@ export const emails = [
 		subj: "HERZLICHEN GLÜCKWUNSCH! iPhone 15 gewonnnen!!!",
 		body: "Hallo Kunde. Du wurdest ausgewählt! Klicke HIER um dein iPhone 15 Pro Max (Titan) sofort zu erhalten! Nur noch 5 Minuten gültig! 📱🎁",
 		opts: [
-			{ btn: "KLICKEN! Her damit!", r: "Ein Fenster poppt auf: 'DIES WAR EIN PHISHING-TEST DER IT! SIE SIND DURCHGEFALLEN!' Du musst jetzt ein 20 Minuten langes Security-Video gucken. Dein Tag ist gelaufen.", m: 20, f: -10, a: 50, c: 20 },
 			{ btn: "Als Phishing melden", r: "Die IT antwortet: 'Gut gemacht, Müller. Sie haben als einziger nicht geklickt.' Ein Fleißsternchen im System.", m: 2, f: 0, a: -5, c: -10 },
+			{ btn: "KLICKEN! Her damit!", r: "Ein Fenster poppt auf: 'DIES WAR EIN PHISHING-TEST DER IT! SIE SIND DURCHGEFALLEN!' Du musst jetzt ein 20 Minuten langes Security-Video gucken. Dein Tag ist gelaufen.", m: 20, f: -10, a: 50, c: 20 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -432,8 +432,8 @@ export const emails = [
 		subj: "Falschparker auf Parkplatz 42",
 		body: "Du schaust aus dem Fenster. Ein fetter, neuer Porsche SUV steht quer auf DEINEM Parkplatz! Dreistigkeit siegt?!",
 		opts: [
-			{ btn: "Abschleppdienst rufen!", r: "Der Abschlepper kommt und zieht den Porsche weg. Du fühlst Genugtuung. 10 Min später brüllt der CEO: 'WER HAT MEINEN LEIHWAGEN ABSCHLEPPEN LASSEN?!' Oh Mist...", m: 10, f: 0, a: 50, c: 80 },
 			{ btn: "Scheibenwischer hochklappen", r: "Ein kleiner, passiv-aggressiver Racheakt. Fühlt sich gut an und keiner hat's gesehen.", m: 5, f: 0, a: -10, c: 0 },
+			{ btn: "Abschleppdienst rufen!", r: "Der Abschlepper kommt und zieht den Porsche weg. Du fühlst Genugtuung. 10 Min später brüllt der CEO: 'WER HAT MEINEN LEIHWAGEN ABSCHLEPPEN LASSEN?!' Oh Mist...", m: 10, f: 0, a: 50, c: 80 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -454,8 +454,8 @@ export const emails = [
 		subj: "DSGVO Auskunft Art. 15",
 		body: "Hiermit fordere ich Sie auf, mir binnen Frist ALLE Daten zu senden, die Sie über mich gespeichert haben. Auch Chat-Logs und interne Notizen!",
 		opts: [
-			{ btn: "Alles senden (inkl. Chat-Logs)", r: "Du schickst ihm wirklich alles. Auch die Logs, wo der Chef ihn 'Niete' nennt. Er verklagt die Firma wegen Mobbing. Der Chef tobt.", m: 10, f: -10, a: 20, c: 60 },
 			{ btn: "Standard-Textbaustein senden", r: "Du schickst ein nichtssagendes PDF: 'Wir haben leider keine relevanten Daten mehr'. Er gibt Ruhe. Bürokratie besiegt.", m: 2, f: 5, a: -5, c: -5 },
+			{ btn: "Alles senden (inkl. Chat-Logs)", r: "Du schickst ihm wirklich alles. Auch die Logs, wo der Chef ihn 'Niete' nennt. Er verklagt die Firma wegen Mobbing. Der Chef tobt.", m: 10, f: -10, a: 20, c: 60 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -465,9 +465,9 @@ export const emails = [
 		subj: "Weihnachtsfeier: Bowling oder Oper?",
 		body: "Liebe Kollegen, für die diesjährige Feier haben wir zwei Optionen: \n1. 'Cosmic Bowling' (mit Schwarzlicht und Dosenbier) \n2. 'Die Zauberflöte' (3,5 Stunden, Anzugpflicht). \nBitte abstimmen!",
 		opts: [
+			{ btn: "Reply-All: 'Saufen!'", r: "Egon antwortet: 'Mein Mann!'. Der Chef mahnt dich ab wegen 'unprofessioneller Kommunikation'.", m: 2, f: 0, a: 10, c: 15 },
 			{ btn: "Team 'Bowling'", r: "Du stimmst für Bowling. Die IT jubelt. Chantal ist entsetzt ('Meine Schuhe!'). Stimmung +1.", m: 2, f: 5, a: -5, c: 0 },
 			{ btn: "Team 'Oper'", r: "Du stimmst für Kultur. Niemand mag dich mehr. Kevin nennt dich 'Streber'.", m: 2, f: 0, a: 5, c: 5 },
-			{ btn: "Reply-All: 'Saufen!'", r: "Egon antwortet: 'Mein Mann!'. Der Chef mahnt dich ab wegen 'unprofessioneller Kommunikation'.", m: 2, f: 0, a: 10, c: 15 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Dir egal. Hauptsache es gibt Essen.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -477,8 +477,8 @@ export const emails = [
 		subj: "Fundsache: Roter Ball",
 		body: "Moin. Hab beim Fegen so nen roten Knet-Ball gefunden. Klebt unterm Heizkörper im Flur. Vermisst den wer? Wenn nicht, kriegt ihn mein Dackel.",
 		opts: [
-			{ btn: "Antwort: 'MEINER! Ich hol ihn ab!'", loot: "stressball", r: "Du rennst schnell runter zu Egon, bevor der Hund zuschnappt. Der Ball ist voller Staub, aber noch gut.", m: 5, f: 0, a: -5, c: 0, },
 			{ btn: "Antwort: 'Gönn ihn dem Dackel'", r: "Egon freut sich: 'Der Waldi dankt!'. Du hast ein gutes Werk getan. Der Dackel liebt dich jetzt.", m: 2, f: 5, a: 0, c: 0 },
+			{ btn: "Antwort: 'MEINER! Ich hol ihn ab!'", loot: "stressball", r: "Du rennst schnell runter zu Egon, bevor der Hund zuschnappt. Der Ball ist voller Staub, aber noch gut.", m: 5, f: 0, a: -5, c: 0, },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Der Ball verschwindet im Dackel. Chance vertan.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -488,9 +488,9 @@ export const emails = [
 		subj: "Ihr Urlaubsantrag 2028",
 		body: "Status-Update zu Ihrem Antrag 'Sommerurlaub': ABGELEHNT. \nBegründung: 'Zu dieser Zeit könnte theoretisch ein Server ausfallen. Wir brauchen Sie stand-by.'",
 		opts: [
-			{ btn: "Widerspruch einlegen", r: "Du schreibst eine zweiseitige Mail mit Gesetzes-Auszügen. HR antwortet nicht, aber du fühlst dich im Recht.", m: 15, f: -10, a: 20, c: 10 },
 			{ btn: "Krankenschein planen", r: "Wenn du nicht frei kriegst, bist du halt 'krank'. Du grinst böse und planst deinen 'Husten'.", m: 5, f: 10, a: -10, c: 0 },
 			{ btn: "Stillschweigend hinnehmen", r: "Du starrst die Wand an. Die Wand starrt zurück. Deine Seele stirbt ein wenig.", m: 2, f: 0, a: 10, c: -5, },
+			{ btn: "Widerspruch einlegen", r: "Du schreibst eine zweiseitige Mail mit Gesetzes-Auszügen. HR antwortet nicht, aber du fühlst dich im Recht.", m: 15, f: -10, a: 20, c: 10 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -511,8 +511,8 @@ export const emails = [
 		subj: "Bitte bewerten Sie Ihre Lösung",
 		body: "Sie haben das Ticket 'PC brennt' geschlossen. Wie zufrieden waren Sie mit Ihrer eigenen Leistung? \n(Stern 1-5)",
 		opts: [
-			{ btn: "Mir selbst 5 Sterne geben", r: "Du klopfst dir selbst auf die Schulter. 'Guter Mann, dieser Müller.' Das System speichert: 'Exzellenter Mitarbeiter'.", m: 2, f: 5, a: -5, c: 0 },
 			{ btn: "Mir selbst 1 Stern geben", r: "Du bist ehrlich zu dir selbst. Das war ziemlicher Pfusch. Aber immerhin brennt es nicht mehr.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Mir selbst 5 Sterne geben", r: "Du klopfst dir selbst auf die Schulter. 'Guter Mann, dieser Müller.' Das System speichert: 'Exzellenter Mitarbeiter'.", m: 2, f: 5, a: -5, c: 0 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -522,8 +522,8 @@ export const emails = [
 		subj: "Idee: Blockchain-Kaffeemaschine",
 		body: "Müller! Ich habe gelesen, Blockchain ist die Zukunft. Bauen Sie das in die Kaffeemaschine ein! Jeder Espresso soll als NFT gemintet werden! Deadline: Morgen!",
 		opts: [
-			{ btn: "Antwort: 'Das ist technisch unmöglich'", r: "Er nennt dich enttäuscht eine 'Innovationsbremse'. Dein Radar steigt, weil du 'keine Visionen hast'.",  m: 2, f: 0, a: 10, c: 10 },
 			{ btn: "Antwort: 'Geniale Idee, wird umgesetzt!'", r: "Du klebst einfach einen Sticker 'Blockchain Certified' auf den Wassertank. Er merkt den Unterschied nicht, findet den Kaffee aber plötzlich 'dezentraler'.", m: 2, f: 10, a: 0, c: 0 },
+			{ btn: "Antwort: 'Das ist technisch unmöglich'", r: "Er nennt dich enttäuscht eine 'Innovationsbremse'. Dein Radar steigt, weil du 'keine Visionen hast'.",  m: 2, f: 0, a: 10, c: 10 },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du tust so, als hättest du die Mail nie bekommen. Riskant. Wenn er morgen nachfragt, hast du ein echtes Problem.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -533,8 +533,8 @@ export const emails = [
 		subj: "Speiseplan: 'Woche der Experimente'",
 		body: "Mo: Grünkohl mit Nutella \nDi: Pizza 'Hawaii' (nur Ananas, kein Schinken) \nMi: Überraschungseintopf (Reste von Mo+Di) \nDo: Schnitzel (vegan, aus Pappe) \nFr: Fischstäbchen-Auflauf",
 		opts: [
-			{ btn: "Ausdrucken & Warnen", r: "Du hängst den Plan als Warnung im Flur auf. Du hast Leben gerettet.", m: 2, f: 0, a: 5, c: 0,  },
 			{ btn: "Fastenwoche planen", r: "Du beschließt, diese Woche nichts zu essen. Dein Magen knurrt alleine an diesem Gedanken.", m: 2, f: 0, a: 5, c: 0 },
+			{ btn: "Ausdrucken & Warnen", r: "Du hängst den Plan als Warnung im Flur auf. Du hast Leben gerettet.", m: 2, f: 0, a: 5, c: 0,  },
 			{ btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},
@@ -566,8 +566,8 @@ export const emails = [
         subj: "Deine Musik...",
         body: "Moin, wir hören alle deinen 'Death Metal'-Mix durch die Kopfhörer. Könntest du das leiser machen? Meine Pflanzen gehen schon ein.",
         opts: [
-            { btn: "Die Musik leiser machen", r: "Du bist rücksichtsvoll. Langweilig, aber nett.", m: 2, f: 0, a: -5, c: 0 },
             { btn: "Die Musik Lauter drehen", r: "Jetzt hören sie es wenigstens in guter Qualität.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_noise_2" },
+            { btn: "Die Musik leiser machen", r: "Du bist rücksichtsvoll. Langweilig, aber nett.", m: 2, f: 0, a: -5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -589,8 +589,8 @@ export const emails = [
         subj: "Wettbüro eröffnet! 💰",
         body: "Hey Chef, wir wetten gerade, wann der neue Projektleiter seinen ersten Nervenzusammenbruch hat. Einsatz: 5€. Machst du mit?",
         opts: [
-            { btn: "Ich setze auf 'Heute'", r: "Du bist dabei. Risiko!", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_bet_win" },
             { btn: "Ich setze auf 'Niemals'", r: "Optimist. Du verlierst sofort.", m: 2, f: 0, a: 0, c: -5 },
+            { btn: "Ich setze auf 'Heute'", r: "Du bist dabei. Risiko!", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_bet_win" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -680,8 +680,8 @@ export const emails = [
         subj: "Kaffeemaschine DEFEKT",
         body: "Jemand hat Milch in den Wassertank gefüllt. Die Maschine macht jetzt Käse.",
         opts: [
-            { btn: "Ich repariere das.", r: "Du opferst dich für das Team.", m: 10, f: -10, a: -10, c: 0, nextEmail: "mail_coffee_2" },
             { btn: "Ich trinke Tee.", r: "Du Monster.", m: 2, f: 5, a: 5, c: 0 },
+            { btn: "Ich repariere das.", r: "Du opferst dich für das Team.", m: 10, f: -10, a: -10, c: 0, nextEmail: "mail_coffee_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -770,8 +770,8 @@ export const emails = [
         subj: "Dringende Überweisung",
         body: "Hallo Herr Müller, ich sitze in einem geheimen Meeting. Bitte kaufen Sie sofort 10x 100€ Apple Gift Cards und schicken Sie mir die Codes. Sagen Sie niemandem etwas!",
         opts: [
-            { btn: "Alles klar, Chef! Die Codes kommen gleich", r: "Du fällst auf den ältesten Trick rein.", m: 5, f: 0, a: 5, c: 5, nextEmail: "mail_ceo_scam_fail" },
             { btn: "Antwort: 'Netter Versuch.'", r: "Du hast den Betrüger durchschaut.", m: 2, f: 0, a: -5, c: 0, nextEmail: "mail_ceo_scam_win" },
+            { btn: "Alles klar, Chef! Die Codes kommen gleich", r: "Du fällst auf den ältesten Trick rein.", m: 5, f: 0, a: 5, c: 5, nextEmail: "mail_ceo_scam_fail" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -896,8 +896,8 @@ export const emails = [
         subj: "Farb-Druck Verbot",
         body: "Ab sofort sind Farbdrucke verboten! Jede farbige Seite kostet 5 Cent und wird vom Gehalt abgezogen.",
         opts: [
-            { btn: "Alles in S/W drucken", r: "Die Welt ist grau. Deine Seele auch.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Trotzdem Farbe drucken", r: "Rebellion! Du druckst ein Regenbogen-Bild.", m: 2, f: 5, a: -5, c: 5, nextEmail: "mail_print_color_2" },
+            { btn: "Alles in S/W drucken", r: "Die Welt ist grau. Deine Seele auch.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -942,8 +942,8 @@ export const emails = [
         subj: "Schimmel-Alarm",
         body: "Im Kühlschrank lebt etwas. Es hat Fell und atmet. Wer seine Tupperdose gleich nicht holt, wird gefeuert.",
         opts: [
-            { btn: "Meine Dose holen", r: "Du entsorgst das Experiment in Bio-Hazard Manier.", m: 5, f: -5, a: 0, c: 0, nextEmail: "mail_fridge_2" },
             { btn: "Nicht mein Problem", r: "Du hoffst, dass es nicht deine Dose ist.", m: 2, f: 0, a: 0, c: 5 },
+            { btn: "Meine Dose holen", r: "Du entsorgst das Experiment in Bio-Hazard Manier.", m: 5, f: -5, a: 0, c: 0, nextEmail: "mail_fridge_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1010,8 +1010,8 @@ export const emails = [
         subj: "Wir sind jetzt auf TikTok! 💃",
         body: "Heyy! Wir müssen 'jung und dynamisch' wirken! Kommt alle in den Flur für die 'Corporate Dance Challenge'!",
         opts: [
-            { btn: "Mitmachen (Tanzen)", r: "Du machst dich zum Affen. Chantal filmt alles.", m: 10, f: 5, a: 5, c: 0, nextEmail: "mail_tiktok_2" },
             { btn: "Verstecken", r: "Du schließt dich im Klo ein.", m: 10, f: 0, a: 0, c: 5 },
+            { btn: "Mitmachen (Tanzen)", r: "Du machst dich zum Affen. Chantal filmt alles.", m: 10, f: 5, a: 5, c: 0, nextEmail: "mail_tiktok_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1090,8 +1090,8 @@ export const emails = [
         subj: "Lichtsteuerung: Beta Test",
         body: "Sie haben nun Zugriff auf die Lampen in Ihrer Abteilung. Bitte verantwortungsvoll nutzen.",
         opts: [
-            { btn: "Modus: 'Disco Strobe'", r: "Alles blinkt bunt. Kollegen bekommen Anfälle.", m: 2, f: 10, a: -5, c: 0, nextEmail: "mail_lights_disco" },
             { btn: "Modus: 'Dunkelkammer'", r: "Licht aus. Zeit für ein Nickerchen.", m: 2, f: 15, a: 0, c: 5, nextEmail: "mail_lights_dark" },
+            { btn: "Modus: 'Disco Strobe'", r: "Alles blinkt bunt. Kollegen bekommen Anfälle.", m: 2, f: 10, a: -5, c: 0, nextEmail: "mail_lights_disco" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1123,8 +1123,8 @@ export const emails = [
         subj: "Frage zu 'DELETE ALL'",
         body: "Chef? Wenn da steht 'Wollen Sie wirklich die Kundendatenbank löschen?', muss ich da auf 'Ja' klicken, damit das Fenster weggeht? Es nervt.",
         opts: [
-            { btn: "NEIN!!! UM GOTTES WILLEN!", r: "Du tippst drei Zeilen Großbuchstaben und rennst gleichzeitig los. Zwei Stockwerke, ein Flur, eine Tür - Kevin sitzt vor dem Dialog, den Mauszeiger schwebend über dem Ja-Knopf, und dreht sich fragend um.", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_intern_db_panic" },
             { btn: "Sarkasmus: 'Klar, mach mal.'", r: "Du denkst, er versteht den Witz.", m: 2, f: 5, a: 0, c: 0, nextEmail: "mail_intern_db_fail" },
+            { btn: "NEIN!!! UM GOTTES WILLEN!", r: "Du tippst drei Zeilen Großbuchstaben und rennst gleichzeitig los. Zwei Stockwerke, ein Flur, eine Tür - Kevin sitzt vor dem Dialog, den Mauszeiger schwebend über dem Ja-Knopf, und dreht sich fragend um.", m: 5, f: -10, a: 20, c: 10, nextEmail: "mail_intern_db_panic" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1222,8 +1222,8 @@ export const emails = [
         subj: "Happy Birthday! 🎉",
         body: "Lieber Mitarbeiter, alles Gute zum 50. Geburtstag! Holen Sie sich Ihren Gratis-Apfel in der Kantine ab!",
         opts: [
-            { btn: "Ich bin erst 28?!", r: "Du mailst wütend zurück.", m: 2, f: 0, a: 10, c: 0, nextEmail: "mail_birthday_fix" },
             { btn: "Apfel holen", r: "Gratis ist Gratis. Auch wenn du jetzt offiziell alt bist.", m: 5, f: 5, a: -5, c: 0 },
+            { btn: "Ich bin erst 28?!", r: "Du mailst wütend zurück.", m: 2, f: 0, a: 10, c: 0, nextEmail: "mail_birthday_fix" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1244,8 +1244,8 @@ export const emails = [
         subj: "Maus geht nicht",
         body: "Chef, meine Maus ist kaputt. Wenn ich sie hochhebe, bewegt sich der Zeiger nicht mehr. Hä?",
         opts: [
-            { btn: "Ernsthaft? 'Leg sie hin.'", r: "Du erklärst ihm die Physik.", m: 5, f: 0, a: 5, c: 0, nextEmail: "mail_mouse_2" },
             { btn: "Kauf dir eine neue.", r: "Nicht dein Budget, nicht dein Problem.", m: 2, f: 5, a: 0, c: 5 },
+            { btn: "Ernsthaft? 'Leg sie hin.'", r: "Du erklärst ihm die Physik.", m: 5, f: 0, a: 5, c: 0, nextEmail: "mail_mouse_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1288,8 +1288,8 @@ export const emails = [
         subj: "Name für neuen Drucker",
         body: "Vorschläge: 1. Drucki McPrintface, 2. Papierstau-Paulus, 3. The Beast. Bitte abstimmen.",
         opts: [
-            { btn: "Drucki McPrintface", r: "Klassiker. Alle lachen.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "The Beast", r: "Passend. Er sieht böse aus.", m: 2, f: 0, a: 0, c: 0, nextEmail: "mail_printer_beast" },
+            { btn: "Drucki McPrintface", r: "Klassiker. Alle lachen.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1375,8 +1375,8 @@ export const emails = [
         subj: "E-Roller im Flur",
         body: "Wer hat seinen 'Lime-Scooter' im Serverraum geparkt? Er piept alle 30 Sekunden.",
         opts: [
-            { btn: "Das ist mein Dienstwagen.", r: "Du bist zu faul zum Laufen.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_parking_scooter_2" },
             { btn: "Rausschmeißen", r: "Du wirfst den Roller aus dem Fenster.", m: 5, f: 0, a: -5, c: 0 },
+            { btn: "Das ist mein Dienstwagen.", r: "Du bist zu faul zum Laufen.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_parking_scooter_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1397,8 +1397,8 @@ export const emails = [
         subj: "Schnitzel-Verbot?",
         body: "Diskussion: Sollen wir den 'Schnitzel-Dienstag' durch den 'Tofu-Tornado-Tag' ersetzen?",
         opts: [
-            { btn: "NIEMALS! (Pro Schnitzel)", r: "Du kämpfst für dein Fleisch. Die IT steht hinter dir.", m: 2, f: 0, a: -5, c: 0, nextEmail: "mail_vegan_schnitzel" },
             { btn: "Ja, Tofu ist super.", r: "Alle hassen dich. Wirklich alle.", m: 2, f: 0, a: 15, c: 0 },
+            { btn: "NIEMALS! (Pro Schnitzel)", r: "Du kämpfst für dein Fleisch. Die IT steht hinter dir.", m: 2, f: 0, a: -5, c: 0, nextEmail: "mail_vegan_schnitzel" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1419,8 +1419,8 @@ export const emails = [
         subj: "Kugelschreiber Schwund",
         body: "Es fehlen 500 Kugelschreiber. Wer welche hat, bitte zurückgeben. Anonyme Box steht bereit.",
         opts: [
-            { btn: "Meine 40 Stück zurückgeben", r: "Du leerst deine Schublade. Es klappert laut.", m: 5, f: 0, a: 0, c: 5, nextEmail: "mail_pen_thief_2" },
             { btn: "Ich weiß von nichts.", r: "Du baust eine Burg aus Stiften.", m: 2, f: 5, a: 0, c: 0 },
+            { btn: "Meine 40 Stück zurückgeben", r: "Du leerst deine Schublade. Es klappert laut.", m: 5, f: 0, a: 0, c: 5, nextEmail: "mail_pen_thief_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1441,8 +1441,8 @@ export const emails = [
         subj: "ANGEKÜNDIGTER FEUERALARM",
         body: "Heute um 14:00 testen wir die Sirene. Bitte NICHT in Panik geraten und NICHT aus dem Fenster springen.",
         opts: [
-            { btn: "Ohrstöpsel rein", r: "Du ignorierst alles. Profi.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "Um 14:00 'FEUER!' schreien", r: "Du sorgst für realistische Bedingungen.", m: 5, f: 0, a: 0, c: 10, nextEmail: "mail_fire_chaos" },
+            { btn: "Ohrstöpsel rein", r: "Du ignorierst alles. Profi.", m: 2, f: 5, a: -5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1463,8 +1463,8 @@ export const emails = [
         subj: "Wochenende!!! 🍺🍺",
         body: "Hier ein lustiges Bild von einem Minion, der Bier trinkt! Hahaha! Versteht ihr? Weil Arbeit doof ist!",
         opts: [
-            { btn: "Fake-Lachen antworten", r: "Du schreibst 'LOL Günther!'. Deine Seele stirbt.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Günther blockieren", r: "Endlich Ruhe.", m: 2, f: 5, a: -5, c: 0 },
+            { btn: "Fake-Lachen antworten", r: "Du schreibst 'LOL Günther!'. Deine Seele stirbt.", m: 2, f: 0, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1474,8 +1474,8 @@ export const emails = [
         subj: "Effizienz-Analyse",
         body: "Wir prüfen Ihre Abteilung. Bitte protokollieren Sie jeden Toilettengang in Excel.",
         opts: [
-            { btn: "Excel ausfüllen", r: "Du tippst: '09:00 - Pipi'. Erniedrigend.", m: 5, f: -10, a: 15, c: 0, nextEmail: "mail_consultant_2" },
             { btn: "Excel fälschen", r: "Du schreibst, du gehst nie. Du bist ein Roboter.", m: 2, f: 5, a: 0, c: 5 },
+            { btn: "Excel ausfüllen", r: "Du tippst: '09:00 - Pipi'. Erniedrigend.", m: 5, f: -10, a: 15, c: 0, nextEmail: "mail_consultant_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1506,8 +1506,8 @@ export const emails = [
         subj: "Geruchsbelästigung",
         body: "Jemand in diesem Büro riecht nach altem Käse und Verzweiflung. Bitte duschen.",
         opts: [
-            { btn: "Rieche ich das?", r: "Du schnupperst an dir. Vielleicht?", m: 2, f: 0, a: 5, c: 5, nextEmail: "mail_smell_2" },
             { btn: "Das ist Kevin.", r: "Es ist immer Kevin.", m: 2, f: 5, a: -5, c: 0 },
+            { btn: "Rieche ich das?", r: "Du schnupperst an dir. Vielleicht?", m: 2, f: 0, a: 5, c: 5, nextEmail: "mail_smell_2" },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1528,8 +1528,8 @@ export const emails = [
         subj: "Teamevent: Wald-Survival",
         body: "Wir setzen euch im Wald aus. Ohne Handys. Wer zuerst zurück ist, wird nicht gefeuert.",
         opts: [
-            { btn: "Krankmelden", r: "Plötzlich hast du 'Rücken'.", m: 2, f: 10, a: -5, c: 0 },
             { btn: "Ich nehme ein Messer mit.", r: "Du bist bereit für die 'Hunger Games'.", m: 2, f: 0, a: 5, c: 5 },
+            { btn: "Krankmelden", r: "Plötzlich hast du 'Rücken'.", m: 2, f: 10, a: -5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1539,8 +1539,8 @@ export const emails = [
         subj: "TONER LEER",
         body: "Cyan ist leer. Ich kann dieses Schwarz-Weiß-Dokument nicht drucken, weil ich Cyan brauche um Schwarz zu mischen.",
         opts: [
-            { btn: "Drucker schlagen", r: "Es hilft nicht, aber tut gut.", m: 5, f: 0, a: 5, c: 0 },
             { btn: "Mit Kugelschreiber abschreiben", r: "Zurück ins Mittelalter.", m: 10, f: -10, a: 10, c: 0 },
+            { btn: "Drucker schlagen", r: "Es hilft nicht, aber tut gut.", m: 5, f: 0, a: 5, c: 0 },
             { btn: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },
@@ -1591,15 +1591,15 @@ export const emails = [
     body: "NA DIE ZAHLEN HALT AUSRUFEZEICHEN die wo der kunde meinte dass die komisch sind PUNKT\n\nfrag GABI die weiß sowas\n\nSiri sende an Müller nein NICHT an Müller Berger an MÜLLER",
     opts: [
         {
+            btn: "'Ruf mich an, wenn du geparkt hast'",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Die Antwort kommt vier Stunden später: 'BIN GEPARKT wer bist du nochmal FRAGEZEICHEN'. Siri hat den Verlauf gefressen. Das Thema hat sich, wie so vieles bei Markus, unterwegs von selbst erledigt."
+        },
+        {
             btn: "Gabi fragen (natürlich weiß sie es)",
             rep: { "Gabi": 3 },
             m: 5, f: 5, a: 0, c: 0,
             r: "Gabi weiß es sofort: 'Die Rabattstaffel. Die ist seit März falsch verlinkt, das meint er.' Du schickst die korrigierte Datei. Zwei Menschen in diesem Haus verstehen den Vertrieb: Gabi und niemand sonst."
-        },
-        {
-            btn: "'Ruf mich an, wenn du geparkt hast'",
-            m: 2, f: 5, a: -5, c: 0,
-            r: "Die Antwort kommt vier Stunden später: 'BIN GEPARKT wer bist du nochmal FRAGEZEICHEN'. Siri hat den Verlauf gefressen. Das Thema hat sich, wie so vieles bei Markus, unterwegs von selbst erledigt."
         }
     ]
 },
@@ -1684,12 +1684,6 @@ export const emails = [
     body: "Sehr geehrter Herr Müller,\n\nanbei die Anlagenliste der IT (214 Positionen). Bitte prüfen Sie JEDE Position auf tatsächliches Vorhandensein und bestätigen Sie bis Monatsende.\n\nStichprobenkontrollen behalte ich mir vor.\n\nMit freundlichen Grüßen\nE. Elster",
     opts: [
         {
-            btn: "Gewissenhaft prüfen, Auffälligkeiten melden",
-            nextEmail: "mail_elster_inventur_2a",
-            m: 25, f: -10, a: 15, c: 0,
-            r: "Ein Nachmittag zwischen Racks, Schränken und Egons Kellerregalen. 209 Positionen: vorhanden. Vier: verschollen. Und Position 87, 'Quantenrechner QX-1, Anschaffung 1997', kann unmöglich existieren. Du meldest exakt das - samt der Frage, was ein Quantenrechner 1997 gekostet haben soll."
-        },
-        {
             btn: "Alle 214 blind bestätigen",
             nextEmail: "mail_elster_inventur_2b",
             m: 5, f: 10, a: 0, c: 0,
@@ -1700,6 +1694,12 @@ export const emails = [
             rep: { "Kevin": 3 },
             m: 5, f: 5, a: 0, c: 5,
             r: "Kevin zieht begeistert mit Klemmbrett los. Rückmeldung nach drei Stunden: '213 gefunden! Und was ist ein Quantenrechner?' Der Junge hat die Kontrollposition entdeckt, ohne zu ahnen, dass es eine war. Instinkt kann man nicht lehren."
+        },
+        {
+            btn: "Gewissenhaft prüfen, Auffälligkeiten melden",
+            nextEmail: "mail_elster_inventur_2a",
+            m: 25, f: -10, a: 15, c: 0,
+            r: "Ein Nachmittag zwischen Racks, Schränken und Egons Kellerregalen. 209 Positionen: vorhanden. Vier: verschollen. Und Position 87, 'Quantenrechner QX-1, Anschaffung 1997', kann unmöglich existieren. Du meldest exakt das - samt der Frage, was ein Quantenrechner 1997 gekostet haben soll."
         }
     ]
 },
@@ -1711,16 +1711,16 @@ export const emails = [
     body: "Sehr geehrter Herr Müller,\n\nPosition 87 war eine Kontrollposition.\n\nSie sind der Erste seit Einführung dieser Praxis (2011), der sie beanstandet hat.\n\nIch habe Sie auf die Liste der prüfungssicheren Ansprechpartner gesetzt. Diese Liste umfasst nunmehr zwei Namen.\n\nE. Elster",
     opts: [
         {
-            btn: "'Wer ist der andere Name?'",
-            rep: { "Frau Elster": 5 },
-            m: 2, f: 0, a: 0, c: 0,
-            r: "Die Antwort kommt umgehend und besteht aus einem Wort: 'Ich.' Mehr Ehre passt in dieser Firma nicht in eine Zeile. Du druckst die Mail nicht aus. Aber es war knapp."
-        },
-        {
             btn: "Still stolz sein",
             rep: { "Frau Elster": 3 },
             m: 2, f: 5, a: 0, c: 0,
             r: "Manche Auszeichnungen brauchen keine Antwort. Du bist jetzt prüfungssicher - ein Adelstitel, den es offiziell nicht gibt und der in diesem Haus trotzdem mehr wiegt als jede Beförderung."
+        },
+        {
+            btn: "'Wer ist der andere Name?'",
+            rep: { "Frau Elster": 5 },
+            m: 2, f: 0, a: 0, c: 0,
+            r: "Die Antwort kommt umgehend und besteht aus einem Wort: 'Ich.' Mehr Ehre passt in dieser Firma nicht in eine Zeile. Du druckst die Mail nicht aus. Aber es war knapp."
         }
     ]
 },
@@ -1753,15 +1753,15 @@ export const emails = [
     body: "hier die datei die du wolltest\n\nlg kevin",
     opts: [
         {
+            btn: "Selbst per Fernwartung nachsehen",
+            m: 10, f: 5, a: 5, c: 0,
+            r: "Du findest die Datei auf seinem Desktop. Sie heißt 'endgültig_final_NEU(3).xlsx' und liegt direkt neben 'endgültig_final_NEU(2).xlsx' und 'endgültig_final.xlsx'. Du nimmst die mit der höchsten Zahl. Hoffentlich zählt Kevin so wie der Rest der Menschheit."
+        },
+        {
             btn: "'Kevin. Der Anhang.'",
             nextEmail: "mail_kevin_anhang_2",
             m: 2, f: 0, a: 5, c: 0,
             r: "Du antwortest mit drei Wörtern. Mehr braucht es nicht. Mehr würde auch nichts ändern."
-        },
-        {
-            btn: "Selbst per Fernwartung nachsehen",
-            m: 10, f: 5, a: 5, c: 0,
-            r: "Du findest die Datei auf seinem Desktop. Sie heißt 'endgültig_final_NEU(3).xlsx' und liegt direkt neben 'endgültig_final_NEU(2).xlsx' und 'endgültig_final.xlsx'. Du nimmst die mit der höchsten Zahl. Hoffentlich zählt Kevin so wie der Rest der Menschheit."
         },
         {
             btn: "Löschen & Ignorieren",
@@ -1779,15 +1779,15 @@ export const emails = [
     body: "omg sorry 🙈 jetzt aber wirklich\n\nlg kevin",
     opts: [
         {
+            btn: "Anrufen und es beenden",
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'Ach DESHALB ging die Mail so schnell raus!' Vierzig Sekunden Telefon lösen, was zwei Mails nicht konnten. Die Datei kommt an. Als Download-Link. Immerhin."
+        },
+        {
             btn: "Schweigend warten - er merkt es selbst",
             nextEmail: "mail_kevin_anhang_3",
             m: 2, f: 5, a: 0, c: 0,
             r: "Wieder kein Anhang. Du antwortest nicht. Kevin wird es selbst bemerken - erfahrungsgemäß nach elf Minuten, wenn die Scham durch die Kopfhörer sickert."
-        },
-        {
-            btn: "Anrufen und es beenden",
-            m: 5, f: 0, a: 5, c: 0,
-            r: "'Ach DESHALB ging die Mail so schnell raus!' Vierzig Sekunden Telefon lösen, was zwei Mails nicht konnten. Die Datei kommt an. Als Download-Link. Immerhin."
         }
     ]
 },
@@ -1799,15 +1799,15 @@ export const emails = [
     body: "ok JETZT hab ichs gecheckt 😅 anbei!!\n\nlg kevin\n\n[Anhang: IMG_20260801_1337.jpg, 4,2 MB]",
     opts: [
         {
-            btn: "Das Foto für die Ewigkeit sichern",
-            m: 2, f: 5, a: -5, c: 0,
-            r: "Der Anhang ist ein Foto seines Bildschirms, auf dem die geöffnete Datei zu sehen ist. Scharf fotografiert immerhin. Das Bild wandert in deinen Ordner 'Beweise'. Bei seiner Abschlussfeier wird es eine Diashow geben. Du sammelst bereits."
-        },
-        {
             btn: "Hingehen und die Anhang-Schulung halten",
             rep: { "Kevin": 5 },
             m: 10, f: -5, a: 5, c: 0,
             r: "Du zeigst ihm das Büroklammer-Symbol. Kevin: 'DA ist das!' Er notiert es sich - als Sprachnachricht an sich selbst, aber er notiert es. Die Datei kommt zwei Minuten später an. Als echter Anhang. Es ist Wachstum. Irgendeine Form davon."
+        },
+        {
+            btn: "Das Foto für die Ewigkeit sichern",
+            m: 2, f: 5, a: -5, c: 0,
+            r: "Der Anhang ist ein Foto seines Bildschirms, auf dem die geöffnete Datei zu sehen ist. Scharf fotografiert immerhin. Das Bild wandert in deinen Ordner 'Beweise'. Bei seiner Abschlussfeier wird es eine Diashow geben. Du sammelst bereits."
         }
     ]
 },
@@ -1845,14 +1845,14 @@ export const emails = [
     body: "Herr Müller,\n\nkurze private Nachfrage unter uns: Diese 'Küchen-Logs'... was genau loggen die? Und seit wann?\n\nRein interessehalber.\n\n- Jürgen (3. OG)",
     opts: [
         {
-            btn: "'Alles. Seit 2019.'",
-            m: 2, f: 5, a: -10, c: 0,
-            r: "Eine Stunde später steht eine neue, versiegelte Lasagne im Kühlschrank. Daneben ein Zettel: 'Für Bernd. Von einem Freund.' Fall geschlossen - ohne Urteil, ohne Beweis, ohne ein einziges echtes Log. Justiz durch Bluff. Die günstigste Form."
-        },
-        {
             btn: "'Jürgen. Wir beide wissen es.'",
             m: 5, f: 0, a: -5, c: 0,
             r: "Jürgen antwortet nicht. Muss er auch nicht. In der Kantine stellt er dir fortan wortlos den Nachtisch mit aufs Tablett. Schweigegeld in Puddingform. Du nimmst es an. Man muss auch nehmen können."
+        },
+        {
+            btn: "'Alles. Seit 2019.'",
+            m: 2, f: 5, a: -10, c: 0,
+            r: "Eine Stunde später steht eine neue, versiegelte Lasagne im Kühlschrank. Daneben ein Zettel: 'Für Bernd. Von einem Freund.' Fall geschlossen - ohne Urteil, ohne Beweis, ohne ein einziges echtes Log. Justiz durch Bluff. Die günstigste Form."
         }
     ]
 },
@@ -1864,6 +1864,11 @@ export const emails = [
     body: "Sehr geehrter Kunde,\n\nIhr Paket Nr. DE-8471-B kann nicht zugestellt werden. Bitte bestätigen Sie die Zustellgebühr über den folgenden Link.\n\n[Klassische Phishing-Optik in schlechtem Deutsch. Aber der Mail-Header verrät dem geübten Auge: Absender ist die eigene Konzern-Security. Es ist der jährliche Phishing-TEST.]",
     opts: [
         {
+            btn: "Die halbe Firma vorwarnen",
+            m: 5, f: 5, a: -5, c: 5,
+            r: "Deine Flurfunk-Warnung lotst Dutzende Kollegen sicher durch den Test. Die Konzern-Security staunt über die beste Quote der Firmengeschichte - 98 Prozent - und kündigt an, 'die Testmethodik zu überprüfen'. Du hast eine Statistik geheilt und sie dadurch verdächtig gemacht."
+        },
+        {
             btn: "Vorbildlich als Phishing melden",
             m: 2, f: 0, a: 0, c: -5,
             r: "Der Musterknaben-Klick. Sekunden später: 'Glückwunsch! Sie haben den Test bestanden.' Du bist jetzt Teil einer Statistik, die in einer Vorstandsfolie enden wird. Immerhin auf der grünen Balkenseite."
@@ -1873,11 +1878,6 @@ export const emails = [
             nextEmail: "mail_security_test_2",
             m: 5, f: 10, a: 0, c: 0,
             r: "Wissenschaftliche Neugier: Was passiert bei Klick? Der Link führt auf eine Belehrungsseite mit trauriger Schild-Grafik ('Das hätte ein echter Angriff sein können!') - und einer automatischen Konsequenz, die du eine Sekunde zu spät liest."
-        },
-        {
-            btn: "Die halbe Firma vorwarnen",
-            m: 5, f: 5, a: -5, c: 5,
-            r: "Deine Flurfunk-Warnung lotst Dutzende Kollegen sicher durch den Test. Die Konzern-Security staunt über die beste Quote der Firmengeschichte - 98 Prozent - und kündigt an, 'die Testmethodik zu überprüfen'. Du hast eine Statistik geheilt und sie dadurch verdächtig gemacht."
         }
     ]
 },
@@ -1889,14 +1889,14 @@ export const emails = [
     body: "Sehr geehrter Herr Müller,\n\naufgrund Ihres Klickverhaltens wurden Sie automatisch für die Schulung 'Phishing erkennen - Grundlagen' angemeldet.\n\nDie Teilnahme ist verpflichtend und wird protokolliert.\n\nIhre IT-Security",
     opts: [
         {
-            btn: "Die 45 Minuten würdevoll absitzen",
-            m: 30, f: 10, a: 15, c: 0,
-            r: "Du - hauptberuflich der Mensch, der diese Schulung halten könnte - klickst dich durch Module wie 'Was ist ein Link?'. Das Abschlusszertifikat druckst du aus und hängst es ins Büro. Als Mahnung. Oder Trophäe. Die Grenze ist fließend."
-        },
-        {
             btn: "Widerspruch: 'Ich BIN die IT'",
             m: 10, f: 0, a: 10, c: 5,
             r: "Die Antwort der Konzern-Security kommt formvollendet: 'Gerade Administratoren sind ein Hochrisiko-Ziel. Die Teilnahme bleibt verpflichtend.' Sie haben recht, und das ist das Ärgerlichste daran. Die Schulung wartet. Sie wartet geduldig."
+        },
+        {
+            btn: "Die 45 Minuten würdevoll absitzen",
+            m: 30, f: 10, a: 15, c: 0,
+            r: "Du - hauptberuflich der Mensch, der diese Schulung halten könnte - klickst dich durch Module wie 'Was ist ein Link?'. Das Abschlusszertifikat druckst du aus und hängst es ins Büro. Als Mahnung. Oder Trophäe. Die Grenze ist fließend."
         }
     ]
 },
@@ -1963,14 +1963,14 @@ export const emails = [
     body: "Herr Müller,\n\nhaben Sie nachher fünf Minuten für mich?\n\nW.",
     opts: [
         {
-            btn: "'Selbstverständlich, jederzeit!'",
-            m: 25, f: 5, a: 25, c: 0,
-            r: "Die fünf Minuten beginnen um 14 Uhr und enden als Projektskizze: Dr. Wichtig möchte 'die Digitalisierung nochmal ganz neu denken', und weil du so bereitwillig Zeit hattest, denkst du sie jetzt mit. Erste Arbeitsfassung: bis Freitag. Fünf Minuten sind in Chefzeit eine Währung mit sehr eigenem Wechselkurs."
-        },
-        {
             btn: "'Worum geht es denn?'",
             m: 2, f: 0, a: 5, c: 15,
             r: "Eine völlig vernünftige Rückfrage - nur liest sie sich auf Vorstandsebene anders: Wer nach dem Thema fragt, verhandelt über seine Verfügbarkeit. Die Antwort kommt nach vier Stunden und besteht aus einem einzigen Satz: 'Um fünf Minuten, Herr Müller.' Der Termin steht jetzt trotzdem. Die Verstimmung auch."
+        },
+        {
+            btn: "'Selbstverständlich, jederzeit!'",
+            m: 25, f: 5, a: 25, c: 0,
+            r: "Die fünf Minuten beginnen um 14 Uhr und enden als Projektskizze: Dr. Wichtig möchte 'die Digitalisierung nochmal ganz neu denken', und weil du so bereitwillig Zeit hattest, denkst du sie jetzt mit. Erste Arbeitsfassung: bis Freitag. Fünf Minuten sind in Chefzeit eine Währung mit sehr eigenem Wechselkurs."
         },
         {
             btn: "Löschen & Ignorieren",
@@ -2011,6 +2011,11 @@ export const emails = [
     body: "Sehr geehrter Herr Müller,\n\nwir freuen uns, Ihnen mitzuteilen, dass Sie für das neue MENTOREN-PROGRAMM nominiert wurden! Sie begleiten künftig drei Nachwuchskräfte auf ihrem Weg.\n\nDas Programm startet nächste Woche. Wir gratulieren herzlich!\n\nIhre Personalabteilung",
     opts: [
         {
+            btn: "Nachfragen: Wer hat mich nominiert?",
+            m: 5, f: 5, a: 5, c: 5,
+            r: "Die Antwort kommt strahlend: 'Herr Markus aus dem Vertrieb - als Dank für Ihre großartige Unterstützung!' Markus wollte dir etwas Gutes tun und hat dir drei Auszubildende geschenkt. Die Nominierung zurückzuziehen würde ihn kränken und die Personalabteilung verwirren. Du bist jetzt Mentor. Aus Dankbarkeit. Seiner."
+        },
+        {
             btn: "Geehrt annehmen - eine Auszeichnung!",
             m: 10, f: 10, a: 25, c: 0,
             r: "Die Auszeichnung entpuppt sich als Stundenplan: drei Nachwuchskräfte, wöchentliche 'Sparring-Sessions', Entwicklungsbögen in dreifacher Ausfertigung - alles zusätzlich zur eigentlichen Arbeit, versteht sich, denn 'Mentoring ist ja eine Ehre'. Ehren sind in diesem Haus grundsätzlich unbezahlt und terminiert."
@@ -2019,11 +2024,6 @@ export const emails = [
             btn: "Höflich ablehnen: keine Kapazität",
             m: 5, f: 0, a: 5, c: 10,
             r: "Deine sachliche Absage wird 'mit Bedauern zur Kenntnis genommen' und wandert als Vermerk in die Personalakte: 'Entwicklungsbereitschaft: eingeschränkt.' Beim nächsten Gehaltsgespräch wird genau dieses Wort auf dem Tisch liegen. Man kann in diesem Haus Ehren ablehnen. Aber nicht kostenlos."
-        },
-        {
-            btn: "Nachfragen: Wer hat mich nominiert?",
-            m: 5, f: 5, a: 5, c: 5,
-            r: "Die Antwort kommt strahlend: 'Herr Markus aus dem Vertrieb - als Dank für Ihre großartige Unterstützung!' Markus wollte dir etwas Gutes tun und hat dir drei Auszubildende geschenkt. Die Nominierung zurückzuziehen würde ihn kränken und die Personalabteilung verwirren. Du bist jetzt Mentor. Aus Dankbarkeit. Seiner."
         }
     ]
 },
@@ -2035,15 +2035,15 @@ export const emails = [
     body: "Guten Morgen Herr Müller,\n\nda Frau Müller aus dem Onboarding weiterhin ausfällt und Sie in unserer Verteilerliste direkt über ihr stehen, senden wir Ihnen die Zugangsdaten für unseren neuen Junior Assistant. Sie arbeiten ja ohnehin den ganzen Tag mit Computern.\n\nLogin: j_schnoesel\nPasswort: Synergy2026!\n\nHinweis der IT: Das Initialpasswort ist für sämtliche Konten im Haus identisch und darf nicht geändert werden, das verwirrt die Datenbank.\n\nBitte leiten Sie die Mail an ihn weiter. Ein Postfach hat er noch nicht.",
     opts: [
         {
+            btn: "Ausdrucken und Schnösel auf den Tisch legen",
+            r: "Du druckst die Zugangsdaten aus und legst den Zettel auf Schnösels Tastatur. Der Ausdruck bleibt dort drei Wochen liegen, mit dem Passwort nach oben. Immerhin hat er ihn dann.",
+            m: 10, f: 0, a: -5, c: 0
+        },
+        {
             btn: "Antworten: 'Falscher Empfänger, mein Konto heißt mueller.'",
             r: "Du erklärst in zwei Sätzen, dass du nicht Schnösel bist, dass dein Konto schlicht 'mueller' heißt und dass Zugangsdaten nicht per Mail durchs Haus wandern sollten. Absenden. Niemand wird das lesen.",
             m: 5, f: 0, a: 5, c: 0,
             nextEmail: "mail_onboarding_reply"
-        },
-        {
-            btn: "Ausdrucken und Schnösel auf den Tisch legen",
-            r: "Du druckst die Zugangsdaten aus und legst den Zettel auf Schnösels Tastatur. Der Ausdruck bleibt dort drei Wochen liegen, mit dem Passwort nach oben. Immerhin hat er ihn dann.",
-            m: 10, f: 0, a: -5, c: 0
         },
         {
             btn: "Löschen & Ignorieren",

@@ -28,6 +28,8 @@ public/
 tools/
   lint-data.mjs         Datenprüfung, npm run lint:data
   simulate-day.mjs      Tages-Simulation, npm run sim
+  reorder-opts.mjs      verteilt die Optionsreihenfolge, einmalig
+  normalize-quotes.mjs  Anführungszeichen, einmalig
 ```
 
 ## src/assets/ oder public/assets/
@@ -79,6 +81,7 @@ npm run dev            Entwicklungsserver auf Port 8080
 npm run build          erzeugt docs/
 npm run preview        docs/ lokal prüfen
 npm run lint:data      Datenprüfung
+npm run sim            Tages-Simulation für die Balance
 npm start              baut und startet Electron
 npm run build:win      Desktop-Build
 ```
@@ -86,6 +89,53 @@ npm run build:win      Desktop-Build
 Veröffentlicht wird `docs/` über GitHub Pages (Einstellung: Deploy from a branch,
 `main` + `/docs`). Der Build gehört deshalb mit ins Repository: erst `npm run
 build`, dann committen und pushen — sonst ist die Live-Seite älter als der Code.
+
+## Werkzeuge
+
+`lint-data.mjs` und `simulate-day.mjs` gehören in den Arbeitsablauf: der Linter
+nach jeder Datenänderung (0 Fehler, 0 Warnungen), die Simulation vor jeder
+Balance-Entscheidung.
+
+Die anderen beiden sind Einmal-Werkzeuge, die den Bestand in einen definierten
+Zustand gebracht haben. Sie sind wiederholbar — ein zweiter Lauf ändert nichts
+mehr — und stehen im Repository, weil sie dokumentieren, wie dieser Zustand
+zustande kam:
+
+`reorder-opts.mjs` verteilt die Reihenfolge der Antwortmöglichkeiten. Vorher
+stand in 53% aller Ereignisse mit drei oder mehr Optionen die günstigste ganz
+oben; wer das bemerkt, klickt fortan die erste Zeile. Das Werkzeug rotiert die
+Liste, statt zu mischen, damit eine Abfolge von zurückhaltend nach drastisch
+erhalten bleibt. Abbruch-Optionen bleiben unten, Tutorial und Stationswahl der
+Gala werden nicht angefasst.
+
+`normalize-quotes.mjs` macht zwei Durchgänge über die Anführungszeichen, siehe
+unten. `--dry` berichtet, ohne zu schreiben.
+
+## Konventionen in den Datendateien
+
+**Notation:** Zeichenketten stehen in doppelten Anführungszeichen. Das ist mehr
+als Geschmack — Werkzeuge, die die Dateien als Text durchsuchen, überspringen
+eine abweichend geschriebene Datei stillschweigend. Genau das ist einmal mit
+dem gesamten Party-Pool passiert, ohne eine einzige Fehlermeldung.
+
+**Spieltext:** Anführungszeichen erster Ordnung sind einfach — `'so'` für
+wörtliche Rede, Namen und ironische Distanz. Doppelte nur als zweite Ordnung
+innerhalb eines Zitats. Das passt zur Terminal-Fiktion, in der alles Monospace
+und ASCII ist. Der Linter warnt, wenn doppelte in erster Ordnung auftauchen.
+
+**Folge-Ereignisse stehen für sich.** Ein Ereignis mit `reqStory` kann Stunden
+nach seinem Auslöser kommen oder gar nicht. Es darf deshalb weder unmittelbare
+Nähe behaupten ("Kaum hast du…") noch den Auslöser in die Vergangenheit
+verlegen ("wegen gestern"). Der Linter prüft beide Richtungen über alle
+Textfelder.
+
+**Quest-Items sind ausschließlich lootbar** — Trophäen über Ruf-Ereignisse und
+für Erfolge. Sie dürfen nie als `req` oder `rem` stehen; der Linter prüft das.
+
+**Ruf sparsam:** ±5 ist die Regel, ±10 die begründete Ausnahme, alles darüber
+ein Ereignis mit Gewicht. So wächst das Verhältnis zu den Kollegen über mehrere
+Arbeitstage statt an einem einzigen. Wo eine Figur im Ereignis auftritt, gehört
+sie auch ins Feld `char` — sonst bleibt die Karte ohne Gesicht.
 
 ## Zustand und Anzeige
 

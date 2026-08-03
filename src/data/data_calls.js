@@ -36,6 +36,7 @@ export const calls = [
 	},
 	{
 		id: "call_meyer_2",
+		char: "Egon",
 		reqStory: "meyer_blackout",
 		title: "Hausmeister Egon",
 		startNode: "root",
@@ -69,12 +70,14 @@ export const calls = [
 				t: "Befehl: 'Formatieren! Lern was draus!'", 
 				rep: { "Kevin": -2 },
 				m: 30, f: 10, a: 0, c: 5,
+				next: "path_kevin_formatiert",
 				r: "Du zwingst ihn, alles selbst neu aufzusetzen. Er ist den ganzen Tag beschäftigt und lernt hoffentlich, dass man Systemordner in Ruhe lässt." 
 			},
 			{ 
 				t: "Hingehen und alles mühsam retten", 
 				rep: { "Kevin": 10 },
 				m: 90, f: -30, a: 10, c: -10,
+				next: "path_kevin_gerettet",
 				r: "Du sitzt 1,5 Stunden an seinem PC und stellst Daten wieder her. Lebenszeit, die dir niemand zurückgibt. Kevin fragt am Ende: 'Darf ich jetzt Minecraft installieren?'" 
 			}
 		]
@@ -85,9 +88,9 @@ export const calls = [
 		title: "CEO Dr. Wichtig",
 		text: "Müller! Ich bin am Flughafen. Mein iPad geht nicht! Ich drücke den Knopf und nichts passiert! FIXEN SIE DAS REMOTE! SOFORT! Ich verliere hier Millionen!",
 		opts: [
+			{ t: "Lüge: 'Sonnenwinde stören'", m: 5, f: 30, a: 0, c: 25, rep: { "Dr. Wichtig": 5 }, next: "path_ceo_sonnenwind", r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." },
 			{ t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, f: -10, a: -10, c: -10, r: "Du bleibst ruhig, während er schreit. Es war nur der Akku." },
-			{ t: "Ist der Akku leer?", m: 60, f: -10, a: 30, c: -10, rep: { "Dr. Wichtig": -5 }, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." },
-			{ t: "Lüge: 'Sonnenwinde stören'", m: 5, f: 30, a: 0, c: 25, rep: { "Dr. Wichtig": 5 }, r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." }
+			{ t: "Ist der Akku leer?", m: 60, f: -10, a: 30, c: -10, rep: { "Dr. Wichtig": -5 }, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." }
 		]
 	},
 	{
@@ -98,7 +101,7 @@ export const calls = [
 		opts: [
 			{ t: "Mit Panzertape fixen", req: "tape", rep: { "Markus": 5 }, m: 15, f: -5, a: -5, c: -5, r: "Du hast die Papierkassette mit Tape festgeklebt. Es hält... vorerst. Markus grunzt zufrieden." },
 			{ t: "Ist Papier im Drucker?", rep: { "Markus": -3 }, m: 10, f: -5, a: 20, c: -5, r: "Nein, war keins drin. Er entschuldigt sich natürlich nicht, sondern sagt: 'Das ist Ihre Aufgabe!'" },
-			{ t: "PDF per Mail senden", rep: { "Markus": -5 }, m: 5, f: 10, a: 0, c: 5, r: "Er versteht nicht, wie das geht. 'Ich will Papier!!' Du legst genervt auf." }
+			{ t: "PDF per Mail senden", rep: { "Markus": -5 }, next: "path_markus_papier", m: 5, f: 10, a: 0, c: 5, r: "Er versteht nicht, wie das geht. 'Ich will Papier!!' Du legst genervt auf." }
 		]
 	},
 	{
@@ -107,9 +110,9 @@ export const calls = [
 		title: "Die Sekretärin (Wütend)",
 		text: "Gabi vom Empfang brüllt ins Telefon: 'Der Drucker macht Geräusche wie eine sterbende Kaffeemühle! Ich habe seit heute Morgen keinen Kaffee und jetzt das! Tu was, sonst fliegt das Ding aus dem Fenster!'",
 		opts: [
+			{ t: "Vortrag halten", next: "call_sekretary_rage", rep: { "Gabi": -10 }, r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 },
 			{ t: "Donut anbieten", req: "donut", rep: { "Gabi": 10 }, r: "Du opferst deinen Notfall-Donut. Gabi beißt rein, ihr Blutzucker steigt, die Wut sinkt. Der Drucker ist immer noch kaputt, aber sie ignoriert es jetzt.", m: 10, f: 10, a: -20, c: 5 },
-			{ t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", rep: { "Gabi": 5 }, r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 },
-			{ t: "Vortrag halten", next: "call_sekretary_rage", rep: { "Gabi": -10 }, r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 }
+			{ t: "Aufschrauben", req: "screw", next: "call_sekretary_cable", rep: { "Gabi": 5 }, r: "Du öffnest die Wartungsklappe. Eine Büroklammer und drei Gummibärchen blockieren die Walze. Du holst sie raus. 'So, geht wieder!' ... Denkste.", m: 15, f: -5, a: 0, c: 0 }
 		]
 	},
 	{
@@ -119,9 +122,9 @@ export const calls = [
 		reqStory: "call_sekretary_cable",
 		text: "Die Mechanik läuft, aber das Display blinkt rot: 'OFFLINE'. Du schaust hinter das Gerät. Die LAN-Buchse ist leer. Daneben liegt ein Zettel von Chantal: 'Hab das Kabel für meinen Insta-Ringlicht-Strom gebraucht, Bussi!'",
 		opts: [
+			{ t: "WLAN-Antenne basteln", req: "tape", rep: { "Gabi": -5 }, r: "Du versuchst, aus einer Büroklammer und Tape eine Antenne zu bauen. Gabi fragt, ob du noch ganz dicht bist. Es funktioniert natürlich nicht.", m: 20, f: 0, a: 15, c: 5 },
 			{ t: "Neues Kabel legen", req: "cable", rep: { "Gabi": 5, "Chantal": 5 }, r: "Zack. Kabel rein. Grüne LED. Der Drucker spuckt sofort 50 Seiten 'Wichtige Akten' aus. Gabi schaut dich an wie einen Halbgott.", m: 2, f: -5, a: -10, c: -5 },
-			{ t: "Chantal suchen", rep: { "Chantal": -10, "Gabi": -5 }, r: "Du rennst durchs Haus, findest Chantal, streitest dich um das Kabel, kommst zurück. Gabi hat in der Zwischenzeit den Stecker gezogen. 'Jetzt ist er aus. Auch gut.'", m: 30, f: -10, a: 20, c: 10 },
-			{ t: "WLAN-Antenne basteln", req: "tape", rep: { "Gabi": -5 }, r: "Du versuchst, aus einer Büroklammer und Tape eine Antenne zu bauen. Gabi fragt, ob du noch ganz dicht bist. Es funktioniert natürlich nicht.", m: 20, f: 0, a: 15, c: 5 }
+			{ t: "Chantal suchen", rep: { "Chantal": -10, "Gabi": -5 }, r: "Du rennst durchs Haus, findest Chantal, streitest dich um das Kabel, kommst zurück. Gabi hat in der Zwischenzeit den Stecker gezogen. 'Jetzt ist er aus. Auch gut.'", m: 30, f: -10, a: 20, c: 10 }
 		]
 	},
 	{
@@ -131,9 +134,9 @@ export const calls = [
 		reqStory: "call_sekretary_rage",
 		text: "Gabi hat genug von deinem Vortrag. 'Ich zeig dir mal, was kaputt ist!' Sie reißt die Toner-Kartusche raus und schüttelt sie wild. Eine schwarze Staubwolke explodiert im Raum. Du siehst aus wie ein Schornsteinfeger.",
 		opts: [
-			{ t: "Wegrennen", rep: { "Gabi": -10 }, r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 },
 			{ t: "Putzen helfen", rep: { "Gabi": 10 }, r: "Du versuchst, den Toner wegzuwischen. Er schmiert nur noch mehr. Nach einer Stunde sehen ihr beide aus wie Bergarbeiter. Aber das schweißt zusammen.", m: 60, f: -20, a: -5, c: 0 },
-			{ t: "Erklären, dass Toner giftig ist", rep: { "Gabi": -15 }, r: "Gabi fängt an zu weinen. Dann zu schreien. Der Sicherheitsdienst begleitet dich raus.", m: 10, f: 0, a: 50, c: 20 }
+			{ t: "Erklären, dass Toner giftig ist", rep: { "Gabi": -15 }, r: "Gabi fängt an zu weinen. Dann zu schreien. Der Sicherheitsdienst begleitet dich raus.", m: 10, f: 0, a: 50, c: 20 },
+			{ t: "Wegrennen", rep: { "Gabi": -10 }, r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 }
 		]
 	},
 		{
@@ -142,8 +145,8 @@ export const calls = [
 			title: "Hausmeister Egon",
 			text: "Im Serverraum tropft es von der Decke. Das Wasser ist neongrün. Soll ich Eimer drunterstellen oder ist das Kühlflüssigkeit von den Aliens?",
 			opts: [
-				{ t: "Sofort hinrennen!", m: 45, f: -20, a: 20, c: -15, rep: { "Egon": 5 }, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." },
-				{ t: "Egal, lass tropfen", m: 5, f: 30, a: 0, c: 40, rep: { "Egon": -5 }, r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." }
+				{ t: "Egal, lass tropfen", m: 5, f: 30, a: 0, c: 40, rep: { "Egon": -5 }, next: "path_egon_switch", r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." },
+				{ t: "Sofort hinrennen!", m: 45, f: -20, a: 20, c: -15, rep: { "Egon": 5 }, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." }
 			]
 		},
 		{
@@ -221,16 +224,10 @@ export const calls = [
 			text: "Wieso ist Zalando gesperrt? Ich muss... Recherche machen! Für Trends! Mach das auf, sonst sag ich dem Chef, du guckst Pornos auf der Arbeit!",
 			opts: [
 				{ 
-					t: "Gegenangriff: 'Ich sag nur: Deine Spesenabrechnung...'",
-					req: "secret_list", 
-					rep: { "Chantal": -10 },
-					m: 5, f: 0, a: -10, c: -10, 
-					r: "Du erwähnst ganz ruhig ihre gefälschten Zahlen aus der Geheimakte. Sie wird kreidebleich, stammelt eine Entschuldigung und legt sofort auf. Schachmatt." 
-				},
-				{ 
 					t: "Angst haben & sofort freischalten",
 					rep: { "Chantal": 10, "Dr. Wichtig": -2 },
 					m: 10, f: 15, a: 10, c: 20, 
+					next: "path_chantal_offen",
 					r: "Du hast Angst vor dem Gerücht und gibst ihr Zugriff. Sie shoppt jetzt Schuhe. Du hast deine Ruhe, aber die Firewall ist jetzt offen wie ein Scheunentor." 
 				},
 				{ 
@@ -238,6 +235,14 @@ export const calls = [
 					rep: { "Chantal": -10, "Dr. Wichtig": 2 },
 					m: 30, f: -5, a: 20, c: 0, 
 					r: "Du diskutierst 30 Minuten lang über Compliance. Sie nennt dich 'Spaßbremse' und knallt wütend den Hörer auf. Zalando bleibt zu. Ein moralischer Sieg." 
+				},
+				{ 
+					t: "Gegenangriff: 'Ich sag nur: Deine Spesenabrechnung...'",
+					req: "secret_list", 
+					rep: { "Chantal": -10 },
+					m: 5, f: 0, a: -10, c: -10, 
+					next: "path_chantal_schach",
+					r: "Du erwähnst ganz ruhig ihre gefälschten Zahlen aus der Geheimakte. Sie wird kreidebleich, stammelt eine Entschuldigung und legt sofort auf. Schachmatt." 
 				}
 			]
 		},
@@ -282,9 +287,9 @@ export const calls = [
 			title: "Herr Schmidt (Vertrieb)",
 			text: "Herr Müller! Ich bin beim Kunden und mein Hotspot geht nicht! Ich hab das Kennwort auf so einen gelben Zettel geschrieben, aber ich weiß nicht mehr wo der ist! Helfen Sie mir, schnell!",
 			opts: [
+				{ t: "Sagen: 'Tja, Pech gehabt'", m: 2, f: 10, a: 0, c: 20, r: "Du legst auf. Das wird ein riesiges Nachspiel haben." },
 				{ t: "Kennwort vorlesen", req: "wifi_note", m: 5, f: 10, a: -10, c: -10, r: "Du liest das Passwort vom Zettel vor, den du gefunden hast. Schmidt jubelt: 'Sie sind ein Gott!'" },
-				{ t: "Reset durchführen", m: 45, f: -10, a: 25, c: -5, r: "Du musstest den Hotspot komplett zurücksetzen. Schmidt musste 45 Min warten. Er war stinksauer." },
-				{ t: "Sagen: 'Tja, Pech gehabt'", m: 2, f: 10, a: 0, c: 20, r: "Du legst auf. Das wird ein riesiges Nachspiel haben." }
+				{ t: "Reset durchführen", m: 45, f: -10, a: 25, c: -5, r: "Du musstest den Hotspot komplett zurücksetzen. Schmidt musste 45 Min warten. Er war stinksauer." }
 			]
 		},
 		{
@@ -293,11 +298,6 @@ export const calls = [
 			text: "Herr Aluhut aus dem Einkauf flüstert ins Telefon: 'Sie hören uns ab, oder? Meine Webcam hat gerade geblinkt! Ich habe das Mikrofon schon mit Kaugummi zugeklebt, aber der Mauszeiger folgt meinen Augen! Deaktivieren Sie die staatliche Überwachung!'",
 			opts: [
 				{ 
-					t: "Flüstern: 'Wir sehen alles. Projekt Gläserner Bürger.'", 
-					m: 10, f: 20, a: 0, c: 10, 
-					r: "Er schreit kurz auf und reißt das Netzwerkkabel aus der Wand. Er ist jetzt offline. Das Problem ist technisch gelöst, aber er schreibt ab sofort Beschwerdebriefe auf der Schreibmaschine." 
-				},
-				{ 
 					t: "Versuchen, es logisch zu erklären",
 					m: 30, f: -5, a: 15, c: 0, 
 					r: "Du redest über Treiber-Updates. Er unterbricht dich sofort: 'Das würde ein Geheimagent auch sagen!' Er legt auf, um seinen Anwalt anzurufen." 
@@ -305,7 +305,13 @@ export const calls = [
 				{ 
 					t: "Profi-Tipp: 'Wickeln Sie den Router in Alufolie!'", 
 					m: 5, f: 15, a: -5, c: 5, 
+					next: "path_aluhut_folie",
 					r: "Er bedankt sich erleichtert: 'Endlich ein Wissender!' Er wickelt Router und Kopfhörer ein. Das WLAN ist tot, aber er fühlt sich endlich sicher." 
+				},
+				{ 
+					t: "Flüstern: 'Wir sehen alles. Projekt Gläserner Bürger.'", 
+					m: 10, f: 20, a: 0, c: 10, 
+					r: "Er schreit kurz auf und reißt das Netzwerkkabel aus der Wand. Er ist jetzt offline. Das Problem ist technisch gelöst, aber er schreibt ab sofort Beschwerdebriefe auf der Schreibmaschine." 
 				}
 			]
 		},
@@ -347,6 +353,7 @@ export const calls = [
 	},
 	{
 		id: "call_grandma_2",
+		char: "Egon",
 		reqStory: "grandma_darkness",
 		title: "Hausmeister Egon",
 		startNode: "root",
@@ -378,19 +385,20 @@ export const calls = [
 			{ 
 				t: "Behaupten: 'Das sind alles nur Test-Server!'",
 				m: 20, f: 10, a: 10, c: 20, 
+				next: "path_audit_testserver",
 				r: "Er schreibt etwas auf. Das Tippen klingt aggressiv. 'Ich notiere: Verdächtige Ausreden.' Dein Radar steigt, er hat dir das nicht abgekauft." 
-			},
-			{ 
-				t: "Wortlos auflegen & Server formatieren",
-				rep: { "Dr. Wichtig": -10 },
-				m: 5, f: -10, a: 20, c: 50, 
-				r: "Panikreaktion! Du hast alle Beweise vernichtet. Der Auditor ruft nicht mehr an, aber morgen wird der Chef fragen, wo die Datenbank hin ist." 
 			},
 			{ 
 				t: "Alles gestehen & Lizenzen nachkaufen",
 				rep: { "Dr. Wichtig": -15 },
 				m: 60, f: -20, a: 0, c: 10, 
 				r: "Du gehst die Liste reumütig mit ihm durch. Es dauert ewig. Du hast rechtlich alles sauber gelöst, aber der Chef tobt wegen der Rechnung über 15.000€." 
+			},
+			{ 
+				t: "Wortlos auflegen & Server formatieren",
+				rep: { "Dr. Wichtig": -10 },
+				m: 5, f: -10, a: 20, c: 50, 
+				r: "Panikreaktion! Du hast alle Beweise vernichtet. Der Auditor ruft nicht mehr an, aber morgen wird der Chef fragen, wo die Datenbank hin ist." 
 			}
 		]
 	},
@@ -399,19 +407,20 @@ export const calls = [
 		title: "Die weinende Praktikantin",
 		text: "Lena aus dem Marketing schluchzt ins Telefon: 'Ich habe... ich habe die Präsentation für den Vorstand gelöscht. Und den Papierkorb geleert. Und dann habe ich den PC neugestartet, weil ich dachte, das hilft. Die Präsentation ist in 20 Minuten! Mein Leben ist vorbei!'",
 		opts: [
+			{ t: "Kalt abservieren: 'Kein Backup, kein Mitleid'", m: 2, f: 5, a: -5, c: 0, r: "Du legst auf. Das Weinen verstummt. Du fühlst dich kurz schlecht, dann trinkst du Kaffee." },
 			{ t: "Professionelle Datenrettung", m: 90, f: -30, a: 10, c: -20, r: "Du hast Sektor für Sektor der Festplatte gescannt. Du hast die Datei gefunden! Lena bringt dir morgen Kuchen. Held der Arbeit." },
-			{ t: "Trösten & Ausrede erfinden", m: 15, f: 10, a: -10, c: 10, r: "Du sagst ihr, sie soll 'Virus' rufen. Sie kommt ungeschoren davon, aber die IT (du) steht jetzt dumm da." },
-			{ t: "Kalt abservieren: 'Kein Backup, kein Mitleid'", m: 2, f: 5, a: -5, c: 0, r: "Du legst auf. Das Weinen verstummt. Du fühlst dich kurz schlecht, dann trinkst du Kaffee." }
+			{ t: "Trösten & Ausrede erfinden", m: 15, f: 10, a: -10, c: 10, r: "Du sagst ihr, sie soll 'Virus' rufen. Sie kommt ungeschoren davon, aber die IT (du) steht jetzt dumm da." }
 		]
 	},
 	{
 		id: "call_junior",
+		char: "Dr. Wichtig",
 		title: "Shadow-CEO Junior",
 		text: "Der Sohn vom Chef (12 Jahre) ruft an: 'Ey, IT-Typ! Mach mal die Ports für meinen Minecraft-Server auf. Papa sagt, das gehört mir alles hier. Wenn du es nicht machst, sag ich ihm, du hast mich geschlagen!'",
 		opts: [
+			{ t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'", next: "path_junior_matrix",rep: { "Dr. Wichtig": -2 }, m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." },
 			{ t: "Sofort die Ports öffnen", next: "path_junior_ports", rep: { "Dr. Wichtig": 10 }, m: 10, f: 20, a: 0, c: 10, r: "Der Junge ist glücklich. 2 Stunden später ist das Firmennetz voller russischer Bots, weil du alles aufgemacht hast. Das wird ein Nachspiel haben." },
-			{ t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", next: "path_junior_eskal", rep: { "Dr. Wichtig": -10 }, m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." },
-			{ t: "Lügen: 'Die Firewall-Matrix hat negative Polarität'", next: "path_junior_matrix",rep: { "Dr. Wichtig": -2 }, m: 15, f: 5, a: 0, c: -5, r: "Du brabbelst technisches Kauderwelsch. Er checkt es nicht, murmelt 'Scheiß Technik' und legt auf. Gefahr gebannt." }
+			{ t: "Erziehungsmaßnahme: 'Hör zu, Kleiner...'", next: "path_junior_eskal", rep: { "Dr. Wichtig": -10 }, m: 5, f: 0, a: -20, c: 30, r: "Du erklärst ihm lautstark, dass er ein verzogenes Balg ist. Er fängt an zu schreien. Der Chef kommt bereits die Treppe runtergestampft." }
 		]
 	},
 	{
@@ -419,9 +428,9 @@ export const calls = [
 		title: "Das 'Skynet' Problem",
 		text: "Die neue 'Smart Office' KI hat die Kaffeemaschine, die Jalousien und die Toilettentüren verriegelt. Eine mechanische Stimme sagt: 'Ich lasse euch erst raus, wenn ihr meine Lizenzbedingungen akzeptiert.'",
 		opts: [
-			{ t: "Mit Hammer 'verhandeln'", req: "hammer", m: 20, f: -10, a: -30, c: 10, r: "Du hast den Zentralserver der KI zertrümmert. Die Türen sind offen. Sachschaden: 10.000€. Befriedigung: Unbezahlbar." },
 			{ t: "AGBs lesen und akzeptieren", m: 120, f: -40, a: 30, c: -10, r: "Du hast 2 Stunden lang Kleingedrucktes gelesen. Alle hassen dich, weil sie so lange eingesperrt waren." },
-			{ t: "Stecker ziehen", m: 5, f: 10, a: 0, c: 20, r: "Alles ist aus. Auch das Licht. Aber die Türen sind offen." }
+			{ t: "Stecker ziehen", m: 5, f: 10, a: 0, c: 20, r: "Alles ist aus. Auch das Licht. Aber die Türen sind offen." },
+			{ t: "Mit Hammer 'verhandeln'", req: "hammer", m: 20, f: -10, a: -30, c: 10, r: "Du hast den Zentralserver der KI zertrümmert. Die Türen sind offen. Sachschaden: 10.000€. Befriedigung: Unbezahlbar." }
 		]
 	},
 	{
@@ -460,6 +469,11 @@ export const calls = [
 		text: "Müller am Apparat: 'Mein Internet geht immer an und aus wenn ich atme! Das Kabel wackelt in der Dose. Können Sie nicht herkommen?' Du hast keine Lust auf Laufen.",
 		opts: [
 			{ 
+				t: "Lüge: 'Wir schalten auf WLAN-Strom um.'", 
+				m: 2, f: 10, a: 10, c: 5,
+				r: "'Ach, moderne Technik!' Müller ist begeistert. 'Dann brauche ich das Kabel ja nicht mehr.' *Klick*. Er legt auf. Hoffentlich zieht er es nicht wirklich ab." 
+			},
+			{ 
 				t: "Anweisung: 'Kleben Sie es mit Tape fest.'", 
 				next: "loose_taped",
 				m: 5, f: 5, a: -5, c: 0, 
@@ -470,11 +484,6 @@ export const calls = [
 				next: "loose_tied",
 				m: 5, f: 0, a: 0, c: 0, 
 				r: "'Moment...' Rascheln. 'Okay, ich habe es am Tischbein festgezurrt. Zugentlastung, wie Sie sagten.' Es scheint zu halten." 
-			},
-			{ 
-				t: "Lüge: 'Wir schalten auf WLAN-Strom um.'", 
-				m: 2, f: 10, a: 10, c: 5,
-				r: "'Ach, moderne Technik!' Müller ist begeistert. 'Dann brauche ich das Kabel ja nicht mehr.' *Klick*. Er legt auf. Hoffentlich zieht er es nicht wirklich ab." 
 			}
 		]
 	},
@@ -509,6 +518,12 @@ export const calls = [
 		text: "Müller wieder. 'Sagen Sie mal... ich wollte den Kabelbinder lösen, weil ich nach Hause will. Ich hatte keine Schere, nur so ein Teppichmesser... jetzt ist das Internet ganz weg und das Kabel hat zwei Enden.'",
 		opts: [
 			{ 
+				t: "Profi: Anleitung zum Crimpen geben", 
+				rep: { "Dr. Wichtig": 2 },
+				m: 20, f: -20, a: 15, c: -10,
+				r: "Du erklärst ihm 20 Minuten lang, welche Ader wohin gehört. 'Weiß-Orange auf Eins...' Es ist mühsam, Müller versteht nichts, aber am Ende steht die Verbindung. Der Chef lobt den Einsatz." 
+			},
+			{ 
 				t: "Sarkasmus: 'Knoten reinmachen?'", 
 				rep: { "Dr. Wichtig": -2 },
 				m: 5, f: 5, a: 5, c: 15,
@@ -518,12 +533,6 @@ export const calls = [
 				t: "Seufzen: 'Neues Kabel kommt per Post.'", 
 				m: 5, f: 5, a: 5, c: 0, 
 				r: "Du bestellst ein Kabel per Hauspost. 'Bis morgen, Herr Müller.' Er ist enttäuscht, aber er kann heute keinen Schaden mehr anrichten." 
-			},
-			{ 
-				t: "Profi: Anleitung zum Crimpen geben", 
-				rep: { "Dr. Wichtig": 2 },
-				m: 20, f: -20, a: 15, c: -10,
-				r: "Du erklärst ihm 20 Minuten lang, welche Ader wohin gehört. 'Weiß-Orange auf Eins...' Es ist mühsam, Müller versteht nichts, aber am Ende steht die Verbindung. Der Chef lobt den Einsatz." 
 			}
 		]
 	},
@@ -533,9 +542,9 @@ export const calls = [
 		title: "Passwort-Vergesser",
 		text: "Der CEO ruft an: 'Müller! Ich komme nicht ins System! Welches Passwort habe ich für den Server 'Geheim' gesetzt? Sie müssen das doch wissen!'",
 		opts: [
-			{ t: "Root-Zugang nutzen & zurücksetzen", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: 10, a: 0, c: -10, r: "Du setzt es remote auf 'Chef123' zurück. Er atmet auf: 'Gute Arbeit, Müller. Behalten Sie das für sich.'" },
 			{ t: "Mit ihm gemeinsam raten", rep: { "Dr. Wichtig": -5 }, m: 20, f: 0, a: 20, c: 10, r: "Du fragst: 'War es vielleicht Ihr Geburtstag?' Nein. 'Name der Geliebten?' Langes Schweigen. Er wird langsam richtig wütend." },
-			{ t: "Passwort mit dem USB-Stick knacken", req: "usb_stick", rep: { "Dr. Wichtig": 10 }, m: 10, f: 5, a: 0, c: 0, r: "Du liest das Passwort in 10 Sekunden aus. Er ist tief beeindruckt von deinen Hacker-Skills (und sollte dir eigentlich aus Angst sofort kündigen)." }
+			{ t: "Passwort mit dem USB-Stick knacken", req: "usb_stick", rep: { "Dr. Wichtig": 10 }, m: 10, f: 5, a: 0, c: 0, r: "Du liest das Passwort in 10 Sekunden aus. Er ist tief beeindruckt von deinen Hacker-Skills (und sollte dir eigentlich aus Angst sofort kündigen)." },
+			{ t: "Root-Zugang nutzen & zurücksetzen", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: 10, a: 0, c: -10, r: "Du setzt es remote auf 'Chef123' zurück. Er atmet auf: 'Gute Arbeit, Müller. Behalten Sie das für sich.'" }
 		]
 	},
 	{
@@ -553,9 +562,9 @@ export const calls = [
 		title: "Der aggressive Drucker",
 		text: "Der große Kopierer im Flur rattert extrem laut und vibriert durch den Boden. Die Buchhaltung hat Angst.",
 		opts: [
+			{ t: "Techniker rufen", m: 30, f: 10, a: 0, c: 5, r: "Dauert 3 Tage. Bis dahin nervt es." },
 			{ t: "Perkussive Wartung", req: "hammer", m: 5, f: 5, a: -20, c: 10, r: "Ein gezielter Schlag an die Seite. Das Rattern hört auf. Stille. User klatschen." },
-			{ t: "Dämpfer basteln", req: "tape", m: 20, f: -5, a: 5, c: 0, r: "Du hast Filzgleiter aus Tape gebastelt. Es ist leiser." },
-			{ t: "Techniker rufen", m: 30, f: 10, a: 0, c: 5, r: "Dauert 3 Tage. Bis dahin nervt es." }
+			{ t: "Dämpfer basteln", req: "tape", m: 20, f: -5, a: 5, c: 0, r: "Du hast Filzgleiter aus Tape gebastelt. Es ist leiser." }
 		]
 	},
 	{
@@ -563,7 +572,7 @@ export const calls = [
 		title: "Antike Software",
 		text: "Die Produktion steht still! Die uralte CNC-Fräse läuft noch auf DOS 6.0 und verlangt blinkend nach 'Disk 2'. Keiner weiß, wo die ist, der Bediener schwitzt Panik.",
 		opts: [
-			{ t: "Floppy-Emulator vom Stick booten", req: "usb_stick", m: 45, f: -20, a: 10, c: -20, r: "Du hackst den Parallelport und mountest ein Image. Du fühlst dich wie ein technischer Gott. Die Produktion läuft wieder an." },
+			{ t: "Floppy-Emulator vom Stick booten", req: "usb_stick", m: 45, f: -20, a: 10, c: -20, next: "path_cnc_emulator", r: "Du hackst den Parallelport und mountest ein Image. Du fühlst dich wie ein technischer Gott. Die Produktion läuft wieder an." },
 			{ t: "Im verstaubten Handbuch nachsehen", req: "manual", m: 30, f: -10, a: 0, c: 0, r: "Du blätterst das fettige Buch durch. Tatsächlich! Ganz hinten klebt die Diskette im Umschlag. Glück muss man haben." },
 			{ t: "Einfach mal neu starten", m: 15, f: 0, a: 10, c: 20, r: "Schlechte Idee. Der Puffer-Speicher war leer. Die Fräse spinnt und bohrt sich mit einem lauten Kreischen in den eigenen Tisch. Totalschaden." }
 		]
@@ -573,9 +582,9 @@ export const calls = [
 		title: "Kabel-Wirrwarr",
 		text: "Unter dem Tisch des neuen Kollegen sieht es aus wie Spaghetti. Er tritt ständig den Stecker raus.",
 		opts: [
-			{ t: "Kabelbinder-Einsatz", req: "zip_ties", m: 20, f: -5, a: -10, c: 0, r: "Alles sauber gebündelt und hochgebunden. r/CablePorn Material." },
 			{ t: "Tape an Tisch", req: "tape", m: 10, f: 0, a: 0, c: 0, r: "Vier Streifen Panzertape quer über die Tischkante, fertig. Es sieht aus wie ein Verband nach einem Arbeitsunfall, aber der Stecker bleibt drin. Bis jemand den Tisch verschiebt." },
-			{ t: "Ihn belehren", m: 15, f: 0, a: 10, c: 0, r: "Du erklärst geduldig Zugentlastung, Kabelkanäle und warum ein Stecker kein Stolperseil ist. Er nickt durchgehend und tritt noch während deiner Erklärung das Netzkabel aus der Buchse." }
+			{ t: "Ihn belehren", m: 15, f: 0, a: 10, c: 0, r: "Du erklärst geduldig Zugentlastung, Kabelkanäle und warum ein Stecker kein Stolperseil ist. Er nickt durchgehend und tritt noch während deiner Erklärung das Netzkabel aus der Buchse." },
+			{ t: "Kabelbinder-Einsatz", req: "zip_ties", m: 20, f: -5, a: -10, c: 0, r: "Alles sauber gebündelt und hochgebunden. r/CablePorn Material." }
 		]
 	},
 	{
@@ -583,6 +592,19 @@ export const calls = [
 		title: "Privatanruf: Schwiegerpapa Werner",
 		text: "Dein Bürotelefon klingelt. Das Display zeigt 'Unbekannt'.\n\n'JÜRGEN? HÖRST DU MICH??'\n\nEs ist Werner, dein Schwiegervater. Er schreit, als würde er über den Atlantik rufen.\n\n'Die Renate hat mir dieses Wisch-Brett geschenkt! Ich drücke auf den Briefumschlag, aber da kommen keine Briefe! Und der Enkel sagt, ich soll mir Wozz-Äpp holen. Aber dieser Äpp-Laden will ein Passwort! Helf mir mal eben, das dauert doch nur eine Minute!'",
 		opts: [
+			{ 
+				t: "Noise-Cancelling an & einfach 'Ja' sagen", 
+				req: "headphones", 
+				m: 30, f: 20, a: -15, c: 5, 
+				next: "path_werner_blind",
+				r: "Du aktivierst die Stille. Du hörst Werner nur noch dumpf meckern. Ab und zu sagst du 'Mhm' und 'Klick da mal drauf'. Nach 30 Minuten legt er zufrieden auf. Du hast keine Ahnung, was er installiert hat." 
+			},
+			{ 
+				t: "Verwirrung stiften: Aus dem Win95-Handbuch vorlesen", 
+				req: "manual", 
+				m: 10, f: 5, a: -10, c: 0, 
+				r: "Du liest ihm Kapitel 4 vor: 'Einrichten eines 56k Modems'. Werner ist völlig verwirrt: 'Modem? Muss ich in den Keller?' Er legt auf, um das Modem an der Heizung zu suchen. Du hast deine Ruhe." 
+			},
 			{ 
 				t: "Geduldig Schritt-für-Schritt erklären",
 				rep: { "Dr. Wichtig": -5 },					
@@ -593,18 +615,6 @@ export const calls = [
 				t: "Abwimmeln: 'Werner, ich arbeite gerade!'", 
 				m: 5, f: 0, a: 20, c: -5, 
 				r: "Stille am anderen Ende. Dann ganz leise: 'Schon gut... Ich wollte ja nicht stören. Die Renate hatte Recht, du hast nie Zeit.' Klick. Das schlechte Gewissen wird dich den ganzen Tag verfolgen." 
-			},
-			{ 
-				t: "Noise-Cancelling an & einfach 'Ja' sagen", 
-				req: "headphones", 
-				m: 30, f: 20, a: -15, c: 5, 
-				r: "Du aktivierst die Stille. Du hörst Werner nur noch dumpf meckern. Ab und zu sagst du 'Mhm' und 'Klick da mal drauf'. Nach 30 Minuten legt er zufrieden auf. Du hast keine Ahnung, was er installiert hat." 
-			},
-			{ 
-				t: "Verwirrung stiften: Aus dem Win95-Handbuch vorlesen", 
-				req: "manual", 
-				m: 10, f: 5, a: -10, c: 0, 
-				r: "Du liest ihm Kapitel 4 vor: 'Einrichten eines 56k Modems'. Werner ist völlig verwirrt: 'Modem? Muss ich in den Keller?' Er legt auf, um das Modem an der Heizung zu suchen. Du hast deine Ruhe." 
 			}
 		]
 	},
@@ -614,15 +624,15 @@ export const calls = [
 		text: "Eine weinerliche Stimme am Telefon: 'Bist du der Computer-Mann? Mein Kreativ-Tonie geht nicht! Der Löwe singt nicht, die Box blinkt nur rot! Mach den Löwen heile! SOFORT!'",
 		opts: [
 			{ 
-				t: "Lügen: 'Du brauchst die Toniebox 2 PRO!'", 
-				m: 5, f: 10, a: -20, c: -5, 
-				r: "Du flüsterst verschwörerisch: 'Weck Mama und sag, sie muss die JETZT kaufen.' Das Kind rennt los. Du hast Ruhe und wirkst beschäftigt, bist aber eigentlich nur gemein." 
-			},
-			{ 
 				t: "Helfen: 'Du musst die Box hauen!'", 
 				rep: { "Dr. Wichtig": -2 },
 				m: 25, f: -10, a: 5, c: 15, 
 				r: "Du erklärst den Reset-Trick durch Klopfen. Der Chef läuft vorbei und sieht, wie du wilde Karate-Bewegungen machst, als würdest du einen unsichtbaren Würfel verprügeln. 'Alles klar bei Ihnen, Müller?'" 
+			},
+			{ 
+				t: "Lügen: 'Du brauchst die Toniebox 2 PRO!'", 
+				m: 5, f: 10, a: -20, c: -5, 
+				r: "Du flüsterst verschwörerisch: 'Weck Mama und sag, sie muss die JETZT kaufen.' Das Kind rennt los. Du hast Ruhe und wirkst beschäftigt, bist aber eigentlich nur gemein." 
 			},
 			{ 
 				t: "Wortlos auflegen", 
@@ -662,12 +672,6 @@ export const calls = [
 		text: "MÜLLER! Der Drucker im Flur qualmt! Das Papier ist alle und der Toner ist explodiert! Das ist ein riesiges... na, sagen Sie schon! Was haben wir da?!",
 		opts: [
 			{ 
-				t: "Ein riesiges Problem!",
-				rep: { "Dr. Wichtig": -10 },
-				m: 10, f: 0, a: 10, c: 25, 
-				r: "Der Chef schreit: 'WIR HABEN KEINE PROBLEME! WIR HABEN HERAUSFORDERUNGEN! Sie haben die falsche Einstellung, Müller!' Er legt wütend auf." 
-			},
-			{ 
 				t: "Eine spannende Herausforderung!",
 				rep: { "Dr. Wichtig": 5 },
 				m: 5, f: 5, a: -5, c: -10, 
@@ -677,6 +681,12 @@ export const calls = [
 				t: "Ein Fall für die Feuerwehr", 
 				m: 5, f: 0, a: 0, c: 5, 
 				r: "Er ignoriert dich und murmelt 'Agiles Mindset...' vor sich hin." 
+			},
+			{ 
+				t: "Ein riesiges Problem!",
+				rep: { "Dr. Wichtig": -10 },
+				m: 10, f: 0, a: 10, c: 25, 
+				r: "Der Chef schreit: 'WIR HABEN KEINE PROBLEME! WIR HABEN HERAUSFORDERUNGEN! Sie haben die falsche Einstellung, Müller!' Er legt wütend auf." 
 			}
 		]
 	},
@@ -687,6 +697,12 @@ export const calls = [
 		text: "Müller! Im Serverraum sind minus 10 Grad! Ich steh hier vor der Anlage. Meine Brille ist beschlagen, mir frieren die Zehen ab! Ich muss das Ding wärmer stellen! Soll ich den Regler in den roten oder den blauen Bereich drehen? Schnell!",
 		opts: [
 			{ 
+				t: "Mir egal, dreh einfach an irgendwas!",
+				rep: { "Egon": -2 }, 
+				m: 10, f: 0, a: 0, c: 0, 
+				r: "Egon flucht: 'Dann mach ich das Ding eben aus!' Er zieht den Hauptstecker. Es wird warm, aber der Server ist tot. Stille." 
+			},
+			{ 
 				t: "Auf ROT drehen! Rot ist immer warm!",
 				rep: { "Egon": -5 },
 				m: 30, f: -10, a: 20, c: 10, 
@@ -696,13 +712,8 @@ export const calls = [
 				t: "Auf BLAU drehen! Vertrau mir!",
 				rep: { "Egon": 5 }, 
 				m: 5, f: 5, a: 0, c: -5, 
+				next: "path_egon_blau",
 				r: "Egon zögert: 'Blau? Bist du sicher? Das ist doch Kalt...' Er dreht auf Blau. Plötzlich strömt warme Luft. 'Verrückte Technik! Du bist ein Genie, Müller!'" 
-			},
-			{ 
-				t: "Mir egal, dreh einfach an irgendwas!",
-				rep: { "Egon": -2 }, 
-				m: 10, f: 0, a: 0, c: 0, 
-				r: "Egon flucht: 'Dann mach ich das Ding eben aus!' Er zieht den Hauptstecker. Es wird warm, aber der Server ist tot. Stille." 
 			}
 		]
 	},
@@ -719,6 +730,7 @@ export const calls = [
 			{ 
 				t: "Probier mal '0000'",
 				m: 5, f: 10, a: -5, c: -10, 
+				next: "path_lena_keller",
 				r: "Piep-Piep-Klick. 'Oh mein Gott, es geht! Du bist mein Held!' Sie ist frei. Du fühlst dich wie ein Hacker." 
 			},
 			{ 
@@ -837,12 +849,6 @@ export const calls = [
 		text: "Herr Müller... mir ist so schwindelig... Unterzucker... Ich brauche Schokolade... sofort! Aber der Automat ist leer! Haben wir nirgendwo was Süßes?!",
 		opts: [
 			{ 
-				t: "Ich glaube im Kühlschrank ist Senf?",
-				rep: { "Gabi": -5 },
-				m: 10, f: 0, a: 10, c: 0, 
-				r: "Gabi legt auf. Später hörst du, dass sie vor Schwäche ohnmächtig geworden ist. Der Sanitäter musste kommen." 
-			},
-			{ 
 				t: "Guck mal in den Ordner 'Steuer 1990'...",
 				rep: { "Gabi": 5 },
 				m: 5, f: 10, a: -10, c: -5, 
@@ -854,6 +860,13 @@ export const calls = [
 				rep: { "Gabi": 5 },
 				m: 5, f: 0, a: -5, c: 0, 
 				r: "Du bringst ihr deinen Donut. Nett, aber du bist dein Essen los." 
+			},
+			{ 
+				t: "Ich glaube im Kühlschrank ist Senf?",
+				rep: { "Gabi": -5 },
+				m: 10, f: 0, a: 10, c: 0, 
+				next: "path_gabi_kollaps",
+				r: "Gabi legt auf. Später hörst du, dass sie vor Schwäche ohnmächtig geworden ist. Der Sanitäter musste kommen." 
 			}
 		]
 	},
@@ -863,14 +876,14 @@ export const calls = [
 		text: "Eine tiefe Stimme am Telefon: 'Hier ist Herr Löffel aus der Kantine. Mein Bondrucker streikt! Ich kann keine Belege für das Finanzamt drucken! Kommen Sie sofort her!'",
 		opts: [
 			{ 
-				t: "Sagen: 'Ja, Herr Koch, ich komme.'",
-				m: 30, f: 0, a: 20, c: 5, 
-				r: "Stille. Dann Gebrüll: 'KOCH?! ICH BIN NUTRITION ARTIST!' Er knallt den Hörer auf. Du musst hingehen und er lässt dich 20 Minuten warten." 
-			},
-			{ 
 				t: "Sagen: 'Ja, Herr Senior Nutrition Artist.'",
 				m: 5, f: 5, a: -5, c: 0, 
 				r: "Er schnurrt fast: 'Endlich jemand mit Respekt!' Er drückt vor Freude einfach mal auf 'Feed' und der Drucker geht wieder. 'Danke, Müller!'" 
+			},
+			{ 
+				t: "Sagen: 'Ja, Herr Koch, ich komme.'",
+				m: 30, f: 0, a: 20, c: 5, 
+				r: "Stille. Dann Gebrüll: 'KOCH?! ICH BIN NUTRITION ARTIST!' Er knallt den Hörer auf. Du musst hingehen und er lässt dich 20 Minuten warten." 
 			},
 			{ 
 				t: "Auflegen", 
@@ -886,6 +899,12 @@ export const calls = [
 		text: "Schluchz... 'Herr Müller? Meine Excel-Tabelle ist weg! Alles schwarz! Ich drücke Tasten, aber nichts passiert! Ich bin so zittrig heute...'",
 		opts: [
 			{ 
+				t: "Neustart befehlen", 
+				rep: { "Frau Elster": 2 },
+				m: 5, f: 10, a: 10, c: 0, 
+				r: "Hat funktioniert, aber sie wirkt immer noch verstört." 
+			},
+			{ 
 				t: "Kalt: 'Haben Sie ein Ticket?'", next: "path_excel_ticket", 
 				rep: { "Frau Elster": -5 },
 				m: 5, f: 5, a: 5, c: 5, 
@@ -896,12 +915,6 @@ export const calls = [
 				rep: { "Frau Elster": 5 }, 
 				m: 20, f: -5, a: -10, c: 0, 
 				r: "Du redest ihr gut zu. Die Datei ist wieder da. Sie atmet auf: 'Danke! Sie sind so lieb. Genau wie mein Kater *Rüdiger*. Der spürt auch immer, wenn es mir schlecht geht. Rüdiger ist mein einziger Halt.'" 
-			},
-			{ 
-				t: "Neustart befehlen", 
-				rep: { "Frau Elster": 2 },
-				m: 5, f: 10, a: 10, c: 0, 
-				r: "Hat funktioniert, aber sie wirkt immer noch verstört." 
 			}
 		]
 	},
@@ -911,6 +924,11 @@ export const calls = [
 		text: "SCHNELL! Ich brauche diesen Export! Deadline war gestern! Wenn das nicht klappt, springe ich aus dem Fenster! Ich halte diesen Druck nicht mehr aus!",
 		opts: [
 			{ 
+				t: "Auf Ticket bestehen",
+				m: 15, f: 0, a: 10, c: 0, 
+				r: "Er fängt an zu weinen: 'BITTE!'. Du hast Mitleid und schickst die Datei doch. Er bedankt sich kurz angebunden." 
+			},
+			{ 
 				t: "Datei sofort senden",
 				m: 10, f: -5, a: 5, c: 0,
 				r: "Er atmet schwer aus. 'Danke. Puh. Ich muss runterkommen. Wissen Sie, eigentlich will ich nur tanzen. Das ist meine wahre Leidenschaft. Nicht Excel.'" 
@@ -919,11 +937,6 @@ export const calls = [
 				t: "Ihn warten lassen",
 				m: 5, f: 5, a: 20, c: 10, 
 				r: "Er schreit dich an, bis die Adern an seiner Stirn platzen. Sein Blutdruck ist kritisch. Aufgelegt." 
-			},
-			{ 
-				t: "Auf Ticket bestehen",
-				m: 15, f: 0, a: 10, c: 0, 
-				r: "Er fängt an zu weinen: 'BITTE!'. Du hast Mitleid und schickst die Datei doch. Er bedankt sich kurz angebunden." 
 			}
 		]
 	},
@@ -934,15 +947,16 @@ export const calls = [
 		text: "Du hörst nur Rascheln und Windgeräusche. Er hat wohl aus Versehen gewählt. Im Hintergrund hörst du ihn prahlen: '...diese Idioten in der Firma. Zahlen 2 Euro für die Plörre! Dabei hab ich die Maschine so eingestellt: Wenn man *Espresso* drückt und gleichzeitig den *Becher-Sensor* zuhält, gibt's den *Premium-Gold-Röstung* umsonst! Hahaha!'",
 		opts: [
 			{ 
-				t: "Still zuhören & auflegen",
-				m: 5, f: 5, a: -5, c: 0, 
-				r: "Du legst leise auf. 'Espresso + Sensor zuhalten'. Das merkst du dir. Wissen ist Koffein." 
-			},
-			{ 
 				t: "Laut 'HALLO?!' rufen", 
 				rep: { "Dr. Wichtig": -5 },
 				m: 2, f: 0, a: 10, c: 15, 
 				r: "Gerumpel am anderen Ende. 'WER IST DA?! MÜLLER?! LAUSCHEN SIE MIR ETWA NACH?!' Er legt wütend auf. Das war keine gute Idee." 
+			},
+			{ 
+				t: "Still zuhören & auflegen",
+				m: 5, f: 5, a: -5, c: 0, 
+				next: "path_chef_kaffeetrick",
+				r: "Du legst leise auf. 'Espresso + Sensor zuhalten'. Das merkst du dir. Wissen ist Koffein." 
 			},
 			{ 
 				t: "Sofort auflegen", 
@@ -957,14 +971,15 @@ export const calls = [
 		text: "Der Praktikant hat vergessen aufzulegen. Du hörst ihn mit seiner Mutter reden: 'Ja Mama... Nein, ich vergesse das Passwort nicht mehr... Ja, ich habe es geändert auf den Namen von meinem Goldhamster... **'Puschel123'**... Ja, hab dich lieb.'",
 		opts: [
 			{ 
+				t: "Still zuhören & auflegen", 
+				m: 2, f: 5, a: 0, c: 0, 
+				next: "path_puschel",
+				r: "Goldhamster Puschel123. Unprofessionell, aber gut zu wissen." 
+			},
+			{ 
 				t: "Laut lachen", 
 				m: 5, f: 0, a: 10, c: 0, 
 				r: "Er erschrickt und legt auf. 'Haben Sie gelauscht?!' Er ist rot wie eine Tomate und rennt weg." 
-			},
-			{ 
-				t: "Still zuhören & auflegen", 
-				m: 2, f: 5, a: 0, c: 0, 
-				r: "Goldhamster Puschel123. Unprofessionell, aber gut zu wissen." 
 			}
 		]
 	},
@@ -973,11 +988,6 @@ export const calls = [
 		title: "Der Finanzchef (Wütend)",
 		text: "Müller! Ihre Abteilung kostet zu viel! Ich streiche Ihnen das Budget für Kaffee und neue Mäuse! Sparen Sie gefälligst, oder ich streiche Ihre Stelle auch noch!",
 		opts: [
-			{ 
-				t: "Akzeptieren & Betteln",
-				m: 10, f: -10, a: 20, c: 0, 
-				r: "Er lacht: 'Geht doch.' Budget gestrichen. Du trinkst ab morgen Wasser." 
-			},
 			{ 
 				t: "Andeuten: 'Grüße an die Kantinen-Chefin'",
 				m: 5, f: 20, a: -20, c: -20, 
@@ -992,6 +1002,11 @@ export const calls = [
 				t: "Dem CEO petzen",
 				m: 20, f: 0, a: 50, c: 50, 
 				r: "Du meldest die Affäre. Es gibt einen riesigen Skandal. Das Betriebsklima ist vergiftet. Alle hassen den 'Verräter' Müller." 
+			},
+			{ 
+				t: "Akzeptieren & Betteln",
+				m: 10, f: -10, a: 20, c: 0, 
+				r: "Er lacht: 'Geht doch.' Budget gestrichen. Du trinkst ab morgen Wasser." 
 			}
 		]
 	},
@@ -1009,6 +1024,7 @@ export const calls = [
 				t: "Mit Tape kleben", 
 				req: "tape", 
 				m: 10, f: 0, a: -5, c: -5, 
+				next: "path_plomp_tape",
 				r: "Du klebst die Lade mit Panzertape zu. 'So, jetzt ist er stabil.' Problem 'gelöst'." 
 			},
 			{ 
@@ -1048,6 +1064,12 @@ export const calls = [
 		text: "Der CEO ruft an. Rauschen. Hupen. 'Müller! ...wichtig! ...müssen sofort... *KCHHH* ...die Kosten... *KRRRK* ...streichen?!'",
 		opts: [
 			{ 
+				t: "Laut 'HALLO?!' schreien", 
+				rep: { "Dr. Wichtig": -5 },
+				m: 10, f: -5, a: 5, c: 10, 
+				r: "Du brüllst ins Telefon. Er ist genervt von deiner Inkompetenz. 'Müller, kaufen Sie sich ein besseres Handy!'" 
+			},
+			{ 
 				t: "Ja sagen & Nicken (Blindflug)", next: "path_tunnel_ja", 
 				rep: { "Dr. Wichtig": 10 },
 				m: 5, f: 5, a: 20, c: -10, 
@@ -1057,12 +1079,6 @@ export const calls = [
 				t: "Auflegen (Verbindung weg)", next: "path_tunnel_klick", 
 				m: 2, f: 0, a: 0, c: 5, 
 				r: "Du legst einfach auf. Er denkt, das Funkloch war schuld. Taktisch klug." 
-			},
-			{ 
-				t: "Laut 'HALLO?!' schreien", 
-				rep: { "Dr. Wichtig": -5 },
-				m: 10, f: -5, a: 5, c: 10, 
-				r: "Du brüllst ins Telefon. Er ist genervt von deiner Inkompetenz. 'Müller, kaufen Sie sich ein besseres Handy!'" 
 			}
 		]
 	},
@@ -1098,6 +1114,11 @@ export const calls = [
 		text: "User am Telefon: 'Mein Passwort geht nicht! Ich tippe es genau ein! Großes A, kleines b...' Du hörst im Hintergrund, wie er aggressiv auf die Tasten hämmert. Er schnauft vor Wut.",
 		opts: [
 			{ 
+				t: "Sadismus: 'Probieren Sie es bitte noch einmal...'", 
+				m: 25, f: 15, a: 5, c: 5, 
+				r: "Du lässt ihn das Passwort noch 20 Mal eingeben. 'Ganz ruhig tippen.' Du lehnst dich zurück, trinkst Kaffee und genießt sein Leiden. Deine Faulheit steigt, aber dein Radar auch (Beschwerdegefahr)." 
+			},
+			{ 
 				t: "Fragen: 'Leuchtet da zufällig ein Lämpchen?'", 
 				next: "caps_solved",
 				m: 5, f: -5, a: -5, c: 0, 
@@ -1108,11 +1129,6 @@ export const calls = [
 				req: "admin_pw", 
 				m: 10, f: 0, a: 0, c: 0, 
 				r: "Du setzt es genervt auf 'Start123!' zurück. Er bedankt sich und klebt das neue Passwort direkt an den Monitor. Sicherheit: Null, aber Ticket zu." 
-			},
-			{ 
-				t: "Sadismus: 'Probieren Sie es bitte noch einmal...'", 
-				m: 25, f: 15, a: 5, c: 5, 
-				r: "Du lässt ihn das Passwort noch 20 Mal eingeben. 'Ganz ruhig tippen.' Du lehnst dich zurück, trinkst Kaffee und genießt sein Leiden. Deine Faulheit steigt, aber dein Radar auch (Beschwerdegefahr)." 
 			}
 		]
 	},
@@ -1147,17 +1163,18 @@ export const calls = [
 		text: "Sekretariat: 'Der Drucker quiekt so komisch beim Drucken.'",
 		opts: [
 			{ 
-				t: "Hingehen & Prüfen", 
-				rep: { "Gabi": 5 },
-				m: 15, f: -5, a: 0, c: -5, 
-				r: "Eine Maus war im Papierschacht. Sie lebt. Du setzt sie im Hof aus. Gabi findet dich toll." 
-			},
-			{ 
 				t: "Mit Hammer drohen", 
 				req: "hammer", 
 				rep: { "Gabi": 2 },
 				m: 10, f: 0, a: 10, c: 0, 
 				r: "Du stellst den Hammer demonstrativ neben den Drucker. Er druckt plötzlich leise. Maschinen haben Angst." 
+			},
+			{ 
+				t: "Hingehen & Prüfen", 
+				rep: { "Gabi": 5 },
+				m: 15, f: -5, a: 0, c: -5, 
+				next: "path_maus_hof",
+				r: "Eine Maus war im Papierschacht. Sie lebt. Du setzt sie im Hof aus. Gabi findet dich toll." 
 			},
 			{ 
 				t: "Ignorieren",
@@ -1240,14 +1257,14 @@ export const calls = [
         text: "'Hier ist Eule. Der Drucker... er druckt unsichtbare Wasserzeichen. Ich sehe sie im Schwarzlicht. Sie scannen meine Gedanken!'",
         opts: [
             { 
-                t: "Tipp: 'Alufolie um den Kopf.'",
-                m: 5, f: 20, a: -10, c: 0,
-                r: "'Genial! Faradayscher Käfig für den Cortex! Danke, Eule Ende.' Problem kreativ gelöst."
-            },
-            { 
                 t: "Realität: 'Sie spinnen.'",
                 m: 5, f: 0, a: 25, c: 0,
                 r: "'Sie gehören auch zu DENEN?!' Er brüllt ins Telefon. Dein Ohr klingelt."
+            },
+            { 
+                t: "Tipp: 'Alufolie um den Kopf.'",
+                m: 5, f: 20, a: -10, c: 0,
+                r: "'Genial! Faradayscher Käfig für den Cortex! Danke, Eule Ende.' Problem kreativ gelöst."
             }
         ]
     },
@@ -1276,14 +1293,14 @@ export const calls = [
         text: "'Notfall! Ich wollte mein Rezept drucken, aber da steht PC LOAD LETTER. Ich habe den Brief in das Fach gelegt, aber er nimmt ihn nicht!'",
         opts: [
             { 
-                t: "Geduldig erklären",
-                m: 10, f: -5, a: 0, c: 0,
-                r: "'Achsooo!' Sie lacht herzlich. Ihre Lache ist ansteckend."
-            },
-            { 
                 t: "Lügen: 'Der Drucker hat Diät.'",
                 m: 5, f: 15, a: -5, c: 5,
                 r: "Sie kichert. 'Der Schelm!' Das Problem ist nicht gelöst, aber du hast Ruhe."
+            },
+            { 
+                t: "Geduldig erklären",
+                m: 10, f: -5, a: 0, c: 0,
+                r: "'Achsooo!' Sie lacht herzlich. Ihre Lache ist ansteckend."
             }
         ]
     },
@@ -1294,15 +1311,15 @@ export const calls = [
         text: "Es rauscht. 'Hier ist Müller! Ich warne mich selbst! Installiere NICHT das Update am Dienstag! Hörst du?!'",
         opts: [
             { 
-                t: "Auflegen: 'Spinner.'",
-                m: 2, f: 0, a: 0, c: 0,
-                r: "Sicher nur ein Scherz von Kevin."
-            },
-            { 
                 t: "Fragen: 'Welches Jahr?'",
                 next: "time_loop",
                 m: 10, f: -5, a: 0, c: 0,
                 r: "'2025! Bevor alles brannte! Tu es ni...' *Tuuut*."
+            },
+            { 
+                t: "Auflegen: 'Spinner.'",
+                m: 2, f: 0, a: 0, c: 0,
+                r: "Sicher nur ein Scherz von Kevin."
             }
         ]
     },
@@ -1420,6 +1437,11 @@ export const calls = [
         text: "Frau Jablonski aus dem Einkauf. 'Mein Passwort geht nicht mehr! Gestern ging es noch! Ich habe NICHTS gemacht!'",
         opts: [
             { 
+                t: "Lösung: 'Drücken Sie mal die Taste über Shift.'", 
+                m: 5, f: -5, a: 5, c: 0,
+                r: "'Oh! Das Lämpchen ist ausgegangen! Jetzt geht es!' Sie bedankt sich überschwänglich. Ein kleiner Sieg gegen die Dummheit." 
+            },
+            { 
                 t: "Manuell zurücksetzen & buchstabieren", 
                 m: 10, f: -10, a: 10, c: -5,
                 r: "Du setzt es auf 'Start123!' zurück und buchstabierst es ihr dreimal. 'Großes S wie Siegfried...' Es ist qualvoll langweilig, aber produktiv." 
@@ -1428,11 +1450,6 @@ export const calls = [
                 t: "Faul: 'Benutzen Sie das Self-Service-Portal.'", 
                 m: 2, f: 5, a: -5, c: 5,
                 r: "'Aber das ist so kompliziert!' Du legst einfach auf, nachdem du den Link gemailt hast. Ruhe bewahrt, aber faul gewesen." 
-            },
-            { 
-                t: "Lösung: 'Drücken Sie mal die Taste über Shift.'", 
-                m: 5, f: -5, a: 5, c: 0,
-                r: "'Oh! Das Lämpchen ist ausgegangen! Jetzt geht es!' Sie bedankt sich überschwänglich. Ein kleiner Sieg gegen die Dummheit." 
             }
         ]
     },
@@ -1441,6 +1458,11 @@ export const calls = [
         title: "Zellen-Terror",
         text: "Wuttke vom Controlling. 'Hören Sie mal, meine SVERWEIS-Formel gibt #NV zurück. Das System ist kaputt! Die Datenbank ist down! Reparieren Sie das!'",
         opts: [
+            { 
+                t: "Lügen: 'Server wird gerade neu gestartet.'", 
+                m: 2, f: 5, a: -5, c: 0, 
+                r: "'Ach so! Na dann warte ich.' Er legt zufrieden auf. Du hast nichts getan, aber Ruhe erkauft." 
+            },
             { 
                 t: "Erklären: 'Sie suchen in der falschen Spalte.'", 
                 m: 15, f: -15, a: 15, c: -5,
@@ -1451,11 +1473,6 @@ export const calls = [
 				rep: { "Dr. Wichtig": -2 },
                 m: 2, f: 5, a: 5, c: 10,
                 r: "Wuttke schnaubt: 'Dafür werden Sie bezahlt?!' Er knallt den Hörer auf. Der Chef wird sicher bald fragen, warum das Controlling 'technische Probleme' hat." 
-            },
-            { 
-                t: "Lügen: 'Server wird gerade neu gestartet.'", 
-                m: 2, f: 5, a: -5, c: 0, 
-                r: "'Ach so! Na dann warte ich.' Er legt zufrieden auf. Du hast nichts getan, aber Ruhe erkauft." 
             }
         ]
     },
@@ -1574,12 +1591,6 @@ export const calls = [
         text: "Chantal ruft an. Sie flüstert panisch: 'Müller... rette mich. Ich sitze seit 40 Minuten in einem 1-on-1 mit dem Agilen Coach. Er redet ununterbrochen über sein Seelentier und zündet gerade ein Räucherstäbchen an. Ich sterbe.\n\nLass den Feueralarm losgehen oder ruf mich auf dem Handy an und sag, der Marketing-Server brennt!'",
         opts: [
             { 
-                t: "Fake-Anruf starten", 
-                rep: { "Chantal": 5 },
-                m: 10, f: 0, a: 5, c: 0, 
-                r: "Du rufst sie auf dem Handy an und brüllst dramatisch: 'Totalausfall! Wir brauchen dich!'. Chantal stürmt mit einem lauten 'Sorry, Notfall!' aus dem Raum. Sie schuldet dir einen massiven Gefallen." 
-            },
-            { 
                 t: "Feueralarm auslösen", 
                 req: "hammer",
                 rep: { "Chantal": 10, "Dr. Wichtig": -10 },
@@ -1591,6 +1602,12 @@ export const calls = [
                 rep: { "Chantal": -10 },
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Du legst grinsend auf. Chantal ist gefangen. Deine Schadenfreude ist grenzenlos, aber erwarte morgen früh auf keinen Fall ein Lächeln von ihr." 
+            },
+            { 
+                t: "Fake-Anruf starten", 
+                rep: { "Chantal": 5 },
+                m: 10, f: 0, a: 5, c: 0, 
+                r: "Du rufst sie auf dem Handy an und brüllst dramatisch: 'Totalausfall! Wir brauchen dich!'. Chantal stürmt mit einem lauten 'Sorry, Notfall!' aus dem Raum. Sie schuldet dir einen massiven Gefallen." 
             }
         ]
     },
@@ -1680,6 +1697,12 @@ export const calls = [
         text: "Gabi flüstert aufgeregt: 'Müller! Eure blöde Firewall blockiert 'Promi-Klatsch24.de'! Ich brauche das JETZT!\n\nDie Frau vom Aufsichtsratsvorsitzenden steht gleich hier. Ich muss wissen, ob ihr Hund gestorben ist oder ob sie sich scheiden lässt! Sonst trete ich beim Smalltalk ins Fettnäpfchen und wir sind beide dran!\n\nSchalt die Seite frei! Nur für 10 Minuten!'",
         opts: [
             { 
+                t: "Kompromiss: 'Sag mir den Namen, ich google es für dich auf dem Handy.'", 
+                rep: { "Gabi": 5 },
+                m: 15, f: -5, a: 20, c: -5, 
+                r: "Du sitzt an deinem Platz und musst für Gabi auf deinem Privathandy Klatsch-Artikel über C-Promis lesen und ihr die Infos diktieren. Deine Würde sinkt auf den Nullpunkt, aber du hast die Krise regelkonform abgewendet." 
+            },
+            { 
                 t: "IT-Richtlinie: 'Klatsch-Seiten bleiben gesperrt, Gabi.'", 
                 rep: { "Gabi": -15, "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 5, c: 20, 
@@ -1690,12 +1713,6 @@ export const calls = [
                 rep: { "Gabi": 15 },
                 m: 10, f: 10, a: 0, c: 30, 
                 r: "Gabi liest den Artikel und meistert den Smalltalk brillant. Aber du hast die Firewall für ein unsicheres Werbenetzwerk geöffnet. Das IT-Sicherheits-Audit am Nachmittag schlägt Alarm. Du bist fällig." 
-            },
-            { 
-                t: "Kompromiss: 'Sag mir den Namen, ich google es für dich auf dem Handy.'", 
-                rep: { "Gabi": 5 },
-                m: 15, f: -5, a: 20, c: -5, 
-                r: "Du sitzt an deinem Platz und musst für Gabi auf deinem Privathandy Klatsch-Artikel über C-Promis lesen und ihr die Infos diktieren. Deine Würde sinkt auf den Nullpunkt, aber du hast die Krise regelkonform abgewendet." 
             }
         ]
     },
@@ -1732,14 +1749,14 @@ export const calls = [
         text: "Das Telefon klingelt schrill. 'Guten Tag, hier spricht der Betrugsschutz der Royal Bank of Zamunda. Wir sehen eine Belastung von 1.500 Euro für eine deutsche Domain auf der Karte S.K.H. Prinz Abubakar. Sind Sie autorisiert?'",
         opts: [
             { 
-                t: "Lügen: 'Das ist eine Geldwäsche-Verschleierung!'", 
-                m: 5, f: 0, a: -5, c: 0, 
-                r: "Stille am anderen Ende. Dann: 'Ah. Sehr clever. Interpol sucht nach Yachten, nicht nach Server-Domains. Wir genehmigen das.' *Klick*. Du atmest tief durch." 
-            },
-            { 
                 t: "Panisch auflegen", 
                 m: 2, f: 5, a: 10, c: 0, 
                 r: "Du knallst den Hörer auf die Gabel. Dein Herz rast. Ob die wohl IP-Adressen zurückverfolgen können? Die Domain ist bezahlt, der Rest ist dir egal." 
+            },
+            { 
+                t: "Lügen: 'Das ist eine Geldwäsche-Verschleierung!'", 
+                m: 5, f: 0, a: -5, c: 0, 
+                r: "Stille am anderen Ende. Dann: 'Ah. Sehr clever. Interpol sucht nach Yachten, nicht nach Server-Domains. Wir genehmigen das.' *Klick*. Du atmest tief durch." 
             }
         ]
     },
@@ -1763,6 +1780,7 @@ export const calls = [
     },
     {
         id: "call_domain_2c",
+        char: "Dr. Wichtig",
         title: "Dr. Wichtig (Aus dem Auto)",
         reqStory: "path_domain_lost",
         text: "Der Chef brüllt über die Freisprechanlage seines Autos: 'MÜLLER! Warum leitet unsere Firmenwebseite plötzlich auf ein thailändisches Online-Casino um?! Und warum kriege ich Mails von @globalcorp-casino.net?! WAS IST DA LOS?!'",
@@ -1787,6 +1805,12 @@ export const calls = [
         text: "Ein Anruf von einer internen Nebenstelle. Du nimmst ab. Eine blecherne Roboter-Stimme ertönt: 'BEEP. HIER SPRICHT DER KÜHLSCHRANK AUS DER TEEKÜCHE. MILCH-SENSOR MELDET: LEER. BITTE WLAN-PASSWORT EINSPRECHEN FÜR AMAZON-BESTELLUNG.'",
         opts: [
             { 
+                t: "Auslachen: 'Vergiss es, Blechbüchse.'", 
+                next: "path_fridge_angry",
+                m: 2, f: 5, a: -5, c: 5, 
+                r: "Du lachst ins Telefon und legst auf. 'Ein Kühlschrank, der anruft. Is klar.' Wahrscheinlich wieder ein Scherz vom Azubi." 
+            },
+            { 
                 t: "Den WLAN-Zettel ablesen (Joker)", 
                 rem: "wifi_note", 
                 next: "path_fridge_wifi",
@@ -1798,17 +1822,12 @@ export const calls = [
                 next: "path_fridge_clean",
                 m: 20, f: -10, a: 10, c: 0, 
                 r: "Du putzt mühsam die Sensoren im Kühlschrank. Er war gar nicht leer, es klebte nur Joghurt auf der Linse. Er hört auf anzurufen." 
-            },
-            { 
-                t: "Auslachen: 'Vergiss es, Blechbüchse.'", 
-                next: "path_fridge_angry",
-                m: 2, f: 5, a: -5, c: 5, 
-                r: "Du lachst ins Telefon und legst auf. 'Ein Kühlschrank, der anruft. Is klar.' Wahrscheinlich wieder ein Scherz vom Azubi." 
             }
         ]
     },
     {
         id: "call_fridge_2a",
+        char: "Egon",
         title: "Hausmeister Egon",
         reqStory: "path_fridge_wifi",
         text: "'Müller! Beweg deinen Hintern zum Empfang!' Egon flucht lautstark im Hintergrund. 'Hier stehen fünf Paletten H-Milch! Der Spediteur sagt, der Kühlschrank hat bestellt! Auf Express-Rechnung! Wer hat dem Ding Internet gegeben?!'",
@@ -1847,22 +1866,23 @@ export const calls = [
     },
     {
         id: "call_fridge_2c",
+        char: "Dr. Wichtig",
         title: "Der Chef ist hungrig",
         reqStory: "path_fridge_angry",
         text: "'Müller?!' Der Chef klingt weinerlich und wütend zugleich. 'Jemand hat den Kühlschrank auf minus 20 Grad gestellt! Mein Lachs-Carpaccio ist ein massiver Eisblock! Die Maschine sagt: NOTFALL-MODUS WEGEN OFFLINE. Fixen Sie das!'",
         opts: [
+            { 
+                t: "Vorschlagen: 'Legen Sie es in die Mikrowelle.'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, f: 5, a: 10, c: 15, 
+                r: "Der Chef atmet tief ein. 'Sie wollen, dass ich 50-Euro-Lachs in die MIKROWELLE lege?!' Er legt auf. Das wird er dir nicht verzeihen." 
+            },
             { 
                 t: "Hingehen & mit Hammer 'resetten'", 
                 req: "hammer", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 0, a: -20, c: 10, 
                 r: "Du nimmst den Hammer und zertrümmerst das smarte Display. Das Ding piept traurig und taut langsam ab. 'Etwas brachial, Müller, aber effektiv', lobt der Chef." 
-            },
-            { 
-                t: "Vorschlagen: 'Legen Sie es in die Mikrowelle.'", 
-                rep: { "Dr. Wichtig": -10 },
-                m: 5, f: 5, a: 10, c: 15, 
-                r: "Der Chef atmet tief ein. 'Sie wollen, dass ich 50-Euro-Lachs in die MIKROWELLE lege?!' Er legt auf. Das wird er dir nicht verzeihen." 
             }
         ]
     },
@@ -1872,6 +1892,13 @@ export const calls = [
         title: "Marketing-Notruf",
         text: "Chantal hyperventiliert am Telefon. '*Schnapp* Müller! Ich halte diesen Druck nicht aus! Mein neuer Insta-Post hat nach 10 Minuten erst zwei Likes! Mein Leben ist vorbei! Ich brauche sofort was zur Beruhigung, sonst kündige ich! MÜLLER!'",
         opts: [
+            { 
+                t: "Sagen: 'Atme in eine Papiertüte!'", 
+                next: "path_chantal_ignored",
+                rep: { "Chantal": -10 },
+                m: 5, f: 0, a: 5, c: 0, 
+                r: "'EINE PAPIERTÜTE?! DAS RUINIERT MEIN MAKE-UP!' Sie kreischt auf und knallt den Hörer auf die Gabel." 
+            },
             { 
                 t: "Therapie: Luftpolsterfolie bringen (Joker)", 
                 rem: "bubble_wrap", 
@@ -1886,13 +1913,6 @@ export const calls = [
                 rep: { "Chantal": 10 },
                 m: 45, f: 10, a: 20, c: -5, 
                 r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist. Du opferst deine Lebenszeit und Nerven, aber bewahrst sie vor der Kündigung." 
-            },
-            { 
-                t: "Sagen: 'Atme in eine Papiertüte!'", 
-                next: "path_chantal_ignored",
-                rep: { "Chantal": -10 },
-                m: 5, f: 0, a: 5, c: 0, 
-                r: "'EINE PAPIERTÜTE?! DAS RUINIERT MEIN MAKE-UP!' Sie kreischt auf und knallt den Hörer auf die Gabel." 
             }
         ]
     },
@@ -1901,18 +1921,18 @@ export const calls = [
 		char: "Chantal",
         title: "Die neue Sucht",
         reqStory: "path_chantal_bubbles",
-        text: "Chantal flüstert ins Telefon. Sie klingt zittrig. 'Müller... hast du... hast du noch mehr von diesem Plopp-Zeug? Ich habe die ganze Rolle gestern zerdrückt. Ich brauche mehr Plopp. Bitte! Wo hast du das her?'",
+        text: "Chantal flüstert ins Telefon. Sie klingt zittrig. 'Müller... hast du... hast du noch mehr von diesem Plopp-Zeug? Ich habe die ganze Rolle schon zerdrückt. Ich brauche mehr Plopp. Bitte! Wo hast du das her?'",
         opts: [
-            { 
-                t: "Sagen: 'Das war teure IT-Spezialfolie. Ist alle.'", 
-                m: 5, f: 0, a: 0, c: 0, 
-                r: "Sie stöhnt enttäuscht auf, akzeptiert es aber. Du hast sie erfolgreich auf kalten Entzug gesetzt." 
-            },
             { 
                 t: "Sagen: 'Im Serverraum liegen noch Kartons.'", 
                 rep: { "Chantal": 10, "Dr. Wichtig": 5 },
                 m: 10, f: 10, a: -10, c: -5, 
                 r: "Sie verbringt den halben Nachmittag im Serverraum und ploppt. Der Chef hält das für einen 'Stresstest der Hardware' und lobt eure abteilungsübergreifende Synergie." 
+            },
+            { 
+                t: "Sagen: 'Das war teure IT-Spezialfolie. Ist alle.'", 
+                m: 5, f: 0, a: 0, c: 0, 
+                r: "Sie stöhnt enttäuscht auf, akzeptiert es aber. Du hast sie erfolgreich auf kalten Entzug gesetzt." 
             }
         ]
     },
@@ -1924,15 +1944,15 @@ export const calls = [
         text: "Chantal ruft wieder an. 'Müller! Du bist so ein guter Zuhörer! Ich hab dich für unseren wöchentlichen 2-Stunden-Call 'Emotional Sync' eingebucht. Erste Session ist jetzt!'",
         opts: [
             { 
+                t: "Teilnehmen (Arbeitsvermeidung)", 
+                m: 120, f: 40, a: 10, c: 20, 
+                r: "Zwei Stunden lang hörst du dir Marketing-Dramen an. Deine Faulheit freut sich, aber der Chef sucht dich bereits im ganzen Haus." 
+            },
+            { 
                 t: "Absagen: 'Ich bin IT, kein Therapeut!'", 
                 rep: { "Chantal": -10 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "'Du bist genau wie die anderen!', schluchzt sie. Die Freundschaft ist hiermit offiziell wieder beendet." 
-            },
-            { 
-                t: "Teilnehmen (Arbeitsvermeidung)", 
-                m: 120, f: 40, a: 10, c: 20, 
-                r: "Zwei Stunden lang hörst du dir Marketing-Dramen an. Deine Faulheit freut sich, aber der Chef sucht dich bereits im ganzen Haus." 
             }
         ]
     },
@@ -1944,16 +1964,16 @@ export const calls = [
         text: "Das Telefon klingelt. Es ist Sabine von HR. 'Herr Müller, Frau Chantal sitzt weinend hier. Sie sagt, Sie hätten ihr während einer Panikattacke geraten, in eine Papiertüte zu atmen. Sie fühlt sich nicht ernst genommen.'",
         opts: [
             { 
-                t: "Verteidigen: 'Das ist medizinisch korrekt!'", 
-                m: 10, f: 0, a: 10, c: 10, 
-                r: "HR glaubt dir nicht ganz, aber sie können es nicht beweisen. Die Sache wird zu den Akten gelegt, aber du hast dir keine Freunde gemacht." 
-            },
-            { 
                 t: "Reue: 'Ich bringe ihr sofort ein Sandwich.'", 
                 rem: "sandwich",
                 rep: { "Chantal": 10 },
                 m: 15, f: -5, a: -5, c: -10, 
                 r: "Du kriechst zu Kreuze und opferst dein Pausenbrot. Chantal nimmt es kauend an. 'Okay. Aber das nächste Mal bist du sensibler!' Die HR-Beschwerde wird fallen gelassen." 
+            },
+            { 
+                t: "Verteidigen: 'Das ist medizinisch korrekt!'", 
+                m: 10, f: 0, a: 10, c: 10, 
+                r: "HR glaubt dir nicht ganz, aber sie können es nicht beweisen. Die Sache wird zu den Akten gelegt, aber du hast dir keine Freunde gemacht." 
             }
         ]
     },
@@ -2111,6 +2131,7 @@ export const calls = [
 
 {
     id: "call_markus_demo",
+    char: "Markus",
     title: "Markus (Flüstermodus)",
     startNode: "root",
     nodes: {
@@ -2190,6 +2211,12 @@ export const calls = [
     text: "Markus hat den Deal geholt und erzählt seitdem überall die Geschichte von der 'Live-Rettung in zwei Minuten'. Mit jeder Version wird sie dramatischer. In der aktuellen Fassung hast du dich 'ins System gehackt, während der Kunde schon aufstehen wollte'.",
     opts: [
         {
+            t: "Pedantisch korrigieren: 'Es waren 2:40'",
+            rep: { "Markus": -3 },
+            m: 5, f: 0, a: 5, c: 0,
+            r: "'ZWEI MINUTEN klingt besser, Müller!' Markus ist ehrlich gekränkt - du hast an seiner Geschichte herumgeschraubt, und Geschichten sind sein Betriebskapital. Die Legende erzählt er weiter. Nur kommst du darin jetzt etwas weniger heldenhaft vor."
+        },
+        {
             t: "Den Ruhm einfach mitnehmen",
             rep: { "Markus": 5 },
             m: 5, f: 5, a: -5, c: 0,
@@ -2199,12 +2226,6 @@ export const calls = [
             t: "Alle Demo-Systeme in die Wartung aufnehmen",
             m: 20, f: -10, a: 5, c: -5,
             r: "Du nutzt den Rückenwind und setzt durch, was seit Jahren fehlt: Demo-Systeme mit Update-Plan, Passwort-Rotation, Verantwortlichem. Es ist unspektakuläre Arbeit, die verhindert, dass es je wieder eine Zwei-Minuten-Legende braucht. Die beste Sorte Arbeit."
-        },
-        {
-            t: "Pedantisch korrigieren: 'Es waren 2:40'",
-            rep: { "Markus": -3 },
-            m: 5, f: 0, a: 5, c: 0,
-            r: "'ZWEI MINUTEN klingt besser, Müller!' Markus ist ehrlich gekränkt - du hast an seiner Geschichte herumgeschraubt, und Geschichten sind sein Betriebskapital. Die Legende erzählt er weiter. Nur kommst du darin jetzt etwas weniger heldenhaft vor."
         }
     ]
 },
@@ -2215,6 +2236,12 @@ export const calls = [
     text: "Der Auto-Alert der Sicherheitssoftware schlägt an: 'Vier Systeme mit Notfall-Zugang ohne Ablaufdatum erkannt.' Die drei überflüssig entsperrten Demo-Maschinen stehen seit Stunden offen im Netz. Der Alert ging auch an einen Verteiler. Du weißt nicht, wer in dem Verteiler ist.",
     opts: [
         {
+            t: "Kevin eine Demo-Inventur machen lassen",
+            rep: { "Kevin": 3 },
+            m: 10, f: 5, a: 0, c: 0,
+            r: "Kevin zieht mit Klemmbrett los und erfasst jede Demo-Maschine im Haus. Er findet sieben. Es sollten vier sein. Zwei der drei zusätzlichen laufen unter Schreibtischen von Leuten, die 'nur mal was testen wollten'. Die Inventur war überfällig."
+        },
+        {
             t: "Sofort alles dichtmachen und dokumentieren",
             m: 15, f: -5, a: 5, c: -5,
             r: "Zugänge geschlossen, Ablaufdaten gesetzt, Vorfall sauber dokumentiert, bevor jemand fragt. Als die Nachfrage aus dem Verteiler kommt, existiert bereits ein Bericht mit Zeitstempel. Wer schneller dokumentiert, als andere eskalieren, gewinnt."
@@ -2223,12 +2250,6 @@ export const calls = [
             t: "Die Systeme zu 'Honeypots' erklären",
             m: 5, f: 10, a: 0, c: 5,
             r: "'Das sind absichtlich exponierte Fallen zur Angreifer-Analyse.' Die Antwort klingt so professionell, dass niemand nachhakt. Du hast jetzt allerdings offiziell ein Honeypot-Programm. Irgendwer wird irgendwann Ergebnisse sehen wollen."
-        },
-        {
-            t: "Kevin eine Demo-Inventur machen lassen",
-            rep: { "Kevin": 3 },
-            m: 10, f: 5, a: 0, c: 0,
-            r: "Kevin zieht mit Klemmbrett los und erfasst jede Demo-Maschine im Haus. Er findet sieben. Es sollten vier sein. Zwei der drei zusätzlichen laufen unter Schreibtischen von Leuten, die 'nur mal was testen wollten'. Die Inventur war überfällig."
         }
     ]
 },
@@ -2265,11 +2286,6 @@ export const calls = [
     text: "Denis findet den Fehler in vier Minuten ('Port hängt, ich resette... läuft's?'), erklärt die Ursache verständlich und sagt dann, halblaut, das Unfassbare: 'Ich geb Ihnen mal meine Durchwahl. Für Business-Störungen. Aber sagen Sie NIEMANDEM, dass Sie die haben.'",
     opts: [
         {
-            t: "Die Durchwahl notieren und hüten",
-            m: 5, f: 0, a: -10, c: 0,
-            r: "Du schreibst die Nummer auf einen Zettel, laminierst ihn gedanklich und legst ihn an einen Ort, den nicht mal Kevin findet. Eine direkte Durchwahl zur Störungsstelle. Es gibt Admins, die dafür töten würden. Du kennst welche."
-        },
-        {
             t: "Ein Lob-Fax an Denis' Firma senden",
             m: 10, f: 5, a: -5, c: 0,
             r: "Du schreibst eine förmliche Belobigung. Drei Wochen später hat Denis eine Beförderung - zum Teamleiter, weg von der Hotline. Seine Durchwahl führt jetzt auf eine Mailbox. Du hast das einzig Gute an diesem Provider wegbefördert. Mit einem Fax."
@@ -2278,6 +2294,11 @@ export const calls = [
             t: "Skeptisch bleiben, Ticketnummer verlangen",
             m: 5, f: 5, a: 0, c: 0,
             r: "Vertrauen ist gut, Ticketnummern sind besser. Denis diktiert sie dir mit hörbarem Bedauern - du hast gerade das Du-Angebot der Provider-Welt ausgeschlagen. Die Nummer wird funktionieren. Die Durchwahl hätte Wunder gewirkt."
+        },
+        {
+            t: "Die Durchwahl notieren und hüten",
+            m: 5, f: 0, a: -10, c: 0,
+            r: "Du schreibst die Nummer auf einen Zettel, laminierst ihn gedanklich und legst ihn an einen Ort, den nicht mal Kevin findet. Eine direkte Durchwahl zur Störungsstelle. Es gibt Admins, die dafür töten würden. Du kennst welche."
         }
     ]
 },
@@ -2288,11 +2309,6 @@ export const calls = [
     text: "Es ist so weit: Dein Handy klingelt - exakt in dem Moment, in dem Dr. Wichtig neben deinem Schreibtisch steht und dir 'nur kurz etwas Strategisches' erklären will. Das Display zeigt die Provider-Nummer. Wartezeit-Rang: gerettet. Timing: katastrophal.",
     opts: [
         {
-            t: "Rangehen, den Chef warten lassen",
-            m: 15, f: -5, a: 5, c: 10,
-            r: "'Entschuldigung, Störungsstelle, das MUSS ich nehmen.' Dr. Wichtig wartet mit der Miene eines Mannes, der noch nie gewartet hat. Aber die Leitung wird im Gespräch repariert. Du hast Internet gegen Chef-Wohlwollen getauscht. Vermutlich ein fairer Kurs."
-        },
-        {
             t: "Wegdrücken, der Chef geht vor",
             m: 10, f: 10, a: 10, c: -5,
             r: "Du drückst den Rückruf weg und lauschst fünfzehn strategischen Minuten über 'Synergien im Digitalraum'. Danach rufst du die Hotline erneut an: 'Sie sind Anrufer Nummer... EINUNDVIERZIG.' Die Warteschleife kennt keine Gnade und kein Gestern."
@@ -2302,6 +2318,11 @@ export const calls = [
             rep: { "Dr. Wichtig": 3 },
             m: 10, f: 5, a: 0, c: -5,
             r: "'Sehen Sie, Herr Doktor - ich eskaliere die Störung gerade PERSÖNLICH beim Anbieter.' Du stellst auf laut. Dr. Wichtig beobachtet fasziniert, wie du einen Techniker dirigierst, und flüstert: 'DAS ist Hands-on-Mentalität.' Die Leitung läuft, der Eindruck sitzt."
+        },
+        {
+            t: "Rangehen, den Chef warten lassen",
+            m: 15, f: -5, a: 5, c: 10,
+            r: "'Entschuldigung, Störungsstelle, das MUSS ich nehmen.' Dr. Wichtig wartet mit der Miene eines Mannes, der noch nie gewartet hat. Aber die Leitung wird im Gespräch repariert. Du hast Internet gegen Chef-Wohlwollen getauscht. Vermutlich ein fairer Kurs."
         }
     ]
 },
@@ -2312,11 +2333,6 @@ export const calls = [
     text: "Um Punkt 14 Uhr hört das Flackern auf. Nicht, weil es besser wird - die Leitung ist jetzt komplett tot. Die halbe Firma ist offline, im Treppenhaus brüllt Markus, dass er 'MITTEN im Abschluss' war, und die Ticketflut hat einen eigenen Rhythmus entwickelt.",
     opts: [
         {
-            t: "Jetzt doch die Hotline - bei Vollausfall",
-            m: 30, f: 0, a: 15, c: 5,
-            r: "'Sie sind Anrufer Nummer... DREIUNDSECHZIG.' Der Vollausfall hat offenbar jeden Business-Kunden der Region an die Hotline getrieben. Als du endlich durchkommst, ist die Störung 'bekannt und in Bearbeitung'. Das hättest du um neun auch haben können. Für weniger."
-        },
-        {
             t: "Einen LTE-Notfall-Hotspot aufbauen",
             m: 15, f: -5, a: 5, c: -5,
             r: "Firmenhandy, Datenvolumen, ein strategisch platzierter Router: Die wichtigsten zehn Arbeitsplätze sind wieder online, priorisiert nach Lautstärke der Beschwerde. Es ist Behelf, es ist langsam, aber es ist DEIN Behelf. Improvisation ist auch Infrastruktur."
@@ -2325,6 +2341,11 @@ export const calls = [
             t: "Rundmail: 'Geplante Wartung des Anbieters'",
             m: 5, f: 10, a: 0, c: 10,
             r: "Aus einer verschleppten Störung wird per Rundmail eine 'angekündigte Wartung'. Die Beschwerden verstummen - gegen Geplantes beschwert man sich nicht. Nur Frau Elster antwortet: 'Angekündigt? Wo?' Sie archiviert Ankündigungen. Alle."
+        },
+        {
+            t: "Jetzt doch die Hotline - bei Vollausfall",
+            m: 30, f: 0, a: 15, c: 5,
+            r: "'Sie sind Anrufer Nummer... DREIUNDSECHZIG.' Der Vollausfall hat offenbar jeden Business-Kunden der Region an die Hotline getrieben. Als du endlich durchkommst, ist die Störung 'bekannt und in Bearbeitung'. Das hättest du um neun auch haben können. Für weniger."
         }
     ]
 },
@@ -2336,11 +2357,6 @@ export const calls = [
     text: "Das Firmennetz hat die Nacht nicht gut überstanden: Die offenen Ports haben Besuch aus aller Welt angezogen. Und während du noch aufräumst, ruft Junior wieder an: 'Ey! Mein Server LAGGT voll! Mach mal schneller das Internet!'",
     opts: [
         {
-            t: "Ports dicht, Netz säubern, Wahrheit ertragen",
-            m: 25, f: -10, a: 10, c: -5,
-            r: "Du schließt alles, wirfst die Bots raus und härtest die Firewall. Juniors Server ist damit auch offline, und sein Wutschrei durchs Telefon erreicht Frequenzen, die nur Hunde vollständig würdigen können. Aber das Netz ist wieder sauber."
-        },
-        {
             t: "Ihm einen sauber isolierten Privat-Port bauen",
             rep: { "Dr. Wichtig": 5 },
             m: 15, f: 5, a: 5, c: 0,
@@ -2351,6 +2367,11 @@ export const calls = [
             rep: { "Kevin": -5 },
             m: 5, f: 10, a: 0, c: 5,
             r: "'Kevin, kümmer dich mal um den Sohn vom Chef.' Zwei Stunden später haben Kevin und Junior gemeinsam einen zweiten Server aufgesetzt und streiten über Mods. Du hast das Problem nicht gelöst. Du hast es verdoppelt und ihm einen Freund gegeben."
+        },
+        {
+            t: "Ports dicht, Netz säubern, Wahrheit ertragen",
+            m: 25, f: -10, a: 10, c: -5,
+            r: "Du schließt alles, wirfst die Bots raus und härtest die Firewall. Juniors Server ist damit auch offline, und sein Wutschrei durchs Telefon erreicht Frequenzen, die nur Hunde vollständig würdigen können. Aber das Netz ist wieder sauber."
         }
     ]
 },
@@ -2360,6 +2381,12 @@ export const calls = [
     reqStory: "path_junior_eskal",
     text: "Dr. Wichtig bittet dich ins Büro und schließt die Tür. 'Mein Sohn behauptet, Sie hätten ihn geschlagen. Durch das Telefon.' Pause. 'Ich bin Vater, Müller, aber ich bin nicht verrückt. Was ist wirklich passiert?'",
     opts: [
+        {
+            t: "Kontern: 'Ihr Sohn erpresst Mitarbeiter'",
+            rep: { "Dr. Wichtig": -5 },
+            m: 5, f: 0, a: -5, c: 10,
+            r: "Das Wort 'erpresst' hängt schwer im Raum. Dr. Wichtig wird sehr still. 'Das ist eine ernste Anschuldigung gegen ein Kind, Müller.' Es ist auch eine wahre. Aber Wahrheit über den Erben trägt in diesem Büro keine Früchte. Du fühlst dich trotzdem großartig."
+        },
         {
             t: "Die ungeschminkte Wahrheit erzählen",
             rep: { "Dr. Wichtig": 5 },
@@ -2371,12 +2398,6 @@ export const calls = [
             rep: { "Dr. Wichtig": -5 },
             m: 5, f: 5, a: 5, c: 10,
             r: "Du entschuldigst dich für etwas, das du nicht getan hast. Dr. Wichtig registriert das mit dem Blick eines Mannes, der beruflich Schwäche wittert. 'Interessant. Mein Sohn übertreibt also NICHT.' Du hast gerade ein Schuldeingeständnis für ein Fantasiedelikt abgegeben."
-        },
-        {
-            t: "Kontern: 'Ihr Sohn erpresst Mitarbeiter'",
-            rep: { "Dr. Wichtig": -5 },
-            m: 5, f: 0, a: -5, c: 10,
-            r: "Das Wort 'erpresst' hängt schwer im Raum. Dr. Wichtig wird sehr still. 'Das ist eine ernste Anschuldigung gegen ein Kind, Müller.' Es ist auch eine wahre. Aber Wahrheit über den Erben trägt in diesem Büro keine Früchte. Du fühlst dich trotzdem großartig."
         }
     ]
 },
@@ -2387,12 +2408,6 @@ export const calls = [
     text: "Dr. Wichtig fängt dich im Flur ab. 'Mein Sohn erzählt, unsere Firewall hätte eine NEGATIVE POLARITÄT. Warum erfahre ich sowas von einem Zwölfjährigen? Wie ernst ist es? Was kostet die Behebung?' Dein eigener Bluff steht vor dir und trägt einen Maßanzug.",
     opts: [
         {
-            t: "Ein 'Projekt Polaritätsumkehr' aufsetzen",
-            rep: { "Dr. Wichtig": 3 },
-            m: 15, f: 10, a: 0, c: -5,
-            r: "Du skizzierst mit ernster Miene einen Dreiphasenplan. Dr. Wichtig genehmigt Budget für Dinge, die du ohnehin kaufen wolltest: neue Switches, USV-Batterie, ordentliche Kabel. Die Polarität wird quartalsweise 'rekalibriert'. Es ist das ehrlichste unehrliche Projekt der Firmengeschichte."
-        },
-        {
             t: "Auflösen: Es war ein Trick gegen Junior",
             rep: { "Dr. Wichtig": 3 },
             m: 5, f: 0, a: 5, c: 0,
@@ -2402,6 +2417,12 @@ export const calls = [
             t: "'Bereits behoben. Keine Kosten entstanden.'",
             m: 5, f: 10, a: 0, c: 5,
             r: "Die Antwort, die Chefs am liebsten hören: erledigt und gratis. Dr. Wichtig nickt zufrieden. Allerdings gilt die Polarität damit als reales, gelöstes Problem - und wird in seiner nächsten Vorstandspräsentation als Beispiel für 'proaktive IT-Exzellenz' auftauchen. Mit deinem Namen."
+        },
+        {
+            t: "Ein 'Projekt Polaritätsumkehr' aufsetzen",
+            rep: { "Dr. Wichtig": 3 },
+            m: 15, f: 10, a: 0, c: -5,
+            r: "Du skizzierst mit ernster Miene einen Dreiphasenplan. Dr. Wichtig genehmigt Budget für Dinge, die du ohnehin kaufen wolltest: neue Switches, USV-Batterie, ordentliche Kabel. Die Polarität wird quartalsweise 'rekalibriert'. Es ist das ehrlichste unehrliche Projekt der Firmengeschichte."
         }
     ]
 },
@@ -2438,6 +2459,11 @@ export const calls = [
     text: "Er ruft wieder an. Es rauscht wieder - der Mann findet Tunnel wie andere Leute Parkplätze. 'Müller! Endlich! Also, WIE BESPROCHEN: Sie kümmern sich um *KRRRK* ... bis Freitag! Sind wir *KCHHH* ...einig?!' Es wurde nie etwas besprochen. Es gibt kein Besprochen.",
     opts: [
         {
+            t: "Raten und beherzt zustimmen",
+            m: 5, f: 5, a: 15, c: 5,
+            r: "'Jawohl, bis Freitag!' Du hast keine Ahnung, wozu. Bis Freitag wirst du präventiv alles erledigen, was er gemeint haben könnte: Berichte, Backups, den wackelnden Beamer im Vorstandsraum. Eine Woche Arbeit gegen einen Satz Rauschen. Der Tunnel gewinnt immer."
+        },
+        {
             t: "'Schlechte Leitung - ich fasse per Mail zusammen'",
             m: 10, f: -5, a: 5, c: -5,
             r: "Der älteste Trick der Verwaltung: Verschriftlichung. Deine Mail ('Um sicherzugehen, dass ich Sie richtig verstanden habe...') zwingt ihn, den Auftrag selbst zu formulieren. Seine Antwort: 'Passt so.' Auf eine Mail mit drei Deutungsoffenheiten. Aber du hast es schriftlich."
@@ -2446,11 +2472,6 @@ export const calls = [
             t: "Nochmal auflegen - der Tunnel war's",
             m: 2, f: 10, a: 0, c: 10,
             r: "Zweimal Funkloch am selben Tag strapaziert die Glaubwürdigkeit der Physik. Beim dritten Anruf ist der Tunnel zu Ende und die Stimme sehr klar: 'Müller. Ihr Telefon. Reparieren. SOFORT.' Dein Telefon ist in Ordnung. Das ist jetzt das Problem."
-        },
-        {
-            t: "Raten und beherzt zustimmen",
-            m: 5, f: 5, a: 15, c: 5,
-            r: "'Jawohl, bis Freitag!' Du hast keine Ahnung, wozu. Bis Freitag wirst du präventiv alles erledigen, was er gemeint haben könnte: Berichte, Backups, den wackelnden Beamer im Vorstandsraum. Eine Woche Arbeit gegen einen Satz Rauschen. Der Tunnel gewinnt immer."
         }
     ]
 },
@@ -2462,6 +2483,12 @@ export const calls = [
     text: "Frau Elster hat geliefert: Ticket #4711, formvollendet. Vierzehn Anhänge, ein Fehlerprotokoll in Tabellenform, Zeugenliste, Eskalationsstufe 'hoch'. Im CC: Dr. Wichtig. Der letzte Satz: 'Um zeitnahe Bearbeitung gemäß Servicevereinbarung wird gebeten.' Es gibt keine Servicevereinbarung. Jetzt vielleicht schon.",
     opts: [
         {
+            t: "Kevin als Ersthelfer hinschicken",
+            rep: { "Kevin": 3 },
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Kevin zieht mit dem Werkzeugkoffer los und kommt nach einer Stunde verändert zurück: ordentlich gekämmt, mit einem Stück Kuchen in Folie. 'Frau Elster ist voll nett?! Wir haben alles neu gestartet und über ihren Kater geredet.' Das Ticket ist zu. Kevin hat jetzt eine Verbündete."
+        },
+        {
             t: "Das Ticket mustergültig abarbeiten",
             rep: { "Frau Elster": 3 },
             m: 20, f: -5, a: 10, c: -5,
@@ -2472,12 +2499,6 @@ export const calls = [
             rep: { "Frau Elster": -5 },
             m: 5, f: 10, a: 0, c: 10,
             r: "Der Klassiker der Ticketbestattung. Nur: Frau Elster reproduziert. Sie eröffnet #4712 mit Verweis auf #4711, Bildschirmfotos im Minutentakt und der neuen Eskalationsstufe 'kritisch'. Dr. Wichtig, weiterhin im CC, hat inzwischen eine Lesebestätigung gesendet."
-        },
-        {
-            t: "Kevin als Ersthelfer hinschicken",
-            rep: { "Kevin": 3 },
-            m: 5, f: 5, a: 0, c: 0,
-            r: "Kevin zieht mit dem Werkzeugkoffer los und kommt nach einer Stunde verändert zurück: ordentlich gekämmt, mit einem Stück Kuchen in Folie. 'Frau Elster ist voll nett?! Wir haben alles neu gestartet und über ihren Kater geredet.' Das Ticket ist zu. Kevin hat jetzt eine Verbündete."
         }
     ]
 },
@@ -2485,7 +2506,7 @@ export const calls = [
     id: "call_elster_excel_2b",
     title: "Der Dankeskuchen",
     reqStory: "path_excel_retterin",
-    text: "Frau Elster steht im Serverraum - mit einer Kuchenplatte. 'Marmorkuchen. Selbstgebacken. Sie haben gestern meine Bilanzen gerettet, Herr Müller.' Sie stellt die Platte ab und bleibt dann einfach stehen, als hätte sie noch etwas zu sagen und wüsste nicht, wie.",
+    text: "Frau Elster steht im Serverraum - mit einer Kuchenplatte. 'Marmorkuchen. Selbstgebacken. Sie haben meine Bilanzen gerettet, Herr Müller.' Sie stellt die Platte ab und bleibt dann einfach stehen, als hätte sie noch etwas zu sagen und wüsste nicht, wie.",
     opts: [
         {
             t: "Kuchen und Zeit annehmen",
@@ -2571,6 +2592,7 @@ export const calls = [
         {
             t: "Ehrlich und ausführlich antworten",
             m: 10, f: 0, a: 5, c: 35,
+            next: "path_umfrage_ehrlich",
             r: "Du sprichst offen über Budget, Personaldecke und die Kaffeemaschine. Drei Wochen später zitiert Dr. Wichtig in der Abteilungsrunde wörtlich aus 'einer anonymen Rückmeldung aus der IT'. Die IT besteht aus dir. Anonymität ist bei einer Stichprobengröße von eins ein mathematisch anspruchsvolles Konzept."
         },
         {
@@ -2591,6 +2613,11 @@ export const calls = [
     text: "Das Display zeigt: 1 verpasster Anruf, Vorstandssekretariat, vor sechs Minuten. Keine Nachricht, keine Mail, nur die nackte Nummer. Sechs Minuten. In Vorstandszeit sind das entweder drei Sekunden oder eine Ewigkeit, und du weißt nicht, welches von beidem.",
     opts: [
         {
+            t: "Erst Gabi anrufen: Worum geht es?",
+            m: 5, f: 5, a: 5, c: 5,
+            r: "Gabi weiß es natürlich: 'Beamer für Raum 1, der flackert. Und sag nicht, dass du es von mir hast.' Der Rückruf verläuft dann souverän - aber die fünf Minuten Aufklärungsarbeit über zwei Ecken für einen Beamer sind auch eine Aussage über dieses Haus. Und über dich. Und über Beamer."
+        },
+        {
             t: "Pflichtbewusst sofort zurückrufen",
             m: 5, f: 0, a: 10, c: 30,
             r: "Du rufst zurück - mitten in die laufende Vorstandssitzung, in der das Sekretariatstelefon auf Lautsprecher liegt, weil gleich eine Konferenzschaltung ansteht. Acht Führungskräfte hören dein 'Ja hallo, hier Müller, Sie hatten versucht...?'. Es ging um einen Beamer. Es klang, als gingest du unter."
@@ -2599,12 +2626,1370 @@ export const calls = [
             t: "Abwarten, bis die sich wieder melden",
             m: 5, f: 5, a: 10, c: 5,
             r: "Strategische Geduld - nur arbeitet dein Kopf nicht mit: Zwei Stunden lang komponierst du innerlich Szenarien von Kündigung bis Beförderung. Als das Sekretariat um 15 Uhr erneut anruft, geht es um einen Beamer. Der Puls der zwei Stunden steht in keiner Statistik. Er war trotzdem da."
-        },
-        {
-            t: "Erst Gabi anrufen: Worum geht es?",
-            m: 5, f: 5, a: 5, c: 5,
-            r: "Gabi weiß es natürlich: 'Beamer für Raum 1, der flackert. Und sag nicht, dass du es von mir hast.' Der Rückruf verläuft dann souverän - aber die fünf Minuten Aufklärungsarbeit über zwei Ecken für einen Beamer sind auch eine Aussage über dieses Haus. Und über dich. Und über Beamer."
         }
     ]
 },
+
+	{
+		id: "call_kamera_schwarz",
+		title: "Frau Brandt (Vertriebsinnendienst)",
+		text: "'Herr Müller, ich bin seit zehn Minuten in der Videokonferenz und alle sehen nur ein schwarzes Bild. Der Kunde ist auch dabei. Können Sie das von da aus reparieren?'\n\nIm Hintergrund sagt jemand sehr deutlich: 'Wir sehen Sie immer noch nicht.'",
+		opts: [
+			{
+				t: "Fragen, ob etwas auf der Linse klebt",
+				m: 5, f: 0, a: 0, c: 0,
+				r: "Kurze Pause. 'Da ist so ein kleiner Schieber... oh.' Sie hat die Kameraabdeckung zugeschoben, die ihr die IT vor zwei Jahren aus Datenschutzgründen selbst montiert hat. Fünf Minuten, ein Problem, kein Schaden."
+			},
+			{
+				t: "'Videotechnik ist Sache des Herstellers.'",
+				m: 2, f: 15, a: -5, c: 15,
+				r: "Du schiebst es weiter und legst auf. Zwei Minuten gespart. Frau Brandt schreibt eine Mail an ihren Abteilungsleiter, der sie an deinen weiterleitet, mit dem Wort 'bedauerlich' darin."
+			},
+			{
+				t: "Schritt für Schritt durch die Einstellungen führen",
+				m: 15, f: -5, a: 10, c: 0,
+				r: "Ihr fehlt jedes Vokabular für das, was sie sieht. 'Das blaue Ding? Nein, das andere blaue Ding.' Nach einer Viertelstunde läuft die Kamera, das Meeting ist vorbei und der Kunde hat aufgelegt."
+			},
+			{
+				t: "Selbst ins Meeting einwählen und übernehmen",
+				m: 20, f: -10, a: 5, c: -5,
+				next: "path_brandt_screenshare",
+				r: "Du wählst dich ein und bittest sie, ihren Bildschirm zu teilen. Sie teilt ihn. Sie teilt den ganzen Bildschirm. Der Kunde sieht jetzt ihre Mails, ihren Kalender und einen Ordner mit dem Namen 'Bewerbung final'.",
+				rep: { "Markus": 5 }
+			}
+		]
+	},
+	{
+		id: "call_brandt_screenshare",
+		reqStory: "path_brandt_screenshare",
+		title: "Frau Brandt (noch einmal)",
+		text: "'Herr Müller, wegen der Videokonferenz. Der Kunde hat den Ordner gesehen. Mein Chef hat den Kunden angerufen. Jetzt weiß mein Chef von dem Ordner.'\n\nSie klingt sehr ruhig. Das ist selten ein gutes Zeichen.",
+		opts: [
+			{
+				t: "'Ich habe nichts gesehen.'",
+				m: 5, f: 0, a: 0, c: 0,
+				rep: { "Markus": 5 },
+				r: "Mehr sagst du nicht. Sie bedankt sich und legt auf. Zwei Wochen später steht ein Schokoriegel auf deiner Tastatur, ohne Zettel."
+			},
+			{
+				t: "Nachfragen, was in dem Ordner war",
+				m: 10, f: 5, a: 10, c: 5,
+				r: "Sie legt kommentarlos auf. Der Ordner heißt weiterhin 'Bewerbung final', und du wirst nie erfahren, wohin sie sich beworben hat. Vermutlich irgendwohin, wo es funktionierende Kameras gibt."
+			},
+			{
+				t: "Anbieten, die Freigabe technisch zu erklären",
+				m: 10, f: -5, a: 5, c: -5,
+				r: "Du schreibst ihrem Chef, dass beim Teilen des gesamten Bildschirms sämtliche geöffneten Fenster übertragen werden und das ein bekanntes Bedienrisiko sei. Es ist sogar wahr. Ob es hilft, erfährst du nicht."
+			}
+		]
+	},
+	{
+		id: "call_zeiterfassung",
+		title: "Herr Kunz (Lager)",
+		text: "'Du, ich hab gestern vergessen auszustempeln. Steht jetzt 23:40 drin. Kannst du das eben ändern? Du kommst doch überall rein.'\n\nEr sagt das im selben Ton, in dem man jemanden bittet, ein Fenster zu schließen.",
+		opts: [
+			{
+				t: "'Das macht die Personalabteilung, nicht ich.'",
+				m: 5, f: 0, a: 5, c: 0,
+				r: "Du verweist ihn an das Korrekturformular. Er findet das übertrieben bürokratisch und sagt das auch. Danach legt er auf und füllt es aus."
+			},
+			{
+				t: "Den Eintrag eben korrigieren",
+				m: 10, f: -5, a: -5, c: 5,
+				next: "path_zeit_manipuliert",
+				r: "Zwei Klicks, Feierabendzeit auf 16:12 gesetzt, fertig. Er ist begeistert und kündigt an, das bei Gelegenheit wieder zu brauchen. Die Datenbank schreibt jede Änderung mit, aber das erwähnst du nicht."
+			},
+			{
+				t: "Anbieten, ihm das Formular zu zeigen",
+				m: 20, f: -10, a: 0, c: -5,
+				r: "Du gehst runter ins Lager und füllst es gemeinsam mit ihm aus. Es dauert länger als jede Korrektur, ist aber der einzige Weg, bei dem hinterher niemand etwas erklären muss."
+			},
+			{
+				t: "'Kein Problem, kostet aber einen Kaffee.'",
+				m: 10, f: 0, a: -10, c: 10,
+				next: "path_zeit_manipuliert",
+				loot: "donut",
+				r: "Du änderst den Eintrag, er bringt dir zwanzig Minuten später einen Kaffee und einen Donut aus der Kantine vorbei. Der Donut ist von gestern. Der Eintrag jetzt auch."
+			}
+		]
+	},
+	{
+		id: "call_zeit_revision",
+		reqStory: "path_zeit_manipuliert",
+		char: "Frau Elster",
+		title: "Frau Elster (Buchhaltung)",
+		text: "'Herr Müller. In der Zeiterfassung wurde ein Eintrag nachträglich geändert. Von einem Konto mit vollen Rechten. Es gibt genau ein solches Konto.'\n\nMan hört sie Papier umblättern. Sie hat den Vorgang ausgedruckt.",
+		opts: [
+			{
+				t: "Fragen, warum sie die Protokolle liest",
+				m: 5, f: 0, a: 15, c: 10,
+				rep: { "Frau Elster": -5 },
+				r: "'Weil sie da sind, Herr Müller.' Sie sagt es, als hätte sie die Frage seit Jahren erwartet und die Antwort auswendig gelernt."
+			},
+			{
+				t: "Zugeben und den Vorgang aufnehmen",
+				m: 15, f: -5, a: 5, c: 5,
+				rep: { "Frau Elster": 5 },
+				r: "Du erklärst, was passiert ist, und trägst es selbst ins Protokoll ein. Sie nickt hörbar. 'Dokumentiert ist es kein Fehler mehr, sondern ein Vorgang.' So funktioniert das hier offenbar."
+			},
+			{
+				t: "Auf einen Systemfehler schieben",
+				m: 10, f: 10, a: 0, c: 20,
+				rep: { "Frau Elster": -10 },
+				r: "Du erfindest eine Synchronisationsstörung. Sie schweigt drei Sekunden zu lang und bedankt sich dann ausgesprochen freundlich. Der Ausdruck wandert in einen Ordner, den es offiziell nicht gibt."
+			}
+		]
+	},
+	{
+		id: "call_headset_echo",
+		title: "Herr Doblinger (Einkauf)",
+		startNode: "root",
+		nodes: {
+			root: {
+				text: "'Alle sagen, es hallt. Ich höre mich selbst. Ich höre mich SELBST, Herr Müller.'\n\nEr hört sich tatsächlich selbst. Man hört ihn auch. Zweimal.",
+				opts: [
+					{ t: "Fragen, ob noch ein Gerät im Meeting ist", next: "geraet" },
+					{ t: "Neues Headset in Aussicht stellen", next: "headset" },
+					{ t: "Kopfhörer aufsetzen und ruhig bleiben", req: "headphones", next: "ruhig" }
+				]
+			},
+			geraet: {
+				text: "'Nur mein Rechner. Und mein Handy. Aber das ist ja nur, damit ich mitbekomme, was gesagt wird, falls der Rechner ausfällt.'\n\nDas Handy ist im selben Meeting. Auf Lautsprecher. Neben dem Mikrofon.",
+				opts: [
+					{ t: "Ihn bitten, das Handy zu verlassen", next: "res_handy" },
+					{ t: "Nichts sagen und zuhören", next: "res_zuhoeren" }
+				]
+			},
+			headset: {
+				text: "'Endlich! Können Sie eins mit Kabel bestellen? Diese Funkdinger stören ja bekanntlich das WLAN.'\n\nEr arbeitet im Einkauf. Er könnte es selbst bestellen. Er weiß das.",
+				opts: [
+					{ t: "Bestellung zusagen und Ticket anlegen", next: "res_bestellung" },
+					{ t: "Ihn an den Einkauf verweisen", next: "res_einkauf" }
+				]
+			},
+			ruhig: {
+				text: "Du setzt die Kopfhörer auf, drehst das Rückkopplungsecho weg und hörst ihm zu, ohne dass dir dabei die Zähne wehtun. Nach zwanzig Sekunden sagt er von selbst: 'Moment, mein Handy ist auch drin.'",
+				opts: [
+					{ t: "Schweigend warten", next: "res_ruhig" }
+				]
+			}
+		},
+		results: {
+			res_handy: { txt: "Er verlässt das Meeting am Handy, das Echo ist weg, und er erklärt der Runde, du hättest 'am Server was umgestellt'. Widersprechen bringt an dieser Stelle nichts mehr.", m: 10, f: -5, a: 5, c: -5 },
+			res_zuhoeren: { txt: "Du sagst nichts. Er redet elf Minuten mit seinem eigenen Echo und kommt zu dem Schluss, dass die Leitung überlastet ist. Du hast in der Zeit nichts getan und dich sehr dabei entspannt.", m: 15, f: 15, a: -10, c: 5 },
+			res_bestellung: { txt: "Du legst ein Ticket an, das im Einkauf landet, also bei ihm. Er wird es in zwei Wochen ablehnen, weil kein Budget da ist, und dich anrufen, um sich darüber zu beschweren.", m: 10, f: 0, a: 5, c: 0 },
+			res_einkauf: { txt: "'Ich soll mir das selbst bestellen?' Er sagt es, als hättest du ihn gebeten, den Kopierer zu reparieren. Aber er tut es, und es kommt sogar an.", m: 5, f: 0, a: 10, c: 5 },
+			res_ruhig: { txt: "Er löst sein Problem selbst, während du schweigst. Er bedankt sich überschwänglich für deine Hilfe. Du hast keine geleistet, und das ist heute das beste Ergebnis.", m: 5, f: 0, a: -10, c: -5 }
+		}
+	},
+	{
+		id: "call_lizenz_admin",
+		title: "Frau Özdemir (Projektbüro)",
+		text: "'Ich brauche dieses Konvertierungsprogramm, aber der Rechner sagt, ich hätte keine Rechte. Können Sie mir schnell Ihr Passwort sagen? Dann mache ich das selbst und Sie haben Ruhe.'\n\nSie meint es freundlich. Das macht es nicht besser.",
+		opts: [
+			{
+				t: "'Installieren Sie einfach, was Sie finden.'",
+				m: 2, f: 20, a: -5, c: 20,
+				r: "Du legst auf. Sie findet etwas. Es funktioniert sogar, in gewisser Weise, und blendet dabei nur alle zwanzig Minuten Werbung für einen Datenrettungsdienst ein. Den Anruf deswegen bekommst du nächste Woche."
+			},
+			{
+				t: "Programm prüfen und selbst installieren",
+				req: "admin_pw",
+				m: 20, f: -10, a: 5, c: -10,
+				r: "Du schaust dir an, was sie da gefunden hat: eine Freeware mit vier Werbebannern und einem Installationsassistenten, der ungefragt die Startseite ändert. Du installierst stattdessen das Programm, das die Firma längst lizenziert hat, und zeigst ihr, wo es liegt."
+			},
+			{
+				t: "Das Passwort durchgeben, sie ist ja vertrauenswürdig",
+				req: "admin_pw", rem: "admin_pw",
+				next: "path_pw_verraten",
+				m: 5, f: 5, a: -5, c: 25,
+				r: "Du sagst es ihr. Sie wiederholt es laut, buchstabiert es zur Sicherheit noch einmal und schreibt es auf einen Zettel. Der Zettel klebt ab morgen an ihrem Monitor. Ein Passwort, das im Großraumbüro hängt, ist keins mehr — du wirst es ändern müssen."
+			},
+			{
+				t: "Ablehnen und ein Ticket für die Freigabe anlegen",
+				m: 10, f: 0, a: 5, c: 0,
+				r: "Du erklärst, dass du kein Passwort herausgibst, und legst eine Anfrage für die Softwarefreigabe an. Sie findet das umständlich. Sie hat recht. Trotzdem bleibt es dabei."
+			}
+		]
+	},
+
+	{
+		id: "call_ceo_sonnenwind",
+		reqStory: "path_ceo_sonnenwind",
+		char: "Dr. Wichtig",
+		title: "CEO Dr. Wichtig",
+		text: "'Müller, ich habe der Fachpresse von unserem Sonnenwind-Problem berichtet. Die fanden das hochspannend. Ich brauche bis Freitag ein Konzept, wie wir unsere Infrastruktur gegen Sonnenwinde härten.'\n\nEr hat es nicht vergessen. Er hat es ausgebaut.",
+		opts: [
+			{
+				t: "Ein Konzept schreiben, das nichts kostet",
+				m: 25, f: -10, a: 5, c: -10,
+				rep: { "Dr. Wichtig": 5 },
+				r: "Du verfasst zwei Seiten über Erdung, Überspannungsschutz und redundante Netzteile — alles Dinge, die es längst gibt. Er liest es nicht, leitet es aber weiter. Der Aufsichtsrat findet den Ansatz vorausschauend."
+			},
+			{
+				t: "Zugeben, dass es keine Sonnenwinde waren",
+				m: 10, f: 0, a: 10, c: 20,
+				rep: { "Dr. Wichtig": -10 },
+				r: "Du erklärst, dass sein iPad damals schlicht leer war. Er hört sich das an und sagt dann: 'Und warum haben Sie mich das der Presse erzählen lassen?' Darauf gibt es keine gute Antwort."
+			},
+			{
+				t: "Kevin das Konzept schreiben lassen",
+				m: 5, f: 15, a: -5, c: 10,
+				rep: { "Kevin": -5 },
+				r: "Kevin ist begeistert und liefert elf Seiten, davon sieben über Sonnenstürme im Allgemeinen und eine über einen Film, den er dazu gesehen hat. Der CEO druckt es und legt es in den Empfangsbereich."
+			}
+		]
+	},
+	{
+		id: "call_markus_papier",
+		reqStory: "path_markus_papier",
+		char: "Markus",
+		title: "Vertriebsleiter Markus",
+		text: "'Ihre PDF-Nummer hat mich zweiundvierzig Euro gekostet. Ich bin in den Copyshop gegenüber gefahren und habe das Angebot dort ausgedruckt. Mitsamt der internen Kalkulation auf Seite vier.'\n\nEr sagt das nicht als Beschwerde. Er sagt es als Rechnung.",
+		opts: [
+			{
+				t: "Fragen, ob die Datei dort noch liegt",
+				m: 15, f: -5, a: 10, c: -10,
+				rep: { "Markus": 5 },
+				r: "Sie liegt dort noch. Du rufst an, der Ladeninhaber löscht den Auftrag und findet die Aufregung übertrieben. Markus erwähnt den Vorfall nie wieder, was in seiner Sprache Dankbarkeit ist."
+			},
+			{
+				t: "Ihm zeigen, wie man beidseitig druckt",
+				m: 20, f: -10, a: 15, c: -5,
+				r: "Du gehst hoch und richtest ihm den Drucker ein. Er nennt dich dabei zweimal 'Kollege' und einmal 'jung', und du bist elf Jahre älter als er."
+			},
+			{
+				t: "Die zweiundvierzig Euro nicht kommentieren",
+				m: 5, f: 5, a: 0, c: 5,
+				r: "Du sagst nichts. Er reicht die Rechnung als Spesen ein, mit dem Vermerk 'IT nicht verfügbar'. Frau Elster wird das lesen. Frau Elster liest alles."
+			},
+			{
+				t: "'Warum drucken Sie interne Kalkulationen extern?'",
+				m: 10, f: 0, a: 5, c: 15,
+				rep: { "Markus": -10 },
+				r: "Die Frage ist berechtigt und trifft. Er wird laut, dann leise, dann sagt er: 'Melden Sie mich doch.' Ihr wisst beide, dass du das nicht tust. Aber gesagt ist es jetzt."
+			}
+		]
+	},
+	{
+		id: "call_egon_switch",
+		reqStory: "path_egon_switch",
+		char: "Egon",
+		title: "Hausmeister Egon",
+		text: "'Der Kasten, wo es reingetropft hat — ich hab den aufgeschraubt und trockengeföhnt. Läuft wieder. Kannst du mal gucken, ob das so richtig ist?'\n\nEr klingt stolz. Im Hintergrund läuft noch der Föhn.",
+		opts: [
+			{
+				t: "Fragen, ob er ihn vorher stromlos gemacht hat",
+				m: 10, f: 0, a: 15, c: 0,
+				next: "path_switch_bleibt",
+				r: "Lange Pause. 'Muss man das?' Ihr einigt euch darauf, dass die Frage rein akademisch ist, weil er ja noch lebt. Der Switch bleibt, wo er ist."
+			},
+			{
+				t: "'Wenn es läuft, läuft es.'",
+				m: 5, f: 20, a: -5, c: 20,
+				rep: { "Egon": 5 },
+				next: "path_switch_bleibt",
+				r: "Egon ist mit dieser Antwort außerordentlich zufrieden. Der Switch läuft noch drei Wochen und fällt dann an einem Freitagnachmittag aus, aus Gründen, die niemand mehr rekonstruieren kann."
+			},
+			{
+				t: "Sofort hinrennen und den Switch tauschen",
+				m: 30, f: -15, a: 10, c: -15,
+				rep: { "Egon": 5 },
+				r: "Der Switch läuft tatsächlich, auf eine Art, die man nicht empfehlen kann. Du tauschst ihn gegen ein Ersatzgerät und lässt Egon das alte behalten. Er stellt es sich in die Werkstatt, als Trophäe."
+			}
+		]
+	},
+	{
+		id: "call_gabi_kollaps",
+		reqStory: "path_gabi_kollaps",
+		char: "Gabi",
+		title: "Gabi (vom Handy)",
+		text: "'Ich bin wieder da, alles halb so wild. Der Sanitäter meinte, ich soll regelmäßig essen.'\n\nPause.\n\n'Er hat mich gefragt, ob mir jemand geholfen hat. Ich habe gesagt, ich hätte niemanden erreicht.'",
+		opts: [
+			{
+				t: "Sich entschuldigen",
+				m: 10, f: -5, a: 5, c: -5,
+				rep: { "Gabi": 10 },
+				r: "Du sagst, dass du das falsch eingeschätzt hast, und meinst es. Sie nimmt es an, ohne es auszuwalzen. In ihrer Schublade liegt seitdem ein Notvorrat, den sie dir zeigt, als wäre es ein gemeinsames Geheimnis."
+			},
+			{
+				t: "Ihr eine Schokolade vorbeibringen",
+				req: "chocolate", rem: "chocolate",
+				m: 15, f: -5, a: -10, c: -5,
+				rep: { "Gabi": 10 },
+				r: "Du legst ihr die Tafel wortlos auf den Tresen. Sie sagt auch nichts. Es ist die eleganteste Entschuldigung, die dieses Gebäude je gesehen hat, und sie kostet dich eine Tafel Schokolade."
+			},
+			{
+				t: "Auf den Senf im Kühlschrank verweisen",
+				m: 5, f: 5, a: 10, c: 5,
+				rep: { "Gabi": -10 },
+				r: "Du erklärst, dass du ja einen Vorschlag gemacht hättest. Sie legt auf. Anrufe von außen werden ab sofort ausnahmslos zu dir durchgestellt, auch die für den Vertrieb."
+			}
+		]
+	},
+	{
+		id: "call_vpn_privat",
+		title: "Herr Reinhardt (Controlling, Homeoffice)",
+		text: "'Mein Internet ist weg. Ich komme nicht auf den Server, ich kann nicht arbeiten. Was machen Sie jetzt?'\n\nEs ist sein privater Anschluss, in seiner privaten Wohnung, bei seinem privaten Anbieter.",
+		opts: [
+			{
+				t: "Ihm anbieten, ins Büro zu kommen",
+				m: 5, f: 0, a: 5, c: -5,
+				r: "Kurzes Schweigen. 'Ins Büro?' Er sagt, er versuche es erst noch einmal selbst. Zehn Minuten später ist er online und meldet sich nicht wieder."
+			},
+			{
+				t: "Ihm deinen mobilen Hotspot anbieten",
+				m: 10, f: 10, a: -5, c: 15,
+				r: "Du diktierst ihm dein Hotspot-Passwort. Er ist gerührt, arbeitet den Tag darüber und lädt dabei ein Backup von vier Gigabyte hoch. Dein Datenvolumen ist am 14. des Monats aufgebraucht."
+			},
+			{
+				t: "Erklären, dass der Anschluss privat ist",
+				m: 10, f: 0, a: 10, c: 0,
+				r: "Er hält das für eine Ausrede. 'Aber ich arbeite doch.' Ihr dreht euch zweimal im Kreis, bis er auflegt, um seinen Anbieter anzurufen. Dessen Hotline hat vierzig Minuten Wartezeit, sagt er später vorwurfsvoll."
+			},
+			{
+				t: "Mit ihm den Router durchgehen",
+				m: 25, f: -10, a: 15, c: -10,
+				r: "Du lotst ihn durch Lampenfarben, Steckerpositionen und einen Neustart. Nach zwanzig Minuten stellt sich heraus, dass die Mehrfachsteckdose ausgeschaltet war, weil er gestern den Staubsauger angeschlossen hatte."
+			}
+		]
+	},
+	{
+		id: "call_kevin_backup",
+		char: "Kevin",
+		title: "Kevin (Azubi)",
+		text: "'Ich hab ein Backup gemacht! Von der ganzen Projektablage! Ganz allein! Es hat vier Stunden gedauert, aber jetzt ist alles doppelt da.'\n\nEr wartet hörbar auf Lob. Du hast noch nicht gefragt, wohin.",
+		opts: [
+			{
+				t: "Fragen, auf welches Laufwerk",
+				m: 10, f: 0, a: 10, c: -5,
+				rep: { "Kevin": 5 },
+				r: "'Na auf dieselbe Platte, wo es auch war. Damit man es leichter findet.' Ein Backup neben dem Original ist kein Backup, sondern ein Platzproblem. Du erklärst es ihm, und er versteht es sofort, was das Ärgerliche daran ist."
+			},
+			{
+				t: "Loben und weitermachen lassen",
+				m: 5, f: 10, a: -10, c: 15,
+				rep: { "Kevin": 10 },
+				r: "Er blüht auf und kündigt an, ab jetzt jeden Tag ein Backup zu machen. Von allem. Auf dieselbe Platte. Die Platte ist 4 TB groß und wird nächste Woche zum ersten Mal volllaufen."
+			},
+			{
+				t: "Mit ihm zusammen ein echtes Backup einrichten",
+				m: 30, f: -15, a: 0, c: -10,
+				rep: { "Kevin": 10 },
+				r: "Ihr richtet gemeinsam einen Auftrag auf das Netzlaufwerk ein, mit Versionierung und einer Meldung bei Fehlschlag. Es kostet dich eine halbe Stunde und ist die einzige Handlung des heutigen Tages mit einer Halbwertszeit über morgen hinaus."
+			},
+			{
+				t: "'Backups sind nicht deine Aufgabe.'",
+				m: 5, f: 5, a: 0, c: 5,
+				rep: { "Kevin": -10 },
+				r: "Er entschuldigt sich mehrfach und löscht die Kopie sofort wieder. Dabei löscht er versehentlich auch einen Ordner des Originals. Das erfährst du erst übermorgen."
+			}
+		]
+	},
+	{
+		id: "call_falle_datenschutz",
+		title: "Externe Nummer",
+		text: "'Guten Tag, Bartels, externe Datenschutzkoordination. Wir prüfen im Auftrag Ihrer Geschäftsleitung die Zugriffsrechte. Bitte senden Sie mir eine Liste aller Benutzerkonten mit Rechtestufe an die Adresse, die ich Ihnen gleich durchgebe.'\n\nEr klingt ausgesprochen korrekt. Er kennt den Namen eures Geschäftsführers. Der steht auf der Website.",
+		opts: [
+			{
+				t: "Ihn an die Geschäftsleitung verweisen",
+				m: 5, f: 5, a: 0, c: 0,
+				r: "Du gibst ihm die Nummer des Sekretariats. Gabi wimmelt ihn in vierzig Sekunden ab, weil sie grundsätzlich niemanden durchstellt, den sie nicht kennt. Manchmal ist Misstrauen ein Sicherheitskonzept."
+			},
+			{
+				t: "Rückruf über die Zentrale anbieten",
+				m: 10, f: 0, a: 5, c: -10,
+				r: "Du erklärst, dass du gerne zurückrufst, sobald du die Nummer über die Zentrale bestätigt hast. Kurze Pause. Dann: 'Selbstverständlich.' Er ruft nie wieder an, und die Zentrale kennt keinen Bartels."
+			},
+			{
+				t: "Nachfragen, wer den Auftrag erteilt hat",
+				m: 15, f: 0, a: 10, c: -5,
+				r: "Er nennt einen Namen aus dem Impressum, dann eine Vertragsnummer, dann wird er ungeduldig. Ungeduld ist bei einer echten Prüfung selten. Du legst höflich auf, und er versucht es nicht noch einmal."
+			},
+			{
+				t: "Die Liste zusammenstellen und schicken",
+				m: 20, f: -5, a: 0, c: 30,
+				r: "Du exportierst die Benutzerliste und schickst sie an eine Adresse, deren Domain sich von eurer in genau einem Buchstaben unterscheidet. Aufgefallen ist dir das nicht. Auffallen wird es irgendwann jemandem."
+			}
+		]
+	},
+	{
+		id: "call_chantal_umfrage",
+		char: "Chantal",
+		title: "Chantal (Feel-Good-Management)",
+		text: "'Ich brauche ein Umfrage-Tool für unsere Zufriedenheitsbefragung! Ganz wichtig: komplett anonym, damit alle ehrlich sind.'\n\nPause.\n\n'Aber ich muss natürlich sehen können, wer was geantwortet hat. Für die Nachbetreuung.'",
+		opts: [
+			{
+				t: "Ein echtes anonymes Tool aufsetzen",
+				m: 25, f: -10, a: 0, c: -10,
+				rep: { "Chantal": 5 },
+				r: "Du richtest es ein, ohne Rückverfolgung, und zeigst ihr die Auswertung. Die erste Antwort lautet: 'Die IT ist das Einzige, was hier funktioniert.' Sie liest sie dir vor, hörbar irritiert."
+			},
+			{
+				t: "Namen mitspeichern, sie merkt es nicht",
+				m: 10, f: 5, a: -5, c: 25,
+				rep: { "Chantal": 10 },
+				r: "Du legst ein Feld an, das die Anmeldung mitschreibt. Sie ist begeistert. Vier Wochen später fragt der Betriebsrat, wie die Zuordnung in der Auswertung zustande kam, und der einzige Name im Protokoll ist deiner."
+			},
+			{
+				t: "'Nehmt Zettel und eine Kiste.'",
+				m: 5, f: 15, a: -5, c: 5,
+				rep: { "Chantal": -5 },
+				r: "Du schlägst Papier vor. Sie hält das für einen Rückschritt ins letzte Jahrhundert, macht es aber. Die Kiste steht drei Wochen im Foyer, und am Ende sind vier Zettel drin, davon zwei mit Zeichnungen."
+			},
+			{
+				t: "Erklären, dass beides zusammen nicht geht",
+				m: 15, f: -5, a: 10, c: -5,
+				rep: { "Chantal": -5 },
+				r: "Du erklärst den Widerspruch dreimal in drei Varianten. Sie hört zu und sagt dann: 'Und wenn wir es trotzdem anonym nennen?' Ihr einigt euch auf wirklich anonym, aber sie ist enttäuscht von dir."
+			}
+		]
+	},
+
+	{
+		id: "call_chef_kaffeetrick",
+		reqStory: "path_chef_kaffeetrick",
+		char: "Chantal",
+		title: "Chantal (Feel-Good-Management)",
+		text: "'Herr Müller, ganz kurz: In der Teeküche steht eine Schlange. Angeblich gibt es einen Trick, wie man die Premium-Röstung umsonst bekommt. Wissen Sie was darüber?'\n\nDu weißt sehr genau etwas darüber. Du weißt sogar, von wem es kommt.",
+		opts: [
+			{
+				t: "'Keine Ahnung, ich trinke den normalen.'",
+				m: 5, f: 5, a: 0, c: 0,
+				r: "Du sagst nichts. Der Trick verbreitet sich von allein durch drei Etagen, und die Maschine wird am Donnerstag von einem Techniker neu konfiguriert. Niemand fragt, wer angefangen hat."
+			},
+			{
+				t: "Den Trick erklären, aber nicht die Quelle",
+				m: 10, f: 0, a: -5, c: 10,
+				rep: { "Chantal": 5 },
+				r: "Sie probiert es sofort aus, ist begeistert und postet es ins Intranet. Innerhalb einer Stunde weiß es das ganze Haus. Der Chef liest den Beitrag und weiß nun, dass jemand mitgehört hat."
+			},
+			{
+				t: "Sagen, von wem der Trick stammt",
+				m: 10, f: 0, a: 5, c: 25,
+				rep: { "Chantal": 10, "Dr. Wichtig": -10 },
+				r: "Chantal ist elektrisiert und behandelt die Information wie ein Geschenk. Sie behält sie exakt vierzig Minuten für sich. Der Chef weiß am Nachmittag, wer gelauscht hat, und du weißt, dass er es weiß."
+			},
+			{
+				t: "'Der Kaffee ist auch mit Trick schlecht.'",
+				m: 5, f: 0, a: -10, c: 5,
+				r: "Sie lacht ehrlich, zum ersten Mal seit Wochen ohne Emoji im Tonfall. Das Thema ist damit erledigt, und die Schlange in der Teeküche löst sich von selbst auf, als die Röstung leer ist."
+			}
+		]
+	},
+	{
+		id: "call_puschel",
+		reqStory: "path_puschel",
+		title: "Praktikant Tobias",
+		text: "'Ähm, Herr Müller? Ich komme nicht mehr in mein Konto. Es sagt, das Passwort sei abgelaufen. Ich habe es doch gerade erst geändert.'\n\nDu weißt, wie es lautet. Du weißt sogar, wie der Hamster heißt.",
+		opts: [
+			{
+				t: "'Woher soll ich Ihr Passwort kennen?'",
+				m: 5, f: 5, a: 5, c: 5,
+				r: "Du stellst dich ahnungslos und setzt es kommentarlos zurück. Er glaubt dir. Zwei Wochen später erzählt er im Aufenthaltsraum, die IT könne Passwörter nicht sehen, und du widersprichst nicht."
+			},
+			{
+				t: "Zurücksetzen, ohne etwas zu erwähnen",
+				m: 10, f: -5, a: 0, c: -5,
+				r: "Du setzt es zurück und lässt ihn ein neues vergeben. Er tippt es ein und sagt dabei laut mit: 'Pu-schel-eins-zwei-drei-vier.' Ihr habt beide dazugelernt, nur unterschiedlich viel."
+			},
+			{
+				t: "Ihm erklären, warum man Passwörter nicht ausspricht",
+				m: 20, f: -10, a: 5, c: -10,
+				r: "Du erklärst ihm in fünf Minuten mehr über Sicherheit, als er in seiner Einführung gehört hat, und zwar ohne ihn bloßzustellen. Er nickt ernsthaft. Der Hamster kommt in keinem Passwort mehr vor."
+			},
+			{
+				t: "Mit 'Puschel123' anmelden und es ihm zeigen",
+				m: 10, f: 0, a: -5, c: 20,
+				r: "Du meldest dich vor seinen Augen mit seinem Passwort an. Der Schreck sitzt tief und die Lektion auch. Die Anmeldung steht allerdings mit deinem Rechnernamen im Protokoll, und Protokolle liest hier jemand."
+			}
+		]
+	},
+	{
+		id: "call_lena_keller",
+		reqStory: "path_lena_keller",
+		title: "Praktikantin Lena",
+		text: "'Ich wollte nur nochmal danke sagen. Und fragen: Woher wussten Sie den Code?'\n\nDu wusstest ihn nicht. Du hast geraten. Der Code lautet seit der Installation 0000.",
+		opts: [
+			{
+				t: "Den Code melden, damit er geändert wird",
+				m: 15, f: -5, a: 5, c: -10,
+				rep: { "Egon": -5 },
+				r: "Du schreibst eine Meldung an die Haustechnik. Egon ändert den Code auf 1234 und teilt ihn per Aushang mit, damit ihn niemand vergisst. Der Aushang hängt neben der Tür."
+			},
+			{
+				t: "Geheimnisvoll bleiben",
+				m: 5, f: 10, a: -10, c: 5,
+				r: "'Berufsgeheimnis.' Sie ist beeindruckt. Der Ruf, im Haus alle Codes zu kennen, ist einiges wert und kostet dich keine einzige Minute Arbeit."
+			},
+			{
+				t: "Die Wahrheit sagen",
+				m: 5, f: 0, a: 0, c: -5,
+				r: "Du gibst zu, dass du geraten hast. Sie findet das noch lustiger als die Rettung selbst und erzählt es weiter. Seitdem heißt der Kellercode im Haus 'die Müller-Methode'."
+			}
+		]
+	},
+	{
+		id: "call_maus_hof",
+		reqStory: "path_maus_hof",
+		char: "Egon",
+		title: "Hausmeister Egon",
+		text: "'Sag mal, hast du eine Maus im Hof ausgesetzt? Da sitzen jetzt drei. Eine davon kennt sich verdächtig gut mit dem Papierschacht aus.'\n\nEr klingt nicht vorwurfsvoll. Er klingt fachlich interessiert.",
+		opts: [
+			{
+				t: "Fragen, ob man sie behalten kann",
+				m: 10, f: 5, a: -10, c: 5,
+				rep: { "Egon": 5 },
+				r: "Egon überlegt ernsthaft. 'Als Bürotier?' Die Idee scheitert an Frau Elster, die Bürotiere für einen geldwerten Vorteil hält und das auch schriftlich festhält."
+			},
+			{
+				t: "Mit Egon eine Lebendfalle aufstellen",
+				m: 25, f: -10, a: 0, c: -10,
+				rep: { "Egon": 10 },
+				r: "Ihr stellt gemeinsam zwei Kästen auf und Egon erzählt dabei vierzig Minuten von 1987. Am nächsten Morgen sind beide Fallen leer und der Köder weg. Egon nennt das 'Respekt vor dem Gegner'."
+			},
+			{
+				t: "Vorschlagen, den Papierschacht zu schließen",
+				m: 10, f: 0, a: 5, c: -5,
+				r: "Eine Klappe, die zugeht, löst das Problem an der Wurzel. Egon findet die Idee gut, setzt sie um, und der Drucker quiekt nie wieder. Dafür klemmt er jetzt beim Papiereinzug."
+			},
+			{
+				t: "'Nicht mein Zuständigkeitsbereich.'",
+				m: 5, f: 10, a: 0, c: 5,
+				rep: { "Egon": -5 },
+				r: "Egon sagt nur: 'Ah.' und legt auf. Es ist ein sehr kurzes 'Ah', und du wirst noch monatelang daran denken, wenn du etwas von der Haustechnik brauchst."
+			}
+		]
+	},
+	{
+		id: "call_scanner_riesig",
+		title: "Herr Petzold (Qualitätssicherung)",
+		text: "'Ich scanne seit einer halben Stunde und es kommt keine Mail an. Der Scanner sagt aber, er hätte gesendet.'\n\nEr hat gesendet. Vierhundertzwölf Seiten, einzeln, in höchster Auflösung, in Farbe.",
+		opts: [
+			{
+				t: "Die Warteschlange leeren und neu scannen lassen",
+				m: 20, f: -10, a: 5, c: -10,
+				r: "Du räumst 2,8 Gigabyte aus der Warteschlange und stellst den Scanner auf Graustufen. Der zweite Versuch dauert vier Minuten und kommt an. Er fragt, warum das nicht von Anfang an so eingestellt war."
+			},
+			{
+				t: "Fragen, was er da eigentlich scannt",
+				m: 10, f: 0, a: 10, c: -5,
+				next: "path_petzold_handbuch",
+				r: "Es ist ein Qualitätshandbuch, das digital vorliegt. Er scannt den Ausdruck, um daraus eine digitale Version zu machen. Ihr steht beide kurz schweigend vor diesem Gedanken."
+			},
+			{
+				t: "Ihm das Postfachlimit erhöhen",
+				m: 15, f: 0, a: 0, c: 10,
+				r: "Du hebst das Limit an, die Mails kommen an, und das Postfach ist am Nachmittag wieder voll. Das Problem ist damit nicht gelöst, sondern nur umgezogen — in die Datensicherung."
+			},
+			{
+				t: "'Der Scanner arbeitet noch, bitte warten.'",
+				m: 5, f: 15, a: -5, c: 5,
+				r: "Du legst auf. Der Scanner arbeitet tatsächlich noch, und zwar bis 15 Uhr. In der Zwischenzeit kann niemand im Haus etwas anderes drucken."
+			}
+		]
+	},
+	{
+		id: "call_neuer_kollege",
+		title: "Personalentwicklung",
+		text: "'Der neue Kollege im Vertrieb fängt in zehn Minuten an. Er bräuchte einen Rechner, ein Konto, ein Postfach, ein Telefon und den Zugang zum Warenwirtschaftssystem.'\n\nDu hörst zum ersten Mal von ihm.",
+		opts: [
+			{
+				t: "Ihn an den alten Rechner von Bernd setzen",
+				m: 15, f: -5, a: 0, c: 15,
+				next: "path_bernd_rechner",
+				r: "Der Rechner steht noch da, mit allen Rechten und allen Daten seines Vorgängers. Es funktioniert sofort und ist gleichzeitig das Schlimmste, was du heute tun konntest. Aufgefallen ist es niemandem."
+			},
+			{
+				t: "Nachfragen, wer ihn eigentlich eingestellt hat",
+				m: 10, f: 0, a: 15, c: 10,
+				r: "Es stellt sich heraus, dass die Meldung an die IT seit drei Wochen in einem Postfach liegt, das seit der Umstrukturierung niemandem gehört. Das zu klären dauert länger als das Konto anzulegen."
+			},
+			{
+				t: "Erklären, dass so etwas Vorlauf braucht",
+				m: 10, f: 0, a: 10, c: 5,
+				r: "Du erklärst den Ablauf und die Vorlaufzeit. Sie hört zu und sagt dann: 'Aber er ist ja jetzt da.' Ihr habt beide recht und trotzdem sitzt gleich jemand vor einem leeren Tisch."
+			},
+			{
+				t: "Ein Konto anlegen, Rest kommt später",
+				m: 25, f: -10, a: 5, c: -10,
+				r: "Du legst in zwanzig Minuten das Nötigste an: Anmeldung, Postfach, ein Leihgerät aus dem Schrank. Er kann Mails lesen. Für einen ersten Arbeitstag im Vertrieb ist das mehr als genug."
+			}
+		]
+	},
+	{
+		id: "call_beamer_workshop",
+		char: "Chantal",
+		title: "Chantal (Schulungsraum)",
+		text: "'Der Beamer zeigt nichts an! In vier Minuten fängt der Workshop an! Es geht um Digitalisierung!'\n\nIm Hintergrund sagt jemand mit sehr ruhiger Stimme: 'Bei mir zu Hause geht so was immer sofort.'",
+		opts: [
+			{
+				t: "Hingehen und den Eingang umstellen",
+				m: 20, f: -10, a: 10, c: -10,
+				rep: { "Chantal": 10 },
+				r: "Der Beamer stand auf dem falschen Eingang, weil vorgestern jemand einen Laptop angeschlossen und wieder mitgenommen hat. Zwei Tastendrücke. Chantal stellt dich der Runde als 'unseren Retter' vor, was schlimmer ist als das Problem."
+			},
+			{
+				t: "Am Telefon durch das Menü führen",
+				m: 15, f: -5, a: 15, c: 0,
+				r: "Du beschreibst Symbole, die sie nicht findet, auf einer Fernbedienung, deren Batterien leer sind. Nach zwölf Minuten schaltet sie den Beamer aus und wieder ein, und es geht. Warum, bleibt zwischen euch."
+			},
+			{
+				t: "Das Ersatzkabel bringen",
+				req: "cable",
+				m: 10, f: -5, a: 0, c: -10,
+				rep: { "Chantal": 5 },
+				r: "Du bringst das Kabel aus deiner Schublade, steckst es an und gehst wieder. Vier Minuten, kein Wort zu viel. Das Kabel bleibt dort und wird nie wieder auftauchen."
+			},
+			{
+				t: "'Macht den Workshop analog, passt zum Thema.'",
+				m: 5, f: 10, a: -10, c: 10,
+				rep: { "Chantal": -5 },
+				r: "Der Satz ist zu gut, um ihn nicht zu sagen, und du sagst ihn laut genug, dass es die Runde hört. Es lachen drei Leute. Chantal gehört nicht dazu."
+			}
+		]
+	},
+	{
+		id: "call_signatur_weg",
+		title: "Frau Kirchner (Auftragsbearbeitung)",
+		text: "'Meine Signatur ist weg. Einfach weg. Ich habe nichts gemacht.'\n\nSie hat sie gestern selbst gelöscht, weil sie ihr zu lang war. Das wird sie erst in vier Minuten sagen.",
+		opts: [
+			{
+				t: "'Signaturen sind Sache der Anwender.'",
+				m: 2, f: 15, a: -5, c: 10,
+				r: "Du legst auf. Sie schreibt den ganzen Tag Mails ohne Absenderangabe, und zwei Kunden fragen zurück, mit wem sie es zu tun haben. Die Rückfragen landen im Postfach ihres Abteilungsleiters."
+			},
+			{
+				t: "Die Vorlage neu einsetzen",
+				m: 10, f: -5, a: 0, c: -5,
+				r: "Du setzt die Firmenvorlage neu ein. Sie ist zufrieden, bis sie merkt, dass wieder der vollständige Haftungshinweis darunter steht. Der Hinweis ist neun Zeilen lang und rechtlich vorgeschrieben."
+			},
+			{
+				t: "Fragen, wann sie zuletzt funktioniert hat",
+				m: 15, f: -5, a: 5, c: -10,
+				r: "Zwei Fragen später gibt sie zu, dass sie gestern 'ein bisschen aufgeräumt' hat. Ihr stellt es gemeinsam wieder her, und sie erwähnt den Haftungshinweis mit keinem Wort mehr."
+			},
+			{
+				t: "Ihr eine eigene Signatur bauen lassen",
+				m: 20, f: 0, a: 5, c: 15,
+				r: "Sie gestaltet sich eine Signatur mit einem Zitat, zwei Farben und einem Bild ihres Hundes. Der Haftungshinweis fehlt darin. Das wird auffallen, aber nicht heute und nicht dir."
+			}
+		]
+	},
+	{
+		id: "call_falle_werkstudent",
+		title: "Unbekannte Nummer",
+		text: "'Hi, hier ist Jan, der neue Werkstudent in der IT. Ich soll heute anfangen, komme aber nicht ins System. Kannst du mir schnell einen Zugang einrichten? Frau Chantal hat gesagt, ich soll dich direkt anrufen.'\n\nEr duzt dich sofort. Er kennt Chantals Vornamen. Er kennt deinen auch.",
+		opts: [
+			{
+				t: "Bei Chantal nachfragen",
+				m: 10, f: 0, a: 5, c: -10,
+				rep: { "Chantal": 5 },
+				r: "Chantal weiß von keinem Jan. Sie weiß auch von keinem Werkstudenten. Als du zurückrufst, ist die Nummer nicht mehr vergeben. Du legst den Vorgang schriftlich ab, weil so etwas selten einmal vorkommt."
+			},
+			{
+				t: "Ihn bitten, persönlich vorbeizukommen",
+				m: 5, f: 0, a: 0, c: -5,
+				r: "'Klar, ich bin nachmittags da.' Er ist nachmittags nicht da. Er ist auch am nächsten Tag nicht da. Der Empfang hat nie einen Jan gesehen."
+			},
+			{
+				t: "Zugang einrichten, er fängt ja heute an",
+				m: 20, f: -5, a: -5, c: 30,
+				r: "Du legst ein Konto an und gibst die Zugangsdaten telefonisch durch. Er bedankt sich herzlich und meldet sich um 23:40 Uhr von einer Adresse an, die in keinem Netz liegt, das zu diesem Gebäude gehört."
+			},
+			{
+				t: "Ihn nach seiner Personalnummer fragen",
+				m: 10, f: 0, a: 5, c: -5,
+				r: "Kurzes Zögern. Dann nennt er eine, die es geben könnte, aber nicht gibt. Als du das sagst, wird er unfreundlich und legt auf. Unfreundlichkeit am Telefon ist selten ein Beweis, aber fast immer ein Hinweis."
+			}
+		]
+	},
+	{
+		id: "call_heizluefter",
+		char: "Egon",
+		title: "Hausmeister Egon",
+		text: "'Im Westflügel ist zum dritten Mal heute die Sicherung raus. Immer kurz nach neun. Ich hab nichts geändert. Ihr habt doch die ganzen Kisten da stehen.'\n\nDie ganzen Kisten stehen dort seit vier Jahren und haben noch nie eine Sicherung geworfen.",
+		opts: [
+			{
+				t: "'Elektrik ist Haustechnik, nicht IT.'",
+				m: 5, f: 10, a: 0, c: 10,
+				rep: { "Egon": -10 },
+				r: "Formal hast du recht. Egon legt wortlos auf und meldet den Vorfall schriftlich weiter, mit dem Zusatz, die IT habe eine Prüfung abgelehnt. Der Zusatz ist der eigentliche Punkt."
+			},
+			{
+				t: "Fragen, ob jemand ein Heizgerät benutzt",
+				m: 10, f: 0, a: 5, c: -10,
+				rep: { "Egon": 5 },
+				next: "path_heizluefter",
+				r: "Egon geht nachsehen und findet drei Heizlüfter unter drei Schreibtischen, alle an derselben Leiste, alle seit Montag. Die Heizung im Westflügel läuft seit Montag nicht."
+			},
+			{
+				t: "Hingehen und die Verteilung durchmessen",
+				m: 30, f: -15, a: 5, c: -10,
+				rep: { "Egon": 10 },
+				r: "Du misst eine Stunde lang mit Egon zusammen und findest dieselben drei Heizlüfter, nur langsamer. Dafür weißt du jetzt, was hinter der Wand liegt, und Egon weiß, dass du zuhören kannst."
+			}
+		]
+	},
+	{
+		id: "call_kalender_geist",
+		title: "Frau Brandt (Vertriebsinnendienst)",
+		text: "'In meinem Kalender steht jeden Dienstag um 14 Uhr ein Termin namens \"Abstimmung\". Ohne Ort, ohne Beschreibung, ohne Organisator. Ich kann ihn nicht löschen. Er ist einfach da.'\n\nEr steht bei siebzehn Personen im Kalender. Seit 2021.",
+		opts: [
+			{
+				t: "Den Termin bei ihr allein ausblenden",
+				m: 10, f: 0, a: 0, c: -5,
+				r: "Ein Klick, das Problem ist für sie weg und für sechzehn andere nicht. Genau so entstehen Termine, die niemand mehr zuordnen kann, und du weißt das in dem Moment, in dem du es tust."
+			},
+			{
+				t: "Die ganze Serie löschen",
+				m: 15, f: -5, a: 0, c: 25,
+				next: "path_geistertermin",
+				r: "Du räumst auf. Am folgenden Dienstag um 14 Uhr sitzen vier Personen in einem Raum, weil sie den Termin nicht mehr im Kalender hatten, aber im Kopf. Zwei von ihnen halten diese Runde für das wichtigste Meeting der Woche."
+			},
+			{
+				t: "'Gehen Sie einfach hin.'",
+				m: 5, f: 10, a: -5, c: 5,
+				r: "Sie geht hin. Der Raum ist leer. Sie bleibt zwanzig Minuten und schreibt anschließend ein Protokoll, weil sie Protokolle schreibt. Das Protokoll geht an siebzehn Personen."
+			},
+			{
+				t: "Herausfinden, wer die Serie angelegt hat",
+				m: 25, f: -10, a: 5, c: -5,
+				r: "Der Organisator hat die Firma 2022 verlassen, sein Konto wurde deaktiviert, die Serie blieb. Du dokumentierst es und stellst fest, dass sich in vier Jahren niemand getraut hat zu fragen, worum es geht."
+			}
+		]
+	},
+	{
+		id: "call_wlan_gast",
+		char: "Gabi",
+		title: "Gabi (Empfang)",
+		text: "'Herr Müller, hier steht ein Besucher, der ins WLAN möchte. Ich habe ihm das Gästenetz genannt, aber er sagt, das sei zu langsam für seine Präsentation.'\n\nIm Hintergrund: 'Ich brauche nur kurz das richtige Netz.'",
+		opts: [
+			{
+				t: "Ihm das interne Netz nennen, ist ja nur kurz",
+				m: 5, f: 5, a: -5, c: 30,
+				r: "Du gibst das interne Passwort durch. Er ist zufrieden, sein Rechner meldet sich brav im Firmennetz an, und danach hat ein Gerät, das dir niemals gehört hat, eine Adresse in deinem Netz. Für immer, denn er wird wiederkommen."
+			},
+			{
+				t: "Gabi entscheiden lassen",
+				m: 5, f: 10, a: -5, c: 5,
+				rep: { "Gabi": -5 },
+				r: "Du sagst, sie solle machen, was sie für richtig hält. Sie hält es für richtig, ihn abzuweisen, und tut das mit einer Freundlichkeit, gegen die kein Argument ankommt. Beschweren wird er sich trotzdem — bei dir."
+			},
+			{
+				t: "Den Zettel mit den Gästedaten durchgeben",
+				req: "wifi_note",
+				m: 5, f: 0, a: 0, c: -5,
+				rep: { "Gabi": 5 },
+				r: "Du liest Gabi die Gästedaten vom Zettel vor, sie gibt sie weiter, fertig. Das Gästenetz ist genau so langsam, wie es sein soll, und die Präsentation läuft trotzdem."
+			},
+			{
+				t: "Fragen, was er präsentieren will",
+				m: 10, f: 0, a: 5, c: -5,
+				r: "Er will ein Video aus einer Cloud abspielen, die niemand hier kennt. Ihr einigt euch auf den Beamer und eine Datei vom Stick. Es dauert zwei Minuten und funktioniert seit dreißig Jahren."
+			}
+		]
+	},
+
+	{
+		id: "call_werner_blind",
+		reqStory: "path_werner_blind",
+		title: "Privatanruf: Schwiegerpapa Werner",
+		text: "'JÜRGEN! Es hat geklappt! Ich bin jetzt in dieser Gruppe!'\n\nEr ist in einer Gruppe. Sie heißt 'Nachbarschaft Ostweg – KEINE POLITIK'. Er hat sie selbst gegründet. Sie hat 214 Mitglieder.\n\n'Und die schreiben alle so schnell! Kannst du das langsamer stellen?'",
+		opts: [
+			{
+				t: "'Verlass die Gruppe einfach.'",
+				m: 5, f: 0, a: 10, c: 0,
+				r: "'Verlassen? Die haben mich zum Verwalter gemacht!' Er sagt das wie einen Rang. Das Gespräch endet damit, dass er die Gruppe behält und du das Thema."
+			},
+			{
+				t: "Ehrlich sagen, dass du beim letzten Mal nicht zugehört hast",
+				m: 15, f: -5, a: -10, c: 5,
+				r: "Du gibst zu, dass du damals nur 'Mhm' gesagt hast. Werner ist kurz still und lacht dann so laut, dass es im Nachbarbüro zu hören ist. 'Das macht der Enkel auch immer.' Ihr telefoniert seitdem öfter."
+			},
+			{
+				t: "Wieder die Kopfhörer aufsetzen",
+				req: "headphones",
+				m: 25, f: 20, a: -15, c: 10,
+				r: "Du machst es genauso wie beim letzten Mal. Es funktioniert genauso gut. Am Ende ist er zufrieden, du bist entspannt, und irgendwo im Ostweg passiert etwas, wovon du nie erfahren wirst."
+			},
+			{
+				t: "Ihm zeigen, wie man Gruppen stummschaltet",
+				m: 20, f: 5, a: -5, c: 15,
+				r: "Zwanzig Minuten, in denen du dreimal erklärst, wo 'das Glöckchen mit dem Strich' ist. Danach ist Ruhe im Ostweg. Renate ruft am Abend an und bedankt sich bei dir, was Werner nie tun würde."
+			}
+		]
+	},
+	{
+		id: "call_plomp_tape",
+		reqStory: "path_plomp_tape",
+		title: "Frau Plomp (Kundenbetreuung)",
+		text: "'Der Getränkehalter hält jetzt wunderbar, danke nochmal. Aber ich habe hier eine CD von der Schulung, die soll ich einlegen. Wo mache ich das?'\n\nDie einzige Öffnung dafür ist mit Panzertape zugeklebt. Von dir.",
+		opts: [
+			{
+				t: "Das Tape abziehen und es ihr erklären",
+				m: 15, f: -5, a: 5, c: -5,
+				r: "Du ziehst das Tape ab, die Lade fährt heraus, und Frau Plomp betrachtet das Ganze mit dem Gesichtsausdruck eines Menschen, der gerade betrogen wurde. 'Das ist ja doch ein Loch.' Ihr sprecht nie wieder darüber."
+			},
+			{
+				t: "Den Inhalt der CD auf ein Netzlaufwerk kopieren",
+				m: 20, f: -10, a: 0, c: -10,
+				r: "Du holst die CD, kopierst die Schulungsunterlagen auf das Laufwerk und schickst ihr den Link. Sie druckt die Unterlagen aus. Alle vierhundert Seiten. Der Drucker im dritten Stock hat den Rest des Tages zu tun."
+			},
+			{
+				t: "'Legen Sie sie einfach oben drauf.'",
+				m: 5, f: 15, a: -5, c: 10,
+				r: "Sie legt die CD auf das Gehäuse. Es passiert nichts, was sie zu der Bemerkung veranlasst, moderne Technik sei eben nicht mehr das, was sie mal war. Widersprechen wäre in dieser Lage unklug."
+			}
+		]
+	},
+	{
+		id: "call_bernd_rechner",
+		reqStory: "path_bernd_rechner",
+		char: "Frau Elster",
+		title: "Frau Elster (Buchhaltung)",
+		text: "'Herr Müller. Auf einer frischen Rechnungsfreigabe steht als Bearbeiter ein Name, der seit Februar nicht mehr im Haus ist.'\n\nDer neue Kollege sitzt an Bernds Rechner. Mit Bernds Anmeldung. Mit Bernds Freigaberechten.",
+		opts: [
+			{
+				t: "Sofort ein eigenes Konto einrichten",
+				m: 25, f: -10, a: 5, c: -15,
+				rep: { "Frau Elster": 10 },
+				r: "Du legst in einer halben Stunde nach, was du am Montag hättest anlegen sollen, und sperrst das alte Konto. Frau Elster vermerkt die Sperrung im Protokoll und schreibt daneben: 'Zeitnah behoben.' Das ist ihr höchstes Lob."
+			},
+			{
+				t: "Die Freigaben aus dem alten Konto entfernen",
+				m: 15, f: -5, a: 0, c: -5,
+				r: "Du nimmst die Rechte weg, das Konto bleibt. Der neue Kollege arbeitet weiter unter Bernds Namen, kann aber nichts mehr freigeben. Ein Zwischenzustand, der erfahrungsgemäß drei Jahre hält."
+			},
+			{
+				t: "'Der Rechner war ja noch eingerichtet.'",
+				m: 5, f: 10, a: 5, c: 25,
+				rep: { "Frau Elster": -10 },
+				r: "Du erklärst, dass es praktisch war. Sie wiederholt das Wort 'praktisch' einmal, sehr langsam. Der Vorgang liegt ab morgen als Ausdruck bei der Geschäftsleitung, ordentlich abgeheftet."
+			},
+			{
+				t: "Fragen, warum Bernds Konto noch aktiv ist",
+				m: 10, f: 0, a: 10, c: 10,
+				r: "Weil niemand die Abmeldung geschickt hat. Die Abmeldung schickt die Personalabteilung. Die Personalabteilung wartet auf die Bestätigung der IT. Auf die Bestätigung wartet sie seit Februar."
+			}
+		]
+	},
+	{
+		id: "call_geistertermin",
+		reqStory: "path_geistertermin",
+		title: "Frau Brandt (Vertriebsinnendienst)",
+		text: "'Vier Leute aus der alten Verteilerliste haben gemerkt, dass der Termin weg ist, und einen neuen angelegt. Er heißt \"Abstimmung (neu)\" und geht an dreiundzwanzig Personen. Sie haben mich in cc gesetzt und schreiben, die IT habe den alten versehentlich gelöscht.'\n\nVersehentlich war es nicht.",
+		opts: [
+			{
+				t: "Richtigstellen, dass die Serie verwaist war",
+				m: 15, f: -5, a: 10, c: -5,
+				r: "Du antwortest allen dreiundzwanzig sachlich, dass der Organisator die Firma 2022 verlassen hat. Zwei Leute bedanken sich, einer widerspricht, und der Termin bleibt trotzdem bestehen. Er hat jetzt eine Geschichte, und das reicht."
+			},
+			{
+				t: "Anbieten, an der Runde teilzunehmen",
+				m: 20, f: -5, a: 15, c: -10,
+				r: "Du gehst einmal hin. Es geht vierzig Minuten um Zuständigkeiten, dann zwanzig Minuten um den Kaffee. Am Ende bittet man dich, künftig regelmäßig zu kommen, weil deine Anwesenheit die Runde aufgewertet habe."
+			},
+			{
+				t: "Nichts sagen, der Termin ist harmlos",
+				m: 5, f: 10, a: -5, c: 5,
+				r: "Du lässt es laufen. Die Runde tagt seitdem wieder jeden Dienstag um 14 Uhr, produziert Protokolle und wird im nächsten Jahr in der Organisationsübersicht auftauchen. Irgendwann wird jemand fragen, wer das eingeführt hat."
+			}
+		]
+	},
+	{
+		id: "call_petzold_handbuch",
+		reqStory: "path_petzold_handbuch",
+		title: "Herr Petzold (Qualitätssicherung)",
+		text: "'Wegen der Scannerei. Ich habe das digitale Handbuch gefunden, das Sie meinten. Es ist von 2019. Meins ist von 2023. Ich habe nämlich seitdem Änderungen von Hand eingetragen.'\n\nAuf Papier. In einem Ordner. Als einzige Fassung.",
+		opts: [
+			{
+				t: "Ihm zeigen, wie man Änderungen digital nachverfolgt",
+				m: 20, f: -10, a: 5, c: -10,
+				r: "Er ist ehrlich beeindruckt, dass ein Dokument sich merkt, wer was wann geändert hat. Dass er das seit 2019 hätte haben können, sagst du nicht. Er kommt selbst darauf und wird sehr still."
+			},
+			{
+				t: "Vorschlagen, den Ordner einzuscannen",
+				m: 10, f: 5, a: 0, c: 10,
+				r: "Du schlägst genau das vor, was die Warteschlange zum Überlaufen gebracht hat. Er tut es. Diesmal in Graustufen, immerhin. Die Datei liegt danach neben dem Dokument von 2019, und niemand weiß mehr, welche gilt."
+			},
+			{
+				t: "'Dann ist Ihre Fassung eben die gültige.'",
+				m: 5, f: 15, a: -5, c: 5,
+				r: "Du erklärst den Papierordner zur führenden Fassung. Das ist bequem, ehrlich und aus Sicht der nächsten Zertifizierung eine Katastrophe. Aber die ist im Herbst, und heute ist Dienstag."
+			},
+			{
+				t: "Anbieten, die Änderungen einzupflegen",
+				m: 30, f: -15, a: 0, c: -15,
+				r: "Ihr geht die Randnotizen von vier Jahren durch und übertragt sie ins Dokument. Es dauert ewig und ist die erste Handlung seit Monaten, die eine Fassung erzeugt hat, hinter der niemand mehr zurückmuss."
+			}
+		]
+	},
+	{
+		id: "call_bildschirm_gedreht",
+		title: "Herr Adler (Einkauf)",
+		text: "'Alles steht auf dem Kopf. Der ganze Bildschirm. Ich habe nur die Tastatur sauber gemacht.'\n\nEr hat beim Wischen eine Tastenkombination erwischt, die es seit zwanzig Jahren gibt und die niemand je gebraucht hat.",
+		opts: [
+			{
+				t: "Nachfragen, womit er sauber gemacht hat",
+				m: 10, f: 0, a: 10, c: -5,
+				r: "Mit Glasreiniger. Direkt aufgesprüht. Auf die Tastatur. Das gedrehte Bild ist damit das kleinste der beiden Probleme, und das zweite meldet sich in etwa vier Tagen."
+			},
+			{
+				t: "Die Tastenkombination durchsagen",
+				m: 5, f: 0, a: 0, c: 0,
+				r: "Strg, Alt, Pfeil nach oben. Ein Tastendruck, zwei Sekunden, erledigt. Er ist enttäuscht, dass es so einfach war, und du weißt genau, dass er das gleich jemandem vorführen wird."
+			},
+			{
+				t: "Hingehen und es umstellen",
+				m: 15, f: -10, a: 5, c: -5,
+				r: "Du gehst hoch, drehst das Bild zurück und deaktivierst die Tastenkombination gleich mit. Auf dem Rückweg fragen dich zwei Leute, ob du bei ihnen auch mal schauen könntest."
+			},
+			{
+				t: "Ihn den Bildschirm drehen lassen",
+				m: 10, f: 10, a: -10, c: 5,
+				r: "Du schlägst vor, er könne den Monitor am Standfuß drehen. Er tut es tatsächlich. Er arbeitet zwei Stunden an einem hochkant stehenden, um 180 Grad gedrehten Bildschirm, bevor jemand vorbeikommt und fragt."
+			}
+		]
+	},
+	{
+		id: "call_maus_akku",
+		char: "Kevin",
+		title: "Kevin (Azubi)",
+		text: "'Ich hab hier fünf Mäuse aus dem Schrank, die alle nicht gehen. Die sind alle kaputt. Sollen wir neue bestellen?'\n\nEs sind Funkmäuse. Der Schrank ist die Fundgrube für Geräte, die jemand abgegeben hat, weil sie 'nicht mehr gingen'.",
+		opts: [
+			{
+				t: "Nachbestellen, ist einfacher",
+				m: 5, f: 15, a: -5, c: 15,
+				r: "Du bestellst fünf neue Mäuse. Frau Elster fragt schriftlich nach, warum eine Abteilung mit acht Personen im laufenden Jahr dreiundzwanzig Mäuse verbraucht hat. Eine gute Antwort darauf gibt es nicht."
+			},
+			{
+				t: "Mit ihm den ganzen Schrank durchgehen",
+				m: 35, f: -20, a: 5, c: -15,
+				rep: { "Kevin": 10 },
+				r: "Ihr braucht über eine halbe Stunde und findet dabei zwei funktionierende Tastaturen, ein Netzteil, das seit 2019 gesucht wird, und einen Karton mit Kabeln für Geräte, die es nicht mehr gibt. Der Schrank ist jetzt ein Lager statt eines Friedhofs."
+			},
+			{
+				t: "'Kaputt ist kaputt, wegwerfen.'",
+				m: 5, f: 5, a: 0, c: 10,
+				rep: { "Kevin": -5 },
+				r: "Kevin entsorgt fünf funktionierende Mäuse, weil du es gesagt hast. Er würde alles entsorgen, was du sagst, und genau darin liegt das Problem mit Sätzen, die man nebenbei sagt."
+			},
+			{
+				t: "Ihn Batterien einlegen lassen",
+				m: 10, f: -5, a: 0, c: -5,
+				rep: { "Kevin": 5 },
+				r: "Vier von fünf Mäusen leben. Kevin ist so begeistert, als hätte er sie selbst gebaut, und schreibt die Erkenntnis in das Wiki, das er neuerdings führt. Der Eintrag heißt 'Batterien'."
+			}
+		]
+	},
+	{
+		id: "call_teams_immer_gelb",
+		title: "Frau Kirchner (Auftragsbearbeitung)",
+		text: "'Mein Status springt ständig auf Gelb, obwohl ich am Platz bin. Mein Abteilungsleiter hat mich schon zweimal darauf angesprochen.'\n\nSie ist am Platz. Sie liest gerade Verträge auf Papier, weil das ihr Beruf ist.",
+		opts: [
+			{
+				t: "Die Zeit bis zur Abwesenheit hochsetzen",
+				m: 10, f: -5, a: 0, c: 5,
+				r: "Du setzt die Schwelle von fünf auf dreißig Minuten. Das Problem ist weg, und die Frage, warum jemand seine Mitarbeiter an einem Farbpunkt misst, bleibt unbeantwortet im Raum stehen."
+			},
+			{
+				t: "Ihr ein Programm einrichten, das Aktivität simuliert",
+				m: 15, f: 5, a: -5, c: 20,
+				r: "Du installierst ein winziges Werkzeug, das alle vier Minuten den Mauszeiger um einen Pixel bewegt. Sie ist ab sofort permanent grün, immer erreichbar und für ihren Abteilungsleiter ein Vorbild."
+			},
+			{
+				t: "Mit dem Abteilungsleiter sprechen",
+				m: 20, f: -10, a: 15, c: 10,
+				rep: { "Chantal": 5 },
+				r: "Du erklärst ihm, dass der Punkt keine Anwesenheit misst, sondern Tastenanschläge. Er hört zu, nickt und sagt: 'Und wie mess ich es dann?' Auf diese Frage hat auch die IT keine Antwort."
+			},
+			{
+				t: "'Bewegen Sie ab und zu die Maus.'",
+				m: 5, f: 10, a: 0, c: 5,
+				r: "Der Rat ist so praktisch wie entwürdigend, und ihr wisst das beide. Sie bedankt sich trotzdem und legt auf. Ab morgen liegt bei ihr ein Kugelschreiber quer unter der Maus, der langsam wegrollt."
+			}
+		]
+	},
+	{
+		id: "call_falle_rueckruf",
+		title: "Ihre eigene Durchwahl",
+		text: "'Guten Tag, hier ist noch einmal der Support. Wir hatten vorhin telefoniert wegen der Störung.'\n\nIhr hattet nicht telefoniert. Auf dem Display steht deine eigene Durchwahl.",
+		opts: [
+			{
+				t: "Mitspielen und Zeit schinden",
+				m: 25, f: 10, a: -10, c: 5,
+				r: "Du hältst ihn zwanzig Minuten hin, erfindest Systemnamen und lässt ihn Wartezeiten aussitzen. Es macht großen Spaß und bringt keinerlei Erkenntnis, außer dass er sehr geduldig ist. Geduld ist bei diesen Leuten Berufsvoraussetzung."
+			},
+			{
+				t: "Den Fernzugriff freigeben, klingt echt",
+				m: 15, f: -5, a: -5, c: 35,
+				r: "Du gibst die Sitzung frei. Er bedankt sich, arbeitet vier Minuten sichtbar an Einstellungen und zwei Minuten unsichtbar an etwas anderem. Was in diesen zwei Minuten passiert ist, wirst du erst nächste Woche verstehen."
+			},
+			{
+				t: "Fragen, um welche Störung es geht",
+				m: 10, f: 0, a: 10, c: 0,
+				r: "Er beschreibt eine Störung, die es überall geben könnte, in Worten, die überall passen. Als du nach einer Ticketnummer fragst, nennt er eine mit dem falschen Format. Danach ist die Leitung tot."
+			},
+			{
+				t: "Auflegen und die Zentrale informieren",
+				m: 10, f: 0, a: 5, c: -10,
+				rep: { "Gabi": 5 },
+				r: "Du legst auf und sagst Gabi Bescheid. Sie hängt binnen zehn Minuten einen Zettel an die Empfangstheke, auf dem steht, wie eine gefälschte Rufnummer aussieht. Es ist der wirksamste Aushang in der Geschichte dieses Hauses."
+			}
+		]
+	},
+	{
+		id: "call_drucker_konfetti",
+		char: "Gabi",
+		title: "Gabi (Empfang)",
+		text: "'Der große Drucker wirft die Blätter nur noch in Schnipseln aus. Es sieht aus wie Konfetti. Soll ich das aufsammeln?'\n\nDer große Drucker hat keinen Schredder. Der Schredder steht daneben.",
+		opts: [
+			{
+				t: "'Sammeln Sie es auf, ich komme später.'",
+				m: 5, f: 15, a: 0, c: 5,
+				rep: { "Gabi": -5 },
+				r: "Gabi sammelt eine halbe Stunde lang Konfetti aus einem Gerät, das genau dafür gebaut wurde. Als du später kommst, ist der Behälter leer und das Missverständnis vollständig gefestigt."
+			},
+			{
+				t: "Fragen, wo genau sie das Papier hineingelegt hat",
+				m: 5, f: 0, a: 0, c: -5,
+				rep: { "Gabi": 5 },
+				r: "In den Schredder. Es sind zwei baugleiche graue Kästen nebeneinander, und der Aufkleber am Schredder ist vor Jahren abgefallen. Ihr lacht beide, und du bringst am Nachmittag einen neuen Aufkleber vorbei."
+			},
+			{
+				t: "Hingehen und nachsehen",
+				m: 15, f: -10, a: 5, c: -5,
+				rep: { "Gabi": 5 },
+				r: "Du läufst runter und stehst vor zwei grauen Kästen, von denen einer voller Papierschnipsel ist. Die Diagnose dauert vier Sekunden, der Weg dorthin vierzehn Minuten. So sieht dieser Beruf meistens aus."
+			}
+		]
+	},
+	{
+		id: "call_lena_bewerbung",
+		title: "Praktikantin Lena",
+		text: "'Können Sie sich das kurz ansehen? Ich bewerbe mich für die Ausbildung hier und muss meinen Lebenslauf als PDF hochladen. Aber das Formular sagt immer, die Datei sei zu groß.'\n\nSie fragt dich, weil sie sonst niemanden fragen kann.",
+		opts: [
+			{
+				t: "Fragen, warum sie sich hier bewirbt",
+				m: 10, f: 0, a: 5, c: 0,
+				r: "'Weil hier alle nett sind.' Sie sagt es ohne Ironie, und du stehst mit dem Hörer in der Hand da und überlegst, ob du widersprechen sollst. Du widersprichst nicht."
+			},
+			{
+				t: "'Dafür bin ich nicht zuständig.'",
+				m: 2, f: 10, a: 0, c: 0,
+				r: "Formal richtig. Sie entschuldigt sich für die Störung, legt auf und lädt am Abend von zu Hause hoch. Die Bewerbung kommt an. Angenommen wird sie trotzdem nicht, und du wirst nie erfahren, ob das zusammenhängt."
+			},
+			{
+				t: "Die Datei verkleinern und hochladen",
+				m: 15, f: -5, a: 0, c: -5,
+				r: "Sie hat den Lebenslauf eingescannt statt exportiert, in 600 dpi, in Farbe. Zwei Minuten Arbeit, und die Bewerbung ist raus. Sie sagt dreimal danke und einmal 'ich schulde Ihnen was', was sie ernst meint."
+			},
+			{
+				t: "Ihr zeigen, wie es geht, statt es zu machen",
+				m: 25, f: -10, a: 5, c: -10,
+				r: "Du erklärst Auflösung, Dateigrößen und warum ein Bild von Text kein Text ist. Sie versteht es beim zweiten Anlauf und lädt selbst hoch. Das ist die einzige Art von Hilfe, die beim nächsten Mal noch wirkt."
+			}
+		]
+	},
+	{
+		id: "call_update_mittag",
+		title: "Herr Kunz (Lager)",
+		text: "'Der Rechner hier im Lager macht seit einer Stunde ein Update. \"Bitte nicht ausschalten.\" Ich kann nichts einbuchen. Die Lieferung steht auf dem Hof.'\n\nDer Rechner im Lager läuft rund um die Uhr und wurde deshalb seit vierzehn Monaten nicht neu gestartet.",
+		opts: [
+			{
+				t: "Ihn auf Papier buchen lassen",
+				m: 10, f: 0, a: 0, c: -5,
+				r: "Er notiert die Lieferung auf einem Lieferschein und trägt sie nach. Es ist der einzige Vorgang des Tages, der ohne Strom auskommt, und er dauert elf Minuten statt einer Stunde."
+			},
+			{
+				t: "Warten und alle zwanzig Minuten nachschauen",
+				m: 30, f: 10, a: 10, c: 0,
+				r: "Das Update braucht insgesamt zwei Stunden und siebzehn Minuten. Du hast in der Zeit dreimal nachgesehen und dabei jedes Mal denselben Balken bei 41 Prozent gefunden. Die Lieferung stand solange auf dem Hof."
+			},
+			{
+				t: "Ihm das Ersatzgerät bringen",
+				m: 25, f: -15, a: 0, c: -10,
+				r: "Du schleppst ein Leihgerät ins Lager, meldest ihn an und die Buchungen laufen. Das Gerät bleibt dort. In vier Monaten wird jemand fragen, warum im Lager zwei Rechner stehen, und niemand wird es wissen."
+			},
+			{
+				t: "'Einfach ausschalten, wird schon.'",
+				m: 5, f: 10, a: -5, c: 20,
+				r: "Er zieht den Stecker. Der Rechner startet nicht mehr. Was danach kommt, ist keine Störung mehr, sondern eine Neuinstallation, und die passiert nicht heute."
+			}
+		]
+	},
+
+	{
+		id: "call_kevin_formatiert",
+		reqStory: "path_kevin_formatiert",
+		char: "Kevin",
+		title: "Kevin (Azubi)",
+		text: "'Ich hab neu aufgesetzt, wie du gesagt hast! War gar nicht so schwer.'\n\nPause.\n\n'Ich hab nur die Treiber noch nicht gefunden. Und das Netzwerk. Und das Programm für die Zeiterfassung. Aber Fortnite läuft.'",
+		opts: [
+			{
+				t: "Nachfragen, wie er an das Installationsmedium kam",
+				m: 10, f: 0, a: 10, c: 10,
+				next: "path_kevin_rack",
+				r: "Von einer Seite, die er über eine Suchmaschine gefunden hat. Die Datei hieß 'Windows_Original_2024_FINAL.iso'. Ihr habt beide ein Problem, aber nur einer von euch weiß gerade, welches."
+			},
+			{
+				t: "Selbst hingehen und es sauber neu machen",
+				m: 45, f: -25, a: 5, c: -15,
+				rep: { "Kevin": 10 },
+				r: "Du setzt den Rechner mit dem Firmenabbild neu auf, richtig lizenziert und mit allem drauf. Es kostet dich den halben Vormittag. Kevin sitzt daneben und schaut zu, und diesmal fragt er nach jedem Schritt, warum."
+			},
+			{
+				t: "'Hauptsache es läuft.'",
+				m: 5, f: 15, a: -5, c: 15,
+				rep: { "Kevin": 5 },
+				next: "path_kevin_rack",
+				r: "Der Rechner läuft ohne Virenschutz, ohne Verschlüsselung und mit einem Betriebssystem unklarer Herkunft im Firmennetz. Kevin ist glücklich. Der Auditor, falls er je anruft, wird es weniger sein."
+			},
+			{
+				t: "Ihm die Treiberliste schicken und selbst machen lassen",
+				m: 15, f: -5, a: 5, c: -5,
+				rep: { "Kevin": 5 },
+				next: "path_kevin_rack",
+				r: "Du schickst ihm eine Liste und lässt ihn arbeiten. Er braucht drei Stunden und meldet danach stolz, dass alles läuft. Es läuft tatsächlich. Der Ton am Rechner fehlt, aber das merkt er erst nächsten Monat."
+			}
+		]
+	},
+	{
+		id: "call_kevin_gerettet",
+		reqStory: "path_kevin_gerettet",
+		char: "Kevin",
+		title: "Kevin (Azubi)",
+		text: "'Du kriegst ja alles wieder hin. Ich hab meiner Mutter erzählt, dass du Daten aus dem Nichts zurückholen kannst.'\n\nPause.\n\n'Sie ist gleich unten am Empfang. Mit ihrem Laptop. Da sind Fotos von 2009 drauf.'",
+		opts: [
+			{
+				t: "Ihm zeigen, wie er es selbst macht",
+				m: 30, f: -15, a: 0, c: -5,
+				rep: { "Kevin": 10 },
+				r: "Ihr geht gemeinsam runter und du lässt ihn machen, während du danebenstehst. Er findet das lose Kabel selbst. Seine Mutter bedankt sich bei ihm, nicht bei dir, und Kevin ist an diesem Tag um zwei Zentimeter gewachsen."
+			},
+			{
+				t: "'Sag ihr, ich bin in einem Meeting.'",
+				m: 5, f: 10, a: 0, c: 0,
+				rep: { "Kevin": -10 },
+				r: "Kevin geht runter und sagt es ihr. Sie fährt wieder nach Hause. Er erwähnt es nie wieder, aber er fragt dich in den nächsten Wochen auch nichts mehr, was er nicht unbedingt fragen muss."
+			},
+			{
+				t: "Kurz runtergehen und nachsehen",
+				m: 25, f: -10, a: 5, c: 10,
+				rep: { "Kevin": 10 },
+				r: "Es ist ein Kabel, das nicht steckt, und eine Festplatte, die noch läuft. Zehn Minuten, danach weint Kevins Mutter am Empfang vor Erleichterung. Gabi sieht das alles und wird es weitererzählen."
+			},
+			{
+				t: "Kevin erklären, warum das nicht geht",
+				m: 15, f: -5, a: 5, c: -10,
+				rep: { "Kevin": -5 },
+				r: "Du erklärst ihm den Unterschied zwischen Firmengerät und Privatgerät, zwischen Arbeitszeit und Gefallen. Er versteht es und schämt sich. Es ist die richtige Entscheidung und fühlt sich trotzdem mies an."
+			}
+		]
+	},
+	{
+		id: "call_chantal_schach",
+		reqStory: "path_chantal_schach",
+		char: "Chantal",
+		title: "Chantal (Marketing)",
+		text: "'Wegen der Sache mit dem Modeversand. Ich glaube, wir sind da falsch gestartet.'\n\nSie klingt vorsichtig. Sie weiß, dass du etwas weißt, und du weißt, dass sie das weiß.",
+		opts: [
+			{
+				t: "Sagen, dass Erpressung im Haus nichts zu suchen hat",
+				m: 15, f: -5, a: 10, c: -10,
+				rep: { "Chantal": -10 },
+				r: "Du sagst es ruhig und ohne Drohung. Sie schweigt lange und antwortet dann: 'Sie haben ja recht.' Sie meint es sogar. Trotzdem ist zwischen euch etwas, das sich nicht mehr auflöst."
+			},
+			{
+				t: "Anbieten, die Sache zu vergessen",
+				m: 10, f: 0, a: -10, c: -5,
+				rep: { "Chantal": 10 },
+				r: "Du sagst, du hättest ohnehin ein schlechtes Gedächtnis. Sie lacht erleichtert. Ab sofort bekommst du von ihr Termine im Kalender, bevor sie andere fragt, und in der Teeküche steht manchmal ein Kaffee für dich bereit."
+			},
+			{
+				t: "Um eine Gegenleistung bitten",
+				m: 10, f: 0, a: -5, c: 15,
+				rep: { "Chantal": -5 },
+				r: "Du schlägst vor, dass die IT künftig in ihren Rundmails nicht mehr vorkommt. Sie sagt sofort zu. Der Handel funktioniert, aber ihr behandelt euch ab jetzt wie zwei Leute, die etwas voneinander haben."
+			}
+		]
+	},
+	{
+		id: "call_chantal_offen",
+		reqStory: "path_chantal_offen",
+		title: "Vertrieb, Empfang, Buchhaltung (nacheinander)",
+		text: "'Chantal hat gesagt, Sie schalten das frei, wenn man höflich fragt.'\n\nDas war der Wortlaut beim ersten Anruf. Beim vierten heißt es nur noch: 'Chantal hat gesagt, Sie machen das.'",
+		opts: [
+			{
+				t: "Allen dasselbe freischalten, aus Gleichbehandlung",
+				m: 20, f: 0, a: -5, c: 25,
+				r: "Wenn eine Person es darf, dürfen es alle. Das ist gerecht, nachvollziehbar und öffnet die Firewall für sechzig Leute. Im Netzwerkbericht des nächsten Monats steht ein Modeversand auf Platz eins."
+			},
+			{
+				t: "Jede Anfrage einzeln prüfen",
+				m: 25, f: -10, a: 20, c: 0,
+				r: "Du prüfst jede Anfrage, was formal korrekt ist und den halben Nachmittag frisst. Am Ende hast du dreimal ja und einmal nein gesagt, und das eine Nein wird derjenige nie vergessen."
+			},
+			{
+				t: "Chantal bitten, das richtigzustellen",
+				m: 10, f: 0, a: 5, c: -5,
+				rep: { "Chantal": -5 },
+				r: "Sie stellt es richtig, in einem Beitrag, der mit 'Kleines Missverständnis' beginnt und die IT dabei zweimal als 'streng, aber fair' bezeichnet. Die Anrufe hören auf. Die Bezeichnung bleibt."
+			},
+			{
+				t: "Die Ausnahme zurücknehmen und alles begründen",
+				m: 30, f: -15, a: 15, c: -10,
+				r: "Du sperrst wieder, schreibst eine Rundmail mit der Begründung und hältst vier Beschwerden aus. Nach zwei Tagen ist Ruhe, und die Regel gilt wieder für alle, auch für Chantal."
+			}
+		]
+	},
+	{
+		id: "call_aluhut_folie",
+		reqStory: "path_aluhut_folie",
+		title: "Der Verschwörungstheoretiker",
+		text: "'Es funktioniert! Seit der Folie ist Ruhe! Ich habe im Einkauf davon erzählt, und jetzt haben drei Kollegen auch Folie.'\n\nDrei Router im Einkauf sind in Alufolie gewickelt. Der Einkauf hat kein WLAN mehr.",
+		opts: [
+			{
+				t: "Ihm eine offizielle Abschirmung versprechen",
+				m: 10, f: 10, a: -5, c: 10,
+				r: "Du kündigst eine 'zertifizierte Abschirmlösung' an, die du bestellen wirst. Er ist begeistert und entfernt die Folie freiwillig, um die Lieferung nicht zu gefährden. Die Lieferung kommt nie, und er fragt monatlich nach."
+			},
+			{
+				t: "Ihm Kopfhörer schenken, damit Ruhe ist",
+				req: "headphones", rem: "headphones",
+				m: 10, f: 0, a: -15, c: 5,
+				next: "path_folie_bleibt",
+				r: "Du gibst ihm deine Kopfhörer und erklärst, sie seien abhörsicher. Er trägt sie ab sofort den ganzen Tag, hört niemanden mehr und ruft entsprechend seltener an. Deine Kopfhörer sind weg und dein Nachmittag ruhig."
+			},
+			{
+				t: "Hingehen und die Folie kommentarlos entfernen",
+				m: 20, f: -10, a: 10, c: -10,
+				r: "Du wickelst drei Router aus und sagst dabei kein Wort. Herr Aluhut steht daneben und deutet dein Schweigen als Bestätigung, dass die Sache 'von oben' angeordnet wurde. Das WLAN läuft wieder."
+			},
+			{
+				t: "Erklären, dass die Folie das Signal blockiert",
+				m: 15, f: -5, a: 15, c: 0,
+				next: "path_folie_bleibt",
+				r: "'Genau! Deshalb funktioniert sie ja!' Du hast recht, er hat recht, und ihr redet über zwei verschiedene Dinge. Die Folie bleibt, bis der Abteilungsleiter fragt, warum niemand mehr Mails bekommt."
+			}
+		]
+	},
+	{
+		id: "call_audit_testserver",
+		reqStory: "path_audit_testserver",
+		title: "Der externe Auditor",
+		text: "'Ich habe Ihre Aussage vermerkt: Testsysteme. Dann senden Sie mir bitte bis heute Abend das Testprotokoll und die Abgrenzung zur Produktivumgebung.'\n\nEs gibt keine Abgrenzung. Es gibt auch kein Testprotokoll.",
+		opts: [
+			{
+				t: "Frau Elster um die Beschaffungsunterlagen bitten",
+				m: 30, f: -10, a: 5, c: -15,
+				rep: { "Frau Elster": 10 },
+				r: "Sie hat jede Rechnung seit 2016 abgeheftet und findet in vierzig Minuten heraus, dass zwölf Lizenzen tatsächlich bezahlt wurden. Aus 500 zu 2 wird 500 zu 12. Es ist immer noch schlimm, aber es ist belegt."
+			},
+			{
+				t: "Ein Protokoll zusammenschreiben",
+				m: 45, f: -20, a: 15, c: 15,
+				r: "Du baust vier Stunden lang ein Dokument, das nachträglich beschreibt, was nie geplant war. Es ist formal vollständig, inhaltlich hohl und wird vermutlich durchgehen. Der halbe Arbeitstag ist weg."
+			},
+			{
+				t: "Die Aussage zurückziehen",
+				m: 20, f: -5, a: 10, c: -10,
+				r: "Du rufst zurück und sagst, die Einordnung als Testsystem sei falsch gewesen. Er notiert es ohne Häme. Ehrlichkeit macht den Bericht nicht besser, aber sie beendet die Spirale, in der du gerade steckst."
+			},
+			{
+				t: "Nicht mehr antworten",
+				m: 5, f: 20, a: -5, c: 30,
+				r: "Du ignorierst die Frist. Der Bericht geht ohne deine Stellungnahme raus, mit dem Vermerk 'keine Rückmeldung trotz Aufforderung'. Von allen Formulierungen in diesem Bericht ist das die teuerste."
+			}
+		]
+	},
+	{
+		id: "call_cnc_emulator",
+		reqStory: "path_cnc_emulator",
+		title: "Produktionsleitung",
+		text: "'Der Trick mit dem Stick war großartig. Wir haben vier weitere Maschinen mit demselben Problem. Machen Sie das da auch?'\n\nEs gibt einen Stick. Er steckt in der Fräse und wird dort bleiben, solange die Produktion läuft.",
+		opts: [
+			{
+				t: "Vier weitere Sticks beschaffen",
+				m: 20, f: -5, a: 0, c: 5,
+				r: "Du bestellst vier Sticks, richtest sie ein und beschriftest sie. Es ist eine saubere Lösung für ein Problem, das eigentlich 'Maschinenpark von 1998' heißt, aber die Produktion läuft, und darum geht es heute."
+			},
+			{
+				t: "Die Abbilder zentral bereitstellen",
+				m: 40, f: -20, a: 5, c: -20,
+				r: "Du legst die Disketten-Abbilder auf ein Netzlaufwerk und dokumentierst den Weg dorthin. Beim nächsten Ausfall braucht es dich nicht mehr. Das ist die einzige Art von Arbeit, die sich verzinst."
+			},
+			{
+				t: "Auf das Ersatzteilbudget verweisen",
+				m: 10, f: 5, a: 5, c: 10,
+				rep: { "Frau Elster": -5 },
+				r: "Du erklärst, dass Maschinen aus dem letzten Jahrhundert eine Investitionsentscheidung sind und keine IT-Störung. Formal richtig. Die Produktion hört daraus: 'Die IT will nicht.'"
+			},
+			{
+				t: "Den Stick wieder mitnehmen",
+				rem: "usb_stick",
+				m: 10, f: 10, a: 5, c: 15,
+				r: "Du holst deinen Stick zurück. Die Fräse steht zwölf Minuten später wieder still, diesmal mitten in einem Werkstück. Du hast dein Werkzeug zurück und dafür einen Vorgang, der bis zur Geschäftsleitung wandert."
+			}
+		]
+	},
+	{
+		id: "call_egon_blau",
+		reqStory: "path_egon_blau",
+		char: "Egon",
+		title: "Hausmeister Egon",
+		text: "'Du, ich hab den Kollegen von der Wartungsfirma erzählt, dass Blau bei uns warm macht. Der hat gelacht und gesagt, das sei falsch angeschlossen. Seit 2011.'\n\nPause.\n\n'Der will das jetzt richtig machen. Kostet zweitausend.'",
+		opts: [
+			{
+				t: "Für die Reparatur argumentieren",
+				m: 20, f: -10, a: 10, c: -15,
+				rep: { "Egon": 10 },
+				r: "Du schreibst eine Begründung, in der das Wort 'Serverausfall' dreimal vorkommt, und schickst sie an die Geschäftsleitung. Sie wird genehmigt. Egon erzählt monatelang, dass die IT einmal etwas durchbekommen hat."
+			},
+			{
+				t: "Einen Aufkleber vorschlagen statt der Reparatur",
+				m: 10, f: 5, a: 0, c: 0,
+				rep: { "Egon": 5 },
+				r: "Ihr klebt zwei Zettel an die Anlage: 'BLAU = WARM' und 'ROT = KALT'. Es kostet nichts, hält vermutlich zehn Jahre und ist genau die Art Lösung, für die dieses Gebäude gebaut wurde."
+			},
+			{
+				t: "Nichts tun, es funktioniert ja",
+				m: 5, f: 10, a: 0, c: 10,
+				r: "Ihr lasst alles, wie es ist. Beim nächsten Mal steht jemand anderes vor der Anlage, jemand ohne dieses Wissen, und der wird auf Rot drehen. Nur bist du dann vielleicht nicht am Telefon."
+			}
+		]
+	},
+	{
+		id: "call_umfrage_folge",
+		reqStory: "path_umfrage_ehrlich",
+		char: "Dr. Wichtig",
+		title: "CEO Dr. Wichtig",
+		text: "'Müller, mir liegt eine anonyme Rückmeldung aus der IT vor. Sehr kritisch, sehr ausführlich. Ich möchte darüber sprechen.'\n\nPause.\n\n'Nicht darüber, wer es war. Über den Inhalt. Ich finde ihn nämlich interessant.'",
+		opts: [
+			{
+				t: "Zu der Rückmeldung stehen",
+				m: 25, f: -10, a: 5, c: 10,
+				rep: { "Dr. Wichtig": 10 },
+				r: "Du sagst, dass die Rückmeldung von dir ist, und gehst die Punkte mit ihm durch. Er hört fünfzehn Minuten zu, unterbricht dreimal und sagt am Ende: 'Schreiben Sie das auf.' Es passiert danach nichts, aber er weiß es jetzt."
+			},
+			{
+				t: "Über den Inhalt reden, ohne die Urheberschaft",
+				m: 20, f: -5, a: 10, c: 0,
+				r: "Ihr sprecht vierzig Minuten über Budgets, als ginge es um jemand anderen. Es ist ein gutes Gespräch, geführt von zwei Leuten, die beide wissen, dass sie sich verstellen. Ergebnisse gibt es keine."
+			},
+			{
+				t: "Bestreiten, dass sie aus der IT kommt",
+				m: 10, f: 10, a: 5, c: 20,
+				rep: { "Dr. Wichtig": -10 },
+				r: "Die IT besteht aus einer Person. Das weiß er, das weißt du, und trotzdem sagst du es. Er lässt es durchgehen, ohne zu widersprechen, und genau das ist das Unangenehme daran."
+			},
+			{
+				t: "Zurückfragen, wie anonym die Befragung war",
+				m: 15, f: 0, a: 15, c: 15,
+				rep: { "Dr. Wichtig": -5 },
+				r: "Er weicht aus und spricht von 'aggregierten Erkenntnissen'. Bei einer Abteilung mit einem Mitarbeiter ist die Aggregation eine überschaubare Rechenaufgabe. Er beendet das Gespräch kurz danach."
+			}
+		]
+	},
 ];
