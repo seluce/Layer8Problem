@@ -75,6 +75,30 @@ for (const p of POOLS) {
     if (ev.reqStory && ev.text) {
       const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
       if (m) warn(`${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
+      // The other direction: the trigger happened during THIS workday, so a
+      // follow-up must not push it into the past. "gestern" is wrong even
+      // when it sounds harmless, and it becomes wrong twice over once story
+      // flags travel across days in a campaign.
+      // Nur ein Hinweis, keine Warnung: Ob sich das "gestern" auf den Auslöser
+      // bezieht oder auf den Kater der Buchhaltung, kann kein Muster
+      // entscheiden. Beim Schreiben eines Folge-Ereignisses ist die Zeile
+      // trotzdem die richtige Frage.
+      //
+      // Geprüft wird der ganze Text des Ereignisses, nicht nur die Einleitung:
+      // Ein Ergebnistext, der den Auslöser auf gestern datiert, ist genauso
+      // falsch und fällt beim Lesen noch weniger auf.
+      const zeit = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
+      const alleTexte = [
+        ['text', ev.text],
+        ...Object.entries(ev.nodes ?? {}).map(([k, n]) => [`nodes.${k}.text`, n.text]),
+        ...(ev.opts ?? []).map((o, i) => [`opts[${i}].r`, o.r]),
+        ...Object.entries(ev.results ?? {}).map(([k, r]) => [`results.${k}.txt`, r.txt])
+      ];
+      for (const [feld, txt] of alleTexte) {
+        if (typeof txt !== 'string') continue;
+        const g = txt.match(zeit);
+        if (g) info(`${ctx} ${feld}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+      }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
       warn(`${ctx}: kind fehlt oder unbekannt ("${ev.kind}") — Dienstgänge brauchen "text" oder "phone"`);

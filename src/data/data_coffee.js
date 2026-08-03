@@ -3754,7 +3754,7 @@ export const coffee = [
         id: "cof_grinder_2c",
         title: "Explosion",
         reqStory: "path_grinder_endure",
-        text: "Du hättest die Maschine gestern nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist heute Morgen mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
+        text: "Du hättest die Maschine nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist heute Morgen mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
         opts: [
             { 
                 t: "Sich unauffällig vom Tatort entfernen", 
@@ -4507,4 +4507,122 @@ export const coffee = [
     ]
 },
 
+
+    {
+        id: "cof_kaffeetrick_schlange",
+        reqStory: "path_chef_kaffeetrick",
+        title: "Schlange am Automaten",
+        text: "Vor der Maschine stehen sieben Leute. Jeder drückt Espresso, hält den Becher-Sensor zu und wartet auf die Premium-Röstung. Die Maschine gibt sie heraus, jedes Mal, mit einem Geräusch, das sie vorher nicht gemacht hat.\n\nDu wolltest eigentlich nur einen Kaffee.",
+        opts: [
+            {
+                t: "Anstellen und mitmachen",
+                m: 20, f: 10, a: -10, c: 10,
+                rep: { "Kevin": 5 },
+                r: "Zwanzig Minuten in der Schlange, dafür der beste Kaffee, den dieses Haus zu bieten hat. Die Wut sinkt merklich. Der Zeitverlust ist der Preis, und heute zahlst du ihn gern."
+            },
+            {
+                t: "Warten, bis die Schlange weg ist",
+                m: 25, f: 15, a: -5, c: 0,
+                r: "Du wartest im Flur, bis die Teeküche leer ist, und ziehst dir dann in Ruhe einen normalen Kaffee. Er schmeckt wie immer. Dafür hat dich niemand angesprochen, und das war heute mehr wert."
+            },
+            {
+                t: "Die Maschine sperren, bevor sie kaputtgeht",
+                m: 15, f: -10, a: 15, c: -10,
+                rep: { "Chantal": -5, "Markus": -5 },
+                r: "Du schaltest die Maschine in den Servicemodus und hängst einen Zettel dran. Sieben Leute sehen dir dabei zu. Vier davon werden heute noch erzählen, dass die IT ihnen den Kaffee weggenommen hat."
+            },
+            {
+                t: "Den Sensor mit Panzertape abkleben",
+                req: "tape", rem: "tape",
+                m: 10, f: 0, a: -5, c: 5,
+                r: "Du klebst den Becher-Sensor ab. Der Trick funktioniert nicht mehr, die Maschine überlebt, und niemand weiß, warum es plötzlich vorbei ist. Dein Panzertape ist weg, aber es starb für etwas."
+            }
+        ]
+    },
+    {
+        id: "cof_gabi_vorrat",
+        reqStory: "path_gabi_kollaps",
+        char: "Gabi",
+        title: "Die Schublade",
+        text: "Gabi steht an der Spüle und räumt eine Tüte in den Unterschrank. Traubenzucker, zwei Riegel, eine Packung Kekse.\n\n'Der Sanitäter hat gesagt, ich soll immer was dahaben. Sie wissen ja, wo es steht.'",
+        opts: [
+            {
+                t: "Sich bedienen, sie hat es angeboten",
+                m: 5, f: 0, a: -10, c: 0,
+                loot: "chocolate",
+                rep: { "Gabi": 5 },
+                r: "Du nimmst einen Riegel. Sie nickt zufrieden, als hätte sie darauf gewartet, dass das Angebot angenommen wird. Ein Vorrat, den niemand anrührt, ist kein Vorrat, sondern ein Vorwurf."
+            },
+            {
+                t: "Ablehnen und stattdessen Kaffee holen",
+                m: 10, f: 0, a: -10, c: 0,
+                r: "Du bleibst beim Kaffee und lehnst freundlich ab. Ihr steht zehn Minuten in der Teeküche und redet über nichts Besonderes. Es ist die entspannteste Viertelstunde des Tages."
+            },
+            {
+                t: "Ihr etwas dazustellen",
+                req: "sandwich", rem: "sandwich",
+                m: 5, f: 5, a: -15, c: 0,
+                rep: { "Gabi": 10 },
+                r: "Du legst dein Brötchen dazu, ohne etwas zu sagen. Sie sagt auch nichts. Der Unterschrank in der Teeküche ist ab heute eine gemeinsame Angelegenheit, und das ist mehr wert als das Brötchen."
+            }
+        ]
+    },
+    {
+        id: "cof_freischalt_schlange",
+        reqStory: "path_chantal_offen",
+        title: "Kein ruhiger Kaffee",
+        text: "Du bist noch nicht an der Maschine, da steht schon jemand neben dir. 'Ach, gut dass ich Sie treffe — wegen der gesperrten Seiten.'\n\nHinter ihm wartet noch jemand. Der wartet nicht auf die Maschine.",
+        opts: [
+            {
+                t: "Freundlich vertrösten und Kaffee holen",
+                m: 10, f: 5, a: -5, c: 5,
+                r: "Du sagst zweimal 'schicken Sie mir eine Mail' und kommst tatsächlich an deinen Kaffee. Die Wut sinkt ein wenig, aber nicht so weit wie sonst. Für einen ruhigen Kaffee war heute jemand anderes zuständig."
+            },
+            {
+                t: "Die Sache im Stehen klären",
+                m: 20, f: -10, a: 10, c: -5,
+                rep: { "Markus": 5 },
+                r: "Du erklärst der Runde in der Teeküche, wie die Freigabe läuft und warum es sie gibt. Zwei verstehen es, einer nicht, und dein Kaffee ist kalt. Immerhin fragen sie ab morgen nicht mehr an der Maschine."
+            },
+            {
+                t: "Ohne Kaffee wieder gehen",
+                m: 5, f: 0, a: 10, c: 0,
+                r: "Du drehst um. Die Teeküche ist der einzige Ort im Gebäude, an dem du sonst runterkommst, und heute ist sie ein Wartezimmer. Du gehst mit mehr Wut zurück, als du gekommen bist."
+            },
+            {
+                t: "Vorschlagen, dass Chantal die Anfragen sammelt",
+                m: 15, f: 0, a: -5, c: 0,
+                rep: { "Chantal": -5 },
+                r: "Du erklärst, alle Wünsche gingen ab sofort über Chantal, weil sie das Thema aufgebracht hat. Die Runde findet das einleuchtend. Chantal findet es weniger einleuchtend, sammelt aber tatsächlich."
+            }
+        ]
+    },
+    {
+        id: "cof_praktikant_verlegen",
+        reqStory: "path_puschel",
+        title: "Der Praktikant an der Maschine",
+        text: "Der Praktikant steht vor dem Automaten und drückt Tasten in einer Reihenfolge, die zu nichts führt. Als er dich sieht, wird er rot.\n\n'Wegen dem Passwort... das war mir voll peinlich.'",
+        opts: [
+            {
+                t: "Ihm zeigen, wie die Maschine funktioniert",
+                m: 10, f: 0, a: -10, c: 0,
+                r: "Du zeigst ihm die Reihenfolge — erst Becher, dann Stärke, dann Sorte — und ihr trinkt beide einen. Er redet danach zehn Minuten über sein Studium. Es ist erstaunlich erholsam, jemandem zuzuhören, der nichts von dir will."
+            },
+            {
+                t: "Sagen, dass so etwas jedem passiert",
+                m: 5, f: 0, a: -5, c: 0,
+                r: "Du winkst ab und erzählst ihm, dass hier ein Passwort für alle Konten gilt und seit 2019 niemand daran etwas ändert. Er ist ehrlich erleichtert und leicht entsetzt, was beides angemessen ist."
+            },
+            {
+                t: "Das Thema meiden und Kaffee holen",
+                m: 5, f: 5, a: -5, c: 0,
+                r: "Du sagst nichts dazu, holst deinen Kaffee und gehst. Er bleibt an der Maschine stehen. Es ist keine unfreundliche Begegnung, aber eine, an die er sich länger erinnern wird als du."
+            },
+            {
+                t: "Ihn nach dem Hamster fragen",
+                m: 10, f: 0, a: -15, c: 5,
+                r: "Der Hamster heißt Puschel, ist sechs Jahre alt und damit uralt für einen Hamster. Der Praktikant zeigt dir vierzehn Fotos. Du lachst zum ersten Mal an diesem Tag, und die Wut fällt spürbar ab."
+            }
+        ]
+    },
 ];

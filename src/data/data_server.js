@@ -289,7 +289,7 @@ export const server = [
         id: "srv_bernd_2a",
         title: "Katerstimmung",
         reqStory: "path_bernd_drunk",
-        text: "Bernd steht plötzlich strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee gestern... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
+        text: "Bernd steht plötzlich strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
         opts: [
             { 
                 t: "Mitspielen: 'Klar, bin dabei.'", 
@@ -4902,7 +4902,7 @@ export const server = [
     id: "srv_schacht_3",
     title: "Rack 7",
     reqStory: "path_schacht_2",
-    text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft seit gestern anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seit heute Morgen nichts anderes mehr gehört. Es ist 15:40 Uhr, du hast vier Folgen im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
+    text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft neuerdings anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seit heute Morgen nichts anderes mehr gehört. Es ist 15:40 Uhr, du hast vier Folgen im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
     opts: [
         {
             t: "'Der Schacht vergisst nicht, Kevin.'",
@@ -4954,4 +4954,93 @@ export const server = [
     ]
 },
 
+
+    {
+        id: "srv_kevin_eigenbau",
+        reqStory: "path_kevin_rack",
+        char: "Kevin",
+        title: "Ein Rechner zu viel",
+        text: "Im Rack unter dem Switch steht ein Gehäuse, das dort nicht hingehört. Ein Aufkleber mit einem Drachen klebt drauf. Es läuft, es ist verkabelt, und es hat eine Adresse im Serversegment.\n\nEs ist Kevins Rechner. Er wollte 'kurze Wege zum Netzwerk'.",
+        opts: [
+            {
+                t: "Netzwerkkabel ziehen und den Rechner mitnehmen",
+                m: 15, f: -5, a: 5, c: -10,
+                rep: { "Kevin": -5 },
+                r: "Du ziehst das Kabel und trägst das Gehäuse hoch an seinen Platz. Kevin protestiert kurz, versteht dann aber, dass ein Arbeitsplatzrechner im Serversegment ungefähr so sinnvoll ist wie ein Fahrrad auf der Autobahn."
+            },
+            {
+                t: "Ins Arbeitsplatznetz umhängen",
+                m: 25, f: -10, a: 0, c: -15,
+                rep: { "Kevin": 5 },
+                r: "Du hängst ihn in das richtige Segment, vergibst eine ordentliche Adresse und trägst ihn in die Liste ein. Fünfundzwanzig Minuten, und danach steht dort ein Gerät, von dem das Netzwerk weiß."
+            },
+            {
+                t: "Prüfen, was auf dem Ding überhaupt läuft",
+                m: 30, f: -15, a: 10, c: -10,
+                r: "Ein Betriebssystem unklarer Herkunft, kein Virenschutz, dafür ein Programm, das im Hintergrund Rechenleistung an eine Adresse in Übersee verkauft. Kevin hat es für ein Wartungswerkzeug gehalten."
+            },
+            {
+                t: "Stehen lassen, läuft ja",
+                m: 5, f: 15, a: -5, c: 20,
+                r: "Das Gehäuse mit dem Drachen bleibt im Rack. Es fällt niemandem auf, weil im Serverraum nie jemand nachschaut außer dir. Genau das ist das Beruhigende daran und gleichzeitig das Problem."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_foehn",
+        reqStory: "path_switch_bleibt",
+        char: "Egon",
+        title: "Der geföhnte Switch",
+        text: "Der Switch, den Egon trockengeföhnt hat, läuft. Er läuft sogar auffällig gut.\n\nAn der Seite klebt ein Zettel in Egons Handschrift: 'GEWARTET' und ein Datum. Die Gehäuseschrauben liegen daneben, in einem Marmeladenglas.",
+        opts: [
+            {
+                t: "Ersatzgerät einbauen, altes archivieren",
+                m: 30, f: -15, a: 5, c: -15,
+                rep: { "Egon": 5 },
+                r: "Du tauschst das Gerät im laufenden Betrieb, was bei diesem Modell möglich ist, wenn man weiß wie. Der geföhnte Switch kommt ins Regal, mit Egons Zettel dran. Er hat ihn sich verdient."
+            },
+            {
+                t: "Die Schrauben wieder eindrehen",
+                m: 10, f: 0, a: 0, c: -5,
+                rep: { "Egon": 5 },
+                r: "Du schließt das Gehäuse und stellst das Marmeladenglas zurück in die Werkstatt. Der Switch läuft weiter, jetzt wenigstens staubdicht. Es ist die kleinste mögliche Verbesserung, aber es ist eine."
+            },
+            {
+                t: "Die Feuchtigkeitsspuren fotografieren",
+                m: 15, f: -5, a: 5, c: -10,
+                rep: { "Egon": -5 },
+                r: "Du dokumentierst die Wasserränder auf der Platine für den Fall, dass jemand später fragt, warum das Gerät ausgefallen ist. Es ist die unglamouröseste Form von Vorsorge und die einzige, die vor Gericht zählt."
+            }
+        ]
+    },
+    {
+        id: "srv_dat_archiv",
+        reqStory: "path_cnc_emulator",
+        title: "Das Bandarchiv",
+        text: "Auf der Suche nach Platz für die Disketten-Abbilder stehst du vor dem alten Bandarchiv. Vierzig Kassetten, beschriftet mit Kürzeln, die niemand mehr auflösen kann.\n\nGanz unten liegt eine, auf der 'FRÄSE / NICHT WEGWERFEN' steht. In derselben Handschrift wie Egons Zettel.",
+        opts: [
+            {
+                t: "Das Band einlesen",
+                m: 40, f: -20, a: 10, c: -20,
+                rep: { "Egon": 5 },
+                r: "Das Laufwerk braucht drei Anläufe, dann liest es. Auf dem Band liegen die Originaldisketten aller vier Maschinen, gesichert 2003 von jemandem, der wusste, was er tat. Deine Arbeit von heute wäre nicht nötig gewesen."
+            },
+            {
+                t: "Das Archiv beschriften und in die Doku aufnehmen",
+                m: 30, f: -10, a: 0, c: -15,
+                r: "Du gehst die vierzig Kassetten durch, notierst, was sich auflösen lässt, und hängst die Liste an die Regalwand. Der Nächste, der hier steht, verliert dadurch keine zwei Stunden mehr."
+            },
+            {
+                t: "Nur die eine Kassette mitnehmen",
+                m: 10, f: 0, a: 0, c: -5,
+                r: "Du nimmst das Band mit der Fräse mit und lässt den Rest stehen. Die Produktion ist damit abgesichert, das Archiv bleibt ein Rätsel, und beides ist heute die richtige Entscheidung."
+            },
+            {
+                t: "Das Archiv ist Elektroschrott",
+                m: 15, f: 10, a: -5, c: 15,
+                rep: { "Egon": -10 },
+                r: "Du meldest die vierzig Kassetten zur Entsorgung. Es sind vierzig Kilo weniger im Raum und die einzige Sicherung von Maschinen, die noch produzieren. Auffallen wird das erst beim nächsten Ausfall."
+            }
+        ]
+    },
 ];

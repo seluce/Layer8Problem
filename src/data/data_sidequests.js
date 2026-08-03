@@ -1695,7 +1695,7 @@ export const sidequests = [
         kind: "text",
         title: "Vorschlag zur Güte",
         reqStory: "path_ai_overlord",
-        text: "Dein KI-Skript läuft seit Tagen im Hintergrund auf dem Server. Plötzlich ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
+        text: "Dein KI-Skript läuft im Hintergrund auf dem Server. Plötzlich ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
         opts: [
             { 
                 t: "Zustimmen: 'Weg mit dem Ballast!'", 
@@ -2352,7 +2352,7 @@ export const sidequests = [
         kind: "text",
         title: "Dankbarkeit in der Buchhaltung",
         reqStory: "path_elster_happy",
-        text: "Frau Elster steht räuspernd vor deinem Schreibtisch. Sie blickt sich nervös um, öffnet ihre Handtasche und legt dir ein teures Stück Konditor-Torte auf den Tisch. 'Das ist für Ihren... inoffiziellen IT-Einsatz gestern. Rüdiger schnurrt wieder. Aber wehe, das erfährt jemand!'",
+        text: "Frau Elster steht räuspernd vor deinem Schreibtisch. Sie blickt sich nervös um, öffnet ihre Handtasche und legt dir ein teures Stück Konditor-Torte auf den Tisch. 'Das ist für Ihren... inoffiziellen IT-Einsatz. Rüdiger schnurrt wieder. Aber wehe, das erfährt jemand!'",
         opts: [
             { 
                 t: "Kuchen annehmen & schweigen", 
@@ -3397,7 +3397,7 @@ export const sidequests = [
         kind: "text",
         title: "Der Erpresser",
         reqStory: "path_awkward_photo",
-        text: "Du stehst in der Lobby. Kevin fängt dich ab. Er wirkt ungewohnt selbstbewusst. 'Dieses Foto... lösch das. Sonst sag ich dem Chef, dass du mich gestern gezwungen hast, deine Tastatur mit einer Zahnbürste zu reinigen.'",
+        text: "Du stehst in der Lobby. Kevin fängt dich ab. Er wirkt ungewohnt selbstbewusst. 'Dieses Foto... lösch das. Sonst sag ich dem Chef, dass du mich gezwungen hast, deine Tastatur mit einer Zahnbürste zu reinigen.'",
         opts: [
             { 
                 t: "Foto löschen (Kapitulieren)", 
@@ -7483,4 +7483,163 @@ export const sidequests = [
     ]
 },
 
+
+    {
+        id: "sq_zettel_monitor",
+        reqStory: "path_pw_verraten",
+        kind: "text",
+        title: "Der Zettel",
+        text: "Auf dem Weg zum Kopierer kommst du am Projektbüro vorbei. An Frau Özdemirs Monitor klebt ein gelber Zettel. Die Schrift ist gut lesbar, auch aus zwei Metern Entfernung.\n\nEs ist das Root-Passwort. Der Schreibtisch steht neben dem Besprechungstisch, an dem heute Nachmittag ein Kunde sitzt.",
+        opts: [
+            {
+                t: "Zettel abnehmen und das Passwort ändern",
+                m: 40, f: -20, a: 10, c: -20,
+                rep: { "Frau Elster": 5 },
+                r: "Du nimmst den Zettel mit und änderst das Passwort auf allen betroffenen Systemen. Es dauert vierzig Minuten und ist der einzige Weg, der die Sache wirklich beendet. Frau Özdemir wird sich morgen wundern und dich anrufen."
+            },
+            {
+                t: "Nur den Zettel mitnehmen",
+                m: 5, f: 5, a: 0, c: 10,
+                r: "Der Zettel ist weg, das Passwort nicht. Sie hat es sich inzwischen gemerkt, und wer immer es beim Vorbeigehen gelesen hat, auch. Du hast ein Symptom entfernt und dich dabei besser gefühlt."
+            },
+            {
+                t: "Sie bitten, ihn selbst zu entfernen",
+                m: 15, f: -5, a: 10, c: -5,
+                r: "Du erklärst ihr in drei Sätzen, warum ein Passwort am Monitor keins mehr ist. Sie nimmt den Zettel ab, entschuldigt sich und schreibt es sich in ihr Notizbuch. Das Notizbuch liegt offen auf dem Schreibtisch."
+            },
+            {
+                t: "Vorbeigehen",
+                m: 2, f: 15, a: 0, c: 15,
+                r: "Du gehst weiter. Der Zettel hängt bis Freitag. Es passiert vermutlich nichts, so wie bei den meisten Dingen dieser Art vermutlich nichts passiert, bis einmal doch etwas passiert."
+            }
+        ]
+    },
+    {
+        id: "sq_maus_falle",
+        reqStory: "path_maus_hof",
+        char: "Egon",
+        kind: "text",
+        title: "Im Hof",
+        text: "Auf dem Weg zum Container steht Egon im Hof und betrachtet zwei Lebendfallen. Beide sind leer, beide Köder sind weg.\n\n'Die sind schlauer als der Vertrieb', sagt er, ohne aufzusehen.",
+        opts: [
+            {
+                t: "Mit ihm überlegen, wo sie reinkommen",
+                m: 25, f: -10, a: -5, c: -10,
+                rep: { "Egon": 10 },
+                r: "Ihr geht die Fassade ab und findet die Stelle: ein Lüftungsgitter hinter dem Papiercontainer, seit Jahren lose. Egon schraubt es fest. Es ist das erste Problem seit Wochen, das damit tatsächlich erledigt ist."
+            },
+            {
+                t: "Besseren Köder vorschlagen",
+                m: 10, f: 0, a: -5, c: 0,
+                rep: { "Egon": 5 },
+                r: "Du schlägst Erdnussbutter statt Käse vor, weil das im Internet steht. Egon findet das albern und probiert es trotzdem. Am nächsten Morgen sitzt eine Maus in der Falle und Egon sagt kein Wort darüber, wer recht hatte."
+            },
+            {
+                t: "Egon deine Schokolade als Köder geben",
+                req: "chocolate", rem: "chocolate",
+                m: 10, f: 0, a: -10, c: 0,
+                rep: { "Egon": 5 },
+                r: "Er bricht ein Stück ab, legt es in die Falle und den Rest in seine Brusttasche. Beide Portionen erfüllen ihren Zweck. Deine Tafel ist weg und der Hof zehn Minuten lang ein friedlicher Ort."
+            },
+            {
+                t: "Weitergehen, ist nicht dein Thema",
+                m: 5, f: 5, a: 0, c: 5,
+                rep: { "Egon": -5 },
+                r: "Du gehst vorbei. Egon sagt nichts, aber er sieht auf. Das ist bei ihm die ausführlichste Form der Enttäuschung, die es gibt."
+            }
+        ]
+    },
+    {
+        id: "sq_bernd_schreibtisch",
+        reqStory: "path_bernd_rechner",
+        kind: "text",
+        title: "Ein Schreibtisch wird geräumt",
+        text: "Im Vertrieb steht der neue Kollege vor Bernds altem Platz. Zwei Kartons, ein Locher, eine Kaffeetasse mit Fußballwappen, ein Foto.\n\n'Ich soll hier aufräumen. Aber der Rechner ist an, und da sind lauter Dateien drauf, die nicht mir gehören.'",
+        opts: [
+            {
+                t: "Die Daten sichern und den Rechner neu aufsetzen",
+                m: 45, f: -25, a: 5, c: -20,
+                rep: { "Frau Elster": 10, "Markus": 5 },
+                r: "Du ziehst Bernds Dateien auf ein Netzlaufwerk, dokumentierst den Vorgang und setzt das Gerät sauber neu auf. Der halbe Nachmittag ist weg, dafür gehört der Arbeitsplatz jetzt jemandem."
+            },
+            {
+                t: "Nur die Anmeldung tauschen",
+                m: 20, f: -10, a: 0, c: -5,
+                r: "Neues Konto, alter Rechner, alte Dateien. Es ist schnell, es funktioniert, und in einem halben Jahr wird jemand fragen, warum in einem Vertriebsordner Bernds Steuerunterlagen liegen."
+            },
+            {
+                t: "Die Kiste mit den privaten Sachen beiseitestellen",
+                m: 15, f: -5, a: 5, c: -5,
+                r: "Du packst Tasse, Foto und Locher in einen der Kartons und schreibst Bernds Namen drauf. Der Karton steht danach acht Monate im Lager. Abgeholt wird er nie, weggeworfen aber auch nicht."
+            },
+            {
+                t: "Ihn selbst entscheiden lassen",
+                m: 10, f: 10, a: 0, c: 10,
+                rep: { "Frau Elster": -10 },
+                r: "Du sagst, er solle löschen, was er nicht braucht. Er löscht gründlich. Zwei Wochen später sucht die Buchhaltung eine Aufstellung, die es nur einmal gab, und zwar auf diesem Rechner."
+            }
+        ]
+    },
+    {
+        id: "sq_alufolie_einkauf",
+        reqStory: "path_folie_bleibt",
+        kind: "text",
+        title: "Besuch im Einkauf",
+        text: "Der Einkauf sieht aus wie eine Küche kurz vor Weihnachten: Drei Router stecken in Alufolie, sauber gefaltet, mit umgeschlagenen Kanten.\n\nDrei Leute schauen dich erwartungsvoll an. Einer hält vorsorglich die Rolle bereit.",
+        opts: [
+            {
+                t: "Auswickeln und den Grund erklären",
+                m: 25, f: -10, a: 15, c: -10,
+                r: "Du wickelst aus und erklärst, dass Metall Funk abschirmt und genau das der Grund für das fehlende WLAN ist. Zwei nicken, einer sagt: 'Aber sicherer ist es schon, oder?' Darauf gibt es keine Antwort, die hilft."
+            },
+            {
+                t: "Die Folie gegen Abstand tauschen",
+                m: 20, f: -5, a: 0, c: -10,
+                r: "Du bietest an, die Geräte an eine Wandhalterung zu setzen, weg von den Schreibtischen. Das ist ihnen sicher genug, das WLAN läuft wieder, und alle drei halten das für einen Kompromiss. Es ist keiner, aber es wirkt wie einer."
+            },
+            {
+                t: "Herrn Aluhut zum Ansprechpartner machen",
+                m: 15, f: 10, a: -10, c: 10,
+                r: "Du erklärst ihn zum 'Beauftragten für Abschirmfragen im Einkauf'. Er nimmt die Aufgabe sehr ernst, wickelt eigenhändig alles wieder aus, um es 'fachgerecht zu prüfen', und ruft dich seitdem nur noch einmal pro Woche an."
+            },
+            {
+                t: "Ein Kabel verlegen und das WLAN vergessen",
+                req: "cable", rem: "cable",
+                m: 30, f: -15, a: -5, c: -15,
+                r: "Du verlegst ein Netzwerkkabel quer durchs Büro und klebst es mit dem Rest deines Tapes fest. Der Einkauf ist online, die Folie darf bleiben, und alle sind zufrieden. Dein Ersatzkabel ist weg."
+            }
+        ]
+    },
+    {
+        id: "sq_westfluegel_heizung",
+        reqStory: "path_heizluefter",
+        char: "Egon",
+        kind: "text",
+        title: "Westflügel",
+        text: "Im Westflügel ist es kalt genug, dass man den Atem sieht. Unter drei Schreibtischen brummen drei Heizlüfter, alle an derselben Steckdosenleiste, alle auf Stufe zwei.\n\nDie Leiste ist warm. Wärmer als die Heizkörper.",
+        opts: [
+            {
+                t: "Die Lüfter auf drei Stromkreise verteilen",
+                m: 25, f: -10, a: 0, c: -15,
+                rep: { "Egon": 5 },
+                r: "Du verteilst die Geräte auf drei getrennte Kreise und beschriftest die Leisten. Die Sicherung hält, die Leute bleiben warm, und die eigentliche Ursache — eine Heizung, die seit Montag aus ist — steht jetzt schriftlich in einer Meldung."
+            },
+            {
+                t: "Die Lüfter einsammeln",
+                m: 15, f: -5, a: 20, c: -10,
+                r: "Du trägst drei Heizlüfter aus dem Westflügel und erntest drei sehr deutliche Meinungen. Formal ist es richtig: Die Leiste war eine Brandlast. Menschlich fühlt es sich an, als hättest du drei Leuten die Jacke weggenommen."
+            },
+            {
+                t: "Die Heizung reparieren lassen, statt Symptome zu jagen",
+                m: 20, f: -10, a: 5, c: -10,
+                rep: { "Egon": 10 },
+                r: "Du gehst mit Egon in den Heizungskeller. Ein Ventil steht seit Montag auf null, weil jemand daran vorbeigekommen ist. Zwei Umdrehungen später wird es warm, und drei Heizlüfter werden von allein überflüssig."
+            },
+            {
+                t: "Eine stärkere Sicherung einbauen lassen",
+                m: 10, f: 5, a: 0, c: 20,
+                r: "Du schlägst vor, den Kreis abzusichern. Egon sagt sehr langsam: 'Eine stärkere Sicherung.' Ihr schaut euch an, und keiner von euch beiden erwähnt den Vorschlag jemals wieder."
+            }
+        ]
+    },
 ];

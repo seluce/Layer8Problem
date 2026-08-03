@@ -153,7 +153,7 @@ export const reputation = [
         title: "Loot Sharing",
         reqRep: { "Kevin": 40 },
         reqStory: "path_kevin_tech_tip",
-        text: "Kevin kommt grinsend aus der Küche. 'Hey! Mein Stream gestern hatte 3 Zuschauer! Das Mikro macht echt einen Unterschied. Hier, als Dankeschön hab ich dir was vom Catering 'gerettet'.'",
+        text: "Kevin kommt grinsend aus der Küche. 'Hey! Mein erster Stream hatte 3 Zuschauer! Das Mikro macht echt einen Unterschied. Hier, als Dankeschön hab ich dir was vom Catering 'gerettet'.'",
         opts: [
             { 
                 t: "Annehmen: 'Ehrenmann!'", 
