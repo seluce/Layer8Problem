@@ -1115,11 +1115,17 @@ export const events = {
         const ev = this.state.currentPhoneEvent;
         const sender = ev.title || "Unbekannt";
 
+        // Known colleagues show their contact photo, everyone else (scammers,
+        // wrong numbers, mum) falls back to the initial - just like contacts
+        // without a picture in a real messenger.
+        const contact = ev.char ? DB.chars?.find(c => c.name === ev.char) ?? null : null;
+
         this.addPhoneMessage({
             side: 'in',
             text: node.text,
             sender,
-            avatar: sender.charAt(0).toUpperCase()
+            avatar: sender.charAt(0).toUpperCase(),
+            img: contact?.img ?? null
         });
 
         this.state.phone.options = node.opts || [];

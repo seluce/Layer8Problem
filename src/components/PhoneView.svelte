@@ -78,8 +78,16 @@
                 {#if msg.side === 'in'}
                     <div class="w-full flex justify-start mb-4 fade-in">
                         <div class="flex items-end gap-2 max-w-[85%]">
-                            <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0">
-                                {msg.avatar}
+                            <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0 overflow-hidden">
+                                {#if msg.img}
+                                    <!-- Contact photo. alt stays empty on purpose: the
+                                         sender name is printed right above the bubble,
+                                         repeating it would only double screen-reader
+                                         output for a decorative image. -->
+                                    <img src={msg.img} alt="" class="w-full h-full object-cover" />
+                                {:else}
+                                    {msg.avatar}
+                                {/if}
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{msg.sender}</span>
