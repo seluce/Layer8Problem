@@ -129,7 +129,7 @@ for (const pool of pools) {
     push(pool, id, 'text',  'prose', ev.text);
     push(pool, id, 'body',  'prose', ev.body);
     (ev.opts ?? []).forEach((o, i) => {
-      push(pool, id, `opts[${i}].btn`, 'label', o.btn ?? o.t);
+      push(pool, id, `opts[${i}].t`, 'label', o.t);
       push(pool, id, `opts[${i}].r`,   'prose', o.r);
     });
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
@@ -309,7 +309,8 @@ section('Dünne Auftakte (Szenentext unter 80 Zeichen vor einer Entscheidung)',
 // ASCII arrows, both remnants of the mass-produced era.
 const labels = [];
 for (const r of records) {
-  if (r.kind !== 'label' || !/\.btn$|\]\.t$|\[\d+\]\.t$/.test(r.field) && !/btn|\.t$/.test(r.field)) continue;
+  // Option labels are the fields ending in .t; title and subj are headings.
+  if (r.kind !== 'label' || !/\.t$/.test(r.field)) continue;
   if (norm(r.text).length > 80)
     labels.push(`[${loc(r)}] ${r.field}: ${norm(r.text).length} Zeichen "${norm(r.text).slice(0, 70)}…"`);
   if (/->/.test(r.text))

@@ -233,7 +233,7 @@ export const events = {
                 message = `E-MAIL IGNORIERT!${penaltyText}`;
                 color = "text-red-500 font-bold";
             } else {
-                message = `Gesendet: "${opt.btn}"`;
+                message = `Gesendet: "${opt.t}"`;
                 color = "text-blue-400";
             }
 

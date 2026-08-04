@@ -33,7 +33,7 @@ const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'party', 'reputation', 
 const itemIds = new Set(Object.keys(DB.items));
 const charNames = new Set(DB.chars.map(c => c.name));
 
-/* ---------- 1) Event-IDs: eindeutig über ALLE Pools ---------- */
+/* ---------- 1) Event ids: unique across ALL pools ---------- */
 const idMap = new Map();
 for (const p of POOLS) {
   for (const ev of DB[p]) {
@@ -45,7 +45,7 @@ for (const [id, pools] of idMap) {
   if (pools.length > 1) err(`Doppelte Event-ID "${id}" in ${pools.join(' + ')} — usedIDs blockiert beide gleichzeitig`);
 }
 
-/* ---------- 2) Referenzen + Story-Flags ---------- */
+/* ---------- 2) References and story flags ---------- */
 // Story flags vs. node navigation.
 // A plain event carries `opts`; its opt.next SETS a story flag.
 // A chain event carries `nodes`; opt.next inside a node NAVIGATES to another
@@ -61,7 +61,7 @@ const noteFlag = (flag, where) => {
 };
 
 const checkOpt = (o, ctx) => {
-  if (o.t === undefined && o.btn === undefined) err(`${ctx}: Option ohne Button-Text`);
+  if (o.t === undefined) err(`${ctx}: Option ohne Button-Text`);
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
     if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
   }
@@ -81,25 +81,25 @@ for (const p of POOLS) {
       // follow-up must not push it into the past. "gestern" is wrong even
       // when it sounds harmless, and it becomes wrong twice over once story
       // flags travel across days in a campaign.
-      // Nur ein Hinweis, keine Warnung: Ob sich das "gestern" auf den Auslöser
-      // bezieht oder auf den Kater der Buchhaltung, kann kein Muster
-      // entscheiden. Beim Schreiben eines Folge-Ereignisses ist die Zeile
-      // trotzdem die richtige Frage.
+      // An info, not a warning: whether that "gestern" refers to the
+      // trigger or to the accountant's tomcat is nothing a pattern can
+      // decide. When writing a follow-up event, though, it is still
+      // exactly the right question to ask.
       //
-      // Geprüft wird der ganze Text des Ereignisses, nicht nur die Einleitung:
-      // Ein Ergebnistext, der den Auslöser auf gestern datiert, ist genauso
-      // falsch und fällt beim Lesen noch weniger auf.
-      const zeit = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
-      const alleTexte = [
+      // The whole event is checked, not just the opening: a result text
+      // that dates the trigger to yesterday is just as wrong and even
+      // harder to catch while reading.
+      const timeRef = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
+      const allTexts = [
         ['text', ev.text],
         ...Object.entries(ev.nodes ?? {}).map(([k, n]) => [`nodes.${k}.text`, n.text]),
         ...(ev.opts ?? []).map((o, i) => [`opts[${i}].r`, o.r]),
         ...Object.entries(ev.results ?? {}).map(([k, r]) => [`results.${k}.txt`, r.txt])
       ];
-      for (const [feld, txt] of alleTexte) {
+      for (const [field, txt] of allTexts) {
         if (typeof txt !== 'string') continue;
-        const g = txt.match(zeit);
-        if (g) info(`${ctx} ${feld}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+        const g = txt.match(timeRef);
+        if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
       }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
@@ -153,7 +153,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 2b) Sperr-Sicherheit: item-freie Optionen ---------- */
+/* ---------- 2b) Lock safety: options that need no item ---------- */
 // An event whose options all carry req or rem can lock itself completely once
 // the items are missing - the inventory resets daily, and in a chain the
 // player would be stuck.
@@ -171,7 +171,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 2c) Zahlen-Raster + Zeit-Wirkung ---------- */
+/* ---------- 2c) Number grid and time vs. effect ---------- */
 // The stat bars move in steps of five (reputation may be finer), no action
 // takes less than two minutes, and expensive time without noticeable effect is
 // a free fast-forward.
@@ -198,7 +198,7 @@ for (const p of POOLS) {
 }
 for (const e of DB.emails) (e.opts ?? []).forEach((o, i) => numCheck(o, `[emails/${e.id}] opts[${i}]`));
 
-/* ---------- 2d) Schwarzes Brett & Intranet ---------- */
+/* ---------- 2d) Bulletin board and intranet ---------- */
 // Neither is an event pool, so none of the checks above sees them - but both
 // filter their content by reqStory, and a typo there fails silently: the note
 // or the post simply never appears, on any save, forever. Feeding their flags
@@ -222,7 +222,7 @@ for (const [where, entries] of reactive) {
 for (const name of Object.keys(DB.intranet?.employee ?? {}))
   if (!charNames.has(name)) err(`[intranet/employee] "${name}" nicht in DB.chars`);
 
-/* ---------- 3) E-Mails ---------- */
+/* ---------- 3) Emails ---------- */
 const mailIdSeen = new Map();
 const subjSeen = new Map();
 for (const e of DB.emails) {
@@ -240,12 +240,12 @@ for (const e of DB.emails) {
 for (const [id, c] of mailIdSeen) if (c > 1) err(`Doppelte Mail-ID "${id}" (${c}x) — usedEmails blockiert beide, nextEmail trifft die falsche`);
 for (const [s, c] of subjSeen) if (c > 1) warn(`Doppelter Mail-Betreff "${s}" (${c}x) — nur kosmetisch, wirkt im Spiel aber wie dieselbe Mail`);
 
-/* ---------- 4) Tote Story-Flags ---------- */
+/* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`Story-Flag "${flag}" wird NIE gesetzt, aber gefordert von ${ctxs.join(', ')} -> toter Content`);
 }
 
-/* ---------- 4b) Verwaiste Flags: gesetzt, aber von niemandem gefordert ---------- */
+/* ---------- 4b) Orphaned flags: set, but required by nobody ---------- */
 // A flag nobody requires is a dead end: the player made a decision that
 // leads nowhere. Usually a renamed follow-up event or one that never got
 // written.
@@ -266,7 +266,7 @@ for (const [flag, wheres] of flagsSetWhere) {
     warn(`Story-Flag "${flag}" wird gesetzt, aber von keinem Ereignis gefordert -> Sackgasse (${list})`);
 }
 
-/* ---------- 4c) Textqualität ---------- */
+/* ---------- 4c) Text quality ---------- */
 const PLACEHOLDER = /\b(TODO|TBD|FIXME|XXX|Lorem ipsum|Platzhalter)\b/i;
 
 const checkText = (ctx, field, txt) => {
@@ -288,12 +288,12 @@ const checkText = (ctx, field, txt) => {
     const markup = t.match(/<\/?(br|b|i|u|p|em|strong|span|div|ul|ol|li|h[1-6])\b[^>]*>/i);
     if (markup) err(`${ctx} ${field}: Auszeichnung "${markup[0]}" in einem Feld, das als reiner Text ausgegeben wird — benutze \\n für einen Absatz`);
 
-    // Anführungszeichen erster Ordnung sind im ganzen Spiel einfach: 'so'.
-    // Doppelte gehören nur in ein Zitat innerhalb eines Zitats. Ein Text mit
-    // doppelten und ohne einfache ist deshalb immer erste Ordnung und weicht
-    // von der Hausregel ab. Der Bestand schreibt das in 96% der Texte so; die
-    // Ausnahmen entstanden dort, wo eine Datei im Quelltext einfach gequotet
-    // war und man im Text bequem " tippen konnte.
+    // First-order quotes are single throughout the game: 'so'. Double
+    // ones belong inside a quote within a quote. A text with double
+    // quotes and no single ones is therefore always first order and
+    // departs from the house rule. 96% of the texts follow it; the
+    // exceptions grew where a file was single quoted in the source and
+    // typing " inside the text was simply the more convenient key.
     if (t.includes('"') && !t.includes("'"))
         warn(`${ctx} ${field}: doppelte Anführungszeichen in erster Ordnung — im Spieltext gilt 'so', doppelte nur verschachtelt`);
 
@@ -320,7 +320,7 @@ const checkText = (ctx, field, txt) => {
     }
 };
 
-// Ergebnistexte sammeln, um Dubletten zu finden
+// Collect result texts to find duplicates
 const resultTexts = new Map();
 const noteText = (ctx, field, txt) => {
     checkText(ctx, field, txt);
@@ -355,7 +355,7 @@ for (const e of DB.emails) {
     checkText(ctx, 'subj', e.subj);
     checkText(ctx, 'body', e.body);
     (e.opts ?? []).forEach((o, i) => {
-        checkText(ctx, `opts[${i}].btn`, o.btn ?? o.t);
+        checkText(ctx, `opts[${i}].t`, o.t);
         noteText(ctx, `opts[${i}].r`, o.r);
     });
 }
@@ -365,7 +365,7 @@ for (const [txt, ctxs] of resultTexts) {
     warn(`Identischer Ergebnistext in ${ctxs.length} Optionen (${unique.join(', ')}): "${txt.slice(0, 55)}…"`);
 }
 
-/* ---------- 5) Escaping-Risiken im inline-onclick ---------- */
+/* ---------- 5) Escaping risks in the inline onclick ---------- */
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     for (const o of ev.opts ?? []) {
@@ -387,7 +387,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 6) Verwaiste Items ---------- */
+/* ---------- 6) Orphaned items ---------- */
 const used = new Set();
 const collect = o => ['loot', 'req', 'rem'].forEach(k => o[k] && used.add(o[k]));
 for (const p of POOLS) for (const ev of DB[p]) {
@@ -398,20 +398,20 @@ for (const p of POOLS) for (const ev of DB[p]) {
 DB.emails.forEach(e => (e.opts ?? []).forEach(collect));
 for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].name}) wird von keinem Event vergeben/verlangt`);
 
-/* ---------- 7) E-Mail-Konvention: Löschen & Ignorieren ---------- */
+/* ---------- 7) Mail convention: the delete option ---------- */
 // The delete option must carry ignoreEmail: true and sit at the BOTTOM of
 // the list. Chain follow-ups without any delete option are fine by design.
 for (const ev of DB.emails) {
   const opts = ev.opts ?? [];
   opts.forEach((o, idx) => {
-    const isDelete = /Löschen & Ignorieren/.test(o.btn ?? '') || o.ignoreEmail;
+    const isDelete = /Löschen & Ignorieren/.test(o.t ?? '') || o.ignoreEmail;
     if (!isDelete) return;
     if (!o.ignoreEmail) err(`[emails/${ev.id}] Löschen-Option ohne ignoreEmail: true`);
     if (idx !== opts.length - 1) err(`[emails/${ev.id}] Löschen-Option steht nicht an letzter Position`);
   });
 }
 
-/* ---------- 8) Verwaiste unsichtbare Zeichen ---------- */
+/* ---------- 8) Orphaned invisible characters ---------- */
 // Orphaned variation selectors / zero-width chars are invisible in the UI
 // but break every pattern match (see the mail_leak_1 incident). U+FE0F is
 // only legitimate directly after an emoji/symbol base character.
@@ -438,7 +438,7 @@ for (const ev of DB.emails) {
   DB.emails.forEach(ev => walk(ev, `emails/${ev.id}`));
 }
 
-/* ---------- 9) Unbekannte Felder ---------- */
+/* ---------- 9) Unknown fields ---------- */
 // The quietest bug in the data: a misspelt key parses fine, lints clean and is
 // silently dropped at runtime - `ep` instead of `rep` cost one sidequest its
 // whole reputation effect for two versions. The lists below are what the engine
@@ -466,7 +466,7 @@ const NODE_OPT_KEYS = ['t', 'next', 'req', 'rem', 'action'];
 const RESULT_KEYS   = ['txt', 'm', 'f', 'a', 'c', 'min', 'fl', 'al', 'cr', 'rep', 'loot', 'rem', 'next'];
 const FAIL_KEYS     = OPT_KEYS.filter(k => k !== 't');
 const MAIL_KEYS     = ['id', 'sender', 'subj', 'body', 'opts', 'linked'];
-const MAIL_OPT_KEYS = ['btn', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
+const MAIL_OPT_KEYS = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
 
 const checkKeys = (obj, allowed, ctx, what) => {
   if (!obj || typeof obj !== 'object') return;
@@ -499,7 +499,7 @@ for (const ev of DB.emails) {
   (ev.opts ?? []).forEach((o, i) => checkKeys(o, MAIL_OPT_KEYS, `${ctx} opts[${i}]`, 'in der Auswahl'));
 }
 
-/* ---------- 10) Result-Schlüssel: res_-Präfix ---------- */
+/* ---------- 10) Result keys: the res_ prefix ---------- */
 // components/EventView.svelte hangs a "..." badge on every chain option whose
 // next does NOT start with res_ - the badge tells the player the conversation
 // goes on. A result named `truth` therefore promises a follow-up and then hangs
@@ -515,7 +515,7 @@ for (const ev of DB.emails) {
     info(`${stray.length} Result-Schlüssel ohne res_-Präfix — die Option dorthin trägt im Terminal das "..."-Abzeichen, obwohl sie das Gespräch beendet (z. B. ${stray.slice(0, 4).join(', ')})`);
 }
 
-/* ---------- Ausgabe ---------- */
+/* ---------- Output ---------- */
 const section = (title, list, sym) => {
   console.log(`\n${title} (${list.length})`);
   list.forEach(m => console.log(` ${sym} ${m}`));

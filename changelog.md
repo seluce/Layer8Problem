@@ -1,3 +1,31 @@
+[4.1.0] - 2026-08-05
+
+Ein reines Pflege-Update: Datenpflege und Fehlerkorrektur. In der letzten Zeit
+kamen viele neue Ereignisse dazu, die sich anders lasen und anders
+präsentierten als der Altbestand. Vor allem die älteren Ereignisse waren mit
+Meta-Angaben ausgezeichnet, an denen man vorab ablesen konnte, wie eine Option
+wirkt. Das ist jetzt für alle Ereignisse einheitlich.
+
+Ereignisse & Texte:
+* Alle rund 230 Ereignisse in acht Bereichen wurden redaktionell überarbeitet. Die Optionen und ihre Auswirkungen sind unverändert - nur die Sprache ist überall dieselbe. Ältere Ereignisse waren teils sehr karg und wiederholten einander: spielweit standen 245 Sätze doppelt, jetzt sind es 172.
+* Die Auftakte klingen nicht mehr nach Schablone. 64 Eröffnungen wurden neu geschrieben - "Du willst..." begann 22 Ereignisse, jetzt 9, und das Füllwort "plötzlich" stand 47-mal im Text, jetzt 14-mal. An einem einzelnen Ereignis fällt so etwas nicht auf, an fünfzig hintereinander schon.
+
+Anzeige & Layout:
+* Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. 817 Beschriftungen sind vom alten Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)") auf das umgestellt, was Müller tut oder sagt. Ob eine Antwort feige, ehrlich oder dumm war, entscheidet jetzt der Ergebnistext - nicht der Knopf davor.
+* Das Smartphone zeigt Kontaktfotos: Ein Chat mit einer bekannten Figur zeigt ihr Porträt statt der Initiale. In Gruppen-Chats kann jede einzelne Nachricht ihr eigenes Gesicht und ihren eigenen Namen haben, während der Rest der Gruppe anonym bleibt. Unbekannte Nummern behalten die Initiale - wie im echten Adressbuch.
+
+Fehlerkorrekturen:
+* Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Die Option stand an der falschen Stelle und hatte ihr Verhalten verloren; schuld waren zwei unsichtbare Sonderzeichen vor der Beschriftung.
+* Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen. Ein Tippfehler im Feldnamen hatte die Wirkung stillschweigend verschluckt.
+* Schreib- und Logikfehler in diversen Ereignissen behoben.
+
+Für Entwickler:
+* Der Daten-Prüfer (npm run lint:data) kennt fünf neue Regeln: die Löschen-Konvention im Postfach, verwaiste unsichtbare Zeichen (U+200B, U+FEFF und Variation-Selektoren ohne Emoji davor), Charakter-Namen auf Knoten-Ebene, unbekannte Felder und Result-Schlüssel ohne res_-Präfix. Die erste hätte die Kündigungsliste gemeldet, bevor sie jemand gespielt hat.
+* Die Regel für unbekannte Felder prüft je Stelle, was die Engine dort wirklich liest - ein reqStory an einer Mittagspause oder ein req in einer Mail wird nie ausgewertet und ist deshalb ab sofort ein Fehler, kein stiller Blindgänger. Sie hat zwei Altlasten in den Dienstgängen gefunden, darunter die verschluckte Ruf-Wirkung oben.
+* Die Beschriftung einer Antwort heißt jetzt in allen Datendateien t. Im Postfach hieß dasselbe Feld historisch btn - 416 Auswahlen sind umbenannt, und die fünf Stellen, die es lasen (Engine, Postfach-Ansicht, Daten-Prüfer, Prosa-Bericht, Sortier-Werkzeug), lesen jetzt dasselbe Feld wie überall sonst. Eine Sonderregel weniger beim Schreiben neuer Ereignisse.
+* Phone-Ereignisse werten char jetzt auch pro Knoten aus - für Gruppen-Chats, in denen nur einzelne Stimmen ein Gesicht haben. Der Knoten gewinnt, sonst erbt er das Ereignis, und char: null erzwingt die Initiale trotz Ereignis-Figur.
+* Der Prosa-Bericht (tools/report-prose.mjs) hat zwei Abschnitte mehr: Alt-Register in Beschriftungen und Schablonen in Auftakten. Beide Listen waren die Arbeitsgrundlage dieser Version und stehen jetzt in allen Bereichen auf null.
+
 [4.0.0] - 2026-08-03
 
 Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der

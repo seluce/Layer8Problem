@@ -1,49 +1,48 @@
 /**
- * Einmalige Umsortierung der Antwortmöglichkeiten.
+ * One-off redistribution of the answer options.
  *
- * In 53% aller Ereignisse mit drei oder mehr Optionen stand die günstigste
- * ganz oben. Bei drei Optionen wären 33% zufällig. Wer das einmal bemerkt,
- * klickt fortan reflexhaft die erste Zeile, und die Entscheidung, um die es
- * eigentlich geht, findet nicht mehr statt.
+ * In 53% of all events with three or more options the cheapest one sat
+ * at the top. With three options, 33% would be chance. Whoever notices
+ * that clicks the first line from then on, and the decision the event is
+ * actually about stops happening.
  *
- * Nicht zufällig gemischt, sondern gleichmäßig verteilt: Je Gruppengröße
- * wandert die günstigste Option reihum auf Platz 1, 2, 3, 4. Das Ergebnis ist
- * deterministisch - zweimal laufen lassen ändert nichts mehr - und die
- * Reihenfolge der übrigen Optionen bleibt untereinander erhalten, weil die
- * Liste rotiert und nicht gewürfelt wird. Eine Eskalation von zurückhaltend
- * nach drastisch überlebt das.
+ * Not shuffled at random but spread evenly: per group size the cheapest
+ * option moves to position 1, 2, 3, 4 in turn. The result is
+ * deterministic - running it twice changes nothing more - and the order
+ * of the remaining options survives among themselves, because the list
+ * is rotated and not thrown. An escalation from cautious to drastic
+ * lives through that.
  *
- * Nicht angefasst:
- *   - data_tutorial.js: das Tutorial zeigt auf bestimmte Schaltflächen
- *   - Optionen mit action/checkPool: das ist die Stationswahl der Gala,
- *     dort wäre eine wandernde Reihenfolge sinnlos
- *   - Knoten-Optionen in Ketten: das sind Rückfragen, keine Kostenentscheidung
- *   - Abbruch-Optionen: "Ignorieren", "Auflegen", "Löschen & Ignorieren" und
- *     Verwandte bleiben unten angenagelt. Der Spieler sucht sie dort, und bei
- *     E-Mails ist es seit jeher die letzte Zeile.
+ * Left alone:
+ *   - data_tutorial.js: the tutorial points at specific buttons
+ *   - options with action/checkPool: that is the station picker of the
+ *     gala, where a travelling order would be pointless
+ *   - node options in chains: those are follow-up questions, not a
+ *     decision about cost
+ *   - abort options: "Ignorieren", "Auflegen", "Löschen & Ignorieren"
+ *     and relatives stay nailed to the bottom. That is where the player
+ *     looks for them, and in mails it has always been the last line.
  */
 import { readFileSync, writeFileSync } from 'fs';
 
-const DATEIEN = [
+const FILES = [
     'data_calls.js', 'data_server.js', 'data_coffee.js', 'data_sidequests.js',
     'data_reputation.js', 'data_emails.js', 'data_lunch.js', 'data_bossfights.js',
     'data_party.js'
 ];
 
-// Was unten bleibt. Bewusst am Anfang des Textes verankert, damit
-// "Ignorieren" trifft, aber "Ignorieren ist keine Option" nicht.
-/** Die Pools benennen die Beschriftung unterschiedlich: Ereignisse nutzen t,
- *  E-Mails btn. Wer nur eines liest, behandelt eine ganze Datei blind. */
-const beschriftung = (o) => o.t ?? o.btn ?? '';
+const label = (o) => o.t ?? '';
 
-const ABBRUCH = /^\s*\[?\s*(System:\s*)?(Ignorieren|Löschen|Auflegen|Abbrechen|Wegwerfen|Nichts tun|Nichts sagen|Weitergehen|Wortlos auflegen|Sofort auflegen|Kommentarlos|Zuklappen|Schließen|Abwimmeln|Vorbeigehen|Nicht antworten|Nicht mehr antworten)/i;
+// What stays at the bottom. Anchored at the start of the text on purpose,
+// so "Ignorieren" matches but "Ignorieren ist keine Option" does not.
+const ABORT = /^\s*\[?\s*(System:\s*)?(Ignorieren|Löschen|Auflegen|Abbrechen|Wegwerfen|Nichts tun|Nichts sagen|Weitergehen|Wortlos auflegen|Sofort auflegen|Kommentarlos|Zuklappen|Schließen|Abwimmeln|Vorbeigehen|Nicht antworten|Nicht mehr antworten)/i;
 
-/** Zerlegt den Inhalt eines Array-Literals in seine Elemente, ohne die
- *  Formatierung zu verlieren. Zeichenketten und Verschachtelung werden
- *  mitgezählt, sonst zerreißt ein Komma in einem Text die Liste. */
-function elementeZerlegen(text) {
-    const teile = [];
-    let tiefe = 0, start = 0, quote = null;
+/** Splits the body of an array literal into its elements without losing
+ *  the formatting. Strings and nesting are tracked, otherwise a comma
+ *  inside a text would tear the list apart. */
+function splitElements(text) {
+    const parts = [];
+    let depth = 0, start = 0, quote = null;
     for (let i = 0; i < text.length; i++) {
         const c = text[i];
         if (quote) {
@@ -52,121 +51,121 @@ function elementeZerlegen(text) {
             continue;
         }
         if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
-        if (c === '{' || c === '[' || c === '(') tiefe++;
-        else if (c === '}' || c === ']' || c === ')') tiefe--;
-        else if (c === ',' && tiefe === 0) { teile.push(text.slice(start, i)); start = i + 1; }
+        if (c === '{' || c === '[' || c === '(') depth++;
+        else if (c === '}' || c === ']' || c === ')') depth--;
+        else if (c === ',' && depth === 0) { parts.push(text.slice(start, i)); start = i + 1; }
     }
     const rest = text.slice(start);
-    if (rest.trim()) teile.push(rest);
-    return teile;
+    if (rest.trim()) parts.push(rest);
+    return parts;
 }
 
-/** Trennt führende Leerzeichen vom eigentlichen Element. Die Einrückung
- *  gehört zur Position in der Datei, nicht zum Element - sonst wandert sie
- *  beim Umsortieren mit und die Datei franst aus. */
-const zerlegen = (s) => {
+/** Separates leading whitespace from the element itself. The indentation
+ *  belongs to the position in the file, not to the element - otherwise it
+ *  travels along when reordering and the file frays. */
+const splitIndent = (s) => {
     const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/);
-    return { vorn: m[1], koerper: m[2], hinten: m[3] };
+    return { lead: m[1], body: m[2], trail: m[3] };
 };
 
-/** Findet zu einer Position das schließende Gegenstück. */
-function klammerEnde(text, start) {
-    let tiefe = 0, quote = null;
+/** Finds the closing counterpart for a given position. */
+function bracketEnd(text, start) {
+    let depth = 0, quote = null;
     for (let i = start; i < text.length; i++) {
         const c = text[i];
         if (quote) { if (c === '\\') { i++; continue; } if (c === quote) quote = null; continue; }
         if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
-        if (c === '[') tiefe++;
-        else if (c === ']') { tiefe--; if (tiefe === 0) return i; }
+        if (c === '[') depth++;
+        else if (c === ']') { depth--; if (depth === 0) return i; }
     }
     return -1;
 }
 
-const zaehler = {};          // Rundlauf je Gruppengröße
-let umsortiert = 0, unberuehrt = 0, angenagelt = 0;
-const grund = {};
-const zaehleGrund = (g) => { grund[g] = (grund[g] ?? 0) + 1; unberuehrt++; };
+const counter = {};          // round robin per group size
+let reordered = 0, untouched = 0, pinnedTotal = 0;
+const reasons = {};
+const countReason = (reason) => { reasons[reason] = (reasons[reason] ?? 0) + 1; untouched++; };
 
-for (const datei of DATEIEN) {
-    let text = readFileSync(datei, 'utf-8');
-    const modul = await import('./' + datei + '?v=' + Date.now());
-    const pool = Object.values(modul)[0];
+for (const file of FILES) {
+    let text = readFileSync(file, 'utf-8');
+    const mod = await import('./' + file + '?v=' + Date.now());
+    const pool = Object.values(mod)[0];
 
-    // Von hinten nach vorn, damit frühere Ersetzungen die Positionen der
-    // späteren nicht verschieben.
-    const stellen = [];
+    // Back to front, so earlier replacements do not shift the positions
+    // of the later ones.
+    const spots = [];
     for (const ev of pool) {
-        if (!Array.isArray(ev.opts) || ev.opts.length < 2) { if (Array.isArray(ev.opts)) zaehleGrund('nur eine Option'); continue; }
-        if (ev.opts.some(o => o.action || o.checkPool)) { zaehleGrund('Stationswahl'); continue; }
+        if (!Array.isArray(ev.opts) || ev.opts.length < 2) { if (Array.isArray(ev.opts)) countReason('nur eine Option'); continue; }
+        if (ev.opts.some(o => o.action || o.checkPool)) { countReason('Stationswahl'); continue; }
 
-        // Die Datendateien schreiben Kennungen mal mit doppelten, mal mit
-        // einfachen Anführungszeichen. Wer nur eine Schreibweise sucht,
-        // überspringt stillschweigend eine ganze Datei.
+        // The data files write ids with double quotes in some places and
+        // with single ones in others. Searching for only one spelling
+        // silently skips a whole file.
         let idPos = text.indexOf(`id: "${ev.id}"`);
         if (idPos < 0) idPos = text.indexOf(`id: '${ev.id}'`);
-        if (idPos < 0) { zaehleGrund('id nicht gefunden'); console.warn('  nicht gefunden: ' + ev.id); continue; }
+        if (idPos < 0) { countReason('id nicht gefunden'); console.warn('  nicht gefunden: ' + ev.id); continue; }
         const optPos = text.indexOf('opts:', idPos);
-        const auf = text.indexOf('[', optPos);
-        const zu = klammerEnde(text, auf);
-        if (optPos < 0 || auf < 0 || zu < 0) { zaehleGrund('Klammern unklar'); continue; }
+        const open = text.indexOf('[', optPos);
+        const close = bracketEnd(text, open);
+        if (optPos < 0 || open < 0 || close < 0) { countReason('Klammern unklar'); continue; }
 
-        stellen.push({ ev, auf, zu });
+        spots.push({ ev, open, close });
     }
 
-    for (const { ev, auf, zu } of stellen.reverse()) {
-        const inhalt = text.slice(auf + 1, zu);
-        const roh = elementeZerlegen(inhalt);
-        if (roh.length !== ev.opts.length) { zaehleGrund('Zerlegung passt nicht'); continue; }  // Formatierung unklar: Finger weg
+    for (const { ev, open, close } of spots.reverse()) {
+        const content = text.slice(open + 1, close);
+        const raw = splitElements(content);
+        if (raw.length !== ev.opts.length) { countReason('Zerlegung passt nicht'); continue; }  // formatting unclear: hands off
 
-        const teile = roh.map(zerlegen);
-        const feste = [], frei = [];
+        const parts = raw.map(splitIndent);
+        const pinned = [], free = [];
         ev.opts.forEach((o, i) => {
-            const abbruch = o.ignoreEmail === true || ABBRUCH.test(beschriftung(o));
-            (abbruch ? feste : frei).push(i);
+            const isAbort = o.ignoreEmail === true || ABORT.test(label(o));
+            (isAbort ? pinned : free).push(i);
         });
-        angenagelt += feste.length;
+        pinnedTotal += pinned.length;
 
-        // Bei nur einer beweglichen Option gibt es nichts zu verteilen - die
-        // Abbruch-Option gehört aber trotzdem nach unten.
-        let neu = frei;
-        if (frei.length >= 2) {
-            // Günstigste Option: geringste Summe aus Faulheit, Aggro und Radar.
+        // With only one movable option there is nothing to distribute -
+        // the abort option still belongs at the bottom.
+        let newOrder = free;
+        if (free.length >= 2) {
+            // Cheapest option: the lowest sum of laziness, anger and radar.
             //
-            // Bei Gleichstand entscheidet der Text, nicht die Position. Das ist
-            // der Unterschied zwischen "wiederholbar" und "wandert bei jedem
-            // Lauf weiter": Nähme man einfach die erste der gleich teuren
-            // Optionen, wäre das nach der ersten Rotation eine andere, und der
-            // nächste Lauf würde erneut drehen. So bleibt es dieselbe Option,
-            // egal wo sie gerade steht.
-            const kosten = frei.map(i => (ev.opts[i].f ?? 0) + (ev.opts[i].a ?? 0) + (ev.opts[i].c ?? 0));
-            const min = Math.min(...kosten);
-            const gleichauf = frei.map((_, k) => k).filter(k => kosten[k] === min);
-            const beste = gleichauf.reduce((a, b) =>
-                beschriftung(ev.opts[frei[a]]) <= beschriftung(ev.opts[frei[b]]) ? a : b);
+            // On a tie the text decides, not the position. That is the
+            // difference between "repeatable" and "moves on with every
+            // run": take the first of the equally expensive options and it
+            // would be a different one after the first rotation, so the
+            // next run would turn again. This way it stays the same
+            // option, wherever it currently sits.
+            const cost = free.map(i => (ev.opts[i].f ?? 0) + (ev.opts[i].a ?? 0) + (ev.opts[i].c ?? 0));
+            const min = Math.min(...cost);
+            const tied = free.map((_, k) => k).filter(k => cost[k] === min);
+            const best = tied.reduce((a, b) =>
+                label(ev.opts[free[a]]) <= label(ev.opts[free[b]]) ? a : b);
 
-            const n = frei.length;
-            zaehler[n] = (zaehler[n] ?? 0);
-            const ziel = zaehler[n]++ % n;
+            const n = free.length;
+            counter[n] = (counter[n] ?? 0);
+            const target = counter[n]++ % n;
 
-            // Rotation statt Mischen: die relative Abfolge der übrigen
-            // Optionen bleibt erhalten.
-            const versatz = ((beste - ziel) % n + n) % n;
-            neu = Array.from({ length: n }, (_, k) => frei[(k + versatz) % n]);
+            // Rotating instead of shuffling: the relative order of the
+            // remaining options survives.
+            const offset = ((best - target) % n + n) % n;
+            newOrder = Array.from({ length: n }, (_, k) => free[(k + offset) % n]);
         }
-        const reihenfolge = [...neu, ...feste];
+        const order = [...newOrder, ...pinned];
 
-        if (reihenfolge.every((v, i) => v === i)) { zaehleGrund('war schon richtig'); continue; }
+        if (order.every((v, i) => v === i)) { countReason('war schon richtig'); continue; }
 
-        const zusammen = reihenfolge
-            .map((quelle, ziel2) => teile[ziel2].vorn + teile[quelle].koerper + teile[ziel2].hinten)
+        const joined = order
+            .map((source, slot) => parts[slot].lead + parts[source].body + parts[slot].trail)
             .join(',');
-        text = text.slice(0, auf + 1) + zusammen + text.slice(zu);
-        umsortiert++;
+        text = text.slice(0, open + 1) + joined + text.slice(close);
+        reordered++;
     }
 
-    writeFileSync(datei, text);
-    console.log(`${datei.padEnd(22)} fertig`);
+    writeFileSync(file, text);
+    console.log(`${file.padEnd(22)} fertig`);
 }
 
-console.log(`\numsortiert: ${umsortiert} | unberührt: ${unberuehrt} | unten angenagelt: ${angenagelt}`);
-console.log('Gründe:', grund);
+console.log(`\numsortiert: ${reordered} | unberührt: ${untouched} | unten angenagelt: ${pinnedTotal}`);
+console.log('Gründe:', reasons);

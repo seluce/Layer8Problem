@@ -88,7 +88,7 @@ sondern ein Fehler.
 
 | Feld | Wirkung |
 |---|---|
-| `t` | Pflicht: die Beschriftung des Knopfes. In Mails heißt dasselbe Feld `btn`. |
+| `t` | Pflicht: die Beschriftung des Knopfes — in jedem Bereich gleich, auch im Postfach. |
 | `r` | Pflicht: der Ergebnistext. Er steht danach auch im Protokoll. |
 | `m` | Kostet Minuten Spielzeit. Der Arbeitstag ist begrenzt, das ist die eigentliche Währung. |
 | `f` | Faulheit (positiv = fauler). Wirkt 1:1. |
@@ -538,9 +538,9 @@ brauchen keine Beiträge.
 
 ## 10. E-Mails (`data_emails.js`)
 
-Postfach-Ereignisse haben eigene Feldnamen: `sender`, `subj` (der Betreff — "Re:", "WG:"
-und dringliche Phishing-Betreffs sind ausdrücklich erwünscht, das ist Mail-Realismus),
-`body` als Mailtext, und die Auswahlen heißen `btn` statt `t`.
+Die Mail selbst hat eigene Feldnamen: `sender`, `subj` (der Betreff — "Re:", "WG:" und
+dringliche Phishing-Betreffs sind ausdrücklich erwünscht, das ist Mail-Realismus) und
+`body` als Mailtext. Die Auswahlen sind gebaut wie überall sonst, mit `t` und `r`.
 
 Was hier **nicht** funktioniert: `req` und `rem`. Eine Mail kann Gegenstände geben
 (`loot`), aber keine verlangen oder verbrauchen. `char` gibt es ebenfalls nicht, das
@@ -569,13 +569,13 @@ Mail als ignoriert.
     body: "Sehr geehrter Gewinner,\n\nSie haben 2.000.000 Euro gewonnen. Zur Auszahlung benötigen wir lediglich eine Bearbeitungsgebühr von 49,99 Euro.",
     opts: [
         {
-            btn: "'Ziehen Sie die Gebühr doch einfach vom Gewinn ab.'",
+            t: "'Ziehen Sie die Gebühr doch einfach vom Gewinn ab.'",
             m: 2, f: 0, a: 0, c: 0,
             r: "Antwort verschickt, Verhandlung eröffnet.",
             nextEmail: "mail_gewinnspiel_2"
         },
         {
-            btn: "Löschen & Ignorieren",
+            t: "Löschen & Ignorieren",
             m: 2, f: 0, a: 0, c: 0,
             r: "Zwei Millionen ärmer, eine Illusion reicher.",
             ignoreEmail: true
@@ -590,12 +590,12 @@ Mail als ignoriert.
     body: "Guter Verhandler! Neue Gebühr: nur noch 29,99 Euro. Letztes Angebot!",
     opts: [
         {
-            btn: "'19,99 und wir sind im Geschäft.'",
+            t: "'19,99 und wir sind im Geschäft.'",
             m: 3, f: 0, a: -5, c: 0,
             r: "Du feilschst mit Betrügern. Und du liegst vorn."
         },
         {
-            btn: "Löschen & Ignorieren",
+            t: "Löschen & Ignorieren",
             m: 2, f: 0, a: 0, c: 0,
             r: "Der Spuk ist vorbei.",
             ignoreEmail: true
