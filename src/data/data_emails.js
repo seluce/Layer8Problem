@@ -105,8 +105,8 @@ export const emails = [
 		subj: "WG: Kündigungswelle Q4 (VERTRAULICH)",
 		body: "An: Vorstand\nCc: (Versehentlich) Alle Mitarbeiter\n\nMeine Herren, anbei die Liste der 50 Mitarbeiter, die wir nächsten Montag feuern. Bitte diskret behandeln.\n\n[Anhang: Liste_FINAL_v3.pdf]",
 		opts: [
-			{ btn: "️️🗑️ Löschen & Ignorieren", r: "Du klickst auf Löschen und starrst danach zwei Minuten durch den Monitor hindurch. Fünfzig Namen. Du hast keinen einzigen gelesen und trotzdem zu viele gesehen.", m: 2, f: 0, a: 5, c: -5 },
-			{ btn: "Allen antworten: 'BIN ICH AUCH DRAUF?!'", r: "Du hast an den gesamten Verteiler geantwortet. Panik bricht aus.", m: 2, f: -10, a: 10, c: 5, nextEmail: "mail_leak_2" }
+			{ btn: "Allen antworten: 'BIN ICH AUCH DRAUF?!'", r: "Du hast an den gesamten Verteiler geantwortet. Panik bricht aus.", m: 2, f: -10, a: 10, c: 5, nextEmail: "mail_leak_2" },
+			{ btn: "️️Löschen & Ignorieren", r: "Du klickst auf Löschen und starrst danach zwei Minuten durch den Monitor hindurch. Fünfzig Namen. Du hast keinen einzigen gelesen und trotzdem zu viele gesehen.", m: 2, f: 0, a: 5, c: -5, ignoreEmail: true }
 		]
 	},
 	{
