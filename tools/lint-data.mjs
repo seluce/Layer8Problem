@@ -391,6 +391,46 @@ for (const p of POOLS) for (const ev of DB[p]) {
 DB.emails.forEach(e => (e.opts ?? []).forEach(collect));
 for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].name}) wird von keinem Event vergeben/verlangt`);
 
+/* ---------- 7) E-Mail-Konvention: Löschen & Ignorieren ---------- */
+// The delete option must carry ignoreEmail: true and sit at the BOTTOM of
+// the list. Chain follow-ups without any delete option are fine by design.
+for (const ev of DB.emails) {
+  const opts = ev.opts ?? [];
+  opts.forEach((o, idx) => {
+    const isDelete = /Löschen & Ignorieren/.test(o.btn ?? '') || o.ignoreEmail;
+    if (!isDelete) return;
+    if (!o.ignoreEmail) err(`[emails/${ev.id}] Löschen-Option ohne ignoreEmail: true`);
+    if (idx !== opts.length - 1) err(`[emails/${ev.id}] Löschen-Option steht nicht an letzter Position`);
+  });
+}
+
+/* ---------- 8) Verwaiste unsichtbare Zeichen ---------- */
+// Orphaned variation selectors / zero-width chars are invisible in the UI
+// but break every pattern match (see the mail_leak_1 incident). U+FE0F is
+// only legitimate directly after an emoji/symbol base character.
+{
+  const scan = (str, where) => {
+    if (typeof str !== 'string') return;
+    for (let i = 0; i < str.length; i++) {
+      const cp = str.codePointAt(i);
+      if (cp === 0x200B || cp === 0xFEFF)
+        err(`[${where}] unsichtbares Zeichen U+${cp.toString(16).toUpperCase()} an Position ${i}`);
+      if (cp === 0xFE0F) {
+        const prev = i > 0 ? str.codePointAt(i - (str.charCodeAt(i - 1) >= 0xDC00 ? 2 : 1)) : 0;
+        if (prev < 0x2000 || prev === 0xFE0F)
+          err(`[${where}] verwaister Variation-Selektor U+FE0F an Position ${i} ("${str.slice(0, 24)}…")`);
+      }
+    }
+  };
+  const walk = (obj, where) => {
+    if (typeof obj === 'string') return scan(obj, where);
+    if (Array.isArray(obj)) return obj.forEach(v => walk(v, where));
+    if (obj && typeof obj === 'object') for (const v of Object.values(obj)) walk(v, where);
+  };
+  for (const p of POOLS) for (const ev of DB[p]) walk(ev, `${p}/${ev.id}`);
+  DB.emails.forEach(ev => walk(ev, `emails/${ev.id}`));
+}
+
 /* ---------- Ausgabe ---------- */
 const section = (title, list, sym) => {
   console.log(`\n${title} (${list.length})`);
