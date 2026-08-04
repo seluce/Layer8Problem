@@ -20,7 +20,7 @@ export const bossfights = [
 			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 10, c: 25, r: "Feuerwehr kommt. Büro evakuiert. Du hast Pause." },
 			{ t: "Feuerlöscher benutzen", req: "fire_ext", m: 30, f: -10, a: 10, c: -20, r: "Feuer gelöscht. Du hustest, aber bist ein Held." }
 		],
-		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Alles ist nass. Totalschaden." }
+		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Von der Decke regnet es auf Server, Akten und deine letzte Hoffnung. Totalschaden." }
 	},
 	{
 		id: "boss_stream",
@@ -30,7 +30,7 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
-			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
+			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Aus dem Stream-Chat regnen Klötzchen-Emojis." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
 	},
@@ -267,7 +267,7 @@ export const bossfights = [
 				r: "Du musst das Kabel die restlichen 45 Minuten der Präsentation in einem bestimmten Winkel festhalten. Deine Hand krampft. Du bist im Bild des Livestreams zu sehen. Peinlich." 
 			}
 		],
-		fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
+		fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Im Saal beginnt höfliches, tödliches Kichern. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
 	},
 	{
 		id: "boss_audit",
@@ -322,7 +322,7 @@ export const bossfights = [
 				r: "Panzertape hält alles! Auch 500 Liter Wasserdruck (fürs Erste). Die Kois leben. Der Chef umarmt dich (nass)." 
 			}
 		],
-		 fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
+		 fail: { r: "Das Wasser läuft aus. Irgendwo knallt es elektrisch. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
 	},
 	{
 	id: "boss_demo_fail",
@@ -344,7 +344,7 @@ export const bossfights = [
 			r: "In Millisekunden wechselst du auf eine komplizierte Tabelle. Die Zuschauer denken, das gehört zur Show. 'Und hier sehen Sie unsere Effizienz!', ruft der Chef. Gerettet!" 
 		}
 	],
-	fail: { m: 60, f: 0, a: 50, c: 80, r: "ZU LANGSAM! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
+	fail: { m: 60, f: 0, a: 50, c: 80, r: "DANEBEN! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
 	},
     {
         id: "boss_ransomware_2",
@@ -392,7 +392,7 @@ export const bossfights = [
                 t: "Lachend zusehen", 
                 rep: { "Dr. Wichtig": -20 },
                 m: 15, f: -10, a: -15, c: 30, 
-                r: "Ein historischer Moment für den Flurfunk. Dein Chef-Radar explodiert allerdings kurz danach." 
+                r: "Ein historischer Moment für den Flurfunk. Der Chef wird dir das allerdings noch sehr lange nachtragen." 
             }
         ],
         fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 30, c: 40, r: "ZU SPÄT! Jemand hat Screenshots gemacht. Das Meme geht viral auf LinkedIn. Der Chef ist am Boden zerstört." }
@@ -521,7 +521,7 @@ export const bossfights = [
                 r: "Du schaltest 50% der Hardware ab. Die Temperatur stabilisiert sich, aber viele Abteilungen sind offline." 
             }
         ],
-        fail: { m: 120, f: -10, a: 40, c: 60, r: "KERN-SCHMELZE! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
+        fail: { m: 120, f: -10, a: 40, c: 60, r: "HITZE-KOLLAPS! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
     },
     {
         id: "boss_ddos_1",

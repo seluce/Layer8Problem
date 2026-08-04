@@ -47,7 +47,7 @@ export const lunch = [
 		{
 			id: "lunch_vegan",
 			title: "MITTAG: VEGANER TAG",
-			text: "In der Kantine gibt es nur Tofu-Klumpen. Die Stimmung im Team ist aggressiv.",
+			text: "Die Kantine serviert heute ausschließlich Tofu-Klumpen in Sauce nach Hausart. An den Tischen wird auffällig leise gegessen, und die Stimmung kippt Richtung aggressiv.",
 			opts: [
 				{ t: "Zum Döner-Mann rennen", m: 45, f: 5, a: -20, c: 5, r: "Du kommst mit Knoblauchfahne zurück. Du bist glücklich, die Kollegen rümpfen die Nase." },
 				{ t: "Mitessen und meckern", m: 45, f: 0, a: 15, c: 0, r: "Gemeinsames Meckern verbindet das Team." }
@@ -78,7 +78,7 @@ export const lunch = [
 			text: "Das Team will Pizza bestellen. Die Diskussion dauert schon 20 Minuten. 'Ananas gehört nicht drauf!' vs 'Ich bin laktoseintolerant!'. Deine Pause verrinnt.",
 			opts: [
 				{ t: "Aussteigen & Brot essen", m: 30, f: 10, a: -10, c: 0, r: "Du isst dein trockenes Brot, während die anderen noch streiten. Friedlich, aber traurig." },
-				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Aggro steigt durch das Gemecker." }
+				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Das Dauergemecker im Hintergrund nagt trotzdem an den Nerven." }
 			]
 		},
 		{
@@ -161,7 +161,7 @@ export const lunch = [
 					t: "Hinsetzen & Smalltalk wagen", 
 					rep: { "Dr. Wichtig": 5 },
 					m: 60, f: -10, a: 20, c: -25, 
-					r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann'. Chef-Radar sinkt massiv! Dein Essen ist allerdings kalt geworden." 
+					r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann', und dieses Wohlwollen trägt wochenlang. Dein Essen ist allerdings kalt geworden." 
 				}
 			]
 		},
@@ -358,9 +358,9 @@ export const lunch = [
 			title: "MITTAG: TUPPER-ROULETTE",
 			text: "In der Küche stehen 5 identische Dosen ohne Namen. Die Kollegen spielen 'Russisch Roulette'. Eine enthält leckere Lasagne, eine enthält Schimmel-Pilz von 2021.",
 			opts: [
-				{ t: "Nicht mitspielen", m: 10, f: 0, a: 5, c: 0, r: "Du isst dein trockenes Brot. Langweilig, aber sicher." },
+				{ t: "Nicht mitspielen", m: 10, f: 0, a: 5, c: 0, r: "Du bleibst beim mitgebrachten trockenen Brot. Kein Risiko, kein Ruhm, kein Schimmel." },
 				{ t: "Dose 1 öffnen", m: 30, f: 0, a: -10, c: 0, r: "Jackpot! Lasagne! Der Tag ist gerettet." },
-				{ t: "Dose 3 öffnen", m: 45, f: -20, a: 30, c: 0, r: "Es war der Schimmel. Du verbringst die Pause würgend auf dem Klo. Aggro steigt massiv." }
+				{ t: "Dose 3 öffnen", m: 45, f: -20, a: 30, c: 0, r: "Es war der Schimmel. Du verbringst die Pause würgend auf dem Klo. Gespart: 3 Euro. Verloren: der Nachmittag." }
 			]
 		},
 		{
@@ -438,7 +438,7 @@ export const lunch = [
 				{ 
 					t: "Brav anstellen und warten",
 					m: 40, f: -5, a: 20, c: 0, 
-					r: "Die Dame vor dir zahlt 4,99€ ausschließlich in 1- und 2-Cent-Münzen. Du starrst auf die Uhr. Du kommst zu spät und das Brötchen schmeckt nach purer Wut." 
+					r: "Die Dame vor dir zahlt 4,99€ ausschließlich in 1- und 2-Cent-Münzen. Du starrst auf die Uhr. Die Rückkehr wird knapp, und das Brötchen schmeckt nach purer Wut." 
 				}
 			]
 		},
@@ -525,7 +525,7 @@ export const lunch = [
 				{ 
 					t: "Bestellung stornieren & Snack essen", 
 					m: 10, f: 5, a: 25, c: 0, 
-					r: "Du brichst ab, holst dir einen Schokoriegel aus dem Automaten und arbeitest weiter. Du hast nur 10 Minuten verloren, aber deine Aggro explodiert vor Hunger." 
+					r: "Du brichst ab, holst dir einen Schokoriegel aus dem Automaten und arbeitest weiter. Du hast nur 10 Minuten verloren, aber der Hunger macht dich bis Feierabend ungenießbar." 
 				},
 				{ 
 					t: "Ihn draußen suchen gehen", 

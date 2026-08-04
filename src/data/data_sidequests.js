@@ -1258,7 +1258,7 @@ export const sidequests = [
             { 
                 t: "Verstecken: 'Ich wars nicht!'", 
                 m: 10, f: 10, a: -5, c: 0, 
-                r: "Du schließt dich im Klo ein. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef. Du bist sicher, aber ein Feigling." 
+                r: "Du verriegelst dich in der Kabine. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef. Du bist sicher, aber ein Feigling." 
             }
         ]
     },

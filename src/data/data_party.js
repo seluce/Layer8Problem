@@ -167,7 +167,7 @@ export const party = [
 		id: "party_buffet_7", loc: "buffet",
 		char: "Kevin",
 		title: "Deko-Fresser",
-		text: "Du siehst, wie Kevin verzweifelt auf einem Stück Deko-Zitrone mit Schale herumkaut, weil er denkt, es gehöre zum Hauptgericht. Er sieht aus, als würde er gleich weinen.",
+		text: "Du siehst, wie Kevin verzweifelt auf einem Stück Deko-Zitrone mit Schale herumkaut, weil er denkt, es gehöre zum Hauptgericht. Er wirkt den Tränen nahe.",
 		opts: [
 			{ t: "Ihn loben: 'Iss die Schale mit, da sind Vitamine!'", f: 10, a: 15, r: "Kevin würgt das harte, bittere Stück Schale tapfer runter und versucht dabei zu lächeln. 'Sehr... gesund!', krächzt er. Du bist ein wahrhaft grausamer, sadistischer Mensch.", next: "party_hub" },
 			{ t: "Ihn erlösen: 'Das ist Deko, Kevin.'", f: -5, a: -5, r: "Kevin spuckt das bittere Stück sofort in eine Serviette. 'Bah! Ich dachte, das ist diese angesagte Molekular-Küche...' Er ist dir unendlich dankbar, dass du seine Geschmacksnerven gerettet hast.", next: "party_hub" },
@@ -245,7 +245,7 @@ export const party = [
 		opts: [
 			{ t: "Einfach mitnicken", f: 20, a: -5, r: "Du integrierst dich nahtlos in das Rudel. Ihr seid eine stumme, nickende Brüderschaft der Rhythmus-Legastheniker. Keine Worte nötig, nur der Takt und das Bier.", next: "party_hub" },
 			{ t: "Die Gruppe zum Tanzen zwingen", a: 15, f: -10, r: "Du zerrst die armen Kerle erbarmungslos auf die beleuchtete Fläche. Sie sehen aus wie verängstigte Rehe im Scheinwerferlicht und hassen dich ab sofort von ganzem Herzen.", next: "party_hub" },
-			{ t: "Ironisch den Roboter tanzen", f: 5, a: 10, r: "Du fängst an, extrem steife, ironische Roboter-Moves zu machen. Die anderen ITler lachen leise und prosten dir zu. Du bist der unangefochtene König der Nerds.", next: "party_hub" }
+			{ t: "Ironisch den Roboter tanzen", f: 5, a: 10, r: "Du fängst an, extrem steife, ironische Roboter-Moves zu machen. Die anderen ITler lachen leise und prosten dir zu. Die Nerds haben einen neuen Anführer, und er tanzt wie eine Waschmaschine.", next: "party_hub" }
 		]
 	},
 
@@ -277,7 +277,7 @@ export const party = [
 		text: "Du greifst hinter das Kissen eines Sofas. Deine Hand stößt auf etwas Kaltes aus Glas. Eine halb volle, entkorkte Flasche unfassbar teuren Rotwein.",
 		opts: [
 			{ t: "Einen ordentlichen Schluck nehmen", f: 35, a: -25, r: "Du setzt an und trinkst wie ein Barbar direkt aus der Flasche. Der Tropfen ist edel und schmeckt hervorragend. Die grellen Lichter und der Lärm der Party werden plötzlich viel weicher und erträglicher.", next: "party_hub" },
-			{ t: "Flasche ins Klo schütten", a: 20, f: 0, r: "Klassenkampf! Du nimmst die sündhaft teure Flasche mit zur Toilette und versenkst genüsslich 300 Euro im Ausguss. Du fühlst dich wie ein moderner Robin Hood, nur ein bisschen dümmer.", next: "party_hub" },
+			{ t: "Flasche ins Klo schütten", a: 20, f: 0, r: "Klassenkampf! Du nimmst die sündhaft teure Flasche mit zur Toilette und versenkst genüsslich 300 Euro im Ausguss. Du kommst dir vor wie ein moderner Robin Hood, nur ein bisschen dümmer.", next: "party_hub" },
 			{ t: "Ignorieren und liegen lassen", f: 5, a: 10, r: "Du bist schließlich immer noch im Dienst... irgendwie. Du ärgerst dich ein wenig über deine eigene spießige Korrektheit und holst dir stattdessen ein stilles Wasser an der Bar.", next: "party_hub" }
 		]
 	},
