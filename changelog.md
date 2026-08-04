@@ -51,8 +51,7 @@ Einstellungen:
 
 Fehlerkorrekturen:
 * Bei 38 Ereignissen fehlte das Bild des Kollegen, um den es ging - Kevins Sprachnachrichten, Egons Groll, Gabis Panik und der Chefsessel zeigten eine leere Karte. Vier Ereignisse wirken jetzt auf das Verhältnis zu dem Kollegen, um den es die ganze Zeit ging, und in einem Fall bekam der Falsche die Anerkennung.
-* Das vollständige Zurücksetzen verwirft jetzt auch einen unterbrochenen Arbeitstag. Bislang bot das Spiel danach an, den laufenden Tag fortzusetzen - und weil dieser Zwischenstand seine eigene Kopie des Verhältnisses zu den Kollegen mitführt, wanderte damit ein Teil des gelöschten Fortschritts wieder zurück. Dasselbe galt beim Einspielen eines fremden Spielstands.
-* 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
+ 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
 * 5 Ereignisse waren gar nicht erreichbar, weil ihre Voraussetzung nirgends erfüllt werden konnte: die Gerüchteküche um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
 * Das Party-Ende "INSIDER" ließ sich nicht abschließen: Der Ergebnistext enthält wörtliche Rede, wodurch die Schaltfläche technisch unbrauchbar wurde. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
 * Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
@@ -63,7 +62,8 @@ Fehlerkorrekturen:
 * "Spielstand löschen" setzt nun auch das Tutorial zurück, und der Tutorial-Fortschritt wird beim Export und Import tatsächlich übertragen. Beim Abgleich mit der Steam Cloud wird er nur noch freigeschaltet und nie mehr zurückgesetzt.
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben; im Ruhebildschirm passte sich die Schrift nach der ersten Rückkehr nicht mehr an die Breite an.
 * Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen. Während der Synergy-Gala konnte weiterhin eine Büro-Nachricht im Ticker erscheinen.
-* 10 Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen. In einem Privatanruf standen Formatierungszeichen mitten im Text. Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde immer als "Normal" gemeldet.
+* 10 Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen.
+* In einem Privatanruf standen Formatierungszeichen mitten im Text. Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde immer als "Normal" gemeldet.
 
 System & Stabilität:
 * Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite geladen, auch die des Party-Finales, das die meisten nie sehen. Nun lädt zunächst nur das Nötigste, der Rest kommt im Hintergrund nach - die Datenmenge beim Start sinkt um rund 92 Prozent. Auch die Musikstücke laden erst, wenn sie gespielt werden.
