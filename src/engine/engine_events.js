@@ -1115,10 +1115,13 @@ export const events = {
         const ev = this.state.currentPhoneEvent;
         const sender = ev.title || "Unbekannt";
 
-        // Known colleagues show their contact photo, everyone else (scammers,
-        // wrong numbers, mum) falls back to the initial - just like contacts
+        // Portrait resolution, per node: a node's own char wins, otherwise
+        // the node inherits the event's char. `char: null` on a node forces
+        // the initial even inside a character chat (an anonymous voice in a
+        // group); no char anywhere keeps the plain initial - like contacts
         // without a picture in a real messenger.
-        const contact = ev.char ? DB.chars?.find(c => c.name === ev.char) ?? null : null;
+        const charName = node.char !== undefined ? node.char : ev.char;
+        const contact = charName ? DB.chars?.find(c => c.name === charName) ?? null : null;
 
         this.addPhoneMessage({
             side: 'in',
