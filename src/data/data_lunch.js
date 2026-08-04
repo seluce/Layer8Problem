@@ -78,7 +78,7 @@ export const lunch = [
 			text: "Das Team will Pizza bestellen. Die Diskussion dauert schon 20 Minuten. 'Ananas gehört nicht drauf!' vs 'Ich bin laktoseintolerant!'. Deine Pause verrinnt.",
 			opts: [
 				{ t: "Aussteigen & Brot essen", m: 30, f: 10, a: -10, c: 0, r: "Du isst dein trockenes Brot, während die anderen noch streiten. Friedlich, aber traurig." },
-				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Das Dauergemecker im Hintergrund nagt trotzdem an den Nerven." }
+				{ t: "'SALAMI FÜR ALLE!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Das Dauergemecker im Hintergrund nagt trotzdem an den Nerven." }
 			]
 		},
 		{
@@ -203,7 +203,7 @@ export const lunch = [
 					r: "Du isst genüsslich einen Schokoriegel und siehst zu, wie sie draußen im Nieselregen leiden. Das ist wahre Entspannung." 
 				},
 				{ 
-					t: "Abwinken: 'Sorry, mein Knie...'",
+					t: "'Sorry, mein Knie...'",
 					m: 5, f: 5, a: 0, c: 0, 
 					r: "Der Klassiker. Sie nicken mitleidig (und etwas verächtlich). Du schlurfst entspannt Richtung Kantine." 
 				}
@@ -220,7 +220,7 @@ export const lunch = [
 					r: "Du musst das Schnitzel zurücktragen, während alle dich anstarren. 'Schande! Schande!' Du isst trockenes Brot am Platz." 
 				},
 				{ 
-					t: "Laufpass: 'Ich hol's gleich!'", 
+					t: "'Ich hol's gleich!'", 
 					m: 20, f: -5, a: 10, c: 0, 
 					r: "Du rennst hoch, holst Geld, rennst runter. Dein Platz ist weg, das Schnitzel ist kalt. Stress pur." 
 				},
@@ -247,7 +247,7 @@ export const lunch = [
 					r: "Du murmelst 'Meeting!' und rennst raus. Du hörst Sabine hinter dir seufzen. Knapp entkommen." 
 				},
 				{ 
-					t: "Sagen: 'Ich hasse Zucchini'", 
+					t: "'Ich hasse Zucchini.'", 
 					m: 5, f: 0, a: -5, c: 10, 
 					r: "Sabine fängt fast an zu weinen. Die Kollegen starren dich böse an. Du hast die Stimmung ruiniert, aber wenigstens musst du den Mist nicht essen." 
 				}
@@ -293,7 +293,7 @@ export const lunch = [
 					r: "Du erzählst wilde Horror-Stories über Arbeitslager. Die Kollegen weinen fast. Das Chaos ist herrlich. Produktivität am Nachmittag: Null. Der Chef tobt." 
 				},
 				{ 
-					t: "Abwinken: 'Alles nur Gerüchte.'",
+					t: "'Alles nur Gerüchte.'",
 					m: 30, f: -5, a: 10, c: -5, 
 					r: "Du spielst den Fels in der Brandung: 'Das war bestimmt nur ein fehlerhafter Ausdruck.' Die Leute beruhigen sich etwas. Langweilig, aber verantwortungsvoll." 
 				}
@@ -310,7 +310,7 @@ export const lunch = [
 					r: "Du ziehst die Hand ängstlich zurück. Markus lacht triumphierend: 'Opfer!' Du mahlst lustlos trockene Blätter und hasst dein Leben. Deine Wut kocht." 
 				},
 				{ 
-					t: "Dagegenhalten: 'Ich war zuerst!'",
+					t: "'Ich war zuerst!'",
 					m: 20, f: -5, a: 10, c: 5, 
 					r: "Du stellst dich breitbeinig hin. Die Kantinen-Frau mischt sich genervt ein: 'Ruhe im Karton! Ich teil das jetzt!' Du kriegst ein halbes Schnitzel. Ein schmutziger Teilsieg." 
 				},
@@ -376,7 +376,7 @@ export const lunch = [
 					next: "prince_active"
 				},
 				{ 
-					t: "Ablehnen: 'Zu teuer für Teig.'", 
+					t: "'Zu teuer für Teig.'", 
 					m: 30, f: 5, a: -5, c: 0, 
 					r: "Du holst dir lieber einen Döner. Der macht schöner. Und satt. Und kostet keine 25 Euro." 
 				},
@@ -426,7 +426,7 @@ export const lunch = [
 			text: "Du willst dir nur schnell ein Brötchen im Supermarkt holen. Aber: Rentner-Invasion! Alle drei Kassen sind voll mit Leuten, die passend zahlen wollen ('Warten Sie, ich hab's klein!').",
 			opts: [
 				{ 
-					t: "Rufen: 'PLATZ DA! ICH BIN ARZT!'",
+					t: "'PLATZ DA! ICH BIN ARZT!'",
 					m: 15, f: 5, a: -5, c: 10, 
 					r: "Die Menge teilt sich ehrfürchtig wie das Rote Meer. Du scannst dein Mettbrötchen wie ein Herzchirurg. Du bist satt, aber dein Karma ist im Keller." 
 				},
@@ -500,7 +500,7 @@ export const lunch = [
 					r: "Du hörst sanften Death Metal, während Sabine 30 Minuten stumm ihren Mund bewegt. Du hast entspannt gegessen und sie denkt, du bist ein toller Zuhörer." 
 				},
 				{ 
-					t: "Flucht: 'Mir ist schlecht!'", 
+					t: "'Mir ist schlecht!'", 
 					m: 5, f: 0, a: 20, c: 10, 
 					r: "Du rennst nach 5 Minuten aufs Klo und lässt dein Essen stehen. Du hast die Pause abgebrochen. Du hungerst und bist wütend auf dich selbst." 
 				},
@@ -565,7 +565,7 @@ export const lunch = [
 			text: "Du willst gerade reinbeißen, da greift dich der agile Projektleiter am Arm. 'So Müller, genug gesessen! Wir machen jetzt den 'Healthy-Brain-Walk' um den Block! Kommen Sie, frische Luft macht produktiv!'",
 			opts: [
 				{ 
-					t: "Mitlaufen (Gruppenzwang)", 
+					t: "Dem Gruppenzwang nachgeben und mitlaufen", 
 					m: 40, f: -15, a: 15, c: -5, 
 					r: "Du latscht 40 Minuten im Stechschritt durchs Industriegebiet. Du kommst verschwitzt zurück, hast Blasen an den Füßen und bist hungriger als vorher. Aber das Team liebt dich." 
 				},
@@ -916,7 +916,7 @@ export const lunch = [
 					r: "Zwanzig Minuten Innenhof, achtzig Aufnahmen, weil Markus auf jeder blinzelt. Dein Essen ist kalt, deine Finger sind klamm, und auf dem finalen Bild stehst du hinten links halb hinter Kevin. Auf der Karriereseite steht darunter: 'Ein Team, das zusammenhält.'"
 				},
 				{
-					t: "Ablehnen: Pause ist Pause",
+					t: "Ablehnen - Pause ist Pause",
 					m: 5, f: 5, a: -10, c: 20,
 					r: "Du isst in Ruhe zu Ende. Auf dem Foto fehlt die IT vollständig - was niemandem auffällt, bis Dr. Wichtig es sechs Wochen später auf der fertigen Karriereseite bemerkt und in der Abteilungsrunde fragt, ob 'die IT sich nicht als Teil des Teams sieht'. Die Frage klingt harmlos. Sie ist es nicht."
 				}

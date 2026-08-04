@@ -75,7 +75,7 @@ export const bossfights = [
 				r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Die Daten sind sicher." 
 			},
 			{ 
-				t: "Steckerleiste rausreißen (Blackout)", 
+				t: "Die ganze Steckerleiste rausreißen", 
 				m: 45, f: 0, a: 20, c: 30,
 				r: "KLACK. Funken sprühen. Das Büro ist dunkel. Die Löschung ist gestoppt... genau wie der Rest der Firma. Der Server-Check dauert ewig (45 Min), aber die Daten leben noch." 
 			}
@@ -93,7 +93,7 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ 
-				t: "Fesseln (Bürgerfestnahme)", 
+				t: "Per Bürgerfestnahme fesseln", 
 				req: "zip_ties",
 				m: 15, f: -5, a: -20, c: 10, 
 				r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'Sigma Male Admin verteidigt Revier'. Die Kommentare feiern dich." 
@@ -105,7 +105,7 @@ export const bossfights = [
 				r: "WOOSH! Du hast ihn komplett eingeweißt. Er hustet und rennt weg: 'Mein Merch ist ruiniert!'. Die Server sind staubig, aber sicher." 
 			},
 			{ 
-				t: "Bodycheck (Tackle)", 
+				t: "Mit einem Bodycheck stoppen", 
 				m: 5, f: 0, a: 40, c: 20, 
 				r: "Du rammst ihn mit voller Wucht weg, bevor er den Stecker zieht. Sein Smartphone fliegt gegen ein Rack (kaputt). Er heult und droht mit Anwalt. Du hast blaue Flecken und bist stinksauer." 
 			}
@@ -123,7 +123,7 @@ export const bossfights = [
 		timer: 10,
 		opts: [
 			{ t: "Aus dem Fenster werfen", m: 5, f: 10, a: 20, c: 20, r: "Du hast das 20kg Teil durchs geschlossene Fenster geworfen. Es explodiert auf dem Parkplatz. Besser dort als hier." },
-			{ t: "Abdichten (MacGyver)", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." }
+			{ t: "MacGyver-mäßig mit Panzertape abdichten", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
 	},
@@ -262,7 +262,7 @@ export const bossfights = [
 				r: "Du kriechst unter das Pult, zückst den Schraubendreher und fixierst den Stecker bombenfest. Das Bild ist kristallklar. Der Chef flüstert: 'Guter Mann!'" 
 			},
 			{ 
-				t: "Kabel festhalten (Human Tripod)", 
+				t: "Das Kabel als menschliches Stativ festhalten", 
 				m: 45, f: -15, a: 20, c: 0, 
 				r: "Du musst das Kabel die restlichen 45 Minuten der Präsentation in einem bestimmten Winkel festhalten. Deine Hand krampft. Du bist im Bild des Livestreams zu sehen. Peinlich." 
 			}
@@ -282,7 +282,7 @@ export const bossfights = [
 				r: "Du wirfst ihm das Win95 Handbuch hin. Er blättert... nickt... 'Sehr klassisch. Genehmigt.' Puh. Kompetenz durch Alter." 
 			},
 			{ 
-				t: "Ablenken (Kaffee)", 
+				t: "Ihn zum Kaffee einladen und ablenken", 
 				m: 10, f: 5, a: 5, c: 25, 
 				r: "Du lädst ihn zum Kaffee ein. Er vergisst das Protokoll, aber beschwert sich über den Geschmack. Prüfung bestanden (knapp)." 
 			},
@@ -302,13 +302,13 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ 
-				t: "Wasser aufsaugen (Kleidung)", 
+				t: "Das Wasser mit der eigenen Kleidung aufsaugen", 
 				rep: { "Dr. Wichtig": 2 },
 				m: 20, f: -10, a: 20, c: -5, 
 				r: "Du wirfst deinen Pulli in die Pfütze. Es reicht nicht. Der Teppich ist ruiniert, aber du hast 'Einsatz' gezeigt." 
 			},
 			{ 
-				t: "Kois retten (Kescher)",
+				t: "Die Kois mit dem Kescher retten",
 				rep: { "Dr. Wichtig": 10 },					
 				req: "zip_ties", 
 				m: 10, f: 0, a: -10, c: -10, 
@@ -331,7 +331,7 @@ export const bossfights = [
 	timer: 10,
 	opts: [
 		{ 
-			t: "Brutal: Kabel mit Schere kappen", 
+			t: "Das Kabel brutal mit der Schere kappen", 
 			rep: { "Dr. Wichtig": -2 },
 			m: 5, f: -10, a: 25, c: 20, 
 			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
@@ -353,7 +353,7 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
-                t: "Mit den Hackern verhandeln (Zeit schinden)", 
+                t: "Mit den Hackern verhandeln und Zeit schinden", 
                 m: 120, f: 20, a: 15, c: -5, 
                 r: "Du schreibst im Chat-Fenster der Ransomware mit den Angreifern. Sie geben euch 24 Stunden Aufschub. Ein schwacher Sieg." 
             },
@@ -536,7 +536,7 @@ export const bossfights = [
                 r: "Du blendest die Panik aus, knetest den Ball und schreibst in Rekordzeit IP-Filter. Perfekte Abwehr." 
             },
             { 
-                t: "Alle externen Verbindungen kappen (Panik-Modus)", 
+                t: "Panisch alle externen Verbindungen kappen", 
                 m: 15, f: 0, a: 5, c: 20, 
                 r: "Du blockierst pauschal alles. Der Angriff verpufft, aber ihr seid komplett vom Internet getrennt. Der Chef brüllt." 
             },
