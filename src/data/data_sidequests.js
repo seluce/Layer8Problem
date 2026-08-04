@@ -3596,7 +3596,7 @@ export const sidequests = [
             }, 
             "virus_doom": { 
                 txt: "[System: VIRUS AKTIV] Dein Handy spielt plötzlich extrem lauten Techno-Schlager auf maximaler Lautstärke ab. Der Chef guckt schon warnend in deine Richtung!", 
-                m: 5, f: 0, a: 30, c: 40, virus: true 
+                m: 5, f: 0, a: 30, c: 40 
             } 
         } 
     },
@@ -4553,7 +4553,7 @@ export const sidequests = [
         results: { 
             "ignore": {  
                 txt: "[System: Benachrichtigungen aus] Du ignorierst den Chat. Chantal schreibt dir später privat: 'Langweiler'. Aber du hast immerhin was gearbeitet.",  
-                ep: { "Chantal": -5, "Kevin": -2 },
+                rep: { "Chantal": -5, "Kevin": -2 },
                 m: 2, f: -5, a: 5, c: -5 
             }, 
             "warn": {  

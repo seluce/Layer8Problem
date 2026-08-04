@@ -16,6 +16,8 @@
  *  - chain events: next going nowhere, unreachable nodes/results, dead ends
  *  - nextEmail pointing at a missing mail, duplicate mail ids and subjects
  *  - characters in opt.r that could break the inline onclick string
+ *  - unknown fields: a misspelt key parses fine and is silently dropped
+ *  - result keys without the res_ prefix (the terminal reads that prefix)
  */
 
 import { readFileSync, readdirSync } from 'fs';
@@ -434,6 +436,83 @@ for (const ev of DB.emails) {
   };
   for (const p of POOLS) for (const ev of DB[p]) walk(ev, `${p}/${ev.id}`);
   DB.emails.forEach(ev => walk(ev, `emails/${ev.id}`));
+}
+
+/* ---------- 9) Unbekannte Felder ---------- */
+// The quietest bug in the data: a misspelt key parses fine, lints clean and is
+// silently dropped at runtime - `ep` instead of `rep` cost one sidequest its
+// whole reputation effect for two versions. The lists below are what the engine
+// actually reads AT THAT PLACE, which is stricter than "the field exists
+// somewhere": reqStory on a lunch event is never evaluated (triggerLunch draws
+// at random without filtering), req/rem in a mail is never checked, and a node
+// option only ever carries t/next - its m, rep or r would go nowhere, because a
+// chain applies the values of the RESULT it ends in.
+const EVENT_KEYS = {
+  _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
+  bossfights: ['timer', 'fail'],
+  calls:      ['reqStory', 'webOnly'],
+  coffee:     ['reqStory', 'webOnly'],
+  server:     ['reqStory', 'webOnly'],
+  sidequests: ['reqStory', 'webOnly', 'kind', 'appName'],
+  reputation: ['reqStory', 'reqRep'],
+  party:      ['loc'],
+  lunch:      [],
+  tutorial:   ['type', 'step']
+};
+const OPT_KEYS      = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'req', 'rem', 'next', 'action'];
+const NODE_KEYS     = ['text', 'opts', 'char'];
+const NODE_OPT_KEYS = ['t', 'next', 'req', 'rem', 'action'];
+// Results accept the legacy names min/fl/al/cr as well; handleChainChoice maps them.
+const RESULT_KEYS   = ['txt', 'm', 'f', 'a', 'c', 'min', 'fl', 'al', 'cr', 'rep', 'loot', 'rem', 'next'];
+const FAIL_KEYS     = OPT_KEYS.filter(k => k !== 't');
+const MAIL_KEYS     = ['id', 'sender', 'subj', 'body', 'opts', 'linked'];
+const MAIL_OPT_KEYS = ['btn', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
+
+const checkKeys = (obj, allowed, ctx, what) => {
+  if (!obj || typeof obj !== 'object') return;
+  for (const k of Object.keys(obj)) {
+    if (allowed.includes(k)) continue;
+    err(`${ctx}: unbekanntes Feld "${k}" ${what} — Tippfehler, oder ein Feld, das die Engine an dieser Stelle nicht liest`);
+  }
+};
+
+for (const p of POOLS) {
+  const eventKeys = [...EVENT_KEYS._common, ...(EVENT_KEYS[p] ?? [])];
+  const optKeys = p === 'party' ? [...OPT_KEYS, 'checkPool'] : OPT_KEYS;
+  for (const ev of DB[p]) {
+    const ctx = `[${p}/${ev.id}]`;
+    checkKeys(ev, eventKeys, ctx, 'am Ereignis');
+    (ev.opts ?? []).forEach((o, i) => checkKeys(o, optKeys, `${ctx} opts[${i}]`, 'in der Auswahl'));
+    for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
+      checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'am Knoten');
+      (node.opts ?? []).forEach((o, i) =>
+        checkKeys(o, NODE_OPT_KEYS, `${ctx}#${nid}[${i}]`, 'in der Knoten-Auswahl (Wirkungen gehören ins Result)'));
+    }
+    for (const [rid, res] of Object.entries(ev.results ?? {}))
+      checkKeys(res, RESULT_KEYS, `${ctx}!${rid}`, 'im Result');
+    if (ev.fail) checkKeys(ev.fail, FAIL_KEYS, `${ctx}.fail`, 'im Zeitablauf');
+  }
+}
+for (const ev of DB.emails) {
+  const ctx = `[emails/${ev.id}]`;
+  checkKeys(ev, MAIL_KEYS, ctx, 'an der Mail');
+  (ev.opts ?? []).forEach((o, i) => checkKeys(o, MAIL_OPT_KEYS, `${ctx} opts[${i}]`, 'in der Auswahl'));
+}
+
+/* ---------- 10) Result-Schlüssel: res_-Präfix ---------- */
+// components/EventView.svelte hangs a "..." badge on every chain option whose
+// next does NOT start with res_ - the badge tells the player the conversation
+// goes on. A result named `truth` therefore promises a follow-up and then hangs
+// up. Only an info: the existing pools are split roughly half and half, and
+// renaming a result means renaming every next that points at it.
+{
+  const stray = [];
+  for (const p of POOLS)
+    for (const ev of DB[p])
+      for (const rid of Object.keys(ev.results ?? {}))
+        if (!rid.startsWith('res_')) stray.push(`${p}/${ev.id}!${rid}`);
+  if (stray.length)
+    info(`${stray.length} Result-Schlüssel ohne res_-Präfix — die Option dorthin trägt im Terminal das "..."-Abzeichen, obwohl sie das Gespräch beendet (z. B. ${stray.slice(0, 4).join(', ')})`);
 }
 
 /* ---------- Ausgabe ---------- */
