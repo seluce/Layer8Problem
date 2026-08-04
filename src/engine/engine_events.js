@@ -1113,7 +1113,6 @@ export const events = {
     // components/PhoneView.svelte renders both.
     renderPhoneNode: function(node) {
         const ev = this.state.currentPhoneEvent;
-        const sender = ev.title || "Unbekannt";
 
         // Portrait resolution, per node: a node's own char wins, otherwise
         // the node inherits the event's char. `char: null` on a node forces
@@ -1122,6 +1121,13 @@ export const events = {
         // without a picture in a real messenger.
         const charName = node.char !== undefined ? node.char : ev.char;
         const contact = charName ? DB.chars?.find(c => c.name === charName) ?? null : null;
+
+        // The sender label follows the NODE char only: a 1:1 chat keeps the
+        // saved contact name (ev.title) even when the event has a char, so
+        // existing chats look exactly as before. Only a node marked with its
+        // own char writes that character's name above the bubble - like a
+        // named voice inside a group.
+        const sender = (node.char ? contact?.name : null) ?? ev.title ?? "Unbekannt";
 
         this.addPhoneMessage({
             side: 'in',
