@@ -238,7 +238,7 @@ export const server = [
         id: "srv_tool_2c",
         title: "Sucheinsatz",
         reqStory: "path_tool_wait",
-        text: "Der Techniker kommt zurück und wirkt verzweifelt. 'Verdammt, ich finde mein Crimp-Zange nicht. Ich muss in 10 Minuten fertig sein, sonst Vertragsstrafe.'",
+        text: "Der Techniker kommt zurück und wirkt verzweifelt. 'Verdammt, ich finde meine Crimp-Zange nicht. Ich muss in 10 Minuten fertig sein, sonst Vertragsstrafe.'",
         opts: [
             { 
                 t: "Helfen zu suchen", 
@@ -294,7 +294,7 @@ export const server = [
             { 
                 t: "Panik: 'Ich war betrunken!'", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Bernds Gesicht fällt zusammen. 'Oh. Ich dachte... das war echt.' Er schlurft traurig davon. Du fühlst dich wie ein Monster." 
+                r: "Bernds Gesicht fällt zusammen. 'Oh. Ich dachte... das war echt.' Er schlurft traurig davon. Es war nur ein Witz, aber sein Gesicht wirst du so schnell nicht los." 
             },
             { 
                 t: "Nach weiterem Schnaps fragen", 
@@ -398,7 +398,7 @@ export const server = [
             { 
                 t: "Panisch auspusten", 
                 m: 5, f: 0, a: 20, c: 20, 
-                r: "Du wedelst mit einem Handbuch. Es bringt nichts. Die Sprinkleranlage geht an. Du bist nass, der Serverraum ist nass. Das wird teuer." 
+                r: "Du wedelst mit einem Handbuch. Es bringt nichts. Die Sprinkleranlage geht an. Du bist nass, der Serverraum ist nass, und die Versicherung wird sehr konkrete Fragen stellen." 
             },
             { 
                 t: "Rennen und 'FEUER!' schreien", 
@@ -570,7 +570,7 @@ export const server = [
                 loot: "energy", 
                 next: "path_drink_keep", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Man weiß nie, wann man einen chemischen Boost braucht. Ab in die Tasche damit." 
+                r: "Für chemische Notfälle ist man besser gerüstet als überrascht. Ab in die Tasche damit." 
             },
             { 
                 t: "Stehen lassen", 
@@ -605,7 +605,7 @@ export const server = [
             { 
                 t: "Auf der Toilette verstecken", 
                 m: 20, f: 10, a: 5, c: -5, 
-                r: "Sicher ist sicher. Du verbringst 20 Minuten in der Kachel-Abteilung. Produktivität: Null. Überlebenswille: Hoch." 
+                r: "Lieber gründlich als mutig. Du verbringst 20 Minuten in der Kachel-Abteilung. Produktivität: Null. Überlebenswille: Hoch." 
             }
         ]
     },
@@ -657,12 +657,12 @@ export const server = [
                 t: "Ihm viel Spaß wünschen",
                 rep: { "Kevin": -5 }, 
                 m: 2, f: 5, a: 0, c: 0, 
-                r: "Darwin regelt das. Du gehst Kaffee holen." 
+                r: "Darwin regelt das, entscheidest du, und gehst Kaffee holen. Aus der Küche hörst du kurz darauf ein triumphierendes 'WOAH, KRASS'. Das System arbeitet." 
             },
             { 
                 t: "Ihm um den Pfand beneiden", 
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "25 Cent. Du hättest reich sein können. Verdammt." 
+                r: "25 Cent Pfand, seit 2012 unangetastet. Kevin bekommt das Sammlerstück UND das Kleingeld. In dieser Verteilung steckt eine Lehre über das Leben, aber du weigerst dich, sie zu suchen." 
             }
         ]
     },
@@ -710,7 +710,7 @@ export const server = [
                 t: "Training: Bizeps-Curls machen", 
                 rep: { "Egon": -5 },
                 m: 20, f: -10, a: -20, c: 10, 
-                r: "Du nutzt das Gewicht für ein spontanes Workout im Gang. Deine Arme brennen, deine Aggro sinkt. Egon schüttelt nur den Kopf." 
+                r: "Du nutzt das Gewicht für ein spontanes Workout im Gang. Deine Arme brennen, dein Puls wird mit jeder Wiederholung ruhiger. Egon schüttelt nur den Kopf." 
             },
             { 
                 t: "Sagen, dass du ihn zur Wartung bringst",
@@ -729,7 +729,7 @@ export const server = [
             { 
                 t: "Alles selbst putzen", 
                 m: 120, f: -50, a: 30, c: -10, 
-                r: "Zwei Stunden. Du kriechst zwei Stunden lang mit einem Lappen durch den Raum. Deine Faulheit ist im Keller, deine Wut auf dem Höhepunkt." 
+                r: "Du kriechst zwei Stunden lang mit einem Lappen durch den Raum. Die Arme zittern, die Laune ist im Keller, und jede Minute davon ist ehrliche, unbezahlte Demut." 
             },
             { 
                 t: "Flüchten und Tür abschließen", 
@@ -861,7 +861,7 @@ export const server = [
                 t: "Sofort die Lösung nennen", 
 				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: -5, a: -10, c: -20, 
-                r: "'IRQ 5, DMA 1, Adresse 220.' Du hast es gerade gelesen. Der Chef starrt dich an wie einen Gott. 'Müller, Sie sind ein Genie.' (Massiver Radar-Bonus)" 
+                r: "'IRQ 5, DMA 1, Adresse 220.' Du hast es gerade gelesen. Der Chef schaut dich an, als hätte er versehentlich einen Propheten eingestellt. 'Müller, Sie sind ein Genie.' Von diesem Moment wirst du noch Monate zehren." 
             },
             { 
                 t: "So tun, als müsstest du recherchieren", 
@@ -907,7 +907,7 @@ export const server = [
                 t: "Flicken mit Tape", 
                 req: "tape", 
                 m: 10, f: 0, a: 5, c: 5, 
-                r: "Du fummelst die Adern zusammen und isolierst sie. 'Temporary Fix' nennst du das. Es hält... vorerst." 
+                r: "Du fummelst die Adern zusammen und isolierst sie. 'Temporary Fix' nennst du das. Halten wird es. Eine Weile. Vermutlich." 
             },
             { 
                 t: "Es auf 'Sonnenwinde' schieben", 
@@ -1079,7 +1079,7 @@ export const server = [
             { 
                 t: "Chemische Keule (Insektenspray)", 
                 m: 5, f: 5, a: -5, c: 5, 
-                r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Schnell weg hier." 
+                r: "Du sprühst, bis der Nebel steht. Die Ameisen sind tot. Der Lüfter des Switches verklebt zwar etwas, aber es läuft noch. Du verschwindest, bevor jemand nach dem Geruch fragt." 
             }
         ]
     },
@@ -1324,7 +1324,7 @@ export const server = [
             { 
                 t: "Ignorieren", 
                 m: 2, f: 5, a: 0, c: 0, 
-                r: "Du lässt den roten Knopf rot sein. Manche Dinge fasst man besser nicht an. Du gehst weiter." 
+                r: "Du lässt den roten Knopf rot sein. Manche Dinge fasst man besser nicht an. Weiter im Rundgang." 
             }
         ]
     },
@@ -1404,18 +1404,18 @@ export const server = [
         id: "srv_loot_box_2a",
         title: "Die Rückkehr",
         reqStory: "path_loot_zip",
-        text: "Der Techniker kommt angerannt. Er schwitzt und wirkt extrem gestresst. 'Verdammt, wo ist die Packung Kabelbinder hin? Ich muss in 10 Minuten beim nächsten Kunden sein!' Er sieht dich an.",
+        text: "Der Techniker kommt angerannt. Er schwitzt und wirkt extrem gestresst. 'Verdammt, wo ist die Packung Kabelbinder hin? Beim nächsten Kunden bin ich schon zu spät!' Er sieht dich an.",
         opts: [
             { 
                 t: "Kevin beschuldigen",
                 rep: { "Kevin": -10 }, 
                 m: 2, f: 5, a: -5, c: -10, 
-                r: "'Der Azubi war vorhin hier...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
+                r: "'Ich glaube, der Azubi hat vorhin aufgeräumt...' Der Techniker schüttelt den Kopf. 'Keine Zeit für Diskussionen.' Er haut ab. Du hast die Beute noch." 
             },
             { 
                 t: "Lügen: 'Habe nichts gesehen'", 
                 m: 2, f: 0, a: 5, c: -5, 
-                r: "Du zuckst mit den Schultern. 'Vielleicht hat die Putzkolonne aufgeräumt?' Er flucht, packt seine Kiste und rennt los. Dein Gewissen zwickt kurz." 
+                r: "Du hebst entschuldigend die Hände. 'Vielleicht hat die Putzkolonne aufgeräumt?' Er flucht, packt seine Kiste und rennt los. Dein Gewissen zwickt kurz." 
             },
             { 
                 t: "Zurückgeben ('Gefunden')", 
@@ -1578,14 +1578,14 @@ export const server = [
             { 
                 t: "Alles wieder losknippsen", 
                 m: 20, f: -10, a: 20, c: -5, 
-                r: "Du musst deinen eigenen Pfusch beseitigen. Du fluchst, schneidest dich am Plastik und brauchst ewig. Faulheit wird am Ende immer bestraft." 
+                r: "Du musst deinen eigenen Pfusch beseitigen. Du fluchst, schneidest dich am Plastik und brauchst ewig. Bequemlichkeit wird am Ende immer bestraft." 
             },
             { 
                 t: "Ohrstöpsel rein & ignorieren", 
                 req: "headphones",
 				rep: { "Dr. Wichtig": -2 },
                 m: 2, f: 20, a: -10, c: 20, 
-                r: "Du setzt die Noise-Cancelling-Kopfhörer auf. Himmlische Stille. Der Chef kommt rein und brüllt was, aber du hörst ihn nicht. Er sieht wütend aus." 
+                r: "Du setzt die Noise-Cancelling-Kopfhörer auf. Endlich Watte um die Welt. Der Chef steht irgendwann im Raum und brüllt etwas, aber du hörst ihn nicht. Er sieht wütend aus." 
             },
             { 
                 t: "Mehr Kabelbinder!", 
@@ -1636,13 +1636,13 @@ export const server = [
                 t: "Doch noch Kabelbinder holen", 
                 req: "zip_ties", 
                 m: 20, f: -10, a: 5, c: 0, 
-                r: "Du musst erst die Klebereste abkratzen, bevor du es ordentlich machst. Doppelte Arbeit für deine Faulheit." 
+                r: "Du musst erst die Klebereste abkratzen, bevor du es ordentlich machst. Doppelte Arbeit, weil es einmal bequem sein sollte." 
             },
             { 
                 t: "Einfach neues Tape drüber", 
                 req: "tape", 
                 m: 5, f: 5, a: 0, c: 5, 
-                r: "Mehr Tape hilft mehr. Du wickelst den halben Server ein. Es sieht aus wie eine Mumie, aber das Geräusch ist weg." 
+                r: "Mehr Tape hilft mehr. Du wickelst den halben Server ein. Der Server wirkt danach einbalsamiert, aber das Geräusch ist weg." 
             }
         ]
     },
@@ -1768,7 +1768,7 @@ export const server = [
                 req: "tape",
                 next: "path_leak_tape", 
                 m: 5, f: 0, a: -5, c: -10, 
-                r: "Du wickelst eine halbe Rolle Tape drum. Dicht! Zumindest für heute. Und wir wissen ja: Nichts hält länger als ein Provisorium." 
+                r: "Du wickelst so lange Tape um die Stelle, bis nichts mehr tropft. Dicht! Zumindest für heute. Und Provisorien überleben bekanntlich Zivilisationen." 
             },
             { 
                 t: "Mülleimer drunterstellen", 
@@ -1795,7 +1795,7 @@ export const server = [
                 t: "Mehr Tape drumwickeln", 
                 req: "tape", 
                 m: 5, f: 10, a: 0, c: 5, 
-                r: "Du stabilisierst die Blase mit noch mehr Klebeband. Jetzt sieht es aus wie ein Kokon. Hoffentlich platzt das nie." 
+                r: "Du stabilisierst die Blase mit noch mehr Klebeband, bis ein Kokon entstanden ist. Hoffentlich platzt der nie." 
             },
             { 
                 t: "Schüssel drunter & wegrennen", 
@@ -1824,7 +1824,7 @@ export const server = [
             { 
                 t: "Alles aufwischen", 
                 m: 30, f: -20, a: 10, c: -5, 
-                r: "Du kriechst mit Papierhandtüchern auf dem Boden rum. Deine Hose wird nass, dein Rücken schmerzt. Faulheit wird sofort bestraft." 
+                r: "Du kriechst mit Papierhandtüchern auf dem Boden rum. Deine Hose wird nass, dein Rücken schmerzt. Der bequeme Weg schickt seine Rechnung sofort." 
             },
             { 
                 t: "Putzkolonne rufen", 
@@ -1909,7 +1909,7 @@ export const server = [
             { 
                 t: "Zettel ignorieren", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Du gehst weiter. Farben sind schließlich genormt, oder? Was soll schon passieren." 
+                r: "Du gehst weiter. Farben sind schließlich genormt, oder? Was könnte da schon schiefgehen." 
             },
             { 
                 t: "Anlage genauer untersuchen", 
@@ -2062,7 +2062,7 @@ export const server = [
                 t: "Den Berater zitieren", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 0, a: -20, c: -10,
-                r: "'Der Berater sagte: Keine Kosten scheuen für Stabilität.' Der Chef läuft rot an. 'Dieser Idiot! Aber gut, wenn er es empfohlen hat...' Du bist fein raus." 
+                r: "'Der Berater sagte: Keine Kosten scheuen für Stabilität.' Der Chef verfärbt sich gefährlich. 'Dieser Idiot! Aber gut, wenn er es empfohlen hat...' Du bist fein raus." 
             },
             { 
                 t: "Technik-Geschwafel nutzen", 
@@ -2098,7 +2098,7 @@ export const server = [
             { 
                 t: "Klein beigeben & unterschreiben", 
                 m: 10, f: 5, a: -10, c: -20, 
-                r: "Du unterschreibst zähneknirschend. Der Berater lächelt süffisant. 'Geht doch. Synergie durch Kooperation.' Dein Radar sinkt, aber dein Stolz ist tot." 
+                r: "Du unterschreibst zähneknirschend. Der Berater lächelt süffisant. 'Geht doch. Synergie durch Kooperation.' Der Chef ist fürs Erste besänftigt. Dein Stolz hat dieses Meeting nicht überlebt." 
             }
         ]
     },
@@ -2151,7 +2151,7 @@ export const server = [
         id: "srv_dust_disaster_2b",
         title: "Staub-Therapie",
         reqStory: "srv_dust_2b",
-        text: "Du flüchtest vor einem User ('Mein Mauszeiger ist weg!') zurück in den Serverraum. Es ist kühl und laut. Du siehst deinen Staub-Smiley auf dem Backup-Server.",
+        text: "Du flüchtest vor einem User ('Mein Mauszeiger ist weg!') in den Serverraum. Hier ist es kühl und laut. Du siehst deinen Staub-Smiley auf dem Backup-Server.",
         opts: [
             { 
                 t: "Muster verfeinern (Zen-Garten)", 
@@ -2236,13 +2236,13 @@ export const server = [
             { 
                 t: "Ventilator sofort zurückgeben", 
                 m: 5, f: 0, a: -10, c: 5, 
-                r: "Du ziehst den Stecker. 'Sorry Chef.' Er nimmt das Ding und geht. Berta wird sofort wieder heiß. Du musst jetzt pusten." 
+                r: "Du ziehst dem Ventilator den Stecker. 'Sorry, Chef.' Er nimmt das Ding und geht. Berta wird sofort wieder heiß. Du musst jetzt pusten." 
             },
             { 
                 t: "Frech werden: 'Sie schwitzen für die Firma'", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 2, f: 0, a: 10, c: 30, 
-                r: "'Opfer müssen gebracht werden.' Der Chef explodiert fast. Er reißt den Ventilator an sich und knallt die Tür zu. Das gibt eine Abmahnung." 
+                r: "'Opfer müssen gebracht werden.' Der Chef explodiert fast. Er reißt den Ventilator an sich und knallt die Tür zu. Die Abmahnung schreibt er vermutlich noch im Gehen." 
             }
         ]
     },
@@ -2251,13 +2251,13 @@ export const server = [
 		char: "Frau Elster",
         title: "Der Zahltag-Aufstand",
         reqStory: "path_overheat_ignore",
-        text: "Frau Elster aus der Buchhaltung steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
+        text: "Frau Elster steht kreischend im Flur: 'BERTA IST TOT! KEIN GELD DIESEN MONAT!' Eine wütende Meute von Mitarbeitern mit Fackeln (und Tackern) versammelt sich vor der IT.",
         opts: [
             { 
                 t: "Schuld auf 'Hacker' schieben",
                 rep: { "Frau Elster": -2 }, 
                 m: 10, f: 5, a: -10, c: 10, 
-                r: "'Nordkoreanische Cyber-Attacke!' Alle nicken ängstlich. Der Chef glaubt es halb, ist aber sauer wegen der PR. Du bist fein raus, aber das Klima ist vergiftet." 
+                r: "'Nordkoreanische Cyber-Attacke!' Alle nicken ängstlich. Der Chef glaubt es halb, ist aber sauer wegen der PR. Du bist raus aus der Schusslinie, aber das Klima ist vergiftet." 
             },
             { 
                 t: "Auf der Toilette verstecken",
@@ -2317,7 +2317,7 @@ export const server = [
 				rem: "energy",
                 rep: { "Dr. Wichtig": -2 },
 				m: 2, f: 5, a: -5, c: 10, 
-                r: "'Wollen Sie einen Schluck?' Der Chef starrt dich an, als wärst du irre. 'Reparieren Sie das! Sofort!' Das war wohl der falsche Moment." 
+                r: "'Wollen Sie einen Schluck?' Der Blick des Chefs pendelt zwischen Sorge und Fassungslosigkeit. 'Reparieren Sie das! Sofort!' Das war wohl der falsche Moment." 
             },
             { 
                 t: "Die Nachtschicht beschuldigen", 
@@ -2395,7 +2395,7 @@ export const server = [
                 req: "screw", 
                 next: "path_legacy_tape_success",
                 m: 20, f: -5, a: 0, c: -5, 
-                r: "Mit chirurgischer Präzision hebelst du die Blende auf. Das Tape gleitet unbeschädigt heraus. Daten gerettet. Du fühlst dich wie ein Gott." 
+                r: "Mit chirurgischer Präzision hebelst du die Blende auf. Das Tape gleitet unbeschädigt heraus. Daten gerettet. In deinem Kopf applaudiert ein unsichtbares Publikum." 
             },
             { 
                 t: "McGyver-Trick (Kabelbinder-Schlaufe)", 
@@ -2411,7 +2411,7 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Der Restore-Test",
         reqStory: "path_legacy_tape_success",
-        text: "Der Chef kommt rein. 'Müller! Gut, dass Sie das Tape haben. Ein Kunde hat versehentlich seine Datenbank gelöscht. Wir brauchen den Stand von gestern. Spielen Sie es ein.'",
+        text: "Auftritt Chef. 'Müller! Gut, dass Sie das Tape haben. Ein Kunde hat versehentlich seine Datenbank gelöscht. Wir brauchen den Stand von gestern. Spielen Sie es ein.'",
         opts: [
             { 
                 t: "Lässig das Tape einlegen", 
@@ -2530,7 +2530,7 @@ export const server = [
                 t: "Egon um Hilfe bitten (Demütigung)",
                 rep: { "Egon": 5 }, 
                 m: 30, f: 0, a: 20, c: 0, 
-                r: "Du musst zu Kreuze kriechen. Egon grinst breit. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
+                r: "Du musst zu Kreuze kriechen. Egon lehnt sich zurück und genießt. 'Tja, altes Schloss. Das dauert.' Er lässt sich extrem viel Zeit, während du auf dem Flur arbeiten musst." 
             }
         ]
     },
@@ -2649,7 +2649,7 @@ export const server = [
                 t: "Eingabe: 'Puschel123'",
 				rep: { "Dr. Wichtig": 10 },
                 m: 5, f: 10, a: -10, c: -5, 
-                r: "Du tippst es blind ein. 'ZUGRIFF ERLAUBT'. Der Chef starrt dich an: 'Woher...? Egal. Gute Arbeit, Müller!'" 
+                r: "Du tippst es blind ein. 'ZUGRIFF ERLAUBT'. Der Chef blinzelt: 'Woher...? Egal. Gute Arbeit, Müller!'" 
             },
             { 
                 t: "Admin-Reset erzwingen",
@@ -2842,7 +2842,7 @@ export const server = [
                 t: "MacGyver-Lösung: USB-Lüfter basteln", 
                 req: "usb_stick", 
                 m: 15, f: -5, a: -5, c: 0, 
-                r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus und du fühlst dich wie ein Ingenieur." 
+                r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus - und genau so fühlt es sich an: nach Ingenieurskunst ohne messbare Wirkung." 
             }
         ]
     },
@@ -2982,7 +2982,7 @@ export const server = [
                 req: "hammer",
                 next: "path_alarm_smashed",
                 m: 5, f: 0, a: 10, c: 40, 
-                r: "Die Sirene ist kaputt, aber die Wand auch. Das wird teuer." 
+                r: "Die Sirene ist kaputt, aber die Wand jetzt auch. Zwei Rechnungen, ein Schlag." 
             },
             { 
                 t: "Rausrennen",
@@ -3014,7 +3014,7 @@ export const server = [
                 t: "Lügen: 'Da war eine riesige Ratte!'",
                 rep: { "Egon": -10 }, 
                 m: 5, f: 0, a: 10, c: 20, 
-                r: "Egon zieht eine Augenbraue hoch. 'Eine Ratte mit Hammer?' Er glaubt dir kein Wort. Er schreibt einen Bericht über 'Vandalismus'. Dein Radar ist jetzt im kritischen Bereich." 
+                r: "Egon zieht eine Augenbraue hoch. 'Eine Ratte mit Hammer?' Sein Blick sagt alles. Er schreibt einen Bericht über 'Vandalismus', und der landet garantiert nicht in der Ablage, sondern beim Chef." 
             },
             { 
                 t: "Beichten: 'Es war ein Notfall...'", 
@@ -3055,13 +3055,13 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Muskelkater & Lob",
         reqStory: "path_hdd_kurbel",
-        text: "Etwas später steht plötzlich der Chef in deinem Büro. 'Müller, ich habe vorhin die sauber entmagnetisierten Platten im Lager gesehen. Das nenne ich Fleiß! Echte Handarbeit!' Er klopft dir hart auf die Schulter. Dein Arm fällt fast ab.",
+        text: "Etwas später taucht der Chef in deinem Büro auf. 'Müller, ich habe vorhin die sauber entmagnetisierten Platten im Lager gesehen. Das nenne ich Fleiß! Echte Handarbeit!' Er klopft dir hart auf die Schulter, ausgerechnet auf den Kurbel-Arm.",
         opts: [
             { 
                 t: "Schmerz lächelnd ertragen", 
                 rep: { "Dr. Wichtig": 15 },
                 m: 5, f: 0, a: 5, c: -15, 
-                r: "Du beißt die Zähne zusammen. Der Chef ist schwer beeindruckt von deinem Einsatz. Die elende Kurbel-Aktion hat sich zumindest für dein Chef-Radar gelohnt." 
+                r: "Du beißt die Zähne zusammen. Der Chef ist schwer beeindruckt von deinem Einsatz. Die elende Kurbel-Aktion hat dir beim Chef immerhin einen dicken Stein im Brett verschafft." 
             },
             { 
                 t: "Jammern: 'Das ist ein Fall für die Berufsgenossenschaft!'", 
@@ -3462,7 +3462,7 @@ export const server = [
     {
         id: "srv_rat_cable_1",
         title: "Nager im System",
-        text: "Unter dem Doppelboden hörst du ein verdächtiges Rascheln und Kratzen. Du hebst eine Gitterplatte an und siehst eine fette Ratte, die gerade genüsslich an einem gelben Glasfaserkabel nagt!",
+        text: "Unter dem Doppelboden hörst du ein verdächtiges Rascheln und Kratzen. Du hebst eine Gitterplatte an und siehst eine fette Ratte, die sich gerade durch die Isolierung eines Glasfaserkabels arbeitet!",
         opts: [
             { 
                 t: "Einen alten Donut als Köder werfen", 
@@ -3537,7 +3537,7 @@ export const server = [
             { 
                 t: "Das Kabel mühsam spleißen (flicken)", 
                 m: 45, f: -10, a: 25, c: 0, 
-                r: "Du kriechst auf dem Boden herum und flickst die filigrane Faser. Dein Rücken schmerzt, aber das Netz läuft wieder." 
+                r: "Du liegst bäuchlings im Doppelboden und flickst die filigrane Faser. Dein Rücken schmerzt, aber das Netz läuft wieder." 
             }
         ]
     },
@@ -3637,7 +3637,7 @@ export const server = [
                 t: "Mail demonstrativ löschen", 
 				rep: { "Dr. Wichtig": -10 },
                 m: 2, f: 5, a: 5, c: 15, 
-                r: "Aus den Augen, aus dem Sinn. Das gibt später garantiert noch einen verbalen Anschiss, aber jetzt hast du deine Ruhe." 
+                r: "Deckel drauf, Problem vertagt. Das gibt später garantiert noch einen verbalen Anschiss, aber jetzt hast du deine Ruhe." 
             },
             { 
                 t: "Antworten: 'Ich habe das WLAN kalibriert!'", 
@@ -3920,7 +3920,7 @@ export const server = [
     id: "srv_cloud_2c",
     title: "Premium-Support",
     reqStory: "path_cloud_stick",
-    text: "Das Telefon klingelt. TechniPlast. Eine sehr geduldige Stimme: 'Ihr Kollege hat uns den Cloud-Zugang übergeben. Er passt aber nicht in den SD-Karten-Schacht. Haben wir das falsche Abo?'",
+    text: "Das Telefon: TechniPlast. Eine sehr geduldige Stimme: 'Ihr Kollege hat uns den Cloud-Zugang übergeben. Er passt aber nicht in den SD-Karten-Schacht. Haben wir das falsche Abo?'",
     opts: [
         {
             t: "Geduldig durch die Anmeldung führen",
@@ -4119,7 +4119,7 @@ export const server = [
         {
             t: "Türen auf, Ventilatoren-Notaufbau",
             m: 20, f: -5, a: 10, c: 5,
-            r: "Du organisierst jeden Ventilator des Gebäudes und baust eine Windschneise. Es sieht aus wie eine Kunstinstallation, aber die Temperatur fällt. Der halbe Flur fragt, was hier los ist. Gute Frage."
+            r: "Du organisierst jeden Ventilator des Gebäudes und baust eine Windschneise. Das Ganze wirkt wie eine Kunstinstallation, aber die Temperatur fällt. Der halbe Flur fragt, was hier los ist. Gute Frage."
         }
     ]
 },
@@ -4608,7 +4608,7 @@ export const server = [
             rem: "usb_stick",
             rep: { "Markus": -5 },
             m: 5, f: 0, a: 5, c: 0,
-            r: "'Der war... da waren doch...' Markus starrt auf den frisch formatierten Stick. Du zuckst mit den Schultern: 'Quarantäne-Standardprozess.' Er trauert um vierhundert Selfies. Der Vertrieb wird heute ungewohnt still sein."
+            r: "'Der war... da waren doch...' Markus starrt auf den frisch formatierten Stick. Du hebst kurz die Schultern: 'Quarantäne-Standardprozess.' Er trauert um vierhundert Selfies. Der Vertrieb wird heute ungewohnt still sein."
         },
         {
             t: "'Nie gesehen'",
