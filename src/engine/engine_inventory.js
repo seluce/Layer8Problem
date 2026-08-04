@@ -16,7 +16,7 @@ export const inventory = {
         this.hideOverlay(modal);
     },
 		
-    // --- ITEM SYSTEM (Mit Sicherheitsabfrage) ---
+    // --- ITEM SYSTEM (with confirmation prompt) ---
     
     // 1. Abfrage: Willst du wirklich?
     askUseItem: function(id) {
@@ -25,7 +25,7 @@ export const inventory = {
             if (this.state.time - this.state.lastStressballTime < 60) {
                 let wait = 60 - (this.state.time - this.state.lastStressballTime);
                 this.log(`Der Ball ist noch platt. Er muss sich erst wieder entfalten (${wait} Min).`, "text-slate-500");
-                return; // Kein Modal, direkt Abbruch
+                return; // No modal, abort right away
             }
         }
 
@@ -116,7 +116,7 @@ export const inventory = {
 
         // --- LOGIK ---
         
-        // A. Kein Verbrauch (nur Cooldown)
+        // A. No consumption (cooldown only)
         if (id === 'stressball') {
             this.state.al = Math.max(0, this.state.al - 5);
             

@@ -61,11 +61,12 @@ mount(BoardView,      { target: document.getElementById('board-notes') });
 mount(IntranetView,   { target: document.getElementById('intranet-root') });
 
 /* ============================================================
-   Für die, die nachsehen.
+   For those who look.
 
-   Wer in einem Spiel über Systemadministration die Entwicklerkonsole
-   öffnet, gehört zur Zielgruppe und darf begrüßt werden. Die einzige
-   bewusste Konsolenausgabe des Spiels — alles andere dort ist Diagnose.
+   Anyone who opens the developer console in a game about systems
+   administration is part of the target audience and deserves a
+   greeting. The game's only deliberate console output — everything
+   else there is diagnostics.
    ============================================================ */
 console.log(
     '%c H.A.L.G.E.R.D. %c\n\n' +

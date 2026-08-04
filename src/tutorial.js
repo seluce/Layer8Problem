@@ -20,7 +20,7 @@ const tutorial = {
         }
     },
 
-    // NEU: Eine zentrale Funktion, um alle Lichter auszuknipsen
+    // NEW: one central place to switch off all the lights
     clearGlows: function() {
         const allElements = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls', 'ticket-container', 'clock-container', 'stat-row-fl', 'stat-row-al', 'stat-row-cr', 'stats-container', 'btn-inventory', 'btn-team', 'inventory-grid'];
         allElements.forEach(id => {
@@ -97,7 +97,7 @@ const tutorial = {
                     if (tutorial.step === 8) {
                         tutorial.advance(); 
                     } else {
-                        tutorial.applyStepLogic(); // Spieler hat z.B. in Schritt 6 was gegessen -> Zeige Schritt 6 wieder an
+                        tutorial.applyStepLogic(); // The player e.g. ate something during step 6 -> show step 6 again
                     }
                 }
             };
@@ -106,7 +106,7 @@ const tutorial = {
             engine.closeItemConfirm = function(...args) {
                 if (origCloseItemConfirm) origCloseItemConfirm.apply(this, args);
                 if (tutorial.isActive) {
-                    tutorial.applyStepLogic(); // Abgebrochen -> Alles wieder einblenden
+                    tutorial.applyStepLogic(); // Cancelled -> bring everything back into view
                 }
             };
 

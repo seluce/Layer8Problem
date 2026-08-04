@@ -1,12 +1,12 @@
 <!--
-  Das persönliche Logbuch.
+  The personal journal.
 
-  Der literarisch beste Teil des Spiels stand bisher als vierter Absatz in
-  einem grauen Kasten. Hier bekommt er, was er verdient: ein Blatt Papier,
-  leicht schief auf den Tisch gelegt, mit Datum und Wochentag wie in einem
-  echten Tagebuch. Die Textur liegt bereits im Projekt (public/assets).
+  The most literary part of the game used to sit as the fourth paragraph in a
+  grey box. Here it gets what it deserves: a sheet of paper, laid slightly
+  askew on the desk, with date and weekday like in a real diary. The texture
+  already lives in the project (public/assets).
 
-  Die Absätze kommen als Daten aus engine_core.generateDiaryEntry().
+  The paragraphs arrive as data from engine_core.generateDiaryEntry().
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
@@ -66,7 +66,7 @@
                 {/each}
             </div>
 
-            <!-- Unterschrift-Zeile; das Kürzel ist das des Spielercharakters -->
+            <!-- Signature line; the initials are the player character's -->
             <div class="mt-4 text-right font-serif italic text-slate-600 text-[12px]">— M.</div>
         </div>
     </div>

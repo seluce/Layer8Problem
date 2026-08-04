@@ -194,7 +194,7 @@ export const ui = {
             phone.classList.remove('flex');
             phone.classList.add('hidden', 'lg:flex'); 
         } else {
-            // Wieder normal anzeigen
+            // Show normally again
             phone.classList.remove('hidden', 'lg:flex');
             phone.classList.add('flex');
         }
@@ -375,7 +375,7 @@ export const ui = {
         this.state.modal = {
             open: true,
             title: end.title,
-            text: end.text ?? '',      // nur noch die Party nutzt freien Text
+            text: end.text ?? '',      // only the party still uses free text
             lead: end.lead ?? '',
             cause: end.cause ?? null,
             diary: end.diary ?? null,
@@ -488,7 +488,7 @@ export const ui = {
     },
 
     /**
-     * Was das Intranet heute über dich schreibt.
+     * What the intranet writes about you today.
      *
      * Rebuilt on every open, unlike the bulletin board, which draws its notes
      * once a day and keeps them. A wall is a place and should not reshuffle
@@ -558,7 +558,7 @@ export const ui = {
         const dayKey = this.difficultyKey();
         const today = dayKey === 'easy' ? 'Freitag' : dayKey === 'hard' ? 'Montag' : 'Mittwoch';
 
-        // Human Capital: Müllers eigene Akte.
+        // Human Capital: Müller's own file.
         const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
         const notes = [];
         const push = (tone, title, text) => notes.push({ tone, title, text });
@@ -1169,7 +1169,7 @@ export const ui = {
     },
 
     /**
-     * Setzt alle Optionen der Einstellungsseite auf Auslieferungszustand.
+     * Resets every option on the settings page to factory state.
      *
      * Deliberately WITHOUT reloading the page: the workday carries on, and a
      * reload would destroy it. Instead every value goes through the regular
@@ -1271,7 +1271,7 @@ export const ui = {
     },
     
     /**
-     * Welcher Wochentag beim Start vorausgewählt ist.
+     * Which weekday is preselected at startup.
      *
      * Deliberately without a log entry. The activity log is the record of the
      * workday - what happened at the desk - and a setting is not part of it.
@@ -1297,7 +1297,7 @@ export const ui = {
         const originalText = textSpan.innerText;
 
         if (navigator.share) {
-            navigator.share(shareData).catch(() => { /* Der Mensch hat den Teilen-Dialog geschlossen - kein Fehler. */ });
+            navigator.share(shareData).catch(() => { /* The person closed the share dialog - not an error. */ });
         } else {
             navigator.clipboard.writeText(shareUrl).then(() => {
                 textSpan.innerText = "Link erfolgreich kopiert!";
@@ -1542,7 +1542,7 @@ ${logText}
             // --- Silent POST via no-cors: the response is opaque, which is fine ---
             fetch(FORM_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Verhindert Sicherheits-Blockaden vom Browser
+                mode: 'no-cors', // Prevents browser security blocks
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },

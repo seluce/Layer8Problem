@@ -116,14 +116,14 @@
    overrides Tailwind's own .text-xl and .text-2xl.
    Cascade order is unchanged: utilities still override components. */
 @layer components {
-    /* TASTENKAPPEN (Shortcut-Hinweise)
-       Eine kleine mechanische Taste statt grauem Kästchen — Model-M-
-       Gedächtnis, passend zum Haus. Lichtkante oben, 2px Sockel unten,
-       und die Kappe drückt mit, wenn ihr Button gedrückt wird.
-       Zentrale Definition für Aktionsleiste, Ereignis-Optionen, Handy
-       und Postfach; abweichende Hover-Akzente (z. B. Rot fürs Löschen
-       im Postfach) setzen die Komponenten per Utility-Klasse, die den
-       Components-Layer regulär überstimmt. */
+    /* KEYCAPS (shortcut hints)
+       A small mechanical key instead of a grey box — a Model M
+       memorial, fitting for this house. Light edge on top, a 2px
+       plinth below, and the cap presses down along with its button.
+       Central definition for the action bar, event options, phone and
+       inbox; deviating hover accents (e.g. red for delete in the
+       inbox) are set by the components via utility classes, which
+       regularly override the components layer. */
     .key-hint {
         display: inline-flex;
         align-items: center;
@@ -149,10 +149,10 @@
         transition: transform 0.06s ease, box-shadow 0.06s ease, color 0.15s ease;
     }
 
-    /* Beim Überfahren des Buttons leuchtet die Beschriftung im Haus-Bernstein. */
+    /* Hovering the button lights the label up in the house amber. */
     button:hover .key-hint { color: #fbbf24; }
 
-    /* Die Kappe fährt beim Drücken des Buttons in den Sockel. */
+    /* The cap sinks into its plinth while the button is pressed. */
     button:active .key-hint {
         transform: translateY(1px);
         box-shadow:
@@ -202,14 +202,13 @@
         box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
-    /* DER TERMINAL-BILDSCHIRM
-       #terminal ist die Bühne des Spiels und war bisher ein konturloses
-       Loch. Ein Hauch Röhrenmonitor gibt der Fläche Leben, ohne sie wie
-       eine Bürolampe aufzuhellen: feine Scanlines, ein schwaches
-       Phosphor-Glimmen aus der Bildmitte und ein minimal angehobener
-       Verlauf. Alles statisch - kein Flackern, keine Animation. */
-    /* Abschaltbar über die Einstellungen: Manche empfinden die Textur als
-       unruhig, dann bleibt die Fläche glatt. */
+    /* THE TERMINAL SCREEN
+       #terminal is the stage of the game and used to be a featureless
+       hole. A hint of CRT gives the surface life without brightening
+       it like an office lamp: fine scanlines, a faint phosphor glow
+       from the centre of the image and a minimally lifted gradient.
+       All of it static - no flicker, no animation. */
+    /* Can be switched off in the settings: some find the texture restless, in which case the surface stays flat. */
     body.no-scanlines .terminal-screen {
         background-image: linear-gradient(180deg, #0e1727 0%, #0a111d 100%);
     }
@@ -226,10 +225,10 @@
             linear-gradient(180deg, #0e1727 0%, #0a111d 100%);
     }
 
-    /* Die Statuszeile auf dem Bildschirm (Versionsnummer bzw. der
-       Broadcast-Ticker) liegt direkt auf Scanlines und Glimmen. Eine
-       feine dunkle Unterlegung hebt den Text ab, ohne ihn hervorzuheben -
-       es bleibt eine Statuszeile, kein Inhalt. */
+    /* The status line on the screen (version number or the broadcast
+       ticker) sits directly on scanlines and glow. A subtle dark
+       underlay lifts the text off the background without emphasising
+       it - it remains a status line, not content. */
     #terminal-header-right {
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
     }
@@ -342,7 +341,7 @@
 @utility animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @utility animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
 
-/* Sanftes Erscheinen für Modale, Ereignis-Karten und Boot-Zeilen.
+/* Soft appearance for modals, event cards and boot lines.
    The class was in the markup from the very beginning - seventeen places in
    index.html and seven components - but no stylesheet ever defined it, not
    even in 3.2.2. It has therefore never done anything. Since every one of
@@ -369,13 +368,13 @@
 }
 
 /* ============================================================
-   TEXTGRÖSSE
-   Bewusst außerhalb der @layer-Blöcke: Tailwinds Utilities liegen in
-   einer späteren Ebene und schlagen sonst jede Regel, egal wie
-   spezifisch sie ist. Und bewusst an der Wurzel-Schriftgröße statt an
-   einzelnen Elementen — Tailwind bemisst Schriftgrößen in rem, also
-   relativ zu genau diesem Wert. So wächst alles gleichmäßig mit:
-   Ereignisse, Handy, Postfach, Team, Archiv und die Menüs.
+   TEXT SIZE
+   Deliberately outside the @layer blocks: Tailwind's utilities live
+   in a later layer and would otherwise beat any rule, no matter how
+   specific it is. And deliberately on the root font size rather than
+   on individual elements — Tailwind sizes type in rem, i.e. relative
+   to exactly this value. So everything grows evenly: events, phone,
+   inbox, team, archive and the menus.
    ============================================================ */
 html.text-size-large  { font-size: 17px; }
 html.text-size-xlarge { font-size: 18.5px; }

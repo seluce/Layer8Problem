@@ -33,7 +33,7 @@ export const audio = {
                 osc.frequency.setValueAtTime(600, t);
                 osc.frequency.exponentialRampToValueAtTime(100, t + 0.02);
                 
-                // MULTIPLIZIERT MIT vol
+                // MULTIPLIED BY vol
                 gain.gain.setValueAtTime(0.15 * vol, t);
                 gain.gain.exponentialRampToValueAtTime(0.01 * vol, t + 0.02);
                 
@@ -116,7 +116,7 @@ export const audio = {
             if (key === 'boss' || key === 'gala') {
                 this.bgmTracks[key].loop = true; // Boss & Gala loopen endlos
             } else {
-                this.bgmTracks[key].loop = false; // Office Tracks werden manuell gesteuert
+                this.bgmTracks[key].loop = false; // Office tracks are controlled manually
                 
                 // What happens once the track finishes?
                 this.bgmTracks[key].addEventListener('ended', () => {
@@ -213,7 +213,7 @@ export const audio = {
         }
 
         this.state.currentMusicTrack = actualTrack;
-        this.stopMusic(); // Stoppt alle anderen Tracks
+        this.stopMusic(); // Stops all other tracks
 
         if (!this.bgmTracks) this.initMusic();
 

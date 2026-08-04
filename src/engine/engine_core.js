@@ -20,7 +20,7 @@ export const core = {
             if (Array.isArray(source[key])) {
                 target[key] = [...source[key]];
             } 
-            // Objekte werden rekursiv tiefenkopiert
+            // Objects are deep-copied recursively
             else if (source[key] !== null && typeof source[key] === 'object') {
                 if (!target[key]) target[key] = {};
                 this.deepMerge(target[key], source[key]);
@@ -191,7 +191,7 @@ export const core = {
         }
     },
 
-    /** Gibt es einen unterbrochenen Tag? Liefert ihn oder null. */
+    /** Is there an interrupted day? Returns it or null. */
     loadDay: function() {
         try {
             const raw = localStorage.getItem(this.KEYS.dayState);
@@ -205,7 +205,7 @@ export const core = {
         }
     },
 
-    /** Stellt einen gesicherten Tag wieder her und macht im Ruhezustand weiter. */
+    /** Restores a saved day and picks up again in a paused state. */
     resumeDay: function() {
         const day = this.loadDay();
         if (!day) { this.reset(); return; }
@@ -222,7 +222,7 @@ export const core = {
         // keys in the LogFeed.
         this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
 
-        // Anzeige und Ablauf wieder aufsetzen
+        // Rebuild display and flow
         for (const key of DAY_TIMERS) this.state[key] = null;
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
@@ -241,7 +241,7 @@ export const core = {
         this.updatePresence('system');
     },
 
-    /** Aus dem Fortsetzen-Dialog: Zwischenstand wegwerfen, neu anfangen. */
+    /** From the resume dialog: discard the interim state, start fresh. */
     discardDay: function() {
         this.clearDay();
         const modal = document.getElementById('resume-modal');
@@ -399,7 +399,7 @@ export const core = {
         return pool[Math.floor(Math.random() * pool.length)];
     },
 
-    /** Kurzname des Wochentags aus dem Schwierigkeitsgrad. */
+    /** Short weekday name derived from the difficulty. */
     difficultyKey: function() {
         if (this.state.difficultyMult < 1.0) return 'easy';
         if (this.state.difficultyMult > 1.0) return 'hard';
@@ -407,7 +407,7 @@ export const core = {
     },
 
     /**
-     * Schreibt fest, wie ein Arbeitstag ausgegangen ist.
+     * Records how a workday ended.
      *
      * Replaces the individual incrementStat calls at the end of a day: the
      * outcome is more than one counter. The streak of days survived, the
@@ -654,7 +654,7 @@ export const core = {
     checkAchievements: function() {
         // --- PLAYSTYLE: EXTREMES ---
         
-        // 1. DER ASKET (Kein Kaffee) - Ab 16:00
+        // 1. 'Der Asket' (no coffee) - from 16:00
         // Rewards enduring the aggro without help
         if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
             this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
@@ -717,7 +717,7 @@ export const core = {
             this.unlockAchievement('ach_ninja', '🥷 Ninja', 'Fast unsichtbar für den Chef.');
         }
 
-        // ZEN MEISTER (Keine Wut) - Ab 15:00
+        // 'Zen Meister' (no anger) - from 15:00
         if(this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
             this.unlockAchievement('ach_zen', '🕊️ Zen-Meister', '15 Uhr und die Ruhe selbst. Bist du überhaupt wach?');
         }
@@ -737,7 +737,7 @@ export const core = {
             this.unlockAchievement('ach_clean', '✨ Inbox Zero', 'Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.');
         }
 
-        // TANZ AUF DEM VULKAN (High Risk Survival) - Ab 16:20
+        // 'Tanz auf dem Vulkan' (high-risk survival) - from 16:20
         if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
             this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
         }
@@ -789,7 +789,7 @@ export const core = {
         if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
 
         // Pull the stored difficulty
-        let savedDiffVal = 0; // 0 = Noch nie geschafft
+        let savedDiffVal = 0; // 0 = never achieved yet
         
         // Guard against a malformed archive
         if (this.state.archive && this.state.archive.achievements && this.state.archive.achievements.includes(id)) {

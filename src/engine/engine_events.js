@@ -460,7 +460,7 @@ export const events = {
 
     triggerBossFight: function() {
 		
-        // --- FIX: KEINE E-MAILS BEI BOSSFIGHTS ---
+        // --- FIX: NO EMAILS DURING BOSSFIGHTS ---
         if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
         if (this.state.emailDelayTimer) clearTimeout(this.state.emailDelayTimer);
         if (this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
@@ -956,7 +956,7 @@ export const events = {
         } 
         else if (mood.effect === "lazy") {
             this.state.fl += moodVal;
-            this.state.time += 30; // Zeitverlust wegen Verschlafen
+            this.state.time += 30; // Time lost to oversleeping
             this.state.tickets += 1; // penalty for the thirty minutes lost
             statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
         } 

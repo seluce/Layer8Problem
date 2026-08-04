@@ -9,12 +9,12 @@
   until someone actually looks.
 -->
 <script>
-    /* Bilder laden hier bewusst sofort (loading="eager"), nicht verzögert.
-       Das Archiv ist ein Modal, das man öffnet, um zu blättern — mit
-       verzögertem Laden erschienen beim Scrollen erst leere Kästen, weil der
-       Browser die Dateien erst beim Sichtbarwerden anfordert. Es sind
-       wenige, kleine WebP-Dateien; sie alle auf einmal zu holen ist der
-       schnellere Weg. Gleiches gilt für TeamView. */
+    /* Images here load immediately on purpose (loading="eager"), not lazily.
+       The archive is a modal opened for browsing — with lazy loading,
+       scrolling first showed empty boxes, because the browser only requests
+       the files once they become visible. These are a few small WebP files;
+       fetching them all at once is the faster path. The same applies to
+       TeamView. */
     import { state } from '../engine/engine_state.svelte.js';
     import { DB } from '../data.js';
 
@@ -120,8 +120,7 @@
 
         <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner space-y-2.5">
 
-            <!-- Serie zuerst: die einzige Zahl, die morgen anders aussieht,
-                 wenn man heute aufhört. -->
+            <!-- Streak first: the only number that looks different tomorrow if you stop today. -->
             {#if streakBest > 0}
                 <div class="flex items-center justify-between px-2 py-1.5 bg-slate-800/40 rounded-sm border border-slate-700/30">
                     <span class="text-[9px] text-slate-500 uppercase tracking-widest">Serie</span>
@@ -143,7 +142,7 @@
                 {/each}
             </div>
 
-            <!-- Nach Wochentag: ersetzt eine nichtssagende Gesamtquote. -->
+            <!-- Per weekday: replaces a meaningless overall rate. -->
             {#if hasWeekdays}
                 <div class="space-y-1 px-1 pt-0.5">
                     {#each weekdays as day (day.key)}
@@ -179,8 +178,7 @@
                      title={entry.unlocked ? entry.item.name : 'Unbekannt'}>
                     {#if !entry.unlocked}?
                     {:else}
-                        <!-- Das Symbol liegt darunter: Fehlt die Bilddatei, entfernt sich
-                             das Bild selbst und der Platz bleibt nicht leer. -->
+                        <!-- The symbol sits underneath: if the image file is missing, the image removes itself and the spot does not stay empty. -->
                         <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
                         {#if entry.item.img}
                             <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
@@ -200,8 +198,7 @@
                          title={entry.unlocked ? entry.item.name : '???'}>
                         {#if !entry.unlocked}?
                         {:else}
-                            <!-- Das Symbol liegt darunter: Fehlt die Bilddatei, entfernt sich
-                                 das Bild selbst und der Platz bleibt nicht leer. -->
+                            <!-- The symbol sits underneath: if the image file is missing, the image removes itself and the spot does not stay empty. -->
                             <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
                             {#if entry.item.img}
                                 <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
