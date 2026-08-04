@@ -3,7 +3,7 @@ export const party = [
 	{
 		id: "party_start",
 		title: "SYSTEM OVERRIDE: Synergy-Gala",
-		text: "16:30 Uhr. Du fährst gerade den Rechner runter und willst unauffällig durch den Hinterausgang verschwinden. Plötzlich taucht Chantal auf und klebt dir im Vorbeigehen einen grellen 'Hello my name is'-Sticker direkt auf die Stirn. Du bist gefangen: Willkommen auf der GlobalCorp Sommerfeier.\n\nDas Event beginnt im großen Saal. Der CEO, Dr. Wichtig, hält gerade eine unfassbar zähe, 45-minütige Präsentation über 'Agiles Feiern im Zeitalter der KI'. Der Beamer ist unscharf, jemand hat den Laserpointer geklaut und die Klimaanlage ist offensichtlich ausgefallen.",
+		text: "16:30 Uhr. Du fährst gerade den Rechner runter und willst unauffällig durch den Hinterausgang verschwinden. Chantal fängt dich ab und klebt dir im Vorbeigehen einen grellen 'Hello my name is'-Sticker direkt auf die Stirn. Du bist gefangen: Willkommen auf der GlobalCorp Sommerfeier.\n\nDas Event beginnt im großen Saal. Der CEO, Dr. Wichtig, hält gerade eine unfassbar zähe, 45-minütige Präsentation über 'Agiles Feiern im Zeitalter der KI'. Der Beamer ist unscharf, jemand hat den Laserpointer geklaut und die Klimaanlage ist offensichtlich ausgefallen.",
 		opts: [
 			{ t: "Klatschend ertragen", a: 25, r: "Du stehst in der Menge und klatschst brav im Takt der Floskeln. Es ist furchtbar peinlich, dir läuft der Schweiß den Rücken hinunter und deine Aggression steigt mit jedem weiteren Buzzword ins Unermessliche.", next: "party_hub" },
 			{ t: "Stecker vom Beamer ziehen", f: 10, a: -15, r: "Du tust so, als würdest du stolpern. Ein 'technischer Defekt' beendet die Rede vorzeitig. Ein kollektives, leises Aufatmen geht durch den Saal. Du bist der stille Held der ersten Stunde.", next: "party_hub" },
@@ -81,7 +81,7 @@ export const party = [
 	{
 		id: "party_bar_6", loc: "bar",
 		title: "Der Gesundheits-Apostel",
-		text: "Du willst dir ein kühles Bier holen. Ein Kollege aus dem 'Feel-Good-Management' blockiert den Kühlschrank. 'Alkohol ist Gift für die Synergien! Trink dieses energetisierte Ingwer-Wasser!'",
+		text: "Zwischen dir und einem kühlen Bier steht das 'Feel-Good-Management' und blockiert den Kühlschrank. 'Alkohol ist Gift für die Synergien! Trink dieses energetisierte Ingwer-Wasser!'",
 		opts: [
 			{ t: "Ihn wegschieben: 'Ich brauche Hopfen!'", a: -10, f: 0, r: "Du schiebst ihn bestimmt zur Seite, reißt den Kühlschrank auf und greifst dir das eisgekühlte Pils. 'Toxische Männlichkeit!', flüstert er entsetzt, während du zischend den Kronkorken abhebelst.", next: "party_hub" },
 			{ t: "'Bier ist auch nur Getreidesmoothie.'", f: 15, a: 5, r: "Du verwickelst ihn in eine hochgradig absurde, pseudowissenschaftliche Diskussion über die isotonischen Vorteile von Weizenbier, bis er entnervt die Augen verdreht und aufgibt. Sieg durch Nervtötung.", next: "party_hub" },
@@ -221,7 +221,7 @@ export const party = [
 	{
 		id: "party_dance_5", loc: "dance",
 		title: "Der Kuschelsong",
-		text: "Das Licht wird gedimmt. Plötzlich läuft 'Careless Whisper'. Eine leicht angetrunkene Kollegin aus der Buchhaltung steuert zielstrebig und mit schmachtendem Blick auf dich zu.",
+		text: "Das Licht wird gedimmt. Die ersten Takte von 'Careless Whisper'. Eine leicht angetrunkene Kollegin aus der Buchhaltung steuert zielstrebig und mit schmachtendem Blick auf dich zu.",
 		opts: [
 			{ t: "Kevin als Ersatzopfer vorschieben", f: 10, a: -5, r: "Du packst den Azubi am Kragen und stellst ihn exakt zwischen dich und die Kollegin. Sie umschlingt sofort Kevin. Er blickt panisch drein, aber du bist frei und holst dir ein Bier.", next: "party_hub" },
 			{ t: "Auf die Toilette flüchten", f: 15, a: 5, r: "Du drehst dich auf dem Absatz um und sprintest im Dauerlauf Richtung Herrentoilette. Die Kollegin ist verwirrt und krallt sich stattdessen den völlig perplexen Hausmeister Egon für den Engtanz.", next: "party_hub" },

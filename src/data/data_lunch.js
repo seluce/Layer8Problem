@@ -143,7 +143,7 @@ export const lunch = [
 			id: "lunch_ceo_table",
 			char: "Dr. Wichtig",
 			title: "MITTAG: DER CEO WINKT",
-			text: "Du betrittst die Kantine mit deinem Tablett (Linseneintopf). Plötzlich winkt Dr. Wichtig vom 'Vorstands-Tisch' zu dir. 'Müller! Setzen Sie sich zu mir! Wir müssen uns mal unterhalten.' Alle im Raum starren dich an.",
+			text: "Du betrittst die Kantine mit deinem Tablett (Linseneintopf). Vom 'Vorstands-Tisch' winkt Dr. Wichtig zu dir herüber. 'Müller! Setzen Sie sich zu mir! Wir müssen uns mal unterhalten.' Alle im Raum starren dich an.",
 			opts: [
 				{ 
 					t: "Über Gehaltserhöhung reden", 
@@ -423,7 +423,7 @@ export const lunch = [
 		{
 			id: "lunch_supermarket",
 			title: "MITTAG: SUPERMARKT-KAMPF",
-			text: "Du willst dir nur schnell ein Brötchen im Supermarkt holen. Aber: Rentner-Invasion! Alle drei Kassen sind voll mit Leuten, die passend zahlen wollen ('Warten Sie, ich hab's klein!').",
+			text: "Nur schnell ein Brötchen aus dem Supermarkt - was soll schon passieren? Rentner-Invasion! Alle drei Kassen sind voll mit Leuten, die passend zahlen wollen ('Warten Sie, ich hab's klein!').",
 			opts: [
 				{ 
 					t: "'PLATZ DA! ICH BIN ARZT!'",
@@ -445,7 +445,7 @@ export const lunch = [
 		{
 			id: "lunch_canteen_crash",
 			title: "MITTAG: SYSTEMAUSFALL",
-			text: "Du stehst in der Kantine ganz vorne in der Schlange mit deinem Tablett. Plötzlich stürzt die Kasse ab. Windows-Updates werden installiert (1 von 45). Die Schlange hinter dir murrt. Die Kassiererin guckt dich flehend an: 'Sie sind doch von der IT?'",
+			text: "Du stehst in der Kantine ganz vorne in der Schlange mit deinem Tablett. Die Kasse stürzt ab. Windows-Updates werden installiert (1 von 45). Die Schlange hinter dir murrt. Die Kassiererin guckt dich flehend an: 'Sie sind doch von der IT?'",
 			opts: [
 				{ 
 					t: "Brav warten", 
@@ -468,7 +468,7 @@ export const lunch = [
 		{
 			id: "lunch_microwave_queue",
 			title: "MITTAG: MIKROWELLEN-STAU",
-			text: "Du willst dir deine Nudeln aufwärmen, aber von drei Mikrowellen geht nur noch eine. Davor steht eine Schlange von 4 Leuten. Ganz vorne steht der Vertriebsleiter und taut geduldig ein komplett gefrorenes Hähnchen auf.",
+			text: "Deine Nudeln sind kalt, und von drei Mikrowellen geht nur noch eine. Davor steht eine Schlange von 4 Leuten. Ganz vorne steht der Vertriebsleiter und taut geduldig ein komplett gefrorenes Hähnchen auf.",
 			opts: [
 				{ 
 					t: "Zähneknirschend warten", 
@@ -631,7 +631,7 @@ export const lunch = [
 		{ 
 			id: "lunch_fish_microwave", 
 			title: "MITTAG: BIO-WAFFE", 
-			text: "Du willst dir dein Essen aufwärmen, als dir eine Wand aus Gestank entgegenkommt. Azubi Kevin macht sich Kabeljau vom Vortag in der Mikrowelle warm. Der Geruch brennt regelrecht in den Augen.", 
+			text: "Auf halbem Weg zur Mikrowelle trifft dich eine Wand aus Gestank. Azubi Kevin macht sich Kabeljau vom Vortag in der Mikrowelle warm. Der Geruch brennt regelrecht in den Augen.", 
 			opts: [ 
 				{  
 					t: "Den Stecker der Mikrowelle ziehen", 
@@ -726,7 +726,7 @@ export const lunch = [
 		{ 
 			id: "lunch_nap_attack", 
 			title: "MITTAG: UNTERBROCHENER SCHLAF", 
-			text: "Du liegst auf der Couch im dunklen Pausenraum und schläfst fast ein. Plötzlich stürmt Chantal herein, macht das extrem grelle Licht an und nimmt lautstark Sprachnachrichten auf.", 
+			text: "Du liegst auf der Couch im dunklen Pausenraum und schläfst fast ein. Die Tür fliegt auf. Chantal macht das extrem grelle Licht an und nimmt lautstark Sprachnachrichten auf.", 
 			opts: [ 
 				{  
 					t: "Aufstehen und sie anknurren", 

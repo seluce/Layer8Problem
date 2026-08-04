@@ -299,7 +299,7 @@ export const coffee = [
         id: "cof_empty_2b",
         title: "Künstliche Intelligenz?",
         reqStory: "path_empty_kick",
-        text: "Das Display flackert nach deinem Tritt. Plötzlich ertönt eine blecherne, synthetische Stimme aus dem Lautsprecher: 'AUA. DAS WAR UNHÖFLICH, MÜLLER. ICH MERKE MIR DAS. KEIN KOFFEIN FÜR GEWALTTÄTER.' Der Auslauf verriegelt sich hörbar.",
+        text: "Das Display flackert nach deinem Tritt, dann ertönt eine blecherne, synthetische Stimme aus dem Lautsprecher: 'AUA. DAS WAR UNHÖFLICH, MÜLLER. ICH MERKE MIR DAS. KEIN KOFFEIN FÜR GEWALTTÄTER.' Der Auslauf verriegelt sich hörbar.",
         opts: [
             { 
                 t: "Exorzisten rufen", 
@@ -369,7 +369,7 @@ export const coffee = [
         id: "cof_newbie_2a",
         title: "Best Friends Forever",
         reqStory: "path_newbie_friend",
-        text: "Torben steht plötzlich neben deinem Schreibtisch. Er hält zwei vegane Smoothies. 'Hey Buddy! Danke nochmal für vorhin. Ich dachte, wir machen zusammen Mittag? Ich wollte mit dir über Synergien zwischen IT und Controlling brainstormen!'",
+        text: "Torben ist da. Einfach da, neben deinem Schreibtisch, mit zwei veganen Smoothies. 'Hey Buddy! Danke nochmal für vorhin. Ich dachte, wir machen zusammen Mittag? Ich wollte mit dir über Synergien zwischen IT und Controlling brainstormen!'",
         opts: [
             { 
                 t: "'Ich esse im Serverraum.'", 
@@ -783,7 +783,7 @@ export const coffee = [
         id: "cof_juergen_2a",
         title: "Stummes Gespräch",
         reqStory: "path_juergen_nc",
-        text: "Jürgen steht plötzlich an deinem Schreibtisch. Du hast die Kopfhörer noch auf. Er gestikuliert wild und fragt dich offensichtlich etwas. Du hörst absolut nichts außer Double-Bass-Drums.",
+        text: "Jürgen lehnt an deinem Schreibtisch, und du hast ihn nicht kommen hören. Die Kopfhörer sitzen noch. Er gestikuliert wild und fragt dich offensichtlich etwas. Du hörst absolut nichts außer Double-Bass-Drums.",
         opts: [
             { 
                 t: "Einfach 'Daumen hoch' zeigen", 
@@ -1083,7 +1083,7 @@ export const coffee = [
 		char: "Gabi",
         title: "Der Teetrinker",
         reqStory: "path_sticky_tea",
-        text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich plötzlich vorsichtig.",
+        text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich seither auffällig vorsichtig.",
         opts: [
             { 
                 t: "'Die Taste war nur kaputt.'", 
@@ -1892,7 +1892,7 @@ export const coffee = [
 		char: "Gabi",
         title: "Die Klette",
         reqStory: "path_gabi_listen",
-        text: "Du willst dir nur schnell einen frischen Kaffee holen, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
+        text: "Halber Weg zur Kaffeemaschine, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
         opts: [
             { 
                 t: "'Nimm doch Plastikblumen.'", 
@@ -2549,7 +2549,7 @@ export const coffee = [
         id: "cof_sugar_2b",
         title: "Das Embargo",
         reqStory: "path_sugar_embargo",
-        text: "Du willst Kaffee. Aber die Zuckerdose ist leer. Stattdessen klebt ein Zettel daran: 'Wegen Lieferkettenproblemen temporär außer Betrieb. Gez. Bernd'. Bernd sitzt drei Tische weiter auf einem Thron aus Kopierpapier und grinst dich böse an.",
+        text: "Kaffee wäre da. Die Zuckerdose ist leer. Stattdessen klebt ein Zettel daran: 'Wegen Lieferkettenproblemen temporär außer Betrieb. Gez. Bernd'. Bernd sitzt drei Tische weiter auf einem Thron aus Kopierpapier und grinst dich böse an.",
         opts: [
             { 
                 t: "Den Bunker stürmen", 
@@ -2828,7 +2828,7 @@ export const coffee = [
         id: "cof_kevin_hack_2a",
         title: "Lauwarme Plörre",
         reqStory: "path_kevin_hack_stop",
-        text: "Du willst dir einen Kaffee holen. Die Maschine blinkt grün: 'SAFE MODE'. Der Kaffee kommt mit exakt 60 Grad heraus und schmeckt wässrig. Kevin hat aus Trotz die Spar-Einstellungen aktiviert.",
+        text: "Die Kaffeemaschine blinkt grün: 'SAFE MODE'. Der Kaffee kommt mit exakt 60 Grad heraus und schmeckt wässrig. Kevin hat aus Trotz die Spar-Einstellungen aktiviert.",
         opts: [
             { 
                 t: "Trinken und leiden", 
@@ -3493,7 +3493,7 @@ export const coffee = [
 		char: "Dr. Wichtig",
         title: "Salatdressing",
         reqStory: "path_descale_vinegar",
-        text: "Einige Zeit ist vergangen. Plötzlich stürmt der Chef aus seinem Büro. Er würgt. 'Müller! Was ist in der Kaffeemaschine?! Ich wollte einen Espresso und es schmeckt wie lauwarmer Gurkensalat! Der ganze Flur riecht nach Essig!'",
+        text: "Einige Zeit ist vergangen. Dann fliegt die Chef-Bürotür auf. Er würgt. 'Müller! Was ist in der Kaffeemaschine?! Ich wollte einen Espresso und es schmeckt wie lauwarmer Gurkensalat! Der ganze Flur riecht nach Essig!'",
         opts: [
             { 
                 t: "'Telefon klingelt, muss weg!'", 
@@ -3692,7 +3692,7 @@ export const coffee = [
     {
         id: "cof_grinder_1",
         title: "Ohrenbetäubend",
-        text: "Die teure Kaffeemaschine mahlt die Bohnen plötzlich mit einem Geräusch, das an einen startenden Düsenjet erinnert. Die Vibrationen lassen die Tassen im Schrank klappern. Irgendwas im Mahlwerk klemmt gewaltig.",
+        text: "Die teure Kaffeemaschine mahlt die Bohnen heute mit einem Geräusch, das an einen startenden Düsenjet erinnert. Die Vibrationen lassen die Tassen im Schrank klappern. Irgendwas im Mahlwerk klemmt gewaltig.",
         opts: [
             { 
                 t: "Einen beherzten Schlag verpassen", 
@@ -4093,7 +4093,7 @@ export const coffee = [
     id: "cof_entkalken_2a",
     title: "Zu gut gewartet",
     reqStory: "path_kalk_pflege",
-    text: "Die entkalkte Maschine läuft mit dem Druck ihrer Jugend - und dosiert plötzlich deutlich stärker als in den letzten drei Jahren. Die halbe Firma ist überkoffeiniert. Chantal hat seit elf Uhr vier Meetings angesetzt, Kevin spricht ausschließlich in Ausrufezeichen.",
+    text: "Die entkalkte Maschine läuft mit dem Druck ihrer Jugend - und dosiert deutlich stärker als in den letzten drei Jahren. Die halbe Firma ist überkoffeiniert. Chantal hat seit elf Uhr vier Meetings angesetzt, Kevin spricht ausschließlich in Ausrufezeichen.",
     opts: [
         {
             t: "Laufen lassen - Produktivität!",
@@ -4194,7 +4194,7 @@ export const coffee = [
     id: "cof_markus_termin_2a",
     title: "Der Technik-Mann",
     reqStory: "path_lampen_coach",
-    text: "Gebrüll aus dem Flur, aber diesmal das gute: 'ABSCHLUSS! TechniPlast hat unterschrieben!' Markus stürmt in die Küche, deutet auf dich und verkündet der versammelten Frühstücksrunde: 'MEIN Technik-Mann! Ohne den wär das nichts geworden!' Alle schauen dich an.",
+    text: "Gebrüll aus dem Flur, aber diesmal das gute: 'ABSCHLUSS! TechniPlast hat unterschrieben!' Markus fegt in die Küche, deutet auf dich und verkündet der versammelten Frühstücksrunde: 'MEIN Technik-Mann! Ohne den wär das nichts geworden!' Alle schauen dich an.",
     opts: [
         {
             t: "Frech eine Provision fordern",

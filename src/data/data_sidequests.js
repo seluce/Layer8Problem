@@ -188,7 +188,7 @@ export const sidequests = [
         kind: "text",
         title: "Schneegestöber",
         reqStory: "path_fire_hero",
-        text: "Der Rauch ist weg. Dafür ist die Küche jetzt komplett weiß gepudert. Hausmeister Egon steht in der Tür und wischt mit dem Finger über den staubigen Tisch. Er sieht dich vernichtend an.",
+        text: "Der Rauch ist weg. Dafür ist die Küche jetzt komplett weiß gepudert. Hausmeister Egon betrachtet das Werk von der Tür aus und wischt mit dem Finger über den staubigen Tisch. Er sieht dich vernichtend an.",
         opts: [
             { 
                 t: "'Gefahr neutralisiert!'", 
@@ -209,7 +209,7 @@ export const sidequests = [
         kind: "text",
         title: "Süße Beute",
         reqStory: "path_fire_loot",
-        text: "Der Alarm ist vorbei. Du sitzt am Platz und mampfst die gestohlenen Kekse. Plötzlich kommt eine Rundmail vom Chefsekretariat: 'Wer hat während der Evakuierung das Catering für den Aufsichtsrat gestohlen?! Wir sichten die Kameras!'",
+        text: "Der Alarm ist vorbei. Du sitzt am Platz und mampfst die gestohlenen Kekse. Bis eine Rundmail vom Chefsekretariat aufploppt: 'Wer hat während der Evakuierung das Catering für den Aufsichtsrat gestohlen?! Wir sichten die Kameras!'",
         opts: [
             { 
                 t: "Die Beweis-Kekse schnell aufessen", 
@@ -1074,7 +1074,7 @@ export const sidequests = [
         kind: "text",
         title: "Der blaue Orden",
         reqStory: "path_toner_explosion",
-        text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef kommt rein. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
+        text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef persönlich erscheint. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
         opts: [
             { 
                 t: "Die Legende bestätigen", 
@@ -1341,7 +1341,7 @@ export const sidequests = [
         kind: "text",
         title: "Geschäfte unter der Tür",
         reqStory: "path_affair_secret",
-        text: "Später am Tag. Du sitzt auf Kabine 3. Plötzlich siehst du teure Leder-Slipper unter der Tür. Die Stimme des Finanzchefs flüstert: 'Müller? Wir schätzen Ihre Diskretion.' Ein Umschlag wird unter der Tür durchgeschoben. Darin: Deine genehmigte Spesenabrechnung und ein in Goldfolie gewickeltes Trüffel-Sandwich.",
+        text: "Später am Tag. Du sitzt auf Kabine 3. Unter der Tür erscheinen teure Leder-Slipper. Die Stimme des Finanzchefs flüstert: 'Müller? Wir schätzen Ihre Diskretion.' Ein Umschlag wird unter der Tür durchgeschoben. Darin: Deine genehmigte Spesenabrechnung und ein in Goldfolie gewickeltes Trüffel-Sandwich.",
         opts: [
             { 
                 t: "'Ich bin nicht käuflich.'", 
@@ -1360,7 +1360,7 @@ export const sidequests = [
         kind: "text",
         title: "Verhör auf dem Thron",
         reqStory: "path_affair_joke",
-        text: "Später am Tag. Du suchst Ruhe auf Kabine 3. Plötzlich wird das Licht im Vorraum ausgeschaltet. Teure Leder-Slipper stoppen direkt vor deiner Tür. Die Stimme des Finanzchefs hallt durch den dunklen Raum: 'Müller... Wer Witze macht, braucht kein Budget. Und die Küche lässt ausrichten: Vorsicht bei der Pilzsuppe.'",
+        text: "Später am Tag. Du suchst Ruhe auf Kabine 3. Das Licht im Vorraum geht aus. Teure Leder-Slipper stoppen direkt vor deiner Tür. Die Stimme des Finanzchefs hallt durch den dunklen Raum: 'Müller... Wer Witze macht, braucht kein Budget. Und die Küche lässt ausrichten: Vorsicht bei der Pilzsuppe.'",
         opts: [
             { 
                 t: "Kleinlaut entschuldigen", 
@@ -1430,7 +1430,7 @@ export const sidequests = [
         kind: "text",
         title: "Log-Datei-Analyse",
         reqStory: "path_sys_fake",
-        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' steht plötzlich an deinem Tisch. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom Crash heute Morgen geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
+        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' taucht an deinem Tisch auf. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom Crash heute Morgen geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
         opts: [
             { 
                 t: "'Wollen Sie einen Keks?'", 
@@ -1477,7 +1477,7 @@ export const sidequests = [
         kind: "text",
         title: "God Mode Aktiviert",
         reqStory: "path_stick_godmode",
-        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Heute morgen ploppt plötzlich ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
+        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Heute morgen ploppt ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
         opts: [
             { 
                 t: "Robin Hood: Allen Mitarbeitern Hitzefrei geben", 
@@ -1584,7 +1584,7 @@ export const sidequests = [
         kind: "text",
         title: "Logistik-Chaos",
         reqStory: "path_merger_labels",
-        text: "Der Lagerleiter stürmt herein, sichtbar am Ende. 'Sagen Sie dem Chef, er soll aufhören zu drucken! Wir kommen nicht mehr hinterher!' Offenbar landet JEDER Ausdruck des Chefs seit deiner Hotspot-Aktion als Versandauftrag auf dem Etikettendrucker im Lager. Und die Jungs dort führen die Befehle gnadenlos aus.",
+        text: "Der Lagerleiter wankt herein, sichtbar am Ende. 'Sagen Sie dem Chef, er soll aufhören zu drucken! Wir kommen nicht mehr hinterher!' Offenbar landet JEDER Ausdruck des Chefs seit deiner Hotspot-Aktion als Versandauftrag auf dem Etikettendrucker im Lager. Und die Jungs dort führen die Befehle gnadenlos aus.",
         opts: [
             { 
                 t: "'Was habt ihr verschickt?'", 
@@ -1698,7 +1698,7 @@ export const sidequests = [
         kind: "text",
         title: "Vorschlag zur Güte",
         reqStory: "path_ai_overlord",
-        text: "Dein KI-Skript läuft im Hintergrund auf dem Server. Plötzlich ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
+        text: "Dein KI-Skript läuft im Hintergrund auf dem Server. Mittendrin ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
         opts: [
             { 
                 t: "'ABBRUCH! LÖSCHEN!'", 
@@ -1764,7 +1764,7 @@ export const sidequests = [
         kind: "text",
         title: "Ups, das war echt",
         reqStory: "path_audit_hack_real",
-        text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Plötzlich ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
+        text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Vor deinen Augen ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
         opts: [
             { 
                 t: "'Teil der Übung! Ruhe bewahren!'", 
@@ -2070,7 +2070,7 @@ export const sidequests = [
         kind: "text",
         title: "Gesichtskrampf",
         reqStory: "path_smile_cramp",
-        text: "Am Nachmittag sitzt du in einem Meeting. Plötzlich verkrampft sich dein Gesichtsmuskel von der Aktion an der Tür. Du hast jetzt ein psychotisches Dauergrinsen im Gesicht, das du nicht kontrollieren kannst. Der Chef starrt dich irritiert an.",
+        text: "Am Nachmittag sitzt du in einem Meeting, da verkrampft sich dein Gesichtsmuskel von der Aktion an der Tür. Du hast jetzt ein psychotisches Dauergrinsen im Gesicht, das du nicht kontrollieren kannst. Der Chef starrt dich irritiert an.",
         opts: [
             { 
                 t: "So tun als ob: 'Ich bin einfach glücklich!'", 
@@ -2143,7 +2143,7 @@ export const sidequests = [
         id: "sq_desk_rise_1",
         kind: "text",
         title: "Der Aufstieg",
-        text: "Du arbeitest am neuen, elektrischen 2000€-Steh-Sitz-Tisch eines kranken Kollegen. Plötzlich entwickelt der Tisch ein Eigenleben. Er fährt hoch. Und hört nicht auf. Deine Tastatur ist schon auf Brusthöhe. Der 'Stop'-Knopf klemmt.",
+        text: "Du arbeitest am neuen, elektrischen 2000€-Steh-Sitz-Tisch eines kranken Kollegen. Der Tisch entwickelt ein Eigenleben. Er fährt hoch. Und hört nicht auf. Deine Tastatur ist schon auf Brusthöhe. Der 'Stop'-Knopf klemmt.",
         opts: [
             { 
                 t: "Zum Stecker kriechen und ziehen", 
@@ -2223,7 +2223,7 @@ export const sidequests = [
         kind: "text",
         title: "Das Handbuch-Opfer",
         reqStory: "path_desk_heavy",
-        text: "Du willst dein Handbuch zurück. Aber es ist mit dem Bedienpanel verschmolzen. Der Kunststoff ist geschmolzen und hat das Buch 'assimiliert'. Der Tisch reagiert auf gar nichts mehr.",
+        text: "Das Handbuch kommt nicht wieder: Es ist mit dem Bedienpanel verschmolzen. Der Kunststoff ist geschmolzen und hat das Buch 'assimiliert'. Der Tisch reagiert auf gar nichts mehr.",
         opts: [
             { 
                 t: "Das Buch mit dem Hammer befreien", 
@@ -2248,7 +2248,7 @@ export const sidequests = [
         id: "sq_shredder_1",
         kind: "text",
         title: "Datenschutz extrem",
-        text: "Du willst einen alten Kassenbon vernichten. Der neue 'Smart-Shredder 4000' versperrt den Schlitz. Auf dem Touchscreen steht: 'Bitte Dokumentenkategorie wählen (1-99). Bestätigen Sie DSGVO-Konformität. Scannt nach Büroklammern...'",
+        text: "Ein alter Kassenbon soll in den Schredder. Der neue 'Smart-Shredder 4000' versperrt den Schlitz. Auf dem Touchscreen steht: 'Bitte Dokumentenkategorie wählen (1-99). Bestätigen Sie DSGVO-Konformität. Scannt nach Büroklammern...'",
         opts: [
             { 
                 t: "Erst den Auffangbehälter prüfen", 
@@ -2601,7 +2601,7 @@ export const sidequests = [
         kind: "text",
         title: "Der Hexenschuss",
         reqStory: "path_drive_run",
-        text: "Die Quittung für deinen Treppen-Sprint: Du stehst am Kopierer und plötzlich blockiert dein unterer Rücken komplett. Du hängst in einem 90-Grad-Winkel fest. Chantal kommt vorbei und starrt dich an. 'Machst du Yoga?'",
+        text: "Die Quittung für deinen Treppen-Sprint: Du stehst am Kopierer, als dein unterer Rücken komplett blockiert. Du hängst in einem 90-Grad-Winkel fest. Chantal kommt vorbei und starrt dich an. 'Machst du Yoga?'",
         opts: [
             { 
                 t: "'Ich suche eine Kontaktlinse!'", 
@@ -2684,7 +2684,7 @@ export const sidequests = [
         kind: "text",
         title: "Das Versteckspiel fliegt auf",
         reqStory: "path_investor_hide",
-        text: "Du sitzt immer noch geduckt hinter der Kaffeemaschine. Plötzlich blickt der Investor über den Tresen direkt auf dich herab. 'Was machen Sie da unten? Suchen Sie das WLAN?'",
+        text: "Du sitzt immer noch geduckt hinter der Kaffeemaschine. Der Kopf des Investors erscheint über dem Tresen. Er blickt direkt auf dich herab. 'Was machen Sie da unten? Suchen Sie das WLAN?'",
         opts: [
             { 
                 t: "So tun, als würdest du putzen", 
@@ -2769,7 +2769,7 @@ export const sidequests = [
         kind: "text",
         title: "Die Schikane",
         reqStory: "path_guard_scream",
-        text: "Du willst nach der Pause wieder ins Gebäude. Der Wachmann von vorhin steht an der Tür. Er erkennt dich. 'Halt. Ausweiskontrolle. Und Taschenkontrolle. Ich muss den Laptop auf Seriennummer prüfen.'",
+        text: "Zurück von der Pause. Der Wachmann von vorhin steht an der Tür. Er erkennt dich. 'Halt. Ausweiskontrolle. Und Taschenkontrolle. Ich muss den Laptop auf Seriennummer prüfen.'",
         opts: [
             { 
                 t: "Brav mitmachen und deeskalieren", 
@@ -2941,7 +2941,7 @@ export const sidequests = [
         kind: "text",
         title: "Die Alternative",
         reqStory: "path_printer_lie",
-        text: "Da der Abteilungsdrucker 'kaputt' ist, stehen nun plötzlich fünf Kollegen in deinem Büro und wollen, dass du ihre extrem wichtigen Dokumente an deinem kleinen lokalen Drucker ausdruckst.",
+        text: "Da der Abteilungsdrucker 'kaputt' ist, stehen nun fünf Kollegen in deinem Büro und wollen, dass du ihre extrem wichtigen Dokumente an deinem kleinen lokalen Drucker ausdruckst.",
         opts: [
             { 
                 t: "Seufzen und als Copy-Shop arbeiten", 
@@ -5514,7 +5514,7 @@ export const sidequests = [
         kind: "text",
         title: "Stolzer Dieb",
         reqStory: "path_chair_steal",
-        text: "Das Marketing-Team hat bemerkt, dass ihr bester Stuhl fehlt. Sie durchsuchen die Büros und stehen plötzlich kopfschüttelnd in deiner Tür.",
+        text: "Das Marketing-Team hat bemerkt, dass ihr bester Stuhl fehlt. Sie durchsuchen die Büros und stehen schließlich kopfschüttelnd in deiner Tür.",
         opts: [
             { 
                 t: "Schuld von sich weisen und weinen", 
@@ -6128,7 +6128,7 @@ export const sidequests = [
         id: "sq_cable_1",
         kind: "text",
         title: "Das Spaghetti-Monster",
-        text: "Du willst deinen Monitor im Büro umstecken, aber unter deinem Tisch sieht es aus, als hätte jemand Spaghettinester geflochten. Hunderte Kabel kreuzen sich im Chaos.",
+        text: "Der Monitor soll nur umgesteckt werden, aber unter deinem Tisch sieht es aus, als hätte jemand Spaghettinester geflochten. Hunderte Kabel kreuzen sich im Chaos.",
         opts: [
             { 
                 t: "Kevin unter den Tisch befehlen", 

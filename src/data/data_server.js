@@ -289,7 +289,7 @@ export const server = [
         id: "srv_bernd_2a",
         title: "Katerstimmung",
         reqStory: "path_bernd_drunk",
-        text: "Bernd steht plötzlich strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
+        text: "Bernd materialisiert strahlend an deinem Schreibtisch. Er trägt eine Sonnenbrille und riecht nach Minze. 'Hey Partner! Wegen unserer Idee... Ich habe die Domain alpaka-server-farm.de schon registriert!'",
         opts: [
             { 
                 t: "'Ich war betrunken!'", 
@@ -849,7 +849,7 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Legacy-Support",
         reqStory: "path_man_study",
-        text: "Der Chef kommt rein. 'Müller! Wir haben noch einen 486er im Keller, der die Türsteuerung regelt. Er verlangt eine IRQ-Zuweisung für die Soundkarte. Wissen Sie zufällig, was das ist?'",
+        text: "Der Chef schaut vorbei. 'Müller! Wir haben noch einen 486er im Keller, der die Türsteuerung regelt. Er verlangt eine IRQ-Zuweisung für die Soundkarte. Wissen Sie zufällig, was das ist?'",
         opts: [
             { 
                 t: "'Kaufen Sie einfach was Neues.'", 
@@ -2029,7 +2029,7 @@ export const server = [
     {
         id: "srv_consultant_fail_1",
         title: "Der teure Berater",
-        text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef stürmt rein: 'WIESO STEHT DER BETRIEB?!'",
+        text: "Ein externer 'Senior Strategy Consultant' (Tagessatz: 2000€) hat gerade den Stecker des Haupt-Servers gezogen, um sein iPhone zu laden. Alles ist aus. Der Chef reißt die Tür auf: 'WIESO STEHT DER BETRIEB?!'",
         opts: [
             { 
                 t: "Stecker wieder reinrammen", 
@@ -2126,7 +2126,7 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Das Budget-Problem",
         reqStory: "srv_dust_2a",
-        text: "Der Chef kommt rein und hört das kraftvolle Surren. 'Hören Sie das, Müller? Methusalem läuft ja wie ein Neuwagen! Da können wir den Antrag für den neuen Server (15.000€) ja stornieren.' Dein Herz bleibt stehen.",
+        text: "Der Chef bleibt im Serverraum stehen und lauscht dem kraftvollen Surren. 'Hören Sie das, Müller? Methusalem läuft ja wie ein Neuwagen! Da können wir den Antrag für den neuen Server (15.000€) ja stornieren.' Dein Herz bleibt stehen.",
         opts: [
             { 
                 t: "Trotzdem auf Neukauf bestehen",
@@ -2304,7 +2304,7 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Das fehlende Laufwerk",
         reqStory: "path_night_shift_loot",
-        text: "Der Chef steht in der Tür. 'Müller? Warum kann das Marketing nicht auf Laufwerk X zugreifen? Da liegen die Kampagnen für morgen!' Er sieht die tote LED.",
+        text: "Der Chef taucht in der Tür auf. 'Müller? Warum kann das Marketing nicht auf Laufwerk X zugreifen? Da liegen die Kampagnen für morgen!' Er sieht die tote LED.",
         opts: [
             { 
                 t: "Heldenhaft das Backup einspielen", 
@@ -2432,7 +2432,7 @@ export const server = [
 		char: "Dr. Wichtig",
         title: "Daten-Verlust",
         reqStory: "path_legacy_tape_fail",
-        text: "Der Chef stürmt rein. 'Katastrophe! Ein Kunde hat alles gelöscht! Wo ist das Backup von gestern?! Wir müssen SOFORT restoren!' Er sieht das leere Laufwerk.",
+        text: "Der Chef bricht förmlich durch die Tür. 'Katastrophe! Ein Kunde hat alles gelöscht! Wo ist das Backup von gestern?! Wir müssen SOFORT restoren!' Er sieht das leere Laufwerk.",
         opts: [
             { 
                 t: "'Das Backup lief nie!'", 
@@ -2512,7 +2512,7 @@ export const server = [
 		char: "Egon",
         title: "Die klemmende Bürotür",
         reqStory: "path_egon_snitch",
-        text: "Du willst morgens in dein Büro. Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
+        text: "Morgens vor deinem Büro: Der Schlüssel passt, aber die Tür rührt sich keinen Millimeter. Im Schlüsselloch steckt... Kaugummi? Egon wischt 10 Meter weiter pfeifend den Boden.",
         opts: [
             { 
                 t: "Tür eintreten", 
@@ -2850,7 +2850,7 @@ export const server = [
         id: "srv_ac_failure_2a",
         title: "Der Paragraphen-Reiter",
         reqStory: "path_ac_door",
-        text: "Der Datenschutzbeauftragte steht im Türrahmen. Er sieht schwitzig und unglücklich aus. Er tippt auf sein Klemmbrett. 'Gemäß ISO 27001 und DSGVO Artikel 32 ist der physische Zugang zu beschränken. Ich muss das melden. Ich hasse meinen Job, aber Vorschrift ist Vorschrift.'",
+        text: "Der Datenschutzbeauftragte schiebt sich in den Türrahmen. Er sieht schwitzig und unglücklich aus. Er tippt auf sein Klemmbrett. 'Gemäß ISO 27001 und DSGVO Artikel 32 ist der physische Zugang zu beschränken. Ich muss das melden. Ich hasse meinen Job, aber Vorschrift ist Vorschrift.'",
         opts: [
             { 
                 t: "'Wollen Sie ein Eis?'", 
@@ -3108,7 +3108,7 @@ export const server = [
         id: "srv_hdd_destroy_2c",
         title: "Datenleck",
         reqStory: "path_hdd_trash",
-        text: "Es ist einiges an Zeit vergangen, seit du den Müll entsorgt hast. Plötzlich eine panische Mail vom Compliance-Officer: 'Auf dem Hof fliegen alte Festplatten herum! Jemand hat die Tonne durchwühlt! Wer hat die nicht vernichtet?!'",
+        text: "Es ist einiges an Zeit vergangen, seit du den Müll entsorgt hast. Dann eine panische Mail vom Compliance-Officer: 'Auf dem Hof fliegen alte Festplatten herum! Jemand hat die Tonne durchwühlt! Wer hat die nicht vernichtet?!'",
         opts: [
             { 
                 t: "'Ich habe Zertifikate über die Vernichtung!'", 
@@ -3131,7 +3131,7 @@ export const server = [
     {
         id: "srv_paywall_1",
         title: "Die Ransomware vom Hersteller",
-        text: "Eine uralte, proprietäre Server-Software verlangt plötzlich eine Kreditkarten-Autorisierung für eine 'zwingende Lizenzverlängerung' (499€), sonst fährt sie in 5 Minuten runter. Der Chef sitzt im Flugzeug und ist nicht erreichbar. Die Buchhaltung hat schon Feierabend.",
+        text: "Eine uralte, proprietäre Server-Software verlangt ab heute eine Kreditkarten-Autorisierung für eine 'zwingende Lizenzverlängerung' (499€), sonst fährt sie in 5 Minuten runter. Der Chef sitzt im Flugzeug und ist nicht erreichbar. Die Buchhaltung hat schon Feierabend.",
         opts: [
             { 
                 t: "Es runterfahren lassen", 
@@ -4204,7 +4204,7 @@ export const server = [
     id: "srv_folder_2009_2b",
     title: "Das Vernichtungsprotokoll",
     reqStory: "path_folder_shred",
-    text: "Frau Elster steht in der Tür, in der Hand eine Inventarliste. 'Herr Müller. Sie haben einen registrierten Ordner vernichtet. Inventarnummer 2009-17. Ich benötige das Vernichtungsprotokoll. Sie HABEN doch ein Vernichtungsprotokoll?'",
+    text: "Frau Elster erscheint, die Inventarliste im Anschlag. 'Herr Müller. Sie haben einen registrierten Ordner vernichtet. Inventarnummer 2009-17. Ich benötige das Vernichtungsprotokoll. Sie HABEN doch ein Vernichtungsprotokoll?'",
     opts: [
         {
             t: "Das Protokoll ordnungsgemäß nachreichen",
@@ -4340,7 +4340,7 @@ export const server = [
     id: "srv_usv_beep_2c",
     title: "Objektive Realität",
     reqStory: "path_usv_ignore",
-    text: "Gabi steht in der Tür: 'Sag mal, piept das bei dir? Ich hör das bis zum Empfang, durch den Lüftungsschacht. Frau Elster hat schon eine Beschwerde-Mail vorformuliert. Ich wollte dich nur vorwarnen.'",
+    text: "Gabi steckt den Kopf zur Tür rein: 'Sag mal, piept das bei dir? Ich hör das bis zum Empfang, durch den Lüftungsschacht. Frau Elster hat schon eine Beschwerde-Mail vorformuliert. Ich wollte dich nur vorwarnen.'",
     opts: [
         {
             t: "Gabi die Kopfhörer schenken",

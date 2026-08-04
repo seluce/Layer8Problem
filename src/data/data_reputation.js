@@ -657,7 +657,7 @@ export const reputation = [
         title: "Finale: Das Bauernopfer",
         reqRep: { "Chantal": 60 },
         reqStory: "path_chantal_enemy",
-        text: "Der Chef stürmt rein. 'Müller! Chantal sagt, SIE sind schuld, dass die Klobrillen nicht 'smart' sind! Sie hätten die Schnittstelle blockiert!' Chantal steht grinsend hinter ihm.",
+        text: "Der Chef poltert herein. 'Müller! Chantal sagt, SIE sind schuld, dass die Klobrillen nicht 'smart' sind! Sie hätten die Schnittstelle blockiert!' Chantal steht grinsend hinter ihm.",
         opts: [
             { 
                 t: "'Das Projekt ist Schwachsinn!'", 
@@ -943,7 +943,7 @@ export const reputation = [
         title: "Das Tribunal",
         reqRep: { "Chantal": -70 },
         reqStory: "path_chantal_war",
-        text: "Mittagspause in der Kantine. Chantal steht auf einem Tisch und hält eine Brandrede gegen dich. Plötzlich kommt Dr. Wichtig rein. Er sieht Chantal auf dem Tisch und läuft rot an. 'FRAU CHANTAL! RUNTER DA! SIND WIR HIER IM ZOO?!'",
+        text: "Mittagspause in der Kantine. Chantal steht auf einem Tisch und hält eine Brandrede gegen dich. Genau in diesem Moment betritt Dr. Wichtig den Raum. Er sieht Chantal auf dem Tisch und läuft rot an. 'FRAU CHANTAL! RUNTER DA! SIND WIR HIER IM ZOO?!'",
         opts: [
             { 
                 t: "'Jawohl, Chef! Sag es ihr!'", 
@@ -1220,7 +1220,7 @@ export const reputation = [
         title: "Finale: Das 'defekte' Ventil",
         reqRep: { "Egon": 50 },
         reqStory: "path_egon_snob",
-        text: "In deinem Büro sind es plötzlich 14 Grad. Du zitterst. Egon lehnt im Flur an seinem Besen und sieht sehr zufrieden aus. 'Tja. Heizung bei dir scheint kaputt zu sein. Ersatzteil kommt... naja... wenn der LKW kommt. Kann dauern.' Er grinst fies.",
+        text: "In deinem Büro sind es seit heute 14 Grad. Du zitterst. Egon lehnt im Flur an seinem Besen und sieht sehr zufrieden aus. 'Tja. Heizung bei dir scheint kaputt zu sein. Ersatzteil kommt... naja... wenn der LKW kommt. Kann dauern.' Er grinst fies.",
         opts: [
             { 
                 t: "Selbst reparieren", 
@@ -1500,7 +1500,7 @@ export const reputation = [
         title: "Eingemauert",
         reqRep: { "Egon": -80 },
         reqStory: "path_egon_war",
-        text: "Du willst aus dem Serverraum, aber die Tür klemmt. Von außen wurde ein Holzbalken dagegen genagelt. Egon ruft gedämpft durch die Tür: 'Schlüssel her, oder du bleibst da drin bis Weihnachten!' Plötzlich hörst du die Stimme des Chefs: 'Nanu? Warum ist die Tür verrammelt?'",
+        text: "Du willst aus dem Serverraum, aber die Tür klemmt. Von außen wurde ein Holzbalken dagegen genagelt. Egon ruft gedämpft durch die Tür: 'Schlüssel her, oder du bleibst da drin bis Weihnachten!' Draußen die Stimme des Chefs: 'Nanu? Warum ist die Tür verrammelt?'",
         opts: [
             { 
                 t: "Egon anschwärzen: 'ER HAT MICH EINGESPERRT!'", 
@@ -1638,7 +1638,7 @@ export const reputation = [
 		char: "Egon",
         title: "Klima-Diktatur",
         reqRep: { "Egon": -10 }, 
-        text: "Du schwitzt im Büro, weil die Sonne reinknallt. Du hast deinen privaten Tisch-Ventilator angemacht. Egon stürmt rein und zieht einfach den Stecker. 'Brandgefahr! Privatgeräte ohne TÜV-Siegel sind strengstens verboten!'",
+        text: "Du schwitzt im Büro, weil die Sonne reinknallt. Du hast deinen privaten Tisch-Ventilator angemacht. Egon marschiert rein und zieht einfach den Stecker. 'Brandgefahr! Privatgeräte ohne TÜV-Siegel sind strengstens verboten!'",
         opts: [
             { 
                 t: "Wieder einstecken, sobald er weg ist", 
@@ -1692,7 +1692,7 @@ export const reputation = [
 		char: "Dr. Wichtig",
         title: "Vision & Panik",
         reqRep: { "Dr. Wichtig": 60 },
-        text: "Dr. Wichtig winkt dich in sein Büro. 'Müller! Ich habe eine Vision: Walking-Meetings auf Laufbändern!' Plötzlich wird er blass und starrt auf sein Tablet. 'Oh Gott... Das Internet! Da ist ein Video... ich singe 'Barbie Girl'?! Das ist ein Deepfake-Angriff der Konkurrenz! Müller, tun Sie was!'",
+        text: "Dr. Wichtig winkt dich in sein Büro. 'Müller! Ich habe eine Vision: Walking-Meetings auf Laufbändern!' Mitten im Satz wird er blass und starrt auf sein Tablet. 'Oh Gott... Das Internet! Da ist ein Video... ich singe 'Barbie Girl'?! Das ist ein Deepfake-Angriff der Konkurrenz! Müller, tun Sie was!'",
         opts: [
             { 
                 t: "'Ich lösche das. Niemand hat es gesehen.'", 
@@ -2061,7 +2061,7 @@ export const reputation = [
         title: "Der Belastungstest",
         reqRep: { "Dr. Wichtig": -80 },
         reqStory: "path_ceo_sabotage",
-        text: "Der Chef stürmt rein und reißt das Haupt-Netzwerkkabel aus der Wand. Funken sprühen. 'So, Herr Super-Admin! Wenn Sie so unverzichtbar sind: Reparieren Sie das in 5 Minuten! Sonst fliegen Sie!' Er stoppt die Zeit.",
+        text: "Der Chef kommt wie ein Gewitter rein und reißt das Haupt-Netzwerkkabel aus der Wand. Funken sprühen. 'So, Herr Super-Admin! Wenn Sie so unverzichtbar sind: Reparieren Sie das in 5 Minuten! Sonst fliegen Sie!' Er stoppt die Zeit.",
         opts: [
             { 
                 t: "'Ups, kaputt.'", 
@@ -2508,7 +2508,7 @@ export const reputation = [
         title: "Die Abmahnung",
         reqRep: { "Frau Elster": -40 },
         reqStory: "path_elster_coins",
-        text: "Ein offizieller Brief liegt auf deinem Tisch. 'Verweis wegen unsachgemäßer Übergabe von Geldmitteln und Gefährdung des Betriebsfriedens.' Frau Elster steht in der Tür und lächelt kühl. 'Ordnung muss sein, Herr Müller.'",
+        text: "Ein offizieller Brief liegt auf deinem Tisch. 'Verweis wegen unsachgemäßer Übergabe von Geldmitteln und Gefährdung des Betriebsfriedens.' Frau Elster lächelt kühl von der Tür herüber. 'Ordnung muss sein, Herr Müller.'",
         opts: [
             { 
                 t: "Entschuldigung heucheln", 
@@ -2870,7 +2870,7 @@ export const reputation = [
         title: "Finale: Entgangener Gewinn",
         reqRep: { "Markus": 50 },
         reqStory: "path_markus_failure",
-        text: "Markus stürmt rein. Er knallt seine Mappe auf deinen Tisch. 'Der Kunde hat abgesagt. Er wollte Innovation sehen, ich konnte ihm nur Sicherheitsprotokolle zeigen. Wissen Sie, was Sie der Firma gerade gekostet haben?!'",
+        text: "Markus knallt erst die Tür auf, dann seine Mappe auf deinen Tisch. 'Der Kunde hat abgesagt. Er wollte Innovation sehen, ich konnte ihm nur Sicherheitsprotokolle zeigen. Wissen Sie, was Sie der Firma gerade gekostet haben?!'",
         opts: [
             { 
                 t: "'Tja, kein Skill, kein Deal.'", 
@@ -3396,7 +3396,7 @@ export const reputation = [
         title: "Finale: Lärmschutz",
         reqRep: { "Gabi": 75 },
         reqStory: "path_gabi_rocker",
-        text: "Mittagspause. Gabi hat Kopfhörer auf und trommelt aggressiv mit zwei Stiften auf dem Tresen. Sie bemerkt dich, grinst und macht die 'Pommesgabel'. Plötzlich stürmt Dr. Wichtig auf den Flur: 'Wer macht hier diesen Höllenlärm?!'",
+        text: "Mittagspause. Gabi hat Kopfhörer auf und trommelt aggressiv mit zwei Stiften auf dem Tresen. Sie bemerkt dich, grinst und macht die 'Pommesgabel'. Dr. Wichtig schießt aus seinem Büro auf den Flur: 'Wer macht hier diesen Höllenlärm?!'",
         opts: [
             { 
                 t: "'Gabi ist schuld.'", 
@@ -3425,7 +3425,7 @@ export const reputation = [
         title: "Finale: Passierschein A38",
         reqRep: { "Gabi": 55 },
         reqStory: "path_gabi_ticket",
-        text: "Du willst kurz raus, um Döner zu holen. Gabi versperrt den Ausgang. 'Hast du ein Ticket für den Gebäudeaustritt? Nein? Tja. Vorschrift ist Vorschrift. Schreib eins an HR, Bearbeitungszeit 3 Werktage.'",
+        text: "Kurzer Döner-Run, dachtest du. Gabi versperrt den Ausgang. 'Hast du ein Ticket für den Gebäudeaustritt? Nein? Tja. Vorschrift ist Vorschrift. Schreib eins an HR, Bearbeitungszeit 3 Werktage.'",
         opts: [
             { 
                 t: "'Ich war ein Idiot.'", 
