@@ -1,5 +1,5 @@
 <!--
-  Der Speiseplan, vormals public/assets/intranet/kantine.html.
+  The canteen menu, formerly public/assets/intranet/kantine.html.
 
   The five working days are data now, the Saturday row stays as markup - it
   carries its own colours and a second line under the day name, and folding

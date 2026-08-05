@@ -1,5 +1,5 @@
 <!--
-  Human Capital, vormals public/assets/intranet/hr.html.
+  Human Capital, formerly public/assets/intranet/hr.html.
 
   Two files sit behind one password. The credentials are broadcast over the
   news ticker for Schnösel, but GlobalCorp hands out the same initial password
@@ -20,7 +20,7 @@
 
     const data = $derived(game.intranetData?.hr ?? null);
 
-    // Ein Passwort für alle. Das ist der Witz, und es ist auch die Regel.
+    // One password for everyone. That is the joke, and it is also the policy.
     const PASSWORD = 'Synergy2026!';
     const ACCOUNTS = {
         j_schnoesel: 'schnoesel',
@@ -206,8 +206,8 @@
         </div>
 
     {:else if data}
-        <!-- Die eigene Akte. Dieselbe Vorlage, andere Zahlen - und die Zahlen
-             stammen aus dem Archiv. -->
+        <!-- Your own record. Same template, different numbers - and the
+             numbers come from the archive. -->
         <div class="mt-8">
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-3xl font-black text-white tracking-tight">Mitarbeiterakte <span class="text-purple-500">#0404-A</span></h1>

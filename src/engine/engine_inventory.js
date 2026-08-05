@@ -2,7 +2,7 @@ import { DB } from '../data.js';
 
 export const inventory = {
 
-    // --- INVENTAR SYSTEM ---
+    // --- INVENTORY SYSTEM ---
     // Contents are rendered by components/InventoryFull.svelte from
     // state.inventory; this only opens the window.
     openInventory: function() {
@@ -18,9 +18,9 @@ export const inventory = {
 		
     // --- ITEM SYSTEM (with confirmation prompt) ---
     
-    // 1. Abfrage: Willst du wirklich?
+    // 1. Ask first: are you sure?
     askUseItem: function(id) {
-        // Cooldown Check VOR dem Modal
+        // Cooldown check BEFORE the modal
         if (id === 'stressball') {
             if (this.state.time - this.state.lastStressballTime < 60) {
                 let wait = 60 - (this.state.time - this.state.lastStressballTime);
@@ -35,7 +35,7 @@ export const inventory = {
             return; // no modal needed, the lore window takes over
         }
         
-        // --- ONE-CLICK ITEM LOGIK ---
+        // --- ONE-CLICK ITEM LOGIC ---
         if (this.state.oneClickItem) {
             this.state.pendingItem = id;
             this.confirmUseItem();
@@ -46,7 +46,7 @@ export const inventory = {
         let itemDB = DB.items[id];
         let title = itemDB ? itemDB.name : id; 
         
-        // --- BILD VS ICON LOGIK ---
+        // --- IMAGE VS ICON LOGIC ---
         let displayContent = "❓";
         if (itemDB) {
             if (itemDB.img) {
@@ -97,7 +97,7 @@ export const inventory = {
         document.getElementById('item-confirm-desc').innerText = desc;
         document.getElementById('item-confirm-warn').innerText = warn;
 
-        // Modal anzeigen
+        // Show the modal
         document.getElementById('item-confirm-modal').classList.remove('hidden');
         document.getElementById('item-confirm-modal').classList.add('flex');
         document.body.classList.add('overflow-hidden');
@@ -114,7 +114,7 @@ export const inventory = {
         // Is the inventory open? Decides whether the view needs refreshing.
         const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
 
-        // --- LOGIK ---
+        // --- LOGIC ---
         
         // A. No consumption (cooldown only)
         if (id === 'stressball') {
@@ -156,7 +156,7 @@ export const inventory = {
         }
 
         this.updateUI(); // Balken updaten
-        if(isInvOpen) this.openInventory(); // Inventar neu zeichnen (Item entfernen)
+        if(isInvOpen) this.openInventory(); // Redraw the inventory (the item is gone)
         this.state.pendingItem = null;
     },
 

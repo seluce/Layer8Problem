@@ -25,7 +25,7 @@ export const core = {
                 if (!target[key]) target[key] = {};
                 this.deepMerge(target[key], source[key]);
             } 
-            // Primitive Werte (Zahlen, Strings, Booleans) einfach zuweisen
+            // Primitive values (numbers, strings, booleans) are simply assigned
             else {
                 target[key] = source[key];
             }
@@ -128,7 +128,7 @@ export const core = {
                 if(!this.state.archive.reputation) this.state.archive.reputation = {};
                 if(!this.state.archive.stats) this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
                 
-                // --- NEU: GARBAGE COLLECTION (Bereinigung alter Daten) ---
+                // --- NEW: GARBAGE COLLECTION (clearing out stale data) ---
                 if (typeof DB !== 'undefined' && DB.items) {
                     this.state.archive.items = this.state.archive.items.filter(id => DB.items[id]);
                 }
@@ -155,7 +155,7 @@ export const core = {
     },
 
     /**
-     * Sichert den laufenden Arbeitstag.
+     * Saves the workday in progress.
      *
      * Saved only while idle - that is, with no event open. Restoring a
      * half-answered conversation would be involved and error-prone; this way
@@ -252,9 +252,9 @@ export const core = {
         this.start();
     },
 
-    /** Verwirft den gesicherten Tag (Tagesende oder bewusster Neustart). */
+    /** Discards the saved day (end of day, or a deliberate restart). */
     clearDay: function() {
-        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* egal */ }
+        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
     },
 
     saveSystem: function() {
@@ -433,7 +433,7 @@ export const core = {
             if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
         } else {
             bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
-            st.streak = 0;   // Eine Serie endet, wo der Tag endet.
+            st.streak = 0;   // A streak ends where the day ends.
         }
 
         if (this.state.rageWarningReceived) bump('ventSaves');
@@ -571,7 +571,7 @@ export const core = {
         }
         // -----------------------------------------------------------------
 		
-		// --- Morgen-Routinen Abfang-Mechanismus ---
+		// --- interception for the morning routines ---
 		if (!this.state.morningMoodShown) {
             this.state.morningMoodShown = true;
             this.triggerMorningMood();
@@ -590,7 +590,7 @@ export const core = {
         this.checkForNews(); // news only fires while idle
     },
 
-    // Blitzschneller Neustart ohne Page-Reload
+    // Instant restart without a page reload
     // Stops every per-day timer and nulls the handle. Nulling matters: an
     // expired handle is still truthy, and triggerEmail() reads it as "a timer
     // is already running" and stops scheduling mail for the rest of the day.
@@ -627,7 +627,7 @@ export const core = {
         // persists, so this records where it stood at the start of today.
         this.state.repAtStart = { ...this.state.reputation };
 
-        // Ein neuer Tag ersetzt jeden gesicherten Zwischenstand.
+        // A new day replaces any saved progress.
         this.clearDay();
 
         // Reset the ticker header immediately
@@ -666,13 +666,13 @@ export const core = {
             this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
         }
 
-        // 3. GHOSTING (Mails ignorieren)
+        // 3. GHOSTING (ignoring mails)
         // Raised to 5 - genuinely dangerous for the radar value
         if(this.state.emailsIgnored >= 5 && !this.hasAch('ach_ignore')) {
             this.unlockAchievement('ach_ignore', '👻 Ghosting-Profi', '5 Mails ignoriert. Deine "Entf"-Taste glüht.');
         }
 
-        // 4. SCHWARZES LOCH (Volles Inventar)
+        // 4. BLACK HOLE (full inventory)
         // Set to 8 - you have to hoard even the junk
         if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
             this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
@@ -712,7 +712,7 @@ export const core = {
 
         // --- LATE GAME CHALLENGES (time dependent) ---
         
-        // NINJA (Heimlich faul) - Ab 14:00
+        // NINJA (secretly lazy) - from 14:00
         if(this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
             this.unlockAchievement('ach_ninja', '🥷 Ninja', 'Fast unsichtbar für den Chef.');
         }
@@ -722,7 +722,7 @@ export const core = {
             this.unlockAchievement('ach_zen', '🕊️ Zen-Meister', '15 Uhr und die Ruhe selbst. Bist du überhaupt wach?');
         }
 
-        // MITARBEITER DES MONATS (Anti-Faul) - Ab 16:00
+        // EMPLOYEE OF THE MONTH (anti-lazy) - from 16:00
         if (this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
             this.unlockAchievement('ach_workaholic', '👔 Streber', 'Du hast tatsächlich gearbeitet? Du machst uns anderen schlecht!');
         }
@@ -900,7 +900,7 @@ export const core = {
     },
 
     /**
-     * Stellt ein Tagesende in die Warteschlange.
+     * Queues up an end of day.
      *
      * The four endings only differed in title, line and cause - the sequence
      * (record the outcome, build the diary, set pendingEnd) was the same all
@@ -1010,7 +1010,7 @@ export const core = {
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
-        // C. Vorwarnung bei sieben Tickets
+        // C. Early warning at seven tickets
         else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
@@ -1084,7 +1084,7 @@ export const core = {
         
         this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");
 		
-		// ---> GALA MUSIK STARTEN <---
+		// ---> START THE GALA MUSIC <---
         this.playMusic('gala');
         this.updatePresence('party');
         
@@ -1143,7 +1143,7 @@ export const core = {
         }
     },
 
-    // --- TAGEBUCH GENERATOR ---
+    // --- DIARY GENERATOR ---
     generateDiaryEntry: function(endReason, partyText = "") {
         const state = this.state;
         
@@ -1339,7 +1339,7 @@ export const core = {
         }
 
         // ==========================================
-        // NACHSATZ: DER BLINDFLUG
+        // POSTSCRIPT: FLYING BLIND
         // ==========================================
         // No achievement, no trophy - a marginal note. Working a whole day
         // without readouts is a different experience from everyone else's,

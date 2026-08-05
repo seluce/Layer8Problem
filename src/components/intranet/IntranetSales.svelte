@@ -1,5 +1,5 @@
 <!--
-  Die Wall of Deals, vormals public/assets/intranet/sales.html.
+  The Wall of Deals, formerly public/assets/intranet/sales.html.
 
   Same five deals as before, but as data rather than five copies of the same
   card - which is what the next step needs, when the wall starts reacting to
@@ -11,8 +11,8 @@
 <script>
     import { state as game } from '../../engine/engine_state.svelte.js';
 
-    // Der zusätzliche Eintrag richtet sich nach Markus' Verhältnis zu dir,
-    // der stornierte Serientermin nach dem Story-Flag von heute.
+    // The extra entry follows Markus' standing with you, the cancelled
+    // recurring meeting follows today's story flag.
     const extra = $derived([game.intranetData?.sales?.extra, game.intranetData?.sales?.phoenix].filter(Boolean));
 
     // Whole class names, mapped from a key. Never assembled from parts, and

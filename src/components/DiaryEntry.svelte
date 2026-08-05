@@ -44,7 +44,7 @@
                         repeating-linear-gradient(0deg, transparent 0 27px, rgba(120,130,150,0.18) 27px 28px),
                         linear-gradient(180deg, #f7f1e0 0%, #efe5cd 100%);">
 
-            <!-- Kopfzeile wie in einem Notizbuch: Wochentag, darunter der Strich -->
+            <!-- Header like a notebook: weekday, with the rule underneath -->
             <div class="flex items-baseline justify-between border-b-2 border-[#c8b99b] pb-1 mb-3">
                 <span class="font-serif font-bold text-[15px] tracking-wide">Logbuch — {weekday}</span>
                 <span class="font-serif text-[11px] text-slate-600 italic">Persönlich</span>

@@ -1,5 +1,5 @@
 <!--
-  Chantals Feel-Good Hub, vormals public/assets/intranet/chantal.html.
+  Chantals Feel-Good Hub, formerly public/assets/intranet/chantal.html.
 
   The top post follows the average reputation across the team; between the
   thresholds of the team view (+20 / -20) Chantal has no reason to write about

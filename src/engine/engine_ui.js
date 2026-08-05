@@ -64,8 +64,8 @@ export const ui = {
 
             // Sort priorities
             const getPrio = (item, id) => {
-                if (id === 'stressball' || !item.keep) return 1; // Prio 1: Cooldowns & Verbrauch
-                if (item.keep && !item.quest) return 2;          // Prio 2: Werkzeuge
+                if (id === 'stressball' || !item.keep) return 1; // Prio 1: cooldowns and consumables
+                if (item.keep && !item.quest) return 2;          // Prio 2: tools
                 return 3;                                        // 3: quest items and trophies
             };
 
@@ -127,10 +127,10 @@ export const ui = {
         const target = document.getElementById('btn-inventory'); 
         if (!target) return;
 
-        // 1. Positionen berechnen
+        // 1. Work out the positions
         const targetRect = target.getBoundingClientRect();
 
-        // Ziel-Mittelpunkt (Mitte des Rucksack-Buttons)
+        // Target centre (middle of the backpack button)
         const targetX = targetRect.left + (targetRect.width / 2);
         const targetY = targetRect.top + (targetRect.height / 2);
 
@@ -138,7 +138,7 @@ export const ui = {
         const startX = targetX;
         const startY = targetY - 60;
 
-        // 2. Geist-Bild erstellen
+        // 2. Create the ghost image
         const ghost = document.createElement('img');
         ghost.src = imgUrl;
         
@@ -155,7 +155,7 @@ export const ui = {
         // Force a reflow so the browser registers the start position
         void ghost.offsetWidth; 
 
-        // 3. Animation starten
+        // 3. Start the animation
         setTimeout(() => {
             // Drops 60px onto the button while shrinking and fading out
             ghost.style.opacity = '0'; 
@@ -540,7 +540,7 @@ export const ui = {
         // page is not the same page.
         const draw = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
-        // Kennzahl des Tages. Anyone playing without a ticket counter must not
+        // Key figure of the day. Anyone playing without a ticket counter must not
         // get it back here - the company simply withholds the figure, which is
         // exactly what it would do.
         const tickets = this.state.tickets ?? 0;
@@ -671,12 +671,12 @@ export const ui = {
 
     // --- VISUAL FEEDBACK (floating text) ---
     showFloatingText: function(elementId, value) {
-        if (value === 0) return; // Nichts anzeigen bei 0
+        if (value === 0) return; // Show nothing at 0
 
         const target = document.getElementById(elementId);
         if (!target) return;
 
-        // 1. Element erstellen (+ oder - davor setzen)
+        // 1. Create the element (prefixed with + or -)
         const floatEl = document.createElement('div');
         const sign = value > 0 ? '+' : '';
         floatEl.innerText = `${sign}${value}`;
@@ -705,7 +705,7 @@ export const ui = {
         // on its way into the backpack.
         floatEl.className = `fixed font-normal text-xl z-9999 pointer-events-none transition-all duration-3000 ease-out ${color}`;
 
-        // 3. Start-Position berechnen
+        // 3. Work out the start position
         const rect = target.getBoundingClientRect();
         floatEl.style.left = (rect.left + rect.width / 2) + 'px';
         floatEl.style.top = (rect.top - 10) + 'px';
@@ -752,7 +752,7 @@ export const ui = {
         this.state.bootLines = [];
         this._setTerminal('flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner', { mode: 'boot' });
 
-        // Weniger "Nerd-Linux", mehr "GlobalCorp Satire"
+        // Less "Nerd-Linux", more "GlobalCorp Satire"
         const bootLines = [
             `GlobalCorp OS - Version ${this.VERSION}`,
             `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
@@ -794,7 +794,7 @@ export const ui = {
             const area = document.getElementById('export-area');
             const msg = document.getElementById('export-msg');
             
-            // Code generieren
+            // Generate the code
             const code = engine.exportSaveGame();
             area.value = code || "Fehler beim Erstellen.";
             msg.style.opacity = '0'; // Reset Message
@@ -844,7 +844,7 @@ export const ui = {
             });
         },
 
-        // Import-Funktion (ROBUST & GEFIXT)
+        // Import function (robust, and fixed)
         performImport: function() {
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
@@ -862,13 +862,13 @@ export const ui = {
             try {
                 let base64, checksum;
 
-                // 2. STRATEGIE: Trennen am '--' (Neues Format)
+                // 2. STRATEGY: split at '--' (new format)
                 if (code.includes('--')) {
                     const parts = code.split('--');
                     base64 = parts[0];
                     checksum = parts[1];
                 } 
-                // 3. FALLBACK: Trennen am letzten '-' (Altes Format oder manuell bearbeitet)
+                // 3. FALLBACK: split at the last '-' (old format, or hand-edited)
                 else if (code.includes('-')) {
                     const lastDash = code.lastIndexOf('-');
                     base64 = code.substring(0, lastDash);
@@ -902,7 +902,7 @@ export const ui = {
                 // Merge the imported save into it without losing new fields
                 const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
 
-                // Speichern des reparierten/gemergten Archivs
+                // Save the repaired and merged archive
                 localStorage.setItem(engine.KEYS.archive, JSON.stringify(mergedArchive));
 
                 // Only ever raise the tutorial flag, never lower it.
@@ -1385,7 +1385,7 @@ export const ui = {
             }
         }
 
-        // 3. Erfolgreich speichern
+        // 3. Saved successfully
         this.state.keyBinds[this.state.actionToBind] = pressedKey;
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
@@ -1471,7 +1471,7 @@ export const ui = {
             const catVal = document.getElementById('report-category')?.value || "Unbekannt";
             const descVal = document.getElementById('report-desc')?.value || "";
 
-            // Leere Beschreibung abfangen (Optional, aber gut)
+            // Catch an empty description (optional, but worth it)
             if (descVal.trim() === "") {
                 alert("Bitte gib eine kurze Beschreibung ein.");
                 return;

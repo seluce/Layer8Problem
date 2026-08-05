@@ -1,5 +1,5 @@
 <!--
-  Startseite des Intranets, vormals public/assets/intranet/index.html.
+  The intranet home page, formerly public/assets/intranet/index.html.
 
   Three things here know how the day is going: the employee of the month
   (highest reputation, only above the FRIENDLY threshold), the company feed

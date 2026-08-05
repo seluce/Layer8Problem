@@ -55,7 +55,7 @@
                   font-size="8" fill="#64748b" font-family="monospace">{v}</text>
         {/each}
 
-        <!-- Zeitachse -->
+        <!-- Time axis -->
         {#each hours as t}
             <line x1={x(t)} y1={PAD.t} x2={x(t)} y2={H - PAD.b}
                   stroke="#1e293b" stroke-width="1" />
@@ -63,7 +63,7 @@
                   font-size="8" fill="#64748b" font-family="monospace">{pad(t / 60)}</text>
         {/each}
 
-        <!-- Die drei Kurven -->
+        <!-- The three curves -->
         {#each SERIES as s}
             <polyline points={line(s.key)} fill="none" stroke={s.color}
                       stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />

@@ -54,7 +54,7 @@ const tutorial = {
                 if (origOpenTeam) origOpenTeam.apply(this, args);
                 if (tutorial.isActive) {
                     tutorial.hidePointer(); 
-                    tutorial.clearGlows(); // Hintergrund stumm schalten
+                    tutorial.clearGlows(); // Mute the background
                     if (tutorial.step === 9) tutorial.advance(); 
                 }
             };
@@ -81,7 +81,7 @@ const tutorial = {
                         engine.log("H.A.L.G.E.R.D.: Fokus, Mitarbeiter #404! Klicke auf den Donut.", "text-red-500 font-bold");
                         return; // modal stays closed
                     }
-                    // Ansonsten: Modal darf aufgehen -> Hintergrund leise schalten
+                    // Otherwise the modal may open -> turn the background down
                     tutorial.hidePointer();
                     tutorial.clearGlows();
                 }
@@ -282,7 +282,7 @@ const tutorial = {
         
         engine.showOverlay(pointer, false);
         
-        // 3. Position sofort einmal berechnen
+        // 3. Work the position out once, right away
         this.updatePosition();
 
         // 4. Recalculate the position whenever the page scrolls

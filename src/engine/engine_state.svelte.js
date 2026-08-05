@@ -35,7 +35,7 @@ export function freshDay(mult = 1.0) {
 
         blindRun: false,
 
-        // Wurde der 13:37-Moment heute schon gezeigt? (siehe checkLeetMoment)
+        // Has the 13:37 moment already been shown today? (see checkLeetMoment)
         leetSeen: false,
 
         // Stat curve of the day, one point per decision. The end screen draws
@@ -191,7 +191,7 @@ export const state = $state({
     // someone opens it.
     loreOpen: false,
 
-    // Das Firmen-Intranet. components/intranet/IntranetView.svelte renders the
+    // The company intranet. components/intranet/IntranetView.svelte renders the
     // browser window and the pages inside it; nothing exists until it opens.
     intranetOpen: false,
 

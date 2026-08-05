@@ -74,12 +74,12 @@ engine.init();
 document.addEventListener('keydown', (event) => {
     // 1. Is the player currently rebinding a key?
     if (engine.state.isBindingKey) {
-        event.preventDefault(); // Verhindert z.B. Scrollen bei Leertaste
+        event.preventDefault(); // Prevents scrolling on space, for one
         engine.finishBindingKey(event.key);
         return;
     }
 
-    // Ignoriere Eingaben in Formularen
+    // Ignore keystrokes inside form fields
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
     let key = event.key.toLowerCase();
@@ -169,14 +169,14 @@ document.addEventListener('keydown', (event) => {
             if (startBtn) { startBtn.click(); return; }
         }
         
-        // B: Modals (Abmahnung, Ende, Item-Confirm)
+        // B: modals (warning letter, ending, item confirm)
         const okBtn = document.querySelector('#modal-content button');
         if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
         // The item confirmation modal - the green "use" button is the second one in the grid
         const itemUseBtn = document.querySelector('#item-confirm-modal button.bg-green-600');
         if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
 
-        // C: Handy-Benachrichtigung annehmen
+        // C: accept the phone notification
         const phoneNotif = document.getElementById('phone-notification');
         if (phoneNotif && phoneNotif.offsetParent !== null && !phoneNotif.classList.contains('hidden')) {
             phoneNotif.click();

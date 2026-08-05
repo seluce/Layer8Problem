@@ -6,9 +6,9 @@ export const events = {
     // How often an unlocked follow-up beats a fresh event. See pickFromPool.
     FOLLOWUP_CHANCE: 0.30,
 
-    // --- E-MAIL SYSTEM (Clean Light / Logik Fixes) ---
+    // --- EMAIL SYSTEM (clean light / logic fixes) ---
     checkRandomEmail: function() {
-        // 1. Grund-Checks (Offen? Unterwegs? Tutorial?)
+        // 1. Basic checks (open? on the move? tutorial?)
         if(this.state.isEmailOpen || this.state.emailPending) return; 
         if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
         if (this.state.isPartyMode) return;
@@ -29,12 +29,12 @@ export const events = {
         if (id.includes('boss')) return;
         if (id.includes('lunch')) return;
 
-        // 3. SPAM-SCHUTZ (Letztes Event)
+        // 3. SPAM GUARD (last event)
         if (this.state.lastEmailEventId === this.state.currentEventId) return;
 
-        // 4. Wahrscheinlichkeit (vorher 20%, jetzt 15% Basis)
+        // 4. Probability (was 20%, now a 15% base)
         let baseChance = 0.15 * this.state.difficultyMult; 
-        // Vorher +5% pro Ticket, jetzt +4% pro Ticket.
+        // Was +5% per ticket, now +4% per ticket.
         let chance = baseChance + (this.state.tickets * 0.04); 
         
         // Cap: no matter how many tickets, the per-click chance never exceeds 35%
@@ -196,7 +196,7 @@ export const events = {
     },
 
     resolveEmail: function(opt, timeout = false) {
-        // NEUER SPAM-SCHUTZ ---
+        // NEW SPAM GUARD ---
         if (!this.state.isEmailOpen) return;
         // -------------------------
         
@@ -211,12 +211,12 @@ export const events = {
             this.hideOverlay(modal);
         }
         
-        // --- ANPASSUNG 1: System sofort blockieren ---
+        // --- CHANGE 1: block the system straight away ---
         this.state.isEmailOpen = false;
         this.state.emailPending = true; // Blockiert checkRandomEmail
         // -------------------------------------------
 
-        // Game Logik
+        // Game logic
         let message = "";
         let color = "";
 
@@ -261,17 +261,17 @@ export const events = {
 
             this.grantItem(opt.loot, 'ERHALTEN');
 
-            // 2. ZEIT LOGIK (opt.m)
+            // 2. TIME LOGIC (opt.m)
             if (opt.m) {
                 const before = this.state.time;
                 this.state.time += opt.m;
                 this.checkLeetMoment(before);
             }
 
-            // 3. RUF LOGIK (opt.rep)
+            // 3. REPUTATION LOGIC (opt.rep)
             this.applyReputation(opt.rep);
 
-            // 4. TEXT LOGIK (opt.r)
+            // 4. TEXT LOGIC (opt.r)
             if (opt.r) {
                 if (opt.ignoreEmail) {
                     setTimeout(() => this.log(`${opt.r}`, "text-slate-500 italic"), 500);
@@ -326,7 +326,7 @@ export const events = {
             } else {
                 this.log("H.A.L.G.E.R.D.: Diese Aktion ist in der aktuellen Simulationsphase nicht vorgesehen.", "text-red-500");
             }
-            return; // Normalen Trigger abbrechen!
+            return; // Cancel the normal trigger!
         }
         
         this.markDayStarted();
@@ -430,7 +430,7 @@ export const events = {
         // 3. THE ACTUAL ACTION (nothing intercepted it)
         // ---------------------------------------------------------
         
-        // Sonderfall: Handy/Sidequest Logik
+        // Special case: phone and sidequest logic
         if (type === 'sidequest') { 
             this.handleSideQuest(); 
             return; 
@@ -454,7 +454,7 @@ export const events = {
         // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
         const ev = this.pickFromPool(pool);
         
-        // Event starten
+        // Start the event
         this.renderTerminal(ev, type);
     },
 
@@ -541,11 +541,11 @@ export const events = {
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
             
-            // Notification anzeigen
+            // Show the notification
             this.state.phone.notification = true;
             this.log("Handy: " + ev.title);
             
-            // --- Handy einblenden & hinscrollen ---
+            // --- show the phone and scroll to it ---
             this.updatePhoneVisibility();
             setTimeout(() => {
                 const phone = document.getElementById('smartphone');
@@ -585,24 +585,24 @@ export const events = {
         }
     },
 
-    // 1. NEUES SYSTEM (Story-Ketten)
+    // 1. NEW SYSTEM (story chains)
     renderChainNode: function(nodeId) {
         const ev = this.state.currentChainEvent;
         const type = this.state.currentChainType;
         const node = ev.nodes[nodeId];
         if (!node) { console.error("Node not found:", nodeId); return; }
 
-        // Gemeinsames HTML generieren
+        // Build the shared HTML
         this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char);
     },
 
-    // 2. ALTES SYSTEM (Einfache Events)
+    // 2. OLD SYSTEM (simple events)
     // Hands the event to the terminal component, which renders it.
     renderEventHTML: function(ev, type) {
         this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, ev.char);
     },
 
-    // 3. GEMEINSAMES HTML-TEMPLATE
+    // 3. SHARED HTML TEMPLATE
     // Routes a chosen option to whatever handles it.
     chooseOption: function(opt) {
         const ev = this.state.terminal.event ?? {};
@@ -689,7 +689,7 @@ export const events = {
 
         this.playAudio('ui');
 	
-        // --- BUGFIX: TIMER STOPPEN ---
+        // --- BUGFIX: STOP THE TIMER ---
         if (this.state.bossTimer) {
             clearInterval(this.state.bossTimer);
             this.state.bossTimer = null;
@@ -744,7 +744,7 @@ export const events = {
             this.state.lunchDone = true;
         }
 
-        // --- SCHWIERIGKEIT & FAULHEIT LOGIK ---
+        // --- DIFFICULTY AND LAZINESS LOGIC ---
         // Wednesday hardening: the data values are calibrated a little too
         // softly for normal (day simulation: 87% win rate for an attentive
         // casual player). A 10% surcharge on the formulas alone brings that to
@@ -777,12 +777,12 @@ export const events = {
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
         
-        // --- REPUTATION LOGIK  ---
+        // --- REPUTATION LOGIC  ---
         // repData arrives as the object straight from the data file. It used to
         // travel through an HTML attribute and be JSON-parsed back out here.
         if (repData && typeof repData === 'object') this.applyReputation(repData);
 
-        // Story Flag setzen
+        // Set the story flag
         if (next && next !== "") {
             this.state.storyFlags[next] = true;
         }
@@ -805,7 +805,7 @@ export const events = {
         }
         // --------------------------------
 
-        // --- ITEM LOGIK: LOOT ---
+        // --- ITEM LOGIC: LOOT ---
         this.grantItem(loot, 'ITEM');
         
         this.log(res);
@@ -821,9 +821,9 @@ export const events = {
             if (this.state.pendingEnd.isParty) {
                 btnAction = "startParty";
                 btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
-                btnColor = "bg-pink-600 hover:bg-pink-500"; // Ein fieses Pink als kleiner Hinweis
+                btnColor = "bg-pink-600 hover:bg-pink-500"; // A nasty pink as a small hint
             } else {
-                // --- Normales Ende ---
+                // --- normal ending ---
                 btnAction = "finishGame";
                 if (this.state.pendingEnd.isWin) {
                     btnText = "FEIERABEND MACHEN 🎉";
@@ -855,7 +855,7 @@ export const events = {
     },
 
     /**
-     * Der Morgen-Bildschirm.
+     * The morning screen.
      *
      * `forceEffect` is for testing only: it narrows the draw to one category
      * so an effect can be triggered on purpose instead of rolled for. From the
@@ -972,7 +972,7 @@ export const events = {
                 this.state.excusesLeft--;
                 statHtml = "<span class='text-red-400 font-bold'>Eine Ausrede weniger als sonst</span>";
             } else {
-                // Nichts mehr zu streichen - der Tag beginnt trotzdem schief
+                // Nothing left to cancel - the day starts badly all the same
                 this.state.cr += moodVal;
                 statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
             }
@@ -1029,10 +1029,10 @@ export const events = {
         }
         this.state.isPartyMode = false;
         
-        // --- GALA-ERFOLG FREISCHALTEN ---
+        // --- UNLOCK THE GALA ACHIEVEMENT ---
         this.unlockAchievement('ach_party', '🎉 Synergy-Veteran', 'Du hast die legendäre Firmenfeier überlebt.');
 
-        // 2. Party-Report Box zusammenbauen
+        // 2. Assemble the party report box
         let diffName = "MITTWOCH (Normal)";
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
@@ -1060,7 +1060,7 @@ export const events = {
 
         let fullReport = statsHTML + achHTML;
 
-        // 3. Tagebuch generieren (inkl. des Party-Endes)
+        // 3. Generate the diary (including the party ending)
         this.recordDayResult('survived');
         let diary = this.generateDiaryEntry("PARTY", text);
 
@@ -1239,7 +1239,7 @@ export const events = {
                 loadingId = this.addPhoneMessage({ side: 'typing' });
             }
 
-            // Timer (entweder 0 oder 1.5s)
+            // Timer (either 0 or 1.5s)
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             this.state.phoneTypeTimer = setTimeout(() => {
                 if (loadingId) this.removePhoneMessage(loadingId);

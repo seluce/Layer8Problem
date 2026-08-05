@@ -24,7 +24,7 @@ export const audio = {
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
             
-            // NEU: Den Slider-Wert auslesen (0.0 bis 1.0)        
+            // NEW: read the slider value (0.0 to 1.0)        
             osc.connect(gain);
             gain.connect(this.audioCtx.destination);
             
@@ -92,7 +92,7 @@ export const audio = {
         }
     },
 	
-    // --- MUSIK SYSTEM ---
+    // --- MUSIC SYSTEM ---
     bgmTracks: null,
 
     initMusic: function() {
