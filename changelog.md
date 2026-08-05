@@ -17,6 +17,8 @@ Anzeige & Layout:
 Fehlerkorrekturen:
 * Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Die Option stand an der falschen Stelle und hatte ihr Verhalten verloren; schuld waren zwei unsichtbare Sonderzeichen vor der Beschriftung.
 * Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen. Ein Tippfehler im Feldnamen hatte die Wirkung stillschweigend verschluckt.
+* Im Rucksack lassen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger öffnen. Bisher erschienen sie nur unter dem Mauszeiger - wer am Handy oder auf dem Steam Deck spielt, hat nie erfahren, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt die Beschreibung, ein zweiter Tipp benutzt den Gegenstand wie gehabt, ein Tipp daneben schließt sie wieder.
+* Auf schmalen Bildschirmen ragten diese Beschreibungen am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 
 Für Entwickler:
