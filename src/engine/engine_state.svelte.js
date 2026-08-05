@@ -175,6 +175,14 @@ export const DAY_TIMERS = [
  *
  * Below the spread: everything that must OUTLIVE the day.
  */
+/**
+ * From this many open tickets on, the day is visibly slipping: the counter in
+ * the header pulses and the phone in the action bar is highlighted. One
+ * constant for both, because two of them drifted apart once already - the
+ * header warned from eight, the button from seven.
+ */
+export const TICKET_WARNING = 8;
+
 export const state = $state({
 
     ...freshDay(1.0),

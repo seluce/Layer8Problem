@@ -10,7 +10,7 @@
   between body and the grid and change the layout.
 -->
 <script>
-    import { state } from '../engine/engine_state.svelte.js';
+    import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
 
     const pad = (n) => String(n).padStart(2, '0');
 
@@ -49,7 +49,7 @@
       the responsive pair and appending only the pulse class fixes that.
     -->
     <div id="ticket-count"
-         class="text-3xl lg:text-4xl font-black text-white ticket-counter {state.tickets > 7 ? 'ticket-pulse' : ''}">
+         class="text-3xl lg:text-4xl font-black text-white ticket-counter {state.tickets >= TICKET_WARNING ? 'ticket-pulse' : ''}">
         {ticketText}
     </div>
     <div class="text-[8px] text-slate-500">Max: 10</div>

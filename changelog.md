@@ -21,6 +21,7 @@ Anzeige & Layout:
 Fehlerkorrekturen:
 * Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Die Option stand an der falschen Stelle und hatte ihr Verhalten verloren; schuld waren zwei unsichtbare Sonderzeichen vor der Beschriftung.
 * Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen. Ein Tippfehler im Feldnamen hatte die Wirkung stillschweigend verschluckt.
+* Der Anruf-Knopf sprang schon bei sieben offenen Tickets auf Blau, der Zähler oben blinkte erst ab acht. Beide reagieren jetzt auf dieselbe Zahl - ab acht.
 * Im Archiv schimmerte hinter jedem Gegenstand sein Symbol durch. Es lag dort dauerhaft unter dem Bild, als Platzhalter für den Fall einer fehlenden Datei - und war bei allen freigestellten Bildern sichtbar. Jetzt wird genau eines von beiden gezeichnet: das Bild, und nur wenn es fehlt, das Symbol. Die übrigen Ansichten waren davon nie betroffen.
 * Auf schmalen Bildschirmen ragten die Gegenstands-Beschreibungen im Rucksack am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
 * Das Tagebuch verschluckte Begegnungen. Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste davon zu lesen - der Rest fiel beim Zusammensetzen des Satzes still unter den Tisch. Jetzt steht dort, was der Tag hergegeben hat.

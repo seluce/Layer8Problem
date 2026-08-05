@@ -642,8 +642,8 @@ for (const ev of DB.emails) {
         else checkText(ctx, `lines[${k}]`, line);
       });
 
-      // Namen, die es nicht gibt: ach('ach_tippfehler') zündet sonst nie und
-      // fällt nur dadurch auf, dass eine Zeile nie erscheint.
+      // Names that do not exist: ach('ach_typo') would never fire, and the only
+      // symptom is a line that never shows up.
       const source = f.when.toString();
       for (const [, id] of source.matchAll(/\bach\(\s*['"]([^'"]+)['"]\s*\)/g))
         if (!achIds.has(id)) err(`${ctx}: Erfolg "${id}" existiert nicht`);
@@ -657,7 +657,7 @@ for (const ev of DB.emails) {
       }
       if (fitted === 0) warn(`${ctx}: die Bedingung passt auf keinen denkbaren Tag — die Zeilen erscheinen nie`);
 
-      // Platzhalter: der Auftakt einer Aufzählung braucht {list}.
+      // Placeholders: the sentence around a list needs its {list}.
       if (Object.values(LIST_SLOTS).includes(slot))
         f.lines.forEach((line, k) => {
           if (!line.includes('{list}')) err(`${ctx} lines[${k}]: {list} fehlt — die Aufzählung hätte keinen Platz`);
@@ -669,11 +669,11 @@ for (const ev of DB.emails) {
     });
   }
 
-  // Ein Wahl-Platz ohne passenden Baustein liefert eine leere Zeile. Fuer den
-  // Abschluss ist das der schlimmste Fall: der Tag endet ohne Schlusssatz.
+  // A choice slot with no fitting fragment yields an empty line. For the ending
+  // that is the worst case: the day would close without a closing sentence.
   for (const slot of CHOICE_SLOTS) {
     if (!DB.diary[slot]) { err(`[diary/${slot}]: Platz fehlt`); continue; }
-    if (slot === 'postscript') continue;   // darf leer bleiben, ist ein Nachsatz
+    if (slot === 'postscript') continue;   // may stay empty, it is an afterword
     const orphans = days.filter(d => !DB.diary[slot].some(f => { try { return f.when(d); } catch { return false; } }));
     if (orphans.length) {
       const ends = [...new Set(orphans.map(d => d.end))].join(', ');
@@ -681,7 +681,7 @@ for (const ev of DB.emails) {
     }
   }
 
-  // Jeder Sammelplatz braucht seinen Auftakt, sonst stehen die Klauseln nackt da.
+  // Every collecting slot needs its intro, or the clauses stand there bare.
   for (const [listSlot, introSlot] of Object.entries(LIST_SLOTS)) {
     if (!DB.diary[listSlot]) err(`[diary/${listSlot}]: Platz fehlt`);
     if (!DB.diary[introSlot]) err(`[diary/${introSlot}]: Auftakt zu ${listSlot} fehlt`);
