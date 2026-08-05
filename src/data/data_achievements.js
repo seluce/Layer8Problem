@@ -15,7 +15,7 @@ export const achievements = [
 	{ id: "ach_rich", icon: "💸", img: "assets/img/achievements/ach_rich.webp", title: "Der Millionär", desc: "Du hast dem Prinzen vertraut. Kündigung ist raus!", hint: "Ignoriere den gesunden Menschenverstand und den Spam-Filter." },
 	{ id: "ach_hacker", icon: "💻", img: "assets/img/achievements/ach_hacker.webp", title: "Mr. Robot", desc: "Root-Rechte erhalten. Jetzt gehört das Netzwerk dir.", hint: "Finde einen Weg, dir illegale Admin-Rechte zu verschaffen." },
 
-	// END GAME / ZEITABHÄNGIG
+	// END GAME / TIME-DEPENDENT
 	{ id: "ach_ninja", icon: "🥷", img: "assets/img/achievements/ach_ninja.webp", title: "Ninja", desc: "Fast unsichtbar für den Chef (bis 14 Uhr unbemerkt).", hint: "Bleib bis zum frühen Nachmittag komplett unter dem Radar." },
 	{ id: "ach_zen", icon: "🕊️", img: "assets/img/achievements/ach_zen.webp", title: "Zen-Meister", desc: "15 Uhr und die Ruhe selbst (0 Aggro). Bist du überhaupt wach?", hint: "Erreiche den Nachmittag mit absoluter innerer Seelenruhe." },
 	{ id: "ach_workaholic", icon: "👔", img: "assets/img/achievements/ach_workaholic.webp", title: "Streber", desc: "Bis 16 Uhr fast keine Faulheit. Du machst uns anderen schlecht!", hint: "Arbeite hart und halte deine Faulheit bis kurz vor Feierabend extrem niedrig." },

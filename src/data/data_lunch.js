@@ -1,11 +1,11 @@
 /**
- * Die Mittagspause.
+ * The lunch break.
  *
- * Lag bis v4.0.0 als lunchEvents in data_special.js. Mit 44 Einträgen ist sie
- * längst ein vollwertiger Ereignis-Pool wie Kaffee oder Serverraum und wird
- * über triggerLunch() auch genau so verwendet — also gehört sie in eine
- * eigene Datei und wird wie die anderen erst bei Bedarf geladen. Gebraucht
- * wird sie frühestens um zwölf; im ersten Ladevorgang hat sie nichts verloren.
+ * Sat in data_special.js as lunchEvents until v4.0.0. With 44 entries it has
+ * long been a full event pool like coffee or the server room, and
+ * triggerLunch() uses it exactly that way - so it belongs in a file of its own
+ * and loads on demand like the others. It is needed at twelve at the earliest;
+ * it has no business in the first load.
  */
 export const lunch = [
 		{

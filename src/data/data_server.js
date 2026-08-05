@@ -3702,11 +3702,11 @@ export const server = [
 },
 
 /* ============================================================
-   SERVERRAUM-WELLE 1 (v4.0.0)
-   Fünf Basis-Events mit den bislang im Serverraum fehlenden
-   Charakteren (Chantal, Markus, Dr. Wichtig, Gabi) plus ein
-   charakterfreies Fund-Event als zweite admin_pw-Quelle.
-   Jede Option setzt ein Flag, jedes Flag hat ein Folge-Event.
+   SERVER ROOM WAVE 1 (v4.0.0)
+   Five base events with the characters the server room was
+   missing so far (Chantal, Markus, Dr. Wichtig, Gabi) plus one
+   find without a character as a second source of admin_pw.
+   Every option sets a flag, every flag has a follow-up.
    ============================================================ */
 
 {
@@ -4254,11 +4254,12 @@ export const server = [
 
 
 /* ============================================================
-   SERVERRAUM-WELLE 2 (v4.0.0)
-   USV, Egons Schattenwirtschaft, Patchpanel, der fremde Stick
-   und das Doku-To-do. Neue Loot-Quellen für fire_ext (2x),
-   cable und usb_stick; Gates auf cable und headphones.
-   Gabi und Kevin bekommen mehr (überwiegend positive) Ruf-Stellen.
+   SERVER ROOM WAVE 2 (v4.0.0)
+   The UPS, Egon's shadow economy, the patch panel, the stranger's
+   stick and the documentation to-do. New loot sources for
+   fire_ext (2x), cable and usb_stick; gates on cable and
+   headphones. Gabi and Kevin get more reputation moments, mostly
+   positive ones.
    ============================================================ */
 
 {
@@ -4774,8 +4775,8 @@ export const server = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Die vernünftig klingende Antwort ist die
-   teure. Kein kostenloser Ausweg.
+   TRAPS (v4.0.0): the answer that sounds sensible is the
+   expensive one. No free way out.
    ============================================================ */
 
 {

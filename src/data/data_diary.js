@@ -33,7 +33,7 @@
 export const diary = {
     // Opening line: the mood of the day. First match wins, so the fallback goes last.
     mood: [
-        // Wochentag statt Erfolg: greift auch an Tagen, an denen nichts Besonderes passiert ist.
+        // Weekday rather than achievement: fits days on which nothing special happened.
         {
             id: "mood_monday", rank: 1, when: d => d.difficulty === 'hard',
             lines: [
@@ -519,7 +519,7 @@ export const diary = {
     // One concrete figure from the day. A choice slot on purpose: three
     // numbers in a row would read like a report, not like a diary.
     detail: [
-        // Konkrete Zahlen des Tages. Genau eine davon kommt in den Eintrag.
+        // The concrete figures of the day. Exactly one of them makes the entry.
         {
             id: "detail_coffee_many", rank: 2, when: d => d.coffee >= 4,
             lines: [
@@ -606,7 +606,7 @@ export const diary = {
     // skipping work; whoever picks this up next should write the missing ones
     // rather than add more fragments.
     people: [
-        // Wer sich heute bewegt hat - Ruf gegen den Stand von heute Morgen.
+        // Who moved today - reputation against where it stood this morning.
         {
             id: "people_both", rank: 3, when: d => d.upBy >= 5 && d.downBy >= 5,
             lines: [

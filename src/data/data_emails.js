@@ -1547,14 +1547,14 @@ export const emails = [
 
 
 /* ============================================================
-   MAIL-WELLE (v4.0.0)
-   Frau Elster bekommt ihre ersten Mails überhaupt (Beleg-Saga
-   und die Inventur mit Kontrollposition 87), Markus seine
-   Siri-Diktate und den CC-Loop, Kevin den Anhang-Klassiker.
-   Dazu charakterfreie Büro-Post: Reply-All-Lasagne, der
-   Phishing-Test der Konzernzentrale, die 14-Ebenen-Weiterleitung
-   und die Abwesenheitsnotiz-Endlosschleife. Sechs Ketten via
-   nextEmail. Erstmals tragen Mails kleine Ruf-Werte (±3-5).
+   MAIL WAVE (v4.0.0)
+   Frau Elster gets her first mails at all (the receipt saga and
+   the stocktake with control item 87), Markus his Siri dictations
+   and the CC loop, Kevin the attachment classic. Plus office post
+   without a character attached: the reply-all lasagne, head
+   office's phishing test, the 14-level forward and the
+   out-of-office loop. Six chains via nextEmail. For the first
+   time mails carry small reputation values (±3-5).
    ============================================================ */
 
 {
@@ -1952,8 +1952,8 @@ export const emails = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Postfach-Köder - die dienstbeflissene
-   Antwort ist die teure.
+   TRAPS (v4.0.0): inbox bait - the dutiful reply is the
+   expensive one.
    ============================================================ */
 
 {

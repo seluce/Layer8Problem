@@ -53,13 +53,13 @@ export const tutorial = [
 			{
 				t: "Schnell einen Donut greifen und verschwinden.",
 				m: 5, f: 5, a: 0, c: 5,
-				loot: "donut", // <-- Garantiert den Donut
+				loot: "donut", // <-- guarantees the donut
 				r: "Du hast dir einen Donut gesichert, wurdest aber leicht komisch angeschaut."
 			},
 			{
 				t: "Den Kollegen in ein Gespräch verwickeln und unauffällig zugreifen.",
 				m: 10, f: 10, a: 0, c: 0,
-				loot: "donut", // <-- Garantiert den Donut
+				loot: "donut", // <-- guarantees the donut
 				r: "Das Gespräch war quälend langweilig, aber der Donut gehört dir!"
 			}
 		]

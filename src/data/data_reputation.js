@@ -1,6 +1,6 @@
 export const reputation = [
 
-    // === KEVIN: DER AZUBI ===
+    // === KEVIN: THE APPRENTICE ===
 	{
         id: "rep_kevin_story_1",
 	    char: "Kevin",
@@ -562,7 +562,7 @@ export const reputation = [
             }
         ]
     },
-    // === CHANTAL: DIE MARKETING-QUEEN  ===
+    // === CHANTAL: THE MARKETING QUEEN  ===
     {
         id: "rep_chantal_story_1",
 		char: "Chantal",
@@ -1126,7 +1126,7 @@ export const reputation = [
             }
         ]
     },
-    // === EGON: DER HÜTER DER SCHLÜSSEL  ===
+    // === EGON: THE KEEPER OF THE KEYS  ===
     {
         id: "rep_egon_story_1",
 		char: "Egon",
@@ -1686,7 +1686,7 @@ export const reputation = [
             }
         ]
     },
-    // === DR. WICHTIG: DER VISIONÄR ===
+    // === DR. WICHTIG: THE VISIONARY ===
     {
         id: "rep_ceo_story_1",
 		char: "Dr. Wichtig",
@@ -2245,7 +2245,7 @@ export const reputation = [
             }
         ]
     },
-    // === FRAU ELSTER: DIE HÜTERIN DER ZAHLEN ===
+    // === FRAU ELSTER: THE KEEPER OF THE NUMBERS ===
     {
         id: "rep_elster_story_1",
 		char: "Frau Elster",
@@ -2804,7 +2804,7 @@ export const reputation = [
             }
         ]
     },
-    // === MARKUS: DER CLOSER ===
+    // === MARKUS: THE CLOSER ===
     {
         id: "rep_markus_story_1",
 		char: "Markus",
@@ -3359,7 +3359,7 @@ export const reputation = [
             }
         ]
     },
-    // === GABI: DIE SEELE DER FIRMA ===
+    // === GABI: THE SOUL OF THE COMPANY ===
     {
         id: "rep_gabi_story_1",
 		char: "Gabi",

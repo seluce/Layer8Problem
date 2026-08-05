@@ -2120,13 +2120,13 @@ export const calls = [
 
 
 /* ============================================================
-   ANRUFE-WELLE (v4.0.0)
-   Zwei neue Basis-Anrufe (Markus live beim Kunden als
-   Node-Gespräch, die Provider-Warteschleife) plus die
-   Fortsetzungen für neun nachgerüstete Pfade in den
-   Bestands-Anrufen call_junior, call_boss_tunnel,
-   call_elster_excel und call_phish. Der Anruf-Pool hatte
-   71 Prozent Sackgassen - das hier ist der Anfang vom Ende.
+   CALL WAVE (v4.0.0)
+   Two new base calls (Markus live at a customer site as a node
+   conversation, the provider hold queue) plus follow-ups for
+   nine paths retrofitted into the existing calls call_junior,
+   call_boss_tunnel, call_elster_excel and call_phish. 71 per
+   cent of the call pool were dead ends - this is where that
+   starts to end.
    ============================================================ */
 
 {
@@ -2580,8 +2580,8 @@ export const calls = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Anrufe, bei denen Pflichtbewusstsein der
-   teuerste Reflex ist.
+   TRAPS (v4.0.0): calls where a sense of duty is the most
+   expensive reflex.
    ============================================================ */
 
 {

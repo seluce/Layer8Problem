@@ -36,7 +36,7 @@ export const moods = [
 	{ id: "mood_lazy_9", effect: "lazy", title: "Existenzkrise", text: "Du hast auf dem Weg zur Arbeit einen Podcast über 'Passive Einkommensquellen auf Bali' gehört. Jetzt sitzt du hier und hinterfragst deine gesamte Existenz." },
 	{ id: "mood_lazy_10", effect: "lazy", title: "Weichgekocht", text: "Die Heizung in der Bahn lief auf 40 Grad. Du wurdest auf der Fahrt in eine Art Trance-Zustand weichgekocht. Dein Gehirn läuft aktuell nur auf Notstrom." },
 
-	// --- KATEGORIE 4: SNACK-MODUS (Zufälliges Food-Item) [10% Chance] ---
+	// --- CATEGORY 4: SNACK MODE (random food item) [10% chance] ---
 	{ id: "mood_snack_1", effect: "snack", title: "Der Bäcker-Irrtum", text: "Die nette Dame beim Bäcker hat dir heute Morgen aus Versehen etwas extra in die Tüte gepackt. Du hast natürlich nicht widersprochen. Man muss die kleinen Siege feiern!" },
 	{ id: "mood_snack_2", effect: "snack", title: "Mitleid am Kiosk", text: "Du sahst heute Morgen beim Zeitungsverkäufer am Bahnhof so furchtbar fertig aus, dass er dir aus Mitleid etwas Nervennahrung geschenkt hat. 'Sie sehen aus, als könnten Sie das brauchen', sagte er." },
 	{ id: "mood_snack_3", effect: "snack", title: "Spontane Entstehung", text: "Du hast in deine Manteltasche gegriffen und völlig unerwartet Essbares gefunden. Wie alt es ist? Keine Ahnung. Ob es noch gut ist? Bestimmt! Hauptsache gratis." },
@@ -111,7 +111,7 @@ export const moods = [
 	{ id: "mood_normal_60", effect: "normal", title: "Das Ritual", text: "Du klickst nach dem Booten routiniert dreimal auf 'Aktualisieren' auf dem völlig leeren Desktop, obwohl es absolut nichts bringt. Ein wichtiges, psychologisches Startritual für jeden echten SysAdmin." }
 ,
 
-	// --- TICKET-RÜCKSTAND: Der Tag hat schon angefangen, ohne dich ---
+	// --- TICKET BACKLOG: the day started without you ---
 	{ id: "mood_tickets_1", effect: "tickets", title: "Die Nachtschicht", text: "Über Nacht ist der Backup-Server dreimal neu gestartet und hat bei jedem Versuch brav ein Ticket erzeugt. Die Warteschlange begrüßt dich also bereits mit einer kleinen, unerledigten Familie." },
 	{ id: "mood_tickets_2", effect: "tickets", title: "Der Wochenend-Held", text: "Jemand hat am Sonntag 'nur mal kurz' etwas im Netzwerk umgesteckt. Wer, wird sich nie klären lassen. Die Folgen dieses Kurzbesuchs liegen fein säuberlich in deiner Warteschlange." },
 	{ id: "mood_tickets_3", effect: "tickets", title: "Automatische Eskalation", text: "Das Ticketsystem hat um 6:00 Uhr eigenmächtig mehrere alte Vorgänge 'wegen Fristüberschreitung reaktiviert'. Es meint es nicht böse. Es kennt nur keine Gnade." },
@@ -119,7 +119,7 @@ export const moods = [
 	{ id: "mood_tickets_5", effect: "tickets", title: "Urlaubsübergabe", text: "Der Kollege aus der Verwaltung ist ab heute drei Wochen weg und hat vor dem Abflug noch schnell 'ein paar Kleinigkeiten' an die IT übergeben. Sie sind weder klein noch Kleinigkeiten." },
 	{ id: "mood_tickets_6", effect: "tickets", title: "Update-Nacht", text: "Die zentrale Update-Verteilung lief um 3 Uhr durch. Erfolgreich, meldet der Bericht. Die Rechner, die seither nicht mehr hochfahren, melden es anders - in deiner Warteschlange." },
 
-	// --- AUSREDEN GESTRICHEN: Heute wird jede Ausflucht teurer ---
+	// --- EXCUSES CUT: every way out costs more today ---
 	{ id: "mood_noexcuse_1", effect: "excuse_minus", title: "Compliance-Woche", text: "Ein Aushang im Flur verkündet die 'Woche der Transparenz'. Führungskräfte sind angehalten, Aussagen von Mitarbeitenden 'stichprobenartig zu verifizieren'. Heute ist ein schlechter Tag für kreative Wahrheiten." },
 	{ id: "mood_noexcuse_2", effect: "excuse_minus", title: "Der Kalender lügt nicht", text: "Dr. Wichtig hat sich über Nacht Zugriff auf alle Abteilungskalender geben lassen. Er sieht jetzt in Echtzeit, wer wann angeblich wo ist. Deine bewährten Termine sind plötzlich überprüfbar." },
 	{ id: "mood_noexcuse_3", effect: "excuse_minus", title: "Einer zu viel", text: "Gestern hast du eine Ausrede zweimal benutzt. Bei derselben Person. Sie hat nichts gesagt, nur kurz die Augenbrauen gehoben. Dieses Repertoire ist bis auf Weiteres verbrannt." },
@@ -127,7 +127,7 @@ export const moods = [
 	{ id: "mood_noexcuse_5", effect: "excuse_minus", title: "Gabis Frühwarnung", text: "'Sei heute vorsichtig', flüstert Gabi beim Reinkommen. 'Die von oben sind auf Ausreden geeicht. Frag nicht, woher ich das weiß.' Du fragst nicht. Du weißt, dass sie recht hat." },
 	{ id: "mood_noexcuse_6", effect: "excuse_minus", title: "Krankenstand", text: "Drei Kollegen haben sich heute Morgen krankgemeldet, zwei davon 'überraschend'. Die Geduld der Geschäftsleitung mit spontanen Verhinderungen ist damit für heute vollständig aufgebraucht." },
 
-	// --- AUSREDE EXTRA: Manchmal spielt das Haus für dich ---
+	// --- SPARE EXCUSE: sometimes the house plays for you ---
 	{ id: "mood_bonus_1", effect: "excuse_plus", title: "Alibi frei Haus", text: "In deinem Kalender steht ein ganztägiger Termin, den du nie angenommen hast: 'IT-Sicherheitsaudit (extern)'. Es gibt kein Audit. Aber es steht da, und es steht da für alle sichtbar." },
 	{ id: "mood_bonus_2", effect: "excuse_plus", title: "Der Vorschuss", text: "Du hast gestern spätabends unbezahlt zwei Stunden ein Backup gerettet. Niemand hat es angeordnet, aber alle wissen es. So etwas ergibt in diesem Haus ein stilles Guthaben." },
 	{ id: "mood_bonus_3", effect: "excuse_plus", title: "Serverraum-Nebel", text: "Die Klimaanlage im Serverraum hat heute Morgen kurz Nebel produziert. Völlig harmlos, längst behoben - aber die Geschichte ist zu gut, um sie nicht den ganzen Tag über nachwirken zu lassen." },

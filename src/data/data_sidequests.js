@@ -5279,8 +5279,8 @@ export const sidequests = [
         }
     },
 
-    // CHAIN 1: Die Büropflanze
-    // CHAIN: Die Bowl-Bestellung (Vorlauf zu sq_food_bowl_delivery)
+    // CHAIN 1: the office plant
+    // CHAIN: the bowl order (lead-in to sq_food_bowl_delivery)
     {
         id: "sq_food_bowl_order",
         kind: "phone",
@@ -5481,7 +5481,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 2: Der Stuhl
+    // CHAIN 2: the chair
     {
         id: "sq_furniture_1",
         kind: "text",
@@ -5843,7 +5843,7 @@ export const sidequests = [
             }
         ]
     },
-// CHAIN 6: Der mysteriöse Kuchen
+// CHAIN 6: the mysterious cake
     {
         id: "sq_bday_1",
         kind: "text",
@@ -6027,7 +6027,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 8: Das verschwundene Paket
+    // CHAIN 8: the vanished parcel
     {
         id: "sq_delivery_1",
         char: "Egon",
@@ -6123,7 +6123,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 9: Der Kabel-Salat
+    // CHAIN 9: the cable tangle
     {
         id: "sq_cable_1",
         kind: "text",
@@ -6217,7 +6217,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 10: Der Fensterstreit
+    // CHAIN 10: the window war
     {
         id: "sq_window_1",
         kind: "text",
@@ -6388,12 +6388,12 @@ export const sidequests = [
 },
 
 /* ============================================================
-   DIENSTGANG-WELLE (v4.0.0)
-   Fünf Streifzüge durchs Gebäude für die im Pool dünnen
-   Charaktere Markus, Dr. Wichtig und Chantal, plus zwei
-   charakterfreie Mysterien (Projekt Phoenix, der Kopierer-
-   Karton). Verzahnt mit der Egon-Lore der anderen Wellen.
-   Gates auf stressball und zip_ties, Loot: manual, stressball.
+   ERRAND WAVE (v4.0.0)
+   Five walks through the building for Markus, Dr. Wichtig and
+   Chantal, who were thin in this pool, plus two mysteries with
+   no character attached (Project Phoenix, the copier carton).
+   Interlocked with the Egon lore of the other waves. Gates on
+   stressball and zip_ties, loot: manual, stressball.
    ============================================================ */
 
 {
@@ -6964,11 +6964,11 @@ export const sidequests = [
 
 
 /* ============================================================
-   HANDY-NACHRICHTEN (v4.0.0, Ergänzung zur Dienstgang-Welle)
-   Drei neue kind:"phone"-Ereignisse im Messenger-Format:
-   Markus' Alpha Circle, Kevins Sprachnachrichten-Lawine und
-   Gabis Frühwarnsystem. Je ein Ergebnis-Pfad setzt ein Flag
-   mit fertiger Text-Fortsetzung.
+   PHONE MESSAGES (v4.0.0, an addition to the errand wave)
+   Three new kind:"phone" events in messenger format: Markus'
+   Alpha Circle, Kevin's avalanche of voice messages and Gabi's
+   early warning system. In each, one result path sets a flag
+   that already has its text follow-up.
    ============================================================ */
 
 {
@@ -7221,8 +7221,8 @@ export const sidequests = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Auf dem Flur ist Anstand der teuerste
-   Reflex. Kein kostenloser Ausweg.
+   TRAPS (v4.0.0): out in the corridor, decency is the most
+   expensive reflex. No free way out.
    ============================================================ */
 
 {
@@ -7319,12 +7319,12 @@ export const sidequests = [
 },
 
 /* ============================================================
-   FUNDSTELLEN MIT NACHSPIEL (v4.0.0)
-   Panzertape, Kopfhörer und das Admin-Kennwort werden häufig
-   verlangt, aber selten gefunden. Diese Ereignisse schaffen
-   Nachschub - und schicken jeweils jemanden hinterher, der sein
-   Eigentum wiederhaben will. Wer abgibt, bleibt sauber. Wer
-   behält, hat das Werkzeug und ein Problem.
+   FINDS WITH CONSEQUENCES (v4.0.0)
+   Duct tape, headphones and the admin password are asked for
+   often and found rarely. These events create supply - and each
+   sends someone after it who wants their property back. Hand it
+   over and you stay clean. Keep it and you have the tool and a
+   problem.
    ============================================================ */
 
 {

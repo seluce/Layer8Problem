@@ -1,6 +1,6 @@
 export const items = {
 	
-    // VERBRAUCHSGEGENSTÄNDE (Einmalig)
+    // CONSUMABLES (single use)
     "wifi_note": { icon: "🏷️", name: "WLAN-Zettel", flavor: "'Das Passwort lautet: 1234abcd. Bitte nicht weitergeben.' - Egon. Wahrscheinlich klebt eine Kopie davon direkt am Router im Pausenraum.", img: "assets/img/items/wifi_note.webp" },
     "donut": { icon: "🍩", name: "Alter Donut", flavor: "'Er ist hart wie Stein, aber Zucker bleibt Zucker. Ein zäher Überlebenskünstler vom letzten Management-Meeting vor drei Wochen.'", img: "assets/img/items/donut.webp" },
     "energy": { icon: "⚡", name: "Energy Drink", flavor: "'Schmeckt nach Gummibärchen und drohender Panikattacke. Nach dem Konsum kannst du Farben hören und die Zeit verlangsamt sich spürbar.'", img: "assets/img/items/energy.webp" },

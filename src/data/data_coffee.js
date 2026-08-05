@@ -3847,13 +3847,13 @@ export const coffee = [
 },
 
 /* ============================================================
-   KAFFEE-WELLE (v4.0.0)
-   Frau Elster und Dr. Wichtig waren im Kaffee-Pool fast unsichtbar
-   (3 bzw. 2 Events), Markus hatte nur den Krypto-Clown-Ruf
-   (+68/-117) - hier bekommt er seine verletzliche Seite.
-   Verzahnt mit der Server-Welle (TechniPlast). Kurze Zeiten,
-   viel Aggro-Handel - der Pool bleibt der Erholungs-Pool,
-   aber nichts ist mehr gratis.
+   COFFEE WAVE (v4.0.0)
+   Frau Elster and Dr. Wichtig were nearly invisible in the coffee
+   pool (3 and 2 events), Markus had nothing but his crypto-clown
+   reputation (+68/-117) - here he gets his vulnerable side.
+   Interlocked with the server wave (TechniPlast). Short times, a
+   lot of trading in anger - the pool stays the place to recover,
+   but nothing in it is free any more.
    ============================================================ */
 
 {
@@ -4402,9 +4402,9 @@ export const coffee = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Ereignisse, bei denen die Antwort, die
-   vernünftig KLINGT, nicht die ist, die vernünftig IST.
-   Kein kostenloser Ausweg - Zwickmühlen mit Köder.
+   TRAPS (v4.0.0): events where the answer that SOUNDS sensible
+   is not the one that IS sensible. No free way out - dilemmas
+   with bait.
    ============================================================ */
 
 {
@@ -4479,8 +4479,9 @@ export const coffee = [
 
 /* ============================================================
    SCHACHT 7 (v4.0.0)
-   Eine Kette über drei Bereiche des Hauses. Wer sie beginnt,
-   merkt erst beim dritten Mal, dass er das Problem ist.
+   One chain across three areas of the building. Whoever starts
+   it only works out on the third stop that they are the
+   problem.
    ============================================================ */
 
 {

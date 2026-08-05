@@ -1,10 +1,10 @@
 export const special = {
 
 
-	/* Die beiden Notventile: Was passiert, wenn Aggro oder Chef-Radar zum
-	   ersten Mal an die 100 stoßen. Standen bis v4.0.0 als zwanzig
-	   Zeichenketten mitten in checkEndConditions - Texte gehören zu den
-	   Daten, nicht in die Ablauflogik. */
+	/* The two safety valves: what happens when anger or the boss radar
+	   hits 100 for the first time. Sat in the middle of
+	   checkEndConditions as twenty strings until v4.0.0 - text belongs
+	   with the data, not in the control flow. */
 	valveTexts: {
 		rage: [
                     "Du gehst in die Teeküche und starrst regungslos die rotierende Mikrowelle an. Nachdem du dir bildhaft vorgestellt hast, wie alles brennt, kehrst du an deinen Platz zurück.",

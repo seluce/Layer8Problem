@@ -463,7 +463,7 @@ export const party = [
 	},
 
 	// ===============================================
-	// DIE 5 VERSCHIEDENEN ENDEN (Wird vom System gewählt)
+	// THE 5 ENDINGS (picked by the engine)
 	// ===============================================
 	{
 		id: "party_finale_rage",
