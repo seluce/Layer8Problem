@@ -775,7 +775,7 @@ export const reputation = [
         text: "Chantal steht wieder da. Auf ihrer Webcam klebt ein riesiges Stück Panzertape. 'Also ich hab das gemacht, was du gesagt hast. Aber jetzt sagen die im Meeting, mein Bild ist schwarz. Verarschen die mich? Ist das Mobbing?'",
         opts: [
             { 
-                t: "Lachen", 
+                t: "Ihr ins Gesicht lachen", 
                 rep: { "Chantal": -15 },
                 m: 2, f: 0, a: -10, c: 0, 
                 r: "Du lachst ihr ins Gesicht. 'Ich hasse die IT', murmelt sie und geht. Das war's mit der Freundschaft." 
@@ -2683,7 +2683,7 @@ export const reputation = [
                 r: "Du stopfst dir den Antrag in den Mund. Sie starrt dich entsetzt an. 'Sie sind ja ein Tier.' Sie geht rückwärts raus. Du hast Ruhe, aber einen Papiergeschmack im Mund." 
             },
             { 
-                t: "Weinen", 
+                t: "In Tränen ausbrechen", 
                 rep: { "Frau Elster": 5 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du brichst zusammen. 'Ich kann nicht mehr!' Sie wirkt betreten. 'Na gut. Ich... ich drücke ein Auge zu. Nehmen Sie den blauen Kuli.' Mitleid funktioniert." 
@@ -3456,7 +3456,7 @@ export const reputation = [
         text: "Ein wichtiger Anruf vom Support kommt nicht durch. Du gehst zum Empfang. Gabi feilt sich die Nägel. Das Telefon blinkt stumm. 'Oh, war das für dich? Ups. Mein PC spinnt seit deinem Neustart immer noch.'",
         opts: [
             { 
-                t: "Schreien", 
+                t: "Den Hörer anbrüllen", 
                 rep: { "Gabi": -5 },
                 m: 2, f: 0, a: -10, c: 10, 
                 r: "Du brüllst den Hörer an. Gabi ist unbeeindruckt. 'Schlechte Vibes, Müller. Ganz schlechte Vibes.'" 

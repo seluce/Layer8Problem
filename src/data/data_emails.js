@@ -804,7 +804,7 @@ export const emails = [
         subj: "Meeting: 'Feel Good Management'",
         body: "Einladung: Wir wollen 20 Minuten lang über unsere Gefühle tanzen. Anwesenheitspflicht für alle!",
         opts: [
-            { t: "Teilnehmen", r: "Du tanzt zwanzig Minuten lang deine Gefühle, hauptsächlich das Gefühl, beobachtet zu werden. Torben nennt dich 'mutig'. Der Chef hat dich währenddessen zweimal vergeblich gesucht. Das wird noch Thema.", m: 20, f: 20, a: -10, c: 20, nextEmail: "mail_meeting_2" },
+            { t: "Die Gefühle mittanzen", r: "Du tanzt zwanzig Minuten lang deine Gefühle, hauptsächlich das Gefühl, beobachtet zu werden. Torben nennt dich 'mutig'. Der Chef hat dich währenddessen zweimal vergeblich gesucht. Das wird noch Thema.", m: 20, f: 20, a: -10, c: 20, nextEmail: "mail_meeting_2" },
             { t: "Mit 'Server brennt' absagen", r: "Die Ausrede 'Server brennt' funktioniert bei Torben immer, weil er nicht weiß, was ein Server ist. Du verbringst die zwanzig Minuten mit echter Arbeit. Es fühlt sich beinahe subversiv an.", m: 2, f: 0, a: 0, c: 5 },
             { t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
@@ -1375,7 +1375,7 @@ export const emails = [
         subj: "E-Roller im Flur",
         body: "Wer hat seinen 'Lime-Scooter' im Serverraum geparkt? Er piept alle 30 Sekunden.",
         opts: [
-            { t: "Rausschmeißen", r: "Du wirfst den Roller in hohem Bogen aus dem Fenster. Er landet weich im Gebüsch und piept dort tapfer weiter, aber gedämpft. Egon schickt dir wortlos ein Foto: Daumen hoch vor Gebüsch.", m: 5, f: 0, a: -5, c: 0 },
+            { t: "Den Roller aus dem Fenster werfen", r: "Du wirfst den Roller in hohem Bogen aus dem Fenster. Er landet weich im Gebüsch und piept dort tapfer weiter, aber gedämpft. Egon schickt dir wortlos ein Foto: Daumen hoch vor Gebüsch.", m: 5, f: 0, a: -5, c: 0 },
             { t: "Das ist mein Dienstwagen.", r: "Du bekennst dich zum Roller und nennst ihn 'Flottenfahrzeug'. Egon antwortet mit einem Scan der Hausordnung, in dem das Wort 'Flur' viermal unterstrichen ist. Den Serverraum erwähnt er gar nicht erst.", m: 2, f: 5, a: 0, c: 5, nextEmail: "mail_parking_scooter_2" },
             { t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
@@ -1529,7 +1529,7 @@ export const emails = [
         body: "Wir setzen euch im Wald aus. Ohne Handys. Wer zuerst zurück ist, wird nicht gefeuert.",
         opts: [
             { t: "Ich nehme ein Messer mit.", r: "Du bestätigst die Teilnahme und beginnst eine Packliste: Messer, Kompass, Müsliriegel, Ersatzsocken. Wenn die Firma Survival will, bekommt sie jemanden, der den Ernstfall wörtlich nimmt.", m: 2, f: 0, a: 5, c: 5 },
-            { t: "Krankmelden", r: "Dein Rücken meldet sich mit tadellosem Timing. Die Beschwerden sind nicht nachweisbar, nicht widerlegbar und halten exakt bis zum Ende des Teamevents an. Ein Klassiker der Arbeitsmedizin.", m: 2, f: 10, a: -5, c: 0 },
+            { t: "Sich rechtzeitig krankmelden", r: "Dein Rücken meldet sich mit tadellosem Timing. Die Beschwerden sind nicht nachweisbar, nicht widerlegbar und halten exakt bis zum Ende des Teamevents an. Ein Klassiker der Arbeitsmedizin.", m: 2, f: 10, a: -5, c: 0 },
             { t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
         ]
     },

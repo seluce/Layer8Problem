@@ -296,7 +296,7 @@ export const party = [
 		title: "Die Couch-Blockade",
 		text: "Drei Praktikanten haben die größte, gemütlichste Couch komplett besetzt. Sie starren stumm auf ihre Handys und schauen TikToks mit Ton an.",
 		opts: [
-			{ t: "Dazwischenquetschen", f: 15, a: -5, r: "Du setzt dich mit purer Ignoranz exakt in die Mitte der Gruppe. Die Praktikanten weichen peinlich berührt zur Seite und schweigen. Du hast dir den besten Platz der Lounge erobert.", next: "party_hub" },
+			{ t: "Sich in die Mitte quetschen", f: 15, a: -5, r: "Du setzt dich mit purer Ignoranz exakt in die Mitte der Gruppe. Die Praktikanten weichen peinlich berührt zur Seite und schweigen. Du hast dir den besten Platz der Lounge erobert.", next: "party_hub" },
 			{ t: "WLAN am Router drosseln", a: 5, f: 20, r: "Du zückst dein Admin-Handy, greifst remote auf den Router zu und killst den Speed. Die Videos puffern. Die Praktikanten fluchen, stehen auf und gehen. Ein makelloser IT-Sieg.", next: "party_hub" },
 			{ t: "Seufzen und stehenbleiben", a: 15, f: 5, r: "Die Jugend von heute hat keinen Respekt mehr. Du bleibst trotzig daneben stehen, starrst sie böse an und spürst, wie deine chronischen Rückenschmerzen langsam wieder einsetzen.", next: "party_hub" }
 		]

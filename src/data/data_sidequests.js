@@ -6739,7 +6739,7 @@ export const sidequests = [
             r: "Du meldest den Schaden ans Fuhrparkmanagement, sachlich und mit Datum. Es ist das Richtige, und beide wissen es. Trotzdem behandeln dich Kevin und Markus eine Woche lang wie einen Wetterumschwung. Korrektheit hat selten Applaus."
         },
         {
-            t: "Mitschweigen",
+            t: "Nichts gesehen haben",
             m: 2, f: 10, a: 0, c: 5,
             r: "Offiziell hast du nichts gesehen. Der Kratzer war 'schon immer da', wie alle Kratzer dieser Welt. Das Schweigegelübde hat jetzt drei Mitglieder, und Schweigegelübde mit drei Mitgliedern halten statistisch elf Tage. Die Uhr läuft."
         },
@@ -7542,7 +7542,7 @@ export const sidequests = [
                 r: "Du erklärst ihr in drei Sätzen, warum ein Passwort am Monitor keins mehr ist. Sie nimmt den Zettel ab, entschuldigt sich und schreibt es sich in ihr Notizbuch. Das Notizbuch liegt offen auf dem Schreibtisch."
             },
             {
-                t: "Vorbeigehen",
+                t: "Einfach weitergehen",
                 m: 2, f: 15, a: 0, c: 15,
                 r: "Du gehst weiter. Der Zettel hängt bis Freitag. Es passiert vermutlich nichts, so wie bei den meisten Dingen dieser Art vermutlich nichts passiert, bis einmal doch etwas passiert."
             }

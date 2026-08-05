@@ -179,7 +179,7 @@ export const server = [
                 r: "Du klappst den Koffer zu, damit niemand anderes auf dumme Ideen kommt. Du bist heute der Wächter des Eigentums." 
             },
             { 
-                t: "Einstecken", 
+                t: "Das Werkzeug einstecken", 
                 loot: "screw", 
                 next: "path_tool_theft", 
                 m: 5, f: 0, a: -5, c: 5, 
@@ -1017,7 +1017,7 @@ export const server = [
         text: "Egon, der Hausmeister, kniet vor der Serverraum-Tür und montiert ein neues Schloss. Er sieht dich kommen. 'Na, wieder aufgetaut? Ich bau jetzt eins ein, das man auch von innen aufkriegt.'",
         opts: [
             { 
-                t: "Fachsimpeln", 
+                t: "Über Schließzylinder fachsimpeln", 
                 rep: { "Egon": -5 },
                 m: 5, f: 5, a: 5, c: -5, 
                 r: "'Ist das auch ein Zylinder nach DIN 18252?' Egon verdreht die Augen. 'Lass mich einfach arbeiten.' Du nervst ihn." 
@@ -1340,7 +1340,7 @@ export const server = [
                 r: "'Diese alten Anlagen... tickende Zeitbomben!' Der Feuerwehrmann nickt. 'Ja, Halon ist seit 20 Jahren verboten. Das muss eh raus.' Du kommst mit einer Verwarnung davon." 
             },
             { 
-                t: "Wegrennen", 
+                t: "Im Chaos verschwinden", 
                 m: 5, f: 10, a: -5, c: 20, 
                 r: "Du nutzt das Chaos und verschwindest. Die Rechnung über 3.000€ Einsatzkosten landet pauschal bei der IT-Abteilung. Dein Budget weint." 
             },
@@ -4162,7 +4162,7 @@ export const server = [
             r: "Der Ordner verschwindet wieder hinter dem Rack. Später-Müller wird sich darum kümmern. Später-Müller hasst dich jetzt schon. Und du bist nicht der Einzige, der hier unten gelegentlich herumstöbert."
         },
         {
-            t: "Durchblättern",
+            t: "Den Ordner durchblättern",
             loot: "admin_pw",
             next: "path_folder_read",
             m: 15, f: -5, a: 5, c: 0,

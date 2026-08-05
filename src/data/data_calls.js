@@ -136,7 +136,7 @@ export const calls = [
 		opts: [
 			{ t: "Putzen helfen", rep: { "Gabi": 10 }, r: "Du versuchst, den Toner wegzuwischen. Er schmiert nur noch mehr. Nach einer Stunde sehen ihr beide aus wie Bergarbeiter. Aber das schweißt zusammen.", m: 60, f: -20, a: -5, c: 0 },
 			{ t: "Erklären, dass Toner giftig ist", rep: { "Gabi": -15 }, r: "Gabi fängt an zu weinen. Dann zu schreien. Der Sicherheitsdienst begleitet dich raus.", m: 10, f: 0, a: 50, c: 20 },
-			{ t: "Wegrennen", rep: { "Gabi": -10 }, r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 }
+			{ t: "Hustend das Weite suchen", rep: { "Gabi": -10 }, r: "Du fliehst hustend. Gabi wirft dir den leeren Toner hinterher. Du hinterlässt schwarze Fußabdrücke im Flur.", m: 5, f: 0, a: 20, c: 10 }
 		]
 	},
 		{
@@ -1193,7 +1193,7 @@ export const calls = [
                 text: "'Hello Sir. This is Windows Support. Your computer has virus. Please install TeamViewer.'\n\nKlassischer Scam.",
                 opts: [
                     { t: "Mitspielen & Zeit verschwenden", next: "troll" },
-                    { t: "Anschreien", next: "rage" }
+                    { t: "Den Anrufer anbrüllen", next: "rage" }
                 ]
             },
             troll: {

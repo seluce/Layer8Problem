@@ -396,7 +396,7 @@ export const coffee = [
         text: "Torben fängt dich im Flur ab. Er wedelt mit einem Formular. 'Du, wegen der 5 Euro für den Kaffee-Service... ich brauche eine Kostenstelle für die Buchhaltung. Läuft das über 'IT-Infrastruktur' oder 'Externe Dienstleistung'?'",
         opts: [
             { 
-                t: "Wegrennen", 
+                t: "Einen Server-Alarm erfinden", 
                 m: 5, f: -5, a: -10, c: 10, 
                 r: "Du rufst 'Server-Alarm!' und sprintest weg. Torben ruft hinterher: 'Ich buche es auf Sonstiges!'" 
             },
@@ -2924,7 +2924,7 @@ export const coffee = [
                 r: "Der Ficus lässt sofort die Blätter hängen. Du hast das Büro vor einer Biowaffe bewahrt." 
             },
             { 
-                t: "Austrinken", 
+                t: "Den Becher tapfer austrinken", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Es schmeckt nach Wiese und Erde. Du würgst es runter. Chantal strahlt. 'Spürst du den Glow?'" 
             }
@@ -3009,7 +3009,7 @@ export const coffee = [
                 r: "Du legst den Stapel unauffällig auf Kevins Tisch. Er wird es nicht merken, bis es zu spät ist." 
             },
             { 
-                t: "Abarbeiten", 
+                t: "Den Stapel selbst abarbeiten", 
                 rep: { "Dr. Wichtig": 5 }, 
                 m: 45, f: -20, a: 20, c: 0, 
                 r: "Du sortierst Papier. Der Kaffee war gut, aber der Preis war zu hoch. Du fühlst dich benutzt." 
@@ -3307,7 +3307,7 @@ export const coffee = [
         text: "Markus kommt zu dir an den Tisch. Er legt dir ein Buch hin: 'Die 4-Stunden-Woche'. 'Für dich, Tiger. Wir Wölfe müssen zusammenhalten.'",
         opts: [
             { 
-                t: "Lesen", 
+                t: "Tatsächlich hineinlesen", 
                 rep: { "Markus": 5 },
                 m: 30, f: 20, a: 5, c: 0, 
                 r: "Du liest drei Seiten. Es geht nur darum, Arbeit an andere auszulagern. Du fühlst dich schmutzig." 
@@ -3607,7 +3607,7 @@ export const coffee = [
         text: "Du öffnest den Kühlschrank für etwas Milch. Darin lacht dich ein perfekt belegtes Pastrami-Sandwich an. Darauf klebt ein passiv-aggressiver Zettel: 'Finger weg! Eigentum von Markus (Sales)!!!'",
         opts: [
             { 
-                t: "Konfiszieren", 
+                t: "Das Sandwich konfiszieren", 
                 loot: "sandwich", 
                 next: "path_sandwich_steal", 
                 m: 2, f: -5, a: 0, c: 5, 
