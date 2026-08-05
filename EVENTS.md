@@ -325,8 +325,13 @@ Chat-Kopf).
 
 Für die Beschriftungen gilt im Chat eine eigene Konvention: Klartext ist eine
 **Nachricht**, die Müller abschickt; eckige Klammern sind eine **Handlung** statt einer
-Nachricht — App-Funktionen mit System-Präfix (`[System: Gruppe verlassen]`), Handgriffe
-ohne (`[Handy weglegen]`), Medien als `[GIF gesendet: …]`.
+Nachricht — ob App-Funktion oder Handgriff, spielt keine Rolle: `[Gruppe verlassen]`,
+`[Handy weglegen]`, Medien als `[GIF gesendet: …]`. Kein `System:` davor; die Klammern
+sagen bereits alles, und im schmalen Chatfenster zählt jedes Zeichen.
+
+Im **Text** einer Blase darf `[System: …]` dagegen stehen — dort ist es die Meldung des
+Messengers selbst (`[System: Chat stummgeschaltet] Du lässt das Handy vibrieren`) und
+nicht die Beschriftung eines Knopfes.
 
 Das Porträt kommt auch hier aus `char`, wird im Chat aber pro Nachricht aufgelöst:
 
@@ -351,7 +356,7 @@ Das Porträt kommt auch hier aus `char`, wird im Chat aber pro Nachricht aufgel�
             text: "47 ungelesene Nachrichten. Jemand plant eine Überraschung für Egons Dienstjubiläum, und die Planung ist bereits an dem Punkt, an dem über Wimpelketten abgestimmt wird.",
             opts: [
                 { t: "Bin dabei. Was soll ich mitbringen?", next: "zusage" },
-                { t: "[System: Gruppe stummschalten]", next: "res_stumm" }
+                { t: "[Gruppe stummschalten]", next: "res_stumm" }
             ]
         },
         zusage: {

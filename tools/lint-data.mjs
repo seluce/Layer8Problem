@@ -64,6 +64,12 @@ const noteFlag = (flag, where) => {
 
 const checkOpt = (o, ctx) => {
   if (o.t === undefined) err(`${ctx}: Option ohne Button-Text`);
+  // In the messenger a pair of brackets already says "this is an action, not a
+  // message". The System: prefix in front of it was historical and cost eight
+  // characters of a very narrow bubble. It stays allowed inside chat texts,
+  // where it is the messenger's own notice rather than a label.
+  if (/^\s*\[\s*System\s*:/i.test(o.t ?? ''))
+    err(`${ctx}: Beschriftung mit "[System: …]" — im Chat tragen Handlungen nur die eckigen Klammern`);
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
     if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
   }

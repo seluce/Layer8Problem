@@ -3526,7 +3526,7 @@ export const sidequests = [
             "yes": {  
                 text: "Admn_Rogue: 'Sauber. Installier das Skript im Anhang auf dem Mainframe. Passwort ist 1234.'",  
                 opts: [ 
-                    { t: "[System: Angehängtes Skript herunterladen und ausführen]", next: "done_hack" }, 
+                    { t: "[Angehängtes Skript herunterladen und ausführen]", next: "done_hack" }, 
                     { t: "Puh, lass mal. Ich bin beim Chef eh schon auf dem Radar. Bin raus.", next: "chicken" } 
                 ] 
             }, 
@@ -3540,7 +3540,7 @@ export const sidequests = [
             "no": {  
                 text: "Admn_Rogue: 'Langweiler. Wir löschen dich aus der Gruppe.'",  
                 opts: [ 
-                    { t: "[System: Chat stummschalten und archivieren]", next: "kicked" } 
+                    { t: "[Chat stummschalten und archivieren]", next: "kicked" } 
                 ] 
             } 
         }, 
@@ -3573,15 +3573,15 @@ export const sidequests = [
             "root": { 
                 text: "InfoService: Sie haben ein brandneues iPhone 50 gewonnen! Klicken Sie hier: www.virus-load.ru. Klicken Sie JETZT für Ihren Gewinn!", 
                 opts: [ 
-                    { t: "[System: Auf den Link klicken]", next: "virus_start" }, 
-                    { t: "[System: Nachricht sofort löschen]", next: "clean" } 
+                    { t: "[Auf den Link klicken]", next: "virus_start" }, 
+                    { t: "[Nachricht sofort löschen]", next: "clean" } 
                 ] 
             }, 
             "virus_start": { 
                 text: "[Browser öffnet sich...] DOWNLOADING... 99%... INSTALLING ROOTKIT...", 
                 opts: [ 
-                    { t: "[System: Prozess panisch abbrechen! X drücken!]", next: "virus_fail" }, 
-                    { t: "[System: Abwarten, vielleicht gibt es ja wirklich ein Handy...]", next: "virus_doom" } 
+                    { t: "[Prozess panisch abbrechen! X drücken!]", next: "virus_fail" }, 
+                    { t: "[Abwarten, vielleicht gibt es ja wirklich ein Handy...]", next: "virus_doom" } 
                 ] 
             } 
         }, 
@@ -3619,14 +3619,14 @@ export const sidequests = [
                 text: "Lisa: 'Super! Treffen uns in 5 Min in der Lobby. Ich erkenne dich am Karohemd, richtig? 😉'", 
                 opts: [ 
                     { t: "Erwischt. Bis gleich in der Lobby!", next: "go_date" }, 
-                    { t: "[System: Match aus unerklärlicher Panik auflösen]", next: "ghost" } 
+                    { t: "[Match aus unerklärlicher Panik auflösen]", next: "ghost" } 
                 ] 
             }, 
             "hr_check": { 
                 text: "Lisa: 'LOL nein! 😂 Ich bin im Marketing. Ich will nur Koffein, kein Compliance-Audit. Versprochen!'", 
                 opts: [ 
                     { t: "Puh, okay. Dann bis gleich am Kaffeeautomaten in der Lobby!", next: "go_date" }, 
-                    { t: "[System: Nutzerin blockieren] Genau das würde ein HR-Spion sagen...", next: "date_no" } 
+                    { t: "[Nutzerin blockieren] Genau das würde ein HR-Spion sagen...", next: "date_no" } 
                 ] 
             } 
         }, 
@@ -3697,7 +3697,7 @@ export const sidequests = [
                 text: "[Bild empfangen: Dein getaptes Kunstwerk auf dem Parkplatz] Auditor: 'Wer war das?! Das ist genial! Ich krieg die Fahrertür nicht auf, aber tiefster Respekt. Wer auch immer das war: Komm in mein Büro. - Der externe Auditor'", 
                 opts: [ 
                     { t: "Das war ich. Panzerband löst eben alle Probleme!", next: "res_respect" }, 
-                    { t: "[System: Nachricht ignorieren & panisch unter dem Tisch verstecken]", next: "res_fear" } 
+                    { t: "[Nachricht ignorieren & panisch unter dem Tisch verstecken]", next: "res_fear" } 
                 ] 
             }, 
             "res_respect": { 
@@ -3709,7 +3709,7 @@ export const sidequests = [
             "res_fear": { 
                 text: "[System: Du starrst auf das Display und antwortest nicht] Auditor: 'Hallo? Keiner? Schade. Aber das Tape hält echt verdammt gut...'", 
                 opts: [ 
-                    { t: "[System: Chat endgültig löschen]", next: "end_fear" } 
+                    { t: "[Chat endgültig löschen]", next: "end_fear" } 
                 ] 
             } 
         }, 
@@ -3736,14 +3736,14 @@ export const sidequests = [
             "root": { 
                 text: "Dr. Wichtig: 'MÜLLER! Ihr Corsa steht in meiner Flugschneise! Ich habe in 5 Minuten einen hochwichtigen Termin beim Golf-Club. BEWEGEN SIE DAS DING!'", 
                 opts: [ 
-                    { t: "[System: Handy schnappen und sofort zum Parkplatz rennen]", next: "res_fast" }, 
-                    { t: "[System: Nachricht als ungelesen markieren und Handy ignorieren]", next: "res_ignore" } 
+                    { t: "[Handy schnappen und sofort zum Parkplatz rennen]", next: "res_fast" }, 
+                    { t: "[Nachricht als ungelesen markieren und Handy ignorieren]", next: "res_ignore" } 
                 ] 
             }, 
             "res_fast": { 
                 text: "[System: Chat verlassen. Du sprintest außer Atem nach unten] Du stehst am Parkplatz. Der Chef fuchtelt wild mit den Autoschlüsseln seines SUVs.", 
                 opts: [ 
-                    { t: "[System: Zähneknirschend ins Auto steigen und umparken]", next: "end_fast" } 
+                    { t: "[Zähneknirschend ins Auto steigen und umparken]", next: "end_fast" } 
                 ] 
             }, 
             "res_ignore": { 
@@ -3841,14 +3841,14 @@ export const sidequests = [
             "root": { 
                 text: "Anon: 'Ich zahle 1 Bitcoin pro Datensatz für interne Firmengeheimnisse. Komplett anonym über ein Escrow-System. Interesse an schnellem Geld?'", 
                 opts: [ 
-                    { t: "[System: Chat sofort schließen & Session beenden]", next: "good" }, 
+                    { t: "[Chat sofort schließen & Session beenden]", next: "good" }, 
                     { t: "Wie genau stellst du dir das vor? Bin ganz Ohr.", next: "bad" } 
                 ] 
             }, 
             "bad": { 
                 text: "Anon: 'Lass einfach einen Dump eurer Kundendatenbank über diesen gesicherten Onion-Link laufen. Meine Scripts waschen alle Spuren. Keiner wird es je merken.'", 
                 opts: [ 
-                    { t: "[System: Datei 'Kundendatenbank.sql' auswählen & Upload starten]", next: "crime" }, 
+                    { t: "[Datei 'Kundendatenbank.sql' auswählen & Upload starten]", next: "crime" }, 
                     { t: "Nein, das ist mir eine Nummer zu groß. Ich bin raus.", next: "chicken" } 
                 ] 
             } 
@@ -4237,15 +4237,15 @@ export const sidequests = [
             "root": { 
                 text: "Chantal hat dich zur Gruppe hinzugefügt. (Sie hat sich wohl verklickt...) Chantal: 'Habt ihr Müller heute gesehen? Der hat schon wieder diesen uralten Hoodie an. Wetten, der schläft heimlich im Serverraum zwischen den Kabeln? 🤢'", 
                 opts: [ 
-                    { t: "[System: Lesebestätigung deaktivieren und weiterlesen]", next: "spy" }, 
+                    { t: "[Lesebestätigung deaktivieren und weiterlesen]", next: "spy" }, 
                     { t: "Ich bin übrigens in dieser Gruppe. Nur zur Info.", next: "fight" }, 
-                    { t: "[System: Gruppe verlassen]", next: "leave" } 
+                    { t: "[Gruppe verlassen]", next: "leave" } 
                 ] 
             }, 
             "spy": { 
                 text: "Markus: 'Ja, totaler Freak. Aber wir müssen echt nett sein. Wenn der uns die Admin-Rechte entzieht, können wir nicht mehr online shoppen. Also schön lächeln!'", 
                 opts: [ 
-                    { t: "[System: Chat-Screenshot an HR weiterleiten]", next: "snitch" }, 
+                    { t: "[Chat-Screenshot an HR weiterleiten]", next: "snitch" }, 
                     { t: "[GIF gesendet: Saurons Auge sieht alles]", next: "scare" } 
                 ] 
             } 
@@ -4279,8 +4279,8 @@ export const sidequests = [
             "root": { 
                 text: "Mama: 'Hallo Schatz. Der Drucker blinkt böse rot. Wir haben absolut NICHTS gemacht! Papa wollte das Rezept für den Apfelkuchen ausdrucken. Jetzt steht da PC LOAD LETTER. Heißt das, das Internet ist leer? Papa drückt schon wild auf alle Knöpfe!'", 
                 opts: [ 
-                    { t: "[System: Sprachanruf starten]", next: "help" }, 
-                    { t: "[System: Nachricht ignorieren und Chat schließen]", next: "ignore" }, 
+                    { t: "[Sprachanruf starten]", next: "help" }, 
+                    { t: "[Nachricht ignorieren und Chat schließen]", next: "ignore" }, 
                     { t: "Zieht einfach den Stromstecker aus der Wand! Bitte drückt nichts mehr!", next: "plug" } 
                 ] 
             }, 
@@ -4288,7 +4288,7 @@ export const sidequests = [
                 text: "[System: Sprachanruf läuft (42:15)] Mama (am Telefon): 'Papa hat jetzt an so einem dicken schwarzen Kabel gezogen. Der Toaster ist jetzt aus, aber der Drucker rattert weiter... Oh, jetzt riecht es verbrannt! Was sollen wir tun?!'", 
                 opts: [ 
                     { t: "Okay, ganz ruhig. Gib mir bitte einfach mal Papa ans Telefon...", next: "good_son" }, 
-                    { t: "[System: Auflegen]", next: "bad_son" } 
+                    { t: "[Auflegen]", next: "bad_son" } 
                 ] 
             } 
         }, 
@@ -4382,7 +4382,7 @@ export const sidequests = [
             "proof": { 
                 text: "[Datei empfangen: Gehaltsabrechnung_Kevin.pdf] Anon: 'Gern geschehen. Viel Spaß bei der nächsten Gehaltsverhandlung. Verbrenn dir nicht die Finger an dem Wissen.'", 
                 opts: [ 
-                    { t: "[System: Datei verschlüsselt herunterladen & speichern]", next: "loot_it" } 
+                    { t: "[Datei verschlüsselt herunterladen & speichern]", next: "loot_it" } 
                 ] 
             } 
         }, 
@@ -4408,8 +4408,8 @@ export const sidequests = [
             "root": { 
                 text: "Chantal: 'Hii! Kannst du mein Insta liken? Ich brauche 500 Likes für die Firmen-Kampagne WeLoveIT. Sonst krieg ich Ärger vom Chef! Bitte! Wenn ich die Quote nicht schaffe, streicht er das komplette Marketing-Budget!'", 
                 opts: [ 
-                    { t: "[System: Herzchen drücken & Beitrag teilen]", next: "like" }, 
-                    { t: "[System: Auf 'Gelesen' lassen und App schließen]", next: "ignore" }, 
+                    { t: "[Herzchen drücken & Beitrag teilen]", next: "like" }, 
+                    { t: "[Auf 'Gelesen' lassen und App schließen]", next: "ignore" }, 
                     { t: "Und was springt für mich dabei raus?", next: "deal" } 
                 ] 
             }, 
@@ -4491,8 +4491,8 @@ export const sidequests = [
             "intro": { 
                 text: "👑 PRINZ: 'My dearest friend! Bad news! There was a counter-revolution! My uncle is alive! He wants the money back! If not, he calls Interpol! Please send back NOW!'", 
                 opts: [ 
-                    { t: "[System: Gesamte Summe rücküberweisen]", next: "return_money" }, 
-                    { t: "[System: Nutzer sofort blockieren]", next: "keep_money" }, 
+                    { t: "[Gesamte Summe rücküberweisen]", next: "return_money" }, 
+                    { t: "[Nutzer sofort blockieren]", next: "keep_money" }, 
                     { t: "Hab das Geld leider schon komplett für Fortnite Skins verballert.", next: "troll_prince" } 
                 ] 
             }, 
@@ -4512,7 +4512,7 @@ export const sidequests = [
                 text: "👑 PRINZ: 'YOU WHAT?! Skins?! Are you crazy?! My head is on the line here! Send the rest! NOW!'", 
                 opts: [ 
                     { t: "Okay, okay! Bleib locker. Ich schick dir den Rest zurück.", next: "return_money" }, 
-                    { t: "[System: Nutzer sofort blockieren]", next: "res_kept" } 
+                    { t: "[Nutzer sofort blockieren]", next: "res_kept" } 
                 ] 
             } 
         }, 
@@ -4540,13 +4540,13 @@ export const sidequests = [
                 opts: [ 
                     { t: "Und habt ihr mal auf die Schuhe geachtet?! 🤮", next: "join_in" }, 
                     { t: "Vorsicht Leute, die IT sieht alles. Auch der Chef liest Logs.", next: "warn" }, 
-                    { t: "[System: Gruppe stummschalten & Handy sperren]", next: "ignore" } 
+                    { t: "[Gruppe stummschalten & Handy sperren]", next: "ignore" } 
                 ] 
             }, 
             "join_in": { 
                 text: "Chantal: 'OMG JA! 💀 Du bist der Beste! Ich mach ein Meme draus.' (Dein Handy vibriert kurz darauf, weil sie ein Bild in die Gruppe postet)", 
                 opts: [ 
-                    { t: "[System: Auf das Bild mit 😂 reagieren]", next: "meme_like" } 
+                    { t: "[Auf das Bild mit 😂 reagieren]", next: "meme_like" } 
                 ] 
             } 
         }, 
@@ -4611,7 +4611,7 @@ export const sidequests = [
                 opts: [ 
                     { t: "Bin dabei! Ich bring dir den Zehner nachher rüber.", next: "bet_placed" }, 
                     { t: "2:1 für Bayern. Aber ich spiele nur zum Spaß mit, ohne Kohle.", next: "bet_chat" }, 
-                    { t: "[System: Chat wegen illegalem Glücksspiel an HR melden]", next: "snitch" } 
+                    { t: "[Chat wegen illegalem Glücksspiel an HR melden]", next: "snitch" } 
                 ] 
             } 
         }, 
@@ -5236,7 +5236,7 @@ export const sidequests = [
             ebay_cola: {
                 text: "Zero. Aber ist schon offen. Deal?",
                 opts: [
-                    { t: "[System: Blockieren]", next: "res_ebay_sad" }
+                    { t: "[Blockieren]", next: "res_ebay_sad" }
                 ]
             }
         },
@@ -6982,7 +6982,7 @@ export const sidequests = [
         root: {
             text: "Markus hat dich zur Gruppe 'ALPHA CIRCLE 💪🔥' hinzugefügt.\n\nMarkus: 'Willkommen im inneren Zirkel, Müller! Hier teilen wir SIGNALS. Erste Regel: 5 Uhr aufstehen. Zweite Regel: Über den Circle wird nicht geredet, nur PERFORMT.'\n\nSteve_Hustle: 'LFG 🚀🚀🚀'\n\nMarkus: 'Sag kurz hallo, Bro.'",
             opts: [
-                { t: "[System: Gruppe für immer stummschalten]", next: "mute" },
+                { t: "[Gruppe für immer stummschalten]", next: "mute" },
                 { t: "Höflich austreten, mit Begründung", next: "exit" },
                 { t: "'Bin dabei 💪'", next: "join" }
             ]
@@ -7062,9 +7062,9 @@ export const sidequests = [
         root: {
             text: "Kevin: [Sprachnachricht 0:47]\n\nKevin: [Sprachnachricht 1:12]\n\nKevin: [Sprachnachricht 0:58]\n\nKevin: 'ach und'\n\nKevin: [Sprachnachricht 1:35]\n\nGesamtlänge: 4 Minuten 32 Sekunden. Betreff: unbekannt. Dringlichkeit: unbekannt. Es könnte alles sein, von 'Drucker piept' bis 'Serverraum brennt'.",
             opts: [
-                { t: "[System: Alle vier Nachrichten anhören]", next: "listen" },
+                { t: "[Alle vier Nachrichten anhören]", next: "listen" },
                 { t: "'SCHREIB. ES. BITTE. AUF.'", next: "schreib" },
-                { t: "[System: In doppelter Geschwindigkeit anhören]", next: "speed" }
+                { t: "[In doppelter Geschwindigkeit anhören]", next: "speed" }
             ]
         },
         listen: {
@@ -7076,8 +7076,8 @@ export const sidequests = [
         schreib: {
             text: "Kevin: [Sprachnachricht 0:21]\n\nEr hat auf die Bitte, zu schreiben, mit einer Sprachnachricht geantwortet. Inhalt: 'okay sorry, also, schreiben, ja, also es geht um meinen Bildschirm, der ist...' - die Nachricht bricht ab.\n\nKevin: [Sprachnachricht 0:44]",
             opts: [
-                { t: "[System: Kapitulieren und anhören]", next: "end_kapit" },
-                { t: "[System: Ihn einfach anrufen]", next: "end_anruf" }
+                { t: "[Kapitulieren und anhören]", next: "end_kapit" },
+                { t: "[Ihn einfach anrufen]", next: "end_anruf" }
             ]
         },
         speed: {
@@ -7156,8 +7156,8 @@ export const sidequests = [
         info: {
             text: "Gabi: 'Punkt 1 ist die neue Kaffeemaschine (frag nicht).'\n\nGabi: 'Punkt 2 die Reisekosten vom Vertrieb.'\n\nGabi: 'Punkt 3 bist du. Wörtlich: \"Kostenstelle IT - Handlungsbedarf\".'\n\nGabi: 'Du hast bis 14 Uhr. 🙃'",
             opts: [
-                { t: "[System: Sofort Zahlen und Belege sammeln]", next: "end_prep" },
-                { t: "[System: Abwarten, wird schon nichts werden]", next: "end_warten" }
+                { t: "[Sofort Zahlen und Belege sammeln]", next: "end_prep" },
+                { t: "[Abwarten, wird schon nichts werden]", next: "end_warten" }
             ]
         },
         rein: {

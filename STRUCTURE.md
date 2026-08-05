@@ -5,6 +5,12 @@ index.html              Vite-Einstieg, lädt src/main.js
 vite.config.js
 package.json            "type": "module"
 
+README.md
+UEBERGABE.md            Arbeitsweise, Stand, offene Punkte
+STRUCTURE.md            diese Datei
+EVENTS.md               wie Ereignisse gebaut werden — Leitfaden für Beiträge
+changelog.md
+
 electron/
   main.cjs              Electron-Hauptprozess, lädt docs/
 
@@ -28,6 +34,7 @@ public/
 tools/
   lint-data.mjs         Datenprüfung, npm run lint:data
   simulate-day.mjs      Tages-Simulation, npm run sim
+  report-prose.mjs      Prosa- und Stilbericht, node tools/report-prose.mjs [bereich]
   reorder-opts.mjs      verteilt die Optionsreihenfolge, einmalig
   normalize-quotes.mjs  Anführungszeichen, einmalig
 ```
@@ -50,10 +57,11 @@ kann `assets/img/items/${id}.webp` auflösen, weil `id` erst im Spiel bekannt
 ist. Diese Dateien werden unverändert kopiert und behalten ihren Pfad.
 
 Dort liegen: alle Item-, Charakter- und Erfolgsbilder sowie die Musik. Die
-Intranet-Seiten lagen bis v4.0.0 ebenfalls dort — als eigenständige HTML-Dateien
-in einem iframe, die dafür eine handkopierte Fassung des Stylesheets brauchten.
-Sie sind jetzt Komponenten unter `components/intranet/` und teilen sich den
-Build des Spiels.
+Charakterbilder werden seit 4.1 an zwei Stellen gebraucht: im Terminal als
+Ereignis-Porträt und im Messenger als Kontaktfoto. Die Intranet-Seiten lagen bis
+v4.0.0 ebenfalls hier — als eigenständige HTML-Dateien in einem iframe, die
+dafür eine handkopierte Fassung des Stylesheets brauchten. Sie sind jetzt
+Komponenten unter `components/intranet/` und teilen sich den Build des Spiels.
 
 Kurz: **Verweis im Code sichtbar → `src/`. Pfad zur Laufzeit gebaut → `public/`.**
 
@@ -90,13 +98,47 @@ Veröffentlicht wird `docs/` über GitHub Pages (Einstellung: Deploy from a bran
 `main` + `/docs`). Der Build gehört deshalb mit ins Repository: erst `npm run
 build`, dann committen und pushen — sonst ist die Live-Seite älter als der Code.
 
+Weil `docs/` beim Bauen überschrieben wird, gehört dort **keine** Dokumentation
+hinein. Die Markdown-Dateien liegen deshalb in der Wurzel.
+
 ## Werkzeuge
 
 `lint-data.mjs` und `simulate-day.mjs` gehören in den Arbeitsablauf: der Linter
 nach jeder Datenänderung (0 Fehler, 0 Warnungen), die Simulation vor jeder
 Balance-Entscheidung.
 
-Die anderen beiden sind Einmal-Werkzeuge, die den Bestand in einen definierten
+Der Linter prüft Verweise und Konventionen: Item-, Figuren- und Flag-Namen
+(`req`, `rem`, `loot`, `rep`, `char` — auch auf Knoten-Ebene in Chats), doppelte
+IDs, unbekannte Felder, Quest-Items als `req`/`rem`, Zeitbezüge in
+Folge-Ereignissen, die Löschen-Konvention im Postfach (eine Lösch-Auswahl trägt
+`ignoreEmail: true` und steht an letzter Position) und verwaiste unsichtbare
+Zeichen. Die beiden letztgenannten stammen aus einem konkreten Fehler: In
+`mail_leak_1` standen zwei Variation-Selektoren ohne Emoji-Basis vor dem
+Button-Text. Unsichtbar im Editor, unsichtbar im Spiel — aber jedes Textmuster
+lief daran vorbei, und so blieb die Option jahrelang an falscher Position ohne
+ihr Flag.
+
+Die Regel für **unbekannte Felder** prüft je Stelle, was die Engine dort
+tatsächlich liest, und ist damit schärfer als eine bloße Liste erlaubter Namen:
+`reqStory` an einer Mittagspause wird nie ausgewertet (die Pause zieht rein
+zufällig), `req` in einer Mail ebenso wenig, und eine Knoten-Auswahl in einem
+Gespräch trägt nur `t` und `next` — ihre Wirkungen gehören ins Result. Anlass
+war ein `ep` statt `rep` in einem Dienstgang-Chat, das eine Ruf-Änderung zwei
+Versionen lang verschluckt hat. Ein Tippfehler im Feldnamen ist die leiseste
+Fehlerklasse, die es hier gibt: Er lässt sich fehlerfrei parsen und verschwindet
+danach zur Laufzeit.
+
+`report-prose.mjs` ist kein Build-Gate, sondern ein Bericht für die
+redaktionelle Arbeit: Der Exit-Code ist immer 0, alle Befunde sind Lesestoff.
+Aufruf mit Bereich (`node tools/report-prose.mjs coffee`) oder ohne für alle.
+Gemeldet werden wörtlich wiederholte Sätze und Wortfolgen über Ereignisgrenzen
+hinweg, Statuswert-Sprache im Erzähltext ("Aggro steigt"), Tippfehler-Muster,
+alternde Referenzen, zu knappe Ergebnistexte, dünne Auftakte, auffällige
+Beschriftungen, Alt-Register in Optionen (Sektion 9) und Auftakt-Schablonen
+(Sektion 10). Das Werkzeug kennt die legitimen Ausnahmen und meldet sie nicht:
+Betreffzeilen, Anrufer-Anzeigen, Chat-Nachrichten und bewusste Lautmalerei.
+
+Die letzten beiden sind Einmal-Werkzeuge, die den Bestand in einen definierten
 Zustand gebracht haben. Sie sind wiederholbar — ein zweiter Lauf ändert nichts
 mehr — und stehen im Repository, weil sie dokumentieren, wie dieser Zustand
 zustande kam:
@@ -112,6 +154,9 @@ Gala werden nicht angefasst.
 unten. `--dry` berichtet, ohne zu schreiben.
 
 ## Konventionen in den Datendateien
+
+Wie ein Ereignis technisch aufgebaut ist — Felder, Bautypen, Beispiele — steht
+in EVENTS.md. Hier stehen die Regeln, die für den Bestand gelten.
 
 **Notation:** Zeichenketten stehen in doppelten Anführungszeichen. Das ist mehr
 als Geschmack — Werkzeuge, die die Dateien als Text durchsuchen, überspringen
@@ -136,6 +181,53 @@ für Erfolge. Sie dürfen nie als `req` oder `rem` stehen; der Linter prüft das
 ein Ereignis mit Gewicht. So wächst das Verhältnis zu den Kollegen über mehrere
 Arbeitstage statt an einem einzigen. Wo eine Figur im Ereignis auftritt, gehört
 sie auch ins Feld `char` — sonst bleibt die Karte ohne Gesicht.
+
+**Beschriftungen sind Handlungen, keine Etiketten.** Ein Button beschreibt in
+einer natürlichen Verbphrase, was Müller tut ("Ihn vor dem Spinat-Kern warnen"),
+oder er ist nackte wörtliche Rede, wenn der Witz im Wortlaut steckt ("'Herr
+Koch? Die Suppe ist kalt!'"). Die Haltung steckt im Verb oder Adverb ("Panisch
+auflegen"), nicht in einem Präfix ("Lüge:") oder einer Klammer
+("(Kapitulation)"). Versalien tragen das Ausrasten, Anführungszeichen die
+Ironie einer "'versehentlichen'" Sabotage, ein Gedankenstrich den Nachsatz.
+Aktions-Buttons enden ohne Punkt, gesprochene Sätze mit normaler Interpunktion;
+Richtwert unter 60 Zeichen. Ausgenommen ist, was echt sein muss: Betreffzeilen
+im Postfach, Anrufer-Anzeigen auf dem Telefondisplay, Ticket-Status und die
+parodierte Entkalkungs-Software mit ihren 73 Schritten. Sektion 9 des
+Prosa-Berichts listet, was noch im alten Register steht.
+
+**Auftakte ohne Schablone.** Der erste Satz eines Ereignisses trägt die Szene.
+"Du willst…" nur, wenn der Witz im selben Satz sitzt; Auftritte variieren, statt
+dass jeder Kollege "in der Tür steht"; "plötzlich" nur, wenn die Überraschung
+der Inhalt ist und nicht bloß Füllwort. Sektion 10 des Prosa-Berichts wacht
+darüber.
+
+**Result-Schlüssel beginnen mit `res_`.** Das Terminal hängt an jede
+Ketten-Auswahl, deren Ziel *nicht* so heißt, ein "…"-Abzeichen — das Zeichen
+dafür, dass das Gespräch weitergeht. Ein Ausgang namens `truth` verspricht damit
+eine Fortsetzung und legt dann auf. Der Linter meldet Abweichungen als Info und
+nicht als Warnung: 101 Ausgänge im Bestand tragen noch alte Namen, und ein
+Result umzubenennen heißt, jedes `next` mitzuziehen, das darauf zeigt.
+
+**Im Smartphone-Chat** ist Klartext eine Nachricht, die Müller sendet — volle
+Sätze, Emojis erlaubt. Eckige Klammern sind eine Handlung statt einer Nachricht,
+gleich ob App-Funktion oder Handgriff: `[Gruppe verlassen]`,
+`[Handy frustriert weglegen]`, Medien als `[GIF gesendet: …]`. Hybride
+kombinieren beides.
+
+Bis 4.1 trugen App-Funktionen zusätzlich ein `System:` vor dem Text. Das ist
+entfallen — die Klammern sagen dasselbe, und acht Zeichen sind im schmalen
+Chatfenster viel. In den Chat-Blasen bleibt `[System: …]` dagegen erhalten: Dort
+ist es die Meldung des Messengers selbst, nicht die Beschriftung eines Knopfes.
+Der Daten-Prüfer hält die Trennung offen.
+
+**Porträts im Chat** lösen sich pro Knoten auf: Ein `char` am Knoten gewinnt,
+sonst erbt der Knoten das `char` des Ereignisses, und ohne beides bleibt die
+Initiale. So deckt ein Feld alle Fälle ab — ein Charakter für den ganzen Chat,
+ein Gastauftritt mitten in einer Kette (dann steht auch der Figurenname über der
+Blase) und Gruppen, in denen nur einzelne Stimmen ein Gesicht haben. `char: null`
+an einem Knoten erzwingt die Initiale trotz Ereignis-Figur. Dass Unbekannte —
+Scammer, der Prinz, Mama, der Vermieter — gar kein `char` tragen, ist Absicht:
+Wer nicht im Adressbuch steht, hat auch kein Foto.
 
 ## Zustand und Anzeige
 
@@ -169,3 +261,8 @@ den Zustand zu gehen hieße, dass jede davon vom Tutorial wissen muss. Bei
 `ActionBar` wäre es zusätzlich schädlich: Die Komponente hält bewusst nichts
 Zustandsabhängiges im `class`-Attribut, weil Svelte es sonst bei jeder Änderung
 neu schreibt und die Ringe entfernt.
+
+## Sprache im Repository
+
+Spieltexte, Commit-Nachrichten und die Dokumentation sind Deutsch — das Spiel
+spielt in einem deutschen Büro. Code und Kommentare sind Englisch.
