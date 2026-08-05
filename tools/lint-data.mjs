@@ -18,13 +18,15 @@
  *  - characters in opt.r that could break the inline onclick string
  *  - unknown fields: a misspelt key parses fine and is silently dropped
  *  - result keys without the res_ prefix (the terminal reads that prefix)
+ *  - the diary pool: conditions that throw, never fit, or name something
+ *    that does not exist
  */
 
 import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -513,6 +515,120 @@ for (const ev of DB.emails) {
         if (!rid.startsWith('res_')) stray.push(`${p}/${ev.id}!${rid}`);
   if (stray.length)
     info(`${stray.length} Result-Schlüssel ohne res_-Präfix — die Option dorthin trägt im Terminal das "..."-Abzeichen, obwohl sie das Gespräch beendet (z. B. ${stray.slice(0, 4).join(', ')})`);
+}
+
+/* ---------- 11) The diary ---------- */
+// data_diary.js keeps its conditions next to its texts, which is what makes
+// writing a new line a data change. The price is that a condition is code, so
+// it gets exercised here: every fragment is run against a spread of synthetic
+// days. A condition that throws would otherwise only surface at 16:30 on
+// somebody's screen, and one that can never fit is a line nobody ever reads.
+{
+  const CHOICE_SLOTS = ['mood', 'place', 'ending', 'postscript'];
+  const LIST_SLOTS = { encounters: 'encountersIntro', habits: 'habitsIntro', warnings: 'warningsIntro' };
+  const ENDS = ['WIN', 'RAGE', 'TICKETS', 'FIRED', 'PARTY'];
+  const achIds = new Set(DB.achievements.map(a => a.id));
+
+  // A spread of days: every ending, both warnings, all three difficulties,
+  // blind and sighted, and achievement/item sets from nothing to everything.
+  //
+  // The three event counts have to differ from one another, not just grow
+  // together: a day is a server day or a phone day precisely because one
+  // number outgrows the others, and every condition on the place slot compares
+  // them. With server === calls === quests none of them could ever fit, and
+  // the check reported three perfectly good fragments as unreachable.
+  const SHAPES = [
+    { server: 0,  calls: 0,  quests: 0  },   // nothing happened yet
+    { server: 6,  calls: 5,  quests: 4  },   // an ordinary day
+    { server: 9,  calls: 2,  quests: 3  },   // hiding in the server room
+    { server: 2,  calls: 9,  quests: 3  },   // the phone never stopped
+    { server: 2,  calls: 2,  quests: 9  },   // out on errands all day
+    { server: 14, calls: 14, quests: 14 }    // a very long day
+  ];
+  const days = [];
+  const achList = [...achIds], itemList = [...itemIds];
+  for (const end of ENDS) {
+    for (const difficulty of ['easy', 'normal', 'hard']) {
+      for (const share of [0, 0.5, 1]) {
+        const owned = new Set(achList.filter((_, i) => share === 1 || (share === 0.5 && i % 2 === 0)));
+        const carried = new Set(itemList.filter((_, i) => share === 1 || (share === 0.5 && i % 3 === 0)));
+        for (const shape of SHAPES) {
+          days.push({
+            end, difficulty, survived: end === 'WIN' || end === 'PARTY',
+            ...shape,
+            rageWarned: share > 0, chefWarned: share === 1, blind: share > 0,
+            ach: (id) => owned.has(id), item: (id) => carried.has(id),
+            hasEncounters: share > 0, hasHabits: share === 1
+          });
+        }
+      }
+    }
+  }
+
+  const seenIds = new Set();
+  for (const [slot, fragments] of Object.entries(DB.diary)) {
+    if (!Array.isArray(fragments)) { err(`[diary/${slot}]: kein Array`); continue; }
+
+    fragments.forEach((f, i) => {
+      const ctx = `[diary/${slot}#${f.id ?? i}]`;
+      if (!f.id) err(`${ctx}: Baustein ohne id — die Wiederholungs-Sperre merkt sich ids`);
+      else if (seenIds.has(f.id)) err(`${ctx}: id "${f.id}" gibt es doppelt`);
+      else seenIds.add(f.id);
+
+      if (typeof f.when !== 'function') { err(`${ctx}: when fehlt oder ist keine Funktion`); return; }
+      if (!Array.isArray(f.lines) || f.lines.length === 0) { err(`${ctx}: keine Zeilen`); return; }
+      f.lines.forEach((line, k) => {
+        if (typeof line !== 'string' || !line.trim()) err(`${ctx} lines[${k}]: leer`);
+        else checkText(ctx, `lines[${k}]`, line);
+      });
+
+      // Namen, die es nicht gibt: ach('ach_tippfehler') zündet sonst nie und
+      // fällt nur dadurch auf, dass eine Zeile nie erscheint.
+      const source = f.when.toString();
+      for (const [, id] of source.matchAll(/\bach\(\s*['"]([^'"]+)['"]\s*\)/g))
+        if (!achIds.has(id)) err(`${ctx}: Erfolg "${id}" existiert nicht`);
+      for (const [, id] of source.matchAll(/\bitem\(\s*['"]([^'"]+)['"]\s*\)/g))
+        if (!itemIds.has(id)) err(`${ctx}: Gegenstand "${id}" existiert nicht`);
+
+      let fitted = 0;
+      for (const day of days) {
+        try { if (f.when(day)) fitted++; }
+        catch (e) { err(`${ctx}: Bedingung stolpert (${e.message})`); return; }
+      }
+      if (fitted === 0) warn(`${ctx}: die Bedingung passt auf keinen denkbaren Tag — die Zeilen erscheinen nie`);
+
+      // Platzhalter: der Auftakt einer Aufzählung braucht {list}.
+      if (Object.values(LIST_SLOTS).includes(slot))
+        f.lines.forEach((line, k) => {
+          if (!line.includes('{list}')) err(`${ctx} lines[${k}]: {list} fehlt — die Aufzählung hätte keinen Platz`);
+        });
+      else
+        f.lines.forEach((line, k) => {
+          if (line.includes('{list}')) err(`${ctx} lines[${k}]: {list} steht ausserhalb eines Aufzählungs-Auftakts`);
+        });
+    });
+  }
+
+  // Ein Wahl-Platz ohne passenden Baustein liefert eine leere Zeile. Fuer den
+  // Abschluss ist das der schlimmste Fall: der Tag endet ohne Schlusssatz.
+  for (const slot of CHOICE_SLOTS) {
+    if (!DB.diary[slot]) { err(`[diary/${slot}]: Platz fehlt`); continue; }
+    if (slot === 'postscript') continue;   // darf leer bleiben, ist ein Nachsatz
+    const orphans = days.filter(d => !DB.diary[slot].some(f => { try { return f.when(d); } catch { return false; } }));
+    if (orphans.length) {
+      const ends = [...new Set(orphans.map(d => d.end))].join(', ');
+      err(`[diary/${slot}]: kein Baustein passt für ${ends} — der Absatz bliebe leer`);
+    }
+  }
+
+  // Jeder Sammelplatz braucht seinen Auftakt, sonst stehen die Klauseln nackt da.
+  for (const [listSlot, introSlot] of Object.entries(LIST_SLOTS)) {
+    if (!DB.diary[listSlot]) err(`[diary/${listSlot}]: Platz fehlt`);
+    if (!DB.diary[introSlot]) err(`[diary/${introSlot}]: Auftakt zu ${listSlot} fehlt`);
+  }
+
+  const total = Object.values(DB.diary).flat().reduce((n, f) => n + (f.lines?.length ?? 0), 0);
+  info(`Tagebuch: ${Object.values(DB.diary).flat().length} Bausteine mit ${total} Zeilen in ${Object.keys(DB.diary).length} Plätzen`);
 }
 
 /* ---------- Output ---------- */

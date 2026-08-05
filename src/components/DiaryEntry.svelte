@@ -6,7 +6,8 @@
   askew on the desk, with date and weekday like in a real diary. The texture
   already lives in the project (public/assets).
 
-  The paragraphs arrive as data from engine_core.generateDiaryEntry().
+  The paragraphs arrive as data from engine/engine_diary.js: a list in
+  reading order, each with a tone that decides how it is set.
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
@@ -22,17 +23,18 @@
     ];
     const weekday = $derived(WEEKDAY.find(d => d.test(game.difficultyMult)).label);
 
-    // The blind-run postscript deliberately sits before the closing line and
-    // gets its own styling: added afterwards, like a note that only occurred
-    // to you as you were shutting the book.
+    // A list rather than fixed fields, so a new slot in the diary does not
+    // need a change here. The order is the order of the page; the blind-run
+    // postscript deliberately sits before the closing line and gets its own
+    // styling: added afterwards, like a note that only occurred to you as you
+    // were shutting the book.
     const paragraphs = $derived(
-        [
-            { text: diary?.p1 },
-            { text: diary?.p2 },
-            { text: diary?.pWarn,  warn: true },
-            { text: diary?.pBlind, note: true },
-            { text: diary?.p3,     final: true }
-        ].filter(p => p.text)
+        (diary?.paragraphs ?? []).map(p => ({
+            text: p.text,
+            warn: p.tone === 'warn',
+            note: p.tone === 'note',
+            final: p.tone === 'final'
+        }))
     );
 </script>
 

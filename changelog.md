@@ -19,6 +19,7 @@ Fehlerkorrekturen:
 * Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen. Ein Tippfehler im Feldnamen hatte die Wirkung stillschweigend verschluckt.
 * Im Rucksack lassen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger öffnen. Bisher erschienen sie nur unter dem Mauszeiger - wer am Handy oder auf dem Steam Deck spielt, hat nie erfahren, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt die Beschreibung, ein zweiter Tipp benutzt den Gegenstand wie gehabt, ein Tipp daneben schließt sie wieder.
 * Auf schmalen Bildschirmen ragten diese Beschreibungen am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
+* Das Tagebuch verschluckte Begegnungen. Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste davon zu lesen - der Rest fiel beim Zusammensetzen des Satzes still unter den Tisch. Jetzt steht dort, was der Tag hergegeben hat.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 
 Für Entwickler:
