@@ -45,9 +45,12 @@ export function freshDay(mult = 1.0) {
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
 
-        // The excuse currently on offer. Drawn when the dialog opens so it
-        // stays put while the player reads it.
+        // The excuse currently on offer, and the event it was drawn for. One
+        // excuse per event: closing and reopening the dialog must not deal a
+        // new one, or a player can leaf through the whole pool without ever
+        // spending an excuse.
         currentExcuse: '',
+        excuseFor: null,
 
         // Progress
         inventory: [],

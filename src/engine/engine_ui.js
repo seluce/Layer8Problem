@@ -393,9 +393,15 @@ export const ui = {
         const modal = document.getElementById('excuse-modal');
         if (!modal) return;
 
-        this.state.currentExcuse = DB.excuses?.length
-            ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
-            : "Sorry, mein Router hat einen schlechten Tag.";
+        // Drawn once per event, not once per opening. Whoever closes the dialog
+        // and opens it again gets the same excuse back - the texts are the
+        // reward for actually fleeing, not a gallery to leaf through.
+        if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
+            this.state.currentExcuse = DB.excuses?.length
+                ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
+                : "Sorry, mein Router hat einen schlechten Tag.";
+            this.state.excuseFor = this.state.currentEventId;
+        }
 
         this.showOverlay(modal);
     },
@@ -414,6 +420,11 @@ export const ui = {
         }
 
         this.state.excusesLeft--;
+
+        // Spent: the next event deals a new one. Without this the same text
+        // would come back if the engine draws this event again later - fleeing
+        // it emptied usedIDs, after all.
+        this.state.excuseFor = null;
         
         if (this.state.currentEventId && this.state.usedIDs.has(this.state.currentEventId)) {
             this.state.usedIDs.delete(this.state.currentEventId);
