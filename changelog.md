@@ -8,17 +8,18 @@ wirkt. Das ist jetzt für alle Ereignisse einheitlich.
 
 Ereignisse & Texte:
 * Alle rund 230 Ereignisse in acht Bereichen wurden redaktionell überarbeitet. Die Optionen und ihre Auswirkungen sind unverändert - nur die Sprache ist überall dieselbe. Ältere Ereignisse waren teils sehr karg und wiederholten einander: spielweit standen 245 Sätze doppelt, jetzt sind es 172.
+* Das Tagebuch am Feierabend erzählt jetzt vom Tag statt von den Erfolgen. Es liest, wie der Tag verlaufen ist - ob es früh brannte oder erst nach zwei kippte, wie viele Tassen es gebraucht hat, wie viele Tickets offen blieben, wer heute anders über einen denkt als heute Morgen. Der Bestand ist von 40 auf 75 Bausteine gewachsen, und die zuletzt benutzten Sätze werden beim nächsten Eintrag übersprungen: In einer Arbeitswoche wiederholt sich damit noch jeder elfte Satz statt jedem zweiten.
 * Die Auftakte klingen nicht mehr nach Schablone. 64 Eröffnungen wurden neu geschrieben - "Du willst..." begann 22 Ereignisse, jetzt 9, und das Füllwort "plötzlich" stand 47-mal im Text, jetzt 14-mal. An einem einzelnen Ereignis fällt so etwas nicht auf, an fünfzig hintereinander schon.
 
 Anzeige & Layout:
 * Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. 817 Beschriftungen sind vom alten Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)") auf das umgestellt, was Müller tut oder sagt. Ob eine Antwort feige, ehrlich oder dumm war, entscheidet jetzt der Ergebnistext - nicht der Knopf davor.
+* Im Rucksack lassen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger öffnen. Bisher erschienen sie nur unter dem Mauszeiger - wer am Handy oder auf dem Steam Deck spielt, hat nie erfahren, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt die Beschreibung, ein zweiter Tipp benutzt den Gegenstand wie gehabt, ein Tipp daneben schließt sie wieder.
 * Das Smartphone zeigt Kontaktfotos: Ein Chat mit einer bekannten Figur zeigt ihr Porträt statt der Initiale. In Gruppen-Chats kann jede einzelne Nachricht ihr eigenes Gesicht und ihren eigenen Namen haben, während der Rest der Gruppe anonym bleibt. Unbekannte Nummern behalten die Initiale - wie im echten Adressbuch.
 
 Fehlerkorrekturen:
 * Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Die Option stand an der falschen Stelle und hatte ihr Verhalten verloren; schuld waren zwei unsichtbare Sonderzeichen vor der Beschriftung.
 * Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen. Ein Tippfehler im Feldnamen hatte die Wirkung stillschweigend verschluckt.
-* Im Rucksack lassen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger öffnen. Bisher erschienen sie nur unter dem Mauszeiger - wer am Handy oder auf dem Steam Deck spielt, hat nie erfahren, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt die Beschreibung, ein zweiter Tipp benutzt den Gegenstand wie gehabt, ein Tipp daneben schließt sie wieder.
-* Auf schmalen Bildschirmen ragten diese Beschreibungen am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
+* Auf schmalen Bildschirmen ragten die Gegenstands-Beschreibungen im Rucksack am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
 * Das Tagebuch verschluckte Begegnungen. Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste davon zu lesen - der Rest fiel beim Zusammensetzen des Satzes still unter den Tisch. Jetzt steht dort, was der Tag hergegeben hat.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 

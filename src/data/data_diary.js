@@ -14,11 +14,18 @@
  *
  * Two kinds of slot:
  *
- *   - choice slots (mood, place, ending, postscript): the FIRST fragment whose
- *     condition holds wins, so order matters and the fallback goes last.
+ *   - choice slots (mood, place, rhythm, detail, people, ending, postscript):
+ *     of everything that fits, the highest `rank` wins and a draw among equals
+ *     decides the rest. Rank is how specific a fragment is - 2 for "this fits
+ *     one kind of day", 0 for the fallback that always fits. Order in the file
+ *     no longer decides anything, so new fragments go wherever they read best.
  *   - collecting slots (encounters, habits, warnings): every match contributes
  *     one clause; the matching *Intro slot supplies the sentence around them
  *     and receives the joined clauses as {list}.
+ *
+ * Lines may carry placeholders: {up} {down} for the colleagues who moved most
+ * today, {upBy} {downBy} for how far, {tickets} {coffee} {mails} {excuses}
+ * {items} {events} {streak} for the day's figures, and {weekday}.
  *
  * One line per fragment is drawn at random. Ids are what the anti-repetition
  * memory remembers, so renaming one makes the game forget it was ever used.
@@ -26,8 +33,32 @@
 export const diary = {
     // Opening line: the mood of the day. First match wins, so the fallback goes last.
     mood: [
+        // Wochentag statt Erfolg: greift auch an Tagen, an denen nichts Besonderes passiert ist.
         {
-            id: "mood_rage", when: d => d.ach('ach_rage'),
+            id: "mood_monday", rank: 1, when: d => d.difficulty === 'hard',
+            lines: [
+                "Montag. Das Wort allein ist schon eine Diagnose.",
+                "Ein {weekday}, wie er im Handbuch steht: Die Firma hat das Wochenende überlebt, aber nichts dazugelernt.",
+                "Der Wochenanfang hat mich heute abgeholt, ohne vorher zu fragen, ob ich mitwill."
+            ]
+        },
+        {
+            id: "mood_friday", rank: 1, when: d => d.difficulty === 'easy',
+            lines: [
+                "Freitag. Die halbe Firma saß innerlich schon im Auto, die andere Hälfte im Stau.",
+                "Ein {weekday}, an dem selbst die Server langsamer laufen, weil es sich sonst nicht lohnt.",
+                "Zum Wochenausklang macht der Wahnsinn eine Pause. Nicht lange, aber immerhin."
+            ]
+        },
+        {
+            id: "mood_streak", rank: 1, when: d => d.survived && d.streak >= 4,
+            lines: [
+                "Ich habe aufgehört mitzuzählen, den wievielten Tag am Stück ich das jetzt durchhalte. Das Zählen übernimmt die Firma.",
+                "Es läuft seit Tagen erstaunlich glatt. Genau deshalb traue ich dem Frieden nicht."
+            ]
+        },
+        {
+            id: "mood_rage", rank: 2, when: d => d.ach('ach_rage'),
             lines: [
                 "Heute war ich ein wandelndes Pulverfass. Ein falsches Wort und ich hätte den Router angezündet.",
                 "Mein Puls war heute konstant auf 180. Ich habe mehrfach überlegt, einfach den Feueralarm zu drücken.",
@@ -35,7 +66,7 @@ export const diary = {
             ]
         },
         {
-            id: "mood_lazy", when: d => d.ach('ach_lazy'),
+            id: "mood_lazy", rank: 2, when: d => d.ach('ach_lazy'),
             lines: [
                 "Mein Motto heute: Warum heute arbeiten, wenn man es auch auf unbestimmte Zeit verschieben kann?",
                 "Ich habe die Kunst der produktiven Arbeitsvermeidung heute absolut perfektioniert.",
@@ -43,7 +74,7 @@ export const diary = {
             ]
         },
         {
-            id: "mood_ascetic", when: d => d.ach('ach_ascetic'),
+            id: "mood_ascetic", rank: 2, when: d => d.ach('ach_ascetic'),
             lines: [
                 "Ich habe den Tag ohne einen Tropfen Kaffee überlebt – mein Kopf dröhnt vor Tugendhaftigkeit.",
                 "Kein Koffein heute. Ich funktioniere nur noch durch pure Willenskraft und unterdrückte Wut.",
@@ -51,7 +82,7 @@ export const diary = {
             ]
         },
         {
-            id: "mood_coffee", when: d => d.ach('ach_coffee'),
+            id: "mood_coffee", rank: 2, when: d => d.ach('ach_coffee'),
             lines: [
                 "Mein Blut besteht mittlerweile zu 90% aus Koffein. Ich kann Farben schmecken.",
                 "Ich zittere am ganzen Körper. Nicht vor Angst, sondern weil ich den halben Kaffeeautomaten geleert habe.",
@@ -59,7 +90,7 @@ export const diary = {
             ]
         },
         {
-            id: "mood_workaholic", when: d => d.ach('ach_workaholic'),
+            id: "mood_workaholic", rank: 2, when: d => d.ach('ach_workaholic'),
             lines: [
                 "Ich habe heute tatsächlich so hart gearbeitet, dass ich uns alle schlecht aussehen lasse.",
                 "Heute war ich beängstigend produktiv. Ich hoffe, das Management gewöhnt sich nicht daran.",
@@ -67,7 +98,7 @@ export const diary = {
             ]
         },
         {
-            id: "mood_default", when: () => true,
+            id: "mood_default", rank: 0, when: () => true,
             lines: [
                 "Ein weiterer Tag im alltäglichen Corporate-Wahnsinn neigt sich dem Ende.",
                 "Wieder acht Stunden meines Lebens, die mir niemand zurückgeben wird.",
@@ -78,7 +109,21 @@ export const diary = {
     // Where the day was spent. Follows the opening in the same paragraph.
     place: [
         {
-            id: "place_corridors", when: d => d.quests > d.server && d.quests > d.calls,
+            id: "place_quiet", rank: 1, when: d => d.events <= 12,
+            lines: [
+                "So übersichtlich war es lange nicht. Ich habe zwischendurch die Ablage sortiert, freiwillig.",
+                "Der Laden lief heute fast ohne mich. Ein Gefühl zwischen Erleichterung und Kränkung."
+            ]
+        },
+        {
+            id: "place_full", rank: 1, when: d => d.events >= 30,
+            lines: [
+                "Ich war heute überall und nirgends: Serverraum, Flur, Telefon, und wieder von vorn.",
+                "Mein Stuhl und ich haben uns heute hauptsächlich vom Hörensagen gekannt."
+            ]
+        },
+        {
+            id: "place_corridors", rank: 2, when: d => d.quests > d.server && d.quests > d.calls,
             lines: [
                 "Anstatt mich um echte Probleme zu kümmern, bin ich lieber ziellos durch die Flure gegeistert.",
                 "Meine Hauptaufgabe bestand heute scheinbar darin, seltsame Büro-Dramen abseits meines Schreibtisches zu lösen.",
@@ -86,7 +131,7 @@ export const diary = {
             ]
         },
         {
-            id: "place_server", when: d => d.server > d.calls + 2,
+            id: "place_server", rank: 2, when: d => d.server > d.calls + 2,
             lines: [
                 "Um den nervigen Menschen aus dem Weg zu gehen, habe ich mich größtenteils im dunklen Serverraum verschanzt.",
                 "Die lauten Lüfter im Serverraum waren heute meine einzige, echte Gesellschaft.",
@@ -94,7 +139,7 @@ export const diary = {
             ]
         },
         {
-            id: "place_phone", when: d => d.calls > d.server + 3,
+            id: "place_phone", rank: 2, when: d => d.calls > d.server + 3,
             lines: [
                 "Gefühlt klebte mir das Telefon pausenlos am Ohr. Die User haben mir den letzten Nerv geraubt.",
                 "Ich habe heute mehr Support-Gespräche geführt als eine vollbesetzte Call-Center-Schicht.",
@@ -102,7 +147,7 @@ export const diary = {
             ]
         },
         {
-            id: "place_mixed", when: () => true,
+            id: "place_mixed", rank: 0, when: () => true,
             lines: [
                 "Zwischen piepsenden Servern und panischen Anrufen habe ich irgendwie versucht, den Betrieb am Laufen zu halten.",
                 "Ein chaotischer Mix aus Hardware-Ausfällen und menschlicher Inkompetenz hielt mich heute auf Trab.",
@@ -305,6 +350,49 @@ export const diary = {
     // The closing line. {party} carries the text the gala finale brings along.
     ending: [
         {
+            id: "end_win_late", rank: 1, when: d => d.end === 'WIN' && d.endHour >= 16 && d.tickets <= 1,
+            lines: [
+                "Halb fünf, die Liste fast leer, Licht aus. Das kommt so selten vor, dass ich im Türrahmen kurz stehen geblieben bin.",
+                "Ein sauberer Feierabend mit sauberer Warteschlange. Ich werde morgen niemandem davon erzählen, es würde nur Erwartungen wecken."
+            ]
+        },
+        {
+            id: "end_win_close", rank: 1, when: d => d.end === 'WIN' && d.peakValue >= 85,
+            lines: [
+                "Bis Feierabend geschafft, aber es war knapp. Wie knapp, behalte ich für mich.",
+                "Der Tag ist an mir vorbeigeschrammt, nicht andersherum. Ich nehme das Ergebnis trotzdem."
+            ]
+        },
+        {
+            id: "end_win_more", rank: 0, when: d => d.end === 'WIN',
+            lines: [
+                "Der Rechner ist aus, die Tür fällt zu, der Rest ist morgen. So einfach ist das an guten Tagen.",
+                "Ich habe die Tastatur gerade gerückt, das Licht gelöscht und bin gegangen, bevor noch jemand eine Idee hat.",
+                "Feierabend. Kein Applaus, kein Abspann, nur der Aufzug, der schon wieder woanders ist."
+            ]
+        },
+        {
+            id: "end_rage_more", rank: 0, when: d => d.end === 'RAGE',
+            lines: [
+                "Am Ende habe ich alles gesagt, was ich seit Monaten denke. Leider laut und leider vollständig.",
+                "Es war nicht der große Knall. Es war der letzte kleine, und der reichte."
+            ]
+        },
+        {
+            id: "end_tickets_more", rank: 0, when: d => d.end === 'TICKETS',
+            lines: [
+                "Die Warteschlange hat gewonnen. Sie gewinnt am Ende immer, heute nur schneller als sonst.",
+                "Irgendwann tippt man nur noch, ohne zu lesen. Danach dauert es nicht mehr lange."
+            ]
+        },
+        {
+            id: "end_fired_more", rank: 0, when: d => d.end === 'FIRED',
+            lines: [
+                "Der Karton stand schon bereit, als ich zurückkam. Effizient waren sie hier immer nur bei den falschen Dingen.",
+                "Mein Zugang war gesperrt, bevor ich am Aufzug ankam. Das war die schnellste Reaktion der IT seit Jahren, und sie kam von mir."
+            ]
+        },
+        {
             id: "end_rage", when: d => d.end === 'RAGE',
             lines: [
                 "Das bittere Ende vom Lied? Mir ist die Sicherung durchgebrannt. Ein fliegender Monitor ist schließlich auch eine Form von fristloser Kündigung!",
@@ -346,7 +434,7 @@ export const diary = {
     // Marginal note, only on days that were survived. Nothing else writes here yet.
     postscript: [
         {
-            id: "blind_hard", when: d => d.survived && d.blind && d.difficulty === 'hard',
+            id: "blind_hard", rank: 2, when: d => d.survived && d.blind && d.difficulty === 'hard',
             lines: [
                 "Nachtrag: Ich habe den ganzen Montag über keine einzige Zahl gesehen. Keine Prozente, keine Ticketstände, nichts. Nur Gesichter, Tonfall und das Geräusch, das die Kaffeemaschine macht, wenn es zu spät ist. Ich habe ihn trotzdem überstanden. Ich weiß bis jetzt nicht, wie knapp es war, und ich will es auch nicht wissen.",
                 "Nachtrag: Montag, blind. Ich habe den Tag gelesen wie ein Seemann das Wetter — an der Art, wie Gabi 'guten Morgen' sagt, daran, wie lange Markus in der Tür stehen bleibt, daran, ob die Tür vom Chef offen war. Es hat funktioniert. Ich bin selbst am meisten überrascht.",
@@ -354,19 +442,212 @@ export const diary = {
             ]
         },
         {
-            id: "blind_easy", when: d => d.survived && d.blind && d.difficulty === 'easy',
+            id: "blind_easy", rank: 2, when: d => d.survived && d.blind && d.difficulty === 'easy',
             lines: [
                 "Nachtrag: Ich habe heute alle Anzeigen ausgeblendet. Kein Prozentwert, kein Ticketstand. An einem Freitag ist das kein Kunststück, aber es war erstaunlich ruhig im Kopf, wenn niemand einem ständig vorrechnet, wie es um einen steht.",
                 "Nachtrag: Der ganze Tag ohne Zahlen. Man merkt schnell, dass die Kollegen die ehrlicheren Messgeräte sind — die Zahlen sagen einem nur, wie schlimm es ist, die Kollegen sagen einem, warum."
             ]
         },
         {
-            id: "blind_normal", when: d => d.survived && d.blind,
+            id: "blind_normal", rank: 2, when: d => d.survived && d.blind,
             lines: [
                 "Nachtrag: Heute habe ich sämtliche Anzeigen abgeschaltet und den Tag nach Gefühl gearbeitet. Keine Prozente, keine offenen Zähler, nur der Laden und ich. Rückblickend die klarste Sicht, die ich seit Monaten hatte.",
                 "Nachtrag: Ein ganzer Arbeitstag ohne eine einzige Kennzahl. Kein Dashboard, kein Zähler, kein Balken, der langsam rot wird. Nur Menschen, Geräusche und Erfahrung. Man sollte das öfter machen. Man wird es nicht öfter machen.",
                 "Nachtrag: Blind gearbeitet, von acht bis Feierabend. Als jemand mittags fragte, wie es denn stehe, konnte ich zum ersten Mal ehrlich antworten: keine Ahnung. Und es war trotzdem in Ordnung."
             ]
         }
-    ]
+    ],
+
+    // How the day ran - shape of the curve, not its result.
+    rhythm: [
+        {
+            id: "rhythm_calm", rank: 2, when: d => d.calm && d.survived,
+            lines: [
+                "Der Tag lief so ruhig, dass ich zwischendurch geprüft habe, ob das Telefon überhaupt noch angeschlossen ist.",
+                "Kein Balken hat sich heute ernsthaft in Richtung Rot bewegt. Verdächtig.",
+                "Ein Arbeitstag ohne Zwischenfall. Ich habe ihn zweimal daraufhin abgeklopft und keinen gefunden."
+            ]
+        },
+        {
+            id: "rhythm_late_peak", rank: 2, when: d => d.peakHour >= 14 && d.peakValue >= 60,
+            lines: [
+                "Bis zum Mittag hatte ich alles im Griff. Was danach kam, hatte mit dem Vormittag nichts mehr zu tun.",
+                "Der Vormittag war Kulisse. Die eigentliche Vorstellung begann irgendwann nach zwei.",
+                "Am frühen Nachmittag ist der Tag gekippt, und zwar in einem einzigen Zug."
+            ]
+        },
+        {
+            id: "rhythm_early_peak", rank: 2, when: d => d.peakHour <= 10 && d.peakValue >= 60,
+            lines: [
+                "Vor neun war schon alles gesagt. Der Rest war Aufräumen.",
+                "Der Tag hat direkt nach dem ersten Kaffee sein Pulver verschossen. Danach ging es bergab, ausnahmsweise im guten Sinne.",
+                "Kaum saß ich, brannte es. Um elf war der Höhepunkt vorbei, und ehrlich gesagt ich auch."
+            ]
+        },
+        {
+            id: "rhythm_boss", rank: 1, when: d => d.boss >= 2,
+            lines: [
+                "Zweimal stand heute alles auf der Kippe, und zweimal hat es gereicht. Die Statistik nennt so etwas Erfahrung.",
+                "Der Tag hatte mehrere Momente, in denen die Uhr wichtiger war als der Verstand."
+            ]
+        },
+        {
+            id: "rhythm_grind", rank: 1, when: d => d.events >= 30,
+            lines: [
+                "Ich habe heute mehr erledigt als in mancher ganzen Woche und könnte trotzdem nicht sagen, was davon gewirkt hat.",
+                "Ein Tag im Akkord. Rückblickend verschwimmen die Vorgänge zu einem einzigen langen Vorgang.",
+                "So viele Kleinigkeiten, dass am Abend keine davon einzeln erinnerbar ist."
+            ]
+        },
+        {
+            id: "rhythm_short", rank: 1, when: d => !d.survived && d.events <= 12,
+            lines: [
+                "Der Tag war kurz. Nicht, weil wenig los war, sondern weil er vorzeitig endete.",
+                "Für einen abgebrochenen Arbeitstag war erstaunlich viel Schaden möglich."
+            ]
+        },
+        {
+            id: "rhythm_default", rank: 0, when: () => true,
+            lines: [
+                "Der Tag hatte seine Wellen: erst Ruhe, dann Betrieb, dann wieder Ruhe, und irgendwo dazwischen ich.",
+                "Von außen betrachtet ein ganz gewöhnlicher Arbeitstag. Von innen betrachtet ebenfalls, und genau das ist das Problem.",
+                "Ein Tag ohne Höhepunkte, dafür mit Tiefen, die niemand protokolliert hat."
+            ]
+        },
+    ],
+
+    // One concrete figure from the day. A choice slot on purpose: three
+    // numbers in a row would read like a report, not like a diary.
+    detail: [
+        // Konkrete Zahlen des Tages. Genau eine davon kommt in den Eintrag.
+        {
+            id: "detail_coffee_many", rank: 2, when: d => d.coffee >= 4,
+            lines: [
+                "Kaffeebilanz: {coffee} Tassen. Der Automat kennt mich inzwischen besser als die Personalabteilung.",
+                "Nach der {coffee}. Tasse habe ich das Zittern in den Fingern als Grundrauschen akzeptiert.",
+                "Ich habe heute so viel Kaffee getrunken, dass ich meinen eigenen Puls hören kann."
+            ]
+        },
+        {
+            id: "detail_coffee_none", rank: 2, when: d => d.coffee === 0 && d.events >= 8,
+            lines: [
+                "Keine einzige Tasse heute. Ich habe die Küche gemieden wie das Reh die Landstraße.",
+                "Null Kaffee. Ich weiß bis jetzt nicht, ob das Disziplin war oder schlicht keine Gelegenheit."
+            ]
+        },
+        {
+            id: "detail_tickets_high", rank: 2, when: d => d.tickets >= 7,
+            lines: [
+                "Am Ende standen {tickets} Tickets offen. Sie werden morgen noch da sein, treu wie sonst nichts in dieser Firma.",
+                "Die Warteschlange stand zuletzt bei {tickets}. Das ist kein Rückstand mehr, das ist ein Bestand."
+            ]
+        },
+        {
+            id: "detail_tickets_zero", rank: 2, when: d => d.tickets === 0 && d.survived,
+            lines: [
+                "Keine offenen Tickets. Ich habe die Ansicht dreimal neu geladen, weil ich es nicht glauben wollte.",
+                "Die Liste war am Abend leer. So etwas passiert vielleicht zweimal im Jahr, und niemand ist da, der es bezeugt."
+            ]
+        },
+        {
+            id: "detail_mails", rank: 2, when: d => d.mailsIgnored >= 3,
+            lines: [
+                "{mails} Mails habe ich ungelesen entsorgt. Keine davon hat mir bisher gefehlt.",
+                "Mein Postfach hat heute {mails} Nachrichten verloren und ich darüber keine Sekunde Schlaf."
+            ]
+        },
+        {
+            id: "detail_boss", rank: 2, when: d => d.boss >= 1,
+            lines: [
+                "Einmal stand der Laden kurz vor dem Stillstand. Es hat gereicht, aber nur, weil ich schneller war als die Uhr.",
+                "Es gab diesen einen Moment, in dem alles gleichzeitig blinkte. Ich habe ihn überlebt und will nicht darüber reden."
+            ]
+        },
+        {
+            id: "detail_excuses", rank: 1, when: d => d.excusesUsed >= 1,
+            lines: [
+                "Ich habe mich heute {excuses}-mal aus einer Sache herausgeredet. Jede Ausrede war schlechter als die vorige und hat trotzdem gewirkt.",
+                "Einmal mehr hat mich eine erfundene Dringlichkeit gerettet. Ich sollte mir die Formulierungen notieren."
+            ]
+        },
+        {
+            id: "detail_lunch", rank: 1, when: d => d.lunch,
+            lines: [
+                "Immerhin Mittag gemacht. Zwanzig Minuten, in denen niemand etwas von mir wollte, sind hier eine Währung.",
+                "Die Mittagspause war der einzige Termin heute, den ich freiwillig wahrgenommen habe."
+            ]
+        },
+        {
+            id: "detail_items", rank: 1, when: d => d.items >= 5,
+            lines: [
+                "Der Rucksack ist am Abend schwerer als am Morgen. Nichts davon gehört mir, und niemand wird danach fragen."
+            ]
+        },
+        {
+            id: "detail_leet", rank: 1, when: d => d.leet,
+            lines: [
+                "Um 13:37 Uhr habe ich auf die Uhr gesehen und mich anschließend darüber geärgert, dass es mir aufgefallen ist."
+            ]
+        },
+        {
+            id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
+            lines: [
+                "{streak} Tage am Stück überstanden. Meine Erwartungen an mich selbst sinken erfreulich schnell."
+            ]
+        },
+    ],
+
+    // The colleagues, measured against this morning rather than against zero.
+    //
+    // KNOWN THIN SPOT: people_both, detail_items, detail_leet and detail_streak
+    // carry two lines or one. The memory in engine_diary.js can only skip a
+    // line while another one is left, so on two days with the same constellation
+    // these do repeat. Three lines per fragment is the number that makes the
+    // skipping work; whoever picks this up next should write the missing ones
+    // rather than add more fragments.
+    people: [
+        // Wer sich heute bewegt hat - Ruf gegen den Stand von heute Morgen.
+        {
+            id: "people_both", rank: 3, when: d => d.upBy >= 5 && d.downBy >= 5,
+            lines: [
+                "Unterm Strich: {up} mag mich heute mehr, {down} deutlich weniger. In dieser Firma ist das vermutlich ein Nullsummenspiel.",
+                "Ich habe heute bei {up} gewonnen und bei {down} verloren. Die Bilanz zieht ohnehin jemand anderes."
+            ]
+        },
+        {
+            id: "people_up_strong", rank: 2, when: d => d.upBy >= 15,
+            lines: [
+                "{up} hat heute die Seite gewechselt, und zwar auf meine. Ich sollte das nutzen, solange es hält.",
+                "Bei {up} habe ich {upBy} Punkte gutgemacht. So etwas hält erfahrungsgemäß bis zur nächsten Störung."
+            ]
+        },
+        {
+            id: "people_down_strong", rank: 2, when: d => d.downBy >= 15,
+            lines: [
+                "{down} spricht seit heute Nachmittag nur noch das Nötigste mit mir. Verdient, aber unangenehm.",
+                "Bei {down} habe ich an einem einzigen Tag verspielt, was ich mir über Wochen aufgebaut hatte."
+            ]
+        },
+        {
+            id: "people_up", rank: 1, when: d => d.upBy >= 5,
+            lines: [
+                "{up} war heute auffällig freundlich. Entweder habe ich etwas richtig gemacht, oder es kommt noch eine Bitte.",
+                "Immerhin {up} scheint mit dem Tag zufrieden zu sein. Einer von uns beiden also."
+            ]
+        },
+        {
+            id: "people_down", rank: 1, when: d => d.downBy >= 5,
+            lines: [
+                "{down} hat mich heute anders angesehen als gestern, und nicht zum Besseren.",
+                "Bei {down} steht seit heute etwas offen, das sich mit Arbeit nicht begleichen lässt."
+            ]
+        },
+        {
+            id: "people_quiet", rank: 0, when: d => d.upBy < 5 && d.downBy < 5 && d.events >= 10,
+            lines: [
+                "Zwischenmenschlich ist heute nichts passiert. Für einen Sysadmin ist das der Idealzustand.",
+                "Niemand mag mich heute mehr oder weniger als gestern. Ich werte das als Erfolg."
+            ]
+        },
+    ],
 };

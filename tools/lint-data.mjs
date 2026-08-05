@@ -545,21 +545,75 @@ for (const ev of DB.emails) {
     { server: 2,  calls: 2,  quests: 9  },   // out on errands all day
     { server: 14, calls: 14, quests: 14 }    // a very long day
   ];
+  // The figures of a day. Every fact a condition can read has to appear here
+  // with a low, a middling and a high value - a fact that is always undefined
+  // makes every condition on it false, and the check would report perfectly
+  // good fragments as unreachable.
+  const FIGURES = [
+    { events: 4,  boss: 0, lunch: false, leet: false, coffee: 0, mailsIgnored: 0,
+      tickets: 0,  excusesUsed: 0, items: 0,  endHour: 9,  peakHour: 9,  peakValue: 10,
+      upBy: 0,  downBy: 0,  streak: 0 },
+    { events: 18, boss: 1, lunch: true,  leet: false, coffee: 2, mailsIgnored: 1,
+      tickets: 3,  excusesUsed: 1, items: 3,  endHour: 13, peakHour: 15, peakValue: 65,
+      upBy: 7,  downBy: 6,  streak: 3 },
+    { events: 34, boss: 2, lunch: true,  leet: true,  coffee: 6, mailsIgnored: 5,
+      tickets: 9,  excusesUsed: 2, items: 7,  endHour: 16, peakHour: 10, peakValue: 92,
+      upBy: 20, downBy: 25, streak: 7 }
+  ];
+
+  // Seeded, so a run is reproducible: the same 300 days every time, and a
+  // fragment that only fits an unusual combination still finds one.
+  let seed = 20260805;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const between = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+
   const days = [];
   const achList = [...achIds], itemList = [...itemIds];
+
+  for (let i = 0; i < 300; i++) {
+    const end = ENDS[between(0, ENDS.length - 1)];
+    const peakValue = between(0, 100);
+    const owned = new Set(achList.filter(() => rnd() < 0.3));
+    const carried = new Set(itemList.filter(() => rnd() < 0.3));
+    days.push({
+      end, difficulty: ['easy', 'normal', 'hard'][between(0, 2)],
+      survived: end === 'WIN' || end === 'PARTY',
+      server: between(0, 14), calls: between(0, 14), quests: between(0, 14),
+      events: between(0, 40), boss: between(0, 3),
+      lunch: rnd() < 0.6, leet: rnd() < 0.3,
+      coffee: between(0, 8), mailsIgnored: between(0, 6),
+      tickets: between(0, 10), excusesUsed: between(0, 3), items: between(0, 8),
+      // A day that was survived always ends at half past four; only a day
+      // that ended early can end at any hour.
+      endHour: (end === 'WIN' || end === 'PARTY') ? 16 : between(8, 16),
+      peakHour: between(8, 16), peakValue,
+      calm: peakValue < 40,
+      upName: 'Kevin', upBy: between(0, 30),
+      downName: 'Chantal', downBy: between(0, 30),
+      streak: between(0, 9),
+      rageWarned: rnd() < 0.4, chefWarned: rnd() < 0.4, blind: rnd() < 0.3,
+      ach: (id) => owned.has(id), item: (id) => carried.has(id),
+      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5
+    });
+  }
+
   for (const end of ENDS) {
     for (const difficulty of ['easy', 'normal', 'hard']) {
       for (const share of [0, 0.5, 1]) {
         const owned = new Set(achList.filter((_, i) => share === 1 || (share === 0.5 && i % 2 === 0)));
         const carried = new Set(itemList.filter((_, i) => share === 1 || (share === 0.5 && i % 3 === 0)));
         for (const shape of SHAPES) {
-          days.push({
-            end, difficulty, survived: end === 'WIN' || end === 'PARTY',
-            ...shape,
-            rageWarned: share > 0, chefWarned: share === 1, blind: share > 0,
-            ach: (id) => owned.has(id), item: (id) => carried.has(id),
-            hasEncounters: share > 0, hasHabits: share === 1
-          });
+          for (const figures of FIGURES) {
+            days.push({
+              end, difficulty, survived: end === 'WIN' || end === 'PARTY',
+              ...shape, ...figures,
+              calm: figures.peakValue < 40,
+              upName: 'Kevin', downName: 'Chantal',
+              rageWarned: share > 0, chefWarned: share === 1, blind: share > 0,
+              ach: (id) => owned.has(id), item: (id) => carried.has(id),
+              hasEncounters: share > 0, hasHabits: share === 1
+            });
+          }
         }
       }
     }

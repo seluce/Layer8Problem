@@ -13,6 +13,7 @@ export const KEYS = {
     // --- Save and progress (removed by the hard reset) ---
     archive:      'layer8_archive',
     dayState:     'layer8_day',        // workday in progress, see engine_core.saveDay()
+    diaryRecent:  'layer8_diary_recent',  // lines the diary used lately, see engine_diary.js
     defaultDiff:  'layer8_default_diff',
     tutorialDone: 'sysadmin_tutorial_done',
     partyPlayed:  { easy:   'layer8_party_played_easy',
@@ -58,6 +59,7 @@ export const KEYS = {
 export const PROGRESS_KEYS = [
     KEYS.archive,
     KEYS.dayState,
+    KEYS.diaryRecent,
     KEYS.defaultDiff,
     KEYS.tutorialDone,
     ...Object.values(KEYS.partyPlayed)
