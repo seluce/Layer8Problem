@@ -15,11 +15,21 @@
        the files once they become visible. These are a few small WebP files;
        fetching them all at once is the faster path. The same applies to
        TeamView. */
-    import { state } from '../engine/engine_state.svelte.js';
+    // Renamed so the $state rune stays usable in this file - see the pitfall
+    // noted in STRUCTURE.md.
+    import { state as game } from '../engine/engine_state.svelte.js';
     import { DB } from '../data.js';
 
-    const owned = $derived(state.archive.items ?? []);
-    const earned = $derived(state.archive.achievements ?? []);
+    // Image files that failed to load. Until now the symbol was simply drawn
+    // underneath every picture, so a missing file left the spot filled - but a
+    // picture with transparent areas showed the emoji through it. Now exactly
+    // one of the two is rendered, and this decides which.
+    let brokenImages = $state({});
+    const markBroken = (src) => { brokenImages = { ...brokenImages, [src]: true }; };
+    const hasPicture = (entry) => entry.img && !brokenImages[entry.img];
+
+    const owned = $derived(game.archive.items ?? []);
+    const earned = $derived(game.archive.achievements ?? []);
 
     // Trophies are shown apart from ordinary equipment: they mark a story
     // branch rather than something you carry around.
@@ -31,7 +41,7 @@
     const itemPercent = $derived(items.length ? Math.round(foundItems / items.length * 100) : 0);
     const achPercent  = $derived(DB.achievements.length ? Math.round(earned.length / DB.achievements.length * 100) : 0);
 
-    const stats = $derived(state.archive.stats ?? { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 });
+    const stats = $derived(game.archive.stats ?? { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 });
 
     const DAY_STATS = [
         { key: 'daysStarted',  label: 'Begonnen',   tone: 'text-slate-200' },
@@ -78,7 +88,7 @@
     const achievements = $derived(
         DB.achievements.map(ach => {
             const unlocked = earned.includes(ach.id);
-            const diff = DIFFICULTY[state.archive.achievementDiffs?.[ach.id] ?? 'easy'] ?? DIFFICULTY.easy;
+            const diff = DIFFICULTY[game.archive.achievementDiffs?.[ach.id] ?? 'easy'] ?? DIFFICULTY.easy;
             return {
                 ach, unlocked, diff,
                 desc: unlocked ? ach.desc : (ach.hint || '???')
@@ -94,7 +104,7 @@
     };
 </script>
 
-{#if state.archiveOpen}
+{#if game.archiveOpen}
     <div class="mb-8 flex flex-col gap-3">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
@@ -177,12 +187,11 @@
                 <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, false)} flex items-center justify-center text-xl cursor-help transition-all relative group"
                      title={entry.unlocked ? entry.item.name : 'Unbekannt'}>
                     {#if !entry.unlocked}?
+                    {:else if hasPicture(entry.item)}
+                        <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={() => markBroken(entry.item.img)}>
                     {:else}
-                        <!-- The symbol sits underneath: if the image file is missing, the image removes itself and the spot does not stay empty. -->
-                        <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
-                        {#if entry.item.img}
-                            <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
-                        {/if}
+                        <!-- No picture, or the file is missing: the symbol keeps the spot from sitting empty. -->
+                        <span class="pointer-events-none">{entry.item.icon}</span>
                     {/if}
                 </div>
             {/each}
@@ -197,12 +206,11 @@
                     <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, true)} flex items-center justify-center text-xl cursor-help transition-all relative group"
                          title={entry.unlocked ? entry.item.name : '???'}>
                         {#if !entry.unlocked}?
+                        {:else if hasPicture(entry.item)}
+                            <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={() => markBroken(entry.item.img)}>
                         {:else}
-                            <!-- The symbol sits underneath: if the image file is missing, the image removes itself and the spot does not stay empty. -->
-                            <span class="absolute inset-0 flex items-center justify-center pointer-events-none">{entry.item.icon}</span>
-                            {#if entry.item.img}
-                                <img src={entry.item.img} loading="eager" decoding="async" class="relative w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={(e) => e.currentTarget.remove()}>
-                            {/if}
+                            <!-- No picture, or the file is missing: the symbol keeps the spot from sitting empty. -->
+                            <span class="pointer-events-none">{entry.item.icon}</span>
                         {/if}
                     </div>
                 {/each}
@@ -219,8 +227,8 @@
                     <div class={row.ach.img
                         ? 'w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50'
                         : 'text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50'}>
-                        {#if row.ach.img}
-                            <img src={row.ach.img} loading="eager" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt={row.ach.title}>
+                        {#if hasPicture(row.ach)}
+                            <img src={row.ach.img} loading="eager" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt={row.ach.title} onerror={() => markBroken(row.ach.img)}>
                         {:else}{row.ach.icon}{/if}
                     </div>
 
