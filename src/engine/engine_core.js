@@ -51,10 +51,51 @@ export const core = {
         // The intro modal is up and the player reads it for several seconds —
         // more than enough to warm the remaining pools before the first click.
         prefetchAll();
+        this.warmImages();
 
         this.renderHeader();
         this.updateUI();
         this.log(`System ${this.VERSION} geladen. Warte auf User...`);
+    },
+
+    /**
+     * Fetches and decodes every portrait, item and trophy picture ahead of time.
+     *
+     * The archive, the team screen and the event card all draw the emoji icon
+     * underneath the picture, so an image that has not arrived yet shows as its
+     * placeholder and then swaps - visible as a flicker when a modal opens.
+     * Decoding here rather than at paint time is what removes it: decode()
+     * finishes the work off the rendering path, so the first frame that shows
+     * the modal already has the bitmap.
+     *
+     * Where it happens differs by shell. On the desktop build the files sit on
+     * the same disk as the game and cost nothing, so this runs right away while
+     * the intro modal is being read. In the browser the same files come over the
+     * network, where they would compete with the deferred data pools - the ones
+     * the player needs first - so there it waits for an idle moment.
+     */
+    warmImages: function() {
+        if (typeof Image === 'undefined') return;
+
+        const urls = [
+            ...(DB.chars ?? []).map(c => c.img),
+            ...Object.values(DB.items ?? {}).map(i => i.img),
+            ...(DB.achievements ?? []).map(a => a.img)
+        ].filter(Boolean);
+
+        const warm = () => {
+            for (const src of urls) {
+                const img = new Image();
+                img.src = src;
+                // A failure is not worth reporting: every <img> in the markup
+                // falls back to its icon on its own.
+                img.decode?.().catch(() => {});
+            }
+        };
+
+        if (platform.isDesktop) warm();
+        else if (typeof requestIdleCallback === 'function') requestIdleCallback(warm, { timeout: 5000 });
+        else setTimeout(warm, 2000);
     },
 
     // --- PERSISTENCE ---

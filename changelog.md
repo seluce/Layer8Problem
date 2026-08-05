@@ -14,6 +14,7 @@ Ereignisse & Texte:
 Anzeige & Layout:
 * Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. 817 Beschriftungen sind vom alten Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)") auf das umgestellt, was Müller tut oder sagt. Ob eine Antwort feige, ehrlich oder dumm war, entscheidet jetzt der Ergebnistext - nicht der Knopf davor.
 * Im Rucksack lassen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger öffnen. Bisher erschienen sie nur unter dem Mauszeiger - wer am Handy oder auf dem Steam Deck spielt, hat nie erfahren, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt die Beschreibung, ein zweiter Tipp benutzt den Gegenstand wie gehabt, ein Tipp daneben schließt sie wieder.
+* Archiv, Team und Ereignis-Karten zeigen ihre Bilder sofort statt erst ein Symbol und kurz darauf das Bild. Die Dateien werden jetzt schon beim Start geholt und entpackt - in der Steam-Fassung sofort, weil sie ohnehin auf der Platte liegen, im Browser in einer ruhigen Minute, damit sie den Spieldaten nicht die Leitung wegnehmen.
 * Das Smartphone zeigt Kontaktfotos: Ein Chat mit einer bekannten Figur zeigt ihr Porträt statt der Initiale. In Gruppen-Chats kann jede einzelne Nachricht ihr eigenes Gesicht und ihren eigenen Namen haben, während der Rest der Gruppe anonym bleibt. Unbekannte Nummern behalten die Initiale - wie im echten Adressbuch.
 
 Fehlerkorrekturen:
