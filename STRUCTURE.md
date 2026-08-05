@@ -52,6 +52,14 @@ ausliefert.
 Dort liegen: die beiden Schriftschnitte und die drei Texturen — alle aus
 `app.css` referenziert.
 
+**`public/manifest.json`** — Sonderfall aus demselben Grund, aber andersherum:
+Vite *könnte* den Verweis aus `index.html` sehen und würde die Datei dann mit
+Prüfsumme nach `docs/build/` schreiben. Genau das darf nicht passieren, denn
+`start_url: "./index.html"` ist relativ zum Ablageort des Manifests — aus
+`docs/build/` heraus zeigte es auf eine Datei, die es dort nicht gibt. In
+`public/` liegt es nach dem Bauen als `docs/manifest.json` neben der
+`index.html`, und der Verweis stimmt.
+
 **`public/assets/`** — wenn der Pfad erst zur Laufzeit entsteht. Kein Bundler
 kann `assets/img/items/${id}.webp` auflösen, weil `id` erst im Spiel bekannt
 ist. Diese Dateien werden unverändert kopiert und behalten ihren Pfad.

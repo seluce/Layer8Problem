@@ -7,11 +7,13 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 
-    <!-- apple-mobile-web-app-capable is deprecated; the standard name is
-         mobile-web-app-capable. Both are kept so older iOS versions,
-         which only understand the Apple prefix, still install cleanly. -->
+    <!-- Standalone mode comes from the manifest (display: standalone), which
+         iOS has honoured over the old apple-mobile-web-app-capable meta since
+         2018. That meta is deprecated and warns in the console, so it is gone.
+         The two apple- tags below stay: the status bar style has no equivalent
+         in the manifest, and the title predates short_name on older systems. -->
+    <link rel="manifest" href="./manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Layer8Problem">
 
