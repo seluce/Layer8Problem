@@ -43,8 +43,7 @@ export const core = {
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
         if (!this.state.scanlines) document.body.classList.add('no-scanlines');
-        document.getElementById('intro-modal').style.display = 'flex';
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay('intro-modal');
 
         this.updatePresence('system');
 
@@ -270,9 +269,7 @@ export const core = {
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
 
-        document.getElementById('difficulty-modal').style.display = 'none';
-        document.getElementById('resume-modal')?.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('resume-modal');
 
         this.renderHeader();
         this.updateUI();
@@ -503,7 +500,8 @@ export const core = {
     // Starts the game, honouring a saved default difficulty
     start: function() {
 		this.playMusic('office');
-        document.getElementById('intro-modal').style.display = 'none';
+        // Scroll stays locked: whatever comes next is another overlay.
+        this.hideOverlay('intro-modal', false);
 
         // Is there an interrupted workday? Asking about it comes before the
         // difficulty picker, otherwise the first click would discard it.
@@ -532,7 +530,7 @@ export const core = {
             // Otherwise show the picker
             const diffModal = document.getElementById('difficulty-modal');
             if(diffModal) {
-                diffModal.style.display = 'flex';
+                this.showOverlay(diffModal);
             } else {
                 this.setDifficulty('normal'); // Fallback
             }
@@ -541,8 +539,7 @@ export const core = {
 
     // Applies the difficulty, then starts the day (or the tutorial)
     setDifficulty: function(level) {
-        document.getElementById('difficulty-modal').style.display = 'none';
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('difficulty-modal');
         
         // Lock the buttons for the half second of setup
         this.disableButtons(true);

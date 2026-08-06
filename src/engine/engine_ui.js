@@ -349,6 +349,39 @@ export const ui = {
         return el;
     },
 
+    /**
+     * Is an overlay on screen?
+     *
+     * The third of the trio, and the reason it exists: until 4.1 the intro and
+     * the difficulty picker were switched with style.display while every other
+     * overlay used the hidden class. An inline style covers the class but does
+     * not remove it, so the difficulty picker kept its `hidden` while visible -
+     * and every check asking "is it open?" answered no. Escape then fell
+     * through to the bottom of its chain and opened the settings menu on top of
+     * the picker.
+     *
+     * One encoding, asked in one place.
+     */
+    isOverlayOpen: function(target) {
+        const el = typeof target === 'string' ? document.getElementById(target) : target;
+        return !!el && !el.classList.contains('hidden');
+    },
+
+    /**
+     * The windows that stand between loading the page and playing: the intro,
+     * the question about an interrupted workday, and the difficulty picker.
+     *
+     * While any of them is up the game is not running. Hotkeys do nothing,
+     * Escape does not dismiss them, and the day cannot be restarted - a restart
+     * would call clearDay() and throw away the very save the resume dialog is
+     * offering.
+     */
+    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal'],
+
+    isStartupOverlayOpen: function() {
+        return this.STARTUP_OVERLAYS.some(id => this.isOverlayOpen(id));
+    },
+
     showModal: function(title, text, isEnd) {
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
                              lead: '', cause: null, diary: null };
@@ -1046,26 +1079,17 @@ export const ui = {
 
         document.body.classList.add('overflow-hidden');
 
-        // --- Soft reset button, greyed out in the main menu and difficulty picker ---
+        // --- Soft reset button, greyed out while the game is still starting ---
         const softResetBtn = document.getElementById('btn-soft-reset');
-        const introModal = document.getElementById('intro-modal');
-        const diffModal = document.getElementById('difficulty-modal');
-        
-        if (softResetBtn) {
-            // Is the intro, the difficulty modal or the tutorial currently active?
-            const isIntroOpen = introModal && introModal.style.display !== 'none';
-            const isDiffOpen = diffModal && (diffModal.style.display === 'flex' || !diffModal.classList.contains('hidden'));
-            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
 
-            if (isIntroOpen || isDiffOpen || isTutorialActive) {
-                // Lock it
-                softResetBtn.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
-                softResetBtn.disabled = true; 
-            } else {
-                // Release it
-                softResetBtn.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
-                softResetBtn.disabled = false; 
-            }
+        if (softResetBtn) {
+            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
+            const locked = this.isStartupOverlayOpen() || isTutorialActive;
+
+            softResetBtn.classList.toggle('opacity-40', locked);
+            softResetBtn.classList.toggle('pointer-events-none', locked);
+            softResetBtn.classList.toggle('grayscale', locked);
+            softResetBtn.disabled = locked;
         }
         // -------------------------------------------------------------
         

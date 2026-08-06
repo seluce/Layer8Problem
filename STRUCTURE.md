@@ -254,6 +254,24 @@ Datei nicht mehr verwenden. Svelte liest `$name` als Store-Subskription, und
 `state` ist kein Store. Für Element-Referenzen ist ohnehin ein Attachment der
 bessere Weg, siehe `PhoneView.svelte`.
 
+## Overlays
+
+Alle achtzehn Vollbild-Fenster werden über dieselben drei Funktionen in
+`engine_ui.js` geschaltet: `showOverlay()`, `hideOverlay()`, `isOverlayOpen()`.
+Offen heißt: die Klasse `hidden` fehlt.
+
+Das ist keine Stilfrage. Bis 4.1 liefen Intro und Tageswahl über
+`style.display`, und ein Inline-Stil verdeckt die Klasse, ohne sie zu
+entfernen — die Tageswahl behielt ihr `hidden`, während sie zu sehen war, und
+jede Prüfung „ist das Fenster offen?" antwortete mit Nein. Wer ein Fenster
+anders schaltet als über diese drei Funktionen, baut denselben Fehler wieder
+ein.
+
+`STARTUP_OVERLAYS` fasst die drei Fenster zusammen, die vor dem Spiel stehen:
+Intro, die Frage nach einem unterbrochenen Tag, die Tageswahl. Solange eines
+davon oben ist, läuft das Spiel nicht — Tasten tun nichts, Escape schließt
+nichts, der Tag lässt sich nicht neu starten.
+
 ## Was bewusst nicht in Komponenten liegt
 
 Die **Positionierung des Tutorial-Zeigers** in `tutorial.js` misst mit

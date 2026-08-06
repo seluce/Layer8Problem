@@ -88,14 +88,16 @@ document.addEventListener('keydown', (event) => {
     // 2. Escape always closes the topmost overlay
     if (key === 'escape') {
         
-        // Is the element present and visible?
-        const isVisible = (id) => {
-            const el = document.getElementById(id);
-            return el && !el.classList.contains('hidden') && el.style.display !== 'none';
-        };
+        // Is the element present and visible? engine_ui owns the answer, so
+        // show, hide and ask all agree on how "open" is written down.
+        const isVisible = (id) => engine.isOverlayOpen(id);
 
-        // A. Intro and difficulty choice must not be dismissible
-        if (isVisible('intro-modal') || isVisible('difficulty-modal') || isVisible('tut-ask-modal')) return;
+        // A. Nothing here can be dismissed with a key.
+        //    The three startup windows because the game has not begun yet, the
+        //    tutorial question because it is a question, and the mail because
+        //    it is an open decision: it has no close button, and every option
+        //    including deleting it counts. Escape must not become the way out.
+        if (engine.isStartupOverlayOpen() || isVisible('tut-ask-modal') || isVisible('email-modal')) return;
 
         // B. The lore book
         if (engine.state.loreOpen) {
@@ -136,14 +138,11 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
-    // --- HOTKEY BLOCKING WHILE A MAIN MENU IS OPEN ---
-    // While intro or difficulty selection is up, every hotkey except confirm is blocked
-    const introModal = document.getElementById('intro-modal');
-    const diffModal = document.getElementById('difficulty-modal');
-    if ((introModal && introModal.style.display !== 'none') || 
-        (diffModal && diffModal.style.display !== 'none')) {
-        return;
-    }
+    // --- HOTKEY BLOCKING WHILE THE GAME IS STILL STARTING ---
+    // Intro, the resume question and the difficulty picker all block the keys.
+    // The resume question used to be covered by accident: the picker's inline
+    // display was still empty at that point, and '' !== 'none' read as "open".
+    if (engine.isStartupOverlayOpen()) return;
 
     // 3. CONFIRM (popups, answering the phone, continue buttons)
     if (key === engine.state.keyBinds.confirm.toLowerCase()) {
