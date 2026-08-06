@@ -1038,32 +1038,15 @@ export const ui = {
         }
     },
     
+    // The seventeen controls used to be refreshed from here, one
+    // getElementById per option. They now read the state themselves in
+    // components/SettingsView.svelte, so opening the dialog no longer has to
+    // copy anything into the DOM.
     openSettings: function() {
         const modal = document.getElementById('settings-modal');
-        const select = document.getElementById('setting-diff');
-        
+
         document.body.classList.add('overflow-hidden');
-        
-        if(select) select.value = localStorage.getItem(engine.KEYS.defaultDiff) || 'ask';
-        
-        // --- Refresh the toggles ---
-        if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
-        if(document.getElementById('setting-oneclick')) document.getElementById('setting-oneclick').checked = this.state.oneClickItem;
-        if(document.getElementById('setting-fastchat')) document.getElementById('setting-fastchat').checked = this.state.fastChat;
-        if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
-        if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
-        if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
-        if(document.getElementById('setting-textsize')) document.getElementById('setting-textsize').value = this.state.textSize ?? 'normal';
-        if(document.getElementById('setting-scanlines')) document.getElementById('setting-scanlines').checked = this.state.scanlines !== false;
-        if(document.getElementById('setting-autochart')) document.getElementById('setting-autochart').checked = !!this.state.autoChart;
-        if(document.getElementById('setting-volume')) document.getElementById('setting-volume').value = this.state.audioVolume;
-		if(document.getElementById('setting-music')) document.getElementById('setting-music').checked = this.state.musicEnabled;
-        if(document.getElementById('setting-music-volume')) document.getElementById('setting-music-volume').value = this.state.musicVolume;
-        if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
-        if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
-        if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
-        const styleSelect = document.getElementById('setting-music-style'); if(styleSelect) styleSelect.value = this.state.musicStyle;
-        
+
         // --- Soft reset button, greyed out in the main menu and difficulty picker ---
         const softResetBtn = document.getElementById('btn-soft-reset');
         const introModal = document.getElementById('intro-modal');
@@ -1220,7 +1203,6 @@ export const ui = {
         this.resetKeybinds();
         this.toggleShowHotkeys(!window.matchMedia('(pointer: coarse)').matches);
 
-        this.updateSettingsUI();
         this.playAudio('ui');
     },
 
@@ -1228,27 +1210,25 @@ export const ui = {
      * Two-step confirmation on the button itself instead of a browser dialog.
      * The first click asks, the second acts; after five seconds without an
      * answer the button returns to its resting state.
+     *
+     * Only the flag is set here. What the button then says and how it looks is
+     * decided in components/SettingsView.svelte - the same division of labour
+     * as flashBinding() and the key bindings.
      */
-    confirmResetSettings: function(btn) {
-        if (btn.dataset.armed === 'true') {
-            clearTimeout(this._resetArmTimer);
-            btn.dataset.armed = 'false';
-            btn.textContent = btn.dataset.label;
-            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+    confirmResetSettings: function() {
+        clearTimeout(this._resetArmTimer);
+
+        if (this.state.settingsResetArmed) {
+            this.state.settingsResetArmed = false;
             this.resetSettings();
             return;
         }
-        btn.dataset.label = btn.dataset.label || btn.textContent.trim();
-        btn.dataset.armed = 'true';
-        btn.textContent = 'Wirklich?';
-        btn.classList.add('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+
+        this.state.settingsResetArmed = true;
         this.playAudio('ui');
 
-        clearTimeout(this._resetArmTimer);
         this._resetArmTimer = setTimeout(() => {
-            btn.dataset.armed = 'false';
-            btn.textContent = btn.dataset.label;
-            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+            this.state.settingsResetArmed = false;
         }, 5000);
     },
 
@@ -1290,6 +1270,7 @@ export const ui = {
      * that speaks German. The dropdown shows the choice; that is the feedback.
      */
     saveDefaultDifficulty: function(val) {
+        this.state.defaultDiff = val;
         localStorage.setItem(engine.KEYS.defaultDiff, val);
         this.playAudio('ui');
     },
@@ -1366,7 +1347,6 @@ export const ui = {
         if (key.toLowerCase() === 'escape' || (currentBind && currentBind.toLowerCase() === pressedKey.toLowerCase())) {
             this.state.isBindingKey = false;
             this.state.actionToBind = null;
-            this.updateSettingsUI();
             return;
         }
 
@@ -1388,19 +1368,10 @@ export const ui = {
         this.state.keyBinds[this.state.actionToBind] = pressedKey;
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
-        this.saveSystem(); 
-        this.updateSettingsUI();
+        this.saveSystem();
     },
 
-    // The binding buttons used to be redrawn from here. They now follow
-    // state.keyBinds on their own in components/KeybindView.svelte, so this is
-    // only left as the place the settings dialog calls to refresh itself.
-    updateSettingsUI: function() {
-    },
-    
     openKeybinds: function() {
-        this.updateSettingsUI();
-        
         if(document.getElementById('setting-showhotkeys')) {
             document.getElementById('setting-showhotkeys').checked = this.state.showHotkeys;
         }
@@ -1422,7 +1393,6 @@ export const ui = {
         this.state.actionToBind = null;
         
         this.saveSystem();
-        this.updateSettingsUI();
         this.playAudio('ui');
         
         // Visual feedback: every button flashes green briefly

@@ -267,6 +267,18 @@ export const state = $state({
     autoChart: localStorage.getItem(KEYS.autoChart) === 'true',
     screenShake: localStorage.getItem(KEYS.screenShake) !== 'false',
 
+    // Which weekday a new day starts on, or 'ask' for the picker. The odd one
+    // out among the settings: a hard reset removes it, because it is a decision
+    // about the save rather than about the person playing. It lives here all
+    // the same, so the dropdown in components/SettingsView.svelte follows a
+    // reset to defaults without having to be told.
+    defaultDiff: localStorage.getItem(KEYS.defaultDiff) || 'ask',
+
+    // Is "reset to defaults" currently asking whether we really mean it?
+    // The engine only sets the flag; the button's wording and colour follow
+    // from it in the component - same split as bindFlash below.
+    settingsResetArmed: false,
+
     // --- KEYBOARD MAPPING ---
     showHotkeys: (() => {
         const saved = localStorage.getItem(KEYS.showHotkeys);

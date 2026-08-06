@@ -27,6 +27,7 @@ Fehlerkorrekturen:
 * Im Archiv schimmerte hinter jedem Gegenstand sein Symbol durch. Es lag dort dauerhaft unter dem Bild, als Platzhalter für den Fall einer fehlenden Datei - und war bei allen freigestellten Bildern sichtbar. Jetzt wird genau eines von beiden gezeichnet: das Bild, und nur wenn es fehlt, das Symbol. Die übrigen Ansichten waren davon nie betroffen.
 * Auf schmalen Bildschirmen ragten die Gegenstands-Beschreibungen im Rucksack am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
 * Das Tagebuch verschluckte Begegnungen. Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste davon zu lesen - der Rest fiel beim Zusammensetzen des Satzes still unter den Tisch. Jetzt steht dort, was der Tag hergegeben hat.
+* "Auf Standard zurücksetzen" wirkte, war aber nicht zu sehen. Die Werte wurden gespeichert und waren sofort gültig - die Schalter im offenen Fenster standen aber weiter auf den alten Stellungen, bis man das Menü einmal zu- und wieder aufmachte. Wer danach einen Schalter umlegte, umging damit unbemerkt seinen ersten Klick.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 
 Für Entwickler:
@@ -35,6 +36,7 @@ Für Entwickler:
 * Die Beschriftung einer Antwort heißt jetzt in allen Datendateien t. Im Postfach hieß dasselbe Feld historisch btn - 416 Auswahlen sind umbenannt, und die fünf Stellen, die es lasen (Engine, Postfach-Ansicht, Daten-Prüfer, Prosa-Bericht, Sortier-Werkzeug), lesen jetzt dasselbe Feld wie überall sonst. Eine Sonderregel weniger beim Schreiben neuer Ereignisse.
 * Phone-Ereignisse werten char jetzt auch pro Knoten aus - für Gruppen-Chats, in denen nur einzelne Stimmen ein Gesicht haben. Der Knoten gewinnt, sonst erbt er das Ereignis, und char: null erzwingt die Initiale trotz Ereignis-Figur.
 * Der Prosa-Bericht (tools/report-prose.mjs) hat zwei Abschnitte mehr: Alt-Register in Beschriftungen und Schablonen in Auftakten. Beide Listen waren die Arbeitsgrundlage dieser Version und stehen jetzt in allen Bereichen auf null.
+* Die Einstellungen sind eine Komponente (src/components/SettingsView.svelte). Vorher waren sie 280 Zeilen Formular in index.html, deren siebzehn Felder beim Öffnen des Fensters einzeln aus dem Zustand nachgefüllt wurden - sechzehn getElementById-Zeilen, die mit jeder neuen Option mitwachsen mussten. Jetzt lesen die Felder den Zustand direkt, und eine neue Einstellung ist ein Eintrag in einer Tabelle statt vierzehn Zeilen Markup. Sichtbar ändert sich nichts: Texte, Klassen und Reihenfolge sind gegen den alten Stand abgeglichen.
 
 [4.0.0] - 2026-08-03
 

@@ -520,8 +520,10 @@ export const core = {
             return;
         }
 
-        // Did the player pin a default difficulty?
-        const defaultDiff = localStorage.getItem(this.KEYS.defaultDiff) || 'ask';
+        // Did the player pin a default difficulty? Read from state, which was
+        // seeded from localStorage at boot - one place to ask, same as every
+        // other setting.
+        const defaultDiff = this.state.defaultDiff;
         
         if (defaultDiff !== 'ask') {
             // Skip the dialog and go straight in

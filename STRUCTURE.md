@@ -23,7 +23,7 @@ src/
   platform.js           Plattform-Schnittstelle, Web-Fassung
   platform_steam.js     Steam-Bridge, lädt sich nur unter Electron nach
 
-  components/           34 Svelte-Komponenten, davon 8 fürs Intranet
+  components/           35 Svelte-Komponenten, davon 8 fürs Intranet
   engine/               Engine-Module, engine_state.svelte.js hält den Zustand
   data/                 19 Datendateien
   assets/               von Vite verarbeitet, siehe unten
@@ -255,10 +255,6 @@ Datei nicht mehr verwenden. Svelte liest `$name` als Store-Subskription, und
 bessere Weg, siehe `PhoneView.svelte`.
 
 ## Was bewusst nicht in Komponenten liegt
-
-Die **Einstellungen** sind Formular-Markup in `index.html`. Umzustellen wäre
-nur das Befüllen der Felder; die 243 Zeilen Markup blieben in ähnlicher Form
-bestehen.
 
 Die **Positionierung des Tutorial-Zeigers** in `tutorial.js` misst mit
 `getBoundingClientRect()`, wo ein Element tatsächlich gelandet ist — das kann
