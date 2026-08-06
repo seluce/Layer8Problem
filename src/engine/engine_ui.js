@@ -290,7 +290,7 @@ export const ui = {
             color: colorClass || ''
         });
 
-        // Cap the backlog. Nobody scrolls back 200 lines.
+        // Cap the backlog at LOG_MAX_ENTRIES - nobody scrolls back that far.
         if (this.state.logEntries.length > LOG_MAX_ENTRIES) {
             this.state.logEntries.splice(0, this.state.logEntries.length - LOG_MAX_ENTRIES);
         }
