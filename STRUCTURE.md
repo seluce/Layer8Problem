@@ -6,7 +6,6 @@ vite.config.js
 package.json            "type": "module"
 
 README.md
-UEBERGABE.md            Arbeitsweise, Stand, offene Punkte
 STRUCTURE.md            diese Datei
 EVENTS.md               wie Ereignisse gebaut werden — Leitfaden für Beiträge
 changelog.md
@@ -271,6 +270,37 @@ ein.
 Intro, die Frage nach einem unterbrochenen Tag, die Tageswahl. Solange eines
 davon oben ist, läuft das Spiel nicht — Tasten tun nichts, Escape schließt
 nichts, der Tag lässt sich nicht neu starten.
+
+### Die Seite hinter dem Fenster
+
+Fenster können übereinander liegen: die Tastenbelegung über den Einstellungen,
+„Benutzen?" über dem Rucksack. Deshalb ist die Bildlauf-Sperre keine Ja/Nein-
+Angelegenheit, sondern eine Menge benannter Halter — `lockScroll(name)` und
+`releaseScroll(name)`. Die Seite gibt frei, wenn der letzte loslässt.
+
+Ein Zähler täte dasselbe, bis er einmal aus dem Tritt gerät; danach ist die
+Seite entweder für immer gesperrt oder scrollt hinter einem offenen Dialog.
+Bei einer Menge ist doppeltes Sperren folgenlos, und ein Lösen durch den
+Falschen ändert nichts.
+
+`showOverlay` und `hideOverlay` erledigen das mit. Wer den Body von Hand
+anfasst, hebelt die Buchführung aus. Zwei Ausnahmen sperren bewusst nicht und
+werden mit `showOverlay(el, false)` geöffnet: das Schwarze Brett, das am Handy
+scrollbar bleiben soll, und der Tutorial-Zeiger, der gar kein Fenster ist.
+
+Zu sehen ist das alles erst unter 1024 px — darüber hält `app.css` den Body
+ohnehin still. Fehler in diesem Bereich fallen am Rechner nicht auf.
+
+### Die Falle im verschachtelten `ui`-Objekt
+
+In `engine_ui.js` liegt unter `ui:` ein zweites, verschachteltes `ui`-Objekt
+für Export und Import. Es wird als `engine.ui.openExportModal()` gerufen, also
+zeigt `this` dort auf dieses innere Objekt und nicht auf die Engine. Wer von
+dort `this.showOverlay()` schreibt, ruft `undefined` auf.
+
+Genau das war zwei Versionen lang der Fall: Export und Import warfen beim
+Klick, der globale Fehlerfänger schluckte es, und für den Spieler passierte
+nichts. Aus dem inneren Objekt heraus wird die Engine über `engine.` erreicht.
 
 ## Was bewusst nicht in Komponenten liegt
 
