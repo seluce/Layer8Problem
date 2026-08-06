@@ -960,45 +960,8 @@
         <div class="p-5 overflow-y-auto w-full space-y-4 flex-1 min-h-0">
             <p class="text-xs text-slate-400 mb-4">Klicke auf eine Taste, um sie neu zuzuweisen.</p>
             
-            <div class="grid gap-3">
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Kaffee holen</span>
-                    <button id="bind-actCoffee" onclick="engine.startBindingKey('actCoffee')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">Q</button>
-                </div>
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Dienstgang</span>
-                    <button id="bind-actQuest" onclick="engine.startBindingKey('actQuest')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">W</button>
-                </div>
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Serverraum</span>
-                    <button id="bind-actServer" onclick="engine.startBindingKey('actServer')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">E</button>
-                </div>
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Anruf</span>
-                    <button id="bind-actCall" onclick="engine.startBindingKey('actCall')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">R</button>
-                </div>
-                
-                <div class="h-px bg-slate-700 my-2"></div>
-
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Option 1 (Oben)</span>
-                    <button id="bind-opt1" onclick="engine.startBindingKey('opt1')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">1</button>
-                </div>
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Option 2 (Mitte)</span>
-                    <button id="bind-opt2" onclick="engine.startBindingKey('opt2')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">2</button>
-                </div>
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-                    <span class="text-sm font-medium text-slate-200">Option 3 (Unten)</span>
-                    <button id="bind-opt3" onclick="engine.startBindingKey('opt3')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">3</button>
-                </div>
-                
-                <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 border-l-2 border-l-amber-500">
-                    <div class="flex flex-col">
-                        <span class="text-sm font-medium text-slate-200">Bestätigen / Popups / Handy</span>
-                    </div>
-                    <button id="bind-confirm" onclick="engine.startBindingKey('confirm')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px]">SPACE</button>
-                </div>
+            <div id="keybind-list">
+                <!-- Rendered by src/components/KeybindView.svelte -->
             </div>
 			
             <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mb-4 rounded-lg border border-slate-700/50">

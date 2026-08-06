@@ -1335,12 +1335,21 @@ export const ui = {
 
         this.state.isBindingKey = true;
         this.state.actionToBind = action;
-        let btn = document.getElementById('bind-' + action);
-        if (btn) {
-            btn.innerText = "Drücke Taste...";
-            btn.className = "bg-amber-500 text-black px-4 py-2 rounded-lg font-bold text-xs uppercase animate-pulse shadow-lg";
-            btn.blur(); 
-        }
+        this.state.bindFlash = null;
+        // Away from the button, or the next key press would count as a click
+        // on it as well.
+        document.activeElement?.blur?.();
+    },
+
+    /** Turns a binding button red for a moment: taken, or reserved. */
+    flashBinding: function(action, reserved = false) {
+        this.state.bindFlash = action;
+        this.state.bindFlashReserved = reserved;
+        clearTimeout(this._bindFlashTimer);
+        this._bindFlashTimer = setTimeout(() => {
+            this.state.bindFlash = null;
+            this.state.bindFlashReserved = false;
+        }, reserved ? 800 : 500);
     },
 
     finishBindingKey: function(key) {
@@ -1361,37 +1370,16 @@ export const ui = {
             return;
         }
 
-        // --- 4, 5 and 6 are reserved, with visual feedback ---
+        // 4, 5 and 6 belong to the fixed slots and cannot be reassigned.
         if (hardcodedKeys.includes(pressedKey)) {
-            let conflictBtn = document.getElementById('bind-' + this.state.actionToBind);
-            if (conflictBtn) {
-                conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                conflictBtn.innerText = "RESERVIERT"; // Optischer Hinweis
-                
-                setTimeout(() => {
-                    conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                    conflictBtn.classList.add('bg-amber-500', 'text-black'); // back to the amber "waiting" state
-                    conflictBtn.innerText = "Drücke Taste...";
-                }, 800);
-            }
+            this.flashBinding(this.state.actionToBind, true);
             return; // reject the key but stay in binding mode
         }
-        // ---------------------------------------------------------
-        
-        // 2. Doppelbelegung verhindern
+
+        // A key can only do one thing: point at whoever holds it already.
         for (let act in this.state.keyBinds) {
             if (this.state.keyBinds[act].toLowerCase() === pressedKey.toLowerCase() && act !== this.state.actionToBind) {
-                let conflictBtn = document.getElementById('bind-' + act);
-                if (conflictBtn) {
-                    conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                    conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                    
-                    setTimeout(() => {
-                        conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                        conflictBtn.classList.add('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                    }, 500);
-                }
+                this.flashBinding(act);
                 return;
             }
         }
@@ -1404,17 +1392,10 @@ export const ui = {
         this.updateSettingsUI();
     },
 
+    // The binding buttons used to be redrawn from here. They now follow
+    // state.keyBinds on their own in components/KeybindView.svelte, so this is
+    // only left as the place the settings dialog calls to refresh itself.
     updateSettingsUI: function() {
-        for (let act in this.state.keyBinds) {
-            let btn = document.getElementById('bind-' + act);
-            if (btn) {
-                let displayKey = this.state.keyBinds[act];
-                if(displayKey.startsWith('Arrow')) displayKey = displayKey.replace('Arrow', '');
-                
-                btn.innerText = displayKey.toUpperCase();
-                btn.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase transition-colors min-w-[80px]";
-            }
-        }
     },
     
     openKeybinds: function() {

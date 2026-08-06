@@ -298,6 +298,13 @@ export const state = $state({
         return saved;
     })(),
     isBindingKey: false,
-    actionToBind: null
+    actionToBind: null,
+
+    // Which binding button flashes red right now, and whether it does so
+    // because the key is reserved rather than already taken. Purely visual and
+    // short-lived, but it belongs here: components/KeybindView.svelte draws
+    // from it, and the engine must not reach into the DOM to say "no".
+    bindFlash: null,
+    bindFlashReserved: false
 
 });
