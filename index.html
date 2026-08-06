@@ -290,8 +290,8 @@
 <!-- E-MAIL MODAL END -->
 
 <!-- SCHWIERIGKEIT MODAL START -->
-    <!-- Unterbrochener Arbeitstag: erscheint vor der Tageswahl, wenn ein
-         gesicherter Zwischenstand vorliegt (siehe engine_core.saveDay). -->
+    <!-- Interrupted workday: appears before the day is picked, when a saved
+         state is waiting to be resumed (see engine_core.saveDay). -->
     <div id="resume-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
             <div class="text-4xl mb-3">🕗</div>
@@ -387,8 +387,8 @@
     
 <!-- TUTORIAL MODAL END -->
 
-<!-- Das Intranet rendert src/components/intranet/IntranetView.svelte,
-     inklusive Browserfenster. Siehe engine.openIntranet(). -->
+<!-- The intranet is rendered by src/components/intranet/IntranetView.svelte,
+     browser window included. See engine.openIntranet(). -->
 <div id="intranet-root"></div>
 
 <!-- SCHWARZES BRETT MODAL START -->
@@ -685,17 +685,6 @@
             
             <div id="keybind-list">
                 <!-- Rendered by src/components/KeybindView.svelte -->
-            </div>
-			
-            <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mb-4 rounded-lg border border-slate-700/50">
-                <div class="flex flex-col flex-1">
-                    <span class="text-sm font-medium text-slate-200 leading-tight">Visuelle Hotkeys</span>
-                    <span class="text-[10px] text-slate-500 mt-1">Zeigt Tasten-Symbole auf den Antwort-Buttons an.</span>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" id="setting-showhotkeys" onchange="engine.toggleShowHotkeys(this.checked)" class="sr-only peer">
-                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500"></div>
-                </label>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mt-4">

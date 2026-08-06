@@ -1,4 +1,4 @@
-import { KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 
@@ -989,15 +989,13 @@ export const ui = {
             // Step 2: execute.
             // This used to remove a non-existent 'tutorialSeen' key, which meant a
             // hard reset wiped the archive but left the tutorial marked as done.
-            // Deliberately NOT removed: keyBinds and every settings and audio
-            // key (see keys.js). A hard reset wipes the save, not the
-            // preferences of the person in front of the screen.
-            localStorage.removeItem(engine.KEYS.archive);
-            localStorage.removeItem(engine.KEYS.defaultDiff);
-            localStorage.removeItem(engine.KEYS.tutorialDone);
-            localStorage.removeItem(engine.KEYS.partyPlayed.easy);
-            localStorage.removeItem(engine.KEYS.partyPlayed.normal);
-            localStorage.removeItem(engine.KEYS.partyPlayed.hard);
+            // The list is no longer kept here: PROGRESS_KEYS in keys.js is the
+            // one place that says what a reset removes, which is what that file
+            // claimed all along while this function maintained its own copy.
+            // Deliberately NOT in it: keyBinds and every settings and audio key.
+            // A hard reset wipes the save, not the preferences of the person in
+            // front of the screen.
+            for (const key of PROGRESS_KEYS) localStorage.removeItem(key);
 
             // The interrupted workday goes too. Without this the reload would
             // offer to resume a day that belongs to the save just wiped - and
@@ -1008,6 +1006,7 @@ export const ui = {
             // Push the emptied state to cloud storage as well, otherwise the
             // next launch would pull the old archive straight back in.
             engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
+            engine.state.defaultDiff = 'ask';
             platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
@@ -1017,7 +1016,7 @@ export const ui = {
             
             setTimeout(() => location.reload(), 1000);
         } else {
-            // Schritt 1: Scharfschalten
+            // Step 1: arm it.
             btn.dataset.armed = "true";
             const textSpan = btn.querySelector('#text-hard-reset');
             const iconSpan = btn.querySelector('#icon-hard-reset');
@@ -1059,11 +1058,11 @@ export const ui = {
             const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
 
             if (isIntroOpen || isDiffOpen || isTutorialActive) {
-                // Sperren
+                // Lock it
                 softResetBtn.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
                 softResetBtn.disabled = true; 
             } else {
-                // Freigeben
+                // Release it
                 softResetBtn.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
                 softResetBtn.disabled = false; 
             }
@@ -1372,10 +1371,6 @@ export const ui = {
     },
 
     openKeybinds: function() {
-        if(document.getElementById('setting-showhotkeys')) {
-            document.getElementById('setting-showhotkeys').checked = this.state.showHotkeys;
-        }
-        
         document.getElementById('keybind-modal').classList.remove('hidden');
         document.getElementById('keybind-modal').classList.add('flex');
     },

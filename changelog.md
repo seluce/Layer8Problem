@@ -28,6 +28,7 @@ Fehlerkorrekturen:
 * Auf schmalen Bildschirmen ragten die Gegenstands-Beschreibungen im Rucksack am linken und rechten Rand aus dem Bild. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
 * Das Tagebuch verschluckte Begegnungen. Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste davon zu lesen - der Rest fiel beim Zusammensetzen des Satzes still unter den Tisch. Jetzt steht dort, was der Tag hergegeben hat.
 * "Auf Standard zurücksetzen" wirkte, war aber nicht zu sehen. Die Werte wurden gespeichert und waren sofort gültig - die Schalter im offenen Fenster standen aber weiter auf den alten Stellungen, bis man das Menü einmal zu- und wieder aufmachte. Wer danach einen Schalter umlegte, umging damit unbemerkt seinen ersten Klick.
+* Der Spielstand-Löscher räumte das Gedächtnis des Tagebuchs nicht mit weg. Wer neu anfing, bekam die ersten Einträge um genau die Sätze gekürzt, die der gelöschte Spielstand zuletzt benutzt hatte.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 
 Für Entwickler:
@@ -37,6 +38,8 @@ Für Entwickler:
 * Phone-Ereignisse werten char jetzt auch pro Knoten aus - für Gruppen-Chats, in denen nur einzelne Stimmen ein Gesicht haben. Der Knoten gewinnt, sonst erbt er das Ereignis, und char: null erzwingt die Initiale trotz Ereignis-Figur.
 * Der Prosa-Bericht (tools/report-prose.mjs) hat zwei Abschnitte mehr: Alt-Register in Beschriftungen und Schablonen in Auftakten. Beide Listen waren die Arbeitsgrundlage dieser Version und stehen jetzt in allen Bereichen auf null.
 * Die Einstellungen sind eine Komponente (src/components/SettingsView.svelte). Vorher waren sie 280 Zeilen Formular in index.html, deren siebzehn Felder beim Öffnen des Fensters einzeln aus dem Zustand nachgefüllt wurden - sechzehn getElementById-Zeilen, die mit jeder neuen Option mitwachsen mussten. Jetzt lesen die Felder den Zustand direkt, und eine neue Einstellung ist ein Eintrag in einer Tabelle statt vierzehn Zeilen Markup. Sichtbar ändert sich nichts: Texte, Klassen und Reihenfolge sind gegen den alten Stand abgeglichen.
+* Der Schalter für die Tasten-Symbole ist in die Tastenbelegungs-Komponente gewandert. Er war das letzte Bedienelement im Spiel, das beim Öffnen seines Fensters von außen befüllt wurde; damit gibt es keine setting-IDs mehr.
+* PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird. Sie stand seit ihrer Einführung unbenutzt da, während der Spielstand-Löscher seine eigene Aufzählung von Hand pflegte - genau die doppelte Buchführung, gegen die die Liste angelegt worden war. Dabei fiel auf, dass die Wiederholungssperre des Tagebuchs unter dem Schlüsselnamen "undefined" ablegte: KEYS.diaryRecent war nie definiert worden.
 
 [4.0.0] - 2026-08-03
 
