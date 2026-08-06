@@ -104,9 +104,8 @@ export const events = {
         // toggled here. EmailView.svelte only renders the contents.
         const modal = document.getElementById('email-modal');
         if (modal) {
-            this.showOverlay(modal, false);
+            this.showOverlay(modal);
         }
-        document.body.classList.add('overflow-hidden');
 
         const DURATION = 20000;
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);

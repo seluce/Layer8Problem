@@ -346,7 +346,7 @@ const tutorial = {
         if(pointer) {
             pointer.classList.add('opacity-0');
             this.pointerTimeout = setTimeout(() => {
-                engine.hideOverlay(pointer, false);
+                engine.hideOverlay(pointer);
                 this.currentTarget = null; // clear the target while hidden
             }, 300);
         }

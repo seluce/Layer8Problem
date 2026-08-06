@@ -283,10 +283,7 @@ export const core = {
     /** From the resume dialog: discard the interim state, start fresh. */
     discardDay: function() {
         this.clearDay();
-        const modal = document.getElementById('resume-modal');
-        modal?.classList.add('hidden');
-        modal?.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('resume-modal');
         this.playAudio('ui');
         this.start();
     },
@@ -500,8 +497,7 @@ export const core = {
     // Starts the game, honouring a saved default difficulty
     start: function() {
 		this.playMusic('office');
-        // Scroll stays locked: whatever comes next is another overlay.
-        this.hideOverlay('intro-modal', false);
+        this.hideOverlay('intro-modal');
 
         // Is there an interrupted workday? Asking about it comes before the
         // difficulty picker, otherwise the first click would discard it.
@@ -652,7 +648,7 @@ export const core = {
         this.closeSettings();
         const overlay = document.getElementById('modal-overlay');
         if (overlay) {
-            this.hideOverlay(overlay, false);
+            this.hideOverlay(overlay);
         }
 
         // Replace the whole day rather than resetting fields one by one, so a

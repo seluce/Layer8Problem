@@ -98,9 +98,7 @@ export const inventory = {
         document.getElementById('item-confirm-warn').innerText = warn;
 
         // Show the modal
-        document.getElementById('item-confirm-modal').classList.remove('hidden');
-        document.getElementById('item-confirm-modal').classList.add('flex');
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay('item-confirm-modal');
     },
 
     // 2. Confirmed - actually do it
@@ -162,9 +160,7 @@ export const inventory = {
 
     closeItemConfirm: function() {
 		this.playAudio('ui');
-        document.getElementById('item-confirm-modal').classList.add('hidden');
-        document.getElementById('item-confirm-modal').classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('item-confirm-modal');
         this.state.pendingItem = null;
     },
 

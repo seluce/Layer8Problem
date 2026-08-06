@@ -29,6 +29,8 @@ Fehlerkorrekturen:
 * "Auf Standard zurücksetzen" wirkte, war aber nicht zu sehen: Die Werte galten sofort, die Schalter im offenen Fenster standen weiter auf den alten Stellungen. Wer danach einen umlegte, verlor unbemerkt seinen ersten Klick.
 * Ein unterbrochener Arbeitstag ließ sich versehentlich wegwerfen. Solange das Fenster fragte, ob man weitermachen will, öffnete Escape das Menü darüber - und "Tag neu starten" war dort nicht gesperrt. Ein Klick verwarf genau den Tag, den das Fenster anbot.
 * Dasselbe Loch klaffte über der Tageswahl und über einer offenen Mail. Die Mail hat bewusst keinen Schließen-Knopf - auch das Löschen ist eine Entscheidung mit Folgen, und Escape war die Hintertür daran vorbei.
+* Spielstand exportieren und importieren ging nicht mehr auf. Der Klick löste einen Fehler aus, der stillschweigend aufgefangen wurde - für den Spieler passierte einfach nichts. Betroffen war beides, über das Startfenster wie über die Einstellungen.
+* Am Handy scrollte die Seite hinter einem offenen Fenster, sobald man ein zweites darüber wieder geschlossen hatte - etwa die Tastenbelegung über den Einstellungen oder "Benutzen?" über dem Rucksack. Am Rechner war das nie zu sehen.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
 
 Für Entwickler:
@@ -41,6 +43,7 @@ Für Entwickler:
 * Der Schalter für die Tasten-Symbole ist in die Tastenbelegungs-Komponente gewandert - das letzte Bedienelement, das beim Öffnen seines Fensters von außen befüllt wurde. Damit gibt es keine setting-IDs mehr.
 * PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird. Sie stand seit ihrer Einführung unbenutzt da, während der Spielstand-Löscher seine eigene Aufzählung von Hand pflegte - genau die doppelte Buchführung, gegen die die Liste angelegt worden war.
 * Overlays werden überall gleich geschaltet. Intro und Tageswahl liefen als einzige von achtzehn über style.display statt über die hidden-Klasse; ein Inline-Stil verdeckt die Klasse aber, ohne sie zu entfernen, weshalb jede Prüfung "ist das Fenster offen?" mit Nein antwortete. showOverlay, hideOverlay und das neue isOverlayOpen sind jetzt die einzige Stelle, die diese Kodierung kennt.
+* Die Bildlauf-Sperre wird als Menge benannter Halter geführt statt als Schalter. Fenster können übereinander liegen; bisher gab das Schließen des oberen die Seite frei, obwohl das untere noch stand. Ein Zähler hätte dasselbe geleistet, bis er einmal aus dem Tritt gerät - eine Menge kann das nicht.
 
 
 [4.0.0] - 2026-08-03

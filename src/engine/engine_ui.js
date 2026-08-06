@@ -321,6 +321,34 @@ export const ui = {
      */
 
     /**
+     * Who is currently holding the page still.
+     *
+     * Several windows can be open at once - the key bindings sit on top of the
+     * settings, "use this item?" on top of the backpack - so the lock is held
+     * by name instead of by a flag. It lifts when the last holder lets go, and
+     * a second lock or a stray release changes nothing, which a counter cannot
+     * promise: a counter that drifts once leaves the page either locked for
+     * good or scrolling behind an open dialog.
+     *
+     * Only visible below 1024px. Above that app.css keeps the body from
+     * scrolling anyway, which is why closing the upper of two windows released
+     * the page unnoticed for so long.
+     */
+    _scrollHolders: new Set(),
+
+    lockScroll: function(holder) {
+        this._scrollHolders.add(holder);
+        document.body.classList.add('overflow-hidden');
+    },
+
+    releaseScroll: function(holder) {
+        this._scrollHolders.delete(holder);
+        if (this._scrollHolders.size === 0) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    },
+
+    /**
      * Shows a full-screen overlay and locks the page behind it.
      *
      * The three lines this replaces (drop "hidden", add "flex", lock scrolling)
@@ -335,17 +363,21 @@ export const ui = {
         if (!el) return null;
         el.classList.remove('hidden');
         el.classList.add('flex');
-        if (lockScroll) document.body.classList.add('overflow-hidden');
+        if (lockScroll) this.lockScroll(el.id || 'overlay');
         return el;
     },
 
-    /** Counterpart to showOverlay. */
-    hideOverlay: function(target, unlockScroll = true) {
+    /**
+     * Counterpart to showOverlay. Always releases this overlay's hold on the
+     * page - whether the page then scrolls again is decided by whoever else is
+     * still holding it, so there is no second argument to get wrong.
+     */
+    hideOverlay: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
         el.classList.add('hidden');
         el.classList.remove('flex');
-        if (unlockScroll) document.body.classList.remove('overflow-hidden');
+        this.releaseScroll(el.id || 'overlay');
         return el;
     },
 
@@ -392,9 +424,7 @@ export const ui = {
     closeModal: function() {
         this.state.modal = { open: false, title: '', text: '', isEnd: false,
                              lead: '', cause: null, diary: null };
-        document.getElementById('modal-overlay').classList.add('hidden');
-        document.getElementById('modal-overlay').classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('modal-overlay');
         this.updateUI();
     },
 
@@ -488,21 +518,19 @@ export const ui = {
 
     closeArchive: function() {
         this.state.archiveOpen = false;
-        document.getElementById('archive-modal').classList.add('hidden');
-        document.getElementById('archive-modal').classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('archive-modal');
     },
     
     // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
     showLoreModal: function() {
         this.state.loreOpen = true;
-        document.body.classList.add('overflow-hidden');
+        this.lockScroll('lore');
     },
 
     closeLoreModal: function() {
         this.state.loreOpen = false;
-        document.body.classList.remove('overflow-hidden');
+        this.releaseScroll('lore');
     },
 
     // --- TEAM AND CHARACTERS ---
@@ -528,7 +556,7 @@ export const ui = {
         await ensure('intranet');
         this.buildIntranet();
         this.state.intranetOpen = true;
-        document.body.classList.add('overflow-hidden');
+        this.lockScroll('intranet');
     },
 
     /**
@@ -680,7 +708,7 @@ export const ui = {
 
     closeIntranet: function() {
         this.state.intranetOpen = false;
-        document.body.classList.remove('overflow-hidden');
+        this.releaseScroll('intranet');
     },
 
     // --- BULLETIN BOARD ---
@@ -710,7 +738,7 @@ export const ui = {
 
     closeBoard: function() {
         const modal = document.getElementById('board-modal');
-        this.hideOverlay(modal, false);
+        this.hideOverlay(modal);
     },
 
     // --- VISUAL FEEDBACK (floating text) ---
@@ -831,6 +859,10 @@ export const ui = {
     },
     
     // --- SAVEGAME UI HELPERS ---
+    // Careful: these are called as engine.ui.openExportModal(), so `this` is
+    // this nested object and not the engine. The overlay helpers have to be
+    // reached through `engine` - this.showOverlay() silently threw and the
+    // dialog simply never opened.
     ui: {
         // Opens the export dialog
         openExportModal: function() {
@@ -843,7 +875,7 @@ export const ui = {
             area.value = code || "Fehler beim Erstellen.";
             msg.style.opacity = '0'; // Reset Message
 
-            this.showOverlay(modal);
+            engine.showOverlay(modal);
         },
 
         // Opens the import dialog
@@ -856,16 +888,13 @@ export const ui = {
             msg.style.opacity = '0'; 
             msg.innerText = "";
 
-            this.showOverlay(modal);
+            engine.showOverlay(modal);
         },
 
         // Closes both dialogs
         closeModals: function() {
-            document.getElementById('save-export-modal').classList.add('hidden');
-            document.getElementById('save-export-modal').classList.remove('flex');
-            document.getElementById('save-import-modal').classList.add('hidden');
-            document.getElementById('save-import-modal').classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            engine.hideOverlay('save-export-modal');
+            engine.hideOverlay('save-import-modal');
         },
 
         // Kopier-Funktion
@@ -1077,8 +1106,6 @@ export const ui = {
     openSettings: function() {
         const modal = document.getElementById('settings-modal');
 
-        document.body.classList.add('overflow-hidden');
-
         // --- Soft reset button, greyed out while the game is still starting ---
         const softResetBtn = document.getElementById('btn-soft-reset');
 
@@ -1111,7 +1138,7 @@ export const ui = {
             title.innerText = 'MENÜ';
         }
 
-        this.showOverlay(modal, false);
+        this.showOverlay(modal);
     },
     
     closeSettings: function() {
@@ -1395,14 +1422,12 @@ export const ui = {
     },
 
     openKeybinds: function() {
-        document.getElementById('keybind-modal').classList.remove('hidden');
-        document.getElementById('keybind-modal').classList.add('flex');
+        this.showOverlay('keybind-modal');
     },
 
     closeKeybinds: function() {
         this.state.isBindingKey = false;
-        document.getElementById('keybind-modal').classList.add('hidden');
-        document.getElementById('keybind-modal').classList.remove('flex');
+        this.hideOverlay('keybind-modal');
     },
     
     resetKeybinds: function() {
