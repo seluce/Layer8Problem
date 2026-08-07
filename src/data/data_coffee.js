@@ -3504,7 +3504,7 @@ export const coffee = [
                 t: "'Bestimmt ein Sabotage-Akt!'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: 15, c: 15, 
-                r: "Der Chef glaubt dir halb, aber er verdonnert dich dazu, die Maschine 30 Minuten lang mit klarem Wasser zu spülen. Der Pfusch von heute Morgen hat dich jetzt eingeholt." 
+                r: "Der Chef glaubt dir halb, aber er verdonnert dich dazu, die Maschine 30 Minuten lang mit klarem Wasser zu spülen. Der Pfusch von vorhin hat dich jetzt eingeholt." 
             },
             { 
                 t: "'Das ist ein Lifehack aus dem Internet!'", 
@@ -3755,7 +3755,7 @@ export const coffee = [
         id: "cof_grinder_2c",
         title: "Explosion",
         reqStory: "path_grinder_endure",
-        text: "Du hättest die Maschine nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist heute Morgen mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
+        text: "Du hättest die Maschine nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist kurz darauf mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
         opts: [
             { 
                 t: "Sich unauffällig vom Tatort entfernen", 

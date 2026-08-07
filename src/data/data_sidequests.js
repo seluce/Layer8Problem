@@ -1430,7 +1430,7 @@ export const sidequests = [
         kind: "text",
         title: "Log-Datei-Analyse",
         reqStory: "path_sys_fake",
-        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' taucht an deinem Tisch auf. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom Crash heute Morgen geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
+        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' taucht an deinem Tisch auf. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom heutigen Crash geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
         opts: [
             { 
                 t: "'Wollen Sie einen Keks?'", 
@@ -1477,7 +1477,7 @@ export const sidequests = [
         kind: "text",
         title: "God Mode Aktiviert",
         reqStory: "path_stick_godmode",
-        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Heute morgen ploppt ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
+        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Jetzt ploppt ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
         opts: [
             { 
                 t: "Robin Hood: Allen Mitarbeitern Hitzefrei geben", 
@@ -1906,7 +1906,7 @@ export const sidequests = [
             { 
                 t: "Eifersüchtig sein", 
                 m: 10, f: -10, a: 20, c: 0, 
-                r: "Der Hund bekommt besseres Essen als du. Gestern gab es Steak für ihn und Kantinen-Brei für dich. Du starrst ihn böse an. Er wedelt fröhlich und furzt leise." 
+                r: "Der Hund bekommt besseres Essen als du. Steak für ihn, Kantinen-Brei für dich. Du starrst ihn böse an. Er wedelt fröhlich und furzt leise." 
             }
         ]
     },
@@ -2749,7 +2749,7 @@ export const sidequests = [
         kind: "text",
         title: "Urkundenfälschung",
         reqStory: "path_guard_package",
-        text: "Eine Rundmail von HR: 'Ein wichtiges Paket wurde heute Morgen von 'Mickey Mouse' quittiert. Wer war das? Das Paket enthielt keine Hardware, sondern die neuen Firmen-Smartphones. Wir leiten rechtliche Schritte ein!'",
+        text: "Eine Rundmail von HR: 'Ein wichtiges Paket wurde heute von 'Mickey Mouse' quittiert. Wer war das? Das Paket enthielt keine Hardware, sondern die neuen Firmen-Smartphones. Wir leiten rechtliche Schritte ein!'",
         opts: [
             { 
                 t: "Sich stellen: 'Ich wollte nur helfen!'", 
@@ -3482,7 +3482,7 @@ export const sidequests = [
                 t: "Panisch die Kameraaufnahmen löschen", 
                 req: "admin_pw",
                 m: 15, f: -5, a: 10, c: -20, 
-                r: "Du loggst dich schnell mit deinen Root-Rechten ins System ein und löschst die Video-Files von heute Morgen. Egon findet nichts. Du hast einen Herzinfarkt knapp überlebt." 
+                r: "Du loggst dich schnell mit deinen Root-Rechten ins System ein und löschst die Video-Files von vorhin. Egon findet nichts. Du hast einen Herzinfarkt knapp überlebt." 
             }
         ]
     },
@@ -7030,7 +7030,7 @@ export const sidequests = [
     kind: "text",
     title: "Das 5-Uhr-Signal",
     reqStory: "path_alpha_member",
-    text: "Es ist eingetreten: Jeden Morgen um Punkt fünf Uhr vibriert dein Handy. Das SIGNAL ist immer ein Foto von Markus im Fitnessstudio, dazu ein Spruch ('Während du schläfst, trainiert dein Wettbewerb'). Heute Morgen waren es zwei Fotos. Der Circle skaliert.",
+    text: "Es ist eingetreten: Zu jeder vollen Stunde vibriert dein Handy. Das SIGNAL ist immer ein Foto von Markus im Fitnessstudio, dazu ein Spruch ('Während du schläfst, trainiert dein Wettbewerb'). Eben waren es zwei Fotos. Der Circle skaliert.",
     opts: [
         {
             t: "Die Gruppe endlich stummschalten",

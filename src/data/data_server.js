@@ -989,7 +989,7 @@ export const server = [
         id: "srv_cold_2a",
         title: "Der Schreiner",
         reqStory: "path_cold_break",
-        text: "Ein externer Schreiner steht kopfschüttelnd vor der Serverraum-Tür, die heute Morgen 'jemand' (du) mit Gewalt geöffnet hat. Er flucht über die Splitter.",
+        text: "Ein externer Schreiner steht kopfschüttelnd vor der Serverraum-Tür, die vorhin 'jemand' (du) mit Gewalt geöffnet hat. Er flucht über die Splitter.",
         opts: [
             { 
                 t: "Helfen, die Späne aufzufegen", 
@@ -4903,7 +4903,7 @@ export const server = [
     id: "srv_schacht_3",
     title: "Rack 7",
     reqStory: "path_schacht_2",
-    text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft neuerdings anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seit heute Morgen nichts anderes mehr gehört. Es ist 15:40 Uhr, du hast vier Folgen im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
+    text: "Kevin steht vor dem Serverschrank und schaut auf sein Klemmbrett. 'Ey, kurze Frage - der Server in Rack sieben, der läuft neuerdings anders. Also nicht kaputt. Nur... anders. Und die Logs hören nachts um kurz nach drei einfach auf und fangen dann wieder an.' Er schaut dich an und wartet auf eine Antwort. Du hast seither nichts anderes mehr gehört. Vier Folgen hast du im Kopf, und jede Antwort, die dir einfällt, stammt aus der Serie.",
     opts: [
         {
             t: "Dem Chef davon erzählen - der muss das wissen",
