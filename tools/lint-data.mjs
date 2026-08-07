@@ -406,6 +406,40 @@ for (const p of POOLS) for (const ev of DB[p]) {
 DB.emails.forEach(e => (e.opts ?? []).forEach(collect));
 for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].name}) wird von keinem Event vergeben/verlangt`);
 
+/* ---------- 6b) Usable items ---------- */
+// `use` is what makes an item usable: it drives the backpack buttons, the
+// confirm dialog and the effect. An incomplete block therefore shows up as a
+// button that opens a dialog saying nothing and does nothing.
+const USE_FIELDS = ['al', 'fl', 'desc', 'warn', 'log', 'color', 'cooldown'];
+for (const id of itemIds) {
+  const item = DB.items[id];
+  const use = item.use;
+  if (!use) continue;
+  const ctx = `Item "${id}"`;
+
+  for (const k of ['desc', 'warn', 'log', 'color'])
+    if (!use[k]) err(`${ctx}: use.${k} fehlt — ohne das bleibt der Dialog oder das Protokoll leer`);
+
+  for (const k of Object.keys(use))
+    if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} ist kein bekanntes Feld`);
+
+  if (!use.al && !use.fl)
+    err(`${ctx}: use ohne Wirkung — al oder fl muss gesetzt sein`);
+
+  for (const k of ['al', 'fl'])
+    if (use[k] !== undefined && !(use[k] < 0))
+      err(`${ctx}: use.${k} muss negativ sein (Werte werden gesenkt), ist ${use[k]}`);
+
+  if (use.cooldown && !item.keep)
+    err(`${ctx}: use.cooldown ohne keep — was verbraucht wird, braucht keine Wartezeit`);
+
+  if (item.keep && !use.cooldown)
+    err(`${ctx}: keep ohne use.cooldown — wäre unbegrenzt oft benutzbar`);
+
+  if (item.quest)
+    err(`${ctx}: Quest-Items sind Trophäen und dürfen kein use haben`);
+}
+
 /* ---------- 7) Mail convention: the delete option ---------- */
 // The delete option must carry ignoreEmail: true and sit at the BOTTOM of
 // the list. Chain follow-ups without any delete option are fine by design.

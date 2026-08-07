@@ -28,7 +28,7 @@
     const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', bg: 'bg-slate-900' };
 
     const EXCUSE_TYPES = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
-    const STRESSBALL_COOLDOWN = 60;
+    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
 
     const ev    = $derived(state.terminal.event ?? {});
     const style = $derived(STYLES[ev.type] ?? FALLBACK);

@@ -44,6 +44,7 @@ Für Entwickler:
 * PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird. Sie stand seit ihrer Einführung unbenutzt da, während der Spielstand-Löscher seine eigene Aufzählung von Hand pflegte - genau die doppelte Buchführung, gegen die die Liste angelegt worden war.
 * Overlays werden überall gleich geschaltet. Intro und Tageswahl liefen als einzige von achtzehn über style.display statt über die hidden-Klasse; ein Inline-Stil verdeckt die Klasse aber, ohne sie zu entfernen, weshalb jede Prüfung "ist das Fenster offen?" mit Nein antwortete. showOverlay, hideOverlay und das neue isOverlayOpen sind jetzt die einzige Stelle, die diese Kodierung kennt.
 * Die Bildlauf-Sperre wird als Menge benannter Halter geführt statt als Schalter. Fenster können übereinander liegen; bisher gab das Schließen des oberen die Seite frei, obwohl das untere noch stand. Ein Zähler hätte dasselbe geleistet, bis er einmal aus dem Tritt gerät - eine Menge kann das nicht.
+* Was ein Gegenstand bewirkt, steht jetzt beim Gegenstand. Wirkung, Dialogtexte, Protokollzeile und Wartezeit liegen in data_items.js unter `use`; ob etwas benutzbar ist, ergibt sich daraus. Vorher war dasselbe Wissen auf fünf Stellen verteilt - zwei if-Ketten in engine_inventory.js, zwei wortgleiche CONSUMABLES-Listen in den Rucksack-Komponenten und die Wartezeit des Stressballs an vier Stellen als nackte 60. engine_inventory.js schrumpft von 175 auf 115 Zeilen, der Linter prüft die neuen Felder. Alle 30 Gegenstände verhalten sich unverändert, nachgemessen.
 
 
 [4.0.0] - 2026-08-03

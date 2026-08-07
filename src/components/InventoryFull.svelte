@@ -21,8 +21,12 @@
     import { engine } from '../engine.js';
     import { DB } from '../data.js';
 
-    const STRESSBALL_COOLDOWN = 60;
-    const CONSUMABLES = ['energy', 'donut', 'sandwich', 'chocolate', 'bubble_wrap'];
+    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
+    // Usable, how long it rests and whether it survives - all of that is in
+    // data_items.js under `use`. Nothing about items is listed here.
+    const usable = (id) => !!DB.items[id]?.use;
+    const cooldownOf = (id) => DB.items[id]?.use?.cooldown ?? 0;
+    const isConsumable = (id) => usable(id) && !cooldownOf(id);
 
     const entries = $derived(
         game.inventory.map((entry, i) => {
@@ -102,7 +106,7 @@
                 ? 'inv-slot relative group cursor-default cursor-pointer border-green-500 hover:bg-green-900/20'
                 : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
         }
-        if (CONSUMABLES.includes(row.entry.id)) {
+        if (isConsumable(row.entry.id)) {
             return 'inv-slot relative group cursor-default cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
         }
         return 'inv-slot relative group cursor-default' + ring;
@@ -131,7 +135,7 @@
             return;
         }
 
-        if (CONSUMABLES.includes(id)) engine.askUseItem(id);
+        if (isConsumable(id)) engine.askUseItem(id);
     }
 
     /**
