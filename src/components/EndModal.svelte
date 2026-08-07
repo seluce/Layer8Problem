@@ -1,15 +1,15 @@
 <!--
-  Der große Bildschirm in der Mitte: Tagesende, Niederlage, Warnungen.
+  The big screen in the middle: end of day, defeat, warnings.
 
-  Aufbau von oben nach unten: Titel, ein Satz zum Ausgang, die Bilanz mit
-  hervorgehobener Ursache, darunter aufklappbar Verlauf und Logbuch. Die
-  Reihenfolge ist Absicht — erst die Nachricht, dann die Zahlen, dann die
-  Analyse für die, die sie wollen.
+  Top to bottom: title, one sentence on the outcome, the balance sheet with
+  the cause highlighted, and below that the curve and the logbook, both
+  collapsible. The order is deliberate — the message first, then the numbers,
+  then the analysis for whoever wants it.
 
-  Bis v4.0.0 kam all das als eine HTML-Zeichenkette aus der Engine. Jetzt
-  liefert sie Felder (lead, cause, diary), und die Bestandteile sind eigene
-  Komponenten. `text` gibt es weiterhin: Warnungen und die Party bringen ihre
-  eigene Zusammenfassung mit.
+  Until v4.0.0 all of this arrived from the engine as one HTML string. Now it
+  hands over fields (lead, cause, diary) and the parts are components of their
+  own. `text` still exists: warnings and the party bring a summary of their
+  own.
 -->
 <script>
     // Renamed so the $state rune stays usable in this file - see the pitfall
@@ -73,8 +73,8 @@
             <p class="text-lg text-slate-300 italic mb-2">{modal.lead}</p>
         {/if}
 
-        <!-- Warnungen und die Party bringen eigenen Text mit. Er stammt aus
-             der Engine, nie vom Spieler. -->
+        <!-- Warnings and the party bring their own text. It comes from the
+             engine, never from the player. -->
         {#if modal.text}
             <div class="text-lg text-slate-300 italic">{@html modal.text}</div>
         {/if}

@@ -21,7 +21,7 @@
     </div>
 
     <div class="bg-black/40 p-5 rounded-lg border-l-4 border-slate-400 mb-6">
-        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{view.text}"</p>
+        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">{view.text}</p>
     </div>
 
     <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">

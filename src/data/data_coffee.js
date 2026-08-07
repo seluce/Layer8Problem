@@ -5,8 +5,8 @@ export const coffee = [
         title: "Fundstück am Automaten",
         text: "Jemand hat hier einen gelben Notizzettel liegen lassen. Darauf steht 'WLAN-PW: 1234abcd'. Das ist Schmidts Handschrift.",
         opts: [
-            { t: "Zettel einstecken", loot: "wifi_note", m: 5, f: 5, a: 0, c: 0, r: "Das könnte noch nützlich werden. Wissen ist Macht." },
-            { t: "Wegwerfen", m: 5, f: 0, a: 0, c: 0, r: "Sicherheitsrisiko beseitigt." }
+            { t: "Zettel einstecken", loot: "wifi_note", m: 5, f: 5, a: 0, c: 0, r: "Du steckst den Zettel ein. Schmidts WLAN-Passwort in Schmidts Handschrift - so etwas wirft man nicht weg, so etwas archiviert man. Für einen Regentag." },
+            { t: "Wegwerfen", m: 5, f: 0, a: 0, c: 0, r: "Du zerreißt den Zettel in Konfetti-Größe und verteilst ihn auf zwei Mülleimer. Übertrieben? Vielleicht. Aber genau so steht es im IT-Grundschutz, und irgendwer muss ihn ja leben." }
         ]
     },
     {
@@ -25,7 +25,7 @@ export const coffee = [
                 t: "Stolz zeigen & liegen lassen", 
                 next: "path_donut_left", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Du gehst weiter. Du bist zwar chronisch unterzuckert, aber du isst keine Reste vom Management. Ein bisschen Würde muss man sich als Admin bewahren." 
+                r: "Du gehst weiter. Du bist zwar chronisch unterzuckert, aber du isst keine Reste vom Management." 
             }
         ]
     },
@@ -37,7 +37,7 @@ export const coffee = [
         text: "Irgendwann steht Chantal aus dem Marketing in der Küche und sucht etwas. 'Oh, hast du den letzten 'Veggie-Spinat-Schoko-Test-Donut' gesehen? Ich wollte den gerade für Instagram fotografieren!'",
         opts: [
             { 
-                t: "Lügen: 'Der Putzdienst war schon da'", 
+                t: "Den Putzdienst vorschieben", 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Chantal seufzt enttäuscht. 'Schade. Dabei soll der Spinat-Kern so gesund sein.' Du hast den Donut noch, aber plötzlich weniger Appetit." 
             },
@@ -53,7 +53,7 @@ export const coffee = [
                 rem: "donut", 
                 rep: { "Chantal": -5 },
                 m: 5, f: -5, a: -10, c: 5, 
-                r: "Du stopfst den Rest mit einem Bissen rein. 'Mmpf... keine Ahnung.' Chantal starrt dich an. 'Du hast Krümel am Kinn.' Peinlich, aber satt." 
+                r: "Du stopfst den Rest mit einem Bissen rein. 'Mmpf... keine Ahnung.' Chantal mustert dich. 'Du hast Krümel am Kinn.' Peinlich, aber satt." 
             }
         ]
     },
@@ -65,13 +65,13 @@ export const coffee = [
         text: "Du holst dir deinen Kaffee und siehst, wie Dr. Wichtig den Raum betritt. Er sieht den Donut, seine Augen leuchten. Er beißt herzhaft hinein. 'Mmmh! Endlich mal gute Verpflegung hier!'",
         opts: [
             { 
-                t: "Schleimen: 'Hab ich für Sie übrig gelassen'", 
+                t: "'Hab ich für Sie übrig gelassen!'", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 5, a: -5, c: -10,
                 r: "Der Chef nickt anerkennend mit vollem Mund. 'Müller, Sie denken mit. Das merke ich mir.' Ein billiger Sieg, aber er zählt." 
             },
             { 
-                t: "Ihn warnen (Spinat-Gerücht)", 
+                t: "Ihn vor dem Spinat-Kern warnen", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 2, f: 0, a: 5, c: 5,
                 r: "'Chef, der ist vom letzten Monat!' Er spuckt ihn sofort in den Mülleimer. 'Wollen Sie mich vergiften?!' Ups. Zu ehrlich." 
@@ -79,7 +79,7 @@ export const coffee = [
             { 
                 t: "Schweigend genießen", 
                 m: 5, f: 5, a: -10, c: 0, 
-                r: "Du nippst an deinem Kaffee und siehst dem Chef beim Krümeln zu. Ein seltener Moment des Friedens." 
+                r: "Du nippst an deinem Kaffee und siehst dem Chef beim Krümeln zu. Für zwei Minuten ist die Hierarchie nur ein Gerücht." 
             }
         ]
     },
@@ -91,10 +91,10 @@ export const coffee = [
             { 
                 t: "Panisch weglaufen", 
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du stammelst 'Äh... Error 404!' und rennst raus. Kaffee vergessen. Du hasst dich selbst." 
+                r: "Du stammelst 'Äh... Error 404!' und rennst raus. Der Kaffee bleibt zurück, die Würde auch. Auf dem Flur spielst du dir die Szene noch dreimal vor. Sie wird nicht besser." 
             },
             { 
-                t: "Flirten: 'Für dich lösche ich jedes Feuer'", 
+                t: "'Für dich lösche ich jedes Feuer.'", 
                 next: "path_flirt_date", 
                 m: 20, f: 10, a: -30, c: 5, 
                 r: "Es läuft gut! Sie kichert und zwirbelt eine Haarsträhne. 'Soso, ein Feuerwehrmann...'" 
@@ -108,9 +108,9 @@ export const coffee = [
         text: "Das Gespräch mit Sarah läuft überraschend flüssig. Sarah lehnt sich gegen den Automaten. 'Sag mal... hast du heute Abend schon was vor? Ich könnte einen Drink gebrauchen, der nicht aus diesem Automaten kommt.'",
         opts: [
             { 
-                t: "Zusagen: 'Klar, 18 Uhr im Pub?'", 
+                t: "'Klar! 18 Uhr im Pub?'", 
                 m: 10, f: 10, a: -20, c: 0, 
-                r: "'Perfekt! Ich freu mich!' Sie schreibt ihre Nummer auf deinen Arm. Dein Selbstbewusstsein durchbricht die Decke. Der Arbeitstag ist gerettet." 
+                r: "'Perfekt! Ich freu mich!' Sie schreibt ihre Nummer auf deinen Arm. Dein Selbstbewusstsein durchbricht die Decke." 
             },
             { 
                 t: "Nerd-Antwort: 'Ich muss raiden.'", 
@@ -118,7 +118,7 @@ export const coffee = [
                 r: "'Oh. Okay. Prioritäten, was?' Ihr Lächeln gefriert. Sie geht. Du hast das Date für einen virtuellen Drachen geopfert." 
             },
             { 
-                t: "Workaholic: 'Muss Überstunden machen'", 
+                t: "Sich auf Überstunden rausreden", 
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: -10, a: 10, c: -20, 
                 r: "Sie nickt verständnisvoll, aber enttäuscht. 'Schade. Fleißiges Bienchen.' Der Chef, der gerade vorbeikommt, hört das und nickt zufrieden." 
@@ -132,7 +132,7 @@ export const coffee = [
         text: "Der Chef steht breitbeinig vor der Kaffeemaschine und blockiert den Zugang. Er dreht sich in Zeitlupe zu dir um, eine Augenbraue hochgezogen. 'Ah, Müller? Schon wieder hier? Ist das heute der fünfte Kaffee oder haben Sie Ihren Schreibtisch untervermietet?'",
         opts: [
             { 
-                t: "Rechtfertigen: 'Ich brauche Treibstoff...'", 
+                t: "'Ich brauche Treibstoff, Chef...'", 
                 next: "path_boss_lecture",
 				rep: { "Dr. Wichtig": -2 },
                 m: 15, f: -5, a: 10, c: 5,
@@ -148,7 +148,7 @@ export const coffee = [
                 next: "path_boss_consultant",
 				rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 10, a: 5, c: -10,
-                r: "Der Chef nickt anerkennend: 'Ah, Service-Orientierung! Sehr gut, weitermachen.' Er tritt zur Seite. Du hast gelogen, aber du hast deinen Kaffee." 
+                r: "Der Chef nickt anerkennend: 'Ah, Service-Orientierung! Sehr gut, weitermachen.' Er tritt zur Seite. Gelogen wie gedruckt - und der Kaffee schmeckt trotzdem." 
             }
         ]
     },
@@ -160,7 +160,7 @@ export const coffee = [
         text: "Irgendwann steht der Chef an deinem Platz. Im Schlepptau ein Mann im 2000€-Anzug. 'Müller! Da sind Sie ja. Hier ist der Senior Consultant von McKinsey. Er sagte, er hätte Durst, und da Sie ja ohnehin schon mal für ihn geholt haben...' Der Berater greift gierig nach DEINEM Becher.",
         opts: [
             { 
-                t: "Lügen: 'Da ist Hustensaft drin.'", 
+                t: "'Da ist Hustensaft drin.'", 
 				rep: { "Dr. Wichtig": -2 },		
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "Der Berater zieht die Hand zurück. 'Oh. Äh. Nein danke.' Der Chef guckt misstrauisch, aber du darfst deinen Kaffee behalten." 
@@ -228,18 +228,18 @@ export const coffee = [
         text: "Du drückst 'Espresso'. Neben dir stehen der Chef und der Vertreter von vorhin. Der Vertreter zeigt begeistert auf den roten Ball in deiner Hand: 'Ah! Ich sehe, unsere 'Cloud' ist schon im Einsatz! Wie gefällt sie Ihnen?'",
         opts: [
             { 
-                t: "'Das beste Gadget seit Jahren!' (Übertrieben loben)", 
+                t: "'Das beste Gadget seit Jahren!'", 
 				rep: { "Dr. Wichtig": 10 },	
                 m: 15, f: 5, a: 15, c: -10,
-                r: "Ein fataler Fehler. Der Vertreter ist so begeistert, dass er dich in die Ecke drängt und dir 15 Minuten lang die Roadmap für Q4 erklärt. Der Chef nickt stolz, aber deine Ohren bluten und der Kaffee wird kalt." 
+                r: "Eine krasse Fehleinschätzung. Der Vertreter ist so begeistert, dass er dich in die Ecke drängt und dir 15 Minuten lang die Roadmap für Q4 erklärt. Der Chef nickt stolz, aber deine Ohren bluten und der Kaffee wird kalt." 
             },
             { 
-                t: "'Ist halt Schaumstoff.' (Trocken)", 
+                t: "'Ist halt Schaumstoff.'", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Das Lächeln des Vertreters gefriert. 'Äh, ja. High-Tech-Polymer.' Er wendet sich irritiert ab. Das Gespräch stirbt, und du kannst in Ruhe mit deinem Kaffee entkommen." 
             },
             { 
-                t: "Tief inhalieren und Augenkontakt halten (provozieren)", 
+                t: "Tief inhalieren und den Augenkontakt halten", 
 				rep: { "Dr. Wichtig": -10 },	
                 m: 5, f: 0, a: 0, c: 20,
                 r: "Du hältst den Ball direkt unter deine Nase, atmest tief ein und flüsterst: 'Er riecht nach Weichmachern.' Totenstille. Der Vertreter weicht zurück. Der Chef läuft purpurrot an. 'MÜLLER! BÜRO!'" 
@@ -255,7 +255,7 @@ export const coffee = [
                 t: "Zettel schreiben: 'WER LEER MACHT, FÜLLT AUF!'", 
                 next: "path_empty_note", 
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "Du klebst einen passiv-aggressiven Post-it mit drei Ausrufezeichen an die Maschine. Du fühlst dich moralisch überlegen, hast aber immer noch keinen Kaffee." 
+                r: "Du klebst einen passiv-aggressiven Post-it mit drei Ausrufezeichen an die Maschine. Kaffee hast du immer noch keinen." 
             },
             { 
                 t: "Seufzen und die Bohnen auffüllen", 
@@ -279,19 +279,19 @@ export const coffee = [
         text: "Als du wieder einmal in die Küche kommst, steht dort die neue Praktikantin. Sie strahlt dich an. 'Oh, warst du das mit dem Auffüllen? Du bist ja lieb! Hier, nimm meinen. Ich hab mir aus Versehen zwei gezogen.' Sie reicht dir einen perfekten Cappuccino.",
         opts: [
             { 
-                t: "Ablehnen: 'Ich traue nur meinem eigenen Sud'", 
+                t: "'Ich traue nur meinem eigenen Sud.'", 
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du lehnst ab. Sie zuckt mit den Schultern und trinkt beide selbst. Jetzt stehst du da und musst warten, bis die Maschine wieder frei ist. Selbst schuld." 
             },
             { 
                 t: "Sie belehren: 'Eigentlich ist das Diebstahl'", 
                 m: 5, f: -5, a: 10, c: 5, 
-                r: "Ihr Lächeln gefriert. 'Wow. Okay, Boomer.' Sie geht. Du hast deinen Kaffee, aber deine Seele ist schwarz." 
+                r: "Ihr Lächeln gefriert. 'Wow. Okay, Boomer.' Sie geht. Den Kaffee hast du - aber deine Seele ist jetzt so schwarz wie er." 
             },
             { 
                 t: "Dankbar annehmen", 
                 m: 5, f: 0, a: -25, c: 0, 
-                r: "Der Kaffee schmeckt nach Gerechtigkeit und Milchschaum. Dein Tag ist gerettet. Manchmal lohnt es sich, nett zu sein." 
+                r: "Der Kaffee schmeckt nach Gerechtigkeit und Milchschaum." 
             }
         ]
     },
@@ -299,7 +299,7 @@ export const coffee = [
         id: "cof_empty_2b",
         title: "Künstliche Intelligenz?",
         reqStory: "path_empty_kick",
-        text: "Das Display flackert nach deinem Tritt. Plötzlich ertönt eine blecherne, synthetische Stimme aus dem Lautsprecher: 'AUA. DAS WAR UNHÖFLICH, MÜLLER. ICH MERKE MIR DAS. KEIN KOFFEIN FÜR GEWALTTÄTER.' Der Auslauf verriegelt sich hörbar.",
+        text: "Das Display flackert nach deinem Tritt, dann ertönt eine blecherne, synthetische Stimme aus dem Lautsprecher: 'AUA. DAS WAR UNHÖFLICH, MÜLLER. ICH MERKE MIR DAS. KEIN KOFFEIN FÜR GEWALTTÄTER.' Der Auslauf verriegelt sich hörbar.",
         opts: [
             { 
                 t: "Exorzisten rufen", 
@@ -337,7 +337,7 @@ export const coffee = [
             { 
                 t: "Neuen Zettel: 'GRAMMATIK LERNEN!'", 
                 m: 5, f: 5, a: 5, c: 0, 
-                r: "Du korrigierst die Fehler der anderen mit rotem Stift. Das ist der Alman-Move des Jahres. Du fühlst dich überlegen, hast aber immer noch Durst." 
+                r: "Du korrigierst die Fehler der anderen mit rotem Stift. Das ist der Alman-Move des Jahres. Moralisch ein Sieg, nur der Durst bleibt." 
             }
         ]
     },
@@ -347,7 +347,7 @@ export const coffee = [
         text: "Ein junger Typ im Anzug steht verloren vor der Maschine. 'Äh, hallo? Ich bin neu im Controlling. Braucht man hier eine Karte oder ist das kostenlos? Und wo ist die Soja-Milch?'",
         opts: [
             { 
-                t: "Anlügen: 'Das kostet 5€ pro Tasse, zahlbar bei mir.'", 
+                t: "'Das kostet 5€ pro Tasse. Zahlbar bei mir.'", 
                 next: "path_newbie_scam", 
                 m: 10, f: 10, a: -10, c: 10, 
                 r: "Er wirkt beeindruckt von der Professionalität. 'Oh, Service am Platz? Stark.' Er drückt dir einen 5er in die Hand. 'Quittung später, okay?'" 
@@ -369,15 +369,15 @@ export const coffee = [
         id: "cof_newbie_2a",
         title: "Best Friends Forever",
         reqStory: "path_newbie_friend",
-        text: "Torben steht plötzlich neben deinem Schreibtisch. Er hält zwei vegane Smoothies. 'Hey Buddy! Danke nochmal für vorhin. Ich dachte, wir machen zusammen Mittag? Ich wollte mit dir über Synergien zwischen IT und Controlling brainstormen!'",
+        text: "Torben ist da. Einfach da, neben deinem Schreibtisch, mit zwei veganen Smoothies. 'Hey Buddy! Danke nochmal für vorhin. Ich dachte, wir machen zusammen Mittag? Ich wollte mit dir über Synergien zwischen IT und Controlling brainstormen!'",
         opts: [
             { 
-                t: "Ablehnen: 'Ich esse im Serverraum.'", 
+                t: "'Ich esse im Serverraum.'", 
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Torben nickt eifrig. 'Cool! Secret Base! Ich komme mit!' Du musst dich auf der Toilette einschließen, um ihn loszuwerden." 
             },
             { 
-                t: "Ausnutzen: 'Nur wenn du meine Spesen genehmigst.'", 
+                t: "'Nur wenn du meine Spesen genehmigst.'", 
                 m: 10, f: 5, a: -5, c: -10, 
                 r: "Er zwinkert. 'Für meinen Mentor? Alles! Ich buche das als 'Team-Building'.' Er redet 60 Minuten ohne Punkt und Komma, aber dein Budget ist sicher." 
             },
@@ -396,12 +396,12 @@ export const coffee = [
         text: "Torben fängt dich im Flur ab. Er wedelt mit einem Formular. 'Du, wegen der 5 Euro für den Kaffee-Service... ich brauche eine Kostenstelle für die Buchhaltung. Läuft das über 'IT-Infrastruktur' oder 'Externe Dienstleistung'?'",
         opts: [
             { 
-                t: "Wegrennen", 
+                t: "Einen Server-Alarm erfinden", 
                 m: 5, f: -5, a: -10, c: 10, 
                 r: "Du rufst 'Server-Alarm!' und sprintest weg. Torben ruft hinterher: 'Ich buche es auf Sonstiges!'" 
             },
             { 
-                t: "Lügen: 'Das ist eine Schwarzgeld-Kasse für Notfälle.'", 
+                t: "'Das ist eine Schwarzgeld-Kasse für Notfälle.'", 
                 m: 5, f: 5, a: 0, c: 20, 
                 r: "Torben flüstert: 'Verstehe. Black Ops. Cool.' Er zerreißt das Formular. 'Mein Mund ist versiegelt.' Er hält dich jetzt für einen Geheimagenten." 
             },
@@ -444,10 +444,10 @@ export const coffee = [
                 r: "'Nö. Vielleicht hat ihn die Putzkolonne?' Der Handwerker flucht und geht zum Wagen, Ersatz holen. Du hast den Hammer, aber ein (sehr kleines) schlechtes Gewissen." 
             },
             { 
-                t: "Zurückgeben: 'War nur ausgeliehen'", 
+                t: "Ihn kleinlaut zurückgeben", 
                 rem: "hammer",
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Du gibst ihn zurück. 'Wollte nur... die Balance prüfen.' Er reißt ihn dir aus der Hand. 'Finger weg, IT-Fuzzi.' Chance vertan." 
+                r: "Du gibst ihn zurück. 'Wollte nur... die Balance prüfen.' Er schnappt ihn dir weg. 'Finger weg, IT-Fuzzi.' Chance vertan." 
             },
             { 
                 t: "Kevin beschuldigen", 
@@ -466,7 +466,7 @@ export const coffee = [
             { 
                 t: "Dankend ablehnen", 
                 m: 2, f: 0, a: 0, c: 5, 
-                r: "'Ich bin versorgt.' Er zuckt mit den Schultern und wirft den Kram in seinen Koffer. 'Mehr für mich.' Du bleibst ehrlich, aber leer." 
+                r: "'Ich bin versorgt.' Er brummt nur und wirft den Kram in seinen Koffer. 'Mehr für mich.' Du bleibst ehrlich, aber leer." 
             },
             { 
                 t: "Kabelbinder nehmen", 
@@ -504,7 +504,7 @@ export const coffee = [
                 req: "hammer", 
                 next: "path_revolte_hammer", 
                 m: 10, f: 0, a: -20, c: 20, 
-                r: "BAM! Du schlägst gezielt auf das Gehäuse ein. Das Display hat jetzt einen Riss, aber aus purer Angst spuckt die Maschine sofort schwarzen Kaffee aus. Gewalt ist manchmal doch eine Lösung." 
+                r: "BAM! Du schlägst gezielt auf das Gehäuse ein. Das Display hat jetzt einen Riss, aber aus purer Angst spuckt die Maschine sofort schwarzen Kaffee aus." 
             }
         ]
     },
@@ -537,12 +537,12 @@ export const coffee = [
                 t: "Den Ruhm genießen", 
 				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 10, a: -10, c: -5, 
-                r: "Du lehnst dich zurück. 'Nur das Beste für mein Team.' Selbst der Chef nickt dir im Vorbeigehen zu. Dein Radar sinkt ins Bodenlose." 
+                r: "Du lehnst dich zufrieden an die Anrichte. 'Nur das Beste für mein Team.' Selbst der Chef nickt dir im Vorbeigehen zu. So viel Wohlwollen von oben gab es zuletzt vor Jahren." 
             },
             { 
                 t: "Trinkgeld für dich behalten", 
                 m: 10, f: 0, a: -5, c: 0, 
-                r: "Du nimmst das Geld als 'Bearbeitungsgebühr'. Du bist jetzt der offizielle Dealer für Koffein. Dein Ansehen (und Kontostand) steigt." 
+                r: "Du nimmst das Geld als 'Bearbeitungsgebühr'. Du bist jetzt der offizielle Dealer für Koffein." 
             }
         ]
     },
@@ -555,7 +555,7 @@ export const coffee = [
             { 
                 t: "Den 'Lachen'-Sound deaktivieren", 
                 m: 5, f: 0, a: -10, c: 0, 
-                r: "Endlich Ruhe. Du programmierst die Maschine so um, dass sie stattdessen jedes Mal 'Hallo Chef' sagt, wenn du kommst. Ein kleines, feines Ego-Upgrade." 
+                r: "Ruhe kehrt ein. Du programmierst die Maschine so um, dass sie stattdessen jedes Mal 'Hallo Chef' sagt, wenn du kommst." 
             },
             { 
                 t: "Alles auf 'Maximum' stellen", 
@@ -613,7 +613,7 @@ export const coffee = [
                 r: "Du stellst ihr 150€ für 'IT-Support und psychologische Betreuung' in Rechnung. Patt-Situation. Chantal grüßt dich ab jetzt nicht mehr." 
             },
             { 
-                t: "Zahlen (Friedensangebot)", 
+                t: "Zahlen und Frieden kaufen", 
                 rep: { "Chantal": 10 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du legst 50€ in den Umschlag. Es tut weh, aber der Krieg ist (vielleicht) vorbei. Dein Portemonnaie weint." 
@@ -642,7 +642,7 @@ export const coffee = [
                 t: "Paket an Kevin weitergeben", 
                 rep: { "Kevin": 5, "Chantal": -5 },
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "'Hier Kevin, für deine Ausbildung.' Kevin freut sich. Er räuchert jetzt das Lager aus. Du bist fein raus." 
+                r: "'Hier Kevin, für deine Ausbildung.' Kevin freut sich. Er räuchert jetzt das Lager aus. Und dein Name taucht nirgends auf." 
             }
         ]
     },
@@ -654,7 +654,7 @@ export const coffee = [
         text: "Du läufst am Meetingraum vorbei. Chantal hält eine Präsentation über 'Toxische Vibes'. Auf der Leinwand ist ein (heimlich aufgenommenes) Foto von DIR, wie du böse auf die Kaffeemaschine starrst. Untertitel: 'Der Energie-Vampir'.",
         opts: [
             { 
-                t: "Reinplatzen: 'Das ist Rufmord!'", 
+                t: "Reinplatzen und 'Rufmord!' rufen", 
                 rep: { "Chantal": -10 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du machst eine Szene. Das bestätigt leider genau ihre These. 'Seht ihr? Aggression!', ruft Chantal. Du hast verloren." 
@@ -705,12 +705,12 @@ export const coffee = [
         text: "Bernd fängt dich am Kopierer ab. Er wirkt unruhig und hält eine Münze in der Hand. 'Das mit der Milch war Glück, Müller. Ich fordere Genugtuung. Kopf oder Zahl um den letzten Keks im Meetingraum?'",
         opts: [
             { 
-                t: "Annehmen (Zocken)", 
+                t: "Die Wette annehmen", 
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "Die Münze fliegt. Du gewinnst wieder. Bernd bricht fast zusammen. Du bist jetzt offiziell der Glückspilz der Abteilung." 
+                r: "Die Münze fliegt. Du gewinnst wieder. Bernd bricht fast zusammen." 
             },
             { 
-                t: "Ablehnen: 'Glück gehört zum Können'", 
+                t: "'Glück gehört zum Können.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Du lässt ihn stehen. Bernd murmelt etwas von 'Angsthase', aber du weißt: Man soll aufhören, wenn man gewinnt." 
             }
@@ -723,12 +723,12 @@ export const coffee = [
         text: "Du triffst Bernd wieder. Er sieht extrem zufrieden aus und klopft sich auf den Bauch. 'Danke nochmal für die Milch. Mein Tee war heute besonders cremig. Man muss sich auch mal was gönnen, nicht wahr?'",
         opts: [
             { 
-                t: "Sarkasmus: 'Pass auf deine Arterien auf'", 
+                t: "'Pass auf deine Arterien auf.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Bernd lacht nur. 'Ich habe Knochen aus Stahl!' Deine Großzügigkeit wird hier eindeutig als Schwäche ausgelegt." 
             },
             { 
-                t: "Lügen: 'Die war eigentlich abgelaufen'", 
+                t: "'Die war eigentlich abgelaufen...'", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Bernds Gesichtsfarbe wechselt zu Grün. 'Was? Warum sagst du das erst jetzt?!' Er rennt Richtung Toilette. Rache ist ein Gericht, das man kalt serviert." 
             }
@@ -772,10 +772,10 @@ export const coffee = [
                 r: "20 Minuten später kennst du den Unterschied zwischen Mulch-Keil und Seitenauswurf. Ein Teil deiner Seele hat den Körper verlassen. Jürgen droht: 'Morgen erzähl ich dir von meiner Wärmepumpe!'" 
             },
             { 
-                t: "Schreien: 'OH GOTT, DER SERVER!' & rennen", 
+                t: "'OH GOTT, DER SERVER!' schreien und rennen", 
                 next: "path_juergen_run",
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Du täuschst einen fatalen Systemabsturz vor und sprintest aus der Küche. Du hast zwar keinen Kaffee, aber du bist Jürgens Monolog entkommen. Freiheit schmeckt auch gut." 
+                r: "Du täuschst einen fatalen Systemabsturz vor und sprintest aus der Küche. Freiheit schmeckt auch gut." 
             }
         ]
     },
@@ -783,7 +783,7 @@ export const coffee = [
         id: "cof_juergen_2a",
         title: "Stummes Gespräch",
         reqStory: "path_juergen_nc",
-        text: "Jürgen steht plötzlich an deinem Schreibtisch. Du hast die Kopfhörer noch auf. Er gestikuliert wild und fragt dich offensichtlich etwas. Du hörst absolut nichts außer Double-Bass-Drums.",
+        text: "Jürgen lehnt an deinem Schreibtisch, und du hast ihn nicht kommen hören. Die Kopfhörer sitzen noch. Er gestikuliert wild und fragt dich offensichtlich etwas. Du hörst absolut nichts außer Double-Bass-Drums.",
         opts: [
             { 
                 t: "Einfach 'Daumen hoch' zeigen", 
@@ -796,7 +796,7 @@ export const coffee = [
                 r: "Du hebst eine Muschel an. Jürgen: '...ob du mal meinen Drucker... ach egal, du bist beschäftigt.' Er zieht ab." 
             },
             { 
-                t: "Kopf schütteln (Nein sagen)", 
+                t: "Stumm den Kopf schütteln", 
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du schüttelst traurig den Kopf. Jürgen wirkt betroffen: 'Oh, das wusste ich nicht. Mein Beileid.' Er geht leise weg. Du hast keine Ahnung, worum es ging, aber es hat funktioniert." 
             }
@@ -809,19 +809,19 @@ export const coffee = [
         text: "Du wolltest nur schnell Wasser holen. Jürgen lauert schon: 'Ah! Da bist du ja! Ich hatte dir ja die Datenblätter zur Vorlauftemperatur versprochen. Guck mal hier auf meinem Tablet...'",
         opts: [
             { 
-                t: "Flucht: 'Telefon klingelt!' (Phantom-Anruf)", 
+                t: "Einen Phantom-Anruf vortäuschen", 
                 m: 2, f: 5, a: 0, c: 5, 
                 r: "Du hältst dir dein stummes Handy ans Ohr: 'Ja Chef? Sofort!' und rennst weg. Jürgen ruft hinterher: 'Wir reden später über den Pufferspeicher!'" 
             },
             { 
-                t: "Fachsimpeln (Fehler korrigieren)", 
+                t: "Seinen Fachfehler korrigieren", 
                 m: 30, f: -10, a: 15, c: 0,
-                r: "Du wolltest nur kurz klugscheißen. Aber jetzt steckst du in einer 30-minütigen Debatte über Geothermie vs. Luft-Wasser. Du hast Recht, aber du hast auch deine Mittagspause verloren." 
+                r: "Du wolltest nur kurz klugscheißen. Aber jetzt steckst du in einer 30-minütigen Debatte über Geothermie vs. Luft-Wasser." 
             },
             { 
-                t: "Tot stellen (Starre)", 
+                t: "Sich tot stellen", 
                 m: 10, f: 10, a: 10, c: 0, 
-                r: "Du starrst durch ihn hindurch. Jürgen redet 10 Minuten ohne Punkt und Komma, merkt dann, dass du nicht blinzelst, und geht irritiert. 'Ich schick dir das PDF...'" 
+                r: "Du starrst durch ihn hindurch. Jürgen redet 10 Minuten am Stück, merkt dann, dass du nicht blinzelst, und geht irritiert. 'Ich schick dir das PDF...'" 
             }
         ]
     },
@@ -832,7 +832,7 @@ export const coffee = [
         text: "Jürgen steht an deinem Platz und stellt einen dampfenden Becher ab. 'Hier. Du bist ja vorhin so schnell weg wegen dem Server-Crash. Armer Kerl. Zucker, keine Milch, wie du es magst.'",
         opts: [
             { 
-                t: "Ablehnen: 'Ich trinke nur Red Bull.'", 
+                t: "'Ich hab meinen eigenen Treibstoff.'", 
                 req: "energy",
                 m: 5, f: -20, a: 0, c: 0,
                 r: "Du ziehst die Dose aus der Tasche. *ZISCH*. 'Das ist mein Treibstoff.' Du ext das Ding in drei Zügen. Jürgen weicht erschrocken zurück: 'Okay, okay, ganz ruhig...' Er verschwindet, bevor dein Herzrasen einsetzt." 
@@ -843,7 +843,7 @@ export const coffee = [
                 r: "Der Kaffee weckt deine Lebensgeister. Leider setzt sich Jürgen auf deinen Schreibtisch: 'Also, wo war ich... genau, der Mähroboter!' Du hörst zu, weil du in seiner Schuld stehst." 
             },
             { 
-                t: "Misstrauisch: 'Was willst du?'", 
+                t: "'Was willst du?'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Jürgen lacht: 'Nur nett sein! Mensch, ihr ITler seid immer so paranoid.' Er geht kopfschüttelnd. Der Kaffee schmeckt nach Schuldgefühlen, ist aber lecker." 
             }
@@ -881,16 +881,16 @@ export const coffee = [
                 t: "Tipp geben: 'Nimm Kaugummi.'",
                 rep: { "Egon": -5 }, 
                 m: 5, f: 5, a: 10, c: 0, 
-                r: "Egon starrt dich an. 'Kaugummi? Bin ich MacGyver?' Er schüttelt den Kopf über die 'Büro-Hengste' und geht." 
+                r: "Egon hebt eine Braue. 'Kaugummi? Bin ich MacGyver?' Er schüttelt den Kopf über die 'Büro-Hengste' und geht." 
             },
             { 
-                t: "Lügen: 'Nö, keine Ahnung.'",
+                t: "'Nö, keine Ahnung.'",
                 rep: { "Egon": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Egon tritt gegen den Mülleimer. 'Verdammte Diebe hier! Alles muss man anketten!' Er zieht wütend ab. Du hast das Tape, aber Egon ist sauer." 
+                r: "Egon tritt gegen den Mülleimer. 'Verdammte Diebe hier! Alles muss man anketten!' Er zieht wütend ab." 
             },
             { 
-                t: "Zurückgeben: 'Lag am Boden.'", 
+                t: "Ihn ehrlich abgeben", 
                 rem: "tape",
                 rep: { "Egon": 5 },
                 m: 5, f: 0, a: -5, c: 5, 
@@ -919,7 +919,7 @@ export const coffee = [
                 r: "Du gibst ihm die Binder zurück. 'Oh, danke Jung! Du rettest meinen Rücken.' Egon schuldet dir was." 
             },
             { 
-                t: "Sarkasmus: 'Hast du kein Tape?'",
+                t: "'Hast du kein Tape?'",
                 rep: { "Egon": -5 }, 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "'Tape hält da nicht bei der Hitze, du Experte!' Er ist genervt. Du hast deinen Spaß und deine Kabelbinder." 
@@ -932,7 +932,7 @@ export const coffee = [
         text: "Der Stehtisch in der Küche wackelt extrem. Der Kaffee schwappt fast über. Es ist dieser eine Millimeter, der dich in den Wahnsinn treibt.",
         opts: [
             { 
-                t: "Schrauben festziehen (Brachial)", 
+                t: "Die Schrauben brachial festziehen", 
                 req: "screw", 
                 next: "path_table_screw", 
                 m: 10, f: -5, a: -5, c: 0, 
@@ -961,7 +961,7 @@ export const coffee = [
         text: "Der Hausmeister steht rot anlaufend und schwitzend am Tisch. Er zerrt mit beiden Händen daran. 'Wer hat das Ding festgeschweißt?! Ich muss hier wischen! Das bewegt sich keinen Millimeter!'",
         opts: [
             { 
-                t: "Stolz: 'Das war Qualitätsarbeit'", 
+                t: "'Das war Qualitätsarbeit.'", 
                 rep: { "Egon": -5 },
                 m: 5, f: -5, a: -5, c: 0, 
                 r: "Egon starrt dich an. 'Du hast durch den Estrich in die Fußbodenheizung gebohrt!' Ups. Aber hey, der Tisch steht stabil." 
@@ -970,7 +970,7 @@ export const coffee = [
                 t: "Die Flucht ergreifen", 
                 rep: { "Egon": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Du pfeifst unschuldig und gehst. Hinter dir hörst du, wie Egon eine Brechstange ansetzt. Der Tisch gewinnt." 
+                r: "Du pfeifst unschuldig und gehst. Im Rücken hörst du schon, wie Egon eine Brechstange ansetzt. Der Tisch gewinnt." 
             }
         ]
     },
@@ -1028,7 +1028,7 @@ export const coffee = [
                 r: "Mit der Präzision eines Uhrmachers hebelst du die Taste raus, kratzt den 'Zucker-Beton' weg und setzt sie wieder ein. *Klick*. Ein wunderschönes Geräusch." 
             },
             { 
-                t: "Frust-Lösung: Einfach draufhauen", 
+                t: "Einfach draufhauen", 
                 next: "path_sticky_broken",
                 m: 2, f: 0, a: 5, c: 5, 
                 r: "BAM! KNACK! Die Taste bricht ab und fliegt in hohem Bogen unter den Kühlschrank. Ups. Jetzt gibt es nur noch die Wahl zwischen 'Heißes Wasser' und 'Systemfehler'." 
@@ -1050,12 +1050,12 @@ export const coffee = [
             { 
                 t: "Schild aufstellen: 'IT, nicht Café!'", 
                 m: 5, f: 0, a: 10, c: 5, 
-                r: "Du schickst alle weg. Sie murren, aber du hast deine Ruhe. Kompetenz ist manchmal ein Fluch." 
+                r: "Du schickst alle weg. Sie murren, aber du hast deine Ruhe." 
             },
             { 
                 t: "Service gegen Gebühr anbieten", 
                 m: 10, f: 10, a: -10, c: 0, 
-                r: "Du verlangst Schokolade für jede Reparatur. Dein Schreibtisch ist jetzt ein Süßwarenladen. Man muss Prioritäten setzen." 
+                r: "Du verlangst Schokolade für jede Reparatur. Dein Schreibtisch ist jetzt ein Süßwarenladen." 
             }
         ]
     },
@@ -1083,10 +1083,10 @@ export const coffee = [
 		char: "Gabi",
         title: "Der Teetrinker",
         reqStory: "path_sticky_tea",
-        text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich plötzlich vorsichtig.",
+        text: "Du wirst mit deiner Teetasse gesehen. Das Gerücht verbreitet sich: 'Müller trinkt keinen Kaffee mehr. Ist er krank? Burnout? Oder schwanger?' Die Kollegen behandeln dich seither auffällig vorsichtig.",
         opts: [
             { 
-                t: "Aufklären: 'Taste war nur kaputt'", 
+                t: "'Die Taste war nur kaputt.'", 
                 rep: { "Gabi": -2 },
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "'Achso.' Der Zauber ist vorbei. Gabi nimmt die Kekse wieder mit. Die Realität ist hart." 
@@ -1105,14 +1105,14 @@ export const coffee = [
         text: "Du entdeckst an der Rückseite der Kaffeemaschine einen USB-Wartungsport. Das Display zeigt 'INSERT SERVICE KEY'. Es ist verlockend. Sehr verlockend.",
         opts: [
             { 
-                t: "USB-Stick benutzen (Script laden)", 
+                t: "Den USB-Stick anstöpseln und das Script laden", 
                 req: "usb_stick", 
                 next: "path_hack_root", 
                 m: 5, f: 10, a: -10, c: 0, 
                 r: "HACK SUCCESS! Du hast den 'Developer Mode' aktiviert. Der Kaffee läuft jetzt doppelt so schnell und ist kostenlos. Du fühlst dich wie Neo in der Matrix." 
             },
             { 
-                t: "Wild Knöpfe drücken (Konami-Code?)", 
+                t: "Den Konami-Code probieren", 
                 next: "path_hack_glitch", 
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Oben, Oben, Unten, Unten, Links, Rechts... Das Display flackert wild. Es piept dreimal laut. Du hoffst, dass das ein 'Cheat Code' war und keine Selbstzerstörung." 
@@ -1126,12 +1126,12 @@ export const coffee = [
         text: "Seit deinem Hack begrüßt dich die Maschine mit 'HELLO ADMIN' und spielt eine 8-Bit-Melodie. Der Chef steht daneben und starrt auf sein Display, das nur 'PLEASE INSERT COIN' anzeigt. Er schaut misstrauisch zu deinem randvollen Gratis-Becher.",
         opts: [
             { 
-                t: "Angeben: 'Man muss die Maschine nur streicheln'", 
+                t: "'Man muss die Maschine nur streicheln.'", 
                 m: 5, f: 5, a: -5, c: 10, 
                 r: "Der Chef streichelt die Maschine. Nichts passiert. Er fühlt sich veräppelt. Du grinst in deinen Kaffee. Das war es wert." 
             },
             { 
-                t: "Ablenken: 'Das ist ein Firmware-Bug!'", 
+                t: "'Das ist ein Firmware-Bug!'", 
                 m: 10, f: 0, a: 10, c: 0, 
                 r: "'Wirklich? Kümmern Sie sich drum, Müller!' Er geht. Puh. Du behältst deine Privilegien, musst jetzt aber so tun, als würdest du arbeiten." 
             }
@@ -1149,7 +1149,7 @@ export const coffee = [
                 r: "Du hältst dein Handy davor und rettest den Tag. Du bist der Held, obwohl du das Problem verursacht hast. Das ist wahres IT-Consulting." 
             },
             { 
-                t: "Behaupten: 'Das ist ein Cyber-Angriff aus China!'", 
+                t: "'Das ist ein Cyber-Angriff aus China!'", 
                 m: 5, f: 0, a: 10, c: 15, 
                 r: "Panik bricht aus. Der Chef will das Internetkabel ziehen. Du hast vielleicht etwas übertrieben, aber niemand verdächtigt dich." 
             }
@@ -1213,7 +1213,7 @@ export const coffee = [
                 r: "Du wickelst Panzertape um den Rest. Er sieht jetzt aus wie eine rote Kartoffel, die einen Unfall hatte. Funktioniert kaum noch." 
             },
             { 
-                t: "Trauerfeier abhalten (Wegwerfen)", 
+                t: "Eine kleine Trauerfeier am Mülleimer abhalten", 
                 rem: "stressball",
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Du wirfst die Reste in den Müll. Er ist als Held gestorben. Ruhe in Frieden, kleiner Ball." 
@@ -1232,7 +1232,7 @@ export const coffee = [
         text: "Sabine hat Rache geschworen. Seit deinem Kommentar isst sie demonstrativ nur noch weiche Sachen, wenn du da bist – starrt dich dabei aber böse an. Heute liegt eine Banane auf deiner Tastatur. Eine Drohung?",
         opts: [
             { 
-                t: "Banane essen (Dominanz zeigen)", 
+                t: "Demonstrativ die Banane essen", 
                 m: 10, f: 5, a: -10, c: 0, 
                 r: "Du schälst die Banane und isst sie, ohne den Augenkontakt zu brechen. Sabine ist verwirrt und zieht sich zurück. Sieg." 
             },
@@ -1270,7 +1270,7 @@ export const coffee = [
         text: "Der Chef zitiert dich in sein Büro. Er lächelt gequält. 'Müller, ich habe Sie vorhin in der Küche gehört. Ich möchte sichergehen, dass wir 'aligned' sind. Wie läuft das aktuelle Projekt? Gibt es... Schwierigkeiten?' Er wartet lauernd auf ein bestimmtes Wort.",
         opts: [
             { 
-                t: "Übertreiben: 'Es ist eine fantastische Growth-Opportunity!'", 
+                t: "'Eine fantastische Growth-Opportunity!'", 
 				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 10, a: -5, c: 0, 
                 r: "Der Chef wirkt kurz verwirrt, nickt dann aber anerkennend. 'Wow. Das ist ja noch positiver als mein Coach. Weiter so!' Er macht sich eine Notiz: 'Müller = Visionär'." 
@@ -1279,7 +1279,7 @@ export const coffee = [
                 t: "Ehrlich sein: 'Ja, wir haben ein riesiges Problem.'", 
 				rep: { "Dr. Wichtig": -10 },	
                 m: 5, f: 0, a: 10, c: 20, 
-                r: "Sein Lächeln gefriert. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
+                r: "Das Dauerlächeln bekommt Risse. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
             },
             { 
                 t: "Bullshit-Bingo: 'Nur spannende Herausforderungen!'", 
@@ -1295,12 +1295,12 @@ export const coffee = [
         text: "Du hörst lautes Geschrei aus der Küche. Der Kantinen-Chef fuchtelt wild mit einer Schöpfkelle herum: 'Ich bin doch kein schnöder KOCH! Ich bin *Senior Nutrition Artist* und *Food Experience Manager*! Wer mich noch einmal 'Koch' nennt, kriegt versalzene Suppe bis zur Rente!'",
         opts: [
             { 
-                t: "Provokation: 'Herr Koch? Die Suppe ist kalt!'", 
+                t: "'Herr Koch? Die Suppe ist kalt!'", 
                 m: 5, f: 0, a: 10, c: 5, 
-                r: "Totenstille. Er dreht sich langsam um, die Kelle fest umklammert. Seine Augen verengen sich zu Schlitzen. Du stehst jetzt auf seiner schwarzen Liste. Dein nächstes Schnitzel wird Schuhsohlen-Qualität haben." 
+                r: "Die Kelle verharrt mitten in der Bewegung. Er wendet sich langsam um, und sein Blick wird schmal und sehr persönlich. Die schwarze Liste der Kantine ist nirgends dokumentiert, aber ab heute stehst du darauf. Dein nächstes Schnitzel wird Schuhsohlen-Qualität haben." 
             },
             { 
-                t: "Schleimen: 'Guten Morgen, Maestro!'", 
+                t: "'Guten Morgen, Maestro!'", 
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Er hält inne, rückt seine Mütze zurecht und lächelt geschmeichelt. 'Endlich jemand mit Kultur!' Du bekommst heute eine extra große Portion Pudding." 
             },
@@ -1322,9 +1322,9 @@ export const coffee = [
                 r: "ERROR 404. Die Maschine sperrt sich für 5 Minuten. Du starrst auf den Ladebalken. Toll gemacht." 
             },
             { 
-                t: "2,50€ bezahlen (Kapitulation)", 
+                t: "Zähneknirschend 2,50€ bezahlen", 
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du wirfst das Geld ein. Der Kaffee schmeckt nach verbrannten Reifen und Niederlage. Du fühlst dich ausgeraubt, aber wenigstens bist du wach." 
+                r: "Du wirfst das Geld ein. Der Kaffee schmeckt nach verbrannten Reifen und Niederlage." 
             },
             { 
                 t: "Espresso + Sensor zuhalten",
@@ -1370,7 +1370,7 @@ export const coffee = [
                 t: "Die Schuld auf den Spediteur schieben", 
                 rep: { "Egon": 2 },
                 m: 5, f: 5, a: -5, c: 5, 
-                r: "'Das war doch schon bei der Lieferung so, Egon!' Egon kratzt sich am Kopf. 'Stimmt... die Kartons sahen übel aus.' Du bist fein raus." 
+                r: "'Das war doch schon bei der Lieferung so, Egon!' Egon kratzt sich am Kopf. 'Stimmt... die Kartons sahen übel aus.' Verdacht abgewendet." 
             },
             { 
                 t: "Sich unauffällig verdrücken", 
@@ -1385,7 +1385,7 @@ export const coffee = [
         text: "Du traust deinen Augen nicht: Jemand hat einen billigen 'Smart Plug' (Marke 'China-Export') zwischen Steckdose und Kaffeemaschine gebastelt. Das Gehäuse schmilzt bereits, es funkt blau und riecht beißend nach verbranntem Weichmacher. Brandgefahr Stufe Rot.",
         opts: [
             { 
-                t: "Lebensgefahr: Sofort den Stecker ziehen", 
+                t: "Sofort den Stecker ziehen", 
                 next: "path_iot_sabotage", 
                 m: 10, f: -5, a: 30, c: 30, 
                 r: "ZACK! Funkenregen. Du hast das Gebäude gerettet. Da stürmt der Marketing-Chef mit knallrotem Kopf rein: 'MEIN PROTOTYP! Ich habe wochenlang an der Blockchain-basierten 'Coffee-Cloud' gearbeitet! Sie Maschinenstürmer!'" 
@@ -1405,7 +1405,7 @@ export const coffee = [
         text: "Der Marketing-Chef hat eine offizielle Beschwerde eingereicht. Er fordert Schadensersatz für den 'entgangenen Gewinn' seines geplanten 'Coffee-Coin' ICOs, den du durch das Ziehen des Steckers verhindert hast.",
         opts: [
             { 
-                t: "Gegenangriff: Egon informieren", 
+                t: "Egon einschalten", 
                 rep: { "Egon": 5 },
                 m: 10, f: -5, a: -10, c: 10, 
                 r: "Du petzt beim Hausmeister. Egon stürmt mit dem Bolzenschneider ins Marketing-Büro. 'Keine Fremdgeräte!' Das Schreien hört man bis in den 3. Stock." 
@@ -1424,14 +1424,14 @@ export const coffee = [
         text: "Die Feuerwehr ist weg, aber die Küche steht unter Wasser. Der Marketing-Chef steht heulend vor seinem verkohlten Smart-Plug. 'Warum hat niemand was gesagt?!'",
         opts: [
             { 
-                t: "Spöttisch: 'Ist das diese Liquid-Cooling?'", 
+                t: "'Ist das diese Liquid-Cooling?'", 
                 m: 5, f: 0, a: -5, c: 10, 
                 r: "Böser Witz. Aber er musste sein. Der Marketing-Chef hasst dich jetzt, aber die IT-Abteilung feiert dich als Legende." 
             },
             { 
                 t: "Schultern zucken: 'War im Meeting'", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Die perfekte Ausrede. Niemand kann beweisen, dass du mit Cola daneben standst. Du bleibst trocken." 
+                r: "Die perfekte Ausrede. Dass du mit Cola daneben standst, steht in keinem Protokoll. Du bleibst trocken." 
             }
         ]
     },
@@ -1472,7 +1472,7 @@ export const coffee = [
                 r: "Du schaust weg. 'Bestimmt ein Software-Fehler.' Der Kollege spült seinen Mund am Wasserspender aus. Knapp war's." 
             },
             { 
-                t: "Behaupten: 'Das ist die neue Citrus-Röstung'", 
+                t: "'Das ist die neue Citrus-Röstung.'", 
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "Der Kollege probiert noch mal vorsichtig. 'Echt? Hm... erfrischend im Abgang.' Du hast gerade einen widerlichen Trend gesetzt." 
             }
@@ -1506,7 +1506,7 @@ export const coffee = [
         text: "Dein Magen grummelt seltsam. Du hast das Gefühl, einen halben Ziegelstein verschluckt zu haben. Offenbar war in dem 'Kaffee' mehr Kalk als Wasser.",
         opts: [
             { 
-                t: "Schönreden: 'Das ist gut für die Knochen'", 
+                t: "'Das ist gut für die Knochen.'", 
                 m: 2, f: 5, a: 5, c: 0, 
                 r: "Mineralstoffe sind wichtig. Du redest dir ein, dass du dich gesund ernährst. Der Schmerz ist nur Schwäche, die den Körper verlässt." 
             },
@@ -1525,7 +1525,7 @@ export const coffee = [
             { 
                 t: "Großen Schritt drüber machen", 
                 m: 2, f: 5, a: -5, c: 0, 
-                r: "Mit einem olympreifen Satz springst du über die Lache. Nicht dein Dreck, nicht dein Problem. Soll die Nachtschicht doch Schlittschuh laufen. Du fühlst dich erhaben." 
+                r: "Mit einem olympreifen Satz springst du über die Lache. Nicht dein Dreck, nicht dein Problem. Soll die Nachtschicht doch Schlittschuh laufen." 
             },
             { 
                 t: "Heldenhaft zum Lappen greifen & wischen", 
@@ -1551,7 +1551,7 @@ export const coffee = [
             { 
                 t: "In den Müll werfen", 
                 m: 2, f: 0, a: -5, c: 0, 
-                r: "Das Ding fliegt mit Wucht in den Papierkorb. Du bist doch kein Kleinkind. Das Abreagieren tat gut." 
+                r: "Das Ding fliegt mit Wucht in den Papierkorb. Du bist doch kein Kleinkind." 
             },
             { 
                 t: "Tasse aus Trotz benutzen", 
@@ -1571,10 +1571,10 @@ export const coffee = [
                 t: "Juristisch wehren: 'DIN-Norm erfüllt'",
                 rep: { "Chantal": -10 }, 
                 m: 5, f: 5, a: 10, c: 0, 
-                r: "Du musst ihr 10 Minuten lang erklären, dass die Schriftgröße lesbar war. Sie rauscht beleidigt ab. Du hast Recht, aber die Diskussion war pure Zeitverschwendung und nervig." 
+                r: "Du musst ihr 10 Minuten lang erklären, dass die Schriftgröße lesbar war. Sie rauscht beleidigt ab." 
             },
             { 
-                t: "Mitleid zeigen (Schokolade)", 
+                t: "Mitfühlen und die Schokolade opfern", 
                 rep: { "Chantal": 10 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "Du gibst ihr einen Riegel aus deiner Schublade. Sie beruhigt sich sofort. 'Na gut. Aber nächstes Mal machst du Neon-Farbe dran, okay?' Problem gelöst." 
@@ -1595,7 +1595,7 @@ export const coffee = [
                 r: "Du entschuldigst dich kleinlaut. Sie rückt ihre Brille zurecht, schnaubt: 'Man muss eben an die Gemeinschaft denken!' und rauscht ab. Der Streit ist vorbei, dein Essen aber auch." 
             },
             { 
-                t: "Anbrüllen: 'Das war mein Mittag!'", 
+                t: "'DAS WAR MEIN MITTAG!'", 
                 next: "path_elster_allergy", 
                 rep: { "Frau Elster": -5 },
                 m: 10, f: 0, a: 20, c: 10, 
@@ -1620,7 +1620,7 @@ export const coffee = [
                 t: "Genüsslich kauen & anhauchen", 
                 rep: { "Frau Elster": -10 },
                 m: 5, f: -5, a: -10, c: 10, 
-                r: "Du kaust extra laut. 'Mmmh, knackig.' Frau Elster flüchtet panisch aus dem Raum. Du hast jetzt die Küche für dich allein. Mächtiges Gefühl." 
+                r: "Du kaust extra laut. 'Mmmh, knackig.' Frau Elster flüchtet panisch aus dem Raum. Du hast jetzt die Küche für dich allein." 
             }
         ]
     },
@@ -1635,10 +1635,10 @@ export const coffee = [
                 t: "Wütenden Antwort-Zettel schreiben", 
                 rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: -5, c: 0, 
-                r: "Du schreibst: 'Finger weg von meinem Eigentum!' und klebst ihn an ihre Tupperdose. Ein kleiner Akt der Rebellion, der gut tut." 
+                r: "Du schreibst: 'Finger weg von meinem Eigentum!' und klebst ihn an ihre Tupperdose." 
             },
             { 
-                t: "Alles neu beschriften (Arbeit)", 
+                t: "Alle Fächer neu beschriften", 
                 rep: { "Frau Elster": 5 },
                 m: 2, f: 5, a: 15, c: 0, 
                 r: "Du beschriftest jedes einzelne Lebensmittel mit Datum und Namen, damit sie Ruhe gibt. Es dauert 10 Minuten und nervt tierisch." 
@@ -1689,7 +1689,7 @@ export const coffee = [
                 req: "arg_list_1", 
 				rep: { "Dr. Wichtig": 5 },	
                 m: 10, f: -5, a: -10, c: 10, 
-                r: "Du ratterst deine Erfolge runter. Der Chef ist beeindruckt (und etwas eingeschüchtert). 'Okay, okay! Wir reden über einen Bonus.' Ein Teilsieg! Du fühlst dich wertgeschätzt." 
+                r: "Du ratterst deine Erfolge runter. Der Chef ist beeindruckt (und etwas eingeschüchtert). 'Okay, okay! Wir reden über einen Bonus.' Ein Teilsieg!" 
             }
         ]
     },
@@ -1717,7 +1717,7 @@ export const coffee = [
         id: "cof_markus_flex_1",
 		char: "Markus",
         title: "Der Angeber",
-        text: "Markus aus dem Vertrieb blockiert die Maschine. Er krempelt den Ärmel hoch und hält dir sein Handgelenk unter die Nase. 'Na, Admin? Schau mal genau hin. Diese Uhr kostet mehr als dein ganzes Auto.' Er grinst sein breites Gewinner-Lächeln.",
+        text: "Markus vom Vertrieb hat sich vor der Maschine aufgebaut. Er krempelt den Ärmel hoch und hält dir sein Handgelenk unter die Nase. 'Na, Admin? Schau mal genau hin. Diese Uhr kostet mehr als dein ganzes Auto.' Er grinst sein breites Gewinner-Lächeln.",
         opts: [
             { 
                 t: "Gezielter Wurf mit dem Stressball", 
@@ -1725,7 +1725,7 @@ export const coffee = [
                 next: "path_markus_hit", 
                 rep: { "Markus": -15, "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: -20, c: 30, 
-                r: "ZACK! Volltreffer auf die Nase. Markus jault auf wie ein getretener Pudel. Du fühlst tiefe Genugtuung, aber leider stand der Chef im Türrahmen. Das gibt Ärger." 
+                r: "ZACK! Volltreffer auf die Nase. Markus jault auf wie ein getretener Pudel. Leider stand der Chef im Türrahmen. Das gibt Ärger." 
             },
             { 
                 t: "Trocken kontern: 'Ist die geleast?'", 
@@ -1755,10 +1755,10 @@ export const coffee = [
 		char: "Markus",
         title: "Das Schmerzensgeld",
         reqStory: "path_markus_hit",
-        text: "Markus trägt jetzt ein riesiges Pflaster auf der Nase (völlig übertrieben). Er wedelt mit einem Formular vor deinem Gesicht. 'Das war ein tätlicher Angriff! Entweder du unterschreibst diese offizielle Entschuldigung, oder ich rufe meinen Anwalt!'",
+        text: "Markus trägt jetzt ein riesiges Pflaster auf der Nase (völlig übertrieben). Er fuchtelt mit einem Formular vor deinem Gesicht. 'Das war ein tätlicher Angriff! Entweder du unterschreibst diese offizielle Entschuldigung, oder ich rufe meinen Anwalt!'",
         opts: [
             { 
-                t: "Unterschreiben (Demütigung)",
+                t: "Klein beigeben und unterschreiben",
                 rep: { "Markus": 5 }, 
                 m: 5, f: 0, a: 15, c: 0, 
                 r: "Du unterschreibst. Markus grinst triumphierend und hängt den Zettel an seine Bürotür. Jeder kann jetzt lesen, dass es dir leid tut. Dein Blut kocht." 
@@ -1801,7 +1801,7 @@ export const coffee = [
         text: "Weil du ihm zugehört hast, hält Markus dich jetzt für seinen 'Schüler'. Er schickt dir morgens um 6 Uhr WhatsApp-Sprachnachrichten: 'Guten Morgen Champ! Zeit zum Hustlen! Hol mir mal einen Kaffee, das übt Demut!'",
         opts: [
             { 
-                t: "Kaffee holen (Dienst nach Vorschrift)", 
+                t: "Wortlos den Kaffee holen", 
                 rep: { "Markus": 10 },
                 m: 10, f: 0, a: 25, c: 0, 
                 r: "Du bringst ihm den Kaffee. Er tätschelt dir den Kopf. 'Braver Junge.' Du stirbst innerlich tausend Tode." 
@@ -1821,7 +1821,7 @@ export const coffee = [
         text: "Gabi aus der Poststelle sitzt schluchzend auf der Eckbank im Pausenraum. In der Hand hält sie einen braunen, schrumpeligen Klumpen. 'Mein kleiner Stachi ist tot! Einfach von uns gegangen!'",
         opts: [
             { 
-                t: "Geduldig zuhören (Seelsorge)", 
+                t: "Geduldig zuhören", 
                 next: "path_gabi_listen", 
                 rep: { "Gabi": 5 },
                 m: 45, f: -15, a: 20, c: 10, 
@@ -1874,13 +1874,13 @@ export const coffee = [
         text: "Der Chef stürmt in die Küche, packt dich am Arm und zerrt dich in den Flur. 'Sie haben Gabi aufgeputscht?! Sehen Sie sich das an!' Durch die offene Tür der Poststelle siehst du, wie Gabi Pakete im Akkord an die Decke stapelt.",
         opts: [
             { 
-                t: "Staunen: 'Effizient!'", 
+                t: "'Effizient!'", 
                 rep: { "Gabi": -5, "Dr. Wichtig": -2 },
                 m: 5, f: 0, a: 10, c: 5, 
-                r: "Der Chef läuft rot an. 'Das ist kein Tetris, das sind wichtige Akten!' Du musst helfen, den Turm abzubauen, bevor er einstürzt. Nervige Strafarbeit." 
+                r: "Der Chef bekommt rote Flecken am Hals. 'Das ist kein Tetris, das sind wichtige Akten!' Du musst helfen, den Turm abzubauen, bevor er einstürzt. Nervige Strafarbeit." 
             },
             { 
-                t: "Flüchten: 'Nicht mein Zuständigkeitsbereich'", 
+                t: "'Nicht mein Zuständigkeitsbereich.'", 
                 rep: { "Dr. Wichtig": -5 },
                 m: 2, f: -5, a: 5, c: 0, 
                 r: "Du reißt dich los und rennst zurück zum Kaffee. Der Chef brüllt dir hinterher. Das gibt Ärger, aber immerhin musst du nicht klettern." 
@@ -1892,13 +1892,13 @@ export const coffee = [
 		char: "Gabi",
         title: "Die Klette",
         reqStory: "path_gabi_listen",
-        text: "Du willst dir nur schnell einen frischen Kaffee holen, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
+        text: "Halber Weg zur Kaffeemaschine, da springt Gabi hinter dem Kühlschrank hervor. Sie hat auf dich gewartet. 'Du, der leere Topf sieht so einsam aus... meinst du, eine Begonie wäre besser als ein Kaktus?'",
         opts: [
             { 
-                t: "Sarkastisch: 'Nimm Plastikblumen'", 
+                t: "'Nimm doch Plastikblumen.'", 
                 rep: { "Gabi": 2 },
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "'Oh, gute Idee! Die sterben nicht!' Sie rennt los, um welche zu kaufen. Endlich Ruhe. Du hast zwar Ruhe, aber fühlst dich etwas schlecht." 
+                r: "'Oh, gute Idee! Die sterben nicht!' Sie rennt los, um welche zu kaufen. Der Flur gehört wieder dir - nur das schlechte Gewissen läuft hinterher." 
             },
             { 
                 t: "Sich hinter der Kaffeemaschine verstecken", 
@@ -1917,13 +1917,13 @@ export const coffee = [
                 req: "tape", 
                 next: "path_machine_tape", 
                 m: 10, f: -5, a: 0, c: -10, 
-                r: "Du wickelst eine halbe Rolle Tape um den Wassertank. Es sieht aus wie eine misslungene Mumie, aber es hält dicht! Die Küche bleibt trocken, der Kaffee fließt. Du bist der Held des Tages." 
+                r: "Du wickelst eine halbe Rolle Tape um den Wassertank. Es sieht aus wie eine misslungene Mumie, aber es hält dicht! Die Küche bleibt trocken, der Kaffee fließt." 
             },
             { 
-                t: "Sicherheits-Protokoll: Stecker ziehen", 
+                t: "Sofort den Stecker ziehen", 
                 next: "path_machine_plug", 
                 m: 5, f: 5, a: 10, c: 10, 
-                r: "Zack. Strom aus. Die Gefahr ist gebannt. Das Display wird schwarz. Ein kollektives, schmerzhaftes Stöhnen geht durch das Büro. Du hast vielleicht Leben gerettet, aber die Stimmung ist im Eimer." 
+                r: "Zack. Strom aus. Die Gefahr ist gebannt. Das Display wird schwarz. Ein kollektives, schmerzhaftes Stöhnen geht durch das Büro." 
             },
             { 
                 t: "Pfeifend weitergehen & ignorieren", 
@@ -1942,10 +1942,10 @@ export const coffee = [
         text: "Hausmeister Egon steht vor deinem Tape-Kunstwerk. Er nickt langsam und anerkennend. 'Saubere Arbeit, Müller. Hätte ich nicht besser machen können. Das hält bis 2030.' Er klopft dir fest auf die Schulter.",
         opts: [
             { 
-                t: "Fachsimpeln: 'Panzertape regelt alles'", 
+                t: "'Panzertape regelt alles.'", 
                 rep: { "Egon": 10 },
                 m: 5, f: 5, a: -15, c: 0, 
-                r: "Ihr tauscht kurz Handwerker-Weisheiten aus. Das entspannt ungemein. Du fühlst dich kompetent und wertgeschätzt." 
+                r: "Ihr tauscht kurz Handwerker-Weisheiten aus. Das entspannt ungemein." 
             },
             { 
                 t: "Bescheiden nicken", 
@@ -1969,7 +1969,7 @@ export const coffee = [
                 r: "'Nur mein Job, Chef.' Er drückt dir dankbar die Hand. 'Machen Sie heute früher Feierabend. Das ist ein Befehl!' Musik in deinen Ohren." 
             },
             { 
-                t: "Beruhigen: 'Sicherheit geht vor'", 
+                t: "'Sicherheit geht vor.'", 
 				rep: { "Dr. Wichtig": 5 },	
                 m: 5, f: 0, a: -10, c: -20, 
                 r: "Die Kollegen klatschen leise. Der Ärger über den fehlenden Kaffee ist verflogen. Du bist der verantwortungsvolle Fels in der Brandung." 
@@ -2010,7 +2010,7 @@ export const coffee = [
                 r: "Du drückst ihm den schweren Wälzer gegen die Brust. 'Lies Kapitel 1 bis 10. Vorher sprichst du mich nicht mehr an.' Er verzieht sich ehrfürchtig in eine Ecke. Endlich Ruhe." 
             },
             { 
-                t: "Lügen: 'Ja, das ist der E-Mail-Kobold'", 
+                t: "'Ja, das ist der E-Mail-Kobold.'", 
                 next: "path_kevin_kobold",
                 rep: { "Kevin": 5, "Dr. Wichtig": -2 }, 
                 m: 5, f: 10, a: -5, c: 10, 
@@ -2057,13 +2057,13 @@ export const coffee = [
                 t: "Ihn wegschicken",
                 rep: { "Kevin": -5 }, 
                 m: 2, f: -5, a: 5, c: 0, 
-                r: "'Lass den Quatsch.' Du arbeitest weiter. Kevin ist enttäuscht. Du hast eine Chance auf legale Faulheit verpasst." 
+                r: "'Lass den Quatsch.' Du arbeitest weiter. Kevin ist enttäuscht. Du hast soeben eine amtlich genehmigte Pause ausgeschlagen." 
             },
             { 
                 t: "Angebot annehmen",
                 rep: { "Kevin": 10 }, 
                 m: 20, f: 5, a: -20, c: 0, 
-                r: "Du legst die Füße hoch. Kevin bewacht die Tür und weist sogar den Chef mit Verweis auf 'Seite 103' ab. Das ist der beste Azubi aller Zeiten. Dein Stresslevel sinkt auf Null." 
+                r: "Du legst die Füße hoch. Kevin bewacht die Tür und weist sogar den Chef mit Verweis auf 'Seite 103' ab. Das ist der beste Azubi aller Zeiten." 
             }
         ]
     },
@@ -2074,7 +2074,7 @@ export const coffee = [
         text: "Hinter dem Rack findest du einen Teller. Darauf liegt keine saure Milch, sondern eine Packung feinster belgischer Pralinen. Ein Zettel liegt dabei: 'Für Gunter, bitte mach das Internet ganz.'",
         opts: [
             { 
-                t: "Ich bin Gunter (Essen)", 
+                t: "Sich als Gunter ausgeben und essen", 
                 rep: { "Kevin": 5 },
                 m: 5, f: 10, a: -10, c: 0, 
                 r: "Du mampfst die Pralinen genüsslich auf. Sie schmecken fantastisch. Als Kevin reinkommt, rülpst du leise. Kevin flüstert ehrfürchtig: 'Gunter hat es angenommen!'" 
@@ -2083,7 +2083,7 @@ export const coffee = [
                 t: "Kevin als Gunter erschrecken",
                 rep: { "Kevin": -5 }, 
                 m: 5, f: 15, a: -15, c: 5, 
-                r: "Du versteckst dich und machst Gruselgeräusche: *'MEHR SCHOKOLADE!'* Kevin rennt schreiend weg. Du lachst Tränen. Das war böse, aber extrem befriedigend." 
+                r: "Du versteckst dich und machst Gruselgeräusche: *'MEHR SCHOKOLADE!'* Kevin rennt schreiend weg. Du lachst Tränen." 
             }
         ]
     },
@@ -2144,7 +2144,7 @@ export const coffee = [
                 r: "Du hältst dem Investor eine Gabel hin. Er nimmt dankend an. Die Situation ist gerettet, aber der Chef wird dich später töten." 
             },
             { 
-                t: "Lügen: 'Qualitätskontrolle!'",
+                t: "'Qualitätskontrolle!'",
 				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 10, a: 20, c: 30, 
                 r: "Du stammelst mit vollem Mund etwas von 'Gift-Test'. Niemand glaubt dir. Es ist unfassbar peinlich. Die Japaner verbeugen sich höflich vor deiner Gier." 
@@ -2173,7 +2173,7 @@ export const coffee = [
                 r: "Egon meldet sich knarzend: 'Hömma! Ich ess erst mal meine Stulle auf. Bleib locker.' Du bist 30 Minuten gefangen. Deine Laune ist im Keller." 
             },
             { 
-                t: "Markus zuhören (Opfergang)", 
+                t: "Markus tapfer zuhören", 
                 next: "path_elevator_markus", 
                 rep: { "Markus": 5 },
                 m: 30, f: -10, a: 25, c: 0, 
@@ -2186,7 +2186,7 @@ export const coffee = [
 		char: "Markus",
         title: "Gefangen mit dem Bestie",
         reqStory: "path_elevator_markus",
-        text: "Markus springt in letzter Sekunde zu dir in den Aufzug. 'Hey Buddy! Gut, dass ich dich treffe!' Er drückt grinsend den **Nothalt-Knopf**. Der Aufzug stoppt hart. 'Ich muss dir unbedingt von meiner neuen Business-Idee erzählen. Dauert nur 20 Minuten.'",
+        text: "Markus springt in letzter Sekunde zu dir in den Aufzug. 'Na, Großer! Gut, dass ich dich treffe!' Er drückt grinsend den **Nothalt-Knopf**. Der Aufzug stoppt hart. 'Ich muss dir dringend von meiner neuen Business-Idee erzählen. Dauert nur 20 Minuten.'",
         opts: [
             { 
                 t: "Panisch schreien: 'HILFE!'",
@@ -2206,7 +2206,7 @@ export const coffee = [
         id: "cof_elevator_2b",
         title: "Experten am Werk",
         reqStory: "path_elevator_tech",
-        text: "Der Aufzug ruckt und steht. Neben dir: Ein Mann im Blaumann. Er wird bleich. 'Äh. Ich bin der Techniker. Ich wollte den Aufzug reparieren.' Er drückt hektisch Knöpfe. 'Mist. Mein Werkzeugkoffer steht draußen. Wir sitzen fest.'",
+        text: "Der Aufzug ruckt und steht. Neben dir: Ein Mann im Blaumann. Seine Gesichtsfarbe kippt. 'Äh. Ich bin der Techniker. Ich wollte den Aufzug reparieren.' Er drückt hektisch Knöpfe. 'Mist. Mein Werkzeugkoffer steht draußen. Wir sitzen fest.'",
         opts: [
             { 
                 t: "Ihm den 'Notfall-Donut' geben", 
@@ -2215,7 +2215,7 @@ export const coffee = [
                 r: "Der Techniker zittert wegen Unterzuckerung. Du gibst ihm den Donut. Er beruhigt sich, tritt gegen die Tür und – ZACK – sie geht auf. 'Danke, Kumpel!' Manchmal hilft Zucker mehr als Technik." 
             },
             { 
-                t: "Gemeinsam warten (Hoffnungslos)", 
+                t: "Gemeinsam auf Rettung warten", 
                 m: 45, f: 0, a: 20, c: 0, 
                 r: "Ihr sitzt beide auf dem Boden. Der Techniker weint leise. Nach 45 Minuten hört ihr Egon lachen, der die Tür von außen öffnet. 'Na, Kaffeekränzchen?'" 
             }
@@ -2228,14 +2228,14 @@ export const coffee = [
         text: "Der Aufzug ruckelt und bleibt stehen. Die fünf anderen Kollegen drehen sich synchron zu dir um. Einer reicht dir erwartungsvoll seinen Autoschlüssel. 'Los, mach schon. Du hast das doch neulich auch repariert. Wir haben es eilig.'",
         opts: [
             { 
-                t: "Verweigern: 'Bin kein Techniker'", 
+                t: "'Bin kein Techniker.'", 
                 m: 30, f: 0, a: 15, c: -5, 
                 r: "Die Stimmung kippt. 'Toll. Jetzt müssen wir warten.' Alle starren dich 30 Minuten lang vorwurfsvoll an. Du bist der Buhmann, weil du nicht helfen willst." 
             },
             { 
-                t: "So tun, als ob (Show)", 
+                t: "Eine Reparatur-Show abziehen", 
                 m: 5, f: 5, a: -5, c: 5, 
-                r: "Du rüttelst wichtig an der Tür und murmelst 'Fluxkompensator'. Zufällig geht es weiter. 'Ein Genie!', flüstern die Kollegen. Dein Ruf als Legende ist zementiert." 
+                r: "Du rüttelst wichtig an der Tür und murmelst 'Fluxkompensator'. Zufällig geht es weiter. 'Ein Genie!', flüstern die Kollegen." 
             }
         ]
     },
@@ -2251,7 +2251,7 @@ export const coffee = [
                 r: "Das muss dokumentiert werden! Du arrangierst deine Brille und einen Stift dekorativ daneben. '#OfficeLife #Grindset #Blessed'. Aber ein Foto reicht nicht..." 
             },
             { 
-                t: "Dem Chef bringen (Schleimen)",
+                t: "Ihn dem Chef bringen",
                 rep: { "Dr. Wichtig": 5 },				
                 next: "path_miracle_boss", 
                 m: 5, f: -5, a: 5, c: -15, 
@@ -2290,10 +2290,10 @@ export const coffee = [
         text: "Der Chef freut sich. 'Müller! Sie lesen Gedanken!' Er nimmt die Tasse mit dem perfekten Kaffee... und kippt drei Päckchen Süßstoff und einen Schuss laktosefreie H-Milch hinein. Die Crema zerfällt sofort zu grauer Plörre.",
         opts: [
             { 
-                t: "Kommentieren: 'Das war ein Grand Cru!'", 
+                t: "'Das war ein Grand Cru!'", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 5, f: 5, a: 5, c: 5, 
-                r: "Der Chef starrt dich an. 'Das ist Kaffee, Müller. Keine Wissenschaft. Gehen Sie arbeiten.' Dein Opfer war umsonst." 
+                r: "Der Chef schaut nur müde. 'Das ist Kaffee, Müller. Keine Wissenschaft. Gehen Sie arbeiten.' Dein Opfer war umsonst." 
             },
             { 
                 t: "Innerlich weinen & lächeln", 
@@ -2334,7 +2334,7 @@ export const coffee = [
         text: "Du bist gerade tiefenentspannt, da brüllt dir jemand direkt ins Ohr: 'MAHLZEIT!!!'. Es ist der lustige Holger aus der Buchhaltung, der sich angeschlichen hat.",
         opts: [
             { 
-                t: "Reflexartig zuschlagen (Stressball)", 
+                t: "Reflexartig den Stressball werfen", 
                 req: "stressball", 
                 m: 5, f: 0, a: -10, c: 10, 
                 r: "Dein Arm zuckt aus Reflex. Der Stressball trifft Holger am Kopf. 'Au! Spinnst du?!' Jetzt ist er das Opfer. Geschieht ihm recht." 
@@ -2397,7 +2397,7 @@ export const coffee = [
             { 
                 t: "Nicht fragen, nur essen", 
                 m: 5, f: 5, a: -20, c: 0, 
-                r: "Einem geschenkten Gaul schaut man nicht ins Maul. Du isst den zweiten Keks. Du fühlst dich seltsam geliebt von einem unsichtbaren Wohltäter. Dein Stresslevel sinkt massiv." 
+                r: "Einem geschenkten Gaul schaut man nicht ins Maul. Du isst den zweiten Keks. Du fühlst dich seltsam geliebt von einem unsichtbaren Wohltäter." 
             }
         ]
     },
@@ -2415,7 +2415,7 @@ export const coffee = [
             { 
                 t: "Krümel-Topping basteln", 
                 m: 5, f: 5, a: -15, c: 0, 
-                r: "Du zerbröselst den Keks über den Milchschaum. Ein Gourmet-Kaffee 'Marke Eigenbau'. Du fühlst dich wie ein Barista-König." 
+                r: "Du zerbröselst den Keks über den Milchschaum. Gourmet-Kaffee 'Marke Eigenbau'. Irgendwo in Italien weint ein Barista, aber hier schmeckt es großartig." 
             }
         ]
     },
@@ -2432,7 +2432,7 @@ export const coffee = [
                 r: "Du schraubst die Verkleidung ab und fixierst den Schlauch. Die Maschine surrt dankbar! Der erste Schluck schmeckt nach Sieg (und etwas Kalk)." 
             },
             { 
-                t: "Folie nutzen (Therapie)", 
+                t: "Die Luftpolsterfolie therapeutisch ploppen", 
                 req: "bubble_wrap", 
                 next: "path_machine_confused", 
                 m: 10, f: 5, a: -15, c: 0, 
@@ -2453,14 +2453,14 @@ export const coffee = [
         text: "Du kommst zurück. Das Display leuchtet rot. Der Text läuft als Laufschrift durch, weil er so lang ist: 'ERROR 418.666.KICK_DETECTED.USER_BLACKLISTED.SELF_DEFENSE_MODE_ACTIVE.38472.DO_NOT_TOUCH'. Es riecht verbrannt.",
         opts: [
             { 
-                t: "Stecker ziehen (den Krieg beenden)", 
+                t: "Den Stecker ziehen und den Krieg beenden", 
                 m: 5, f: 0, a: 5, c: 10, 
                 r: "Du ziehst den Stecker. Das rote Licht erlischt langsam wie das Auge von HAL 9000. Du hast gewonnen... vorerst." 
             },
             { 
                 t: "Vorsichtig nähern", 
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Die Maschine spuckt plötzlich kochenden Dampf aus. Sie hat auf dich gewartet! Du weichst zurück. Das Ding ist bösartig." 
+                r: "Die Maschine spuckt plötzlich kochenden Dampf aus. Als hätte sie nur auf dich gewartet! Du weichst zurück. Das Ding ist bösartig." 
             }
         ]
     },
@@ -2476,7 +2476,7 @@ export const coffee = [
                 r: "Du streichelst das Gehäuse. Das Blinken wird langsamer. Sie braut dir einen 'Special Espresso' mit doppelter Crema. Schmeckt nach Zuneigung." 
             },
             { 
-                t: "Einmal fest draufhauen (Reset)", 
+                t: "Einmal fest draufhauen", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Alte Schule. Die Maschine ist beleidigt und geht zurück auf Standard-Einstellungen. Der Kaffee ist okay, aber die Magie ist weg." 
             }
@@ -2489,7 +2489,7 @@ export const coffee = [
         text: "Das Display zeigt jetzt Zahlenkolonnen: 'ERROR 503.PLOPP.UNDEFINED.WHAT_IS_PURPOSE.BUBBLE_LOGIC_EXCEPTION.7463.8291.000'. Die Maschine versucht anscheinend, den Sinn deiner Bubble-Wrap-Aktion zu berechnen.",
         opts: [
             { 
-                t: "Nochmal ploppen (Dialog)", 
+                t: "Zurückploppen", 
                 req: "bubble_wrap", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du ploppst eine Blase. Die Maschine piept einmal. Du ploppst nochmal. Sie piept zweimal. Ihr habt eine Ebene der Verständigung gefunden." 
@@ -2507,20 +2507,20 @@ export const coffee = [
         text: "Du hörst ein hektisches Rascheln. Bernd (Logistik) steht gebückt vor dem Vorratsschrank. Seine Anzugtaschen beulen sich verdächtig aus. Er schwitzt. 'Psst! Die da oben wollen rationalisieren! Der Great Reset kommt! Ich sichere das weiße Gold!' Er starrt dich irre an. 'Bist du dabei oder bist du ein Schaf?'",
         opts: [
             { 
-                t: "Drohen: 'Ich sags dem Chef'", 
+                t: "'Ich sags dem Chef.'", 
                 next: "path_sugar_embargo", 
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "Bernds Augen verengen sich zu Schlitzen. 'Du wirst es bereuen. Wenn die Krise kommt, kommst du angekrochen!' Er verschwindet im Schatten des Kopierraums. Du hast dir einen mächtigen Feind gemacht." 
             },
             { 
-                t: "Geschäftsmäßig: 'Was kostet das Gramm?'", 
+                t: "'Was kostet das Gramm?'", 
                 next: "path_sugar_dealer", 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Bernd zieht einen Taschenrechner. 'Tagespreis schwankt. Aber für dich... Tausch gegen Tackerklammern?' Ihr verhandelt kurz. Du lässt ihn gewähren." 
             },
             { 
-                t: "Investieren: 'Gib mir 20 Prozent!'", 
+                t: "'Gib mir 20 Prozent!'", 
                 next: "path_sugar_junkie", 
                 m: 5, f: -5, a: -5, c: 0, 
                 r: "Bernd grinst breit (ein Goldzahn blitzt auf). 'Guter Mann. Diversifizierung ist alles.' Er schaufelt dir drei Handvoll Päckchen in die Tasche. Ihr nickt euch verschwörerisch zu. Das Kartell steht." 
@@ -2549,7 +2549,7 @@ export const coffee = [
         id: "cof_sugar_2b",
         title: "Das Embargo",
         reqStory: "path_sugar_embargo",
-        text: "Du willst Kaffee. Aber die Zuckerdose ist leer. Stattdessen klebt ein Zettel daran: 'Wegen Lieferkettenproblemen temporär außer Betrieb. Gez. Bernd'. Bernd sitzt drei Tische weiter auf einem Thron aus Kopierpapier und grinst dich böse an.",
+        text: "Kaffee wäre da. Die Zuckerdose ist leer. Stattdessen klebt ein Zettel daran: 'Wegen Lieferkettenproblemen temporär außer Betrieb. Gez. Bernd'. Bernd sitzt drei Tische weiter auf einem Thron aus Kopierpapier und grinst dich böse an.",
         opts: [
             { 
                 t: "Den Bunker stürmen", 
@@ -2570,7 +2570,7 @@ export const coffee = [
         text: "Im Flur herrscht reges Treiben. Bernd hat einen kleinen Stand aufgebaut. Er verkauft Zucker gegen Kugelschreiber, Post-its und Kantinen-Gutscheine. Das Geschäft brummt.",
         opts: [
             { 
-                t: "Den Chef informieren (Whistleblower)", 
+                t: "Zum Chef gehen und auspacken", 
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Der Chef kommt, sieht das Geschäft... und kauft selbst zwei Päckchen für sein Meeting. 'Aus der Portokasse, Bernd.' Du hast den Glauben an das System verloren." 
             },
@@ -2587,13 +2587,13 @@ export const coffee = [
         text: "Ganz hinten im Kühlschrank steht ein Joghurt. Das Verfallsdatum ist 'Mai 2012'. Er pulsiert leicht in neon-grün. Als du dich näherst, formen sich auf der Oberfläche pelzige Buchstaben: 'H...U...N...G...E...R'.",
         opts: [
             { 
-                t: "Tür schnell zuwerfen (Flucht)", 
+                t: "Die Tür zuwerfen und fliehen", 
                 next: "path_mold_civ", 
                 m: 2, f: 0, a: 5, c: 0, 
                 r: "Aus den Augen, aus dem Sinn. Du klebst einen Zettel 'DEFEKT' an den Kühlschrank. Soll sich die Nachtschicht mit der neuen Lebensform rumschlagen." 
             },
             { 
-                t: "Zuckerpäckchen opfern (Füttern)", 
+                t: "Ihm ein Zuckerpäckchen opfern", 
                 next: "path_mold_ally", 
                 m: 5, f: -5, a: -10, c: 0, 
                 r: "Du streust Zucker hinein. Der Pilz absorbiert ihn glücklich und rülpst leise. Eine piepsige Stimme in deinem Kopf sagt: 'WIR DIENEN DEM MEISTER.' Du hast jetzt einen ekligen Freund." 
@@ -2613,7 +2613,7 @@ export const coffee = [
         text: "Du öffnest den Kühlschrank wieder. Der Joghurt ist gewachsen. 'MEISTER', piepst es. 'DER FEIND (CHEF) HAT SEIN SANDWICH HIER GELAGERT. SOLLEN WIR ES... GESCHMACKLICH OPTIMIEREN?'",
         opts: [
             { 
-                t: "Ablehnen: 'Frieden bewahren'", 
+                t: "Höflich ablehnen und den Frieden wahren", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "'WIE DU WÜNSCHST.' Der Pilz wirkt enttäuscht, formt aber ein Herzchen für dich. Es ist süß, aber auch extrem widerlich." 
             },
@@ -2637,7 +2637,7 @@ export const coffee = [
                 r: "Du hustest dir die Seele aus dem Leib. Deine Augen brennen. Der Joghurt scheint höhnisch zu lachen. Du hast den Kampf gegen eine Molkerei-Produk verloren." 
             },
             { 
-                t: "Flammenwerfer (Deo + Feuerzeug)", 
+                t: "Deo und Feuerzeug zum Flammenwerfer kombinieren", 
                 m: 5, f: -5, a: -10, c: 10, 
                 r: "Du brennst das Fach aus. Es stinkt bestialisch, aber der Feind ist vernichtet. Der Hausmeister wird Fragen stellen, aber du hast gesiegt." 
             }
@@ -2650,7 +2650,7 @@ export const coffee = [
         text: "Du wagst einen Blick. Im Gemüsefach hat sich was getan. Der Pilz hat kleine Häuser aus altem Käse gebaut. Winzige Pilz-Männchen reiten auf Kakerlaken. Sie haben das Rad erfunden.",
         opts: [
             { 
-                t: "Gott spielen (Licht an/aus)", 
+                t: "Mit dem Kühlschranklicht Gott spielen", 
                 m: 20, f: 0, a: -15, c: 0, 
                 r: "Du machst das Kühlschranklicht an und aus. Die kleinen Wesen fallen auf die Knie und beten dich an. 'DER LICHTBRINGER!'. Das tut deinem Ego gut." 
             },
@@ -2667,7 +2667,7 @@ export const coffee = [
         text: "Das Meeting der Geschäftsleitung ist vorbei. Auf dem Mahagoni-Tisch stehen die Reste. Lachs-Brötchen, Kaviar-Häppchen, Premium-Kaffee. Niemand ist zu sehen.",
         opts: [
             { 
-                t: "Aufräumen (Pflichtbewusst)", 
+                t: "Pflichtbewusst aufräumen", 
                 next: "path_cat_cleanup", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 15, f: -15, a: 5, c: -5, 
@@ -2677,7 +2677,7 @@ export const coffee = [
                 t: "Gierig alles aufessen", 
                 next: "path_cat_eat", 
                 m: 10, f: 15, a: -15, c: 0, 
-                r: "Du stopfst dich voll wie ein Hamster. Lachs, Trauben, Käse. Du fühlst dich wie ein König. Leider hast du jetzt einen fetten Remouladen-Fleck auf dem Hemd." 
+                r: "Du stopfst dich voll wie ein Hamster. Lachs, Trauben, Käse. Für zehn Minuten lebst du wie der Vorstand. Leider hast du jetzt einen fetten Remouladen-Fleck auf dem Hemd." 
             },
             { 
                 t: "Nur den Kaffee klauen", 
@@ -2695,13 +2695,13 @@ export const coffee = [
         text: "Der Chef kommt hektisch zurück. Er sucht genau diesen Zettel. Er sieht dich an, Panik in den Augen. 'Müller! Haben Sie hier... Papierkram gesehen?'",
         opts: [
             { 
-                t: "Ehrlich: 'Hier ist er, Chef.'", 
+                t: "'Hier ist er, Chef.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 15, c: 10, 
                 r: "Er reißt ihn dir aus der Hand. Statt Dankbarkeit siehst du Kälte. Er weiß jetzt, dass DU Bescheid weißt. 'Vergessen Sie das. Sofort.' Du stehst jetzt auf seiner Beobachtungsliste." 
             },
             { 
-                t: "Wahnsinn: Zettel essen", 
+                t: "Den Zettel einfach aufessen", 
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 5, a: -20, c: -20, 
                 r: "Du starrst ihm in die Augen, steckst das Papier in den Mund und schluckst es runter. 'Ich habe nichts gesehen, Chef.' Er nickt langsam, tief beeindruckt. 'Guter Mann. Loyalität schmeckt bitter, was?'" 
@@ -2722,7 +2722,7 @@ export const coffee = [
                 r: "Du zeigst auf den Fleck. 'Leberwurst, Chef. Ganz übel.' Er rümpft die Nase und geht auf Abstand. 'Waschen Sie sich. Sie riechen nach Fisch.' Du bist entkommen." 
             },
             { 
-                t: "Offensive: 'Das muss weg, wird ja schlecht!'",
+                t: "'Das muss weg, wird ja schlecht!'",
                 rep: { "Dr. Wichtig": -5 },				
                 m: 5, f: 0, a: 5, c: 20, 
                 r: "'Das ist 50€-Lachs, Müller! Das ist kein Hundefutter!' Er ist stinksauer über deine Respektlosigkeit. Das gibt eine Abmahnung wegen Mundraub." 
@@ -2736,12 +2736,12 @@ export const coffee = [
         text: "Sabine blockiert den Weg. 'Ich verrate dich nicht wegen dem Kaffee... aber mein Drucker macht so komische Geräusche. Kannst du mal *ganz kurz* gucken? Bitte!'",
         opts: [
             { 
-                t: "Ablenken: 'Oh Gott! Ist das eine Spinne?!'", 
+                t: "'Oh Gott! Ist das eine Spinne?!'", 
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du zeigst panisch hinter sie. Sabine kreischt und springt zur Seite. Du nutzt das Chaos und rennst weg. Nicht elegant, aber effektiv." 
             },
             { 
-                t: "Nett sein (Erpressung akzeptieren)", 
+                t: "Die Erpressung schlucken und helfen", 
                 m: 45, f: -15, a: 25, c: -15, 
                 r: "Klassischer Fehler. Es war nicht der Drucker, es war der Treiber. Und das Netzwerk. Du bist 45 Minuten gefangen. Sabine erzählt dir dabei ihre ganze Lebensgeschichte. Du hasst dich selbst." 
             }
@@ -2803,24 +2803,24 @@ export const coffee = [
         text: "Kevin hat die Rückwand der Kaffeemaschine abgeschraubt und einen Raspberry Pi an die Platine gelötet. 'Ich installiere Doom auf dem Display. Und ich habe die Wassertemperatur auf 105 Grad übertaktet. Willst du den ersten Testlauf machen?'",
         opts: [
             { 
-                t: "Flucht: 'Ich trinke heute Tee.'", 
+                t: "'Ich trinke heute... Tee.'", 
                 next: "path_kevin_hack_ignore", 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du verlässt die Küche, bevor du als Mitschuldiger identifiziert werden kannst." 
             },
             { 
-                t: "Einschreiten: 'Bau das sofort zurück!'", 
+                t: "'Bau das sofort zurück!'", 
                 next: "path_kevin_hack_stop", 
                 rep: { "Kevin": -5 }, 
                 m: 10, f: -5, a: 5, c: -5, 
                 r: "Du zwingst ihn, die Kabel zu trennen. Kevin mault: 'Hier wird Innovation echt klein gehalten.' Die Maschine sieht wieder normal aus." 
             },
             { 
-                t: "Unterstützen: 'Kann sie auch Bitcoin minen?'", 
+                t: "'Kann sie auch Bitcoin minen?'", 
                 next: "path_kevin_hack_help", 
                 rep: { "Kevin": 10 }, 
                 m: 5, f: -5, a: -10, c: 10, 
-                r: "Kevin strahlt. 'Gute Idee! Ich leite den Strom vom Kühlschrank um.' Ihr bastelt kurz weiter. Es riecht leicht nach verschmortem Plastik." 
+                r: "Kevin leuchtet förmlich. 'Gute Idee! Ich leite den Strom vom Kühlschrank um.' Ihr bastelt kurz weiter. Es riecht leicht nach verschmortem Plastik." 
             }
         ]
     },
@@ -2828,7 +2828,7 @@ export const coffee = [
         id: "cof_kevin_hack_2a",
         title: "Lauwarme Plörre",
         reqStory: "path_kevin_hack_stop",
-        text: "Du willst dir einen Kaffee holen. Die Maschine blinkt grün: 'SAFE MODE'. Der Kaffee kommt mit exakt 60 Grad heraus und schmeckt wässrig. Kevin hat aus Trotz die Spar-Einstellungen aktiviert.",
+        text: "Die Kaffeemaschine blinkt grün: 'SAFE MODE'. Der Kaffee kommt mit exakt 60 Grad heraus und schmeckt wässrig. Kevin hat aus Trotz die Spar-Einstellungen aktiviert.",
         opts: [
             { 
                 t: "Trinken und leiden", 
@@ -2888,21 +2888,21 @@ export const coffee = [
         text: "Chantal hat ein Ringlicht vor der Kaffeemaschine aufgebaut. 'Hey! Kannst du kurz filmen? Ich mache die 'No-Sleep-Challenge'. Ich muss so tun, als würde ich den Kaffee inhalieren. Sei ästhetisch!'",
         opts: [
             { 
-                t: "Filmen: 'Klar, Action!'", 
+                t: "'Klar, Action!'", 
                 next: "path_chantal_tiktok_help", 
                 rep: { "Chantal": 10 }, 
                 m: 10, f: -5, a: -5, c: 0, 
                 r: "Du filmst 15 Takes. 'Mehr Drama!', ruft sie. Am Ende ist der Kaffee kalt, aber Chantal ist happy." 
             },
             { 
-                t: "Sabotieren: Stecker ziehen", 
+                t: "Heimlich den Stecker ziehen", 
                 next: "path_chantal_tiktok_ruin", 
                 rep: { "Chantal": -15 }, 
                 m: 5, f: 0, a: -10, c: 0, 
                 r: "Mitten im Take geht das Licht aus. 'Mein Vibe!', schreit sie. Du zuckst mit den Schultern. 'Stromausfall.'" 
             },
             { 
-                t: "Wegdrängen: 'Ich muss arbeiten.'", 
+                t: "Sie beiseiteschieben", 
                 next: "path_chantal_tiktok_push", 
                 rep: { "Chantal": -5 }, 
                 m: 2, f: 0, a: 5, c: 0, 
@@ -2924,7 +2924,7 @@ export const coffee = [
                 r: "Der Ficus lässt sofort die Blätter hängen. Du hast das Büro vor einer Biowaffe bewahrt." 
             },
             { 
-                t: "Austrinken", 
+                t: "Den Becher tapfer austrinken", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Es schmeckt nach Wiese und Erde. Du würgst es runter. Chantal strahlt. 'Spürst du den Glow?'" 
             }
@@ -2940,7 +2940,7 @@ export const coffee = [
                 t: "Abreißen", 
                 rep: { "Chantal": -5 },
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Du knüllst das Papier zusammen. Es fühlt sich an wie ein kleiner Sieg, aber der Krieg hat erst begonnen." 
+                r: "Du zerknüllst den Zettel. Es fühlt sich an wie ein kleiner Sieg, aber der Krieg hat erst begonnen." 
             },
             { 
                 t: "Drüber lachen", 
@@ -2974,7 +2974,7 @@ export const coffee = [
         text: "Dr. Wichtig steht lächelnd an der Maschine. Er hält zwei Becher. 'Ah, Müller! Perfektes Timing. Ich habe heute Spendierhosen an. Möchten Sie diesen doppelten Espresso? Aus meinem Privat-Vorrat. Geht aufs Haus.'",
         opts: [
             { 
-                t: "Misstrauisch: 'Ist da Gift drin?'", 
+                t: "'Ist da Gift drin?'", 
                 next: "path_ceo_trap_doubt", 
                 rep: { "Dr. Wichtig": -5 }, 
                 m: 5, f: 0, a: 0, c: 5, 
@@ -2988,7 +2988,7 @@ export const coffee = [
                 r: "Du nimmst den Becher. Er ist heiß und duftet herrlich. Der Chef lächelt breiter. 'Wunderbar. Wer Zeit für Genuss hat, hat sicher Energie übrig.'" 
             },
             { 
-                t: "Ablehnen: 'Muss dringend arbeiten.'", 
+                t: "'Muss dringend arbeiten.'", 
                 next: "path_ceo_trap_denied", 
                 rep: { "Dr. Wichtig": 10 }, 
                 m: 2, f: -10, a: 5, c: -10, 
@@ -3000,7 +3000,7 @@ export const coffee = [
         id: "cof_ceo_trap_2a",
         title: "Die Quittung",
         reqStory: "path_ceo_trap_taken",
-        text: "Du kommst zurück an deinen Platz. Dort liegt ein riesiger Stapel unsortierter Rechnungen. Ein Post-it klebt darauf: 'Da Sie ja frisch gestärkt sind – bitte bis 17 Uhr abarbeiten. Danke für den Kaffee-Plausch. Dr. W.'",
+        text: "Zurück am Platz wartet ein riesiger Stapel unsortierter Rechnungen. Ein Post-it klebt darauf: 'Da Sie ja frisch gestärkt sind – bitte bis 17 Uhr abarbeiten. Danke für den Kaffee-Plausch. Dr. W.'",
         opts: [
             { 
                 t: "Stapel zu Kevin schieben", 
@@ -3009,10 +3009,10 @@ export const coffee = [
                 r: "Du legst den Stapel unauffällig auf Kevins Tisch. Er wird es nicht merken, bis es zu spät ist." 
             },
             { 
-                t: "Abarbeiten", 
+                t: "Den Stapel selbst abarbeiten", 
                 rep: { "Dr. Wichtig": 5 }, 
                 m: 45, f: -20, a: 20, c: 0, 
-                r: "Du sortierst Papier. Der Kaffee war gut, aber der Preis war zu hoch. Du fühlst dich benutzt." 
+                r: "Du sortierst Papier. Der Kaffee war gut, aber der Preis war zu hoch." 
             }
         ]
     },
@@ -3061,21 +3061,21 @@ export const coffee = [
         text: "Die Kaffeemaschine ist zerlegt. Egon stochert mit einem Schraubenzieher im Mahlwerk. 'Kalk. Überall Kalk. Und jemand hat Kaugummi reingeworfen. Das muss mechanisch gelöst werden.'",
         opts: [
             { 
-                t: "Klugscheißen: 'Nimm doch Entkalker.'", 
+                t: "'Nimm doch einfach Entkalker.'", 
                 next: "path_egon_fix_chem", 
                 rep: { "Egon": -10 }, 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Egon funkelt dich an. 'Chemie ist für Weicheier! Das hier ist Präzisionsarbeit.' Er hämmert wütend gegen den Tank." 
             },
             { 
-                t: "Bestechen: 'Mach sie schneller.'", 
+                t: "Ihn dafür bezahlen, sie schneller zu machen", 
                 next: "path_egon_fix_turbo", 
                 rep: { "Egon": 5 }, 
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Du steckst ihm einen Riegel zu. 'Kannst du den Druck erhöhen?' Egon grinst. 'Ich dreh die Sicherheitsschraube raus. Auf eigene Gefahr.'" 
             },
             { 
-                t: "Helfen: Teile halten", 
+                t: "Die Teile halten", 
                 next: "path_egon_fix_help",
                 rep: { "Egon": 10 },
                 m: 20, f: -10, a: 10, c: 0, 
@@ -3087,7 +3087,7 @@ export const coffee = [
         id: "cof_egon_fix_2a",
         title: "Kalter Kaffee",
         reqStory: "path_egon_fix_chem",
-        text: "Du willst dir später einen Kaffee holen. Die Maschine läuft, aber Egon hat aus Trotz die Heizspirale abgeklemmt. Der Kaffee kommt bei exakt 18 Grad heraus.",
+        text: "Beim nächsten Versuch läuft die Maschine zwar wieder, aber Egon hat aus Trotz die Heizspirale abgeklemmt. Der Kaffee kommt bei exakt 18 Grad heraus.",
         opts: [
             { 
                 t: "Mikrowelle nutzen", 
@@ -3131,7 +3131,7 @@ export const coffee = [
                 t: "Danken & Genießen", 
                 rep: { "Egon": 5 },
                 m: 5, f: 5, a: -10, c: 0, 
-                r: "Der beste Kaffee seit Wochen. Und du hast jetzt Respekt beim Hausmeister. Das ist mehr wert als Gehalt." 
+                r: "Der beste Kaffee seit Wochen. Und du hast jetzt Respekt beim Hausmeister. Das zahlt keine Gehaltserhöhung aus, aber es öffnet Türen. Wörtlich." 
             },
             { 
                 t: "Schild entfernen", 
@@ -3147,21 +3147,21 @@ export const coffee = [
         text: "Frau Elster steht mit einem Klemmbrett vor der Kaffeemaschine. Sie notiert jede Tasse. 'Herr Müller! Der Bohnenverbrauch ist im Q3 um 4,2% gestiegen. Haben Sie das Entnahme-Formular K-7 ausgefüllt?'",
         opts: [
             { 
-                t: "Bestechen: 1 Euro in die Kasse werfen", 
+                t: "Einen Euro in die Kasse werfen", 
                 next: "path_elster_audit_pay", 
                 rep: { "Frau Elster": 5 }, 
                 m: 2, f: 0, a: -5, c: 0, 
                 r: "Ihr Blick wird weicher. 'Eine Spende? Sehr löblich. Das verbuchen wir unter 'Sonstige Einnahmen'. Weitermachen.'" 
             },
             { 
-                t: "Lügen: 'Ich nehme nur heißes Wasser.'", 
+                t: "'Ich nehme nur heißes Wasser.'", 
                 next: "path_elster_audit_lie", 
                 rep: { "Frau Elster": 5 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Sie nickt zufrieden. 'Vorbildlich! Wasser ist gratis und gut für die Bilanz. Trinken Sie!'" 
             },
             { 
-                t: "Diskutieren: 'Kaffee ist ein Grundrecht!'", 
+                t: "'Kaffee ist ein Grundrecht!'", 
                 next: "path_elster_audit_fight", 
                 rep: { "Frau Elster": -10 }, 
                 m: 5, f: 0, a: 10, c: 0, 
@@ -3174,7 +3174,7 @@ export const coffee = [
 		char: "Frau Elster",
         title: "Rationierung",
         reqStory: "path_elster_audit_fight",
-        text: "Du willst dir einen Kaffee holen. Das Display zeigt: 'LIMIT ERREICHT'. Ein Zettel von Frau Elster hängt daneben: 'Wegen Verschwendungssucht wurde Abteilung IT auf 2 Tassen pro Tag gedrosselt.'",
+        text: "Du steuerst die Maschine an. Das Display zeigt: 'LIMIT ERREICHT'. Ein Zettel von Frau Elster hängt daneben: 'Wegen Verschwendungssucht wurde Abteilung IT auf 2 Tassen pro Tag gedrosselt.'",
         opts: [
             { 
                 t: "Wütend gegen die Maschine treten", 
@@ -3221,10 +3221,10 @@ export const coffee = [
                 t: "Heimlich Kaffee ziehen", 
                 rep: { "Frau Elster": -10 },
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Du wartest, bis sie blinzelt, und drückst schnell 'Espresso'. Du fühlst dich wie ein Verbrecher." 
+                r: "Du wartest, bis sie blinzelt, und drückst schnell 'Espresso'. Er schmeckt nach Freiheit mit einer Note Straftat." 
             },
             { 
-                t: "Wasser trinken (Gehorsam)", 
+                t: "Gehorsam Wasser trinken", 
                 rep: { "Frau Elster": 5 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du trinkst heißes Wasser. Es schmeckt nach nichts. Dein Koffein-Entzug setzt ein." 
@@ -3238,21 +3238,21 @@ export const coffee = [
         text: "Markus fängt dich ab. Er lehnt lässig an der Maschine und blockiert den Ausguss. 'Müller! Kaffee ist für Closer. Apropos... hast du mal über passives Einkommen nachgedacht? Krypto? NFTs von gelangweilten Katzen? Ich kann dich ins inner Circle holen.'",
         opts: [
             { 
-                t: "Interesse heucheln (Gratis Kaffee?)", 
+                t: "Interesse heucheln - vielleicht gibts Gratis-Kaffee", 
                 next: "path_markus_pitch_scam", 
                 rep: { "Markus": 5 }, 
                 m: 15, f: 10, a: -5, c: 0, 
                 r: "Er redet 15 Minuten über Blockchain und Mindset. Du hast nichts verstanden, aber er zahlt deinen Kaffee mit seiner 'Black Card'." 
             },
             { 
-                t: "Sarkasmus: 'Ist das ein Schneeballsystem?'", 
+                t: "'Ist das ein Schneeballsystem?'", 
                 next: "path_markus_pitch_hate", 
                 rep: { "Markus": -10 }, 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Markus läuft rot an. 'Es ist Multi-Level-Marketing! Du hast einfach das Mindset eines Angestellten.' Er stürmt beleidigt davon." 
             },
             { 
-                t: "Dominanz: Schweigen & Starren", 
+                t: "Schweigen und starren", 
                 next: "path_markus_pitch_alpha", 
                 rep: { "Markus": 5 }, 
                 m: 2, f: 0, a: 0, c: 0, 
@@ -3270,7 +3270,7 @@ export const coffee = [
                 t: "Markus konfrontieren", 
                 rep: { "Markus": -5 },
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "'Das ist Growth-Hacking!', verteidigt er sich. Du hast jetzt Kopfschmerzen." 
+                r: "'Das ist Growth-Hacking!', verteidigt er sich. Deine Schläfen pochen im Takt seiner Buzzwords." 
             },
             { 
                 t: "Löschen & Blockieren", 
@@ -3295,7 +3295,7 @@ export const coffee = [
             { 
                 t: "Ignorieren", 
                 m: 2, f: 0, a: 10, c: 0, 
-                r: "Du schluckst den Ärger runter. Der Löwe kümmert sich nicht um die Meinung von Schafen." 
+                r: "Du atmest den Ärger weg. Der Löwe kümmert sich nicht um die Meinung von Schafen." 
             }
         ]
     },
@@ -3307,7 +3307,7 @@ export const coffee = [
         text: "Markus kommt zu dir an den Tisch. Er legt dir ein Buch hin: 'Die 4-Stunden-Woche'. 'Für dich, Tiger. Wir Wölfe müssen zusammenhalten.'",
         opts: [
             { 
-                t: "Lesen", 
+                t: "Tatsächlich hineinlesen", 
                 rep: { "Markus": 5 },
                 m: 30, f: 20, a: 5, c: 0, 
                 r: "Du liest drei Seiten. Es geht nur darum, Arbeit an andere auszulagern. Du fühlst dich schmutzig." 
@@ -3326,21 +3326,21 @@ export const coffee = [
         text: "Gabi hockt hinter der großen Topfpflanze neben der Kaffeemaschine. Sie flüstert: 'Psst! Ich verstecke mich vor dem UPS-Mann. Der hat ein Paket, das 30kg wiegt. Sag nichts!'",
         opts: [
             { 
-                t: "Verraten: 'DA HINTEN IST SIE!'", 
+                t: "'DA HINTEN IST SIE!'", 
                 next: "path_gabi_break_snitch", 
                 rep: { "Gabi": -10 }, 
                 m: 5, f: 0, a: 5, c: -5, 
                 r: "Gabi muss aus ihrem Versteck kriechen. Ihr Blick könnte töten, während sie das Paket annimmt." 
             },
             { 
-                t: "Decken: 'Hab sie nicht gesehen.'", 
+                t: "'Hab sie nicht gesehen.'", 
                 next: "path_gabi_break_help", 
                 rep: { "Gabi": 10 }, 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Der Bote zieht ab. Gabi atmet auf. 'Du bist ein Lebensretter. Nimm dir nen Keks.'" 
             },
             { 
-                t: "Erpressen: 'Das kostet einen Kaffee.'", 
+                t: "'Das kostet dich einen Kaffee.'", 
                 next: "path_gabi_break_deal", 
                 rep: { "Gabi": -5 }, 
                 m: 5, f: 0, a: 0, c: 0, 
@@ -3380,7 +3380,7 @@ export const coffee = [
             { 
                 t: "Flüchten", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Du bist weg, bevor er da ist. Perfektes Timing." 
+                r: "Du bist weg, bevor er da ist. Die Tür fällt zu, sein Schatten erscheint im Milchglas. Knapper geht es nicht." 
             },
             { 
                 t: "Vorbereiten", 
@@ -3402,7 +3402,7 @@ export const coffee = [
                 t: "Entschuldigen", 
                 rep: { "Gabi": 5 },
                 m: 5, f: 0, a: 0, c: 0, 
-                r: "'War doch nur Spaß.' Gabi brummt. 'Jaja. Iss schon.'" 
+                r: "'War doch nur Spaß.' Gabi brummt etwas, das entfernt nach Versöhnung klingt, und schiebt dir den Riegel näher. 'Jaja. Iss schon.' Der Streit ist damit offiziell vertagt." 
             },
             { 
                 t: "Essen", 
@@ -3414,7 +3414,7 @@ export const coffee = [
     {
         id: "cof_descale_absurd_1",
         title: "Entkalkung: Schritt 1 von 73",
-        text: "Du willst Kaffee. Die Maschine blockiert: 'ENTKALKUNG NOTWENDIG'. Der Display-Assistent verlangt Absurdes: 'Schritt 1: Wassertank 45 Grad neigen. Schritt 2: Schublade 3x öffnen.' Der Chef ruft im Vorbeigehen: 'Gut, dass Sie das machen! Bleiben Sie dran!'",
+        text: "Du brauchst Kaffee. Die Maschine blockiert: 'ENTKALKUNG NOTWENDIG'. Der Display-Assistent verlangt Absurdes: 'Schritt 1: Wassertank 45 Grad neigen. Schritt 2: Schublade 3x öffnen.' Der Chef ruft im Vorbeigehen: 'Gut, dass Sie das machen! Bleiben Sie dran!'",
         opts: [
             { 
                 t: "Sensor manuell überbrücken", 
@@ -3424,7 +3424,7 @@ export const coffee = [
                 r: "Du drückst mit dem Schraubendreher den versteckten Mikroschalter für 'Reinigung abgeschlossen'. Die dumme Maschine glaubt dir. Der Kaffee läuft. Du gehst zufrieden zurück ins Büro." 
             },
             { 
-                t: "Essig-Essenz reinkippen (Pfusch)", 
+                t: "Einfach Essig-Essenz reinkippen", 
                 next: "path_descale_vinegar",
                 m: 5, f: 10, a: 0, c: 0, 
                 r: "Du kippst puren Essig in den Tank und startest den Spülvorgang blind. Das dauert kurz, du hast aber keine Lust zu warten. Du verdrückst dich unauffällig in dein Büro." 
@@ -3475,13 +3475,13 @@ export const coffee = [
                 r: "Du gehst los und kaufst ihm einen anständigen Kaffee. Er ist besänftigt, aber du hast 20 Minuten und 3 Euro verloren." 
             },
             { 
-                t: "Lügen: 'Das ist Vanilla-Flavour-Crunch!'", 
+                t: "'Das ist Vanilla-Flavour-Crunch!'", 
                 rep: { "Markus": 5 },
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Markus starrt in den Becher. 'Crunch? Oh, premium!' Er trinkt ihn tatsächlich aus. Das Kalk-Problem hat sich erledigt." 
             },
             { 
-                t: "Sagen: 'Dann entkalk sie halt selbst!'", 
+                t: "'Dann entkalk sie halt selbst!'", 
                 rep: { "Markus": -10 },
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "Markus wirft den Kaffee wütend in deinen Mülleimer. 'Immer diese arrogante IT!' Du hast einen Freund verloren, aber Zeit gespart." 
@@ -3493,21 +3493,21 @@ export const coffee = [
 		char: "Dr. Wichtig",
         title: "Salatdressing",
         reqStory: "path_descale_vinegar",
-        text: "Einige Zeit ist vergangen. Plötzlich stürmt der Chef aus seinem Büro. Er würgt. 'Müller! Was ist in der Kaffeemaschine?! Ich wollte einen Espresso und es schmeckt wie lauwarmer Gurkensalat! Der ganze Flur riecht nach Essig!'",
+        text: "Einige Zeit ist vergangen. Dann fliegt die Chef-Bürotür auf. Er würgt. 'Müller! Was ist in der Kaffeemaschine?! Ich wollte einen Espresso und es schmeckt wie lauwarmer Gurkensalat! Der ganze Flur riecht nach Essig!'",
         opts: [
             { 
-                t: "Flucht: 'Telefon klingelt, muss weg!'", 
+                t: "'Telefon klingelt, muss weg!'", 
                 m: 5, f: 5, a: 0, c: 10, 
                 r: "Du rennst panisch zurück in dein Büro und schließt die Tür ab. Der Chef brüllt weiter auf dem Flur herum, sucht sich aber ein anderes Opfer. Feige, aber effektiv." 
             },
             { 
-                t: "Ahnungslos: 'Bestimmt ein Sabotage-Akt!'", 
+                t: "'Bestimmt ein Sabotage-Akt!'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: 15, c: 15, 
-                r: "Der Chef glaubt dir halb, aber er verdonnert dich dazu, die Maschine 30 Minuten lang mit klarem Wasser zu spülen. Der Pfusch von heute Morgen hat dich jetzt eingeholt." 
+                r: "Der Chef glaubt dir halb, aber er verdonnert dich dazu, die Maschine 30 Minuten lang mit klarem Wasser zu spülen. Der Pfusch von vorhin hat dich jetzt eingeholt." 
             },
             { 
-                t: "Beichten: 'Das ist ein Lifehack aus dem Internet!'", 
+                t: "'Das ist ein Lifehack aus dem Internet!'", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 5, f: 0, a: 20, c: 30, 
                 r: "Der Chef läuft rot an. 'Lassen Sie Ihre Lifehacks aus meiner Maschine!' Er ist fuchsteufelswild und brüllt dich über den ganzen Flur an." 
@@ -3520,7 +3520,7 @@ export const coffee = [
         text: "Jemand hat eine sündhaft teure, noch verschlossene Tafel Schweizer Edelschokolade auf der Mikrowelle liegen lassen. Kein Zettel, kein Name. Sie liegt da einfach und ruft deinen Namen.",
         opts: [
             { 
-                t: "Einstecken (Fundbüro IT)", 
+                t: "Als IT-Fundsache einziehen", 
                 loot: "chocolate", 
                 next: "path_choc_steal", 
                 m: 2, f: 0, a: -5, c: 5, 
@@ -3607,7 +3607,7 @@ export const coffee = [
         text: "Du öffnest den Kühlschrank für etwas Milch. Darin lacht dich ein perfekt belegtes Pastrami-Sandwich an. Darauf klebt ein passiv-aggressiver Zettel: 'Finger weg! Eigentum von Markus (Sales)!!!'",
         opts: [
             { 
-                t: "Konfiszieren", 
+                t: "Das Sandwich konfiszieren", 
                 loot: "sandwich", 
                 next: "path_sandwich_steal", 
                 m: 2, f: -5, a: 0, c: 5, 
@@ -3692,7 +3692,7 @@ export const coffee = [
     {
         id: "cof_grinder_1",
         title: "Ohrenbetäubend",
-        text: "Die teure Kaffeemaschine mahlt die Bohnen plötzlich mit einem Geräusch, das an einen startenden Düsenjet erinnert. Die Vibrationen lassen die Tassen im Schrank klappern. Irgendwas im Mahlwerk klemmt gewaltig.",
+        text: "Die teure Kaffeemaschine mahlt die Bohnen heute mit einem Geräusch, das an einen startenden Düsenjet erinnert. Die Vibrationen lassen die Tassen im Schrank klappern. Irgendwas im Mahlwerk klemmt gewaltig.",
         opts: [
             { 
                 t: "Einen beherzten Schlag verpassen", 
@@ -3704,7 +3704,7 @@ export const coffee = [
                 t: "Maschine ausschalten & Ticket bei HR eröffnen", 
                 next: "path_grinder_ticket", 
                 m: 5, f: -5, a: 10, c: 5, 
-                r: "Du ziehst den Stecker und hängst ein 'DEFEKT'-Schild auf. Die halbe Abteilung starrt dich an, als hättest du gerade Weihnachten abgesagt." 
+                r: "Du ziehst den Stecker und hängst ein 'DEFEKT'-Schild auf. Die halbe Abteilung mustert dich, als hättest du gerade Weihnachten abgesagt." 
             },
             { 
                 t: "Mit Ohren zuhalten durchziehen", 
@@ -3737,7 +3737,7 @@ export const coffee = [
         id: "cof_grinder_2b",
         title: "Der Kaffee-Aufstand",
         reqStory: "path_grinder_ticket",
-        text: "Die Maschine ist immer noch außer Betrieb. Im Flur hat sich eine wütende Traube von Mitarbeitern gebildet. Die Stimmung ist extrem feindselig. Jemand flüstert: 'Die IT hat das Ding kaputt gemacht.'",
+        text: "Die Maschine steht weiter still. Im Flur hat sich eine wütende Traube von Mitarbeitern gebildet. Die Stimmung ist extrem feindselig. Jemand flüstert: 'Die IT hat das Ding kaputt gemacht.'",
         opts: [
             { 
                 t: "Sich ergeben und löslichen Kaffee kochen", 
@@ -3747,7 +3747,7 @@ export const coffee = [
             { 
                 t: "Flüchten und sich im Büro einschließen", 
                 m: 5, f: 5, a: 0, c: 10, 
-                r: "Du rennst in dein Büro und schließt ab. Lass die Kaffeesüchtigen sich doch gegenseitig auffressen." 
+                r: "Du flüchtest ins Büro und drehst den Schlüssel um. Lass die Kaffeesüchtigen sich doch gegenseitig auffressen." 
             }
         ]
     },
@@ -3755,12 +3755,12 @@ export const coffee = [
         id: "cof_grinder_2c",
         title: "Explosion",
         reqStory: "path_grinder_endure",
-        text: "Du hättest die Maschine nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist heute Morgen mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
+        text: "Du hättest die Maschine nicht gewaltsam weiterlaufen lassen dürfen. Das Mahlwerk ist kurz darauf mit einem lauten Knall geplatzt. Kaffeepulver klebt bis an die Decke.",
         opts: [
             { 
                 t: "Sich unauffällig vom Tatort entfernen", 
                 m: 5, f: 5, a: 0, c: 10, 
-                r: "Du drehst dich auf dem Absatz um und gehst. Wer das aufräumt, wird definitiv keinen Spaß haben." 
+                r: "Du machst kommentarlos kehrt. Wer das aufräumt, wird definitiv keinen Spaß haben." 
             },
             { 
                 t: "Egon per Eil-Ticket rufen", 
@@ -3786,7 +3786,7 @@ export const coffee = [
             { 
                 t: "Unter Schmerzen selbst zapfen", 
                 m: 5, f: 0, a: 15, c: 0, 
-                r: "Du presst die Zähne zusammen und hebst zitternd den Arm. Jeder Muskel brennt. Du hast deinen Kaffee, aber bist extrem reizbar." 
+                r: "Du presst die Zähne zusammen und hebst zitternd den Arm. Jeder Muskel brennt. Der Kaffee ist verdient wie selten, aber deine Arme zittern noch eine Stunde nach." 
             }
         ]
     },
@@ -3802,13 +3802,13 @@ export const coffee = [
                 r: "Du reißt die Augen auf, kreischt leise und sprintest aus dem Bild. Ein unfassbar peinlicher Abgang, der jetzt für immer im Firmen-Archiv und im Internet steht." 
             },
             { 
-                t: "Durchziehen: Den Tanz perfekt beenden", 
+                t: "Den Tanz souverän zu Ende bringen", 
                 next: "path_dance_finish", 
                 m: 10, f: 10, a: -10, c: 15, 
                 r: "Wenn schon, denn schon! Du tippst dir an den imaginären Hut, gleitest rückwärts aus dem Bild und verschwindest cool. Die Investoren im Stream eskalieren vor Begeisterung." 
             },
             { 
-                t: "Sabotage: Linse mit Donut abdecken", 
+                t: "Die Kameralinse mit dem Donut abdecken", 
                 rem: "donut", 
                 next: "path_dance_donut", 
                 m: 5, f: 0, a: 10, c: 20, 
@@ -3841,19 +3841,19 @@ export const coffee = [
             loot: "hammer",
             m: 10, f: 10, a: 0, c: 0,
             rep: { "Chantal": -5 },
-            r: "Du holst einen Hammer aus dem Lager, kommst zurück, und Chantal ist in einem Meeting. Der Karton steht noch da. Der Hammer bleibt bei dir. Manchmal löst sich ein Problem von selbst."
+            r: "Du holst einen Hammer aus dem Lager, kommst zurück, und Chantal ist in einem Meeting. Der Karton steht noch da. Der Hammer bleibt bei dir."
         }
     ]
 },
 
 /* ============================================================
-   KAFFEE-WELLE (v4.0.0)
-   Frau Elster und Dr. Wichtig waren im Kaffee-Pool fast unsichtbar
-   (3 bzw. 2 Events), Markus hatte nur den Krypto-Clown-Ruf
-   (+68/-117) - hier bekommt er seine verletzliche Seite.
-   Verzahnt mit der Server-Welle (TechniPlast). Kurze Zeiten,
-   viel Aggro-Handel - der Pool bleibt der Erholungs-Pool,
-   aber nichts ist mehr gratis.
+   COFFEE WAVE (v4.0.0)
+   Frau Elster and Dr. Wichtig were nearly invisible in the coffee
+   pool (3 and 2 events), Markus had nothing but his crypto-clown
+   reputation (+68/-117) - here he gets his vulnerable side.
+   Interlocked with the server wave (TechniPlast). Short times, a
+   lot of trading in anger - the pool stays the place to recover,
+   but nothing in it is free any more.
    ============================================================ */
 
 {
@@ -4050,7 +4050,7 @@ export const coffee = [
             r: "Chantal übernimmt mit Feuereifer: Sie nennt es 'Coffee Experience', druckt Menükarten und stellt eine Duftkerze auf. Der Kaffee ist immer noch Knopf 1. Die Bewertung des Meetings: 'bestes Catering seit Jahren'. Marketing funktioniert."
         },
         {
-            t: "Absagen: Du bist Admin, kein Barista",
+            t: "'Ich bin Admin, kein Barista.'",
             rep: { "Dr. Wichtig": -5 },
             m: 5, f: 0, a: 5, c: 5,
             r: "Deine höfliche Absage wird im Sekretariat 'zur Kenntnis genommen'. Dr. Wichtig erwähnt beim nächsten Vorbeigehen beiläufig, dass 'Servicebereitschaft ein Führungskriterium' sei. Du bist keine Führungskraft. Eben, sagt sein Blick."
@@ -4076,7 +4076,7 @@ export const coffee = [
             r: "Entkalker ansetzen, Programm starten, drei Spülgänge abwarten - während draußen die ersten Tassen klirren. Aber die Maschine läuft danach wie am ersten Tag. Vielleicht sogar etwas zu gut."
         },
         {
-            t: "Die Meldung wegdrücken (Knopf halten)",
+            t: "Den Knopf halten, bis die Meldung verschwindet",
             next: "path_kalk_ignor",
             m: 2, f: 10, a: 0, c: 5,
             r: "Acht Sekunden Knopf halten, Meldung weg, Maschine läuft. Ein Trick, den dir mal ein Servicetechniker gezeigt hat - mit den Worten 'aber nur im Notfall'. Es ist jetzt jedes Mal ein Notfall. Der Kalk sammelt Zinsen."
@@ -4093,7 +4093,7 @@ export const coffee = [
     id: "cof_entkalken_2a",
     title: "Zu gut gewartet",
     reqStory: "path_kalk_pflege",
-    text: "Die entkalkte Maschine läuft mit dem Druck ihrer Jugend - und dosiert plötzlich deutlich stärker als in den letzten drei Jahren. Die halbe Firma ist überkoffeiniert. Chantal hat seit elf Uhr vier Meetings angesetzt, Kevin spricht ausschließlich in Ausrufezeichen.",
+    text: "Die entkalkte Maschine läuft mit dem Druck ihrer Jugend - und dosiert deutlich stärker als in den letzten drei Jahren. Die halbe Firma ist überkoffeiniert. Chantal hat seit elf Uhr vier Meetings angesetzt, Kevin spricht ausschließlich in Ausrufezeichen.",
     opts: [
         {
             t: "Laufen lassen - Produktivität!",
@@ -4119,7 +4119,7 @@ export const coffee = [
     text: "Es ist passiert: Die Maschine ist mitten im Bezug verstummt. Endgültig, mit einem letzten Rasseln, das nach Kalk und Vorwurf klang. Vor ihr bildet sich eine Schlange. Kevin hat seinen Rucksack geöffnet und flüstert: 'Ich hätte da Instant. Fünfzig Cent der Becher.'",
     opts: [
         {
-            t: "Zettel: 'DEFEKT - Techniker informiert'",
+            t: "Einen Zettel hinhängen: 'DEFEKT - Techniker informiert'",
             m: 2, f: 10, a: 5, c: 5,
             r: "Der Zettel ist geduldig, die Schlange nicht. Es ist kein Techniker informiert - der Zettel IST die Maßnahme. Die Kollegen pilgern murrend zur Tankstelle gegenüber. Irgendwer wird fragen, wann der Techniker denn kommt. Täglich."
         },
@@ -4194,7 +4194,7 @@ export const coffee = [
     id: "cof_markus_termin_2a",
     title: "Der Technik-Mann",
     reqStory: "path_lampen_coach",
-    text: "Gebrüll aus dem Flur, aber diesmal das gute: 'ABSCHLUSS! TechniPlast hat unterschrieben!' Markus stürmt in die Küche, deutet auf dich und verkündet der versammelten Frühstücksrunde: 'MEIN Technik-Mann! Ohne den wär das nichts geworden!' Alle schauen dich an.",
+    text: "Gebrüll aus dem Flur, aber diesmal das gute: 'ABSCHLUSS! TechniPlast hat unterschrieben!' Markus fegt in die Küche, deutet auf dich und verkündet der versammelten Frühstücksrunde: 'MEIN Technik-Mann! Ohne den wär das nichts geworden!' Alle schauen dich an.",
     opts: [
         {
             t: "Frech eine Provision fordern",
@@ -4209,7 +4209,7 @@ export const coffee = [
             r: "Du nimmst den Applaus mit einem Nicken entgegen. 'Technik-Mann' ist ab jetzt dein Titel im Vertrieb - was bedeutet: Der Vertrieb hat ab jetzt deine Durchwahl. Ruhm ist in dieser Firma nur ein anderes Wort für Erreichbarkeit."
         },
         {
-            t: "Klarstellen: einmalige Aktion",
+            t: "Klarstellen, dass das einmalig war",
             rep: { "Markus": -3 },
             m: 5, f: 0, a: 5, c: 0,
             r: "'Einmalig, Markus. Ich hab auch einen Job.' Er winkt großzügig ab: 'Klar, klar. Einmalig.' Ihr wisst beide, dass er in zwei Wochen wieder an der Maschine steht. Aber die Grenze ist gezogen, fürs Protokoll."
@@ -4340,7 +4340,7 @@ export const coffee = [
             r: "'Chantal, das Thema braucht ein Gesicht. Deins.' Sie nimmt die Mission an, entwirft ein Badge und vergisst die Kamera darüber vollständig. Die Attrappe hängt weiter, jetzt quasi unter dem Schutz der Botschafterin selbst. Eleganter geht Ablenkung nicht."
         },
         {
-            t: "Auflösen: Es ist eine Attrappe",
+            t: "Die Kamera als Attrappe entlarven",
             m: 10, f: 0, a: 10, c: 0,
             r: "Du hältst die kabellose Kamera hoch wie ein Beweisstück. Erleichterung, Gelächter, ein einzelner Vorwurf ('Psychologische Überwachung ist AUCH Überwachung!'). Der Termin endet nach zehn Minuten. Die Kasse bleibt seither voll. Theater wirkt, auch enttarnt."
         },
@@ -4384,7 +4384,7 @@ export const coffee = [
         {
             t: "Nüchtern dementieren",
             m: 5, f: 0, a: 5, c: 0,
-            r: "'Die Karte gehört einem nigerianischen Prinzen, Markus.' Er lacht dröhnend und klopft dir auf die Schulter: 'DISKRETION! Verstehe. Old Money redet nicht.' Das Dementi hat das Gerücht soeben bestätigt. So funktionieren Gerüchte."
+            r: "'Die Karte gehört einem nigerianischen Prinzen, Markus.' Er lacht dröhnend und boxt dir kumpelhaft gegen den Arm: 'DISKRETION! Verstehe. Old Money redet nicht.' Das Dementi hat das Gerücht soeben bestätigt. So funktionieren Gerüchte."
         },
         {
             t: "Markus auflaufen lassen",
@@ -4402,9 +4402,9 @@ export const coffee = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Ereignisse, bei denen die Antwort, die
-   vernünftig KLINGT, nicht die ist, die vernünftig IST.
-   Kein kostenloser Ausweg - Zwickmühlen mit Köder.
+   TRAPS (v4.0.0): events where the answer that SOUNDS sensible
+   is not the one that IS sensible. No free way out - dilemmas
+   with bait.
    ============================================================ */
 
 {
@@ -4414,7 +4414,7 @@ export const coffee = [
     text: "Chantal stellt feierlich eine Tüte auf die Maschine: 'Bio! Fairtrade! Single Origin! Die füllen wir jetzt ein, ja? Für die Werte.' Die Tüte glänzt ölig. Die Maschine ist Baujahr 2014 und hat schon normale Bohnen nur widerwillig akzeptiert.",
     opts: [
         {
-            t: "Ablehnen: Die Maschine verträgt das nicht",
+            t: "'Die Maschine verträgt das nicht.'",
             rep: { "Chantal": -5 },
             m: 5, f: 5, a: 10, c: 0,
             r: "Fachlich korrekt, sozial ein Minenfeld. Chantal notiert dich innerlich als 'Fortschrittsverweigerer', und die Diskussion über Maschinenverträglichkeit von Idealen kostet dich eine Viertelstunde Lebensfreude in fünf Minuten."
@@ -4443,7 +4443,7 @@ export const coffee = [
             r: "Du gehst mit leerer Tasse und vollem Prinzip. Der Nachmittag ohne Koffein zieht sich wie ein Alignment-Termin, und hinter dir hörst du, wie jemand anders seelenruhig die letzte Tasse nimmt und NICHT neu kocht. Es gibt keine Gerechtigkeit. Nur Kaffee, und den hast du nicht."
         },
         {
-            t: "Clever: nur einen halben Schluck nehmen",
+            t: "Vorsichtshalber nur einen halben Schluck nehmen",
             m: 2, f: 5, a: 10, c: 25,
             r: "Der älteste Trick der Bürowelt - und exakt in diesem Moment betritt Frau Elster die Küche und sieht dich mit der Kanne in der Hand einen strategischen Restschluck lassen. Ihr Blick katalogisiert dich neu. Der Rest-Zentimeter Kaffee steht dort noch drei Tage als Mahnmal."
         },
@@ -4479,8 +4479,9 @@ export const coffee = [
 
 /* ============================================================
    SCHACHT 7 (v4.0.0)
-   Eine Kette über drei Bereiche des Hauses. Wer sie beginnt,
-   merkt erst beim dritten Mal, dass er das Problem ist.
+   One chain across three areas of the building. Whoever starts
+   it only works out on the third stop that they are the
+   problem.
    ============================================================ */
 
 {

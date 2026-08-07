@@ -130,7 +130,7 @@
     <div class="bg-slate-800/50 border border-slate-700 p-4 sm:p-5 rounded-xl shadow-inner">
         <div class="bg-slate-900 border border-slate-700 rounded-lg p-3 mb-6 shadow-md relative overflow-hidden">
             <div class="font-bold text-sm mb-1 {diagnosis.tone}">{diagnosis.title}</div>
-            <div class="text-xs text-slate-300 italic leading-snug">"{diagnosis.text}"</div>
+            <div class="text-xs text-slate-300 italic leading-snug">{diagnosis.text}</div>
         </div>
 
         <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-5 border-b border-slate-700 pb-2 flex items-center justify-between">

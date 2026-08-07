@@ -20,7 +20,7 @@ const tutorial = {
         }
     },
 
-    // NEU: Eine zentrale Funktion, um alle Lichter auszuknipsen
+    // NEW: one central place to switch off all the lights
     clearGlows: function() {
         const allElements = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls', 'ticket-container', 'clock-container', 'stat-row-fl', 'stat-row-al', 'stat-row-cr', 'stats-container', 'btn-inventory', 'btn-team', 'inventory-grid'];
         allElements.forEach(id => {
@@ -54,7 +54,7 @@ const tutorial = {
                 if (origOpenTeam) origOpenTeam.apply(this, args);
                 if (tutorial.isActive) {
                     tutorial.hidePointer(); 
-                    tutorial.clearGlows(); // Hintergrund stumm schalten
+                    tutorial.clearGlows(); // Mute the background
                     if (tutorial.step === 9) tutorial.advance(); 
                 }
             };
@@ -81,7 +81,7 @@ const tutorial = {
                         engine.log("H.A.L.G.E.R.D.: Fokus, Mitarbeiter #404! Klicke auf den Donut.", "text-red-500 font-bold");
                         return; // modal stays closed
                     }
-                    // Ansonsten: Modal darf aufgehen -> Hintergrund leise schalten
+                    // Otherwise the modal may open -> turn the background down
                     tutorial.hidePointer();
                     tutorial.clearGlows();
                 }
@@ -97,7 +97,7 @@ const tutorial = {
                     if (tutorial.step === 8) {
                         tutorial.advance(); 
                     } else {
-                        tutorial.applyStepLogic(); // Spieler hat z.B. in Schritt 6 was gegessen -> Zeige Schritt 6 wieder an
+                        tutorial.applyStepLogic(); // The player e.g. ate something during step 6 -> show step 6 again
                     }
                 }
             };
@@ -106,7 +106,7 @@ const tutorial = {
             engine.closeItemConfirm = function(...args) {
                 if (origCloseItemConfirm) origCloseItemConfirm.apply(this, args);
                 if (tutorial.isActive) {
-                    tutorial.applyStepLogic(); // Abgebrochen -> Alles wieder einblenden
+                    tutorial.applyStepLogic(); // Cancelled -> bring everything back into view
                 }
             };
 
@@ -282,7 +282,7 @@ const tutorial = {
         
         engine.showOverlay(pointer, false);
         
-        // 3. Position sofort einmal berechnen
+        // 3. Work the position out once, right away
         this.updatePosition();
 
         // 4. Recalculate the position whenever the page scrolls
@@ -346,7 +346,7 @@ const tutorial = {
         if(pointer) {
             pointer.classList.add('opacity-0');
             this.pointerTimeout = setTimeout(() => {
-                engine.hideOverlay(pointer, false);
+                engine.hideOverlay(pointer);
                 this.currentTarget = null; // clear the target while hidden
             }, 300);
         }

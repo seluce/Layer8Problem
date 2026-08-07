@@ -15,9 +15,9 @@ export default defineConfig({
     base: './',
 
     build: {
-        // docs/ statt dist/, weil GitHub Pages direkt aus main:/docs
-        // ausliefert ("Deploy from a branch"). Der Build wird mit
-        // committet; ein eigener Deploy-Workflow entfällt dadurch.
+        // docs/ instead of dist/, because GitHub Pages serves straight from
+        // main:/docs ("Deploy from a branch"). The build is committed along
+        // with the source, which saves having a deploy workflow at all.
         outDir: 'docs',
         emptyOutDir: true,
 

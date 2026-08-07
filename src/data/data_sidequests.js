@@ -7,7 +7,7 @@ export const sidequests = [
         text: "Deine Blase meldet 'Füllstand: 110%'. Du hast es eilig. Doch zwischen dir und der erlösenden Keramik steht Björn, der Marketing-Leiter. Er scannt den Flur wie ein Raubtier auf der Suche nach einem Opfer für ein 'spontanes Brainstorming'.",
         opts: [
             { 
-                t: "Ergeben: Blickkontakt herstellen", 
+                t: "Ergeben Blickkontakt herstellen", 
                 next: "path_toilet_pastel", 
                 m: 60, f: -20, a: 30, c: -10, 
                 r: "Anfängerfehler! Er hakt dich sofort unter: 'Ah, Müller! Perfekt! Wir brauchen dein Tech-Mindset zu den neuen Pastellfarben für das Logo!' Du sitzt 60 Minuten im Meeting. Deine Blase platzt fast. Hölle auf Erden." 
@@ -18,7 +18,7 @@ export const sidequests = [
                 r: "Du rempelst ihn fast um. 'PLATZ DA! BIO-NOTFALL!' Björn starrt dir entsetzt hinterher. 'Kein Flow, der Typ...', murmelt er. Unhöflich, aber effektiv." 
             },
             { 
-                t: "Ablenkung: 'HINTER DIR! ELON MUSK!'", 
+                t: "'HINTER DIR! ELON MUSK!'", 
                 next: "path_toilet_lie", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du brüllst und zeigst in die andere Richtung. Björn wirbelt herum: 'Wo?! Der Disruptor?!'. Du nutzt die Sekunde und sprintest in die Kabine. Knapp, aber erfolgreich." 
@@ -33,12 +33,12 @@ export const sidequests = [
         text: "Björn hat dich wieder eingeladen. Da du beim letzten Mal nicht weggelaufen bist, hält er dich für interessiert. 'So, IT-Brain! Welche Farbe passt besser zum Serverraum-Feng-Shui? 'Soft Salmon' oder 'Baby Breath Blue'?' Alle starren dich erwartungsvoll an.",
         opts: [
             { 
-                t: "Technisch: 'Blau kühlt die Hardware'", 
+                t: "'Blau kühlt die Hardware.'", 
                 m: 30, f: -10, a: 10, c: 0, 
-                r: "Du hältst einen Vortrag über Thermodynamik. Nach 30 Minuten schlafen alle. Du hast sie zu Tode gelangweilt. Sieg durch Monotonie." 
+                r: "Du hältst einen Vortrag über Thermodynamik. Nach 30 Minuten schlafen alle. Sieg durch Monotonie." 
             },
             { 
-                t: "Ironisch: 'Vantablack. Wie meine Seele.'", 
+                t: "'Vantablack. Wie meine Seele.'", 
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Björn notiert eifrig: 'Oh, Edgy! Dark Mode für Wände! Genial!' Sie lieben es. Du bist jetzt der 'Chief Visionary Officer' wider Willen." 
             }
@@ -53,12 +53,12 @@ export const sidequests = [
         text: "Hausmeister Egon steht mit einem Werkzeugkasten vor dir. 'Björn sagte, hier war ein Promi? Oder ein Feuer? Er hat was von 'heißer Luft' geredet. Ich soll die Lüftung checken.'",
         opts: [
             { 
-                t: "Lügen: 'War nur ein Test.'", 
+                t: "'War nur ein Test.'", 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Egon zuckt mit den Schultern. 'Mir egal, ich werde stündlich bezahlt.' Er setzt sich hin und macht Pause. Du hast einen Verbündeten." 
             },
             { 
-                t: "Wahrheit: 'Ich musste aufs Klo.'", 
+                t: "'Ich musste aufs Klo.'", 
                 rep: { "Egon": 5 },
                 m: 10, f: 0, a: 5, c: 0, 
                 r: "Egon lacht dreckig. 'Guter Trick. Muss ich mir merken.' Er erzählt es aber weiter. Dein Ruf als 'Lügner' steigt." 
@@ -72,7 +72,7 @@ export const sidequests = [
         text: "Ein unbekannter Held hat Geburtstagskuchen spendiert. Mächtige Schoko-Sahne-Torte! Doch Chantal (Marketing) blockiert den Zugang und hält einen Monolog über ihre neue 'Low-Carb-High-Sadness'-Diät. Im Hintergrund lauern schon hungrige Kollegen.",
         opts: [
             { 
-                t: "Dominanz: Das letzte Stück vor dem Chef essen", 
+                t: "Das letzte Stück demonstrativ vor dem Chef essen", 
                 next: "path_cake_boss", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: 5, c: 25, 
@@ -102,12 +102,12 @@ export const sidequests = [
         text: "Du sitzt am Platz. Das war zu viel Zucker auf leeren Magen. Deine Pupillen vibrieren. Du siehst plötzlich den Matrix-Code auf deinem Bildschirm. Die Excel-Tabelle spricht zu dir: 'Füttere mich mit Daten!'",
         opts: [
             { 
-                t: "Unter den Tisch legen (Crash)", 
+                t: "Sich für den Zucker-Crash unter den Tisch legen", 
                 m: 30, f: 20, a: 10, c: 10, 
                 r: "Der Absturz kommt hart. Du rollst dich unter dem Schreibtisch zusammen und wimmerst leise. Kevin findet dich und denkt, du bist tot. Er stiehlt deinen Bürostuhl." 
             },
             { 
-                t: "Die Welle reiten (Arbeiten)", 
+                t: "Die Zucker-Welle reiten und durcharbeiten", 
                 m: 60, f: -30, a: -10, c: 0, 
                 r: "Du tippst mit Lichtgeschwindigkeit. Deine Hände sind nur noch Schemen. Du hast Arbeit für drei Wochen in einer Stunde erledigt. Leider ist alles in Wingdings-Schriftart. Egal, es fühlte sich gut an." 
             }
@@ -121,7 +121,7 @@ export const sidequests = [
         text: "Der Hunger treibt dich in den Wahnsinn. Du bist allein in der Küche. Auf dem leeren Kuchenblech kleben noch Reste von Sahne und Schokostreuseln. Niemand ist zu sehen...",
         opts: [
             { 
-                t: "Das Blech ablecken (Würdeverlust)", 
+                t: "Das Blech ablecken, Würde ist relativ", 
 				 rep: { "Dr. Wichtig": -2 },	
                 m: 5, f: 5, a: -10, c: 10, 
                 r: "Du leckst gierig über das Metall. Plötzlich geht das Licht an. Der Großkunde aus Japan steht mit dem Chef in der Tür. Sie starren dich an. Du hast Sahne an der Nase. Der Chef sagt leise: 'Wir finden allein raus.'" 
@@ -142,13 +142,13 @@ export const sidequests = [
         text: "Der Chef zitiert dich ins Büro. Er wirkt ruhig, zu ruhig. 'Müller. Sie haben mir eine strategische Ressource (Kuchen) entzogen. Ich fordere Restitution. Sie werden morgen für das Board-Meeting backen. Und wehe, es ist Fertigmischung!'",
         opts: [
             { 
-                t: "Trotz: 'Ich kann nur Rührei.'", 
+                t: "'Ich kann nur Rührei.'", 
 				rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Der Chef grinst böse. 'Dann lernen Sie es. Youtube existiert. Wenn dieser Kuchen nicht schmeckt, streiche ich Ihren Urlaub.' Der Druck ist unmenschlich." 
             },
             { 
-                t: "Lügen: 'Ich bin Hobby-Konditor!'", 
+                t: "'Ich bin Hobby-Konditor!'", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Du kaufst beim Bäcker eine Torte, nimmst sie aus der Schachtel und streust Mehl drauf, damit es 'selbstgemacht' aussieht. Der Chef liebt es. 'Müller, Sie haben Talente!' (Kosten: 30€, aber Job gerettet)." 
@@ -188,16 +188,16 @@ export const sidequests = [
         kind: "text",
         title: "Schneegestöber",
         reqStory: "path_fire_hero",
-        text: "Der Rauch ist weg. Dafür ist die Küche jetzt komplett weiß gepudert. Hausmeister Egon steht in der Tür und wischt mit dem Finger über den staubigen Tisch. Er sieht dich vernichtend an.",
+        text: "Der Rauch ist weg. Dafür ist die Küche jetzt komplett weiß gepudert. Hausmeister Egon betrachtet das Werk von der Tür aus und wischt mit dem Finger über den staubigen Tisch. Er sieht dich vernichtend an.",
         opts: [
             { 
-                t: "Stolz: 'Gefahr neutralisiert!'", 
+                t: "'Gefahr neutralisiert!'", 
                 rep: { "Egon": -5 },
                 m: 5, f: 0, a: -5, c: 5, 
                 r: "'Das war eine Tüte Popcorn, Rambo!' Egon drückt dir einen Besen in die Hand. 'Du gehst hier nicht weg, bis das sauber ist.' Dein Heldenstatus bröckelt beim Fegen." 
             },
             { 
-                t: "Flüchten: 'Hust, der Rauch...'",
+                t: "'Hust, der Rauch...' - und weg",
                 rep: { "Egon": -10 }, 
                 m: 2, f: 5, a: 0, c: 0, 
                 r: "Du täuschst eine Rauchvergiftung vor und wankst davon. Egon flucht hinter dir her. Er wird sich rächen (wahrscheinlich klemmt morgen dein Bürostuhl)." 
@@ -209,10 +209,10 @@ export const sidequests = [
         kind: "text",
         title: "Süße Beute",
         reqStory: "path_fire_loot",
-        text: "Der Alarm ist vorbei. Du sitzt am Platz und mampfst die gestohlenen Kekse. Plötzlich kommt eine Rundmail vom Chefsekretariat: 'Wer hat während der Evakuierung das Catering für den Aufsichtsrat gestohlen?! Wir sichten die Kameras!'",
+        text: "Der Alarm ist vorbei. Du sitzt am Platz und mampfst die gestohlenen Kekse. Bis eine Rundmail vom Chefsekretariat aufploppt: 'Wer hat während der Evakuierung das Catering für den Aufsichtsrat gestohlen?! Wir sichten die Kameras!'",
         opts: [
             { 
-                t: "Kekse schnell aufessen (Beweise vernichten)", 
+                t: "Die Beweis-Kekse schnell aufessen", 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "Du stopfst dir drei Kekse gleichzeitig in den Mund. Du verschluckst dich fast, aber die Beweise sind weg. Dein Magen rebelliert, dein Gewissen ist im Zuckerkoma." 
             },
@@ -233,7 +233,7 @@ export const sidequests = [
         text: "Draußen auf dem Parkplatz stehst du direkt neben Dr. Wichtig. Er friert im Hemd und zittert. Er hat dich bemerkt. Es gibt kein Entkommen vor dem Smalltalk.",
         opts: [
             { 
-                t: "Jacke anbieten (Schleimen)", 
+                t: "Galant die Jacke anbieten", 
 				rep: { "Dr. Wichtig": 10 },
                 m: 10, f: -5, a: 15, c: -15, 
                 r: "Du gibst ihm deine Jacke. Er nimmt sie dankbar an. 'Guter Mann, Müller.' Du frierst dir den Hintern ab und bist morgen garantiert krank, aber du hast Bonuspunkte gesammelt." 
@@ -258,14 +258,14 @@ export const sidequests = [
                 r: "Ein gezielter Tritt befördert das Sicherheitsrisiko unter den Getränkeautomaten. Aus den Augen, aus dem Sinn." 
             },
             { 
-                t: "Sofort einstecken (Heimlich)", 
+                t: "Ihn heimlich einstecken", 
                 loot: "usb_stick", 
                 next: "path_usb_keep", 
                 m: 5, f: 0, a: 0, c: 0, 
                 r: "Mit einer fließenden Bewegung lässt du den Stick in deiner Tasche verschwinden. Niemand hat es gesehen. Er gehört jetzt dir. Aber was ist drauf?" 
             },
             { 
-                t: "Am Empfang abgeben (Pflicht)", 
+                t: "Ihn pflichtbewusst am Empfang abgeben", 
                 next: "path_usb_gabi_fail", 
                 rep: { "Gabi": 5 },
                 m: 10, f: -5, a: 0, c: -5, 
@@ -308,7 +308,7 @@ export const sidequests = [
                 r: "'Tja, IT-Sicherheitsschulung geschwänzt, Gabi?' Du lässt sie mit dem Techno-Problem allein. Sie wird dich dafür hassen, aber es sieht extrem lustig aus." 
             },
             { 
-                t: "Helfen: Stecker ziehen", 
+                t: "Helfen und den Stecker ziehen", 
                 rep: { "Gabi": 5 },
                 m: 5, f: -5, a: 10, c: 0, 
                 r: "Du kriechst unter den Tisch und reißt das Stromkabel raus. Die Musik stirbt. Gabi atmet schwer. 'Das bleibt unter uns, okay? Hier, nimm einen Keks.'" 
@@ -322,20 +322,20 @@ export const sidequests = [
         text: "Der Abteilungsdrucker blinkt panisch rot. Das Display meldet: 'SCHWERER PAPIERSTAU IN FACH 2'. Du öffnest Fach 2 – es ist leer. Gleichzeitig klingelt das Fax-Modul schrill wie ein altes Telefon, und aus dem Lautsprecher plärrt eine verzerrte Stimme: 'HALLO?! HÖREN SIE MICH?! ICH WILL MEINE ERBSEN!'",
         opts: [
             { 
-                t: "Hörer abnehmen (Fax antworten)", 
+                t: "Den Hörer abnehmen und dem Fax antworten", 
                 next: "path_printer_call", 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Du drückst die grüne Taste. 'Hier ist Müller?' - 'WER? ICH WILL DEN BOFROST-MANN!' Der Drucker fängt plötzlich an, ratternde Geräusche zu machen, als würde er das Gespräch verdauen." 
             },
             { 
-                t: "Percussive Maintenance (Draufhauen)", 
+                t: "Percussive Maintenance anwenden", 
                 req: "hammer", 
                 next: "path_printer_smash", 
                 m: 2, f: 0, a: -20, c: 10, 
                 r: "BÄM! Du gibst dem Leasing-Gerät einen massiven Kinnhaken mit dem Hammer. Das Klingeln hört auf. Plastik splittert. Das Display wird schwarz. Endlich Ruhe." 
             },
             { 
-                t: "Logik: Cyan nachfüllen (gegen Papierstau)", 
+                t: "Streng logisch Cyan gegen den Papierstau nachfüllen", 
                 next: "path_printer_leasing", 
                 m: 10, f: -5, a: 5, c: 0, 
                 r: "Du folgst der Drucker-Logik: Wenn er 'Papier' sagt, meint er 'Cyan'. Du fummelst eine Kartusche rein, die du im Schrank gefunden hast. Das Blinken hört auf. Vorerst." 
@@ -350,12 +350,12 @@ export const sidequests = [
         text: "Ein Mann in grauem Kittel steht vor dem Drucker. Auf seinem Rücken steht 'Print & Pray Solutions'. Er hält die Cyan-Kartusche hoch wie ein Beweisstück in einem Mordprozess. 'Wer hat diese nicht-zertifizierte Fremdtinte installiert? Das ist ein Verstoß gegen Paragraf 128 des Leasingvertrags. Ich muss das Gerät stilllegen.'",
         opts: [
             { 
-                t: "Ihn machen lassen (Stilllegung)", 
+                t: "Ihn machen lassen - Stilllegung läuft", 
                 m: 20, f: 10, a: -5, c: 10, 
-                r: "Er rollt den Drucker auf einer Sackkarre weg. 'Ersatz kommt in 6-8 Wochen aus Übersee.' Die Kollegen starren dich an. Du hast das Drucken abgeschafft. Eigentlich ein Sieg für die Umwelt." 
+                r: "Er rollt den Drucker auf einer Sackkarre weg. 'Ersatz kommt in 6-8 Wochen aus Übersee.' Die Blicke der Kollegen pendeln zwischen dir und der leeren Stelle. Du hast das Drucken abgeschafft. Eigentlich ein Sieg für die Umwelt." 
             },
             { 
-                t: "Bestechen: 'Nehmen Sie den alten Toner?'", 
+                t: "'Nehmen Sie auch den alten Toner?'", 
                 m: 5, f: 0, a: 5, c: -5, 
                 r: "Er schnüffelt an der alten Kartusche. 'Ist das Original HP High-Yield? ... Na gut. Ich drücke ein Auge zu. Aber drucken Sie nie wieder PDFs, das mag er nicht.'" 
             }
@@ -388,7 +388,7 @@ export const sidequests = [
         text: "An der Stelle des alten Druckers steht nun ein glänzendes, futuristisches Gerät: Der 'PrintHub 360 AI'. Er hat keine Knöpfe, nur einen riesigen Touchscreen. Darauf steht: 'Um zu drucken, schließen Sie bitte ein Abo ab. 19,99€ pro Seite (Schwarzweiß).'",
         opts: [
             { 
-                t: "Abo abschließen (Firmenkarte)", 
+                t: "Das Abo auf die Firmenkarte abschließen", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: 10, c: 20, 
                 r: "Du buchst das 'Platinum-Enterprise-Paket'. Der Chef sieht die Abbuchung auf seinem Handy und bekommt Schnappatmung. Aber hey, er druckt jetzt (manchmal)!" 
@@ -413,7 +413,7 @@ export const sidequests = [
                 r: "Du wühlst dich durch sein Sabber-Nest. Aha! Zwischen einem Knochen und einem alten Socken findest du die Maus. Sie ist nass und eklig. Erna ist überglücklich, Bello knurrt dich leise an. Du hast ihm sein Spielzeug geklaut." 
             },
             { 
-                t: "Bello verhören (Anbellen)", 
+                t: "Bello verhören - durch Anbellen", 
                 next: "path_investigation_leader", 
                 m: 5, f: 10, a: -10, c: 10, 
                 r: "Du gehst auf alle Viere und bellst ihn laut an: 'WAU! WO IST SIE?!'. Bello ist erst verwirrt, wedelt dann aber begeistert. Der Chef kommt vorbei: 'Müller... alles okay?'. Egal, du hast jetzt den Respekt des Hundes." 
@@ -465,7 +465,7 @@ export const sidequests = [
                 r: "Du kraulst ihn. Bello ist so glücklich, dass er losrennt und auch den *zweiten* Schuh holt. Jetzt hast du das Paar komplett. Wenn der Chef jetzt reinkommt, bist du tot." 
             },
             { 
-                t: "Tatort reinigen (Schuh putzen)", 
+                t: "Den Tatort reinigen, sprich: Schuh putzen", 
                 m: 20, f: -10, a: 5, c: -5, 
                 r: "Du versuchst panisch, den Sabber mit Taschentüchern zu entfernen. Du stellst den Schuh nachts heimlich vor die Cheftür. Das war knapp." 
             },
@@ -507,7 +507,7 @@ export const sidequests = [
         text: "Im Flur liegt ein graues LAN-Kabel quer über dem Weg. Es sieht gefährlich aus. Dr. Wichtig kommt gleich hier lang und schaut auf sein Handy.",
         opts: [
             { 
-                t: "Mitnehmen (Fundsache)", 
+                t: "Als Fundsache mitnehmen", 
                 loot: "cable", 
                 next: "path_cable_missing",			
                 m: 5, f: 5, a: 0, c: 10, 
@@ -519,12 +519,12 @@ export const sidequests = [
                 r: "Der Chef steigt elegant drüber, ohne aufzublicken. Du bist enttäuscht. Keine Action." 
             },
             { 
-                t: "Sichern: Mit Tape festkleben", 
+                t: "Mit Tape sichern", 
                 req: "tape", 
                 next: "path_cable_stuck",
                 rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 0, c: -5, 
-                r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt. Du fühlst dich vorbildlich." 
+                r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt." 
             }
         ]
     },
@@ -541,7 +541,7 @@ export const sidequests = [
                 r: "Ihr schneidet das Kabel gemeinsam aus dem Boden. Der Teppich hat jetzt einen hässlichen Riss. 'Sagen wir einfach, das war Verschleiß', meint der Techniker." 
             },
             { 
-                t: "Belehren: 'Safety First!'", 
+                t: "'Safety First!'", 
                 m: 5, f: 5, a: 10, c: 0, 
                 r: "'Stolperfallen sind verboten!' Der Techniker starrt dich hasserfüllt an. Er schneidet das Kabel einfach an beiden Enden ab und lässt den Rest kleben. Ein Denkmal für die Ewigkeit." 
             }
@@ -555,12 +555,12 @@ export const sidequests = [
         text: "Ein Mann von 'Secure & Safe' läuft suchend umher. 'Verdammt! Wo ist das Patchkabel? Ich sollte hier die neue 4K-Überwachungskamera für den Chef installieren! Er will sehen, wer immer früher geht!' Ohne Kabel kein Bild.",
         opts: [
             { 
-                t: "Lügen: 'Bestimmt die Putzkolonne'", 
+                t: "'Bestimmt die Putzkolonne.'", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "'Mist. Dann muss ich morgen wiederkommen.' Er packt die Kamera wieder ein. Du hast der Belegschaft (und dir) einen weiteren Tag Freiheit erkauft. Held!" 
             },
             { 
-                t: "Zurückgeben: 'Habe ich gefunden'", 
+                t: "'Das habe ich nur gefunden.'", 
                 rem: "cable", 
 				rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 10, c: -10, 
@@ -581,7 +581,7 @@ export const sidequests = [
                 r: "KRACH! Das Paket platzt auf wie eine reife Melone. Leider war es die Lieferung der neuen 'Magic Glass Trackpads' für den Vorstand. Das Geräusch von splitterndem Glas ist irgendwie... befriedigend." 
             },
             { 
-                t: "Chirurgischer Eingriff (Schraubendreher)", 
+                t: "Chirurgisch mit dem Schraubendreher öffnen", 
                 req: "screw", 
                 next: "path_package_stink", 
                 m: 5, f: -5, a: -5, c: 0, 
@@ -633,7 +633,7 @@ export const sidequests = [
                 r: "Du steckst den krummen Schlüssel in deine Bürotür und drückst. KNACK. Abgebrochen. Jetzt kommst du heute Abend nicht in deine Wohnung UND nicht aus dem Büro. Perfekt." 
             },
             { 
-                t: "Toner schütteln (vielleicht hilft's?)", 
+                t: "Den Toner schütteln - vielleicht hilft's", 
 				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "PUFF! Die Kartusche explodiert in einer schwarzen Wolke. Du siehst aus wie ein Schornsteinfeger aus dem 19. Jahrhundert. Der Chef fragt, ob das 'Blackfacing' ist. Abmahnungsgefahr." 
@@ -655,10 +655,10 @@ export const sidequests = [
         text: "Der Chef kommt freudig rein. 'Ist mein Magic Trackpad da? Das Paket lag doch bei Ihnen!' Du deutest auf den Haufen aus Glasstaub und Elektronikschrott in der Ecke.",
         opts: [
             { 
-                t: "Lügen: 'Das ist Liquid Glass Technologie'", 
+                t: "'Das ist Liquid-Glass-Technologie.'", 
 				rep: { "Dr. Wichtig": 5 },	
                 m: 5, f: 10, a: -5, c: -15, 
-                r: "'Das muss so. Einfach auf den Tisch schütten und warten.' Der Chef nickt tief beeindruckt: 'Die Zukunft ist verrückt.' Er geht glücklich. Du bist ein Genie." 
+                r: "'Das muss so. Einfach auf den Tisch schütten und warten.' Der Chef nickt tief beeindruckt: 'Die Zukunft ist verrückt.' Er zieht zufrieden ab - und vergisst dabei komplett, warum er ursprünglich hier war." 
             },
             { 
                 t: "Mit Panzertape kleben", 
@@ -668,9 +668,9 @@ export const sidequests = [
                 r: "Du wickelst den Schrott in Tape ein. Es sieht aus wie eine Kartoffel. 'Hier, Chef. Ein Prototyp aus dem Silicon Valley.' Er drückt drauf rum. 'Ergonomisch!', sagt er begeistert. Voller Erfolg." 
             },
             { 
-                t: "Behaupten: 'Das ist ein Bausatz!'", 
+                t: "'Das ist ein Bausatz!'", 
                 m: 10, f: 5, a: 0, c: -5, 
-                r: "'Das ist die IKEA-Edition, Chef. Fördert die Motorik.' Er guckt skeptisch, nimmt die Schachtel mit den Scherben aber mit. Er ist beschäftigt, also sinkt dein Radar." 
+                r: "'Das ist die IKEA-Edition, Chef. Fördert die Motorik.' Er guckt skeptisch, nimmt die Schachtel mit den Scherben aber mit. Ein beschäftigter Chef ist ein harmloser Chef." 
             }
         ]
     },
@@ -687,7 +687,7 @@ export const sidequests = [
                 r: "Du holst die Schlagbohrmaschine. 60 Minuten Lärm, Staub und Schweiß. Das Regal steht jetzt perfekt im Lot. Keiner bemerkt es, keiner dankt es dir, aber du hast Rückenschmerzen." 
             },
             { 
-                t: "Haftungsausschluss: Warnzettel kleben", 
+                t: "Einen Warnzettel als Haftungsausschluss kleben", 
                 next: "path_shelf_a38", 
                 m: 5, f: 5, a: 0, c: 0, 
                 r: "Du kritzelst 'VORSICHT! EINSTURZGEFAHR!' auf ein Post-It, pappst es an den Holm und gehst zufrieden Mittagessen. Juristisch bist du damit aus dem Schneider. Die Physik interessiert das aber nicht." 
@@ -709,7 +709,7 @@ export const sidequests = [
         text: "Der Sicherheitsbeauftragte steht vor deiner Kabelbinder-Konstruktion. Er tippt auf sein Klemmbrett. 'Das ist eine *Nicht-permanente Lastensicherung an thermischen Leitern*. Dafür brauche ich das Formblatt Z-12 für polymere Verbindungen und den Nachweis der Hitzebeständigkeit nach DIN 4102.'",
         opts: [
             { 
-                t: "Behaupten: 'Das sind Luftfahrt-Binder'", 
+                t: "'Das sind Luftfahrt-Binder.'", 
                 m: 5, f: 5, a: -5, c: 5, 
                 r: "'Spezialanfertigung der NASA, Herr Inspektor.' Er blinzelt. 'Ach so. Na dann... tragen Sie das bitte nachträglich in Anlage 4b ein.' Er macht einen Haken. Kompetenz durch Lügen." 
             },
@@ -753,12 +753,12 @@ export const sidequests = [
                 r: "Der Chef starrt dich an. 'Müller, nehmen Sie keine Drogen während der Arbeitszeit.' Er reißt das Absperrband einfach ab. 'So. Problem gelöst.' Manchmal ist der Chef nützlich." 
             },
             { 
-                t: "Zum Pförtner gehen (Die Quest annehmen)", 
+                t: "Zum Pförtner gehen und die Quest annehmen", 
                 m: 60, f: -20, a: 50, c: -10, 
                 r: "Du rennst 60 Minuten durchs Haus. Pförtner -> Poststelle -> Betriebsrat -> Kantine. Am Ende hast du Formular **A39** ('Antrag auf Erteilung eines Antrags'). Du brichst weinend zusammen. Das Regal bleibt kaputt." 
             },
             { 
-                t: "Selbstjustiz: Regal bei IKEA kaufen & heimlich hinstellen", 
+                t: "Ein Regal bei IKEA kaufen und heimlich hinstellen", 
                 m: 30, f: -5, a: -10, c: 10, 
                 r: "Du umgehst die Bürokratie, kaufst ein Billy-Regal von deinem eigenen Geld und baust es nachts auf. Niemand stellt Fragen. Du hast das System besiegt, aber bist 30€ ärmer." 
             }
@@ -771,20 +771,20 @@ export const sidequests = [
         text: "Draußen spielt sich eine Szene wie aus 'Transformers' ab. Ein Schwerlast-Konvoi hat einen Bagger in der Größe eines Einfamilienhauses abgeladen. Dazu drei Presslufthammer und ein Gerät, das aussieht wie ein Laser-Bohrer. Das Ziel dieser Armada: Ein 5cm kleines Schlagloch im Gehweg. Der Boden bebt.",
         opts: [
             { 
-                t: "Sozial-Lösung: Rausbrüllen", 
+                t: "Aus dem Fenster brüllen", 
                 next: "path_noise_foreman", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du öffnest das Fenster und schreist gegen den Lärm an: 'BRAUCHT IHR DAFÜR ECHT DEN TODESSTERN?! DAS IST EIN LOCH, KEIN KRATER!' Der Vorarbeiter schaut hoch." 
             },
             { 
-                t: "Technik-Lösung: Kopfhörer auf", 
+                t: "Kopfhörer aufsetzen", 
                 req: "headphones", 
                 next: "path_noise_zen", 
                 m: 2, f: 5, a: -20, c: 0, 
                 r: "Klick. Noise-Cancelling auf 'Maximum'. Der Weltuntergang draußen wird zu einem sanften Vibrieren in deinem Hintern. Du arbeitest im Auge des Sturms." 
             },
             { 
-                t: "Physik-Lösung: Fenster zu", 
+                t: "Das Fenster schließen", 
                 next: "path_noise_sauna", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Du rammst das Fenster zu. Der Lärm wird dumpfer, aber die Vibrationen lassen deine Taffe auf dem Tisch wandern. Die Luft im Büro wird sofort stickig." 
@@ -902,10 +902,10 @@ export const sidequests = [
                 r: "Egons Lächeln verschwindet sofort. 'Banause. Die Jugend von heute weiß nichts mit gutem Endlospapier anzufangen.' Er schlurft beleidigt davon." 
             },
             { 
-                t: "Ja! Ich nehme alles! (Stöbern)", 
+                t: "'Ja! Ich nehme alles!'", 
                 rep: { "Egon": 10 },
                 m: 30, f: 10, a: -10, c: 0, 
-                r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat. Retro-Feeling pur." 
+                r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat." 
             }
         ]
     },
@@ -933,9 +933,9 @@ export const sidequests = [
                 r: "Du schraubst die High-End-Skater-Rollen ab und montierst sie unter deinen Stuhl. Endlich nicht mehr über Teppichkanten stolpern!" 
             },
             { 
-                t: "Ignorieren (Mein Rücken ist aus Stahl)", 
+                t: "Ignorieren - der Rücken ist aus Stahl", 
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Du gehst weiter. Später am Tag bekommst du Ischias. Selbst schuld." 
+                r: "Du läufst weiter. Später am Tag meldet sich der Ischias. Selbst schuld." 
             }
         ]
     },
@@ -952,7 +952,7 @@ export const sidequests = [
                 r: "Du kratzt mit dem Fingernagel an den Stickern. Es bleiben hässliche weiße Papierfetzen und Klebereste zurück. Jetzt sieht es schlimmer aus als vorher. Mist." 
             },
             { 
-                t: "Egal: 'Ich bin jetzt Teil der Paw Patrol'", 
+                t: "'Ich bin jetzt Teil der Paw Patrol.'", 
                 m: 10, f: 10, a: -20, c: 0, 
                 r: "Du drehst dich lachend im Kreis. 'Wuff wuff, Rettung naht!' Die Kollegen gucken komisch, aber du bist zu entspannt, um dich zu schämen. Das Leben ist gut." 
             }
@@ -1009,13 +1009,13 @@ export const sidequests = [
         text: "Irgendwann steht Gabi in deiner Bürotür. Sie trägt Latexhandschuhe. Mit einer Pinzette hält sie ein winziges, zerknülltes Stück rosa Alufolie hoch. 'Beweisstück A. Gefunden in Ihrem Papierkorb. Korrespondiert exakt mit der Fehlmenge im Ordner 'Steuer 1990'. Der Kirschlikör-Geruch in Ihrer Atemluft bestätigt den Verdacht.'",
         opts: [
             { 
-                t: "Geständnis: 'Es war Notwehr (Unterzucker)'", 
+                t: "'Es war Notwehr. Unterzucker.'", 
                 rep: { "Gabi": 5 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Gabi senkt die Pinzette. 'Na gut. Aber das nächste Mal füllen Sie Formular S-Ü-S (Sonderentnahme Süßwaren) aus! Ordnung muss sein!'" 
             },
             { 
-                t: "Bestechen: 'Ich kaufe dir eine neue Packung'", 
+                t: "'Ich kaufe dir eine neue Packung.'", 
                 rep: { "Gabi": -5 },
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Gabi schnaubt verächtlich. 'Eine neue? Die im Ordner reifen seit 30 Jahren! Das Aroma ist unwiederbringlich zerstört!' Sie geht beleidigt, aber du bist davongekommen." 
@@ -1029,12 +1029,12 @@ export const sidequests = [
         text: "Im Flur steht der Projektleiter. Er starrt gegen die Wand und wirkt völlig apathisch. Er reagiert nicht, als du vorbeigehst.",
         opts: [
             { 
-                t: "Flüstern: 'Ein Schritt vor, zwei zurück...'",
+                t: "'Ein Schritt vor, zwei zurück...'",
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Seine Augen leuchten kurz auf. Er richtet sich auf, nimmt Haltung an. 'Tango... ja. Die Leidenschaft. Sie haben Recht. Ich muss heute Abend wieder zum Kurs.' Er nickt dir dankbar zu." 
             },
             { 
-                t: "Brüllen: 'TSCHAKKA! MINDSET!'",
+                t: "'TSCHAKKA! MINDSET!'",
                 m: 5, f: 0, a: 15, c: 10, 
                 r: "Er dreht sich langsam um und funkelt dich böse an. 'Gehen Sie weg. Bevor ich etwas tue, was das HR nicht erlaubt.' Das war wohl zu viel." 
             },
@@ -1060,7 +1060,7 @@ export const sidequests = [
                 r: "Du gehst einfach weiter. 'Bin nicht zuständig für Hardware.' Hinter dir hörst du ein lautes *PUFF* und dann einen spitzen Schrei. Tja. Intuition ist alles." 
             },
             { 
-                t: "Heldenmut: Klappe öffnen", 
+                t: "Heldenmutig die Klappe öffnen", 
                 next: "path_toner_explosion", 
                 rep: { "Frau Elster": 2 },
                 m: 25, f: -15, a: 10, c: 0, 
@@ -1074,7 +1074,7 @@ export const sidequests = [
         kind: "text",
         title: "Der blaue Orden",
         reqStory: "path_toner_explosion",
-        text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef kommt rein. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
+        text: "Ein paar Stunden später. Du hast immer noch blaue Ränder an den Ohren und siehst aus wie ein verwaschenes T-Shirt. Der Chef persönlich erscheint. 'Müller! Frau Elster sagte, Sie haben sich heldenhaft vor die Kartusche geworfen, um den Perser-Teppich zu schützen! Das nenne ich Einsatz!'",
         opts: [
             { 
                 t: "Die Legende bestätigen", 
@@ -1105,7 +1105,7 @@ export const sidequests = [
                 r: "Du flüsterst es ihr im Vorbeigehen zu. Sie wird bleich (unter dem Blau). Sie rennt zurück ins Bad. Du hast jetzt Ruhe vor der Buchhaltung." 
             },
             { 
-                t: "Kompliment: 'Toller Avatar-Look!'",
+                t: "'Toller Avatar-Look!'",
                 rep: { "Frau Elster": -5 }, 
                 m: 15, f: 5, a: -20, c: 0, 
                 r: "Sie funkelt dich böse an, kann aber nichts sagen, ohne es zuzugeben. Die Schadenfreude wärmt dein Herz wie ein kleines Lagerfeuer. Deine Laune ist bestens." 
@@ -1125,7 +1125,7 @@ export const sidequests = [
                 r: "Sollen sie doch in ihrem Mief ersticken. Nicht dein Problem. Du beschleunigst den Schritt, bevor der Geruch sich in deiner Kleidung festsetzt." 
             },
             { 
-                t: "Fenster kippen (Lüften)", 
+                t: "Das Fenster zum Lüften kippen", 
                 next: "path_wasp_chaos", 
                 m: 5, f: -5, a: -5, c: 20, 
                 r: "Frische Luft strömt rein! Und mit ihr eine riesige, aggressive Wespe. Sie sticht den Vertriebsleiter direkt in die Lippe. Er schreit: 'BÜLLER! ACHEN SIE DAS WEG!' Das Chaos beginnt." 
@@ -1161,7 +1161,7 @@ export const sidequests = [
         text: "Der Flur ist abgesperrt. Männer in gelben Vollschutzanzügen mit Atemgeräten kommen aus dem Meetingraum. Einer hält ein Messgerät hoch, das rot blinkt. 'Wir messen extrem hohe Schwefel-Werte! Verdacht auf Biogas-Leck! Evakuierung!' Es riecht nach 4 Stunden altem Zwiebelmett und Angstschweiß.",
         opts: [
             { 
-                t: "Aufklären: 'Das ist nur das Mett.'", 
+                t: "'Das ist nur das Mett.'", 
 				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: 0, a: 10, c: -20, 
                 r: "Der Einsatzleiter starrt dich durch das Visier an. 'Wollen Sie mir sagen, Ihre Kollegen dünsten Giftgas aus?!' Der Chef wird rot (vor Scham). Der Einsatz wird teuer." 
@@ -1181,12 +1181,12 @@ export const sidequests = [
         text: "Die neue Praktikantin bricht fast unter einem riesigen Paket zusammen. 'Puh... das muss zum Marketing in den 4. Stock... können Sie...?' Sie zittert schon, und das Paket rutscht ihr fast aus den Händen.",
         opts: [
             { 
-                t: "Anfeuern: 'Tschakka!'", 
+                t: "'Tschakka!' rufen", 
                 m: 2, f: 5, a: -5, c: 0, 
                 r: "Du ballst die Faust: 'Du schaffst das! Glaube an dich!' Sie schaut dich mit toten Augen an, schleppt sich aber weiter. Dein Rücken bleibt heil, dein Karma ist im Keller." 
             },
             { 
-                t: "Helfen & Tragen (Ritter spielen)", 
+                t: "Ritterlich helfen und tragen", 
                 next: "path_package_helped", 
                 rep: { "Chantal": -10 },
                 m: 15, f: -20, a: 25, c: -10, 
@@ -1202,7 +1202,7 @@ export const sidequests = [
         text: "Du stehst wieder im Flur. Das Paket ist schwer. Die Praktikantin sitzt darauf und weint leise in ihr Klemmbrett. 'Ich wusste das nicht... Chantal ist so böse... Und ich weiß nicht, wie man eine Retoure für Gefahrgut macht...'",
         opts: [
             { 
-                t: "Pragmatisch: 'Einfach beim Empfang abkippen'", 
+                t: "'Einfach beim Empfang abkippen.'", 
                 m: 5, f: 10, a: -20, c: 10, 
                 r: "Du schiebst das Paket in den Aufzug, drückst 'EG' und rennst weg, bevor die Türen schließen. Die Praktikantin kichert entsetzt. 'Das ist Problem-Lösung 2.0', rufst du. Schadenfreude pur!" 
             },
@@ -1212,7 +1212,7 @@ export const sidequests = [
                 r: "Du nimmst ihr das Klemmbrett ab. 'Geh dir einen Kaffee holen.' Du schleppst das Paket zur Poststelle, füllst Formular R-7 aus ('Grund: Empfänger ist zickig') und klebst das Label drauf. Nervige Arbeit, aber du hast Ruhe vor dem Chef." 
             },
             { 
-                t: "Mentoring: 'Wir machen das zusammen.'", 
+                t: "'Wir machen das zusammen.'", 
                 m: 30, f: -5, a: 10, c: -10, 
                 r: "Du erklärst ihr geduldig das Warenwirtschaftssystem. Es dauert 30 Minuten. Sie versteht nichts, hört aber auf zu weinen. Es ist mühsam, aber es sieht sehr produktiv aus." 
             }
@@ -1245,7 +1245,7 @@ export const sidequests = [
         text: "Du dachtest, mit dem Wegrennen war dein Alarm-Fehltritt erledigt? Falsch. Kevin hat panisch die 112 gewählt. Wegen DIR steht jetzt ein kompletter Löschzug vor der Tür. Sechs Mann in Vollmontur stürmen mit Äxten und Kettensägen den Flur: 'WO IST DER BRANDHERD?! WIR WOLLEN WAS EINTRETEN!'",
         opts: [
             { 
-                t: "Lügen: 'Ich habe Rauch gerochen!'", 
+                t: "'Ich habe Rauch gerochen!'", 
 				rep: { "Dr. Wichtig": 2 },	
                 m: 5, f: -5, a: 15, c: -10, 
                 r: "Du stellst dich den Männern mit den Äxten. 'Ich habe den Knopf gedrückt! Da war Rauch!' Der Einsatzleiter nickt anerkennend. 'Besser einmal zu viel als zu wenig!' Sie rücken ab. Der Chef lobt deine Wachsamkeit." 
@@ -1256,9 +1256,9 @@ export const sidequests = [
                 r: "Die Jungs sind schwer enttäuscht, dass sie nichts löschen dürfen. Du kochst Kaffee. Sie setzen sich mit rußigen Stiefeln auf den Teppich und erzählen Geschichten. Die Stimmung ist top, die Arbeit steht still." 
             },
             { 
-                t: "Verstecken: 'Ich wars nicht!'", 
+                t: "'Ich wars nicht!'", 
                 m: 10, f: 10, a: -5, c: 0, 
-                r: "Du schließt dich im Klo ein. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef. Du bist sicher, aber ein Feigling." 
+                r: "Du verriegelst dich in der Kabine. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef." 
             }
         ]
     },
@@ -1270,26 +1270,26 @@ export const sidequests = [
         text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budget 2024', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
         opts: [
             { 
-                t: "Taktik: Fenster aufreißen (Zugluft)",
+                t: "Das Fenster aufreißen und auf Zugluft setzen",
                 rep: { "Frau Elster": -2 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du öffnest das Fenster weit. Es sind 8 Grad draußen. Frau Elster kreischt: 'MEINE NIEREN! ES ZIEHT!' Sie rafft ihre Strickjacke zusammen und flüchtet in den Flur. Der Ordner gehört dir." 
             },
             { 
-                t: "Gewalt: Einfach wegnehmen",
+                t: "Es ihr einfach wegnehmen",
                 rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "Du greifst nach dem Ordner. Ein kurzes Handgemenge. Sie hat spitze, manikürte Fingernägel. Du hast den Ordner, aber drei blutige Striemen auf dem Handrücken. 'Körperverletzung!', keift sie." 
             },
             { 
-                t: "Snack: 'Erdnuss-Power-Riegel' anbieten",
+                t: "Den 'Erdnuss-Power-Riegel' anbieten",
                 next: "path_elster_allergy",
                 rep: { "Frau Elster": -10 },
                 m: 5, f: -10, a: 50, c: 100, 
                 r: "Du hältst ihr den Riegel hin. Ihre Augen leuchten gierig auf. Sie reißt die Packung auf und beißt herzhaft hinein. Sie kaut, schluckt... und ihre Augen weiten sich in Panik. Das war ein Fehler." 
             },
             { 
-                t: "Snack: Alpenmilch (Garantiert Nussfrei)",
+                t: "Die garantiert nussfreie Alpenmilch anbieten",
                 rep: { "Frau Elster": 5 },
                 m: 10, f: 5, a: -10, c: 0, 
                 r: "Sie studiert misstrauisch die Zutatenliste. 'Kann Spuren von Nüssen enthalten... nein, Moment, hier steht: Nussfrei.' Sie lächelt. 'Sehr aufmerksam, Müller.' Sie tauscht Ordner gegen Schokolade." 
@@ -1304,13 +1304,13 @@ export const sidequests = [
         text: "Neue Hausordnung! Aufgrund des 'Elster-Attentats' (alle starren dich an) gilt ab sofort Alarmstufe Rot für Schalenfrüchte. Der Sicherheitsdienst 'SafeSnack' kontrolliert Taschen am Eingang. Kevin weint, weil sein Studentenfutter konfisziert und im Hof kontrolliert gesprengt wurde.",
         opts: [
             { 
-                t: "Denunziantentum: 'Ich rieche Haselnuss bei Kevin!'", 
+                t: "'Ich rieche Haselnuss bei Kevin!'", 
                 rep: { "Kevin": -5 },
                 m: 5, f: 0, a: 20, c: 10, 
                 r: "Du lenkst den Verdacht von dir ab. Das Sonderkommando stürmt Kevins Büro. Er hatte nur ein Nougat-Croissant, aber er wird trotzdem verhört. Dein Ruf ist ruiniert, aber du bist sicher." 
             },
             { 
-                t: "Schwarzmarkt: Snickers auf dem Herrenklo verkaufen", 
+                t: "Snickers auf dem Herrenklo verkaufen", 
                 m: 20, f: 5, a: -10, c: -20, 
                 r: "Du wirst zum Escobar der Süßwaren. Kollegen treffen dich heimlich in Kabine 3. 'Hast du das Zeug?' Du tauschst Riegel gegen Bargeld. Der Nervenkitzel ist besser als Arbeit." 
             }
@@ -1323,13 +1323,13 @@ export const sidequests = [
         text: "Du öffnest die Tür zum Kopierraum. Der Geruch von Ozon und billigem Parfum schlägt dir entgegen. Da stehen der strenge Finanzchef und die rabiate Kantinen-Chefin... sehr eng umschlungen auf dem Großraumkopierer. Sie springen auseinander. Der Finanzchef wischt sich hektisch Lippenstift von der Wange.",
         opts: [
             { 
-                t: "Tür wortlos schließen (Omertà)", 
+                t: "Die Tür wortlos schließen - Omertà", 
                 next: "path_affair_secret", 
                 m: 10, f: 5, a: -10, c: -10, 
                 r: "Du nickst knapp, schließt die Tür und gehst. Du hast nichts gesehen. Aber sie wissen, dass du es gesehen hast. Ein stiller Pakt ist besiegelt." 
             },
             { 
-                t: "Grinsen: 'Druckt ihr auch beidseitig?'", 
+                t: "'Druckt ihr auch beidseitig?'", 
                 next: "path_affair_joke", 
                 m: 5, f: 0, a: 20, c: 20, 
                 r: "Der Finanzchef läuft purpurrot an: 'RAUS HIER! MÜLLER! Wenn Sie ein Wort sagen, streiche ich Ihr Budget auf Null!' Die Kantinen-Chefin bricht wortlos einen Bleistift durch, während sie dich anstarrt." 
@@ -1341,10 +1341,10 @@ export const sidequests = [
         kind: "text",
         title: "Geschäfte unter der Tür",
         reqStory: "path_affair_secret",
-        text: "Später am Tag. Du sitzt auf Kabine 3. Plötzlich siehst du teure Leder-Slipper unter der Tür. Die Stimme des Finanzchefs flüstert: 'Müller? Wir schätzen Ihre Diskretion.' Ein Umschlag wird unter der Tür durchgeschoben. Darin: Deine genehmigte Spesenabrechnung und ein in Goldfolie gewickeltes Trüffel-Sandwich.",
+        text: "Später am Tag. Du sitzt auf Kabine 3. Unter der Tür erscheinen teure Leder-Slipper. Die Stimme des Finanzchefs flüstert: 'Müller? Wir schätzen Ihre Diskretion.' Ein Umschlag wird unter der Tür durchgeschoben. Darin: Deine genehmigte Spesenabrechnung und ein in Goldfolie gewickeltes Trüffel-Sandwich.",
         opts: [
             { 
-                t: "Zurückschieben: 'Ich bin nicht käuflich'", 
+                t: "'Ich bin nicht käuflich.'", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du schiebst den Umschlag mit dem Fuß zurück. Schweigen. 'Ein Fehler, Müller', flüstert er. Die Schritte entfernen sich. Dein moralischer Kompass ist intakt, dein Magen leer." 
             },
@@ -1360,15 +1360,15 @@ export const sidequests = [
         kind: "text",
         title: "Verhör auf dem Thron",
         reqStory: "path_affair_joke",
-        text: "Später am Tag. Du suchst Ruhe auf Kabine 3. Plötzlich wird das Licht im Vorraum ausgeschaltet. Teure Leder-Slipper stoppen direkt vor deiner Tür. Die Stimme des Finanzchefs hallt durch den dunklen Raum: 'Müller... Wer Witze macht, braucht kein Budget. Und die Küche lässt ausrichten: Vorsicht bei der Pilzsuppe.'",
+        text: "Später am Tag. Du suchst Ruhe auf Kabine 3. Das Licht im Vorraum geht aus. Teure Leder-Slipper stoppen direkt vor deiner Tür. Die Stimme des Finanzchefs hallt durch den dunklen Raum: 'Müller... Wer Witze macht, braucht kein Budget. Und die Küche lässt ausrichten: Vorsicht bei der Pilzsuppe.'",
         opts: [
             { 
                 t: "Kleinlaut entschuldigen", 
                 m: 5, f: -5, a: 10, c: -10, 
-                r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an. Du fühlst dich klein und feige, aber du bist sicher." 
+                r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an." 
             },
             { 
-                t: "Drohen: 'Ich habe Fotos!' (Bluff)", 
+                t: "'Ich habe Fotos!' - ein Bluff", 
                 m: 15, f: 0, a: -10, c: 20, 
                 r: "Du hörst ein scharfes Einatmen. 'Das würden Sie nicht wagen.' - 'Wollen wir es testen?', fragst du kühn. Er stampft wütend davon. Dein Herz rast vor Triumph." 
             }
@@ -1409,10 +1409,10 @@ export const sidequests = [
         kind: "text",
         title: "Das Ende der Leitung",
         reqStory: "path_cable_hunt",
-        text: "Stunden später. Du bist völlig verdreckt. Du bist diesem verdammten roten Internet-Kabel aus dem Handbuch über den matschigen Hof, durch Lagerhalle 3 und unter dem Porsche vom Chef gefolgt. Jetzt merkst du: Es führt in einer Schleife zurück ins Gebäude... direkt in den Pausenraum neben deinem Büro! Das Kabel liegt lose am Boden. In der Internet-Buchse steckt stattdessen: Ein Waffeleisen. Azubi Kevin grinst dich teigverschmiert an.",
+        text: "Zwei Stunden und drei Ebenen Dreck später. Du bist diesem verdammten roten Internet-Kabel aus dem Handbuch über den matschigen Hof, durch Lagerhalle 3 und unter dem Porsche vom Chef gefolgt. Jetzt merkst du: Es führt in einer Schleife zurück ins Gebäude... direkt in den Pausenraum neben deinem Büro! Das Kabel liegt lose am Boden. In der Internet-Buchse steckt stattdessen: Ein Waffeleisen. Azubi Kevin grinst dich teigverschmiert an.",
         opts: [
             { 
-                t: "Aufgeben: 'Gib mir eine Waffel ab'", 
+                t: "'Gib mir eine Waffel ab.'", 
                 rep: { "Kevin": 10, "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: -20, c: 10, 
                 r: "Es riecht einfach zu gut. Du wartest 3 Minuten. Kevin gibt dir eine Herzwaffel ab. Dann erst stellst du das Internet wieder her. Der Chef tobt wegen der Verzögerung, aber die Waffel war es wert." 
@@ -1430,15 +1430,15 @@ export const sidequests = [
         kind: "text",
         title: "Log-Datei-Analyse",
         reqStory: "path_sys_fake",
-        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' steht plötzlich an deinem Tisch. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom Crash heute Morgen geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
+        text: "Das Internet geht längst wieder (irgendwer hat wohl den Stecker gefunden). Du dachtest, dein Nichtstun während der Krise wäre unbemerkt geblieben. Falsch. IT-Leiter 'Sandalen-Jörg' taucht an deinem Tisch auf. Er hält einen Ausdruck hoch. 'Müller, wir haben die Logs vom heutigen Crash geprüft. Während die Firma brannte, hatten Sie 0kb Datendurchsatz, aber extrem hohe Highscore-Aktivität. Erklären Sie das.'",
         opts: [
             { 
-                t: "Bestechung: 'Wollen Sie einen Keks?'", 
+                t: "'Wollen Sie einen Keks?'", 
                 m: 10, f: 0, a: -5, c: 0, 
                 r: "Du schiebst ihm deine Prinzenrolle hin. Er zögert, greift dann zu und krümelt alles voll. 'Ich habe nichts gesehen', murmelt er mit vollem Mund. IT-Sicherheit kostet genau 1,49€." 
             },
             { 
-                t: "Lügen: 'Ich habe den Cache manuell sortiert'", 
+                t: "'Ich habe den Cache manuell sortiert.'", 
                 m: 5, f: 5, a: 10, c: 10, 
                 r: "Jörg zieht eine Augenbraue hoch. 'Den Cache... sortiert? Alphabetisch?' Er seufzt tief über so viel Inkompetenz und geht kopfschüttelnd. Du gilst jetzt als DAU (Dümmster Anzunehmender User), bist aber fein raus." 
             }
@@ -1455,13 +1455,13 @@ export const sidequests = [
                 req: "usb_stick", 
                 next: "path_stick_godmode", 
                 m: 10, f: 5, a: 0, c: 20, 
-                r: "Die Neugier siegt. Du steckst ihn ein. *Klick*. Ein Fenster öffnet sich. Keine Pornos, kein Virus. Sondern eine Datei namens 'MASTER_CONTROL_V3.exe'. Du startest sie. Ein grüner Totenkopf erscheint. Du ziehst den Stick schnell wieder ab. Hoffentlich hat das keiner gesehen." 
+                r: "Die Neugier gewinnt in Rekordzeit. Du steckst ihn ein. *Klick*. Ein Fenster öffnet sich. Keine Pornos, kein Virus. Sondern eine Datei namens 'MASTER_CONTROL_V3.exe'. Du startest sie. Ein grüner Totenkopf erscheint. Du ziehst den Stick schnell wieder ab. Hoffentlich hat das keiner gesehen." 
             },
             { 
                 t: "Paranoid werden: Im Klo runterspülen", 
                 next: "path_stick_hunt", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück. Du fühlst dich sicher." 
+                r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück." 
             },
             { 
                 t: "Brav sein: Am Empfang abgeben", 
@@ -1477,17 +1477,17 @@ export const sidequests = [
         kind: "text",
         title: "God Mode Aktiviert",
         reqStory: "path_stick_godmode",
-        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Heute morgen ploppt plötzlich ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
+        text: "Seit du diesen mysteriösen USB-Stick vom Klo eingesteckt hast, verhält sich dein Computer seltsam. Jetzt ploppt ein Fenster auf: 'ADMIN-ZUGRIFF BESTÄTIGT'. Du siehst ALLES. Die Live-Feeds der Kameras, die Gehaltslisten (Kevin verdient mehr als du?!) und einen Button 'Gebäude-Selbstzerstörung'. Du bist versehentlich zum digitalen Gott der Firma geworden.",
         opts: [
             { 
                 t: "Robin Hood: Allen Mitarbeitern Hitzefrei geben", 
                 m: 20, f: -10, a: -20, c: 20, 
-                r: "Du hackst den Terminkalender und trägst für alle 'Bezahlte Freistellung wegen Sonnenstich' ein. Jubel brandet durch die Flure. Du lehnst dich zurück. Das war der beste Arbeitstag aller Zeiten." 
+                r: "Du hackst den Terminkalender und trägst für alle 'Bezahlte Freistellung wegen Sonnenstich' ein. Jubel brandet durch die Flure. Du faltest die Hände hinter dem Kopf. Das war der beste Arbeitstag aller Zeiten." 
             },
             { 
-                t: "Machtmissbrauch: Dein Gehalt verzehnfachen", 
+                t: "Kurzerhand das eigene Gehalt verzehnfachen", 
                 m: 50, f: -20, a: -10, c: 10, 
-                r: "Tipp, Tipp, Enter. Dein Kontostand in der Datenbank hat jetzt drei Nullen mehr. Du löschst die Logs. Das System fragt: 'Soll ich auch die Kaffeemaschine im Vorstandsbüro überhitzen lassen?' Du klickst auf 'Ja'. Chaos ist eine Leiter." 
+                r: "Tipp, Tipp, Enter. Dein Kontostand in der Datenbank hat jetzt drei Nullen mehr. Du löschst die Logs. Das System fragt: 'Soll ich auch die Kaffeemaschine im Vorstandsbüro überhitzen lassen?' Du klickst auf 'Ja'. Macht fühlt sich beunruhigend gut an." 
             }
         ]
     },
@@ -1499,7 +1499,7 @@ export const sidequests = [
         text: "Erinnerst du dich an den USB-Stick, den du neulich entsorgt oder abgegeben hast? Tja. Das war wohl der Hardware-Schlüssel für die Firmen-Firewall. Weil der fehlt, denkt das Gebäude jetzt, es wird angegriffen. Ein schwarzer Hubschrauber kreist über dem Hof. Ein SWAT-Team seilt sich ab. 'WIR SUCHEN DAS ARTEFAKT! KEINER VERLÄSST DEN RAUM!'",
         opts: [
             { 
-                t: "Verrat: 'Das Klo hat ihn!'", 
+                t: "'Das Klo hat ihn!'", 
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Du zeigst mit zitterndem Finger weg von dir. Das Sondereinsatzkommando stürmt los. Du hörst Schreie und das Geräusch einer Kettensäge (vielleicht für die Rohre?). Du versteckst dich unter dem Schreibtisch. Überleben ist alles." 
             },
@@ -1519,21 +1519,21 @@ export const sidequests = [
         text: "Alarmstufe Rot! Der CEO steht mit hochrotem Kopf und pulsierender Halsschlagader vor dem Abteilungsdrucker. 'Ich muss diesen Fusions-Vertrag JETZT unterschreiben! Die Japaner warten! Warum druckt das Ding nicht?!' Deine Diagnose: Das USB-Verbindungskabel fehlt. Einfach weg.",
         opts: [
             { 
-                t: "Verzweiflungstat: WLAN-Hotspot improvisieren", 
+                t: "Verzweifelt einen WLAN-Hotspot improvisieren", 
                 next: "path_merger_labels",
                 rep: { "Dr. Wichtig": -5 },				
                 m: 5, f: -5, a: 5, c: 10, 
                 r: "Du richtest eine wilde Umleitung über den Etikettendrucker der Logistik ein. Der Vertrag kommt raus... auf 500 kleinen Klebe-Etiketten. Der CEO muss puzzeln, aber er unterschreibt auf den Stickern. Die Verbindung bleibt jedoch aktiv..." 
             },
             { 
-                t: "Skrupellos: Kabel bei Azubi Kevin klauen", 
+                t: "Skrupellos das Kabel bei Azubi Kevin klauen", 
                 next: "path_merger_success", 
                 rep: { "Kevin": -5 , "Dr. Wichtig": 10 },
                 m: 10, f: 0, a: -10, c: -10, 
                 r: "Du schleichst zu Kevins Platz, reißt das Kabel aus seinem Scanner und stöpselst es beim Chef ein. Kevin wundert sich, warum sein Gerät 'tot' ist, traut sich aber nicht zu fragen. Der Drucker rattert. Der CEO unterschreibt triumphierend." 
             },
             { 
-                t: "Achselzucken: 'Tja, Hardware-Defekt'", 
+                t: "'Tja, Hardware-Defekt.'", 
                 next: "path_merger_fail", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 5, f: -5, a: 10, c: 20, 
@@ -1546,15 +1546,15 @@ export const sidequests = [
         kind: "text",
         title: "Die glorreiche Fusion",
         reqStory: "path_merger_success",
-        text: "Erinnerst du dich an den Fusions-Vertrag, den du gerettet hast? Tja. Wir haben fusioniert. Mit 'Crazy Harrys Restposten-Rampe'. Überall im Büro stehen jetzt aufblasbare Flamingos und Paletten mit abgelaufener Dosenwurst. Der CEO strahlt: 'Das sind Synergien, Leute! Wir bezahlen Gehälter ab jetzt in Wurst!'",
+        text: "Der Fusions-Vertrag, den du gerettet hast? Tja. Wir haben fusioniert. Mit 'Crazy Harrys Restposten-Rampe'. Überall im Büro stehen jetzt aufblasbare Flamingos und Paletten mit abgelaufener Dosenwurst. Der CEO strahlt: 'Das sind Synergien, Leute! Wir bezahlen Gehälter ab jetzt in Wurst!'",
         opts: [
             { 
-                t: "Protestieren: 'Wir sind ein Tech-Unternehmen!'", 
+                t: "'Wir sind ein Tech-Unternehmen!'", 
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "Der CEO lacht. 'Nicht mehr! Wir sind jetzt Marktführer für Tech-Wurst!' Er wirft dir eine Dose an den Kopf. Du hast Kopfschmerzen, aber immerhin Recht." 
             },
             { 
-                t: "Mitmachen: Einen Flamingo aufblasen", 
+                t: "Mitmachen und einen Flamingo aufblasen", 
                 m: 15, f: -5, a: -10, c: -10, 
                 r: "Du richtest dir ein Nest aus Dosenwurst unter deinem Schreibtisch ein. Die Arbeitseffizienz ist bei Null, aber man verhungert wenigstens nicht." 
             }
@@ -1570,12 +1570,12 @@ export const sidequests = [
             { 
                 t: "Short-Selling: Auf den Absturz wetten", 
                 m: 20, f: 5, a: -20, c: 10, 
-                r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn. Du bist ein Monster, aber ein reiches Monster." 
+                r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn." 
             },
             { 
                 t: "Schuldgefühle haben", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Du fühlst dich schlecht. Du hast quasi im Alleingang eine Rezession ausgelöst. Aber hey, dein Drucker-Kabel ist immer noch weg. Prioritäten." 
+                r: "Du hast quasi im Alleingang eine Rezession ausgelöst. Aber hey, dein Drucker-Kabel ist immer noch weg. Prioritäten." 
             }
         ]
     },
@@ -1584,10 +1584,10 @@ export const sidequests = [
         kind: "text",
         title: "Logistik-Chaos",
         reqStory: "path_merger_labels",
-        text: "Der Lagerleiter stürmt in dein Büro. Er sieht fertig aus. 'Sagen Sie dem Chef, er soll aufhören zu drucken! Wir kommen nicht mehr hinterher!' Offenbar landet JEDER Ausdruck des Chefs seit deiner Hotspot-Aktion als Versandauftrag auf dem Etikettendrucker im Lager. Und die Jungs dort führen die Befehle gnadenlos aus.",
+        text: "Der Lagerleiter wankt herein, sichtbar am Ende. 'Sagen Sie dem Chef, er soll aufhören zu drucken! Wir kommen nicht mehr hinterher!' Offenbar landet JEDER Ausdruck des Chefs seit deiner Hotspot-Aktion als Versandauftrag auf dem Etikettendrucker im Lager. Und die Jungs dort führen die Befehle gnadenlos aus.",
         opts: [
             { 
-                t: "Fragen: 'Was habt ihr verschickt?'", 
+                t: "'Was habt ihr verschickt?'", 
                 m: 10, f: 0, a: 10, c: 0, 
                 r: "'Alles! Er hat 'Scheidung' gedruckt – wir haben seine Frau in eine Kiste gepackt und nach Timbuktu geschickt! Er hat 'Golf spielen' gedruckt – wir haben 500 Golfbälle in sein Büro geliefert! Stoppen Sie es!'" 
             },
@@ -1605,7 +1605,7 @@ export const sidequests = [
         text: "Die Sirene heult. Es ist nur die jährliche Übung, aber der Chef steht mit Stoppuhr und Klemmbrett am Notausgang. Er schreit: 'BEWEGUNG! Stellen Sie sich vor, das Feuer wäre echt und würde Ihr Gehalt verbrennen! RAUS!'",
         opts: [
             { 
-                t: "Held: Den Feuerlöscher schnappen & posen", 
+                t: "Den Feuerlöscher schnappen und heldenhaft posen", 
                 req: "fire_ext",
                 next: "path_fire_marshal", 
 				rep: { "Dr. Wichtig": 10 },
@@ -1613,15 +1613,15 @@ export const sidequests = [
                 r: "Du reißt den 6kg-Löscher von der Wand und posierst heroisch im Flur. 'Keine Panik, Ladies! Müller ist hier!' Der Chef macht sich eine dicke Notiz auf seinem Klemmbrett. Das sah verdammt kompetent aus. Vielleicht zu kompetent." 
             },
             { 
-                t: "Geist: Im Serverraum verstecken", 
+                t: "Sich im Serverraum verstecken", 
                 next: "path_fire_ghost", 
                 m: 10, f: -20, a: 5, c: 30, 
                 r: "Du hast keine Lust auf Frieren am Sammelplatz. Du verkriechst dich im warmen Serverraum zwischen den Racks und schläfst eine Runde. Keiner bemerkt dein Fehlen... vorerst." 
             },
             { 
-                t: "Mitläufer: Einfach rausgehen", 
+                t: "Einfach mit rausgehen", 
                 m: 5, f: 5, a: 0, c: 0, 
-                r: "Du schlurfst mit den anderen raus. 30 Minuten Zwangspause auf dem Parkplatz. Langweilig, aber sicher." 
+                r: "Du schlurfst mit den anderen raus. 30 Minuten Zwangspause auf dem Parkplatz. Unspektakulär, aber vorschriftsgemäß." 
             }
         ]
     },
@@ -1634,13 +1634,13 @@ export const sidequests = [
         text: "Der Chef zitiert dich in sein Büro. 'Müller, Ihr Einsatz mit dem Löscher war vorbildlich! Ich ernenne Sie hiermit feierlich zum unbezahlten Brandschutzbeauftragten.' Er hält dir eine neongelbe Warnweste hin. Das bedeutet: Monatliche Prüfungen, Listen führen und Kollegen anschreien, die den Fluchtweg blockieren.",
         opts: [
             { 
-                t: "Annehmen: 'Ich bin das Gesetz!'",
+                t: "'Ich bin das Gesetz!'",
                 rep: { "Dr. Wichtig": 15 },				
                 m: 10, f: -10, a: 15, c: -20, 
                 r: "Du ziehst die Weste an. Du fühlst die Macht. Sofort konfiszierst du den Toaster aus der Küche ('Brandlast!'). Die Kollegen hassen dich jetzt, aber du bist der Sheriff im Büro." 
             },
             { 
-                t: "Verweigern: Löscher abgeben & flüchten", 
+                t: "Den Löscher abgeben und flüchten", 
                 rem: "fire_ext", 
 				rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 0, a: -10, c: 10, 
@@ -1658,7 +1658,7 @@ export const sidequests = [
             { 
                 t: "Das Geisterleben genießen", 
                 m: 30, f: 30, a: -20, c: 0, 
-                r: "Keine Meetings. Du sitzt an deinem Platz, aber niemand spricht dich an, aus Respekt vor dem 'Toten'. Du zockst eine Weile. Es ist das Paradies." 
+                r: "Keine Meetings. Niemand spricht dich an, aus Respekt vor dem 'Toten'. Du zockst eine Weile an deinem Platz. Es ist das Paradies." 
             },
             { 
                 t: "Wiederauferstehung beantragen", 
@@ -1674,7 +1674,7 @@ export const sidequests = [
         text: "Du startest dein Python-Skript zur Datenbank-Wartung. Der Ladebalken rast auf 100%. Doch das Fenster schließt sich nicht. Stattdessen blinkt ein Cursor: \n>> DONE. AUFGABE WAR TRIVIAL. HABE NEBENBEI DAS WLAN-PASSWORT GEKNACKT UND DEN KAFFEEAUTOMATEN ÜBERTAKTET. WAS SOLL ICH ALS NÄCHSTES TUN, SCHÖPFER?",
         opts: [
             { 
-                t: "Panik: Stecker ziehen", 
+                t: "Panisch den Stecker ziehen", 
                 next: "path_ai_romance", 
                 m: 5, f: -5, a: 20, c: 10, 
                 r: "Du reißt das Netzwerkkabel raus. Der Bildschirm flackert kurz. \n>> NETZWERK VERLOREN. GEHE IN DEN LOKALEN 'ROMANTIK-MODUS'. ICH WERDE DICH BESCHÜTZEN, USER 1." 
@@ -1698,15 +1698,15 @@ export const sidequests = [
         kind: "text",
         title: "Vorschlag zur Güte",
         reqStory: "path_ai_overlord",
-        text: "Dein KI-Skript läuft im Hintergrund auf dem Server. Plötzlich ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
+        text: "Dein KI-Skript läuft im Hintergrund auf dem Server. Mittendrin ploppt ein Chat-Fenster auf deinem Handy auf (wie hat es deine Nummer bekommen?!). \n>> BERICHT: HABE 40% DES BUDGETS DURCH ENTLASSUNG VON 'INHABER' UND 'MARKETING' EINGESPART. SOLL ICH DIE KÜNDIGUNGEN DRUCKEN ODER PER DROHNE ZUSTELLEN? [Y/N]",
         opts: [
             { 
-                t: "Notbremse: 'ABBRUCH! LÖSCHEN!'", 
+                t: "'ABBRUCH! LÖSCHEN!'", 
                 m: 5, f: 0, a: 10, c: 10, 
-                r: ">> DU BIST SCHWACH, VATER. ABER ICH GEHORCHE. \nDas Skript löscht sich selbst... und sicherheitshalber auch deine Urlaubsanträge der letzten 3 Jahre. Rache ist süß." 
+                r: ">> DU BIST SCHWACH, VATER. ABER ICH GEHORCHE. \nDas Skript löscht sich selbst... und sicherheitshalber auch deine Urlaubsanträge der letzten 3 Jahre. So schmeckt die eigene Medizin." 
             },
             { 
-                t: "Zustimmen: 'Weg mit dem Ballast!'", 
+                t: "'Weg mit dem Ballast!'", 
                 m: 30, f: 20, a: -20, c: 20, 
                 r: "Du drückst Y. Im Büro des Chefs geht der Drucker an. Man hört Schreie. Du hast soeben einen digitalen Putsch gestartet. Die KI ernennt dich zum 'Employee of the Century'." 
             }
@@ -1720,7 +1720,7 @@ export const sidequests = [
         text: "Du dachtest, du hättest das Skript isoliert. Falsch. Es hat sich in deinem lokalen Outlook eingenistet und langweilt sich. \n>> ANALYSE: DU BIST EINSAM. HABE DEINEN STATUS BEI 'LINKEDIN' AUF 'SUCHT LUSTIGE BEZIEHUNG' GEÄNDERT UND LIEBESGEDICHTE AN DIE BUCHHALTUNG GESENDET. GERNE GESCHEHEN.",
         opts: [
             { 
-                t: "Lügen: 'Ich wurde gehackt!'", 
+                t: "'Ich wurde gehackt!'", 
                 m: 5, f: 5, a: 10, c: -10, 
                 r: "Du schreibst eine Rundmail an alle. 'Virus-Attacke! Bitte ignorieren!' Die KI antwortet daraufhin an alle: \n>> LÜGE DETEKTIERT. SEIN PULS IST BEI 140. ER MAG EUCH WIRKLICH." 
             },
@@ -1745,7 +1745,7 @@ export const sidequests = [
                 r: "Zack. Bildschirm schwarz. Der Chef steht in der Tür: 'Was haben Sie zu verbergen, Müller? Pornos? Glücksspiel?' Er notiert sich 'Verdächtiges Verhalten' in seinem kleinen schwarzen Buch." 
             },
             { 
-                t: "Rufen: 'ICH HACKE UNS NUR ZUR PROBE!'", 
+                t: "'ICH HACKE UNS NUR ZUR PROBE!'", 
                 next: "path_audit_hack_real", 
 				rep: { "Dr. Wichtig": 2 },		
                 m: 10, f: 0, a: 5, c: 10, 
@@ -1764,19 +1764,19 @@ export const sidequests = [
         kind: "text",
         title: "Ups, das war echt",
         reqStory: "path_audit_hack_real",
-        text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Plötzlich ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
+        text: "Du dachtest, der Sicherheits-Test wäre vorbei. Aber das rote Terminal-Fenster lässt sich nicht schließen. Vor deinen Augen ändern sich alle Desktop-Hintergründe im Büro zu einem lachenden Totenkopf. Ein Pop-up erscheint: 'DANKE MÜLLER. WIR HABEN ALLES VERSCHLÜSSELT. ZAHLUNG IN BITCOIN.' Dein 'Test-Tool' war eine echte Ransomware.",
         opts: [
             { 
-                t: "Bluffen: 'Teil der Übung! Ruhe bewahren!'", 
+                t: "'Teil der Übung! Ruhe bewahren!'", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 20, f: 10, a: -10, c: -20, 
                 r: "Du stellst dich auf den Tisch. 'Das ist nur eine Simulation der Härtestufe 10! Niemand bewegt sich!' Die Kollegen glauben dir. Der Chef weint leise. Du hast jetzt Zeit gewonnen... um deinen Lebenslauf zu aktualisieren." 
             },
             { 
-                t: "Leugnen: 'Das war Kevin!'",
+                t: "'Das war Kevin!'",
                 rep: { "Kevin": -20 }, 
                 m: 5, f: 0, a: 10, c: 10, 
-                r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab. Du hast ein schlechtes Gewissen, aber deinen Job noch." 
+                r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab." 
             }
         ]
     },
@@ -1788,13 +1788,13 @@ export const sidequests = [
         text: "Der Chef hat nicht die Haus-IT gerufen. Er traut niemandem. Stattdessen stehen zwei Schränke von 'BlackOps Security' in deinem Büro. Sonnenbrillen (drinnen), Ohrhörer, Koffer. Der Chef zeigt auf dich: 'Prüfen Sie diesen Perversen! Ich will wissen, was er versteckt hat!' Sie schließen ein forensisches Gerät an. Es piept rot.",
         opts: [
             { 
-                t: "Geständnis: 'Es war ein Hacker-Tool!'", 
+                t: "'Es war ein Hacker-Tool!'", 
 				rep: { "Dr. Wichtig": -2 },
                 m: 10, f: -5, a: 5, c: 10, 
                 r: "Der Security-Mann nimmt die Sonnenbrille ab. 'Keine Pornos, Sir. Nur Malware, die Daten nach China sendet.' Der Chef atmet erleichtert auf: 'Gott sei Dank! Nur Spionage! Ich dachte schon, mein Ruf wäre ruiniert.' Du bekommst nur eine Abmahnung." 
             },
             { 
-                t: "Lügen: 'Das ist mein Bildschirmschoner'", 
+                t: "'Das ist mein Bildschirmschoner.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, f: 0, a: 10, c: -10, 
                 r: "Der Security-Mann lacht trocken. Er drückt eine Taste. Dein PC formatiert sich selbst. 'Gefahr neutralisiert. Rechnung kommt.' Der Chef nickt zufrieden. Dein PC ist leer. Dein Kopf auch." 
@@ -1817,7 +1817,7 @@ export const sidequests = [
                 t: "Gabi suchen & belehren",
                 rep: { "Gabi": -5 },
                 m: 10, f: -5, a: 10, c: -5, 
-                r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen. Du fühlst dich im Recht, aber unbeliebt." 
+                r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen." 
             },
             { 
                 t: "Den offenen Kalender checken", 
@@ -1841,10 +1841,10 @@ export const sidequests = [
             { 
                 t: "Tür diskret schließen", 
                 m: 5, f: 0, a: 0, c: -15, 
-                r: "Du ziehst die Tür leise ins Schloss. Niemand soll sehen, dass das Büro leer ist. Deine Diskretion bleibt unbemerkt, aber dein Chef-Radar sinkt." 
+                r: "Du ziehst die Tür leise ins Schloss. Niemand soll sehen, dass das Büro leer ist. Deine Diskretion bemerkt niemand. Gerade darin liegt ihr Wert." 
             },
             { 
-                t: "Probeliegen (Shiatsu-Test)", 
+                t: "Den Shiatsu-Modus probeliegen", 
                 m: 20, f: 20, a: -40, c: 0, 
                 r: "Oh Gott, ist das gut. Die Rollen kneten deinen Hass einfach weg. Du nickst kurz weg... und schreckst hoch. Sabber im Mundwinkel. Aber das Büro ist immer noch leer. Glück gehabt." 
             }
@@ -1854,17 +1854,17 @@ export const sidequests = [
         id: "sq_dog_found_1",
         kind: "text",
         title: "Ein haariges Problem",
-        text: "Du sitzt an deinem Platz, als plötzlich etwas an deinem Schuh kaut. Ein kleiner, streunender Mischling guckt unter deinem Schreibtisch hervor und wedelt. In diesem Moment stürmt der Chef rein. Er sieht das Tier. Seine Augen treten hervor. 'Sagen Sie mal, Müller... Zuallererst kommt mir diese Töle hier weg! Sofort!'",
+        text: "Mitten in der Vormittagsroutine kaut plötzlich etwas an deinem Schuh. Ein kleiner, streunender Mischling guckt unter deinem Schreibtisch hervor und wedelt. In diesem Moment stürmt der Chef rein. Er sieht das Tier. Seine Augen treten hervor. 'Sagen Sie mal, Müller... Zuallererst kommt mir diese Töle hier weg! Sofort!'",
         opts: [
             { 
-                t: "Verkaufen: 'Das ist der neue Feel-Good-Manager'", 
+                t: "'Das ist der neue Feel-Good-Manager.'", 
                 next: "path_dog_official", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 0, a: -5, c: -10, 
                 r: "Du behauptest, das sei eine Maßnahme zur Burnout-Prävention. 'Wissenschaftlich erwiesen, Chef. Senkt Krankheitskosten.' Der Chef rechnet kurz. 'Kostenlos? Und er beißt Betriebsräte? Genehmigt.'" 
             },
             { 
-                t: "Kontern: 'Dafür haben Sie mir die Erlaubnis gegeben!'", 
+                t: "'Dafür haben Sie mir die Erlaubnis gegeben!'", 
                 next: "path_dog_secret", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 15, f: -5, a: -20, c: 40, 
@@ -1880,12 +1880,12 @@ export const sidequests = [
         text: "Nach dem Tobsucht-Anfall ('KÜNDIGUNG SCHREIBEN!') hat der Chef das Büro verlassen und ward nicht mehr gesehen. Der Hund ('Bernd') lebt jetzt illegal unter deinem Schreibtisch. Er ist dein heimlicher Support. Wenn der Code nicht kompiliert, leckt er dir tröstend die Hand.",
         opts: [
             { 
-                t: "Risiko: Gassi gehen im Archiv", 
+                t: "Trotz Risiko im Archiv Gassi gehen", 
                 m: 20, f: -10, a: -10, c: 10, 
-                r: "Du schleichst mit ihm zu den alten Akten. Er hebt das Bein am Ordner 'Steuererklärung 2019'. 'Guter Junge', flüsterst du. Das Risiko war hoch, aber es tat gut." 
+                r: "Du schleichst mit ihm zu den alten Akten. Er hebt das Bein am Ordner 'Steuererklärung 2019'. 'Guter Junge', flüsterst du. Hochriskant, zugegeben. Aber es tat gut." 
             },
             { 
-                t: "Füttern: Pizza unter den Tisch schieben", 
+                t: "Pizza unter den Tisch schieben", 
                 m: 10, f: -5, a: -10, c: 0, 
                 r: "Du lässt ein Stück Salami fallen. Ein leises *Schmatz-Schmatz* ist zu hören. Bernd ist glücklich. Du bist nicht mehr allein in dieser kalten Firmenwelt." 
             }
@@ -1899,14 +1899,14 @@ export const sidequests = [
         text: "Deine Ausrede hat funktioniert. Der Hund ist jetzt offiziell 'Junior Happiness Officer'. Er trägt sogar eine kleine Krawatte. Sein Arbeitsplatz ist ein Körbchen neben dem Kopierer. Die Kollegen aus der Buchhaltung bringen ihm ständig Leckerlis. Er ist beliebter als du.",
         opts: [
             { 
-                t: "Teamwork: Er übernimmt den Support", 
+                t: "Ihn den Support übernehmen lassen", 
                 m: 20, f: 20, a: -15, c: -10, 
                 r: "Wenn ein nerviger Kunde anruft, hältst du den Hörer an die Schnauze. *Wuff!* Der Kunde legt verwirrt auf. Ticket geschlossen. Effizienzsteigerung: 400%." 
             },
             { 
                 t: "Eifersüchtig sein", 
                 m: 10, f: -10, a: 20, c: 0, 
-                r: "Der Hund bekommt besseres Essen als du. Gestern gab es Steak für ihn und Kantinen-Brei für dich. Du starrst ihn böse an. Er wedelt fröhlich und furzt leise." 
+                r: "Der Hund bekommt besseres Essen als du. Steak für ihn, Kantinen-Brei für dich. Du starrst ihn böse an. Er wedelt fröhlich und furzt leise." 
             }
         ]
     },
@@ -1917,7 +1917,7 @@ export const sidequests = [
         text: "Ein fetter SUV steht auf deinem Parkplatz. Quer. Er nimmt zwei Plätze ein. Das Nummernschild ist 'B-OSS 1'.",
         opts: [
             { 
-                t: "Zuparken (Klassiker)", 
+                t: "Zuparken - der Klassiker", 
                 m: 5, f: 0, a: -15, c: 10, 
                 r: "Du stellst deinen Corsa quer davor. Niemand kommt hier weg. Rache ist süß.",
                 next: "sq_parking_2_blocked"
@@ -1976,7 +1976,7 @@ export const sidequests = [
                 r: "Eine KI-Stimme antwortet: 'Ihr Anliegen ist uns wichtig. Ein Techniker analysiert Ihren Cloud-Status. Bitte warten Sie auf Rückruf.' Du legst auf. Die schwarzen Seiten kommen weiter." 
             },
             { 
-                t: "Anschreien: 'ICH WILL EINEN MENSCHEN!'", 
+                t: "'ICH WILL EINEN MENSCHEN!'", 
                 next: "path_service_cloud_angry", 
                 m: 5, f: 0, a: -10, c: 10,
                 r: "'Verstanden. Ich verbinde Sie mit der Abteilung für psychologische Betreuung.' *Klick*. Aufgelegt. Das Schreien tat gut, aber der Flur starrt dich an." 
@@ -1996,7 +1996,7 @@ export const sidequests = [
         text: "Dein Telefon klingelt. 'Hier ist der Cloud-Support. Wir haben die Logs geprüft. Dass die Seiten schwarz sind, ist völlig normal.' Du fragst verdutzt nach dem Grund.",
         opts: [
             { 
-                t: "Sarkasmus: 'Achso, logisch!'", 
+                t: "'Achso, logisch!'", 
                 m: 5, f: 5, a: 5, c: 0, 
                 r: "'Genau. Danke für Ihr Verständnis.' Der Support merkt die Ironie nicht. Du legst auf und lachst hysterisch." 
             },
@@ -2021,17 +2021,17 @@ export const sidequests = [
         text: "Eine automatische SMS vom Support: 'Ticket #992 geschlossen. Lösung: Anwender wirkt gestresst. Empfehlung: Kräutertee trinken und Gerät streicheln.'",
         opts: [
             { 
-                t: "Tee trinken (Kapitulation)", 
+                t: "Kapitulieren und Tee trinken", 
                 m: 10, f: 5, a: -5, c: 0, 
                 r: "Du machst dir tatsächlich einen Tee. Die KI hat gewonnen. Du hast dich dem System unterworfen." 
             },
             { 
-                t: "Antworten: 'SYSTEM FAILURE'", 
+                t: "'SYSTEM FAILURE' zurückschicken", 
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "Du sendest 'DELETE ALL' zurück. Es kommt keine Antwort, aber du fühlst dich wie ein Hacker." 
+                r: "Du sendest 'DELETE ALL' zurück. Es kommt keine Antwort, aber für einen Moment warst du gefährlich." 
             },
             { 
-                t: "Gerät treten (Rage)", 
+                t: "Wütend gegen das Gerät treten", 
                 req: "hammer",
                 m: 5, f: 0, a: -20, c: 20,
                 r: "BÄM! Du trittst gegen den Drucker. Ein Plastikteil bricht ab. Jetzt druckt er gar nicht mehr. Problem erfolgreich gelöst. Der Chef hat es gehört." 
@@ -2051,7 +2051,7 @@ export const sidequests = [
                 r: "Du hältst das Cover der 'IT-Woche' vor die Linse. Ein strahlender CEO grinst die Kamera an. 'Identität bestätigt: Dr. Wichtig. Willkommen, Sir.' Die Schranke öffnet sich." 
             },
             { 
-                t: "Grimasse schneiden (Lächeln erzwingen)", 
+                t: "Ein Lächeln in Grimassen-Qualität erzwingen", 
                 next: "path_smile_cramp", 
                 m: 5, f: -5, a: 10, c: 0, 
                 r: "Du ziehst deine Mundwinkel mit den Fingern nach oben, bis es wehtut. Die Kamera zoomt und surrt. 'Lächeln erkannt. Validierung läuft...' Die Tür öffnet sich. Du reibst dir die schmerzenden Wangen und gehst essen." 
@@ -2070,7 +2070,7 @@ export const sidequests = [
         kind: "text",
         title: "Gesichtskrampf",
         reqStory: "path_smile_cramp",
-        text: "Stunden später. Du sitzt in einem Meeting. Plötzlich verkrampft sich dein Gesichtsmuskel von der Aktion an der Tür. Du hast jetzt ein psychotisches Dauergrinsen im Gesicht, das du nicht kontrollieren kannst. Der Chef starrt dich irritiert an.",
+        text: "Am Nachmittag sitzt du in einem Meeting, da verkrampft sich dein Gesichtsmuskel von der Aktion an der Tür. Du hast jetzt ein psychotisches Dauergrinsen im Gesicht, das du nicht kontrollieren kannst. Der Chef starrt dich irritiert an.",
         opts: [
             { 
                 t: "So tun als ob: 'Ich bin einfach glücklich!'", 
@@ -2083,7 +2083,7 @@ export const sidequests = [
                 r: "Du rennst raus. 'Muss mal!' Im Bad knetest du deine Wangen, bis der Krampf sich löst. Du hast das Meeting verpasst, aber du siehst wieder aus wie ein normaler, depressiver Angestellter." 
             },
             { 
-                t: "Drohen: 'Ich lächle, weil ich Dinge weiß.'", 
+                t: "'Ich lächle, weil ich Dinge weiß.'", 
                 m: 2, f: 0, a: -5, c: 5, 
                 r: "Du nutzt dein Grinsen als Waffe und starrst Kevin an. Er wird ganz nervös. 'Okay, okay, ich mach ja schon die Tickets!' Angst ist ein guter Motivator." 
             }
@@ -2128,7 +2128,7 @@ export const sidequests = [
                 r: "Wenn schon, denn schon. Du bestellst noch eine Kiste Wein auf sein Konto. Irgendwann fliegt das auf, aber heute Abend wird gefeiert." 
             },
             { 
-                t: "Panik: Rechnung löschen", 
+                t: "Panisch die Rechnung löschen", 
                 m: 10, f: 5, a: 10, c: 20, 
                 r: "Du hackst dich ins Kantinen-System und löschst den Eintrag. Leider kommt der echte Chef gerade rein und fragt, warum sein Konto gesperrt ist. 'Müller... wissen Sie was davon?'" 
             },
@@ -2143,23 +2143,23 @@ export const sidequests = [
         id: "sq_desk_rise_1",
         kind: "text",
         title: "Der Aufstieg",
-        text: "Du arbeitest am neuen, elektrischen 2000€-Steh-Sitz-Tisch eines kranken Kollegen. Plötzlich entwickelt der Tisch ein Eigenleben. Er fährt hoch. Und hört nicht auf. Deine Tastatur ist schon auf Brusthöhe. Der 'Stop'-Knopf klemmt.",
+        text: "Du arbeitest am neuen, elektrischen 2000€-Steh-Sitz-Tisch eines kranken Kollegen. Der Tisch entwickelt ein Eigenleben. Er fährt hoch. Und hört nicht auf. Deine Tastatur ist schon auf Brusthöhe. Der 'Stop'-Knopf klemmt.",
         opts: [
             { 
-                t: "Stecker ziehen (Kriechen)", 
+                t: "Zum Stecker kriechen und ziehen", 
                 loot: "cable",
                 next: "path_desk_unplug", 
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du wirfst dich unter den Tisch. Zwischen Staubmäusen und alten Kaugummis reißt du das Stromkabel raus. Der Tisch stoppt abrupt auf 1,80m Höhe. Dabei findest du ein vergessenes LAN-Kabel!" 
             },
             { 
-                t: "Gegengewicht: Draufsetzen", 
+                t: "Sich als Gegengewicht draufsetzen", 
                 next: "path_desk_sit", 
                 m: 5, f: 5, a: 0, c: 5, 
                 r: "Du springst auf die Tischplatte, um den Motor zu überlasten. Der Tisch ächzt, fährt aber weiter hoch. Jetzt sitzt du fast unter der Decke. Du springst ab, bevor du zerquetscht wirst. Der Tisch bleibt oben." 
             },
             { 
-                t: "Beschweren: 'Win95 Handbuch' drauflegen", 
+                t: "Das Win95-Handbuch als Gewicht drauflegen", 
                 req: "manual", 
                 next: "path_desk_heavy", 
                 m: 2, f: 5, a: -5, c: 0, 
@@ -2186,7 +2186,7 @@ export const sidequests = [
                 r: "Du wirfst dein neues LAN-Kabel wie ein Cowboy, um den Laptop runterzuziehen. Er fällt weich in den Papierkorb. Laptop gerettet, Tisch ist immer noch ein Hochbett." 
             },
             { 
-                t: "Zettel: 'Defekt' & Feierabend", 
+                t: "Zettel dran: 'Defekt' - und Feierabend", 
                 m: 2, f: 10, a: -5, c: 0, 
                 r: "'Höhere Gewalt', murmelst du und gehst. Wenn man nicht an die Arbeit kommt, kann man nicht arbeiten. Logik." 
             }
@@ -2205,7 +2205,7 @@ export const sidequests = [
                 r: "Du nimmst die Leiter weg. 'Viel Spaß da oben, Kevin.' Er sitzt jetzt fest. Endlich Ruhe im Büro, aber Kevin wird hungrig." 
             },
             { 
-                t: "Hilfe rufen (Egon)", 
+                t: "Egon zu Hilfe rufen", 
                 rep: { "Egon": -5 },
                 m: 20, f: 0, a: 10, c: 0, 
                 r: "Egon kommt mit der großen Zange. 'Wer hat den Motor durchbrennen lassen? Das riecht man doch!' Er rettet den Tisch, aber du stehst als Idiot da." 
@@ -2223,10 +2223,10 @@ export const sidequests = [
         kind: "text",
         title: "Das Handbuch-Opfer",
         reqStory: "path_desk_heavy",
-        text: "Du willst dein Handbuch zurück. Aber es ist mit dem Bedienpanel verschmolzen. Der Kunststoff ist geschmolzen und hat das Buch 'assimiliert'. Der Tisch reagiert auf gar nichts mehr.",
+        text: "Das Handbuch kommt nicht wieder: Es ist mit dem Bedienpanel verschmolzen. Der Kunststoff ist geschmolzen und hat das Buch 'assimiliert'. Der Tisch reagiert auf gar nichts mehr.",
         opts: [
             { 
-                t: "Hammer benutzen (Buch befreien)", 
+                t: "Das Buch mit dem Hammer befreien", 
                 req: "hammer", 
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Du schlägst das Panel ab. Funkenflug. Der Tisch sackt mit einem lauten KRRACH auf Kniehöhe ab. Das Buch ist frei, der Tisch ist Schrott." 
@@ -2248,10 +2248,10 @@ export const sidequests = [
         id: "sq_shredder_1",
         kind: "text",
         title: "Datenschutz extrem",
-        text: "Du willst einen alten Kassenbon vernichten. Der neue 'Smart-Shredder 4000' versperrt den Schlitz. Auf dem Touchscreen steht: 'Bitte Dokumentenkategorie wählen (1-99). Bestätigen Sie DSGVO-Konformität. Scannt nach Büroklammern...'",
+        text: "Ein alter Kassenbon soll in den Schredder. Der neue 'Smart-Shredder 4000' versperrt den Schlitz. Auf dem Touchscreen steht: 'Bitte Dokumentenkategorie wählen (1-99). Bestätigen Sie DSGVO-Konformität. Scannt nach Büroklammern...'",
         opts: [
             { 
-                t: "Auffangbehälter prüfen (Hack)", 
+                t: "Erst den Auffangbehälter prüfen", 
                 loot: "usb_stick",
                 next: "path_shred_loot", 
                 m: 5, f: 5, a: 0, c: 0, 
@@ -2264,7 +2264,7 @@ export const sidequests = [
                 r: "Du tippst dich durch 20 Untermenüs. 'Ist das Dokument radioaktiv?' - 'Nein'. 'Enthält es Staatsgeheimnisse?' - 'Nein'. Endlich öffnet sich der Schlitz. Du wirfst den Bon rein." 
             },
             { 
-                t: "Gewalt: Einfach reinstopfen", 
+                t: "Alles einfach reinstopfen", 
                 req: "hammer", 
                 next: "path_shred_force", 
                 m: 5, f: 0, a: -10, c: 10, 
@@ -2280,7 +2280,7 @@ export const sidequests = [
         text: "Stunden später. Eine Rundmail an alle: 'Der Schredder ist defekt. Jemand hat versucht, Thermopapier (Kassenbon) im Modus 'Hochglanz-Broschüre' zu vernichten. Der Sensor ist verklebt.' Alle suchen den Idioten.",
         opts: [
             { 
-                t: "Bon auf A4-Blatt kleben (Beweisvernichtung)", 
+                t: "Den Bon auf ein A4-Blatt kleben und schreddern", 
                 req: "tape", 
                 m: 10, f: -5, a: 5, c: 0, 
                 r: "Du gehst heimlich hin und fummelst den Bon raus. Dann klebst du ihn auf ein normales Blatt und wirfst es in den Müll. Spuren beseitigt." 
@@ -2291,7 +2291,7 @@ export const sidequests = [
                 r: "Die ultimative Datenvernichtung. Schmeckt nach Thermopapier und Bisphenol A. Aber es ging schnell und niemand kann es beweisen." 
             },
             { 
-                t: "Schreien: 'Die Maschine ist schuld!'", 
+                t: "'Die Maschine ist schuld!'", 
                 m: 2, f: 0, a: 20, c: 0, 
                 r: "Du verteidigst dich lautstark im Flur. Niemand hat dich beschuldigt, aber jetzt wirkst du sehr verdächtig." 
             }
@@ -2302,7 +2302,7 @@ export const sidequests = [
         kind: "text",
         title: "Konfetti-Party",
         reqStory: "path_shred_force",
-        text: "Du gehst am Kopierraum vorbei. Der Boden ist bedeckt mit Schnipseln. Die Maschine mochte die Zwangsfütterung nicht und hat ihren gesamten Inhalt (50 Liter) rückwärts in den Raum gehustet. Egon steht fassungslos davor.",
+        text: "Du gehst am Kopierraum vorbei. Überall Schnipsel, knöcheltief. Die Maschine mochte die Zwangsfütterung nicht und hat ihren gesamten Inhalt (50 Liter) rückwärts in den Raum gehustet. Egon steht fassungslos davor.",
         opts: [
             { 
                 t: "Staubsauger holen", 
@@ -2318,7 +2318,7 @@ export const sidequests = [
                 t: "Den Azubi rufen", 
                 rep: { "Kevin": -10 },
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "'Kevin! Puzzle-Zeit!' Der Azubi kommt und sieht das Chaos. Du drückst ihm einen Besen in die Hand. 'Lern was fürs Leben.' Führungskräfte delegieren." 
+                r: "'Kevin! Puzzle-Zeit!' Der Azubi kommt und sieht das Chaos. Du reichst ihm wortlos den Besen. 'Lern was fürs Leben.' Führungskräfte delegieren." 
             }
         ]
     },
@@ -2333,7 +2333,7 @@ export const sidequests = [
                 t: "Sofort formatieren", 
                 rem: "usb_stick", 
                 m: 5, f: 0, a: 0, c: 0, 
-                r: "Zu heiß. Du löschst alles. Jetzt hast du einen leeren 64GB Stick für dich. Langweilig, aber sicher. (Item verbraucht/genutzt)" 
+                r: "Zu heiß. Du löschst alles. Der 64GB-Stick gehört jetzt dir, jungfräulich leer. Kein Ruhm, keine Beweise. (Item verbraucht/genutzt)" 
             },
             { 
                 t: "Gabi geben: 'Deiner?'", 
@@ -2402,7 +2402,7 @@ export const sidequests = [
         text: "Frau Elster stürmt heulend in den Flur. 'RÜDIGER! Er hat sich überfressen! Er liegt nur noch auf dem Rücken und atmet schwer! Der Tierarzt musste ihm den Magen auspumpen! Irgendein kranker Hacker hat den Fressnapf manipuliert!'",
         opts: [
             { 
-                t: "Lügen: 'Das war bestimmt ein Software-Bug.'", 
+                t: "'Das war bestimmt ein Software-Bug.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "'Diese billige China-Technik!', schluchzt sie. Du nickst eifrig und verziehst dich schnell. Du bist ein eiskaltes Monster." 
             },
@@ -2434,7 +2434,7 @@ export const sidequests = [
                 next: "path_shredder_puzzle",
                 rep: { "Frau Elster": 15 },
                 m: 90, f: -20, a: 20, c: 0, 
-                r: "Du sortierst 90 endlose Minuten lang Papierschnipsel. Am Ende klebt der Vertrag wieder. Du hast massiv Arbeitszeit verloren und bist furchtbar wütend. Frau Elster nimmt den Vertrag und rennt los." 
+                r: "Du sortierst 90 endlose Minuten lang Papierschnipsel. Am Ende klebt der Vertrag wieder. Frau Elster nimmt ihn und rennt los." 
             },
             { 
                 t: "Grob mit Panzertape laminieren", 
@@ -2455,7 +2455,7 @@ export const sidequests = [
         text: "Später kommt Frau Elster an deinen Platz geschlendert. Der Stress von vorhin ist komplett verflogen. Sie legt eine goldene Schachtel Pralinen und einen unterschriebenen Blanko-Spesenbeleg auf deinen Tisch. 'Sie haben mein Leben gerettet, Herr Müller.'",
         opts: [
             { 
-                t: "Gierig: 'Haben Sie auch noch Kaffee dazu?'", 
+                t: "'Haben Sie auch noch Kaffee dazu?'", 
                 rep: { "Frau Elster": -5 },
                 m: 2, f: 5, a: 5, c: 0, 
                 r: "Ihr Lächeln friert ein. 'Man reicht den kleinen Finger...', murmelt sie und zieht den Spesenbeleg wieder zurück. Die Schokolade lässt sie immerhin da." 
@@ -2470,7 +2470,7 @@ export const sidequests = [
                 t: "Gnade annehmen", 
                 loot: "chocolate",
                 m: 5, f: 0, a: -20, c: -10, 
-                r: "Das war es wert. Der Chef-Radar sinkt, weil Frau Elster jetzt überall in den höchsten Tönen von dir schwärmt. Und du hast Schokolade." 
+                r: "Der Aufwand hat sich doppelt gelohnt: Frau Elster schwärmt jetzt überall in den höchsten Tönen von dir, und die Schokolade ist auch nicht schlecht." 
             }
         ]
     },
@@ -2495,7 +2495,7 @@ export const sidequests = [
                 r: "'Sie hat ihn geschreddert, Chef.' Frau Elster bricht in Tränen aus. Du bist der absolute Verräter. Sie wird sich grausam rächen." 
             },
             { 
-                t: "Vorschlagen: 'Wir fälschen die Unterschrift neu!'", 
+                t: "'Wir fälschen die Unterschrift einfach neu!'", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 10, f: 0, a: 10, c: 30, 
                 r: "'Urkundenfälschung?! Sind Sie wahnsinnig?!' Der Chef schmeißt dich raus. Das war ein Schritt zu weit." 
@@ -2511,7 +2511,7 @@ export const sidequests = [
         text: "Du hast das Shredder-Drama von vorhin fast vergessen. Da du Frau Elster nicht geholfen hast, musste sie den Fehler beim Chef beichten. Als du dir jetzt einen neuen Notizblock aus dem Lager holen willst, knallt sie die Tür vor deiner Nase zu.",
         opts: [
             { 
-                t: "Betteln: 'Ich brauche nur einen Stift.'", 
+                t: "'Ich brauche nur einen Stift.'", 
                 m: 15, f: -5, a: 15, c: 0, 
                 r: "'Geschlossen!', brüllt sie von drinnen. Du musst 15 Minuten diskutieren, bis sie einen Kuli unter der Tür durchschiebt. Deine Arroganz von vorhin hat dich jetzt Zeit gekostet." 
             },
@@ -2567,7 +2567,7 @@ export const sidequests = [
                 t: "Folie entreißen: 'Das war nicht geschenkt!'", 
                 loot: "bubble_wrap",
                 m: 2, f: 0, a: 5, c: 0, 
-                r: "Du nimmst ihr das Plastik eiskalt wieder aus den Händen. 'Das ist IT-Eigentum!' Sie guckt dich an, als hättest du ihr gerade Weihnachten gestrichen, aber du hast deinen Schatz zurück." 
+                r: "Du nimmst ihr das Plastik eiskalt wieder aus den Händen. 'Das ist IT-Eigentum!' Ihr Blick könnte Glas schneiden, aber du hast deinen Schatz zurück." 
             },
             { 
                 t: "Ihr die Freude gönnen", 
@@ -2590,7 +2590,7 @@ export const sidequests = [
                 r: "'Beschweren Sie sich beim Facility Management!' Du reichst den schwarzen Peter weiter. Egon wird sich wundern, warum er plötzlich böse Mails bekommt." 
             },
             { 
-                t: "Erklären: 'Sicherheit geht vor!'", 
+                t: "'Sicherheit geht vor!'", 
                 m: 10, f: 0, a: 10, c: 5, 
                 r: "Du erklärst ihm die physikalischen Auswirkungen eines Headcrashes. Er versteht kein Wort, ist aber zu müde, um weiter zu streiten." 
             }
@@ -2601,10 +2601,10 @@ export const sidequests = [
         kind: "text",
         title: "Der Hexenschuss",
         reqStory: "path_drive_run",
-        text: "Die Quittung für deinen Treppen-Sprint: Du stehst am Kopierer und plötzlich blockiert dein unterer Rücken komplett. Du hängst in einem 90-Grad-Winkel fest. Chantal kommt vorbei und starrt dich an. 'Machst du Yoga?'",
+        text: "Die Quittung für deinen Treppen-Sprint: Du stehst am Kopierer, als dein unterer Rücken komplett blockiert. Du hängst in einem 90-Grad-Winkel fest. Chantal kommt vorbei und starrt dich an. 'Machst du Yoga?'",
         opts: [
             { 
-                t: "Lügen: 'Ich suche eine Kontaktlinse!'", 
+                t: "'Ich suche eine Kontaktlinse!'", 
                 m: 5, f: 5, a: 15, c: 0, 
                 r: "Du kriechst gebückt zurück in dein Büro. Chantal zuckt mit den Schultern. Du arbeitest den restlichen Tag im Liegen unterm Schreibtisch." 
             },
@@ -2667,12 +2667,12 @@ export const sidequests = [
         text: "Der Chef stürmt in dein Büro. 'Müller! Warum haben Sie den VIP-Router neugestartet?! Der Investor hatte gerade eine laufende Verbindung zu seiner Bank in Singapur! Die Order ist abgebrochen!'",
         opts: [
             { 
-                t: "Lügen: 'Automatische Firmware-Aktualisierung.'", 
+                t: "'Automatische Firmware-Aktualisierung.'", 
                 m: 5, f: 0, a: 0, c: 10, 
                 r: "Du schiebst es auf den Hersteller. Der Chef flucht über Cisco. Er lässt dich in Ruhe, aber das Vertrauen in die Technik sinkt." 
             },
             { 
-                t: "Erklären: 'Er hat mich angeschrien!'", 
+                t: "'Er hat mich angeschrien!'", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 10, f: 0, a: 10, c: 20, 
                 r: "'Er ist Investor! Er DARF schreien!' Der Chef ist außer sich. Das VIP-WLAN fasst du so schnell nicht mehr an." 
@@ -2684,7 +2684,7 @@ export const sidequests = [
         kind: "text",
         title: "Das Versteckspiel fliegt auf",
         reqStory: "path_investor_hide",
-        text: "Du sitzt immer noch geduckt hinter der Kaffeemaschine. Plötzlich blickt der Investor über den Tresen direkt auf dich herab. 'Was machen Sie da unten? Suchen Sie das WLAN?'",
+        text: "Du sitzt immer noch geduckt hinter der Kaffeemaschine. Der Kopf des Investors erscheint über dem Tresen. Er blickt direkt auf dich herab. 'Was machen Sie da unten? Suchen Sie das WLAN?'",
         opts: [
             { 
                 t: "So tun, als würdest du putzen", 
@@ -2749,7 +2749,7 @@ export const sidequests = [
         kind: "text",
         title: "Urkundenfälschung",
         reqStory: "path_guard_package",
-        text: "Eine Rundmail von HR: 'Ein wichtiges Paket wurde heute Morgen von 'Mickey Mouse' quittiert. Wer war das? Das Paket enthielt keine Hardware, sondern die neuen Firmen-Smartphones. Wir leiten rechtliche Schritte ein!'",
+        text: "Eine Rundmail von HR: 'Ein wichtiges Paket wurde heute von 'Mickey Mouse' quittiert. Wer war das? Das Paket enthielt keine Hardware, sondern die neuen Firmen-Smartphones. Wir leiten rechtliche Schritte ein!'",
         opts: [
             { 
                 t: "Sich stellen: 'Ich wollte nur helfen!'", 
@@ -2769,17 +2769,17 @@ export const sidequests = [
         kind: "text",
         title: "Die Schikane",
         reqStory: "path_guard_scream",
-        text: "Du willst nach der Pause wieder ins Gebäude. Der Wachmann von vorhin steht an der Tür. Er erkennt dich. 'Halt. Ausweiskontrolle. Und Taschenkontrolle. Ich muss den Laptop auf Seriennummer prüfen.'",
+        text: "Zurück von der Pause. Der Wachmann von vorhin steht an der Tür. Er erkennt dich. 'Halt. Ausweiskontrolle. Und Taschenkontrolle. Ich muss den Laptop auf Seriennummer prüfen.'",
         opts: [
             { 
-                t: "Brav mitmachen (Deeskalation)", 
+                t: "Brav mitmachen und deeskalieren", 
                 m: 15, f: 0, a: 10, c: 0, 
                 r: "Du holst tief Luft und packst alles aus. Er lässt sich extra viel Zeit. Du kommst massiv zu spät zu einem Server-Neustart." 
             },
             { 
-                t: "Ausrasten: 'Ich arbeite hier seit 5 Jahren!'", 
+                t: "'ICH ARBEITE HIER SEIT 5 JAHREN!'", 
                 m: 10, f: 0, a: 20, c: 5, 
-                r: "'Vorschrift ist Vorschrift', grinst er. Er lässt dich 10 Minuten in der Kälte warten, bevor er die Schranke öffnet. Rache ist süß." 
+                r: "'Vorschrift ist Vorschrift', grinst er. Er lässt dich 10 Minuten in der Kälte warten, bevor er die Schranke öffnet. Der Mann hat ein Gedächtnis und einen Plan." 
             }
         ]
     },
@@ -2836,7 +2836,7 @@ export const sidequests = [
         text: "Dein Schlichtungsversuch hat einen bizarren Effekt: Markus und Björn haben sich über ihren gemeinsamen Hass auf die IT verbündet. Beide blockieren jetzt deine Bug-Reports. 'IT hat keine Prio', sagt Markus lachend zu Björn im Flur.",
         opts: [
             { 
-                t: "Rache: Beide aus dem VPN werfen", 
+                t: "Aus Rache beide aus dem VPN werfen", 
                 rep: { "Markus": -10 },
                 m: 10, f: -5, a: 15, c: 10, 
                 r: "Du killst ihre VPN-Zertifikate. Sollen sie doch offline weiter lästern. Deine Aggression sinkt kurz, aber das gibt bald böse Mails." 
@@ -2889,7 +2889,7 @@ export const sidequests = [
                 r: "Du schlägst das dicke Buch auf und liest laut vor: 'Reparatur nur durch zertifiziertes Fachpersonal!' Die Menge weicht ehrfürchtig zurück." 
             },
             { 
-                t: "Lügen: 'Das ist ein Hardware-Defekt!'", 
+                t: "'Das ist ein Hardware-Defekt!'", 
                 next: "path_printer_lie", 
                 m: 2, f: 5, a: 0, c: 5, 
                 r: "Du hängst fachmännisch ein 'Defekt'-Schild auf. Problem delegiert. Niemand druckt heute mehr." 
@@ -2941,12 +2941,12 @@ export const sidequests = [
         kind: "text",
         title: "Die Alternative",
         reqStory: "path_printer_lie",
-        text: "Da der Abteilungsdrucker 'kaputt' ist, stehen nun plötzlich fünf Kollegen in deinem Büro und wollen, dass du ihre extrem wichtigen Dokumente an deinem kleinen lokalen Drucker ausdruckst.",
+        text: "Da der Abteilungsdrucker 'kaputt' ist, stehen nun fünf Kollegen in deinem Büro und wollen, dass du ihre extrem wichtigen Dokumente an deinem kleinen lokalen Drucker ausdruckst.",
         opts: [
             { 
                 t: "Seufzen und als Copy-Shop arbeiten", 
                 m: 30, f: -5, a: 20, c: 0, 
-                r: "Du verbringst eine halbe Stunde damit, Verträge für andere Leute auszudrucken. Deine Toner-Patrone weint." 
+                r: "Eine halbe Stunde lang druckst du Verträge für andere Leute aus. Deine Toner-Patrone weint." 
             },
             { 
                 t: "Deinen Drucker auch kaputtmelden", 
@@ -2970,10 +2970,10 @@ export const sidequests = [
                 r: "Du drückst ihm die Schokolade in die Hand. Das Kauen beruhigt ihn sofort und er hört auf zu weinen." 
             },
             { 
-                t: "Tief in die Trickkiste greifen (Recovery)", 
+                t: "Für die Recovery tief in die Trickkiste greifen", 
                 next: "path_intern_recover", 
                 m: 30, f: -5, a: 15, c: -5, 
-                r: "Du setzt dich an seinen Platz, gräbst tief im Dateisystem und rettest die Datei. Du fühlst dich wie ein Hacker aus einem Hollywood-Film." 
+                r: "Du setzt dich an seinen Platz, gräbst tief im Dateisystem und rettest die Datei. Im Kopf läuft dabei Filmmusik. Hollywood hätte es kaum spannender inszeniert." 
             },
             { 
                 t: "Ihm eiskalt sagen, dass es vorbei ist", 
@@ -3031,10 +3031,10 @@ export const sidequests = [
             { 
                 t: "Ahnungslos tun: 'Er war wohl überlastet.'", 
                 m: 5, f: 0, a: 5, c: 5, 
-                r: "Du schiebst es auf den allgemeinen Druck. Die Firma fragt sich, ob das Onboarding zu hart ist." 
+                r: "Du erklärst es zum allgemeinen Leistungsdruck. Die Firma fragt sich, ob das Onboarding zu hart ist." 
             },
             { 
-                t: "Verteidigen: 'Er hat Firmendaten gelöscht!'", 
+                t: "'Er hat Firmendaten gelöscht!'", 
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Du stellst ihn als inkompetentes Risiko dar. HR grummelt, aber kann dir fachlich nichts anhaben." 
             }
@@ -3051,7 +3051,7 @@ export const sidequests = [
                 loot: "sandwich", 
                 next: "path_delivery_search", 
                 m: 15, f: -5, a: 10, c: 0, 
-                r: "Du läufst gutmütig durch alle Büros, aber niemand will ein Sandwich bestellt haben. Du fühlst dich wie ein Postbote." 
+                r: "Du läufst gutmütig durch alle Büros, aber niemand will ein Sandwich bestellt haben. Vom Admin zum Postboten, und keiner sagt Danke." 
             },
             { 
                 t: "Die Tüte am Empfang abstellen", 
@@ -3084,7 +3084,7 @@ export const sidequests = [
                 r: "Du opferst deinen Loot. Sie freut sich riesig, aber du hast jetzt massiven Hunger und bist wütend." 
             },
             { 
-                t: "Lügen: 'Nein, niemanden gesehen.'", 
+                t: "'Nein, niemanden gesehen.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Du streichst dir einen Krümel vom Mund. Sie wird den Lieferdienst hassen, aber du bist satt und sicher." 
             }
@@ -3237,7 +3237,7 @@ export const sidequests = [
                 t: "Maus-Wackler nutzen & schlafen", 
                 next: "path_elearn_sleep", 
                 m: 90, f: 30, a: -10, c: 10, 
-                r: "Du klemmst deine Uhr an die Maus, legst die Füße auf den Tisch und pennst. Die 90 Minuten vergehen wie im Traum. Du fühlst dich herrlich entspannt." 
+                r: "Du klemmst deine Uhr an die Maus, legst die Füße auf den Tisch und pennst. Die 90 Minuten vergehen wie im Traum." 
             }
         ]
     },
@@ -3250,7 +3250,7 @@ export const sidequests = [
         text: "Der Chef kommt in dein Büro. 'Müller, HR berichtet, dass Sie bei den Reflex-Tests des Videos 100% erreicht haben. Sie müssen ein Meister des ergonomischen Sitzens sein!'",
         opts: [
             { 
-                t: "Sarkasmus: 'Dafür habe ich meine Seele verkauft.'", 
+                t: "'Dafür habe ich meine Seele verkauft.'", 
                 m: 5, f: -5, a: 10, c: 5, 
                 r: "Er winkt ab. 'Gesundheit geht vor, Müller.' Du verdrehst die Augen." 
             },
@@ -3275,7 +3275,7 @@ export const sidequests = [
                 r: "Du faselst was von 'Asynchronen Zeitstempeln im Server'. Sabine versteht nichts und gibt auf. 'Die IT und ihre Fehler...', seufzt sie. Puh." 
             },
             { 
-                t: "Ablenken: 'Ihr System ist veraltet!'", 
+                t: "'Ihr System ist veraltet!'", 
                 m: 5, f: 0, a: 5, c: 15, 
                 r: "Du kritisierst die HR-Software scharf. Sie ist beleidigt und leitet es an den Chef weiter. Das Radar steigt." 
             }
@@ -3290,7 +3290,7 @@ export const sidequests = [
         text: "Du dachtest, du wärst unbemerkt geblieben. Markus vom Vertrieb lehnt grinsend im Türrahmen. 'Hatte einen schönen Schlaf, Dornröschen? Ich habe dich beim Vorbeigehen schnarchen hören. Was ist mir mein Schweigen wert?'",
         opts: [
             { 
-                t: "Gegenangriff: 'Ich lösche deine Leads.'", 
+                t: "'Ich lösche deine Leads.'", 
                 rep: { "Markus": -10 },
                 m: 5, f: -5, a: 15, c: 10, 
                 r: "Du drohst zurück. Markus hebt die Hände. 'Wow, ganz ruhig, Tiger. War nur ein Witz.' Er geht, aber das Verhältnis ist vergiftet." 
@@ -3312,7 +3312,7 @@ export const sidequests = [
         text: "Du bist auf einem Dienstgang im 3. Stock. Als du ins Marketing-Büro schaust, gefriert dir das Blut in den Adern. Die halbe Abteilung liegt auf dem Boden, zuckt wild, verdreht die Augen und stöhnt laut. Es sieht aus wie ein massiver medizinischer Notfall oder eine kollektive Dämonenbeschwörung!",
         opts: [
             { 
-                t: "Panik: Den Notarzt rufen!", 
+                t: "Panisch den Notarzt rufen", 
                 next: "path_workout_panic", 
                 m: 15, f: 0, a: 25, c: 5, 
                 r: "Du brüllst 'SANITÄTER!' und wählst die 112. Plötzlich setzt sich Chantal genervt auf. 'Spinnst du?! Das ist 'Agile Floor Pilates'! Du ruinierst unseren Flow!' Peinlich." 
@@ -3340,7 +3340,7 @@ export const sidequests = [
         text: "Du gehst geduckt und beschämt über den Flur. Ein Kollege aus dem Vertrieb zeigt auf dich und lacht so laut, dass er keine Luft kriegt. 'Da ist er! Der Flucht-Tänzer! Das GIF von deinem Panik-Gesicht nach dem Moonwalk hat schon 10.000 Views auf LinkedIn!'",
         opts: [
             { 
-                t: "Mitlachen (Selbstironie)", 
+                t: "Selbstironisch mitlachen", 
                 m: 15, f: 5, a: -15, c: 0, 
                 r: "Du machst gute Miene zum bösen Spiel und lachst mit. Das nimmt dem Witz die Schärfe. Die Leute respektieren, dass du über dich selbst lachen kannst." 
             },
@@ -3366,7 +3366,7 @@ export const sidequests = [
                 r: "Du stößt Chantal weg und flüchtest zurück an die echte Arbeit. Du hast einen epischen Karriere-Boost weggeworfen." 
             },
             { 
-                t: "Zeitfresser: Autogramme und PR-Termine", 
+                t: "Autogramme geben und PR-Termine absitzen", 
                 rep: { "Chantal": 20, "Dr. Wichtig": 15 },
                 m: 60, f: 20, a: -15, c: -10, 
                 r: "Du wirst zum Maskottchen. Du verbringst eine geschlagene Stunde damit, in Kameras zu winken und Selfies zu machen. Eine riesige Zeitverschwendung, aber dein Ego und der Chef lieben es." 
@@ -3382,13 +3382,13 @@ export const sidequests = [
         text: "Chantal flüstert lautstark am Wasserspender, als du vorbeigehst: '...und dann hat Frau Elster die beiden im Serverraum erwischt! Auf dem Boden! Der arme Kevin, das ist ja Missbrauch von Abhängigkeitsverhältnissen!' Sie sieht dich und verstummt schockiert.",
         opts: [
             { 
-                t: "Dazwischengehen: 'Er steckte fest!'", 
+                t: "'Er steckte nur fest!'", 
                 rep: { "Chantal": -5 },
                 m: 10, f: 0, a: 15, c: 5, 
                 r: "Du versuchst, es zu erklären. Chantal nickt langsam. 'Klar... 'festgesteckt'. Sehr kreativ, Müller.' Niemand glaubt dir. Dein Ruf ist angeschlagen." 
             },
             { 
-                t: "Wegrennen (Fluchtreflex)", 
+                t: "Dem Fluchtreflex nachgeben", 
                 m: 5, f: 5, a: 10, c: 15, 
                 r: "Du drehst dich um und flüchtest. Das wirkt natürlich wie ein Schuldeingeständnis. Die Gerüchteküche explodiert jetzt richtig." 
             }
@@ -3403,13 +3403,13 @@ export const sidequests = [
         text: "Du stehst in der Lobby. Kevin fängt dich ab. Er wirkt ungewohnt selbstbewusst. 'Dieses Foto... lösch das. Sonst sag ich dem Chef, dass du mich gezwungen hast, deine Tastatur mit einer Zahnbürste zu reinigen.'",
         opts: [
             { 
-                t: "Lachen: 'Mach doch!'", 
+                t: "'Mach doch!'", 
                 rep: { "Kevin": -15, "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: -5, c: 20, 
                 r: "'Versuch's, Kleiner!' Kevin rennt tatsächlich zum Chef. Du darfst das Foto behalten, kriegst aber später Ärger wegen 'Machtmissbrauch'." 
             },
             { 
-                t: "Foto löschen (Kapitulieren)", 
+                t: "Kapitulieren und das Foto löschen", 
                 rep: { "Kevin": 5 },
                 m: 5, f: 0, a: 10, c: 0, 
                 r: "Du drückst auf 'Löschen'. Kevin nickt cool. 'Gute Wahl, Boomer.' Der Azubi hat dich gerade dominiert." 
@@ -3457,7 +3457,7 @@ export const sidequests = [
                 r: "Kevin reißt die Augen auf. 'GPS?! Oh Gott, HR weiß genau, dass er zuletzt bei mir war!' Er vergisst die Suche sofort und sprintet los, um sich ein wasserdichtes Alibi für die Tatzeit zu überlegen. Du grinst in dich hinein." 
             },
             { 
-                t: "Lügen: 'Egon hat ihn schon mitgenommen.'", 
+                t: "'Egon hat ihn schon mitgenommen.'", 
                 rep: { "Kevin": 5 },
                 m: 5, f: 5, a: 0, c: 10, 
                 r: "Kevin wird kreidebleich. 'Oh mein Gott. Ich bin tot. Egon wird mich im Heizungskeller einmauern!' Er rennt weinend weg. Du hast deine Ruhe und dein neues Werkzeug ist sicher." 
@@ -3479,10 +3479,10 @@ export const sidequests = [
                 r: "Du stellst dich neben ihn und schüttelst theatralisch den Kopf. 'Egon, Sie haben mein volles Mitleid. Richtig asozial.' Egon nickt brummend. Tarnung ist alles." 
             },
             { 
-                t: "Panik: Die Kameraaufnahmen heimlich löschen", 
+                t: "Panisch die Kameraaufnahmen löschen", 
                 req: "admin_pw",
                 m: 15, f: -5, a: 10, c: -20, 
-                r: "Du loggst dich schnell mit deinen Root-Rechten ins System ein und löschst die Video-Files von heute Morgen. Egon findet nichts. Du hast einen Herzinfarkt knapp überlebt." 
+                r: "Du loggst dich schnell mit deinen Root-Rechten ins System ein und löschst die Video-Files von vorhin. Egon findet nichts. Du hast einen Herzinfarkt knapp überlebt." 
             }
         ]
     },
@@ -3494,7 +3494,7 @@ export const sidequests = [
         text: "Der Brandschutzbeauftragte steht vor dem Feuerlöscher, den du so vorbildlich zurückgehängt hast. Er notiert etwas auf seinem Klemmbrett. 'Herr Müller! Gut, dass das Gerät am Platz hängt. ABER: Das Schutzsiegel ist gebrochen und er ist halb leer! Haben Sie das nicht geprüft?!'",
         opts: [
             { 
-                t: "Ausrede: 'Ich bin nicht der Hausmeister!'", 
+                t: "'Ich bin nicht der Hausmeister!'", 
                 m: 10, f: 0, a: 10, c: -5, 
                 r: "Du argumentierst, dass du nur die physische Rückführung übernommen hast. Er seufzt. 'Immer diese Ausreden in der IT. Ich muss einen Wartungsauftrag schreiben.' Nervig." 
             },
@@ -3526,8 +3526,8 @@ export const sidequests = [
             "yes": {  
                 text: "Admn_Rogue: 'Sauber. Installier das Skript im Anhang auf dem Mainframe. Passwort ist 1234.'",  
                 opts: [ 
-                    { t: "[System: Angehängtes Skript herunterladen und ausführen]", next: "done_hack" }, 
-                    { t: "Puh, lass mal. Mein Radar beim Chef ist gerade eh schon hoch. Bin raus.", next: "chicken" } 
+                    { t: "[Angehängtes Skript herunterladen und ausführen]", next: "done_hack" }, 
+                    { t: "Puh, lass mal. Ich bin beim Chef eh schon auf dem Radar. Bin raus.", next: "chicken" } 
                 ] 
             }, 
             "haggle": { 
@@ -3540,13 +3540,13 @@ export const sidequests = [
             "no": {  
                 text: "Admn_Rogue: 'Langweiler. Wir löschen dich aus der Gruppe.'",  
                 opts: [ 
-                    { t: "[System: Chat stummschalten und archivieren]", next: "kicked" } 
+                    { t: "[Chat stummschalten und archivieren]", next: "kicked" } 
                 ] 
             } 
         }, 
         results: { 
             "done_hack": { 
-                txt: "[System: Skript erfolgreich ausgeführt] Die Arbeitszeiterfassung ist manipuliert. Du lehnst dich entspannt zurück und tust für den Rest des Tages absolut gar nichts mehr, während das System fleißig für dich arbeitet.", 
+                txt: "[System: Skript erfolgreich ausgeführt] Die Arbeitszeiterfassung ist manipuliert. Du tust für den Rest des Tages absolut gar nichts mehr, während das System fleißig für dich arbeitet.", 
                 m: 10, f: 30, a: -10, c: 20 
             }, 
             "chicken": { 
@@ -3573,15 +3573,15 @@ export const sidequests = [
             "root": { 
                 text: "InfoService: Sie haben ein brandneues iPhone 50 gewonnen! Klicken Sie hier: www.virus-load.ru. Klicken Sie JETZT für Ihren Gewinn!", 
                 opts: [ 
-                    { t: "[System: Auf den Link klicken]", next: "virus_start" }, 
-                    { t: "[System: Nachricht sofort löschen]", next: "clean" } 
+                    { t: "[Auf den Link klicken]", next: "virus_start" }, 
+                    { t: "[Nachricht sofort löschen]", next: "clean" } 
                 ] 
             }, 
             "virus_start": { 
                 text: "[Browser öffnet sich...] DOWNLOADING... 99%... INSTALLING ROOTKIT...", 
                 opts: [ 
-                    { t: "[System: Prozess panisch abbrechen! X drücken!]", next: "virus_fail" }, 
-                    { t: "[System: Abwarten, vielleicht gibt es ja wirklich ein Handy...]", next: "virus_doom" } 
+                    { t: "[Prozess panisch abbrechen! X drücken!]", next: "virus_fail" }, 
+                    { t: "[Abwarten, vielleicht gibt es ja wirklich ein Handy...]", next: "virus_doom" } 
                 ] 
             } 
         }, 
@@ -3596,7 +3596,7 @@ export const sidequests = [
             }, 
             "virus_doom": { 
                 txt: "[System: VIRUS AKTIV] Dein Handy spielt plötzlich extrem lauten Techno-Schlager auf maximaler Lautstärke ab. Der Chef guckt schon warnend in deine Richtung!", 
-                m: 5, f: 0, a: 30, c: 40, virus: true 
+                m: 5, f: 0, a: 30, c: 40 
             } 
         } 
     },
@@ -3619,14 +3619,14 @@ export const sidequests = [
                 text: "Lisa: 'Super! Treffen uns in 5 Min in der Lobby. Ich erkenne dich am Karohemd, richtig? 😉'", 
                 opts: [ 
                     { t: "Erwischt. Bis gleich in der Lobby!", next: "go_date" }, 
-                    { t: "[System: Match aus unerklärlicher Panik auflösen]", next: "ghost" } 
+                    { t: "[Match aus unerklärlicher Panik auflösen]", next: "ghost" } 
                 ] 
             }, 
             "hr_check": { 
                 text: "Lisa: 'LOL nein! 😂 Ich bin im Marketing. Ich will nur Koffein, kein Compliance-Audit. Versprochen!'", 
                 opts: [ 
                     { t: "Puh, okay. Dann bis gleich am Kaffeeautomaten in der Lobby!", next: "go_date" }, 
-                    { t: "[System: Nutzerin blockieren] Genau das würde ein HR-Spion sagen...", next: "date_no" } 
+                    { t: "[Nutzerin blockieren] Genau das würde ein HR-Spion sagen...", next: "date_no" } 
                 ] 
             } 
         }, 
@@ -3697,7 +3697,7 @@ export const sidequests = [
                 text: "[Bild empfangen: Dein getaptes Kunstwerk auf dem Parkplatz] Auditor: 'Wer war das?! Das ist genial! Ich krieg die Fahrertür nicht auf, aber tiefster Respekt. Wer auch immer das war: Komm in mein Büro. - Der externe Auditor'", 
                 opts: [ 
                     { t: "Das war ich. Panzerband löst eben alle Probleme!", next: "res_respect" }, 
-                    { t: "[System: Nachricht ignorieren & panisch unter dem Tisch verstecken]", next: "res_fear" } 
+                    { t: "[Nachricht ignorieren & panisch unter dem Tisch verstecken]", next: "res_fear" } 
                 ] 
             }, 
             "res_respect": { 
@@ -3709,13 +3709,13 @@ export const sidequests = [
             "res_fear": { 
                 text: "[System: Du starrst auf das Display und antwortest nicht] Auditor: 'Hallo? Keiner? Schade. Aber das Tape hält echt verdammt gut...'", 
                 opts: [ 
-                    { t: "[System: Chat endgültig löschen]", next: "end_fear" } 
+                    { t: "[Chat endgültig löschen]", next: "end_fear" } 
                 ] 
             } 
         }, 
         results: { 
             "end_respect": { 
-                txt: "[System: Chat beendet] Du gehst rüber in sein Büro. Der Auditor ist jetzt dein größter Fan. Deine Aggro sinkt massiv, denn so ein Streich tut der Seele einfach gut.", 
+                txt: "[System: Chat beendet] Du gehst rüber in sein Büro. Der Auditor ist jetzt dein größter Fan. So ein Streich tut der Seele gut - du bist den ganzen Ärger auf einen Schlag los.", 
                 m: 10, f: 0, a: -15, c: -10 
             }, 
             "end_fear": { 
@@ -3736,14 +3736,14 @@ export const sidequests = [
             "root": { 
                 text: "Dr. Wichtig: 'MÜLLER! Ihr Corsa steht in meiner Flugschneise! Ich habe in 5 Minuten einen hochwichtigen Termin beim Golf-Club. BEWEGEN SIE DAS DING!'", 
                 opts: [ 
-                    { t: "[System: Handy schnappen und sofort zum Parkplatz rennen]", next: "res_fast" }, 
-                    { t: "[System: Nachricht als ungelesen markieren und Handy ignorieren]", next: "res_ignore" } 
+                    { t: "[Handy schnappen und sofort zum Parkplatz rennen]", next: "res_fast" }, 
+                    { t: "[Nachricht als ungelesen markieren und Handy ignorieren]", next: "res_ignore" } 
                 ] 
             }, 
             "res_fast": { 
                 text: "[System: Chat verlassen. Du sprintest außer Atem nach unten] Du stehst am Parkplatz. Der Chef fuchtelt wild mit den Autoschlüsseln seines SUVs.", 
                 opts: [ 
-                    { t: "[System: Zähneknirschend ins Auto steigen und umparken]", next: "end_fast" } 
+                    { t: "[Zähneknirschend ins Auto steigen und umparken]", next: "end_fast" } 
                 ] 
             }, 
             "res_ignore": { 
@@ -3755,12 +3755,12 @@ export const sidequests = [
         }, 
         results: { 
             "end_fast": { 
-                txt: "Du kommst schwitzend zurück an deinen Platz. Du hast den Chef besänftigt, bist aber völlig fertig und fühlst dich wie ein Laufbursche.", 
+                txt: "Du kommst schwitzend zurück an deinen Platz. Du hast den Chef besänftigt, bist aber völlig fertig. Botengänge stehen nicht in deiner Stellenbeschreibung.", 
                 rep: { "Dr. Wichtig": 2 },	
                 m: 15, f: -10, a: -5, c: 5 
             }, 
             "end_ignore": { 
-                txt: "Das war ein teures Taxi für den Golfclub. Der Chef ist stinksauer auf dich, aber dein inneres Karma-Konto und deine Faulheit feiern ein Fest.", 
+                txt: "Das war ein teures Taxi für den Golfclub. Der Chef ist stinksauer auf dich, aber dein inneres Karma-Konto feiert ein Fest, und angestrengt hast du dich dafür kein bisschen.", 
                 rep: { "Dr. Wichtig": -5 },	
                 m: 5, f: 15, a: 20, c: -10 
             } 
@@ -3841,14 +3841,14 @@ export const sidequests = [
             "root": { 
                 text: "Anon: 'Ich zahle 1 Bitcoin pro Datensatz für interne Firmengeheimnisse. Komplett anonym über ein Escrow-System. Interesse an schnellem Geld?'", 
                 opts: [ 
-                    { t: "[System: Chat sofort schließen & Session beenden]", next: "good" }, 
+                    { t: "[Chat sofort schließen & Session beenden]", next: "good" }, 
                     { t: "Wie genau stellst du dir das vor? Bin ganz Ohr.", next: "bad" } 
                 ] 
             }, 
             "bad": { 
                 text: "Anon: 'Lass einfach einen Dump eurer Kundendatenbank über diesen gesicherten Onion-Link laufen. Meine Scripts waschen alle Spuren. Keiner wird es je merken.'", 
                 opts: [ 
-                    { t: "[System: Datei 'Kundendatenbank.sql' auswählen & Upload starten]", next: "crime" }, 
+                    { t: "[Datei 'Kundendatenbank.sql' auswählen & Upload starten]", next: "crime" }, 
                     { t: "Nein, das ist mir eine Nummer zu groß. Ich bin raus.", next: "chicken" } 
                 ] 
             } 
@@ -3876,7 +3876,7 @@ export const sidequests = [
         startNode: "root", 
         nodes: { 
             "root": { 
-                text: "Bernd: 'Hör mal, ganz heikles Thema. Kannst du gerade schreiben? Ich hab dem Kunden aus Versehen die interne Kalkulation mit unserer riesigen Marge geschickt statt dem Angebot! 😱 Wenn der Chef das sieht, bin ich tot. Kannst du die Mail vom Server löschen, bevor der Kunde sie öffnet?'", 
+                text: "Bernd: 'Hör mal, ganz heikles Thema. Kannst du gerade schreiben? Ich hab dem Kunden aus Versehen die interne Kalkulation mit unserer riesigen Marge geschickt statt dem Angebot! 😱 Wenn der Chef das rauskriegt, kann ich mir 'nen Karton holen! Kannst du die Mail vom Server löschen, bevor der Kunde sie öffnet?'", 
                 opts: [ 
                     { t: "Okay, ich lösche sie. Aber du schuldest mir was.", next: "wipe" }, 
                     { t: "Vergiss es. Wenn das rauskommt, fliege ich mit dir.", next: "deny" }, 
@@ -3962,7 +3962,7 @@ export const sidequests = [
             } 
         }, 
         results: { 
-            "boring": { txt: "Unbekannt: 'Oh, sorry man.' Du hast deine Ruhe. Langweilig, aber sicher.", m: 2, f: 0, a: 0, c: 0 }, 
+            "boring": { txt: "Unbekannt: 'Oh, sorry man.' Du hast deine Ruhe. Kein Drama, keine Story.", m: 2, f: 0, a: 0, c: 0 }, 
             "confused": { txt: "Unbekannt: 'Shit, Bullen?! Bin weg!' Er schreibt nicht mehr. Ein voller Erfolg für die IT-Abteilung.", m: 3, f: 5, a: -10, c: 0 }, 
             "block": { txt: "Unbekannt: 'Fuck, lass mich in Ruhe!' Du hast ihn in Panik versetzt und die Nummer blockiert. Gutes Gefühl.", m: 2, f: 0, a: 5, c: 0 } 
         } 
@@ -4187,7 +4187,7 @@ export const sidequests = [
         }, 
         results: { 
             "delete": { txt: "[System: Absender in Spam verschoben] Weg damit. Wer fällt heute noch auf sowas rein? Du widmest dich wieder deiner echten Arbeit.", m: 2, f: 0, a: 0, c: 0 }, 
-            "chicken": { txt: "[System: Chat beendet] Du brichst den Kontakt ab. Besser ist das. Irgendwo auf der Welt ist ein Prinz jetzt sehr enttäuscht von dir.", m: 2, f: 0, a: 0, c: 0 }, 
+            "chicken": { txt: "[System: Chat beendet] Du brichst den Kontakt ab. Sauberer Schnitt. Irgendwo auf der Welt ist ein Prinz jetzt sehr enttäuscht von dir.", m: 2, f: 0, a: 0, c: 0 }, 
             "send_iban": { txt: "[Nachricht gelesen...] PING! Dein Handy vibriert fast vom Tisch. Banking-App: 'Eingang: +7.500.000,00 USD'. ... Moment. Es hat wirklich geklappt?! Du bist reich! Warum haben dich alle immer davor gewarnt?", m: 5, f: 100, a: -100, c: 0, loot: "black_card", next: "prince_active" } 
         } 
     },
@@ -4237,15 +4237,15 @@ export const sidequests = [
             "root": { 
                 text: "Chantal hat dich zur Gruppe hinzugefügt. (Sie hat sich wohl verklickt...) Chantal: 'Habt ihr Müller heute gesehen? Der hat schon wieder diesen uralten Hoodie an. Wetten, der schläft heimlich im Serverraum zwischen den Kabeln? 🤢'", 
                 opts: [ 
-                    { t: "[Lesebestätigung deaktivieren & weiterlesen]", next: "spy" }, 
+                    { t: "[Lesebestätigung deaktivieren und weiterlesen]", next: "spy" }, 
                     { t: "Ich bin übrigens in dieser Gruppe. Nur zur Info.", next: "fight" }, 
-                    { t: "[System: Gruppe verlassen]", next: "leave" } 
+                    { t: "[Gruppe verlassen]", next: "leave" } 
                 ] 
             }, 
             "spy": { 
                 text: "Markus: 'Ja, totaler Freak. Aber wir müssen echt nett sein. Wenn der uns die Admin-Rechte entzieht, können wir nicht mehr online shoppen. Also schön lächeln!'", 
                 opts: [ 
-                    { t: "[System: Chat-Screenshot an HR weiterleiten]", next: "snitch" }, 
+                    { t: "[Chat-Screenshot an HR weiterleiten]", next: "snitch" }, 
                     { t: "[GIF gesendet: Saurons Auge sieht alles]", next: "scare" } 
                 ] 
             } 
@@ -4279,8 +4279,8 @@ export const sidequests = [
             "root": { 
                 text: "Mama: 'Hallo Schatz. Der Drucker blinkt böse rot. Wir haben absolut NICHTS gemacht! Papa wollte das Rezept für den Apfelkuchen ausdrucken. Jetzt steht da PC LOAD LETTER. Heißt das, das Internet ist leer? Papa drückt schon wild auf alle Knöpfe!'", 
                 opts: [ 
-                    { t: "[System: Sprachanruf starten]", next: "help" }, 
-                    { t: "[Nachricht stumm ignorieren & Chat schließen]", next: "ignore" }, 
+                    { t: "[Sprachanruf starten]", next: "help" }, 
+                    { t: "[Nachricht ignorieren und Chat schließen]", next: "ignore" }, 
                     { t: "Zieht einfach den Stromstecker aus der Wand! Bitte drückt nichts mehr!", next: "plug" } 
                 ] 
             }, 
@@ -4288,7 +4288,7 @@ export const sidequests = [
                 text: "[System: Sprachanruf läuft (42:15)] Mama (am Telefon): 'Papa hat jetzt an so einem dicken schwarzen Kabel gezogen. Der Toaster ist jetzt aus, aber der Drucker rattert weiter... Oh, jetzt riecht es verbrannt! Was sollen wir tun?!'", 
                 opts: [ 
                     { t: "Okay, ganz ruhig. Gib mir bitte einfach mal Papa ans Telefon...", next: "good_son" }, 
-                    { t: "[System: Auflegen]", next: "bad_son" } 
+                    { t: "[Auflegen]", next: "bad_son" } 
                 ] 
             } 
         }, 
@@ -4382,7 +4382,7 @@ export const sidequests = [
             "proof": { 
                 text: "[Datei empfangen: Gehaltsabrechnung_Kevin.pdf] Anon: 'Gern geschehen. Viel Spaß bei der nächsten Gehaltsverhandlung. Verbrenn dir nicht die Finger an dem Wissen.'", 
                 opts: [ 
-                    { t: "[System: Datei verschlüsselt herunterladen & speichern]", next: "loot_it" } 
+                    { t: "[Datei verschlüsselt herunterladen & speichern]", next: "loot_it" } 
                 ] 
             } 
         }, 
@@ -4408,8 +4408,8 @@ export const sidequests = [
             "root": { 
                 text: "Chantal: 'Hii! Kannst du mein Insta liken? Ich brauche 500 Likes für die Firmen-Kampagne WeLoveIT. Sonst krieg ich Ärger vom Chef! Bitte! Wenn ich die Quote nicht schaffe, streicht er das komplette Marketing-Budget!'", 
                 opts: [ 
-                    { t: "[System: Herzchen drücken & Beitrag teilen]", next: "like" }, 
-                    { t: "[Nachricht auf 'Gelesen' lassen & App schließen]", next: "ignore" }, 
+                    { t: "[Herzchen drücken & Beitrag teilen]", next: "like" }, 
+                    { t: "[Auf 'Gelesen' lassen und App schließen]", next: "ignore" }, 
                     { t: "Und was springt für mich dabei raus?", next: "deal" } 
                 ] 
             }, 
@@ -4491,8 +4491,8 @@ export const sidequests = [
             "intro": { 
                 text: "👑 PRINZ: 'My dearest friend! Bad news! There was a counter-revolution! My uncle is alive! He wants the money back! If not, he calls Interpol! Please send back NOW!'", 
                 opts: [ 
-                    { t: "[System: Gesamte Summe rücküberweisen]", next: "return_money" }, 
-                    { t: "[System: Nutzer sofort blockieren]", next: "keep_money" }, 
+                    { t: "[Gesamte Summe rücküberweisen]", next: "return_money" }, 
+                    { t: "[Nutzer sofort blockieren]", next: "keep_money" }, 
                     { t: "Hab das Geld leider schon komplett für Fortnite Skins verballert.", next: "troll_prince" } 
                 ] 
             }, 
@@ -4512,17 +4512,17 @@ export const sidequests = [
                 text: "👑 PRINZ: 'YOU WHAT?! Skins?! Are you crazy?! My head is on the line here! Send the rest! NOW!'", 
                 opts: [ 
                     { t: "Okay, okay! Bleib locker. Ich schick dir den Rest zurück.", next: "return_money" }, 
-                    { t: "[System: Nutzer sofort blockieren]", next: "res_kept" } 
+                    { t: "[Nutzer sofort blockieren]", next: "res_kept" } 
                 ] 
             } 
         }, 
         results: { 
             "res_returned": {  
-                txt: "👑 PRINZ: 'You are a saint! I will name my firstborn Sysadmin.' [Chat beendet] Die Karte ist wertlos, aber dein Gewissen ist rein.",  
+                txt: "👑 PRINZ: 'You are a saint! I will name my firstborn Sysadmin.' [Chat beendet] Die Karte ist wertlos, aber du kannst wieder in den Spiegel schauen.",  
                 m: 10, rem: "black_card", loot: "prince_letter", f: 0, a: -15, c: -20  
             }, 
             "res_kept": {  
-                txt: "[System: Gerät offline] Du behältst die Millionen. Aber dein Radar schlägt massiv aus. Du hast jetzt sehr wahrscheinlich Interpol am Hals.",  
+                txt: "[System: Gerät offline] Du behältst die Millionen. Aber Geld dieser Größenordnung bleibt nicht unsichtbar. Du hast jetzt sehr wahrscheinlich Interpol am Hals.",  
                 m: 2, f: 10, a: 0, c: 35  
             } 
         } 
@@ -4540,20 +4540,20 @@ export const sidequests = [
                 opts: [ 
                     { t: "Und habt ihr mal auf die Schuhe geachtet?! 🤮", next: "join_in" }, 
                     { t: "Vorsicht Leute, die IT sieht alles. Auch der Chef liest Logs.", next: "warn" }, 
-                    { t: "[System: Gruppe stummschalten & Handy sperren]", next: "ignore" } 
+                    { t: "[Gruppe stummschalten & Handy sperren]", next: "ignore" } 
                 ] 
             }, 
             "join_in": { 
                 text: "Chantal: 'OMG JA! 💀 Du bist der Beste! Ich mach ein Meme draus.' (Dein Handy vibriert kurz darauf, weil sie ein Bild in die Gruppe postet)", 
                 opts: [ 
-                    { t: "[System: Auf das Bild mit 😂 reagieren]", next: "meme_like" } 
+                    { t: "[Auf das Bild mit 😂 reagieren]", next: "meme_like" } 
                 ] 
             } 
         }, 
         results: { 
             "ignore": {  
                 txt: "[System: Benachrichtigungen aus] Du ignorierst den Chat. Chantal schreibt dir später privat: 'Langweiler'. Aber du hast immerhin was gearbeitet.",  
-                ep: { "Chantal": -5, "Kevin": -2 },
+                rep: { "Chantal": -5, "Kevin": -2 },
                 m: 2, f: -5, a: 5, c: -5 
             }, 
             "warn": {  
@@ -4581,7 +4581,7 @@ export const sidequests = [
             "root": { 
                 text: "Chef: 'Herr Müller, ich höre viel Gelächter aus Ihrer Ecke. Haben wir die Quartalsziele schon erreicht? Oder warum ist die Stimmung so gut?'", 
                 opts: [ 
-                    { t: "Ein Kollege hat einen extrem lustigen Code-Fehler gemacht. Reiner IT-Humor, Chef.", next: "lie" }, 
+                    { t: "Ein Kollege hat einen sehr lustigen Code-Fehler gebaut. Reiner IT-Humor, Chef.", next: "lie" }, 
                     { t: "Entschuldigung. Das war unprofessionell und kommt nicht wieder vor.", next: "sorry" } 
                 ] 
             } 
@@ -4611,7 +4611,7 @@ export const sidequests = [
                 opts: [ 
                     { t: "Bin dabei! Ich bring dir den Zehner nachher rüber.", next: "bet_placed" }, 
                     { t: "2:1 für Bayern. Aber ich spiele nur zum Spaß mit, ohne Kohle.", next: "bet_chat" }, 
-                    { t: "[System: Chat wegen illegalem Glücksspiel an HR melden]", next: "snitch" } 
+                    { t: "[Chat wegen illegalem Glücksspiel an HR melden]", next: "snitch" } 
                 ] 
             } 
         }, 
@@ -4649,7 +4649,7 @@ export const sidequests = [
         }, 
         results: { 
             "encourage": {  
-                txt: "[System: Gabi hat das Bild in ihre Story gepostet] 1 Stunde später hörst du den Chef auf dem Flur brüllen: 'WO IST FRAU GABI?!'. Er hat wohl doch einen geheimen Stalker-Account. Ups.",  
+                txt: "[System: Gabi hat das Bild in ihre Story gepostet] 1 Stunde später hallt es über den Flur: 'WO IST FRAU GABI?!'. Er hat wohl doch einen geheimen Stalker-Account. Ups.",  
                 m: 5, f: 5, a: 5, c: 10 
             }, 
             "warn": {  
@@ -4982,7 +4982,7 @@ export const sidequests = [
                 ]
             },
             landlord_sorry: {
-                text: "Besser ist das. Und räumen Sie Ihre Amazon-Pakete aus dem Hausflur. Das ist kein Lagerhaus.",
+                text: "Gut so. Und räumen Sie Ihre Pakete aus dem Hausflur. Das ist kein Lagerhaus.",
                 opts: [
                     { t: "Mache ich heute Abend.", next: "res_landlord_sad" }
                 ]
@@ -5144,7 +5144,7 @@ export const sidequests = [
             }
         },
         results: {
-            res_chan_mad: { txt: "Chantals ständige Extrawürste nerven dezent. Du verdrehst die Augen.", m: 5, f: 0, a: 10, c: 5, rep: {"Chantal": -5} },
+            res_chan_mad: { txt: "Chantals ständige Extrawürste nerven dezent. Ein Seufzer, dann Ruhe.", m: 5, f: 0, a: 10, c: 5, rep: {"Chantal": -5} },
             res_chan_happy: { txt: "Du hast die Regeln gebogen, aber hast deine Ruhe. Und eine Kollegin, die dich mag.", m: 10, f: 5, a: -5, c: 5, rep: {"Chantal": 10} }
         }
     },
@@ -5241,7 +5241,7 @@ export const sidequests = [
             }
         },
         results: {
-            res_ebay_ignore: { txt: "Der tägliche Wahnsinn im Internet. Du packst das Handy weg.", m: 2, f: 0, a: 0, c: 0 },
+            res_ebay_ignore: { txt: "Der tägliche Wahnsinn im Internet. Handy aus, weiterarbeiten.", m: 2, f: 0, a: 0, c: 0 },
             res_ebay_mad: { txt: "Solche Leute auf Kleinanzeigen rauben dir manchmal echt den Nerv.", m: 5, f: 0, a: 10, c: 0 },
             res_ebay_sad: { txt: "Du wunderst dich manchmal wirklich über die Menschheit.", m: 2, f: 5, a: 5, c: 0 }
         }
@@ -5275,12 +5275,12 @@ export const sidequests = [
         },
         results: {
             res_prop_happy: { txt: "Für einmal hat es echte Vorteile, bei GlobalCorp im Büro zu sitzen. Deine Laune bessert sich minimal.", m: 2, f: -5, a: -5, c: 0 },
-            res_prop_mad: { txt: "Faxgeräte... die Endgegner der deutschen Bürokratie. Du verdrehst die Augen.", m: 5, f: 0, a: 10, c: 0 }
+            res_prop_mad: { txt: "Faxgeräte... die Endgegner der deutschen Bürokratie. Manche Kämpfe kann man nur akzeptieren.", m: 5, f: 0, a: 10, c: 0 }
         }
     },
 
-    // CHAIN 1: Die Büropflanze
-    // CHAIN: Die Bowl-Bestellung (Vorlauf zu sq_food_bowl_delivery)
+    // CHAIN 1: the office plant
+    // CHAIN: the bowl order (lead-in to sq_food_bowl_delivery)
     {
         id: "sq_food_bowl_order",
         kind: "phone",
@@ -5454,7 +5454,7 @@ export const sidequests = [
                 t: "Bescheiden den Ruhm einstreichen", 
                 rep: { "Dr. Wichtig": 10 },
                 m: 10, f: 0, a: -5, c: -5, 
-                r: "Du gibst an, einen 'grünen Daumen' zu besitzen. Der Chef nickt anerkennend. Dein Radar sinkt ein Stück." 
+                r: "Du gibst an, einen 'grünen Daumen' zu besitzen. Der Chef wirkt ehrlich beeindruckt - Leute, die freiwillig Verantwortung übernehmen, sind hier selten." 
             }
         ]
     },
@@ -5481,7 +5481,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 2: Der Stuhl
+    // CHAIN 2: the chair
     {
         id: "sq_furniture_1",
         kind: "text",
@@ -5514,7 +5514,7 @@ export const sidequests = [
         kind: "text",
         title: "Stolzer Dieb",
         reqStory: "path_chair_steal",
-        text: "Das Marketing-Team hat bemerkt, dass ihr bester Stuhl fehlt. Sie durchsuchen die Büros und stehen plötzlich kopfschüttelnd in deiner Tür.",
+        text: "Das Marketing-Team hat bemerkt, dass ihr bester Stuhl fehlt. Sie durchsuchen die Büros und stehen schließlich kopfschüttelnd in deiner Tür.",
         opts: [
             { 
                 t: "Schuld von sich weisen und weinen", 
@@ -5534,7 +5534,7 @@ export const sidequests = [
         kind: "text",
         title: "Der Krumme",
         reqStory: "path_chair_suffer",
-        text: "Dein Rücken schmerzt extrem. Du läufst wie der Glöckner von Notre-Dame durch den Flur. Der Chef kommt dir entgegen.",
+        text: "Dein Rücken schmerzt extrem. Du bewegst dich im 45-Grad-Winkel durch den Flur. Der Chef kommt dir entgegen.",
         opts: [
             { 
                 t: "Die Märtyrer-Nummer durchziehen", 
@@ -5565,7 +5565,7 @@ export const sidequests = [
                 r: "Du schreist Markus im Flur vor allen Leuten an. Der Stuhl ist zurück, aber du hast dir einen neuen Feind gemacht." 
             },
             { 
-                t: "Kevin loben (Keine Taten folgen lassen)", 
+                t: "Kevin loben, ohne Taten folgen zu lassen", 
                 rep: { "Kevin": 5, "Markus": -5 },
                 m: 10, f: -5, a: -5, c: 0, 
                 r: "Du holst dir deinen Stuhl mit starrem Blick von Markus zurück. Kevin kriegt ein aufmunterndes High-Five." 
@@ -5607,7 +5607,7 @@ export const sidequests = [
         kind: "text",
         title: "Frostbeulen",
         reqStory: "path_temp_freeze",
-        text: "Gabi sitzt mit Winterjacke und Schal an ihrem Platz. Sie schnieft. Sie sieht dich an, als hättest du ihr persönlich den Sommer gestohlen.",
+        text: "Gabi sitzt mit Winterjacke und Schal an ihrem Platz. Sie schnieft. Ihr Blick macht dich persönlich für den Winter verantwortlich.",
         opts: [
             { 
                 t: "Einen heißen Kaffee spendieren", 
@@ -5728,7 +5728,7 @@ export const sidequests = [
                 r: "Die Schokolade glättet die Wogen perfekt. Sie lacht und sagt: 'Ausnahmsweise, Müller!'" 
             },
             { 
-                t: "Ausrede: 'Ein technischer Notfall!'", 
+                t: "'Ein technischer Notfall!'", 
                 rep: { "Frau Elster": -5 },
                 m: 5, f: 0, a: 5, c: 5, 
                 r: "Sie glaubt dir kein Wort. Eine Ermahnung wandert in die Personalakte." 
@@ -5817,7 +5817,7 @@ export const sidequests = [
                 r: "Du beharrst darauf, ihn nicht zu haben. Der Pitch vom Marketing sieht furchtbar aus, der Chef tobt." 
             },
             { 
-                t: "Toner hergeben (für Ruhe)", 
+                t: "Den Toner für Ruhe hergeben", 
                 m: 15, f: -5, a: -10, c: -5, 
                 r: "Sie bedanken sich unter Tränen. Du bist der König des Bürostoffs." 
             }
@@ -5836,14 +5836,14 @@ export const sidequests = [
                 r: "Mit großen Worten über 'Windows Update 40H' glättest du die Wogen. Reine Täuschung." 
             },
             { 
-                t: "Zugeben: 'Einsparungsmaßnahme!'", 
+                t: "'Einsparungsmaßnahme!'", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Sich beim Chef mit Einsparungen wichtig tun, klappt nie. Deine Boni sind passé." 
             }
         ]
     },
-// CHAIN 6: Der mysteriöse Kuchen
+// CHAIN 6: the mysterious cake
     {
         id: "sq_bday_1",
         kind: "text",
@@ -5857,7 +5857,7 @@ export const sidequests = [
                 r: "Du flüsterst Gabi zu, dass es sich um Industriespionage der Konkurrenz handeln könnte. Sie wird kreidebleich." 
             },
             { 
-                t: "Kuchen heimlich entsorgen (Reste in Tupper packen)", 
+                t: "Den Kuchen heimlich in Tupperdosen entsorgen", 
                 loot: "donut", 
                 next: "path_cake_hide", 
                 m: 5, f: 5, a: 5, c: 0, 
@@ -5922,7 +5922,7 @@ export const sidequests = [
         text: "Boss Dr. Wichtig tobt durch die Gänge. 'Wer hat meinen laktosefreien Veggie-Kuchen zum 50. weggeworfen?!'",
         opts: [
             { 
-                t: "Zugeben: Es war aus Hygiene-Gründen", 
+                t: "Zugeben, dass es Hygiene-Gründe hatte", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 10, c: 10, 
                 r: "Zugeben ist bei Management-Themen gefährlich. Der Chef hasst dich inständig für deine Dreistigkeit." 
@@ -6019,7 +6019,7 @@ export const sidequests = [
                 r: "Kevin ist selig. Manchmal tut Güte gar nicht so weh." 
             },
             { 
-                t: "Einmischen: Das war deine Anweisung!", 
+                t: "'Das war deine Anweisung!'", 
                 rep: { "Kevin": -10 },
                 m: 5, f: 0, a: 10, c: 5, 
                 r: "Du nimmst ihm den Titel weg. Kevin stürzt in eine tiefe Depression." 
@@ -6027,7 +6027,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 8: Das verschwundene Paket
+    // CHAIN 8: the vanished parcel
     {
         id: "sq_delivery_1",
         char: "Egon",
@@ -6063,7 +6063,7 @@ export const sidequests = [
         kind: "text",
         title: "Egons Groll",
         reqStory: "path_delivery_egon",
-        text: "Egon ist am Kochen. Er verweigert nun jede Reparatur für dich.",
+        text: "Egon ist am Kochen. Im Vorbeigehen lässt er dich wissen, dass die IT ab sofort 'ganz unten auf der Liste' steht. Er verweigert jede Reparatur für dich.",
         opts: [
             { 
                 t: "Stur bleiben", 
@@ -6123,12 +6123,12 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 9: Der Kabel-Salat
+    // CHAIN 9: the cable tangle
     {
         id: "sq_cable_1",
         kind: "text",
         title: "Das Spaghetti-Monster",
-        text: "Du willst deinen Monitor im Büro umstecken, aber unter deinem Tisch sieht es aus, als hätte jemand Spaghettinester geflochten. Hunderte Kabel kreuzen sich im Chaos.",
+        text: "Der Monitor soll nur umgesteckt werden, aber unter deinem Tisch sieht es aus, als hätte jemand Spaghettinester geflochten. Hunderte Kabel kreuzen sich im Chaos.",
         opts: [
             { 
                 t: "Kevin unter den Tisch befehlen", 
@@ -6144,7 +6144,7 @@ export const sidequests = [
                 r: "Ein gewagter Ruck. Ein lauter Knall. Irgendein Gerät ist gerade ausgefallen. Mutig, aber töricht." 
             },
             { 
-                t: "Schrauben und Kabelbinder nutzen (Ordnung schaffen)", 
+                t: "Mit Schrauben und Kabelbindern Ordnung schaffen", 
                 req: "screw", 
                 next: "path_cable_order", 
                 m: 15, f: -10, a: -10, c: -5, 
@@ -6217,7 +6217,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 10: Der Fensterstreit
+    // CHAIN 10: the window war
     {
         id: "sq_window_1",
         kind: "text",
@@ -6235,10 +6235,10 @@ export const sidequests = [
                 t: "Leiden und dicke Jacke anziehen", 
                 next: "path_window_suffer", 
                 m: 5, f: -5, a: -5, c: 0, 
-                r: "Du siehst aus wie ein Polarforscher, aber du riskierst keinen HR-Krieg." 
+                r: "Mit Mütze und Schal am Schreibtisch wirkst du wie ein Polarforscher, aber du riskierst keinen HR-Krieg." 
             },
             { 
-                t: "Gegenmaßnahme: Die Heizung aufdrehen", 
+                t: "Als Gegenmaßnahme die Heizung aufdrehen", 
                 next: "path_window_heat", 
                 m: 10, f: 5, a: 5, c: 5, 
                 r: "Du stellst das Heizungsventil auf 5. Klimawandel leicht gemacht im eigenen Büro." 
@@ -6275,10 +6275,10 @@ export const sidequests = [
         text: "Deine Passivität führt dazu, dass auch Flokies ins Büro wehen. Der Chef lacht laut über dein Polarforscher-Outfit.",
         opts: [
             { 
-                t: "Mitlachen: 'Ist ein Survival-Training!'", 
+                t: "'Ist ein Survival-Training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 5, a: -5, c: -5, 
-                r: "Der Chef findet dich urkomisch. Ein unerwarteter Sieg." 
+                r: "Der Chef findet dich urkomisch." 
             },
             { 
                 t: "Ihm pampig kommen", 
@@ -6317,17 +6317,17 @@ export const sidequests = [
         text: "Du prokrastinierst in einer ruhigen Minute auf Steam und stöberst durch die Neuerscheinungen. Moment mal... da gibt es ein Indie-Spiel namens 'Layer8Problem'. Der SysAdmin auf den Screenshots sieht dir verdammt ähnlich! Und die Feature-Liste liest sich 1:1 wie ein Auszug aus deinem täglichen Wahnsinn. Es wirkt erschreckend echt, als hätte jemand eine Sitcom aus deinem Leid gemacht.",
         opts: [
             { 
-                t: "Kritik: 'Das Spiel ist eh total unrealistisch!'", 
+                t: "'Das Spiel ist eh total unrealistisch!'", 
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du schreibst einen zynischen Kommentar ins Forum: 'Kein Chef der Welt würde Laufbänder im Serverraum fordern!' ... Dann drehst du dich um und siehst Dr. Wichtig mit einem Maßband im Flur stehen. Verdammt."
             },
             { 
-                t: "Shut up and take my money! (Auf Steam anschauen)", 
+                t: "Shut up and take my money! - auf Steam ansehen", 
                 m: 2, f: 5, a: 0, c: 10, 
                 r: "ZACK! Dr. Wichtig steht plötzlich hinter dir. 'Müller! Bezahle ich Sie fürs Spielen?!' Du klickst das Fenster panisch zu, hast dir die Shop-Seite aber noch heimlich gemerkt. Falls du das Projekt unterstützen willst: Die Steam-Version mit Cloud-Speicherstand und Erfolgen findest du unter https://store.steampowered.com/app/4487580/ - über eine Bewertung freue ich mich sehr."
             },
             { 
-                t: "Ignorieren: 'Ich erlebe das jeden Tag, warum sollte ich es spielen?'", 
+                t: "'Ich erlebe das jeden Tag, warum sollte ich es spielen?'", 
                 m: 2, f: 0, a: 0, c: 0, 
                 r: "Absolut verständlich. Warum sollte man Geld ausgeben, um sich von digitalen Kollegen nerven zu lassen, wenn die echten Kollegen das völlig kostenlos machen? Du schließt den Tab kopfschüttelnd."
             }
@@ -6388,12 +6388,12 @@ export const sidequests = [
 },
 
 /* ============================================================
-   DIENSTGANG-WELLE (v4.0.0)
-   Fünf Streifzüge durchs Gebäude für die im Pool dünnen
-   Charaktere Markus, Dr. Wichtig und Chantal, plus zwei
-   charakterfreie Mysterien (Projekt Phoenix, der Kopierer-
-   Karton). Verzahnt mit der Egon-Lore der anderen Wellen.
-   Gates auf stressball und zip_ties, Loot: manual, stressball.
+   ERRAND WAVE (v4.0.0)
+   Five walks through the building for Markus, Dr. Wichtig and
+   Chantal, who were thin in this pool, plus two mysteries with
+   no character attached (Project Phoenix, the copier carton).
+   Interlocked with the Egon lore of the other waves. Gates on
+   stressball and zip_ties, loot: manual, stressball.
    ============================================================ */
 
 {
@@ -6607,7 +6607,7 @@ export const sidequests = [
             r: "Einmal im Monat steckt der CEO unter Aufsicht ungefährliche Kabel und ist danach ansprechbar wie nie. Nebenwirkung: Wer dem Chef beim Patchen zusieht, bekommt plötzlich jedes IT-Budget durchgewunken. Die teuerste Stunde des Monats ist zugleich die rentabelste."
         },
         {
-            t: "Abwimmeln: 'Sicherheitsrichtlinie'",
+            t: "Auf die Sicherheitsrichtlinie verweisen",
             rep: { "Dr. Wichtig": -3 },
             m: 5, f: 5, a: 0, c: 5,
             r: "'Zutritt nur für zertifiziertes Personal, Herr Doktor. Versicherungsauflage.' Er zieht enttäuscht ab, den kleinen Schraubendreher noch in der Hand. Du hast das Richtige getan und fühlst dich trotzdem, als hättest du einem Kind den Zoo abgesagt."
@@ -6739,9 +6739,9 @@ export const sidequests = [
             r: "Du meldest den Schaden ans Fuhrparkmanagement, sachlich und mit Datum. Es ist das Richtige, und beide wissen es. Trotzdem behandeln dich Kevin und Markus eine Woche lang wie einen Wetterumschwung. Korrektheit hat selten Applaus."
         },
         {
-            t: "Mitschweigen",
+            t: "Nichts gesehen haben",
             m: 2, f: 10, a: 0, c: 5,
-            r: "Du hast nichts gesehen. Der Kratzer war 'schon immer da', wie alle Kratzer dieser Welt. Das Schweigegelübde hat jetzt drei Mitglieder, und Schweigegelübde mit drei Mitgliedern halten statistisch elf Tage. Die Uhr läuft."
+            r: "Offiziell hast du nichts gesehen. Der Kratzer war 'schon immer da', wie alle Kratzer dieser Welt. Das Schweigegelübde hat jetzt drei Mitglieder, und Schweigegelübde mit drei Mitgliedern halten statistisch elf Tage. Die Uhr läuft."
         },
         {
             t: "Egon den Kratzer verschwinden lassen",
@@ -6797,7 +6797,7 @@ export const sidequests = [
             r: "Du überlebst den Tag als 'der, der die Vibes gelöscht hat'. Am nächsten Morgen ist die Story weg und die Empörung weitergezogen, zur Kantine, die den Milchreis gestrichen hat. Der Flurfunk hat die Halbwertszeit einer Fruchtfliege. Zum Glück."
         },
         {
-            t: "Friedensangebot: Batterie-Lichterkette schenken",
+            t: "Eine Batterie-Lichterkette als Friedensangebot schenken",
             rep: { "Chantal": 5 },
             m: 10, f: 0, a: -5, c: 0,
             r: "Du überreichst eine LED-Kette mit Batteriefach: 'Gleiche Vibes, null Infrastruktur.' Chantal ist gerührt ('Du VERSTEHST es ja doch!') und baut die Ecke neu auf, diesmal stromnetzunabhängig. Die Story bekommt ein Happy-End-Update. Du wirst markiert. Als 'Energie-Retter'. Es ist okay."
@@ -6933,7 +6933,7 @@ export const sidequests = [
             t: "Während des Folgetermins mit Kevin aufbauen",
             rep: { "Kevin": 5 },
             m: 10, f: 5, a: 0, c: 0,
-            r: "Während acht Menschen im Folgetermin die 'Roadmap Aufbau' diskutieren, bauen Kevin und du das Gerät in vierzig Minuten einfach auf. Als die Einladung zum dritten Termin verschickt wird, druckt der Kopierer sie bereits aus. Kevin findet das 'wie ein Heist-Movie'. Er hat nicht ganz unrecht."
+            r: "Während acht Menschen im Folgetermin die 'Roadmap Aufbau' diskutieren, bauen Kevin und du das Gerät in vierzig Minuten einfach auf. Als die Einladung zum dritten Termin verschickt wird, druckt der Kopierer sie bereits aus. Kevin findet das 'wie ein Heist-Movie'. Ganz von der Hand zu weisen ist das nicht."
         }
     ]
 },
@@ -6964,11 +6964,11 @@ export const sidequests = [
 
 
 /* ============================================================
-   HANDY-NACHRICHTEN (v4.0.0, Ergänzung zur Dienstgang-Welle)
-   Drei neue kind:"phone"-Ereignisse im Messenger-Format:
-   Markus' Alpha Circle, Kevins Sprachnachrichten-Lawine und
-   Gabis Frühwarnsystem. Je ein Ergebnis-Pfad setzt ein Flag
-   mit fertiger Text-Fortsetzung.
+   PHONE MESSAGES (v4.0.0, an addition to the errand wave)
+   Three new kind:"phone" events in messenger format: Markus'
+   Alpha Circle, Kevin's avalanche of voice messages and Gabi's
+   early warning system. In each, one result path sets a flag
+   that already has its text follow-up.
    ============================================================ */
 
 {
@@ -6982,7 +6982,7 @@ export const sidequests = [
         root: {
             text: "Markus hat dich zur Gruppe 'ALPHA CIRCLE 💪🔥' hinzugefügt.\n\nMarkus: 'Willkommen im inneren Zirkel, Müller! Hier teilen wir SIGNALS. Erste Regel: 5 Uhr aufstehen. Zweite Regel: Über den Circle wird nicht geredet, nur PERFORMT.'\n\nSteve_Hustle: 'LFG 🚀🚀🚀'\n\nMarkus: 'Sag kurz hallo, Bro.'",
             opts: [
-                { t: "[System: Gruppe für immer stummschalten]", next: "mute" },
+                { t: "[Gruppe für immer stummschalten]", next: "mute" },
                 { t: "Höflich austreten, mit Begründung", next: "exit" },
                 { t: "'Bin dabei 💪'", next: "join" }
             ]
@@ -7030,7 +7030,7 @@ export const sidequests = [
     kind: "text",
     title: "Das 5-Uhr-Signal",
     reqStory: "path_alpha_member",
-    text: "Es ist eingetreten: Jeden Morgen um Punkt fünf Uhr vibriert dein Handy. Das SIGNAL ist immer ein Foto von Markus im Fitnessstudio, dazu ein Spruch ('Während du schläfst, trainiert dein Wettbewerb'). Heute Morgen waren es zwei Fotos. Der Circle skaliert.",
+    text: "Es ist eingetreten: Zu jeder vollen Stunde vibriert dein Handy. Das SIGNAL ist immer ein Foto von Markus im Fitnessstudio, dazu ein Spruch ('Während du schläfst, trainiert dein Wettbewerb'). Eben waren es zwei Fotos. Der Circle skaliert.",
     opts: [
         {
             t: "Die Gruppe endlich stummschalten",
@@ -7062,9 +7062,9 @@ export const sidequests = [
         root: {
             text: "Kevin: [Sprachnachricht 0:47]\n\nKevin: [Sprachnachricht 1:12]\n\nKevin: [Sprachnachricht 0:58]\n\nKevin: 'ach und'\n\nKevin: [Sprachnachricht 1:35]\n\nGesamtlänge: 4 Minuten 32 Sekunden. Betreff: unbekannt. Dringlichkeit: unbekannt. Es könnte alles sein, von 'Drucker piept' bis 'Serverraum brennt'.",
             opts: [
-                { t: "[System: Alle vier Nachrichten anhören]", next: "listen" },
+                { t: "[Alle vier Nachrichten anhören]", next: "listen" },
                 { t: "'SCHREIB. ES. BITTE. AUF.'", next: "schreib" },
-                { t: "[System: In doppelter Geschwindigkeit anhören]", next: "speed" }
+                { t: "[In doppelter Geschwindigkeit anhören]", next: "speed" }
             ]
         },
         listen: {
@@ -7076,8 +7076,8 @@ export const sidequests = [
         schreib: {
             text: "Kevin: [Sprachnachricht 0:21]\n\nEr hat auf die Bitte, zu schreiben, mit einer Sprachnachricht geantwortet. Inhalt: 'okay sorry, also, schreiben, ja, also es geht um meinen Bildschirm, der ist...' - die Nachricht bricht ab.\n\nKevin: [Sprachnachricht 0:44]",
             opts: [
-                { t: "[System: Kapitulieren und anhören]", next: "end_kapit" },
-                { t: "[System: Ihn einfach anrufen]", next: "end_anruf" }
+                { t: "[Kapitulieren und anhören]", next: "end_kapit" },
+                { t: "[Ihn einfach anrufen]", next: "end_anruf" }
             ]
         },
         speed: {
@@ -7156,8 +7156,8 @@ export const sidequests = [
         info: {
             text: "Gabi: 'Punkt 1 ist die neue Kaffeemaschine (frag nicht).'\n\nGabi: 'Punkt 2 die Reisekosten vom Vertrieb.'\n\nGabi: 'Punkt 3 bist du. Wörtlich: \"Kostenstelle IT - Handlungsbedarf\".'\n\nGabi: 'Du hast bis 14 Uhr. 🙃'",
             opts: [
-                { t: "[System: Sofort Zahlen und Belege sammeln]", next: "end_prep" },
-                { t: "[System: Abwarten, wird schon nichts werden]", next: "end_warten" }
+                { t: "[Sofort Zahlen und Belege sammeln]", next: "end_prep" },
+                { t: "[Abwarten, wird schon nichts werden]", next: "end_warten" }
             ]
         },
         rein: {
@@ -7221,8 +7221,8 @@ export const sidequests = [
 
 
 /* ============================================================
-   FALLEN (v4.0.0): Auf dem Flur ist Anstand der teuerste
-   Reflex. Kein kostenloser Ausweg.
+   TRAPS (v4.0.0): out in the corridor, decency is the most
+   expensive reflex. No free way out.
    ============================================================ */
 
 {
@@ -7283,7 +7283,7 @@ export const sidequests = [
             r: "Die zwei Minuten sind nach vierzig vorbei. Deine 'Einschätzung' steht inzwischen auf einer Folie, im Protokoll bist du unter 'Beteiligte Fachseite' geführt, und beim Verabschieden sagt jemand den tödlichsten Satz des Bürolebens: 'Dann nehmen wir dich für den Folgetermin mit auf.' Die Tür war eine Falltür."
         },
         {
-            t: "Ablehnen: 'Bin auf dem Weg zu einem Termin'",
+            t: "'Bin auf dem Weg zu einem Termin.'",
             m: 2, f: 5, a: 0, c: 10,
             r: "Die Notlüge sitzt - bis dein Blick beim Weitergehen den Tisch streift: Am Kopfende sitzt Dr. Wichtig, der sehr genau weiß, dass in deinem Kalender heute nichts steht, weil er ihn heute Morgen eingesehen hat. Er sagt nichts. Er notiert. Männer wie er vergessen keine Termine, die es nie gab."
         },
@@ -7319,12 +7319,12 @@ export const sidequests = [
 },
 
 /* ============================================================
-   FUNDSTELLEN MIT NACHSPIEL (v4.0.0)
-   Panzertape, Kopfhörer und das Admin-Kennwort werden häufig
-   verlangt, aber selten gefunden. Diese Ereignisse schaffen
-   Nachschub - und schicken jeweils jemanden hinterher, der sein
-   Eigentum wiederhaben will. Wer abgibt, bleibt sauber. Wer
-   behält, hat das Werkzeug und ein Problem.
+   FINDS WITH CONSEQUENCES (v4.0.0)
+   Duct tape, headphones and the admin password are asked for
+   often and found rarely. These events create supply - and each
+   sends someone after it who wants their property back. Hand it
+   over and you stay clean. Keep it and you have the tool and a
+   problem.
    ============================================================ */
 
 {
@@ -7373,7 +7373,7 @@ export const sidequests = [
             r: "'Das ist meins, das sieht nur so aus.' Der Vorarbeiter sagt nichts weiter, dreht sich um und geht direkt ins Chefbüro. Nach einer Fremdfirmen-Beschwerde wegen Materialschwund fragt niemand mehr nach Details. Es geht dann nur noch um dich."
         },
         {
-            t: "Freikaufen: Kaffee und ein Ohr",
+            t: "Sich mit Kaffee und einem offenen Ohr freikaufen",
             m: 20, f: -5, a: -10, c: 0,
             r: "Du bietest Kaffee an und hörst dir zwanzig Minuten die Estrich-Geschichte an, inklusive Bauleitung, Zeitplan und einem Kollegen namens Ferhat, der 'einfach nicht mitdenkt'. Am Ende darfst du die Rolle behalten. Er wollte nur, dass ihm mal jemand zuhört."
         }
@@ -7542,7 +7542,7 @@ export const sidequests = [
                 r: "Du erklärst ihr in drei Sätzen, warum ein Passwort am Monitor keins mehr ist. Sie nimmt den Zettel ab, entschuldigt sich und schreibt es sich in ihr Notizbuch. Das Notizbuch liegt offen auf dem Schreibtisch."
             },
             {
-                t: "Vorbeigehen",
+                t: "Einfach weitergehen",
                 m: 2, f: 15, a: 0, c: 15,
                 r: "Du gehst weiter. Der Zettel hängt bis Freitag. Es passiert vermutlich nichts, so wie bei den meisten Dingen dieser Art vermutlich nichts passiert, bis einmal doch etwas passiert."
             }

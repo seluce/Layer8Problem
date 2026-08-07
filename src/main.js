@@ -3,10 +3,10 @@
  *
  * The Svelte migration is complete: every part of the screen that changes
  * during play is a component. What the engine still owns is the static shell
- * in index.html — modals, the quick bar, the settings dialog — which it drives
- * with plain getElementById and inline onclick handlers. That split is the
- * architecture, not a leftover: components render state, the engine renders
- * chrome.
+ * in index.html — modal frames, the quick bar, export and import — which it
+ * drives with plain getElementById and inline onclick handlers. That split is
+ * the architecture, not a leftover: components render state, the engine
+ * renders chrome.
  *
  * Order matters: tutorial.js publishes window.tutorial, which engine.init()
  * checks for, and the engine has to exist before components read its state.
@@ -34,6 +34,8 @@ import EndModal from './components/EndModal.svelte';
 import TutorialPointer from './components/TutorialPointer.svelte';
 import ExcuseText from './components/ExcuseText.svelte';
 import InventoryFull from './components/InventoryFull.svelte';
+import KeybindView   from './components/KeybindView.svelte';
+import SettingsView  from './components/SettingsView.svelte';
 import AchievementToasts from './components/AchievementToasts.svelte';
 import TerminalHeader from './components/TerminalHeader.svelte';
 import BoardView from './components/BoardView.svelte';
@@ -55,17 +57,20 @@ mount(EndModal,       { target: document.getElementById('modal-overlay') });
 mount(TutorialPointer,{ target: document.getElementById('tut-pointer-root') });
 mount(ExcuseText,     { target: document.getElementById('excuse-text-root') });
 mount(InventoryFull,  { target: document.getElementById('full-inventory-grid') });
+mount(KeybindView,    { target: document.getElementById('keybind-list') });
+mount(SettingsView,   { target: document.getElementById('settings-list') });
 mount(AchievementToasts, { target: document.getElementById('achievement-container') });
 mount(TerminalHeader, { target: document.getElementById('terminal-header-right') });
 mount(BoardView,      { target: document.getElementById('board-notes') });
 mount(IntranetView,   { target: document.getElementById('intranet-root') });
 
 /* ============================================================
-   Für die, die nachsehen.
+   For those who look.
 
-   Wer in einem Spiel über Systemadministration die Entwicklerkonsole
-   öffnet, gehört zur Zielgruppe und darf begrüßt werden. Die einzige
-   bewusste Konsolenausgabe des Spiels — alles andere dort ist Diagnose.
+   Anyone who opens the developer console in a game about systems
+   administration is part of the target audience and deserves a
+   greeting. The game's only deliberate console output — everything
+   else there is diagnostics.
    ============================================================ */
 console.log(
     '%c H.A.L.G.E.R.D. %c\n\n' +

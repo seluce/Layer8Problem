@@ -3,7 +3,7 @@ export const party = [
 	{
 		id: "party_start",
 		title: "SYSTEM OVERRIDE: Synergy-Gala",
-		text: "16:30 Uhr. Du fährst gerade den Rechner runter und willst unauffällig durch den Hinterausgang verschwinden. Plötzlich taucht Chantal auf und klebt dir im Vorbeigehen einen grellen 'Hello my name is'-Sticker direkt auf die Stirn. Du bist gefangen: Willkommen auf der GlobalCorp Sommerfeier.\n\nDas Event beginnt im großen Saal. Der CEO, Dr. Wichtig, hält gerade eine unfassbar zähe, 45-minütige Präsentation über 'Agiles Feiern im Zeitalter der KI'. Der Beamer ist unscharf, jemand hat den Laserpointer geklaut und die Klimaanlage ist offensichtlich ausgefallen.",
+		text: "16:30 Uhr. Du fährst gerade den Rechner runter und willst unauffällig durch den Hinterausgang verschwinden. Chantal fängt dich ab und klebt dir im Vorbeigehen einen grellen 'Hello my name is'-Sticker direkt auf die Stirn. Du bist gefangen: Willkommen auf der GlobalCorp Sommerfeier.\n\nDas Event beginnt im großen Saal. Der CEO, Dr. Wichtig, hält gerade eine unfassbar zähe, 45-minütige Präsentation über 'Agiles Feiern im Zeitalter der KI'. Der Beamer ist unscharf, jemand hat den Laserpointer geklaut und die Klimaanlage ist offensichtlich ausgefallen.",
 		opts: [
 			{ t: "Klatschend ertragen", a: 25, r: "Du stehst in der Menge und klatschst brav im Takt der Floskeln. Es ist furchtbar peinlich, dir läuft der Schweiß den Rücken hinunter und deine Aggression steigt mit jedem weiteren Buzzword ins Unermessliche.", next: "party_hub" },
 			{ t: "Stecker vom Beamer ziehen", f: 10, a: -15, r: "Du tust so, als würdest du stolpern. Ein 'technischer Defekt' beendet die Rede vorzeitig. Ein kollektives, leises Aufatmen geht durch den Saal. Du bist der stille Held der ersten Stunde.", next: "party_hub" },
@@ -15,11 +15,11 @@ export const party = [
 		title: "Der Party-Hub",
 		text: "Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Die Luft ist stickig, der Lärm ohrenbetäubend. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?",
 		opts: [
-			{ t: "🍻 Zur Bar (Markus, Kevin & Co.)", action: { fn: "goToPartyStation", args: ["bar"] }, checkPool: "bar" },
-			{ t: "🥗 Zum Buffet (Essen & Überleben)", action: { fn: "goToPartyStation", args: ["buffet"] }, checkPool: "buffet" },
-			{ t: "🕺 Zur Tanzfläche (Lärm & Peinlichkeiten)", action: { fn: "goToPartyStation", args: ["dance"] }, checkPool: "dance" },
-			{ t: "🪴 In die Lounge (Gabi & Gerüchte)", action: { fn: "goToPartyStation", args: ["lounge"] }, checkPool: "lounge" },
-			{ t: "🚬 Vor die Tür (Raucher-Ecke)", action: { fn: "goToPartyStation", args: ["outside"] }, checkPool: "outside" },
+			{ t: "🍻 Zur Bar - Markus, Kevin & Co.", action: { fn: "goToPartyStation", args: ["bar"] }, checkPool: "bar" },
+			{ t: "🥗 Zum Buffet - essen und überleben", action: { fn: "goToPartyStation", args: ["buffet"] }, checkPool: "buffet" },
+			{ t: "🕺 Zur Tanzfläche - Lärm und Peinlichkeiten", action: { fn: "goToPartyStation", args: ["dance"] }, checkPool: "dance" },
+			{ t: "🪴 In die Lounge - Gabi und Gerüchte", action: { fn: "goToPartyStation", args: ["lounge"] }, checkPool: "lounge" },
+			{ t: "🚬 Vor die Tür - zur Raucher-Ecke", action: { fn: "goToPartyStation", args: ["outside"] }, checkPool: "outside" },
 			{ t: "🚽 Auf die Toilette flüchten", action: { fn: "goToPartyStation", args: ["toilet"] }, checkPool: "toilet" }
 		]
 	},
@@ -42,10 +42,10 @@ export const party = [
 		title: "Shots mit dem Vertrieb",
 		text: "Ein Pulk von Vertrieblern hat die Theke gekapert. Der Abteilungsleiter bestellt eine Runde extrem billigen Tequila für alle Umstehenden – auch für dich. 'Auf die Keller-Kinder aus der IT!', brüllt er. Alle starren dich erwartungsvoll an.",
 		opts: [
-			{ t: "Den Shot eiskalt exen", f: 35, a: -20, r: "Das Zeug brennt wie 90-prozentiges Desinfektionsmittel und schmeckt nach Reue. Aber die Vertriebler johlen und klopfen dir auf die Schultern! Du hast dir den Respekt der Anzugträger gesichert und spürst, wie die Anspannung des Tages schlagartig verschwindet.", next: "party_hub" },
+			{ t: "Den Shot eiskalt exen", f: 35, a: -20, r: "Das Zeug brennt wie 90-prozentiges Desinfektionsmittel und schmeckt nach Reue. Aber die Vertriebler johlen und klopfen dir auf die Schultern! Die Anspannung des Tages verschwindet schlagartig.", next: "party_hub" },
 			{ t: "Den Shot heimlich in den Ficus kippen", f: 15, a: 0, r: "Während die Meute brüllt und die Köpfe in den Nacken wirft, kippst du das Gift in einer fließenden Bewegung in den armen Ficus neben dir. Der Baum wird das Wochenende wohl nicht überleben, aber du behältst einen klaren Kopf.", next: "party_hub" },
 			{ t: "Lautstark und genervt ablehnen", a: 25, r: "'Ich trinke nicht mit Leuten, die nicht mal ein PDF drehen können', verkündest du lautstark. Die feuchtfröhliche Stimmung kippt in Sekundenbruchteilen auf den Nullpunkt. Du stehst stolz, aber völlig isoliert an der Bar.", next: "party_hub" },
-			{ t: "Wasser im Shotglas vortäuschen", f: 10, a: -5, r: "Du tauschst das Glas unauffällig gegen Leitungswasser aus, reißt die Arme hoch und machst mit. Maximale Integration bei minimalem Hirnschwund. Ein echter, absolut reibungsloser Admin-Move.", next: "party_hub" }
+			{ t: "Wasser im Shotglas vortäuschen", f: 10, a: -5, r: "Du tauschst das Glas unauffällig gegen Leitungswasser aus, reißt die Arme hoch und machst mit. Maximale Integration bei minimalem Hirnschwund.", next: "party_hub" }
 		]
 	},
 	{
@@ -53,7 +53,7 @@ export const party = [
 		title: "Der zapfende Azubi",
 		text: "Der externe Barkeeper ist rauchen gegangen. Kevin versucht heimlich, ein Bier zu zapfen. Er reißt den Hahn auf. Das Glas besteht zu 95% aus Schaum, das Fass spuckt und das teure Pils droht überzulaufen.",
 		opts: [
-			{ t: "Die Zapfanlage fachgerecht bedienen", f: -15, a: -10, r: "Du schiebst Kevin sanft, aber bestimmt beiseite und zeigst ihm den heiligen 45-Grad-Winkel der Schankkunst. Das goldene Nass fließt perfekt ins Glas. Handwerk hat eben doch goldenen Boden, auch außerhalb der IT.", next: "party_hub" },
+			{ t: "Die Zapfanlage fachgerecht bedienen", f: -15, a: -10, r: "Du schiebst Kevin sanft, aber bestimmt beiseite und zeigst ihm den heiligen 45-Grad-Winkel der Schankkunst. Das goldene Nass fließt perfekt ins Glas.", next: "party_hub" },
 			{ t: "Ihn lauthals auslachen", a: 20, r: "Du lachst so laut und dreckig, dass Kevin panisch zusammenzuckt. Er lässt das Glas fallen und eine klebrige, schaumige Sauerei ergießt sich über seine neuen Sneaker. Fies, aber für dich extrem befriedigend.", next: "party_hub" },
 			{ t: "Fass übernehmen und ausschenken", f: 40, a: -20, r: "Du legst dein Sakko ab und ernennst dich selbst zum inoffiziellen Schankwart der Gala. Innerhalb von Minuten hast du eine Schlange glücklicher, durstiger Kollegen vor dir. Du arbeitest zwar wieder, aber du bist der unangefochtene König der Bar.", next: "party_hub" }
 		]
@@ -64,7 +64,7 @@ export const party = [
 		text: "Ein Kollege aus der Buchhaltung mischt sich einen Cocktail: Blauer Pfefferminz-Sirup, Wodka und Weizenbier. Es sieht aus wie giftiges Spülwasser. 'Willste auch mal nippen?'",
 		opts: [
 			{ t: "Mutig einen winzigen Schluck nehmen", f: 20, a: 20, r: "Du opferst dich für die Wissenschaft. Es schmeckt nach abgelaufener Zahnpasta, abgestandener Hefe und purem Schmerz. Dein Magen rebelliert sofort. Eine der schlechtesten Entscheidungen deines Lebens.", next: "party_hub" },
-			{ t: "Ihn probieren lassen und zuschauen", a: 15, f: 10, r: "Der Buchhalter nimmt einen großen Schluck, seine Augen weiten sich in panischer Reue. Er würgt, schlägt sich die Hand vor den Mund und sprintet im Vollsprint Richtung Herrentoilette. Ein absolut legendärer Anblick.", next: "party_hub" },
+			{ t: "Ihn probieren lassen und zuschauen", a: 15, f: 10, r: "Der Buchhalter nimmt einen großen Schluck, seine Augen weiten sich in panischer Reue. Er würgt, schlägt sich die Hand vor den Mund und sprintet im Vollsprint Richtung Herrentoilette.", next: "party_hub" },
 			{ t: "Den Becher aus der Hand schlagen", a: 10, f: -5, r: "'Das ist ein Verbrechen gegen den guten Geschmack und die Leber!', rufst du und schlägst ihm den Becher aus der Hand. Er guckt traurig auf die klebrige Pfütze, aber du hast gerade Schlimmeres verhindert.", next: "party_hub" }
 		]
 	},
@@ -74,18 +74,18 @@ export const party = [
 		text: "Du bemerkst, dass Dr. Wichtig seine schwarze Firmen-Kreditkarte auf dem klebrigen Tresen vergessen hat. Der Barkeeper fragt gerade: 'Auf wessen Deckel gehen die fünf Flaschen Champagner dort drüben?'",
 		opts: [
 			{ t: "Auf die Firmenkarte zeigen", f: 20, a: -10, r: "'Geht alles auf den Chef!', brüllst du durch die Bar und zeigst auf die Karte. Die Umstehenden jubeln ekstatisch. Der Barkeeper fängt an auszuschenken. Der Chef wird morgen beim Blick auf die Abrechnung bitterlich weinen.", next: "party_hub" },
-			{ t: "Die Karte dem Chef zurückbringen", f: -10, a: -5, r: "Du suchst den CEO in der Menge und drückst ihm die Karte in die Hand. Er grunzt nur ein knappes 'Danke' und wendet sich wieder ab. Du erntest keinen Ruhm, aber immerhin ein reines Gewissen.", next: "party_hub" },
+			{ t: "Die Karte dem Chef zurückbringen", f: -10, a: -5, r: "Du suchst den CEO in der Menge und drückst ihm die Karte in die Hand. Er grunzt nur ein knappes 'Danke' und wendet sich wieder ab.", next: "party_hub" },
 			{ t: "Dir selbst noch 3 Cocktails bestellen", f: 30, a: -15, r: "Du nutzt die Gunst der Stunde eiskalt aus. Der Champagner war dir zu riskant, aber drei edle Mojitos fallen auf der Rechnung sicher nicht ins Gewicht. Du fühlst dich wie ein kriminelles Genie.", next: "party_hub" }
 		]
 	},
 	{
 		id: "party_bar_6", loc: "bar",
 		title: "Der Gesundheits-Apostel",
-		text: "Du willst dir ein kühles Bier holen. Ein Kollege aus dem 'Feel-Good-Management' blockiert den Kühlschrank. 'Alkohol ist Gift für die Synergien! Trink dieses energetisierte Ingwer-Wasser!'",
+		text: "Zwischen dir und einem kühlen Bier steht das 'Feel-Good-Management' und blockiert den Kühlschrank. 'Alkohol ist Gift für die Synergien! Trink dieses energetisierte Ingwer-Wasser!'",
 		opts: [
 			{ t: "Ihn wegschieben: 'Ich brauche Hopfen!'", a: -10, f: 0, r: "Du schiebst ihn bestimmt zur Seite, reißt den Kühlschrank auf und greifst dir das eisgekühlte Pils. 'Toxische Männlichkeit!', flüstert er entsetzt, während du zischend den Kronkorken abhebelst.", next: "party_hub" },
-			{ t: "Diskutieren: 'Bier ist auch nur Getreidesmoothie.'", f: 15, a: 5, r: "Du verwickelst ihn in eine hochgradig absurde, pseudowissenschaftliche Diskussion über die isotonischen Vorteile von Weizenbier, bis er entnervt die Augen verdreht und aufgibt. Sieg durch Nervtötung.", next: "party_hub" },
-			{ t: "Ingwer-Wasser trinken (Unterwerfung)", f: 5, a: 15, r: "Du fügst dich deinem Schicksal und nimmst einen Schluck. Es schmeckt wie scharfe Seife gemischt mit Spülwasser. Du ärgerst dich maßlos über deine eigene Schwäche und Rückgratlosigkeit.", next: "party_hub" }
+			{ t: "'Bier ist auch nur Getreidesmoothie.'", f: 15, a: 5, r: "Du verwickelst ihn in eine hochgradig absurde, pseudowissenschaftliche Diskussion über die isotonischen Vorteile von Weizenbier, bis er entnervt die Augen verdreht und aufgibt. Sieg durch Nervtötung.", next: "party_hub" },
+			{ t: "Sich fügen und Ingwer-Wasser trinken", f: 5, a: 15, r: "Du fügst dich deinem Schicksal und nimmst einen Schluck. Es schmeckt wie scharfe Seife gemischt mit Spülwasser. Du ärgerst dich maßlos über deine eigene Schwäche und Rückgratlosigkeit.", next: "party_hub" }
 		]
 	},
 	{
@@ -95,7 +95,7 @@ export const party = [
 		opts: [
 			{ t: "Das Glas einfach stehen lassen", f: 10, a: 0, r: "Du bist Systemadministrator und kein Butler. Du drehst dich einfach um und gehst. Irgendein armer Praktikant wird sich dem flammenden Glas schon annehmen müssen.", next: "party_hub" },
 			{ t: "Selbst trinken", f: 25, a: -10, r: "Du ziehst den Strohhalm durch. Eine Geschmacksexplosion aus purem Sirup-Zucker und billigem Wodka! Du fühlst dich fantastisch, auch wenn du mit dem leuchtenden Drink und der Wunderkerze völlig albern aussiehst.", next: "party_hub" },
-			{ t: "Es brav zu Chantal bringen", f: -10, a: 5, r: "Du spielst den gehorsamen Kellner und balancierst das Ungetüm durch die Menge. Chantal nimmt es ohne ein einziges 'Danke' entgegen und dreht sich sofort wieder weg. Du fühlst dich maximal gedemütigt.", next: "party_hub" }
+			{ t: "Es brav zu Chantal bringen", f: -10, a: 5, r: "Du spielst den gehorsamen Kellner und balancierst das Ungetüm durch die Menge. Chantal nimmt es ohne ein einziges 'Danke' entgegen und dreht sich sofort wieder weg.", next: "party_hub" }
 		]
 	},
 
@@ -119,7 +119,7 @@ export const party = [
 		opts: [
 			{ t: "Wortlos eine eigene Dose rausholen", f: 30, a: -15, r: "Ihr nickt euch schweigend und mit tiefem Verständnis zu. Wie ein gut geöltes Syndikat plündert ihr das Buffet und stopft die feinsten Stücke in eure Tupperdosen. Eine unheilige, aber extrem leckere Allianz.", next: "party_hub" },
 			{ t: "Laut räuspern und missbilligend gucken", a: 20, r: "Sie wird knallrot im Gesicht, packt die halbvolle Dose panisch in ihre Handtasche und zischt beim Weggehen: 'Petze!'. Du stehst als moralischer Sieger vor den vollen Platten und grinst.", next: "party_hub" },
-			{ t: "Erpressung: 'Das kostet einen Teller für mich.'", a: 0, f: 20, r: "Sie seufzt extrem genervt, legt dir aber ordentlich von dem teuren Roastbeef auf deinen eigenen Teller. 'Dafür halten Sie den Mund, Müller!' Deal akzeptiert. Schweigen schmeckt köstlich.", next: "party_hub" }
+			{ t: "'Das kostet einen Teller für mich.'", a: 0, f: 20, r: "Sie seufzt extrem genervt, legt dir aber ordentlich von dem teuren Roastbeef auf deinen eigenen Teller. 'Dafür halten Sie den Mund, Müller!' Deal akzeptiert. Schweigen schmeckt köstlich.", next: "party_hub" }
 		]
 	},
 	{
@@ -129,7 +129,7 @@ export const party = [
 		opts: [
 			{ t: "Öl ins Feuer gießen", a: 40, f: 15, r: "Du stellst dich mitten in die Menge und rufst theatralisch: 'Sagt mal, ist in dem Bio-Tofu eigentlich Schweinespeck für den Geschmack?!' Das laute Chaos und die Empörung, die daraufhin ausbrechen, sind absolut filmreif.", next: "party_hub" },
 			{ t: "Einfach Salat nehmen und gehen", f: 10, a: 5, r: "Du mischst dich gar nicht erst ein, schnappst dir hastig ein bisschen Grünzeug und verlässt die Gefahrenzone, bevor die ersten Fetzen und Beleidigungen fliegen. Gut für die Nerven.", next: "party_hub" },
-			{ t: "Löffel heimlich reinigen und sortieren", f: -15, a: -10, r: "Du putzt die Löffel penibel mit einer Serviette ab und legst sie exakt an ihren richtigen Platz zurück. Du hast soeben einen blutigen Bürgerkrieg am Buffet verhindert. Niemand merkt es, aber du weißt, dass du der Held des Abends bist.", next: "party_hub" }
+			{ t: "Löffel heimlich reinigen und sortieren", f: -15, a: -10, r: "Du putzt die Löffel penibel mit einer Serviette ab und legst sie exakt an ihren richtigen Platz zurück. Du hast soeben einen blutigen Bürgerkrieg am Buffet verhindert. Niemand merkt es, aber du weißt es.", next: "party_hub" }
 		]
 	},
 	{
@@ -149,7 +149,7 @@ export const party = [
 		text: "Am Ende des Buffets gibt es eine Schale mit echtem Kaviar und Austern. Ein Schild sagt: 'Nur für Management'. Dir tropft der Zahn.",
 		opts: [
 			{ t: "Vorschriften einhalten", a: 15, f: -5, r: "Du begnügst dich brav mit dem wässrigen Kartoffelsalat. Während du kaust, musst du zusehen, wie Dr. Wichtig drüben eine teure Auster nach der anderen wegschlürft. Die Klassengesellschaft tut weh.", next: "party_hub" },
-			{ t: "Schild unauffällig vertauschen", a: 10, f: 15, r: "Du tauschst flink das VIP-Schild mit dem vom 'Veganen Soja-Eintopf'. Die Verwirrung der Manager, die sich plötzlich über den Matsch beugen, ist schlichtweg unbezahlbar. Ein Streich der Meisterklasse.", next: "party_hub" },
+			{ t: "Schild unauffällig vertauschen", a: 10, f: 15, r: "Du tauschst flink das VIP-Schild mit dem vom 'Veganen Soja-Eintopf'. Die Verwirrung der Manager, die sich plötzlich über den Matsch beugen, ist schlichtweg unbezahlbar.", next: "party_hub" },
 			{ t: "Skrupellos zugreifen", a: -5, f: 20, r: "Du schaufelst dir den absoluten Luxus auf deinen Pappteller. Ein Abteilungsleiter starrt dich fassungslos an, ist aber so schockiert von deiner Dreistigkeit, dass er kein Wort herausbringt. Du isst wie ein Kaiser.", next: "party_hub" }
 		]
 	},
@@ -158,18 +158,18 @@ export const party = [
 		title: "Der Saucen-Unfall",
 		text: "Jemand vor dir hat gekleckert. Auf dem Boden liegt ein dicker Flatschen Ketchup. Die HR-Chefin stöckelt in ihren teuren Prada-Schuhen genau darauf zu.",
 		opts: [
-			{ t: "Schweigen und zusehen", f: 15, a: 25, r: "*Pflatsch*. Sie rutscht voll aus, rudert wild mit den Armen und Ketchup spritzt großflächig auf ihr weißes Kleid. Ein extrem böses, aber faszinierendes Schauspiel, das du dir still grinsend ansiehst.", next: "party_hub" },
+			{ t: "Schweigen und zusehen", f: 15, a: 25, r: "*Pflatsch*. Sie rutscht voll aus, rudert wild mit den Armen und Ketchup spritzt großflächig auf ihr weißes Kleid. Du siehst still grinsend zu.", next: "party_hub" },
 			{ t: "Schnell selbst durchlaufen", f: 5, a: 5, r: "Du trittst absichtlich voll rein und verwischst die rote Pfütze auf dem Boden. Jetzt klebt zwar dein linker Schuh bei jedem Schritt, aber die tückische Falle für die Kollegin ist entschärft.", next: "party_hub" },
-			{ t: "Warnen: 'Achtung, Ketchup!'", f: -5, a: -10, r: "Sie stoppt im letzten Moment, wankt kurz auf den hohen Hacken und atmet auf. 'Puh, danke Müller! Das Kleid war teuer! Sie sind mein Held!' Dein Karma-Konto füllt sich.", next: "party_hub" }
+			{ t: "'Achtung, Ketchup!'", f: -5, a: -10, r: "Sie stoppt im letzten Moment, wankt kurz auf den hohen Hacken und atmet auf. 'Puh, danke Müller! Das Kleid war teuer! Sie sind mein Held!' Dein Karma-Konto füllt sich.", next: "party_hub" }
 		]
 	},
 	{
 		id: "party_buffet_7", loc: "buffet",
 		char: "Kevin",
 		title: "Deko-Fresser",
-		text: "Du siehst, wie Kevin verzweifelt auf einem Stück Deko-Zitrone mit Schale herumkaut, weil er denkt, es gehöre zum Hauptgericht. Er sieht aus, als würde er gleich weinen.",
+		text: "Du siehst, wie Kevin verzweifelt auf einem Stück Deko-Zitrone mit Schale herumkaut, weil er denkt, es gehöre zum Hauptgericht. Er wirkt den Tränen nahe.",
 		opts: [
-			{ t: "Ihn loben: 'Iss die Schale mit, da sind Vitamine!'", f: 10, a: 15, r: "Kevin würgt das harte, bittere Stück Schale tapfer runter und versucht dabei zu lächeln. 'Sehr... gesund!', krächzt er. Du bist ein wahrhaft grausamer, sadistischer Mensch.", next: "party_hub" },
+			{ t: "Ihn loben: 'Iss die Schale mit, da sind Vitamine!'", f: 10, a: 15, r: "Kevin würgt das harte, bittere Stück Schale tapfer runter und versucht dabei zu lächeln. 'Sehr... gesund!', krächzt er.", next: "party_hub" },
 			{ t: "Ihn erlösen: 'Das ist Deko, Kevin.'", f: -5, a: -5, r: "Kevin spuckt das bittere Stück sofort in eine Serviette. 'Bah! Ich dachte, das ist diese angesagte Molekular-Küche...' Er ist dir unendlich dankbar, dass du seine Geschmacksnerven gerettet hast.", next: "party_hub" },
 			{ t: "Ignorieren", f: 5, a: 0, r: "Du schaust genüsslich zu. Er wird schon irgendwann von selbst merken, dass Zitronenschalen keine Delikatesse sind. Man lernt im Leben eben nur durch Schmerz und bittere Erfahrungen.", next: "party_hub" }
 		]
@@ -184,7 +184,7 @@ export const party = [
 		opts: [
 			{ t: "Starr stehen bleiben", a: 15, f: 10, r: "Du bewegst keinen einzigen Muskel und starrst sie nur emotionslos an. Chantal gibt irgendwann peinlich berührt auf, bricht den Tanz ab und die Musik läuft unangenehm weiter.", next: "party_hub" },
 			{ t: "Strom der Anlage ziehen", f: 10, a: -30, r: "Du reißt den Hauptstecker der PA-Anlage aus der Wand. Die Musik stirbt mit einem hässlichen Kratzen. 'Oh, Stromausfall', rufst du unschuldig in die Stille. Die gesamte Belegschaft atmet heimlich auf.", next: "party_hub" },
-			{ t: "Mitmachen und Macarena tanzen", a: 60, f: -15, r: "Du gehst auf die Fläche und opferst deinen allerletzten Rest Würde. Der Fremdscham ist physisch im ganzen Raum spürbar. Aber Chantal jubelt, klatscht im Takt und liebt dich dafür abgöttisch.", next: "party_hub" }
+			{ t: "Mitmachen und Macarena tanzen", a: 60, f: -15, r: "Du gehst auf die Fläche und opferst deinen allerletzten Rest Würde. Die Fremdscham ist physisch im ganzen Raum spürbar. Aber Chantal jubelt, klatscht im Takt und liebt dich dafür abgöttisch.", next: "party_hub" }
 		]
 	},
 	{
@@ -194,8 +194,8 @@ export const party = [
 		text: "Dr. Wichtig hat sich seine Krawatte wie Rambo um den Kopf gebunden und versucht sich in der Mitte des Kreises an Breakdance. Es sieht gefährlich nach Bandscheibenvorfall aus.",
 		opts: [
 			{ t: "Ihn aus Mitleid von der Fläche holen", f: -10, a: 10, r: "Du gehst hin, fässt ihn am Arm und flüsterst: 'Chef, die wichtigen Investoren schauen zu.' Er stoppt abrupt, wird kreidebleich und rückt sich die Krawatte zurecht. Du hast ihn vor dem totalen Ruin gerettet.", next: "party_hub" },
-			{ t: "Heimlich filmen (Erpressungsmaterial)", a: 25, f: 10, r: "Du hältst voll drauf. Der Chef wälzt sich unkoordiniert auf dem Boden. Das ist feinstes, hochauflösendes Erpressungsmaterial für die nächste Gehaltsverhandlung. Du grinst böse.", next: "party_hub" },
-			{ t: "Anfeuern und klatschen", f: 20, a: -5, r: "Der Chef fühlt sich durch dein Klatschen bestärkt, macht einen krachenden 'Worm' und reißt sich dabei gut hörbar die Anzughose auf. Ein absolutes Fest für alle Anwesenden.", next: "party_hub" }
+			{ t: "Heimlich Erpressungsmaterial filmen", a: 25, f: 10, r: "Du hältst voll drauf. Der Chef wälzt sich unkoordiniert auf dem Boden. Das ist feinstes, hochauflösendes Erpressungsmaterial für die nächste Gehaltsverhandlung. Du grinst böse.", next: "party_hub" },
+			{ t: "Anfeuern und klatschen", f: 20, a: -5, r: "Der Chef fühlt sich durch dein Klatschen bestärkt, macht einen krachenden 'Worm' und reißt sich dabei gut hörbar die Anzughose auf.", next: "party_hub" }
 		]
 	},
 	{
@@ -221,7 +221,7 @@ export const party = [
 	{
 		id: "party_dance_5", loc: "dance",
 		title: "Der Kuschelsong",
-		text: "Das Licht wird gedimmt. Plötzlich läuft 'Careless Whisper'. Eine leicht angetrunkene Kollegin aus der Buchhaltung steuert zielstrebig und mit schmachtendem Blick auf dich zu.",
+		text: "Das Licht wird gedimmt. Die ersten Takte von 'Careless Whisper'. Eine leicht angetrunkene Kollegin aus der Buchhaltung steuert zielstrebig und mit schmachtendem Blick auf dich zu.",
 		opts: [
 			{ t: "Kevin als Ersatzopfer vorschieben", f: 10, a: -5, r: "Du packst den Azubi am Kragen und stellst ihn exakt zwischen dich und die Kollegin. Sie umschlingt sofort Kevin. Er blickt panisch drein, aber du bist frei und holst dir ein Bier.", next: "party_hub" },
 			{ t: "Auf die Toilette flüchten", f: 15, a: 5, r: "Du drehst dich auf dem Absatz um und sprintest im Dauerlauf Richtung Herrentoilette. Die Kollegin ist verwirrt und krallt sich stattdessen den völlig perplexen Hausmeister Egon für den Engtanz.", next: "party_hub" },
@@ -233,7 +233,7 @@ export const party = [
 		title: "Der Rempel-Tänzer",
 		text: "Ein völlig euphorischer Typ aus der Logistik tanzt wie ein Flummi. Er hüpft wild im Kreis und rammt dir schmerzhaft seinen Ellbogen in die Rippen.",
 		opts: [
-			{ t: "Zurückrempeln (Moshpit eröffnen)", a: 20, f: -15, r: "Du drückst die Schulter rein und rammst ihn hart zurück. Er lacht laut auf und schubst wieder. Plötzlich habt ihr einen kleinen, aber feinen IT-Moshpit mitten auf der Tanzfläche gestartet.", next: "party_hub" },
+			{ t: "Zurückrempeln und den Moshpit eröffnen", a: 20, f: -15, r: "Du drückst die Schulter rein und rammst ihn hart zurück. Er lacht laut auf und schubst wieder. Ihr habt einen kleinen IT-Moshpit mitten auf der Tanzfläche gestartet.", next: "party_hub" },
 			{ t: "Erbost weichen", a: 15, f: 5, r: "Du reibst dir die schmerzenden Rippen und ziehst dich verärgert an den ruhigen Rand zurück. Wilde, extrovertierte Menschen sind einfach schrecklich anstrengend.", next: "party_hub" },
 			{ t: "Ihm diskret das Bein stellen", a: -10, f: 0, r: "Du fährst unauffällig den Fuß aus. Er stolpert unelegant und schlägt der Länge nach auf dem Parkett auf. Danach tanzt er deutlich ruhiger und respektvoller. Gefahr diskret gebannt.", next: "party_hub" }
 		]
@@ -245,7 +245,7 @@ export const party = [
 		opts: [
 			{ t: "Einfach mitnicken", f: 20, a: -5, r: "Du integrierst dich nahtlos in das Rudel. Ihr seid eine stumme, nickende Brüderschaft der Rhythmus-Legastheniker. Keine Worte nötig, nur der Takt und das Bier.", next: "party_hub" },
 			{ t: "Die Gruppe zum Tanzen zwingen", a: 15, f: -10, r: "Du zerrst die armen Kerle erbarmungslos auf die beleuchtete Fläche. Sie sehen aus wie verängstigte Rehe im Scheinwerferlicht und hassen dich ab sofort von ganzem Herzen.", next: "party_hub" },
-			{ t: "Ironisch den Roboter tanzen", f: 5, a: 10, r: "Du fängst an, extrem steife, ironische Roboter-Moves zu machen. Die anderen ITler lachen leise und prosten dir zu. Du bist der unangefochtene König der Nerds.", next: "party_hub" }
+			{ t: "Ironisch den Roboter tanzen", f: 5, a: 10, r: "Du fängst an, extrem steife, ironische Roboter-Moves zu machen. Die anderen ITler lachen leise und prosten dir zu. Die Nerds haben einen neuen Anführer, und er tanzt wie eine Waschmaschine.", next: "party_hub" }
 		]
 	},
 
@@ -258,7 +258,7 @@ export const party = [
 		opts: [
 			{ t: "Moralisch überlegen ablehnen", a: 15, f: -5, r: "'Ich beteilige mich nicht an so etwas', sagst du erhaben. 'Spielverderber', zischt Gabi und verdreht die Augen. Du gehst zu den Langweilern an die Bar.", next: "party_hub" },
 			{ t: "Informationen für später abspeichern", f: 15, a: 5, r: "Wissen ist Macht, besonders in der IT. Du nickst nur leicht, aber merkst dir das Detail mit dem kaputten Firmenauto ganz genau. Das könnte nochmal ein exzellenter Hebel sein.", next: "party_hub" },
-			{ t: "Dazusetzen und mitlästern", f: 40, a: -20, r: "Ihr tauscht eine halbe Stunde lang Gift, Galle und die bösartigsten Gerüchte der Firma aus. Ein absolutes Fest für die Seele, das alle deine aufgestauten Aggressionen des Jahres heilt.", next: "party_hub" }
+			{ t: "Dazusetzen und mitlästern", f: 40, a: -20, r: "Ihr tauscht eine halbe Stunde lang Gift, Galle und die bösartigsten Gerüchte der Firma aus. Ein absolutes Fest für die Seele.", next: "party_hub" }
 		]
 	},
 	{
@@ -277,7 +277,7 @@ export const party = [
 		text: "Du greifst hinter das Kissen eines Sofas. Deine Hand stößt auf etwas Kaltes aus Glas. Eine halb volle, entkorkte Flasche unfassbar teuren Rotwein.",
 		opts: [
 			{ t: "Einen ordentlichen Schluck nehmen", f: 35, a: -25, r: "Du setzt an und trinkst wie ein Barbar direkt aus der Flasche. Der Tropfen ist edel und schmeckt hervorragend. Die grellen Lichter und der Lärm der Party werden plötzlich viel weicher und erträglicher.", next: "party_hub" },
-			{ t: "Flasche ins Klo schütten", a: 20, f: 0, r: "Klassenkampf! Du nimmst die sündhaft teure Flasche mit zur Toilette und versenkst genüsslich 300 Euro im Ausguss. Du fühlst dich wie ein moderner Robin Hood, nur ein bisschen dümmer.", next: "party_hub" },
+			{ t: "Flasche ins Klo schütten", a: 20, f: 0, r: "Klassenkampf! Du nimmst die sündhaft teure Flasche mit zur Toilette und versenkst genüsslich 300 Euro im Ausguss. Du kommst dir vor wie ein moderner Robin Hood, nur ein bisschen dümmer.", next: "party_hub" },
 			{ t: "Ignorieren und liegen lassen", f: 5, a: 10, r: "Du bist schließlich immer noch im Dienst... irgendwie. Du ärgerst dich ein wenig über deine eigene spießige Korrektheit und holst dir stattdessen ein stilles Wasser an der Bar.", next: "party_hub" }
 		]
 	},
@@ -286,7 +286,7 @@ export const party = [
 		title: "Deep Talk im Halbdunkel",
 		text: "Ein Kollege aus der Logistik sitzt weinend in der Ecke. Er greift nach deinem Ärmel und erzählt von seiner Scheidung und seinen Schulden.",
 		opts: [
-			{ t: "Kalt abwimmeln", a: 25, f: 5, r: "'Tut mir leid Kumpel, ich bin in der IT, kein Therapeut.' Der Kollege starrt dich an und weint noch lauter. Du bist ein eiskaltes Monster, aber hast deine Ruhe.", next: "party_hub" },
+			{ t: "Kalt abwimmeln", a: 25, f: 5, r: "'Tut mir leid Kumpel, ich bin in der IT, kein Therapeut.' Der Kollege starrt dich an und weint noch lauter. Du hast deine Ruhe.", next: "party_hub" },
 			{ t: "Ihn trösten und zuhören", f: -15, a: -15, r: "Du lässt ihn eine halbe Stunde lang auf dein Hemd weinen und hörst dir die Tragödie an. Es kostet immens viel emotionale Kraft, aber du warst heute Abend wirklich ein guter, empathischer Mensch.", next: "party_hub" },
 			{ t: "Ihm ein Bier holen und verschwinden", f: 15, a: 0, r: "Du drückst ihm wortlos eine kalte Dose in die Hand, murmelst etwas von 'Kopf hoch' und flüchtest rückwärts in die rettende Dunkelheit der lauten Tanzfläche.", next: "party_hub" }
 		]
@@ -296,9 +296,9 @@ export const party = [
 		title: "Die Couch-Blockade",
 		text: "Drei Praktikanten haben die größte, gemütlichste Couch komplett besetzt. Sie starren stumm auf ihre Handys und schauen TikToks mit Ton an.",
 		opts: [
-			{ t: "Dazwischenquetschen", f: 15, a: -5, r: "Du setzt dich mit purer Ignoranz exakt in die Mitte der Gruppe. Die Praktikanten weichen peinlich berührt zur Seite und schweigen. Du hast dir den besten Platz der Lounge erobert.", next: "party_hub" },
-			{ t: "WLAN am Router drosseln", a: 5, f: 20, r: "Du zückst dein Admin-Handy, greifst remote auf den Router zu und killst den Speed. Die Videos puffern. Die Praktikanten fluchen, stehen auf und gehen. Ein makelloser IT-Sieg.", next: "party_hub" },
-			{ t: "Seufzen und stehenbleiben", a: 15, f: 5, r: "Die Jugend von heute hat keinen Respekt mehr. Du bleibst trotzig daneben stehen, starrst sie böse an und spürst, wie deine chronischen Rückenschmerzen langsam wieder einsetzen.", next: "party_hub" }
+			{ t: "Sich in die Mitte quetschen", f: 15, a: -5, r: "Du setzt dich mit purer Ignoranz exakt in die Mitte der Gruppe. Die Praktikanten weichen peinlich berührt zur Seite und schweigen. Du hast dir den besten Platz der Lounge erobert.", next: "party_hub" },
+			{ t: "WLAN am Router drosseln", a: 5, f: 20, r: "Du zückst dein Admin-Handy, greifst remote auf den Router zu und killst den Speed. Die Videos puffern. Die Praktikanten fluchen, stehen auf und gehen.", next: "party_hub" },
+			{ t: "Seufzen und stehenbleiben", a: 15, f: 5, r: "Du bleibst trotzig daneben stehen, starrst sie böse an und spürst, wie deine chronischen Rückenschmerzen langsam wieder einsetzen.", next: "party_hub" }
 		]
 	},
 	{
@@ -306,8 +306,8 @@ export const party = [
 		title: "Das verlorene Smartphone",
 		text: "Auf dem kleinen Beistelltisch blinkt ein verwaistes iPhone. Eine Nachricht von 'Hasi ❤️' ploppt auf: 'Wann kommst du endlich heim?!'",
 		opts: [
-			{ t: "Antworten: 'Bin noch auf der Afterparty!'", a: 20, f: 0, r: "Du tippst schnell die Antwort und schickst die Nachricht ab. Das gibt heute Nacht zu Hause garantiert ein kolossales Beziehungs-Drama für den Besitzer.", next: "party_hub" },
-			{ t: "Handy am Empfang abgeben", f: -5, a: 5, r: "Du bringst das klingelnde Gerät artig zu Gabi an den Empfang. Irgendjemand wird sich morgen sehr freuen. Ein absolut anständiger und verantwortungsvoller Move.", next: "party_hub" },
+			{ t: "'Bin noch auf der Afterparty!'", a: 20, f: 0, r: "Du tippst schnell die Antwort und schickst die Nachricht ab. Das gibt heute Nacht zu Hause garantiert ein kolossales Beziehungs-Drama für den Besitzer.", next: "party_hub" },
+			{ t: "Handy am Empfang abgeben", f: -5, a: 5, r: "Du bringst das klingelnde Gerät artig zu Gabi an den Empfang. Irgendjemand wird sich morgen sehr freuen.", next: "party_hub" },
 			{ t: "Ignorieren", f: 10, a: 0, r: "Einfach wegsehen. Nicht dein Handy, nicht dein Drama, nicht deine Baustelle. Du schlenderst weiter und lässt das Ding fröhlich in der Dunkelheit vor sich hin blinken.", next: "party_hub" }
 		]
 	},
@@ -328,8 +328,8 @@ export const party = [
 		title: "Kaltluft und Nikotin",
 		text: "Du trittst nach draußen. Es nieselt leicht. Ein paar frierende Kollegen aus der Buchhaltung stehen unter dem Vordach und rauchen schweigend. Die Stimmung ist angenehm melancholisch.",
 		opts: [
-			{ t: "Sich stumm dazustellen", f: 20, a: -15, r: "Du lehnst dich an die kalte, feuchte Hauswand. Niemand sagt ein Wort, man hört nur das leise Knistern der Zigaretten. Ein perfekter, sozial absolut anspruchsloser Moment der Erholung.", next: "party_hub" },
-			{ t: "Nach Feuer fragen (obwohl du nicht rauchst)", f: 5, a: 5, r: "Du versuchst krampfhaft, dazuzugehören. Die rauchenden Kollegen schauen dich misstrauisch an. Du tust peinlich berührt so, als hättest du deine Zigaretten drinnen vergessen, und schleichst wieder rein.", next: "party_hub" }
+			{ t: "Sich stumm dazustellen", f: 20, a: -15, r: "Du lehnst dich an die kalte, feuchte Hauswand. Niemand sagt ein Wort, man hört nur das leise Knistern der Zigaretten.", next: "party_hub" },
+			{ t: "Nach Feuer fragen, obwohl du nicht rauchst", f: 5, a: 5, r: "Du versuchst krampfhaft, dazuzugehören. Die rauchenden Kollegen schauen dich misstrauisch an. Du tust peinlich berührt so, als hättest du deine Zigaretten drinnen vergessen, und schleichst wieder rein.", next: "party_hub" }
 		]
 	},
 	{
@@ -338,7 +338,7 @@ export const party = [
 		text: "Ein völlig unbekannter Kollege aus der IT-Infrastruktur flucht lautstark in sein Handy. Sein Uber hat ihn versetzt. Er hat offensichtlich Schlagseite.",
 		opts: [
 			{ t: "Ihn ignorieren", a: 10, f: 5, r: "Du zuckst mit den Schultern. Sollen ihn doch die Wölfe im Industriegebiet holen. Du drehst dich um und gehst wieder rein ins Warme.", next: "party_hub" },
-			{ t: "Ihm helfen, ein Taxi zu rufen", f: -10, a: -10, r: "Du besorgst ihm über deine App einen Wagen. Er fällt dir lallend um den Hals und drückt dich feucht-fröhlich an sich. Etwas eklig, aber du hast eine wahrhaft gute Tat vollbracht.", next: "party_hub" }
+			{ t: "Ihm helfen, ein Taxi zu rufen", f: -10, a: -10, r: "Du besorgst ihm über deine App einen Wagen. Er fällt dir lallend um den Hals und drückt dich feucht-fröhlich an sich.", next: "party_hub" }
 		]
 	},
 	{
@@ -365,9 +365,9 @@ export const party = [
 		title: "Die Frostbeule",
 		text: "Die neue Praktikantin steht im dünnen Partykleid im Wind und zittert wie Espenlaub, während sie auf ihr Uber wartet. Sie sieht erbärmlich aus.",
 		opts: [
-			{ t: "Ritterlich dein Sakko/Pulli anbieten", f: -10, a: -15, r: "Sie nimmt dein wärmendes Sakko extrem dankbar an und wickelt sich ein. Du stehst jetzt im kalten Wind und frierst dir den Hintern ab, bist aber der absolute Gentleman des Abends.", next: "party_hub" },
+			{ t: "Ritterlich dein Sakko/Pulli anbieten", f: -10, a: -15, r: "Sie nimmt dein wärmendes Sakko extrem dankbar an und wickelt sich ein. Du stehst jetzt im kalten Wind und frierst dir den Hintern ab.", next: "party_hub" },
 			{ t: "Tipps geben: 'Beweg dich, dann wird dir warm!'", a: 15, f: 5, r: "Du klatschst in die Hände und feuerst sie an. Sie starrt dich fassungslos und hasserfüllt an. 'Danke für nichts, Arschloch.' Mission vergeigt.", next: "party_hub" },
-			{ t: "Wieder reingehen (Mir ist zu kalt)", f: 15, a: 0, r: "Du hast absolut keine Lust, dir für jemand anderen eine Lungenentzündung zu holen. Du murmelst ein 'Viel Glück noch' und flüchtest schnell zurück in die beheizte Lobby.", next: "party_hub" }
+			{ t: "Wieder reingehen - zu kalt hier", f: 15, a: 0, r: "Du hast absolut keine Lust, dir für jemand anderen eine Lungenentzündung zu holen. Du murmelst ein 'Viel Glück noch' und flüchtest schnell zurück in die beheizte Lobby.", next: "party_hub" }
 		]
 	},
 	{
@@ -376,7 +376,7 @@ export const party = [
 		text: "Du siehst, wie ein Auto beim Ausparken rückwärts extrem hart gegen den teuren SUV des Finanzchefs dotzt. Das Glas splittert. Der Fahrer steigt aus: Es ist der Leiter der Rechtsabteilung. Er sieht dich.",
 		opts: [
 			{ t: "Augen zuhalten: 'Ich hab nichts gesehen!'", f: 10, a: 5, r: "Du drehst dich blitzschnell weg und pfeifst. Der flüchtende Anwalt gibt Gas. Das kommende Büro-Drama überlässt du genüsslich den anderen. Du hast nichts gesehen.", next: "party_hub" },
-			{ t: "Erpressung: 'Das bleibt unter uns, gegen Gefallen.'", f: 20, a: -10, r: "Er nickt hektisch, wischt sich den Schweiß von der Stirn und braust mit quietschenden Reifen davon. Du hast jetzt einen massiven, illegalen Gefallen bei der mächtigsten Abteilung der Firma frei.", next: "party_hub" },
+			{ t: "'Das bleibt unter uns. Gegen einen Gefallen.'", f: 20, a: -10, r: "Er nickt hektisch, wischt sich den Schweiß von der Stirn und braust mit quietschenden Reifen davon. Du hast jetzt einen massiven, illegalen Gefallen bei der mächtigsten Abteilung der Firma frei.", next: "party_hub" },
 			{ t: "Brav ein Foto für den Finanzchef machen", a: 10, f: -5, r: "Du zückst das Handy und sicherst Beweise. Der Rechts-Chef rastet völlig aus und brüllt dich über den halben Parkplatz an. Aber am Ende siegt die Gerechtigkeit.", next: "party_hub" }
 		]
 	},
@@ -385,8 +385,8 @@ export const party = [
 		title: "Die Lärmbeschwerde",
 		text: "Ein wütender Typ im Bademantel steht am Zaun des Geländes. 'MACHT DIESE DRECKSMUSIK LEISER ODER ICH RUFE DIE COPS! ICH WILL SCHLAFEN!'",
 		opts: [
-			{ t: "Zurückpöbeln: 'DANN ZIEH DOCH WEG!'", a: 30, f: -5, r: "'DANN ZIEH DOCH IN DEN WALD, DU RENTNER!', brüllst du zurück. Ihr liefert euch ein episches Wortgefecht über den Zaun. Es tut unfassbar gut, den aufgestauten Frust mal richtig rauszubrüllen.", next: "party_hub" },
-			{ t: "Beschwichtigen: 'Ich sage dem DJ Bescheid.'", f: 5, a: -10, r: "Du nickst verständnisvoll. 'Sie haben völlig recht, ich kümmere mich darum.' Du gehst rein und sagst dem DJ natürlich absolut NICHT Bescheid, aber der Nachbar ist erstmal ruhiggestellt.", next: "party_hub" },
+			{ t: "'DANN ZIEH DOCH WEG!'", a: 30, f: -5, r: "'DANN ZIEH DOCH IN DEN WALD, DU RENTNER!', brüllst du zurück. Ihr liefert euch ein episches Wortgefecht über den Zaun. Es tut unfassbar gut, den aufgestauten Frust mal richtig rauszubrüllen.", next: "party_hub" },
+			{ t: "'Ich sage dem DJ Bescheid.'", f: 5, a: -10, r: "Du nickst verständnisvoll. 'Sie haben völlig recht, ich kümmere mich darum.' Du gehst rein und sagst dem DJ natürlich absolut NICHT Bescheid, aber der Nachbar ist erstmal ruhiggestellt.", next: "party_hub" },
 			{ t: "Polizei provozieren: 'Ruf sie doch!'", a: 40, f: 10, r: "'Dann ruf sie doch, du Feigling!', stachelst du ihn an. Dein genial-böser Plan: Wenn die Polizei gleich anrückt und die Party beendet, kannst du endlich legal nach Hause gehen.", next: "party_hub" }
 		]
 	},
@@ -397,9 +397,9 @@ export const party = [
 		title: "Die stöhnende Kabine",
 		text: "Du betrittst den Waschraum. Aus der mittleren Kabine hörst du ein rhythmisches Quietschen und gedämpftes Stöhnen. Unter der Tür siehst du die roten Pumps der HR-Chefin.",
 		opts: [
-			{ t: "Handy zücken und Füße filmen", f: 25, a: -10, r: "Du hältst das Handy flach über den Boden und machst lautlos ein hochauflösendes Foto der roten Schuhe in verfänglicher Position. Ein schmutziger, aber unglaublich mächtiger Blackmail-Move.", next: "party_hub" },
+			{ t: "Handy zücken und Füße filmen", f: 25, a: -10, r: "Du hältst das Handy flach über den Boden und machst lautlos ein hochauflösendes Foto der roten Schuhe in verfänglicher Position.", next: "party_hub" },
 			{ t: "Hände laut waschen und gehen", f: 15, a: 10, r: "Du willst mit diesem HR-Skandal absolut nichts zu tun haben. Du machst den Wasserhahn extrem laut an, wäschst dir die Hände und verschwindest fast fluchtartig aus dem Raum.", next: "party_hub" },
-			{ t: "Laut gegen die Tür hämmern: 'Putzdienst!'", a: 30, f: -5, r: "Du schlägst mit der flachen Hand gegen die Tür und brüllst. Drinnen bricht pure, nackte Panik aus. Jemand rutscht klatschend ab und flucht. Du lachst dir Tränen ins Fäustchen.", next: "party_hub" }
+			{ t: "Laut gegen die Tür hämmern: 'Putzdienst!'", a: 30, f: -5, r: "Du schlägst mit der flachen Hand gegen die Tür und brüllst. Drinnen bricht pure, nackte Panik aus. Jemand rutscht klatschend ab und flucht. Du lachst dir ins Fäustchen.", next: "party_hub" }
 		]
 	},
 	{
@@ -407,7 +407,7 @@ export const party = [
 		title: "Spiegel-Gespräche",
 		text: "Du stehst am Waschbecken. Ein Vertriebler wäscht sich die Hände, starrt sich tief in den Spiegel und murmelt: 'Du bist ein Tiger. Du bist ein Macher.' Er bereitet sich auf den Flirt vor.",
 		opts: [
-			{ t: "Zustimmen: 'Gibt ihnen, Tiger!'", f: 5, a: -5, r: "Er schaut dich erst völlig überrascht an, grinst dann breit und zeigt dir mit beiden Händen die Finger-Pistolen. Ein extrem seltsamer, etwas unangenehmer Bro-Moment am Waschbecken.", next: "party_hub" },
+			{ t: "'Gib's ihnen, Tiger!'", f: 5, a: -5, r: "Er schaut dich erst völlig überrascht an, grinst dann breit und zeigt dir mit beiden Händen die Finger-Pistolen.", next: "party_hub" },
 			{ t: "Kommentarlos die Hände trocknen", a: 10, f: 0, r: "Du schüttelst nur leicht den Kopf über so viel aufgesetzte Verkäufer-Psyche, ziehst dir stumm ein Papiertuch und verlässt den Raum. Leute gibt's, die gibt's gar nicht.", next: "party_hub" }
 		]
 	},
@@ -417,7 +417,7 @@ export const party = [
 		text: "Du hast dich in einer Kabine eingeschlossen, um durchzuatmen. Zwei Leute kommen herein. Sie lästern am Waschbecken lautstark: 'Hast du Müllers Pulli gesehen? Die IT kriegt echt nichts mehr mit.' Sie reden über DICH!",
 		opts: [
 			{ t: "Still lauschen", f: 20, a: 15, r: "Du bewegst dich keinen Millimeter und hörst dir die ganze Läster-Tirade an. Es macht dich extrem wütend, aber du weißt jetzt ganz genau, wer die hinterhältigen Schlangen im Büro sind.", next: "party_hub" },
-			{ t: "Die Spülung ziehen und raustreten", a: 25, f: -5, r: "Du betätigst lautstark die Spülung, reißt die Tür auf und baust dich vor ihnen auf. Die beiden erstarren augenblicklich zur Salzsäule. Ihr schockierter Blick ist unbezahlbar. Du gehst wortlos und erhaben an ihnen vorbei.", next: "party_hub" }
+			{ t: "Die Spülung ziehen und raustreten", a: 25, f: -5, r: "Du betätigst lautstark die Spülung, reißt die Tür auf und baust dich vor ihnen auf. Die beiden erstarren augenblicklich zur Salzsäule. Du gehst wortlos und erhaben an ihnen vorbei.", next: "party_hub" }
 		]
 	},
 	{
@@ -425,7 +425,7 @@ export const party = [
 		title: "Das Klopapier-Monopol",
 		text: "Aus der Kabine neben dir klopft jemand verzweifelt an die Trennwand. 'Hallo? Ist da jemand? Mein Papier ist leer. Haben Sie noch was?' Du blickst auf deine eigene, volle Rolle.",
 		opts: [
-			{ t: "Erpressung: 'Was ist es Ihnen wert?'", f: 10, a: 20, r: "'Fünf Euro?', fragt die zittrige Stimme. Ein zerknitterter Schein taucht unter der Tür auf. Du nimmst das Geld und reichst das Papier rüber. Purer, schmutziger Kapitalismus in Reinkultur.", next: "party_hub" },
+			{ t: "'Was ist es Ihnen wert?'", f: 10, a: 20, r: "'Fünf Euro?', fragt die zittrige Stimme. Ein zerknitterter Schein taucht unter der Tür auf. Du nimmst das Geld und reichst das Papier rüber. Purer, schmutziger Kapitalismus in Reinkultur.", next: "party_hub" },
 			{ t: "Schweigen und lautlos gehen", f: 25, a: 5, r: "Du tust so, als wärst du gar nicht da. Du schleichst lautlos aus der Kabine und verlässt den Raum. Der arme Kerl sitzt da wahrscheinlich noch bis zum Morgengrauen fest.", next: "party_hub" },
 			{ t: "Ein Blatt unter der Tür durchschieben", f: -5, a: -10, r: "Du reißt ein großzügiges Stück ab und schiebst es unter der Trennwand durch. 'Oh mein Gott, danke! Ich werde Ihnen das nie vergessen!', wimmert es von drüben. Du bist der Retter in höchster Not.", next: "party_hub" }
 		]
@@ -436,8 +436,8 @@ export const party = [
 		text: "Du willst die Kabine abschließen, aber der Riegel fehlt. Irgendwer hat ihn abgetreten. Du musst auf der Schüssel sitzen und gleichzeitig mit dem Fuß die Tür zuhalten.",
 		opts: [
 			{ t: "Genervt aufgeben und gehen", a: 15, f: 5, r: "Du ziehst die Hose wieder hoch und verlässt fluchend die Kabine. Diese Firma kriegt nicht mal einfache Türschlösser auf die Reihe. Wie soll da das Netzwerk funktionieren?", next: "party_hub" },
-			{ t: "Den Akrobatik-Akt durchziehen", f: 10, a: 10, r: "Du verkrampfst dein Bein und stemmst den Fuß gegen die Tür, während du versuchst, dein Geschäft zu erledigen. Es funktioniert irgendwie, aber Entspannung sieht definitiv anders aus.", next: "party_hub" },
-			{ t: "Die Tür einfach offen lassen", a: 30, f: 0, r: "Wer reinguckt, ist selber schuld! Ein ahnungsloser Kollege stößt die Tür auf, starrt dich fassungslos an und flüchtet sofort mit einem lauten 'Sorry!'. Du hast Dominanz bewiesen.", next: "party_hub" }
+			{ t: "Den Akrobatik-Akt durchziehen", f: 10, a: 10, r: "Du verkrampfst dein Bein und stemmst den Fuß gegen die Tür, während du versuchst, dein Geschäft zu erledigen. Es funktioniert irgendwie. Dein Bein zittert noch beim Händewaschen.", next: "party_hub" },
+			{ t: "Die Tür einfach offen lassen", a: 30, f: 0, r: "Wer reinguckt, ist selber schuld! Ein ahnungsloser Kollege stößt die Tür auf, starrt dich fassungslos an und flüchtet sofort mit einem lauten 'Sorry!'.", next: "party_hub" }
 		]
 	},
 	{
@@ -463,15 +463,15 @@ export const party = [
 	},
 
 	// ===============================================
-	// DIE 5 VERSCHIEDENEN ENDEN (Wird vom System gewählt)
+	// THE 5 ENDINGS (picked by the engine)
 	// ===============================================
 	{
 		id: "party_finale_rage",
 		title: "FINALE: BOFH MELTDOWN",
-		text: "23:00 Uhr. Die Musik ist furchtbar, die Kollegen nerven, der Fremdscham des heutigen Abends hat jede einzelne deiner verbliebenen Gehirnzellen zerstört. Dein Blutdruck ist im kritischen Bereich.\n\nPlötzlich ein lauter Knall! Jemand ist übers Stromkabel gestolpert. Die Musik stirbt. Das Licht geht aus. Aus der totalen Dunkelheit ruft Dr. Wichtig panisch: 'MÜLLER! SIND SIE NOCH DA?! TUN SIE WAS!'",
+		text: "23:00 Uhr. Die Musik ist furchtbar, die Kollegen nerven, die Fremdscham des heutigen Abends hat jede einzelne deiner verbliebenen Gehirnzellen zerstört. Dein Blutdruck ist im kritischen Bereich.\n\nPlötzlich ein lauter Knall! Jemand ist übers Stromkabel gestolpert. Die Musik stirbt. Das Licht geht aus. Aus der totalen Dunkelheit ruft Dr. Wichtig panisch: 'MÜLLER! SIND SIE NOCH DA?! TUN SIE WAS!'",
 		opts: [
 			{ 
-				t: "Die epische Tirade (Rage-Quit)", 
+				t: "Die epische Tirade - der Rage-Quit", 
 				action: { fn: "finishParty", args: ["LEGENDE", "Dein Puls ist auf 180. Das Maß ist voll. Du schnappst dir das batteriebetriebene Notstrom-Mikrofon des DJs. Du brüllst eine dreiminütige, epische Tirade in die absolute Dunkelheit. Du erzählst von der geballten Inkompetenz der Belegschaft, rezitierst die absurdesten Browser-Verläufe aus dem Kopf und nennst den CEO einen glorifizierten Krawattenständer. Du lässt das Mikrofon fallen und verlässt wortlos durch den Notausgang die Halle. Niemand wird diesen Abend je vergessen. Eine Legende ward geboren."] }
 			}
 		]
@@ -482,7 +482,7 @@ export const party = [
 		text: "23:00 Uhr. Du hast den Abend größtenteils extrem entspannt verbracht. Du hast dich weggeduckt, geschlafen, Leute ignoriert und das Buffet geplündert. Du bist extrem faul, leise und praktisch unsichtbar geworden.\n\nEin lauter Knall! Das Hauptkabel wurde aus der Wand gerissen. Die Halle ist stockfinster. Die Kollegen schreien in Panik durcheinander.",
 		opts: [
 			{ 
-				t: "Im Dunkeln verschwinden (Houdini)", 
+				t: "Im Dunkeln verschwinden wie Houdini", 
 				action: { fn: "finishParty", args: ["HOUDINI", "Während alle im Dunkeln übereinander stolpern, schreien und den Notausgang suchen, nutzt du das Chaos meisterhaft aus. Du ziehst die Schultern hoch, robbst lautlos unter dem Catering-Buffet durch, schnappst dir im Vorbeigehen blind eine volle Flasche Sekt und gleitest wie ein Schatten durch die Nebentür. Um 23:15 Uhr liegst du bereits mit Jogginghose auf deiner Couch. Perfekte Flucht. Niemand wird je beweisen können, wann genau du gegangen bist."] }
 			}
 		]
@@ -505,7 +505,7 @@ export const party = [
 		opts: [
 			{ 
 				t: "Die VIP-Ecke kapern", 
-				action: { fn: "finishParty", args: ["INSIDER", "Du räusperst dich leise im Dunkeln. Der Chef erstarrt. 'Wer ist da?' Du antwortest extrem gelassen: 'Nur die IT, Chef. Keine Sorge, mein Schweigen kann man kaufen.' Ein leises Lachen ertönt von Frau Elster. Du gesellst dich im Dunkeln einfach in den inneren Zirkel der Macht. Ihr tauscht im Schutz der Finsternis Intrigen und Geheimnisse aus, bis der Strom wieder da ist. Du bist jetzt unangreifbar. Du hast absolute Macht im Büro erlangt."] }
+				action: { fn: "finishParty", args: ["INSIDER", "Du räusperst dich leise im Dunkeln. Der Chef erstarrt. 'Wer ist da?' Du antwortest extrem gelassen: 'Nur die IT, Chef. Keine Sorge, mein Schweigen kann man kaufen.' Ein leises Lachen ertönt von Frau Elster. Du gesellst dich im Dunkeln einfach in den inneren Zirkel der Macht. Ihr tauscht im Schutz der Finsternis Intrigen und Geheimnisse aus, bis der Strom wieder da ist. Du bist jetzt unangreifbar."] }
 			}
 		]
 	},

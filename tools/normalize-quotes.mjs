@@ -23,89 +23,89 @@
  *
  * Idempotent - running it twice changes nothing the second time.
  *
- *   node tools/normalize-quotes.mjs            alle Datendateien
- *   node tools/normalize-quotes.mjs --dry      nur berichten, nichts schreiben
+ *   node tools/normalize-quotes.mjs            all data files
+ *   node tools/normalize-quotes.mjs --dry      report only, write nothing
  */
 import { readFileSync, writeFileSync, readdirSync } from 'fs';
 import * as acorn from 'acorn';
 
-const NUR_BERICHT = process.argv.includes('--dry');
-const VERZEICHNIS = process.argv.find(a => !a.startsWith('--') && a !== process.argv[0] && a !== process.argv[1]) ?? '.';
+const REPORT_ONLY = process.argv.includes('--dry');
+const DIRECTORY = process.argv.find(a => !a.startsWith('--') && a !== process.argv[0] && a !== process.argv[1]) ?? '.';
 
 /** Collects every node of a type without knowing the tree in advance. */
-function sammeln(baum, typ, treffer = []) {
-    if (!baum || typeof baum !== 'object') return treffer;
-    if (Array.isArray(baum)) { baum.forEach(k => sammeln(k, typ, treffer)); return treffer; }
-    if (baum.type === typ) treffer.push(baum);
-    for (const [k, v] of Object.entries(baum)) if (!['type', 'start', 'end'].includes(k)) sammeln(v, typ, treffer);
-    return treffer;
+function collect(tree, type, hits = []) {
+    if (!tree || typeof tree !== 'object') return hits;
+    if (Array.isArray(tree)) { tree.forEach(node => collect(node, type, hits)); return hits; }
+    if (tree.type === type) hits.push(tree);
+    for (const [key, value] of Object.entries(tree)) if (!['type', 'start', 'end'].includes(key)) collect(value, type, hits);
+    return hits;
 }
 
 const parse = (text) => acorn.parse(text, { ecmaVersion: 'latest', sourceType: 'module' });
-const literale = (text) => sammeln(parse(text), 'Literal').filter(k => typeof k.value === 'string');
+const literals = (text) => collect(parse(text), 'Literal').filter(node => typeof node.value === 'string');
 
 /**
- * Rewrites the chosen literals. `neuerWert` returns the new value or null to
+ * Rewrites the chosen literals. `newValue` returns the new value or null to
  * leave the literal alone. Works from the back so earlier replacements do not
  * shift the positions of later ones.
  */
-function schreiben(text, neuerWert) {
-    let ergebnis = text, anzahl = 0;
-    for (const k of literale(text).sort((a, b) => b.start - a.start)) {
-        const wert = neuerWert(k);
-        if (wert === null) continue;
-        ergebnis = ergebnis.slice(0, k.start) + JSON.stringify(wert) + ergebnis.slice(k.end);
-        anzahl++;
+function rewrite(text, newValue) {
+    let result = text, count = 0;
+    for (const node of literals(text).sort((a, b) => b.start - a.start)) {
+        const value = newValue(node);
+        if (value === null) continue;
+        result = result.slice(0, node.start) + JSON.stringify(value) + result.slice(node.end);
+        count++;
     }
-    return { ergebnis, anzahl };
+    return { result, count };
 }
 
-let summeNotation = 0, summeText = 0, summeVerschachtelt = 0;
+let totalNotation = 0, totalText = 0, totalNested = 0;
 
-for (const datei of readdirSync(VERZEICHNIS).filter(f => f.startsWith('data_') && f.endsWith('.js')).sort()) {
-    const pfad = VERZEICHNIS === '.' ? datei : `${VERZEICHNIS}/${datei}`;
-    const original = readFileSync(pfad, 'utf-8');
+for (const file of readdirSync(DIRECTORY).filter(f => f.startsWith('data_') && f.endsWith('.js')).sort()) {
+    const path = DIRECTORY === '.' ? file : `${DIRECTORY}/${file}`;
+    const original = readFileSync(path, 'utf-8');
     let text = original;
 
-    // --- 1) Notation: einfache Anführungszeichen im Quelltext -> doppelte ---
-    const einfach = literale(text).filter(k => text[k.start] === "'").length;
-    if (einfach) {
-        const { ergebnis } = schreiben(text, (k) => text[k.start] === "'" ? k.value : null);
-        const vorher = literale(text).map(k => k.value);
-        const nachher = literale(ergebnis).map(k => k.value);
-        if (JSON.stringify(vorher) !== JSON.stringify(nachher)) {
-            console.error(`${datei}: Notation — Inhalt hätte sich verändert, übersprungen`);
+    // --- 1) Notation: single quotes in the source -> double ---
+    const singleQuoted = literals(text).filter(node => text[node.start] === "'").length;
+    if (singleQuoted) {
+        const { result } = rewrite(text, (node) => text[node.start] === "'" ? node.value : null);
+        const before = literals(text).map(node => node.value);
+        const after = literals(result).map(node => node.value);
+        if (JSON.stringify(before) !== JSON.stringify(after)) {
+            console.error(`${file}: Notation — Inhalt hätte sich verändert, übersprungen`);
         } else {
-            text = ergebnis;
-            summeNotation += einfach;
+            text = result;
+            totalNotation += singleQuoted;
         }
     }
 
-    // --- 2) Spieltext: doppelte Anführungszeichen erster Ordnung -> einfache ---
-    // Nur Texte mit " und OHNE ': dann kann es keine Verschachtelung sein.
-    // Texte mit beiden Sorten sind Zitat im Zitat und bleiben unberührt.
-    const kandidaten = literale(text).filter(k => k.value.includes('"'));
-    const ersteOrdnung = kandidaten.filter(k => !k.value.includes("'"));
-    summeVerschachtelt += kandidaten.length - ersteOrdnung.length;
+    // --- 2) Game text: first-order double quotes -> single ---
+    // Only texts with " and WITHOUT ': then there can be no nesting.
+    // Texts carrying both kinds are a quote inside a quote and stay put.
+    const candidates = literals(text).filter(node => node.value.includes('"'));
+    const firstOrder = candidates.filter(node => !node.value.includes("'"));
+    totalNested += candidates.length - firstOrder.length;
 
-    if (ersteOrdnung.length) {
-        const stellen = new Set(ersteOrdnung.map(k => k.start));
-        const { ergebnis, anzahl } = schreiben(text, (k) => stellen.has(k.start) ? k.value.replace(/"/g, "'") : null);
-        const vorher = literale(text).map(k => k.value);
-        const nachher = literale(ergebnis).map(k => k.value);
-        const geaendert = vorher.filter((v, i) => v !== nachher[i]);
-        if (geaendert.length !== anzahl || geaendert.some(v => !v.includes('"'))) {
-            console.error(`${datei}: Spieltext — unerwartete Abweichung, übersprungen`);
+    if (firstOrder.length) {
+        const spots = new Set(firstOrder.map(node => node.start));
+        const { result, count } = rewrite(text, (node) => spots.has(node.start) ? node.value.replace(/"/g, "'") : null);
+        const before = literals(text).map(node => node.value);
+        const after = literals(result).map(node => node.value);
+        const changed = before.filter((v, i) => v !== after[i]);
+        if (changed.length !== count || changed.some(v => !v.includes('"'))) {
+            console.error(`${file}: Spieltext — unerwartete Abweichung, übersprungen`);
         } else {
-            text = ergebnis;
-            summeText += anzahl;
+            text = result;
+            totalText += count;
         }
     }
 
     if (text === original) continue;
-    if (!NUR_BERICHT) writeFileSync(pfad, text);
-    console.log(`${datei.padEnd(22)} Notation: ${String(einfach).padStart(4)} | Spieltext: ${ersteOrdnung.length}`);
+    if (!REPORT_ONLY) writeFileSync(path, text);
+    console.log(`${file.padEnd(22)} Notation: ${String(singleQuoted).padStart(4)} | Spieltext: ${firstOrder.length}`);
 }
 
-console.log(`\nNotation umgestellt: ${summeNotation} | Spieltexte umgestellt: ${summeText} | Verschachtelungen unberührt: ${summeVerschachtelt}`);
-if (NUR_BERICHT) console.log('(--dry: nichts geschrieben)');
+console.log(`\nNotation umgestellt: ${totalNotation} | Spieltexte umgestellt: ${totalText} | Verschachtelungen unberührt: ${totalNested}`);
+if (REPORT_ONLY) console.log('(--dry: nichts geschrieben)');

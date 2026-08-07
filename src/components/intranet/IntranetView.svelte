@@ -1,5 +1,5 @@
 <!--
-  Das GlobalCorp-Intranet.
+  The GlobalCorp intranet.
 
   Until v4.0.0 this was seven standalone HTML files in public/assets/intranet/,
   shown in an iframe. That construction needed a hand-copied Tailwind build at

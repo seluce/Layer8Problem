@@ -16,13 +16,17 @@
  *  - chain events: next going nowhere, unreachable nodes/results, dead ends
  *  - nextEmail pointing at a missing mail, duplicate mail ids and subjects
  *  - characters in opt.r that could break the inline onclick string
+ *  - unknown fields: a misspelt key parses fine and is silently dropped
+ *  - result keys without the res_ prefix (the terminal reads that prefix)
+ *  - the diary pool: conditions that throw, never fit, or name something
+ *    that does not exist
  */
 
 import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -31,7 +35,7 @@ const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'party', 'reputation', 
 const itemIds = new Set(Object.keys(DB.items));
 const charNames = new Set(DB.chars.map(c => c.name));
 
-/* ---------- 1) Event-IDs: eindeutig über ALLE Pools ---------- */
+/* ---------- 1) Event ids: unique across ALL pools ---------- */
 const idMap = new Map();
 for (const p of POOLS) {
   for (const ev of DB[p]) {
@@ -43,7 +47,7 @@ for (const [id, pools] of idMap) {
   if (pools.length > 1) err(`Doppelte Event-ID "${id}" in ${pools.join(' + ')} — usedIDs blockiert beide gleichzeitig`);
 }
 
-/* ---------- 2) Referenzen + Story-Flags ---------- */
+/* ---------- 2) References and story flags ---------- */
 // Story flags vs. node navigation.
 // A plain event carries `opts`; its opt.next SETS a story flag.
 // A chain event carries `nodes`; opt.next inside a node NAVIGATES to another
@@ -59,7 +63,13 @@ const noteFlag = (flag, where) => {
 };
 
 const checkOpt = (o, ctx) => {
-  if (o.t === undefined && o.btn === undefined) err(`${ctx}: Option ohne Button-Text`);
+  if (o.t === undefined) err(`${ctx}: Option ohne Button-Text`);
+  // In the messenger a pair of brackets already says "this is an action, not a
+  // message". The System: prefix in front of it was historical and cost eight
+  // characters of a very narrow bubble. It stays allowed inside chat texts,
+  // where it is the messenger's own notice rather than a label.
+  if (/^\s*\[\s*System\s*:/i.test(o.t ?? ''))
+    err(`${ctx}: Beschriftung mit "[System: …]" — im Chat tragen Handlungen nur die eckigen Klammern`);
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
     if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
   }
@@ -79,31 +89,53 @@ for (const p of POOLS) {
       // follow-up must not push it into the past. "gestern" is wrong even
       // when it sounds harmless, and it becomes wrong twice over once story
       // flags travel across days in a campaign.
-      // Nur ein Hinweis, keine Warnung: Ob sich das "gestern" auf den Auslöser
-      // bezieht oder auf den Kater der Buchhaltung, kann kein Muster
-      // entscheiden. Beim Schreiben eines Folge-Ereignisses ist die Zeile
-      // trotzdem die richtige Frage.
+      // An info, not a warning: whether that "gestern" refers to the
+      // trigger or to the accountant's tomcat is nothing a pattern can
+      // decide. When writing a follow-up event, though, it is still
+      // exactly the right question to ask.
       //
-      // Geprüft wird der ganze Text des Ereignisses, nicht nur die Einleitung:
-      // Ein Ergebnistext, der den Auslöser auf gestern datiert, ist genauso
-      // falsch und fällt beim Lesen noch weniger auf.
-      const zeit = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
-      const alleTexte = [
+      // The whole event is checked, not just the opening: a result text
+      // that dates the trigger to yesterday is just as wrong and even
+      // harder to catch while reading.
+      //
+      // Reviewed and found fine (4.1.0) - each of these time references
+      // points at something other than the trigger, so the question is
+      // answered and need not be asked again:
+      //   call_hotline_queue_2b    "kein Gestern" is figurative
+      //   cof_stolen_sandwich_2c   Markus' absence yesterday is backstory
+      //   rep_egon_story_2c        Egon's revenge started today - trigger was today
+      //   rep_elster_simple_good_2c  the dog video is from yesterday, unrelated
+      //   srv_legacy_tape_2ab/2c   the tape holds yesterday's backup (says so in the trigger)
+      //   srv_disco_led_2c         same: the latest backup is yesterday's
+      //   srv_fremder_stick_2c     musical since today - trigger was today
+      const timeRefReviewed = new Set([
+        'call_hotline_queue_2b', 'cof_stolen_sandwich_2c', 'rep_egon_story_2c',
+        'rep_elster_simple_good_2c', 'srv_legacy_tape_2ab', 'srv_legacy_tape_2c',
+        'srv_disco_led_2c', 'srv_fremder_stick_2c'
+      ]);
+      const timeRef = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
+      const allTexts = [
         ['text', ev.text],
         ...Object.entries(ev.nodes ?? {}).map(([k, n]) => [`nodes.${k}.text`, n.text]),
         ...(ev.opts ?? []).map((o, i) => [`opts[${i}].r`, o.r]),
         ...Object.entries(ev.results ?? {}).map(([k, r]) => [`results.${k}.txt`, r.txt])
       ];
-      for (const [feld, txt] of alleTexte) {
+      for (const [field, txt] of allTexts) {
         if (typeof txt !== 'string') continue;
-        const g = txt.match(zeit);
-        if (g) info(`${ctx} ${feld}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+        if (timeRefReviewed.has(ev.id)) continue;
+        const g = txt.match(timeRef);
+        if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
       }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
       warn(`${ctx}: kind fehlt oder unbekannt ("${ev.kind}") — Dienstgänge brauchen "text" oder "phone"`);
     if (ev.reqStory) (flagsReq.get(ev.reqStory) ?? flagsReq.set(ev.reqStory, []).get(ev.reqStory)).push(ctx);
     if (ev.char && !charNames.has(ev.char)) err(`${ctx}: char "${ev.char}" nicht in DB.chars`);
+    // Node-level chars (phone chats): a node's own char must exist too.
+    // `char: null` is legitimate - it forces the anonymous initial inside
+    // a character chat and must not be reported.
+    for (const [nid, node] of Object.entries(ev.nodes ?? {}))
+      if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
     if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" nicht in DB.chars`);
 
     for (const o of ev.opts ?? []) {
@@ -146,7 +178,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 2b) Sperr-Sicherheit: item-freie Optionen ---------- */
+/* ---------- 2b) Lock safety: options that need no item ---------- */
 // An event whose options all carry req or rem can lock itself completely once
 // the items are missing - the inventory resets daily, and in a chain the
 // player would be stuck.
@@ -164,7 +196,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 2c) Zahlen-Raster + Zeit-Wirkung ---------- */
+/* ---------- 2c) Number grid and time vs. effect ---------- */
 // The stat bars move in steps of five (reputation may be finer), no action
 // takes less than two minutes, and expensive time without noticeable effect is
 // a free fast-forward.
@@ -191,7 +223,7 @@ for (const p of POOLS) {
 }
 for (const e of DB.emails) (e.opts ?? []).forEach((o, i) => numCheck(o, `[emails/${e.id}] opts[${i}]`));
 
-/* ---------- 2d) Schwarzes Brett & Intranet ---------- */
+/* ---------- 2d) Bulletin board and intranet ---------- */
 // Neither is an event pool, so none of the checks above sees them - but both
 // filter their content by reqStory, and a typo there fails silently: the note
 // or the post simply never appears, on any save, forever. Feeding their flags
@@ -215,7 +247,7 @@ for (const [where, entries] of reactive) {
 for (const name of Object.keys(DB.intranet?.employee ?? {}))
   if (!charNames.has(name)) err(`[intranet/employee] "${name}" nicht in DB.chars`);
 
-/* ---------- 3) E-Mails ---------- */
+/* ---------- 3) Emails ---------- */
 const mailIdSeen = new Map();
 const subjSeen = new Map();
 for (const e of DB.emails) {
@@ -233,12 +265,12 @@ for (const e of DB.emails) {
 for (const [id, c] of mailIdSeen) if (c > 1) err(`Doppelte Mail-ID "${id}" (${c}x) — usedEmails blockiert beide, nextEmail trifft die falsche`);
 for (const [s, c] of subjSeen) if (c > 1) warn(`Doppelter Mail-Betreff "${s}" (${c}x) — nur kosmetisch, wirkt im Spiel aber wie dieselbe Mail`);
 
-/* ---------- 4) Tote Story-Flags ---------- */
+/* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`Story-Flag "${flag}" wird NIE gesetzt, aber gefordert von ${ctxs.join(', ')} -> toter Content`);
 }
 
-/* ---------- 4b) Verwaiste Flags: gesetzt, aber von niemandem gefordert ---------- */
+/* ---------- 4b) Orphaned flags: set, but required by nobody ---------- */
 // A flag nobody requires is a dead end: the player made a decision that
 // leads nowhere. Usually a renamed follow-up event or one that never got
 // written.
@@ -259,7 +291,7 @@ for (const [flag, wheres] of flagsSetWhere) {
     warn(`Story-Flag "${flag}" wird gesetzt, aber von keinem Ereignis gefordert -> Sackgasse (${list})`);
 }
 
-/* ---------- 4c) Textqualität ---------- */
+/* ---------- 4c) Text quality ---------- */
 const PLACEHOLDER = /\b(TODO|TBD|FIXME|XXX|Lorem ipsum|Platzhalter)\b/i;
 
 const checkText = (ctx, field, txt) => {
@@ -281,12 +313,12 @@ const checkText = (ctx, field, txt) => {
     const markup = t.match(/<\/?(br|b|i|u|p|em|strong|span|div|ul|ol|li|h[1-6])\b[^>]*>/i);
     if (markup) err(`${ctx} ${field}: Auszeichnung "${markup[0]}" in einem Feld, das als reiner Text ausgegeben wird — benutze \\n für einen Absatz`);
 
-    // Anführungszeichen erster Ordnung sind im ganzen Spiel einfach: 'so'.
-    // Doppelte gehören nur in ein Zitat innerhalb eines Zitats. Ein Text mit
-    // doppelten und ohne einfache ist deshalb immer erste Ordnung und weicht
-    // von der Hausregel ab. Der Bestand schreibt das in 96% der Texte so; die
-    // Ausnahmen entstanden dort, wo eine Datei im Quelltext einfach gequotet
-    // war und man im Text bequem " tippen konnte.
+    // First-order quotes are single throughout the game: 'so'. Double
+    // ones belong inside a quote within a quote. A text with double
+    // quotes and no single ones is therefore always first order and
+    // departs from the house rule. 96% of the texts follow it; the
+    // exceptions grew where a file was single quoted in the source and
+    // typing " inside the text was simply the more convenient key.
     if (t.includes('"') && !t.includes("'"))
         warn(`${ctx} ${field}: doppelte Anführungszeichen in erster Ordnung — im Spieltext gilt 'so', doppelte nur verschachtelt`);
 
@@ -313,7 +345,7 @@ const checkText = (ctx, field, txt) => {
     }
 };
 
-// Ergebnistexte sammeln, um Dubletten zu finden
+// Collect result texts to find duplicates
 const resultTexts = new Map();
 const noteText = (ctx, field, txt) => {
     checkText(ctx, field, txt);
@@ -348,7 +380,7 @@ for (const e of DB.emails) {
     checkText(ctx, 'subj', e.subj);
     checkText(ctx, 'body', e.body);
     (e.opts ?? []).forEach((o, i) => {
-        checkText(ctx, `opts[${i}].btn`, o.btn ?? o.t);
+        checkText(ctx, `opts[${i}].t`, o.t);
         noteText(ctx, `opts[${i}].r`, o.r);
     });
 }
@@ -358,7 +390,7 @@ for (const [txt, ctxs] of resultTexts) {
     warn(`Identischer Ergebnistext in ${ctxs.length} Optionen (${unique.join(', ')}): "${txt.slice(0, 55)}…"`);
 }
 
-/* ---------- 5) Escaping-Risiken im inline-onclick ---------- */
+/* ---------- 5) Escaping risks in the inline onclick ---------- */
 for (const p of POOLS) {
   for (const ev of DB[p]) {
     for (const o of ev.opts ?? []) {
@@ -380,7 +412,7 @@ for (const p of POOLS) {
   }
 }
 
-/* ---------- 6) Verwaiste Items ---------- */
+/* ---------- 6) Orphaned items ---------- */
 const used = new Set();
 const collect = o => ['loot', 'req', 'rem'].forEach(k => o[k] && used.add(o[k]));
 for (const p of POOLS) for (const ev of DB[p]) {
@@ -391,7 +423,327 @@ for (const p of POOLS) for (const ev of DB[p]) {
 DB.emails.forEach(e => (e.opts ?? []).forEach(collect));
 for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].name}) wird von keinem Event vergeben/verlangt`);
 
-/* ---------- Ausgabe ---------- */
+/* ---------- 6b) Usable items ---------- */
+// `use` is what makes an item usable: it drives the backpack buttons, the
+// confirm dialog and the effect. An incomplete block therefore shows up as a
+// button that opens a dialog saying nothing and does nothing.
+const USE_FIELDS = ['al', 'fl', 'desc', 'warn', 'log', 'color', 'cooldown'];
+for (const id of itemIds) {
+  const item = DB.items[id];
+  const use = item.use;
+  if (!use) continue;
+  const ctx = `Item "${id}"`;
+
+  for (const k of ['desc', 'warn', 'log', 'color'])
+    if (!use[k]) err(`${ctx}: use.${k} fehlt — ohne das bleibt der Dialog oder das Protokoll leer`);
+
+  for (const k of Object.keys(use))
+    if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} ist kein bekanntes Feld`);
+
+  if (!use.al && !use.fl)
+    err(`${ctx}: use ohne Wirkung — al oder fl muss gesetzt sein`);
+
+  for (const k of ['al', 'fl'])
+    if (use[k] !== undefined && !(use[k] < 0))
+      err(`${ctx}: use.${k} muss negativ sein (Werte werden gesenkt), ist ${use[k]}`);
+
+  if (use.cooldown && !item.keep)
+    err(`${ctx}: use.cooldown ohne keep — was verbraucht wird, braucht keine Wartezeit`);
+
+  if (item.keep && !use.cooldown)
+    err(`${ctx}: keep ohne use.cooldown — wäre unbegrenzt oft benutzbar`);
+
+  if (item.quest)
+    err(`${ctx}: Quest-Items sind Trophäen und dürfen kein use haben`);
+}
+
+/* ---------- 7) Mail convention: the delete option ---------- */
+// The delete option must carry ignoreEmail: true and sit at the BOTTOM of
+// the list. Chain follow-ups without any delete option are fine by design.
+for (const ev of DB.emails) {
+  const opts = ev.opts ?? [];
+  opts.forEach((o, idx) => {
+    const isDelete = /Löschen & Ignorieren/.test(o.t ?? '') || o.ignoreEmail;
+    if (!isDelete) return;
+    if (!o.ignoreEmail) err(`[emails/${ev.id}] Löschen-Option ohne ignoreEmail: true`);
+    if (idx !== opts.length - 1) err(`[emails/${ev.id}] Löschen-Option steht nicht an letzter Position`);
+  });
+}
+
+/* ---------- 8) Orphaned invisible characters ---------- */
+// Orphaned variation selectors / zero-width chars are invisible in the UI
+// but break every pattern match (see the mail_leak_1 incident). U+FE0F is
+// only legitimate directly after an emoji/symbol base character.
+{
+  const scan = (str, where) => {
+    if (typeof str !== 'string') return;
+    for (let i = 0; i < str.length; i++) {
+      const cp = str.codePointAt(i);
+      if (cp === 0x200B || cp === 0xFEFF)
+        err(`[${where}] unsichtbares Zeichen U+${cp.toString(16).toUpperCase()} an Position ${i}`);
+      if (cp === 0xFE0F) {
+        const prev = i > 0 ? str.codePointAt(i - (str.charCodeAt(i - 1) >= 0xDC00 ? 2 : 1)) : 0;
+        if (prev < 0x2000 || prev === 0xFE0F)
+          err(`[${where}] verwaister Variation-Selektor U+FE0F an Position ${i} ("${str.slice(0, 24)}…")`);
+      }
+    }
+  };
+  const walk = (obj, where) => {
+    if (typeof obj === 'string') return scan(obj, where);
+    if (Array.isArray(obj)) return obj.forEach(v => walk(v, where));
+    if (obj && typeof obj === 'object') for (const v of Object.values(obj)) walk(v, where);
+  };
+  for (const p of POOLS) for (const ev of DB[p]) walk(ev, `${p}/${ev.id}`);
+  DB.emails.forEach(ev => walk(ev, `emails/${ev.id}`));
+}
+
+/* ---------- 9) Unknown fields ---------- */
+// The quietest bug in the data: a misspelt key parses fine, lints clean and is
+// silently dropped at runtime - `ep` instead of `rep` cost one sidequest its
+// whole reputation effect for two versions. The lists below are what the engine
+// actually reads AT THAT PLACE, which is stricter than "the field exists
+// somewhere": reqStory on a lunch event is never evaluated (triggerLunch draws
+// at random without filtering), req/rem in a mail is never checked, and a node
+// option only ever carries t/next - its m, rep or r would go nowhere, because a
+// chain applies the values of the RESULT it ends in.
+const EVENT_KEYS = {
+  _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
+  bossfights: ['timer', 'fail'],
+  calls:      ['reqStory', 'webOnly'],
+  coffee:     ['reqStory', 'webOnly'],
+  server:     ['reqStory', 'webOnly'],
+  sidequests: ['reqStory', 'webOnly', 'kind', 'appName'],
+  reputation: ['reqStory', 'reqRep'],
+  party:      ['loc'],
+  lunch:      [],
+  tutorial:   ['type', 'step']
+};
+const OPT_KEYS      = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'req', 'rem', 'next', 'action'];
+const NODE_KEYS     = ['text', 'opts', 'char'];
+const NODE_OPT_KEYS = ['t', 'next', 'req', 'rem', 'action'];
+// Results accept the legacy names min/fl/al/cr as well; handleChainChoice maps them.
+const RESULT_KEYS   = ['txt', 'm', 'f', 'a', 'c', 'min', 'fl', 'al', 'cr', 'rep', 'loot', 'rem', 'next'];
+const FAIL_KEYS     = OPT_KEYS.filter(k => k !== 't');
+const MAIL_KEYS     = ['id', 'sender', 'subj', 'body', 'opts', 'linked'];
+const MAIL_OPT_KEYS = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
+
+const checkKeys = (obj, allowed, ctx, what) => {
+  if (!obj || typeof obj !== 'object') return;
+  for (const k of Object.keys(obj)) {
+    if (allowed.includes(k)) continue;
+    err(`${ctx}: unbekanntes Feld "${k}" ${what} — Tippfehler, oder ein Feld, das die Engine an dieser Stelle nicht liest`);
+  }
+};
+
+for (const p of POOLS) {
+  const eventKeys = [...EVENT_KEYS._common, ...(EVENT_KEYS[p] ?? [])];
+  const optKeys = p === 'party' ? [...OPT_KEYS, 'checkPool'] : OPT_KEYS;
+  for (const ev of DB[p]) {
+    const ctx = `[${p}/${ev.id}]`;
+    checkKeys(ev, eventKeys, ctx, 'am Ereignis');
+    (ev.opts ?? []).forEach((o, i) => checkKeys(o, optKeys, `${ctx} opts[${i}]`, 'in der Auswahl'));
+    for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
+      checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'am Knoten');
+      (node.opts ?? []).forEach((o, i) =>
+        checkKeys(o, NODE_OPT_KEYS, `${ctx}#${nid}[${i}]`, 'in der Knoten-Auswahl (Wirkungen gehören ins Result)'));
+    }
+    for (const [rid, res] of Object.entries(ev.results ?? {}))
+      checkKeys(res, RESULT_KEYS, `${ctx}!${rid}`, 'im Result');
+    if (ev.fail) checkKeys(ev.fail, FAIL_KEYS, `${ctx}.fail`, 'im Zeitablauf');
+  }
+}
+for (const ev of DB.emails) {
+  const ctx = `[emails/${ev.id}]`;
+  checkKeys(ev, MAIL_KEYS, ctx, 'an der Mail');
+  (ev.opts ?? []).forEach((o, i) => checkKeys(o, MAIL_OPT_KEYS, `${ctx} opts[${i}]`, 'in der Auswahl'));
+}
+
+/* ---------- 10) Result keys: the res_ prefix ---------- */
+// A readability convention, not a mechanic: since 4.1 the "..." badge in
+// EventView looks the target up in ev.nodes the same way the engine routes,
+// so a result named `truth` works and displays correctly. The prefix still
+// helps anyone skimming a data file to see where a chain ends, which is why
+// new results should follow it. The existing stock stays as it is - renaming
+// a result means renaming every next that points at it, for zero effect.
+{
+  const stray = [];
+  for (const p of POOLS)
+    for (const ev of DB[p])
+      for (const rid of Object.keys(ev.results ?? {}))
+        if (!rid.startsWith('res_')) stray.push(`${p}/${ev.id}!${rid}`);
+  if (stray.length)
+    info(`${stray.length} Result-Schlüssel ohne res_-Präfix (Stil, keine Funktion — Anzeige und Engine schlagen strukturell nach; neue Results bitte mit Präfix anlegen)`);
+}
+
+/* ---------- 11) The diary ---------- */
+// data_diary.js keeps its conditions next to its texts, which is what makes
+// writing a new line a data change. The price is that a condition is code, so
+// it gets exercised here: every fragment is run against a spread of synthetic
+// days. A condition that throws would otherwise only surface at 16:30 on
+// somebody's screen, and one that can never fit is a line nobody ever reads.
+{
+  const CHOICE_SLOTS = ['mood', 'place', 'ending', 'postscript'];
+  const LIST_SLOTS = { encounters: 'encountersIntro', habits: 'habitsIntro', warnings: 'warningsIntro' };
+  const ENDS = ['WIN', 'RAGE', 'TICKETS', 'FIRED', 'PARTY'];
+  const achIds = new Set(DB.achievements.map(a => a.id));
+
+  // A spread of days: every ending, both warnings, all three difficulties,
+  // blind and sighted, and achievement/item sets from nothing to everything.
+  //
+  // The three event counts have to differ from one another, not just grow
+  // together: a day is a server day or a phone day precisely because one
+  // number outgrows the others, and every condition on the place slot compares
+  // them. With server === calls === quests none of them could ever fit, and
+  // the check reported three perfectly good fragments as unreachable.
+  const SHAPES = [
+    { server: 0,  calls: 0,  quests: 0  },   // nothing happened yet
+    { server: 6,  calls: 5,  quests: 4  },   // an ordinary day
+    { server: 9,  calls: 2,  quests: 3  },   // hiding in the server room
+    { server: 2,  calls: 9,  quests: 3  },   // the phone never stopped
+    { server: 2,  calls: 2,  quests: 9  },   // out on errands all day
+    { server: 14, calls: 14, quests: 14 }    // a very long day
+  ];
+  // The figures of a day. Every fact a condition can read has to appear here
+  // with a low, a middling and a high value - a fact that is always undefined
+  // makes every condition on it false, and the check would report perfectly
+  // good fragments as unreachable.
+  const FIGURES = [
+    { events: 4,  boss: 0, lunch: false, leet: false, coffee: 0, mailsIgnored: 0,
+      tickets: 0,  excusesUsed: 0, items: 0,  endHour: 9,  peakHour: 9,  peakValue: 10,
+      upBy: 0,  downBy: 0,  streak: 0 },
+    { events: 18, boss: 1, lunch: true,  leet: false, coffee: 2, mailsIgnored: 1,
+      tickets: 3,  excusesUsed: 1, items: 3,  endHour: 13, peakHour: 15, peakValue: 65,
+      upBy: 7,  downBy: 6,  streak: 3 },
+    { events: 34, boss: 2, lunch: true,  leet: true,  coffee: 6, mailsIgnored: 5,
+      tickets: 9,  excusesUsed: 2, items: 7,  endHour: 16, peakHour: 10, peakValue: 92,
+      upBy: 20, downBy: 25, streak: 7 }
+  ];
+
+  // Seeded, so a run is reproducible: the same 300 days every time, and a
+  // fragment that only fits an unusual combination still finds one.
+  let seed = 20260805;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const between = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+
+  const days = [];
+  const achList = [...achIds], itemList = [...itemIds];
+
+  for (let i = 0; i < 300; i++) {
+    const end = ENDS[between(0, ENDS.length - 1)];
+    const peakValue = between(0, 100);
+    const owned = new Set(achList.filter(() => rnd() < 0.3));
+    const carried = new Set(itemList.filter(() => rnd() < 0.3));
+    days.push({
+      end, difficulty: ['easy', 'normal', 'hard'][between(0, 2)],
+      survived: end === 'WIN' || end === 'PARTY',
+      server: between(0, 14), calls: between(0, 14), quests: between(0, 14),
+      events: between(0, 40), boss: between(0, 3),
+      lunch: rnd() < 0.6, leet: rnd() < 0.3,
+      coffee: between(0, 8), mailsIgnored: between(0, 6),
+      tickets: between(0, 10), excusesUsed: between(0, 3), items: between(0, 8),
+      // A day that was survived always ends at half past four; only a day
+      // that ended early can end at any hour.
+      endHour: (end === 'WIN' || end === 'PARTY') ? 16 : between(8, 16),
+      peakHour: between(8, 16), peakValue,
+      calm: peakValue < 40,
+      upName: 'Kevin', upBy: between(0, 30),
+      downName: 'Chantal', downBy: between(0, 30),
+      streak: between(0, 9),
+      rageWarned: rnd() < 0.4, chefWarned: rnd() < 0.4, blind: rnd() < 0.3,
+      ach: (id) => owned.has(id), item: (id) => carried.has(id),
+      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5
+    });
+  }
+
+  for (const end of ENDS) {
+    for (const difficulty of ['easy', 'normal', 'hard']) {
+      for (const share of [0, 0.5, 1]) {
+        const owned = new Set(achList.filter((_, i) => share === 1 || (share === 0.5 && i % 2 === 0)));
+        const carried = new Set(itemList.filter((_, i) => share === 1 || (share === 0.5 && i % 3 === 0)));
+        for (const shape of SHAPES) {
+          for (const figures of FIGURES) {
+            days.push({
+              end, difficulty, survived: end === 'WIN' || end === 'PARTY',
+              ...shape, ...figures,
+              calm: figures.peakValue < 40,
+              upName: 'Kevin', downName: 'Chantal',
+              rageWarned: share > 0, chefWarned: share === 1, blind: share > 0,
+              ach: (id) => owned.has(id), item: (id) => carried.has(id),
+              hasEncounters: share > 0, hasHabits: share === 1
+            });
+          }
+        }
+      }
+    }
+  }
+
+  const seenIds = new Set();
+  for (const [slot, fragments] of Object.entries(DB.diary)) {
+    if (!Array.isArray(fragments)) { err(`[diary/${slot}]: kein Array`); continue; }
+
+    fragments.forEach((f, i) => {
+      const ctx = `[diary/${slot}#${f.id ?? i}]`;
+      if (!f.id) err(`${ctx}: Baustein ohne id — die Wiederholungs-Sperre merkt sich ids`);
+      else if (seenIds.has(f.id)) err(`${ctx}: id "${f.id}" gibt es doppelt`);
+      else seenIds.add(f.id);
+
+      if (typeof f.when !== 'function') { err(`${ctx}: when fehlt oder ist keine Funktion`); return; }
+      if (!Array.isArray(f.lines) || f.lines.length === 0) { err(`${ctx}: keine Zeilen`); return; }
+      f.lines.forEach((line, k) => {
+        if (typeof line !== 'string' || !line.trim()) err(`${ctx} lines[${k}]: leer`);
+        else checkText(ctx, `lines[${k}]`, line);
+      });
+
+      // Names that do not exist: ach('ach_typo') would never fire, and the only
+      // symptom is a line that never shows up.
+      const source = f.when.toString();
+      for (const [, id] of source.matchAll(/\bach\(\s*['"]([^'"]+)['"]\s*\)/g))
+        if (!achIds.has(id)) err(`${ctx}: Erfolg "${id}" existiert nicht`);
+      for (const [, id] of source.matchAll(/\bitem\(\s*['"]([^'"]+)['"]\s*\)/g))
+        if (!itemIds.has(id)) err(`${ctx}: Gegenstand "${id}" existiert nicht`);
+
+      let fitted = 0;
+      for (const day of days) {
+        try { if (f.when(day)) fitted++; }
+        catch (e) { err(`${ctx}: Bedingung stolpert (${e.message})`); return; }
+      }
+      if (fitted === 0) warn(`${ctx}: die Bedingung passt auf keinen denkbaren Tag — die Zeilen erscheinen nie`);
+
+      // Placeholders: the sentence around a list needs its {list}.
+      if (Object.values(LIST_SLOTS).includes(slot))
+        f.lines.forEach((line, k) => {
+          if (!line.includes('{list}')) err(`${ctx} lines[${k}]: {list} fehlt — die Aufzählung hätte keinen Platz`);
+        });
+      else
+        f.lines.forEach((line, k) => {
+          if (line.includes('{list}')) err(`${ctx} lines[${k}]: {list} steht ausserhalb eines Aufzählungs-Auftakts`);
+        });
+    });
+  }
+
+  // A choice slot with no fitting fragment yields an empty line. For the ending
+  // that is the worst case: the day would close without a closing sentence.
+  for (const slot of CHOICE_SLOTS) {
+    if (!DB.diary[slot]) { err(`[diary/${slot}]: Platz fehlt`); continue; }
+    if (slot === 'postscript') continue;   // may stay empty, it is an afterword
+    const orphans = days.filter(d => !DB.diary[slot].some(f => { try { return f.when(d); } catch { return false; } }));
+    if (orphans.length) {
+      const ends = [...new Set(orphans.map(d => d.end))].join(', ');
+      err(`[diary/${slot}]: kein Baustein passt für ${ends} — der Absatz bliebe leer`);
+    }
+  }
+
+  // Every collecting slot needs its intro, or the clauses stand there bare.
+  for (const [listSlot, introSlot] of Object.entries(LIST_SLOTS)) {
+    if (!DB.diary[listSlot]) err(`[diary/${listSlot}]: Platz fehlt`);
+    if (!DB.diary[introSlot]) err(`[diary/${introSlot}]: Auftakt zu ${listSlot} fehlt`);
+  }
+
+  const total = Object.values(DB.diary).flat().reduce((n, f) => n + (f.lines?.length ?? 0), 0);
+  info(`Tagebuch: ${Object.values(DB.diary).flat().length} Bausteine mit ${total} Zeilen in ${Object.keys(DB.diary).length} Plätzen`);
+}
+
+/* ---------- Output ---------- */
 const section = (title, list, sym) => {
   console.log(`\n${title} (${list.length})`);
   list.forEach(m => console.log(` ${sym} ${m}`));

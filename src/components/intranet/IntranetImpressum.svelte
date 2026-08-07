@@ -1,5 +1,5 @@
 <!--
-  Impressum & AGB, vormals public/assets/intranet/impressum.html.
+  Impressum & AGB, formerly public/assets/intranet/impressum.html.
 
   Two things react here, and one of them deliberately does not grow: the
   version number climbs with every workday started, while the extra clauses

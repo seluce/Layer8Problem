@@ -2,11 +2,11 @@ export const moods = [
 
 	// --- KATEGORIE 1: AGGRO-MODUS (+15 Aggro) [10% Chance] ---
 	{ id: "mood_aggro_1", effect: "aggro", title: "Die Bahn fährt (nicht)", text: "Dein Zug hatte heute Morgen 40 Minuten Verspätung wegen 'freilaufender Tiere im Gleisbett'. Du musstest die letzten zwei Kilometer im Nieselregen zum Büro sprinten. Deine Laune ist bereits im Keller." },
-	{ id: "mood_aggro_2", effect: "aggro", title: "Der Zehen-Vorfall", text: "Du bist heute Morgen im Dunkeln mit dem kleinen Zeh volle Kanne gegen den Bettpfosten rennt. Der Schmerz pocht immer noch in deinem Fuß, während du humpelnd das Büro betrittst." },
+	{ id: "mood_aggro_2", effect: "aggro", title: "Der Zehen-Vorfall", text: "Du bist heute Morgen im Dunkeln mit dem kleinen Zeh volle Kanne gegen den Bettpfosten gerannt. Der Schmerz pocht immer noch in deinem Fuß, während du humpelnd das Büro betrittst." },
 	{ id: "mood_aggro_3", effect: "aggro", title: "Kaffee-Katastrophe", text: "Dir ist zuhause die Kaffeekanne aus der Hand gerutscht. Die Küche klebt, du hattest keinen Koffein-Kick und deine Socken riechen nach Filterkaffee. Jeder, der dich heute anspricht, lebt gefährlich." },
 	{ id: "mood_aggro_4", effect: "aggro", title: "Der E-Scooter-Schreck", text: "Ein rücksichtsloser Teenager auf einem E-Scooter hat dich auf dem Fußweg fast umgefahren. Das Adrenalin pumpt noch durch deine Adern und du bist maximal auf Krawall gebürstet." },
 	{ id: "mood_aggro_5", effect: "aggro", title: "Der Zahnpasta-Fleck", text: "Du hast dir beim Zähneputzen frische Minz-Zahnpasta auf das frisch gebügelte, schwarze Hemd gekleckert. Du musstest dich hastig umziehen und ärgerst dich maßlos über deine eigene Motorik." },
-	{ id: "mood_aggro_6", effect: "aggro", title: "Der Falsche-Winker", text: "Du hast in der vollen Bahn heute Morgen jemandem extrem freundlich zugewinkt. Die Person meinte aber den Typen hinter dir. Du wolltest im Boden versinken. Diese Peinlichkeit hat sich sofort in pure Aggression verwandelt." },
+	{ id: "mood_aggro_6", effect: "aggro", title: "Der Falsche-Winker", text: "Du hast in der vollen Bahn heute Morgen jemandem extrem freundlich zugewinkt. Die Person meinte aber den Typen hinter dir. Du wolltest im Boden versinken." },
 	{ id: "mood_aggro_7", effect: "aggro", title: "Dumme Arbeit", text: "Du wurdest auf dem Parkplatz vom Hausmeister abgefangen, der dich zwang, ihm beim Tragen von drei schweren Kisten voll altem Druckpapier zu helfen. Sinnlose körperliche Arbeit am frühen Morgen. Dein Puls kocht." },
 	{ id: "mood_aggro_8", effect: "aggro", title: "Offenes Geheimnis", text: "Du hast erst im Firmenaufzug gemerkt, dass dein Hosenstall die ganze Fahrt über offen war. Und du hast noch laut mit dem Kassierer beim Bäcker geplaudert! Du bist heute extrem reizbar." },
 	{ id: "mood_aggro_9", effect: "aggro", title: "Die Mülltrennung", text: "Ein Nachbar hat dich im Treppenhaus in ein 15-minütiges Gespräch über korrekte Mülltrennung verwickelt. Du hast brav genickt, während du innerlich explodiert bist." },
@@ -30,13 +30,13 @@ export const moods = [
 	{ id: "mood_lazy_3", effect: "lazy", title: "Schlüsselsuche", text: "Du hast heute Morgen 30 Minuten lang deinen Haustürschlüssel gesucht. Er lag im Kühlschrank neben dem Käse. Du bist zu spät und starrst jetzt mit leerem Blick auf deinen Monitor." },
 	{ id: "mood_lazy_4", effect: "lazy", title: "Die Doku-Falle", text: "Du bist gestern Nacht bei YouTube in ein 'Rabbit Hole' gefallen und hast bis 4 Uhr morgens Dokus über den Bau von Pyramiden geschaut. Dein Gehirn ist völliger Matsch und du kannst kaum die Augen offen halten." },
 	{ id: "mood_lazy_5", effect: "lazy", title: "Körperliches Wrack", text: "Du hast gestern Abend versucht, im Fitnessstudio 'gesund und aktiv' zu sein. Ein riesiger Fehler. Du hast brutalen Muskelkater und selbst das Tippen auf der Tastatur ist eine körperliche Qual." },
-	{ id: "mood_lazy_6", effect: "lazy", title: "Das Update", text: "Dein Handy hat über Nacht ein Update gezogen und den Wecker gelöscht. Du bist erst aufgewacht, als die Sonne schon hoch stand. Die Motivation ist im Bett geblieben." },
+	{ id: "mood_lazy_6", effect: "lazy", title: "Das Update", text: "Dein Handy hat über Nacht ein Update gezogen und den Wecker gelöscht. Du bist erst aufgewacht, als die Sonne schon hoch stand." },
 	{ id: "mood_lazy_7", effect: "lazy", title: "Haltestellen-Philosophie", text: "Es regnete in Strömen. Du standest 20 Minuten lang an der Haltestelle und hast ernsthaft überlegt, ob du einfach wieder nach Hause gehst und kündigst. Du bist extrem müde." },
 	{ id: "mood_lazy_8", effect: "lazy", title: "Schwerkraft", text: "Dein Bett war heute Morgen so unfassbar warm und weich wie noch nie. Das Universum wollte dich dort behalten. Du fühlst dich, als würdest du durch Sirup waten." },
 	{ id: "mood_lazy_9", effect: "lazy", title: "Existenzkrise", text: "Du hast auf dem Weg zur Arbeit einen Podcast über 'Passive Einkommensquellen auf Bali' gehört. Jetzt sitzt du hier und hinterfragst deine gesamte Existenz." },
 	{ id: "mood_lazy_10", effect: "lazy", title: "Weichgekocht", text: "Die Heizung in der Bahn lief auf 40 Grad. Du wurdest auf der Fahrt in eine Art Trance-Zustand weichgekocht. Dein Gehirn läuft aktuell nur auf Notstrom." },
 
-	// --- KATEGORIE 4: SNACK-MODUS (Zufälliges Food-Item) [10% Chance] ---
+	// --- CATEGORY 4: SNACK MODE (random food item) [10% chance] ---
 	{ id: "mood_snack_1", effect: "snack", title: "Der Bäcker-Irrtum", text: "Die nette Dame beim Bäcker hat dir heute Morgen aus Versehen etwas extra in die Tüte gepackt. Du hast natürlich nicht widersprochen. Man muss die kleinen Siege feiern!" },
 	{ id: "mood_snack_2", effect: "snack", title: "Mitleid am Kiosk", text: "Du sahst heute Morgen beim Zeitungsverkäufer am Bahnhof so furchtbar fertig aus, dass er dir aus Mitleid etwas Nervennahrung geschenkt hat. 'Sie sehen aus, als könnten Sie das brauchen', sagte er." },
 	{ id: "mood_snack_3", effect: "snack", title: "Spontane Entstehung", text: "Du hast in deine Manteltasche gegriffen und völlig unerwartet Essbares gefunden. Wie alt es ist? Keine Ahnung. Ob es noch gut ist? Bestimmt! Hauptsache gratis." },
@@ -111,7 +111,7 @@ export const moods = [
 	{ id: "mood_normal_60", effect: "normal", title: "Das Ritual", text: "Du klickst nach dem Booten routiniert dreimal auf 'Aktualisieren' auf dem völlig leeren Desktop, obwohl es absolut nichts bringt. Ein wichtiges, psychologisches Startritual für jeden echten SysAdmin." }
 ,
 
-	// --- TICKET-RÜCKSTAND: Der Tag hat schon angefangen, ohne dich ---
+	// --- TICKET BACKLOG: the day started without you ---
 	{ id: "mood_tickets_1", effect: "tickets", title: "Die Nachtschicht", text: "Über Nacht ist der Backup-Server dreimal neu gestartet und hat bei jedem Versuch brav ein Ticket erzeugt. Die Warteschlange begrüßt dich also bereits mit einer kleinen, unerledigten Familie." },
 	{ id: "mood_tickets_2", effect: "tickets", title: "Der Wochenend-Held", text: "Jemand hat am Sonntag 'nur mal kurz' etwas im Netzwerk umgesteckt. Wer, wird sich nie klären lassen. Die Folgen dieses Kurzbesuchs liegen fein säuberlich in deiner Warteschlange." },
 	{ id: "mood_tickets_3", effect: "tickets", title: "Automatische Eskalation", text: "Das Ticketsystem hat um 6:00 Uhr eigenmächtig mehrere alte Vorgänge 'wegen Fristüberschreitung reaktiviert'. Es meint es nicht böse. Es kennt nur keine Gnade." },
@@ -119,7 +119,7 @@ export const moods = [
 	{ id: "mood_tickets_5", effect: "tickets", title: "Urlaubsübergabe", text: "Der Kollege aus der Verwaltung ist ab heute drei Wochen weg und hat vor dem Abflug noch schnell 'ein paar Kleinigkeiten' an die IT übergeben. Sie sind weder klein noch Kleinigkeiten." },
 	{ id: "mood_tickets_6", effect: "tickets", title: "Update-Nacht", text: "Die zentrale Update-Verteilung lief um 3 Uhr durch. Erfolgreich, meldet der Bericht. Die Rechner, die seither nicht mehr hochfahren, melden es anders - in deiner Warteschlange." },
 
-	// --- AUSREDEN GESTRICHEN: Heute wird jede Ausflucht teurer ---
+	// --- EXCUSES CUT: every way out costs more today ---
 	{ id: "mood_noexcuse_1", effect: "excuse_minus", title: "Compliance-Woche", text: "Ein Aushang im Flur verkündet die 'Woche der Transparenz'. Führungskräfte sind angehalten, Aussagen von Mitarbeitenden 'stichprobenartig zu verifizieren'. Heute ist ein schlechter Tag für kreative Wahrheiten." },
 	{ id: "mood_noexcuse_2", effect: "excuse_minus", title: "Der Kalender lügt nicht", text: "Dr. Wichtig hat sich über Nacht Zugriff auf alle Abteilungskalender geben lassen. Er sieht jetzt in Echtzeit, wer wann angeblich wo ist. Deine bewährten Termine sind plötzlich überprüfbar." },
 	{ id: "mood_noexcuse_3", effect: "excuse_minus", title: "Einer zu viel", text: "Gestern hast du eine Ausrede zweimal benutzt. Bei derselben Person. Sie hat nichts gesagt, nur kurz die Augenbrauen gehoben. Dieses Repertoire ist bis auf Weiteres verbrannt." },
@@ -127,7 +127,7 @@ export const moods = [
 	{ id: "mood_noexcuse_5", effect: "excuse_minus", title: "Gabis Frühwarnung", text: "'Sei heute vorsichtig', flüstert Gabi beim Reinkommen. 'Die von oben sind auf Ausreden geeicht. Frag nicht, woher ich das weiß.' Du fragst nicht. Du weißt, dass sie recht hat." },
 	{ id: "mood_noexcuse_6", effect: "excuse_minus", title: "Krankenstand", text: "Drei Kollegen haben sich heute Morgen krankgemeldet, zwei davon 'überraschend'. Die Geduld der Geschäftsleitung mit spontanen Verhinderungen ist damit für heute vollständig aufgebraucht." },
 
-	// --- AUSREDE EXTRA: Manchmal spielt das Haus für dich ---
+	// --- SPARE EXCUSE: sometimes the house plays for you ---
 	{ id: "mood_bonus_1", effect: "excuse_plus", title: "Alibi frei Haus", text: "In deinem Kalender steht ein ganztägiger Termin, den du nie angenommen hast: 'IT-Sicherheitsaudit (extern)'. Es gibt kein Audit. Aber es steht da, und es steht da für alle sichtbar." },
 	{ id: "mood_bonus_2", effect: "excuse_plus", title: "Der Vorschuss", text: "Du hast gestern spätabends unbezahlt zwei Stunden ein Backup gerettet. Niemand hat es angeordnet, aber alle wissen es. So etwas ergibt in diesem Haus ein stilles Guthaben." },
 	{ id: "mood_bonus_3", effect: "excuse_plus", title: "Serverraum-Nebel", text: "Die Klimaanlage im Serverraum hat heute Morgen kurz Nebel produziert. Völlig harmlos, längst behoben - aber die Geschichte ist zu gut, um sie nicht den ganzen Tag über nachwirken zu lassen." },

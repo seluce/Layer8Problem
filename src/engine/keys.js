@@ -12,7 +12,8 @@
 export const KEYS = {
     // --- Save and progress (removed by the hard reset) ---
     archive:      'layer8_archive',
-    dayState:     'layer8_day',        // laufender Arbeitstag, siehe engine_core.saveDay()
+    dayState:     'layer8_day',        // workday in progress, see engine_core.saveDay()
+    diaryRecent:  'layer8_diary_recent',  // lines the diary used lately, see engine_diary.js
     defaultDiff:  'layer8_default_diff',
     tutorialDone: 'sysadmin_tutorial_done',
     partyPlayed:  { easy:   'layer8_party_played_easy',
@@ -43,21 +44,22 @@ export const KEYS = {
 };
 
 /**
- * Alles, was ein vollständiges Zurücksetzen entfernen muss.
+ * Everything a full reset has to remove.
  *
- * Existiert, weil genau hier schon zweimal etwas vergessen wurde: erst der
- * tutorialSeen-Phantomschlüssel, dann der laufende Arbeitstag, der ein Zurück-
- * setzen überlebte und danach anbot, mit der Reputation des gelöschten Stands
- * weiterzumachen. Beides kam daher, dass die Löschliste von Hand geführt wurde.
+ * Exists because right here something was forgotten twice already: first the
+ * tutorialSeen phantom key, then the running workday that survived a reset
+ * and afterwards offered to continue with the reputation of the wiped save.
+ * Both happened because the deletion list was maintained by hand.
  *
- * Ein neuer Fortschrittsschlüssel gehört in diese Liste - und ist damit
- * überall berücksichtigt, wo zurückgesetzt wird. Einstellungen, Audio und
- * Tastenbelegung stehen bewusst NICHT hier: ein Zurücksetzen löscht den
- * Spielstand, nicht die Vorlieben der Person vor dem Bildschirm.
+ * A new progress key belongs in this list - and is thereby covered
+ * everywhere a reset happens. Settings, audio and key bindings are
+ * deliberately NOT in here: a reset wipes the save, not the preferences of
+ * the person in front of the screen.
  */
 export const PROGRESS_KEYS = [
     KEYS.archive,
     KEYS.dayState,
+    KEYS.diaryRecent,
     KEYS.defaultDiff,
     KEYS.tutorialDone,
     ...Object.values(KEYS.partyPlayed)

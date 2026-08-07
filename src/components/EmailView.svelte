@@ -108,7 +108,7 @@
                                  {o.isDelete ? 'text-slate-600 group-hover:text-red-500' : 'text-slate-500 group-hover:text-blue-400'}">
                         {o.isDelete ? '🗑️' : '➥'}
                     </span>
-                    <span class="wrap-break-word leading-tight py-1">{o.opt.btn}</span>
+                    <span class="wrap-break-word leading-tight py-1">{o.opt.t}</span>
                 </div>
                 <div class="shrink-0 flex items-center h-full">
                     {#if o.key}

@@ -1,13 +1,13 @@
 <!--
-  Die Kurve des Arbeitstags: Faulheit, Aggro und Chef-Radar über der Zeit.
+  The curve of the workday: laziness, aggro and boss radar over time.
 
-  Handgezeichnetes SVG statt einer Diagramm-Bibliothek — es sind drei
-  Polylinien, und der Rest des Spiels kommt auch ohne aus. Gezeichnet wird aus
-  state.statHistory, das die Engine bei jeder Wirkung fortschreibt.
+  Hand-drawn SVG instead of a chart library — it is three polylines, and the
+  rest of the game gets by without one too. Drawn from state.statHistory,
+  which the engine appends to on every effect.
 
-  Die Ventil-Sprünge (Ausraster, Abmahnung) brauchen keine Sondermarkierung:
-  Ein Wert, der von 100 auf 50 fällt, ist in der Kurve deutlicher zu sehen als
-  jedes Symbol daneben.
+  The safety-valve jumps (outburst, written warning) need no special marker:
+  a value falling from 100 to 50 is easier to see in the curve than any
+  symbol next to it.
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
@@ -47,7 +47,7 @@
     <svg viewBox="0 0 {W} {H}" class="w-full h-auto" role="img"
          aria-label="Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag">
 
-        <!-- Waagerechte Hilfslinien bei 0, 50 und 100 Prozent -->
+        <!-- Horizontal guide lines at 0, 50 and 100 percent -->
         {#each [0, 50, 100] as v}
             <line x1={PAD.l} y1={y(v)} x2={W - PAD.r} y2={y(v)}
                   stroke="#334155" stroke-width="1" stroke-dasharray={v === 100 ? '0' : '3 3'} />
@@ -55,7 +55,7 @@
                   font-size="8" fill="#64748b" font-family="monospace">{v}</text>
         {/each}
 
-        <!-- Zeitachse -->
+        <!-- Time axis -->
         {#each hours as t}
             <line x1={x(t)} y1={PAD.t} x2={x(t)} y2={H - PAD.b}
                   stroke="#1e293b" stroke-width="1" />
@@ -63,7 +63,7 @@
                   font-size="8" fill="#64748b" font-family="monospace">{pad(t / 60)}</text>
         {/each}
 
-        <!-- Die drei Kurven -->
+        <!-- The three curves -->
         {#each SERIES as s}
             <polyline points={line(s.key)} fill="none" stroke={s.color}
                       stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />

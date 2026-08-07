@@ -1,4 +1,4 @@
-import { KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 
@@ -64,8 +64,8 @@ export const ui = {
 
             // Sort priorities
             const getPrio = (item, id) => {
-                if (id === 'stressball' || !item.keep) return 1; // Prio 1: Cooldowns & Verbrauch
-                if (item.keep && !item.quest) return 2;          // Prio 2: Werkzeuge
+                if (id === 'stressball' || !item.keep) return 1; // Prio 1: cooldowns and consumables
+                if (item.keep && !item.quest) return 2;          // Prio 2: tools
                 return 3;                                        // 3: quest items and trophies
             };
 
@@ -127,10 +127,10 @@ export const ui = {
         const target = document.getElementById('btn-inventory'); 
         if (!target) return;
 
-        // 1. Positionen berechnen
+        // 1. Work out the positions
         const targetRect = target.getBoundingClientRect();
 
-        // Ziel-Mittelpunkt (Mitte des Rucksack-Buttons)
+        // Target centre (middle of the backpack button)
         const targetX = targetRect.left + (targetRect.width / 2);
         const targetY = targetRect.top + (targetRect.height / 2);
 
@@ -138,7 +138,7 @@ export const ui = {
         const startX = targetX;
         const startY = targetY - 60;
 
-        // 2. Geist-Bild erstellen
+        // 2. Create the ghost image
         const ghost = document.createElement('img');
         ghost.src = imgUrl;
         
@@ -155,7 +155,7 @@ export const ui = {
         // Force a reflow so the browser registers the start position
         void ghost.offsetWidth; 
 
-        // 3. Animation starten
+        // 3. Start the animation
         setTimeout(() => {
             // Drops 60px onto the button while shrinking and fading out
             ghost.style.opacity = '0'; 
@@ -194,7 +194,7 @@ export const ui = {
             phone.classList.remove('flex');
             phone.classList.add('hidden', 'lg:flex'); 
         } else {
-            // Wieder normal anzeigen
+            // Show normally again
             phone.classList.remove('hidden', 'lg:flex');
             phone.classList.add('flex');
         }
@@ -243,10 +243,13 @@ export const ui = {
     },
 
     // Shows an event. components/EventView.svelte renders it from the view model.
-    setTerminalEvent: function(type, title, text, opts, isChain, charName) {
+    // `nodes` rides along so the component can tell whether an option's next
+    // names another conversation node (badge: goes on) or a result (ends) -
+    // the same lookup the engine does on the click.
+    setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'event',
-            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null }
+            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null }
         });
     },
 
@@ -290,7 +293,7 @@ export const ui = {
             color: colorClass || ''
         });
 
-        // Cap the backlog. Nobody scrolls back 200 lines.
+        // Cap the backlog at LOG_MAX_ENTRIES - nobody scrolls back that far.
         if (this.state.logEntries.length > LOG_MAX_ENTRIES) {
             this.state.logEntries.splice(0, this.state.logEntries.length - LOG_MAX_ENTRIES);
         }
@@ -321,6 +324,34 @@ export const ui = {
      */
 
     /**
+     * Who is currently holding the page still.
+     *
+     * Several windows can be open at once - the key bindings sit on top of the
+     * settings, "use this item?" on top of the backpack - so the lock is held
+     * by name instead of by a flag. It lifts when the last holder lets go, and
+     * a second lock or a stray release changes nothing, which a counter cannot
+     * promise: a counter that drifts once leaves the page either locked for
+     * good or scrolling behind an open dialog.
+     *
+     * Only visible below 1024px. Above that app.css keeps the body from
+     * scrolling anyway, which is why closing the upper of two windows released
+     * the page unnoticed for so long.
+     */
+    _scrollHolders: new Set(),
+
+    lockScroll: function(holder) {
+        this._scrollHolders.add(holder);
+        document.body.classList.add('overflow-hidden');
+    },
+
+    releaseScroll: function(holder) {
+        this._scrollHolders.delete(holder);
+        if (this._scrollHolders.size === 0) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    },
+
+    /**
      * Shows a full-screen overlay and locks the page behind it.
      *
      * The three lines this replaces (drop "hidden", add "flex", lock scrolling)
@@ -335,18 +366,55 @@ export const ui = {
         if (!el) return null;
         el.classList.remove('hidden');
         el.classList.add('flex');
-        if (lockScroll) document.body.classList.add('overflow-hidden');
+        if (lockScroll) this.lockScroll(el.id || 'overlay');
         return el;
     },
 
-    /** Counterpart to showOverlay. */
-    hideOverlay: function(target, unlockScroll = true) {
+    /**
+     * Counterpart to showOverlay. Always releases this overlay's hold on the
+     * page - whether the page then scrolls again is decided by whoever else is
+     * still holding it, so there is no second argument to get wrong.
+     */
+    hideOverlay: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
         el.classList.add('hidden');
         el.classList.remove('flex');
-        if (unlockScroll) document.body.classList.remove('overflow-hidden');
+        this.releaseScroll(el.id || 'overlay');
         return el;
+    },
+
+    /**
+     * Is an overlay on screen?
+     *
+     * The third of the trio, and the reason it exists: until 4.1 the intro and
+     * the difficulty picker were switched with style.display while every other
+     * overlay used the hidden class. An inline style covers the class but does
+     * not remove it, so the difficulty picker kept its `hidden` while visible -
+     * and every check asking "is it open?" answered no. Escape then fell
+     * through to the bottom of its chain and opened the settings menu on top of
+     * the picker.
+     *
+     * One encoding, asked in one place.
+     */
+    isOverlayOpen: function(target) {
+        const el = typeof target === 'string' ? document.getElementById(target) : target;
+        return !!el && !el.classList.contains('hidden');
+    },
+
+    /**
+     * The windows that stand between loading the page and playing: the intro,
+     * the question about an interrupted workday, and the difficulty picker.
+     *
+     * While any of them is up the game is not running. Hotkeys do nothing,
+     * Escape does not dismiss them, and the day cannot be restarted - a restart
+     * would call clearDay() and throw away the very save the resume dialog is
+     * offering.
+     */
+    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal'],
+
+    isStartupOverlayOpen: function() {
+        return this.STARTUP_OVERLAYS.some(id => this.isOverlayOpen(id));
     },
 
     showModal: function(title, text, isEnd) {
@@ -359,9 +427,7 @@ export const ui = {
     closeModal: function() {
         this.state.modal = { open: false, title: '', text: '', isEnd: false,
                              lead: '', cause: null, diary: null };
-        document.getElementById('modal-overlay').classList.add('hidden');
-        document.getElementById('modal-overlay').classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('modal-overlay');
         this.updateUI();
     },
 
@@ -375,7 +441,7 @@ export const ui = {
         this.state.modal = {
             open: true,
             title: end.title,
-            text: end.text ?? '',      // nur noch die Party nutzt freien Text
+            text: end.text ?? '',      // only the party still uses free text
             lead: end.lead ?? '',
             cause: end.cause ?? null,
             diary: end.diary ?? null,
@@ -393,9 +459,15 @@ export const ui = {
         const modal = document.getElementById('excuse-modal');
         if (!modal) return;
 
-        this.state.currentExcuse = DB.excuses?.length
-            ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
-            : "Sorry, mein Router hat einen schlechten Tag.";
+        // Drawn once per event, not once per opening. Whoever closes the dialog
+        // and opens it again gets the same excuse back - the texts are the
+        // reward for actually fleeing, not a gallery to leaf through.
+        if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
+            this.state.currentExcuse = DB.excuses?.length
+                ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
+                : "Sorry, mein Router hat einen schlechten Tag.";
+            this.state.excuseFor = this.state.currentEventId;
+        }
 
         this.showOverlay(modal);
     },
@@ -414,6 +486,11 @@ export const ui = {
         }
 
         this.state.excusesLeft--;
+
+        // Spent: the next event deals a new one. Without this the same text
+        // would come back if the engine draws this event again later - fleeing
+        // it emptied usedIDs, after all.
+        this.state.excuseFor = null;
         
         if (this.state.currentEventId && this.state.usedIDs.has(this.state.currentEventId)) {
             this.state.usedIDs.delete(this.state.currentEventId);
@@ -444,21 +521,19 @@ export const ui = {
 
     closeArchive: function() {
         this.state.archiveOpen = false;
-        document.getElementById('archive-modal').classList.add('hidden');
-        document.getElementById('archive-modal').classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('archive-modal');
     },
     
     // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
     showLoreModal: function() {
         this.state.loreOpen = true;
-        document.body.classList.add('overflow-hidden');
+        this.lockScroll('lore');
     },
 
     closeLoreModal: function() {
         this.state.loreOpen = false;
-        document.body.classList.remove('overflow-hidden');
+        this.releaseScroll('lore');
     },
 
     // --- TEAM AND CHARACTERS ---
@@ -484,11 +559,11 @@ export const ui = {
         await ensure('intranet');
         this.buildIntranet();
         this.state.intranetOpen = true;
-        document.body.classList.add('overflow-hidden');
+        this.lockScroll('intranet');
     },
 
     /**
-     * Was das Intranet heute über dich schreibt.
+     * What the intranet writes about you today.
      *
      * Rebuilt on every open, unlike the bulletin board, which draws its notes
      * once a day and keeps them. A wall is a place and should not reshuffle
@@ -540,7 +615,7 @@ export const ui = {
         // page is not the same page.
         const draw = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
-        // Kennzahl des Tages. Anyone playing without a ticket counter must not
+        // Key figure of the day. Anyone playing without a ticket counter must not
         // get it back here - the company simply withholds the figure, which is
         // exactly what it would do.
         const tickets = this.state.tickets ?? 0;
@@ -558,7 +633,7 @@ export const ui = {
         const dayKey = this.difficultyKey();
         const today = dayKey === 'easy' ? 'Freitag' : dayKey === 'hard' ? 'Montag' : 'Mittwoch';
 
-        // Human Capital: Müllers eigene Akte.
+        // Human Capital: Müller's own file.
         const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
         const notes = [];
         const push = (tone, title, text) => notes.push({ tone, title, text });
@@ -636,7 +711,7 @@ export const ui = {
 
     closeIntranet: function() {
         this.state.intranetOpen = false;
-        document.body.classList.remove('overflow-hidden');
+        this.releaseScroll('intranet');
     },
 
     // --- BULLETIN BOARD ---
@@ -666,17 +741,17 @@ export const ui = {
 
     closeBoard: function() {
         const modal = document.getElementById('board-modal');
-        this.hideOverlay(modal, false);
+        this.hideOverlay(modal);
     },
 
     // --- VISUAL FEEDBACK (floating text) ---
     showFloatingText: function(elementId, value) {
-        if (value === 0) return; // Nichts anzeigen bei 0
+        if (value === 0) return; // Show nothing at 0
 
         const target = document.getElementById(elementId);
         if (!target) return;
 
-        // 1. Element erstellen (+ oder - davor setzen)
+        // 1. Create the element (prefixed with + or -)
         const floatEl = document.createElement('div');
         const sign = value > 0 ? '+' : '';
         floatEl.innerText = `${sign}${value}`;
@@ -705,7 +780,7 @@ export const ui = {
         // on its way into the backpack.
         floatEl.className = `fixed font-normal text-xl z-9999 pointer-events-none transition-all duration-3000 ease-out ${color}`;
 
-        // 3. Start-Position berechnen
+        // 3. Work out the start position
         const rect = target.getBoundingClientRect();
         floatEl.style.left = (rect.left + rect.width / 2) + 'px';
         floatEl.style.top = (rect.top - 10) + 'px';
@@ -752,7 +827,7 @@ export const ui = {
         this.state.bootLines = [];
         this._setTerminal('flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner', { mode: 'boot' });
 
-        // Weniger "Nerd-Linux", mehr "GlobalCorp Satire"
+        // Less "Nerd-Linux", more "GlobalCorp Satire"
         const bootLines = [
             `GlobalCorp OS - Version ${this.VERSION}`,
             `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
@@ -787,6 +862,10 @@ export const ui = {
     },
     
     // --- SAVEGAME UI HELPERS ---
+    // Careful: these are called as engine.ui.openExportModal(), so `this` is
+    // this nested object and not the engine. The overlay helpers have to be
+    // reached through `engine` - this.showOverlay() silently threw and the
+    // dialog simply never opened.
     ui: {
         // Opens the export dialog
         openExportModal: function() {
@@ -794,12 +873,12 @@ export const ui = {
             const area = document.getElementById('export-area');
             const msg = document.getElementById('export-msg');
             
-            // Code generieren
+            // Generate the code
             const code = engine.exportSaveGame();
             area.value = code || "Fehler beim Erstellen.";
             msg.style.opacity = '0'; // Reset Message
 
-            this.showOverlay(modal);
+            engine.showOverlay(modal);
         },
 
         // Opens the import dialog
@@ -812,16 +891,13 @@ export const ui = {
             msg.style.opacity = '0'; 
             msg.innerText = "";
 
-            this.showOverlay(modal);
+            engine.showOverlay(modal);
         },
 
         // Closes both dialogs
         closeModals: function() {
-            document.getElementById('save-export-modal').classList.add('hidden');
-            document.getElementById('save-export-modal').classList.remove('flex');
-            document.getElementById('save-import-modal').classList.add('hidden');
-            document.getElementById('save-import-modal').classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
+            engine.hideOverlay('save-export-modal');
+            engine.hideOverlay('save-import-modal');
         },
 
         // Kopier-Funktion
@@ -844,7 +920,7 @@ export const ui = {
             });
         },
 
-        // Import-Funktion (ROBUST & GEFIXT)
+        // Import function (robust, and fixed)
         performImport: function() {
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
@@ -862,13 +938,13 @@ export const ui = {
             try {
                 let base64, checksum;
 
-                // 2. STRATEGIE: Trennen am '--' (Neues Format)
+                // 2. STRATEGY: split at '--' (new format)
                 if (code.includes('--')) {
                     const parts = code.split('--');
                     base64 = parts[0];
                     checksum = parts[1];
                 } 
-                // 3. FALLBACK: Trennen am letzten '-' (Altes Format oder manuell bearbeitet)
+                // 3. FALLBACK: split at the last '-' (old format, or hand-edited)
                 else if (code.includes('-')) {
                     const lastDash = code.lastIndexOf('-');
                     base64 = code.substring(0, lastDash);
@@ -902,7 +978,7 @@ export const ui = {
                 // Merge the imported save into it without losing new fields
                 const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
 
-                // Speichern des reparierten/gemergten Archivs
+                // Save the repaired and merged archive
                 localStorage.setItem(engine.KEYS.archive, JSON.stringify(mergedArchive));
 
                 // Only ever raise the tutorial flag, never lower it.
@@ -978,15 +1054,13 @@ export const ui = {
             // Step 2: execute.
             // This used to remove a non-existent 'tutorialSeen' key, which meant a
             // hard reset wiped the archive but left the tutorial marked as done.
-            // Deliberately NOT removed: keyBinds and every settings and audio
-            // key (see keys.js). A hard reset wipes the save, not the
-            // preferences of the person in front of the screen.
-            localStorage.removeItem(engine.KEYS.archive);
-            localStorage.removeItem(engine.KEYS.defaultDiff);
-            localStorage.removeItem(engine.KEYS.tutorialDone);
-            localStorage.removeItem(engine.KEYS.partyPlayed.easy);
-            localStorage.removeItem(engine.KEYS.partyPlayed.normal);
-            localStorage.removeItem(engine.KEYS.partyPlayed.hard);
+            // The list is no longer kept here: PROGRESS_KEYS in keys.js is the
+            // one place that says what a reset removes, which is what that file
+            // claimed all along while this function maintained its own copy.
+            // Deliberately NOT in it: keyBinds and every settings and audio key.
+            // A hard reset wipes the save, not the preferences of the person in
+            // front of the screen.
+            for (const key of PROGRESS_KEYS) localStorage.removeItem(key);
 
             // The interrupted workday goes too. Without this the reload would
             // offer to resume a day that belongs to the save just wiped - and
@@ -997,6 +1071,7 @@ export const ui = {
             // Push the emptied state to cloud storage as well, otherwise the
             // next launch would pull the old archive straight back in.
             engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
+            engine.state.defaultDiff = 'ask';
             platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
@@ -1006,7 +1081,7 @@ export const ui = {
             
             setTimeout(() => location.reload(), 1000);
         } else {
-            // Schritt 1: Scharfschalten
+            // Step 1: arm it.
             btn.dataset.armed = "true";
             const textSpan = btn.querySelector('#text-hard-reset');
             const iconSpan = btn.querySelector('#icon-hard-reset');
@@ -1027,52 +1102,24 @@ export const ui = {
         }
     },
     
+    // The seventeen controls used to be refreshed from here, one
+    // getElementById per option. They now read the state themselves in
+    // components/SettingsView.svelte, so opening the dialog no longer has to
+    // copy anything into the DOM.
     openSettings: function() {
         const modal = document.getElementById('settings-modal');
-        const select = document.getElementById('setting-diff');
-        
-        document.body.classList.add('overflow-hidden');
-        
-        if(select) select.value = localStorage.getItem(engine.KEYS.defaultDiff) || 'ask';
-        
-        // --- Refresh the toggles ---
-        if(document.getElementById('setting-fx')) document.getElementById('setting-fx').checked = this.state.visualFX;
-        if(document.getElementById('setting-oneclick')) document.getElementById('setting-oneclick').checked = this.state.oneClickItem;
-        if(document.getElementById('setting-fastchat')) document.getElementById('setting-fastchat').checked = this.state.fastChat;
-        if(document.getElementById('setting-blindstats')) document.getElementById('setting-blindstats').checked = this.state.blindStats;
-        if(document.getElementById('setting-blindtickets')) document.getElementById('setting-blindtickets').checked = this.state.blindTickets;
-        if(document.getElementById('setting-audio')) document.getElementById('setting-audio').checked = this.state.audioEffects;
-        if(document.getElementById('setting-textsize')) document.getElementById('setting-textsize').value = this.state.textSize ?? 'normal';
-        if(document.getElementById('setting-scanlines')) document.getElementById('setting-scanlines').checked = this.state.scanlines !== false;
-        if(document.getElementById('setting-autochart')) document.getElementById('setting-autochart').checked = !!this.state.autoChart;
-        if(document.getElementById('setting-volume')) document.getElementById('setting-volume').value = this.state.audioVolume;
-		if(document.getElementById('setting-music')) document.getElementById('setting-music').checked = this.state.musicEnabled;
-        if(document.getElementById('setting-music-volume')) document.getElementById('setting-music-volume').value = this.state.musicVolume;
-        if(document.getElementById('setting-autohide')) document.getElementById('setting-autohide').checked = this.state.autoHidePhone;
-        if(document.getElementById('setting-compact')) document.getElementById('setting-compact').checked = this.state.compactMode;
-        if(document.getElementById('setting-shake')) document.getElementById('setting-shake').checked = this.state.screenShake;
-        const styleSelect = document.getElementById('setting-music-style'); if(styleSelect) styleSelect.value = this.state.musicStyle;
-        
-        // --- Soft reset button, greyed out in the main menu and difficulty picker ---
-        const softResetBtn = document.getElementById('btn-soft-reset');
-        const introModal = document.getElementById('intro-modal');
-        const diffModal = document.getElementById('difficulty-modal');
-        
-        if (softResetBtn) {
-            // Is the intro, the difficulty modal or the tutorial currently active?
-            const isIntroOpen = introModal && introModal.style.display !== 'none';
-            const isDiffOpen = diffModal && (diffModal.style.display === 'flex' || !diffModal.classList.contains('hidden'));
-            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
 
-            if (isIntroOpen || isDiffOpen || isTutorialActive) {
-                // Sperren
-                softResetBtn.classList.add('opacity-40', 'pointer-events-none', 'grayscale');
-                softResetBtn.disabled = true; 
-            } else {
-                // Freigeben
-                softResetBtn.classList.remove('opacity-40', 'pointer-events-none', 'grayscale');
-                softResetBtn.disabled = false; 
-            }
+        // --- Soft reset button, greyed out while the game is still starting ---
+        const softResetBtn = document.getElementById('btn-soft-reset');
+
+        if (softResetBtn) {
+            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
+            const locked = this.isStartupOverlayOpen() || isTutorialActive;
+
+            softResetBtn.classList.toggle('opacity-40', locked);
+            softResetBtn.classList.toggle('pointer-events-none', locked);
+            softResetBtn.classList.toggle('grayscale', locked);
+            softResetBtn.disabled = locked;
         }
         // -------------------------------------------------------------
         
@@ -1094,7 +1141,7 @@ export const ui = {
             title.innerText = 'MENÜ';
         }
 
-        this.showOverlay(modal, false);
+        this.showOverlay(modal);
     },
     
     closeSettings: function() {
@@ -1169,7 +1216,7 @@ export const ui = {
     },
 
     /**
-     * Setzt alle Optionen der Einstellungsseite auf Auslieferungszustand.
+     * Resets every option on the settings page to factory state.
      *
      * Deliberately WITHOUT reloading the page: the workday carries on, and a
      * reload would destroy it. Instead every value goes through the regular
@@ -1209,7 +1256,6 @@ export const ui = {
         this.resetKeybinds();
         this.toggleShowHotkeys(!window.matchMedia('(pointer: coarse)').matches);
 
-        this.updateSettingsUI();
         this.playAudio('ui');
     },
 
@@ -1217,27 +1263,25 @@ export const ui = {
      * Two-step confirmation on the button itself instead of a browser dialog.
      * The first click asks, the second acts; after five seconds without an
      * answer the button returns to its resting state.
+     *
+     * Only the flag is set here. What the button then says and how it looks is
+     * decided in components/SettingsView.svelte - the same division of labour
+     * as flashBinding() and the key bindings.
      */
-    confirmResetSettings: function(btn) {
-        if (btn.dataset.armed === 'true') {
-            clearTimeout(this._resetArmTimer);
-            btn.dataset.armed = 'false';
-            btn.textContent = btn.dataset.label;
-            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+    confirmResetSettings: function() {
+        clearTimeout(this._resetArmTimer);
+
+        if (this.state.settingsResetArmed) {
+            this.state.settingsResetArmed = false;
             this.resetSettings();
             return;
         }
-        btn.dataset.label = btn.dataset.label || btn.textContent.trim();
-        btn.dataset.armed = 'true';
-        btn.textContent = 'Wirklich?';
-        btn.classList.add('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+
+        this.state.settingsResetArmed = true;
         this.playAudio('ui');
 
-        clearTimeout(this._resetArmTimer);
         this._resetArmTimer = setTimeout(() => {
-            btn.dataset.armed = 'false';
-            btn.textContent = btn.dataset.label;
-            btn.classList.remove('!text-red-300', '!border-red-500/70', '!bg-red-950/40');
+            this.state.settingsResetArmed = false;
         }, 5000);
     },
 
@@ -1271,7 +1315,7 @@ export const ui = {
     },
     
     /**
-     * Welcher Wochentag beim Start vorausgewählt ist.
+     * Which weekday is preselected at startup.
      *
      * Deliberately without a log entry. The activity log is the record of the
      * workday - what happened at the desk - and a setting is not part of it.
@@ -1279,6 +1323,7 @@ export const ui = {
      * that speaks German. The dropdown shows the choice; that is the feedback.
      */
     saveDefaultDifficulty: function(val) {
+        this.state.defaultDiff = val;
         localStorage.setItem(engine.KEYS.defaultDiff, val);
         this.playAudio('ui');
     },
@@ -1297,7 +1342,7 @@ export const ui = {
         const originalText = textSpan.innerText;
 
         if (navigator.share) {
-            navigator.share(shareData).catch(() => { /* Der Mensch hat den Teilen-Dialog geschlossen - kein Fehler. */ });
+            navigator.share(shareData).catch(() => { /* The person closed the share dialog - not an error. */ });
         } else {
             navigator.clipboard.writeText(shareUrl).then(() => {
                 textSpan.innerText = "Link erfolgreich kopiert!";
@@ -1324,12 +1369,21 @@ export const ui = {
 
         this.state.isBindingKey = true;
         this.state.actionToBind = action;
-        let btn = document.getElementById('bind-' + action);
-        if (btn) {
-            btn.innerText = "Drücke Taste...";
-            btn.className = "bg-amber-500 text-black px-4 py-2 rounded-lg font-bold text-xs uppercase animate-pulse shadow-lg";
-            btn.blur(); 
-        }
+        this.state.bindFlash = null;
+        // Away from the button, or the next key press would count as a click
+        // on it as well.
+        document.activeElement?.blur?.();
+    },
+
+    /** Turns a binding button red for a moment: taken, or reserved. */
+    flashBinding: function(action, reserved = false) {
+        this.state.bindFlash = action;
+        this.state.bindFlashReserved = reserved;
+        clearTimeout(this._bindFlashTimer);
+        this._bindFlashTimer = setTimeout(() => {
+            this.state.bindFlash = null;
+            this.state.bindFlashReserved = false;
+        }, reserved ? 800 : 500);
     },
 
     finishBindingKey: function(key) {
@@ -1346,81 +1400,37 @@ export const ui = {
         if (key.toLowerCase() === 'escape' || (currentBind && currentBind.toLowerCase() === pressedKey.toLowerCase())) {
             this.state.isBindingKey = false;
             this.state.actionToBind = null;
-            this.updateSettingsUI();
             return;
         }
 
-        // --- 4, 5 and 6 are reserved, with visual feedback ---
+        // 4, 5 and 6 belong to the fixed slots and cannot be reassigned.
         if (hardcodedKeys.includes(pressedKey)) {
-            let conflictBtn = document.getElementById('bind-' + this.state.actionToBind);
-            if (conflictBtn) {
-                conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                conflictBtn.innerText = "RESERVIERT"; // Optischer Hinweis
-                
-                setTimeout(() => {
-                    conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                    conflictBtn.classList.add('bg-amber-500', 'text-black'); // back to the amber "waiting" state
-                    conflictBtn.innerText = "Drücke Taste...";
-                }, 800);
-            }
+            this.flashBinding(this.state.actionToBind, true);
             return; // reject the key but stay in binding mode
         }
-        // ---------------------------------------------------------
-        
-        // 2. Doppelbelegung verhindern
+
+        // A key can only do one thing: point at whoever holds it already.
         for (let act in this.state.keyBinds) {
             if (this.state.keyBinds[act].toLowerCase() === pressedKey.toLowerCase() && act !== this.state.actionToBind) {
-                let conflictBtn = document.getElementById('bind-' + act);
-                if (conflictBtn) {
-                    conflictBtn.classList.remove('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                    conflictBtn.classList.add('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                    
-                    setTimeout(() => {
-                        conflictBtn.classList.remove('bg-red-600', 'border-red-500', 'text-white', 'animate-shake');
-                        conflictBtn.classList.add('bg-slate-800', 'border-slate-600', 'text-slate-300');
-                    }, 500);
-                }
+                this.flashBinding(act);
                 return;
             }
         }
 
-        // 3. Erfolgreich speichern
+        // 3. Saved successfully
         this.state.keyBinds[this.state.actionToBind] = pressedKey;
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
-        this.saveSystem(); 
-        this.updateSettingsUI();
+        this.saveSystem();
     },
 
-    updateSettingsUI: function() {
-        for (let act in this.state.keyBinds) {
-            let btn = document.getElementById('bind-' + act);
-            if (btn) {
-                let displayKey = this.state.keyBinds[act];
-                if(displayKey.startsWith('Arrow')) displayKey = displayKey.replace('Arrow', '');
-                
-                btn.innerText = displayKey.toUpperCase();
-                btn.className = "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-4 py-2 rounded-lg font-bold text-xs uppercase transition-colors min-w-[80px]";
-            }
-        }
-    },
-    
     openKeybinds: function() {
-        this.updateSettingsUI();
-        
-        if(document.getElementById('setting-showhotkeys')) {
-            document.getElementById('setting-showhotkeys').checked = this.state.showHotkeys;
-        }
-        
-        document.getElementById('keybind-modal').classList.remove('hidden');
-        document.getElementById('keybind-modal').classList.add('flex');
+        this.showOverlay('keybind-modal');
     },
 
     closeKeybinds: function() {
         this.state.isBindingKey = false;
-        document.getElementById('keybind-modal').classList.add('hidden');
-        document.getElementById('keybind-modal').classList.remove('flex');
+        this.hideOverlay('keybind-modal');
     },
     
     resetKeybinds: function() {
@@ -1430,7 +1440,6 @@ export const ui = {
         this.state.actionToBind = null;
         
         this.saveSystem();
-        this.updateSettingsUI();
         this.playAudio('ui');
         
         // Visual feedback: every button flashes green briefly
@@ -1471,7 +1480,7 @@ export const ui = {
             const catVal = document.getElementById('report-category')?.value || "Unbekannt";
             const descVal = document.getElementById('report-desc')?.value || "";
 
-            // Leere Beschreibung abfangen (Optional, aber gut)
+            // Catch an empty description (optional, but worth it)
             if (descVal.trim() === "") {
                 alert("Bitte gib eine kurze Beschreibung ein.");
                 return;
@@ -1542,7 +1551,7 @@ ${logText}
             // --- Silent POST via no-cors: the response is opaque, which is fine ---
             fetch(FORM_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Verhindert Sicherheits-Blockaden vom Browser
+                mode: 'no-cors', // Prevents browser security blocks
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },

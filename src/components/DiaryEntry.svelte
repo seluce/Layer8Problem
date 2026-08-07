@@ -1,12 +1,13 @@
 <!--
-  Das persönliche Logbuch.
+  The personal journal.
 
-  Der literarisch beste Teil des Spiels stand bisher als vierter Absatz in
-  einem grauen Kasten. Hier bekommt er, was er verdient: ein Blatt Papier,
-  leicht schief auf den Tisch gelegt, mit Datum und Wochentag wie in einem
-  echten Tagebuch. Die Textur liegt bereits im Projekt (public/assets).
+  The most literary part of the game used to sit as the fourth paragraph in a
+  grey box. Here it gets what it deserves: a sheet of paper, laid slightly
+  askew on the desk, with date and weekday like in a real diary. The texture
+  already lives in the project (public/assets).
 
-  Die Absätze kommen als Daten aus engine_core.generateDiaryEntry().
+  The paragraphs arrive as data from engine/engine_diary.js: a list in
+  reading order, each with a tone that decides how it is set.
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
@@ -22,17 +23,18 @@
     ];
     const weekday = $derived(WEEKDAY.find(d => d.test(game.difficultyMult)).label);
 
-    // The blind-run postscript deliberately sits before the closing line and
-    // gets its own styling: added afterwards, like a note that only occurred
-    // to you as you were shutting the book.
+    // A list rather than fixed fields, so a new slot in the diary does not
+    // need a change here. The order is the order of the page; the blind-run
+    // postscript deliberately sits before the closing line and gets its own
+    // styling: added afterwards, like a note that only occurred to you as you
+    // were shutting the book.
     const paragraphs = $derived(
-        [
-            { text: diary?.p1 },
-            { text: diary?.p2 },
-            { text: diary?.pWarn,  warn: true },
-            { text: diary?.pBlind, note: true },
-            { text: diary?.p3,     final: true }
-        ].filter(p => p.text)
+        (diary?.paragraphs ?? []).map(p => ({
+            text: p.text,
+            warn: p.tone === 'warn',
+            note: p.tone === 'note',
+            final: p.tone === 'final'
+        }))
     );
 </script>
 
@@ -44,7 +46,7 @@
                         repeating-linear-gradient(0deg, transparent 0 27px, rgba(120,130,150,0.18) 27px 28px),
                         linear-gradient(180deg, #f7f1e0 0%, #efe5cd 100%);">
 
-            <!-- Kopfzeile wie in einem Notizbuch: Wochentag, darunter der Strich -->
+            <!-- Header like a notebook: weekday, with the rule underneath -->
             <div class="flex items-baseline justify-between border-b-2 border-[#c8b99b] pb-1 mb-3">
                 <span class="font-serif font-bold text-[15px] tracking-wide">Logbuch — {weekday}</span>
                 <span class="font-serif text-[11px] text-slate-600 italic">Persönlich</span>
@@ -66,7 +68,7 @@
                 {/each}
             </div>
 
-            <!-- Unterschrift-Zeile; das Kürzel ist das des Spielercharakters -->
+            <!-- Signature line; the initials are the player character's -->
             <div class="mt-4 text-right font-serif italic text-slate-600 text-[12px]">— M.</div>
         </div>
     </div>

@@ -19,7 +19,7 @@
   offsets it changes nothing visually, and it saves a classList call.
 -->
 <script>
-    import { state } from '../engine/engine_state.svelte.js';
+    import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
     const ACTIONS = [
@@ -34,7 +34,6 @@
     // permanent: it appears once the tickets get dangerous, at the same
     // threshold the counter starts pulsing at. Then it says something true and
     // actionable instead of just "this one is important".
-    const TICKET_WARNING = 7;
     const urgent = $derived(state.tickets >= TICKET_WARNING);
 
     // "ArrowUp" reads better as "UP" on a badge that is nine pixels wide.

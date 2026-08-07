@@ -1,3 +1,47 @@
+[4.1.0] - 2026-08-07
+
+Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser
+erzählt, einheitlich beschriftet und von einer Reihe alter Macken befreit.
+
+Ereignisse & Texte:
+* Sämtliche Ereignisse wurden redaktionell überarbeitet, in mehreren Durchgängen: erst gegen Kargheit und wörtliche Wiederholung, dann gegen den Erzähler, der seine Pointen erklärt. Schlusssätze wie "Du hast gewonnen, aber du bist ein Monster" sind gestrichen oder durch eine Reaktion ersetzt - das Urteil fällt wieder der Spieler. Optionen und Auswirkungen sind unverändert.
+* Das Tagebuch am Feierabend erzählt vom Tag statt von den Erfolgen: ob es früh brannte oder erst nach zwei kippte, wie viele Tassen es gebraucht hat, wer heute anders über einen denkt als heute Morgen. Zuletzt benutzte Sätze werden übersprungen - Wiederholungen sind selten geworden.
+* Auftakte und Formulierungen klingen nicht mehr nach Schablone: Baukasten-Sätze wie "plötzlich", "Du hast X, aber Y" oder "Du fühlst dich ..." stehen nur noch dort, wo sie eine Figur oder eine Pointe tragen.
+
+Anzeige & Layout:
+* Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. Beschriftungen im Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)", "Tech-Lösung: ...") sind auf das umgestellt, was Müller tut oder sagt.
+* Im Rucksack öffnen sich die Gegenstands-Beschreibungen jetzt auch per Fingertipp - wichtig am Handy und auf dem Steam Deck. Ein Tipp zeigt, ein zweiter benutzt.
+* Bilder stehen beim Öffnen sofort da: Porträts, Gegenstände und Trophäen werden beim Start vorgeladen.
+* Im Messenger sind die Handlungs-Knöpfe kürzer ("[Chat stummschalten]" statt "[System: Chat stummschalten]"), und Chats mit bekannten Figuren zeigen ihr Porträt statt der Initiale - in Gruppen-Chats sogar pro Nachricht.
+* Die Erzähltexte stehen nicht mehr in Anführungszeichen. Die Hülle behauptete einen Sprecher, den es nicht gibt; wörtliche Rede ist ohnehin im Text markiert.
+
+Fehlerkorrekturen:
+* Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren.
+* Im Gruppen-Chat der Kollegen wirkt die Ruf-Strafe fürs Ignorieren der Lästerei jetzt wie vorgesehen.
+* Die Tastenbelegung zeigt zuverlässig, welche Taste schon vergeben oder reserviert ist.
+* Die Ausrede wird pro Ereignis gezogen statt bei jedem Öffnen des Fensters - der Vorrat ließ sich vorher folgenlos durchblättern.
+* Anruf-Knopf und Ticket-Zähler warnen jetzt bei derselben Zahl: ab acht.
+* Im Archiv schimmerte hinter freigestellten Gegenständen das Symbol durch, und im Rucksack ragten die Beschreibungen auf schmalen Bildschirmen über den Rand. Beides behoben.
+* Das Tagebuch verschluckt keine Begegnungen mehr, wenn ein Tag mehrere hergab.
+* "Auf Standard zurücksetzen" aktualisiert jetzt auch die sichtbaren Schalter.
+* Escape war eine Hintertür an Entscheidungen vorbei: Über der Weiterspielen-Frage, der Tageswahl und offenen Mails öffnete es das Menü darüber - ein Klick konnte dort den angebotenen Tag verwerfen. Geschlossen.
+* Das "…"-Abzeichen an Antworten verspricht nur noch dann ein Weiterreden, wenn tatsächlich ein Gesprächsknoten folgt.
+* Spielstand exportieren und importieren funktioniert wieder, über das Startfenster wie über die Einstellungen.
+* Am Handy scrollte die Seite hinter gestapelten Fenstern, sobald das obere geschlossen wurde.
+* Drei Mittags-Optionen verbrauchten ihren Gegenstand nicht (Energy Drink in der Sonne, Donut essen beziehungsweise verschenken). Jetzt kostet der Konsum, was der Text behauptet.
+* Schreib-, Grammatik- und Logikfehler in diversen Ereignissen behoben, darunter ein vermischtes Sprichwort und zweimal das falsche Geschlecht der Fremdscham.
+
+Für Entwickler:
+* Der Daten-Prüfer (npm run lint:data) kennt fünf neue Regeln, darunter unbekannte Felder je Kontext: Ein req in einer Mail ist jetzt ein Fehler statt ein stiller Blindgänger. Die Regeln fanden zwei Altlasten, darunter die verschluckte Ruf-Wirkung oben.
+* Die Beschriftung einer Antwort heißt in allen Datendateien t; im Postfach hieß dasselbe Feld historisch btn.
+* Phone-Ereignisse werten char auch pro Knoten aus - für Gruppen-Chats; char: null erzwingt die Initiale.
+* Der Prosa-Bericht (tools/report-prose.mjs) hat drei Abschnitte mehr: Alt-Register in Beschriftungen (auch zusammengesetzte Präfixe wie "Tech-Lösung:"), Schablonen in Auftakten und eine Frequenz-Zählung wiederkehrender Formulierungsmuster - Letztere bewusst als Leseliste und Vorher-nachher-Messung, nicht als Fehlerliste.
+* Einstellungen und Tastenbelegung sind eigenständige Komponenten; kein Bedienelement wird mehr beim Öffnen von außen befüllt.
+* Overlays laufen alle über dieselben drei Funktionen (showOverlay, hideOverlay, isOverlayOpen), die Bildlauf-Sperre über eine Menge benannter Halter - beides beendet je eine Klasse stiller Fehler, darunter einen reproduzierbaren Datenverlust-Pfad.
+* Was ein Gegenstand bewirkt, steht komplett beim Gegenstand (use-Block in data_items.js) statt an fünf Stellen. Alle 30 Gegenstände verhalten sich unverändert, nachgemessen.
+* PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird.
+
+
 [4.0.0] - 2026-08-03
 
 Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der
@@ -51,8 +95,7 @@ Einstellungen:
 
 Fehlerkorrekturen:
 * Bei 38 Ereignissen fehlte das Bild des Kollegen, um den es ging - Kevins Sprachnachrichten, Egons Groll, Gabis Panik und der Chefsessel zeigten eine leere Karte. Vier Ereignisse wirken jetzt auf das Verhältnis zu dem Kollegen, um den es die ganze Zeit ging, und in einem Fall bekam der Falsche die Anerkennung.
-* Das vollständige Zurücksetzen verwirft jetzt auch einen unterbrochenen Arbeitstag. Bislang bot das Spiel danach an, den laufenden Tag fortzusetzen - und weil dieser Zwischenstand seine eigene Kopie des Verhältnisses zu den Kollegen mitführt, wanderte damit ein Teil des gelöschten Fortschritts wieder zurück. Dasselbe galt beim Einspielen eines fremden Spielstands.
-* 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
+ 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
 * 5 Ereignisse waren gar nicht erreichbar, weil ihre Voraussetzung nirgends erfüllt werden konnte: die Gerüchteküche um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
 * Das Party-Ende "INSIDER" ließ sich nicht abschließen: Der Ergebnistext enthält wörtliche Rede, wodurch die Schaltfläche technisch unbrauchbar wurde. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
 * Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
@@ -63,7 +106,8 @@ Fehlerkorrekturen:
 * "Spielstand löschen" setzt nun auch das Tutorial zurück, und der Tutorial-Fortschritt wird beim Export und Import tatsächlich übertragen. Beim Abgleich mit der Steam Cloud wird er nur noch freigeschaltet und nie mehr zurückgesetzt.
 * Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben; im Ruhebildschirm passte sich die Schrift nach der ersten Rückkehr nicht mehr an die Breite an.
 * Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen. Während der Synergy-Gala konnte weiterhin eine Büro-Nachricht im Ticker erscheinen.
-* 10 Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen. In einem Privatanruf standen Formatierungszeichen mitten im Text. Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde immer als "Normal" gemeldet.
+* 10 Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen.
+* In einem Privatanruf standen Formatierungszeichen mitten im Text. Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde immer als "Normal" gemeldet.
 
 System & Stabilität:
 * Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite geladen, auch die des Party-Finales, das die meisten nie sehen. Nun lädt zunächst nur das Nötigste, der Rest kommt im Hintergrund nach - die Datenmenge beim Start sinkt um rund 92 Prozent. Auch die Musikstücke laden erst, wenn sie gespielt werden.

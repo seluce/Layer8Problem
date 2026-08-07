@@ -1,10 +1,10 @@
 <!--
-  Die Tagesbilanz im Endbildschirm.
+  The day's balance sheet on the end screen.
 
-  Früher baute engine_core.buildDayReport() diesen Block als HTML-Zeichenkette
-  zusammen. Als Komponente kann er etwas, was der String nicht konnte: den Wert
-  hervorheben, an dem der Tag zerbrochen ist. Wer gefeuert wurde, soll den
-  Chef-Radar sehen und nicht drei gleich laute Zahlen.
+  engine_core.buildDayReport() used to assemble this block as an HTML string.
+  As a component it can do something the string never could: highlight the
+  value the day broke on. Whoever got fired should see the boss radar, not
+  three equally loud numbers.
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';

@@ -1,6 +1,7 @@
 import { KEYS } from './keys.js';
 
 import { DB, ensure, prefetchAll } from '../data.js';
+import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
 
@@ -20,12 +21,12 @@ export const core = {
             if (Array.isArray(source[key])) {
                 target[key] = [...source[key]];
             } 
-            // Objekte werden rekursiv tiefenkopiert
+            // Objects are deep-copied recursively
             else if (source[key] !== null && typeof source[key] === 'object') {
                 if (!target[key]) target[key] = {};
                 this.deepMerge(target[key], source[key]);
             } 
-            // Primitive Werte (Zahlen, Strings, Booleans) einfach zuweisen
+            // Primitive values (numbers, strings, booleans) are simply assigned
             else {
                 target[key] = source[key];
             }
@@ -42,18 +43,58 @@ export const core = {
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
         if (!this.state.scanlines) document.body.classList.add('no-scanlines');
-        document.getElementById('intro-modal').style.display = 'flex';
-        document.body.classList.add('overflow-hidden');
+        this.showOverlay('intro-modal');
 
         this.updatePresence('system');
 
         // The intro modal is up and the player reads it for several seconds —
         // more than enough to warm the remaining pools before the first click.
         prefetchAll();
+        this.warmImages();
 
         this.renderHeader();
         this.updateUI();
         this.log(`System ${this.VERSION} geladen. Warte auf User...`);
+    },
+
+    /**
+     * Fetches and decodes every portrait, item and trophy picture ahead of time.
+     *
+     * The archive, the team screen and the event card all draw the emoji icon
+     * underneath the picture, so an image that has not arrived yet shows as its
+     * placeholder and then swaps - visible as a flicker when a modal opens.
+     * Decoding here rather than at paint time is what removes it: decode()
+     * finishes the work off the rendering path, so the first frame that shows
+     * the modal already has the bitmap.
+     *
+     * Where it happens differs by shell. On the desktop build the files sit on
+     * the same disk as the game and cost nothing, so this runs right away while
+     * the intro modal is being read. In the browser the same files come over the
+     * network, where they would compete with the deferred data pools - the ones
+     * the player needs first - so there it waits for an idle moment.
+     */
+    warmImages: function() {
+        if (typeof Image === 'undefined') return;
+
+        const urls = [
+            ...(DB.chars ?? []).map(c => c.img),
+            ...Object.values(DB.items ?? {}).map(i => i.img),
+            ...(DB.achievements ?? []).map(a => a.img)
+        ].filter(Boolean);
+
+        const warm = () => {
+            for (const src of urls) {
+                const img = new Image();
+                img.src = src;
+                // A failure is not worth reporting: every <img> in the markup
+                // falls back to its icon on its own.
+                img.decode?.().catch(() => {});
+            }
+        };
+
+        if (platform.isDesktop) warm();
+        else if (typeof requestIdleCallback === 'function') requestIdleCallback(warm, { timeout: 5000 });
+        else setTimeout(warm, 2000);
     },
 
     // --- PERSISTENCE ---
@@ -128,7 +169,7 @@ export const core = {
                 if(!this.state.archive.reputation) this.state.archive.reputation = {};
                 if(!this.state.archive.stats) this.state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
                 
-                // --- NEU: GARBAGE COLLECTION (Bereinigung alter Daten) ---
+                // --- NEW: GARBAGE COLLECTION (clearing out stale data) ---
                 if (typeof DB !== 'undefined' && DB.items) {
                     this.state.archive.items = this.state.archive.items.filter(id => DB.items[id]);
                 }
@@ -155,7 +196,7 @@ export const core = {
     },
 
     /**
-     * Sichert den laufenden Arbeitstag.
+     * Saves the workday in progress.
      *
      * Saved only while idle - that is, with no event open. Restoring a
      * half-answered conversation would be involved and error-prone; this way
@@ -191,7 +232,7 @@ export const core = {
         }
     },
 
-    /** Gibt es einen unterbrochenen Tag? Liefert ihn oder null. */
+    /** Is there an interrupted day? Returns it or null. */
     loadDay: function() {
         try {
             const raw = localStorage.getItem(this.KEYS.dayState);
@@ -205,7 +246,7 @@ export const core = {
         }
     },
 
-    /** Stellt einen gesicherten Tag wieder her und macht im Ruhezustand weiter. */
+    /** Restores a saved day and picks up again in a paused state. */
     resumeDay: function() {
         const day = this.loadDay();
         if (!day) { this.reset(); return; }
@@ -222,15 +263,13 @@ export const core = {
         // keys in the LogFeed.
         this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
 
-        // Anzeige und Ablauf wieder aufsetzen
+        // Rebuild display and flow
         for (const key of DAY_TIMERS) this.state[key] = null;
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
 
-        document.getElementById('difficulty-modal').style.display = 'none';
-        document.getElementById('resume-modal')?.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('resume-modal');
 
         this.renderHeader();
         this.updateUI();
@@ -241,20 +280,17 @@ export const core = {
         this.updatePresence('system');
     },
 
-    /** Aus dem Fortsetzen-Dialog: Zwischenstand wegwerfen, neu anfangen. */
+    /** From the resume dialog: discard the interim state, start fresh. */
     discardDay: function() {
         this.clearDay();
-        const modal = document.getElementById('resume-modal');
-        modal?.classList.add('hidden');
-        modal?.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('resume-modal');
         this.playAudio('ui');
         this.start();
     },
 
-    /** Verwirft den gesicherten Tag (Tagesende oder bewusster Neustart). */
+    /** Discards the saved day (end of day, or a deliberate restart). */
     clearDay: function() {
-        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* egal */ }
+        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
     },
 
     saveSystem: function() {
@@ -399,7 +435,7 @@ export const core = {
         return pool[Math.floor(Math.random() * pool.length)];
     },
 
-    /** Kurzname des Wochentags aus dem Schwierigkeitsgrad. */
+    /** Short weekday name derived from the difficulty. */
     difficultyKey: function() {
         if (this.state.difficultyMult < 1.0) return 'easy';
         if (this.state.difficultyMult > 1.0) return 'hard';
@@ -407,7 +443,7 @@ export const core = {
     },
 
     /**
-     * Schreibt fest, wie ein Arbeitstag ausgegangen ist.
+     * Records how a workday ended.
      *
      * Replaces the individual incrementStat calls at the end of a day: the
      * outcome is more than one counter. The streak of days survived, the
@@ -433,7 +469,7 @@ export const core = {
             if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
         } else {
             bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
-            st.streak = 0;   // Eine Serie endet, wo der Tag endet.
+            st.streak = 0;   // A streak ends where the day ends.
         }
 
         if (this.state.rageWarningReceived) bump('ventSaves');
@@ -461,7 +497,7 @@ export const core = {
     // Starts the game, honouring a saved default difficulty
     start: function() {
 		this.playMusic('office');
-        document.getElementById('intro-modal').style.display = 'none';
+        this.hideOverlay('intro-modal');
 
         // Is there an interrupted workday? Asking about it comes before the
         // difficulty picker, otherwise the first click would discard it.
@@ -478,8 +514,10 @@ export const core = {
             return;
         }
 
-        // Did the player pin a default difficulty?
-        const defaultDiff = localStorage.getItem(this.KEYS.defaultDiff) || 'ask';
+        // Did the player pin a default difficulty? Read from state, which was
+        // seeded from localStorage at boot - one place to ask, same as every
+        // other setting.
+        const defaultDiff = this.state.defaultDiff;
         
         if (defaultDiff !== 'ask') {
             // Skip the dialog and go straight in
@@ -488,7 +526,7 @@ export const core = {
             // Otherwise show the picker
             const diffModal = document.getElementById('difficulty-modal');
             if(diffModal) {
-                diffModal.style.display = 'flex';
+                this.showOverlay(diffModal);
             } else {
                 this.setDifficulty('normal'); // Fallback
             }
@@ -497,8 +535,7 @@ export const core = {
 
     // Applies the difficulty, then starts the day (or the tutorial)
     setDifficulty: function(level) {
-        document.getElementById('difficulty-modal').style.display = 'none';
-        document.body.classList.remove('overflow-hidden');
+        this.hideOverlay('difficulty-modal');
         
         // Lock the buttons for the half second of setup
         this.disableButtons(true);
@@ -571,7 +608,7 @@ export const core = {
         }
         // -----------------------------------------------------------------
 		
-		// --- Morgen-Routinen Abfang-Mechanismus ---
+		// --- interception for the morning routines ---
 		if (!this.state.morningMoodShown) {
             this.state.morningMoodShown = true;
             this.triggerMorningMood();
@@ -590,7 +627,7 @@ export const core = {
         this.checkForNews(); // news only fires while idle
     },
 
-    // Blitzschneller Neustart ohne Page-Reload
+    // Instant restart without a page reload
     // Stops every per-day timer and nulls the handle. Nulling matters: an
     // expired handle is still truthy, and triggerEmail() reads it as "a timer
     // is already running" and stops scheduling mail for the rest of the day.
@@ -611,7 +648,7 @@ export const core = {
         this.closeSettings();
         const overlay = document.getElementById('modal-overlay');
         if (overlay) {
-            this.hideOverlay(overlay, false);
+            this.hideOverlay(overlay);
         }
 
         // Replace the whole day rather than resetting fields one by one, so a
@@ -627,7 +664,7 @@ export const core = {
         // persists, so this records where it stood at the start of today.
         this.state.repAtStart = { ...this.state.reputation };
 
-        // Ein neuer Tag ersetzt jeden gesicherten Zwischenstand.
+        // A new day replaces any saved progress.
         this.clearDay();
 
         // Reset the ticker header immediately
@@ -654,7 +691,7 @@ export const core = {
     checkAchievements: function() {
         // --- PLAYSTYLE: EXTREMES ---
         
-        // 1. DER ASKET (Kein Kaffee) - Ab 16:00
+        // 1. 'Der Asket' (no coffee) - from 16:00
         // Rewards enduring the aggro without help
         if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
             this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
@@ -666,13 +703,13 @@ export const core = {
             this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
         }
 
-        // 3. GHOSTING (Mails ignorieren)
+        // 3. GHOSTING (ignoring mails)
         // Raised to 5 - genuinely dangerous for the radar value
         if(this.state.emailsIgnored >= 5 && !this.hasAch('ach_ignore')) {
             this.unlockAchievement('ach_ignore', '👻 Ghosting-Profi', '5 Mails ignoriert. Deine "Entf"-Taste glüht.');
         }
 
-        // 4. SCHWARZES LOCH (Volles Inventar)
+        // 4. BLACK HOLE (full inventory)
         // Set to 8 - you have to hoard even the junk
         if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
             this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
@@ -712,17 +749,17 @@ export const core = {
 
         // --- LATE GAME CHALLENGES (time dependent) ---
         
-        // NINJA (Heimlich faul) - Ab 14:00
+        // NINJA (secretly lazy) - from 14:00
         if(this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
             this.unlockAchievement('ach_ninja', '🥷 Ninja', 'Fast unsichtbar für den Chef.');
         }
 
-        // ZEN MEISTER (Keine Wut) - Ab 15:00
+        // 'Zen Meister' (no anger) - from 15:00
         if(this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
             this.unlockAchievement('ach_zen', '🕊️ Zen-Meister', '15 Uhr und die Ruhe selbst. Bist du überhaupt wach?');
         }
 
-        // MITARBEITER DES MONATS (Anti-Faul) - Ab 16:00
+        // EMPLOYEE OF THE MONTH (anti-lazy) - from 16:00
         if (this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
             this.unlockAchievement('ach_workaholic', '👔 Streber', 'Du hast tatsächlich gearbeitet? Du machst uns anderen schlecht!');
         }
@@ -737,7 +774,7 @@ export const core = {
             this.unlockAchievement('ach_clean', '✨ Inbox Zero', 'Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.');
         }
 
-        // TANZ AUF DEM VULKAN (High Risk Survival) - Ab 16:20
+        // 'Tanz auf dem Vulkan' (high-risk survival) - from 16:20
         if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
             this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
         }
@@ -789,7 +826,7 @@ export const core = {
         if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
 
         // Pull the stored difficulty
-        let savedDiffVal = 0; // 0 = Noch nie geschafft
+        let savedDiffVal = 0; // 0 = never achieved yet
         
         // Guard against a malformed archive
         if (this.state.archive && this.state.archive.achievements && this.state.archive.achievements.includes(id)) {
@@ -900,7 +937,7 @@ export const core = {
     },
 
     /**
-     * Stellt ein Tagesende in die Warteschlange.
+     * Queues up an end of day.
      *
      * The four endings only differed in title, line and cause - the sequence
      * (record the outcome, build the diary, set pendingEnd) was the same all
@@ -1010,7 +1047,7 @@ export const core = {
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
-        // C. Vorwarnung bei sieben Tickets
+        // C. Early warning at seven tickets
         else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
@@ -1084,7 +1121,7 @@ export const core = {
         
         this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");
 		
-		// ---> GALA MUSIK STARTEN <---
+		// ---> START THE GALA MUSIC <---
         this.playMusic('gala');
         this.updatePresence('party');
         
@@ -1143,238 +1180,12 @@ export const core = {
         }
     },
 
-    // --- TAGEBUCH GENERATOR ---
+    // --- DIARY ---
+    // The texts and the conditions that pick them live in data/data_diary.js,
+    // the assembly in engine_diary.js. This method stays so the two call sites
+    // keep reading the same.
     generateDiaryEntry: function(endReason, partyText = "") {
-        const state = this.state;
-        
-        // Turns ["A", "B", "C"] into the phrase "A, B und C"
-        const formatList = (arr) => {
-            if (arr.length === 0) return "";
-            if (arr.length === 1) return arr[0];
-            let last = arr.pop();
-            return arr.join(", ") + " und " + last;
-        };
-
-        // Picks one phrasing at random
-        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-        // 1. EVENT ANALYSIS (locations)
-        const usedArray = Array.from(state.usedIDs);
-        const serverVisits = usedArray.filter(id => id.startsWith('srv_')).length;
-        const callVisits = usedArray.filter(id => id.startsWith('call_')).length;
-        const questVisits = usedArray.filter(id => id.startsWith('sq_')).length;
-
-        // ==========================================
-        // PARAGRAPH 1: overall mood and location
-        // ==========================================
-        let p1 = "";
-        
-        // Overall mood, driven by achievements
-        if (state.achievements.includes('ach_rage')) {
-            p1 += pick([
-                "Heute war ich ein wandelndes Pulverfass. Ein falsches Wort und ich hätte den Router angezündet. ",
-                "Mein Puls war heute konstant auf 180. Ich habe mehrfach überlegt, einfach den Feueralarm zu drücken. ",
-                "Wenn Blicke töten könnten, wäre das Großraumbüro heute ein Friedhof geworden. "
-            ]);
-        } else if (state.achievements.includes('ach_lazy')) {
-            p1 += pick([
-                "Mein Motto heute: Warum heute arbeiten, wenn man es auch auf unbestimmte Zeit verschieben kann? ",
-                "Ich habe die Kunst der produktiven Arbeitsvermeidung heute absolut perfektioniert. ",
-                "Wenn Faulenzen olympisch wäre, hätte ich heute Gold für die Firma geholt. "
-            ]);
-        } else if (state.achievements.includes('ach_ascetic')) {
-            p1 += pick([
-                "Ich habe den Tag ohne einen Tropfen Kaffee überlebt – mein Kopf dröhnt vor Tugendhaftigkeit. ",
-                "Kein Koffein heute. Ich funktioniere nur noch durch pure Willenskraft und unterdrückte Wut. ",
-                "Ein völlig entkoffeinierter Tag. Ich fühle mich wie eine leere Hülle, aber mein Blutdruck ist fantastisch. "
-            ]);
-        } else if (state.achievements.includes('ach_coffee')) {
-            p1 += pick([
-                "Mein Blut besteht mittlerweile zu 90% aus Koffein. Ich kann Farben schmecken. ",
-                "Ich zittere am ganzen Körper. Nicht vor Angst, sondern weil ich den halben Kaffeeautomaten geleert habe. ",
-                "Wenn ich noch einen Espresso trinke, kann ich wahrscheinlich durch die Zeit reisen. Mein Puls ist auf Rekordjagd. "
-            ]);
-        } else if (state.achievements.includes('ach_workaholic')) {
-            p1 += pick([
-                "Ich habe heute tatsächlich so hart gearbeitet, dass ich uns alle schlecht aussehen lasse. ",
-                "Heute war ich beängstigend produktiv. Ich hoffe, das Management gewöhnt sich nicht daran. ",
-                "Ein Tag wie ein Maschinengewehr. Tickets gelöst, Probleme gefixt. Ich habe heute quasi die ganze Firma im Alleingang getragen. "
-            ]);
-        } else {
-            p1 += pick([
-                "Ein weiterer Tag im alltäglichen Corporate-Wahnsinn neigt sich dem Ende. ",
-                "Wieder acht Stunden meines Lebens, die mir niemand zurückgeben wird. ",
-                "Die Neonröhren surren, der Kaffee war kalt, der Wahnsinn hatte Methode. "
-            ]);
-        }
-
-        // Where the day was mostly spent
-        if (questVisits > serverVisits && questVisits > callVisits) {
-            p1 += pick([
-                "Anstatt mich um echte Probleme zu kümmern, bin ich lieber ziellos durch die Flure gegeistert.",
-                "Meine Hauptaufgabe bestand heute scheinbar darin, seltsame Büro-Dramen abseits meines Schreibtisches zu lösen.",
-                "Ich war heute öfter auf 'Dienstgang' unterwegs als am eigenen Platz."
-            ]);
-        } else if (serverVisits > callVisits + 2) {
-            p1 += pick([
-                "Um den nervigen Menschen aus dem Weg zu gehen, habe ich mich größtenteils im dunklen Serverraum verschanzt.",
-                "Die lauten Lüfter im Serverraum waren heute meine einzige, echte Gesellschaft.",
-                "Ich habe heute fast schon eine emotionale Bindung zu den blinkenden Racks im Keller aufgebaut."
-            ]);
-        } else if (callVisits > serverVisits + 3) {
-            p1 += pick([
-                "Gefühlt klebte mir das Telefon pausenlos am Ohr. Die User haben mir den letzten Nerv geraubt.",
-                "Ich habe heute mehr Support-Gespräche geführt als eine vollbesetzte Call-Center-Schicht.",
-                "Das ständige Klingeln des Telefons wird mich vermutlich noch bis in meine Träume verfolgen."
-            ]);
-        } else {
-            p1 += pick([
-                "Zwischen piepsenden Servern und panischen Anrufen habe ich irgendwie versucht, den Betrieb am Laufen zu halten.",
-                "Ein chaotischer Mix aus Hardware-Ausfällen und menschlicher Inkompetenz hielt mich heute auf Trab.",
-                "Ich bin von Brandherd zu Brandherd gerannt, ohne jemals wirklich etwas zu löschen."
-            ]);
-        }
-
-        // ==========================================
-        // PARAGRAPH 2: encounters (achievements and lore items)
-        // ==========================================
-        let p2 = "";
-        let encounters = [];
-        const hasAch = (id) => state.achievements.includes(id);
-        const hasItem = (id) => state.inventory.some(i => i.id === id);
-
-        // Story achievements, three phrasings each
-        if (hasAch('ach_mentor')) encounters.push(pick(["ich Azubi Kevin vor dem totalen IT-Kollaps bewahrt habe", "ich Kevins Haut gerettet habe", "Kevin mir nun auf ewig etwas schuldig ist"]));
-        if (hasAch('ach_ally')) encounters.push(pick(["ich eine unheilige Allianz mit Chantal aus dem Marketing geschmiedet habe", "Chantal und ich jetzt ein tödliches Team sind", "das Marketing nun in meiner Schuld steht"]));
-        if (hasAch('ach_rockstar')) encounters.push(pick(["mir Gabi ihr feinstes Death-Metal-Mixtape anvertraut hat", "ich mit Gabi musikalisch voll auf einer Wellenlänge war", "Gabi und ich den Empfang gerockt haben"]));
-        if (hasAch('ach_cat_whisperer')) encounters.push(pick(["ich das Katzenproblem der Buchhaltung gelöst habe", "ich zum offiziellen Katzenflüsterer von Frau Elster wurde", "Frau Elsters Kater Rüdiger und ich jetzt quasi Best Friends sind"]));
-        if (hasAch('ach_keymaster')) encounters.push(pick(["mir Hausmeister Egon seinen Generalschlüssel überlassen hat", "ich dank Egon nun theoretisch überall reinpasse", "ich jetzt dank Egons Schlüssel die wahre Macht im Gebäude habe"]));
-        if (hasAch('ach_closer')) encounters.push(pick(["ich mit Markus aus dem Sales einen extrem wichtigen Deal gerettet habe", "ich dem Vertrieb buchstäblich den Hintern gerettet habe", "Markus ohne mich heute seinen fetten Bonus verloren hätte"]));
-        if (hasAch('ach_wolf')) encounters.push(pick(["ich dem Chef einen neuen Arbeitsvertrag aus den Rippen geleiert habe", "ich gehaltstechnisch endlich aufgestiegen bin", "ich den Chef in der Gehaltsverhandlung absolut dominiert habe"]));
-        if (hasAch('ach_hacker')) encounters.push(pick(["ich mir illegale Admin-Rechte im System verschafft habe", "ich mich unbemerkt ins Root-Verzeichnis gehackt habe", "ich dank Root-Passwort jetzt der absolute Gott im Netzwerk bin"]));
-        if (hasAch('ach_rich')) encounters.push(pick(["ich dem nigerianischen Prinzen mein Vertrauen geschenkt habe", "ich unfassbar reich werde (falls der Scam echt ist)", "ich bald Millionen auf dem Konto habe (hoffentlich)"]));
-        
-        // Lore items, three phrasings each
-        if (hasItem('corp_chronicles')) encounters.push(pick(["ich die verbotene Firmenchronik studiert habe", "ich finstere Wahrheiten in einem alten Buch entdeckt habe", "ich die düsteren Geheimnisse des Gründers in der Chronik gelesen habe"]));
-        if (hasItem('prince_letter')) encounters.push(pick(["ich diesen absurden Prinzen-Brief mit mir herumschleppe", "ich heute königliche Post erhalten habe", "mir ein echter Brief von einem Prinzen in die Hände gefallen ist"]));
-
-        if (encounters.length > 0) {
-            p2 += pick([
-                `Besonders denkwürdig war heute, dass ${formatList(encounters)}. `,
-                `Wenn ich auf den Tag zurückblicke, sticht besonders hervor, dass ${formatList(encounters)}. `,
-                `Man wird sich wohl noch lange daran erinnern, dass ${formatList(encounters)}. `
-            ]);
-        }
-
-        // Habits, three phrasings each
-        let habits = [];
-        if (hasAch('ach_ignore')) habits.push(pick(["die Entf-Taste bei E-Mails mein absoluter bester Freund war", "ich das Ignorieren von Mails zur Kunst erhoben habe", "ich heute einen Rekord im Löschen ungelesener E-Mails aufgestellt habe"]));
-        if (hasAch('ach_hoarder')) habits.push(pick(["ich meinen Rucksack mit absolutem Müll vollgestopft habe", "ich heute alles eingesteckt habe, was nicht niet- und nagelfest war", "ich wie ein echter Loot-Goblin jeden Schrott im Büro gesammelt habe"]));
-        if (hasAch('ach_macgyver')) habits.push(pick(["ich mich mit Tape und Kabelbindern wie MacGyver gefühlt habe", "ich IT-Probleme mit reiner Bastel-Energie gelöst habe", "ich bewiesen habe, dass man mit Panzertape einfach alles reparieren kann"]));
-        if (hasAch('ach_clean')) habits.push(pick(["ich tatsächlich 'Inbox Zero' erreicht habe (ein Wunder!)", "mein Ticket-System am Ende völlig leer war", "ich jedes verdammte Ticket abgearbeitet habe"]));
-        
-        if (habits.length > 0) {
-            let conn = encounters.length > 0 ? pick(["Ansonsten", "Darüber hinaus", "Zu guter Letzt"]) : pick(["Meine Strategie", "Mein grundlegender Ansatz"]);
-            p2 += `${conn} bestand heute hauptsächlich daraus, dass ${formatList(habits)}.`;
-        }
-
-        // ==========================================
-        // PARAGRAPH 2.5: warnings (reprimand and release valve)
-        // ==========================================
-        let pWarn = "";
-        let warnings = [];
-        
-        if (state.rageWarningReceived) {
-            warnings.push(pick([
-                "ich zwischendurch einen halben Nervenzusammenbruch in der Besenkammer hatte",
-                "ich heute schon einmal kurz davor war, komplett die Kontrolle zu verlieren",
-                "ich meine Wut heute bereits an harmlosem Büromaterial auslassen musste"
-            ]));
-        }
-        
-        if (state.chefWarningReceived) {
-            warnings.push(pick([
-                "der Chef mir heute bereits mit dem Rauswurf gedroht hat",
-                "ich nur haarscharf an einer fristlosen Kündigung vorbeigeschrammt bin",
-                "ich heute schon eine hochoffizielle und sehr laute Abmahnung kassiert habe"
-            ]));
-        }
-
-        if (warnings.length > 0) {
-            let warnConn = (encounters.length > 0 || habits.length > 0) ? pick(["Ach ja, und erwähnenswert ist auch, dass ", "Fast vergessen: Dazu kommt, dass ", "Zu allem Überfluss sei noch gesagt, dass "]) : pick(["Besonders heikel war heute, dass ", "Ein absoluter Tiefpunkt war, dass "]);
-            pWarn = `${warnConn}${formatList(warnings)}.`;
-        }
-
-        // ==========================================
-        // PARAGRAPH 3: the ending
-        // ==========================================
-        let p3 = "";
-        if (endReason === "RAGE") {
-            p3 = pick([
-                "Das bittere Ende vom Lied? Mir ist die Sicherung durchgebrannt. Ein fliegender Monitor ist schließlich auch eine Form von fristloser Kündigung!",
-                "Irgendwann war das Maß voll. Ich habe getobt, geschrien und bin gegangen. Ein glorreicher Abgang, den hier so schnell niemand vergisst.",
-                "Ich habe komplett die Kontrolle verloren. Es fühlt sich großartig an, auch wenn ich morgen wohl arbeitslos bin."
-            ]);
-        } else if (endReason === "TICKETS") {
-            p3 = pick([
-                "Schlussendlich hat mich die Ticket-Lawine komplett unter sich begraben. Das System ist restlos kollabiert – und ich bin meinen Job los.",
-                "Die Flut an Anfragen war nicht mehr zu stoppen. Ich habe kapituliert. Morgen sitze ich wohl auf der Straße.",
-                "Das Ticket-Limit wurde gesprengt. Der Chef hat persönlich den Stecker gezogen. Ende der Vorstellung."
-            ]);
-        } else if (endReason === "FIRED") {
-            p3 = pick([
-                "Dass der Sicherheitsdienst mich am Ende persönlich rauseskortiert hat, ist der perfekte Schlusspunkt für dieses Trauerspiel.",
-                "Der Chef hat ernst gemacht. Meine Sachen sind gepackt, meine Karriere hier ist offiziell und endgültig beendet.",
-                "Ein kalter Blick, ein kurzes Wort von HR, und das war's. Ich bin gefeuert. Wenigstens muss ich diesen Teppichboden nie wieder sehen."
-            ]);
-        } else if (endReason === "WIN") {
-            p3 = pick([
-                "Irgendwie habe ich es lebend bis 16:30 Uhr geschafft. Feierabend. Morgen geht der ganze Zirkus wieder von vorne los...",
-                "Die Uhr springt auf Feierabend. Ich klappe den Laptop zu und flüchte. Ein weiterer Tag in der IT-Hölle wurde erfolgreich überlebt.",
-                "Überlebt. Erschöpft, aber lebendig. Ich brauche jetzt dringend etwas, das weitaus stärker ist als Kaffee."
-            ]);
-        } else if (endReason === "PARTY") {
-            // --- PARTY FINALE TEXT ---
-            p3 = "Dann kam 16:30 Uhr und die ominöse Synergy-Gala. " + partyText;
-        }
-
-        // ==========================================
-        // NACHSATZ: DER BLINDFLUG
-        // ==========================================
-        // No achievement, no trophy - a marginal note. Working a whole day
-        // without readouts is a different experience from everyone else's,
-        // and that belongs in the logbook. Only for days survived: a blind
-        // run ending in a rage quit comments on itself.
-        let pBlind = "";
-        if (state.blindRun && (endReason === "WIN" || endReason === "PARTY")) {
-            const hard   = state.difficultyMult > 1.0;
-            const easy   = state.difficultyMult < 1.0;
-
-            if (hard) {
-                pBlind = pick([
-                    "Nachtrag: Ich habe den ganzen Montag über keine einzige Zahl gesehen. Keine Prozente, keine Ticketstände, nichts. Nur Gesichter, Tonfall und das Geräusch, das die Kaffeemaschine macht, wenn es zu spät ist. Ich habe ihn trotzdem überstanden. Ich weiß bis jetzt nicht, wie knapp es war, und ich will es auch nicht wissen.",
-                    "Nachtrag: Montag, blind. Ich habe den Tag gelesen wie ein Seemann das Wetter — an der Art, wie Gabi 'guten Morgen' sagt, daran, wie lange Markus in der Tür stehen bleibt, daran, ob die Tür vom Chef offen war. Es hat funktioniert. Ich bin selbst am meisten überrascht.",
-                    "Nachtrag: Kein einziger Balken, kein einziger Zähler, und dann auch noch ein Montag. Irgendwann hört man auf zu rechnen und fängt an zu spüren, wie der Laden steht. Das ist entweder Erfahrung oder die erste Stufe des Wahnsinns. Vermutlich beides."
-                ]);
-            } else if (easy) {
-                pBlind = pick([
-                    "Nachtrag: Ich habe heute alle Anzeigen ausgeblendet. Kein Prozentwert, kein Ticketstand. An einem Freitag ist das kein Kunststück, aber es war erstaunlich ruhig im Kopf, wenn niemand einem ständig vorrechnet, wie es um einen steht.",
-                    "Nachtrag: Der ganze Tag ohne Zahlen. Man merkt schnell, dass die Kollegen die ehrlicheren Messgeräte sind — die Zahlen sagen einem nur, wie schlimm es ist, die Kollegen sagen einem, warum."
-                ]);
-            } else {
-                pBlind = pick([
-                    "Nachtrag: Heute habe ich sämtliche Anzeigen abgeschaltet und den Tag nach Gefühl gearbeitet. Keine Prozente, keine offenen Zähler, nur der Laden und ich. Rückblickend die klarste Sicht, die ich seit Monaten hatte.",
-                    "Nachtrag: Ein ganzer Arbeitstag ohne eine einzige Kennzahl. Kein Dashboard, kein Zähler, kein Balken, der langsam rot wird. Nur Menschen, Geräusche und Erfahrung. Man sollte das öfter machen. Man wird es nicht öfter machen.",
-                    "Nachtrag: Blind gearbeitet, von acht bis Feierabend. Als jemand mittags fragte, wie es denn stehe, konnte ich zum ersten Mal ehrlich antworten: keine Ahnung. Und es war trotzdem in Ordnung."
-                ]);
-            }
-        }
-
-        // ==========================================
-        // ASSEMBLE THE HTML
-        // ==========================================
-        // Paragraphs as data; components/DiaryEntry.svelte does the paper look.
-        return { p1, p2, pWarn, pBlind, p3 };
+        return buildDiary(this.state, endReason, partyText);
     },
 
 };

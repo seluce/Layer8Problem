@@ -45,7 +45,7 @@
     </div>
 
     <div class="bg-black/40 p-5 rounded-lg border-l-4 border-emerald-500/60 shadow-inner">
-        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{#each parts as part}{#if part.href}<a href={part.href} target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300 not-italic">{part.text}</a>{:else}{part.text}{/if}{/each}"</p>
+        <p class="italic text-slate-300 text-lg leading-relaxed font-serif">{#each parts as part}{#if part.href}<a href={part.href} target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300 not-italic">{part.text}</a>{:else}{part.text}{/if}{/each}</p>
     </div>
 
     <div class="flex flex-wrap gap-2 mt-4">

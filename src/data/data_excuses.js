@@ -17,6 +17,7 @@ export const excuses = [
     "Ich muss dringend meine Papierschere kalibrieren. Sie schneidet bei A4-Blättern nicht mehr in einem exakten 90-Grad-Winkel.",
     "Der Lieferdienst hat angerufen, mein asiatischer Nudelsalat verfehlt die Eingangstür. Ich muss den Fahrer einweisen.",
     "Der Teppichboden hat beim Drüberlaufen fies geknistert. Ich bin statisch aufgeladen und darf vorerst niemanden angucken.",
+    // "spühlen" is misspelled on purpose - the note's author is the joke, never "fix" it.
     "Jemand hat auf den Zettel in der Küche 'Bitte immer spühlen' geschrieben. Ich muss den Schuldigen ausfindig machen.",
     "Ich muss nachschauen, ob die Uhr im großen Besprechungsraum immer noch zwei Minuten vorgeht. Man kann nie sicher genug sein.",
     "Ein Kollege hat im Gang geniest, und ich habe nicht schnell genug 'Gesundheit' gesagt. Ich muss ihn finden, um mich aufrichtig zu entschuldigen.",

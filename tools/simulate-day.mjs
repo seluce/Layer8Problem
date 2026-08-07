@@ -3,20 +3,20 @@
  *
  * Plays whole workdays (8:00 to 16:30) against the real data pools and
  * reproduces the engine formulas exactly:
- *   - fl += f                                (Faulheit ungebremst)
- *   - al += a > 0 ? ceil(a * diff) : a       (Aggro-Anstieg skaliert)
- *   - cr += c > 0 ? ceil(c * diff * (1 + fl/200)) : c   (Radar doppelt skaliert)
- *   - Tickets: +1 je angebrochene 30 Minuten (Deckel 16:30), Anrufe je -1
- *   - Mail-Chance je Aktion: min(35%, 15% * diff + 4% * Tickets), 25-min-Cooldown
- *   - Ventile: Aggro/Radar je einmal Reset auf 30/50/60, danach Verlust
- *   - Endbedingungen in Engine-Reihenfolge: Aggro, Tickets>=10, 16:30, Radar
+ *   - fl += f                                (laziness unscaled)
+ *   - al += a > 0 ? ceil(a * diff) : a       (a rise in anger scales)
+ *   - cr += c > 0 ? ceil(c * diff * (1 + fl/200)) : c   (radar scales twice)
+ *   - tickets: +1 per started 30 minutes (capped at 16:30), -1 per call
+ *   - mail chance per action: min(35%, 15% * diff + 4% * tickets), 25-min cooldown
+ *   - valves: anger and radar reset once each to 30/50/60, a loss after that
+ *   - end conditions in engine order: anger, tickets >= 10, 16:30, radar
  *
- * Bewusste Vereinfachungen (alle zugunsten von Vergleichbarkeit):
- *   - keine Ruf-Interventionen (bei frischem Profil ohnehin kaum erreichbar)
+ * Deliberate simplifications, all of them for comparability:
+ *   - no reputation encounters (hardly reachable on a fresh profile anyway)
  *   - no excuses (results are therefore a lower bound on the survival rate)
- *   - kein Alkohol-/Spezialeffekt, kein Tutorial, keine Party
+ *   - no alcohol or special effects, no tutorial, no party
  *
- * Aufruf: node tools/simulate-day.mjs [Tage-pro-Zelle, Standard 1500]
+ * Usage: node tools/simulate-day.mjs [days per cell, default 1500]
  */
 import { DB, ensure } from '../src/data.js';
 
@@ -25,10 +25,10 @@ await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 
 const DAYS = parseInt(process.argv[2] ?? '1500', 10);
 
 // Experiment parameters for counter-variants (defaults = current state):
-//   --lazydiv=300     lazyMult = 1 + fl/300 statt fl/200
-//   --lazycap=1.3     lazyMult nach oben deckeln
-//   --nolazyeasy      lazyMult auf Leicht deaktivieren
-//   --mailbase=0.12   Mail-Basischance senken
+//   --lazydiv=300     lazyMult = 1 + fl/300 instead of fl/200
+//   --lazycap=1.3     cap lazyMult
+//   --nolazyeasy      disable lazyMult on easy
+//   --mailbase=0.12   lower the base mail chance
 const ARG = (name, def) => {
     const hit = process.argv.find(a => a.startsWith(`--${name}=`));
     return hit ? parseFloat(hit.split('=')[1]) : def;
@@ -38,7 +38,7 @@ const LAZY_CAP  = ARG('lazycap', 99);
 const MAIL_BASE = ARG('mailbase', 0.15);
 const NO_LAZY_EASY = process.argv.includes('--nolazyeasy');
 //   --valves=25,40,50 override the valve resets per difficulty
-//   --decay=1         Radar sinkt passiv um N je 30 Minuten (Chef beruhigt sich)
+//   --decay=1         radar drops by N every 30 minutes (the boss calms down)
 const VALVES = (() => {
     const hit = process.argv.find(a => a.startsWith('--valves='));
     return hit ? hit.split('=')[1].split(',').map(Number) : null;
@@ -46,7 +46,7 @@ const VALVES = (() => {
 const DECAY = ARG('decay', 0);
 //   --normmult=1.1    override the difficulty multiplier for Wednesday
 //   --excuses=3,1,1   override the number of excuses per difficulty
-const NORM_MULT = ARG('normmult', 1.1);   // Engine-Stand: Mittwoch-Härtung x1.1
+const NORM_MULT = ARG('normmult', 1.1);   // engine state: Wednesday hardening x1.1
 const EXCUSES = (() => {
     const hit = process.argv.find(a => a.startsWith('--excuses='));
     return hit ? hit.split('=')[1].split(',').map(Number) : null;
@@ -63,17 +63,17 @@ const DIFFS = [
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// ---------- Optionswahl der drei Spielertypen ----------
+// ---------- how the three player types choose ----------
 function unlocked(opts, inv) {
     return opts.filter(o => {
         if (o.req && !inv.has(o.req)) return false;
         if (o.rem && !inv.has(o.rem)) return false;
-        if (o.checkPool) return false;              // Party-Spezialfälle
+        if (o.checkPool) return false;              // party special cases
         return true;
     });
 }
 
-// Gefahren-Score einer Option aus Sicht des aktuellen Zustands.
+// Danger score of an option, seen from the current state.
 function danger(o, s) {
     const a = (o.a ?? 0) > 0 ? Math.ceil(o.a * statMult(s)) : (o.a ?? 0);
     const cRaw = (o.c ?? 0) > 0 ? Math.ceil(o.c * statMult(s) * lazyMult(s)) : (o.c ?? 0);
@@ -103,7 +103,7 @@ const STRATEGIES = {
     speed: (opts, s) => opts.reduce((a, b) => ((a.m ?? 99) <= (b.m ?? 99) ? a : b)),
 };
 
-// ---------- Wirkung anwenden (exakte Engine-Formeln) ----------
+// ---------- applying effects (the exact engine formulas) ----------
 function apply(s, o, poolType) {
     const m = o.m ?? 0, f = o.f ?? 0, a = o.a ?? 0, c = o.c ?? 0;
 
@@ -141,7 +141,7 @@ function playNodes(s, ev, pick) {
     }
 }
 
-// ---------- Endbedingungen in Engine-Reihenfolge ----------
+// ---------- end conditions in engine order ----------
 function checkEnd(s) {
     if (s.al >= 100) {
         if (!s.rageUsed) { s.rageUsed = true; s.al = s.valveReset; }
@@ -156,7 +156,7 @@ function checkEnd(s) {
     return null;
 }
 
-// ---------- Ein kompletter Arbeitstag ----------
+// ---------- one full workday ----------
 function playDay(diffCfg, stratName) {
     const pick = (opts, s) => STRATEGIES[stratName](opts, s) ?? opts[0];
     const s = {
@@ -171,7 +171,7 @@ function playDay(diffCfg, stratName) {
         mails: 0, callsDone: 0, events: 0, currentPool: '',
     };
 
-    // Morgen-Stimmung: 60% neutral, je 10% Aggro/Radar/Faulheit/Snack
+    // Morning mood: 60% neutral, 10% each for anger/radar/laziness/snack
     const mood = Math.random();
     if (mood < 0.1) s.al += 15;
     else if (mood < 0.2) s.cr += 15;
@@ -181,13 +181,13 @@ function playDay(diffCfg, stratName) {
         !s.used.has(ev.id) && (!ev.reqStory || s.flags.has(ev.reqStory)) && !ev.webOnly);
 
     while (true) {
-        // Aktionswahl je Spielertyp
+        // Action choice per player type
         let action;
         if (s.tickets >= (stratName === 'vernunft' ? 5 : 6)) action = 'calls';
         else if ((stratName === 'vernunft' || stratName === 'gelegenheit') && s.al >= 70) action = 'coffee';
         else action = rnd(['coffee', 'server', 'sidequests', 'calls']);
 
-        // Boss-Chance ab 9:00
+        // Boss chance from 9:00 onwards
         let ev = null, poolType = action;
         if (s.time > 540 && Math.random() < 0.05) {
             const bp = DB.bossfights.filter(e => !s.used.has(e.id));
@@ -262,7 +262,7 @@ function playDay(diffCfg, stratName) {
     return s;
 }
 
-// ---------- Auswertung ----------
+// ---------- evaluation ----------
 console.log(`Simulation: ${DAYS} Tage je Zelle, 3 Schwierigkeiten x 3 Spielertypen\n`);
 if (VALVES) DIFFS.forEach((d, i) => d.valveReset = VALVES[i]);
 // Stat multiplier as in engine_events: formulas only, not identity (mail

@@ -14,8 +14,11 @@
     import { DB } from '../data.js';
 
     const SLOT_COUNT = 5;
-    const STRESSBALL_COOLDOWN = 60;   // in-game minutes
-    const CONSUMABLES = ['energy', 'donut', 'sandwich', 'chocolate', 'bubble_wrap'];
+
+    // Usable, how long it rests and whether it survives - all of that is in
+    // data_items.js under `use`. Nothing about items is listed here.
+    const usable = (id) => !!DB.items[id]?.use;
+    const cooldownOf = (id) => DB.items[id]?.use?.cooldown ?? 0;
 
     const visible = $derived(
         state.inventory.filter(i => {
@@ -31,17 +34,17 @@
             if (!entry) return null;
 
             const item = DB.items[entry.id];
-            const isStressball = entry.id === 'stressball';
-            const wait = STRESSBALL_COOLDOWN - (state.time - state.lastStressballTime);
+            const cooldown = cooldownOf(entry.id);
+            const wait = cooldown - (state.time - state.lastStressballTime);
 
             return {
                 id: entry.id,
                 item,
                 name: item?.name ?? 'Unbekannt',
-                isStressball,
-                ready: isStressball && wait <= 0,
+                isStressball: cooldown > 0,
+                ready: cooldown > 0 && wait <= 0,
                 wait,
-                isConsumable: CONSUMABLES.includes(entry.id)
+                isConsumable: usable(entry.id) && !cooldown
             };
         })
     );
@@ -63,7 +66,7 @@
         if (!slot) return;
 
         if (slot.isStressball) {
-            if (slot.ready) engine.askUseItem('stressball');
+            if (slot.ready) engine.askUseItem(slot.id);
             else engine.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${slot.wait} Min)`, 'text-slate-500');
             return;
         }

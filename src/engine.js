@@ -1,4 +1,3 @@
-import { DB } from './data.js';
 import { state } from './engine/engine_state.svelte.js';
 import { audio } from './engine/engine_audio.js';
 import { core } from './engine/engine_core.js';
@@ -7,7 +6,7 @@ import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 
 const engine = {
-    VERSION: "v4.0.0",
+    VERSION: "v4.1.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -74,12 +73,12 @@ engine.init();
 document.addEventListener('keydown', (event) => {
     // 1. Is the player currently rebinding a key?
     if (engine.state.isBindingKey) {
-        event.preventDefault(); // Verhindert z.B. Scrollen bei Leertaste
+        event.preventDefault(); // Prevents scrolling on space, for one
         engine.finishBindingKey(event.key);
         return;
     }
 
-    // Ignoriere Eingaben in Formularen
+    // Ignore keystrokes inside form fields
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
     let key = event.key.toLowerCase();
@@ -88,14 +87,16 @@ document.addEventListener('keydown', (event) => {
     // 2. Escape always closes the topmost overlay
     if (key === 'escape') {
         
-        // Is the element present and visible?
-        const isVisible = (id) => {
-            const el = document.getElementById(id);
-            return el && !el.classList.contains('hidden') && el.style.display !== 'none';
-        };
+        // Is the element present and visible? engine_ui owns the answer, so
+        // show, hide and ask all agree on how "open" is written down.
+        const isVisible = (id) => engine.isOverlayOpen(id);
 
-        // A. Intro and difficulty choice must not be dismissible
-        if (isVisible('intro-modal') || isVisible('difficulty-modal') || isVisible('tut-ask-modal')) return;
+        // A. Nothing here can be dismissed with a key.
+        //    The three startup windows because the game has not begun yet, the
+        //    tutorial question because it is a question, and the mail because
+        //    it is an open decision: it has no close button, and every option
+        //    including deleting it counts. Escape must not become the way out.
+        if (engine.isStartupOverlayOpen() || isVisible('tut-ask-modal') || isVisible('email-modal')) return;
 
         // B. The lore book
         if (engine.state.loreOpen) {
@@ -136,14 +137,11 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
-    // --- HOTKEY BLOCKING WHILE A MAIN MENU IS OPEN ---
-    // While intro or difficulty selection is up, every hotkey except confirm is blocked
-    const introModal = document.getElementById('intro-modal');
-    const diffModal = document.getElementById('difficulty-modal');
-    if ((introModal && introModal.style.display !== 'none') || 
-        (diffModal && diffModal.style.display !== 'none')) {
-        return;
-    }
+    // --- HOTKEY BLOCKING WHILE THE GAME IS STILL STARTING ---
+    // Intro, the resume question and the difficulty picker all block the keys.
+    // The resume question used to be covered by accident: the picker's inline
+    // display was still empty at that point, and '' !== 'none' read as "open".
+    if (engine.isStartupOverlayOpen()) return;
 
     // 3. CONFIRM (popups, answering the phone, continue buttons)
     if (key === engine.state.keyBinds.confirm.toLowerCase()) {
@@ -169,14 +167,14 @@ document.addEventListener('keydown', (event) => {
             if (startBtn) { startBtn.click(); return; }
         }
         
-        // B: Modals (Abmahnung, Ende, Item-Confirm)
+        // B: modals (warning letter, ending, item confirm)
         const okBtn = document.querySelector('#modal-content button');
         if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
         // The item confirmation modal - the green "use" button is the second one in the grid
         const itemUseBtn = document.querySelector('#item-confirm-modal button.bg-green-600');
         if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
 
-        // C: Handy-Benachrichtigung annehmen
+        // C: accept the phone notification
         const phoneNotif = document.getElementById('phone-notification');
         if (phoneNotif && phoneNotif.offsetParent !== null && !phoneNotif.classList.contains('hidden')) {
             phoneNotif.click();

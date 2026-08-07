@@ -66,12 +66,12 @@
             </div>
 
             <div class="flex-1 min-w-0">
-                <!-- Kopfzeile: links Name über Rolle, rechts Bewegung und Stufe.
-                     Die Rolle steht auf allen Breiten unter dem Namen, nicht
-                     mehr daneben. Nebeneinander konkurrierten vier Angaben um
-                     dieselbe Zeile, und bei "MARKETING & FEEL GOOD" neben
-                     "HASST DICH" gab der Name nach - aus Chantal wurde
-                     "Chant…". Untereinander ist für beides Platz. -->
+                <!-- Header: name above role on the left, movement and tier on
+                     the right. The role sits under the name at every width now,
+                     no longer beside it. Side by side, four pieces of
+                     information competed for the same line, and with
+                     "MARKETING & FEEL GOOD" next to "HASST DICH" the name gave
+                     way - Chantal became "Chant…". Stacked, both fit. -->
                 <div class="flex justify-between items-start gap-2 mb-1">
                     <div class="flex flex-col min-w-0">
                         <h3 class="font-bold text-white text-lg truncate">{member.char.name}</h3>
@@ -81,7 +81,7 @@
                     {#if !member.player}
                         <span class="flex items-center gap-1.5 shrink-0">
                             {#if member.today !== 0}
-                                <!-- Nur heute Bewegtes; ohne Veränderung bleibt die Zeile ruhig. -->
+                                <!-- Only what moved today; with no change the line stays quiet. -->
                                 <span class="text-[0.625rem] font-mono font-bold {member.today > 0 ? 'text-emerald-400' : 'text-red-400'}"
                                       title="Veränderung seit heute Morgen">
                                     {member.today > 0 ? '▲' : '▼'}{Math.abs(member.today)}

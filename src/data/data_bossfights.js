@@ -20,7 +20,7 @@ export const bossfights = [
 			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 10, c: 25, r: "Feuerwehr kommt. Büro evakuiert. Du hast Pause." },
 			{ t: "Feuerlöscher benutzen", req: "fire_ext", m: 30, f: -10, a: 10, c: -20, r: "Feuer gelöscht. Du hustest, aber bist ein Held." }
 		],
-		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Alles ist nass. Totalschaden." }
+		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Von der Decke regnet es auf Server, Akten und deine letzte Hoffnung. Totalschaden." }
 	},
 	{
 		id: "boss_stream",
@@ -30,7 +30,7 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
-			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Die Investoren lachen." }
+			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Aus dem Stream-Chat regnen Klötzchen-Emojis." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
 	},
@@ -75,7 +75,7 @@ export const bossfights = [
 				r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Die Daten sind sicher." 
 			},
 			{ 
-				t: "Steckerleiste rausreißen (Blackout)", 
+				t: "Die ganze Steckerleiste rausreißen", 
 				m: 45, f: 0, a: 20, c: 30,
 				r: "KLACK. Funken sprühen. Das Büro ist dunkel. Die Löschung ist gestoppt... genau wie der Rest der Firma. Der Server-Check dauert ewig (45 Min), aber die Daten leben noch." 
 			}
@@ -93,7 +93,7 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ 
-				t: "Fesseln (Bürgerfestnahme)", 
+				t: "Per Bürgerfestnahme fesseln", 
 				req: "zip_ties",
 				m: 15, f: -5, a: -20, c: 10, 
 				r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'Sigma Male Admin verteidigt Revier'. Die Kommentare feiern dich." 
@@ -105,7 +105,7 @@ export const bossfights = [
 				r: "WOOSH! Du hast ihn komplett eingeweißt. Er hustet und rennt weg: 'Mein Merch ist ruiniert!'. Die Server sind staubig, aber sicher." 
 			},
 			{ 
-				t: "Bodycheck (Tackle)", 
+				t: "Mit einem Bodycheck stoppen", 
 				m: 5, f: 0, a: 40, c: 20, 
 				r: "Du rammst ihn mit voller Wucht weg, bevor er den Stecker zieht. Sein Smartphone fliegt gegen ein Rack (kaputt). Er heult und droht mit Anwalt. Du hast blaue Flecken und bist stinksauer." 
 			}
@@ -123,7 +123,7 @@ export const bossfights = [
 		timer: 10,
 		opts: [
 			{ t: "Aus dem Fenster werfen", m: 5, f: 10, a: 20, c: 20, r: "Du hast das 20kg Teil durchs geschlossene Fenster geworfen. Es explodiert auf dem Parkplatz. Besser dort als hier." },
-			{ t: "Abdichten (MacGyver)", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." }
+			{ t: "MacGyver-mäßig mit Panzertape abdichten", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." }
 		],
 		fail: { rep: { "Dr. Wichtig": -20 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
 	},
@@ -262,12 +262,12 @@ export const bossfights = [
 				r: "Du kriechst unter das Pult, zückst den Schraubendreher und fixierst den Stecker bombenfest. Das Bild ist kristallklar. Der Chef flüstert: 'Guter Mann!'" 
 			},
 			{ 
-				t: "Kabel festhalten (Human Tripod)", 
+				t: "Das Kabel als menschliches Stativ festhalten", 
 				m: 45, f: -15, a: 20, c: 0, 
 				r: "Du musst das Kabel die restlichen 45 Minuten der Präsentation in einem bestimmten Winkel festhalten. Deine Hand krampft. Du bist im Bild des Livestreams zu sehen. Peinlich." 
 			}
 		],
-		fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Die Investoren lachen. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
+		fail: { rep: { "Dr. Wichtig": -10 }, r: "Bild weg. Chef: 'Äh... Technik...' Im Saal beginnt höfliches, tödliches Kichern. Der Aktienkurs fällt um 2%. Der Chef macht dich persönlich haftbar.", m: 60, f: 0, a: 40, c: 80 }
 	},
 	{
 		id: "boss_audit",
@@ -282,7 +282,7 @@ export const bossfights = [
 				r: "Du wirfst ihm das Win95 Handbuch hin. Er blättert... nickt... 'Sehr klassisch. Genehmigt.' Puh. Kompetenz durch Alter." 
 			},
 			{ 
-				t: "Ablenken (Kaffee)", 
+				t: "Ihn zum Kaffee einladen und ablenken", 
 				m: 10, f: 5, a: 5, c: 25, 
 				r: "Du lädst ihn zum Kaffee ein. Er vergisst das Protokoll, aber beschwert sich über den Geschmack. Prüfung bestanden (knapp)." 
 			},
@@ -302,13 +302,13 @@ export const bossfights = [
 		timer: 12,
 		opts: [
 			{ 
-				t: "Wasser aufsaugen (Kleidung)", 
+				t: "Das Wasser mit der eigenen Kleidung aufsaugen", 
 				rep: { "Dr. Wichtig": 2 },
 				m: 20, f: -10, a: 20, c: -5, 
 				r: "Du wirfst deinen Pulli in die Pfütze. Es reicht nicht. Der Teppich ist ruiniert, aber du hast 'Einsatz' gezeigt." 
 			},
 			{ 
-				t: "Kois retten (Kescher)",
+				t: "Die Kois mit dem Kescher retten",
 				rep: { "Dr. Wichtig": 10 },					
 				req: "zip_ties", 
 				m: 10, f: 0, a: -10, c: -10, 
@@ -322,7 +322,7 @@ export const bossfights = [
 				r: "Panzertape hält alles! Auch 500 Liter Wasserdruck (fürs Erste). Die Kois leben. Der Chef umarmt dich (nass)." 
 			}
 		],
-		 fail: { r: "Das Wasser läuft aus. Kurzschluss. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
+		 fail: { r: "Das Wasser läuft aus. Irgendwo knallt es elektrisch. Büro zerstört. Kois tot. Du wirst wohl gefeuert.", m: 60, f: 0, a: 50, c: 100 }
 	},
 	{
 	id: "boss_demo_fail",
@@ -331,7 +331,7 @@ export const bossfights = [
 	timer: 10,
 	opts: [
 		{ 
-			t: "Brutal: Kabel mit Schere kappen", 
+			t: "Das Kabel brutal mit der Schere kappen", 
 			rep: { "Dr. Wichtig": -2 },
 			m: 5, f: -10, a: 25, c: 20, 
 			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
@@ -344,7 +344,7 @@ export const bossfights = [
 			r: "In Millisekunden wechselst du auf eine komplizierte Tabelle. Die Zuschauer denken, das gehört zur Show. 'Und hier sehen Sie unsere Effizienz!', ruft der Chef. Gerettet!" 
 		}
 	],
-	fail: { m: 60, f: 0, a: 50, c: 80, r: "ZU LANGSAM! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
+	fail: { m: 60, f: 0, a: 50, c: 80, r: "DANEBEN! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
 	},
     {
         id: "boss_ransomware_2",
@@ -353,7 +353,7 @@ export const bossfights = [
         timer: 12,
         opts: [
             { 
-                t: "Mit den Hackern verhandeln (Zeit schinden)", 
+                t: "Mit den Hackern verhandeln und Zeit schinden", 
                 m: 120, f: 20, a: 15, c: -5, 
                 r: "Du schreibst im Chat-Fenster der Ransomware mit den Angreifern. Sie geben euch 24 Stunden Aufschub. Ein schwacher Sieg." 
             },
@@ -392,7 +392,7 @@ export const bossfights = [
                 t: "Lachend zusehen", 
                 rep: { "Dr. Wichtig": -20 },
                 m: 15, f: -10, a: -15, c: 30, 
-                r: "Ein historischer Moment für den Flurfunk. Dein Chef-Radar explodiert allerdings kurz danach." 
+                r: "Ein historischer Moment für den Flurfunk. Der Chef wird dir das allerdings noch sehr lange nachtragen." 
             }
         ],
         fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 30, c: 40, r: "ZU SPÄT! Jemand hat Screenshots gemacht. Das Meme geht viral auf LinkedIn. Der Chef ist am Boden zerstört." }
@@ -521,7 +521,7 @@ export const bossfights = [
                 r: "Du schaltest 50% der Hardware ab. Die Temperatur stabilisiert sich, aber viele Abteilungen sind offline." 
             }
         ],
-        fail: { m: 120, f: -10, a: 40, c: 60, r: "KERN-SCHMELZE! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
+        fail: { m: 120, f: -10, a: 40, c: 60, r: "HITZE-KOLLAPS! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
     },
     {
         id: "boss_ddos_1",
@@ -536,7 +536,7 @@ export const bossfights = [
                 r: "Du blendest die Panik aus, knetest den Ball und schreibst in Rekordzeit IP-Filter. Perfekte Abwehr." 
             },
             { 
-                t: "Alle externen Verbindungen kappen (Panik-Modus)", 
+                t: "Panisch alle externen Verbindungen kappen", 
                 m: 15, f: 0, a: 5, c: 20, 
                 r: "Du blockierst pauschal alles. Der Angriff verpufft, aber ihr seid komplett vom Internet getrennt. Der Chef brüllt." 
             },

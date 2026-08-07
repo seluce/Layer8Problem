@@ -1,22 +1,73 @@
+/**
+ * Every item in the game.
+ *
+ * `use` decides whether an item can be used at all - no use block, no button,
+ * no dialog. It carries what using it costs, what the confirmation dialog says
+ * and what lands in the log, because all of that is text and numbers rather
+ * than logic. Until 4.1 the same knowledge sat in four places: a keep flag
+ * here, a CONSUMABLES list in two components, and two if-chains in
+ * engine_inventory.js. A new snack meant editing five spots.
+ *
+ *   use.al / use.fl   how far aggro and laziness drop (negative numbers)
+ *   use.desc          the line above the confirm button
+ *   use.warn          the small print below it
+ *   use.log           what the log says afterwards
+ *   use.color         Tailwind class for that log line
+ *   use.cooldown      minutes before it works again; only for items with
+ *                     keep: true, which are not consumed by using them
+ *
+ * keep: true means the item survives being used. Everything else with a `use`
+ * block disappears from the backpack.
+ */
 export const items = {
 	
-    // VERBRAUCHSGEGENSTÄNDE (Einmalig)
+    // CONSUMABLES (single use)
     "wifi_note": { icon: "🏷️", name: "WLAN-Zettel", flavor: "'Das Passwort lautet: 1234abcd. Bitte nicht weitergeben.' - Egon. Wahrscheinlich klebt eine Kopie davon direkt am Router im Pausenraum.", img: "assets/img/items/wifi_note.webp" },
-    "donut": { icon: "🍩", name: "Alter Donut", flavor: "'Er ist hart wie Stein, aber Zucker bleibt Zucker. Ein zäher Überlebenskünstler vom letzten Management-Meeting vor drei Wochen.'", img: "assets/img/items/donut.webp" },
-    "energy": { icon: "⚡", name: "Energy Drink", flavor: "'Schmeckt nach Gummibärchen und drohender Panikattacke. Nach dem Konsum kannst du Farben hören und die Zeit verlangsamt sich spürbar.'", img: "assets/img/items/energy.webp" },
+    "donut": { icon: "🍩", name: "Alter Donut", flavor: "'Er ist hart wie Stein, aber Zucker bleibt Zucker. Ein zäher Überlebenskünstler vom letzten Management-Meeting vor drei Wochen.'", img: "assets/img/items/donut.webp",
+        use: { al: -15,
+               desc: "Senkt AGGRO um -15. Seelentröster aus Teig.",
+               warn: "Einmaliger Genuss (Hüftgold bleibt für immer). Der Donut ist danach weg.",
+               log:  "Mmmh... Zuckerglasur. Die Wut schmilzt dahin. (Aggro -15)",
+               color: "text-pink-400" } },
+    "energy": { icon: "⚡", name: "Energy Drink", flavor: "'Schmeckt nach Gummibärchen und drohender Panikattacke. Nach dem Konsum kannst du Farben hören und die Zeit verlangsamt sich spürbar.'", img: "assets/img/items/energy.webp",
+        use: { fl: -15,
+               desc: "Senkt FAULHEIT um -15. Flüssiges Herzrasen.",
+               warn: "Ex und hopp! Die Dose ist danach leer. Kein Pfand, keine Rückgabe.",
+               log:  "ZISCH! Du ext den Energy Drink. Dein Herz rast, aber du bist hellwach. (Faulheit -15)",
+               color: "text-blue-400" } },
     "secret_list": { icon: "📁", name: "Schwarze Liste", flavor: "'Wer auf dieser Liste steht, kann schon mal Kartons packen. Pures, unzensiertes Gold, für das HR töten würde.'", img: "assets/img/items/secret_list.webp" },
     "arg_list_1": { icon: "📋", name: "Argumente (Ich)", flavor: "'1000 Tickets gelöst. 0 Dankbarkeit. Das ändert sich heute. Mit diesen Fakten bist du bereit, das Büro des Chefs in Schutt und Asche zu legen.'", img: "assets/img/items/arg_list_1.webp" }, 
     "arg_list_2": { icon: "📑", name: "Argumente (Kevin)", flavor: "'Gefahrenzulage für IT-Azubis? Ein schlechter Scherz! Dieser Zettel beweist schwarz auf weiß, dass Kevin fürs Minecraft-Spielen fürstlich entlohnt wird.'", img: "assets/img/items/arg_list_2.webp" },
-    "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie", flavor: "'Jedes *Plopp* ist ein stummgeschalteter User in deiner Fantasie. Die mit Abstand billigste und effektivste Therapie für leidgeprüfte Administratoren.'", img: "assets/img/items/bubble_wrap.webp" },
-    "sandwich": { icon: "🥪", name: "Belegtes Brötchen", flavor: "'Käse, Remoulade und die salzigen Tränen des Vertriebs. Skrupellos aus dem Kühlschrank entwendet, schmeckt es wunderbar nach Anarchie.'", img: "assets/img/items/sandwich.webp" },
-    "chocolate": { icon: "🍫", name: "Tafel Schokolade", flavor: "'Pures, quadratisches Glück auf Kakaobasis. Heimlich vor der gierigen Buchhaltung gerettet, ist sie der einzige Lichtblick am Montag.'", img: "assets/img/items/chocolate.webp" },
+    "bubble_wrap": { icon: "🫧", name: "Luftpolsterfolie", flavor: "'Jedes *Plopp* ist ein stummgeschalteter User in deiner Fantasie. Die mit Abstand billigste und effektivste Therapie für leidgeprüfte Administratoren.'", img: "assets/img/items/bubble_wrap.webp",
+        use: { al: -10,
+               desc: "Senkt AGGRO um -10. Sehr befriedigend.",
+               warn: "Einweg-Therapie! Wenn alle Blasen geplatzt sind, ist der Spaß vorbei.",
+               log:  "*Plopp* *Plopp* *Plopp*. Das ist besser als Therapie. (Aggro -10)",
+               color: "text-cyan-400" } },
+    "sandwich": { icon: "🥪", name: "Belegtes Brötchen", flavor: "'Käse, Remoulade und die salzigen Tränen des Vertriebs. Skrupellos aus dem Kühlschrank entwendet, schmeckt es wunderbar nach Anarchie.'", img: "assets/img/items/sandwich.webp",
+        use: { al: -10, fl: -5,
+               desc: "Senkt AGGRO um -10 und FAULHEIT um -5. Ein solides Handwerker-Frühstück.",
+               warn: "Mit viel Remoulade! Einmalig konsumierbar.",
+               log:  "Eine dicke Scheibe Käse und Remoulade. Das erdet. (Aggro -10, Faulheit -5)",
+               color: "text-yellow-400" } },
+    "chocolate": { icon: "🍫", name: "Tafel Schokolade", flavor: "'Pures, quadratisches Glück auf Kakaobasis. Heimlich vor der gierigen Buchhaltung gerettet, ist sie der einzige Lichtblick am Montag.'", img: "assets/img/items/chocolate.webp",
+        use: { al: -20,
+               desc: "Senkt AGGRO um -20. Quadratisch, praktisch, weg.",
+               warn: "Du hast sie dir verdient. Verschwindet nach dem Essen aus dem Inventar.",
+               log:  "Die Schokolade schmilzt auf der Zunge. Für einen kurzen Moment hasst du niemanden. (Aggro -20)",
+               color: "text-amber-500" } },
         
     // WERKZEUGE (Dauerhaft -> keep: true)
     "admin_pw": { icon: "🔑", name: "Root-Passwort", flavor: "'Mit großer Macht kommt... ein Haufen Verantwortung (und Ärger). Ein falscher Klick und die Kundendatenbank ist Geschichte.'", keep: true, img: "assets/img/items/admin_pw.webp" },
     "cable": { icon: "〰️", name: "LAN-Kabel", flavor: "'Cat7. Hält Daten und wackelige Racks verlässlich zusammen. Im absoluten Notfall auch hervorragend als Peitsche gegen aufmüpfige User einsetzbar.'", keep: true, img: "assets/img/items/cable.webp" },
     "tape": { icon: "🩹", name: "Panzertape", flavor: "'Die stärkste bekannte Kraft im Universum ist graues Klebeband. Repariert gebrochene Server, undichte Rohre und zwingt Kollegen zum Schweigen.'", keep: true, img: "assets/img/items/tape.webp" },
     "screw": { icon: "🪛", name: "Schraubendreher", flavor: "'Hochwertiger Kreuzschlitz. Auch zur Selbstverteidigung geeignet. Dein treuester Begleiter in den dunklen Eingeweiden uralter Hardware.'", keep: true, img: "assets/img/items/screw.webp" },
-    "stressball": { icon: "🔴", name: "Anti-Stressball", flavor: "'Wird so oft gequetscht, dass er leise um Hilfe wimmert. Trägt bereits die permanenten Abdrücke deiner Finger als stummer Therapeut.'", keep: true, img: "assets/img/items/stressball.webp" },
+    "stressball": { icon: "🔴", name: "Anti-Stressball", flavor: "'Wird so oft gequetscht, dass er leise um Hilfe wimmert. Trägt bereits die permanenten Abdrücke deiner Finger als stummer Therapeut.'", keep: true, img: "assets/img/items/stressball.webp",
+        use: { al: -5, cooldown: 60,
+               desc: "Senkt AGGRO sofort um -5 Punkte. *Quietsch*",
+               warn: "Material-Ermüdung! Nach dem Kneten ist der Ball für 60 Minuten platt und nutzlos.",
+               log:  "Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -5)",
+               color: "text-green-400" } },
     "manual": { icon: "📖", name: "Win95 Handbuch", flavor: "'Das heilige Buch der Vorväter. Eignet sich auch als Monitor-Stütze. Die Seiten kleben zusammen, aber das Wissen darin ist absolut zeitlos.'", keep: true, img: "assets/img/items/manual.webp" },
     "usb_stick": { icon: "💾", name: "Boot-Stick", flavor: "'Ein 64GB Stick, voll mit Skripten, Viren und Katzen-Memes. Dein digitales Schweizer Taschenmesser, um jedes zickige System zu zähmen.'", keep: true, img: "assets/img/items/usb_stick.webp" },
     "fire_ext": { icon: "🧯", name: "Feuerlöscher", flavor: "'CO2. Kalt, laut und extrem effektiv gegen rauchende Hardware. Auch bestens geeignet, um brennende Konflikte im Flur radikal abzukühlen.'", keep: true, img: "assets/img/items/fire_ext.webp" },

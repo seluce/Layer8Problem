@@ -35,7 +35,7 @@ export function freshDay(mult = 1.0) {
 
         blindRun: false,
 
-        // Wurde der 13:37-Moment heute schon gezeigt? (siehe checkLeetMoment)
+        // Has the 13:37 moment already been shown today? (see checkLeetMoment)
         leetSeen: false,
 
         // Stat curve of the day, one point per decision. The end screen draws
@@ -45,9 +45,12 @@ export function freshDay(mult = 1.0) {
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
 
-        // The excuse currently on offer. Drawn when the dialog opens so it
-        // stays put while the player reads it.
+        // The excuse currently on offer, and the event it was drawn for. One
+        // excuse per event: closing and reopening the dialog must not deal a
+        // new one, or a player can leaf through the whole pool without ever
+        // spending an excuse.
         currentExcuse: '',
+        excuseFor: null,
 
         // Progress
         inventory: [],
@@ -175,6 +178,14 @@ export const DAY_TIMERS = [
  *
  * Below the spread: everything that must OUTLIVE the day.
  */
+/**
+ * From this many open tickets on, the day is visibly slipping: the counter in
+ * the header pulses and the phone in the action bar is highlighted. One
+ * constant for both, because two of them drifted apart once already - the
+ * header warned from eight, the button from seven.
+ */
+export const TICKET_WARNING = 8;
+
 export const state = $state({
 
     ...freshDay(1.0),
@@ -191,7 +202,7 @@ export const state = $state({
     // someone opens it.
     loreOpen: false,
 
-    // Das Firmen-Intranet. components/intranet/IntranetView.svelte renders the
+    // The company intranet. components/intranet/IntranetView.svelte renders the
     // browser window and the pages inside it; nothing exists until it opens.
     intranetOpen: false,
 
@@ -256,6 +267,18 @@ export const state = $state({
     autoChart: localStorage.getItem(KEYS.autoChart) === 'true',
     screenShake: localStorage.getItem(KEYS.screenShake) !== 'false',
 
+    // Which weekday a new day starts on, or 'ask' for the picker. The odd one
+    // out among the settings: a hard reset removes it, because it is a decision
+    // about the save rather than about the person playing. It lives here all
+    // the same, so the dropdown in components/SettingsView.svelte follows a
+    // reset to defaults without having to be told.
+    defaultDiff: localStorage.getItem(KEYS.defaultDiff) || 'ask',
+
+    // Is "reset to defaults" currently asking whether we really mean it?
+    // The engine only sets the flag; the button's wording and colour follow
+    // from it in the component - same split as bindFlash below.
+    settingsResetArmed: false,
+
     // --- KEYBOARD MAPPING ---
     showHotkeys: (() => {
         const saved = localStorage.getItem(KEYS.showHotkeys);
@@ -287,6 +310,13 @@ export const state = $state({
         return saved;
     })(),
     isBindingKey: false,
-    actionToBind: null
+    actionToBind: null,
+
+    // Which binding button flashes red right now, and whether it does so
+    // because the key is reserved rather than already taken. Purely visual and
+    // short-lived, but it belongs here: components/KeybindView.svelte draws
+    // from it, and the engine must not reach into the DOM to say "no".
+    bindFlash: null,
+    bindFlashReserved: false
 
 });

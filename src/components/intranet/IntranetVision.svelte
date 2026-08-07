@@ -1,5 +1,5 @@
 <!--
-  Das CEO-Interview, vormals public/assets/intranet/ceo_interview.html.
+  The CEO interview, formerly public/assets/intranet/ceo_interview.html.
 
   The printed interview is fixed. What changes is one additional question,
   and it sits BEFORE the closing one - nothing follows "letzte Frage". It only

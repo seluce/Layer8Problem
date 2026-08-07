@@ -28,7 +28,7 @@
     const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', bg: 'bg-slate-900' };
 
     const EXCUSE_TYPES = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
-    const STRESSBALL_COOLDOWN = 60;
+    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
 
     const ev    = $derived(state.terminal.event ?? {});
     const style = $derived(STYLES[ev.type] ?? FALLBACK);
@@ -93,8 +93,11 @@
             return {
                 opt, index, locked,
                 // A chain option pointing at another node continues the
-                // conversation; one pointing at a result ends it.
-                continues: ev.isChain && !locked && opt.next && !opt.next.startsWith('res_'),
+                // conversation; one pointing at a result ends it. Asked the
+                // same way the engine routes it - by looking the name up, not
+                // by its prefix. A result named `truth` used to earn the "..."
+                // badge and then hang up on the player.
+                continues: ev.isChain && !locked && !!opt.next && !!ev.nodes?.[opt.next],
                 consumes: locked ? null : consumes(opt),
                 key: hotkey(index)
             };
@@ -126,7 +129,7 @@
 
     <div class="flex gap-4 md:gap-6 items-center mb-8">
         <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
-            <p class="italic text-slate-300 text-lg leading-relaxed font-serif">"{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}"</p>
+            <p class="italic text-slate-300 text-lg leading-relaxed font-serif">{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}</p>
         </div>
 
         {#if portrait}

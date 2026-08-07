@@ -1,11 +1,11 @@
 /**
- * Die Mittagspause.
+ * The lunch break.
  *
- * Lag bis v4.0.0 als lunchEvents in data_special.js. Mit 44 Einträgen ist sie
- * längst ein vollwertiger Ereignis-Pool wie Kaffee oder Serverraum und wird
- * über triggerLunch() auch genau so verwendet — also gehört sie in eine
- * eigene Datei und wird wie die anderen erst bei Bedarf geladen. Gebraucht
- * wird sie frühestens um zwölf; im ersten Ladevorgang hat sie nichts verloren.
+ * Sat in data_special.js as lunchEvents until v4.0.0. With 44 entries it has
+ * long been a full event pool like coffee or the server room, and
+ * triggerLunch() uses it exactly that way - so it belongs in a file of its own
+ * and loads on demand like the others. It is needed at twelve at the earliest;
+ * it has no business in the first load.
  */
 export const lunch = [
 		{
@@ -47,7 +47,7 @@ export const lunch = [
 		{
 			id: "lunch_vegan",
 			title: "MITTAG: VEGANER TAG",
-			text: "In der Kantine gibt es nur Tofu-Klumpen. Die Stimmung im Team ist aggressiv.",
+			text: "Die Kantine serviert heute ausschließlich Tofu-Klumpen in Sauce nach Hausart. An den Tischen wird auffällig leise gegessen, und die Stimmung kippt Richtung aggressiv.",
 			opts: [
 				{ t: "Zum Döner-Mann rennen", m: 45, f: 5, a: -20, c: 5, r: "Du kommst mit Knoblauchfahne zurück. Du bist glücklich, die Kollegen rümpfen die Nase." },
 				{ t: "Mitessen und meckern", m: 45, f: 0, a: 15, c: 0, r: "Gemeinsames Meckern verbindet das Team." }
@@ -78,7 +78,7 @@ export const lunch = [
 			text: "Das Team will Pizza bestellen. Die Diskussion dauert schon 20 Minuten. 'Ananas gehört nicht drauf!' vs 'Ich bin laktoseintolerant!'. Deine Pause verrinnt.",
 			opts: [
 				{ t: "Aussteigen & Brot essen", m: 30, f: 10, a: -10, c: 0, r: "Du isst dein trockenes Brot, während die anderen noch streiten. Friedlich, aber traurig." },
-				{ t: "Machtwort: 'Salami für alle!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Aggro steigt durch das Gemecker." }
+				{ t: "'SALAMI FÜR ALLE!'", m: 45, f: -5, a: 10, c: 0, r: "Du hast bestellt. Die Veganer hassen dich, aber du bist satt. Das Dauergemecker im Hintergrund nagt trotzdem an den Nerven." }
 			]
 		},
 		{
@@ -113,7 +113,7 @@ export const lunch = [
 			text: "Du hast zu viel gegessen. Das 'Schnitzel-Koma' setzt ein. Deine Augenlider wiegen Tonnen. Der Serverraum ist schön kühl...",
 			opts: [
 				{ t: "Power-Nap im Serverraum", m: 45, f: 25, a: -20, c: 10, r: "Du bist eingeschlafen! Du wachst mit Tastatur-Abdruck im Gesicht auf. Hoffentlich hat dich keiner gesehen." },
-				{ t: "Doppelter Espresso", m: 10, f: -5, a: 5, c: 0, r: "Das Herz rasen setzt ein. Du bist wach, aber deine Hände zittern. Produktivität: Fragwürdig." }
+				{ t: "Doppelter Espresso", m: 10, f: -5, a: 5, c: 0, r: "Das Herzrasen setzt ein. Du bist wach, aber deine Hände zittern. Produktivität: Fragwürdig." }
 			]
 		},
 		{
@@ -124,7 +124,7 @@ export const lunch = [
 				{ 
 					t: "Im Büro bleiben & Reste essen",
 					m: 10, f: -5, a: 5, c: -5, 
-					r: "Du isst einen alten Riegel aus der Schublade, während die anderen draußen Spaß haben. Du fühlst dich moralisch überlegen, weil du dem Hype widerstanden hast – bist aber immer noch hungrig." 
+					r: "Du isst einen alten Riegel aus der Schublade, während die anderen draußen Spaß haben. Dem Hype widerstanden – hungrig bist du trotzdem." 
 				},
 				{ 
 					t: "Den 'Bio-Burger' für 15€ holen",
@@ -143,7 +143,7 @@ export const lunch = [
 			id: "lunch_ceo_table",
 			char: "Dr. Wichtig",
 			title: "MITTAG: DER CEO WINKT",
-			text: "Du betrittst die Kantine mit deinem Tablett (Linseneintopf). Plötzlich winkt Dr. Wichtig vom 'Vorstands-Tisch' zu dir. 'Müller! Setzen Sie sich zu mir! Wir müssen uns mal unterhalten.' Alle im Raum starren dich an.",
+			text: "Du betrittst die Kantine mit deinem Tablett (Linseneintopf). Vom 'Vorstands-Tisch' winkt Dr. Wichtig zu dir herüber. 'Müller! Setzen Sie sich zu mir! Wir müssen uns mal unterhalten.' Alle im Raum starren dich an.",
 			opts: [
 				{ 
 					t: "Über Gehaltserhöhung reden", 
@@ -161,7 +161,7 @@ export const lunch = [
 					t: "Hinsetzen & Smalltalk wagen", 
 					rep: { "Dr. Wichtig": 5 },
 					m: 60, f: -10, a: 20, c: -25, 
-					r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann'. Chef-Radar sinkt massiv! Dein Essen ist allerdings kalt geworden." 
+					r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann', und dieses Wohlwollen trägt wochenlang. Dein Essen ist allerdings kalt geworden." 
 				}
 			]
 		},
@@ -183,7 +183,7 @@ export const lunch = [
 				{ 
 					t: "Lautstark herumpöbeln",
 					m: 30, f: 0, a: 25, c: 0, 
-					r: "Du brüllst durch die Küche: 'FISCH?! ERNSTHAFT?! SIND WIR HIER AM HAFEN?!' Es entsteht eine hitzige Debatte. Du hast dich abreagiert, aber dein Essen ist immer noch kalt." 
+					r: "Du brüllst durch die Küche: 'FISCH?! ERNSTHAFT?! SIND WIR HIER AM HAFEN?!' Es entsteht eine hitzige Debatte. Dein Essen ist immer noch kalt." 
 				}
 			]
 		},
@@ -203,7 +203,7 @@ export const lunch = [
 					r: "Du isst genüsslich einen Schokoriegel und siehst zu, wie sie draußen im Nieselregen leiden. Das ist wahre Entspannung." 
 				},
 				{ 
-					t: "Abwinken: 'Sorry, mein Knie...'",
+					t: "'Sorry, mein Knie...'",
 					m: 5, f: 5, a: 0, c: 0, 
 					r: "Der Klassiker. Sie nicken mitleidig (und etwas verächtlich). Du schlurfst entspannt Richtung Kantine." 
 				}
@@ -220,7 +220,7 @@ export const lunch = [
 					r: "Du musst das Schnitzel zurücktragen, während alle dich anstarren. 'Schande! Schande!' Du isst trockenes Brot am Platz." 
 				},
 				{ 
-					t: "Laufpass: 'Ich hol's gleich!'", 
+					t: "'Ich hol's gleich!'", 
 					m: 20, f: -5, a: 10, c: 0, 
 					r: "Du rennst hoch, holst Geld, rennst runter. Dein Platz ist weg, das Schnitzel ist kalt. Stress pur." 
 				},
@@ -247,9 +247,9 @@ export const lunch = [
 					r: "Du murmelst 'Meeting!' und rennst raus. Du hörst Sabine hinter dir seufzen. Knapp entkommen." 
 				},
 				{ 
-					t: "Sagen: 'Ich hasse Zucchini'", 
+					t: "'Ich hasse Zucchini.'", 
 					m: 5, f: 0, a: -5, c: 10, 
-					r: "Sabine fängt fast an zu weinen. Die Kollegen starren dich böse an. Du hast die Stimmung ruiniert, aber wenigstens musst du den Mist nicht essen." 
+					r: "Sabine fängt fast an zu weinen. Die Kollegen starren dich böse an. Wenigstens musst du den Mist nicht essen." 
 				}
 			]
 		},
@@ -293,7 +293,7 @@ export const lunch = [
 					r: "Du erzählst wilde Horror-Stories über Arbeitslager. Die Kollegen weinen fast. Das Chaos ist herrlich. Produktivität am Nachmittag: Null. Der Chef tobt." 
 				},
 				{ 
-					t: "Abwinken: 'Alles nur Gerüchte.'",
+					t: "'Alles nur Gerüchte.'",
 					m: 30, f: -5, a: 10, c: -5, 
 					r: "Du spielst den Fels in der Brandung: 'Das war bestimmt nur ein fehlerhafter Ausdruck.' Die Leute beruhigen sich etwas. Langweilig, aber verantwortungsvoll." 
 				}
@@ -310,7 +310,7 @@ export const lunch = [
 					r: "Du ziehst die Hand ängstlich zurück. Markus lacht triumphierend: 'Opfer!' Du mahlst lustlos trockene Blätter und hasst dein Leben. Deine Wut kocht." 
 				},
 				{ 
-					t: "Dagegenhalten: 'Ich war zuerst!'",
+					t: "'Ich war zuerst!'",
 					m: 20, f: -5, a: 10, c: 5, 
 					r: "Du stellst dich breitbeinig hin. Die Kantinen-Frau mischt sich genervt ein: 'Ruhe im Karton! Ich teil das jetzt!' Du kriegst ein halbes Schnitzel. Ein schmutziger Teilsieg." 
 				},
@@ -329,7 +329,7 @@ export const lunch = [
 				{ 
 					t: "Mitrennen! Ellbogen raus!", 
 					m: 15, f: -5, a: -10, c: 0, 
-					r: "Du wirfst dich körperlich ins Getümmel. Du erbeutest drei Lachs-Brötchen und einen Muffin. Ein voller Erfolg! Du fühlst dich satt und spritzig." 
+					r: "Du wirfst dich körperlich ins Getümmel. Du erbeutest drei Lachs-Brötchen und einen Muffin. Ein voller Erfolg!" 
 				},
 				{ 
 					t: "Später hingehen. Ich bin doch kein Tier.",
@@ -348,9 +348,9 @@ export const lunch = [
 			title: "MITTAG: DAS GEHEIME DACH",
 			text: "Du kennst einen Trick, wie man auf das Flachdach kommt. Aussicht über die graue Stadt. Niemand nervt dich. Aber der Wind ist kalt.",
 			opts: [
-				{ t: "Aussicht genießen", m: 60, f: 20, a: -30, c: 0, r: "Du fühlst dich frei. Fast vergisst du die Zeit. Du kommst 10 Minuten zu spät, aber entspannt." },
+				{ t: "Aussicht genießen", m: 60, f: 20, a: -30, c: 0, r: "Fast vergisst du die Zeit. Du kommst 10 Minuten zu spät, aber entspannt." },
 				{ t: "Papierflieger werfen", req: "manual", m: 30, f: 10, a: -10, c: 0, r: "Du reißt Seiten aus dem Handbuch und baust Flieger. Sie segeln auf den Parkplatz des Chefs. Riskant, aber lustig." },
-				{ t: "Energy Drink in der Sonne", req: "energy", m: 30, f: 0, a: -20, c: 0, r: "Koffein und UV-Strahlung. Du vibrierst vor Energie. Inventar -1." }
+				{ t: "Energy Drink in der Sonne", rem: "energy", m: 30, f: 0, a: -20, c: 0, r: "Koffein und UV-Strahlung. Du vibrierst vor Energie." }
 			]
 		},
 		{
@@ -358,9 +358,9 @@ export const lunch = [
 			title: "MITTAG: TUPPER-ROULETTE",
 			text: "In der Küche stehen 5 identische Dosen ohne Namen. Die Kollegen spielen 'Russisch Roulette'. Eine enthält leckere Lasagne, eine enthält Schimmel-Pilz von 2021.",
 			opts: [
-				{ t: "Nicht mitspielen", m: 10, f: 0, a: 5, c: 0, r: "Du isst dein trockenes Brot. Langweilig, aber sicher." },
+				{ t: "Nicht mitspielen", m: 10, f: 0, a: 5, c: 0, r: "Du bleibst beim mitgebrachten trockenen Brot. Kein Risiko, kein Ruhm, kein Schimmel." },
 				{ t: "Dose 1 öffnen", m: 30, f: 0, a: -10, c: 0, r: "Jackpot! Lasagne! Der Tag ist gerettet." },
-				{ t: "Dose 3 öffnen", m: 45, f: -20, a: 30, c: 0, r: "Es war der Schimmel. Du verbringst die Pause würgend auf dem Klo. Aggro steigt massiv." }
+				{ t: "Dose 3 öffnen", m: 45, f: -20, a: 30, c: 0, r: "Es war der Schimmel. Du verbringst die Pause würgend auf dem Klo. Gespart: 3 Euro. Verloren: der Nachmittag." }
 			]
 		},
 		{
@@ -376,7 +376,7 @@ export const lunch = [
 					next: "prince_active"
 				},
 				{ 
-					t: "Ablehnen: 'Zu teuer für Teig.'", 
+					t: "'Zu teuer für Teig.'", 
 					m: 30, f: 5, a: -5, c: 0, 
 					r: "Du holst dir lieber einen Döner. Der macht schöner. Und satt. Und kostet keine 25 Euro." 
 				},
@@ -393,7 +393,7 @@ export const lunch = [
 			text: "Du schleichst dich wie ein Krimineller in die Tiefgarage. Dein Auto ist deine Festung. Du stellst den Sitz nach hinten. Endlich Stille, nur das ferne Surren der Lüftung.",
 			opts: [
 				{ 
-					t: "Ohne Wecker schlafen)", 
+					t: "Ohne Wecker schlafen", 
 					rep: { "Dr. Wichtig": -10 },	
 					m: 90, f: 30, a: -30, c: 20, 
 					r: "Du fällst in ein Koma. Du wachst völlig vernebelt auf. Was für ein Jahr haben wir? Blick auf die Uhr: SCHEI**E! Du warst 90 Minuten weg. Der Chef hat dich gesucht." 
@@ -417,18 +417,18 @@ export const lunch = [
 			opts: [
 				{ t: "Sabotieren", m: 10, f: 5, a: -5, c: 10, r: "Du drehst die Heizung auf 30 Grad. Das Training wird abgebrochen. Danke, Held." },
 				{ t: "Teilnehmen", rep: { "Dr. Wichtig": 2 }, m: 45, f: -10, a: 10, c: -5, r: "Du hast Liegestütze im Anzug gemacht. Jetzt riechst du nach Iltis. Aber der Chef hat's gesehen." },
-				{ t: "Zuschauen & Donut essen", req: "donut", m: 30, f: 10, a: -10, c: 5, r: "Du isst einen Donut, während die Kollegen leiden. Ein Gefühl der Überlegenheit. Aber HR guckt böse." }
+				{ t: "Zuschauen & Donut essen", rem: "donut", m: 30, f: 10, a: -10, c: 5, r: "Du isst einen Donut, während die Kollegen leiden. HR guckt böse." }
 			]
 		},
 		{
 			id: "lunch_supermarket",
 			title: "MITTAG: SUPERMARKT-KAMPF",
-			text: "Du willst dir nur schnell ein Brötchen im Supermarkt holen. Aber: Rentner-Invasion! Alle drei Kassen sind voll mit Leuten, die passend zahlen wollen ('Warten Sie, ich hab's klein!').",
+			text: "Nur schnell ein Brötchen aus dem Supermarkt - was soll schon passieren? Rentner-Invasion! Alle drei Kassen sind voll mit Leuten, die passend zahlen wollen ('Warten Sie, ich hab's klein!').",
 			opts: [
 				{ 
-					t: "Rufen: 'PLATZ DA! ICH BIN ARZT!'",
+					t: "'PLATZ DA! ICH BIN ARZT!'",
 					m: 15, f: 5, a: -5, c: 10, 
-					r: "Die Menge teilt sich ehrfürchtig wie das Rote Meer. Du scannst dein Mettbrötchen wie ein Herzchirurg. Du bist satt, aber dein Karma ist im Keller." 
+					r: "Die Menge teilt sich ehrfürchtig wie das Rote Meer. Du scannst dein Mettbrötchen wie ein Herzchirurg. Hinter dir schüttelt eine Rentnerin sehr langsam den Kopf." 
 				},
 				{ 
 					t: "Ware ins Regal werfen & flüchten", 
@@ -438,14 +438,14 @@ export const lunch = [
 				{ 
 					t: "Brav anstellen und warten",
 					m: 40, f: -5, a: 20, c: 0, 
-					r: "Die Dame vor dir zahlt 4,99€ ausschließlich in 1- und 2-Cent-Münzen. Du starrst auf die Uhr. Du kommst zu spät und das Brötchen schmeckt nach purer Wut." 
+					r: "Die Dame vor dir zahlt 4,99€ ausschließlich in 1- und 2-Cent-Münzen. Du starrst auf die Uhr. Die Rückkehr wird knapp, und das Brötchen schmeckt nach purer Wut." 
 				}
 			]
 		},
 		{
 			id: "lunch_canteen_crash",
 			title: "MITTAG: SYSTEMAUSFALL",
-			text: "Du stehst in der Kantine ganz vorne in der Schlange mit deinem Tablett. Plötzlich stürzt die Kasse ab. Windows-Updates werden installiert (1 von 45). Die Schlange hinter dir murrt. Die Kassiererin guckt dich flehend an: 'Sie sind doch von der IT?'",
+			text: "Du stehst in der Kantine ganz vorne in der Schlange mit deinem Tablett. Die Kasse stürzt ab. Windows-Updates werden installiert (1 von 45). Die Schlange hinter dir murrt. Die Kassiererin guckt dich flehend an: 'Sie sind doch von der IT?'",
 			opts: [
 				{ 
 					t: "Brav warten", 
@@ -468,7 +468,7 @@ export const lunch = [
 		{
 			id: "lunch_microwave_queue",
 			title: "MITTAG: MIKROWELLEN-STAU",
-			text: "Du willst dir deine Nudeln aufwärmen, aber von drei Mikrowellen geht nur noch eine. Davor steht eine Schlange von 4 Leuten. Ganz vorne steht der Vertriebsleiter und taut geduldig ein komplett gefrorenes Hähnchen auf.",
+			text: "Deine Nudeln sind kalt, und von drei Mikrowellen geht nur noch eine. Davor steht eine Schlange von 4 Leuten. Ganz vorne steht der Vertriebsleiter und taut geduldig ein komplett gefrorenes Hähnchen auf.",
 			opts: [
 				{ 
 					t: "Zähneknirschend warten", 
@@ -477,7 +477,7 @@ export const lunch = [
 				},
 				{ 
 					t: "Mit Donut bestechen & vordrängeln", 
-					req: "donut",
+					rem: "donut",
 					m: 15, f: 5, a: -10, c: 0, 
 					r: "Du gibst dem Typen vor dir den Donut. Er lässt dich vor. In 15 Minuten bist du satt und entspannt. Ein Hoch auf die Korruption!" 
 				},
@@ -500,7 +500,7 @@ export const lunch = [
 					r: "Du hörst sanften Death Metal, während Sabine 30 Minuten stumm ihren Mund bewegt. Du hast entspannt gegessen und sie denkt, du bist ein toller Zuhörer." 
 				},
 				{ 
-					t: "Flucht: 'Mir ist schlecht!'", 
+					t: "'Mir ist schlecht!'", 
 					m: 5, f: 0, a: 20, c: 10, 
 					r: "Du rennst nach 5 Minuten aufs Klo und lässt dein Essen stehen. Du hast die Pause abgebrochen. Du hungerst und bist wütend auf dich selbst." 
 				},
@@ -508,7 +508,7 @@ export const lunch = [
 					t: "Höflich zuhören", 
 					rep: { "Gabi": 5 },
 					m: 40, f: 15, a: 15, c: 0, 
-					r: "Du nickst 40 Minuten lang. Du kennst jetzt die Namen aller Straßenhunde auf Bali und ihr Seelentier. Du hast dich zwar ausgeruht, aber dein Gehirn ist Matsch." 
+					r: "Du nickst 40 Minuten lang. Du kennst jetzt die Namen aller Straßenhunde auf Bali und ihr Seelentier. Dein Gehirn ist Matsch." 
 				}
 			]
 		},
@@ -525,7 +525,7 @@ export const lunch = [
 				{ 
 					t: "Bestellung stornieren & Snack essen", 
 					m: 10, f: 5, a: 25, c: 0, 
-					r: "Du brichst ab, holst dir einen Schokoriegel aus dem Automaten und arbeitest weiter. Du hast nur 10 Minuten verloren, aber deine Aggro explodiert vor Hunger." 
+					r: "Du brichst ab, holst dir einen Schokoriegel aus dem Automaten und arbeitest weiter. Du hast nur 10 Minuten verloren, aber der Hunger macht dich bis Feierabend ungenießbar." 
 				},
 				{ 
 					t: "Ihn draußen suchen gehen", 
@@ -565,14 +565,14 @@ export const lunch = [
 			text: "Du willst gerade reinbeißen, da greift dich der agile Projektleiter am Arm. 'So Müller, genug gesessen! Wir machen jetzt den 'Healthy-Brain-Walk' um den Block! Kommen Sie, frische Luft macht produktiv!'",
 			opts: [
 				{ 
-					t: "Mitlaufen (Gruppenzwang)", 
+					t: "Dem Gruppenzwang nachgeben und mitlaufen", 
 					m: 40, f: -15, a: 15, c: -5, 
 					r: "Du latscht 40 Minuten im Stechschritt durchs Industriegebiet. Du kommst verschwitzt zurück, hast Blasen an den Füßen und bist hungriger als vorher. Aber das Team liebt dich." 
 				},
 				{ 
 					t: "Auf halber Strecke abseilen", 
 					m: 20, f: 10, a: -5, c: 5, 
-					r: "Als er nicht guckt, biegst du heimlich zum Dönerladen ab. Du hast 20 Minuten gebraucht, aber du hast warmes Essen. Hoffentlich merkt er nicht, dass du fehlst." 
+					r: "Als er nicht guckt, biegst du heimlich zum Dönerladen ab. 20 Minuten später sitzt du mit warmem Essen auf einer Bank. Hoffentlich merkt er nicht, dass du fehlst." 
 				},
 				{ 
 					t: "Aggressiv ablehnen", 
@@ -600,7 +600,7 @@ export const lunch = [
 					t: "Noise-Cancelling Kopfhörer aufsetzen", 
 					req: "headphones", 
 					m: 30, f: -15, a: -10, c: 0,  
-					r: "Du drückst den Knopf und die Welt verstummt. Du siehst nur noch vier wild gestikulierende Männer in traditioneller Tracht, während du ungestört deine Nudeln kaust. Eine surreale, aber wunderbar entspannende Pause."  
+					r: "Du drückst den Knopf und die Welt verstummt. Du siehst nur noch vier wild gestikulierende Männer in traditioneller Tracht, während du ungestört deine Nudeln kaust."  
 				} 
 			] 
 		},
@@ -631,7 +631,7 @@ export const lunch = [
 		{ 
 			id: "lunch_fish_microwave", 
 			title: "MITTAG: BIO-WAFFE", 
-			text: "Du willst dir dein Essen aufwärmen, als dir eine Wand aus Gestank entgegenkommt. Azubi Kevin macht sich Kabeljau vom Vortag in der Mikrowelle warm. Der Geruch brennt regelrecht in den Augen.", 
+			text: "Auf halbem Weg zur Mikrowelle trifft dich eine Wand aus Gestank. Azubi Kevin macht sich Kabeljau vom Vortag in der Mikrowelle warm. Der Geruch brennt regelrecht in den Augen.", 
 			opts: [ 
 				{  
 					t: "Den Stecker der Mikrowelle ziehen", 
@@ -695,7 +695,7 @@ export const lunch = [
 				{  
 					t: "Absichtlich extrem schlecht spielen",  
 					m: 30, f: -5, a: 5, c: 0,  
-					r: "Du hast absolut keine Lust auf diesen Wettbewerb. Du schießt absichtlich drei peinliche Eigentore. Sie verlieren sofort jeglichen Respekt und das Interesse an dir. Für den Rest des Jahres lassen sie dich in Ruhe. Clever."  
+					r: "Du hast absolut keine Lust auf diesen Wettbewerb. Du schießt absichtlich drei peinliche Eigentore. Sie verlieren sofort jeglichen Respekt und das Interesse an dir. Für den Rest des Jahres lassen sie dich in Ruhe."  
 				} 
 			] 
 		},
@@ -713,7 +713,7 @@ export const lunch = [
 				{  
 					t: "Ein großes Stück davon essen",  
 					m: 45, f: 20, a: 10, c: 0,  
-					r: "Das Fleisch schmeckt überraschend gut, aber das rächt sich schnell. Keine 20 Minuten später liegst du schweißgebadet auf der Firmen-Toilette und flehst um Erlösung. Eine absolute Fehlentscheidung."  
+					r: "Das Fleisch schmeckt überraschend gut. Keine 20 Minuten später liegst du schweißgebadet auf der Firmen-Toilette und flehst um Erlösung."  
 				}, 
 				{  
 					t: "Den Igel in den Müll werfen", 
@@ -726,7 +726,7 @@ export const lunch = [
 		{ 
 			id: "lunch_nap_attack", 
 			title: "MITTAG: UNTERBROCHENER SCHLAF", 
-			text: "Du liegst auf der Couch im dunklen Pausenraum und schläfst fast ein. Plötzlich stürmt Chantal herein, macht das extrem grelle Licht an und nimmt lautstark Sprachnachrichten auf.", 
+			text: "Du liegst auf der Couch im dunklen Pausenraum und schläfst fast ein. Die Tür fliegt auf. Chantal macht das extrem grelle Licht an und nimmt lautstark Sprachnachrichten auf.", 
 			opts: [ 
 				{  
 					t: "Aufstehen und sie anknurren", 
@@ -803,7 +803,7 @@ export const lunch = [
 				{  
 					t: "Auf dem Boden sitzen und ins Leere starren",  
 					m: 30, f: -10, a: -5, c: 0,  
-					r: "Du isst gar nicht. Du setzt dich einfach im Schneidersitz auf den kühlen Gitterboden und starrst ins dunkle Nichts. Manchmal reicht es schon aus, einfach für 30 Minuten keine menschliche Stimme hören zu müssen."  
+					r: "Du isst gar nicht. Du setzt dich einfach im Schneidersitz auf den kühlen Gitterboden und starrst ins dunkle Nichts. Dreißig Minuten keine einzige menschliche Stimme."  
 				}, 
 				{  
 					t: "Kabel entwirren und meditieren", 
@@ -828,7 +828,7 @@ export const lunch = [
 					t: "Azubi Kevin den Vortritt lassen", 
 					rep: { "Kevin": 5 }, 
 					m: 5, f: 0, a: 10, c: 0,  
-					r: "Du trittst zurück und überlässt dem hungrigen Azubi das letzte Essen. Du lächelst tapfer, aber diese bodenlose, respektlose Unverschämtheit der reichen Geschäftsführung lässt dein Blut förmlich kochen. Ein echter Tiefpunkt."  
+					r: "Du trittst zurück und überlässt dem hungrigen Azubi das letzte Essen. Du lächelst tapfer, aber diese bodenlose, respektlose Unverschämtheit der reichen Geschäftsführung lässt dein Blut förmlich kochen."  
 				}, 
 				{  
 					t: "Dein Gourmet-Sandwich auspacken", 
@@ -916,7 +916,7 @@ export const lunch = [
 					r: "Zwanzig Minuten Innenhof, achtzig Aufnahmen, weil Markus auf jeder blinzelt. Dein Essen ist kalt, deine Finger sind klamm, und auf dem finalen Bild stehst du hinten links halb hinter Kevin. Auf der Karriereseite steht darunter: 'Ein Team, das zusammenhält.'"
 				},
 				{
-					t: "Ablehnen: Pause ist Pause",
+					t: "Ablehnen - Pause ist Pause",
 					m: 5, f: 5, a: -10, c: 20,
 					r: "Du isst in Ruhe zu Ende. Auf dem Foto fehlt die IT vollständig - was niemandem auffällt, bis Dr. Wichtig es sechs Wochen später auf der fertigen Karriereseite bemerkt und in der Abteilungsrunde fragt, ob 'die IT sich nicht als Teil des Teams sieht'. Die Frage klingt harmlos. Sie ist es nicht."
 				}

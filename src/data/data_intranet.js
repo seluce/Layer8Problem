@@ -1,5 +1,5 @@
 /**
- * Was das Intranet über dich weiß.
+ * What the intranet knows about you.
  *
  * The company pages used to say the same thing forever. As data they can react
  * to the save: to reputation, to the story flags of today, and to the counters
@@ -83,7 +83,7 @@ export const intranet = {
        ================================================================ */
     feed: [
 
-        // ---------- Immer möglich ----------
+        // ---------- Always available ----------
         {
             id: "feed_tasse", author: "Chantal", handle: "@HR_FeelGood",
             initials: "CH", tone: "#f472b6",
@@ -160,7 +160,7 @@ export const intranet = {
             text: "Ihre durchschnittliche Reaktionszeit hat sich im laufenden Quartal um 12% verbessert. Der Zielwert wurde daraufhin um 15% angepasst. Herzlichen Glückwunsch."
         },
 
-        // ---------- Reagiert auf den heutigen Tag ----------
+        // ---------- Reacts to today ----------
         {
             id: "feed_kalk_essig", reqStory: "path_kalk_essig",
             author: "Facility Management", handle: "@Betriebstechnik",
@@ -302,7 +302,7 @@ export const intranet = {
        team view (+20 / -20) the ordinary post stays in place.
        ================================================================ */
     chantal: {
-        // Der ältere Beitrag darunter, einer pro Besuch.
+        // The older post underneath, one per visit.
         older: [
             {
                 title: "Die Kraft der stummen Meetings 🤫",
