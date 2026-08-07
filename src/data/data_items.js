@@ -52,7 +52,7 @@ export const items = {
                color: "text-yellow-400" } },
     "chocolate": { icon: "🍫", name: "Tafel Schokolade", flavor: "'Pures, quadratisches Glück auf Kakaobasis. Heimlich vor der gierigen Buchhaltung gerettet, ist sie der einzige Lichtblick am Montag.'", img: "assets/img/items/chocolate.webp",
         use: { al: -20,
-               desc: "Senkt AGGRO um -20. Pures, quadratisches Glück auf Kakaobasis.",
+               desc: "Senkt AGGRO um -20. Quadratisch, praktisch, weg.",
                warn: "Du hast sie dir verdient. Verschwindet nach dem Essen aus dem Inventar.",
                log:  "Die Schokolade schmilzt auf der Zunge. Für einen kurzen Moment hasst du niemanden. (Aggro -20)",
                color: "text-amber-500" } },
