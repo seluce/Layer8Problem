@@ -97,6 +97,22 @@ for (const p of POOLS) {
       // The whole event is checked, not just the opening: a result text
       // that dates the trigger to yesterday is just as wrong and even
       // harder to catch while reading.
+      //
+      // Reviewed and found fine (4.1.0) - each of these time references
+      // points at something other than the trigger, so the question is
+      // answered and need not be asked again:
+      //   call_hotline_queue_2b    "kein Gestern" is figurative
+      //   cof_stolen_sandwich_2c   Markus' absence yesterday is backstory
+      //   rep_egon_story_2c        Egon's revenge started today - trigger was today
+      //   rep_elster_simple_good_2c  the dog video is from yesterday, unrelated
+      //   srv_legacy_tape_2ab/2c   the tape holds yesterday's backup (says so in the trigger)
+      //   srv_disco_led_2c         same: the latest backup is yesterday's
+      //   srv_fremder_stick_2c     musical since today - trigger was today
+      const timeRefReviewed = new Set([
+        'call_hotline_queue_2b', 'cof_stolen_sandwich_2c', 'rep_egon_story_2c',
+        'rep_elster_simple_good_2c', 'srv_legacy_tape_2ab', 'srv_legacy_tape_2c',
+        'srv_disco_led_2c', 'srv_fremder_stick_2c'
+      ]);
       const timeRef = /(vorgestern|gestern|letzte Woche|vor ein paar Tagen|seit Tagen|heute Morgen|seit heute)/i;
       const allTexts = [
         ['text', ev.text],
@@ -106,6 +122,7 @@ for (const p of POOLS) {
       ];
       for (const [field, txt] of allTexts) {
         if (typeof txt !== 'string') continue;
+        if (timeRefReviewed.has(ev.id)) continue;
         const g = txt.match(timeRef);
         if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
       }
@@ -542,11 +559,12 @@ for (const ev of DB.emails) {
 }
 
 /* ---------- 10) Result keys: the res_ prefix ---------- */
-// components/EventView.svelte hangs a "..." badge on every chain option whose
-// next does NOT start with res_ - the badge tells the player the conversation
-// goes on. A result named `truth` therefore promises a follow-up and then hangs
-// up. Only an info: the existing pools are split roughly half and half, and
-// renaming a result means renaming every next that points at it.
+// A readability convention, not a mechanic: since 4.1 the "..." badge in
+// EventView looks the target up in ev.nodes the same way the engine routes,
+// so a result named `truth` works and displays correctly. The prefix still
+// helps anyone skimming a data file to see where a chain ends, which is why
+// new results should follow it. The existing stock stays as it is - renaming
+// a result means renaming every next that points at it, for zero effect.
 {
   const stray = [];
   for (const p of POOLS)
@@ -554,7 +572,7 @@ for (const ev of DB.emails) {
       for (const rid of Object.keys(ev.results ?? {}))
         if (!rid.startsWith('res_')) stray.push(`${p}/${ev.id}!${rid}`);
   if (stray.length)
-    info(`${stray.length} Result-Schlüssel ohne res_-Präfix — die Option dorthin trägt im Terminal das "..."-Abzeichen, obwohl sie das Gespräch beendet (z. B. ${stray.slice(0, 4).join(', ')})`);
+    info(`${stray.length} Result-Schlüssel ohne res_-Präfix (Stil, keine Funktion — Anzeige und Engine schlagen strukturell nach; neue Results bitte mit Präfix anlegen)`);
 }
 
 /* ---------- 11) The diary ---------- */

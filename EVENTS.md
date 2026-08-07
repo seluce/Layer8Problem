@@ -268,10 +268,11 @@ einen `startNode`, ein `nodes`-Objekt (die Gesprächsschritte) und ein `results`
 - **Results** tragen alle Wirkungen. Der Ergebnistext heißt hier `txt` statt `r`, sonst
   gelten dieselben Felder wie in einer Auswahl. Ein `next` **im Result** setzt ein
   Story-Flag wie in Abschnitt 3.
-- **Result-Schlüssel beginnen mit `res_`.** Das Terminal hängt an jede Auswahl, deren
-  Ziel nicht so heißt, ein "…"-Abzeichen — das Zeichen dafür, dass das Gespräch
-  weitergeht. Ein Ausgang namens `truth` verspricht also eine Fortsetzung und legt dann
-  auf.
+- **Result-Schlüssel beginnen mit `res_`.** Das ist eine Lesbarkeitsregel, keine
+  Mechanik: Wer die Datei überfliegt, sieht am Namen, wo eine Kette endet. Das
+  "…"-Abzeichen im Terminal hängt nicht am Namen — es schaut wie die Engine nach,
+  ob das Ziel ein Knoten ist. Ein Ausgang darf also `truth` heißen und funktioniert
+  trotzdem; `res_truth` liest sich nur besser.
 
 ```js
 // Anruf mit Verlauf (data_calls.js):

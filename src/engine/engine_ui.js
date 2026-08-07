@@ -243,10 +243,13 @@ export const ui = {
     },
 
     // Shows an event. components/EventView.svelte renders it from the view model.
-    setTerminalEvent: function(type, title, text, opts, isChain, charName) {
+    // `nodes` rides along so the component can tell whether an option's next
+    // names another conversation node (badge: goes on) or a result (ends) -
+    // the same lookup the engine does on the click.
+    setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'event',
-            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null }
+            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null }
         });
     },
 

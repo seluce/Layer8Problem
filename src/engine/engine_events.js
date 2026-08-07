@@ -592,7 +592,7 @@ export const events = {
         if (!node) { console.error("Node not found:", nodeId); return; }
 
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char);
+        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char, ev.nodes);
     },
 
     // 2. OLD SYSTEM (simple events)

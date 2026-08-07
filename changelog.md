@@ -16,6 +16,7 @@ Anzeige & Layout:
 * Bilder stehen beim Öffnen sofort da statt mit Verzögerung - im Archiv, im Team, auf den Ereignis-Karten und im Rucksack. Sie werden jetzt beim Start geholt: in der Steam-Fassung gleich, im Browser in einer ruhigen Minute, damit sie den Spieldaten nicht die Leitung wegnehmen.
 * Im Messenger sind die Handlungs-Knöpfe kürzer: statt "[System: Chat stummschalten und archivieren]" steht dort "[Chat stummschalten und archivieren]". Die eckigen Klammern sagen ohnehin, dass es keine Nachricht ist, und im schmalen Chatfenster sind acht Zeichen eine Menge. In den Chat-Blasen bleibt die Systemmeldung.
 * Das Smartphone zeigt Kontaktfotos: Ein Chat mit einer bekannten Figur zeigt ihr Porträt statt der Initiale. In Gruppen-Chats kann jede Nachricht ihr eigenes Gesicht haben, während der Rest anonym bleibt. Unbekannte Nummern behalten die Initiale - wie im echten Adressbuch.
+* Die Erzähltexte stehen nicht mehr in Anführungszeichen. Die Hülle behauptete einen Sprecher, den es nicht gibt - wer spricht, steht ohnehin in '...' markiert im Text, und bei den 86 Ereignissen, die direkt mit wörtlicher Rede beginnen, standen drei Anführungszeichen in Folge. Tagebuch, Mails und Telefon kamen immer schon ohne aus.
 
 Fehlerkorrekturen:
 * Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Zwei unsichtbare Sonderzeichen vor der Beschriftung hatten der Option ihr Verhalten genommen.
@@ -29,6 +30,7 @@ Fehlerkorrekturen:
 * "Auf Standard zurücksetzen" wirkte, war aber nicht zu sehen: Die Werte galten sofort, die Schalter im offenen Fenster standen weiter auf den alten Stellungen. Wer danach einen umlegte, verlor unbemerkt seinen ersten Klick.
 * Ein unterbrochener Arbeitstag ließ sich versehentlich wegwerfen. Solange das Fenster fragte, ob man weitermachen will, öffnete Escape das Menü darüber - und "Tag neu starten" war dort nicht gesperrt. Ein Klick verwarf genau den Tag, den das Fenster anbot.
 * Dasselbe Loch klaffte über der Tageswahl und über einer offenen Mail. Die Mail hat bewusst keinen Schließen-Knopf - auch das Löschen ist eine Entscheidung mit Folgen, und Escape war die Hintertür daran vorbei.
+* Das "…"-Abzeichen an Antworten sagt jetzt die Wahrheit. Es hing am Namen des Ziels (res_-Präfix), die Engine schlägt aber strukturell nach - bei über hundert Kettenausgängen versprach das Abzeichen ein Weiterreden, und dann legte das Gespräch auf. Anzeige und Engine stellen jetzt dieselbe Frage: Zeigt die Antwort auf einen weiteren Gesprächsknoten?
 * Spielstand exportieren und importieren ging nicht mehr auf. Der Klick löste einen Fehler aus, der stillschweigend aufgefangen wurde - für den Spieler passierte einfach nichts. Betroffen war beides, über das Startfenster wie über die Einstellungen.
 * Am Handy scrollte die Seite hinter einem offenen Fenster, sobald man ein zweites darüber wieder geschlossen hatte - etwa die Tastenbelegung über den Einstellungen oder "Benutzen?" über dem Rucksack. Am Rechner war das nie zu sehen.
 * Schreib- und Logikfehler in diversen Ereignissen behoben.
