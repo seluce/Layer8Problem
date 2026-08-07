@@ -1466,7 +1466,7 @@ export const calls = [
             { 
                 t: "'Sie suchen in der falschen Spalte.'", 
                 m: 15, f: -15, a: 15, c: -5,
-                r: "Du musst ihm Excel erklären. Am Telefon. Es zieht sich wie ein Jahresabschluss. Er versteht es kaum. Du spürst, wie deine Gehirnzellen absterben, aber du hast das Problem gelöst" 
+                r: "Du musst ihm Excel erklären. Am Telefon. Es zieht sich wie ein Jahresabschluss. Er versteht es kaum. Du spürst, wie deine Gehirnzellen absterben, aber du hast das Problem gelöst." 
             },
             { 
                 t: "'Das ist ein Anwenderfehler.'", 
@@ -1648,7 +1648,7 @@ export const calls = [
                 req: "admin_pw",
                 rep: { "Frau Elster": -20 },
                 m: 5, f: 5, a: 5, c: 20, 
-                r: "Du hackst das Buchhaltungssystem und setzt den Status auf 'Genehmigt'. Die Server werden bestellt. Frau Elster meldet diesen massiven Compliance-Verstoß sofort dem Vorstand. Du hast die Hardware, aber massiven Ärger." 
+                r: "Du hackst das Buchhaltungssystem und setzt den Status auf 'Genehmigt'. Die Server werden bestellt. Frau Elster meldet diesen massiven Compliance-Verstoß sofort dem Vorstand." 
             },
             { 
                 t: "'Dann eben keine neuen Server.'", 
@@ -1912,7 +1912,7 @@ export const calls = [
                 next: "path_chantal_listen",
                 rep: { "Chantal": 10 },
                 m: 45, f: 10, a: 20, c: -5, 
-                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist. Du opferst deine Lebenszeit und Nerven, aber bewahrst sie vor der Kündigung." 
+                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist." 
             }
         ]
     },

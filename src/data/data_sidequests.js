@@ -35,7 +35,7 @@ export const sidequests = [
             { 
                 t: "'Blau kühlt die Hardware.'", 
                 m: 30, f: -10, a: 10, c: 0, 
-                r: "Du hältst einen Vortrag über Thermodynamik. Nach 30 Minuten schlafen alle. Du hast sie zu Tode gelangweilt. Sieg durch Monotonie." 
+                r: "Du hältst einen Vortrag über Thermodynamik. Nach 30 Minuten schlafen alle. Sieg durch Monotonie." 
             },
             { 
                 t: "'Vantablack. Wie meine Seele.'", 
@@ -524,7 +524,7 @@ export const sidequests = [
                 next: "path_cable_stuck",
                 rep: { "Dr. Wichtig": 2 },					
                 m: 5, f: -5, a: 0, c: -5, 
-                r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt. Du fühlst dich vorbildlich." 
+                r: "Du wickelst ordentlich Panzertape drüber. Das bewegt sich keinen Millimeter mehr. Unfallverhütungsvorschrift: Erfüllt." 
             }
         ]
     },
@@ -771,20 +771,20 @@ export const sidequests = [
         text: "Draußen spielt sich eine Szene wie aus 'Transformers' ab. Ein Schwerlast-Konvoi hat einen Bagger in der Größe eines Einfamilienhauses abgeladen. Dazu drei Presslufthammer und ein Gerät, das aussieht wie ein Laser-Bohrer. Das Ziel dieser Armada: Ein 5cm kleines Schlagloch im Gehweg. Der Boden bebt.",
         opts: [
             { 
-                t: "Sozial-Lösung: Rausbrüllen", 
+                t: "Aus dem Fenster brüllen", 
                 next: "path_noise_foreman", 
                 m: 5, f: 5, a: -5, c: 0, 
                 r: "Du öffnest das Fenster und schreist gegen den Lärm an: 'BRAUCHT IHR DAFÜR ECHT DEN TODESSTERN?! DAS IST EIN LOCH, KEIN KRATER!' Der Vorarbeiter schaut hoch." 
             },
             { 
-                t: "Technik-Lösung: Kopfhörer auf", 
+                t: "Kopfhörer aufsetzen", 
                 req: "headphones", 
                 next: "path_noise_zen", 
                 m: 2, f: 5, a: -20, c: 0, 
                 r: "Klick. Noise-Cancelling auf 'Maximum'. Der Weltuntergang draußen wird zu einem sanften Vibrieren in deinem Hintern. Du arbeitest im Auge des Sturms." 
             },
             { 
-                t: "Physik-Lösung: Fenster zu", 
+                t: "Das Fenster schließen", 
                 next: "path_noise_sauna", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "Du rammst das Fenster zu. Der Lärm wird dumpfer, aber die Vibrationen lassen deine Taffe auf dem Tisch wandern. Die Luft im Büro wird sofort stickig." 
@@ -905,7 +905,7 @@ export const sidequests = [
                 t: "'Ja! Ich nehme alles!'", 
                 rep: { "Egon": 10 },
                 m: 30, f: 10, a: -10, c: 0, 
-                r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat. Retro-Feeling pur." 
+                r: "Du folgst Egon in den Keller. Ihr verbringt eine halbe Stunde damit, in uralter Hardware zu wühlen. Du nimmst nichts mit, aber Egon ist glücklich, dass jemand seinen 'Schatz' gewürdigt hat." 
             }
         ]
     },
@@ -1258,7 +1258,7 @@ export const sidequests = [
             { 
                 t: "'Ich wars nicht!'", 
                 m: 10, f: 10, a: -5, c: 0, 
-                r: "Du verriegelst dich in der Kabine. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef. Du bist sicher, aber ein Feigling." 
+                r: "Du verriegelst dich in der Kabine. Du hörst, wie draußen Türen eingetreten werden. Irgendwann ziehen sie ab. Die Rechnung über den Fehlalarm (2.500€) landet beim Chef." 
             }
         ]
     },
@@ -1365,7 +1365,7 @@ export const sidequests = [
             { 
                 t: "Kleinlaut entschuldigen", 
                 m: 5, f: -5, a: 10, c: -10, 
-                r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an. Du fühlst dich klein und feige, aber du bist sicher." 
+                r: "'Es war nur ein Scherz, Chef! Ich habe nichts gesehen!' Stille. Dann geht das Licht wieder an." 
             },
             { 
                 t: "'Ich habe Fotos!' - ein Bluff", 
@@ -1461,7 +1461,7 @@ export const sidequests = [
                 t: "Paranoid werden: Im Klo runterspülen", 
                 next: "path_stick_hunt", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück. Du fühlst dich sicher." 
+                r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück." 
             },
             { 
                 t: "Brav sein: Am Empfang abgeben", 
@@ -1570,12 +1570,12 @@ export const sidequests = [
             { 
                 t: "Short-Selling: Auf den Absturz wetten", 
                 m: 20, f: 5, a: -20, c: 10, 
-                r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn. Du bist ein Monster, aber ein reiches Monster." 
+                r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn." 
             },
             { 
                 t: "Schuldgefühle haben", 
                 m: 5, f: 0, a: 5, c: 0, 
-                r: "Du fühlst dich schlecht. Du hast quasi im Alleingang eine Rezession ausgelöst. Aber hey, dein Drucker-Kabel ist immer noch weg. Prioritäten." 
+                r: "Du hast quasi im Alleingang eine Rezession ausgelöst. Aber hey, dein Drucker-Kabel ist immer noch weg. Prioritäten." 
             }
         ]
     },
@@ -1776,7 +1776,7 @@ export const sidequests = [
                 t: "'Das war Kevin!'",
                 rep: { "Kevin": -20 }, 
                 m: 5, f: 0, a: 10, c: 10, 
-                r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab. Du hast ein schlechtes Gewissen, aber deinen Job noch." 
+                r: "Du schreist quer durchs Büro: 'KEVIN! HAST DU WIEDER AUF LINKS GEKLICKT?!' Alle starren den Azubi an. Er stammelt. Die IT führt ihn ab." 
             }
         ]
     },
@@ -1817,7 +1817,7 @@ export const sidequests = [
                 t: "Gabi suchen & belehren",
                 rep: { "Gabi": -5 },
                 m: 10, f: -5, a: 10, c: -5, 
-                r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen. Du fühlst dich im Recht, aber unbeliebt." 
+                r: "Du findest sie in der Küche und zitierst das Handbuch. Sie rollt mit den Augen." 
             },
             { 
                 t: "Den offenen Kalender checken", 
@@ -2434,7 +2434,7 @@ export const sidequests = [
                 next: "path_shredder_puzzle",
                 rep: { "Frau Elster": 15 },
                 m: 90, f: -20, a: 20, c: 0, 
-                r: "Du sortierst 90 endlose Minuten lang Papierschnipsel. Am Ende klebt der Vertrag wieder. Du hast massiv Arbeitszeit verloren und bist furchtbar wütend. Frau Elster nimmt den Vertrag und rennt los." 
+                r: "Du sortierst 90 endlose Minuten lang Papierschnipsel. Am Ende klebt der Vertrag wieder. Frau Elster nimmt ihn und rennt los." 
             },
             { 
                 t: "Grob mit Panzertape laminieren", 
@@ -3237,7 +3237,7 @@ export const sidequests = [
                 t: "Maus-Wackler nutzen & schlafen", 
                 next: "path_elearn_sleep", 
                 m: 90, f: 30, a: -10, c: 10, 
-                r: "Du klemmst deine Uhr an die Maus, legst die Füße auf den Tisch und pennst. Die 90 Minuten vergehen wie im Traum. Du fühlst dich herrlich entspannt." 
+                r: "Du klemmst deine Uhr an die Maus, legst die Füße auf den Tisch und pennst. Die 90 Minuten vergehen wie im Traum." 
             }
         ]
     },
@@ -6278,7 +6278,7 @@ export const sidequests = [
                 t: "'Ist ein Survival-Training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, f: 5, a: -5, c: -5, 
-                r: "Der Chef findet dich urkomisch. Ein unerwarteter Sieg." 
+                r: "Der Chef findet dich urkomisch." 
             },
             { 
                 t: "Ihm pampig kommen", 

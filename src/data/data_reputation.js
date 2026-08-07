@@ -525,7 +525,7 @@ export const reputation = [
             { 
                 t: "Aushalten & Kopfhörer aufsetzen", 
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du versuchst es zu ignorieren, aber das *KLACK KLACK* bohrt sich in dein Gehirn. Deine Aggression steigt stetig an." 
+                r: "Du versuchst es zu ignorieren, aber das *KLACK KLACK* bohrt sich in dein Gehirn." 
             },
             { 
                 t: "'Wirf das Ding weg!'", 
@@ -694,7 +694,7 @@ export const reputation = [
                 r: "Sie hält inne und prüft ihr Spiegelbild. 'Echt? Meinst du? ... Stimmt, eigentlich hast du Recht. Natural Beauty und so.' Sie geht strahlend weg. Problem durch Schmeichelei gelöst." 
             },
             { 
-                t: "Tech-Lösung: 'Ich installiere Snap Camera.'", 
+                t: "'Ich installiere Snap Camera.'", 
                 next: "path_chantal_gadget",
                 rep: { "Chantal": 5 },
                 m: 15, f: -5, a: 5, c: 5, 
@@ -728,7 +728,7 @@ export const reputation = [
                 loot: "energy",
                 rep: { "Chantal": 5 },
                 m: 5, f: 5, a: -5, c: 0, 
-                r: "Es schmeckt nach Wiese und Algen. Aber Chantal lächelt erwartungsvoll. 'Mmmh, gesund!', lügst du. Du fühlst dich seltsam energiegeladen.)" 
+                r: "Es schmeckt nach Wiese und Algen. Aber Chantal lächelt erwartungsvoll. 'Mmmh, gesund!', lügst du. Du fühlst dich seltsam energiegeladen." 
             },
             { 
                 t: "'Lieber Kaffee.'", 
@@ -806,7 +806,7 @@ export const reputation = [
                 next: "path_chantal_sellout",
                 rep: { "Chantal": 15, "Dr. Wichtig": -10 },
                 m: 5, f: 10, a: 15, c: 10, 
-                r: "Du zwingst dich zu einem Grinsen und machst das Peace-Zeichen. Chantal quietscht: 'OMG, der Goblin ist zahm! #OfficePet'. Du stirbst innerlich, aber sie wirkt besänftigt." 
+                r: "Du zwingst dich zu einem Grinsen und machst das Peace-Zeichen. Chantal quietscht: 'OMG, der Goblin ist zahm! #OfficePet'. Du stirbst innerlich." 
             },
             { 
                 t: "Handy wegschlagen", 
@@ -933,7 +933,7 @@ export const reputation = [
                 next: "path_chantal_makeover",
                 rep: { "Chantal": 15, "Dr. Wichtig": -5 }, 
                 m: 5, f: 5, a: 20, c: 5, 
-                r: "Du schaust in ihre Kamera und sagst: 'Ich war ein Bremser. Chantal hat Recht.' Chantal ist perplex, dann begeistert. 'Oh wow! Einsicht! #CharacterArc'. Du hast deine Würde verkauft, aber den Frieden erkauft." 
+                r: "Du schaust in ihre Kamera und sagst: 'Ich war ein Bremser. Chantal hat Recht.' Chantal ist perplex, dann begeistert. 'Oh wow! Einsicht! #CharacterArc'." 
             }
         ]
     },
@@ -987,7 +987,7 @@ export const reputation = [
                 t: "'Chantal hat wohl einen Virus geladen.'", 
                 rep: { "Chantal": -30, "Dr. Wichtig": 5 },
                 m: 5, f: 0, a: -10, c: -5, 
-                r: "Du schiebst ihr die Schuld in die Schuhe. 'User Error.' Der Chef glaubt dir. Chantal bekommt Schreibverbot. Du hast gewonnen, aber du bist ein Monster." 
+                r: "Du schiebst ihr die Schuld in die Schuhe. 'User Error.' Der Chef glaubt dir. Chantal bekommt Schreibverbot. Sie sieht dich lange an. Du öffnest dein Ticket-System." 
             }
         ]
     },
@@ -1015,7 +1015,7 @@ export const reputation = [
                 t: "Das Ding widerstandslos anziehen", 
                 rep: { "Chantal": 25 },
                 m: 5, f: 10, a: 30, c: 0, 
-                r: "Du ziehst es an. Es spannt am Bauch. Chantal klatscht: 'Slay! Du bist jetzt unser Maskottchen!' Du hast keine Würde mehr, aber Chantal ist deine beste Freundin." 
+                r: "Du ziehst es an. Es spannt am Bauch. Chantal klatscht: 'Slay! Du bist jetzt unser Maskottchen!' Sie postet ein Selfie mit euch beiden. #BFF" 
             }
         ]
     },
@@ -1081,7 +1081,7 @@ export const reputation = [
         text: "Chantal steht genervt vor deinem Tisch. 'Dieser schwarze Kasten unter meinem Schreibtisch... der Rechner. Der ruiniert das Feng-Shui. Kannst du den nicht weiß ansprühen? Oder gegen einen iMac tauschen?'",
         opts: [
             { 
-                t: "Tech-Lösung: Den PC untern Tisch schieben", 
+                t: "Den PC untern Tisch schieben", 
                 m: 10, f: 5, a: 0, c: 0, 
                 r: "Du kriechst unter ihren Tisch und schiebst den Tower ganz nach hinten ins Eck. 'Aus den Augen, aus dem Sinn.' Sie ist mäßig zufrieden." 
             },
@@ -1405,7 +1405,7 @@ export const reputation = [
             { 
                 t: "Müll selbst wegbringen", 
                 m: 15, f: -10, a: 10, c: 10, 
-                r: "Du trägst deinen Müll demonstrativ am Chef vorbei zum Container. Du fühlst dich erniedrigt. Egon winkt dir fröhlich hinterher." 
+                r: "Du trägst deinen Müll demonstrativ am Chef vorbei zum Container. Egon winkt dir fröhlich hinterher." 
             }
         ]
     },
@@ -1426,7 +1426,7 @@ export const reputation = [
             { 
                 t: "Kabelbinder aufschneiden", 
                 m: 10, f: 0, a: 10, c: 0, 
-                r: "Du fummelst 10 Minuten mit der Schere rum. Du hast den Monitor wieder, aber Egon hat erreicht, was er wollte: Dich nerven." 
+                r: "Du fummelst 10 Minuten mit der Schere rum. Du hast den Monitor wieder, aber Egon hat erreicht, was er wollte." 
             },
             { 
                 t: "Verlängerungskabel aus dem Flur holen", 
@@ -1518,7 +1518,7 @@ export const reputation = [
                 t: "Schlüssel unter der Tür durchschieben", 
                 rep: { "Egon": 5 },
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du gibst auf. Egon öffnet die Tür, lacht dich aus und nimmt den Schlüssel. Du hast verloren, aber du bist frei." 
+                r: "Du gibst auf. Egon öffnet die Tür, lacht dich aus und nimmt den Schlüssel. Du bist frei." 
             }
         ]
     },
@@ -2128,7 +2128,7 @@ export const reputation = [
                 t: "'Ich will einen neuen Stuhl.'", 
                 rep: { "Dr. Wichtig": -5 },
                 m: 10, f: 0, a: -5, c: 10,
-                r: "'Sie sind gierig, Müller.' Er notiert es. 'Stuhl ist bestellt. Aber wehe, Sie reden!' Du hast gewonnen, aber er hasst dich dafür." 
+                r: "'Sie sind gierig, Müller.' Er notiert es. 'Stuhl ist bestellt. Aber wehe, Sie reden!'" 
             },
             { 
                 t: "Bluff erhöhen: 'Das reicht nicht.'", 
@@ -2381,7 +2381,7 @@ export const reputation = [
                 r: "Ihr Blick wird weich. 'Rüdiger? Der würde die Münze unter das Sofa kicken.' Sie lächelt verträumt. 'Er ist so ein kleiner Rebell.'" 
             },
             { 
-                t: "Tech-Lösung: 'Ich schreibe ein Such-Skript.'", 
+                t: "'Ich schreibe ein Such-Skript.'", 
                 next: "path_elster_excel",
                 rep: { "Frau Elster": 10 },
                 m: 15, f: -5, a: 10, c: -5,
@@ -2488,10 +2488,10 @@ export const reputation = [
                 r: "Du kramst in der Tasche und wirfst ihr 2 Euro vor die Füße. 'Da! Stimmt so!' Sie starrt entsetzt auf die Münzen am Boden. 'Das... ist Bestechung! Und Respektlosigkeit!'" 
             },
             { 
-                t: "Tech-Lösung: Beleg fälschen", 
+                t: "Einen neuen Beleg basteln", 
                 next: "path_elster_fake",
                 m: 10, f: 5, a: 5, c: 0, 
-                r: "Du gehst an den PC, öffnest Photoshop und bastelst in 5 Minuten einen täuschend echten Parkschein. 'Hier, per Mail.' Du fühlst dich schlau." 
+                r: "Du gehst an den PC, öffnest Photoshop und bastelst in 5 Minuten einen täuschend echten Parkschein. 'Hier, per Mail.'" 
             },
             { 
                 t: "'Ich suche im Keller-Archiv!'", 
@@ -2692,7 +2692,7 @@ export const reputation = [
                 t: "'Jawohl, Frau Elster.'", 
                 rep: { "Frau Elster": 20 },
                 m: 45, f: -20, a: 30, c: -10,
-                r: "Du schreibst alles neu. 45 Minuten Lebenszeit verschwendet. Sie prüft es. 'Besser. Budget für einen Bleistift ist freigegeben.' Du hast gewonnen, aber um welchen Preis?" 
+                r: "Du schreibst alles neu. 45 Minuten Lebenszeit verschwendet. Sie prüft es. 'Besser. Budget für einen Bleistift ist freigegeben.'" 
             }
         ]
     },
@@ -2800,7 +2800,7 @@ export const reputation = [
                 t: "'Die Maschine musste heizen.'", 
                 rep: { "Frau Elster": 2 },
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Sie notiert es sich. 'Technisches Versagen. Akzeptabel, aber grenzwertig.' Du fühlst dich wie im Gefängnis." 
+                r: "Sie notiert es sich. 'Technisches Versagen. Akzeptabel, aber grenzwertig.'" 
             }
         ]
     },
@@ -2966,7 +2966,7 @@ export const reputation = [
             { 
                 t: "Annehmen & Chillen", 
                 m: 20, f: 15, a: -20, c: 0, 
-                r: "Der Espresso ist stark und gut. Ihr redet 20 Minuten über Autos. Du fühlst dich wichtig. Das ist das gute Leben." 
+                r: "Der Espresso ist stark und gut. Ihr redet 20 Minuten über Autos. Das ist das gute Leben." 
             },
             { 
                 t: "'Muss arbeiten.'", 
@@ -3375,7 +3375,7 @@ export const reputation = [
                 r: "Du hörst sie tief ausatmen. 'Stille... Danke. Du bist meine Rettung.' Du nimmst für 10 Minuten Anrufe an." 
             },
             { 
-                t: "Tech-Lösung: 'Remote Neustart (Zwang)'", 
+                t: "Remote-Neustart erzwingen", 
                 next: "path_gabi_anger",
                 rep: { "Gabi": -10 },
                 m: 2, f: 5, a: 5, c: 10, 
@@ -3625,7 +3625,7 @@ export const reputation = [
             { 
                 t: "Selbst zum Depot fahren", 
                 m: 60, f: -20, a: 20, c: 0,
-                r: "Du fährst 1 Stunde durch die Stadt, um das Paket zu holen. Du hast das Teil, aber dein Tag ist gelaufen." 
+                r: "Du fährst 1 Stunde durch die Stadt, um das Paket zu holen. Du hast das Teil. Dein Tag ist gelaufen." 
             },
             { 
                 t: "Toben & Schreien", 
@@ -3685,7 +3685,7 @@ export const reputation = [
                 t: "'Das ist mein Zwillingsbruder.'", 
                 rep: { "Gabi": -5 },
                 m: 5, f: 5, a: 0, c: 5, 
-                r: "'Netter Versuch.' Sie behält das Video. Du bist jetzt erpressbar. Das wird noch nachhallen." 
+                r: "'Netter Versuch.' Sie behält das Video. Du bist jetzt erpressbar." 
             },
             { 
                 t: "'Filmen ist illegal!'", 

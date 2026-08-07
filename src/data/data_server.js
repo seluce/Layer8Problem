@@ -152,7 +152,7 @@ export const server = [
             { 
                 t: "Ihn überzeugen mitzunehmen", 
                 m: 10, f: 5, a: -5, c: 10, 
-                r: "Du redest so lange auf ihn ein, bis er sie genervt auflädt. 'Mir doch egal.' Weg ist weg. Du bist ein Genie." 
+                r: "Du redest so lange auf ihn ein, bis er sie genervt auflädt. 'Mir doch egal.' Weg ist weg." 
             },
             { 
                 t: "Die Wahrheit sagen", 
@@ -281,7 +281,7 @@ export const server = [
                 t: "Eiskalt bei HR verpetzen", 
                 next: "path_bernd_snitch", 
                 m: 10, f: -5, a: 0, c: -15, 
-                r: "Du rufst anonym an. Zwei Minuten später wird Bernd von der Security rausgeschleift. Er ruft: 'Verrat! Et tu, Brute?!' Du fühlst dich schmutzig, aber dein Job ist sicher." 
+                r: "Du rufst anonym an. Zwei Minuten später wird Bernd von der Security rausgeschleift. Er ruft: 'Verrat! Et tu, Brute?!'" 
             }
         ]
     },
@@ -779,7 +779,7 @@ export const server = [
                 t: "Vor Ort darin blättern", 
                 next: "path_man_study", 
                 m: 30, f: 10, a: -10, c: 0, 
-                r: "Du hockst dich auf den Boden und liest das Kapitel über 'IRQ-Konflikte'. Eine einfachere Zeit. Du fühlst dich entspannt, aber deine Beine sind eingeschlafen." 
+                r: "Du hockst dich auf den Boden und liest das Kapitel über 'IRQ-Konflikte'. Eine einfachere Zeit. Deine Beine sind eingeschlafen." 
             },
             { 
                 t: "Rausziehen und einstecken", 
@@ -1147,7 +1147,7 @@ export const server = [
                 t: "Geld verlangen", 
                 rem: "secret_list",
                 m: 5, f: 10, a: -20, c: -20, 
-                r: "Er reißt dir die Liste aus der Hand und steckt dir einen dicken Umschlag zu. 'Spesenabrechnung. Monatlich. Schweigen wir nie wieder darüber.' Du bist jetzt offiziell korrupt." 
+                r: "Er reißt dir die Liste aus der Hand und steckt dir einen dicken Umschlag zu. 'Spesenabrechnung. Monatlich. Schweigen wir nie wieder darüber.'" 
             },
             { 
                 t: "Home-Office fordern", 
@@ -1956,7 +1956,7 @@ export const server = [
             { 
                 t: "Leise wieder rausgehen", 
                 m: 2, f: 0, a: 0, c: 0, 
-                r: "Du lässt sie in Ruhe. Manchmal braucht man Privatsphäre." 
+                r: "Du lässt sie in Ruhe." 
             }
         ]
     },
@@ -1988,7 +1988,7 @@ export const server = [
             { 
                 t: "Arrogante Rundmail schreiben", 
                 m: 10, f: 0, a: -20, c: -5, 
-                r: "'Betreff: Gern geschehen.' Du erklärst, dass der grüne Button sie vor dem Ruin gerettet hat. Plötzlich ist Ruhe. Ein kleiner Triumph." 
+                r: "'Betreff: Gern geschehen.' Du erklärst, dass der grüne Button sie vor dem Ruin gerettet hat. Plötzlich ist Ruhe." 
             },
             { 
                 t: "Den Button per CSS wieder blau färben", 
@@ -2161,7 +2161,7 @@ export const server = [
             { 
                 t: "Mit dem Ärmel wegwischen", 
                 m: 5, f: -5, a: -10, c: 0,
-                r: "Ein Wisch mit dem Ärmel. Der Staub ist weg (auf deinem Pulli). Eine saubere Oberfläche. Ein kleiner Sieg über das Chaos. Du fühlst dich besser." 
+                r: "Ein Wisch mit dem Ärmel. Der Staub ist weg (auf deinem Pulli). Eine saubere Oberfläche." 
             }
         ]
     },
@@ -2269,7 +2269,7 @@ export const server = [
                 t: "Alle Überweisungen manuell tippen",
                 rep: { "Frau Elster": 10 }, 
                 m: 120, f: -50, a: 20, c: -10, 
-                r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich. Lektion gelernt." 
+                r: "Du sitzt 2 Stunden mit Frau Elster da und tippst IBANs ab. Deine Finger bluten. Aber der Mob beruhigt sich." 
             }
         ]
     },
@@ -2347,7 +2347,7 @@ export const server = [
             { 
                 t: "Ihm die Meinung geigen", 
                 m: 5, f: 0, a: -10, c: 0, 
-                r: "Du stellst ihn zur Rede. Er winkt ab. 'Chill mal. Teamwork, oder?' Du fühlst dich moralisch überlegen, aber er lernt nichts draus." 
+                r: "Du stellst ihn zur Rede. Er winkt ab. 'Chill mal. Teamwork, oder?'" 
             }
         ]
     },
@@ -2370,7 +2370,7 @@ export const server = [
             { 
                 t: "Ignorieren", 
                 m: 2, f: 5, a: -5, c: 5, 
-                r: "Soll er doch heulen. Du löschst die Mail. Der Chef fragt auch nicht nach. Manchmal ist Schweigen Gold." 
+                r: "Soll er doch heulen. Du löschst die Mail. Der Chef fragt auch nicht nach." 
             }
         ]
     },
@@ -2497,7 +2497,7 @@ export const server = [
                 t: "Zettel schreiben: 'Beweis es doch!'", 
                 rep: { "Egon": -2 },
                 m: 5, f: 0, a: 10, c: 0, 
-                r: "Du legst den Zettel zurück. Das ist jetzt ein Nervenkrieg. Wer blinzelt zuerst? Du fühlst dich wie in einem Spionage-Thriller." 
+                r: "Du legst den Zettel zurück. Das ist jetzt ein Nervenkrieg. Wer blinzelt zuerst?" 
             },
             { 
                 t: "5 Euro als Friedensangebot reinlegen",
@@ -2612,7 +2612,7 @@ export const server = [
                 t: "Vorsorglich alles auf Kevin schieben", 
                 rep: { "Kevin": -15 },
                 m: 5, f: 5, a: -5, c: 5, 
-                r: "Du benennst den Prozess wieder in 'Kevin_Test' um. Wenn sie es finden, war es der Azubi. Du bist ein eiskaltes Ekelpaket, aber du bist sicher." 
+                r: "Du benennst den Prozess wieder in 'Kevin_Test' um. Wenn sie es finden, war es der Azubi." 
             }
         ]
     },
@@ -3100,7 +3100,7 @@ export const server = [
                 t: "'Das war nur der Datenschutz-Troll.'",
                 rep: { "Egon": -10 }, 
                 m: 2, f: 5, a: 5, c: 5, 
-                r: "Egon flucht lautstark am Telefon über die IT. Du hast dir wieder etwas Zeit gespart, aber Egon ist stinksauer auf dich." 
+                r: "Egon flucht lautstark am Telefon über die IT." 
             }
         ]
     },
@@ -3119,7 +3119,7 @@ export const server = [
                 t: "Azubi Kevin vorschieben", 
                 rep: { "Kevin": -15 },
                 m: 10, f: 5, a: 10, c: 20, 
-                r: "Du schreibst zurück: 'Kevin sollte sie eigentlich schreddern!' Kevin bekommt einen gigantischen Einlauf. Du fühlst dich schrecklich, aber du bist sicher." 
+                r: "Du schreibst zurück: 'Kevin sollte sie eigentlich schreddern!' Kevin bekommt einen gigantischen Einlauf." 
             },
             { 
                 t: "Rausrennen und Platten aufsammeln", 
@@ -3226,7 +3226,7 @@ export const server = [
                 t: "Mit Pappe und alten Kartons aufsaugen", 
                 next: "path_acid_cardboard", 
                 m: 25, f: -10, a: 25, c: 0, 
-                r: "Du wirfst Müll auf die Säure. Deine Finger brennen leicht, deine Schuhe haben jetzt weiße Flecken, aber die Hauptstromkabel sind erst einmal sicher. Ein gefährlicher Einsatz." 
+                r: "Du wirfst Müll auf die Säure. Deine Finger brennen leicht, deine Schuhe haben jetzt weiße Flecken, aber die Hauptstromkabel sind erst einmal sicher." 
             },
             { 
                 t: "Hausmeister Egon rufen", 

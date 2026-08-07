@@ -259,6 +259,55 @@ for (const r of records) {
 }
 section('Referenzen, die das Spiel altern lassen', dated);
 
+/* ---------- 5b) template constructions (editorial frequency baseline) ---------- */
+// The measurable share of the editorial brief "Weg von KI-Prosa": phrasings
+// that are fine once and become a stamp when they recur across many events.
+// Every hit is a READING assignment, never a rewrite order - a dry "Immerhin."
+// can be exactly right where it stands. The list is deliberately incomplete:
+// generic entries from the brief ("Das ist ...") would flood the report and
+// stay a human read. This section doubles as the before/after gauge for an
+// editing wave: totals should sink, and no NEW phrasing may shoot up in their
+// place - sections 1 and 2 are the counter-check for that.
+const SENT_START = '(?:^|[.!?…]["“”«»]?\\s+)';
+const TEMPLATES = [
+  ['„Du fühlst dich …“',           /\b[Dd]u fühlst dich\b/g],
+  ['„Du X, aber Y“ (Satzanfang)',  new RegExp(SENT_START + 'Du [^.!?"\\n]{2,60}, aber ', 'g')],
+  ['„Du bist jetzt …“',            /\b[Dd]u bist jetzt\b/g],
+  ['„Du hast gewonnen …“',         /\b[Dd]u hast gewonnen\b/g],
+  ['„Sieg durch …“',               /\bSieg durch\b/g],
+  ['„Natürlich …“ (Satzanfang)',   new RegExp(SENT_START + 'Natürlich\\b', 'g')],
+  ['„Immerhin …“ (Satzanfang)',    new RegExp(SENT_START + 'Immerhin\\b', 'g')],
+  ['„Plötzlich …“ (Satzanfang)',   new RegExp(SENT_START + 'Plötzlich\\b', 'g')],
+  ['„Manchmal …“ (Satzanfang)',    new RegExp(SENT_START + 'Manchmal\\b', 'g')],
+  ['„Dafür …“ (Satzanfang)',       new RegExp(SENT_START + 'Dafür\\b', 'g')],
+  ['„Am Ende …“ (Satzanfang)',     new RegExp(SENT_START + 'Am Ende\\b', 'g')],
+  ['„Und wieder (einmal) …“',      new RegExp(SENT_START + 'Und wieder\\b', 'g')]
+];
+const tmplRows = [];
+for (const [label, re] of TEMPLATES) {
+  let total = 0;
+  const perPool = new Map(), where = [];
+  for (const r of prose) {
+    for (const m of r.text.matchAll(re)) {
+      total++;
+      perPool.set(r.pool, (perPool.get(r.pool) ?? 0) + 1);
+      // Trim the sentence-start punctuation off so the phrase leads the snippet.
+      const at = m.index + m[0].search(/[A-Za-zÄÖÜäöü]/);
+      where.push(`[${loc(r)}] ${r.field}: "…${norm(r.text.slice(Math.max(0, at - 12), at + 58))}…"`);
+    }
+  }
+  if (total) tmplRows.push({ label, total, perPool, where, re });
+}
+tmplRows.sort((a, b) => b.total - a.total);
+sectionNo++;
+console.log(`\n== ${sectionNo}) Schablonen-Konstruktionen (Frequenz-Baseline der Redaktion) — ${tmplRows.reduce((a, r) => a + r.total, 0)} Treffer in ${tmplRows.length} Mustern ==`);
+for (const row of tmplRows) {
+  const dist = [...row.perPool.entries()].sort((a, b) => b[1] - a[1]).map(([p, c]) => `${p} ${c}`).join(', ');
+  console.log(`  ${String(row.total).padStart(3)}x  ${row.label}   (${dist})`);
+  row.where.slice(0, 10).forEach(w => console.log(`        ${w}`));
+  if (row.where.length > 10) console.log(`        … und ${row.where.length - 10} weitere — Muster: ${row.re}`);
+}
+
 /* ---------- 6) telegraph events: the rewrite queue ---------- */
 // Events whose result texts average below SHORT_RESULT chars. These are
 // the mass-produced ones; sorted ascending = worst first.
@@ -336,7 +385,11 @@ for (const r of records) {
   const t = norm(r.text);
   if (/\([^)]*\)\s*$/.test(t))
     legacyLabels.push(`[${loc(r)}] Klammer:  "${t}"`);
-  else if (/^[A-ZÄÖÜ][a-zäöüß-]+:\s/.test(t) && !/^(https?|Betreff):/i.test(t))
+  // Composite category prefixes ("Tech-Lösung:") slipped past the single-word
+  // pattern because of the capital after the hyphen. Catch the generic family
+  // only; character prefixes stay legal ("MacGyver-Lösung:" fails the
+  // lowercase-first-part test, "Bullshit-Bingo:" fails the second word).
+  else if ((/^[A-ZÄÖÜ][a-zäöüß-]+:\s/.test(t) || /^[A-ZÄÖÜ][a-zäöüß]+-(Lösung|Protokoll):\s/.test(t)) && !/^(https?|Betreff):/i.test(t))
     legacyLabels.push(`[${loc(r)}] Präfix:   "${t}"`);
 }
 section('Alt-Register Optionsbeschriftungen (Migrationsliste zum Hausstil)', legacyLabels, 900);
