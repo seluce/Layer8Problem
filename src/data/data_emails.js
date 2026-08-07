@@ -2032,7 +2032,7 @@ export const emails = [
     id: "mail_onboarding_wrong",
     sender: "Personalentwicklung",
     subj: "Zugangsdaten für unseren neuen Kollegen (bitte weiterleiten)",
-    body: "Guten Morgen Herr Müller,\n\nda Frau Müller aus dem Onboarding weiterhin ausfällt und Sie in unserer Verteilerliste direkt über ihr stehen, senden wir Ihnen die Zugangsdaten für unseren neuen Junior Assistant. Sie arbeiten ja ohnehin den ganzen Tag mit Computern.\n\nLogin: j_schnoesel\nPasswort: Synergy2026!\n\nHinweis der IT: Das Initialpasswort ist für sämtliche Konten im Haus identisch und darf nicht geändert werden, das verwirrt die Datenbank.\n\nBitte leiten Sie die Mail an ihn weiter. Ein Postfach hat er noch nicht.",
+    body: "Guten Morgen Herr Müller,\n\nda Frau Müller aus dem Onboarding weiterhin ausfällt und Sie in unserer Verteilerliste direkt über ihr stehen, senden wir Ihnen die Zugangsdaten für unseren neuen Junior Assistant. Sie arbeiten ja ohnehin den ganzen Tag mit Computern.\n\nLogin: j_schnoesel\nPasswort: Synergy123!\n\nHinweis der IT: Das Initialpasswort ist für sämtliche Konten im Haus identisch und darf nicht geändert werden, das verwirrt die Datenbank.\n\nBitte leiten Sie die Mail an ihn weiter. Ein Postfach hat er noch nicht.",
     opts: [
         {
             t: "Ausdrucken und Schnösel auf den Tisch legen",

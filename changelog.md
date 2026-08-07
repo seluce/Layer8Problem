@@ -1,52 +1,45 @@
-[4.1.0] - 2026-08-05
+[4.1.0] - 2026-08-07
 
-Ein Pflege-Update mit ein paar Neuerungen am Rand. In der letzten Zeit kamen
-viele neue Ereignisse dazu, die sich anders lasen als der Altbestand: Vor allem
-die älteren waren mit Meta-Angaben ausgezeichnet, an denen man vorab ablesen
-konnte, wie eine Option wirkt. Das ist jetzt überall einheitlich.
+Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser
+erzählt, einheitlich beschriftet und von einer Reihe alter Macken befreit.
 
 Ereignisse & Texte:
-* Alle rund 230 Ereignisse wurden redaktionell überarbeitet. Optionen und Auswirkungen sind unverändert, nur die Sprache ist jetzt überall dieselbe: Ältere Ereignisse waren karg und wiederholten einander, spielweit standen 245 Sätze doppelt, jetzt sind es 172.
-* Das Tagebuch am Feierabend erzählt vom Tag statt von den Erfolgen: ob es früh brannte oder erst nach zwei kippte, wie viele Tassen es gebraucht hat, wer heute anders über einen denkt als heute Morgen. 75 Bausteine statt 40, und zuletzt benutzte Sätze werden übersprungen - in einer Arbeitswoche wiederholt sich noch jeder elfte statt jedem zweiten.
-* Die Auftakte klingen nicht mehr nach Schablone: 64 Eröffnungen sind neu geschrieben. "Du willst..." begann 22 Ereignisse, jetzt 9; das Füllwort "plötzlich" stand 47-mal im Text, jetzt 14-mal. An einem Ereignis fällt so etwas nicht auf, an fünfzig hintereinander schon.
+* Sämtliche Ereignisse wurden redaktionell überarbeitet, in mehreren Durchgängen: erst gegen Kargheit und wörtliche Wiederholung, dann gegen den Erzähler, der seine Pointen erklärt. Schlusssätze wie "Du hast gewonnen, aber du bist ein Monster" sind gestrichen oder durch eine Reaktion ersetzt - das Urteil fällt wieder der Spieler. Optionen und Auswirkungen sind unverändert.
+* Das Tagebuch am Feierabend erzählt vom Tag statt von den Erfolgen: ob es früh brannte oder erst nach zwei kippte, wie viele Tassen es gebraucht hat, wer heute anders über einen denkt als heute Morgen. Zuletzt benutzte Sätze werden übersprungen - Wiederholungen sind selten geworden.
+* Auftakte und Formulierungen klingen nicht mehr nach Schablone: Baukasten-Sätze wie "plötzlich", "Du hast X, aber Y" oder "Du fühlst dich ..." stehen nur noch dort, wo sie eine Figur oder eine Pointe tragen.
 
 Anzeige & Layout:
-* Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. 817 Beschriftungen sind vom Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)") auf das umgestellt, was Müller tut oder sagt. Ob eine Antwort feige oder ehrlich war, entscheidet der Ergebnistext - nicht der Knopf davor.
-* Im Rucksack öffnen sich die Gegenstands-Beschreibungen jetzt auch mit dem Finger. Bisher erschienen sie nur unter dem Mauszeiger - am Handy und auf dem Steam Deck erfuhr man nie, was ein Gegenstand kann und ob er die Benutzung übersteht. Ein Tipp zeigt, ein zweiter benutzt.
-* Bilder stehen beim Öffnen sofort da statt mit Verzögerung - im Archiv, im Team, auf den Ereignis-Karten und im Rucksack. Sie werden jetzt beim Start geholt: in der Steam-Fassung gleich, im Browser in einer ruhigen Minute, damit sie den Spieldaten nicht die Leitung wegnehmen.
-* Im Messenger sind die Handlungs-Knöpfe kürzer: statt "[System: Chat stummschalten und archivieren]" steht dort "[Chat stummschalten und archivieren]". Die eckigen Klammern sagen ohnehin, dass es keine Nachricht ist, und im schmalen Chatfenster sind acht Zeichen eine Menge. In den Chat-Blasen bleibt die Systemmeldung.
-* Das Smartphone zeigt Kontaktfotos: Ein Chat mit einer bekannten Figur zeigt ihr Porträt statt der Initiale. In Gruppen-Chats kann jede Nachricht ihr eigenes Gesicht haben, während der Rest anonym bleibt. Unbekannte Nummern behalten die Initiale - wie im echten Adressbuch.
-* Die Erzähltexte stehen nicht mehr in Anführungszeichen. Die Hülle behauptete einen Sprecher, den es nicht gibt - wer spricht, steht ohnehin in '...' markiert im Text, und bei den 86 Ereignissen, die direkt mit wörtlicher Rede beginnen, standen drei Anführungszeichen in Folge. Tagebuch, Mails und Telefon kamen immer schon ohne aus.
+* Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. Beschriftungen im Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)", "Tech-Lösung: ...") sind auf das umgestellt, was Müller tut oder sagt.
+* Im Rucksack öffnen sich die Gegenstands-Beschreibungen jetzt auch per Fingertipp - wichtig am Handy und auf dem Steam Deck. Ein Tipp zeigt, ein zweiter benutzt.
+* Bilder stehen beim Öffnen sofort da: Porträts, Gegenstände und Trophäen werden beim Start vorgeladen.
+* Im Messenger sind die Handlungs-Knöpfe kürzer ("[Chat stummschalten]" statt "[System: Chat stummschalten]"), und Chats mit bekannten Figuren zeigen ihr Porträt statt der Initiale - in Gruppen-Chats sogar pro Nachricht.
+* Die Erzähltexte stehen nicht mehr in Anführungszeichen. Die Hülle behauptete einen Sprecher, den es nicht gibt; wörtliche Rede ist ohnehin im Text markiert.
 
 Fehlerkorrekturen:
-* Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren. Zwei unsichtbare Sonderzeichen vor der Beschriftung hatten der Option ihr Verhalten genommen.
-* Im Gruppen-Chat der Kollegen verpuffte eine Ruf-Wirkung: Wer die Lästerei ignoriert, verliert jetzt wie vorgesehen bei Chantal und Kevin an Ansehen.
-* In der Tastenbelegung zeigt eine schon vergebene Taste zuverlässig, wer sie belegt, und die reservierten Tasten 4, 5 und 6 sagen, dass sie reserviert sind.
-* Die Ausrede wird pro Ereignis gezogen statt bei jedem Öffnen des Fensters. Wer zuklappte und wieder aufmachte, bekam jedes Mal eine neue - und konnte sich so durch den ganzen Vorrat lesen, ohne je eine zu verbrauchen.
-* Der Anruf-Knopf sprang schon bei sieben offenen Tickets auf Blau, der Zähler oben blinkte erst ab acht. Beide reagieren jetzt auf dieselbe Zahl - ab acht.
-* Im Archiv schimmerte hinter jedem Gegenstand sein Symbol durch: Es lag als Platzhalter dauerhaft unter dem Bild und war bei allen freigestellten sichtbar. Jetzt wird genau eines von beiden gezeichnet.
-* Auf schmalen Bildschirmen ragten die Gegenstands-Beschreibungen im Rucksack über den Rand hinaus. Sie richten sich jetzt nach der tatsächlichen Spaltenzahl - drei am Handy, vier auf dem Tablet, fünf am Rechner.
-* Das Tagebuch verschluckte Begegnungen: Wer an einem Tag mehrere denkwürdige Dinge erlebt hat, bekam in zwei von drei Fällen nur die erste zu lesen. Jetzt steht dort, was der Tag hergegeben hat.
-* "Auf Standard zurücksetzen" wirkte, war aber nicht zu sehen: Die Werte galten sofort, die Schalter im offenen Fenster standen weiter auf den alten Stellungen. Wer danach einen umlegte, verlor unbemerkt seinen ersten Klick.
-* Ein unterbrochener Arbeitstag ließ sich versehentlich wegwerfen. Solange das Fenster fragte, ob man weitermachen will, öffnete Escape das Menü darüber - und "Tag neu starten" war dort nicht gesperrt. Ein Klick verwarf genau den Tag, den das Fenster anbot.
-* Dasselbe Loch klaffte über der Tageswahl und über einer offenen Mail. Die Mail hat bewusst keinen Schließen-Knopf - auch das Löschen ist eine Entscheidung mit Folgen, und Escape war die Hintertür daran vorbei.
-* Das "…"-Abzeichen an Antworten sagt jetzt die Wahrheit. Es hing am Namen des Ziels (res_-Präfix), die Engine schlägt aber strukturell nach - bei über hundert Kettenausgängen versprach das Abzeichen ein Weiterreden, und dann legte das Gespräch auf. Anzeige und Engine stellen jetzt dieselbe Frage: Zeigt die Antwort auf einen weiteren Gesprächsknoten?
-* Spielstand exportieren und importieren ging nicht mehr auf. Der Klick löste einen Fehler aus, der stillschweigend aufgefangen wurde - für den Spieler passierte einfach nichts. Betroffen war beides, über das Startfenster wie über die Einstellungen.
-* Am Handy scrollte die Seite hinter einem offenen Fenster, sobald man ein zweites darüber wieder geschlossen hatte - etwa die Tastenbelegung über den Einstellungen oder "Benutzen?" über dem Rucksack. Am Rechner war das nie zu sehen.
-* Schreib- und Logikfehler in diversen Ereignissen behoben.
+* Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren.
+* Im Gruppen-Chat der Kollegen wirkt die Ruf-Strafe fürs Ignorieren der Lästerei jetzt wie vorgesehen.
+* Die Tastenbelegung zeigt zuverlässig, welche Taste schon vergeben oder reserviert ist.
+* Die Ausrede wird pro Ereignis gezogen statt bei jedem Öffnen des Fensters - der Vorrat ließ sich vorher folgenlos durchblättern.
+* Anruf-Knopf und Ticket-Zähler warnen jetzt bei derselben Zahl: ab acht.
+* Im Archiv schimmerte hinter freigestellten Gegenständen das Symbol durch, und im Rucksack ragten die Beschreibungen auf schmalen Bildschirmen über den Rand. Beides behoben.
+* Das Tagebuch verschluckt keine Begegnungen mehr, wenn ein Tag mehrere hergab.
+* "Auf Standard zurücksetzen" aktualisiert jetzt auch die sichtbaren Schalter.
+* Escape war eine Hintertür an Entscheidungen vorbei: Über der Weiterspielen-Frage, der Tageswahl und offenen Mails öffnete es das Menü darüber - ein Klick konnte dort den angebotenen Tag verwerfen. Geschlossen.
+* Das "…"-Abzeichen an Antworten verspricht nur noch dann ein Weiterreden, wenn tatsächlich ein Gesprächsknoten folgt.
+* Spielstand exportieren und importieren funktioniert wieder, über das Startfenster wie über die Einstellungen.
+* Am Handy scrollte die Seite hinter gestapelten Fenstern, sobald das obere geschlossen wurde.
+* Drei Mittags-Optionen verbrauchten ihren Gegenstand nicht (Energy Drink in der Sonne, Donut essen beziehungsweise verschenken). Jetzt kostet der Konsum, was der Text behauptet.
+* Schreib-, Grammatik- und Logikfehler in diversen Ereignissen behoben, darunter ein vermischtes Sprichwort und zweimal das falsche Geschlecht der Fremdscham.
 
 Für Entwickler:
-* Der Daten-Prüfer (npm run lint:data) kennt fünf neue Regeln: die Löschen-Konvention im Postfach, verwaiste unsichtbare Zeichen (U+200B, U+FEFF und Variation-Selektoren ohne Emoji davor), Charakter-Namen auf Knoten-Ebene, unbekannte Felder und Result-Schlüssel ohne res_-Präfix. Die erste hätte die Kündigungsliste gemeldet, bevor sie ausgeliefert wurde.
-* Die Regel für unbekannte Felder prüft je Stelle, was die Engine dort wirklich liest: Ein reqStory an einer Mittagspause oder ein req in einer Mail wird nie ausgewertet und ist ab sofort ein Fehler statt ein stiller Blindgänger. Sie fand zwei Altlasten in den Dienstgängen, darunter die verschluckte Ruf-Wirkung oben.
-* Die Beschriftung einer Antwort heißt jetzt in allen Datendateien t. Im Postfach hieß dasselbe Feld historisch btn - 416 Auswahlen sind umbenannt, dazu die fünf Stellen, die es lasen. Eine Sonderregel weniger beim Schreiben neuer Ereignisse.
-* Phone-Ereignisse werten char jetzt auch pro Knoten aus - für Gruppen-Chats, in denen nur einzelne Stimmen ein Gesicht haben. Der Knoten gewinnt, sonst erbt er das Ereignis, und char: null erzwingt die Initiale trotz Ereignis-Figur.
-* Der Prosa-Bericht (tools/report-prose.mjs) hat zwei Abschnitte mehr: Alt-Register in Beschriftungen und Schablonen in Auftakten. Beide Listen waren die Arbeitsgrundlage dieser Version und stehen jetzt überall auf null.
-* Die Einstellungen sind eine Komponente (src/components/SettingsView.svelte). Vorher waren es 280 Zeilen Formular in index.html, deren siebzehn Felder beim Öffnen einzeln aus dem Zustand nachgefüllt wurden. Jetzt lesen sie den Zustand direkt, und eine neue Einstellung ist ein Tabelleneintrag statt vierzehn Zeilen Markup. Sichtbar ändert sich nichts.
-* Der Schalter für die Tasten-Symbole ist in die Tastenbelegungs-Komponente gewandert - das letzte Bedienelement, das beim Öffnen seines Fensters von außen befüllt wurde. Damit gibt es keine setting-IDs mehr.
-* PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird. Sie stand seit ihrer Einführung unbenutzt da, während der Spielstand-Löscher seine eigene Aufzählung von Hand pflegte - genau die doppelte Buchführung, gegen die die Liste angelegt worden war.
-* Overlays werden überall gleich geschaltet. Intro und Tageswahl liefen als einzige von achtzehn über style.display statt über die hidden-Klasse; ein Inline-Stil verdeckt die Klasse aber, ohne sie zu entfernen, weshalb jede Prüfung "ist das Fenster offen?" mit Nein antwortete. showOverlay, hideOverlay und das neue isOverlayOpen sind jetzt die einzige Stelle, die diese Kodierung kennt.
-* Die Bildlauf-Sperre wird als Menge benannter Halter geführt statt als Schalter. Fenster können übereinander liegen; bisher gab das Schließen des oberen die Seite frei, obwohl das untere noch stand. Ein Zähler hätte dasselbe geleistet, bis er einmal aus dem Tritt gerät - eine Menge kann das nicht.
-* Was ein Gegenstand bewirkt, steht jetzt beim Gegenstand. Wirkung, Dialogtexte, Protokollzeile und Wartezeit liegen in data_items.js unter `use`; ob etwas benutzbar ist, ergibt sich daraus. Vorher war dasselbe Wissen auf fünf Stellen verteilt - zwei if-Ketten in engine_inventory.js, zwei wortgleiche CONSUMABLES-Listen in den Rucksack-Komponenten und die Wartezeit des Stressballs an vier Stellen als nackte 60. engine_inventory.js schrumpft von 175 auf 115 Zeilen, der Linter prüft die neuen Felder. Alle 30 Gegenstände verhalten sich unverändert, nachgemessen.
+* Der Daten-Prüfer (npm run lint:data) kennt fünf neue Regeln, darunter unbekannte Felder je Kontext: Ein req in einer Mail ist jetzt ein Fehler statt ein stiller Blindgänger. Die Regeln fanden zwei Altlasten, darunter die verschluckte Ruf-Wirkung oben.
+* Die Beschriftung einer Antwort heißt in allen Datendateien t; im Postfach hieß dasselbe Feld historisch btn.
+* Phone-Ereignisse werten char auch pro Knoten aus - für Gruppen-Chats; char: null erzwingt die Initiale.
+* Der Prosa-Bericht (tools/report-prose.mjs) hat drei Abschnitte mehr: Alt-Register in Beschriftungen (auch zusammengesetzte Präfixe wie "Tech-Lösung:"), Schablonen in Auftakten und eine Frequenz-Zählung wiederkehrender Formulierungsmuster - Letztere bewusst als Leseliste und Vorher-nachher-Messung, nicht als Fehlerliste.
+* Einstellungen und Tastenbelegung sind eigenständige Komponenten; kein Bedienelement wird mehr beim Öffnen von außen befüllt.
+* Overlays laufen alle über dieselben drei Funktionen (showOverlay, hideOverlay, isOverlayOpen), die Bildlauf-Sperre über eine Menge benannter Halter - beides beendet je eine Klasse stiller Fehler, darunter einen reproduzierbaren Datenverlust-Pfad.
+* Was ein Gegenstand bewirkt, steht komplett beim Gegenstand (use-Block in data_items.js) statt an fünf Stellen. Alle 30 Gegenstände verhalten sich unverändert, nachgemessen.
+* PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird.
 
 
 [4.0.0] - 2026-08-03

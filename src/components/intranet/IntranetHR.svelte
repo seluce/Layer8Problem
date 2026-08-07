@@ -21,7 +21,7 @@
     const data = $derived(game.intranetData?.hr ?? null);
 
     // One password for everyone. That is the joke, and it is also the policy.
-    const PASSWORD = 'Synergy2026!';
+    const PASSWORD = 'Synergy123!';
     const ACCOUNTS = {
         j_schnoesel: 'schnoesel',
         mueller:     'mueller'
