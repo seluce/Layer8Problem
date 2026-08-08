@@ -32,6 +32,82 @@ export const special = {
                 ]
 	},
 
+	/* Week mode (v4.2): one line about the night itself on the night screen.
+	   Chosen by week level; 'worn' takes over from the third night on, when
+	   the recovery rates have visibly decayed (engine_week WEEK_TUNING.wearPP).
+	   Pure flavour - the numbers stand right above it in the baggage block. */
+	week_sleep: {
+		easy: {
+			fresh: [
+				"Du schläfst tief und traumlos. Der Resturlaub im Blut wirkt noch.",
+				"Acht Stunden, durchgeschlafen. Dein Körper weiß offenbar noch, wie das geht."
+			],
+			worn: [
+				"Du schläfst ordentlich, aber das Aufwachen dauert jeden Morgen ein bisschen länger.",
+				"Guter Schlaf, nur die Träume spielen inzwischen im Büro."
+			]
+		},
+		normal: {
+			fresh: [
+				"Du schläfst passabel. Einmal wachst du auf, weil du im Traum ein Ticket schließt, das es nicht gibt.",
+				"Der Schlaf kommt spät, bleibt aber. Immerhin verhandelt er nicht."
+			],
+			worn: [
+				"Der Schlaf arbeitet nur noch Dienst nach Vorschrift: anwesend, aber unmotiviert.",
+				"Du wachst vor dem Wecker auf und ärgerst dich über die verschenkten Minuten."
+			]
+		},
+		hard: {
+			fresh: [
+				"Du wälzt dich lange. Als der Schlaf endlich kommt, bringt er die Arbeit einfach mit.",
+				"Vier Stunden echter Schlaf, der Rest ist Deckenstudium. Urlaubsreif eben."
+			],
+			worn: [
+				"Du drehst die Decke um, aber die Probleme drehen sich mit. Erholung sieht anders aus.",
+				"Die Nacht ist eher eine Pause zwischen zwei Tagen als ein Schlaf. Dein Körper merkt sich das."
+			]
+		}
+	},
+
+	/* Week mode (v4.2): the daily contingent of an action pool is used up.
+	   One entry per pool. Effects mirror empty_pool EXACTLY (m 20, f 5,
+	   a -5) because tools/simulate-week.mjs models idle clicks with these
+	   numbers - the two must not drift apart. */
+	week_idle: {
+		coffee: {
+			id: "fallback_week_coffee",
+			title: "Kaffeeküche leergefegt",
+			text: "Die Kanne ist kalt, der Vollautomat blinkt ENTKALKEN und jemand hat den letzten Filter als Notizzettel benutzt. Für heute ist hier nichts mehr zu holen.",
+			opts: [
+				{ t: "Leer ausgehen", m: 20, f: 5, a: -5, c: 0, r: "Du starrst in die leere Kanne. Morgen wieder." }
+			]
+		},
+		server: {
+			id: "fallback_week_server",
+			title: "Serverraum verdächtig still",
+			text: "Alle Lämpchen blinken grün. Kein Lüfter jault, kein Kabel schmort. Das macht dich nervöser als jeder Ausfall, aber es gibt schlicht nichts zu tun.",
+			opts: [
+				{ t: "Misstrauisch lauschen", m: 20, f: 5, a: -5, c: 0, r: "Nichts. Unheimlich. Du gehst rückwärts wieder raus." }
+			]
+		},
+		calls: {
+			id: "fallback_week_calls",
+			title: "Die Hotline schweigt",
+			text: "Kein Anruf. Du hebst testweise ab: Freizeichen. Entweder sind alle Probleme gelöst oder alle haben aufgegeben. Beides wäre ein Novum.",
+			opts: [
+				{ t: "Auf Anrufe warten", m: 20, f: 5, a: -5, c: 0, r: "Das Telefon bleibt stumm. Du legst den Hörer verkehrt herum auf. Falls doch wer anruft." }
+			]
+		},
+		sidequests: {
+			id: "fallback_week_sidequests",
+			title: "Kein Dienstgang mehr",
+			text: "Der Flur ist leer, die Küche ist leer, sogar Kevin ist irgendwo verschwunden. Für heute hat das Gebäude keine Ablenkung mehr für dich übrig.",
+			opts: [
+				{ t: "Ziellos herumstehen", m: 20, f: 5, a: -5, c: 0, r: "Du drehst eine Runde und landest wieder am Schreibtisch." }
+			]
+		}
+	},
+
 	empty_pool: {
 		id: "fallback_empty",
 		title: "Ruhe vor dem Sturm",

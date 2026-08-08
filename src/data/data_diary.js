@@ -33,6 +33,32 @@
 export const diary = {
     // Opening line: the mood of the day. First match wins, so the fallback goes last.
     mood: [
+        // Week runs (v4.2): rank 2 so these beat the difficulty-day openings,
+        // which would read Montag/Freitag flavour into the wrong weekday.
+        {
+            id: "mood_week_monday", rank: 2, when: d => d.week && d.weekDay === 1,
+            lines: [
+                "Montag, und diesmal zählt er nicht für sich allein. Vier weitere warten schon dahinter, ordentlich aufgereiht wie Tickets.",
+                "Der erste von fünf. Ich habe heute Morgen kurz überlegt, die Woche als Ganzes krankzumelden. Man kann es ja mal denken.",
+                "Wochenstart. Was ich heute liegen lasse, liegt morgen immer noch da — das ist neuerdings wörtlich gemeint."
+            ]
+        },
+        {
+            id: "mood_week_friday", rank: 2, when: d => d.week && d.weekDay === 5,
+            lines: [
+                "Freitag. Vier Tage stecken mir in den Knochen, und alle vier haben etwas dagelassen.",
+                "Der letzte Tag der Woche. Ich rieche schon das Wochenende, aber dazwischen steht noch dieser Freitag wie ein Möbelstück im Flur.",
+                "Fünfter Tag. Ich zähle nicht mehr, was diese Woche alles passiert ist — der Rucksack erinnert mich von selbst daran."
+            ]
+        },
+        {
+            id: "mood_week_mid", rank: 2, when: d => d.week,
+            lines: [
+                "{weekday}. Die Woche hat einen Rhythmus gefunden, und er ist nicht meiner.",
+                "Wieder ein {weekday}, wieder derselbe Schreibtisch, und der Stapel darauf kennt mich inzwischen beim Namen.",
+                "{weekday}. Ich merke, wie die Tage aneinanderkleben — was gestern war, ist heute noch nicht vorbei."
+            ]
+        },
         // Weekday rather than achievement: fits days on which nothing special happened.
         {
             id: "mood_monday", rank: 1, when: d => d.difficulty === 'hard',
@@ -313,7 +339,7 @@ export const diary = {
     // Collecting slot: the valve and the written warning, both of which happened today.
     warnings: [
         {
-            id: "warn_rage", when: d => d.rageWarned,
+            id: "warn_rage", when: d => d.rageWarned && !d.week,
             lines: [
                 "ich zwischendurch einen halben Nervenzusammenbruch in der Besenkammer hatte",
                 "ich heute schon einmal kurz davor war, komplett die Kontrolle zu verlieren",
@@ -321,11 +347,25 @@ export const diary = {
             ]
         },
         {
-            id: "warn_chef", when: d => d.chefWarned,
+            id: "warn_chef", when: d => d.chefWarned && !d.week,
             lines: [
                 "der Chef mir heute bereits mit dem Rauswurf gedroht hat",
                 "ich nur haarscharf an einer fristlosen Kündigung vorbeigeschrammt bin",
                 "ich heute schon eine hochoffizielle und sehr laute Abmahnung kassiert habe"
+            ]
+        },
+        {
+            id: "warn_week_valve", when: d => d.week && d.rageWarned,
+            lines: [
+                "mein Ventil für diese Woche bereits verbraucht ist — der nächste Ausraster zählt",
+                "ich diese Woche schon einmal Dampf ablassen musste und das Kontingent damit aufgebraucht ist"
+            ]
+        },
+        {
+            id: "warn_week_chef", when: d => d.week && d.chefWarned,
+            lines: [
+                "die Abmahnung dieser Woche schon in meiner Akte liegt — die nächste wäre die letzte",
+                "der Chef sein Pulver für diese Woche verschossen hat, ich meins allerdings auch"
             ]
         }
     ],
@@ -349,6 +389,29 @@ export const diary = {
     ],
     // The closing line. {party} carries the text the gala finale brings along.
     ending: [
+        {
+            id: "end_week_won", rank: 2, when: d => d.week && d.weekDay === 5 && d.survived,
+            lines: [
+                "Fünf Tage. Ich habe alle fünf gesehen, von innen, in voller Länge. Jetzt gehört das Wochenende mir, und zwar verdient.",
+                "Freitag, Feierabend, Woche komplett. Ich schließe ab, und zum ersten Mal seit Montag schließt nichts hinter mir auf.",
+                "Die Woche ist durch. Ich lasse den Stuhl angelehnt, das Licht aus und die Firma einfach Firma sein. Bis Montag ist das nicht mein Problem."
+            ]
+        },
+        {
+            id: "end_week_thursday", rank: 3, when: d => d.week && d.weekDay === 4 && d.end === 'WIN',
+            lines: [
+                "Donnerstag geschafft. Nur noch der Freitag — das klingt nach wenig und ist erfahrungsgemäß am meisten.",
+                "Ein Tag noch. Ich gehe schlafen wie ein Läufer auf der Zielgeraden: zu müde für Freude, zu nah dran zum Aufgeben."
+            ]
+        },
+        {
+            id: "end_week_night", rank: 2, when: d => d.week && d.weekDay < 5 && d.end === 'WIN',
+            lines: [
+                "Feierabend, aber nicht Schluss: {restdays} Tage stehen noch aus. Der Rechner geht aus, die Liste nicht.",
+                "Tag abgehakt, Woche nicht. Ich nehme mit nach Hause, was der Tag übrig gelassen hat, und morgen früh verteilt es sich wieder auf dem Schreibtisch.",
+                "Geschafft für heute. Morgen ist wieder so ein Tag, und übermorgen auch — das ist diesmal keine Redensart, sondern der Spielstand."
+            ]
+        },
         {
             id: "end_win_late", rank: 1, when: d => d.end === 'WIN' && d.endHour >= 16 && d.tickets <= 1,
             lines: [
@@ -433,6 +496,21 @@ export const diary = {
     ],
     // Marginal note, only on days that were survived. Nothing else writes here yet.
     postscript: [
+        {
+            id: "post_week_baggage", rank: 1, when: d => d.week && d.survived && d.weekDay < 5 && d.tickets > 0,
+            lines: [
+                "Nachtrag: {tickets} Tickets nehme ich mit ins Bett. Nicht wörtlich, aber sie werden trotzdem da sein, wenn ich aufwache.",
+                "Nachtrag: Die Warteschlange schläft nicht, sie wartet nur. {tickets} Stück stehen morgen früh wieder stramm.",
+                "Nachtrag: Ich habe die offenen Tickets nicht erledigt, ich habe sie vertagt. Das Wort macht einen Unterschied, das Gefühl nicht."
+            ]
+        },
+        {
+            id: "post_week_clean", rank: 1, when: d => d.week && d.survived && d.weekDay < 5 && d.tickets === 0,
+            lines: [
+                "Nachtrag: Warteschlange leer. Morgen fange ich bei null an — im Wortsinn, und das kommt in dieser Woche einem Urlaub am nächsten.",
+                "Nachtrag: Kein einziges Ticket bleibt über Nacht offen. Ich habe das Gefühl, das System plant bereits eine Gegenmaßnahme."
+            ]
+        },
         {
             id: "blind_hard", rank: 2, when: d => d.survived && d.blind && d.difficulty === 'hard',
             lines: [

@@ -74,7 +74,8 @@ oder bewusst ausbleibt.
 | `reqRep` | Begegnungen, dort Pflicht | Ruf-Schwelle, siehe Abschnitt 6. |
 | `kind` | Dienstgang, dort Pflicht | `"text"` (Terminal) oder `"phone"` (Handy-Chat). |
 | `appName` | Dienstgang-Chat | Welche App den Chat anzeigt, z. B. `"WhatsApp"`, `"Teams"`, `"SMS"`. |
-| `startNode`, `nodes`, `results` | Anrufe und Dienstgang | Gespräch mit Verlauf statt einer einzelnen Entscheidung, siehe Abschnitt 4. |
+| `startNode`, `nodes`, `results` | Anrufe, Dienstgang, Wochenmeeting | Gespräch mit Verlauf statt einer einzelnen Entscheidung, siehe Abschnitt 4. |
+| `startNodeGala` | Wochenmeeting | Zweiter Einstiegsknoten: greift, wenn am Abend die Gala ansteht — die Ansage kommt im Meeting, siehe Abschnitt 4. |
 | `loc` | Party, dort Pflicht | Ort der Feier: `"bar"`, `"buffet"`, `"dance"`, `"lounge"`, `"smoke"`. |
 | `timer`, `fail` | Bossfights, dort Pflicht | Countdown in Sekunden und was passiert, wenn er abläuft. |
 | `webOnly` | Kaffee, Serverraum, Anrufe, Dienstgang | Erscheint nur im Browser, nicht in der Steam-Fassung (für Ereignisse, die auf die Shop-Seite zeigen). |
@@ -167,8 +168,13 @@ Zwei Bereiche haben je ein Pflichtfeld mehr:
 ## 2. Porträts: das Feld `char`
 
 `char` blendet neben dem Text das Porträt einer Figur ein. Das gilt in **jedem** Bereich,
-nicht nur im Chat: Kaffee, Serverraum, Anruf, Dienstgang, Mittagspause, Bossfight und
-Party zeigen es gleichermaßen.
+nicht nur im Chat: Kaffee, Serverraum, Anruf, Dienstgang, Mittagspause, Bossfight,
+Party und Wochenmeeting zeigen es gleichermaßen.
+
+Ein Name, der **nicht** in `data_chars.js` steht, ist kein Fehler: Das Terminal zeigt
+dann eine Initialen-Kachel mit dem Namen darunter — wie ein Kontakt ohne Bild. Das ist
+die vorgesehene Darstellung für die austauschbaren Berater im Wochenmeeting, die
+bewusst nie ins Team und ins Ruf-System aufgenommen werden.
 
 ```js
 {
@@ -273,6 +279,22 @@ einen `startNode`, ein `nodes`-Objekt (die Gesprächsschritte) und ein `results`
   "…"-Abzeichen im Terminal hängt nicht am Namen — es schaut wie die Engine nach,
   ob das Ziel ein Knoten ist. Ein Ausgang darf also `truth` heißen und funktioniert
   trotzdem; `res_truth` liest sich nur besser.
+- **Knoten dürfen einen eigenen `char` tragen** (seit v4.2, Konvention vom Handy
+  übernommen): Der Knoten-`char` schlägt den Ereignis-`char`, `char: null` erzwingt
+  gar keinen. So wechselt eine Kette mitten im Gespräch den Sprecher — im Terminal
+  genauso wie im Handy-Chat.
+
+### Das Wochenmeeting (`data_meetings.js`, seit v4.2)
+
+Der Meeting-Pool nutzt den Ketten-Aufbau mit drei Sonderregeln. IDs beginnen mit
+`meet_`. `startNodeGala` ist ein zweiter Einstiegsknoten: Die Engine wählt ihn, wenn
+die Gala am selben Abend zündet — die "kurz halten"-Ansage gehört ins Gespräch, nicht
+in eine Systemmeldung. Und die externen Berater existieren **nur** als Knoten-`char`
+mit Initialen-Kachel (Abschnitt 2): kein `data_chars`-Eintrag, kein Ruf, kein Team —
+die Besetzung darf pro Ereignis frei erfunden werden und rotiert über die Wochen von
+selbst. Ruf bewegt sich im Meeting nur bei echten Figuren (Kevin, Chantal,
+Dr. Wichtig). Ausreden gibt es im Meeting keine — dem Wochenbericht entkommt man
+nicht.
 
 ```js
 // Anruf mit Verlauf (data_calls.js):

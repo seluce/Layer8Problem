@@ -106,7 +106,11 @@
                 <div class="flex items-center flex-1 mr-2">
                     <span class="mr-2 transition-colors duration-75 text-base shrink-0
                                  {o.isDelete ? 'text-slate-600 group-hover:text-red-500' : 'text-slate-500 group-hover:text-blue-400'}">
-                        {o.isDelete ? '🗑️' : '➥'}
+                        {#if o.isDelete}
+                            <img src="assets/img/ui/ui_trash.webp" alt="Löschen"
+                                 width="18" height="18" class="w-5 h-5 select-none"
+                                 onerror={(e) => e.currentTarget.outerHTML = '🗑️'}>
+                        {:else}➥{/if}
                     </span>
                     <span class="wrap-break-word leading-tight py-1">{o.opt.t}</span>
                 </div>

@@ -28,7 +28,7 @@
 
     // First match wins; red is the default.
     const THEMES = [
-        { match: ['FEIERABEND'],        title: 'text-green-500',  border: 'border-green-500' },
+        { match: ['FEIERABEND', 'GESCHAFFT', 'ÜBERLEBT'], title: 'text-green-500',  border: 'border-green-500' },
         { match: ['GALA VORBEI'],       title: 'text-pink-500',   border: 'border-pink-500' },
         { match: ['VENTIL', 'RAGE'],    title: 'text-orange-500', border: 'border-orange-500' }
     ];
@@ -46,13 +46,24 @@
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
 
+    // A finished week day (Monday to Thursday): not an ending, the run
+    // carries on tomorrow - so no reload, and the baggage block below.
+    const isNight = $derived(!!modal.isNight);
+    const rnd = (v) => Math.round(v ?? 0);
+
     // Context: what this day means for the career. The counters live in the
     // archive and survive a restart, which turns single days into a run.
     const stats = $derived(game.archive?.stats ?? {});
+    // A week run counts weeks, not days - "Arbeitstag Nr. 24" on a Friday
+    // balance sheet described the wrong unit.
     const tally = $derived(
-        (stats.daysStarted ?? 0) > 1
-            ? `Arbeitstag Nr. ${stats.daysStarted} · ${stats.daysSurvived ?? 0} überstanden`
-            : null
+        modal.isWeek
+            ? ((stats.weeksStarted ?? 0) > 1
+                ? `Arbeitswoche Nr. ${stats.weeksStarted} · ${stats.weeksSurvived ?? 0} überstanden`
+                : null)
+            : ((stats.daysStarted ?? 0) > 1
+                ? `Arbeitstag Nr. ${stats.daysStarted} · ${stats.daysSurvived ?? 0} überstanden`
+                : null)
     );
 </script>
 
@@ -83,7 +94,28 @@
             <DayReport cause={modal.cause} />
         {/if}
 
-        {#if isFinal && (hasChart || hasDiary)}
+        <!-- The night: what tomorrow inherits, before and after sleep. The
+             transparency is the feature - evenings are for planning. -->
+        {#if isNight && modal.night}
+            <div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1.5">
+                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">Das nimmst du mit in den {modal.nextDay}</div>
+                <div class="flex justify-between"><span>🎫 Tickets</span>
+                    <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
+                <div class="flex justify-between"><span>😡 Aggro</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
+                <div class="flex justify-between"><span>📡 Chef-Radar</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
+                <div class="flex justify-between"><span>🦥 Faulheit</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
+                <div class="flex justify-between"><span>🃏 Ausreden</span>
+                    <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
+                {#if modal.night.sleepText}
+                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{modal.night.sleepText}</div>
+                {/if}
+            </div>
+        {/if}
+
+        {#if (isFinal || isNight) && (hasChart || hasDiary)}
             <div class="flex flex-wrap justify-center gap-2 mb-4">
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
@@ -114,9 +146,10 @@
             {/if}
         {/if}
 
-        <button onclick={() => isFinal ? location.reload() : engine.closeModal()}
+        <button onclick={() => isNight ? engine.continueWeekNight()
+                             : isFinal ? location.reload() : engine.closeModal()}
                 class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
-            {isFinal ? 'NEUSTART' : 'VERSTANDEN'}
+            {isNight ? `WEITER · ${(modal.nextDay ?? '').toUpperCase()}` : isFinal ? 'NEUSTART' : 'VERSTANDEN'}
         </button>
     </div>
 {/if}

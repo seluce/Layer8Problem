@@ -1072,6 +1072,7 @@ export const ui = {
             // next launch would pull the old archive straight back in.
             engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
             engine.state.defaultDiff = 'ask';
+            engine.state.defaultWeekDiff = 'ask';
             platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
@@ -1087,9 +1088,9 @@ export const ui = {
             const iconSpan = btn.querySelector('#icon-hard-reset');
             
             textSpan.innerText = "Bist du dir sicher?";
-            iconSpan.className = "text-base"; 
+            iconSpan.className = "shrink-0"; 
             
-            btn.className = "w-full text-left px-4 py-3 bg-red-950/30 border border-red-500 rounded-lg transition-all text-red-400 text-sm font-bold flex items-center gap-3 mt-2 animate-pulse shadow-xs";
+            btn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/50 border border-red-500 rounded-lg transition-all flex items-center gap-3 animate-pulse shadow-xs";
             
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
@@ -1120,6 +1121,17 @@ export const ui = {
             softResetBtn.classList.toggle('pointer-events-none', locked);
             softResetBtn.classList.toggle('grayscale', locked);
             softResetBtn.disabled = locked;
+
+            // In a week the button does not restart "the day at 08:00" - it
+            // returns to the last night checkpoint, which can be a different
+            // weekday entirely. Saying 08:00 there would be a plain lie.
+            // In a week the button restarts the WEEK, not the day - the label
+            // has to say so, otherwise it promises the wrong scope.
+            const title = document.getElementById('text-soft-reset');
+            const sub = document.getElementById('sub-soft-reset');
+            const inWeek = this.state.week.active;
+            if (title) title.innerText = inWeek ? 'Woche neu starten' : 'Tag neu starten';
+            if (sub) sub.innerText = inWeek ? '(Zurück auf Montag)' : '(08:00 Uhr)';
         }
         // -------------------------------------------------------------
         
@@ -1127,8 +1139,8 @@ export const ui = {
         if (resetBtn) {
             resetBtn.dataset.armed = "false";
             document.getElementById('text-hard-reset').innerText = "Spielstand löschen";
-            document.getElementById('icon-hard-reset').className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
+            document.getElementById('icon-hard-reset').className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
+            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
         }
 
         const mainView = document.getElementById('menu-main-view');
@@ -1325,6 +1337,13 @@ export const ui = {
     saveDefaultDifficulty: function(val) {
         this.state.defaultDiff = val;
         localStorage.setItem(engine.KEYS.defaultDiff, val);
+        this.playAudio('ui');
+    },
+
+    /** The same for the week mode; see the note in engine_state. */
+    saveDefaultWeekDifficulty: function(val) {
+        this.state.defaultWeekDiff = val;
+        localStorage.setItem(engine.KEYS.defaultWeekDiff, val);
         this.playAudio('ui');
     },
 

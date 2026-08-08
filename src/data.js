@@ -46,6 +46,7 @@ const LOADERS = {
     emails:     () => import('./data/data_emails.js'),
     intranet:   () => import('./data/data_intranet.js'),
     lunch:      () => import('./data/data_lunch.js'),
+    meetings:   () => import('./data/data_meetings.js'),
     party:      () => import('./data/data_party.js'),
     reputation: () => import('./data/data_reputation.js'),
     server:     () => import('./data/data_server.js'),

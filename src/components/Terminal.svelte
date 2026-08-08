@@ -16,9 +16,10 @@
     import MorningView from './MorningView.svelte';
     import BootView from './BootView.svelte';
 
+    // The emoji stays as the fallback if an icon file is ever missing.
     const IDLE = {
-        system:  { icon: '🖥️', title: 'SYSTEM BEREIT',        sub: 'Wähle eine Aktion unten.', tone: '' },
-        halgerd: { icon: '🤖', title: 'H.A.L.G.E.R.D. BEREIT', sub: 'Warte auf Eingabe...',     tone: 'text-cyan-400' }
+        system:  { icon: '🖥️', img: 'act_idle',    title: 'SYSTEM BEREIT',        sub: 'Wähle eine Aktion unten.', tone: '' },
+        halgerd: { icon: '🤖', img: 'act_halgerd', title: 'H.A.L.G.E.R.D. BEREIT', sub: 'Warte auf Eingabe...',     tone: 'text-cyan-400' }
     };
 
     const idle = $derived(IDLE[state.terminal.variant] ?? IDLE.system);
@@ -30,7 +31,9 @@
       whenever it reset the panel, so the first reset silently dropped the
       responsive pair that index.html started with.
     -->
-    <div class="text-4xl md:text-6xl mb-4">{idle.icon}</div>
+    <img src="assets/img/actions/{idle.img}.webp" alt=""
+         width="80" height="80" class="w-12 md:w-20 h-12 md:h-20 mb-4 select-none"
+         onerror={(e) => e.currentTarget.outerHTML = `<div class="text-4xl md:text-6xl mb-4">${idle.icon}</div>`}>
     <h1 class="text-xl md:text-2xl font-bold {idle.tone}">{idle.title}</h1>
     <p>{idle.sub}</p>
 {:else if state.terminal.mode === 'event'}

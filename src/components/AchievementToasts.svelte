@@ -19,7 +19,11 @@
     <div class="achievement-toast"
          in:fly={{ x: 300, duration: 500 }}
          out:fly={{ x: 300, duration: 500 }}>
-        <div class="ach-icon">🏆</div>
+        <div class="ach-icon">
+            <img src="assets/img/ui/ui_archive.webp" alt="" width="28" height="28"
+                 class="w-7 h-7 select-none"
+                 onerror={(e) => e.currentTarget.outerHTML = '🏆'}>
+        </div>
         <div class="ach-text">
             <span class="ach-title">{toast.title}</span><br>
             <span class="ach-desc">{toast.desc}</span>

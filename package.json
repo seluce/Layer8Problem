@@ -13,7 +13,9 @@
     "start:dev": "electron .",
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
-    "sim": "node tools/simulate-day.mjs"
+    "sim": "node tools/simulate-day.mjs",
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs",
+    "sim:week": "node tools/simulate-week.mjs"
   },
   "build": {
     "appId": "com.layer8problem.game",

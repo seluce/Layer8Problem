@@ -17,11 +17,32 @@ const STORE_URL = 'https://store.steampowered.com/app/4487580/Layer8Problem/';
 
 // Maps the game's internal counter names onto the stat names configured in the
 // Steamworks backend. Anything not listed here is simply not reported.
+/**
+ * Internal counter -> Steam stat. Keys that are missing here never leave the
+ * machine, which is intended: the archive holds far more than Steam needs.
+ *
+ * Two subtleties:
+ *   - The three started_* keys share one Steam stat. daysStarted counts every
+ *     day Mueller ever lived, week days included (the chronicle numbers its
+ *     entries with it), so it would report week days as day runs. The
+ *     per-difficulty keys are namespaced (a week day writes started_week_easy)
+ *     and therefore count day runs only.
+ *   - Everything week-related is its own stat. A week is one run, not five.
+ */
 const STAT_NAMES = {
-    daysStarted:  'stat_started',
-    daysSurvived: 'stat_survived',
-    daysRageQuit: 'stat_ragequit',
-    daysFired:    'stat_fired'
+    // --- Single days ---
+    started_easy:   'stat_started',
+    started_normal: 'stat_started',
+    started_hard:   'stat_started',
+    daysSurvived:   'stat_survived',
+    daysRageQuit:   'stat_ragequit',
+    daysFired:      'stat_fired',
+
+    // --- Whole weeks (v4.2) ---
+    weeksStarted:   'stat_weeks_started',
+    weeksSurvived:  'stat_weeks_survived',
+    weeksRageQuit:  'stat_weeks_ragequit',
+    weeksFired:     'stat_weeks_fired'
 };
 
 export const desktop = {

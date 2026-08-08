@@ -70,6 +70,7 @@ export function freshDay(mult = 1.0) {
         bootLines: [],          // startup sequence, read by BootView.svelte
         dayActive: false,
         lunchDone: false,
+        meetingDone: false,   // week Friday finale (v4.2); day mode never sets it
         morningMoodShown: false,
         ticketWarning: false,
         chefWarningReceived: false,
@@ -191,8 +192,20 @@ export const state = $state({
     ...freshDay(1.0),
 
     // Difficulty multiplier (1.0 = default / "Mittwoch"). Set once when the
-    // player picks a day and kept across restarts.
+    // player picks a day and kept across restarts. Day mode identity - the
+    // week never writes it; week formulas go through engine.effMult().
     difficultyMult: 1.0,
+
+    // The week run (v4.2). Outlives every single day by definition; the
+    // per-day fields it carries across nights stay in freshDay() and are
+    // written back by engine_week.advanceWeekNight() after each reset.
+    week: {
+        active: false,      // is a Monday-to-Friday run in progress?
+        level: null,        // 'easy' | 'normal' | 'hard' (Erholt/Genervt/Urlaubsreif)
+        dayIndex: 1,        // 1 = Montag ... 5 = Freitag
+        weekLog: [],        // one summary line per finished day, for the balance sheet
+        repAtWeekStart: {}, // reputation snapshot from Monday morning
+    },
 
     // Whether the archive modal is on screen. components/ArchiveView.svelte
     // only renders while this is true, so its images load on first open.
@@ -273,6 +286,10 @@ export const state = $state({
     // the same, so the dropdown in components/SettingsView.svelte follows a
     // reset to defaults without having to be told.
     defaultDiff: localStorage.getItem(KEYS.defaultDiff) || 'ask',
+    // Same idea for the week mode, kept apart on purpose: the two pickers ask
+    // different questions (which weekday vs. how worn out Mueller is), so one
+    // shared preset would answer the wrong one.
+    defaultWeekDiff: localStorage.getItem(KEYS.defaultWeekDiff) || 'ask',
 
     // Is "reset to defaults" currently asking whether we really mean it?
     // The engine only sets the flag; the button's wording and colour follow

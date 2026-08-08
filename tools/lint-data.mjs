@@ -26,12 +26,12 @@ import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
 
-const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
+const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
 const itemIds = new Set(Object.keys(DB.items));
 const charNames = new Set(DB.chars.map(c => c.name));
 
@@ -134,8 +134,13 @@ for (const p of POOLS) {
     // Node-level chars (phone chats): a node's own char must exist too.
     // `char: null` is legitimate - it forces the anonymous initial inside
     // a character chat and must not be reported.
-    for (const [nid, node] of Object.entries(ev.nodes ?? {}))
-      if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
+    // EXCEPT the meetings pool: its consultants are meeting-local voices ON
+    // PURPOSE (no data_chars entry, no reputation, no team view - design
+    // 8.1); EventView renders them as name plus initials. Real characters in
+    // meetings stay protected through the rep key check above.
+    if (p !== 'meetings')
+      for (const [nid, node] of Object.entries(ev.nodes ?? {}))
+        if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
     if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" nicht in DB.chars`);
 
     for (const o of ev.opts ?? []) {
@@ -164,7 +169,8 @@ for (const p of POOLS) {
     }
 
     /* Erreichbarkeit */
-    const reached = new Set([ev.startNode]);
+    // startNodeGala is a second entry point (meetings, design 8.1).
+    const reached = new Set([ev.startNode, ev.startNodeGala].filter(Boolean));
     for (let changed = true; changed;) {
       changed = false;
       for (const nid of [...reached]) {
@@ -516,6 +522,7 @@ const EVENT_KEYS = {
   reputation: ['reqStory', 'reqRep'],
   party:      ['loc'],
   lunch:      [],
+  meetings:   ['startNodeGala'],   // alternative opening when tonight's gala fires (engine_week.triggerMeeting)
   tutorial:   ['type', 'step']
 };
 const OPT_KEYS      = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'req', 'rem', 'next', 'action'];

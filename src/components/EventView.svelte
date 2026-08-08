@@ -16,16 +16,17 @@
     import { DB } from '../data.js';
 
     const STYLES = {
-        calls:     { name: 'ANRUF',         color: 'text-blue-400',    border: 'border-blue-500',    icon: '📞', bg: 'bg-slate-900' },
-        boss:      { name: 'NOTFALL',       color: 'text-red-500',     border: 'border-red-500',     icon: '🚨', bg: 'bg-slate-900' },
-        rep:       { name: 'BEGEGNUNG',     color: 'text-yellow-300',  border: 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]', icon: '📖', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
-        sidequest: { name: 'DIENSTGANG',    color: 'text-purple-400',  border: 'border-purple-500',  icon: '🎲', bg: 'bg-slate-900' },
-        server:    { name: 'SERVERRAUM',    color: 'text-emerald-400', border: 'border-emerald-500', icon: '💾', bg: 'bg-slate-900' },
-        coffee:    { name: 'KAFFEE',        color: 'text-amber-400',   border: 'border-amber-500',   icon: '☕', bg: 'bg-slate-900' },
-        party:     { name: 'SYNERGY-GALA',  color: 'text-pink-400',    border: 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]',  icon: '🎉', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
-        lunch:     { name: 'MITTAGSPAUSE',  color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', bg: 'bg-slate-900' }
+        calls:     { name: 'ANRUF',         color: 'text-blue-400',    border: 'border-blue-500',    icon: '📞', img: 'act_calls',     bg: 'bg-slate-900' },
+        boss:      { name: 'NOTFALL',       color: 'text-red-500',     border: 'border-red-500',     icon: '🚨', img: 'act_boss',      bg: 'bg-slate-900' },
+        rep:       { name: 'BEGEGNUNG',     color: 'text-yellow-300',  border: 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]', icon: '📖', img: 'act_rep', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
+        sidequest: { name: 'DIENSTGANG',    color: 'text-purple-400',  border: 'border-purple-500',  icon: '🎲', img: 'act_sidequest', bg: 'bg-slate-900' },
+        server:    { name: 'SERVERRAUM',    color: 'text-emerald-400', border: 'border-emerald-500', icon: '💾', img: 'act_server',    bg: 'bg-slate-900' },
+        coffee:    { name: 'KAFFEE',        color: 'text-amber-400',   border: 'border-amber-500',   icon: '☕', img: 'act_coffee',    bg: 'bg-slate-900' },
+        party:     { name: 'SYNERGY-GALA',  color: 'text-pink-400',    border: 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]',  icon: '🎉', img: 'act_party', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
+        lunch:     { name: 'MITTAGSPAUSE',  color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', img: 'act_lunch', bg: 'bg-slate-900' },
+        meeting:   { name: 'WOCHENMEETING', color: 'text-sky-400',     border: 'border-sky-500 shadow-[0_0_12px_rgba(56,189,248,0.25)]',  icon: '📊', img: 'act_meeting', bg: 'bg-linear-to-b from-slate-900 to-slate-950' }
     };
-    const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', bg: 'bg-slate-900' };
+    const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', img: 'act_system', bg: 'bg-slate-900' };
 
     const EXCUSE_TYPES = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
     const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
@@ -38,6 +39,19 @@
 
     const portrait = $derived(
         ev.charName ? DB.chars?.find(c => c.name === ev.charName) ?? null : null
+    );
+
+    // Meeting-local voices (v4.2): a node char without a data_chars entry
+    // (the interchangeable consultants) renders as name plus initials -
+    // deliberately no real portrait, they stay out of the team for good.
+    const initials = $derived(
+        (ev.charName ?? '')
+            .split(/\s+/)
+            .map(w => w.replace(/[^A-Za-zÄÖÜäöü]/g, ''))
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(w => w[0].toUpperCase())
+            .join('')
     );
 
     const showExcuse = $derived(
@@ -111,7 +125,17 @@
 <div class="w-full max-w-2xl text-left fade-in {style.bg} border {style.border} p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0">
 
     <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
-        <span class="text-3xl shrink-0">{style.icon}</span>
+        <!-- Every header type carries a drawn icon now; the emoji in the table
+             above is only the fallback for a missing file. The four action
+             pools share theirs with the button bar, so an action looks the
+             same wherever it turns up. -->
+        {#if style.img}
+            <img src="assets/img/actions/{style.img}.webp" alt=""
+                 width="40" height="40" class="w-10 h-10 shrink-0 select-none"
+                 onerror={(e) => e.currentTarget.outerHTML = `<span class="text-3xl shrink-0">${style.icon}</span>`}>
+        {:else}
+            <span class="text-3xl shrink-0">{style.icon}</span>
+        {/if}
         <div class="flex flex-col min-w-0">
             <span class="{style.color} font-black uppercase tracking-widest text-sm wrap-break-word">{style.name}</span>
             <h2 class="text-xl md:text-2xl font-bold text-slate-100 wrap-break-word">{ev.title}</h2>
@@ -140,6 +164,11 @@
                     <div class="w-full h-full flex items-center justify-center text-5xl bg-slate-800/50">{portrait.icon}</div>
                 {/if}
             </div>
+        {:else if ev.charName}
+            <div class="hidden sm:flex shrink-0 w-28 h-28 md:w-32 md:h-32 bg-slate-900 border border-slate-600 rounded-xl shadow-lg flex-col items-center justify-center gap-1.5 px-1">
+                <div class="w-14 h-14 rounded-full bg-slate-700 border border-slate-500 flex items-center justify-center text-xl font-black text-slate-200">{initials}</div>
+                <span class="text-[10px] text-slate-400 font-mono text-center leading-tight">{ev.charName}</span>
+            </div>
         {/if}
     </div>
 
@@ -150,7 +179,11 @@
                     onclick={() => engine.chooseOption(o.opt)}>
                 <div class="flex items-center flex-1 mr-2 min-w-0">
                     <span class="mr-3 text-xl shrink-0">
-                        {#if o.locked}🔒{:else}<span class="{style.color} group-hover:text-white transition-colors">➤</span>{/if}
+                        {#if o.locked}
+                            <img src="assets/img/ui/ui_locked.webp" alt="Gesperrt"
+                                 width="20" height="20" class="w-6 h-6 select-none"
+                                 onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
+                        {:else}<span class="{style.color} group-hover:text-white transition-colors">➤</span>{/if}
                     </span>
                     <span class="text-left wrap-break-word py-1">
                         {o.opt.t}

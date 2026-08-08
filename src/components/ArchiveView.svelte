@@ -18,6 +18,7 @@
     // Renamed so the $state rune stays usable in this file - see the pitfall
     // noted in STRUCTURE.md.
     import { state as game } from '../engine/engine_state.svelte.js';
+    import { KEYS } from '../engine/keys.js';
     import { DB } from '../data.js';
 
     // Image files that failed to load. Until now the symbol was simply drawn
@@ -43,29 +44,82 @@
 
     const stats = $derived(game.archive.stats ?? { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 });
 
-    const DAY_STATS = [
-        { key: 'daysStarted',  label: 'Begonnen',   tone: 'text-slate-200' },
-        { key: 'daysSurvived', label: 'Überlebt',   tone: 'text-emerald-400' },
-        { key: 'daysRageQuit', label: 'Rage Quits', tone: 'text-orange-400' },
-        { key: 'daysFired',    label: 'Gefeuert',   tone: 'text-red-500' }
+    /**
+     * One block, two modes. Doubling the panel would have cost twice the
+     * space for numbers that are read one at a time anyway, so the two
+     * ledgers share a place and a shape - and the choice is remembered,
+     * because whoever plays the week wants to see the week next time too.
+     */
+    const MODES = [
+        { key: 'day',  label: 'Arbeitstag',   accent: 'text-blue-400',   border: 'border-blue-500/60' },
+        { key: 'week', label: 'Arbeitswoche', accent: 'text-purple-400', border: 'border-purple-500/60' }
     ];
 
-    // Weekdays say more than one overall rate: someone who survived ten
-    // Fridays but no Monday sees exactly that.
-    const WEEKDAYS = [
-        { key: 'easy',   label: 'Freitag',  bar: 'bg-green-500' },
-        { key: 'normal', label: 'Mittwoch', bar: 'bg-blue-500' },
-        { key: 'hard',   label: 'Montag',   bar: 'bg-red-500' }
-    ];
+    let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
+    const setMode = (key) => {
+        mode = key;
+        try { localStorage.setItem(KEYS.statsTab, key); } catch { /* private mode */ }
+    };
 
-    const weekdays = $derived(WEEKDAYS.map(d => {
-        const started  = stats['started_'  + d.key] ?? 0;
-        const survived = stats['survived_' + d.key] ?? 0;
-        return { ...d, started, survived,
+    // Same four questions per mode, different unit: days here, weeks there.
+    const COUNTERS = {
+        day: [
+            // Not daysStarted: that one numbers every day Mueller ever lived,
+            // week days included. The sum of the three day-mode keys is what
+            // the bars underneath add up to.
+            { key: 'dayRunsStarted', label: 'Begonnen', tone: 'text-slate-200' },
+            { key: 'daysSurvived', label: 'Überlebt',   tone: 'text-emerald-400' },
+            { key: 'daysRageQuit', label: 'Rage Quits', tone: 'text-orange-400' },
+            { key: 'daysFired',    label: 'Gefeuert',   tone: 'text-red-500' }
+        ],
+        week: [
+            { key: 'weeksStarted',  label: 'Begonnen',   tone: 'text-slate-200' },
+            { key: 'weeksSurvived', label: 'Überlebt',   tone: 'text-emerald-400' },
+            { key: 'weeksRageQuit', label: 'Rage Quits', tone: 'text-orange-400' },
+            { key: 'weeksFired',    label: 'Gefeuert',   tone: 'text-red-500' }
+        ]
+    };
+
+    // The bars say more than one overall rate: someone who survived ten
+    // Fridays but no Monday sees exactly that - and the same holds for the
+    // week, where the three states are the real difficulty.
+    const LEVELS = {
+        day: [
+            { key: 'easy',   label: 'Freitag',     bar: 'bg-green-500' },
+            { key: 'normal', label: 'Mittwoch',    bar: 'bg-blue-500' },
+            { key: 'hard',   label: 'Montag',      bar: 'bg-red-500' }
+        ],
+        week: [
+            { key: 'easy',   label: 'Erholt',      bar: 'bg-green-500' },
+            { key: 'normal', label: 'Genervt',     bar: 'bg-amber-500' },
+            { key: 'hard',   label: 'Urlaubsreif', bar: 'bg-red-500' }
+        ]
+    };
+
+    // Day mode reads the plain counters; the week keeps its own prefix.
+    const statOf = (level) => mode === 'day'
+        ? { started: stats['started_' + level] ?? 0, survived: stats['survived_' + level] ?? 0 }
+        : { started: stats['weeksStarted_' + level] ?? 0, survived: stats['weeksSurvived_' + level] ?? 0 };
+
+    // Day runs started are derived rather than stored, see the note above.
+    const dayRunsStarted = $derived(
+        (stats.started_easy ?? 0) + (stats.started_normal ?? 0) + (stats.started_hard ?? 0));
+    const counterValue = (key) => key === 'dayRunsStarted' ? dayRunsStarted : (stats[key] ?? 0);
+
+    const counters = $derived(COUNTERS[mode]);
+    const levels = $derived(LEVELS[mode].map(l => {
+        const { started, survived } = statOf(l.key);
+        return { ...l, started, survived,
                  percent: started ? Math.round(survived / started * 100) : 0 };
     }));
+    const hasLevels = $derived(levels.some(l => l.started > 0));
 
-    const hasWeekdays = $derived(weekdays.some(d => d.started > 0));
+    // Only while no week has been survived yet: how far the best run got.
+    const WEEK_BEST = ['–', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'ganze Woche'];
+    const weekBest = $derived(WEEK_BEST[Math.min(5, stats.weekBestDay ?? 0)]);
+    const showBest = $derived(mode === 'week'
+        && (stats.weekBestDay ?? 0) > 0 && (stats.weeksSurvived ?? 0) === 0);
+
     const streak      = $derived(stats.streak ?? 0);
     const streakBest  = $derived(stats.streakBest ?? 0);
 
@@ -143,30 +197,53 @@
                 </div>
             {/if}
 
+            <div class="flex items-center gap-1.5 mb-2">
+                {#each MODES as m (m.key)}
+                    <button type="button" onclick={() => setMode(m.key)}
+                            aria-pressed={mode === m.key}
+                            class="flex-1 text-[10px] font-bold uppercase tracking-widest py-1.5 rounded-sm border transition-colors
+                                   {mode === m.key
+                                     ? `bg-slate-800 ${m.accent} ${m.border}`
+                                     : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
+                        {m.label}
+                    </button>
+                {/each}
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {#each DAY_STATS as stat (stat.key)}
+                {#each counters as stat (stat.key)}
                     <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
                         <span class="text-[9px] text-slate-500 uppercase tracking-widest">{stat.label}</span>
-                        <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{stats[stat.key] ?? 0}</span>
+                        <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{counterValue(stat.key)}</span>
                     </div>
                 {/each}
             </div>
 
-            <!-- Per weekday: replaces a meaningless overall rate. -->
-            {#if hasWeekdays}
+            {#if showBest}
+                <p class="text-[9px] text-slate-500 uppercase tracking-widest text-center">
+                    Bester Lauf: <span class="text-slate-300 font-bold">{weekBest}</span>
+                </p>
+            {/if}
+
+            <!-- Per difficulty: replaces a meaningless overall rate. -->
+            {#if hasLevels}
                 <div class="space-y-1 px-1 pt-0.5">
-                    {#each weekdays as day (day.key)}
+                    {#each levels as level (level.key)}
                         <div class="flex items-center gap-2">
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-14 shrink-0">{day.label}</span>
+                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-20 shrink-0">{level.label}</span>
                             <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full {day.bar} rounded-full transition-all" style="width: {day.percent}%"></div>
+                                <div class="h-full {level.bar} rounded-full transition-all" style="width: {level.percent}%"></div>
                             </div>
                             <span class="font-mono text-[10px] text-slate-400 w-14 text-right shrink-0">
-                                {day.survived}/{day.started}
+                                {level.survived}/{level.started}
                             </span>
                         </div>
                     {/each}
                 </div>
+            {:else}
+                <p class="text-[10px] text-slate-600 text-center py-2">
+                    {mode === 'day' ? 'Noch kein Arbeitstag begonnen.' : 'Noch keine Arbeitswoche begonnen.'}
+                </p>
             {/if}
 
             {#if footnotes.length}

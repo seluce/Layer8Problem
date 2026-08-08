@@ -208,6 +208,8 @@ export const core = {
      * Sets become arrays for JSON.
      */
     saveDay: function() {
+        // A running week saves as one unit - the day slot never holds a half-week.
+        if (this.state.week.active) { this.saveWeek(); return; }
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
 
         try {
@@ -246,11 +248,12 @@ export const core = {
         }
     },
 
-    /** Restores a saved day and picks up again in a paused state. */
-    resumeDay: function() {
-        const day = this.loadDay();
-        if (!day) { this.reset(); return; }
-
+    /**
+     * Writes a stored day snapshot back onto the state. Shared by the day
+     * resume, the week resume and the week's soft reset, so the three can
+     * never disagree about what restoring a day means.
+     */
+    applyRestoredDay: function(day) {
         const SETS = ['usedIDs', 'usedEmails'];
         for (const [key, value] of Object.entries(day)) {
             if (key === 'savedAt') continue;
@@ -268,6 +271,20 @@ export const core = {
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+    },
+
+    /** Restores a saved run and picks up again in a paused state. */
+    resumeDay: function() {
+        // The resume dialog serves both modes; a stored week routes here too.
+        if (this._resumeKind === 'week') {
+            this._resumeKind = null;
+            this.resumeWeek();
+            return;
+        }
+        const day = this.loadDay();
+        if (!day) { this.reset(); return; }
+
+        this.applyRestoredDay(day);
 
         this.hideOverlay('resume-modal');
 
@@ -282,6 +299,14 @@ export const core = {
 
     /** From the resume dialog: discard the interim state, start fresh. */
     discardDay: function() {
+        if (this._resumeKind === 'week') {
+            this._resumeKind = null;
+            this.clearWeek();
+            this.hideOverlay('resume-modal');
+            this.playAudio('ui');
+            this.startWeekSelect();   // back into the WEEK flow: the picker
+            return;
+        }
         this.clearDay();
         this.hideOverlay('resume-modal');
         this.playAudio('ui');
@@ -437,6 +462,9 @@ export const core = {
 
     /** Short weekday name derived from the difficulty. */
     difficultyKey: function() {
+        // Week runs record under their own keys so they can never distort
+        // the day-mode achievement grades or the gala prerequisites.
+        if (this.state.week.active) return 'week_' + this.state.week.level;
         if (this.state.difficultyMult < 1.0) return 'easy';
         if (this.state.difficultyMult > 1.0) return 'hard';
         return 'normal';
@@ -462,18 +490,32 @@ export const core = {
             platform.stat(key, st[key]);
         };
 
+        // The plain day counters stay day mode only, otherwise the archive's
+        // "Arbeitstag" figures would silently include week days and no longer
+        // match the per-weekday bars underneath them. Week days are recorded
+        // through their own namespace (survived_week_*, see difficultyKey) and
+        // the week itself through recordWeekResult().
+        const dayMode = !this.state.week.active;
+
         if (outcome === 'survived') {
-            bump('daysSurvived');
+            if (dayMode) bump('daysSurvived');
             bump('survived_' + diff);
+            // The streak is deliberately mode-agnostic: it counts days
+            // survived in a row, and a week day is a day survived.
             st.streak = (st.streak || 0) + 1;
             if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
         } else {
-            bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
+            if (dayMode) bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
             st.streak = 0;   // A streak ends where the day ends.
         }
 
-        if (this.state.rageWarningReceived) bump('ventSaves');
-        if (this.state.chefWarningReceived) bump('warningsChef');
+        // In week mode the two safety flags survive the nights (valve and
+        // warning are weekly), so counting them per day would inflate the
+        // stats - recordWeekResult() counts them once at the week's end.
+        if (!this.state.week.active) {
+            if (this.state.rageWarningReceived) bump('ventSaves');
+            if (this.state.chefWarningReceived) bump('warningsChef');
+        }
 
         this.saveSystem();
     },
@@ -499,20 +541,10 @@ export const core = {
 		this.playMusic('office');
         this.hideOverlay('intro-modal');
 
-        // Is there an interrupted workday? Asking about it comes before the
+        // Is there an interrupted DAY? Asking about it comes before the
         // difficulty picker, otherwise the first click would discard it.
-        const saved = this.loadDay();
-        const resumeModal = document.getElementById('resume-modal');
-        if (saved && resumeModal) {
-            const pad = (n) => String(n).padStart(2, '0');
-            const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
-            const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
-                       : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
-            const info = document.getElementById('resume-info');
-            if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
-            this.showOverlay(resumeModal);
-            return;
-        }
+        // A stored week is not offered here - it belongs to the other button.
+        if (this.offerResume('day')) return;
 
         // Did the player pin a default difficulty? Read from state, which was
         // seeded from localStorage at boot - one place to ask, same as every
@@ -531,6 +563,44 @@ export const core = {
                 this.setDifficulty('normal'); // Fallback
             }
         }
+    },
+
+    /**
+     * Offers to continue an interrupted run of the CHOSEN mode. Each mode
+     * entry asks only about its own slot: clicking "Arbeitstag" with a
+     * stored week (or the other way round) never shows the foreign save -
+     * the other slot stays untouched and waits for its own button.
+     * Returns true when the resume dialog is on screen.
+     */
+    offerResume: function(kind) {
+        const resumeModal = document.getElementById('resume-modal');
+        if (!resumeModal) return false;
+        const pad = (n) => String(n).padStart(2, '0');
+        const info = document.getElementById('resume-info');
+
+        if (kind === 'week') {
+            const savedWeek = this.loadWeek();
+            if (!savedWeek) return false;
+            this._resumeKind = 'week';
+            const t = savedWeek.day?.time ?? 8 * 60;
+            const clock = `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+            const cfg = this.WEEK_DIFFS[savedWeek.week.level];
+            const dayName = this.WEEK_DAY_NAMES[savedWeek.week.dayIndex - 1];
+            if (info) info.textContent =
+                `Arbeitswoche (${cfg.name}) · ${dayName} · Stand ${clock} Uhr · ${savedWeek.day?.tickets ?? 0} offene Tickets`;
+            this.showOverlay(resumeModal);
+            return true;
+        }
+
+        const saved = this.loadDay();
+        if (!saved) return false;
+        this._resumeKind = 'day';
+        const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
+        const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
+                   : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
+        if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
+        this.showOverlay(resumeModal);
+        return true;
     },
 
     // Applies the difficulty, then starts the day (or the tutorial)
@@ -640,7 +710,33 @@ export const core = {
     },
 
     // Restarts the workday without touching settings, archive or difficulty.
+    /**
+     * Back to the title screen, so the player can pick the other mode without
+     * reloading the page or restarting the app.
+     *
+     * The run is not thrown away: saveDay() routes to the week slot while a
+     * week runs, so the intro's mode buttons offer to continue exactly where
+     * this left off. Only an open event or a pending ending refuses to save,
+     * which is the same rule the resume dialog has always followed.
+     *
+     * A reload rather than a hand-written teardown: the day owns timers,
+     * overlays, the phone and (in week mode) the calendar. Unwinding all of
+     * that by hand is where stale state creeps in - the end screen's restart
+     * button takes the same route for the same reason.
+     */
+    returnToMenu: function() {
+        this.saveDay();
+        this.clearDayTimers();
+        this.stopMusic();
+        location.reload();
+    },
+
     softReset: function() {
+        // A running week must not be wiped by a day reset - freshDay() would
+        // silently destroy the carried backpack and the whole run. The week
+        // restarts from its last checkpoint instead.
+        if (this.state.week.active) { this.softResetWeek(); return; }
+
         this.stopMusic();
         this.clearDayTimers();
 
@@ -821,9 +917,9 @@ export const core = {
         // 2. Archive check: earned before? And if so, on which difficulty?
         
         // Current difficulty as a number (1 easy, 2 normal, 3 hard)
-        let currentDiffVal = 1;
-        if (this.state.difficultyMult >= 1.0) currentDiffVal = 2; // Mittwoch
-        if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
+        // difficultyTier() maps both modes onto 1/2/3 (day: Freitag/Mittwoch/
+        // Montag, week: Erholt/Genervt/Urlaubsreif) - same historical values.
+        let currentDiffVal = this.difficultyTier();
 
         // Pull the stored difficulty
         let savedDiffVal = 0; // 0 = never achieved yet
@@ -931,9 +1027,10 @@ export const core = {
      * checkEndConditions twice, word for word.
      */
     valveResetValue: function() {
-        if (this.state.difficultyMult < 1.0) return 30;   // Freitag
-        if (this.state.difficultyMult > 1.2) return 60;   // Montag
-        return 50;                                        // Mittwoch
+        const tier = this.difficultyTier();               // week-aware, see engine_week.js
+        if (tier === 1) return 30;                        // Freitag / Erholt
+        if (tier === 3) return 60;                        // Montag / Urlaubsreif
+        return 50;                                        // Mittwoch / Genervt
     },
 
     /**
@@ -967,7 +1064,7 @@ export const core = {
 
         const texts = DB.special.valveTexts.rage;
         let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Aggro auf ${resetTo}% gesetzt).`;
-        if (this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
+        if (this.difficultyTier() === 3) warningText += " Deine Nerven liegen trotzdem noch blank!";
 
         this.showModal("VENTIL GEÖFFNET", warningText, false);
         return true;
@@ -987,7 +1084,7 @@ export const core = {
 
         const texts = DB.special.valveTexts.chef;
         let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Radar auf ${resetTo}% gesetzt).`;
-        if (this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
+        if (this.difficultyTier() === 3) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
 
         this.showModal("ABMAHNUNG", warningText, false);
         return true;
@@ -1001,9 +1098,13 @@ export const core = {
      * does not hand you the party on Monday. And once per difficulty.
      */
     partyInvitation: function() {
+        // Tier-based so week runs map onto the day ranks: a week on Genervt
+        // asks for the same achievement grade as Mittwoch and shares its
+        // played-once flag - the gala stays a once-per-tier finale. Day mode
+        // resolves to exactly the historical values.
+        const needed = this.difficultyTier();
+        const diffStr = needed === 1 ? 'easy' : needed === 3 ? 'hard' : 'normal';
         const DIFF_RANK = { easy: 1, normal: 2, hard: 3 };
-        const diffStr = this.difficultyKey();
-        const needed = DIFF_RANK[diffStr];
 
         const REQUIRED = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
                           'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
@@ -1035,7 +1136,7 @@ export const core = {
             if (this.openRageValve()) return;
             this.queueEnd({
                 title: "RAGE QUIT",
-                lead: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.",
+                lead: this.weekFailLead("Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt."),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
         }
@@ -1043,7 +1144,7 @@ export const core = {
         else if (this.state.tickets >= 10) {
             this.queueEnd({
                 title: "GEFEUERT",
-                lead: "Zu viele offene Tickets! Das System ist kollabiert.",
+                lead: this.weekFailLead("Zu viele offene Tickets! Das System ist kollabiert."),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
@@ -1054,6 +1155,28 @@ export const core = {
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
         else if (this.state.time >= 16 * 60 + 30) {
+            // Week mode: Monday to Thursday end in a night, Friday ends the
+            // run. The gala never fires mid-week; Friday's gala returns
+            // together with the meeting finale (v4.2, package 3).
+            if (this.state.week.active) {
+                if (this.state.week.dayIndex < 5) {
+                    this.queueNightEnd();
+                } else {
+                    // Friday: the gala fires like it always did - but it was
+                    // announced in the meeting, so only after it (design 8.1).
+                    if (this.state.meetingDone) {
+                        const party = this.partyInvitation();
+                        if (party) { this.state.pendingEnd = party; return; }
+                    }
+                    this.queueEnd({
+                        title: "WOCHE ÜBERLEBT",
+                        lead: "Freitag, 16:30 Uhr. Fünf Tage GlobalCorp am Stück – und du stehst noch.",
+                        cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
+                    });
+                }
+                return;
+            }
+
             const party = this.partyInvitation();
             if (party) { this.state.pendingEnd = party; return; }
 
@@ -1068,7 +1191,7 @@ export const core = {
             if (this.issueChefWarning()) return;
             this.queueEnd({
                 title: "GEFEUERT",
-                lead: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.",
+                lead: this.weekFailLead("Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei."),
                 cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
             });
         }
@@ -1080,6 +1203,28 @@ export const core = {
             
             if (end.isParty) {
                 this.startParty();
+                return;
+            }
+
+            // Monday to Thursday in a week: the day ends in a night, not in
+            // an end screen. The run carries on tomorrow.
+            if (end.isNight) {
+                this.playMusic('office');
+                this.clearDayTimers();
+                this.state.emailPending = false;
+                this.showNightScreen(end);
+                this.state.pendingEnd = null;
+                return;
+            }
+
+            // Any real ending while a week runs ends the WEEK - win on
+            // Friday, fail on any day, always with the week balance sheet.
+            if (this.state.week.active) {
+                this.playMusic('office');
+                this.clearDayTimers();
+                this.state.emailPending = false;
+                this.finishWeek(end);
+                this.state.pendingEnd = null;
                 return;
             }
             

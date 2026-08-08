@@ -33,7 +33,7 @@ export const events = {
         if (this.state.lastEmailEventId === this.state.currentEventId) return;
 
         // 4. Probability (was 20%, now a 15% base)
-        let baseChance = 0.15 * this.state.difficultyMult; 
+        let baseChance = 0.15 * this.effMult(); 
         // Was +5% per ticket, now +4% per ticket.
         let chance = baseChance + (this.state.tickets * 0.04); 
         
@@ -220,7 +220,7 @@ export const events = {
         let color = "";
 
         if(timeout) {
-            let penalty = Math.ceil(10 * this.state.difficultyMult);
+            let penalty = Math.ceil(10 * this.effMult());
             this.state.cr += penalty;
             this.state.emailsIgnored++;
             message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
@@ -228,7 +228,7 @@ export const events = {
         } else if(opt) {
             if (opt.ignoreEmail) {
                 // Work out whether a penalty applied, so the log can mention it
-                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.state.difficultyMult)}%` : "";
+                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.effMult())}%` : "";
                 message = `E-MAIL IGNORIERT!${penaltyText}`;
                 color = "text-red-500 font-bold";
             } else {
@@ -236,7 +236,7 @@ export const events = {
                 color = "text-blue-400";
             }
 
-            let mult = this.state.difficultyMult;
+            let mult = this.effMult();
             
             // Cache the final values for the animation
             let addedF = opt.f || 0;
@@ -429,6 +429,14 @@ export const events = {
         // 3. THE ACTUAL ACTION (nothing intercepted it)
         // ---------------------------------------------------------
         
+        // Week mode: every action pool has a daily contingent so that no
+        // pool can be clicked empty before Friday (design 6.2). An exhausted
+        // contingent behaves like an exhausted pool: idle line, time passes.
+        if (this.state.week.active && this.weekContingentLeft(type) <= 0) {
+            this.renderTerminal(this.weekIdleEvent(type), type);
+            return;
+        }
+
         // Special case: phone and sidequest logic
         if (type === 'sidequest') { 
             this.handleSideQuest(); 
@@ -452,6 +460,7 @@ export const events = {
         
         // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
         const ev = this.pickFromPool(pool);
+        this.spendContingent(type);   // books today's week budget (no-op in day mode)
         
         // Start the event
         this.renderTerminal(ev, type);
@@ -530,9 +539,19 @@ export const events = {
             return true;
         });
 
-        if (pool.length === 0) { this.log("Gerade nichts los."); return; }
+        if (pool.length === 0) {
+            // In a week even "nothing going on" costs time (design 6.3) -
+            // a free click would turn the dry pool into a stalling exploit.
+            if (this.state.week.active) {
+                this.renderTerminal(this.weekIdleEvent('sidequest'), 'sidequest');
+                return;
+            }
+            this.log("Gerade nichts los.");
+            return;
+        }
 
         const ev = this.pickFromPool(pool);
+        this.spendContingent('sidequest');   // books today's week budget (no-op in day mode)
 
         if (ev.kind === 'phone') {
             this.state.activeEvent = true;
@@ -591,8 +610,13 @@ export const events = {
         const node = ev.nodes[nodeId];
         if (!node) { console.error("Node not found:", nodeId); return; }
 
+        // Node char convention, mirrored from the phone (EVENTS.md, 9):
+        // a node's own char beats the event char, char: null forces none.
+        // This is what lets one meeting chain switch speakers mid-dialogue.
+        const charName = ('char' in node) ? node.char : ev.char;
+
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char, ev.nodes);
+        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, charName, ev.nodes);
     },
 
     // 2. OLD SYSTEM (simple events)
@@ -743,15 +767,26 @@ export const events = {
             this.state.lunchDone = true;
         }
 
+        // Meeting check (week Friday finale, design 8.1): the first
+        // transition past 15:00 turns the next continue button into the walk
+        // to the meeting room. Lunch keeps right of way; 16:30 stays the
+        // hard end either way, the 90-minute buffer is deliberate.
+        let triggerMeeting = false;
+        if (!triggerLunch && !this.state.isPartyMode && this.state.week.active
+            && this.state.week.dayIndex === 5 && !this.state.meetingDone
+            && this.state.time >= 15 * 60) {
+            triggerMeeting = true;
+        }
+
         // --- DIFFICULTY AND LAZINESS LOGIC ---
-        // Wednesday hardening: the data values are calibrated a little too
-        // softly for normal (day simulation: 87% win rate for an attentive
-        // casual player). A 10% surcharge on the formulas alone brings that to
-        // roughly 75% without touching the optimal player (94%).
-        // IMPORTANT: state.difficultyMult stays 1.0 - everywhere else that
-        // value is an identity check (> 1.0 = Monday: starting tickets,
-        // excuses, achievements). The stat multiplier is derived only here.
-        let diffMult = this.state.difficultyMult === 1.0 ? 1.1 : this.state.difficultyMult;
+        // statMult() carries the Wednesday hardening for the day mode: the
+        // data values are calibrated a little too softly for normal (day
+        // simulation: 87% win rate for an attentive casual player), so 1.0
+        // becomes 1.1 in the formulas ONLY - state.difficultyMult stays 1.0,
+        // because everywhere else that value is an identity check. In week
+        // mode statMult() returns the honest ramped value instead
+        // (engine_week.js has the whole story).
+        let diffMult = this.statMult();
         let lazyMult = 1 + (this.state.fl / 200);
 
         this.state.fl += f;
@@ -811,13 +846,21 @@ export const events = {
         this.updateUI();
 
         // UI Rendern
-        let btnAction = triggerLunch ? "triggerLunch" : "reset";
-        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : "WEITER";
+        let btnAction = triggerLunch ? "triggerLunch" : triggerMeeting ? "triggerMeeting" : "reset";
+        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : triggerMeeting ? "ZUM WOCHENMEETING" : "WEITER";
         let btnColor = "bg-blue-600 hover:bg-blue-500";
 
         if (this.state.pendingEnd) {
+            // --- Monday to Thursday in a week: the day is over, the run is
+            // not. Without this branch the button falls through to the fail
+            // case below and shouts GAME OVER before the night screen. ---
+            if (this.state.pendingEnd.isNight) {
+                btnAction = "finishGame";
+                btnText = "FEIERABEND MACHEN 🎉";
+                btnColor = "bg-green-600 hover:bg-green-500";
+            }
             // --- The disguised party trap ---
-            if (this.state.pendingEnd.isParty) {
+            else if (this.state.pendingEnd.isParty) {
                 btnAction = "startParty";
                 btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // A nasty pink as a small hint
@@ -842,7 +885,14 @@ export const events = {
     // here covers the case of someone being faster than the connection.
     triggerLunch: async function() {
         await ensure('lunch');
-        const pool = DB.lunch ?? [];
+        let pool = DB.lunch ?? [];
+        // Week mode: no repeated lunch within one week (design 6.3). The day
+        // mode keeps drawing from the full pool - within a single day a
+        // repeat is impossible anyway, so behaviour stays identical.
+        if (this.state.week.active) {
+            const fresh = pool.filter(ev => !this.state.usedIDs.has(ev.id));
+            if (fresh.length) pool = fresh;   // all used up: a repeat beats no break
+        }
         if (!pool.length) {
             // Should never happen; better to skip the break than to hang.
             console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
@@ -850,6 +900,7 @@ export const events = {
             return;
         }
         const randomLunch = pool[Math.floor(Math.random() * pool.length)];
+        if (this.state.week.active) this.state.usedIDs.add(randomLunch.id);
         this.renderTerminal(randomLunch, 'lunch');
     },
 
@@ -943,7 +994,7 @@ export const events = {
         
         // The morning scales with the weekday: Friday forgives, Monday does
         // not. 15 points become 12 / 15 / 19.
-        const moodVal = Math.round(15 * this.state.difficultyMult);
+        const moodVal = Math.round(15 * this.effMult());
 
         if (mood.effect === "aggro") {
             this.state.al += moodVal;
@@ -961,7 +1012,7 @@ export const events = {
         } 
         // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
-            const extra = this.state.difficultyMult > 1.0 ? 3 : (this.state.difficultyMult < 1.0 ? 1 : 2);
+            const extra = this.difficultyTier(); // 1/2/3 extra tickets by chosen level, week-aware
             this.state.tickets += extra;
             statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
         }
@@ -1003,6 +1054,15 @@ export const events = {
         // without its own point the curve would wrongly begin at zero.
         this.recordStatPoint();
 
+        // Week mode: carried baggage plus a bad morning can end the run
+        // before the first click. Failing here, immediately and legibly,
+        // beats dying confusingly after a harmless first action. The valves
+        // may still open in checkEndConditions - then the day carries on.
+        if (this.state.week.active) {
+            this.checkEndConditions();
+            if (this.state.pendingEnd) { this.finishGame(); return; }
+        }
+
         this.setTerminalMorning(mood.title, mood.text, statHtml);
     },
 
@@ -1035,6 +1095,7 @@ export const events = {
         let diffName = "MITTWOCH (Normal)";
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
+        if (this.state.week.active) diffName = `WOCHE (${this.WEEK_DIFFS[this.state.week.level].name})`;
 
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
@@ -1065,10 +1126,22 @@ export const events = {
 
         // 4. Show the end modal - the hidden [PARTY] marker drives the colour
         let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
+        // A gala on the Friday of a week closes the WEEK as well: counters,
+        // balance sheet below the party report, save slot. The balance must
+        // be built BEFORE endWeek() - it reads the still-active week.
+        let weekHTML = '';
+        let leadText = "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.";
+        if (this.state.week.active) {
+            this.recordWeekResult('survived', 5);
+            weekHTML = this.buildWeekBalanceHTML({ isWin: true });
+            this.endWeek();
+            leadText = "Der Abend ist vorbei. Eine Arbeitswoche für die Geschichtsbücher.";
+        }
+
         this.showEnd({
             title: "GALA VORBEI",
-            lead: "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.",
-            text: subtitleHTML + fullReport,   // Party-eigene Zusammenfassung
+            lead: leadText,
+            text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
             cause: "party",
             diary,
             isWin: true

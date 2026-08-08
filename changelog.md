@@ -1,3 +1,51 @@
+[5.0.0] - 2026-08-08
+
+Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends
+vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts
+vergessen wird - fünf Tage am Stück, mit allem, was man mitschleppt. Dazu
+bekommt die Oberfläche zum ersten Mal eigene Symbole statt Emojis.
+
+Die Arbeitswoche:
+* Ein zweiter Modus, gleichrangig neben dem Arbeitstag: Montag bis Freitag am Stück. Wer scheitert, beendet die ganze Woche - nicht nur den Tag.
+* Gewählt wird nicht der Wochentag, sondern Müllers Zustand: Erholt, Genervt oder Urlaubsreif. Er bestimmt, womit der Montag beginnt und wie gut die Nächte erholen.
+* Über Nacht bleibt fast alles: Rucksack, Ruf, Faulheit, gelesene Ereignisse und die Geschichten, die noch weitergehen. Von den offenen Tickets bleibt ein Viertel, aufgerundet - kein Ticket ist je geschenkt, aber vier abgearbeitete sparen eines für morgen.
+* Aggro und Chef-Radar erholen sich prozentual, und die Erholung wird von Nacht zu Nacht schlechter. Der Freitag ist nicht schwerer, weil das Spiel härter wird, sondern weil vier Tage in den Knochen stecken.
+* Ventil und Abmahnung gibt es einmal pro WOCHE statt einmal pro Tag. Wer am Dienstag ausrastet, hat bis Freitag keine zweite Chance.
+* Der Nacht-Bildschirm zeigt vor dem Schlafengehen, was der nächste Morgen erbt: Tickets, Werte und Ausreden im Vorher-nachher, dazu eine Zeile darüber, wie die Nacht war. Der Abend ist zum Planen da.
+* Der Freitag hat ein Finale: Ab 15 Uhr führt der Weg ins Wochenmeeting - mit dem Chef, wechselnden externen Beratern und einer Tagesordnung, die niemanden interessiert. Erst danach ist Feierabend.
+* Am Ende steht die Wochen-Bilanz: pro Tag die Werte, mit denen er in die Nacht ging, darunter die Summen. Wer scheitert, sieht, an welchem Tag es riss.
+* Das Tagebuch kennt die Woche: eigene Auftakte je Wochentag, ein Nachtrag darüber, was mit ins Bett genommen wird, und ein eigener Text für den überstandenen Freitag.
+* Damit kein Bereich leergeklickt werden kann, hat jeder Pool ein Tagespensum. Ist es aufgebraucht, kostet der Griff dorthin trotzdem Zeit - der Serverraum ist dann eben verdächtig still.
+* Drei neue Erfolge: Wochenendlich, Eisern und Blanker Freitag. Alle drei sind wie gewohnt nach Schwierigkeit gestuft.
+* Eine unterbrochene Woche geht nicht verloren. Beim nächsten Start bietet der Arbeitswochen-Knopf sie mit Wochentag, Uhrzeit und offenen Tickets zum Weitermachen an - der angefangene Arbeitstag wartet unabhängig davon an seinem eigenen Knopf.
+
+Archiv & Statistiken:
+* Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
+* Als überlebt zählt eine Woche nur mit erreichtem Freitagabend. Jeder Abbruch unterwegs landet bei Rage Quit oder Gefeuert.
+* Die weltweiten Steam-Statistiken haben denselben Umschalter bekommen, mit eigenen Vergleichswerten und eigenen Diagnosen für die Woche. Fehlen weltweite Daten für einen Modus, sagt die Anzeige das, statt leere Balken zu zeichnen.
+* In den Einstellungen lassen sich beide Modi vorwählen, getrennt voneinander: ein fester Wochentag für den Arbeitstag, ein fester Zustand für die Arbeitswoche. Beides steht auf "Jedes Mal fragen".
+
+Anzeige & Layout:
+* Die Oberfläche trägt eigene Symbole statt Emojis: 65 gezeichnete Icons für Aktionsleiste, Terminal-Kopf, Schnellstartleiste, Einstellungen, Menü und Dialoge - im selben getuschten Stil wie die Gegenstände und Porträts. Fehlt eine Datei, erscheint wieder das alte Emoji.
+* Die Schwierigkeitswahl zeigt gezeichnete Motive: ein Kalenderblatt je Wochentag mit einem Fünf-Punkte-Streifen, der die Lage in der Woche verrät, und für den Wochenmodus Müllers Tasse in drei Zuständen.
+* Das Startfenster ist neu aufgeteilt. Der Begrüßungstext steht oben über die volle Breite, darunter stehen beide Modi als gleichwertige Karten nebeneinander, rechts das Überlebens-Handbuch. Die rechte Spalte läuft nicht mehr halb leer.
+* Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
+* "Spielstand löschen" ist als das gekennzeichnet, was es ist: rot hinterlegt, mit einer Zeile darüber, was genau verschwindet.
+* Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
+
+Fehlerkorrekturen:
+* Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.
+* Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
+
+Für Entwickler:
+* Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
+* Zähler sind nach Modus getrennt: Wochentage erhöhen die Tageszähler nicht mehr, die Woche zählt über recordWeekResult(). Die Serie zählt weiterhin modusübergreifend, weil ein überlebter Wochentag ein überlebter Tag ist.
+* Vier neue Steam-Statistiken (stat_weeks_started, _survived, _ragequit, _fired), und stat_started wird nicht mehr aus daysStarted gespeist - dieser Zähler nummeriert die Firmenchronik und enthält deshalb auch Wochentage. Die Abfrage in main.cjs holt jetzt acht Namen statt vier.
+* tools/simulate-week.mjs (npm run sim:week) rechnet ganze Wochen durch, mit denselben Formeln wie der Tages-Simulator. Die Balance der Woche wurde damit vor dem Bauen kalibriert.
+* Drei Test-Suiten unter tools/ (npm test) prüfen Fundament, Ablauf und das Entwickler-Werkzeug der Woche gegen die echten Module - 88 Tests.
+* tools/dev-woche.js legt in der Browser-Konsole Testbefehle für den Wochenmodus an: einen beliebigen Wochentag herstellen, den Nacht-Bildschirm oder das Freitagsfinale auslösen, die Gala freischalten, Zähler ansehen und leeren.
+
+
 [4.1.0] - 2026-08-07
 
 Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser
