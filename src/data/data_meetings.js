@@ -57,12 +57,12 @@ export const meetings = [
 		},
 		results: {
 			res_klartext: {
-				txt: "Stille. Frau Vogl klappt das Tablet zu. 'Genau diese Silodenke meinen wir.' Der Chef entschuldigt sich bei ihr — bei ihr, nicht bei dir. Immerhin: Kevin, der draußen am Kopierer lauscht, streckt dir durch die Glaswand einen Daumen entgegen.",
+				txt: "Stille. Frau Vogl klappt das Tablet zu. 'Genau diese Silodenke meinen wir.' Der Chef entschuldigt sich bei ihr — bei ihr, nicht bei dir. Draußen am Kopierer steht Kevin und streckt dir durch die Glaswand einen Daumen entgegen.",
 				rep: { "Kevin": 5 },
 				m: 50, f: 0, a: 10, c: 5
 			},
 			res_nicken: {
-				txt: "'Spannend' war das richtige Wort. Es folgen vierzig Folien. Bei Folie 12 stirbt etwas in dir, bei Folie 31 hört der Chef auf mitzuschreiben. Am Ende bekommt deine Abteilung ein Framework. Es heißt SYNERGATE. Der Chef ist begeistert.",
+				txt: "'Spannend' war das richtige Wort. Es folgen vierzig Folien. Bei Folie 12 stirbt etwas in dir, bei Folie 31 hört der Chef auf mitzuschreiben. Deine Abteilung bekommt ein Framework. Es heißt SYNERGATE. Der Chef ist begeistert.",
 				m: 55, f: 10, a: 5, c: -5
 			},
 			res_zweifel: {
@@ -156,7 +156,7 @@ export const meetings = [
 			},
 			zahlen: {
 				char: "Herr Berger (Synerqon)",
-				text: "'Wir haben Ihre Woche normalisiert', sagt Herr Berger. Auf dem Beamer erscheint deine Woche als Wasserfalldiagramm. Zwischen Mittwoch und Donnerstag hat es eine Farbe, die es in PowerPoint offiziell nicht gibt. Dr. Wichtig fotografiert die Folie mit dem Handy.",
+				text: "'Wir haben Ihre Woche normalisiert', sagt Herr Berger. Auf dem Beamer erscheint deine Woche als Wasserfalldiagramm. Zwischen Mittwoch und Donnerstag hat es eine Farbe, die es in PowerPoint offiziell nicht gibt. 'Die schicken Sie mir', sagt Dr. Wichtig.",
 				opts: [
 					{ t: "Nach der Datenquelle fragen", next: "res_quelle" },
 					{ t: "Das Diagramm einfach wirken lassen", next: "res_wirken" }
@@ -190,6 +190,181 @@ export const meetings = [
 				txt: "'Stimmt', flüsterst du, 'im Intranet wirkt er größer.' Kevin prustet in seinen Teller. Alle sehen zu euch. Dr. Wichtig hebt eine Augenbraue, sehr langsam, wie ein Mann, der Zeit hat.",
 				rep: { "Kevin": 5, "Dr. Wichtig": -5 },
 				m: 45, f: 5, a: -5, c: 10
+			}
+		}
+	},
+
+	{
+		id: "meet_beamer_1",
+		title: "Technik-Check",
+		startNode: "root",
+		startNodeGala: "root_gala",
+		nodes: {
+			root: {
+				text: "Der Chef steht vor der Leinwand und drückt auf der Fernbedienung herum. Neben ihm wartet Frau Kienzle von Norden & Kessler mit einem USB-Stick in der Hand. Der Beamer zeigt ein blaues Bild und die Uhrzeit von vorgestern. 'Da, Müller. Sie sind ja Fachmann.'",
+				opts: [
+					{ t: "Zum Beamer gehen", next: "beamer" },
+					{ t: "Sitzen bleiben", next: "warten" }
+				]
+			},
+			root_gala: {
+				text: "Der Chef steht vor der Leinwand und drückt auf der Fernbedienung herum. Neben ihm wartet Frau Kienzle von Norden & Kessler mit einem USB-Stick in der Hand. Der Beamer zeigt ein blaues Bild und die Uhrzeit von vorgestern.\n'Wir haben vierzig Minuten', sagt Frau Kienzle. 'Danach beginnt die Synergy-Gala, und ich fahre mit dem Vorstand hin.' Der Chef drückt schneller. 'Da, Müller. Sie sind ja Fachmann.'",
+				opts: [
+					{ t: "Zum Beamer gehen", next: "beamer" },
+					{ t: "Sitzen bleiben", next: "warten" }
+				]
+			},
+			beamer: {
+				char: "Egon",
+				text: "Das Kabel steckt. Der Beamer steht auf HDMI 2, das Notebook sendet auf HDMI 1. Du hast die Fernbedienung in der Hand, als Egon mit einer Leiter hereinkommt. 'Chef sagte, der Beamer ist kaputt.' Er sieht nach oben. 'Der hängt da seit acht Jahren.'",
+				opts: [
+					{ t: "'Zwei Klicks, dann läuft er.'", next: "res_eingang" },
+					{ t: "Egon die Leiter aufstellen lassen", next: "res_leiter" }
+				]
+			},
+			warten: {
+				char: "Frau Kienzle (Norden & Kessler)",
+				text: "Frau Kienzle probiert es selbst. Erst den Stick, dann einen anderen Anschluss, dann den Stick noch einmal, langsamer. Der Chef sagt 'ja, genau' zu Vorschlägen, die niemand gemacht hat. Nach sechs Minuten dreht sie sich um.",
+				opts: [
+					{ t: "Jetzt aufstehen", next: "res_spaet" },
+					{ t: "'Sie machen das gut.'", next: "res_lob" }
+				]
+			}
+		},
+		results: {
+			res_eingang: {
+				txt: "Zwei Klicks, das Bild steht. Frau Kienzle bedankt sich beim Chef.",
+				m: 45, f: 0, a: 0, c: -5
+			},
+			res_leiter: {
+				txt: "Egon stellt die Leiter auf, steigt hoch und dreht den Eingang am Gerät um. Von oben, mit einem Kugelschreiber. Das Bild steht. 'War die Elektrik', sagt er zum Chef, der beeindruckt nickt.",
+				rep: { "Egon": 5 },
+				m: 50, f: 5, a: 0, c: -5
+			},
+			res_spaet: {
+				txt: "Du gehst hin und drückst zweimal. Das Bild steht. 'Hätte ich auch hinbekommen', sagt Frau Kienzle. Der Chef notiert sich die sechs Minuten als Reaktionszeit der IT.",
+				m: 50, f: 0, a: 5, c: 5
+			},
+			res_lob: {
+				txt: "Sie sieht dich an, dann den Beamer, dann wieder dich. Zwei Klicks später steht das Bild, und sie sagt nichts mehr dazu. Auf Folie 9 geht es um Verantwortungsdiffusion.",
+				m: 50, f: 5, a: 0, c: 5
+			}
+		}
+	},
+
+	{
+		id: "meet_tool_1",
+		title: "Produktvorstellung",
+		startNode: "root",
+		startNodeGala: "root_gala",
+		nodes: {
+			root: {
+				text: "'Müller, setzen Sie sich, das wird Sie freuen.' Neben dem Chef sitzt Herr Sobotka von Norden & Kessler, daneben Frau Elster mit einem Ordner auf dem Schoß. Auf der Leinwand steht ein Logo, das aussieht wie euer Ticketsystem, nur runder.",
+				opts: [
+					{ t: "Sich das Logo genauer ansehen", next: "logo" },
+					{ t: "Frau Elster ansehen, die den Ordner festhält", next: "elster" }
+				]
+			},
+			root_gala: {
+				text: "'Müller, setzen Sie sich, das wird Sie freuen.' Neben dem Chef sitzt Herr Sobotka von Norden & Kessler, daneben Frau Elster mit einem Ordner auf dem Schoß.\n'Ich mache es kurz', sagt Herr Sobotka und richtet die Krawatte. 'Um halb fünf ist Synergy-Gala, und ich sitze am Tisch des Vorstands.' Auf der Leinwand steht ein Logo, das aussieht wie euer Ticketsystem, nur runder.",
+				opts: [
+					{ t: "Sich das Logo genauer ansehen", next: "logo" },
+					{ t: "Frau Elster ansehen, die den Ordner festhält", next: "elster" }
+				]
+			},
+			logo: {
+				char: "Herr Sobotka (Norden & Kessler)",
+				text: "'Ticketing 4.0', sagt Herr Sobotka. 'Cloudbasiert, KI-gestützt, vollintegriert.' Er klickt weiter. Die Oberfläche ist eure. Dieselben Spalten, dieselbe abgeschnittene Betreffzeile, dieselbe Sortierung, die sich seit Jahren nicht ändern lässt.",
+				opts: [
+					{ t: "'Das ist unser System mit einem neuen Logo.'", next: "res_logo" },
+					{ t: "Nach dem Preis fragen", next: "res_preis" }
+				]
+			},
+			elster: {
+				char: "Frau Elster",
+				text: "Frau Elster hält den Ordner vor die Brust. 'Ich soll das nachher gegenzeichnen', flüstert sie. 'Aber da steht eine Zahl drin, und ich weiß nicht, ob die pro Jahr ist oder pro Monat.' Herr Sobotka lächelt in eure Richtung.",
+				opts: [
+					{ t: "'Zeigen Sie mir die Zahl.'", next: "res_zahl" },
+					{ t: "'Unterschreiben Sie heute nichts.'", next: "res_nichts" }
+				]
+			}
+		},
+		results: {
+			res_logo: {
+				txt: "'Genau', sagt Herr Sobotka, ohne aus dem Takt zu kommen. 'Wir haben es für Sie individualisiert.' Der Chef findet das nachvollziehbar. Auf dem Weg hinaus fragt er dich, warum die IT so etwas nicht selbst hinbekommt.",
+				m: 50, f: 0, a: 10, c: 0
+			},
+			res_preis: {
+				txt: "Die Zahl steht drei Sekunden auf der Folie. Sie hat vor dem Komma eine Stelle mehr, als du erwartet hast. Frau Elster macht ein Geräusch.",
+				m: 45, f: 0, a: 5, c: 0
+			},
+			res_zahl: {
+				txt: "Pro Monat. Pro Nutzer. Frau Elster schreibt sich beides auf und unterstreicht es zweimal. Im Protokoll steht später, die Buchhaltung habe Klärungsbedarf angemeldet.",
+				rep: { "Frau Elster": 5 },
+				m: 50, f: 0, a: 0, c: 5
+			},
+			res_nichts: {
+				txt: "Sie legt den Ordner weg. Als Herr Sobotka nach der Unterschrift fragt, sagt sie: 'Herr Müller prüft das noch.' Du hast das nicht gesagt. Du prüfst es jetzt.",
+				rep: { "Frau Elster": 5 },
+				m: 50, f: 0, a: 5, c: 5
+			}
+		}
+	},
+
+	{
+		id: "meet_neuling_1",
+		title: "Bestandsaufnahme",
+		startNode: "root",
+		startNodeGala: "root_gala",
+		nodes: {
+			root: {
+				text: "Im Besprechungsraum sitzt ein sehr junger Berater. Vor ihm ein Laptop, daneben ein ausgedruckter Ablauf mit Textmarker. Der Chef ist noch nicht da. Auf dem Flur telefoniert jemand laut über Kapazitäten.",
+				opts: [
+					{ t: "'Guten Tag. Müller, IT.'", next: "vorstellen" },
+					{ t: "Warten, bis er anfängt", next: "warten" }
+				]
+			},
+			root_gala: {
+				text: "Im Besprechungsraum sitzt ein sehr junger Berater. Vor ihm ein Laptop, daneben ein ausgedruckter Ablauf mit Textmarker. Auf dem Flur telefoniert jemand laut über Kapazitäten.\n'Ich soll sagen', liest der Berater vom Blatt ab, 'dass wir zeitlich gebunden sind. Heute Abend ist die Synergy-Gala.' Er sieht auf. 'Gehen Sie da eigentlich hin?'",
+				opts: [
+					{ t: "'Guten Tag. Müller, IT.'", next: "vorstellen" },
+					{ t: "Warten, bis er anfängt", next: "warten" }
+				]
+			},
+			vorstellen: {
+				char: "Herr Lohmann (Synerqon)",
+				text: "'Lohmann. Erster Tag.' Er schüttelt deine Hand zu lange. Dann dreht er das Blatt so, dass du es nicht sehen kannst, und liest die erste Frage vor: 'Wo sehen Sie Ihre Abteilung in drei Jahren?'",
+				opts: [
+					{ t: "'Im selben Raum. Mit demselben Drucker.'", next: "res_drucker" },
+					{ t: "Die Frage ernst nehmen", next: "res_ernst" }
+				]
+			},
+			warten: {
+				char: "Markus",
+				text: "Markus kommt herein, ohne anzuklopfen, und setzt sich ans Kopfende. 'Ich habe zehn Minuten.' Er mustert den jungen Berater. 'Sind Sie der von der Digitalisierung?' Der Berater sucht die Frage auf seinem Blatt.",
+				opts: [
+					{ t: "Markus die zehn Minuten reden lassen", next: "res_markus" },
+					{ t: "'Er ist zur Bestandsaufnahme hier.'", next: "res_erklaeren" }
+				]
+			}
+		},
+		results: {
+			res_drucker: {
+				txt: "Er schreibt es auf. Wörtlich, mit dem Drucker. Zwei Wochen später steht der Satz in einer Präsentation unter der Überschrift 'Stimmen aus der Organisation', und der Chef fragt dich, wer das gesagt hat.",
+				m: 45, f: 0, a: 0, c: 5
+			},
+			res_ernst: {
+				txt: "Du antwortest drei Minuten lang. Er tippt mit, verliert den Anschluss und fragt, ob du das noch einmal von vorn sagen kannst. Auf dem Flur telefoniert sein Kollege weiter über Kapazitäten.",
+				m: 55, f: 5, a: 5, c: -5
+			},
+			res_markus: {
+				txt: "Markus redet elf Minuten über Abschlussquoten. Der Berater notiert alles. Als Markus geht, fragt er dich, was ein Abschluss ist.",
+				rep: { "Markus": 5 },
+				m: 50, f: 0, a: 0, c: 0
+			},
+			res_erklaeren: {
+				txt: "'Bestandsaufnahme', wiederholt Markus. 'Von wem beauftragt?' Der Berater blättert. Markus steht auf und geht telefonieren. Draußen trifft er den Kollegen des Beraters, und die beiden reden lange.",
+				m: 45, f: 0, a: 5, c: 0
 			}
 		}
 	}

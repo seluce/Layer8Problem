@@ -27,13 +27,13 @@
 import { DB, ensure } from '../src/data.js';
 
 await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet',
-             'lunch', 'party', 'reputation', 'server', 'sidequests');
+             'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
 
 /* ---------- configuration ---------- */
 
 // Pools that contain player-facing prose. `board` rides along because its
 // notes are prose too; intranet stays out (component-rendered, own tone).
-const ALL_POOLS = ['server', 'coffee', 'calls', 'sidequests', 'emails',
+const ALL_POOLS = ['server', 'coffee', 'calls', 'sidequests', 'emails', 'meetings',
                    'lunch', 'party', 'reputation', 'bossfights', 'special', 'board'];
 
 // Sentences that repeat by design. Exact match after normalisation.
