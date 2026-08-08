@@ -211,23 +211,23 @@
                 {/each}
             </div>
 
-            {#if streakBest > 0}
-                <div class="flex items-center justify-between px-2 py-1.5 bg-slate-800/40 rounded-sm border border-slate-700/30">
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Serie · {streakLabel}</span>
-                    <span class="font-mono text-sm">
-                        <span class="{streak > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">{streak}</span>
-                        <span class="text-slate-600 mx-1.5">·</span>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-widest">Rekord</span>
-                        <span class="text-slate-300 font-bold ml-1">{streakBest}</span>
-                    </span>
-                </div>
-            {/if}
-
-            {#if showBest}
-                <p class="text-[9px] text-slate-500 uppercase tracking-widest text-center">
-                    Bester Lauf: <span class="text-slate-300 font-bold">{weekBest}</span>
-                </p>
-            {/if}
+            <!-- Immer sichtbar, auch bei null: Sonst sähen die beiden Ansichten
+                 unterschiedlich aus, und wer den Modus noch nie gespielt hat,
+                 erführe nicht, dass es hier etwas zu erreichen gibt.
+                 Die Einheit steht direkt hinter der Zahl statt in einer
+                 gesperrten Versalzeile - das liest sich als Satz. -->
+            <div class="flex items-center justify-between px-3 py-2 bg-slate-800/40 rounded-sm border border-slate-700/30">
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest">
+                    Serie{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[11px] ml-2">bester Lauf: {weekBest}</span>{/if}
+                </span>
+                <span class="flex items-baseline gap-1.5 font-mono">
+                    <span class="text-base font-bold {streak > 0 ? 'text-amber-400' : 'text-slate-500'}">{streak}</span>
+                    <span class="text-[11px] text-slate-400">{streakLabel}</span>
+                    <span class="text-slate-700 px-1">·</span>
+                    <span class="text-[11px] text-slate-400">Rekord</span>
+                    <span class="text-base font-bold {streakBest > 0 ? 'text-slate-200' : 'text-slate-500'}">{streakBest}</span>
+                </span>
+            </div>
 
             <!-- Per difficulty: replaces a meaningless overall rate. -->
             {#if hasLevels}
