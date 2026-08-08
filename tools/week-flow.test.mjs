@@ -787,7 +787,7 @@ await ok('Ein Wochenlauf erzeugt nur Wochen-Zähler', () => {
     assert.equal(st.weeksSurvived, 1);
 });
 await ok('Die Abfrage in main.cjs holt alle acht Namen', () => {
-    const src = readFileSync(new URL('../main.cjs', import.meta.url), 'utf-8');
+    const src = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
     for (const n of ['stat_started', 'stat_survived', 'stat_ragequit', 'stat_fired',
                      'stat_weeks_started', 'stat_weeks_survived', 'stat_weeks_ragequit', 'stat_weeks_fired']) {
         assert.ok(src.includes(`'${n}'`), `${n} fehlt in der Steam-Abfrage`);

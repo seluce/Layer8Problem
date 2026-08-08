@@ -22,9 +22,10 @@ src/
   platform.js           Plattform-Schnittstelle, Web-Fassung
   platform_steam.js     Steam-Bridge, lädt sich nur unter Electron nach
 
-  components/           35 Svelte-Komponenten, davon 8 fürs Intranet
-  engine/               Engine-Module, engine_state.svelte.js hält den Zustand
-  data/                 19 Datendateien
+  components/           36 Svelte-Komponenten, davon 8 fürs Intranet
+  engine/               9 Module, engine_state.svelte.js hält den Zustand,
+                        engine_week.js den Wochenmodus
+  data/                 21 Datendateien
   assets/               von Vite verarbeitet, siehe unten
 
 public/
@@ -33,9 +34,13 @@ public/
 tools/
   lint-data.mjs         Datenprüfung, npm run lint:data
   simulate-day.mjs      Tages-Simulation, npm run sim
+  simulate-week.mjs     Wochen-Simulation, npm run sim:week
   report-prose.mjs      Prosa- und Stilbericht, node tools/report-prose.mjs [bereich]
-  reorder-opts.mjs      verteilt die Optionsreihenfolge, einmalig
   normalize-quotes.mjs  Anführungszeichen, einmalig
+  dev-woche.js          Konsolen-Werkzeug für den Wochenmodus, siehe unten
+  *.test.mjs            drei Testsuiten, npm test
+  register.mjs          Loader-Haken für die Tests
+  svelte-loader.mjs     kompiliert .svelte.js für die Tests
 ```
 
 ## src/assets/ oder public/assets/
@@ -63,7 +68,12 @@ Prüfsumme nach `docs/build/` schreiben. Genau das darf nicht passieren, denn
 kann `assets/img/items/${id}.webp` auflösen, weil `id` erst im Spiel bekannt
 ist. Diese Dateien werden unverändert kopiert und behalten ihren Pfad.
 
-Dort liegen: alle Item-, Charakter- und Erfolgsbilder sowie die Musik. Die
+Dort liegen: alle Item-, Charakter- und Erfolgsbilder, die Symbole der
+Oberfläche (`img/ui/`, `img/actions/`, `img/difficulty/`) sowie die Musik. Bei
+den Symbolen entsteht der Pfad überwiegend zur Laufzeit — die Einstellungsliste
+und der Terminal-Kopf wählen ihr Bild aus einer Tabelle. Die wenigen fest
+verdrahteten Verweise in `index.html` liegen aus Gründen der Einheitlichkeit
+daneben, wie das Logo seit jeher. Die
 Charakterbilder werden seit 4.1 an zwei Stellen gebraucht: im Terminal als
 Ereignis-Porträt und im Messenger als Kontaktfoto. Die Intranet-Seiten lagen bis
 v4.0.0 ebenfalls hier — als eigenständige HTML-Dateien in einem iframe, die
@@ -96,7 +106,9 @@ npm run dev            Entwicklungsserver auf Port 8080
 npm run build          erzeugt docs/
 npm run preview        docs/ lokal prüfen
 npm run lint:data      Datenprüfung
+npm test               Testsuiten des Wochenmodus
 npm run sim            Tages-Simulation für die Balance
+npm run sim:week       Wochen-Simulation für die Balance
 npm start              baut und startet Electron
 npm run build:win      Desktop-Build
 ```
@@ -110,9 +122,18 @@ hinein. Die Markdown-Dateien liegen deshalb in der Wurzel.
 
 ## Werkzeuge
 
-`lint-data.mjs` und `simulate-day.mjs` gehören in den Arbeitsablauf: der Linter
-nach jeder Datenänderung (0 Fehler, 0 Warnungen), die Simulation vor jeder
-Balance-Entscheidung.
+`lint-data.mjs` und die beiden Simulatoren gehören in den Arbeitsablauf: der
+Linter nach jeder Datenänderung (0 Fehler, 0 Warnungen), die Simulation vor
+jeder Balance-Entscheidung. `simulate-week.mjs` ist ein eigenständiges
+Geschwister von `simulate-day.mjs`, keine Erweiterung: Beide tragen dieselben
+Formeln als Kopie, damit eine Änderung am Tagesmodell nicht stillschweigend die
+Wochenrechnung verschiebt. Die Kalibrierung der Woche steckt als Vorgabewert
+darin, `npm run sim:week` reproduziert sie ohne Parameter.
+
+`dev-woche.js` wird nicht importiert, sondern in die Browser-Konsole eingefügt.
+Danach stellt `dev.` einen beliebigen Wochentag her, löst den Nacht-Bildschirm
+oder das Freitagsfinale aus, schaltet die Gala frei und räumt die Zähler wieder
+auf, die das Testen zwangsläufig erzeugt.
 
 Der Linter prüft Verweise und Konventionen: Item-, Figuren- und Flag-Namen
 (`req`, `rem`, `loot`, `rep`, `char` — auch auf Knoten-Ebene in Chats), doppelte
@@ -159,6 +180,30 @@ Gala werden nicht angefasst.
 
 `normalize-quotes.mjs` macht zwei Durchgänge über die Anführungszeichen, siehe
 unten. `--dry` berichtet, ohne zu schreiben.
+
+## Tests
+
+`npm test` lässt drei Suiten nacheinander laufen: Fundament und Ablauf des
+Wochenmodus sowie das Konsolen-Werkzeug. Sie laufen gegen die **echten** Module,
+nicht gegen Nachbauten — nur Anzeige und Audio sind ersetzt.
+
+Das braucht zwei Kunstgriffe, die in `register.mjs` und `svelte-loader.mjs`
+stecken: Der Loader-Haken schickt jede `.svelte.js`-Datei durch
+`compileModule()`, damit die Runes in Node überhaupt etwas tun, und
+`--conditions browser` sorgt dafür, dass dieselben Einstiegspunkte aufgelöst
+werden wie im Spiel. Beide Dateien sind ohne die Suiten wertlos und ohne sie
+startet keine Suite.
+
+Zwei Fallstricke, die beide schon zugeschlagen haben:
+
+**Zufall gehört nicht in eine Zusicherung.** Ein Test verglich die Vorschau des
+Nacht-Bildschirms mit dem Zustand *nach* der Morgenstimmung — und die ist
+gewürfelt. Er fiel in jedem dritten Lauf um. Er prüft jetzt gegen den
+Speicherpunkt, den `continueWeekNight()` vor dem Morgen schreibt.
+
+**Der Zustand ist ein Modul-Singleton.** Was ein Test hinterlässt, sieht der
+nächste. `resetState()` setzt deshalb auch `difficultyMult` und die Erfolge
+zurück; ohne Letztere zündete in einem späteren Freitag überraschend die Gala.
 
 ## Konventionen in den Datendateien
 
@@ -252,6 +297,40 @@ außerhalb.
 Datei nicht mehr verwenden. Svelte liest `$name` als Store-Subskription, und
 `state` ist kein Store. Für Element-Referenzen ist ohnehin ein Attachment der
 bessere Weg, siehe `PhoneView.svelte`.
+
+## Der Wochenmodus
+
+`engine_week.js` trägt den gesamten Modus. Zwei Regeln halten den Tagesmodus
+davon frei, und beide sind im Bauen mehrfach nützlich gewesen:
+
+**`state.difficultyMult` bleibt die Identitätsgrenze des Tagesmodus.** Die Woche
+fasst ihn nie an. Alle Formelstellen lesen stattdessen `effMult()` oder
+`statMult()`, wobei Letzteres den Mittwochs-Aufschlag trägt (1.0 wird an der
+Formelstelle zu 1.1, während der gespeicherte Wert 1.0 bleibt — überall sonst
+ist er ein Identitätsvergleich). Verstreute `> 1.0`-Abfragen sind durch
+`difficultyTier()` ersetzt, das beide Modi auf 1/2/3 abbildet.
+
+**Die Nacht ist kein zweiter Reset-Pfad.** `advanceWeekNight()` ruft `freshDay()`
+und schreibt danach nur den Übertrag zurück. Wer ein neues Tagesfeld anlegt,
+muss die Nacht nicht kennen — das Feld setzt sich dort zurück wie überall
+sonst. Der umgekehrte Weg (die Nacht listet auf, was sie zurücksetzt) wäre die
+Sorte Code, die genau einmal beim nächsten neuen Feld bricht.
+
+Der Wochenlauf hat einen eigenen Speicherplatz (`KEYS.weekState`). `saveDay()`
+leitet bei laufender Woche dorthin um, damit der Tages-Platz nie eine halbe
+Woche hält; ein angefangener Arbeitstag bleibt davon unberührt und wartet an
+seinem eigenen Knopf.
+
+Bei den Zählern gilt dieselbe Trennung: Wochentage erhöhen die Tageszähler
+nicht, die Woche zählt über `recordWeekResult()`. Nur die Serie zählt
+modusübergreifend weiter, weil ein überlebter Wochentag ein überlebter Tag ist.
+
+**Zeitschwellen brauchen ein Fenster, keine Schranke.** Eine einzelne Option
+kann bis zu vier Stunden kosten (Median 5 Minuten, Maximum 240 in den
+Bossfights). Die Mittagspause kannte nur „ab zwölf" und ließ sich damit in den
+Nachmittag schieben; sie hat jetzt ein Fenster bis 14 Uhr. Aus demselben Grund
+endet der Freitag erst nach dem Wochenmeeting — zwischen 15:00 und 16:30 liegen
+nur 90 Minuten Puffer.
 
 ## Overlays
 
