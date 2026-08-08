@@ -12,7 +12,7 @@ Die Arbeitswoche:
 * Aggro und Chef-Radar erholen sich prozentual, und die Erholung wird von Nacht zu Nacht schlechter. Der Freitag ist nicht schwerer, weil das Spiel härter wird, sondern weil vier Tage in den Knochen stecken.
 * Ventil und Abmahnung gibt es einmal pro WOCHE statt einmal pro Tag. Wer am Dienstag ausrastet, hat bis Freitag keine zweite Chance.
 * Der Nacht-Bildschirm zeigt vor dem Schlafengehen, was der nächste Morgen erbt: Tickets, Werte und Ausreden im Vorher-nachher, dazu eine Zeile darüber, wie die Nacht war. Der Abend ist zum Planen da.
-* Der Freitag hat ein Finale: Ab 15 Uhr führt der Weg ins Wochenmeeting - mit dem Chef, wechselnden externen Beratern und einer Tagesordnung, die niemanden interessiert. Erst danach ist Feierabend.
+* Der Freitag hat ein Finale: Ab 15 Uhr führt der Weg ins Wochenmeeting - mit dem Chef, wechselnden externen Beratern und einer Tagesordnung, die niemanden interessiert. Erst danach ist Feierabend, auch wenn es darüber später als halb fünf wird.
 * Am Ende steht die Wochen-Bilanz: pro Tag die Werte, mit denen er in die Nacht ging, darunter die Summen. Wer scheitert, sieht, an welchem Tag es riss.
 * Das Tagebuch kennt die Woche: eigene Auftakte je Wochentag, ein Nachtrag darüber, was mit ins Bett genommen wird, und ein eigener Text für den überstandenen Freitag.
 * Damit kein Bereich leergeklickt werden kann, hat jeder Pool ein Tagespensum. Ist es aufgebraucht, kostet der Griff dorthin trotzdem Zeit - der Serverraum ist dann eben verdächtig still.
@@ -34,6 +34,7 @@ Anzeige & Layout:
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
 
 Fehlerkorrekturen:
+* Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
 * Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.
 * Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
 

@@ -1159,6 +1159,12 @@ export const core = {
             // run. The gala never fires mid-week; Friday's gala returns
             // together with the meeting finale (v4.2, package 3).
             if (this.state.week.active) {
+                // Friday's meeting outranks the clock. A four-hour option can
+                // carry 14:00 past 16:30 in one go, and the week would then
+                // end without its finale ever happening. The button offers the
+                // meeting instead; the next check ends the week right after.
+                if (this.state.week.dayIndex === 5 && !this.state.meetingDone) return;
+
                 if (this.state.week.dayIndex < 5) {
                     this.queueNightEnd();
                 } else {

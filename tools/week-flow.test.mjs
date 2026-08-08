@@ -56,9 +56,15 @@ const resetState = () => {
     state.difficultyMult = 1.0;   // freshDay trägt es nicht - sonst leckt ein Wert aus dem Vortest
     state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
     state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
+    // Auch die Erfolge zurücksetzen: Der Gala-Test schaltet sie frei, und ein
+    // späterer Freitag würde sonst überraschend in der Feier statt in der
+    // Bilanz enden.
+    state.archive.achievements = [];
+    state.archive.achievementDiffs = {};
+    state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
-    calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.reloaded = false;
+    calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.reloaded = false; calls.termResult = null;
     engine._resumeKind = null;
     store.clear();
 };
@@ -137,6 +143,7 @@ await ok('Freitag 16:30 → WOCHE ÜBERLEBT mit Bilanz, Statistiken, Slot geräu
     ];
     state.time = 16 * 60 + 30; state.tickets = 6; state.coffeeConsumed = 2;
     state.fl = 52; state.al = 44; state.cr = 39;
+    state.meetingDone = true;              // der Freitag endet erst nach dem Meeting
     engine.checkEndConditions();
     assert.equal(state.pendingEnd.title, 'WOCHE ÜBERLEBT');
     engine.finishGame();
@@ -461,7 +468,7 @@ await ok('triggerMeeting: zieht aus dem Pool, setzt meetingDone, Gala-Variante g
     assert.equal(calls.terminal[0].startNode, 'root_gala');     // Ansage-Variante
     engine.partyInvitation = realParty;
 });
-await ok('Freitag 16:30: Gala zündet nur nach dem Meeting, sonst Wochen-Bilanz', () => {
+await ok('Freitag 16:30: erst das Meeting, dann Gala oder Bilanz', () => {
     resetState();
     engine.startWeek('easy');
     state.week.dayIndex = 5;
@@ -469,14 +476,22 @@ await ok('Freitag 16:30: Gala zündet nur nach dem Meeting, sonst Wochen-Bilanz'
     const realParty = engine.partyInvitation;
     engine.partyInvitation = () => ({ isParty: true, partyKey: 'k', diffStr: 'easy' });
 
-    state.meetingDone = false;                                  // ohne Meeting: keine Gala
+    // Ohne Meeting endet gar nichts - der Knopf führt in den Besprechungsraum.
+    state.meetingDone = false;
+    engine.checkEndConditions();
+    assert.equal(state.pendingEnd, null, 'das Finale darf nicht übersprungen werden');
+
+    // Mit Meeting und erfüllten Voraussetzungen: die Gala
+    state.meetingDone = true;
+    engine.checkEndConditions();
+    assert.equal(state.pendingEnd.isParty, true);
+
+    // Mit Meeting, ohne Gala-Voraussetzungen: die Wochen-Bilanz
+    state.pendingEnd = null;
+    engine.partyInvitation = () => null;
     engine.checkEndConditions();
     assert.equal(state.pendingEnd.title, 'WOCHE ÜBERLEBT');
 
-    state.pendingEnd = null;
-    state.meetingDone = true;                                   // mit Meeting: Gala
-    engine.checkEndConditions();
-    assert.equal(state.pendingEnd.isParty, true);
     engine.partyInvitation = realParty;
 });
 await ok('partyInvitation ist stufenbasiert: week_normal fragt Mittwoch-Rang, teilt den Played-Schlüssel', () => {
@@ -654,9 +669,15 @@ await ok('Nacht-Screen und Zustand zeigen exakt dieselben Werte', () => {
     const gezeigt = state.pendingEnd.night;
     engine.finishGame();
     engine.continueWeekNight();
-    assert.equal(state.al, gezeigt.alAfter);
-    assert.equal(state.cr, gezeigt.crAfter);
-    assert.equal(state.tickets, gezeigt.ticketsAfter);
+
+    // Gegen den Speicherpunkt prüfen, nicht gegen den Live-Zustand:
+    // continueWeekNight() spielt direkt danach den Morgen, und dessen
+    // Stimmung verschiebt die Werte zufällig. saveWeek() schreibt den Stand
+    // davor - genau das, was der Bildschirm versprochen hat.
+    const stand = engine.loadWeek().day;
+    assert.equal(stand.al, gezeigt.alAfter);
+    assert.equal(stand.cr, gezeigt.crAfter);
+    assert.equal(stand.tickets, gezeigt.ticketsAfter);
 });
 
 // ------------------------------------------------ Voreinstellung Arbeitswoche
@@ -731,6 +752,7 @@ await ok('Der Endbildschirm kennzeichnet Wochen-Enden über das End-Objekt', () 
     engine.startWeek('normal');
     state.week.dayIndex = 5;
     state.time = 16 * 60 + 30;
+    state.meetingDone = true;
     engine.checkEndConditions();
     engine.finishGame();
     assert.equal(calls.end.isWeek, true, 'isWeek fehlt - Kopfzeile zeigte den falschen Zähler');
@@ -804,6 +826,49 @@ await ok('Ein offenes Ereignis verhindert das Sichern - wie beim Resume-Dialog',
     state.activeEvent = true;
     engine.returnToMenu();
     assert.equal(engine.loadWeek(), null, 'mitten im Ereignis darf nicht gesichert werden');
+});
+
+// ------------------------------------------------- Zeitsprünge (Spieltest)
+console.log('Lange Ereignisse:');
+await ok('Die Mittagspause hat ein Fenster: 12:30 ja, 15:50 nicht mehr', () => {
+    resetState();
+    state.time = 12 * 60 + 20;
+    engine.resolveTerminal({ m: 10, r: 'x' }, 'coffee');
+    assert.equal(state.lunchDone, true);
+    assert.equal(calls.termResult?.action, 'triggerLunch', 'im Fenster muss die Pause kommen');
+
+    // Ein Bossfight kann vier Stunden kosten: 11:50 -> 15:50
+    resetState();
+    state.time = 11 * 60 + 50;
+    engine.resolveTerminal({ m: 240, r: 'x' }, 'server');
+    assert.equal(state.lunchDone, true, 'die Pause ist trotzdem vorbei');
+    assert.notEqual(calls.termResult?.action, 'triggerLunch',
+        'um 15:50 darf keine Mittagspause mehr angeboten werden');
+});
+await ok('Das Freitagsfinale wird nicht von der Uhr überholt', () => {
+    resetState();
+    engine.startWeek('normal');
+    state.week.dayIndex = 5;
+    state.meetingDone = false;
+    state.time = 16 * 60 + 40;                                  // schon über Feierabend
+    state.ticketWarning = true;
+
+    engine.checkEndConditions();
+    assert.equal(state.pendingEnd, null, 'die Woche darf ohne Meeting nicht enden');
+
+    state.meetingDone = true;
+    engine.checkEndConditions();
+    assert.equal(state.pendingEnd?.title, 'WOCHE ÜBERLEBT');
+});
+await ok('Mo–Do bleibt vom Meeting-Schutz unberührt', () => {
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 3;
+    state.meetingDone = false;
+    state.time = 16 * 60 + 40;
+    state.ticketWarning = true;
+    engine.checkEndConditions();
+    assert.equal(state.pendingEnd?.isNight, true);
 });
 
 console.log(`\n${passed} Tests bestanden.`);

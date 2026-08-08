@@ -760,11 +760,22 @@ export const events = {
         this.state.time += m;
         this.checkLeetMoment(timeBefore);
         
-        // Lunch Check
+        // Lunch check, with a window rather than an open-ended threshold.
+        // A single option can cost up to four hours (the boss fights), so one
+        // choice can carry the clock from 11:50 straight past the afternoon -
+        // and the old condition would then have announced the lunch break at
+        // half past three. Past the window the break is simply missed, which
+        // is both more believable and the thing an office actually does.
+        const LUNCH_FROM = 12 * 60;
+        const LUNCH_UNTIL = 14 * 60;
         let triggerLunch = false;
-        if (!this.state.isPartyMode && !this.state.lunchDone && this.state.time >= 12 * 60) {
-            triggerLunch = true;
-            this.state.lunchDone = true;
+        if (!this.state.isPartyMode && !this.state.lunchDone && this.state.time >= LUNCH_FROM) {
+            this.state.lunchDone = true;              // either way it is over for today
+            if (this.state.time < LUNCH_UNTIL) {
+                triggerLunch = true;
+            } else {
+                this.log("Die Mittagspause ist heute ausgefallen. Gemerkt hat es niemand.", "text-slate-500");
+            }
         }
 
         // Meeting check (week Friday finale, design 8.1): the first
