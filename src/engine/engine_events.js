@@ -1039,8 +1039,18 @@ export const events = {
             }
         }
         else if (mood.effect === "excuse_plus") {
-            this.state.excusesLeft++;
-            statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+            // Der Wochenmodus deckelt den Vorrat (Design 4.4). Ohne diese
+            // Pruefung haette die Morgenstimmung den Deckel umgangen und der
+            // Vorrat waere ueber die Woche beliebig gewachsen.
+            const deckel = this.state.week.active
+                ? this.WEEK_DIFFS[this.state.week.level].excuseCap
+                : Infinity;
+            if (this.state.excusesLeft < deckel) {
+                this.state.excusesLeft++;
+                statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+            } else {
+                statHtml = "<span class='text-slate-400 font-bold'>Dein Vorrat an Ausreden ist ohnehin voll</span>";
+            }
         }
 
         else if (mood.effect === "normal") {
@@ -1141,8 +1151,10 @@ export const events = {
         // balance sheet below the party report, save slot. The balance must
         // be built BEFORE endWeek() - it reads the still-active week.
         let weekHTML = '';
+        let warWoche = false;
         let leadText = "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.";
         if (this.state.week.active) {
+            warWoche = true;
             this.recordWeekResult('survived', 5);
             weekHTML = this.buildWeekBalanceHTML({ isWin: true });
             this.endWeek();
@@ -1155,7 +1167,11 @@ export const events = {
             text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
             cause: "party",
             diary,
-            isWin: true
+            isWin: true,
+            // endWeek() lief oben, der Zustand weiss also nicht mehr, aus
+            // welchem Modus dieses Ende stammt - die Kopfzeile haette sonst
+            // "Arbeitstag Nr." ueber einer ueberstandenen Woche gezeigt.
+            isWeek: warWoche
         });
     },
 

@@ -47,7 +47,7 @@ const engine = {
     setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
     setTerminalResult(text, m, f, a, c, action, buttonText) { calls.termResult = { action, buttonText }; },
     log() {},
-    unlockAchievement(id) { calls.achs.push(id); },
+    unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'Tagebuch-Stub',
 };
 
@@ -64,7 +64,7 @@ const resetState = () => {
     state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
-    calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.reloaded = false; calls.termResult = null;
+    calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.achStufen = []; calls.reloaded = false; calls.termResult = null;
     engine._resumeKind = null;
     store.clear();
 };
@@ -869,6 +869,65 @@ await ok('Mo–Do bleibt vom Meeting-Schutz unberührt', () => {
     state.ticketWarning = true;
     engine.checkEndConditions();
     assert.equal(state.pendingEnd?.isNight, true);
+});
+
+// --------------------------------------------------- Randfälle (Abnahme)
+console.log('Randfälle:');
+await ok('Der Ausreden-Deckel gilt auch für die Morgenstimmung', () => {
+    resetState();
+    engine.startWeek('hard');                                   // Deckel 3
+    state.excusesLeft = 3;
+    engine.triggerMorningMood('excuse_plus');
+    assert.equal(state.excusesLeft, 3, 'Deckel umgangen');
+
+    engine.startWeek('hard');
+    state.excusesLeft = 1;
+    engine.triggerMorningMood('excuse_plus');
+    assert.equal(state.excusesLeft, 2, 'unter dem Deckel muss sie wirken');
+
+    resetState();                                               // Tagesmodus: kein Deckel
+    state.excusesLeft = 9;
+    engine.triggerMorningMood('excuse_plus');
+    assert.equal(state.excusesLeft, 10);
+});
+await ok('Das Gala-Ende kennzeichnet die überstandene Woche', () => {
+    resetState();
+    engine.startWeek('normal');
+    state.week.dayIndex = 5;
+    state.isPartyMode = true; state.partyProgress = 12;
+    engine.finishParty('party_finale_standard');
+    assert.equal(calls.end?.isWeek, true, 'Kopfzeile zeigte den Tageszähler');
+    assert.equal(state.archive.stats.weeksSurvived, 1);
+
+    resetState();                                               // Tagesmodus bleibt Tag
+    state.isPartyMode = true; state.partyProgress = 12;
+    engine.finishParty('party_finale_standard');
+    assert.ok(!calls.end?.isWeek);
+});
+await ok('Erfolge tragen die Stufe des Wochenzustands', () => {
+    resetState();
+    engine.startWeek('hard');
+    state.tickets = 0;
+    engine.recordWeekResult('survived', 5);
+    assert.ok(calls.achStufen.length >= 3);
+    assert.ok(calls.achStufen.every(t => t === 3), `Stufen: ${calls.achStufen}`);
+});
+await ok('Kontingente überstehen das Fortsetzen', () => {
+    resetState();
+    engine.startWeek('normal');
+    state.morningMoodShown = true;
+    engine.spendContingent('coffee');
+    engine.spendContingent('coffee');
+    const vorher = engine.weekContingentLeft('coffee');
+    engine.saveWeek();
+    const slot = store.get('layer8_week');
+    const archiv = JSON.parse(JSON.stringify(state.archive.stats));
+    resetState();
+    state.archive.stats = archiv;
+    store.set('layer8_week', slot);
+    engine.offerResume('week');
+    engine.resumeDay();
+    assert.equal(engine.weekContingentLeft('coffee'), vorher);
 });
 
 console.log(`\n${passed} Tests bestanden.`);
