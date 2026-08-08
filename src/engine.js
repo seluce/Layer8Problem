@@ -7,7 +7,7 @@ import { ui } from './engine/engine_ui.js';
 import { week } from './engine/engine_week.js';
 
 const engine = {
-    VERSION: "v4.1.0",
+    VERSION: "v5.0.0",
 
     // 1. Attach the mutable game state
     state: state,

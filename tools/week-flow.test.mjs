@@ -722,7 +722,7 @@ await ok('Wochentage zählen NICHT in die Tageszähler', () => {
     engine.recordDayResult('survived');
     assert.equal(state.archive.stats.daysSurvived ?? 0, 0, 'daysSurvived verunreinigt');
     assert.equal(state.archive.stats.survived_week_normal, 2, 'Wochentage fehlen im eigenen Namensraum');
-    assert.equal(state.archive.stats.streak, 2, 'Serie zählt modusunabhängig weiter');
+    assert.equal(state.archive.stats.streak ?? 0, 0, 'die Tages-Serie bleibt vom Wochenmodus unberührt');
 
     engine.endWeek();
     engine.recordDayResult('survived');
@@ -950,6 +950,54 @@ await ok('Das Meeting wiederholt sich nicht in aufeinanderfolgenden Wochen', asy
     }
     // Das Gedächtnis darf den Pool nie ganz leeren
     assert.ok(state.archive.seenMeetings.length < DB.meetings.length);
+});
+
+await ok('Die Serie ist nach Modus getrennt', () => {
+    resetState();
+    engine.startWeek('normal');
+    engine.recordDayResult('survived');
+    engine.recordDayResult('survived');
+    assert.equal(state.archive.stats.streak ?? 0, 0, 'Wochentage zählen nicht in die Tages-Serie');
+
+    engine.recordWeekResult('survived', 5);
+    engine.recordWeekResult('survived', 5);
+    assert.equal(state.archive.stats.weekStreak, 2);
+    assert.equal(state.archive.stats.weekStreakBest, 2);
+
+    engine.recordWeekResult('rage', 3);                         // Abbruch reisst die Serie
+    assert.equal(state.archive.stats.weekStreak, 0);
+    assert.equal(state.archive.stats.weekStreakBest, 2, 'der Rekord bleibt');
+
+    engine.endWeek();                                           // Tagesmodus zählt weiter eigenständig
+    engine.recordDayResult('survived');
+    assert.equal(state.archive.stats.streak, 1);
+    assert.equal(state.archive.stats.weekStreak, 0);
+});
+await ok('Der Rucksack-Deckel greift, Werkzeuge sind bewusst ausgenommen', async () => {
+    resetState();
+    engine.startWeek('easy');
+    await ensure('items');
+    const ids = Object.keys(DB.items);
+    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);   // 9 Stück
+    const werkzeug  = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
+
+    // Erst alle Verbrauchsgüter, dann Werkzeuge bis über den Deckel
+    for (const id of verbrauch) engine.grantItem(id, 'ITEM');
+    for (const id of werkzeug.slice(0, 4)) engine.grantItem(id, 'ITEM');
+    const zaehlbar = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
+    assert.ok(zaehlbar > 10, `Werkzeuge müssen den Deckel überschreiten dürfen (${zaehlbar})`);
+
+    // Ein weiteres Verbrauchsgut wird jetzt abgewiesen
+    const vorher = state.inventory.length;
+    state.inventory = state.inventory.filter(i => i.id !== verbrauch[0]);
+    engine.grantItem(verbrauch[0], 'ITEM');
+    assert.ok(!state.inventory.some(i => i.id === verbrauch[0]),
+        'bei vollem Rucksack darf kein Verbrauchsgut mehr dazukommen');
+
+    // Die Nacht trägt den Stand unverändert weiter
+    const stand = state.inventory.length;
+    engine.advanceWeekNight();
+    assert.equal(state.inventory.length, stand);
 });
 
 console.log(`\n${passed} Tests bestanden.`);

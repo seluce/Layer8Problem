@@ -500,13 +500,18 @@ export const core = {
         if (outcome === 'survived') {
             if (dayMode) bump('daysSurvived');
             bump('survived_' + diff);
-            // The streak is deliberately mode-agnostic: it counts days
-            // survived in a row, and a week day is a day survived.
-            st.streak = (st.streak || 0) + 1;
-            if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
+            // The streak belongs to the day mode, like the counters above it.
+            // A week has its own streak in recordWeekResult() - counted in
+            // weeks, not in days, because that is the run the player finishes.
+            if (dayMode) {
+                st.streak = (st.streak || 0) + 1;
+                if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
+            }
         } else {
-            if (dayMode) bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
-            st.streak = 0;   // A streak ends where the day ends.
+            if (dayMode) {
+                bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
+                st.streak = 0;   // A streak ends where the day ends.
+            }
         }
 
         // In week mode the two safety flags survive the nights (valve and

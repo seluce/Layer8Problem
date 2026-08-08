@@ -120,8 +120,11 @@
     const showBest = $derived(mode === 'week'
         && (stats.weekBestDay ?? 0) > 0 && (stats.weeksSurvived ?? 0) === 0);
 
-    const streak      = $derived(stats.streak ?? 0);
-    const streakBest  = $derived(stats.streakBest ?? 0);
+    // Die Serie gehört zum Modus: Tage am Stück beziehungsweise Wochen am
+    // Stück. Eine gemeinsame Zahl hätte zwei verschiedene Dinge gezählt.
+    const streak      = $derived(mode === 'day' ? (stats.streak ?? 0) : (stats.weekStreak ?? 0));
+    const streakBest  = $derived(mode === 'day' ? (stats.streakBest ?? 0) : (stats.weekStreakBest ?? 0));
+    const streakLabel = $derived(mode === 'day' ? 'Tage am Stück' : 'Wochen am Stück');
 
     // Small print: only show what actually happened. The numbers carry the
     // colour of their stat - orange for the valve, red for the boss - so the
@@ -163,7 +166,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">📦</span> Items</span>
+                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_items.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '📦'}> Items</span>
                     <span class="text-xs font-mono text-slate-300">{foundItems} / {items.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -173,7 +176,7 @@
 
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><span class="text-sm">🏅</span> Erfolge</span>
+                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_medal.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '🏅'}> Erfolge</span>
                     <span class="text-xs font-mono text-slate-300">{earned.length} / {DB.achievements.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -184,20 +187,9 @@
 
         <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner space-y-2.5">
 
-            <!-- Streak first: the only number that looks different tomorrow if you stop today. -->
-            {#if streakBest > 0}
-                <div class="flex items-center justify-between px-2 py-1.5 bg-slate-800/40 rounded-sm border border-slate-700/30">
-                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Serie</span>
-                    <span class="font-mono text-sm">
-                        <span class="{streak > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">{streak}</span>
-                        <span class="text-slate-600 mx-1.5">·</span>
-                        <span class="text-[10px] text-slate-500 uppercase tracking-widest">Rekord</span>
-                        <span class="text-slate-300 font-bold ml-1">{streakBest}</span>
-                    </span>
-                </div>
-            {/if}
-
-            <div class="flex items-center gap-1.5 mb-2">
+            <!-- Der Umschalter zuerst: er bestimmt, was die Zahlen darunter
+                 überhaupt bedeuten. -->
+            <div class="flex items-center gap-1.5">
                 {#each MODES as m (m.key)}
                     <button type="button" onclick={() => setMode(m.key)}
                             aria-pressed={mode === m.key}
@@ -218,6 +210,18 @@
                     </div>
                 {/each}
             </div>
+
+            {#if streakBest > 0}
+                <div class="flex items-center justify-between px-2 py-1.5 bg-slate-800/40 rounded-sm border border-slate-700/30">
+                    <span class="text-[9px] text-slate-500 uppercase tracking-widest">Serie · {streakLabel}</span>
+                    <span class="font-mono text-sm">
+                        <span class="{streak > 0 ? 'text-amber-400 font-bold' : 'text-slate-500'}">{streak}</span>
+                        <span class="text-slate-600 mx-1.5">·</span>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-widest">Rekord</span>
+                        <span class="text-slate-300 font-bold ml-1">{streakBest}</span>
+                    </span>
+                </div>
+            {/if}
 
             {#if showBest}
                 <p class="text-[9px] text-slate-500 uppercase tracking-widest text-center">

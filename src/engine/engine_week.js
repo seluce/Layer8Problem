@@ -504,6 +504,15 @@ export const week = {
             platform.stat(key, st[key]);
         };
 
+        // The week's own streak: completed weeks in a row. A failed week
+        // breaks it, exactly like a failed day breaks the day streak.
+        if (outcome === 'survived') {
+            st.weekStreak = (st.weekStreak || 0) + 1;
+            if (st.weekStreak > (st.weekStreakBest || 0)) st.weekStreakBest = st.weekStreak;
+        } else {
+            st.weekStreak = 0;
+        }
+
         if (outcome === 'survived') {
             bump('weeksSurvived');
             // Own namespace on purpose: survived_week_easy already counts the
