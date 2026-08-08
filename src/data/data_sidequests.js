@@ -3507,7 +3507,7 @@ export const sidequests = [
         ]
     },
 
-    // --- PHONE EVENTS (Chat-System) ---
+    // --- PHONE EVENTS (chat system) ---
     { 
         id: "sq_telegram", 
         kind: "phone", 
@@ -5334,7 +5334,7 @@ export const sidequests = [
             }
         }
     },
-    // CHAIN: Kevin bekommt Verantwortung (Vorlauf zu sq_kevin_origin_2)
+    // CHAIN: Kevin is handed responsibility (leads into sq_kevin_origin_2)
     {
         id: "sq_kevin_origin_1",
         char: "Kevin",
@@ -5664,7 +5664,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 4: Verschlossene Kabine
+    // CHAIN 4: the locked cubicle
     {
         id: "sq_wc_1",
         kind: "text",
@@ -5757,7 +5757,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 5: Toner-Mafia
+    // CHAIN 5: the toner mafia
     {
         id: "sq_toner_1",
         kind: "text",
@@ -5936,7 +5936,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 7: Brennender Papierkorb
+    // CHAIN 7: the burning waste basket
     {
         id: "sq_smoke_1",
         kind: "text",

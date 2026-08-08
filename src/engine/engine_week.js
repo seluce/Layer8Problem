@@ -359,7 +359,16 @@ export const week = {
         // once, whatever the room turns out to contain.
         this.state.meetingDone = true;
 
-        const pool = (DB.meetings ?? []).filter(ev => !this.state.usedIDs.has(ev.id));
+        // usedIDs lives inside one week, so without a longer memory the same
+        // finale could turn up two weeks in a row - with three chains that is
+        // a one-in-three chance. The archive remembers the last few and the
+        // pool prefers what the player has not seen; once everything has been
+        // seen, the oldest drops out and rotation starts over.
+        const gesehen = this.state.archive.seenMeetings ?? [];
+        let pool = (DB.meetings ?? []).filter(ev => !this.state.usedIDs.has(ev.id));
+        const frisch = pool.filter(ev => !gesehen.includes(ev.id));
+        if (frisch.length) pool = frisch;
+
         if (!pool.length) {
             // Should never happen (one meeting per week, weekly usedIDs) -
             // better a fallen-through meeting than a frozen Friday.
@@ -369,6 +378,13 @@ export const week = {
         }
 
         const ev = pool[Math.floor(Math.random() * pool.length)];
+
+        // One slot fewer than the pool holds: the oldest entry always falls
+        // out, so the filter can never empty the pool completely.
+        const merken = Math.max(1, (DB.meetings ?? []).length - 1);
+        this.state.archive.seenMeetings = [...gesehen.filter(id => id !== ev.id), ev.id].slice(-merken);
+        this.saveSystem();
+
         const galaTonight = !!this.partyInvitation();
         const startNode = (galaTonight && ev.startNodeGala) ? ev.startNodeGala : ev.startNode;
 

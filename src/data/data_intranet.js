@@ -284,7 +284,7 @@ export const intranet = {
     },
 
     /* ================================================================
-       SYSTEM-STATUS (Zähler)
+       SYSTEM STATUS (the counter)
        The counter beside "Tage ohne Vorfall im Serverraum" reads the
        streak from the archive, so for most players it says zero. That is
        the joke; the remarks make it one.

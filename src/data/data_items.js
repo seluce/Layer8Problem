@@ -57,7 +57,7 @@ export const items = {
                log:  "Die Schokolade schmilzt auf der Zunge. Für einen kurzen Moment hasst du niemanden. (Aggro -20)",
                color: "text-amber-500" } },
         
-    // WERKZEUGE (Dauerhaft -> keep: true)
+    // TOOLS (permanent -> keep: true)
     "admin_pw": { icon: "🔑", name: "Root-Passwort", flavor: "'Mit großer Macht kommt... ein Haufen Verantwortung (und Ärger). Ein falscher Klick und die Kundendatenbank ist Geschichte.'", keep: true, img: "assets/img/items/admin_pw.webp" },
     "cable": { icon: "〰️", name: "LAN-Kabel", flavor: "'Cat7. Hält Daten und wackelige Racks verlässlich zusammen. Im absoluten Notfall auch hervorragend als Peitsche gegen aufmüpfige User einsetzbar.'", keep: true, img: "assets/img/items/cable.webp" },
     "tape": { icon: "🩹", name: "Panzertape", flavor: "'Die stärkste bekannte Kraft im Universum ist graues Klebeband. Repariert gebrochene Server, undichte Rohre und zwingt Kollegen zum Schweigen.'", keep: true, img: "assets/img/items/tape.webp" },

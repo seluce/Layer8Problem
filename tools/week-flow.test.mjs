@@ -930,4 +930,26 @@ await ok('Kontingente überstehen das Fortsetzen', () => {
     assert.equal(engine.weekContingentLeft('coffee'), vorher);
 });
 
+await ok('Das Meeting wiederholt sich nicht in aufeinanderfolgenden Wochen', async () => {
+    resetState();
+    await ensure('meetings');
+    state.archive.seenMeetings = [];
+    const folge = [];
+    for (let w = 0; w < 6; w++) {
+        Object.assign(state, freshDay(1.0));            // neue Woche, frische usedIDs
+        engine.startWeek('normal');
+        state.week.dayIndex = 5;
+        state.meetingDone = false;
+        engine.triggerMeeting();
+        await new Promise(r => setTimeout(r, 10));
+        folge.push(calls.terminal[0].id);
+        engine.endWeek();
+    }
+    for (let i = 1; i < folge.length; i++) {
+        assert.notEqual(folge[i], folge[i - 1], `Woche ${i + 1} wiederholt das Finale`);
+    }
+    // Das Gedächtnis darf den Pool nie ganz leeren
+    assert.ok(state.archive.seenMeetings.length < DB.meetings.length);
+});
+
 console.log(`\n${passed} Tests bestanden.`);
