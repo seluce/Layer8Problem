@@ -313,16 +313,24 @@
                         {:else}{row.ach.icon}{/if}
                     </div>
 
-                    <div class="flex-1 min-w-0 flex flex-col justify-center">
-                        <div class="flex items-center gap-2 mb-0.5">
-                            <div class="font-bold text-xs truncate {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
+                    <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
+                        <!-- items-start und kein truncate: "Tanz auf dem Vulkan"
+                             endete sonst bei "Vul…". Der Titel darf umbrechen,
+                             das Abzeichen bleibt oben rechts stehen. -->
+                        <div class="flex items-start gap-2 mb-0.5">
+                            <div class="font-bold text-xs leading-tight {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
                             {#if row.unlocked}
-                                <span class="text-[9px] font-bold border px-1.5 rounded-sm ml-auto {row.diff.badge}">{row.diff.label}</span>
+                                <span class="text-[9px] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{row.diff.label}</span>
                             {:else}
-                                <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto">GESPERRT</span>
+                                <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">GESPERRT</span>
                             {/if}
                         </div>
-                        <div class="text-[10px] leading-tight line-clamp-2 {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
+                        <!-- Kein line-clamp: 33 von 54 Texten sind laenger als
+                             zwei Zeilen dieser Spalte, und abgeschnittene
+                             Hinweise verraten nicht mehr, was zu tun ist. Das
+                             Raster streckt die Karten einer Reihe ohnehin auf
+                             dieselbe Hoehe, es entsteht also keine Treppe. -->
+                        <div class="text-[10px] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
                     </div>
                 </div>
             {/each}
