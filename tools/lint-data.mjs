@@ -632,6 +632,13 @@ for (const ev of DB.emails) {
   const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   const between = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
 
+  // weekDay 0 means day mode; 1 to 5 are Monday through Friday of a week run.
+  const weekFacts = (weekDay) => ({
+    week: weekDay > 0,
+    weekDay,
+    weekRest: weekDay > 0 ? 5 - weekDay : 0,
+  });
+
   const days = [];
   const achList = [...achIds], itemList = [...itemIds];
 
@@ -658,7 +665,12 @@ for (const ev of DB.emails) {
       streak: between(0, 9),
       rageWarned: rnd() < 0.4, chefWarned: rnd() < 0.4, blind: rnd() < 0.3,
       ach: (id) => owned.has(id), item: (id) => carried.has(id),
-      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5
+      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5,
+      // Week facts (engine_diary.factsOf). Without them every week fragment
+      // looked unreachable and produced a warning that could never be fixed -
+      // ten permanent false alarms are the fastest way to teach someone that
+      // the warning list is safe to ignore.
+      ...weekFacts(between(0, 5))
     });
   }
 
