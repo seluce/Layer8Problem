@@ -52,6 +52,7 @@ Fehlerkorrekturen:
 * Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
 * Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.
 * Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
+* Die Merkliste des Tagebuchs (zuletzt benutzte Sätze, damit sich morgen nichts wiederholt) hing an einem ungültigen Speicher-Schlüssel und überlebte dadurch den harten Reset - das Tagebuch mied danach Sätze eines gelöschten Spielstands. Sie hat jetzt einen richtigen Namen und wird beim Reset mit abgeräumt.
 
 Für Entwickler:
 * Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
