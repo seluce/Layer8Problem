@@ -43,6 +43,17 @@ export const core = {
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
         if (!this.state.scanlines) document.body.classList.add('no-scanlines');
+
+        // Das Tutorial läuft nur im Arbeitstag - es schreibt einen festen
+        // Ablauf und setzt einen bestimmten Startzustand voraus, den die
+        // Woche je nach Zustand nicht hat. Wer noch nie eines gespielt hat
+        // und gleich die Woche wählt, bekommt deshalb einen Hinweis statt
+        // einer Sperre: Fünf Tage ohne Grundlagen sind ein harter Einstieg,
+        // aber die Entscheidung bleibt beim Spieler.
+        if (localStorage.getItem(this.KEYS.tutorialDone) === 'true') {
+            document.getElementById('week-tutorial-hint')?.remove();
+        }
+
         this.showOverlay('intro-modal');
 
         this.updatePresence('system');

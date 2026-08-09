@@ -1000,4 +1000,18 @@ await ok('Der Rucksack-Deckel greift, Werkzeuge sind bewusst ausgenommen', async
     assert.equal(state.inventory.length, stand);
 });
 
+await ok('Das Tutorial läuft nicht in den Wochenmodus hinein', () => {
+    resetState();
+    store.delete('sysadmin_tutorial_done');          // Erstspieler
+    let tutorialGestartet = false;
+    globalThis.tutorial = { isActive: false, start() { tutorialGestartet = true; } };
+
+    engine.setWeekDifficulty('normal');
+    assert.equal(tutorialGestartet, false, 'die Woche darf das Tutorial nicht starten');
+    assert.equal(state.week.active, true);
+    assert.equal(state.tickets, 1, 'der Startzustand des Zustands bleibt unangetastet');
+
+    delete globalThis.tutorial;
+});
+
 console.log(`\n${passed} Tests bestanden.`);
