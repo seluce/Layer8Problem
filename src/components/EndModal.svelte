@@ -98,6 +98,21 @@
              transparency is the feature - evenings are for planning. -->
         {#if isNight && modal.night}
             <div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1.5">
+                <!-- Where in the week we are. The balance sheet only shows up
+                     at the end, so until then the night is the only place that
+                     can put a day into context. -->
+                <div class="flex items-center gap-1.5 mb-3">
+                    {#each ['Mo','Di','Mi','Do','Fr'] as tag, i}
+                        <span class="flex-1 text-center text-[9px] font-bold uppercase tracking-widest py-1 rounded-sm border
+                                     {i < game.week.dayIndex
+                                        ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
+                                        : i === game.week.dayIndex
+                                          ? 'bg-slate-800 border-slate-500 text-white'
+                                          : 'bg-slate-900/40 border-slate-800 text-slate-600'}">
+                            {tag}
+                        </span>
+                    {/each}
+                </div>
                 <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">Das nimmst du mit in den {modal.nextDay}</div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>Tickets</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>

@@ -407,6 +407,28 @@ export const week = {
      * end-of-day state; advanceWeekNight() recomputes the same deterministic
      * result when the player actually continues.
      */
+    /**
+     * The line under the headline of the night screen.
+     *
+     * It used to be a bare countdown - four nights, the same sentence, only
+     * the number changing. The state a day ends in says far more about how it
+     * went than the number of days left, so the countdown moves to the back
+     * and the front belongs to whatever stood out.
+     */
+    nightLead: function(remaining, report) {
+        const rest = remaining === 1 ? "Nur noch der Freitag."
+                                     : `Noch ${remaining} Tage.`;
+
+        // Ceiling: the day ends at ten tickets, and a quarter of nine is
+        // three - anything above that can never occur.
+        if (report.ticketsAfter >= 3)  return `Drei Tickets nimmst du mit ins Bett. ${rest}`;
+        if (report.ticketsAfter === 0) return `Keine offenen Tickets. Das gab es lange nicht. ${rest}`;
+        if (report.alAfter >= 55)      return `Der Puls ist immer noch oben. ${rest}`;
+        if (report.crAfter >= 55)      return `Der Chef hat sich deinen Namen notiert. ${rest}`;
+        if (report.fl >= 60)           return `Du hast heute wenig bewegt und viel überstanden. ${rest}`;
+        return `16:30 Uhr. ${rest}`;
+    },
+
     queueNightEnd: function() {
         const s = this.state;
         this.recordDayResult('survived');   // streak and daysSurvived count week days
@@ -427,16 +449,24 @@ export const week = {
         // picks the register, 'worn' takes over once the wear shows.
         const sleepPool = DB.special?.week_sleep?.[s.week.level];
         const sleepStage = s.week.dayIndex >= 3 ? 'worn' : 'fresh';
-        const sleepLines = sleepPool?.[sleepStage] ?? [];
+        // Monday and Tuesday both draw from "fresh", Wednesday and Thursday
+        // both from "worn" - with two lines per stage that made a repeat
+        // inside a single week a 75% affair. Remembering the last one takes
+        // that down to zero as long as a stage holds more than one line.
+        let sleepLines = sleepPool?.[sleepStage] ?? [];
+        if (sleepLines.length > 1 && this._lastSleepText) {
+            const frisch = sleepLines.filter(z => z !== this._lastSleepText);
+            if (frisch.length) sleepLines = frisch;
+        }
         preview.report.sleepText = sleepLines.length
             ? sleepLines[Math.floor(Math.random() * sleepLines.length)]
             : '';
+        this._lastSleepText = preview.report.sleepText;
 
         s.pendingEnd = {
             isNight: true,
             title: `${this.weekDayName().toUpperCase()} GESCHAFFT`,
-            lead: remaining === 1 ? "16:30 Uhr. Nur noch der Freitag."
-                                  : `16:30 Uhr. Noch ${remaining} Tage.`,
+            lead: this.nightLead(remaining, preview.report),
             diary: this.generateDiaryEntry('WIN'),
             night: preview.report,
             nextDay: WEEK_DAY_NAMES[s.week.dayIndex],
@@ -470,7 +500,16 @@ export const week = {
         document.getElementById('email-modal')?.classList.add('hidden');
         this.renderHeader();
         this.updateUI();
-        this.log(`${this.weekDayName()}. Neuer Tag, alter Backlog.`, 'text-purple-400');
+        // Five mornings a week, and it used to be the same sentence every
+        // time. The weekday itself carries meaning, so the line varies with it.
+        const MORGEN = {
+            2: 'Dienstag. Der Montag hat sich nicht von selbst erledigt.',
+            3: 'Mittwoch. Bergfest, sagen Leute, die nicht in der IT arbeiten.',
+            4: 'Donnerstag. Der Freitag ist in Sichtweite und das macht es nicht besser.',
+            5: 'Freitag. Einmal noch.',
+        };
+        this.log(MORGEN[this.state.week.dayIndex] ?? `${this.weekDayName()}. Neuer Tag, alter Backlog.`,
+                 'text-purple-400');
 
         this.playBootSequence(() => { this.reset(); });
     },

@@ -47,7 +47,7 @@ const engine = {
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
     setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
     setTerminalResult(text, m, f, a, c, action, buttonText) { calls.termResult = { action, buttonText }; },
-    log() {},
+    log(text) { (calls.logs ??= []).push(text); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'Tagebuch-Stub',
 };
@@ -1217,6 +1217,66 @@ await ok('Aus der Woche heraus beginnt die Gala mit einer eigenen Zeile', async 
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
     assert.ok(!/Fünf Tage/.test(calls.terminal[0].text), 'im Tagesmodus fehl am Platz');
+});
+
+// -------------------------------------------------- Der Tageswechsel
+console.log('Nacht und Übergang:');
+await ok('Der Vorspann greift auf, wie der Tag gelaufen ist', async () => {
+    resetState();
+    await ensure('special');
+    engine.startWeek('hard');
+    const lead = (t, al, cr, fl) => {
+        state.week.dayIndex = 2;
+        state.tickets = t; state.al = al; state.cr = cr; state.fl = fl;
+        state.time = 16 * 60 + 30; state.ticketWarning = true; state.pendingEnd = null;
+        engine.queueNightEnd();
+        return state.pendingEnd.lead;
+    };
+    assert.match(lead(9, 20, 20, 20), /Tickets nimmst du mit/);
+    assert.match(lead(0, 20, 20, 20), /Keine offenen Tickets/);
+    assert.match(lead(2, 100, 20, 20), /Puls/);
+    assert.match(lead(2, 20, 100, 20), /Chef/);
+    assert.match(lead(2, 20, 20, 80), /wenig bewegt/);
+    assert.match(lead(2, 25, 25, 30), /^16:30 Uhr/);
+});
+await ok('Die Ticket-Schwelle ist erreichbar', () => {
+    // Bei zehn Tickets endet der Tag, ein Viertel von neun sind drei.
+    const hoechstwert = Math.ceil(9 * 0.25);
+    const src = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
+    const m = src.match(/report\.ticketsAfter >= (\d+)/);
+    assert.ok(m, 'Schwelle nicht gefunden');
+    assert.ok(Number(m[1]) <= hoechstwert,
+        `Schwelle ${m[1]} ist über dem Höchstwert ${hoechstwert} - tote Verzweigung`);
+});
+await ok('Zwei Nächte hintereinander zeigen nie denselben Schlaftext', async () => {
+    resetState();
+    await ensure('special');
+    engine.startWeek('normal');
+    const gesehen = [];
+    for (let d = 1; d <= 4; d++) {
+        state.week.dayIndex = d;
+        state.tickets = 2; state.al = 25; state.cr = 25; state.fl = 30;
+        state.time = 16 * 60 + 30; state.ticketWarning = true; state.pendingEnd = null;
+        engine.queueNightEnd();
+        gesehen.push(state.pendingEnd.night.sleepText);
+    }
+    for (let i = 1; i < gesehen.length; i++) {
+        assert.notEqual(gesehen[i], gesehen[i - 1], `Nacht ${i + 1} wiederholt den Vortext`);
+    }
+});
+await ok('Jeder Morgen bekommt seine eigene Zeile', () => {
+    resetState();
+    engine.startWeek('easy');
+    const zeilen = new Set();
+    for (let d = 2; d <= 5; d++) {
+        state.week.dayIndex = d - 1;
+        state.morningMoodShown = true;
+        calls.logs = [];
+        state.modal = { open: true, isNight: true };
+        engine.continueWeekNight();
+        zeilen.add(calls.logs.find(l => /Dienstag|Mittwoch|Donnerstag|Freitag/.test(l)));
+    }
+    assert.equal(zeilen.size, 4, 'die vier Morgen müssen sich unterscheiden');
 });
 
 console.log(`\n${passed} Tests bestanden.`);
