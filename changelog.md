@@ -37,6 +37,11 @@ Anzeige & Layout:
 * Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
 
+Die Synergy-Gala:
+* Der Abend hat jetzt eine Uhrzeit. Die Feier beginnt um 17 Uhr, und jede Station bringt eine halbe Stunde - wer auf die Uhr sieht, weiß ungefähr, wie lange es noch dauert, ohne dass ihm jemand eine Fortschrittsanzeige hinstellt.
+* Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
+* Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
+
 Steam-Fassung:
 * Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
 * Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.

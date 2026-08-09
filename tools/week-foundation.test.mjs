@@ -112,7 +112,7 @@ ok('startWeek setzt Woche + Montags-Startzustand (Urlaubsreif: 2 Tickets, Aggro 
     assert.equal(state.excusesLeft, 1);
 });
 ok('advanceWeekNight: freshDay-Reset + Übertrag + weekLog + dayIndex', () => {
-    // Ein simulierter Montag mit Gepäck
+    // A simulated Monday carrying some baggage
     state.time = 16 * 60 + 30;
     state.tickets = 9; state.al = 80; state.cr = 50; state.fl = 30;
     state.lunchDone = true; state.leetSeen = true;

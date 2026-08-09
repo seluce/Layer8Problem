@@ -520,7 +520,7 @@ const EVENT_KEYS = {
   server:     ['reqStory', 'webOnly'],
   sidequests: ['reqStory', 'webOnly', 'kind', 'appName'],
   reputation: ['reqStory', 'reqRep'],
-  party:      ['loc'],
+  party:      ['loc', 'textByProgress'],   // hub variants by progress (engine_core.reset)
   lunch:      [],
   meetings:   ['startNodeGala'],   // alternative opening when tonight's gala fires (engine_week.triggerMeeting)
   tutorial:   ['type', 'step']

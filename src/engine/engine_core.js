@@ -5,6 +5,15 @@ import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
 
+/**
+ * The gala runs on its own clock. Twelve stations at half an hour each carry
+ * the evening from 17:00 to 23:00 - the header clock is the progress bar.
+ */
+const PARTY_START    = 17 * 60;
+const PARTY_END      = 23 * 60;
+const PARTY_STATIONS = 12;
+const PARTY_STEP     = (PARTY_END - PARTY_START) / PARTY_STATIONS;   // 30 minutes
+
 export const core = {
 
     // Single source of truth for every localStorage key the game touches.
@@ -757,8 +766,15 @@ export const core = {
             this.state.activeEvent = true;
             this.disableButtons(true);
             
+            // Half an hour per station: twelve of them carry 17:00 to 23:00,
+            // which is exactly where the finale sets it anyway.
+            this.state.time = Math.min(
+                PARTY_END,
+                PARTY_START + this.state.partyProgress * PARTY_STEP
+            );
+
             // After 12 stations the finale kicks in
-            if (this.state.partyProgress >= 12) {
+            if (this.state.partyProgress >= PARTY_STATIONS) {
                 let finaleId = 'party_finale_standard';
                 if (this.state.al >= 100) finaleId = 'party_finale_rage';
                 else if (this.state.fl >= 100) finaleId = 'party_finale_houdini';
@@ -766,12 +782,25 @@ export const core = {
                 else if (this.state.fl >= 50 && this.state.al <= 60) finaleId = 'party_finale_gossip';
                 
                 // --- The finale happens at 23:00 ---
-                this.state.time = 23 * 60;
+                this.state.time = PARTY_END;
                 this.updateUI();
                 
                 this.renderTerminal(DB.party.find(e => e.id === finaleId), 'party');
             } else {
-                this.renderTerminal(DB.party.find(e => e.id === 'party_hub'), 'party');
+                // Which version of the hub shows depends on how far the
+                // evening has come: arrival, peak, and the hour in which the
+                // room slowly empties.
+                const hub = DB.party.find(e => e.id === 'party_hub');
+                const fassungen = hub?.textByProgress;
+                if (fassungen?.length) {
+                    const stufe = Math.min(
+                        fassungen.length - 1,
+                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / fassungen.length))
+                    );
+                    this.renderTerminal({ ...hub, text: fassungen[stufe] }, 'party');
+                } else {
+                    this.renderTerminal(hub, 'party');
+                }
             }
             return;
         }
@@ -1373,6 +1402,12 @@ export const core = {
         // Switch into party mode
         this.state.isPartyMode = true;
         this.state.partyProgress = 0;
+
+        // The evening starts at 17:00 and reaches 23:00 at the finale. The
+        // clock in the header is the progress bar: it is already there, it
+        // belongs to the fiction, and it tells the player the evening is
+        // going somewhere without anyone having to write "station 7 of 12".
+        this.state.time = PARTY_START;
         this.state.currentPartyKey = endData.partyKey; 
         
         // The party starts from a clean slate
@@ -1390,8 +1425,19 @@ export const core = {
         this.playMusic('gala');
         this.updatePresence('party');
         
-        // And the trap closes: render the opening party event
-        this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
+        // And the trap closes: render the opening party event. Coming out of
+        // a week the gala is the end of five days, not of one - one line is
+        // enough to tie the two modes together.
+        const auftakt = DB.party.find(e => e.id === 'party_start');
+        if (auftakt && this.state.week.active) {
+            this.renderTerminal({
+                ...auftakt,
+                text: "Fünf Tage. Montag bis Freitag, ohne einen einzigen davon abzugeben.\n\n"
+                    + auftakt.text
+            }, 'party');
+        } else {
+            this.renderTerminal(auftakt, 'party');
+        }
     },
     
     // --- SPEICHERSTAND EXPORT / IMPORT SYSTEM ---

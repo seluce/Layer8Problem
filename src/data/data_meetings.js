@@ -234,7 +234,7 @@ export const meetings = [
 		results: {
 			res_eingang: {
 				txt: "Zwei Klicks, das Bild steht. Frau Kienzle bedankt sich beim Chef.",
-				m: 45, f: 0, a: 0, c: -5
+				m: 45, f: 0, a: 10, c: -5
 			},
 			res_leiter: {
 				txt: "Egon stellt die Leiter auf, steigt hoch und dreht den Eingang am Gerät um. Von oben, mit einem Kugelschreiber. Das Bild steht. 'War die Elektrik', sagt er zum Chef, der beeindruckt nickt.",
@@ -296,7 +296,8 @@ export const meetings = [
 			},
 			res_preis: {
 				txt: "Die Zahl steht drei Sekunden auf der Folie. Sie hat vor dem Komma eine Stelle mehr, als du erwartet hast. Frau Elster macht ein Geräusch.",
-				m: 45, f: 0, a: 5, c: 0
+				rep: { "Frau Elster": 5 },
+				m: 45, f: 0, a: 5, c: -5
 			},
 			res_zahl: {
 				txt: "Pro Monat. Pro Nutzer. Frau Elster schreibt sich beides auf und unterstreicht es zweimal. Im Protokoll steht später, die Buchhaltung habe Klärungsbedarf angemeldet.",
@@ -351,7 +352,7 @@ export const meetings = [
 		results: {
 			res_drucker: {
 				txt: "Er schreibt es auf. Wörtlich, mit dem Drucker. Zwei Wochen später steht der Satz in einer Präsentation unter der Überschrift 'Stimmen aus der Organisation', und der Chef fragt dich, wer das gesagt hat.",
-				m: 45, f: 0, a: 0, c: 5
+				m: 45, f: 0, a: 10, c: 5
 			},
 			res_ernst: {
 				txt: "Du antwortest drei Minuten lang. Er tippt mit, verliert den Anschluss und fragt, ob du das noch einmal von vorn sagen kannst. Auf dem Flur telefoniert sein Kollege weiter über Kapazitäten.",
@@ -364,7 +365,8 @@ export const meetings = [
 			},
 			res_erklaeren: {
 				txt: "'Bestandsaufnahme', wiederholt Markus. 'Von wem beauftragt?' Der Berater blättert. Markus steht auf und geht telefonieren. Draußen trifft er den Kollegen des Beraters, und die beiden reden lange.",
-				m: 45, f: 0, a: 5, c: 0
+				rep: { "Markus": -5 },
+				m: 45, f: 0, a: 5, c: 5
 			}
 		}
 	}

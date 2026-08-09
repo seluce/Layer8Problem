@@ -57,9 +57,8 @@ const resetState = () => {
     state.difficultyMult = 1.0;   // freshDay trägt es nicht - sonst leckt ein Wert aus dem Vortest
     state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
     state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
-    // Auch die Erfolge zurücksetzen: Der Gala-Test schaltet sie frei, und ein
-    // späterer Freitag würde sonst überraschend in der Feier statt in der
-    // Bilanz enden.
+    // Reset the achievements too: the gala test unlocks them, and a later
+    // Friday would otherwise end in the party instead of the balance sheet.
     state.archive.achievements = [];
     state.archive.achievementDiffs = {};
     state.achievements = [];
@@ -154,7 +153,7 @@ await ok('Freitag 16:30 → WOCHE ÜBERLEBT mit Bilanz, Statistiken, Slot geräu
     assert.ok(calls.end.text.includes('Erholt'));
     assert.ok(calls.end.text.includes('✓ Freitag'));
     assert.ok(calls.end.text.includes('☕ 12× Kaffee'));         // 3+2+4+1+2
-    // Endwerte statt Peak, abgekürzt, mit Legende im Kopf
+    // Closing values instead of the peak, abbreviated, legend in the header
     assert.ok(calls.end.text.includes('4 Tickets · F 20 · A 31 · C 24'), 'Montagszeile');
     assert.ok(calls.end.text.includes('6 Tickets · F 52 · A 44 · C 39'), 'Freitagszeile');
     assert.ok(calls.end.text.includes('F Faulheit · A Aggro · C Chef'), 'Legende');
@@ -218,7 +217,7 @@ await ok('offerResume(week) findet den Wochen-Slot und routet resumeDay → resu
     state.tickets = 4; state.morningMoodShown = true; state.time = 11 * 60;
     engine.saveWeek();
 
-    // Frischer Boot: Zustand geleert, nur der Slot lebt
+    // Fresh boot: state cleared, only the save slot survives
     const slot = store.get('layer8_week');
     resetState();
     store.set('layer8_week', slot);
@@ -270,8 +269,8 @@ await ok('softReset bei laufender Woche startet die Woche neu auf Montag', () =>
     assert.equal(state.week.dayIndex, 1, 'zurück auf Montag');
     assert.equal(state.week.level, 'normal', 'Zustand bleibt gewählt');
     assert.equal(state.week.weekLog.length, 0, 'altes Protokoll verworfen');
-    // Keine festen Werte prüfen: der Neustart spielt sofort den Montagmorgen,
-    // und dessen Stimmung ist zufällig. Entscheidend ist, dass das Gepäck weg ist.
+    // No fixed values here: the restart plays Monday morning right away and
+    // its mood is random. What matters is that the baggage is gone.
     assert.ok(state.tickets < 7, `Tickets nicht zurückgesetzt: ${state.tickets}`);
     assert.ok(state.al < 80, `Aggro nicht zurückgesetzt: ${state.al}`);
     assert.equal(state.archive.stats.weeksStarted, 2, 'Neustart ist ein neuer Versuch');
@@ -477,17 +476,17 @@ await ok('Freitag 16:30: erst das Meeting, dann Gala oder Bilanz', () => {
     const realParty = engine.partyInvitation;
     engine.partyInvitation = () => ({ isParty: true, partyKey: 'k', diffStr: 'easy' });
 
-    // Ohne Meeting endet gar nichts - der Knopf führt in den Besprechungsraum.
+    // Without the meeting nothing ends - the button leads to the meeting room.
     state.meetingDone = false;
     engine.checkEndConditions();
     assert.equal(state.pendingEnd, null, 'das Finale darf nicht übersprungen werden');
 
-    // Mit Meeting und erfüllten Voraussetzungen: die Gala
+    // With the meeting and the requirements met: the gala
     state.meetingDone = true;
     engine.checkEndConditions();
     assert.equal(state.pendingEnd.isParty, true);
 
-    // Mit Meeting, ohne Gala-Voraussetzungen: die Wochen-Bilanz
+    // With the meeting, without the gala requirements: the balance sheet
     state.pendingEnd = null;
     engine.partyInvitation = () => null;
     engine.checkEndConditions();
@@ -588,8 +587,8 @@ await ok('Achievements: alle drei sind stufenfähig, keiner ist an einen Zustand
     engine.recordWeekResult('survived', 5);
     assert.deepEqual(calls.achs, ['ach_week', 'ach_week_iron', 'ach_week_clean']);
 
-    // Dasselbe auf der leichtesten Stufe: identische Ausbeute, nur die
-    // Wertung unterscheidet sich (difficultyTier in unlockAchievement).
+    // The same on the easiest tier: identical yield, only the grade differs
+    // (difficultyTier inside unlockAchievement).
     resetState();
     engine.startWeek('easy');
     state.tickets = 0;
@@ -597,7 +596,7 @@ await ok('Achievements: alle drei sind stufenfähig, keiner ist an einen Zustand
     assert.deepEqual(calls.achs, ['ach_week', 'ach_week_iron', 'ach_week_clean'],
         'kein Erfolg darf an eine Stufe gebunden sein');
 
-    // Ventil gezogen und Tickets offen -> nur der Grunderfolg
+    // Valve pulled and tickets left open -> only the base achievement
     resetState();
     engine.startWeek('normal');
     state.rageWarningReceived = true;
@@ -640,16 +639,16 @@ await ok('Der Ergebnis-Knopf sagt bei der Nacht nicht GAME OVER', () => {
     engine.checkEndConditions();
     assert.equal(state.pendingEnd.isNight, true);
 
-    // Der Zweig, der den Knopf beschriftet (engine_events.resolveTerminal):
-    // isNight muss VOR dem Fail-Zweig greifen.
+    // The branch that labels the button (engine_events.resolveTerminal):
+    // isNight has to come BEFORE the failure branch.
     const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
     const iNight = src.indexOf('this.state.pendingEnd.isNight');
     const iOver  = src.indexOf("DAS WAR'S... (GAME OVER)");
     assert.ok(iNight > 0 && iNight < iOver, 'isNight-Zweig fehlt oder kommt zu spät');
 });
 await ok('Die Nacht liefert ganze Zahlen (keine 25.08 % im Kopfbereich)', () => {
-    // Der Fall aus dem Spieltest: Erholt, Nacht 2 (Abnutzung 10 pp),
-    // rAl = 0.62 -> 66 - 40.92 = 25.08 stand vorher roh im Kopfbereich.
+    // The case from play testing: Erholt, night 2 (wear 10 pp), rAl = 0.62
+    // -> 66 - 40.92 = 25.08 used to sit raw in the header.
     resetState();
     engine.startWeek('easy');
     state.week.dayIndex = 2;
@@ -671,10 +670,10 @@ await ok('Nacht-Screen und Zustand zeigen exakt dieselben Werte', () => {
     engine.finishGame();
     engine.continueWeekNight();
 
-    // Gegen den Speicherpunkt prüfen, nicht gegen den Live-Zustand:
-    // continueWeekNight() spielt direkt danach den Morgen, und dessen
-    // Stimmung verschiebt die Werte zufällig. saveWeek() schreibt den Stand
-    // davor - genau das, was der Bildschirm versprochen hat.
+    // Check against the checkpoint, not the live state: continueWeekNight()
+    // plays the morning right afterwards and its mood shifts the values at
+    // random. saveWeek() writes the state before that - exactly what the
+    // screen promised.
     const stand = engine.loadWeek().day;
     assert.equal(stand.al, gezeigt.alAfter);
     assert.equal(stand.cr, gezeigt.crAfter);
@@ -765,8 +764,8 @@ console.log('Steam-Statistiken:');
 await ok('Kein Wochentag wird als Tageslauf gemeldet', () => {
     const src = readFileSync(new URL('../src/platform_steam.js', import.meta.url), 'utf-8');
     const block = src.slice(src.indexOf('const STAT_NAMES'), src.indexOf('};', src.indexOf('const STAT_NAMES')));
-    // daysStarted zählt Karrieretage inklusive Wochentagen - es darf deshalb
-    // nicht mehr auf die Tages-Statistik zeigen.
+    // daysStarted counts career days including week days, so it must no
+    // longer feed the day statistic.
     assert.ok(!/\bdaysStarted\s*:/.test(block), 'daysStarted darf nicht gemeldet werden');
     for (const key of ['started_easy', 'started_normal', 'started_hard',
                        'daysSurvived', 'daysRageQuit', 'daysFired',
@@ -838,7 +837,7 @@ await ok('Die Mittagspause hat ein Fenster: 12:30 ja, 15:50 nicht mehr', () => {
     assert.equal(state.lunchDone, true);
     assert.equal(calls.termResult?.action, 'triggerLunch', 'im Fenster muss die Pause kommen');
 
-    // Ein Bossfight kann vier Stunden kosten: 11:50 -> 15:50
+    // A boss fight can cost four hours: 11:50 -> 15:50
     resetState();
     state.time = 11 * 60 + 50;
     engine.resolveTerminal({ m: 240, r: 'x' }, 'server');
@@ -949,7 +948,7 @@ await ok('Das Meeting wiederholt sich nicht in aufeinanderfolgenden Wochen', asy
     for (let i = 1; i < folge.length; i++) {
         assert.notEqual(folge[i], folge[i - 1], `Woche ${i + 1} wiederholt das Finale`);
     }
-    // Das Gedächtnis darf den Pool nie ganz leeren
+    // The memory must never empty the pool completely
     assert.ok(state.archive.seenMeetings.length < DB.meetings.length);
 });
 
@@ -982,20 +981,20 @@ await ok('Der Rucksack-Deckel greift, Werkzeuge sind bewusst ausgenommen', async
     const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);   // 9 Stück
     const werkzeug  = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
-    // Erst alle Verbrauchsgüter, dann Werkzeuge bis über den Deckel
+    // Consumables first, then tools until the cap is exceeded
     for (const id of verbrauch) engine.grantItem(id, 'ITEM');
     for (const id of werkzeug.slice(0, 4)) engine.grantItem(id, 'ITEM');
     const zaehlbar = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
     assert.ok(zaehlbar > 10, `Werkzeuge müssen den Deckel überschreiten dürfen (${zaehlbar})`);
 
-    // Ein weiteres Verbrauchsgut wird jetzt abgewiesen
+    // One more consumable is turned away now
     const vorher = state.inventory.length;
     state.inventory = state.inventory.filter(i => i.id !== verbrauch[0]);
     engine.grantItem(verbrauch[0], 'ITEM');
     assert.ok(!state.inventory.some(i => i.id === verbrauch[0]),
         'bei vollem Rucksack darf kein Verbrauchsgut mehr dazukommen');
 
-    // Die Nacht trägt den Stand unverändert weiter
+    // The night carries the state over unchanged
     const stand = state.inventory.length;
     engine.advanceWeekNight();
     assert.equal(state.inventory.length, stand);
@@ -1016,9 +1015,9 @@ await ok('Das Tutorial läuft nicht in den Wochenmodus hinein', () => {
 });
 
 await ok('Der Import räumt auch den Wochen-Speicherplatz ab', () => {
-    // Quelltext-Prüfung: performImport lebt in engine_ui und braucht das DOM,
-    // aber die Reihenfolge lässt sich hier festhalten. Ohne clearWeek() träfe
-    // ein fremdes Archiv auf eine laufende Woche.
+    // Source-level check: performImport lives in engine_ui and needs the DOM,
+    // but the order can be pinned down here. Without clearWeek() a foreign
+    // archive would meet a running week.
     const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
     const i = src.indexOf('performImport');
     const block = src.slice(i, i + 4000);
@@ -1040,7 +1039,7 @@ await ok('Die Karriere-Sicht sieht auch reine Wochen-Spieler', () => {
     assert.equal(k.rage, 1);
     assert.equal(k.streakBest, 10, 'zwei Wochen sind zehn Tage');
 
-    // Und im Tagesmodus bleibt sie unverändert
+    // And in day mode it stays unchanged
     resetState();
     state.archive.stats = { daysSurvived: 7, daysRageQuit: 2, streakBest: 4 };
     const t = engine.careerStats();
@@ -1084,7 +1083,7 @@ await ok('Wegwerfen macht Platz und trifft nur den einen Gegenstand', async () =
     assert.ok(!state.inventory.some(i => i.id === werkzeug), 'das Werkzeug liegt noch im Rucksack');
     assert.ok(state.inventory.some(i => i.id === verbrauch[0]), 'ein fremder Gegenstand wurde entfernt');
 
-    // Trophäen werden gar nicht erst zum Wegwerfen angeboten
+    // Trophies are never offered for discarding in the first place
     if (trophaee) {
         engine.askDiscardItem(trophaee);
         assert.notEqual(state.pendingItemMode, 'discard', 'Trophäen dürfen nicht wegwerfbar sein');
@@ -1098,7 +1097,7 @@ await ok('Nach dem Wegwerfen passt wieder ein Verbrauchsgut hinein', async () =>
     const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
     const werkzeuge = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
-    // Rucksack mit Werkzeugen über den Deckel füllen
+    // Fill the backpack past the cap using tools
     for (const id of werkzeuge.slice(0, 10)) engine.grantItem(id, 'ITEM');
     engine.grantItem(verbrauch[0], 'ITEM');
     assert.ok(!state.inventory.some(i => i.id === verbrauch[0]), 'Voraussetzung: der Rucksack ist voll');
@@ -1166,6 +1165,58 @@ await ok('Die Nacht schreibt sofort, nicht erst nach der Drosselung', () => {
     assert.ok(schreibt >= 1, 'die Nacht muss die Drosselung übergehen');
 
     engine.buildCloudPayload = orig;
+});
+
+// ----------------------------------------------------------- The gala
+console.log('Gala:');
+await ok('Die Uhr trägt den Abend von 17:00 bis 23:00', async () => {
+    resetState();
+    await ensure('party');
+    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    engine.startParty();
+    await new Promise(r => setTimeout(r, 20));
+    assert.equal(state.time, 17 * 60, 'die Gala beginnt um 17:00');
+
+    const stand = [];
+    for (let i = 0; i < 12; i++) {
+        state.partyProgress = i;
+        engine.reset();
+        stand.push(state.time);
+    }
+    assert.equal(stand[0], 17 * 60);
+    assert.equal(stand[6], 20 * 60, 'nach sechs Stationen ist es 20:00');
+    assert.ok(stand.every((t, i) => i === 0 || t > stand[i - 1]), 'die Uhr muss vorwärts laufen');
+
+    state.partyProgress = 12;
+    engine.reset();
+    assert.equal(state.time, 23 * 60, 'das Finale liegt auf 23:00');
+});
+await ok('Der Vorraum wechselt über den Abend', async () => {
+    resetState();
+    await ensure('party');
+    state.isPartyMode = true;
+    const gesehen = new Set();
+    for (const p of [0, 5, 11]) {
+        state.partyProgress = p;
+        engine.reset();
+        gesehen.add(calls.terminal[0].text);
+    }
+    assert.equal(gesehen.size, 3, 'drei Abschnitte müssen drei Fassungen zeigen');
+});
+await ok('Aus der Woche heraus beginnt die Gala mit einer eigenen Zeile', async () => {
+    resetState();
+    await ensure('party');
+    engine.startWeek('normal');
+    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    engine.startParty();
+    await new Promise(r => setTimeout(r, 20));
+    assert.ok(/Fünf Tage/.test(calls.terminal[0].text), 'die Woche wird nicht erwähnt');
+
+    resetState();                                               // Tagesmodus: unverändert
+    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    engine.startParty();
+    await new Promise(r => setTimeout(r, 20));
+    assert.ok(!/Fünf Tage/.test(calls.terminal[0].text), 'im Tagesmodus fehl am Platz');
 });
 
 console.log(`\n${passed} Tests bestanden.`);
