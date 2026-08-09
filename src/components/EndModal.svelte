@@ -99,15 +99,15 @@
         {#if isNight && modal.night}
             <div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1.5">
                 <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">Das nimmst du mit in den {modal.nextDay}</div>
-                <div class="flex justify-between"><span>🎫 Tickets</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>Tickets</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
-                <div class="flex justify-between"><span>😡 Aggro</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>Aggro</span>
                     <span><span class="text-slate-500">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
-                <div class="flex justify-between"><span>📡 Chef-Radar</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_eye.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '📡'}>Chef-Radar</span>
                     <span><span class="text-slate-500">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
-                <div class="flex justify-between"><span>🦥 Faulheit</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_lazy.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🦥'}>Faulheit</span>
                     <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
-                <div class="flex justify-between"><span>🃏 Ausreden</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>Ausreden</span>
                     <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
                 {#if modal.night.sleepText}
                     <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{modal.night.sleepText}</div>
@@ -128,7 +128,10 @@
                     <button type="button" onclick={() => showDiary = !showDiary}
                             aria-expanded={showDiary}
                             class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
-                        {showDiary ? '▾' : '▸'} 📖 Logbuch
+                        {showDiary ? '▾' : '▸'}
+            <img src="assets/img/ui/ui_book.webp" alt="" width="14" height="14"
+                 class="w-3.5 h-3.5 inline-block align-[-0.15em] mx-1 select-none"
+                 onerror={(e) => e.currentTarget.outerHTML = '📖'}>Logbuch
                     </button>
                 {/if}
             </div>
