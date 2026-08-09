@@ -445,8 +445,11 @@ export const core = {
             fired:      (st.daysFired ?? 0) + (st.weeksFired ?? 0),
             streak:     Math.max(st.streak ?? 0, (st.weekStreak ?? 0) * 5),
             streakBest: Math.max(st.streakBest ?? 0, (st.weekStreakBest ?? 0) * 5),
-            warningsChef: st.warningsChef ?? 0,
-            ventSaves:    st.ventSaves ?? 0,
+            // Valve and warning live in per-mode keys (the archive footnote
+            // switches with the panel); the personnel file keeps the career
+            // total, like every other number in here.
+            warningsChef: (st.warningsChef ?? 0) + (st.weekWarningsChef ?? 0),
+            ventSaves:    (st.ventSaves ?? 0)    + (st.weekVentSaves ?? 0),
             daysStarted:  st.daysStarted ?? 0,
         };
     },
@@ -628,7 +631,8 @@ export const core = {
 
         // In week mode the two safety flags survive the nights (valve and
         // warning are weekly), so counting them per day would inflate the
-        // stats - recordWeekResult() counts them once at the week's end.
+        // stats - recordWeekResult() counts them once at the week's end,
+        // into the week's own keys.
         if (!this.state.week.active) {
             if (this.state.rageWarningReceived) bump('ventSaves');
             if (this.state.chefWarningReceived) bump('warningsChef');

@@ -138,11 +138,17 @@
 
     // Small print: only show what actually happened. The numbers carry the
     // colour of their stat - orange for the valve, red for the boss - so the
-    // line stays readable without effort.
-    const footnotes = $derived([
-        stats.ventSaves    ? { value: stats.ventSaves,    text: 'durch das Ventil gerettet', tone: 'text-orange-400' } : null,
-        stats.warningsChef ? { value: stats.warningsChef, text: 'abgemahnt',                 tone: 'text-red-500' } : null
-    ].filter(Boolean));
+    // line stays readable without effort. Valve and warning belong to their
+    // mode like everything else in this panel: once per day here, once per
+    // week there (weekVentSaves / weekWarningsChef, see recordWeekResult).
+    const footnotes = $derived.by(() => {
+        const vent = mode === 'day' ? stats.ventSaves    : stats.weekVentSaves;
+        const warn = mode === 'day' ? stats.warningsChef : stats.weekWarningsChef;
+        return [
+            vent ? { value: vent, text: 'durch das Ventil gerettet', tone: 'text-orange-400' } : null,
+            warn ? { value: warn, text: 'abgemahnt',                 tone: 'text-red-500' } : null
+        ].filter(Boolean);
+    });
 
     // How hard it was when the achievement was earned. Anything recorded before
     // the difficulty was tracked counts as easy.

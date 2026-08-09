@@ -179,7 +179,8 @@ await ok('Rage Quit am Mittwoch: Tagesnennung, weeksRageQuit, Ventil zählt 1×'
     assert.ok(calls.end.text.includes('✗ Mittwoch'));
     assert.equal(state.archive.stats.weeksRageQuit, 1);
     assert.equal(state.archive.stats.weekBestDay, 2);           // zwei Tage geschafft
-    assert.equal(state.archive.stats.ventSaves, 1);             // 1× pro Woche, nicht pro Tag
+    assert.equal(state.archive.stats.weekVentSaves, 1);         // once per week, in the week's own key
+    assert.equal(state.archive.stats.ventSaves ?? 0, 0);        // the day key stays day mode only
     assert.equal(state.week.active, false);
 });
 await ok('recordDayResult zählt Ventil-Flags im Wochenmodus NICHT täglich', () => {
@@ -189,6 +190,7 @@ await ok('recordDayResult zählt Ventil-Flags im Wochenmodus NICHT täglich', ()
     engine.recordDayResult('survived');
     engine.recordDayResult('survived');
     assert.equal(state.archive.stats.ventSaves ?? 0, 0);        // erst recordWeekResult zählt
+    assert.equal(state.archive.stats.weekVentSaves ?? 0, 0);    // and only into the week key
 });
 
 // -------------------------------------------------------------- morning death
@@ -1032,12 +1034,14 @@ await ok('Die Karriere-Sicht sieht auch reine Wochen-Spieler', () => {
     state.archive.stats = {
         weeksStarted: 3, weeksSurvived: 2, weeksRageQuit: 1, weeksFired: 0,
         survived_week_normal: 11, weekStreak: 2, weekStreakBest: 2,
-        ventSaves: 2, warningsChef: 1, daysStarted: 15,
+        weekVentSaves: 2, weekWarningsChef: 1, daysStarted: 15,
     };
     const k = engine.careerStats();
     assert.equal(k.survived, 11, 'überlebte Wochentage fehlen');
     assert.equal(k.rage, 1);
     assert.equal(k.streakBest, 10, 'zwei Wochen sind zehn Tage');
+    assert.equal(k.ventSaves, 2, 'Wochen-Ventile fehlen in der Personalakte');
+    assert.equal(k.warningsChef, 1, 'Wochen-Abmahnungen fehlen in der Personalakte');
 
     // And in day mode it stays unchanged
     resetState();

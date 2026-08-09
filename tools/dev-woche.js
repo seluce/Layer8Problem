@@ -307,7 +307,11 @@
         zaehlerLeeren() {
             const st = s.archive.stats ?? (s.archive.stats = {});
             for (const key of Object.keys(st)) {
-                if (/^(days|weeks|started_|survived_|streak|ventSaves|warningsChef|weekBestDay)/.test(key)) {
+                // 'week' covers every week key at once: weeksStarted and
+                // friends, weekBestDay, weekVentSaves/weekWarningsChef and
+                // the week streaks - the latter used to slip through, because
+                // 'weeks' does not match the capital S in weekStreak.
+                if (/^(days|week|started_|survived_|streak|ventSaves|warningsChef)/.test(key)) {
                     delete st[key];
                 }
             }

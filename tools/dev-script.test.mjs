@@ -235,11 +235,14 @@ await ok('dev.aufraeumen() verwirft die Woche', () => {
 await ok('dev.zaehler() und dev.zaehlerLeeren() räumen den Teststand auf', () => {
     reset();
     dev.tag(3, 'normal');
+    state.rageWarningReceived = true;                           // writes weekVentSaves below
     engine.recordWeekResult('survived', 5);
     assert.ok((state.archive.stats.weeksStarted ?? 0) > 0);
+    assert.equal(state.archive.stats.weekVentSaves, 1);
     dev.zaehler();
     dev.zaehlerLeeren();
     assert.equal(state.archive.stats.weeksStarted ?? 0, 0);
+    assert.equal(state.archive.stats.weekVentSaves ?? 0, 0);    // week keys are run counters too
     assert.equal(state.archive.stats.daysStarted, 0);
 });
 await ok('dev.hilfe() läuft', () => { dev.hilfe(); });

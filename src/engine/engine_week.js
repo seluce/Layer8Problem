@@ -579,9 +579,12 @@ export const week = {
         }
 
         // The weekly valve flags count once per week (recordDayResult skips
-        // them while a week runs, see the comment there).
-        if (this.state.rageWarningReceived) bump('ventSaves');
-        if (this.state.chefWarningReceived) bump('warningsChef');
+        // them while a week runs, see the comment there). Week keys on
+        // purpose: the archive footnote switches with the panel, and the
+        // plain keys hold every pre-week career, so they stay day mode only.
+        // careerStats() adds both back together for the personnel file.
+        if (this.state.rageWarningReceived) bump('weekVentSaves');
+        if (this.state.chefWarningReceived) bump('weekWarningsChef');
 
         // The mode's headline number: how far did the run get?
         st.weekBestDay = Math.max(st.weekBestDay || 0, daysCompleted);
