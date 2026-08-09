@@ -1110,4 +1110,62 @@ await ok('Nach dem Wegwerfen passt wieder ein Verbrauchsgut hinein', async () =>
         'nach dem Wegwerfen muss wieder Platz sein');
 });
 
+// ------------------------------------------------ Cloud-Synchronisierung
+console.log('Cloud:');
+await ok('Die Nutzlast trägt Tag, Woche und einen Zeitstempel', () => {
+    resetState();
+    store.set('layer8_day', '{"savedAt":1}');
+    store.set('layer8_week', '{"savedAt":2}');
+    const p = engine.buildCloudPayload();
+    assert.ok(p.archive, 'Archiv fehlt');
+    assert.equal(p.day, '{"savedAt":1}');
+    assert.equal(p.week, '{"savedAt":2}');
+    assert.ok(p.runSyncedAt > 0, 'runSyncedAt fehlt');
+});
+await ok('Der neuere Lauf gewinnt, der ältere überschreibt nichts', () => {
+    resetState();
+    engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":3},"savedAt":1000}', 2000);
+    assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 3, 'nicht übernommen');
+
+    engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":4},"savedAt":5000}', 6000);
+    assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 4, 'neuerer Stand ignoriert');
+
+    engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":1},"savedAt":10}', 20);
+    assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 4, 'älterer Stand hat gewonnen');
+});
+await ok('Woanders beendet räumt ab, eine alte Nutzlast aber nicht', () => {
+    resetState();
+    store.set('layer8_week', '{"savedAt":1000}');
+    engine.adoptCloudRun('layer8_week', null, 5000);            // danach beendet
+    assert.equal(store.get('layer8_week'), undefined, 'Rest blieb liegen');
+
+    store.set('layer8_week', '{"savedAt":9000}');
+    engine.adoptCloudRun('layer8_week', null, 3000);            // ältere Nutzlast
+    assert.ok(store.get('layer8_week'), 'laufende Woche wurde gelöscht');
+});
+await ok('Kaputte Nutzlast wird verworfen, nicht geworfen', () => {
+    resetState();
+    store.set('layer8_week', 'kein json');
+    engine.adoptCloudRun('layer8_week', '{ kaputt', 5000);
+    engine.adoptCloudRun('layer8_day', undefined, undefined);
+});
+await ok('Die Nacht schreibt sofort, nicht erst nach der Drosselung', () => {
+    resetState();
+    let schreibt = 0;
+    const orig = engine.buildCloudPayload.bind(engine);
+    engine.buildCloudPayload = () => { schreibt++; return orig(); };
+
+    engine._lastRunSync = Date.now();                           // Drosselung aktiv
+    engine.syncRun();
+    assert.equal(schreibt, 0, 'gedrosselt muss stumm bleiben');
+
+    engine.startWeek('easy');
+    state.morningMoodShown = true;
+    state.modal = { open: true, isNight: true, nextDay: 'Dienstag' };
+    engine.continueWeekNight();
+    assert.ok(schreibt >= 1, 'die Nacht muss die Drosselung übergehen');
+
+    engine.buildCloudPayload = orig;
+});
+
 console.log(`\n${passed} Tests bestanden.`);

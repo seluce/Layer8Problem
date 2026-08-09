@@ -36,6 +36,10 @@ Anzeige & Layout:
 * Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
 
+Steam-Fassung:
+* Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
+* Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.
+
 Fehlerkorrekturen:
 * Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
 * Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.

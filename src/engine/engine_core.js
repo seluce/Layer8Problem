@@ -131,18 +131,77 @@ export const core = {
         if (cloud.party_easy)   localStorage.setItem(this.KEYS.partyPlayed.easy,   cloud.party_easy);
         if (cloud.party_normal) localStorage.setItem(this.KEYS.partyPlayed.normal, cloud.party_normal);
         if (cloud.party_hard)   localStorage.setItem(this.KEYS.partyPlayed.hard,   cloud.party_hard);
+
+        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.runSyncedAt);
+        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.runSyncedAt);
+    },
+
+    /**
+     * Decides between the run on this machine and the one from the cloud.
+     *
+     * Runs cannot be merged the way the archive can - it is one or the other,
+     * so the newer one wins. Both payloads carry savedAt, which makes that a
+     * plain comparison.
+     *
+     * The case without a cloud run needs the second timestamp: an empty slot
+     * means either "never played anywhere" or "finished on the other machine".
+     * Only if the payload was written AFTER our local save does the second
+     * reading apply, and the local leftover goes.
+     */
+    adoptCloudRun: function(key, roh, runSyncedAt) {
+        const zeit = (text) => {
+            try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
+        };
+
+        let lokal = null;
+        try { lokal = localStorage.getItem(key); } catch { return; }
+
+        if (!roh) {
+            if (lokal && runSyncedAt && runSyncedAt > zeit(lokal)) {
+                try { localStorage.removeItem(key); } catch { /* never mind */ }
+            }
+            return;
+        }
+
+        if (!lokal || zeit(roh) > zeit(lokal)) {
+            try { localStorage.setItem(key, roh); } catch { /* storage full */ }
+        }
     },
 
     // Everything worth carrying across devices. Settings stay local on purpose:
     // volume and keybinds belong to the machine, not to the player's progress.
+    //
+    // The run in progress travels as well - a week is five days of play, and
+    // losing it by opening the game on the other machine would be the worst
+    // possible surprise. runSyncedAt is the timestamp of this payload: it lets
+    // the other machine tell an abandoned run apart from one that was finished
+    // here afterwards (see loadCloudSave).
     buildCloudPayload: function() {
         return {
             archive:      this.state.archive,
             tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
             party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
             party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
-            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false"
+            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
+            day:          localStorage.getItem(this.KEYS.dayState),
+            week:         localStorage.getItem(this.KEYS.weekState),
+            runSyncedAt:  Date.now()
         };
+    },
+
+    /**
+     * Writes the cloud payload, at most once every half minute.
+     *
+     * saveDay() runs after every single action; without the throttle the
+     * desktop build would write a file that often. The throttle is skipped at
+     * the points that matter - a night, the end of a run - so the moment a
+     * player is most likely to switch machines is always in the cloud.
+     */
+    syncRun: function(force = false) {
+        const now = Date.now();
+        if (!force && now - (this._lastRunSync || 0) < 30000) return;
+        this._lastRunSync = now;
+        platform.save(this.buildCloudPayload());
     },
 
     // Maps the current activity onto the status line friends can see.
@@ -238,6 +297,7 @@ export const core = {
             day.savedAt = Date.now();
 
             localStorage.setItem(this.KEYS.dayState, JSON.stringify(day));
+            this.syncRun();
         } catch (e) {
             // Storage full or private mode: the day carries on, it simply is
             // not saved.

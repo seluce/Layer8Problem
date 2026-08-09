@@ -465,6 +465,7 @@ export const week = {
 
         this.advanceWeekNight();
         this.saveWeek();                        // the night IS the checkpoint
+        this.syncRun(true);                     // and the moment one switches machines
 
         document.getElementById('email-modal')?.classList.add('hidden');
         this.renderHeader();
@@ -493,6 +494,7 @@ export const week = {
 
         this.clearDay();
         this.endWeek();                                  // week.active off, slot cleared
+        this.syncRun(true);                              // the empty slot travels at once
         this.showEnd(end);
     },
 
@@ -680,6 +682,7 @@ export const week = {
                 savedAt: Date.now(),
             };
             localStorage.setItem(KEYS.weekState, JSON.stringify(payload));
+            this.syncRun();
         } catch (e) {
             // Storage full or private mode: the week carries on unsaved.
             console.warn('Woche konnte nicht gesichert werden:', e);

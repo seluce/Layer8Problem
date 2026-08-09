@@ -67,7 +67,9 @@ unterstützen möchte, bekommt auf Steam ein paar technische Annehmlichkeiten:
 - **Offline spielbar** — im Zug, im Flugzeug, im Serverkeller
 - **Steam-Errungenschaften** und **weltweite Statistiken** — sieh, wie oft der
   Rest der Welt hingeworfen hat
-- **Cloud-Speicher** — mittags auf dem Laptop anfangen, abends am Rechner leiden
+- **Cloud-Speicher** — Archiv, Erfolge und Statistiken reisen mit, und der
+  laufende Durchgang ebenso: mittags auf dem Laptop anfangen, abends am
+  Rechner weiterleiden
 - **Dynamischer Status** — deine Freundesliste erfährt, ob du gerade
   *"Im Serverraum versteckt"* bist oder *"Die Synergy-Gala überlebst"*
 
