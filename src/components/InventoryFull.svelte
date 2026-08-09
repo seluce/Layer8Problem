@@ -13,6 +13,21 @@
   that slot, and a second tap on the same slot does what a click has always
   done. Anything else - a tap outside, scrolling, Escape, leaving by keyboard -
   unpins it again.
+
+  Equipment can be thrown away. The backpack holds ten and nothing stacks,
+  which across a whole week turns into a dead end: tools bypass the cap when
+  picked up, so a hoarder can end up unable to take a single consumable.
+  Discarding turns that into a decision instead of a wall. Trophies stay -
+  they cost no capacity and stand for something that happened.
+
+  How to reach it took three attempts, and the first two are worth writing
+  down. A bin badge in the slot corner was 24px across and sat in the gap
+  between two slots: below every touch guideline. Moving it into the tooltip
+  made the target big but unreachable with a mouse - the tooltip floats above
+  the slot with a gap in between, so moving towards it leaves the slot and
+  closes it. The mode is what phones have always done for deleting: press the
+  bin once, then pick what goes. Same flow for mouse, finger, keyboard and the
+  Deck, and the target is a whole slot.
 -->
 <script>
     // Renamed so the $state rune stays usable in this file - see the pitfall
@@ -50,6 +65,19 @@
     // keyboard set this; a mouse still gets the tooltip from :hover alone.
     let pinned = $state(null);
 
+    /**
+     * Discard mode. A bin badge on each slot was tried first and thrown out
+     * twice: at 24px in the gap between two slots it was a mis-tap waiting to
+     * happen, and inside the tooltip it was unreachable with a mouse, because
+     * the tooltip sits above the slot with a gap in between - moving towards
+     * it leaves the slot and closes it.
+     *
+     * A mode is the pattern every phone already uses for deleting: press the
+     * bin once, then pick what goes. One flow for mouse, finger, keyboard and
+     * the Deck, and the target is the whole slot instead of a corner of it.
+     */
+    let discardMode = $state(false);
+
     // Whether the last press came from a finger or a pen. Read in the click
     // handler, because a click event does not carry the pointer type in every
     // browser.
@@ -75,12 +103,38 @@
     // A pinned tooltip must never outlive the gesture that opened it. The
     // pointer listener ignores presses on a slot, because those are handled by
     // the slot itself - it is everything else that closes the tooltip.
+    /**
+     * Der Wegwerf-Modus überlebt das Schließen nicht.
+     *
+     * Beobachtet wird das Fenster selbst, nicht der Schließen-Knopf: Escape
+     * blendet das oberste Overlay direkt aus, ohne closeInventory() zu rufen,
+     * und ein Klick auf das Kreuz nimmt wieder einen anderen Weg. Am Element
+     * zu hängen erfasst jeden davon - auch einen, den es heute noch nicht gibt.
+     */
+    $effect(() => {
+        const modal = document.getElementById('inventory-modal');
+        if (!modal) return;
+
+        const beobachter = new MutationObserver(() => {
+            if (modal.classList.contains('hidden')) {
+                discardMode = false;
+                pinned = null;
+            }
+        });
+        beobachter.observe(modal, { attributes: true, attributeFilter: ['class'] });
+        return () => beobachter.disconnect();
+    });
+
     $effect(() => {
         const closeOnOutsidePress = (event) => {
             if (event.target?.closest?.('[data-inv-slot]')) return;
             pinned = null;
         };
-        const closeOnEscape = (event) => { if (event.key === 'Escape') pinned = null; };
+        const closeOnEscape = (event) => {
+            if (event.key !== 'Escape') return;
+            pinned = null;
+            discardMode = false;
+        };
         const close = () => { pinned = null; };
 
         window.addEventListener('pointerdown', closeOnOutsidePress);
@@ -95,6 +149,12 @@
 
     function slotClass(row) {
         const ring = pinned === row.key ? ' ring-2 ring-slate-400/70' : '';
+
+        // Im Wegwerf-Modus sieht jedes Ausrüstungsfeld gleich aus - anklickbar
+        // und rot umrandet. Trophäen bleiben, wie sie sind.
+        if (discardMode && !row.quest) {
+            return 'inv-slot relative group cursor-pointer border-red-600/70 bg-red-950/20 hover:bg-red-900/30' + ring;
+        }
 
         if (row.entry.id === 'corp_chronicles') {
             return 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40' + ring;
@@ -146,6 +206,15 @@
      * shows the text, so a click acts straight away.
      */
     function activate(row, coarse) {
+        // Im Wegwerf-Modus zählt der erste Druck sofort - auch per Finger.
+        // Das Anheften des Hinweisfensters wäre hier ein Umweg, denn die
+        // Rückfrage zeigt Namen und Wirkung ohnehin noch einmal.
+        if (discardMode && !row.quest) {
+            pinned = null;
+            engine.askDiscardItem(row.entry.id);
+            return;
+        }
+
         if (coarse && pinned !== row.key) {
             pinned = row.key;
             return;
@@ -179,7 +248,7 @@
         {:else}{row.item?.icon ?? '?'}{/if}
 
         {#if row.item}
-            <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned === row.key ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 transition-opacity pointer-events-none z-50 text-left">
+            <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned === row.key ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 focus-within:opacity-100 transition-opacity pointer-events-none z-50 text-left">
                 <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{row.item.name}</div>
                 <div class="text-[10px] text-slate-300 italic leading-snug">{row.item.flavor ?? '"Keine weiteren Informationen."'}</div>
                 <!-- Whether an item survives being used was written down
@@ -213,7 +282,39 @@
 <div class="flex flex-col gap-6 w-full"
      onfocusout={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) pinned = null; }}>
     <div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">AUSRÜSTUNG</h3>
+        <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ausrüstung</h3>
+
+            <!-- Zähler und Knopf teilen Höhe, Rundung und Randstärke, damit
+                 sie als ein Paar lesen statt als Text mit Knopf daneben. -->
+            <div class="flex items-center gap-2">
+                <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
+                             font-mono text-[11px] tabular-nums
+                             {normal.length >= MIN_SLOTS ? 'text-amber-400' : 'text-slate-400'}">
+                    {normal.length}/{MIN_SLOTS} Gegenstände
+                </span>
+
+                <button type="button"
+                        aria-pressed={discardMode}
+                        onclick={() => { discardMode = !discardMode; pinned = null; }}
+                        class="h-8 px-2.5 rounded-md border flex items-center gap-1.5
+                               text-[11px] font-bold transition-colors
+                               {discardMode
+                                 ? 'bg-red-950/50 border-red-600 text-red-300'
+                                 : 'bg-slate-900/60 border-slate-700 text-slate-300 hover:border-red-700 hover:text-red-300'}">
+                    <img src="assets/img/ui/ui_trash.webp" alt="" width="14" height="14"
+                         class="w-3.5 h-3.5 select-none pointer-events-none"
+                         onerror={(e) => e.currentTarget.remove()}>
+                    {discardMode ? 'Fertig' : 'Wegwerfen'}
+                </button>
+            </div>
+        </div>
+
+        {#if discardMode}
+            <p class="text-[11px] text-red-300/90 mb-3 -mt-1">
+                Wähle den Gegenstand, der weg soll. Trophäen bleiben unangetastet.
+            </p>
+        {/if}
         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
             {#each normal as row, i (row.key)}
                 {@render slot(row, i)}

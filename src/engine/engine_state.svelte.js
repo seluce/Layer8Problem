@@ -32,6 +32,8 @@ export function freshDay(mult = 1.0) {
         // engine_ui.openBoard(); reopening must not reshuffle them, or the
         // wall stops feeling like a place.
         boardNotes: [],
+        // 'use' or 'discard' - which question the item dialog is asking
+        pendingItemMode: null,
 
         blindRun: false,
 

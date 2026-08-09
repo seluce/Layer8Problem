@@ -276,7 +276,7 @@
                     📦
                 </div>
                 <div class="flex flex-col min-w-0">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-amber-500">Gegenstand benutzen</span>
+                    <span id="item-confirm-kind" class="text-[10px] font-bold uppercase tracking-widest text-amber-500">Gegenstand benutzen</span>
                     <h3 id="item-confirm-title" class="text-lg font-black text-white leading-tight mt-0.5">ITEM NAME</h3>
                 </div>
             </div>
@@ -300,9 +300,15 @@
                         class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors">
                     Abbrechen
                 </button>
-                <button onclick="engine.confirmUseItem()"
+                <!-- Zwei Knöpfe statt eines umbeschrifteten: die Engine
+                     blendet je nach Frage einen aus. -->
+                <button id="item-confirm-use" onclick="engine.confirmUseItem()"
                         class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/40 text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all hover:scale-[1.03]">
                     Benutzen
+                </button>
+                <button id="item-confirm-discard" onclick="engine.confirmDiscardItem()"
+                        class="hidden bg-red-950/40 hover:bg-red-900/50 border border-red-900/60 hover:border-red-600 text-red-300 hover:text-red-200 py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors">
+                    Wegwerfen
                 </button>
             </div>
         </div>

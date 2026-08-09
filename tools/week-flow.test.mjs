@@ -13,7 +13,7 @@ globalThis.localStorage = {
 };
 globalThis.window = globalThis;
 globalThis.window.matchMedia = () => ({ matches: false });
-const fakeEl = () => ({ textContent: '', classList: { add() {}, remove() {} }, id: '' });
+const fakeEl = () => ({ textContent: '', classList: { add() {}, remove() {}, toggle() {} }, id: '' });
 globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
@@ -25,13 +25,14 @@ const { buildDiary } = await import('../src/engine/engine_diary.js');
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
+const { inventory } = await import('../src/engine/engine_inventory.js');
 const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
 
 // --- engine composition with UI stubs (later spread wins) --------------------
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
-    ...core, ...events, ...week,
+    ...core, ...events, ...week, ...inventory,
     showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
     hideOverlay() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
@@ -1061,6 +1062,52 @@ await ok('Das schwarze Brett deckelt reaktive Zettel, damit es über die Woche w
     assert.ok(/reqStory && flags\[n\.reqStory\]\)[\s\S]{0,120}sort\(/.test(block),
         'reaktive Zettel werden nicht gemischt');
     assert.ok(block.includes('.slice(0, 4)'), 'kein Deckel auf den reaktiven Zetteln');
+});
+
+await ok('Wegwerfen macht Platz und trifft nur den einen Gegenstand', async () => {
+    resetState();
+    engine.startWeek('easy');
+    await ensure('items');
+    const ids = Object.keys(DB.items);
+    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    const werkzeug  = ids.find(i => DB.items[i].keep && !DB.items[i].quest);
+    const trophaee  = ids.find(i => DB.items[i].quest);
+
+    for (const id of verbrauch) engine.grantItem(id, 'ITEM');
+    engine.grantItem(werkzeug, 'ITEM');
+    if (trophaee) engine.grantItem(trophaee, 'ITEM');
+    const vorher = state.inventory.length;
+
+    engine.state.pendingItem = werkzeug;
+    engine.confirmDiscardItem();
+    assert.equal(state.inventory.length, vorher - 1);
+    assert.ok(!state.inventory.some(i => i.id === werkzeug), 'das Werkzeug liegt noch im Rucksack');
+    assert.ok(state.inventory.some(i => i.id === verbrauch[0]), 'ein fremder Gegenstand wurde entfernt');
+
+    // Trophäen werden gar nicht erst zum Wegwerfen angeboten
+    if (trophaee) {
+        engine.askDiscardItem(trophaee);
+        assert.notEqual(state.pendingItemMode, 'discard', 'Trophäen dürfen nicht wegwerfbar sein');
+    }
+});
+await ok('Nach dem Wegwerfen passt wieder ein Verbrauchsgut hinein', async () => {
+    resetState();
+    engine.startWeek('easy');
+    await ensure('items');
+    const ids = Object.keys(DB.items);
+    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    const werkzeuge = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
+
+    // Rucksack mit Werkzeugen über den Deckel füllen
+    for (const id of werkzeuge.slice(0, 10)) engine.grantItem(id, 'ITEM');
+    engine.grantItem(verbrauch[0], 'ITEM');
+    assert.ok(!state.inventory.some(i => i.id === verbrauch[0]), 'Voraussetzung: der Rucksack ist voll');
+
+    engine.state.pendingItem = werkzeuge[0];
+    engine.confirmDiscardItem();
+    engine.grantItem(verbrauch[0], 'ITEM');
+    assert.ok(state.inventory.some(i => i.id === verbrauch[0]),
+        'nach dem Wegwerfen muss wieder Platz sein');
 });
 
 console.log(`\n${passed} Tests bestanden.`);

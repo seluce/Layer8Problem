@@ -59,6 +59,7 @@ export const inventory = {
 
         this.state.pendingItem = id;
 
+        this.setItemConfirmMode('use');
         document.getElementById('item-confirm-icon').innerHTML = displayContent;
         document.getElementById('item-confirm-title').innerText = item ? item.name : id;
         document.getElementById('item-confirm-desc').innerText = use?.desc ?? "Unbekannter Effekt.";
@@ -106,10 +107,76 @@ export const inventory = {
         this.state.pendingItem = null;
     },
 
+    /**
+     * Switches the confirmation dialog between using and discarding.
+     *
+     * Two buttons in the markup rather than one whose label and colour get
+     * rewritten: engine_ui already overwrites className in a few places, and
+     * every one of those has cost an afternoon when the markup changed. Here
+     * the two buttons simply take turns being hidden.
+     */
+    setItemConfirmMode: function(mode) {
+        this.state.pendingItemMode = mode;
+        const kind = document.getElementById('item-confirm-kind');
+        const useBtn = document.getElementById('item-confirm-use');
+        const dropBtn = document.getElementById('item-confirm-discard');
+        if (kind) kind.innerText = mode === 'discard' ? 'Gegenstand wegwerfen' : 'Gegenstand benutzen';
+        useBtn?.classList.toggle('hidden', mode === 'discard');
+        dropBtn?.classList.toggle('hidden', mode !== 'discard');
+    },
+
+    /**
+     * The backpack holds ten pieces and nothing stacks, which is the point -
+     * but across a whole week that turns into a lock: tools bypass the cap
+     * when they are picked up, so a hoarder ends up unable to take any
+     * consumable at all. Throwing something away turns that dead end back
+     * into a decision - keep the screwdriver, or make room for the donut.
+     *
+     * Trophies are not offered: they cost no capacity and stand for something
+     * that happened.
+     */
+    askDiscardItem: function(id) {
+        const item = DB.items[id];
+        if (!item || item.quest) return;
+
+        this.state.pendingItem = id;
+        this.setItemConfirmMode('discard');
+
+        document.getElementById('item-confirm-icon').innerHTML = item.img
+            ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
+            : (item.icon ?? '❓');
+        document.getElementById('item-confirm-title').innerText = item.name;
+        document.getElementById('item-confirm-desc').innerText = item.keep
+            ? 'Wiederverwendbar - du gibst ein Werkzeug auf.'
+            : 'Verbrauchsgut - du gibst eine einmalige Wirkung auf.';
+        document.getElementById('item-confirm-warn').innerText =
+            'Der Gegenstand ist weg. Ob dir noch einmal einer über den Weg läuft, entscheidet der Zufall.';
+
+        this.showOverlay('item-confirm-modal');
+    },
+
+    /** Confirmed: the item leaves the backpack. */
+    confirmDiscardItem: function() {
+        this.playAudio('ui');
+        const id = this.state.pendingItem;
+        if (!id) return;
+
+        const i = this.state.inventory.findIndex(entry => entry.id === id);
+        this.closeItemConfirm();
+        if (i === -1) return;
+
+        const name = DB.items[id]?.name ?? id;
+        this.state.inventory.splice(i, 1);
+        this.log(`${name} weggeworfen. Der Papierkorb im Flur ist ohnehin nie voll.`, 'text-slate-500 italic');
+        this.updateUI();
+        this.saveDay();
+    },
+
     closeItemConfirm: function() {
 		this.playAudio('ui');
         this.hideOverlay('item-confirm-modal');
         this.state.pendingItem = null;
+        this.state.pendingItemMode = null;
     },
 
 };
