@@ -242,13 +242,56 @@
         position: fixed; bottom: 100px; right: 20px; z-index: 100;
         display: flex; flex-direction: column; gap: 10px; pointer-events: none;
     }
+    /* The toast used to be a solid green block with white text on it - the
+       only panel in the game that did not follow the house silhouette, and
+       title and description were typographically identical, so neither read
+       as the more important one. It is a neon-box now like everything else:
+       dark panel, accent edge on top, three distinct type levels.
+       Enter and exit are Svelte transitions, see AchievementToasts.svelte. */
     .achievement-toast {
-        background: rgba(16, 185, 129, 0.95); color: white;
-        border: 2px solid #059669; border-radius: 2px;
-        padding: 12px 16px; min-width: 250px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8);
-        /* Enter and exit are Svelte transitions, see AchievementToasts.svelte */
+        background: var(--depth-panel);
+        border: 1px solid #1e293b;
+        border-top: 3px solid #f59e0b;
+        border-radius: 3px;
+        padding: 12px 14px;
+        min-width: 270px;
+        max-width: 340px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.8),
+                    0 0 18px -6px rgba(245, 158, 11, 0.45);
         display: flex; align-items: center; gap: 12px;
+    }
+
+    /* The medal sits on its own plinth so it keeps its contrast no matter
+       what the panel behind it does. */
+    .achievement-toast .ach-icon {
+        width: 44px; height: 44px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        background: #0f172a;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 6px;
+    }
+
+    .achievement-toast .ach-text { min-width: 0; }
+
+    .achievement-toast .ach-label {
+        display: block;
+        font-size: 9px; line-height: 1.2; letter-spacing: 0.14em;
+        text-transform: uppercase; font-weight: 700;
+        color: #f59e0b;
+    }
+
+    .achievement-toast .ach-title {
+        display: block;
+        font-size: 14px; line-height: 1.25; font-weight: 800;
+        color: #f8fafc;
+        margin-top: 2px;
+    }
+
+    .achievement-toast .ach-desc {
+        display: block;
+        font-size: 11px; line-height: 1.35;
+        color: #94a3b8;
+        margin-top: 3px;
     }
 
     /* PHONE & CHAT */

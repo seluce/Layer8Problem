@@ -32,6 +32,8 @@ Anzeige & Layout:
 * Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
 * "Spielstand löschen" ist als das gekennzeichnet, was es ist: rot hinterlegt, mit einer Zeile darüber, was genau verschwindet.
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
+* Die Erfolgsmeldung sieht aus wie der Rest des Spiels: dunkles Panel mit Akzentkante statt grünem Block, die Medaille auf eigenem Sockel und drei klar getrennte Zeilen. Vorher standen Titel und Beschreibung in derselben Schrift, sodass beim Aufblitzen nichts hervorstach. Bei einer Aufwertung sagt sie das jetzt auch.
+* Die Nachfrage vor dem Benutzen eines Gegenstands ist neu aufgebaut: der Gegenstand auf einem Sockel neben seinem Namen, darunter die Wirkung als eigener Punkt und der Warnhinweis in einem abgesetzten Kasten.
 
 Fehlerkorrekturen:
 * Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.

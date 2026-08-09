@@ -974,11 +974,17 @@ export const core = {
             let toastDesc = text;
 
             // Upgrade case, e.g. easy -> hard
+            let isUpgrade = false;
             if (savedDiffVal > 0) {
-                const diffNames = ["", "FREITAG", "MITTWOCH", "MONTAG"];
-                logText = `🏆 ERFOLG AUFGEWERTET: ${title} (${diffNames[currentDiffVal]})`;
+                // The tiers are named after the day mode's weekdays, but a week
+                // run earns them too - there the names are Mueller's condition.
+                const dayNames  = ["", "FREITAG", "MITTWOCH", "MONTAG"];
+                const weekNames = ["", "ERHOLT", "GENERVT", "URLAUBSREIF"];
+                const stufe = (this.state.week.active ? weekNames : dayNames)[currentDiffVal];
+                isUpgrade = true;
+                logText = `ERFOLG AUFGEWERTET: ${title} (${stufe})`;
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
-                toastDesc = `Upgrade auf ${diffNames[currentDiffVal]}!`;
+                toastDesc = `Aufgewertet auf ${stufe}.`;
             }
 
             // A. Write the log line
@@ -987,7 +993,7 @@ export const core = {
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
             const toastId = this._toastId = (this._toastId || 0) + 1;
-            this.state.toasts.push({ id: toastId, title, desc: toastDesc });
+            this.state.toasts.push({ id: toastId, title, desc: toastDesc, upgrade: isUpgrade });
 
             setTimeout(() => {
                 const k = this.state.toasts.findIndex(t => t.id === toastId);
