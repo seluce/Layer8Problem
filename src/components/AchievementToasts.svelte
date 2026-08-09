@@ -20,9 +20,9 @@
     import { fly } from 'svelte/transition';
     import { state } from '../engine/engine_state.svelte.js';
 
-    // Die Titel tragen ihr eigenes Emoji ("🗓️ Wochenendlich"). Neben der
-    // Medaille auf dem Sockel wäre das ein zweites Symbol in derselben Zeile,
-    // deshalb steht im Toast nur der Name. Im Log bleibt das Emoji.
+    // Titles carry their own emoji ("🗓️ Wochenendlich"). Next to the medal on
+    // its plinth that would be a second symbol on the same line, so the toast
+    // shows the name alone. The log keeps the emoji.
     const nurName = (titel) => String(titel ?? '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
 </script>
 

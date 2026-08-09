@@ -120,8 +120,8 @@
     const showBest = $derived(mode === 'week'
         && (stats.weekBestDay ?? 0) > 0 && (stats.weeksSurvived ?? 0) === 0);
 
-    // Die Serie gehört zum Modus: Tage am Stück beziehungsweise Wochen am
-    // Stück. Eine gemeinsame Zahl hätte zwei verschiedene Dinge gezählt.
+    // The streak belongs to its mode: days in a row here, weeks in a row
+    // there. One shared number would have counted two different things.
     const streak      = $derived(mode === 'day' ? (stats.streak ?? 0) : (stats.weekStreak ?? 0));
     const streakBest  = $derived(mode === 'day' ? (stats.streakBest ?? 0) : (stats.weekStreakBest ?? 0));
     const streakLabel = $derived(mode === 'day' ? 'Tage am Stück' : 'Wochen am Stück');
@@ -187,8 +187,8 @@
 
         <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/60 shadow-inner space-y-2.5">
 
-            <!-- Der Umschalter zuerst: er bestimmt, was die Zahlen darunter
-                 überhaupt bedeuten. -->
+            <!-- The switch comes first: it decides what the numbers below
+                 it even mean. -->
             <div class="flex items-center gap-1.5">
                 {#each MODES as m (m.key)}
                     <button type="button" onclick={() => setMode(m.key)}
@@ -211,11 +211,11 @@
                 {/each}
             </div>
 
-            <!-- Immer sichtbar, auch bei null: Sonst sähen die beiden Ansichten
-                 unterschiedlich aus, und wer den Modus noch nie gespielt hat,
-                 erführe nicht, dass es hier etwas zu erreichen gibt.
-                 Die Einheit steht direkt hinter der Zahl statt in einer
-                 gesperrten Versalzeile - das liest sich als Satz. -->
+            <!-- Always visible, even at zero: otherwise the two views would
+                 have different heights, and someone who has never played that
+                 mode would not learn there is anything to reach here. The unit
+                 sits right behind the number rather than in a spaced-out line
+                 of capitals - that reads as a sentence. -->
             <div class="flex items-center justify-between px-3 py-2 bg-slate-800/40 rounded-sm border border-slate-700/30">
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest">
                     Serie{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[11px] ml-2">bester Lauf: {weekBest}</span>{/if}
@@ -314,9 +314,9 @@
                     </div>
 
                     <div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                        <!-- items-start und kein truncate: "Tanz auf dem Vulkan"
-                             endete sonst bei "Vul…". Der Titel darf umbrechen,
-                             das Abzeichen bleibt oben rechts stehen. -->
+                        <!-- items-start and no truncate: "Tanz auf dem Vulkan"
+                             used to end at "Vul…". The title may wrap now; the
+                             badge stays in the top right corner. -->
                         <div class="flex items-start gap-2 mb-0.5">
                             <div class="font-bold text-xs leading-tight {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
                             {#if row.unlocked}
@@ -325,11 +325,11 @@
                                 <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">GESPERRT</span>
                             {/if}
                         </div>
-                        <!-- Kein line-clamp: 33 von 54 Texten sind laenger als
-                             zwei Zeilen dieser Spalte, und abgeschnittene
-                             Hinweise verraten nicht mehr, was zu tun ist. Das
-                             Raster streckt die Karten einer Reihe ohnehin auf
-                             dieselbe Hoehe, es entsteht also keine Treppe. -->
+                        <!-- No line-clamp: 33 of 54 texts are longer than two
+                             lines of this column, and a truncated hint no
+                             longer tells you what to do. The grid stretches
+                             the cards of a row to the same height anyway, so
+                             nothing turns into a staircase. -->
                         <div class="text-[10px] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
                     </div>
                 </div>

@@ -104,12 +104,12 @@
     // pointer listener ignores presses on a slot, because those are handled by
     // the slot itself - it is everything else that closes the tooltip.
     /**
-     * Der Wegwerf-Modus überlebt das Schließen nicht.
+     * Discard mode does not survive closing the backpack.
      *
-     * Beobachtet wird das Fenster selbst, nicht der Schließen-Knopf: Escape
-     * blendet das oberste Overlay direkt aus, ohne closeInventory() zu rufen,
-     * und ein Klick auf das Kreuz nimmt wieder einen anderen Weg. Am Element
-     * zu hängen erfasst jeden davon - auch einen, den es heute noch nicht gibt.
+     * What is watched is the window itself, not a close button: Escape hides
+     * the topmost overlay directly without calling closeInventory(), and the
+     * cross takes yet another route. Hanging off the element catches every one
+     * of them - including one that does not exist yet.
      */
     $effect(() => {
         const modal = document.getElementById('inventory-modal');
@@ -150,8 +150,8 @@
     function slotClass(row) {
         const ring = pinned === row.key ? ' ring-2 ring-slate-400/70' : '';
 
-        // Im Wegwerf-Modus sieht jedes Ausrüstungsfeld gleich aus - anklickbar
-        // und rot umrandet. Trophäen bleiben, wie sie sind.
+        // In discard mode every equipment slot looks the same - clickable
+        // and outlined in red. Trophies stay as they are.
         if (discardMode && !row.quest) {
             return 'inv-slot relative group cursor-pointer border-red-600/70 bg-red-950/20 hover:bg-red-900/30' + ring;
         }
@@ -206,9 +206,9 @@
      * shows the text, so a click acts straight away.
      */
     function activate(row, coarse) {
-        // Im Wegwerf-Modus zählt der erste Druck sofort - auch per Finger.
-        // Das Anheften des Hinweisfensters wäre hier ein Umweg, denn die
-        // Rückfrage zeigt Namen und Wirkung ohnehin noch einmal.
+        // In discard mode the first press counts straight away, on touch as
+        // well. Pinning the tooltip first would be a detour: the confirmation
+        // shows name and effect once more anyway.
         if (discardMode && !row.quest) {
             pinned = null;
             engine.askDiscardItem(row.entry.id);
@@ -285,8 +285,9 @@
         <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
             <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ausrüstung</h3>
 
-            <!-- Zähler und Knopf teilen Höhe, Rundung und Randstärke, damit
-                 sie als ein Paar lesen statt als Text mit Knopf daneben. -->
+            <!-- Counter and button share height, radius and border weight so
+                 they read as a pair rather than as text with a button next
+                 to it. -->
             <div class="flex items-center gap-2">
                 <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
                              font-mono text-[11px] tabular-nums

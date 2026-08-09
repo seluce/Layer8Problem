@@ -264,10 +264,9 @@
 
 <!-- ITEM CONFIRM MODAL START -->	
     <div id="item-confirm-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-6">
-        <!-- Folgt der Hausform: dunkles Panel, Akzentkante oben, der
-             Gegenstand auf einem eigenen Sockel wie im Schnell-Inventar.
-             Vorher war es eine zentrierte Textsäule ohne erkennbare
-             Zugehörigkeit zum übrigen Spiel. -->
+        <!-- House shape: dark panel, accent edge on top, the item on its own
+             plinth like in the quick inventory. This used to be a centred
+             column of text with no visible ties to the rest of the game. -->
         <div class="neon-box accent-amber bg-slate-900 max-w-sm w-full shadow-2xl relative overflow-hidden">
 
             <div class="flex items-center gap-4 p-5 border-b border-slate-800">
@@ -300,8 +299,10 @@
                         class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors">
                     Abbrechen
                 </button>
-                <!-- Zwei Knöpfe statt eines umbeschrifteten: die Engine
-                     blendet je nach Frage einen aus. -->
+                <!-- Two buttons rather than one that gets relabelled: the
+                     engine hides whichever the current question does not
+                     need. Rewriting className at runtime is the trap that
+                     cost an afternoon elsewhere. -->
                 <button id="item-confirm-use" onclick="engine.confirmUseItem()"
                         class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/40 text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all hover:scale-[1.03]">
                     Benutzen
