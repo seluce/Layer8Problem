@@ -340,11 +340,14 @@
         <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
             <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
-                <div class="flex flex-col mt-1">
+                <div class="flex items-center gap-3 md:gap-4 mt-1 min-w-0">
+                    <img src="assets/img/ui/ui_archive.webp" alt="" width="40" height="40" class="w-9 h-9 md:w-10 md:h-10 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='🏆'">
+                    <div class="flex flex-col min-w-0">
                     <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-blue-400 uppercase tracking-widest mb-1">
                         Karriere-Fortschritt
                     </h2>
                     <p class="text-xs md:text-sm text-slate-400 font-mono">Deine gesammelten Werke des Wahnsinns.</p>
+                    </div>
                 </div>
                 <button onclick="engine.closeArchive()" class="text-slate-500 hover:text-white text-4xl font-light leading-none transition-colors px-1">&times;</button>
             </div>
@@ -766,7 +769,8 @@
 		<button onclick="engine.closeExcuseModal()"
 			class="absolute top-2 right-4 text-slate-400 hover:text-white text-2xl">&times;</button>
 
-		<h2 class="text-lg font-bold text-slate-200 mb-2 uppercase tracking-wider">
+		<h2 class="text-lg font-bold text-slate-200 mb-2 uppercase tracking-wider flex items-center gap-2.5">
+			<img src="assets/img/ui/ui_excuse.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='🃏'">
 			Notfall-Ausrede erfinden
 		</h2>
 		
@@ -843,7 +847,7 @@
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
-                <span class="text-xl text-amber-400">⌨️</span>
+                <img src="assets/img/ui/set_keys.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='⌨️'">
                 <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5">TASTENBELEGUNG</h2>
             </div>
             <button onclick="engine.closeKeybinds()" class="text-slate-500 hover:text-white text-3xl font-light leading-none transition-colors px-2">&times;</button>
