@@ -1039,9 +1039,9 @@ export const events = {
             }
         }
         else if (mood.effect === "excuse_plus") {
-            // Der Wochenmodus deckelt den Vorrat (Design 4.4). Ohne diese
-            // Pruefung haette die Morgenstimmung den Deckel umgangen und der
-            // Vorrat waere ueber die Woche beliebig gewachsen.
+            // The week mode caps the stock (design 4.4). Without this check
+            // the morning mood would have walked straight past that cap and
+            // the stock could grow without limit across the five days.
             const deckel = this.state.week.active
                 ? this.WEEK_DIFFS[this.state.week.level].excuseCap
                 : Infinity;
@@ -1168,9 +1168,9 @@ export const events = {
             cause: "party",
             diary,
             isWin: true,
-            // endWeek() lief oben, der Zustand weiss also nicht mehr, aus
-            // welchem Modus dieses Ende stammt - die Kopfzeile haette sonst
-            // "Arbeitstag Nr." ueber einer ueberstandenen Woche gezeigt.
+            // endWeek() ran above, so the state no longer knows which mode
+            // this ending came from - the header would otherwise have read
+            // "Arbeitstag Nr." above a week that was survived.
             isWeek: warWoche
         });
     },

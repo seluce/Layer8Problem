@@ -44,12 +44,12 @@ export const core = {
         if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
         if (!this.state.scanlines) document.body.classList.add('no-scanlines');
 
-        // Das Tutorial läuft nur im Arbeitstag - es schreibt einen festen
-        // Ablauf und setzt einen bestimmten Startzustand voraus, den die
-        // Woche je nach Zustand nicht hat. Wer noch nie eines gespielt hat
-        // und gleich die Woche wählt, bekommt deshalb einen Hinweis statt
-        // einer Sperre: Fünf Tage ohne Grundlagen sind ein harter Einstieg,
-        // aber die Entscheidung bleibt beim Spieler.
+        // The tutorial only runs in day mode: it scripts a fixed sequence
+        // and assumes a starting state the week does not have (it claims one
+        // open ticket, which is true for Mittwoch but not for Erholt or
+        // Urlaubsreif). Someone who has never played it and picks the week
+        // straight away gets a note rather than a barrier - five days without
+        // the basics is a harsh entry, but it stays the player's call.
         if (localStorage.getItem(this.KEYS.tutorialDone) === 'true') {
             document.getElementById('week-tutorial-hint')?.remove();
         }
@@ -352,6 +352,36 @@ export const core = {
      * sitting. Lives in the archive, so it survives restarts and travels to
      * the cloud with everything else.
      */
+    /**
+     * The career figures, both modes together.
+     *
+     * The archive keeps two separate ledgers on purpose - a week is not five
+     * days, and mixing them made the numbers meaningless. The chronicle and
+     * the intranet are the opposite case: they describe Mueller's life, not a
+     * mode, and a player who lives in the week mode should not read a blank
+     * personnel file.
+     *
+     * Week days are recorded under survived_week_*; a failed week counts once,
+     * because that is what it was. The streak converts weeks into days (five
+     * per week) so that "Arbeitstage ohne Zwischenfall" keeps its unit.
+     */
+    careerStats: function() {
+        const st = this.state.archive.stats ?? {};
+        const wochentage = (st.survived_week_easy ?? 0)
+                         + (st.survived_week_normal ?? 0)
+                         + (st.survived_week_hard ?? 0);
+        return {
+            survived:   (st.daysSurvived ?? 0) + wochentage,
+            rage:       (st.daysRageQuit ?? 0) + (st.weeksRageQuit ?? 0),
+            fired:      (st.daysFired ?? 0) + (st.weeksFired ?? 0),
+            streak:     Math.max(st.streak ?? 0, (st.weekStreak ?? 0) * 5),
+            streakBest: Math.max(st.streakBest ?? 0, (st.weekStreakBest ?? 0) * 5),
+            warningsChef: st.warningsChef ?? 0,
+            ventSaves:    st.ventSaves ?? 0,
+            daysStarted:  st.daysStarted ?? 0,
+        };
+    },
+
     addChronicleEntry: function() {
         const archive = this.state.archive;
         archive.chronicle ??= [];
@@ -386,13 +416,15 @@ export const core = {
      * time and survives a restart.
      */
     composeChronicleLine: function() {
-        const st = this.state.archive.stats ?? {};
+        // The book tells a career, not a mode - hence the combined view
+        // rather than the plain day counters.
+        const st = this.careerStats();
         const rep = this.state.reputation ?? {};
         const flags = this.state.storyFlags ?? {};
-        const survived = st.daysSurvived ?? 0;
-        const rage = st.daysRageQuit ?? 0;
-        const fired = st.daysFired ?? 0;
-        const streak = st.streakBest ?? 0;
+        const survived = st.survived;
+        const rage = st.rage;
+        const fired = st.fired;
+        const streak = st.streakBest;
 
         const pool = [];
 
@@ -809,7 +841,7 @@ export const core = {
             this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
         }
 
-        // 2. KOFFEIN-SCHOCK (Zu viel Kaffee)
+        // 2. CAFFEINE OVERLOAD (too much coffee)
         // Raised to 8 - roughly one trip to the machine per hour
         if(this.state.coffeeConsumed >= 8 && !this.hasAch('ach_coffee')) {
             this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');

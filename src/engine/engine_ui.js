@@ -608,7 +608,9 @@ export const ui = {
         const feed = [...reactive, ...general].slice(0, 4);
 
         // Days without an incident in the server room. Zero on most days.
-        const streak = stats.streak ?? 0;
+        // The personnel file knows nothing about modes - see careerStats().
+        const karriere = engine.careerStats();
+        const streak = karriere.streak;
         const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
 
         // Everything drawn fresh on every visit, so a second look at the same
@@ -638,20 +640,20 @@ export const ui = {
         const notes = [];
         const push = (tone, title, text) => notes.push({ tone, title, text });
 
-        if (stats.warningsChef)
-            push('bad', `Abmahnungen: ${stats.warningsChef}`,
+        if (karriere.warningsChef)
+            push('bad', `Abmahnungen: ${karriere.warningsChef}`,
                  'Sämtlich mündlich ausgesprochen und nachträglich schriftlich vermerkt. Ein Widerspruch ist nicht eingegangen, da über die Vermerke nicht informiert wurde.');
-        if (stats.daysRageQuit)
-            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${stats.daysRageQuit}`,
+        if (karriere.rage)
+            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${karriere.rage}`,
                  'Der Mitarbeiter hat das Gebäude vor Dienstschluss verlassen, ohne sich abzumelden. In allen Fällen war er am Folgetag pünktlich wieder anwesend, was die Personalabteilung als Reue wertet.');
-        if (stats.ventSaves)
-            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${stats.ventSaves} Teilnahmen`,
+        if (karriere.ventSaves)
+            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${karriere.ventSaves} Teilnahmen`,
                  'Der Mitarbeiter hat wiederholt von der betrieblichen Möglichkeit Gebrauch gemacht, sich vor einer Eskalation kurz zurückzuziehen. Die Maßnahme gilt damit als wirksam und wird nicht ausgebaut.');
-        if ((stats.streakBest ?? 0) >= 3)
-            push('good', `Längste Phase ohne Zwischenfall: ${stats.streakBest} Arbeitstage`,
+        if (karriere.streakBest >= 3)
+            push('good', `Längste Phase ohne Zwischenfall: ${karriere.streakBest} Arbeitstage`,
                  'Ein auffällig ruhiger Zeitraum. Die Personalabteilung prüft, ob in dieser Phase eine Unterauslastung vorlag.');
-        if (stats.daysSurvived)
-            push('good', `Regulär beendete Arbeitstage: ${stats.daysSurvived}`,
+        if (karriere.survived)
+            push('good', `Regulär beendete Arbeitstage: ${karriere.survived}`,
                  'Der Mitarbeiter hat das Gebäude an diesen Tagen zur vorgesehenen Zeit verlassen. Eine gesonderte Würdigung ist nicht vorgesehen, da dies dem Vertrag entspricht.');
         if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
 
@@ -729,7 +731,13 @@ export const ui = {
 
         if (!this.state.boardNotes?.length && pool.length) {
             const flags = this.state.storyFlags ?? {};
-            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory]);
+            // Story flags survive the night in week mode. Without shuffling
+            // and a cap, the same reactions stayed pinned for five days and
+            // crowded out the general notes along the way. Four reactive ones
+            // are plenty; the rest get their turn tomorrow.
+            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory])
+                                 .sort(() => Math.random() - 0.5)
+                                 .slice(0, 4);
             const general = pool.filter(n => !n.reqStory)
                                 .sort(() => Math.random() - 0.5)
                                 .slice(0, Math.max(4, 8 - reactive.length));

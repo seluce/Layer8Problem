@@ -1025,4 +1025,42 @@ await ok('Der Import räumt auch den Wochen-Speicherplatz ab', () => {
     assert.ok(block.includes('engine.clearWeek()'), 'clearWeek fehlt - die Woche überlebt den Import');
 });
 
+// ------------------------------------------------- Nebenschauplätze
+console.log('Chronik, Intranet, Brett:');
+await ok('Die Karriere-Sicht sieht auch reine Wochen-Spieler', () => {
+    resetState();
+    state.archive.stats = {
+        weeksStarted: 3, weeksSurvived: 2, weeksRageQuit: 1, weeksFired: 0,
+        survived_week_normal: 11, weekStreak: 2, weekStreakBest: 2,
+        ventSaves: 2, warningsChef: 1, daysStarted: 15,
+    };
+    const k = engine.careerStats();
+    assert.equal(k.survived, 11, 'überlebte Wochentage fehlen');
+    assert.equal(k.rage, 1);
+    assert.equal(k.streakBest, 10, 'zwei Wochen sind zehn Tage');
+
+    // Und im Tagesmodus bleibt sie unverändert
+    resetState();
+    state.archive.stats = { daysSurvived: 7, daysRageQuit: 2, streakBest: 4 };
+    const t = engine.careerStats();
+    assert.equal(t.survived, 7);
+    assert.equal(t.rage, 2);
+    assert.equal(t.streakBest, 4);
+});
+await ok('Die Firmenchronik bleibt für Wochen-Spieler erzählbar', () => {
+    resetState();
+    state.archive.stats = { survived_week_normal: 11, weeksRageQuit: 1, daysStarted: 15 };
+    const zeile = engine.composeChronicleLine();
+    assert.ok(typeof zeile === 'string' && zeile.length > 40,
+        'die Chronik fällt für Wochen-Spieler auf eine leere Zeile zurück');
+});
+await ok('Das schwarze Brett deckelt reaktive Zettel, damit es über die Woche wechselt', () => {
+    const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const i = src.indexOf('openBoard');
+    const block = src.slice(i, i + 1400);
+    assert.ok(/reqStory && flags\[n\.reqStory\]\)[\s\S]{0,120}sort\(/.test(block),
+        'reaktive Zettel werden nicht gemischt');
+    assert.ok(block.includes('.slice(0, 4)'), 'kein Deckel auf den reaktiven Zetteln');
+});
+
 console.log(`\n${passed} Tests bestanden.`);
