@@ -34,6 +34,7 @@ Anzeige & Layout:
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
 * Die Erfolgsmeldung sieht aus wie der Rest des Spiels: dunkles Panel mit Akzentkante statt grünem Block, die Medaille auf eigenem Sockel und drei klar getrennte Zeilen. Vorher standen Titel und Beschreibung in derselben Schrift, sodass beim Aufblitzen nichts hervorstach. Bei einer Aufwertung sagt sie das jetzt auch.
 * Die Nachfrage vor dem Benutzen eines Gegenstands ist neu aufgebaut: der Gegenstand auf einem Sockel neben seinem Namen, darunter die Wirkung als eigener Punkt und der Warnhinweis in einem abgesetzten Kasten.
+* Sichern und Laden des Spielstands folgen derselben Form. Beide sagen jetzt auch, worum es geht: Der Code enthält das Archiv - gefundene Gegenstände, Erfolge, Statistiken und den Ruf im Kollegium -, aber keinen laufenden Arbeitstag und keine begonnene Woche. Beim Laden steht der Hinweis dazu in einem eigenen Kasten statt als fett gedruckter Halbsatz.
 
 Fehlerkorrekturen:
 * Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.

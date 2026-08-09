@@ -685,16 +685,28 @@
 <!-- EXPORT IMPORT MODAL START -->
 
 <div id="save-export-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
-    <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
-        <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
-        
-        <h2 class="text-xl font-black text-blue-400 mb-2 flex items-center gap-2"><img src="assets/img/ui/ui_export.webp" alt="" width="24" height="24" class="w-6 h-6 select-none" onerror="this.outerHTML='💾'">SPIELSTAND SICHERN</h2>
-        <p class="text-xs text-slate-400 mb-4">Kopiere diesen Code, um deinen Fortschritt auf einem anderen Gerät wiederherzustellen.</p>
+    <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
+        <button onclick="engine.ui.closeModals()" class="absolute top-3 right-4 text-slate-500 hover:text-white text-xl leading-none z-10">✕</button>
 
-        <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-sm p-3 text-xs font-mono text-slate-300 focus:outline-hidden resize-none custom-scrollbar break-all mb-4 selection:bg-blue-500/30" readonly></textarea>
-        
-        <div class="flex flex-col gap-2">
-            <button onclick="engine.ui.copyToClipboard()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-sm text-xs font-bold uppercase flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]">
+        <div class="flex items-center gap-4 p-5 border-b border-slate-800">
+            <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-950 border border-blue-500/25 shadow-inner">
+                <img src="assets/img/ui/ui_export.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='💾'">
+            </div>
+            <div class="flex flex-col min-w-0">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400">Spielstand sichern</span>
+                <h2 class="text-lg font-black text-white leading-tight mt-0.5">Dein Code</h2>
+            </div>
+        </div>
+
+        <div class="p-5 space-y-3">
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Der Code enthält dein Archiv: gefundene Gegenstände, Erfolge, Statistiken und deinen Ruf im Kollegium.
+                <span class="text-slate-500">Ein laufender Arbeitstag oder eine begonnene Woche reisen nicht mit.</span>
+            </p>
+
+            <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-blue-500 resize-none custom-scrollbar break-all" readonly></textarea>
+
+            <button onclick="engine.ui.copyToClipboard()" class="w-full bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]">
                 <img src="assets/img/ui/ui_copy.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='📋'"> In Zwischenablage kopieren
             </button>
             <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4">Code kopiert!</div>
@@ -703,17 +715,36 @@
 </div>
 
 <div id="save-import-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
-    <div class="neon-box border-red bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
-        <button onclick="engine.ui.closeModals()" class="absolute top-2 right-4 text-slate-400 hover:text-white text-xl">✕</button>
-        
-        <h2 class="text-xl font-black text-red-400 mb-2 flex items-center gap-2"><img src="assets/img/ui/ui_import.webp" alt="" width="24" height="24" class="w-6 h-6 select-none" onerror="this.outerHTML='📂'">SPIELSTAND LADEN</h2>
-        <p class="text-xs text-slate-400 mb-4">Füge hier deinen Speicher-Code ein. <strong class="text-red-500">Achtung: Dein aktueller Fortschritt wird überschrieben!</strong></p>
+    <div class="neon-box accent-red bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
+        <button onclick="engine.ui.closeModals()" class="absolute top-3 right-4 text-slate-500 hover:text-white text-xl leading-none z-10">✕</button>
 
-        <textarea id="import-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-sm p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-red-500 resize-none custom-scrollbar break-all mb-4 selection:bg-red-500/30" placeholder="Code hier einfügen..."></textarea>
-        
-        <div class="flex flex-col gap-2">
-            <button onclick="engine.ui.performImport()" class="w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded-sm text-xs font-bold uppercase shadow-lg transition-transform hover:scale-[1.02]">
-                SPIELSTAND LADEN
+        <div class="flex items-center gap-4 p-5 border-b border-slate-800">
+            <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-950 border border-red-500/25 shadow-inner">
+                <img src="assets/img/ui/ui_import.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='📂'">
+            </div>
+            <div class="flex flex-col min-w-0">
+                <span class="text-[10px] font-bold uppercase tracking-widest text-red-400">Spielstand laden</span>
+                <h2 class="text-lg font-black text-white leading-tight mt-0.5">Code einfügen</h2>
+            </div>
+        </div>
+
+        <div class="p-5 space-y-3">
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Füge den Code ein, den du auf dem anderen Gerät kopiert hast.
+            </p>
+
+            <textarea id="import-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-red-500 resize-none custom-scrollbar break-all" placeholder="Code hier einfügen ..."></textarea>
+
+            <div class="bg-slate-950/60 border border-red-900/40 rounded-lg p-3 flex gap-2.5 items-start">
+                <img src="assets/img/ui/ui_warning.webp" alt="" width="18" height="18" class="w-[18px] h-[18px] shrink-0 mt-0.5 select-none" onerror="this.outerHTML='⚠'">
+                <span class="text-xs text-slate-300 leading-snug">
+                    Dein bisheriges Archiv wird ersetzt: Gegenstände, Erfolge, Statistiken und Ruf.
+                    Ein angefangener Arbeitstag oder eine laufende Woche werden dabei verworfen.
+                </span>
+            </div>
+
+            <button onclick="engine.ui.performImport()" class="w-full bg-red-600 hover:bg-red-500 border border-red-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest shadow-lg transition-all hover:scale-[1.02]">
+                Spielstand ersetzen
             </button>
             <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4">Fehler!</div>
         </div>

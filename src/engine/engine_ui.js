@@ -929,7 +929,7 @@ export const ui = {
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
-                msg.innerText = "Bitte Code eingeben!";
+                msg.innerText = "Da steht noch nichts.";
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
                 return;
@@ -991,12 +991,14 @@ export const ui = {
                 if (data.party_normal) localStorage.setItem(engine.KEYS.partyPlayed.normal, data.party_normal);
                 if (data.party_hard) localStorage.setItem(engine.KEYS.partyPlayed.hard, data.party_hard);
 
-                // Same reason as in the hard reset: a running day belongs to
+                // Same reason as in the hard reset: a running run belongs to
                 // the save that was just replaced. Resuming it would mix the
-                // imported archive with the reputation of a foreign workday.
+                // imported archive with the reputation of a foreign workday -
+                // and a whole week would drag four of them along.
                 engine.clearDay();
+                engine.clearWeek();
 
-                msg.innerText = "Erfolg! Neustart...";
+                msg.innerText = "Übernommen. Das Spiel startet neu ...";
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
 
@@ -1004,7 +1006,7 @@ export const ui = {
 
             } catch (e) {
                 console.error(e);
-                msg.innerText = "Ungültiger Code!";
+                msg.innerText = "Der Code lässt sich nicht lesen. Vollständig kopiert?";
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
             }

@@ -1014,4 +1014,15 @@ await ok('Das Tutorial läuft nicht in den Wochenmodus hinein', () => {
     delete globalThis.tutorial;
 });
 
+await ok('Der Import räumt auch den Wochen-Speicherplatz ab', () => {
+    // Quelltext-Prüfung: performImport lebt in engine_ui und braucht das DOM,
+    // aber die Reihenfolge lässt sich hier festhalten. Ohne clearWeek() träfe
+    // ein fremdes Archiv auf eine laufende Woche.
+    const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const i = src.indexOf('performImport');
+    const block = src.slice(i, i + 4000);
+    assert.ok(block.includes('engine.clearDay()'), 'clearDay fehlt');
+    assert.ok(block.includes('engine.clearWeek()'), 'clearWeek fehlt - die Woche überlebt den Import');
+});
+
 console.log(`\n${passed} Tests bestanden.`);
