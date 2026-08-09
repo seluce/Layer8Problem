@@ -39,7 +39,7 @@
     <div id="achievement-container"></div>
 
 	<div id="intro-modal" class="fixed inset-0 bg-black/90 z-999 flex items-center justify-center p-4 md:p-8">
-		<div class="neon-box border-blue bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative rounded-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+		<div class="neon-box accent-blue bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative max-h-[90vh] overflow-y-auto custom-scrollbar">
 
 			<!-- Head: the pitch is read once, so it spans the full width instead
 			     of squeezing the mode choice down the left column. -->
@@ -337,7 +337,7 @@
     <div id="lore-root"></div>
 
     <div id="archive-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
-        <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+        <div class="neon-box accent-purple bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
             <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
                 <div class="flex items-center gap-3 md:gap-4 mt-1 min-w-0">
@@ -369,7 +369,7 @@
     <!-- Interrupted workday: appears before the day is picked, when a saved
          state is waiting to be resumed (see engine_core.saveDay). -->
     <div id="resume-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
-        <div class="neon-box border-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
+        <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
             <div class="mb-3"><img src="assets/img/ui/ui_clock.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;🕗&lt;/span&gt;'"></div>
             <h2 class="text-2xl font-black text-white mb-2">SITZUNG UNTERBROCHEN</h2>
             <p class="text-slate-400 text-sm mb-1">Dein letzter Durchlauf wurde nicht zu Ende gebracht.</p>
@@ -390,7 +390,7 @@
     </div>
 
     <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
-        <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN TAG</h2>
             <p class="text-slate-400 mb-8">Wie sehr hasst du dein Leben heute?</p>
             
@@ -437,7 +437,7 @@
     </div>
 
     <div id="week-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
-        <div class="neon-box border-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
+        <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2">WÄHLE DEINEN ZUSTAND</h2>
             <p class="text-slate-400 mb-2">Fünf Tage am Stück. Tickets, Werte und Rucksack überleben die Nacht.</p>
             <p class="text-[11px] text-purple-300 font-mono mb-8">⚠ Ventil und Abmahnung gibt es nur EINMAL pro Woche.</p>
@@ -487,7 +487,7 @@
 
 <!-- TUTORIAL MODAL START -->
     <div id="tut-ask-modal" class="fixed inset-0 z-2100 hidden items-center justify-center bg-black/90 fade-in">
-        <div class="bg-slate-900 border-2 border-cyan-500/50 p-6 md:p-8 rounded-xl max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)] text-center mx-4 relative overflow-hidden">
+        <div class="neon-box accent-cyan bg-slate-900 p-6 md:p-8 max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)] text-center mx-4 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent"></div>
             
             <div class="mb-4 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]"><img src="assets/img/ui/act_halgerd.webp" alt="" width="56" height="56" class="w-14 h-14 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-5xl&quot;&gt;🤖&lt;/span&gt;'"></div>
@@ -549,7 +549,7 @@
 
 <!-- Systemsteuerung MODAL START -->
 <div id="settings-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
+    <div class="neon-box accent-amber bg-slate-900 max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
 
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
@@ -765,7 +765,7 @@
 
 <!-- EXCUSE MODAL START -->
 <div id="excuse-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
-	<div class="bg-slate-900 border-2 border-slate-600 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
+	<div class="neon-box accent-cyan bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
 		<button onclick="engine.closeExcuseModal()" aria-label="Schließen" title="Schließen" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
 		<h2 class="text-lg font-bold text-slate-200 mb-2 uppercase tracking-wider flex items-center gap-2.5">
@@ -799,7 +799,7 @@
 
 <!-- REPORT MODAL START -->
 <div id="report-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
-    <div class="bg-slate-900 border-2 border-slate-600 p-6 rounded-lg w-full max-w-lg shadow-2xl relative">
+    <div class="neon-box accent-red bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
         <button onclick="engine.closeReportModal()" aria-label="Schließen" title="Schließen" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         
         <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -842,7 +842,7 @@
 
 <!-- KEYBOAD BINDING MODAL START -->
 <div id="keybind-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
+    <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
@@ -876,7 +876,7 @@
 <!-- GLOBALE STATISTIKEN MODAL START -->
 
 <div id="global-stats-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+    <div class="neon-box accent-purple bg-slate-900 max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
