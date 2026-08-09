@@ -27,15 +27,14 @@ Archiv & Statistiken:
 * In den Einstellungen lassen sich beide Modi vorwählen, getrennt voneinander: ein fester Wochentag für den Arbeitstag, ein fester Zustand für die Arbeitswoche. Beides steht auf "Jedes Mal fragen".
 
 Anzeige & Layout:
-* Die Oberfläche trägt eigene Symbole statt Emojis: 65 gezeichnete Icons für Aktionsleiste, Terminal-Kopf, Schnellstartleiste, Einstellungen, Menü und Dialoge - im selben getuschten Stil wie die Gegenstände und Porträts. Fehlt eine Datei, erscheint wieder das alte Emoji.
+* Die Oberfläche trägt eigene Symbole statt Emojis: 69 gezeichnete Icons für Aktionsleiste, Terminal-Kopf, Schnellstartleiste, Einstellungen, Menü, Dialoge und den Nacht-Bildschirm - im selben getuschten Stil wie die Gegenstände und Porträts. Wo dasselbe gemeint ist, steht auch dasselbe Symbol: Die Schnecke aus dem Überlebens-Handbuch taucht abends bei der Faulheit wieder auf, der Pokal der Schnellstartleiste im Kopf des Archivs. Fehlt eine Datei, erscheint wieder das alte Emoji.
 * Die Schwierigkeitswahl zeigt gezeichnete Motive: ein Kalenderblatt je Wochentag mit einem Fünf-Punkte-Streifen, der die Lage in der Woche verrät, und für den Wochenmodus Müllers Tasse in drei Zuständen.
+* Alle Fenster folgen einer Form. Erfolgsmeldung, Gegenstands-Nachfrage sowie Sichern und Laden waren jeweils eigene Bauarten aus verschiedenen Zeiten; sie sehen jetzt aus wie der Rest des Spiels: dunkles Panel mit Akzentkante, Symbol auf einem Sockel neben der Überschrift, Warnhinweise in einem abgesetzten Kasten. "Spielstand löschen" ist als das gekennzeichnet, was es ist.
+* Die Schließen-Kreuze hatten vier verschiedene Größen und zwei verschiedene Zeichen. Jetzt sind sie überall gleich groß, deutlich leichter zu treffen als vorher - was besonders am Handy und auf dem Steam Deck auffällt - und für Vorleseprogramme endlich beschriftet.
+* Sichern und Laden sagen außerdem, worum es geht: Der Code enthält das Archiv - gefundene Gegenstände, Erfolge, Statistiken und den Ruf im Kollegium -, aber keinen laufenden Arbeitstag und keine begonnene Woche.
 * Das Startfenster ist neu aufgeteilt. Der Begrüßungstext steht oben über die volle Breite, darunter stehen beide Modi als gleichwertige Karten nebeneinander, rechts das Überlebens-Handbuch. Die rechte Spalte läuft nicht mehr halb leer.
 * Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
-* "Spielstand löschen" ist als das gekennzeichnet, was es ist: rot hinterlegt, mit einer Zeile darüber, was genau verschwindet.
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
-* Die Erfolgsmeldung sieht aus wie der Rest des Spiels: dunkles Panel mit Akzentkante statt grünem Block, die Medaille auf eigenem Sockel und drei klar getrennte Zeilen. Vorher standen Titel und Beschreibung in derselben Schrift, sodass beim Aufblitzen nichts hervorstach. Bei einer Aufwertung sagt sie das jetzt auch.
-* Die Nachfrage vor dem Benutzen eines Gegenstands ist neu aufgebaut: der Gegenstand auf einem Sockel neben seinem Namen, darunter die Wirkung als eigener Punkt und der Warnhinweis in einem abgesetzten Kasten.
-* Sichern und Laden des Spielstands folgen derselben Form. Beide sagen jetzt auch, worum es geht: Der Code enthält das Archiv - gefundene Gegenstände, Erfolge, Statistiken und den Ruf im Kollegium -, aber keinen laufenden Arbeitstag und keine begonnene Woche. Beim Laden steht der Hinweis dazu in einem eigenen Kasten statt als fett gedruckter Halbsatz.
 
 Fehlerkorrekturen:
 * Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
