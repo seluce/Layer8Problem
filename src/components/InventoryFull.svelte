@@ -6,6 +6,7 @@
   is the chronicle, which opens the lore book.
 
   Tooltips shift sideways in the outermost columns so they stay on screen.
+  The box itself lives in ItemTooltip.svelte, shared with the archive.
 
   Touch has no hover, so on a phone or the Steam Deck the tooltip was simply
   unreachable: the flavour text and the line about whether an item survives
@@ -35,6 +36,7 @@
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { DB } from '../data.js';
+    import ItemTooltip from './ItemTooltip.svelte';
 
     const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
     // Usable, how long it rests and whether it survives - all of that is in
@@ -248,19 +250,7 @@
         {:else}{row.item?.icon ?? '?'}{/if}
 
         {#if row.item}
-            <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned === row.key ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 focus-within:opacity-100 transition-opacity pointer-events-none z-50 text-left">
-                <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{row.item.name}</div>
-                <div class="text-[10px] text-slate-300 italic leading-snug">{row.item.flavor ?? '"Keine weiteren Informationen."'}</div>
-                <!-- Whether an item survives being used was written down
-                     nowhere - you found out once it was gone. -->
-                <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
-                            {row.quest ? 'text-amber-500' : row.item.keep ? 'text-sky-400' : 'text-slate-500'}">
-                    {#if row.quest}Trophäe · bleibt für immer
-                    {:else if row.item.keep}Wiederverwendbar
-                    {:else}Verbraucht sich bei Nutzung{/if}
-                </div>
-                <div class="absolute top-full {pos.arrow} border-4 border-transparent border-t-slate-600"></div>
-            </div>
+            <ItemTooltip item={row.item} pinned={pinned === row.key} {pos} />
         {/if}
 
         <div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate pointer-events-none">

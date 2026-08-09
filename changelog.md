@@ -23,6 +23,7 @@ Die Arbeitswoche:
 
 Archiv & Statistiken:
 * Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
+* Die Gegenstands-Kacheln im Archiv tragen jetzt dieselben Beschreibungen wie der Rucksack: Name, Text und die Zeile, ob sich ein Gegenstand verbraucht - per Maus beim Überfahren, am Handy und auf dem Steam Deck per Fingertipp. Bisher stand dort nur der Name, und den bekam nur die Maus zu sehen. Nicht gefundene Gegenstände bleiben ein Fragezeichen.
 * Als überlebt zählt eine Woche nur mit erreichtem Freitagabend. Jeder Abbruch unterwegs landet bei Rage Quit oder Gefeuert.
 * Die weltweiten Steam-Statistiken haben denselben Umschalter bekommen, mit eigenen Vergleichswerten und eigenen Diagnosen für die Woche. Fehlen weltweite Daten für einen Modus, sagt die Anzeige das, statt leere Balken zu zeichnen.
 * In den Einstellungen lassen sich beide Modi vorwählen, getrennt voneinander: ein fester Wochentag für den Arbeitstag, ein fester Zustand für die Arbeitswoche. Beides steht auf "Jedes Mal fragen".

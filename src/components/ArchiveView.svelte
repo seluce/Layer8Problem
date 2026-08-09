@@ -7,10 +7,19 @@
 
   Rendering is tied to the open flag so the two dozen images are not fetched
   until someone actually looks.
+
+  Item tiles used to carry only a native title attribute - mouse-only
+  knowledge, and on touch a tile told you nothing beyond the picture. They
+  now share the backpack's tooltip (ItemTooltip.svelte) and its gesture:
+  hover with a mouse, tap to pin on touch, Enter or Space on a keyboard.
+  There is no action behind a tile, so the gesture is the same for every
+  input: it toggles. Locked tiles answer with a minimal box instead of
+  staying silent, without leaking name or flavour of something not yet
+  found.
 -->
 <script>
     /* Images here load immediately on purpose (loading="eager"), not lazily.
-       The archive is a modal opened for browsing — with lazy loading,
+       The archive is a modal opened for browsing - with lazy loading,
        scrolling first showed empty boxes, because the browser only requests
        the files once they become visible. These are a few small WebP files;
        fetching them all at once is the faster path. The same applies to
@@ -20,6 +29,7 @@
     import { state as game } from '../engine/engine_state.svelte.js';
     import { KEYS } from '../engine/keys.js';
     import { DB } from '../data.js';
+    import ItemTooltip from './ItemTooltip.svelte';
 
     // Image files that failed to load. Until now the symbol was simply drawn
     // underneath every picture, so a missing file left the spot filled - but a
@@ -159,7 +169,107 @@
             ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
             : 'border-slate-500/50 text-slate-200 bg-slate-800';
     };
+
+    // Which tile currently has its tooltip pinned, by item id. Touch and
+    // keyboard need this; a mouse still gets the tooltip from :hover alone.
+    let pinned = $state(null);
+
+    // The grids are grid-cols-6 md:grid-cols-8 lg:grid-cols-10, so the column
+    // a tile sits in depends on the viewport - same reasoning as in
+    // InventoryFull, just with the archive's breakpoints.
+    let columns = $state(10);
+
+    $effect(() => {
+        const steps = [
+            [window.matchMedia('(min-width: 1024px)'), 10],
+            [window.matchMedia('(min-width: 768px)'), 8]
+        ];
+        const update = () => { columns = steps.find(([query]) => query.matches)?.[1] ?? 6; };
+        update();
+        steps.forEach(([query]) => query.addEventListener('change', update));
+        return () => steps.forEach(([query]) => query.removeEventListener('change', update));
+    });
+
+    // A pinned tooltip must never outlive the gesture that opened it - and
+    // not the modal either. The listeners only exist while the archive is
+    // open; closing it resets the pin through the same effect.
+    $effect(() => {
+        if (!game.archiveOpen) {
+            pinned = null;
+            return;
+        }
+
+        const closeOnOutsidePress = (event) => {
+            if (event.target?.closest?.('[data-arch-tile]')) return;
+            pinned = null;
+        };
+        const closeOnEscape = (event) => { if (event.key === 'Escape') pinned = null; };
+        const close = () => { pinned = null; };
+
+        window.addEventListener('pointerdown', closeOnOutsidePress);
+        window.addEventListener('keydown', closeOnEscape);
+        window.addEventListener('scroll', close, true);
+        return () => {
+            window.removeEventListener('pointerdown', closeOnOutsidePress);
+            window.removeEventListener('keydown', closeOnEscape);
+            window.removeEventListener('scroll', close, true);
+        };
+    });
+
+    // Tooltips are wider than a tile, so the ones near the edges would be
+    // cut off. The archive grid is denser than the backpack: at six columns
+    // on a phone even the second tile sits too close to the screen edge for
+    // a centred box - hence the two-tile edge zone there.
+    function tooltipPosition(index) {
+        const edge = columns === 6 ? 1 : 0;
+        const col = index % columns;
+        if (col <= edge)               return { box: 'left-0 translate-x-0',            arrow: 'left-5 translate-x-0' };
+        if (col >= columns - 1 - edge) return { box: 'right-0 left-auto translate-x-0', arrow: 'right-5 left-auto translate-x-0' };
+        return { box: 'left-1/2 -translate-x-1/2', arrow: 'left-1/2 -translate-x-1/2' };
+    }
+
+    // A tap or click toggles the tooltip. The archive is for looking, not
+    // for using, so there is no second meaning to separate - mouse, finger
+    // and keyboard share the one gesture, and hover keeps working on top.
+    const toggle = (id) => { pinned = pinned === id ? null : id; };
+
+    // stopPropagation keeps Enter and Space away from the global key
+    // handling in engine.js, so a focused tile does not also fire the
+    // confirm action - same reasoning as in InventoryFull.
+    function keyToggle(event, id) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        event.stopPropagation();
+        toggle(id);
+    }
+
+    // Focus leaving a grid unpins, so a keyboard user tabbing onwards does
+    // not leave a box floating over unrelated tiles.
+    const unpinOnFocusOut = (event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) pinned = null;
+    };
 </script>
+
+{#snippet tile(entry, index)}
+    {@const quest = !!entry.item.quest}
+    {@const pos = tooltipPosition(index)}
+    <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, quest)} flex items-center justify-center text-xl cursor-help transition-all relative group {pinned === entry.id ? 'ring-2 ring-slate-400/70' : ''}"
+         data-arch-tile role="button" tabindex="0"
+         aria-label={entry.unlocked ? entry.item.name : (quest ? '???' : 'Unbekannt')}
+         onclick={() => toggle(entry.id)}
+         onkeydown={(e) => keyToggle(e, entry.id)}>
+        {#if !entry.unlocked}?
+        {:else if hasPicture(entry.item)}
+            <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={() => markBroken(entry.item.img)}>
+        {:else}
+            <!-- No picture, or the file is missing: the symbol keeps the spot from sitting empty. -->
+            <span class="pointer-events-none">{entry.item.icon}</span>
+        {/if}
+
+        <ItemTooltip item={entry.item} pinned={pinned === entry.id}
+                     locked={!entry.unlocked} lockedTitle={quest ? '???' : 'Unbekannt'} {pos} />
+    </div>
+{/snippet}
 
 {#if game.archiveOpen}
     <div class="mb-8 flex flex-col gap-3">
@@ -261,39 +371,21 @@
         </div>
     </div>
 
-    <div class="mb-8">
+    <div class="mb-8" onfocusout={unpinOnFocusOut}>
         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">GEFUNDENE AUSRÜSTUNG</h3>
         <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
-            {#each normalItems as entry (entry.id)}
-                <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, false)} flex items-center justify-center text-xl cursor-help transition-all relative group"
-                     title={entry.unlocked ? entry.item.name : 'Unbekannt'}>
-                    {#if !entry.unlocked}?
-                    {:else if hasPicture(entry.item)}
-                        <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={() => markBroken(entry.item.img)}>
-                    {:else}
-                        <!-- No picture, or the file is missing: the symbol keeps the spot from sitting empty. -->
-                        <span class="pointer-events-none">{entry.item.icon}</span>
-                    {/if}
-                </div>
+            {#each normalItems as entry, i (entry.id)}
+                {@render tile(entry, i)}
             {/each}
         </div>
     </div>
 
     {#if questItems.length > 0}
-        <div class="mb-8">
+        <div class="mb-8" onfocusout={unpinOnFocusOut}>
             <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">LEGENDÄRE TROPHÄEN</h3>
             <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
-                {#each questItems as entry (entry.id)}
-                    <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, true)} flex items-center justify-center text-xl cursor-help transition-all relative group"
-                         title={entry.unlocked ? entry.item.name : '???'}>
-                        {#if !entry.unlocked}?
-                        {:else if hasPicture(entry.item)}
-                            <img src={entry.item.img} loading="eager" decoding="async" class="w-full h-full object-contain p-1 pointer-events-none" alt={entry.item.name} onerror={() => markBroken(entry.item.img)}>
-                        {:else}
-                            <!-- No picture, or the file is missing: the symbol keeps the spot from sitting empty. -->
-                            <span class="pointer-events-none">{entry.item.icon}</span>
-                        {/if}
-                    </div>
+                {#each questItems as entry, i (entry.id)}
+                    {@render tile(entry, i)}
                 {/each}
             </div>
         </div>
