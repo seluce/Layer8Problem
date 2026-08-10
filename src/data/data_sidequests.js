@@ -7676,4 +7676,339 @@ export const sidequests = [
             }
         ]
     },
+
+/* -------------------------------------------------------------------------
+   Dreiteiler wave 3 (v5.0): sidequest chains. Two of them deliberately
+   switch medium - approach in the phone chat, consequence as a terminal
+   scene (and once the other way round) - so the messenger carries story
+   weight instead of decoration. Duplicate check against the stock
+   (2026-08): Probealarm (5x), Aufzug (3x), Zimmerpflanze, Poststelle, the
+   Schmidt memorial box and the fruit-fly plague (donut fertiliser chain)
+   are taken - the fruit basket below therefore decays into BUREAUCRACY,
+   not into biology. Flag setting inside phone events happens in the
+   RESULT (res.next), not in node options - those only navigate.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_kevin_geheim_1",
+    char: "Kevin",
+    kind: "phone",
+    appName: "WhatsApp",
+    title: "Kevin",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Kevin: 'bist du im haus'\n\nKevin: 'wenn du die tage mal im 3. bist. treppenhaus. hinterer teil'\n\nKevin: 'sag keinem was'\n\nKevin: 'lohnt sich'",
+            opts: [
+                { t: "'Worum geht es?'", next: "frage" },
+                { t: "'Ok. Die Tage.'", next: "end_zusage" },
+                { t: "'Kevin, ich hab zu tun.'", next: "end_absage" }
+            ]
+        },
+        frage: {
+            text: "Kevin: 'nicht im chat'\n\nKevin: 'die lesen mit'\n\nKevin: 'wer ist die? gute frage'\n\nKevin: '👀'",
+            opts: [
+                { t: "'Na gut. Die Tage.'", next: "end_zusage" },
+                { t: "'Du hast zu viele Filme gesehen.'", next: "end_absage" }
+            ]
+        }
+    },
+    results: {
+        end_zusage: {
+            txt: "Kevin: '👍'\n\nKevin: 'hinterer teil. wo die lampe flackert'\n\nDie Lampe flackert dort seit Jahren. Du hast sie nie reparieren lassen. Jetzt weißt du wieder nicht, warum eigentlich.",
+            m: 5, f: 0, a: 0, c: 0,
+            next: "sq_kevin_termin"
+        },
+        end_absage: {
+            txt: "Kevin: 'ok'\n\nKevin: 'dein verlust'\n\nEr schreibt nichts mehr. Den Rest des Tages fragst du dich in unregelmäßigen Abständen, was im dritten Stock ist.",
+            m: 5, f: 0, a: 5, c: 0
+        }
+    }
+},
+{
+    id: "sq_kevin_geheim_2",
+    char: "Kevin",
+    kind: "text",
+    reqStory: "sq_kevin_termin",
+    reqStoryAge: 1,
+    title: "Hinterer Teil, dritter Stock",
+    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt, ohne Preisschilder. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.'",
+    opts: [
+        {
+            t: "Fach C4 öffnen",
+            m: 10, f: 0, a: -10, c: 0,
+            loot: "sandwich",
+            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
+        },
+        {
+            t: "'Kevin. Wer beliefert einen toten Automaten?'",
+            m: 10, f: 0, a: 5, c: 0,
+            rep: { "Kevin": -5 },
+            r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+        }
+    ]
+},
+{
+    id: "sq_berater_1",
+    kind: "text",
+    title: "Der Herr in Grau",
+    text: "An der Etagentür steht ein Mann in grauem Anzug und lächelt geduldig. 'Ich komme nicht rein — mein Ausweis ist noch in der Anmeldung. Ich bin der neue Berater fürs Transformationsprojekt.' Er hält einen Laptop unterm Arm und sagt das Wort 'Transformationsprojekt', als wäre damit alles erklärt. Du hast von keinem Projekt gehört.",
+    opts: [
+        {
+            t: "Zur Anmeldung begleiten, den langen Weg",
+            m: 25, f: -5, a: 5, c: -5,
+            r: "Ihr lauft schweigend durchs Treppenhaus. An der Anmeldung kennt ihn niemand, aber er bleibt vollkommen ruhig und beginnt, Formulare auszufüllen. Beim Weggehen hörst du ihn sagen: 'Kein Problem, ich kenne den Prozess.' Es klingt, als hätte er ihn geschrieben."
+        },
+        {
+            t: "Die Tür aufhalten. Wird schon stimmen.",
+            m: 5, f: 5, a: 0, c: 5,
+            next: "sq_berater_drin",
+            r: "'Vielen Dank.' Er geht zielstrebig den Flur hinunter, biegt in Raum 2.11 ab und schließt leise die Tür. Zielstrebig. In ein Gebäude, das er angeblich nicht kennt."
+        },
+        {
+            t: "'Ohne Ausweis kann ich Sie nicht reinlassen.'",
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Er nickt, fast erfreut. 'Sehr gut. Sicherheitskultur.' Er notiert etwas in ein kleines Buch und stellt sich neben die Tür, wartend, lächelnd. Als du später wieder vorbeikommst, ist er weg. Oder drin."
+        }
+    ]
+},
+{
+    id: "sq_berater_2",
+    char: "Gabi",
+    kind: "phone",
+    appName: "Messages",
+    reqStory: "sq_berater_drin",
+    reqStoryAge: 1,
+    title: "Gabi (Empfang)",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Gabi: 'Sag mal. Hast DU einen Mann in Grau reingelassen?'\n\nGabi: 'Er sitzt seit gestern in 2.11. Mit Laptop. Er holt sich morgens Kaffee und grüßt alle mit Vornamen.'\n\nGabi: 'Niemand weiß, zu wem er gehört. ALLE denken, er gehört zu jemand anderem.'",
+            opts: [
+                { t: "'Er sagt, er ist vom Transformationsprojekt.'", next: "projekt" },
+                { t: "'Nie gesehen.'", next: "end_leugnen" }
+            ]
+        },
+        projekt: {
+            text: "Gabi: 'Es gibt kein Transformationsprojekt.'\n\nGabi: 'Ich hab die Raumbelegung geprüft. 2.11 ist als frei gebucht.'\n\nGabi: 'Er hat für morgen einen Termin eingestellt. Titel: \"Kick-off\". Vier Leute haben schon zugesagt.'",
+            opts: [
+                { t: "[Der Anmeldung Bescheid geben]", next: "end_melden" },
+                { t: "[Erst mal beobachten. Vielleicht regelt es sich.]", next: "end_beobachten" }
+            ]
+        }
+    },
+    results: {
+        end_melden: {
+            txt: "Gabi: 'Mach ich mit. Ich schick den Sicherheitsdienst hoch.'\n\nGabi: 'Falls er WIRKLICH von irgendwas ist, warst du das nicht. 🙃'\n\nDer Sicherheitsdienst findet Raum 2.11 leer. Auf dem Tisch: ein Flipchart mit drei Kreisen und dem Wort SYNERGIE.",
+            m: 10, f: 0, a: 5, c: -10
+        },
+        end_beobachten: {
+            txt: "Gabi: 'DU willst beobachten. Er hat inzwischen ein Namensschild.'\n\nGabi: 'Selbst laminiert. Ich erkenne unser Laminiergerät.'\n\nDu beschließt, morgen mal an 2.11 vorbeizugehen. Rein zufällig.",
+            m: 5, f: 5, a: 0, c: 5
+        },
+        end_leugnen: {
+            txt: "Gabi: 'Interessant.'\n\nGabi: 'Auf dem Türkamera-Standbild hält ihm nämlich jemand die Tür auf.'\n\nGabi: 'Die Frisur kommt mir bekannt vor. 🙃'\n\nSie schickt das Bild nicht. Sie muss auch nicht.",
+            m: 5, f: 0, a: 5, c: 5
+        }
+    }
+},
+{
+    id: "sq_berater_3",
+    kind: "text",
+    reqStory: "sq_berater_drin",
+    reqStoryAge: 2,
+    title: "Kick-off in 2.11",
+    text: "Im Vorbeigehen siehst du es durch die Glasscheibe von Raum 2.11: Der Herr in Grau steht am Flipchart, sechs Leute sitzen um den Tisch, auf dem Papier drei Kreise und das Wort SYNERGIE. Zwei der sechs machen sich Notizen. Einer ist aus der Geschäftsleitung.",
+    opts: [
+        {
+            t: "Reingehen und die Ausweisfrage stellen, vor allen",
+            m: 15, f: 0, a: -5, c: 10,
+            r: "Es wird sehr still. Der Herr in Grau lächelt geduldig. 'Ein wichtiger Punkt. Sicherheitskultur. Nehmen wir mit auf.' Er schreibt SICHERHEITSKULTUR in einen der Kreise. Die Runde nickt. Du stehst noch im Raum und bist schon kein Thema mehr."
+        },
+        {
+            t: "Weitergehen. Das Haus hat entschieden.",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "Wer einen Termin hat, existiert — so funktioniert diese Firma. Später hängt in der Teeküche ein Aushang: 'Transformationsprojekt: erste Ergebnisse folgen.' Es gibt jetzt ein Transformationsprojekt. Du warst dabei, als es nicht entstanden ist."
+        }
+    ]
+},
+{
+    id: "sq_ersthelfer_1",
+    kind: "text",
+    title: "Ernannt",
+    text: "Am schwarzen Brett hängt eine neue Liste: 'Betriebliche Ersthelfer — Stand aktuell'. Zwei Namen. Der zweite ist deiner. Du hast dich nie gemeldet, nie eine Schulung besucht, nie ein Formular unterschrieben. Daneben, handschriftlich: 'Schulung wird nachgereicht.'",
+    opts: [
+        {
+            t: "Den Verbandskasten wenigstens mal inspizieren",
+            m: 20, f: -5, a: 5, c: -5,
+            next: "sq_ersthelfer_amt",
+            r: "Der Kasten hängt im Flur, versiegelt mit Staub. Laut Prüfplakette zuletzt kontrolliert vor vier Jahren. Das Pflasterset ist eingetrocknet, die Rettungsdecke raschelt verdächtig, aber die Schere ist gut. Du notierst eine Nachbestellung. Ab jetzt bist du das wohl wirklich."
+        },
+        {
+            t: "Schriftlich widersprechen",
+            m: 25, f: 0, a: 10, c: 0,
+            r: "Du füllst das Widerspruchsformular aus. Die Antwort kommt schnell und freundlich: Der Widerspruch werde geprüft — zuständig für die Prüfung sei der betriebliche Ersthelfer. Du liest den Satz dreimal. Er wird nicht besser."
+        },
+        {
+            t: "Ignorieren. Was soll schon passieren.",
+            m: 5, f: 10, a: 0, c: 0,
+            next: "sq_ersthelfer_amt",
+            r: "Du lässt die Liste hängen. Auf der Treppe begegnet dir jemand mit einem Karton voller Tacker. Du beschließt, nicht darüber nachzudenken, was davon dich jetzt etwas angeht."
+        }
+    ]
+},
+{
+    id: "sq_ersthelfer_2",
+    kind: "text",
+    reqStory: "sq_ersthelfer_amt",
+    reqStoryAge: 1,
+    title: "Der erste Einsatz",
+    text: "Jemand aus dem Vertrieb steht vor deinem Büro und hält den Zeigefinger hoch wie ein Beweisstück. Ein Papierschnitt, kaum zu sehen. 'Sie sind doch der Ersthelfer. Das muss dokumentiert werden. Ins Verbandbuch. Wegen der Berufsgenossenschaft.' Hinter ihm warten zwei Kollegen. Ob als Zeugen oder aus Neugier, ist nicht zu erkennen.",
+    opts: [
+        {
+            t: "Volles Programm: Pflaster, Verbandbuch, Unterschrift",
+            m: 20, f: -5, a: 10, c: -5,
+            r: "Du desinfizierst, klebst, dokumentierst. Art der Verletzung: 'Schnitt, papierbedingt'. Erstversorgung: 'Pflaster, Zuspruch'. Der Vertriebler liest deinen Eintrag Korrektur. Die Zeugen nicken. Es ist der ordentlichste Moment deiner Woche, und der sinnloseste."
+        },
+        {
+            t: "'Das heilt an der Luft.'",
+            m: 5, f: 5, a: 0, c: 10,
+            r: "Der Zeigefinger senkt sich langsam. 'Das kommt ins Protokoll.' Welches Protokoll, weißt du nicht. Dass es existiert, steht außer Frage — samt deinem Namen, gut lesbar."
+        },
+        {
+            t: "Schokolade als Schmerzensgeld reichen",
+            rem: "chocolate",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "'Schokolade?' — 'Bewährtes Hausmittel.' Er isst sie noch im Flur, besänftigt. Das Verbandbuch bleibt zu, die Zeugen zerstreuen sich. Manche Erste Hilfe wirkt über den Magen."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_1",
+    kind: "text",
+    title: "Fit im Betrieb",
+    text: "In der Teeküche der Etage steht ein Obstkorb. Groß, geflochten, mit Schleife und Kärtchen: 'Initiative FIT IM BETRIEB — greifen Sie zu!' Bananen, Äpfel, zwei Kiwis, eine einzelne Ananas als Zentrum der Komposition. Niemand greift zu. Alle warten, wer sich zuerst traut.",
+    opts: [
+        {
+            t: "Sich als Erster bedienen",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "Du nimmst einen Apfel, mitten im Berufsverkehr der Teeküche. Zwei Leute sehen zu. Kaum bist du draußen, hörst du hinter dir das Rascheln der Nachahmer. Jemand musste das Eis brechen. Der Apfel ist gut."
+        },
+        {
+            t: "Die Ananas in Sicherheit bringen",
+            m: 10, f: 0, a: -5, c: 5,
+            next: "sq_obstkorb_steht",
+            r: "Die Ananas wandert in dein Büro, als Trophäe und Raumschmuck. Was man mit einer Ananas ohne Messer und ohne Plan anfängt, wird sich zeigen. Der Korb sieht ohne sein Zentrum seltsam führungslos aus."
+        },
+        {
+            t: "Nicht anrühren. Gehört ja allen.",
+            m: 5, f: 5, a: 0, c: 0,
+            next: "sq_obstkorb_steht",
+            r: "Du nimmst nichts. Alle nehmen nichts. Der Korb steht da wie ein Denkanstoß, den keiner bestellt hat, und die Bananen beginnen ihre stille Verwandlung."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_2",
+    kind: "text",
+    reqStory: "sq_obstkorb_steht",
+    reqStoryAge: 1,
+    title: "Die Entnahmeliste",
+    text: "Am Obstkorb klebt jetzt eine Liste, sauber liniert, mit Kugelschreiber an einer Schnur: 'Entnahmeliste — im Sinne der Fairness bitte Name, Datum und Obstart eintragen. F. Elster.' Seit die Liste hängt, hat niemand mehr etwas genommen. Die Bananen sind ins Fleckige gewechselt und werden von einem Formular bewacht.",
+    opts: [
+        {
+            t: "Sich eintragen und demonstrativ eine Banane nehmen",
+            m: 10, f: 0, a: -5, c: 0,
+            rep: { "Frau Elster": 5 },
+            r: "Name, Datum, 'Banane (1 Stk.)'. Deine Zeile ist die erste. Als du gehst, tritt hinter dir jemand an die Liste und beginnt zu schreiben. Systeme brauchen einen ersten Eintrag, sonst bleiben sie Drohungen."
+        },
+        {
+            t: "Einen Apfel nehmen, ohne Eintrag",
+            m: 5, f: 5, a: -5, c: 5,
+            rep: { "Frau Elster": -5 },
+            r: "Der Apfel schmeckt normal, aber er isst sich wie Diebesgut. Die Liste hat jetzt eine Lücke, und du weißt aus Erfahrung: Lücken sind das Einzige, was in diesem Haus zuverlässig auffällt."
+        },
+        {
+            t: "Weder Obst noch Liste anfassen",
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Du gehst vorbei wie an einer Baustelle. Hinter dir raschelt nichts. Der Korb und die Liste belagern sich gegenseitig, und das Obst verliert."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_3",
+    kind: "text",
+    reqStory: "sq_obstkorb_steht",
+    reqStoryAge: 2,
+    title: "Erfolgreich abgeschlossen",
+    text: "Der Obstkorb ist weg. An seiner Stelle steht ein Aufsteller mit QR-Code: 'Ihre Meinung zählt! Wie fanden Sie die Initiative FIT IM BETRIEB?' Daneben ein Aushang: Aufgrund des großen Erfolgs werde die Initiative künftig quartalsweise wiederholt. Über den Verbleib des Obsts existieren keine Unterlagen.",
+    opts: [
+        {
+            t: "Ehrlich antworten, mit Verlaufsbeschreibung",
+            m: 15, f: -5, a: -5, c: 5,
+            r: "Du beschreibst den Werdegang des Korbs von der Komposition bis zur Belagerung, sachlich, in ganzen Sätzen. Das Formular bedankt sich und fragt am Ende nach Name und Abteilung. Anonym ist die Umfrage nur in der Überschrift."
+        },
+        {
+            t: "Fünf Sterne, weitergehen",
+            m: 5, f: 5, a: 0, c: -5,
+            r: "Fünf Sterne für einen Korb, aus dem fast niemand etwas hatte. Irgendwo entsteht daraus eine Folie mit einem Balkendiagramm, und das Balkendiagramm wird glücklich sein."
+        }
+    ]
+},
+{
+    id: "sq_markus_schritte_1",
+    char: "Markus",
+    kind: "phone",
+    appName: "Teams",
+    title: "Markus",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Markus: 'BRO!'\n\nMarkus: 'Abteilungs-Challenge!! Schrittzähler, eine Woche, IT gegen Vertrieb gegen Buchhaltung 💪'\n\nMarkus: 'Hab dich schon eingetragen. Du dankst mir später.'",
+            opts: [
+                { t: "'Trag mich wieder aus.'", next: "austragen" },
+                { t: "'Von mir aus. Was zählt?'", next: "end_dabei" }
+            ]
+        },
+        austragen: {
+            text: "Markus: 'Geht nicht mehr, Anmeldeschluss war eben 😅'\n\nMarkus: 'Komm schon. Die BUCHHALTUNG führt gerade. DIE BUCHHALTUNG.'\n\nMarkus: 'Frau Sonntag macht 12.000 Schritte am Tag. ZWÖLFTAUSEND.'",
+            opts: [
+                { t: "'Na schön. Für die Ehre.'", next: "end_dabei" },
+                { t: "'Dann hat die Buchhaltung es verdient.'", next: "end_raus" }
+            ]
+        }
+    },
+    results: {
+        end_dabei: {
+            txt: "Markus: 'SO siehts aus 💪💪'\n\nMarkus: 'Zwischenstand kommt täglich. Enttäusch mich nicht.'\n\nDu siehst an dir herunter. Dein Arbeitsplatz ist drei Meter vom Serverraum entfernt. Das wird kein fairer Wettkampf.",
+            m: 5, f: -5, a: 0, c: 0,
+            next: "sq_schritte_dabei"
+        },
+        end_raus: {
+            txt: "Markus: 'Schwach.'\n\nMarkus: 'Ich sag das nur einmal: Schwach.'\n\nEr schickt noch ein einzelnes 💔 hinterher. Es ist erstaunlich wirkungsvoll für ein Emoji.",
+            m: 5, f: 5, a: 0, c: 0,
+            rep: { "Markus": -5 }
+        }
+    }
+},
+{
+    id: "sq_markus_schritte_2",
+    kind: "text",
+    reqStory: "sq_schritte_dabei",
+    reqStoryAge: 1,
+    title: "Der Zwischenstand hängt aus",
+    text: "In der Teeküche hängt ein Ausdruck: 'SCHRITT-CHALLENGE — Zwischenstand'. Buchhaltung vorn, Vertrieb dahinter, die IT abgeschlagen auf dem letzten Platz. Hinter dem IT-Balken hat jemand handschriftlich ergänzt: 'sitzen viel'. Markus hat deinen Namen gelb markiert. Als Ansporn, vermutlich.",
+    opts: [
+        {
+            t: "Ab jetzt jede Etage zu Fuß, jede Runde mitnehmen",
+            m: 25, f: -15, a: 5, c: 0,
+            rep: { "Markus": 5 },
+            r: "Treppe statt Aufzug, der lange Flur statt der kurze, der Drucker am anderen Ende. Abends brummen die Beine, und der Balken der IT wächst um ein sichtbares Stück. Markus schickt drei Flammen-Emojis. Du hast dir schon sinnlosere Anerkennung härter erarbeitet."
+        },
+        {
+            t: "Das Handy auf den Aktenwagen der Hauspost legen",
+            m: 10, f: 5, a: -5, c: 5,
+            r: "Der Wagen rollt den ganzen Tag durchs Haus, dein Schrittzähler rollt mit. Bei Feierabend führst du die Einzelwertung mit weitem Abstand. Markus ist zu Tränen gerührt. Das schlechte Gewissen hält sich in Grenzen, aber es hält sich."
+        }
+    ]
+},
 ];
