@@ -4628,4 +4628,286 @@ export const coffee = [
             }
         ]
     },
+
+    /* ---------------------------------------------------------------------
+       Dreiteiler wave 2 (v5.0): coffee chains. Pool identity: this is where
+       the workday gets saved, so delayed payoffs here are REAL recovery
+       (a -10 to -15). Duplicate check against the stock (2026-08):
+       Kaffeekasse, Bohnen and Kühlschrank are taken (9/12/20 hits) and were
+       dropped unwritten; check new chains against cof_entkalken (machine
+       care, office-wide euphoria joke) before writing. One follow-up lives
+       in data_calls.js (call_deka_stimmung). Frau Sonntag returns from
+       call_wlp_geruch - flavour name, no reputation.
+       --------------------------------------------------------------------- */
+    {
+        id: "cof_deka_1",
+        title: "Pilotprojekt Klarer Kopf",
+        text: "Am Kaffeeautomaten hängt ein laminierter Aushang: 'Pilotprojekt KLARER KOPF — diese Woche testweise entkoffeiniert. Ihre Personalabteilung.' Darunter, handschriftlich, bereits drei Kommentare. Einer davon ist nur ein Wort, und das ist nicht zitierfähig.",
+        opts: [
+            {
+                t: "Hinnehmen. Ist ja nur eine Woche.",
+                m: 5, f: 5, a: 5, c: 0,
+                next: "cof_deka_brav",
+                r: "Du trinkst das braune Wasser. Es schmeckt wie Kaffee, dem man die Meinung verboten hat."
+            },
+            {
+                t: "Echten Kaffee im Serverraum deponieren",
+                m: 15, f: 0, a: -5, c: 5,
+                next: "cof_deka_geheim",
+                r: "Eine French Press hinter den Ersatzteilkisten, Bohnen in einer Dose mit der Aufschrift 'SCHRAUBEN M4'. Der Serverraum hat jetzt ein Betriebsgeheimnis."
+            },
+            {
+                t: "Beim Betriebsrat beschweren",
+                m: 25, f: 0, a: 10, c: 0,
+                r: "Der Betriebsrat nimmt es 'sehr ernst'. Es wird Tagesordnungspunkt 14 der nächsten Sitzung. Die Sitzung ist nächsten Monat. Der Pilot läuft diese Woche."
+            }
+        ]
+    },
+    {
+        id: "cof_deka_2",
+        reqStory: "cof_deka_brav",
+        reqStoryAge: 1,
+        title: "Der Schädel meldet sich",
+        text: "Hinter deiner Stirn sitzt seit dem Aufstehen ein dumpfer Druck, und er hat einen Namen: Entzug. Am Automaten steht schon eine kleine Gruppe und starrt den Aushang an wie eine Traueranzeige.",
+        opts: [
+            {
+                t: "Durchhalten und Wasser trinken",
+                m: 10, f: 5, a: 10, c: 0,
+                r: "Du trinkst Wasser. Es hilft gegen Durst. Gegen alles andere hilft es nicht."
+            },
+            {
+                t: "Den Stressball kneten, bis es vorbeigeht",
+                req: "stressball",
+                m: 5, f: 0, a: -5, c: 0,
+                r: "Kneten, atmen, kneten. Der Druck bleibt, aber er hat jetzt Konkurrenz. Der Ball sieht aus, als hätte er eine schwere Woche."
+            },
+            {
+                t: "Kevin nach seinem Geheimvorrat fragen",
+                m: 10, f: 5, a: -5, c: 5,
+                rep: { "Kevin": 5 },
+                r: "Kevin zieht wortlos eine Thermoskanne aus dem Rucksack und schenkt dir einen Becher ein. Er stellt keine Fragen. Er notiert nur etwas in einem kleinen Buch."
+            }
+        ]
+    },
+    {
+        id: "cof_deka_3",
+        reqStory: "cof_deka_brav",
+        reqStoryAge: 2,
+        title: "Der Aushang ist weg",
+        text: "Am Automaten klebt nur noch ein Rest Laminierfolie. Daneben ein neuer Zettel, kleiner, ohne Logo: 'Pilot vorzeitig beendet. Auswertung folgt.' Aus der Maschine riecht es wieder nach Kaffee. Nach echtem.",
+        opts: [
+            {
+                t: "Den ersten richtigen Kaffee zelebrieren",
+                m: 15, f: 0, a: -15, c: 0,
+                r: "Du nimmst die Tasse mit beiden Händen und trinkst im Stehen, langsam, mit geschlossenen Augen. Irgendwo hinter deiner Stirn packt der Druck seine Sachen. Du hast Dinge überstanden diese Woche. Das hier zählt dazu."
+            },
+            {
+                t: "Fragen, warum der Pilot so schnell vorbei ist",
+                m: 10, f: 0, a: -10, c: 0,
+                r: "Die Antwort steht in keiner Mail, aber die Teeküche weiß es: Die Fehlerquote der Buchhaltung. Frau Sonntag soll drei Überweisungen nach Liechtenstein geschickt haben. Aus Versehen. Alle drei."
+            }
+        ]
+    },
+    {
+        id: "cof_deka_4",
+        reqStory: "cof_deka_geheim",
+        reqStoryAge: 1,
+        title: "Die Auswertung lobt dich",
+        text: "Im Postfach liegt die Zwischenbilanz des Pilotprojekts, und ein Satz ist gelb markiert: 'Besonders die IT-Abteilung zeigt, dass konstante Leistung auch ohne Koffein möglich ist.' Du liest ihn zweimal. Im Serverraum steht eine Dose mit der Aufschrift 'SCHRAUBEN M4'.",
+        opts: [
+            {
+                t: "Das Lob kommentarlos einstreichen",
+                m: 5, f: 0, a: -5, c: -5,
+                r: "Du druckst den Satz aus und hängst ihn in den Serverraum. Über die Dose."
+            },
+            {
+                t: "Die French Press vorsichtshalber abschaffen",
+                m: 10, f: 5, a: 5, c: -5,
+                r: "Wer gelobt wird, wird beobachtet. Die Dose wandert in die Aktentasche, der Serverraum riecht wieder nach Serverraum. Ein Umzug, nur trauriger."
+            }
+        ]
+    },
+    {
+        id: "cof_automat_1",
+        title: "Der Probeaufsteller",
+        text: "Neben dem alten Automaten steht plötzlich ein zweiter: Chrom, Display, Bohnenmahlwerk mit Beleuchtung. Ein Herr Kowalski verteilt Visitenkarten. 'Zur Probe. Bis Ende der Woche. Völlig unverbindlich.' Die Maschine surrt wie ein Versprechen.",
+        opts: [
+            {
+                t: "Unverbindlich probieren",
+                m: 10, f: 0, a: -10, c: 0,
+                next: "cof_automat_genuss",
+                r: "Flat White auf Knopfdruck, die Crema hält, was das Display verspricht. Der alte Automat brummt daneben wie ein Verwandter, den man gerade enterbt."
+            },
+            {
+                t: "Kowalski fragen, wo der Haken ist",
+                m: 10, f: 0, a: 0, c: 0,
+                next: "cof_automat_genuss",
+                r: "'Kein Haken. Nur ein Angebot.' Er lächelt wie ein Prospekt. Du probierst trotzdem. Der Kaffee ist das Beste, was diese Teeküche je hervorgebracht hat, und genau das macht dich misstrauisch."
+            },
+            {
+                t: "Nicht anrühren",
+                m: 5, f: 0, a: 5, c: 0,
+                r: "Kostenlos ist nie kostenlos. Du bleibst beim alten Automaten. Er hat es nicht verdient, aber du auch nicht."
+            }
+        ]
+    },
+    {
+        id: "cof_automat_2",
+        reqStory: "cof_automat_genuss",
+        reqStoryAge: 2,
+        title: "Kowalski holt ab",
+        text: "Die Chrommaschine steht angekippt auf einer Sackkarre, das Display ist dunkel. Herr Kowalski wickelt das Stromkabel auf, sorgfältig, wie man ein Pflaster abzieht. 'Und?', fragt er. 'Schon mit dem Einkauf gesprochen?'",
+        opts: [
+            {
+                t: "Das Angebot ehrlich weiterleiten",
+                m: 15, f: -5, a: 5, c: 5,
+                r: "Du schreibst dem Einkauf eine sachliche Empfehlung. Die Antwort kommt als Formular: 'Bedarfsmeldung Kategorie C, Bearbeitung im nächsten Quartal.' Kowalski nickt, als hätte er sie mitgelesen. 'Bis nächstes Quartal dann.'"
+            },
+            {
+                t: "'Nehmen Sie sie einfach schnell mit.'",
+                m: 5, f: 0, a: 10, c: 0,
+                r: "Er versteht. Beim Rausrollen quietscht die Sackkarre einmal, wie zum Abschied. Der alte Automat mahlt demonstrativ laut. Sein Kaffee schmeckt heute nach Standpauke."
+            }
+        ]
+    },
+    {
+        id: "cof_tasse_1",
+        title: "Die Tasse ist weg",
+        text: "Deine Tasse ist nicht am Platz. Nicht in der Spülmaschine, nicht im Schrank, nicht hinter der Kaffeedose. Die mit dem Sprung am Henkel und dem verblassten Aufdruck. Es gibt vierzig Tassen in dieser Teeküche, und es ist die eine, die fehlt.",
+        opts: [
+            {
+                t: "Systematisch suchen, Etage für Etage",
+                m: 20, f: -5, a: 5, c: 0,
+                next: "cof_tasse_spur",
+                r: "Drei Teeküchen, zwei Besprechungsräume, ein verwaister Rollcontainer. Nichts. Aber im dritten Stock sagt eine Praktikantin, sie habe 'so eine mit Sprung' gestern beim Vertrieb gesehen. Die Spur lebt."
+            },
+            {
+                t: "Irgendeine andere nehmen",
+                m: 5, f: 5, a: 5, c: 0,
+                next: "cof_tasse_egal",
+                r: "Du nimmst eine weiße mit Firmenlogo. Der Henkel sitzt falsch in der Hand, der Rand ist zu dick. Der Kaffee schmeckt wie aus einem Hotel, in dem man nicht freiwillig wohnt."
+            },
+            {
+                t: "Aus Prinzip aus dem Pappbecher trinken",
+                m: 5, f: 0, a: 5, c: 0,
+                r: "Der Pappbecher weicht durch, der Kaffee schmeckt nach Deckel. Aber es ist ein Statement, und Statements schmecken selten gut."
+            }
+        ]
+    },
+    {
+        id: "cof_tasse_2",
+        reqStory: "cof_tasse_spur",
+        reqStoryAge: 1,
+        title: "Die Tasse beim Vertrieb",
+        text: "Da steht sie. Auf dem Schreibtisch eines Herrn Petzold aus dem Vertrieb, gefüllt mit Milchschaum, daneben ein Keks. Der Sprung am Henkel ist unverkennbar. Herr Petzold telefoniert und macht dabei Gesten, als würde er ein Orchester dirigieren.",
+        opts: [
+            {
+                t: "Warten, bis er auflegt, und sie zurückfordern",
+                m: 15, f: 0, a: -10, c: 0,
+                r: "'Oh. Die stand in der Spülmaschine, ich dachte—' Du nimmst die Tasse, kippst den Milchschaum ins Waschbecken und spülst sie zweimal. Auf dem Rückweg trägst du sie wie einen Pokal."
+            },
+            {
+                t: "Sie wortlos vom Tisch nehmen, mitten im Gespräch",
+                m: 5, f: 0, a: -10, c: 5,
+                r: "Petzold verliert kurz den Faden und dirigiert ins Leere. Du bist schon an der Tür. Manche Botschaften brauchen keinen Ton."
+            }
+        ]
+    },
+    {
+        id: "cof_tasse_3",
+        reqStory: "cof_tasse_egal",
+        reqStoryAge: 2,
+        title: "Sie ist wieder da",
+        text: "Deine Tasse steht am Platz. Gespült, trocken, der Sprung am Henkel wie immer. Am Henkel hängt das Etikett eines Teebeutels, den du nie gekauft hast: Rooibos-Vanille. Keine Notiz, keine Erklärung. Die Teeküche schweigt.",
+        opts: [
+            {
+                t: "Nicht hinterfragen. Kaffee einschenken.",
+                m: 5, f: 0, a: -10, c: 0,
+                r: "Der Henkel sitzt in der Hand wie ein Händedruck. Wo sie war, wirst du nie erfahren, und vielleicht ist das in Ordnung."
+            },
+            {
+                t: "Das Rooibos-Etikett aufheben. Als Beweisstück.",
+                m: 5, f: 0, a: -5, c: 0,
+                r: "Du klemmst das Etikett an den Monitor, zu den anderen ungelösten Fällen. Irgendwer in diesem Haus trinkt Rooibos-Vanille aus fremden Tassen. Du wirst wachsam bleiben."
+            }
+        ]
+    },
+    {
+        id: "cof_sonntag_1",
+        title: "Fehlercode E-52",
+        text: "Frau Sonntag aus der Buchhaltung steht vor dem Kaffeeautomaten und liest das Display wie ein Testament. 'E-52', sagt sie, als du dazukommst. 'Ich hab schon zweimal aus- und wieder angeschaltet. Das hilft doch sonst bei Ihnen auch immer.'",
+        opts: [
+            {
+                t: "Den Fehler ansehen und beheben",
+                m: 10, f: -5, a: -5, c: 0,
+                next: "cof_sonntag_dank",
+                r: "E-52 ist der Tresterbehälter. Du leerst ihn, die Maschine erwacht. Frau Sonntag sieht aus, als hättest du ein Kind aus einem Brunnen gezogen. 'Sie können das einfach so?'"
+            },
+            {
+                t: "'E-52. Da müssen Sie ein Ticket aufmachen.'",
+                m: 5, f: 5, a: 0, c: 0,
+                r: "Sie sieht dich an, dann das Display, dann wieder dich. 'Ein Ticket. Für den Kaffeeautomaten.' Du nickst ernst. Irgendwo muss die Grenze der Zuständigkeit verlaufen, und heute verläuft sie hier."
+            }
+        ]
+    },
+    {
+        id: "cof_sonntag_2",
+        reqStory: "cof_sonntag_dank",
+        reqStoryAge: 1,
+        title: "Ein Teller im Fach",
+        text: "In deinem Postfach steht ein kleiner Teller mit Frischhaltefolie darüber. Darunter: ein Stück Marmorkuchen und ein Donut, dazu ein Post-it in akkurater Buchhalterinnen-Schrift: 'Für den Herrn von der IT. Der Automat und ich bedanken uns. — R. Sonntag'",
+        opts: [
+            {
+                t: "Kuchen sofort, Donut für später",
+                m: 10, f: 0, a: -10, c: 0,
+                loot: "donut",
+                r: "Der Marmorkuchen ist selbst gebacken, mit ordentlich Rührzeit. Du isst ihn im Stehen am Fenster und bist für vier Minuten mit allem im Reinen. Der Donut wandert in die Schublade. Eine Investition."
+            },
+            {
+                t: "Sich persönlich bedanken gehen",
+                m: 15, f: 0, a: -10, c: -5,
+                r: "Frau Sonntag winkt ab, freut sich aber sichtbar. 'Mein Mann sagt immer, die IT lebt von Keksen.' Ihr Mann hat recht. Auf dem Rückweg grüßen dich zwei Leute aus der Buchhaltung, die dich noch nie gegrüßt haben."
+            }
+        ]
+    },
+    {
+        id: "cof_empfang_1",
+        char: "Gabi",
+        title: "Die gute Maschine",
+        text: "Es ist ein offenes Geheimnis: Die beste Kaffeemaschine des Hauses steht im Empfang. Siebträger, gepflegt, Gabis Revier. Als du vorbeigehst, fängt sie dich ab. 'Du bist doch von der IT. Mein Etikettendrucker druckt nur noch Striche. Hilf mir, und ich zeig dir, wie man an der Maschine einen Cappuccino macht, der den Namen verdient.'",
+        opts: [
+            {
+                t: "Auf den Handel eingehen",
+                m: 30, f: -10, a: 5, c: -5,
+                rep: { "Gabi": 5 },
+                next: "cof_empfang_zugang",
+                r: "Der Drucker hat einen zerknüllten Etikettenstau und eine Firmware von vorgestern. Zwanzig Minuten später druckt er wieder Buchstaben. Gabi nickt anerkennend. 'Morgen früh. Erste Lektion.'"
+            },
+            {
+                t: "'Dafür gibt es ein Ticketsystem.'",
+                m: 5, f: 5, a: 0, c: 0,
+                rep: { "Gabi": -5 },
+                r: "Gabi zieht eine Augenbraue hoch und wendet sich ab. 'Dann trink weiter das da oben.' Sie sagt 'das da oben', wie andere Leute 'Leitungswasser' sagen."
+            }
+        ]
+    },
+    {
+        id: "cof_empfang_2",
+        reqStory: "cof_empfang_zugang",
+        reqStoryAge: 1,
+        title: "Erste Lektion am Siebträger",
+        text: "Gabi steht neben dir am Siebträger und kommandiert mit zwei Worten: 'Fester. Gerader.' Der Empfang riecht nach frisch gemahlenem Kaffee, das Telefon klingelt, sie ignoriert es mit der Autorität von jemandem, der weiß, was wichtig ist.",
+        opts: [
+            {
+                t: "Zuhören, tampen, lernen",
+                m: 20, f: 0, a: -15, c: 0,
+                r: "Der dritte Versuch läuft dunkel und dick, die Crema steht. Gabi probiert, nickt einmal. 'Geht doch.' Du trinkst den besten Kaffee deiner Firmengeschichte im Stehen zwischen Paketannahme und Klingelschild, und ab jetzt hast du hier ein stehendes Angebot."
+            },
+            {
+                t: "Abkürzen und den Knopf der Mühle drücken",
+                m: 10, f: 5, a: -5, c: 0,
+                r: "Gabi schiebt deine Hand weg wie die eines Kindes am Herd. 'So wird das nichts.' Du bekommst trotzdem einen Cappuccino. Aus Gnade. Er schmeckt nach Gnade."
+            }
+        ]
+    },
 ];

@@ -4014,4 +4014,27 @@ export const calls = [
 			}
 		]
 	},
+
+	/* Dreiteiler wave 2 (v5.0): cross-pool follow-up of cof_deka_1 - the
+	   decaf pilot slows the whole house down, and the phone knows first. */
+	{
+		id: "call_deka_stimmung",
+		char: "Gabi",
+		reqStory: "cof_deka_brav",
+		reqStoryAge: 1,
+		title: "Anruf vom Empfang",
+		text: "'Sag mal', Gabi klingt gedämpft, als würde sie die Hand um den Hörer legen, 'ist bei euch auch alles so... langsam? Die halbe Buchhaltung telefoniert in Zeitlupe, und im zweiten Stock hat jemand den Aufzug genommen. Für ein Stockwerk. Nach unten.'",
+		opts: [
+			{
+				t: "'Das ist der Koffein-Pilot. Wir sterben alle.'",
+				m: 5, f: 0, a: -5, c: 0,
+				r: "Gabi schweigt kurz. 'DAS ist das Projekt mit dem Aushang?' Sie legt auf. Zwei Minuten später hörst du es durchs Treppenhaus: Der Empfang hat eine eigene Maschine, und Gabi hat eine Durchsage-Stimme."
+			},
+			{
+				t: "'Mir fällt nichts auf.' Langsam sprechen.",
+				m: 5, f: 5, a: -5, c: 0,
+				r: "Du dehnst jedes Wort wie Kaugummi. Gabi lacht, bis sie husten muss. Es ist der erste Ton von Freude, den dieses Haus heute produziert hat."
+			}
+		]
+	},
 ];
