@@ -37,7 +37,9 @@ tools/
   simulate-week.mjs     Wochen-Simulation, npm run sim:week
   report-prose.mjs      Prosa- und Stilbericht, node tools/report-prose.mjs [bereich]
   normalize-quotes.mjs  Anführungszeichen, einmalig
+  audit-stats.mjs       Statuswerte gegen die Doktrin, Stichprobe (kein Tor)
   dev-woche.js          Konsolen-Werkzeug für den Wochenmodus, siehe unten
+  WERKZEUGE.md          Handbuch zu allem in diesem Ordner
   *.test.mjs            drei Testsuiten, npm test
   register.mjs          Loader-Haken für die Tests
   svelte-loader.mjs     kompiliert .svelte.js für die Tests
@@ -166,20 +168,16 @@ Beschriftungen, Alt-Register in Optionen (Sektion 9) und Auftakt-Schablonen
 (Sektion 10). Das Werkzeug kennt die legitimen Ausnahmen und meldet sie nicht:
 Betreffzeilen, Anrufer-Anzeigen, Chat-Nachrichten und bewusste Lautmalerei.
 
-Die letzten beiden sind Einmal-Werkzeuge, die den Bestand in einen definierten
-Zustand gebracht haben. Sie sind wiederholbar — ein zweiter Lauf ändert nichts
-mehr — und stehen im Repository, weil sie dokumentieren, wie dieser Zustand
-zustande kam:
+`normalize-quotes.mjs` ist ein Einmal-Werkzeug, wiederholbar — ein zweiter
+Lauf ändert nichts mehr. Es macht zwei Durchgänge über die Anführungszeichen,
+siehe unten. `--dry` berichtet, ohne zu schreiben.
 
-`reorder-opts.mjs` verteilt die Reihenfolge der Antwortmöglichkeiten. Vorher
-stand in 53% aller Ereignisse mit drei oder mehr Optionen die günstigste ganz
-oben; wer das bemerkt, klickt fortan die erste Zeile. Das Werkzeug rotiert die
-Liste, statt zu mischen, damit eine Abfolge von zurückhaltend nach drastisch
-erhalten bleibt. Abbruch-Optionen bleiben unten, Tutorial und Stationswahl der
-Gala werden nicht angefasst.
+Die Reihenfolge der Antwortmöglichkeiten wurde einmalig mit `reorder-opts.mjs`
+verteilt (vorher stand in 53% der Ereignisse die günstigste Option ganz oben).
+Das Skript ist erledigt und entfernt; die Regel lebt in `EVENT-DOKTRIN.md`
+§2a weiter, samt Zielverteilung und Messbefehl.
 
-`normalize-quotes.mjs` macht zwei Durchgänge über die Anführungszeichen, siehe
-unten. `--dry` berichtet, ohne zu schreiben.
+Ein vollständiges Handbuch zu allen Werkzeugen steht in `tools/WERKZEUGE.md`.
 
 ## Tests
 

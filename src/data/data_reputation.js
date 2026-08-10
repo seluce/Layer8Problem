@@ -1625,7 +1625,6 @@ export const reputation = [
             },
             { 
                 t: "'Willst du einen Donut dafür?'", 
-                req: "donut",
                 rem: "donut",
                 rep: { "Egon": 15 },
                 m: 5, f: 0, a: -5, c: 0, 

@@ -35,13 +35,13 @@
 
             const item = DB.items[entry.id];
             const cooldown = cooldownOf(entry.id);
-            const wait = cooldown - (state.time - state.lastStressballTime);
+            const wait = cooldown - (state.time - (state.itemCooldowns?.[entry.id] ?? -100000));
 
             return {
                 id: entry.id,
                 item,
                 name: item?.name ?? 'Unbekannt',
-                isStressball: cooldown > 0,
+                hasCooldown: cooldown > 0,
                 ready: cooldown > 0 && wait <= 0,
                 wait,
                 isConsumable: usable(entry.id) && !cooldown
@@ -52,22 +52,22 @@
 
     function slotClass(slot) {
         if (!slot) return 'inv-slot empty';
-        if (slot.isStressball && slot.ready) return 'inv-slot relative group cursor-pointer border-green-500 hover:bg-green-900/20';
+        if (slot.hasCooldown && slot.ready) return 'inv-slot relative group cursor-pointer border-green-500 hover:bg-green-900/20';
         if (slot.isConsumable) return 'inv-slot relative group cursor-pointer border-blue-500 hover:bg-blue-900/20';
         return 'inv-slot relative group';
     }
 
     function slotTitle(slot) {
         if (!slot) return '';
-        return slot.isStressball && slot.ready ? `${slot.name} (Benutzen)` : slot.name;
+        return slot.hasCooldown && slot.ready ? `${slot.name} (Benutzen)` : slot.name;
     }
 
     function activate(slot) {
         if (!slot) return;
 
-        if (slot.isStressball) {
+        if (slot.hasCooldown) {
             if (slot.ready) engine.askUseItem(slot.id);
-            else engine.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${slot.wait} Min)`, 'text-slate-500');
+            else engine.log(`${DB.items[slot.id]?.use?.wait ?? `${slot.name} braucht noch etwas Zeit`} (${slot.wait} Min).`, 'text-slate-500');
             return;
         }
 
@@ -98,7 +98,7 @@
                 {slot.item?.icon ?? '?'}
             {/if}
 
-            {#if slot.isStressball}
+            {#if slot.hasCooldown}
                 {#if slot.ready}
                     <div class="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 {:else}

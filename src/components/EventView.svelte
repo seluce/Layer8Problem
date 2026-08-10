@@ -29,7 +29,11 @@
     const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', img: 'act_system', bg: 'bg-slate-900' };
 
     const EXCUSE_TYPES = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
-    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
+    // An option may require a cooling item; then it is locked until ready.
+    const cooldownLeft = (id) => {
+        const cd = DB.items[id]?.use?.cooldown ?? 0;
+        return cd ? cd - (state.time - (state.itemCooldowns?.[id] ?? -100000)) : 0;
+    };
 
     const ev    = $derived(state.terminal.event ?? {});
     const style = $derived(STYLES[ev.type] ?? FALLBACK);
@@ -80,7 +84,7 @@
     function lockReason(opt) {
         if (opt.req) {
             if (!state.inventory.find(i => i.id === opt.req && !i.used)) return `Fehlt: ${itemName(opt.req)}`;
-            if (opt.req === 'stressball' && state.time - state.lastStressballTime < STRESSBALL_COOLDOWN) return 'Noch nicht bereit';
+            if (cooldownLeft(opt.req) > 0) return 'Noch nicht bereit';
         }
         if (opt.rem && !state.inventory.find(i => i.id === opt.rem)) {
             return `Fehlt: ${itemName(opt.rem)}`;

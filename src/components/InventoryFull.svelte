@@ -38,7 +38,12 @@
     import { DB } from '../data.js';
     import ItemTooltip from './ItemTooltip.svelte';
 
-    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
+    // Minutes an item still has to cool down; 0 or less means ready. Reads the
+    // item's own clock, so several cooldown items no longer share one.
+    const waitFor = (id) => {
+        const cd = DB.items[id]?.use?.cooldown ?? 0;
+        return cd ? cd - (game.time - (game.itemCooldowns?.[id] ?? -100000)) : 0;
+    };
     // Usable, how long it rests and whether it survives - all of that is in
     // data_items.js under `use`. Nothing about items is listed here.
     const usable = (id) => !!DB.items[id]?.use;
@@ -61,7 +66,6 @@
     const MIN_SLOTS = 10;
     const emptySlots = $derived(Math.max(0, MIN_SLOTS - normal.length));
 
-    const stressballWait = $derived(STRESSBALL_COOLDOWN - (game.time - game.lastStressballTime));
 
     // Which slot currently has its tooltip pinned, by key. Only touch and
     // keyboard set this; a mouse still gets the tooltip from :hover alone.
@@ -163,8 +167,8 @@
         }
         if (row.quest) return 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
 
-        if (row.entry.id === 'stressball') {
-            return (stressballWait <= 0
+        if (DB.items[row.entry.id]?.use?.cooldown) {
+            return (waitFor(row.entry.id) <= 0
                 ? 'inv-slot relative group cursor-default cursor-pointer border-green-500 hover:bg-green-900/20'
                 : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
         }
@@ -191,13 +195,17 @@
             return;
         }
 
-        if (id === 'stressball') {
-            if (stressballWait <= 0) engine.askUseItem('stressball');
-            else engine.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${stressballWait} Min)`, 'text-slate-500');
+        if (DB.items[id]?.use?.cooldown) {
+            const wait = waitFor(id);
+            if (wait <= 0) engine.askUseItem(id);
+            else engine.log(`${DB.items[id].use.wait ?? `${row.item?.name ?? id} braucht noch etwas Zeit`} (${wait} Min).`, 'text-slate-500');
             return;
         }
 
         if (isConsumable(id)) engine.askUseItem(id);
+        // A passive item has no button. Without this line clicking it does
+        // nothing at all, which reads as broken rather than as by design.
+        else if (DB.items[id]?.passive) engine.log(`${row.item?.name ?? id} wirkt von allein, sobald es darauf ankommt.`, 'text-slate-500 italic');
     }
 
     /**
@@ -257,12 +265,12 @@
             {row.item?.name ?? row.entry.id}
         </div>
 
-        {#if !row.quest && row.entry.id === 'stressball'}
-            {#if stressballWait <= 0}
+        {#if !row.quest && DB.items[row.entry.id]?.use?.cooldown}
+            {#if waitFor(row.entry.id) <= 0}
                 <div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-slate-900"></div>
             {:else}
                 <div class="absolute inset-0 bg-slate-900/70 rounded-sm flex items-center justify-center z-10 backdrop-blur-[1px]">
-                    <span class="font-bold text-white text-xs select-none">{stressballWait}</span>
+                    <span class="font-bold text-white text-xs select-none">{waitFor(row.entry.id)}</span>
                 </div>
             {/if}
         {/if}

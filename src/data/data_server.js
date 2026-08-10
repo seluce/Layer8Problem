@@ -3857,7 +3857,6 @@ export const server = [
         },
         {
             t: "Einen USB-Stick als Cloud-Zugang überreichen",
-            req: "usb_stick",
             rem: "usb_stick",
             rep: { "Markus": 7 },
             next: "path_cloud_stick",
@@ -4491,7 +4490,6 @@ export const server = [
         },
         {
             t: "Ordentlich neu patchen",
-            req: "cable",
             rem: "cable",
             next: "path_patch_neu",
             m: 10, f: 0, a: -5, c: -5,
@@ -5426,6 +5424,66 @@ export const server = [
                 m: 10, f: 0, a: -5, c: 0,
                 rep: { "Gabi": 5 },
                 r: "Ein älterer Stand, aber besser als keiner. Gabi nimmt den Stick wie einen Lottogewinn. Du siehst ihn nie wieder."
+            }
+        ]
+    },
+
+    /* Item discovery (v5.0), see the note in data_sidequests.js: the loot is
+       in the opener so day mode can reach it, the aged part only adds
+       consequence. Frau Sonntag returns from the coffee pool - the building
+       remembers, but the scene stands on its own for anyone who missed her. */
+    {
+        id: "srv_puppe_1",
+        title: "Speicheraufrüstung Buchhaltung",
+        text: "Der Rechner der Buchhaltung bekommt zwei Riegel Arbeitsspeicher. Routine: Seitenteil ab, erden, einbauen. Nur hängt im Gehäuse, mit drei Kabelbindern am Laufwerkskäfig befestigt, eine kleine Stoffpuppe. Nadelstreifen mit Kugelschreiber aufgemalt, ein Krawattenknoten aus Zwirn, das Gesicht sorgfältig gestickt. Die Ähnlichkeit ist nicht zu leugnen.",
+        opts: [
+            {
+                t: "Kabelbinder durchtrennen und die Puppe einstecken",
+                m: 20, f: -5, a: -5, c: 0,
+                loot: "voodoo_doll",
+                next: "srv_puppe_genommen",
+                r: "Der Speicher ist in vier Minuten drin, die Puppe braucht zwei. Sie ist erstaunlich gut gearbeitet, das Mauspad-Material an den Kanten sauber versäubert. Jemand in diesem Haus hat Zeit, Talent und ein sehr klares Feindbild."
+            },
+            {
+                t: "Speicher einbauen, Puppe hängen lassen",
+                m: 15, f: -10, a: 0, c: 0,
+                r: "Du arbeitest um sie herum wie ein Elektriker um eine Hausspinne. Beim Zuschrauben nickst du ihr zu. Man weiß ja nie, welche Systeme hier wirklich laufen."
+            },
+            {
+                t: "Ein Foto machen. Nur für dich.",
+                m: 10, f: 0, a: -10, c: 5,
+                r: "Du machst drei Aufnahmen, eine davon im Detail. Später am Schreibtisch siehst du sie dir noch einmal an und findest den Nadelstreifen wirklich gut getroffen. Das Bild wirst du niemandem zeigen, aber du wirst wissen, dass du es hast."
+            },
+            {
+                t: "Den Fund melden, wie es die Vorschrift verlangt",
+                m: 25, f: -5, a: 5, c: 10,
+                r: "Du meldest 'einen unbekannten Gegenstand im Gehäuse eines Firmenrechners'. Die Rückfrage kommt binnen einer Stunde und will wissen, ob der Gegenstand jemanden darstelle. Du schreibst 'nicht eindeutig' und weißt beim Absenden, dass das gelogen ist."
+            }
+        ]
+    },
+    {
+        id: "srv_puppe_2",
+        char: "Dr. Wichtig",
+        reqStory: "srv_puppe_genommen",
+        reqStoryAge: 1,
+        title: "Rückenbeschwerden",
+        text: "Dr. Wichtig steht im Türrahmen und hält sich die Seite. 'Sagen Sie', beginnt er, und es klingt ungewohnt beiläufig, 'diese Rechner in der Buchhaltung — die stehen doch alle auf demselben Stromkreis?' Er verzieht kurz das Gesicht. 'Seit gestern zieht es bei mir im Rücken. Ich frage nur.'",
+        opts: [
+            {
+                t: "'Stromkreise verursachen keine Rückenschmerzen.'",
+                m: 10, f: 0, a: -5, c: 0,
+                r: "'Das sagen Sie so.' Er richtet sich auf, hält kurz inne und geht dann sehr aufrecht den Flur hinunter. In deiner Tasche liegt etwas, das ungefähr die Größe seiner Hand hat."
+            },
+            {
+                t: "Anbieten, die Elektrik durchzumessen",
+                m: 30, f: -10, a: 0, c: -10,
+                r: "Du misst zwei Stunden lang Steckdosen, an denen nichts ist, und legst ihm ein Protokoll auf den Tisch. Er studiert es lange und wirkt danach spürbar erleichtert. Der Rücken, sagt er, sei auch schon besser."
+            },
+            {
+                t: "'Vielleicht der Bürostuhl. Die sind alle von 2011.'",
+                m: 10, f: 0, a: -5, c: -5,
+                rep: { "Dr. Wichtig": 5 },
+                r: "Er nimmt den Gedanken sofort an, als hätte er auf eine Erklärung gewartet, die keine Nadel enthält. Am Nachmittag geht eine Anfrage an den Einkauf: ergonomische Bestuhlung, Priorität hoch. Die halbe Etage wird dir danken, ohne je zu erfahren, wofür."
             }
         ]
     },

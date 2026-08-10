@@ -217,6 +217,43 @@ export const events = {
         return true;
     },
 
+    /**
+     * Passive items: they do their work when an event OPENS, before the
+     * player has chosen anything - currently gated by the character on
+     * screen (data_items.js, `passive`). Deliberately not a flat bonus per
+     * event: a permanent effect that always applies is invisible, while one
+     * tied to a person is a moment, and the tenth backpack slot it occupies
+     * is the actual decision.
+     *
+     * Called from the three places an event becomes visible: renderTerminal,
+     * the phone branch and the boss fight. NOT from renderEventHTML, which
+     * renderTerminal itself calls - that would fire twice.
+     */
+    applyPassiveItems: function(charName) {
+        if (!charName) return;
+        for (const entry of this.state.inventory) {
+            const p = DB.items[entry.id]?.passive;
+            if (!p || p.onChar !== charName) continue;
+
+            if (p.cr) {
+                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.cr));
+                this.showFloatingText('val-cr', p.cr);
+            }
+            if (p.al) {
+                this.state.al = Math.max(0, Math.min(100, this.state.al + p.al));
+                this.showFloatingText('val-al', p.al);
+            }
+            if (p.fl) {
+                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.fl));
+                this.showFloatingText('val-fl', p.fl);
+            }
+            // A number floating up on its own looks like a bug. The log line
+            // says who caused it, and it is not optional for that reason.
+            this.log(p.log, p.color ?? 'text-slate-300');
+        }
+        this.updateUI();
+    },
+
     applyReputation: function(rep) {
         if (!rep) return false;
         for (const [charName, val] of Object.entries(rep)) {
@@ -536,6 +573,7 @@ export const events = {
         // Reset before rendering: the bar is shared state and would otherwise
         // start at whatever the previous fight left behind.
         this.state.bossBarPercent = 100;
+        this.applyPassiveItems(boss.char);
         this.renderEventHTML(boss, 'boss');
 
         // Milliseconds, so the bar animates smoothly
@@ -591,7 +629,8 @@ export const events = {
             this.state.currentPhoneEvent = ev;
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
-            
+            this.applyPassiveItems(ev.char);
+
             // Show the notification
             this.state.phone.notification = true;
             this.log("Handy: " + ev.title);
@@ -623,6 +662,7 @@ export const events = {
         this.state.activeEvent = true;
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
+        this.applyPassiveItems(ev.char);
 
 
 

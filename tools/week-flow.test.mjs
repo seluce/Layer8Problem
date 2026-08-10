@@ -13,7 +13,7 @@ globalThis.localStorage = {
 };
 globalThis.window = globalThis;
 globalThis.window.matchMedia = () => ({ matches: false });
-const fakeEl = () => ({ textContent: '', classList: { add() {}, remove() {}, toggle() {} }, id: '' });
+const fakeEl = () => ({ textContent: '', innerText: '', innerHTML: '', classList: { add() {}, remove() {}, toggle() {}, contains: () => false }, id: '' });
 globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
@@ -388,6 +388,80 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// --------------------------------------------------- item cooldowns (v5.0)
+console.log('Gegenstände mit Abklingzeit und Kosten:');
+await ok('Abklingzeiten gelten pro Gegenstand, nicht global', () => {
+    resetState();
+    state.time = 600;
+    engine.state.itemCooldowns.stressball = 600;
+    // The ball is cooling; the doll has its own clock and stays available.
+    assert.ok(state.time - state.itemCooldowns.stressball < DB.items.stressball.use.cooldown);
+    assert.equal(state.itemCooldowns.voodoo_doll ?? undefined, undefined);
+});
+await ok('Die Krawatte senkt Chef beim Auftritt von Dr. Wichtig', () => {
+    resetState();
+    state.cr = 50;
+    state.inventory = [{ id: 'tie', used: false }];
+    engine.applyPassiveItems('Dr. Wichtig');
+    assert.equal(state.cr, 45, 'passiver Effekt nicht angewandt');
+});
+await ok('Die Krawatte bleibt bei anderen Figuren still', () => {
+    resetState();
+    state.cr = 50;
+    state.inventory = [{ id: 'tie', used: false }];
+    engine.applyPassiveItems('Kevin');
+    engine.applyPassiveItems(null);
+    assert.equal(state.cr, 50, 'Effekt feuerte bei der falschen Figur');
+});
+await ok('Ohne Krawatte im Rucksack passiert nichts', () => {
+    resetState();
+    state.cr = 50;
+    state.inventory = [];
+    engine.applyPassiveItems('Dr. Wichtig');
+    assert.equal(state.cr, 50);
+});
+await ok('Der Chef-Wert bleibt bei 0 gedeckelt', () => {
+    resetState();
+    state.cr = 2;
+    state.inventory = [{ id: 'tie', used: false }];
+    engine.applyPassiveItems('Dr. Wichtig');
+    assert.equal(state.cr, 0, 'unter null gerutscht');
+});
+await ok('Der Effekt hängt wirklich am Öffnen eines Ereignisses', () => {
+    resetState();
+    state.cr = 50;
+    state.inventory = [{ id: 'tie', used: false }];
+    // The REAL renderTerminal, not the harness stub above: only this proves
+    // the hook is wired. Calling it through the helper would pass even if
+    // nobody ever called applyPassiveItems in production.
+    events.renderTerminal.call(engine, { id: 'tst_passive', char: 'Dr. Wichtig', title: 'T', text: 'x', opts: [] }, 'server');
+    assert.equal(state.cr, 45, 'Haken in renderTerminal fehlt');
+    assert.equal(calls.termEvent.charName, 'Dr. Wichtig');
+});
+await ok('use.cr und use.rep wirken beim Benutzen', () => {
+    resetState();
+    state.time = 600;
+    state.inventory = [{ id: 'voodoo_doll', used: false }];
+    const al0 = state.al, cr0 = state.cr;
+    state.pendingItem = 'voodoo_doll';
+    engine.confirmUseItem();
+    assert.equal(state.al, Math.max(0, al0 - 20), 'Aggro nicht gesenkt');
+    assert.equal(state.cr, cr0 + 10, 'Chef-Wert nicht gestiegen');
+    assert.equal(state.reputation['Dr. Wichtig'], -2, 'Ruf nicht abgezogen');
+    assert.equal(state.itemCooldowns.voodoo_doll, 600, 'Abklingzeit nicht gesetzt');
+    // keep: true - the doll stays in the backpack
+    assert.ok(state.inventory.some(i => i.id === 'voodoo_doll'), 'Puppe verschwunden');
+});
+await ok('Der Chef-Wert bleibt bei 100 gedeckelt', () => {
+    resetState();
+    state.time = 600;
+    state.cr = 95;
+    state.inventory = [{ id: 'voodoo_doll', used: false }];
+    state.pendingItem = 'voodoo_doll';
+    engine.confirmUseItem();
+    assert.equal(state.cr, 100, 'Deckel verletzt');
+});
+
 // ------------------------------------------------------- time predicates (3f)
 console.log('Zeit-Prädikate (Dreiteiler):');
 await ok('Fahnen tragen in der Woche den Setz-Tag, im Tagesmodus true', () => {

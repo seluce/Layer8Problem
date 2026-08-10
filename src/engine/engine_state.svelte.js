@@ -79,7 +79,11 @@ export function freshDay(mult = 1.0) {
         rageWarningReceived: false,
         pendingEnd: null,
         drunkEndTime: 0,
-        lastStressballTime: -100,
+        // Cooldowns per item id: { stressball: 240, ... } holds the minute
+        // an item was last used. Used to be a single lastStressballTime for
+        // the whole backpack, which was fine while exactly one item had a
+        // cooldown - a second one would have blocked the first.
+        itemCooldowns: {},
 
         // Currently open event. These four are the ones that used to leak:
         // a stale currentPhoneEvent reappears as soon as any new event sets

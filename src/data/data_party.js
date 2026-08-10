@@ -202,7 +202,7 @@ export const party = [
 		title: "Der Chef eskaliert",
 		text: "Dr. Wichtig hat sich seine Krawatte wie Rambo um den Kopf gebunden und versucht sich in der Mitte des Kreises an Breakdance. Es sieht gefährlich nach Bandscheibenvorfall aus.",
 		opts: [
-			{ t: "Ihn aus Mitleid von der Fläche holen", f: -10, a: 10, r: "Du gehst hin, fässt ihn am Arm und flüsterst: 'Chef, die wichtigen Investoren schauen zu.' Er stoppt abrupt, wird kreidebleich und rückt sich die Krawatte zurecht. Du hast ihn vor dem totalen Ruin gerettet.", next: "party_hub" },
+			{ t: "Ihn aus Mitleid von der Fläche holen", f: -10, a: 10, r: "Du gehst hin, fasst ihn am Arm und flüsterst: 'Chef, die wichtigen Investoren schauen zu.' Er stoppt abrupt, wird kreidebleich und rückt sich die Krawatte zurecht. Du hast ihn vor dem totalen Ruin gerettet.", next: "party_hub" },
 			{ t: "Heimlich Erpressungsmaterial filmen", a: 25, f: 10, r: "Du hältst voll drauf. Der Chef wälzt sich unkoordiniert auf dem Boden. Das ist feinstes, hochauflösendes Erpressungsmaterial für die nächste Gehaltsverhandlung. Du grinst böse.", next: "party_hub" },
 			{ t: "Anfeuern und klatschen", f: 20, a: -5, r: "Der Chef fühlt sich durch dein Klatschen bestärkt, macht einen krachenden 'Worm' und reißt sich dabei gut hörbar die Anzughose auf.", next: "party_hub" }
 		]

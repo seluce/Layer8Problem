@@ -27,11 +27,18 @@ export const inventory = {
         const item = DB.items[id];
         const use = item?.use;
 
-        // Cooldown check BEFORE the modal
-        if (use?.cooldown && this.state.time - this.state.lastStressballTime < use.cooldown) {
-            const wait = use.cooldown - (this.state.time - this.state.lastStressballTime);
-            this.log(`Der Ball ist noch platt. Er muss sich erst wieder entfalten (${wait} Min).`, "text-slate-500");
-            return; // No modal, abort right away
+        // Cooldown check BEFORE the modal. Each item carries its own clock,
+        // so a cooling stress ball does not lock the voodoo doll.
+        if (use?.cooldown) {
+            const last = this.state.itemCooldowns?.[id] ?? -100000;
+            const wait = use.cooldown - (this.state.time - last);
+            if (wait > 0) {
+                // The item says how it phrases its own pause; the fallback
+                // keeps a new item from sounding like the stress ball.
+                const line = use.wait ?? `${item?.name ?? 'Der Gegenstand'} braucht noch etwas Zeit`;
+                this.log(`${line} (${wait} Min).`, "text-slate-500");
+                return; // No modal, abort right away
+            }
         }
 
         // --- LORE ITEM CHECK ---
@@ -88,7 +95,7 @@ export const inventory = {
             // the backpack before it can take effect.
             let takes = true;
             if (item.keep) {
-                if (use.cooldown) this.state.lastStressballTime = this.state.time;
+                if (use.cooldown) this.state.itemCooldowns[id] = this.state.time;
             } else {
                 const index = this.state.inventory.findIndex(i => i.id === id);
                 if (index > -1) this.state.inventory.splice(index, 1);
@@ -98,6 +105,14 @@ export const inventory = {
             if (takes) {
                 if (use.al) this.state.al = Math.max(0, this.state.al + use.al);
                 if (use.fl) this.state.fl = Math.max(0, this.state.fl + use.fl);
+                // cr and rep make trade-off items possible: relief now, paid
+                // for on the boss's radar or in someone's regard. Same clamps
+                // as the event path, so an item cannot do what an event may not.
+                if (use.cr) {
+                    this.state.cr = Math.max(0, Math.min(100, this.state.cr + use.cr));
+                    this.showFloatingText('val-cr', use.cr);
+                }
+                if (use.rep) this.applyReputation(use.rep);
                 this.log(use.log, use.color);
             }
         }

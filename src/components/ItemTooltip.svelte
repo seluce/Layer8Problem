@@ -36,8 +36,9 @@
         <!-- Whether an item survives being used was written down nowhere -
              you found out once it was gone. -->
         <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
-                    {item.quest ? 'text-amber-500' : item.keep ? 'text-sky-400' : 'text-slate-500'}">
+                    {item.quest ? 'text-amber-500' : item.passive ? 'text-indigo-300' : item.keep ? 'text-sky-400' : 'text-slate-500'}">
             {#if item.quest}Trophäe · bleibt für immer
+            {:else if item.passive}Wirkt von allein
             {:else if item.keep}Wiederverwendbar
             {:else}Verbraucht sich bei Nutzung{/if}
         </div>

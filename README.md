@@ -32,11 +32,11 @@ kollabiert es und du bist raus. Also nimmst du Anrufe an, rennst in den
 Serverraum, holst Kaffee und gehst Dienstgänge — und behältst dabei drei Werte
 im Auge:
 
-| | | |
-|---|---|---|
-| 🦥 **Faulheit** | Je höher, desto härter bestraft der Chef deine Fehler. |
-| 😡 **Aggro** | Bei 100 % rastest du aus. Das Ventil öffnet genau einmal. |
-| 👁️ **Chef-Radar** | Bei 100 % gibt es eine Abmahnung. Danach die Kündigung. |
+| | |
+|---|---|
+| <img src="public/assets/img/ui/ui_lazy.webp" width="22" alt=""> **Faulheit** | Je höher, desto härter bestraft der Chef deine Fehler. |
+| <img src="public/assets/img/ui/ui_angry.webp" width="22" alt=""> **Aggro** | Bei 100 % rastest du aus. Das Ventil öffnet genau einmal. |
+| <img src="public/assets/img/ui/ui_eye.webp" width="22" alt=""> **Chef-Radar** | Bei 100 % gibt es eine Abmahnung. Danach die Kündigung. |
 
 Jede Entscheidung kostet Zeit, und die Uhr läuft nur in eine Richtung.
 
@@ -52,9 +52,9 @@ Jede Entscheidung kostet Zeit, und die Uhr läuft nur in eine Richtung.
   gab.
 - **Acht Kollegen mit eigenem Ruf**, die sich merken, wie du dich entschieden
   hast — und irgendwann zurückzahlen. In beide Richtungen.
-- **30 Gegenstände** zum Finden und kreativen Zweckentfremden. Panzertape
-  flickt mehr, als es sollte.
-- **30 Erfolge**, gestuft nach Schwierigkeit, dazu ein Archiv, ein Tagebuch,
+- **32 Gegenstände** zum Finden und kreativen Zweckentfremden. Panzertape
+  flickt mehr, als es sollte, und manches wirkt, ohne dass man es anfasst.
+- **27 Erfolge**, gestuft nach Schwierigkeit, dazu ein Archiv, ein Tagebuch,
   das jeden Abend deinen Tag erzählt, und eine Firmenchronik zum Weiterschreiben.
 - **Voller Tastatur-Support** mit frei belegbaren Tasten. Ein Tutorial gibt es
   auch, falls du lieber an die Hand genommen wirst.

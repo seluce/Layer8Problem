@@ -13,8 +13,19 @@
  *   use.warn          the small print below it
  *   use.log           what the log says afterwards
  *   use.color         Tailwind class for that log line
+ *   use.cr / use.rep  what using it COSTS: chef radar and standing with a
+ *                     character. Same clamps as the event path. Trade-off
+ *                     items live on these two - relief now, paid for later.
  *   use.cooldown      minutes before it works again; only for items with
  *                     keep: true, which are not consumed by using them
+ * `passive` works without a button: it fires when an event OPENS, gated by
+ * the character on screen (passive.onChar). Fields al/fl/cr shift the bars,
+ * log/color go into the protocol - mandatory, because a number appearing
+ * without a click looks like a bug otherwise.
+ *
+ *   use.wait          what the log says while it is still cooling down.
+ *                     Each item phrases its own pause; without it the line
+ *                     falls back to a neutral sentence.
  *
  * keep: true means the item survives being used. Everything else with a `use`
  * block disappears from the backpack.
@@ -65,6 +76,7 @@ export const items = {
     "stressball": { icon: "🔴", name: "Anti-Stressball", flavor: "'Wird so oft gequetscht, dass er leise um Hilfe wimmert. Trägt bereits die permanenten Abdrücke deiner Finger als stummer Therapeut.'", keep: true, img: "assets/img/items/stressball.webp",
         use: { al: -5, cooldown: 60,
                desc: "Senkt AGGRO sofort um -5 Punkte. *Quietsch*",
+               wait: "Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten.",
                warn: "Material-Ermüdung! Nach dem Kneten ist der Ball für 60 Minuten platt und nutzlos.",
                log:  "Du knetest den Ball aggressiv. *Quietsch*. Das hilft. (Aggro -5)",
                color: "text-green-400" } },
@@ -74,6 +86,17 @@ export const items = {
     "hammer": { icon: "🔨", name: "Hammer", flavor: "'Ein 500g Meinungsverstärker. Löst Hardware-Probleme sofort. Perkussive Wartung ist manchmal die einzige Sprache, die Drucker verstehen.'", keep: true, img: "assets/img/items/hammer.webp" },
     "zip_ties": { icon: "➰", name: "Kabelbinder", flavor: "'Schwarzes Plastik. Die unzerstörbaren Handschellen der IT. Zähmen den wildesten Kabelsalat und halten die Infrastruktur wortwörtlich zusammen.'", keep: true, img: "assets/img/items/zip_ties.webp" },
     "headphones": { icon: "🎧", name: "NC-Kopfhörer", flavor: "'Wenn du sie aufsetzt, existiert der Rest der Welt nicht mehr. Das ultimative Schutzschild gegen den Lärm der Marketingabteilung und Jürgens Monologe.'", keep: true, img: "assets/img/items/headphones.webp" },
+    "voodoo_doll": { icon: "🪡", name: "Voodoo-Puppe (Dr. W.)", flavor: "'Nachbildung des Chefs, gefertigt aus einem Mauspad und drei Kabelbindern. Die Ähnlichkeit ist erschreckend, die Wirkung umstritten, die Erleichterung messbar.'", keep: true, img: "assets/img/items/voodoo_doll.webp",
+        use: { al: -20, cr: 10, rep: { "Dr. Wichtig": -2 }, cooldown: 180,
+               desc: "Senkt AGGRO um -20, hebt CHEF um +10. Er merkt sowas.",
+               wait: "Die Puppe hat für heute genug mitgemacht. Auch Stoff braucht Pausen.",
+               warn: "Drei Stunden Ruhe danach. Und Dr. Wichtig mag dich jedes Mal ein kleines Stück weniger, ohne sagen zu können, warum.",
+               log:  "Du piekst die Nadel in den Stoffbauch. Zwei Etagen höher verzieht Dr. Wichtig das Gesicht, greift sich in die Seite und denkt aus unerfindlichen Gründen an dich. (Aggro -20, Chef +10)",
+               color: "text-fuchsia-400" } },
+    "tie": { icon: "👔", name: "Notfall-Krawatte", flavor: "'Hängt seit 2016 hinter der Bürotür, für den Fall der Fälle. Dunkelblau mit diagonalen Streifen - exakt das Modell, das Dr. Wichtig seit seiner Beförderung trägt.'", keep: true, img: "assets/img/items/tie.webp",
+        passive: { onChar: "Dr. Wichtig", cr: -5,
+                   log: "Dr. Wichtigs Blick bleibt an deiner Krawatte hängen. Es ist seine. Für einen Moment hält er dich für einen der Ihren. (Chef -5)",
+                   color: "text-indigo-300" } },
     "black_card": { icon: "💳", name: "Schwarze Amex", flavor: "'Eigentum von Prinz Abubakar. Das Limit ist eine reine Illusion. Du könntest damit eine kleine Insel kaufen, aber heute reicht es wohl auch für Pizza.'", keep: true, img: "assets/img/items/black_card.webp" },
 
     // QUEST ITEMS

@@ -861,7 +861,6 @@ export const lunch = [
 				},
 				{
 					t: "Alles fotografieren und Frau Elster schicken",
-					req: "black_card",
 					m: 20, f: 0, a: -5, c: -20,
 					r: "Du dokumentierst das Buffet wie ein Gutachter und schickst die Bilder an die Buchhaltung mit der Frage nach der Zuwendungsgrenze. Frau Elsters Antwort kommt binnen Minuten: 'Ich übernehme.' Am Nachmittag wird das Buffet 'aus formalen Gründen' abgebaut. Der Dienstleister hat noch nichts verkauft und schon einen Feind."
 				},

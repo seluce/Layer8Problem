@@ -3297,7 +3297,6 @@ export const sidequests = [
             },
             { 
                 t: "Ihm einen alten Donut geben", 
-                req: "donut",
                 rem: "donut",
                 rep: { "Markus": 5 },
                 m: 5, f: 5, a: -5, c: -5, 
@@ -5794,7 +5793,7 @@ export const sidequests = [
             { 
                 t: "Flucht ins Server-Exil", 
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Du machst dich unsichtbar. Es ist laft, wer den Staub beseitigt." 
+                r: "Du machst dich unsichtbar. Es ist egal, wer den Staub beseitigt." 
             },
             { 
                 t: "Egon alarmieren", 
@@ -6775,7 +6774,6 @@ export const sidequests = [
         },
         {
             t: "Fachgerechte Dauerlösung mit Kabelbindern",
-            req: "zip_ties",
             rem: "zip_ties",
             rep: { "Chantal": 3 },
             next: "path_licht_sauber",
@@ -7564,7 +7562,7 @@ export const sidequests = [
             },
             {
                 t: "Egon deine Schokolade als Köder geben",
-                req: "chocolate", rem: "chocolate",
+                rem: "chocolate",
                 m: 10, f: 0, a: -10, c: 0,
                 rep: { "Egon": 5 },
                 r: "Er bricht ein Stück ab, legt es in die Falle und den Rest in seine Brusttasche. Beide Portionen erfüllen ihren Zweck. Deine Tafel ist weg und der Hof zehn Minuten lang ein friedlicher Ort."
@@ -7623,7 +7621,7 @@ export const sidequests = [
         opts: [
             {
                 t: "Ein Kabel verlegen und das WLAN vergessen",
-                req: "cable", rem: "cable",
+                rem: "cable",
                 m: 30, f: -15, a: -5, c: -15,
                 r: "Du verlegst ein Netzwerkkabel quer durchs Büro und klebst es mit dem Rest deines Tapes fest. Der Einkauf ist online, die Folie darf bleiben, und alle sind zufrieden. Dein Ersatzkabel ist weg."
             },
@@ -7734,16 +7732,16 @@ export const sidequests = [
     text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt, ohne Preisschilder. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.'",
     opts: [
         {
-            t: "Fach C4 öffnen",
-            m: 10, f: 0, a: -10, c: 0,
-            loot: "sandwich",
-            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
-        },
-        {
             t: "'Kevin. Wer beliefert einen toten Automaten?'",
             m: 10, f: 0, a: 5, c: 0,
             rep: { "Kevin": -5 },
             r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+        },
+        {
+            t: "Fach C4 öffnen",
+            m: 10, f: 0, a: -10, c: 0,
+            loot: "sandwich",
+            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
         },
         {
             t: "Das Sandwich Kevin überlassen",
@@ -7760,6 +7758,11 @@ export const sidequests = [
     text: "An der Etagentür steht ein Mann in grauem Anzug und lächelt geduldig. 'Ich komme nicht rein — mein Ausweis ist noch in der Anmeldung. Ich bin der neue Berater fürs Transformationsprojekt.' Er hält einen Laptop unterm Arm und sagt das Wort 'Transformationsprojekt', als wäre damit alles erklärt. Du hast von keinem Projekt gehört.",
     opts: [
         {
+            t: "'Ohne Ausweis kann ich Sie nicht reinlassen.'",
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Er nickt, fast erfreut. 'Sehr gut. Sicherheitskultur.' Er notiert etwas in ein kleines Buch und stellt sich neben die Tür, wartend, lächelnd. Als du später wieder vorbeikommst, ist er weg. Oder drin."
+        },
+        {
             t: "Zur Anmeldung begleiten, den langen Weg",
             m: 25, f: -5, a: 5, c: -5,
             r: "Ihr lauft schweigend durchs Treppenhaus. An der Anmeldung kennt ihn niemand, aber er bleibt vollkommen ruhig und beginnt, Formulare auszufüllen. Beim Weggehen hörst du ihn sagen: 'Kein Problem, ich kenne den Prozess.' Es klingt, als hätte er ihn geschrieben."
@@ -7769,11 +7772,6 @@ export const sidequests = [
             m: 5, f: 5, a: 0, c: 5,
             next: "sq_berater_drin",
             r: "'Vielen Dank.' Er geht zielstrebig den Flur hinunter, biegt in Raum 2.11 ab und schließt leise die Tür. Zielstrebig. In ein Gebäude, das er angeblich nicht kennt."
-        },
-        {
-            t: "'Ohne Ausweis kann ich Sie nicht reinlassen.'",
-            m: 10, f: 0, a: 5, c: -5,
-            r: "Er nickt, fast erfreut. 'Sehr gut. Sicherheitskultur.' Er notiert etwas in ein kleines Buch und stellt sich neben die Tür, wartend, lächelnd. Als du später wieder vorbeikommst, ist er weg. Oder drin."
         }
     ]
 },
@@ -7849,15 +7847,15 @@ export const sidequests = [
     text: "Am schwarzen Brett hängt eine neue Liste: 'Betriebliche Ersthelfer — Stand aktuell'. Zwei Namen. Der zweite ist deiner. Du hast dich nie gemeldet, nie eine Schulung besucht, nie ein Formular unterschrieben. Daneben, handschriftlich: 'Schulung wird nachgereicht.'",
     opts: [
         {
+            t: "Schriftlich widersprechen",
+            m: 25, f: 0, a: 10, c: 0,
+            r: "Du füllst das Widerspruchsformular aus. Die Antwort kommt schnell und freundlich: Der Widerspruch werde geprüft — zuständig für die Prüfung sei der betriebliche Ersthelfer. Du liest den Satz dreimal. Er wird nicht besser."
+        },
+        {
             t: "Den Verbandskasten wenigstens mal inspizieren",
             m: 20, f: -5, a: 5, c: -5,
             next: "sq_ersthelfer_amt",
             r: "Der Kasten hängt im Flur, versiegelt mit Staub. Laut Prüfplakette zuletzt kontrolliert vor vier Jahren. Das Pflasterset ist eingetrocknet, die Rettungsdecke raschelt verdächtig, aber die Schere ist gut. Du notierst eine Nachbestellung. Ab jetzt bist du das wohl wirklich."
-        },
-        {
-            t: "Schriftlich widersprechen",
-            m: 25, f: 0, a: 10, c: 0,
-            r: "Du füllst das Widerspruchsformular aus. Die Antwort kommt schnell und freundlich: Der Widerspruch werde geprüft — zuständig für die Prüfung sei der betriebliche Ersthelfer. Du liest den Satz dreimal. Er wird nicht besser."
         },
         {
             t: "Ignorieren. Was soll schon passieren.",
@@ -7927,6 +7925,11 @@ export const sidequests = [
     text: "Am Obstkorb klebt jetzt eine Liste, sauber liniert, mit Kugelschreiber an einer Schnur: 'Entnahmeliste — im Sinne der Fairness bitte Name, Datum und Obstart eintragen. F. Elster.' Seit die Liste hängt, hat niemand mehr etwas genommen. Die Bananen sind ins Fleckige gewechselt und werden von einem Formular bewacht.",
     opts: [
         {
+            t: "Weder Obst noch Liste anfassen",
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Du gehst vorbei wie an einer Baustelle. Hinter dir raschelt nichts. Der Korb und die Liste belagern sich gegenseitig, und das Obst verliert."
+        },
+        {
             t: "Sich eintragen und demonstrativ eine Banane nehmen",
             m: 10, f: 0, a: -5, c: 0,
             rep: { "Frau Elster": 5 },
@@ -7937,11 +7940,6 @@ export const sidequests = [
             m: 5, f: 5, a: -5, c: 5,
             rep: { "Frau Elster": -5 },
             r: "Der Apfel schmeckt normal, aber er isst sich wie Diebesgut. Die Liste hat jetzt eine Lücke, und du weißt aus Erfahrung: Lücken sind das Einzige, was in diesem Haus zuverlässig auffällt."
-        },
-        {
-            t: "Weder Obst noch Liste anfassen",
-            m: 5, f: 10, a: 0, c: 0,
-            r: "Du gehst vorbei wie an einer Baustelle. Hinter dir raschelt nichts. Der Korb und die Liste belagern sich gegenseitig, und das Obst verliert."
         }
     ]
 },
@@ -7954,14 +7952,14 @@ export const sidequests = [
     text: "Der Obstkorb ist weg. An seiner Stelle steht ein Aufsteller mit QR-Code: 'Ihre Meinung zählt! Wie fanden Sie die Initiative FIT IM BETRIEB?' Daneben ein Aushang: Aufgrund des großen Erfolgs werde die Initiative künftig quartalsweise wiederholt. Über den Verbleib des Obsts existieren keine Unterlagen.",
     opts: [
         {
-            t: "Ehrlich antworten, mit Verlaufsbeschreibung",
-            m: 15, f: -5, a: -5, c: 5,
-            r: "Du beschreibst den Werdegang des Korbs von der Komposition bis zur Belagerung, sachlich, in ganzen Sätzen. Das Formular bedankt sich und fragt am Ende nach Name und Abteilung. Anonym ist die Umfrage nur in der Überschrift."
-        },
-        {
             t: "Fünf Sterne, weitergehen",
             m: 5, f: 5, a: 0, c: -5,
             r: "Fünf Sterne für einen Korb, aus dem fast niemand etwas hatte. Irgendwo entsteht daraus eine Folie mit einem Balkendiagramm, und das Balkendiagramm wird glücklich sein."
+        },
+        {
+            t: "Ehrlich antworten, mit Verlaufsbeschreibung",
+            m: 15, f: -5, a: -5, c: 5,
+            r: "Du beschreibst den Werdegang des Korbs von der Komposition bis zur Belagerung, sachlich, in ganzen Sätzen. Das Formular bedankt sich und fragt am Ende nach Name und Abteilung. Anonym ist die Umfrage nur in der Überschrift."
         },
         {
             t: "Bei der Initiative anrufen und Nachschub loben",
@@ -8061,6 +8059,76 @@ export const sidequests = [
             m: 10, f: 0, a: -5, c: 0,
             rep: { "Gabi": 5 },
             r: "Gabi erscheint nach zwei Minuten mit ernster Miene: 'Der Termin mit dem Brandschutz — die warten.' Es gibt keinen Termin und keinen Brandschutz, aber Herr Brandt weicht Autorität instinktiv aus. Sie eskortiert ihn hinaus und sagt im Vorbeigehen, ohne die Lippen zu bewegen: 'Du schuldest mir was.'"
+        }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Item discovery (v5.0). The loot sits in the OPENER, not in an aged
+   follow-up: reqStoryAge never opens in day mode, so a tool hidden behind
+   it would exist for week players only. The aged part adds consequence,
+   never a second item - that keeps both modes equal on equipment and still
+   gives the week something the day cannot have.
+
+   Neither opener announces itself as a find: one is a propped-open fire
+   door, the other a routine memory upgrade. Duplicate check (2026-08):
+   the shredder already hides a USB stick, Rack 5 is heavily used, and fire
+   safety exists as a topic (extinguisher, safety officer) but never as a
+   door tied open.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_brandtuer_1",
+    kind: "text",
+    title: "Die Tür im Ostflügel",
+    text: "Im Ostflügel steht die Brandschutztür zum Treppenhaus offen. Nicht ein Stück — ganz. Jemand hat sie mit einer Krawatte am Geländer festgebunden, dunkelblau mit diagonalen Streifen, sorgfältig verknotet. Darunter ein Karton, der offenbar oft hier durchgeschoben wird.",
+    opts: [
+        {
+            t: "Die Tür schließen und die Krawatte hängen lassen",
+            m: 10, f: -5, a: 0, c: -5,
+            r: "Tür zu, Krawatte baumelt am Geländer wie ein Wimpel. Beim nächsten Vorbeigehen ist die Tür wieder offen und der Knoten neu. Der Gegner ist geduldiger als du."
+        },
+        {
+            t: "Blaschke Bescheid geben",
+            m: 15, f: 0, a: -5, c: -5,
+            r: "'Ostflügel? Die Tür ist seit dem Umbau zu schwer.' Blaschke seufzt tief. 'Ich bring einen Türschließer. Nächste Woche.' Immerhin weiß es jetzt jemand, dessen Zuständigkeit es tatsächlich ist."
+        },
+        {
+            t: "Knoten lösen, Tür schließen, Vorgang notieren",
+            m: 20, f: -10, a: 0, c: -5,
+            loot: "tie",
+            next: "sq_brandtuer_frei",
+            r: "Der Knoten ist fest und der Stoff gut. Die Tür fällt ins Schloss, wie sie soll, und du trägst den Vorfall in die Liste ein, die es dafür geben müsste und ab heute gibt. Die Krawatte behältst du erst mal. Irgendwer wird sie vermissen."
+        },
+        {
+            t: "Nicht deine Tür, nicht dein Stockwerk",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du gehst durch und lässt alles, wie es ist. Zwei Schritte weiter kommt dir der Gedanke, dass Brandschutztüren einen Zweck haben. Vier Schritte weiter ist der Gedanke wieder weg."
+        }
+    ]
+},
+{
+    id: "sq_brandtuer_2",
+    kind: "text",
+    reqStory: "sq_brandtuer_frei",
+    reqStoryAge: 1,
+    title: "Rundmail des Brandschutzbeauftragten",
+    text: "Eine Rundmail an alle: 'Erfreulicherweise wurde die dauerhaft geöffnete Brandschutztür im Ostflügel gemeldet und gesichert. Wir danken der aufmerksamen Person.' Zwei Absätze später, kleiner: 'Der Eigentümer eines dort verwendeten Kleidungsstücks möge sich melden.'",
+    opts: [
+        {
+            t: "Nichts sagen. Beide Absätze übergehen.",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du liest die Mail, du löschst die Mail. Irgendwo im Haus fehlt jemandem eine Krawatte, und irgendwo im Haus ist eine Tür zu. Beides ist in Ordnung."
+        },
+        {
+            t: "Sich als aufmerksame Person melden",
+            m: 10, f: 0, a: -5, c: -10,
+            r: "Du antwortest sachlich und ohne das Kleidungsstück zu erwähnen. Die Antwort kommt vom Brandschutzbeauftragten persönlich, drei Zeilen, mit dem Wort 'vorbildlich' darin. Du liest es zweimal, dann verschiebst du die Mail in einen Ordner, den es vorher nicht gab."
+        },
+        {
+            t: "Die Krawatte anonym in die Hauspost geben",
+            rem: "tie",
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Ohne Absender, ohne Zettel, adressiert an den Brandschutzbeauftragten. Zwei Tage später hängt im Ostflügel ein neuer Aushang: 'Türkeile sind erhältlich beim Facility Management.' Manchmal reicht ein Beweisstück."
         }
     ]
 },

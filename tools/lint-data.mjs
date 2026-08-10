@@ -73,6 +73,12 @@ const checkOpt = (o, ctx) => {
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
     if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
   }
+  // req and rem both demand the item; they differ only in whether it
+  // survives (EventView.lockReason gates on either). Both on the same item
+  // is therefore redundant - and worse, it hides the answer to the one
+  // question that matters when reading the data: does the player lose it?
+  if (o.req && o.rem && o.req === o.rem)
+    err(`${ctx}: req und rem auf "${o.req}" — beides zugleich ist widersprüchlich. Bleibt der Gegenstand, nur req; wird er abgegeben oder verbraucht, nur rem.`);
   if (o.rep) for (const n of Object.keys(o.rep)) if (!charNames.has(n)) err(`${ctx}: rep-Charakter "${n}" nicht in DB.chars`);
   if (o.next) flagsSet.add(o.next);
 };
@@ -483,7 +489,9 @@ for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].
 // `use` is what makes an item usable: it drives the backpack buttons, the
 // confirm dialog and the effect. An incomplete block therefore shows up as a
 // button that opens a dialog saying nothing and does nothing.
-const USE_FIELDS = ['al', 'fl', 'desc', 'warn', 'log', 'color', 'cooldown'];
+// cr/rep (v5.0) carry the COST of trade-off items, wait is the cooling-down
+// line each item phrases for itself.
+const USE_FIELDS = ['al', 'fl', 'cr', 'rep', 'desc', 'warn', 'log', 'color', 'cooldown', 'wait'];
 for (const id of itemIds) {
   const item = DB.items[id];
   const use = item.use;
@@ -495,6 +503,18 @@ for (const id of itemIds) {
 
   for (const k of Object.keys(use))
     if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} ist kein bekanntes Feld`);
+
+  // A trade-off item pays with reputation. Unlike an event choice it can be
+  // triggered again and again, so the ceiling here is tighter than the ±5
+  // of an event - and a permanent one without a cooldown has no ceiling.
+  if (use.rep) {
+    for (const [n, v] of Object.entries(use.rep)) {
+      if (!charNames.has(n)) err(`${ctx}: use.rep-Charakter "${n}" nicht in DB.chars`);
+      if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} — ein Gegenstand ist wiederholt benutzbar, hier hoechstens ±5`);
+    }
+  }
+  if (item.keep && !use.cooldown && (use.cr || use.rep))
+    err(`${ctx}: bleibender Gegenstand mit Kosten (use.cr/use.rep) braucht eine cooldown — sonst beliebig oft auslösbar`);
 
   if (!use.al && !use.fl)
     err(`${ctx}: use ohne Wirkung — al oder fl muss gesetzt sein`);
@@ -511,6 +531,39 @@ for (const id of itemIds) {
 
   if (item.quest)
     err(`${ctx}: Quest-Items sind Trophäen und dürfen kein use haben`);
+}
+
+/* ---------- 6c) Passive items ---------- */
+// `passive` fires on its own when an event opens, so a typo here is silent
+// twice over: no button is missing, nothing throws, the effect simply never
+// happens. onChar is checked against DB.chars for the same reason event
+// chars are.
+const PASSIVE_FIELDS = ['onChar', 'al', 'fl', 'cr', 'log', 'color'];
+for (const id of itemIds) {
+  const item = DB.items[id];
+  const pas = item.passive;
+  if (!pas) continue;
+  const ctx = `Item "${id}"`;
+
+  for (const k of Object.keys(pas))
+    if (!PASSIVE_FIELDS.includes(k)) err(`${ctx}: passive.${k} ist kein bekanntes Feld`);
+
+  if (!pas.onChar) err(`${ctx}: passive ohne onChar — ein Effekt ohne Auslöser feuert nie`);
+  else if (!charNames.has(pas.onChar)) err(`${ctx}: passive.onChar "${pas.onChar}" nicht in DB.chars`);
+
+  if (!pas.log) err(`${ctx}: passive ohne log — eine Zahl, die ohne Klick erscheint, sieht sonst wie ein Fehler aus`);
+  if (!pas.al && !pas.fl && !pas.cr) err(`${ctx}: passive ohne Wirkung — al, fl oder cr muss gesetzt sein`);
+  if (!item.keep) err(`${ctx}: passive ohne keep — ein Verbrauchsgut kann nicht dauerhaft wirken`);
+  if (item.quest) err(`${ctx}: Quest-Items sind Trophäen und dürfen kein passive haben`);
+
+  // The player never chooses to trigger it, so it may only ever help; a
+  // passive penalty would be an invisible tax nobody can avoid.
+  for (const k of ['al', 'fl', 'cr'])
+    if (pas[k] !== undefined && !(pas[k] < 0))
+      err(`${ctx}: passive.${k} muss negativ sein — ein Effekt ohne Entscheidung darf nicht schaden, ist ${pas[k]}`);
+  for (const k of ['al', 'fl', 'cr'])
+    if (typeof pas[k] === 'number' && Math.abs(pas[k]) > 10)
+      warn(`${ctx}: passive.${k} ${pas[k]} — wirkt bei JEDEM Auftritt der Figur, hoechstens -10`);
 }
 
 /* ---------- 7) Mail convention: the delete option ---------- */

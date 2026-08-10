@@ -2800,7 +2800,7 @@ export const calls = [
 			},
 			{
 				t: "Das Passwort durchgeben, sie ist ja vertrauenswürdig",
-				req: "admin_pw", rem: "admin_pw",
+				rem: "admin_pw",
 				next: "path_pw_verraten",
 				m: 5, f: 5, a: -5, c: 25,
 				r: "Du sagst es ihr. Sie wiederholt es laut, buchstabiert es zur Sicherheit noch einmal und schreibt es auf einen Zettel. Der Zettel klebt ab morgen an ihrem Monitor. Ein Passwort, das im Großraumbüro hängt, ist keins mehr — du wirst es ändern müssen."
@@ -2914,7 +2914,7 @@ export const calls = [
 			},
 			{
 				t: "Ihr eine Schokolade vorbeibringen",
-				req: "chocolate", rem: "chocolate",
+				rem: "chocolate",
 				m: 15, f: -5, a: -10, c: -5,
 				rep: { "Gabi": 10 },
 				r: "Du legst ihr die Tafel wortlos auf den Tresen. Sie sagt auch nichts. Es ist die eleganteste Entschuldigung, die dieses Gebäude je gesehen hat, und sie kostet dich eine Tafel Schokolade."
@@ -3857,7 +3857,7 @@ export const calls = [
 			},
 			{
 				t: "Ihm Kopfhörer schenken, damit Ruhe ist",
-				req: "headphones", rem: "headphones",
+				rem: "headphones",
 				m: 10, f: 0, a: -15, c: 5,
 				next: "path_folie_bleibt",
 				r: "Du gibst ihm deine Kopfhörer und erklärst, sie seien abhörsicher. Er trägt sie ab sofort den ganzen Tag, hört niemanden mehr und ruft entsprechend seltener an. Deine Kopfhörer sind weg und dein Nachmittag ruhig."
@@ -4065,15 +4065,15 @@ export const calls = [
 		text: "Die Stimme ist gedämpft, aber gewohnt, dass man ihr zuhört. 'Hier spricht... sagen wir: ein Freund der Firma. Oberste Etage. Es geht um ein Bildschirm-Problem, und es darf dazu keine Akte geben. Keine Mail, kein Ticket, kein Flurgespräch. Verstehen wir uns?'",
 		opts: [
 			{
+				t: "'Dafür gibt es das Ticketsystem. Für alle.'",
+				m: 5, f: 0, a: -5, c: 10,
+				r: "Eine sehr lange Pause. 'Interessant', sagt die Stimme, und das Wort fällt wie ein Aktenvermerk. Dann legt sie auf. Du hast das Richtige getan. Du wirst herausfinden, was es kostet."
+			},
+			{
 				t: "Diskret hochgehen und nachsehen",
 				m: 15, f: -5, a: -5, c: 0,
 				next: "call_diskret_gefallen",
 				r: "Eckbüro, Auszeichnungen an der Wand, und mittendrin ein Monitor, dessen Bild seitwärts steht. Strg, Alt, Pfeiltaste — drei Sekunden. Er nickt staatsmännisch, als hättet ihr gemeinsam eine Krise abgewendet. 'Das bleibt unter uns.'"
-			},
-			{
-				t: "'Dafür gibt es das Ticketsystem. Für alle.'",
-				m: 5, f: 0, a: -5, c: 10,
-				r: "Eine sehr lange Pause. 'Interessant', sagt die Stimme, und das Wort fällt wie ein Aktenvermerk. Dann legt sie auf. Du hast das Richtige getan. Du wirst herausfinden, was es kostet."
 			},
 			{
 				t: "Die Lösung am Telefon durchflüstern",
@@ -4115,14 +4115,14 @@ export const calls = [
 		text: "In deinem Postfach liegt ein laminierter Parkausweis: 'Stellplatz 2 — auf Widerruf'. Kein Absender, kein Anschreiben. Stellplatz 2 liegt direkt neben Stellplatz 1, und auf Stellplatz 1 parkt jeden Morgen der Wagen der Geschäftsleitung. Das ist keine Parkkarte. Das ist eine Beförderung in Sichtweite.",
 		opts: [
 			{
-				t: "Annehmen und ab jetzt vorne parken",
-				m: 5, f: 0, a: -10, c: 5,
-				r: "Kein Schneescharren mehr am hintersten Platz, kein Pfützen-Slalom. Der Preis: jeden Morgen dieselben vier Meter Smalltalk-Gefahr. Du übst auf dem Weg schon mal ein Nicken, das nach allem und nichts aussieht."
-			},
-			{
 				t: "Den Ausweis kommentarlos zurück ins Hauspostfach legen",
 				m: 5, f: 0, a: 5, c: -5,
 				r: "Manche Geschenke sind Leinen. Du legst ihn zurück, ohne Notiz, so wie er kam. Falls das jemand als Antwort versteht, ist es die richtige."
+			},
+			{
+				t: "Annehmen und ab jetzt vorne parken",
+				m: 5, f: 0, a: -10, c: 5,
+				r: "Kein Schneescharren mehr am hintersten Platz, kein Pfützen-Slalom. Der Preis: jeden Morgen dieselben vier Meter Smalltalk-Gefahr. Du übst auf dem Weg schon mal ein Nicken, das nach allem und nichts aussieht."
 			},
 			{
 				t: "Den Ausweis Kevin schenken",
@@ -4186,14 +4186,14 @@ export const calls = [
 		text: "Ticket 108 liegt ausgedruckt auf deinem Tisch, und die Lösung ist eine Demütigung für alle Beteiligten: Das Encoding-Problem von damals ist seit Jahren eine Checkbox in den Druckeinstellungen. Ein Haken. Sieben Jahre, drei Vorgänger, ein Haken.",
 		opts: [
 			{
-				t: "Haken setzen, testen, Herrn Grabowski anrufen",
-				m: 25, f: -10, a: -15, c: -5,
-				r: "Das Testetikett druckt 'Grüße aus Lübeck' mit allen Umlauten. Du rufst ihn an und sagst den Satz: 'Ticket 108 ist gelöst.' Herr Grabowski schweigt sehr lange. 'Sieben Jahre', sagt er dann, feierlich. 'Das werde ich dem Kegelverein erzählen.' Es ist das ehrlichste Lob deiner Laufbahn."
-			},
-			{
 				t: "Haken setzen, Ticket still schließen",
 				m: 10, f: 0, a: -5, c: 0,
 				r: "Status: gelöst. Keine Rückmeldung erforderlich. Das älteste Ticket der Firma stirbt lautlos in einem Dropdown. Herr Grabowski wird nächstes Jahr anrufen und es von einem Fremden erfahren. Du hast ein Ticket gelöst und einen Moment verschenkt."
+			},
+			{
+				t: "Haken setzen, testen, Herrn Grabowski anrufen",
+				m: 25, f: -10, a: -15, c: -5,
+				r: "Das Testetikett druckt 'Grüße aus Lübeck' mit allen Umlauten. Du rufst ihn an und sagst den Satz: 'Ticket 108 ist gelöst.' Herr Grabowski schweigt sehr lange. 'Sieben Jahre', sagt er dann, feierlich. 'Das werde ich dem Kegelverein erzählen.' Es ist das ehrlichste Lob deiner Laufbahn."
 			}
 		]
 	},
@@ -4202,6 +4202,11 @@ export const calls = [
 		title: "Bitte um Rückruf",
 		text: "Auf deiner Tastatur klebt ein Zettel aus fremder Hand: 'Herr Leuchter, Niederlassung Süd, bittet um Rückruf. Wichtig.' Du rufst an. Es klingelt lange, dann eine Kollegin: 'Der Herr Leuchter ist gerade im Gespräch. Soll ich was ausrichten?'",
 		opts: [
+			{
+				t: "Zettel zu den anderen Zetteln legen",
+				m: 5, f: 10, a: 0, c: 5,
+				r: "Wenn es wichtig ist, ruft er wieder an. So lautet das Gesetz, und das Gesetz hat dich selten enttäuscht. Der Zettel kommt auf den Stapel, und der Stapel sagt nichts dazu."
+			},
 			{
 				t: "Nachricht hinterlassen: bittet um Rückruf",
 				m: 5, f: 0, a: 0, c: 0,
@@ -4213,11 +4218,6 @@ export const calls = [
 				m: 10, f: -5, a: 5, c: 0,
 				next: "call_tennis_laeuft",
 				r: "Zweiter Versuch: Besprechung. Dritter: Mittagspause. Beim vierten nimmt jemand ab, der nur vertretungsweise da ist und niemanden kennt, auch Herrn Leuchter nicht. Du gibst für heute auf, aber ehrenvoll."
-			},
-			{
-				t: "Zettel zu den anderen Zetteln legen",
-				m: 5, f: 10, a: 0, c: 5,
-				r: "Wenn es wichtig ist, ruft er wieder an. So lautet das Gesetz, und das Gesetz hat dich selten enttäuscht. Der Zettel kommt auf den Stapel, und der Stapel sagt nichts dazu."
 			}
 		]
 	},

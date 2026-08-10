@@ -4520,7 +4520,7 @@ export const coffee = [
         opts: [
             {
                 t: "Den Sensor mit Panzertape abkleben",
-                req: "tape", rem: "tape",
+                rem: "tape",
                 m: 10, f: 0, a: -5, c: 5,
                 r: "Du klebst den Becher-Sensor ab. Der Trick funktioniert nicht mehr, die Maschine überlebt, und niemand weiß, warum es plötzlich vorbei ist. Dein Panzertape ist weg, aber es starb für etwas."
             },
@@ -4551,7 +4551,7 @@ export const coffee = [
         opts: [
             {
                 t: "Ihr etwas dazustellen",
-                req: "sandwich", rem: "sandwich",
+                rem: "sandwich",
                 m: 5, f: 5, a: -15, c: 0,
                 rep: { "Gabi": 10 },
                 r: "Du legst dein Brötchen dazu, ohne etwas zu sagen. Sie sagt auch nichts. Der Unterschrank in der Teeküche ist ab heute eine gemeinsame Angelegenheit, und das ist mehr wert als das Brötchen."
@@ -4818,14 +4818,14 @@ export const coffee = [
         text: "Da steht sie. Auf dem Schreibtisch eines Herrn Petzold aus dem Vertrieb, gefüllt mit Milchschaum, daneben ein Keks. Der Sprung am Henkel ist unverkennbar. Herr Petzold telefoniert und macht dabei Gesten, als würde er ein Orchester dirigieren.",
         opts: [
             {
-                t: "Warten, bis er auflegt, und sie zurückfordern",
-                m: 15, f: 0, a: -10, c: 0,
-                r: "'Oh. Die stand in der Spülmaschine, ich dachte—' Du nimmst die Tasse, kippst den Milchschaum ins Waschbecken und spülst sie zweimal. Auf dem Rückweg trägst du sie wie einen Pokal."
-            },
-            {
                 t: "Sie wortlos vom Tisch nehmen, mitten im Gespräch",
                 m: 5, f: 0, a: -10, c: 5,
                 r: "Petzold verliert kurz den Faden und dirigiert ins Leere. Du bist schon an der Tür. Manche Botschaften brauchen keinen Ton."
+            },
+            {
+                t: "Warten, bis er auflegt, und sie zurückfordern",
+                m: 15, f: 0, a: -10, c: 0,
+                r: "'Oh. Die stand in der Spülmaschine, ich dachte—' Du nimmst die Tasse, kippst den Milchschaum ins Waschbecken und spülst sie zweimal. Auf dem Rückweg trägst du sie wie einen Pokal."
             },
             {
                 t: "Stehen bleiben und zusehen, wie er daraus trinkt",
@@ -4864,15 +4864,15 @@ export const coffee = [
         text: "Frau Sonntag aus der Buchhaltung steht vor dem Kaffeeautomaten und liest das Display wie ein Testament. 'E-52', sagt sie, als du dazukommst. 'Ich hab schon zweimal aus- und wieder angeschaltet. Das hilft doch sonst bei Ihnen auch immer.'",
         opts: [
             {
+                t: "'E-52. Da müssen Sie ein Ticket aufmachen.'",
+                m: 5, f: 5, a: 0, c: 0,
+                r: "Sie sieht dich an, dann das Display, dann wieder dich. 'Ein Ticket. Für den Kaffeeautomaten.' Du nickst ernst. Irgendwo muss die Grenze der Zuständigkeit verlaufen, und heute verläuft sie hier."
+            },
+            {
                 t: "Den Fehler ansehen und beheben",
                 m: 10, f: -5, a: -5, c: 0,
                 next: "cof_sonntag_dank",
                 r: "E-52 ist der Tresterbehälter. Du leerst ihn, die Maschine erwacht. Frau Sonntag sieht aus, als hättest du ein Kind aus einem Brunnen gezogen. 'Sie können das einfach so?'"
-            },
-            {
-                t: "'E-52. Da müssen Sie ein Ticket aufmachen.'",
-                m: 5, f: 5, a: 0, c: 0,
-                r: "Sie sieht dich an, dann das Display, dann wieder dich. 'Ein Ticket. Für den Kaffeeautomaten.' Du nickst ernst. Irgendwo muss die Grenze der Zuständigkeit verlaufen, und heute verläuft sie hier."
             },
             {
                 t: "Streng mit dem Automaten sprechen",
@@ -4890,6 +4890,11 @@ export const coffee = [
         text: "In deinem Postfach steht ein kleiner Teller mit Frischhaltefolie darüber. Darunter: ein Stück Marmorkuchen und ein Donut, dazu ein Post-it in akkurater Buchhalterinnen-Schrift: 'Für den Herrn von der IT. Der Automat und ich bedanken uns. — R. Sonntag'",
         opts: [
             {
+                t: "In bester Buchhalter-Manier zurückschreiben",
+                m: 10, f: 0, a: -5, c: 0,
+                r: "Du legst ein Post-it in ihr Fach: 'Eingang bestätigt. Der Kuchen wurde ordnungsgemäß verbucht und für sehr gut befunden. Mit Dank, die IT.' Es hat gute Chancen, laminiert zu werden. Ihr habt jetzt einen Briefwechsel."
+            },
+            {
                 t: "Kuchen sofort, Donut für später",
                 m: 10, f: 0, a: -10, c: 0,
                 loot: "donut",
@@ -4899,11 +4904,6 @@ export const coffee = [
                 t: "Sich persönlich bedanken gehen",
                 m: 15, f: 0, a: -10, c: -5,
                 r: "Frau Sonntag winkt ab, freut sich aber sichtbar. 'Mein Mann sagt immer, die IT lebt von Keksen.' Ihr Mann hat recht. Auf dem Rückweg grüßen dich zwei Leute aus der Buchhaltung, die dich noch nie gegrüßt haben."
-            },
-            {
-                t: "In bester Buchhalter-Manier zurückschreiben",
-                m: 10, f: 0, a: -5, c: 0,
-                r: "Du legst ein Post-it in ihr Fach: 'Eingang bestätigt. Der Kuchen wurde ordnungsgemäß verbucht und für sehr gut befunden. Mit Dank, die IT.' Es hat gute Chancen, laminiert zu werden. Ihr habt jetzt einen Briefwechsel."
             }
         ]
     },
@@ -4914,17 +4914,17 @@ export const coffee = [
         text: "Es ist ein offenes Geheimnis: Die beste Kaffeemaschine des Hauses steht im Empfang. Siebträger, gepflegt, Gabis Revier. Als du vorbeigehst, fängt sie dich ab. 'Du bist doch von der IT. Mein Etikettendrucker druckt nur noch Striche. Hilf mir, und ich zeig dir, wie man an der Maschine einen Cappuccino macht, der den Namen verdient.'",
         opts: [
             {
+                t: "'Dafür gibt es ein Ticketsystem.'",
+                m: 5, f: 5, a: 0, c: 0,
+                rep: { "Gabi": -5 },
+                r: "Gabi zieht eine Augenbraue hoch und wendet sich ab. 'Dann trink weiter das da oben.' Sie sagt 'das da oben', wie andere Leute 'Leitungswasser' sagen."
+            },
+            {
                 t: "Auf den Handel eingehen",
                 m: 30, f: -10, a: 5, c: -5,
                 rep: { "Gabi": 5 },
                 next: "cof_empfang_zugang",
                 r: "Der Drucker hat einen zerknüllten Etikettenstau und eine Firmware von vorgestern. Zwanzig Minuten später druckt er wieder Buchstaben. Gabi nickt anerkennend. 'Morgen früh. Erste Lektion.'"
-            },
-            {
-                t: "'Dafür gibt es ein Ticketsystem.'",
-                m: 5, f: 5, a: 0, c: 0,
-                rep: { "Gabi": -5 },
-                r: "Gabi zieht eine Augenbraue hoch und wendet sich ab. 'Dann trink weiter das da oben.' Sie sagt 'das da oben', wie andere Leute 'Leitungswasser' sagen."
             },
             {
                 t: "Kevin vorbeischicken",
@@ -4942,11 +4942,6 @@ export const coffee = [
         text: "Gabi steht neben dir am Siebträger und kommandiert mit zwei Worten: 'Fester. Gerader.' Der Empfang riecht nach frisch gemahlenem Kaffee, das Telefon klingelt, sie ignoriert es mit der Autorität von jemandem, der weiß, was wichtig ist.",
         opts: [
             {
-                t: "Zuhören, tampen, lernen",
-                m: 20, f: 0, a: -15, c: 0,
-                r: "Der dritte Versuch läuft dunkel und dick, die Crema steht. Gabi probiert, nickt einmal. 'Geht doch.' Du trinkst den besten Kaffee deiner Firmengeschichte im Stehen zwischen Paketannahme und Klingelschild, und ab jetzt hast du hier ein stehendes Angebot."
-            },
-            {
                 t: "Abkürzen und den Knopf der Mühle drücken",
                 m: 10, f: 5, a: -5, c: 0,
                 r: "Gabi schiebt deine Hand weg wie die eines Kindes am Herd. 'So wird das nichts.' Du bekommst trotzdem einen Cappuccino. Aus Gnade. Er schmeckt nach Gnade."
@@ -4955,6 +4950,11 @@ export const coffee = [
                 t: "Fragen, woher sie das alles kann",
                 m: 15, f: 0, a: -10, c: 0,
                 r: "'Drei Jahre Barista, vor dem hier.' Gabi wischt die Brühgruppe ab, ohne hinzusehen. 'Manchmal fehlt mir nur die Maschine.' Sie sagt es leichthin, und genau deshalb bleibt der Satz den Tag über bei dir."
+            },
+            {
+                t: "Zuhören, tampen, lernen",
+                m: 20, f: 0, a: -15, c: 0,
+                r: "Der dritte Versuch läuft dunkel und dick, die Crema steht. Gabi probiert, nickt einmal. 'Geht doch.' Du trinkst den besten Kaffee deiner Firmengeschichte im Stehen zwischen Paketannahme und Klingelschild, und ab jetzt hast du hier ein stehendes Angebot."
             }
         ]
     },
