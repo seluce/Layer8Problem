@@ -4098,7 +4098,7 @@ export const coffee = [
         {
             t: "Laufen lassen - Produktivität!",
             m: 2, f: 10, a: 0, c: 5,
-            r: "Die Firma vibriert. Die Ticketzahlen sinken, die Lautstärke steigt, jemand hat um 14 Uhr das Treppenhaus gebohnert, freiwillig. Das kann unmöglich gesund enden, aber bis dahin ist es beeindruckend anzusehen."
+            r: "Die Firma vibriert. Die Ticketzahlen sinken, die Lautstärke steigt, jemand hat gerade das Treppenhaus gebohnert, freiwillig. Das kann unmöglich gesund enden, aber bis dahin ist es beeindruckend anzusehen."
         },
         {
             t: "Ein Warnschild aufstellen",

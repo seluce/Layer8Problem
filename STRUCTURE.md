@@ -22,7 +22,7 @@ src/
   platform.js           Plattform-Schnittstelle, Web-Fassung
   platform_steam.js     Steam-Bridge, lädt sich nur unter Electron nach
 
-  components/           36 Svelte-Komponenten, davon 8 fürs Intranet
+  components/           37 Svelte-Komponenten, davon 8 fürs Intranet
   engine/               9 Module, engine_state.svelte.js hält den Zustand,
                         engine_week.js den Wochenmodus
   data/                 21 Datendateien

@@ -71,6 +71,8 @@ oder bewusst ausbleibt.
 | `opts` | Pflicht, außer bei Ketten | Die Auswahlen, siehe unten. |
 | `char` | überall optional | Zeigt das Porträt einer Figur. Name **exakt** wie in `data_chars.js`. |
 | `reqStory` | Kaffee, Serverraum, Anrufe, Dienstgang, Begegnungen | Vorbedingung: Das Ereignis erscheint erst, wenn dieses Story-Flag gesetzt ist. Mittagspause, Bossfight und Party werten das Feld **nicht** aus. |
+| `reqStoryAge` | Kaffee, Serverraum, Anrufe, Dienstgang — nur zusammen mit `reqStory` | Wochenmodus: Das Flag muss mindestens so viele **Nächte** alt sein (1 = frühestens morgen). Im Tagesmodus nie erfüllbar, siehe Abschnitt 3. |
+| `reqWeekDayMin` | Kaffee, Serverraum, Anrufe, Dienstgang | Wochenmodus: erscheint **ab** diesem Wochentag (2 = Dienstag … 5 = Freitag), nicht nur an ihm. Im Tagesmodus nie erfüllbar. |
 | `reqRep` | Begegnungen, dort Pflicht | Ruf-Schwelle, siehe Abschnitt 6. |
 | `kind` | Dienstgang, dort Pflicht | `"text"` (Terminal) oder `"phone"` (Handy-Chat). |
 | `appName` | Dienstgang-Chat | Welche App den Chat anzeigt, z. B. `"WhatsApp"`, `"Teams"`, `"SMS"`. |
@@ -247,6 +249,50 @@ oder nie**, wenn der Tag vorher endet. Zwischen Auslöser und Fortsetzung könne
 liegen. Deshalb kein "gerade eben", kein "kaum hast du", kein "Sekunden später"; der
 Prüfer warnt bei solchen Formulierungen. Umgekehrt gilt genauso: Der Auslöser war
 **heute**, also datiert ihn kein "gestern" in die Vergangenheit.
+
+### Mehrtägige Ketten: `reqStoryAge` und `reqWeekDayMin` (Wochenmodus)
+
+Im Wochenmodus tragen Story-Flags den Tag, an dem sie gesetzt wurden. Zwei Felder
+nutzen das aus:
+
+- `reqStoryAge: 1` — das Flag ist mindestens eine **Nacht** alt. Ein solches
+  Folgeereignis kann per Definition nicht mehr am selben Tag kommen; der Auslöser
+  liegt wirklich in der Vergangenheit, "gestern" ist hier also richtig statt falsch.
+- `reqWeekDayMin: 3` — erscheint **ab** Mittwoch, nicht nur am Mittwoch. Züge sind
+  Zufall: Ein Ereignis, das nur an einem einzigen Tag feuern dürfte, konkurriert an
+  diesem Tag gegen den ganzen Pool und wird oft verpasst. Der Prüfer warnt deshalb
+  bei `reqWeekDayMin: 5`.
+
+Beide Bedingungen sind im Tagesmodus schlicht unerfüllbar — zeitgebundene Teile sind
+dadurch automatisch Wochen-exklusiv, ohne eigenes Modus-Feld. Der **Auftakt** einer
+solchen Kette läuft dagegen in beiden Modi; seine riskante Auswahl braucht darum einen
+kleinen Sofortpreis, sonst ist sie im Tagesmodus, wo die Rechnung nie kommt, immer die
+beste.
+
+Schreibregeln für mehrtägige Teile:
+
+1. **Der Auftakt schließt als eigene Szene.** Ketten dürfen verhungern (die Woche
+   endet, der Zufall zieht anders) — das darf sich nie wie ein Fehler anfühlen.
+   Der Auftakt-Text erklärt die Lage außerdem vollständig selbst; der Titel ist
+   Zugabe, keine Voraussetzung.
+2. **Wiederverankerung im Gegenstand, nicht im Meta.** Der Spieler ist Tage weiter.
+   Nicht "wie du weißt, hast du am Montag …", sondern: der Serverraum riecht nach
+   Grillabend.
+3. **Keine Wochentagsnamen und keine Uhrzeiten im Text.** Ein "ab Mittwoch"-Ereignis
+   kann auch Donnerstag gezogen werden; "endlich da" stimmt an beiden Tagen. Und weil
+   jedes Ereignis zu jeder Tageszeit gezogen werden kann, darf die Szene nicht an einer
+   Uhr hängen ("Um kurz nach elf zuckt das Licht"). Erlaubt sind Uhrzeiten, die einem
+   **Gegenstand** gehören — Kalendereintrag, Log-Stempel, Mail-Zeit — oder die vor 8:00
+   bzw. nach Feierabend liegen. Der Prüfer warnt und kennt eine geprüfte Ausnahmeliste
+   (`clockReviewed`).
+4. **Eskalation sind mehrere Ereignisse**, nicht ein wartendes: Stufe 1 mit
+   `reqStoryAge: 1`, Stufe 2 mit `reqStoryAge: 2`. Jede Stufe ist eine eigene Szene.
+5. **Numerisch gewöhnlich, erzählerisch besonders.** Jeder Teil ist ein normal
+   balanciertes Ereignis seines Pools; das Drama liegt in der Erwartung, nicht in
+   den Zahlen.
+
+Flags sind global — ein Serverraum-Auslöser darf sein Echo auch im Anruf-Pool haben
+(`call_wlp_geruch` fragt nach dem Ketchup aus `srv_wlp_1`). Das Gebäude erinnert sich.
 
 Flag-Namen sind frei wählbar, im Bestand tragen 565 von 595 das Präfix `path_`. Sprechend
 benennen: `path_kabel_gezogen`, nicht `path_2b`.

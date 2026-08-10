@@ -213,7 +213,7 @@ function apply(s, o, poolType) {
     s.al += a > 0 ? Math.ceil(a * s.mult) : a;
     s.cr += c > 0 ? Math.ceil(c * s.mult * lazy) : c;
 
-    if (o.next) s.flags.add(o.next);
+    if (o.next) s.flags.set(o.next, s.dayIndex);
     if (o.nextEmail) s.linkedMail.push(o.nextEmail);
     if (o.loot) grant(s, o.loot);
     if (o.rem) consume(s, o.rem);
@@ -315,8 +315,13 @@ function playWeekDay(s, cfg, strat, dayIndex) {
         }
 
         if (!ev) {
-            const pool = DB[action].filter(e =>
-                !s.used.has(e.id) && (!e.reqStory || s.flags.has(e.reqStory)) && !e.webOnly);
+            // Mirrors engine_events.storyGateOpen: flag set, old enough,
+            // late enough in the week (Dreiteiler predicates).
+            const gateOpen = (e) =>
+                (!e.reqStory || s.flags.has(e.reqStory)) &&
+                (e.reqStoryAge == null || s.dayIndex - (s.flags.get(e.reqStory) ?? 99) >= e.reqStoryAge) &&
+                (e.reqWeekDayMin == null || s.dayIndex >= e.reqWeekDayMin);
+            const pool = DB[action].filter(e => !s.used.has(e.id) && gateOpen(e) && !e.webOnly);
             if (cont[action] <= 0 || !pool.length) {
                 // Contingent used up or pool dry: the week_idle fallback (time passes)
                 s.starveClicks++;
@@ -410,7 +415,7 @@ function playWeek(cfg, strat) {
         fl: 0, al: cfg.startAl, cr: 0, tickets: cfg.startTickets,
         excusesLeft: cfg.exStart,
         rageUsed: false, chefUsed: false,
-        flags: new Set(), used: new Set(), usedMails: new Set(),
+        flags: new Map(), used: new Set(), usedMails: new Set(),   // flag -> dayIndex, mirrors setStoryFlag
         inv: new Map(), linkedMail: [],
         events: 0, excusesSpent: 0, wastedRegen: 0, starveClicks: 0,
         carriedTickets: [], morningDeath: false, poolEmptySeen: false,

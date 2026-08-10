@@ -84,7 +84,9 @@ for (const p of POOLS) {
     // claiming immediate proximity are wrong in that case.
     if (ev.reqStory && ev.text) {
       const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
-      if (m) warn(`${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
+      if (m) warn(ev.reqStoryAge != null
+        ? `${ctx}: Folge-Ereignis mit reqStoryAge behauptet unmittelbare Nähe ("${m[0]}") — der Auslöser liegt mindestens eine Nacht zurück`
+        : `${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
       // The other direction: the trigger happened during THIS workday, so a
       // follow-up must not push it into the past. "gestern" is wrong even
       // when it sounds harmless, and it becomes wrong twice over once story
@@ -123,8 +125,56 @@ for (const p of POOLS) {
       for (const [field, txt] of allTexts) {
         if (typeof txt !== 'string') continue;
         if (timeRefReviewed.has(ev.id)) continue;
+        // With reqStoryAge the trigger really IS days ago - "gestern" is
+        // then exactly right, so the question below only applies to
+        // same-day follow-ups.
+        if (ev.reqStoryAge != null) continue;
         const g = txt.match(timeRef);
         if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+      }
+    }
+    // Dreiteiler predicates (v5.0): age needs a flag, ranges must be
+    // playable, and Friday-only is a dangling-chain trap (random draws
+    // compete against the whole pool on a single day).
+    if (ev.reqStoryAge != null && !ev.reqStory)
+      err(`${ctx}: reqStoryAge ohne reqStory — das Alter braucht eine Fahne`);
+    if (ev.reqStoryAge != null && (!Number.isInteger(ev.reqStoryAge) || ev.reqStoryAge < 1 || ev.reqStoryAge > 4))
+      err(`${ctx}: reqStoryAge ${ev.reqStoryAge} — erlaubt ist 1 bis 4 (Nächte seit dem Auslöser)`);
+    if (ev.reqWeekDayMin != null && (!Number.isInteger(ev.reqWeekDayMin) || ev.reqWeekDayMin < 2 || ev.reqWeekDayMin > 5))
+      err(`${ctx}: reqWeekDayMin ${ev.reqWeekDayMin} — erlaubt ist 2 bis 5 (Montag wäre wirkungslos)`);
+    if (ev.reqWeekDayMin === 5)
+      warn(`${ctx}: reqWeekDayMin 5 — nur Freitag ist eine Baumelfalle, das Ereignis konkurriert an einem einzigen Tag gegen den ganzen Pool. Lieber 4.`);
+    // Events in the random pools fire at ANY time of the workday - a text
+    // that pins the scene to a clock time ("Um kurz nach elf zuckt das
+    // Licht") is wrong for most draws. References to before 08:00 or to
+    // the evening are fine, the reviewed set lists them - same pattern as
+    // timeRefReviewed above.
+    if (['coffee', 'server', 'calls', 'sidequests', 'reputation', 'bossfights'].includes(p)) {
+      const clockReviewed = new Set([
+        'call_elster_budget_trap_1',  // expired at 08:00 - the day starts then, always past
+        'srv_falle_update',           // 23:00 at home - future reference
+        'cof_markus_flex_2c',         // 6:00 voice messages - habitual, always before work
+        'call_falle_werkstudent',     // 23:40 login timestamp - a log datum, always after hours
+        'call_kalender_geist',        // "jeden Dienstag um 14 Uhr" - a calendar datum, not the scene
+        'call_geistertermin',         // same: the recurring appointment's slot
+        'sq_raum_phoenix_2c',         // 17:58 auto-reply - mail timestamp after closing time
+        'sq_falle_meeting',           // 16:41 - after closing time, always future or datum
+        'sq_phone_gabi_intel'         // the whole quest is built around a 14:00 meeting; drawn
+                                      // after 14:00 the premise limps - legacy, left as is
+      ]);
+      if (!clockReviewed.has(ev.id)) {
+        const clockRe = /\b(?:um|gegen)\s+(?:kurz\s+(?:nach|vor)\s+)?(?:halb\s+)?(?:\d{1,2}(?::\d{2})?\s*Uhr\b|\d{1,2}:\d{2}\b|(?:acht|neun|zehn|elf|zwölf)\b(?!\s*(?:Prozent|Euro|Grad|Minuten|Sekunden|Stunden|Tage|Jahre|Mal)))/i;
+        const clockTexts = [
+          ['text', ev.text],
+          ...(ev.opts ?? []).map((o, i) => [`opts[${i}].r`, o.r]),
+          ...Object.entries(ev.nodes ?? {}).map(([k, n]) => [`nodes.${k}.text`, n.text]),
+          ...Object.entries(ev.results ?? {}).map(([k, r]) => [`results.${k}.txt`, r.txt])
+        ];
+        for (const [field, txt] of clockTexts) {
+          if (typeof txt !== 'string') continue;
+          const c = txt.match(clockRe);
+          if (c) warn(`${ctx} ${field}: Uhrzeit "${c[0].trim()}" — das Ereignis kann zu jeder Tageszeit gezogen werden. Vergangenheit vor 8:00 oder Abend/Zukunft sind ok: dann in clockReviewed eintragen.`);
+        }
       }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
@@ -515,10 +565,10 @@ for (const ev of DB.emails) {
 const EVENT_KEYS = {
   _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
   bossfights: ['timer', 'fail'],
-  calls:      ['reqStory', 'webOnly'],
-  coffee:     ['reqStory', 'webOnly'],
-  server:     ['reqStory', 'webOnly'],
-  sidequests: ['reqStory', 'webOnly', 'kind', 'appName'],
+  calls:      ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  coffee:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  server:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  sidequests: ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly', 'kind', 'appName'],
   reputation: ['reqStory', 'reqRep'],
   party:      ['loc', 'textByProgress'],   // hub variants by progress (engine_core.reset)
   lunch:      [],

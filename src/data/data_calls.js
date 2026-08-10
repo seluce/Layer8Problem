@@ -2345,7 +2345,7 @@ export const calls = [
         {
             t: "Jetzt doch die Hotline - bei Vollausfall",
             m: 30, f: 0, a: 15, c: 5,
-            r: "'Sie sind Anrufer Nummer... DREIUNDSECHZIG.' Der Vollausfall hat offenbar jeden Business-Kunden der Region an die Hotline getrieben. Als du endlich durchkommst, ist die Störung 'bekannt und in Bearbeitung'. Das hättest du um neun auch haben können. Für weniger."
+            r: "'Sie sind Anrufer Nummer... DREIUNDSECHZIG.' Der Vollausfall hat offenbar jeden Business-Kunden der Region an die Hotline getrieben. Als du endlich durchkommst, ist die Störung 'bekannt und in Bearbeitung'. Das hättest du vor einer Stunde auch haben können. Für weniger."
         }
     ]
 },
@@ -2431,7 +2431,7 @@ export const calls = [
     id: "call_boss_tunnel_2a",
     title: "Die Streichung",
     reqStory: "path_tunnel_ja",
-    text: "Die Rundmail kommt um 15 Uhr: 'Auf Empfehlung der IT-Abteilung wird das IT-Budget zum Monatsende optimiert (-40%).' Auf Empfehlung. Der IT. Du hast im Tunnel 'Jawohl' zu deiner eigenen Kürzung gesagt.",
+    text: "Die Rundmail kommt zwei Stunden später: 'Auf Empfehlung der IT-Abteilung wird das IT-Budget zum Monatsende optimiert (-40%).' Auf Empfehlung. Der IT. Du hast im Tunnel 'Jawohl' zu deiner eigenen Kürzung gesagt.",
     opts: [
         {
             t: "Termin beim Chef: das Missverständnis aufklären",
@@ -2625,7 +2625,7 @@ export const calls = [
         {
             t: "Abwarten, bis die sich wieder melden",
             m: 5, f: 5, a: 10, c: 5,
-            r: "Strategische Geduld - nur arbeitet dein Kopf nicht mit: Zwei Stunden lang komponierst du innerlich Szenarien von Kündigung bis Beförderung. Als das Sekretariat um 15 Uhr erneut anruft, geht es um einen Beamer. Der Puls der zwei Stunden steht in keiner Statistik. Er war trotzdem da."
+            r: "Strategische Geduld - nur arbeitet dein Kopf nicht mit: Zwei Stunden lang komponierst du innerlich Szenarien von Kündigung bis Beförderung. Als das Sekretariat zwei Stunden später erneut anruft, geht es um einen Beamer. Der Puls der zwei Stunden steht in keiner Statistik. Er war trotzdem da."
         }
     ]
 },
@@ -3989,6 +3989,28 @@ export const calls = [
 				m: 15, f: 0, a: 15, c: 15,
 				rep: { "Dr. Wichtig": -5 },
 				r: "Er weicht aus und spricht von 'aggregierten Erkenntnissen'. Bei einer Abteilung mit einem Mitarbeiter ist die Aggregation eine überschaubare Rechenaufgabe. Er beendet das Gespräch kurz danach."
+			}
+		]
+	},
+
+	/* Dreiteiler wave 1 (v5.0): cross-pool follow-up of srv_wlp_1 - the
+	   ketchup travels through the ventilation into the calls pool. */
+	{
+		id: "call_wlp_geruch",
+		reqStory: "srv_wlp_ketchup",
+		reqStoryAge: 1,
+		title: "Anruf: Geruchsbelästigung",
+		text: "'Hier ist Frau Sonntag, Buchhaltung. Bei uns zieht seit heute früh ein Geruch durch die Lüftung. Wie von einer Imbissbude. Herr Blaschke sagt, der Strang läuft über Ihren Serverraum?'",
+		opts: [
+			{
+				t: "'Wir arbeiten mit Hochdruck daran.'",
+				m: 5, f: 0, a: 0, c: 5,
+				r: "'Und woran genau?' — 'An der Ursache.' Sie notiert hörbar mit."
+			},
+			{
+				t: "'Das ist die neue Kühlflüssigkeit.'",
+				m: 5, f: 0, a: 0, c: 10,
+				r: "Pause. 'Die riecht nach Currywurst?' — 'Bio-basiert.' Klick."
 			}
 		]
 	},

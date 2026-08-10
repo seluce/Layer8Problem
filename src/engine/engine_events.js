@@ -184,6 +184,39 @@ export const events = {
      * Applies reputation changes and keeps them within -100 to 100. Used to
      * exist in three places; one of them had forgotten the save call.
      */
+    /**
+     * Story flags remember WHEN they were set: a running week writes its
+     * dayIndex (1-5, all truthy), the single day writes true. Every existing
+     * truthiness check keeps working unchanged; reqStoryAge needs the number.
+     * Old saves hold true - age-gated events simply never fire for them,
+     * which is the correct degradation (no migration needed).
+     */
+    setStoryFlag: function(name) {
+        if (!name) return;
+        this.state.storyFlags[name] = this.state.week?.active ? this.state.week.dayIndex : true;
+    },
+
+    /**
+     * Every time condition of an event in one place (design: Dreiteiler).
+     * reqStoryAge counts NIGHTS since the flag was set (1 = tomorrow at the
+     * earliest), reqWeekDayMin is an absolute 'from this weekday on' (1-5).
+     * Both are unsatisfiable outside a running week, so dated chain parts
+     * are week-exclusive without any mode flag - and same-day follow-ups
+     * with an age are excluded by definition.
+     */
+    storyGateOpen: function(ev) {
+        if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+        if (ev.reqStoryAge != null) {
+            const set = this.state.storyFlags[ev.reqStory];
+            if (!this.state.week?.active || typeof set !== 'number') return false;
+            if (this.state.week.dayIndex - set < ev.reqStoryAge) return false;
+        }
+        if (ev.reqWeekDayMin != null) {
+            if (!this.state.week?.active || this.state.week.dayIndex < ev.reqWeekDayMin) return false;
+        }
+        return true;
+    },
+
     applyReputation: function(rep) {
         if (!rep) return false;
         for (const [charName, val] of Object.entries(rep)) {
@@ -374,9 +407,9 @@ export const events = {
             let possibleInterventions = DB.reputation.filter(ev => {
                 if (this.state.usedIDs.has(ev.id)) return false; 
 
-                // Story continuation: is the flag set?
+                // Story continuation: flag set, and old enough / late enough?
                 if (ev.reqStory) {
-                    return !!this.state.storyFlags[ev.reqStory]; 
+                    return this.storyGateOpen(ev);
                 }
                 
                 // Plain reputation event: check the thresholds
@@ -446,7 +479,7 @@ export const events = {
         // Default: a random event from the chosen pool (coffee, server, calls)
         let pool = DB[type].filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
-            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            if (!this.storyGateOpen(ev)) return false;
             // webOnly events point at the store page - pointless once bought
             if (ev.webOnly && platform.isDesktop) return false;
             return true;
@@ -533,7 +566,7 @@ export const events = {
 
         let pool = DB.sidequests.filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
-            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            if (!this.storyGateOpen(ev)) return false;
             // webOnly events point at the store page - pointless once bought
             if (ev.webOnly && platform.isDesktop) return false;
             return true;
@@ -827,9 +860,9 @@ export const events = {
         // travel through an HTML attribute and be JSON-parsed back out here.
         if (repData && typeof repData === 'object') this.applyReputation(repData);
 
-        // Set the story flag
+        // Set the story flag (day-stamped in week mode, see setStoryFlag)
         if (next && next !== "") {
-            this.state.storyFlags[next] = true;
+            this.setStoryFlag(next);
         }
         
         // --- COUNT PARTY PROGRESS ---
@@ -1324,7 +1357,7 @@ export const events = {
         
         // --- SET THE STORY FLAG ---
         if (res.next && res.next !== "") {
-            this.state.storyFlags[res.next] = true;
+            this.setStoryFlag(res.next);
         }
         // -----------------------------------
         

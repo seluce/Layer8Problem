@@ -1969,7 +1969,7 @@ export const server = [
                 t: "Sofort das Update installieren", 
                 next: "path_update_patch", 
                 m: 20, f: -10, a: 30, c: 0, 
-                r: "Update läuft durch! Aber: Der 'Stempeln'-Button ist jetzt grün statt blau. Um 13 Uhr bricht totale Panik aus. 'ALLES SIEHT ANDERS AUS!' Das Telefon glüht. Du hast das Layout verändert, du Monster." 
+                r: "Update läuft durch! Aber: Der 'Stempeln'-Button ist jetzt grün statt blau. Eine Stunde später bricht totale Panik aus. 'ALLES SIEHT ANDERS AUS!' Das Telefon glüht. Du hast das Layout verändert, du Monster." 
             },
             { 
                 t: "Wegklicken - never change a running system", 
@@ -5041,6 +5041,348 @@ export const server = [
                 t: "Nur die eine Kassette mitnehmen",
                 m: 10, f: 0, a: 0, c: -5,
                 r: "Du nimmst das Band mit der Fräse mit und lässt den Rest stehen. Die Produktion ist damit abgesichert, das Archiv bleibt ein Rätsel, und beides ist heute die richtige Entscheidung."
+            }
+        ]
+    },
+
+    /* ---------------------------------------------------------------------
+       Dreiteiler wave 1 (v5.0): chains with time predicates. reqStoryAge
+       counts nights since the trigger, reqWeekDayMin gates by weekday -
+       both only ever open in week mode. Openers must stand alone as
+       scenes: chains may starve (random draws, Friday), and that must
+       never read as a bug. One follow-up lives in data_calls.js
+       (call_wlp_geruch) - the building remembers across pools.
+
+       Narrative duplicate check (editorial pass 3): the first drafts here
+       had an AC-drip/bucket chain (twin of srv_leak) and a beeping-UPS
+       chain (twin of srv_usv_beep) - both replaced. Before writing new
+       server chains, check against: srv_leak, srv_overheat_warning,
+       srv_usv_beep, the RAID note (line ~2279) and the tape archive.
+
+       Stat doctrine (editorial pass 2): diligence LOWERS f, laziness and
+       delegation raise it; deeds the firm or the boss profits from lower
+       c; venting and relief lower a, the stupidity of things raises it.
+       Delayed payoffs are real recovery (down to -15), delayed bills are
+       real bills (up to +15) - the drama may be narrative, but the
+       numbers must not whisper. -------------------------------------- */
+    {
+        id: "srv_wlp_1",
+        title: "Rack 3 wird warm",
+        text: "CPU 2 in Rack 3 meldet 84 Grad. Der Kühler sitzt locker, das ließe sich richten — aber die Wärmeleitpaste ist alle. Die Tube liegt ausgequetscht im Werkzeugkasten, daneben ein Post-it: 'NACHBESTELLEN!!'. Datiert vor drei Wochen.",
+        opts: [
+            {
+                t: "Ketchup aus der Kantine holen",
+                m: 15, f: 5, a: -5, c: 5,
+                next: "srv_wlp_ketchup",
+                r: "Leitet Wärme, sagt das Internet. Du verstreichst eine dünne Schicht, der Lüfter beruhigt sich, die Kurve fällt auf 71 Grad. Deine Hände riechen bis Feierabend nach Pommes."
+            },
+            {
+                t: "Paste bestellen und den Takt drosseln",
+                m: 25, f: -5, a: 5, c: 5,
+                next: "srv_wlp_wait",
+                r: "Express-Bestellung raus. Bis dahin rechnet Rack 3 im Schongang, und irgendwo im Haus wird gerade ein Report langsamer. Du hoffst, es ist keiner von denen mit Deckblatt."
+            },
+            {
+                t: "Kühler festschrauben und beobachten",
+                m: 20, f: -5, a: 5, c: 0,
+                r: "79 Grad. Ohne Paste bleibt es Flickwerk, aber es ist beobachtetes Flickwerk. Du legst ein Ohr ans Blech und gehst rückwärts raus."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_2",
+        reqStory: "srv_wlp_ketchup",
+        reqStoryAge: 1,
+        title: "Rack 3 riecht nach Imbiss",
+        text: "Schon an der Tür riecht der Serverraum nach Grillabend. Rack 3 hält die Temperatur — noch. Auf dem Kühlkörper hat sich eine braune Kruste gebildet, und der Lüfter klingt, als hätte er etwas zu verarbeiten.",
+        opts: [
+            {
+                t: "Abschrauben und sauber machen",
+                m: 35, f: -10, a: 5, c: 0,
+                r: "Die Kruste kommt in Schichten ab, die letzte nur mit dem Fingernagel. Du verstreichst neuen Ketchup, dünner diesmal, gleichmäßiger, die Ränder mit dem Spatel gezogen. Es ist jetzt offiziell ein Rezept."
+            },
+            {
+                t: "Tür zu. Riecht ja keiner außer dir.",
+                m: 5, f: 5, a: 0, c: 5,
+                r: "Du klemmst ein Duftbäumchen ans Rack. Jetzt riecht es nach Grillabend im Neuwagen."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_3",
+        reqStory: "srv_wlp_ketchup",
+        reqStoryAge: 2,
+        title: "Rack 3 macht Feierabend",
+        text: "Der Thermo-Alarm geht durch, dann Stille: CPU 2 hat sich abgeschaltet. Auf dem Kühlkörper ist der Ketchup zu Lack geworden. Es tropft nichts, aber das Rack sieht aus, als hätte es geblutet.",
+        opts: [
+            {
+                t: "Notpaste beim Elektroladen holen",
+                m: 45, f: -10, a: 10, c: 5,
+                r: "Zwanzig Minuten Fußweg, vierzehn Euro, eine Tube. Der Verkäufer fragt, ob es dringend ist, und du lachst etwas zu lange. Beim Einbau fällt dir auf, wie leise ein Serverraum ist, wenn ein Rack fehlt."
+            },
+            {
+                t: "Kevin schrubben lassen",
+                m: 20, f: 5, a: 0, c: 5,
+                rep: { "Kevin": -5 },
+                r: "Kevin fragt nicht mal, warum da Ketchup ist. Er holt Küchenrolle und fängt an. Das beunruhigt dich mehr als der Ausfall."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_4",
+        reqStory: "srv_wlp_wait",
+        reqStoryAge: 1,
+        reqWeekDayMin: 3,
+        title: "Ein Paket für die IT",
+        text: "Der Empfang ruft durch: ein Päckchen für 'IT / Serverkeller', aufgeweicht vom Regen. Drin liegen drei Tuben Wärmeleitpaste und eine Rechnung mit Express-Zuschlag. Rack 3 rechnet seit der Bestellung im Schongang.",
+        opts: [
+            {
+                t: "Sofort einbauen",
+                m: 30, f: -10, a: -15, c: -5,
+                loot: "bubble_wrap",
+                r: "Kühler ab, alte Reste weg, Paste drauf, Takt hoch. Rack 3 zieht durch wie am ersten Tag, die Lüfter fahren runter statt hoch. Die Tuben steckten in einer Armlänge Luftpolsterfolie — die hebst du auf, für medizinische Zwecke. Du bleibst noch einen Moment stehen und hörst zu. Es klingt nach nichts. Genau richtig."
+            },
+            {
+                t: "Erst die Rechnung prüfen, dann einbauen",
+                m: 35, f: -10, a: -10, c: -10,
+                r: "Der Express-Zuschlag ist teurer als die Paste. Du zeichnest die Rechnung sauber gegen, heftest sie dahin ab, wo die Buchhaltung sie erwartet, und schraubst dann in Ruhe. Zwei Baustellen weniger."
+            }
+        ]
+    },
+    {
+        id: "srv_ntp_1",
+        title: "Die Serveruhr geht vor",
+        text: "Beim Blick ins Log stimmt etwas nicht: Die Einträge kommen aus der Zukunft. Vier Minuten. Der Zeitserver, den die Kiste fragt, antwortet seit Wochen nicht mehr, und ohne Taktgeber driftet die Uhr — jeden Tag ein Stück weiter.",
+        opts: [
+            {
+                t: "Neue Zeitquelle eintragen und sauber synchen",
+                m: 30, f: -10, a: -5, c: -5,
+                r: "Zwei Zeilen Konfiguration, ein Neustart des Dienstes, die Uhr rutscht zurück in die Gegenwart. Im Log klafft jetzt ein vier Minuten langes Loch. Du schreibst einen Kommentar hinein: 'Hier fehlt nichts.'"
+            },
+            {
+                t: "Die Uhr einfach von Hand zurückstellen",
+                m: 10, f: 5, a: 5, c: 0,
+                next: "srv_ntp_drift",
+                r: "Vier Minuten zurückgedreht, Problem gelöst. Dass die Uhr ohne Taktgeber weiterdriftet, steht auf einem anderen Blatt. Auf einem aus der Zukunft."
+            },
+            {
+                t: "Vier Minuten. Wen juckt's.",
+                m: 5, f: 10, a: 0, c: 0,
+                next: "srv_ntp_drift",
+                r: "Du lebst jetzt vier Minuten in der Zukunft. Ein Vorsprung ist es nicht."
+            }
+        ]
+    },
+    {
+        id: "srv_ntp_2",
+        reqStory: "srv_ntp_drift",
+        reqStoryAge: 2,
+        title: "Zwölf Minuten Zukunft",
+        text: "Die Uhr geht inzwischen zwölf Minuten vor, und jetzt ist es aufgefallen: Die Zeiterfassung hängt am selben Server. Das halbe Haus hat laut System vor Arbeitsbeginn gestempelt, und Frau Elster hat eine Liste. Chronologisch sortiert. Nach der falschen Uhr.",
+        opts: [
+            {
+                t: "Zeitquelle fixen, Korrektur-Mail ans Haus",
+                m: 40, f: -15, a: 5, c: -10,
+                rep: { "Frau Elster": 5 },
+                r: "Konfiguration, Sync, Rundmail mit Entschuldigung und berichtigter Tabelle. Frau Elster antwortet mit einem einzigen Wort: 'Danke.' Du druckst es nicht aus. Aber fast."
+            },
+            {
+                t: "Die zwölf Minuten stillschweigend zurückdrehen",
+                m: 10, f: 5, a: 5, c: 15,
+                r: "Die Uhr stimmt wieder, die Stempel-Einträge von heute früh stimmen jetzt doppelt nicht. Irgendwo im Haus vergleicht gerade jemand zwei Listen."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_kabel_1",
+        char: "Egon",
+        title: "Port 12 ist tot",
+        text: "Der Uplink an Port 12 ist weg, und das Patchkabel dazu zerbröselt dir in der Hand. Während du im leeren Kabelkarton wühlst, steht Egon in der Tür. 'Ich hab da noch was. Cat 7, doppelt geschirmt. Vom Vorgänger geerbt.' Er hält es wie eine Reliquie.",
+        opts: [
+            {
+                t: "Das Kabel dankend annehmen",
+                loot: "cable",
+                m: 10, f: 0, a: -5, c: 0,
+                next: "srv_egon_kabel",
+                r: "Es riecht nach Kellerjahrzehnten und funktioniert auf Anhieb. 'Ich will es zurück', sagt Egon. Es klingt nicht wie eine Bitte."
+            },
+            {
+                t: "Ablehnen und selbst crimpen",
+                m: 30, f: -10, a: 10, c: 0,
+                r: "Aus zwei halbtoten Kabeln wird ein dreivierteltotes. Der dritte Stecker sitzt erst beim fünften Versuch, und die Crimpzange hinterlässt einen Abdruck in deiner Handfläche. Port 12 lebt. Egon geht kopfschüttelnd, die Reliquie unterm Arm."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_kabel_2",
+        char: "Egon",
+        reqStory: "srv_egon_kabel",
+        reqStoryAge: 1,
+        title: "Egon will sein Kabel",
+        text: "Egon steht am Rack und sieht auf Port 12, wo sein Kabel hängt. 'Na?', sagt er. Mehr nicht. Er hat Zeit mitgebracht.",
+        opts: [
+            {
+                t: "Das Kabel zurückgeben",
+                rem: "cable",
+                m: 15, f: 0, a: 5, c: 0,
+                rep: { "Egon": 5 },
+                r: "Du patchst auf Restbestand um, er wickelt sein Kabel auf wie andere Leute Gartenschlauch. 'Wusste, auf dich ist Verlass.'"
+            },
+            {
+                t: "'Das ist jetzt Infrastruktur.'",
+                m: 5, f: 0, a: -5, c: 5,
+                rep: { "Egon": -5 },
+                r: "Egon nickt langsam. Er sagt nichts weiter. Er wird es auch nicht vergessen."
+            },
+            {
+                t: "'Kabel? Welches Kabel?'",
+                m: 5, f: 5, a: 0, c: 0,
+                rep: { "Egon": -5 },
+                r: "Ihr seht beide auf Port 12. Das Kabel trägt ein handbeschriftetes Etikett: EGON."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_1",
+        title: "Es kratzt in der Lüftung",
+        text: "Über dem Rack, hinter der Lüftungsverkleidung, kratzt etwas. Nicht elektrisch — Krallen. Es wandert von links nach rechts, macht Pause, kratzt weiter. Die Server surren dazu, als wäre nichts.",
+        opts: [
+            {
+                t: "Gitter abschrauben und nachsehen",
+                m: 25, f: -10, a: 5, c: 0,
+                r: "Vier Schrauben, eine Staubwolke, kein Tier. Nur ein Gang, der tiefer ins Gebäude führt, und ein paar Spuren im Staub. Du schraubst wieder zu, etwas langsamer als nötig."
+            },
+            {
+                t: "Dem Gebäudemanagement melden",
+                m: 10, f: 0, a: 0, c: 0,
+                next: "srv_marder_meldung",
+                r: "Blaschke hört sich das Kratzen durchs Telefon an. 'Marder. Oder Taube. Ich komm die Woche vorbei und bring die Falle mit.' Er klingt fast vorfreudig."
+            },
+            {
+                t: "Musik lauter und weiterarbeiten",
+                m: 5, f: 10, a: -5, c: 0,
+                next: "srv_marder_ignoriert",
+                r: "Gegen Krallen helfen Kopfhörer. Das Tier arbeitet weiter, du auch, ihr stört euch nicht."
+            },
+            {
+                t: "Einmal mit dem Hammer gegen die Verkleidung",
+                req: "hammer",
+                m: 5, f: 5, a: -5, c: 0,
+                next: "srv_marder_ignoriert",
+                r: "Ein satter Blechschlag, dann Stille. Du stellst den Hammer griffbereit ab. Ihr habt jetzt eine Sprache."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_2",
+        reqStory: "srv_marder_ignoriert",
+        reqStoryAge: 1,
+        title: "Aus dem Gitter rieselt es",
+        text: "Aus dem Lüftungsgitter über dem Rack rieselt Feines: Staub, Dämmwolle, etwas Stroh. Auf dem Gehäuse liegt ein kleiner Haufen, ordentlich, fast dekorativ. Da oben richtet sich jemand ein.",
+        opts: [
+            {
+                t: "Rack abdecken und das Gitter abdichten",
+                m: 25, f: -5, a: 5, c: 0,
+                r: "Folie übers Rack, das Gitter mit Pappe verkeilt. Von oben kommt empörtes Kratzen, dann Stille. Die Stille ist schlimmer."
+            },
+            {
+                t: "Wegpusten und weitermachen",
+                m: 5, f: 10, a: 0, c: 5,
+                r: "Beim nächsten Vorbeigehen liegt der Haufen wieder da. Etwas größer. Mit einer Büroklammer drin, die du kennst."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_3",
+        reqStory: "srv_marder_ignoriert",
+        reqStoryAge: 2,
+        title: "Die Abluft steht",
+        text: "Der Abluft-Ventilator in der Lüftung dreht nicht mehr. Durchs Gitter siehst du, warum: Um die Achse ist Nistmaterial gewickelt, fest und fachmännisch. Im Serverraum riecht es nach warmem Staub und ein bisschen nach Zoo.",
+        opts: [
+            {
+                t: "Gitter ab, Nest raus, Ventilator freilegen",
+                m: 45, f: -15, a: 15, c: 5,
+                r: "Handschuhe, Leiter, eine halbe Mülltüte Nistmaterial. Das Tier ist nicht da, nur sein Werk. Beim letzten Griff findest du einen Kugelschreiber. Deinen."
+            },
+            {
+                t: "Blaschke anrufen, jetzt offiziell",
+                m: 15, f: 5, a: 5, c: 5,
+                next: "srv_marder_meldung",
+                r: "'JETZT ist es ein Marder', sagt Blaschke. 'Vorher war es günstiger.' Er kommt trotzdem."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_4",
+        reqStory: "srv_marder_meldung",
+        reqStoryAge: 1,
+        reqWeekDayMin: 4,
+        title: "Blaschke bringt die Falle",
+        text: "Herr Blaschke vom Gebäudemanagement steht mit einer Lebendfalle und einem halben Zwieback im Serverraum und sieht zum Lüftungsgitter hoch wie ein Angler aufs Wasser. 'Marder', sagt er. 'Hört man am Rhythmus.'",
+        opts: [
+            {
+                t: "Zusehen, wie ein Profi arbeitet",
+                m: 15, f: 0, a: -10, c: 0,
+                r: "Falle in die Lüftung, Zwieback rein, Gitter zu. 'Der geht heute Abend rein, die sind neugierig.' Beim Rausgehen klopft Blaschke zweimal an die Verkleidung. Es klopft nicht zurück."
+            },
+            {
+                t: "Fragen, ob das öfter vorkommt",
+                m: 10, f: 0, a: -10, c: 0,
+                r: "'Dritter dieses Jahr. Die kommen über die Tiefgarage.' Er sagt es wie eine Wetterlage. Du nimmst dir vor, das Auto woanders zu parken."
+            }
+        ]
+    },
+    {
+        id: "srv_nachtjob_1",
+        title: "Der Nachtjob hängt",
+        text: "Das Backup von letzter Nacht steht bei 61 Prozent und bewegt sich nicht. Das Zielverzeichnis meldet sich nicht ab, der Job sich nicht an. Ein Neustart läuft vier Stunden mit — ein Abbruch heißt: Für diesen Stand gibt es keine Sicherung.",
+        opts: [
+            {
+                t: "Neu starten und mitlaufen lassen",
+                m: 40, f: -10, a: 5, c: -5,
+                r: "Der Job frisst sich langsam durch die Freigaben. Du arbeitest nebenher und siehst alle paar Minuten nach, wie man nach einem Kuchen sieht."
+            },
+            {
+                t: "Energydrink köpfen und dranbleiben",
+                rem: "energy",
+                m: 20, f: -15, a: 5, c: -5,
+                r: "Der Job läuft, du läufst mit. Ab der Hälfte zittert dein linkes Augenlid im Takt der Fortschrittsanzeige. Der Balken wird voll. Du hast jede Sekunde gesehen."
+            },
+            {
+                t: "Abbrechen. Heute Nacht läuft ja wieder einer.",
+                m: 5, f: 10, a: 0, c: 0,
+                next: "srv_nachtjob_skip",
+                r: "Job gekillt, Konsole zu. Ein Tag ohne Sicherung ist wie ein Tag ohne Netz. Du merkst selbst, dass der Satz hinkt."
+            }
+        ]
+    },
+    {
+        id: "srv_nachtjob_2",
+        char: "Gabi",
+        reqStory: "srv_nachtjob_skip",
+        reqStoryAge: 1,
+        title: "Gabi braucht eine Datei",
+        text: "Gabi steht in der Tür, ausnahmsweise ohne zu klopfen. 'Ich hab gestern Nachmittag die Kalkulation überschrieben. Die alte Version — die ist doch in der Sicherung?' Sie sieht dich an, wie man jemanden ansieht, der Sicherungen macht.",
+        opts: [
+            {
+                t: "Die Wahrheit sagen",
+                m: 10, f: 0, a: 5, c: 10,
+                rep: { "Gabi": -5 },
+                r: "Gabi sagt eine Weile nichts. 'Und wofür haben wir dann...' Sie spricht den Satz nicht zu Ende, und du bist dankbar dafür. Auf dem Rückweg zu ihrem Büro macht sie einen Umweg über die Teeküche. Die mit den Ohren."
+            },
+            {
+                t: "In den Schattenkopien wühlen",
+                m: 35, f: -10, a: 5, c: -5,
+                rep: { "Gabi": 5 },
+                loot: "chocolate",
+                r: "Vorgängerversion, 14:52 Uhr. Du stellst sie her, ohne zu erklären, wie knapp es war. Gabi legt dir wortlos Schokolade auf den Tisch."
+            },
+            {
+                t: "'Zufällig hab ich da was auf einem Stick.'",
+                rem: "usb_stick",
+                m: 10, f: 0, a: -5, c: 0,
+                rep: { "Gabi": 5 },
+                r: "Ein älterer Stand, aber besser als keiner. Gabi nimmt den Stick wie einen Lottogewinn. Du siehst ihn nie wieder."
             }
         ]
     },

@@ -388,6 +388,54 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// ------------------------------------------------------- time predicates (3f)
+console.log('Zeit-Prädikate (Dreiteiler):');
+await ok('Fahnen tragen in der Woche den Setz-Tag, im Tagesmodus true', () => {
+    resetState();
+    engine.setStoryFlag('tst_day_flag');
+    assert.equal(state.storyFlags.tst_day_flag, true);          // day mode: plain truthy
+    engine.startWeek('easy');
+    state.week.dayIndex = 2;
+    engine.setStoryFlag('tst_week_flag');
+    assert.equal(state.storyFlags.tst_week_flag, 2);            // week mode: the day number
+});
+await ok('reqStoryAge sperrt am selben Tag und öffnet nach der Nacht', () => {
+    resetState();
+    engine.startWeek('easy');
+    engine.setStoryFlag('tst_ketchup');
+    const ev = { id: 'tst', reqStory: 'tst_ketchup', reqStoryAge: 1 };
+    assert.equal(engine.storyGateOpen(ev), false);              // same day: locked
+    engine.advanceWeekNight();
+    assert.equal(engine.storyGateOpen(ev), true);               // tomorrow: open
+    assert.equal(engine.storyGateOpen({ ...ev, reqStoryAge: 2 }), false);
+});
+await ok('reqWeekDayMin öffnet ab dem Stichtag, nicht nur an ihm', () => {
+    resetState();
+    engine.startWeek('easy');
+    const ev = { id: 'tst', reqWeekDayMin: 3 };
+    assert.equal(engine.storyGateOpen(ev), false);              // Monday
+    state.week.dayIndex = 3;
+    assert.equal(engine.storyGateOpen(ev), true);               // Wednesday
+    state.week.dayIndex = 4;
+    assert.equal(engine.storyGateOpen(ev), true);               // Thursday too: min, not only
+});
+await ok('Tagesmodus erfüllt Zeit-Prädikate nie', () => {
+    resetState();                                               // week.active false
+    engine.setStoryFlag('tst_ketchup');
+    assert.equal(engine.storyGateOpen({ id: 'tst', reqStory: 'tst_ketchup' }), true);
+    assert.equal(engine.storyGateOpen({ id: 'tst', reqStory: 'tst_ketchup', reqStoryAge: 1 }), false);
+    assert.equal(engine.storyGateOpen({ id: 'tst', reqWeekDayMin: 2 }), false);
+});
+await ok('Der Tag-Stempel überlebt Speichern und Laden', () => {
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 2;
+    engine.setStoryFlag('tst_stamp');
+    engine.saveWeek();
+    const slot = JSON.parse(store.get('layer8_week'));
+    assert.ok(JSON.stringify(slot).includes('"tst_stamp":2'), 'Stempel fehlt im Wochen-Slot');
+});
+
 await ok('Mittagspause filtert in der Woche gegen usedIDs und merkt sich den Zug', async () => {
     resetState();
     engine.startWeek('easy');
