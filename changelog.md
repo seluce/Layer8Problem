@@ -44,6 +44,16 @@ Die Synergy-Gala:
 * Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
 * Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
 
+Mehrtägige Geschichten:
+* Rund 50 neue Ereignisse in Serverraum, Kaffeeküche, Dienstgang und am Telefon - zum ersten Mal als Geschichten, die über mehrere Tage gehen: Was am Montag aufgeschoben wird, eskaliert übermorgen; was bestellt ist, kommt frühestens am nächsten Tag; wer einmal diskret geholfen hat, ist ab jetzt "die Nummer". Im Arbeitstag stehen die Auftakte ganz normal im Pool - die Fortsetzungen gehören der Woche.
+* Folgen springen auch zwischen den Bereichen: Die Abkürzung im Serverraum klingelt später am Telefon, und ein Kaltakquise-Anruf steht tags darauf leibhaftig am Empfang - "wie telefonisch vereinbart".
+* Der Dienstgang nutzt seine zwei Gesichter als Erzählmittel: Manche Geschichte beginnt als Chat auf dem Handy und endet im Terminal, eine läuft andersherum.
+* Neue Gesichter machen GlobalCorp größer: Herr Blaschke vom Gebäudemanagement, Frau Sonntag aus der Buchhaltung, ein Herr in Grau mit Transformationsprojekt, Herr Grabowski (seit sieben Jahren in Rente, ruft trotzdem einmal im Jahr an) und die Niederlassung Süd, die nie ans Telefon geht.
+
+Gegenstände:
+* Zwei Neuzugänge, beide mit Haken. Die Voodoo-Puppe des Chefs senkt die Aggro spürbar - aber zwei Etagen höher verspürt Dr. Wichtig einen Krampf und muss aus unerfindlichen Gründen an dich denken, das Radar steigt. Die Notfall-Krawatte wirkt von allein: Trägt man exakt sein Modell, hält er einen bei jeder Begegnung kurz für einen der Ihren. Beide sind dort versteckt, wo niemand ein Geschenk erwartet.
+* Jeder Gegenstand hat jetzt seine eigene Abklingzeit. Bisher gab es im ganzen Rucksack nur eine - beim Stressball allein fiel das nie auf, mit dem zweiten Werkzeug hätte das Kneten die Puppe gesperrt.
+
 Steam-Fassung:
 * Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
 * Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.
@@ -54,7 +64,12 @@ Fehlerkorrekturen:
 * Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
 * Die Merkliste des Tagebuchs (zuletzt benutzte Sätze, damit sich morgen nichts wiederholt) hing an einem ungültigen Speicher-Schlüssel und überlebte dadurch den harten Reset - das Tagebuch mied danach Sätze eines gelöschten Spielstands. Sie hat jetzt einen richtigen Namen und wird beim Reset mit abgeräumt.
 
+* Beim Partner-Buffet in der Kantine verlangte "Alles fotografieren und Frau Elster schicken" grundlos die Schwarze Karte des Prinzen - die Option war damit für fast alle unerreichbar. Sie steht jetzt jedem offen.
+* Anrufer erklärten ihre Stimmung im Namen ("Die Sekretärin (Wütend)"), und manche Antwort trug ein Etikett vor der eigentlichen Entscheidung ("Tech-Pfusch: ..."). Die Stimmung steht im Text, wo sie immer schon stand; die Etiketten sind weg - sieben Titel, fünfundzwanzig Antworten. Abteilungs-Zusätze wie "(Buchhaltung)" bleiben, das ist Anruferanzeige.
+* Textpflege im Bestand: zwei Tippfehler und eine Handvoll fester Uhrzeiten in Ereignissen, die zu jeder Tageszeit auftreten können ("Um 13 Uhr bricht Panik aus" - auch um neun).
+
 Für Entwickler:
+* Gegenstände: Abklingzeiten liegen in state.itemCooldowns je Gegenstands-ID, use versteht zusätzlich cr, rep und wait, und die neue Klasse passive wirkt beim Öffnen eines Ereignisses mit der hinterlegten Figur. Der Datenprüfer kennt alle neuen Felder und erzwingt: Kosten nur mit Abklingzeit, passive Wirkungen nur negativ, req und rem nie zugleich auf demselben Gegenstand.
 * Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
 * Zähler sind nach Modus getrennt: Wochentage erhöhen die Tageszähler nicht mehr, die Woche zählt über recordWeekResult(). Die Serie zählt weiterhin modusübergreifend, weil ein überlebter Wochentag ein überlebter Tag ist.
 * Vier neue Steam-Statistiken (stat_weeks_started, _survived, _ragequit, _fired), und stat_started wird nicht mehr aus daysStarted gespeist - dieser Zähler nummeriert die Firmenchronik und enthält deshalb auch Wochentage. Die Abfrage in main.cjs holt jetzt acht Namen statt vier.

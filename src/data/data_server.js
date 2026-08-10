@@ -2085,7 +2085,7 @@ export const server = [
         text: "Der Berater wedelt mit einem laminierten Dokument. 'Bezüglich unseres Disputs. Ich habe hier eine formelle Beschwerde wegen 'Toxischer Arbeitsatmosphäre'. Unterschreiben Sie, oder ich empfehle dem Vorstand Outsourcing.'",
         opts: [
             { 
-                t: "Bürokratie-Konter: 'Formular 7b fehlt'", 
+                t: "'Da fehlt Formular 7b.'", 
                 m: 5, f: 10, a: 10, c: 10, 
                 r: "Du schaust das Papier an. 'Das ist das alte Formular von 2018. Ohne Passierschein A38 kann ich das nicht annehmen.' Der Berater ist verwirrt und zieht ab." 
             },
@@ -2839,7 +2839,7 @@ export const server = [
                 r: "Frische Flur-Luft strömt herein. Die Temperatur sinkt auf erträgliche 30 Grad. Aber: Eine dauerhaft offene Serverraum-Tür ist ein massives Sicherheitsrisiko." 
             },
             { 
-                t: "MacGyver-Lösung: USB-Lüfter basteln", 
+                t: "Einen USB-Lüfter improvisieren", 
                 req: "usb_stick", 
                 m: 15, f: -5, a: -5, c: 0, 
                 r: "Du fummelst an den Anschlüssen herum und improvisierst eine aktive Kühlung. Es bringt fast nichts, sieht aber extrem technisch aus - und genau so fühlt es sich an: nach Ingenieurskunst ohne messbare Wirkung." 

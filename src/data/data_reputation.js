@@ -555,7 +555,7 @@ export const reputation = [
                 r: "Du wirfst es selbst weg. Kevin feixt im Hintergrund: 'Danke für den Zimmerservice!' Du hast gerade den Rest deines Respekts verloren." 
             },
             { 
-                t: "Passiv-Aggressiv: In seinen Rucksack stecken", 
+                t: "Kommentarlos in seinen Rucksack stecken", 
                 rep: { "Kevin": -10 },
                 m: 5, f: 0, a: -5, c: 0, 
                 r: "Du lässt den Müll heimlich in seiner Tasche verschwinden. Das wird morgen früh beim Auspacken ein sehr böses Erwachen für ihn geben. Perfekte Rache." 
@@ -687,7 +687,7 @@ export const reputation = [
         text: "Chantal stürmt an deinen Schreibtisch. Sie hält ihr Tablet wie einen Spiegel. 'Müller! Notfall! Mein Bild im Teams-Meeting sieht total fahl aus. Das Licht hier ist Neon-Hölle! Kannst du mir einen 'Glow-Up'-Filter fest in die Webcam programmieren? Ich hab gleich Call mit New York!'",
         opts: [
             { 
-                t: "Charme-Offensive: 'Du brauchst keinen Filter.'", 
+                t: "'Du brauchst keinen Filter.'", 
                 next: "path_chantal_flatter",
                 rep: { "Chantal": 10 },
                 m: 5, f: 5, a: -10, c: 0, 
@@ -1471,7 +1471,7 @@ export const reputation = [
         text: "Es sind 8 Grad in deinem Büro. Die Heizung wurde physisch abmontiert. Auf dem Boden liegt nur ein Zettel: 'Wartungsarbeiten. Dauer: Unbekannt.' Egon steht im Flur, löffelt eine heiße Suppe und grinst dich an.",
         opts: [
             { 
-                t: "Tech-Rache: Seine Stechuhr manipulieren", 
+                t: "Seine Stechuhr manipulieren", 
                 next: "path_egon_sabotage",
                 req: "admin_pw", 
                 rep: { "Egon": -15 },
@@ -1816,7 +1816,7 @@ export const reputation = [
                 r: "Du baust ihm einen Link zum Monitoring. Es blinkt rot (Serverlast) und gelb (Speicher). Der Chef wird blass. 'Oh Gott... sind wir am Ende?' Er wirkt verstört." 
             },
             { 
-                t: "Sci-Fi: Matrix-Code als Bildschirmschoner", 
+                t: "Matrix-Code als Bildschirmschoner", 
                 next: "path_ceo_cyber",
                 rep: { "Dr. Wichtig": 5 },
                 m: 5, f: 5, a: 5, c: -15,
@@ -3038,7 +3038,7 @@ export const reputation = [
         text: "Markus platzt herein. Er schwitzt. 'Müller! Ich habe dem Kunden gerade 'Voice Control 3000' verkauft. Für die alte Datenbank. Der Vertrag ist unterschrieben. Du hast bis morgen früh Zeit, das zu programmieren. Sonst sind wir beide dran.'",
         opts: [
             { 
-                t: "Tech-Pfusch: Ein Soundboard basteln", 
+                t: "Ein Soundboard basteln", 
                 next: "path_markus_demo",
                 m: 15, f: 5, a: 5, c: 0, 
                 r: "Du programmierst ein Skript, das bei 'Hallo' einfach eine MP3 abspielt. 'Hier. Besser geht's nicht.' Markus greift es sich. 'Reicht! Hauptsache es blinkt!'" 
@@ -3146,7 +3146,7 @@ export const reputation = [
         text: "Markus kommt nicht allein. Er hat einen jungen Mann im Slim-Fit-Anzug dabei. 'Müller. Das ist Kai-Uwe von 'Cloud-Force'. Er wird deine Aufgaben übernehmen. Er ist agil. Du bist... Legacy-Code. Pack deine Sachen.'",
         opts: [
             { 
-                t: "Redemption-Angebot: 'Ich kann dir die Konkurrenz hacken.'", 
+                t: "'Ich kann dir die Konkurrenz hacken.'", 
                 next: "path_markus_blackhat",
                 rep: { "Markus": 10 },
                 m: 10, f: -10, a: -5, c: 0, 
@@ -3709,7 +3709,7 @@ export const reputation = [
                 r: "Gabi hält inne. Ihre Augen blitzen. 'Informationen? Interessant. Komm in mein Büro. Wir müssen reden.'" 
             },
             { 
-                t: "Tech-Krieg: Ihre Telefonanlage hacken", 
+                t: "Ihre Telefonanlage hacken", 
                 next: "path_gabi_war",
                 rep: { "Gabi": -10 },
                 m: 10, f: -5, a: -10, c: 10,
@@ -3738,7 +3738,7 @@ export const reputation = [
                 r: "Die Horde rüttelt an deiner Tür. 'Bier! Bier!' Du sitzt im Dunkeln und schwitzt. Gabi hat gewonnen." 
             },
             { 
-                t: "Gegen-Durchsage: 'Gabi zahlt!'", 
+                t: "Per Durchsage kontern: 'Gabi zahlt!'", 
                 rep: { "Gabi": -20, "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: -10, c: 20,
                 r: "Du hackst dich ins PA-System. 'Korrektur! Gabi feiert ihren Lotto-Gewinn am Empfang!' Jetzt rennen alle zu ihr. Chaos pur." 
@@ -3787,7 +3787,7 @@ export const reputation = [
         text: "Gabi schließt die Tür. Sie holt ein Notizbuch raus. 'Okay, Vögelchen. Sing. Ich brauche die Chat-Logs von der Buchhaltung. Wer lästert über wen? Wenn du mir das gibst, sind wir quitt. Wenn nicht...'",
         opts: [
             { 
-                t: "Fake-Logs: 'Alle lieben Gabi.'", 
+                t: "Logs fälschen: 'Alle lieben Gabi.'", 
                 rep: { "Gabi": -5 },
                 m: 15, f: -5, a: 5, c: 0, 
                 r: "Du fälschst Chats. Gabi liest es und runzelt die Stirn. 'Das klingt zu nett. Du lügst doch.' Sie ist misstrauisch, aber der Krieg pausiert." 

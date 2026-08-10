@@ -113,7 +113,7 @@ export const coffee = [
                 r: "'Perfekt! Ich freu mich!' Sie schreibt ihre Nummer auf deinen Arm. Dein Selbstbewusstsein durchbricht die Decke." 
             },
             { 
-                t: "Nerd-Antwort: 'Ich muss raiden.'", 
+                t: "'Ich muss raiden.'", 
                 m: 5, f: 0, a: 5, c: 0, 
                 r: "'Oh. Okay. Prioritäten, was?' Ihr Lächeln gefriert. Sie geht. Du hast das Date für einen virtuellen Drachen geopfert." 
             },
@@ -1282,7 +1282,7 @@ export const coffee = [
                 r: "Das Dauerlächeln bekommt Risse. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
             },
             { 
-                t: "Bullshit-Bingo: 'Nur spannende Herausforderungen!'", 
+                t: "'Nur spannende Herausforderungen!'", 
 				rep: { "Dr. Wichtig": 5 },	
                 m: 10, f: 5, a: -10, c: -10, 
                 r: "Der Chef atmet erleichtert aus. 'Exzellent! Das ist der Spirit! Here, take a cookie.' Er wirft dir einen einzeln verpackten Keks zu. Du bist sicher." 

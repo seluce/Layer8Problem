@@ -107,7 +107,7 @@ export const calls = [
 	{
 		id: "call_sekretary_1",
 		char: "Gabi",
-		title: "Die Sekretärin (Wütend)",
+		title: "Die Sekretärin",
 		text: "Gabi vom Empfang brüllt ins Telefon: 'Der Drucker macht Geräusche wie eine sterbende Kaffeemühle! Ich habe seit heute Morgen keinen Kaffee und jetzt das! Tu was, sonst fliegt das Ding aus dem Fenster!'",
 		opts: [
 			{ t: "Vortrag halten", next: "call_sekretary_rage", rep: { "Gabi": -10 }, r: "Du erklärst ihr den Unterschied zwischen Lasertrommel und Fixiereinheit. Ihre Augenbraue zuckt gefährlich.", m: 10, f: -5, a: 10, c: 0 },
@@ -303,7 +303,7 @@ export const calls = [
 					r: "Du redest über Treiber-Updates. Er unterbricht dich sofort: 'Das würde ein Geheimagent auch sagen!' Er legt auf, um seinen Anwalt anzurufen." 
 				},
 				{ 
-					t: "Profi-Tipp: 'Wickeln Sie den Router in Alufolie!'", 
+					t: "'Wickeln Sie den Router in Alufolie!'", 
 					m: 5, f: 15, a: -5, c: 5, 
 					next: "path_aluhut_folie",
 					r: "Er bedankt sich erleichtert: 'Endlich ein Wissender!' Er wickelt Router und Kopfhörer ein. Das WLAN ist tot, aber er fühlt sich endlich sicher." 
@@ -494,7 +494,7 @@ export const calls = [
 		text: "Müller ruft wieder an. Er klingt panisch. 'Hören Sie... ich wollte gerade meinen Schreibtisch verschieben. Das Tape hat gehalten. Aber... die Netzwerkdose kommt mir entgegen. Und ein großes Stück Wand.'",
 		opts: [
 			{ 
-				t: "Pfusch-Tipp: 'Kalender drüberhängen.'", 
+				t: "'Kalender drüberhängen.'", 
 				m: 5, f: -5, a: 0, c: 20,
 				r: "'Meinen Sie? Okay, ich habe noch den Katzen-Kalender von 2018.' Du hörst Rascheln. 'Sieht man kaum.' Das Problem ist gelöst, aber der Facility Manager wird dich töten." 
 			},
@@ -620,7 +620,7 @@ export const calls = [
 	},
 	{
 		id: "call_tonie_kid",
-		title: "Unbekannte Nummer (Kinderstimme)",
+		title: "Unbekannte Nummer",
 		text: "Eine weinerliche Stimme am Telefon: 'Bist du der Computer-Mann? Mein Kreativ-Tonie geht nicht! Der Löwe singt nicht, die Box blinkt nur rot! Mach den Löwen heile! SOFORT!'",
 		opts: [
 			{ 
@@ -668,7 +668,7 @@ export const calls = [
 	{
 		id: "call_boss_wording",
 		char: "Dr. Wichtig",
-		title: "Der Chef (Hektisch)",
+		title: "Der Chef",
 		text: "MÜLLER! Der Drucker im Flur qualmt! Das Papier ist alle und der Toner ist explodiert! Das ist ein riesiges... na, sagen Sie schon! Was haben wir da?!",
 		opts: [
 			{ 
@@ -693,7 +693,7 @@ export const calls = [
 	{
 		id: "call_climate_emergency",
 		char: "Egon",
-		title: "Hausmeister Egon (Frierend)",
+		title: "Hausmeister Egon",
 		text: "Müller! Im Serverraum sind minus 10 Grad! Ich steh hier vor der Anlage. Meine Brille ist beschlagen, mir frieren die Zehen ab! Ich muss das Ding wärmer stellen! Soll ich den Regler in den roten oder den blauen Bereich drehen? Schnell!",
 		opts: [
 			{ 
@@ -719,7 +719,7 @@ export const calls = [
 	},
 	{
 		id: "call_locked_in",
-		title: "Unbekannte Nummer (Panisch)",
+		title: "Unbekannte Nummer",
 		text: "HILFE! Hier ist die Praktikantin Lena! Ich wollte Druckerpapier aus dem Keller holen und die Tür ist zugefallen! Hier ist ein Tastenfeld, aber ich kenne den Code nicht! Es ist dunkel und hier sind Spinnen!",
 		opts: [
 			{ 
@@ -845,7 +845,7 @@ export const calls = [
 	{
 		id: "call_gabi_sugar",
 		char: "Gabi",
-		title: "Sekretärin Gabi (Zitternd)",
+		title: "Sekretärin Gabi",
 		text: "Herr Müller... mir ist so schwindelig... Unterzucker... Ich brauche Schokolade... sofort! Aber der Automat ist leer! Haben wir nirgendwo was Süßes?!",
 		opts: [
 			{ 
@@ -985,7 +985,7 @@ export const calls = [
 	},
 	{
 		id: "call_budget_cut",
-		title: "Der Finanzchef (Wütend)",
+		title: "Der Finanzchef",
 		text: "Müller! Ihre Abteilung kostet zu viel! Ich streiche Ihnen das Budget für Kaffee und neue Mäuse! Sparen Sie gefälligst, oder ich streiche Ihre Stelle auch noch!",
 		opts: [
 			{ 
@@ -1703,7 +1703,7 @@ export const calls = [
                 r: "Du sitzt an deinem Platz und musst für Gabi auf deinem Privathandy Klatsch-Artikel über C-Promis lesen und ihr die Infos diktieren. Deine Würde sinkt auf den Nullpunkt, aber du hast die Krise regelkonform abgewendet." 
             },
             { 
-                t: "IT-Richtlinie: 'Klatsch-Seiten bleiben gesperrt, Gabi.'", 
+                t: "'Klatsch-Seiten bleiben gesperrt, Gabi.'", 
                 rep: { "Gabi": -15, "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: 5, c: 20, 
                 r: "Gabi flucht leise und legt auf. Zehn Minuten später fragt sie die VIP-Gattin nach ihrem Mann. Die lässt sich gerade scheiden und stürmt weinend raus. Der Chef macht DICH für das PR-Desaster verantwortlich." 

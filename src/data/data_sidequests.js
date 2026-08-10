@@ -79,7 +79,7 @@ export const sidequests = [
                 r: "Du schiebst dir das letzte Stück genüsslich in den Mund, genau als der Chef danach greift. Er greift ins Leere. Er starrt auf deine schokolierten Lippen, sein Gesicht läuft dunkelrot an. Er flüstert: 'Das war meins...'" 
             },
             { 
-                t: "Ninja-Move: Kuchen schnappen & flüchten", 
+                t: "Kuchen schnappen & flüchten", 
                 next: "path_cake_sugar", 
                 rep: { "Chantal": -5 },
                 m: 5, f: 5, a: -5, c: 0, 
@@ -162,7 +162,7 @@ export const sidequests = [
         text: "WUUUP! WUUUP! Die Sirene brüllt. Es riecht nicht nach Inferno, sondern eindeutig nach verbranntem 'Salty Caramel'-Popcorn aus der Teeküche. Die Kollegen rennen panisch zum Sammelplatz.",
         opts: [
             { 
-                t: "HELDENTAT: Küche stürmen!", 
+                t: "Küche stürmen!", 
                 req: "fire_ext", 
                 next: "path_fire_hero", 
                 m: 5, f: -20, a: -20, c: -10, 
@@ -693,7 +693,7 @@ export const sidequests = [
                 r: "Du kritzelst 'VORSICHT! EINSTURZGEFAHR!' auf ein Post-It, pappst es an den Holm und gehst zufrieden Mittagessen. Juristisch bist du damit aus dem Schneider. Die Physik interessiert das aber nicht." 
             },
             { 
-                t: "Quick-Fix: Kabelbinder-Orgie", 
+                t: "Kabelbinder-Orgie", 
                 req: "zip_ties", 
                 next: "path_shelf_iso", 
                 m: 10, f: -5, a: 0, c: 0, 
@@ -728,7 +728,7 @@ export const sidequests = [
         text: "Facility Management hat das Bohrloch entdeckt. 'Haben Sie etwa in die *Brandschutzwand F90* gebohrt?! Ohne den 'Antrag auf Durchdringung von Feuerwiderstandsklassen' (dreifacher Durchschlag, rosa)?! Das muss sofort zurückgebaut und verputzt werden!'",
         opts: [
             { 
-                t: "Bürokratie-Konter: 'Das war Gefahr im Verzug!'", 
+                t: "'Das war Gefahr im Verzug!'", 
                 m: 10, f: 0, a: 5, c: 0, 
                 r: "Du zitierst Arbeitsschutzgesetz §9. 'Ich habe Leben gerettet!' Der Facility-Typ wird unsicher. 'Na gut. Aber reichen Sie Formular 'Heldenmut im Amt' nach.' Puh." 
             },
@@ -1396,7 +1396,7 @@ export const sidequests = [
                 r: "Du lehnst dich entspannt zurück. *Dudel-Dudel*. Die Firma brennt, aber du knackst den Highscore. Der Chef starrt fassungslos auf dein Display. Seine Halsschlagader beginnt gefährlich zu pochen." 
             },
             { 
-                t: "Matrix-Modus: Wildes Tippen vortäuschen", 
+                t: "Wildes Tippen vortäuschen", 
                 next: "path_sys_fake", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: -5, a: 10, c: -5, 
@@ -1568,7 +1568,7 @@ export const sidequests = [
         text: "Du liest die Wirtschaftsnachrichten. Eilmeldung: 'Global Player OMEGA CORP meldet Insolvenz an!' Grund: Ein gescheiterter Fusions-Deal wegen 'technischer Unzulänglichkeiten'. 50.000 Arbeitsplätze sind weg. Der CEO der anderen Firma wurde weinend in einem Karton gesehen. Und das alles wegen einem fehlenden USB-Kabel.",
         opts: [
             { 
-                t: "Short-Selling: Auf den Absturz wetten", 
+                t: "Auf den Absturz wetten", 
                 m: 20, f: 5, a: -20, c: 10, 
                 r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn." 
             },
@@ -3270,7 +3270,7 @@ export const sidequests = [
         text: "Sabine (HR) ruft an. 'Herr Müller? Unser System zeigt, dass Sie das 90-minütige Video in exakt 14 Sekunden absolviert haben. Haben Sie etwa die Software gehackt?'",
         opts: [
             { 
-                t: "Tech-Ausrede: 'Cache-Synchronisation!'", 
+                t: "'Cache-Synchronisation!'", 
                 m: 10, f: 0, a: 10, c: -10, 
                 r: "Du faselst was von 'Asynchronen Zeitstempeln im Server'. Sabine versteht nichts und gibt auf. 'Die IT und ihre Fehler...', seufzt sie. Puh." 
             },
@@ -3451,7 +3451,7 @@ export const sidequests = [
         text: "Kevin stürmt panisch auf dich zu. 'Chef! Hast du zufällig den Feuerlöscher aus Büro 312 gesehen?! Ich hab mir da heimlich ein Käse-Toast gemacht und es hat gebrannt. Ich wollte ihn gerade zurückhängen, damit Hausmeister Egon nichts merkt, aber er ist weg!'",
         opts: [
             { 
-                t: "IT-Paranoia: 'Die neuen Löscher haben GPS-Tracker.'", 
+                t: "'Die neuen Löscher haben GPS-Tracker.'", 
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Kevin reißt die Augen auf. 'GPS?! Oh Gott, HR weiß genau, dass er zuletzt bei mir war!' Er vergisst die Suche sofort und sprintet los, um sich ein wasserdichtes Alibi für die Tatzeit zu überlegen. Du grinst in dich hinein." 
             },
