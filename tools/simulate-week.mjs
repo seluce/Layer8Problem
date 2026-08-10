@@ -84,6 +84,13 @@ const NIGHT_KEEP  = ARG('nightkeep', 0.25); // calibrated v2
 const NIGHT_T     = ARG('nighttickets', 0);
 const NIGHT_T_SET = process.argv.some(a => a.startsWith('--nighttickets='));
 const NIGHT_HALF  = process.argv.includes('--nighthalf');
+// The idle click of an exhausted contingent (week_idle vector). Knobs kept
+// from the 2026-08 starvation experiment that settled a-5 -> a0 and the
+// raised caps (old wall: ~12 idle clicks/week for SENSIBLE play).
+//   --idlem=20 --idlef=5 --idlea=0   (defaults = live data)
+const IDLE_M = ARG('idlem', 20);
+const IDLE_F = ARG('idlef', 5);
+const IDLE_A = ARG('idlea', 0);
 // --bases=0.85,0.95,1.05 overrides the three difficulty base multipliers.
 // Calibration finding: five days at day-mode-normal intensity compound to
 // ~0.77^5 = 27% before any carry-over — week days must sit BELOW their
@@ -95,7 +102,7 @@ const BASES = (() => {
 
 const SHIFT_END = 16 * 60 + 30;
 const ACTION_POOLS = ['coffee', 'server', 'calls', 'sidequests'];
-const MAXC = { coffee: 14, server: 14, calls: 12, sidequests: 18 };
+const MAXC = { coffee: 20, server: 20, calls: 17, sidequests: 26 };
 const MINC = 8;
 
 // Calibrated v1 (2026-08-08). Anchor: the mean of vernunft and gelegenheit
@@ -311,9 +318,9 @@ function playWeekDay(s, cfg, strat, dayIndex) {
             const pool = DB[action].filter(e =>
                 !s.used.has(e.id) && (!e.reqStory || s.flags.has(e.reqStory)) && !e.webOnly);
             if (cont[action] <= 0 || !pool.length) {
-                // Contingent used up or pool dry: the empty_pool fallback (time passes)
+                // Contingent used up or pool dry: the week_idle fallback (time passes)
                 s.starveClicks++;
-                apply(s, { m: 20, f: 5, a: -5 }, 'fallback');
+                apply(s, { m: IDLE_M, f: IDLE_F, a: IDLE_A }, 'fallback');
                 end = checkEnd(s);
                 if (end) return end;
                 continue;

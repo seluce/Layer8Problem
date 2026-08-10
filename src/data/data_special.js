@@ -70,16 +70,18 @@ export const special = {
 	},
 
 	/* Week mode (v4.2): the daily contingent of an action pool is used up.
-	   One entry per pool. Effects mirror empty_pool EXACTLY (m 20, f 5,
-	   a -5) because tools/simulate-week.mjs models idle clicks with these
-	   numbers - the two must not drift apart. */
+	   One entry per pool. Vector m 20, f 5, a 0 - tools/simulate-week.mjs
+	   models idle clicks with exactly these numbers, the two must not drift
+	   apart. Deliberately no longer the empty_pool vector: its a -5 turned
+	   the wall into a farmable aggro faucet (measured 2026-08, see
+	   WEEK_CONTINGENTS in engine_week.js). */
 	week_idle: {
 		coffee: {
 			id: "fallback_week_coffee",
 			title: "Kaffeeküche leergefegt",
 			text: "Die Kanne ist kalt, der Vollautomat blinkt ENTKALKEN und jemand hat den letzten Filter als Notizzettel benutzt. Für heute ist hier nichts mehr zu holen.",
 			opts: [
-				{ t: "Leer ausgehen", m: 20, f: 5, a: -5, c: 0, r: "Du starrst in die leere Kanne. Morgen wieder." }
+				{ t: "Leer ausgehen", m: 20, f: 5, a: 0, c: 0, r: "Du starrst in die leere Kanne. Morgen wieder." }
 			]
 		},
 		server: {
@@ -87,7 +89,7 @@ export const special = {
 			title: "Serverraum verdächtig still",
 			text: "Alle Lämpchen blinken grün. Kein Lüfter jault, kein Kabel schmort. Das macht dich nervöser als jeder Ausfall, aber es gibt schlicht nichts zu tun.",
 			opts: [
-				{ t: "Misstrauisch lauschen", m: 20, f: 5, a: -5, c: 0, r: "Nichts. Unheimlich. Du gehst rückwärts wieder raus." }
+				{ t: "Misstrauisch lauschen", m: 20, f: 5, a: 0, c: 0, r: "Nichts. Unheimlich. Du gehst rückwärts wieder raus." }
 			]
 		},
 		calls: {
@@ -95,7 +97,7 @@ export const special = {
 			title: "Die Hotline schweigt",
 			text: "Kein Anruf. Du hebst testweise ab: Freizeichen. Entweder sind alle Probleme gelöst oder alle haben aufgegeben. Beides wäre ein Novum.",
 			opts: [
-				{ t: "Auf Anrufe warten", m: 20, f: 5, a: -5, c: 0, r: "Das Telefon bleibt stumm. Du legst den Hörer verkehrt herum auf. Falls doch wer anruft." }
+				{ t: "Auf Anrufe warten", m: 20, f: 5, a: 0, c: 0, r: "Das Telefon bleibt stumm. Du legst den Hörer verkehrt herum auf. Falls doch wer anruft." }
 			]
 		},
 		sidequests: {
@@ -103,7 +105,7 @@ export const special = {
 			title: "Kein Dienstgang mehr",
 			text: "Der Flur ist leer, die Küche ist leer, sogar Kevin ist irgendwo verschwunden. Für heute hat das Gebäude keine Ablenkung mehr für dich übrig.",
 			opts: [
-				{ t: "Ziellos herumstehen", m: 20, f: 5, a: -5, c: 0, r: "Du drehst eine Runde und landest wieder am Schreibtisch." }
+				{ t: "Ziellos herumstehen", m: 20, f: 5, a: 0, c: 0, r: "Du drehst eine Runde und landest wieder am Schreibtisch." }
 			]
 		}
 	},

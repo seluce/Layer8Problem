@@ -55,12 +55,17 @@ export const WEEK_DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', '
 
 /**
  * Daily pool contingents (design 6.2), shared with tools/simulate-week.mjs.
- * min: no day ever feels completely dry; max: no pool can be clicked empty
- * before Friday (5 x 14 = 70 << 203 coffee events).
+ * min: no day ever feels completely dry. max: a distant ceiling, not a wall.
+ * Measured 2026-08 (600 weeks/cell): the old 14/14/12/18 caps hit SENSIBLE
+ * play ~12 idle clicks per week, and the calls cap alone raised ticket
+ * deaths from 15% to 24% - while coffee-only play loses the week at ANY cap
+ * (4-8% wins), so the wall punished the wrong players. The real brake
+ * against thin pools is the adaptive rest/days formula in
+ * weekContingentLeft(); the max only fences off pure button-hammering.
  */
 export const WEEK_CONTINGENTS = {
     min: 8,
-    max: { coffee: 14, server: 14, calls: 12, sidequests: 18 },
+    max: { coffee: 20, server: 20, calls: 17, sidequests: 26 },
 };
 
 /**
@@ -259,8 +264,11 @@ export const week = {
     // Mirrors tools/simulate-week.mjs (MINC 8, MAXC below, margin 1.3):
     // change the numbers THERE first, verify the corridors, then here.
     // The idle clicks of an exhausted contingent are modelled in the
-    // simulator with exactly the empty_pool vector (m 20, f 5, a -5), so
+    // simulator with exactly the week_idle vector (m 20, f 5, a 0), so
     // data/data_special.js week_idle must not drift from those numbers.
+    // Deliberately NOT the empty_pool vector any more: its a -5 turned the
+    // wall into a farmable aggro faucet (measured 2026-08, see
+    // WEEK_CONTINGENTS above).
 
     /** 'sidequest' (the button) and 'sidequests' (the pool) map to one key. */
     contingentKey: function(type) {

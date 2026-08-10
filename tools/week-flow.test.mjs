@@ -349,9 +349,9 @@ await ok('Formel: großer Pool → MAX gedeckelt, kleiner Rest → MIN greift', 
     resetState();
     await ensure('coffee', 'server', 'calls', 'sidequests');
     engine.startWeek('easy');
-    assert.equal(engine.weekContingentLeft('coffee'), 14);      // ~203 Events → Deckel
-    assert.equal(engine.weekContingentLeft('calls'), 12);
-    assert.equal(engine.weekContingentLeft('sidequest'), 18);   // Singular-Button → Pool-Key
+    assert.equal(engine.weekContingentLeft('coffee'), 20);      // ~203 events -> the cap
+    assert.equal(engine.weekContingentLeft('calls'), 17);
+    assert.equal(engine.weekContingentLeft('sidequest'), 26);   // singular button -> pool key
 
     const orig = DB.server;
     DB.server = orig.slice(0, 9);                               // Rest 9
@@ -368,7 +368,7 @@ await ok('spendContingent zählt runter, die Nacht setzt zurück', () => {
     assert.equal(engine.weekContingentLeft('calls'), start - 1);
     engine.advanceWeekNight();
     assert.equal(state.week.contingents.calls ?? null, null);   // lazy bis zum ersten Zug
-    assert.equal(engine.weekContingentLeft('calls'), 12);       // Dienstag, Pool weiter groß
+    assert.equal(engine.weekContingentLeft('calls'), 17);       // Tuesday, pool still deep
 });
 await ok('Kontingent 0 → trigger() liefert das Leerlauf-Event mit Zeitkosten', async () => {
     resetState();
@@ -380,6 +380,7 @@ await ok('Kontingent 0 → trigger() liefert das Leerlauf-Event mit Zeitkosten',
     Math.random = origRandom;
     assert.equal(calls.terminal?.[0]?.id, 'fallback_week_coffee');
     assert.equal(calls.terminal[0].opts[0].m, 20);              // Sim-Kontrakt: Zeit vergeht
+    assert.equal(calls.terminal[0].opts[0].a, 0);               // sim contract: the wall pays nothing
     assert.equal(state.week.contingents.coffee, 0);             // Leerlauf verbraucht nichts
 });
 await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
