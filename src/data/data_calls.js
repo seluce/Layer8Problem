@@ -4011,6 +4011,11 @@ export const calls = [
 				t: "'Das ist die neue Kühlflüssigkeit.'",
 				m: 5, f: 0, a: 0, c: 10,
 				r: "Pause. 'Die riecht nach Currywurst?' — 'Bio-basiert.' Klick."
+			},
+			{
+				t: "'Wir lassen das durch einen Fachbetrieb prüfen.'",
+				m: 5, f: 5, a: 0, c: -5,
+				r: "'Ein Fachbetrieb. Sehr gut.' Frau Sonntag klingt hörbar besänftigt — das Wort ordnet ihre Welt. Es gibt keinen Fachbetrieb, aber es gibt jetzt einen Vorgang, und das ist in der Buchhaltung fast dasselbe."
 			}
 		]
 	},
@@ -4034,6 +4039,228 @@ export const calls = [
 				t: "'Mir fällt nichts auf.' Langsam sprechen.",
 				m: 5, f: 5, a: -5, c: 0,
 				r: "Du dehnst jedes Wort wie Kaugummi. Gabi lacht, bis sie husten muss. Es ist der erste Ton von Freude, den dieses Haus heute produziert hat."
+			},
+			{
+				t: "'Führ Protokoll. Für die Nachwelt.'",
+				m: 5, f: 5, a: -5, c: 0,
+				r: "Gabi nimmt es ernster als gedacht. Im Laufe des Tages entsteht am Empfang eine Liste: 'Chronik der langsamen Tage', mit Uhrzeitspalte und Beobachtungen. Sie wird sie aufheben. Solche Dokumente überleben Firmen."
+			}
+		]
+	},
+
+	/* -------------------------------------------------------------------
+	   Dreiteiler wave 4 (v5.0): call chains. The week's fresh dimension
+	   here: callers who come BACK. One chain runs in reverse - the call is
+	   the opener, the consequence walks in as a sidequest (sq_brandt_1).
+	   Duplicate check against the stock (2026-08): Pizza/misdials (5x),
+	   Fax (6x), the callback SERVICE gag, the distressed-intern calls
+	   (Lena in the basement, the crying intern) and the title "Ticket
+	   #4711" (Frau Elster) are taken - hence the secret-help chain
+	   inverts the status (power calls, quietly), and the ancient ticket
+	   carries the LOW number an ancient ticket would actually have.
+	   ------------------------------------------------------------------- */
+	{
+		id: "call_diskret_1",
+		title: "Ein Freund der Firma",
+		text: "Die Stimme ist gedämpft, aber gewohnt, dass man ihr zuhört. 'Hier spricht... sagen wir: ein Freund der Firma. Oberste Etage. Es geht um ein Bildschirm-Problem, und es darf dazu keine Akte geben. Keine Mail, kein Ticket, kein Flurgespräch. Verstehen wir uns?'",
+		opts: [
+			{
+				t: "Diskret hochgehen und nachsehen",
+				m: 15, f: -5, a: -5, c: 0,
+				next: "call_diskret_gefallen",
+				r: "Eckbüro, Auszeichnungen an der Wand, und mittendrin ein Monitor, dessen Bild seitwärts steht. Strg, Alt, Pfeiltaste — drei Sekunden. Er nickt staatsmännisch, als hättet ihr gemeinsam eine Krise abgewendet. 'Das bleibt unter uns.'"
+			},
+			{
+				t: "'Dafür gibt es das Ticketsystem. Für alle.'",
+				m: 5, f: 0, a: -5, c: 10,
+				r: "Eine sehr lange Pause. 'Interessant', sagt die Stimme, und das Wort fällt wie ein Aktenvermerk. Dann legt sie auf. Du hast das Richtige getan. Du wirst herausfinden, was es kostet."
+			},
+			{
+				t: "Die Lösung am Telefon durchflüstern",
+				m: 15, f: 0, a: 10, c: 0,
+				r: "'Strg... Alt... welcher Pfeil? Es gibt VIER.' Ihr braucht drei Anläufe, einmal steht das Bild kopfüber, und er atmet dabei wie ein Mann, der Schlimmes gesehen hat. Dann ist es gerade. Er legt ohne Gruß auf. Das war der Dank."
+			}
+		]
+	},
+	{
+		id: "call_diskret_2",
+		reqStory: "call_diskret_gefallen",
+		reqStoryAge: 1,
+		title: "Der Freund ruft wieder an",
+		text: "Dieselbe gedämpfte Stimme, diesmal ohne Vorrede: 'Das Symbol unten ist weg. Das für die... Tabellen. Und mein Kalender zeigt eine Woche an, die es nicht gibt.' Eine Pause, dann, beinahe freundlich: 'Sie sind jetzt meine Nummer.'",
+		opts: [
+			{
+				t: "Wieder diskret hochgehen",
+				m: 20, f: 5, a: 5, c: -5,
+				r: "Taskleiste repariert, Kalenderansicht zurückgestellt. Er telefoniert währenddessen und deutet nur auf Dinge. Auf dem Rückweg begegnest du seiner Assistentin, die dich ansieht, als wüsste sie genau, was du jetzt bist: die Nummer."
+			},
+			{
+				t: "'Es gibt dafür ein ganzes Team. Es ist gut.'",
+				m: 10, f: 0, a: -5, c: 5,
+				r: "Wieder die lange Pause, aber diesmal hältst du sie aus. 'Wie Sie meinen.' Es klingt nicht nach Einverständnis. Es klingt nach einem Vermerk. Trotzdem: Auflegen fühlt sich heute an wie Feierabend."
+			},
+			{
+				t: "Kevin schicken. Sollen die sich kennenlernen.",
+				m: 10, f: 5, a: 0, c: 5,
+				rep: { "Kevin": -5 },
+				r: "Kevin kommt nach einer Stunde zurück, stiller als sonst. 'Er hat mich Justin genannt. Dreimal.' Mehr sagt er nicht. Er wird es dir nicht vergessen."
+			}
+		]
+	},
+	{
+		id: "call_diskret_3",
+		reqStory: "call_diskret_gefallen",
+		reqStoryAge: 2,
+		title: "Die Revanche",
+		text: "In deinem Postfach liegt ein laminierter Parkausweis: 'Stellplatz 2 — auf Widerruf'. Kein Absender, kein Anschreiben. Stellplatz 2 liegt direkt neben Stellplatz 1, und auf Stellplatz 1 parkt jeden Morgen der Wagen der Geschäftsleitung. Das ist keine Parkkarte. Das ist eine Beförderung in Sichtweite.",
+		opts: [
+			{
+				t: "Annehmen und ab jetzt vorne parken",
+				m: 5, f: 0, a: -10, c: 5,
+				r: "Kein Schneescharren mehr am hintersten Platz, kein Pfützen-Slalom. Der Preis: jeden Morgen dieselben vier Meter Smalltalk-Gefahr. Du übst auf dem Weg schon mal ein Nicken, das nach allem und nichts aussieht."
+			},
+			{
+				t: "Den Ausweis kommentarlos zurück ins Hauspostfach legen",
+				m: 5, f: 0, a: 5, c: -5,
+				r: "Manche Geschenke sind Leinen. Du legst ihn zurück, ohne Notiz, so wie er kam. Falls das jemand als Antwort versteht, ist es die richtige."
+			},
+			{
+				t: "Den Ausweis Kevin schenken",
+				m: 5, f: 0, a: -5, c: 5,
+				rep: { "Kevin": 5 },
+				r: "Kevin fragt nicht, woher. Er fragt nie. Anderntags steht sein Kleinwagen auf Stellplatz 2, frisch gewaschen, und die Geschäftsleitung grüßt ihn beim Aussteigen mit kleinem Zögern. Kevin grüßt zurück, würdevoll. Das Gleichgewicht des Hauses hat sich verschoben."
+			}
+		]
+	},
+	{
+		id: "call_kalt_1",
+		title: "Digitalisierungslösungen",
+		text: "'Guten Tag, Brandt mein Name, ich darf Ihnen ganz kurz unsere Digitalisierungslösung vorstellen—' Er redet ohne Punkt. Ganzheitlich, skalierbar, KI-gestützt. Er möchte 'am liebsten direkt mit der Entscheiderebene' sprechen, aber du gehst ihm auch. Jeder geht ihm.",
+		opts: [
+			{
+				t: "'Kein Interesse. Wirklich nicht.'",
+				m: 5, f: 0, a: 5, c: 0,
+				r: "'Verstehe ich VOLL', sagt er und redet weiter. Du legst mitten in 'skalierbar' auf. Es fühlt sich unhöflich an und richtig."
+			},
+			{
+				t: "'Kommen Sie doch einfach mal persönlich vorbei.'",
+				m: 5, f: 0, a: -5, c: 0,
+				next: "call_brandt_kommt",
+				r: "Es ist der älteste Trick der Abwimmel-Kunst: eine Einladung, die keine ist. Brandt ist kurz still. 'Das... ja! Das machen wir!' Du legst zufrieden auf. Der Satz hat noch nie Konsequenzen gehabt."
+			},
+			{
+				t: "'Schicken Sie mir Unterlagen.'",
+				m: 5, f: 5, a: 0, c: 0,
+				r: "Die Mail kommt binnen Minuten: vierzig Megabyte, ein PDF namens 'Journey_final_v7_NEU'. Es wird ungeöffnet alt werden."
+			}
+		]
+	},
+	{
+		id: "call_grabowski_1",
+		title: "Ticket 108",
+		text: "'Grabowski hier. Ich bin seit sieben Jahren in Rente, aber das tut nichts zur Sache.' Er klingt wie jemand, der Briefe mit Füller schreibt. 'Ihr Vorgänger hat mir zugesagt, dass Ticket 108 gelöst wird. Ich rufe seitdem einmal im Jahr an. Jetzt sind Sie dran, junger Mann.'",
+		opts: [
+			{
+				t: "Das Ticket ernsthaft raussuchen",
+				m: 20, f: -10, a: 5, c: 0,
+				next: "call_grabowski_akte",
+				r: "Es existiert. Ticket 108, angelegt vor deiner Zeit, Status: offen. Das älteste offene Ticket der Firma. Betreff: 'Umlaute im Etikettendruck fehlerhaft'. Du druckst es aus. So etwas druckt man aus."
+			},
+			{
+				t: "'Das System kennt kein Ticket 108.'",
+				m: 5, f: 5, a: 0, c: 5,
+				r: "'Das hat Ihr Vorgänger auch gesagt. 2019.' Er klingt nicht einmal enttäuscht, nur geduldig. Das ist das Schlimmste daran. 'Bis nächstes Jahr dann.' Er legt zuerst auf."
+			},
+			{
+				t: "'Erzählen Sie mir von damals.'",
+				m: 15, f: 5, a: -10, c: 0,
+				r: "Herr Grabowski erzählt: von Etiketten, vom Vorgänger, von einer Betriebsfeier, bei der der Drucker eine Rolle spielte. Zwanzig Minuten Firmengeschichte aus erster Hand. Das Ticket bleibt offen, doch ihr verabschiedet euch wie alte Bekannte. 'Bis nächstes Jahr', sagt er, und es klingt nach Vorfreude."
+			}
+		]
+	},
+	{
+		id: "call_grabowski_2",
+		reqStory: "call_grabowski_akte",
+		reqStoryAge: 1,
+		title: "Sieben Jahre, eine Checkbox",
+		text: "Ticket 108 liegt ausgedruckt auf deinem Tisch, und die Lösung ist eine Demütigung für alle Beteiligten: Das Encoding-Problem von damals ist seit Jahren eine Checkbox in den Druckeinstellungen. Ein Haken. Sieben Jahre, drei Vorgänger, ein Haken.",
+		opts: [
+			{
+				t: "Haken setzen, testen, Herrn Grabowski anrufen",
+				m: 25, f: -10, a: -15, c: -5,
+				r: "Das Testetikett druckt 'Grüße aus Lübeck' mit allen Umlauten. Du rufst ihn an und sagst den Satz: 'Ticket 108 ist gelöst.' Herr Grabowski schweigt sehr lange. 'Sieben Jahre', sagt er dann, feierlich. 'Das werde ich dem Kegelverein erzählen.' Es ist das ehrlichste Lob deiner Laufbahn."
+			},
+			{
+				t: "Haken setzen, Ticket still schließen",
+				m: 10, f: 0, a: -5, c: 0,
+				r: "Status: gelöst. Keine Rückmeldung erforderlich. Das älteste Ticket der Firma stirbt lautlos in einem Dropdown. Herr Grabowski wird nächstes Jahr anrufen und es von einem Fremden erfahren. Du hast ein Ticket gelöst und einen Moment verschenkt."
+			}
+		]
+	},
+	{
+		id: "call_tennis_1",
+		title: "Bitte um Rückruf",
+		text: "Auf deiner Tastatur klebt ein Zettel aus fremder Hand: 'Herr Leuchter, Niederlassung Süd, bittet um Rückruf. Wichtig.' Du rufst an. Es klingelt lange, dann eine Kollegin: 'Der Herr Leuchter ist gerade im Gespräch. Soll ich was ausrichten?'",
+		opts: [
+			{
+				t: "Nachricht hinterlassen: bittet um Rückruf",
+				m: 5, f: 0, a: 0, c: 0,
+				next: "call_tennis_laeuft",
+				r: "'Richte ich aus.' Du legst auf und ahnst, was du gerade gestartet hast. Irgendwo in Süddeutschland klebt jetzt ein Zettel auf einer Tastatur, und er trägt deinen Namen."
+			},
+			{
+				t: "'Ich versuche es später wieder. Und wieder.'",
+				m: 10, f: -5, a: 5, c: 0,
+				next: "call_tennis_laeuft",
+				r: "Zweiter Versuch: Besprechung. Dritter: Mittagspause. Beim vierten nimmt jemand ab, der nur vertretungsweise da ist und niemanden kennt, auch Herrn Leuchter nicht. Du gibst für heute auf, aber ehrenvoll."
+			},
+			{
+				t: "Zettel zu den anderen Zetteln legen",
+				m: 5, f: 10, a: 0, c: 5,
+				r: "Wenn es wichtig ist, ruft er wieder an. So lautet das Gesetz, und das Gesetz hat dich selten enttäuscht. Der Zettel kommt auf den Stapel, und der Stapel sagt nichts dazu."
+			}
+		]
+	},
+	{
+		id: "call_tennis_2",
+		reqStory: "call_tennis_laeuft",
+		reqStoryAge: 1,
+		title: "Der Gegenzettel",
+		text: "Ein neuer Zettel, andere Handschrift: 'Herr Leuchter hat zurückgerufen. Sie waren im Serverraum. Er bittet erneut um Rückruf.' Darunter, kleiner: 'Er sagt, es wird langsam absurd.' Du rufst an. 'Der Herr Leuchter ist gerade in ein Meeting gegangen.' Natürlich ist er das.",
+		opts: [
+			{
+				t: "Per Mail einen festen Telefonmoment ausmachen",
+				m: 10, f: -5, a: 5, c: 0,
+				r: "Du schreibst: 'Vorschlag: morgen, gleich als Erstes, ich rufe an.' Die Antwort kommt prompt und aus einem Kalender-Automaten: Herr Leuchter ist morgen ganztägig im Workshop. Der Automat wünscht eine gute Restwoche."
+			},
+			{
+				t: "Zurückrufen lassen ausrichten lassen",
+				m: 5, f: 5, a: 5, c: 0,
+				r: "Die Kollegin in Süd notiert es mit hörbarem Vergnügen. 'Sie beide sind hier schon ein Begriff.' Ihr seid ein Running Gag einer Niederlassung, die du nie betreten hast. Auch eine Form von Bekanntheit."
+			},
+			{
+				t: "Einen Brief schreiben. Papier, Umschlag, Marke.",
+				m: 15, f: -5, a: -5, c: 0,
+				r: "Drei Sätze mit Füller, Hauspost nach Süd. Ein Brief kann nicht in ein Meeting gehen — das ist seine Stärke. Die Antwort, hörst du später, hängt am schwarzen Brett der Niederlassung. Erreicht habt ihr euch immer noch nicht, doch ihr seid jetzt Brieffreunde."
+			}
+		]
+	},
+	{
+		id: "call_tennis_3",
+		reqStory: "call_tennis_laeuft",
+		reqStoryAge: 2,
+		title: "Durchgekommen",
+		text: "Das Telefon klingelt, du hebst ab, und eine Stimme sagt: 'Leuchter.' Ihr schweigt beide einen Moment, wie zwei Bergsteiger auf dem Gipfel. Dann sagt er es: 'Ich weiß ehrlich gesagt nicht mehr, worum es ging.' Du siehst auf deinen Zettelstapel. Du weißt es auch nicht.",
+		opts: [
+			{
+				t: "Gemeinsam rekonstruieren, was es gewesen sein könnte",
+				m: 15, f: 0, a: -10, c: 0,
+				r: "Ihr geht die Möglichkeiten durch: die Schnittstelle? Die Zugänge für den Neuen? Nach fünf Minuten einigt ihr euch darauf, dass es sich vermutlich von selbst erledigt hat — die stabilste Lösung, die diese Firma kennt. Ihr lacht. Es ist das erste Gespräch mit Süd seit Jahren, das beiden gefallen hat."
+			},
+			{
+				t: "'Wollen wir es dabei belassen?'",
+				m: 5, f: 5, a: -10, c: 0,
+				r: "'Gerne.' Ihr legt gleichzeitig auf. Sauberer hätte man es nicht lösen können."
 			}
 		]
 	},

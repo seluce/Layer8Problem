@@ -7744,6 +7744,12 @@ export const sidequests = [
             m: 10, f: 0, a: 5, c: 0,
             rep: { "Kevin": -5 },
             r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+        },
+        {
+            t: "Das Sandwich Kevin überlassen",
+            m: 5, f: 0, a: -5, c: 0,
+            rep: { "Kevin": 5 },
+            r: "'Du willst nicht?' Kevin nimmt es mit dem Respekt eines Mannes, der Verzicht einordnen kann. Das Fach klemmt wieder zu. Beute nimmst du keine mit, nur Standort und Verfahren. Wissen ist auch ein Vorrat."
         }
     ]
 },
@@ -7828,6 +7834,11 @@ export const sidequests = [
             t: "Weitergehen. Das Haus hat entschieden.",
             m: 5, f: 5, a: 5, c: 0,
             r: "Wer einen Termin hat, existiert — so funktioniert diese Firma. Später hängt in der Teeküche ein Aushang: 'Transformationsprojekt: erste Ergebnisse folgen.' Es gibt jetzt ein Transformationsprojekt. Du warst dabei, als es nicht entstanden ist."
+        },
+        {
+            t: "Sich dazusetzen und mitschreiben",
+            m: 25, f: 5, a: -5, c: -5,
+            r: "Du nickst an den richtigen Stellen und notierst Wörter, die keine Sätze ergeben. Nach dem Termin steht dein Name im Verteiler des Projekts, das es nicht gibt. Es ist der karrierefreundlichste Unsinn, an dem du je beteiligt warst."
         }
     ]
 },
@@ -7951,6 +7962,11 @@ export const sidequests = [
             t: "Fünf Sterne, weitergehen",
             m: 5, f: 5, a: 0, c: -5,
             r: "Fünf Sterne für einen Korb, aus dem fast niemand etwas hatte. Irgendwo entsteht daraus eine Folie mit einem Balkendiagramm, und das Balkendiagramm wird glücklich sein."
+        },
+        {
+            t: "Bei der Initiative anrufen und Nachschub loben",
+            m: 10, f: 5, a: -5, c: 5,
+            r: "Die Hotline ist elektrisiert — endlich Resonanz! Man bedankt sich für das 'wertvolle Engagement' und kündigt an, das Format auszubauen. Du ahnst, was du getan hast. Demnächst stehen hier zwei Körbe."
         }
     ]
 },
@@ -8008,6 +8024,43 @@ export const sidequests = [
             t: "Das Handy auf den Aktenwagen der Hauspost legen",
             m: 10, f: 5, a: -5, c: 5,
             r: "Der Wagen rollt den ganzen Tag durchs Haus, dein Schrittzähler rollt mit. Bei Feierabend führst du die Einzelwertung mit weitem Abstand. Markus ist zu Tränen gerührt. Das schlechte Gewissen hält sich in Grenzen, aber es hält sich."
+        },
+        {
+            t: "Kopfhörer auf und Treppen-Intervalle",
+            m: 20, f: -10, a: -10, c: 0,
+            req: "headphones",
+            rep: { "Markus": 5 },
+            r: "Mit Musik sind Treppen ein Taktspiel. Vier Stockwerke rauf, vier runter, der Bass zählt mit. Unten wartet Markus mit erhobener Faust, und ausnahmsweise erwiderst du sie. Der IT-Balken bekommt Nachschub, du bekommst einen freien Kopf."
+        }
+    ]
+},
+
+{
+    /* Dreiteiler wave 4 (v5.0): reverse cross-pool - the cold call was the
+       opener (call_kalt_1), the consequence walks in through the door. */
+    id: "sq_brandt_1",
+    kind: "text",
+    reqStory: "call_brandt_kommt",
+    reqStoryAge: 1,
+    title: "Wie telefonisch vereinbart",
+    text: "Am Empfang steht ein Mann im Sakko, ein Rollup-Banner unterm Arm wie ein Feldzeichen. 'Herr Brandt! Wie telefonisch vereinbart!' Gabi hat ihn zu dir durchgestellt, mit dem Gesichtsausdruck von jemandem, der ganz genau weiß, wer hier was vereinbart hat. Das Banner entfaltet sich von allein ein Stück. Es will das hier.",
+    opts: [
+        {
+            t: "Den Termin durchstehen, mit Würde",
+            m: 35, f: 0, a: 10, c: 0,
+            r: "Vierzig Minuten Folien. Ganzheitlich, skalierbar, eine Roadmap mit drei Horizonten. Du unterschreibst nichts, nickst sparsam und begleitest ihn hinaus. An der Tür schüttelt er dir lange die Hand: 'Ein sehr gutes Erstgespräch.' Es wird ein Protokoll davon geben. Du wirst darin als 'interessiert' geführt."
+        },
+        {
+            t: "Nach oben durchreichen: 'Das ist Chefsache.'",
+            m: 10, f: 5, a: -5, c: 5,
+            rep: { "Dr. Wichtig": -5 },
+            r: "Du meldest Brandt bei Dr. Wichtig an und gehst. Eine Stunde später sind die beiden noch im Gespräch, und durch die Glastür siehst du das Schlimmste: Sie verstehen sich. Auf dem Flipchart steht bereits das Wort SYNERGIEPOTENZIAL. Was immer daraus wird — es trägt deine Anmeldung."
+        },
+        {
+            t: "Gabi um einen Notfall bitten",
+            m: 10, f: 0, a: -5, c: 0,
+            rep: { "Gabi": 5 },
+            r: "Gabi erscheint nach zwei Minuten mit ernster Miene: 'Der Termin mit dem Brandschutz — die warten.' Es gibt keinen Termin und keinen Brandschutz, aber Herr Brandt weicht Autorität instinktiv aus. Sie eskortiert ihn hinaus und sagt im Vorbeigehen, ohne die Lippen zu bewegen: 'Du schuldest mir was.'"
         }
     ]
 },

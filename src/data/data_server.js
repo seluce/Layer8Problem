@@ -5105,6 +5105,11 @@ export const server = [
                 t: "Tür zu. Riecht ja keiner außer dir.",
                 m: 5, f: 5, a: 0, c: 5,
                 r: "Du klemmst ein Duftbäumchen ans Rack. Jetzt riecht es nach Grillabend im Neuwagen."
+            },
+            {
+                t: "Lüfter auf Maximum und Tür zu",
+                m: 5, f: 5, a: 5, c: 5,
+                r: "Volle Drehzahl gegen die Kruste. Rack 3 klingt jetzt wie ein startendes Kleinflugzeug, und im Flur bleibt jemand stehen und horcht. Temperatur: stabil. Lage: instabil."
             }
         ]
     },
@@ -5125,6 +5130,11 @@ export const server = [
                 m: 20, f: 5, a: 0, c: 5,
                 rep: { "Kevin": -5 },
                 r: "Kevin fragt nicht mal, warum da Ketchup ist. Er holt Küchenrolle und fängt an. Das beunruhigt dich mehr als der Ausfall."
+            },
+            {
+                t: "Den Ausfall offiziell melden, mit allem",
+                m: 15, f: 0, a: 5, c: 10,
+                r: "Du schreibst die Störmeldung, Ursache: 'thermisches Ereignis'. Das Wort Ketchup kommt nicht vor, aber die Meldung landet im Verteiler, und der Verteiler stellt Fragen. Wenigstens ist es jetzt ein Vorgang mit Nummer."
             }
         ]
     },
@@ -5146,6 +5156,11 @@ export const server = [
                 t: "Erst die Rechnung prüfen, dann einbauen",
                 m: 35, f: -10, a: -10, c: -10,
                 r: "Der Express-Zuschlag ist teurer als die Paste. Du zeichnest die Rechnung sauber gegen, heftest sie dahin ab, wo die Buchhaltung sie erwartet, und schraubst dann in Ruhe. Zwei Baustellen weniger."
+            },
+            {
+                t: "Einbauen und den Rest einlagern",
+                m: 35, f: -10, a: -10, c: 0,
+                r: "Kühler ab, Paste drauf, Takt hoch — und die zwei übrigen Tuben ins Werkzeugfach, beschriftet und sichtbar. Das alte Post-it wandert in den Papierkorb, ein neues an die Wand: 'IST DA.' Der nächste Notfall findet eine andere Firma vor."
             }
         ]
     },
@@ -5190,6 +5205,12 @@ export const server = [
                 t: "Die zwölf Minuten stillschweigend zurückdrehen",
                 m: 10, f: 5, a: 5, c: 15,
                 r: "Die Uhr stimmt wieder, die Stempel-Einträge von heute früh stimmen jetzt doppelt nicht. Irgendwo im Haus vergleicht gerade jemand zwei Listen."
+            },
+            {
+                t: "Frau Elster die Rohdaten geben",
+                m: 15, f: 5, a: -5, c: 0,
+                rep: { "Frau Elster": 5 },
+                r: "Du schickst ihr die Drift-Tabelle mit einer Zeile Erklärung. Zurück kommt ein Dokument mit Korrekturspalten, Fußnoten und Versionsnummer. Die Zeitquelle trägst du nebenbei nach — die Tabelle war der eigentliche Berg."
             }
         ]
     },
@@ -5210,6 +5231,13 @@ export const server = [
                 t: "Ablehnen und selbst crimpen",
                 m: 30, f: -10, a: 10, c: 0,
                 r: "Aus zwei halbtoten Kabeln wird ein dreivierteltotes. Der dritte Stecker sitzt erst beim fünften Versuch, und die Crimpzange hinterlässt einen Abdruck in deiner Handfläche. Port 12 lebt. Egon geht kopfschüttelnd, die Reliquie unterm Arm."
+            },
+            {
+                t: "Erst die Bedingungen klären",
+                m: 10, f: 0, a: 5, c: 0,
+                loot: "cable",
+                next: "srv_egon_kabel",
+                r: "'Rückgabe bei Bedarf. Zustand: geerbt.' Egon übergibt das Kabel wie eine Amtskette. Die Bedingungen bleiben unklar, gebunden bist du trotzdem. Mündlich. Vor Zeugen, sagt Egon. Welche Zeugen, sagt er nicht."
             }
         ]
     },
@@ -5289,6 +5317,11 @@ export const server = [
                 t: "Wegpusten und weitermachen",
                 m: 5, f: 10, a: 0, c: 5,
                 r: "Beim nächsten Vorbeigehen liegt der Haufen wieder da. Etwas größer. Mit einer Büroklammer drin, die du kennst."
+            },
+            {
+                t: "Einen Keks aufs Rack legen. Diplomatie.",
+                m: 5, f: 5, a: -5, c: 0,
+                r: "Wenn da oben jemand wohnt, soll er wenigstens wissen, dass man zivilisiert ist. Der Keks ist beim nächsten Vorbeigehen weg. Der Haufen ist größer. Ihr habt jetzt Handelsbeziehungen."
             }
         ]
     },
@@ -5309,6 +5342,11 @@ export const server = [
                 m: 15, f: 5, a: 5, c: 5,
                 next: "srv_marder_meldung",
                 r: "'JETZT ist es ein Marder', sagt Blaschke. 'Vorher war es günstiger.' Er kommt trotzdem."
+            },
+            {
+                t: "Fenster auf, Tür zu, auf Auszug hoffen",
+                m: 5, f: 10, a: 0, c: 5,
+                r: "Frische Luft für alle Beteiligten. Das Tier bleibt, der Geruch verteilt sich großzügiger im Stockwerk, und irgendwo niest jemand demonstrativ. Der Plan hat Schwächen, dafür kostet er nichts. Noch nicht."
             }
         ]
     },
@@ -5329,6 +5367,11 @@ export const server = [
                 t: "Fragen, ob das öfter vorkommt",
                 m: 10, f: 0, a: -10, c: 0,
                 r: "'Dritter dieses Jahr. Die kommen über die Tiefgarage.' Er sagt es wie eine Wetterlage. Du nimmst dir vor, das Auto woanders zu parken."
+            },
+            {
+                t: "Sich das Fallenstellen erklären lassen",
+                m: 15, f: -5, a: -10, c: 0,
+                r: "Blaschke erklärt in vier Sätzen Köderwahl, Windrichtung und warum der Zwieback halbiert ist. Nebenbei erfährst du mehr über dieses Gebäude als aus vier Jahren Intranet. Du merkst dir alles. Man weiß ja nie, wer als Nächstes einzieht."
             }
         ]
     },

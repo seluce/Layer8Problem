@@ -4705,6 +4705,11 @@ export const coffee = [
                 t: "Fragen, warum der Pilot so schnell vorbei ist",
                 m: 10, f: 0, a: -10, c: 0,
                 r: "Die Antwort steht in keiner Mail, aber die Teeküche weiß es: Die Fehlerquote der Buchhaltung. Frau Sonntag soll drei Überweisungen nach Liechtenstein geschickt haben. Aus Versehen. Alle drei."
+            },
+            {
+                t: "Die Nachricht von Tür zu Tür tragen",
+                m: 15, f: 0, a: -10, c: 0,
+                r: "Du gehst den Flur ab wie ein Ausrufer: 'Die Maschine kann wieder.' Türen öffnen sich, Tassen werden gegriffen, jemand applaudiert leise. Für zehn Minuten bist du der beliebteste Mensch der Etage, und es war nicht mal deine Leistung."
             }
         ]
     },
@@ -4724,6 +4729,12 @@ export const coffee = [
                 t: "Die French Press vorsichtshalber abschaffen",
                 m: 10, f: 5, a: 5, c: -5,
                 r: "Wer gelobt wird, wird beobachtet. Die Dose wandert in die Aktentasche, der Serverraum riecht wieder nach Serverraum. Ein Umzug, nur trauriger."
+            },
+            {
+                t: "Kevin einweihen und die Dose teilen",
+                m: 10, f: 0, a: -5, c: 5,
+                rep: { "Kevin": 5 },
+                r: "Kevin probiert, nickt, sagt nichts. Dann holt er sein kleines Buch heraus und notiert etwas. Die Verschwörung hat jetzt zwei Mitglieder und eine Akte, und du hoffst sehr, dass beides nie relevant wird."
             }
         ]
     },
@@ -4767,6 +4778,11 @@ export const coffee = [
                 t: "'Nehmen Sie sie einfach schnell mit.'",
                 m: 5, f: 0, a: 10, c: 0,
                 r: "Er versteht. Beim Rausrollen quietscht die Sackkarre einmal, wie zum Abschied. Der alte Automat mahlt demonstrativ laut. Sein Kaffee schmeckt heute nach Standpauke."
+            },
+            {
+                t: "Ein Abschiedsfoto machen",
+                m: 5, f: 5, a: 0, c: 0,
+                r: "Kowalski stellt sich unaufgefordert neben die Sackkarre und posiert wie fürs Prospekt. Er hat das offensichtlich schon oft gemacht. Das Foto landet im Team-Chat mit der Unterschrift 'Sie war zu gut für uns.' Drei Trauer-Emojis, eines von Kevin."
             }
         ]
     },
@@ -4810,6 +4826,11 @@ export const coffee = [
                 t: "Sie wortlos vom Tisch nehmen, mitten im Gespräch",
                 m: 5, f: 0, a: -10, c: 5,
                 r: "Petzold verliert kurz den Faden und dirigiert ins Leere. Du bist schon an der Tür. Manche Botschaften brauchen keinen Ton."
+            },
+            {
+                t: "Stehen bleiben und zusehen, wie er daraus trinkt",
+                m: 10, f: 5, a: 10, c: 0,
+                r: "Petzold trinkt, dirigiert, trinkt wieder. Milchschaum. Aus deiner Tasse. Du gehst wieder, ohne etwas gesagt zu haben, und nimmst das Bild mit. Es wird dich in ruhigen Momenten besuchen."
             }
         ]
     },
@@ -4829,6 +4850,11 @@ export const coffee = [
                 t: "Das Rooibos-Etikett aufheben. Als Beweisstück.",
                 m: 5, f: 0, a: -5, c: 0,
                 r: "Du klemmst das Etikett an den Monitor, zu den anderen ungelösten Fällen. Irgendwer in diesem Haus trinkt Rooibos-Vanille aus fremden Tassen. Du wirst wachsam bleiben."
+            },
+            {
+                t: "Rooibos-Vanille kaufen und danebenstellen",
+                m: 10, f: 0, a: -5, c: 0,
+                r: "Eine ganze Packung, gut sichtbar neben der Tasse. Wenn der Unbekannte wiederkommt, soll er ordentlich versorgt sein. Falle oder Gastgeschenk — das darf er selbst entscheiden."
             }
         ]
     },
@@ -4847,6 +4873,12 @@ export const coffee = [
                 t: "'E-52. Da müssen Sie ein Ticket aufmachen.'",
                 m: 5, f: 5, a: 0, c: 0,
                 r: "Sie sieht dich an, dann das Display, dann wieder dich. 'Ein Ticket. Für den Kaffeeautomaten.' Du nickst ernst. Irgendwo muss die Grenze der Zuständigkeit verlaufen, und heute verläuft sie hier."
+            },
+            {
+                t: "Streng mit dem Automaten sprechen",
+                m: 5, f: 5, a: -5, c: 0,
+                next: "cof_sonntag_dank",
+                r: "Du stellst dich vor die Maschine und sagst mit Nachdruck: 'E-52. Wir hatten das besprochen.' Dann drückst du unauffällig die Reset-Kombination. Der Automat erwacht. Frau Sonntag betrachtet dich wie einen Pferdeflüsterer. Du korrigierst sie nicht."
             }
         ]
     },
@@ -4867,6 +4899,11 @@ export const coffee = [
                 t: "Sich persönlich bedanken gehen",
                 m: 15, f: 0, a: -10, c: -5,
                 r: "Frau Sonntag winkt ab, freut sich aber sichtbar. 'Mein Mann sagt immer, die IT lebt von Keksen.' Ihr Mann hat recht. Auf dem Rückweg grüßen dich zwei Leute aus der Buchhaltung, die dich noch nie gegrüßt haben."
+            },
+            {
+                t: "In bester Buchhalter-Manier zurückschreiben",
+                m: 10, f: 0, a: -5, c: 0,
+                r: "Du legst ein Post-it in ihr Fach: 'Eingang bestätigt. Der Kuchen wurde ordnungsgemäß verbucht und für sehr gut befunden. Mit Dank, die IT.' Es hat gute Chancen, laminiert zu werden. Ihr habt jetzt einen Briefwechsel."
             }
         ]
     },
@@ -4888,6 +4925,12 @@ export const coffee = [
                 m: 5, f: 5, a: 0, c: 0,
                 rep: { "Gabi": -5 },
                 r: "Gabi zieht eine Augenbraue hoch und wendet sich ab. 'Dann trink weiter das da oben.' Sie sagt 'das da oben', wie andere Leute 'Leitungswasser' sagen."
+            },
+            {
+                t: "Kevin vorbeischicken",
+                m: 5, f: 5, a: 0, c: 0,
+                rep: { "Gabi": -5 },
+                r: "Kevin kommt nach zwanzig Minuten zurück, mit Drucker-Ruß an den Fingern und ohne Cappuccino. 'Sie hat gesagt, sie hat DICH gefragt.' Der Deal ist vom Tisch, und der Etikettendrucker druckt jetzt Striche mit Rußrand."
             }
         ]
     },
@@ -4907,6 +4950,11 @@ export const coffee = [
                 t: "Abkürzen und den Knopf der Mühle drücken",
                 m: 10, f: 5, a: -5, c: 0,
                 r: "Gabi schiebt deine Hand weg wie die eines Kindes am Herd. 'So wird das nichts.' Du bekommst trotzdem einen Cappuccino. Aus Gnade. Er schmeckt nach Gnade."
+            },
+            {
+                t: "Fragen, woher sie das alles kann",
+                m: 15, f: 0, a: -10, c: 0,
+                r: "'Drei Jahre Barista, vor dem hier.' Gabi wischt die Brühgruppe ab, ohne hinzusehen. 'Manchmal fehlt mir nur die Maschine.' Sie sagt es leichthin, und genau deshalb bleibt der Satz den Tag über bei dir."
             }
         ]
     },
