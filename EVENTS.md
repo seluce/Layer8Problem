@@ -305,6 +305,44 @@ verwenden.
 Ein freigeschaltetes Folgeereignis bekommt beim Ziehen Vorrang: In 30 % der Fälle wählt
 die Engine aus den offenen Fortsetzungen statt aus dem Grundbestand.
 
+### Was davon ins Wissen gehört (`data_compendium.js`)
+
+Das Kompendium sammelt, was Müller über das Haus herausfindet: über Kollegen,
+über Leute, die immer wieder auftauchen, über Räume und über Vorgänge. Es füllt
+sich aus Ereignissen, die es ohnehin gibt — ein Eintrag verweist per
+Ereignis-ID oder Story-Flag auf die Szenen, aus denen er stammt.
+
+**Beim Schreiben mitdenken, aber nichts erzwingen.** Wer eine Figur, einen Ort
+oder einen laufenden Vorgang mehrfach auftreten lässt, schafft nebenbei
+Material für einen Eintrag — das ist ein guter Grund, aus einem Einzelereignis
+eine Kette zu machen oder eine Nebenfigur ein zweites Mal zu verwenden. Der
+umgekehrte Weg funktioniert nicht: Ereignisse zu schreiben, damit ein Eintrag
+zustande kommt, merkt man dem Ergebnis an.
+
+Die Aufnahmeprüfung ist streng und hat nichts mit Vollständigkeit zu tun:
+
+- **Mindestens drei Szenen.** Ein Eintrag darf so viele Notizen führen, wie er
+  verschiedene Szenen zitiert (Deckel acht) — der Linter setzt das durch. Wer
+  aus zwei Auftritten fünf Notizen zieht, erfindet.
+- **Die Notiz ist die Lehre, nicht die Szene.** Das Ereignis erzählt, was
+  passiert ist; die Notiz hält fest, was Müller jetzt weiß. Prüffrage: Wäre die
+  Notiz auch für jemanden lesbar und komisch, der das Ereignis nie gesehen hat?
+  Wenn sie die Szene als Kontext braucht, ist sie eine Zusammenfassung und
+  gehört umgeschrieben.
+- **Eine Notiz pro Kette, nicht pro Ereignis.** Ein Dreiteiler liefert sonst
+  dreimal dieselbe Erkenntnis.
+- **Kein Eintrag um des Eintrags willen.** Eine Figur mit einem Auftritt, ein
+  Raum ohne eigenen Charakter, ein Vorgang ohne Wiederkehr — das wird eine
+  Beschreibung statt einer Beobachtung, und Beschreibungen liest niemand
+  zweimal. Lieber kein Eintrag als ein dünner.
+
+Auslöser sind **immer** Ereignis-IDs oder Story-Flags, nie Namen im Text: Es
+gibt zwei Brandts im Spiel, und ein Namensabgleich würde dem falschen Eintrag
+eine Notiz geben.
+
+Das Format und die vier Kategorien stehen im Kopfkommentar von
+`data/data_compendium.js`. Neue Einträge prüft `npm run lint:data` mit.
+
 ## 4. Gespräche mit Verlauf: `nodes` und `results`
 
 Für echte Dialoge gibt es den Knoten-Aufbau. Statt `text` und `opts` hat das Ereignis

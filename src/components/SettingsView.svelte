@@ -27,6 +27,18 @@
 
     const SLIDER = 'flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500';
 
+    // Some options only do something below a certain width - the phone panel
+    // is laid out with 'hidden lg:flex', so auto-minimising cannot change
+    // anything from 1024px up. Without this the switch flips and nothing
+    // happens, which reads as a broken setting rather than an inactive one.
+    let wide = $state(typeof window !== 'undefined' && window.innerWidth >= 1024);
+    $effect(() => {
+        const onResize = () => (wide = window.innerWidth >= 1024);
+        window.addEventListener('resize', onResize);
+        onResize();
+        return () => window.removeEventListener('resize', onResize);
+    });
+
     // The reset button swaps its colours rather than layering !important on top
     // of them, which is why the resting state keeps its hover utilities and the
     // armed state does not: while it is asking, it should not react to the
@@ -122,6 +134,8 @@
 
                 { kind: 'toggle', icon: '📱', img: 'set_phonemin', title: 'Handy aut. minimieren',
                   desc: 'Blendet inaktives Handy bei kompakter Anzeige aus.',
+                  inactive: () => wide,
+                  inactiveNote: 'Ohne Wirkung: Dein Fenster ist breit genug, das Handy bleibt sichtbar.',
                   get: () => game.autoHidePhone, set: (v) => engine.toggleAutoHidePhone(v) },
 
                 { kind: 'toggle', icon: '💓', img: 'set_pulse', title: 'Warn-Pulsieren (>80%)',
@@ -207,19 +221,30 @@
 {/snippet}
 
 {#snippet switchInput(row)}
-    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-        <input type="checkbox" class="sr-only peer" aria-label={row.title}
+    {@const off = row.inactive?.() ?? false}
+    <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
+        <input type="checkbox" class="sr-only peer" aria-label={row.title} disabled={off}
                checked={row.get()} onchange={(e) => row.set(e.currentTarget.checked)}>
         <div class={SWITCH}></div>
     </label>
 {/snippet}
 
 {#snippet toggleRow(row)}
-    <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-        <div class="flex items-start gap-3 flex-1">
-            {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+    {@const off = row.inactive?.() ?? false}
+    <!-- An option without effect is greyed out and says why, instead of
+         silently swallowing the click. It keeps its stored value: made
+         narrower again, it works as before. -->
+    <div class="flex flex-col gap-1 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50
+                {off ? 'opacity-50' : ''}">
+        <div class="flex justify-between items-center gap-4">
+            <div class="flex items-start gap-3 flex-1">
+                {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+            </div>
+            {@render switchInput(row)}
         </div>
-        {@render switchInput(row)}
+        {#if off && row.inactiveNote}
+            <p class="text-[10px] text-amber-500/80 pl-9">{row.inactiveNote}</p>
+        {/if}
     </div>
 {/snippet}
 

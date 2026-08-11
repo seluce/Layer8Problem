@@ -1,4 +1,4 @@
-[5.0.0] - 2026-08-08
+[5.0.0] - 2026-08-12
 
 Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends
 vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts
@@ -46,6 +46,9 @@ Gegenstände:
 Der Rucksack:
 * Die Kacheln stehen jetzt sauber im Raster, auch wenn nur ein Gegenstand darin liegt. Die Beschriftungen hingen vorher unter den Kacheln und schoben die Zeilen auseinander - auf dem Handy fiel das Raster dadurch sichtbar auseinander.
 * Der Wegwerfen-Knopf hält sich zurück, bis man ihn braucht, und färbt sich erst dann rot - im selben Ton wie die Sicherheitsabfrage, die danach kommt. Die Erklärzeile ist weg: Die Kacheln leuchten ohnehin rot, und der Text hat beim Erscheinen das ganze Raster nach unten geschoben.
+
+Einstellungen:
+* "Handy aut. minimieren" ist am breiten Bildschirm ausgegraut und sagt auch, warum: Dort bleibt das Handy ohnehin sichtbar, die Einstellung kann nichts bewirken. Vorher ließ sich der Schalter umlegen, ohne dass etwas passierte. Wird das Fenster schmaler, ist er sofort wieder da - der gespeicherte Wert bleibt unangetastet.
 
 Der Startbildschirm:
 * Der Hochfahr-Text meldet jetzt die Lage, statt jeden Morgen dasselbe zu behaupten: übernommene Tickets, das Chef-Radar vom Vortag, was im Rucksack liegt. Am Montag steht dort die gewählte Startbedingung, am Freitag zuerst der Termin, den man nicht vergessen sollte.
