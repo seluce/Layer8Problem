@@ -1,6 +1,7 @@
 import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
+import { WEEK_DIFFS } from './engine_week.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
@@ -843,6 +844,97 @@ export const ui = {
         }
     },
     
+    /**
+     * The startup log. In week mode this runs FIVE times per week, so a fixed
+     * block of nine lines would be almost half a minute of identical text.
+     * Two things follow from that: from the second morning on the sequence is
+     * short, and the middle lines report the actual situation instead of
+     * decorating it - carried tickets, yesterday's radar, what is in the
+     * backpack. The startup screen becomes the briefing it was standing in
+     * front of.
+     *
+     * Only state that is definitely settled at this point is read. Draw
+     * budgets are computed lazily on the first draw of the day and would
+     * trigger data loading here, so they stay out.
+     */
+    buildBootLines: function() {
+        const w = this.state.week;
+        const day = w?.active ? w.dayIndex : 0;
+        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        // Two draws from the same pool must not return the same line, which a
+        // plain pick() does often enough to notice.
+        const pickTwo = (arr) => {
+            const a = Math.floor(Math.random() * arr.length);
+            let b = Math.floor(Math.random() * (arr.length - 1));
+            if (b >= a) b++;
+            return [arr[a], arr[b]];
+        };
+
+        // Situation lines - WEEK MODE ONLY. A workday always starts clean at the
+        // chosen difficulty, and nothing is carried over; on top of that the day
+        // restart plays this sequence BEFORE reset(), so the state still belongs
+        // to the day that just ended. Reporting any of it would both be wrong
+        // and suggest a carry-over that does not exist.
+        const lage = [];
+        if (w?.active && day >= 2) {
+            // Only from Tuesday on is there anything to carry: Monday's numbers
+            // are the starting condition of the chosen level, not a leftover,
+            // and a week restart puts the player back exactly there. Calling
+            // that an "Übertrag" would report a carry-over that never happened.
+            if (this.state.tickets > 0)
+                lage.push(`Übernehme offene Tickets: ${this.state.tickets}... [ÜBERNOMMEN]`);
+            if (this.state.cr >= 30)
+                lage.push(`Chef-Radar aus Vortag: ${this.state.cr}%... [BEOBACHTUNG LÄUFT]`);
+            if (this.state.al >= 40)
+                lage.push(`Stimmungsanalyse... [WARNUNG: RESTAGGRESSION ${this.state.al}%]`);
+
+            const items = this.state.inventory?.length ?? 0;
+            if (items > 0)
+                lage.push(`Rucksack-Inventur: ${items} ${items === 1 ? 'Gegenstand' : 'Gegenstände'}... [OK]`);
+            if (day < 5)
+                lage.push(`Resttage bis Freitag: ${5 - day}... [ZUR KENNTNIS GENOMMEN]`);
+            // Friday's meeting outranks everything else that could be reported.
+            if (day === 5)
+                lage.unshift("Kalenderprüfung... [1 TERMIN: WOCHENMEETING]");
+        } else if (w?.active && day === 1) {
+            // Monday states the starting condition instead - true both for a
+            // fresh week and for a restart over the settings.
+            const cfg = WEEK_DIFFS[w.level];
+            if (cfg) lage.push(`Startbedingung: ${cfg.name.toUpperCase()}... [ÜBERNOMMEN]`);
+            lage.push("Fünf Arbeitstage geplant... [ALLES ZÄHLT]");
+        }
+
+        // Flavour, drawn fresh each time so no two mornings read alike.
+        const flavour = [
+            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
+            `Lade Ausreden-Datenbank (Modul ${12 + Math.floor(Math.random() * 60)})... [OK]`,
+            `Ignoriere wartende User-Anfragen: ${(3200 + Math.floor(Math.random() * 2600)).toLocaleString('de-DE')}... [ERLEDIGT]`,
+            "Verbinde mit Serverraum (Keller)... [OK]",
+            "Suche Drucker im Netzwerk... [4 GEFUNDEN, 1 ERREICHBAR]",
+            "Prüfe Lizenzen... [GÜLTIG BIS: UNKLAR]",
+            "Lade Firmenwerte... [ÜBERSPRUNGEN]",
+            "Synchronisiere Kalender... [KONFLIKTE: 3]",
+            "Teste Backup... [ZULETZT GEPRÜFT: NIE]"
+        ];
+
+        // From the second morning on, the greeting is dropped: the header with
+        // company and copyright is a welcome, not a daily bulletin.
+        if (day > 1) {
+            const kopf = [`GlobalCorp OS - ${this.weekDayName?.() ?? 'Neuer Tag'}`];
+            const mitte = lage.length ? lage.slice(0, 2) : [pick(flavour)];
+            return [...kopf, ...mitte, "TicketSystem bereit."];
+        }
+
+        return [
+            `GlobalCorp OS - Version ${this.VERSION}`,
+            `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
+            `----------------------------------------------`,
+            ...pickTwo(flavour),
+            ...lage.slice(0, 2),
+            "Initialisiere TicketSystem... Viel Glück."
+        ];
+    },
+
     playBootSequence: function(callback) {
         this.playAudio('boot');
         this.state.activeEvent = true;
@@ -852,18 +944,7 @@ export const ui = {
         this.state.bootLines = [];
         this._setTerminal('flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner', { mode: 'boot' });
 
-        // Less "Nerd-Linux", more "GlobalCorp Satire"
-        const bootLines = [
-            `GlobalCorp OS - Version ${this.VERSION}`,
-            `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
-            `----------------------------------------------`,
-            "Verbinde mit Serverraum (Keller)... [OK]",
-            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
-            "Lade Ausreden-Datenbank (Modul 42)... [OK]",
-            "Synchronisiere Chef-Radar... [OK]",
-            "Ignoriere wartende User-Anfragen: 4.815... [ERLEDIGT]",
-            "Initialisiere TicketSystem... Viel Glück."
-        ];
+        const bootLines = this.buildBootLines();
 
         let i = 0;
         

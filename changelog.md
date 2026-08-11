@@ -47,6 +47,11 @@ Der Rucksack:
 * Die Kacheln stehen jetzt sauber im Raster, auch wenn nur ein Gegenstand darin liegt. Die Beschriftungen hingen vorher unter den Kacheln und schoben die Zeilen auseinander - auf dem Handy fiel das Raster dadurch sichtbar auseinander.
 * Der Wegwerfen-Knopf hält sich zurück, bis man ihn braucht, und färbt sich erst dann rot - im selben Ton wie die Sicherheitsabfrage, die danach kommt. Die Erklärzeile ist weg: Die Kacheln leuchten ohnehin rot, und der Text hat beim Erscheinen das ganze Raster nach unten geschoben.
 
+Der Startbildschirm:
+* Der Hochfahr-Text meldet jetzt die Lage, statt jeden Morgen dasselbe zu behaupten: übernommene Tickets, das Chef-Radar vom Vortag, was im Rucksack liegt. Am Montag steht dort die gewählte Startbedingung, am Freitag zuerst der Termin, den man nicht vergessen sollte.
+* Ab dem zweiten Arbeitstag fällt die Begrüßung mit Firmenname und Copyright weg - fünf Morgen pro Woche brauchen keine fünf Vorstellungsrunden. Der Start ist dadurch spürbar kürzer.
+* Die übrigen Zeilen wechseln von Mal zu Mal. Die Ausreden-Datenbank lädt mal ein anderes Modul, die Zahl der ignorierten Anfragen stimmt nie zweimal, und gelegentlich fällt auf, wann das Backup zuletzt geprüft wurde.
+
 Archiv & Statistiken:
 * Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
 * Die Gegenstands-Kacheln im Archiv tragen jetzt dieselben Beschreibungen wie der Rucksack: Name, Text und die Zeile, ob sich ein Gegenstand verbraucht - per Maus beim Überfahren, am Handy und auf dem Steam Deck per Fingertipp. Bisher stand dort nur der Name, und den bekam nur die Maus zu sehen. Nicht gefundene Gegenstände bleiben ein Fragezeichen.

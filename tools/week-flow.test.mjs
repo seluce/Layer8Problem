@@ -26,6 +26,9 @@ const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
+// engine_ui is NOT spread into the harness engine (its functions need the DOM);
+// the boot lines are pure computation, so they are called on it directly.
+const { ui } = await import('../src/engine/engine_ui.js');
 const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
 
 // --- engine composition with UI stubs (later spread wins) --------------------
@@ -388,6 +391,63 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// ------------------------------------------------------ Boot-Sequenz (v5.0)
+console.log('Startbildschirm:');
+await ok('Ab dem zweiten Morgen ist der Start kurz', () => {
+    resetState();
+    state.week = { active: true, dayIndex: 3 };
+    state.tickets = 2;
+    const lines = ui.buildBootLines.call(engine);
+    assert.ok(lines.length <= 5, `zu lang: ${lines.length} Zeilen`);
+    assert.ok(!lines.some(l => l.includes('Copyright')), 'Begrüßungskopf am Folgetag');
+});
+await ok('Der Start meldet die übernommenen Tickets', () => {
+    resetState();
+    state.week = { active: true, dayIndex: 2 };
+    state.tickets = 4;
+    const lines = ui.buildBootLines.call(engine);
+    assert.ok(lines.some(l => l.includes('Übernehme offene Tickets: 4')), lines.join(' | '));
+});
+await ok('Am Freitag steht das Meeting an erster Stelle', () => {
+    resetState();
+    state.week = { active: true, dayIndex: 5 };
+    state.tickets = 6;
+    const lines = ui.buildBootLines.call(engine);
+    const idx = lines.findIndex(l => l.includes('WOCHENMEETING'));
+    assert.ok(idx > 0 && idx < 3, `Meeting an Position ${idx}: ${lines.join(' | ')}`);
+});
+await ok('Ohne Woche bleibt der volle Begrüßungskopf', () => {
+    resetState();
+    state.week = { active: false, dayIndex: 0 };
+    const lines = ui.buildBootLines.call(engine);
+    assert.ok(lines.some(l => l.includes('Copyright')), 'Kopf fehlt im Tagesmodus');
+    assert.equal(new Set(lines).size, lines.length, 'doppelte Zeile im Start');
+});
+await ok('Montag nennt die Startbedingung statt eines Übertrags', () => {
+    // startWeek() sets tickets and aggro as the level's starting condition,
+    // and a week restart via the settings puts the player back exactly there.
+    // Calling that a carry-over would report something that never happened.
+    resetState();
+    state.week = { active: true, level: 'hard', dayIndex: 1 };
+    state.tickets = 2; state.al = 10;
+    const lines = ui.buildBootLines.call(engine);
+    assert.ok(!lines.some(l => l.includes('Übernehme offene Tickets')), lines.join(' | '));
+    assert.ok(!lines.some(l => l.includes('Vortag')), lines.join(' | '));
+    assert.ok(lines.some(l => l.includes('URLAUBSREIF')), 'Startbedingung fehlt');
+});
+await ok('Der Arbeitstag meldet nie einen Übertrag', () => {
+    // The day restart plays the boot sequence BEFORE reset(), so the state
+    // still holds the finished day. Nothing of it may show up: a workday
+    // always starts clean at the chosen difficulty.
+    resetState();
+    state.week = { active: false, dayIndex: 0 };
+    state.tickets = 7; state.cr = 60; state.al = 80;
+    state.inventory = [{ id: 'tape' }, { id: 'donut' }];
+    const lines = ui.buildBootLines.call(engine);
+    for (const wort of ['Übernehme', 'Vortag', 'Rucksack-Inventur', 'Resttage', 'WOCHENMEETING'])
+        assert.ok(!lines.some(l => l.includes(wort)), `"${wort}" im Tagesmodus: ${lines.join(' | ')}`);
+});
+
 // ------------------------------------------------------- compendium (v5.0)
 console.log('Wissen / Kompendium:');
 await ensure('compendium');
