@@ -33,7 +33,7 @@
 export const diary = {
     // Opening line: the mood of the day. First match wins, so the fallback goes last.
     mood: [
-        // Week runs (v4.2): rank 2 so these beat the difficulty-day openings,
+        // Week runs (v5.0): rank 2 so these beat the difficulty-day openings,
         // which would read Montag/Freitag flavour into the wrong weekday.
         {
             id: "mood_week_monday", rank: 2, when: d => d.week && d.weekDay === 1,

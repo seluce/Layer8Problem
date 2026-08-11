@@ -2,8 +2,9 @@
 
 Übersicht über alles unter `tools/`. Stand 5.0.
 
-Gegenstück zur `EVENT-DOKTRIN.md`: Dort steht, **wie** man schreibt, hier
-steht, **womit** man prüft. Alle Befehle laufen aus dem Repo-Wurzelverzeichnis.
+Was hier steht, ist das **Womit**: welches Werkzeug wofür da ist, welche
+Schalter es kennt und welche Meldung ernst zu nehmen ist. Alle Befehle laufen
+aus dem Repo-Wurzelverzeichnis.
 
 ---
 
@@ -95,7 +96,7 @@ ist, entscheidet ein Mensch. Zehn Abschnitte:
 
 **Arbeitsweise:** erst schreiben, dann messen, dann korrigieren. Vor/Nach-
 Vergleich statt Nullziel — Abschnitt 6 *soll* Treffer haben. Beabsichtigte
-Refrains dürfen stehen bleiben, brauchen aber ein Warum (siehe Doktrin §9).
+Refrains dürfen stehen bleiben, brauchen aber ein Warum.
 
 ## 3. `simulate-day.mjs` — Tages-Balance
 
@@ -246,22 +247,21 @@ Zwei Durchgänge, die gleich aussehen und es nicht sind:
 Arbeitet über den Parser, nie über Suchen-und-Ersetzen, und prüft das eigene
 Ergebnis vor dem Schreiben. Trotzdem: **immer erst `--dry`.**
 
-## 8. `audit-stats.mjs` — Werte gegen die Doktrin
+## 8. `audit-stats.mjs` — Statuswerte auf Plausibilität
 
 ```
 node --conditions browser --import ./tools/register.mjs tools/audit-stats.mjs
 ```
 
 Einmalwerkzeug, **bewusst nicht** in `lint:data` eingehängt: Es klassifiziert
-Optionen über Schlüsselwörter und prüft, ob die Vorzeichen zur Doktrin passen
-(`f` runter bei Fleiß, `c` runter bei Firmennutzen, `a` runter bei
+Optionen über Schlüsselwörter und prüft die Vorzeichen gegen die
+Hausregeln (`f` runter bei Fleiß, `c` runter bei Firmennutzen, `a` runter bei
 Erleichterung). Die Fehlalarmquote ist hoch — Arbeits-Verben treffen
 zuverlässig Delegation und Aussitzen, wo `f+` genau richtig ist — deshalb ist
 jeder Treffer eine **Frage, kein Urteil**. Als Tor würde es die 0-Warnungen-
 Disziplin zerstören, als gelegentliche Stichprobe ist es nützlich.
 
-Beim letzten Lauf (2026-08) fand es keine echten Vorzeichenfehler, dafür zwei
-falsche Angaben in der Dokumentation — siehe Doktrin §3 und §4.
+Beim letzten Lauf (2026-08) fand es keine echten Vorzeichenfehler.
 
 ---
 
@@ -272,7 +272,8 @@ falsche Angaben in der Dokumentation — siehe Doktrin §3 und §4.
 - **Ob eine Wiederholung Absicht ist.** Running Gag oder Faulheit entscheidet
   der Mensch.
 - **Ob ein Thema erzählerisch doppelt ist.** Der Duplikat-Check läuft per
-  `grep` von Hand — deshalb steht der Themen-Friedhof in der Doktrin §1b.
+  `grep` von Hand: vor jedem neuen Ereignis die Motive gegen den Bestand
+  klopfen.
 - **Ob Balance sich gut anfühlt.** Der Simulator misst Quoten, nicht Spaß.
 
 ## Faustregeln
@@ -292,5 +293,4 @@ falsche Angaben in der Dokumentation — siehe Doktrin §3 und §4.
 ---
 
 *Fortschreiben, wenn ein Werkzeug dazukommt oder einen neuen Schalter
-bekommt. Zusammen mit `UEBERGABE.md` und `EVENT-DOKTRIN.md` die dritte
-Sitzungsgrundlage.*
+bekommt.*

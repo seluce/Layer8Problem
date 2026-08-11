@@ -37,7 +37,7 @@ tools/
   simulate-week.mjs     Wochen-Simulation, npm run sim:week
   report-prose.mjs      Prosa- und Stilbericht, node tools/report-prose.mjs [bereich]
   normalize-quotes.mjs  Anführungszeichen, einmalig
-  audit-stats.mjs       Statuswerte gegen die Doktrin, Stichprobe (kein Tor)
+  audit-stats.mjs       Statuswerte auf Plausibilität, Stichprobe (kein Tor)
   dev-woche.js          Konsolen-Werkzeug für den Wochenmodus, siehe unten
   WERKZEUGE.md          Handbuch zu allem in diesem Ordner
   *.test.mjs            drei Testsuiten, npm test
@@ -174,8 +174,8 @@ siehe unten. `--dry` berichtet, ohne zu schreiben.
 
 Die Reihenfolge der Antwortmöglichkeiten wurde einmalig mit `reorder-opts.mjs`
 verteilt (vorher stand in 53% der Ereignisse die günstigste Option ganz oben).
-Das Skript ist erledigt und entfernt; die Regel lebt in `EVENT-DOKTRIN.md`
-§2a weiter, samt Zielverteilung und Messbefehl.
+Das Skript ist erledigt und entfernt. Die Verteilung wird seitdem beim
+Schreiben gehalten: Platz 1 rund 40%, Platz 2 rund 38%, der Rest dahinter.
 
 Ein vollständiges Handbuch zu allen Werkzeugen steht in `tools/WERKZEUGE.md`.
 

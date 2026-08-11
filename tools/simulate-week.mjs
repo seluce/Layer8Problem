@@ -1,5 +1,5 @@
 /**
- * Week simulator for v4.2 balancing (roguelike Monday-Friday run).
+ * Week simulator for v5.0 balancing (roguelike Monday-Friday run).
  *
  * Plays whole weeks against the real data pools. Shares the exact engine
  * formulas with tools/simulate-day.mjs (kept in sync by hand — change one,

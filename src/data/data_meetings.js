@@ -1,5 +1,5 @@
 /*
- * The Friday meeting pool (v4.2 week mode, design 8.1).
+ * The Friday meeting pool (v5.0 week mode, design 8.1).
  *
  * One meeting per week, drawn like any other pool - usedIDs is week-scoped,
  * so the cast rotates by itself across runs. The chef hosts every meeting

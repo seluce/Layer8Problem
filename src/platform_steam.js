@@ -38,7 +38,7 @@ const STAT_NAMES = {
     daysRageQuit:   'stat_ragequit',
     daysFired:      'stat_fired',
 
-    // --- Whole weeks (v4.2) ---
+    // --- Whole weeks (v5.0) ---
     weeksStarted:   'stat_weeks_started',
     weeksSurvived:  'stat_weeks_survived',
     weeksRageQuit:  'stat_weeks_ragequit',

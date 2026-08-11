@@ -28,7 +28,7 @@
  *   upName / upBy, downName / downBy
  *                the colleague who moved most today, in each direction
  *   streak       days survived in a row, today included
- *   week         a week run is in progress (v4.2)
+ *   week         a week run is in progress (v5.0)
  *   weekDay      1 (Montag) to 5 (Freitag) inside a week, else 0
  *   weekRest     week days left AFTER today (4 on Monday, 0 on Friday)
  *   rageWarned / chefWarned / blind

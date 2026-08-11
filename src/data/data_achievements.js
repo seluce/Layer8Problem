@@ -1,6 +1,6 @@
 export const achievements = [
 
-	// WEEK MODE (v4.2) - earned through engine_week.recordWeekResult()
+	// WEEK MODE (v5.0) - earned through engine_week.recordWeekResult()
 	{ id: "ach_week", icon: "🗓️", img: "assets/img/achievements/ach_week.webp", title: "Wochenendlich", desc: "Montag bis Freitag am Stück überlebt. Das Wochenende ist diesmal verdient.", hint: "Halte durch, bis Müller einmal ohne offene Rechnung ins Wochenende geht." },
 	{ id: "ach_week_iron", icon: "🧊", img: "assets/img/achievements/ach_week_iron.webp", title: "Eisern", desc: "Fünf Tage ohne Ventil und ohne Abmahnung. Die Personalabteilung ist beunruhigt.", hint: "Komm durch die lange Strecke, ohne einmal Dampf abzulassen oder zum Gespräch gebeten zu werden." },
 	{ id: "ach_week_clean", icon: "🧹", img: "assets/img/achievements/ach_week_clean.webp", title: "Blanker Freitag", desc: "Freitagabend, Warteschlange leer. Montag beginnt zum ersten Mal bei null.", hint: "Verlasse das Büro am letzten Tag, ohne dass irgendetwas offen bleibt." },

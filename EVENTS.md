@@ -325,12 +325,12 @@ einen `startNode`, ein `nodes`-Objekt (die Gesprächsschritte) und ein `results`
   "…"-Abzeichen im Terminal hängt nicht am Namen — es schaut wie die Engine nach,
   ob das Ziel ein Knoten ist. Ein Ausgang darf also `truth` heißen und funktioniert
   trotzdem; `res_truth` liest sich nur besser.
-- **Knoten dürfen einen eigenen `char` tragen** (seit v4.2, Konvention vom Handy
+- **Knoten dürfen einen eigenen `char` tragen** (seit v5.0, Konvention vom Handy
   übernommen): Der Knoten-`char` schlägt den Ereignis-`char`, `char: null` erzwingt
   gar keinen. So wechselt eine Kette mitten im Gespräch den Sprecher — im Terminal
   genauso wie im Handy-Chat.
 
-### Das Wochenmeeting (`data_meetings.js`, seit v4.2)
+### Das Wochenmeeting (`data_meetings.js`, seit v5.0)
 
 Der Meeting-Pool nutzt den Ketten-Aufbau mit drei Sonderregeln. IDs beginnen mit
 `meet_`. `startNodeGala` ist ein zweiter Einstiegsknoten: Die Engine wählt ihn, wenn

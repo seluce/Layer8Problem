@@ -1,4 +1,4 @@
-// Foundation tests for the v4.2 week module.
+// Foundation tests for the v5.0 week module.
 // Run: node --conditions browser --import ./test/register.mjs test/week-foundation.test.mjs
 import assert from 'node:assert/strict';
 

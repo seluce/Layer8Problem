@@ -72,7 +72,7 @@ export function freshDay(mult = 1.0) {
         bootLines: [],          // startup sequence, read by BootView.svelte
         dayActive: false,
         lunchDone: false,
-        meetingDone: false,   // week Friday finale (v4.2); day mode never sets it
+        meetingDone: false,   // week Friday finale (v5.0); day mode never sets it
         morningMoodShown: false,
         ticketWarning: false,
         chefWarningReceived: false,
@@ -202,7 +202,7 @@ export const state = $state({
     // week never writes it; week formulas go through engine.effMult().
     difficultyMult: 1.0,
 
-    // The week run (v4.2). Outlives every single day by definition; the
+    // The week run (v5.0). Outlives every single day by definition; the
     // per-day fields it carries across nights stay in freshDay() and are
     // written back by engine_week.advanceWeekNight() after each reset.
     week: {

@@ -4,7 +4,7 @@ import { platform } from '../platform.js';
 import { DB, ensure } from '../data.js';
 
 /**
- * The week run (v4.2): a roguelike Monday-to-Friday campaign.
+ * The week run (v5.0): a roguelike Monday-to-Friday campaign.
  *
  * This module owns everything the week mode adds ON TOP of a single workday:
  * the tuning numbers, the night carry-over, the derived difficulty

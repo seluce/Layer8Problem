@@ -32,7 +32,7 @@ export const special = {
                 ]
 	},
 
-	/* Week mode (v4.2): one line about the night itself on the night screen.
+	/* Week mode (v5.0): one line about the night itself on the night screen.
 	   Chosen by week level; 'worn' takes over from the third night on, when
 	   the recovery rates have visibly decayed (engine_week WEEK_TUNING.wearPP).
 	   Pure flavour - the numbers stand right above it in the baggage block. */
@@ -69,7 +69,7 @@ export const special = {
 		}
 	},
 
-	/* Week mode (v4.2): the daily contingent of an action pool is used up.
+	/* Week mode (v5.0): the daily contingent of an action pool is used up.
 	   One entry per pool. Vector m 20, f 5, a 0 - tools/simulate-week.mjs
 	   models idle clicks with exactly these numbers, the two must not drift
 	   apart. Deliberately no longer the empty_pool vector: its a -5 turned

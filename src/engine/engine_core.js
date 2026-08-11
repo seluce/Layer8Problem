@@ -1304,7 +1304,7 @@ export const core = {
         else if (this.state.time >= 16 * 60 + 30) {
             // Week mode: Monday to Thursday end in a night, Friday ends the
             // run. The gala never fires mid-week; Friday's gala returns
-            // together with the meeting finale (v4.2, package 3).
+            // together with the meeting finale (v5.0, package 3).
             if (this.state.week.active) {
                 // Friday's meeting outranks the clock. A four-hour option can
                 // carry 14:00 past 16:30 in one go, and the week would then

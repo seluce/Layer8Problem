@@ -45,7 +45,7 @@
         ev.charName ? DB.chars?.find(c => c.name === ev.charName) ?? null : null
     );
 
-    // Meeting-local voices (v4.2): a node char without a data_chars entry
+    // Meeting-local voices (v5.0): a node char without a data_chars entry
     // (the interchangeable consultants) renders as name plus initials -
     // deliberately no real portrait, they stay out of the team for good.
     const initials = $derived(
