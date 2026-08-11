@@ -4795,7 +4795,7 @@ export const coffee = [
                 t: "Systematisch suchen, Etage für Etage",
                 m: 20, f: -5, a: 5, c: 0,
                 next: "cof_tasse_spur",
-                r: "Drei Teeküchen, zwei Besprechungsräume, ein verwaister Rollcontainer. Nichts. Aber im dritten Stock sagt eine Praktikantin, sie habe 'so eine mit Sprung' gestern beim Vertrieb gesehen. Die Spur lebt."
+                r: "Drei Teeküchen, zwei Besprechungsräume, ein verwaister Rollcontainer. Nichts. Aber im dritten Stock sagt eine Praktikantin, sie habe 'so eine mit Sprung' gestern in der Qualitätssicherung gesehen. Die Spur lebt."
             },
             {
                 t: "Irgendeine andere nehmen",
@@ -4814,8 +4814,8 @@ export const coffee = [
         id: "cof_tasse_2",
         reqStory: "cof_tasse_spur",
         reqStoryAge: 1,
-        title: "Die Tasse beim Vertrieb",
-        text: "Da steht sie. Auf dem Schreibtisch eines Herrn Petzold aus dem Vertrieb, gefüllt mit Milchschaum, daneben ein Keks. Der Sprung am Henkel ist unverkennbar. Herr Petzold telefoniert und macht dabei Gesten, als würde er ein Orchester dirigieren.",
+        title: "Die Tasse in der Qualitätssicherung",
+        text: "Da steht sie. Auf dem Schreibtisch eines Herrn Petzold aus der Qualitätssicherung, gefüllt mit Milchschaum, daneben ein Keks. Der Sprung am Henkel ist unverkennbar. Herr Petzold telefoniert und macht dabei Gesten, als würde er ein Orchester dirigieren.",
         opts: [
             {
                 t: "Sie wortlos vom Tisch nehmen, mitten im Gespräch",

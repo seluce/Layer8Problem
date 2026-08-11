@@ -252,8 +252,17 @@ export const state = $state({
         items: [],
         achievements: [],
         achievementDiffs: {},
-        reputation: {}
+        reputation: {},
+        // Evidence for the compendium: which events were opened and which
+        // story flags were raised, across the whole career. Stored raw rather
+        // than as unlocked entries, so notes added in a later version light up
+        // for players who already saw the scene.
+        seenEvents: [],
+        seenFlags: []
     },
+
+    // Whether the knowledge modal is on screen; the view builds on demand.
+    knowledgeOpen: false,
 
     // Reputation system (-100 to +100).
     // Re-seeded from DB.chars in core.loadSystem(); these are only the defaults.

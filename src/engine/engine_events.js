@@ -194,6 +194,7 @@ export const events = {
     setStoryFlag: function(name) {
         if (!name) return;
         this.state.storyFlags[name] = this.state.week?.active ? this.state.week.dayIndex : true;
+        this.recordSeen('flag', name);
     },
 
     /**
@@ -229,6 +230,22 @@ export const events = {
      * the phone branch and the boss fight. NOT from renderEventHTML, which
      * renderTerminal itself calls - that would fire twice.
      */
+    /**
+     * Records what the player has seen, permanently, for the compendium.
+     * Kept as raw evidence (event ids, story flags) rather than as unlocked
+     * notes: entries written later then light up for players who already
+     * played the scene, instead of staying dark forever.
+     *
+     * Bounded by the number of events in the game, so the archive stays a
+     * few kilobytes.
+     */
+    recordSeen: function(kind, value) {
+        if (!value) return;
+        const list = kind === 'flag' ? this.state.archive.seenFlags : this.state.archive.seenEvents;
+        if (!list || list.includes(value)) return;
+        list.push(value);
+    },
+
     applyPassiveItems: function(charName) {
         if (!charName) return;
         for (const entry of this.state.inventory) {
@@ -629,6 +646,7 @@ export const events = {
             this.state.currentPhoneEvent = ev;
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
+            this.recordSeen('event', ev.id);
             this.applyPassiveItems(ev.char);
 
             // Show the notification
@@ -662,6 +680,7 @@ export const events = {
         this.state.activeEvent = true;
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
+        this.recordSeen('event', ev.id);
         this.applyPassiveItems(ev.char);
 
 

@@ -8052,6 +8052,7 @@ export const sidequests = [
             t: "Nach oben durchreichen: 'Das ist Chefsache.'",
             m: 10, f: 5, a: -5, c: 5,
             rep: { "Dr. Wichtig": -5 },
+            next: "sq_brandt_chefsache",
             r: "Du meldest Brandt bei Dr. Wichtig an und gehst. Eine Stunde später sind die beiden noch im Gespräch, und durch die Glastür siehst du das Schlimmste: Sie verstehen sich. Auf dem Flipchart steht bereits das Wort SYNERGIEPOTENZIAL. Was immer daraus wird — es trägt deine Anmeldung."
         },
         {
@@ -8129,6 +8130,110 @@ export const sidequests = [
             rem: "tie",
             m: 10, f: 0, a: -5, c: 0,
             r: "Ohne Absender, ohne Zettel, adressiert an den Brandschutzbeauftragten. Zwei Tage später hängt im Ostflügel ein neuer Aushang: 'Türkeile sind erhältlich beim Facility Management.' Manchmal reicht ein Beweisstück."
+        }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Der Fall des stillen Örtchens (v5.0): a three-parter played straight as a
+   detective story - observation, deduction, reveal. The opener runs in day
+   mode like any other event; only the deductions are dated, so week players
+   get the case and day players get the crime scene.
+
+   The culprit is the CEO's son, established in call_junior. Nothing about
+   the reveal is new lore - the deductions only point at what the game has
+   already shown. Duplicate check (2026-08): sq_wc_1 (occupied cabin) and
+   sq_wc_2b (the HR toilet) exist and are different scenes.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_wc_fall_1",
+    kind: "text",
+    title: "Der Tatort",
+    text: "Die Herrentoilette im zweiten Stock sieht aus, als hätte dort jemand gefeiert und verloren. Papierhandtücher im Becken, ein Fußabdruck an der Kabinentür, und über allem der süßliche Geruch von etwas, das nicht ins Haus gehört. Es ist das dritte Mal in dieser Woche.",
+    opts: [
+        {
+            t: "Egon informieren und weitergehen",
+            m: 5, f: 0, a: 0, c: 0,
+            r: "Egon hört sich das an, ohne den Blick vom Werkzeugkoffer zu heben. 'Dritte Mal, ja. Ich putz das weg, wie immer.' Er sagt es ohne Groll. Das ist das Schlimmste daran."
+        },
+        {
+            t: "Den Raum ansehen, bevor jemand aufräumt",
+            m: 10, f: -5, a: 0, c: 0,
+            next: "wc_fall_offen",
+            r: "Du gehst nicht rein, du liest. Der Abdruck an der Tür ist klein, Schuhgröße achtunddreißig, höchstens. Die Papierhandtücher liegen nicht verstreut, sondern gezielt: jemand hat sie geworfen und gezielt. In der Ecke steht eine Dose, grün, unbeschriftet. Du fotografierst alles, bevor Egon kommt."
+        },
+        {
+            t: "Tür zu und Etage wechseln",
+            m: 5, f: 10, a: -5, c: 0,
+            r: "Drei Treppen tiefer gibt es auch eine Toilette. Sie ist sauber, gut beleuchtet und sechs Minuten entfernt. Der Preis der Feigheit ist berechenbar."
+        },
+        {
+            t: "Selbst aufräumen. Irgendwer muss.",
+            m: 20, f: -10, a: 10, c: -5,
+            r: "Handschuhe aus dem Serverraum, zehn Minuten, ein sehr schweigsamer Weg zurück an den Platz. Niemand hat es gesehen, niemand wird es erfahren, und morgen sieht es wieder so aus."
+        }
+    ]
+},
+{
+    id: "sq_wc_fall_2",
+    kind: "text",
+    reqStory: "wc_fall_offen",
+    reqStoryAge: 1,
+    title: "Drei Beobachtungen",
+    text: "Der Tatort ist gereinigt, deine Aufnahmen nicht. Drei Dinge lassen dich nicht los: Der Fußabdruck gehört zu einer Größe, die im ganzen Haus niemand trägt. Die grüne Dose ist ein Energy-Drink, den es hier nicht zu kaufen gibt. Und alle drei Vorfälle fielen auf Nachmittage.",
+    opts: [
+        {
+            t: "Die Zutrittsprotokolle der Nachmittage abgleichen",
+            m: 20, f: -10, a: 5, c: 5,
+            next: "wc_fall_spur",
+            r: "Drei Nachmittage, drei Protokolle. Zweiundvierzig Personen waren jedes Mal im Haus, einundvierzig davon jeden Tag. Bleibt eine Karte, die nur an genau diesen drei Nachmittagen benutzt wurde: die Besucherkarte der Geschäftsleitung. Ausgegeben an einen Gast ohne Namen."
+        },
+        {
+            t: "Gabi fragen, wer nachmittags kommt und geht",
+            m: 5, f: 0, a: -5, c: 0,
+            next: "wc_fall_spur",
+            r: "Gabi überlegt keine drei Sekunden. 'Nachmittags? Da kommt der Kleine.' Sie sagt es, als sei es Wetter. Auf die Rückfrage folgt ein Blick, den man für die Frage nach dem Standort der Kaffeemaschine bekommt."
+        },
+        {
+            t: "Die Dose auf Herkunft prüfen",
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Unbeschriftet, grün, mit einem Aufkleber in einer Sprache, die du nicht liest. Kevin identifiziert sie im Vorbeigehen: 'Nuclear Sludge, Bro. Gibts nur im Netz.' Auf die Frage, wer sowas trinkt, zuckt er mit den Schultern. 'Leute mit Taschengeld.'"
+        },
+        {
+            t: "Den Fall zu den Akten legen",
+            m: 5, f: 10, a: -5, c: 0,
+            r: "Du löschst die Fotos. Es ist eine Toilette, kein Kapitalverbrechen, und du hast dreiundzwanzig offene Tickets. Der Gedanke hält bis zum nächsten Vorfall."
+        }
+    ]
+},
+{
+    id: "sq_wc_fall_3",
+    kind: "text",
+    reqStory: "wc_fall_spur",
+    reqStoryAge: 1,
+    title: "Die Auflösung",
+    text: "Du gehst nachmittags an der Geschäftsleitung vorbei, und da sitzt er: zwölf Jahre alt, Schuhgröße achtunddreißig, Kopfhörer auf, eine grüne Dose neben sich. Der Sohn des Chefs wartet, bis Papa Feierabend hat. Er sieht auf, mustert dich kurz und sagt: 'Ey, IT-Typ.' Der Fall ist gelöst. Die Frage ist, was das jetzt wert ist.",
+    opts: [
+        {
+            t: "Zurückgrüßen und weitergehen",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "'Ey.' Mehr passiert nicht. Du weißt jetzt, wer es war, und dieses Wissen ist vollkommen wertlos, was es zum typischsten Ergebnis deiner Laufbahn macht."
+        },
+        {
+            t: "Ihm anbieten, im Serverraum zu warten",
+            m: 15, f: -5, a: -10, c: 0,
+            r: "Ein alter Stuhl, ein Netzwerkkabel und die Ansage, dass hier nichts angefasst wird. Er bleibt zwei Stunden, sagt drei Sätze und hinterlässt nichts. Auf dem Rückweg sagt er 'Danke' und meint es. Die Toilette im zweiten Stock bleibt ab jetzt sauber, und niemand wird je erfahren, warum."
+        },
+        {
+            t: "Dr. Wichtig sachlich informieren",
+            m: 10, f: 0, a: 10, c: 15,
+            r: "Du trägst es vor wie einen Störfallbericht, ohne ein Wort zu viel. Dr. Wichtig hört zu, nickt und sagt: 'Kinder.' Dann fragt er, ob du wirklich Zutrittsprotokolle ausgewertet hast, und ob das deine Aufgabe sei. Der Fall ist geklärt. Das Problem hat jetzt einen anderen Namen."
+        },
+        {
+            t: "Es Egon erzählen, unter vier Augen",
+            m: 5, f: 0, a: -10, c: 0,
+            rep: { "Egon": 5 },
+            r: "Egon hört zu, stellt den Koffer ab und lacht einmal, kurz und trocken. 'Wusst ich's doch.' Er wusste es nicht, er hat es geahnt, und ihm reicht die Bestätigung. Ab jetzt seid ihr die zwei Leute im Haus, die es wissen."
         }
     ]
 },

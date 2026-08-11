@@ -398,6 +398,24 @@ export const core = {
         try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
     },
 
+    /**
+     * Builds what the knowledge view renders: every entry whose head has been
+     * unlocked, with the notes earned so far. Derived from the raw evidence in
+     * the archive on every call - the compendium itself is never persisted, so
+     * entries added in a later version light up for old save files.
+     */
+    knowledgeEntries: function() {
+        const seen  = new Set(this.state.archive.seenEvents ?? []);
+        const flags = new Set(this.state.archive.seenFlags ?? []);
+        const known = (n) => (n.flag ? flags.has(n.flag) : seen.has(n.seen));
+
+        return (DB.compendium ?? []).map(e => {
+            const open  = (e.seen ?? []).some(id => seen.has(id));
+            const notes = (e.notizen ?? []).filter(known).map(n => n.text);
+            return { ...e, open, notes, total: (e.notizen ?? []).length };
+        });
+    },
+
     saveSystem: function() {
         // Copy the current reputation into the archive before writing
         this.state.archive.reputation = { ...this.state.reputation };

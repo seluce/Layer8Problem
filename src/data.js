@@ -42,6 +42,7 @@ const LOADERS = {
     bossfights: () => import('./data/data_bossfights.js'),
     calls:      () => import('./data/data_calls.js'),
     coffee:     () => import('./data/data_coffee.js'),
+    compendium: () => import('./data/data_compendium.js'),
     diary:      () => import('./data/data_diary.js'),
     emails:     () => import('./data/data_emails.js'),
     intranet:   () => import('./data/data_intranet.js'),

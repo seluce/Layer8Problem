@@ -350,6 +350,77 @@
             return dev;
         },
 
+        // ---------------------------------------------------------------
+        // Wissen (Kompendium)
+        // ---------------------------------------------------------------
+
+        /**
+         * Shows every entry with the notes earned so far. Without arguments
+         * it is a table; with an id it prints that entry in full, including
+         * which trigger is still missing for each locked note.
+         * dev.wissen()  /  dev.wissen('blaschke')
+         */
+        wissen(id) {
+            const entries = e.knowledgeEntries?.() ?? [];
+            if (!entries.length) { console.warn('Kompendium nicht geladen - Wissen einmal öffnen.'); return dev; }
+
+            if (!id) {
+                console.table(Object.fromEntries(entries.map(x =>
+                    [x.id, { Name: x.name, Kopf: x.open ? 'offen' : 'zu', Notizen: `${x.notes.length}/${x.total}` }])));
+                return dev;
+            }
+            const entry = entries.find(x => x.id === id);
+            if (!entry) { console.warn(`Kein Eintrag "${id}".`); return dev; }
+
+            const seen = new Set(s.archive.seenEvents ?? []);
+            const flags = new Set(s.archive.seenFlags ?? []);
+            console.log(`${entry.name} - ${entry.rolle}  [${entry.open ? 'offen' : 'zu'}]`);
+            console.log(entry.kopf);
+            for (const n of entry.notizen ?? []) {
+                const have = n.flag ? flags.has(n.flag) : seen.has(n.seen);
+                console.log(`  ${have ? '✓' : '·'} ${n.text}`);
+                if (!have) console.log(`      fehlt: ${n.flag ? 'Fahne ' + n.flag : 'Ereignis ' + n.seen}`);
+            }
+            return dev;
+        },
+
+        /**
+         * Fakes the evidence instead of the result, so the same derivation
+         * runs that a real playthrough would trigger.
+         * dev.wissenFuellen()            everything
+         * dev.wissenFuellen('sonntag')   one entry
+         * dev.wissenFuellen('sonntag', 2)  head plus the first two notes
+         */
+        wissenFuellen(id, anzahl) {
+            // knowledgeEntries() carries the raw entry along, so the console
+            // does not need access to DB (the engine only exposes functions).
+            const list = e.knowledgeEntries?.() ?? [];
+            if (!list.length) { console.warn('Kompendium nicht geladen - Wissen einmal öffnen.'); return dev; }
+
+            const ev = new Set(s.archive.seenEvents ?? []);
+            const fl = new Set(s.archive.seenFlags ?? []);
+            for (const entry of list) {
+                if (id && entry.id !== id) continue;
+                (entry.seen ?? []).slice(0, 1).forEach(x => ev.add(x));
+                const notes = anzahl == null ? (entry.notizen ?? []) : (entry.notizen ?? []).slice(0, anzahl);
+                for (const n of notes) { if (n.flag) fl.add(n.flag); else ev.add(n.seen); }
+            }
+            s.archive.seenEvents = [...ev];
+            s.archive.seenFlags = [...fl];
+            e.saveSystem();
+            console.log(`Wissen gefüllt${id ? ' fuer ' + id : ''}. Modal neu öffnen.`);
+            return dev;
+        },
+
+        /** Wipes the evidence - back to an empty compendium. */
+        wissenLeeren() {
+            s.archive.seenEvents = [];
+            s.archive.seenFlags = [];
+            e.saveSystem();
+            console.log('Wissen geleert.');
+            return dev;
+        },
+
         hilfe() {
             console.log(`
 Layer8Problem - Testbefehle Arbeitswoche
@@ -373,6 +444,14 @@ SZENARIEN
   dev.morgentod(4)         Tod in der Morgenstimmung
   dev.gala()               Gala freischalten, dann dev.meeting()
   dev.leerlauf('server')   Kontingent leeren, Leerlauf-Text sehen
+
+WISSEN (Kompendium)
+  dev.wissen()                                 Übersicht aller Einträge
+  dev.wissen('blaschke')                       ein Eintrag im Detail
+  dev.wissenFuellen()                          alles freischalten
+  dev.wissenFuellen('sonntag')                 nur diesen Eintrag
+  dev.wissenFuellen('sonntag', 2)              Kopf plus zwei Notizen
+  dev.wissenLeeren()                           zurück auf leer
 
 SPIELSTAND
   dev.zaehler()                                Archiv-Zähler anzeigen

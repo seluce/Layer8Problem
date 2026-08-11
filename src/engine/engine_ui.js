@@ -523,6 +523,23 @@ export const ui = {
         this.state.archiveOpen = false;
         this.hideOverlay('archive-modal');
     },
+
+    // --- KNOWLEDGE (compendium) ---
+    // Team shows the live reputation of the seven colleagues; this shows
+    // everyone else, and it is permanent. The pool is deferred, so the data
+    // is fetched the first time the modal is opened.
+    openKnowledge: async function() {
+        await ensure('compendium');
+        const modal = document.getElementById('knowledge-modal');
+        this.showOverlay(modal);
+        this.state.knowledgeOpen = true;
+    },
+
+    closeKnowledge: function() {
+        this.state.knowledgeOpen = false;
+        this.hideOverlay('knowledge-modal');
+    },
+
     
     // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
@@ -1160,7 +1177,7 @@ export const ui = {
         if (mainView && settingsView && title) {
             mainView.classList.remove('hidden');
             settingsView.classList.add('hidden');
-            title.innerText = 'MENÜ';
+            title.innerText = 'Einstellungen';
         }
 
         this.showOverlay(modal);

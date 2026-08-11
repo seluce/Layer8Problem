@@ -205,28 +205,32 @@
             </div>
             
             <div class="flex-2 neon-box accent-slate p-3 flex flex-col min-h-0 overflow-hidden shrink-0">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-1 mb-2 shrink-0">
-                    <div class="flex gap-4">
+                <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 sm:gap-x-4 border-b border-slate-800 pb-1 mb-2 shrink-0">
+                    <div class="contents">
                         <div id="btn-inventory" onclick="engine.openInventory()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 -ml-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-amber-500 font-bold flex items-center gap-1.5"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'">INVENTAR</span>
+                            <span class="text-[10px] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'">INVENTAR</span>
                             <!-- Rendered by src/components/InventoryBadge.svelte -->
                             <span id="inv-badge"></span>
                         </div>
 
                         <div id="btn-team" onclick="engine.openTeam()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-white font-bold flex items-center gap-1.5"><img src="assets/img/ui/ui_team.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='👥'">TEAM</span>
+                            <span class="text-[10px] text-white font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"><img src="assets/img/ui/ui_team.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='👥'">TEAM</span>
+                        </div>
+
+                        <div onclick="engine.openKnowledge()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center justify-between group">
+                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'">WISSEN</span>
                         </div>
 
                         <div onclick="engine.openArchive()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1.5"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'">ARCHIV</span>
+                            <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'">ARCHIV</span>
                         </div>
 
                         <div onclick="engine.openSettings()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-1.5">
-                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1.5"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'">MENÜ</span>
+                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'">EINSTELLUNGEN</span>
                         </div>
                     </div>
 
-                    <span onclick="engine.toggleLog()" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1">
+                    <span onclick="engine.toggleLog()" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 ml-auto">
                         LOG <span id="log-arrow" class="text-[8px] lg:hidden">▼</span>
                     </span>
                 </div>
@@ -358,6 +362,32 @@
         </div>
     </div>
 <!-- ARCHIV MODAL END -->
+
+<!-- WISSEN MODAL START -->
+    <div id="knowledge-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
+        <div class="neon-box accent-emerald bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden h-[85vh] md:h-[78vh]">
+
+            <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
+                <div class="flex items-center gap-3 md:gap-4 mt-1 min-w-0">
+                    <img src="assets/img/ui/ui_knowledge.webp" alt="" width="40" height="40" class="w-9 h-9 md:w-10 md:h-10 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='\u{1F4D6}'">
+                    <div class="flex flex-col min-w-0">
+                        <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-400 uppercase tracking-widest mb-1">
+                            Wissen
+                        </h2>
+                        <p class="text-xs md:text-sm text-slate-400 font-mono">Was du über dieses Haus herausgefunden hast.</p>
+                    </div>
+                </div>
+                <button onclick="engine.closeKnowledge()" aria-label="Schließen" title="Schließen" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-2xl leading-none">&times;</button>
+            </div>
+
+            <!-- Fixed height, not max-height: switching tabs changes how many
+                 entries are listed, and a modal that grows and shrinks under
+                 the cursor is unpleasant to click through. -->
+            <div id="knowledge-content" class="flex flex-col flex-1 overflow-hidden"></div>
+
+        </div>
+    </div>
+<!-- WISSEN MODAL END -->
 	
 <!-- E-MAIL MODAL START -->
 <!-- Contents rendered by src/components/EmailView.svelte -->
@@ -554,7 +584,7 @@
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
                 <img src="assets/img/ui/ui_menu.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-xl text-slate-400&quot;&gt;⚙️&lt;/span&gt;'">
-                <h2 id="settings-title" class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5">MENÜ</h2>
+                <h2 id="settings-title" class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5">Einstellungen</h2>
             </div>
             <button onclick="engine.closeSettings()" aria-label="Schließen" title="Schließen" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
@@ -665,7 +695,7 @@
         <div id="menu-settings-view" class="hidden p-5 space-y-8 overflow-y-auto w-full flex-1 min-h-0">
             
             <div>
-                <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'MENÜ';" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
+                <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden'); document.getElementById('settings-title').innerText = 'Einstellungen';" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
                     <span>◀</span> Zurück zum Hauptmenü
                 </button>
             </div>

@@ -26,7 +26,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -346,8 +346,14 @@ const engineSource = ['src/engine.js', 'src/tutorial.js']
     .map(f => readFileSync(f, 'utf8'))
     .join('\n');
 
+// The compendium consumes flags too: a note can hang on one.
+const compFlags = new Set();
+for (const e of DB.compendium ?? [])
+  for (const n of e.notizen ?? []) if (n.flag) compFlags.add(n.flag);
+
 for (const [flag, wheres] of flagsSetWhere) {
     if (flagsReq.has(flag)) continue;
+    if (compFlags.has(flag)) continue;
     if (engineSource.includes(`'${flag}'`) || engineSource.includes(`"${flag}"`)) continue;
     const list = wheres.length > 3 ? `${wheres.slice(0, 3).join(', ')} … (+${wheres.length - 3})` : wheres.join(', ');
     warn(`Story-Flag "${flag}" wird gesetzt, aber von keinem Ereignis gefordert -> Sackgasse (${list})`);
@@ -564,6 +570,59 @@ for (const id of itemIds) {
   for (const k of ['al', 'fl', 'cr'])
     if (typeof pas[k] === 'number' && Math.abs(pas[k]) > 10)
       warn(`${ctx}: passive.${k} ${pas[k]} — wirkt bei JEDEM Auftritt der Figur, hoechstens -10`);
+}
+
+/* ---------- 6d) Compendium ---------- */
+// Every trigger here fails silently when wrong: a typo in an id or a flag
+// does not throw, the note simply never shows up. Both sides are therefore
+// checked against what exists - idMap holds every event id in the game,
+// flagsSetWhere every flag an event raises.
+{
+  const FIELDS = ['id', 'cat', 'name', 'rolle', 'kopf', 'seen', 'notizen'];
+  const NOTE_FIELDS = ['seen', 'flag', 'text'];
+  const ids = new Set();
+  for (const e of DB.compendium ?? []) {
+    const ctx = `Kompendium "${e.id ?? '?'}"`;
+    for (const k of Object.keys(e))
+      if (!FIELDS.includes(k)) err(`${ctx}: ${k} ist kein bekanntes Feld`);
+    if (!e.id || !e.name || !e.rolle || !e.kopf) err(`${ctx}: id, name, rolle und kopf sind Pflicht`);
+    // The view groups and colours by category, so an unknown one would show up
+    // in no tab at all - invisible, without anything failing.
+    if (!['team', 'person', 'ort', 'vorgang'].includes(e.cat))
+      err(`${ctx}: cat "${e.cat}" unbekannt — erlaubt sind team, person, ort, vorgang`);
+    if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
+    ids.add(e.id);
+
+    if (!(e.seen ?? []).length) err(`${ctx}: ohne seen wird der Kopf nie freigeschaltet`);
+    for (const id of e.seen ?? [])
+      if (!idMap.has(id)) err(`${ctx}: seen "${id}" ist kein Ereignis`);
+
+    const notes = e.notizen ?? [];
+    if (notes.length < 3) warn(`${ctx}: nur ${notes.length} Notizen — unter drei wirkt ein Eintrag dünn`);
+    // An entry may hold as many notes as it has distinct scenes to draw on,
+    // plus one for the pattern that emerges across them. This ties the length
+    // to the evidence rather than to a category: the colleagues and the big
+    // rooms earn eight, a walk-on with two appearances does not. Eight is the
+    // hard ceiling either way - beyond that a page stops being read.
+    const quellen = new Set([...(e.seen ?? []), ...notes.map(n => n.flag ?? n.seen)]).size;
+    const maxNotes = Math.min(8, Math.max(3, quellen));
+    if (notes.length > maxNotes)
+      warn(`${ctx}: ${notes.length} Notizen bei ${quellen} Quellen — höchstens ${maxNotes}, sonst wird erfunden statt beobachtet`);
+
+    const texte = new Set();
+    for (const [i, n] of notes.entries()) {
+      const nctx = `${ctx} notizen[${i}]`;
+      for (const k of Object.keys(n))
+        if (!NOTE_FIELDS.includes(k)) err(`${nctx}: ${k} ist kein bekanntes Feld`);
+      if (!n.text) err(`${nctx}: ohne text`);
+      if (!n.seen && !n.flag) err(`${nctx}: ohne Auslöser (seen oder flag) erscheint die Notiz nie`);
+      if (n.seen && n.flag) err(`${nctx}: seen und flag zugleich — ein Auslöser genügt`);
+      if (n.seen && !idMap.has(n.seen)) err(`${nctx}: seen "${n.seen}" ist kein Ereignis`);
+      if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: Fahne "${n.flag}" wird von keinem Ereignis gesetzt`);
+      if (n.text && texte.has(n.text)) err(`${nctx}: Notiztext doppelt`);
+      if (n.text) texte.add(n.text);
+    }
+  }
 }
 
 /* ---------- 7) Mail convention: the delete option ---------- */

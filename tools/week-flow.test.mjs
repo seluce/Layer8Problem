@@ -388,6 +388,49 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// ------------------------------------------------------- compendium (v5.0)
+console.log('Wissen / Kompendium:');
+await ensure('compendium');
+await ok('Beweise landen dauerhaft im Archiv', () => {
+    resetState();
+    state.archive.seenEvents = []; state.archive.seenFlags = [];
+    events.recordSeen.call(engine, 'event', 'cof_sonntag_1');
+    events.recordSeen.call(engine, 'event', 'cof_sonntag_1');   // doppelt zählt nicht
+    events.setStoryFlag.call(engine, 'srv_marder_meldung');
+    assert.deepEqual(state.archive.seenEvents, ['cof_sonntag_1']);
+    assert.ok(state.archive.seenFlags.includes('srv_marder_meldung'));
+});
+await ok('Ohne Begegnung bleibt der Eintrag zu', () => {
+    resetState();
+    state.archive.seenEvents = []; state.archive.seenFlags = [];
+    const sonntag = engine.knowledgeEntries().find(e => e.id === 'sonntag');
+    assert.equal(sonntag.open, false, 'Kopf ohne Begegnung offen');
+    assert.equal(sonntag.notes.length, 0);
+});
+await ok('Eine Begegnung öffnet den Kopf, die Notiz folgt dem Beweis', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1']; state.archive.seenFlags = [];
+    const sonntag = engine.knowledgeEntries().find(e => e.id === 'sonntag');
+    assert.equal(sonntag.open, true, 'Kopf nicht freigeschaltet');
+    assert.equal(sonntag.notes.length, 1, 'genau die erlebte Notiz erwartet');
+    assert.ok(sonntag.notes[0].includes('zweimal aus und wieder ein'));
+});
+await ok('Fahnen schalten Notizen genauso frei wie Ereignisse', () => {
+    resetState();
+    state.archive.seenEvents = ['srv_marder_1'];
+    state.archive.seenFlags = ['srv_marder_meldung'];
+    const b = engine.knowledgeEntries().find(e => e.id === 'blaschke');
+    assert.equal(b.open, true);
+    assert.equal(b.notes.length, 1);
+    assert.ok(b.notes[0].includes('Rhythmus'));
+});
+await ok('Der Beweis wird beim Öffnen eines Ereignisses aufgezeichnet', () => {
+    resetState();
+    state.archive.seenEvents = [];
+    events.renderTerminal.call(engine, { id: 'tst_seen', title: 'T', text: 'x', opts: [] }, 'server');
+    assert.ok(state.archive.seenEvents.includes('tst_seen'), 'Haken fehlt');
+});
+
 // --------------------------------------------------- item cooldowns (v5.0)
 console.log('Gegenstände mit Abklingzeit und Kosten:');
 await ok('Abklingzeiten gelten pro Gegenstand, nicht global', () => {
