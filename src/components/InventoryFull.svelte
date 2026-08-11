@@ -159,7 +159,7 @@
         // In discard mode every equipment slot looks the same - clickable
         // and outlined in red. Trophies stay as they are.
         if (discardMode && !row.quest) {
-            return 'inv-slot relative group cursor-pointer border-red-600/70 bg-red-950/20 hover:bg-red-900/30' + ring;
+            return 'inv-slot relative group cursor-pointer border-red-900/60 bg-red-950/40 hover:border-red-600 hover:bg-red-900/50' + ring;
         }
 
         if (row.entry.id === 'corp_chronicles') {
@@ -248,7 +248,14 @@
 
 {#snippet slot(row, index)}
     {@const pos = tooltipPosition(index)}
-    <div class={slotClass(row)} style="margin-bottom: 15px" role="button" tabindex="0"
+    <!-- Tile and caption sit in one column instead of the caption hanging
+         below the tile in absolute position. That used to need a fixed
+         margin under every tile, which added to the grid gap and made the
+         rows drift apart - visibly so on a phone, where three columns leave
+         the captions no room. Now the grid gap alone spaces the cells and
+         every one is the same height, with or without an item. -->
+<div class="flex flex-col items-center">
+    <div class={slotClass(row)} role="button" tabindex="0"
          data-inv-slot
          aria-label={row.item?.name ?? row.entry.id}
          onpointerdown={(e) => (coarsePress = e.pointerType !== 'mouse')}
@@ -261,9 +268,6 @@
             <ItemTooltip item={row.item} pinned={pinned === row.key} {pos} />
         {/if}
 
-        <div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate pointer-events-none">
-            {row.item?.name ?? row.entry.id}
-        </div>
 
         {#if !row.quest && DB.items[row.entry.id]?.use?.cooldown}
             {#if waitFor(row.entry.id) <= 0}
@@ -275,6 +279,12 @@
             {/if}
         {/if}
     </div>
+
+    <!-- Always rendered, empty for a free slot, so all cells match in height. -->
+    <div class="h-4 mt-1 w-full text-center text-[8px] leading-4 text-slate-400 truncate pointer-events-none">
+        {row.item ? row.item.name : ''}
+    </div>
+</div>
 {/snippet}
 
 <div class="flex flex-col gap-6 w-full"
@@ -283,10 +293,12 @@
         <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
             <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ausrüstung</h3>
 
-            <!-- Counter and button share height, radius and border weight so
-                 they read as a pair rather than as text with a button next
-                 to it. -->
-            <div class="flex items-center gap-2">
+            <!-- Two different things, so they must not look alike: the counter
+                 is information and keeps its frame, throwing away is a rarely
+                 used destructive action and stays quiet until it is armed.
+                 Only then does it become a filled red control - loud exactly
+                 when it can do damage, and never before. -->
+            <div class="flex items-center gap-1">
                 <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
                              font-mono text-[11px] tabular-nums
                              {normal.length >= MIN_SLOTS ? 'text-amber-400' : 'text-slate-400'}">
@@ -295,31 +307,36 @@
 
                 <button type="button"
                         aria-pressed={discardMode}
+                        title={discardMode ? 'Auswahl beenden' : 'Gegenstand wegwerfen'}
                         onclick={() => { discardMode = !discardMode; pinned = null; }}
-                        class="h-8 px-2.5 rounded-md border flex items-center gap-1.5
+                        class="h-8 px-2.5 rounded-md flex items-center gap-1.5
                                text-[11px] font-bold transition-colors
                                {discardMode
-                                 ? 'bg-red-950/50 border-red-600 text-red-300'
-                                 : 'bg-slate-900/60 border-slate-700 text-slate-300 hover:border-red-700 hover:text-red-300'}">
+                                 ? 'bg-red-950/40 border border-red-900/60 text-red-300'
+                                 : 'text-slate-500 hover:text-red-300 hover:bg-red-950/40'}">
                     <img src="assets/img/ui/ui_trash.webp" alt="" width="14" height="14"
-                         class="w-3.5 h-3.5 select-none pointer-events-none"
+                         class="w-3.5 h-3.5 select-none pointer-events-none {discardMode ? '' : 'opacity-70'}"
                          onerror={(e) => e.currentTarget.remove()}>
                     {discardMode ? 'Fertig' : 'Wegwerfen'}
                 </button>
             </div>
         </div>
 
-        {#if discardMode}
-            <p class="text-[11px] text-red-300/90 mb-3 -mt-1">
-                Wähle den Gegenstand, der weg soll. Trophäen bleiben unangetastet.
-            </p>
-        {/if}
-        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
+        <!-- No explanatory line in discard mode: every equipment slot turns red
+             and clickable while the trophies stay untouched, which says it
+             better than a sentence - and a sentence that only exists in one
+             state would push the whole grid down as it appears. -->
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 [&>*]:min-w-0">
             {#each normal as row, i (row.key)}
                 {@render slot(row, i)}
             {/each}
             {#each { length: emptySlots } as _, i (i)}
-                <div class="inv-slot empty"></div>
+                <!-- Same cell shape as a filled slot - centring wrapper plus the
+                     empty caption line - so free and used slots line up exactly. -->
+                <div class="flex flex-col items-center">
+                    <div class="inv-slot empty"></div>
+                    <div class="h-4 mt-1" aria-hidden="true"></div>
+                </div>
             {/each}
         </div>
     </div>
@@ -327,7 +344,7 @@
     {#if quest.length > 0}
         <div>
             <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">TROPHÄEN & ERINNERUNGEN</h3>
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 [&>*]:min-w-0">
                 {#each quest as row, i (row.key)}
                     {@render slot(row, i)}
                 {/each}

@@ -21,6 +21,32 @@ Die Arbeitswoche:
 * Drei neue Erfolge: Wochenendlich, Eisern und Blanker Freitag. Alle drei sind wie gewohnt nach Schwierigkeit gestuft.
 * Eine unterbrochene Woche geht nicht verloren. Beim nächsten Start bietet der Arbeitswochen-Knopf sie mit Wochentag, Uhrzeit und offenen Tickets zum Weitermachen an - der angefangene Arbeitstag wartet unabhängig davon an seinem eigenen Knopf.
 
+Die Synergy-Gala:
+* Der Abend hat jetzt eine Uhrzeit. Die Feier beginnt um 17 Uhr, und jede Station bringt eine halbe Stunde - wer auf die Uhr sieht, weiß ungefähr, wie lange es noch dauert, ohne dass ihm jemand eine Fortschrittsanzeige hinstellt.
+* Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
+* Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
+
+Mehrtägige Geschichten:
+* Rund 50 neue Ereignisse in Serverraum, Kaffeeküche, Dienstgang und am Telefon - zum ersten Mal als Geschichten, die über mehrere Tage gehen: Was am Montag aufgeschoben wird, eskaliert übermorgen; was bestellt ist, kommt frühestens am nächsten Tag; wer einmal diskret geholfen hat, ist ab jetzt "die Nummer". Im Arbeitstag stehen die Auftakte ganz normal im Pool - die Fortsetzungen gehören der Woche.
+* Folgen springen auch zwischen den Bereichen: Die Abkürzung im Serverraum klingelt später am Telefon, und ein Kaltakquise-Anruf steht tags darauf leibhaftig am Empfang - "wie telefonisch vereinbart".
+* Der Dienstgang nutzt seine zwei Gesichter als Erzählmittel: Manche Geschichte beginnt als Chat auf dem Handy und endet im Terminal, eine läuft andersherum.
+* Neue Gesichter machen GlobalCorp größer: Herr Blaschke vom Gebäudemanagement, Frau Sonntag aus der Buchhaltung, ein Herr in Grau mit Transformationsprojekt, Herr Grabowski (seit sieben Jahren in Rente, ruft trotzdem einmal im Jahr an) und die Niederlassung Süd, die nie ans Telefon geht.
+
+Das Wissen:
+* Ein neuer Punkt in der Leiste, zwischen Team und Archiv. Müller notiert dort, was er über dieses Haus herausfindet: über die Kollegen, über die Leute, die immer wieder anrufen, über Räume und über Vorgänge, die niemand angefangen hat und die trotzdem laufen.
+* Die Seiten füllen sich von allein. Wer jemandem begegnet, schlägt seinen Eintrag auf; wer eine Geschichte weiterspielt, bekommt die nächste Notiz. Was noch fehlt, steht als leere Zeile da - man sieht, dass eine Seite unfertig ist, aber nicht, was darauf fehlen wird.
+* Aufgebaut wie ein Notizbuch: links das Register, rechts die aufgeschlagene Seite, oben die vier Bereiche mit eigener Farbe. Auf dem Handy ist das Register die Seite, und ein Tipp blättert um.
+* Der Fortschritt gehört zur Laufbahn, nicht zum Tag. Was einmal notiert ist, bleibt notiert - auch über Wochen und Neuanfänge hinweg.
+* Dazu ein neuer Fall im Dienstgang: eine verwüstete Toilette, drei Beobachtungen und ein Abgleich der Zutrittsprotokolle. Wer über drei Tage dranbleibt, erfährt, wer es war. Ob das hilft, ist eine andere Frage.
+
+Gegenstände:
+* Zwei Neuzugänge, beide mit Haken. Die Voodoo-Puppe des Chefs senkt die Aggro spürbar - aber zwei Etagen höher verspürt Dr. Wichtig einen Krampf und muss aus unerfindlichen Gründen an dich denken, das Radar steigt. Die Notfall-Krawatte wirkt von allein: Trägt man exakt sein Modell, hält er einen bei jeder Begegnung kurz für einen der Ihren. Beide sind dort versteckt, wo niemand ein Geschenk erwartet.
+* Jeder Gegenstand hat jetzt seine eigene Abklingzeit. Bisher gab es im ganzen Rucksack nur eine - beim Stressball allein fiel das nie auf, mit dem zweiten Werkzeug hätte das Kneten die Puppe gesperrt.
+
+Der Rucksack:
+* Die Kacheln stehen jetzt sauber im Raster, auch wenn nur ein Gegenstand darin liegt. Die Beschriftungen hingen vorher unter den Kacheln und schoben die Zeilen auseinander - auf dem Handy fiel das Raster dadurch sichtbar auseinander.
+* Der Wegwerfen-Knopf hält sich zurück, bis man ihn braucht, und färbt sich erst dann rot - im selben Ton wie die Sicherheitsabfrage, die danach kommt. Die Erklärzeile ist weg: Die Kacheln leuchten ohnehin rot, und der Text hat beim Erscheinen das ganze Raster nach unten geschoben.
+
 Archiv & Statistiken:
 * Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
 * Die Gegenstands-Kacheln im Archiv tragen jetzt dieselben Beschreibungen wie der Rucksack: Name, Text und die Zeile, ob sich ein Gegenstand verbraucht - per Maus beim Überfahren, am Handy und auf dem Steam Deck per Fingertipp. Bisher stand dort nur der Name, und den bekam nur die Maus zu sehen. Nicht gefundene Gegenstände bleiben ein Fragezeichen.
@@ -39,21 +65,6 @@ Anzeige & Layout:
 * Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
 * Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
 
-Die Synergy-Gala:
-* Der Abend hat jetzt eine Uhrzeit. Die Feier beginnt um 17 Uhr, und jede Station bringt eine halbe Stunde - wer auf die Uhr sieht, weiß ungefähr, wie lange es noch dauert, ohne dass ihm jemand eine Fortschrittsanzeige hinstellt.
-* Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
-* Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
-
-Mehrtägige Geschichten:
-* Rund 50 neue Ereignisse in Serverraum, Kaffeeküche, Dienstgang und am Telefon - zum ersten Mal als Geschichten, die über mehrere Tage gehen: Was am Montag aufgeschoben wird, eskaliert übermorgen; was bestellt ist, kommt frühestens am nächsten Tag; wer einmal diskret geholfen hat, ist ab jetzt "die Nummer". Im Arbeitstag stehen die Auftakte ganz normal im Pool - die Fortsetzungen gehören der Woche.
-* Folgen springen auch zwischen den Bereichen: Die Abkürzung im Serverraum klingelt später am Telefon, und ein Kaltakquise-Anruf steht tags darauf leibhaftig am Empfang - "wie telefonisch vereinbart".
-* Der Dienstgang nutzt seine zwei Gesichter als Erzählmittel: Manche Geschichte beginnt als Chat auf dem Handy und endet im Terminal, eine läuft andersherum.
-* Neue Gesichter machen GlobalCorp größer: Herr Blaschke vom Gebäudemanagement, Frau Sonntag aus der Buchhaltung, ein Herr in Grau mit Transformationsprojekt, Herr Grabowski (seit sieben Jahren in Rente, ruft trotzdem einmal im Jahr an) und die Niederlassung Süd, die nie ans Telefon geht.
-
-Gegenstände:
-* Zwei Neuzugänge, beide mit Haken. Die Voodoo-Puppe des Chefs senkt die Aggro spürbar - aber zwei Etagen höher verspürt Dr. Wichtig einen Krampf und muss aus unerfindlichen Gründen an dich denken, das Radar steigt. Die Notfall-Krawatte wirkt von allein: Trägt man exakt sein Modell, hält er einen bei jeder Begegnung kurz für einen der Ihren. Beide sind dort versteckt, wo niemand ein Geschenk erwartet.
-* Jeder Gegenstand hat jetzt seine eigene Abklingzeit. Bisher gab es im ganzen Rucksack nur eine - beim Stressball allein fiel das nie auf, mit dem zweiten Werkzeug hätte das Kneten die Puppe gesperrt.
-
 Steam-Fassung:
 * Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
 * Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.
@@ -69,6 +80,7 @@ Fehlerkorrekturen:
 * Textpflege im Bestand: zwei Tippfehler und eine Handvoll fester Uhrzeiten in Ereignissen, die zu jeder Tageszeit auftreten können ("Um 13 Uhr bricht Panik aus" - auch um neun).
 
 Für Entwickler:
+* Das Wissen speichert Beweise statt Freischaltungen: state.archive führt seenEvents und seenFlags, alles Weitere wird beim Öffnen daraus abgeleitet. Später ergänzte Notizen leuchten dadurch rückwirkend für bestehende Spielstände auf. Der Datenprüfer hält die Einträge an die Belege: Ereignis-IDs und Fahnen werden gegen den Bestand geprüft, und ein Eintrag darf höchstens so viele Notizen führen, wie er Szenen zitiert.
 * Gegenstände: Abklingzeiten liegen in state.itemCooldowns je Gegenstands-ID, use versteht zusätzlich cr, rep und wait, und die neue Klasse passive wirkt beim Öffnen eines Ereignisses mit der hinterlegten Figur. Der Datenprüfer kennt alle neuen Felder und erzwingt: Kosten nur mit Abklingzeit, passive Wirkungen nur negativ, req und rem nie zugleich auf demselben Gegenstand.
 * Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
 * Zähler sind nach Modus getrennt: Wochentage erhöhen die Tageszähler nicht mehr, die Woche zählt über recordWeekResult(). Die Serie zählt weiterhin modusübergreifend, weil ein überlebter Wochentag ein überlebter Tag ist.
