@@ -36,5 +36,13 @@ export default defineConfig({
     server: {
         port: 8080,
         open: false
+    },
+
+    // vite preview serves dist/ by default, so with outDir: 'docs' it answered
+    // every request with a 404. It has to be pointed at the same directory the
+    // build writes to.
+    preview: {
+        port: 4173,
+        open: false
     }
 });
