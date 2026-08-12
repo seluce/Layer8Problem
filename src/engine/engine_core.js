@@ -886,7 +886,7 @@ export const core = {
     returnToMenu: function() {
         this.saveDay();
         this.clearDayTimers();
-        this.stopMusic();
+        this.stopMusic(0);   // the page reloads immediately, a fade would be cut off anyway
         location.reload();
     },
 

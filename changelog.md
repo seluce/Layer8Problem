@@ -50,6 +50,10 @@ Der Rucksack:
 Einstellungen:
 * "Handy aut. minimieren" ist am breiten Bildschirm ausgegraut und sagt auch, warum: Dort bleibt das Handy ohnehin sichtbar, die Einstellung kann nichts bewirken. Vorher ließ sich der Schalter umlegen, ohne dass etwas passierte. Wird das Fenster schmaler, ist er sofort wieder da - der gespeicherte Wert bleibt unangetastet.
 
+Musik:
+* Die Musik wechselt nicht mehr mit einem Schnitt. Beim Bossfight bricht die Bürobeschallung ab, statt einfach zu verstummen, und die Kampfmusik setzt hart ein - danach kommt das Büro sanft zurück. Auffallen soll das nicht; es fällt vorher auf, wenn es fehlt.
+* Wer in den Einstellungen einen festen Musikstil gewählt hat, hört ihn ohne die kurze Lücke am Ende jedes Durchlaufs. Im Radio-Modus bleibt alles wie gehabt, dort muss ein Stück zu Ende sein, damit das nächste gewählt werden kann.
+
 Der Startbildschirm:
 * Der Hochfahr-Text meldet jetzt die Lage, statt jeden Morgen dasselbe zu behaupten: übernommene Tickets, das Chef-Radar vom Vortag, was im Rucksack liegt. Am Montag steht dort die gewählte Startbedingung, am Freitag zuerst der Termin, den man nicht vergessen sollte.
 * Ab dem zweiten Arbeitstag fällt die Begrüßung mit Firmenname und Copyright weg - fünf Morgen pro Woche brauchen keine fünf Vorstellungsrunden. Der Start ist dadurch spürbar kürzer.

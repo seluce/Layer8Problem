@@ -391,6 +391,66 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// -------------------------------------------------------------- Musik (v5.0)
+console.log('Musik:');
+{
+    // Audio stub - the real element does not exist under node.
+    class FakeAudio {
+        constructor(src) { this.src = src; this.volume = 1; this.paused = true; this.loop = false; this.preload = ''; this._h = {}; }
+        play() { this.paused = false; return Promise.resolve(); }
+        pause() { this.paused = true; }
+        addEventListener(e, f) { this._h[e] = f; }
+    }
+    globalThis.Audio = FakeAudio;
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const mus = { state, ...audio };
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+    await ok('Ein Titel blendet ein statt hart zu starten', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        mus.initMusic();
+        mus.playMusic('office');
+        const key = state.currentMusicTrack;
+        assert.equal(mus.bgmTracks[key].volume, 0, 'startet nicht bei 0');
+        await wait(750);
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.8) < 0.02, 'blendet nicht auf Zielwert');
+    });
+
+    await ok('Der abgelöste Titel wird pausiert und auf Lautstärke zurückgesetzt', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        mus.initMusic();
+        mus.playMusic('office');
+        const alt = state.currentMusicTrack;
+        await wait(700);
+        mus.playMusic('boss');
+        await wait(500);
+        assert.ok(mus.bgmTracks[alt].paused, 'alter Titel läuft weiter');
+        // must not stay at 0, or a later play() without fade would be silent
+        assert.ok(Math.abs(mus.bgmTracks[alt].volume - 0.8) < 0.02, 'Lautstärke nicht zurückgesetzt');
+    });
+
+    await ok('Fester Stil wiederholt nahtlos, Radio nicht', () => {
+        state.musicEnabled = false; state.musicStyle = 'radio';
+        mus.initMusic();
+        assert.equal(mus.bgmTracks.lofi.loop, false, 'Radio darf nicht loopen');
+        mus.changeMusicStyle('lofi');
+        assert.equal(mus.bgmTracks.lofi.loop, true, 'fester Stil loopt nicht');
+        mus.changeMusicStyle('radio');
+        assert.equal(mus.bgmTracks.lofi.loop, false, 'Rückschaltung greift nicht');
+    });
+
+    await ok('Der Lautstärkeregler schlägt eine laufende Blende', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        mus.initMusic();
+        mus.playMusic('office');
+        const key = state.currentMusicTrack;
+        mus.setMusicVolume(0.3);      // mitten im Einblenden
+        await wait(750);
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.3) < 0.02,
+                  `Blende überschreibt den Regler: ${mus.bgmTracks[key].volume}`);
+    });
+}
+
 // ------------------------------------------------------ Boot-Sequenz (v5.0)
 console.log('Startbildschirm:');
 await ok('Ab dem zweiten Morgen ist der Start kurz', () => {
