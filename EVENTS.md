@@ -659,10 +659,10 @@ alle drei folgen daraus, dass Feierabend ist:
   der Feier weder ausrasten noch gefeuert werden. Der Abend endet ausschließlich über
   eines der `party_finale_*`-Ereignisse.
 
-Auch `rep`, `loot`, `req` und `rem` kommen in keiner der 137 bestehenden Auswahlen vor.
-Die Engine würde `m`, `c` und `rep` zwar verarbeiten — die Beschränkung ist eine
-Konvention des Bereichs, keine technische Sperre. Halte dich daran: Eine Party-Auswahl
-trägt `f`, `a` und `next`, sonst nichts. Nach genug Stationen löst
+`m` und `c` meldet der Linter als Fehler — die Engine würde beide verarbeiten, wirkungslos,
+und ein Wert, der still nichts tut, ist schlimmer als einer, der laut scheitert. `rep`,
+`loot`, `req` und `rem` bleiben erlaubt, kommen aber in keiner der 137 bestehenden
+Auswahlen vor. Der Normalfall ist: `f`, `a` und `next`. Nach genug Stationen löst
 der Abend eines der Finale aus; die `party_finale_*`-Ereignisse sind fest verdrahtet und
 brauchen keine Beiträge.
 

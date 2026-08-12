@@ -716,6 +716,21 @@ for (const p of POOLS) {
     const ctx = `[${p}/${ev.id}]`;
     checkKeys(ev, eventKeys, ctx, 'am Ereignis');
     (ev.opts ?? []).forEach((o, i) => checkKeys(o, optKeys, `${ctx} opts[${i}]`, 'in der Auswahl'));
+
+    // The party runs after hours, and two fields have no meaning there. The
+    // engine would happily process both - m is overwritten a moment later by
+    // the station clock, and the chef radar has no consequence because
+    // checkEndConditions() bails out in party mode. Catching it here rather
+    // than swallowing it in the engine: a value that silently does nothing is
+    // worse than one that fails loudly.
+    if (p === 'party') {
+      (ev.opts ?? []).forEach((o, i) => {
+        if (o.m !== undefined)
+          err(`${ctx} opts[${i}]: "m" wirkt auf der Feier nicht — die Uhr läuft über zwölf Stationen zu je 30 Minuten`);
+        if (o.c !== undefined)
+          err(`${ctx} opts[${i}]: "c" wirkt auf der Feier nicht — nach Feierabend gibt es kein Chef-Radar und kein Spielende`);
+      });
+    }
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
       checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'am Knoten');
       (node.opts ?? []).forEach((o, i) =>
