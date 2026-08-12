@@ -2,6 +2,12 @@
 
 Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
 
+Das Wissen:
+* Die Sommerfeier hat eine eigene Seite bekommen. Wer den Abend übersteht, findet dort wieder, was am Montag niemand mehr erwähnt: die Rangfolge am Buffet, die Lounge als Nachrichtenquelle, die Firmenkarte auf dem klebrigen Tresen.
+* Auch das Wochenmeeting und die Beratungsfirmen sind jetzt erfasst. Drei Namen, ein Auftreten - und Zahlen, die aus einem Dashboard stammen, das seit 2019 kaputt ist.
+* Jeder der sieben Kollegen hat eine Notiz aus den persönlichen Begegnungen dazubekommen - dort steht, was man über jemanden erst erfährt, wenn man länger mit ihm zu tun hat. Egon sucht einen Nachfolger, Chantal lässt einmal die Fassade fallen, Frau Elster bittet um Hilfe für einen digitalen Bilderrahmen.
+* Zwei Gesichter aus dem Postfach haben es ins Buch geschafft: Sabine aus der Personalabteilung, die eine inklusive Atmosphäre schafft und Listen darüber führt, und Herr Wuttke aus der Buchhaltung, der seine Einkaufszettel an Outlook schickt und sich beim Programm dafür bedankt.
+
 Fehlerkorrekturen:
 * Ein Handy-Dienstgang konnte eine Leiste kurz über 100 % zeigen, bevor sie auf 100 % zurücksprang. Der Wert war nie wirklich höher - die Anzeige lief der Begrenzung nur einen Wimpernschlag voraus. Jetzt bleibt sie stehen, wo sie hingehört.
 

@@ -578,6 +578,11 @@ for (const id of itemIds) {
 // checked against what exists - idMap holds every event id in the game,
 // flagsSetWhere every flag an event raises.
 {
+  // A compendium note may cite a mail as well as an event - mails are not part
+  // of POOLS, so idMap alone would reject every one of them.
+  const mailIds = new Set((DB.emails ?? []).map(m => m.id));
+  const istQuelle = (id) => idMap.has(id) || mailIds.has(id);
+
   const FIELDS = ['id', 'cat', 'name', 'rolle', 'kopf', 'seen', 'notizen'];
   const NOTE_FIELDS = ['seen', 'flag', 'text'];
   const ids = new Set();
@@ -595,7 +600,7 @@ for (const id of itemIds) {
 
     if (!(e.seen ?? []).length) err(`${ctx}: ohne seen wird der Kopf nie freigeschaltet`);
     for (const id of e.seen ?? [])
-      if (!idMap.has(id)) err(`${ctx}: seen "${id}" ist kein Ereignis`);
+      if (!istQuelle(id)) err(`${ctx}: seen "${id}" ist weder Ereignis noch Mail`);
 
     const notes = e.notizen ?? [];
     if (notes.length < 3) warn(`${ctx}: nur ${notes.length} Notizen — unter drei wirkt ein Eintrag dünn`);
@@ -617,7 +622,7 @@ for (const id of itemIds) {
       if (!n.text) err(`${nctx}: ohne text`);
       if (!n.seen && !n.flag) err(`${nctx}: ohne Auslöser (seen oder flag) erscheint die Notiz nie`);
       if (n.seen && n.flag) err(`${nctx}: seen und flag zugleich — ein Auslöser genügt`);
-      if (n.seen && !idMap.has(n.seen)) err(`${nctx}: seen "${n.seen}" ist kein Ereignis`);
+      if (n.seen && !istQuelle(n.seen)) err(`${nctx}: seen "${n.seen}" ist weder Ereignis noch Mail`);
       if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: Fahne "${n.flag}" wird von keinem Ereignis gesetzt`);
       if (n.text && texte.has(n.text)) err(`${nctx}: Notiztext doppelt`);
       if (n.text) texte.add(n.text);

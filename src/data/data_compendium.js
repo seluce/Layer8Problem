@@ -136,6 +136,35 @@ export const compendium = [
         ]
     },
     {
+        id: "sabine",
+        cat: "person",
+        name: "Sabine",
+        rolle: "Personalabteilung",
+        kopf: "Schafft eine inklusive Atmosphäre und führt Listen darüber, wer sich daran hält. Beides mit derselben Ernsthaftigkeit.",
+        seen: ["mail_cake_1", "mail_cake_2", "mail_sabine_tupper", "mail_ac_pants", "mail_teambuilding_1"],
+        notizen: [
+            { seen: "mail_cake_1",        text: "Bäckt veganen, glutenfreien Zucchini-Kuchen für alle und schreibt dazu, dass jeder nur ein Stück nehmen darf. Der Widerspruch fällt ihr nicht auf." },
+            { seen: "mail_cake_2",        text: "Wer ihren Kuchen kommentiert, landet auf der Kein-Weihnachtsgeld-Liste. Es gibt diese Liste. Sie führt sie selbst." },
+            { seen: "mail_sabine_tupper", text: "Ihre rote Dose trägt einen Aufkleber mit ihrem Namen. Verschwindet sie, durchsucht sie Schreibtische und droht mit der Polizei." },
+            { seen: "mail_teambuilding_1", text: "Ihr Teamevent heißt Wald-Survival: aussetzen, ohne Handys, wer zuerst zurück ist, wird nicht gefeuert. Sie meint den Nachsatz als Anreiz." },
+            { seen: "mail_ac_pants",      text: "Formuliert Ermahnungen in vollständigen Sätzen, egal wie absurd der Anlass ist. Genau das macht sie so schwer zu ertragen." }
+        ]
+    },
+    {
+        id: "wuttke",
+        cat: "person",
+        name: "H. Wuttke",
+        rolle: "Buchhaltung",
+        kopf: "Benutzt das Postfach für alles, wofür andere getrennte Geräte haben. Die Grenze zwischen Arbeit und Einkaufszettel ist ihm nie erklärt worden.",
+        seen: ["mail_wuttke_excel", "mail_wuttke_1", "mail_wuttke_ai", "mail_software_1"],
+        notizen: [
+            { seen: "mail_wuttke_excel", text: "'Ich habe nichts gemacht, ehrlich' steht in Großbuchstaben in der Betreffzeile. Gelöscht wurde Spalte G." },
+            { seen: "mail_wuttke_1",     text: "Schreibt Suchanfragen als Mail. 'Gulasch Rezept einfach schnell ohne Paprika', kein Betreff, kein Empfängerzweifel." },
+            { seen: "mail_wuttke_ai",    text: "Hält die automatische Antwort für einen Menschen und bedankt sich bei Outlook. Dann bestellt er bei ihm Sahne und Nudeln, keine Spiralnudeln." },
+            { seen: "mail_software_1",   text: "Installiert Gratis-Software, weil der Rechner danach bunter ist, und bietet den Link kollegial weiter. Genau dort beginnt die Arbeit." }
+        ]
+    },
+    {
         id: "werner",
         cat: "person",
         name: "Werner",
@@ -301,37 +330,37 @@ export const compendium = [
     {
         id: "k_kevin", cat: "team", name: "Kevin", rolle: "Auszubildender",
         kopf: "Lernt schnell, nur selten das, was auf dem Ausbildungsplan steht. Fragt zu spät und meldet zu ehrlich.",
-        seen: ["cof_deka_2", "call_diskret_2", "sq_kevin_geheim_2", "srv_schacht_3", "call_kevin2", "call_kevin_button_1"],
+        seen: ["cof_deka_2", "call_diskret_2", "sq_kevin_geheim_2", "srv_schacht_3", "call_kevin2", "call_kevin_button_1", "rep_kevin_story_1"],
         notizen: [
             { seen: "sq_kevin_geheim_2", text: "Kennt Ecken des Gebäudes, die in keinem Plan stehen, und teilt sie nur mit Leuten, die nicht nachfragen." },
             { seen: "cof_deka_2",        text: "Hat immer eine Thermoskanne im Rucksack. Er stellt keine Fragen, aber er notiert." },
             { seen: "call_diskret_2",    text: "Wird von der Geschäftsleitung zuverlässig Justin genannt. Dreimal im selben Gespräch." },
             { seen: "srv_schacht_3",     text: "Führt ein Klemmbrett und merkt Veränderungen, bevor die Überwachung sie meldet. Man sollte ihm öfter zuhören." },
             { seen: "call_kevin_backup", text: "Macht Sicherungen aus eigenem Antrieb, vier Stunden lang, und legt sie neben das Original. Der Wille stimmt, der Ort nicht." },
-            { seen: "call_kevin_microsoft", text: "Ruft bei Herstellern an, bevor er im Haus fragt. Am anderen Ende sitzt dann jemand, der auch nicht weiß, was eine ruckelnde Maus ist." },
             { seen: "call_kevin2",          text: "Will das Admin-Passwort, sobald die Panik groß genug ist. Der Satz davor lautet immer, dass der Chef ihn sonst umbringt." },
-            { seen: "call_kevin_button_1",  text: "Drückt Knöpfe, um zu sehen, was passiert. Das ist beim Lernen eine Stärke und im Serverraum ein Problem." }
+            { seen: "call_kevin_button_1",  text: "Drückt Knöpfe, um zu sehen, was passiert. Das ist beim Lernen eine Stärke und im Serverraum ein Problem." },
+            { seen: "rep_kevin_story_1", text: "Schreibt aus Langeweile Skripte, die tatsächlich funktionieren. Was sie sonst noch tun, merkt man erst, wenn sie auf alle Mails antworten." }
         ]
     },
     {
         id: "k_chantal", cat: "team", name: "Chantal", rolle: "Marketing",
         kopf: "Spricht fließend Strategie und kein Wort Technik. Beides mit derselben Überzeugung.",
-        seen: ["cof_chantal_tiktok_2b", "call_chantal_umfrage", "sq_smile_gate_2a", "call_chantal_breakdown_1", "call_beamer_workshop", "call_chef_kaffeetrick"],
+        seen: ["cof_chantal_tiktok_2b", "call_chantal_umfrage", "sq_smile_gate_2a", "call_chantal_breakdown_1", "call_beamer_workshop", "call_chef_kaffeetrick", "rep_chantal_story_1"],
         notizen: [
             { seen: "call_chantal_umfrage", text: "Ihre Umfragen haben immer schon ein Ergebnis, wenn sie verschickt werden. Die Rückläufe sind Formsache." },
             { seen: "cof_chantal_tiktok_2b", text: "Was in ihrer Story landet, war vorher nie zur Veröffentlichung gedacht. Sie sieht darin keinen Widerspruch." },
             { seen: "sq_smile_gate_2a",     text: "Nennt jede Maßnahme nach dem Gefühl, das sie erzeugen soll, nie nach dem, was sie tut." },
             { seen: "call_chantal_breakdown_1", text: "Zwei Likes nach zehn Minuten sind für sie ein Notfall. Die Panik ist echt, auch wenn der Anlass es nicht ist." },
-            { seen: "call_beamer_workshop", text: "Ihre Workshops beginnen in vier Minuten und behandeln Digitalisierung. Der Beamer gehört nie dazu." },
             { seen: "call_chef_kaffeetrick", text: "Feel-Good-Management ist eine Funktion, kein Zustand. Wer das verwechselt, diskutiert stundenlang." },
             { seen: "call_chantal",         text: "Gesperrte Seiten sind für sie Recherche-Hindernisse. Der Hinweis auf den Chef kommt im selben Atemzug und ist nicht als Drohung gemeint, sondern als Argument." },
-            { seen: "call_chantal_hostage_1", text: "Wer sie aus einem Termin rettet, hat einen Gefallen gut. Wer es nicht tut, hört vierzig Minuten später davon." }
+            { seen: "call_chantal_hostage_1", text: "Wer sie aus einem Termin rettet, hat einen Gefallen gut. Wer es nicht tut, hört vierzig Minuten später davon." },
+            { seen: "rep_chantal_story_1", text: "Hinter der Fassade sitzt jemand, der die Fassade durchschaut. Das gibt sie genau einmal zu, an der Kaffeemaschine, und nie wieder." }
         ]
     },
     {
         id: "k_egon", cat: "team", name: "Egon", rolle: "Hausmeister",
         kopf: "Der eigentliche Hausherr. Besitzt jeden Schlüssel, misstraut jedem Kabel und hat für alles eine Lösung von 1987.",
-        seen: ["srv_egon_kabel_1", "call_meyer_2", "cof_empfang_1", "rep_egon_story_2c", "call_egon_switch", "call_climate_emergency"],
+        seen: ["srv_egon_kabel_1", "call_meyer_2", "cof_empfang_1", "rep_egon_story_2c", "call_egon_switch", "call_climate_emergency", "rep_egon_story_2a"],
         notizen: [
             { seen: "srv_egon_kabel_1", text: "Verleiht nichts, er übergibt. Wer etwas von ihm bekommt, ist ab da Verwalter, nicht Besitzer." },
             { seen: "call_meyer_2",     text: "Hasst Elektrik und kommt trotzdem. Er will nur vorher wissen, wer schuld ist." },
@@ -339,13 +368,14 @@ export const compendium = [
             { seen: "call_egon",         text: "Meldet Störungen wörtlich und ohne Deutung. Ob eine Flüssigkeit Kühlmittel oder Alien ist, entscheidet die IT, nicht er." },
             { seen: "sq_janitor_talk",   text: "Am Hintereingang ist er gesprächiger als im ganzen restlichen Haus. Man muss nur zufällig vorbeikommen." },
             { seen: "call_egon_switch",  text: "Hat einen nassen Switch aufgeschraubt und trockengeföhnt. Er fragt hinterher, ob das so richtig war, und der Kasten läuft tatsächlich." },
-            { seen: "call_climate_emergency", text: "Steht bei minus zehn Grad vor der Klimaanlage und will sie wärmer stellen. Dass ein Serverraum kalt sein soll, ist für ihn Ideologie." }
+            { seen: "call_climate_emergency", text: "Steht bei minus zehn Grad vor der Klimaanlage und will sie wärmer stellen. Dass ein Serverraum kalt sein soll, ist für ihn Ideologie." },
+            { seen: "rep_egon_story_2a", text: "Geht bald in Rente und sucht jemanden, dem er das Haus übergeben kann. Die Auswahl ist klein, die Prüfung streng." }
         ]
     },
     {
         id: "k_wichtig", cat: "team", name: "Dr. Wichtig", rolle: "Geschäftsführung",
         kopf: "Hat Visionen, Termine und ein Telefon im Tunnel. Von allem dreien ist der Tunnel am verlässlichsten.",
-        seen: ["srv_puppe_2", "sq_brandt_1", "call_diskret_1", "call_boss_pocket", "call_boss_tunnel"],
+        seen: ["srv_puppe_2", "sq_brandt_1", "call_diskret_1", "call_boss_pocket", "call_boss_tunnel", "rep_ceo_story_1"],
         notizen: [
             { flag: "call_diskret_gefallen", text: "Größere Probleme regelt er über die offizielle Struktur. Bildschirm-Probleme regelt er heimlich." },
             { seen: "srv_puppe_2",           text: "Sucht für jedes Unwohlsein eine technische Ursache. Ein Messprotokoll heilt ihn zuverlässiger als eine Diagnose." },
@@ -354,13 +384,13 @@ export const compendium = [
             { seen: "boss_flood",            text: "In der Rangfolge einer Katastrophe stehen die Kois vor den Bodensteckdosen. Er sagt es nicht im Scherz." },
             { seen: "call_junior",           text: "Sein Sohn hält die Firma für Familienbesitz. Zwölf Jahre alt, und er hat es von irgendwem gehört." },
             { seen: "call_boss_pocket",      text: "Wählt gelegentlich aus der Hosentasche. Was man dann hört, ist ehrlicher als jede All-Hands." },
-            { seen: "call_boss_tunnel",      text: "Trifft Entscheidungen im Tunnel, bei fünfzig Prozent Verständlichkeit. Die Hälfte, die ankommt, gilt trotzdem." }
+            { seen: "rep_ceo_story_1", text: "Visionen enden bei ihm regelmäßig mit Geräten im Serverraum. Laufbänder zum Beispiel, drei Stück, für agiles Programmieren im Gehen." }
         ]
     },
     {
         id: "k_elster", cat: "team", name: "Frau Elster", rolle: "Buchhaltung",
         kopf: "Formvollendet, unbestechlich und unerbittlich. Wer ihre Regeln benutzt statt sie zu umgehen, hat sie auf seiner Seite.",
-        seen: ["sq_obstkorb_2", "srv_ntp_2", "cof_elster_razzia", "cof_elster_audit_1", "call_elster_excel"],
+        seen: ["sq_obstkorb_2", "srv_ntp_2", "cof_elster_razzia", "cof_elster_audit_1", "call_elster_excel", "rep_elster_story_2b"],
         notizen: [
             { seen: "sq_obstkorb_2",   text: "Eine Liste von ihr beendet jede Selbstbedienung. Nicht durch Verbot, sondern durch Sichtbarkeit." },
             { seen: "srv_ntp_2",       text: "Rohdaten sind bei ihr besser aufgehoben als bei jedem System. Sie liefert sie mit Korrekturspalten und Versionsnummer zurück." },
@@ -368,13 +398,14 @@ export const compendium = [
             { seen: "call_zeit_revision", text: "Bemerkt jede nachträgliche Änderung in der Zeiterfassung. Sie weiß auch, welches Konto sie gemacht haben muss." },
             { seen: "call_elster_budget_trap_1", text: "Anträge scheitern bei ihr nie am Geld, sondern an der Form. Das ist die schlechtere Nachricht." },
             { seen: "cof_elster_audit_1",   text: "Führt Strichlisten über den Bohnenverbrauch und kennt die Abweichung zum Vorquartal auf die Kommastelle." },
-            { seen: "call_elster_excel",    text: "Ein schwarzer Bildschirm bringt sie zum Weinen, eine Fristüberschreitung nicht. Die Rangfolge ist konsequent." }
+            { seen: "call_elster_excel",    text: "Ein schwarzer Bildschirm bringt sie zum Weinen, eine Fristüberschreitung nicht. Die Rangfolge ist konsequent." },
+            { seen: "rep_elster_story_2b", text: "Hinter geschlossenen Jalousien bittet sie um Hilfe für einen digitalen Bilderrahmen, der Rüdiger nicht mehr anzeigt. Das ist kein Auftrag, das ist Vertrauen." }
         ]
     },
     {
         id: "k_markus", cat: "team", name: "Markus", rolle: "Vertriebsleitung",
         kopf: "Verkauft mit echter Begeisterung Dinge, die es noch nicht gibt. Der Rückweg ist regelmäßig dein Problem.",
-        seen: ["sq_markus_schritte_1", "cof_elevator_2a", "sq_markus_schritte_2", "call_markus", "cof_markus_flex_1"],
+        seen: ["sq_markus_schritte_1", "cof_elevator_2a", "sq_markus_schritte_2", "call_markus", "cof_markus_flex_1", "rep_markus_story_2b"],
         notizen: [
             { seen: "sq_markus_schritte_1", text: "Trägt einen ungefragt in Wettbewerbe ein und rechnet fest mit Dankbarkeit." },
             { seen: "cof_elevator_2a",      text: "Der Nothalt im Aufzug ist für ihn ein Besprechungsraum. Er benutzt ihn ohne jedes Unrechtsbewusstsein." },
@@ -382,13 +413,14 @@ export const compendium = [
             { seen: "call_markus_papier",   text: "Löst Probleme notfalls im Copyshop gegenüber und rechnet die Fahrt gegen die IT auf. Zweiundvierzig Euro, und er hat die Quittung dabei." },
             { seen: "call_markus_ambush_1", text: "Schaltet die Freisprechanlage ein, ohne es zu sagen. Wer ihm etwas Vertrauliches erzählt, erzählt es dem Raum." },
             { seen: "call_markus",          text: "Jedes seiner Probleme kostet die Firma eine Million Euro und muss in fünf Minuten gelöst sein. Bisher ist keine Million geflossen." },
-            { seen: "cof_markus_flex_1",    text: "Trägt die Uhr so, dass man sie sieht, und krempelt dafür den Ärmel hoch. Das Gespräch beginnt erst danach." }
+            { seen: "cof_markus_flex_1",    text: "Trägt die Uhr so, dass man sie sieht, und krempelt dafür den Ärmel hoch. Das Gespräch beginnt erst danach." },
+            { seen: "rep_markus_story_2b", text: "Sagt der Kunde ab, liegt es an der Technik. Sagt der Kunde zu, lag es an ihm. Das System ist geschlossen und funktioniert seit Jahren." }
         ]
     },
     {
         id: "k_gabi", cat: "team", name: "Gabi", rolle: "Empfang",
         kopf: "Die Nachrichtenzentrale. Weiß Dinge vor dem Intranet, und die wichtigen erfährt sie überhaupt nur mündlich.",
-        seen: ["cof_empfang_1", "sq_berater_2", "sq_brandt_1", "call_gabi_gossip_1", "call_mouse_in_printer"],
+        seen: ["cof_empfang_1", "sq_berater_2", "sq_brandt_1", "call_gabi_gossip_1", "call_mouse_in_printer", "rep_gabi_story_2b"],
         notizen: [
             { flag: "cof_empfang_zugang", text: "Die beste Kaffeemaschine des Hauses steht bei ihr. Zugang gibt es nicht für Geld, nur für Gefallen." },
             { seen: "sq_berater_2",       text: "Prüft Raumbelegungen und Türkamera-Standbilder aus reiner Gründlichkeit. Wer ihr etwas verschweigt, verliert Zeit." },
@@ -396,7 +428,8 @@ export const compendium = [
             { seen: "call_sekretary_2a",  text: "Ihre Fehlerbeschreibungen sind Klangbilder. Eine sterbende Kaffeemühle ist präziser als jede Fehlernummer." },
             { seen: "call_deka_stimmung", text: "Merkt an der Geschwindigkeit des Hauses, dass etwas nicht stimmt, bevor es jemand ausspricht." },
             { seen: "call_gabi_gossip_1", text: "Wenn sie eine gesperrte Seite braucht, hat das einen Grund, der gleich zur Tür hereinkommt." },
-            { seen: "call_mouse_in_printer", text: "Beschreibt ein Quietschen im Takt der Seiten so genau, dass die Diagnose vor dem Hinsehen feststeht." }
+            { seen: "call_mouse_in_printer", text: "Beschreibt ein Quietschen im Takt der Seiten so genau, dass die Diagnose vor dem Hinsehen feststeht." },
+            { seen: "rep_gabi_story_2b", text: "Kennt jede Vorschrift, die ihr gerade nützt, und zitiert sie mit vollem Ernst. Der Gebäudeaustritt braucht angeblich ein Ticket." }
         ]
     },
     /* -------------------------------------------------------------------- ORTE */
@@ -484,6 +517,24 @@ export const compendium = [
             { seen: "sq_janitor_talk",    text: "Egon steht hier und flucht über neumodische Technik. Ein Feuerzeug zählt für ihn bereits dazu." },
             { seen: "sq_drafty_door_2a",  text: "Die Schiebetür hält jedem Provisorium stand, nur nicht einem Manager, der raus will." },
             { seen: "srv_folder_2009",    text: "Was hier besprochen wird, steht in keinem Protokoll und stimmt trotzdem öfter als das Intranet." }
+        ]
+    },
+    {
+        id: "gala",
+        cat: "ort",
+        name: "Die Sommerfeier",
+        rolle: "Einmal im Jahr, Pflichtveranstaltung",
+        kopf: "Ein Abend, an dem sich alle Dinge erlauben, für die sie sich am Montag schämen werden. Die Firma bezahlt, das Gebäude hält, der Rest ist Verhandlungssache.",
+        seen: ["party_start", "party_hub", "party_buffet_1", "party_lounge_1", "party_dance_2", "party_outside_7", "party_bar_5", "party_toilet_3"],
+        notizen: [
+            { seen: "party_start",     text: "Der Fluchtweg über den Hinterausgang ist bekannt und wird bewacht. Wer einen Namensaufkleber auf der Stirn trägt, ist bereits verloren." },
+            { seen: "party_hub",       text: "Der Raum sortiert die Leute von selbst: Bar, Buffet, Tanzfläche, Lounge, draußen. Wo jemand steht, sagt mehr über seinen Abend als jedes Gespräch." },
+            { seen: "party_buffet_1",  text: "Am Buffet gilt Rangfolge. Der Mett-Igel ist gesperrt, bis die Geschäftsführung gegessen hat, und Egon setzt das durch." },
+            { seen: "party_lounge_1",  text: "In der Lounge erfährt man, was das ganze Jahr verschwiegen wurde. Ein geschrottetes Firmenauto zum Beispiel, das noch niemand gemeldet hat." },
+            { seen: "party_dance_2",   text: "Ab einer bestimmten Uhrzeit trägt Dr. Wichtig seine Krawatte um die Stirn. Wer das sieht, hat gute Karten und ein Problem zugleich." },
+            { seen: "party_bar_5",     text: "Die schwarze Firmenkarte liegt irgendwann unbeaufsichtigt auf einem klebrigen Tresen. Sie liegt dort nicht lange." },
+            { seen: "party_toilet_3",  text: "In den Kabinen wird gelästert, ohne nachzusehen, wer nebenan sitzt. Die besten Informationen des Abends kosten hier keinen Cent." },
+            { seen: "party_outside_7", text: "Draußen steht irgendwann ein Anwohner im Bademantel am Zaun. Er hat recht, und es hilft ihm nichts." }
         ]
     },
     {
@@ -755,6 +806,37 @@ export const compendium = [
             { seen: "srv_dat_archiv",     text: "Beschriftet in einer Systematik, die mit ihrem Erfinder gegangen ist. Ganz unten liegt eine, die aus der Reihe fällt." },
             { seen: "call_cnc_emulator",  text: "Alte Technik verschwindet hier nie, sie wird nur seltener gebraucht. Bis sie plötzlich vier Maschinen gleichzeitig am Laufen hält." },
             { seen: "srv_dat_archiv",     text: "Wegwerfen darf es niemand, lesen kann es niemand. Der einzige stabile Zustand für Daten in diesem Haus." }
+        ]
+    },
+    {
+        id: "wochenmeeting",
+        cat: "vorgang",
+        name: "Das Wochenmeeting",
+        rolle: "Freitagnachmittag, Besprechungsraum",
+        kopf: "Der Abschluss jeder Arbeitswoche. Man berichtet, was war, und erfährt dabei, was es in Wirklichkeit gewesen sein soll.",
+        seen: ["meet_review_1", "meet_synergie_1", "meet_kennzahlen_1", "meet_beamer_1", "meet_tool_1", "meet_neuling_1"],
+        notizen: [
+            { seen: "meet_review_1",    text: "Es sitzt immer jemand Externes mit am Tisch. Vorgestellt wird er, als sei seine Anwesenheit die Nachricht." },
+            { seen: "meet_beamer_1",    text: "Der Beamer steht auf dem falschen Eingang. Jedes Mal. Wer das behebt, bekommt die Reaktionszeit der IT notiert, nicht den Dank." },
+            { seen: "meet_kennzahlen_1", text: "Die eigene Woche erscheint als Diagramm, in dem ein Balken keine Beschriftung hat. Erklärt wird er trotzdem." },
+            { seen: "meet_synergie_1",  text: "Was hier gesagt wird, landet im Protokoll. Was im Protokoll landet, war gesagt worden — die Reihenfolge lässt sich nachträglich nicht mehr klären." },
+            { seen: "meet_neuling_1",   text: "Sätze aus diesem Raum tauchen Wochen später in Präsentationen auf, unter der Überschrift 'Stimmen aus der Organisation'." },
+            { seen: "meet_tool_1",      text: "Verkauft wird gelegentlich das, was man bereits besitzt. Man erkennt es an den Spaltenüberschriften." }
+        ]
+    },
+    {
+        id: "berater",
+        cat: "vorgang",
+        name: "Die Berater",
+        rolle: "Synerqon · Norden & Kessler · McKandy",
+        kopf: "Drei Firmen, ein Auftreten. Sie begleiten die Transformation seit Jahren und sind sich darin einig, dass sie noch nicht abgeschlossen ist.",
+        seen: ["meet_review_1", "meet_synergie_1", "meet_kennzahlen_1", "meet_tool_1", "meet_neuling_1"],
+        notizen: [
+            { seen: "meet_review_1",     text: "Aus einer Beschreibung wird bei ihnen ein Befund: Wer sagt, es laufe, hat ein Ressourcen-Alignment-Defizit mit reaktiver Eskalationskultur." },
+            { seen: "meet_kennzahlen_1", text: "Ihre Zahlen stammen aus dem Intranet-Dashboard, das seit 2019 kaputt ist. Das weiß außer dir niemand im Raum." },
+            { seen: "meet_synergie_1",   text: "Jede Lücke heißt Delta, und jedes Delta wird in einem Workshop definiert. Der Workshop kostet das Budget von vier Stellen." },
+            { seen: "meet_neuling_1",    text: "Wer neu ist, liest die Fragen von einem ausgedruckten Ablauf ab und dreht das Blatt weg. Nach zwei Jahren macht er es auswendig." },
+            { seen: "meet_tool_1",       text: "Widerspruch bringt sie nicht aus dem Takt. 'Wir haben es für Sie individualisiert' beantwortet auch den Vorwurf, es sei das eigene Produkt." }
         ]
     }
 ];
