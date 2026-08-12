@@ -391,6 +391,33 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// ------------------------------------------------------- Statuswerte (v5.0)
+console.log('Statuswerte:');
+await ok('Werte bleiben beim Zuweisen in 0..100', () => {
+    resetState();
+    state.fl = 98;
+    events.addStat.call(engine, 'fl', 7);
+    assert.equal(state.fl, 100, 'über 100 gerutscht');
+    state.al = 3;
+    events.addStat.call(engine, 'al', -20);
+    assert.equal(state.al, 0, 'unter 0 gerutscht');
+});
+await ok('Ein Ereignis kann die Anzeige nicht überschießen lassen', () => {
+    resetState();
+    state.fl = 96; state.al = 95; state.cr = 97;
+    // resolveTerminal is the path the phone sidequests take as well
+    events.resolveTerminal.call(engine, { m: 5, f: 15, a: 20, c: 25, r: 'x' }, 'sidequest');
+    for (const k of ['fl', 'al', 'cr'])
+        assert.ok(state[k] <= 100, `${k} steht bei ${state[k]}`);
+});
+await ok('Die Todesschwelle wird bei genau 100 noch erreicht', () => {
+    resetState();
+    state.al = 90;
+    events.addStat.call(engine, 'al', 50);   // würde ohne Deckel 140 ergeben
+    assert.equal(state.al, 100, 'Deckel verfehlt');
+    assert.ok(state.al >= 100, 'Todesprüfung (>= 100) griffe nicht mehr');
+});
+
 // -------------------------------------------------------------- Musik (v5.0)
 console.log('Musik:');
 {

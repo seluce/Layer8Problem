@@ -1,9 +1,15 @@
+[5.1.0] - unveröffentlicht
+
+Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
+
+Fehlerkorrekturen:
+* Ein Handy-Dienstgang konnte eine Leiste kurz über 100 % zeigen, bevor sie auf 100 % zurücksprang. Der Wert war nie wirklich höher - die Anzeige lief der Begrenzung nur einen Wimpernschlag voraus. Jetzt bleibt sie stehen, wo sie hingehört.
+
+---
+
 [5.0.0] - 2026-08-12
 
-Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends
-vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts
-vergessen wird - fünf Tage am Stück, mit allem, was man mitschleppt. Dazu
-bekommt die Oberfläche zum ersten Mal eigene Symbole statt Emojis.
+Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts vergessen wird - fünf Tage am Stück, mit allem, was man mitschleppt. Dazu bekommt die Oberfläche zum ersten Mal eigene Symbole statt Emojis.
 
 Die Arbeitswoche:
 * Ein zweiter Modus, gleichrangig neben dem Arbeitstag: Montag bis Freitag am Stück. Wer scheitert, beendet die ganze Woche - nicht nur den Tag.
@@ -104,8 +110,7 @@ Für Entwickler:
 
 [4.1.0] - 2026-08-07
 
-Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser
-erzählt, einheitlich beschriftet und von einer Reihe alter Macken befreit.
+Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser erzählt, einheitlich beschriftet und von einer Reihe alter Macken befreit.
 
 Ereignisse & Texte:
 * Sämtliche Ereignisse wurden redaktionell überarbeitet, in mehreren Durchgängen: erst gegen Kargheit und wörtliche Wiederholung, dann gegen den Erzähler, der seine Pointen erklärt. Schlusssätze wie "Du hast gewonnen, aber du bist ein Monster" sind gestrichen oder durch eine Reaktion ersetzt - das Urteil fällt wieder der Spieler. Optionen und Auswirkungen sind unverändert.
@@ -148,10 +153,7 @@ Für Entwickler:
 
 [4.0.0] - 2026-08-03
 
-Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der
-Oberfläche wurde die gesamte Grundlage erneuert, darüber sind über 165 neue
-Ereignisse dazugekommen. Wer zuletzt Version 3.2.2 gespielt hat, findet ein
-anderes Spiel vor.
+Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der Oberfläche wurde die gesamte Grundlage erneuert, darüber sind über 165 neue Ereignisse dazugekommen. Wer zuletzt Version 3.2.2 gespielt hat, findet ein anderes Spiel vor.
 
 Neuerungen:
 * Über 165 neue Ereignisse in allen fünf Bereichen des Arbeitstags: 41 im Serverraum (wo sich jetzt auch Chantal, Markus, Gabi und Dr. Wichtig verirren - bislang gehörte der Raum Kevin und Egon allein), 21 an der Kaffeemaschine, 27 auf dem Dienstgang und 17 im Postfach. Darunter die ENTKALKEN-Krise samt Kevins Instant-Schwarzmarkt, Dr. Wichtig vor zwei Knöpfen ("Machen Sie mir das, was ich immer trinke"), das Rätsel um "Projekt Phoenix", Kevins vier Sprachnachrichten (4:32 Minuten, Inhalt: der Bildschirm ist "komisch") und die Abwesenheitsnotiz-Endlosschleife mit 14 Mails pro Minute. Frau Elster schreibt zum ersten Mal überhaupt.
@@ -199,7 +201,7 @@ Einstellungen:
 
 Fehlerkorrekturen:
 * Bei 38 Ereignissen fehlte das Bild des Kollegen, um den es ging - Kevins Sprachnachrichten, Egons Groll, Gabis Panik und der Chefsessel zeigten eine leere Karte. Vier Ereignisse wirken jetzt auf das Verhältnis zu dem Kollegen, um den es die ganze Zeit ging, und in einem Fall bekam der Falsche die Anerkennung.
- 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
+16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
 * 5 Ereignisse waren gar nicht erreichbar, weil ihre Voraussetzung nirgends erfüllt werden konnte: die Gerüchteküche um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
 * Das Party-Ende "INSIDER" ließ sich nicht abschließen: Der Ergebnistext enthält wörtliche Rede, wodurch die Schaltfläche technisch unbrauchbar wurde. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
 * Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.

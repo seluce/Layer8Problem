@@ -271,6 +271,21 @@ export const events = {
         this.updateUI();
     },
 
+    /**
+     * Adds to a stat and keeps it in 0..100 immediately.
+     *
+     * The clamp used to live in updateUI() alone. With runes the bars read
+     * state.fl directly and redraw the moment it changes, so a value of 105
+     * was on screen for one frame before updateUI() pulled it back - visible
+     * as a bar that overshoots and then settles. Clamping where the value is
+     * written removes that intermediate state, and protects any path that
+     * changes a stat without calling updateUI() straight after.
+     */
+    addStat: function(key, delta) {
+        if (!delta) return;
+        this.state[key] = Math.max(0, Math.min(100, this.state[key] + delta));
+    },
+
     applyReputation: function(rep) {
         if (!rep) return false;
         for (const [charName, val] of Object.entries(rep)) {
@@ -308,7 +323,7 @@ export const events = {
 
         if(timeout) {
             let penalty = Math.ceil(10 * this.effMult());
-            this.state.cr += penalty;
+            this.addStat('cr', penalty);
             this.state.emailsIgnored++;
             message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
             color = "text-red-500 font-bold";
@@ -330,9 +345,9 @@ export const events = {
             let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
             let addedC = opt.c ? Math.ceil(opt.c * mult) : 0;
 
-            if(addedF) this.state.fl += addedF;
-            if(addedA) this.state.al += addedA;
-            if(addedC) this.state.cr += addedC;
+            this.addStat('fl', addedF);
+            this.addStat('al', addedA);
+            this.addStat('cr', addedC);
 
             // --- Floating text for mails ---
             if (addedF !== 0) this.showFloatingText('val-fl', addedF);
@@ -892,9 +907,9 @@ export const events = {
         let diffMult = this.statMult();
         let lazyMult = 1 + (this.state.fl / 200);
 
-        this.state.fl += f;
+        this.addStat('fl', f);
         let finalA = a > 0 ? Math.ceil(a * diffMult) : a;
-        this.state.al += finalA;
+        this.addStat('al', finalA);
 
         let finalC = c;
         if (c > 0) {
@@ -902,7 +917,7 @@ export const events = {
         } else {
             finalC = c; 
         }
-        this.state.cr += finalC;
+        this.addStat('cr', finalC);
 
         // --- Floating Text ---
         if (f !== 0) this.showFloatingText('val-fl', f);
@@ -1100,15 +1115,15 @@ export const events = {
         const moodVal = Math.round(15 * this.effMult());
 
         if (mood.effect === "aggro") {
-            this.state.al += moodVal;
+            this.addStat('al', moodVal);
             statHtml = `<span class='text-orange-400 font-bold'>+${moodVal}% Aggro</span>`;
         } 
         else if (mood.effect === "radar") {
-            this.state.cr += moodVal;
+            this.addStat('cr', moodVal);
             statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
         } 
         else if (mood.effect === "lazy") {
-            this.state.fl += moodVal;
+            this.addStat('fl', moodVal);
             this.state.time += 30; // Time lost to oversleeping
             this.state.tickets += 1; // penalty for the thirty minutes lost
             statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
@@ -1126,7 +1141,7 @@ export const events = {
                 statHtml = "<span class='text-red-400 font-bold'>Eine Ausrede weniger als sonst</span>";
             } else {
                 // Nothing left to cancel - the day starts badly all the same
-                this.state.cr += moodVal;
+                this.addStat('cr', moodVal);
                 statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
             }
         }
@@ -1396,9 +1411,9 @@ export const events = {
         let finalA = res.a || 0;
         let finalC = res.c || 0;
 
-        this.state.fl += finalF;
-        this.state.al += finalA;
-        this.state.cr += finalC;
+        this.addStat('fl', finalF);
+        this.addStat('al', finalA);
+        this.addStat('cr', finalC);
 
         // --- Floating text for the phone ---
         if (finalF !== 0) this.showFloatingText('val-fl', finalF);
