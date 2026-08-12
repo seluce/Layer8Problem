@@ -32,6 +32,7 @@ Der Grundtyp, wie er in Kaffee, Serverraum, Dienstgang und Anruf steht:
             next: "path_spinat_erklaert",        // optional: setzt ein Story-Flag für Folge-Ereignisse
             rep: { "Chantal": 5, "Kevin": -2 },  // optional: Ruf bei Kollegen
             m: 5, f: 0, a: 0, c: 0,              // Hausstil: immer alle vier, auch als 0
+                                                 // (Ausnahme Firmenfeier: nur f und a, siehe 9)
             r: "Zwei Minuten Erklärung, danach nickt sie zufrieden und drückt trotzdem den falschen Knopf. Immerhin weiß sie jetzt, welchen."   // Pflicht: das Ergebnis
         },
         {
@@ -643,7 +644,25 @@ einem Feld mehr:
   Besuch eines Ortes zieht das Spiel zufällig ein dort noch nicht erlebtes Ereignis.
 
 In den Auswahlen führt `next: "party_hub"` zurück zur Ortsübersicht und zählt den
-Abend-Fortschritt hoch — so enden die meisten Party-Auswahlen. Nach genug Stationen löst
+Abend-Fortschritt hoch — so enden die meisten Party-Auswahlen.
+
+**Die Feier rechnet anders als der Rest des Spiels.** Drei Dinge sind hier anders, und
+alle drei folgen daraus, dass Feierabend ist:
+
+- **Keine Minuten.** Die Uhr wird nicht durch `m` vorgerückt, sondern aus dem
+  Fortschritt berechnet: zwölf Stationen zu je einer halben Stunde tragen von 17:00 bis
+  23:00. Jede Station kostet dasselbe, egal was man tut.
+- **Kein Chef-Radar.** Nach Feierabend beobachtet niemand mehr, wie viel du arbeitest.
+  Benutzt werden nur `f` und `a` — Faulheit und Aggro, weil beide auch privat
+  weiterlaufen.
+- **Kein Ende.** `checkEndConditions()` steigt im Partymodus sofort aus: Man kann auf
+  der Feier weder ausrasten noch gefeuert werden. Der Abend endet ausschließlich über
+  eines der `party_finale_*`-Ereignisse.
+
+Auch `rep`, `loot`, `req` und `rem` kommen in keiner der 137 bestehenden Auswahlen vor.
+Die Engine würde `m`, `c` und `rep` zwar verarbeiten — die Beschränkung ist eine
+Konvention des Bereichs, keine technische Sperre. Halte dich daran: Eine Party-Auswahl
+trägt `f`, `a` und `next`, sonst nichts. Nach genug Stationen löst
 der Abend eines der Finale aus; die `party_finale_*`-Ereignisse sind fest verdrahtet und
 brauchen keine Beiträge.
 
@@ -657,13 +676,13 @@ brauchen keine Beiträge.
         {
             t: "Sich setzen und zuhören",
             next: "party_hub",
-            m: 40, f: 10, a: 10, c: 0,
-            r: "Vierzig Minuten später kennst du drei Schlagworte mehr und einen Menschen weniger, dem du freiwillig zuhörst."
+            f: 10, a: 10,
+            r: "Eine halbe Stunde später kennst du drei Schlagworte mehr und einen Menschen weniger, dem du freiwillig zuhörst."
         },
         {
             t: "'Ich hole nur schnell etwas zu trinken.'",
             next: "party_hub",
-            m: 5, f: 0, a: -5, c: 0,
+            f: 0, a: -5,
             r: "Der älteste Trick des Abends. Er funktioniert, weil er immer funktioniert, und weil das Sofa schon den Nächsten hat."
         }
     ]
