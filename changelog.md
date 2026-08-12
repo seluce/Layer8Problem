@@ -2,6 +2,10 @@
 
 Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
 
+Das Wochenmeeting:
+* Zwölf statt sechs Ketten - der Freitag wiederholt sich damit frühestens nach zwölf Wochen. Neu dabei: die Auswertung der Mitarbeiterbefragung, eine Schalte nach Süd ohne Ton, ein Termin, zu dem niemand kommt, die Vorbereitung der externen Prüfung, ein Pilotprojekt mit einer Assistenz, die aus den eigenen Ticketantworten gelernt hat, und ein Workshop über zu viele Meetings.
+* Alle Meetings sind länger geworden: drei Entscheidungen statt zwei und doppelt so viele Ausgänge. Der neue Mittelteil ist das, was Besprechungen wirklich zieht - die Folie danach, die Rückfrage, der Kollege, der noch etwas anmerken möchte.
+
 Das Wissen:
 * Das Buch deckt jetzt auch die Sommerfeier, das Wochenmeeting, die Beratungsfirmen und zwei Dauerabsender aus dem Postfach ab.
 * Einträge mit ungelesenen Notizen heben ihre Zahl im Register hervor. Wer das Buch öffnet, landet direkt auf dem neuen Eintrag; danach steht die Zahl wieder ruhig da.

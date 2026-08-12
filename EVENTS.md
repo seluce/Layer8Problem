@@ -376,9 +376,31 @@ die Gala am selben Abend zündet — die "kurz halten"-Ansage gehört ins Gespr�
 in eine Systemmeldung. Und die externen Berater existieren **nur** als Knoten-`char`
 mit Initialen-Kachel (Abschnitt 2): kein `data_chars`-Eintrag, kein Ruf, kein Team —
 die Besetzung darf pro Ereignis frei erfunden werden und rotiert über die Wochen von
-selbst. Ruf bewegt sich im Meeting nur bei echten Figuren (Kevin, Chantal,
-Dr. Wichtig). Ausreden gibt es im Meeting keine — dem Wochenbericht entkommt man
-nicht.
+selbst. Ruf bewegt sich im Meeting nur bei echten Figuren, also den sieben aus
+`data_chars` — nie bei den Beratern. Ausreden gibt es im Meeting keine — dem
+Wochenbericht entkommt man nicht.
+
+**Der Aufbau in drei Akten (seit v5.1).** Ein Meeting ist kein Ereignis mit
+Verzweigung, sondern eine Besprechung, die sich zieht. Deshalb drei
+Entscheidungen statt zwei:
+
+1. **Die Frage an dich** (`root`) — man wird um den Wochenbericht gebeten.
+2. **Der Exkurs** — die Antwort wird umgedeutet, jemand übernimmt, eine Folie
+   kommt dazwischen. Hier ist die Länge zu Hause: die Rückfrage, das Flipchart,
+   der Kollege mit einer Anmerkung.
+3. **Der Ausstieg** — wie man aus dem Raum kommt und was man dabei zusagt.
+
+Daraus ergeben sich acht Knoten (root, `root_gala`, zwei im zweiten, vier im
+dritten Akt) und mindestens acht Ergebnisse. Wichtig: Was der Exkurs erzählt,
+darf im Ergebnistext nicht noch einmal stehen — beim Umbau der ersten sechs
+Meetings mussten zwei Ergebnisse neu geschrieben werden, weil sie dieselbe
+Pointe ein zweites Mal brachten.
+
+**Nicht durchgehend zwei Optionen.** Alle Knoten binär zu bauen ist bequem und
+fällt über zwölf Meetings auf; der Rest des Spiels variiert zwischen einer und
+drei. Pro Meeting bekommt deshalb ein Knoten eine dritte Option, an wechselnder
+Stelle — meist die leise Wahl: schweigen, auf die Uhr sehen, jemand anderen
+machen lassen.
 
 ```js
 // Anruf mit Verlauf (data_calls.js):
