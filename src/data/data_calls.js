@@ -181,7 +181,7 @@ export const calls = [
 				next: "vip_angry" 
 			},
 			res_sorry: { 
-				txt: "Du kriechst zu Kreuze. Er beruhigt sich etwas. Radar sinkt, Selbstachtung auch.", 
+				txt: "Du kriechst zu Kreuze. Er beruhigt sich etwas. Er ist besänftigt, du bist es nicht.", 
 				m: 15, f: -5, a: -10, c: -5
 			}
 		}
@@ -1332,7 +1332,7 @@ export const calls = [
             { 
                 t: "Update abbrechen",
                 m: 15, f: 0, a: -5, c: -10,
-                r: "Du brichst ab. PC läuft stabil. Das Telefon hört auf zu blinken. Radar sinkt, du hast gute Arbeit geleistet."
+                r: "Du brichst ab. PC läuft stabil. Das Telefon hört auf zu blinken. Niemand ruft an, niemand fragt nach — die höchste Form von Lob in diesem Haus."
             },
             { 
                 t: "Update installieren",
@@ -1621,7 +1621,7 @@ export const calls = [
                 t: "'Chef, haben Sie vielleicht den Laserpointer in der Hand?'", 
                 rep: { "Dr. Wichtig": 2 },
                 m: 5, f: 0, a: 10, c: -10, 
-                r: "Zwei Sekunden Stille. Ein leises Klappern, als er das Gerät wechselt. '...das bleibt unter uns, Müller.' Er legt auf. Ein peinliches Ticket extrem diskret gelöst. Das Radar sinkt massiv, aber du hast Kopfschmerzen vor lauter Dummheit." 
+                r: "Zwei Sekunden Stille. Ein leises Klappern, als er das Gerät wechselt. '...das bleibt unter uns, Müller.' Er legt auf. Ein peinliches Ticket, extrem diskret gelöst. Er wird sich daran erinnern, dass du geschwiegen hast. Du wirst dich an den Rest erinnern." 
             },
             { 
                 t: "'Starten Sie den Rechner sofort hart neu!'", 
@@ -2066,7 +2066,7 @@ export const calls = [
             }
         },
         results: {
-            "res_hr_seminar": { txt: "Du hast bald ein sehr unangenehmes 4-Stunden-Seminar vor dir. Das Radar steigt.", m: 15, f: 0, a: 10, c: 20 },
+            "res_hr_seminar": { txt: "Vier Stunden Seminar stehen dir bevor, mit Anwesenheitsliste. Dein Name steht schon drauf, handschriftlich ergänzt.", m: 15, f: 0, a: 10, c: 20 },
             "res_hr_boss": { txt: "Der Chef wird das nicht lustig finden. Die Gerüchte werden zur Aktennotiz.", m: 5, f: 0, a: 10, c: 30 }
         }
     },

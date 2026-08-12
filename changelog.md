@@ -7,6 +7,7 @@ Das Wissen:
 * Jeder der sieben Kollegen hat eine Notiz aus den persönlichen Begegnungen dazubekommen - dort steht, was man über jemanden erst erfährt, wenn man länger mit ihm zu tun hat.
 
 Fehlerkorrekturen:
+* Neun Ergebnistexte sagten dem Spieler, was die Anzeige darunter ohnehin zeigt - "Das Radar sinkt massiv" stand direkt über "Chef -10". Sie beschreiben jetzt, was tatsächlich passiert, statt die Zahl vorzulesen. Niemand in diesem Haus weiß, dass er ein Radar hat.
 * Sehr lange Wörter ohne Trennstelle - etwa der Fehlercode der Kaffeemaschine - schoben den Ereignistext auf dem Handy aus dem Bild heraus. Solche Wörter brechen jetzt um, und normale Bandwürmer werden getrennt statt gedehnt. Betrifft Ereignisse, Ergebnisse, den Handy-Chat und das Wissen.
 * Ein Handy-Dienstgang konnte eine Leiste kurz über 100 % zeigen, bevor sie auf 100 % zurücksprang. Der Wert war nie wirklich höher - die Anzeige lief der Begrenzung nur einen Wimpernschlag voraus. Jetzt bleibt sie stehen, wo sie hingehört.
 

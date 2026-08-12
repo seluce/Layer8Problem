@@ -3277,7 +3277,7 @@ export const sidequests = [
             { 
                 t: "'Ihr System ist veraltet!'", 
                 m: 5, f: 0, a: 5, c: 15, 
-                r: "Du kritisierst die HR-Software scharf. Sie ist beleidigt und leitet es an den Chef weiter. Das Radar steigt." 
+                r: "Du kritisierst die HR-Software scharf. Sie ist beleidigt und leitet deine Nachricht weiter — im Wortlaut, an den Chef, mit dem Zusatz 'zur Kenntnis'." 
             }
         ]
     },

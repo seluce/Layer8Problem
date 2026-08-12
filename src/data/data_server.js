@@ -1749,7 +1749,7 @@ export const server = [
             { 
                 t: "Den Frust mit dem Schokoriegel bekämpfen", 
                 m: 5, f: 10, a: -10, c: 0, 
-                r: "Du isst einen Snack, während er arbeitet. Wenigstens sinkt dein Stresslevel, während die Rechnung steigt." 
+                r: "Du isst einen Snack, während er arbeitet. Zusehen entspannt ungemein, solange man die Rechnung noch nicht gesehen hat." 
             },
             { 
                 t: "Ihm beim Aufbohren zusehen", 

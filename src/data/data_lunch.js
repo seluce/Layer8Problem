@@ -589,7 +589,7 @@ export const lunch = [
 				{  
 					t: "Einfach mitbrummen",  
 					m: 45, f: -10, a: -15, c: 15,  
-					r: "Du schließt die Augen und stimmst in das tiefe 'Ooooommmm' ein. Die Vibrationen lösen deine Verspannungen. Die Kollegen vom Vertrieb starren dich verstört an, aber dein Stresslevel sinkt rapide. Du bist eins mit dem Server."  
+					r: "Du schließt die Augen und stimmst in das tiefe 'Ooooommmm' ein. Die Vibrationen lösen deine Verspannungen. Die Kollegen vom Vertrieb starren dich verstört an. Es ist dir vollkommen gleichgültig. Du bist eins mit dem Server."  
 				}, 
 				{  
 					t: "Fluchtartig den Raum verlassen",  

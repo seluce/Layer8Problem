@@ -523,7 +523,7 @@ export const emails = [
 		body: "Müller! Ich habe gelesen, Blockchain ist die Zukunft. Bauen Sie das in die Kaffeemaschine ein! Jeder Espresso soll als NFT gemintet werden! Deadline: Morgen!",
 		opts: [
 			{ t: "'Geniale Idee, wird umgesetzt!'", r: "Du klebst einfach einen Sticker 'Blockchain Certified' auf den Wassertank. Er merkt den Unterschied nicht, findet den Kaffee aber plötzlich 'dezentraler'.", m: 2, f: 10, a: 0, c: 0 },
-			{ t: "'Das ist technisch unmöglich.'", r: "Er nennt dich enttäuscht eine 'Innovationsbremse'. Dein Radar steigt, weil du 'keine Visionen hast'.",  m: 2, f: 0, a: 10, c: 10 },
+			{ t: "'Das ist technisch unmöglich.'", r: "Er nennt dich enttäuscht eine 'Innovationsbremse'. Das Wort setzt sich fest, und er wird es wieder benutzen.",  m: 2, f: 0, a: 10, c: 10 },
 			{ t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Du tust so, als hättest du die Mail nie bekommen. Riskant. Wenn er morgen nachfragt, hast du ein echtes Problem.", m: 2, f: 0, a: 0, c: 10, ignoreEmail: true }
 		]
 	},

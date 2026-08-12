@@ -2240,7 +2240,7 @@ export const reputation = [
                 t: "'Mein Server brennt!'", 
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, f: 0, a: -5, c: 15, 
-                r: "Du lügst, um zu entkommen. 'Immer diese Ausreden', murmelt er beleidigt und lässt dich gehen. Das gibt Minuspunkte auf dem Radar." 
+                r: "Du lügst, um zu entkommen. 'Immer diese Ausreden', murmelt er beleidigt und lässt dich gehen. Er sagt es leise genug, dass du es hören sollst." 
             }
         ]
     },
