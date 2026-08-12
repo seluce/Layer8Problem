@@ -79,7 +79,7 @@ export const sidequests = [
                 r: "Du schiebst dir das letzte Stück genüsslich in den Mund, genau als der Chef danach greift. Er greift ins Leere. Er starrt auf deine schokolierten Lippen, sein Gesicht läuft dunkelrot an. Er flüstert: 'Das war meins...'" 
             },
             { 
-                t: "Ninja-Move: Kuchen schnappen & flüchten", 
+                t: "Kuchen schnappen & flüchten", 
                 next: "path_cake_sugar", 
                 rep: { "Chantal": -5 },
                 m: 5, f: 5, a: -5, c: 0, 
@@ -162,7 +162,7 @@ export const sidequests = [
         text: "WUUUP! WUUUP! Die Sirene brüllt. Es riecht nicht nach Inferno, sondern eindeutig nach verbranntem 'Salty Caramel'-Popcorn aus der Teeküche. Die Kollegen rennen panisch zum Sammelplatz.",
         opts: [
             { 
-                t: "HELDENTAT: Küche stürmen!", 
+                t: "Küche stürmen!", 
                 req: "fire_ext", 
                 next: "path_fire_hero", 
                 m: 5, f: -20, a: -20, c: -10, 
@@ -693,7 +693,7 @@ export const sidequests = [
                 r: "Du kritzelst 'VORSICHT! EINSTURZGEFAHR!' auf ein Post-It, pappst es an den Holm und gehst zufrieden Mittagessen. Juristisch bist du damit aus dem Schneider. Die Physik interessiert das aber nicht." 
             },
             { 
-                t: "Quick-Fix: Kabelbinder-Orgie", 
+                t: "Kabelbinder-Orgie", 
                 req: "zip_ties", 
                 next: "path_shelf_iso", 
                 m: 10, f: -5, a: 0, c: 0, 
@@ -728,7 +728,7 @@ export const sidequests = [
         text: "Facility Management hat das Bohrloch entdeckt. 'Haben Sie etwa in die *Brandschutzwand F90* gebohrt?! Ohne den 'Antrag auf Durchdringung von Feuerwiderstandsklassen' (dreifacher Durchschlag, rosa)?! Das muss sofort zurückgebaut und verputzt werden!'",
         opts: [
             { 
-                t: "Bürokratie-Konter: 'Das war Gefahr im Verzug!'", 
+                t: "'Das war Gefahr im Verzug!'", 
                 m: 10, f: 0, a: 5, c: 0, 
                 r: "Du zitierst Arbeitsschutzgesetz §9. 'Ich habe Leben gerettet!' Der Facility-Typ wird unsicher. 'Na gut. Aber reichen Sie Formular 'Heldenmut im Amt' nach.' Puh." 
             },
@@ -1396,7 +1396,7 @@ export const sidequests = [
                 r: "Du lehnst dich entspannt zurück. *Dudel-Dudel*. Die Firma brennt, aber du knackst den Highscore. Der Chef starrt fassungslos auf dein Display. Seine Halsschlagader beginnt gefährlich zu pochen." 
             },
             { 
-                t: "Matrix-Modus: Wildes Tippen vortäuschen", 
+                t: "Wildes Tippen vortäuschen", 
                 next: "path_sys_fake", 
 				rep: { "Dr. Wichtig": 5 },
                 m: 10, f: -5, a: 10, c: -5, 
@@ -1568,7 +1568,7 @@ export const sidequests = [
         text: "Du liest die Wirtschaftsnachrichten. Eilmeldung: 'Global Player OMEGA CORP meldet Insolvenz an!' Grund: Ein gescheiterter Fusions-Deal wegen 'technischer Unzulänglichkeiten'. 50.000 Arbeitsplätze sind weg. Der CEO der anderen Firma wurde weinend in einem Karton gesehen. Und das alles wegen einem fehlenden USB-Kabel.",
         opts: [
             { 
-                t: "Short-Selling: Auf den Absturz wetten", 
+                t: "Auf den Absturz wetten", 
                 m: 20, f: 5, a: -20, c: 10, 
                 r: "Du nutzt dein Insiderwissen und kaufst Put-Optionen. Während die Welt brennt, machst du Gewinn." 
             },
@@ -3270,7 +3270,7 @@ export const sidequests = [
         text: "Sabine (HR) ruft an. 'Herr Müller? Unser System zeigt, dass Sie das 90-minütige Video in exakt 14 Sekunden absolviert haben. Haben Sie etwa die Software gehackt?'",
         opts: [
             { 
-                t: "Tech-Ausrede: 'Cache-Synchronisation!'", 
+                t: "'Cache-Synchronisation!'", 
                 m: 10, f: 0, a: 10, c: -10, 
                 r: "Du faselst was von 'Asynchronen Zeitstempeln im Server'. Sabine versteht nichts und gibt auf. 'Die IT und ihre Fehler...', seufzt sie. Puh." 
             },
@@ -3297,7 +3297,6 @@ export const sidequests = [
             },
             { 
                 t: "Ihm einen alten Donut geben", 
-                req: "donut",
                 rem: "donut",
                 rep: { "Markus": 5 },
                 m: 5, f: 5, a: -5, c: -5, 
@@ -3452,7 +3451,7 @@ export const sidequests = [
         text: "Kevin stürmt panisch auf dich zu. 'Chef! Hast du zufällig den Feuerlöscher aus Büro 312 gesehen?! Ich hab mir da heimlich ein Käse-Toast gemacht und es hat gebrannt. Ich wollte ihn gerade zurückhängen, damit Hausmeister Egon nichts merkt, aber er ist weg!'",
         opts: [
             { 
-                t: "IT-Paranoia: 'Die neuen Löscher haben GPS-Tracker.'", 
+                t: "'Die neuen Löscher haben GPS-Tracker.'", 
                 m: 5, f: 5, a: -10, c: 0, 
                 r: "Kevin reißt die Augen auf. 'GPS?! Oh Gott, HR weiß genau, dass er zuletzt bei mir war!' Er vergisst die Suche sofort und sprintet los, um sich ein wasserdichtes Alibi für die Tatzeit zu überlegen. Du grinst in dich hinein." 
             },
@@ -3507,7 +3506,7 @@ export const sidequests = [
         ]
     },
 
-    // --- PHONE EVENTS (Chat-System) ---
+    // --- PHONE EVENTS (chat system) ---
     { 
         id: "sq_telegram", 
         kind: "phone", 
@@ -5334,7 +5333,7 @@ export const sidequests = [
             }
         }
     },
-    // CHAIN: Kevin bekommt Verantwortung (Vorlauf zu sq_kevin_origin_2)
+    // CHAIN: Kevin is handed responsibility (leads into sq_kevin_origin_2)
     {
         id: "sq_kevin_origin_1",
         char: "Kevin",
@@ -5664,7 +5663,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 4: Verschlossene Kabine
+    // CHAIN 4: the locked cubicle
     {
         id: "sq_wc_1",
         kind: "text",
@@ -5757,7 +5756,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 5: Toner-Mafia
+    // CHAIN 5: the toner mafia
     {
         id: "sq_toner_1",
         kind: "text",
@@ -5794,7 +5793,7 @@ export const sidequests = [
             { 
                 t: "Flucht ins Server-Exil", 
                 m: 5, f: 0, a: -5, c: 5, 
-                r: "Du machst dich unsichtbar. Es ist laft, wer den Staub beseitigt." 
+                r: "Du machst dich unsichtbar. Es ist egal, wer den Staub beseitigt." 
             },
             { 
                 t: "Egon alarmieren", 
@@ -5936,7 +5935,7 @@ export const sidequests = [
         ]
     },
 
-    // CHAIN 7: Brennender Papierkorb
+    // CHAIN 7: the burning waste basket
     {
         id: "sq_smoke_1",
         kind: "text",
@@ -6775,7 +6774,6 @@ export const sidequests = [
         },
         {
             t: "Fachgerechte Dauerlösung mit Kabelbindern",
-            req: "zip_ties",
             rem: "zip_ties",
             rep: { "Chantal": 3 },
             next: "path_licht_sauber",
@@ -7564,7 +7562,7 @@ export const sidequests = [
             },
             {
                 t: "Egon deine Schokolade als Köder geben",
-                req: "chocolate", rem: "chocolate",
+                rem: "chocolate",
                 m: 10, f: 0, a: -10, c: 0,
                 rep: { "Egon": 5 },
                 r: "Er bricht ein Stück ab, legt es in die Falle und den Rest in seine Brusttasche. Beide Portionen erfüllen ihren Zweck. Deine Tafel ist weg und der Hof zehn Minuten lang ein friedlicher Ort."
@@ -7623,7 +7621,7 @@ export const sidequests = [
         opts: [
             {
                 t: "Ein Kabel verlegen und das WLAN vergessen",
-                req: "cable", rem: "cable",
+                rem: "cable",
                 m: 30, f: -15, a: -5, c: -15,
                 r: "Du verlegst ein Netzwerkkabel quer durchs Büro und klebst es mit dem Rest deines Tapes fest. Der Einkauf ist online, die Folie darf bleiben, und alle sind zufrieden. Dein Ersatzkabel ist weg."
             },
@@ -7676,4 +7674,567 @@ export const sidequests = [
             }
         ]
     },
+
+/* -------------------------------------------------------------------------
+   Dreiteiler wave 3 (v5.0): sidequest chains. Two of them deliberately
+   switch medium - approach in the phone chat, consequence as a terminal
+   scene (and once the other way round) - so the messenger carries story
+   weight instead of decoration. Duplicate check against the stock
+   (2026-08): Probealarm (5x), Aufzug (3x), Zimmerpflanze, Poststelle, the
+   Schmidt memorial box and the fruit-fly plague (donut fertiliser chain)
+   are taken - the fruit basket below therefore decays into BUREAUCRACY,
+   not into biology. Flag setting inside phone events happens in the
+   RESULT (res.next), not in node options - those only navigate.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_kevin_geheim_1",
+    char: "Kevin",
+    kind: "phone",
+    appName: "WhatsApp",
+    title: "Kevin",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Kevin: 'bist du im haus'\n\nKevin: 'wenn du die tage mal im 3. bist. treppenhaus. hinterer teil'\n\nKevin: 'sag keinem was'\n\nKevin: 'lohnt sich'",
+            opts: [
+                { t: "'Worum geht es?'", next: "frage" },
+                { t: "'Ok. Die Tage.'", next: "end_zusage" },
+                { t: "'Kevin, ich hab zu tun.'", next: "end_absage" }
+            ]
+        },
+        frage: {
+            text: "Kevin: 'nicht im chat'\n\nKevin: 'die lesen mit'\n\nKevin: 'wer ist die? gute frage'\n\nKevin: '👀'",
+            opts: [
+                { t: "'Na gut. Die Tage.'", next: "end_zusage" },
+                { t: "'Du hast zu viele Filme gesehen.'", next: "end_absage" }
+            ]
+        }
+    },
+    results: {
+        end_zusage: {
+            txt: "Kevin: '👍'\n\nKevin: 'hinterer teil. wo die lampe flackert'\n\nDie Lampe flackert dort seit Jahren. Du hast sie nie reparieren lassen. Jetzt weißt du wieder nicht, warum eigentlich.",
+            m: 5, f: 0, a: 0, c: 0,
+            next: "sq_kevin_termin"
+        },
+        end_absage: {
+            txt: "Kevin: 'ok'\n\nKevin: 'dein verlust'\n\nEr schreibt nichts mehr. Den Rest des Tages fragst du dich in unregelmäßigen Abständen, was im dritten Stock ist.",
+            m: 5, f: 0, a: 5, c: 0
+        }
+    }
+},
+{
+    id: "sq_kevin_geheim_2",
+    char: "Kevin",
+    kind: "text",
+    reqStory: "sq_kevin_termin",
+    reqStoryAge: 1,
+    title: "Hinterer Teil, dritter Stock",
+    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt, ohne Preisschilder. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.'",
+    opts: [
+        {
+            t: "'Kevin. Wer beliefert einen toten Automaten?'",
+            m: 10, f: 0, a: 5, c: 0,
+            rep: { "Kevin": -5 },
+            r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+        },
+        {
+            t: "Fach C4 öffnen",
+            m: 10, f: 0, a: -10, c: 0,
+            loot: "sandwich",
+            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
+        },
+        {
+            t: "Das Sandwich Kevin überlassen",
+            m: 5, f: 0, a: -5, c: 0,
+            rep: { "Kevin": 5 },
+            r: "'Du willst nicht?' Kevin nimmt es mit dem Respekt eines Mannes, der Verzicht einordnen kann. Das Fach klemmt wieder zu. Beute nimmst du keine mit, nur Standort und Verfahren. Wissen ist auch ein Vorrat."
+        }
+    ]
+},
+{
+    id: "sq_berater_1",
+    kind: "text",
+    title: "Der Herr in Grau",
+    text: "An der Etagentür steht ein Mann in grauem Anzug und lächelt geduldig. 'Ich komme nicht rein — mein Ausweis ist noch in der Anmeldung. Ich bin der neue Berater fürs Transformationsprojekt.' Er hält einen Laptop unterm Arm und sagt das Wort 'Transformationsprojekt', als wäre damit alles erklärt. Du hast von keinem Projekt gehört.",
+    opts: [
+        {
+            t: "'Ohne Ausweis kann ich Sie nicht reinlassen.'",
+            m: 10, f: 0, a: 5, c: -5,
+            r: "Er nickt, fast erfreut. 'Sehr gut. Sicherheitskultur.' Er notiert etwas in ein kleines Buch und stellt sich neben die Tür, wartend, lächelnd. Als du später wieder vorbeikommst, ist er weg. Oder drin."
+        },
+        {
+            t: "Zur Anmeldung begleiten, den langen Weg",
+            m: 25, f: -5, a: 5, c: -5,
+            r: "Ihr lauft schweigend durchs Treppenhaus. An der Anmeldung kennt ihn niemand, aber er bleibt vollkommen ruhig und beginnt, Formulare auszufüllen. Beim Weggehen hörst du ihn sagen: 'Kein Problem, ich kenne den Prozess.' Es klingt, als hätte er ihn geschrieben."
+        },
+        {
+            t: "Die Tür aufhalten. Wird schon stimmen.",
+            m: 5, f: 5, a: 0, c: 5,
+            next: "sq_berater_drin",
+            r: "'Vielen Dank.' Er geht zielstrebig den Flur hinunter, biegt in Raum 2.11 ab und schließt leise die Tür. Zielstrebig. In ein Gebäude, das er angeblich nicht kennt."
+        }
+    ]
+},
+{
+    id: "sq_berater_2",
+    char: "Gabi",
+    kind: "phone",
+    appName: "Messages",
+    reqStory: "sq_berater_drin",
+    reqStoryAge: 1,
+    title: "Gabi (Empfang)",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Gabi: 'Sag mal. Hast DU einen Mann in Grau reingelassen?'\n\nGabi: 'Er sitzt seit gestern in 2.11. Mit Laptop. Er holt sich morgens Kaffee und grüßt alle mit Vornamen.'\n\nGabi: 'Niemand weiß, zu wem er gehört. ALLE denken, er gehört zu jemand anderem.'",
+            opts: [
+                { t: "'Er sagt, er ist vom Transformationsprojekt.'", next: "projekt" },
+                { t: "'Nie gesehen.'", next: "end_leugnen" }
+            ]
+        },
+        projekt: {
+            text: "Gabi: 'Es gibt kein Transformationsprojekt.'\n\nGabi: 'Ich hab die Raumbelegung geprüft. 2.11 ist als frei gebucht.'\n\nGabi: 'Er hat für morgen einen Termin eingestellt. Titel: \"Kick-off\". Vier Leute haben schon zugesagt.'",
+            opts: [
+                { t: "[Der Anmeldung Bescheid geben]", next: "end_melden" },
+                { t: "[Erst mal beobachten. Vielleicht regelt es sich.]", next: "end_beobachten" }
+            ]
+        }
+    },
+    results: {
+        end_melden: {
+            txt: "Gabi: 'Mach ich mit. Ich schick den Sicherheitsdienst hoch.'\n\nGabi: 'Falls er WIRKLICH von irgendwas ist, warst du das nicht. 🙃'\n\nDer Sicherheitsdienst findet Raum 2.11 leer. Auf dem Tisch: ein Flipchart mit drei Kreisen und dem Wort SYNERGIE.",
+            m: 10, f: 0, a: 5, c: -10
+        },
+        end_beobachten: {
+            txt: "Gabi: 'DU willst beobachten. Er hat inzwischen ein Namensschild.'\n\nGabi: 'Selbst laminiert. Ich erkenne unser Laminiergerät.'\n\nDu beschließt, morgen mal an 2.11 vorbeizugehen. Rein zufällig.",
+            m: 5, f: 5, a: 0, c: 5
+        },
+        end_leugnen: {
+            txt: "Gabi: 'Interessant.'\n\nGabi: 'Auf dem Türkamera-Standbild hält ihm nämlich jemand die Tür auf.'\n\nGabi: 'Die Frisur kommt mir bekannt vor. 🙃'\n\nSie schickt das Bild nicht. Sie muss auch nicht.",
+            m: 5, f: 0, a: 5, c: 5
+        }
+    }
+},
+{
+    id: "sq_berater_3",
+    kind: "text",
+    reqStory: "sq_berater_drin",
+    reqStoryAge: 2,
+    title: "Kick-off in 2.11",
+    text: "Im Vorbeigehen siehst du es durch die Glasscheibe von Raum 2.11: Der Herr in Grau steht am Flipchart, sechs Leute sitzen um den Tisch, auf dem Papier drei Kreise und das Wort SYNERGIE. Zwei der sechs machen sich Notizen. Einer ist aus der Geschäftsleitung.",
+    opts: [
+        {
+            t: "Reingehen und die Ausweisfrage stellen, vor allen",
+            m: 15, f: 0, a: -5, c: 10,
+            r: "Es wird sehr still. Der Herr in Grau lächelt geduldig. 'Ein wichtiger Punkt. Sicherheitskultur. Nehmen wir mit auf.' Er schreibt SICHERHEITSKULTUR in einen der Kreise. Die Runde nickt. Du stehst noch im Raum und bist schon kein Thema mehr."
+        },
+        {
+            t: "Weitergehen. Das Haus hat entschieden.",
+            m: 5, f: 5, a: 5, c: 0,
+            r: "Wer einen Termin hat, existiert — so funktioniert diese Firma. Später hängt in der Teeküche ein Aushang: 'Transformationsprojekt: erste Ergebnisse folgen.' Es gibt jetzt ein Transformationsprojekt. Du warst dabei, als es nicht entstanden ist."
+        },
+        {
+            t: "Sich dazusetzen und mitschreiben",
+            m: 25, f: 5, a: -5, c: -5,
+            r: "Du nickst an den richtigen Stellen und notierst Wörter, die keine Sätze ergeben. Nach dem Termin steht dein Name im Verteiler des Projekts, das es nicht gibt. Es ist der karrierefreundlichste Unsinn, an dem du je beteiligt warst."
+        }
+    ]
+},
+{
+    id: "sq_ersthelfer_1",
+    kind: "text",
+    title: "Ernannt",
+    text: "Am schwarzen Brett hängt eine neue Liste: 'Betriebliche Ersthelfer — Stand aktuell'. Zwei Namen. Der zweite ist deiner. Du hast dich nie gemeldet, nie eine Schulung besucht, nie ein Formular unterschrieben. Daneben, handschriftlich: 'Schulung wird nachgereicht.'",
+    opts: [
+        {
+            t: "Schriftlich widersprechen",
+            m: 25, f: 0, a: 10, c: 0,
+            r: "Du füllst das Widerspruchsformular aus. Die Antwort kommt schnell und freundlich: Der Widerspruch werde geprüft — zuständig für die Prüfung sei der betriebliche Ersthelfer. Du liest den Satz dreimal. Er wird nicht besser."
+        },
+        {
+            t: "Den Verbandskasten wenigstens mal inspizieren",
+            m: 20, f: -5, a: 5, c: -5,
+            next: "sq_ersthelfer_amt",
+            r: "Der Kasten hängt im Flur, versiegelt mit Staub. Laut Prüfplakette zuletzt kontrolliert vor vier Jahren. Das Pflasterset ist eingetrocknet, die Rettungsdecke raschelt verdächtig, aber die Schere ist gut. Du notierst eine Nachbestellung. Ab jetzt bist du das wohl wirklich."
+        },
+        {
+            t: "Ignorieren. Was soll schon passieren.",
+            m: 5, f: 10, a: 0, c: 0,
+            next: "sq_ersthelfer_amt",
+            r: "Du lässt die Liste hängen. Auf der Treppe begegnet dir jemand mit einem Karton voller Tacker. Du beschließt, nicht darüber nachzudenken, was davon dich jetzt etwas angeht."
+        }
+    ]
+},
+{
+    id: "sq_ersthelfer_2",
+    kind: "text",
+    reqStory: "sq_ersthelfer_amt",
+    reqStoryAge: 1,
+    title: "Der erste Einsatz",
+    text: "Jemand aus dem Vertrieb steht vor deinem Büro und hält den Zeigefinger hoch wie ein Beweisstück. Ein Papierschnitt, kaum zu sehen. 'Sie sind doch der Ersthelfer. Das muss dokumentiert werden. Ins Verbandbuch. Wegen der Berufsgenossenschaft.' Hinter ihm warten zwei Kollegen. Ob als Zeugen oder aus Neugier, ist nicht zu erkennen.",
+    opts: [
+        {
+            t: "Volles Programm: Pflaster, Verbandbuch, Unterschrift",
+            m: 20, f: -5, a: 10, c: -5,
+            r: "Du desinfizierst, klebst, dokumentierst. Art der Verletzung: 'Schnitt, papierbedingt'. Erstversorgung: 'Pflaster, Zuspruch'. Der Vertriebler liest deinen Eintrag Korrektur. Die Zeugen nicken. Es ist der ordentlichste Moment deiner Woche, und der sinnloseste."
+        },
+        {
+            t: "'Das heilt an der Luft.'",
+            m: 5, f: 5, a: 0, c: 10,
+            r: "Der Zeigefinger senkt sich langsam. 'Das kommt ins Protokoll.' Welches Protokoll, weißt du nicht. Dass es existiert, steht außer Frage — samt deinem Namen, gut lesbar."
+        },
+        {
+            t: "Schokolade als Schmerzensgeld reichen",
+            rem: "chocolate",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "'Schokolade?' — 'Bewährtes Hausmittel.' Er isst sie noch im Flur, besänftigt. Das Verbandbuch bleibt zu, die Zeugen zerstreuen sich. Manche Erste Hilfe wirkt über den Magen."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_1",
+    kind: "text",
+    title: "Fit im Betrieb",
+    text: "In der Teeküche der Etage steht ein Obstkorb. Groß, geflochten, mit Schleife und Kärtchen: 'Initiative FIT IM BETRIEB — greifen Sie zu!' Bananen, Äpfel, zwei Kiwis, eine einzelne Ananas als Zentrum der Komposition. Niemand greift zu. Alle warten, wer sich zuerst traut.",
+    opts: [
+        {
+            t: "Sich als Erster bedienen",
+            m: 5, f: 0, a: -5, c: 0,
+            r: "Du nimmst einen Apfel, mitten im Berufsverkehr der Teeküche. Zwei Leute sehen zu. Kaum bist du draußen, hörst du hinter dir das Rascheln der Nachahmer. Jemand musste das Eis brechen. Der Apfel ist gut."
+        },
+        {
+            t: "Die Ananas in Sicherheit bringen",
+            m: 10, f: 0, a: -5, c: 5,
+            next: "sq_obstkorb_steht",
+            r: "Die Ananas wandert in dein Büro, als Trophäe und Raumschmuck. Was man mit einer Ananas ohne Messer und ohne Plan anfängt, wird sich zeigen. Der Korb sieht ohne sein Zentrum seltsam führungslos aus."
+        },
+        {
+            t: "Nicht anrühren. Gehört ja allen.",
+            m: 5, f: 5, a: 0, c: 0,
+            next: "sq_obstkorb_steht",
+            r: "Du nimmst nichts. Alle nehmen nichts. Der Korb steht da wie ein Denkanstoß, den keiner bestellt hat, und die Bananen beginnen ihre stille Verwandlung."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_2",
+    kind: "text",
+    reqStory: "sq_obstkorb_steht",
+    reqStoryAge: 1,
+    title: "Die Entnahmeliste",
+    text: "Am Obstkorb klebt jetzt eine Liste, sauber liniert, mit Kugelschreiber an einer Schnur: 'Entnahmeliste — im Sinne der Fairness bitte Name, Datum und Obstart eintragen. F. Elster.' Seit die Liste hängt, hat niemand mehr etwas genommen. Die Bananen sind ins Fleckige gewechselt und werden von einem Formular bewacht.",
+    opts: [
+        {
+            t: "Weder Obst noch Liste anfassen",
+            m: 5, f: 10, a: 0, c: 0,
+            r: "Du gehst vorbei wie an einer Baustelle. Hinter dir raschelt nichts. Der Korb und die Liste belagern sich gegenseitig, und das Obst verliert."
+        },
+        {
+            t: "Sich eintragen und demonstrativ eine Banane nehmen",
+            m: 10, f: 0, a: -5, c: 0,
+            rep: { "Frau Elster": 5 },
+            r: "Name, Datum, 'Banane (1 Stk.)'. Deine Zeile ist die erste. Als du gehst, tritt hinter dir jemand an die Liste und beginnt zu schreiben. Systeme brauchen einen ersten Eintrag, sonst bleiben sie Drohungen."
+        },
+        {
+            t: "Einen Apfel nehmen, ohne Eintrag",
+            m: 5, f: 5, a: -5, c: 5,
+            rep: { "Frau Elster": -5 },
+            r: "Der Apfel schmeckt normal, aber er isst sich wie Diebesgut. Die Liste hat jetzt eine Lücke, und du weißt aus Erfahrung: Lücken sind das Einzige, was in diesem Haus zuverlässig auffällt."
+        }
+    ]
+},
+{
+    id: "sq_obstkorb_3",
+    kind: "text",
+    reqStory: "sq_obstkorb_steht",
+    reqStoryAge: 2,
+    title: "Erfolgreich abgeschlossen",
+    text: "Der Obstkorb ist weg. An seiner Stelle steht ein Aufsteller mit QR-Code: 'Ihre Meinung zählt! Wie fanden Sie die Initiative FIT IM BETRIEB?' Daneben ein Aushang: Aufgrund des großen Erfolgs werde die Initiative künftig quartalsweise wiederholt. Über den Verbleib des Obsts existieren keine Unterlagen.",
+    opts: [
+        {
+            t: "Fünf Sterne, weitergehen",
+            m: 5, f: 5, a: 0, c: -5,
+            r: "Fünf Sterne für einen Korb, aus dem fast niemand etwas hatte. Irgendwo entsteht daraus eine Folie mit einem Balkendiagramm, und das Balkendiagramm wird glücklich sein."
+        },
+        {
+            t: "Ehrlich antworten, mit Verlaufsbeschreibung",
+            m: 15, f: -5, a: -5, c: 5,
+            r: "Du beschreibst den Werdegang des Korbs von der Komposition bis zur Belagerung, sachlich, in ganzen Sätzen. Das Formular bedankt sich und fragt am Ende nach Name und Abteilung. Anonym ist die Umfrage nur in der Überschrift."
+        },
+        {
+            t: "Bei der Initiative anrufen und Nachschub loben",
+            m: 10, f: 5, a: -5, c: 5,
+            r: "Die Hotline ist elektrisiert — endlich Resonanz! Man bedankt sich für das 'wertvolle Engagement' und kündigt an, das Format auszubauen. Du ahnst, was du getan hast. Demnächst stehen hier zwei Körbe."
+        }
+    ]
+},
+{
+    id: "sq_markus_schritte_1",
+    char: "Markus",
+    kind: "phone",
+    appName: "Teams",
+    title: "Markus",
+    startNode: "root",
+    nodes: {
+        root: {
+            text: "Markus: 'BRO!'\n\nMarkus: 'Abteilungs-Challenge!! Schrittzähler, eine Woche, IT gegen Vertrieb gegen Buchhaltung 💪'\n\nMarkus: 'Hab dich schon eingetragen. Du dankst mir später.'",
+            opts: [
+                { t: "'Trag mich wieder aus.'", next: "austragen" },
+                { t: "'Von mir aus. Was zählt?'", next: "end_dabei" }
+            ]
+        },
+        austragen: {
+            text: "Markus: 'Geht nicht mehr, Anmeldeschluss war eben 😅'\n\nMarkus: 'Komm schon. Die BUCHHALTUNG führt gerade. DIE BUCHHALTUNG.'\n\nMarkus: 'Frau Sonntag macht 12.000 Schritte am Tag. ZWÖLFTAUSEND.'",
+            opts: [
+                { t: "'Na schön. Für die Ehre.'", next: "end_dabei" },
+                { t: "'Dann hat die Buchhaltung es verdient.'", next: "end_raus" }
+            ]
+        }
+    },
+    results: {
+        end_dabei: {
+            txt: "Markus: 'SO siehts aus 💪💪'\n\nMarkus: 'Zwischenstand kommt täglich. Enttäusch mich nicht.'\n\nDu siehst an dir herunter. Dein Arbeitsplatz ist drei Meter vom Serverraum entfernt. Das wird kein fairer Wettkampf.",
+            m: 5, f: -5, a: 0, c: 0,
+            next: "sq_schritte_dabei"
+        },
+        end_raus: {
+            txt: "Markus: 'Schwach.'\n\nMarkus: 'Ich sag das nur einmal: Schwach.'\n\nEr schickt noch ein einzelnes 💔 hinterher. Es ist erstaunlich wirkungsvoll für ein Emoji.",
+            m: 5, f: 5, a: 0, c: 0,
+            rep: { "Markus": -5 }
+        }
+    }
+},
+{
+    id: "sq_markus_schritte_2",
+    kind: "text",
+    reqStory: "sq_schritte_dabei",
+    reqStoryAge: 1,
+    title: "Der Zwischenstand hängt aus",
+    text: "In der Teeküche hängt ein Ausdruck: 'SCHRITT-CHALLENGE — Zwischenstand'. Buchhaltung vorn, Vertrieb dahinter, die IT abgeschlagen auf dem letzten Platz. Hinter dem IT-Balken hat jemand handschriftlich ergänzt: 'sitzen viel'. Markus hat deinen Namen gelb markiert. Als Ansporn, vermutlich.",
+    opts: [
+        {
+            t: "Ab jetzt jede Etage zu Fuß, jede Runde mitnehmen",
+            m: 25, f: -15, a: 5, c: 0,
+            rep: { "Markus": 5 },
+            r: "Treppe statt Aufzug, der lange Flur statt der kurze, der Drucker am anderen Ende. Abends brummen die Beine, und der Balken der IT wächst um ein sichtbares Stück. Markus schickt drei Flammen-Emojis. Du hast dir schon sinnlosere Anerkennung härter erarbeitet."
+        },
+        {
+            t: "Das Handy auf den Aktenwagen der Hauspost legen",
+            m: 10, f: 5, a: -5, c: 5,
+            r: "Der Wagen rollt den ganzen Tag durchs Haus, dein Schrittzähler rollt mit. Bei Feierabend führst du die Einzelwertung mit weitem Abstand. Markus ist zu Tränen gerührt. Das schlechte Gewissen hält sich in Grenzen, aber es hält sich."
+        },
+        {
+            t: "Kopfhörer auf und Treppen-Intervalle",
+            m: 20, f: -10, a: -10, c: 0,
+            req: "headphones",
+            rep: { "Markus": 5 },
+            r: "Mit Musik sind Treppen ein Taktspiel. Vier Stockwerke rauf, vier runter, der Bass zählt mit. Unten wartet Markus mit erhobener Faust, und ausnahmsweise erwiderst du sie. Der IT-Balken bekommt Nachschub, du bekommst einen freien Kopf."
+        }
+    ]
+},
+
+{
+    /* Dreiteiler wave 4 (v5.0): reverse cross-pool - the cold call was the
+       opener (call_kalt_1), the consequence walks in through the door. */
+    id: "sq_brandt_1",
+    kind: "text",
+    reqStory: "call_brandt_kommt",
+    reqStoryAge: 1,
+    title: "Wie telefonisch vereinbart",
+    text: "Am Empfang steht ein Mann im Sakko, ein Rollup-Banner unterm Arm wie ein Feldzeichen. 'Herr Brandt! Wie telefonisch vereinbart!' Gabi hat ihn zu dir durchgestellt, mit dem Gesichtsausdruck von jemandem, der ganz genau weiß, wer hier was vereinbart hat. Das Banner entfaltet sich von allein ein Stück. Es will das hier.",
+    opts: [
+        {
+            t: "Den Termin durchstehen, mit Würde",
+            m: 35, f: 0, a: 10, c: 0,
+            r: "Vierzig Minuten Folien. Ganzheitlich, skalierbar, eine Roadmap mit drei Horizonten. Du unterschreibst nichts, nickst sparsam und begleitest ihn hinaus. An der Tür schüttelt er dir lange die Hand: 'Ein sehr gutes Erstgespräch.' Es wird ein Protokoll davon geben. Du wirst darin als 'interessiert' geführt."
+        },
+        {
+            t: "Nach oben durchreichen: 'Das ist Chefsache.'",
+            m: 10, f: 5, a: -5, c: 5,
+            rep: { "Dr. Wichtig": -5 },
+            next: "sq_brandt_chefsache",
+            r: "Du meldest Brandt bei Dr. Wichtig an und gehst. Eine Stunde später sind die beiden noch im Gespräch, und durch die Glastür siehst du das Schlimmste: Sie verstehen sich. Auf dem Flipchart steht bereits das Wort SYNERGIEPOTENZIAL. Was immer daraus wird — es trägt deine Anmeldung."
+        },
+        {
+            t: "Gabi um einen Notfall bitten",
+            m: 10, f: 0, a: -5, c: 0,
+            rep: { "Gabi": 5 },
+            r: "Gabi erscheint nach zwei Minuten mit ernster Miene: 'Der Termin mit dem Brandschutz — die warten.' Es gibt keinen Termin und keinen Brandschutz, aber Herr Brandt weicht Autorität instinktiv aus. Sie eskortiert ihn hinaus und sagt im Vorbeigehen, ohne die Lippen zu bewegen: 'Du schuldest mir was.'"
+        }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Item discovery (v5.0). The loot sits in the OPENER, not in an aged
+   follow-up: reqStoryAge never opens in day mode, so a tool hidden behind
+   it would exist for week players only. The aged part adds consequence,
+   never a second item - that keeps both modes equal on equipment and still
+   gives the week something the day cannot have.
+
+   Neither opener announces itself as a find: one is a propped-open fire
+   door, the other a routine memory upgrade. Duplicate check (2026-08):
+   the shredder already hides a USB stick, Rack 5 is heavily used, and fire
+   safety exists as a topic (extinguisher, safety officer) but never as a
+   door tied open.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_brandtuer_1",
+    kind: "text",
+    title: "Die Tür im Ostflügel",
+    text: "Im Ostflügel steht die Brandschutztür zum Treppenhaus offen. Nicht ein Stück — ganz. Jemand hat sie mit einer Krawatte am Geländer festgebunden, dunkelblau mit diagonalen Streifen, sorgfältig verknotet. Darunter ein Karton, der offenbar oft hier durchgeschoben wird.",
+    opts: [
+        {
+            t: "Die Tür schließen und die Krawatte hängen lassen",
+            m: 10, f: -5, a: 0, c: -5,
+            r: "Tür zu, Krawatte baumelt am Geländer wie ein Wimpel. Beim nächsten Vorbeigehen ist die Tür wieder offen und der Knoten neu. Der Gegner ist geduldiger als du."
+        },
+        {
+            t: "Blaschke Bescheid geben",
+            m: 15, f: 0, a: -5, c: -5,
+            r: "'Ostflügel? Die Tür ist seit dem Umbau zu schwer.' Blaschke seufzt tief. 'Ich bring einen Türschließer. Nächste Woche.' Immerhin weiß es jetzt jemand, dessen Zuständigkeit es tatsächlich ist."
+        },
+        {
+            t: "Knoten lösen, Tür schließen, Vorgang notieren",
+            m: 20, f: -10, a: 0, c: -5,
+            loot: "tie",
+            next: "sq_brandtuer_frei",
+            r: "Der Knoten ist fest und der Stoff gut. Die Tür fällt ins Schloss, wie sie soll, und du trägst den Vorfall in die Liste ein, die es dafür geben müsste und ab heute gibt. Die Krawatte behältst du erst mal. Irgendwer wird sie vermissen."
+        },
+        {
+            t: "Nicht deine Tür, nicht dein Stockwerk",
+            m: 5, f: 10, a: 0, c: 5,
+            r: "Du gehst durch und lässt alles, wie es ist. Zwei Schritte weiter kommt dir der Gedanke, dass Brandschutztüren einen Zweck haben. Vier Schritte weiter ist der Gedanke wieder weg."
+        }
+    ]
+},
+{
+    id: "sq_brandtuer_2",
+    kind: "text",
+    reqStory: "sq_brandtuer_frei",
+    reqStoryAge: 1,
+    title: "Rundmail des Brandschutzbeauftragten",
+    text: "Eine Rundmail an alle: 'Erfreulicherweise wurde die dauerhaft geöffnete Brandschutztür im Ostflügel gemeldet und gesichert. Wir danken der aufmerksamen Person.' Zwei Absätze später, kleiner: 'Der Eigentümer eines dort verwendeten Kleidungsstücks möge sich melden.'",
+    opts: [
+        {
+            t: "Nichts sagen. Beide Absätze übergehen.",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "Du liest die Mail, du löschst die Mail. Irgendwo im Haus fehlt jemandem eine Krawatte, und irgendwo im Haus ist eine Tür zu. Beides ist in Ordnung."
+        },
+        {
+            t: "Sich als aufmerksame Person melden",
+            m: 10, f: 0, a: -5, c: -10,
+            r: "Du antwortest sachlich und ohne das Kleidungsstück zu erwähnen. Die Antwort kommt vom Brandschutzbeauftragten persönlich, drei Zeilen, mit dem Wort 'vorbildlich' darin. Du liest es zweimal, dann verschiebst du die Mail in einen Ordner, den es vorher nicht gab."
+        },
+        {
+            t: "Die Krawatte anonym in die Hauspost geben",
+            rem: "tie",
+            m: 10, f: 0, a: -5, c: 0,
+            r: "Ohne Absender, ohne Zettel, adressiert an den Brandschutzbeauftragten. Zwei Tage später hängt im Ostflügel ein neuer Aushang: 'Türkeile sind erhältlich beim Facility Management.' Manchmal reicht ein Beweisstück."
+        }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Der Fall des stillen Örtchens (v5.0): a three-parter played straight as a
+   detective story - observation, deduction, reveal. The opener runs in day
+   mode like any other event; only the deductions are dated, so week players
+   get the case and day players get the crime scene.
+
+   The culprit is the CEO's son, established in call_junior. Nothing about
+   the reveal is new lore - the deductions only point at what the game has
+   already shown. Duplicate check (2026-08): sq_wc_1 (occupied cabin) and
+   sq_wc_2b (the HR toilet) exist and are different scenes.
+   ------------------------------------------------------------------------- */
+{
+    id: "sq_wc_fall_1",
+    kind: "text",
+    title: "Der Tatort",
+    text: "Die Herrentoilette im zweiten Stock sieht aus, als hätte dort jemand gefeiert und verloren. Papierhandtücher im Becken, ein Fußabdruck an der Kabinentür, und über allem der süßliche Geruch von etwas, das nicht ins Haus gehört. Es ist das dritte Mal in dieser Woche.",
+    opts: [
+        {
+            t: "Egon informieren und weitergehen",
+            m: 5, f: 0, a: 0, c: 0,
+            r: "Egon hört sich das an, ohne den Blick vom Werkzeugkoffer zu heben. 'Dritte Mal, ja. Ich putz das weg, wie immer.' Er sagt es ohne Groll. Das ist das Schlimmste daran."
+        },
+        {
+            t: "Den Raum ansehen, bevor jemand aufräumt",
+            m: 10, f: -5, a: 0, c: 0,
+            next: "wc_fall_offen",
+            r: "Du gehst nicht rein, du liest. Der Abdruck an der Tür ist klein, Schuhgröße achtunddreißig, höchstens. Die Papierhandtücher liegen nicht verstreut, sondern gezielt: jemand hat sie geworfen und gezielt. In der Ecke steht eine Dose, grün, unbeschriftet. Du fotografierst alles, bevor Egon kommt."
+        },
+        {
+            t: "Tür zu und Etage wechseln",
+            m: 5, f: 10, a: -5, c: 0,
+            r: "Drei Treppen tiefer gibt es auch eine Toilette. Sie ist sauber, gut beleuchtet und sechs Minuten entfernt. Der Preis der Feigheit ist berechenbar."
+        },
+        {
+            t: "Selbst aufräumen. Irgendwer muss.",
+            m: 20, f: -10, a: 10, c: -5,
+            r: "Handschuhe aus dem Serverraum, zehn Minuten, ein sehr schweigsamer Weg zurück an den Platz. Niemand hat es gesehen, niemand wird es erfahren, und morgen sieht es wieder so aus."
+        }
+    ]
+},
+{
+    id: "sq_wc_fall_2",
+    kind: "text",
+    reqStory: "wc_fall_offen",
+    reqStoryAge: 1,
+    title: "Drei Beobachtungen",
+    text: "Der Tatort ist gereinigt, deine Aufnahmen nicht. Drei Dinge lassen dich nicht los: Der Fußabdruck gehört zu einer Größe, die im ganzen Haus niemand trägt. Die grüne Dose ist ein Energy-Drink, den es hier nicht zu kaufen gibt. Und alle drei Vorfälle fielen auf Nachmittage.",
+    opts: [
+        {
+            t: "Die Zutrittsprotokolle der Nachmittage abgleichen",
+            m: 20, f: -10, a: 5, c: 5,
+            next: "wc_fall_spur",
+            r: "Drei Nachmittage, drei Protokolle. Zweiundvierzig Personen waren jedes Mal im Haus, einundvierzig davon jeden Tag. Bleibt eine Karte, die nur an genau diesen drei Nachmittagen benutzt wurde: die Besucherkarte der Geschäftsleitung. Ausgegeben an einen Gast ohne Namen."
+        },
+        {
+            t: "Gabi fragen, wer nachmittags kommt und geht",
+            m: 5, f: 0, a: -5, c: 0,
+            next: "wc_fall_spur",
+            r: "Gabi überlegt keine drei Sekunden. 'Nachmittags? Da kommt der Kleine.' Sie sagt es, als sei es Wetter. Auf die Rückfrage folgt ein Blick, den man für die Frage nach dem Standort der Kaffeemaschine bekommt."
+        },
+        {
+            t: "Die Dose auf Herkunft prüfen",
+            m: 10, f: -5, a: 5, c: 0,
+            r: "Unbeschriftet, grün, mit einem Aufkleber in einer Sprache, die du nicht liest. Kevin identifiziert sie im Vorbeigehen: 'Nuclear Sludge, Bro. Gibts nur im Netz.' Auf die Frage, wer sowas trinkt, zuckt er mit den Schultern. 'Leute mit Taschengeld.'"
+        },
+        {
+            t: "Den Fall zu den Akten legen",
+            m: 5, f: 10, a: -5, c: 0,
+            r: "Du löschst die Fotos. Es ist eine Toilette, kein Kapitalverbrechen, und du hast dreiundzwanzig offene Tickets. Der Gedanke hält bis zum nächsten Vorfall."
+        }
+    ]
+},
+{
+    id: "sq_wc_fall_3",
+    kind: "text",
+    reqStory: "wc_fall_spur",
+    reqStoryAge: 1,
+    title: "Die Auflösung",
+    text: "Du gehst nachmittags an der Geschäftsleitung vorbei, und da sitzt er: zwölf Jahre alt, Schuhgröße achtunddreißig, Kopfhörer auf, eine grüne Dose neben sich. Der Sohn des Chefs wartet, bis Papa Feierabend hat. Er sieht auf, mustert dich kurz und sagt: 'Ey, IT-Typ.' Der Fall ist gelöst. Die Frage ist, was das jetzt wert ist.",
+    opts: [
+        {
+            t: "Zurückgrüßen und weitergehen",
+            m: 5, f: 5, a: 0, c: 0,
+            r: "'Ey.' Mehr passiert nicht. Du weißt jetzt, wer es war, und dieses Wissen ist vollkommen wertlos, was es zum typischsten Ergebnis deiner Laufbahn macht."
+        },
+        {
+            t: "Ihm anbieten, im Serverraum zu warten",
+            m: 15, f: -5, a: -10, c: 0,
+            r: "Ein alter Stuhl, ein Netzwerkkabel und die Ansage, dass hier nichts angefasst wird. Er bleibt zwei Stunden, sagt drei Sätze und hinterlässt nichts. Auf dem Rückweg sagt er 'Danke' und meint es. Die Toilette im zweiten Stock bleibt ab jetzt sauber, und niemand wird je erfahren, warum."
+        },
+        {
+            t: "Dr. Wichtig sachlich informieren",
+            m: 10, f: 0, a: 10, c: 15,
+            r: "Du trägst es vor wie einen Störfallbericht, ohne ein Wort zu viel. Dr. Wichtig hört zu, nickt und sagt: 'Kinder.' Dann fragt er, ob du wirklich Zutrittsprotokolle ausgewertet hast, und ob das deine Aufgabe sei. Der Fall ist geklärt. Das Problem hat jetzt einen anderen Namen."
+        },
+        {
+            t: "Es Egon erzählen, unter vier Augen",
+            m: 5, f: 0, a: -10, c: 0,
+            rep: { "Egon": 5 },
+            r: "Egon hört zu, stellt den Koffer ab und lacht einmal, kurz und trocken. 'Wusst ich's doch.' Er wusste es nicht, er hat es geahnt, und ihm reicht die Bestätigung. Ab jetzt seid ihr die zwei Leute im Haus, die es wissen."
+        }
+    ]
+},
 ];

@@ -22,6 +22,8 @@
     import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
+    // The emoji stays in the table as a fallback: if an icon file is ever
+    // missing, the button keeps its meaning instead of showing an empty box.
     const ACTIONS = [
         { id: 'btn-coffee',    type: 'coffee',    bind: 'actCoffee', icon: '☕', label: 'KAFFEE',     tone: 'text-amber-500' },
         { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'DIENSTGANG', tone: 'text-purple-500' },
@@ -54,7 +56,9 @@
             <span class="absolute inset-0 bg-blue-900/30 border border-blue-800 pointer-events-none" style="border-radius: inherit"></span>
         {/if}
 
-        <span class="text-xl relative">{action.icon}</span>
+        <img src="assets/img/actions/act_{action.type}.webp" alt=""
+             width="28" height="28" class="w-8 h-8 relative select-none"
+             onerror={(e) => e.currentTarget.outerHTML = `<span class="text-xl relative">${action.icon}</span>`}>
         <span class="text-[10px] md:text-xs font-bold relative">{action.label}</span>
 
         {#if state.showHotkeys}

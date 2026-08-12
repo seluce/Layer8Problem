@@ -138,7 +138,9 @@
                         onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem)}>
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         {#if o.missing}
-                            <span class="text-red-500 shrink-0">🔒</span>
+                            <img src="assets/img/ui/ui_locked.webp" alt="Gesperrt"
+                                 width="16" height="16" class="w-5 h-5 shrink-0 select-none"
+                                 onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
                         {:else}
                             <span class="opacity-50 group-hover:opacity-100 shrink-0">➤</span>
                         {/if}
@@ -172,7 +174,9 @@
             <button type="button" id="phone-notification"
                  class="mt-6 bg-slate-800 p-3 rounded-xl w-3/4 flex items-center gap-3 border border-red-500 cursor-pointer animate-pulse text-left"
                  onclick={() => engine.openPhone()}>
-                <span class="text-xl">📩</span>
+                <img src="assets/img/ui/ui_message.webp" alt=""
+                     width="28" height="28" class="w-7 h-7 shrink-0 select-none"
+                     onerror={(e) => e.currentTarget.outerHTML = '📩'}>
                 <span class="block">
                     <span class="block text-[10px] font-bold">NEUE NACHRICHT</span>
                     <span class="block text-[9px]">Jetzt lesen...</span>

@@ -33,7 +33,7 @@ export const events = {
         if (this.state.lastEmailEventId === this.state.currentEventId) return;
 
         // 4. Probability (was 20%, now a 15% base)
-        let baseChance = 0.15 * this.state.difficultyMult; 
+        let baseChance = 0.15 * this.effMult(); 
         // Was +5% per ticket, now +4% per ticket.
         let chance = baseChance + (this.state.tickets * 0.04); 
         
@@ -184,6 +184,93 @@ export const events = {
      * Applies reputation changes and keeps them within -100 to 100. Used to
      * exist in three places; one of them had forgotten the save call.
      */
+    /**
+     * Story flags remember WHEN they were set: a running week writes its
+     * dayIndex (1-5, all truthy), the single day writes true. Every existing
+     * truthiness check keeps working unchanged; reqStoryAge needs the number.
+     * Old saves hold true - age-gated events simply never fire for them,
+     * which is the correct degradation (no migration needed).
+     */
+    setStoryFlag: function(name) {
+        if (!name) return;
+        this.state.storyFlags[name] = this.state.week?.active ? this.state.week.dayIndex : true;
+        this.recordSeen('flag', name);
+    },
+
+    /**
+     * Every time condition of an event in one place (design: Dreiteiler).
+     * reqStoryAge counts NIGHTS since the flag was set (1 = tomorrow at the
+     * earliest), reqWeekDayMin is an absolute 'from this weekday on' (1-5).
+     * Both are unsatisfiable outside a running week, so dated chain parts
+     * are week-exclusive without any mode flag - and same-day follow-ups
+     * with an age are excluded by definition.
+     */
+    storyGateOpen: function(ev) {
+        if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+        if (ev.reqStoryAge != null) {
+            const set = this.state.storyFlags[ev.reqStory];
+            if (!this.state.week?.active || typeof set !== 'number') return false;
+            if (this.state.week.dayIndex - set < ev.reqStoryAge) return false;
+        }
+        if (ev.reqWeekDayMin != null) {
+            if (!this.state.week?.active || this.state.week.dayIndex < ev.reqWeekDayMin) return false;
+        }
+        return true;
+    },
+
+    /**
+     * Passive items: they do their work when an event OPENS, before the
+     * player has chosen anything - currently gated by the character on
+     * screen (data_items.js, `passive`). Deliberately not a flat bonus per
+     * event: a permanent effect that always applies is invisible, while one
+     * tied to a person is a moment, and the tenth backpack slot it occupies
+     * is the actual decision.
+     *
+     * Called from the three places an event becomes visible: renderTerminal,
+     * the phone branch and the boss fight. NOT from renderEventHTML, which
+     * renderTerminal itself calls - that would fire twice.
+     */
+    /**
+     * Records what the player has seen, permanently, for the compendium.
+     * Kept as raw evidence (event ids, story flags) rather than as unlocked
+     * notes: entries written later then light up for players who already
+     * played the scene, instead of staying dark forever.
+     *
+     * Bounded by the number of events in the game, so the archive stays a
+     * few kilobytes.
+     */
+    recordSeen: function(kind, value) {
+        if (!value) return;
+        const list = kind === 'flag' ? this.state.archive.seenFlags : this.state.archive.seenEvents;
+        if (!list || list.includes(value)) return;
+        list.push(value);
+    },
+
+    applyPassiveItems: function(charName) {
+        if (!charName) return;
+        for (const entry of this.state.inventory) {
+            const p = DB.items[entry.id]?.passive;
+            if (!p || p.onChar !== charName) continue;
+
+            if (p.cr) {
+                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.cr));
+                this.showFloatingText('val-cr', p.cr);
+            }
+            if (p.al) {
+                this.state.al = Math.max(0, Math.min(100, this.state.al + p.al));
+                this.showFloatingText('val-al', p.al);
+            }
+            if (p.fl) {
+                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.fl));
+                this.showFloatingText('val-fl', p.fl);
+            }
+            // A number floating up on its own looks like a bug. The log line
+            // says who caused it, and it is not optional for that reason.
+            this.log(p.log, p.color ?? 'text-slate-300');
+        }
+        this.updateUI();
+    },
+
     applyReputation: function(rep) {
         if (!rep) return false;
         for (const [charName, val] of Object.entries(rep)) {
@@ -220,7 +307,7 @@ export const events = {
         let color = "";
 
         if(timeout) {
-            let penalty = Math.ceil(10 * this.state.difficultyMult);
+            let penalty = Math.ceil(10 * this.effMult());
             this.state.cr += penalty;
             this.state.emailsIgnored++;
             message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
@@ -228,7 +315,7 @@ export const events = {
         } else if(opt) {
             if (opt.ignoreEmail) {
                 // Work out whether a penalty applied, so the log can mention it
-                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.state.difficultyMult)}%` : "";
+                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.effMult())}%` : "";
                 message = `E-MAIL IGNORIERT!${penaltyText}`;
                 color = "text-red-500 font-bold";
             } else {
@@ -236,7 +323,7 @@ export const events = {
                 color = "text-blue-400";
             }
 
-            let mult = this.state.difficultyMult;
+            let mult = this.effMult();
             
             // Cache the final values for the animation
             let addedF = opt.f || 0;
@@ -374,9 +461,9 @@ export const events = {
             let possibleInterventions = DB.reputation.filter(ev => {
                 if (this.state.usedIDs.has(ev.id)) return false; 
 
-                // Story continuation: is the flag set?
+                // Story continuation: flag set, and old enough / late enough?
                 if (ev.reqStory) {
-                    return !!this.state.storyFlags[ev.reqStory]; 
+                    return this.storyGateOpen(ev);
                 }
                 
                 // Plain reputation event: check the thresholds
@@ -429,6 +516,14 @@ export const events = {
         // 3. THE ACTUAL ACTION (nothing intercepted it)
         // ---------------------------------------------------------
         
+        // Week mode: every action pool has a daily contingent so that no
+        // pool can be clicked empty before Friday (design 6.2). An exhausted
+        // contingent behaves like an exhausted pool: idle line, time passes.
+        if (this.state.week.active && this.weekContingentLeft(type) <= 0) {
+            this.renderTerminal(this.weekIdleEvent(type), type);
+            return;
+        }
+
         // Special case: phone and sidequest logic
         if (type === 'sidequest') { 
             this.handleSideQuest(); 
@@ -438,7 +533,7 @@ export const events = {
         // Default: a random event from the chosen pool (coffee, server, calls)
         let pool = DB[type].filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
-            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            if (!this.storyGateOpen(ev)) return false;
             // webOnly events point at the store page - pointless once bought
             if (ev.webOnly && platform.isDesktop) return false;
             return true;
@@ -452,6 +547,7 @@ export const events = {
         
         // --- FOLGE-EVENT PRIORISIERUNG (30% Chance) ---
         const ev = this.pickFromPool(pool);
+        this.spendContingent(type);   // books today's week budget (no-op in day mode)
         
         // Start the event
         this.renderTerminal(ev, type);
@@ -494,6 +590,7 @@ export const events = {
         // Reset before rendering: the bar is shared state and would otherwise
         // start at whatever the previous fight left behind.
         this.state.bossBarPercent = 100;
+        this.applyPassiveItems(boss.char);
         this.renderEventHTML(boss, 'boss');
 
         // Milliseconds, so the bar animates smoothly
@@ -524,22 +621,34 @@ export const events = {
 
         let pool = DB.sidequests.filter(ev => {
             if (this.state.usedIDs.has(ev.id)) return false;
-            if (ev.reqStory && !this.state.storyFlags[ev.reqStory]) return false;
+            if (!this.storyGateOpen(ev)) return false;
             // webOnly events point at the store page - pointless once bought
             if (ev.webOnly && platform.isDesktop) return false;
             return true;
         });
 
-        if (pool.length === 0) { this.log("Gerade nichts los."); return; }
+        if (pool.length === 0) {
+            // In a week even "nothing going on" costs time (design 6.3) -
+            // a free click would turn the dry pool into a stalling exploit.
+            if (this.state.week.active) {
+                this.renderTerminal(this.weekIdleEvent('sidequest'), 'sidequest');
+                return;
+            }
+            this.log("Gerade nichts los.");
+            return;
+        }
 
         const ev = this.pickFromPool(pool);
+        this.spendContingent('sidequest');   // books today's week budget (no-op in day mode)
 
         if (ev.kind === 'phone') {
             this.state.activeEvent = true;
             this.state.currentPhoneEvent = ev;
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
-            
+            this.recordSeen('event', ev.id);
+            this.applyPassiveItems(ev.char);
+
             // Show the notification
             this.state.phone.notification = true;
             this.log("Handy: " + ev.title);
@@ -571,6 +680,8 @@ export const events = {
         this.state.activeEvent = true;
         if(ev.id) this.state.usedIDs.add(ev.id); 
         this.disableButtons(true);
+        this.recordSeen('event', ev.id);
+        this.applyPassiveItems(ev.char);
 
 
 
@@ -591,8 +702,13 @@ export const events = {
         const node = ev.nodes[nodeId];
         if (!node) { console.error("Node not found:", nodeId); return; }
 
+        // Node char convention, mirrored from the phone (EVENTS.md, 9):
+        // a node's own char beats the event char, char: null forces none.
+        // This is what lets one meeting chain switch speakers mid-dialogue.
+        const charName = ('char' in node) ? node.char : ev.char;
+
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, ev.char, ev.nodes);
+        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, charName, ev.nodes);
     },
 
     // 2. OLD SYSTEM (simple events)
@@ -736,22 +852,44 @@ export const events = {
         this.state.time += m;
         this.checkLeetMoment(timeBefore);
         
-        // Lunch Check
+        // Lunch check, with a window rather than an open-ended threshold.
+        // A single option can cost up to four hours (the boss fights), so one
+        // choice can carry the clock from 11:50 straight past the afternoon -
+        // and the old condition would then have announced the lunch break at
+        // half past three. Past the window the break is simply missed, which
+        // is both more believable and the thing an office actually does.
+        const LUNCH_FROM = 12 * 60;
+        const LUNCH_UNTIL = 14 * 60;
         let triggerLunch = false;
-        if (!this.state.isPartyMode && !this.state.lunchDone && this.state.time >= 12 * 60) {
-            triggerLunch = true;
-            this.state.lunchDone = true;
+        if (!this.state.isPartyMode && !this.state.lunchDone && this.state.time >= LUNCH_FROM) {
+            this.state.lunchDone = true;              // either way it is over for today
+            if (this.state.time < LUNCH_UNTIL) {
+                triggerLunch = true;
+            } else {
+                this.log("Die Mittagspause ist heute ausgefallen. Gemerkt hat es niemand.", "text-slate-500");
+            }
+        }
+
+        // Meeting check (week Friday finale, design 8.1): the first
+        // transition past 15:00 turns the next continue button into the walk
+        // to the meeting room. Lunch keeps right of way; 16:30 stays the
+        // hard end either way, the 90-minute buffer is deliberate.
+        let triggerMeeting = false;
+        if (!triggerLunch && !this.state.isPartyMode && this.state.week.active
+            && this.state.week.dayIndex === 5 && !this.state.meetingDone
+            && this.state.time >= 15 * 60) {
+            triggerMeeting = true;
         }
 
         // --- DIFFICULTY AND LAZINESS LOGIC ---
-        // Wednesday hardening: the data values are calibrated a little too
-        // softly for normal (day simulation: 87% win rate for an attentive
-        // casual player). A 10% surcharge on the formulas alone brings that to
-        // roughly 75% without touching the optimal player (94%).
-        // IMPORTANT: state.difficultyMult stays 1.0 - everywhere else that
-        // value is an identity check (> 1.0 = Monday: starting tickets,
-        // excuses, achievements). The stat multiplier is derived only here.
-        let diffMult = this.state.difficultyMult === 1.0 ? 1.1 : this.state.difficultyMult;
+        // statMult() carries the Wednesday hardening for the day mode: the
+        // data values are calibrated a little too softly for normal (day
+        // simulation: 87% win rate for an attentive casual player), so 1.0
+        // becomes 1.1 in the formulas ONLY - state.difficultyMult stays 1.0,
+        // because everywhere else that value is an identity check. In week
+        // mode statMult() returns the honest ramped value instead
+        // (engine_week.js has the whole story).
+        let diffMult = this.statMult();
         let lazyMult = 1 + (this.state.fl / 200);
 
         this.state.fl += f;
@@ -781,9 +919,9 @@ export const events = {
         // travel through an HTML attribute and be JSON-parsed back out here.
         if (repData && typeof repData === 'object') this.applyReputation(repData);
 
-        // Set the story flag
+        // Set the story flag (day-stamped in week mode, see setStoryFlag)
         if (next && next !== "") {
-            this.state.storyFlags[next] = true;
+            this.setStoryFlag(next);
         }
         
         // --- COUNT PARTY PROGRESS ---
@@ -811,13 +949,21 @@ export const events = {
         this.updateUI();
 
         // UI Rendern
-        let btnAction = triggerLunch ? "triggerLunch" : "reset";
-        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : "WEITER";
+        let btnAction = triggerLunch ? "triggerLunch" : triggerMeeting ? "triggerMeeting" : "reset";
+        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : triggerMeeting ? "ZUM WOCHENMEETING" : "WEITER";
         let btnColor = "bg-blue-600 hover:bg-blue-500";
 
         if (this.state.pendingEnd) {
+            // --- Monday to Thursday in a week: the day is over, the run is
+            // not. Without this branch the button falls through to the fail
+            // case below and shouts GAME OVER before the night screen. ---
+            if (this.state.pendingEnd.isNight) {
+                btnAction = "finishGame";
+                btnText = "FEIERABEND MACHEN 🎉";
+                btnColor = "bg-green-600 hover:bg-green-500";
+            }
             // --- The disguised party trap ---
-            if (this.state.pendingEnd.isParty) {
+            else if (this.state.pendingEnd.isParty) {
                 btnAction = "startParty";
                 btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // A nasty pink as a small hint
@@ -842,7 +988,14 @@ export const events = {
     // here covers the case of someone being faster than the connection.
     triggerLunch: async function() {
         await ensure('lunch');
-        const pool = DB.lunch ?? [];
+        let pool = DB.lunch ?? [];
+        // Week mode: no repeated lunch within one week (design 6.3). The day
+        // mode keeps drawing from the full pool - within a single day a
+        // repeat is impossible anyway, so behaviour stays identical.
+        if (this.state.week.active) {
+            const fresh = pool.filter(ev => !this.state.usedIDs.has(ev.id));
+            if (fresh.length) pool = fresh;   // all used up: a repeat beats no break
+        }
         if (!pool.length) {
             // Should never happen; better to skip the break than to hang.
             console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
@@ -850,6 +1003,7 @@ export const events = {
             return;
         }
         const randomLunch = pool[Math.floor(Math.random() * pool.length)];
+        if (this.state.week.active) this.state.usedIDs.add(randomLunch.id);
         this.renderTerminal(randomLunch, 'lunch');
     },
 
@@ -943,7 +1097,7 @@ export const events = {
         
         // The morning scales with the weekday: Friday forgives, Monday does
         // not. 15 points become 12 / 15 / 19.
-        const moodVal = Math.round(15 * this.state.difficultyMult);
+        const moodVal = Math.round(15 * this.effMult());
 
         if (mood.effect === "aggro") {
             this.state.al += moodVal;
@@ -961,7 +1115,7 @@ export const events = {
         } 
         // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
-            const extra = this.state.difficultyMult > 1.0 ? 3 : (this.state.difficultyMult < 1.0 ? 1 : 2);
+            const extra = this.difficultyTier(); // 1/2/3 extra tickets by chosen level, week-aware
             this.state.tickets += extra;
             statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
         }
@@ -977,8 +1131,18 @@ export const events = {
             }
         }
         else if (mood.effect === "excuse_plus") {
-            this.state.excusesLeft++;
-            statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+            // The week mode caps the stock (design 4.4). Without this check
+            // the morning mood would have walked straight past that cap and
+            // the stock could grow without limit across the five days.
+            const deckel = this.state.week.active
+                ? this.WEEK_DIFFS[this.state.week.level].excuseCap
+                : Infinity;
+            if (this.state.excusesLeft < deckel) {
+                this.state.excusesLeft++;
+                statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+            } else {
+                statHtml = "<span class='text-slate-400 font-bold'>Dein Vorrat an Ausreden ist ohnehin voll</span>";
+            }
         }
 
         else if (mood.effect === "normal") {
@@ -1002,6 +1166,15 @@ export const events = {
         // The morning sets starting values (anger, radar, oversleeping);
         // without its own point the curve would wrongly begin at zero.
         this.recordStatPoint();
+
+        // Week mode: carried baggage plus a bad morning can end the run
+        // before the first click. Failing here, immediately and legibly,
+        // beats dying confusingly after a harmless first action. The valves
+        // may still open in checkEndConditions - then the day carries on.
+        if (this.state.week.active) {
+            this.checkEndConditions();
+            if (this.state.pendingEnd) { this.finishGame(); return; }
+        }
 
         this.setTerminalMorning(mood.title, mood.text, statHtml);
     },
@@ -1035,6 +1208,7 @@ export const events = {
         let diffName = "MITTWOCH (Normal)";
         if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
         if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
+        if (this.state.week.active) diffName = `WOCHE (${this.WEEK_DIFFS[this.state.week.level].name})`;
 
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
@@ -1065,13 +1239,31 @@ export const events = {
 
         // 4. Show the end modal - the hidden [PARTY] marker drives the colour
         let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
+        // A gala on the Friday of a week closes the WEEK as well: counters,
+        // balance sheet below the party report, save slot. The balance must
+        // be built BEFORE endWeek() - it reads the still-active week.
+        let weekHTML = '';
+        let warWoche = false;
+        let leadText = "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.";
+        if (this.state.week.active) {
+            warWoche = true;
+            this.recordWeekResult('survived', 5);
+            weekHTML = this.buildWeekBalanceHTML({ isWin: true });
+            this.endWeek();
+            leadText = "Der Abend ist vorbei. Eine Arbeitswoche für die Geschichtsbücher.";
+        }
+
         this.showEnd({
             title: "GALA VORBEI",
-            lead: "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.",
-            text: subtitleHTML + fullReport,   // Party-eigene Zusammenfassung
+            lead: leadText,
+            text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
             cause: "party",
             diary,
-            isWin: true
+            isWin: true,
+            // endWeek() ran above, so the state no longer knows which mode
+            // this ending came from - the header would otherwise have read
+            // "Arbeitstag Nr." above a week that was survived.
+            isWeek: warWoche
         });
     },
 
@@ -1224,7 +1416,7 @@ export const events = {
         
         // --- SET THE STORY FLAG ---
         if (res.next && res.next !== "") {
-            this.state.storyFlags[res.next] = true;
+            this.setStoryFlag(res.next);
         }
         // -----------------------------------
         

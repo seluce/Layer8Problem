@@ -28,7 +28,7 @@
 
     // First match wins; red is the default.
     const THEMES = [
-        { match: ['FEIERABEND'],        title: 'text-green-500',  border: 'border-green-500' },
+        { match: ['FEIERABEND', 'GESCHAFFT', 'ÜBERLEBT'], title: 'text-green-500',  border: 'border-green-500' },
         { match: ['GALA VORBEI'],       title: 'text-pink-500',   border: 'border-pink-500' },
         { match: ['VENTIL', 'RAGE'],    title: 'text-orange-500', border: 'border-orange-500' }
     ];
@@ -46,13 +46,24 @@
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
 
+    // A finished week day (Monday to Thursday): not an ending, the run
+    // carries on tomorrow - so no reload, and the baggage block below.
+    const isNight = $derived(!!modal.isNight);
+    const rnd = (v) => Math.round(v ?? 0);
+
     // Context: what this day means for the career. The counters live in the
     // archive and survive a restart, which turns single days into a run.
     const stats = $derived(game.archive?.stats ?? {});
+    // A week run counts weeks, not days - "Arbeitstag Nr. 24" on a Friday
+    // balance sheet described the wrong unit.
     const tally = $derived(
-        (stats.daysStarted ?? 0) > 1
-            ? `Arbeitstag Nr. ${stats.daysStarted} · ${stats.daysSurvived ?? 0} überstanden`
-            : null
+        modal.isWeek
+            ? ((stats.weeksStarted ?? 0) > 1
+                ? `Arbeitswoche Nr. ${stats.weeksStarted} · ${stats.weeksSurvived ?? 0} überstanden`
+                : null)
+            : ((stats.daysStarted ?? 0) > 1
+                ? `Arbeitstag Nr. ${stats.daysStarted} · ${stats.daysSurvived ?? 0} überstanden`
+                : null)
     );
 </script>
 
@@ -83,7 +94,43 @@
             <DayReport cause={modal.cause} />
         {/if}
 
-        {#if isFinal && (hasChart || hasDiary)}
+        <!-- The night: what tomorrow inherits, before and after sleep. The
+             transparency is the feature - evenings are for planning. -->
+        {#if isNight && modal.night}
+            <div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1.5">
+                <!-- Where in the week we are. The balance sheet only shows up
+                     at the end, so until then the night is the only place that
+                     can put a day into context. -->
+                <div class="flex items-center gap-1.5 mb-3">
+                    {#each ['Mo','Di','Mi','Do','Fr'] as tag, i}
+                        <span class="flex-1 text-center text-[9px] font-bold uppercase tracking-widest py-1 rounded-sm border
+                                     {i < game.week.dayIndex
+                                        ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
+                                        : i === game.week.dayIndex
+                                          ? 'bg-slate-800 border-slate-500 text-white'
+                                          : 'bg-slate-900/40 border-slate-800 text-slate-600'}">
+                            {tag}
+                        </span>
+                    {/each}
+                </div>
+                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">Das nimmst du mit in den {modal.nextDay}</div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>Tickets</span>
+                    <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>Aggro</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_eye.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '📡'}>Chef-Radar</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_lazy.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🦥'}>Faulheit</span>
+                    <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>Ausreden</span>
+                    <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
+                {#if modal.night.sleepText}
+                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{modal.night.sleepText}</div>
+                {/if}
+            </div>
+        {/if}
+
+        {#if (isFinal || isNight) && (hasChart || hasDiary)}
             <div class="flex flex-wrap justify-center gap-2 mb-4">
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
@@ -96,7 +143,10 @@
                     <button type="button" onclick={() => showDiary = !showDiary}
                             aria-expanded={showDiary}
                             class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
-                        {showDiary ? '▾' : '▸'} 📖 Logbuch
+                        {showDiary ? '▾' : '▸'}
+            <img src="assets/img/ui/ui_book.webp" alt="" width="14" height="14"
+                 class="w-3.5 h-3.5 inline-block align-[-0.15em] mx-1 select-none"
+                 onerror={(e) => e.currentTarget.outerHTML = '📖'}>Logbuch
                     </button>
                 {/if}
             </div>
@@ -114,9 +164,10 @@
             {/if}
         {/if}
 
-        <button onclick={() => isFinal ? location.reload() : engine.closeModal()}
+        <button onclick={() => isNight ? engine.continueWeekNight()
+                             : isFinal ? location.reload() : engine.closeModal()}
                 class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
-            {isFinal ? 'NEUSTART' : 'VERSTANDEN'}
+            {isNight ? `WEITER · ${(modal.nextDay ?? '').toUpperCase()}` : isFinal ? 'NEUSTART' : 'VERSTANDEN'}
         </button>
     </div>
 {/if}

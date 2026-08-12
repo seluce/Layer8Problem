@@ -13,6 +13,15 @@ export const party = [
 	{
 		id: "party_hub",
 		title: "Der Party-Hub",
+		// The hub comes up twelve times. Three versions by progress give the
+		// evening an arc: arrival, peak, last hour. The engine picks by
+		// partyProgress and divides the stations by however many versions are
+		// listed here - more of them need no code change (engine_core.reset).
+		textByProgress: [
+			"Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Noch riecht es nach Bohnerwachs statt nach Bier. Die Leute stehen in Grüppchen und halten ihre Gläser wie Schutzschilde. Wohin jetzt?",
+			"Der Bass ist lauter geworden, oder du bist es gewohnt.\n\nIm Vorraum ist kein Durchkommen mehr. Jemand hat den Sticker von deiner Stirn abgezogen und an die Wand geklebt, gleich neben drei andere. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?",
+			"Die Musik läuft weiter, aber es tanzt niemand mehr.\n\nIm Vorraum stehen halbleere Gläser auf jeder Fläche, die nicht senkrecht ist. Zwei Kollegen suchen ihre Jacken, ein dritter erklärt jemandem sehr ausführlich das Ticketsystem. Wohin noch?"
+		],
 		text: "Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Die Luft ist stickig, der Lärm ohrenbetäubend. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?",
 		opts: [
 			{ t: "🍻 Zur Bar - Markus, Kevin & Co.", action: { fn: "goToPartyStation", args: ["bar"] }, checkPool: "bar" },
@@ -193,7 +202,7 @@ export const party = [
 		title: "Der Chef eskaliert",
 		text: "Dr. Wichtig hat sich seine Krawatte wie Rambo um den Kopf gebunden und versucht sich in der Mitte des Kreises an Breakdance. Es sieht gefährlich nach Bandscheibenvorfall aus.",
 		opts: [
-			{ t: "Ihn aus Mitleid von der Fläche holen", f: -10, a: 10, r: "Du gehst hin, fässt ihn am Arm und flüsterst: 'Chef, die wichtigen Investoren schauen zu.' Er stoppt abrupt, wird kreidebleich und rückt sich die Krawatte zurecht. Du hast ihn vor dem totalen Ruin gerettet.", next: "party_hub" },
+			{ t: "Ihn aus Mitleid von der Fläche holen", f: -10, a: 10, r: "Du gehst hin, fasst ihn am Arm und flüsterst: 'Chef, die wichtigen Investoren schauen zu.' Er stoppt abrupt, wird kreidebleich und rückt sich die Krawatte zurecht. Du hast ihn vor dem totalen Ruin gerettet.", next: "party_hub" },
 			{ t: "Heimlich Erpressungsmaterial filmen", a: 25, f: 10, r: "Du hältst voll drauf. Der Chef wälzt sich unkoordiniert auf dem Boden. Das ist feinstes, hochauflösendes Erpressungsmaterial für die nächste Gehaltsverhandlung. Du grinst böse.", next: "party_hub" },
 			{ t: "Anfeuern und klatschen", f: 20, a: -5, r: "Der Chef fühlt sich durch dein Klatschen bestärkt, macht einen krachenden 'Worm' und reißt sich dabei gut hörbar die Anzughose auf.", next: "party_hub" }
 		]

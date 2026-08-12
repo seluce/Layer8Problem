@@ -4,9 +4,10 @@ import { core } from './engine/engine_core.js';
 import { events } from './engine/engine_events.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
+import { week } from './engine/engine_week.js';
 
 const engine = {
-    VERSION: "v4.1.0",
+    VERSION: "v5.0.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -18,7 +19,8 @@ const engine = {
     ...core,
     ...events,
     ...inventory,
-    ...ui
+    ...ui,
+    ...week
 };
 
 // Expose the engine globally (inline onclick handlers in index.html rely on this)

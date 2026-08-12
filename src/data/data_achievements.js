@@ -1,5 +1,10 @@
 export const achievements = [
 
+	// WEEK MODE (v5.0) - earned through engine_week.recordWeekResult()
+	{ id: "ach_week", icon: "🗓️", img: "assets/img/achievements/ach_week.webp", title: "Wochenendlich", desc: "Montag bis Freitag am Stück überlebt. Das Wochenende ist diesmal verdient.", hint: "Halte durch, bis Müller einmal ohne offene Rechnung ins Wochenende geht." },
+	{ id: "ach_week_iron", icon: "🧊", img: "assets/img/achievements/ach_week_iron.webp", title: "Eisern", desc: "Fünf Tage ohne Ventil und ohne Abmahnung. Die Personalabteilung ist beunruhigt.", hint: "Komm durch die lange Strecke, ohne einmal Dampf abzulassen oder zum Gespräch gebeten zu werden." },
+	{ id: "ach_week_clean", icon: "🧹", img: "assets/img/achievements/ach_week_clean.webp", title: "Blanker Freitag", desc: "Freitagabend, Warteschlange leer. Montag beginnt zum ersten Mal bei null.", hint: "Verlasse das Büro am letzten Tag, ohne dass irgendetwas offen bleibt." },
+
 	// EXTREME PLAYSTYLE
 	{ id: "ach_ascetic", icon: "🧘", img: "assets/img/achievements/ach_ascetic.webp", title: "Der Asket", desc: "16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.", hint: "Überstehe fast den ganzen Tag, ohne das 'schwarze Gold' anzurühren." },
 	{ id: "ach_coffee", icon: "🫀", img: "assets/img/achievements/ach_coffee.webp", title: "Herzrasen", desc: "8 Tassen getrunken. Du kannst Farben hören und die Zeit anhalten.", hint: "Trinke eine medizinisch bedenkliche Menge Kaffee an einem Tag." },

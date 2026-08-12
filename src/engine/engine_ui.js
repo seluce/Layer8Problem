@@ -1,6 +1,7 @@
 import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
+import { WEEK_DIFFS } from './engine_week.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
@@ -523,6 +524,23 @@ export const ui = {
         this.state.archiveOpen = false;
         this.hideOverlay('archive-modal');
     },
+
+    // --- KNOWLEDGE (compendium) ---
+    // Team shows the live reputation of the seven colleagues; this shows
+    // everyone else, and it is permanent. The pool is deferred, so the data
+    // is fetched the first time the modal is opened.
+    openKnowledge: async function() {
+        await ensure('compendium');
+        const modal = document.getElementById('knowledge-modal');
+        this.showOverlay(modal);
+        this.state.knowledgeOpen = true;
+    },
+
+    closeKnowledge: function() {
+        this.state.knowledgeOpen = false;
+        this.hideOverlay('knowledge-modal');
+    },
+
     
     // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
@@ -608,7 +626,9 @@ export const ui = {
         const feed = [...reactive, ...general].slice(0, 4);
 
         // Days without an incident in the server room. Zero on most days.
-        const streak = stats.streak ?? 0;
+        // The personnel file knows nothing about modes - see careerStats().
+        const karriere = engine.careerStats();
+        const streak = karriere.streak;
         const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
 
         // Everything drawn fresh on every visit, so a second look at the same
@@ -638,20 +658,20 @@ export const ui = {
         const notes = [];
         const push = (tone, title, text) => notes.push({ tone, title, text });
 
-        if (stats.warningsChef)
-            push('bad', `Abmahnungen: ${stats.warningsChef}`,
+        if (karriere.warningsChef)
+            push('bad', `Abmahnungen: ${karriere.warningsChef}`,
                  'Sämtlich mündlich ausgesprochen und nachträglich schriftlich vermerkt. Ein Widerspruch ist nicht eingegangen, da über die Vermerke nicht informiert wurde.');
-        if (stats.daysRageQuit)
-            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${stats.daysRageQuit}`,
+        if (karriere.rage)
+            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${karriere.rage}`,
                  'Der Mitarbeiter hat das Gebäude vor Dienstschluss verlassen, ohne sich abzumelden. In allen Fällen war er am Folgetag pünktlich wieder anwesend, was die Personalabteilung als Reue wertet.');
-        if (stats.ventSaves)
-            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${stats.ventSaves} Teilnahmen`,
+        if (karriere.ventSaves)
+            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${karriere.ventSaves} Teilnahmen`,
                  'Der Mitarbeiter hat wiederholt von der betrieblichen Möglichkeit Gebrauch gemacht, sich vor einer Eskalation kurz zurückzuziehen. Die Maßnahme gilt damit als wirksam und wird nicht ausgebaut.');
-        if ((stats.streakBest ?? 0) >= 3)
-            push('good', `Längste Phase ohne Zwischenfall: ${stats.streakBest} Arbeitstage`,
+        if (karriere.streakBest >= 3)
+            push('good', `Längste Phase ohne Zwischenfall: ${karriere.streakBest} Arbeitstage`,
                  'Ein auffällig ruhiger Zeitraum. Die Personalabteilung prüft, ob in dieser Phase eine Unterauslastung vorlag.');
-        if (stats.daysSurvived)
-            push('good', `Regulär beendete Arbeitstage: ${stats.daysSurvived}`,
+        if (karriere.survived)
+            push('good', `Regulär beendete Arbeitstage: ${karriere.survived}`,
                  'Der Mitarbeiter hat das Gebäude an diesen Tagen zur vorgesehenen Zeit verlassen. Eine gesonderte Würdigung ist nicht vorgesehen, da dies dem Vertrag entspricht.');
         if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
 
@@ -729,7 +749,13 @@ export const ui = {
 
         if (!this.state.boardNotes?.length && pool.length) {
             const flags = this.state.storyFlags ?? {};
-            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory]);
+            // Story flags survive the night in week mode. Without shuffling
+            // and a cap, the same reactions stayed pinned for five days and
+            // crowded out the general notes along the way. Four reactive ones
+            // are plenty; the rest get their turn tomorrow.
+            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory])
+                                 .sort(() => Math.random() - 0.5)
+                                 .slice(0, 4);
             const general = pool.filter(n => !n.reqStory)
                                 .sort(() => Math.random() - 0.5)
                                 .slice(0, Math.max(4, 8 - reactive.length));
@@ -818,6 +844,97 @@ export const ui = {
         }
     },
     
+    /**
+     * The startup log. In week mode this runs FIVE times per week, so a fixed
+     * block of nine lines would be almost half a minute of identical text.
+     * Two things follow from that: from the second morning on the sequence is
+     * short, and the middle lines report the actual situation instead of
+     * decorating it - carried tickets, yesterday's radar, what is in the
+     * backpack. The startup screen becomes the briefing it was standing in
+     * front of.
+     *
+     * Only state that is definitely settled at this point is read. Draw
+     * budgets are computed lazily on the first draw of the day and would
+     * trigger data loading here, so they stay out.
+     */
+    buildBootLines: function() {
+        const w = this.state.week;
+        const day = w?.active ? w.dayIndex : 0;
+        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        // Two draws from the same pool must not return the same line, which a
+        // plain pick() does often enough to notice.
+        const pickTwo = (arr) => {
+            const a = Math.floor(Math.random() * arr.length);
+            let b = Math.floor(Math.random() * (arr.length - 1));
+            if (b >= a) b++;
+            return [arr[a], arr[b]];
+        };
+
+        // Situation lines - WEEK MODE ONLY. A workday always starts clean at the
+        // chosen difficulty, and nothing is carried over; on top of that the day
+        // restart plays this sequence BEFORE reset(), so the state still belongs
+        // to the day that just ended. Reporting any of it would both be wrong
+        // and suggest a carry-over that does not exist.
+        const lage = [];
+        if (w?.active && day >= 2) {
+            // Only from Tuesday on is there anything to carry: Monday's numbers
+            // are the starting condition of the chosen level, not a leftover,
+            // and a week restart puts the player back exactly there. Calling
+            // that an "Übertrag" would report a carry-over that never happened.
+            if (this.state.tickets > 0)
+                lage.push(`Übernehme offene Tickets: ${this.state.tickets}... [ÜBERNOMMEN]`);
+            if (this.state.cr >= 30)
+                lage.push(`Chef-Radar aus Vortag: ${this.state.cr}%... [BEOBACHTUNG LÄUFT]`);
+            if (this.state.al >= 40)
+                lage.push(`Stimmungsanalyse... [WARNUNG: RESTAGGRESSION ${this.state.al}%]`);
+
+            const items = this.state.inventory?.length ?? 0;
+            if (items > 0)
+                lage.push(`Rucksack-Inventur: ${items} ${items === 1 ? 'Gegenstand' : 'Gegenstände'}... [OK]`);
+            if (day < 5)
+                lage.push(`Resttage bis Freitag: ${5 - day}... [ZUR KENNTNIS GENOMMEN]`);
+            // Friday's meeting outranks everything else that could be reported.
+            if (day === 5)
+                lage.unshift("Kalenderprüfung... [1 TERMIN: WOCHENMEETING]");
+        } else if (w?.active && day === 1) {
+            // Monday states the starting condition instead - true both for a
+            // fresh week and for a restart over the settings.
+            const cfg = WEEK_DIFFS[w.level];
+            if (cfg) lage.push(`Startbedingung: ${cfg.name.toUpperCase()}... [ÜBERNOMMEN]`);
+            lage.push("Fünf Arbeitstage geplant... [ALLES ZÄHLT]");
+        }
+
+        // Flavour, drawn fresh each time so no two mornings read alike.
+        const flavour = [
+            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
+            `Lade Ausreden-Datenbank (Modul ${12 + Math.floor(Math.random() * 60)})... [OK]`,
+            `Ignoriere wartende User-Anfragen: ${(3200 + Math.floor(Math.random() * 2600)).toLocaleString('de-DE')}... [ERLEDIGT]`,
+            "Verbinde mit Serverraum (Keller)... [OK]",
+            "Suche Drucker im Netzwerk... [4 GEFUNDEN, 1 ERREICHBAR]",
+            "Prüfe Lizenzen... [GÜLTIG BIS: UNKLAR]",
+            "Lade Firmenwerte... [ÜBERSPRUNGEN]",
+            "Synchronisiere Kalender... [KONFLIKTE: 3]",
+            "Teste Backup... [ZULETZT GEPRÜFT: NIE]"
+        ];
+
+        // From the second morning on, the greeting is dropped: the header with
+        // company and copyright is a welcome, not a daily bulletin.
+        if (day > 1) {
+            const kopf = [`GlobalCorp OS - ${this.weekDayName?.() ?? 'Neuer Tag'}`];
+            const mitte = lage.length ? lage.slice(0, 2) : [pick(flavour)];
+            return [...kopf, ...mitte, "TicketSystem bereit."];
+        }
+
+        return [
+            `GlobalCorp OS - Version ${this.VERSION}`,
+            `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
+            `----------------------------------------------`,
+            ...pickTwo(flavour),
+            ...lage.slice(0, 2),
+            "Initialisiere TicketSystem... Viel Glück."
+        ];
+    },
+
     playBootSequence: function(callback) {
         this.playAudio('boot');
         this.state.activeEvent = true;
@@ -827,18 +944,7 @@ export const ui = {
         this.state.bootLines = [];
         this._setTerminal('flex-1 flex flex-col items-start justify-center p-8 w-full min-h-full bg-slate-950 text-emerald-400 font-mono text-sm md:text-base overflow-hidden border border-slate-800 rounded-xl shadow-inner', { mode: 'boot' });
 
-        // Less "Nerd-Linux", more "GlobalCorp Satire"
-        const bootLines = [
-            `GlobalCorp OS - Version ${this.VERSION}`,
-            `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
-            `----------------------------------------------`,
-            "Verbinde mit Serverraum (Keller)... [OK]",
-            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
-            "Lade Ausreden-Datenbank (Modul 42)... [OK]",
-            "Synchronisiere Chef-Radar... [OK]",
-            "Ignoriere wartende User-Anfragen: 4.815... [ERLEDIGT]",
-            "Initialisiere TicketSystem... Viel Glück."
-        ];
+        const bootLines = this.buildBootLines();
 
         let i = 0;
         
@@ -929,7 +1035,7 @@ export const ui = {
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
-                msg.innerText = "Bitte Code eingeben!";
+                msg.innerText = "Da steht noch nichts.";
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
                 return;
@@ -991,12 +1097,14 @@ export const ui = {
                 if (data.party_normal) localStorage.setItem(engine.KEYS.partyPlayed.normal, data.party_normal);
                 if (data.party_hard) localStorage.setItem(engine.KEYS.partyPlayed.hard, data.party_hard);
 
-                // Same reason as in the hard reset: a running day belongs to
+                // Same reason as in the hard reset: a running run belongs to
                 // the save that was just replaced. Resuming it would mix the
-                // imported archive with the reputation of a foreign workday.
+                // imported archive with the reputation of a foreign workday -
+                // and a whole week would drag four of them along.
                 engine.clearDay();
+                engine.clearWeek();
 
-                msg.innerText = "Erfolg! Neustart...";
+                msg.innerText = "Übernommen. Das Spiel startet neu ...";
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
 
@@ -1004,7 +1112,7 @@ export const ui = {
 
             } catch (e) {
                 console.error(e);
-                msg.innerText = "Ungültiger Code!";
+                msg.innerText = "Der Code lässt sich nicht lesen. Vollständig kopiert?";
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
             }
@@ -1072,6 +1180,7 @@ export const ui = {
             // next launch would pull the old archive straight back in.
             engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
             engine.state.defaultDiff = 'ask';
+            engine.state.defaultWeekDiff = 'ask';
             platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
@@ -1087,9 +1196,9 @@ export const ui = {
             const iconSpan = btn.querySelector('#icon-hard-reset');
             
             textSpan.innerText = "Bist du dir sicher?";
-            iconSpan.className = "text-base"; 
+            iconSpan.className = "shrink-0"; 
             
-            btn.className = "w-full text-left px-4 py-3 bg-red-950/30 border border-red-500 rounded-lg transition-all text-red-400 text-sm font-bold flex items-center gap-3 mt-2 animate-pulse shadow-xs";
+            btn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/50 border border-red-500 rounded-lg transition-all flex items-center gap-3 animate-pulse shadow-xs";
             
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
@@ -1120,6 +1229,17 @@ export const ui = {
             softResetBtn.classList.toggle('pointer-events-none', locked);
             softResetBtn.classList.toggle('grayscale', locked);
             softResetBtn.disabled = locked;
+
+            // In a week the button does not restart "the day at 08:00" - it
+            // returns to the last night checkpoint, which can be a different
+            // weekday entirely. Saying 08:00 there would be a plain lie.
+            // In a week the button restarts the WEEK, not the day - the label
+            // has to say so, otherwise it promises the wrong scope.
+            const title = document.getElementById('text-soft-reset');
+            const sub = document.getElementById('sub-soft-reset');
+            const inWeek = this.state.week.active;
+            if (title) title.innerText = inWeek ? 'Woche neu starten' : 'Tag neu starten';
+            if (sub) sub.innerText = inWeek ? '(Zurück auf Montag)' : '(08:00 Uhr)';
         }
         // -------------------------------------------------------------
         
@@ -1127,8 +1247,8 @@ export const ui = {
         if (resetBtn) {
             resetBtn.dataset.armed = "false";
             document.getElementById('text-hard-reset').innerText = "Spielstand löschen";
-            document.getElementById('icon-hard-reset').className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full text-left px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
+            document.getElementById('icon-hard-reset').className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
+            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
         }
 
         const mainView = document.getElementById('menu-main-view');
@@ -1138,7 +1258,7 @@ export const ui = {
         if (mainView && settingsView && title) {
             mainView.classList.remove('hidden');
             settingsView.classList.add('hidden');
-            title.innerText = 'MENÜ';
+            title.innerText = 'Einstellungen';
         }
 
         this.showOverlay(modal);
@@ -1325,6 +1445,13 @@ export const ui = {
     saveDefaultDifficulty: function(val) {
         this.state.defaultDiff = val;
         localStorage.setItem(engine.KEYS.defaultDiff, val);
+        this.playAudio('ui');
+    },
+
+    /** The same for the week mode; see the note in engine_state. */
+    saveDefaultWeekDifficulty: function(val) {
+        this.state.defaultWeekDiff = val;
+        localStorage.setItem(engine.KEYS.defaultWeekDiff, val);
         this.playAudio('ui');
     },
 

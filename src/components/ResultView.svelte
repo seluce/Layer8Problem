@@ -40,7 +40,9 @@
             shadow-[0_0_12px_rgba(16,185,129,0.12)]">
 
     <div class="flex items-center gap-3 mb-4 border-b border-slate-600 pb-3">
-        <span class="text-2xl shrink-0">📋</span>
+        <img src="assets/img/ui/ui_result.webp" alt=""
+             width="28" height="28" class="w-7 h-7 shrink-0 select-none"
+             onerror={(e) => e.currentTarget.outerHTML = '<span class="text-2xl shrink-0">📋</span>'}>
         <span class="text-emerald-500 font-black uppercase tracking-widest text-sm">Ergebnis</span>
     </div>
 

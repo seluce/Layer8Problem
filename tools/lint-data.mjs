@@ -26,12 +26,12 @@ import { readFileSync, readdirSync } from 'fs';
 import { DB, ensure } from '../src/data.js';
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'diary', 'emails', 'intranet', 'lunch', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
 
-const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
+const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
 const itemIds = new Set(Object.keys(DB.items));
 const charNames = new Set(DB.chars.map(c => c.name));
 
@@ -73,6 +73,12 @@ const checkOpt = (o, ctx) => {
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
     if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
   }
+  // req and rem both demand the item; they differ only in whether it
+  // survives (EventView.lockReason gates on either). Both on the same item
+  // is therefore redundant - and worse, it hides the answer to the one
+  // question that matters when reading the data: does the player lose it?
+  if (o.req && o.rem && o.req === o.rem)
+    err(`${ctx}: req und rem auf "${o.req}" — beides zugleich ist widersprüchlich. Bleibt der Gegenstand, nur req; wird er abgegeben oder verbraucht, nur rem.`);
   if (o.rep) for (const n of Object.keys(o.rep)) if (!charNames.has(n)) err(`${ctx}: rep-Charakter "${n}" nicht in DB.chars`);
   if (o.next) flagsSet.add(o.next);
 };
@@ -84,7 +90,9 @@ for (const p of POOLS) {
     // claiming immediate proximity are wrong in that case.
     if (ev.reqStory && ev.text) {
       const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
-      if (m) warn(`${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
+      if (m) warn(ev.reqStoryAge != null
+        ? `${ctx}: Folge-Ereignis mit reqStoryAge behauptet unmittelbare Nähe ("${m[0]}") — der Auslöser liegt mindestens eine Nacht zurück`
+        : `${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
       // The other direction: the trigger happened during THIS workday, so a
       // follow-up must not push it into the past. "gestern" is wrong even
       // when it sounds harmless, and it becomes wrong twice over once story
@@ -123,8 +131,56 @@ for (const p of POOLS) {
       for (const [field, txt] of allTexts) {
         if (typeof txt !== 'string') continue;
         if (timeRefReviewed.has(ev.id)) continue;
+        // With reqStoryAge the trigger really IS days ago - "gestern" is
+        // then exactly right, so the question below only applies to
+        // same-day follow-ups.
+        if (ev.reqStoryAge != null) continue;
         const g = txt.match(timeRef);
         if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+      }
+    }
+    // Dreiteiler predicates (v5.0): age needs a flag, ranges must be
+    // playable, and Friday-only is a dangling-chain trap (random draws
+    // compete against the whole pool on a single day).
+    if (ev.reqStoryAge != null && !ev.reqStory)
+      err(`${ctx}: reqStoryAge ohne reqStory — das Alter braucht eine Fahne`);
+    if (ev.reqStoryAge != null && (!Number.isInteger(ev.reqStoryAge) || ev.reqStoryAge < 1 || ev.reqStoryAge > 4))
+      err(`${ctx}: reqStoryAge ${ev.reqStoryAge} — erlaubt ist 1 bis 4 (Nächte seit dem Auslöser)`);
+    if (ev.reqWeekDayMin != null && (!Number.isInteger(ev.reqWeekDayMin) || ev.reqWeekDayMin < 2 || ev.reqWeekDayMin > 5))
+      err(`${ctx}: reqWeekDayMin ${ev.reqWeekDayMin} — erlaubt ist 2 bis 5 (Montag wäre wirkungslos)`);
+    if (ev.reqWeekDayMin === 5)
+      warn(`${ctx}: reqWeekDayMin 5 — nur Freitag ist eine Baumelfalle, das Ereignis konkurriert an einem einzigen Tag gegen den ganzen Pool. Lieber 4.`);
+    // Events in the random pools fire at ANY time of the workday - a text
+    // that pins the scene to a clock time ("Um kurz nach elf zuckt das
+    // Licht") is wrong for most draws. References to before 08:00 or to
+    // the evening are fine, the reviewed set lists them - same pattern as
+    // timeRefReviewed above.
+    if (['coffee', 'server', 'calls', 'sidequests', 'reputation', 'bossfights'].includes(p)) {
+      const clockReviewed = new Set([
+        'call_elster_budget_trap_1',  // expired at 08:00 - the day starts then, always past
+        'srv_falle_update',           // 23:00 at home - future reference
+        'cof_markus_flex_2c',         // 6:00 voice messages - habitual, always before work
+        'call_falle_werkstudent',     // 23:40 login timestamp - a log datum, always after hours
+        'call_kalender_geist',        // "jeden Dienstag um 14 Uhr" - a calendar datum, not the scene
+        'call_geistertermin',         // same: the recurring appointment's slot
+        'sq_raum_phoenix_2c',         // 17:58 auto-reply - mail timestamp after closing time
+        'sq_falle_meeting',           // 16:41 - after closing time, always future or datum
+        'sq_phone_gabi_intel'         // the whole quest is built around a 14:00 meeting; drawn
+                                      // after 14:00 the premise limps - legacy, left as is
+      ]);
+      if (!clockReviewed.has(ev.id)) {
+        const clockRe = /\b(?:um|gegen)\s+(?:kurz\s+(?:nach|vor)\s+)?(?:halb\s+)?(?:\d{1,2}(?::\d{2})?\s*Uhr\b|\d{1,2}:\d{2}\b|(?:acht|neun|zehn|elf|zwölf)\b(?!\s*(?:Prozent|Euro|Grad|Minuten|Sekunden|Stunden|Tage|Jahre|Mal)))/i;
+        const clockTexts = [
+          ['text', ev.text],
+          ...(ev.opts ?? []).map((o, i) => [`opts[${i}].r`, o.r]),
+          ...Object.entries(ev.nodes ?? {}).map(([k, n]) => [`nodes.${k}.text`, n.text]),
+          ...Object.entries(ev.results ?? {}).map(([k, r]) => [`results.${k}.txt`, r.txt])
+        ];
+        for (const [field, txt] of clockTexts) {
+          if (typeof txt !== 'string') continue;
+          const c = txt.match(clockRe);
+          if (c) warn(`${ctx} ${field}: Uhrzeit "${c[0].trim()}" — das Ereignis kann zu jeder Tageszeit gezogen werden. Vergangenheit vor 8:00 oder Abend/Zukunft sind ok: dann in clockReviewed eintragen.`);
+        }
       }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
@@ -134,8 +190,13 @@ for (const p of POOLS) {
     // Node-level chars (phone chats): a node's own char must exist too.
     // `char: null` is legitimate - it forces the anonymous initial inside
     // a character chat and must not be reported.
-    for (const [nid, node] of Object.entries(ev.nodes ?? {}))
-      if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
+    // EXCEPT the meetings pool: its consultants are meeting-local voices ON
+    // PURPOSE (no data_chars entry, no reputation, no team view - design
+    // 8.1); EventView renders them as name plus initials. Real characters in
+    // meetings stay protected through the rep key check above.
+    if (p !== 'meetings')
+      for (const [nid, node] of Object.entries(ev.nodes ?? {}))
+        if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
     if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" nicht in DB.chars`);
 
     for (const o of ev.opts ?? []) {
@@ -164,7 +225,8 @@ for (const p of POOLS) {
     }
 
     /* Erreichbarkeit */
-    const reached = new Set([ev.startNode]);
+    // startNodeGala is a second entry point (meetings, design 8.1).
+    const reached = new Set([ev.startNode, ev.startNodeGala].filter(Boolean));
     for (let changed = true; changed;) {
       changed = false;
       for (const nid of [...reached]) {
@@ -284,8 +346,14 @@ const engineSource = ['src/engine.js', 'src/tutorial.js']
     .map(f => readFileSync(f, 'utf8'))
     .join('\n');
 
+// The compendium consumes flags too: a note can hang on one.
+const compFlags = new Set();
+for (const e of DB.compendium ?? [])
+  for (const n of e.notizen ?? []) if (n.flag) compFlags.add(n.flag);
+
 for (const [flag, wheres] of flagsSetWhere) {
     if (flagsReq.has(flag)) continue;
+    if (compFlags.has(flag)) continue;
     if (engineSource.includes(`'${flag}'`) || engineSource.includes(`"${flag}"`)) continue;
     const list = wheres.length > 3 ? `${wheres.slice(0, 3).join(', ')} … (+${wheres.length - 3})` : wheres.join(', ');
     warn(`Story-Flag "${flag}" wird gesetzt, aber von keinem Ereignis gefordert -> Sackgasse (${list})`);
@@ -427,7 +495,9 @@ for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].
 // `use` is what makes an item usable: it drives the backpack buttons, the
 // confirm dialog and the effect. An incomplete block therefore shows up as a
 // button that opens a dialog saying nothing and does nothing.
-const USE_FIELDS = ['al', 'fl', 'desc', 'warn', 'log', 'color', 'cooldown'];
+// cr/rep (v5.0) carry the COST of trade-off items, wait is the cooling-down
+// line each item phrases for itself.
+const USE_FIELDS = ['al', 'fl', 'cr', 'rep', 'desc', 'warn', 'log', 'color', 'cooldown', 'wait'];
 for (const id of itemIds) {
   const item = DB.items[id];
   const use = item.use;
@@ -439,6 +509,18 @@ for (const id of itemIds) {
 
   for (const k of Object.keys(use))
     if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} ist kein bekanntes Feld`);
+
+  // A trade-off item pays with reputation. Unlike an event choice it can be
+  // triggered again and again, so the ceiling here is tighter than the ±5
+  // of an event - and a permanent one without a cooldown has no ceiling.
+  if (use.rep) {
+    for (const [n, v] of Object.entries(use.rep)) {
+      if (!charNames.has(n)) err(`${ctx}: use.rep-Charakter "${n}" nicht in DB.chars`);
+      if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} — ein Gegenstand ist wiederholt benutzbar, hier hoechstens ±5`);
+    }
+  }
+  if (item.keep && !use.cooldown && (use.cr || use.rep))
+    err(`${ctx}: bleibender Gegenstand mit Kosten (use.cr/use.rep) braucht eine cooldown — sonst beliebig oft auslösbar`);
 
   if (!use.al && !use.fl)
     err(`${ctx}: use ohne Wirkung — al oder fl muss gesetzt sein`);
@@ -455,6 +537,92 @@ for (const id of itemIds) {
 
   if (item.quest)
     err(`${ctx}: Quest-Items sind Trophäen und dürfen kein use haben`);
+}
+
+/* ---------- 6c) Passive items ---------- */
+// `passive` fires on its own when an event opens, so a typo here is silent
+// twice over: no button is missing, nothing throws, the effect simply never
+// happens. onChar is checked against DB.chars for the same reason event
+// chars are.
+const PASSIVE_FIELDS = ['onChar', 'al', 'fl', 'cr', 'log', 'color'];
+for (const id of itemIds) {
+  const item = DB.items[id];
+  const pas = item.passive;
+  if (!pas) continue;
+  const ctx = `Item "${id}"`;
+
+  for (const k of Object.keys(pas))
+    if (!PASSIVE_FIELDS.includes(k)) err(`${ctx}: passive.${k} ist kein bekanntes Feld`);
+
+  if (!pas.onChar) err(`${ctx}: passive ohne onChar — ein Effekt ohne Auslöser feuert nie`);
+  else if (!charNames.has(pas.onChar)) err(`${ctx}: passive.onChar "${pas.onChar}" nicht in DB.chars`);
+
+  if (!pas.log) err(`${ctx}: passive ohne log — eine Zahl, die ohne Klick erscheint, sieht sonst wie ein Fehler aus`);
+  if (!pas.al && !pas.fl && !pas.cr) err(`${ctx}: passive ohne Wirkung — al, fl oder cr muss gesetzt sein`);
+  if (!item.keep) err(`${ctx}: passive ohne keep — ein Verbrauchsgut kann nicht dauerhaft wirken`);
+  if (item.quest) err(`${ctx}: Quest-Items sind Trophäen und dürfen kein passive haben`);
+
+  // The player never chooses to trigger it, so it may only ever help; a
+  // passive penalty would be an invisible tax nobody can avoid.
+  for (const k of ['al', 'fl', 'cr'])
+    if (pas[k] !== undefined && !(pas[k] < 0))
+      err(`${ctx}: passive.${k} muss negativ sein — ein Effekt ohne Entscheidung darf nicht schaden, ist ${pas[k]}`);
+  for (const k of ['al', 'fl', 'cr'])
+    if (typeof pas[k] === 'number' && Math.abs(pas[k]) > 10)
+      warn(`${ctx}: passive.${k} ${pas[k]} — wirkt bei JEDEM Auftritt der Figur, hoechstens -10`);
+}
+
+/* ---------- 6d) Compendium ---------- */
+// Every trigger here fails silently when wrong: a typo in an id or a flag
+// does not throw, the note simply never shows up. Both sides are therefore
+// checked against what exists - idMap holds every event id in the game,
+// flagsSetWhere every flag an event raises.
+{
+  const FIELDS = ['id', 'cat', 'name', 'rolle', 'kopf', 'seen', 'notizen'];
+  const NOTE_FIELDS = ['seen', 'flag', 'text'];
+  const ids = new Set();
+  for (const e of DB.compendium ?? []) {
+    const ctx = `Kompendium "${e.id ?? '?'}"`;
+    for (const k of Object.keys(e))
+      if (!FIELDS.includes(k)) err(`${ctx}: ${k} ist kein bekanntes Feld`);
+    if (!e.id || !e.name || !e.rolle || !e.kopf) err(`${ctx}: id, name, rolle und kopf sind Pflicht`);
+    // The view groups and colours by category, so an unknown one would show up
+    // in no tab at all - invisible, without anything failing.
+    if (!['team', 'person', 'ort', 'vorgang'].includes(e.cat))
+      err(`${ctx}: cat "${e.cat}" unbekannt — erlaubt sind team, person, ort, vorgang`);
+    if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
+    ids.add(e.id);
+
+    if (!(e.seen ?? []).length) err(`${ctx}: ohne seen wird der Kopf nie freigeschaltet`);
+    for (const id of e.seen ?? [])
+      if (!idMap.has(id)) err(`${ctx}: seen "${id}" ist kein Ereignis`);
+
+    const notes = e.notizen ?? [];
+    if (notes.length < 3) warn(`${ctx}: nur ${notes.length} Notizen — unter drei wirkt ein Eintrag dünn`);
+    // An entry may hold as many notes as it has distinct scenes to draw on,
+    // plus one for the pattern that emerges across them. This ties the length
+    // to the evidence rather than to a category: the colleagues and the big
+    // rooms earn eight, a walk-on with two appearances does not. Eight is the
+    // hard ceiling either way - beyond that a page stops being read.
+    const quellen = new Set([...(e.seen ?? []), ...notes.map(n => n.flag ?? n.seen)]).size;
+    const maxNotes = Math.min(8, Math.max(3, quellen));
+    if (notes.length > maxNotes)
+      warn(`${ctx}: ${notes.length} Notizen bei ${quellen} Quellen — höchstens ${maxNotes}, sonst wird erfunden statt beobachtet`);
+
+    const texte = new Set();
+    for (const [i, n] of notes.entries()) {
+      const nctx = `${ctx} notizen[${i}]`;
+      for (const k of Object.keys(n))
+        if (!NOTE_FIELDS.includes(k)) err(`${nctx}: ${k} ist kein bekanntes Feld`);
+      if (!n.text) err(`${nctx}: ohne text`);
+      if (!n.seen && !n.flag) err(`${nctx}: ohne Auslöser (seen oder flag) erscheint die Notiz nie`);
+      if (n.seen && n.flag) err(`${nctx}: seen und flag zugleich — ein Auslöser genügt`);
+      if (n.seen && !idMap.has(n.seen)) err(`${nctx}: seen "${n.seen}" ist kein Ereignis`);
+      if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: Fahne "${n.flag}" wird von keinem Ereignis gesetzt`);
+      if (n.text && texte.has(n.text)) err(`${nctx}: Notiztext doppelt`);
+      if (n.text) texte.add(n.text);
+    }
+  }
 }
 
 /* ---------- 7) Mail convention: the delete option ---------- */
@@ -509,13 +677,14 @@ for (const ev of DB.emails) {
 const EVENT_KEYS = {
   _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
   bossfights: ['timer', 'fail'],
-  calls:      ['reqStory', 'webOnly'],
-  coffee:     ['reqStory', 'webOnly'],
-  server:     ['reqStory', 'webOnly'],
-  sidequests: ['reqStory', 'webOnly', 'kind', 'appName'],
+  calls:      ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  coffee:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  server:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
+  sidequests: ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly', 'kind', 'appName'],
   reputation: ['reqStory', 'reqRep'],
-  party:      ['loc'],
+  party:      ['loc', 'textByProgress'],   // hub variants by progress (engine_core.reset)
   lunch:      [],
+  meetings:   ['startNodeGala'],   // alternative opening when tonight's gala fires (engine_week.triggerMeeting)
   tutorial:   ['type', 'step']
 };
 const OPT_KEYS      = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'req', 'rem', 'next', 'action'];
@@ -625,6 +794,13 @@ for (const ev of DB.emails) {
   const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
   const between = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
 
+  // weekDay 0 means day mode; 1 to 5 are Monday through Friday of a week run.
+  const weekFacts = (weekDay) => ({
+    week: weekDay > 0,
+    weekDay,
+    weekRest: weekDay > 0 ? 5 - weekDay : 0,
+  });
+
   const days = [];
   const achList = [...achIds], itemList = [...itemIds];
 
@@ -651,7 +827,12 @@ for (const ev of DB.emails) {
       streak: between(0, 9),
       rageWarned: rnd() < 0.4, chefWarned: rnd() < 0.4, blind: rnd() < 0.3,
       ach: (id) => owned.has(id), item: (id) => carried.has(id),
-      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5
+      hasEncounters: rnd() < 0.5, hasHabits: rnd() < 0.5,
+      // Week facts (engine_diary.factsOf). Without them every week fragment
+      // looked unreachable and produced a warning that could never be fixed -
+      // ten permanent false alarms are the fastest way to teach someone that
+      // the warning list is safe to ignore.
+      ...weekFacts(between(0, 5))
     });
   }
 

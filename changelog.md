@@ -1,3 +1,107 @@
+[5.0.0] - 2026-08-12
+
+Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends
+vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts
+vergessen wird - fünf Tage am Stück, mit allem, was man mitschleppt. Dazu
+bekommt die Oberfläche zum ersten Mal eigene Symbole statt Emojis.
+
+Die Arbeitswoche:
+* Ein zweiter Modus, gleichrangig neben dem Arbeitstag: Montag bis Freitag am Stück. Wer scheitert, beendet die ganze Woche - nicht nur den Tag.
+* Gewählt wird nicht der Wochentag, sondern Müllers Zustand: Erholt, Genervt oder Urlaubsreif. Er bestimmt, womit der Montag beginnt und wie gut die Nächte erholen.
+* Über Nacht bleibt fast alles: Rucksack, Ruf, Faulheit, gelesene Ereignisse und die Geschichten, die noch weitergehen. Von den offenen Tickets bleibt ein Viertel, aufgerundet - kein Ticket ist je geschenkt, aber vier abgearbeitete sparen eines für morgen.
+* Aggro und Chef-Radar erholen sich prozentual, und die Erholung wird von Nacht zu Nacht schlechter. Der Freitag ist nicht schwerer, weil das Spiel härter wird, sondern weil vier Tage in den Knochen stecken.
+* Ventil und Abmahnung gibt es einmal pro WOCHE statt einmal pro Tag. Wer am Dienstag ausrastet, hat bis Freitag keine zweite Chance.
+* Gegenstände lassen sich im Rucksack wegwerfen. Der Rucksack fasst weiterhin zehn Stück und nichts stapelt sich - über eine ganze Woche wurde daraus aber eine Sackgasse, weil Werkzeuge beim Aufsammeln am Deckel vorbeigehen und irgendwann kein Verbrauchsgut mehr hineinpasste. Jetzt ist es eine Entscheidung: den Schraubenzieher behalten oder Platz für den Donut schaffen.
+* Der Nacht-Bildschirm zeigt vor dem Schlafengehen, was der nächste Morgen erbt: Tickets, Werte und Ausreden im Vorher-nachher, dazu eine Zeile darüber, wie die Nacht war. Ein Streifen über den fünf Wochentagen zeigt, wo du gerade stehst. Der Abend ist zum Planen da.
+* Die Zeile unter der Überschrift greift auf, wie der Tag gelaufen ist - ob du mit vollem Postkorb ins Bett gehst, ob der Puls noch oben ist oder ob zum ersten Mal seit langem nichts offen war. Auch jeder Morgen begrüßt dich anders.
+* Der Freitag hat ein Finale: Ab 15 Uhr führt der Weg ins Wochenmeeting - mit dem Chef, wechselnden externen Beratern und einer Tagesordnung, die niemanden interessiert. Erst danach ist Feierabend, auch wenn es darüber später als halb fünf wird.
+* Am Ende steht die Wochen-Bilanz: pro Tag die Werte, mit denen er in die Nacht ging, darunter die Summen. Wer scheitert, sieht, an welchem Tag es riss.
+* Das Tagebuch kennt die Woche: eigene Auftakte je Wochentag, ein Nachtrag darüber, was mit ins Bett genommen wird, und ein eigener Text für den überstandenen Freitag.
+* Damit kein Bereich leergeklickt werden kann, hat jeder Pool ein Tagespensum. Ist es aufgebraucht, kostet der Griff dorthin trotzdem Zeit - der Serverraum ist dann eben verdächtig still.
+* Drei neue Erfolge: Wochenendlich, Eisern und Blanker Freitag. Alle drei sind wie gewohnt nach Schwierigkeit gestuft.
+* Eine unterbrochene Woche geht nicht verloren. Beim nächsten Start bietet der Arbeitswochen-Knopf sie mit Wochentag, Uhrzeit und offenen Tickets zum Weitermachen an - der angefangene Arbeitstag wartet unabhängig davon an seinem eigenen Knopf.
+
+Die Synergy-Gala:
+* Der Abend hat jetzt eine Uhrzeit. Die Feier beginnt um 17 Uhr, und jede Station bringt eine halbe Stunde - wer auf die Uhr sieht, weiß ungefähr, wie lange es noch dauert, ohne dass ihm jemand eine Fortschrittsanzeige hinstellt.
+* Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
+* Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
+
+Mehrtägige Geschichten:
+* Rund 50 neue Ereignisse in Serverraum, Kaffeeküche, Dienstgang und am Telefon - zum ersten Mal als Geschichten, die über mehrere Tage gehen: Was am Montag aufgeschoben wird, eskaliert übermorgen; was bestellt ist, kommt frühestens am nächsten Tag; wer einmal diskret geholfen hat, ist ab jetzt "die Nummer". Im Arbeitstag stehen die Auftakte ganz normal im Pool - die Fortsetzungen gehören der Woche.
+* Folgen springen auch zwischen den Bereichen: Die Abkürzung im Serverraum klingelt später am Telefon, und ein Kaltakquise-Anruf steht tags darauf leibhaftig am Empfang - "wie telefonisch vereinbart".
+* Der Dienstgang nutzt seine zwei Gesichter als Erzählmittel: Manche Geschichte beginnt als Chat auf dem Handy und endet im Terminal, eine läuft andersherum.
+* Neue Gesichter machen GlobalCorp größer: Herr Blaschke vom Gebäudemanagement, Frau Sonntag aus der Buchhaltung, ein Herr in Grau mit Transformationsprojekt, Herr Grabowski (seit sieben Jahren in Rente, ruft trotzdem einmal im Jahr an) und die Niederlassung Süd, die nie ans Telefon geht.
+
+Das Wissen:
+* Ein neuer Punkt in der Leiste, zwischen Team und Archiv. Müller notiert dort, was er über dieses Haus herausfindet: über die Kollegen, über die Leute, die immer wieder anrufen, über Räume und über Vorgänge, die niemand angefangen hat und die trotzdem laufen.
+* Die Seiten füllen sich von allein. Wer jemandem begegnet, schlägt seinen Eintrag auf; wer eine Geschichte weiterspielt, bekommt die nächste Notiz. Was noch fehlt, steht als leere Zeile da - man sieht, dass eine Seite unfertig ist, aber nicht, was darauf fehlen wird.
+* Aufgebaut wie ein Notizbuch: links das Register, rechts die aufgeschlagene Seite, oben die vier Bereiche mit eigener Farbe. Auf dem Handy ist das Register die Seite, und ein Tipp blättert um.
+* Der Fortschritt gehört zur Laufbahn, nicht zum Tag. Was einmal notiert ist, bleibt notiert - auch über Wochen und Neuanfänge hinweg.
+* Dazu ein neuer Fall im Dienstgang: eine verwüstete Toilette, drei Beobachtungen und ein Abgleich der Zutrittsprotokolle. Wer über drei Tage dranbleibt, erfährt, wer es war. Ob das hilft, ist eine andere Frage.
+
+Gegenstände:
+* Zwei Neuzugänge, beide mit Haken. Die Voodoo-Puppe des Chefs senkt die Aggro spürbar - aber zwei Etagen höher verspürt Dr. Wichtig einen Krampf und muss aus unerfindlichen Gründen an dich denken, das Radar steigt. Die Notfall-Krawatte wirkt von allein: Trägt man exakt sein Modell, hält er einen bei jeder Begegnung kurz für einen der Ihren. Beide sind dort versteckt, wo niemand ein Geschenk erwartet.
+* Jeder Gegenstand hat jetzt seine eigene Abklingzeit. Bisher gab es im ganzen Rucksack nur eine - beim Stressball allein fiel das nie auf, mit dem zweiten Werkzeug hätte das Kneten die Puppe gesperrt.
+
+Der Rucksack:
+* Die Kacheln stehen jetzt sauber im Raster, auch wenn nur ein Gegenstand darin liegt. Die Beschriftungen hingen vorher unter den Kacheln und schoben die Zeilen auseinander - auf dem Handy fiel das Raster dadurch sichtbar auseinander.
+* Der Wegwerfen-Knopf hält sich zurück, bis man ihn braucht, und färbt sich erst dann rot - im selben Ton wie die Sicherheitsabfrage, die danach kommt. Die Erklärzeile ist weg: Die Kacheln leuchten ohnehin rot, und der Text hat beim Erscheinen das ganze Raster nach unten geschoben.
+
+Einstellungen:
+* "Handy aut. minimieren" ist am breiten Bildschirm ausgegraut und sagt auch, warum: Dort bleibt das Handy ohnehin sichtbar, die Einstellung kann nichts bewirken. Vorher ließ sich der Schalter umlegen, ohne dass etwas passierte. Wird das Fenster schmaler, ist er sofort wieder da - der gespeicherte Wert bleibt unangetastet.
+
+Musik:
+* Die Musik wechselt nicht mehr mit einem Schnitt. Beim Bossfight bricht die Bürobeschallung ab, statt einfach zu verstummen, und die Kampfmusik setzt hart ein - danach kommt das Büro sanft zurück. Auffallen soll das nicht; es fällt vorher auf, wenn es fehlt.
+* Wer in den Einstellungen einen festen Musikstil gewählt hat, hört ihn ohne die kurze Lücke am Ende jedes Durchlaufs. Im Radio-Modus bleibt alles wie gehabt, dort muss ein Stück zu Ende sein, damit das nächste gewählt werden kann.
+
+Der Startbildschirm:
+* Der Hochfahr-Text meldet jetzt die Lage, statt jeden Morgen dasselbe zu behaupten: übernommene Tickets, das Chef-Radar vom Vortag, was im Rucksack liegt. Am Montag steht dort die gewählte Startbedingung, am Freitag zuerst der Termin, den man nicht vergessen sollte.
+* Ab dem zweiten Arbeitstag fällt die Begrüßung mit Firmenname und Copyright weg - fünf Morgen pro Woche brauchen keine fünf Vorstellungsrunden. Der Start ist dadurch spürbar kürzer.
+* Die übrigen Zeilen wechseln von Mal zu Mal. Die Ausreden-Datenbank lädt mal ein anderes Modul, die Zahl der ignorierten Anfragen stimmt nie zweimal, und gelegentlich fällt auf, wann das Backup zuletzt geprüft wurde.
+
+Archiv & Statistiken:
+* Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
+* Die Gegenstands-Kacheln im Archiv tragen jetzt dieselben Beschreibungen wie der Rucksack: Name, Text und die Zeile, ob sich ein Gegenstand verbraucht - per Maus beim Überfahren, am Handy und auf dem Steam Deck per Fingertipp. Bisher stand dort nur der Name, und den bekam nur die Maus zu sehen. Nicht gefundene Gegenstände bleiben ein Fragezeichen.
+* Als überlebt zählt eine Woche nur mit erreichtem Freitagabend. Jeder Abbruch unterwegs landet bei Rage Quit oder Gefeuert.
+* Die weltweiten Steam-Statistiken haben denselben Umschalter bekommen, mit eigenen Vergleichswerten und eigenen Diagnosen für die Woche. Fehlen weltweite Daten für einen Modus, sagt die Anzeige das, statt leere Balken zu zeichnen.
+* In den Einstellungen lassen sich beide Modi vorwählen, getrennt voneinander: ein fester Wochentag für den Arbeitstag, ein fester Zustand für die Arbeitswoche. Beides steht auf "Jedes Mal fragen".
+
+Anzeige & Layout:
+* Die Oberfläche trägt eigene Symbole statt Emojis: 69 gezeichnete Icons für Aktionsleiste, Terminal-Kopf, Schnellstartleiste, Einstellungen, Menü, Dialoge und den Nacht-Bildschirm - im selben getuschten Stil wie die Gegenstände und Porträts. Wo dasselbe gemeint ist, steht auch dasselbe Symbol: Die Schnecke aus dem Überlebens-Handbuch taucht abends bei der Faulheit wieder auf, der Pokal der Schnellstartleiste im Kopf des Archivs. Fehlt eine Datei, erscheint wieder das alte Emoji.
+* Die Schwierigkeitswahl zeigt gezeichnete Motive: ein Kalenderblatt je Wochentag mit einem Fünf-Punkte-Streifen, der die Lage in der Woche verrät, und für den Wochenmodus Müllers Tasse in drei Zuständen.
+* Alle Fenster folgen einer Form. Erfolgsmeldung, Gegenstands-Nachfrage sowie Sichern und Laden waren jeweils eigene Bauarten aus verschiedenen Zeiten; sie sehen jetzt aus wie der Rest des Spiels: dunkles Panel mit Akzentkante, Symbol auf einem Sockel neben der Überschrift, Warnhinweise in einem abgesetzten Kasten. "Spielstand löschen" ist als das gekennzeichnet, was es ist.
+* Alle Fenster tragen jetzt die farbige Kante am oberen Rand, die im Spiel sonst jedes Panel auszeichnet - Archiv, Einstellungen, Tastenbelegung, Statistiken, Ausreden und die Fehlermeldung hatten stattdessen eigene Rahmen aus früheren Zeiten. Auch die Ecken sind überall gleich: Der farbige Streifen wirkt nur bei scharfer Kante als durchgehende Linie.
+* Die Schließen-Kreuze hatten vier verschiedene Größen und zwei verschiedene Zeichen. Jetzt sind sie überall gleich groß, deutlich leichter zu treffen als vorher - was besonders am Handy und auf dem Steam Deck auffällt - und für Vorleseprogramme endlich beschriftet.
+* Sichern und Laden sagen außerdem, worum es geht: Der Code enthält das Archiv - gefundene Gegenstände, Erfolge, Statistiken und den Ruf im Kollegium -, aber keinen laufenden Arbeitstag und keine begonnene Woche.
+* Das Startfenster ist neu aufgeteilt. Der Begrüßungstext steht oben über die volle Breite, darunter stehen beide Modi als gleichwertige Karten nebeneinander, rechts das Überlebens-Handbuch. Die rechte Spalte läuft nicht mehr halb leer.
+* Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
+* Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
+
+Steam-Fassung:
+* Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
+* Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.
+
+Fehlerkorrekturen:
+* Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
+* Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.
+* Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
+* Die Merkliste des Tagebuchs (zuletzt benutzte Sätze, damit sich morgen nichts wiederholt) hing an einem ungültigen Speicher-Schlüssel und überlebte dadurch den harten Reset - das Tagebuch mied danach Sätze eines gelöschten Spielstands. Sie hat jetzt einen richtigen Namen und wird beim Reset mit abgeräumt.
+
+* Beim Partner-Buffet in der Kantine verlangte "Alles fotografieren und Frau Elster schicken" grundlos die Schwarze Karte des Prinzen - die Option war damit für fast alle unerreichbar. Sie steht jetzt jedem offen.
+* Anrufer erklärten ihre Stimmung im Namen ("Die Sekretärin (Wütend)"), und manche Antwort trug ein Etikett vor der eigentlichen Entscheidung ("Tech-Pfusch: ..."). Die Stimmung steht im Text, wo sie immer schon stand; die Etiketten sind weg - sieben Titel, fünfundzwanzig Antworten. Abteilungs-Zusätze wie "(Buchhaltung)" bleiben, das ist Anruferanzeige.
+* Textpflege im Bestand: zwei Tippfehler und eine Handvoll fester Uhrzeiten in Ereignissen, die zu jeder Tageszeit auftreten können ("Um 13 Uhr bricht Panik aus" - auch um neun).
+
+Für Entwickler:
+* Das Wissen speichert Beweise statt Freischaltungen: state.archive führt seenEvents und seenFlags, alles Weitere wird beim Öffnen daraus abgeleitet. Später ergänzte Notizen leuchten dadurch rückwirkend für bestehende Spielstände auf. Der Datenprüfer hält die Einträge an die Belege: Ereignis-IDs und Fahnen werden gegen den Bestand geprüft, und ein Eintrag darf höchstens so viele Notizen führen, wie er Szenen zitiert.
+* Gegenstände: Abklingzeiten liegen in state.itemCooldowns je Gegenstands-ID, use versteht zusätzlich cr, rep und wait, und die neue Klasse passive wirkt beim Öffnen eines Ereignisses mit der hinterlegten Figur. Der Datenprüfer kennt alle neuen Felder und erzwingt: Kosten nur mit Abklingzeit, passive Wirkungen nur negativ, req und rem nie zugleich auf demselben Gegenstand.
+* Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
+* Zähler sind nach Modus getrennt: Wochentage erhöhen die Tageszähler nicht mehr, die Woche zählt über recordWeekResult(). Die Serie zählt weiterhin modusübergreifend, weil ein überlebter Wochentag ein überlebter Tag ist.
+* Vier neue Steam-Statistiken (stat_weeks_started, _survived, _ragequit, _fired), und stat_started wird nicht mehr aus daysStarted gespeist - dieser Zähler nummeriert die Firmenchronik und enthält deshalb auch Wochentage. Die Abfrage in main.cjs holt jetzt acht Namen statt vier.
+* tools/simulate-week.mjs (npm run sim:week) rechnet ganze Wochen durch, mit denselben Formeln wie der Tages-Simulator. Die Balance der Woche wurde damit vor dem Bauen kalibriert.
+* Drei Test-Suiten unter tools/ (npm test) prüfen Fundament, Ablauf und das Entwickler-Werkzeug der Woche gegen die echten Module - 88 Tests.
+* tools/dev-woche.js legt in der Browser-Konsole Testbefehle für den Wochenmodus an: einen beliebigen Wochentag herstellen, den Nacht-Bildschirm oder das Freitagsfinale auslösen, die Gala freischalten, Zähler ansehen und leeren.
+
+
 [4.1.0] - 2026-08-07
 
 Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser

@@ -94,6 +94,44 @@ export const audio = {
 	
     // --- MUSIC SYSTEM ---
     bgmTracks: null,
+    fadeTimers: {},        // one running fade per track, keyed by track name
+
+    /**
+     * Fades a track's volume and calls back when it arrives. Without this every
+     * change of scene was a hard cut: pause() stopped mid-bar and the next
+     * track came in at full volume. Nobody notices a fade while it happens -
+     * they notice its absence.
+     *
+     * A track keeps its own timer, so a second call while a fade is running
+     * replaces it instead of two fades fighting over the same volume.
+     */
+    fadeTrack: function(key, target, ms, done) {
+        const track = this.bgmTracks?.[key];
+        if (!track) { done?.(); return; }
+
+        clearInterval(this.fadeTimers[key]);
+
+        const step = 25;
+        const from = track.volume;
+        const diff = target - from;
+        if (ms <= 0 || Math.abs(diff) < 0.01) {
+            track.volume = Math.max(0, Math.min(1, target));
+            done?.();
+            return;
+        }
+
+        let passed = 0;
+        this.fadeTimers[key] = setInterval(() => {
+            passed += step;
+            const t = Math.min(1, passed / ms);
+            track.volume = Math.max(0, Math.min(1, from + diff * t));
+            if (t >= 1) {
+                clearInterval(this.fadeTimers[key]);
+                delete this.fadeTimers[key];
+                done?.();
+            }
+        }, step);
+    },
 
     initMusic: function() {
         this.bgmTracks = {
@@ -116,7 +154,11 @@ export const audio = {
             if (key === 'boss' || key === 'gala') {
                 this.bgmTracks[key].loop = true; // Boss & Gala loopen endlos
             } else {
-                this.bgmTracks[key].loop = false; // Office tracks are controlled manually
+                // Radio mode has to hear the end of a track to pick the next
+                // one, so it cannot loop. A fixed style repeats the same track
+                // anyway - and doing that natively removes the audible gap the
+                // manual restart left between two runs.
+                this.bgmTracks[key].loop = this.state.musicStyle !== 'radio';
                 
                 // What happens once the track finishes?
                 this.bgmTracks[key].addEventListener('ended', () => {
@@ -130,8 +172,10 @@ export const audio = {
                             ? others[Math.floor(Math.random() * others.length)]
                             : key;
                         this.playMusic(nextTrack); 
-                    } else {
-                        // Single-style mode (the player picked e.g. 'lofi'): restart it
+                    } else if (!this.bgmTracks[key].loop) {
+                        // Fixed style without native looping (e.g. the style was
+                        // switched while this track was already running): restart
+                        // it by hand, as before.
                         this.bgmTracks[key].play().catch(e => console.warn("Musik konnte nicht starten:", e));
                     }
                 });
@@ -158,6 +202,14 @@ export const audio = {
     changeMusicStyle: function(style) {
         this.state.musicStyle = style;
         localStorage.setItem(KEYS.musicStyle, style);
+
+        // Looping depends on the mode, so it has to follow the setting: radio
+        // needs the 'ended' event to move on, a fixed style loops seamlessly.
+        if (this.bgmTracks) {
+            for (const key of ['elevator', 'lofi', 'detective', 'bossa']) {
+                this.bgmTracks[key].loop = style !== 'radio';
+            }
+        }
         
         // Outside boss fight and gala the track has to follow the setting
         if (this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
@@ -177,6 +229,10 @@ export const audio = {
         localStorage.setItem(KEYS.musicVolume, val);
         if (this.bgmTracks) {
             for (let key in this.bgmTracks) {
+                // Cancel a running fade first - otherwise it would carry on
+                // towards its old target and undo the slider a moment later.
+                clearInterval(this.fadeTimers[key]);
+                delete this.fadeTimers[key];
                 this.bgmTracks[key].volume = this.state.musicVolume;
             }
         }
@@ -213,21 +269,51 @@ export const audio = {
         }
 
         this.state.currentMusicTrack = actualTrack;
-        this.stopMusic(); // Stops all other tracks
+        // Out faster than in, so the two never sit on top of each other for
+        // long. The boss fight cuts hardest, that is the point of it.
+        this.stopMusic(actualTrack === 'boss' ? 150 : 350);
 
         if (!this.bgmTracks) this.initMusic();
 
         let track = this.bgmTracks[actualTrack];
         if (track) {
-            track.volume = this.state.musicVolume;
-            track.play().catch(e => console.warn("Musik Autoplay blockiert:", e));
+            // A boss fight should hit; everything else eases in.
+            const fadeIn = actualTrack === 'boss' ? 250 : 600;
+            clearInterval(this.fadeTimers[actualTrack]);
+            track.volume = 0;
+            track.play()
+                .then(() => this.fadeTrack(actualTrack, this.state.musicVolume, fadeIn))
+                .catch(e => {
+                    // Autoplay blocked: leave the volume usable for the retry.
+                    track.volume = this.state.musicVolume;
+                    console.warn("Musik Autoplay blockiert:", e);
+                });
         }
     },
 
-    stopMusic: function() {
+    /**
+     * @param {number} ms  fade-out time; 0 stops instantly (used when the
+     *                     player switches music off - that should be immediate)
+     */
+    stopMusic: function(ms = 400) {
         if (!this.bgmTracks) return;
         for (let key in this.bgmTracks) {
-            this.bgmTracks[key].pause();
+            const track = this.bgmTracks[key];
+            clearInterval(this.fadeTimers[key]);
+            delete this.fadeTimers[key];
+
+            if (track.paused) continue;
+            if (ms <= 0) {
+                track.pause();
+                track.volume = this.state.musicVolume;   // ready for the next play()
+                continue;
+            }
+            this.fadeTrack(key, 0, ms, () => {
+                track.pause();
+                // Restore the target volume, otherwise the track would start
+                // silent the next time it is played without a fade.
+                track.volume = this.state.musicVolume;
+            });
         }
     },
     

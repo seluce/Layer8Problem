@@ -1,19 +1,31 @@
 {
   "name": "layer8problem",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "Layer8Problem - SysAdmin Survival Simulator",
+  "author": "seluce",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seluce/Layer8Problem.git"
+  },
+  "homepage": "https://seluce.github.io/Layer8Problem/",
+  "bugs": {
+    "url": "https://github.com/seluce/Layer8Problem/issues"
+  },
   "type": "module",
   "main": "electron/main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --outDir docs",
     "lint:data": "node tools/lint-data.mjs",
     "start": "npm run build && electron .",
     "start:dev": "electron .",
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
-    "sim": "node tools/simulate-day.mjs"
+    "sim": "node tools/simulate-day.mjs",
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs",
+    "sim:week": "node tools/simulate-week.mjs"
   },
   "build": {
     "appId": "com.layer8problem.game",
@@ -36,9 +48,9 @@
     }
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
-    "electron": "^43.3.0",
+    "electron": "^43.4.0",
     "electron-builder": "^26.15.3",
     "svelte": "^5.56.8",
     "tailwindcss": "^4.3.3",

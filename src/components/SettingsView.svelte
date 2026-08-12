@@ -27,6 +27,18 @@
 
     const SLIDER = 'flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500';
 
+    // Some options only do something below a certain width - the phone panel
+    // is laid out with 'hidden lg:flex', so auto-minimising cannot change
+    // anything from 1024px up. Without this the switch flips and nothing
+    // happens, which reads as a broken setting rather than an inactive one.
+    let wide = $state(typeof window !== 'undefined' && window.innerWidth >= 1024);
+    $effect(() => {
+        const onResize = () => (wide = window.innerWidth >= 1024);
+        window.addEventListener('resize', onResize);
+        onResize();
+        return () => window.removeEventListener('resize', onResize);
+    });
+
     // The reset button swaps its colours rather than layering !important on top
     // of them, which is why the resting state keeps its hover utilities and the
     // armed state does not: while it is asking, it should not react to the
@@ -49,11 +61,21 @@
         ['xlarge', 'Sehr groß']
     ];
 
+    // Two presets rather than one: the pickers ask different questions, so a
+    // single value could only ever answer one of them. Both default to 'ask',
+    // which is the behaviour players already know.
     const DIFFICULTIES = [
-        ['ask',    'Täglich fragen'],
+        ['ask',    'Jedes Mal fragen'],
         ['easy',   'Freitag (Leicht)'],
         ['normal', 'Mittwoch (Normal)'],
         ['hard',   'Montag (Schwer)']
+    ];
+
+    const WEEK_DIFFICULTIES = [
+        ['ask',    'Jedes Mal fragen'],
+        ['easy',   'Erholt (Leicht)'],
+        ['normal', 'Genervt (Normal)'],
+        ['hard',   'Urlaubsreif (Schwer)']
     ];
 
     // Icon, wording and wiring of every row, in the order they appear.
@@ -68,7 +90,7 @@
             accent: 'text-amber-400',
             grid: false,
             rows: [
-                { kind: 'link', icon: '⌨️', title: 'Tastenbelegung anpassen',
+                { kind: 'link', icon: '⌨️', img: 'set_keys', title: 'Tastenbelegung anpassen',
                   desc: 'Hotkeys für Menüs & Aktionen ändern',
                   act: () => engine.openKeybinds() }
             ]
@@ -78,19 +100,19 @@
             accent: 'text-amber-400',
             grid: true,
             rows: [
-                { kind: 'slider', icon: '🔔', title: 'Effekte',
+                { kind: 'slider', icon: '🔔', img: 'set_sfx', title: 'Effekte',
                   desc: 'Klicks & Benachrichtigungen',
                   get: () => game.audioEffects, set: (v) => engine.toggleAudio(v),
                   level: () => game.audioVolume, setLevel: (v) => engine.setVolume(v),
                   step: 0.05, levelTitle: 'Lautstärke der Effekte' },
 
-                { kind: 'slider', icon: '🎵', title: 'Musik',
+                { kind: 'slider', icon: '🎵', img: 'set_music', title: 'Musik',
                   desc: 'Hintergrund-Gedudel & Boss-Beats',
                   get: () => game.musicEnabled, set: (v) => engine.toggleMusic(v),
                   level: () => game.musicVolume, setLevel: (v) => engine.setMusicVolume(v),
                   step: 0.01, levelTitle: 'Lautstärke der Musik' },
 
-                { kind: 'select', icon: '📻', title: 'Musik-Stil',
+                { kind: 'select', icon: '📻', img: 'set_musicstyle', title: 'Musik-Stil',
                   desc: 'Wähle deinen musikalischen Wahnsinn.',
                   focus: 'focus:border-amber-500', options: MUSIC_STYLES,
                   get: () => game.musicStyle, set: (v) => engine.changeMusicStyle(v) }
@@ -101,32 +123,34 @@
             accent: 'text-cyan-400',
             grid: true,
             rows: [
-                { kind: 'select', icon: '🔠', title: 'Textgröße',
+                { kind: 'select', icon: '🔠', img: 'set_textsize', title: 'Textgröße',
                   desc: 'Dieses Spiel ist zum Lesen da. Nimm die Größe, die dir liegt.',
                   focus: 'focus:border-cyan-500', options: TEXT_SIZES,
                   get: () => game.textSize ?? 'normal', set: (v) => engine.setTextSize(v) },
 
-                { kind: 'toggle', icon: '🗜️', title: 'Kompaktmodus',
+                { kind: 'toggle', icon: '🗜️', img: 'set_compact', title: 'Kompaktmodus',
                   desc: 'Verkleinert Abstände im UI. Ideal für kleinere Auflösungen.',
                   get: () => game.compactMode, set: (v) => engine.toggleCompactMode(v) },
 
-                { kind: 'toggle', icon: '📱', title: 'Handy aut. minimieren',
+                { kind: 'toggle', icon: '📱', img: 'set_phonemin', title: 'Handy aut. minimieren',
                   desc: 'Blendet inaktives Handy bei kompakter Anzeige aus.',
+                  inactive: () => wide,
+                  inactiveNote: 'Ohne Wirkung: Dein Fenster ist breit genug, das Handy bleibt sichtbar.',
                   get: () => game.autoHidePhone, set: (v) => engine.toggleAutoHidePhone(v) },
 
-                { kind: 'toggle', icon: '💓', title: 'Warn-Pulsieren (>80%)',
+                { kind: 'toggle', icon: '💓', img: 'set_pulse', title: 'Warn-Pulsieren (>80%)',
                   desc: 'Terminal-Rand leuchtet bei hohem Stress rot auf.',
                   get: () => game.visualFX, set: (v) => engine.toggleFX(v) },
 
-                { kind: 'toggle', icon: '🫨', title: 'Kamera-Wackeln',
+                { kind: 'toggle', icon: '🫨', img: 'set_shake', title: 'Kamera-Wackeln',
                   desc: 'Bildschirm bebt bei kritischen Fehlern.',
                   get: () => game.screenShake, set: (v) => engine.toggleShake(v) },
 
-                { kind: 'toggle', icon: '💬', title: 'Smartphone-Animation',
+                { kind: 'toggle', icon: '💬', img: 'set_chatanim', title: 'Smartphone-Animation',
                   desc: 'Kein "Tippt..." Delay bei Chats.',
                   get: () => game.fastChat, set: (v) => engine.toggleFastChat(v) },
 
-                { kind: 'toggle', icon: '📺', title: 'Bildschirm-Textur',
+                { kind: 'toggle', icon: '📺', img: 'set_scanlines', title: 'Bildschirm-Textur',
                   desc: 'Feine Scanlines und Glimmen auf dem Terminal.',
                   get: () => game.scanlines !== false, set: (v) => engine.toggleScanlines(v) }
             ]
@@ -136,16 +160,21 @@
             accent: 'text-emerald-400',
             grid: true,
             rows: [
-                { kind: 'select', icon: '⏱️', title: 'Start-Schwierigkeit',
-                  desc: 'Legt den Modus für neue Tage fest.',
+                { kind: 'select', icon: '⏱️', img: 'set_difficulty', title: 'Arbeitstag vorwählen',
+                  desc: 'Überspringt die Tageswahl beim Start.',
                   focus: 'focus:border-emerald-500', options: DIFFICULTIES,
                   get: () => game.defaultDiff, set: (v) => engine.saveDefaultDifficulty(v) },
 
-                { kind: 'toggle', icon: '⚡', title: 'Schnelle Items',
+                { kind: 'select', icon: '🗓️', img: 'set_difficulty_week', title: 'Arbeitswoche vorwählen',
+                  desc: 'Überspringt die Zustandswahl beim Start.',
+                  focus: 'focus:border-emerald-500', options: WEEK_DIFFICULTIES,
+                  get: () => game.defaultWeekDiff, set: (v) => engine.saveDefaultWeekDifficulty(v) },
+
+                { kind: 'toggle', icon: '⚡', img: 'set_fastitems', title: 'Schnelle Items',
                   desc: 'Nahrung ohne Bestätigung nutzen.',
                   get: () => game.oneClickItem, set: (v) => engine.toggleOneClick(v) },
 
-                { kind: 'toggle', icon: '📈', title: 'Verlauf sofort zeigen',
+                { kind: 'toggle', icon: '📈', img: 'set_chart', title: 'Verlauf sofort zeigen',
                   desc: 'Öffnet die Tageskurve im Endbildschirm automatisch.',
                   get: () => !!game.autoChart, set: (v) => engine.toggleAutoChart(v) }
             ]
@@ -155,11 +184,11 @@
             accent: 'text-red-400',
             grid: true,
             rows: [
-                { kind: 'toggle', icon: '❓', title: 'Werte verbergen',
+                { kind: 'toggle', icon: '❓', img: 'set_hidestats', title: 'Werte verbergen',
                   desc: 'Blendet exakte %-Zahlen aus.',
                   get: () => game.blindStats, set: (v) => engine.toggleBlindStats(v) },
 
-                { kind: 'toggle', icon: '❔', title: 'Tickets verbergen',
+                { kind: 'toggle', icon: '❔', img: 'set_hidetickets', title: 'Tickets verbergen',
                   desc: 'Blendet Ticket-Anzahl aus.',
                   get: () => game.blindTickets, set: (v) => engine.toggleBlindTickets(v) }
             ]
@@ -169,7 +198,7 @@
             accent: 'text-slate-400',
             grid: false,
             rows: [
-                { kind: 'reset', icon: '♻️', title: 'Auf Standard zurücksetzen',
+                { kind: 'reset', icon: '♻️', img: 'set_reset', title: 'Auf Standard zurücksetzen',
                   desc: 'Setzt alle Optionen dieser Seite zurück. Spielstand, Archiv und Erfolge bleiben unangetastet.' }
             ]
         }
@@ -177,7 +206,14 @@
 </script>
 
 {#snippet info(row, iconClass)}
-    <span class={iconClass}>{row.icon}</span>
+    {#if row.img}
+        <img src="assets/img/ui/{row.img}.webp" alt=""
+             width="24" height="24"
+             class="{iconClass.includes('text-xl') ? 'w-7 h-7' : 'w-6 h-6'} shrink-0 select-none {iconClass}"
+             onerror={(e) => e.currentTarget.outerHTML = `<span class="${iconClass}">${row.icon}</span>`}>
+    {:else}
+        <span class={iconClass}>{row.icon}</span>
+    {/if}
     <div class="flex flex-col">
         <span class="text-sm font-medium text-slate-200 leading-tight">{row.title}</span>
         <span class="text-[10px] text-slate-500 mt-1">{row.desc}</span>
@@ -185,19 +221,30 @@
 {/snippet}
 
 {#snippet switchInput(row)}
-    <label class="relative inline-flex items-center cursor-pointer shrink-0">
-        <input type="checkbox" class="sr-only peer" aria-label={row.title}
+    {@const off = row.inactive?.() ?? false}
+    <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
+        <input type="checkbox" class="sr-only peer" aria-label={row.title} disabled={off}
                checked={row.get()} onchange={(e) => row.set(e.currentTarget.checked)}>
         <div class={SWITCH}></div>
     </label>
 {/snippet}
 
 {#snippet toggleRow(row)}
-    <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-        <div class="flex items-start gap-3 flex-1">
-            {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+    {@const off = row.inactive?.() ?? false}
+    <!-- An option without effect is greyed out and says why, instead of
+         silently swallowing the click. It keeps its stored value: made
+         narrower again, it works as before. -->
+    <div class="flex flex-col gap-1 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50
+                {off ? 'opacity-50' : ''}">
+        <div class="flex justify-between items-center gap-4">
+            <div class="flex items-start gap-3 flex-1">
+                {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+            </div>
+            {@render switchInput(row)}
         </div>
-        {@render switchInput(row)}
+        {#if off && row.inactiveNote}
+            <p class="text-[10px] text-amber-500/80 pl-9">{row.inactiveNote}</p>
+        {/if}
     </div>
 {/snippet}
 
@@ -229,7 +276,7 @@
         <div class="flex items-start gap-3 flex-1 w-full">
             {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
         </div>
-        <select class="w-full sm:w-auto bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 {row.focus} outline-hidden cursor-pointer shadow-xs shrink-0"
+        <select class="w-full sm:w-52 bg-slate-900 border border-slate-600 text-white text-xs rounded-sm px-2 py-1.5 {row.focus} outline-hidden cursor-pointer shadow-xs shrink-0"
                 aria-label={row.title}
                 value={row.get()} onchange={(e) => row.set(e.currentTarget.value)}>
             {#each row.options as [value, label] (value)}
@@ -242,7 +289,9 @@
 {#snippet linkRow(row)}
     <button type="button" onclick={row.act}
             class="w-full text-left px-4 py-3 bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-amber-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-        <span class="text-xl opacity-70 group-hover:opacity-100 group-hover:text-amber-400 transition-all mt-0.5">{row.icon}</span>
+        <img src="assets/img/ui/{row.img}.webp" alt=""
+             width="24" height="24" class="w-7 h-7 shrink-0 select-none opacity-70 group-hover:opacity-100 transition-all mt-0.5"
+             onerror={(e) => e.currentTarget.outerHTML = '<span class="text-xl opacity-70 mt-0.5">' + row.icon + '</span>'}>
         <div class="flex flex-col">
             <span class="font-medium leading-tight">{row.title}</span>
             <span class="text-[10px] text-slate-500 mt-1 font-normal group-hover:text-slate-400 transition-colors">{row.desc}</span>

@@ -1,6 +1,6 @@
 export const moods = [
 
-	// --- KATEGORIE 1: AGGRO-MODUS (+15 Aggro) [10% Chance] ---
+	// --- CATEGORY 1: ANGER MODE (+15 anger) [10% chance] ---
 	{ id: "mood_aggro_1", effect: "aggro", title: "Die Bahn fährt (nicht)", text: "Dein Zug hatte heute Morgen 40 Minuten Verspätung wegen 'freilaufender Tiere im Gleisbett'. Du musstest die letzten zwei Kilometer im Nieselregen zum Büro sprinten. Deine Laune ist bereits im Keller." },
 	{ id: "mood_aggro_2", effect: "aggro", title: "Der Zehen-Vorfall", text: "Du bist heute Morgen im Dunkeln mit dem kleinen Zeh volle Kanne gegen den Bettpfosten gerannt. Der Schmerz pocht immer noch in deinem Fuß, während du humpelnd das Büro betrittst." },
 	{ id: "mood_aggro_3", effect: "aggro", title: "Kaffee-Katastrophe", text: "Dir ist zuhause die Kaffeekanne aus der Hand gerutscht. Die Küche klebt, du hattest keinen Koffein-Kick und deine Socken riechen nach Filterkaffee. Jeder, der dich heute anspricht, lebt gefährlich." },
@@ -12,7 +12,7 @@ export const moods = [
 	{ id: "mood_aggro_9", effect: "aggro", title: "Die Mülltrennung", text: "Ein Nachbar hat dich im Treppenhaus in ein 15-minütiges Gespräch über korrekte Mülltrennung verwickelt. Du hast brav genickt, während du innerlich explodiert bist." },
 	{ id: "mood_aggro_10", effect: "aggro", title: "Glasklarer Fail", text: "Du wolltest lässig durch die Drehtür am Eingang gehen, bist hängen geblieben und hast deinen To-Go-Kaffee gegen die Scheibe gedrückt. Alle am Empfang haben es gesehen. Sprich mich heute besser nicht an." },
 
-	// --- KATEGORIE 2: RADAR-MODUS (+15 Chef-Radar) [10% Chance] ---
+	// --- CATEGORY 2: RADAR MODE (+15 boss radar) [10% chance] ---
 	{ id: "mood_radar_1", effect: "radar", title: "Die ominöse E-Mail", text: "Du hast gestern Abend um 23:45 Uhr noch eine E-Mail vom Chef bekommen: 'Müller. Morgen früh in mein Büro. Ohne Vorwarnung.' Du hast keine Ahnung, worum es geht und schwitzt kalten Angstschweiß." },
 	{ id: "mood_radar_2", effect: "radar", title: "Der böse Blick", text: "Als du das Gebäude betreten hast, stand die HR-Chefin am Empfang, sah dich an und hat sich sofort etwas auf ihrem Klemmbrett notiert. Das kann absolut nichts Gutes bedeuten." },
 	{ id: "mood_radar_3", effect: "radar", title: "Das falsche Hemd", text: "Du hast heute Morgen versehentlich das Firmen-Polo der Konkurrenz angezogen (ein altes Werbegeschenk). Du hast es erst im Aufzug gemerkt. Wenn der Chef das sieht, bist du fällig." },
@@ -24,7 +24,7 @@ export const moods = [
 	{ id: "mood_radar_9", effect: "radar", title: "Das Schweigen", text: "Als du ankamst, wurde auf dem Flur geflüstert. Alle sind sofort verstummt, als sie dich sahen. Die Kündigungswelle rollt an, da bist du dir absolut sicher." },
 	{ id: "mood_radar_10", effect: "radar", title: "Falscher CC", text: "Du hast gestern Abend versehentlich den Chef in CC gesetzt, als du über das Kantinenessen gelästert hast. Heute Morgen hat er dich auf dem Flur extrem freundlich gegrüßt. Eine Todesdrohung." },
 
-	// --- KATEGORIE 3: VERSCHLAFEN (+15 Faulheit, +30 Min Zeit) [10% Chance] ---
+	// --- CATEGORY 3: OVERSLEPT (+15 laziness, +30 minutes) [10% chance] ---
 	{ id: "mood_lazy_1", effect: "lazy", title: "Der Snooze-Meister", text: "Du hast den Wecker viermal auf 'Snooze' gedrückt und dann geträumt, du wärst schon auf der Arbeit. Du kommst zu spät ins Büro. Deine Motivation liegt noch warm zugedeckt in deinem Bett." },
 	{ id: "mood_lazy_2", effect: "lazy", title: "Das Falsche-Bus-Syndrom", text: "Du warst heute Morgen so in Gedanken versunken, dass du in den falschen Bus gestiegen bist. Du kommst viel zu spät an. Eigentlich würdest du am liebsten direkt wieder nach Hause fahren." },
 	{ id: "mood_lazy_3", effect: "lazy", title: "Schlüsselsuche", text: "Du hast heute Morgen 30 Minuten lang deinen Haustürschlüssel gesucht. Er lag im Kühlschrank neben dem Käse. Du bist zu spät und starrst jetzt mit leerem Blick auf deinen Monitor." },
@@ -48,7 +48,7 @@ export const moods = [
 	{ id: "mood_snack_9", effect: "snack", title: "Der Einstand", text: "Ein Kollege feiert Einstand und hat Verpflegung an den Plätzen verteilt. Du hast dich bedankt und sofort seinen Namen wieder vergessen. Gratis ist gratis." },
 	{ id: "mood_snack_10", effect: "snack", title: "Automat geknackt", text: "Der Automat im Flur hat geklemmt. Du hast einmal kräftig dagegen getreten und wurdest reichlich belohnt. Ein guter Tag für das Inventar." },
 
-	// --- KATEGORIE 5: NORMAL-MODUS (Satire, Null Stats) [60% Chance] ---
+	// --- CATEGORY 5: PLAIN MODE (satire, no stat change) [60% chance] ---
 	{ id: "mood_normal_1", effect: "normal", title: "Ein Glitch in der Matrix", text: "Dein Wecker klingelte exakt. Die Bahn war auf die Sekunde pünktlich. Der Kaffee schmeckte perfekt. Es ist alles so unfassbar makellos und normal, dass du panische Angst hast, gleich einen Meteoriteneinschlag zu erleben." },
 	{ id: "mood_normal_2", effect: "normal", title: "Erschreckende Routine", text: "8 Stunden Schlaf, ein ausgewogenes Müsli, alle Ampeln waren grün. Dein Körper ist so an chronischen IT-Stress gewöhnt, dass diese absolute Normalität bei dir leichte Paranoia auslöst." },
 	{ id: "mood_normal_3", effect: "normal", title: "Die Ruhe vor dem Sturm", text: "Niemand hat dich auf dem Weg zur Arbeit angerempelt. Es regnet nicht. Du setzt dich an den Platz. Alles funktioniert. Du kneifst dich selbst. Das kann einfach nicht die Realität sein." },

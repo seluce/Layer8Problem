@@ -5,6 +5,15 @@ import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
 
+/**
+ * The gala runs on its own clock. Twelve stations at half an hour each carry
+ * the evening from 17:00 to 23:00 - the header clock is the progress bar.
+ */
+const PARTY_START    = 17 * 60;
+const PARTY_END      = 23 * 60;
+const PARTY_STATIONS = 12;
+const PARTY_STEP     = (PARTY_END - PARTY_START) / PARTY_STATIONS;   // 30 minutes
+
 export const core = {
 
     // Single source of truth for every localStorage key the game touches.
@@ -43,6 +52,17 @@ export const core = {
         if (this.state.compactMode) document.body.classList.add('compact-mode');
         if (this.state.textSize && this.state.textSize !== 'normal') document.documentElement.classList.add('text-size-' + this.state.textSize);
         if (!this.state.scanlines) document.body.classList.add('no-scanlines');
+
+        // The tutorial only runs in day mode: it scripts a fixed sequence
+        // and assumes a starting state the week does not have (it claims one
+        // open ticket, which is true for Mittwoch but not for Erholt or
+        // Urlaubsreif). Someone who has never played it and picks the week
+        // straight away gets a note rather than a barrier - five days without
+        // the basics is a harsh entry, but it stays the player's call.
+        if (localStorage.getItem(this.KEYS.tutorialDone) === 'true') {
+            document.getElementById('week-tutorial-hint')?.remove();
+        }
+
         this.showOverlay('intro-modal');
 
         this.updatePresence('system');
@@ -120,18 +140,77 @@ export const core = {
         if (cloud.party_easy)   localStorage.setItem(this.KEYS.partyPlayed.easy,   cloud.party_easy);
         if (cloud.party_normal) localStorage.setItem(this.KEYS.partyPlayed.normal, cloud.party_normal);
         if (cloud.party_hard)   localStorage.setItem(this.KEYS.partyPlayed.hard,   cloud.party_hard);
+
+        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.runSyncedAt);
+        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.runSyncedAt);
+    },
+
+    /**
+     * Decides between the run on this machine and the one from the cloud.
+     *
+     * Runs cannot be merged the way the archive can - it is one or the other,
+     * so the newer one wins. Both payloads carry savedAt, which makes that a
+     * plain comparison.
+     *
+     * The case without a cloud run needs the second timestamp: an empty slot
+     * means either "never played anywhere" or "finished on the other machine".
+     * Only if the payload was written AFTER our local save does the second
+     * reading apply, and the local leftover goes.
+     */
+    adoptCloudRun: function(key, roh, runSyncedAt) {
+        const zeit = (text) => {
+            try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
+        };
+
+        let lokal = null;
+        try { lokal = localStorage.getItem(key); } catch { return; }
+
+        if (!roh) {
+            if (lokal && runSyncedAt && runSyncedAt > zeit(lokal)) {
+                try { localStorage.removeItem(key); } catch { /* never mind */ }
+            }
+            return;
+        }
+
+        if (!lokal || zeit(roh) > zeit(lokal)) {
+            try { localStorage.setItem(key, roh); } catch { /* storage full */ }
+        }
     },
 
     // Everything worth carrying across devices. Settings stay local on purpose:
     // volume and keybinds belong to the machine, not to the player's progress.
+    //
+    // The run in progress travels as well - a week is five days of play, and
+    // losing it by opening the game on the other machine would be the worst
+    // possible surprise. runSyncedAt is the timestamp of this payload: it lets
+    // the other machine tell an abandoned run apart from one that was finished
+    // here afterwards (see loadCloudSave).
     buildCloudPayload: function() {
         return {
             archive:      this.state.archive,
             tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
             party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
             party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
-            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false"
+            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
+            day:          localStorage.getItem(this.KEYS.dayState),
+            week:         localStorage.getItem(this.KEYS.weekState),
+            runSyncedAt:  Date.now()
         };
+    },
+
+    /**
+     * Writes the cloud payload, at most once every half minute.
+     *
+     * saveDay() runs after every single action; without the throttle the
+     * desktop build would write a file that often. The throttle is skipped at
+     * the points that matter - a night, the end of a run - so the moment a
+     * player is most likely to switch machines is always in the cloud.
+     */
+    syncRun: function(force = false) {
+        const now = Date.now();
+        if (!force && now - (this._lastRunSync || 0) < 30000) return;
+        this._lastRunSync = now;
+        platform.save(this.buildCloudPayload());
     },
 
     // Maps the current activity onto the status line friends can see.
@@ -208,6 +287,8 @@ export const core = {
      * Sets become arrays for JSON.
      */
     saveDay: function() {
+        // A running week saves as one unit - the day slot never holds a half-week.
+        if (this.state.week.active) { this.saveWeek(); return; }
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
 
         try {
@@ -225,6 +306,7 @@ export const core = {
             day.savedAt = Date.now();
 
             localStorage.setItem(this.KEYS.dayState, JSON.stringify(day));
+            this.syncRun();
         } catch (e) {
             // Storage full or private mode: the day carries on, it simply is
             // not saved.
@@ -246,11 +328,12 @@ export const core = {
         }
     },
 
-    /** Restores a saved day and picks up again in a paused state. */
-    resumeDay: function() {
-        const day = this.loadDay();
-        if (!day) { this.reset(); return; }
-
+    /**
+     * Writes a stored day snapshot back onto the state. Shared by the day
+     * resume, the week resume and the week's soft reset, so the three can
+     * never disagree about what restoring a day means.
+     */
+    applyRestoredDay: function(day) {
         const SETS = ['usedIDs', 'usedEmails'];
         for (const [key, value] of Object.entries(day)) {
             if (key === 'savedAt') continue;
@@ -268,6 +351,20 @@ export const core = {
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+    },
+
+    /** Restores a saved run and picks up again in a paused state. */
+    resumeDay: function() {
+        // The resume dialog serves both modes; a stored week routes here too.
+        if (this._resumeKind === 'week') {
+            this._resumeKind = null;
+            this.resumeWeek();
+            return;
+        }
+        const day = this.loadDay();
+        if (!day) { this.reset(); return; }
+
+        this.applyRestoredDay(day);
 
         this.hideOverlay('resume-modal');
 
@@ -282,6 +379,14 @@ export const core = {
 
     /** From the resume dialog: discard the interim state, start fresh. */
     discardDay: function() {
+        if (this._resumeKind === 'week') {
+            this._resumeKind = null;
+            this.clearWeek();
+            this.hideOverlay('resume-modal');
+            this.playAudio('ui');
+            this.startWeekSelect();   // back into the WEEK flow: the picker
+            return;
+        }
         this.clearDay();
         this.hideOverlay('resume-modal');
         this.playAudio('ui');
@@ -291,6 +396,24 @@ export const core = {
     /** Discards the saved day (end of day, or a deliberate restart). */
     clearDay: function() {
         try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
+    },
+
+    /**
+     * Builds what the knowledge view renders: every entry whose head has been
+     * unlocked, with the notes earned so far. Derived from the raw evidence in
+     * the archive on every call - the compendium itself is never persisted, so
+     * entries added in a later version light up for old save files.
+     */
+    knowledgeEntries: function() {
+        const seen  = new Set(this.state.archive.seenEvents ?? []);
+        const flags = new Set(this.state.archive.seenFlags ?? []);
+        const known = (n) => (n.flag ? flags.has(n.flag) : seen.has(n.seen));
+
+        return (DB.compendium ?? []).map(e => {
+            const open  = (e.seen ?? []).some(id => seen.has(id));
+            const notes = (e.notizen ?? []).filter(known).map(n => n.text);
+            return { ...e, open, notes, total: (e.notizen ?? []).length };
+        });
     },
 
     saveSystem: function() {
@@ -316,6 +439,39 @@ export const core = {
      * sitting. Lives in the archive, so it survives restarts and travels to
      * the cloud with everything else.
      */
+    /**
+     * The career figures, both modes together.
+     *
+     * The archive keeps two separate ledgers on purpose - a week is not five
+     * days, and mixing them made the numbers meaningless. The chronicle and
+     * the intranet are the opposite case: they describe Mueller's life, not a
+     * mode, and a player who lives in the week mode should not read a blank
+     * personnel file.
+     *
+     * Week days are recorded under survived_week_*; a failed week counts once,
+     * because that is what it was. The streak converts weeks into days (five
+     * per week) so that "Arbeitstage ohne Zwischenfall" keeps its unit.
+     */
+    careerStats: function() {
+        const st = this.state.archive.stats ?? {};
+        const wochentage = (st.survived_week_easy ?? 0)
+                         + (st.survived_week_normal ?? 0)
+                         + (st.survived_week_hard ?? 0);
+        return {
+            survived:   (st.daysSurvived ?? 0) + wochentage,
+            rage:       (st.daysRageQuit ?? 0) + (st.weeksRageQuit ?? 0),
+            fired:      (st.daysFired ?? 0) + (st.weeksFired ?? 0),
+            streak:     Math.max(st.streak ?? 0, (st.weekStreak ?? 0) * 5),
+            streakBest: Math.max(st.streakBest ?? 0, (st.weekStreakBest ?? 0) * 5),
+            // Valve and warning live in per-mode keys (the archive footnote
+            // switches with the panel); the personnel file keeps the career
+            // total, like every other number in here.
+            warningsChef: (st.warningsChef ?? 0) + (st.weekWarningsChef ?? 0),
+            ventSaves:    (st.ventSaves ?? 0)    + (st.weekVentSaves ?? 0),
+            daysStarted:  st.daysStarted ?? 0,
+        };
+    },
+
     addChronicleEntry: function() {
         const archive = this.state.archive;
         archive.chronicle ??= [];
@@ -350,13 +506,15 @@ export const core = {
      * time and survives a restart.
      */
     composeChronicleLine: function() {
-        const st = this.state.archive.stats ?? {};
+        // The book tells a career, not a mode - hence the combined view
+        // rather than the plain day counters.
+        const st = this.careerStats();
         const rep = this.state.reputation ?? {};
         const flags = this.state.storyFlags ?? {};
-        const survived = st.daysSurvived ?? 0;
-        const rage = st.daysRageQuit ?? 0;
-        const fired = st.daysFired ?? 0;
-        const streak = st.streakBest ?? 0;
+        const survived = st.survived;
+        const rage = st.rage;
+        const fired = st.fired;
+        const streak = st.streakBest;
 
         const pool = [];
 
@@ -437,6 +595,9 @@ export const core = {
 
     /** Short weekday name derived from the difficulty. */
     difficultyKey: function() {
+        // Week runs record under their own keys so they can never distort
+        // the day-mode achievement grades or the gala prerequisites.
+        if (this.state.week.active) return 'week_' + this.state.week.level;
         if (this.state.difficultyMult < 1.0) return 'easy';
         if (this.state.difficultyMult > 1.0) return 'hard';
         return 'normal';
@@ -462,18 +623,38 @@ export const core = {
             platform.stat(key, st[key]);
         };
 
+        // The plain day counters stay day mode only, otherwise the archive's
+        // "Arbeitstag" figures would silently include week days and no longer
+        // match the per-weekday bars underneath them. Week days are recorded
+        // through their own namespace (survived_week_*, see difficultyKey) and
+        // the week itself through recordWeekResult().
+        const dayMode = !this.state.week.active;
+
         if (outcome === 'survived') {
-            bump('daysSurvived');
+            if (dayMode) bump('daysSurvived');
             bump('survived_' + diff);
-            st.streak = (st.streak || 0) + 1;
-            if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
+            // The streak belongs to the day mode, like the counters above it.
+            // A week has its own streak in recordWeekResult() - counted in
+            // weeks, not in days, because that is the run the player finishes.
+            if (dayMode) {
+                st.streak = (st.streak || 0) + 1;
+                if (st.streak > (st.streakBest || 0)) st.streakBest = st.streak;
+            }
         } else {
-            bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
-            st.streak = 0;   // A streak ends where the day ends.
+            if (dayMode) {
+                bump(outcome === 'rage' ? 'daysRageQuit' : 'daysFired');
+                st.streak = 0;   // A streak ends where the day ends.
+            }
         }
 
-        if (this.state.rageWarningReceived) bump('ventSaves');
-        if (this.state.chefWarningReceived) bump('warningsChef');
+        // In week mode the two safety flags survive the nights (valve and
+        // warning are weekly), so counting them per day would inflate the
+        // stats - recordWeekResult() counts them once at the week's end,
+        // into the week's own keys.
+        if (!this.state.week.active) {
+            if (this.state.rageWarningReceived) bump('ventSaves');
+            if (this.state.chefWarningReceived) bump('warningsChef');
+        }
 
         this.saveSystem();
     },
@@ -499,20 +680,10 @@ export const core = {
 		this.playMusic('office');
         this.hideOverlay('intro-modal');
 
-        // Is there an interrupted workday? Asking about it comes before the
+        // Is there an interrupted DAY? Asking about it comes before the
         // difficulty picker, otherwise the first click would discard it.
-        const saved = this.loadDay();
-        const resumeModal = document.getElementById('resume-modal');
-        if (saved && resumeModal) {
-            const pad = (n) => String(n).padStart(2, '0');
-            const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
-            const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
-                       : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
-            const info = document.getElementById('resume-info');
-            if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
-            this.showOverlay(resumeModal);
-            return;
-        }
+        // A stored week is not offered here - it belongs to the other button.
+        if (this.offerResume('day')) return;
 
         // Did the player pin a default difficulty? Read from state, which was
         // seeded from localStorage at boot - one place to ask, same as every
@@ -531,6 +702,44 @@ export const core = {
                 this.setDifficulty('normal'); // Fallback
             }
         }
+    },
+
+    /**
+     * Offers to continue an interrupted run of the CHOSEN mode. Each mode
+     * entry asks only about its own slot: clicking "Arbeitstag" with a
+     * stored week (or the other way round) never shows the foreign save -
+     * the other slot stays untouched and waits for its own button.
+     * Returns true when the resume dialog is on screen.
+     */
+    offerResume: function(kind) {
+        const resumeModal = document.getElementById('resume-modal');
+        if (!resumeModal) return false;
+        const pad = (n) => String(n).padStart(2, '0');
+        const info = document.getElementById('resume-info');
+
+        if (kind === 'week') {
+            const savedWeek = this.loadWeek();
+            if (!savedWeek) return false;
+            this._resumeKind = 'week';
+            const t = savedWeek.day?.time ?? 8 * 60;
+            const clock = `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+            const cfg = this.WEEK_DIFFS[savedWeek.week.level];
+            const dayName = this.WEEK_DAY_NAMES[savedWeek.week.dayIndex - 1];
+            if (info) info.textContent =
+                `Arbeitswoche (${cfg.name}) · ${dayName} · Stand ${clock} Uhr · ${savedWeek.day?.tickets ?? 0} offene Tickets`;
+            this.showOverlay(resumeModal);
+            return true;
+        }
+
+        const saved = this.loadDay();
+        if (!saved) return false;
+        this._resumeKind = 'day';
+        const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
+        const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
+                   : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
+        if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
+        this.showOverlay(resumeModal);
+        return true;
     },
 
     // Applies the difficulty, then starts the day (or the tutorial)
@@ -579,8 +788,15 @@ export const core = {
             this.state.activeEvent = true;
             this.disableButtons(true);
             
+            // Half an hour per station: twelve of them carry 17:00 to 23:00,
+            // which is exactly where the finale sets it anyway.
+            this.state.time = Math.min(
+                PARTY_END,
+                PARTY_START + this.state.partyProgress * PARTY_STEP
+            );
+
             // After 12 stations the finale kicks in
-            if (this.state.partyProgress >= 12) {
+            if (this.state.partyProgress >= PARTY_STATIONS) {
                 let finaleId = 'party_finale_standard';
                 if (this.state.al >= 100) finaleId = 'party_finale_rage';
                 else if (this.state.fl >= 100) finaleId = 'party_finale_houdini';
@@ -588,12 +804,25 @@ export const core = {
                 else if (this.state.fl >= 50 && this.state.al <= 60) finaleId = 'party_finale_gossip';
                 
                 // --- The finale happens at 23:00 ---
-                this.state.time = 23 * 60;
+                this.state.time = PARTY_END;
                 this.updateUI();
                 
                 this.renderTerminal(DB.party.find(e => e.id === finaleId), 'party');
             } else {
-                this.renderTerminal(DB.party.find(e => e.id === 'party_hub'), 'party');
+                // Which version of the hub shows depends on how far the
+                // evening has come: arrival, peak, and the hour in which the
+                // room slowly empties.
+                const hub = DB.party.find(e => e.id === 'party_hub');
+                const fassungen = hub?.textByProgress;
+                if (fassungen?.length) {
+                    const stufe = Math.min(
+                        fassungen.length - 1,
+                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / fassungen.length))
+                    );
+                    this.renderTerminal({ ...hub, text: fassungen[stufe] }, 'party');
+                } else {
+                    this.renderTerminal(hub, 'party');
+                }
             }
             return;
         }
@@ -640,7 +869,33 @@ export const core = {
     },
 
     // Restarts the workday without touching settings, archive or difficulty.
+    /**
+     * Back to the title screen, so the player can pick the other mode without
+     * reloading the page or restarting the app.
+     *
+     * The run is not thrown away: saveDay() routes to the week slot while a
+     * week runs, so the intro's mode buttons offer to continue exactly where
+     * this left off. Only an open event or a pending ending refuses to save,
+     * which is the same rule the resume dialog has always followed.
+     *
+     * A reload rather than a hand-written teardown: the day owns timers,
+     * overlays, the phone and (in week mode) the calendar. Unwinding all of
+     * that by hand is where stale state creeps in - the end screen's restart
+     * button takes the same route for the same reason.
+     */
+    returnToMenu: function() {
+        this.saveDay();
+        this.clearDayTimers();
+        this.stopMusic(0);   // the page reloads immediately, a fade would be cut off anyway
+        location.reload();
+    },
+
     softReset: function() {
+        // A running week must not be wiped by a day reset - freshDay() would
+        // silently destroy the carried backpack and the whole run. The week
+        // restarts from its last checkpoint instead.
+        if (this.state.week.active) { this.softResetWeek(); return; }
+
         this.stopMusic();
         this.clearDayTimers();
 
@@ -697,7 +952,7 @@ export const core = {
             this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
         }
 
-        // 2. KOFFEIN-SCHOCK (Zu viel Kaffee)
+        // 2. CAFFEINE OVERLOAD (too much coffee)
         // Raised to 8 - roughly one trip to the machine per hour
         if(this.state.coffeeConsumed >= 8 && !this.hasAch('ach_coffee')) {
             this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
@@ -821,9 +1076,9 @@ export const core = {
         // 2. Archive check: earned before? And if so, on which difficulty?
         
         // Current difficulty as a number (1 easy, 2 normal, 3 hard)
-        let currentDiffVal = 1;
-        if (this.state.difficultyMult >= 1.0) currentDiffVal = 2; // Mittwoch
-        if (this.state.difficultyMult >= 1.25) currentDiffVal = 3; // Montag
+        // difficultyTier() maps both modes onto 1/2/3 (day: Freitag/Mittwoch/
+        // Montag, week: Erholt/Genervt/Urlaubsreif) - same historical values.
+        let currentDiffVal = this.difficultyTier();
 
         // Pull the stored difficulty
         let savedDiffVal = 0; // 0 = never achieved yet
@@ -862,11 +1117,17 @@ export const core = {
             let toastDesc = text;
 
             // Upgrade case, e.g. easy -> hard
+            let isUpgrade = false;
             if (savedDiffVal > 0) {
-                const diffNames = ["", "FREITAG", "MITTWOCH", "MONTAG"];
-                logText = `🏆 ERFOLG AUFGEWERTET: ${title} (${diffNames[currentDiffVal]})`;
+                // The tiers are named after the day mode's weekdays, but a week
+                // run earns them too - there the names are Mueller's condition.
+                const dayNames  = ["", "FREITAG", "MITTWOCH", "MONTAG"];
+                const weekNames = ["", "ERHOLT", "GENERVT", "URLAUBSREIF"];
+                const stufe = (this.state.week.active ? weekNames : dayNames)[currentDiffVal];
+                isUpgrade = true;
+                logText = `ERFOLG AUFGEWERTET: ${title} (${stufe})`;
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
-                toastDesc = `Upgrade auf ${diffNames[currentDiffVal]}!`;
+                toastDesc = `Aufgewertet auf ${stufe}.`;
             }
 
             // A. Write the log line
@@ -875,7 +1136,7 @@ export const core = {
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
             const toastId = this._toastId = (this._toastId || 0) + 1;
-            this.state.toasts.push({ id: toastId, title, desc: toastDesc });
+            this.state.toasts.push({ id: toastId, title, desc: toastDesc, upgrade: isUpgrade });
 
             setTimeout(() => {
                 const k = this.state.toasts.findIndex(t => t.id === toastId);
@@ -931,9 +1192,10 @@ export const core = {
      * checkEndConditions twice, word for word.
      */
     valveResetValue: function() {
-        if (this.state.difficultyMult < 1.0) return 30;   // Freitag
-        if (this.state.difficultyMult > 1.2) return 60;   // Montag
-        return 50;                                        // Mittwoch
+        const tier = this.difficultyTier();               // week-aware, see engine_week.js
+        if (tier === 1) return 30;                        // Freitag / Erholt
+        if (tier === 3) return 60;                        // Montag / Urlaubsreif
+        return 50;                                        // Mittwoch / Genervt
     },
 
     /**
@@ -967,7 +1229,7 @@ export const core = {
 
         const texts = DB.special.valveTexts.rage;
         let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Aggro auf ${resetTo}% gesetzt).`;
-        if (this.state.difficultyMult > 1.2) warningText += " Deine Nerven liegen trotzdem noch blank!";
+        if (this.difficultyTier() === 3) warningText += " Deine Nerven liegen trotzdem noch blank!";
 
         this.showModal("VENTIL GEÖFFNET", warningText, false);
         return true;
@@ -987,7 +1249,7 @@ export const core = {
 
         const texts = DB.special.valveTexts.chef;
         let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Radar auf ${resetTo}% gesetzt).`;
-        if (this.state.difficultyMult > 1.2) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
+        if (this.difficultyTier() === 3) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
 
         this.showModal("ABMAHNUNG", warningText, false);
         return true;
@@ -1001,9 +1263,13 @@ export const core = {
      * does not hand you the party on Monday. And once per difficulty.
      */
     partyInvitation: function() {
+        // Tier-based so week runs map onto the day ranks: a week on Genervt
+        // asks for the same achievement grade as Mittwoch and shares its
+        // played-once flag - the gala stays a once-per-tier finale. Day mode
+        // resolves to exactly the historical values.
+        const needed = this.difficultyTier();
+        const diffStr = needed === 1 ? 'easy' : needed === 3 ? 'hard' : 'normal';
         const DIFF_RANK = { easy: 1, normal: 2, hard: 3 };
-        const diffStr = this.difficultyKey();
-        const needed = DIFF_RANK[diffStr];
 
         const REQUIRED = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
                           'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
@@ -1035,7 +1301,7 @@ export const core = {
             if (this.openRageValve()) return;
             this.queueEnd({
                 title: "RAGE QUIT",
-                lead: "Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt.",
+                lead: this.weekFailLead("Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt."),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
         }
@@ -1043,7 +1309,7 @@ export const core = {
         else if (this.state.tickets >= 10) {
             this.queueEnd({
                 title: "GEFEUERT",
-                lead: "Zu viele offene Tickets! Das System ist kollabiert.",
+                lead: this.weekFailLead("Zu viele offene Tickets! Das System ist kollabiert."),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
@@ -1054,6 +1320,34 @@ export const core = {
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
         else if (this.state.time >= 16 * 60 + 30) {
+            // Week mode: Monday to Thursday end in a night, Friday ends the
+            // run. The gala never fires mid-week; Friday's gala returns
+            // together with the meeting finale (v5.0, package 3).
+            if (this.state.week.active) {
+                // Friday's meeting outranks the clock. A four-hour option can
+                // carry 14:00 past 16:30 in one go, and the week would then
+                // end without its finale ever happening. The button offers the
+                // meeting instead; the next check ends the week right after.
+                if (this.state.week.dayIndex === 5 && !this.state.meetingDone) return;
+
+                if (this.state.week.dayIndex < 5) {
+                    this.queueNightEnd();
+                } else {
+                    // Friday: the gala fires like it always did - but it was
+                    // announced in the meeting, so only after it (design 8.1).
+                    if (this.state.meetingDone) {
+                        const party = this.partyInvitation();
+                        if (party) { this.state.pendingEnd = party; return; }
+                    }
+                    this.queueEnd({
+                        title: "WOCHE ÜBERLEBT",
+                        lead: "Freitag, 16:30 Uhr. Fünf Tage GlobalCorp am Stück – und du stehst noch.",
+                        cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
+                    });
+                }
+                return;
+            }
+
             const party = this.partyInvitation();
             if (party) { this.state.pendingEnd = party; return; }
 
@@ -1068,7 +1362,7 @@ export const core = {
             if (this.issueChefWarning()) return;
             this.queueEnd({
                 title: "GEFEUERT",
-                lead: "Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei.",
+                lead: this.weekFailLead("Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei."),
                 cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
             });
         }
@@ -1080,6 +1374,28 @@ export const core = {
             
             if (end.isParty) {
                 this.startParty();
+                return;
+            }
+
+            // Monday to Thursday in a week: the day ends in a night, not in
+            // an end screen. The run carries on tomorrow.
+            if (end.isNight) {
+                this.playMusic('office');
+                this.clearDayTimers();
+                this.state.emailPending = false;
+                this.showNightScreen(end);
+                this.state.pendingEnd = null;
+                return;
+            }
+
+            // Any real ending while a week runs ends the WEEK - win on
+            // Friday, fail on any day, always with the week balance sheet.
+            if (this.state.week.active) {
+                this.playMusic('office');
+                this.clearDayTimers();
+                this.state.emailPending = false;
+                this.finishWeek(end);
+                this.state.pendingEnd = null;
                 return;
             }
             
@@ -1108,6 +1424,12 @@ export const core = {
         // Switch into party mode
         this.state.isPartyMode = true;
         this.state.partyProgress = 0;
+
+        // The evening starts at 17:00 and reaches 23:00 at the finale. The
+        // clock in the header is the progress bar: it is already there, it
+        // belongs to the fiction, and it tells the player the evening is
+        // going somewhere without anyone having to write "station 7 of 12".
+        this.state.time = PARTY_START;
         this.state.currentPartyKey = endData.partyKey; 
         
         // The party starts from a clean slate
@@ -1125,8 +1447,19 @@ export const core = {
         this.playMusic('gala');
         this.updatePresence('party');
         
-        // And the trap closes: render the opening party event
-        this.renderTerminal(DB.party.find(e => e.id === 'party_start'), 'party');
+        // And the trap closes: render the opening party event. Coming out of
+        // a week the gala is the end of five days, not of one - one line is
+        // enough to tie the two modes together.
+        const auftakt = DB.party.find(e => e.id === 'party_start');
+        if (auftakt && this.state.week.active) {
+            this.renderTerminal({
+                ...auftakt,
+                text: "Fünf Tage. Montag bis Freitag, ohne einen einzigen davon abzugeben.\n\n"
+                    + auftakt.text
+            }, 'party');
+        } else {
+            this.renderTerminal(auftakt, 'party');
+        }
     },
     
     // --- SPEICHERSTAND EXPORT / IMPORT SYSTEM ---

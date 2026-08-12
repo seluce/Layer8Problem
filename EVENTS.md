@@ -71,10 +71,13 @@ oder bewusst ausbleibt.
 | `opts` | Pflicht, außer bei Ketten | Die Auswahlen, siehe unten. |
 | `char` | überall optional | Zeigt das Porträt einer Figur. Name **exakt** wie in `data_chars.js`. |
 | `reqStory` | Kaffee, Serverraum, Anrufe, Dienstgang, Begegnungen | Vorbedingung: Das Ereignis erscheint erst, wenn dieses Story-Flag gesetzt ist. Mittagspause, Bossfight und Party werten das Feld **nicht** aus. |
+| `reqStoryAge` | Kaffee, Serverraum, Anrufe, Dienstgang — nur zusammen mit `reqStory` | Wochenmodus: Das Flag muss mindestens so viele **Nächte** alt sein (1 = frühestens morgen). Im Tagesmodus nie erfüllbar, siehe Abschnitt 3. |
+| `reqWeekDayMin` | Kaffee, Serverraum, Anrufe, Dienstgang | Wochenmodus: erscheint **ab** diesem Wochentag (2 = Dienstag … 5 = Freitag), nicht nur an ihm. Im Tagesmodus nie erfüllbar. |
 | `reqRep` | Begegnungen, dort Pflicht | Ruf-Schwelle, siehe Abschnitt 6. |
 | `kind` | Dienstgang, dort Pflicht | `"text"` (Terminal) oder `"phone"` (Handy-Chat). |
 | `appName` | Dienstgang-Chat | Welche App den Chat anzeigt, z. B. `"WhatsApp"`, `"Teams"`, `"SMS"`. |
-| `startNode`, `nodes`, `results` | Anrufe und Dienstgang | Gespräch mit Verlauf statt einer einzelnen Entscheidung, siehe Abschnitt 4. |
+| `startNode`, `nodes`, `results` | Anrufe, Dienstgang, Wochenmeeting | Gespräch mit Verlauf statt einer einzelnen Entscheidung, siehe Abschnitt 4. |
+| `startNodeGala` | Wochenmeeting | Zweiter Einstiegsknoten: greift, wenn am Abend die Gala ansteht — die Ansage kommt im Meeting, siehe Abschnitt 4. |
 | `loc` | Party, dort Pflicht | Ort der Feier: `"bar"`, `"buffet"`, `"dance"`, `"lounge"`, `"smoke"`. |
 | `timer`, `fail` | Bossfights, dort Pflicht | Countdown in Sekunden und was passiert, wenn er abläuft. |
 | `webOnly` | Kaffee, Serverraum, Anrufe, Dienstgang | Erscheint nur im Browser, nicht in der Steam-Fassung (für Ereignisse, die auf die Shop-Seite zeigen). |
@@ -167,8 +170,13 @@ Zwei Bereiche haben je ein Pflichtfeld mehr:
 ## 2. Porträts: das Feld `char`
 
 `char` blendet neben dem Text das Porträt einer Figur ein. Das gilt in **jedem** Bereich,
-nicht nur im Chat: Kaffee, Serverraum, Anruf, Dienstgang, Mittagspause, Bossfight und
-Party zeigen es gleichermaßen.
+nicht nur im Chat: Kaffee, Serverraum, Anruf, Dienstgang, Mittagspause, Bossfight,
+Party und Wochenmeeting zeigen es gleichermaßen.
+
+Ein Name, der **nicht** in `data_chars.js` steht, ist kein Fehler: Das Terminal zeigt
+dann eine Initialen-Kachel mit dem Namen darunter — wie ein Kontakt ohne Bild. Das ist
+die vorgesehene Darstellung für die austauschbaren Berater im Wochenmeeting, die
+bewusst nie ins Team und ins Ruf-System aufgenommen werden.
 
 ```js
 {
@@ -242,6 +250,50 @@ liegen. Deshalb kein "gerade eben", kein "kaum hast du", kein "Sekunden später"
 Prüfer warnt bei solchen Formulierungen. Umgekehrt gilt genauso: Der Auslöser war
 **heute**, also datiert ihn kein "gestern" in die Vergangenheit.
 
+### Mehrtägige Ketten: `reqStoryAge` und `reqWeekDayMin` (Wochenmodus)
+
+Im Wochenmodus tragen Story-Flags den Tag, an dem sie gesetzt wurden. Zwei Felder
+nutzen das aus:
+
+- `reqStoryAge: 1` — das Flag ist mindestens eine **Nacht** alt. Ein solches
+  Folgeereignis kann per Definition nicht mehr am selben Tag kommen; der Auslöser
+  liegt wirklich in der Vergangenheit, "gestern" ist hier also richtig statt falsch.
+- `reqWeekDayMin: 3` — erscheint **ab** Mittwoch, nicht nur am Mittwoch. Züge sind
+  Zufall: Ein Ereignis, das nur an einem einzigen Tag feuern dürfte, konkurriert an
+  diesem Tag gegen den ganzen Pool und wird oft verpasst. Der Prüfer warnt deshalb
+  bei `reqWeekDayMin: 5`.
+
+Beide Bedingungen sind im Tagesmodus schlicht unerfüllbar — zeitgebundene Teile sind
+dadurch automatisch Wochen-exklusiv, ohne eigenes Modus-Feld. Der **Auftakt** einer
+solchen Kette läuft dagegen in beiden Modi; seine riskante Auswahl braucht darum einen
+kleinen Sofortpreis, sonst ist sie im Tagesmodus, wo die Rechnung nie kommt, immer die
+beste.
+
+Schreibregeln für mehrtägige Teile:
+
+1. **Der Auftakt schließt als eigene Szene.** Ketten dürfen verhungern (die Woche
+   endet, der Zufall zieht anders) — das darf sich nie wie ein Fehler anfühlen.
+   Der Auftakt-Text erklärt die Lage außerdem vollständig selbst; der Titel ist
+   Zugabe, keine Voraussetzung.
+2. **Wiederverankerung im Gegenstand, nicht im Meta.** Der Spieler ist Tage weiter.
+   Nicht "wie du weißt, hast du am Montag …", sondern: der Serverraum riecht nach
+   Grillabend.
+3. **Keine Wochentagsnamen und keine Uhrzeiten im Text.** Ein "ab Mittwoch"-Ereignis
+   kann auch Donnerstag gezogen werden; "endlich da" stimmt an beiden Tagen. Und weil
+   jedes Ereignis zu jeder Tageszeit gezogen werden kann, darf die Szene nicht an einer
+   Uhr hängen ("Um kurz nach elf zuckt das Licht"). Erlaubt sind Uhrzeiten, die einem
+   **Gegenstand** gehören — Kalendereintrag, Log-Stempel, Mail-Zeit — oder die vor 8:00
+   bzw. nach Feierabend liegen. Der Prüfer warnt und kennt eine geprüfte Ausnahmeliste
+   (`clockReviewed`).
+4. **Eskalation sind mehrere Ereignisse**, nicht ein wartendes: Stufe 1 mit
+   `reqStoryAge: 1`, Stufe 2 mit `reqStoryAge: 2`. Jede Stufe ist eine eigene Szene.
+5. **Numerisch gewöhnlich, erzählerisch besonders.** Jeder Teil ist ein normal
+   balanciertes Ereignis seines Pools; das Drama liegt in der Erwartung, nicht in
+   den Zahlen.
+
+Flags sind global — ein Serverraum-Auslöser darf sein Echo auch im Anruf-Pool haben
+(`call_wlp_geruch` fragt nach dem Ketchup aus `srv_wlp_1`). Das Gebäude erinnert sich.
+
 Flag-Namen sind frei wählbar, im Bestand tragen 565 von 595 das Präfix `path_`. Sprechend
 benennen: `path_kabel_gezogen`, nicht `path_2b`.
 
@@ -252,6 +304,44 @@ verwenden.
 
 Ein freigeschaltetes Folgeereignis bekommt beim Ziehen Vorrang: In 30 % der Fälle wählt
 die Engine aus den offenen Fortsetzungen statt aus dem Grundbestand.
+
+### Was davon ins Wissen gehört (`data_compendium.js`)
+
+Das Kompendium sammelt, was Müller über das Haus herausfindet: über Kollegen,
+über Leute, die immer wieder auftauchen, über Räume und über Vorgänge. Es füllt
+sich aus Ereignissen, die es ohnehin gibt — ein Eintrag verweist per
+Ereignis-ID oder Story-Flag auf die Szenen, aus denen er stammt.
+
+**Beim Schreiben mitdenken, aber nichts erzwingen.** Wer eine Figur, einen Ort
+oder einen laufenden Vorgang mehrfach auftreten lässt, schafft nebenbei
+Material für einen Eintrag — das ist ein guter Grund, aus einem Einzelereignis
+eine Kette zu machen oder eine Nebenfigur ein zweites Mal zu verwenden. Der
+umgekehrte Weg funktioniert nicht: Ereignisse zu schreiben, damit ein Eintrag
+zustande kommt, merkt man dem Ergebnis an.
+
+Die Aufnahmeprüfung ist streng und hat nichts mit Vollständigkeit zu tun:
+
+- **Mindestens drei Szenen.** Ein Eintrag darf so viele Notizen führen, wie er
+  verschiedene Szenen zitiert (Deckel acht) — der Linter setzt das durch. Wer
+  aus zwei Auftritten fünf Notizen zieht, erfindet.
+- **Die Notiz ist die Lehre, nicht die Szene.** Das Ereignis erzählt, was
+  passiert ist; die Notiz hält fest, was Müller jetzt weiß. Prüffrage: Wäre die
+  Notiz auch für jemanden lesbar und komisch, der das Ereignis nie gesehen hat?
+  Wenn sie die Szene als Kontext braucht, ist sie eine Zusammenfassung und
+  gehört umgeschrieben.
+- **Eine Notiz pro Kette, nicht pro Ereignis.** Ein Dreiteiler liefert sonst
+  dreimal dieselbe Erkenntnis.
+- **Kein Eintrag um des Eintrags willen.** Eine Figur mit einem Auftritt, ein
+  Raum ohne eigenen Charakter, ein Vorgang ohne Wiederkehr — das wird eine
+  Beschreibung statt einer Beobachtung, und Beschreibungen liest niemand
+  zweimal. Lieber kein Eintrag als ein dünner.
+
+Auslöser sind **immer** Ereignis-IDs oder Story-Flags, nie Namen im Text: Es
+gibt zwei Brandts im Spiel, und ein Namensabgleich würde dem falschen Eintrag
+eine Notiz geben.
+
+Das Format und die vier Kategorien stehen im Kopfkommentar von
+`data/data_compendium.js`. Neue Einträge prüft `npm run lint:data` mit.
 
 ## 4. Gespräche mit Verlauf: `nodes` und `results`
 
@@ -273,6 +363,22 @@ einen `startNode`, ein `nodes`-Objekt (die Gesprächsschritte) und ein `results`
   "…"-Abzeichen im Terminal hängt nicht am Namen — es schaut wie die Engine nach,
   ob das Ziel ein Knoten ist. Ein Ausgang darf also `truth` heißen und funktioniert
   trotzdem; `res_truth` liest sich nur besser.
+- **Knoten dürfen einen eigenen `char` tragen** (seit v5.0, Konvention vom Handy
+  übernommen): Der Knoten-`char` schlägt den Ereignis-`char`, `char: null` erzwingt
+  gar keinen. So wechselt eine Kette mitten im Gespräch den Sprecher — im Terminal
+  genauso wie im Handy-Chat.
+
+### Das Wochenmeeting (`data_meetings.js`, seit v5.0)
+
+Der Meeting-Pool nutzt den Ketten-Aufbau mit drei Sonderregeln. IDs beginnen mit
+`meet_`. `startNodeGala` ist ein zweiter Einstiegsknoten: Die Engine wählt ihn, wenn
+die Gala am selben Abend zündet — die "kurz halten"-Ansage gehört ins Gespräch, nicht
+in eine Systemmeldung. Und die externen Berater existieren **nur** als Knoten-`char`
+mit Initialen-Kachel (Abschnitt 2): kein `data_chars`-Eintrag, kein Ruf, kein Team —
+die Besetzung darf pro Ereignis frei erfunden werden und rotiert über die Wochen von
+selbst. Ruf bewegt sich im Meeting nur bei echten Figuren (Kevin, Chantal,
+Dr. Wichtig). Ausreden gibt es im Meeting keine — dem Wochenbericht entkommt man
+nicht.
 
 ```js
 // Anruf mit Verlauf (data_calls.js):

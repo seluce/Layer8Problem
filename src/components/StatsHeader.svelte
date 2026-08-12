@@ -33,11 +33,35 @@
     // Pulsing is tied to the visual effects setting, same as before.
     const aggroPulse = $derived(state.visualFX && state.al >= 80 ? 'pulse-orange' : '');
     const radarPulse = $derived(state.visualFX && state.cr >= 80 ? 'pulse-red' : '');
+
+    /** Weekday shorthand for the week mode, matching the calendar icons. */
+    const WEEK_SHORT = ['MO', 'DI', 'MI', 'DO', 'FR'];
 </script>
 
-<div id="clock-container" class="neon-box panel-raised border-blue flex flex-col justify-center items-center col-span-2 lg:col-span-1 p-2">
-    <span class="text-[10px] text-blue-400 font-bold uppercase">Uhrzeit</span>
-    <div id="clock" class="text-3xl lg:text-4xl font-black text-white">{clock}</div>
+<!--
+  Two readings side by side in week mode: the clock and the weekday. A grid
+  rather than nested flex columns, because the two rows keep the big numbers
+  on one baseline while "1/5" hangs below the day - stacking them would push
+  the clock off-centre against the ticket counter beside it. The box keeps its
+  blue identity throughout: no second accent colour for the same panel.
+-->
+<div id="clock-container"
+     class="neon-box panel-raised border-blue col-span-2 lg:col-span-1 p-2 grid items-start justify-items-center content-center gap-x-3 {state.week.active ? 'grid-cols-[1fr_auto_1fr]' : 'grid-cols-1'}">
+
+    <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">Uhrzeit</span>
+    {#if state.week.active}
+        <span class="self-stretch w-px bg-blue-500/25"></span>
+        <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">Tag</span>
+    {/if}
+
+    <div id="clock" class="text-3xl lg:text-4xl font-black text-white leading-none mt-1.5">{clock}</div>
+    {#if state.week.active}
+        <div class="self-stretch w-px bg-blue-500/25"></div>
+        <div class="flex flex-col items-center mt-1.5">
+            <span class="text-3xl lg:text-4xl font-black text-white leading-none">{WEEK_SHORT[state.week.dayIndex - 1]}</span>
+            <span class="text-[10px] text-blue-400 font-bold leading-none mt-1.5">{state.week.dayIndex}/5</span>
+        </div>
+    {/if}
 </div>
 
 <div id="ticket-container" class="neon-box panel-raised border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">

@@ -28,6 +28,9 @@
  *   upName / upBy, downName / downBy
  *                the colleague who moved most today, in each direction
  *   streak       days survived in a row, today included
+ *   week         a week run is in progress (v5.0)
+ *   weekDay      1 (Montag) to 5 (Freitag) inside a week, else 0
+ *   weekRest     week days left AFTER today (4 on Monday, 0 on Friday)
  *   rageWarned / chefWarned / blind
  *   ach(id) / item(id)
  *   hasEncounters / hasHabits
@@ -40,9 +43,14 @@
  */
 import { DB } from '../data.js';
 import { KEYS } from './keys.js';
+import { WEEK_DAY_NAMES } from './engine_week.js';
 
-/** How many recently used lines to remember. Roughly two days of entries. */
-const MEMORY = 60;
+/**
+ * How many recently used lines to remember. A week run writes five entries
+ * in one sitting, so the old value (60, roughly two days) started repeating
+ * within a single week - 150 keeps several runs apart.
+ */
+const MEMORY = 150;
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -118,8 +126,13 @@ const wrap = (slot, day, recent, clauses) =>
 function factsOf(state, endReason) {
     const used = Array.from(state.usedIDs ?? []);
     const count = (prefix) => used.filter(id => id.startsWith(prefix)).length;
+    const week = !!state.week?.active;
     const mult = state.difficultyMult ?? 1.0;
-    const difficulty = mult > 1.0 ? 'hard' : mult < 1.0 ? 'easy' : 'normal';
+    // In a week, difficultyMult stays at its day-mode identity (1.0), so the
+    // difficulty must come from the chosen week level - it drives the excuse
+    // maths below and every difficulty-flavoured fragment.
+    const difficulty = week ? (state.week.level ?? 'normal')
+                     : mult > 1.0 ? 'hard' : mult < 1.0 ? 'easy' : 'normal';
 
     // The curve of the day. statHistory holds one point per decision, so the
     // highest bar and the hour it was reached describe the shape of a day far
@@ -167,6 +180,9 @@ function factsOf(state, endReason) {
         upName: up.name, upBy: up.by,
         downName: down.name, downBy: Math.abs(down.by),
         streak: state.archive?.stats?.streak ?? 0,
+        week,
+        weekDay: week ? (state.week.dayIndex ?? 1) : 0,
+        weekRest: week ? 5 - (state.week.dayIndex ?? 1) : 0,
         rageWarned: !!state.rageWarningReceived,
         chefWarned: !!state.chefWarningReceived,
         blind: !!state.blindRun,
@@ -201,7 +217,10 @@ export function buildDiary(state, endReason, partyText = '') {
         tickets: String(day.tickets), coffee: String(day.coffee),
         mails: String(day.mailsIgnored), excuses: String(day.excusesUsed),
         items: String(day.items), events: String(day.events),
-        streak: String(day.streak), weekday: WEEKDAY[day.difficulty],
+        streak: String(day.streak), restdays: String(day.weekRest),
+        // In a week {weekday} is the real calendar day - the difficulty
+        // mapping would claim Mittwoch five times in a row.
+        weekday: day.week ? WEEK_DAY_NAMES[day.weekDay - 1] : WEEKDAY[day.difficulty],
         party: partyText
     };
 

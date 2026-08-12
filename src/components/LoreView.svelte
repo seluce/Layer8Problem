@@ -131,7 +131,9 @@
                         {:else}
                             <button type="button" onclick={addLine}
                                     class="text-sm font-serif text-[#5d4037] bg-[#efebe9] hover:bg-[#e0d8d0] border-2 border-dashed border-[#a1887f] rounded-sm px-5 py-2.5 transition-colors shadow-sm">
-                                🖊️ Etwas hinzufügen
+                                <img src="assets/img/ui/ui_pen.webp" alt="" width="16" height="16"
+                                     class="w-4 h-4 inline-block align-[-0.2em] mr-1.5 select-none"
+                                     onerror={(e) => e.currentTarget.outerHTML = '🖊️'}> Etwas hinzufügen
                             </button>
                             <p class="text-[11px] text-[#8d6e63] italic mt-2">
                                 Niemand hat es dir erlaubt. Niemand hat es dir verboten.

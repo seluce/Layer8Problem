@@ -1,6 +1,6 @@
 export const tutorial = [
 
-	// SCHRITT 1: Anruf
+	// STEP 1: the phone call
 	{
 		id: "tut_call_1",
 		type: "calls",
@@ -21,7 +21,7 @@ export const tutorial = [
 		]
 	},
 	
-	// SCHRITT 2: Kaffee
+	// STEP 2: the coffee machine
 	{
 		id: "tut_coffee_1",
 		type: "coffee",
@@ -42,7 +42,7 @@ export const tutorial = [
 		]
 	},
 
-	// SCHRITT 3: Dienstgang
+	// STEP 3: the errand
 	{
 		id: "tut_sq_1",
 		type: "sidequest",
@@ -65,7 +65,7 @@ export const tutorial = [
 		]
 	},
 
-	// SCHRITT 4: Serverraum
+	// STEP 4: the server room
 	{
 		id: "tut_srv_1",
 		type: "server",

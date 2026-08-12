@@ -12,15 +12,18 @@
 export const KEYS = {
     // --- Save and progress (removed by the hard reset) ---
     archive:      'layer8_archive',
-    dayState:     'layer8_day',        // workday in progress, see engine_core.saveDay()
-    diaryRecent:  'layer8_diary_recent',  // lines the diary used lately, see engine_diary.js
-    defaultDiff:  'layer8_default_diff',
+    dayState:     'layer8_day',        // running workday, see engine_core.saveDay()
+    weekState:    'layer8_week',       // running work week, see engine_week.saveWeek()
+    defaultDiff:  'layer8_default_diff',      // preselected workday
+    defaultWeekDiff: 'layer8_default_week_diff', // preselected work week
+    diaryRecent:  'layer8_diary_recent',  // diary lines used recently, see engine_diary.loadMemory()
     tutorialDone: 'sysadmin_tutorial_done',
     partyPlayed:  { easy:   'layer8_party_played_easy',
                     normal: 'layer8_party_played_normal',
                     hard:   'layer8_party_played_hard' },
 
     // --- Settings (deliberately survive the hard reset) ---
+    statsTab:      'layer8_stats_tab',     // last stats view (archive and global): 'day' or 'week'
     keyBinds:      'layer8_keybinds',
     visualFX:      'layer8_fx',
     screenShake:   'layer8_shake',
@@ -59,8 +62,10 @@ export const KEYS = {
 export const PROGRESS_KEYS = [
     KEYS.archive,
     KEYS.dayState,
-    KEYS.diaryRecent,
+    KEYS.weekState,
     KEYS.defaultDiff,
+    KEYS.defaultWeekDiff,
+    KEYS.diaryRecent,
     KEYS.tutorialDone,
     ...Object.values(KEYS.partyPlayed)
 ];

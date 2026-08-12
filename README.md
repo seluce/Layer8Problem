@@ -1,62 +1,117 @@
-# 🖥️🔥 Layer8Problem: Der SysAdmin Survival Simulator
+# Layer8Problem
 
-> **"Das Problem befindet sich in der Regel ca. 30 cm vor dem Bildschirm."**
+> *"Das Problem befindet sich in der Regel ca. 30 cm vor dem Bildschirm."*
 
-Willkommen bei GlobalCorp. Dein Traumjob in der IT-Hölle. **Layer8Problem** ist ein satirischer, textbasierter SysAdmin-Simulator, der dich an den Rand des Wahnsinns treiben wird. Du bist die letzte Bastion zwischen dem Firmennetzwerk und dem totalen Kollaps – gefangen zwischen inkompetenten Usern, cholerischen Chefs und einem Drucker, der *immer* Papierstau hat.
+**Ein satirischer SysAdmin-Simulator.** Du bist die IT von GlobalCorp. Einer.
+Für alle. Zwischen Chantal aus dem Marketing, einem Chef, der IT für
+Voodoo-Zauber hält, und einem Ticketzähler, der niemals rückwärts läuft.
 
-🌐 **[Klicke hier, um die Web-Version direkt im Browser zu spielen](https://seluce.github.io/Layer8Problem)**
+### [▶ Im Browser spielen](https://seluce.github.io/Layer8Problem) · [Auf Steam kaufen](https://store.steampowered.com/app/4487580/Layer8Problem/)
 
----
-
-## ☕ Unterstütze das Projekt auf Steam!
-
-Was als kleines Open-Source-Hobbyprojekt auf GitHub begann, ist durch das Feedback der Community massiv gewachsen. 
-
-Du kannst das Spiel weiterhin kostenlos hier im Browser spielen. Wenn dir der alltägliche Büro-Wahnsinn aber ein Lächeln entlockt und du die Weiterentwicklung des Projekts aktiv unterstützen möchtest, kannst du dir das Spiel für einen kleinen Betrag auch auf **Steam** holen! 
-
-Dadurch hilfst du mir als Solo-Entwickler, neue Events, Quests und Funktionen auszubauen. Zudem bietet dir die Steam-Version exklusive technische Annehmlichkeiten:
-
-* **Offline spielbar:** Kein Internet? Kein Problem. Rette die IT auch im Zug, im Flugzeug oder im tiefsten Serverkeller.
-* **Steam-Errungenschaften:** Deine Ingame-Trophäen, absurden Fails und gesammelten Enden sind direkt mit deinem Steam-Profil gekoppelt. Zeig der Welt, dass du den "Rage Quit" gemeistert hast!
-* **Globale Statistiken:** Sieh, wie du dich im Vergleich zu anderen SysAdmins schlägst! Wie viele Spieler weltweit haben ebenfalls hingeworfen oder das System zum Kollaps gebracht?
-* **Steam Cloud-Speicher:** Fang heimlich auf dem Laptop an und leide abends nahtlos am Desktop-PC weiter. Dein Spielfortschritt, dein Inventar und dein Ruf beim Kollegium werden automatisch synchronisiert.
-* **Dynamischer Steam-Status:** Lass deine Steam-Freunde in Echtzeit wissen, was du treibst. Dein Status in der Freundesliste passt sich automatisch an – ob du gerade *"Verzweifelt am IT-Support"* hängst, dich *"Im Serverraum versteckst"* oder *"Die Synergy-Gala überlebst"*.
-
-👉 **[Hier geht's zur Steam-Seite](https://store.steampowered.com/app/4487580/Layer8Problem/)**
+Kostenlos im Browser, keine Anmeldung, kein Download. Läuft auf dem Handy
+genauso wie am Rechner.
 
 ---
 
-## 🎯 Worum geht es?
+## Zwei Spielarten
 
-Dein Ziel: **Überlebe bis 16:30 Uhr**, ohne gefeuert zu werden, vor Wut den Monitor aus dem Fenster zu werfen oder vor Faulheit einzuschlafen. Alle 30 Minuten knallt ein neues Ticket in dein System. Wenn der Zähler 10 erreicht, kollabiert das System und du fliegst raus. 
+**Arbeitstag** — Eine Schicht von 08:00 bis 16:30 Uhr. Überlebe bis Feierabend.
+Abends ist alles vergessen, morgen beginnst du wieder bei null. Wähle vorher,
+wie sehr du dein Leben hasst: entspannter Freitag, normaler Mittwoch oder
+Montag.
 
-Nimm Anrufe an, eile in den Serverraum, überstehe sinnlose Dienstgänge und ignoriere (auf eigene Gefahr) sinnbefreite E-Mails.
+**Arbeitswoche** — Montag bis Freitag am Stück. Nichts wird über Nacht
+vergessen: Was du heute liegen lässt, liegt morgen noch da. Dein Rucksack
+kommt mit, dein Ruf auch, deine Faulheit sowieso. Ventil und Abmahnung gibt es
+nur einmal pro Woche, nicht pro Tag. Wer scheitert, verliert die ganze Woche.
 
-## 📊 Behalte deine Werte im Blick:
-* 💤 **FAULHEIT:** Zu hoch? Der Chef bestraft deine Fehler deutlich härter.
-* 😡 **AGGRO:** Steigt unweigerlich an, wenn du mit Menschen reden musst, dich fremdschämst oder absurde Aufgaben erledigen sollst. Erreicht es 100 %, rastest du aus und gehst (Rage Quit).
-* 👁️ **CHEF-RADAR:** Pfuschst du rum oder beleidigst den CEO, steigt das Radar. Bei 100 % wirst du vom Sicherheitsdienst persönlich rauseskortiert (sofern du schon abgemahnt wurdest).
+## Worum es geht
 
-## ✨ Features
+Alle 30 Minuten knallt ein Ticket in dein System. Bei zehn offenen Tickets
+kollabiert es und du bist raus. Also nimmst du Anrufe an, rennst in den
+Serverraum, holst Kaffee und gehst Dienstgänge — und behältst dabei drei Werte
+im Auge:
 
-* **Schwarzer Corporate-Humor:** Erlebe hunderte absurde Events, E-Mails und Chats, direkt inspiriert vom echten IT-Wahnsinn. 
-* **Entscheidungen mit Konsequenzen:** Hilfst du Chantal aus dem Marketing oder deckst du die illegalen Machenschaften von Hausmeister Egon? Deine Wahl triggert unberechenbare Kettenreaktionen über verschiedene Abteilungen hinweg, die dich Stunden später wieder einholen.
-* **Ressourcen-Management:** Finde überlebenswichtigen Loot. Ein Energy-Drink macht dich wach, Panzertape flickt den Server.
-* **Kein Stress... oder doch?** Wähle jeden Morgen deinen Tag: Entspannter "Freitag", normaler "Mittwoch" oder der absolute Albtraum "Montag".
-* **Anpassbare Steuerung:** Voller Tastatur-Support! Passe deine Hotkeys frei an, spiele bequem mit einer Hand oder nutze die Steuerung für eine nahtlose Controller-Erfahrung (via Steam Input).
+| | |
+|---|---|
+| <img src="public/assets/img/ui/ui_lazy.webp" width="22" alt=""> **Faulheit** | Je höher, desto härter bestraft der Chef deine Fehler. |
+| <img src="public/assets/img/ui/ui_angry.webp" width="22" alt=""> **Aggro** | Bei 100 % rastest du aus. Das Ventil öffnet genau einmal. |
+| <img src="public/assets/img/ui/ui_eye.webp" width="22" alt=""> **Chef-Radar** | Bei 100 % gibt es eine Abmahnung. Danach die Kündigung. |
 
-## 🛠️ Technologie (Web-Version)
+Jede Entscheidung kostet Zeit, und die Uhr läuft nur in eine Richtung.
 
-Die Basis des Projekts ist bewusst simpel und performant gehalten ("Old School"):
-* **HTML5 & CSS3** (mit Tailwind CSS)
-* **Vanilla JavaScript** (Keine Frameworks, keine Build-Tools)
+## Was dich erwartet
 
-## ⚠️ Disclaimer & Lizenz
+- **Über 1.200 Ereignisse** in Serverraum, Kaffeeküche, am Telefon, auf dem
+  Dienstgang und im Postfach — plus Bossfights, Mittagspausen und einer
+  Firmen-Gala, die nur die Hartnäckigsten je zu sehen bekommen.
+- **Entscheidungen mit Gedächtnis.** Der Rechner, den du Kevin hast neu
+  aufsetzen lassen, steht Stunden später im Rack — mit Drachenaufkleber und
+  einem Programm, das Rechenleistung nach Übersee verkauft. Wer Gabi hat
+  auflaufen lassen, findet in der Teeküche eine Schublade, die es vorher nicht
+  gab.
+- **Acht Kollegen mit eigenem Ruf**, die sich merken, wie du dich entschieden
+  hast — und irgendwann zurückzahlen. In beide Richtungen.
+- **32 Gegenstände** zum Finden und kreativen Zweckentfremden. Panzertape
+  flickt mehr, als es sollte, und manches wirkt, ohne dass man es anfasst.
+- **27 Erfolge**, gestuft nach Schwierigkeit, dazu ein Archiv, ein Tagebuch,
+  das jeden Abend deinen Tag erzählt, und eine Firmenchronik zum Weiterschreiben.
+- **Voller Tastatur-Support** mit frei belegbaren Tasten. Ein Tutorial gibt es
+  auch, falls du lieber an die Hand genommen wirst.
 
-Dieses Spiel dient als **reine Satire**. Es ist eine humorvolle Aufarbeitung des IT-Support-Alltags. Ähnlichkeiten mit realen Personen, Firmen oder cholerischen Vorgesetzten sind rein zufällig (aber wahrscheinlich unvermeidbar).
+## Warum Steam, wenn es kostenlos läuft?
 
-* **Web-Version & Code:** Die hier auf GitHub gehostete Web-Version und der dazugehörige Quellcode stehen unter der **MIT License (Open Source)**. Du darfst den Code studieren, nutzen und für eigene, nicht-kommerzielle Ableger verändern.
-* **Namensnennung:** Bitte erwähne mich (**seluce**) namentlich als Urheber, wenn du den Quellcode als Basis verwendest.
+Das Spiel bleibt im Browser vollständig und kostenlos. Wer die Entwicklung
+unterstützen möchte, bekommt auf Steam ein paar technische Annehmlichkeiten:
+
+- **Offline spielbar** — im Zug, im Flugzeug, im Serverkeller
+- **Steam-Errungenschaften** und **weltweite Statistiken** — sieh, wie oft der
+  Rest der Welt hingeworfen hat
+- **Cloud-Speicher** — Archiv, Erfolge und Statistiken reisen mit, und der
+  laufende Durchgang ebenso: mittags auf dem Laptop anfangen, abends am
+  Rechner weiterleiden
+- **Dynamischer Status** — deine Freundesliste erfährt, ob du gerade
+  *"Im Serverraum versteckt"* bist oder *"Die Synergy-Gala überlebst"*
+
+Beide Fassungen laufen auf demselben Inhaltsstand.
 
 ---
+
+## Für Entwickler
+
+Svelte 5 (Runes), Vite, Tailwind CSS 4. Die Steam-Fassung ist dieselbe
+Anwendung in Electron. Die Web-Version wird aus `main:/docs` über GitHub Pages
+ausgeliefert, der Build wird also mitcommittet.
+
+```bash
+npm install
+npm run dev            # Entwicklungsserver
+npm run build          # Build nach docs/
+npm run preview        # gebaute Fassung ansehen (nicht per Doppelklick öffnen)
+```
+
+Werkzeuge im Ordner `tools/`:
+
+```bash
+npm run lint:data      # prüft alle Ereignis-Daten auf Struktur und Regeln
+npm test               # Testsuiten für den Wochenmodus
+npm run sim            # simuliert tausende Arbeitstage für die Balance
+npm run sim:week       # dasselbe für ganze Wochen
+```
+
+Wer Ereignisse schreiben möchte: `EVENTS.md` erklärt das Datenformat, von der
+einfachen Option bis zur verzweigten Gesprächskette. `STRUCTURE.md` erklärt,
+warum welche Datei wo liegt.
+
+## Lizenz & Kleingedrucktes
+
+Reine Satire. Ähnlichkeiten mit realen Personen, Firmen oder cholerischen
+Vorgesetzten sind zufällig, aber vermutlich unvermeidbar.
+
+Web-Version und Quellcode stehen unter der **MIT-Lizenz**. Du darfst den Code
+studieren, nutzen und für eigene, nicht-kommerzielle Ableger verändern —
+bitte mit Namensnennung (**seluce**).
+
+---
+
 *Erstellt mit viel Koffein, Panzertape und Liebe zum Detail.*

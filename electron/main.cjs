@@ -95,7 +95,13 @@ ipcMain.handle('steam-get-global-stats', async () => {
     try {
         // Valve's public endpoint. Needs no API key as long as the stats are
         // set to "Aggregated" in the Steamworks backend.
-        const url = 'https://api.steampowered.com/ISteamUserStats/GetGlobalStatsForGame/v0001/?appid=4487580&count=4&name[0]=stat_started&name[1]=stat_survived&name[2]=stat_ragequit&name[3]=stat_fired';
+        const names = [
+            'stat_started', 'stat_survived', 'stat_ragequit', 'stat_fired',
+            'stat_weeks_started', 'stat_weeks_survived', 'stat_weeks_ragequit', 'stat_weeks_fired'
+        ];
+        const query = names.map((n, i) => `name[${i}]=${n}`).join('&');
+        const url = 'https://api.steampowered.com/ISteamUserStats/GetGlobalStatsForGame/v0001/'
+                  + `?appid=4487580&count=${names.length}&${query}`;
         const response = await fetch(url);
         const data = await response.json();
         

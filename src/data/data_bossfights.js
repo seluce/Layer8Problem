@@ -337,7 +337,7 @@ export const bossfights = [
 			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
 		},
 		{ 
-			t: "Hacker-Move: Zu Excel wechseln", 
+			t: "Zu Excel wechseln", 
 			req: "admin_pw", 
 			rep: { "Dr. Wichtig": 2 },
 			m: 5, f: 5, a: -10, c: -10, 

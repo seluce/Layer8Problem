@@ -13,7 +13,9 @@
 
 <div class="w-full max-w-2xl text-left fade-in bg-slate-900 border border-slate-400 p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0 relative">
     <div class="flex items-center gap-3 mb-4 md:mb-6 border-b border-slate-600 pb-3 md:pb-4">
-        <span class="text-3xl">🌅</span>
+        <img src="assets/img/ui/ui_morning.webp" alt=""
+             width="36" height="36" class="w-9 h-9 shrink-0 select-none"
+             onerror={(e) => e.currentTarget.outerHTML = '<span class="text-3xl">🌅</span>'}>
         <div class="flex flex-col">
             <span class="text-slate-400 font-black uppercase tracking-widest text-sm">DER MORGEN DANACH</span>
             <h2 class="text-2xl font-bold text-white">{view.title}</h2>

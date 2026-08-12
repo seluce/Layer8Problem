@@ -6,6 +6,7 @@
   is the chronicle, which opens the lore book.
 
   Tooltips shift sideways in the outermost columns so they stay on screen.
+  The box itself lives in ItemTooltip.svelte, shared with the archive.
 
   Touch has no hover, so on a phone or the Steam Deck the tooltip was simply
   unreachable: the flavour text and the line about whether an item survives
@@ -13,6 +14,21 @@
   that slot, and a second tap on the same slot does what a click has always
   done. Anything else - a tap outside, scrolling, Escape, leaving by keyboard -
   unpins it again.
+
+  Equipment can be thrown away. The backpack holds ten and nothing stacks,
+  which across a whole week turns into a dead end: tools bypass the cap when
+  picked up, so a hoarder can end up unable to take a single consumable.
+  Discarding turns that into a decision instead of a wall. Trophies stay -
+  they cost no capacity and stand for something that happened.
+
+  How to reach it took three attempts, and the first two are worth writing
+  down. A bin badge in the slot corner was 24px across and sat in the gap
+  between two slots: below every touch guideline. Moving it into the tooltip
+  made the target big but unreachable with a mouse - the tooltip floats above
+  the slot with a gap in between, so moving towards it leaves the slot and
+  closes it. The mode is what phones have always done for deleting: press the
+  bin once, then pick what goes. Same flow for mouse, finger, keyboard and the
+  Deck, and the target is a whole slot.
 -->
 <script>
     // Renamed so the $state rune stays usable in this file - see the pitfall
@@ -20,8 +36,14 @@
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { DB } from '../data.js';
+    import ItemTooltip from './ItemTooltip.svelte';
 
-    const STRESSBALL_COOLDOWN = DB.items.stressball?.use?.cooldown ?? 0;
+    // Minutes an item still has to cool down; 0 or less means ready. Reads the
+    // item's own clock, so several cooldown items no longer share one.
+    const waitFor = (id) => {
+        const cd = DB.items[id]?.use?.cooldown ?? 0;
+        return cd ? cd - (game.time - (game.itemCooldowns?.[id] ?? -100000)) : 0;
+    };
     // Usable, how long it rests and whether it survives - all of that is in
     // data_items.js under `use`. Nothing about items is listed here.
     const usable = (id) => !!DB.items[id]?.use;
@@ -44,11 +66,23 @@
     const MIN_SLOTS = 10;
     const emptySlots = $derived(Math.max(0, MIN_SLOTS - normal.length));
 
-    const stressballWait = $derived(STRESSBALL_COOLDOWN - (game.time - game.lastStressballTime));
 
     // Which slot currently has its tooltip pinned, by key. Only touch and
     // keyboard set this; a mouse still gets the tooltip from :hover alone.
     let pinned = $state(null);
+
+    /**
+     * Discard mode. A bin badge on each slot was tried first and thrown out
+     * twice: at 24px in the gap between two slots it was a mis-tap waiting to
+     * happen, and inside the tooltip it was unreachable with a mouse, because
+     * the tooltip sits above the slot with a gap in between - moving towards
+     * it leaves the slot and closes it.
+     *
+     * A mode is the pattern every phone already uses for deleting: press the
+     * bin once, then pick what goes. One flow for mouse, finger, keyboard and
+     * the Deck, and the target is the whole slot instead of a corner of it.
+     */
+    let discardMode = $state(false);
 
     // Whether the last press came from a finger or a pen. Read in the click
     // handler, because a click event does not carry the pointer type in every
@@ -75,12 +109,38 @@
     // A pinned tooltip must never outlive the gesture that opened it. The
     // pointer listener ignores presses on a slot, because those are handled by
     // the slot itself - it is everything else that closes the tooltip.
+    /**
+     * Discard mode does not survive closing the backpack.
+     *
+     * What is watched is the window itself, not a close button: Escape hides
+     * the topmost overlay directly without calling closeInventory(), and the
+     * cross takes yet another route. Hanging off the element catches every one
+     * of them - including one that does not exist yet.
+     */
+    $effect(() => {
+        const modal = document.getElementById('inventory-modal');
+        if (!modal) return;
+
+        const beobachter = new MutationObserver(() => {
+            if (modal.classList.contains('hidden')) {
+                discardMode = false;
+                pinned = null;
+            }
+        });
+        beobachter.observe(modal, { attributes: true, attributeFilter: ['class'] });
+        return () => beobachter.disconnect();
+    });
+
     $effect(() => {
         const closeOnOutsidePress = (event) => {
             if (event.target?.closest?.('[data-inv-slot]')) return;
             pinned = null;
         };
-        const closeOnEscape = (event) => { if (event.key === 'Escape') pinned = null; };
+        const closeOnEscape = (event) => {
+            if (event.key !== 'Escape') return;
+            pinned = null;
+            discardMode = false;
+        };
         const close = () => { pinned = null; };
 
         window.addEventListener('pointerdown', closeOnOutsidePress);
@@ -96,13 +156,19 @@
     function slotClass(row) {
         const ring = pinned === row.key ? ' ring-2 ring-slate-400/70' : '';
 
+        // In discard mode every equipment slot looks the same - clickable
+        // and outlined in red. Trophies stay as they are.
+        if (discardMode && !row.quest) {
+            return 'inv-slot relative group cursor-pointer border-red-900/60 bg-red-950/40 hover:border-red-600 hover:bg-red-900/50' + ring;
+        }
+
         if (row.entry.id === 'corp_chronicles') {
             return 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40' + ring;
         }
         if (row.quest) return 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
 
-        if (row.entry.id === 'stressball') {
-            return (stressballWait <= 0
+        if (DB.items[row.entry.id]?.use?.cooldown) {
+            return (waitFor(row.entry.id) <= 0
                 ? 'inv-slot relative group cursor-default cursor-pointer border-green-500 hover:bg-green-900/20'
                 : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
         }
@@ -129,13 +195,17 @@
             return;
         }
 
-        if (id === 'stressball') {
-            if (stressballWait <= 0) engine.askUseItem('stressball');
-            else engine.log(`Der Ball ist noch völlig plattgedrückt. Gib ihm Zeit, sich zu entfalten. (${stressballWait} Min)`, 'text-slate-500');
+        if (DB.items[id]?.use?.cooldown) {
+            const wait = waitFor(id);
+            if (wait <= 0) engine.askUseItem(id);
+            else engine.log(`${DB.items[id].use.wait ?? `${row.item?.name ?? id} braucht noch etwas Zeit`} (${wait} Min).`, 'text-slate-500');
             return;
         }
 
         if (isConsumable(id)) engine.askUseItem(id);
+        // A passive item has no button. Without this line clicking it does
+        // nothing at all, which reads as broken rather than as by design.
+        else if (DB.items[id]?.passive) engine.log(`${row.item?.name ?? id} wirkt von allein, sobald es darauf ankommt.`, 'text-slate-500 italic');
     }
 
     /**
@@ -146,6 +216,15 @@
      * shows the text, so a click acts straight away.
      */
     function activate(row, coarse) {
+        // In discard mode the first press counts straight away, on touch as
+        // well. Pinning the tooltip first would be a detour: the confirmation
+        // shows name and effect once more anyway.
+        if (discardMode && !row.quest) {
+            pinned = null;
+            engine.askDiscardItem(row.entry.id);
+            return;
+        }
+
         if (coarse && pinned !== row.key) {
             pinned = row.key;
             return;
@@ -169,7 +248,14 @@
 
 {#snippet slot(row, index)}
     {@const pos = tooltipPosition(index)}
-    <div class={slotClass(row)} style="margin-bottom: 15px" role="button" tabindex="0"
+    <!-- Tile and caption sit in one column instead of the caption hanging
+         below the tile in absolute position. That used to need a fixed
+         margin under every tile, which added to the grid gap and made the
+         rows drift apart - visibly so on a phone, where three columns leave
+         the captions no room. Now the grid gap alone spaces the cells and
+         every one is the same height, with or without an item. -->
+<div class="flex flex-col items-center">
+    <div class={slotClass(row)} role="button" tabindex="0"
          data-inv-slot
          aria-label={row.item?.name ?? row.entry.id}
          onpointerdown={(e) => (coarsePress = e.pointerType !== 'mouse')}
@@ -179,47 +265,78 @@
         {:else}{row.item?.icon ?? '?'}{/if}
 
         {#if row.item}
-            <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned === row.key ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 transition-opacity pointer-events-none z-50 text-left">
-                <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{row.item.name}</div>
-                <div class="text-[10px] text-slate-300 italic leading-snug">{row.item.flavor ?? '"Keine weiteren Informationen."'}</div>
-                <!-- Whether an item survives being used was written down
-                     nowhere - you found out once it was gone. -->
-                <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
-                            {row.quest ? 'text-amber-500' : row.item.keep ? 'text-sky-400' : 'text-slate-500'}">
-                    {#if row.quest}Trophäe · bleibt für immer
-                    {:else if row.item.keep}Wiederverwendbar
-                    {:else}Verbraucht sich bei Nutzung{/if}
-                </div>
-                <div class="absolute top-full {pos.arrow} border-4 border-transparent border-t-slate-600"></div>
-            </div>
+            <ItemTooltip item={row.item} pinned={pinned === row.key} {pos} />
         {/if}
 
-        <div class="absolute -bottom-6 w-full text-center text-[8px] text-slate-400 truncate pointer-events-none">
-            {row.item?.name ?? row.entry.id}
-        </div>
 
-        {#if !row.quest && row.entry.id === 'stressball'}
-            {#if stressballWait <= 0}
+        {#if !row.quest && DB.items[row.entry.id]?.use?.cooldown}
+            {#if waitFor(row.entry.id) <= 0}
                 <div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-slate-900"></div>
             {:else}
                 <div class="absolute inset-0 bg-slate-900/70 rounded-sm flex items-center justify-center z-10 backdrop-blur-[1px]">
-                    <span class="font-bold text-white text-xs select-none">{stressballWait}</span>
+                    <span class="font-bold text-white text-xs select-none">{waitFor(row.entry.id)}</span>
                 </div>
             {/if}
         {/if}
     </div>
+
+    <!-- Always rendered, empty for a free slot, so all cells match in height. -->
+    <div class="h-4 mt-1 w-full text-center text-[8px] leading-4 text-slate-400 truncate pointer-events-none">
+        {row.item ? row.item.name : ''}
+    </div>
+</div>
 {/snippet}
 
 <div class="flex flex-col gap-6 w-full"
      onfocusout={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) pinned = null; }}>
     <div>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">AUSRÜSTUNG</h3>
-        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
+        <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ausrüstung</h3>
+
+            <!-- Two different things, so they must not look alike: the counter
+                 is information and keeps its frame, throwing away is a rarely
+                 used destructive action and stays quiet until it is armed.
+                 Only then does it become a filled red control - loud exactly
+                 when it can do damage, and never before. -->
+            <div class="flex items-center gap-1">
+                <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
+                             font-mono text-[11px] tabular-nums
+                             {normal.length >= MIN_SLOTS ? 'text-amber-400' : 'text-slate-400'}">
+                    {normal.length}/{MIN_SLOTS} Gegenstände
+                </span>
+
+                <button type="button"
+                        aria-pressed={discardMode}
+                        title={discardMode ? 'Auswahl beenden' : 'Gegenstand wegwerfen'}
+                        onclick={() => { discardMode = !discardMode; pinned = null; }}
+                        class="h-8 px-2.5 rounded-md flex items-center gap-1.5
+                               text-[11px] font-bold transition-colors
+                               {discardMode
+                                 ? 'bg-red-950/40 border border-red-900/60 text-red-300'
+                                 : 'text-slate-500 hover:text-red-300 hover:bg-red-950/40'}">
+                    <img src="assets/img/ui/ui_trash.webp" alt="" width="14" height="14"
+                         class="w-3.5 h-3.5 select-none pointer-events-none {discardMode ? '' : 'opacity-70'}"
+                         onerror={(e) => e.currentTarget.remove()}>
+                    {discardMode ? 'Fertig' : 'Wegwerfen'}
+                </button>
+            </div>
+        </div>
+
+        <!-- No explanatory line in discard mode: every equipment slot turns red
+             and clickable while the trophies stay untouched, which says it
+             better than a sentence - and a sentence that only exists in one
+             state would push the whole grid down as it appears. -->
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 [&>*]:min-w-0">
             {#each normal as row, i (row.key)}
                 {@render slot(row, i)}
             {/each}
             {#each { length: emptySlots } as _, i (i)}
-                <div class="inv-slot empty"></div>
+                <!-- Same cell shape as a filled slot - centring wrapper plus the
+                     empty caption line - so free and used slots line up exactly. -->
+                <div class="flex flex-col items-center">
+                    <div class="inv-slot empty"></div>
+                    <div class="h-4 mt-1" aria-hidden="true"></div>
+                </div>
             {/each}
         </div>
     </div>
@@ -227,7 +344,7 @@
     {#if quest.length > 0}
         <div>
             <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">TROPHÄEN & ERINNERUNGEN</h3>
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 pb-4">
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 [&>*]:min-w-0">
                 {#each quest as row, i (row.key)}
                     {@render slot(row, i)}
                 {/each}
