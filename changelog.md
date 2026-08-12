@@ -4,6 +4,7 @@ Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bl
 
 Das Wissen:
 * Das Buch deckt jetzt auch die Sommerfeier, das Wochenmeeting, die Beratungsfirmen und zwei Dauerabsender aus dem Postfach ab.
+* Einträge mit ungelesenen Notizen heben ihre Zahl im Register hervor. Wer das Buch öffnet, landet direkt auf dem neuen Eintrag; danach steht die Zahl wieder ruhig da.
 * Jeder der sieben Kollegen hat eine Notiz aus den persönlichen Begegnungen dazubekommen - dort steht, was man über jemanden erst erfährt, wenn man länger mit ihm zu tun hat.
 
 Fehlerkorrekturen:

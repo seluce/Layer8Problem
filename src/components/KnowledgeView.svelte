@@ -50,11 +50,20 @@
 
     // Something should always be on the page on desktop: the first entry in
     // this category the player has met, otherwise simply the first one.
+    // Opening the book should land on what changed, not on the first name in
+    // the register - otherwise the marker disappears before it was noticed.
     const current = $derived(
         entries.find(e => e.id === selectedId)
+        ?? entries.find(e => e.neu)
         ?? entries[0]
         ?? null
     );
+
+    // Reading is a side effect, so it belongs in an effect, not in $derived.
+    $effect(() => {
+        if (current?.neu) engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+    });
+
 
     const onPage = $derived(selectedId !== null);
     const missing = $derived(current ? Math.max(0, current.total - current.notes.length) : 0);
@@ -100,7 +109,13 @@
                             <span class="text-xs font-bold truncate {e.open ? theme.text : 'text-slate-600'}">
                                 {e.name}
                             </span>
-                            <span class="ml-auto text-[10px] tabular-nums shrink-0 {e.open ? 'text-slate-500' : 'text-slate-700'}">
+                            <!-- Unread entries brighten their own counter instead of
+                                 getting a marker next to them. No fifth colour either:
+                                 amber is already the Vorgänge category, so a coloured
+                                 counter would be invisible in that tab. Brightness
+                                 works in all four. -->
+                            <span class="ml-auto text-[10px] tabular-nums shrink-0 transition-colors
+                                         {e.neu ? 'text-slate-100 font-bold' : e.open ? 'text-slate-500' : 'text-slate-700'}">
                                 {e.open ? `${e.notes.length}/${e.total}` : '–'}
                             </span>
                         </button>
