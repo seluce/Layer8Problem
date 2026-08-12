@@ -127,13 +127,13 @@
                     <h3 class="text-lg font-bold {theme.text}">{current.name}</h3>
                     <p class="text-[11px] text-slate-500 mb-4">{current.rolle}</p>
 
-                    <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5">
+                    <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5 wrap-break-word">
                         {current.kopf}
                     </p>
 
                     <ul class="space-y-3">
                         {#each current.notes as note}
-                            <li class="text-xs text-slate-300 leading-relaxed flex gap-2.5">
+                            <li class="text-xs text-slate-300 leading-relaxed flex gap-2.5 wrap-break-word">
                                 <span class="{theme.bullet} shrink-0" aria-hidden="true">&ndash;</span>
                                 <span>{note}</span>
                             </li>

@@ -91,7 +91,7 @@
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{msg.sender}</span>
-                                <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed">
+                                <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed wrap-break-word">
                                     {msg.text}
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
                 {:else}
                     <div class="w-full flex justify-end mb-4 fade-in">
                         <div class="max-w-[85%] flex flex-col items-end">
-                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed">
+                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
                                 {msg.text}
                             </div>
                             <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>

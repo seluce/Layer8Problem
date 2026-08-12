@@ -157,7 +157,7 @@
 
     <div class="flex gap-4 md:gap-6 items-center mb-8">
         <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
-            <p class="italic text-slate-300 text-lg leading-relaxed font-serif">{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}</p>
+            <p class="italic text-slate-300 text-lg leading-relaxed font-serif break-words hyphens-auto">{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}</p>
         </div>
 
         {#if portrait}
