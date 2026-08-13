@@ -7,8 +7,10 @@ als JavaScript-Objekte in `src/data/data_*.js` (eine Datei je Bereich: `data_cof
 `data_lunch.js`, `data_bossfights.js`, `data_party.js`, `data_emails.js`). Ein neues
 Ereignis ist einfach ein weiteres Objekt im Array der passenden Datei.
 
-Spieltexte sind Deutsch, aus Müllers Sicht ("du"), im Präsens. Zum Ausprobieren:
-`npm install`, dann `npm run preview`.
+Spieltexte sind Deutsch, aus Müllers Sicht ("du"), im Präsens. Kommentare im Code und
+Dateinamen sind Englisch. Zum Ausprobieren: `npm install`, dann `npm run preview`;
+vor einem Pull Request `npm run lint:data` — er muss ohne Fehler und ohne Warnungen
+durchlaufen.
 
 Die Beispiele zeigen absichtlich den **Vollausbau**: alles, was an einer Stelle möglich
 ist, auf einmal. Weglassen darf man fast alles — aber wer weiß, was es gibt, lässt
@@ -84,7 +86,7 @@ oder bewusst ausbleibt.
 | `webOnly` | Kaffee, Serverraum, Anrufe, Dienstgang | Erscheint nur im Browser, nicht in der Steam-Fassung (für Ereignisse, die auf die Shop-Seite zeigen). |
 | `sender`, `subj`, `body`, `linked` | nur Mails | Siehe Abschnitt 10. |
 
-Der Daten-Prüfer meldet seit 4.1 jedes Feld, das die Engine **an dieser Stelle** nicht
+Der Daten-Prüfer meldet jedes Feld, das die Engine **an dieser Stelle** nicht
 liest. Ein `reqStory` an einer Mittagspause ist damit kein stiller Blindgänger mehr,
 sondern ein Fehler.
 
@@ -292,8 +294,9 @@ Schreibregeln für mehrtägige Teile:
    balanciertes Ereignis seines Pools; das Drama liegt in der Erwartung, nicht in
    den Zahlen.
 
-Flags sind global — ein Serverraum-Auslöser darf sein Echo auch im Anruf-Pool haben
-(`call_wlp_geruch` fragt nach dem Ketchup aus `srv_wlp_1`). Das Gebäude erinnert sich.
+Flags sind global — ein Serverraum-Auslöser darf sein Echo auch im Anruf-Pool haben: Wer
+im Serverraum etwas improvisiert, bekommt zwei Tage später einen Anruf aus einer ganz
+anderen Abteilung, die den Geruch bemerkt hat. Das Gebäude erinnert sich.
 
 Flag-Namen sind frei wählbar, im Bestand tragen 565 von 595 das Präfix `path_`. Sprechend
 benennen: `path_kabel_gezogen`, nicht `path_2b`.
@@ -304,7 +307,13 @@ Geschichten machen das bereits. Einfach `reqStory` im Ereignis des anderen Berei
 verwenden.
 
 Ein freigeschaltetes Folgeereignis bekommt beim Ziehen Vorrang: In 30 % der Fälle wählt
-die Engine aus den offenen Fortsetzungen statt aus dem Grundbestand.
+die Engine aus den offenen Fortsetzungen statt aus dem Grundbestand. Dieselbe Regel gilt
+auch für die Mittagspause.
+
+**Nicht bei den Begegnungen.** In `data_reputation.js` sind mehrtägige Ketten nicht
+vorgesehen: Der Pool ist an anderer Stelle fest eingeplant, und zusätzliche Ketten
+senken dort die Ziehchance der vorhandenen Ereignisse. Der Daten-Prüfer weist
+`reqStoryAge` in diesem Pool deshalb ab.
 
 ### Was davon ins Wissen gehört (`data_compendium.js`)
 
@@ -364,12 +373,12 @@ einen `startNode`, ein `nodes`-Objekt (die Gesprächsschritte) und ein `results`
   "…"-Abzeichen im Terminal hängt nicht am Namen — es schaut wie die Engine nach,
   ob das Ziel ein Knoten ist. Ein Ausgang darf also `truth` heißen und funktioniert
   trotzdem; `res_truth` liest sich nur besser.
-- **Knoten dürfen einen eigenen `char` tragen** (seit v5.0, Konvention vom Handy
+- **Knoten dürfen einen eigenen `char` tragen** (Konvention vom Handy
   übernommen): Der Knoten-`char` schlägt den Ereignis-`char`, `char: null` erzwingt
   gar keinen. So wechselt eine Kette mitten im Gespräch den Sprecher — im Terminal
   genauso wie im Handy-Chat.
 
-### Das Wochenmeeting (`data_meetings.js`, seit v5.0)
+### Das Wochenmeeting (`data_meetings.js`)
 
 Der Meeting-Pool nutzt den Ketten-Aufbau mit drei Sonderregeln. IDs beginnen mit
 `meet_`. `startNodeGala` ist ein zweiter Einstiegsknoten: Die Engine wählt ihn, wenn
@@ -381,7 +390,7 @@ selbst. Ruf bewegt sich im Meeting nur bei echten Figuren, also den sieben aus
 `data_chars` — nie bei den Beratern. Ausreden gibt es im Meeting keine — dem
 Wochenbericht entkommt man nicht.
 
-**Der Aufbau in drei Akten (seit v5.1).** Ein Meeting ist kein Ereignis mit
+**Der Aufbau in drei Akten.** Ein Meeting ist kein Ereignis mit
 Verzweigung, sondern eine Besprechung, die sich zieht. Deshalb drei
 Entscheidungen statt zwei:
 
@@ -393,9 +402,8 @@ Entscheidungen statt zwei:
 
 Daraus ergeben sich acht Knoten (root, `root_gala`, zwei im zweiten, vier im
 dritten Akt) und mindestens acht Ergebnisse. Wichtig: Was der Exkurs erzählt,
-darf im Ergebnistext nicht noch einmal stehen — beim Umbau der ersten sechs
-Meetings mussten zwei Ergebnisse neu geschrieben werden, weil sie dieselbe
-Pointe ein zweites Mal brachten.
+darf im Ergebnistext nicht noch einmal stehen. Wer eine Pointe in den
+Mittelteil setzt, muss das Ergebnis danach neu denken.
 
 **Nicht durchgehend zwei Optionen.** Alle Knoten binär zu bauen ist bequem und
 fällt über zwölf Meetings auf; der Rest des Spiels variiert zwischen einer und
@@ -587,25 +595,31 @@ Wahrscheinlichkeit vor einer beliebigen Handlung ab.
 ## 7. Mittagspause (`data_lunch.js`)
 
 Normale Text-Ereignisse mit `title`, `text` und `opts`, gern mit `char`. Die Pause wird
-einmal am Tag ab zwölf Uhr ausgelöst, und zwar **rein zufällig** aus dem gesamten Pool:
-Es gibt hier keine Vorbedingungen, `reqStory` und `reqRep` werden nicht ausgewertet. Ein
-Mittagsereignis muss also für sich allein stehen.
+einmal am Tag zwischen zwölf und vierzehn Uhr ausgelöst. Die Zeiten sind entsprechend
+groß — eine Pause kostet typischerweise 30 bis 60 Minuten. Sie darf Gegenstände geben
+und den Ruf verändern.
 
-Die Zeiten sind entsprechend groß — eine Pause kostet typischerweise 30 bis 60 Minuten.
-Sie darf Gegenstände geben und den Ruf verändern; ein `next` als Aufhänger für ein
-Folgeereignis ist möglich, wird im Bestand aber kaum genutzt.
+**Mehrtägige Ketten.** `triggerLunch` wertet `reqStory` und `reqStoryAge` aus, mit
+derselben `FOLLOWUP_CHANCE` von 30 % wie die Aktions-Pools: Eine
+offene Fortsetzung kommt in 30 % der Fälle, sonst wird aus dem Grundbestand gezogen.
+`reqRep` wird hier weiterhin nicht ausgewertet.
+
+Das macht die Pause zum natürlichsten Ort für ein „gestern beim Essen" — sie ist das
+Einzige, was jeden Tag stattfindet. Wer zehn Kilometer mitläuft, spürt es am nächsten
+Mittag. Drei solche Stränge gibt es bisher; der Auftakt setzt die Fahne über `next`,
+das Folgeereignis fordert sie mit `reqStoryAge: 1`.
 
 ## 8. Bossfights (`data_bossfights.js`)
 
 Der Notfall mit Countdown. Zwei Pflichtfelder mehr:
 
-- `timer`: die Sekunden, die der Balken läuft (im Bestand 8 bis 15).
+- `timer`: die Sekunden, die der Balken läuft (im Bestand 8 bis 20, meist 10 oder 12).
 - `fail`: was passiert, wenn niemand entscheidet. Aufbau wie eine Auswahl, nur ohne `t`.
 
 ```js
 {
     id: "boss_klima_1",
-    title: "🥵 KLIMAANLAGE TOT 🥵",
+    title: "Einundvierzig Grad",
     text: "Der Serverraum hat 41 Grad und wird wärmer. Die Klimaanlage meldet einen Fehler, der laut Handbuch nicht auftreten kann. Die ersten Lüfter drehen hoch, als wollten sie abheben.",
     timer: 12,
     opts: [
@@ -631,8 +645,34 @@ Der Notfall mit Countdown. Zwei Pflichtfelder mehr:
 
 Regel für die Balance: **Nichtstun muss die schlechteste Wahl sein.** `fail` fährt
 schlechter als die schlechteste aktive Entscheidung — sonst ist Warten eine Strategie.
-Item-Auswahlen (`req`) sind hier häufig, aber mindestens eine Auswahl muss ohne
-Gegenstand funktionieren.
+Gemessener Rahmen über alle 38: Auswahlen kosten −30 bis +60 auf `a`+`c`, `fail`
+zwischen 50 und 150. In allen 38 ist `fail` teurer als jede Auswahl; das lässt sich mit
+einem Dreizeiler nachrechnen und gehört nach jeder neuen Welle geprüft.
+
+**Der Titel nennt die Situation, nicht die Katastrophenart.** Die Ansicht schreibt
+ohnehin NOTFALL in Rot mit Countdown-Balken darüber — der Titel muss nicht schreien und
+trägt keine Emojis. Also „Das Rohr in der Teeküche" statt „WASSERSCHADEN": Wer nach der
+Gattung benennt, bekommt schnell mehrere Notfälle, die praktisch gleich heißen.
+
+**Mindestens ein Ausweg über einen Gegenstand, mindestens einer ohne.** Ein knappes
+Viertel der Notfälle kommt ganz ohne `req` aus; das ist die Untergrenze.
+
+Beim Gegenstand zählt die Verfügbarkeit: Ein Werkzeug, das man im Spiel oft findet,
+macht die Auswahl für mehr Leute erreichbar. Gute Kandidaten sind `cable` (acht
+Fundorte), `screw` (sieben) und `tape` (sechs). `admin_pw` hat nur drei und gehört
+deshalb nur dorthin, wo die Handlung wirklich Rechte braucht und nicht bloß Hände —
+einen Stecker zieht man ohne Passwort.
+
+**Nachklänge.** Ein Notfall darf eine Folge haben: Die Auswahl setzt über
+`next` eine Fahne, und ein Ereignis in einem anderen Pool fordert sie mit `reqStoryAge:
+1`. Damit kommt der nächste Morgen einen Tag später — im Tagesmodus also nie, was
+richtig ist, denn dort gibt es kein Gestern. Acht der 38 haben so einen Nachklang, einer
+davon eine dreiteilige Geschichte mit eigenem Wissens-Eintrag.
+
+Beim Wissens-Eintrag die Erreichbarkeit mitdenken: Ein Notfall wird zwar oft ausgelöst,
+aber ein *bestimmter* selten — bei knapp vierzig im Vorrat sieht man ihn nur wenige Male
+im Jahr. Ein Eintrag, der mehrere verschiedene Notfälle zitiert, wäre damit praktisch
+unerreichbar. Er muss an **einer** Kette hängen.
 
 ## 9. Die Firmenfeier (`data_party.js`)
 

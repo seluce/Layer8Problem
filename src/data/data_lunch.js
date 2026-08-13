@@ -86,7 +86,7 @@ export const lunch = [
 			title: "MITTAG: GESCHÄFTSESSEN",
 			text: "Ein schmieriger Vertreter lädt dich zum Lunch ein. Es gibt teures Sushi. Er will dir aber eigentlich nur eine völlig überteuerte Firewall-Lösung andrehen.",
 			opts: [
-				{ t: "Gratis Essen abgreifen", m: 90, f: 20, a: -10, c: -5, r: "Das Sushi war göttlich. Du hast ihm versprochen, 'mal drüber nachzudenken' (Lüge). Pause überzogen." },
+				{ t: "Gratis Essen abgreifen", next: "path_lunch_sushi", m: 90, f: 20, a: -10, c: -5, r: "Das Sushi war göttlich. Du hast ihm versprochen, 'mal drüber nachzudenken' (Lüge). Pause überzogen." },
 				{ t: "Dankend ablehnen", m: 30, f: -5, a: 0, c: 5, r: "Du bleibst im Büro. Deine Integrität ist gewahrt, aber dein Magen knurrt." }
 			]
 		},
@@ -158,7 +158,7 @@ export const lunch = [
 					r: "Du hältst das Handy ans Ohr: 'Oh, Server-Notfall! Muss los!' Du rennst mit dem Tablett raus. Knapp entkommen, aber er wirkt beleidigt." 
 				},
 				{ 
-					t: "Hinsetzen & Smalltalk wagen", 
+					t: "Hinsetzen & Smalltalk wagen", next: "path_lunch_vorstandstisch", 
 					rep: { "Dr. Wichtig": 5 },
 					m: 60, f: -10, a: 20, c: -25, 
 					r: "Du schwitzt Blut und Wasser. Du lachst über seine unlustigen Witze. Aber es lohnt sich: Er hält dich jetzt für einen 'Guten Mann', und dieses Wohlwollen trägt wochenlang. Dein Essen ist allerdings kalt geworden." 
@@ -193,7 +193,7 @@ export const lunch = [
 			text: "Die 'High-Performer' ziehen sich Laufschuhe an. 'Na Müller? Kommst du mit? 10km in der Mittagspause! Das klärt den Geist für maximale Productivity!' Sie sehen fit, aber manisch aus.",
 			opts: [
 				{ 
-					t: "Mitlaufen! 10km sind doch nix!",
+					t: "Mitlaufen! 10km sind doch nix!", next: "path_lunch_gelaufen",
 					m: 70, f: -20, a: 30, c: -10, 
 					r: "Du stirbst. Zweimal. Du kommst schweißgebadet und mit hochrotem Kopf wieder. Du kannst kaum noch tippen vor Erschöpfung. Aber sie akzeptieren dich jetzt als einen von ihnen." 
 				},
@@ -921,4 +921,60 @@ export const lunch = [
 				}
 			]
 		},
-	];
+	
+/* -------------------------------------------------------------------------
+   Multi-day lunches (v5.1). The pool had no chain at all, although lunch is
+   the one thing that happens every single day - which makes it the most
+   natural place for a "yesterday over food". The openers above set the flags,
+   the next midday lives here. Gated in engine_events.triggerLunch, with the
+   same FOLLOWUP_CHANCE the action pools use.
+   ------------------------------------------------------------------------- */
+{
+    id: "lunch_nach_lauf",
+    reqStory: "path_lunch_gelaufen",
+    reqStoryAge: 1,
+    title: "MITTAG: DER MUSKELKATER",
+    text: "Zehn Kilometer sind gestern deutlich weiter gewesen als in der Ankündigung. Die Treppe ins Untergeschoss hast du heute im Seitwärtsschritt genommen. In der Kantine winkt die Laufgruppe schon von weitem, und einer hält zwei Paar Schuhe hoch.",
+    opts: [
+        { t: "Wieder mitlaufen", m: 45, f: -10, a: 10, c: 0,
+          r: "Du läufst wieder. Nach vier Kilometern hört der Schmerz auf und wird zu etwas anderem, das sich fast gut anfühlt. Zurück am Platz sitzt du eine halbe Stunde bewegungslos und bereust nichts, aber auch nicht nichts." },
+        { t: "Absagen und sitzen bleiben", m: 30, f: 5, a: -10, c: 0,
+          r: "Du sagst ab, ohne dich zu rechtfertigen. Einer der Läufer sagt 'Schade' und meint es sogar. Beim Essen merkst du, dass sie dich ab jetzt jedes Mal fragen werden, und das ist keine schlechte Nachricht." },
+        { t: "Fragen, ob es die Strecke auch kürzer gibt", m: 35, f: -5, a: -5, c: 0,
+          r: "Es gibt sie. Fünf Kilometer, dienstags, kleinere Gruppe, weniger Gespräch über Kennzahlen. Zwei aus der Buchhaltung laufen mit, seit Monaten, und niemand im Haus wusste davon." }
+    ]
+},
+{
+    id: "lunch_nach_sushi",
+    reqStory: "path_lunch_sushi",
+    reqStoryAge: 1,
+    title: "MITTAG: DIE NACHFASSUNG",
+    text: "Das Sushi war ausgezeichnet, die Firewall-Lösung nicht. Heute liegt eine Mail im Postfach: Zusammenfassung des gestrigen Gesprächs, drei Seiten, mit einem Angebot im Anhang und einem Satz, der dir nicht gefällt. 'Wie besprochen.' Besprochen wurde nichts.",
+    opts: [
+        { t: "Sachlich richtigstellen, was besprochen wurde", m: 20, f: -5, a: 5, c: 5,
+          r: "Du antwortest in vier Sätzen: kein Bedarf, keine Zusage, kein Termin. Die Antwort kommt binnen Minuten und ist ausgesprochen freundlich. Das Angebot bleibt gültig. Es wird immer gültig bleiben." },
+        { t: "Nicht antworten", m: 5, f: 10, a: 0, c: 5,
+          r: "Du antwortest nicht. Nach drei Tagen kommt die Erinnerung, nach zwei Wochen der Anruf, nach einem Monat steht das Angebot im Verteiler des Chefs. 'Wie besprochen' steht immer noch darin." },
+        { t: "Die Mail an Frau Elster weiterleiten", m: 15, f: -5, a: -5, c: 0,
+          rep: { "Frau Elster": 5 },
+          r: "Frau Elster liest, was gestern angeblich besprochen wurde, und ruft selbst an. Was sie sagt, weiß niemand. Der Vertreter meldet sich nie wieder, und das Sushi war rückblickend das teuerste, das du je umsonst gegessen hast." }
+    ]
+},
+{
+    id: "lunch_nach_vorstand",
+    reqStory: "path_lunch_vorstandstisch",
+    reqStoryAge: 1,
+    title: "MITTAG: DER PLATZ IST FREI",
+    text: "Du kommst mit dem Tablett in die Kantine, und am Vorstandstisch ist ein Stuhl frei. Dr. Wichtig sieht nicht auf, aber der Stuhl steht ein Stück heraus, so wie man ihn herausstellt, wenn jemand kommen soll. An deinem alten Tisch sitzen Kevin und Chantal und haben schon Platz gemacht.",
+    opts: [
+        { t: "Zu Kevin und Chantal setzen", m: 30, f: 0, a: -10, c: 0,
+          rep: { "Kevin": 5, "Chantal": 5 },
+          r: "Du setzt dich zu den beiden. Es wird laut, es wird über nichts geredet, und es ist die erste Pause seit Wochen, die sich wie eine anfühlt. Der Stuhl am Vorstandstisch bleibt leer und wird irgendwann zurückgeschoben." },
+        { t: "Sich an den Vorstandstisch setzen", m: 35, f: -5, a: 5, c: -10,
+          rep: { "Dr. Wichtig": 5, "Kevin": -5 },
+          r: "Du setzt dich. Es wird über Zahlen geredet, über die du nichts sagen kannst, und über Leute, die zwei Tische weiter sitzen. Danach weißt du drei Dinge, die du lieber nicht wüsstest, und alle drei betreffen Kollegen." },
+        { t: "Das Tablett nehmen und am Platz essen", m: 20, f: 10, a: 5, c: 0,
+          r: "Du gehst mit dem Tablett zurück an deinen Schreibtisch. Von dort siehst du beide Tische durch die Glaswand, und keiner von beiden vermisst dich. Es ist eine ruhige halbe Stunde und keine gute." }
+    ]
+},
+];

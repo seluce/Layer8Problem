@@ -686,9 +686,15 @@ const EVENT_KEYS = {
   coffee:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   server:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   sidequests: ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly', 'kind', 'appName'],
+  // Deliberately WITHOUT reqStoryAge/reqWeekDayMin: the encounter pool is
+  // reserved for the quest items, and those have to stay reachable. Every
+  // filler chain added here lowers the chance of the item events being drawn
+  // and can lock the gala behind an achievement that never completes. If the
+  // pool is ever opened for multi-day stories, that decision belongs with
+  // the quest-item design, not with a passing content wave.
   reputation: ['reqStory', 'reqRep'],
   party:      ['loc', 'textByProgress'],   // hub variants by progress (engine_core.reset)
-  lunch:      [],
+  lunch:      ['reqStory', 'reqStoryAge'],   // gated in engine_events.triggerLunch
   meetings:   ['startNodeGala'],   // alternative opening when tonight's gala fires (engine_week.triggerMeeting)
   tutorial:   ['type', 'step']
 };

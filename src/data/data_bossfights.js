@@ -2,64 +2,65 @@ export const bossfights = [
 
    {
 		id: "boss_ransomware",
-		title: "🚨 RANSOMWARE ANGRIFF 🚨",
-		text: "EIN TOTENKOPF AUF DEM HAUPTSERVER! 'Senden Sie 10 Bitcoin oder alles wird gelöscht'. Der Countdown läuft! (10 Sekunden)",
+		title: "Der Totenkopf auf dem Hauptserver",
+		text: "Auf dem Hauptserver steht ein Totenkopf in ASCII-Zeichen. Darunter: 'Senden Sie 10 Bitcoin oder alles wird gelöscht.' Eine Ziffernfolge zählt rückwärts, und sie zählt schnell.",
 		timer: 10, 
 		opts: [
-			{ t: "Admin-Code eingeben", req: "admin_pw", m: 5, f: 0, a: -10, c: -20, r: "Profi-Move! Angriff abgewehrt. Held der Firma!" },
-			{ t: "Stecker ziehen!", m: 10, f: -10, a: 20, c: 10, r: "Brachial, aber wirksam. Server ist aus. Daten gerettet (vielleicht)." }
+			{ t: "Admin-Code eingeben", req: "admin_pw", m: 5, f: 0, a: -10, c: -20, r: "Du tippst den Admin-Code, der Countdown bleibt stehen, und der Totenkopf verschwindet Zeile für Zeile. Niemand hat es gesehen. Du sitzt danach zwei Minuten still da, und niemand wird je erfahren, wie knapp das war." },
+			{ t: "Stecker ziehen!", m: 10, f: -10, a: 20, c: 10, r: "Du ziehst den Stecker mitten im Verschlüsselungslauf. Der Server ist aus, der Angriff auch. Ob die Daten den Abbruch überstanden haben, weiß frühestens morgen jemand, und niemand spricht es heute aus." }
 		],
-		fail: {rep: { "Dr. Wichtig": -20 }, m: 30, f: 0, a: 50, c: 50, r: "ZU LANGSAM! Daten verschlüsselt. Chef tobt!" }
+		fail: {rep: { "Dr. Wichtig": -20 }, m: 30, f: 0, a: 50, c: 50, r: "Der Zähler läuft ab, während du noch überlegst. Danach sind alle Dateien verschlüsselt, auch die Sicherung, weil sie am selben Netz hing. Der Chef schreit sich in eine Lautstärke, die man zwei Etagen tiefer hört." }
 	},
 	{
 		id: "boss_fire",
-		title: "🔥 SERVER BRAND 🔥",
-		text: "Rauch im Serverraum! Ein Kondensator ist geplatzt! Flammen schlagen hoch! Handeln Sie!",
+		title: "Rauch im Serverraum",
+		text: "Es riecht nach verbranntem Kunststoff, bevor du etwas siehst. Ein Kondensator ist geplatzt, aus dem oberen Rack schlagen Flammen, und die Rauchmelder haben noch nicht angeschlagen.",
 		timer: 8,
 		opts: [
-			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 10, c: 25, r: "Feuerwehr kommt. Büro evakuiert. Du hast Pause." },
-			{ t: "Feuerlöscher benutzen", req: "fire_ext", m: 30, f: -10, a: 10, c: -20, r: "Feuer gelöscht. Du hustest, aber bist ein Held." }
+			{ t: "Wegrennen und Alarm drücken", m: 60, f: 10, a: 10, c: 25, r: "Die Feuerwehr braucht sieben Minuten und ist mit vier Leuten da. Das Haus steht auf dem Parkplatz, die halbe Belegschaft in Hausschuhen, und du stehst dazwischen mit dem Gefühl, alles richtig gemacht zu haben." },
+			{ t: "Feuerlöscher benutzen", req: "fire_ext", m: 30, f: -10, a: 10, c: -20, r: "Zwei Stöße mit dem Löscher, dann ist es aus. Du hustest den halben Nachmittag und riechst noch abends danach. Egon kommt später vorbei, sieht sich das Rack an und sagt: 'Sauber gemacht.' Mehr sagt er nicht.",
+				next: "path_boss_fire_geloescht" }
 		],
-		fail: { m: 120, f: -20, a: 30, c: 40, r: "SPRINKLERANLAGE AKTIV! Von der Decke regnet es auf Server, Akten und deine letzte Hoffnung. Totalschaden." }
+		fail: { m: 120, f: -20, a: 30, c: 40, r: "Die Sprinkleranlage löst aus, und zwar überall gleichzeitig. Von der Decke regnet es auf Racks, Aktenordner und einen Karton mit Weihnachtsdeko. Das Feuer ist aus. Alles andere auch." }
 	},
 	{
 		id: "boss_stream",
 		char: "Dr. Wichtig",
-		title: "☠️ CEO LIVE-STREAM FAIL ☠️",
-		text: "Der CEO präsentiert live vor 5000 Investoren. Das Bild friert ein! Er ruft dich auf dem Handy an und brüllt: 'MACHEN SIE DASS ES GEHT! JETZT SOFORT!'",
+		title: "Das Bild friert ein",
+		text: "Der Chef präsentiert live vor fünftausend Investoren, und das Bild steht seit vier Sekunden still. Dein Handy klingelt. Er brüllt hinein, ohne zu grüßen: 'Machen Sie, dass es geht!'",
 		timer: 12,
 		opts: [
-			{ t: "Backup-Leitung schalten", req: "admin_pw", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
+			{ t: "Backup-Leitung mit einem Ersatzkabel schalten", req: "cable", rep: { "Dr. Wichtig": 10 }, m: 5, f: -10, a: 0, c: -20, r: "Profi-Reaktion! Der Stream läuft wieder in 4K. Der CEO wirkt erleichtert (und schwitzt)." },
 			{ t: "Qualität auf 'Kartoffel' (240p) setzen", rep: { "Dr. Wichtig": -5 }, m: 5, f: 5, a: 0, c: 25, r: "Es läuft wieder flüssig. Aber der CEO sieht aus wie eine Lego-Figur. Aus dem Stream-Chat regnen Klötzchen-Emojis." }
 		],
-		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "STREAM ABGEBROCHEN. Aktienkurs fällt um 10%. Der Chef kommt persönlich runter..." }
+		fail: { rep: { "Dr. Wichtig": -20 }, m: 20, f: 0, a: 40, c: 60, r: "Der Stream bricht ab, und fünftausend Zuschauer sehen ein schwarzes Bild mit einer Fehlernummer. Der Kurs gibt bis Handelsschluss zehn Prozent nach. Der Chef kommt nicht an, er kommt herunter." }
 	},
 	{
 		id: "boss_ddos",
-		title: "🧟 ZOMBIE BOTNET ANGRIFF 🧟",
-		text: "ALARM! Millionen von gehackten Kühlschränken greifen unsere Webseite an! Die Firewall glüht! Traffic bei 5000%!",
+		title: "Die Kühlschränke greifen an",
+		text: "Der Traffic liegt bei fünftausend Prozent. Die Quellen sind vernetzte Kühlschränke, hunderttausende, weltweit. Die Firewall hält noch, aber der Graph zeigt nur noch nach oben.",
 		timer: 15,
 		opts: [
 			{ t: "Stecker vom Router ziehen", m: 5, f: 10, a: -5, c: 20, r: "Der Angriff ist gestoppt. Aber wir sind offline. Technisch gesehen ein Erfolg, wirtschaftlich eine Katastrophe." },
 			{ t: "Geo-Blocking aktivieren", m: 10, f: -5, a: 5, c: -5, r: "Zack! Der ganze Traffic aus Übersee ist geblockt. Die Seite läuft wieder. Kollateralschaden gering." }
 		],
-		fail: { m: 60, f: -10, a: 30, c: 40, r: "SERVER ABGESTÜRZT. Die Seite ist down. Auf Twitter trendet #GlobalCorpFail." }
+		fail: { m: 60, f: -10, a: 30, c: 40, r: "Der Server geht in die Knie und nimmt die Firmenseite mit. Bis zum Abend ist der Ausfall ein eigenes Schlagwort im Netz, mit Bildschirmfotos, und Chantal beantwortet Kommentare, bis ihr jemand das Handy abnimmt." }
 	},
 	{
 		id: "boss_heat",
-		title: "❄️ KLIMAANLAGE TOTALAUSFALL ❄️",
-		text: "Stille im Serverraum. Die Kühlung ist tot. Die Temperatur steigt rasant! 40°C... 45°C... Bei 50°C schmelzen die CPUs!",
+		title: "Die Kühlung ist tot",
+		text: "Es ist still im Serverraum, und das ist das Falsche daran. Die Kühlung läuft nicht. Das Thermometer zeigt vierzig Grad und klettert im Sekundentakt. Bei fünfzig schaltet sich alles selbst ab.",
 		timer: 10,
 		opts: [
 			{ t: "Fenster einschlagen", req: "hammer", m: 5, f: 0, a: 20, c: 10, r: "Klirr! Eiskalte Luft strömt herein (und ein paar Tauben). Hardware gerettet, Fenster kaputt." },
 			{ t: "Not-Aus drücken", m: 5, f: 5, a: 10, c: 25, r: "Alles fährt runter. Die Stille ist gespenstisch. Hardware sicher, aber die Firma steht still." }
 		],
-		fail: { m: 120, f: -20, a: 50, c: 50, r: "KERN-SCHMELZE! Es riecht nach verschmortem Plastik. Der Feuermelder geht los. Renn!" }
+		fail: { m: 120, f: -20, a: 50, c: 50, r: "Bei einundfünfzig Grad schalten sich die ersten Server selbst ab, bei dreiundfünfzig riecht es nach verschmortem Kunststoff. Der Rauchmelder geht an, und du bist als Einziger nah genug, um zu wissen, dass es diesmal echt ist." }
 	},
 	{
 		id: "boss_db_purge",
-		title: "💀 DROP DATABASE PROD 💀",
-		text: "ALARM! Der Azubi Kevin hat 'aus Versehen' das Lösch-Skript auf der LIVE-DATENBANK gestartet! Die Balken werden rot! Kundendaten verschwinden im Sekundentakt! (8 Sekunden)",
+		title: "Kevin und das Löschskript",
+		text: "Kevin steht sehr aufrecht vor seinem Bildschirm und sagt nichts. Auf dem Bildschirm läuft ein Löschskript gegen die Live-Datenbank. Der Fortschrittsbalken ist bei elf Prozent.",
 		timer: 8,
 		opts: [
 			{ 
@@ -72,7 +73,8 @@ export const bossfights = [
 				t: "Admin-Override", 
 				req: "admin_pw", 
 				m: 5, f: 5, a: -10, c: -20,
-				r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Die Daten sind sicher." 
+				r: "Mit zitternden Händen tippst du das Root-Passwort. 'ROLLBACK COMPLETE'. Du bist ein Gott. Die Daten sind sicher.",
+				next: "path_boss_rollback" 
 			},
 			{ 
 				t: "Die ganze Steckerleiste rausreißen", 
@@ -83,20 +85,21 @@ export const bossfights = [
 		fail: { 
 			rep: { "Dr. Wichtig": -10 },	
 			m: 120, f: -50, a: 50, c: 80, 
-			r: "DATENBANK LEER. 'Error 404: Company not found'. Der Chef steht weinend im Serverraum. Du solltest schon mal deinen Lebenslauf aktualisieren." 
+			r: "Das Skript läuft durch. Danach meldet die Datenbank keinen Fehler mehr, sondern gar nichts. 'Error 404: Company not found'. Der Chef steht weinend im Serverraum. Du solltest schon mal deinen Lebenslauf aktualisieren." 
 		}
 	},
 	{
 		id: "boss_tiktok",
-		title: "🤳 TIKTOK INVASION 🤳",
-		text: "Ein bekannter Influencer ist in den Serverraum eingedrungen! 'Yo Leute, checkt mal diese blinkenden Lichter! Ich zieh mal hier dran für den Prank!' Er greift nach dem Haupt-Switch!",
+		title: "Der Influencer im Rack",
+		text: "Ein Influencer steht zwischen den Racks und filmt sich selbst. 'Checkt mal diese blinkenden Lichter. Ich zieh mal hier dran, für den Prank.' Seine Hand liegt am Haupt-Switch.",
 		timer: 12,
 		opts: [
 			{ 
 				t: "Per Bürgerfestnahme fesseln", 
 				req: "zip_ties",
 				m: 15, f: -5, a: -20, c: 10, 
-				r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'Sigma Male Admin verteidigt Revier'. Die Kommentare feiern dich." 
+				r: "Du hast ihn mit Kabelbindern an ein Rack gefesselt, bis die Security kam. Das Video geht viral: 'Sigma Male Admin verteidigt Revier'. Die Kommentare feiern dich.",
+				next: "path_boss_influencer" 
 			},
 			{ 
 				t: "Mit Feuerlöscher 'einnebeln'", 
@@ -113,24 +116,24 @@ export const bossfights = [
 		fail: { 
 			m: 60, f: 0, a: 50, c: 50, 
 			rep: { "Dr. Wichtig": -10 },	
-			r: "ER HAT DEN STECKER GEZOGEN! 'Ouuuups, war nur ein Prank Bro!'. Das Internet ist weg. Du gehst viral als 'Der heulende Admin' und wirst zum Meme. Der Chef ist 'not amused'." 
+			r: "Er zieht den Stecker, hält ihn in die Kamera und sagt: 'Ouuups, war nur ein Prank.' Das Haus ist offline. Am Abend läuft der Ausschnitt unter dem Titel 'Der heulende Admin', und er läuft sehr gut. Der Chef ist 'not amused'." 
 		}
 	},
 	{
 		id: "boss_ups_battery",
-		title: "🔋 USV BATTERIE SÄURE 🔋",
-		text: "Die Notstrom-Batterie bläht sich auf wie ein Ballon! Es zischt! Säure droht auszutreten und durch den Doppelboden in die Etage darunter zu tropfen (Chefbüro)!",
+		title: "Die Batterie bläht sich auf",
+		text: "Die Notstrom-Batterie hat sich aufgebläht wie ein Ballon und zischt leise. Was gleich austritt, läuft durch den Doppelboden in die Etage darunter. Darunter liegt das Chefbüro.",
 		timer: 10,
 		opts: [
 			{ t: "Aus dem Fenster werfen", m: 5, f: 10, a: 20, c: 20, r: "Du hast das 20kg Teil durchs geschlossene Fenster geworfen. Es explodiert auf dem Parkplatz. Besser dort als hier." },
 			{ t: "MacGyver-mäßig mit Panzertape abdichten", req: "tape", m: 10, f: 0, a: 0, c: -10, r: "Du wickelst eine ganze Rolle Panzertape drum. Es hält den Druck... gerade so. Zeitbombe entschärft (für heute)." }
 		],
-		fail: { rep: { "Dr. Wichtig": -20 }, m: 240, f: -30, a: 40, c: 80, r: "SÄURE-LECK! Es frisst sich durch den Boden. Es tropft auf den Schreibtisch des Chefs. Der Geruch ist bestialisch." }
+		fail: { rep: { "Dr. Wichtig": -20 }, m: 240, f: -30, a: 40, c: 80, r: "Die Batterie gibt nach. Was austritt, frisst sich durch den Doppelboden und tropft eine Etage tiefer auf den Schreibtisch, an dem gerade niemand sitzt. Der Geruch hält sich drei Wochen." }
 	},
 	{
 		id: "boss_skynet_lock",
-		title: "🔒 TÜREN VERRIEGELT 🔒",
-		text: "Fehlfunktion im Sicherheitssystem! Die Brandschutztüren schließen sich. Der Sauerstoff wird abgesaugt (Halon-Anlage). Du hast 10 Sekunden, bevor du ohnmächtig wirst!",
+		title: "Die Brandschutztüren schließen",
+		text: "Die Brandschutztüren fahren zu, alle gleichzeitig, ohne dass es brennt. Dann setzt die Löschanlage an und beginnt, dem Raum den Sauerstoff zu entziehen. Du bist noch drin.",
 		timer: 10,
 		opts: [
 			{ 
@@ -154,24 +157,24 @@ export const bossfights = [
 		fail: {
 			rep: { "Dr. Wichtig": -10 },				
 			m: 120, f: 30, a: 20, c: 50, 
-			r: "OHNMACHT. Du wachst im Krankenhaus auf. Der Chef steht am Bett: 'Wer schläft, fliegt! Das ziehen wir vom Lohn ab!'" 
+			r: "Du wachst im Krankenhaus auf, mit einer Sauerstoffmaske und ohne Erinnerung an die letzten Minuten. Der Chef steht am Bett und ist ehrlich besorgt, bis er fragt, ob das jetzt als Arbeitsunfall zählt." 
 		}
 	},
 	{
 		id: "boss_coffee_crisis",
-		title: "☕ KAFFEE-MASCHINE EXPLOSION ☕",
-		text: "NICHT DER SERVERRAUM! SCHLIMMER! Die Industriemaschine in der Küche vibriert und sprüht heißen Dampf! Der Druckkessel steht kurz vor dem Bersten! Ohne Kaffee stirbt die Abteilung!",
+		title: "Die Maschine unter Druck",
+		text: "Nicht der Serverraum. Die Küche. Die Industriemaschine vibriert auf der Arbeitsplatte und stößt heißen Dampf aus, das Manometer steht im roten Bereich. Ohne diese Maschine überlebt die Abteilung den Tag nicht.",
 		timer: 9,
 		opts: [
 			{ t: "Überdruckventil öffnen", req: "screw", m: 5, f: -5, a: -10, c: -5, r: "Pfeifend entweicht der Druck. Du bist der Held der Belegschaft. Applaus im Flur!" },
 			{ t: "Stecker ziehen & wegrennen", m: 5, f: 10, a: 25, c: 10, r: "Die Maschine beruhigt sich langsam. Aber: KEIN KAFFEE MEHR HEUTE. Die Kollegen schauen dich mit mordlustigen Augen an." }
 		],
-		fail: { m: 60, f: 0, a: 50, c: 20, r: "KA-WUMM! Die Küche ist voller Kaffeesatz. Die Maschine ist Schrott. Die Moral der Firma sinkt auf 0. Es herrschen anarchische Zustände." }
+		fail: { m: 60, f: 0, a: 50, c: 20, r: "Der Kessel gibt nach. Danach ist die Küche bis zur Decke mit Kaffeesatz ausgekleidet, die Maschine ist Schrott, und im Haus sinkt binnen einer Stunde alles, was man messen könnte." }
 	},
 	{
 		id: "boss_printer_rage",
-		title: "BOSS: DER DRUCKER DES TODES",
-		text: "ALARM! Der Großraumdrucker rattert wie ein Maschinengewehr! Er spuckt hunderte schwarze Seiten aus, Rauch steigt auf. Das Display blinkt: 'FEED ME STRAY CAT'. Er droht zu überhitzen und die Sprinkleranlage auszulösen!",
+		title: "Der Drucker im Dauerfeuer",
+		text: "Der Großraumdrucker rattert ohne Unterlass und wirft schwarze Seiten aus, hunderte inzwischen. Aus dem Fach steigt Rauch. Im Display blinkt eine Meldung, die dort nicht vorgesehen ist: FEED ME STRAY CAT.",
 		timer: 15,
 		opts: [
 			{ 
@@ -189,14 +192,20 @@ export const bossfights = [
 				t: "Papierstau suchen", 
 				m: 10, f: -5, a: 20, c: 10, 
 				r: "Du greifst in die Mechanik. Der Drucker beißt dich! Du hast Tinte im Gesicht und Verbrennungen an den Fingern. Er hört von alleine auf, weil das Papier alle ist." 
+			},
+			{
+				t: "Kopfhörer aufsetzen und in Ruhe suchen",
+				req: "headphones",
+				m: 15, f: -5, a: -15, c: 0,
+				r: "Mit Kopfhörern ist es nur noch ein Gerät, das etwas tut. Nach vier Minuten findest du den zerknüllten Rest eines Lieferscheins in der Zuführung. Der Drucker piept, druckt eine saubere Seite und schweigt."
 			}
 		],
-		fail: { r: "BOOOOM! Der Drucker ist explodiert. Die Sprinkler gehen an. Alles ist nass. Du bist nass. Der Tag ist gelaufen.", m: 60, f: -10, a: 50, c: 50 }
+		fail: { r: "Der Drucker überhitzt, und was danach kommt, ist eher ein dumpfer Schlag als eine Explosion. Die Sprinkler springen trotzdem an. Alles ist nass, du bist nass, und der Tag ist gelaufen.", m: 60, f: -10, a: 50, c: 50 }
 	},
 	{
 		id: "boss_cable_mess",
-		title: "BOSS: DER ISO-PRÜFER KOMMT",
-		text: "PANIK! Der strenge Prüfer vom TÜV steht im Flur! Er steuert direkt auf den Serverraum zu! Dort hängen die Kabel wie Lianen im Dschungel von der Decke. Wenn er das sieht, entzieht er uns die Zertifizierung!",
+		title: "Der TÜV steht im Flur",
+		text: "Der Prüfer vom TÜV steht im Flur und geht zielstrebig auf den Serverraum zu. Dort hängen die Kabel von der Decke wie Lianen. Was er in den nächsten zwei Minuten sieht, entscheidet über die Zertifizierung.",
 		timer: 20,
 		opts: [
 			{ 
@@ -220,8 +229,8 @@ export const bossfights = [
 	},
 	{
 		id: "boss_water_leak",
-		title: "BOSS: DAS ROHR BRICHT",
-		text: "ZISCH! In der Teeküche ist ein Rohr geplatzt! Ein Strahl heißes Wasser schießt quer durch den Raum... direkt auf die ungeschützte Steckdosenleiste des Etagen-Verteilers! Stromausfall in 3... 2...",
+		title: "Das Rohr in der Teeküche",
+		text: "In der Teeküche ist ein Rohr geplatzt. Ein Strahl heißes Wasser schießt quer durch den Raum, in einem sehr geraden Winkel, genau auf die offene Steckdosenleiste des Etagenverteilers.",
 		timer: 15,
 		opts: [
 			{ 
@@ -245,8 +254,8 @@ export const bossfights = [
 	},
 	{
 		id: "boss_vga_fail",
-		title: "BOSS: LIVESTREAM DESASTERS",
-		text: "Der Chef hält seine Jahresrede live vor allen Investoren! Plötzlich flackert der Beamer. Das Bild wird lila, dann schwarz. Der VGA-Stecker am Podium ist locker und die Rändelschrauben fehlen! Der Chef schwitzt und starrt dich panisch an!",
+		title: "Das Kabel zur Jahresrede",
+		text: "Mitten in der Jahresrede flackert der Beamer, das Bild wird lila, dann schwarz. Am Podium sitzt der VGA-Stecker lose; die Rändelschrauben fehlen seit Jahren. Der Chef redet weiter und sieht dabei nur dich an.",
 		timer: 20,
 		opts: [
 			{ 
@@ -271,8 +280,8 @@ export const bossfights = [
 	},
 	{
 		id: "boss_audit",
-		title: "📋 DER DATENSCHUTZ-AUDITOR 📋",
-		text: "Ein externer Prüfer steht unangekündigt im Serverraum! Er will das 'Notfall-Handbuch' und das 'Lösch-Protokoll' sehen! Du hast beides nicht! Er zückt den roten Stift!",
+		title: "Der Datenschutz-Prüfer",
+		text: "Ein externer Prüfer steht unangekündigt im Serverraum und bittet um das Notfallhandbuch und das Löschprotokoll. Beides gibt es nicht. Er nimmt einen roten Stift aus der Innentasche und wartet freundlich.",
 		timer: 15,
 		opts: [
 			{ 
@@ -293,12 +302,12 @@ export const bossfights = [
 				r: "Du schlägst den Melder ein. Prüfung wegen Evakuierung abgebrochen. Radikal, aber effektiv." 
 			}
 		],
-		fail: { r: "Durchgefallen! Bußgeld: 50.000€. Die Firma ist pleite. Du bist schuld.", m: 120, f: -50, a: 50, c: 100 }
+		fail: { r: "Der Prüfer schreibt vierzig Minuten. Das Bußgeld steht am Ende unter einer Zeile, die mit 'wiederholt festgestellt' beginnt. Der Chef liest sie dreimal und sucht dabei jemanden, den er ansehen kann.", m: 120, f: -50, a: 50, c: 100 }
 	},
 	{
 		id: "boss_flood",
-		title: "🌊 DAS AQUARIUM PLATZT 🌊",
-		text: "Das riesige Zierfisch-Aquarium im Chefbüro hat einen Riss! 500 Liter Wasser drohen auf den Perserteppich und die Boden-Steckdosen zu laufen! Der Chef schreit: 'RETTE DIE KOIS!'",
+		title: "Fünfhundert Liter Zierfisch",
+		text: "Das Zierfischaquarium im Chefbüro hat einen Riss, fingerbreit, quer über die Frontscheibe. Darunter liegen ein Perserteppich und die Bodensteckdosen. Der Chef steht daneben und ruft: 'Retten Sie die Kois!'",
 		timer: 12,
 		opts: [
 			{ 
@@ -312,7 +321,8 @@ export const bossfights = [
 				rep: { "Dr. Wichtig": 10 },					
 				req: "zip_ties", 
 				m: 10, f: 0, a: -10, c: -10, 
-				r: "Du baust aus Kabelbindern und Müllbeutel einen Kescher. Fische gerettet. Das Büro ist geflutet, aber die Tiere leben." 
+				r: "Du baust aus Kabelbindern und Müllbeutel einen Kescher. Fische gerettet. Das Büro ist geflutet, aber die Tiere leben.",
+				next: "path_boss_kois" 
 			},
 			{ 
 				t: "Riss kleben", 
@@ -326,30 +336,29 @@ export const bossfights = [
 	},
 	{
 	id: "boss_demo_fail",
-	title: "☠️ DIE LIVE-DEMO ☠️",
-	text: "Der Chef präsentiert gerade live im TV! Auf der riesigen Leinwand hinter ihm erscheint plötzlich dein Desktop... und du hast 'Solitär' offen! Die ganze Welt sieht es! Du hast 10 Sekunden!",
+	title: "Die Fehlermeldung im Fernsehen",
+	text: "Der Chef präsentiert live im Fernsehen. Auf der Leinwand hinter ihm erscheint dein Desktop, in voller Größe, und darauf ein Fenster mit einem angefangenen Solitär-Spiel.",
 	timer: 10,
 	opts: [
 		{ 
 			t: "Das Kabel brutal mit der Schere kappen", 
 			rep: { "Dr. Wichtig": -2 },
 			m: 5, f: -10, a: 25, c: 20, 
-			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Du hast den Tag gerettet, aber ein HDMI-Kabel im Wert von 50€ zerstört." 
+			r: "Ratsch! Bild schwarz. Der Chef stammelt: 'Technische Störung!'. Der Tag ist gerettet. Nur ein HDMI-Kabel im Wert von 50€ zerstört." 
 		},
 		{ 
 			t: "Zu Excel wechseln", 
-			req: "admin_pw", 
 			rep: { "Dr. Wichtig": 2 },
-			m: 5, f: 5, a: -10, c: -10, 
+			m: 5, f: 5, a: -5, c: -5, 
 			r: "In Millisekunden wechselst du auf eine komplizierte Tabelle. Die Zuschauer denken, das gehört zur Show. 'Und hier sehen Sie unsere Effizienz!', ruft der Chef. Gerettet!" 
 		}
 	],
-	fail: { m: 60, f: 0, a: 50, c: 80, r: "DANEBEN! Du klickst versehentlich auf 'Neues Spiel'. Die Investoren lachen. Du bist das Meme des Monats." }
+	fail: { m: 60, f: 0, a: 50, c: 80, r: "Du klickst daneben, und zwar auf 'Neues Spiel'. Die Karten legen sich vor fünftausend Zuschauern neu aus. Die Investoren lachen, und einer applaudiert." }
 	},
     {
         id: "boss_ransomware_2",
-        title: "🚨 ROTE TOTENKOPF-KRISE 🚨",
-        text: "ALARM! Auf allen 400 Bildschirmen erscheint ein roter Totenkopf. 'Ihre Dateien wurden verschlüsselt!' Der CEO stürmt brüllend herein. Eine neue Ransomware!",
+        title: "Vierhundert rote Bildschirme",
+        text: "Auf allen vierhundert Bildschirmen im Haus steht derselbe rote Totenkopf. 'Ihre Dateien wurden verschlüsselt.' Aus dem Flur hört man den Chef kommen, lange bevor man ihn sieht.",
         timer: 12,
         opts: [
             { 
@@ -369,12 +378,12 @@ export const bossfights = [
                 r: "Brachiale Methode. Das Dateisystem ist hinüber, aber die Verschlüsselung stoppt sofort." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -30 }, m: 180, f: 0, a: 40, c: 50, r: "PANIK-STARRE! Die Zeit läuft ab und die gesamte Firmen-Cloud ist unlesbar. Der CEO feuert dich beinahe!" }
+        fail: { rep: { "Dr. Wichtig": -30 }, m: 180, f: 0, a: 40, c: 50, r: "Du bewegst dich nicht, während der Zähler abläuft. Danach ist die gesamte Firmen-Cloud unlesbar. Der Chef holt tief Luft, sagt drei Sätze und dann einen vierten, den er zurücknimmt." }
     },
     {
         id: "boss_ceo_stream_1",
-        title: "☠️ DER LIVE-STREAM ☠️",
-        text: "Der CEO teilt in einem globalen Live-Stream (5.000 Zuschauer) seinen Bildschirm. Plötzlich ploppt ein privater, unzensierter Browser-Tab mit furchtbaren Inhalten auf!",
+        title: "Der geteilte Bildschirm",
+        text: "Der Chef teilt seinen Bildschirm in einem Stream mit fünftausend Zuschauern. In diesem Moment holt ein privater Browser-Tab die Aufmerksamkeit zurück, den er sicher geglaubt hatte.",
         timer: 10,
         opts: [
             { 
@@ -395,12 +404,12 @@ export const bossfights = [
                 r: "Ein historischer Moment für den Flurfunk. Der Chef wird dir das allerdings noch sehr lange nachtragen." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 30, c: 40, r: "ZU SPÄT! Jemand hat Screenshots gemacht. Das Meme geht viral auf LinkedIn. Der Chef ist am Boden zerstört." }
+        fail: { rep: { "Dr. Wichtig": -40 }, m: 30, f: 0, a: 30, c: 40, r: "Jemand hat mitgeschnitten. Bis zum Abend läuft der Ausschnitt in einem Netzwerk, in dem der Chef sein Profil pflegt, und darunter diskutieren Leute, die ihn kennen." }
     },
     {
         id: "boss_water_leak_1",
-        title: "🌊 DER WASSERFALL 🌊",
-        text: "Ein Heizungsrohr an der Decke des Serverraums ist geplatzt! Rostiges Wasser prasselt wie ein Wasserfall direkt auf den Core-Switch zu!",
+        title: "Rostiges Wasser über Rack 3",
+        text: "An der Decke des Serverraums ist ein Heizungsrohr aufgegangen. Rostiges Wasser läuft an der Wand herunter und sammelt sich genau über dem Core-Switch. Es tropft noch nicht, aber es wird gleich.",
         timer: 12,
         opts: [
             { 
@@ -419,14 +428,17 @@ export const bossfights = [
                 req: "tape", 
                 m: 30, f: 10, a: 10, c: -5, 
                 r: "Du kletterst auf eine wackelige Leiter und wickelst das Tape um das nasse Rohr. Klitschnass, aber es hält dicht." 
-            }
+},
+{ t: "Die Verbindungen auf den Ersatz-Switch umstecken", req: "cable",
+  m: 20, f: -10, a: -5, c: -10,
+  r: "Du ziehst Port für Port um, mit dem Ersatzkabel aus dem Rucksack, und lässt den nassen Switch allein zurück. Als das Wasser ihn erreicht, hängt nichts mehr daran. Egon findet ihn zwei Tage später und nickt anerkennend." }
         ],
-        fail: { m: 90, f: -10, a: 30, c: 40, r: "ZEIT ABGELAUFEN! *BZZZZT*. Das Wasser erreicht den Switch. Ein Kurzschluss legt das gesamte Gebäude lahm." }
+        fail: { m: 90, f: -10, a: 30, c: 40, r: "Das Wasser erreicht den Core-Switch. Es macht kein dramatisches Geräusch, nur ein kurzes Knistern, und danach ist das ganze Gebäude ohne Netz." }
     },
     {
         id: "boss_rogue_ai_1",
-        title: "🤖 KÜNDIGUNG PER KI 🤖",
-        text: "Die neue 'KI-HR-Software' dreht durch! Sie bewertet alle Mitarbeiter als 'ungenügend' und verschickt massenhaft Kündigungen!",
+        title: "Die Software kündigt allen",
+        text: "Die neue Personalsoftware hat über Nacht alle Mitarbeiter bewertet und ist bei jedem Einzelnen zu 'ungenügend' gekommen. Sie versendet gerade die Schreiben. Zweihundertvierzig sind schon raus.",
         timer: 15,
         opts: [
             { 
@@ -438,7 +450,7 @@ export const bossfights = [
                 t: "Das LAN-Kabel der KI physisch ziehen", 
                 rem: "cable", 
                 m: 10, f: 0, a: 5, c: -10, 
-                r: "Du reißt das dicke Patchkabel raus. Die Mail-Flut stoppt sofort." 
+                r: "Du ziehst das Patchkabel, und der Versand bricht mitten im Wort ab. Zweihundertvierzig Schreiben sind draußen, einhundertsechzig nicht. Wer zu welcher Hälfte gehört, entscheidet sich am Montag." 
             },
             { 
                 t: "Einen Server-Neustart erzwingen", 
@@ -446,12 +458,12 @@ export const bossfights = [
                 r: "Hunderte Mitarbeiter denken jetzt, sie seien arbeitslos, bevor du das System gestoppt hast. Pures Chaos." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -20 }, m: 120, f: 0, a: 25, c: 30, r: "DIE KI GEWINNT! 400 Leute haben die Kündigung im Postfach. Das HR-Telefonnetz bricht unter der Last zusammen." }
+        fail: { rep: { "Dr. Wichtig": -20 }, m: 120, f: 0, a: 25, c: 30, r: "Vierhundert Kündigungsschreiben sind zugestellt, alle mit korrekter Anrede. Die Personalabteilung ist telefonisch nicht mehr erreichbar, und im Flur steht eine Schlange bis zum Aufzug." }
     },
     {
         id: "boss_audit_surprise_1",
-        title: "👔 ISO-AUDIT 👔",
-        text: "Drei strenge Männer im Anzug stehen unangemeldet im Serverraum. 'ISO 27001 Überprüfung! Zeigen Sie uns sofort Ihre Dokumentation zur Netzwerksicherheit!'",
+        title: "Drei Anzüge ohne Anmeldung",
+        text: "Drei Männer im Anzug stehen unangemeldet zwischen den Racks. 'ISO 27001, Stichprobe. Wir bräuchten Ihre Dokumentation zur Netzwerksicherheit.' Einer von ihnen hat bereits ein Klemmbrett ausgeklappt.",
         timer: 10,
         opts: [
             { 
@@ -471,12 +483,12 @@ export const bossfights = [
                 r: "Du fällst in allen Punkten durch. Die Geschäftsführung kriegt einen katastrophalen Mängelbericht." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -15 }, m: 45, f: 10, a: 25, c: 45, r: "STAMMERN! Deine Sprachlosigkeit wird als Schuldeingeständnis gewertet. Fette Abmahnung für das Team!" }
+        fail: { rep: { "Dr. Wichtig": -15 }, m: 45, f: 10, a: 25, c: 45, r: "Du findest keinen Satz. Der Prüfer wartet höflich, notiert dann etwas und wertet das Schweigen als das, was es ist. Die Abmahnung trifft nicht dich allein, sondern das ganze Team." }
     },
     {
         id: "boss_lockdown_1",
-        title: "🔒 SYSTEM-LOCKDOWN 🔒",
-        text: "Ein fehlerhaftes Firmware-Update blockiert das elektronische Schließsystem! Alle Türen im Haus sind dicht! Panik an einem Freitagnachmittag!",
+        title: "Das Schließsystem hat entschieden",
+        text: "Ein Firmware-Update hat das elektronische Schließsystem übernommen und alle Türen im Haus verriegelt. Von innen wie von außen. Im Flur sammeln sich die ersten Leute, die nach Hause wollten.",
         timer: 12,
         opts: [
             { 
@@ -496,12 +508,12 @@ export const bossfights = [
                 r: "Egon kommt mit einem Bund, das aussieht wie das Inventar einer Kathedrale, und schließt jede Tür einzeln auf. Analog besiegt Digital, und der Mann, den sonst niemand grüßt, ist für zehn Minuten der wichtigste Mensch im Haus." 
             }
         ],
-        fail: { m: 180, f: 20, a: 40, c: 15, r: "GEFANGEN! Jemand ruft in Panik die echte Feuerwehr. Die brechen das Haupttor auf. Riesen-Drama!" }
+        fail: { m: 180, f: 20, a: 40, c: 15, r: "Irgendwer ruft die Feuerwehr. Die kommt mit drei Fahrzeugen und öffnet das Haupttor auf die einzige Art, die dann noch geht. Die Rechnung dafür sieht man Wochen später im Verteiler." }
     },
     {
         id: "boss_ac_failure_1",
-        title: "🌡️ HITZE-TOD 🌡️",
-        text: "Die Klimaanlage im Serverraum ist komplett ausgefallen. Das Thermostat zeigt 48 Grad! Die Server fangen an zu stinken!",
+        title: "Achtundvierzig Grad",
+        text: "Die Klimaanlage ist ausgefallen, und niemand weiß, seit wann. Das Thermostat zeigt achtundvierzig Grad. Es riecht nach heißem Staub und nach etwas anderem, das man nicht riechen möchte.",
         timer: 10,
         opts: [
             { 
@@ -521,12 +533,12 @@ export const bossfights = [
                 r: "Du schaltest 50% der Hardware ab. Die Temperatur stabilisiert sich, aber viele Abteilungen sind offline." 
             }
         ],
-        fail: { m: 120, f: -10, a: 40, c: 60, r: "HITZE-KOLLAPS! Die Notabschaltung der Server greift. Die Firma ist für heute komplett offline!" }
+        fail: { m: 120, f: -10, a: 40, c: 60, r: "Die Notabschaltung greift und nimmt alles vom Netz, gleichzeitig und ohne Rückfrage. Die Firma ist für heute offline. Es dauert bis zum Abend, bis der Raum kühl genug zum Betreten ist." }
     },
     {
         id: "boss_ddos_1",
-        title: "🛡️ DDOS ANGRIFF 🛡️",
-        text: "Die Firewall-Logs rattern in Lichtgeschwindigkeit! Ein massiver DDoS-Angriff aus dem Ausland legt das Netz lahm. Nichts geht mehr!",
+        title: "Die Logs überschlagen sich",
+        text: "Die Firewall-Logs laufen so schnell durch, dass man einzelne Zeilen nicht mehr lesen kann. Ein Angriff aus dem Ausland, verteilt über tausende Adressen. Im Haus geht seit zwei Minuten nichts mehr.",
         timer: 12,
         opts: [
             { 
@@ -546,12 +558,12 @@ export const bossfights = [
                 r: "Sollen die Hacker doch machen. Du hast Feierabend im Kopf, während die Firma brennt." 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -15 }, m: 60, f: 0, a: 40, c: 30, r: "FREEZE! Der Core-Router stürzt unter der Last ab. Es dauert ewig, ihn neu zu booten. Kunden sind wütend." }
+        fail: { rep: { "Dr. Wichtig": -15 }, m: 60, f: 0, a: 40, c: 30, r: "Der Core-Router steigt unter der Last aus. Das Neustarten dauert siebzehn Minuten, in denen niemand etwas tun kann außer zusehen. Die Kunden schreiben in dieser Zeit sehr viele Mails." }
     },
     {
         id: "boss_excavator_1",
-        title: "🚧 EGONS BAGGER 🚧",
-        text: "Egon hat im Hof mit einem Mini-Bagger die Haupt-Glasfaserleitung der Firma zerrissen! Das Internet ist tot!",
+        title: "Egon und der Bagger",
+        text: "Egon steht im Hof neben einem Minibagger und sieht auf etwas herab, das aus der Erde ragt. Es ist die Hauptglasfaser des Hauses, sauber durchtrennt. Er hebt langsam den Kopf und sucht deinen Blick.",
         timer: 15,
         opts: [
             { 
@@ -563,33 +575,34 @@ export const bossfights = [
                 t: "Egon lauthals anschreien", 
                 rep: { "Egon": -15 },
                 m: 15, f: 0, a: -5, c: 10, 
-                r: "Das Netz ist zwar down, aber dein Frust-Schrei hat therapeutische Wirkung." 
+                r: "Du schreist über den halben Hof. Egon lässt es über sich ergehen, ohne den Blick zu senken, und sagt danach nur: 'Fertig?' Das Netz ist immer noch weg, aber dir geht es besser, und das rechnet niemand gegen." 
             },
             { 
                 t: "LTE-Router mit Gäste-WLAN aktivieren", 
                 rem: "wifi_note", 
                 m: 30, f: 5, a: 5, c: -10, 
-                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online." 
+                r: "Du opferst deinen WLAN-Zettel für den Notfall-Router. Die Bandbreite ist Müll, aber der Chef ist online.",
+				next: "path_boss_lte" 
             }
         ],
-        fail: { m: 240, f: 20, a: 20, c: 30, r: "OHNE INTERNET! Die Kollegen schicken sich Zettel auf den Fluren. Ein furchtbarer Arbeitstag beginnt." }
+        fail: { m: 240, f: 20, a: 20, c: 30, r: "Ohne Netz kehrt das Haus in einen früheren Zustand zurück: Zettel auf den Fluren, Leute, die einander suchen, und erstaunlich viele Gespräche. Gearbeitet wird nichts." }
     },
     {
         id: "boss_db_corruption_1",
-        title: "📉 DATENBANK-CRASH 📉",
-        text: "Die zentrale Finanz-Datenbank ist korrupt! Morgen ist Jahresabschluss. Wenn das nicht gefixt wird, bist du erledigt!",
+        title: "Der Jahresabschluss ist morgen",
+        text: "Die zentrale Finanzdatenbank meldet beim Öffnen einen Prüfsummenfehler. Morgen ist Jahresabschluss. Frau Elster ist bereits unterwegs zu dir, das hört man am Gang.",
         timer: 12,
         opts: [
             { 
                 t: "Schuld auf ein Windows-Update schieben", 
                 m: 15, f: 5, a: 15, c: 15, 
-                r: "Niemand kann das Gegenteil beweisen. Du kommst davon, aber die Firma verliert Geld." 
+                r: "Niemand kann das Gegenteil beweisen. Du kommst davon. Die Firma verliert Geld, und zwar messbar." 
             },
             { 
                 t: "Energy Drink exen und die Nacht durcharbeiten", 
                 rem: "energy", 
                 m: 120, f: -10, a: 5, c: -20, 
-                r: "Du pumpst dich mit Taurin voll und stellst alles fehlerfrei wieder her." 
+                r: "Vier Stunden, zwei Dosen und ein Wiederherstellungslauf, der dreimal abbricht, bevor er durchläuft. Um kurz vor sieben stimmt die Prüfsumme. Frau Elster bekommt den Jahresabschluss pünktlich und erfährt nie, wie knapp es war." 
             },
             { 
                 t: "Altes Backup blind drüberbügeln", 
@@ -597,12 +610,12 @@ export const bossfights = [
                 r: "Die fehlenden Tage muss Frau Elster eben per Hand neu eintippen. Sie wird dich dafür hassen." 
             }
         ],
-        fail: { rep: { "Frau Elster": -30, "Dr. Wichtig": -20 }, m: 60, f: 0, a: 30, c: 30, r: "ZÖGERN! Die Datenbank schmiert komplett ab. Die Wirtschaftsprüfer werden das Unternehmen zerfleischen." }
+        fail: { rep: { "Frau Elster": -30, "Dr. Wichtig": -20 }, m: 60, f: 0, a: 30, c: 30, r: "Du zögerst zu lange, und die Datenbank gibt ganz auf. Morgen ist Jahresabschluss, und die Prüfer werden Fragen stellen, auf die es keine Antworten gibt, nur Erklärungen." }
     },
     {
         id: "boss_crypto_police_1",
-        title: "🚓 CYBER-POLIZEI 🚓",
-        text: "Zwei Beamte stehen am Empfang. Eine Firmen-IP wurde beim illegalen Krypto-Mining erwischt. Sie wollen den Serverraum beschlagnahmen!",
+        title: "Zwei Beamte am Empfang",
+        text: "Zwei Beamte stehen am Empfang und haben es nicht eilig. Eine Firmen-IP ist beim Krypto-Mining aufgefallen. Sie fragen, wo der Serverraum liegt, und sie fragen nur aus Höflichkeit.",
         timer: 10,
         opts: [
             { 
@@ -614,21 +627,22 @@ export const bossfights = [
             { 
                 t: "Kooperieren und Türen öffnen", 
                 m: 180, f: 30, a: 25, c: 25, 
-                r: "Sie nehmen drei Racks mit. Die Firma steht still. Ein riesiger Skandal." 
+                r: "Sie nehmen drei Racks mit, ordentlich verpackt, mit Nummern versehen. Danach steht die Firma still, und im Flur wird über nichts anderes geredet. Die Geräte kommen nach acht Monaten zurück." 
             },
             { 
                 t: "USB-Wipe-Skript am Mining-PC ausführen", 
                 rem: "usb_stick", 
                 m: 10, f: 0, a: 15, c: 5, 
-                r: "Du löschst Kevins Beweise restlos. Die Polizei findet nichts." 
+                r: "Elf Sekunden, dann ist der Rechner sauber. Die Beamten sehen sich um, notieren zwei Seriennummern und ziehen wieder ab. Kevin steht daneben und begreift erst am Abend, was gerade passiert ist.",
+				next: "path_boss_wipe" 
             }
         ],
-        fail: { m: 240, f: 0, a: 40, c: 50, r: "DURCHSUCHUNG! Die Beamten stürmen vorbei, reißen Kabel aus der Wand und nehmen alles mit. Totalschaden!" }
+        fail: { m: 240, f: 0, a: 40, c: 50, r: "Die Beamten gehen an dir vorbei, ziehen die Kabel selbst und nehmen mit, was sie für relevant halten. Sie sind gründlich, höflich und in vierzig Minuten fertig." }
     },
     {
         id: "boss_phishing_ceo_1",
-        title: "🎣 DER DUMME KLICK 🎣",
-        text: "Der CEO hat auf 'Paket verfolgen' geklickt. Ein Skript löscht jetzt gerade live alle Dokumente im großen Intranet-Laufwerk!",
+        title: "Paket verfolgen",
+        text: "Der Chef hat auf 'Paket verfolgen' geklickt. Ein Skript arbeitet sich seitdem durch das Intranet-Laufwerk und löscht, was es findet. Man kann im Explorer zusehen, wie die Ordner verschwinden.",
         timer: 8,
         opts: [
             { 
@@ -640,7 +654,7 @@ export const bossfights = [
             { 
                 t: "Schreiend im Kreis rennen", 
                 m: 45, f: 20, a: 25, c: 20, 
-                r: "Du siehst weinend zu, wie 10 Jahre Firmenhistorie gelöscht werden." 
+                r: "Du siehst zu, wie sich das Skript durch zehn Jahre arbeitet. Die Ordnernamen werden älter, je weiter es kommt, und beim letzten steht eine Jahreszahl, die vor deiner Zeit liegt. Dann ist der Bildschirm leer." 
             },
             { 
                 t: "Mit Schraubendreher den Switch killen", 
@@ -649,12 +663,12 @@ export const bossfights = [
                 r: "Du reißt das Netzteil aus dem Switch. Alles offline, aber die Daten sind sicher!" 
             }
         ],
-        fail: { rep: { "Dr. Wichtig": -10 }, m: 60, f: 0, a: 30, c: 40, r: "ALLES WEG! Die Festplatte ist leer. Die Backups sind auch infiziert. Ihr beginnt wieder bei null." }
+        fail: { rep: { "Dr. Wichtig": -10 }, m: 60, f: 0, a: 30, c: 40, r: "Das Laufwerk ist leer, und die Sicherungen tragen dasselbe Skript in sich. Ihr fangt bei null an, mit einem Ordner, den jemand privat auf einem Stick hatte." }
     },
     {
         id: "boss_coffee_shortage_1",
-        title: "☕ KAFFEE-EMBARGO ☕",
-        text: "Der Lieferant hat gestreikt! Es gibt absolut keinen Kaffee mehr im Gebäude. Die Belegschaft mutiert zu wütenden Zombies. Produktivität = Null.",
+        title: "Kein Kaffee im Haus",
+        text: "Der Lieferant streikt, und im ganzen Haus gibt es keine Bohne mehr. Die ersten stehen schon vor dem leeren Automaten und drücken trotzdem. In einer Stunde ist hier niemand mehr ansprechbar.",
         timer: 15,
         opts: [
             { 
@@ -666,7 +680,7 @@ export const bossfights = [
                 t: "Einen Donut zur Beruhigung essen", 
                 rem: "donut", 
                 m: 5, f: -5, a: -5, c: 0, 
-                r: "Du rettest deine eigene Stimmung mit Zucker, während die Welt brennt." 
+                r: "Du holst dir etwas Süßes aus dem Automaten und siehst dem Haus beim Entkoffeinieren zu. Bis vierzehn Uhr hält die Stimmung, danach wird im ganzen Stockwerk nur noch geflüstert oder gebrüllt." 
             },
             { 
                 t: "Notfall-Ration (Löslich) im Flur aufbrühen", 
@@ -674,7 +688,185 @@ export const bossfights = [
                 r: "Es schmeckt wie Asche, aber die Meute wird ruhig gestellt. Du opferst dich für das Team." 
             }
         ],
-        fail: { m: 180, f: 30, a: 45, c: 15, r: "MEUTEREI! Das Büro verfällt in Lethargie. Du schläfst vor Erschöpfung fast am Schreibtisch ein." }
-    }
+        fail: { m: 180, f: 30, a: 45, c: 15, r: "Am Nachmittag redet niemand mehr. Zwei Leute gehen früher, drei tun so, als arbeiteten sie, und du sitzt vor einem Bildschirm und liest denselben Satz viermal." }
+    },
 
+
+	/* -------------------------------------------------------------------
+	   Wave 2 (v5.1). Same shape as the existing thirty: at least one way
+	   out through an item, one or two without that cost stats instead, and
+	   a fail that is worse than every option (measured range: options -30
+	   to +60 on a+c, fails 50 to 150). Duplicate check against the stock:
+	   fire alarm, the TÜV inspector, the aquarium, ransomware, DDoS, the
+	   frozen livestream and the coffee machine are taken.
+	   ------------------------------------------------------------------- */
+	{
+		id: "boss_cert_expired",
+		title: "Das Zertifikat ist abgelaufen",
+		timer: 12,
+		text: "Der Kundenshop meldet seit einer Minute eine Sicherheitswarnung, ganzseitig, rot. Das Zertifikat ist heute Nacht abgelaufen. Im Kalender stand eine Erinnerung dafür, vor elf Monaten eingetragen, von jemandem, der nicht mehr hier arbeitet.",
+		opts: [
+			{ t: "Ersatzzertifikat aus dem Handbuch einspielen", req: "manual",
+			  m: 10, f: -5, a: -5, c: -10,
+			  r: "Auf Seite 61 steht der Notfallschlüssel, handschriftlich ergänzt. Vier Minuten später ist der Shop wieder grün. Das Handbuch ist jetzt zum zweiten Mal wertvoller als jedes Wartungsprojekt." },
+			{ t: "Mit dem Admin-Zugang ein Notzertifikat ausstellen", req: "admin_pw",
+			  m: 15, f: -5, a: 5, c: -5,
+			  r: "Du stellst ein Zertifikat auf dreißig Tage aus. Es ist nicht schön, aber es ist gültig, und die Warnung verschwindet. In dreißig Tagen wird dasselbe Problem wieder auftauchen, und dann bist du es, der die Erinnerung einträgt." },
+			{ t: "Den Shop offline nehmen, bis es geklärt ist", m: 20, f: 0, a: 15, c: 20,
+			  r: "Du nimmst den Shop vom Netz. Kein Kunde sieht mehr eine Warnung, weil kein Kunde mehr etwas sieht. Der Vertrieb merkt es nach acht Minuten, und Markus ruft dreimal an, bevor du abnehmen kannst." },
+			{ t: "Die Warnung wegklicken lassen und Anleitung verschicken", m: 10, f: 5, a: 20, c: 10,
+			  r: "Du schreibst eine Rundmail, wie man die Warnung wegklickt. Damit hast du eintausendzweihundert Kunden beigebracht, Sicherheitswarnungen zu ignorieren. Der Shop läuft wieder, und dieser Sieg schmeckt schlechter als jeder Ausfall." }
+		],
+		fail: {
+			m: 25, f: 0, a: 40, c: 45,
+			r: "Die Warnung steht drei Stunden. In dieser Zeit brechen zweihundert Bestellvorgänge ab, und zwei Kunden schreiben freundliche Mails, dass sie das ihrer IT gemeldet hätten. Der Vertrieb rechnet den Umsatz aus, bevor der Shop wieder läuft."
+		}
+	},
+	{
+		id: "boss_broadcast_storm",
+		title: "Beide Enden im selben Switch",
+		timer: 10,
+		text: "Alle Anzeigen im Rack blinken gleichzeitig, im selben Takt, und das Netz steht. Im Besprechungsraum hat jemand ein Netzwerkkabel gefunden und beide Enden in die Dose gesteckt. Ordentlich, mit Klick, in beide.",
+		opts: [
+			{ t: "Den Port über den Admin-Zugang abschalten", req: "admin_pw",
+			  m: 5, f: -5, a: -10, c: -5,
+			  r: "Ein Befehl, ein Port, Ruhe. Die Anzeigen beruhigen sich innerhalb von Sekunden, und im Besprechungsraum merkt niemand, dass gerade etwas passiert ist. Das ist der Beruf: Man sieht es nur, wenn es fehlt." },
+			{ t: "In den Besprechungsraum laufen und das Kabel ziehen", m: 15, f: -10, a: 5, c: 0,
+			  r: "Du läufst zwei Stockwerke und ziehst das Kabel. Im Raum sitzen acht Leute in einer Präsentation und sehen dich an. Einer sagt: 'Wir dachten, das gehört so.' Du sagst nichts und gehst zurück." },
+			{ t: "Den ganzen Switch neu starten", m: 10, f: 0, a: 20, c: 15,
+			  r: "Der Neustart bringt Ruhe und nimmt dabei die halbe Etage mit. Vier Leute verlieren ungespeicherte Arbeit, einer davon Frau Elster. Die Schleife ist weg, das Kabel steckt noch." }
+		],
+		fail: {
+			m: 20, f: 0, a: 50, c: 40,
+			r: "Der Sturm frisst das Netz von innen auf. Nach einer Viertelstunde geben die ersten Geräte auf, danach die Telefonanlage. Wer den Fehler gemacht hat, weiß am Ende niemand mehr, und gesucht wird ohnehin an anderer Stelle."
+		}
+	},
+	{
+		id: "boss_recall",
+		title: "Der Rückruf betrifft euch",
+		timer: 15,
+		text: "Eine Warnmeldung des Herstellers: Bei einer Netzteilserie kann es zur Überhitzung kommen, sofortige Außerbetriebnahme empfohlen. Du gleichst die Seriennummern ab. Betroffen sind vier Geräte, und alle vier laufen bei euch, in Betrieb, seit zwei Jahren.",
+		opts: [
+			{ t: "Die vier Geräte kontrolliert herunterfahren", m: 30, f: -10, a: 10, c: -10,
+			  r: "Du fährst sie einzeln herunter, mit Ankündigung und in der Reihenfolge, die am wenigsten wehtut. Es kostet den halben Nachmittag und niemanden einen Ausfall. Die Ersatzteile kommen in zwei Wochen." },
+			{ t: "Mit dem Schraubendreher die Netzteile prüfen", req: "screw",
+			  m: 20, f: -10, a: 0, c: -5,
+			  r: "Du öffnest alle vier. Bei dreien ist alles unauffällig, beim vierten wölbt sich ein Kondensator sichtbar nach oben. Das Gerät geht sofort vom Netz, die anderen laufen weiter. Ein Schraubendreher hat hier gerade zwei Wochen gewonnen." },
+			{ t: "Die Meldung an den Chef weitergeben und abwarten", m: 5, f: 10, a: 15, c: 20,
+			  r: "Der Chef liest die Meldung, fragt, ob das dringend sei, und du sagst, es sei eine Empfehlung. Damit ist es entschieden. Vier Geräte laufen weiter, und ab jetzt weißt du, dass sie laufen." }
+		],
+		fail: {
+			m: 25, f: 0, a: 45, c: 50,
+			r: "Zwei Tage später riecht es im Serverraum, und diesmal ist es kein Kondensator, sondern zwei. Der Hersteller weist auf die Warnmeldung hin, und die Versicherung tut es auch. In der Akte steht das Datum, an dem sie euch erreicht hat."
+		}
+	},
+	{
+		id: "boss_generator_test",
+		title: "Der Jahrestest des Notstroms",
+		timer: 12,
+		text: "Egon hat den Jahrestest des Notstromaggregats gestartet, wie jedes Jahr, mit Klemmbrett. Das Aggregat springt an. Was nicht passiert: die Umschaltung zurück auf Netzstrom. Der Diesel reicht laut Aufkleber für zweiundvierzig Minuten.",
+		opts: [
+			{ t: "Die Umschaltung am Verteiler von Hand nachziehen", req: "screw",
+			  m: 15, f: -10, a: 0, c: -10,
+			  r: "Zwei Schrauben, ein Hebel, ein Klacken. Die Anlage nimmt wieder Netzstrom, das Aggregat läuft aus. Egon sieht dir dabei zu, sagt nichts und schreibt auf sein Klemmbrett: bestanden." },
+			{ t: "Egon den Notaus drücken lassen", m: 10, f: 5, a: 10, c: 5,
+			  r: "Egon drückt den Notaus, und das Haus ist für elf Sekunden vollständig dunkel. Danach kommt alles wieder, außer drei Rechnern in der Buchhaltung, die diesen Tag nie ganz verzeihen." },
+			{ t: "Die zweiundvierzig Minuten abwarten und dokumentieren", m: 45, f: -5, a: 5, c: -5,
+			  r: "Du sitzt zweiundvierzig Minuten daneben und schreibst mit, wann was passiert. Das Aggregat läuft leer, die Anlage schaltet von selbst zurück, und du hast das erste vollständige Testprotokoll, das dieses Haus je gesehen hat." }
+		],
+		fail: {
+			m: 30, f: 0, a: 45, c: 40,
+			r: "Der Diesel geht nach zweiundvierzig Minuten zur Neige, und die Umschaltung greift immer noch nicht. Was danach passiert, passiert allen Geräten gleichzeitig und ohne Vorwarnung. Egon steht daneben und sagt: 'Deshalb testet man das.'"
+		}
+	},
+
+	{
+		id: "boss_frost",
+		title: "Zu gut gekühlt",
+		timer: 12,
+		text: "Die Klimaanlage hat sich nach der Reparatur etwas gemerkt, das sie nicht merken sollte. Der Serverraum steht bei zwei Grad, an den Kaltgängen bildet sich Reif, und auf dem Boden liegt Kondenswasser in einer Spur, die zum Rack führt.",
+		opts: [
+			{ t: "Das Bedienfeld aufschrauben und die Steuerung zurücksetzen", req: "screw",
+			  m: 10, f: -5, a: -5, c: -10,
+			  r: "Vier Schrauben, ein Menü, achtzehn Grad, wie es sein soll. Innerhalb einer Stunde ist der Reif weg. Nur die Wasserspur bleibt und wird morgen früh jemandem auffallen, der nicht weiß, wovon sie kommt." },
+			{ t: "Das Kondenswasser mit Panzertape umleiten", req: "tape",
+			  m: 15, f: -10, a: 5, c: 0,
+			  r: "Du klebst eine Rinne aus Panzertape, die das Wasser am Rack vorbei in einen Eimer führt. Es sieht aus wie eine Notlösung, weil es eine ist, und es hält vier Wochen länger als geplant." },
+			{ t: "Die Anlage komplett abschalten", m: 5, f: 0, a: 15, c: 20,
+			  r: "Aus ist aus. Der Reif taut, das Wasser läuft, und ab dem Mittag steigt die Temperatur in die Richtung, die dir zwei Jahre lang Sorgen gemacht hat. Du hast ein Problem gegen das andere getauscht." },
+			{ t: "Egon holen und die Anlage von Hand drosseln", m: 25, f: -5, a: 0, c: 5,
+			  rep: { "Egon": 5 },
+			  r: "Egon kommt mit einem Schlüssel, den es laut Plan nicht gibt, und dreht ein Ventil um eine Vierteldrehung zurück. 'Die überlegt sich das', sagt er. Nach zwanzig Minuten steht der Raum bei siebzehn Grad." }
+		],
+		fail: {
+			m: 25, f: 0, a: 40, c: 45,
+			r: "Das Kondenswasser findet den Weg ins Rack, wie Wasser das immer tut. Zwei Netzteile geben nacheinander auf, das dritte hält bis zum Abend. Danach ist der Raum warm, sehr warm, und die Klimaanlage steht endgültig."
+		}
+	},
+	{
+		id: "boss_delivery_block",
+		title: "Die Lieferung im Fluchtweg",
+		timer: 15,
+		text: "Vor dem Serverraum stapeln sich zweiundzwanzig Kartons einer Lieferung, die niemand bestellt zu haben scheint. Sie stehen im Fluchtweg, in voller Breite. Im Haus ist heute die Begehung der Berufsgenossenschaft, und sie hat im Erdgeschoss angefangen.",
+		opts: [
+			{ t: "Mit dem Sackkarren-Trick der Kabelbinder stapeln", req: "zip_ties",
+			  m: 20, f: -10, a: 0, c: -10,
+			  r: "Du bindest die Kartons zu vier stabilen Türmen an der Wand, außerhalb des Laufwegs, beschriftet. Als die Begehung kommt, sieht sie eine Lieferung, die auf Abholung wartet, und schreibt nichts auf." },
+			{ t: "Alles in den Serverraum schieben", m: 15, f: -5, a: 10, c: 0,
+			  r: "Der Fluchtweg ist frei, der Serverraum nicht mehr begehbar. Die Begehung sieht den Flur und ist zufrieden. Vier Wochen später stehst du immer noch zwischen Kartons, wenn du an Rack 4 musst." },
+			{ t: "Die Begehung an der Etage vorbeilotsen", m: 25, f: 0, a: 15, c: 15,
+			  r: "Du führst die Gruppe über das Treppenhaus im Ostflügel und redest dabei viel. Es funktioniert. Auf dem Rückweg fragt eine der Prüferinnen beiläufig, was denn auf der Etage sei, die ihr ausgelassen habt." },
+			{ t: "Den Absender ausfindig machen und abholen lassen", m: 30, f: -10, a: 5, c: -5,
+			  r: "Zwei Anrufe, ein Lieferschein, eine Abteilung, die von nichts weiß. Die Kartons gehören dem Marketing und werden binnen einer Stunde abgeholt. Chantal sagt, sie habe sie 'zwischengelagert', und meint das ohne jede Ironie." }
+		],
+		fail: {
+			m: 20, f: 0, a: 40, c: 50,
+			r: "Die Begehung findet die Kartons vor der Brandschutztür und misst nach: neunzig Zentimeter Restbreite bei vorgeschriebenen einhundertzwanzig. Es gibt eine Frist, ein Protokoll und einen Termin zur Nachkontrolle. Alle drei landen bei dir."
+		}
+	},
+
+	{
+		id: "boss_selbstlernend",
+		title: "Das Update kommt zurück",
+		timer: 12,
+		text: "Du hast das fehlerhafte Update heute Morgen zurückgerollt, sauber und dokumentiert. Jetzt meldet die Verwaltungssoftware, dass sie es erneut verteilt. Auf vierzig Rechnern läuft die Installation bereits, und die Liste wird länger, während du hinsiehst.",
+		opts: [
+			{ t: "Im Handbuch nachsehen, wie man den Verteildienst stoppt", req: "manual",
+			  m: 10, f: -5, a: 0, c: -10,
+			  next: "path_boss_update_gestoppt",
+			  r: "Auf Seite 88 steht der Dienstname, handschriftlich korrigiert. Du stoppst ihn mitten im Lauf. Vierzig Rechner haben das Update, zweihundert nicht. Warum er es überhaupt erneut verteilt hat, steht in keinem Protokoll — und genau das lässt dir keine Ruhe." },
+			{ t: "Das Netzwerkkabel des Verteilservers ziehen", m: 5, f: -5, a: 10, c: 5,
+			  next: "path_boss_update_gestoppt",
+			  r: "Du ziehst das Kabel, und die Verteilung endet mitten in einer Übertragung. Drei Rechner bleiben in einem Zustand stehen, den es im Handbuch nicht gibt. Aber der Rest ist sicher, und das war die Frage." },
+			{ t: "Es durchlaufen lassen und danach erneut zurückrollen", m: 40, f: -10, a: 20, c: 10,
+			  r: "Du lässt es laufen und rollst hinterher alles zurück, zweihundertvierzig Rechner, im Stapelbetrieb. Es dauert bis in den Abend. Der Zustand ist danach derselbe wie heute Morgen, nur bist du sechs Stunden älter." }
+		],
+		fail: {
+			m: 30, f: 0, a: 45, c: 45,
+			r: "Das Update erreicht alle zweihundertvierzig Rechner. Am nächsten Morgen kann sich niemand anmelden, weil der Fehler genau dort sitzt. Der Chef fragt, warum es zurückgerollt wurde, wenn es doch wiederkam."
+		}
+	},
+	{
+		id: "boss_falsche_nummer",
+		title: "Die Nummer war richtig",
+		timer: 10,
+		text: "Am Telefon ist eine Frau, die deine Durchwahl hat und deinen Namen kennt. Sie sagt, sie rufe aus der Zentrale an, es gebe einen Vorfall, und sie brauche jetzt sofort einen Fernzugriff. Alles stimmt: der Ton, die Begriffe, die Nummer im Display. Nur die Zentrale gibt es nicht.",
+		opts: [
+			{ t: "Die Nummer in der Geheimliste nachschlagen", req: "secret_list",
+			  m: 10, f: -5, a: -5, c: -10,
+			  next: "path_boss_anruf_geprueft",
+			  r: "Auf der Liste steht diese Durchwahl nicht, dafür eine sehr ähnliche, die sich in einer Ziffer unterscheidet. Du legst höflich auf. Am Nachmittag ruft dieselbe Frau noch zweimal an, bei anderen Leuten im Haus." },
+			{ t: "Nach etwas fragen, das nur ein Kollege wissen kann", m: 10, f: 0, a: 5, c: -5,
+			  next: "path_boss_anruf_geprueft",
+			  r: "Du fragst, wer im dritten Stock den Kaffee bestellt. Zwei Sekunden Stille, dann eine Antwort, die plausibel klingt und falsch ist. Du sagst, du rufst zurück, und die Verbindung endet, bevor du zu Ende gesprochen hast." },
+			{ t: "Den Zugriff geben, sie klingt echt", m: 5, f: 5, a: 25, c: 30,
+			  r: "Du gibst den Zugriff. Sie bedankt sich, arbeitet elf Minuten lang und verabschiedet sich freundlich. Was in diesen elf Minuten passiert ist, findest du in den Protokollen, aber erst, wenn jemand dich darauf hinweist." },
+			{ t: "Auflegen, ohne etwas zu sagen", m: 5, f: 0, a: 10, c: 5,
+			  r: "Du legst kommentarlos auf. Falls es doch echt war, wird sich jemand melden. Es meldet sich niemand, und du weißt trotzdem nicht, ob das die Bestätigung ist oder nur Stille." }
+		],
+		fail: {
+			m: 20, f: 0, a: 45, c: 50,
+			r: "Du sagst nichts, und Schweigen wertet sie als Zustimmung: 'Ich sehe, die Sitzung läuft.' Sie läuft nicht, aber irgendwann findet sie einen Weg hinein. Am Freitag steht die Frage im Raum, wer den Zugang eingerichtet hat."
+		}
+	},
 ];

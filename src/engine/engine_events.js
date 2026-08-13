@@ -1004,6 +1004,24 @@ export const events = {
     triggerLunch: async function() {
         await ensure('lunch');
         let pool = DB.lunch ?? [];
+
+        // Story gate and follow-up priority, exactly as in the action pools
+        // (see the intervention check above): a continuation must not turn up
+        // without its prerequisite, and it jumps the queue with the same
+        // FOLLOWUP_CHANCE. Lunch used to draw from the raw pool, which was
+        // harmless only while no lunch event carried a reqStory.
+        const fortsetzungen = pool.filter(ev => ev.reqStory && this.storyGateOpen(ev)
+                                                && !this.state.usedIDs.has(ev.id));
+        const grundpool = pool.filter(ev => !ev.reqStory);
+
+        if (fortsetzungen.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
+            pool = fortsetzungen;
+        } else if (grundpool.length > 0) {
+            pool = grundpool;
+        } else {
+            // Fallback: nothing but continuations left and the roll failed
+            pool = fortsetzungen;
+        }
         // Week mode: no repeated lunch within one week (design 6.3). The day
         // mode keeps drawing from the full pool - within a single day a
         // repeat is impossible anyway, so behaviour stays identical.

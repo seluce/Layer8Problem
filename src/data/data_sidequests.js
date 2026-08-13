@@ -8135,7 +8135,7 @@ export const sidequests = [
 },
 
 /* -------------------------------------------------------------------------
-   Der Fall des stillen Örtchens (v5.0): a three-parter played straight as a
+   The case of the quiet corner (v5.0): a three-parter played straight as a
    detective story - observation, deduction, reveal. The opener runs in day
    mode like any other event; only the deductions are dated, so week players
    get the case and day players get the crime scene.

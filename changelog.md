@@ -2,6 +2,17 @@
 
 Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
 
+Mittagspause:
+* Auch die Pause hat jetzt ein Gedächtnis. Wer mit der Laufgruppe zehn Kilometer läuft, spürt das am nächsten Tag auf der Treppe; wer sich vom Vertreter zum Sushi einladen lässt, findet am Morgen eine Zusammenfassung im Postfach, in der "wie besprochen" steht, obwohl nichts besprochen wurde.
+* Der Platz am Vorstandstisch bleibt einen Tag lang frei und wartet. Am alten Tisch haben Kevin und Chantal ebenfalls Platz gemacht.
+
+Notfälle:
+* Acht neue Zwischenfälle, damit sind es achtunddreißig: ein abgelaufenes Zertifikat im Kundenshop, beide Enden eines Netzwerkkabels in derselben Dose, ein Herstellerrückruf, der ausgerechnet eure Geräte betrifft, der Jahrestest des Notstroms, eine zu gut eingestellte Klimaanlage, eine Lieferung im Fluchtweg, ein Update, das sich selbst erneut verteilt, und ein Anruf, bei dem alles stimmt außer der Abteilung.
+* Zwei der neuen haben eine Fortsetzung. Der Anruf aus der Zentrale wird über drei Tage zu einer Geschichte, die man im Wissen nachlesen kann - wenn man sie zu Ende verfolgt.
+* Ein Notfall hat jetzt ein Morgen. Sechs der dreißig Zwischenfälle bekommen einen Nachklang am nächsten Tag: der Geruch nach dem Kondensator und das Prüfprotokoll, die Kois in der Regentonne im Besprechungsraum, die Rechnung für den Notfall-Router, Kevins vier handgeschriebene Seiten nach der Beinahe-Löschung.
+* Die Titel heißen nicht mehr nach ihrer Katastrophenart, sondern nach dem, was tatsächlich passiert - die Anzeige schreibt ohnehin schon NOTFALL in Rot. Vier Zwischenfälle hießen vorher praktisch gleich.
+* Die Texte sind überarbeitet: weniger Großbuchstaben, weniger Ausrufezeichen, dafür genauer. Ein Notfall wird spannend durch das, was man sieht, nicht durch Satzzeichen.
+
 Das Wochenmeeting:
 * Zwölf statt sechs Ketten - der Freitag wiederholt sich damit frühestens nach zwölf Wochen. Neu dabei: die Auswertung der Mitarbeiterbefragung, eine Schalte nach Süd ohne Ton, ein Termin, zu dem niemand kommt, die Vorbereitung der externen Prüfung, ein Pilotprojekt mit einer Assistenz, die aus den eigenen Ticketantworten gelernt hat, und ein Workshop über zu viele Meetings.
 * Alle Meetings sind länger geworden: drei Entscheidungen statt zwei und doppelt so viele Ausgänge. Der neue Mittelteil ist das, was Besprechungen wirklich zieht - die Folie danach, die Rückfrage, der Kollege, der noch etwas anmerken möchte.

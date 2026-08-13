@@ -450,7 +450,7 @@ export const meetings = [
 			},
 			res_gerufen: {
 				txt: "'Es hat mich niemand gerufen.' Der Chef sieht auf seinen Zettel, dann auf dich, dann streicht er die sechs Minuten durch. Darunter schreibt er etwas Neues, das du von hier aus nicht lesen kannst. Nichtwissen ist hier meistens die bessere Lage.",
-				m: 45, f: 0, a: 0, c: 5
+				m: 45, f: 0, a: -5, c: 10
 			},
 			res_folie9: {
 				txt: "'Aus Erfahrung?' Frau Kienzle lächelt zum ersten Mal ehrlich. 'Aus sehr viel Erfahrung.' Danach läuft die Präsentation deutlich schneller, und zwei Folien überspringt sie ganz. Der Chef merkt es nicht.",
@@ -671,7 +671,7 @@ export const meetings = [
 			},
 			res_haekchen: {
 				txt: "Du zeigst auf das Häkchen. Er wird rot bis zu den Ohren, murmelt etwas von einer Vorlage und dreht das Blatt um. Auf der Rückseite steht dieselbe Skala, unausgefüllt. Er stellt dir danach zwei Fragen, die nicht auf dem Ablauf stehen, und die sind die besseren.",
-				m: 50, f: 0, a: -5, c: 0
+				m: 50, f: 0, a: -10, c: 0
 			},
 			res_schicken: {
 				txt: "Du bietest an, es aufzuschreiben. Er ist sichtlich erleichtert und notiert deine Mailadresse falsch. Die Zusammenfassung schickst du trotzdem, an ihn und in Kopie an dich selbst. Sie taucht später wörtlich in einem Bericht auf, unter seinem Namen.",
@@ -687,7 +687,7 @@ export const meetings = [
 			},
 			res_ablauf: {
 				txt: "Du lässt ihn den ausgedruckten Ablauf zu Ende lesen. Es sind neun Fragen, und ab der sechsten wiederholen sie sich. Er merkt es selbst, wird schneller und hört bei acht auf. Beim Hinausgehen bedankt er sich zweimal.",
-				m: 55, f: 5, a: 0, c: 0
+				m: 55, f: 5, a: 5, c: -5
 			}
 		}
 	},
@@ -786,7 +786,7 @@ export const meetings = [
 			},
 			res_protokolliert: {
 				txt: "Du lässt es protokollieren und ziehst weiter. Der Satz steht im Protokoll, das Protokoll steht im Ordner, der Ordner steht im Regal, und dort steht er wenigstens.",
-				m: 45, f: 5, a: 0, c: 0
+				m: 45, f: 10, a: 0, c: -5
 			},
 			res_app: {
 				txt: "Du sagst zu, die App zu betreuen, bevor sie jemand anderes ausschreibt. Sabine ist begeistert. Was du dir eingehandelt hast, wirst du erst im nächsten Quartal begreifen, aber es wird wenigstens funktionieren.",
@@ -794,7 +794,7 @@ export const meetings = [
 			},
 			res_obstkorb: {
 				txt: "'Den Obstkorb hatten wir schon.' Kurze Stille. Sabine sagt, diesmal werde er 'begleitet'. Der Chef findet Begleitung wichtig. Auf dem Rückweg denkst du an die Entnahmeliste und schweigst.",
-				m: 45, f: 0, a: 5, c: 0
+				m: 45, f: 0, a: 10, c: 0
 			},
 			res_regel: {
 				txt: "Du lässt die Regel stehen. Die IT bleibt grau, und Grau ist neutral. Beim Hinausgehen fällt dir auf, dass Neutral auf dieser Folie direkt neben Unzufrieden liegt, farblich betrachtet.",
@@ -806,11 +806,11 @@ export const meetings = [
 			},
 			res_schweigen_umf: {
 				txt: "Du schweigst. Der Chef antwortet an deiner Stelle: die IT sei 'sehr gefordert'. Sabine notiert 'gefordert'. Zum ersten Mal beschreibt jemand in diesem Haus den Zustand deiner Abteilung richtig, und ausgerechnet er hat es getan.",
-				m: 40, f: 5, a: 0, c: 0
+				m: 40, f: 10, a: 0, c: -5
 			},
 			res_foto: {
 				txt: "Du fotografierst die Folie ab. Sabine fragt, wofür. Du sagst: 'Für die Unterlagen.' Sie findet das professionell. Im März wird die Folie in einer anderen Präsentation auftauchen, in geänderter Form, und du wirst das Original haben.",
-				m: 45, f: 0, a: 0, c: 5
+				m: 45, f: -5, a: 0, c: 10
 			}
 		}
 	},
@@ -882,7 +882,7 @@ export const meetings = [
 		results: {
 			res_deckel: {
 				txt: "'Technische Störung.' Der Chef gibt sich damit zufrieden, Süd auch. Die vier auf der Leinwand sehen dich an, und einer von ihnen hebt kurz den Daumen. Ihr habt euch nie gesprochen, aber jetzt schuldet dir jemand in Süddeutschland etwas.",
-				m: 50, f: 0, a: -5, c: 0
+				m: 50, f: 0, a: -10, c: 5
 			},
 			res_wiederholen: {
 				txt: "Du wiederholst es wörtlich. In Süd wird sehr still. Der Chef will es zweimal genau wissen. Beim zweiten Mal antwortet Herr Leuchter höflich, es sei um die Kaffeequalität gegangen. Es war nicht um die Kaffeequalität gegangen.",
@@ -914,7 +914,7 @@ export const meetings = [
 			},
 			res_ton_aus: {
 				txt: "Du schaltest den Ton wieder ab, bevor der Satz zu Ende ist. Auf der Leinwand sieht man, wie Herr Leuchter erleichtert die Augen schließt. Der Chef fragt, was los sei. 'Leitung', sagst du. Niemand widerspricht einer Leitung.",
-				m: 45, f: 0, a: -5, c: 0
+				m: 45, f: 5, a: -10, c: 0
 			}
 		}
 	},
@@ -996,11 +996,11 @@ export const meetings = [
 			},
 			res_serientermin: {
 				txt: "Der Termin läuft seit vierzehn Monaten. In dieser Zeit hat ihn genau einmal jemand wahrgenommen: du, heute. Gabi findet das lustig, du findest es weniger lustig, und der Beamer läuft immer noch.",
-				m: 45, f: 5, a: 0, c: 0
+				m: 45, f: 10, a: -5, c: 0
 			},
 			res_kopierer: {
 				txt: "Der Kopierer im dritten Stock wird abgebaut, weil er laut Statistik zu selten genutzt wird. Die Statistik zählt nur Aufträge über das Netzwerk. Der Kopierer im dritten Stock hängt nicht am Netzwerk. Das erklärt die Statistik vollständig.",
-				m: 50, f: 0, a: 5, c: 0
+				m: 50, f: -5, a: 10, c: 0
 			},
 			res_loeschen: {
 				txt: "Du löschst den Serientermin. Es dauert vier Sekunden und beendet vierzehn Monate. Am Montag fragt niemand danach. Am übernächsten Freitag fällt jemandem im Flur auf, dass er auf einmal Zeit hat, und er weiß nicht, warum.",
@@ -1016,7 +1016,7 @@ export const meetings = [
 			},
 			res_gehen: {
 				txt: "Du gehst. Der Beamer läuft weiter, die zwölf Gläser stehen weiter, und am nächsten Freitag wird beides wieder so sein. Auf dem Flur überlegst du kurz, ob du den Beamer hättest ausschalten sollen, und gehst zurück.",
-				m: 40, f: 0, a: -5, c: 0
+				m: 40, f: 10, a: -5, c: 0
 			},
 			res_ueberlassen: {
 				txt: "Du überlässt Gabi den Raum und gehst. Auf dem Flur hörst du sie hinter dir telefonieren, laut und gut gelaunt. Der Beamer läuft weiter, die zwölf Gläser stehen weiter, und immerhin nutzt jetzt jemand den Termin.",
@@ -1206,7 +1206,7 @@ export const meetings = [
 		results: {
 			res_protokoll_ki: {
 				txt: "Die Frage steht im Protokoll, unbeantwortet, mit deinem Namen davor. Das ist wenig und mehr als nichts. Aiden geht im Januar in den Pilotbetrieb, und deine Frage geht mit ihm.",
-				m: 50, f: 0, a: 5, c: 0
+				m: 50, f: 0, a: 10, c: -5
 			},
 			res_keine_rechts: {
 				txt: "'Wir haben keine Rechtsabteilung.' Der Berater blättert, findet nichts und notiert es. Der Chef sagt, man werde 'jemanden hinzuziehen'. Drei Wochen später sitzt tatsächlich eine Anwältin im Haus, und sie stellt genau deine Frage.",
@@ -1223,7 +1223,7 @@ export const meetings = [
 			},
 			res_mein_komma: {
 				txt: "'Es ist mein Komma.' Der Raum ist kurz still. Der Berater sagt, das zeige doch, wie gut das Modell die Hausstimme treffe. Er meint es als Kompliment, und in gewisser Hinsicht ist es eines. Du gehst trotzdem anders aus dem Termin, als du hineingegangen bist.",
-				m: 50, f: 0, a: 5, c: 0
+				m: 50, f: 0, a: 15, c: 0
 			},
 			res_gut_problem: {
 				txt: "'Es ist gut. Das ist das Problem.' Der Chef versteht es beim zweiten Anlauf und wird still. Der Berater klickt zur nächsten Folie, auf der ein Einsparpotenzial steht. Er überspringt sie, ohne sie zu erklären, und alle haben sie gesehen.",
@@ -1315,7 +1315,7 @@ export const meetings = [
 			},
 			res_belassen: {
 				txt: "Du lässt es. Die Zahl bleibt auf dem Flipchart stehen, den ganzen Termin lang, und niemand sieht sie noch einmal an. Beim Abbau reißt die Beraterin das Blatt ab und nimmt es mit.",
-				m: 45, f: 5, a: 0, c: 0
+				m: 45, f: 10, a: 0, c: -5
 			},
 			res_verstoss: {
 				txt: "'Dieser Termin verstößt gegen alle drei.' Es ist still. Dann lacht die Beraterin, ehrlich und laut, und sagt: 'Ja.' Der Termin endet vierzig Minuten früher als geplant. Es ist der einzige Freitag, an dem du vor Egon das Haus verlässt.",
@@ -1331,7 +1331,7 @@ export const meetings = [
 			},
 			res_auswertung: {
 				txt: "'Verändert das die Auswertung?' Die Beraterin sieht nach. Es verändert sie erheblich: zwei Abteilungen tauschen die Plätze, und der Vertrieb ist plötzlich nicht mehr Spitzenreiter. Sie sagt, sie rechne es neu. Die neue Fassung sieht niemand je.",
-				m: 50, f: 0, a: 0, c: 5
+				m: 50, f: -5, a: 0, c: 10
 			},
 			res_bereinigen_serien: {
 				txt: "Du bietest an, die achtzig verwaisten Serientermine zu bereinigen. Der Chef findet das großartig. Die Beraterin notiert es als Ergebnis des Workshops, und im Bericht steht später, der Workshop habe achtzig Termine eingespart. Gearbeitet hat daran genau eine Person.",

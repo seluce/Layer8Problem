@@ -5487,4 +5487,164 @@ export const server = [
             }
         ]
     },
+
+/* -------------------------------------------------------------------------
+   Bossfight aftermaths (v5.1). Until now not one of the thirty fights had a
+   consequence: yesterday's server fire had never happened by this morning.
+   data_bossfights sets the flags, the next morning lives here. reqStoryAge: 1
+   makes them arrive a day later, so they never fire in day mode - which is
+   correct, because there is no yesterday there.
+   ------------------------------------------------------------------------- */
+{
+    id: "srv_nach_brand",
+    reqStory: "path_boss_fire_geloescht",
+    reqStoryAge: 1,
+    title: "Der Geruch bleibt",
+    text: "Der Serverraum riecht immer noch nach dem Kondensator, und er wird es eine Woche lang tun. Auf dem leeren Platz im Rack klebt der Ruß in einem sauberen Rechteck. Egon steht daneben mit einem Formular: Brandmelder-Prüfprotokoll, ausgelöst am Vortag, Ursache anzugeben.",
+    opts: [
+        { t: "Ursache eintragen: Bauteilversagen", m: 10, f: -5, a: 0, c: -5,
+          r: "Du trägst es korrekt ein. Egon liest mit, nickt und trägt darunter ein zweites Feld nach, dessen Existenz dir neu ist. Das Protokoll geht an die Versicherung, und du bist darin nur ein Name in einer Zeile." },
+        { t: "Ihn das Formular ausfüllen lassen", m: 5, f: 10, a: 0, c: 0,
+          r: "Egon füllt es aus, in Druckbuchstaben, und trägt als Ursache 'Materialermüdung' ein. Beim Unterschreiben sagt er, das habe er schon dreimal geschrieben, immer für dasselbe Rack." },
+        { t: "Nachsehen, warum der Kondensator geplatzt ist", m: 25, f: -10, a: 5, c: 5,
+          r: "Das Netzteil ist von 2009 und hat drei baugleiche Geschwister im selben Rack. Du schreibst die Seriennummern auf. Es ist die Art Zettel, die man in einem halben Jahr wiederfindet und dann froh ist." }
+    ]
+},
+{
+    id: "srv_nach_kois",
+    reqStory: "path_boss_kois",
+    reqStoryAge: 1,
+    title: "Die Kois im Besprechungsraum",
+    text: "Die Kois schwimmen seit gestern in einer Regentonne im Besprechungsraum Kreativ 2. Der Chef hat zweimal nach ihnen gesehen und einmal nach dir gefragt. Das Aquarium im Büro ist leer, der Riss quer über die Frontscheibe geklebt, und niemand weiß, wer die Tiere zurückbringt.",
+    opts: [
+        { t: "Beim Fachbetrieb anrufen und einen Termin holen", m: 20, f: -5, a: 0, c: -5,
+          r: "Der Fachbetrieb kommt in zwei Wochen und will vorher Fotos. Der Chef findet zwei Wochen lang. Die Kois finden es offenbar in Ordnung; sie fressen mehr als vorher." },
+        { t: "Nichts tun. Es sind Fische, keine Server.", m: 5, f: 10, a: 5, c: 5,
+          r: "Du tust nichts, und es passiert auch nichts. Nach vier Tagen steht die Regentonne immer noch dort, und jemand hat einen Zettel danebengeklebt: 'Bitte nicht füttern, ist geregelt.' Es ist nicht geregelt." },
+        { t: "Gabi fragen, wer im Haus Fische hat", m: 15, f: -5, a: -5, c: 0,
+          rep: { "Gabi": 5 },
+          r: "Gabi kennt jemanden aus der Buchhaltung mit einem Teich. Nachmittags stehen zwei Leute mit Eimern im Besprechungsraum, und abends ist die Regentonne leer. Der Chef erfährt es aus einer Rundmail, die Gabi geschrieben hat." }
+    ]
+},
+{
+    id: "srv_nach_lte",
+    reqStory: "path_boss_lte",
+    reqStoryAge: 1,
+    title: "Die Rechnung für den Notfall",
+    text: "Der LTE-Router hat das Haus einen Tag lang am Netz gehalten. Jetzt liegt die Verbrauchsübersicht vor: das Datenvolumen eines Quartals an einem Nachmittag. Frau Elster hat sie ausgedruckt und mit einem gelben Klebezettel versehen, auf dem nur ein Fragezeichen steht.",
+    opts: [
+        { t: "Den Ausfall danebenlegen und beides zusammen einreichen", m: 20, f: -5, a: 0, c: -5,
+          rep: { "Frau Elster": 5 },
+          r: "Du legst die Ausfallzeit daneben, in Stunden und in Gehältern. Frau Elster rechnet nach, streicht das Fragezeichen durch und schreibt 'nachvollziehbar' darüber. Der Zettel bleibt an der Rechnung kleben, und das ist gut so." },
+        { t: "Die Rechnung erst mal liegen lassen", m: 5, f: 10, a: 5, c: 5,
+          r: "Du legst sie in den Stapel. Am Freitag liegt sie obenauf, mit einem zweiten Zettel darüber, auf dem zwei Fragezeichen stehen." },
+        { t: "Egon fragen, wie lange die Glasfaser braucht", m: 15, f: -5, a: -5, c: 0,
+          r: "Egon sagt: 'Drei Wochen, wenn sie wollen.' Auf die Rückfrage, ob sie wollen, sagt er nichts und geht zum Bagger zurück. Der steht immer noch im Hof, mit Absperrband." }
+    ]
+},
+{
+    id: "srv_nach_rollback",
+    reqStory: "path_boss_rollback",
+    reqStoryAge: 1,
+    title: "Kevin hat nicht geschlafen",
+    text: "Kevin steht schon vor dir am Rechner, was noch nie vorgekommen ist. Er hat die Nacht damit verbracht, jeden Schritt aufzuschreiben, der zu dem Löschskript geführt hat. Es sind vier Seiten. Auf der letzten steht, was er beim nächsten Mal anders machen will.",
+    opts: [
+        { t: "Die vier Seiten durchgehen", m: 25, f: -10, a: -5, c: 0,
+          rep: { "Kevin": 10 },
+          r: "Ihr geht es zusammen durch. An zwei Stellen liegt er falsch, an einer hat er etwas gefunden, das du selbst nicht gesehen hattest. Am Ende druckt er es aus und hängt es über seinen Schreibtisch, wo es hängen bleibt." },
+        { t: "Ihm sagen, dass die Sache erledigt ist", m: 5, f: 5, a: 0, c: 0,
+          r: "'Ist erledigt.' Er nickt und faltet die vier Seiten zusammen. Später siehst du sie im Papierkorb liegen, und es fühlt sich schlechter an, als es sollte." },
+        { t: "Aus den Seiten eine Anleitung fürs Team machen", m: 30, f: -10, a: 0, c: 10,
+          rep: { "Kevin": 5 },
+          r: "Ihr macht eine Anleitung daraus, zwei Seiten, mit Kevins Namen oben. Sie hängt drei Tage im Serverraum, bis jemand sie mitnimmt. Ein halbes Jahr später taucht sie in einer Onboarding-Mappe auf, ohne den Namen." }
+    ]
+},
+{
+    id: "srv_nach_wipe",
+    reqStory: "path_boss_wipe",
+    reqStoryAge: 1,
+    title: "Was die Protokolle noch wissen",
+    text: "Die Beamten sind ohne Ergebnis abgezogen. Am Morgen fällt dir ein, was du gestern nicht bedacht hast: Der Mining-Rechner ist sauber, aber der Router protokolliert weiter, seit Jahren, in ein Verzeichnis, das niemand je aufgeräumt hat.",
+    opts: [
+        { t: "Die Protokolle prüfen und behalten", m: 25, f: -10, a: 5, c: 0,
+          r: "Du siehst sie durch. Es steht alles drin: Zeitpunkte, Datenmengen, Ziele. Du legst sie an einen Ort, den nur du kennst. Es ist keine schöne Entscheidung, aber es ist eine Entscheidung." },
+        { t: "Auch die Protokolle löschen", m: 15, f: -5, a: 5, c: -10,
+          r: "Vier Jahre Verkehrsdaten sind in elf Sekunden weg. Der Router protokolliert ab jetzt wieder von vorn, und ab jetzt bist du derjenige, der etwas zu verbergen hat." },
+        { t: "Kevin sagen, was noch existiert", m: 15, f: -5, a: -5, c: 0,
+          rep: { "Kevin": 5 },
+          r: "Kevin wird sehr still und fragt, ob das schlimm ist. Du sagst, es sei nicht schlimm, solange niemand danach sucht. Er nickt und mined nie wieder. Zumindest nicht hier." }
+    ]
+},
+{
+    id: "srv_nach_influencer",
+    reqStory: "path_boss_influencer",
+    reqStoryAge: 1,
+    title: "Das Video ist online",
+    text: "Das Video hat über Nacht zweihunderttausend Aufrufe. Man sieht einen Mann, der mit Kabelbindern an einem Rack hängt, und im Bildrand für zwei Sekunden dich. Der Titel lautet: 'IT-Typ rastet aus'. In den Kommentaren wird über dich diskutiert, und die Mehrheit ist auf deiner Seite.",
+    opts: [
+        { t: "Die Kommentare lesen", m: 20, f: 5, a: -10, c: 0,
+          r: "Du liest zwanzig Minuten lang Kommentare von Fremden, die deinen Beruf verstehen. Einer schreibt, er habe dasselbe erlebt, mit einem Praktikanten und einer Notaus-Taste. Es ist der beste Arbeitsmoment der Woche und findet nicht bei der Arbeit statt." },
+        { t: "Chantal fragen, ob die Firma reagieren muss", m: 15, f: -5, a: 5, c: 5,
+          r: "Chantal hat es längst gesehen und bereits einen Entwurf: 'Wir distanzieren uns von den Umständen.' Auf die Frage, welche Umstände gemeint seien, sagt sie, das sei genau der Punkt." },
+        { t: "Es ignorieren und arbeiten", m: 5, f: -5, a: 0, c: 0,
+          r: "Du arbeitest. Am Nachmittag kommt der Chef vorbei, sagt nichts über das Video und fragt nach etwas anderem. Beim Hinausgehen dreht er sich um: 'Gut gemacht, übrigens.' Dann ist er weg, bevor du antworten kannst." }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Two more aftermaths (v5.1, wave 2). The phishing call becomes a three-part
+   story because it is worth telling to the end: the call, the pattern, the
+   answer. It carries a compendium entry, which only works because the whole
+   chain hangs off a single fight - citing several different bossfights would
+   make an entry practically unreachable (a specific fight comes up in about
+   10% of weeks).
+   ------------------------------------------------------------------------- */
+{
+    id: "srv_nach_update",
+    reqStory: "path_boss_update_gestoppt",
+    reqStoryAge: 1,
+    title: "Warum es zurückkam",
+    text: "Der Verteilserver hat das Update von selbst erneut ausgerollt, und du weißt seit gestern nicht, warum. Heute findest du es: eine Wiederholungsregel, angelegt vor drei Jahren, die fehlgeschlagene Verteilungen automatisch erneut versucht. Zurückrollen zählt für sie als Fehlschlag.",
+    opts: [
+        { t: "Die Regel abschalten und dokumentieren", m: 25, f: -10, a: 0, c: -5,
+          r: "Du schaltest sie ab und schreibst zwei Sätze dazu in die Ablage, mit Datum. Es ist eine kleine Änderung, die verhindert, dass irgendwann jemand dasselbe drei Tage lang sucht. Vermutlich du selbst." },
+        { t: "Die Regel behalten, aber Rollbacks ausnehmen", m: 35, f: -15, a: 5, c: 5,
+          r: "Du nimmst Rollbacks aus der Wiederholung aus, ohne die Regel zu verlieren. Es dauert länger und ist die bessere Lösung, weil die Regel für alles andere sinnvoll ist. Bemerken wird das nie jemand." },
+        { t: "Es so lassen, jetzt weißt du es ja", m: 5, f: 10, a: 10, c: 5,
+          r: "Du rührst es nicht an. Beim nächsten fehlgeschlagenen Update wirst du daran denken, und beim übernächsten vielleicht nicht mehr. In der Ablage steht nichts, und im Kopf hält sich so etwas keine sechs Monate." }
+    ]
+},
+{
+    id: "srv_nach_anruf",
+    reqStory: "path_boss_anruf_geprueft",
+    reqStoryAge: 1,
+    title: "Sie hat weitertelefoniert",
+    text: "Gabi erzählt beiläufig, gestern habe eine sehr freundliche Frau aus der Zentrale angerufen und nach der Durchwahl der IT gefragt. Auf Nachfrage stellt sich heraus: Sie hat mindestens vier Leute im Haus erreicht. Zwei davon haben ihr geantwortet, einer hat ihr etwas gesagt.",
+    opts: [
+        { t: "Aufschreiben, wen sie angerufen hat", m: 25, f: -10, a: 0, c: 0,
+          next: "path_boss_anruf_liste",
+          rep: { "Gabi": 5 },
+          r: "Gabi geht mit dir die Liste durch, aus dem Kopf, in der richtigen Reihenfolge. Vier Namen, drei Abteilungen, ein Muster: Sie hat sich von unten nach oben durchgefragt und bei jedem etwas mehr gewusst als beim vorigen." },
+        { t: "Eine Warnung an alle schreiben", m: 20, f: -5, a: 5, c: 5,
+          r: "Du schreibst eine Rundmail: Anrufe von der Zentrale, Rückruf über die interne Liste, keine Zugänge am Telefon. Gelesen wird sie von den Leuten, die es ohnehin wissen. Aber sie steht im Postfach, und darauf kann man sich später berufen." },
+        { t: "Es auf sich beruhen lassen", m: 5, f: 10, a: 10, c: 0,
+          r: "Du lässt es. Sie hat nichts bekommen, und Aufregung erzeugt nur Fragen. Zwei Wochen später fragt jemand aus dem Vertrieb, ob man einer Frau aus der Zentrale den Fernzugriff geben dürfe. Er fragt zum Glück vorher." }
+    ]
+},
+{
+    id: "srv_nach_anruf_2",
+    reqStory: "path_boss_anruf_liste",
+    reqStoryAge: 1,
+    title: "Von unten nach oben",
+    text: "Die vier Namen ergeben ein Muster. Bei der Pforte hat sie nach Öffnungszeiten gefragt, im Lager nach dem Namen des Hausmeisters, im Vertrieb nach der Struktur der IT. Jedes Gespräch war harmlos. Zusammen ergibt es eine Landkarte des Hauses, und der letzte Anruf ging an dich.",
+    opts: [
+        { t: "Die Rekonstruktion Frau Elster geben", m: 30, f: -10, a: 0, c: 5,
+          rep: { "Frau Elster": 10 },
+          r: "Frau Elster liest die zwei Seiten zweimal und legt sie dann in eine Mappe, die sie beschriftet. 'Das gehört gemeldet', sagt sie, und zwar nicht an den Chef. Zwei Wochen später steht eine Schulung im Kalender, an der alle teilnehmen müssen." },
+        { t: "Sie an die Wand im Serverraum hängen", m: 15, f: -10, a: -5, c: 0,
+          r: "Du hängst die Rekonstruktion neben den Racks auf, wo sie außer dir niemand liest. Für dich reicht es: Beim nächsten freundlichen Anruf weißt du, welche Frage die dritte sein wird, und du wirst sie vorher stellen." },
+        { t: "Es dabei belassen, sie kommt nicht wieder", m: 5, f: 10, a: 5, c: 0,
+          r: "Du legst die Notizen weg. Sie kommt nicht wieder, jedenfalls nicht unter dieser Nummer. Ob sie es bei einer anderen Firma versucht, erfährst du nie, und das ist die Art Frage, die nachts wiederkommt." }
+    ]
+},
 ];

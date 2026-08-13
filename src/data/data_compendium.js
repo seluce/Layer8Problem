@@ -757,6 +757,21 @@ export const compendium = [
         ]
     },
     {
+        id: "anruferin",
+        cat: "vorgang",
+        name: "Die Frau aus der Zentrale",
+        rolle: "Existiert nicht, ruft trotzdem an",
+        kopf: "Freundlich, sachkundig, mit der richtigen Nummer im Display. Alles an ihr stimmt bis auf die Abteilung, die sie nennt — und die gibt es in dieser Firma nicht.",
+        seen: ["boss_falsche_nummer", "srv_nach_anruf", "srv_nach_anruf_2"],
+        notizen: [
+            { seen: "boss_falsche_nummer", text: "Sie kennt deinen Namen und deine Durchwahl, bevor sie etwas will. Genau das ist der Teil, den man später nicht mehr erklären kann." },
+            { flag: "path_boss_anruf_geprueft", text: "Eine einzige Rückfrage genügt, die nur ein Kollege beantworten könnte. Danach ist das Gespräch binnen Sekunden vorbei." },
+            { seen: "srv_nach_anruf",   text: "Sie ruft nicht einmal an, sondern viermal, in verschiedenen Abteilungen. Jedes einzelne Gespräch ist harmlos." },
+            { flag: "path_boss_anruf_liste", text: "Pforte, Lager, Vertrieb, IT — von unten nach oben. Bei jedem Anruf weiß sie etwas mehr als beim vorigen, und das Wissen stammt aus dem Haus selbst." },
+            { seen: "srv_nach_anruf_2", text: "Der letzte Anruf ging an dich. Wer diese Reihenfolge einmal gesehen hat, erkennt sie beim nächsten Mal am zweiten Anruf." }
+        ]
+    },
+    {
         id: "karteileiche",
         cat: "vorgang",
         name: "Die Karteileiche",

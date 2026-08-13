@@ -478,6 +478,84 @@ console.log('Musik:');
     });
 }
 
+// ------------------------------------------- Mittagspause mit Fahnen (v5.1)
+console.log('Mittagspause:');
+await ensure('lunch');
+const origRenderTerminal = engine.renderTerminal;
+await ok('Ein Nachklang erscheint nicht ohne seine Fahne', async () => {
+    resetState();
+    state.week = { active: true, dayIndex: 3 };
+    state.storyFlags = {};
+    let gezogen = [];
+    engine.renderTerminal = (ev) => gezogen.push(ev.id);
+    for (let i = 0; i < 25; i++) { state.usedIDs = new Set(); await engine.triggerLunch(); }
+    const nach = gezogen.filter(id => id.startsWith('lunch_nach_'));
+    assert.equal(nach.length, 0, `ohne Vorgeschichte gezogen: ${nach.join(', ')}`);
+});
+await ok('Mit Fahne kommt der Nachklang mit derselben 30-Prozent-Chance', async () => {
+    // Same rule as the action pools (FOLLOWUP_CHANCE), so a single draw
+    // proves nothing - the rate does.
+    resetState();
+    state.week = { active: true, dayIndex: 3 };
+    state.storyFlags = { path_lunch_gelaufen: 2 };   // gestern gesetzt
+    let nach = 0;
+    const N = 600;
+    engine.renderTerminal = (ev) => { if (ev.id.startsWith('lunch_nach_')) nach++; };
+    for (let i = 0; i < N; i++) { state.usedIDs = new Set(); await engine.triggerLunch(); }
+    const quote = nach / N;
+    assert.ok(Math.abs(quote - events.FOLLOWUP_CHANCE) < 0.08,
+              `Quote ${(quote * 100).toFixed(1)}% weicht von ${events.FOLLOWUP_CHANCE * 100}% ab`);
+});
+await ok('Am selben Tag noch nicht', async () => {
+    resetState();
+    state.week = { active: true, dayIndex: 2 };
+    state.storyFlags = { path_lunch_gelaufen: 2 };   // heute gesetzt
+    let gezogen = [];
+    engine.renderTerminal = (ev) => gezogen.push(ev.id);
+    for (let i = 0; i < 15; i++) { state.usedIDs = new Set(); await engine.triggerLunch(); }
+    assert.ok(!gezogen.some(id => id.startsWith('lunch_nach_')), 'reqStoryAge greift nicht');
+});
+engine.renderTerminal = origRenderTerminal;   // Gerüst wiederherstellen
+
+// ---------------------------------------------- Wissen: neu/gelesen (v5.1)
+await ensure('compendium');
+console.log('Wissen, Neu-Markierung:');
+await ok('Ein frisch geöffneter Eintrag gilt als neu', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.seenFlags = [];
+    state.archive.knowledgeRead = {};
+    const e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.open, true);
+    assert.equal(e.neu, true, 'nicht als neu erkannt');
+});
+await ok('Gelesen heißt gelesen', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    let e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    engine.markKnowledgeRead('sonntag', e.notes.length);
+    e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.neu, false, 'bleibt trotz Lesen neu');
+});
+await ok('Eine spätere Notiz macht den Eintrag wieder neu', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    engine.markKnowledgeRead('sonntag', 1);
+    // second scene experienced later
+    state.archive.seenEvents.push('cof_sonntag_2');
+    const e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.notes.length, 2);
+    assert.equal(e.neu, true, 'Nachschlag nicht gemeldet');
+});
+await ok('Was man nie getroffen hat, ist nicht neu', () => {
+    resetState();
+    state.archive.seenEvents = [];
+    state.archive.knowledgeRead = {};
+    assert.equal(engine.knowledgeEntries().some(e => e.neu), false, 'ungeöffnete Einträge melden sich');
+});
+
 // ------------------------------------------------------ Boot-Sequenz (v5.0)
 console.log('Startbildschirm:');
 await ok('Ab dem zweiten Morgen ist der Start kurz', () => {
@@ -1557,7 +1635,7 @@ await ok('Der Vorspann greift auf, wie der Tag gelaufen ist', async () => {
     assert.match(lead(2, 25, 25, 30), /^16:30 Uhr/);
 });
 await ok('Die Ticket-Schwelle ist erreichbar', () => {
-    // Bei zehn Tickets endet der Tag, ein Viertel von neun sind drei.
+    // Ten tickets end the day, and a quarter of nine is three.
     const hoechstwert = Math.ceil(9 * 0.25);
     const src = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
     const m = src.match(/report\.ticketsAfter >= (\d+)/);
