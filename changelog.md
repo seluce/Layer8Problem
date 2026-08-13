@@ -9,7 +9,7 @@ Mittagspause:
 Notfälle:
 * Acht neue Zwischenfälle, damit sind es achtunddreißig: ein abgelaufenes Zertifikat im Kundenshop, beide Enden eines Netzwerkkabels in derselben Dose, ein Herstellerrückruf, der ausgerechnet eure Geräte betrifft, der Jahrestest des Notstroms, eine zu gut eingestellte Klimaanlage, eine Lieferung im Fluchtweg, ein Update, das sich selbst erneut verteilt, und ein Anruf, bei dem alles stimmt außer der Abteilung.
 * Zwei der neuen haben eine Fortsetzung. Der Anruf aus der Zentrale wird über drei Tage zu einer Geschichte, die man im Wissen nachlesen kann - wenn man sie zu Ende verfolgt.
-* Ein Notfall hat jetzt ein Morgen. Sechs der dreißig Zwischenfälle bekommen einen Nachklang am nächsten Tag: der Geruch nach dem Kondensator und das Prüfprotokoll, die Kois in der Regentonne im Besprechungsraum, die Rechnung für den Notfall-Router, Kevins vier handgeschriebene Seiten nach der Beinahe-Löschung.
+* Ein Notfall hat jetzt ein Morgen. Acht Zwischenfälle bekommen einen Nachklang am nächsten Tag: der Geruch nach dem Kondensator und das Prüfprotokoll, die Kois in der Regentonne im Besprechungsraum, die Rechnung für den Notfall-Router, Kevins vier handgeschriebene Seiten nach der Beinahe-Löschung.
 * Die Titel heißen nicht mehr nach ihrer Katastrophenart, sondern nach dem, was tatsächlich passiert - die Anzeige schreibt ohnehin schon NOTFALL in Rot. Vier Zwischenfälle hießen vorher praktisch gleich.
 * Die Texte sind überarbeitet: weniger Großbuchstaben, weniger Ausrufezeichen, dafür genauer. Ein Notfall wird spannend durch das, was man sieht, nicht durch Satzzeichen.
 
@@ -18,7 +18,7 @@ Das Wochenmeeting:
 * Alle Meetings sind länger geworden: drei Entscheidungen statt zwei und doppelt so viele Ausgänge. Der neue Mittelteil ist das, was Besprechungen wirklich zieht - die Folie danach, die Rückfrage, der Kollege, der noch etwas anmerken möchte.
 
 Das Wissen:
-* Das Buch deckt jetzt auch die Sommerfeier, das Wochenmeeting, die Beratungsfirmen und zwei Dauerabsender aus dem Postfach ab.
+* Das Buch deckt jetzt auch die Sommerfeier, das Wochenmeeting, die Beratungsfirmen, zwei Dauerabsender aus dem Postfach und Jürgen aus dem Vertrieb ab.
 * Einträge mit ungelesenen Notizen heben ihre Zahl im Register hervor. Wer das Buch öffnet, landet direkt auf dem neuen Eintrag; danach steht die Zahl wieder ruhig da.
 * Jeder der sieben Kollegen hat eine Notiz aus den persönlichen Begegnungen dazubekommen - dort steht, was man über jemanden erst erfährt, wenn man länger mit ihm zu tun hat.
 

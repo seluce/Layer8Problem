@@ -136,6 +136,23 @@ export const compendium = [
         ]
     },
     {
+        id: "juergen",
+        cat: "person",
+        name: "Jürgen",
+        rolle: "Vertrieb, drittes Obergeschoss",
+        kopf: "Sucht Gesellschaft und findet sie zuverlässig bei dir. Er meint es gut, und genau das macht es so schwer.",
+        seen: ["cof_juergen_1", "cof_juergen_2a", "cof_juergen_2b", "cof_juergen_2c", "sq_betting_pool", "mail_juergen_admin", "mail_allhands_lasagne_2"],
+        notizen: [
+            { seen: "cof_juergen_1",   text: "Blockiert die Kaffeemaschine und erzählt vom Mähroboter. Wer wartet, hört auch von der Vorlauftemperatur." },
+            { seen: "cof_juergen_2a",  text: "Merkt nicht, dass die Kopfhörer noch sitzen, und redet trotzdem weiter. Nicken genügt ihm als Gespräch." },
+            { seen: "cof_juergen_2b",  text: "Versprochene Datenblätter hält er ein. Vorwerfen kann man ihm das schlecht." },
+            { seen: "cof_juergen_2c",  text: "Bringt nach einem schlechten Tag einen Kaffee an den Platz. Zucker, keine Milch — er hat es sich gemerkt, ohne dass es je Thema war." },
+            { seen: "mail_juergen_admin", text: "Findet Werkzeuge im Netz, deren Dateiname bereits die Diagnose enthält, und hält die Virenwarnung für einen Fehlalarm." },
+            { seen: "mail_allhands_lasagne_2", text: "Fragt privat nach, was die Küchen-Logs eigentlich mitschreiben. 'Rein interessehalber' steht darunter, und das ist die Antwort." },
+            { seen: "sq_betting_pool", text: "Organisiert die Wettrunde und spricht dabei den ganzen Raum mit 'Männers' an. Es funktioniert trotzdem." }
+        ]
+    },
+    {
         id: "sabine",
         cat: "person",
         name: "Sabine",
