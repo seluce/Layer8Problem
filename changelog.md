@@ -1,4 +1,4 @@
-[5.1.0] - unveröffentlicht
+[5.1.0] - 2026-08-14
 
 Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
 
