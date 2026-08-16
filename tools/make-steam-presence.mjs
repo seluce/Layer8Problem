@@ -1,7 +1,7 @@
 /**
  * Writes the Steam rich presence localisation files from the dictionaries.
  *
- *   node tools/make-steam-presence.mjs [--out build/steam]
+ *   node tools/make-steam-presence.mjs [--out build/steam/presence]
  *
  * Steam shows the friends-list status in the language of whoever is LOOKING,
  * not the language the player picked. It can only do that if the game sends a
@@ -14,6 +14,10 @@
  * presence.* line changes - and note the ORDER: the file has to be in
  * Steamworks before a build that sends the new tokens ships, or the friends
  * list shows the bare token.
+ *
+ * The file is named exactly like the ACHIEVEMENT localisation file - both are
+ * `4487580_loc_<language>.vdf` - and they go to different places in Steamworks.
+ * That is why each tool writes into a directory of its own.
  *
  * `#DisplayStatus` is written out as well, although nothing sends %statustext%
  * any more. It costs one line and keeps an older client - someone who has not
@@ -35,7 +39,7 @@ const DICTIONARIES = [
 const APP_ID = '4487580';
 const outDir = process.argv.includes('--out')
     ? process.argv[process.argv.indexOf('--out') + 1]
-    : 'build/steam';
+    : 'build/steam/presence';
 
 const TYPES = PRESENCE_ALL;
 

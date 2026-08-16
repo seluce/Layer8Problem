@@ -3,15 +3,14 @@ dist/
 release/
 .vite/
 
-# Interne Arbeitsdateien — nicht ins Repository
+# Internal working files - not for the repository
 CLAUDE.md
 GLOSSAR.md
 UEBERGABE.md
 UEBERSETZUNG.md
 EVENT-DOKTRIN.md
-UMZUG.md
 
-# Claude Code — lokale Einstellungen und Temporärdateien
+# Claude Code - local settings and temporary files
 .claude/settings.local.json
 .claude/settings.local.json.tmp.*
 .claude/launch.json

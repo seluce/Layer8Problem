@@ -771,9 +771,10 @@ export const events = {
         // never reaches a save file and needs no migration.
         this.state.currentChainNode = nodeId;
 
-        // Node char convention, mirrored from the phone (EVENTS.md, 9):
-        // a node's own char beats the event char, char: null forces none.
-        // This is what lets one meeting chain switch speakers mid-dialogue.
+        // Node char convention (EVENTS.md, 4): a node's own char beats the
+        // event char, char: null forces none. This is what lets one meeting
+        // chain switch speakers mid-dialogue - and in the stock the meetings
+        // are the only pool that uses it.
         const charName = charDisplayName(('char' in node) ? node.char : ev.char);
 
         // Build the shared HTML

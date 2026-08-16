@@ -334,6 +334,33 @@ await ok('Jede Tätigkeit hat einen Text, jeder Text eine Tätigkeit', async () 
     }
 });
 
+await ok('Jeder Erfolg steht in der Steam-Reihenfolge, mit Titel und Hinweis', async () => {
+    // Steamworks benennt Erfolge über ihre POSITION (NEW_ACHIEVEMENT_1_7_NAME),
+    // und diese Position ist NICHT die der Datendatei — die drei Wochen-Erfolge
+    // stehen dort oben und in Steam unten. Ein neuer Erfolg, der nicht hinten
+    // angehängt wird, verschiebt alle folgenden: jeder Erfolg im Shop trüge
+    // dann den Namen seines Nachbarn, in einer Sprache, die niemand hier liest.
+    const { readFileSync } = await import('node:fs');
+    const { achievements: dea } = await import('../src/data/de/data_achievements.js');
+    const { achievements: ena } = await import('../src/data/en/data_achievements.js');
+
+    const werkzeug = readFileSync(new URL('./make-steam-achievements.mjs', import.meta.url), 'utf-8');
+    const block = werkzeug.slice(werkzeug.indexOf('const STEAM_ORDER'), werkzeug.indexOf('];', werkzeug.indexOf('const STEAM_ORDER')));
+    const order = [...block.matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
+
+    assert.equal(order.length, dea.length, 'STEAM_ORDER und der Baum sind verschieden lang');
+    assert.equal(new Set(order).size, order.length, 'eine Kennung steht doppelt in STEAM_ORDER');
+    for (const baum of [['de', dea], ['en', ena]]) {
+        const [name, tree] = baum;
+        assert.deepEqual([...order].sort(), tree.map(a => a.id).sort(),
+                         `${name}: STEAM_ORDER und der Baum führen verschiedene Erfolge`);
+        for (const a of tree) {
+            assert.ok(a.title, `${name}: ${a.id} ohne Titel`);
+            assert.ok(a.hint,  `${name}: ${a.id} ohne hint — desc wäre ein Spoiler`);
+        }
+    }
+});
+
 console.log('Verdrahtung:');
 
 await ok('Der Startbildschirm bietet jede Sprache an', async () => {
