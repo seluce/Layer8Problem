@@ -5,9 +5,10 @@ import { events } from './engine/engine_events.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 import { week } from './engine/engine_week.js';
+import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v5.1.0",
+    VERSION: "v6.0.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -20,11 +21,23 @@ const engine = {
     ...events,
     ...inventory,
     ...ui,
-    ...week
+    ...week,
+
+    // 3. Language. Not a module of its own: these two are all the rest of the
+    //    game needs, and the inline handlers in index.html reach them through
+    //    window.engine like everything else in the static shell.
+    switchLanguage,
+    language
 };
 
 // Expose the engine globally (inline onclick handlers in index.html rely on this)
 window.engine = engine;
+
+// The one thing a language switch cannot repaint by itself: the scene in the
+// terminal was copied out of the old data tree when it opened. Registered from
+// this side rather than imported from the other, because i18n knows nothing
+// about the engine and should stay that way.
+onLanguageChange(() => engine.relocaliseScene());
 
 /**
  * Global safety net.
@@ -51,7 +64,7 @@ function recoverFromError(err) {
     try {
         engine.state.activeEvent = false;
         engine.disableButtons(false);
-        engine.log("H.A.L.G.E.R.D.: Interner Fehler abgefangen. Weitermachen.", "text-red-500");
+        engine.log(t('log.halgerd.internalError'), "text-red-500");
     } catch (recoveryError) {
         // Engine not far enough along to recover — nothing sensible left to do.
         console.error("Recovery failed:", recoveryError);
@@ -66,10 +79,13 @@ window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason))
 // index.html.
 export { engine };
 
-// Boot the game.
-// init() is async because the desktop build awaits its cloud save first;
-// nothing after this needs to wait, so the promise is intentionally floating.
-engine.init();
+// Deliberately NOT booted here (6.0).
+//
+// Fourteen components import this module, so the static import graph pulls
+// engine.js in before main.js reaches its first await. Booting from the module
+// body therefore meant init() ran before the language was known - and the
+// language decides which data tree DB is filled from. main.js now calls
+// engine.init() itself, after the language is settled and the core tier is in.
 
 // --- GLOBALE TASTATUR-STEUERUNG ---
 document.addEventListener('keydown', (event) => {
@@ -123,11 +139,16 @@ document.addEventListener('keydown', (event) => {
 
         // D. Warning modals - closable, unlike a game over screen
         if (isVisible('modal-overlay')) {
-            const okBtn = document.querySelector('#modal-content button');
-            if (okBtn && okBtn.innerText === 'VERSTANDEN') {
-                engine.closeModal();
-            }
-            return; // Game over screens cannot be dismissed with ESC
+            // Which box may be dismissed is a property of the box, not of the
+            // word on its button. This used to read
+            //     okBtn.innerText === 'VERSTANDEN'
+            // which stopped being true the moment that button said
+            // 'UNDERSTOOD' - and then ESC silently did nothing on a warning.
+            // A game over needs a restart and a night screen wants its click,
+            // so both stay closed to ESC; everything else is a warning.
+            const box = engine.state.modal;
+            if (box && !box.isEnd && !box.isNight) engine.closeModal();
+            return;
         }
 
         // E. Nothing open at all -> toggle the settings menu

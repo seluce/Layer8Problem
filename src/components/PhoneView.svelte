@@ -11,8 +11,8 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { DB } from '../data.js';
 
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
     const phone = $derived(state.phone);
 
     const pad = (n) => String(n).padStart(2, '0');
@@ -24,7 +24,7 @@
         return key.replace(/^Arrow/, '').toUpperCase();
     };
 
-    const itemName = (id) => DB.items[id]?.name ?? id;
+    const itemName = (id) => tree().items[id]?.name ?? id;
 
     /** Name of the item an option needs but the player does not have. */
     function missingItem(opt) {
@@ -120,7 +120,7 @@
                             <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
                                 {msg.text}
                             </div>
-                            <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>
+                            <span class="text-[10px] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
                         </div>
                     </div>
                 {/if}
@@ -138,7 +138,7 @@
                         onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem)}>
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         {#if o.missing}
-                            <img src="assets/img/ui/ui_locked.webp" alt="Gesperrt"
+                            <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
                                  width="16" height="16" class="w-5 h-5 shrink-0 select-none"
                                  onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
                         {:else}
@@ -148,7 +148,7 @@
                     </div>
                     <div class="shrink-0 flex items-center h-full gap-2">
                         {#if o.missing}
-                            <span class="text-[10px]">(Fehlt: {o.missing})</span>
+                            <span class="text-[10px]">{tf('phone.missing', { item: o.missing })}</span>
                         {:else}
                             {#if o.consumes}
                                 <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">−{o.consumes}</span>
@@ -178,8 +178,8 @@
                      width="28" height="28" class="w-7 h-7 shrink-0 select-none"
                      onerror={(e) => e.currentTarget.outerHTML = '📩'}>
                 <span class="block">
-                    <span class="block text-[10px] font-bold">NEUE NACHRICHT</span>
-                    <span class="block text-[9px]">Jetzt lesen...</span>
+                    <span class="block text-[10px] font-bold">{t('phone.newMessage')}</span>
+                    <span class="block text-[9px]">{t('phone.readNow')}</span>
                 </span>
             </button>
         {/if}

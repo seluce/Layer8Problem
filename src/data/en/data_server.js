@@ -1,0 +1,5677 @@
+// i18n-status: translated
+//
+// 1,786 text fields, 1,777 translated. Nine are deliberately identical, and all
+// nine are `title` values that are already English in the German source:
+//
+//   "The Wolf of Server Room", "Winter Wonderland", "Heise Online News",
+//   "Content is King", "Viral", "Port 23", "Port 24", "Autoplay", "Rack 7"
+//
+// "Viral" and "Autoplay" are the same word in both languages; "Port 23/24" and
+// "Rack 7" are identifiers (GLOSSAR §1, digit stays, word is translated - and
+// here the word is already English); "Heise Online News" is a brand name (§3).
+//
+// Only "The Wolf of Server Room" clears lint-parity's four-word threshold, so
+// the pool reports 1 there and not 0. The broken English is the joke - it is
+// the German source's own Scorsese pun and is left exactly as it stands.
+//
+// Two things in here are load-bearing and must never drift (GLOSSAR §2, §1):
+// srv_label_fail carries 'BLUE heats (Warm)' and 'RED cools (Cold)' - the
+// pairing makes the later choice in call_climate_emergency solvable, and
+// nothing reports it if it is swapped. srv_alarm_stuck_1 uses 4711 as an ALARM
+// code, while call_elster_excel_2a and the mails use it as a TICKET number:
+// two different jokes, deliberately not unified. 0000 is the basement code.
+//
+// srv_dat_archiv, srv_kevin_eigenbau, srv_egon_foehn and srv_wlp_1 share their
+// wording with already-English events in data_calls.js across silent links that
+// carry no reqStory of their own: floppy images and the milling machine, the
+// operating system of unclear origin, the hairdried switch, the takeaway smell.
+export const server = [
+
+    {
+        id: "srv_lore_1",
+        title: "The Forgotten Filing Cabinet",
+        text: "Behind the mainframe stands a dusty cabinet marked 'CONFIDENTIAL'. It is slightly ajar. On top of it lies a roll of packing material.",
+        opts: [
+            { 
+                t: "Rummage through the files", 
+                loot: "secret_list", 
+                next: "path_lore_list", 
+                m: 20, l: 5, a: 0, b: 5, 
+                r: "You dig through dusty invoices until you find it: HR's 'Blacklist'. That is pure dynamite. You pocket it, quickly." 
+            },
+            { 
+                t: "Take the bubble wrap", 
+                loot: "bubble_wrap", 
+                next: "path_lore_bubble", 
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You go for the simple pleasure. The wrap goes into your bag. Plastic is worth more than knowledge today." 
+            },
+            { 
+                t: "Touch nothing and leave", 
+                next: "path_lore_ignore", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You let the ghosts of the past lie. Some doors are better left shut." 
+            }
+        ]
+    },
+    {
+        id: "srv_lore_2a",
+        title: "Internal Investigation",
+        reqStory: "path_lore_list",
+        text: "You hear heavy footsteps in the corridor. It is 'the Cleaner' from HR. He is looking for leaks. The 'Blacklist' in your bag suddenly weighs a ton.",
+        opts: [
+            { 
+                t: "Hand the list back", 
+                rem: "secret_list",
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You head him off. 'Found this. It was just lying about.' He takes it without a word, nods to you and goes. No evidence, no trouble." 
+            },
+            { 
+                t: "Create a diversion with the fire extinguisher", 
+                req: "fire_ext",
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "One short blast of CO2 makes fog and confusion. 'Fire alarm? I am off!' he shouts, and runs. Chaos is your friend." 
+            },
+            { 
+                t: "Hide in the cable duct", 
+                m: 15, l: -5, a: 15, b: -5, 
+                r: "You squeeze in between dusty bundles of cable. He walks past, sniffs the air for a moment, then disappears again. Your heart is hammering." 
+            }
+        ]
+    },
+    {
+        id: "srv_lore_2b",
+        title: "Bag Search",
+        reqStory: "path_lore_bubble",
+        text: "The 'Cleaner' from HR heads you off in the corridor. 'Routine search. We are looking for stolen company property. Empty your pockets!' He stares at your bulging trouser pocket.",
+        opts: [
+            { 
+                t: "Show your pockets willingly", 
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "He finds... bubble wrap. He wrinkles his nose. 'Only rubbish? You have no ambition at all.' He leaves you standing there, wrap and all." 
+            },
+            { 
+                t: "Refuse, outraged", 
+                m: 2, l: 0, a: 10, b: 5, 
+                r: "'That is a breach of my rights!' He writes your name down on a list, but as he can prove nothing, he moves off." 
+            },
+            { 
+                t: "Offer the doughnut as a bribe", 
+                rem: "donut",
+                m: 2, l: 5, a: -10, b: -5, 
+                r: "He stares at the stale doughnut. His stomach rumbles. 'Very well. One-off exception.' He takes the doughnut and disappears, chewing." 
+            }
+        ]
+    },
+    {
+        id: "srv_sleep_1",
+        title: "The Cardboard Store",
+        text: "Behind the racks old server packaging is stacked to the ceiling. Strictly speaking you ought to take it out to the waste paper. But arranged cleverly it makes a cave nobody can see into...",
+        opts: [
+            { 
+                t: "Build a secret fortress", 
+                next: "path_sleep_fort", 
+                m: 60, l: 35, a: -10, b: 10, 
+                r: "You build yourself a snug nest behind the cardboard wall. Nobody can see you in here. You have a nap and leave the structure standing for 'future emergencies'." 
+            },
+            { 
+                t: "Get rid of it all straight away", 
+                next: "path_sleep_trash", 
+                m: 30, l: -10, a: 5, b: 0, 
+                r: "You lug the boxes out to the skip. It is dull and you sweat, and the server room is properly empty again afterwards." 
+            },
+            { 
+                t: "Stick a 'RETURN' label on it", 
+                next: "path_sleep_label", 
+                m: 5, l: 10, a: -5, b: 0, 
+                r: "You stick notes on the piles at random. Now it looks like an important matter. A problem for your future self." 
+            }
+        ]
+    },
+    {
+        id: "srv_sleep_2a",
+        title: "The Fortress Commander",
+		char: "Kevin",
+        reqStory: "path_sleep_fort",
+        text: "Kevin is standing in front of your cardboard fortress. He has put up a password sign: 'Cool People Only'. 'Hey, boss! Nice den. I laid some Wi-Fi cable in there.'",
+        opts: [
+            { 
+                t: "Praise him", 
+                rep: { "Kevin": 5 },
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "'Good work, soldier.' You spend 10 minutes with him on fortress architecture. Productivity is on the floor, morale is up." 
+            },
+            { 
+                t: "Tear the fortress down", 
+                rep: { "Kevin": -10 },
+                m: 15, l: -5, a: 5, b: 0,
+                r: "You panic that the boss will see it. You kick the boxes over. Kevin very nearly cries. 'My castle...'" 
+            }
+        ]
+    },
+    {
+        id: "srv_sleep_2b",
+		char: "Dr. Wichtig",
+        title: "Praise from the Boss",
+        reqStory: "path_sleep_trash",
+        text: "The boss walks down the empty, tidy aisle where the boxes used to be. He nods, satisfied. 'Some order in here at last. Miller, that was exemplary.'",
+        opts: [
+            { 
+                t: "Nod modestly", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 2, l: -5, a: -5, b: 10, 
+                r: "You say nothing and enjoy the rare moment of recognition. Your standing in the firm has risen." 
+            },
+            { 
+                t: "Ask for a pay rise", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "'Over the boxes? Do not push it.' The mood turns again at once. Greed eats the brain." 
+            }
+        ]
+    },
+    {
+        id: "srv_sleep_2c",
+        title: "The Logistics Error",
+        reqStory: "path_sleep_label",
+        text: "A courier stands before your 'Return' boxes, thoroughly baffled. 'I am supposed to collect these? But the delivery note says 2018... and why are they empty?'",
+        opts: [
+            { 
+                t: "Talk him into taking them", 
+                m: 10, l: 5, a: -5, b: 10, 
+                r: "You talk at him until he loads them up in irritation. 'Not my problem.' Gone is gone." 
+            },
+            { 
+                t: "Tell the truth", 
+                m: 30, l: -10, a: 5, b: -5, 
+                r: "'All right, I was just too lazy.' You have to help him carry the lot out to the skip while he swears at you." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_1",
+        title: "The External Engineer",
+        text: "An outside contractor has left his tool case open in the server room. He has gone for a cigarette. A high-quality screwdriver glints at you.",
+        opts: [
+            { 
+                t: "Sort out the chaos in the case", 
+                next: "path_tool_sort", 
+                m: 15, l: -5, a: -10, b: 0, 
+                r: "You cannot look at the mess. You sort bits, pliers and cable ties by size. Deeply satisfying." 
+            },
+            { 
+                t: "Shut the lid and wait", 
+                next: "path_tool_wait", 
+                m: 10, l: 5, a: 0, b: 0, 
+                r: "You close the case so that nobody else gets any ideas. Today you are the guardian of property." 
+            },
+            { 
+                t: "Pocket the tool", 
+                loot: "screw", 
+                next: "path_tool_theft", 
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "Mine. Tools always come in handy. You leave the rest lying there, casually." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2a",
+        title: "Missing Persons Report",
+        reqStory: "path_tool_theft",
+        text: "The engineer comes back and rummages frantically in his case. 'Where is my Wera driver?! It was right here! That thing costs €40!' He stares at you.",
+        opts: [
+            { 
+                t: "'It was on the floor.'", 
+                rem: "screw", 
+                m: 5, l: 0, a: 5, b: -5, 
+                r: "'Oh, that one I... er... secured.' You hand it back through gritted teeth. The engineer snatches it out of your hand. Your conscience is clean, your pockets are empty." 
+            },
+            { 
+                t: "Lie stone-faced: 'No idea.'", 
+                m: 2, l: 0, a: -5, b: 15, 
+                r: "You shrug. 'Maybe the cleaners took it?' He swears and kicks the rack. He does not quite believe you, and he cannot prove a thing." 
+            },
+            { 
+                t: "Blame Kevin", 
+                m: 5, l: 5, a: -10, b: -5, 
+                r: "'The apprentice was in here earlier...' The engineer goes red. 'I will kill the little...' He storms out. It gnaws at you for a moment. Then you remember the tool was free." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2b",
+        title: "The Genius Masters the Chaos",
+        reqStory: "path_tool_sort",
+        text: "The engineer comes back, looks into the perfectly sorted case and goes pale. 'Who... who has been at this? I cannot find ANYTHING any more! My system is built on heap logic!'",
+        opts: [
+            { 
+                t: "'You are welcome.'", 
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'Welcome?! It will take me hours to get that back into a mess!' He rings his boss to complain about 'internal sabotage'." 
+            },
+            { 
+                t: "Lecture him on efficiency", 
+                m: 20, l: -10, a: 5, b: 5, 
+                r: "You explain the 5S system to him. He is not listening at all, he just angrily throws the lot back into one heap. Pearls before swine." 
+            },
+            { 
+                t: "Leave without a word", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You leave the barbarian to his misery. Some people simply do not want saving." 
+            }
+        ]
+    },
+    {
+        id: "srv_tool_2c",
+        title: "Search Party",
+        reqStory: "path_tool_wait",
+        text: "The engineer comes back and seems desperate. 'Damn it, I cannot find my crimping tool. I have to be finished in 10 minutes or there is a penalty clause.'",
+        opts: [
+            { 
+                t: "Help him look", 
+                loot: "energy", 
+                m: 15, l: -10, a: 5, b: -5, 
+                r: "The two of you crawl under the raised floor. You find the tool. 'Cheers, mate! Here, have this.' He tosses you an energy drink." 
+            },
+            { 
+                t: "Laugh at him", 
+                m: 2, l: 5, a: -10, b: 5, 
+                r: "'Professional at work, is it?' He gives you the finger. Your mood improves. Your list of friends does not." 
+            },
+            { 
+                t: "Give him the cable ties", 
+                rem: "zip_ties", 
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "'Forget the tool, take these.' He beams. 'Cable ties solve everything.' He bodges the line together and leaves." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_1",
+        title: "Tears and Whisky",
+        text: "You find Bernd from Sales sitting between the warm server racks in tears, cracking open a bottle of 'Glenfiddich'. He slurs: 'My wife is gone, my sales are gone... it is all gone.'",
+        opts: [
+            { 
+                t: "Give him an energy drink", 
+                rem: "energy", 
+                next: "path_bernd_hyper", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'Here, drink this and pull yourself together, you wreck.' Bernd empties the can in tears. His eyes widen all at once. 'Sugar... caffeine... PERFORMANCE?!'" 
+            },
+            { 
+                t: "Sit down and drink with him", 
+                next: "path_bernd_drunk", 
+                m: 45, l: 20, a: -50, b: 20, 
+                r: "You empty the bottle between you. Bernd tells you about his dream of breeding alpacas. You tell him your root password (hopefully you only dreamt that part). You are best friends." 
+            },
+            { 
+                t: "Grass him up to HR, stone cold", 
+                next: "path_bernd_snitch", 
+                m: 10, l: -5, a: 0, b: -15, 
+                r: "You ring anonymously. Two minutes later security drags Bernd out. He shouts: 'Betrayal! Et tu, Brute?!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2a",
+        title: "The Morning After",
+        reqStory: "path_bernd_drunk",
+        text: "Bernd materialises at your desk, beaming. He is wearing sunglasses and smells of mint. 'Hey, partner! About our idea... I have already registered the domain alpaka-server-farm.de!'",
+        opts: [
+            { 
+                t: "'I was drunk!'", 
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Bernd's face collapses. 'Oh. I thought... I thought that was real.' He shuffles sadly away. It was only a joke. His face will stay with you rather longer than that." 
+            },
+            { 
+                t: "Ask whether he has more spirits", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 5, l: 5, a: -10, b: 10, 
+                r: "'Ha! Good one!' Bernd laughs loudly. Too loudly. The boss looks out of his office. Time to be elsewhere." 
+            },
+            { 
+                t: "'Sure, count me in.'", 
+                m: 15, l: 10, a: -5, b: 5, 
+                r: "Bernd hugs you. 'We are going to be rich! I will handle the hay, you handle the IT.' He walks off whistling. You now have a side business." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2b",
+        title: "The Fallen Man's Estate",
+        reqStory: "path_bernd_snitch",
+        text: "You walk past Bernd's empty desk. He has been 'released'. His office bits and pieces are still in his bin. On top of them, an almost new doughnut.",
+        opts: [
+            { 
+                t: "Nick his stapler", 
+                m: 2, l: 0, a: -5, b: 0, 
+                r: "It is a good stapler. Swingline. Red. You stroke it. Mine." 
+            },
+            { 
+                t: "Have a guilty conscience", 
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You stare at the empty chair. What if you are the next one? The thought spoils the whole day for you." 
+            },
+            { 
+                t: "Loot the doughnut", 
+                loot: "donut", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "Tastes of victory and icing." 
+            }
+        ]
+    },
+    {
+        id: "srv_bernd_2c",
+        title: "The Wolf of Server Room",
+        reqStory: "path_bernd_hyper",
+        text: "Bernd runs past you. He is practically vibrating. The mix of whisky and energy drink has changed something in him. He is shouting into the phone: 'BUY! SELL! IT ALL HAS TO GO!'",
+        opts: [
+            { 
+                t: "Try to slow him down", 
+                m: 10, l: -5, a: 10, b: 0, 
+                r: "You try to calm him. He stares at you, pupils wide open. 'Time is money! Out of the way, low earner!' He sprints for the lift." 
+            },
+            { 
+                t: "Sell him Wi-Fi passwords", 
+                loot: "secret_list", 
+                m: 15, l: 0, a: -5, b: 5, 
+                r: "'Data! I need data!' He swaps his client list for the guest Wi-Fi password. A fair deal between madmen." 
+            },
+            { 
+                t: "Admire him", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "He has just sold the caretaker a lease agreement on a broom. Impressive." 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_1",
+        title: "Hardware Find",
+        text: "Behind a loose floor panel you find a clattering frame full of graphics cards. It is loud, hot and smells of burnt dust. A sticky note on it says: 'DO NOT TOUCH! MUM IS CALCULATING!'",
+        opts: [
+            { 
+                t: "Let it run", 
+                next: "path_mining_heat", 
+                m: 5, l: 10, a: 0, b: 20, 
+                r: "You cover it up again. Passive income! As long as the boss does not check the electricity bill, you are rich. (In theory, at least.)" 
+            },
+            { 
+                t: "Pull the plug", 
+                next: "path_mining_crash", 
+                m: 5, l: -5, a: 5, b: -5, 
+                r: "Snap. Silence. The fans die with a sad whirr. Responsible, and entirely without fun." 
+            },
+            { 
+                t: "Nick the memory stick on the side", 
+                loot: "usb_stick", 
+                next: "path_mining_wallet", 
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "That must be the wallet! You pull the stick out. The screen goes black. Never mind. Crypto millionaire, as of this moment." 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2a",
+        title: "Thermal Escalation",
+        reqStory: "path_mining_heat",
+        text: "The fire alarm goes off. Black smoke is rising out of the floor panel where the mining rig sits. There was rather more dust in those fans than was good for them.",
+        opts: [
+            { 
+                t: "Point the fire extinguisher at it", 
+                req: "fire_ext", 
+                m: 10, l: 0, a: -5, b: -5, 
+                r: "CO2 fog fills the room. The fire is out, the hardware is scrap. You report it as 'spontaneous self-ignition of a switch'." 
+            },
+            { 
+                t: "Blow it out in a panic", 
+                m: 5, l: 0, a: 20, b: 20, 
+                r: "You flap a manual at it. It does nothing at all. The sprinkler system comes on. You are wet, the server room is wet, and the insurers will have some very specific questions." 
+            },
+            { 
+                t: "Run and shout 'FIRE!'", 
+                m: 2, l: 5, a: 10, b: 15, 
+                r: "You evacuate yourself to working from home. The fire brigade will sort it out. Tomorrow there will be awkward questions." 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2b",
+		char: "Dr. Wichtig",
+        title: "Critical Infrastructure",
+        reqStory: "path_mining_crash",
+        text: "Two hours after you switched the rig off, the boss storms in. 'Miller! The entire email archive from 1990 to 2005 is offline! That was running on the legacy cluster behind Rack 4!'",
+        opts: [
+            { 
+                t: "Be honest: 'I switched it off.'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 0, b: 30, 
+                r: "The boss stares at you. 'You took the backup system for an illegal power draw? Miller, I do not know whether you are too clever or too stupid for this job.'" 
+            },
+            { 
+                t: "Claim it was a hacker", 
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'The Russians, boss. Definitely.' He goes pale. 'Oh God. My emails to the receptionist...' He runs out. You quickly switch the thing back on." 
+            },
+            { 
+                t: "Look for the 'fault' and fix it", 
+                req: "manual", 
+                m: 30, l: -15, a: 10, b: -10, 
+                r: "With the Windows 95 manual and a great deal of patience you boot the system again. It beeps cheerfully. The emails are back. Nobody thanks you." 
+            }
+        ]
+    },
+    {
+        id: "srv_mining_2c",
+        title: "The Crypto Hoard",
+        reqStory: "path_mining_wallet",
+        text: "You sit down in your break and put the stolen memory stick into your laptop. Your hands are shaking. Are there Bitcoins on it? Dogecoins? Your pension?",
+        opts: [
+            { 
+                t: "Open the stick", 
+                m: 10, l: 5, a: 10, b: 0, 
+                r: "Folder: 'Holiday_Mallorca_98'. It is 500 pictures of Egon in swimming trunks and nothing else. Your trauma is beyond description. The stick is worthless." 
+            },
+            { 
+                t: "Format the stick and destroy the evidence", 
+                rem: "usb_stick", 
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "Best to be on the safe side. You wipe the lot and throw the stick in the bin. No riches. No evidence either." 
+            },
+            { 
+                t: "Sell the stick to Kevin", 
+                rem: "usb_stick", 
+                loot: "energy",
+                rep: { "Kevin": -5 }, 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'Hey Kevin, there are cheat codes on this.' Kevin believes you and gives you his last can of energy drink for it. A good trade. (Item lost, energy drink gained)" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_1",
+        title: "Tangled Cables",
+        text: "You trip over a loose fibre cable. An ugly crunch. A red light on the main switch blinks frantically. Half the network has just died.",
+        opts: [
+            { 
+                t: "Patch it with tape", 
+                req: "tape",
+                next: "path_cable_fix", 
+                m: 10, l: -5, a: -5, b: -5, 
+                r: "You wind half a roll of duct tape around the break. It looks like a bandaged leg. The light goes green. Nothing lasts longer than a temporary fix." 
+            },
+            { 
+                t: "Wiggle the connector", 
+                next: "path_cable_wiggle", 
+                m: 2, l: 5, a: 10, b: 0, 
+                r: "You push, pull and pray. The light jumps to green. You breathe out. Whatever you do, do not breathe on it again." 
+            },
+            { 
+                t: "Run away and hide", 
+                next: "path_cable_run", 
+                m: 5, l: 10, a: -5, b: 15, 
+                r: "You disappear into the shadow of the racks. Nobody saw you. From the corridor come the first shouts: 'The internet is gone!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2a",
+        title: "ISO Certification",
+        reqStory: "path_cable_fix",
+        text: "An external ISO auditor is standing in front of your masterpiece in tape. He taps the silver lump on the fibre cable with his pen. 'Is that... to DIN standard?'",
+        opts: [
+            { 
+                t: "Admit that it is holding the internet together", 
+                m: 5, l: 0, a: 5, b: -5, 
+                r: "The auditor sighs deeply. 'I have seen nothing. But if that catches fire, I have never met you.' He moves on." 
+            },
+            { 
+                t: "Rip the tape off - away with the evidence", 
+                m: 5, l: 0, a: 20, b: 10, 
+                r: "You rip the tape off. The cable breaks again at once. The network dies a second time. The auditor stares at you in horror. 'That was... brave.'" 
+            },
+            { 
+                t: "Claim it is shielding", 
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "'Special shielding against cosmic radiation.' The auditor nods, impressed, and puts a tick in the box. Competence is a matter of standing there confidently." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2b",
+		char: "Dr. Wichtig",
+        title: "The Loose Connection",
+        reqStory: "path_cable_wiggle",
+        text: "The boss steps into the server room. He plants his foot on the floor. The vibration makes your merely 'wiggled' cable lose contact. The light on the switch jumps to red.",
+        opts: [
+            { 
+                t: "Kick it, discreetly", 
+                m: 2, l: 0, a: 5, b: 5, 
+                r: "While he looks away you kick the rack. The light goes green. 'Self-healing powers,' you murmur. Phew." 
+            },
+            { 
+                t: "Fake an immediate emergency repair", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 15, l: -5, a: 5, b: -5, 
+                r: "'Alarm! Critical fault!' You shoo the boss out and wiggle the cable again. It holds... for now." 
+            },
+            { 
+                t: "Convince him he is statically charged", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 5, l: 5, a: -5, b: 10, 
+                r: "'That is your aura, boss! Too much energy!' He looks flattered. 'Really? I do feel a sort of tingling myself.' He walks out carefully." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_2c",
+        title: "The Hacker Theory",
+        reqStory: "path_cable_run",
+        text: "There is panic in the corridor. Dr Wichtig is standing on a chair. 'We are under attack! This is cyber warfare! Somebody has physically cut the line!' Everyone eyes everyone else with suspicion.",
+        opts: [
+            { 
+                t: "Lead the 'investigation'", 
+                rep: { "Dr. Wichtig": 2 },
+                m: 10, l: 5, a: -5, b: -10, 
+                r: "You play Sherlock Holmes. 'It was... a rat. I saw teeth marks.' The boss nods. 'Buy poison.' You are in the clear." 
+            },
+            { 
+                t: "Blame Kevin", 
+                m: 2, l: 5, a: -5, b: -5, 
+                rep: { "Kevin": -15, "Dr. Wichtig": 10 },
+                r: "'I saw Kevin near the rack...' The crowd roars. Kevin is dragged off to be questioned. Your karma is on the floor. You are safe." 
+            },
+            { 
+                t: "Stand quietly in the corner", 
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "You say nothing and hope nobody notices your shoe prints on the cable. Cold sweat runs down your back." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_1",
+        title: "Forgotten Snack",
+        text: "A lone can of 'Cyber-Fuel' stands on a warm server rack. It is still sealed. Its best-before date is a distant memory.",
+        opts: [
+            { 
+                t: "Pocket it for later", 
+                loot: "energy", 
+                next: "path_drink_keep", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "Better equipped for a chemical emergency than caught out by one. Into the bag it goes." 
+            },
+            { 
+                t: "Leave it standing there", 
+                next: "path_drink_ignore", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You do not trust any liquid that glows in the dark. You leave it for the server goblins." 
+            },
+            { 
+                t: "Drink it on the spot", 
+                next: "path_drink_now", 
+                m: 5, l: -15, a: -15, b: 0, 
+                r: "HISS. The warm brew tastes of jelly babies and palpitations. Invincible for about 20 minutes." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2a",
+        title: "The Sugar Crash",
+        reqStory: "path_drink_now",
+        text: "Your stomach rumbles ominously. That 'Cyber-Fuel' was rather older than it looked. Or radioactive. Your left eyelid twitches beyond your control.",
+        opts: [
+            { 
+                t: "Carry on working and shake", 
+                m: 10, l: -5, a: 20, b: 5, 
+                r: "You try to type. Your hands vibrate so hard that you accidentally close three tickets at once. Efficiency through panic." 
+            },
+            { 
+                t: "Drink some water after it", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You wash the chemical taste away at the water cooler. The twitching stops. You are still alive." 
+            },
+            { 
+                t: "Hide in the toilet", 
+                m: 20, l: 10, a: 5, b: -5, 
+                r: "Thorough beats brave. You spend 20 minutes in the tiled department. Productivity: nil. Will to live: high." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2b",
+        title: "A Sticky Matter",
+        reqStory: "path_drink_keep",
+        text: "You reach into your bag and put your hand in something wet. The can of 'Cyber-Fuel' evidently had a microscopic leak. Everything is sticky.",
+        opts: [
+            { 
+                t: "Never mind, caffeine is caffeine", 
+                rem: "energy", 
+                m: 5, l: -10, a: -5, b: 5, 
+                r: "You lick the residue off your fingers and drink the pitiful remainder out of the can. Undignified. Effective." 
+            },
+            { 
+                t: "Ask the apprentice for help",
+                rep: { "Kevin": 5 }, 
+                m: 5, l: 5, a: -5, b: -5, 
+                r: "'Kevin, have you got any wet wipes?' Kevin grins. 'Course. Standard gamer kit.' He helps you clean out the sticky bag." 
+            },
+            {
+                t: "Hang on... it is empty?",
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "You realise it was only old residue. You drank that can a long time ago."
+            },
+            { 
+                t: "Clean the lot up", 
+                rem: "energy", 
+                m: 15, l: -5, a: 10, b: 0, 
+                r: "You swear and scrub at your trousers with paper towels. The can is empty and so is your patience." 
+            }
+        ]
+    },
+    {
+        id: "srv_drink_2c",
+		char: "Kevin",
+        title: "Kevin's Find",
+        reqStory: "path_drink_ignore",
+        text: "Kevin comes out of the server room with his eyes wide open. He is holding the can. 'Whoa! Vintage Cyber-Fuel from 2012! Collector's item!'",
+        opts: [
+            { 
+                t: "Tell him not to drink it", 
+                rep: { "Kevin": 5 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'Too late!' Kevin empties the can. He begins to smell colours. You tried." 
+            },
+            { 
+                t: "Wish him all the best with it",
+                rep: { "Kevin": -5 }, 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "Darwin will handle this, you decide, and go to fetch a coffee. From the kitchen shortly afterwards comes a triumphant 'WHOA, MENTAL'. The system is working." 
+            },
+            { 
+                t: "Envy him the deposit", 
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "25 cents deposit, untouched since 2012. Kevin gets the collector's item AND the change. There is a lesson about life in that distribution, and you refuse to go looking for it." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_1",
+        title: "Safety Check",
+        text: "Behind a yellowed CRT monitor you find a fire extinguisher. It is dusty. According to the label, it was last inspected in 1998.",
+        opts: [
+            { 
+                t: "Take it with you", 
+                loot: "fire_ext", 
+                next: "path_ext_loot", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "You heave the heavy thing into your inventory. You never know when you will have to put out a fire (or break down a door)." 
+            },
+            { 
+                t: "A quick function test", 
+                next: "path_ext_trap", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You squeeze the lever for barely an instant. A hiss... and then the valve jams. PFFFFFFT!" 
+            },
+            { 
+                t: "Carry out a full DIN audit", 
+                next: "path_ext_audit", 
+                m: 60, l: -30, a: 10, b: -20, 
+                r: "You fetch cleaning kit, a magnifying glass and the inspection record. You spend an hour documenting patches of rust. Exemplary!" 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2a",
+		char: "Egon",
+        title: "Heavy Haulage",
+        reqStory: "path_ext_loot",
+        text: "You lug the fire extinguisher down the corridor. It feels like 20 kilos and keeps banging against your shin. Egon the caretaker gives you a critical look.",
+        opts: [
+            { 
+                t: "Use it as a doorstop", 
+                rep: { "Egon": -2 },
+                rem: "fire_ext", 
+                m: 5, l: 10, a: -5, b: 5, 
+                r: "You have had enough of lugging. You stand it against the server room door. Now the door stays open and it gets cooler." 
+            },
+            { 
+                t: "Do bicep curls with the fire extinguisher", 
+                rep: { "Egon": -5 },
+                m: 20, l: -10, a: -20, b: 10, 
+                r: "You use the weight for a spontaneous workout in the corridor. Your arms burn, your pulse settles with every repetition. Egon just shakes his head." 
+            },
+            { 
+                t: "Say you are taking it away for servicing",
+                rep: { "Egon": 5 }, 
+                m: 10, l: -5, a: 5, b: -5, 
+                r: "Egon nods his approval. 'Good man. Safety is not a toy.' He lets you pass." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2b",
+        title: "Winter Wonderland",
+        reqStory: "path_ext_trap",
+        text: "The 'quick test' from earlier has escalated. Half the server room is covered in white extinguisher powder. It looks like 'Scarface', only dustier. The fan is distributing it everywhere.",
+        opts: [
+            { 
+                t: "Clean it all up yourself", 
+                m: 120, l: -50, a: 30, b: -10, 
+                r: "You crawl around the room with a cloth for two hours. Your arms shake, your mood is on the floor, and every minute of it is honest, unpaid humility." 
+            },
+            { 
+                t: "Flee and lock the door", 
+                m: 5, l: 10, a: -5, b: 30, 
+                r: "You run out. 'No idea, it must be a malfunction of the system!' Let us hope they believe you." 
+            },
+            { 
+                t: "Sell it as an art installation", 
+                m: 15, l: 5, a: 0, b: 15, 
+                r: "You stick a sign on the rack: 'TRANSIENCE'. The boss comes by: 'Interesting. Now clear it away.' Time wasted." 
+            }
+        ]
+    },
+    {
+        id: "srv_extinguisher_2c",
+		char: "Dr. Wichtig",
+        title: "The Bureaucrat",
+        reqStory: "path_ext_audit",
+        text: "After your hour-long audit, Dr Wichtig comes by. He sees your checklists and tables next to the fire extinguisher. He looks surprised.",
+        opts: [
+            { 
+                t: "Claim overtime for it", 
+				rep: { "Dr. Wichtig": -10 },
+                m: 10, l: 0, a: 10, b: 20, 
+                r: "'Overtime? For dusting? Keep dreaming.' The good impression has evaporated." 
+            },
+            { 
+                t: "Ask him to sign the record", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 30, l: -10, a: 5, b: 0, 
+                r: "You force him into a 30-minute discussion of fire safety regulations. He signs, purely so that you will stop talking." 
+            },
+            { 
+                t: "Present the report proudly", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 15, l: -5, a: -5, b: -15, 
+                r: "'The unit does not conform to standard DIN-1402.' The boss nods. 'Miller, I like your thoroughness. Carry on.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_1",
+        title: "Load-Bearing Knowledge",
+        text: "A thick, yellowed book is wedged under a wobbly table leg: 'Windows 95 - The Manual'. It carries the load of three monitors and a switch.",
+        opts: [
+            { 
+                t: "Leaf through it where it lies", 
+                next: "path_man_study", 
+                m: 30, l: 10, a: -10, b: 0, 
+                r: "You crouch on the floor and read the chapter on 'IRQ conflicts'. A simpler time. Your legs have gone to sleep." 
+            },
+            { 
+                t: "Pull it out and take it", 
+                loot: "manual", 
+                next: "path_man_taken", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "One tug and it is out. The table drops 2cm. The monitor on top of it sways ominously. Ancient knowledge, though!" 
+            },
+            { 
+                t: "Leave it where it is", 
+                next: "path_man_leave", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "Never touch a running system. That goes for furniture too. You leave the structural integrity intact and the book to gather dust." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2a",
+        title: "Out of True",
+        reqStory: "path_man_taken",
+        text: "Without the manual under its leg, the table vibrates with the server fans so badly that the expensive core switch is sliding slowly towards the edge. It is about to go.",
+        opts: [
+            { 
+                t: "Fold up cardboard and push it under", 
+                m: 15, l: -10, a: 5, b: 0, 
+                r: "You improvise a replacement wedge out of a pizza box. It holds rather less well and looks dreadful. You do get to keep the book." 
+            },
+            { 
+                t: "Tape the switch down", 
+                req: "tape", 
+                m: 5, l: 5, a: 0, b: -5, 
+                r: "If it moves and it should not move: duct tape. You simply stick the switch to the table. Problem solved." 
+            },
+            { 
+                t: "Push the manual back under", 
+                rem: "manual", 
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "You sacrifice the knowledge for the safety. The table is steady again. Your inventory is emptier, your conscience cleaner." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2b",
+        title: "5S Audit",
+        reqStory: "path_man_leave",
+        text: "A 'lean management consultant' is crawling around the server room. He points at the manual under the table leg. 'That is not a defined storage location for documentation. That has to go.'",
+        opts: [
+            { 
+                t: "Let him remove it", 
+                m: 5, l: 10, a: 0, b: 0, 
+                r: "He pulls it out in triumph. The table tips. The monitor lands on his foot. You laugh on the inside. The audit is over." 
+            },
+            { 
+                t: "Ignore him", 
+                m: 2, l: 5, a: 5, b: 10, 
+                r: "He writes 'inadequate order' in his report. That will mean trouble. On the other hand, you did not have to talk to him." 
+            },
+            { 
+                t: "Explain that it is a load spreader", 
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "You waffle something about 'vibration damping to DIN standard'. The consultant takes notes. 'Creative solution.' He sticks an 'Inspected' label on the book." 
+            }
+        ]
+    },
+    {
+        id: "srv_manual_2c",
+		char: "Dr. Wichtig",
+        title: "Legacy Support",
+        reqStory: "path_man_study",
+        text: "The boss looks in. 'Miller! We still have a 486 in the basement running the door control. It is asking for an IRQ assignment for the sound card. Do you happen to know what that is?'",
+        opts: [
+            { 
+                t: "'Just buy something new.'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "'No budget!' he barks back. A chance to shine, wasted." 
+            },
+            { 
+                t: "Give him the answer at once", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 5, l: -5, a: -10, b: -20, 
+                r: "'IRQ 5, DMA 1, address 220.' You read it five minutes ago. The boss looks at you as though he had hired a prophet by accident. 'Miller, you are a genius.' You will live off that moment for months." 
+            },
+            { 
+                t: "Pretend you have to look it up", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 60, l: 20, a: 0, b: 0, 
+                r: "You know the answer. What you say is: 'That is highly complex. Two hours.' You go for a leisurely coffee. The boss waits in reverence." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_1",
+        title: "The Strange Noise",
+        text: "A scratching noise is coming from Rack 4. It does not sound like a fan. More like... sharp teeth on expensive fibre cable. Something alive is nesting in the firewall.",
+        opts: [
+            { 
+                t: "Doughnut as bait", 
+                req: "donut", 
+                next: "path_rat_feed", 
+                m: 10, l: 5, a: -10, b: 0, 
+                r: "You break off a piece and lay it in front of the cable duct. A shadow darts out, snatches the bait and vanishes without a sound. Quiet." 
+            },
+            { 
+                t: "Call pest control", 
+                next: "path_rat_call", 
+                m: 15, l: 5, a: 0, b: 5, 
+                r: "You raise a ticket with facilities management. Priority: high. Status: 'In progress'. You have done your duty, and off you go." 
+            },
+            { 
+                t: "Give it a kick", 
+                next: "path_rat_kick", 
+                m: 5, l: 0, a: 10, b: 5, 
+                r: "BAM! You kick the panel hard. There is a panicked squeak, then absolute silence. You wait a moment... nothing more. Problem solved, pragmatically." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_2a",
+        title: "Collateral Damage",
+        reqStory: "path_rat_kick",
+        text: "Your monitoring dashboard is lit up red like a Christmas tree. The uplink in Rack 4 is dead. Your kick earlier evidently drove off more than the rat; it loosened something as well.",
+        opts: [
+            { 
+                t: "Mend it with tape", 
+                req: "tape", 
+                m: 10, l: 0, a: 5, b: 5, 
+                r: "You fiddle the wires together and tape them up. 'Temporary fix', you call it. It will hold. For a while. Probably." 
+            },
+            { 
+                t: "Blame it on 'solar wind'", 
+                m: 2, l: 10, a: -5, b: 20, 
+                r: "You send an all-staff email: 'Atmospheric interference'. People will believe anything as long as it sounds technical. You do nothing at all." 
+            },
+            { 
+                t: "Swap the cable", 
+                req: "cable", 
+                m: 15, l: -5, a: -5, b: -10, 
+                r: "You find the severed cable (teeth marks or a tear?). Either way. You plug in a new patch cable. The link is up. Nobody saw a thing." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_2b",
+        title: "A New Friend",
+        reqStory: "path_rat_feed",
+        text: "You walk past Rack 4 again. There she is. The rat you fed. She looks well fed and relaxed. She has even 'caught' a dead cockroach for you.",
+        opts: [
+            { 
+                t: "Keep her on as 'junior admin'", 
+                m: 5, l: 10, a: -10, b: 0, 
+                r: "You call her 'Splinter'. She lives behind the patch panel now. The most effective anti-bug system in the company." 
+            },
+            { 
+                t: "Call the caretaker",
+                rep: { "Egon": 2 }, 
+                m: 10, l: 0, a: 0, b: 0, 
+                r: "On reflection, no pets. Egon comes and deals with it 'discreetly'. You look away." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_2c",
+        title: "Ticket Closed",
+        reqStory: "path_rat_call",
+        text: "An email pops up: 'Ticket #492 (rodent) closed. Reason: no access key.' At the same moment the internet goes down. The rat had plenty of time to chew.",
+        opts: [
+            { 
+                t: "Blame the provider", 
+                m: 5, l: 5, a: -5, b: 15, 
+                r: "'Telekom digger cut the line.' The classic. Everyone nods in sympathy and goes home early. You are in the clear." 
+            },
+            { 
+                t: "Panic repair", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 30, l: -20, a: 20, b: -10, 
+                r: "You have to lay the whole cable run again with the boss breathing down your neck. You should have done it yourself in the first place." 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_1",
+        title: "The Cold Trap",
+        text: "Somebody has set the air conditioning to 16 degrees and snapped the door handle off on the inside. You are locked in and freezing!",
+        opts: [
+            { 
+                t: "Warm yourself on the servers", 
+                m: 90, l: 20, a: 10, b: 0, 
+                r: "You curled up behind the CPU exhaust and slept until somebody happened to open the door from outside. Cosy." 
+            },
+            { 
+                t: "Smash the door in with the hammer", 
+                req: "hammer",
+                next: "path_cold_break", 
+                m: 15, l: -5, a: -10, b: 20, 
+                r: "BAM! Door open. For one moment you are Thor. There are wooden splinters everywhere. The boss will have questions about the door leaf. You are out." 
+            },
+            { 
+                t: "Use your phone and call for help", 
+                next: "path_cold_call", 
+                m: 60, l: 0, a: 20, b: -10, 
+                r: "You had to ring the caretaker. It took him 45 minutes to find the spare key. You have turned into a block of ice." 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_2a",
+        title: "The Joiner",
+        reqStory: "path_cold_break",
+        text: "An outside joiner stands in front of the server room door shaking his head; 'somebody' (you) opened it by force earlier. He swears about the splinters.",
+        opts: [
+            { 
+                t: "Help sweep up the shavings", 
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "Your conscience is at you. You help him clear up. He grunts: 'At least somebody round here mucks in.'" 
+            },
+            { 
+                t: "Offer him duct tape", 
+                req: "tape", 
+                m: 5, l: 5, a: 0, b: -5, 
+                r: "'That will sort it out, chief.' He glares at you. 'That is real wood veneer, not cardboard!' He declines with thanks." 
+            },
+            { 
+                t: "Claim it was the fire brigade", 
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'Imminent danger, you know how it is.' The joiner nods in sympathy. 'Ah, right. Yes, those lads are rough.' Your secret is safe." 
+            }
+        ]
+    },
+    {
+        id: "srv_cold_2b",
+		char: "Egon",
+        title: "Changing the Lock",
+        reqStory: "path_cold_call",
+        text: "Egon the caretaker is kneeling at the server room door fitting a new lock. He sees you coming. 'Well, thawed out again? I am putting one in that opens from the inside as well.'",
+        opts: [
+            { 
+                t: "Talk shop about lock cylinders", 
+                rep: { "Egon": -5 },
+                m: 5, l: 5, a: 5, b: -5, 
+                r: "'Is that a cylinder to DIN 18252, then?' Egon rolls his eyes. 'Just let me work.' You are getting on his nerves." 
+            },
+            { 
+                t: "Sneak quickly past", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "No eye contact, whatever happens. The embarrassment from earlier still sits deep. You slip into the server room." 
+            },
+            { 
+                t: "Bring him a coffee",
+                rep: { "Egon": 10 }, 
+                m: 10, l: 0, a: -5, b: 5, 
+                r: "You fetch him a coffee from the machine. 'Cheers, lad.' He seems mollified. Small gifts keep a friendship alive (and a rescue quick)." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_1",
+        title: "The Red Liquid",
+        text: "A puddle is forming under Rack 7. It is deep red and sticky. It smells sweet. Is that... blood? Hydraulic oil? Or syrup? There is no pipe running above you.",
+        opts: [
+            { 
+                t: "Just mop it up and ignore it", 
+                m: 15, l: 10, a: 0, b: -5, 
+                r: "You wipe the puddle away with tissues. What you do not know cannot hurt you. The floor is still a little tacky. It looks clean." 
+            },
+            { 
+                t: "Bravely dip a finger in and taste it", 
+                next: "path_red_taste", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "It is... cherry slush?! Somebody has hidden an illegal slush machine in here. You quietly draw yourself a cup and move on, contented." 
+            },
+            { 
+                t: "Trigger the full alarm in a panic", 
+                next: "path_red_alarm", 
+                m: 10, l: -5, a: 10, b: 5, 
+                r: "You hit the emergency button. Sirens wail. 'BIOHAZARD!' You run out and let the fire brigade do the rest. Safety first." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_2a",
+        title: "The Great Crawl",
+        reqStory: "path_red_taste",
+        text: "You hear a rustling from Rack 7, where you found the slush earlier. Thousands of ants have been drawn by the sticky remains and are building a nest in the €10,000 switch.",
+        opts: [
+            { 
+                t: "Strip it all out and clean it piece by piece", 
+                m: 60, l: -25, a: 15, b: -5, 
+                r: "For an hour you brush dead ants off circuit boards. It is revolting. You save the hardware. Nobody hears about the incident. Clean work." 
+            },
+            { 
+                t: "Call Kevin the apprentice", 
+                rep: { "Kevin": -10, "Dr. Wichtig": -10 },
+                m: 10, l: 10, a: -15, b: 20, 
+                r: "Kevin sees the ants and screams. The boss joins them. You get a dressing-down for 'inadequate supervision'. Kevin has to do the cleaning." 
+            },
+            { 
+                t: "Reach for the insect spray", 
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "You spray until the fog hangs in the air. The ants are dead. The switch fan gums up a little and still runs. You disappear before anybody asks about the smell." 
+            }
+        ]
+    },
+    {
+        id: "srv_red_2b",
+		char: "Dr. Wichtig",
+        title: "The Debrief",
+        reqStory: "path_red_alarm",
+        text: "The boss summons you to his office. The 'biological hazard' that brought the fire brigade out was leaked coolant with dye in it. He does not look happy.",
+        opts: [
+            { 
+                t: "Offer the doughnut as a bribe", 
+                rem: "donut",
+				rep: { "Dr. Wichtig": 5 },
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "You slide the doughnut across to him. 'Comfort food?' He bites into it, chews and grumbles: 'Get back to work.' Bribery always works." 
+            },
+            { 
+                t: "Insist on the safety protocols", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 10, l: 0, a: -5, b: 10, 
+                r: "'Better safe than sorry, boss!' He massages his temples. 'Yes, quite... but next time smell first, then press.' You get away with it." 
+            },
+            { 
+                t: "Apologise meekly", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 5, l: 0, a: 5, b: -10, 
+                r: "'I am sorry.' The boss sighs. 'The call-out costs us €500. That comes off your budget for Christmas decorations.' Ouch." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_1",
+        title: "The Illegal Data Centre",
+        text: "You lean against a shelf and a false wall suddenly swings open. Behind it: a hidden server room! On the screens flicker... well, some very 'explicit' adult films. The admin console is logged in: it belongs to the deputy boss.",
+        opts: [
+            { 
+                t: "Keep quiet and use the hardware yourself", 
+                next: "path_illegal_share", 
+                m: 5, l: 20, a: -10, b: 20, 
+                r: "You quietly install your private Minecraft server and a Bitcoin miner on the hardware. Free electricity, a high-speed line, and the deputy boss is in no position to report you." 
+            },
+            { 
+                t: "Secure the evidence and blackmail the deputy boss", 
+                req: "secret_list",
+                next: "path_illegal_blackmail", 
+                m: 10, l: 30, a: 0, b: -30, 
+                r: "You take photographs and wave the Blacklist from your bag. 'I know everything.' That is the jackpot. You close the door again, quietly." 
+            },
+            { 
+                t: "Pull the plug immediately", 
+                next: "path_illegal_shutdown", 
+                m: 20, l: -10, a: 10, b: 50, 
+                r: "You do not hesitate. CLACK. The fuse goes. The screens go black. The fans die away. Total silence in the room." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2a",
+        title: "The Consultancy Fee",
+        reqStory: "path_illegal_blackmail",
+        text: "The deputy boss heads you off at the coffee machine. He is sweating heavily. 'Miller... about the... business in the server room. Give me the list and we will come to an arrangement.'",
+        opts: [
+            { 
+                t: "Demand money", 
+                rem: "secret_list",
+                m: 5, l: 10, a: -20, b: -20, 
+                r: "He snatches the list out of your hand and slips you a thick envelope. 'Expenses claim. Monthly. We never speak of this again.'" 
+            },
+            { 
+                t: "Demand working from home", 
+                rem: "secret_list",
+                m: 5, l: 20, a: -15, b: -10, 
+                r: "'Three days a week?' He nods hurriedly, grabs the list and shreds it on the spot. 'Approved. As of now.' He looks relieved. So do you." 
+            },
+            { 
+                t: "Leave him dangling", 
+                m: 2, l: 5, a: -5, b: 10, 
+                r: "You just tap your breast pocket, where the list is, and wink. The pure panic in his eyes is priceless. From now on he will grant you anything you ask." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2b",
+        title: "The Tantrum",
+        reqStory: "path_illegal_shutdown",
+        text: "It takes a while before anybody notices. Then the deputy boss storms into the server room, scarlet. 'WHO DID THAT?! My... er... critical backup system is offline! Do you know how much traffic we are losing?!'",
+        opts: [
+            { 
+                t: "Feign ignorance", 
+                m: 5, l: 5, a: 5, b: 5, 
+                r: "'Power fluctuation, boss. The wiring is old.' He rages and can prove nothing. He does not dare switch the server back on while you are standing there." 
+            },
+            { 
+                t: "'It was a security risk.'", 
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "You look him straight in the eye. 'Too many open ports. I protected the firm.' He understands the threat, swallows hard and leaves without a word." 
+            },
+            { 
+                t: "Laugh at him", 
+                m: 2, l: 5, a: -10, b: 10, 
+                r: "You cannot help yourself. 'Critical backup? Looked more like Backside Sluts 9 to me.' He goes white and runs out. This means war." 
+            }
+        ]
+    },
+    {
+        id: "srv_illegal_2c",
+        title: "Bandwidth War",
+        reqStory: "path_illegal_share",
+        text: "You notice your Bitcoin miner slowing down. The deputy boss is evidently streaming 4K content on the hidden server again. The fans howl like jet engines.",
+        opts: [
+            { 
+                t: "Overclock everything", 
+                m: 5, l: -5, a: 10, b: -10, 
+                r: "You turn the voltage up. There is a smell of scorching and both processes run smoothly. Let us hope the building does not burn down." 
+            },
+            { 
+                t: "Throttle his processes", 
+                m: 10, l: -10, a: -15, b: 10,
+                r: "You prioritise your own traffic on the router with QoS. His stream now buffers every 3 seconds. Somewhere in the office you hear a howl of frustration. Glorious." 
+            },
+            { 
+                t: "A ceasefire by chat", 
+                m: 5, l: 5, a: -5, b: -5, 
+                r: "You open `notepad.exe` on the server and write: '50/50 split of resources?'. He replies: 'Deal. But wipe the history.' Honour among thieves." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_1",
+        title: "The Masked Bandit",
+        text: "The door is open. A fat raccoon is sitting on the main switch, gnawing with relish at a yellow fibre cable. It looks at you, hisses and shows no sign of leaving.",
+        opts: [
+            { 
+                t: "Sacrifice the doughnut as a bribe", 
+                rem: "donut",
+                next: "path_raccoon_bribe", 
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "You throw the doughnut out into the corridor. The raccoon smells the fat, lets go of the cable and waddles off after the pastry. You shut the door quickly." 
+            },
+            { 
+                t: "Door shut, eyes shut, hope", 
+                next: "path_raccoon_ignore", 
+                m: 2, l: 20, a: 0, b: 5, 
+                r: "You pull the door quietly to and lock it. 'Not my problem. The night shift can deal with it.' You walk away whistling." 
+            },
+            { 
+                t: "Assert dominance with the hammer", 
+                req: "hammer",
+                next: "path_raccoon_fight", 
+                m: 10, l: -10, a: 20, b: 10, 
+                r: "You draw back to strike! 'Clear off, you trash panda!' The raccoon does a Matrix dodge. CLANG. Your hammer hits the rack with full force. The raccoon flees, laughing." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2a",
+        title: "Stocktake Damage",
+        reqStory: "path_raccoon_fight",
+        text: "The head of IT is standing in front of Rack 2. There is an enormous dent in the metal, at exactly the height of a hammer. He gives you a questioning look. 'Tell me... do we have poltergeists in here?'",
+        opts: [
+            { 
+                t: "'It was the raccoon!'", 
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "'A raccoon with superhuman strength!' The head of IT shakes his head. 'Miller, cut down on your medication.' He does not believe a word of it." 
+            },
+            { 
+                t: "Cover the damage with a sticker", 
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "You stick an 'Intel Inside' label over the dent. 'Good as new, boss.' He narrows his eyes and lets it pass." 
+            },
+            { 
+                t: "Confess and beat it out", 
+                req: "hammer", 
+                m: 30, l: -10, a: 0, b: -5, 
+                r: "You explain the fight. Then you spend 30 minutes hammering the panel flat again from the inside. It is loud and it is embarrassing." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2b",
+        title: "The Regular",
+        reqStory: "path_raccoon_bribe",
+        text: "You hear scratching at the server room door. The raccoon is back. It has polished off the doughnut and apparently brought friends. Three raccoons are waiting for a refill.",
+        opts: [
+            { 
+                t: "Call Egon the caretaker", 
+                m: 10, l: 5, a: -5, b: 0, 
+                r: "Egon comes. 'Ah, but they are sweet!' He feeds them the remains of his sandwiches. Now there is a raccoon colony outside IT. They do leave the cables alone." 
+            },
+            { 
+                t: "Scare them off with the fire extinguisher", 
+                req: "fire_ext", 
+                m: 5, l: -5, a: 10, b: 5, 
+                r: "PFFFFT! A cloud of CO2 ends the party. The beasts run off. The corridor looks like a ski resort and you have to sweep." 
+            }
+        ]
+    },
+    {
+        id: "srv_raccoon_2c",
+        title: "Biohazard",
+        reqStory: "path_raccoon_ignore",
+        text: "The monitoring reports 'Temperature Critical'. You open the server room door. The stench is appalling. The trapped raccoon, in its fear, has defecated onto the mainframe fan. The result has been distributed around the entire room.",
+        opts: [
+            { 
+                t: "Force the apprentice to clean it",
+                rep: { "Kevin": -20 }, 
+                m: 5, l: 10, a: -5, b: 10, 
+                r: "Kevin has to go in wearing a protective suit. He cries while he does it. You stand outside and give instructions. Your karma drops through the floor. Your hands stay clean." 
+            },
+            { 
+                t: "Clean it yourself - penance is penance",
+                m: 120, l: -50, a: 20, b: -10, 
+                r: "Two hours. Toothbrush. Disinfectant. You question every life decision that led you here." 
+            },
+            { 
+                t: "Seal the room and apply to work from home",
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 20, a: 0, b: 20, 
+                r: "'Health risk! Nobody goes in!' You flee. The problem will escalate tomorrow. Today you are free." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_1",
+        title: "A Message in a Bottle from the Past",
+        text: "You find a 3.5-inch floppy disk labelled 'EMERGENCY PLAN 1999'. A note is stuck to it: 'If everything is on fire, press this button.' Next to it, on the wall, is a red, dusty mushroom-head button.",
+        opts: [
+            { 
+                t: "Just press the button", 
+                next: "path_floppy_button", 
+                m: 5, l: 10, a: -20, b: 100, 
+                r: "CLICK. A hiss. The old halon suppression system discharges! The oxygen is drawn out of the room. You hold your breath and stumble out. This will be expensive." 
+            },
+            { 
+                t: "Read the floppy", 
+                req: "manual",
+                next: "path_floppy_read", 
+                m: 30, l: -5, a: 0, b: -10, 
+                r: "Thanks to the manual you can load the ancient drivers. The drive rattles like a coffee grinder and you get at the data." 
+            },
+            { 
+                t: "Ignore it", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You let the red button be red. Some things are better left untouched. On with the round." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_2a",
+        title: "The Bill from the Authorities",
+        reqStory: "path_floppy_button",
+        text: "Sirens outside. The appliance has arrived because the sensors reported 'oxygen loss'. The officer in charge gives you a stern look. 'Who set it off?'",
+        opts: [
+            { 
+                t: "Plead a technical fault", 
+                m: 15, l: 0, a: 5, b: 10, 
+                r: "'These old systems... ticking time bombs!' The firefighter nods. 'Aye, halon has been banned for 20 years. That has to come out anyway.' You get off with a caution." 
+            },
+            { 
+                t: "Disappear in the chaos", 
+                m: 5, l: 10, a: -5, b: 20, 
+                r: "You use the chaos and disappear. The bill for €3,000 in call-out costs lands with the IT department as a lump sum. Your budget weeps." 
+            },
+            { 
+                t: "Use the smoke machine as an excuse", 
+                m: 5, l: 5, a: 10, b: 0, 
+                r: "'We are only testing stage effects for the Christmas party!' The firefighter is baffled, packs up and leaves. Sheer nerve wins." 
+            }
+        ]
+    },
+    {
+        id: "srv_floppy_2b",
+        title: "The Y2K Patch",
+        reqStory: "path_floppy_read",
+        text: "You go through the files on the floppy. No high scores. There is one file called 'Y2K_FIX_FINAL.BAT'. A script meant to prevent the year 2000.",
+        opts: [
+            { 
+                t: "Format the floppy", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You wipe the lot and save your own holiday photos onto it. 1.44 MB of storage reclaimed. Pure pragmatism." 
+            },
+            { 
+                t: "Run it out of curiosity", 
+                m: 10, l: -10, a: 10, b: 50, 
+                r: "You click on it. The system date jumps to 01/01/1900. Every certificate becomes invalid. Accounts crashes. Retro, though!" 
+            },
+            { 
+                t: "Study the ancient code", 
+                m: 60, l: -20, a: 0, b: -5, 
+                r: "You study the ancient code. It is spaghetti code of the finest vintage, and you pick up a trick for manipulating the server logs. (Skill improved)" 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_1",
+        title: "The Open Toolbox",
+        text: "An outside engineer has forgotten his box next to Rack 3. It stands open like a treasure chest. You can see useful things that make your IT heart beat faster.",
+        opts: [
+            { 
+                t: "Take the screwdriver", 
+                loot: "screw", 
+                next: "path_loot_screw", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "A high-quality branded cross-head with a magnetic tip. It sits well in the hand. Now it sits in your bag." 
+            },
+            { 
+                t: "Leave it standing there", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You resist the temptation. You have enough clutter on your desk already." 
+            },
+            { 
+                t: "Pocket the cable ties", 
+                loot: "zip_ties", 
+                next: "path_loot_zip", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "A pack of 100 black cable ties. Worth their weight in gold for the cable management at home! Into the bag with them, quickly." 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_2a",
+        title: "The Return",
+        reqStory: "path_loot_zip",
+        text: "The engineer comes running up. He is sweating and looks extremely stressed. 'Damn it, where has that pack of cable ties gone? I am already late for my next customer!' He looks at you.",
+        opts: [
+            { 
+                t: "Blame Kevin",
+                rep: { "Kevin": -10 }, 
+                m: 2, l: 5, a: -5, b: -10, 
+                r: "'I think the apprentice had a tidy-up earlier...' The engineer shakes his head. 'No time to argue.' He clears off. You still have the loot." 
+            },
+            { 
+                t: "'I did not see anything.'", 
+                m: 2, l: 0, a: 5, b: -5, 
+                r: "You raise your hands apologetically. 'Maybe the cleaning crew tidied up?' He swears, grabs his box and runs off. Your conscience pinches, briefly." 
+            },
+            { 
+                t: "'Find' the cable ties and hand them back", 
+                rem: "zip_ties",
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'Oh, these were on the floor here. I was just about to secure them.' He breathes out. 'Cheers, mate! You are saving my backside.' And he is gone." 
+            }
+        ]
+    },
+    {
+        id: "srv_loot_box_2b",
+        title: "The Missing Tool",
+        reqStory: "path_loot_screw",
+        text: "The engineer rummages frantically in his box. 'My Wera cross-head! The good one! Have you seen it? Without that I cannot get the customer's rack open!' He is close to despair.",
+        opts: [
+            { 
+                t: "Whistle innocently", 
+                m: 2, l: 0, a: 5, b: -5, 
+                r: "'Nope. Was it important?' He tears at his hair. 'Damn it!' He runs out swearing. You now have a superb tool and bad karma." 
+            },
+            { 
+                t: "Hand it back", 
+                rem: "screw",
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "You pull it out of your bag. 'I only borrowed it.' He nearly snatches it out of your hand. 'Do not do that! But thank you.'" 
+            },
+            { 
+                t: "'Help' him look", 
+                m: 15, l: -5, a: 0, b: -10, 
+                r: "You help him look for 15 minutes (while it is in your bag). 'Hopeless,' he says, resigned, and goes. You are a monster." 
+            }
+        ]
+    },
+    {
+        id: "srv_found_stuff",
+        title: "Suspicious Finds",
+        text: "There is stuff lying about between Rack 3 and Rack 4. It looks as though somebody left in a hurry.",
+        opts: [
+            { 
+                t: "Take the heavy hammer", 
+                loot: "hammer", 
+                next: "found_hammer_2",
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "A 500g engineer's hammer. On the handle, in marker pen: 'HARD RESET'. A reassuring tool to have in the server room." 
+            },
+            { 
+                t: "Take the expensive headphones", 
+                loot: "headphones", 
+                next: "found_headphones_2",
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "Bose noise-cancelling. Very smart. They are still slightly warm and smell faintly of hair gel. Free is free, though." 
+            }
+        ]
+    },
+    {
+        id: "srv_found_stuff_2a",
+        title: "The Audiophiles",
+        reqStory: "found_headphones_2",
+        text: "You walk down the corridor in your new headphones. A colleague from Marketing (hipster beard, mate tea) stops you. 'Hey! Those are my Sennheisers! I have been looking everywhere for them!'",
+        opts: [
+            { 
+                t: "Frighten him with hygiene", 
+                m: 5, l: 5, a: 10, b: 0, 
+                r: "'Really? I have got a fungal infection in my ear at the moment, that is why I am wearing them.' He goes pale, backs away and mutters: 'Keep them. Please. Burn them.' Victory!" 
+            },
+            { 
+                t: "Hand them back", 
+                rem: "headphones",
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "'Oh, they were in the server room.' He snatches them out of your hand, wipes them pointedly on his shirt and puts them on. 'Unbelievable, the thieves in this place.' No thank you." 
+            },
+            { 
+                t: "'They are mine.'", 
+                m: 2, l: 0, a: 5, b: 5, 
+                r: "'That is the XP-500 model. Mine.' He stares at you suspiciously. 'Mine had a scratch on the headband...' You move on quickly, before he spots it." 
+            }
+        ]
+    },
+    {
+        id: "srv_found_stuff_2b",
+        title: "Percussive Maintenance",
+        reqStory: "found_hammer_2",
+        text: "You hear loud swearing from the server room. A former admin (retired) is standing in front of an old server that has hung. He slaps it with the flat of his hand. 'WHERE IS MY PERSUADER?!'",
+        opts: [
+            { 
+                t: "Offer to help", 
+                req: "hammer",
+                m: 10, l: -5, a: -5, b: 5, 
+                r: "'Let me.' You give the server one precise blow in the right place (power supply). It runs. The admin nods his approval. 'Good technique.'" 
+            },
+            { 
+                t: "Walk away quickly", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "Do not get involved, whatever you do. Behind you, you hear him start kicking the server. You stroke your new hammer." 
+            },
+            { 
+                t: "Give the hammer back", 
+                rem: "hammer",
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "You hand him the hammer. He grins nastily. 'Thanks.' CLANG! He hits the case once, hard. The hard disk spins up again. 'There we are.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_loose_rack_1",
+        title: "The Wobbly Rack",
+        text: "Rack 5 is vibrating alarmingly in time with the fans. A load-bearing bolt is missing. If that goes over, it will domino the entire data centre.",
+        opts: [
+            { 
+                t: "Secure it with cable ties", 
+                req: "zip_ties",
+                next: "path_rack_zip", 
+                m: 5, l: 15, a: -5, b: 5,
+                r: "Zip. You simply tie Rack 5 to Rack 4. That is what is known as 'structural redundancy' (or a bodge). It holds for now and looks wild." 
+            },
+            { 
+                t: "Look away and whistle", 
+                m: 2, l: 10, a: -5, b: 10,
+                r: "You turn round. If you cannot see it, it is not illegal. You simply hope that physics is on holiday today." 
+            },
+            { 
+                t: "Bolt it down properly", 
+                req: "screw",
+                next: "path_rack_screw", 
+                m: 25, l: -15, a: 5, b: -10,
+                r: "You crawl about on the floor, align the rack and torque the bolt down. German craftsmanship. The thing does not move a millimetre any more." 
+            }
+        ]
+    },
+    {
+        id: "srv_loose_rack_2a",
+        title: "The Cleaning Accident",
+        reqStory: "path_rack_screw",
+        text: "A loud BANG! The cleaning crew have rammed Rack 5 at full speed with the heavy polishing trolley. Thanks to your bolt it held. The cleaner stares at the dent in shock.",
+        opts: [
+            { 
+                t: "Tear a strip off him", 
+                m: 5, l: 0, a: -20, b: 5, 
+                r: "You shout at him for 5 minutes. It feels good! Your aggression evaporates completely. He apologises a thousand times." 
+            },
+            { 
+                t: "Stay cool and check the kit", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 15, l: -5, a: 5, b: -15, 
+                r: "'It is fine, chief. That will hold.' You check the logs. No outages. The boss sees it and nods his approval. 'Good work, Miller. Solidly built.'" 
+            },
+            { 
+                t: "Demand compensation", 
+                m: 10, l: 5, a: 10, b: 0, 
+                r: "You demand €20 for the paint damage. He hands it over, shaking. An arsehole you may be. A rich arsehole, though." 
+            }
+        ]
+    },
+    {
+        id: "srv_loose_rack_2b",
+        title: "The Great Hum",
+        reqStory: "path_rack_zip",
+        text: "A deep droning fills the room. Your cable ties have transferred the vibration from Rack 5 to Rack 4. Now both are resonating together and making a hellish racket.",
+        opts: [
+            { 
+                t: "Snip it all off again", 
+                m: 20, l: -10, a: 20, b: -5, 
+                r: "You have to undo your own bodge. You swear, cut yourself on the plastic and take forever. Convenience always sends its bill in the end." 
+            },
+            { 
+                t: "Earplugs in and ignore it", 
+                req: "headphones",
+				rep: { "Dr. Wichtig": -2 },
+                m: 2, l: 20, a: -10, b: 20, 
+                r: "You put the noise-cancelling headphones on. Cotton wool around the world at last. At some point the boss is in the room bellowing something, but you cannot hear him. He looks furious." 
+            },
+            { 
+                t: "More cable ties!", 
+                rem: "zip_ties",
+                m: 5, l: 10, a: 0, b: 10, 
+                r: "More is more. You lash everything down so tightly that the plastic turns white. The noise rises, almost to a whistle. There is less wobble, though." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_1",
+        title: "The Cable Nightmare",
+        text: "Behind Rack 3 a bundle of fibre cable hangs dangerously close to the spinning fan. One gust and there will be shredded data (in the literal sense).",
+        opts: [
+            { 
+                t: "Just tape the bundle down", 
+                req: "tape",
+                next: "path_cable_tape", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "You simply stick the bundle to the side panel. 'That will hold,' you murmur. It looks ugly. The danger is averted for now." 
+            },
+            { 
+                t: "Break the fan guard out", 
+                next: "path_cable_break", 
+                m: 2, l: 10, a: 10, b: 15, 
+                r: "CRACK. You rip the guard off in front of the fan. There is more room for the cables now, and the fan spins in the open like a shredder." 
+            },
+            { 
+                t: "Tie them neatly to one side", 
+                req: "zip_ties",
+                m: 15, l: -10, a: 0, b: -5, 
+                r: "You take your time and lay the cables properly in the guide channel. Click, click. That will hold for eternity. Prussian order in the rack." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_2a",
+        title: "Sticky Heat",
+        reqStory: "path_cable_tape",
+        text: "The server has run hot. Your tape adhesive has liquefied. The cable bundle has come loose and is now slapping rhythmically against the fan. CLACK-CLACK-CLACK.",
+        opts: [
+            { 
+                t: "Shut the door", 
+                m: 2, l: 10, a: -5, b: 10, 
+                r: "With the door shut you can hardly hear the clacking. Problem solved (for you)." 
+            },
+            { 
+                t: "Fetch the cable ties after all", 
+                req: "zip_ties", 
+                m: 20, l: -10, a: 5, b: 0, 
+                r: "You have to scrape the adhesive residue off first before you can do it properly. Twice the work, because once it was supposed to be easy." 
+            },
+            { 
+                t: "Just more tape over the top", 
+                req: "tape", 
+                m: 5, l: 5, a: 0, b: 5, 
+                r: "More tape helps more. You wrap up half the server. It ends up looking embalmed. The noise is gone." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_mess_2b",
+		char: "Kevin",
+        title: "The Finger Shredder",
+        reqStory: "path_cable_break",
+        text: "A scream from the server room! Kevin only wanted to feel how strong the draught was. With the guard gone, the fan caught his index finger.",
+        opts: [
+            { 
+                t: "Tell him not to make a fuss", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 5, a: 5, b: 10, 
+                r: "'It is only a flesh wound. It builds character.' You give him a tissue. He goes off sulking." 
+            },
+            { 
+                t: "Fetch the first aid kit", 
+                rep: { "Kevin": 5 },
+                m: 10, l: 0, a: -5, b: 0, 
+                r: "It is bleeding like anything. You patch him up. 'Do not tell the boss!' you whimper. Kevin nods through his tears." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_1",
+        title: "The Sticking Door",
+        text: "The card reader beeps green, but the door handle will not move. The mechanism is jammed. Inside, the servers are blinking, and you need to get in.",
+        opts: [
+            { 
+                t: "One aimed blow with the hammer", 
+                req: "hammer",
+                next: "path_door_hammer", 
+                m: 5, l: -5, a: -10, b: 10, 
+                r: "CLANG. One precise blow on the lock cylinder. Something cracks, then the door swings open. The handle hangs crooked. You are in." 
+            },
+            { 
+                t: "Strip the lock down and grease it", 
+                req: "screw",
+                next: "path_door_screw", 
+                m: 30, l: -10, a: 5, b: 0, 
+                r: "You unscrew the cover plate, straighten the springs and grease the bolt. Professional work. The door glides open and shut without a sound." 
+            },
+            { 
+                t: "Throw your shoulder at it", 
+                next: "path_door_force", 
+                m: 10, l: 0, a: 20, b: 5, 
+                r: "BAM! Your shoulder burns like fire. The door does not move a millimetre. You kick it in a rage and set off the tamper alarm." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2a",
+        title: "The Security Engineer",
+        reqStory: "path_door_hammer",
+        text: "An engineer from the security firm is standing at the door examining the dent in the metal. He is taking photographs for the report. 'Looks like vandalism. Or a bear attack.'",
+        opts: [
+            { 
+                t: "Blame it on 'metal fatigue'", 
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "'The metal must have been brittle.' The engineer laughs drily. 'Of course. And the hammer print is art, is it?' The bill for the cylinder will be steep." 
+            },
+            { 
+                t: "Distract him with coffee", 
+                m: 10, l: 5, a: -5, b: 5, 
+                r: "You distract him with coffee and small talk. He writes 'mechanical defect' in the report instead of 'wilful damage'. Lucky." 
+            },
+            { 
+                t: "Just leave", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You let him work. Later you find an invoice on your desk for 'locking system replacement (emergency call-out)'." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2b",
+        title: "Warranty Void",
+        reqStory: "path_door_screw",
+        text: "The security engineer is here because the 'case open' sensor tripped. He checks the lock. 'Hang on... that runs better than it did from the factory. Did you grease this?'",
+        opts: [
+            { 
+                t: "Nod proudly", 
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "'I am in the trade.' The engineer nods his approval. 'Not bad. Strictly speaking the warranty is void now. I shall turn a blind eye.'" 
+            },
+            { 
+                t: "Look innocent", 
+                m: 2, l: 0, a: 5, b: -5, 
+                r: "'No idea, it was like that already.' He shrugs. 'Well, if it works I shall not write a report.' Case closed." 
+            }
+        ]
+    },
+    {
+        id: "srv_door_stuck_2c",
+        title: "The Emergency Opening",
+        reqStory: "path_door_force",
+        text: "The engineer arrives, irritated. The tamper alarm is still howling. You are holding your aching shoulder. 'Did you try to run the door down? That is reinforced concrete, genius.'",
+        opts: [
+            { 
+                t: "Shout at him: 'Get a move on!'", 
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "Your shoulder hurts and you are angry. He deliberately works more slowly. 'Good tools take time,' he grins. You seethe." 
+            },
+            { 
+                t: "Fight the frustration with the chocolate bar", 
+                m: 5, l: 10, a: -10, b: 0, 
+                r: "You eat a snack while he works. Watching is remarkably relaxing, as long as you have not yet seen the invoice." 
+            },
+            { 
+                t: "Watch him drill it out", 
+                m: 45, l: 20, a: 10, b: -5, 
+                r: "It takes him an eternity to drill the bolt out. You stand beside him, useless. That time is gone from your day." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_1",
+        title: "The Leaking Pipe",
+        text: "Drip... drip... A condensate pipe from the air conditioning is leaking. It drips in slow motion straight into the ventilation slots of the €50,000 core switch. Every drop a potential write-off.",
+        opts: [
+            { 
+                t: "Wrap it in duct tape", 
+                req: "tape",
+                next: "path_leak_tape", 
+                m: 5, l: 0, a: -5, b: -10, 
+                r: "You wind tape around the spot until nothing drips any more. Sealed! For today, at least. And temporary fixes are known to outlive civilisations." 
+            },
+            { 
+                t: "Put a bin underneath", 
+                next: "path_leak_bucket", 
+                m: 10, l: 5, a: 0, b: 0, 
+                r: "Pling... pling... You fetched the bucket from the kitchen. It needs emptying every 2 hours. The hardware stays dry, and your nerves suffer under the noise." 
+            },
+            { 
+                t: "'Straighten' the pipe with the hammer", 
+                req: "hammer",
+                next: "path_leak_hammer", 
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "You set the hammer against it as a lever and push. CRACK! The rotten pipe snaps clean off. A wave of cold water pours over the rack. Catastrophe!" 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2a",
+        title: "The Water Bomb Hazard",
+        reqStory: "path_leak_tape",
+        text: "You go and look at your tape construction. The water has backed up. The tape has stretched and now forms a taut bladder, a litre heavy, directly above the server. It looks like an udder.",
+        opts: [
+            { 
+                t: "Wind more tape around it", 
+                req: "tape", 
+                m: 5, l: 10, a: 0, b: 5, 
+                r: "You stabilise the bladder with yet more tape until a cocoon has formed. Let us hope it never bursts." 
+            },
+            { 
+                t: "Bowl underneath and run", 
+                m: 2, l: 5, a: -5, b: 10, 
+                r: "If that bursts you do not want to be in the room. You put a bowl on the floor to quiet your conscience and flee." 
+            },
+            { 
+                t: "Pierce it carefully and drain it", 
+                req: "screw",
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "Very carefully... JAB. You catch the jet in a cup. It takes 20 cups, and the bladder is gone. Precision work." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2b",
+        title: "Flooded Out",
+        reqStory: "path_leak_bucket",
+        text: "You come back into the server room. It is quiet. No more 'pling'. That is because the bucket is full and has overflowed. A large puddle is spreading towards the power distribution board.",
+        opts: [
+            { 
+                t: "Put up a 'Caution - Wet Floor' sign", 
+                m: 2, l: 15, a: -5, b: 10, 
+                r: "Legally you are covered. Technically the distribution board is still standing in water. Your day is over, though." 
+            },
+            { 
+                t: "Mop the lot up", 
+                m: 30, l: -20, a: 10, b: -5, 
+                r: "You crawl about on the floor with paper towels. Your trousers get wet, your back aches. The easy road sends its bill immediately." 
+            },
+            { 
+                t: "Call the cleaning crew", 
+                m: 5, l: 10, a: -5, b: 5, 
+                r: "'Something has... er... leaked in here.' The cleaner rolls her eyes and clears it up anyway. You stand beside her offering unnecessary tips." 
+            }
+        ]
+    },
+    {
+        id: "srv_leak_2c",
+        title: "Water Damage Bingo",
+        reqStory: "path_leak_hammer",
+        text: "The water is running. The switch is blinking wildly. There is a smell of ozone. You have to act before the €50,000 of damage becomes official.",
+        opts: [
+            { 
+                t: "Blame it on a roof leak", 
+                m: 5, l: 10, a: -10, b: -5, 
+                r: "You photograph the broken pipe. 'Building defect! Act of God!' The insurers pay. Nobody asks about the hammer." 
+            },
+            { 
+                t: "Bury it in rice", 
+                m: 15, l: 5, a: -5, b: 10, 
+                r: "You tip the canteen rice into the server. Technically it achieves nothing; it does look as though you have a plan. The switch dies anyway." 
+            },
+            { 
+                t: "Dry it with a hairdryer", 
+                m: 20, l: -5, a: 5, b: 0, 
+                r: "You blow-dry the circuit boards. It takes forever. The lights actually come back on! A miracle (or luck). Corrosion is a problem for later." 
+            }
+        ]
+    },
+    {
+        id: "srv_pw_list_1",
+        title: "Hidden Note",
+        text: "A yellowed note is stuck behind Rack 5 with sticky tape. On it, in spidery handwriting: 'TOP SECRET - ADMINS ONLY'. The note looks as though it has hung there since Windows 95.",
+        opts: [
+            { 
+                t: "Leave it hanging, reverently", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You press the tape down again. This is IT archaeology and part of the cultural heritage. Anyone who removes it probably deletes the backup by accident too." 
+            },
+            { 
+                t: "Decipher the note out of curiosity", 
+                next: "path_pw_decipher", 
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "There are no passwords on it. It is your predecessor's legacy: 'I have hidden the internet in a black box right at the bottom of the rack. If Google is down, you have to shake the box. P.S.: Never trust the printer.' Wise words." 
+            }
+        ]
+    },
+    {
+        id: "srv_pw_list_2a",
+		char: "Dr. Wichtig",
+        title: "The Google Crash",
+        reqStory: "path_pw_decipher",
+        text: "A shout echoes through the firm: 'GOOGLE IS DOWN!' Panic breaks out. The senior admins hammer at consoles: 'DNS error! Backbone timeout!' Nothing helps. The boss turns red.",
+        opts: [
+            { 
+                t: "Proceed logically and restart the router", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 20, l: -5, a: 10, b: 10, 
+                r: "You ignore the occult advice and restart the Cisco router. It achieves... nothing. 20 minutes later it comes back by itself. The boss grumbles, dissatisfied: 'That took far too long.'" 
+            },
+            { 
+                t: "Distrust the printer", 
+				rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 10, a: -5, b: 10, 
+                r: "The note warned about the printer as well. You glare at the device while the firm loses money. The boss shouts: 'Miller! What are you doing?! Fix the Wi-Fi!' That meant trouble." 
+            },
+            { 
+                t: "Shake the 'black box'", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 5, l: -10, a: -10, b: -20, 
+                r: "You crawl down and shake the dusty black box. CLACK. The LEDs jump to green. The internet is back! The boss claps you on the shoulder, delighted: 'Witchcraft, Miller! Good work, though!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_label_fail",
+        title: "The Electrician's Blunder",
+        text: "You stare at the air conditioning control panel. A handwritten note is stuck over the dials: 'WARNING: The electrician was colour-blind! BLUE heats (Warm) and RED cools (Cold)! Do not touch, not being repaired until 2030.'",
+        opts: [
+            { 
+                t: "Ignore the note", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You walk on. Colours are standardised, after all, are they not? What could possibly go wrong." 
+            },
+            { 
+                t: "Examine the system more closely", 
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Sure enough. The wires are swapped. Red goes to the compressor (Cold), blue to the heating coil (Warm). Completely absurd. Just as well you looked." 
+            }
+        ]
+    },
+    {
+        id: "srv_port_warning",
+        title: "The Warning Sign on the Switch",
+        text: "There is an enormous sign stuck on the main switch over Port 42: 'DO NOT USE! Short-circuit risk! Plug anything in here and you fry the whole switch!'",
+        opts: [
+            { 
+                t: "Straighten the sign", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "Port 42 is evil. Understood. Just as well the sign is hanging there." 
+            },
+            { 
+                t: "Ignore it", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You are in a hurry. Let us hope you keep it in the back of your mind anyway." 
+            }
+        ]
+    },
+    {
+        id: "srv_crying_elster",
+		char: "Frau Elster",
+        title: "Tears in the Server Room",
+        text: "You hear a quiet whimpering behind Rack 4. It is Ms Elster from Accounts. She is sitting on the floor with her face buried in her hands. 'I cannot do all of this any more...' she whispers.",
+        opts: [
+            { 
+                t: "'Everything all right with the balance sheet?'", 
+                rep: { "Frau Elster": -5 },
+                m: 10, l: 0, a: 10, b: 5, 
+                r: "She looks at you, appalled. 'Is work more important to you than people?!' She runs out in tears." 
+            },
+            { 
+                t: "'How is Rüdiger?'",
+                rep: { "Frau Elster": 10 },
+                m: 15, l: 10, a: -20, b: -5, 
+                r: "She looks up, surprised. A small smile appears. 'Rüdiger... yes, he is waiting at home. He needs his food.' She wipes the tears away. 'Thank you, Mr Miller. I shall go home to him now.' You have saved her day." 
+            },
+            { 
+                t: "Quietly leave again", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You leave her in peace." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_1",
+        title: "The Critical Patch",
+        text: "The dashboard is blinking red: 'Critical security hole in the time system! Patch available.' It is the lunch break, everyone is chewing on a Döner. Nobody is logged in. The perfect moment?",
+        opts: [
+            { 
+                t: "Install the update immediately", 
+                next: "path_update_patch", 
+                m: 20, l: -10, a: 30, b: 0, 
+                r: "The update goes through! But: the 'clock in' button is now green instead of blue. An hour later total panic breaks out. 'IT ALL LOOKS DIFFERENT!' The phone glows. You changed the layout, you monster." 
+            },
+            { 
+                t: "Click it away - never change a running system", 
+                next: "path_update_ignore", 
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You click the warning away. If Russian hackers turn up, that is a problem for your future self. Right now it is the break, and the Döner is going cold." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_2a",
+        title: "Heise Online News",
+        reqStory: "path_update_patch",
+        text: "You read the IT news, irritated, while users are still complaining about the green button. Headline: 'Massive ransomware wave exploits hole in time-tracking software. Thousands of firms encrypted.' Not yours, though.",
+        opts: [
+            { 
+                t: "Write an arrogant all-staff email", 
+                m: 10, l: 0, a: -20, b: -5, 
+                r: "'Subject: You are welcome.' You explain that the green button saved them from ruin. The complaints stop." 
+            },
+            { 
+                t: "Colour the button blue again with CSS", 
+                m: 15, l: -5, a: -5, b: 0, 
+                r: "You hack the CSS so that the button is blue again. The security stays, the users are happy. You are the silent guardian." 
+            },
+            { 
+                t: "Enjoy the schadenfreude", 
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "You lean back and read the reports of burning server rooms at the competition. The coffee tastes particularly good today." 
+            }
+        ]
+    },
+    {
+        id: "srv_update_fail_2b",
+        title: "The New Colleagues",
+        reqStory: "path_update_ignore",
+        text: "You check the clocking times. Odd. Next to 'Miller' and 'Schmidt' there are suddenly 'Vladimir', 'Igor' and 'Botnet_Warrior_99'. They all work 24 hours a day and have admin rights.",
+        opts: [
+            { 
+                t: "Ask HR: 'Have we expanded?'", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 10, l: 0, a: -5, b: 20, 
+                r: "HR are astounded. The boss gets wind of it. 'Why do we have employees in St Petersburg?!' You are summoned to explain yourself." 
+            },
+            { 
+                t: "Just let the 'employees' carry on mining", 
+                m: 5, l: 10, a: -10, b: 10, 
+                r: "They only seem to be stealing computing power for crypto. You let them get on with it and skim 10% for yourself. A risky game to play with the Russian mafia." 
+            },
+            { 
+                t: "Clean up the database and patch it, in a panic", 
+                m: 60, l: -20, a: 20, b: 0, 
+                r: "You quietly delete the accounts and apply the update. You sweat blood. Let us hope they did not leave a back door." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_1",
+        title: "The Expensive Consultant",
+        text: "An external 'Senior Strategy Consultant' (day rate: €2,000) has just pulled the plug on the main server to charge his iPhone. Everything is off. The boss throws the door open: 'WHY HAS PRODUCTION STOPPED?!'",
+        opts: [
+            { 
+                t: "Ram the plug back in", 
+                next: "consultant_psu",
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "Sparks fly. The server boots up, and the power supply has burnt out. The consultant taps at his phone: 'Hardware obsolete. Recommend replacement.' You grin nastily. 'Consider it done.'" 
+            },
+            { 
+                t: "Shout at the consultant", 
+                next: "consultant_war",
+				rep: { "Dr. Wichtig": -5 },
+                m: 2, l: 0, a: -20, b: 50, 
+                r: "You bellow at the guest. The boss goes pale. 'Miller! Behave yourself! A written warning for unprofessional conduct!' The consultant grins." 
+            },
+            { 
+                t: "Point at the consultant",
+				rep: { "Dr. Wichtig": -2 },
+                m: 10, l: -5, a: 30, b: 10, 
+                r: "The consultant laughs smoothly: 'Ah, Mr Miller was just demonstrating the UPS to me and evidently caught the wrong cable. Poor briefing!' The boss nods. You are boiling with rage." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_2b",
+        title: "The Gold Power Supply",
+        reqStory: "consultant_psu",
+        text: "The spare part has arrived. Because the consultant said we needed 'high-end', you ordered the 'Titan-Master 9000': hand-soldered, RGB lighting, military grade. Price: €4,800. The boss stares at the invoice in disbelief.",
+        opts: [
+            { 
+                t: "Quote the consultant", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: -20, b: -10,
+                r: "'The consultant said: spare no expense for stability.' The boss changes colour dangerously. 'That idiot! Still, if he recommended it...' You are in the clear." 
+            },
+            { 
+                t: "Deploy some technical waffle", 
+                m: 5, l: 5, a: -5, b: 5, 
+				rep: { "Dr. Wichtig": 2 },
+                r: "'That is the only model compatible with our legacy software, boss.' He sighs. 'Very well. Fit it.' He has no idea that a €50 part would have done." 
+            },
+            { 
+                t: "Fit it with relish", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 30, l: -10, a: -10, b: 0, 
+                r: "You bolt the monster into the rack. It glows in rainbow colours. It is wildly over-specified, but it is YOURS. Revenge is sweet (and expensive)." 
+            }
+        ]
+    },
+    {
+        id: "srv_consultant_fail_2c",
+        title: "The Official Complaint",
+        reqStory: "consultant_war",
+        text: "The consultant waves a laminated document about. 'Regarding our dispute. I have here a formal complaint about a 'toxic working atmosphere'. Sign it, or I recommend outsourcing to the board.'",
+        opts: [
+            { 
+                t: "'Form 7b is missing.'", 
+                m: 5, l: 10, a: 10, b: 10, 
+                r: "You look at the paper. 'That is the old form from 2018. Without Permit A38 I cannot accept it.' The consultant is baffled and moves off." 
+            },
+            { 
+                t: "'Get out of my server room!'", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 2, l: 0, a: -20, b: 40, 
+                r: "You throw him out. He threatens solicitors. The boss is furious. Your colleagues hail you as a hero of the resistance." 
+            },
+            { 
+                t: "Back down and sign", 
+                m: 10, l: 5, a: -10, b: -20, 
+                r: "You sign through gritted teeth. The consultant smiles smugly. 'There we are. Synergy through cooperation.' The boss is pacified for now. Your pride did not survive this meeting." 
+            }
+        ]
+    },
+    {
+        id: "srv_dust_disaster_1",
+        title: "The Dusty Server",
+        text: "The old backup server 'Methuselah' is buried under a 5cm layer of dust. The fans are gasping and the temperature LED is blinking red. That is a fire risk!",
+        opts: [
+            { 
+                t: "Clean it thoroughly with compressed air", 
+                next: "srv_dust_2a",
+                m: 20, l: -10, a: 5, b: 0, 
+                r: "PFFFFT. A grey cloud engulfs you. You pull kilos of dust out of the cooling fins. The fans spin up, the LED goes green. The box runs as it did on its first day. Damn." 
+            },
+            { 
+                t: "Draw patterns in the dust", 
+                next: "srv_dust_2b",
+                m: 5, l: 10, a: -5, b: 0, 
+                r: "You draw a smiley with your finger in the thick dust on the case. It grins at you lopsidedly. Much friendlier already." 
+            }
+        ]
+    },
+    {
+        id: "srv_dust_disaster_2a",
+		char: "Dr. Wichtig",
+        title: "The Budget Problem",
+        reqStory: "srv_dust_2a",
+        text: "The boss stops in the server room and listens to the powerful hum. 'Do you hear that, Miller? Methuselah is running like a new car! We can cancel the request for the new server (€15,000), then.' Your heart stops.",
+        opts: [
+            { 
+                t: "Insist on the replacement anyway",
+				rep: { "Dr. Wichtig": -2 },
+                m: 15, l: 0, a: 10, b: 20,
+                r: "'That is only the last rally before death!' The boss waves it away. 'As long as it blinks, it stays.' You now have a fast old server and an irritated boss." 
+            },
+            { 
+                t: "Quietly throttle the fan again", 
+                m: 10, l: -5, a: -20, b: 10,
+                r: "You quietly wedge a piece of cardboard into the fan. The server overheats at once. The boss sighs: 'Very well. I shall order a replacement.' He buys the cheapest 'refurbished' server on eBay. Now you have electronic waste on your hands." 
+            },
+            { 
+                t: "Stick a Post-it on it: 'Legends never die'", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 2, l: 5, a: 5, b: -10,
+                r: "You accept your fate. You stick a Post-it on the server: 'Do not switch off, or he dies.' The boss nods, satisfied with the saving." 
+            }
+        ]
+    },
+    {
+        id: "srv_dust_disaster_2b",
+        title: "Dust Therapy",
+        reqStory: "srv_dust_2b",
+        text: "You flee from a user ('My mouse pointer has gone!') into the server room. It is cool and loud in here. You see your dust smiley on the backup server.",
+        opts: [
+            { 
+                t: "Refine the pattern into a zen garden", 
+                m: 10, l: 5, a: -15, b: 0,
+                r: "You draw further lines. A fractal in dust. There is something meditative about it, like a zen garden. Your pulse settles. The world is all right." 
+            },
+            { 
+                t: "Wipe it off with your sleeve", 
+                m: 5, l: -5, a: -10, b: 0,
+                r: "One wipe with the sleeve. The dust is gone (onto your jumper). A clean surface." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_1",
+        title: "Heat Shimmer",
+        text: "Server 'Berta' (payroll) is glowing. The fan has stopped, there is an acrid smell of hot silicon. If Berta dies, the payroll data goes with her.",
+        opts: [
+            { 
+                t: "Unscrew it and fan air in", 
+                req: "screw", 
+                m: 45, l: -15, a: 20, b: 0, 
+                r: "You unscrew the case. You stand beside it for 45 minutes fanning fresh air in with a clipboard. Your arm nearly falls off, but Berta survives." 
+            },
+            { 
+                t: "Nick the boss's Dyson fan", 
+                next: "path_overheat_dyson",
+                m: 20, l: -5, a: 5, b: 15, 
+                r: "You fetch the €800 fan from the boss's office. Berta is cooled in luxury. Upstairs in the office, the great sweat begins." 
+            },
+            { 
+                t: "Door shut and hope for the best", 
+                next: "path_overheat_ignore",
+                m: 5, l: 10, a: 0, b: 50, 
+                r: "You simply leave. 10 minutes later Berta dies of heat. Silence in the server room. Noise in the corridor instead." 
+            },
+            { 
+                t: "Brutal solution: CO2 extinguisher", 
+                req: "fire_ext", 
+                next: "path_overheat_co2",
+                m: 5, l: -10, a: 10, b: -10, 
+                r: "PFFFFT! An ice-cold blast of CO2 straight into the air intake. The temperature drops in shock to -10 degrees. Berta purrs again, and is now a block of ice." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2a",
+        title: "Ice Age",
+        reqStory: "path_overheat_co2",
+        text: "Berta is running beautifully, and the CO2 shock has formed condensation on the circuit board. It is beginning to drip. Water and electricity are not friends.",
+        opts: [
+            { 
+                t: "Dry it with a hairdryer", 
+                m: 15, l: -5, a: 10, b: 0, 
+                r: "You fetch a hairdryer and carefully dry the puddles away. It is a dance on a volcano, and you prevent the short circuit." 
+            },
+            { 
+                t: "Tip rice over it", 
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "The good old rice trick. It looks unprofessional and it does soak up the moisture. Let us hope the rice does not cook on the CPU." 
+            },
+            { 
+                t: "Ignore it", 
+                m: 2, l: 10, a: 0, b: 20, 
+                r: "You chance it. BZZZT. A small spark. Berta restarts and carries on running. One sector of the hard disk is fried (employees A-F get no money)." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2b",
+		char: "Dr. Wichtig",
+        title: "The Sweating Boss",
+        reqStory: "path_overheat_dyson",
+        text: "The boss storms into the server room scarlet and drenched in sweat. He sees his beloved Dyson standing in front of the server. 'MILLER! That is my private property! The sweat is running into my eyes!'",
+        opts: [
+            { 
+                t: "'That was an emergency measure.'", 
+				rep: { "Dr. Wichtig": 5 },		
+                m: 5, l: 0, a: -5, b: -10, 
+                r: "'Boss, without the Dyson all the payroll data would be gone!' He pauses, wipes the sweat away. 'Really? Very well. Save the data.' He moves off." 
+            },
+            { 
+                t: "Give the fan back at once", 
+                m: 5, l: 0, a: -10, b: 5, 
+                r: "You pull the fan's plug. 'Sorry, boss.' He takes the thing and goes. Berta heats up again at once. Now you have to blow." 
+            },
+            { 
+                t: "Get cheeky: 'You are sweating for the firm'", 
+				rep: { "Dr. Wichtig": -15 },
+                m: 2, l: 0, a: 10, b: 30, 
+                r: "'Sacrifices have to be made.' The boss very nearly explodes. He snatches the fan to him and slams the door. He is probably writing the written warning as he walks." 
+            }
+        ]
+    },
+    {
+        id: "srv_overheat_warning_2c",
+		char: "Frau Elster",
+        title: "The Payday Revolt",
+        reqStory: "path_overheat_ignore",
+        text: "Ms Elster is standing in the corridor shrieking: 'BERTA IS DEAD! NO MONEY THIS MONTH!' An angry mob of employees with torches (and staplers) gathers outside IT.",
+        opts: [
+            { 
+                t: "Blame it on 'hackers'",
+                rep: { "Frau Elster": -2 }, 
+                m: 10, l: 5, a: -10, b: 10, 
+                r: "'North Korean cyber attack!' Everyone nods, frightened. The boss half believes it and is annoyed about the PR. You are out of the firing line. The atmosphere is poisoned." 
+            },
+            { 
+                t: "Hide in the toilet",
+                rep: { "Frau Elster": -10 }, 
+                m: 60, l: 10, a: -20, b: 40, 
+                r: "You lock yourself in the loo and wait until the mob goes home. When you come out there is a note stuck to your monitor: 'We know where you live.'" 
+            },
+            { 
+                t: "Type every transfer by hand",
+                rep: { "Frau Elster": 10 }, 
+                m: 120, l: -50, a: 20, b: -10, 
+                r: "You sit there for 2 hours with Ms Elster typing IBANs. Your fingers bleed. The mob calms down, though." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_1",
+        title: "Remains of the Night Shift",
+        text: "You find a half-full, warm can of energy drink and a note on the server: 'RAID controller is playing up. Going home, not my problem.' A red lamp on the drive bay is blinking frantically.",
+        opts: [
+            { 
+                t: "Pocket the energy drink", 
+                loot: "energy", 
+                next: "path_night_shift_loot",
+                m: 5, l: -5, a: -5, b: 10, 
+                r: "You pocket the can. Free is free. While you are bending down the blinking stops. The LED is off now. Dead. The drive has taken its leave." 
+            },
+            { 
+                t: "Sigh and start the RAID rebuild", 
+                next: "path_night_shift_fix",
+                m: 60, l: -20, a: 10, b: -10, 
+                r: "You hot-swap the disk and start the rebuild. It takes an hour, which you spend staring at a progress bar. The system is saved." 
+            },
+            { 
+                t: "Ring the colleague out of bed", 
+                next: "path_night_shift_wake",
+                m: 15, l: 0, a: -10, b: 5, 
+                r: "You wake him up and bellow at him. He comes back to work exhausted and surly. 'All right, I am here.' You hand him the chaos and leave." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2a",
+		char: "Dr. Wichtig",
+        title: "The Missing Drive",
+        reqStory: "path_night_shift_loot",
+        text: "The boss appears in the doorway. 'Miller? Why can Marketing not get at drive X? Tomorrow's campaigns are on there!' He sees the dead LED.",
+        opts: [
+            { 
+                t: "Heroically restore the backup", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 45, l: -15, a: 5, b: -20, 
+                r: "You change the tape and restore the backup. 'No panic, boss. Everything under control.' You save the day. The boss nods his approval." 
+            },
+            { 
+                t: "Offer him the energy drink", 
+				rem: "energy",
+                rep: { "Dr. Wichtig": -2 },
+				m: 2, l: 5, a: -5, b: 10, 
+                r: "'Would you like a sip?' The boss's expression swings between concern and disbelief. 'Repair this! Now!' Evidently the wrong moment." 
+            },
+            { 
+                t: "Blame the night shift", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You point at your colleague's note. 'He simply left.' The boss rages. 'That good-for-nothing!' Your neck is out of the noose. Your colleague's is in it." 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2b",
+        title: "Bright and Breezy",
+        reqStory: "path_night_shift_fix",
+        text: "The night shift colleague comes in around midday (well rested). He sees the green LEDs. 'Ah, fixed itself, did it? Told you, it was only a glitch.'",
+        opts: [
+            { 
+                t: "Adjust his chair", 
+                m: 2, l: 5, a: 5, b: 0, 
+                r: "Quiet revenge. You wind his chair 5cm lower and set the mouse speed to 'snail'. That will drive him out of his mind." 
+            },
+            { 
+                t: "Grass him up to the boss", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 10, l: -5, a: 5, b: 5, 
+                r: "You tell on him. The boss shrugs. 'As long as it runs...' Evidently performance is not rewarded here." 
+            },
+            { 
+                t: "Give him a piece of your mind", 
+                m: 5, l: 0, a: -10, b: 0, 
+                r: "You have it out with him. He waves you off. 'Chill out. Teamwork, yeah?'" 
+            }
+        ]
+    },
+    {
+        id: "srv_night_shift_2c",
+        title: "Handbags at Dawn",
+        reqStory: "path_night_shift_wake",
+        text: "An email to everyone (cc: boss, HR): 'Subject: Bullying by IT colleague'. Your colleague complains that you 'terrorised' him during his rest period even though the problem was 'not critical'.",
+        opts: [
+            { 
+                t: "Lie in wait for him and sort it out", 
+                m: 5, l: 0, a: 10, b: 10, 
+                r: "You head him off in the corridor. It gets loud. HR have to step in. Now you both have an entry in your personnel file." 
+            },
+            { 
+                t: "Set the record straight, factually - to everyone", 
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "You attach the error log. 'RAID 5 degraded is critical.' Silence in the inbox. Facts beat feelings. 1-0 to you." 
+            },
+            { 
+                t: "Ignore it", 
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "Let him cry about it. You delete the email. The boss does not ask either." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_1",
+        title: "The Backup Tape",
+        text: "The ancient tape drive hums, clicks and then falls silent. It will not spit the tape out any more. 'Error 08/15: Tape stuck'. It is the only full backup from yesterday. Break it and the data is gone.",
+        opts: [
+            { 
+                t: "Apply brute force: 'GIVE IT HERE!'", 
+                next: "path_legacy_tape_fail",
+                m: 5, l: 0, a: 20, b: 30, 
+                r: "You rip it out with both hands. RRRRIP. Tape spaghetti. The black magnetic tape distributes itself around the entire room. You throw the tangle deep into the bin, quickly." 
+            },
+            { 
+                t: "Leave it in and pray", 
+                m: 2, l: 10, a: 0, b: 20, 
+                r: "You simply ignore the error. Tonight's backup will fail, guaranteed. That is a problem for 'tomorrow's Miller', though." 
+            },
+            { 
+                t: "Lever it out surgically with the screwdriver", 
+                req: "screw", 
+                next: "path_legacy_tape_success",
+                m: 20, l: -5, a: 0, b: -5, 
+                r: "With surgical precision you lever the cover plate open. The tape slides out undamaged. Data saved. In your head an invisible audience applauds." 
+            },
+            { 
+                t: "Improvise a loop from a cable tie", 
+                req: "zip_ties", 
+                next: "path_legacy_tape_success",
+                m: 10, l: 0, a: 5, b: 5, 
+                r: "You make a loop, thread it in and pull carefully. Out it comes! The case has picked up scratches, but hey - it runs." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_2ab",
+		char: "Dr. Wichtig",
+        title: "The Restore Test",
+        reqStory: "path_legacy_tape_success",
+        text: "Enter the boss. 'Miller! Good thing you have the tape. A customer has accidentally deleted his database. We need yesterday's state. Restore it.'",
+        opts: [
+            { 
+                t: "Casually load the tape", 
+				rep: { "Dr. Wichtig": 10 },
+                m: 45, l: -20, a: -10, b: -20,
+                r: "The drive hums. 'Restore completed'. The boss beams. 'You are a lifesaver, Miller!' Care pays for itself now and then." 
+            },
+            { 
+                t: "Ask for a pay rise",
+                rep: { "Dr. Wichtig": -2 },				
+                m: 5, l: 0, a: 5, b: 10,
+                r: "'That costs extra, boss.' He laughs drily. 'Just do your job.' A chance wasted, but brave." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_tape_2c",
+		char: "Dr. Wichtig",
+        title: "Data Loss",
+        reqStory: "path_legacy_tape_fail",
+        text: "The boss practically breaks through the door. 'Catastrophe! A customer has deleted everything! Where is yesterday's backup?! We have to restore NOW!' He sees the empty drive.",
+        opts: [
+            { 
+                t: "'The backup never ran!'", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 5, l: 5, a: -5, b: 20, 
+                r: "'Software fault, boss. The system failed.' He swears at the technology. 'Bloody computers!' You are in the clear. The trust in IT is not." 
+            },
+            { 
+                t: "Fake a panic and cry", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 5, l: 0, a: -10, b: 5, 
+                r: "You collapse theatrically. 'It is all so terrible!' The boss is so confused that he comforts you instead of sacking you. Pity always works." 
+            },
+            { 
+                t: "'The tape is... broken.'", 
+				rep: { "Dr. Wichtig": -15 },
+                m: 10, l: 0, a: 5, b: 50,
+                r: "You fetch the tangle out of the bin. The boss goes chalk white. 'THAT WAS THE ONLY BACKUP?!' He shouts so loudly that the windows rattle in the building next door. That will mean a written warning." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_1",
+		char: "Egon",
+        title: "Egon's Secret Stash",
+        text: "You lift a loose floor panel. Behind it: a dusty box belonging to Egon the caretaker. Contents: an opened bottle of cheap 'Korn', questionable magazines from the nineties and... a handwritten list of every door code in the firm.",
+        opts: [
+            { 
+                t: "Take a deep swig of the Korn", 
+                next: "path_egon_drink",
+                m: 15, l: 10, a: -20, b: 10, 
+                r: "You take a swig. It tastes like brake cleaner and burns like hell. You are slightly tipsy. The work is more bearable now; the smell on your breath is a risk." 
+            },
+            { 
+                t: "Report the find and grass Egon up", 
+                next: "path_egon_snitch",
+                rep: { "Egon": -15, "Dr. Wichtig": 5 },
+                m: 15, l: 0, a: 10, b: -5, 
+                r: "You lay the evidence before the boss. Egon gets into enormous trouble. He knows exactly who did it. His look in the corridor was icy." 
+            },
+            { 
+                t: "Photograph the list, quickly", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "Click. The photograph is safe. Unbelievable: the master code is '9999'. That will open a good few locked doors for you yet. You put the panel back." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_2b",
+		char: "Egon",
+        title: "Message from Underground",
+        reqStory: "path_egon_drink",
+        text: "You look under the floor panel again. The bottle is gone. In its place lies a note in spidery handwriting: 'I know it was you. You owe me 5 marks. Otherwise I tell boss.'",
+        opts: [
+            { 
+                t: "Write a note: 'It was tasty, thanks.'",
+                rep: { "Egon": -10 }, 
+                m: 5, l: 5, a: 10, b: 5, 
+                r: "Pure provocation. Later you hear Egon swearing loudly in the corridor and kicking his cleaning trolley. There will be consequences." 
+            },
+            { 
+                t: "Write a note: 'Prove it, then!'", 
+                rep: { "Egon": -2 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You put the note back. This is a war of nerves now. Who blinks first?" 
+            },
+            { 
+                t: "Put €5 in as a peace offering",
+                rep: { "Egon": 5 }, 
+                m: 2, l: 0, a: -5, b: 0, 
+                r: "You put a note in. The next day there is a boiled sweet lying there. Ceasefire accepted. Egon has his price." 
+            }
+        ]
+    },
+    {
+        id: "srv_egon_stash_2c",
+		char: "Egon",
+        title: "The Sticking Office Door",
+        reqStory: "path_egon_snitch",
+        text: "Morning, outside your office: the key fits, but the door does not budge a millimetre. In the keyhole there is... chewing gum? Ten metres away, Egon is mopping the floor and whistling.",
+        opts: [
+            { 
+                t: "Kick the door in", 
+                rep: { "Egon": -10 },
+                m: 5, l: 0, a: 20, b: 20,
+                r: "BAM. The lock breaks. The door is open, and the frame is ruined. Egon chuckles quietly: 'Oh, vandalism? I shall report that.'" 
+            },
+            { 
+                t: "Climb through the ventilation shaft", 
+                req: "screw",
+                m: 20, l: -10, a: 10, b: 10, 
+                r: "Like Bruce Willis. You unscrew the grille and crawl in. You land on your desk, dusty. Egon has won. You have style." 
+            },
+            { 
+                t: "Ask Egon for help, contritely",
+                rep: { "Egon": 5 }, 
+                m: 30, l: 0, a: 20, b: 0, 
+                r: "You have to eat humble pie. Egon leans back and enjoys it. 'Well, old lock. That takes time.' He takes his time in the extreme while you have to work in the corridor." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_1",
+		char: "Kevin",
+        title: "The Hidden Miner",
+        text: "A server is running at 100% load, the fans howling like a jet on take-off. You check the task manager: 'KevinCoin_Miner.exe' is eating every resource. The apprentice is mining crypto at the firm's expense! The CPU is already at a critical 98 degrees.",
+        opts: [
+            { 
+                t: "Kill the process and have it out with Kevin", 
+                next: "path_crypto_stop",
+                rep: { "Kevin": -5 }, 
+                m: 15, l: -5, a: 5, b: -5,                
+                r: "Kevin whines: 'But the price is going to the moon right now! I was going to buy us all Lambos!' You hold firm. The server cools down, the Lambo has to wait." 
+            },
+            { 
+                t: "Quietly change the wallet address to yours", 
+                req: "admin_pw",
+                next: "path_crypto_hijack",
+                rep: { "Kevin": -10 },
+                m: 10, l: 20, a: -10, b: 25,
+                r: "With a malicious grin you redirect the coins to your private wallet. Wicked? Yes. Profitable? Oh yes. Kevin is now mining for your early retirement. Let us hope Internal Audit does not notice." 
+            },
+            { 
+                t: "Just let it keep running", 
+                next: "path_crypto_crash",
+                rep: { "Kevin": 2 },
+                m: 2, l: 10, a: 0, b: 40, 
+                r: "You ignore it. 30 minutes later the box shuts itself down on emergency stop from overheating. Unfortunately SAP was running on it too. The firm comes to a standstill. Everyone screams." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2a",
+		char: "Kevin",
+        title: "Kevin's Investment",
+        reqStory: "path_crypto_stop",
+        text: "Kevin stands in front of you with watering eyes. He holds up three Hot Wheels toy cars. 'I already ordered the Lambos! On credit! If I am not allowed to keep mining, my financial plan collapses. Just 2 more hours?'",
+        opts: [
+            { 
+                t: "Approve an exception",
+                rep: { "Kevin": 10, "Dr. Wichtig": -2 }, 
+                m: 5, l: 10, a: -10, b: 20, 
+                r: "'All right, but only at night.' Kevin cheers. You know perfectly well that it is illegal. Who can resist those puppy eyes, though?" 
+            },
+            { 
+                t: "Stay strict: 'No!'", 
+                rep: { "Kevin": -5 }, 
+                m: 5, l: 0, a: 5, b: -10,
+                r: "'That is company property, Kevin.' He shuffles off, dejected. He will have to take the toy cars back. You have saved the power grid." 
+            },
+            { 
+                t: "Buy the toy off him",
+                rep: { "Kevin": 6 }, 
+                m: 5, l: 5, a: -15, b: 0, 
+                r: "You give him €5 for the yellow toy Lambo. He beams. 'You are the best!' Now there is a car on your desk. Vroom vroom." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2b",
+        title: "The Audit",
+        reqStory: "path_crypto_hijack",
+        text: "An email pops up: 'Internal Audit: unusual power consumption in server room B. We shall be along shortly to take measurements.' Your heart sinks into your boots. Your wallet is full and the auditors are on their way.",
+        opts: [
+            { 
+                t: "'That is AI training.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 5, l: 10, a: 0, b: 30, 
+                r: "You let it run. When the auditors arrive you burble something about 'neural networks' and 'blockchain innovation'. They nod, none the wiser, and go. The risk paid off!" 
+            },
+            { 
+                t: "Delete everything and cover the tracks", 
+                m: 10, l: -5, a: 10, b: -10, 
+                r: "You delete the miner and the logs and format the temp folder for good measure. The money is safe, the income stream dries up. Phew. Just in time." 
+            },
+            { 
+                t: "Pin the lot on Kevin, as a precaution", 
+                rep: { "Kevin": -15 },
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "You rename the process back to 'Kevin_Test'. If they find it, it was the apprentice." 
+            }
+        ]
+    },
+    {
+        id: "srv_crypto_miner_2c",
+        title: "SAP Emergency Service",
+        reqStory: "path_crypto_crash",
+        text: "The external SAP support is connected in over TeamViewer. The hourly rate is €250. He moves the mouse with agonising slowness. 'Oh, the database is inconsistent. That... could take a while.'",
+        opts: [
+            { 
+                t: "Try to help him", 
+                m: 20, l: -10, a: 10, b: -5, 
+                r: "You give him access to the backups. 'Ah, thank you.' The system is back sooner. Lower costs, and you had to work for them." 
+            },
+            { 
+                t: "Invent a hardware excuse", 
+                m: 10, l: 5, a: 5, b: 15, 
+                r: "'It is the RAM!' The contractor does not contradict you. The boss orders new RAM at once. You have successfully covered up the heat problem." 
+            },
+            { 
+                t: "Watch and drink coffee", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 60, l: 20, a: -5, b: 20, 
+                r: "You are effectively paid to do nothing while the contractor sweats. All the boss sees is 'professionals at work'. The most relaxing hour of the week." 
+            }
+        ]
+    },
+    {
+        id: "srv_intern_access",
+        title: "Urgent Data",
+        text: "The intern is off sick. The boss is standing in front of his PC: 'Miller! Crack the thing! The presentation is on it! I bet the idiot picked something complicated!'",
+        opts: [
+            { 
+                t: "Type in 'Puschel123'",
+				rep: { "Dr. Wichtig": 10 },
+                m: 5, l: 10, a: -10, b: -5, 
+                r: "You type it in without looking. 'ACCESS GRANTED'. The boss blinks: 'How did you...? Never mind. Good work, Miller!'" 
+            },
+            { 
+                t: "Force an admin reset",
+                req: "admin_pw",
+				rep: { "Dr. Wichtig": 2 },
+                m: 15, l: -5, a: 0, b: 0, 
+                r: "Takes 15 minutes, works for certain. The boss drums his fingers impatiently." 
+            },
+            { 
+                t: "Type in '123456'",
+				rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: 10, b: 15, 
+                r: "Wrong. The PC locks itself for 1 hour. The boss explodes." 
+            },
+            { 
+                t: "Type in 'Password'",
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 10, b: 10, 
+                r: "It was never going to be that. The boss shakes his head: 'Do you take me for an idiot? Try something proper!'" 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_1",
+        title: "Cable Spaghetti",
+        text: "The switch in the rack looks like a plate of spaghetti. One single knot of yellow, blue and grey cables. Port 42 is in there somewhere, buried deep in the chaos.",
+        opts: [
+            { 
+                t: "Lash it with cable ties", 
+                req: "zip_ties", 
+                next: "path_cable_tidy",
+                m: 15, l: 5, a: -5, b: 0, 
+                r: "You take a handful of cable ties and lash the lot into one fat sausage. Not pretty. Air gets through and you can see the ports again." 
+            },
+            { 
+                t: "Just pull on it", 
+                next: "path_cable_yank",
+                m: 5, l: 5, a: 20, b: 10, 
+                r: "You pull hard on the cable you need. RRRIP. Three other connectors come out with it. Oops. The lights on the phone system go out." 
+            },
+            { 
+                t: "Untangle it patiently", 
+                next: "path_cable_tidy",
+                m: 45, l: -10, a: -10, b: -10, 
+                r: "You put music on and sort cable after cable. After 45 minutes you have created perfect order. It looks beautiful. Almost too good to touch." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_2ab",
+        title: "The Museum Piece",
+        reqStory: "path_cable_tidy",
+        text: "The head of IT is standing in front of the rack. There are tears in his eyes. 'It is... beautiful. Nobody is to touch this again! I hereby declare this rack a restricted zone!'",
+        opts: [
+            { 
+                t: "Get irritated: 'We do have to work, though'", 
+				rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "'Boss, I need to get at Port 43.' He glares at you. 'Do not dare destroy the symmetry!' Wonderful. Now the rack is useless." 
+            },
+            { 
+                t: "Salute proudly", 
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "'At your command!' Your work is now treated like a holy shrine. Nobody re-patches anything in here again. Your work is for eternity." 
+            },
+            { 
+                t: "Put up a 'work of art' sign", 
+                m: 2, l: 5, a: -5, b: 0, 
+                r: "You stick a sign on it: 'Modern Art - Do not touch'. Colleagues take photographs. You are the Michelangelo of IT." 
+            }
+        ]
+    },
+    {
+        id: "srv_cable_spaghetti_2c",
+        title: "Wrongly Connected",
+        reqStory: "path_cable_yank",
+        text: "You plug the cables back in, panicking. The system restarts. Phew! Except: you have evidently swapped the sockets. The whole building is now wrongly connected. Ring the canteen and you get the boss.",
+        opts: [
+            { 
+                t: "Run round the building swapping plugs", 
+                m: 60, l: -20, a: 20, b: 5, 
+                r: "You run from office to office replugging telephones. 'Why is my rubber plant ringing?' asks a colleague. You are drenched in sweat by the time it is all right again." 
+            },
+            { 
+                t: "Send a new list: 'Numbers changed'", 
+                m: 10, l: 10, a: -5, b: 10,
+                r: "You send an email: 'Due to... sunspots we have new extension numbers.' The boss now receives pizza orders. The chaos is complete. You get a break." 
+            },
+            { 
+                t: "'That will sort itself out by tomorrow.'", 
+                m: 5, l: 10, a: 0, b: 20, 
+                r: "You simply lie. 'The digital synchronisation takes 24 hours.' Let us hope the boss does not notice that he is now reachable under 'caretaker'." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_1",
+        title: "Disco in the Server Room",
+        text: "Every LED on the server racks is blinking in time, 4/4. It looks like a light organ in a village disco. The system is running extremely rough and humming a strange bass rhythm.",
+        opts: [
+            { 
+                t: "Techno playlist on and dance", 
+                next: "path_disco_dance",
+				rep: { "Dr. Wichtig": -2 },
+                m: 15, l: 10, a: -20, b: 20, 
+                r: "You use the blinking as a light show and dance the robot with total abandon. Unfortunately the boss is suddenly in the doorway, staring at you, and asks drily: 'Are you having a stroke, Miller?'" 
+            },
+            { 
+                t: "Brutally pull the plug", 
+                next: "path_disco_plug",
+                m: 5, l: 5, a: 10, b: 10, 
+                r: "Clack. Quiet. Clack. Noise. The server boots again. The blinking is gone. The database does report 'Index Corruption' on start-up, and you ignore that with some skill." 
+            },
+            { 
+                t: "Look it up in the manual", 
+                req: "manual", 
+                m: 20, l: -5, a: -5, b: -5, 
+                r: "You leaf through wildly. Error code '0xPARTY'. A developer easter egg that fires at exactly 100 days of uptime. You press the key combination 'CTRL+ALT+NOFUN'. The blinking stops." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_2b",
+        title: "The Viral Hit",
+        reqStory: "path_disco_dance",
+        text: "You thought the telling-off from the boss was the end of it? Wrong. A colleague filmed your dance through the window in the server room door. The video 'Admin on Drugs' is now number 1 on the company intranet.",
+        opts: [
+            { 
+                t: "Throttle the cameraman's internet", 
+                m: 5, l: 5, a: -15, b: 5,
+                r: "You identify your colleague's IP and throttle his port to 56k modem speed. He cannot upload the video any more. He cannot load anything at all any more. Justice." 
+            },
+            { 
+                t: "Own it: 'Those are moves!'", 
+                m: 5, l: 0, a: -10, b: 5, 
+				rep: { "Dr. Wichtig": -2 },
+                r: "You comment on the video: 'Envy is the highest form of recognition.' Your colleagues laugh, and somehow they think you are cooler now. The boss just shakes his head." 
+            },
+            { 
+                t: "Delete the IT intranet", 
+                m: 10, l: -5, a: 10, b: 20, 
+                r: "You use your admin rights and delete the video (and the backup). That is called the 'Streisand effect'. Now everyone thinks you really do have something to hide." 
+            }
+        ]
+    },
+    {
+        id: "srv_disco_led_2c",
+        title: "The Price Glitch",
+        reqStory: "path_disco_plug",
+        text: "The phone rings off the hook. 'The web shop is going mad!' Your hard restart has shifted the prices in the database. Every product now costs €0.00. Orders are coming in every second.",
+        opts: [
+            { 
+                t: "Set the prices manually to €9,999", 
+				rep: { "Dr. Wichtig": 2 },
+                m: 5, l: 5, a: -5, b: -5, 
+                r: "Quick and dirty SQL command: `UPDATE prices SET value = 9999`. Nobody buys anything any more, and the fault is 'fixed'. You are a genius of madness." 
+            },
+            { 
+                t: "Take the web shop offline immediately", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 10, l: -5, a: 10, b: 20, 
+                r: "You cut the line. The shop is offline. The damage is contained, and the boss is shouting: 'We are losing thousands of euros a minute!' Well, then. Better than giving the goods away." 
+            },
+            { 
+                t: "Restore the backup", 
+				rep: { "Dr. Wichtig": -2 },
+                m: 60, l: -20, a: 10, b: 15, 
+                r: "You have to fetch yesterday's backup. The progress bar crawls. The boss stands behind you breathing heavily: 'Every second costs money, Miller!' You sweat." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_1",
+        title: "Air Conditioning Failure",
+        text: "The air conditioning has failed. It feels like 50 degrees in the server room. The rack fans are running at maximum; it sounds like an aircraft carrier. The servers are sweating.",
+        opts: [
+            { 
+                t: "Fetch ice cubes by the bucket", 
+                next: "path_ac_ice",
+                m: 10, l: 5, a: 0, b: 20, 
+                r: "You put bowls of ice from the kitchenette straight into the racks. It does cool them, and the condensation is collecting. A dance on a razor blade." 
+            },
+            { 
+                t: "Wedge the security door open with a chair", 
+                next: "path_ac_door",
+                m: 5, l: 0, a: 0, b: 10, 
+                r: "Fresh corridor air streams in. The temperature falls to a bearable 30 degrees. Except: a permanently open server room door is a massive security risk." 
+            },
+            { 
+                t: "Improvise a USB fan", 
+                req: "usb_stick", 
+                m: 15, l: -5, a: -5, b: 0, 
+                r: "You fiddle about with the connectors and improvise active cooling. It achieves almost nothing and looks extremely technical - and that is exactly how it feels: engineering with no measurable effect." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_2a",
+        title: "The Stickler for Regulations",
+        reqStory: "path_ac_door",
+        text: "The data protection officer eases himself into the doorway. He looks sweaty and unhappy. He taps his clipboard. 'Under ISO 27001 and GDPR Article 32, physical access is to be restricted. I have to report this. I hate my job, but rules are rules.'",
+        opts: [
+            { 
+                t: "'Would you like an ice lolly?'", 
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "You offer him an ice lolly. He sighs, takes it and closes his eyes. 'I have seen nothing.' Corruption always works." 
+            },
+            { 
+                t: "Cite 'emergency clause 7b'", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You invent a rule: 'In the event of thermal overload the hardware protection clause applies.' He blinks, confused, then nods wearily. 'Very well. If you say so. I shall write... exception.' He shuffles off." 
+            },
+            { 
+                t: "Lecture him about heat", 
+                m: 15, l: -5, a: 10, b: 15, 
+                r: "You shout at him: 'Do you want the data to burn?!' He notes down 'uncooperative conduct' and leaves. That will mean paperwork." 
+            }
+        ]
+    },
+    {
+        id: "srv_ac_failure_2c",
+        title: "Wetland Habitat",
+        reqStory: "path_ac_ice",
+        text: "Physics is cruel. The ice melts faster than expected. Puddles form on the floor and creep dangerously close to the power strips. The humidity is at 99%.",
+        opts: [
+            { 
+                t: "Build a drainage channel out of tape", 
+                req: "tape", 
+                m: 15, l: -5, a: 5, b: 5, 
+                r: "You build a complex construction out of duct tape that leads the water into a plant pot. It is ugly, it is a bodge, and it works. Engineering!" 
+            },
+            { 
+                t: "Call Kevin in to mop", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 10, a: -5, b: 0, 
+                r: "'Kevin! Practical training: data centre cleaning!' The apprentice comes with the mop. He grumbles, and your feet stay dry." 
+            },
+            { 
+                t: "Put up a 'Wet Floor' sign", 
+                m: 2, l: 15, a: 0, b: 10,
+                r: "You put the yellow warning sign up. That puts you outside the reach of liability. The fact that the distribution board is about to go for a swim is a technical detail." 
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_1",
+        title: "The Sealed Shaft",
+        text: "Behind a humming rack you discover an old ventilation hatch. A yellowed note is stuck to it: 'Only to be opened in the event of the end of the world or a stock market crash. Signed, Baron von Greed (founder).'",
+        opts: [
+            { 
+                t: "Rattle it",
+                m: 5, l: 0, a: 10, b: 0,
+                r: "Locked. You will need a lever or a code. What you have got is a lungful of dust. *Cough*"
+            },
+            { 
+                t: "Open the ventilation hatch",
+                next: "path_legacy_open",
+                m: 5, l: -10, a: -5, b: 5,
+                r: "The hatch gives with a grinding noise. That was loud! Let us hope nobody heard it. Behind it is a small, dark cavity."
+            }
+        ]
+    },
+    {
+        id: "srv_legacy_2",
+        title: "The Old Safe",
+        reqStory: "path_legacy_open",
+        text: "You crawl back into the shaft. The safe has a combination dial. Next to it is an engraving: 'The year the company was founded is the key.' (You do not know it, but Kevin scrawled '1899' on the toilet door the other day.)",
+        opts: [
+            { 
+                t: "Enter code '1899'",
+                loot: "corp_chronicles",
+                m: 15, l: -5, a: -10, b: 0,
+                r: "*Click*. The mechanism springs open! A feeling of triumph runs through you. It smells of old paper and greed. (New item, and it can be read in your inventory!)"
+            },
+            { 
+                t: "Try code '1234'",
+                m: 10, l: 0, a: 15, b: 0,
+                r: "Nothing happens. You kick the safe in a rage. Your toe hurts."
+            }
+        ]
+    },
+    {
+        id: "srv_ghost_1",
+        title: "The Unknown Blinking",
+        text: "Right at the back in the dark corner, a green LED blinks on a device that appears on no inventory plan. It is covered in dust and hums quietly.",
+        opts: [
+            { 
+                t: "Wipe the dust off and investigate",
+                next: "path_ghost_found",
+                m: 15, l: -10, a: 5, b: 0,
+                r: "You wipe the dust away. Label: 'Project PHOENIX - 1998 - Do Not Touch'. It has been running for 25 years. Respect."
+            },
+            { 
+                t: "Ignore it",
+                m: 2, l: 10, a: 0, b: 5,
+                r: "Not my ticket, not my problem. You walk away."
+            }
+        ]
+    },
+    {
+        id: "srv_ghost_2",
+        title: "PHOENIX Lives",
+        reqStory: "path_ghost_found",
+        text: "You are standing in front of the mysterious 1998 server again. Today it is making a strange noise. *Click-clack*. As though a hard disk were dying.",
+        opts: [
+            { 
+                t: "Apply percussive maintenance",
+                m: 5, l: 5, a: -15, b: 20,
+                r: "BAM. The clicking stops. The humming settles. Nothing is as relaxing as violence against hardware."
+            },
+            { 
+                t: "Connect a monitor and fix it",
+                m: 45, l: -25, a: 10, b: -10,
+                r: "You spend 45 minutes repairing sectors. It... it is hosting the founder's private fan fiction site?! Never mind, it runs again."
+            }
+        ]
+    },
+    {
+        id: "srv_alarm_stuck_1",
+        title: "EARS BLEEDING!",
+        text: "A false alarm in the server room! The siren blares at 120 decibels. You cannot think. The keypad on the wall is blinking: 'ENTER CODE TO DEACTIVATE'.",
+        opts: [
+            { 
+                t: "Type in 4711",
+                m: 5, l: 5, a: -20, b: -10, 
+                r: "Silence. Heavenly silence. You saved the day because you remembered the bollocking from the caretaker." 
+            },
+            { 
+                t: "Hit it with the hammer",
+                req: "hammer",
+                next: "path_alarm_smashed",
+                m: 5, l: 0, a: 10, b: 40, 
+                r: "The siren is broken, and so is the wall now. Two invoices, one blow." 
+            },
+            { 
+                t: "Run out",
+                m: 30, l: 0, a: 10, b: 10, 
+                r: "You wait outside for 30 minutes for the fire brigade. It was only dust in the sensor." 
+            },
+            { 
+                t: "Try 0000",
+                m: 5, l: 0, a: 20, b: 0, 
+                r: "WRONG. The siren gets even louder. Your ears ring for hours." 
+            }
+        ]
+    },
+    {
+        id: "srv_alarm_stuck_2",
+		char: "Egon",
+        title: "Egon and the Hole",
+        reqStory: "path_alarm_smashed",
+        text: "Egon the caretaker is standing in front of the wreckage of the alarm system. He runs a finger over the deep dent in the wall. 'That was no technical defect. That was blunt force.' He turns slowly towards you. 'Did you see anything?'",
+        opts: [
+            { 
+                t: "Offer him your duct tape as a bribe", 
+                rem: "tape",
+                rep: { "Egon": 10 },
+                m: 5, l: 5, a: -10, b: -5, 
+                r: "Egon's eyes light up. 'Proper gaffer? The good stuff?' He takes the roll, sticks a piece over the hole in the wall and grins. 'What hole? I see no hole.'" 
+            },
+            { 
+                t: "'There was an enormous rat!'",
+                rep: { "Egon": -10 }, 
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "Egon raises an eyebrow. 'A rat with a hammer?' His look says everything. He writes a report about 'vandalism', and that one certainly does not end up in the filing tray but on the boss's desk." 
+            },
+            { 
+                t: "'It was an emergency...'", 
+                rep: { "Egon": 5 },
+                m: 10, l: -5, a: -10, b: -10, 
+                r: "You explain about the bleeding ears. Egon nods with a grunt. 'Better the wall than your eardrum. You pay for the plaster, though.' He covers for you with the boss, and you owe him one." 
+            }
+        ]
+    },
+    {
+        id: "srv_hdd_destroy_1",
+        title: "Scrapping the Hard Disks",
+        text: "A box of 50 old hard disks stands in the server room. Label: 'Strictly confidential: destroy in compliance with data protection!'. Next to it lies the official 'hand degausser', which feels like it takes 100 turns of the crank per disk.",
+        opts: [
+            { 
+                t: "Crank obediently, by the book", 
+                next: "path_hdd_kurbel",
+                m: 90, l: -20, a: 20, b: 0, 
+                r: "You crank yourself a case of tennis elbow. After 90 agonising minutes you are drenched in sweat and your aggression is throbbing. The disks are dead, though. You drag yourself back to your desk." 
+            },
+            { 
+                t: "Brute force!", 
+                req: "hammer",
+                next: "path_hdd_hammer",
+                m: 15, l: -5, a: -30, b: 0, 
+                r: "You lay the disks on the floor and smash them with the hammer. It crashes, splinters fly, your stress level drops. You leave the field of wreckage where it is and go back to work, contented." 
+            },
+            { 
+                t: "Just tip them into the general waste", 
+                next: "path_hdd_trash",
+                m: 5, l: 15, a: 0, b: 0, 
+                r: "You tip the entire box into the black bin by the back entrance. Time saved! You wash your hands in innocence and walk back to your office, unremarkably." 
+            }
+        ]
+    },
+    {
+        id: "srv_hdd_destroy_2a",
+		char: "Dr. Wichtig",
+        title: "Aching Muscles and Praise",
+        reqStory: "path_hdd_kurbel",
+        text: "A little later the boss appears in your office. 'Miller, I saw the neatly degaussed disks in Stores earlier. That is what I call diligence! Real handwork!' He claps you hard on the shoulder, of all places on the cranking arm.",
+        opts: [
+            { 
+                t: "Bear the pain with a smile", 
+                rep: { "Dr. Wichtig": 15 },
+                m: 5, l: 0, a: 5, b: -15, 
+                r: "You grit your teeth. The boss is seriously impressed by your commitment. That wretched cranking has at least earned you a large amount of credit with him." 
+            },
+            { 
+                t: "'That is a case for the workplace safety board!'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 5, a: 10, b: 10, 
+                r: "The boss rolls his eyes. 'Always this self-pity in IT.' The praise has evaporated and your arm still hurts." 
+            },
+            { 
+                t: "Use the goodwill: demand a break", 
+                m: 30, l: 15, a: -10, b: 0, 
+                r: "You demand an ergonomic recovery break. The boss nods graciously. You do nothing for 30 minutes and massage your forearm." 
+            }
+        ]
+    },
+    {
+        id: "srv_hdd_destroy_2b",
+		char: "Egon",
+        title: "The Field of Wreckage",
+        reqStory: "path_hdd_hammer",
+        text: "Some time after your work with the hammer, Egon the caretaker is on his round, standing in the server room shaking his head at the mountain of splintered plastic and bent metal. He rings you: 'Who has been rampaging in here?! I will never shift that with an ordinary broom!'",
+        opts: [
+            { 
+                t: "Promise him an energy drink", 
+                rem: "energy",
+                rep: { "Egon": 5 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'I will put a can out for you later, Egon.' He grunts. 'Very well. But never do that again.' Your hammer massacre goes unpunished." 
+            },
+            { 
+                t: "Snap at him: 'That is what you are paid for!'",
+                rep: { "Egon": -15 }, 
+                m: 5, l: 0, a: 10, b: 10, 
+                r: "Egon hangs up without a word. Not 10 minutes later the light and the heating in your office go off for no reason. Never pick a fight with Egon." 
+            },
+            { 
+                t: "'That was only the data protection troll.'",
+                rep: { "Egon": -10 }, 
+                m: 2, l: 5, a: 5, b: 5, 
+                r: "Egon swears loudly down the phone about IT." 
+            }
+        ]
+    },
+    {
+        id: "srv_hdd_destroy_2c",
+        title: "Data Leak",
+        reqStory: "path_hdd_trash",
+        text: "A fair amount of time has passed since you disposed of the rubbish. Then comes a panicked email from the compliance officer: 'There are old hard disks blowing about the yard! Somebody has been through the bin! Who failed to destroy these?!'",
+        opts: [
+            { 
+                t: "'I have certificates of destruction!'", 
+                m: 5, l: 0, a: 10, b: 30, 
+                r: "That was stupid. The compliance officer demands the documents at once. You have dug your own grave." 
+            },
+            { 
+                t: "Push Kevin the apprentice forward", 
+                rep: { "Kevin": -15 },
+                m: 10, l: 5, a: 10, b: 20, 
+                r: "You write back: 'Kevin was supposed to shred them!' Kevin gets a gigantic dressing-down." 
+            },
+            { 
+                t: "Run out and collect the disks", 
+                m: 30, l: -15, a: 20, b: 10, 
+                r: "You race out into the yard, crawl about on the tarmac and gather the drives back up. The worst humiliation imaginable, and you avert the ultimate disaster." 
+            }
+        ]
+    },
+    {
+        id: "srv_paywall_1",
+        title: "Ransomware from the Vendor",
+        text: "An ancient piece of proprietary server software has started demanding a credit card authorisation for a 'mandatory licence renewal' (€499); otherwise it shuts down in 5 minutes. The boss is on a plane and unreachable. Accounts have already clocked off.",
+        opts: [
+            { 
+                t: "Let it shut down", 
+                next: "path_paywall_down", 
+                m: 5, l: 10, a: 0, b: 30, 
+                r: "No money, no service. You let the timer run out. The server shuts down. Logistics cannot send any more parcels today. Tomorrow there will be an enormous drama." 
+            },
+            { 
+                t: "Use the 'Black Card'", 
+                req: "black_card", 
+                next: "path_paywall_card", 
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "You type in the Nigerian prince's details. *Payment accepted*. Somewhere in Zamunda an offshore account is debited. The server purrs obediently on. No outage." 
+            },
+            { 
+                t: "Reset the timer over and over with a script", 
+                req: "admin_pw", 
+                next: "path_paywall_hack", 
+                m: 20, l: -5, a: 15, b: 5, 
+                r: "You write a nasty script that winds the server's system clock back every 4 minutes. An extremely shaky hack, guaranteed to blow up in your face tomorrow." 
+            }
+        ]
+    },
+    {
+        id: "srv_paywall_2a",
+        title: "Queries from Support",
+        reqStory: "path_paywall_card",
+        text: "The phone rings. It is support for the server software. 'Many thanks for the licence renewal. We do have to ask, though... why has your payment provider registered a billing address in Lagos, Nigeria?'",
+        opts: [
+            { 
+                t: "'That is our new shell company.'", 
+                m: 10, l: 0, a: 5, b: 10, 
+                r: "The support agent clears his throat. 'Tax optimisation? I see. We shall not ask any further.' Phew. That went narrowly past a money-laundering investigation." 
+            },
+            { 
+                t: "Hang up without a word", 
+                m: 2, l: 5, a: 5, b: 0, 
+                r: "The licence is paid for. You do not have to talk to anybody about it. Click." 
+            }
+        ]
+    },
+    {
+        id: "srv_paywall_2b",
+        title: "The Time Paradox",
+        reqStory: "path_paywall_hack",
+        text: "Your time-loop hack is running. Unfortunately the mail server has picked up the manipulated system time. The entire department is currently wondering why every freshly sent email carries the date '01/01/1970'.",
+        opts: [
+            { 
+                t: "Stop the script and pay", 
+                m: 20, l: -5, a: 15, b: 10, 
+                r: "You stop the hack and force the boss into paying by text message. The emails have the right date again, and you are in serious trouble over the hack." 
+            },
+            { 
+                t: "'That is a feature.'", 
+                m: 5, l: 10, a: 5, b: 10, 
+                r: "You claim it is a 'retro encryption method'. A few colleagues believe it. The rest regard IT as a complete joke." 
+            }
+        ]
+    },
+    {
+        id: "srv_paywall_2c",
+        title: "Logistics on the Floor",
+        reqStory: "path_paywall_down",
+        text: "The head of logistics is standing in your office in tears. 'The lorries are backed up onto the main road! The barcode scanner server is offline! We are having to label the parcels with marker pens!'" ,
+        opts: [
+            { 
+                t: "Feign sympathy: 'The boss did not pay.'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: 5, b: 20, 
+                r: "You throw the CEO under the bus. The head of logistics rings Management in a fury. You lean back. Not your budget, not your problem." 
+            },
+            { 
+                t: "Give him a stapler", 
+                m: 2, l: 5, a: 10, b: 5, 
+                r: "'Here, staple the delivery notes on.' He stares at you in disbelief. 'You are a monster, Miller.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_acid_1",
+        title: "Corrosive Hazard",
+        text: "The old emergency battery (UPS) has a leak! Yellowish battery acid is dripping onto the raised floor and hissing. It is eating its way through the metal grating, smoking, straight towards the unprotected mains cables. This is one step short of meltdown.",
+        opts: [
+            { 
+                t: "Deploy the fire extinguisher", 
+                req: "fire_ext", 
+                next: "path_acid_freeze", 
+                m: 5, l: 0, a: -10, b: 0, 
+                r: "PFFFFT! You spray CO2 straight onto the puddle. The acid is blast frozen and sets into a harmless white lump. Clean, safe, solved stone cold." 
+            },
+            { 
+                t: "Soak it up with cardboard and old boxes", 
+                next: "path_acid_cardboard", 
+                m: 25, l: -10, a: 25, b: 0, 
+                r: "You throw rubbish onto the acid. Your fingers sting slightly, your shoes now have white marks, and the mains cables are safe for the time being." 
+            },
+            { 
+                t: "Call Egon the caretaker", 
+                next: "path_acid_egon", 
+                rep: { "Egon": -5 },
+                m: 15, l: 5, a: 5, b: 5, 
+                r: "You fetch Egon. He sees the acid, swears for 10 minutes straight about 'this expensive electronic junk' and scatters cat litter over it. He hates you for it." 
+            }
+        ]
+    },
+    {
+        id: "srv_acid_2a",
+		char: "Egon",
+        title: "Cleaning Duty",
+        reqStory: "path_acid_freeze",
+        text: "Egon comes into the server room to see that all is well. He looks at the frozen block of acid on the floor. He grabs a hand brush and dustpan and simply sweeps the harmless lump of ice up.",
+        opts: [
+            { 
+                t: "Accept the applause", 
+                rep: { "Egon": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "Egon nods his approval at you. 'Cleverly done, IT boy. Nice and clean. No fumes.' You enjoy the moment of tradesman's respect." 
+            }
+        ]
+    },
+    {
+        id: "srv_acid_2b",
+        title: "Eaten Through",
+        reqStory: "path_acid_cardboard",
+        text: "The boxes were not enough. The corrosive liquid has eaten through the cardboard. It is dripping again. Worse: it is dripping onto a network rail. Two machines in Accounts lose their connection.",
+        opts: [
+            { 
+                t: "Seal it with tape", 
+                req: "tape",
+                m: 15, l: -5, a: 10, b: 5, 
+                r: "You wind acid-resistant (?) tape around the leak. The fumes sting your nose. All you have done is postpone the problem. The network is running again." 
+            },
+            { 
+                t: "Ignore Accounts", 
+                m: 2, l: 5, a: 5, b: 10, 
+                r: "Two outages are acceptable collateral damage. Ms Elster will raise a ticket. That can wait until tomorrow." 
+            }
+        ]
+    },
+    {
+        id: "srv_acid_2c",
+		char: "Egon",
+        title: "Egon's Revenge",
+        reqStory: "path_acid_egon",
+        text: "Egon has cleared up the acid damage, and he has left you a lesson. He has locked your office bin with a padlock. A note hangs from it: 'Hazardous waste disposal by request only.'",
+        opts: [
+            { 
+                t: "Throw the rubbish into the corridor", 
+                rep: { "Egon": -10 },
+                m: 5, l: 5, a: 15, b: 5, 
+                r: "You defiantly tip your waste paper outside the door. The cold war between you and facilities management is under way." 
+            },
+            { 
+                t: "Take the screwdriver to it", 
+                req: "screw", 
+                m: 10, l: -5, a: 5, b: 0, 
+                r: "You crack the cheap lock in two minutes. Egon is quietly impressed, and from then on he simply leaves the bin unemptied." 
+            }
+        ]
+    },
+    {
+        id: "srv_rack_slip_1",
+        title: "A Severe Lean",
+        text: "Somebody caught the levelling feet of Rack 2 while hoovering. The 500kg structure is listing and tipping forwards with agonising slowness. If it goes, it will tear the thick fibre trunk line out of the ceiling!",
+        opts: [
+            { 
+                t: "Wedge the Windows 95 manual under it",
+                req: "manual", 
+                next: "path_rack_manual", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "You ram the thick tome under the sinking corner with your foot. It stops the fall to the millimetre. Historical knowledge props up modern technology." 
+            },
+            { 
+                t: "Prop it up with your bare hands", 
+                next: "path_rack_hold", 
+                m: 45, l: -10, a: 30, b: 5, 
+                r: "You push against the rack with all your strength until Egon finally arrives with a jack. You stand there shaking for 45 minutes. Your back is absolute pulp afterwards." 
+            },
+            { 
+                t: "Use it as a lasso: LAN cable", 
+                rem: "cable", 
+                next: "path_rack_cable", 
+                m: 10, l: -5, a: 5, b: -10, 
+                r: "You throw the LAN cable over the top edge of the rack like a cowboy and lash the other end to a thick heating pipe. The case creaks, and it holds!" 
+            }
+        ]
+    },
+    {
+        id: "srv_rack_slip_2a",
+        title: "ISO Pain",
+        reqStory: "path_rack_cable",
+        text: "In the afternoon an external ISO security auditor stares at the heavy rack, shaking his head; the only thing keeping it from going over is a ridiculous grey LAN cable tied to the heating pipe. He weeps quietly.",
+        opts: [
+            { 
+                t: "'Better than dominoes.'", 
+                m: 2, l: 5, a: 0, b: 5, 
+                r: "He has to agree through gritted teeth. Visually a nightmare, practically a masterstroke." 
+            },
+            { 
+                t: "'That is Cat7. It will hold.'", 
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "The auditor takes notes, shaking. 'Load-bearing capacity of data cables... not standardised.' He fails you on the audit, and you did prevent a server crash." 
+            }
+        ]
+    },
+    {
+        id: "srv_rack_slip_2b",
+		char: "Kevin",
+        title: "The Pressed Book",
+        reqStory: "path_rack_manual",
+        text: "Kevin discovers your propping manoeuvre. He sees how 500 kilos of server have compressed the ancient Windows 95 manual into a solid brick of paper. 'Mental. That is like one of those hydraulic press videos on YouTube!'",
+        opts: [
+            { 
+                t: "Try to recover the book, riskily", 
+                m: 10, l: 0, a: 15, b: 5, 
+                r: "You kick the book to free it. The rack wobbles ominously. Better left. The manual is now an eternal foundation of IT." 
+            },
+            { 
+                t: "Leave it to Kevin", 
+                rep: { "Kevin": 5 },
+                m: 2, l: 0, a: -5, b: 0, 
+                r: "Kevin is delighted by the destruction. He takes photographs for Reddit. You let him have his fun." 
+            }
+        ]
+    },
+    {
+        id: "srv_rack_slip_2c",
+        title: "Workplace Accident",
+        reqStory: "path_rack_hold",
+        text: "Your heroic effort of muscle exacts its tribute. You are lying flat on your back on the floor of the break room. An email from Sabine (HR) arrives on your phone: 'Mr Miller, please complete form AU-22 for the back pain. Standing up!'",
+        opts: [
+            { 
+                t: "Tape your back with duct tape", 
+                req: "tape",
+                m: 10, l: -5, a: -10, b: 0, 
+                r: "You quietly wind duct tape around your lumbar spine like a supporting corset. It helps surprisingly well! You can hobble again." 
+            },
+            { 
+                t: "Ignore it and go on lying there", 
+                m: 20, l: 15, a: 10, b: 5, 
+                r: "You simply stay lying on the floor. Half an hour of paid break. Somebody steps awkwardly over you." 
+            }
+        ]
+    },
+    {
+        id: "srv_coffee_cup_1",
+        title: "Mortal Danger in the Rack",
+        text: "You step into the server room and your heart stops. Somebody has put a full, steaming mug of coffee directly on the ventilation grille of the core router.",
+        opts: [
+            { 
+                t: "Punch the wall in rage", 
+                next: "path_cup_rage", 
+                m: 5, l: 0, a: 25, b: 0, 
+                r: "This is sabotage! You rage for minutes before you take the mug away to safety." 
+            },
+            { 
+                t: "Just drink the mug dry", 
+                next: "path_cup_drink", 
+                m: 2, l: -5, a: -10, b: 5, 
+                r: "Coffee is coffee. You down it. It tastes of hazelnut, IT hazard and cowardice." 
+            },
+            { 
+                t: "Remove the mug in slow motion", 
+                next: "path_cup_slow", 
+                m: 10, l: 0, a: 15, b: 0, 
+                r: "Your hands are shaking, but you lift the thing carefully. The core router is saved from death by liquid." 
+            }
+        ]
+    },
+    {
+        id: "srv_coffee_cup_2a",
+		char: "Chantal",
+        title: "The Culprit",
+        reqStory: "path_cup_slow",
+        text: "You are just about to take the mug to the sink when Chantal comes in. 'Oh, thanks, Miller! I put that there on purpose so the router keeps it warm!'",
+        opts: [
+            { 
+                t: "Deliver a lecture on hardware prices", 
+                rep: { "Chantal": -3 },
+                m: 15, l: 0, a: 10, b: 0, 
+                r: "You spend 15 minutes going through what a core router costs. She scrolls Insta throughout, irritated." 
+            },
+            { 
+                t: "Press the mug into her hand without a word", 
+                rep: { "Chantal": -5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "Your look is lethal. She takes the coffee and flees." 
+            }
+        ]
+    },
+    {
+        id: "srv_coffee_cup_2b",
+        title: "On Camera",
+        reqStory: "path_cup_rage",
+        text: "Your tantrum was recorded by the security camera in the server room. HR send you an email about 'aggressive conduct in the workplace' and demand a statement.",
+        opts: [
+            { 
+                t: "Apologise through gritted teeth", 
+                m: 5, l: 0, a: 15, b: -5, 
+                r: "You swallow your pride. HR are satisfied. Your mood is foul." 
+            },
+            { 
+                t: "Plead 'imminent danger'", 
+                m: 10, l: 0, a: 5, b: 5, 
+                r: "You write a dramatic report on hardware security. HR do not understand a word of it and drop the matter." 
+            }
+        ]
+    },
+    {
+        id: "srv_coffee_cup_2c",
+        title: "Sugar Shock",
+        reqStory: "path_cup_drink",
+        text: "That evidently was not an ordinary coffee. There was a double espresso with four spoonfuls of sugar in that mug. Your pulse shoots to 180 and you start to sweat.",
+        opts: [
+            { 
+                t: "Squeeze a stress ball", 
+                req: "stressball", 
+                m: 5, l: 0, a: -15, b: 0, 
+                r: "You abuse the ball until your hands hurt. It does actually help to work the energy off." 
+            },
+            { 
+                t: "Use the hyperfocus on tickets", 
+                m: 5, l: -10, a: 15, b: 0, 
+                r: "In your frenzy you close five old tickets before the shakes set in. Your nerves are finished. The pile has visibly shrunk." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_cable_1",
+        title: "Rodent in the System",
+        text: "You hear a suspicious rustling and scratching under the raised floor. You lift a grating panel and see a fat rat working its way through the insulation of a fibre cable!",
+        opts: [
+            { 
+                t: "Throw an old doughnut in as bait", 
+                rem: "donut", 
+                next: "path_rat_donut", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "The rat lets go of the cable, snatches the doughnut in a flash and disappears into the dark. Danger averted! (Doughnut used up)" 
+            },
+            { 
+                t: "Drive it off with the fire extinguisher", 
+                req: "fire_ext", 
+                next: "path_rat_ext", 
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "You spray hissing CO2 into the floor. A gigantic fog forms, and the rat flees in panic." 
+            },
+            { 
+                t: "Shut the panel again, quickly", 
+                next: "path_rat_ignore", 
+                m: 2, l: 5, a: 10, b: 10, 
+                r: "Out of sight, out of mind. Let us hope she does not gnaw all the way through the cable." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_cable_2a",
+        title: "The Pet",
+        reqStory: "path_rat_donut",
+        text: "The rat seems to have loved your doughnut. When you go back into the server room in the afternoon she is sitting in exactly the same spot, staring at you expectantly.",
+        opts: [
+            { 
+                t: "Give her a name and ignore her", 
+                m: 5, l: 10, a: -5, b: 5, 
+                r: "You call her 'Cisco' and let her be. As long as she does not eat cables, you two get along." 
+            },
+            { 
+                t: "Fetch Egon with a mousetrap", 
+                rep: { "Egon": 5 },
+                m: 15, l: 0, a: 5, b: 0, 
+                r: "Egon sets traps without mercy. Something in you says traitor." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_cable_2b",
+        title: "False Alarm",
+        reqStory: "path_rat_ext",
+        text: "The CO2 fog from your fire extinguisher attack has set off the optical smoke detectors in the server room. The deafening sirens howl through the whole building.",
+        opts: [
+            { 
+                t: "Acknowledge the alarm in a panic", 
+                m: 10, l: 0, a: 20, b: 0, 
+                r: "You run to the fire alarm panel and type the code in. You have tinnitus. The fire brigade stays at home." 
+            },
+            { 
+                t: "Act as though you were never there", 
+                m: 5, l: 5, a: 10, b: 15, 
+                r: "You sneak out. Shortly afterwards HR evacuate half the building." 
+            }
+        ]
+    },
+    {
+        id: "srv_rat_cable_2c",
+        title: "Bitten Through",
+        reqStory: "path_rat_ignore",
+        text: "Your wilful blindness is punished hard. The rat really has bitten through the fibre cable. The entire second floor is offline and the phone rings every second.",
+        opts: [
+            { 
+                t: "Claim the provider has an outage", 
+                m: 5, l: 5, a: 5, b: 15, 
+                r: "You lie to the entire second floor. People calm down for the time being. The problem remains." 
+            },
+            { 
+                t: "Laboriously splice the cable", 
+                m: 45, l: -10, a: 25, b: 0, 
+                r: "You lie face down in the raised floor and mend the delicate fibre. Your back aches, and the network is running again." 
+            }
+        ]
+    },
+    {
+        id: "srv_spilled_screws_1",
+        title: "The Screw Massacre",
+        text: "You trip over a power cable and an open box of tiny case screws spills across the grated floor. Most of them fall clattering down into the darkness.",
+        opts: [
+            { 
+                t: "Swear and leave the lot", 
+                next: "path_screws_ignore", 
+                m: 2, l: 5, a: 15, b: 5, 
+                r: "So the next server will be a few screws short. The rack is hardly going to collapse." 
+            },
+            { 
+                t: "Improvise a fishing rod from duct tape", 
+                req: "tape", 
+                next: "path_screws_tape", 
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "You wind tape sticky side out around a pen and fish about blind. You rescue 80% of the screws." 
+            },
+            { 
+                t: "Take a new set of screws", 
+                loot: "screw", 
+                next: "path_screws_loot", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "Never mind. You reach into the shelf and simply take a new pack. Life is too short for searching." 
+            }
+        ]
+    },
+    {
+        id: "srv_spilled_screws_2a",
+        title: "Dust and Dirt",
+        reqStory: "path_screws_tape",
+        text: "As well as the screws, your sticky rod has brought a few dead insects and enormous black dust bunnies out of the sub-floor. Your hands are extremely dirty.",
+        opts: [
+            { 
+                t: "Just wipe them on your trousers", 
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "You now look like a car mechanic. The admin look par excellence." 
+            },
+            { 
+                t: "Wash your hands thoroughly in the toilets", 
+                m: 10, l: 5, a: 0, b: 0, 
+                r: "You invest working time in hygiene. Highly commendable." 
+            }
+        ]
+    },
+    {
+        id: "srv_spilled_screws_2b",
+        title: "Shortage During the Rebuild",
+        reqStory: "path_screws_loot",
+        text: "You took the new pack of screws. Unfortunately that was the very last set! Later, during the rack rebuild, you find yourself exactly one screw short of fixing the rail.",
+        opts: [
+            { 
+                t: "Let the case wobble", 
+                m: 2, l: 5, a: 10, b: 5, 
+                r: "The panel now vibrates with every burst of disk activity. It sounds dreadful." 
+            },
+            { 
+                t: "Use a cable tie instead", 
+                req: "zip_ties", 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You lash the heavy panel down with plastic. A builder's bodge, and it does not wobble." 
+            }
+        ]
+    },
+    {
+        id: "srv_spilled_screws_2c",
+		char: "Egon",
+        title: "Landmine",
+        reqStory: "path_screws_ignore",
+        text: "Egon steps into the server room and treads squarely on one of the remaining sharp screws. It drills deep into the thick sole of his work boot. He bellows the whole corridor down.",
+        opts: [
+            { 
+                t: "Bring him a coffee by way of apology", 
+                rep: { "Egon": 5 },
+                m: 10, l: 0, a: 5, b: 0, 
+                r: "You buy his forgiveness. Egon loves coffee more than intact boots." 
+            },
+            { 
+                t: "Hide quietly in your office", 
+                rep: { "Egon": -5 },
+                m: 5, l: 5, a: 5, b: 0, 
+                r: "You take cover until the swearing in the corridor dies down." 
+            }
+        ]
+    },
+    {
+        id: "srv_workout_2c",
+		char: "Dr. Wichtig",
+        title: "The Observer",
+        reqStory: "path_workout_watch",
+        text: "You are standing in the server room. A nasty email from the boss pops up on the monitor. 'Miller! Why were you standing in the corridor chewing for 30 minutes earlier, staring at Marketing, while the company network limps along?!'",
+        opts: [
+            { 
+                t: "Delete the email pointedly", 
+				rep: { "Dr. Wichtig": -10 },
+                m: 2, l: 5, a: 5, b: 15, 
+                r: "Lid on, problem deferred. That will certainly earn a verbal bollocking later. For now you have your peace." 
+            },
+            { 
+                t: "'I was calibrating the Wi-Fi!'", 
+				rep: { "Dr. Wichtig": 5 },
+                m: 10, l: 5, a: 0, b: -5, 
+                r: "You reply in a flash with fake technical facts. The boss buys it. 'So one calibrates the Wi-Fi standing up. Understood.'" 
+            }
+        ]
+    },
+    {
+        id: "srv_awkward_1",
+		char: "Kevin",
+        title: "An Unfortunate Position",
+        text: "Kevin has crawled under Rack 4 in the server room and got stuck. 'Boss, my jumper has caught in the fan guard! I cannot get my arm out!' You have to help him. You lean low over him and tug at his arm.",
+        opts: [
+            { 
+                t: "Pull hard and puff", 
+                next: "path_awkward_elster", 
+                m: 10, l: 0, a: 5, b: 15, 
+                r: "You are both panting with the effort. Kevin groans. At that moment the door opens. Ms Elster stares at you. You are hanging over Kevin. She goes chalk white, says 'Forgive the interruption' and slams the door shut again." 
+            },
+            { 
+                t: "Use a script off the boot stick", 
+                rep: { "Kevin": 5 },
+                req: "usb_stick",
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "You reboot the server. The fan stops for 5 seconds. Kevin pulls his arm out. No embarrassing wrestling, no audience. Perfectly solved." 
+            },
+            { 
+                t: "Laugh at him and take photographs", 
+                rep: { "Kevin": -10 },
+                next: "path_awkward_photo", 
+                m: 2, l: 10, a: -10, b: 5, 
+                r: "You whip out your phone. Kevin whimpers. 'Please not on the intranet!' That will make a splendid meme for the Christmas party." 
+            }
+        ]
+    },
+
+    {
+    id: "srv_tool_desk",
+    title: "Tool Issue",
+    text: "A new sign has appeared in the server room: 'TOOLS MAY ONLY BE WITHDRAWN ON FORM WZ-4'.\n\nNext to it a box with a lock. Next to that a stack of forms. Next to that a pen on a chain.",
+    opts: [
+        {
+            t: "Fill in form WZ-4 correctly.",
+            m: 25, l: -5, a: 20, b: -5,
+            r: "You fill it in. Field 7 requires the signature of the tool officer. According to the notice, the tool officer is Mr Brunner. Mr Brunner is on sabbatical until the end of the month. The form now lies in a tray that nobody empties."
+        },
+        {
+            t: "Just open the box.",
+            loot: "hammer",
+            m: 5, l: 10, a: -5, b: 10,
+            r: "The lock is not locked. It never was locked. You take a hammer and put the form neatly back on the stack — there is no need to be disrespectful."
+        },
+        {
+            t: "See what else is in there.",
+            loot: "screw",
+            m: 10, l: 5, a: 0, b: 10,
+            r: "A set of screwdrivers, a roll of insulating tape and, for reasons, a single men's shoe. You take the screwdriver. You leave the shoe where it is, and it occupies you for a good while afterwards."
+        }
+    ]
+},
+
+/* ============================================================
+   SERVER ROOM WAVE 1 (v4.0.0)
+   Five base events with the characters the server room was
+   missing so far (Chantal, Markus, Dr. Wichtig, Gabi) plus one
+   find without a character as a second source of admin_pw.
+   Every option sets a flag, every flag has a follow-up.
+   ============================================================ */
+
+{
+    id: "srv_reel",
+    char: "Chantal",
+    title: "Content is King",
+    text: "Chantal is standing between the racks with a ring light and a phone tripod. 'Miller! Perfect that you are here! This room has SUCH a vibe. I am making a recruitment reel: hashtag TechLife, hashtag ServerLove. You can be lighting assistant!'",
+    opts: [
+        {
+            t: "Be lighting assistant",
+            rep: { "Chantal": 6 },
+            next: "path_reel_star",
+            m: 15, l: 5, a: 0, b: 5,
+            r: "You hold a ring light for fifteen minutes while Chantal laughs 'entirely spontaneously' in front of Rack 3. She films the labels as well. All the labels. Somebody out there might notice that."
+        },
+        {
+            t: "Point out data protection",
+            rep: { "Chantal": -4 },
+            next: "path_reel_dsgvo",
+            m: 5, l: 0, a: 5, b: 0,
+            r: "'Data-what?' Chantal rolls her eyes and packs up. 'This is exactly why nobody finds us on social media.' She heads off towards the open-plan office with the ring light. There is plenty to film in there too."
+        },
+        {
+            t: "Give a short tech tour, no camera",
+            rep: { "Chantal": 3 },
+            next: "path_reel_tour",
+            m: 10, l: 0, a: -5, b: 0,
+            r: "You explain to her why the little lights blink. Chantal actually listens. 'It is like an organism!' she says, reverently. She will reuse that sentence somewhere, that much is certain."
+        }
+    ]
+},
+{
+    id: "srv_reel_2a",
+    title: "Viral",
+    reqStory: "path_reel_star",
+    text: "Chantal's reel has 40,000 views overnight. The audio is a trending sound, the comments are enthusiastic. All but one: 'Nice patch panel, very legible. Regards, your friendly neighbourhood pentester.'",
+    opts: [
+        {
+            t: "Ask Chantal to delete it",
+            rep: { "Chantal": -3 },
+            m: 10, l: 0, a: 5, b: 0,
+            r: "She deletes it. Under protest. '40,000 views, Miller. FORTY THOUSAND. Do you know what reach costs?' You know what a security incident costs. You keep that argument to yourself."
+        },
+        {
+            t: "Secure everything that was filmed",
+            m: 25, l: -5, a: 10, b: -5,
+            r: "You change every password and every label that was visible in the video. Two hours of work for fifteen seconds of fame. That comment can no longer touch you, though."
+        },
+        {
+            t: "Report the comment and pray",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "You report the comment as 'spam' and hope it was a joke. If it was not, you will find out soon enough. Probably at the least convenient moment."
+        }
+    ]
+},
+{
+    id: "srv_reel_2b",
+    title: "The Fallback Content",
+    reqStory: "path_reel_dsgvo",
+    text: "Chantal shot her reel in the open-plan office instead. It looks good. In the background, however: screens. And on one of them, pin sharp, Ms Elster's open payroll list.",
+    opts: [
+        {
+            t: "Warn Ms Elster discreetly",
+            rep: { "Frau Elster": 5 },
+            m: 10, l: 0, a: 5, b: 0,
+            r: "Ms Elster goes pale, then very quiet. 'Thank you, Mr Miller.' She reaches for the receiver. Whatever she is about to discuss with Chantal: you are glad you are not Chantal."
+        },
+        {
+            t: "Offer to edit the video",
+            rep: { "Chantal": 5 },
+            next: "path_reel_cutter",
+            m: 20, l: 10, a: 0, b: 5,
+            r: "You cut the payroll list out, lay music under it and export in three formats. Chantal is delighted: 'That makes you my edit bro!' That title will have consequences."
+        },
+        {
+            t: "Say nothing, know nothing",
+            m: 2, l: 5, a: 0, b: 5,
+            r: "Perhaps nobody will notice. The video has only a few hundred views so far. And nobody is interested in salaries. In any company. Ever."
+        }
+    ]
+},
+{
+    id: "srv_reel_2c",
+    title: "Organic Reach",
+    reqStory: "path_reel_tour",
+    text: "In the marketing meeting Chantal quoted you: 'Our server is a living organism.' She introduced you as 'our server whisperer' while she was at it. Dr Wichtig thought that 'visionary' and would like a talk. For everyone.",
+    opts: [
+        {
+            t: "Decline the title 'server whisperer'",
+            rep: { "Chantal": -2 },
+            m: 5, l: 0, a: 5, b: 0,
+            r: "'But personal branding, Miller!' Chantal is disappointed and accepts it. The meeting slide now says only 'IT'. Honest, if nothing else."
+        },
+        {
+            t: "Give the talk",
+            rep: { "Chantal": 3 },
+            m: 25, l: 0, a: 10, b: -5,
+            r: "You explain to thirty people what a server does. Two are listening, one of them is you. Dr Wichtig nods benevolently throughout, though, and in this firm that is the hardest currency there is."
+        },
+        {
+            t: "Send Kevin up as the speaker",
+            rep: { "Kevin": -3 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "Kevin lectures proudly on 'turbo mode' and the 'weather cloud'. The audience applauds. Technically it was a write-off, and at some point that will come back to you."
+        }
+    ]
+},
+{
+    id: "srv_reel_3a",
+    title: "The Edit Bro",
+    reqStory: "path_reel_cutter",
+    text: "Chantal is in the doorway again, this time with four memory cards. 'Edit bro! I have got more material from the summer party, from the onboarding and from the team event. You do it SO well.'",
+    opts: [
+        {
+            t: "Make one video, in exchange for a favour",
+            rep: { "Chantal": 4 },
+            m: 20, l: 10, a: 0, b: 5,
+            r: "You edit the summer party video, and in return Marketing now officially owe you a favour. Chantal seals the deal with a handshake. In this firm that binds harder than any contract."
+        },
+        {
+            t: "Draw a clear line",
+            rep: { "Chantal": -3 },
+            m: 5, l: 0, a: 5, b: 0,
+            r: "'One-off, Chantal.' She sighs theatrically, takes her memory cards and goes. At the door she turns round: 'If you change your mind: I have got material from the Christmas party as well.' That was a threat."
+        }
+    ]
+},
+
+{
+    id: "srv_cloud",
+    char: "Markus",
+    title: "The Private Cloud",
+    text: "Markus taps Rack 2 appraisingly, as though it were a bonnet. 'Miller, quick question, man to man: I have sold TechniPlast a private cloud. Premium package. Which of these boxes is the cloud, then?'",
+    opts: [
+        {
+            t: "Present the backup server as the cloud",
+            rep: { "Markus": 5 },
+            next: "path_cloud_demo",
+            m: 10, l: 5, a: 0, b: 5,
+            r: "'THAT is it?' Markus photographs the backup server from every angle like a new car. 'Looks expensive. Perfect.' He sends the photographs straight to the customer. Straight. To the customer."
+        },
+        {
+            t: "Tell the truth: we do not have one",
+            rep: { "Markus": -5 },
+            next: "path_cloud_truth",
+            m: 10, l: 0, a: 5, b: 0,
+            r: "'Details, Miller. DETAILS.' Markus waves it away. 'The contract is signed. Time is money.' He leaves the room on the phone. You already have a fair idea whose desk this problem will land on."
+        },
+        {
+            t: "Present a memory stick as cloud access",
+            rem: "usb_stick",
+            rep: { "Markus": 7 },
+            next: "path_cloud_stick",
+            m: 5, l: 5, a: -5, b: 0,
+            r: "You label a memory stick 'CLOUD - PREMIUM' and hand it over ceremonially. Markus receives it like the keys to a company car. 'THAT is why you are the engineer.' The stick is now in the hands of Sales. What could possibly happen."
+        }
+    ]
+},
+{
+    id: "srv_cloud_2a",
+    title: "The Site Visit",
+    reqStory: "path_cloud_demo",
+    text: "Markus bursts in: 'Small update: TechniPlast want to VIEW the cloud. Tomorrow. With their technical department.' He says 'technical department' the way other people say 'tax inspection'.",
+    opts: [
+        {
+            t: "Turn Rack 2 into a showcase cloud",
+            rep: { "Markus": 4 },
+            m: 20, l: 5, a: -5, b: 5,
+            r: "You fit a brushed-metal sign ('PRIVATE CLOUD - PREMIUM ACCESS ONLY'), tidy the cables and add blue LED lighting. It is theatre. It is damned good theatre, though."
+        },
+        {
+            t: "Confess to Markus that this will come out",
+            rep: { "Markus": -4 },
+            m: 10, l: 0, a: 5, b: 0,
+            r: "'Come out? Miller, I have been selling things that do not exist for twenty years. The technical department only want to see blinking lights.' The unsettling part is: he is probably right."
+        },
+        {
+            t: "Schedule a maintenance window at short notice",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "'Regrettably the cloud is in maintenance tomorrow. Security updates, you understand.' The appointment is postponed. The problem is not. It only matures."
+        }
+    ]
+},
+{
+    id: "srv_cloud_2b",
+    title: "Escalation Level: Customer",
+    reqStory: "path_cloud_truth",
+    text: "A ticket from TechniPlast: 'Access to the private cloud we booked has been missing for three days. Urgent clarification requested.' In CC: Dr Wichtig. In CC, where else.",
+    opts: [
+        {
+            t: "Quietly set up a real cloud",
+            m: 30, l: -10, a: 5, b: -5,
+            r: "Three hours later a clean cloud solution with customer access is running on the backup server. It technically IS a private cloud now. Markus turned out to be right, and that is the worst part of it."
+        },
+        {
+            t: "Forward the ticket to Markus",
+            rep: { "Markus": -3 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "'Responsibility: Sales.' Click. Markus will answer the ticket with a discount voucher and pure charm. Nothing is solved by that, and it is now officially not your nothing any more."
+        },
+        {
+            t: "Answer the customer honestly",
+            rep: { "Dr. Wichtig": -4 },
+            m: 10, l: 0, a: 5, b: 10,
+            r: "You write a polite, truthful reply. Two minutes later a one-word email arrives from Dr Wichtig: 'Office. Now.' That CC really was not a good idea."
+        }
+    ]
+},
+{
+    id: "srv_cloud_2c",
+    title: "Premium Support",
+    reqStory: "path_cloud_stick",
+    text: "The phone: TechniPlast. A very patient voice: 'Your colleague handed us the cloud access. It does not fit in the SD card slot, though. Have we got the wrong subscription?'",
+    opts: [
+        {
+            t: "Patiently talk them through logging in",
+            m: 20, l: 0, a: 10, b: -5,
+            r: "Forty-five minutes of telephone support. At minute thirty the customer says: 'Oh, USB! Why did you not say so straight away.' You did say so straight away. Three times. The customer is happy now, and that is all that counts. Allegedly."
+        },
+        {
+            t: "Hand the case back to Markus",
+            rep: { "Markus": -4 },
+            m: 5, l: 5, a: 0, b: 0,
+            r: "Markus takes over the call and, in the same conversation, sells the customer a 'cloud adapter kit' for €89. You do not want to know what ends up in that box. You will find out when the next ticket arrives."
+        },
+        {
+            t: "Build an illustrated guide",
+            m: 15, l: -5, a: -5, b: -5,
+            r: "You produce a step-by-step guide with screenshots and big red arrows. The customer thanks you effusively. The guide will outlive you. It will outlive everyone."
+        }
+    ]
+},
+
+{
+    id: "srv_ceo_visit",
+    char: "Dr. Wichtig",
+    title: "Red Is Failure",
+    text: "Dr Wichtig is standing in the server room unannounced, surveying the racks like a bad quarterly report. 'Miller. Why is everything blinking RED in here? Red is the colour of failure. I want everything in here blinking GREEN. By the board meeting.'",
+    opts: [
+        {
+            t: "Fetch Kevin: 'My colleague will explain'",
+            rep: { "Kevin": -4 },
+            next: "path_led_kevin",
+            m: 5, l: 5, a: 0, b: 5,
+            r: "Kevin beams and explains that red is 'turbo mode'. Dr Wichtig is delighted. Kevin is proud. You have a guilty conscience and, shortly, a considerably larger problem."
+        },
+        {
+            t: "'Calibrate' the LEDs ceremonially",
+            rep: { "Dr. Wichtig": 4 },
+            next: "path_led_placebo",
+            m: 10, l: 5, a: 0, b: -5,
+            r: "You press a button that controls nothing three times, gravely, and nod like a professional. 'Calibrated.' Dr Wichtig nods back. 'You see. Leadership works.' He will tell this story again. Often."
+        },
+        {
+            t: "Explain what the LEDs really mean",
+            rep: { "Dr. Wichtig": -3 },
+            next: "path_led_lecture",
+            m: 15, l: 0, a: 5, b: 5,
+            r: "After ninety seconds of technical exposition he raises a hand. 'I understand. The red ones are the important ones.' That is not what you said. That is what he understood. Something is coming your way."
+        }
+    ]
+},
+{
+    id: "srv_ceo_visit_2a",
+    title: "The Success Story",
+    reqStory: "path_led_placebo",
+    text: "Dr Wichtig presented 'LED calibration by the Miller method' at the board meeting. The investors were delighted. Now they would like a white paper. About the method. Which does not exist.",
+    opts: [
+        {
+            t: "Let Chantal write it",
+            rep: { "Chantal": 4 },
+            m: 10, l: 5, a: 0, b: 0,
+            r: "Chantal delivers eight pages with infographics, a Steve Jobs quotation and the word 'journey' in every other line. It is objectively dreadful and exactly what everyone wanted. She is happy, you are out of it."
+        },
+        {
+            t: "Write four pages of nothing",
+            rep: { "Dr. Wichtig": 5 },
+            m: 30, l: 10, a: 5, b: -5,
+            r: "You write about 'proactive visual infrastructure governance' and 'signal-based leadership culture'. Not one sentence means anything. It will become the most quoted document of your career."
+        },
+        {
+            t: "Refuse and draw a line",
+            rep: { "Dr. Wichtig": -5 },
+            m: 10, l: 0, a: 5, b: 5,
+            r: "'I cannot take responsibility for a white paper about an off switch.' Dr Wichtig looks at you for a long moment. 'Responsibility. An interesting word for somebody in your salary band.' The conversation is over."
+        }
+    ]
+},
+{
+    id: "srv_ceo_visit_2b",
+    title: "The Important Red Ones",
+    reqStory: "path_led_lecture",
+    text: "An email from Dr Wichtig: 'As discussed I require a dashboard with all the red lights. But in green. With the company logo. For my tablet.' There is no context in which that sentence makes sense.",
+    opts: [
+        {
+            t: "Answer 'It is on the cloud roadmap'",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "'Roadmap' is the magic word with which wishes are put to sleep in this firm. Dr Wichtig replies with a thumbs-up. The subject will come back. Subjects always come back."
+        },
+        {
+            t: "Build a dashboard that always shows green",
+            m: 25, l: 5, a: 0, b: -10,
+            r: "The dashboard permanently shows green circles, the logo and the legend 'ALL UNDER CONTROL'. It is connected to nothing. Dr Wichtig checks it every morning. It is the most reassuring tool in the history of the firm."
+        },
+        {
+            t: "Set up real monitoring",
+            m: 35, l: -10, a: 5, b: -5,
+            r: "You take half the afternoon and build clean monitoring with a traffic-light view. Dr Wichtig only sees the traffic lights, you finally see everything. That investment will pay off yet."
+        }
+    ]
+},
+{
+    id: "srv_ceo_visit_2c",
+    title: "Turbo Mode for Everyone",
+    reqStory: "path_led_kevin",
+    text: "Dr Wichtig has sent an all-staff email: from now on all systems are to 'run in turbo mode like the server room'. Sales are already asking where you switch it on. Gabi has put three calls through about it.",
+    opts: [
+        {
+            t: "Make Kevin the turbo officer",
+            rep: { "Kevin": 4 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "From now on Kevin answers every turbo enquiry. With enthusiasm, his own email signature ('Turbo Officer') and completely invented facts. He is busy, happy and astonishingly convincing."
+        },
+        {
+            t: "Build a 'turbo button' for everyone",
+            m: 15, l: 5, a: -5, b: 5,
+            r: "You distribute a desktop shortcut called 'TURBO MODE'. It changes the wallpaper to a red gradient. Perceived system speed rises by thirty per cent company-wide. Placebo is performance too."
+        },
+        {
+            t: "Correct the all-staff email, factually",
+            rep: { "Dr. Wichtig": -4 },
+            m: 10, l: 0, a: 5, b: 5,
+            r: "Your reply to all begins with 'A small technical clarification' and ends in embarrassed silence across the distribution list. Dr Wichtig read it. Being corrected is not among his hobbies."
+        }
+    ]
+},
+
+{
+    id: "srv_gabi_tipp",
+    char: "Gabi",
+    title: "The Back Channel",
+    text: "Gabi from Reception puts her head into the server room and drops her voice. 'I am only telling you because it is you: the maintenance contract for the air conditioning expires TODAY. I happened to overhear it. The renewal has been sitting untouched in a pigeonhole for weeks.'",
+    opts: [
+        {
+            t: "Ring the maintenance firm at once",
+            rep: { "Gabi": 5 },
+            next: "path_klima_call",
+            m: 20, l: 0, a: 5, b: -5,
+            r: "The firm renews over the phone, 'just send the signature on afterwards'. Gabi winks and disappears. You owe her one. And you owe Accounts an explanation of why you ordered around the official route."
+        },
+        {
+            t: "'Thanks, I will deal with it later'",
+            rep: { "Gabi": -3 },
+            next: "path_klima_later",
+            m: 2, l: 10, a: 0, b: 0,
+            r: "Gabi raises an eyebrow. 'Later. Right.' She knows that 'later'. The air conditioning hums away obliviously in the meantime. For now."
+        },
+        {
+            t: "Prepare a plan B with Egon",
+            rep: { "Egon": 4 },
+            next: "path_klima_egon",
+            m: 10, l: 5, a: 0, b: 0,
+            r: "Egon listens to the problem and nods slowly. 'Air conditioning. Newfangled rubbish.' He disappears towards the basement. Whatever he is fetching down there: it is from 1987, and it will work."
+        }
+    ]
+},
+{
+    id: "srv_gabi_tipp_2a",
+    title: "The Receipt",
+    reqStory: "path_klima_call",
+    text: "Ms Elster is standing in the server room with the invoice that arrived afterwards. She holds it with two fingers, like an exhibit. 'Mr Miller. Orders go through ME. I cannot find an order number on this. Is there something you would like to tell me?'",
+    opts: [
+        {
+            t: "'It was an EMERGENCY'",
+            rep: { "Frau Elster": -5 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "'An emergency.' She notes something in a small book. You have never seen that book before, and you know at once: that is not a book you want to be in."
+        },
+        {
+            t: "Name Gabi as the source",
+            rep: { "Gabi": -4, "Frau Elster": -2 },
+            m: 5, l: 5, a: 0, b: 0,
+            r: "'So you had it from Reception.' Ms Elster moves off to follow another lead. You have just betrayed your best source of information. From now on Gabi greets you strictly on business terms."
+        },
+        {
+            t: "Contritely submit every form afterwards",
+            rep: { "Frau Elster": 4 },
+            m: 15, l: 0, a: 5, b: -5,
+            r: "You fill in the procurement form, retrospectively and in triplicate. Ms Elster checks every line and finally nods. 'Order is not harassment, Mr Miller. Order is care.' She very nearly smiled."
+        }
+    ]
+},
+{
+    id: "srv_gabi_tipp_2b",
+    title: "32 Degrees",
+    reqStory: "path_klima_later",
+    text: "It has got warm. Very warm. Rack 3 sounds like an Airbus taking off, the thermometer reads 32 degrees, and somewhere something is beeping that never beeped before.",
+    opts: [
+        {
+            t: "Emergency renewal at an extortionate price",
+            m: 10, l: 0, a: 5, b: 10,
+            r: "The maintenance firm knows its negotiating position precisely: express surcharge, weekend flat rate, 'reactivation fee'. You sign everything. That invoice will raise questions in Accounts. Loud questions."
+        },
+        {
+            t: "Shut Server 3 down in a controlled way",
+            m: 10, l: 0, a: -5, b: 10,
+            r: "Less load, less heat, cleanly solved. Half of Sales now has 'no system', however. You count down inwardly until Markus rings in person. Three. Two. One."
+        },
+        {
+            t: "Doors open, emergency fan installation",
+            m: 20, l: -5, a: 10, b: 5,
+            r: "You round up every fan in the building and build a wind corridor. The whole thing looks like an art installation, and the temperature falls. Half the corridor asks what is going on in here. Good question."
+        }
+    ]
+},
+{
+    id: "srv_gabi_tipp_2c",
+    title: "Built in '87",
+    reqStory: "path_klima_egon",
+    text: "Egon has installed an industrial fan the size of a small car. It runs. The whole corridor knows THAT it runs. You now have to think slightly louder in the server room.",
+    opts: [
+        {
+            t: "Headphones on: problem solved",
+            req: "headphones",
+            m: 2, l: 5, a: -5, b: 0,
+            r: "For you it is quiet now. Conveniently, you can no longer hear your colleagues' complaints either. Egon's fan and you: a marriage of convenience with an excellent soundscape."
+        },
+        {
+            t: "Talk Egon into throttling it",
+            rep: { "Egon": -3 },
+            m: 10, l: 0, a: 5, b: 0,
+            r: "'Throttle it? That is running on ONE of THREE.' Egon reluctantly turns a Bakelite knob. It gets quieter. Egon mutters something about people who always knew better in the old days too."
+        },
+        {
+            t: "Sell the noise as a feature",
+            rep: { "Chantal": 3 },
+            m: 5, l: 5, a: 0, b: 0,
+            r: "Chantal comes by, hears the fan and is electrified: 'That is so industrial! Like a techno club!' She wonders aloud whether one could offer 'deep work sessions' in here. The noise stays. It has branding now."
+        }
+    ]
+},
+
+{
+    id: "srv_folder_2009",
+    title: "Emergency Plan 2009",
+    text: "A dusty ring binder is wedged behind the rack: 'EMERGENCY PLAN 2009 - STRICTLY CONFIDENTIAL'. Your predecessor evidently deposited it there. Or hid it. In this firm the difference is fluid.",
+    opts: [
+        {
+            t: "Wedge it back - one for Later-Miller",
+            next: "path_folder_later",
+            m: 2, l: 10, a: 0, b: 0,
+            r: "The binder disappears behind the rack again. Later-Miller will deal with it. Later-Miller hates you already. And you are not the only one who occasionally roots about down here."
+        },
+        {
+            t: "Leaf through the binder",
+            loot: "admin_pw",
+            next: "path_folder_read",
+            m: 15, l: -5, a: 5, b: 0,
+            r: "Between fax instructions and an evacuation plan with the smoking corner marked on it, a Post-it is stuck: 'root PW - DO NOT LOSE!!'. It has survived seventeen years. It still works. It would, of course."
+        },
+        {
+            t: "Shred it unread for data protection reasons",
+            next: "path_folder_shred",
+            m: 10, l: 0, a: -5, b: -5,
+            r: "You commit the binder to proper data destruction. Very professional, very final. Somebody in this firm keeps a record of registered files, however. And you already know who."
+        }
+    ]
+},
+{
+    id: "srv_folder_2009_2a",
+    title: "Page 34",
+    reqStory: "path_folder_read",
+    text: "In the appendix of the emergency plan: a yellowed floor plan marked 'spare key to the server room - ceiling tile 4'. You look up. Ceiling tile 4 sits crooked. It has always sat crooked.",
+    opts: [
+        {
+            t: "Mention 2009 to Egon in passing",
+            rep: { "Egon": 5 },
+            m: 20, l: 10, a: -5, b: 0,
+            r: "Egon props himself against the door frame and talks about 2009 for twenty minutes. About the old boss, about the flood in the basement, about the colleague 'who could work the fax'. In passing you learn more about this firm than from any organisation chart."
+        },
+        {
+            t: "Climb on a chair and look",
+            m: 10, l: 0, a: 5, b: 0,
+            r: "No key. Only a note in neat handwriting: 'Lent to E.' The E has been gone over three times in pencil. E for Egon. The true ruler of the building, in office for decades."
+        },
+        {
+            t: "Let the ceiling be a ceiling",
+            m: 2, l: 5, a: 0, b: 0,
+            r: "Some things are meant to stay crooked. You have enough building sites at floor level. Every time you step into the room, though, tile 4 will be looking at you. Crooked."
+        }
+    ]
+},
+{
+    id: "srv_folder_2009_2b",
+    title: "The Destruction Record",
+    reqStory: "path_folder_shred",
+    text: "Ms Elster appears, inventory list at the ready. 'Mr Miller. You have destroyed a registered binder. Inventory number 2009-17. I require the destruction record. You DO have a destruction record?'",
+    opts: [
+        {
+            t: "Submit the record properly afterwards",
+            rep: { "Frau Elster": 4 },
+            m: 15, l: 0, a: 5, b: -5,
+            r: "Form DV-7, in triplicate, with date, time and a witness field. You leave the witness field blank and Ms Elster enters herself. 'I did more or less witness it.' Bureaucracy can be complicity too."
+        },
+        {
+            t: "'What binder?'",
+            rep: { "Frau Elster": -5 },
+            m: 2, l: 5, a: 0, b: 5,
+            r: "Ms Elster looks at you. Then she produces a small book and notes something down without lowering her gaze. That was a mistake. One does not lie to Ms Elster's face. One does not lie to Ms Elster at all."
+        },
+        {
+            t: "Invite her for a coffee and explain everything",
+            rep: { "Frau Elster": 6 },
+            m: 20, l: 10, a: -10, b: 0,
+            r: "Over a coffee you explain the data protection side of it. Ms Elster thaws, talks about mountains of files in the old days and at some point, quite casually, about Rüdiger. Her closing line is: 'You will submit the record all the same.' She is smiling as she says it."
+        }
+    ]
+},
+{
+    id: "srv_folder_2009_2c",
+    title: "The Binder Travels",
+    reqStory: "path_folder_later",
+    text: "The binder is gone. In its place a sticky note is now wedged: 'Gripping stuff! Borrowed it for a bit. Cheers, Kevin :)' The smiley has been drawn with particular flourish.",
+    opts: [
+        {
+            t: "Wait and see what happens",
+            m: 2, l: 10, a: 0, b: 5,
+            r: "Kevin. A binder full of legacy liabilities. No supervision. You actively decide not to make this your problem. It will become your problem anyway, only later and larger."
+        },
+        {
+            t: "Hand the binder over to him officially",
+            rep: { "Kevin": 4 },
+            m: 10, l: 5, a: 0, b: 0,
+            r: "'Kevin, this is your project now: digitising the emergency plan.' Kevin beams and from that moment scans every page individually. As its own PDF. Individually. He is busy, proud and completely harmless for weeks."
+        },
+        {
+            t: "Look for Kevin AT ONCE",
+            rep: { "Kevin": -3 },
+            m: 15, l: -5, a: 5, b: 0,
+            r: "You find him in the kitchenette with the binder open at page 34. 'Did you know there is a spare key?' he calls across the room. Now the whole kitchenette knows. From now on the kitchenette knows everything."
+        }
+    ]
+},
+
+
+/* ============================================================
+   SERVER ROOM WAVE 2 (v4.0.0)
+   The UPS, Egon's shadow economy, the patch panel, the stranger's
+   stick and the documentation to-do. New loot sources for
+   fire_ext (2x), cable and usb_stick; gates on cable and
+   headphones. Gabi and Kevin get more reputation moments, mostly
+   positive ones.
+   ============================================================ */
+
+{
+    id: "srv_usv_beep",
+    title: "The Beeping",
+    text: "The UPS is beeping. Every thirty seconds, exactly. No error code, no red lamp, just that one precise beep. It is day three. Nobody else seems to hear it. By now you hear it at home as well.",
+    opts: [
+        {
+            t: "Headphones on and get on with life",
+            req: "headphones",
+            next: "path_usv_ignore",
+            m: 2, l: 5, a: -5, b: 0,
+            r: "With noise cancelling the beeping simply ceases to exist. An elegant solution for you personally. The UPS and its problem remain part of objective reality, however."
+        },
+        {
+            t: "Systematic fault finding",
+            next: "path_usv_debug",
+            m: 30, l: -10, a: 10, b: -5,
+            r: "You go through cable by cable, log by log. After half an hour the realisation: battery self-test failed. The battery is as old as your employment. It needs replacing, and soon."
+        },
+        {
+            t: "Stuff the buzzer with cotton wool",
+            next: "path_usv_mute",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "You stuff cotton wool into the speaker. Silence. Glorious, irresponsible silence. The UPS goes on dutifully reporting its emergency. Only to nobody at all now."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2a",
+    title: "The Replacement Battery",
+    reqStory: "path_usv_debug",
+    text: "The research turns up two options: an original battery for €340 with a six-week lead time, or a copy from an online retailer with reviews along the lines of 'arrived warm, works though'. The UPS beeps along in time.",
+    opts: [
+        {
+            t: "Order the original, form marathon",
+            rep: { "Frau Elster": 3 },
+            m: 20, l: 0, a: 10, b: -5,
+            r: "Form, sign-off, order number - all correct. Ms Elster nods her approval as the request crosses her desk. Six more weeks of beeping, with a clear conscience."
+        },
+        {
+            t: "Risk the warm copy",
+            m: 10, l: 5, a: 0, b: 5,
+            r: "Two days' lead time, half the price, no order number. You buy at the firm's expense and around the process. The beeping will soon end - and the question of what turns up at the next stocktake begins."
+        },
+        {
+            t: "Let Kevin 'organise' a battery",
+            rep: { "Kevin": -5 },
+            m: 5, l: 10, a: 5, b: 0,
+            r: "Kevin knows 'a bloke who knows a bloke'. The next day there is a used car battery with jump leads standing next to the UPS. You are absolutely not going to connect that. You hope."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2b",
+    title: "The Silent Alarm",
+    reqStory: "path_usv_mute",
+    text: "A brief power flicker in the building. The UPS takes over heroically - for eleven seconds. Then its tired battery is empty and Rack 5 simply goes off. The cotton wool in the speaker has meanwhile reliably swallowed every warning.",
+    opts: [
+        {
+            t: "Boot everything, keep quiet about the cause",
+            m: 20, l: 10, a: 10, b: 5,
+            r: "Forty minutes of boot order, checking services, crossing fingers. Running again. Official cause: 'mains fluctuation'. You take the cotton wool out again, unremarkably. It has done enough."
+        },
+        {
+            t: "Document the incident honestly",
+            m: 15, l: -5, a: 5, b: 10,
+            r: "You write a clean incident report, cotton wool included. Honesty is documented guilt, and Dr Wichtig has taken to reading incident reports personally. At the next audit that very sheet of paper will save you, though."
+        },
+        {
+            t: "Ask Egon for a replacement battery",
+            rep: { "Egon": 5 },
+            m: 10, l: 5, a: 0, b: 0,
+            r: "Egon disappears into the basement without a word and comes back with a battery that still reads 'VEB'. 'Will outlast the firm.' You take him at his word."
+        }
+    ]
+},
+{
+    id: "srv_usv_beep_2c",
+    title: "Objective Reality",
+    reqStory: "path_usv_ignore",
+    text: "Gabi puts her head round the door: 'Here, is that beeping coming from you? I can hear it all the way to Reception, through the ventilation shaft. Ms Elster has already drafted a complaint email. I just wanted to give you warning.'",
+    opts: [
+        {
+            t: "Give Gabi the headphones",
+            rem: "headphones",
+            rep: { "Gabi": 3 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "'For Reception. Against the noise.' Gabi is genuinely touched and puts them on at once. The beeping still exists, so does the complaint email - but the firm's most important news exchange hears nothing more about it from now on."
+        },
+        {
+            t: "Thank Gabi and act at once",
+            rep: { "Gabi": 5 },
+            m: 15, l: 0, a: 10, b: -5,
+            r: "You take the headphones off and deal with it. The beeping really is unbearable once you let it in again. Gabi holds Ms Elster's email back. You owe her one, again."
+        },
+        {
+            t: "'What beeping?'",
+            rep: { "Gabi": -5 },
+            m: 2, l: 10, a: 0, b: 5,
+            r: "Gabi looks at your headphones. Then at you. 'I see.' She goes. Ms Elster's drafted email will have your name added to it, of that you are certain."
+        }
+    ]
+},
+
+{
+    id: "srv_egon_deal",
+    char: "Egon",
+    title: "Canteen Stock",
+    text: "Egon is in the server room with a brand-new fire extinguisher. 'Yours is out of date. Take this one. But shhh - it is meant for the canteen. They are getting new ones next week anyway, nobody knows that yet.'",
+    opts: [
+        {
+            t: "Decline - rules are rules",
+            rep: { "Egon": -5 },
+            next: "path_exting_rules",
+            m: 10, l: 0, a: 5, b: -5,
+            r: "Egon looks at you as though you had given him a form as a present. 'Rules.' He carries the extinguisher off, shaking his head. Yours stays on the wall, out of date - you now have to request the replacement officially."
+        },
+        {
+            t: "Ask what else he 'organises'",
+            rep: { "Egon": 5 },
+            next: "path_exting_lager",
+            m: 15, l: 10, a: -5, b: 0,
+            r: "Egon studies you for a long moment. Then, very quietly: 'Come down with me later. Room K3.' You have just opened a door you did not know existed."
+        },
+        {
+            t: "Accept it and ask no questions",
+            loot: "fire_ext",
+            rep: { "Egon": 5 },
+            next: "path_exting_gift",
+            m: 5, l: 5, a: 0, b: 0,
+            r: "You take the extinguisher. Egon nods, satisfied - a deal between men who know how buildings really work. The canteen will count its stock at some point, however."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2a",
+    title: "Stocktake Discrepancy",
+    reqStory: "path_exting_gift",
+    text: "All-staff email from Ms Elster: 'One fire extinguisher (inventory number K-FL-02) is missing from the canteen's interim stocktake. Any useful information to Accounts, please.' The extinguisher is standing next to your rack. With its inventory number.",
+    opts: [
+        {
+            t: "Give Egon warning",
+            rep: { "Egon": 5 },
+            m: 5, l: 5, a: 0, b: 5,
+            r: "Egon listens, nods: 'I will see to it.' The next morning the canteen has an extinguisher again, nobody knows where from, and the stocktake miraculously balances. Better not to ask."
+        },
+        {
+            t: "Discreetly 'update' the label",
+            m: 10, l: 10, a: 0, b: 5,
+            r: "A fresh label, an invented number, a whiff of criminality. The extinguisher is now called SRV-FL-01. As long as nobody checks the labels against the asset list, all is well. Ms Elster enjoys checking labels."
+        },
+        {
+            t: "Report the transfer, without names",
+            rep: { "Frau Elster": 3 },
+            m: 15, l: 0, a: 5, b: 5,
+            r: "You confess to a 'pragmatic immediate measure' - Egon's name is not mentioned. Ms Elster corrects the lists with her fingertips. 'Next time: report it BEFOREHAND.' The matter now has a file note."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2b",
+    title: "The Procurement Request",
+    reqStory: "path_exting_rules",
+    text: "Form B-27: 'Procurement of safety-relevant equipment'. Three signatures required, one of them from Dr Wichtig. The out-of-date extinguisher hangs next to the rack in the meantime, getting a little more decorative every day.",
+    opts: [
+        {
+            t: "Knock on Egon's door after all",
+            loot: "fire_ext",
+            m: 10, l: 5, a: 5, b: 0,
+            r: "Egon grins broadly. 'Oh. NO form after all?' He leaves you dangling for exactly one minute, then produces the canteen extinguisher again. You pay with a piece of your dignity. It was worth it."
+        },
+        {
+            t: "See the request all the way through",
+            m: 35, l: -10, a: 10, b: -5,
+            r: "Three offices, three signatures, half an afternoon. What you hold at the end of it is an approved procurement: by the book, fireproof, unassailable. Very nearly a work of administrative art."
+        },
+        {
+            t: "'Prepare' the request and leave it lying",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "The form now lies filled in in your drawer, only the signatures are missing. That makes it officially 'in progress' - a state that can last years in this firm. The out-of-date extinguisher goes on hanging there in the meantime."
+        }
+    ]
+},
+{
+    id: "srv_egon_deal_2c",
+    title: "Room K3",
+    reqStory: "path_exting_lager",
+    text: "You find a pretext to go down to the basement. Room K3: shelves to the ceiling. Toner from 2011, CRT monitors, an overhead projector, three coffee machines and things from the firm's founding years. Egon props himself against the door frame: 'My archive.'",
+    opts: [
+        {
+            t: "Ask for spare parts for the server room",
+            loot: "cable",
+            rep: { "Egon": 3 },
+            m: 15, l: 0, a: -5, b: 0,
+            r: "Egon rummages briefly and presses a network cable in its original packaging into your hand. 'Cat 5. Good for anything.' It is not good for anything, and a free cable counts double. The rest of the shelf remains a bargaining position."
+        },
+        {
+            t: "Carefully ask about the inventory list",
+            rep: { "Egon": -5 },
+            m: 5, l: 0, a: 5, b: 0,
+            r: "Egon's look turns arctic. 'Inventory.' He eases you out of the room, gently and finally. From now on the door of K3 will always happen to be locked for you."
+        },
+        {
+            t: "Marvel respectfully",
+            rep: { "Egon": 5 },
+            m: 10, l: 5, a: -5, b: 0,
+            r: "'Everything in here, the firm threw away once. And everything in here, it needed again at some point.' Egon taps a shelf. You are just now understanding why nothing in this building is ever finally broken."
+        }
+    ]
+},
+
+{
+    id: "srv_patch23",
+    title: "Port 23",
+    text: "Ticket: 'No network at Desk 14.' The trail leads to the patch panel: Port 23 is dead, and the cable behind it has the consistency of old liquorice. It is kinked in two places and in a third... nibbled?",
+    opts: [
+        {
+            t: "Repatch the cable from Port 24",
+            next: "path_patch_swap",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "Port 24 looked unused. Desk 14 is online, the ticket closed. Whatever was on Port 24: you will find out as soon as somebody misses it."
+        },
+        {
+            t: "Press the liquorice remnant home with feeling",
+            next: "path_patch_wackel",
+            m: 15, l: 5, a: 10, b: 0,
+            r: "After a quarter of an hour of millimetre work the connector clicks tiredly home. The connection is up. It is up the way a house of cards is up: technically yes, morally no."
+        },
+        {
+            t: "Repatch it properly",
+            rem: "cable",
+            next: "path_patch_neu",
+            m: 10, l: 0, a: -5, b: -5,
+            r: "New cable, neatly laid, labelled with the date. Desk 14 has network again, and for the first time in years one label on this panel is correct. The question of the teeth marks remains open, however."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2a",
+    title: "The Teeth Marks",
+    reqStory: "path_patch_neu",
+    text: "The old cable lies on your desk. The teeth marks are unmistakable: small, even, thorough. Something lives behind the patch panel. And it has developed a taste for network infrastructure.",
+    opts: [
+        {
+            t: "Set a live trap",
+            m: 15, l: -5, a: 5, b: 0,
+            r: "You set a trap with peanut butter. The next morning: peanut butter gone, trap empty, another cable nibbled. You are playing against an opponent with home advantage here."
+        },
+        {
+            t: "Lay every cable in protective conduit",
+            m: 30, l: -10, a: 10, b: -5,
+            r: "Half an hour of cable trunking Tetris. Afterwards the panel is rodent-proof, tidy and almost handsome. Whatever lives in there needs a new hobby now. You hope it will not be the power distribution."
+        },
+        {
+            t: "Tell Egon - his territory",
+            rep: { "Egon": 3 },
+            m: 5, l: 5, a: 0, b: 0,
+            r: "Egon studies the teeth marks like a forester. 'Know him. He has lived here longer than you.' He says HIM - with a familiarity that permits no follow-up questions. The problem is now a matter for the boss. The Egon kind of boss."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2b",
+    title: "Port 24",
+    reqStory: "path_patch_swap",
+    text: "Ms Elster is in the doorway, unusually distraught: 'The fax is not working. The FAX, Mr Miller. The year-end document has to go to the tax office today, and the office accepts: fax.' The fax was on Port 24. It would be, the fax.",
+    opts: [
+        {
+            t: "Repatch it back at once and confess",
+            rep: { "Frau Elster": 3 },
+            m: 10, l: 0, a: 5, b: 5,
+            r: "You confess to the repatching and restore everything. The fax rattles, dials and transmits. Ms Elster notes nothing in her small book. That is her highest praise."
+        },
+        {
+            t: "Claim an 'outage at the provider'",
+            rep: { "Frau Elster": -5 },
+            m: 5, l: 10, a: 0, b: 5,
+            r: "Ms Elster listens to the excuse without blinking. 'At the provider. I see.' The fax works again an hour later 'by itself' - exactly after you have quietly repatched it. She knows. She would know."
+        },
+        {
+            t: "Sacrifice Desk 14 again",
+            m: 5, l: 5, a: 5, b: 5,
+            r: "You plug it back: the fax runs, Desk 14 is offline again, and the old ticket opens like a tired curtain. You have moved a problem in a circle and got to know two departments better in the process."
+        }
+    ]
+},
+{
+    id: "srv_patch23_2c",
+    title: "House of Cards",
+    reqStory: "path_patch_wackel",
+    text: "14:00, a call from Desk 14: 'The network has gone again. It worked briefly, then there was a crack.' The liquorice cable has given up, finally this time - as you pull it out the connector head stays stuck in the port.",
+    opts: [
+        {
+            t: "Declare Port 23 dead",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "You stick a cross of insulating tape over the port and take Port 25. The panel now has a memorial. At some point somebody will ask why Port 23 has a grave. Not today, though."
+        },
+        {
+            t: "Move Desk 14 to Wi-Fi",
+            m: 10, l: 5, a: 0, b: 10,
+            r: "'Temporarily,' you say. Wi-Fi in the office means: from now on your colleague freezes in every video conference and holds you responsible for it. The ticket is closed, though, and today only today counts."
+        },
+        {
+            t: "Operate the connector remnant out",
+            m: 20, l: -5, a: 15, b: 0,
+            r: "With tweezers, a torch and held breath you operate the broken head out of Port 23. It is precision engineering on an open heart, and you swear quietly in three languages. The port lives, though."
+        }
+    ]
+},
+
+{
+    id: "srv_fremder_stick",
+    title: "The Stranger's Stick",
+    text: "There is a memory stick in Server 3 that was not there yesterday. Hand-labelled: 'PRIVATE!! DO NOT OPEN!!' Two exclamation marks. Whoever forgot it there really meant it.",
+    opts: [
+        {
+            t: "Leave it in. Not your circus.",
+            next: "path_usbfund_leave",
+            m: 2, l: 10, a: 0, b: 5,
+            r: "You decide that other people's sticks are other people's problems. The stick stays where it is - plugged into your server, in your room, under your responsibility. Otherwise, though: absolutely not your circus."
+        },
+        {
+            t: "Pull it out and scan it in quarantine",
+            loot: "usb_stick",
+            next: "path_usbfund_scan",
+            m: 15, l: -5, a: 5, b: 0,
+            r: "The scan runs clean: no malware, only four hundred selfies of Markus in front of various company cars. You dutifully delete the lot and keep the freshly formatted stick. Its owner will come looking for it."
+        },
+        {
+            t: "Open it. Right on the server. Curiosity wins.",
+            next: "path_usbfund_open",
+            m: 10, l: 5, a: 0, b: 10,
+            r: "You open an unknown storage device on a production system - every security training course in the world lets out a quiet scream. The contents: no malware, but folders with names like 'Key_Loans_2009.xlsx'. This is going to be interesting."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2a",
+    title: "Missing Persons Report",
+    reqStory: "path_usbfund_scan",
+    text: "Markus combs the server room like a crime scene. 'Miller! Have you seen a stick in here? Black, labelled, PRIVATE. It has... sales documents on it. Very important sales documents.' He means the selfies.",
+    opts: [
+        {
+            t: "Give it back and confess to the deletion",
+            rem: "usb_stick",
+            rep: { "Markus": -5 },
+            m: 5, l: 0, a: 5, b: 0,
+            r: "'That had... there were...' Markus stares at the freshly formatted stick. You give a brief shrug: 'Standard quarantine process.' He mourns four hundred selfies. Sales will be unusually quiet today."
+        },
+        {
+            t: "'Never seen it'",
+            m: 2, l: 5, a: 0, b: 5,
+            r: "Markus moves on through the building and by now suspects the cleaning crew. The formatted stick lies in your drawer in the meantime and now simply belongs... to the server room. That is evidently how inventory works around here."
+        },
+        {
+            t: "Organise a replacement photo shoot",
+            rep: { "Markus": 10, "Chantal": 3 },
+            m: 20, l: 10, a: 5, b: 0,
+            r: "You organise a shoot in the car park with Chantal's ring light. Markus poses in front of every company car, the boss's included. The new pictures are objectively better. You have a friend for life and not one piece of work done."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2b",
+    title: "Key_Loans_2009",
+    reqStory: "path_usbfund_open",
+    text: "The spreadsheet is meticulously kept: who got which key and when, from 2009 to 2014. Column D: 'spare key to the server room - E.' After that the list breaks off. The stick evidently belonged to your predecessor. And he knew things.",
+    opts: [
+        {
+            t: "Confront Egon with column D",
+            rep: { "Egon": -5 },
+            m: 10, l: 0, a: 10, b: 0,
+            r: "'Where did you get THAT.' It is not a question. Egon does not take the stick off you - he only looks at it, and the stick visibly squirms. 'Some lists,' he says on his way out, 'break off for good reason.'"
+        },
+        {
+            t: "Format it and never have known",
+            m: 5, l: 5, a: -5, b: 0,
+            r: "Some doors you leave shut. You format the stick and decide never to have known about a list. The feeling of being watched as you pass the basement lasts a few days all the same."
+        },
+        {
+            t: "Print it out and keep it safe",
+            m: 10, l: -5, a: 0, b: 5,
+            r: "Knowledge is power, paper is patient. The printout goes into your private filing, of whose existence nobody knows. One per cent more like your predecessor. Unclear whether that is a good sign."
+        }
+    ]
+},
+{
+    id: "srv_fremder_stick_2c",
+    title: "Autoplay",
+    reqStory: "path_usbfund_leave",
+    text: "As of today, Server 3 has been behaving... musically. On every service restart a burst of schmaltzy pop tootles out of the internal speaker. The stranger's stick has an autostart file, and that file is homesick for 1978.",
+    opts: [
+        {
+            t: "Disconnect the speaker",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "You cut the small piezo speaker. Problem solved, in the worst imaginable way: the server can no longer produce warning tones either. No schmaltzy pop either, mind."
+        },
+        {
+            t: "Find out whose taste in music that is",
+            rep: { "Gabi": 5 },
+            m: 15, l: 0, a: -5, b: 0,
+            r: "You ask the one person who knows everything: Gabi. She hears two bars and says at once: 'Egon's favourite song. It played at every Christmas party until 2019.' The case is solved - why Egon's music is on a stranger's stick in your server, however, is not solved at all."
+        },
+        {
+            t: "Remove the stick properly after all",
+            loot: "usb_stick",
+            m: 10, l: 0, a: 5, b: 0,
+            r: "You pull the stick, scan it properly and end the concert. On it: a single MP3 and a lot of free space. That can be put to sensible use now. Server 3 sounds like a server again."
+        }
+    ]
+},
+
+{
+    id: "srv_doku_todo",
+    title: "The To-do from January",
+    text: "While tidying up, a note in your own handwriting falls out at you: 'Document the server room!!! IMPORTANT!!! Beginning of January!!!' It has not been January for a long time. The note has more exclamation marks than the documentation has pages.",
+    opts: [
+        {
+            t: "Now. At once. Completely.",
+            next: "path_doku_jetzt",
+            m: 35, l: -10, a: 10, b: -10,
+            r: "You document every rack, every port, every password hiding place. After a good half hour there exists, for the first time, a truth about this room that does not live only in your head. It feels dangerously grown-up."
+        },
+        {
+            t: "Write a new note: 'September!!!'",
+            next: "path_doku_september",
+            m: 2, l: 10, a: 0, b: 5,
+            r: "You transfer the task ceremonially onto a fresh note with a new date. That is not procrastination, that is diary management. The old note goes in the bin, where it can no longer look at you accusingly."
+        },
+        {
+            t: "Promote Kevin to the 'documentation project'",
+            rep: { "Kevin": 3 },
+            next: "path_doku_kevin",
+            m: 10, l: 5, a: 0, b: 5,
+            r: "Kevin receives the commission like a knighthood. 'I am going to do this REALLY well!' You even believe him. The only question is what 'really well' means in Kevin's coordinate system."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2a",
+    title: "The Truth About Rack 5",
+    reqStory: "path_doku_jetzt",
+    text: "You noticed it while documenting, and now it will not let you go: there is a server running in Rack 5 that nobody knows about. No entry, no ticket, no label. Uptime: 743 days. Somebody is paying for its electricity.",
+    opts: [
+        {
+            t: "Take it off the network at once",
+            m: 5, l: 0, a: 5, b: -5,
+            r: "You pull the plug. Somewhere in this firm a world has just ended, and you will never learn whose. Rack 5 is quiet again. Too quiet, you find, all of a sudden."
+        },
+        {
+            t: "Enter it in the documentation as a 'legacy system'",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "'Legacy system, function: historically grown.' In this firm that sentence covers everything. The secret server carries on running, now with paperwork. You have not legalised it, only laminated it."
+        },
+        {
+            t: "Carefully analyse what it does",
+            m: 25, l: -5, a: 5, b: -5,
+            r: "Network traffic, processes, open ports - you approach the thing like a sleeping animal. Result: it hosts a Minecraft world. A very large, very well-tended Minecraft world. With players. Every evening from 18:00."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2b",
+    title: "The Note Effect",
+    reqStory: "path_doku_september",
+    text: "Dr Wichtig, in passing, as casually as a guillotine: 'Miller, the insurers are asking about our IT documentation. Send it to me by Friday.' The September note in your pocket becomes very heavy all at once.",
+    opts: [
+        {
+            t: "Hammer the documentation out in one go",
+            m: 30, l: -5, a: 15, b: -5,
+            r: "You hammer together a documentation that is eighty per cent correct. The remaining twenty per cent you word so vaguely that it cannot be wrong. The insurers get paper. Paper is reassuring."
+        },
+        {
+            t: "Recruit Kevin and Gabi as an emergency team",
+            rep: { "Kevin": 3, "Gabi": 3 },
+            m: 20, l: 0, a: 5, b: 0,
+            r: "Kevin photographs every rack, Gabi - who knows everything anyway - dictates who is connected to what. In a short time there exists a document that is alarmingly good. Reception knows this firm better than any organisation chart."
+        },
+        {
+            t: "Say 'the documentation is in the cloud'",
+            m: 5, l: 10, a: 0, b: 10,
+            r: "There is no cloud. There is no documentation. There is now a statement to the boss claiming both - and an insurer who will ask. You have bought time. The interest rate is unknown."
+        }
+    ]
+},
+{
+    id: "srv_doku_todo_2c",
+    title: "One Photograph",
+    reqStory: "path_doku_kevin",
+    text: "Kevin proudly presents the result of his documentation project: a photograph. One single photograph. Blurred, of half the server room, with his thumb in the frame. File name: 'docs_final_DONE(1).jpg'. 'Well?' he beams.",
+    opts: [
+        {
+            t: "Give honest feedback",
+            rep: { "Kevin": 3 },
+            m: 15, l: 0, a: 5, b: 0,
+            r: "You explain to him what documentation needs: structure, labelling, more than one thumb. Kevin nods gravely and takes notes. On his phone. In the notes app. As a voice message to himself. It is a start."
+        },
+        {
+            t: "Submit the photograph as the official documentation",
+            m: 2, l: 10, a: 0, b: 10,
+            r: "You put 'docs_final_DONE(1).jpg' in the documentation folder and close the chapter. Should anybody ever need the documentation, they will find a thumb. The problem is deferred, and deferring has a tradition here."
+        },
+        {
+            t: "Praise him and quietly document it yourself",
+            rep: { "Kevin": 5 },
+            m: 25, l: -5, a: 10, b: 0,
+            r: "'Strong start, Kevin.' He moves off happily and you quietly document it afterwards. The truth now exists in two versions: a correct one and one with a thumb. Kevin will think his is the real one for ever."
+        }
+    ]
+},
+
+
+/* ============================================================
+   TRAPS (v4.0.0): the answer that sounds sensible is the
+   expensive one. No free way out.
+   ============================================================ */
+
+{
+    id: "srv_falle_update",
+    title: "The Small Update",
+    text: "A notice appears on the management console: 'Critical security update available. Installation time: approx. 2 minutes. Install now?' Two minutes. Security first. What can possibly happen in two minutes.",
+    opts: [
+        {
+            t: "Install immediately - security first",
+            m: 25, l: 0, a: 35, b: 15,
+            r: "The two minutes are the manufacturer's estimate, measured on hardware that does not exist here. The update hangs at 67 per cent, restarts three times and takes the file server with it. Five calls later everything is running again. The lesson: 'approx. 2 minutes' is not a time, it is a horoscope."
+        },
+        {
+            t: "Postpone it",
+            m: 2, l: 5, a: 0, b: 10,
+            r: "You click 'Remind me later' - the most honest button in the history of IT, because nobody is ever reminded. The system does record the postponement in the compliance report that group head office reads. 'Critical updates: 1 outstanding' now glows there in an unpleasant amber."
+        },
+        {
+            t: "Plan a proper maintenance window for tonight",
+            m: 10, l: 0, a: 5, b: 5,
+            r: "The textbook route: announcement, time window, rollback plan. It costs you planning time now, an all-staff email and the question from three people whether 'tonight' really means at night. And at 23:00 you are sitting at home at your laptop. It is the right way, though. Sadly the right way is never the comfortable one."
+        }
+    ]
+},
+{
+    id: "srv_falle_tape",
+    title: "The Drip",
+    text: "A drop of condensation has formed on the cooling pipe above Rack 3. One falls every forty seconds; for now it lands on the cable trunking. You know this building: one drop becomes a trickle, one trickle becomes a ticket with the word 'unexplained' in it.",
+    opts: [
+        {
+            t: "Bucket underneath, note attached",
+            m: 5, l: 10, a: 10, b: 0,
+            r: "The honest temporary fix. The bucket fills more slowly than your conscience, the note ('DO NOT REMOVE') yellows before your eyes, and from now on everyone who comes into the server room asks you about 'the bucket thing'. Temporary fixes are known to have the longest life expectancy in this building."
+        },
+        {
+            t: "Instruct facilities management officially",
+            m: 15, l: 0, a: 5, b: 10,
+            r: "The official route: form FM-12, priority, cost centre. The reply is prompt: 'Refrigeration is a subcontracted trade, appointment in 3-5 working days.' Until then you are asked to take 'appropriate immediate measures' - which are exactly the other two answers. The circle closes. The drop falls."
+        },
+        {
+            t: "Wind the trusty duct tape around the pipe",
+            rem: "tape",
+            m: 5, l: 5, a: 30, b: 10,
+            r: "Every admin's reflex - except that no tape in the world holds on a cooling pipe wet with condensation. The tape comes off within the hour, collects the water like a gutter on the way and delivers it unerringly into the fan of Rack 3. The duct tape is gone, the problem is bigger, and the fan now sounds like an espresso machine."
+        }
+    ]
+},
+{
+    id: "srv_falle_gruen",
+    title: "All Green",
+    text: "A rare sight: every single LED in the room glows green. No blinking, no amber, not one red eye. The monitoring dashboard shows zero open alerts. It is the most peaceful server room you have ever seen. Suspiciously peaceful.",
+    opts: [
+        {
+            t: "Suspiciously check the monitoring itself",
+            m: 15, l: 0, a: 10, b: 0,
+            r: "Paranoia pays off: the monitoring service has been hung since 06:42 - that green was the green of a smoke detector with its battery out. You restart it and watch the dashboard jump to seven real alerts within seconds. The most peaceful room of the year was a quarter of an hour of work in camouflage."
+        },
+        {
+            t: "Trigger a test alarm to be sure",
+            m: 10, l: 0, a: 5, b: 10,
+            r: "Thorough: you throw a test alarm. It works - and lands, as it turns out, unfiltered in group head office's escalation distribution list, where at this hour somebody very real reacts very really. The all-clear takes longer than any actual fault. The monitoring is alive, at any rate. Everyone knows it now."
+        },
+        {
+            t: "Enjoy the moment and touch nothing",
+            m: 5, l: 10, a: 15, b: 35,
+            r: "Wisdom, you think. Until the afternoon, when it comes out why nothing was reporting: the monitoring service itself had been dead since the morning - zero alerts, because zero monitoring. Two outages went unnoticed for hours, and the question 'Why did nobody look at that?' has a very short answer with your name in it."
+        }
+    ]
+},
+
+{
+    id: "srv_praktikant_zettel",
+    title: "The Note Under the Keyboard",
+    text: "At the spare workstation in the server room there is a note wedged under the keyboard. On it, in neat handwriting: the credentials of the administrator account, plus the date they were last changed. That was four years ago. Next to it: 'PLEASE DO NOT CHANGE - or Accounts stops working.'",
+    opts: [
+        {
+            t: "Change the password, as one should",
+            m: 20, l: -10, a: 15, b: 10,
+            r: "Technically correct, in practice an avalanche: four line-of-business applications, two interfaces and a printer on the third floor knew that password. Accounts get in touch after eleven minutes. The note was right."
+        },
+        {
+            t: "Take a photograph and leave it lying",
+            next: "path_zettel_foto",
+            m: 5, l: 10, a: 0, b: 5,
+            r: "You photograph the note for emergencies and leave it where it is. The password now exists in two places instead of one. In security terms that is the worst of all worlds, and you have it to hand."
+        },
+        {
+            t: "Pocket the note - this does not belong here",
+            loot: "admin_pw",
+            next: "path_zettel_mit",
+            m: 5, l: 0, a: 0, b: -5,
+            r: "You take the note. That does not make the password any safer, and at least it is no longer on public display. Accounts will keep running, because you changed nothing - you are not insane."
+        }
+    ]
+},
+{
+    id: "srv_praktikant_zettel_2a",
+    title: "The Search for the Note",
+    reqStory: "path_zettel_mit",
+    text: "A young man stands at the spare workstation, at a loss, and lifts the keyboard. Again. And once more. It is the working student from Accounts whom nobody introduced. 'There was a note here,' he says, more to himself. 'There was always a note.'",
+    opts: [
+        {
+            t: "Explain and set him up with his own access",
+            rem: "admin_pw",
+            m: 25, l: -10, a: 10, b: -10,
+            r: "You explain to him why the note is gone and set him up with his own access carrying the rights he actually needs. It costs you half an hour and fixes a problem that has counted as a piece of furniture for four years. Nobody will ever notice."
+        },
+        {
+            t: "Just tell him the password",
+            rep: { "Frau Elster": -5 },
+            m: 5, l: 5, a: 0, b: 15,
+            r: "You give him the password in passing, verbally, in the server room, where nobody else can hear it. Except Ms Elster, who is standing in the doorway at exactly that moment because she is looking for a receipt. She says nothing. She writes something down."
+        },
+        {
+            t: "Say nothing and let him search",
+            m: 5, l: 10, a: 5, b: 10,
+            r: "You look at your screen while he lifts the keyboard for the third time. After ten minutes he leaves and reports to the head of Accounts that 'the credentials have disappeared'. That report takes its course. It takes it upwards."
+        }
+    ]
+},
+
+
+{
+    id: "srv_schacht_3",
+    title: "Rack 7",
+    reqStory: "path_schacht_2",
+    text: "Kevin is at the server cabinet looking at his clipboard. 'Hey, quick question - the server in rack seven, it has been running differently lately. Not broken. Just... different. And the logs just stop at night, shortly after three, and then start again.' He looks at you and waits for an answer. You have heard nothing else since. Four episodes are in your head, and every answer that occurs to you comes from the series.",
+    opts: [
+        {
+            t: "Tell the boss about it - he needs to know",
+            rep: { "Dr. Wichtig": -5 },
+            m: 15, l: 0, a: 5, b: 25,
+            r: "You explain to Dr Wichtig that something in rack seven is defying explanation and that the logs cease to exist at three in the morning. You use the word 'Schacht' while doing so. Twice. He listens to all of it, thanks you politely and closes the door behind you. In the afternoon he asks HR whether there are any stress prevention schemes on offer. For employees. By name."
+        },
+        {
+            t: "Close your eyes for a moment and answer normally",
+            m: 10, l: -5, a: 10, b: -5,
+            r: "You take a breath, push the four episodes aside and answer like a professional: check the time synchronisation, look at the log rotation, done. Kevin moves off. It costs you more effort than the whole rest of the afternoon, and you now know that you will be watching episode five this evening. The moment you clock off."
+        },
+        {
+            t: "'The shaft does not forget, Kevin.'",
+            m: 5, l: 5, a: 0, b: 0,
+            r: "It slips out, in complete earnest, in the narrator's voice. Kevin looks at you for two seconds - and then his face lights up: 'YOU WATCH IT TOO?!' You spend the next ten minutes standing between the racks talking about episode four. The rack problem was a restart of the time synchronisation. Shortly after three. As it is every night."
+        },
+        {
+            t: "'The question is not why. The question is when.'",
+            rep: { "Kevin": 5 },
+            m: 10, l: 0, a: -5, b: 0,
+            r: "Kevin nods slowly and makes a note. 'Whoa. Deep.' He will actually answer the question: shortly after three, every night, the time synchronisation. You have led him to the correct diagnosis with a quotation from a television series, and you will never be able to tell anybody about it."
+        }
+    ]
+},
+
+
+{
+    id: "srv_praktikant_zettel_2b",
+    title: "The Photograph in the Cloud",
+    reqStory: "path_zettel_foto",
+    text: "A notification on your work phone: 'Your photos have been backed up successfully. 1 new image.' The automatic backup is running. It has been running for years. And it has just uploaded this building's administrator password to a data centre in Ireland.",
+    opts: [
+        {
+            t: "Finally change the password - now there is a reason",
+            m: 25, l: -10, a: 20, b: 0,
+            r: "Once it is out, it is worth nothing. You change it, notify all the departments beforehand and spend the afternoon working through the four applications that hung on it. It is the right decision. It is nevertheless indistinguishable from a punishment."
+        },
+        {
+            t: "Delete the photo and switch the backup off for the camera",
+            m: 20, l: -10, a: 10, b: -5,
+            r: "Delete, delete from the bin, delete from the cloud, switch the backup off, empty the cloud's bin. Twenty minutes for a mistake that took two seconds. That is what security work actually looks like: invisible, laborious and without applause."
+        },
+        {
+            t: "It is encrypted, it will be fine",
+            m: 2, l: 10, a: 0, b: 15,
+            r: "End to end, servers in the EU, all correct - and the administrator password is nevertheless now sitting in somebody else's data centre because you could not be bothered. Should an audit ever check the device backups, a very unpleasant conversation begins with exactly this image."
+        }
+    ]
+},
+
+
+    {
+        id: "srv_kevin_eigenbau",
+        reqStory: "path_kevin_rack",
+        char: "Kevin",
+        title: "One Machine Too Many",
+        text: "In the rack under the switch stands a case that does not belong there. A dragon sticker is stuck on it. It runs, it is cabled up, and it has an address in the server segment.\n\nIt is Kevin's machine. He wanted 'a short route to the network'.",
+        opts: [
+            {
+                t: "Leave it, it runs",
+                m: 5, l: 15, a: -5, b: 20,
+                r: "The case with the dragon stays in the rack. Nobody notices, because nobody ever looks in the server room except you. That is exactly the reassuring part and the problem at the same time."
+            },
+            {
+                t: "Pull the network cable and take the machine with you",
+                m: 15, l: -5, a: 5, b: -10,
+                rep: { "Kevin": -5 },
+                r: "You pull the cable and carry the case up to its proper place. Kevin protests briefly, then grasps that a desktop machine in the server segment makes about as much sense as a bicycle on the motorway."
+            },
+            {
+                t: "Move it to the desktop network",
+                m: 25, l: -10, a: 0, b: -15,
+                rep: { "Kevin": 5 },
+                r: "You move it into the right segment, assign it a proper address and enter it in the list. Twenty-five minutes, and afterwards there stands a device that the network knows about."
+            },
+            {
+                t: "Check what is actually running on the thing",
+                m: 30, l: -15, a: 10, b: -10,
+                r: "An operating system of unclear origin, no antivirus, and instead a program that sells computing power in the background to an address overseas. Kevin took it for a maintenance tool."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_foehn",
+        reqStory: "path_switch_bleibt",
+        char: "Egon",
+        title: "The Hairdried Switch",
+        text: "The switch Egon dried out with a hairdryer runs. It runs conspicuously well, in fact.\n\nOn the side is a note in Egon's handwriting: 'SERVICED' and a date. The case screws lie next to it, in a jam jar.",
+        opts: [
+            {
+                t: "Fit a replacement, archive the old one",
+                m: 30, l: -15, a: 5, b: -15,
+                rep: { "Egon": 5 },
+                r: "You swap the device while it is running, which is possible with this model if you know how. The hairdried switch goes on the shelf, with Egon's note attached. He has earned it."
+            },
+            {
+                t: "Put the screws back in",
+                m: 10, l: 0, a: 0, b: -5,
+                rep: { "Egon": 5 },
+                r: "You close the case and put the jam jar back in the workshop. The switch carries on running, dust-tight at last. It is the smallest possible improvement, and it is one."
+            },
+            {
+                t: "Photograph the moisture marks",
+                m: 15, l: -5, a: 5, b: -10,
+                rep: { "Egon": -5 },
+                r: "You document the water marks on the circuit board in case somebody later asks why the device failed. It is the least glamorous form of precaution and the only one that counts in court."
+            }
+        ]
+    },
+    {
+        id: "srv_dat_archiv",
+        reqStory: "path_cnc_emulator",
+        title: "The Tape Archive",
+        text: "Looking for somewhere to put the floppy images, you find yourself in front of the old tape archive. Forty cassettes, labelled with abbreviations that nobody can decode any more.\n\nRight at the bottom lies one that reads 'MILLING MACHINE / DO NOT THROW OUT'. In the same handwriting as Egon's note.",
+        opts: [
+            {
+                t: "The archive is electronic waste",
+                m: 15, l: 10, a: -5, b: 15,
+                rep: { "Egon": -10 },
+                r: "You report the forty cassettes for disposal. That is forty kilos less in the room and the only backup of machines that are still in production. It will not be noticed until the next outage."
+            },
+            {
+                t: "Read the tape in",
+                m: 40, l: -20, a: 10, b: -20,
+                rep: { "Egon": 5 },
+                r: "The drive takes three attempts, then it reads. On the tape are the original floppies of all four machines, backed up in 2003 by somebody who knew what they were doing. Today's work would not have been necessary."
+            },
+            {
+                t: "Label the archive and add it to the documentation",
+                m: 30, l: -10, a: 0, b: -15,
+                r: "You go through the forty cassettes, note down what can be decoded and hang the list on the shelving. The next person to stand here will not lose two hours over it."
+            },
+            {
+                t: "Take just the one cassette",
+                m: 10, l: 0, a: 0, b: -5,
+                r: "You take the tape with the milling machine on it and leave the rest. Production is covered, the archive remains a riddle, and today both are the right decision."
+            }
+        ]
+    },
+
+    /* ---------------------------------------------------------------------
+       Dreiteiler wave 1 (v5.0): chains with time predicates. reqStoryAge
+       counts nights since the trigger, reqWeekDayMin gates by weekday -
+       both only ever open in week mode. Openers must stand alone as
+       scenes: chains may starve (random draws, Friday), and that must
+       never read as a bug. One follow-up lives in data_calls.js
+       (call_wlp_geruch) - the building remembers across pools.
+
+       Narrative duplicate check (editorial pass 3): the first drafts here
+       had an AC-drip/bucket chain (twin of srv_leak) and a beeping-UPS
+       chain (twin of srv_usv_beep) - both replaced. Before writing new
+       server chains, check against: srv_leak, srv_overheat_warning,
+       srv_usv_beep, the RAID note (line ~2279) and the tape archive.
+
+       Stat doctrine (editorial pass 2): diligence LOWERS f, laziness and
+       delegation raise it; deeds the firm or the boss profits from lower
+       c; venting and relief lower a, the stupidity of things raises it.
+       Delayed payoffs are real recovery (down to -15), delayed bills are
+       real bills (up to +15) - the drama may be narrative, but the
+       numbers must not whisper. -------------------------------------- */
+    {
+        id: "srv_wlp_1",
+        title: "Rack 3 Is Getting Warm",
+        text: "CPU 2 in Rack 3 is reporting 84 degrees. The heatsink is loose, which could be put right — except that the thermal paste has run out. The tube lies squeezed flat in the toolbox, next to it a Post-it: 'REORDER!!'. Dated three weeks ago.",
+        opts: [
+            {
+                t: "Fetch ketchup from the canteen",
+                m: 15, l: 5, a: -5, b: 5,
+                next: "srv_wlp_ketchup",
+                r: "Conducts heat, says the internet. You spread a thin layer, the fan settles, the curve falls to 71 degrees. Your hands smell of chips until you clock off."
+            },
+            {
+                t: "Order paste and throttle the clock",
+                m: 25, l: -5, a: 5, b: 5,
+                next: "srv_wlp_wait",
+                r: "Express order out. Until it arrives Rack 3 computes in low gear, and somewhere in the building a report is getting slower. You hope it is not one of the ones with a cover sheet."
+            },
+            {
+                t: "Screw the heatsink down and watch",
+                m: 20, l: -5, a: 5, b: 0,
+                r: "79 degrees. Without paste it stays patchwork, and it is watched patchwork. You put an ear to the panel and back out of the room."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_2",
+        reqStory: "srv_wlp_ketchup",
+        reqStoryAge: 1,
+        title: "Rack 3 Smells of Takeaway",
+        text: "The server room smells of a barbecue evening from the door onwards. Rack 3 is holding its temperature — for now. A brown crust has formed on the heatsink, and the fan sounds as though it has something to process.",
+        opts: [
+            {
+                t: "Unscrew it and clean it",
+                m: 35, l: -10, a: 5, b: 0,
+                r: "The crust comes off in layers, the last one only with a fingernail. You spread fresh ketchup, thinner this time, more evenly, the edges drawn with a spatula. It is officially a recipe now."
+            },
+            {
+                t: "Door shut. Nobody smells it but you.",
+                m: 5, l: 5, a: 0, b: 5,
+                r: "You clip an air freshener to the rack. Now it smells of a barbecue evening in a new car."
+            },
+            {
+                t: "Fan to maximum and door shut",
+                m: 5, l: 5, a: 5, b: 5,
+                r: "Full speed against the crust. Rack 3 now sounds like a light aircraft taking off, and out in the corridor somebody stops and listens. Temperature: stable. Situation: unstable."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_3",
+        reqStory: "srv_wlp_ketchup",
+        reqStoryAge: 2,
+        title: "Rack 3 Clocks Off",
+        text: "The thermal alarm goes through, then silence: CPU 2 has shut itself down. On the heatsink the ketchup has turned to lacquer. Nothing is dripping, and the rack looks as though it has bled.",
+        opts: [
+            {
+                t: "Fetch emergency paste from the electrical shop",
+                m: 45, l: -10, a: 10, b: 5,
+                r: "Twenty minutes on foot, fourteen euros, one tube. The shop assistant asks whether it is urgent and you laugh slightly too long. As you fit it you notice how quiet a server room is when one rack is missing."
+            },
+            {
+                t: "Let Kevin do the scrubbing",
+                m: 20, l: 5, a: 0, b: 5,
+                rep: { "Kevin": -5 },
+                r: "Kevin does not even ask why there is ketchup on it. He fetches kitchen roll and starts. That worries you more than the outage."
+            },
+            {
+                t: "Report the outage officially, with everything",
+                m: 15, l: 0, a: 5, b: 10,
+                r: "You write the fault report, cause: 'thermal event'. The word ketchup does not appear, and the report lands in the distribution list, and the distribution list asks questions. It is a matter with a number now, if nothing else."
+            }
+        ]
+    },
+    {
+        id: "srv_wlp_4",
+        reqStory: "srv_wlp_wait",
+        reqStoryAge: 1,
+        reqWeekDayMin: 3,
+        title: "A Parcel for IT",
+        text: "Reception rings through: a parcel for 'IT / server basement', soaked by the rain. Inside are three tubes of thermal paste and an invoice with an express surcharge. Rack 3 has been computing in low gear since the order went out.",
+        opts: [
+            {
+                t: "Fit it immediately",
+                m: 30, l: -10, a: -15, b: -5,
+                loot: "bubble_wrap",
+                r: "Heatsink off, old residue away, paste on, clock up. Rack 3 pulls through as it did on its first day, the fans wind down instead of up. The tubes were packed in an arm's length of bubble wrap — you keep that, for medicinal purposes. You stand there a moment longer and listen. It sounds like nothing. Exactly right."
+            },
+            {
+                t: "Check the invoice first, then fit it",
+                m: 35, l: -10, a: -10, b: -10,
+                r: "The express surcharge costs more than the paste. You countersign the invoice properly, file it where Accounts expect it, and then get on with the screwdriver in peace. Two building sites fewer."
+            },
+            {
+                t: "Fit it and store the rest",
+                m: 35, l: -10, a: -10, b: 0,
+                r: "Heatsink off, paste on, clock up — and the two remaining tubes into the tool tray, labelled and visible. The old Post-it goes in the bin, a new one on the wall: 'IT IS HERE.' The next emergency will find a different firm."
+            }
+        ]
+    },
+    {
+        id: "srv_ntp_1",
+        title: "The Server Clock Is Fast",
+        text: "Something is wrong when you look at the log: the entries are coming from the future. Four minutes. The time server the box asks has not answered for weeks, and without a reference the clock drifts — a little further every day.",
+        opts: [
+            {
+                t: "Enter a new time source and sync properly",
+                m: 30, l: -10, a: -5, b: -5,
+                r: "Two lines of configuration, a restart of the service, the clock slides back into the present. There is now a four-minute hole gaping in the log. You write a comment into it: 'Nothing is missing here.'"
+            },
+            {
+                t: "Just put the clock back by hand",
+                m: 10, l: 5, a: 5, b: 0,
+                next: "srv_ntp_drift",
+                r: "Four minutes wound back, problem solved. The fact that the clock goes on drifting without a reference is on another sheet of paper. One from the future."
+            },
+            {
+                t: "Four minutes. Who cares.",
+                m: 5, l: 10, a: 0, b: 0,
+                next: "srv_ntp_drift",
+                r: "You live four minutes in the future from now on. It is not a head start."
+            }
+        ]
+    },
+    {
+        id: "srv_ntp_2",
+        reqStory: "srv_ntp_drift",
+        reqStoryAge: 2,
+        title: "Twelve Minutes of Future",
+        text: "The clock is now twelve minutes fast, and it has been noticed: the time system runs on the same server. According to the system, half the building clocked in before the start of work, and Ms Elster has a list. Sorted chronologically. By the wrong clock.",
+        opts: [
+            {
+                t: "Fix the time source, correction email to the building",
+                m: 40, l: -15, a: 5, b: -10,
+                rep: { "Frau Elster": 5 },
+                r: "Configuration, sync, an all-staff email with an apology and a corrected table. Ms Elster replies with a single word: 'Thanks.' You do not print it out. Very nearly, though."
+            },
+            {
+                t: "Wind the twelve minutes back in silence",
+                m: 10, l: 5, a: 5, b: 15,
+                r: "The clock is right again, this morning's clocking entries are now doubly wrong. Somewhere in the building somebody is comparing two lists right now."
+            },
+            {
+                t: "Give Ms Elster the raw data",
+                m: 15, l: 5, a: -5, b: 0,
+                rep: { "Frau Elster": 5 },
+                r: "You send her the drift table with one line of explanation. Back comes a document with correction columns, footnotes and a version number. You enter the time source in passing — the table was the real mountain."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_kabel_1",
+        char: "Egon",
+        title: "Port 12 Is Dead",
+        text: "The uplink on Port 12 is gone, and the patch cable for it crumbles in your hand. While you are rummaging in the empty cable box, Egon is in the doorway. 'I have got something. Cat 7, double shielded. Inherited from your predecessor.' He holds it like a relic.",
+        opts: [
+            {
+                t: "Accept the cable with thanks",
+                loot: "cable",
+                m: 10, l: 0, a: -5, b: 0,
+                next: "srv_egon_kabel",
+                r: "It smells of decades in a basement and works first time. 'I want it back,' says Egon. It does not sound like a request."
+            },
+            {
+                t: "Decline and crimp your own",
+                m: 30, l: -10, a: 10, b: 0,
+                r: "Two half-dead cables make one three-quarters-dead one. The third connector seats only on the fifth attempt, and the crimping tool leaves a mark in your palm. Port 12 lives. Egon walks off shaking his head, the relic under his arm."
+            },
+            {
+                t: "Settle the terms first",
+                m: 10, l: 0, a: 5, b: 0,
+                loot: "cable",
+                next: "srv_egon_kabel",
+                r: "'Return on demand. Condition: inherited.' Egon hands the cable over like a chain of office. The terms remain unclear, and you are bound all the same. Verbally. Before witnesses, says Egon. Which witnesses, he does not say."
+            }
+        ]
+    },
+    {
+        id: "srv_egon_kabel_2",
+        char: "Egon",
+        reqStory: "srv_egon_kabel",
+        reqStoryAge: 1,
+        title: "Egon Wants His Cable Back",
+        text: "Egon is standing at the rack looking at Port 12, where his cable hangs. 'Well?' he says. Nothing more. He has brought time with him.",
+        opts: [
+            {
+                t: "Give the cable back",
+                rem: "cable",
+                m: 15, l: 0, a: 5, b: 0,
+                rep: { "Egon": 5 },
+                r: "You repatch onto what is left in stock, he coils his cable up the way other people coil a garden hose. 'Knew I could rely on you.'"
+            },
+            {
+                t: "'That is infrastructure now.'",
+                m: 5, l: 0, a: -5, b: 5,
+                rep: { "Egon": -5 },
+                r: "Egon nods slowly. He says nothing further. He will not forget it either."
+            },
+            {
+                t: "'Cable? What cable?'",
+                m: 5, l: 5, a: 0, b: 0,
+                rep: { "Egon": -5 },
+                r: "You both look at Port 12. The cable carries a hand-written label: EGON."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_1",
+        title: "Something Is Scratching in the Ventilation",
+        text: "Above the rack, behind the ventilation panelling, something is scratching. Not electrical — claws. It moves from left to right, pauses, scratches on. The servers hum alongside as though nothing were happening.",
+        opts: [
+            {
+                t: "Unscrew the grille and look",
+                m: 25, l: -10, a: 5, b: 0,
+                r: "Four screws, a cloud of dust, no animal. Only a passage leading deeper into the building, and a few tracks in the dust. You screw it shut again, a little more slowly than necessary."
+            },
+            {
+                t: "Report it to facilities management",
+                m: 10, l: 0, a: 0, b: 0,
+                next: "srv_marder_meldung",
+                r: "Blaschke listens to the scratching down the phone. 'Marten. Or pigeon. I will come by this week and bring the trap.' He sounds almost eager."
+            },
+            {
+                t: "Music up and carry on working",
+                m: 5, l: 10, a: -5, b: 0,
+                next: "srv_marder_ignoriert",
+                r: "Headphones work against claws. The animal carries on working, so do you, neither of you disturbs the other."
+            },
+            {
+                t: "One blow with the hammer against the panelling",
+                req: "hammer",
+                m: 5, l: 5, a: -5, b: 0,
+                next: "srv_marder_ignoriert",
+                r: "A solid strike on the metal, then silence. You stand the hammer down within reach. You have a language now."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_2",
+        reqStory: "srv_marder_ignoriert",
+        reqStoryAge: 1,
+        title: "Something Is Trickling Out of the Grille",
+        text: "Fine material is trickling out of the ventilation grille above the rack: dust, insulation wool, a little straw. There is a small heap on the case, tidy, almost decorative. Somebody up there is settling in.",
+        opts: [
+            {
+                t: "Cover the rack and seal the grille",
+                m: 25, l: -5, a: 5, b: 0,
+                r: "Sheeting over the rack, the grille wedged with cardboard. Indignant scratching comes from above, then silence. The silence is worse."
+            },
+            {
+                t: "Blow it away and carry on",
+                m: 5, l: 10, a: 0, b: 5,
+                r: "Next time you pass, the heap is there again. Slightly bigger. With a paper clip in it that you recognise."
+            },
+            {
+                t: "Put a biscuit on the rack. Diplomacy.",
+                m: 5, l: 5, a: -5, b: 0,
+                r: "If somebody lives up there, they should at least know that one is civilised. Next time you pass, the biscuit is gone. The heap is bigger. You have trade relations now."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_3",
+        reqStory: "srv_marder_ignoriert",
+        reqStoryAge: 2,
+        title: "The Extract Air Has Stopped",
+        text: "The extract fan in the ventilation has stopped turning. Through the grille you can see why: nesting material is wound around the shaft, tight and expertly done. The server room smells of warm dust and a little of zoo.",
+        opts: [
+            {
+                t: "Grille off, nest out, free the fan",
+                m: 45, l: -15, a: 15, b: 5,
+                r: "Gloves, ladder, half a bin bag of nesting material. The animal is not there, only its work. On the last handful you find a pen. Yours."
+            },
+            {
+                t: "Ring Blaschke, officially now",
+                m: 15, l: 5, a: 5, b: 5,
+                next: "srv_marder_meldung",
+                r: "'NOW it is a marten,' says Blaschke. 'Earlier it would have been cheaper.' He comes anyway."
+            },
+            {
+                t: "Window open, door shut, hope it moves out",
+                m: 5, l: 10, a: 0, b: 5,
+                r: "Fresh air for all concerned. The animal stays, the smell distributes itself more generously around the floor, and somewhere somebody sneezes pointedly. The plan has weaknesses; on the other hand it costs nothing. Not yet."
+            }
+        ]
+    },
+    {
+        id: "srv_marder_4",
+        reqStory: "srv_marder_meldung",
+        reqStoryAge: 1,
+        reqWeekDayMin: 4,
+        title: "Blaschke Brings the Trap",
+        text: "Mr Blaschke from facilities management stands in the server room with a live trap and half a rusk, looking up at the ventilation grille the way an angler looks at water. 'Marten,' he says. 'You can hear it in the rhythm.'",
+        opts: [
+            {
+                t: "Watch a professional at work",
+                m: 15, l: 0, a: -10, b: 0,
+                r: "Trap into the ventilation, rusk in, grille shut. 'He will go in tonight, they are curious.' On his way out Blaschke knocks twice on the panelling. Nothing knocks back."
+            },
+            {
+                t: "Ask whether this happens often",
+                m: 10, l: 0, a: -10, b: 0,
+                r: "'Third this year. They come in through the underground car park.' He says it like a weather report. You resolve to park the car somewhere else."
+            },
+            {
+                t: "Have the trapping explained to you",
+                m: 15, l: -5, a: -10, b: 0,
+                r: "Blaschke explains bait, wind direction and why the rusk is halved, in four sentences. In passing you learn more about this building than four years of intranet ever taught you. You memorise all of it. You never know who moves in next."
+            }
+        ]
+    },
+    {
+        id: "srv_nachtjob_1",
+        title: "The Night Job Is Hung",
+        text: "Last night's backup sits at 61 per cent and does not move. The target directory will not disconnect, the job will not report in. A restart takes four hours — an abort means: there is no backup of this state.",
+        opts: [
+            {
+                t: "Restart it and sit it out",
+                m: 40, l: -10, a: 5, b: -5,
+                r: "The job eats its way slowly through the shares. You work alongside it and check every few minutes, the way one checks on a cake."
+            },
+            {
+                t: "Crack open an energy drink and stay with it",
+                rem: "energy",
+                m: 20, l: -15, a: 5, b: -5,
+                r: "The job runs, you run with it. From halfway on, your left eyelid shakes in time with the progress bar. The bar fills. You saw every second of it."
+            },
+            {
+                t: "Abort it. Another one runs tonight anyway.",
+                m: 5, l: 10, a: 0, b: 0,
+                next: "srv_nachtjob_skip",
+                r: "Job killed, console closed. A day without a backup is like a day without a network. You notice yourself that the sentence limps."
+            }
+        ]
+    },
+    {
+        id: "srv_nachtjob_2",
+        char: "Gabi",
+        reqStory: "srv_nachtjob_skip",
+        reqStoryAge: 1,
+        title: "Gabi Needs a File",
+        text: "Gabi is in the doorway, for once without knocking. 'I overwrote the costing yesterday afternoon. The old version — that is in the backup, isn't it?' She looks at you the way one looks at somebody who makes backups.",
+        opts: [
+            {
+                t: "Tell the truth",
+                m: 10, l: 0, a: 5, b: 10,
+                rep: { "Gabi": -5 },
+                r: "Gabi says nothing for a while. 'And what do we have them for, then...' She does not finish the sentence, and you are grateful for that. On the way back to her office she takes a detour via the kitchenette. The one with the ears."
+            },
+            {
+                t: "Dig through the shadow copies",
+                m: 35, l: -10, a: 5, b: -5,
+                rep: { "Gabi": 5 },
+                loot: "chocolate",
+                r: "Previous version, 14:52. You restore it without explaining how close it was. Gabi puts a bar of chocolate on your desk without a word."
+            },
+            {
+                t: "'As it happens I have something on a stick.'",
+                rem: "usb_stick",
+                m: 10, l: 0, a: -5, b: 0,
+                rep: { "Gabi": 5 },
+                r: "An older state, and better than none. Gabi takes the stick like a lottery win. You never see it again."
+            }
+        ]
+    },
+
+    /* Item discovery (v5.0), see the note in data_sidequests.js: the loot is
+       in the opener so day mode can reach it, the aged part only adds
+       consequence. Frau Sonntag returns from the coffee pool - the building
+       remembers, but the scene stands on its own for anyone who missed her. */
+    {
+        id: "srv_puppe_1",
+        title: "Memory Upgrade, Accounts",
+        text: "The machine in Accounts is getting two sticks of memory. Routine: side panel off, earth yourself, fit them. Except that hanging inside the case, fastened to the drive cage with three cable ties, is a small cloth doll. Pinstripes drawn on with a pen, a tie knot made of thread, the face carefully embroidered. The likeness is undeniable.",
+        opts: [
+            {
+                t: "Cut the cable ties and pocket the doll",
+                m: 20, l: -5, a: -5, b: 0,
+                loot: "voodoo_doll",
+                next: "srv_puppe_genommen",
+                r: "The memory is in within four minutes, the doll takes two. It is remarkably well made, the mouse-mat material neatly finished at the edges. Somebody in this building has time, talent and a very clear idea of the enemy."
+            },
+            {
+                t: "Fit the memory, leave the doll hanging",
+                m: 15, l: -10, a: 0, b: 0,
+                r: "You work around it the way an electrician works around a house spider. As you screw the panel back on you nod to it. You never know which systems are really running in here."
+            },
+            {
+                t: "Take a photograph. Just for you.",
+                m: 10, l: 0, a: -10, b: 5,
+                r: "You take three shots, one of them a close-up. Later at your desk you look at them again and find the pinstripes really very well caught. You will show that picture to nobody, and you will know that you have it."
+            },
+            {
+                t: "Report the find, as the rules require",
+                m: 25, l: -5, a: 5, b: 10,
+                r: "You report 'an unknown object in the case of a company machine'. The follow-up question comes within the hour and wants to know whether the object depicts anybody. You write 'not clearly' and know as you send it that this is a lie."
+            }
+        ]
+    },
+    {
+        id: "srv_puppe_2",
+        char: "Dr. Wichtig",
+        reqStory: "srv_puppe_genommen",
+        reqStoryAge: 1,
+        title: "Back Trouble",
+        text: "Dr Wichtig is standing in the door frame with a hand on his side. 'Tell me,' he begins, and it sounds unusually casual, 'these machines in Accounts — they are all on the same circuit, are they not?' He winces briefly. 'Since yesterday I have had a pulling in my back. I only ask.'",
+        opts: [
+            {
+                t: "'Circuits do not cause back pain.'",
+                m: 10, l: 0, a: -5, b: 0,
+                r: "'So you say.' He straightens up, pauses briefly and then walks very upright down the corridor. In your bag is something roughly the size of his hand."
+            },
+            {
+                t: "Offer to test the electrics through",
+                m: 30, l: -10, a: 0, b: -10,
+                r: "You spend two hours measuring sockets with nothing wrong with them and put a report on his desk. He studies it for a long time and looks noticeably relieved afterwards. His back, he says, is already better too."
+            },
+            {
+                t: "'Perhaps the office chair. They are all from 2011.'",
+                m: 10, l: 0, a: -5, b: -5,
+                rep: { "Dr. Wichtig": 5 },
+                r: "He takes up the thought at once, as though he had been waiting for an explanation with no needle in it. In the afternoon a request goes to Purchasing: ergonomic seating, priority high. Half the floor will thank you without ever finding out what for."
+            }
+        ]
+    },
+
+/* -------------------------------------------------------------------------
+   Bossfight aftermaths (v5.1). Until now not one of the thirty fights had a
+   consequence: yesterday's server fire had never happened by this morning.
+   data_bossfights sets the flags, the next morning lives here. reqStoryAge: 1
+   makes them arrive a day later, so they never fire in day mode - which is
+   correct, because there is no yesterday there.
+   ------------------------------------------------------------------------- */
+{
+    id: "srv_nach_brand",
+    reqStory: "path_boss_fire_geloescht",
+    reqStoryAge: 1,
+    title: "The Smell Stays",
+    text: "The server room still smells of the capacitor, and it will go on doing so for a week. On the empty space in the rack the soot clings in a neat rectangle. Egon stands beside it with a form: fire detector inspection record, triggered the previous day, cause to be stated.",
+    opts: [
+        { t: "Enter the cause: component failure", m: 10, l: -5, a: 0, b: -5,
+          r: "You enter it correctly. Egon reads along, nods and fills in a second field underneath whose existence is news to you. The record goes to the insurers, and in it you are only a name on a line." },
+        { t: "Let him fill the form in", m: 5, l: 10, a: 0, b: 0,
+          r: "Egon fills it in, in block capitals, and enters 'metal fatigue' as the cause. As he signs he says he has written that three times already, always for the same rack." },
+        { t: "Look into why the capacitor burst", m: 25, l: -10, a: 5, b: 5,
+          r: "The power supply is from 2009 and has three identical siblings in the same rack. You write the serial numbers down. It is the kind of note you find again in six months and are glad of." }
+    ]
+},
+{
+    id: "srv_nach_kois",
+    reqStory: "path_boss_kois",
+    reqStoryAge: 1,
+    title: "The Koi in the Meeting Room",
+    text: "The koi have been swimming in a water butt in meeting room Creative 2 since yesterday. The boss has looked in on them twice and asked after you once. The aquarium in the office is empty, the crack across the front pane taped over, and nobody knows who is putting the fish back.",
+    opts: [
+        { t: "Ring the specialist firm and get an appointment", m: 20, l: -5, a: 0, b: -5,
+          r: "The specialist firm is coming in two weeks and wants photographs first. The boss finds two weeks long. The koi evidently find it all right; they eat more than they used to." },
+        { t: "Do nothing. They are fish, not servers.", m: 5, l: 10, a: 5, b: 5,
+          r: "You do nothing, and nothing happens either. After four days the water butt is still standing there, and somebody has stuck a note beside it: 'Please do not feed, it is in hand.' It is not in hand." },
+        { t: "Ask Gabi who in the building keeps fish", m: 15, l: -5, a: -5, b: 0,
+          rep: { "Gabi": 5 },
+          r: "Gabi knows somebody in Accounts with a pond. In the afternoon two people are standing in the meeting room with buckets, and by the evening the water butt is empty. The boss learns of it from an all-staff email that Gabi wrote." }
+    ]
+},
+{
+    id: "srv_nach_lte",
+    reqStory: "path_boss_lte",
+    reqStoryAge: 1,
+    title: "The Bill for the Emergency",
+    text: "The LTE router kept the building online for a day. Now the usage summary has arrived: a quarter's data volume in one afternoon. Ms Elster has printed it out and attached a yellow sticky note with nothing on it but a question mark.",
+    opts: [
+        { t: "Lay the outage beside it and submit both together", m: 20, l: -5, a: 0, b: -5,
+          rep: { "Frau Elster": 5 },
+          r: "You lay the downtime beside it, in hours and in salaries. Ms Elster checks the arithmetic, crosses the question mark out and writes 'comprehensible' above it. The note stays stuck to the invoice, and that is as it should be." },
+        { t: "Leave the invoice lying for now", m: 5, l: 10, a: 5, b: 5,
+          r: "You put it in the pile. On Friday it is on top, with a second note over it bearing two question marks." },
+        { t: "Ask Egon how long the fibre will take", m: 15, l: -5, a: -5, b: 0,
+          r: "Egon says: 'Three weeks, if they want to.' Asked whether they want to, he says nothing and goes back to the digger. It is still standing in the yard, with tape around it." }
+    ]
+},
+{
+    id: "srv_nach_rollback",
+    reqStory: "path_boss_rollback",
+    reqStoryAge: 1,
+    title: "Kevin Has Not Slept",
+    text: "Kevin is at the machine before you, which has never happened before. He has spent the night writing down every step that led to the deletion script. It comes to four pages. On the last one is what he intends to do differently next time.",
+    opts: [
+        { t: "Go through the four pages", m: 25, l: -10, a: -5, b: 0,
+          rep: { "Kevin": 10 },
+          r: "You go through it together. In two places he is wrong, in one he has found something you had not seen yourself. He prints it out afterwards and hangs it above his desk, where it stays." },
+        { t: "Tell him the matter is closed", m: 5, l: 5, a: 0, b: 0,
+          r: "'It is closed.' He nods and folds the four pages up. Later you see them lying in the bin, and it sits worse with you than it should." },
+        { t: "Turn the pages into a guide for the team", m: 30, l: -10, a: 0, b: 10,
+          rep: { "Kevin": 5 },
+          r: "You make a guide out of it, two pages, with Kevin's name at the top. It hangs in the server room for three days until somebody takes it away. Six months later it turns up in an onboarding folder, without the name." }
+    ]
+},
+{
+    id: "srv_nach_wipe",
+    reqStory: "path_boss_wipe",
+    reqStoryAge: 1,
+    title: "What the Logs Still Know",
+    text: "The officers left without a result. In the morning it occurs to you what you did not think of yesterday: the mining machine is clean, but the router goes on logging, and has for years, into a directory that nobody has ever tidied.",
+    opts: [
+        { t: "Check the logs and keep them", m: 25, l: -10, a: 5, b: 0,
+          r: "You go through them. It is all in there: times, data volumes, destinations. You put them somewhere only you know about. It is not a nice decision, and it is a decision." },
+        { t: "Delete the logs as well", m: 15, l: -5, a: 5, b: -10,
+          r: "Four years of traffic data are gone in eleven seconds. The router starts logging from scratch again, and from now on you are the one with something to hide." },
+        { t: "Tell Kevin what still exists", m: 15, l: -5, a: -5, b: 0,
+          rep: { "Kevin": 5 },
+          r: "Kevin goes very quiet and asks whether that is bad. You say it is not bad as long as nobody goes looking for it. He nods and never mines again. Not here, at any rate." }
+    ]
+},
+{
+    id: "srv_nach_influencer",
+    reqStory: "path_boss_influencer",
+    reqStoryAge: 1,
+    title: "The Video Is Online",
+    text: "The video has two hundred thousand views overnight. You can see a man hanging from a rack by cable ties, and at the edge of the frame, for two seconds, you. The title reads: 'IT bloke loses it'. You are being discussed in the comments, and the majority is on your side.",
+    opts: [
+        { t: "Read the comments", m: 20, l: 5, a: -10, b: 0,
+          r: "For twenty minutes you read comments from strangers who understand your profession. One writes that he went through the same thing, with an intern and an emergency stop button. It is the best working moment of the week and does not take place at work." },
+        { t: "Ask Chantal whether the firm has to respond", m: 15, l: -5, a: 5, b: 5,
+          r: "Chantal saw it long ago and already has a draft: 'We distance ourselves from the circumstances.' Asked which circumstances are meant, she says that is precisely the point." },
+        { t: "Ignore it and work", m: 5, l: -5, a: 0, b: 0,
+          r: "You work. In the afternoon the boss comes by, says nothing about the video and asks about something else. On his way out he turns round: 'Well done, by the way.' Then he is gone before you can answer." }
+    ]
+},
+
+/* -------------------------------------------------------------------------
+   Two more aftermaths (v5.1, wave 2). The phishing call becomes a three-part
+   story because it is worth telling to the end: the call, the pattern, the
+   answer. It carries a compendium entry, which only works because the whole
+   chain hangs off a single fight - citing several different bossfights would
+   make an entry practically unreachable (a specific fight comes up in about
+   10% of weeks).
+   ------------------------------------------------------------------------- */
+{
+    id: "srv_nach_update",
+    reqStory: "path_boss_update_gestoppt",
+    reqStoryAge: 1,
+    title: "Why It Came Back",
+    text: "The distribution server rolled the update out again by itself, and since yesterday you have not known why. Today you find it: a retry rule, created three years ago, that automatically reattempts failed distributions. A rollback counts as a failure to it.",
+    opts: [
+        { t: "Switch the rule off and document it", m: 25, l: -10, a: 0, b: -5,
+          r: "You switch it off and write two sentences about it into the filing, with a date. It is a small change that stops somebody spending three days looking for the same thing one day. Probably you yourself." },
+        { t: "Keep the rule, but exclude rollbacks", m: 35, l: -15, a: 5, b: 5,
+          r: "You take rollbacks out of the retry without losing the rule. It takes longer and is the better solution, because the rule makes sense for everything else. Nobody will ever notice." },
+        { t: "Leave it, you know about it now", m: 5, l: 10, a: 10, b: 5,
+          r: "You do not touch it. At the next failed update you will remember it, and at the one after that perhaps not. Nothing is written in the filing, and in a head that sort of thing does not last six months." }
+    ]
+},
+{
+    id: "srv_nach_anruf",
+    reqStory: "path_boss_anruf_geprueft",
+    reqStoryAge: 1,
+    title: "She Kept Ringing",
+    text: "Gabi mentions in passing that a very friendly woman from head office rang yesterday and asked for IT's extension number. On further questioning it emerges: she reached at least four people in the building. Two of them answered her, one of them told her something.",
+    opts: [
+        { t: "Write down who she rang", m: 25, l: -10, a: 0, b: 0,
+          next: "path_boss_anruf_liste",
+          rep: { "Gabi": 5 },
+          r: "Gabi goes through the list with you, from memory, in the right order. Four names, three departments, one pattern: she worked her way up from the bottom and on each call knew a little more than on the one before." },
+        { t: "Write a warning to everyone", m: 20, l: -5, a: 5, b: 5,
+          r: "You write an all-staff email: calls from head office, call back via the internal list, no access details over the phone. It is read by the people who know already. It is in the inbox, though, and one can refer back to that later." },
+        { t: "Let the matter rest", m: 5, l: 10, a: 10, b: 0,
+          r: "You let it be. She got nothing, and a fuss only produces questions. Two weeks later somebody from Sales asks whether one may give a woman from head office remote access. Fortunately he asks first." }
+    ]
+},
+{
+    id: "srv_nach_anruf_2",
+    reqStory: "path_boss_anruf_liste",
+    reqStoryAge: 1,
+    title: "From the Bottom Upwards",
+    text: "The four names make a pattern. At the gate she asked about opening hours, in Stores about the caretaker's name, in Sales about the structure of IT. Every single call was harmless. Together they make a map of the building, and the last call went to you.",
+    opts: [
+        { t: "Give the reconstruction to Ms Elster", m: 30, l: -10, a: 0, b: 5,
+          rep: { "Frau Elster": 10 },
+          r: "Ms Elster reads the two pages twice and then puts them in a folder, which she labels. 'This ought to be reported,' she says, and not to the boss. Two weeks later a training session appears in the calendar that everybody has to attend." },
+        { t: "Hang it on the wall in the server room", m: 15, l: -10, a: -5, b: 0,
+          r: "You hang the reconstruction up beside the racks, where nobody but you reads it. For you that is enough: on the next friendly call you will know which question will be the third, and you will ask it first." },
+        { t: "Leave it there, she will not come back", m: 5, l: 10, a: 5, b: 0,
+          r: "You put the notes away. She will not come back, at any rate not on this number. Whether she tries it on at another firm you will never learn, and that is the kind of question that comes back at night." }
+    ]
+},
+];

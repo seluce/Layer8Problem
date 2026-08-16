@@ -1,4 +1,5 @@
 import { KEYS } from './keys.js';
+import { t, tf } from '../i18n/i18n.svelte.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
 import { platform } from '../platform.js';
 import { DB, ensure } from '../data.js';
@@ -45,13 +46,30 @@ export const WEEK_TUNING = {
  * carry-over. The week's difficulty comes from persistence, the weekly
  * valves and the ramp, not from the per-day formula.
  */
+// i18n-uses: week.diff.easy, week.diff.normal, week.diff.hard
 export const WEEK_DIFFS = {
-    easy:   { name: 'Erholt',      base: 0.75, startTickets: 0, startAl: 0,  excuseStart: 3, excuseCap: 5, rAl: 0.72, rCr: 0.60 },
-    normal: { name: 'Genervt',     base: 0.85, startTickets: 1, startAl: 0,  excuseStart: 2, excuseCap: 4, rAl: 0.60, rCr: 0.48 },
-    hard:   { name: 'Urlaubsreif', base: 0.95, startTickets: 2, startAl: 10, excuseStart: 1, excuseCap: 3, rAl: 0.42, rCr: 0.30 },
+    easy:   { key: 'easy',   base: 0.75, startTickets: 0, startAl: 0,  excuseStart: 3, excuseCap: 5, rAl: 0.72, rCr: 0.60 },
+    normal: { key: 'normal', base: 0.85, startTickets: 1, startAl: 0,  excuseStart: 2, excuseCap: 4, rAl: 0.60, rCr: 0.48 },
+    hard:   { key: 'hard',   base: 0.95, startTickets: 2, startAl: 10, excuseStart: 1, excuseCap: 3, rAl: 0.42, rCr: 0.30 },
 };
 
-export const WEEK_DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
+/**
+ * The five working days, as ids rather than words (6.0).
+ *
+ * These used to be German display strings, indexed into from four files. That
+ * is the same failure the canteen had: a name that is both an identifier and
+ * something on screen cannot survive a second language - it either stays
+ * German everywhere or breaks whatever compares against it, and neither shows
+ * up as an error.
+ *
+ * dayName() turns an index into the word. The ids stay put, so anything
+ * persisted or compared keeps working.
+ */
+export const WEEK_DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+
+// i18n-uses: week.day.mon, week.day.tue, week.day.wed, week.day.thu, week.day.fri
+/** @param {number} index 0-based day of the week */
+export const dayName = (index) => t(`week.day.${WEEK_DAY_KEYS[index] ?? WEEK_DAY_KEYS[0]}`);
 
 /**
  * Daily pool contingents (design 6.2), shared with tools/simulate-week.mjs.
@@ -128,7 +146,8 @@ export const week = {
     // Re-exported so UI code can reach the names and numbers via the engine.
     WEEK_DIFFS,
     WEEK_TUNING,
-    WEEK_DAY_NAMES,
+    WEEK_DAY_KEYS,
+    dayName,
 
     /**
      * The plain difficulty multiplier - the number the day mode calls
@@ -172,7 +191,7 @@ export const week = {
 
     /** "Montag" ... "Freitag" for headers, logs and the night screen. */
     weekDayName: function() {
-        return WEEK_DAY_NAMES[(this.state.week?.dayIndex ?? 1) - 1];
+        return dayName((this.state.week?.dayIndex ?? 1) - 1);
     },
 
     /**
@@ -201,7 +220,7 @@ export const week = {
         this.incrementStat('weeksStarted');
         this.incrementStat('weeksStarted_' + level);   // gives the archive bars a base
 
-        this.log(`Modus: ARBEITSWOCHE (${cfg.name.toUpperCase()}). Fünf Tage. Alles zählt.`, 'text-purple-400 font-bold');
+        this.log(tf('week.log.start', { mode: t(`week.diff.${cfg.key}`).toUpperCase() }), 'text-purple-400 font-bold');
     },
 
     /** Back to plain day mode. Does not touch the running day. */
@@ -238,9 +257,9 @@ export const week = {
         w.weekLog.push({
             dayIndex: w.dayIndex,
             endTickets: s.tickets,
-            endAl: Math.round(s.al), endCr: Math.round(s.cr), endFl: Math.round(s.fl),
+            endA: Math.round(s.al), endB: Math.round(s.cr), endL: Math.round(s.fl),
             peakA: Math.max(0, ...hist.map(p => p.a)),
-            peakC: Math.max(0, ...hist.map(p => p.c)),
+            peakB: Math.max(0, ...hist.map(p => p.b)),
             coffee: s.coffeeConsumed,
             mailsIgnored: s.emailsIgnored,
         });
@@ -372,15 +391,15 @@ export const week = {
         // a one-in-three chance. The archive remembers the last few and the
         // pool prefers what the player has not seen; once everything has been
         // seen, the oldest drops out and rotation starts over.
-        const gesehen = this.state.archive.seenMeetings ?? [];
+        const recent = this.state.archive.seenMeetings ?? [];
         let pool = (DB.meetings ?? []).filter(ev => !this.state.usedIDs.has(ev.id));
-        const frisch = pool.filter(ev => !gesehen.includes(ev.id));
-        if (frisch.length) pool = frisch;
+        const unseen = pool.filter(ev => !recent.includes(ev.id));
+        if (unseen.length) pool = unseen;
 
         if (!pool.length) {
             // Should never happen (one meeting per week, weekly usedIDs) -
             // better a fallen-through meeting than a frozen Friday.
-            this.log("Der Besprechungsraum ist doppelt gebucht. Das Meeting fällt aus. Niemand beschwert sich.", "text-purple-400");
+            this.log(t('week.log.meetingCancelled'), 'text-purple-400');
             this.reset();
             return;
         }
@@ -389,8 +408,8 @@ export const week = {
 
         // One slot fewer than the pool holds: the oldest entry always falls
         // out, so the filter can never empty the pool completely.
-        const merken = Math.max(1, (DB.meetings ?? []).length - 1);
-        this.state.archive.seenMeetings = [...gesehen.filter(id => id !== ev.id), ev.id].slice(-merken);
+        const keep = Math.max(1, (DB.meetings ?? []).length - 1);
+        this.state.archive.seenMeetings = [...recent.filter(id => id !== ev.id), ev.id].slice(-keep);
         this.saveSystem();
 
         const galaTonight = !!this.partyInvitation();
@@ -404,7 +423,7 @@ export const week = {
     /** Appends the week note to a fail lead while a week runs. */
     weekFailLead: function(base) {
         return this.state.week.active
-            ? `${base} Die Woche endet am ${this.weekDayName()}.`
+            ? tf('week.endsOn', { base, day: this.weekDayName() })
             : base;
     },
 
@@ -424,17 +443,17 @@ export const week = {
      * and the front belongs to whatever stood out.
      */
     nightLead: function(remaining, report) {
-        const rest = remaining === 1 ? "Nur noch der Freitag."
-                                     : `Noch ${remaining} Tage.`;
+        const rest = remaining === 1 ? t('week.night.lastDay')
+                                     : tf('week.night.remaining', { days: remaining });
 
         // Ceiling: the day ends at ten tickets, and a quarter of nine is
         // three - anything above that can never occur.
-        if (report.ticketsAfter >= 3)  return `Drei Tickets nimmst du mit ins Bett. ${rest}`;
-        if (report.ticketsAfter === 0) return `Keine offenen Tickets. Das gab es lange nicht. ${rest}`;
-        if (report.alAfter >= 55)      return `Der Puls ist immer noch oben. ${rest}`;
-        if (report.crAfter >= 55)      return `Der Chef hat sich deinen Namen notiert. ${rest}`;
-        if (report.fl >= 60)           return `Du hast heute wenig bewegt und viel überstanden. ${rest}`;
-        return `16:30 Uhr. ${rest}`;
+        if (report.ticketsAfter >= 3)  return tf('week.night.tickets', { rest });
+        if (report.ticketsAfter === 0) return tf('week.night.clean', { rest });
+        if (report.alAfter >= 55)      return tf('week.night.aggro', { rest });
+        if (report.crAfter >= 55)      return tf('week.night.radar', { rest });
+        if (report.fl >= 60)           return tf('week.night.lazy', { rest });
+        return tf('week.night.plain', { rest });
     },
 
     queueNightEnd: function() {
@@ -463,8 +482,8 @@ export const week = {
         // that down to zero as long as a stage holds more than one line.
         let sleepLines = sleepPool?.[sleepStage] ?? [];
         if (sleepLines.length > 1 && this._lastSleepText) {
-            const frisch = sleepLines.filter(z => z !== this._lastSleepText);
-            if (frisch.length) sleepLines = frisch;
+            const unheard = sleepLines.filter(line => line !== this._lastSleepText);
+            if (unheard.length) sleepLines = unheard;
         }
         preview.report.sleepText = sleepLines.length
             ? sleepLines[Math.floor(Math.random() * sleepLines.length)]
@@ -473,11 +492,11 @@ export const week = {
 
         s.pendingEnd = {
             isNight: true,
-            title: `${this.weekDayName().toUpperCase()} GESCHAFFT`,
+            title: tf('week.night.title', { day: this.weekDayName().toUpperCase() }),
             lead: this.nightLead(remaining, preview.report),
             diary: this.generateDiaryEntry('WIN'),
             night: preview.report,
-            nextDay: WEEK_DAY_NAMES[s.week.dayIndex],
+            nextDay: dayName(s.week.dayIndex),
         };
     },
 
@@ -510,14 +529,12 @@ export const week = {
         this.updateUI();
         // Five mornings a week, and it used to be the same sentence every
         // time. The weekday itself carries meaning, so the line varies with it.
-        const MORGEN = {
-            2: 'Dienstag. Der Montag hat sich nicht von selbst erledigt.',
-            3: 'Mittwoch. Bergfest, sagen Leute, die nicht in der IT arbeiten.',
-            4: 'Donnerstag. Der Freitag ist in Sichtweite und das macht es nicht besser.',
-            5: 'Freitag. Einmal noch.',
-        };
-        this.log(MORGEN[this.state.week.dayIndex] ?? `${this.weekDayName()}. Neuer Tag, alter Backlog.`,
-                 'text-purple-400');
+        // i18n-uses: week.morning.2, week.morning.3, week.morning.4, week.morning.5
+        const dayIndex = this.state.week.dayIndex;
+        const morning = dayIndex >= 2 && dayIndex <= 5
+            ? t(`week.morning.${dayIndex}`)
+            : tf('week.morning.other', { day: this.weekDayName() });
+        this.log(morning, 'text-purple-400');
 
         this.playBootSequence(() => { this.reset(); });
     },
@@ -575,12 +592,12 @@ export const week = {
             // achievement: earning one on Urlaubsreif upgrades the badge.
             // Nothing here may be locked to a single level - that would give
             // the badge a grade it can never improve on.
-            this.unlockAchievement('ach_week', '🗓️ Wochenendlich', 'Fünf Tage am Stück überstanden. Das Wochenende ist diesmal verdient.');
+            this.unlockAchievement('ach_week');
             if (!this.state.rageWarningReceived && !this.state.chefWarningReceived) {
-                this.unlockAchievement('ach_week_iron', '🧊 Eisern', 'Fünf Tage ohne Ventil und ohne Abmahnung. Die Personalabteilung ist beunruhigt.');
+                this.unlockAchievement('ach_week_iron');
             }
             if (this.state.tickets === 0) {
-                this.unlockAchievement('ach_week_clean', '🧹 Blanker Freitag', 'Freitagabend, Warteschlange leer. Montag beginnt zum ersten Mal bei null.');
+                this.unlockAchievement('ach_week_clean');
             }
         } else {
             bump(outcome === 'rage' ? 'weeksRageQuit' : 'weeksFired');
@@ -606,33 +623,40 @@ export const week = {
      * Each day closes with the values it handed to the next morning, not with
      * its peak - the peak was a number without consequences, while these three
      * are exactly what the night worked on and what the following day started
-     * from. Abbreviated F/A/C to keep the row on one line; the header carries
-     * the legend once.
+     * from. Abbreviated to keep the row on one line; the header carries the
+     * legend once. The initials belong to the DICTIONARY, not to this code:
+     * German shortens Faulheit/Aggro/Chef to F/A/C, English
+     * Laziness/Aggro/Boss to L/A/B (GLOSSAR §3a). They were hard-wired here as
+     * F/A/C until the twentieth session, so an English week showed a legend
+     * reading "L Laziness · A Aggro · B Boss" above rows labelled F/A/C - the
+     * one place where the letters have to agree, and the only one where they
+     * did not.
      */
     buildWeekBalanceHTML: function(end) {
         const s = this.state, w = s.week;
         const line = (icon, name, right) =>
             `<div class="flex justify-between gap-4"><span>${icon} ${name}</span><span class="text-slate-400">${right}</span></div>`;
-        const values = (tickets, fl, al, cr) =>
-            `${tickets} Tickets · F ${Math.round(fl)} · A ${Math.round(al)} · C ${Math.round(cr)}`;
+        const values = (tickets, fl, al, cr) => tf('week.summary.values', {
+            tickets, fl: Math.round(fl), al: Math.round(al), cr: Math.round(cr)
+        });
 
-        const rows = w.weekLog.map(d => line('✓', WEEK_DAY_NAMES[d.dayIndex - 1],
-            values(d.endTickets, d.endFl ?? 0, d.endAl ?? 0, d.endCr ?? 0)));
+        const rows = w.weekLog.map(d => line('✓', dayName(d.dayIndex - 1),
+            values(d.endTickets, d.endL ?? 0, d.endA ?? 0, d.endB ?? 0)));
 
         rows.push(end.isWin
-            ? line('✓', WEEK_DAY_NAMES[w.dayIndex - 1], values(s.tickets, s.fl, s.al, s.cr))
-            : line('✗', WEEK_DAY_NAMES[w.dayIndex - 1], end.title));
+            ? line('✓', dayName(w.dayIndex - 1), values(s.tickets, s.fl, s.al, s.cr))
+            : line('✗', dayName(w.dayIndex - 1), end.title));
 
         const coffee = w.weekLog.reduce((n, d) => n + (d.coffee || 0), 0) + s.coffeeConsumed;
         const mails  = w.weekLog.reduce((n, d) => n + (d.mailsIgnored || 0), 0) + s.emailsIgnored;
 
         return `<div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1">` +
             `<div class="flex justify-between items-baseline gap-4 mb-2">` +
-                `<span class="text-[10px] uppercase tracking-widest text-purple-400">Wochen-Bilanz · ${WEEK_DIFFS[w.level].name}</span>` +
-                `<span class="text-[9px] text-slate-600">F Faulheit · A Aggro · C Chef</span>` +
+                `<span class="text-[10px] uppercase tracking-widest text-purple-400">${tf('week.summary.title', { mode: t(`week.diff.${WEEK_DIFFS[w.level].key}`) })}</span>` +
+                `<span class="text-[9px] text-slate-600">${t('week.summary.legend')}</span>` +
             `</div>` +
             rows.join('') +
-            `<div class="pt-2 mt-2 border-t border-slate-800 text-slate-400">☕ ${coffee}× Kaffee · 📧 ${mails} Mails ignoriert</div>` +
+            `<div class="pt-2 mt-2 border-t border-slate-800 text-slate-400">${tf('week.summary.totals', { coffee, mails })}</div>` +
             `</div>`;
     },
 
@@ -643,7 +667,9 @@ export const week = {
         const p = this.loadWeek();
         if (!p) { this.reset(); return; }
 
-        this.state.week = { ...p.week, weekLog: [...(p.week.weekLog ?? [])] };
+        // migrateWeekLog for the same reason applyRestoredDay migrates the
+        // curve: a week row from 5.0 spells its three values differently.
+        this.state.week = { ...p.week, weekLog: this.migrateWeekLog([...(p.week.weekLog ?? [])]) };
         this.applyRestoredDay(p.day);
         if (p.reputation) {
             for (const [name, val] of Object.entries(p.reputation)) this.state.reputation[name] = val;
@@ -664,7 +690,7 @@ export const week = {
         }
 
         this.setTerminalIdle();
-        this.log(`Sitzung wiederhergestellt. ${this.weekDayName()}, die Woche läuft weiter...`, "text-purple-400");
+        this.log(tf('week.log.resumed', { day: this.weekDayName() }), 'text-purple-400');
     },
 
     /**
@@ -691,7 +717,7 @@ export const week = {
 
         this.endWeek();                       // week off, saved slot dropped
         if (!level) {                         // should not happen, but never strand the player
-            this.log("Kein Wochenlauf gefunden. Zurück in den Tagesmodus.", "text-orange-400");
+            this.log(t('week.log.noRun'), 'text-orange-400');
             this.softReset();
             return;
         }
@@ -699,11 +725,11 @@ export const week = {
         Object.assign(this.state, freshDay(this.state.difficultyMult));
         this.state.repAtStart = { ...this.state.reputation };
         this.state.blindRun = this.state.blindStats && this.state.blindTickets;
-        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
 
         this.startWeek(level);                // Monday again, with its starting condition
         this.renderHeader();
-        this.log("Zurück auf Montag. Neue Woche, gleiche Firma.", "text-purple-400");
+        this.log(t('week.log.restart'), 'text-purple-400');
         this.updateUI();
 
         this.playBootSequence(() => { this.reset(); });
@@ -735,7 +761,7 @@ export const week = {
             this.syncRun();
         } catch (e) {
             // Storage full or private mode: the week carries on unsaved.
-            console.warn('Woche konnte nicht gesichert werden:', e);
+            console.warn('The week could not be saved:', e);
         }
     },
 

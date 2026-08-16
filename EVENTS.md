@@ -33,21 +33,21 @@ Der Grundtyp, wie er in Kaffee, Serverraum, Dienstgang und Anruf steht:
             t: "Ihr erklären, was der Automat gerade tut",   // Pflicht: der Button-Text
             next: "path_spinat_erklaert",        // optional: setzt ein Story-Flag für Folge-Ereignisse
             rep: { "Chantal": 5, "Kevin": -2 },  // optional: Ruf bei Kollegen
-            m: 5, f: 0, a: 0, c: 0,              // Hausstil: immer alle vier, auch als 0
-                                                 // (Ausnahme Firmenfeier: nur f und a, siehe 9)
+            m: 5, l: 0, a: 0, b: 0,              // Hausstil: immer alle vier, auch als 0
+                                                 // (Ausnahme Firmenfeier: nur l und a, siehe 9)
             r: "Zwei Minuten Erklärung, danach nickt sie zufrieden und drückt trotzdem den falschen Knopf. Immerhin weiß sie jetzt, welchen."   // Pflicht: das Ergebnis
         },
         {
             t: "Ihr den Donut aus dem Rucksack anbieten",
             rem: "donut",                        // optional: verbraucht den Gegenstand
             rep: { "Chantal": 10 },
-            m: 5, f: 5, a: -5, c: 0,
+            m: 5, l: 5, a: -5, b: 0,
             r: "Sie isst ihn ohne Nachfrage und ohne Danke. Der Automat ist vergessen, das Problem gelöst, der Donut weg."
         },
         {
             t: "'Kein Kommentar.'",
             loot: "energy",
-            m: 2, f: 0, a: 5, c: 0,
+            m: 2, l: 0, a: 5, b: 0,
             r: "Du nimmst dir aus dem Kühlschrank, was du brauchst, und gehst. Hinter dir piept der Automat weiter, jetzt mit Publikum."
         }
     ]
@@ -58,9 +58,9 @@ Der Grundtyp, wie er in Kaffee, Serverraum, Dienstgang und Anruf steht:
 Wer sich daran hält, sorgt dafür, dass jede Datei sich gleich liest:
 
 - am Ereignis: `id` → `char` → `kind` → `title` → `reqRep` → `reqStory` → `text` → `opts`
-- in der Auswahl: `t` → `req`/`rem`/`loot` → `next` → `rep` → `m, f, a, c` → `r`
+- in der Auswahl: `t` → `req`/`rem`/`loot` → `next` → `rep` → `m, l, a, b` → `r`
 
-`m, f, a, c` stehen zusammen auf einer Zeile, und zwar **alle vier**, auch wenn drei
+`m, l, a, b` stehen zusammen auf einer Zeile, und zwar **alle vier**, auch wenn drei
 davon 0 sind. Ohne die Nullen sieht man beim Überfliegen nicht, ob eine Wirkung fehlt
 oder bewusst ausbleibt.
 
@@ -97,15 +97,20 @@ sondern ein Fehler.
 | `t` | Pflicht: die Beschriftung des Knopfes — in jedem Bereich gleich, auch im Postfach. |
 | `r` | Pflicht: der Ergebnistext. Er steht danach auch im Protokoll. |
 | `m` | Kostet Minuten Spielzeit. Der Arbeitstag ist begrenzt, das ist die eigentliche Währung. |
-| `f` | Faulheit (positiv = fauler). Wirkt 1:1. |
+| `l` | Faulheit (positiv = fauler). Wirkt 1:1. |
 | `a` | Aggro. Positive Werte werden mit dem Schwierigkeitsgrad hochgerechnet, negative wirken 1:1. |
-| `c` | Chef-Radar. Positive Werte steigen mit Schwierigkeitsgrad **und** Faulheit — wer faul ist, fällt schneller auf. Negative wirken 1:1. |
+| `b` | Chef-Radar. Positive Werte steigen mit Schwierigkeitsgrad **und** Faulheit — wer faul ist, fällt schneller auf. Negative wirken 1:1. |
 | `rep` | Ruf bei Kollegen: `rep: { "Chantal": -10, "Kevin": 5 }`. Namen exakt wie in `data_chars.js`. |
 | `loot` | Gibt einen Gegenstand (ID aus `data_items.js`). |
 | `req` | Setzt einen Gegenstand voraus. Die Auswahl bleibt **sichtbar**, ist aber gesperrt und meldet "Fehlt: LAN-Kabel". Der Gegenstand bleibt erhalten. |
 | `rem` | Verbraucht den Gegenstand. Solange die Auswahl wählbar ist, steht das als "−Panzertape" auf dem Knopf. |
 | `next` | Im Grundtyp: setzt ein Story-Flag (Abschnitt 3). In einer Kette: das Ziel im Gespräch (Abschnitt 4). |
 | `ignoreEmail`, `nextEmail` | nur in Mails, siehe Abschnitt 10. |
+
+Die vier Wirkungsbuchstaben sind Abkürzungen englischer Wörter — `m` minutes,
+`l` laziness, `a` aggro, `b` boss —, ihre Namen im Spiel bleiben Faulheit,
+Aggro und Chef-Radar. Bis 5.0 hießen sie `f` und `c`; ältere Notizen meinen
+dieselben Felder.
 
 Eine Sonderregel bei Gegenständen: Die Quest-Trophäen (`kevin_ram`, `golden_stapler`,
 `mixtape`, `cat_pic`, `master_key`, `scotch_bottle`, `contract`, `corp_chronicles`,
@@ -122,7 +127,7 @@ Jede Entscheidung soll etwas kosten.
 
 - **`m` ist mindestens 2.** Keine Handlung dauert unter zwei Minuten, und die Uhr läuft
   nie rückwärts. Alles darunter ist ein Fehler.
-- **`f`, `a` und `c` liegen im 5er-Raster.** Die Balken bewegen sich in Fünferschritten;
+- **`l`, `a` und `b` liegen im 5er-Raster.** Die Balken bewegen sich in Fünferschritten;
   eine 3 sieht der Spieler nicht. `rep` darf feiner sein — ±2 und ±3 sind dort üblich.
 - **Teure Zeit braucht eine Folge.** Ab `m: 15` will der Prüfer eine Gesamtwirkung von
   mindestens 10 sehen (oder `loot` bzw. `rep`), sonst ist die Auswahl ein Vorspulknopf
@@ -214,12 +219,12 @@ dann erscheinen.
         {
             t: "Es natürlich ziehen",
             next: "path_kabel_gezogen",
-            m: 2, f: 0, a: 0, c: 0,
+            m: 2, l: 0, a: 0, b: 0,
             r: "Nichts passiert. Kein Alarm, kein Piepen, keine Konsequenz. Du legst das Kabel zurück und fühlst dich seltsam betrogen."
         },
         {
             t: "Die Beschriftung respektieren",
-            m: 2, f: 5, a: 0, c: 0,
+            m: 2, l: 5, a: 0, b: 0,
             r: "Manche Rätsel vererbt man einfach an den nächsten Admin. Der wird auch nicht ziehen, und so geht das seit 1998."
         }
     ]
@@ -235,12 +240,12 @@ dann erscheinen.
         {
             t: "Das Kabel leise wieder einstecken",
             rep: { "Gabi": 5 },
-            m: 5, f: 0, a: 0, c: 0,
+            m: 5, l: 0, a: 0, b: 0,
             r: "Die Klingel verstummt. Gabi bedankt sich für die schnelle Diagnose. Niemand muss je erfahren, wie schnell sie wirklich war."
         },
         {
             t: "'Das ist ein bekanntes Verhalten der Anlage.'",
-            m: 5, f: 10, a: 0, c: 5,
+            m: 5, l: 10, a: 0, b: 5,
             r: "Gabi glaubt dir kein Wort, trägt es aber genau so ins Ticket ein. Die Formulierung wird die Firma überleben."
         }
     ]
@@ -438,18 +443,18 @@ machen lassen.
         res_kevin: {
             txt: "Kevin macht sich auf den Weg. Er kommt vierzig Minuten später zurück, sehr stolz, mit einem Kabel in der Hand, das dort vorher nicht war.",
             rep: { "Kevin": 5, "Frau Elster": -5 },
-            m: 10, f: 10, a: 5, c: 0
+            m: 10, l: 10, a: 5, b: 0
         },
         res_gnaedig: {
             txt: "Sie bedankt sich knapp und beendet das Gespräch. Irgendwann im nächsten Monat taucht ein Beleg wieder auf, den du längst abgeschrieben hattest. Zufälle gibt es.",
             rep: { "Frau Elster": 10 },
-            m: 5, f: 0, a: 0, c: 0,
+            m: 5, l: 0, a: 0, b: 0,
             next: "path_elster_gutschein"        // Story-Flag für ein Folgeereignis
         },
         res_statistik: {
             txt: "Am Telefon herrscht Stille von der Sorte, die man in der Buchhaltung ein Jahr lang aufbewahrt. Dann ein sehr höfliches 'Danke, Herr Müller.'",
             rep: { "Frau Elster": -10 },
-            m: 5, f: 0, a: 5, c: 0
+            m: 5, l: 0, a: 5, b: 0
         }
     }
 }
@@ -509,18 +514,18 @@ Das Porträt kommt auch hier aus `char`, wird im Chat aber pro Nachricht aufgel�
     results: {
         res_stumm: {
             txt: "Die Gruppe plant ohne dich weiter. Bis Feierabend sind es 112 Nachrichten, und irgendwo darin steht, wer die Deko macht. Du wirst es morgen erfahren.",
-            m: 2, f: 5, a: 0, c: 0
+            m: 2, l: 5, a: 0, b: 0
         },
         res_zugesagt: {
             txt: "Du hast dich soeben schriftlich zu Wimpelketten verpflichtet. Der Schreibwarenladen um die Ecke hat noch genau eine, und sie ist rosa.",
             rep: { "Kevin": 5 },
-            m: 5, f: 0, a: 5, c: 0,
+            m: 5, l: 0, a: 5, b: 0,
             next: "path_deko_zugesagt"
         },
         res_ignoriert: {
             txt: "Du legst das Handy weg. Es vibriert weiter, jetzt einzeln, jetzt privat. Kevin hat gesehen, dass du online warst.",
             rep: { "Kevin": -5 },
-            m: 2, f: 5, a: 5, c: 0
+            m: 2, l: 5, a: 5, b: 0
         }
     }
 }
@@ -551,12 +556,12 @@ und Feindschafts-Stränge zur selben Figur:
             t: "'Ehrenmann.'",
             loot: "energy",
             rep: { "Kevin": 5 },
-            m: 2, f: 0, a: -5, c: 0,
+            m: 2, l: 0, a: -5, b: 0,
             r: "Kevin nickt ernst und dreht sich wieder weg. Mehr Worte braucht diese Sache nicht, und beide wissen das."
         },
         {
             t: "Ihm erklären, dass du das Zeug nicht mehr trinkst",
-            m: 5, f: 0, a: 0, c: 0,
+            m: 5, l: 0, a: 0, b: 0,
             r: "Er trinkt ihn selbst. In einem Zug. Du bist gleichzeitig beeindruckt und besorgt, und beides zu Recht."
         }
     ]
@@ -571,14 +576,14 @@ und Feindschafts-Stränge zur selben Figur:
     opts: [
         {
             t: "Das Post-it kommentarlos entfernen",
-            m: 2, f: 0, a: 5, c: 0,
+            m: 2, l: 0, a: 5, b: 0,
             r: "Du wirfst es weg und sagst nichts. Krieg braucht keine Worte, nur Ausdauer, und davon hast du beruflich reichlich."
         },
         {
             t: "Seine Tastatur auf ein anderes Layout umstellen",
             next: "path_kevin_krieg_2",
             rep: { "Kevin": -5 },
-            m: 5, f: -5, a: -5, c: 0,
+            m: 5, l: -5, a: -5, b: 0,
             r: "Ab jetzt tippt er Fragezeichen, wo Bindestriche hingehören. Er wird eine halbe Stunde brauchen, um es zu merken, und den ganzen Tag, um es zu beheben."
         }
     ]
@@ -626,18 +631,18 @@ Der Notfall mit Countdown. Zwei Pflichtfelder mehr:
         {
             t: "Die Tür aufkeilen und zwei Standventilatoren holen",
             req: "cable",
-            m: 10, f: -5, a: 10, c: -10,
+            m: 10, l: -5, a: 10, b: -10,
             r: "Provisorisch, laut und gegen jede Vorschrift — aber die Temperatur fällt. Der Raum steht offen, und die Sicherheitsabteilung wird das erfahren."
         },
         {
             t: "Die halbe Serverlandschaft geordnet herunterfahren",
-            m: 15, f: -10, a: 15, c: 20,
+            m: 15, l: -10, a: 15, b: 20,
             r: "Du fährst herunter, was nicht lebensnotwendig ist. Die Hardware überlebt, der Vertrieb nicht: Drei Präsentationen enden mitten im Satz."
         }
     ],
     fail: {
         rep: { "Dr. Wichtig": -20 },
-        m: 30, f: 0, a: 40, c: 50,
+        m: 30, l: 0, a: 40, b: 50,
         r: "Bei 47 Grad schalten sich die Server selbst ab, einer nach dem anderen, in der Reihenfolge ihrer Wichtigkeit. Der Rest des Tages besteht aus Telefonaten."
     }
 }
@@ -645,7 +650,7 @@ Der Notfall mit Countdown. Zwei Pflichtfelder mehr:
 
 Regel für die Balance: **Nichtstun muss die schlechteste Wahl sein.** `fail` fährt
 schlechter als die schlechteste aktive Entscheidung — sonst ist Warten eine Strategie.
-Gemessener Rahmen über alle 38: Auswahlen kosten −30 bis +60 auf `a`+`c`, `fail`
+Gemessener Rahmen über alle 38: Auswahlen kosten −30 bis +60 auf `a`+`b`, `fail`
 zwischen 50 und 150. In allen 38 ist `fail` teurer als jede Auswahl; das lässt sich mit
 einem Dreizeiler nachrechnen und gehört nach jeder neuen Welle geprüft.
 
@@ -693,16 +698,16 @@ alle drei folgen daraus, dass Feierabend ist:
   Fortschritt berechnet: zwölf Stationen zu je einer halben Stunde tragen von 17:00 bis
   23:00. Jede Station kostet dasselbe, egal was man tut.
 - **Kein Chef-Radar.** Nach Feierabend beobachtet niemand mehr, wie viel du arbeitest.
-  Benutzt werden nur `f` und `a` — Faulheit und Aggro, weil beide auch privat
+  Benutzt werden nur `l` und `a` — Faulheit und Aggro, weil beide auch privat
   weiterlaufen.
 - **Kein Ende.** `checkEndConditions()` steigt im Partymodus sofort aus: Man kann auf
   der Feier weder ausrasten noch gefeuert werden. Der Abend endet ausschließlich über
   eines der `party_finale_*`-Ereignisse.
 
-`m` und `c` meldet der Linter als Fehler — die Engine würde beide verarbeiten, wirkungslos,
+`m` und `b` meldet der Linter als Fehler — die Engine würde beide verarbeiten, wirkungslos,
 und ein Wert, der still nichts tut, ist schlimmer als einer, der laut scheitert. `rep`,
 `loot`, `req` und `rem` bleiben erlaubt, kommen aber in keiner der 137 bestehenden
-Auswahlen vor. Der Normalfall ist: `f`, `a` und `next`. Nach genug Stationen löst
+Auswahlen vor. Der Normalfall ist: `l`, `a` und `next`. Nach genug Stationen löst
 der Abend eines der Finale aus; die `party_finale_*`-Ereignisse sind fest verdrahtet und
 brauchen keine Beiträge.
 
@@ -716,13 +721,13 @@ brauchen keine Beiträge.
         {
             t: "Sich setzen und zuhören",
             next: "party_hub",
-            f: 10, a: 10,
+            l: 10, a: 10,
             r: "Eine halbe Stunde später kennst du drei Schlagworte mehr und einen Menschen weniger, dem du freiwillig zuhörst."
         },
         {
             t: "'Ich hole nur schnell etwas zu trinken.'",
             next: "party_hub",
-            f: 0, a: -5,
+            l: 0, a: -5,
             r: "Der älteste Trick des Abends. Er funktioniert, weil er immer funktioniert, und weil das Sofa schon den Nächsten hat."
         }
     ]
@@ -763,13 +768,13 @@ Mail als ignoriert.
     opts: [
         {
             t: "'Ziehen Sie die Gebühr doch einfach vom Gewinn ab.'",
-            m: 2, f: 0, a: 0, c: 0,
+            m: 2, l: 0, a: 0, b: 0,
             r: "Antwort verschickt, Verhandlung eröffnet.",
             nextEmail: "mail_gewinnspiel_2"
         },
         {
             t: "Löschen & Ignorieren",
-            m: 2, f: 0, a: 0, c: 0,
+            m: 2, l: 0, a: 0, b: 0,
             r: "Zwei Millionen ärmer, eine Illusion reicher.",
             ignoreEmail: true
         }
@@ -784,12 +789,12 @@ Mail als ignoriert.
     opts: [
         {
             t: "'19,99 und wir sind im Geschäft.'",
-            m: 3, f: 0, a: -5, c: 0,
+            m: 3, l: 0, a: -5, b: 0,
             r: "Du feilschst mit Betrügern. Und du liegst vorn."
         },
         {
             t: "Löschen & Ignorieren",
-            m: 2, f: 0, a: 0, c: 0,
+            m: 2, l: 0, a: 0, b: 0,
             r: "Der Spuk ist vorbei.",
             ignoreEmail: true
         }

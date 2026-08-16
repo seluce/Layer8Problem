@@ -1,4 +1,5 @@
 import { KEYS, PROGRESS_KEYS } from './keys.js';
+import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 import { WEEK_DIFFS } from './engine_week.js';
@@ -256,10 +257,17 @@ export const ui = {
 
     // Shows the outcome of a chosen option.
     // `action` names the engine method the button calls - a name, not code.
-    setTerminalResult: function(text, m, f, a, c, action, buttonText, buttonColor) {
+    //
+    // `buttonKey` is a dictionary key, not a caption. It used to be the
+    // finished word, which meant the one line on this screen that COULD follow
+    // a language switch did not: components/ResultView.svelte now translates it
+    // on render, so it changes with everything else. The prose above it cannot
+    // follow - it is the outcome of an option already chosen - and that is the
+    // documented split, not an oversight.
+    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
-            result: { text, m, f, a, c, action, buttonText, buttonColor }
+            result: { text, m, l, a, b, action, buttonKey, buttonColor }
         });
     },
 
@@ -418,9 +426,15 @@ export const ui = {
         return this.STARTUP_OVERLAYS.some(id => this.isOverlayOpen(id));
     },
 
-    showModal: function(title, text, isEnd) {
+    /**
+     * `tone` names the colour of the box. Only the aggro valve wants one; the
+     * written warning and the ticket jam keep the default red. It is passed
+     * rather than read off the title, because the title is a dictionary entry
+     * and says 'BLOW-OFF' in the other language.
+     */
+    showModal: function(title, text, isEnd, tone = null) {
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
-                             lead: '', cause: null, diary: null };
+                             lead: '', cause: null, diary: null, tone };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
     },
@@ -446,7 +460,14 @@ export const ui = {
             lead: end.lead ?? '',
             cause: end.cause ?? null,
             diary: end.diary ?? null,
-            isEnd: true
+            isEnd: true,
+            // Both of these travel on the end object and both used to be
+            // dropped here. isWeek decides whether the tally counts days or
+            // weeks - without it a survived week was headed "Arbeitstag Nr.".
+            // isWin picks the colour of the screen, which the component used
+            // to guess by looking for German words in the title.
+            isWeek: end.isWeek ?? false,
+            isWin: end.isWin ?? false
         };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
@@ -466,7 +487,7 @@ export const ui = {
         if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
             this.state.currentExcuse = DB.excuses?.length
                 ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
-                : "Sorry, mein Router hat einen schlechten Tag.";
+                : t('excuse.fallback');
             this.state.excuseFor = this.state.currentEventId;
         }
 
@@ -498,7 +519,7 @@ export const ui = {
         }
         
         this.closeExcuseModal();
-        this.log("Ausrede erfolgreich! Du bist entkommen.", "text-blue-400 italic");
+        this.log(t('excuse.success'), "text-blue-400 italic");
         
         // Back to idle
         this.state.activeEvent = false;
@@ -627,8 +648,8 @@ export const ui = {
 
         // Days without an incident in the server room. Zero on most days.
         // The personnel file knows nothing about modes - see careerStats().
-        const karriere = engine.careerStats();
-        const streak = karriere.streak;
+        const career = engine.careerStats();
+        const streak = career.streak;
         const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
 
         // Everything drawn fresh on every visit, so a second look at the same
@@ -651,41 +672,45 @@ export const ui = {
                             : src.service.after) };
 
         const dayKey = this.difficultyKey();
-        const today = dayKey === 'easy' ? 'Freitag' : dayKey === 'hard' ? 'Montag' : 'Mittwoch';
+        // An id, not a weekday name: the canteen highlights today by
+        // comparing this against the menu rows, and comparing display text
+        // would simply never match in the English tree - no error, no
+        // highlight, nothing to notice.
+        const today = dayKey === 'easy' ? 'fri' : dayKey === 'hard' ? 'mon' : 'wed';
 
         // Human Capital: Müller's own file.
         const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
         const notes = [];
         const push = (tone, title, text) => notes.push({ tone, title, text });
 
-        if (karriere.warningsChef)
-            push('bad', `Abmahnungen: ${karriere.warningsChef}`,
-                 'Sämtlich mündlich ausgesprochen und nachträglich schriftlich vermerkt. Ein Widerspruch ist nicht eingegangen, da über die Vermerke nicht informiert wurde.');
-        if (karriere.rage)
-            push('bad', `Unentschuldigtes Verlassen des Arbeitsplatzes: ${karriere.rage}`,
-                 'Der Mitarbeiter hat das Gebäude vor Dienstschluss verlassen, ohne sich abzumelden. In allen Fällen war er am Folgetag pünktlich wieder anwesend, was die Personalabteilung als Reue wertet.');
-        if (karriere.ventSaves)
-            push('neutral', `Programm "Achtsamkeit im Kabelkanal": ${karriere.ventSaves} Teilnahmen`,
-                 'Der Mitarbeiter hat wiederholt von der betrieblichen Möglichkeit Gebrauch gemacht, sich vor einer Eskalation kurz zurückzuziehen. Die Maßnahme gilt damit als wirksam und wird nicht ausgebaut.');
-        if (karriere.streakBest >= 3)
-            push('good', `Längste Phase ohne Zwischenfall: ${karriere.streakBest} Arbeitstage`,
-                 'Ein auffällig ruhiger Zeitraum. Die Personalabteilung prüft, ob in dieser Phase eine Unterauslastung vorlag.');
-        if (karriere.survived)
-            push('good', `Regulär beendete Arbeitstage: ${karriere.survived}`,
-                 'Der Mitarbeiter hat das Gebäude an diesen Tagen zur vorgesehenen Zeit verlassen. Eine gesonderte Würdigung ist nicht vorgesehen, da dies dem Vertrag entspricht.');
+        // Condition here, wording in data_intranet.js. Both used to live in
+        // this file, which meant five paragraphs of HR prose sat in the engine.
+        const note = (key, count) => {
+            const n = src.hr.careerNotes?.[key];
+            if (n) push(n.tone, n.title.replace('{count}', count), n.text);
+        };
+        if (career.warningsChef) note('warningsChef', career.warningsChef);
+        if (career.rage)         note('rage', career.rage);
+        if (career.ventSaves)    note('ventSaves', career.ventSaves);
+        if (career.streakBest >= 3) note('streakBest', career.streakBest);
+        if (career.survived)     note('survived', career.survived);
         if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
 
         this.state.intranetData = {
             employee,
             feed,
             incident: { days: streak, note: incident.note },
+            // The fixed frame of the start page. Not reactive, but the
+            // component reads one object rather than two sources.
+            dashboard: { page: src.dashboard.page },
             vision_quote: draw(src.visions),
             status: [...src.status].sort(() => Math.random() - 0.5).slice(0, 3),
             kpi,
 
             chantal: {
                 top: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
-                older: draw(src.chantal.older)
+                older: draw(src.chantal.older),
+                page: src.chantal.page
             },
 
             vision: {
@@ -693,17 +718,20 @@ export const ui = {
                      : (rep['Dr. Wichtig'] ?? 0) >= 20 ? src.vision.good
                      : (rep['Dr. Wichtig'] ?? 0) <= -20 ? src.vision.bad
                      : null,
-                note: done.includes('ach_hacker') ? src.vision.editorNote : null
+                note: done.includes('ach_hacker') ? src.vision.editorNote : null,
+                page: src.vision.page
             },
 
             sales: {
                 extra: (rep['Markus'] ?? 0) >= 20 ? src.sales.good
                      : (rep['Markus'] ?? 0) <= -20 ? src.sales.bad
                      : null,
-                phoenix: flags['path_phoenix_storno'] ? src.sales.phoenix : null
+                phoenix: flags['path_phoenix_storno'] ? src.sales.phoenix : null,
+                page: src.sales.page
             },
 
             kantine: {
+                page: src.kantine.page,
                 today,
                 service,
                 hygiene: draw(src.hygiene),
@@ -713,10 +741,15 @@ export const ui = {
             impressum: {
                 version: src.impressum.baseVersion + (stats.daysStarted ?? 0),
                 note: src.impressum.versionNote,
-                clause: src.impressum.clauses.find(c => (stats.daysRageQuit ?? 0) >= c.minRage) ?? null
+                clause: src.impressum.clauses.find(c => (stats.daysRageQuit ?? 0) >= c.minRage) ?? null,
+                // The static paragraphs, handed through unchanged. They do not
+                // react to anything - they are here because the component reads
+                // one object, not two sources.
+                page: src.impressum.page
             },
 
             hr: {
+                page: src.hr.page,
                 policy: src.hr.policy,
                 support: src.hr.support,
                 probation: Math.min(14, Math.max(1, stats.daysStarted ?? 1)),
@@ -875,54 +908,54 @@ export const ui = {
         // restart plays this sequence BEFORE reset(), so the state still belongs
         // to the day that just ended. Reporting any of it would both be wrong
         // and suggest a carry-over that does not exist.
-        const lage = [];
+        const carryOver = [];
         if (w?.active && day >= 2) {
             // Only from Tuesday on is there anything to carry: Monday's numbers
             // are the starting condition of the chosen level, not a leftover,
             // and a week restart puts the player back exactly there. Calling
             // that an "Übertrag" would report a carry-over that never happened.
             if (this.state.tickets > 0)
-                lage.push(`Übernehme offene Tickets: ${this.state.tickets}... [ÜBERNOMMEN]`);
+                carryOver.push(tf('boot.carry.tickets', { tickets: this.state.tickets }));
             if (this.state.cr >= 30)
-                lage.push(`Chef-Radar aus Vortag: ${this.state.cr}%... [BEOBACHTUNG LÄUFT]`);
+                carryOver.push(tf('boot.carry.radar', { value: this.state.cr }));
             if (this.state.al >= 40)
-                lage.push(`Stimmungsanalyse... [WARNUNG: RESTAGGRESSION ${this.state.al}%]`);
+                carryOver.push(tf('boot.carry.aggro', { value: this.state.al }));
 
             const items = this.state.inventory?.length ?? 0;
             if (items > 0)
-                lage.push(`Rucksack-Inventur: ${items} ${items === 1 ? 'Gegenstand' : 'Gegenstände'}... [OK]`);
+                carryOver.push(tf(items === 1 ? 'boot.carry.itemOne' : 'boot.carry.itemMany', { items }));
             if (day < 5)
-                lage.push(`Resttage bis Freitag: ${5 - day}... [ZUR KENNTNIS GENOMMEN]`);
+                carryOver.push(tf('boot.carry.daysLeft', { days: 5 - day }));
             // Friday's meeting outranks everything else that could be reported.
             if (day === 5)
-                lage.unshift("Kalenderprüfung... [1 TERMIN: WOCHENMEETING]");
+                carryOver.unshift(t('boot.meeting'));
         } else if (w?.active && day === 1) {
             // Monday states the starting condition instead - true both for a
             // fresh week and for a restart over the settings.
             const cfg = WEEK_DIFFS[w.level];
-            if (cfg) lage.push(`Startbedingung: ${cfg.name.toUpperCase()}... [ÜBERNOMMEN]`);
-            lage.push("Fünf Arbeitstage geplant... [ALLES ZÄHLT]");
+            if (cfg) carryOver.push(tf('boot.startCondition', { mode: t(`week.diff.${cfg.key}`).toUpperCase() }));
+            carryOver.push(t('boot.fiveDays'));
         }
 
         // Flavour, drawn fresh each time so no two mornings read alike.
         const flavour = [
-            "Prüfe Kaffeemaschinen-Netzwerk... [WARNUNG: LEER]",
-            `Lade Ausreden-Datenbank (Modul ${12 + Math.floor(Math.random() * 60)})... [OK]`,
-            `Ignoriere wartende User-Anfragen: ${(3200 + Math.floor(Math.random() * 2600)).toLocaleString('de-DE')}... [ERLEDIGT]`,
-            "Verbinde mit Serverraum (Keller)... [OK]",
-            "Suche Drucker im Netzwerk... [4 GEFUNDEN, 1 ERREICHBAR]",
-            "Prüfe Lizenzen... [GÜLTIG BIS: UNKLAR]",
-            "Lade Firmenwerte... [ÜBERSPRUNGEN]",
-            "Synchronisiere Kalender... [KONFLIKTE: 3]",
-            "Teste Backup... [ZULETZT GEPRÜFT: NIE]"
+            t('boot.coffee'),
+            tf('boot.excuseDb', { module: 12 + Math.floor(Math.random() * 60) }),
+            tf('boot.ignoring', { count: (3200 + Math.floor(Math.random() * 2600)).toLocaleString(language()) }),
+            t('boot.serverRoom'),
+            t('boot.printers'),
+            t('boot.licences'),
+            t('boot.values'),
+            t('boot.calendar'),
+            t('boot.backup')
         ];
 
         // From the second morning on, the greeting is dropped: the header with
         // company and copyright is a welcome, not a daily bulletin.
         if (day > 1) {
-            const kopf = [`GlobalCorp OS - ${this.weekDayName?.() ?? 'Neuer Tag'}`];
-            const mitte = lage.length ? lage.slice(0, 2) : [pick(flavour)];
-            return [...kopf, ...mitte, "TicketSystem bereit."];
+            const head = [tf('boot.headDay', { day: this.weekDayName?.() ?? t('boot.newDay') })];
+            const middle = carryOver.length ? carryOver.slice(0, 2) : [pick(flavour)];
+            return [...head, ...middle, t('boot.ready')];
         }
 
         return [
@@ -930,8 +963,8 @@ export const ui = {
             `Copyright (c) 1999-2026 GlobalCorp International Synergy GmbH & Co. KGaA`,
             `----------------------------------------------`,
             ...pickTwo(flavour),
-            ...lage.slice(0, 2),
-            "Initialisiere TicketSystem... Viel Glück."
+            ...carryOver.slice(0, 2),
+            t('boot.init')
         ];
     },
 
@@ -981,7 +1014,10 @@ export const ui = {
             
             // Generate the code
             const code = engine.exportSaveGame();
-            area.value = code || "Fehler beim Erstellen.";
+            // exportSaveGame() returns null when it throws, and the player
+            // reads whatever lands in the textarea - so this one is a label,
+            // not a developer message.
+            area.value = code || t('export.buildFailed');
             msg.style.opacity = '0'; // Reset Message
 
             engine.showOverlay(modal);
@@ -1015,12 +1051,12 @@ export const ui = {
             area.setSelectionRange(0, 99999); 
 
             navigator.clipboard.writeText(area.value).then(() => {
-                msg.innerText = "Code kopiert!";
+                msg.innerText = t('export.copied');
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
                 setTimeout(() => { msg.style.opacity = '0'; }, 2000);
             }).catch(err => {
-                msg.innerText = "Fehler beim Kopieren.";
+                msg.innerText = t('export.copyFailed');
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
             });
@@ -1035,7 +1071,7 @@ export const ui = {
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
-                msg.innerText = "Da steht noch nichts.";
+                msg.innerText = t('export.empty');
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
                 return;
@@ -1056,14 +1092,14 @@ export const ui = {
                     base64 = code.substring(0, lastDash);
                     checksum = code.substring(lastDash + 1);
                 } else {
-                    throw new Error("Format ungültig (Kein Trennzeichen gefunden).");
+                    throw new Error(t('import.badFormat'));
                 }
 
                 // Verify the checksum
                 const calcedSum = engine.calculateChecksum(base64);
                 if (calcedSum !== checksum) {
                     console.error("Checksum Mismatch:", calcedSum, "vs", checksum);
-                    throw new Error("Code beschädigt (Prüfsumme falsch).");
+                    throw new Error(t('import.badChecksum'));
                 }
 
                 // Decoding
@@ -1075,7 +1111,10 @@ export const ui = {
 
                 // Validierung
                 if (!data.arc || !Array.isArray(data.arc.items)) {
-                    throw new Error("Datenstruktur fehlerhaft.");
+                    // Never reaches the player: the catch below logs this and
+                    // shows import.unreadable instead. A console message, so
+                    // it speaks English like its neighbours.
+                    throw new Error("Malformed data structure.");
                 }
 
                 // --- SAFE MERGE ---
@@ -1104,7 +1143,7 @@ export const ui = {
                 engine.clearDay();
                 engine.clearWeek();
 
-                msg.innerText = "Übernommen. Das Spiel startet neu ...";
+                msg.innerText = t('import.accepted');
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
 
@@ -1112,7 +1151,7 @@ export const ui = {
 
             } catch (e) {
                 console.error(e);
-                msg.innerText = "Der Code lässt sich nicht lesen. Vollständig kopiert?";
+                msg.innerText = t('import.unreadable');
                 msg.className = "text-xs text-red-500 font-bold transition-opacity";
                 msg.style.opacity = '1';
             }
@@ -1184,7 +1223,7 @@ export const ui = {
             platform.save(engine.buildCloudPayload());
             
             const textSpan = btn.querySelector('#text-hard-reset');
-            textSpan.innerText = "System wird neu gestartet...";
+            textSpan.innerText = t('settings.hardReset.restarting');
             
             btn.className = "w-full text-left px-4 py-3 bg-red-600 border border-red-500 rounded-lg text-white text-sm font-bold flex justify-center items-center mt-2 shadow-md";
             
@@ -1195,7 +1234,7 @@ export const ui = {
             const textSpan = btn.querySelector('#text-hard-reset');
             const iconSpan = btn.querySelector('#icon-hard-reset');
             
-            textSpan.innerText = "Bist du dir sicher?";
+            textSpan.innerText = t('settings.hardReset.confirm');
             iconSpan.className = "shrink-0"; 
             
             btn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/50 border border-red-500 rounded-lg transition-all flex items-center gap-3 animate-pulse shadow-xs";
@@ -1203,7 +1242,7 @@ export const ui = {
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
                     btn.dataset.armed = "false";
-                    textSpan.innerText = "Spielstand löschen";
+                    textSpan.innerText = t('settings.hardReset.short');
                     iconSpan.className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
                     btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
                 }
@@ -1238,15 +1277,15 @@ export const ui = {
             const title = document.getElementById('text-soft-reset');
             const sub = document.getElementById('sub-soft-reset');
             const inWeek = this.state.week.active;
-            if (title) title.innerText = inWeek ? 'Woche neu starten' : 'Tag neu starten';
-            if (sub) sub.innerText = inWeek ? '(Zurück auf Montag)' : '(08:00 Uhr)';
+            if (title) title.innerText = t(inWeek ? 'settings.softReset.week' : 'settings.softReset.day');
+            if (sub) sub.innerText = t(inWeek ? 'settings.softReset.weekSub' : 'settings.softReset.sub');
         }
         // -------------------------------------------------------------
         
         const resetBtn = document.getElementById('btn-hard-reset');
         if (resetBtn) {
             resetBtn.dataset.armed = "false";
-            document.getElementById('text-hard-reset').innerText = "Spielstand löschen";
+            document.getElementById('text-hard-reset').innerText = t('settings.hardReset.short');
             document.getElementById('icon-hard-reset').className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
             resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
         }
@@ -1258,7 +1297,7 @@ export const ui = {
         if (mainView && settingsView && title) {
             mainView.classList.remove('hidden');
             settingsView.classList.add('hidden');
-            title.innerText = 'Einstellungen';
+            title.innerText = t('settings.title');
         }
 
         this.showOverlay(modal);
@@ -1460,8 +1499,8 @@ export const ui = {
         const shareUrl = platform.shareUrl();
 
         const shareData = {
-            title: 'Layer8Problem - Der SysAdmin Simulator',
-            text: 'Ich versuche gerade als SysAdmin bei GlobalCorp zu überleben. Hilf mir oder mach es besser!',
+            title: t('settings.share.title'),
+            text: t('settings.share.text'),
             url: shareUrl
         };
         
@@ -1472,7 +1511,7 @@ export const ui = {
             navigator.share(shareData).catch(() => { /* The person closed the share dialog - not an error. */ });
         } else {
             navigator.clipboard.writeText(shareUrl).then(() => {
-                textSpan.innerText = "Link erfolgreich kopiert!";
+                textSpan.innerText = t('settings.share.copied');
                 btn.classList.add('bg-green-900/30!', 'border-green-500!', 'text-green-400!');
                 
                 setTimeout(() => {
@@ -1480,7 +1519,7 @@ export const ui = {
                     btn.classList.remove('bg-green-900/30!', 'border-green-500!', 'text-green-400!');
                 }, 3000);
             }).catch(() => {
-                textSpan.innerText = "Kopieren fehlgeschlagen.";
+                textSpan.innerText = t('settings.share.failed');
                 textSpan.classList.add('text-red-400');
                 setTimeout(() => {
                     textSpan.innerText = originalText;
@@ -1604,41 +1643,56 @@ export const ui = {
             };
 
             // --- READ INPUTS ---
+            // The category is an identifier, not prose: index.html carries the
+            // German words as option VALUES, and data-i18n only ever replaces
+            // an element's text - so this field reaches the ticket in German
+            // whichever language is being played. The fallback belongs to that
+            // same family and stays with it, GLOSSAR 1.
             const catVal = document.getElementById('report-category')?.value || "Unbekannt";
             const descVal = document.getElementById('report-desc')?.value || "";
 
             // Catch an empty description (optional, but worth it)
             if (descVal.trim() === "") {
-                alert("Bitte gib eine kurze Beschreibung ein.");
+                alert(t('report.needDescription'));
                 return;
             }
 
             // --- STATE DATA ---
-            const s = this.state || {}; 
+            //
+            // Everything from here to the end of logData is the diagnostic
+            // block. It travels in the ticket and is read by the maintainer,
+            // never shown on screen - so it stays in ONE language rather than
+            // following the player's. English, because it is a log: GLOSSAR 2a
+            // puts machine output in English, and it keeps every ticket
+            // greppable no matter who filed it. Nothing here goes through t().
+            const s = this.state || {};
             const min = s.time || 480;
             const hh = Math.floor(min / 60).toString().padStart(2, '0');
             const mm = (min % 60).toString().padStart(2, '0');
-            const prettyTime = `${hh}:${mm} Uhr`;
+            const prettyTime = `${hh}:${mm}`;
             // inventory holds objects, not ids - joining it straight produced
             // a list of [object Object] in every report so far.
-            const invList = s.inventory?.length ? s.inventory.map(i => i.id).join(", ") : "(leer)";
+            const invList = s.inventory?.length ? s.inventory.map(i => i.id).join(", ") : "(empty)";
             // There is no state.difficulty - the value is difficultyMult, so
-            // every report claimed "Normal" regardless of the day chosen.
-            const diff = s.difficultyMult < 1.0 ? "Freitag (Leicht)"
-                       : s.difficultyMult > 1.0 ? "Montag (Schwer)"
-                       : "Mittwoch (Normal)";
+            // every report claimed "Normal" regardless of the day chosen. The
+            // identifier, not the label: engine_core reads the same three
+            // words off partyInvitation(), and a translated name here would
+            // make the ticket depend on the reporter's language.
+            const diff = s.difficultyMult < 1.0 ? "easy"
+                       : s.difficultyMult > 1.0 ? "hard"
+                       : "normal";
 
             // --- FIND THE LAST EVENT ---
-            let lastEventID = "Keine Daten";
-            if (s.activeEvent?.id) lastEventID = s.activeEvent.id + " (Aktiv)";
-            else if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (Phone)";
+            let lastEventID = "no data";
+            if (s.activeEvent?.id) lastEventID = s.activeEvent.id + " (active)";
+            else if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (phone)";
             else if (s.storyFlags && Object.keys(s.storyFlags).length > 0) {
                 const flags = Object.keys(s.storyFlags);
-                lastEventID = flags[flags.length - 1] + " (Letztes Flag)";
+                lastEventID = flags[flags.length - 1] + " (last flag)";
             }
 
             // --- LOG FEED (last 600 characters) ---
-            let logText = "(Log leer)";
+            let logText = "(log empty)";
 
             if (this.state.logEntries.length > 0) {
                 let rawText = [...this.state.logEntries].reverse()
@@ -1651,11 +1705,11 @@ export const ui = {
             const logData = 
 `=== STATUS ===
 📍 Event:     ${lastEventID}
-🕒 Zeit:      ${prettyTime}
+🕒 Time:      ${prettyTime}
 💀 Diff:      ${diff}
 📊 Stats:     F ${s.fl || 0}% | A ${s.al || 0}% | C ${s.cr || 0}%
 🎒 Inv:       ${invList}
---- LOG FEED (NEUESTE EINTRÄGE) ---
+--- LOG FEED (LATEST ENTRIES) ---
 ${logText}
 =====================`;
 
@@ -1664,7 +1718,7 @@ ${logText}
             let originalText = "";
             if (sendBtn) {
                 originalText = sendBtn.innerHTML;
-                sendBtn.innerHTML = "<span>⏳</span> Sende...";
+                sendBtn.innerHTML = `<span>⏳</span> ${t('report.sending')}`;
                 sendBtn.disabled = true;
                 sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
@@ -1686,7 +1740,7 @@ ${logText}
             }).then(() => {
                 // UI Erfolgsmeldung
                 if (sendBtn) {
-                    sendBtn.innerHTML = "<span>✅</span> Gesendet!";
+                    sendBtn.innerHTML = `<span>✅</span> ${t('report.sent')}`;
                     sendBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
                     sendBtn.classList.add('bg-green-600!');
                 }
@@ -1708,7 +1762,7 @@ ${logText}
 
             }).catch((err) => {
                 console.error("Fetch Error:", err);
-                alert("Fehler beim Senden. Bitte prüfe deine Internetverbindung.");
+                alert(t('report.sendFailed'));
                 if (sendBtn) {
                     sendBtn.innerHTML = originalText;
                     sendBtn.disabled = false;
@@ -1718,7 +1772,7 @@ ${logText}
 
         } catch (e) {
             console.error("Report Error:", e);
-            alert("Ein unerwarteter Fehler ist aufgetreten.");
+            alert(t('report.unexpectedError'));
         }
     },
 

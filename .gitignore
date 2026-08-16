@@ -2,3 +2,16 @@ node_modules/
 dist/
 release/
 .vite/
+
+# Interne Arbeitsdateien — nicht ins Repository
+CLAUDE.md
+GLOSSAR.md
+UEBERGABE.md
+UEBERSETZUNG.md
+EVENT-DOKTRIN.md
+UMZUG.md
+
+# Claude Code — lokale Einstellungen und Temporärdateien
+.claude/settings.local.json
+.claude/settings.local.json.tmp.*
+.claude/launch.json

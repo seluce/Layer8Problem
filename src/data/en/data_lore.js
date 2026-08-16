@@ -1,0 +1,91 @@
+// i18n-status: translated
+/**
+ * The GlobalCorp chronicle.
+ *
+ * Two things that used to live in two other places. The five printed chapters
+ * were component data in LoreView.svelte; the lines Müller can add at the back
+ * were built as sentences inside engine_core.composeChronicleLine(). Both are
+ * prose, and prose belongs here.
+ *
+ * --- WHY THE LINES HAVE IDS ---
+ *
+ * What the archive stores is the id and the numbers that went into it, not the
+ * finished sentence. Until 6.0 it stored the rendered German text, which meant
+ * a save carried a language with it: switch to English and the chronicle would
+ * read half in one, half in the other. Entries written before 6.0 are dropped
+ * on load for exactly that reason - see engine_core.chronicleEntries().
+ *
+ * Placeholders: {rage}, {fired}, {survived}, {streak}. The engine fills in the
+ * ones a line asks for; lint-data.mjs checks that it asks for nothing else.
+ */
+export const lore = {
+
+    /* The printed book. Five chapters, each two paragraphs, all with inline
+       markup - LoreView renders them through {@html}. */
+    chapters: [
+        {
+            year: "1899",
+            title: "The Baron and the Steam Bureaucracy",
+            paragraphs: [
+                "Baron Wilhelm von Gier originally founded GlobalCorp in the Sauerland as the <strong>\"Imperial Manufactory for Forms & Self-Perpetuation\"</strong>. His vision was revolutionary: he wanted to sell problems to which only he had the solution.",
+                "His first patent was the <em>\"Endless Stamping Automaton\"</em>, a steam-powered machine that approved, rejected and shredded applications all at once. It produced maximum turnover with minimum outcome. A business model was born."
+            ]
+        },
+        {
+            year: "1955",
+            title: "The Concrete Age",
+            paragraphs: [
+                "During the economic miracle GlobalCorp realised that happy employees are unproductive (because they talk too much). The solution was the invention of the <strong>grey shade \"RAL 7035\"</strong>.",
+                "Management introduced the revolutionary concept of the \"open space warzone\": open-plan offices with no sound insulation, in which the neighbour's typing breaks your will. Coffee was also declared an official staple food – not to stay awake, but to sell the shaking hands as \"dynamic energy\"."
+            ]
+        },
+        {
+            year: "1982",
+            title: "The Fax Revolution",
+            paragraphs: [
+                "GlobalCorp connected the world. At least every part of the world that owned a beeping modem. Management extended the \"tie requirement\" to telephone calls, in the belief that one could \"hear competence down the line\".",
+                "This period also produced the legendary \"Human Resources\" department. The name said it all: people were finally treated like resources – extractable, consumable and easily replaced."
+            ]
+        },
+        {
+            year: "1999",
+            title: "The Internet Misunderstanding",
+            paragraphs: [
+                "Dr. Wichtig Sr. bought \"the internet\" for 500 million marks. He received an AOL CD-ROM and a 56k modem. To save face, the \"cloud\" was invented.",
+                "<strong>The fact is:</strong> our cloud is not a network. It is a disused salt mine in Bottrop, in which \"the Archivist\" (an employee who has not seen daylight since 1974) photographs important emails onto microfilm. That explains the loading times at login."
+            ]
+        },
+        {
+            year: "2024",
+            title: "Synergy & AI Madness",
+            paragraphs: [
+                "Today we are \"agile\". That means: we run in circles, shout \"Sprint!\" and hope nobody notices that we have no destination.",
+                "Our new AI <strong>\"H.A.L.G.E.R.D.\"</strong> now monitors every mouse click. It calculates in real time whether your toilet break was \"business relevant\". Should your productivity drop below 120%, your office chair is automatically adjusted to be less comfortable. Welcome to the future."
+            ]
+        }
+    ],
+
+    /* Müller's own additions. Which of them can be drawn is decided by
+       engine_core.composeChronicleLine(); the words are here. */
+    lines: {
+        first_found: "I found this book in the server room, behind a rack, under two decades of dust. The last entry is from 2012. I do not know whether anyone gave me permission to add to it. I do not know who I would ask, either.",
+        first_entry: "First entry. I have recently been put in charge of IT. There is no handover, no documentation and nobody who could tell me why a server nobody ordered is running in Rack 5. I am starting anyway.",
+        rage_many_a: "For the record: on {rage} days I left this building without saying goodbye. The chronicle has no section for that. I am opening one.",
+        rage_many_b: "Addendum to the company history: there is a point at which a person stops reading tickets. It lies closer than the management suspects. I have surveyed it several times.",
+        rage_once: "I should mention that I once left before the day was over. It is in no file. It is here now.",
+        fired_repeat: "I have been escorted out of this building {fired} times. I have come back {fired} times. That says more about one of the two parties than about the other.",
+        survived_many_a: "{survived} working days endured. The chronicle has a great deal to say about visions, milestones and growth. About holding on it says nothing. It is the only skill actually needed here.",
+        survived_many_b: "I have survived more working days in this building than the works council has had meetings. Both changed roughly as much.",
+        survived_mid: "Interim result: {survived} days. The building has stopped surprising me, and that is the most unsettling development so far.",
+        streak_best: "Personal best: {streak} days in a row without incident. My family now believes I have a job.",
+        chef_high: "The CEO has lately started greeting me by name. I am unsure whether that is a distinction or the beginning of something I cannot see the shape of.",
+        chef_low: "For the record: management and I have a professional relationship. That is to say, we ignore each other from different floors.",
+        kevin: "The apprentice repaired something today without asking, and he was right. Should anyone ever continue this chronicle: it will be him.",
+        egon: "The caretaker knows every room in this building, including the ones missing from the floor plan. He appears in no chronicle. He should be at the front of it.",
+        elster: "Accounts brought me cake today. I am recording it here because nobody else will believe it.",
+        phoenix: "Note for later readers: there is a room in this building that has been booked for years and never occupied, and a user account belonging to a man who left in 2016. I have stopped asking.",
+        doku: "I started documenting. After two hours it was clear that the documentation would be larger than the system it describes. I carried on anyway.",
+        plain_a: "Another day has passed. The system runs, the tickets are open, the building stands. This chronicle will not have reported much more than that over the last hundred years either.",
+        plain_b: "Nothing of note. I am writing it down anyway, so that later someone knows that somebody was here."
+    }
+};

@@ -119,7 +119,7 @@ ok('advanceWeekNight: freshDay-Reset + Übertrag + weekLog + dayIndex', () => {
     state.usedIDs.add('ev_test');
     state.inventory.push({ id: 'donut', used: false });
     state.rageWarningReceived = true;
-    state.statHistory.push({ t: 700, f: 30, a: 95, c: 50 });
+    state.statHistory.push({ m: 700, l: 30, a: 95, b: 50 });
 
     const report = engine.advanceWeekNight();
 

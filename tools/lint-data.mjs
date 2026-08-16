@@ -23,17 +23,37 @@
  */
 
 import { readFileSync, readdirSync } from 'fs';
-import { DB, ensure } from '../src/data.js';
+import { DB, ensure, loadCore } from '../src/data.js';
+/**
+ * Language (6.0): the pools live under src/data/<lang>. Pass --lang=en to run
+ * against the English tree; without it the German source is checked. The core
+ * tier is no longer a static import, so loadCore() has to be awaited first.
+ *
+ * The flag is removed from argv afterwards. Several tools in here read
+ * positional arguments - a run count, a list of pools - and would otherwise
+ * take "--lang=en" for one of them.
+ */
+const LANG_ARG = process.argv.find(a => a.startsWith('--lang='));
+const LANG = LANG_ARG ? LANG_ARG.slice(7) : 'de';
+if (LANG_ARG) process.argv.splice(process.argv.indexOf(LANG_ARG), 1);
+if (!['de', 'en'].includes(LANG)) {
+    console.error(`Unbekannte Sprache "${LANG}". Erlaubt: de, en`);
+    process.exit(2);
+}
+await loadCore(LANG);
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
+await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
 
 const POOLS = ['bossfights', 'calls', 'coffee', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests', 'tutorial'];
 const itemIds = new Set(Object.keys(DB.items));
-const charNames = new Set(DB.chars.map(c => c.name));
+// PLAYER is a sentinel, not a name: the player's display name is translated
+// ("Du (Müller)" / "You (Miller)"), so it cannot double as its own key the way
+// the seven colleagues' names do. See src/engine/chars.js.
+const charNames = new Set([...DB.chars.map(c => c.name), 'PLAYER']);
 
 /* ---------- 1) Event ids: unique across ALL pools ---------- */
 const idMap = new Map();
@@ -263,14 +283,14 @@ for (const p of POOLS) {
 // takes less than two minutes, and expensive time without noticeable effect is
 // a free fast-forward.
 const numCheck = (o, ctx) => {
-  const m = o.m ?? o.min;
-  for (const k of ['f', 'a', 'c']) {
+  const m = o.m;
+  for (const k of ['l', 'a', 'b']) {
     const v = o[k];
     if (typeof v === 'number' && v % 5 !== 0) warn(`${ctx}: ${k}:${v} liegt nicht im 5er-Raster`);
   }
   if (typeof m === 'number') {
     if (m < 2) err(`${ctx}: m:${m} — keine Aktion dauert unter 2 Minuten, und Zeit läuft nie rückwärts`);
-    const impact = Math.abs(o.f || 0) + Math.abs(o.a || 0) + Math.abs(o.c || 0);
+    const impact = Math.abs(o.l || 0) + Math.abs(o.a || 0) + Math.abs(o.b || 0);
     if (m >= 15 && impact < 10 && !o.loot && !o.rep)
       warn(`${ctx}: m:${m} bei Gesamtwirkung ${impact} — Gratis-Vorspuler ohne Konsequenz`);
   }
@@ -308,6 +328,229 @@ for (const [where, entries] of reactive) {
 // Every character named as employee of the month has to exist.
 for (const name of Object.keys(DB.intranet?.employee ?? {}))
   if (!charNames.has(name)) err(`[intranet/employee] "${name}" nicht in DB.chars`);
+
+/* ---------- 2d2) Achievements the engine hands out ---------- */
+// Since 6.0 unlockAchievement() takes an id alone and looks the words up here.
+// A typo in that id used to award an achievement with no name; now it warns at
+// runtime - and fails here, before anyone plays it.
+{
+  const known = new Set((DB.achievements ?? []).map(a => a.id));
+  const awarded = new Set();
+  for (const file of ['engine_core.js', 'engine_week.js', 'engine_events.js']) {
+    let src = '';
+    try { src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8'); }
+    catch { continue; }
+    for (const m of src.matchAll(/unlockAchievement\(\s*'([^']+)'/g)) {
+      awarded.add(m[1]);
+      if (!known.has(m[1])) err(`[achievements] "${m[1]}" wird in ${file} vergeben, steht aber nicht in data_achievements.js`);
+    }
+    // The old three-argument form would silently pass its own text again.
+    for (const m of src.matchAll(/unlockAchievement\(\s*'[^']+'\s*,/g))
+      err(`[achievements] ${file}: unlockAchievement mit mehr als der ID — Titel und Text stehen in data_achievements.js`);
+  }
+  for (const a of DB.achievements ?? []) {
+    if (a.toast && a.toast === a.desc)
+      warn(`[achievements] "${a.id}": toast ist wortgleich mit desc — dann kann das Feld weg`);
+  }
+}
+
+/* ---------- 2d3) The chronicle ---------- */
+// The archive stores an id and a set of numbers; the words are here. A line
+// asking for a placeholder the engine does not fill would print a literal
+// brace into the book, and nobody reports a bug against flavour text.
+{
+  const VARS = new Set(['{rage}', '{fired}', '{survived}', '{streak}']);
+  for (const [id, line] of Object.entries(DB.lore?.lines ?? {})) {
+    if (typeof line !== 'string' || !line.trim()) { err(`[lore/${id}]: leer`); continue; }
+    for (const ph of line.match(/\{[a-zA-Z]+\}/g) ?? [])
+      if (!VARS.has(ph)) err(`[lore/${id}]: Platzhalter ${ph} wird von niemandem ersetzt`);
+  }
+  const years = new Set();
+  for (const [i, ch] of (DB.lore?.chapters ?? []).entries()) {
+    const ctx = `[lore/chapters[${i}]]`;
+    if (!ch.year) { err(`${ctx}: year fehlt — die Ansicht schlüsselt danach`); continue; }
+    if (years.has(ch.year)) err(`${ctx}: Jahr "${ch.year}" doppelt — {#each} braucht es eindeutig`);
+    years.add(ch.year);
+    if (!ch.title) err(`${ctx}: title fehlt`);
+    if (!ch.paragraphs?.length) err(`${ctx} "${ch.year}": keine paragraphs`);
+  }
+}
+
+/* ---------- 2e) Intranet page bodies ---------- */
+// Since 6.0 the static paragraphs of an intranet page live here rather than in
+// its component (see data_intranet.js). The component only decides how a
+// section looks, so a malformed page produces no error - it renders as an
+// empty box, on a page most players open twice.
+//
+// Each page NAMES its shape rather than being guessed from its keys. The first
+// version of this check inferred the shape from whichever content key it found,
+// and had to be extended for every new page - three times, each time after the
+// check had already wrongly rejected correct data. A declared kind fails the
+// other way round: an unknown one is reported instead of quietly skipped.
+const PAGE_TONES = new Set(['slate', 'red', 'blue', 'amber', 'purple']);
+// Badge tones on the Wall of Deals. Mirrors TONES in IntranetSales.svelte -
+// an unknown one there falls back to grey, which reads as a design choice
+// rather than a mistake.
+const DEAL_TONES = new Set(['signed', 'good', 'pilot', 'bad', 'dead']);
+const LISTS = ['block', 'paragraphs', 'items'];
+
+/** Which keys a page of each kind cannot do without. */
+const PAGE_SHAPES = {
+  sections:  ['title', 'sections'],
+  interview: ['headline', 'interviewer', 'ceo', 'turns'],
+  deals:     ['title', 'customerLabel', 'productLabel', 'deals'],
+  header:    ['title'],
+  panel:     ['welcomeTitle', 'statusTitle', 'kpiTitle'],
+  menu:      ['title', 'dayLabel', 'classicLabel', 'veggieLabel', 'menu', 'saturday'],
+  records:   ['login', 'fileTitle', 'logout', 'sectionMaster', 'sectionDocuments',
+              'sectionBehaviour', 'schnoesel', 'mueller', 'accounts']
+};
+
+/** Reports duplicates in a list of keys the view uses for {#each}. */
+const uniqueBy = (list, pick, ctx, what) => {
+  const seen = new Set();
+  for (const [i, entry] of (list ?? []).entries()) {
+    const key = pick(entry);
+    if (!key) { err(`${ctx}[${i}]: ${what} fehlt — die Ansicht schlüsselt danach`); continue; }
+    if (seen.has(key)) err(`${ctx}[${i}]: ${what} "${key}" doppelt — {#each} braucht es eindeutig`);
+    seen.add(key);
+  }
+};
+
+for (const [pageName, src] of Object.entries(DB.intranet ?? {})) {
+  const page = src?.page;
+  if (!page) continue;
+  const ctx = `[intranet/${pageName}/page]`;
+
+  if (!page.kind) { err(`${ctx}: kind fehlt — die Seite muss ihre Form ansagen`); continue; }
+  const required = PAGE_SHAPES[page.kind];
+  if (!required) {
+    err(`${ctx}: kind "${page.kind}" unbekannt. Erlaubt: ${Object.keys(PAGE_SHAPES).join(', ')}`);
+    continue;
+  }
+  for (const key of required) if (!page[key]) err(`${ctx}: ${key} fehlt (kind "${page.kind}")`);
+
+  // Placeholders are filled in by the component. A typo shows up as a literal
+  // brace on screen, which nobody reports as a bug.
+  for (const ph of (page.versionLine ?? '').match(/\{[a-zA-Z]+\}/g) ?? [])
+    if (!['{version}', '{note}'].includes(ph))
+      err(`${ctx}: Platzhalter ${ph} in versionLine wird von niemandem ersetzt`);
+
+  if (page.kind === 'sections') {
+    uniqueBy(page.sections, s => s.title, `${ctx} sections`, 'title');
+    for (const [i, sec] of (page.sections ?? []).entries()) {
+      const sctx = `${ctx} sections[${i}] "${sec.title ?? '?'}"`;
+      if (sec.tone && !PAGE_TONES.has(sec.tone))
+        err(`${sctx}: tone "${sec.tone}" unbekannt — die Ansicht fällt still auf slate zurück`);
+      if (!LISTS.some(k => sec[k]?.length))
+        err(`${sctx}: weder block, paragraphs noch items — bliebe leer`);
+      for (const k of LISTS)
+        if (sec[k] && !Array.isArray(sec[k])) err(`${sctx}: ${k} muss eine Liste sein`);
+      if (sec.lead && !sec.items?.length)
+        warn(`${sctx}: lead ohne items — die Einleitung führt ins Leere`);
+    }
+
+  } else if (page.kind === 'interview') {
+    uniqueBy(page.turns, t => t.q, `${ctx} turns`, 'Frage');
+    for (const [i, turn] of (page.turns ?? []).entries()) {
+      if (!turn.a) err(`${ctx} turns[${i}]: Antwort fehlt`);
+      // q is plain text, a goes through {@html}. Markup in the question would
+      // be readable on screen instead of rendered.
+      if (turn.q && /<[a-z][^>]*>/i.test(turn.q))
+        err(`${ctx} turns[${i}]: Markup in der Frage — sie wird als Text ausgegeben`);
+    }
+    // The extra question is inserted before the last pair, so there has to be
+    // one to insert it before.
+    if ((page.turns?.length ?? 0) < 2)
+      err(`${ctx}: weniger als zwei Paare — die Zusatzfrage hätte keinen Platz`);
+
+  } else if (page.kind === 'deals') {
+    uniqueBy(page.deals, d => d.customer, `${ctx} deals`, 'Kunde');
+    for (const [i, deal] of (page.deals ?? []).entries()) {
+      const dctx = `${ctx} deals[${i}] "${deal.customer ?? '?'}"`;
+      if (!deal.tone) err(`${dctx}: tone fehlt — das Abzeichen bliebe grau`);
+      else if (!DEAL_TONES.has(deal.tone))
+        err(`${dctx}: tone "${deal.tone}" unbekannt — die Ansicht fällt still auf grau zurück`);
+      if (!deal.rows?.length) err(`${dctx}: keine rows`);
+      uniqueBy(deal.rows, r => r.label, `${dctx} rows`, 'Zeilentitel');
+    }
+
+  } else if (page.kind === 'header') {
+    if (page.signoff && !Array.isArray(page.signoff))
+      err(`${ctx}: signoff muss eine Liste sein — je Zeile ein Eintrag`);
+
+  } else if (page.kind === 'panel') {
+    if (page.incidentLabel && !Array.isArray(page.incidentLabel))
+      err(`${ctx}: incidentLabel muss eine Liste sein — je Zeile ein Eintrag`);
+
+  } else if (page.kind === 'records') {
+    for (const key of ['title', 'subtitle', 'userLabel', 'passLabel', 'denied', 'submit'])
+      if (!page.login?.[key]) err(`${ctx}: login.${key} fehlt`);
+
+    // Schnösel's record is fixed here; Müller's is assembled in the component
+    // from the archive and only contributes labels.
+    const rec = page.schnoesel ?? {};
+    for (const key of ['recordId', 'name', 'role', 'status'])
+      if (!rec[key]) err(`${ctx} schnoesel: ${key} fehlt`);
+    uniqueBy(rec.master, r => r.label, `${ctx} schnoesel.master`, 'Feldname');
+    uniqueBy(rec.documents, d => d.id, `${ctx} schnoesel.documents`, 'Kennung');
+    uniqueBy(rec.notes, n => n.title, `${ctx} schnoesel.notes`, 'Titel');
+    for (const [i, row] of (rec.master ?? []).entries())
+      if (!row.value && !row.lines?.length)
+        err(`${ctx} schnoesel.master[${i}] "${row.label}": weder value noch lines — bliebe leer`);
+    for (const [i, note] of (rec.notes ?? []).entries())
+      if (note.tone && !['good', 'bad', 'neutral'].includes(note.tone))
+        err(`${ctx} schnoesel.notes[${i}]: tone "${note.tone}" unbekannt`);
+
+    /* Both user names are DISCOVERED, never handed out by the interface, and
+       neither the linter for one tree nor the parity check between the two
+       would notice if a name stopped matching where the player reads it:
+         - j_schnoesel comes over the news ticker and in the onboarding mail
+         - the second name is read off the support line under Schnösel's record
+       Rename the player, translate one of those texts, and the record simply
+       stops opening. No error, no crash, a page that says "Zugriff verweigert"
+       forever. This is the one thing in here that is worth a hard failure. */
+    const findable = (name) => {
+      const inTicker = (DB.newsTicker ?? []).some(line => String(line).includes(name));
+      const inMails  = (DB.emails ?? []).some(m => `${m.body ?? ''}${m.subj ?? ''}`.includes(name));
+      const inRecord = `${page.support ?? ''}${src.support ?? ''}`.includes(name);
+      return inTicker || inMails || inRecord;
+    };
+    for (const [i, acc] of (page.accounts ?? []).entries()) {
+      if (!acc.user || !acc.record) { err(`${ctx} accounts[${i}]: user und record sind Pflicht`); continue; }
+      if (acc.user !== acc.user.toLowerCase())
+        err(`${ctx} accounts[${i}]: "${acc.user}" — die Anmeldung vergleicht kleingeschrieben`);
+      if (!page[acc.record])
+        err(`${ctx} accounts[${i}]: record "${acc.record}" gibt es auf dieser Seite nicht`);
+      if (!findable(acc.user))
+        err(`${ctx} accounts[${i}]: "${acc.user}" steht weder im Ticker, noch in einer Mail, noch in der Support-Zeile — der Spieler kann den Namen nirgends ablesen`);
+    }
+
+    // The career notes: {count} is replaced by the engine, nothing else is.
+    for (const [key, note] of Object.entries(src.careerNotes ?? {})) {
+      const nctx = `[intranet/${pageName}] careerNotes.${key}`;
+      if (!note.title || !note.text) err(`${nctx}: title und text sind Pflicht`);
+      if (note.tone && !['good', 'bad', 'neutral'].includes(note.tone))
+        err(`${nctx}: tone "${note.tone}" unbekannt`);
+      for (const ph of `${note.title}${note.text}`.match(/\{[a-zA-Z]+\}/g) ?? [])
+        if (ph !== '{count}') err(`${nctx}: Platzhalter ${ph} wird von niemandem ersetzt`);
+    }
+
+    // {month} is replaced by the component. Anything else stays on screen.
+    for (const ph of (page.mueller?.statusTemplate ?? '').match(/\{[a-zA-Z]+\}/g) ?? [])
+      if (ph !== '{month}') err(`${ctx} mueller: Platzhalter ${ph} wird von niemandem ersetzt`);
+
+  } else if (page.kind === 'menu') {
+    // The id, not the day name: the canteen matches today against it,
+    // and it is the same in both trees.
+    uniqueBy(page.menu, r => r.id, `${ctx} menu`, 'Kennung');
+    for (const row of [...(page.menu ?? []), page.saturday].filter(Boolean)) {
+      for (const slot of ['classic', 'veggie']) {
+        if (!row[slot]?.name) err(`${ctx} "${row.day ?? '?'}": ${slot}.name fehlt — die Zeile bliebe leer`);
+      }
+    }
+  }
+}
 
 /* ---------- 3) Emails ---------- */
 const mailIdSeen = new Map();
@@ -349,7 +592,7 @@ const engineSource = ['src/engine.js', 'src/tutorial.js']
 // The compendium consumes flags too: a note can hang on one.
 const compFlags = new Set();
 for (const e of DB.compendium ?? [])
-  for (const n of e.notizen ?? []) if (n.flag) compFlags.add(n.flag);
+  for (const n of e.notes ?? []) if (n.flag) compFlags.add(n.flag);
 
 for (const [flag, wheres] of flagsSetWhere) {
     if (flagsReq.has(flag)) continue;
@@ -495,9 +738,9 @@ for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].
 // `use` is what makes an item usable: it drives the backpack buttons, the
 // confirm dialog and the effect. An incomplete block therefore shows up as a
 // button that opens a dialog saying nothing and does nothing.
-// cr/rep (v5.0) carry the COST of trade-off items, wait is the cooling-down
+// b/rep (v5.0) carry the COST of trade-off items, wait is the cooling-down
 // line each item phrases for itself.
-const USE_FIELDS = ['al', 'fl', 'cr', 'rep', 'desc', 'warn', 'log', 'color', 'cooldown', 'wait'];
+const USE_FIELDS = ['l', 'a', 'b', 'rep', 'desc', 'warn', 'log', 'color', 'cooldown', 'wait'];
 for (const id of itemIds) {
   const item = DB.items[id];
   const use = item.use;
@@ -519,13 +762,13 @@ for (const id of itemIds) {
       if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} — ein Gegenstand ist wiederholt benutzbar, hier hoechstens ±5`);
     }
   }
-  if (item.keep && !use.cooldown && (use.cr || use.rep))
-    err(`${ctx}: bleibender Gegenstand mit Kosten (use.cr/use.rep) braucht eine cooldown — sonst beliebig oft auslösbar`);
+  if (item.keep && !use.cooldown && (use.b || use.rep))
+    err(`${ctx}: bleibender Gegenstand mit Kosten (use.b/use.rep) braucht eine cooldown — sonst beliebig oft auslösbar`);
 
-  if (!use.al && !use.fl)
-    err(`${ctx}: use ohne Wirkung — al oder fl muss gesetzt sein`);
+  if (!use.a && !use.l)
+    err(`${ctx}: use ohne Wirkung — a oder l muss gesetzt sein`);
 
-  for (const k of ['al', 'fl'])
+  for (const k of ['a', 'l'])
     if (use[k] !== undefined && !(use[k] < 0))
       err(`${ctx}: use.${k} muss negativ sein (Werte werden gesenkt), ist ${use[k]}`);
 
@@ -544,7 +787,7 @@ for (const id of itemIds) {
 // twice over: no button is missing, nothing throws, the effect simply never
 // happens. onChar is checked against DB.chars for the same reason event
 // chars are.
-const PASSIVE_FIELDS = ['onChar', 'al', 'fl', 'cr', 'log', 'color'];
+const PASSIVE_FIELDS = ['onChar', 'l', 'a', 'b', 'log', 'color'];
 for (const id of itemIds) {
   const item = DB.items[id];
   const pas = item.passive;
@@ -558,7 +801,7 @@ for (const id of itemIds) {
   else if (!charNames.has(pas.onChar)) err(`${ctx}: passive.onChar "${pas.onChar}" nicht in DB.chars`);
 
   if (!pas.log) err(`${ctx}: passive ohne log — eine Zahl, die ohne Klick erscheint, sieht sonst wie ein Fehler aus`);
-  if (!pas.al && !pas.fl && !pas.cr) err(`${ctx}: passive ohne Wirkung — al, fl oder cr muss gesetzt sein`);
+  if (!pas.a && !pas.l && !pas.b) err(`${ctx}: passive ohne Wirkung — l, a oder b muss gesetzt sein`);
   if (!item.keep) err(`${ctx}: passive ohne keep — ein Verbrauchsgut kann nicht dauerhaft wirken`);
   if (item.quest) err(`${ctx}: Quest-Items sind Trophäen und dürfen kein passive haben`);
 
@@ -583,14 +826,14 @@ for (const id of itemIds) {
   const mailIds = new Set((DB.emails ?? []).map(m => m.id));
   const istQuelle = (id) => idMap.has(id) || mailIds.has(id);
 
-  const FIELDS = ['id', 'cat', 'name', 'rolle', 'kopf', 'seen', 'notizen'];
+  const FIELDS = ['id', 'cat', 'name', 'role', 'summary', 'seen', 'notes'];
   const NOTE_FIELDS = ['seen', 'flag', 'text'];
   const ids = new Set();
   for (const e of DB.compendium ?? []) {
     const ctx = `Kompendium "${e.id ?? '?'}"`;
     for (const k of Object.keys(e))
       if (!FIELDS.includes(k)) err(`${ctx}: ${k} ist kein bekanntes Feld`);
-    if (!e.id || !e.name || !e.rolle || !e.kopf) err(`${ctx}: id, name, rolle und kopf sind Pflicht`);
+    if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role und summary sind Pflicht`);
     // The view groups and colours by category, so an unknown one would show up
     // in no tab at all - invisible, without anything failing.
     if (!['team', 'person', 'ort', 'vorgang'].includes(e.cat))
@@ -602,7 +845,7 @@ for (const id of itemIds) {
     for (const id of e.seen ?? [])
       if (!istQuelle(id)) err(`${ctx}: seen "${id}" ist weder Ereignis noch Mail`);
 
-    const notes = e.notizen ?? [];
+    const notes = e.notes ?? [];
     if (notes.length < 3) warn(`${ctx}: nur ${notes.length} Notizen — unter drei wirkt ein Eintrag dünn`);
     // An entry may hold as many notes as it has distinct scenes to draw on,
     // plus one for the pattern that emerges across them. This ties the length
@@ -616,7 +859,7 @@ for (const id of itemIds) {
 
     const texte = new Set();
     for (const [i, n] of notes.entries()) {
-      const nctx = `${ctx} notizen[${i}]`;
+      const nctx = `${ctx} notes[${i}]`;
       for (const k of Object.keys(n))
         if (!NOTE_FIELDS.includes(k)) err(`${nctx}: ${k} ist kein bekanntes Feld`);
       if (!n.text) err(`${nctx}: ohne text`);
@@ -698,14 +941,21 @@ const EVENT_KEYS = {
   meetings:   ['startNodeGala'],   // alternative opening when tonight's gala fires (engine_week.triggerMeeting)
   tutorial:   ['type', 'step']
 };
-const OPT_KEYS      = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'req', 'rem', 'next', 'action'];
+// t is the button text, r the result line; m minutes, l laziness, a aggro,
+// b boss radar. Results used to accept min/fl/al/cr as second names for the
+// four effects - an alias for events that no longer exist, used by not one
+// place in the stock, dropped with the rename.
+const OPT_KEYS      = ['t', 'r', 'm', 'l', 'a', 'b', 'rep', 'loot', 'req', 'rem', 'next', 'action'];
 const NODE_KEYS     = ['text', 'opts', 'char'];
 const NODE_OPT_KEYS = ['t', 'next', 'req', 'rem', 'action'];
-// Results accept the legacy names min/fl/al/cr as well; handleChainChoice maps them.
-const RESULT_KEYS   = ['txt', 'm', 'f', 'a', 'c', 'min', 'fl', 'al', 'cr', 'rep', 'loot', 'rem', 'next'];
+const RESULT_KEYS   = ['txt', 'm', 'l', 'a', 'b', 'rep', 'loot', 'rem', 'next'];
 const FAIL_KEYS     = OPT_KEYS.filter(k => k !== 't');
-const MAIL_KEYS     = ['id', 'sender', 'subj', 'body', 'opts', 'linked'];
-const MAIL_OPT_KEYS = ['t', 'r', 'm', 'f', 'a', 'c', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
+// `senderId` is the identifier behind the display name in `sender`: EmailView
+// keys the CC list off it. Before it existed the component matched the sender
+// PROSE ("buchhaltung", "sicherheit"), which works for exactly as long as the
+// pool is German — see the mail block in UEBERGABE.md.
+const MAIL_KEYS     = ['id', 'sender', 'senderId', 'subj', 'body', 'opts', 'linked'];
+const MAIL_OPT_KEYS = ['t', 'r', 'm', 'l', 'a', 'b', 'rep', 'loot', 'ignoreEmail', 'nextEmail'];
 
 const checkKeys = (obj, allowed, ctx, what) => {
   if (!obj || typeof obj !== 'object') return;
@@ -725,7 +975,7 @@ for (const p of POOLS) {
 
     // The party runs after hours, and two fields have no meaning there. The
     // engine would happily process both - m is overwritten a moment later by
-    // the station clock, and the chef radar has no consequence because
+    // the station clock, and the boss radar has no consequence because
     // checkEndConditions() bails out in party mode. Catching it here rather
     // than swallowing it in the engine: a value that silently does nothing is
     // worse than one that fails loudly.
@@ -733,8 +983,8 @@ for (const p of POOLS) {
       (ev.opts ?? []).forEach((o, i) => {
         if (o.m !== undefined)
           err(`${ctx} opts[${i}]: "m" wirkt auf der Feier nicht — die Uhr läuft über zwölf Stationen zu je 30 Minuten`);
-        if (o.c !== undefined)
-          err(`${ctx} opts[${i}]: "c" wirkt auf der Feier nicht — nach Feierabend gibt es kein Chef-Radar und kein Spielende`);
+        if (o.b !== undefined)
+          err(`${ctx} opts[${i}]: "b" wirkt auf der Feier nicht — nach Feierabend gibt es kein Chef-Radar und kein Spielende`);
       });
     }
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) {

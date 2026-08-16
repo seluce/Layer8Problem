@@ -124,5 +124,15 @@ export const desktop = {
             console.warn("Global stats could not be fetched.", err);
             return null;
         }
+    },
+
+    language: async () => {
+        try {
+            return await ipcRenderer.invoke('steam-get-language');
+        } catch (err) {
+            // Not worth a warning: detection falls back to the browser, which
+            // is the same thing the web build does.
+            return null;
+        }
     }
 };

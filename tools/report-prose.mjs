@@ -3,8 +3,9 @@
  * Layer8Problem - prose report
  * ---------------------------------------------------------------
  * Location: tools/report-prose.mjs   (run from the repository root)
- * Usage:    node tools/report-prose.mjs [pool ...]
+ * Usage:    node tools/report-prose.mjs [pool ...] [--lang=de|en]
  *           node tools/report-prose.mjs emails
+ *           node tools/report-prose.mjs lunch --lang=en
  *
  * Editorial magnifier, not a linter. Everything here is a FINDING to
  * read, never an error to silence: whether a sentence is a lazy copy
@@ -24,25 +25,48 @@
  * manual; this report only decides where to look first.
  */
 
-import { DB, ensure } from '../src/data.js';
-
-await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet',
-             'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
+import { DB, ensure, loadCore, currentLanguage } from '../src/data.js';
 
 /* ---------- configuration ---------- */
 
 // Pools that contain player-facing prose. `board` rides along because its
 // notes are prose too; intranet stays out (component-rendered, own tone).
+//
+// The seven at the end were added in the twentieth session, when the last ten
+// files were translated and the report turned out not to know most of them. A
+// report that does not know a pool does not say "unknown" - it says nothing,
+// and nothing looks like zero findings (GLOSSAR section 7b, case twenty-three).
 const ALL_POOLS = ['server', 'coffee', 'calls', 'sidequests', 'emails', 'meetings',
-                   'lunch', 'party', 'reputation', 'bossfights', 'special', 'board'];
+                   'lunch', 'party', 'reputation', 'bossfights', 'special', 'board',
+                   'diary', 'moods', 'achievements', 'excuses', 'newsTicker',
+                   'tutorial', 'chars'];
+
+// Pools that are not arrays of events but trees of text: a plain list of
+// strings (excuses, newsTicker) or sections holding line lists (diary). They
+// are walked leaf by leaf, the way `special` always has been.
+const TREE_POOLS = new Set(['special', 'diary', 'excuses', 'newsTicker']);
 
 // Sentences that repeat by design. Exact match after normalisation.
+//
+// Mirrored entry for entry, like TEMPLATES below and for the same reason: the
+// report is a before/after gauge, and a set that only knows one language
+// measures two different things. Until the mail block the English half was
+// missing, so `emails --lang=en` reported the 140 deletion lines as a section 1
+// finding and their overlaps as four section 2 findings - none of which the
+// German run showed. That is not a translation defect, it is the tool being
+// half-built; the German half has been whitelisted since 5.0.
 const BOILERPLATE = new Set([
   'E-Mail kommentarlos gelöscht.',
   'Gespräch beendet.',
   'Du legst auf.',
   '[System: Chat beendet]',
-  '[System: Du hast die Gruppe verlassen]'
+  '[System: Du hast die Gruppe verlassen]',
+
+  'Email deleted without comment.',
+  'Call ended.',
+  'You hang up.',
+  '[System: Chat closed]',
+  '[System: You have left the group]'
 ]);
 
 // Deliberate misspellings (gags). Skipped by the typo candidate check.
@@ -64,15 +88,26 @@ const DATED = [
 ];
 
 // Mechanics vocabulary that must never surface in narration.
+//
+// Both languages are checked in one list rather than switched on --lang: a
+// German status word in an English text (or the other way round) is a finding
+// too, and a language-dependent set could silently pick the wrong half. The
+// English names are the ones fixed in GLOSSAR section 3a - Laziness, Aggro,
+// Boss Radar - so "Aggro" is the only entry that already covered both.
 const MECHANICS = [
   [/\bAggro\b/,                'Statuswert "Aggro" beim Namen genannt'],
   [/Chef-?Radar/i,             'Statuswert "Chef-Radar" beim Namen genannt'],
+  [/Boss[- ]?Radar/i,          'Statuswert "Boss Radar" beim Namen genannt'],
   [/\b(d|m)ein(em|en)?\s+Radar\b/i, 'Statuswert "Chef-Radar" als "dein/mein Radar" genannt'],
+  [/\b(your|my)\s+radar\b/i,   'Statuswert "Boss Radar" als "your/my radar" genannt'],
   [/\bFaulheit\b/,             'Statuswert "Faulheit" beim Namen genannt (prüfen)'],
+  [/\bLaziness\b/i,            'Statuswert "Laziness" beim Namen genannt (prüfen)'],
   [/Stimmung\s*[+-]\s*\d/,     'Zahlenwert im Erzähltext'],
+  [/\bMood\s*[+-]\s*\d/i,      'Zahlenwert im Erzähltext'],
   [/\bRadar\s*[+-]\s*\d/,      'Zahlenwert im Erzähltext'],
-  [/Radar-?(Bonus|Malus)/i,    'Statuswert-Effekt beim Namen genannt'],
-  [/[+-]\d+\s*(Punkte|Prozentpunkte)\b/, 'Zahlenwert im Erzähltext']
+  [/Radar[- ]?(Bonus|Malus|Penalty)/i, 'Statuswert-Effekt beim Namen genannt'],
+  [/[+-]\d+\s*(Punkte|Prozentpunkte)\b/, 'Zahlenwert im Erzähltext'],
+  [/[+-]\d+\s*(points?|percentage\s+points?)\b/i, 'Zahlenwert im Erzähltext']
 ];
 
 // Sender grouping (emails): tokens that are roles/departments, not names.
@@ -85,7 +120,22 @@ const NOT_A_NAME = new Set([
   'Kantine', 'Sekretariat', 'Sicherheit', 'Rechtsabteilung', 'Personalabteilung',
   'Personalentwicklung', 'Betriebsrat', 'Vorstand', 'Design', 'Facility',
   'Konzernzentrale', 'Kanzlei', 'Söhne', 'Partner', 'Anwalt', 'Mitarbeiter',
-  'Orga', 'Komitee', 'Ausschuss', 'Management', 'Office', 'Umfrage', 'Ticketsystem'
+  'Orga', 'Komitee', 'Ausschuss', 'Management', 'Office', 'Umfrage', 'Ticketsystem',
+
+  // Mirrored for the English tree, like BOILERPLATE and TEMPLATES. Without
+  // these the section reported 16 findings instead of 2: every department and
+  // role word shared by two senders looked like one person under two names
+  // ("Works Council" / "Works Council (Uwe)"). The two real findings are
+  // Kevin and Chantal, and those are meant to be there - the same person
+  // writing on business and private accounts is the joke.
+  'Works', 'Council', 'Accounts', 'Sales', 'Reception', 'Security', 'Canteen',
+  'Kitchen', 'Cleaning', 'Committee', 'Compliance', 'Development', 'Distribution',
+  'Employees', 'Colleagues', 'Staff', 'Group', 'Head', 'Legal', 'Department',
+  'Notary', 'Solicitors', 'Sons', 'Board', 'Working', 'Organising', 'Printer',
+  'Caretaker', 'Apprentice', 'Private', 'Thoughts', 'Former', 'Employee',
+  'Prince', 'Funny', 'Data', 'Protection', 'Officer', 'Project', 'Manager',
+  'Secretariat', 'Financial', 'Control', 'Service', 'Newsletter', 'Facilities',
+  'All', 'Auntie', 'Unknown', 'Anonymous'
 ]);
 
 const SHORT_RESULT = 60;   // chars; below this a result text counts as telegraph
@@ -98,7 +148,16 @@ const NGRAM_MAX = 8, NGRAM_MIN = 5;
 // detection only ever looks at prose.
 
 const args = process.argv.slice(2);
-const pools = args.length ? args : ALL_POOLS;
+
+const langArg = args.find(a => a.startsWith('--lang='));
+const lang = langArg ? langArg.slice('--lang='.length) : 'de';
+if (lang !== 'de' && lang !== 'en') {
+  console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+  process.exit(1);
+}
+
+const wanted = args.filter(a => !a.startsWith('-'));
+const pools = wanted.length ? wanted : ALL_POOLS;
 for (const p of pools) {
   if (!ALL_POOLS.includes(p)) {
     console.error(`Unbekannter Pool "${p}". Verfügbar: ${ALL_POOLS.join(', ')}`);
@@ -106,21 +165,62 @@ for (const p of pools) {
   }
 }
 
+// `special` lives in the core tier, which ensure() does not touch. Without
+// loadCore it stays undefined, walkSpecial walks nothing, and the pool reports
+// zero findings without ever saying that it read zero texts.
+await loadCore(lang);
+await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet',
+             'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests',
+             'diary', 'moods', 'achievements', 'excuses', 'newsTicker',
+             'tutorial', 'chars');
+
+// loadCore falls back to German when a tree cannot be read. Reporting the
+// language that actually loaded keeps a fallback from passing as an English run.
+if (currentLanguage() !== lang) {
+  console.error(`Sprache "${lang}" konnte nicht geladen werden — der Bericht liest "${currentLanguage()}".`);
+  process.exit(1);
+}
+
 const records = [];
 const push = (pool, id, field, kind, text) => {
   if (typeof text === 'string' && text.trim()) records.push({ pool, id, field, kind, text });
 };
 
-// `special` is a tree of text lists (valve texts etc.), not an event array;
-// every string leaf in there is narration the player will read.
-const walkSpecial = (node, path) => {
-  if (typeof node === 'string') push('special', path.replace(/\.\d+$/, ''), path, 'prose', node);
-  else if (Array.isArray(node)) node.forEach((v, i) => walkSpecial(v, `${path}.${i}`));
-  else if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) walkSpecial(v, path ? `${path}.${k}` : k);
+/*
+ * A tree of text lists (valve texts, diary lines, excuses), not an event
+ * array. Every string leaf in there is narration the player will read.
+ *
+ * What counts as ONE entry differs per pool, and getting it wrong makes the
+ * repetition sections blind rather than wrong: section 1 only counts a
+ * sentence that appears in DIFFERENT entries, so a pool whose leaves all
+ * collapse to the same key reports nothing however often it repeats itself.
+ * Proven by mutation - two identical excuses went unreported until each line
+ * became its own entry.
+ *
+ *   excuses / newsTicker   one string = one entry; the player sees each alone
+ *   diary                  the entry is the FRAGMENT (it has its own id), and
+ *                          its `lines` are alternatives for the same slot
+ *   special                the containing list, as it always was
+ */
+const treeId = (pool, path, chain) => {
+  if (pool === 'excuses' || pool === 'newsTicker') return path;
+  if (pool === 'diary') return chain.at(-1) ?? path;
+  return path.replace(/\.\d+$/, '');
+};
+
+const walkTree = (pool, node, path, chain = []) => {
+  if (typeof node === 'string') { push(pool, treeId(pool, path, chain), path, 'prose', node); return; }
+  if (Array.isArray(node)) {
+    node.forEach((v, i) => walkTree(pool, v, `${path}.${i}`, v?.id ? [...chain, v.id] : chain));
+    return;
+  }
+  if (node && typeof node === 'object') {
+    for (const [k, v] of Object.entries(node)) walkTree(pool, v, path ? `${path}.${k}` : k, chain);
+  }
 };
 
 for (const pool of pools) {
-  if (pool === 'special') { walkSpecial(DB.special, ''); continue; }
+  if (TREE_POOLS.has(pool)) { walkTree(pool, DB[pool], ''); continue; }
   const entries = pool === 'board' ? (DB.board ?? []) : (DB[pool] ?? []);
   for (const ev of entries) {
     const id = ev.id ?? '(ohne id)';
@@ -128,6 +228,24 @@ for (const pool of pools) {
     push(pool, id, 'subj',  'label', ev.subj);
     push(pool, id, 'text',  'prose', ev.text);
     push(pool, id, 'body',  'prose', ev.body);
+    // Achievements and the team cards: the blurb under the heading is prose,
+    // the one-line role beside a name is a label.
+    push(pool, id, 'desc',  'prose', ev.desc);
+    push(pool, id, 'hint',  'prose', ev.hint);
+    push(pool, id, 'toast', 'prose', ev.toast);
+    push(pool, id, 'role',  'label', ev.role);
+    // The noticeboard: a pinned note is signed, stamped and footed, and all
+    // of it is written by a colleague. Only `title` and `body` were measured
+    // before, which left two thirds of the pool outside every section.
+    push(pool, id, 'sign',  'prose', ev.sign);
+    push(pool, id, 'sub',   'label', ev.sub);
+    push(pool, id, 'dept',  'label', ev.dept);
+    push(pool, id, 'foot',  'prose', ev.foot);
+    push(pool, id, 'note',  'prose', ev.note);
+    push(pool, id, 'stamp', 'prose', ev.stamp);
+    (ev.items ?? []).forEach((s, i) => push(pool, id, `items[${i}]`, 'prose', s));
+    (ev.tabs  ?? []).forEach((s, i) => push(pool, id, `tabs[${i}]`,  'label', s));
+    (ev.textByProgress ?? []).forEach((s, i) => push(pool, id, `textByProgress[${i}]`, 'prose', s));
     (ev.opts ?? []).forEach((o, i) => {
       push(pool, id, `opts[${i}].t`, 'label', o.t);
       push(pool, id, `opts[${i}].r`,   'prose', o.r);
@@ -156,7 +274,7 @@ const section = (title, findings, cap = 60) => {
   if (findings.length > cap) console.log(`  … und ${findings.length - cap} weitere`);
 };
 
-console.log(`Layer8Problem Prosa-Bericht — Pools: ${pools.join(', ')}`);
+console.log(`Layer8Problem Prosa-Bericht (${lang}) — Pools: ${pools.join(', ')}`);
 console.log(`${records.length} Textfelder erfasst, davon ${prose.length} Erzähltexte.`);
 
 /* ---------- 1) verbatim repeated sentences ---------- */
@@ -269,6 +387,13 @@ section('Referenzen, die das Spiel altern lassen', dated);
 // editing wave: totals should sink, and no NEW phrasing may shoot up in their
 // place - sections 1 and 2 are the counter-check for that.
 const SENT_START = '(?:^|[.!?…]["“”«»]?\\s+)';
+
+// The English set MIRRORS the German one entry for entry, on purpose: the
+// section is a before/after gauge, and two languages measuring different
+// phrasings cannot be held against each other. Only "Dafür …" has no single
+// counterpart - it splits into three English turns, so they share one row.
+// Both sets live in one list because a pattern with zero hits is dropped from
+// the report anyway; a --lang branch here could only ever pick the wrong half.
 const TEMPLATES = [
   ['„Du fühlst dich …“',           /\b[Dd]u fühlst dich\b/g],
   ['„Du X, aber Y“ (Satzanfang)',  new RegExp(SENT_START + 'Du [^.!?"\\n]{2,60}, aber ', 'g')],
@@ -276,12 +401,29 @@ const TEMPLATES = [
   ['„Du hast gewonnen …“',         /\b[Dd]u hast gewonnen\b/g],
   ['„Sieg durch …“',               /\bSieg durch\b/g],
   ['„Natürlich …“ (Satzanfang)',   new RegExp(SENT_START + 'Natürlich\\b', 'g')],
-  ['„Immerhin …“ (Satzanfang)',    new RegExp(SENT_START + 'Immerhin\\b', 'g')],
+  // "Wenigstens" is the same consolation move as "Immerhin" and was not
+  // counted until 6.0. English has one word for both, so without this row the
+  // two languages measure different things: the lunch pool has the move four
+  // times in German and the report saw two of them.
+  ['„Immerhin/Wenigstens …“ (Satzanfang)', new RegExp(SENT_START + '(?:Immerhin|Wenigstens)\\b', 'g')],
   ['„Plötzlich …“ (Satzanfang)',   new RegExp(SENT_START + 'Plötzlich\\b', 'g')],
   ['„Manchmal …“ (Satzanfang)',    new RegExp(SENT_START + 'Manchmal\\b', 'g')],
   ['„Dafür …“ (Satzanfang)',       new RegExp(SENT_START + 'Dafür\\b', 'g')],
   ['„Am Ende …“ (Satzanfang)',     new RegExp(SENT_START + 'Am Ende\\b', 'g')],
-  ['„Und wieder (einmal) …“',      new RegExp(SENT_START + 'Und wieder\\b', 'g')]
+  ['„Und wieder (einmal) …“',      new RegExp(SENT_START + 'Und wieder\\b', 'g')],
+
+  ['„You feel …“',                 /\byou feel\b/gi],
+  ['„You X, but Y“ (Satzanfang)',  new RegExp(SENT_START + 'You [^.!?"\\n]{2,60}, but ', 'g')],
+  ['„You are now …“',              /\byou are now\b/gi],
+  ['„You have won …“',             /\byou have won\b/gi],
+  ['„Victory by/through …“',       /\bvictory (by|through)\b/gi],
+  ['„Of course …“ (Satzanfang)',   new RegExp(SENT_START + 'Of course\\b', 'g')],
+  ['„At least …“ (Satzanfang)',    new RegExp(SENT_START + 'At least\\b', 'g')],
+  ['„Suddenly …“ (Satzanfang)',    new RegExp(SENT_START + 'Suddenly\\b', 'g')],
+  ['„Sometimes …“ (Satzanfang)',   new RegExp(SENT_START + 'Sometimes\\b', 'g')],
+  ['„Then again / On the plus side …“', new RegExp(SENT_START + '(?:Then again|On the plus side|In return)\\b', 'g')],
+  ['„In the end …“ (Satzanfang)',  new RegExp(SENT_START + 'In the end\\b', 'g')],
+  ['„Once again …“',               new RegExp(SENT_START + '(?:Once again|Yet again)\\b', 'g')]
 ];
 const tmplRows = [];
 for (const [label, re] of TEMPLATES) {
@@ -337,8 +479,9 @@ section(`Telegraf-Kandidaten (Ø Ergebnistext unter ${SHORT_RESULT} Zeichen — 
 // beats and may be short; only the opening counts.
 const thin = [];
 for (const pool of pools) {
-  if (pool === 'special') continue;
+  if (TREE_POOLS.has(pool)) continue;
   const entries = pool === 'board' ? (DB.board ?? []) : (DB[pool] ?? []);
+  if (!Array.isArray(entries)) continue;
   for (const ev of entries) {
     // Email bodies are excluded on purpose: a mail IS the artifact, and a
     // three-word mail from Kevin is characterisation, not a missing scene.
@@ -373,7 +516,12 @@ section('Auffällige Optionsbeschriftungen (überlang oder ASCII-Pfeil)', labels
 // Legacy registers to migrate: "Aktion (Hinweis)" and "Haltung: ..." prefixes.
 const legacyLabels = [];
 for (const r of records) {
-  if (r.kind !== 'label') continue;
+  // Option labels are the fields ending in .t, exactly as in section 6c.
+  // Until the twentieth session those were the only labels left after the
+  // title/subj exclusion below, so the section worked by coincidence; once
+  // the noticeboard's `sub` and `dept` were measured it began judging
+  // notice headings ("Betr: Fisch") as legacy button registers.
+  if (r.kind !== 'label' || !/\.t$/.test(r.field)) continue;
   // Caller/title displays like "Frau Meyer (Buchhaltung)" are phone UI,
   // not option buttons - the parenthesis is correct there. Same for email
   // subjects: "Re:", "WG: ... (VERTRAULICH)" and urgent phishing subjects

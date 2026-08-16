@@ -1,0 +1,3943 @@
+// i18n-status: translated
+//
+// 1,120 text fields, 1,111 translated. Nine are deliberately identical, all of
+// them `title`, and all of them already English in the German source:
+//
+//   "Loot Sharing", "Health Food", "Buzzword Bingo", "Digital Native",
+//   "Scope Creep", "Black Hat Ops", "Candid Camera",
+//   "Finale: Quantum Sheets", "Finale: Operation 'Men in Black'"
+//
+// The last one is the only one lint-parity ever reports: the other eight sit
+// below its four-word threshold. Everything else in the pool differs.
+//
+// Two scenes are REBUILT rather than translated, because the mechanism dies at
+// the language border (GLOSSAR §3c, the "neu gebaut / gerade übersetzt" line):
+//   - rep_egon_filler_good_1: the German scene lives on Egon being unable to
+//     read an English machine message. The display now speaks abbreviation
+//     ("FLT MNT REQ"), so all three options answer the same question.
+//   - rep_gabi_filler_bad_2: the German refuses a parcel because the label
+//     says "Muller" without the umlaut, and Miller has no umlaut to lose. The
+//     pretext is now "Millar" with an a - one letter, the same pedantry.
+//
+// `char` stays German ("Frau Elster", "Dr. Wichtig"): lint-parity carries it
+// in ID_KEYS and `reqRep` keys off the same names. The prose beside it writes
+// "Ms Elster" and "Dr Wichtig" (GLOSSAR §4). Rüdiger, Döner and TÜV keep their
+// umlauts on purpose - they are the only German characters left in the pool.
+
+export const reputation = [
+
+    // === KEVIN: THE APPRENTICE ===
+	{
+        id: "rep_kevin_story_1",
+	    char: "Kevin",
+        title: "Kevin's Secret",
+        reqRep: { "Kevin": 60 },
+        text: "Kevin pulls you into a corner, jumpy. 'Bro, I have to show you something. I wrote a script out of boredom that cleans up the firewall logs automatically and optimises them. Is that... illegal? Or good?' He shows you the code. It is chaotic, and brilliant underneath.",
+        opts: [
+            { 
+                t: "'That is a security risk! Delete it!'", 
+                next: "path_kevin_strict",
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "Kevin looks let down, then nods, obedient. 'Understood. Security first.' He deletes his masterpiece. What you have created is a good soldier. Not a hacker." 
+            },
+            { 
+                t: "'That is good. Let us improve it together.'", 
+                next: "path_kevin_mentor",
+                rep: { "Kevin": 15 },
+                m: 20, l: -10, a: -10, b: 0, 
+                r: "You go through the code line by line together. Kevin soaks up everything you know like a sponge. 'Sick. Cheers, Sensei.' He looks up to you now." 
+            },
+            { 
+                t: "'Install it on my machine right now, I want to clock off early.'", 
+                next: "path_kevin_lazy",
+                rep: { "Kevin": 10 },
+                m: 5, l: 20, a: 0, b: 0, 
+                r: "Kevin grins. 'Easy, bro. Threw in an aimbot for Solitaire while I was at it.' Your workload drops. His sense of responsibility does not move." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_story_2a",
+		char: "Kevin",
+        title: "Finale: The Cyber Attack",
+        reqRep: { "Kevin": 80 },
+        reqStory: "path_kevin_mentor",
+        text: "ALARM! A massive DDoS attack from overseas! The firewall is burning (metaphorically). You cannot type fast enough. Kevin is suddenly beside you, laptop at the ready. 'I rebuilt the script from the other day into a defence! Let me at it, I will flatten them!'",
+        opts: [
+            { 
+                t: "Blind trust: 'Do it, Kevin!'", 
+                loot: "kevin_ram", 
+                rep: { "Kevin": 20, "Dr. Wichtig": 10 },
+                m: 5, l: -5, a: -40, b: -20, 
+                r: "Kevin types like a young god. Enter. Silence. The attack stops. He grins wide: 'Learnt that off you, bro.' He gives you his old stick of RAM as a lucky charm." 
+            },
+            { 
+                t: "'Fine, but I am watching!'", 
+                rep: { "Kevin": -5, "Dr. Wichtig": 5 },
+                m: 15, l: -10, a: 10, b: -10, 
+                r: "You stand behind him correcting every typo. 'Not so fast! Syntax!' The attack stops. Kevin is not grateful. 'I would have managed on my own, boss...'" 
+            },
+            { 
+                t: "'Out of the way, too dangerous!'", 
+                rep: { "Kevin": -20, "Dr. Wichtig": -5 },
+                m: 60, l: -10, a: 20, b: 10, 
+                r: "You shove him aside and do it yourself. It takes an hour. The damage is done. Kevin looks at you, hurt. 'You do not trust me at all.' The chance of glory is gone." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_story_2b",
+		char: "Kevin",
+        title: "Finale: The Endless Loop",
+        reqRep: { "Kevin": 80 },
+        reqStory: "path_kevin_lazy",
+        text: "Kevin bursts into your office, white as a sheet. 'Boss! That script I gave you... I 'optimised' something. It answers every email automatically now.' Your inbox has gone mad. It has just sent the CEO a marriage proposal.",
+        opts: [
+            { 
+                t: "Blame it on a virus", 
+                rep: { "Kevin": 5, "Dr. Wichtig": -5 },
+                m: 5, l: 15, a: -5, b: 20, 
+                r: "You report an 'AI virus'. Kevin plays along: 'Yeah, proper nasty trojan!' The boss believes it and has every PC wiped. The afternoon is yours. IT burns." 
+            },
+            { 
+                t: "'PULL THE PLUG!'", 
+                rep: { "Kevin": -10, "Dr. Wichtig": -10 },
+                m: 10, l: -5, a: 10, b: 10, 
+                r: "You rip the network cable out of the wall together. Quiet. That was close. Kevin is breathing hard: 'Efficient though, was it not?' The boss asks later why the internet dropped out for a minute." 
+            },
+            { 
+                t: "Fix it together over an energy drink", 
+                loot: "energy",
+                rep: { "Kevin": 10 },
+                m: 30, l: -15, a: -10, b: 0, 
+                r: "You sit down together and debug the madness over a can. You both laugh until you cry at the generated emails. 'On the bright side, no open tickets left.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_story_2c",
+		char: "Kevin",
+        title: "Finale: The Test",
+        reqRep: { "Kevin": 80 },
+        reqStory: "path_kevin_strict",
+        text: "An external security auditor tries to slip into the building as a 'Telekom engineer' (social engineering). Nobody suspects a thing... except Kevin. He blocks the corridor and demands Permit A38, exactly as you taught him.",
+        opts: [
+            { 
+                t: "Step in, proud: 'He is right.'", 
+                rep: { "Dr. Wichtig": 15, "Kevin": 10 },
+                m: 10, l: 0, a: -5, b: -10, 
+                r: "The auditor drops the act. 'Test passed! Outstanding staff training.' The boss claps you on the shoulder. Kevin salutes, rigid. You have created a guard dog." 
+            },
+            { 
+                t: "Leave the field to Kevin", 
+                rep: { "Kevin": 20, "Dr. Wichtig": 5 },
+                m: 5, l: 5, a: -10, b: -10, 
+                r: "You lean back and watch Kevin grind the auditor down with regulations. The man leaves close to tears. Kevin comes over: 'Did I do that well?' He did." 
+            },
+            { 
+                t: "Step in and take over yourself", 
+                rep: { "Kevin": -15, "Dr. Wichtig": 5 },
+                m: 5, l: -10, a: 10, b: -5, 
+                r: "You push Kevin aside. 'Leave it to the professionals.' You unmask the auditor yourself. The boss praises you. Kevin mutters: 'Great, I already had him...' He feels useless." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_good_1",
+		char: "Kevin",
+        title: "The Twitch Tip",
+        reqRep: { "Kevin": 20 },
+        text: "Kevin leans over to you, conspiratorial. 'Here, boss? I want to take my stream professional. Reckon the Shure SM7B mic is worth it, or will my old headset do? You know about tech.'",
+        opts: [
+            { 
+                t: "'Get the Shure, quality is everything.'", 
+                next: "path_kevin_tech_tip",
+                rep: { "Kevin": 10 },
+                m: 10, l: 0, a: -10, b: 0, 
+                r: "Kevin beams. 'Knew it! Cheers for the tip.' He orders it there and then on the company laptop. A small bonding moment." 
+            },
+            { 
+                t: "'Let us have a game instead.'", 
+                next: "path_kevin_game_night",
+                rep: { "Kevin": 5 },
+                m: 20, l: 10, a: -10, b: 15, 
+                r: "His eyes shine. 'Really? Now? Okay, one game!' You spend 20 minutes secretly playing 'Minesweeper Battle Royale'. Productivity down, morale up." 
+            },
+            { 
+                t: "'Google it.'", 
+                next: "path_kevin_tech_fail",
+				rep: { "Kevin": -2 },
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "'Okay, sorry...' He turns away, deflated. He opens AliExpress." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_good_2a",
+		char: "Kevin",
+        title: "Loot Sharing",
+        reqRep: { "Kevin": 40 },
+        reqStory: "path_kevin_tech_tip",
+        text: "Kevin comes out of the kitchen grinning. 'Hey! My first stream had 3 viewers! The mic really does make a difference. Here, I 'rescued' you something off the catering as a thank you.'",
+        opts: [
+            { 
+                t: "'Legend!'", 
+                loot: "donut", 
+                rep: { "Kevin": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "A fresh doughnut! Kevin nods at you. 'Us techies have to stick together.'" 
+            },
+            { 
+                t: "'I am on a diet.'", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "Kevin shrugs and bites into it himself. 'More loot for me.' He seems content enough." 
+            },
+            { 
+                t: "'Did you nick that?'", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "'God, do not be such a square.' He pockets the doughnut. The good mood is gone." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_good_2b",
+		char: "Kevin",
+        title: "The Energy Deal",
+        reqRep: { "Kevin": 40 },
+        reqStory: "path_kevin_game_night",
+        text: "Kevin rolls his chair over to you. 'Yo, pro gamer. I have seen your APM (actions per minute) dropping. You need fuel.' He holds out a can.",
+        opts: [
+            { 
+                t: "Offer something back: 'I will take a ticket off you'", 
+                rep: { "Kevin": 10 },
+                m: 15, l: -5, a: 10, b: -10, 
+                r: "You clear a printer problem for him in no time. Kevin is delighted: 'Best team ever!' True friendship." 
+            },
+            { 
+                t: "'Gaming on work time is not allowed.'", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "Kevin stares at you. 'You started it?!' He rolls back, shaking his head. That one is on you." 
+            },
+            { 
+                t: "Accept with thanks", 
+                loot: "energy",
+                rep: { "Kevin": 5 }, 
+                m: 2, l: 0, a: -5, b: 0, 
+                r: "HISS. 'That is the good stuff,' Kevin whispers. The tickets suddenly look beatable again." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_good_2c",
+		char: "Kevin",
+        title: "AliExpress Disaster",
+        reqRep: { "Kevin": 40 },
+        reqStory: "path_kevin_tech_fail",
+        text: "Kevin proudly holds out a pink lump of plastic that smells like a chemical spill. 'Listened to you and googled it! The 'Super Studio Mic 9000' for €3.50 from China! Only... the instructions say 'Do not eat' and it picks up Russian radio.'",
+        opts: [
+            { 
+                t: "'That is lo-fi aesthetic! Bang on trend!'", 
+                rep: { "Kevin": 10 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "Kevin looks unsure, then beams. 'True! Vintage vibes! I am calling my channel 'Radio Moscow'.' He is happy with his junk. You are a good friend. A lying one." 
+            },
+            { 
+                t: "'Buy cheap, buy twice.'", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "'Yeah, yeah, laugh it up.' Kevin looks stung. He drops the thing in the bin. 'Next time I will ask someone else.' Chance wasted." 
+            },
+            { 
+                t: "'Let me try soldering it.'", 
+				rep: { "Kevin": 2 },
+                m: 30, l: -10, a: 10, b: 0, 
+                r: "You spend 30 minutes fiddling with the thing. It crumbles to dust. Kevin sighs: 'Guess not. Thanks for trying though.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_bad_1",
+		char: "Kevin",
+        title: "TikTok in the Server Room",
+        reqRep: { "Kevin": -20 },
+        text: "You walk into the server room. Kevin is dancing in front of the blinking lights, phone held up, filming. When he sees you he swings the camera straight onto your irritated face. 'And here we have the grumpy admin in his natural habitat! Say hi!'",
+        opts: [
+            { 
+                t: "Try to look cool - it comes out as a grimace", 
+                next: "path_kevin_viral",
+                rep: { "Kevin": -5 },
+                m: 2, l: 5, a: -5, b: 0, 
+                r: "You pull a 'funny' face and throw a peace sign. Kevin lowers the phone slowly. 'Cringe. Just cringe, mate.' He walks off shaking his head. Age arrives all at once." 
+            },
+            { 
+                t: "'OUT! NOW!'", 
+                next: "path_kevin_war",
+                rep: { "Kevin": -10 },
+                m: 5, l: 0, a: 20, b: 0, 
+                r: "Kevin flinches, then rolls his eyes. 'God, chill out. You are ruining my vibe.' He shuffles out. There will be a sequel." 
+            },
+            { 
+                t: "Take the phone and delete the video", 
+                next: "path_kevin_troll",
+                rep: { "Kevin": -15 },
+                m: 10, l: 0, a: 10, b: 5, 
+                r: "You rip the phone out of his hand. Kevin goes pale. 'Hey! That is my property! Data protection!' You delete the video. He stares at you with pure hatred. 'You will regret that.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_bad_2a",
+		char: "Kevin",
+        title: "The Cable Thief",
+        reqRep: { "Kevin": -40 },
+        reqStory: "path_kevin_war",
+        text: "Your second monitor stays black. The HDMI cable is gone. You look over at Kevin. He has three monitors set up now and is playing 'Fortnite'. Your cable is quite obviously in his console.",
+        opts: [
+            { 
+                t: "Take the cable back without a word", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You walk over, pull the plug mid-match (his screen goes black) and take your cable. Kevin yells: 'OI! I was top 3! You boomer!' A small, dirty win." 
+            },
+            { 
+                t: "Go and tell the boss", 
+                rep: { "Kevin": -20, "Dr. Wichtig": 5 },
+                m: 15, l: 0, a: -5, b: 0, 
+                r: "The boss comes over and takes Kevin apart. Kevin has to bring the cable back and apologise. On his way out he whispers: 'Snitch.'" 
+            },
+            { 
+                t: "Change his Wi-Fi password", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "You block his MAC address. He keeps the cable. Without internet the thing is worthless to him. He swears, loudly. Justice." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_bad_2b",
+		char: "Kevin",
+        title: "Desktop Terror",
+        reqRep: { "Kevin": -40 },
+        reqStory: "path_kevin_troll",
+        text: "Break is over and your desktop is full of icons, none of which can be clicked. Kevin has set a screenshot of your desktop as the wallpaper and hidden the real icons. He sits there in his headphones, grinning.",
+        opts: [
+            { 
+                t: "Hard-reboot the PC and give up", 
+                m: 15, l: 0, a: 20, b: 0, 
+                r: "It takes you 15 minutes to undo all of it. Kevin types at you in the chat: 'Problem, officer? Thought you knew about tech?' You are boiling." 
+            },
+            { 
+                t: "Counter-attack by taping over his mouse", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You stick a scrap of Post-it over his mouse sensor. Next time he moves the mouse, nothing happens. He hammers the desk in fury. A draw, for now." 
+            },
+            { 
+                t: "Get him a written warning", 
+                m: 20, l: 0, a: 10, b: 5, 
+                r: "You run to HR. Since it was 'only a joke', nothing happens, except that the humourless one is suddenly you. Kevin has won." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_simple_bad_2c",
+		char: "Kevin",
+        title: "The Meme",
+        reqRep: { "Kevin": -40 },
+        reqStory: "path_kevin_viral",
+        text: "A new GIF turns up in the company group chat. It shows you trying to be 'cool', with a filter that makes you look like a clown. Caption: 'When the admin tries to seem young'. Chantal and Markus have already sent laughing emojis.",
+        opts: [
+            { 
+                t: "Throttle Kevin's internet to 'modem'", 
+                rep: { "Kevin": -15 },
+                m: 5, l: 0, a: -10, b: 0, 
+                r: "His upload dies. His Spotify stops. He looks up in a panic. You give him a nasty smile and a little wave. He knows exactly who did that." 
+            },
+            { 
+                t: "Simply delete the chat", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 0, a: 20, b: 0, 
+                r: "You delete the message as admin. Kevin posts within seconds: 'Censorship!' Now everyone laughs harder. Streisand effect." 
+            },
+            { 
+                t: "'Clown is my second job.'", 
+                rep: { "Kevin": 5 },
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "You play along. Kevin is confused. 'Eh? I thought you would lose it.' The joke fizzles out because nobody feeds it. Handled with authority." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_nemesis_1",
+		char: "Kevin",
+        title: "The Coup Attempt",
+        reqRep: { "Kevin": -60 },
+        text: "You come into the office. Kevin has pushed his desk out into the corridor. Above it hangs a sign: 'BETTER IT SUPPORT (No boomer moods)'. A queue of colleagues is waiting at it. He is handing out admin passwords like sweets.",
+        opts: [
+            { 
+                t: "Physical violence: tear the sign down", 
+                next: "path_kevin_glue",
+                rep: { "Kevin": -15 },
+                m: 5, l: 0, a: 20, b: 5, 
+                r: "You storm over, rip the sign down and crumple it. Kevin grins nastily. 'Anger issues? That goes on your file.' The colleagues boo you." 
+            },
+            { 
+                t: "Digital lockout: disable his account", 
+                next: "path_kevin_ddos_kid",
+                rep: { "Kevin": -15 },
+                m: 10, l: -5, a: -10, b: 15, 
+                r: "You return to your machine and disable his user in AD. Kevin calls over: 'Oh no, now I have to get my hacker tools out.' That sounded like a threat." 
+            },
+            { 
+                t: "'Respect. Want a coffee?'",
+                rep: { "Kevin": 10 },
+                m: 10, l: 5, a: -20, b: 0, 
+                r: "You go and stand with him. 'Good service, Kevin. Here, a coffee for the head of shadow IT.' Kevin is completely thrown. 'Er... thanks?' He takes the sign down himself later." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_nemesis_2a",
+		char: "Kevin",
+        title: "The Superglue Trap",
+        reqRep: { "Kevin": -80 },
+        reqStory: "path_kevin_glue",
+        text: "You drop into your office chair with some momentum... and stick. Kevin has smeared superglue across the seat. He leans in the doorway, filming. 'Well? Is the backside stuck to the responsibility?'",
+        opts: [
+            { 
+                t: "Sacrifice the trousers and chase Kevin", 
+                rep: { "Kevin": -15 },
+                m: 10, l: -10, a: 30, b: 0, 
+                r: "Rip. Your trousers tear open at the seat. You sprint after Kevin in your underwear. He escapes into the stairwell, laughing. The war goes on." 
+            },
+            { 
+                t: "Laugh and applaud: 'That was a good one!'",
+                rep: { "Kevin": 15 },
+                m: 5, l: 0, a: -15, b: 0, 
+                r: "You burst out laughing. '1-0 to you, kid. Respect.' Kevin lowers the phone. 'Seriously? You are not losing it?' He even helps you with the solvent. Ceasefire?" 
+            },
+            { 
+                t: "Plan revenge: hide his phone", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "You stay put and wait until he leaves his phone lying about. Then it goes into the shredder bin. An eye for an eye." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_nemesis_2b",
+		char: "Kevin",
+        title: "Script Kiddie Revenge",
+        reqRep: { "Kevin": -80 },
+        reqStory: "path_kevin_ddos_kid",
+        text: "Every printer in the building starts up at once. They print thousands of pages of one image: your face on a clown's body. Kevin has turned a 'Low Orbit Ion Cannon' tool loose on the print server. The boss is coming down the corridor!",
+        opts: [
+            { 
+                t: "Grass Kevin up: 'HE DID IT!'", 
+                next: "path_kevin_trap", 
+                rep: { "Kevin": -20, "Dr. Wichtig": 10 },
+                m: 5, l: 5, a: 15, b: -20, 
+                r: "The boss sees Kevin at his laptop. Kevin gets sacked (or nearly). He will hate you properly for this. That was the point of no return." 
+            },
+            { 
+                t: "Cover for him: 'It is a virus, boss!'",
+                rep: { "Kevin": 25 },
+                m: 10, l: -5, a: 0, b: 10, 
+                r: "You lie to the boss and pin it on 'security'. Kevin stares at you open-mouthed. Later he whispers: 'Why did you do that? Thanks...' He deletes his tools." 
+            },
+            { 
+                t: "Surrender and pull the plugs", 
+                m: 10, l: -5, a: 20, b: 10, 
+                r: "You run around pulling plugs. The floor is carpeted in clown pictures. Kevin stands in the corridor and applauds slowly." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_nemesis_2c",
+		char: "Kevin",
+        title: "The Petition",
+        reqRep: { "Kevin": -80 },
+        reqStory: "path_kevin_trap",
+        text: "Kevin has started an online petition: 'Miller must go!'. 80% of the workforce have signed (many thought it was about free beer). The sheet is up on the noticeboard.",
+        opts: [
+            { 
+                t: "Confront Kevin: 'You little...'", 
+                rep: { "Kevin": -20 },
+                m: 10, l: 5, a: 30, b: 20, 
+                r: "It almost comes to blows. HR has to step between you. Both of you get a final written warning. The war has escalated." 
+            },
+            { 
+                t: "Tear the sheet down in a rage", 
+                m: 5, l: 0, a: 15, b: 0, 
+                r: "You tear the paper to shreds. Your colleagues study the floor. You come across as a dictator days from the fall." 
+            },
+            { 
+                t: "'Count me in!'",
+                rep: { "Kevin": 15 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "You take a pen and sign your own dismissal petition. Kevin starts laughing. 'Okay, you are cool after all.' He takes the sheet down." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_good_1",
+		char: "Kevin",
+        title: "Energy Experiment",
+        reqRep: { "Kevin": 10 }, 
+        text: "Kevin brings a lurid green, unlabelled can into your office. 'Bro, I ordered this energy drink off the dark web. It is called 'Nuclear Sludge'. Want a go? I do not dare go first.'",
+        opts: [
+            { 
+                t: "'Sure, hand it over.'", 
+                rep: { "Kevin": 5 },
+                m: 10, l: -15, a: 10, b: 0, 
+                r: "You take a mouthful. It tastes of battery and sour apple. Your heart rate doubles on the spot. Kevin marvels: 'Sick, you are still alive!'" 
+            },
+            { 
+                t: "'Are you trying to poison me?'", 
+                rep: { "Kevin": -2 },
+                m: 2, l: 0, a: -5, b: 0, 
+                r: "Kevin snorts. 'Coward.' He drinks it himself and then shakes uncontrollably at his desk for 2 hours." 
+            },
+            { 
+                t: "'Put it on the boss's desk.'", 
+                rep: { "Kevin": 10, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "You sneak into the boss's office together and leave the can there. An hour later the boss is bellowing something in the corridor about a 'synergy explosion'. You both snigger in the server room." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_good_2",
+		char: "Kevin",
+        title: "Tinder Support",
+        reqRep: { "Kevin": 30 }, 
+        text: "Kevin looks desperate. 'You are wise and that. My Tinder profile is not working. I have got a photo of my PC setup and for a bio: 'Looking for Player 2'. What am I doing wrong?'",
+        opts: [
+            { 
+                t: "'Everything. You are doing everything wrong.'", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Kevin takes offence. 'You just do not understand my target group. Real gamer girls are into that!' He carries on swiping right, frustrated." 
+            },
+            { 
+                t: "'Let us make a proper profile out of it!'", 
+                rep: { "Kevin": 15 },
+                m: 15, l: 10, a: -10, b: 0, 
+                r: "You spend 15 minutes of work time photographing him in the corridor in front of a plant. 'Put down that you like cooking,' you advise. He has a match straight away." 
+            },
+            { 
+                t: "'Buy Tinder Gold.'", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "He sighs. 'That is €30! A new skin in Valorant costs less than that...' He is genuinely weighing it up. Priorities." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_bad_1",
+		char: "Kevin",
+        title: "The Keyboard from Hell",
+        reqRep: { "Kevin": -10 }, 
+        text: "Kevin has bought himself a new mechanical keyboard with blue switches. Every keystroke sounds like a shot from a small-calibre rifle. *CLACK CLACK CLACK*. Concentration is out of the question.",
+        opts: [
+            { 
+                t: "Quietly swap two keycaps", 
+                rep: { "Kevin": -10 },
+                m: 10, l: 5, a: -5, b: 0, 
+                r: "While he is in the toilet you swap 'N' and 'M'. It takes 15 minutes before he gives up shouting, because his password no longer works. Beautiful." 
+            },
+            { 
+                t: "Put up with it and put headphones on", 
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You try to ignore it. The *CLACK CLACK* drills into your brain regardless." 
+            },
+            { 
+                t: "'Bin that thing!'", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "Kevin rolls his eyes. 'That is tactile feedback! You have just got no feel for good hardware.' He types demonstratively louder." 
+            }
+        ]
+    },
+    {
+        id: "rep_kevin_filler_bad_2",
+		char: "Kevin",
+        title: "The Dumping Ground",
+        reqRep: { "Kevin": -30 }, 
+        text: "You come back from getting a coffee. On your desk sit an empty, sticky yoghurt pot and a banana skin. Kevin is two desks away, whistling innocently and staring at his monitor.",
+        opts: [
+            { 
+                t: "Direct confrontation: shout at him", 
+                rep: { "Kevin": -5 },
+                m: 5, l: 0, a: 15, b: 5, 
+                r: "You throw the pot onto his desk. 'Is your bin broken?!' The boss hears it and pulls YOU up about raised voices in the office." 
+            },
+            { 
+                t: "Clear it all away without a word", 
+                rep: { "Kevin": 5 },
+                m: 5, l: -5, a: 10, b: 0, 
+                r: "You bin it yourself. Kevin smirks in the background: 'Cheers for the room service!' Whatever respect was left went with it." 
+            },
+            { 
+                t: "Put it in his backpack, no comment", 
+                rep: { "Kevin": -10 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "You let the rubbish disappear quietly into his bag. Unpacking tomorrow morning will be a very nasty surprise. Perfect revenge." 
+            }
+        ]
+    },
+    // === CHANTAL: THE MARKETING QUEEN  ===
+    {
+        id: "rep_chantal_story_1",
+		char: "Chantal",
+        title: "Chantal Without a Filter",
+        reqRep: { "Chantal": 60 },
+        text: "Chantal is standing at the coffee machine. She looks wrecked. The mask slips. 'God, this whole fake world in here... everybody smiles, everybody lies. Some days I just want to scream. The boss wants me to sell his idiotic 'blockchain toilet seats' as 'innovation'. I cannot do it any more.'",
+        opts: [
+            { 
+                t: "'Not my problem, Chantal.'", 
+                next: "path_chantal_enemy",
+                rep: { "Chantal": -10 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "The ice-cold marketing woman is back within a second. 'Forget I said anything. Go and do some work, nerd.' The chance of a friendship has gone." 
+            },
+            { 
+                t: "'I will help you kill the idea.'", 
+                next: "path_chantal_ally",
+                rep: { "Chantal": 15 },
+                m: 15, l: 5, a: -10, b: 5, 
+                r: "She looks at you, surprised. 'Really? You would help me leave the boss high and dry?' A wicked grin spreads across her face. 'Okay, partner. Let us play at war.'" 
+            },
+            { 
+                t: "'I will do it, and then you owe me.'", 
+                next: "path_chantal_user",
+                rep: { "Chantal": 5 },
+                m: 5, l: 10, a: 0, b: 5, 
+                r: "Chantal snorts. 'Typical. Nothing for nothing, is it? Fine. You keep my back clear, I see to your budget.' A deal between wolves." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_story_2a",
+		char: "Chantal",
+        title: "Finale: The Sabotage",
+        reqRep: { "Chantal": 80 },
+        reqStory: "path_chantal_ally",
+        text: "Chantal comes into your office holding a gold-wrapped parcel. 'It is done. Thanks to your technical 'expertise', the boss believes the toilet seats are impossible to build. The project is dead. We have won.'",
+        opts: [
+            { 
+                t: "Open the present and seal the pact", 
+                loot: "golden_stapler", 
+                rep: { "Chantal": 20, "Dr. Wichtig": -5 },
+                m: 5, l: -20, a: -30, b: -10, 
+                r: "It is a solid gold-plated stapler. 'Siphoned off the marketing budget,' she winks. 'Nobody takes the two of us on.' The most powerful ally in the company is now yours." 
+            },
+            { 
+                t: "Stay modest: 'It was a pleasure.'", 
+                rep: { "Chantal": 10 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "Chantal nods. 'You are okay, Miller. Genuinely okay.' She keeps the stapler. What you get is her lasting respect." 
+            },
+            { 
+                t: "'I am telling the boss you lied.'", 
+                rep: { "Chantal": -40, "Dr. Wichtig": 20 },
+                m: 10, l: 0, a: 20, b: -30, 
+                r: "Chantal's face freezes. 'You would not dare.' You would. The boss loves you for it. You have also just made an enemy for life." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_story_2b",
+		char: "Chantal",
+        title: "Finale: You Scratch My Back",
+        reqRep: { "Chantal": 70 },
+        reqStory: "path_chantal_user",
+        text: "Chantal is leaning in your doorway, casual. 'Right. The toilet seat campaign is running. It is embarrassing and the boss is happy. And as promised: I have... optimised your IT budget a little.'",
+        opts: [
+            { 
+                t: "Push for more: 'I want the new office chair as well.'", 
+                rep: { "Chantal": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "Chantal rolls her eyes. 'Greedy. We will see.' She leaves, irritated. That may have been one step too far." 
+            },
+            { 
+                t: "'I do not want dirty money.'", 
+                rep: { "Chantal": -10 },
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "'Tough. I will buy shoes with it then.' She shrugs and goes. Your integrity is intact and the server cabinet stays empty." 
+            },
+            { 
+                t: "'Pleasure doing business.'", 
+                loot: "energy",
+                rep: { "Chantal": 5 },
+                m: 5, l: 5, a: -5, b: -5, 
+                r: "She throws you an energy drink. 'On the company. We understand each other.' Not a friendship. A solid partnership." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_story_2c",
+		char: "Chantal",
+        title: "Finale: The Pawn Sacrifice",
+        reqRep: { "Chantal": 60 },
+        reqStory: "path_chantal_enemy",
+        text: "The boss barges in. 'Miller! Chantal says YOU are the reason the toilet seats are not 'smart'! That you blocked the interface!' Chantal stands behind him, grinning.",
+        opts: [
+            { 
+                t: "'The project is nonsense!'", 
+                rep: { "Dr. Wichtig": -20 },
+                m: 5, l: 0, a: 50, b: 50, 
+                r: "You go all in. The boss turns red. 'YOU ARE FIRED... nearly!' That was too much truth in one go. Chantal laughs out loud." 
+            },
+            { 
+                t: "'Chantal knows nothing about technology.'", 
+                rep: { "Dr. Wichtig": 5, "Chantal": -20 },
+                m: 15, l: 0, a: 10, b: -10, 
+                r: "You explain to the boss in technical terms why Chantal is lying. He nods, confused. 'Hm. Fine.' Chantal glares at you with pure hatred. Declaration of war accepted." 
+            },
+            { 
+                t: "'Yes, sorry about that.'", 
+                rep: { "Dr. Wichtig": -10, "Chantal": 10 },
+                m: 5, l: 5, a: 15, b: 20, 
+                r: "You take it on the chin for a bit of peace. Chantal winks at you: 'Good boy.' You hate yourself for it." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_simple_good_1",
+		char: "Chantal",
+        title: "The Filter Emergency",
+        reqRep: { "Chantal": 20 },
+        text: "Chantal storms up to your desk, holding her tablet like a mirror. 'Miller! Emergency! My picture in the Teams meeting looks completely washed out. The lighting in here is neon hell! Can you program a 'glow-up' filter straight into the webcam for me? I have a call with New York in a minute!'",
+        opts: [
+            { 
+                t: "'You do not need a filter.'", 
+                next: "path_chantal_flatter",
+                rep: { "Chantal": 10 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "She stops and checks her reflection. 'Really? You think? ... True, actually you are right. Natural beauty and all that.' She leaves beaming. Problem solved by flattery." 
+            },
+            { 
+                t: "'I will install Snap Camera.'", 
+                next: "path_chantal_gadget",
+                rep: { "Chantal": 5 },
+                m: 15, l: -5, a: 5, b: 5, 
+                r: "You set up a virtual camera for her. She can now attend a meeting as a potato or with dog ears. 'OMG! You are a wizard!' She giggles and runs off." 
+            },
+            { 
+                t: "'Stick a Post-it over the lens.'", 
+                next: "path_chantal_tape",
+                rep: { "Chantal": -5 },
+                m: 2, l: 0, a: -5, b: 10, 
+                r: "'Eh? Then nobody can see me at all?' She looks baffled. 'You know nothing about personal branding.' She stalks off, offended." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_simple_good_2a",
+		char: "Chantal",
+        title: "Health Food",
+        reqRep: { "Chantal": 40 },
+        reqStory: "path_chantal_flatter",
+        text: "Chantal comes past with two cups. 'Hey! Here is a 'green detox matcha latte' for you. About the other day. You were right, my complexion was superb on the call. New York loved it.'",
+        opts: [
+            { 
+                t: "'Is it organic?'", 
+                rep: { "Chantal": 5 },
+                m: 10, l: 10, a: -10, b: 5, 
+                r: "'Of course! Hand-picked by moonlight!' You spend 10 minutes on superfoods together. No work gets done. Your social score climbs." 
+            },
+            { 
+                t: "Accept it and drink bravely", 
+                loot: "energy",
+                rep: { "Chantal": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "It tastes of meadow and algae. Chantal is smiling expectantly. 'Mmm, healthy!' you lie. Strangely, the energy is real." 
+            },
+            { 
+                t: "'Coffee, thanks.'", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "Chantal waves it away, offended. 'Your funeral. The dog can have it.' She moves on. You stay with your dishwater." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_simple_good_2b",
+		char: "Chantal",
+        title: "The Unboxing",
+        reqRep: { "Chantal": 40 },
+        reqStory: "path_chantal_gadget",
+        text: "Chantal drops a parcel on your desk. 'You are the tech nerd. I ordered this 'smart water bottle' that lights up when I need to drink. The app is a nuisance though. Do you want it? I will go back to drinking out of a glass.'",
+        opts: [
+            { 
+                t: "'Have you got doughnuts as well?'", 
+                loot: "donut",
+                rep: { "Chantal": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "'Keep the bottle, I will take that doughnut you have got there.' Chantal laughs. 'Deal. You really are greedy.'" 
+            },
+            { 
+                t: "Accept the present", 
+                rep: { "Chantal": 5 }, 
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'Cool, thanks.' It is an €80 water bottle. You hack the firmware and set the glow to 'Matrix green'. A nice toy, which gives up after a few minutes..." 
+            },
+            { 
+                t: "'Electronic waste.'", 
+                rep: { "Chantal": -2 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "'Pff. I will bin it then.' She goes. €80 of hardware turned down, pride intact." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_simple_good_2c",
+		char: "Chantal",
+        title: "The Tape Fail",
+        reqRep: { "Chantal": 30 },
+        reqStory: "path_chantal_tape",
+        text: "Chantal is back. A huge strip of duct tape is stuck over her webcam. 'So I did what you said. Now the people in the meeting say my picture is black. Are they winding me up? Is this bullying?'",
+        opts: [
+            { 
+                t: "Laugh in her face", 
+                rep: { "Chantal": -15 },
+                m: 2, l: 0, a: -10, b: 0, 
+                r: "You laugh in her face. 'I hate IT,' she mutters, and leaves. So much for the friendship." 
+            },
+            { 
+                t: "Explain and take the tape off", 
+                rep: { "Chantal": 5 },
+                m: 5, l: -5, a: 5, b: -5, 
+                r: "You peel the tape off. The picture is back. Chantal marvels: 'Oh! It was the lighting, was it? Thanks, Miller!' She simply does not get it." 
+            },
+            { 
+                t: "'The line is broken.'", 
+                rep: { "Chantal": -5 },
+                m: 5, l: 10, a: -5, b: 10, 
+                r: "'Knew it! Bloody internet!' She runs off to shout at the provider. You have your peace. You have also created a monster." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_bad_1",
+		char: "Chantal",
+        title: "The Insta Story",
+        reqRep: { "Chantal": -20 },
+        text: "Chantal is in your office unannounced, filming on her phone. 'And here, my loves, is the lair of the IT goblins! It smells of despair and cold pizza crust. Say hello to my followers!' She holds the camera right in your face.",
+        opts: [
+            { 
+                t: "'Peace, everyone!'", 
+                next: "path_chantal_sellout",
+                rep: { "Chantal": 15, "Dr. Wichtig": -10 },
+                m: 5, l: 10, a: 15, b: 10, 
+                r: "You force a grin and throw the peace sign. Chantal squeals: 'OMG, the goblin is tame! #OfficePet'. Something in you dies." 
+            },
+            { 
+                t: "Knock the phone away", 
+                next: "path_chantal_glitter",
+                rep: { "Chantal": -15 },
+                m: 5, l: -5, a: 20, b: 5, 
+                r: "You swat at the phone on reflex. She pulls it back. 'HELP! VIOLENCE!' The video cuts out. She glares at you. 'You will regret that, you freak.'" 
+            },
+            { 
+                t: "Block Wi-Fi for her phone", 
+                next: "path_chantal_offline",
+                rep: { "Chantal": -10 },
+                m: 5, l: 5, a: -15, b: 0, 
+                r: "You type a quick command. Her live stream freezes. 'Eh? No signal? MILLER?!' You just grin, satisfied, and turn away. The grin lasts until clocking-off time." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_bad_2a",
+		char: "Chantal",
+        title: "The Glitter Attack",
+        reqRep: { "Chantal": -40 },
+        reqStory: "path_chantal_glitter",
+        text: "After the break your desk is sparkling: keyboard, mouse, chair... all of it under a fine pink glitter dust. A note with a lipstick kiss sits beside it: 'For a bit more sparkle in your drab little life! xoxo'.",
+        opts: [
+            { 
+                t: "Report it to the boss", 
+                rep: { "Chantal": -2 , "Dr. Wichtig": -2 },
+                m: 10, l: 0, a: 10, b: 5, 
+                r: "The boss just laughs. 'Oh come on, a bit of colour does this place good!' He takes Chantal's side. You are left standing there as the humourless killjoy." 
+            },
+            { 
+                t: "Revenge with duct tape", 
+                req: "tape", 
+                rep: { "Chantal": -15 },
+                m: 10, l: -5, a: -20, b: 0, 
+                r: "Like for like. You sneak over to her office and tape her stapler and her coffee mug to the desk. The glitter will never come off. Neither will the tape." 
+            },
+            { 
+                t: "Throw the lot in the bin", 
+                rep: { "Chantal": -5 },
+                m: 15, l: -10, a: 30, b: 0, 
+                r: "You bin the keyboard and mouse and fetch replacements from Stores. Weeks later you are still finding glitter in your eyebrows. Your rage has no bottom." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_bad_2b",
+		char: "Chantal",
+        title: "Digital Counter-Attack",
+        reqRep: { "Chantal": -40 },
+        reqStory: "path_chantal_offline",
+        text: "Chantal has taken her revenge. She has signed your email address up to the 'Daily Cat Facts' and 'Yoga for Seniors' newsletters. Your inbox is overflowing. She has also posted on the intranet that you only fix PC problems in exchange for chocolate today.",
+        opts: [
+            { 
+                t: "Redirect her emails in retaliation", 
+                rep: { "Chantal": -20 },
+                m: 10, l: 0, a: -10, b: -10, 
+                r: "You forward every email from 'Zalando' and 'Douglas' to the boss. That is wicked. Chantal has a very uncomfortable conversation coming." 
+            },
+            { 
+                t: "Put up a sign: 'NO CHOCOLATE!'", 
+                m: 5, l: 0, a: 15, b: 0, 
+                r: "You write an angry sign for your door. Your colleagues are disappointed. Your reputation as a grump is set in concrete." 
+            },
+            { 
+                t: "Configure the spam filter", 
+                m: 20, l: -5, a: 20, b: 0, 
+                r: "It takes you 20 minutes to block the newsletters. Annoying, but doable. Chantal grins at you in the corridor." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_bad_2c",
+		char: "Chantal",
+        title: "The Viral Cringe",
+        reqStory: "path_chantal_sellout",
+        text: "Chantal storms in, delighted. 'Miller! Your peace sign has 500 likes! People love the 'Grumpy Cat' vibe! Come on, we are doing a TikTok dance to 'Savage Love'! The boss is watching too!'",
+        opts: [
+            { 
+                t: "'Only for a budget increase.'", 
+                rep: { "Chantal": 5, "Dr. Wichtig": 5 },
+                m: 10, l: 5, a: 10, b: 5, 
+                r: "You drive a hard bargain. One dance for one new monitor. Chantal pays out of her own budget. Your soul is sold. The new monitor is 4K." 
+            },
+            { 
+                t: "Join in and dance, goodbye dignity", 
+                rep: { "Chantal": 20, "Dr. Wichtig": -15 },
+                m: 15, l: 10, a: 30, b: 20, 
+                r: "You dance as stiffly as a robot. Chantal cheers. The boss shakes his head in the background: 'I do not pay you to wiggle, Miller.' Your reputation as a serious admin is destroyed. Chantal adores you." 
+            },
+            { 
+                t: "'Enough is enough.'", 
+                rep: { "Chantal": -10 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "'Oh nooo, do not be a spoilsport!' She sulks off. Your internet fame was a brief thing." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_nemesis_1",
+		char: "Chantal",
+        title: "The Pile-On",
+        reqRep: { "Chantal": -60 },
+        text: "In the morning there are posters everywhere with an unflattering photo of you (eating a Döner with your mouth open). Under it, in pink: 'IT blocks innovation! #Blocker #Boomer #SadVibes'. Chantal stands beside them filming your reaction live for Insta.",
+        opts: [
+            { 
+                t: "Tear the posters down in a fury", 
+                next: "path_chantal_war",
+                rep: { "Chantal": -15 },
+                m: 5, l: -5, a: 20, b: 5, 
+                r: "You rip the sheets off the wall. Chantal zooms in on your red face. 'Do you see the violence? The toxic masculinity?' She has content. You have rage." 
+            },
+            { 
+                t: "Lock her account 'by accident'", 
+                next: "path_chantal_ban",
+                req: "admin_pw", 
+                rep: { "Chantal": -20 },
+                m: 10, l: -5, a: -5, b: 10, 
+                r: "Back at your desk you disable her AD user on 'suspicion of a bot network'. Chantal shrieks in the corridor: 'My access?!' The war moves to the digital." 
+            },
+            { 
+                t: "Stream a live apology", 
+                next: "path_chantal_makeover",
+                rep: { "Chantal": 15, "Dr. Wichtig": -5 }, 
+                m: 5, l: 5, a: 20, b: 5, 
+                r: "You look into her camera and say: 'I was a blocker. Chantal is right.' Chantal is thrown, then thrilled. 'Oh wow! Self-awareness! #CharacterArc'." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_nemesis_2a",
+		char: "Chantal",
+        title: "The Tribunal",
+        reqRep: { "Chantal": -70 },
+        reqStory: "path_chantal_war",
+        text: "Lunch break in the canteen. Chantal is standing on a table delivering a tirade against you. At that exact moment Dr Wichtig walks in. He sees Chantal on the table and turns red. 'MS CHANTAL! GET DOWN! IS THIS A ZOO?!'",
+        opts: [
+            { 
+                t: "'Yes, sir! You tell her!'", 
+                rep: { "Chantal": -30, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: -20, b: 0, 
+                r: "You stay seated and enjoy the show. The boss takes Chantal apart. She runs out in tears and throws you a look that could kill. That was total war." 
+            },
+            { 
+                t: "Lie to the boss and cover for her", 
+                rep: { "Chantal": 40, "Dr. Wichtig": -20 },
+                m: 10, l: 0, a: 10, b: 20, 
+                r: "You jump up: 'Wait, boss! That was my idea! An... er... agile stand-up exercise!' The boss stares at you. 'Miller, you are an idiot.' He walks off shaking his head. Chantal cannot close her mouth. 'You saved me? Why?'" 
+            },
+            { 
+                t: "Simply leave", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You leave the room. Not your circus, not your monkeys." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_nemesis_2b",
+		char: "Chantal",
+        title: "The Marketing Blackout",
+        reqRep: { "Chantal": -70 },
+        reqStory: "path_chantal_ban",
+        text: "Chantal is standing outside the boss's office in tears. 'I cannot post! Our campaign is dying!' The boss comes over to you: 'Miller! Why is the marketing network down? If this is your mistake, heads will roll!'",
+        opts: [
+            { 
+                t: "'My mistake, boss. Wrong config.'", 
+                rep: { "Chantal": 35, "Dr. Wichtig": -15 },
+                m: 5, l: -5, a: 10, b: 30, 
+                r: "You take the blame. The boss bellows: 'Incompetent!' You unlock her account. Chantal comes to you later, eyes red: 'Thank you. I thought I was out.' Peace." 
+            },
+            { 
+                t: "Distract with technical waffle", 
+                m: 10, l: 0, a: 0, b: 10, 
+                r: "You talk about DNS propagation. Nobody understands a word. The account 'starts working again by itself'. The conflict carries on smouldering." 
+            },
+            { 
+                t: "'Chantal must have downloaded a virus.'", 
+                rep: { "Chantal": -30, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: -10, b: -5, 
+                r: "You pin it on her. 'User error.' The boss believes you. Chantal is banned from posting. She holds your gaze a beat too long. You open your ticket system." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_nemesis_2c",
+		char: "Chantal",
+        title: "Project: Glow-Up",
+        reqRep: { "Chantal": -50 },
+        reqStory: "path_chantal_makeover",
+        text: "Chantal appears in your office. She is not hostile any more, more... pitying. 'Okay, since you are behaving... we have to work on your image. Put this on.' She throws you a pink polo shirt with 'Team Love' across the front.",
+        opts: [
+            { 
+                t: "'That is a step too far.'", 
+                rep: { "Chantal": -10 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "'Pff. Stay ugly then.' She takes the shirt and goes. The ceasefire is thin." 
+            },
+            { 
+                t: "'Fridays only.'", 
+                rep: { "Chantal": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "A compromise. She accepts graciously. 'Okay. Casual Friday is mine.' You have bought time." 
+            },
+            { 
+                t: "Put the thing on without resisting", 
+                rep: { "Chantal": 25 },
+                m: 5, l: 10, a: 30, b: 0, 
+                r: "You put it on. It strains across the stomach. Chantal claps: 'Slay! We have a mascot!' She posts a selfie with you in it. #BFF" 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_good_1",
+		char: "Chantal",
+        title: "Excel for Influencers",
+        reqRep: { "Chantal": 10 }, 
+        text: "Chantal is standing over you with her MacBook. 'Miller, you speak fluent nerd. How do I make this cell go red when the budget for vegan snacks is over? It has to pop!'",
+        opts: [
+            { 
+                t: "Set up conditional formatting", 
+                rep: { "Chantal": 10 },
+                m: 10, l: -5, a: -5, b: 0, 
+                r: "You set the formatting up. Chantal claps her hands. 'OMG, it is magic! You have saved my day!' She goes off happy." 
+            },
+            { 
+                t: "'Buy a red pen.'", 
+                rep: { "Chantal": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "She pouts. 'Always so helpful, IT. I will ask the working student then.' A chance at credit, missed." 
+            },
+            { 
+                t: "'Watch, this is how it works...'", 
+                rep: { "Chantal": 5 },
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "You try to explain it to her. She switches off mentally after 10 seconds and nods along. 'Yeah, yeah, just do it.' She did say thank you, at least." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_good_2",
+		char: "Chantal",
+        title: "The Outfit Check",
+        reqRep: { "Chantal": 30 }, 
+        text: "Chantal looks you up and down. 'We have clients in the building shortly. That T-shirt with the 'There is no Place like 127.0.0.1' line... is that irony or do you mean it? You need an upgrade.'",
+        opts: [
+            { 
+                t: "'Have you got something better?'", 
+                rep: { "Chantal": 15 },
+                m: 10, l: 5, a: 5, b: 5, 
+                r: "She beams, rummages in a box and throws you a far too tight 'GlobalCorp Innovator' polo. You look dreadful. She is happy." 
+            },
+            { 
+                t: "'My clothes, my business.'", 
+                rep: { "Chantal": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "She raises her hands. 'It was only a tip. Don't shoot the messenger.' She trots off shaking her head." 
+            },
+            { 
+                t: "'This is high fashion!'", 
+                rep: { "Chantal": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "She laughs. 'Okay, at least you own your cringe. Just stay behind the server cabinet when the clients arrive.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_bad_1",
+		char: "Chantal",
+        title: "Hardware Aesthetics",
+        reqRep: { "Chantal": -10 }, 
+        text: "Chantal stands at your desk, irritated. 'That black box under my desk... the computer. It ruins the feng shui. Can you not spray it white? Or swap it for an iMac?'",
+        opts: [
+            { 
+                t: "Push the PC further under the desk", 
+                m: 10, l: 5, a: 0, b: 0, 
+                r: "You crawl under her desk and shove the tower right back into the corner. 'Out of sight, out of mind.' She is moderately satisfied." 
+            },
+            { 
+                t: "'That is a company PC, not an ornament.'", 
+                rep: { "Chantal": -5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "'God, you are uncreative,' she moans. 'I will stick rhinestones on it then.' (Please do not...)" 
+            },
+            { 
+                t: "Ignore her and carry on working", 
+                rep: { "Chantal": -10 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "You act as though you have not heard her. She stands there snorting for another minute, then clacks away in a fury." 
+            }
+        ]
+    },
+    {
+        id: "rep_chantal_filler_bad_2",
+		char: "Chantal",
+        title: "The Priority Problem",
+        reqRep: { "Chantal": -30 }, 
+        text: "A ticket from Chantal pops up, priority CRITICAL: 'My second monitor has the wrong colour temperature! The blue is too cool!' You are in the middle of an actual server outage.",
+        opts: [
+            { 
+                t: "Go over and click about for show", 
+                rep: { "Chantal": 5 },
+                m: 15, l: -5, a: 10, b: -5, 
+                r: "You break off the work that matters, walk over and set the monitor 2% warmer. 'Much better!' she says. You want to cry." 
+            },
+            { 
+                t: "Put the boss in CC: 'Please adjust the priority'", 
+                rep: { "Chantal": -10, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: 0, b: -5, 
+                r: "You report the waste of resources to the boss. He agrees with you. Chantal sends you a Teams message full of hate." 
+            },
+            { 
+                t: "Close the ticket: 'No technical fault.'", 
+                rep: { "Chantal": -15 },
+                m: 2, l: 0, a: 5, b: 5, 
+                r: "You close the ticket without mercy. Two minutes later Chantal is shouting down the corridor that IT is deliberately sabotaging the marketing department." 
+            }
+        ]
+    },
+    // === EGON: THE KEEPER OF THE KEYS  ===
+    {
+        id: "rep_egon_story_1",
+		char: "Egon",
+        title: "Flooded Out",
+        reqRep: { "Egon": 60 },
+        text: "You come into the kitchenette. Egon is lying on his back under the sink in the dirty water, swearing quietly. His legs block the way to the coffee machine. He looks you over.",
+        opts: [
+            { 
+                t: "'Give us the pliers!'", 
+                next: "path_egon_handyman",
+                rep: { "Egon": 15 },
+                m: 20, l: -10, a: 5, b: 0, 
+                r: "You throw your jacket aside and reach into the filthy water. Egon grins wide. 'Finally, somebody who works!' You fix the leak between you. A moment between men." 
+            },
+            { 
+                t: "'I will ring the emergency plumber.'", 
+                next: "path_egon_official",
+                rep: { "Egon": -5, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: 5, b: -5, 
+                r: "Egon rolls his eyes. 'Typical pen-pusher. Never take any responsibility.' He packs up, irritated. The boss praises your 'adherence to process' later." 
+            },
+            { 
+                t: "'Ugh, I only wanted tea.'", 
+                next: "path_egon_snob",
+                rep: { "Egon": -15 },
+                m: 2, l: 5, a: 0, b: 5, 
+                r: "You step carefully over his legs. Egon spits into the bucket with contempt. 'Get out of my light, princess.' That did not land well." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_story_2a",
+		char: "Egon",
+        title: "Finale: A Matter of Trust",
+        reqRep: { "Egon": 80 },
+        reqStory: "path_egon_handyman",
+        text: "Egon waves you into his cubbyhole. It smells of cleaning fluid and stale smoke. 'Listen. I am retiring soon. You are the only one here who is not a complete idiot.' He holds out a heavy old bunch of keys. 'For emergencies. Officially you do not have them.'",
+        opts: [
+            { 
+                t: "'That is too much responsibility.'", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "Egon shrugs. 'Suit yourself. The apprentice can have them then, once he is old enough.' He pockets them. Does he mean Kevin?" 
+            },
+            { 
+                t: "'Is that even allowed?'", 
+                rep: { "Egon": -20, "Dr. Wichtig": 2 },
+                m: 5, l: 0, a: 5, b: -10, 
+                r: "Egon goes cold. 'Forget it. You are just one of them after all.' He throws you out. The trust has gone." 
+            },
+            { 
+                t: "Pocket them and nod, no words", 
+                loot: "master_key", 
+                rep: { "Egon": 20 },
+                m: 5, l: -20, a: -30, b: 0, 
+                r: "You take the bunch. Egon claps you firmly on the shoulder. 'Look after the place.' Every door in the building is open to you now." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_story_2b",
+		char: "Egon",
+        title: "Finale: Egon and the Tablet",
+        reqRep: { "Egon": 60 },
+        reqStory: "path_egon_official",
+        text: "You meet Egon in the corridor. He is hammering at the new 'smart heating' panel on the wall with a sausage of a forefinger. 'Rotten thing! It is 12 degrees in here and this lump wants to do a firmware update first! I am freezing! You do it, you are IT!'",
+        opts: [
+            { 
+                t: "'Hit it with the hammer.'", 
+                req: "hammer",
+                rep: { "Egon": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "Egon grins for a second, then shakes his head. 'Too dear. The boss would take it off my wages.' A brief moment of fellowship." 
+            },
+            { 
+                t: "'I will get round the lock.'", 
+                rep: { "Egon": 15 },
+                m: 10, l: -5, a: -5, b: 5, 
+                r: "You type in an admin override. The heating starts up at once. Egon beams: 'You are a wizard! Sod the regulations, warm is what matters!' Respect earned." 
+            },
+            { 
+                t: "'Update running... it takes 2 hours.'", 
+                rep: { "Egon": -5 },
+                m: 5, l: 0, a: 10, b: -5, 
+                r: "Egon groans. 'I will go down to the boiler room then.' He stamps off in a temper. Correct conduct. Nobody helped." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_story_2c",
+		char: "Egon",
+        title: "Finale: The 'Faulty' Valve",
+        reqRep: { "Egon": 50 },
+        reqStory: "path_egon_snob",
+        text: "It has been 14 degrees in your office since this morning. You are shivering. Egon leans on his broom in the corridor looking very satisfied. 'Well. Your heating seems to be broken. Spare part comes... well... when the lorry comes. Could be a while.' He grins nastily.",
+        opts: [
+            { 
+                t: "Repair it yourself", 
+                req: "screw",
+                m: 30, l: -10, a: -10, b: 0, 
+                r: "You crawl under the radiator and bleed it yourself. Dirty work, and the room warms up. Egon looks disappointed that you could help yourself." 
+            },
+            { 
+                t: "'Have this doughnut.'", 
+                rep: { "Egon": 10 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You sacrifice your food. Egon takes it. 'Oh, look at that! Found the valve in my pocket after all!' The heating works again. Corruption wins." 
+            },
+            { 
+                t: "'I am telling the boss!'", 
+                rep: { "Egon": -10 },
+                m: 5, l: 0, a: 10, b: -5, 
+                r: "'Go on then.' Egon is unmoved. He turns the corridor heating up full so that you can tell what you are missing. You carry on freezing." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_good_1",
+		char: "Egon",
+        title: "The Crossword",
+        reqRep: { "Egon": 20 },
+        text: "Egon is sitting on a crate in the boiler room chewing a pencil. 'Now then, you went to university. 6 across: 'Ancient reckoning device'. 6 letters. I tried 'PHONE', it does not fit.'",
+        opts: [
+            { 
+                t: "Suggest 'SYSTEM'", 
+                next: "path_egon_joke",
+                rep: { "Egon": 15 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "Egon gives a dirty laugh. 'System... aye, that is ancient and it does not reckon right either.' He actually writes it in. 'Wrong, and true all the same.'" 
+            },
+            { 
+                t: "Suggest 'ABACUS'", 
+                next: "path_egon_smart",
+                rep: { "Egon": 10 },
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "Egon slaps his forehead. 'Abacus! That is the one. Those Greeks. Cheers, lad, there is something in that head of yours.' He scribbles it in." 
+            },
+            { 
+                t: "'Just google it.'", 
+                next: "path_egon_google",
+                rep: { "Egon": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "'Google... pff. People used to think for themselves.' Egon looks disappointed by your mental idleness." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_good_2a",
+		char: "Egon",
+        title: "The Prize",
+        reqRep: { "Egon": 40 },
+        reqStory: "path_egon_smart",
+        text: "Egon catches you in the corridor, waving a magazine. 'I sent the puzzle in! And won! Only the consolation prize, mind, but a joy shared is a joy doubled.'",
+        opts: [
+            { 
+                t: "'You keep it.'", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "'Suit yourself. I will tape the broom handle with it then.' He walks on, whistling." 
+            },
+            { 
+                t: "'Told you!'", 
+                rep: { "Egon": -5 },
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "'Aye, aye, Professor.' He pockets the tape. Arrogance does not go down well with Egon." 
+            },
+            { 
+                t: "Accept the prize", 
+                loot: "tape",
+                rep: { "Egon": 5 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "He presses a roll of premium duct tape into your hand. 'Came in the DIY set. I have got plenty. Take it.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_good_2b",
+		char: "Egon",
+        title: "Secret Knowledge",
+        reqRep: { "Egon": 40 },
+        reqStory: "path_egon_joke",
+        text: "Egon waves you behind a pillar. 'Since you are so good at a bit of gossip... I found something. Third floor, gents, middle cubicle. The flush sticks, and behind it there is a void. Perfect for... breaks.'",
+        opts: [
+            { 
+                t: "'The Chamber of Secrets?'", 
+                rep: { "Egon": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "Egon grins. 'That is the one. Initiates only.' There is a secret between you now." 
+            },
+            { 
+                t: "Report it anyway", 
+                rep: { "Egon": -20 },
+                m: 5, l: 0, a: 5, b: -15, 
+                r: "You report the void to facilities management. They brick it up. Egon never speaks to you again." 
+            },
+            { 
+                t: "Say thanks and use it", 
+                m: 30, l: 20, a: -20, b: 0, 
+                r: "You find the hideaway. A folding chair, old comics and absolute quiet. You skive for 30 minutes. Nobody finds you. Glorious." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_good_2c",
+		char: "Egon",
+        title: "Uncharted Territory",
+        reqRep: { "Egon": 30 },
+        reqStory: "path_egon_google",
+        text: "Egon holds out his ancient button phone. 'Tried to google, like you said. Now something is flashing and it beeps funny. Have I broken the internet?'",
+        opts: [
+            { 
+                t: "'Only the alarm.'", 
+                rep: { "Egon": 10 },
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "You press two buttons. The beeping stops. Egon lets out a breath. 'Devil's work. Cheers.' He trusts you a shade more again." 
+            },
+            { 
+                t: "'Self-destruct!'", 
+                rep: { "Egon": -10 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "Egon nearly throws the phone away. 'Idiot!' He works out that you are having him on. Bad atmosphere." 
+            },
+            { 
+                t: "Explain that he is using WAP", 
+                m: 10, l: 0, a: 5, b: 5, 
+                r: "You explain mobile data as of 2005. He switches off. 'Just make it stop.' You fix it. The technology has annoyed him regardless." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_bad_1",
+		char: "Egon",
+        title: "Just Mopped",
+        reqRep: { "Egon": -20 },
+        text: "You are in a hurry to get to the server room. Egon is blocking the passage with his mop. The floor is dry and the yellow warning sign is standing there. 'No way through. Drying time: 20 minutes.' He grins nastily.",
+        opts: [
+            { 
+                t: "Jump over it", 
+                next: "path_egon_fail",
+                rep: { "Egon": -5 },
+                m: 2, l: 5, a: 10, b: 5, 
+                r: "You take a run-up... and slip on the one wet patch. You land on your backside. Egon gives a dirty laugh. 'Break a leg, athlete!'" 
+            },
+            { 
+                t: "Just walk through", 
+                next: "path_egon_mess",
+                rep: { "Egon": -10 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "You ignore him and tramp across. Egon bellows: 'OI! That will streak!' You leave dirty prints behind you. The war has begun." 
+            },
+            { 
+                t: "'It is dry!'" , 
+                next: "path_egon_lecture",
+                m: 10, l: -5, a: 10, b: 0, 
+                r: "'Rules are rules, DIN 1234.' Egon delivers a 10-minute lecture on liability insurance. You arrive late and irritated." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_bad_2a",
+		char: "Egon",
+        title: "The Bin Strike",
+        reqRep: { "Egon": -40 },
+        reqStory: "path_egon_mess",
+        text: "Your bin is overflowing. It smells of old banana. Every other bin in the office is empty. Only yours is not. Egon leans in the doorway. 'Well. Your bin was standing 2cm too far to the left. I cannot get the trolley to it. Health and safety.'",
+        opts: [
+            { 
+                t: "Tip the rubbish into the corridor", 
+                rep: { "Egon": -10, "Dr. Wichtig": -5 },
+                m: 5, l: -5, a: 10, b: 10, 
+                r: "Escalation. Now the rubbish is in the corridor. 'Oops, fell over.' Egon goes red with rage. There will be trouble with the building management." 
+            },
+            { 
+                t: "Shout at Egon", 
+                m: 5, l: 0, a: -5, b: 5, 
+                r: "You bellow. Egon turns his hearing aid down. 'Cannot hear a thing, the ventilation is so loud.' Pointless." 
+            },
+            { 
+                t: "Take the rubbish out yourself", 
+                m: 15, l: -10, a: 10, b: 10, 
+                r: "You carry your rubbish past the boss to the skip, demonstratively. Egon waves you off cheerfully." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_bad_2b",
+		char: "Egon",
+        title: "Energy-Saving Measure",
+        reqRep: { "Egon": -40 },
+        reqStory: "path_egon_lecture",
+        text: "Your second monitor is black. The plug has been pulled and secured with a cable tie. A note from Egon is stuck to it: 'Unauthorised appliance. See house rules, section 9.'",
+        opts: [
+            { 
+                t: "Complain to the boss", 
+                rep: { "Egon": -5 },
+                m: 15, l: 0, a: 5, b: -5, 
+                r: "The boss sighs. 'Settle it between yourselves, Miller. Do not trouble me with sockets.' No help from above." 
+            },
+            { 
+                t: "Cut the cable tie off", 
+                m: 10, l: 0, a: 10, b: 0, 
+                r: "You fiddle about with scissors for 10 minutes. The monitor is back. Egon got what he was after all the same." 
+            },
+            { 
+                t: "Fetch an extension lead from the corridor", 
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You run a trailing lead straight across the corridor. It is a trip hazard now. Egon will rage about that, and you have power." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_simple_bad_2c",
+		char: "Egon",
+        title: "The Warning Sign",
+        reqRep: { "Egon": -30 }, 
+        reqStory: "path_egon_fail",
+        text: "A yellow warning sign saying 'Caution - Wet Floor' now stands permanently outside your office. Egon has also drawn a stick man on it falling flat on his face. There is a resemblance.",
+        opts: [
+            { 
+                t: "Hide the sign",
+                rep: { "Egon": -2 }, 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "You put it in the broom cupboard. 5 minutes later it is back. Egon has more stamina than you." 
+            },
+            { 
+                t: "Paint over the drawing", 
+                rep: { "Egon": -5 },
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "You give the stick man a boiler suit and a broom. Now it is Egon going down. A small, childish win." 
+            },
+            { 
+                t: "Laugh it off", 
+                rep: { "Egon": 5 },
+                m: 2, l: 5, a: -5, b: 0, 
+                r: "You grin at Egon: 'Good likeness.' He grunts, surprised: 'He has got a sense of humour, at any rate.' The ice thaws by a millimetre." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_nemesis_1",
+		char: "Egon",
+        title: "Ice Age",
+        reqRep: { "Egon": -60 },
+        text: "It is 8 degrees in your office. The radiator has been physically removed. All that is left on the floor is a note: 'Maintenance work. Duration: unknown.' Egon stands in the corridor spooning hot soup and grinning at you.",
+        opts: [
+            { 
+                t: "Tamper with his clocking records", 
+                next: "path_egon_sabotage",
+                req: "admin_pw", 
+                rep: { "Egon": -15 },
+                m: 15, l: -5, a: 10, b: 10, 
+                r: "You log into the HR system and delete last week's overtime. 'System fault,' you mutter. Egon will rage when he sees his payslip." 
+            },
+            { 
+                t: "'I will mop the corridor for you!'", 
+                next: "path_egon_slave",
+                rep: { "Egon": 15 }, 
+                m: 30, l: -20, a: 10, b: 0, 
+                r: "You offer to do his job. Egon stops grinning. 'The whole corridor? With a toothbrush?' You nod, desperate. He throws you a brush. 'Get started.'" 
+            },
+            { 
+                t: "Steal his master key", 
+                next: "path_egon_war",
+                rep: { "Egon": -20 },
+                m: 10, l: -5, a: 20, b: 10, 
+                r: "You wait for your moment and pinch his bunch of keys off the cleaning trolley. The power is yours! Egon notices at once and bellows through the building. This will get ugly." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_nemesis_2a",
+		char: "Egon",
+        title: "Walled In",
+        reqRep: { "Egon": -80 },
+        reqStory: "path_egon_war",
+        text: "You want to leave the server room and the door will not move. A wooden beam has been nailed across it from outside. Egon calls through the door, muffled: 'Keys, or you stay in there until Christmas!' Outside, the boss's voice: 'Hello? Why is this door barricaded?'",
+        opts: [
+            { 
+                t: "Drop Egon in it: 'HE LOCKED ME IN!'", 
+                rep: { "Egon": -30, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: 20, b: -20, 
+                r: "The boss has the door forced. Egon gets a written warning. As he leaves he whispers: 'Keep an eye on your brake lines...' The war is total." 
+            },
+            { 
+                t: "'I am repairing the door!'", 
+                rep: { "Egon": 35, "Dr. Wichtig": -15 },
+                m: 10, l: 0, a: -5, b: 15, 
+                r: "You cover for Egon. 'All fine, boss! I am testing the... structure!' The boss decides you are simple and leaves. Egon takes the beam off. 'Right. You are all right. Keys here, and we are square.'" 
+            },
+            { 
+                t: "Push the keys under the door", 
+                rep: { "Egon": 5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You give up. Egon opens the door, laughs at you and takes the keys. You are free." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_nemesis_2b",
+		char: "Egon",
+        title: "The Rubbish Avalanche",
+        reqRep: { "Egon": -80 },
+        reqStory: "path_egon_sabotage",
+        text: "You open your office. It is full. To the ceiling. Egon has tipped 3 years of waste paper into your office. He leans on the door frame. 'Well. My chip for the baler would not work today. Odd, is it not?'",
+        opts: [
+            { 
+                t: "'I will put your hours back!'", 
+                rep: { "Egon": 25 },
+                m: 10, l: -5, a: 10, b: 20, 
+                r: "You buckle. 'And I will add another 10 on top!' Egon nods. 'Good. I will clear it away then. It was only waste paper anyway.' Peace bought." 
+            },
+            { 
+                t: "Set the rubbish alight", 
+                rep: { "Egon": 5, "Dr. Wichtig": -20 },
+                m: 5, l: 0, a: 20, b: 40, 
+                r: "You hold a lighter to it. Egon goes pale. 'Are you insane?!' You put it out together. This has gone too far. A ceasefire out of pure fear of you." 
+            },
+            { 
+                t: "Work in the rubbish", 
+                m: 60, l: -30, a: 30, b: 0, 
+                r: "You shovel a path to the PC and work in the heap. Egon takes photographs for the caretakers' WhatsApp group. You have lost." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_nemesis_2c",
+		char: "Egon",
+        title: "Waste Separation 2.0",
+        reqRep: { "Egon": -50 },
+        reqStory: "path_egon_slave",
+        text: "Egon arrives with a box of batteries, cables and banana skins. 'Since you like tidying up so much: here. Sort it. Properly, mind! Heaven help you if a battery ends up in the food waste.' He folds his arms and waits.",
+        opts: [
+            { 
+                t: "'Come on, coffee first.'", 
+                rep: { "Egon": 15 }, 
+                m: 20, l: 10, a: -10, b: 5, 
+                r: "You ignore the rubbish and fetch two cups. Egon hesitates, then accepts. 'Fine. Sorting afterwards though.' The ice is broken. The rubbish stays your problem." 
+            },
+            { 
+                t: "Sort it, meek and obedient", 
+                rep: { "Egon": 20 },
+                m: 30, l: -15, a: 15, b: 0, 
+                r: "You sit there for 30 minutes sorting rubbish. Egon looks in now and then and nods. 'The lad can learn.' Rehabilitated. Your hands smell strange." 
+            },
+            { 
+                t: "'I am no binman.'", 
+                rep: { "Egon": -10 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "'Shame. I was just starting to think you were all right.' Egon tips the box out over your desk and goes. Back to square one." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_good_1",
+		char: "Egon",
+        title: "Translation Help",
+        reqRep: { "Egon": 10 }, 
+        text: "Egon scratches his head and stares at the display of the new air-conditioning unit. 'Now then. It says 'FLT MNT REQ'. Does that mean the thing is about to explode, or does it just want attention?'",
+        opts: [
+            { 
+                t: "'It means you have to change the filter.'", 
+                rep: { "Egon": 10 },
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "Egon grunts in agreement. 'Thought as much. Devil's work, all these abbreviations. Cheers.' He heads off with his toolbox." 
+            },
+            { 
+                t: "'It is becoming self-aware.'", 
+                rep: { "Egon": -5 },
+                m: 2, l: 5, a: 5, b: 0, 
+                r: "Egon gives you a grim look. 'I am old, not stupid.' He turns round and tries brute force." 
+            },
+            { 
+                t: "'I am no tradesman.'", 
+                rep: { "Egon": -5 },
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "'Helping each other has gone out of fashion round here,' he mutters, and presses buttons at random." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_good_2",
+		char: "Egon",
+        title: "Soft Gold",
+        reqRep: { "Egon": 30 }, 
+        text: "Egon is sweeping outside your office. When nobody is looking he slides a roll of three-ply toilet paper across your desk. 'From the board's toilet. The workforce only gets sandpaper. Keep it to yourself.'",
+        opts: [
+            { 
+                t: "Accept with thanks", 
+                rep: { "Egon": 10 },
+                m: 2, l: 0, a: -10, b: 0, 
+                r: "You hide the roll in your drawer sharpish. 'You are a true hero of the working class, Egon,' you whisper. He grins, proud." 
+            },
+            { 
+                t: "'That is theft!'", 
+                rep: { "Egon": -15 },
+                m: 2, l: 0, a: 5, b: 5, 
+                r: "Egon snorts. 'Scratch your backside raw then, Mr Squeaky Clean.' He takes the roll away with him, annoyed." 
+            },
+            { 
+                t: "'Do you want a doughnut for it?'", 
+                rem: "donut",
+                rep: { "Egon": 15 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "A fair trade on the office black market. Egon takes the doughnut, you take the soft paper. Win-win." 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_bad_1",
+		char: "Egon",
+        title: "Climate Dictatorship",
+        reqRep: { "Egon": -10 }, 
+        text: "You are sweating in the office because the sun is hammering in. You have switched on your own desk fan. Egon marches in and simply pulls the plug. 'Fire risk! Private appliances without a TÜV mark are strictly forbidden!'",
+        opts: [
+            { 
+                t: "Plug it back in as soon as he leaves", 
+                rep: { "Egon": -10 },
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "The moment he is out of the door you plug it back in. Half an hour later Egon trips the breaker for the room from outside." 
+            },
+            { 
+                t: "'It is brand new!'", 
+                rep: { "Egon": -5 },
+                m: 10, l: 0, a: 10, b: 0, 
+                r: "You argue about fire safety standards for 10 minutes. He takes the fan away with him regardless. You carry on sweating." 
+            },
+            { 
+                t: "Back down: 'Fine...'", 
+                rep: { "Egon": 5 },
+                m: 5, l: -5, a: 5, b: 0, 
+                r: "You let him take the thing away to avoid the aggravation. Egon nods, condescending. 'Good. Safety first.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_egon_filler_bad_2",
+		char: "Egon",
+        title: "The Tripwire",
+        reqRep: { "Egon": -30 }, 
+        text: "Egon has fixed a loose LAN cable to the floor right outside your office door with three rolls of signal-red hazard tape. The door now opens halfway. He grins at you from a distance.",
+        opts: [
+            { 
+                t: "Remove it with a Stanley knife", 
+                rep: { "Egon": -10 },
+                m: 10, l: 0, a: 10, b: 5, 
+                r: "You cut the tape away, laboriously. Egon calls from down the corridor: 'Criminal damage! That goes in a report!' Your door opens. The war climbs a step." 
+            },
+            { 
+                t: "Fetch the boss: 'That is a fire escape route!'", 
+                rep: { "Egon": -15, "Dr. Wichtig": 5 },
+                m: 15, l: 0, a: -5, b: -5, 
+                r: "The boss makes Egon take the tape off (health and safety). Egon is boiling, because he was shown up in front of the boss." 
+            },
+            { 
+                t: "Squeeze through it every day", 
+                m: 2, l: 5, a: 15, b: 0, 
+                r: "You ignore it and squeeze through the gap every day. It is monumentally irritating, and he never gets the satisfaction of a reaction." 
+            }
+        ]
+    },
+    // === DR. WICHTIG: THE VISIONARY ===
+    {
+        id: "rep_ceo_story_1",
+		char: "Dr. Wichtig",
+        title: "Vision and Panic",
+        reqRep: { "Dr. Wichtig": 60 },
+        text: "Dr Wichtig waves you into his office. 'Miller! I have had a vision: walking meetings on treadmills!' Mid-sentence he goes pale and stares at his tablet. 'Oh God... The internet! There is a video... I am singing 'Barbie Girl'?! This is a deepfake attack by the competition! Miller, do something!'",
+        opts: [
+            { 
+                t: "'I will delete it. Nobody has seen it.'", 
+                next: "path_ceo_saved",
+                rep: { "Dr. Wichtig": 15 },
+                m: 10, l: -5, a: 5, b: -10, 
+                r: "You take the tablet off him. 'Only a cache error, boss. I am cleaning up the Matrix.' You clear the history. He lets out a long breath. 'Miller, you are a rock in the surf. I will not forget this.'" 
+            },
+            { 
+                t: "Be honest: 'That was the 2018 Christmas party...'", 
+                next: "path_ceo_shame",
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: 10, b: 5, 
+                r: "He turns red. 'OUT! And forget what you saw!' You told the truth and wounded his ego with it. Now he wants the evidence destroyed." 
+            },
+            { 
+                t: "'The treadmills are a brilliant idea!'", 
+                next: "path_ceo_treadmill",
+                rep: { "Dr. Wichtig": 5 },
+                m: 20, l: -10, a: 10, b: 5, 
+                r: "He forgets the video instantly. 'Yes, exactly! Order three of them! Now! We will be the fittest company in the world!' The video is off the table. A hardware problem has taken its place." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_story_2a",
+		char: "Dr. Wichtig",
+        title: "Finale: The Annual Review",
+        reqRep: { "Dr. Wichtig": 80 },
+        reqStory: "path_ceo_saved",
+        text: "The boss is in a good mood. 'Miller! Ever since you saw off that 'cyber attack' (the video) discreetly, I have been sleeping better. You are a high performer. But you know how it is... the economy. I am afraid I cannot give you a pay rise.' He smiles apologetically.",
+        opts: [
+            { 
+                t: "Produce the record of achievement", 
+                req: "arg_list_1",
+                loot: "contract", 
+                rep: { "Dr. Wichtig": 20 },
+                m: 15, l: -5, a: -10, b: 20, 
+                r: "You present the list: overtime, servers saved, discretion. The boss nods, impressed. 'Numbers do not lie, Miller. I will give you 6% and the parking space right by the entrance.' An honest win." 
+            },
+            { 
+                t: "Negotiate without evidence", 
+                rep: { "Dr. Wichtig": -2 },
+                m: 15, l: -5, a: 10, b: 0, 
+                r: "He sighs theatrically. 'I would love to, but my hands are tied. Do have a biscuit.' You leave with nothing." 
+            },
+            { 
+                t: "Produce the 'secret list'", 
+                req: "arg_list_2",
+                loot: "contract", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 10, l: 5, a: -50, b: 15, 
+                r: "You produce the PDF showing that the apprentice earns more than you. The boss goes chalk white. 'Er. That is a... system fault! We will correct that immediately, obviously! Say... 20% more? Right now?' He signs with a shaking hand." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_story_2b",
+		char: "Dr. Wichtig",
+        title: "Finale: Operation 'Men in Black'",
+        reqRep: { "Dr. Wichtig": 50 },
+        reqStory: "path_ceo_shame",
+        text: "Dr Wichtig is wearing sunglasses in the office. 'Miller. That business the other day. I no longer trust the cloud. I want us to delete the internet. All the pictures from 2018, at the very least. Make a start.'",
+        opts: [
+            { 
+                t: "'That cannot be done.'", 
+                rep: { "Dr. Wichtig": -20 },
+                m: 5, l: 0, a: 10, b: 20, 
+                r: "'You are fired! ... No, wait, you know too much. You are demoted to changing toner!' The boss is your enemy from here on." 
+            },
+            { 
+                t: "'Look, a new chart!'", 
+                m: 2, l: 5, a: 0, b: -5, 
+                r: "You show him a colourful graphic. He forgets the internet for a while. 'Oh, the curve is going up! I like that.' Danger postponed." 
+            },
+            { 
+                t: "'I am starting the deletion algorithm.'", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, l: 10, a: 5, b: -10, 
+                r: "You open a terminal and ping Google. 'You see, boss? All gone.' He nods, satisfied. 'Good. Nobody may see my... er... the company secrets.' It is quiet again. He has lost his mind." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_story_2c",
+		char: "Dr. Wichtig",
+        title: "Finale: The Accident",
+        reqRep: { "Dr. Wichtig": 60 },
+        reqStory: "path_ceo_treadmill",
+        text: "Three treadmills stand in the server room. 'Miller! Test run! Connect your laptop and program on the move! Speed 10! Agility begins in the legs!' The boss presses the start button.",
+        opts: [
+            { 
+                t: "Genuinely try to work", 
+                m: 30, l: -20, a: 30, b: -10, 
+                r: "You try to type while jogging. Your code looks like 'akhjdf874'. You sweat onto the keyboard. The boss is thrilled: 'Look at that energy!' Your life is hell from here." 
+            },
+            { 
+                t: "Put Kevin on it", 
+                rep: { "Kevin": -10, "Dr. Wichtig": 5 },
+                m: 5, l: 5, a: -5, b: 10, 
+                r: "'Kevin is young, he can manage it.' Kevin now jogs 8 hours a day. He is fit and he hates you. You have your peace." 
+            },
+            { 
+                t: "Join in and fall off on purpose", 
+                m: 10, l: -5, a: 10, b: 5, 
+                r: "You let the belt throw you off, theatrically. You land softly in a heap of cables. 'Workplace accident, boss!' He stops the machine. 'Right, perhaps it is too dangerous after all. Project halted.' You have saved IT." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_good_1",
+		char: "Dr. Wichtig",
+        title: "The Big Picture",
+        reqRep: { "Dr. Wichtig": 20 },
+        text: "Dr Wichtig intercepts you. 'Miller! I need a dashboard for the board. One-pager. High level. Traffic-light system. I want to see that everything is green. Do you understand? Everything. Green.' His eyes twitch slightly.",
+        opts: [
+            { 
+                t: "Show him the real, red live data", 
+                next: "path_ceo_real_panic",
+                rep: { "Dr. Wichtig": -5 },
+                m: 15, l: -5, a: -5, b: 10,
+                r: "You build him a link to the monitoring. It flashes red (server load) and amber (storage). The boss goes pale. 'Oh God... are we finished?' He looks shaken." 
+            },
+            { 
+                t: "Matrix code as a screensaver", 
+                next: "path_ceo_cyber",
+                rep: { "Dr. Wichtig": 5 },
+                m: 5, l: 5, a: 5, b: -15,
+                r: "You install a terminal with green code running down it. It does nothing whatsoever. The boss stares at it, fascinated. 'That is it. That is the cloud. I can feel it.'" 
+            },
+            { 
+                t: "Knock up a static green image", 
+                next: "path_ceo_fake_green",
+                rep: { "Dr. Wichtig": 10 },
+                m: 10, l: -5, a: -5, b: -10,
+                r: "You open Paint and draw an enormous green dot. Underneath you write 'ALL SYSTEMS: GO'. The boss looks at it. 'Perfect. That is the clarity I need.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_good_2a",
+		char: "Dr. Wichtig",
+        title: "The Presentation",
+        reqRep: { "Dr. Wichtig": 40 },
+        reqStory: "path_ceo_fake_green",
+        text: "The boss comes out of the board meeting beaming. 'Miller! Your green dot went down brilliantly! But the supervisory board is asking whether we could make the dot... more dynamic? Flashing, perhaps? For the synergy?'",
+        opts: [
+            { 
+                t: "'That would eat too much performance.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 2, l: 5, a: -5, b: -5,
+                r: "'I see. Resource efficiency. Good point, Miller.' He nods, convinced. The lazy road wins." 
+            },
+            { 
+                t: "Give him a laser pointer", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, l: 0, a: -5, b: -10,
+                r: "'Waggle it about on the screen, boss. That is interactivity.' He tries it and giggles like a child. 'Brilliant!'" 
+            },
+            { 
+                t: "Build in an animated GIF", 
+                rep: { "Dr. Wichtig": 15 },
+                m: 10, l: 5, a: 10, b: -15,
+                r: "You swap the image for a flashing GIF. The boss nods with reverence. 'Now it lives. That is digitalisation 4.0.' A small part of you dies." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_good_2b",
+		char: "Dr. Wichtig",
+        title: "Panic Room",
+        reqRep: { "Dr. Wichtig": 40 },
+        reqStory: "path_ceo_real_panic",
+        text: "The boss is standing in your office, shaking. 'I looked at the dashboard. There was an amber bar next to 'printer toner'. Do we have to file for insolvency? I have already rung my wife!'",
+        opts: [
+            { 
+                t: "Rig the dashboard to all green", 
+                rep: { "Dr. Wichtig": 20 },
+                m: 5, l: -5, a: 5, b: -20,
+                r: "You raise the warning threshold. Everything goes green. 'You see? Problem solved.' The boss beams: 'You are a magician, Miller!'" 
+            },
+            { 
+                t: "'That is only a warning.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, l: -5, a: 10, b: -5,
+                r: "You explain the traffic-light system to him as though to a toddler. 'Amber only means: caution.' He breathes out. 'Phew. I thought it was like a reactor meltdown. Thank you, Miller.'" 
+            },
+            { 
+                t: "Offer coffee and lie", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, l: 5, a: -5, b: -10, 
+                r: "You hand him a coffee. 'All fine, boss. That is... er... the angle of the sun.' He relaxes instantly. 'Ah. Well then.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_good_2c",
+		char: "Dr. Wichtig",
+        title: "The Chosen One",
+        reqRep: { "Dr. Wichtig": 40 },
+        reqStory: "path_ceo_cyber",
+        text: "Dr Wichtig is wearing sunglasses now. In the office. 'Miller. Ever since I started seeing the code, I understand everything. We have to go deeper. Hack the competition! Or order pizza. Digitally, though!'",
+        opts: [
+            { 
+                t: "'I am in.'", 
+                loot: "energy",
+                rep: { "Dr. Wichtig": 15 },
+                m: 5, l: 10, a: 10, b: -15,
+                r: "You type `ping google.de`. He marvels. 'Incredible.' He throws you a can of energy drink. 'Fuel for the mainframe.'" 
+            },
+            { 
+                t: "'Take the glasses off.'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 2, l: 0, a: -5, b: 10,
+                r: "He pushes the glasses up. 'Spoilsport. You have no vision.' The magic has gone." 
+            },
+            { 
+                t: "Order pizza through the app", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 10, l: 5, a: -10, b: -10,
+                r: "You order pizza. The boss takes this for hacking. 'How did you materialise the food?!' He pays, out of sheer enthusiasm." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_bad_1",
+		char: "Dr. Wichtig",
+        title: "The Time and Motion Study",
+        reqRep: { "Dr. Wichtig": -20 },
+        text: "Dr Wichtig is standing directly behind your office chair with a stopwatch, breathing on your neck. 'Miller, I have read that a mouse click may take no more than 0.4 seconds. That one took you 1.2 seconds. We need to work on your efficiency.'",
+        opts: [
+            { 
+                t: "'The mouse is out of date.'", 
+                next: "path_ceo_mouse",
+                m: 10, l: 5, a: 0, b: 0,
+                r: "'That is the latency, boss. Old hardware.' The boss frowns. 'A material defect? In my company? I will not tolerate that! I shall see to it.'" 
+            },
+            { 
+                t: "'I will click faster, boss!'", 
+                next: "path_ceo_log",
+                rep: { "Dr. Wichtig": 5 },
+                m: 5, l: -10, a: 15, b: -10,
+                r: "You hammer at the mouse like a woodpecker. Click-click-click. The boss nods, satisfied. 'You see? There you go. Motivation is everything.'" 
+            },
+            { 
+                t: "'I am not a robot!'", 
+                next: "path_ceo_poster",
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: -10, b: 15,
+                r: "You turn round. 'Would you like to click?!' The boss steps back. 'Oho, temperament! That is unprofessional, Miller. Very bad for the chi of the office.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_bad_2a",
+		char: "Dr. Wichtig",
+        title: "Motivation Offensive",
+        reqRep: { "Dr. Wichtig": -40 },
+        reqStory: "path_ceo_poster",
+        text: "The boss comes back with an enormous poster under his arm. 'Miller, your negative aura is slowing the server down. We are putting this up.' He sticks a picture of a cat dangling from a branch ('Hang in there!') directly above your monitor.",
+        opts: [
+            { 
+                t: "Tear it down as soon as he leaves", 
+                m: 5, l: 0, a: -15, b: 5,
+                r: "Rip. The poster lands in the bin. Relief, instantly. Heaven help you if he notices." 
+            },
+            { 
+                t: "'Thank you, I am cured.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: -5, b: 10,
+                r: "'Inspiring, boss. Truly.' He looks at you with suspicion. 'I can sense your cynicism, Miller. Cynicism is the rust on the gearbox of success.'" 
+            },
+            { 
+                t: "Leave it up and suffer", 
+                m: 2, l: 0, a: 20, b: -10,
+                r: "The cat stares at you. Every day. Every hour. Your rage grows beyond measure. The boss is pleased with the decor." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_bad_2b",
+		char: "Dr. Wichtig",
+        title: "The Upgrade",
+        reqRep: { "Dr. Wichtig": -30 },
+        reqStory: "path_ceo_mouse",
+        text: "Dr Wichtig slams a box onto your desk. 'Here! The fastest mouse in the world! RGB lighting, 12,000 DPI. I expect double the productivity from this!' It is a cheap Chinese model shaped like a racing car that flashes extremely brightly.",
+        opts: [
+            { 
+                t: "Use it despite the eye strain", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 10, l: 0, a: 20, b: -15,
+                r: "The thing is unergonomic and dazzles you. Your hand cramps after 5 minutes. The boss nods on his way past: 'Sleek!'" 
+            },
+            { 
+                t: "'Sadly it is faulty.'", 
+                m: 5, l: 5, a: -5, b: 5,
+                r: "You quietly nick the cable. 'Oh dear, boss. Cheap goods.' He sighs. 'One can rely on nothing any more. Take the old one.'" 
+            },
+            { 
+                t: "Give it to Kevin", 
+                rep: { "Kevin": 5, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: -10, b: 10, 
+                r: "Kevin loses it: 'Whoa! RGB!' The boss sees it later. 'Miller? Why does the apprentice have your high-performance hardware?!' Awkward." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_simple_bad_2c",
+		char: "Dr. Wichtig",
+        title: "The Click Log",
+        reqRep: { "Dr. Wichtig": -30 },
+        reqStory: "path_ceo_log",
+        text: "The boss hands you a stack of forms. 'Since you are clicking faster now, Miller, I would like to measure it. Please enter every mouse click on this list. With the time and the reason. For transparency.'",
+        opts: [
+            { 
+                t: "'That costs more time than it saves!'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: 0, b: 20,
+                r: "'Backchat? I see you are blocking progress.' He takes the sheets away with him, angry. That will cost you at the annual review." 
+            },
+            { 
+                t: "Fill them in obediently", 
+                m: 60, l: -30, a: 30, b: -20,
+                r: "You spend an hour making tally marks. 'Click (close window)'. 'Click (open email)'. You can feel the will to live draining out of you. The boss files it away happily." 
+            },
+            { 
+                t: "Enter made-up data", 
+                m: 10, l: 10, a: -5, b: -10,
+                r: "You simply write '1000 clicks' and 'Reason: world domination'. The boss only skims it. 'Very good. Numbers matter.' With luck he will never read it properly." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_nemesis_1",
+		char: "Dr. Wichtig",
+        title: "The Dismissal",
+        reqRep: { "Dr. Wichtig": -60 },
+        text: "Dr Wichtig places a sheet of paper on your desk. 'Summary dismissal. Already signed. I only have to fill in the date. Give me ONE single reason why I should not do that this very moment. And do not come to me with 'competence'.' He draws his fountain pen.",
+        opts: [
+            { 
+                t: "'I will do anything! Even the washing-up!'", 
+                next: "path_ceo_slave",
+                rep: { "Dr. Wichtig": 15 },
+                m: 5, l: -10, a: 20, b: -20,
+                r: "You crawl. 'I will change!' The boss pauses. A cruel smile appears. 'Anything? I see. Well now, that is an offer.'" 
+            },
+            { 
+                t: "'I know your browser history.'", 
+                next: "path_ceo_blackmail",
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 5, a: -5, b: 5,
+                r: "He freezes. The pen hovers over the paper. 'That... is a bluff.' You say nothing and smile meaningfully. He puts the pen away, slowly. 'We need to talk.'" 
+            },
+            { 
+                t: "'Without me this place burns down.'", 
+                next: "path_ceo_sabotage",
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: -10, b: 15,
+                r: "You laugh in his face. 'Who is going to fix the Wi-Fi? Kevin? Good luck.' The boss goes red. 'Are you threatening me?! We shall see about that!'" 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_nemesis_2a",
+		char: "Dr. Wichtig",
+        title: "The Stress Test",
+        reqRep: { "Dr. Wichtig": -80 },
+        reqStory: "path_ceo_sabotage",
+        text: "The boss comes in like a thunderstorm and rips the main network cable out of the wall. Sparks fly. 'Right then, Mr Super-Admin! If you are so indispensable: repair that in 5 minutes! Otherwise you are out!' He starts the clock.",
+        opts: [
+            { 
+                t: "'Oops, broken.'", 
+                rep: { "Dr. Wichtig": -20 },
+                m: 2, l: 0, a: -20, b: 30,
+                r: "You simply cut the cable through. 'Well. Write-off. We will be needing outside help.' The boss screams: 'OUT!' He cannot sack you while the system is down, though. A dangerous game." 
+            },
+            { 
+                t: "Call Kevin", 
+                rep: { "Kevin": -10, "Dr. Wichtig": 5 },
+                m: 5, l: 5, a: -5, b: -5,
+                r: "'Kevin! Teaching moment!' Kevin patches the cable. You stand beside him nodding importantly. The boss mutters: 'He can delegate, at any rate.' You are saved." 
+            },
+            { 
+                t: "Repair it under pressure", 
+                m: 10, l: -20, a: 10, b: -10,
+                r: "You crimp the cable again with shaking hands. 'Done!' The boss checks the internet. It works. 'Hm. Lucky. Carry on.' The job is still yours. Your nerves are gone." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_nemesis_2b",
+		char: "Dr. Wichtig",
+        title: "The Lackey",
+        reqRep: { "Dr. Wichtig": -50 },
+        reqStory: "path_ceo_slave",
+        text: "Dr Wichtig summons you with a bell (he has a bell for you now). 'Miller! My shoes are dusty. And after that you will sort my business cards by postcode. Chop chop! Show some gratitude!'",
+        opts: [
+            { 
+                t: "Spit on them 'by accident'", 
+                rep: { "Dr. Wichtig": -30 },
+                m: 5, l: 0, a: -20, b: 40,
+                r: "You spit on his expensive leather loafer. 'Oh! I was only polishing!' The boss aims a kick at you. 'OUT!'" 
+            },
+            { 
+                t: "Clean the shoes and smile", 
+                rep: { "Dr. Wichtig": 20 },
+                m: 30, l: -10, a: 30, b: -30,
+                r: "You kneel down. It is the low point of your career. The boss pats you on the head. 'Good Miller. The dismissal is off the table for now.' The job is saved. Of the pride there is nothing left." 
+            },
+            { 
+                t: "'I am an IT admin!'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: -10, b: 20,
+                r: "You throw the cloth away. 'I think not!' The boss goes cold. 'Back to the PC then. And I am watching you!'" 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_nemesis_2c",
+		char: "Dr. Wichtig",
+        title: "Hush Money",
+        reqRep: { "Dr. Wichtig": -70 },
+        reqStory: "path_ceo_blackmail",
+        text: "The boss comes into your office and closes the door. He puts an envelope on the desk. 'Miller. I do not know what you think you know. But here is €50 of meal money. We forget about the dismissal, and you forget... the history.'",
+        opts: [
+            { 
+                t: "Take the money as a ceasefire", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, l: 5, a: -15, b: -10,
+                r: "You take the envelope. 'What history, boss?' He breathes out. 'Good. Carry on.' There is a dirty secret between you. (Crisis averted)." 
+            },
+            { 
+                t: "'I want a new chair.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 10, l: 0, a: -5, b: 10,
+                r: "'You are greedy, Miller.' He writes it down. 'The chair is ordered. Heaven help you if you talk!'" 
+            },
+            { 
+                t: "Raise the bluff: 'That is not enough.'", 
+                rep: { "Dr. Wichtig": -15 },
+                m: 5, l: 0, a: -5, b: 30,
+                r: "He slams his fist on the desk. 'Enough! I will not be blackmailed! I am having IT audited!' Oops. Overplayed." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_good_1",
+		char: "Dr. Wichtig",
+        title: "Buzzword Bingo",
+        reqRep: { "Dr. Wichtig": 10 }, 
+        text: "The boss stops you in the corridor. 'Miller! I read in a magazine about 'hyper-agile cloud synergising'. We need that as well! Are our servers hyper-agile yet?'",
+        opts: [
+            { 
+                t: "'That makes no technical sense.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 5, b: 5, 
+                r: "His smile disappears. 'You simply do not think visionarily enough, Miller. Always the naysayers.' He turns away." 
+            },
+            { 
+                t: "'Only if we use the blockchain.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, l: 5, a: -5, b: 0, 
+                r: "His eyes widen. 'Blockchain! Brilliant! Take that down for the next all-hands meeting!' He is thrilled. You may have just bought yourself extra work." 
+            },
+            { 
+                t: "'Absolutely, boss. Fully synergistic.'", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 5, l: -5, a: -5, b: -5, 
+                r: "He nods gravely. 'Excellent. I knew I could count on you. Carry on!' He walks off satisfied. Nothing done, points scored." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_good_2",
+		char: "Dr. Wichtig",
+        title: "Private IT Support",
+        reqRep: { "Dr. Wichtig": 30 }, 
+        text: "Dr Wichtig calls you into his office. He looks desperate. 'Miller, utmost discretion. My golf app on my private iPad has stopped syncing with my Rolex. This is an emergency!'",
+        opts: [
+            { 
+                t: "Ask for something back: 'That will cost you.'", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, l: 5, a: 0, b: 0, 
+                r: "You ask for an extra day off. He grumbles. 'Outrageous. Very well.' He respects your negotiating." 
+            },
+            { 
+                t: "'One restart, boss.'", 
+                rep: { "Dr. Wichtig": 15 },
+                m: 15, l: -10, a: -5, b: -10, 
+                r: "You solve the problem in two minutes. The boss breathes out. 'You are my saviour. My handicap was at risk!' You are his secret hero." 
+            },
+            { 
+                t: "'I am only responsible for company hardware.'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 2, l: 0, a: 5, b: 15, 
+                r: "He stares at you. 'I AM the company, Miller!' He prods at the iPad himself, furious. Not a good idea." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_bad_1",
+		char: "Dr. Wichtig",
+        title: "Micromanagement",
+        reqRep: { "Dr. Wichtig": -10 }, 
+        text: "The boss stands silently behind your chair watching you type. After two minutes he clears his throat. 'You are not using your little finger for the Shift key at all. That is inefficient.'",
+        opts: [
+            { 
+                t: "'I work best this way.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'Impervious to advice!' he snorts. 'This is why Germany gets nowhere.' He notes something on his clipboard." 
+            },
+            { 
+                t: "Pointedly google touch typing", 
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "You open a typing tutorial. He watches briefly. 'You see? Training on the job.' He is satisfied and you lose time." 
+            },
+            { 
+                t: "Endure it and nod", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, l: -5, a: 15, b: 0, 
+                r: "You force out a smile. 'I will practise, boss.' He pats you on the shoulder, patronising, and leaves. You are boiling inside." 
+            }
+        ]
+    },
+    {
+        id: "rep_ceo_filler_bad_2",
+		char: "Dr. Wichtig",
+        title: "The Impromptu Speech",
+        reqRep: { "Dr. Wichtig": -30 }, 
+        text: "You are on your way to the toilet. The boss intercepts you. 'Miller! Good that I have caught you. I need a sounding board.' He delivers a 20-minute monologue on the 'philosophy of the agile hot beverage'.",
+        opts: [
+            { 
+                t: "Sneak off without a word", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 2, l: 0, a: -10, b: 10, 
+                r: "While he has his eyes shut to form a thought, you turn quietly off into the corridor. He notices much later and is too proud to admit it." 
+            },
+            { 
+                t: "Listen and applaud", 
+                rep: { "Dr. Wichtig": 10 },
+                m: 25, l: 10, a: 5, b: -5, 
+                r: "You lose half an hour of working time. The boss gets to feel like Steve Jobs. 'Good conversation, Miller!'" 
+            },
+            { 
+                t: "'My server is on fire!'", 
+                rep: { "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: -5, b: 15, 
+                r: "You lie to escape. 'Always the excuses,' he mutters, offended, and lets you go. He says it quietly enough that you are meant to hear it." 
+            }
+        ]
+    },
+    // === FRAU ELSTER: THE KEEPER OF THE NUMBERS ===
+    {
+        id: "rep_elster_story_1",
+		char: "Frau Elster",
+        title: "The Stocktake",
+        reqRep: { "Frau Elster": 60 },
+        text: "Ms Elster is standing with a magnifying glass at the coffee machine. 'The coffee bean ratio does not comply with standard DIN-404. That is waste!' She produces her black notebook. You notice fine white hairs on her otherwise immaculate blazer.",
+        opts: [
+            { 
+                t: "'Do you not have any hobbies?'", 
+                next: "path_elster_audit",
+                rep: { "Frau Elster": -15 },
+                m: 5, l: 0, a: 10, b: 5, 
+                r: "She gives you an icy look. 'My hobby is efficiency. And I believe I have just found an inefficiency in your personnel file.' She writes your name down in red." 
+            },
+            { 
+                t: "'Are those cat hairs?'", 
+                next: "path_elster_cat",
+                rep: { "Frau Elster": 15 },
+                m: 15, l: 5, a: 5, b: 0, 
+                r: "She freezes. Her face softens. 'That is Rüdiger. He moults terribly in winter.' She shows you 50 photographs on her phone there and then. You listen patiently. Ice broken." 
+            },
+            { 
+                t: "'I will fill in Form 7B.'", 
+                next: "path_elster_frame",
+                rep: { "Frau Elster": 5 },
+                m: 10, l: -5, a: 10, b: -5, 
+                r: "She nods, impressed. 'Good. Somebody who understands process at last. Come to my office later, I have a... technical matter.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_story_2a",
+		char: "Frau Elster",
+        title: "Finale: The Red Pen",
+        reqRep: { "Frau Elster": 80 },
+        reqStory: "path_elster_cat",
+        text: "Big budget meeting. Ms Elster sits at the table like a judge. She holds her red pen over the line marked 'IT department', threatening. She looks at you. Your existence is on the table (and your new server).",
+        opts: [
+            { 
+                t: "'We need that money!'", 
+                rep: { "Frau Elster": -5 },
+                m: 10, l: 0, a: 10, b: 0, 
+                r: "She shrugs. 'Numbers do not lie. And your numbers are weak.' She cuts it by 20%. Well." 
+            },
+            { 
+                t: "Ask after Rüdiger", 
+                loot: "cat_pic", 
+                rep: { "Frau Elster": 20, "Dr. Wichtig": 5 },
+                m: 5, l: 0, a: -20, b: -10, 
+                r: "You ask, loudly: 'Did Rüdiger cope with the diet?' She sighs theatrically. 'Oh, he suffers so!' She cuts the marketing budget instead. 'IT is essential.' She slides a photo of Rüdiger across to you, discreetly." 
+            },
+            { 
+                t: "'I know about your personal phone calls!'", 
+                rep: { "Frau Elster": -30, "Dr. Wichtig": -10 },
+                m: 10, l: 0, a: 30, b: 20, 
+                r: "Her look turns lethal. 'Insinuations? I am opening compliance proceedings immediately.' She cuts your budget entirely. The boss nods at her. That backfired." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_story_2b",
+		char: "Frau Elster",
+        title: "Finale: A Confidential Matter",
+        reqRep: { "Frau Elster": 70 },
+        reqStory: "path_elster_frame",
+        text: "Ms Elster waves you into her office and closes the blinds. 'This stays between us. My digital picture frame... it no longer shows Rüdiger. When I cannot see Rüdiger, I become... difficult. It is an unauthorised private device. Help me.'",
+        opts: [
+            { 
+                t: "'Private hardware is forbidden.'", 
+                rep: { "Frau Elster": -10 },
+                m: 5, l: 0, a: 5, b: -5, 
+                r: "She goes red. 'Out! And forget the budget for the new printer.' You kept to the rules. What you made was a powerful enemy." 
+            },
+            { 
+                t: "'Is the cat a little... fat?'", 
+                rep: { "Frau Elster": -20 },
+                m: 5, l: 0, a: -10, b: 10, 
+                r: "Dead silence. 'Rüdiger is fluffy, not fat!' She throws you out. That was a fatal mistake." 
+            },
+            { 
+                t: "'Formatting fixed. There he is again.'", 
+                rep: { "Frau Elster": 15 },
+                m: 20, l: -5, a: 10, b: -5, 
+                r: "Rüdiger appears in HD. Ms Elster smiles (it is unsettling). 'He is so majestic. Thank you. I shall review your next expenses claim... favourably.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_story_2c",
+		char: "Frau Elster",
+        title: "Finale: The Special Audit",
+        reqRep: { "Frau Elster": 50 },
+        reqStory: "path_elster_audit",
+        text: "Ms Elster is sitting in YOUR chair when you come in. 'Good morning. In view of your disrespectful conduct I am carrying out a spot stocktake of your office supplies. Where are the 3 pens from Q1 2023?'",
+        opts: [
+            { 
+                t: "'Have you not got a hairdresser's appointment?'", 
+                rep: { "Frau Elster": -20, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 30, b: 20, 
+                r: "That was too much. She writes a report for 'insubordination'. The boss summons you later. You now have a war on two fronts." 
+            },
+            { 
+                t: "Shout 'Fire alarm!' and hit the button", 
+                m: 5, l: 5, a: 0, b: 30, 
+                r: "You set off the alarm to escape the situation. Expensive, stupid, effective. Ms Elster runs out (with the file)." 
+            },
+            { 
+                t: "Apologise and fetch coffee", 
+                rep: { "Frau Elster": 5 },
+                m: 15, l: -5, a: 10, b: 0, 
+                r: "You back down. 'I am sincerely sorry.' She sips the coffee. 'Very well. I shall leave it at a caution. But my eyes are everywhere.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_good_1",
+		char: "Frau Elster",
+        title: "The Two-Cent Mystery",
+        reqRep: { "Frau Elster": 20 },
+        text: "Ms Elster is in the corridor, completely undone. She is tearing at her hair (a strand has come loose!). 'Miller! The petty cash! €0.02 is missing! I have counted it three times. If the balance sheet does not add up, I cannot sleep!'",
+        opts: [
+            { 
+                t: "'Here, 2 cents.'", 
+                next: "path_elster_coin",
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "You rummage in your trouser pocket and hold out a coin. She stares at it as though it were radioactive. 'You want to... simply balance it out? Without a receipt?'" 
+            },
+            { 
+                t: "'What would Rüdiger do?'", 
+                next: "path_elster_chill",
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "Her look softens. 'Rüdiger? He would kick the coin under the sofa.' She smiles dreamily. 'He is such a little rebel.'" 
+            },
+            { 
+                t: "'I will write a search script.'", 
+                next: "path_elster_excel",
+                rep: { "Frau Elster": 10 },
+                m: 15, l: -5, a: 10, b: -5,
+                r: "You open Excel. 'Let me have a go.' She watches over your shoulder, breathing hard. 'Do be careful with the macros!'" 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_good_2a",
+		char: "Frau Elster",
+        title: "Excel Magic",
+        reqRep: { "Frau Elster": 40 },
+        reqStory: "path_elster_excel",
+        text: "Ms Elster beams at you. 'You found it! A rounding error in cell Z99! That is... beautiful. I have never seen anyone use VLOOKUP so elegantly.'",
+        opts: [
+            { 
+                t: "'Data never lies.'", 
+                loot: "energy",
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "'Here, take this energy drink. I confiscated it from Kevin. You need fuel for that brain.'" 
+            },
+            { 
+                t: "'Call me the number whisperer.'", 
+                rep: { "Frau Elster": 10 },
+                m: 2, l: 5, a: -5, b: 0, 
+                r: "She giggles (!). 'Do not exaggerate. But yes, you have talent. Perhaps you should transfer to Financial Control?' Good God, no." 
+            },
+            { 
+                t: "Invoice her: 'That will be a €50 consultancy fee.'", 
+                rep: { "Frau Elster": -5 },
+                m: 5, l: 0, a: 5, b: 10, 
+                r: "Her smile disappears. 'Humour has no place in cash handling.' She goes back to work. Mood killed." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_good_2b",
+		char: "Frau Elster",
+        title: "The Journal Entry",
+        reqRep: { "Frau Elster": 30 },
+        reqStory: "path_elster_coin",
+        text: "Ms Elster comes over with a form. 'I have posted your 2 cents as 'Extraordinary income from an employee donation'. Here is the receipt. Thank you. And never do that again, it disturbs my spreadsheets.'",
+        opts: [
+            { 
+                t: "'Claim it against tax.'", 
+                rep: { "Frau Elster": 2 },
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "She sighs. 'Tax law is no joking matter, Miller.' There is a faint smile with it, though. She secretly values your pragmatism." 
+            },
+            { 
+                t: "Eat the receipt", 
+                rep: { "Frau Elster": -10 },
+                m: 2, l: -5, a: -10, b: 10, 
+                r: "You put the slip in your mouth. Elster shrieks: 'THAT WAS A DOCUMENT!' She runs off to produce a duplicate. You freak." 
+            },
+            { 
+                t: "'It will not happen again.'", 
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 0, a: -5, b: -5, 
+                r: "She nods sternly. 'Good. Order must be kept. Even in chaos.' She files the receipt away. Being told off has never felt so much like approval." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_good_2c",
+		char: "Frau Elster",
+        title: "Cat Content",
+        reqRep: { "Frau Elster": 40 },
+        reqStory: "path_elster_chill",
+        text: "Ms Elster has forgotten the 2 cents. Instead she shows you a video on her phone. 'Do look. Rüdiger shredded a cardboard box yesterday. Is that not pure joy of life? I wish I were that wild.'",
+        opts: [
+            { 
+                t: "'Better than Kevin at work.'", 
+                rep: { "Frau Elster": 5, "Kevin": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "She actually laughs. 'Oh yes! Rüdiger is far more competent.' You spend 5 minutes gossiping about apprentices. That builds a bond." 
+            },
+            { 
+                t: "Back to work: 'I have to go.'", 
+                m: 2, l: -5, a: 5, b: -5, 
+                r: "She looks disappointed. 'I see. Yes, naturally. Duty calls.' The magic moment has passed." 
+            },
+            { 
+                t: "'A magnificent cat.'", 
+                rep: { "Frau Elster": 10 },
+                m: 10, l: 10, a: 5, b: 0, 
+                r: "She beams. 'Yes, is he not? Thank you for listening. The others do not understand.' Accounts is on your side from now on." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_bad_1",
+		char: "Frau Elster",
+        title: "The Missing Receipt",
+        reqRep: { "Frau Elster": -20 },
+        text: "Ms Elster blocks your way, waving a file. 'Miller! Your 2019 travel expenses are missing a parking ticket for €1.50! That is tax fraud! If you do not produce it by midday, I am opening a special audit!'",
+        opts: [
+            { 
+                t: "Throw the change at her feet", 
+                next: "path_elster_coins",
+                rep: { "Frau Elster": -10 },
+                m: 5, l: 0, a: -5, b: 5,
+                r: "You rummage in your pocket and throw €2 down at her feet. 'There! Keep the change!' She stares at the coins on the floor in horror. 'That... is a bribe! And disrespect!'" 
+            },
+            { 
+                t: "Knock up a new receipt", 
+                next: "path_elster_fake",
+                m: 10, l: 5, a: 5, b: 0, 
+                r: "You go to the PC, open Photoshop and knock up a convincing parking ticket in 5 minutes. 'There, by email.'" 
+            },
+            { 
+                t: "'I will look in the basement archive!'", 
+                next: "path_elster_dust",
+                rep: { "Frau Elster": 5 },
+                m: 30, l: -10, a: 20, b: 0,
+                r: "You spend 30 minutes in the dusty archive. You cough, you sweat, you hunt for a scrap of paper from 5 years ago. Ms Elster waits upstairs with her arms folded." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_bad_2a",
+		char: "Frau Elster",
+        title: "The Written Warning",
+        reqRep: { "Frau Elster": -40 },
+        reqStory: "path_elster_coins",
+        text: "An official letter lies on your desk. 'Reprimand for improper transfer of funds and disruption of workplace harmony.' Ms Elster smiles coolly from the doorway. 'Order must be kept, Mr Miller.'",
+        opts: [
+            { 
+                t: "Fake an apology", 
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "'I am sorry.' She nods graciously. 'Insight is the first step towards improvement.' You make a fist in your pocket." 
+            },
+            { 
+                t: "Tear the letter up", 
+                m: 2, l: 0, a: 5, b: 5,
+                r: "You tear the paper up. Elster does not even flinch. 'The original is safe in the strongbox. That was only the copy for your file.' She has won." 
+            },
+            { 
+                t: "Hide her stapler in revenge", 
+                rep: { "Frau Elster": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You sneak into her office and put her stapler on the very top of the cupboard. She is short. She will never reach it. A childish win, and a sweet one." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_bad_2b",
+		char: "Frau Elster",
+        title: "CSI: Accounts",
+        reqRep: { "Frau Elster": -30 },
+        reqStory: "path_elster_fake",
+        text: "Ms Elster arrives at your desk with a magnifying glass, carrying your printed fake receipt. 'Curious. The paper feels too new for 2019. And the typeface... is that Arial 11 or 11.5? I shall have it examined in the laboratory.'",
+        opts: [
+            { 
+                t: "Panic and tip coffee over it", 
+                rep: { "Frau Elster": -5 },
+                m: 5, l: 0, a: 10, b: 5,
+                r: "You knock your cup over 'by accident'. The receipt is ruined. 'Oops!' Elster shrieks: 'Destruction of evidence!' She can no longer prove a thing, though." 
+            },
+            { 
+                t: "'You need new glasses.'", 
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "'That is standard thermal paper, Ms Elster. Are your eyes getting worse?' She blinks, unsettled. 'Perhaps...'" 
+            },
+            { 
+                t: "Avoid confessing and flee",
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "'Server emergency!' You run. She stands there analysing the pixels. A narrow escape." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_simple_bad_2c",
+		char: "Frau Elster",
+        title: "Paperwork",
+        reqRep: { "Frau Elster": -30 },
+        reqStory: "path_elster_dust",
+        text: "You place the crumpled, dusty parking ticket on her desk in triumph. 'There! €1.50! Are you satisfied now?' Ms Elster picks it up with her fingertips. 'It is creased. And there is a coffee stain. I shall have to iron it before I can file it.'",
+        opts: [
+            { 
+                t: "'Rüdiger would eat it.'", 
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You play the cat card. She smiles briefly. 'Yes... Rüdiger loves paper.' The situation is defused." 
+            },
+            { 
+                t: "'Shall I iron it for you as well?'", 
+                rep: { "Frau Elster": 10 },
+                m: 10, l: -10, a: 15, b: 0,
+                r: "You stand in the break room ironing a till receipt. Your colleagues laugh at you. Elster nods, satisfied: 'Very tidy, Miller.'" 
+            },
+            { 
+                t: "'JUST FILE THE THING!'", 
+                rep: { "Frau Elster": -5, "Dr. Wichtig": -2 },
+                m: 5, l: 0, a: -10, b: 10, 
+                r: "You lose your nerve. She flinches. 'No call for that tone.' She punches the holes (crooked). Revenge in miniature." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_nemesis_1",
+		char: "Frau Elster",
+        title: "The Budget Embargo",
+        reqRep: { "Frau Elster": -60 },
+        text: "An email from Ms Elster (CC: boss, HR, caretaker): 'Owing to chaotic conditions in IT, the budget is frozen until further notice. Every pencil must be requested from me individually (Form 12-B, in triplicate).'",
+        opts: [
+            { 
+                t: "'We will just nick office supplies then.'", 
+                next: "path_elster_theft",
+                rep: { "Frau Elster": -20 },
+                m: 5, l: 0, a: 10, b: 10, 
+                r: "You organise a raid on the stores. Toner, paper, staplers. 'Help yourselves!' you call. This is anarchy." 
+            },
+            { 
+                t: "'I will fill in the requests...'", 
+                next: "path_elster_forms",
+                rep: { "Frau Elster": 15 }, 
+                m: 30, l: -20, a: 20, b: 0,
+                r: "For half an hour you fill in forms for a rubber. Ms Elster stands beside you timing it. 'Write more legibly!'" 
+            },
+            { 
+                t: "Malicious compliance: 'I will send her ALL the logs!'", 
+                next: "path_elster_spam",
+                rep: { "Frau Elster": -10 },
+                m: 20, l: -10, a: -5, b: 5,
+                r: "You print the server logs of the last 10 years. 5000 pages. 'There, for your audit.' She is buried under paper. That is a declaration of war." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_nemesis_2a",
+		char: "Frau Elster",
+        title: "The Needle in the Haystack",
+        reqRep: { "Frau Elster": -80 },
+        reqStory: "path_elster_spam",
+        text: "Ms Elster enters your office without knocking. She looks tired and triumphant. 'I have read your 5000 pages. On page 4021, line 12, you ordered a mouse in 2018 and never put it on the inventory. That is misappropriation. I am calling Internal Audit.'",
+        opts: [
+            { 
+                t: "'Misprint.'", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 20, b: 30, 
+                r: "She does not believe you. The matter goes to the boss. It will sit in your file for ever." 
+            },
+            { 
+                t: "'You read my logs? Data protection!'", 
+                m: 10, l: 0, a: 0, b: 10, 
+                r: "Stalemate. She hesitates. 'We are watching each other, Miller.' The cold war continues." 
+            },
+            { 
+                t: "'I am an idiot! My mistake!'", 
+                rep: { "Frau Elster": 30, "Dr. Wichtig": -10 }, 
+                m: 10, l: 0, a: 10, b: 20, 
+                r: "You bow your head. 'I lost it! I am unworthy!' You pay for the mouse yourself. She nods mildly. 'At least you own up to it.' Prosecution averted." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_nemesis_2b",
+		char: "Frau Elster",
+        title: "Bag Search",
+        reqRep: { "Frau Elster": -80 },
+        reqStory: "path_elster_theft",
+        text: "Ms Elster and the security service are standing at the exit. 'Bag search! We are missing 5 packs of copier paper.' Your bag is suspiciously angular.",
+        opts: [
+            { 
+                t: "Blame Kevin", 
+                rep: { "Kevin": -20 },
+                m: 5, l: 5, a: -10, b: 0, 
+                r: "'Kevin planted it on me!' They do not really believe you. Kevin gets questioned anyway. You are a terrible colleague." 
+            },
+            { 
+                t: "Hand it all back with a doughnut on top", 
+                rem: "donut",
+                rep: { "Frau Elster": 25 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You unpack. And add your break-time snack as 'interest'. 'I had... a moment of weakness.' She takes the doughnut. 'Very well. I shall forget this. Once.'" 
+            },
+            { 
+                t: "Just run!", 
+                m: 2, l: 10, a: -5, b: 50, 
+                r: "You sprint past the gatehouse. You get away. Officially, a criminal in your own building." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_nemesis_2c",
+		char: "Frau Elster",
+        title: "Procedural Error",
+        reqRep: { "Frau Elster": -50 },
+        reqStory: "path_elster_forms",
+        text: "Ms Elster comes back with your requests. All of them are marked in red. 'You signed in blue pen. The rule is black (document authenticity). All of it again. And staple it straight this time.'",
+        opts: [
+            { 
+                t: "Snap and eat the paper", 
+                rep: { "Dr. Wichtig": -5 },
+                m: 2, l: 0, a: -10, b: 20, 
+                r: "You stuff the request into your mouth. She stares at you in horror. 'You are an animal.' She backs out of the room. Peace at last, and the taste of paper." 
+            },
+            { 
+                t: "Burst into tears", 
+                rep: { "Frau Elster": 5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "You break down. 'I cannot do this any more!' She looks embarrassed. 'Very well. I shall... I shall turn a blind eye. Keep the blue pen.' Pity works." 
+            },
+            { 
+                t: "'Yes, Ms Elster.'", 
+                rep: { "Frau Elster": 20 },
+                m: 45, l: -20, a: 30, b: -10,
+                r: "You write it all out again. 45 minutes of your life gone. She checks it. 'Better. Budget for one pencil is signed off.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_good_1",
+		char: "Frau Elster",
+        title: "The Thrifty Type",
+        reqRep: { "Frau Elster": 10 }, 
+        text: "Ms Elster studies you at the printer. 'I have seen in the logs that you print your manuals double-sided and in greyscale by default. Exemplary.'",
+        opts: [
+            { 
+                t: "'I only use half sheets, too.'", 
+                rep: { "Frau Elster": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "She raises an eyebrow. 'Sarcasm. How regrettable.' You have ruined the good mood." 
+            },
+            { 
+                t: "'Environmental protection and cost control.'", 
+                rep: { "Frau Elster": 10 },
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "A rare, genuine smile flickers across her face. 'If only marketing thought that way. Keep it up.' You are on the right track." 
+            },
+            { 
+                t: "'The colour cartridge is empty anyway.'", 
+                rep: { "Frau Elster": 2 },
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "'Pragmatism born of necessity. Acceptable.' She returns to her files." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_good_2",
+		char: "Frau Elster",
+        title: "A New Toy",
+        reqRep: { "Frau Elster": 30 }, 
+        text: "Ms Elster is holding a small, glittering object. 'Mr Miller. Do look. A new collar for Rüdiger. With a GPS tracker. Can you set the app up on my phone?'",
+        opts: [
+            { 
+                t: "'Sure, let me see.'", 
+                rep: { "Frau Elster": 15 },
+                m: 15, l: -5, a: -5, b: 0, 
+                r: "You set the app up. Rüdiger is in the kitchen at this moment. Ms Elster is enchanted. 'You are a treasure, Mr Miller.'" 
+            },
+            { 
+                t: "Raise data protection concerns", 
+                rep: { "Frau Elster": -5 },
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "'The servers are in China, Ms Elster.' She snatches the collar away. 'Rüdiger has nothing to hide!' Subject closed." 
+            },
+            { 
+                t: "'Kevin can do it.'", 
+                rep: { "Frau Elster": -2 },
+                m: 2, l: 10, a: 0, b: 0, 
+                r: "She wrinkles her nose. 'I am not entrusting Rüdiger's data to that apprentice. We shall leave it then.' Work saved, no credit earned." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_bad_1",
+		char: "Frau Elster",
+        title: "Stapler Inspection",
+        reqRep: { "Frau Elster": -10 }, 
+        text: "Ms Elster stands at your desk holding your stapler up. 'Inventory number 402-A. That belongs in Room 12. Why is it on your desk?'",
+        opts: [
+            { 
+                t: "Apologise and take it back", 
+                rep: { "Frau Elster": 5 },
+                m: 10, l: -5, a: 10, b: 0, 
+                r: "You stand up and carry the stapler two rooms along in person. Ms Elster nods. 'Order must be kept.' Your patience is being tested." 
+            },
+            { 
+                t: "'I have always had that one!'", 
+                rep: { "Frau Elster": -10 },
+                m: 5, l: 0, a: 10, b: 5, 
+                r: "'Custom and practice does not exist here!' She confiscates the stapler without mercy. You will be folding your papers from now on." 
+            },
+            { 
+                t: "Simply ignore her", 
+                rep: { "Frau Elster": -5 },
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "You just carry on typing. She snorts, takes the stapler and adds you to her blacklist." 
+            }
+        ]
+    },
+    {
+        id: "rep_elster_filler_bad_2",
+		char: "Frau Elster",
+        title: "The Stopwatch",
+        reqRep: { "Frau Elster": -30 }, 
+        text: "You come back to your desk with a coffee. Ms Elster pointedly clicks a stopwatch. '7 minutes and 43 seconds for a hot drink. The allowance for screen breaks is 5 minutes.'",
+        opts: [
+            { 
+                t: "'I WORK PAST 16:30 AS WELL!'", 
+                rep: { "Frau Elster": -10, "Dr. Wichtig": 5 },
+                m: 5, l: -5, a: 20, b: 5, 
+                r: "You get loud. She does not so much as blink. 'Unpaid overtime is a compliance risk. I am reporting that to HR.'" 
+            },
+            { 
+                t: "Down the coffee and get straight to work", 
+                rep: { "Frau Elster": 10 },
+                m: 2, l: -10, a: 15, b: -5, 
+                r: "You swallow the hot coffee in one. It burns your tongue. She is satisfied. 'Exemplary.'" 
+            },
+            { 
+                t: "'The machine had to heat up.'", 
+                rep: { "Frau Elster": 2 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "She writes it down. 'Technical failure. Acceptable, if borderline.'" 
+            }
+        ]
+    },
+    // === MARKUS: THE CLOSER ===
+    {
+        id: "rep_markus_story_1",
+		char: "Markus",
+        title: "Markus in Attack Mode",
+        reqRep: { "Markus": 60 },
+        text: "Markus intercepts you and straightens his tie. 'Miller! Good that I have spotted you. I am off to the big client in a minute. I need admin rights to get round the firewall. The client wants to see our 'cloud AI' (which we do not have). Build me something!'",
+        opts: [
+            { 
+                t: "'I will build you an HTML dummy.'", 
+                next: "path_markus_success",
+                rep: { "Markus": 15 },
+                m: 20, l: -10, a: -10, b: 10, 
+                r: "You throw together a web page that blinks and displays 'Loading data...'. Markus slaps your back, hard. 'Good man! That is mindset! See you on the yacht!'" 
+            },
+            { 
+                t: "'Security risk. No.'", 
+                next: "path_markus_failure",
+                rep: { "Markus": -10 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "Markus snorts with contempt. 'Typical IT. Naysayers! People like you are why Germany makes no revenue!' He storms off, furious." 
+            },
+            { 
+                t: "'Just sell him Excel as AI.'", 
+                next: "path_markus_joke",
+                rep: { "Markus": 5 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Markus stops. His eyes light up. 'Excel... with macros? That is genius! 'Quantum Sheets'! Cheers, Miller!' He runs off. Oh no." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_story_2a",
+		char: "Markus",
+        title: "Finale: Commission",
+        reqRep: { "Markus": 80 },
+        reqStory: "path_markus_success",
+        text: "Markus comes into your office. He is wearing sunglasses (indoors). 'Miller. They signed. 10 million in volume. The client was thrilled by the loading bar. I am getting a bonus you could buy a house with.' He puts a heavy bottle on the desk.",
+        opts: [
+            { 
+                t: "Ask for a cut: 'I want 10%.'", 
+                rep: { "Markus": -10 },
+                m: 10, l: 0, a: 20, b: 10, 
+                r: "Markus laughs, cold. 'Do not push it, keyboard jockey. Be glad they let you work here.' He takes the bottle away with him. Greed is punished." 
+            },
+            { 
+                t: "'I am only doing my job.'", 
+                rep: { "Markus": 5 },
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "Markus shrugs. 'Your loss. More for me.' He walks off shaking his head. You have your integrity. You do not have whisky." 
+            },
+            { 
+                t: "Take the bottle", 
+                loot: "scotch_bottle", 
+                rep: { "Markus": 20 },
+                m: 5, l: -20, a: -30, b: -20, 
+                r: "It is a 30-year-old single malt. 'For the nerves,' Markus winks. 'We understand each other.' The 'inner circle' has a new member." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_story_2b",
+		char: "Markus",
+        title: "Finale: Lost Revenue",
+        reqRep: { "Markus": 50 },
+        reqStory: "path_markus_failure",
+        text: "Markus slams the door first, then his folder onto your desk. 'The client pulled out. He wanted to see innovation, all I could show him was security protocols. Do you know what you have just cost this company?!'",
+        opts: [
+            { 
+                t: "'Well. No skill, no deal.'", 
+                rep: { "Markus": -20 },
+                m: 5, l: 5, a: -10, b: 10, 
+                r: "One word too many. 'You want to be careful, Miller. The wind can turn.' You now have an enemy in Sales." 
+            },
+            { 
+                t: "'Rules are rules.'", 
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Markus waves the subject away. 'Bore.' He leaves to go and bribe somebody on a golf course." 
+            },
+            { 
+                t: "'I saved us from a lawsuit.'", 
+                rep: { "Dr. Wichtig": 5, "Markus": -5 },
+                m: 10, l: 0, a: 10, b: -5, 
+                r: "'Pff. Lawyer talk. Success needs risk!' He is still furious. The point has landed all the same." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_story_2c",
+		char: "Markus",
+        title: "Finale: Quantum Sheets",
+        reqRep: { "Markus": 65 },
+        reqStory: "path_markus_joke",
+        text: "Markus leans against the door. 'Miller! Excel was a smash! The client thought the coloured cells were neural networks. We have the contract! But now we actually have to build it. Can you teach Excel AI?'",
+        opts: [
+            { 
+                t: "Give the job to Kevin", 
+                rep: { "Kevin": -10, "Markus": 5 },
+                m: 5, l: 5, a: 0, b: 0, 
+                r: "'Kevin can do it.' Kevin is now sitting in tears in front of a spreadsheet with 10,000 rows. Markus is satisfied." 
+            },
+            { 
+                t: "'Sure, it will take 2 years though.'", 
+                rep: { "Markus": 10 },
+                m: 5, l: 10, a: -5, b: 0, 
+                r: "'Good. I will have been promoted long before then.' He winks. The problem has been moved into the future." 
+            },
+            { 
+                t: "'That was a joke!'", 
+                rep: { "Markus": -5 },
+                m: 5, l: 0, a: 10, b: 5, 
+                r: "'Not funny. Now I have to explain to the client why the AI crashes when you divide by zero.' He leaves, stressed." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_good_1",
+		char: "Markus",
+        title: "The Laser Emergency",
+        reqRep: { "Markus": 20 },
+        text: "Markus stands in front of you clicking frantically. 'Miller! My presenter is dead! I am pitching to the board in 5 minutes! Without the laser pointer I am naked! Make it light up!'",
+        opts: [
+            { 
+                t: "'Only the batteries.'", 
+                next: "path_markus_battery",
+                rep: { "Markus": 10 },
+                m: 5, l: -5, a: 5, b: 0, 
+                r: "You swap in batteries from your drawer. Markus presses the button. A red dot appears on your forehead. 'Boom! Headshot! Cheers, Miller! You are a lifesaver!'" 
+            },
+            { 
+                t: "'Use the phone app.'", 
+                next: "path_markus_app",
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You show him the remote app. 'Modern and sustainable.' Markus stares at his phone. 'Wow. Tech voodoo. That will impress the old boys. Good call!'" 
+            },
+            { 
+                t: "'That will be a €5 express fee.'", 
+                next: "path_markus_cash",
+                rep: { "Markus": 5 },
+                m: 2, l: 5, a: -10, b: 0,
+                r: "Markus stops and grins. 'Ah! A capitalist! I like it.' He slaps a fiver on your desk. 'Batteries. Now.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_good_2a",
+		char: "Markus",
+        title: "The VIP Lounge",
+        reqRep: { "Markus": 40 },
+        reqStory: "path_markus_battery",
+        text: "Markus steers you into his office (the one with the carpet). 'The pitch was a home run! And that was purely down to your batteries. Sit down. Want an espresso from my private machine? None of that canteen sludge.'",
+        opts: [
+            { 
+                t: "Ask about gadgets", 
+                loot: "stressball",
+                rep: { "Markus": 5 },
+                m: 10, l: 5, a: -5, b: 0, 
+                r: "'Sure! Here, take the stress ball from the last trade fair. 'Squeeze the Deal'. Suits you.'" 
+            },
+            { 
+                t: "Accept and take it easy", 
+                m: 20, l: 15, a: -20, b: 0, 
+                r: "The espresso is strong and good. You talk about cars for 20 minutes. This is the good life." 
+            },
+            { 
+                t: "'Got to work.'", 
+                rep: { "Markus": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "Markus shakes his head. 'You have the mindset of an employee, Miller. Shame.' You go back to your grey office." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_good_2b",
+		char: "Markus",
+        title: "Digital Native",
+        reqRep: { "Markus": 40 },
+        reqStory: "path_markus_app",
+        text: "Markus comes over with his tablet. 'The app was a smash! The board thought I had programmed it myself. But now... how do I get Netflix on it? For... er... market research?'",
+        opts: [
+            { 
+                t: "Install it without comment", 
+                m: 10, l: -5, a: 5, b: -5, 
+                r: "You set it up. Markus nods, satisfied. 'Discretion, Miller. We understand each other.' He winks." 
+            },
+            { 
+                t: "'Company policy.'", 
+                rep: { "Markus": -2 },
+                m: 5, l: 0, a: 0, b: 5, 
+                r: "'Oh come on, do not be so square.' He leaves, disappointed. Your reputation as the cool IT bloke is crumbling." 
+            },
+            { 
+                t: "'Lend' him your password", 
+                rep: { "Markus": 15 },
+                m: 5, l: 5, a: 0, b: 10,
+                r: "You give him your Netflix login. 'Top man! I owe you one.' He goes off to watch films. You hope he logs out again." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_good_2c",
+		char: "Markus",
+        title: "The Side Hustle",
+        reqRep: { "Markus": 40 },
+        reqStory: "path_markus_cash",
+        text: "Markus leans on your desk. 'You have got the right nose, Miller. I have a box here of 'faulty' headsets. The company has written them off. If you... repair them... we could shift them on eBay. 50/50?'",
+        opts: [
+            { 
+                t: "Turn it down", 
+                m: 2, l: 0, a: 0, b: 0, 
+                r: "'Too hot for me.' Markus shrugs. 'That is your loss. Risk is money.' He takes the box away again." 
+            },
+            { 
+                t: "Report him", 
+                rep: { "Markus": -20, "Dr. Wichtig": 5 },
+                m: 10, l: 0, a: 10, b: 5, 
+                r: "You go to the boss. He is... mildly interested. 'Markus brings in revenue, Miller. Let him play.' Markus finds out and is livid." 
+            },
+            { 
+                t: "Get in on it", 
+                loot: "headphones",
+                rep: { "Markus": 2 },
+                m: 30, l: -10, a: -10, b: -10, 
+                r: "You take the box. 'I will have a look.' Markus grins. 'My partner.' You keep the best headset for yourself." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_bad_1",
+		char: "Markus",
+        title: "The Phantom Feature",
+        reqRep: { "Markus": -20 },
+        text: "Markus bursts in. He is sweating. 'Miller! I have just sold the client 'Voice Control 3000'. For the old database. The contract is signed. You have until tomorrow morning to program it. Otherwise we are both for it.'",
+        opts: [
+            { 
+                t: "Knock together a soundboard", 
+                next: "path_markus_demo",
+                m: 15, l: 5, a: 5, b: 0, 
+                r: "You write a script that plays an MP3 when it hears 'hello'. 'There. That is as good as it gets.' Markus grabs it. 'Good enough! As long as it blinks!'" 
+            },
+            { 
+                t: "Pull an all-nighter", 
+                next: "path_markus_more",
+                rep: { "Markus": 5 },
+                m: 30, l: -20, a: 20, b: -10,
+                r: "You sit there all night coding a wrapper. You have rings under your eyes. Markus just nods the next morning. 'There we go. Why not straight away?'" 
+            },
+            { 
+                t: "'Are you out of your mind?!'", 
+                next: "path_markus_bus",
+                rep: { "Markus": -10 },
+                m: 5, l: 0, a: -10, b: 10,
+                r: "You shout at him. 'That is technically impossible!' Markus goes cold. 'Your attitude makes me sick. Then I suppose I will have to tell the client who failed here.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_bad_2a",
+		char: "Markus",
+        title: "The Scapegoat",
+        reqRep: { "Markus": -40 },
+        reqStory: "path_markus_bus",
+        text: "The phone shrills. Markus has put it on speaker. The client is bellowing. Markus says calmly: 'Yes, Mr Client. I am sorry. My admin, Mr Miller... he is cognitively out of his depth, I am afraid. He is sabotaging the project.' He grins at you while he says it.",
+        opts: [
+            { 
+                t: "Pull the phone cable", 
+                m: 2, l: 5, a: -5, b: 5, 
+                r: "Silence. Markus stares at the dead phone. 'Technical fault? Lucky, Miller. Next time I hang you out to dry.'" 
+            },
+            { 
+                t: "'HE IS LYING!'", 
+                rep: { "Dr. Wichtig": -10, "Markus": -20 },
+                m: 5, l: 0, a: -5, b: 20,
+                r: "You bellow into the phone. The client hangs up. Markus sighs theatrically. 'Well. Deal dead because of a choleric admin. That is going to HR.'" 
+            },
+            { 
+                t: "Swallow it and say nothing", 
+                m: 5, l: 0, a: 20, b: -5,
+                r: "You let yourself be insulted. Markus hangs up. 'See, Miller? That is how you manage expectations. You play the villain, I play the rescuer. Learn from it.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_bad_2b",
+		char: "Markus",
+        title: "The Demo Effect",
+        reqRep: { "Markus": -30 },
+        reqStory: "path_markus_demo",
+        text: "Markus storms in, chalk white. 'What have you done?! I said 'Computer, analyse!' and your script played 'Atemlos durch die Nacht'! In front of the board! They think we run a carnival club!'",
+        opts: [
+            { 
+                t: "Hide", 
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "You crawl under the desk. Markus shouts at the empty chair and leaves. Problem postponed." 
+            },
+            { 
+                t: "'Feature, not a bug.'", 
+                rep: { "Markus": -10 },
+                m: 2, l: 10, a: -10, b: 5, 
+                r: "You laugh until you cry. Markus is shaking with rage. 'You think that is funny? I am losing my commission! You are dead to me!'" 
+            },
+            { 
+                t: "'Virus in the system.'", 
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "'A Russian hacker attack!' Markus considers this. 'That... sounds good. That sells. All right, Miller. Play along and we both survive.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_simple_bad_2c",
+		char: "Markus",
+        title: "Scope Creep",
+        reqRep: { "Markus": -30 },
+        reqStory: "path_markus_more",
+        text: "Markus comes in with a coffee (for himself). 'Miller. The voice control is running. But the client wants VR headset support as well now. By midday. You will manage, you are in the flow.'",
+        opts: [
+            { 
+                t: "Crash his machine", 
+                m: 5, l: 5, a: -5, b: 5, 
+                r: "'Oops. Blue screen. Sorry, Markus. It is all gone.' Markus stares at the black screen. 'You... you bungler!' He clears off." 
+            },
+            { 
+                t: "'I will try...'", 
+                rep: { "Markus": 10 },
+                m: 40, l: -20, a: 30, b: -10,
+                r: "You work until you drop. Markus sells it as his own success. His technical serf is official from today." 
+            },
+            { 
+                t: "'That is enough!'", 
+                rep: { "Markus": -15 },
+                m: 5, l: 0, a: -5, b: 10, 
+                r: "'Refusal to work?' Markus taps at his phone. 'Shame. I thought we were a team. I suppose I will have to outsource.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_nemesis_1",
+		char: "Markus",
+        title: "The Replacement",
+        reqRep: { "Markus": -60 },
+        text: "Markus does not come alone. He has a young man in a slim-fit suit with him. 'Miller. This is Kai-Uwe from 'Cloud-Force'. He is taking over your duties. He is agile. You are... legacy code. Pack your things.'",
+        opts: [
+            { 
+                t: "'I can hack the competition for you.'", 
+                next: "path_markus_blackhat",
+                rep: { "Markus": 10 },
+                m: 10, l: -10, a: -5, b: 0, 
+                r: "Markus pauses. He sends Kai-Uwe out. 'Hack? You mean... industrial espionage? Tell me more. If that is true, Kai-Uwe stays outside.'" 
+            },
+            { 
+                t: "Pour coffee over Kai-Uwe 'by accident'", 
+                next: "path_markus_coffee", 
+                rep: { "Markus": -20 },
+                m: 2, l: 5, a: -20, b: 20, 
+                r: "'Oops! Slipped!' The brown stain spreads across the beige suit. Kai-Uwe whimpers. Markus rages: 'That is Italian silk! You will pay for that!'" 
+            },
+            { 
+                t: "'The bloke has no idea!'", 
+                next: "path_markus_outsourcing",
+                rep: { "Markus": -10 },
+                m: 5, l: 0, a: -10, b: 10, 
+                r: "You put a trick DNS question to Kai-Uwe. He stammers. Markus waves it off. 'Details! Kai-Uwe has vision! You are a dinosaur. I will make sure your budget gets cut.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_nemesis_2a",
+		char: "Markus",
+        title: "Budget Cut",
+        reqRep: { "Markus": -80 },
+        reqStory: "path_markus_outsourcing",
+        text: "Markus has convinced the boss that internal IT is 'uneconomic'. Your monitor has been collected. 'Cost savings, Miller. Kai-Uwe does it on an iPad now. You can always... do the filing.'",
+        opts: [
+            { 
+                t: "Leak his expenses claim", 
+                rep: { "Markus": -50, "Dr. Wichtig": -20 },
+                m: 10, l: -5, a: -30, b: 50,
+                r: "You send the receipts from 'Club Velvet' to the boss. Markus storms in, red with rage. 'You are dead! Do you hear me?! I will destroy you!' (State of war)." 
+            },
+            { 
+                t: "Fetch Kai-Uwe his coffee like a good boy", 
+                rep: { "Markus": 10 },
+                m: 5, l: -5, a: 30, b: -10, 
+                r: "You wait on the consultant. Markus grins. 'See? Everybody has a place in the food chain.'" 
+            },
+            { 
+                t: "Lock Kai-Uwe's iPad", 
+                m: 5, l: 0, a: 0, b: 10, 
+                r: "'Wrong password?' You shrug. Kai-Uwe is nearly in tears. Markus rages and can prove nothing." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_nemesis_2b",
+		char: "Markus",
+        title: "Black Hat Ops",
+        reqRep: { "Markus": -50 },
+        reqStory: "path_markus_blackhat",
+        text: "Markus locks your office door. He whispers: 'Right, Miller. Let us cut to it. Get me the client list from 'Competitor AG'. If you do that, we are partners. If not... Kai-Uwe comes back.'",
+        opts: [
+            { 
+                t: "Deliver fake data and play for time", 
+                m: 10, l: -5, a: -5, b: 0, 
+                r: "You give him a list of generated names. He only notices when he starts ringing them. There will be real trouble later. For today it is quiet and Kai-Uwe has gone." 
+            },
+            { 
+                t: "Go through with it and deliver the data - illegal", 
+                rep: { "Markus": 30 }, 
+                m: 20, l: -10, a: -20, b: 20,
+                r: "You use an exploit and pull the CSV. Markus almost kisses the monitor. 'YES! That is millions! Miller, you are a genius! Forget Kai-Uwe. We share the glory!' (Rehabilitated, and blackmailable)." 
+            },
+            { 
+                t: "'Too dangerous.'", 
+                rep: { "Markus": -20 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Markus's face turns to stone. 'Coward. I knew it. You have no bite.' He rings Kai-Uwe. You are finished." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_nemesis_2c",
+		char: "Markus",
+        title: "The Bill",
+        reqRep: { "Markus": -70 },
+        reqStory: "path_markus_coffee",
+        text: "Markus slams a sheet of paper onto your desk. Kai-Uwe stands shivering in the background in a bin-bag poncho. 'Cleaning: €250. Call-out: €50. Emotional damage: priceless. Pay up. Cash. Now.'",
+        opts: [
+            { 
+                t: "Offer replacement clothing: 'Company hoodie, XL'", 
+                rep: { "Markus": 10 }, 
+                m: 10, l: 5, a: -5, b: 0, 
+                r: "You throw Kai-Uwe an 'IT Support' hoodie. Markus laughs: 'My God, Kai-Uwe, you look like a sack of potatoes. All right, Miller, we are square. The sight was worth it.'" 
+            },
+            { 
+                t: "Pay it yourself - the holiday is off", 
+                rep: { "Markus": 5 },
+                m: 5, l: 0, a: 20, b: 0, 
+                r: "You raid your emergency stash. It hurts. Markus counts the notes, satisfied. 'There we go. Kai-Uwe, stop crying, we are going shopping.' You are broke and the problem has gone." 
+            },
+            { 
+                t: "'Operational risk!'", 
+                rep: { "Markus": -10, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: 10, b: 10, 
+                r: "'So sue me!' Markus turns red. 'I will, Miller! My solicitor eats people like you for breakfast!' He storms out." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_good_1",
+		char: "Markus",
+        title: "The Dongle Saviour",
+        reqRep: { "Markus": 10 }, 
+        text: "Markus storms in, tie slightly loosened. 'Miller! Client pitch in 2 minutes! The blasted projector cable does not fit my Mac. Have you got one of those... dongle thingies?'",
+        opts: [
+            { 
+                t: "'One ought to know one's own setup.'", 
+                rep: { "Markus": -5 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "'Smart-arse!' he calls, and storms on to annoy somebody else. You let him run into the wall." 
+            },
+            { 
+                t: "'Get me an ice cream later.'", 
+                rep: { "Markus": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "He laughs. 'Deal!' He takes the adapter. Later a Magnum really does appear on your desk." 
+            },
+            { 
+                t: "'Here, take the adapter.'", 
+                rep: { "Markus": 10 },
+                m: 5, l: -5, a: -5, b: 0, 
+                r: "You throw him the USB-C adapter. He catches it, casual. 'Miller, you are the MVP! I will mention you when the commission comes in!' (He will not, but he likes you.)" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_good_2",
+		char: "Markus",
+        title: "High-Class Leftovers",
+        reqRep: { "Markus": 30 }, 
+        text: "Markus enters your office and puts a smart cardboard box on the desk. 'The investor meeting is done. There are three premium truffle sandwiches left over. For the elite IT.'",
+        opts: [
+            { 
+                t: "Share with Kevin", 
+                rep: { "Kevin": 10, "Markus": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "You call Kevin over. Markus rolls his eyes. 'Pearls before swine,' he mutters, and goes." 
+            },
+            { 
+                t: "Eat them gratefully", 
+                rep: { "Markus": 5 },
+                m: 15, l: 10, a: -15, b: 0, 
+                r: "You eat truffle. It is unbelievable. Markus leans on the door frame and tells you about his new Porsche. A good life." 
+            },
+            { 
+                t: "'I am vegetarian.'", 
+                rep: { "Markus": -2 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "He raises an eyebrow. 'Weak. Very weak, Miller.' He takes the carton away with him." 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_bad_1",
+		char: "Markus",
+        title: "Priority 1: Mouse Battery",
+        reqRep: { "Markus": -10 }, 
+        text: "Your phone rings off the hook. It is Markus. 'Miller! Total outage! My wireless mouse is flat. I cannot do any business like this! Bring batteries at once! Priority 1!'",
+        opts: [
+            { 
+                t: "'Get them from reception.'", 
+                rep: { "Markus": -10 },
+                m: 2, l: 0, a: 0, b: 5, 
+                r: "'This place is a service desert!' he barks, and hangs up. Quiet returns. So does the complaint, on its way." 
+            },
+            { 
+                t: "'Use the touchpad.'", 
+                rep: { "Markus": -5 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "'Touchpad? Do I look like a student in Starbucks?' He is outraged." 
+            },
+            { 
+                t: "Trudge over there", 
+                rep: { "Markus": 5 },
+                m: 15, l: -5, a: 15, b: 0, 
+                r: "You break off your work and change his batteries like a butler. He taps at his phone while you do it. 'About time.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_markus_filler_bad_2",
+		char: "Markus",
+        title: "The Feature Lie",
+        reqRep: { "Markus": -30 }, 
+        text: "Markus slaps you hard on the shoulder as he passes. 'Landed the deal! Promised the client our software can now do blockchain and brew AI coffee. Build that in by Friday. Ciao!'",
+        opts: [
+            { 
+                t: "Simply ignore it", 
+                rep: { "Markus": 5 },
+                m: 2, l: 10, a: 5, b: 10, 
+                r: "You do nothing at all. When the client rings on Friday it will burn. That is a problem for future Miller." 
+            },
+            { 
+                t: "Call after him: 'That does not exist!'", 
+                rep: { "Markus": -5 },
+                m: 5, l: 0, a: 15, b: 0, 
+                r: "He does not even turn round. 'Make it possible, Miller! Mindset!' You rub your temples, lost for words." 
+            },
+            { 
+                t: "Put the boss in CC straight away", 
+                rep: { "Markus": -15, "Dr. Wichtig": 10 },
+                m: 10, l: -5, a: 5, b: -10, 
+                r: "You write a formal email saying it cannot be done. Markus comes in later, furious. 'You little rat...' The war rages." 
+            }
+        ]
+    },
+    // === GABI: THE SOUL OF THE COMPANY ===
+    {
+        id: "rep_gabi_story_1",
+		char: "Gabi",
+        title: "Emergency Call from Reception",
+        reqRep: { "Gabi": 60 },
+        text: "The phone rings. It is Gabi, and her voice is shaking dangerously. 'There are five couriers standing here, the phone will not stop and my Outlook has frozen. If one more person asks me where the toilet is, I am going to start screaming.'",
+        opts: [
+            { 
+                t: "'I will divert your phone to me.'", 
+                next: "path_gabi_rocker",
+                rep: { "Gabi": 10 },
+                m: 10, l: -10, a: -5, b: -5, 
+                r: "You hear her breathe out, deeply. 'Silence... Thank you. You are my salvation.' You take calls for 10 minutes." 
+            },
+            { 
+                t: "Force a remote restart", 
+                next: "path_gabi_anger",
+                rep: { "Gabi": -10 },
+                m: 2, l: 5, a: 5, b: 10, 
+                r: "You click. Her PC shuts down. Gabi screams in the background: 'NO! I had an email open!' *Click*. She hangs up." 
+            },
+            { 
+                t: "'Raise a ticket.'", 
+                next: "path_gabi_ticket",
+                rep: { "Gabi": -5 },
+                m: 2, l: 10, a: 0, b: 5, 
+                r: "She draws a sharp breath. 'Right. Thanks for nothing.' She hangs up calmly. Too calmly." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_story_2a",
+		char: "Gabi",
+        title: "Finale: Noise Control",
+        reqRep: { "Gabi": 75 },
+        reqStory: "path_gabi_rocker",
+        text: "Lunch break. Gabi has headphones on and is drumming aggressively on the counter with two pens. She spots you, grins and throws the horns. Dr Wichtig shoots out of his office into the corridor: 'Who is making that infernal racket?!'",
+        opts: [
+            { 
+                t: "'Gabi did it.'", 
+                rep: { "Gabi": -30, "Dr. Wichtig": 5 },
+                m: 2, l: 0, a: 0, b: -10,
+                r: "The boss takes Gabi apart. She gives you a look that freezes your blood. That was the end of the friendship." 
+            },
+            { 
+                t: "Rock along and headbang", 
+                loot: "mixtape",
+                rep: { "Gabi": 15, "Dr. Wichtig": -10 },
+                m: 5, l: 5, a: -30, b: 15,
+                r: "You shake your mane. The boss stares at the pair of you, appalled. 'A madhouse...' he mutters, and flees. Gabi gives a dirty laugh: 'Soulmate! Here, take the tape. Only the elite understand that one.'" 
+            },
+            { 
+                t: "'That was my server test!'", 
+                rep: { "Gabi": 10, "Dr. Wichtig": -2 },
+                m: 5, l: -5, a: -10, b: 5, 
+                r: "You cover for her, professionally. The boss looks puzzled. 'An acoustic test? Well. Carry on.' Gabi wipes off the sweat. 'Phew. Thanks for the cover, partner.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_story_2b",
+		char: "Gabi",
+        title: "Finale: Permit A38",
+        reqRep: { "Gabi": 55 },
+        reqStory: "path_gabi_ticket",
+        text: "A quick Döner run, you thought. Gabi is blocking the exit. 'Have you got a ticket for leaving the building? No? Well. Rules are rules. Raise one with HR, processing time 3 working days.'",
+        opts: [
+            { 
+                t: "'I was an idiot.'", 
+                rep: { "Gabi": 5 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "Gabi sighs. 'Fine. Just this once.' She opens the barrier. 'But next week I want to see chocolate.'" 
+            },
+            { 
+                t: "Take the back entrance", 
+                rep: { "Gabi": -5 },
+                m: 10, l: -5, a: 10, b: 5, 
+                r: "You sneak through the basement. It is dark and it smells of Egon. You get out. Beaten, but out." 
+            },
+            { 
+                t: "Capitulate and raise a ticket", 
+                rep: { "Gabi": 5 },
+                m: 15, l: -10, a: 20, b: 0, 
+                r: "You type the ticket on your phone. Gabi reviews it, slowly. 'Typo on line 3. Rejected.' No Döner for you." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_story_2c",
+		char: "Gabi",
+        title: "Finale: Unreachable",
+        reqRep: { "Gabi": 45 },
+        reqStory: "path_gabi_anger",
+        text: "An important call from support is not getting through. You go down to reception. Gabi is filing her nails. The phone flashes silently. 'Oh, was that for you? Oops. My PC has been playing up ever since your restart.'",
+        opts: [
+            { 
+                t: "Bellow at the handset", 
+                rep: { "Gabi": -5 },
+                m: 2, l: 0, a: -10, b: 10, 
+                r: "You bellow at the handset. Gabi is unmoved. 'Bad vibes, Miller. Very bad vibes.'" 
+            },
+            { 
+                t: "Fix the PC as penance", 
+                rep: { "Gabi": 10 },
+                m: 30, l: -20, a: 20, b: 0, 
+                r: "You check her PC. There is nothing whatsoever wrong with it. You pretend to fix something. 'Working again.' Gabi grins: 'Thanks. Bound to have been a layer 8 problem.'" 
+            },
+            { 
+                t: "Fetch the boss", 
+                rep: { "Gabi": -15, "Dr. Wichtig": 5 },
+                m: 10, l: 0, a: -5, b: -5, 
+                r: "The boss arrives. 'Ms Gabi! Put it through!' She obeys through gritted teeth. Your reputation is finished." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_good_1",
+		char: "Gabi",
+        title: "The Personal Parcel",
+        reqRep: { "Gabi": 20 },
+        text: "Gabi waves you over. She looks around conspiratorially. 'Psst. There is an Amazon parcel here for you. Strictly speaking private post is banned and I should send it back or burn it. But it rattles so interestingly.'",
+        opts: [
+            { 
+                t: "'There is chocolate in it.'", 
+                next: "path_gabi_candy",
+                rep: { "Gabi": 10 },
+                m: 10, l: 5, a: -10, b: 5, 
+                r: "You open it and give her some. 'Oh, nougat!' She is delighted. 'Wait, I have got a biscuit left over from the meeting. Trade!'" 
+            },
+            { 
+                t: "'Return to sender.'", 
+                next: "path_gabi_rule",
+                m: 5, l: 0, a: 5, b: -5,
+                r: "Gabi rolls her eyes. 'Bore. I will fill in the returns form then.' She stamps it aggressively." 
+            },
+            { 
+                t: "Take it and say thanks", 
+                next: "path_gabi_secret",
+                rep: { "Gabi": 5 },
+                m: 5, l: 5, a: -5, b: 5,
+                r: "'Thanks, Gabi!' You make it disappear quickly. Gabi winks. 'I saw nothing.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_good_2a",
+		char: "Gabi",
+        title: "The Office Grapevine",
+        reqRep: { "Gabi": 40 },
+        reqStory: "path_gabi_secret",
+        text: "Gabi leans right over the counter. 'Since you can keep your mouth shut... I have just seen a fax. Dr Wichtig has ordered a 'stress management coach'. For himself. And he wrote 'urgent' on it.'",
+        opts: [
+            { 
+                t: "Use it: raise it with the boss", 
+                rep: { "Gabi": -10, "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: 10, b: 15,
+                r: "You ask the boss about his stress. He goes pale. 'How?! GABI!' There is trouble for everybody." 
+            },
+            { 
+                t: "'What he needs is a holiday.'", 
+                rep: { "Gabi": 5 },
+                m: 10, l: 10, a: -10, b: 0,
+                r: "You giggle about the boss for 10 minutes. It helps, not being alone with the madness." 
+            },
+            { 
+                t: "'No time, I have work.'", 
+                m: 2, l: -5, a: 5, b: 0, 
+                r: "Gabi looks disappointed. 'You are not curious at all.' She turns back to her crossword." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_good_2b",
+		char: "Gabi",
+        title: "Leftovers",
+        reqRep: { "Gabi": 40 },
+        reqStory: "path_gabi_candy",
+        text: "Gabi rings you. 'Code Delicious. The clients have left meeting room B. They barely touched the canapés. Salmon, brie, the lot. I am giving you a 2 minute head start on the sales lot.'",
+        opts: [
+            { 
+                t: "Run down and plunder", 
+                m: 10, l: 5, a: -20, b: 0,
+                r: "You run. Gabi keeps watch. You stuff yourself. 'Bon appétit,' she whispers as you come out, full and content." 
+            },
+            { 
+                t: "Bring Gabi something back", 
+                rep: { "Gabi": 10 },
+                m: 15, l: 5, a: -15, b: 0, 
+                r: "You secure a 'best of' plate for Gabi. She is touched. 'You are my favourite colleague. Genuinely.'" 
+            },
+            { 
+                t: "Not hungry", 
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "You stay at your desk. Later you hear Markus bellowing: 'Who ate the salmon?!' Chance wasted." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_good_2c",
+		char: "Gabi",
+        title: "The VIP Visit",
+        reqRep: { "Gabi": 30 },
+        reqStory: "path_gabi_rule",
+        text: "An important client is at reception and has forgotten his pass. He is raging. Gabi sees you coming. 'Ah, Mr Miller! You are such a stickler. Can you confirm that this gentleman has NO access authorisation?'",
+        opts: [
+            { 
+                t: "Let the client in anyway", 
+                rep: { "Gabi": -10, "Markus": 5 },
+                m: 5, l: 0, a: 5, b: 0, 
+                r: "You wave him through. Gabi snorts. 'Wonderful. Now I look like the cow.' Markus thanks you, Gabi is furious." 
+            },
+            { 
+                t: "'Looks like a spy to me.'", 
+                rep: { "Gabi": 5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "Gabi laughs. The client does not. But the pair of you have fun at his expense." 
+            },
+            { 
+                t: "'Sorry, regulations.'", 
+                rep: { "Gabi": 10 },
+                m: 5, l: -5, a: 5, b: -5,
+                r: "Gabi grins in triumph. 'There you are. Even IT says no.' The client has to wait outside. Gabi loves it when you play bad cop." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_bad_1",
+		char: "Gabi",
+        title: "The Parcel Hostage",
+        reqRep: { "Gabi": -20 },
+        text: "You see an Amazon parcel with your name on it behind the counter. Gabi lays a protective hand on it. 'Well, Mr Miller. Under house rules, section 4, private post is prohibited. I shall have to... dispose of it thermally. Or donate it to the 'needy'.'",
+        opts: [
+            { 
+                t: "Wait until she goes to the toilet", 
+                next: "path_gabi_cam",
+                m: 15, l: 10, a: 0, b: 0, 
+                r: "You lurk behind a plant for 15 minutes. When she has gone you grab the parcel and run. The perfect heist. You think." 
+            },
+            { 
+                t: "'Hand it over or there will be trouble!'", 
+                next: "path_gabi_denied",
+                rep: { "Gabi": -10 },
+                m: 5, l: 0, a: -5, b: 5,
+                r: "You raise your voice. Gabi smiles, ice cold. 'Threats? Noted. The parcel stays here. To preserve the evidence.'" 
+            },
+            { 
+                t: "'Please! It is medication!' - a lie", 
+                next: "path_gabi_beg",
+                rep: { "Gabi": 5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "She looks you over. 'You do look terrible, actually. Very well. But you will fill in Form 'Special Authorisation A'. Right now.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_bad_2a",
+		char: "Gabi",
+        title: "Delivery Refused",
+        reqRep: { "Gabi": -40 },
+        reqStory: "path_gabi_denied",
+        text: "You are waiting urgently on spare parts for the server. You ask at reception. Gabi is filing her nails. 'Oh, the UPS man? I sent him away. 'Recipient unknown'. You are hardly ever at your desk, so I assumed you did not work here any more.'",
+        opts: [
+            { 
+                t: "Drive to the depot yourself", 
+                m: 60, l: -20, a: 20, b: 0,
+                r: "You drive around the town for 1 hour to collect the parcel. You have the part. Your day is gone." 
+            },
+            { 
+                t: "Rage and shout", 
+                rep: { "Gabi": -5, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: -10, b: 10,
+                r: "You lose your composure. Gabi hums a tune. 'Shall I call security? You seem hysterical.'" 
+            },
+            { 
+                t: "Complain to the boss", 
+                m: 10, l: 0, a: 5, b: 0, 
+                r: "The boss shrugs. 'Gabi is only doing her job. Sort it out. I need harmony in the foyer.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_bad_2b",
+		char: "Gabi",
+        title: "Permit A38",
+        reqRep: { "Gabi": -30 },
+        reqStory: "path_gabi_beg",
+        text: "Gabi holds out the form. 'You have missed field 4b (mother's maiden name) and field 9 (shoe size). Without complete data I cannot release the parcel. General Data Protection Regulation.'",
+        opts: [
+            { 
+                t: "Fill it all in obediently", 
+                rep: { "Gabi": 5 },
+                m: 20, l: -10, a: 15, b: 0, 
+                r: "You enter your shoe size. Gabi examines it critically. '43? Looks more like 44 to me. Very well.' She throws you the parcel." 
+            },
+            { 
+                t: "'This is harassment!'", 
+                rep: { "Gabi": -5 },
+                m: 5, l: 0, a: 10, b: 0, 
+                r: "'This is quality assurance.' She shreds the form. 'Fresh attempt. Here is a clean sheet.'" 
+            },
+            { 
+                t: "Enter made-up data", 
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "Mother: 'Godzilla'. Shoe size: 'clown'. Gabi does not notice and stamps it. A small win against the system." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_simple_bad_2c",
+		char: "Gabi",
+        title: "Candid Camera",
+        reqRep: { "Gabi": -30 },
+        reqStory: "path_gabi_cam",
+        text: "An email from Gabi. Subject: 'Thief in the foyer'. Attached is a grainy piece of CCTV footage of you leaping out from behind the plant and taking the parcel. Body: 'Shall I forward this to HR, or will you be bringing me chocolate?'",
+        opts: [
+            { 
+                t: "Bring the demanded chocolate", 
+                rep: { "Gabi": 5 },
+                m: 10, l: 0, a: 10, b: 0, 
+                r: "You buy her a bar from the machine. She deletes the email in front of you. 'There you go. Honesty is the best policy.'" 
+            },
+            { 
+                t: "'That is my twin brother.'", 
+                rep: { "Gabi": -5 },
+                m: 5, l: 5, a: 0, b: 5, 
+                r: "'Nice try.' She keeps the video. Blackmail material, filed." 
+            },
+            { 
+                t: "'Filming is illegal!'", 
+                rep: { "Gabi": -10, "Dr. Wichtig": -5 },
+                m: 10, l: 0, a: 5, b: 10, 
+                r: "You threaten her with the Works Council. Gabi goes pale, and now she loathes you to the bone. 'You just watch yourself, Miller...'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_nemesis_1",
+		char: "Gabi",
+        title: "Communications Blackout",
+        reqRep: { "Gabi": -60 },
+        text: "You wonder why your phone is dead. Gabi has diverted your extension to 'Number not in service'. Visitors for IT are turned away with: 'Mr Miller? I am afraid he has passed away.'",
+        opts: [
+            { 
+                t: "'I know who is stealing the milk.'", 
+                next: "path_gabi_spy",
+                rep: { "Gabi": 10 },
+                m: 5, l: 0, a: -5, b: 0, 
+                r: "Gabi pauses. Her eyes flash. 'Information? Interesting. Come into my office. We need to talk.'" 
+            },
+            { 
+                t: "Hack her phone system", 
+                next: "path_gabi_war",
+                rep: { "Gabi": -10 },
+                m: 10, l: -5, a: -10, b: 10,
+                r: "You divert every reception call to her private mobile. Gabi storms into the corridor going red. 'This is war, Miller!'" 
+            },
+            { 
+                t: "Bring flowers, contrite", 
+                next: "path_gabi_sub",
+                rep: { "Gabi": 5 },
+                m: 15, l: 0, a: 10, b: 0, 
+                r: "You buy a bunch at the petrol station. Gabi wrinkles her nose. 'Carnations? Am I dead? Still, I will unblock the line. On probation.'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_nemesis_2a",
+		char: "Gabi",
+        title: "Announcement for Mr Miller",
+        reqRep: { "Gabi": -80 },
+        reqStory: "path_gabi_war",
+        text: "The PA system crackles. Gabi's voice echoes through the whole building: 'Attention! Mr Miller from IT invites all colleagues to free beer and pizza! In his office, right now! Thank you, Mr Miller!'",
+        opts: [
+            { 
+                t: "Barricade the door", 
+                m: 10, l: 5, a: 20, b: 0, 
+                r: "The horde rattles your door. 'Beer! Beer!' You sit in the dark and sweat. Gabi has won." 
+            },
+            { 
+                t: "Counter over the PA: 'Gabi is paying!'", 
+                rep: { "Gabi": -20, "Dr. Wichtig": -10 },
+                m: 5, l: 0, a: -10, b: 20,
+                r: "You hack into the PA system. 'Correction! Gabi is celebrating her lottery win at reception!' Now everybody runs to her. Pure chaos." 
+            },
+            { 
+                t: "Escape through the window", 
+                m: 5, l: 10, a: 0, b: 0, 
+                r: "You climb out. Clocking off. Let them look." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_nemesis_2b",
+		char: "Gabi",
+        title: "Miller the Receptionist",
+        reqRep: { "Gabi": -50 },
+        reqStory: "path_gabi_sub",
+        text: "Gabi takes the flowers and puts them straight in the bin. 'Nice. But I have to get to my manicure. You are taking reception. And heaven help you if you are rude to the guests.'",
+        opts: [
+            { 
+                t: "Pull the phone cable and leave", 
+                rep: { "Gabi": -5 },
+                m: 2, l: 5, a: 0, b: 0, 
+                r: "You sabotage the desk and go. Gabi has to work late. You have no pangs of conscience at all, and that does not trouble you in the slightest." 
+            },
+            { 
+                t: "Do the job through gritted teeth", 
+                rep: { "Gabi": 10 },
+                m: 60, l: -30, a: 30, b: -10,
+                r: "You sit there for an hour smiling at delivery drivers. 'Sign here, please.' Gabi comes back and inspects your work. 'There you go.'" 
+            },
+            { 
+                t: "Drive the guests away", 
+                rep: { "Gabi": -10, "Dr. Wichtig": -5 },
+                m: 5, l: 0, a: -10, b: 10, 
+                r: "You tell every visitor: 'The company is bankrupt.' Gabi comes back and has a fit. 'What have you done?!'" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_nemesis_2c",
+		char: "Gabi",
+        title: "The Black Book",
+        reqRep: { "Gabi": -50 },
+        reqStory: "path_gabi_spy",
+        text: "Gabi closes the door. She takes out a notebook. 'Right, little bird. Sing. I need the chat logs from Accounts. Who is slagging off whom? Give me that and we are square. If not...'",
+        opts: [
+            { 
+                t: "Forge the logs: 'Everybody loves Gabi.'", 
+                rep: { "Gabi": -5 },
+                m: 15, l: -5, a: 5, b: 0, 
+                r: "You forge the chats. Gabi reads them and frowns. 'That sounds too nice. You are lying.' She is suspicious, and the war is on pause." 
+            },
+            { 
+                t: "A moral withdrawal", 
+                rep: { "Gabi": -20 },
+                m: 5, l: 0, a: 5, b: -5, 
+                r: "'I am not an informer.' Gabi shuts the book. 'Then you are useless. Out.' The blockade continues." 
+            },
+            { 
+                t: "Deliver the real logs", 
+                rep: { "Gabi": 35 }, 
+                m: 10, l: -5, a: -10, b: 30,
+                r: "You give her the stick. Gabi reads and gives an evil giggle. 'Oh... Ms Elster has something going with the caretaker?! That is worth gold, Miller! You are my new favourite.' (Peace made, and you are a pig.)" 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_good_1",
+		char: "Gabi",
+        title: "The Doorman",
+        reqRep: { "Gabi": 10 }, 
+        text: "Gabi rings. 'Miller, there is a very pushy rep here for printer leasing. He wants to come straight through to you. Shall I get rid of him, or are you bored?'",
+        opts: [
+            { 
+                t: "'Let him in, I need friends.'", 
+                rep: { "Gabi": -2 },
+                m: 15, l: 0, a: 15, b: 0, 
+                r: "'Suit yourself, masochist.' The rep comes in and steals 15 minutes of your life with glossy brochures." 
+            },
+            { 
+                t: "'Send him to Markus.'", 
+                rep: { "Gabi": 5, "Markus": -5 },
+                m: 5, l: 5, a: -5, b: 0, 
+                r: "Gabi giggles. 'Evil. I like it.' The salesman annoys the salesman. A poetic end." 
+            },
+            { 
+                t: "'Send him packing!'", 
+                rep: { "Gabi": 10 },
+                m: 5, l: -5, a: -10, b: 0, 
+                r: "Gabi laughs out loud. 'Right you are, I will tell him you are in exile indefinitely.' You hear her turn authoritative in the background. Perfect assistance." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_good_2",
+		char: "Gabi",
+        title: "Gossip Update",
+        reqRep: { "Gabi": 30 }, 
+        text: "You collect post at reception. Gabi leans over the counter and whispers: 'Have you heard? Chantal from marketing was crying in the toilets this morning because her smoothie had sold out.'",
+        opts: [
+            { 
+                t: "'Oh, the poor thing.'", 
+                rep: { "Gabi": -5 },
+                m: 5, l: 0, a: 0, b: 0, 
+                r: "Gabi gives a short snort. 'Pff, pity? That is natural selection in an office.' You are not toxic enough for her grapevine." 
+            },
+            { 
+                t: "Listen and join in", 
+                rep: { "Gabi": 10 },
+                m: 15, l: 10, a: -10, b: 0, 
+                r: "You analyse the psychological stability of the marketing department together. Utterly unproductive and immensely satisfying." 
+            },
+            { 
+                t: "'Rumours do not interest me.'", 
+                rep: { "Gabi": -10 },
+                m: 2, l: 0, a: 5, b: 0, 
+                r: "She narrows her eyes. 'Fine, Mr Square. No more insider information for you then.' Killjoy." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_bad_1",
+		char: "Gabi",
+        title: "The Spam Gate",
+        reqRep: { "Gabi": -10 }, 
+        text: "Your phone rings. Again. It is the fifth time today that Gabi has put an obvious spam call ('Win an iPhone') through to your extension instead of killing it.",
+        opts: [
+            { 
+                t: "Simply stop answering", 
+                rep: { "Dr. Wichtig": 5 },
+                m: 10, l: 5, a: 5, b: 10, 
+                r: "You ignore the phone. Later the boss complains that IT cannot be reached by telephone. A points win for reception." 
+            },
+            { 
+                t: "Draw the spammer into a conversation", 
+                m: 20, l: -10, a: -5, b: 0, 
+                r: "You explain the server architecture to the call centre worker at length. He eventually hangs up in tears. Time wasted, and funny." 
+            },
+            { 
+                t: "Ring Gabi and snap at her", 
+                rep: { "Gabi": -5 },
+                m: 5, l: 0, a: 15, b: 0, 
+                r: "'Why are you putting that through?!' Gabi answers sweetly: 'Oh, it sounded like IT matters. Sorry.' She is doing it on purpose." 
+            }
+        ]
+    },
+    {
+        id: "rep_gabi_filler_bad_2",
+		char: "Gabi",
+        title: "Working to Rule",
+        reqRep: { "Gabi": -30 }, 
+        text: "An email from Gabi: 'Dear Mr Miller, a parcel for you has been refused, as your name appeared on the label as 'Millar' (with an a). Not permissible under protocol 7B. It is going back to the depot.'",
+        opts: [
+            { 
+                t: "Email the boss: 'This is sabotage!'", 
+                rep: { "Gabi": -5, "Dr. Wichtig": -5 },
+                m: 10, l: 0, a: 10, b: 10, 
+                r: "The boss replies, irritated: 'Sort your private affairs out in your own time, Miller.' Nobody helps you." 
+            },
+            { 
+                t: "Give up and order the parcel again", 
+                rep: { "Gabi": 5 },
+                m: 5, l: 5, a: 15, b: 0, 
+                r: "You give up and click 'send again'. Gabi watches your resignation through the glass door and smiles thinly." 
+            },
+            { 
+                t: "Storm down to reception, furious", 
+                rep: { "Gabi": -10 },
+                m: 10, l: 0, a: 20, b: 5, 
+                r: "You stand in front of her, ranting. Gabi files her nails, unmoved. 'Incorrect addressing. My condolences.' She is enjoying her power." 
+            }
+        ]
+    }
+    
+];

@@ -47,7 +47,16 @@ export const platform = {
     shareUrl: () => window.location.href,
 
     /** Aggregated worldwide statistics, or null when unavailable. */
-    globalStats: async () => null
+    globalStats: async () => null,
+
+    /**
+     * The language Steam was told to start the game in, or null.
+     *
+     * Steam keeps a per-game language setting that can differ from the one the
+     * operating system reports, so on the desktop this outranks
+     * navigator.language. The browser has nothing to answer here.
+     */
+    language: async () => null
 };
 
 // --- DESKTOP UPGRADE ---

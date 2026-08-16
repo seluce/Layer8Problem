@@ -1,6 +1,16 @@
-[5.1.0] - 2026-08-14
+[6.0.0] - 2026-08-16
 
-Sammelstelle für die nächste Fassung. Solange hier nichts Größeres steht, bleibt es bei Feinschliff an dem, was 5.0 gebracht hat.
+Diese Fassung hieß im Entstehen 5.1 und wird als 6.0 veröffentlicht, weil die englische Sprachfassung dazugekommen ist. Letzte veröffentlichte Fassung ist 5.0 - alles, was hier steht, ist seitdem entstanden.
+
+Englisch:
+* Das Spiel gibt es jetzt auf Englisch. Vollständig, nicht in Teilen: alle Ereignisse, das Postfach, der Handy-Chat, das Intranet, das Schwarze Brett, das Wissen, die Firmenchronik, die Erfolge, die Morgenstimmungen, die Ausreden, der Nachrichtenticker, das Tagebuch und jede Beschriftung drumherum. Rund 11.600 Texte, gut 650 Normseiten.
+* Übersetzt wurde nicht Wort für Wort, sondern Szene für Szene. Wo eine Pointe im Englischen nicht trägt, ist sie neu gebaut - Kevins Spottname für Müller etwa, oder die Abkürzung des dümmsten anzunehmenden Users. Was seine Wirkung aus dem Deutschen zieht, bleibt deutsch: der Mettigel, der TÜV, der Döner, die Namen der Kollegen.
+* Müller heißt auf Englisch Miller. Es ist die wörtliche Übersetzung und trägt denselben Witz - der häufigste Nachname des Landes, also niemand Bestimmtes. Die Kollegen behalten ihre Namen: Kevin, Chantal, Egon, Gabi, Markus, Frau Elster und Dr. Wichtig arbeiten weiterhin in einem deutschen Büro.
+* Umgeschaltet wird an zwei Stellen: unten auf dem Startbildschirm mit einem schlichten DE | EN, das man ohne Lesen findet, und in den Einstellungen. Der Schalter auf dem Startbildschirm ist Absicht - wer die falsche Sprache bekommt, kann das Einstellungsmenü nicht suchen, weil auch dessen Beschriftung falsch ist.
+* Beim ersten Start entscheidet die Sprache des Browsers, in der Steam-Fassung die dort eingestellte. Wer schon einmal gespielt hat, bleibt bei Deutsch - ein Update, das treue Spieler auf Englisch umstellt, wäre ein schlechter Dank.
+* Spielstände sind sprachunabhängig. Man kann mitten in der Woche umschalten, ohne etwas zu verlieren: Ruf, Rucksack, gelesene Ereignisse und offene Geschichten bleiben, es wechselt nur die Sprache, in der sie erzählt werden.
+* Der Wechsel geschieht auf der Stelle, ohne die Seite neu zu laden und ohne die Rückfrage, ob man den Tag fortsetzen möchte. Umschalten darf man mitten im Tag, mitten in einem Ereignis und mitten in einem Handy-Chat: Der Bildschirm, der gerade offen ist, wechselt mit - Titel, Text und die Antworten, die zur Wahl stehen. Was vorher schon gesagt war, bleibt stehen, wie es gesagt wurde: das Protokoll, ein bereits abgeschlossenes Ergebnis und die Blasen eines laufenden Chats sind ein Gedächtnis und kein Anzeigetext, und ein Logbuch schreibt man nicht rückwirkend um.
+* Die Erfolge heißen englisch, wo der Name den Witz trägt: aus dem Faulpelz mit dem Faultier auf dem Abzeichen wird Sloth, aus dem Streber ein Swot.
 
 Mittagspause:
 * Auch die Pause hat jetzt ein Gedächtnis. Wer mit der Laufgruppe zehn Kilometer läuft, spürt das am nächsten Tag auf der Treppe; wer sich vom Vertreter zum Sushi einladen lässt, findet am Morgen eine Zusammenfassung im Postfach, in der "wie besprochen" steht, obwohl nichts besprochen wurde.
@@ -26,6 +36,28 @@ Fehlerkorrekturen:
 * Neun Ergebnistexte sagten dem Spieler, was die Anzeige darunter ohnehin zeigt - "Das Radar sinkt massiv" stand direkt über "Chef -10". Sie beschreiben jetzt, was tatsächlich passiert, statt die Zahl vorzulesen. Niemand in diesem Haus weiß, dass er ein Radar hat.
 * Sehr lange Wörter ohne Trennstelle - etwa der Fehlercode der Kaffeemaschine - schoben den Ereignistext auf dem Handy aus dem Bild heraus. Solche Wörter brechen jetzt um, und normale Bandwürmer werden getrennt statt gedehnt. Betrifft Ereignisse, Ergebnisse, den Handy-Chat und das Wissen.
 * Ein Handy-Dienstgang konnte eine Leiste kurz über 100 % zeigen, bevor sie auf 100 % zurücksprang. Der Wert war nie wirklich höher - die Anzeige lief der Begrenzung nur einen Wimpernschlag voraus. Jetzt bleibt sie stehen, wo sie hingehört.
+* Im Wissen stand über Herrn Aluhut, er rufe "unter wechselnden Decknamen" an. Er hat genau einen, und die Pointe des zweiten Anrufs ist gerade, dass er sich damit meldet und erwartet, wiedererkannt zu werden. Dass die Nummer trotzdem jedes Mal dieselbe ist, bleibt unverändert der eigentliche Witz.
+* Im Wissen stand über dem Chefbüro "Etage über dem Serverraum" - die Zusammenfassung direkt darunter, beide Notizen und die auslaufende Batterie sagen einhellig das Gegenteil. Das Büro liegt unter dem Serverraum, deshalb tropft dort auch alles hinein.
+* Kevins zweiter Anruf war mit "Praktikant Kevin" überschrieben. Kevin ist der Azubi - so steht es auf seiner Karte im Team und über seinen fünf anderen Anrufen. Der Anruf heißt jetzt schlicht "Kevin (Wieder)", wie es der Aluhut und die unbekannte Nummer auch halten.
+* Kevin wurde an drei weiteren Stellen zum Praktikanten befördert - Frau Elster wollte "diesem Praktikanten" die Daten ihres Katers nicht anvertrauen, auf der Sommerfeier drängte Markus erst "Azubi Kevin" in die Ecke und redete dann auf einen Praktikanten ein, und eine Morgenstimmung hieß "Der aufmerksame Praktikant". Überall steht jetzt Azubi.
+* Bei der Taschenkontrolle am Ausgang legt man einen Donut als "Zinsen" obendrauf - im Ergebnis nahm Frau Elster dann Schokolade entgegen. Sie nimmt jetzt, was man ihr hingelegt hat.
+* Wer vor Sarah aus der Personalabteilung die Nerven verliert, stammelt eine Fehlermeldung. Bisher war es nur die Nummer; jetzt ist es der ganze Satz, samt der Zeile, die darunter gehört. Was fehlt, ist die Antwort.
+* Die vollständige Entkalkung dauerte im Ergebnistext anderthalb Stunden, im Folgetag am nächsten Morgen aber nur fünfundsiebzig Minuten - und fünfundsiebzig Minuten kostet sie tatsächlich. Beide Stellen nennen jetzt dieselbe Zahl.
+* Zehn Minuten in der Teeküche wurden im selben Satz zur "entspanntesten Viertelstunde des Tages". Es bleiben zehn Minuten, und sie sind trotzdem die entspanntesten.
+* Bernd stand am Vorratsschrank plötzlich in der Logistik, obwohl er überall sonst im Vertrieb sitzt - auf seiner eigenen Karte im Wissen, in seinen sieben Mails, im Serverraum, wo er über seinen verlorenen Umsatz weint, und an dem Schreibtisch, der nach seinem letzten Tag geräumt wird. Er bleibt im Vertrieb; das Wissen sagt es jetzt auch beim Kopierraum.
+* Das dicke Handbuch hieß je nach Fundort anders: im Inventar "Win95 Handbuch", auf den Knöpfen "Win95-Handbuch", beim Fund im Karton "Windows 95 Handbuch". Es heißt jetzt an allen zwölf Stellen Windows-95-Handbuch. Der Buchtitel unter dem wackeligen Tischbein bleibt, wie er ist - "Windows 95 - Das Handbuch" ist schließlich der Titel und nicht der Gegenstand.
+* Vier Schreibfehler im Dienstgang, die seit 5.0 dastanden: Beim zugerammten Fenster wanderte die "Taffe" über den Tisch, gegen den qualmenden Mülleimer half eine "Wasserlasche", vor Frau Elster durfte man "kapitäulieren", und ins Büro wehten "Flokies". Es sind jetzt Tasse, Wasserflasche, kapitulieren und Flocken.
+* Wer den Chef anschreit, während sein Klick sich durchs Laufwerk frisst, brüllte bisher "STEKCER ZIEHEN, SIE IDIOT!". Der Stecker heißt jetzt auch im Affekt Stecker.
+
+Die Sommerfeier:
+* Die sechs Stationen im Vorraum tragen jetzt eigene Bilder statt Emoji - Bierkrug, Salatschüssel, Discokugel, Sessel, Zigarette und Toilette. Emoji werden vom Betriebssystem gezeichnet und sahen unter Windows, unter Linux und im Steam-Overlay jeweils anders aus; der Vorraum ist mit Abstand der meistgesehene Bildschirm des Abends und sieht jetzt überall gleich aus.
+
+Für Entwickler:
+* Die vier Wirkungen heißen überall gleich: m für Minuten, l für laziness, a für aggro, b für boss. Vorher waren f und c deutsche Eselsbrücken (Faulheit, Chef) in einem sonst englischen Datenmodell, und dieselben drei Werte trugen je nach Fundort drei verschiedene Namen. Betroffen sind Auswahlen, fail und results (15.322 Schlüssel), die Gegenstandsblöcke use und passive - wo 5.0 noch al, fl und cr dokumentiert hat -, der Kurvenpunkt in statHistory und die Wochenzeile in weekLog, deren endFl/endAl/endCr jetzt endL/endA/endB heißen und peakC nun peakB.
+* Die Uhrzeit im Kurvenpunkt heißt m, nicht mehr t. In einer Auswahl ist t der Knopftext, und derselbe Buchstabe mit zwei Bedeutungen war genau die Verwechslung, die verschwinden sollte.
+* Der laufende Zustand bleibt bewusst state.fl, state.al und state.cr, ebenso addStat und die Anzeige-Kennungen val-fl, val-al und val-cr. Einzelne Buchstaben an einem Objekt, das quer durch die Engine gelesen wird, sind schlechter zu lesen als in einem Datenliteral. Die Grenze ist damit eine Regel und keine Ausnahmeliste: was man schreibt, trägt Buchstaben, was läuft, trägt fl/al/cr.
+* Results verstanden bisher zusätzlich min, fl, al und cr als Zweitnamen. Der Alias stammte aus einer Zeit, in der es Ereignisse gab, die ihn benutzten; im aktuellen Bestand tat es keines mehr. Er ist ersatzlos entfallen, und der Datenprüfer meldet die alten Namen jetzt als unbekanntes Feld - ein übersehener Schlüssel wird damit rot statt still zu null.
+* Spielstände aus 5.0 brauchen nichts. statHistory und weekLog werden beim Laden umgesetzt, in beiden Wiederaufnahmewegen und ohne dass etwas verloren geht: Die Tageskurve und die Wochenbilanz eines unterbrochenen Laufs sehen nach dem Update aus wie vorher. Der Spielstand-Code aus dem Export enthält diese beiden Formen ohnehin nicht.
 
 ---
 

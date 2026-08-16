@@ -6,13 +6,13 @@
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
-    import { DB } from '../data.js';
+    import { tree } from '../i18n/i18n.svelte.js';
 
     const SLOT_COUNT = 5;
 
     const overflow = $derived(
         Math.max(0, state.inventory.filter(i => {
-            const item = DB.items[i.id];
+            const item = tree().items[i.id];
             return item && !item.quest;
         }).length - SLOT_COUNT)
     );

@@ -12,16 +12,18 @@
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
 
+    import { t, tf } from '../i18n/i18n.svelte.js';
     let { diary } = $props();
 
     // The weekday follows from the difficulty - that is what the levels are
     // called in the game, and the diary plays along.
     const WEEKDAY = [
-        { test: (m) => m < 1.0, label: 'Freitag' },
-        { test: (m) => m > 1.0, label: 'Montag' },
-        { test: () => true,     label: 'Mittwoch' }
+        { test: (m) => m < 1.0, label: 'week.day.fri' },
+        { test: (m) => m > 1.0, label: 'week.day.mon' },
+        { test: () => true,     label: 'week.day.wed' }
     ];
-    const weekday = $derived(WEEKDAY.find(d => d.test(game.difficultyMult)).label);
+    // i18n-uses: week.day.fri, week.day.mon, week.day.wed
+    const weekday = $derived(t(WEEKDAY.find(d => d.test(game.difficultyMult)).label));
 
     // A list rather than fixed fields, so a new slot in the diary does not
     // need a change here. The order is the order of the page; the blind-run
@@ -48,8 +50,8 @@
 
             <!-- Header like a notebook: weekday, with the rule underneath -->
             <div class="flex items-baseline justify-between border-b-2 border-[#c8b99b] pb-1 mb-3">
-                <span class="font-serif font-bold text-[15px] tracking-wide">Logbuch — {weekday}</span>
-                <span class="font-serif text-[11px] text-slate-600 italic">Persönlich</span>
+                <span class="font-serif font-bold text-[15px] tracking-wide">{tf('diary.header', { day: weekday })}</span>
+                <span class="font-serif text-[11px] text-slate-600 italic">{t('diary.personal')}</span>
             </div>
 
             <div class="space-y-3 font-serif text-[13px] leading-[28px]">

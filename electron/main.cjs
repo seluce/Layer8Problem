@@ -42,6 +42,27 @@ ipcMain.on('steam-increment-stat', (event, statName) => {
     }
 });
 
+// Which language did Steam start us in?
+//
+// Two sources, in that order: the Steamworks API, which knows the per-game
+// setting, and the -language argument Steam appends when it launches the app.
+// Both give an English language NAME ('german'), not a code - the renderer
+// maps it. Returns null when neither is available, and the renderer then falls
+// back to the browser preference exactly like the web build.
+ipcMain.handle('steam-get-language', () => {
+    if (steamClient) {
+        try {
+            const fromApi = steamClient.apps?.currentGameLanguage?.();
+            if (fromApi) return fromApi;
+        } catch (err) {
+            console.warn("Steam language unavailable:", err);
+        }
+    }
+    const idx = process.argv.findIndex(a => a === '-language' || a === '--language');
+    if (idx !== -1 && process.argv[idx + 1]) return process.argv[idx + 1];
+    return null;
+});
+
 // Read the save file from disk
 ipcMain.handle('read-savegame', () => {
     const savePath = path.join(app.getPath('userData'), 'savegame.dat');

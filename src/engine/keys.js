@@ -23,6 +23,7 @@ export const KEYS = {
                     hard:   'layer8_party_played_hard' },
 
     // --- Settings (deliberately survive the hard reset) ---
+    language:      'layer8_lang',        // 'de' or 'en', see src/i18n/i18n.svelte.js
     statsTab:      'layer8_stats_tab',     // last stats view (archive and global): 'day' or 'week'
     keyBinds:      'layer8_keybinds',
     visualFX:      'layer8_fx',

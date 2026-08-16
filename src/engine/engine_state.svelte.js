@@ -1,4 +1,5 @@
 import { KEYS } from './keys.js';
+import { SvelteSet } from 'svelte/reactivity';
 
 /**
  * Everything that belongs to a single workday.
@@ -43,7 +44,12 @@ export function freshDay(mult = 1.0) {
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,
         // ~40 steps a day) so it can travel into the archive later if wanted.
-        statHistory: [{ t: 8 * 60, f: 0, a: 0, c: 0 }],
+        //
+        // The letters are the ones an option uses: m the minute of the day,
+        // l/a/b the three bars. Up to 5.0 the point read { t, f, a, c }, with
+        // t for the clock - the same letter an option spends on its button
+        // text. engine_core.migrateStatPoints() carries old saves across.
+        statHistory: [{ m: 8 * 60, l: 0, a: 0, b: 0 }],
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
 
@@ -56,11 +62,14 @@ export function freshDay(mult = 1.0) {
 
         // Progress
         inventory: [],
-        usedIDs: new Set(),
-        usedEmails: new Set(),
+        // SvelteSet, not Set - see the note on Sets below.
+        usedIDs: new SvelteSet(),
+        usedEmails: new SvelteSet(),
         storyFlags: {},
         achievements: [],
-        achievedTitles: [],
+        // Ids of the achievements earned today. Resolved to words only when
+        // the end screen renders, so a saved day carries no language.
+        achievedIds: [],
         coffeeConsumed: 0,
         emailsIgnored: 0,
 
@@ -95,9 +104,14 @@ export function freshDay(mult = 1.0) {
         // Phone view model. components/PhoneView.svelte renders from it:
         // `open` switches between standby and the chat app, `messages` grows
         // as the conversation runs, `options` holds the current replies.
-        phone: { open: false, notification: false, appName: '', messages: [], options: [] },
+        // `node` is the chat node on screen; relocaliseScene() repaints its
+        // replies from it after a language switch.
+        phone: { open: false, notification: false, appName: '', messages: [], options: [], node: null },
         currentChainEvent: null,
         currentChainType: null,
+        // Which node of that chain is on screen. Only relocaliseScene() reads
+        // it, to repaint the same node after a language switch.
+        currentChainNode: null,
         pendingItem: null,
 
         // Email system. `email` is the mail currently on screen;
@@ -166,9 +180,23 @@ export const DAY_TIMERS = [
  * `state`, writing `$state(...)` compiles to a store access and fails with
  * store_invalid_shape. Use $derived, or an attachment for element refs.
  *
- * Note on Sets: $state does not make Set or Map reactive. usedIDs and
- * usedEmails stay plain because no view reads them. Should that change, they
- * need SvelteSet from 'svelte/reactivity'.
+ * Note on Sets: $state does not make Set or Map reactive - wrapping the object
+ * around them changes nothing about what .add() notifies. usedIDs and
+ * usedEmails are therefore SvelteSet from 'svelte/reactivity'.
+ *
+ * They were plain until 6.0, licensed by a comment saying no view read them.
+ * By then EventView.svelte did: the party hub greys out a station once its
+ * pool is exhausted, and that test is `!usedIDs.has(id)`. It happened to be
+ * right anyway, because every .add() sits in renderTerminal() and every
+ * .delete() ends in setTerminalIdle(), so state.terminal was replaced in the
+ * same breath and the $derived re-ran off THAT. A correctness that rests on
+ * an ordering nobody wrote down is a bug waiting for the first caller who
+ * changes a Set without touching the terminal.
+ *
+ * The cost is close to nothing: SvelteSet extends Set (so `instanceof Set` in
+ * both save paths still holds), and has() only creates a per-key source on a
+ * HIT. The pool filters are almost all misses, and those read one version
+ * counter and stop.
  */
 /**
  * The live game state.
@@ -258,7 +286,11 @@ export const state = $state({
         // than as unlocked entries, so notes added in a later version light up
         // for players who already saw the scene.
         seenEvents: [],
-        seenFlags: []
+        seenFlags: [],
+        // Per compendium entry: how many notes had been read the last time it
+        // was opened. An entry counts as unread again once it has more than
+        // that, so a later note re-flags an entry that was already seen.
+        knowledgeRead: {}
     },
 
     // Whether the knowledge modal is on screen; the view builds on demand.

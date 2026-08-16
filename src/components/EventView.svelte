@@ -13,25 +13,29 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { DB } from '../data.js';
 
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
+    // i18n-uses: event.type.calls, event.type.boss, event.type.rep
+    // i18n-uses: event.type.sidequest, event.type.server, event.type.coffee
+    // i18n-uses: event.type.party, event.type.lunch, event.type.meeting
+    // i18n-uses: event.type.system
     const STYLES = {
-        calls:     { name: 'ANRUF',         color: 'text-blue-400',    border: 'border-blue-500',    icon: '📞', img: 'act_calls',     bg: 'bg-slate-900' },
-        boss:      { name: 'NOTFALL',       color: 'text-red-500',     border: 'border-red-500',     icon: '🚨', img: 'act_boss',      bg: 'bg-slate-900' },
-        rep:       { name: 'BEGEGNUNG',     color: 'text-yellow-300',  border: 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]', icon: '📖', img: 'act_rep', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
-        sidequest: { name: 'DIENSTGANG',    color: 'text-purple-400',  border: 'border-purple-500',  icon: '🎲', img: 'act_sidequest', bg: 'bg-slate-900' },
-        server:    { name: 'SERVERRAUM',    color: 'text-emerald-400', border: 'border-emerald-500', icon: '💾', img: 'act_server',    bg: 'bg-slate-900' },
-        coffee:    { name: 'KAFFEE',        color: 'text-amber-400',   border: 'border-amber-500',   icon: '☕', img: 'act_coffee',    bg: 'bg-slate-900' },
-        party:     { name: 'SYNERGY-GALA',  color: 'text-pink-400',    border: 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]',  icon: '🎉', img: 'act_party', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
-        lunch:     { name: 'MITTAGSPAUSE',  color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', img: 'act_lunch', bg: 'bg-slate-900' },
-        meeting:   { name: 'WOCHENMEETING', color: 'text-sky-400',     border: 'border-sky-500 shadow-[0_0_12px_rgba(56,189,248,0.25)]',  icon: '📊', img: 'act_meeting', bg: 'bg-linear-to-b from-slate-900 to-slate-950' }
+        calls:     { name: 'event.type.calls',     color: 'text-blue-400',    border: 'border-blue-500',    icon: '📞', img: 'act_calls',     bg: 'bg-slate-900' },
+        boss:      { name: 'event.type.boss',      color: 'text-red-500',     border: 'border-red-500',     icon: '🚨', img: 'act_boss',      bg: 'bg-slate-900' },
+        rep:       { name: 'event.type.rep',       color: 'text-yellow-300',  border: 'border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.3)]', icon: '📖', img: 'act_rep', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
+        sidequest: { name: 'event.type.sidequest', color: 'text-purple-400',  border: 'border-purple-500',  icon: '🎲', img: 'act_sidequest', bg: 'bg-slate-900' },
+        server:    { name: 'event.type.server',    color: 'text-emerald-400', border: 'border-emerald-500', icon: '💾', img: 'act_server',    bg: 'bg-slate-900' },
+        coffee:    { name: 'event.type.coffee',    color: 'text-amber-400',   border: 'border-amber-500',   icon: '☕', img: 'act_coffee',    bg: 'bg-slate-900' },
+        party:     { name: 'event.type.party',     color: 'text-pink-400',    border: 'border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.3)]',  icon: '🎉', img: 'act_party', bg: 'bg-linear-to-b from-slate-900 to-slate-950' },
+        lunch:     { name: 'event.type.lunch',     color: 'text-teal-400',    border: 'border-teal-500 shadow-[0_0_10px_rgba(45,212,191,0.2)]',  icon: '🍽️', img: 'act_lunch', bg: 'bg-slate-900' },
+        meeting:   { name: 'event.type.meeting',   color: 'text-sky-400',     border: 'border-sky-500 shadow-[0_0_12px_rgba(56,189,248,0.25)]',  icon: '📊', img: 'act_meeting', bg: 'bg-linear-to-b from-slate-900 to-slate-950' }
     };
-    const FALLBACK = { name: 'SYSTEM', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', img: 'act_system', bg: 'bg-slate-900' };
+    const FALLBACK = { name: 'event.type.system', color: 'text-amber-400', border: 'border-amber-500', icon: '⚡', img: 'act_system', bg: 'bg-slate-900' };
 
     const EXCUSE_TYPES = ['coffee', 'server', 'sidequest', 'calls', 'rep'];
     // An option may require a cooling item; then it is locked until ready.
     const cooldownLeft = (id) => {
-        const cd = DB.items[id]?.use?.cooldown ?? 0;
+        const cd = tree().items[id]?.use?.cooldown ?? 0;
         return cd ? cd - (state.time - (state.itemCooldowns?.[id] ?? -100000)) : 0;
     };
 
@@ -42,7 +46,7 @@
     const paragraphs = $derived((ev.text ?? '').split('\n'));
 
     const portrait = $derived(
-        ev.charName ? DB.chars?.find(c => c.name === ev.charName) ?? null : null
+        ev.charName ? tree().chars?.find(c => c.name === ev.charName) ?? null : null
     );
 
     // Meeting-local voices (v5.0): a node char without a data_chars entry
@@ -71,7 +75,7 @@
         return key.replace(/^Arrow/, '').toUpperCase();
     };
 
-    const itemName = (id) => DB.items[id]?.name ?? id;
+    const itemName = (id) => tree().items[id]?.name ?? id;
 
     /**
      * Why an option cannot be taken, or null when it can.
@@ -83,15 +87,15 @@
      */
     function lockReason(opt) {
         if (opt.req) {
-            if (!state.inventory.find(i => i.id === opt.req && !i.used)) return `Fehlt: ${itemName(opt.req)}`;
-            if (cooldownLeft(opt.req) > 0) return 'Noch nicht bereit';
+            if (!state.inventory.find(i => i.id === opt.req && !i.used)) return tf('event.missing', { item: itemName(opt.req) });
+            if (cooldownLeft(opt.req) > 0) return t('event.notReady');
         }
         if (opt.rem && !state.inventory.find(i => i.id === opt.rem)) {
-            return `Fehlt: ${itemName(opt.rem)}`;
+            return tf('event.missing', { item: itemName(opt.rem) });
         }
         if (opt.checkPool) {
-            const left = (DB.party ?? []).filter(e => e.loc === opt.checkPool && !state.usedIDs.has(e.id));
-            if (left.length === 0) return 'Alles gesehen';
+            const left = (tree().party ?? []).filter(e => e.loc === opt.checkPool && !state.usedIDs.has(e.id));
+            if (left.length === 0) return t('event.allSeen');
         }
         return null;
     }
@@ -141,7 +145,7 @@
             <span class="text-3xl shrink-0">{style.icon}</span>
         {/if}
         <div class="flex flex-col min-w-0">
-            <span class="{style.color} font-black uppercase tracking-widest text-sm wrap-break-word">{style.name}</span>
+            <span class="{style.color} font-black uppercase tracking-widest text-sm wrap-break-word">{t(style.name)}</span>
             <h2 class="text-xl md:text-2xl font-bold text-slate-100 wrap-break-word">{ev.title}</h2>
         </div>
     </div>
@@ -184,9 +188,22 @@
                 <div class="flex items-center flex-1 mr-2 min-w-0">
                     <span class="mr-3 text-xl shrink-0">
                         {#if o.locked}
-                            <img src="assets/img/ui/ui_locked.webp" alt="Gesperrt"
+                            <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
                                  width="20" height="20" class="w-6 h-6 select-none"
                                  onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
+                        {:else if o.opt.checkPool}
+                            <!-- The party hub: each station shows its own icon instead of
+                                 the arrow. checkPool already names the station (bar,
+                                 buffet, …), so the path needs no second field that the
+                                 two data trees would have to keep in step - the same
+                                 trick ActionBar plays with action.type.
+                                 The fallback is the arrow every other option carries,
+                                 not an emoji: an emoji in the label is what this
+                                 replaced, and a missing file should look like an
+                                 ordinary option rather than like the old state. -->
+                            <img src="assets/img/party/{o.opt.checkPool}.webp" alt=""
+                                 width="24" height="24" class="w-6 h-6 select-none"
+                                 onerror={(e) => e.currentTarget.outerHTML = `<span class="${style.color}">➤</span>`}>
                         {:else}<span class="{style.color} group-hover:text-white transition-colors">➤</span>{/if}
                     </span>
                     <span class="text-left wrap-break-word py-1">
@@ -214,7 +231,7 @@
             <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
                 <button onclick={() => engine.openExcuseModal()}
                         class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all flex items-center gap-2">
-                    <span>Ausrede nutzen ({state.excusesLeft} übrig)</span>
+                    <span>{tf('event.useExcuse', { left: state.excusesLeft })}</span>
                 </button>
             </div>
         {/if}

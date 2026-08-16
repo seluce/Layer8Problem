@@ -11,18 +11,18 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { DB } from '../data.js';
 
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
     const SLOT_COUNT = 5;
 
     // Usable, how long it rests and whether it survives - all of that is in
     // data_items.js under `use`. Nothing about items is listed here.
-    const usable = (id) => !!DB.items[id]?.use;
-    const cooldownOf = (id) => DB.items[id]?.use?.cooldown ?? 0;
+    const usable = (id) => !!tree().items[id]?.use;
+    const cooldownOf = (id) => tree().items[id]?.use?.cooldown ?? 0;
 
     const visible = $derived(
         state.inventory.filter(i => {
-            const item = DB.items[i.id];
+            const item = tree().items[i.id];
             return item && !item.quest;
         })
     );
@@ -33,14 +33,14 @@
             const entry = visible[i];
             if (!entry) return null;
 
-            const item = DB.items[entry.id];
+            const item = tree().items[entry.id];
             const cooldown = cooldownOf(entry.id);
             const wait = cooldown - (state.time - (state.itemCooldowns?.[entry.id] ?? -100000));
 
             return {
                 id: entry.id,
                 item,
-                name: item?.name ?? 'Unbekannt',
+                name: item?.name ?? t('archive.unknown'),
                 hasCooldown: cooldown > 0,
                 ready: cooldown > 0 && wait <= 0,
                 wait,
@@ -59,7 +59,7 @@
 
     function slotTitle(slot) {
         if (!slot) return '';
-        return slot.hasCooldown && slot.ready ? `${slot.name} (Benutzen)` : slot.name;
+        return slot.hasCooldown && slot.ready ? tf('inv.slot.use', { item: slot.name }) : slot.name;
     }
 
     function activate(slot) {
@@ -67,7 +67,14 @@
 
         if (slot.hasCooldown) {
             if (slot.ready) engine.askUseItem(slot.id);
-            else engine.log(`${DB.items[slot.id]?.use?.wait ?? `${slot.name} braucht noch etwas Zeit`} (${slot.wait} Min).`, 'text-slate-500');
+            // The same two patterns InventoryFull.act() uses. Built by hand
+            // here until 6.0, which put a German sentence and a glued-on "Min"
+            // into the English game - the item's own `use.wait` line covered it
+            // for every item that has one, so the fallback never showed.
+            else engine.log(tf('log.item.cooldown', {
+                line: tree().items[slot.id]?.use?.wait ?? tf('item.cooldown.fallback', { item: slot.name }),
+                wait: slot.wait
+            }), 'text-slate-500');
             return;
         }
 
@@ -89,7 +96,7 @@
 
 {#each slots as slot, i (i)}
     <div class={slotClass(slot)} title={slotTitle(slot)} role="button" tabindex="0"
-         aria-label={slotTitle(slot) || 'Leerer Inventarplatz'}
+         aria-label={slotTitle(slot) || t('inv.emptySlot')}
          onclick={() => activate(slot)} onkeydown={(e) => keyActivate(e, slot)}>
         {#if slot}
             {#if slot.item?.img}

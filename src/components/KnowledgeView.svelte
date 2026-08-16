@@ -13,18 +13,21 @@
      */
     import { state as game } from '../engine/engine_state.svelte.js';
 
+    import { t, tf } from '../i18n/i18n.svelte.js';
     const engine = () => window.engine;
 
     // Each category carries its own colour so a long register stays readable
     // at a glance - and so the modal is not three shades of grey.
+    // i18n-uses: knowledge.cat.team, knowledge.cat.person
+    // i18n-uses: knowledge.cat.place, knowledge.cat.matter
     const CATS = [
-        { id: 'team',    label: 'KOLLEGIUM', text: 'text-violet-400', dim: 'text-violet-900',
+        { id: 'team',    label: 'knowledge.cat.team', text: 'text-violet-400', dim: 'text-violet-900',
           bullet: 'text-violet-600',  tab: 'border-violet-400 text-violet-300',   rule: 'border-violet-800' },
-        { id: 'person',  label: 'PERSONEN', text: 'text-emerald-400', dim: 'text-emerald-900',
+        { id: 'person',  label: 'knowledge.cat.person', text: 'text-emerald-400', dim: 'text-emerald-900',
           bullet: 'text-emerald-600', tab: 'border-emerald-400 text-emerald-300', rule: 'border-emerald-800' },
-        { id: 'ort',     label: 'ORTE',     text: 'text-sky-400',     dim: 'text-sky-900',
+        { id: 'ort',     label: 'knowledge.cat.place', text: 'text-sky-400',     dim: 'text-sky-900',
           bullet: 'text-sky-600',     tab: 'border-sky-400 text-sky-300',         rule: 'border-sky-800' },
-        { id: 'vorgang', label: 'VORGÄNGE', text: 'text-amber-400',   dim: 'text-amber-900',
+        { id: 'vorgang', label: 'knowledge.cat.matter', text: 'text-amber-400',   dim: 'text-amber-900',
           bullet: 'text-amber-600',   tab: 'border-amber-400 text-amber-300',     rule: 'border-amber-800' }
     ];
 
@@ -54,14 +57,14 @@
     // the register - otherwise the marker disappears before it was noticed.
     const current = $derived(
         entries.find(e => e.id === selectedId)
-        ?? entries.find(e => e.neu)
+        ?? entries.find(e => e.unread)
         ?? entries[0]
         ?? null
     );
 
     // Reading is a side effect, so it belongs in an effect, not in $derived.
     $effect(() => {
-        if (current?.neu) engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+        if (current?.unread) engine()?.markKnowledgeRead?.(current.id, current.notes.length);
     });
 
 
@@ -82,14 +85,14 @@
                 aria-current={cat === c.id ? 'page' : undefined}
                 class="px-4 py-2.5 text-[10px] font-bold tracking-[0.14em] border-b-2 -mb-px transition-colors
                        {cat === c.id ? c.tab : 'border-transparent text-slate-500 hover:text-slate-300'}">
-                {c.label}
+                {t(c.label)}
                 <span class="ml-1.5 font-normal opacity-60 tabular-nums">
                     {countOf(c.id)}/{all.filter(e => e.cat === c.id).length}
                 </span>
             </button>
         {/each}
         <span class="ml-auto self-center pr-4 text-[10px] text-slate-600 tabular-nums hidden sm:block">
-            {found}/{total} NOTIZEN
+            {tf('knowledge.notes', { found, total })}
         </span>
     </div>
 
@@ -115,7 +118,7 @@
                                  counter would be invisible in that tab. Brightness
                                  works in all four. -->
                             <span class="ml-auto text-[10px] tabular-nums shrink-0 transition-colors
-                                         {e.neu ? 'text-slate-100 font-bold' : e.open ? 'text-slate-500' : 'text-slate-700'}">
+                                         {e.unread ? 'text-slate-100 font-bold' : e.open ? 'text-slate-500' : 'text-slate-700'}">
                                 {e.open ? `${e.notes.length}/${e.total}` : '–'}
                             </span>
                         </button>
@@ -125,7 +128,7 @@
 
             {#if entries.length === 0}
                 <p class="px-4 py-8 text-center text-xs text-slate-600">
-                    Hier steht noch nichts.
+                    {t('knowledge.empty')}
                 </p>
             {/if}
         </nav>
@@ -135,15 +138,15 @@
             {#if current}
                 <button onclick={() => (selectedId = null)}
                         class="md:hidden text-left px-4 py-3 text-[11px] text-slate-400 hover:text-white border-b border-slate-800 shrink-0">
-                    &larr; Register
+                    &larr; {t('knowledge.index')}
                 </button>
 
                 <div class="p-5">
                     <h3 class="text-lg font-bold {theme.text}">{current.name}</h3>
-                    <p class="text-[11px] text-slate-500 mb-4">{current.rolle}</p>
+                    <p class="text-[11px] text-slate-500 mb-4">{current.role}</p>
 
                     <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5 wrap-break-word">
-                        {current.kopf}
+                        {current.summary}
                     </p>
 
                     <ul class="space-y-3">
@@ -166,7 +169,7 @@
 
                     {#if missing > 0}
                         <p class="mt-5 text-[10px] text-slate-600">
-                            {missing} {missing === 1 ? 'Notiz fehlt noch' : 'Notizen fehlen noch'}.
+                            {missing === 1 ? tf('knowledge.missing.one', { count: missing }) : tf('knowledge.missing.many', { count: missing })}
                         </p>
                     {/if}
                 </div>
@@ -174,7 +177,7 @@
                 <!-- Desktop only: on a phone the register carries this message,
                      because this column is not on screen while it is showing. -->
                 <div class="hidden md:block p-8 text-center text-slate-600 text-xs">
-                    Noch keine Einträge in dieser Kategorie.
+                    {t('knowledge.emptyCategory')}
                 </div>
             {/if}
         </section>

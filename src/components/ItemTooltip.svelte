@@ -15,13 +15,15 @@
   without leaking name or flavour of something not yet found.
 -->
 <script>
+    import { t } from '../i18n/i18n.svelte.js';
+
     let {
         item = null,
         pinned = false,
         pos,
         locked = false,
-        // The archive uses different placeholders per grid: 'Unbekannt' for
-        // equipment, '???' for trophies.
+        // The archive uses different placeholders per grid: the word for
+        // 'unknown' on equipment, '???' on trophies.
         lockedTitle = '???'
     } = $props();
 </script>
@@ -29,18 +31,18 @@
 <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 focus-within:opacity-100 transition-opacity pointer-events-none z-50 text-left">
     {#if locked}
         <div class="font-bold text-slate-400 text-sm border-b border-slate-700 pb-1 mb-1">{lockedTitle}</div>
-        <div class="text-[10px] text-slate-500 italic leading-snug">Noch nicht gefunden.</div>
+        <div class="text-[10px] text-slate-500 italic leading-snug">{t('item.notFound')}</div>
     {:else}
         <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{item.name}</div>
-        <div class="text-[10px] text-slate-300 italic leading-snug">{item.flavor ?? '"Keine weiteren Informationen."'}</div>
+        <div class="text-[10px] text-slate-300 italic leading-snug">{item.flavor ?? t('item.noInfo')}</div>
         <!-- Whether an item survives being used was written down nowhere -
              you found out once it was gone. -->
         <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
                     {item.quest ? 'text-amber-500' : item.passive ? 'text-indigo-300' : item.keep ? 'text-sky-400' : 'text-slate-500'}">
-            {#if item.quest}Trophäe · bleibt für immer
-            {:else if item.passive}Wirkt von allein
-            {:else if item.keep}Wiederverwendbar
-            {:else}Verbraucht sich bei Nutzung{/if}
+            {#if item.quest}{t('item.kind.trophy')}
+            {:else if item.passive}{t('item.kind.passive')}
+            {:else if item.keep}{t('item.kind.reusable')}
+            {:else}{t('item.kind.consumed')}{/if}
         </div>
     {/if}
     <div class="absolute top-full {pos.arrow} border-4 border-transparent border-t-slate-600"></div>

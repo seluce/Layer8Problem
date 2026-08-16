@@ -25,7 +25,9 @@ src/
   components/           38 Svelte-Komponenten, davon 8 fürs Intranet
   engine/               9 Module, engine_state.svelte.js hält den Zustand,
                         engine_week.js den Wochenmodus
-  data/                 22 Datendateien
+  data/de/              22 Datendateien, die deutsche Quelle
+  data/en/              dieselben 22, englisch
+  i18n/                 Sprachwahl und Oberflächentexte
   assets/               von Vite verarbeitet, siehe unten
 
 public/
@@ -44,6 +46,28 @@ tools/
   register.mjs          Loader-Haken für die Tests
   svelte-loader.mjs     kompiliert .svelte.js für die Tests
 ```
+
+## Warum data/ in zwei Bäumen liegt
+
+Beide tragen dieselben Kennungen, Fahnen, Figurennamen und Zahlen — nur die
+Prosa unterscheidet sich. Daraus folgt zweierlei, und beides ist Absicht:
+
+**Ein Spielstand ist sprachunabhängig.** Nichts Gespeichertes verweist auf einen
+Text, also überlebt er einen Sprachwechsel mitten in der Woche. Sprache ist eine
+Anzeige-Einstellung, kein Spielmodus: keine Wanderung von Spielständen, keine
+zweite Statistik, keine getrennten Erfolge.
+
+**Der Sofort-Bestand ist kein statischer Import mehr.** Welche Sprache gilt,
+steht erst fest, wenn `localStorage`, Steam und der Browser gefragt sind. Deshalb
+lädt `data.js` ihn über `loadCore()`, und `main.js` wartet darauf, bevor die
+erste Komponente eingehängt wird. Aus demselben Grund ruft `engine.js` nicht
+mehr selbst `init()` — vierzehn Komponenten importieren die Engine, der
+Importgraph zöge sie sonst hoch, bevor die Sprache feststeht.
+
+Der Sprachwechsel im Spiel lädt die Seite neu. Die Pools liegen auf `DB` im
+Zwischenspeicher, und die Szene auf dem Bildschirm stammt aus dem alten Baum —
+ohne Neuladen säße der Spieler vor einer halb umgestellten Anzeige. Weil
+Spielstände sprachunabhängig sind, kostet das Wegwerfen der Seite nichts.
 
 ## src/assets/ oder public/assets/
 
@@ -107,7 +131,9 @@ npm install
 npm run dev            Entwicklungsserver auf Port 8080
 npm run build          erzeugt docs/
 npm run preview        docs/ lokal prüfen
-npm run lint:data      Datenprüfung
+npm run lint:data      Datenprüfung (deutscher Baum)
+npm run lint:data:en   dasselbe für den englischen
+npm run lint:all       beide nacheinander
 npm test               Testsuiten des Wochenmodus
 npm run sim            Tages-Simulation für die Balance
 npm run sim:week       Wochen-Simulation für die Balance

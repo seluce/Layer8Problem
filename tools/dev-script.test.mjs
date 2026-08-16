@@ -1,4 +1,4 @@
-// Runs every scenario of work/dev-woche.js against the real engine modules,
+// Runs every scenario of tools/dev-woche.js against the real engine modules,
 // so a broken console helper is caught here and not in Ferris' browser.
 // Run: node --conditions browser --import ./test/register.mjs test/dev-script.test.mjs
 import assert from 'node:assert/strict';
@@ -17,7 +17,15 @@ globalThis.document = {
     querySelectorAll: () => [],
 };
 
-const { DB, ensure } = await import('../src/data.js');
+const { DB, ensure, loadCore } = await import('../src/data.js');
+
+// The engine no longer boots itself (6.0): main.js decides the language, then
+// loads the core data, and only then calls engine.init(). A test that skips
+// this step gets an empty DB - and the failure is silent, because
+// triggerMorningMood() answers a missing DB.moods with its fallback and
+// returns before any end condition is checked.
+await loadCore('de');
+
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
@@ -53,9 +61,11 @@ const reset = () => {
     store.clear();
 };
 
-// Load the console helper exactly as Ferris will paste it.
+// Load the console helper exactly as it gets pasted into the browser.
+// Path is relative to this file, so a clean checkout runs it too - it used to
+// point at a session working directory that does not exist in the repository.
 reset();
-const src = readFileSync(new URL('../work/dev-woche.js', import.meta.url), 'utf-8');
+const src = readFileSync(new URL('./dev-woche.js', import.meta.url), 'utf-8');
 new Function(src)();
 const dev = window.dev;
 assert.ok(dev, 'dev wurde nicht angelegt');
@@ -165,7 +175,9 @@ await ok('dev.raus("rage", 3) endet am Mittwoch mit Tagesnennung', () => {
     reset();
     dev.tag(1, 'normal');
     dev.raus('rage', 3);
-    assert.equal(calls.end.title, 'RAGE QUIT');
+    // cause, not the title: the title is a dictionary entry and reads
+    // differently in the other language.
+    assert.equal(calls.end.cause, 'rage');
     assert.ok(calls.end.lead.includes('Die Woche endet am Mittwoch.'));
     assert.ok(calls.end.text.includes('✗ Mittwoch'));
     assert.equal(state.archive.stats.weeksRageQuit, 1);
@@ -174,13 +186,14 @@ await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
     reset();
     dev.tag(1, 'normal');
     dev.raus('tickets', 4);
-    assert.equal(calls.end.title, 'GEFEUERT');
+    // Both ways out are titled GEFEUERT; only the cause tells them apart.
+    assert.equal(calls.end.cause, 'tickets');
     assert.ok(calls.end.lead.includes('Donnerstag'));
 
     reset();
     dev.tag(1, 'normal');
     dev.raus('chef', 2);
-    assert.equal(calls.end.title, 'GEFEUERT');
+    assert.equal(calls.end.cause, 'chef');
     assert.ok(calls.end.lead.includes('Dienstag'));
 });
 await ok('dev.morgentod() beendet die Woche in der Morgenstimmung', () => {

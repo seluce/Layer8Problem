@@ -16,10 +16,13 @@
     import MorningView from './MorningView.svelte';
     import BootView from './BootView.svelte';
 
+    import { t } from '../i18n/i18n.svelte.js';
     // The emoji stays as the fallback if an icon file is ever missing.
+    // i18n-uses: terminal.system.title, terminal.system.sub
+    // i18n-uses: terminal.halgerd.title, terminal.halgerd.sub
     const IDLE = {
-        system:  { icon: '🖥️', img: 'act_idle',    title: 'SYSTEM BEREIT',        sub: 'Wähle eine Aktion unten.', tone: '' },
-        halgerd: { icon: '🤖', img: 'act_halgerd', title: 'H.A.L.G.E.R.D. BEREIT', sub: 'Warte auf Eingabe...',     tone: 'text-cyan-400' }
+        system:  { icon: '🖥️', img: 'act_idle',    title: 'terminal.system.title',  sub: 'terminal.system.sub',  tone: '' },
+        halgerd: { icon: '🤖', img: 'act_halgerd', title: 'terminal.halgerd.title', sub: 'terminal.halgerd.sub', tone: 'text-cyan-400' }
     };
 
     const idle = $derived(IDLE[state.terminal.variant] ?? IDLE.system);
@@ -34,8 +37,8 @@
     <img src="assets/img/actions/{idle.img}.webp" alt=""
          width="80" height="80" class="w-12 md:w-20 h-12 md:h-20 mb-4 select-none"
          onerror={(e) => e.currentTarget.outerHTML = `<div class="text-4xl md:text-6xl mb-4">${idle.icon}</div>`}>
-    <h1 class="text-xl md:text-2xl font-bold {idle.tone}">{idle.title}</h1>
-    <p>{idle.sub}</p>
+    <h1 class="text-xl md:text-2xl font-bold {idle.tone}">{t(idle.title)}</h1>
+    <p>{t(idle.sub)}</p>
 {:else if state.terminal.mode === 'event'}
     <EventView />
 {:else if state.terminal.mode === 'result'}

@@ -1,3 +1,6 @@
+import { tick } from 'svelte';
+import { t } from './i18n/i18n.svelte.js';
+
 const tutorial = {
     isActive: false,
     step: 0,
@@ -43,7 +46,7 @@ const tutorial = {
         engine.state.activeEvent = false; 
         engine.state.morningMoodShown = true; 
         
-        engine.state.activeNewsText = "+++ SYSTEMMELDUNG: H.A.L.G.E.R.D. SIMULATIONS-PROTOKOLL AKTIV +++ REALITÄTSFILTER EINGESCHALTET +++";
+        engine.state.activeNewsText = t('tutorial.ticker');
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
         
         if (!this.hooksInjected && typeof engine !== 'undefined') {
@@ -78,7 +81,7 @@ const tutorial = {
                 if (tutorial.isActive) {
                     // During step 8 only the donut may be used
                     if (tutorial.step === 8 && id !== 'donut') {
-                        engine.log("H.A.L.G.E.R.D.: Fokus, Mitarbeiter #404! Klicke auf den Donut.", "text-red-500 font-bold");
+                        engine.log(t('tutorial.log.focusDonut'), "text-red-500 font-bold");
                         return; // modal stays closed
                     }
                     // Otherwise the modal may open -> turn the background down
@@ -142,7 +145,7 @@ const tutorial = {
         // direct innerHTML write here would tear out the nodes it tracks.
         engine.setTerminalIdle('halgerd');
 
-        engine.log("H.A.L.G.E.R.D.: Tutorial-Protokoll initiiert. Erwarte maximales Versagen.", "text-cyan-400 font-bold");
+        engine.log(t('tutorial.log.init'), "text-cyan-400 font-bold");
         
         this.applyStepLogic();
     },
@@ -162,7 +165,7 @@ const tutorial = {
         engine.state.activeNewsText = null;
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
 
-        engine.log("H.A.L.G.E.R.D.: Simulation übersprungen. Viel Glück im freien Fall.", "text-cyan-400 font-bold");
+        engine.log(t('tutorial.log.skipped'), "text-cyan-400 font-bold");
         engine.reset(); 
     },
 
@@ -180,37 +183,39 @@ const tutorial = {
         });
 
         if (this.step === 1) {
-            this.highlightAction('btn-calls', 'Der Anruf', 'Es liegt bereits <b>1 offenes Ticket</b> an! Bearbeite User-Anfragen, um die Zahl zu senken. Das kostet Zeit und erhöht meistens deine AGGRO.');
-        } 
+            this.highlightAction('btn-calls', t('tutorial.step.call.title'), t('tutorial.step.call.desc'));
+        }
         else if (this.step === 2) {
-            this.highlightInfo('ticket-container', 'Offene Tickets', 'Durch Anrufe senkst du diesen Wert. Spätestens <b>alle 30 Minuten</b> schlägt ein neues Ticket auf!<br><br>Erreichst du <b>10 Tickets</b>, bricht das System zusammen und du wirst gekündigt.');
+            this.highlightInfo('ticket-container', t('tutorial.step.tickets.title'), t('tutorial.step.tickets.desc'));
         }
         else if (this.step === 3) {
-            this.highlightInfo('clock-container', 'Die Uhrzeit', 'Jedes Event kostet Zeit. Du musst bis <b>16:30 Uhr</b> überleben, um Feierabend zu machen. Ohne den Monitor aus dem Fenster zu werfen.');
+            this.highlightInfo('clock-container', t('tutorial.step.clock.title'), t('tutorial.step.clock.desc'));
         }
         else if (this.step === 4) {
-            this.highlightAction('btn-coffee', 'Kaffee holen', 'Allein die Existenz der User lässt den Blutdruck steigen. Ein Kaffee kann helfen, deine AGGRO zu senken – aber Vorsicht: An der Kaffeemaschine lauern oft gesprächige Kollegen.');
+            this.highlightAction('btn-coffee', t('tutorial.step.coffee.title'), t('tutorial.step.coffee.desc'));
         }
         else if (this.step === 5) {
-            this.highlightAction('btn-sidequest', 'Dienstgang', 'Erlebe den Wahnsinn der GlobalCorp hautnah. Du kannst nützlichen Loot finden, in völlig absurde Situationen geraten oder private Nachrichten auf dein Handy erhalten.');
+            this.highlightAction('btn-sidequest', t('tutorial.step.errand.title'), t('tutorial.step.errand.desc'));
         }
         else if (this.step === 6) {
-            this.highlightAction('btn-server', 'Serverraum', 'Dein Rückzugsort vor dem alltäglichen Wahnsinn. Zwischen blinkenden Racks und surrenden Lüftern passieren oft interessante Dinge – und manchmal wartet hier wertvoller Loot auf dich.');
+            this.highlightAction('btn-server', t('tutorial.step.server.title'), t('tutorial.step.server.desc'));
         }
         else if (this.step === 7) {
-            this.highlightInfo(['stat-row-fl', 'stat-row-al', 'stat-row-cr'], 'Deine Parameter', '<b>FAULHEIT:</b> Je fauler du bist, umso mehr verärgert es den Chef bei Fehlern.<br><br><b>AGGRO:</b> Ab 100% musst du einmalig Dampf ablassen, beim zweiten Mal folgt der Rage-Quit.<br><br><b>CHEF-RADAR:</b> Ab 100% gibt es eine Abmahnung, danach die Kündigung.');
+            this.highlightInfo(['stat-row-fl', 'stat-row-al', 'stat-row-cr'], t('tutorial.step.stats.title'), t('tutorial.step.stats.desc'));
         }
         else if (this.step === 8) {
             let hasDonut = engine.state.inventory.find(i => i.id === 'donut');
-            
+
+            // With a donut in the bag the step is finished by eating it, so it
+            // carries no "got it" button - hence the false.
             if (hasDonut) {
-                this.highlightInfo('btn-inventory', 'Inventar & Rucksack', 'Hier landet dein Loot. Wichtige Verbrauchsgegenstände liegen direkt im Schnellzugriff, der Rest wandert in den Rucksack.<br><br><b>Iss jetzt den Donut</b> (Klick auf den Rucksack oder direkt unten auf das Item), um fortzufahren!', false);
+                this.highlightInfo('btn-inventory', t('tutorial.step.inv.title'), t('tutorial.step.inv.descDonut'), false);
             } else {
-                this.highlightInfo('btn-inventory', 'Inventar & Rucksack', 'Hier wird dein Loot verstaut. Wichtige Verbrauchsgegenstände landen priorisiert vorne im Schnell-Inventar, der Rest wandert in den Rucksack.', true);
+                this.highlightInfo('btn-inventory', t('tutorial.step.inv.title'), t('tutorial.step.inv.desc'), true);
             }
         }
         else if (this.step === 9) {
-            this.highlightAction('btn-team', 'Das Kollegium', 'Hier sind alle Abteilungen gelistet. Dein Ruf bei ihnen bestimmt, ob zufällige Begegnungen auf dem Flur positiv oder katastrophal enden.<br><br><b>Klicke jetzt auf den Team-Button.</b>');
+            this.highlightAction('btn-team', t('tutorial.step.team.title'), t('tutorial.step.team.desc'));
         }
         else if (this.step === 10) {
             this.hidePointer();
@@ -256,43 +261,39 @@ const tutorial = {
     },
 
     showPointer: function(targetEl, title, desc, isInfoStep) {
-        const pointer = document.getElementById('tut-pointer');
-        if(!pointer || !targetEl) return;
-        
+        if(!targetEl) return;
+
         if (this.pointerTimeout) clearTimeout(this.pointerTimeout);
-        
+
         // 1. Remember the scroll target
-        this.currentTarget = targetEl; 
-        
+        this.currentTarget = targetEl;
+
         // 2. Scroll it into view - on mobile it is often off-screen
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        document.getElementById('tut-pointer-title').innerText = title;
-        
-        let descHtml = desc;
-        if (isInfoStep) {
-            descHtml += `<div class="mt-4 border-t border-cyan-800 pt-3 pointer-events-auto">
-                            <div onclick="tutorial.advance()" class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-2 px-2 rounded-sm border border-cyan-700 transition-colors uppercase tracking-widest text-[10px] flex items-center justify-center gap-1 shadow-md">
-                                <span>▶</span> Verstanden
-                            </div>
-                         </div>`;
-        }
-        
-        document.getElementById('tut-pointer-desc').innerHTML = descHtml;
-        
-        engine.showOverlay(pointer, false);
-        
-        // 3. Work the position out once, right away
-        this.updatePosition();
+        // 3. Hand the content over. TutorialPointer.svelte owns the markup,
+        //    including the button an info step needs to carry on - writing
+        //    into its nodes from here tore out the anchors it tracks, and the
+        //    hand-built button had no id, so the confirm key in engine.js
+        //    found nothing to click.
+        engine.state.tutorialPointer = {
+            visible: true, faded: true, title, desc, confirmable: !!isInfoStep
+        };
 
-        // 4. Recalculate the position whenever the page scrolls
+        // 4. Measure only once the bubble is really in the document: a hidden
+        //    element has no width, and the arrow would land at the wrong end.
+        tick().then(() => {
+            this.updatePosition();
+            // Fade in afterwards, so the transition has something to run from.
+            setTimeout(() => { engine.state.tutorialPointer.faded = false; }, 10);
+        });
+
+        // 5. Recalculate the position whenever the page scrolls
         if (!this.scrollAttached) {
             window.addEventListener('scroll', () => this.updatePosition(), { passive: true });
             window.addEventListener('resize', () => this.updatePosition(), { passive: true });
             this.scrollAttached = true;
         }
-        
-        setTimeout(() => pointer.classList.remove('opacity-0'), 10);
     },
 
     // Extracted positioning logic
@@ -342,14 +343,11 @@ const tutorial = {
     },
 
     hidePointer: function() {
-        const pointer = document.getElementById('tut-pointer');
-        if(pointer) {
-            pointer.classList.add('opacity-0');
-            this.pointerTimeout = setTimeout(() => {
-                engine.hideOverlay(pointer);
-                this.currentTarget = null; // clear the target while hidden
-            }, 300);
-        }
+        engine.state.tutorialPointer.faded = true;
+        this.pointerTimeout = setTimeout(() => {
+            engine.state.tutorialPointer.visible = false;
+            this.currentTarget = null; // clear the target while hidden
+        }, 300);
     },
 
     advance: function() {
@@ -363,18 +361,18 @@ const tutorial = {
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
             const title = askModal.querySelector('h3');
-            if (title) title.innerText = "Simulation abgeschlossen";
+            if (title) title.innerText = t('tutorial.done.title');
 
             const textContent = askModal.querySelector('p');
             if (textContent) {
-                textContent.innerHTML = "H.A.L.G.E.R.D.: Alle Parameter erfasst. Das System berechnet eine Überlebenswahrscheinlichkeit von 12% für den heutigen Tag. Das ist über dem Abteilungsdurchschnitt.<br><br>Ihre Schonzeit ist hiermit beendet. Viel Glück, Mitarbeiter #404. Sie werden es brauchen.";
+                textContent.innerHTML = t('tutorial.done.text');
             }
 
             const btnContainer = askModal.querySelector('.grid.gap-3');
             if (btnContainer) {
                 btnContainer.innerHTML = `
                     <button id="tut-finish-btn" onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
-                        <span class="text-lg">▶</span> Arbeitstag starten
+                        <span class="text-lg">▶</span> ${t('tutorial.done.start')}
                     </button>
                 `;
             }

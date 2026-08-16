@@ -1,5 +1,44 @@
 import { DB, ensure } from '../data.js';
+import { t, tf } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
+import { PLAYER_CHAR, charDisplayName } from './chars.js';
+
+/**
+ * One coloured sentence for the morning screen's status line.
+ *
+ * The colour stays in the code, the sentence goes in the dictionary: nobody
+ * translating a line has to edit markup, and the class name stays a whole
+ * literal. Tailwind reads the source - a name put together at runtime is
+ * invisible to it and the colour then disappears without a word of warning.
+ */
+const moodLine = (cssClass, text) => `<span class='${cssClass}'>${text}</span>`;
+
+/**
+ * The same event, out of the tree that is loaded NOW.
+ *
+ * Both trees carry the same ids - that is the rule the whole bilingual build
+ * rests on (CLAUDE.md) - so an id is enough to find the other language's copy
+ * of the scene a player is looking at.
+ *
+ * A search rather than a type-to-pool table on purpose: the type on screen can
+ * be 'rep' (pool `reputation`), 'sidequest' (pool `sidequests`) or the
+ * synthesised 'boss', and the two idle screens live under DB.special one level
+ * deeper again. A table would have to know all of that and would go quietly
+ * wrong the day a pool is renamed; a scan over a few thousand objects costs
+ * nothing on an event that happens when a player picks a language.
+ *
+ * The depth stops at 3 (DB -> special -> week_idle -> entry), which is as deep
+ * as an event ever sits. That also keeps it out of `nodes` and `opts`.
+ */
+function findEventById(node, id, depth = 0) {
+    if (!node || typeof node !== 'object' || depth > 3) return null;
+    if (node.id === id) return node;
+    for (const child of Object.values(node)) {
+        const hit = findEventById(child, id, depth + 1);
+        if (hit) return hit;
+    }
+    return null;
+}
 
 export const events = {
 
@@ -151,8 +190,14 @@ export const events = {
      *
      * Until v4.0.0 this sat in the file twice, almost word for word (mail and
      * terminal), which had already led to one copy not knowing a rule.
+     *
+     * `kind` picks the log caption and is an identifier, not a caption itself:
+     * the mail says RECEIVED where the terminal says ITEM, and a caption
+     * handed in from outside would be a display string travelling through the
+     * engine - which is how the German edition used to be the only one that
+     * worked.
      */
-    grantItem: function(itemId, logLabel = 'ITEM') {
+    grantItem: function(itemId, kind = 'found') {
         if (!itemId) return;
         const dbItem = DB.items[itemId];
         const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
@@ -168,13 +213,13 @@ export const events = {
         if (isPermanent && alreadyHas) return;   // still verworfen
 
         if (!isPermanent && normalCount >= 10) {
-            this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+            this.log(tf('log.backpackFull', { item: itemName }), "text-slate-500 italic");
             return;
         }
 
         this.state.inventory.push({ id: itemId, used: false });
         this.addToArchive('items', itemId);
-        this.log(`${logLabel}: ${itemName}`, "text-yellow-400");
+        this.log(tf(kind === 'received' ? 'log.item.received' : 'log.item.found', { item: itemName }), "text-yellow-400");
         if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
             this.animateItemToBackpack(dbItem.img);
         }
@@ -252,17 +297,17 @@ export const events = {
             const p = DB.items[entry.id]?.passive;
             if (!p || p.onChar !== charName) continue;
 
-            if (p.cr) {
-                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.cr));
-                this.showFloatingText('val-cr', p.cr);
+            if (p.b) {
+                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.b));
+                this.showFloatingText('val-cr', p.b);
             }
-            if (p.al) {
-                this.state.al = Math.max(0, Math.min(100, this.state.al + p.al));
-                this.showFloatingText('val-al', p.al);
+            if (p.a) {
+                this.state.al = Math.max(0, Math.min(100, this.state.al + p.a));
+                this.showFloatingText('val-al', p.a);
             }
-            if (p.fl) {
-                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.fl));
-                this.showFloatingText('val-fl', p.fl);
+            if (p.l) {
+                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.l));
+                this.showFloatingText('val-fl', p.l);
             }
             // A number floating up on its own looks like a bug. The log line
             // says who caused it, and it is not optional for that reason.
@@ -325,42 +370,45 @@ export const events = {
             let penalty = Math.ceil(10 * this.effMult());
             this.addStat('cr', penalty);
             this.state.emailsIgnored++;
-            message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
+            message = tf('log.email.ignoredRadar', { value: penalty });
             color = "text-red-500 font-bold";
         } else if(opt) {
             if (opt.ignoreEmail) {
-                // Work out whether a penalty applied, so the log can mention it
-                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.effMult())}%` : "";
-                message = `E-MAIL IGNORIERT!${penaltyText}`;
+                // Two whole sentences instead of a fragment glued onto one:
+                // the penalty does not sit at the end of the sentence in every
+                // language, and half a sentence cannot be reordered.
+                const penalty = opt.b > 0 ? Math.ceil(opt.b * this.effMult()) : 0;
+                message = penalty > 0 ? tf('log.email.ignoredRadar', { value: penalty })
+                                      : t('log.email.ignored');
                 color = "text-red-500 font-bold";
             } else {
-                message = `Gesendet: "${opt.t}"`;
+                message = tf('log.email.sent', { text: opt.t });
                 color = "text-blue-400";
             }
 
             let mult = this.effMult();
             
             // Cache the final values for the animation
-            let addedF = opt.f || 0;
+            let addedL = opt.l || 0;
             let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
-            let addedC = opt.c ? Math.ceil(opt.c * mult) : 0;
+            let addedB = opt.b ? Math.ceil(opt.b * mult) : 0;
 
-            this.addStat('fl', addedF);
+            this.addStat('fl', addedL);
             this.addStat('al', addedA);
-            this.addStat('cr', addedC);
+            this.addStat('cr', addedB);
 
             // --- Floating text for mails ---
-            if (addedF !== 0) this.showFloatingText('val-fl', addedF);
+            if (addedL !== 0) this.showFloatingText('val-fl', addedL);
             if (addedA !== 0) this.showFloatingText('val-al', addedA);
-            if (addedC !== 0) this.showFloatingText('val-cr', addedC);
+            if (addedB !== 0) this.showFloatingText('val-cr', addedB);
             // --------------------------------------
-            
+
             // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
-            
-            this.triggerShake(addedA, addedC);
 
-            this.grantItem(opt.loot, 'ERHALTEN');
+            this.triggerShake(addedA, addedB);
+
+            this.grantItem(opt.loot, 'received');
 
             // 2. TIME LOGIC (opt.m)
             if (opt.m) {
@@ -377,7 +425,7 @@ export const events = {
                 if (opt.ignoreEmail) {
                     setTimeout(() => this.log(`${opt.r}`, "text-slate-500 italic"), 500);
                 } else {
-                    setTimeout(() => this.log(`Re: ${opt.r}`, "text-slate-400 italic"), 500);
+                    setTimeout(() => this.log(tf('log.email.reply', { text: opt.r }), "text-slate-400 italic"), 500);
                 }
             }
 
@@ -425,7 +473,7 @@ export const events = {
 				tutorial.hidePointer();
                 this.renderTerminal(tutEvent, type);
             } else {
-                this.log("H.A.L.G.E.R.D.: Diese Aktion ist in der aktuellen Simulationsphase nicht vorgesehen.", "text-red-500");
+                this.log(t('log.halgerd.notInPhase'), "text-red-500");
             }
             return; // Cancel the normal trigger!
         }
@@ -446,7 +494,7 @@ export const events = {
             try {
                 await ensure(poolName, 'bossfights', 'reputation');
             } catch (err) {
-                this.log("H.A.L.G.E.R.D.: Daten konnten nicht geladen werden. Bitte erneut versuchen.", "text-red-500");
+                this.log(t('log.halgerd.loadFailed'), "text-red-500");
                 return;
             } finally {
                 this.state.isLoadingPool = false;
@@ -518,7 +566,7 @@ export const events = {
                 }
                 
                 if (intervention) {
-                    this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
+                    this.log(tf('log.encounter', { title: intervention.title }), "text-yellow-400");
                     
                     // Rendered as type 'rep' for the golden styling
                     this.renderTerminal(intervention, 'rep'); 
@@ -649,7 +697,7 @@ export const events = {
                 this.renderTerminal(this.weekIdleEvent('sidequest'), 'sidequest');
                 return;
             }
-            this.log("Gerade nichts los.");
+            this.log(t('log.nothingUp'));
             return;
         }
 
@@ -666,7 +714,7 @@ export const events = {
 
             // Show the notification
             this.state.phone.notification = true;
-            this.log("Handy: " + ev.title);
+            this.log(tf('log.phone', { text: ev.title }));
             
             // --- show the phone and scroll to it ---
             this.updatePhoneVisibility();
@@ -717,19 +765,106 @@ export const events = {
         const node = ev.nodes[nodeId];
         if (!node) { console.error("Node not found:", nodeId); return; }
 
+        // Which node is on screen. currentChainEvent alone does not say, and
+        // relocaliseScene() has to repaint exactly this one after a language
+        // switch. Runtime only: saveDay() bails while an event is open, so it
+        // never reaches a save file and needs no migration.
+        this.state.currentChainNode = nodeId;
+
         // Node char convention, mirrored from the phone (EVENTS.md, 9):
         // a node's own char beats the event char, char: null forces none.
         // This is what lets one meeting chain switch speakers mid-dialogue.
-        const charName = ('char' in node) ? node.char : ev.char;
+        const charName = charDisplayName(('char' in node) ? node.char : ev.char);
 
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, charName, ev.nodes);
+        this.setTerminalEvent(type, ev.title || t('event.title.call'), node.text, node.opts, true, charName, ev.nodes);
     },
 
     // 2. OLD SYSTEM (simple events)
     // Hands the event to the terminal component, which renders it.
     renderEventHTML: function(ev, type) {
-        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, ev.char);
+        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, charDisplayName(ev.char));
+    },
+
+    /**
+     * Repaints the terminal out of the tree that is loaded now.
+     *
+     * Registered against onLanguageChange() in engine.js and called after the
+     * new tree is in. Everything else on screen follows the language on its
+     * own: the dictionary sits behind a rune, the shell in index.html is
+     * refilled by applyStaticStrings(), and the idle screen already stores
+     * keys rather than words. What cannot follow is the scene, because its
+     * title, its text and its option captions were copied out of the old tree
+     * into state.terminal at the moment it opened.
+     *
+     * Deliberately NOT renderTerminal(): that one starts an event - it books
+     * the id as used, records it as seen and applies passive items. This is a
+     * repaint, and the two must not be the same function. Both branches below
+     * end in the same pure setTerminalEvent() the first render used.
+     *
+     * What it does not touch, and why:
+     *   - a RESULT screen. Its text is the `r` of an option already chosen,
+     *     and choosing it again is out of the question - resolveTerminal moves
+     *     stats, items and flags. Its button follows the language, because
+     *     that one is a dictionary key rather than a word (see setTerminalResult).
+     *   - the morning's status line, for the same reason: the sentence is the
+     *     record of a stat change that has already happened.
+     *   - the log, and for the same reason the bubbles of a phone chat: both
+     *     are a record of things already said. Decided this way - an hour-old
+     *     line keeps the language it was written in, exactly as a logbook
+     *     would. The chat's REPLIES are a different matter and do get redrawn
+     *     below: they are not history, they are the button about to be pressed.
+     */
+    relocaliseScene: function() {
+        this.relocalisePhone();
+
+        const term = this.state.terminal;
+
+        // The morning mood: title and text come straight from DB.moods and are
+        // re-drawable from the id; the status line under them does not, so it
+        // stays as it stands.
+        if (term.mode === 'morning' && this.state.lastMoodId) {
+            const mood = (DB.moods ?? []).find(m => m.id === this.state.lastMoodId);
+            if (mood) this.setTerminalMorning(mood.title, mood.text, term.morning?.conditions ?? '');
+            return;
+        }
+
+        if (term.mode !== 'event') return;
+
+        const ev = findEventById(DB, this.state.currentEventId);
+        if (!ev) return;
+
+        if (term.event?.isChain && this.state.currentChainNode) {
+            this.state.currentChainEvent = ev;
+            this.renderChainNode(this.state.currentChainNode);
+        } else {
+            this.renderEventHTML(ev, this.state.currentEventType);
+        }
+    },
+
+    /**
+     * The open phone chat, as far as it can follow.
+     *
+     * The bubbles stay - they are what was said, in the language it was said
+     * in. The REPLIES do not: they are the choice the player is about to make,
+     * and German buttons under an English chat is the one place where leaving
+     * things alone would actually get in the way.
+     *
+     * Nothing happens while a reply is in flight (options empty during the
+     * typing delay), which is also the only window in which the next node is
+     * not yet the one written down.
+     */
+    relocalisePhone: function() {
+        const phone = this.state.phone;
+        if (!phone?.open || !phone.node || !phone.options?.length) return;
+
+        const ev = findEventById(DB, this.state.currentPhoneEvent?.id);
+        const node = ev?.nodes?.[phone.node];
+        if (!node) return;
+
+        this.state.currentPhoneEvent = ev;
+        phone.appName = ev.appName ?? phone.appName;
+        phone.options = node.opts || [];
     },
 
     // 3. SHARED HTML TEMPLATE
@@ -771,14 +906,16 @@ export const events = {
         // Case 2: a result, ending the chain
         if (ev.results && ev.results[nextId]) {
             const res = ev.results[nextId];
-            // Chain results use their own field names (txt/min/fl/al/cr);
-            // map them onto the option shape resolveTerminal expects.
+            // A result names its text `txt`; the effects carry the same letters
+            // as an option. It used to accept min/fl/al/cr as second names as
+            // well - an alias kept for events that have long since gone, and
+            // used by not one place in the data. Dropped with the rename.
             this.resolveTerminal({
                 r:    res.txt,
-                m:    res.min || res.m || 0,
-                f:    res.fl  || res.f || 0,
-                a:    res.al  || res.a || 0,
-                c:    res.cr  || res.c || 0,
+                m:    res.m || 0,
+                l:    res.l || 0,
+                a:    res.a || 0,
+                b:    res.b || 0,
                 loot: res.loot || null,
                 rem:  res.rem  || null,
                 next: res.next || null,
@@ -788,8 +925,8 @@ export const events = {
             return;
         }
 
-        console.error("Chain Error: Ziel nicht gefunden", nextId);
-        this.resolveTerminal({ r: "Verbindung unterbrochen." }, "calls");
+        console.error("Chain error: target not found", nextId);
+        this.resolveTerminal({ r: t('event.chainBroken') }, "calls");
     },
 
     /**
@@ -800,7 +937,7 @@ export const events = {
      * object had to be JSON-parsed back out of an HTML attribute. It now takes
      * the option object as authored in the data files.
      *
-     * @param {object} opt  { r, m, f, a, c, loot, rem, next, rep }
+     * @param {object} opt  { r, m, l, a, b, loot, rem, next, rep }
      * @param {string} type event pool the option came from
      */
     resolveTerminal: function(opt, type) {
@@ -813,9 +950,9 @@ export const events = {
 
         // Numeric fallbacks: data files omit values that are zero.
         const m = typeof opt.m === 'number' ? opt.m : 0;
-        const f = typeof opt.f === 'number' ? opt.f : 0;
+        const l = typeof opt.l === 'number' ? opt.l : 0;
         const a = typeof opt.a === 'number' ? opt.a : 0;
-        const c = typeof opt.c === 'number' ? opt.c : 0;
+        const b = typeof opt.b === 'number' ? opt.b : 0;
 
         this.playAudio('ui');
 	
@@ -828,13 +965,13 @@ export const events = {
 	
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
-            res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
+            res = t('event.cmd.intranet');
             this.openIntranet();
         }
 
         // --- BOARD TRIGGER ---
         if (res === "CMD:OPEN_BOARD") {
-            res = "Du vertiefst dich in die faszinierende Welt der Firmen-Aushänge...";
+            res = t('event.cmd.board');
             this.openBoard();
         }
         // --------------------------------
@@ -844,7 +981,7 @@ export const events = {
 		// Drinking with Bernd, or the rum cake
         if (next === 'path_bernd_drunk' || next === 'path_cake_drunk') {
             this.state.drunkEndTime = this.state.time + m + 60; 
-            this.log("Alles dreht sich ein bisschen...", "text-purple-400 italic");
+            this.log(t('log.drunk'), "text-purple-400 italic");
         }
 
         // Zeit & Tickets
@@ -881,7 +1018,7 @@ export const events = {
             if (this.state.time < LUNCH_UNTIL) {
                 triggerLunch = true;
             } else {
-                this.log("Die Mittagspause ist heute ausgefallen. Gemerkt hat es niemand.", "text-slate-500");
+                this.log(t('log.lunchMissed'), "text-slate-500");
             }
         }
 
@@ -907,24 +1044,24 @@ export const events = {
         let diffMult = this.statMult();
         let lazyMult = 1 + (this.state.fl / 200);
 
-        this.addStat('fl', f);
+        this.addStat('fl', l);
         let finalA = a > 0 ? Math.ceil(a * diffMult) : a;
         this.addStat('al', finalA);
 
-        let finalC = c;
-        if (c > 0) {
-            finalC = Math.ceil(c * diffMult * lazyMult);
+        let finalB = b;
+        if (b > 0) {
+            finalB = Math.ceil(b * diffMult * lazyMult);
         } else {
-            finalC = c; 
+            finalB = b;
         }
-        this.addStat('cr', finalC);
+        this.addStat('cr', finalB);
 
         // --- Floating Text ---
-        if (f !== 0) this.showFloatingText('val-fl', f);
+        if (l !== 0) this.showFloatingText('val-fl', l);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
-        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
-        
-        this.triggerShake(finalA, finalC);
+        if (finalB !== 0) this.showFloatingText('val-cr', finalB);
+
+        this.triggerShake(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
@@ -952,20 +1089,25 @@ export const events = {
                 // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
                 let removedName = DB.items[rem] ? DB.items[rem].name : rem;
-                this.log(`Verloren: ${removedName}`, "text-orange-400");
+                this.log(tf('log.itemLost', { item: removedName }), "text-orange-400");
             }
         }
         // --------------------------------
 
         // --- ITEM LOGIC: LOOT ---
-        this.grantItem(loot, 'ITEM');
+        this.grantItem(loot);
         
         this.log(res);
         this.updateUI();
 
         // UI Rendern
+        // The key travels, not the word - see setTerminalResult. Which also
+        // means lint-i18n can no longer see these five as used, so they are
+        // declared here by hand.
+        // i18n-uses: terminal.btn.lunch, terminal.btn.meeting, terminal.btn.continue
+        // i18n-uses: terminal.btn.clockOff, terminal.btn.gameOver
         let btnAction = triggerLunch ? "triggerLunch" : triggerMeeting ? "triggerMeeting" : "reset";
-        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : triggerMeeting ? "ZUM WOCHENMEETING" : "WEITER";
+        let btnKey = triggerLunch ? 'terminal.btn.lunch' : triggerMeeting ? 'terminal.btn.meeting' : 'terminal.btn.continue';
         let btnColor = "bg-blue-600 hover:bg-blue-500";
 
         if (this.state.pendingEnd) {
@@ -974,28 +1116,29 @@ export const events = {
             // case below and shouts GAME OVER before the night screen. ---
             if (this.state.pendingEnd.isNight) {
                 btnAction = "finishGame";
-                btnText = "FEIERABEND MACHEN 🎉";
+                btnKey = 'terminal.btn.clockOff';
                 btnColor = "bg-green-600 hover:bg-green-500";
             }
             // --- The disguised party trap ---
             else if (this.state.pendingEnd.isParty) {
                 btnAction = "startParty";
-                btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
+                btnKey = 'terminal.btn.clockOff';       // the same key as the normal win, so the
+                                                        // disguise cannot come apart in translation
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // A nasty pink as a small hint
             } else {
                 // --- normal ending ---
                 btnAction = "finishGame";
                 if (this.state.pendingEnd.isWin) {
-                    btnText = "FEIERABEND MACHEN 🎉";
+                    btnKey = 'terminal.btn.clockOff';
                     btnColor = "bg-green-600 hover:bg-green-500";
                 } else {
-                    btnText = "DAS WAR'S... (GAME OVER)";
+                    btnKey = 'terminal.btn.gameOver';
                     btnColor = "bg-red-600 hover:bg-red-500";
                 }
             }
         }
 
-        this.setTerminalResult(res, m, f, finalA, finalC, btnAction, btnText, btnColor);
+        this.setTerminalResult(res, m, l, finalA, finalB, btnAction, btnKey, btnColor);
     },
 
     // async: lunch is its own pool and loads on demand like the others.
@@ -1031,7 +1174,7 @@ export const events = {
         }
         if (!pool.length) {
             // Should never happen; better to skip the break than to hang.
-            console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
+            console.warn('Lunch pool unavailable, skipping the break.');
             this.reset();
             return;
         }
@@ -1063,20 +1206,22 @@ export const events = {
      * exactly, so this checks whether it passed the mark in the last step.
      * Once a day, purely decorative: no values, no consequences, just a line
      * in the log for those who look.
+     *
+     * The lines themselves live in data_special.js, drawn like the valve texts.
+     * They are scene prose, so they belong with the data in both languages -
+     * the interface dictionary is for captions.
      */
     checkLeetMoment: function(timeBefore) {
         const LEET = 13 * 60 + 37;
         if (this.state.leetSeen) return;
         if (timeBefore >= LEET || this.state.time < LEET) return;
 
+        // Core data missing (tools, tests): no line rather than a crash, and
+        // the moment is not marked as seen, so a later crossing still counts.
+        const lines = DB.special?.leet;
+        if (!lines?.length) return;
+
         this.state.leetSeen = true;
-        const lines = [
-            "13:37 Uhr. Für den Bruchteil einer Sekunde läuft alles rund. Kein Ticket, kein Anruf, kein Chef. Dann ist es 13:38.",
-            "13:37 Uhr. Sämtliche LEDs im Serverraum blinken für einen Moment im selben Takt. Du bist der einzige Mensch im Gebäude, dem das etwas bedeutet.",
-            "13:37 Uhr. Die Uhr steht kurz still, das Gebäude atmet aus, und irgendwo öffnet sich eine Datei ohne Zutun. Vermutlich Einbildung.",
-            "13:37 Uhr. Du blickst auf die Uhr und nickst anerkennend. Niemand nickt zurück. Niemand hat es gesehen.",
-            "13:37 Uhr. Der Drucker im dritten Stock gibt ein einzelnes, wohlklingendes Piepen von sich und schweigt für den Rest des Tages."
-        ];
         this.log(lines[Math.floor(Math.random() * lines.length)], "text-cyan-400 italic");
     },
 
@@ -1084,10 +1229,10 @@ export const events = {
         const h = this.state.statHistory;
         if (!h || h.length > 200) return;
         h.push({
-            t: this.state.time,
-            f: Math.round(this.state.fl),
+            m: this.state.time,
+            l: Math.round(this.state.fl),
             a: Math.round(this.state.al),
-            c: Math.round(this.state.cr)
+            b: Math.round(this.state.cr)
         });
     },
 
@@ -1118,7 +1263,7 @@ export const events = {
                 availableMoods = forced;
             } else {
                 const known = [...new Set(DB.moods.map(m => m.effect))].join(', ');
-                console.warn(`Unbekannte Morgen-Kategorie "${forceEffect}". Vorhanden: ${known}`);
+                console.warn(`Unknown morning category "${forceEffect}". Available: ${known}`);
             }
         }
         
@@ -1134,33 +1279,33 @@ export const events = {
 
         if (mood.effect === "aggro") {
             this.addStat('al', moodVal);
-            statHtml = `<span class='text-orange-400 font-bold'>+${moodVal}% Aggro</span>`;
-        } 
+            statHtml = moodLine('text-orange-400 font-bold', tf('morning.effect.aggro', { value: moodVal }));
+        }
         else if (mood.effect === "radar") {
             this.addStat('cr', moodVal);
-            statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
-        } 
+            statHtml = moodLine('text-red-500 font-bold', tf('morning.effect.radar', { value: moodVal }));
+        }
         else if (mood.effect === "lazy") {
             this.addStat('fl', moodVal);
             this.state.time += 30; // Time lost to oversleeping
             this.state.tickets += 1; // penalty for the thirty minutes lost
-            statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
-        } 
+            statHtml = moodLine('text-emerald-400 font-bold', tf('morning.effect.lazy', { value: moodVal }));
+        }
         // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
             const extra = this.difficultyTier(); // 1/2/3 extra tickets by chosen level, week-aware
             this.state.tickets += extra;
-            statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
+            statHtml = moodLine('text-red-400 font-bold', tf('morning.effect.tickets', { count: extra }));
         }
         // --- Excuses: the stock of white lies is no longer a constant ---
         else if (mood.effect === "excuse_minus") {
             if (this.state.excusesLeft > 0) {
                 this.state.excusesLeft--;
-                statHtml = "<span class='text-red-400 font-bold'>Eine Ausrede weniger als sonst</span>";
+                statHtml = moodLine('text-red-400 font-bold', t('morning.effect.excuseMinus'));
             } else {
                 // Nothing left to cancel - the day starts badly all the same
                 this.addStat('cr', moodVal);
-                statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
+                statHtml = moodLine('text-red-500 font-bold', tf('morning.effect.radar', { value: moodVal }));
             }
         }
         else if (mood.effect === "excuse_plus") {
@@ -1172,15 +1317,15 @@ export const events = {
                 : Infinity;
             if (this.state.excusesLeft < deckel) {
                 this.state.excusesLeft++;
-                statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+                statHtml = moodLine('text-cyan-400 font-bold', t('morning.effect.excusePlus'));
             } else {
-                statHtml = "<span class='text-slate-400 font-bold'>Dein Vorrat an Ausreden ist ohnehin voll</span>";
+                statHtml = moodLine('text-slate-400 font-bold', t('morning.effect.excuseFull'));
             }
         }
 
         else if (mood.effect === "normal") {
-            statHtml = "<span class='text-slate-400 font-bold'>Neutral. Der ganz normale Wahnsinn beginnt.</span>";
-        } 
+            statHtml = moodLine('text-slate-400 font-bold', t('morning.effect.normal'));
+        }
         else if (mood.effect === "snack") {
             // Snacks only
             const possibleItems = ["energy", "donut", "sandwich", "chocolate"];
@@ -1188,7 +1333,7 @@ export const events = {
             this.state.inventory.push({ id: rItem, used: false });
             this.addToArchive('items', rItem);
             let itemName = DB.items[rItem] ? DB.items[rItem].name : rItem;
-            statHtml = `<span class='text-yellow-400 font-bold'>Inventar: ${itemName} erhalten!</span>`;
+            statHtml = moodLine('text-yellow-400 font-bold', tf('morning.effect.snack', { item: itemName }));
             if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
         }
 
@@ -1219,7 +1364,7 @@ export const events = {
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         
         if (pool.length === 0) {
-            this.log("Hier ist gerade nichts mehr los. Versuch einen anderen Ort.", "text-slate-500");
+            this.log(t('party.noStation'), "text-slate-500");
             return;
         }
         
@@ -1235,33 +1380,35 @@ export const events = {
         this.state.isPartyMode = false;
         
         // --- UNLOCK THE GALA ACHIEVEMENT ---
-        this.unlockAchievement('ach_party', '🎉 Synergy-Veteran', 'Du hast die legendäre Firmenfeier überlebt.');
+        this.unlockAchievement('ach_party');
 
         // 2. Assemble the party report box
-        let diffName = "MITTWOCH (Normal)";
-        if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
-        if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
-        if (this.state.week.active) diffName = `WOCHE (${this.WEEK_DIFFS[this.state.week.level].name})`;
+        // The same three captions the day report uses, from the same keys:
+        // both name the day that has just ended, so they must not drift.
+        let diffName = t('dayReport.diff.normal');
+        if (this.state.difficultyMult < 1.0) diffName = t('dayReport.diff.easy');
+        if (this.state.difficultyMult > 1.0) diffName = t('dayReport.diff.hard');
+        if (this.state.week.active) diffName = tf('week.badge', { mode: t(`week.diff.${this.WEEK_DIFFS[this.state.week.level].key}`) });
 
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
-                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">Party-Bilanz: <span class="text-white font-bold">${diffName}</span></div>
+                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">${t('party.report.title')} <span class="text-white font-bold">${diffName}</span></div>
                 <div class="grid grid-cols-2 gap-2 text-center font-mono">
                     <div class="flex flex-col">
                         <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
-                        <span class="text-[10px] text-slate-400">CHILL-FAKTOR</span>
+                        <span class="text-[10px] text-slate-400">${t('party.report.chill')}</span>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
-                        <span class="text-[10px] text-slate-400">FREMDSCHAM</span>
+                        <span class="text-[10px] text-slate-400">${t('party.report.cringe')}</span>
                     </div>
                 </div>
             </div>
         `;
 
         // Collect the day's achievements
-        let achHTML = this.state.achievedTitles.length > 0 ? 
-            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Heutige Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>` 
+        let achHTML = this.state.achievedIds.length > 0 ? 
+            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">${t('achievement.today')}</div>${this.state.achievedIds.map(id => (DB.achievements ?? []).find(a => a.id === id)).filter(Boolean).map(a => `<div class="text-xs text-slate-300">🏆 ${a.icon ?? ''} ${a.title}</div>`).join('')}</div>` 
             : "";
 
         let fullReport = statsHTML + achHTML;
@@ -1277,17 +1424,17 @@ export const events = {
         // be built BEFORE endWeek() - it reads the still-active week.
         let weekHTML = '';
         let warWoche = false;
-        let leadText = "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.";
+        let leadText = t('party.end.leadDay');
         if (this.state.week.active) {
             warWoche = true;
             this.recordWeekResult('survived', 5);
             weekHTML = this.buildWeekBalanceHTML({ isWin: true });
             this.endWeek();
-            leadText = "Der Abend ist vorbei. Eine Arbeitswoche für die Geschichtsbücher.";
+            leadText = t('party.end.leadWeek');
         }
 
         this.showEnd({
-            title: "GALA VORBEI",
+            title: t('party.end.title'),
             lead: leadText,
             text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
             cause: "party",
@@ -1310,10 +1457,11 @@ export const events = {
             notification: false,
             appName: ev.appName,
             messages: [],
-            options: []
+            options: [],
+            node: null          // set by renderPhoneNode, read by relocaliseScene
         };
 
-        this.renderPhoneNode(ev.nodes[ev.startNode]);
+        this.renderPhoneNode(ev.startNode);
     },
 
     // --- PHONE CONVERSATION ---
@@ -1335,15 +1483,22 @@ export const events = {
 
     // Appends the incoming message and offers the node's replies.
     // components/PhoneView.svelte renders both.
-    renderPhoneNode: function(node) {
+    //
+    // Takes the node's ID rather than the node, the same way renderChainNode
+    // does, so that the id can be written down: relocaliseScene() needs it to
+    // put the replies back in the new language after a language switch.
+    renderPhoneNode: function(nodeId) {
         const ev = this.state.currentPhoneEvent;
+        const node = ev.nodes[nodeId];
+        if (!node) { console.error("Phone node not found:", nodeId); return; }
+        this.state.phone.node = nodeId;
 
         // Portrait resolution, per node: a node's own char wins, otherwise
         // the node inherits the event's char. `char: null` on a node forces
         // the initial even inside a character chat (an anonymous voice in a
         // group); no char anywhere keeps the plain initial - like contacts
         // without a picture in a real messenger.
-        const charName = node.char !== undefined ? node.char : ev.char;
+        const charName = charDisplayName(node.char !== undefined ? node.char : ev.char);
         const contact = charName ? DB.chars?.find(c => c.name === charName) ?? null : null;
 
         // The sender label follows the NODE char only: a 1:1 chat keeps the
@@ -1351,7 +1506,7 @@ export const events = {
         // existing chats look exactly as before. Only a node marked with its
         // own char writes that character's name above the bubble - like a
         // named voice inside a group.
-        const sender = (node.char ? contact?.name : null) ?? ev.title ?? "Unbekannt";
+        const sender = (node.char ? contact?.name : null) ?? ev.title ?? t('phone.unknownSender');
 
         this.addPhoneMessage({
             side: 'in',
@@ -1378,7 +1533,7 @@ export const events = {
             if (itemIndex > -1) {
                 let itemName = DB.items[remId] ? DB.items[remId].name : remId;
                 this.state.inventory.splice(itemIndex, 1);
-                this.log(`Verloren: ${itemName}`, "text-orange-400");
+                this.log(tf('log.itemLost', { item: itemName }), "text-orange-400");
                 this.updateUI(); // reflect the inventory change right away
             }
         }
@@ -1390,7 +1545,7 @@ export const events = {
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
-            this.addPhoneMessage({ side: 'error', text: '- Verbindung abgebrochen -' });
+            this.addPhoneMessage({ side: 'error', text: t('phone.disconnected') });
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -1414,32 +1569,32 @@ export const events = {
 
                 if (!isPermanent && normalCount >= 10) {
                     let itemName = dbItem ? dbItem.name : res.loot;
-                    this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+                    this.log(tf('log.backpackFull', { item: itemName }), "text-slate-500 italic");
                 } else {
                     this.state.inventory.push({ id: res.loot, used: false });
                     this.addToArchive('items', res.loot);
                     let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
-                    this.log("ERHALTEN: " + itemName, "text-yellow-400");
+                    this.log(tf('log.item.received', { item: itemName }), "text-yellow-400");
                     if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
                 }
             }
             
         // Stats Update
-        let finalF = res.f || 0;
+        let finalL = res.l || 0;
         let finalA = res.a || 0;
-        let finalC = res.c || 0;
+        let finalB = res.b || 0;
 
-        this.addStat('fl', finalF);
+        this.addStat('fl', finalL);
         this.addStat('al', finalA);
-        this.addStat('cr', finalC);
+        this.addStat('cr', finalB);
 
         // --- Floating text for the phone ---
-        if (finalF !== 0) this.showFloatingText('val-fl', finalF);
+        if (finalL !== 0) this.showFloatingText('val-fl', finalL);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
-        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
+        if (finalB !== 0) this.showFloatingText('val-cr', finalB);
         // ------------------------------------
-        
-        this.triggerShake(finalA, finalC);
+
+        this.triggerShake(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
@@ -1474,7 +1629,7 @@ export const events = {
                 if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
                 this.state.phoneReadTimer = setTimeout(() => {
                     this.closePhone();
-                    this.log("Handy: " + res.txt);
+                    this.log(tf('log.phone', { text: res.txt }));
                     const beforePhone = this.state.time;
                     this.state.time += 15;
                     this.checkLeetMoment(beforePhone);
@@ -1507,7 +1662,7 @@ export const events = {
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             this.state.phoneTypeTimer = setTimeout(() => {
                 if (loadingId) this.removePhoneMessage(loadingId);
-                this.renderPhoneNode(ev.nodes[nextId]);
+                this.renderPhoneNode(nextId);
             }, typingDuration);
         }
     },

@@ -20,18 +20,21 @@
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
+    import { t, tf } from '../i18n/i18n.svelte.js';
     // Order and wording of the rows. The separator marks where the actions of
     // the day end and the answer keys begin.
     const ROWS = [
-        { action: 'actCoffee', label: 'Kaffee holen' },
-        { action: 'actQuest',  label: 'Dienstgang' },
-        { action: 'actServer', label: 'Serverraum' },
-        { action: 'actCall',   label: 'Anruf' },
+        // i18n-uses: keybind.actCoffee, keybind.actQuest, keybind.actServer, keybind.actCall
+        { action: 'actCoffee', label: 'keybind.actCoffee' },
+        { action: 'actQuest',  label: 'keybind.actQuest' },
+        { action: 'actServer', label: 'keybind.actServer' },
+        { action: 'actCall',   label: 'keybind.actCall' },
         { separator: true },
-        { action: 'opt1', label: 'Option 1 (Oben)' },
-        { action: 'opt2', label: 'Option 2 (Mitte)' },
-        { action: 'opt3', label: 'Option 3 (Unten)' },
-        { action: 'confirm', label: 'Bestätigen / Popups / Handy', accent: true }
+        // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm
+        { action: 'opt1', label: 'keybind.opt1' },
+        { action: 'opt2', label: 'keybind.opt2' },
+        { action: 'opt3', label: 'keybind.opt3' },
+        { action: 'confirm', label: 'keybind.confirm', accent: true }
     ];
 
     // "ArrowUp" reads better as "UP" on a button this narrow.
@@ -52,8 +55,8 @@
     }
 
     function label(action) {
-        if (game.bindFlash === action && game.bindFlashReserved) return 'RESERVIERT';
-        if (waiting(action)) return 'Drücke Taste...';
+        if (game.bindFlash === action && game.bindFlashReserved) return t('keybind.reserved');
+        if (waiting(action)) return t('keybind.press');
         return shownKey(action);
     }
 </script>
@@ -65,10 +68,10 @@
         {:else}
             <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 {row.accent ? 'border-l-2 border-l-amber-500' : ''}">
                 <div class="flex flex-col">
-                    <span class="text-sm font-medium text-slate-200">{row.label}</span>
+                    <span class="text-sm font-medium text-slate-200">{t(row.label)}</span>
                 </div>
                 <button id="bind-{row.action}" class={buttonClass(row.action)}
-                        aria-label="{row.label}: Taste {shownKey(row.action)} ändern"
+                        aria-label={tf('keybind.aria', { what: t(row.label), key: shownKey(row.action) })}
                         onclick={() => engine.startBindingKey(row.action)}>
                     {label(row.action)}
                 </button>
@@ -84,11 +87,11 @@
 -->
 <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mt-4 rounded-lg border border-slate-700/50">
     <div class="flex flex-col flex-1">
-        <span class="text-sm font-medium text-slate-200 leading-tight">Visuelle Hotkeys</span>
-        <span class="text-[10px] text-slate-500 mt-1">Zeigt Tasten-Symbole auf den Antwort-Buttons an.</span>
+        <span class="text-sm font-medium text-slate-200 leading-tight">{t('keybind.hotkeys')}</span>
+        <span class="text-[10px] text-slate-500 mt-1">{t('keybind.hotkeyHint')}</span>
     </div>
     <label class="relative inline-flex items-center cursor-pointer shrink-0">
-        <input type="checkbox" class="sr-only peer" aria-label="Visuelle Hotkeys"
+        <input type="checkbox" class="sr-only peer" aria-label={t('keybind.hotkeys')}
                checked={game.showHotkeys}
                onchange={(e) => engine.toggleShowHotkeys(e.currentTarget.checked)}>
         <div class={SWITCH}></div>
