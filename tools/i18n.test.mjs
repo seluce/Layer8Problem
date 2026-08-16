@@ -314,6 +314,26 @@ await ok('Die Sprache entscheidet, was eingesetzt wird', async () => {
     assert.equal(root.nodes[0].textContent, 'Workday');
 });
 
+console.log('Steam-Präsenz:');
+
+await ok('Jede Tätigkeit hat einen Text, jeder Text eine Tätigkeit', async () => {
+    // Der Bogen reicht über drei Stellen, die nichts voneinander wissen:
+    // engine_core sendet die Kennung, das Wörterbuch hält den Satz, und
+    // make-steam-presence schreibt die .vdf daraus. Fehlt ein Satz, steht in
+    // der Freundesliste ein nacktes "#Status_lunch" — sichtbar für andere,
+    // unsichtbar für jeden Prüfer hier.
+    const { PRESENCE_ALL } = await import('../src/engine/presence.js');
+    const { de } = await import('../src/i18n/de.js');
+    const { en } = await import('../src/i18n/en.js');
+
+    for (const [name, dict] of [['de', de], ['en', en]]) {
+        const vorhanden = Object.keys(dict).filter(k => k.startsWith('presence.'))
+                                           .map(k => k.slice('presence.'.length));
+        assert.deepEqual([...vorhanden].sort(), [...PRESENCE_ALL].sort(),
+                         `${name}: presence.* und PRESENCE_ALL laufen auseinander`);
+    }
+});
+
 console.log('Verdrahtung:');
 
 await ok('Der Startbildschirm bietet jede Sprache an', async () => {

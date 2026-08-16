@@ -263,6 +263,46 @@ await ok('Ein Spielstand aus 5.0 bringt seine Tageskurve mit (Migration)', () =>
     const nochmal = engine.migrateStatPoints(state.statHistory);
     assert.deepEqual(nochmal, state.statHistory, 'Migration ist nicht idempotent');
 });
+await ok('Die Startzeile eines alten Spielstands nennt die laufende Version', () => {
+    resetState();
+    // Ein Stand, der unter 5.0 gespeichert wurde. init() schreibt die
+    // Versionszeile als ersten Protokolleintrag der Sitzung, und weil
+    // setDifficulty den Tag nicht zurücksetzt, wandert sie mit in den
+    // Spielstand. Unverändert wiederhergestellt behauptet das Protokoll eine
+    // andere Version als die Kopfzeile daneben.
+    const alt = {
+        time: 11 * 60, difficultyMult: 1.0,
+        logEntries: [
+            { id: 1, time: '08:00', msg: 'System v5.0.0 geladen. Warte auf User...', color: '' },
+            { id: 2, time: '08:00', msg: 'Modus: MITTWOCH. Business as usual.',     color: '' },
+            { id: 3, time: '09:15', msg: 'Kaffee geholt.',                          color: '' }
+        ]
+    };
+    engine.applyRestoredDay(alt);
+
+    assert.ok(state.logEntries[0].msg.includes(engine.VERSION),
+              `Startzeile nennt nicht ${engine.VERSION}: ${state.logEntries[0].msg}`);
+    assert.ok(!state.logEntries[0].msg.includes('v5.0.0'), 'alte Version steht noch da');
+    // Der Rest des Protokolls ist Gedächtnis und bleibt unangetastet.
+    assert.equal(state.logEntries[1].msg, 'Modus: MITTWOCH. Business as usual.');
+    assert.equal(state.logEntries[2].msg, 'Kaffee geholt.');
+    assert.equal(state.logEntries.length, 3, 'Eintrag dazu- oder weggekommen');
+});
+await ok('Ohne Startzeile wird nichts umgeschrieben', () => {
+    resetState();
+    // Ein späterer Tag einer Woche: der Zähler läuft weiter, id 1 kommt nicht
+    // vor. Und ein langer Tag schiebt die Startzeile ohnehin aus dem Puffer.
+    const alt = {
+        time: 11 * 60, difficultyMult: 1.0,
+        logEntries: [
+            { id: 47, time: '08:00', msg: 'Modus: MITTWOCH. Business as usual.', color: '' },
+            { id: 48, time: '09:15', msg: 'Kaffee geholt.',                      color: '' }
+        ]
+    };
+    engine.applyRestoredDay(alt);
+    assert.deepEqual(state.logEntries.map(e => e.msg),
+                     ['Modus: MITTWOCH. Business as usual.', 'Kaffee geholt.']);
+});
 await ok('Eine Wochenzeile aus 5.0 kommt mit (Migration)', () => {
     resetState();
     const alt = [
@@ -1216,6 +1256,33 @@ await ok('Der Endbildschirm kennzeichnet Wochen-Enden über das End-Objekt', () 
 });
 
 // -------------------------------------------------------- Steam-Zuordnung
+console.log('Steam-Präsenz:');
+await ok('Die Präsenz reist als Kennung, nicht als Satz', async () => {
+    // Ein fertiger Satz käme bei Steam über %statustext% wörtlich heraus und
+    // zeigte JEDEM Freund die Sprache des Spielers. Eine Kennung löst Steam in
+    // der Sprache dessen auf, der hinsieht — und kein Prüfer hier drin würde
+    // den Unterschied bemerken, weil beides „funktioniert".
+    const { PRESENCE_TOKEN } = await import('../src/engine/presence.js');
+    const { platform } = await import('../src/platform.js');
+    // core.updatePresence, nicht engine.updatePresence: der Aufbau dieser Reihe
+    // ersetzt es oben durch eine Attrappe, und die prüfte sich selbst.
+    const { core } = await import('../src/engine/engine_core.js');
+
+    const gesendet = [];
+    const echt = platform.presence;
+    platform.presence = (token) => gesendet.push(token);
+
+    core.updatePresence('coffee');
+    core.updatePresence('gibtesnicht');
+    platform.presence = echt;
+
+    assert.deepEqual(gesendet, [PRESENCE_TOKEN + 'coffee', PRESENCE_TOKEN + 'fallback']);
+    for (const token of gesendet) {
+        assert.ok(token.startsWith('#'), `keine Steam-Kennung: ${token}`);
+        assert.ok(!/\s/.test(token), `sieht nach einem Satz aus: ${token}`);
+    }
+});
+
 console.log('Steam-Statistiken:');
 await ok('Kein Wochentag wird als Tageslauf gemeldet', () => {
     const src = readFileSync(new URL('../src/platform_steam.js', import.meta.url), 'utf-8');

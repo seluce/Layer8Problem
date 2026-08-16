@@ -6,6 +6,7 @@ import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
+import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
  * The gala runs on its own clock. Twelve stations at half an hour each carry
@@ -215,15 +216,31 @@ export const core = {
         platform.save(this.buildCloudPayload());
     },
 
-    // Maps the current activity onto the status line friends can see.
-    // No-op outside the desktop build.
+    /**
+     * Maps the current activity onto the status line friends can see.
+     * No-op outside the desktop build.
+     *
+     * Sends a TOKEN, not a sentence. Up to 6.0 this passed the finished
+     * `t('presence.coffee')` string, which Steam then printed verbatim through
+     * `#DisplayStatus` = `%statustext%` - so the friends list showed the
+     * language the PLAYER had picked, to everyone looking. Steam resolves a
+     * token per viewer instead: the German friend of an English player reads
+     * German, and the other way round.
+     *
+     * The words themselves stay in src/i18n - they are ours, they belong where
+     * lint-i18n and lint-parity can see them. tools/make-steam-presence.mjs
+     * turns them into the two .vdf files for the Steamworks backend, which is
+     * why the keys below are declared by hand: nothing calls t() on them here
+     * any more.
+     *
+     * i18n-uses: presence.coffee, presence.sidequest, presence.server
+     * i18n-uses: presence.calls, presence.boss, presence.rep
+     * i18n-uses: presence.lunch, presence.party, presence.system
+     * i18n-uses: presence.fallback
+     */
     updatePresence: function(type) {
-        // i18n-uses: presence.coffee, presence.sidequest, presence.server
-        // i18n-uses: presence.calls, presence.boss, presence.rep
-        // i18n-uses: presence.lunch, presence.party, presence.system
-        const KNOWN = ['coffee', 'sidequest', 'server', 'calls', 'boss',
-                       'rep', 'lunch', 'party', 'system'];
-        platform.presence(KNOWN.includes(type) ? t(`presence.${type}`) : t('presence.fallback'));
+        const known = PRESENCE_TYPES.includes(type) ? type : 'fallback';
+        platform.presence(PRESENCE_TOKEN + known);
     },
 
     loadSystem: function() {

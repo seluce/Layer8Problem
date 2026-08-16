@@ -25,6 +25,7 @@ aus dem Repo-Wurzelverzeichnis.
 | Echo-Prüfung | `node tools/check-echoes.mjs <pool> [--n=4]` | nach jedem Übersetzungsblock **und nach jeder Reparatur**, kein Tor |
 | Anführungszeichen | `node tools/normalize-quotes.mjs --dry` | selten, nach Fremdtext-Import |
 | Werte-Prüfer | `node --conditions browser --import ./tools/register.mjs tools/audit-stats.mjs` | gelegentlich, kein Tor |
+| Steam-Präsenz | `node tools/make-steam-presence.mjs` | wenn sich ein `presence.*`-Text ändert; Ausgabe nach Steamworks hochladen |
 
 **Die Reihenfolge einer Content-Sitzung:** schreiben → `lint:data` →
 `report-prose` → `npm test` → `sim`/`sim:week` als Rauchtest → ausliefern.
@@ -538,3 +539,38 @@ Steigt eine, war die letzte Reparatur eine.
 > gehalten, und **jede** Folge sieht einzigartig aus. Ein Werkzeug, das 0
 > meldet, gehört gegen einen bekannten Treffer gehalten: `check-echoes
 > meetings --n=6` muss **22** melden, die Zahl der dreizehnten Sitzung.
+
+
+---
+
+## `make-steam-presence.mjs` — die Freundeslisten-Texte
+
+```bash
+node tools/make-steam-presence.mjs [--out build/steam]
+```
+
+Schreibt `4487580_loc_english.vdf` und `4487580_loc_german.vdf` nach
+`build/steam/`. Die beiden Dateien gehören im Steamworks-Backend unter **Rich
+Presence Localization** hochgeladen.
+
+**Warum es das gibt.** Steam zeigt den Status in der Freundesliste in der
+Sprache **dessen, der hinsieht** — aber nur, wenn das Spiel eine *Kennung*
+schickt (`#Status_coffee`) und Steam sie aus der hochgeladenen Datei auflöst.
+Bis 6.0 schickte das Spiel den fertigen Satz durch `%statustext%`, und damit
+las jeder Freund die Sprache des Spielers.
+
+**Die Sätze bleiben im Repo.** Sie stehen unter `presence.*` in `src/i18n/`, wo
+`lint-i18n` und `lint-parity` sie sehen; das Werkzeug übersetzt sie nur in das
+Upload-Format. Welche Tätigkeiten es gibt, steht in `src/engine/presence.js` —
+runenfrei, damit dieses Werkzeug es in reinem Node lesen kann.
+
+**Es ist mehr als ein Formatierer:** Es bricht ab, wenn eine Tätigkeit ohne Text
+dasteht oder ein Text ohne Tätigkeit. Das erste ergäbe in der Freundesliste ein
+nacktes `#Status_lunch`, das zweite gepflegt aussehende Karteileichen. Ein Test
+in `i18n.test.mjs` hält dieselben zwei Listen gegeneinander.
+
+> **Die Reihenfolge ist keine Geschmacksfrage.** Die Datei muss in Steamworks
+> liegen, **bevor** ein Build ausgeliefert wird, der die neuen Kennungen
+> sendet — sonst steht bei allen Spielern die rohe Kennung in der
+> Freundesliste. `#DisplayStatus` wird weiterhin mitgeschrieben, damit ein
+> Client, der das Update noch nicht hat, unverändert weiterläuft.

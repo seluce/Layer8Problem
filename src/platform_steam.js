@@ -87,9 +87,9 @@ export const desktop = {
         }
     },
 
-    presence: (text) => {
+    presence: (token) => {
         try {
-            ipcRenderer.send('steam-set-status', text);
+            ipcRenderer.send('steam-set-status', token);
         } catch (err) {
             console.warn("Rich presence could not be set.", err);
         }
