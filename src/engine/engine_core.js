@@ -383,11 +383,43 @@ export const core = {
         // keys in the LogFeed.
         this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
 
+        this.refreshBootLogEntry();
+
         // Rebuild display and flow
         for (const key of DAY_TIMERS) this.state[key] = null;
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
+    },
+
+    /**
+     * Restamps the boot line of a restored log with the version that is
+     * actually running.
+     *
+     * init() writes "System v6.0.0 loaded" as the FIRST log entry of a session,
+     * before any day exists, and setDifficulty() does not clear the log - so
+     * that line travels into the day save. Restore it verbatim and the log
+     * announces the version the save was written under while the terminal
+     * header two centimetres above shows the running one. Someone who saved
+     * under 5.0 and resumed after an update read "System v5.0.0" under
+     * "TicketSystem v6.0.0".
+     *
+     * The line is restamped rather than kept because it is not a record of
+     * anything that happened in the office: it is the machine announcing
+     * itself, the same statement the header makes, and it has to be true of the
+     * engine running now. That is what separates it from every other log entry,
+     * which stays exactly as it was written - including its language.
+     *
+     * Found by identity, not by text: id 1 is the first log() of a session, and
+     * init()'s line is the first log() there is. A day that ran long enough to
+     * push it past LOG_MAX_ENTRIES simply has nothing to restamp, and a later
+     * day of a week never carries id 1 because the counter keeps running. No
+     * saved field is read, so saves written before this fix are covered too -
+     * which matters, because those are the only ones that can show it.
+     */
+    refreshBootLogEntry: function() {
+        const boot = (this.state.logEntries ?? []).find(e => e?.id === 1);
+        if (boot) boot.msg = tf('log.systemLoaded', { version: this.VERSION });
     },
 
     /** Restores a saved run and picks up again in a paused state. */
