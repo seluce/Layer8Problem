@@ -10,7 +10,7 @@
  * them: the 552 strings in components, the engine and index.html.
  *
  * It exists because a missing interface string fails QUIETLY. t() falls back to
- * German and then to the key itself, so a typo does not throw - it puts
+ * English and then to the key itself, so a typo does not throw - it puts
  * "settings.langauge" on screen, in small text, in a menu nobody opens twice.
  * Over 552 strings and two languages that is not a risk, it is a certainty.
  *
@@ -158,10 +158,16 @@ scan(join(ROOT, 'index.html'));
 /* ---------- 2) Fallback text in the markup must match the dictionary ---------- */
 
 /*
- * An element may keep its German text between the tags. That is useful - it is
- * what a reader of index.html sees, and it survives a module that fails to
- * load - but it means the sentence exists twice, and two copies drift. Here the
- * copy in the markup is held against de.js.
+ * An element may keep its text between the tags. That is useful - it is what a
+ * reader of index.html sees, and it survives a module that fails to load - but
+ * it means the sentence exists twice, and two copies drift. Here the copy in
+ * the markup is held against en.js.
+ *
+ * Against en.js since 6.0, and that is not cosmetic: the markup IS the
+ * fallback, so it has to say what t() would say when a key goes missing, and
+ * t() falls back to English now. Held against de.js it would have gone on
+ * passing while showing the player the wrong language - the copy would be
+ * consistent with a dictionary nobody falls back to any more.
  *
  * Empty elements are fine: they simply have no fallback. The -html form is
  * skipped, because comparing markup would report every whitespace difference.
@@ -174,12 +180,12 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
     const fallback = html.slice(open + 1, close).replace(/\s+/g, ' ').trim();
     if (!fallback) continue;
     const key = m[1];
-    if (!(key in de)) continue;                       // reported below anyway
-    const wanted = String(de[key]).replace(/\s+/g, ' ').trim();
+    if (!(key in en)) continue;                       // reported below anyway
+    const wanted = String(en[key]).replace(/\s+/g, ' ').trim();
     if (fallback !== wanted) {
-        err(`index.html: Rückfalltext zu "${key}" weicht von de.js ab\n`
+        err(`index.html: Rückfalltext zu "${key}" weicht von en.js ab\n`
           + `      Markup:  "${fallback}"\n`
-          + `      de.js:   "${wanted}"`);
+          + `      en.js:   "${wanted}"`);
     }
 }
 
@@ -212,6 +218,46 @@ for (const form of ['data-i18n', 'data-i18n-html']) {
               + `      Der Text daneben gehört dem Elternknoten und bleibt in jeder Sprache deutsch.\n`
               + `      Gehört in ein <span> um den Text herum.`);
         }
+    }
+}
+
+/* ---------- 2b) data-i18n on an element that holds more than text ---------- */
+
+/*
+ * The same failure as 2a, mirrored. `el.textContent = t(key)` replaces
+ * EVERYTHING inside the element - text and child elements alike - so a mark on
+ * an element that also carries markup silently deletes that markup at startup,
+ * before anyone has switched a language.
+ *
+ * Two sat in index.html and were found on 17.08.2026 by the string pass:
+ *
+ *   <span data-i18n="nav.log">LOG <span id="log-arrow">▼</span></span>
+ *   <p data-i18n="export.hint">Der Code … <span data-i18n="export.hint2">…</span></p>
+ *
+ * The first deleted the arrow that toggleLog() then looked for and did not
+ * find - its `if (arrow)` swallowed the miss, so the indicator was simply
+ * never there on a phone. The second deleted a whole second sentence, in BOTH
+ * languages, along with its own mark.
+ *
+ * Neither check 2 nor 2a can see it: 2 reads the text up to the first `<` and
+ * finds a correct German fallback, 2a finds an element that can perfectly well
+ * hold text. The fix is the one 2a already names - a <span> around the text.
+ *
+ * data-i18n-html is exempt: writing markup is precisely its job.
+ */
+for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
+    const open = html.indexOf('>', m.index);
+    if (open === -1) continue;
+    const tagStart = html.lastIndexOf('<', m.index);
+    const tag = html.slice(tagStart + 1, tagStart + 20).match(/^[a-zA-Z][a-zA-Z0-9-]*/)?.[0];
+    if (!tag) continue;
+    const close = html.toLowerCase().indexOf(`</${tag.toLowerCase()}`, open);
+    if (close === -1) continue;
+    const inner = html.slice(open + 1, close);
+    if (inner.includes('<')) {
+        err(`index.html: data-i18n="${m[1]}" sitzt auf <${tag}>, das noch Markup enthält.\n`
+          + `      textContent ersetzt den ganzen Inhalt — das Markup ist beim Start weg.\n`
+          + `      Gehört in ein <span> nur um den Text herum.`);
     }
 }
 

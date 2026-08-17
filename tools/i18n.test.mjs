@@ -233,9 +233,25 @@ await ok('t() liefert die Sprache, die läuft', async () => {
     assert.equal(i18n.t('language.label'), 'Language');
 });
 
-await ok('Ein fehlender Eintrag fällt auf Deutsch und dann auf den Schlüssel', async () => {
-    await i18n.useLanguage('en');
+await ok('Ein fehlender Eintrag fällt auf Englisch und dann auf den Schlüssel', async () => {
+    // Auf Deutsch gespielt: der Rückfall greift sichtbar, der Schlüssel bleibt
+    // die letzte Stufe. Vor 6.0 zeigte diese Probe nur die letzte Stufe, weil
+    // Deutsch selbst der Rückfall war - sie hätte einen falsch herum gedrehten
+    // Rückfall nicht bemerkt.
+    await i18n.useLanguage('de');
+    assert.equal(i18n.t('language.label'), 'Sprache');
     assert.equal(i18n.t('gibt.es.nicht'), 'gibt.es.nicht');
+
+    // Ein Schlüssel, den nur en.js trägt, gibt es im Bestand nicht - dafür
+    // sorgt Regel 4 des Prüfers. Also wird einer eingesetzt und wieder
+    // weggenommen: ohne Rückfall stünde hier der Schlüssel selbst.
+    const { de } = await import('../src/i18n/de.js');
+    const { en } = await import('../src/i18n/en.js');
+    const key = 'language.label';
+    const kept = de[key];
+    delete de[key];
+    assert.equal(i18n.t(key), en[key], 'fällt nicht auf Englisch');
+    de[key] = kept;
 });
 
 await ok('Beide Wörterbücher tragen dieselben Schlüssel', async () => {

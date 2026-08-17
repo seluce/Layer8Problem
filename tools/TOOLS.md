@@ -22,6 +22,7 @@ the repository root.
 | Parity checker | `npm run lint:parity` | after **every** translation, gate at 0 errors |
 | Field scanner | `node tools/scan-fields.mjs <pool> [--list] [--german] [--key=field]` | **proof of completeness** for a translation block, no gate |
 | Echo check | `node tools/check-echoes.mjs <pool> [--n=4]` | after every translation block **and after every repair**, no gate |
+| String pass | `node tools/scan-strings.mjs [path …] [--sentences] [--nouns] [--all-attrs]` | before claiming a **code** surface is done, no gate |
 | Quotation marks | `node tools/normalize-quotes.mjs --dry` | rarely, after importing foreign text |
 | Steam presence | `node tools/make-steam-presence.mjs` | when a `presence.*` string changes; upload the output to Steamworks |
 | Steam achievements | `node tools/make-steam-achievements.mjs` | when an achievement title or `hint` changes, or an achievement is added |
@@ -364,7 +365,7 @@ npm run lint:all        # data (both trees) + interface strings
 **A gate at 0 errors and 0 warnings**, like the data checker.
 
 It exists because a missing interface string goes wrong **quietly**. `t()` falls
-back to German and then to the key — so a typo does not throw but writes
+back to English and then to the key — so a typo does not throw but writes
 `settings.langauge` in small print into a menu nobody opens twice. At 651 keys
 and two languages that is not a possibility but a certainty.
 
@@ -375,6 +376,13 @@ What is checked:
 3. No entry is unused — otherwise a rename leaves the old one standing.
 4. Entries whose English reads verbatim like the German. During the interface
    pass that is the work list; afterwards it is a finding.
+5. The fallback text in `index.html` against **`en.js`** — the markup *is* the
+   fallback, so it has to say what `t()` says when a key goes missing.
+6. Two ways a mark destroys what it sits on. `data-i18n` assigns `textContent`,
+   which owns the whole element: on an empty one (**2a**) the text goes nowhere
+   and the sentence beside it belongs to the parent; on one that carries child
+   markup (**2b**) that markup is deleted at startup, in every language. A
+   `<span>` around the text alone fixes both.
 
 **The three markup forms** (details in `src/i18n/i18n.svelte.js`):
 
@@ -499,6 +507,69 @@ sieve all the same:** „Seit 2019 in Kraft" carries none of its words, and
 conversely it fires on deliberately German proper nouns (`Schnösel`, `Jürgen`,
 `Döner`). **Every hit belongs read, not counted** — a detector that filters out
 proper nouns passes every probe and checks nothing any more.
+
+---
+
+## `scan-strings.mjs` — every literal in the code, with no language filter
+
+```
+node tools/scan-strings.mjs                 # the default space, 78 files
+node tools/scan-strings.mjs src/engine      # a named surface
+node tools/scan-strings.mjs --sentences     # only strings containing a space
+node tools/scan-strings.mjs --nouns         # only capitalised single words
+node tools/scan-strings.mjs --all-attrs     # structural attributes as well
+```
+
+Never a gate, always exits 0. This is the counterpart to `scan-fields.mjs`: that
+one proves a **data** surface complete, this one a **code** surface. Neither
+judges — both lay out everything and leave the reading to a person.
+
+**It has no idea what German is, and that is the whole design.** Four earlier
+passes searched for German words and three of them lost something: capitals
+without umlauts (`KAFFEE`, `DIENSTGANG` — the four buttons of the action bar
+stood in no finding), text nodes spanning several lines, and text nodes with
+`{…}` in them. The umlaut filter is no better: over the 401 strings of
+`engine_ui.js` it produced exactly one hit, and that was the single place that
+was *not* to be changed.
+
+So the file goes through a real parser instead:
+
+| Type | How | Kind in the output |
+|---|---|---|
+| `.js` `.mjs` `.cjs` | acorn; comments fall away with the parser | `str`, `tpl` |
+| `.svelte` `.html` | script blocks to acorn, style and comments dropped, Svelte expressions cut out by **counting** braces | `text`, `attr` |
+
+Template literals are cut into their **pieces without the expressions**:
+`` `Tag ${n}` `` yields `Tag ` and nothing of `n`. Static attribute values are
+shown too — they are neither text node nor script string and were in no earlier
+pass; `alt` and `placeholder` live there.
+
+**The search space is named in the output**, because "the interface is done" is
+a sentence about a search space and is worthless without one. A run without
+arguments covers `src/engine`, `src/components`, `src/i18n/i18n.svelte.js`,
+`src/main.js`, `src/engine.js`, `src/data.js`, `src/tutorial.js`, both
+`platform*.js`, `index.html`, `electron/main.cjs`, `vite.config.js` and
+`tools/`. Skipped, each with its reason printed: the two dictionaries (`de.js`
+is German by trade, `en.js` is held against it by `lint-i18n` rule 4) and
+`src/data/` (that is `lint-parity`'s beat).
+
+**What is left out is a decision about the ROLE of a string, never about its
+language** — module specifiers are paths, `class` and `viewBox` are markup.
+`value` and `content` are deliberately *not* on that list although they look
+structural: an `<option value>` is a word somebody chose. `--all-attrs` shows
+everything, and holding one run against the other is how you check that the
+list hides nothing. The moment a filter asks "does this look German?" the tool
+has become one of the three passes above.
+
+**Two second grips** for when a run is too long to read in one sitting:
+`--sentences` (strings with a space — those are the sentences) and `--nouns`
+(capitalised single words — German nouns sit there). Neither catches anything
+extra; they only make 400 lines bearable.
+
+**acorn is not in `package.json`.** It arrives with Vite, and
+`normalize-quotes.mjs` has been importing it undeclared for just as long. That
+holds today and is worth a `devDependencies` entry the next time the file is
+opened.
 
 ---
 

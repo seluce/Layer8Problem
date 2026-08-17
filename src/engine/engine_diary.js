@@ -207,7 +207,18 @@ function factsOf(state, endReason) {
     };
 }
 
-const WEEKDAY = { easy: 'Freitag', normal: 'Mittwoch', hard: 'Montag' };
+/**
+ * Which calendar day a difficulty stands for, as an index into WEEK_DAY_KEYS:
+ * Friday, Wednesday, Monday.
+ *
+ * Held as an index and resolved through dayName(), not as a word. Up to here
+ * this was `{ easy: 'Freitag', … }`, and the word went straight into {weekday}
+ * of the diary prose - so the English day mode wrote "A Montag straight out of
+ * the textbook". It is the same failure WEEK_DAY_KEYS was built for, one file
+ * further on, and it survived because nothing compares against this value: it
+ * is only ever printed.
+ */
+const WEEKDAY_INDEX = { easy: 4, normal: 2, hard: 0 };
 
 /**
  * @returns {{paragraphs: {text: string, tone: string}[]}} in reading order.
@@ -234,7 +245,7 @@ export function buildDiary(state, endReason, partyText = '') {
         streak: String(day.streak), restdays: String(day.weekRest),
         // In a week {weekday} is the real calendar day - the difficulty
         // mapping would claim Mittwoch five times in a row.
-        weekday: day.week ? dayName(day.weekDay - 1) : WEEKDAY[day.difficulty],
+        weekday: dayName(day.week ? day.weekDay - 1 : WEEKDAY_INDEX[day.difficulty]),
         party: partyText
     };
 

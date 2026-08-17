@@ -275,14 +275,25 @@ export function applyStaticStrings(root = document) {
 /**
  * An interface string.
  *
- * Falls back to German and then to the key itself, so a missing entry shows up
+ * Falls back to English and then to the key itself, so a missing entry shows up
  * as a readable marker on screen rather than as "undefined" - during a
  * translation that runs over months, that difference matters.
+ *
+ * The fallback was German up to 6.0, for the plain reason that German was the
+ * only language there was. Now that it is not, the choice is about who reads
+ * the gap: a German player meeting an English sentence has lost the joke, a
+ * player of any other language meeting a German one has lost the sentence. So
+ * it points at FALLBACK, the same language every other fallback in the build
+ * points at - src/data.js does the same for the data tree, and index.html
+ * carries its static shell in English for the same reason.
+ *
+ * The German tree remains the SOURCE. That is a question about where writing
+ * starts, not about what to show when a key is missing.
  *
  * @param {string} key  dotted path, e.g. 'settings.language'
  */
 export function t(key) {
-    return DICTIONARIES[active]?.[key] ?? DICTIONARIES.de?.[key] ?? key;
+    return DICTIONARIES[active]?.[key] ?? DICTIONARIES[FALLBACK]?.[key] ?? key;
 }
 
 /**

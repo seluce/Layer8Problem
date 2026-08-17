@@ -82,6 +82,13 @@ export const currentLanguage = () => language;
  * The duplication is two lines and cannot drift: both branches take the same
  * name. Plain Node - which is how the tools import this module - resolves
  * either specifier directly.
+ *
+ * **The `de` branch is "not en", not a fallback.** It reads like one now that
+ * FALLBACK_LANGUAGE says 'en', and the two would look as though they disagree.
+ * They never meet: every caller comes through LANGUAGES, so `lang` is 'de' or
+ * 'en' and this ternary only ever picks the tree it was asked for.
+ * FALLBACK_LANGUAGE is for the other case - the asked-for tree failing to
+ * arrive - and by then the branch here has already done its job.
  */
 const importPool = (lang, name) => (lang === 'en'
     ? import(`./data/en/data_${name}.js`)
@@ -114,8 +121,21 @@ export async function loadCore(lang = language) {
     }
 }
 
-/** The language every install is guaranteed to have. */
-const FALLBACK_LANGUAGE = 'de';
+/**
+ * The tree to load when the wanted one will not come.
+ *
+ * A different case from a missing dictionary key, and worth its own thought:
+ * this is the whole prose corpus, not one string. Both trees ship in the same
+ * build, so neither is the safer bet technically - which makes it a question
+ * about the reader. Whoever ends up here is reading a language they did not
+ * ask for either way; English is the one more of them can read.
+ *
+ * Note the asymmetry this creates, because it is the real cost: the language
+ * named HERE is the one whose own failure is fatal. loadCore() rethrows rather
+ * than recurse, so a broken English tree now takes the game down instead of
+ * quietly serving German. That is the trade, and it is deliberate.
+ */
+const FALLBACK_LANGUAGE = 'en';
 
 async function fillCore(lang) {
     const loaded = await Promise.all(CORE_NAMES.map(name => importPool(lang, name)));

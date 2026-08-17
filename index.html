@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,7 +77,7 @@
 			<!-- Head: the pitch is read once, so it spans the full width instead
 			     of squeezing the mode choice down the left column. -->
 			<header class="flex flex-col sm:flex-row items-center gap-5 md:gap-8 border-b border-slate-700/50 pb-6 mb-6">
-				<img src="assets/img/logo/logo.png" alt="Layer8Problem Logo" data-i18n-attr="alt=intro.logoAlt"
+				<img src="assets/img/logo/logo.png" alt="Layer8Problem logo" data-i18n-attr="alt=intro.logoAlt"
 				     class="w-44 md:w-52 shrink-0 drop-shadow-[0_0_20px_rgba(59,130,246,0.15)] pointer-events-none select-none hover:scale-105 transition-transform duration-700">
 				<h1 class="sr-only">Layer8Problem</h1>
 				<!-- One string, not six: the sentence carries a <strong> in the
@@ -91,17 +91,17 @@
 
 				<!-- Choice first: both modes are peers, so they get the same weight. -->
 				<div class="flex flex-col gap-3">
-					<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-1" data-i18n="intro.modes.title">Wie viel Wahnsinn darf es sein?</h2>
+					<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-1" data-i18n="intro.modes.title">How much madness would you like?</h2>
 
 					<button onclick="engine.start()"
                         class="group relative overflow-hidden w-full text-left bg-linear-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-xl p-4 flex items-center gap-4 transition-all shadow-[0_0_20px_rgba(0,0,0,0.35)] hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(0,0,0,0.5)]">
                         <img src="assets/img/ui/mode_day.webp" alt="" width="56" height="56" class="w-14 h-14 shrink-0 select-none drop-shadow-md group-hover:scale-105 transition-transform" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;▶&lt;/span&gt;'">
                         <span class="flex flex-col min-w-0">
                             <span class="flex items-center gap-2 flex-wrap">
-                                <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.day.name">Arbeitstag</span>
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.day.badge">Einzellauf</span>
+                                <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.day.name">Workday</span>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.day.badge">Single run</span>
                             </span>
-                            <span class="text-[11px] leading-snug text-blue-100/90 mt-1" data-i18n="intro.mode.day.desc">Eine Schicht von 08:00 bis 16:30 Uhr. Abends ist alles vergessen.</span>
+                            <span class="text-[11px] leading-snug text-blue-100/90 mt-1" data-i18n="intro.mode.day.desc">One shift, 08:00 to 16:30. By the evening it is all forgotten.</span>
                         </span>
                     </button>
 
@@ -110,13 +110,13 @@
                         <img src="assets/img/ui/mode_week.webp" alt="" width="56" height="56" class="w-14 h-14 shrink-0 select-none drop-shadow-md group-hover:scale-105 transition-transform" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;🗓&lt;/span&gt;'">
                         <span class="flex flex-col min-w-0">
                             <span class="flex items-center gap-2 flex-wrap">
-                                <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.week.name">Arbeitswoche</span>
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.week.badge">Kampagne</span>
+                                <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.week.name">Working week</span>
+                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.week.badge">Campaign</span>
                             </span>
-                            <span class="text-[11px] leading-snug text-purple-100/90 mt-1" data-i18n="intro.mode.week.desc">Montag bis Freitag am Stück. Tickets, Werte und Rucksack überleben die Nacht – ein Rauswurf beendet die Woche.</span>
+                            <span class="text-[11px] leading-snug text-purple-100/90 mt-1" data-i18n="intro.mode.week.desc">Monday to Friday in one go. Tickets, stats and backpack survive the night – getting thrown out ends the week.</span>
                             <span id="week-tutorial-hint" class="text-[10px] leading-snug text-amber-200/90 mt-1.5 flex items-start gap-1.5">
                                 <span aria-hidden="true">⚠</span>
-                                <span data-i18n="intro.mode.week.tutorialHint">Das Tutorial läuft nur im Arbeitstag. Für den ersten Durchgang ist der Einzeltag die sanftere Schule.</span>
+                                <span data-i18n="intro.mode.week.tutorialHint">The tutorial only runs in Workday. For a first attempt the single day is the gentler school.</span>
                             </span>
                         </span>
                     </button>
@@ -124,11 +124,11 @@
 					<div class="grid grid-cols-2 gap-3 pt-2">
 						<button onclick="engine.openArchive()"
                             class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
-                            <img src="assets/img/ui/ui_archive.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🏆'"> <span data-i18n="intro.archive">Archiv</span>
+                            <img src="assets/img/ui/ui_archive.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🏆'"> <span data-i18n="intro.archive">Archive</span>
                         </button>
 						<button onclick="engine.openSettings()"
                             class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
-                            <img src="assets/img/ui/ui_menu.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='⚙️'"> <span data-i18n="intro.settings">Optionen</span>
+                            <img src="assets/img/ui/ui_menu.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='⚙️'"> <span data-i18n="intro.settings">Options</span>
                         </button>
 					</div>
 
@@ -149,11 +149,11 @@
 					<div class="platform-desktop grid grid-cols-2 gap-3">
 						<button onclick="engine.toggleFullscreen()"
                             class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500 text-slate-300 hover:text-cyan-400 py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
-                            <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🔲'"> <span data-i18n="intro.fullscreen">Vollbild</span>
+                            <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🔲'"> <span data-i18n="intro.fullscreen">Full screen</span>
                         </button>
 						<button onclick="engine.quitGame()"
 							class="group bg-slate-800 hover:bg-red-950/40 border border-slate-600 hover:border-red-500 text-slate-300 hover:text-red-400 py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
-							<span class="text-base text-red-500/80 group-hover:text-red-500 group-hover:scale-125 transition-transform">⏻</span> <span data-i18n="intro.quit">Beenden</span>
+							<span class="text-base text-red-500/80 group-hover:text-red-500 group-hover:scale-125 transition-transform">⏻</span> <span data-i18n="intro.quit">Quit</span>
 						</button>
 					</div>
 				</div>
@@ -161,7 +161,7 @@
 				<!-- The rules, one line each. Same order as the header bar reads. -->
 				<aside class="bg-black/30 p-5 lg:p-6 rounded-xl border border-slate-700/80 text-xs font-mono shadow-inner">
 					<h2 class="text-slate-300 font-black border-b border-slate-700/50 pb-3 mb-4 tracking-widest uppercase flex items-center gap-2 text-[11px]">
-						<img src="assets/img/ui/ui_book.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='📋'"> <span data-i18n="intro.handbook.title">Überlebens-Handbuch</span>
+						<img src="assets/img/ui/ui_book.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='📋'"> <span data-i18n="intro.handbook.title">Survival handbook</span>
 					</h2>
 					<ul class="space-y-3.5">
                         <li class="flex gap-3 items-center group">
@@ -170,7 +170,7 @@
                             </span>
                             <span class="flex flex-col min-w-0">
                                 <strong class="text-purple-400 tracking-wider text-[11px]" data-i18n="intro.handbook.tickets.name">TICKETS</strong>
-                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.tickets.desc">Alle 30 Minuten kommt eines dazu. Ab 10 offenen Tickets ist Schluss.</span>
+                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.tickets.desc">One more every 30 minutes. At 10 open tickets it is over.</span>
                             </span>
                         </li>
                         <li class="flex gap-3 items-center group">
@@ -178,8 +178,8 @@
                                 <img src="assets/img/ui/ui_lazy.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-emerald-400 tracking-wider text-[11px]" data-i18n="intro.handbook.lazy.name">FAULHEIT</strong>
-                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.lazy.desc">Zu hoch? Der Chef bestraft Fehler härter.</span>
+                                <strong class="text-emerald-400 tracking-wider text-[11px]" data-i18n="intro.handbook.lazy.name">LAZINESS</strong>
+                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.lazy.desc">Too high? The boss punishes mistakes harder.</span>
                             </span>
                         </li>
                         <li class="flex gap-3 items-center group">
@@ -188,7 +188,7 @@
                             </span>
                             <span class="flex flex-col min-w-0">
                                 <strong class="text-orange-400 tracking-wider text-[11px]" data-i18n="intro.handbook.aggro.name">AGGRO</strong>
-                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.aggro.desc">Bei 100 % öffnest du einmalig dein Ventil. Danach folgt der Rage-Quit.</span>
+                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.aggro.desc">At 100 % you get one blow-off. After that comes the rage quit.</span>
                             </span>
                         </li>
                         <li class="flex gap-3 items-center group">
@@ -196,8 +196,8 @@
                                 <img src="assets/img/ui/ui_eye.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-red-400 tracking-wider text-[11px]" data-i18n="intro.handbook.radar.name">CHEF-RADAR</strong>
-                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.radar.desc">Bei 100 % gibt es eine Abmahnung. Danach folgt die Kündigung.</span>
+                                <strong class="text-red-400 tracking-wider text-[11px]" data-i18n="intro.handbook.radar.name">BOSS RADAR</strong>
+                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.radar.desc">At 100 % there is a written warning. After that, the sack.</span>
                             </span>
                         </li>
                         <li class="flex gap-3 items-center group">
@@ -206,7 +206,7 @@
                             </span>
                             <span class="flex flex-col min-w-0">
                                 <strong class="text-amber-400 tracking-wider text-[11px]" data-i18n="intro.handbook.loot.name">LOOT</strong>
-                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.loot.desc">Finde Items, um Probleme kreativ zu lösen.</span>
+                                <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.loot.desc">Find items to solve problems creatively.</span>
                             </span>
                         </li>
 					</ul>
@@ -240,7 +240,7 @@
                             border-b border-slate-800 pb-1.5 sm:pb-1 mb-2 shrink-0">
                     <div class="contents">
                         <div id="btn-inventory" onclick="engine.openInventory()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 -ml-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="nav.inventory">INVENTAR</span></span>
+                            <span class="text-[10px] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="nav.inventory">INVENTORY</span></span>
                             <!-- Rendered by src/components/InventoryBadge.svelte -->
                             <span id="inv-badge"></span>
                         </div>
@@ -250,20 +250,20 @@
                         </div>
 
                         <div onclick="engine.openKnowledge()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center justify-between group">
-                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">WISSEN</span></span>
+                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">KNOWLEDGE</span></span>
                         </div>
 
                         <div onclick="engine.openArchive()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIV</span></span>
+                            <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIVE</span></span>
                         </div>
 
                         <div onclick="engine.openSettings()" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-1.5">
-                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'"><span data-i18n="nav.settings">EINSTELLUNGEN</span></span>
+                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'"><span data-i18n="nav.settings">SETTINGS</span></span>
                         </div>
                     </div>
 
-                    <span onclick="engine.toggleLog()" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto" data-i18n="nav.log">
-                        LOG <span id="log-arrow" class="text-[8px] lg:hidden">▼</span>
+                    <span onclick="engine.toggleLog()" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto">
+                        <span data-i18n="nav.log">LOG</span> <span id="log-arrow" class="text-[8px] lg:hidden">▼</span>
                     </span>
                 </div>
                 
@@ -285,14 +285,14 @@
 <!-- INVENTAR MODAL START -->		
 	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
-            <button onclick="engine.closeInventory()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-            <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="inv.title">DEIN INVENTAR</span></h2>
+            <button onclick="engine.closeInventory()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="inv.title">YOUR INVENTORY</span></h2>
             
             <!-- Rendered by src/components/InventoryFull.svelte -->
             <div id="full-inventory-grid"></div>
             
             <div class="mt-6 text-center">
-                <button onclick="engine.closeInventory()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Schließen</button>
+                <button onclick="engine.closeInventory()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Close</button>
             </div>
         </div>
     </div>
@@ -311,14 +311,14 @@
                     📦
                 </div>
                 <div class="flex flex-col min-w-0">
-                    <span id="item-confirm-kind" class="text-[10px] font-bold uppercase tracking-widest text-amber-500" data-i18n="item.confirm.title">Gegenstand benutzen</span>
+                    <span id="item-confirm-kind" class="text-[10px] font-bold uppercase tracking-widest text-amber-500" data-i18n="item.confirm.title">Use item</span>
                     <h3 id="item-confirm-title" class="text-lg font-black text-white leading-tight mt-0.5">ITEM NAME</h3>
                 </div>
             </div>
 
             <div class="p-5 space-y-3">
                 <div>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500" data-i18n="item.confirm.effect">Wirkung</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500" data-i18n="item.confirm.effect">Effect</span>
                     <p id="item-confirm-desc" class="text-emerald-400 font-bold text-sm leading-snug mt-0.5">Effect: ???</p>
                 </div>
 
@@ -333,7 +333,7 @@
             <div class="grid grid-cols-2 gap-3 p-5 pt-0">
                 <button onclick="engine.closeItemConfirm()"
                         class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors" data-i18n="common.cancel">
-                    Abbrechen
+                    Cancel
                 </button>
                 <!-- Two buttons rather than one that gets relabelled: the
                      engine hides whichever the current question does not
@@ -341,11 +341,11 @@
                      cost an afternoon elsewhere. -->
                 <button id="item-confirm-use" onclick="engine.confirmUseItem()"
                         class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/40 text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all hover:scale-[1.03]" data-i18n="item.confirm.use">
-                    Benutzen
+                    Use
                 </button>
                 <button id="item-confirm-discard" onclick="engine.confirmDiscardItem()"
                         class="hidden bg-red-950/40 hover:bg-red-900/50 border border-red-900/60 hover:border-red-600 text-red-300 hover:text-red-200 py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors" data-i18n="item.confirm.discard">
-                    Wegwerfen
+                    Throw away
                 </button>
             </div>
         </div>
@@ -355,14 +355,14 @@
 <!-- KOLLEGIUM / TEAM MODAL START -->	
 	<div id="team-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box accent-slate bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button onclick="engine.closeTeam()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_team.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='👥'"><span data-i18n="team.title">DAS KOLLEGIUM (Die Verdächtigen)</span></h2>
+            <button onclick="engine.closeTeam()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_team.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='👥'"><span data-i18n="team.title">THE COLLEAGUES (The Usual Suspects)</span></h2>
             
             <div id="team-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 </div>
             
             <div class="mt-6 text-center">
-                <button onclick="engine.closeTeam()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded-sm text-xs font-bold uppercase" data-i18n="team.close">Zurück an die Arbeit</button>
+                <button onclick="engine.closeTeam()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded-sm text-xs font-bold uppercase" data-i18n="team.close">Back to work</button>
             </div>
         </div>
     </div>
@@ -380,12 +380,12 @@
                     <img src="assets/img/ui/ui_archive.webp" alt="" width="40" height="40" class="w-9 h-9 md:w-10 md:h-10 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='🏆'">
                     <div class="flex flex-col min-w-0">
                     <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-blue-400 uppercase tracking-widest mb-1" data-i18n="archive.title">
-                        Karriere-Fortschritt
+                        Career progress
                     </h2>
-                    <p class="text-xs md:text-sm text-slate-400 font-mono" data-i18n="archive.subtitle">Deine gesammelten Werke des Wahnsinns.</p>
+                    <p class="text-xs md:text-sm text-slate-400 font-mono" data-i18n="archive.subtitle">Your collected works of madness.</p>
                     </div>
                 </div>
-                <button onclick="engine.closeArchive()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+                <button onclick="engine.closeArchive()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
             </div>
 
             <div id="archive-content" class="p-4 md:p-5 overflow-y-auto flex-1">
@@ -404,12 +404,12 @@
                     <img src="assets/img/ui/ui_knowledge.webp" alt="" width="40" height="40" class="w-9 h-9 md:w-10 md:h-10 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='\u{1F4D6}'">
                     <div class="flex flex-col min-w-0">
                         <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-400 uppercase tracking-widest mb-1" data-i18n="knowledge.title">
-                            Wissen
+                            Knowledge
                         </h2>
-                        <p class="text-xs md:text-sm text-slate-400 font-mono" data-i18n="knowledge.subtitle">Was du über dieses Haus herausgefunden hast.</p>
+                        <p class="text-xs md:text-sm text-slate-400 font-mono" data-i18n="knowledge.subtitle">What you have worked out about this place.</p>
                     </div>
                 </div>
-                <button onclick="engine.closeKnowledge()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-2xl leading-none">&times;</button>
+                <button onclick="engine.closeKnowledge()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-2xl leading-none">&times;</button>
             </div>
 
             <!-- Fixed height, not max-height: switching tabs changes how many
@@ -433,115 +433,115 @@
     <div id="resume-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
             <div class="mb-3"><img src="assets/img/ui/ui_clock.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;🕗&lt;/span&gt;'"></div>
-            <h2 class="text-2xl font-black text-white mb-2" data-i18n="resume.title">SITZUNG UNTERBROCHEN</h2>
-            <p class="text-slate-400 text-sm mb-1" data-i18n="resume.subtitle">Dein letzter Durchlauf wurde nicht zu Ende gebracht.</p>
+            <h2 class="text-2xl font-black text-white mb-2" data-i18n="resume.title">SESSION INTERRUPTED</h2>
+            <p class="text-slate-400 text-sm mb-1" data-i18n="resume.subtitle">Your last run was never finished.</p>
             <p id="resume-info" class="text-[11px] font-mono text-blue-400 mb-6"></p>
 
             <div class="flex flex-col sm:flex-row gap-3">
                 <button onclick="engine.resumeDay()"
                         class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors shadow-lg" data-i18n="resume.continue">
-                    Weiterarbeiten
+                    Carry on
                 </button>
                 <button onclick="engine.discardDay()"
                         class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors" data-i18n="resume.discard">
-                    Verwerfen
+                    Discard
                 </button>
             </div>
-            <p class="text-[10px] text-slate-500 mt-4" data-i18n="resume.discardHint">Verwerfen löscht den Zwischenstand endgültig.</p>
+            <p class="text-[10px] text-slate-500 mt-4" data-i18n="resume.discardHint">Discarding deletes the unfinished run for good.</p>
         </div>
     </div>
 
     <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
-            <h2 class="text-3xl font-black text-white mb-2" data-i18n="diff.title">WÄHLE DEINEN TAG</h2>
-            <p class="text-slate-400 mb-8" data-i18n="diff.subtitle">Wie sehr hasst du dein Leben heute?</p>
+            <h2 class="text-3xl font-black text-white mb-2" data-i18n="diff.title">CHOOSE YOUR DAY</h2>
+            <p class="text-slate-400 mb-8" data-i18n="diff.subtitle">How much do you hate your life today?</p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button onclick="engine.setDifficulty('easy')" class="group relative bg-slate-800 border border-green-500 hover:bg-green-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/day_easy.webp" alt="Abgerissenes Kalenderblatt: Freitag" data-i18n-attr="alt=diff.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🍺&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="diff.easy.name">FREITAG</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.easy.motto">"Hoch die Hände, Wochenende!"</div>
+                    <img src="assets/img/difficulty/day_easy.webp" alt="Torn-off calendar page: Friday" data-i18n-attr="alt=diff.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🍺&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="diff.easy.name">FRIDAY</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.easy.motto">"Hands in the air, the weekend is here!"</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-green-500" data-i18n="diff.easy.p1">✔ Weniger Tickets</li>
-                        <li class="text-green-500" data-i18n="diff.easy.p2">✔ Kollegen sind entspannt</li>
-                        <li class="text-green-500" data-i18n="diff.easy.p3">✔ Geringerer Multiplikator (0.8x)</li>
+                        <li class="text-green-500" data-i18n="diff.easy.p1">✔ Fewer tickets</li>
+                        <li class="text-green-500" data-i18n="diff.easy.p2">✔ Colleagues are relaxed</li>
+                        <li class="text-green-500" data-i18n="diff.easy.p3">✔ Lower multiplier (0.8x)</li>
                     </ul>
                 </button>
 
                 <button onclick="engine.setDifficulty('normal')" class="group relative bg-slate-800 border border-blue-500 hover:bg-blue-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/day_normal.webp" alt="Kalenderblatt: Mittwoch" data-i18n-attr="alt=diff.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;☕&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-blue-400 mb-2" data-i18n="diff.normal.name">MITTWOCH</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.normal.motto">"Bergfest. Der Wahnsinn ist Routine."</div>
+                    <img src="assets/img/difficulty/day_normal.webp" alt="Calendar page: Wednesday" data-i18n-attr="alt=diff.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;☕&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-blue-400 mb-2" data-i18n="diff.normal.name">WEDNESDAY</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.normal.motto">"Halfway there. The madness is routine."</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-blue-500" data-i18n="diff.normal.p1">● Standard Wahnsinn</li>
-                        <li class="text-blue-500" data-i18n="diff.normal.p2">● Normale Ticket-Rate</li>
-                        <li class="text-blue-500" data-i18n="diff.normal.p3">● Standard Multiplikator (1.0x)</li>
+                        <li class="text-blue-500" data-i18n="diff.normal.p1">● Standard madness</li>
+                        <li class="text-blue-500" data-i18n="diff.normal.p2">● Normal ticket rate</li>
+                        <li class="text-blue-500" data-i18n="diff.normal.p3">● Standard multiplier (1.0x)</li>
                     </ul>
                 </button>
 
                 <button onclick="engine.setDifficulty('hard')" class="group relative bg-slate-800 border border-red-600 hover:bg-red-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/day_hard.webp" alt="Zerknittertes Kalenderblatt mit Kaffeefleck: Montag" data-i18n-attr="alt=diff.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;💀&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="diff.hard.name">MONTAG</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.hard.motto">"Warum tue ich mir das an?"</div>
+                    <img src="assets/img/difficulty/day_hard.webp" alt="Crumpled calendar page with a coffee stain: Monday" data-i18n-attr="alt=diff.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;💀&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="diff.hard.name">MONDAY</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.hard.motto">"Why am I doing this to myself?"</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-red-500" data-i18n="diff.hard.p1">⚠ Startet mit 2 Tickets</li>
-                        <li class="text-red-500" data-i18n="diff.hard.p2">⚠ Erhöhte Ticket-Rate</li>
-                        <li class="text-red-500" data-i18n="diff.hard.p3">⚠ Erhöhter Multiplikator (1.25x)</li>
+                        <li class="text-red-500" data-i18n="diff.hard.p1">⚠ Starts with 2 tickets</li>
+                        <li class="text-red-500" data-i18n="diff.hard.p2">⚠ Higher ticket rate</li>
+                        <li class="text-red-500" data-i18n="diff.hard.p3">⚠ Higher multiplier (1.25x)</li>
                     </ul>
                 </button>
             </div>
 
             <button onclick="engine.hideOverlay('difficulty-modal'); engine.showOverlay('intro-modal');"
                     class="mt-6 text-[11px] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
-                ← Zurück
+                ← Back
             </button>
         </div>
     </div>
 
     <div id="week-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
-            <h2 class="text-3xl font-black text-white mb-2" data-i18n="week.title">WÄHLE DEINEN ZUSTAND</h2>
-            <p class="text-slate-400 mb-2" data-i18n="week.subtitle">Fünf Tage am Stück. Tickets, Werte und Rucksack überleben die Nacht.</p>
-            <p class="text-[11px] text-purple-300 font-mono mb-8" data-i18n="week.warning">⚠ Ventil und Abmahnung gibt es nur EINMAL pro Woche.</p>
+            <h2 class="text-3xl font-black text-white mb-2" data-i18n="week.title">CHOOSE YOUR CONDITION</h2>
+            <p class="text-slate-400 mb-2" data-i18n="week.subtitle">Five days in a row. Tickets, stats and backpack survive the night.</p>
+            <p class="text-[11px] text-purple-300 font-mono mb-8" data-i18n="week.warning">⚠ The blow-off and the written warning happen ONCE per week.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button onclick="engine.setWeekDifficulty('easy')" class="group relative bg-slate-800 border border-green-500 hover:bg-green-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/week_easy.webp" alt="Volle, dampfende Kaffeetasse" data-i18n-attr="alt=week.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🌱&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="week.easy.name">ERHOLT</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.easy.motto">"Der Urlaub ist zwei Wochen her. Noch wirkt er nach."</div>
+                    <img src="assets/img/difficulty/week_easy.webp" alt="A full, steaming cup of coffee" data-i18n-attr="alt=week.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🌱&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="week.easy.name">RESTED</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.easy.motto">"The holiday was a fortnight ago. It is still working."</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-green-500" data-i18n="week.easy.p1">✔ Erholsame Nächte</li>
-                        <li class="text-green-500" data-i18n="week.easy.p2">✔ 3 Ausreden (Vorrat bis 5)</li>
-                        <li class="text-green-500" data-i18n="week.easy.p3">✔ Sanfter Einstieg (0.75x, steigend)</li>
+                        <li class="text-green-500" data-i18n="week.easy.p1">✔ Restful nights</li>
+                        <li class="text-green-500" data-i18n="week.easy.p2">✔ 3 excuses (stock up to 5)</li>
+                        <li class="text-green-500" data-i18n="week.easy.p3">✔ Gentle start (0.75x, rising)</li>
                     </ul>
                 </button>
 
                 <button onclick="engine.setWeekDifficulty('normal')" class="group relative bg-slate-800 border border-amber-500 hover:bg-amber-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/week_normal.webp" alt="Halb leere Kaffeetasse mit Fleckenrand" data-i18n-attr="alt=week.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;😮‍💨&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-amber-400 mb-2" data-i18n="week.normal.name">GENERVT</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.normal.motto">"Die Woche fängt an wie die letzte aufgehört hat."</div>
+                    <img src="assets/img/difficulty/week_normal.webp" alt="A half-empty cup of coffee with a ring stain" data-i18n-attr="alt=week.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;😮‍💨&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-amber-400 mb-2" data-i18n="week.normal.name">FED UP</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.normal.motto">"The week starts the way the last one ended."</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-amber-500" data-i18n="week.normal.p1">● 1 Ticket wartet schon am Montag</li>
-                        <li class="text-amber-500" data-i18n="week.normal.p2">● Mäßige Erholung, 2 Ausreden</li>
-                        <li class="text-amber-500" data-i18n="week.normal.p3">● Multiplikator 0.85x, steigend</li>
+                        <li class="text-amber-500" data-i18n="week.normal.p1">● 1 ticket already waiting on Monday</li>
+                        <li class="text-amber-500" data-i18n="week.normal.p2">● Middling recovery, 2 excuses</li>
+                        <li class="text-amber-500" data-i18n="week.normal.p3">● Multiplier 0.85x, rising</li>
                     </ul>
                 </button>
 
                 <button onclick="engine.setWeekDifficulty('hard')" class="group relative bg-slate-800 border border-red-600 hover:bg-red-900/20 p-6 rounded-xl transition-all hover:scale-105">
-                    <img src="assets/img/difficulty/week_hard.webp" alt="Umgekippte, gesprungene Kaffeetasse" data-i18n-attr="alt=week.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🫠&lt;/div&gt;'">
-                    <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="week.hard.name">URLAUBSREIF</h3>
-                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.hard.motto">"Schon am Montag mit allem fertig."</div>
+                    <img src="assets/img/difficulty/week_hard.webp" alt="A knocked-over, cracked coffee cup" data-i18n-attr="alt=week.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🫠&lt;/div&gt;'">
+                    <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="week.hard.name">IN NEED OF LEAVE</h3>
+                    <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.hard.motto">"Done with everything by Monday."</div>
                     <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-red-500" data-i18n="week.hard.p1">⚠ 2 Tickets + Grundaggro am Montag</li>
-                        <li class="text-red-500" data-i18n="week.hard.p2">⚠ Kaum Erholung, 1 Ausrede</li>
-                        <li class="text-red-500" data-i18n="week.hard.p3">⚠ Multiplikator 0.95x, steigend</li>
+                        <li class="text-red-500" data-i18n="week.hard.p1">⚠ 2 tickets + base aggro on Monday</li>
+                        <li class="text-red-500" data-i18n="week.hard.p2">⚠ Barely any recovery, 1 excuse</li>
+                        <li class="text-red-500" data-i18n="week.hard.p3">⚠ Multiplier 0.95x, rising</li>
                     </ul>
                 </button>
             </div>
 
             <button onclick="engine.hideOverlay('week-modal'); engine.showOverlay('intro-modal');"
                     class="mt-6 text-[11px] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
-                ← Zurück
+                ← Back
             </button>
         </div>
     </div>
@@ -553,21 +553,20 @@
             <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent"></div>
             
             <div class="mb-4 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]"><img src="assets/img/actions/act_halgerd.webp" alt="" width="56" height="56" class="w-14 h-14 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-5xl&quot;&gt;🤖&lt;/span&gt;'"></div>
-            <h3 class="text-xl font-black text-cyan-400 mb-2 uppercase tracking-widest" data-i18n="tutorial.ask.title">Systemmeldung: H.A.L.G.E.R.D.</h3>
+            <h3 class="text-xl font-black text-cyan-400 mb-2 uppercase tracking-widest" data-i18n="tutorial.ask.title">System message: H.A.L.G.E.R.D.</h3>
             
             <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg mb-6 text-left shadow-inner">
                 <p class="text-slate-300 text-sm leading-relaxed font-mono" data-i18n-html="tutorial.ask.text">
-                    "Mitarbeiter #404, das System registriert eine erhöhte Inkompetenz-Wahrscheinlichkeit in Ihrem Profil.<br><br>
-                    Benötigen Sie eine geführte Simulation des regulären Wahnsinns, bevor Ihre Fehlerrate den Chef alarmiert?"
+                    "Employee #404, the system registers an elevated probability of incompetence in your profile.<br><br>Do you require a guided simulation of the regular madness before your error rate alerts the boss?"
                 </p>
             </div>
             
             <div class="grid gap-3">
                 <button id="tut-start-btn" onclick="tutorial.run()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
-                    <span class="text-lg">▶</span> <span data-i18n="tutorial.ask.yes">Simulation starten (Empfohlen)</span>
+                    <span class="text-lg">▶</span> <span data-i18n="tutorial.ask.yes">Start simulation (recommended)</span>
                 </button>
                 <button onclick="tutorial.skip()" class="w-full bg-transparent hover:bg-red-950/40 text-slate-500 hover:text-red-400 font-bold py-2 px-4 rounded-sm border border-slate-800 hover:border-red-900 transition-colors">
-                    <span data-i18n="tutorial.ask.no">Ablauf ignorieren (Auf eigene Gefahr)</span>
+                    <span data-i18n="tutorial.ask.no">Ignore procedure (at your own risk)</span>
                 </button>
             </div>
         </div>
@@ -591,10 +590,10 @@
 
         <div class="relative z-20 bg-[#5d4037] text-[#fdf6e3] text-center py-3 shadow-md border-b-4 border-[#3e2723] shrink-0">
             <h2 class="text-xl md:text-2xl font-black uppercase tracking-[0.2em] drop-shadow-md" data-i18n="board.title">GlobalCorp • Community Board</h2>
-            <span class="text-[10px] md:text-xs text-[#a1887f] block font-serif opacity-80" data-i18n="board.subtitle">"Kommunikation ist der Schlüssel (der leider klemmt)."</span>
+            <span class="text-[10px] md:text-xs text-[#a1887f] block font-serif opacity-80" data-i18n="board.subtitle">"Communication is the key (which unfortunately sticks)."</span>
             
             <button onclick="engine.closeBoard()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded-sm shadow-inner transition-colors font-bold tracking-wider" data-i18n="board.close">
-                SCHLIESSEN
+                CLOSE
             </button>
         </div>
 
@@ -616,9 +615,9 @@
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
                 <img src="assets/img/ui/ui_menu.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-xl text-slate-400&quot;&gt;⚙️&lt;/span&gt;'">
-                <h2 id="settings-title" class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5" data-i18n="settings.title">Einstellungen</h2>
+                <h2 id="settings-title" class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5" data-i18n="settings.title">Settings</h2>
             </div>
-            <button onclick="engine.closeSettings()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            <button onclick="engine.closeSettings()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
         <div id="menu-main-view" class="p-4 sm:p-6 overflow-y-auto w-full fade-in space-y-6 flex-1 min-h-0">
@@ -627,20 +626,20 @@
                 <button onclick="engine.returnToMenu()" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-purple-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -left-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/mode_week.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;↩&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/ui_home.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;↩&lt;/span&gt;'">
-                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.menu.title">Hauptmenü</span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.menu.switchMode">Modus wechseln</span>
+                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.menu.title">Main menu</span>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.menu.switchMode">Change mode</span>
                 </button>
                 <button id="btn-soft-reset" onclick="engine.softReset()" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-blue-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/set_reset.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🔄&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/set_reset.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🔄&lt;/span&gt;'">
-                    <span id="text-soft-reset" class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.softReset.day">Tag neu starten</span>
-                    <span id="sub-soft-reset" class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.softReset.sub">(08:00 Uhr)</span>
+                    <span id="text-soft-reset" class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.softReset.day">Restart the day</span>
+                    <span id="sub-soft-reset" class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.softReset.sub">(08:00)</span>
                 </button>
                 <button onclick="document.getElementById('menu-main-view').classList.add('hidden'); document.getElementById('menu-settings-view').classList.remove('hidden');" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -left-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/ui_menu.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🎛️&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/ui_menu.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🎛️&lt;/span&gt;'">
-                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.title">Einstellungen</span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.section.settings.sub">Audio, UI, Gameplay</span>
+                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.title">Settings</span>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.section.settings.sub">Audio, UI, gameplay</span>
                 </button>
             </div>
 
@@ -648,23 +647,23 @@
                 <div class="absolute right-0 top-0 opacity-[0.02] pointer-events-none translate-x-1/4 -translate-y-1/4"><img src="assets/img/ui/ui_save.webp" alt="" width="128" height="128" class="w-32 h-32" onerror="this.outerHTML='&lt;span class=&quot;text-9xl&quot;&gt;💾&lt;/span&gt;'"></div>
                 
                 <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <img src="assets/img/ui/ui_save.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;💾&lt;/span&gt;'"> <span data-i18n="settings.section.backups">Sicherheit & Backups</span>
+                    <img src="assets/img/ui/ui_save.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;💾&lt;/span&gt;'"> <span data-i18n="settings.section.backups">Safety & backups</span>
                 </h3>
 
                 <!-- Desktop build only -->
                 <button onclick="engine.toggleFullscreen()" class="platform-desktop w-full mb-3 text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs relative z-10">
                     <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-emerald-400 transition-colors&quot;&gt;🔲&lt;/span&gt;'"> 
-                    <span data-i18n="settings.fullscreen">Vollbild / Fenstermodus umschalten</span>
+                    <span data-i18n="settings.fullscreen">Toggle full screen / windowed</span>
                 </button>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 relative z-10">
                     <button onclick="engine.closeSettings(); engine.ui.openExportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <img src="assets/img/ui/ui_export.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-emerald-400 transition-colors&quot;&gt;📤&lt;/span&gt;'"> 
-                        <span data-i18n="settings.export">Spielstand exportieren</span>
+                        <span data-i18n="settings.export">Export save</span>
                     </button>
                     <button onclick="engine.closeSettings(); engine.ui.openImportModal()" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <img src="assets/img/ui/ui_import.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-emerald-400 transition-colors&quot;&gt;📥&lt;/span&gt;'"> 
-                        <span data-i18n="settings.import">Spielstand importieren</span>
+                        <span data-i18n="settings.import">Import save</span>
                     </button>
                 </div>
                 
@@ -676,33 +675,33 @@
                         <img src="assets/img/ui/ui_warning.webp" alt="" width="24" height="24" class="w-6 h-6 block select-none" onerror="this.outerHTML='⚠️'">
                     </span>
                     <span class="flex flex-col min-w-0">
-                        <span id="text-hard-reset" class="text-red-400 text-sm font-medium" data-i18n="settings.hardReset.title">Spielstand unwiderruflich löschen</span>
-                        <span class="text-[10px] text-slate-500 leading-snug" data-i18n="settings.hardReset.sub">Archiv, Erfolge und Statistiken. Nicht rückgängig zu machen.</span>
+                        <span id="text-hard-reset" class="text-red-400 text-sm font-medium" data-i18n="settings.hardReset.title">Delete save permanently</span>
+                        <span class="text-[10px] text-slate-500 leading-snug" data-i18n="settings.hardReset.sub">Archive, achievements and statistics. Cannot be undone.</span>
                     </span>
                 </button>
             </div>
 
             <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/80 shadow-inner">
                 <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <img src="assets/img/ui/ui_globe.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;🌐&lt;/span&gt;'"> <span data-i18n="settings.section.community">Community & Support</span>
+                    <img src="assets/img/ui/ui_globe.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;🌐&lt;/span&gt;'"> <span data-i18n="settings.section.community">Community & support</span>
                 </h3>
                 
                 <div class="flex flex-col gap-2">
                     <button id="btn-share" onclick="engine.shareGame(this)" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <img src="assets/img/ui/ui_share.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-purple-400 transition-colors&quot;&gt;💌&lt;/span&gt;'"> 
-                        <span id="text-share" data-i18n="settings.share">Spiel mit Freunden teilen</span>
+                        <span id="text-share" data-i18n="settings.share">Share the game with friends</span>
                     </button>
                     
                     <button onclick="engine.closeSettings(); engine.openReportModal()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <img src="assets/img/ui/ui_bug.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-purple-400 transition-colors&quot;&gt;🐞&lt;/span&gt;'"> 
-                        <span data-i18n="settings.report">Fehler melden / Feedback geben</span>
+                        <span data-i18n="settings.report">Report a bug / give feedback</span>
                     </button>
 
                     <!-- Web build only: the desktop version links to the store page instead -->
                     <button onclick="engine.openExternal('https://github.com/seluce/Layer8Problem')" class="platform-web w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-xs">
                         <div class="flex items-center gap-3">
                             <img src="assets/img/ui/ui_code.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-500 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-500 group-hover:text-purple-400 transition-colors&quot;&gt;💻&lt;/span&gt;'"> 
-                            <span data-i18n="settings.github">GitHub Projektseite ansehen</span>
+                            <span data-i18n="settings.github">Visit the GitHub project page</span>
                         </div>
                         <span class="text-xs text-slate-500 group-hover:text-white transition-colors">↗</span>
                     </button>
@@ -710,7 +709,7 @@
                     <!-- Desktop build only: aggregated Steam statistics -->
                     <button onclick="engine.openGlobalStats()" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
                         <img src="assets/img/ui/ui_globe.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block shrink-0 select-none text-slate-500 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-xl text-slate-500 group-hover:text-purple-400 transition-colors&quot;&gt;🌍&lt;/span&gt;'"> 
-                        <span data-i18n="settings.globalStats">Globale Statistiken & Vergleich</span>
+                        <span data-i18n="settings.globalStats">Global statistics & comparison</span>
                     </button>
                 </div>
             </div>
@@ -718,7 +717,7 @@
             <!-- Desktop build only: a browser tab cannot close itself reliably -->
             <div class="platform-desktop pt-2">
                 <button onclick="engine.quitGame()" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/60 rounded-lg transition-all text-slate-300 hover:text-red-400 text-sm font-medium flex items-center justify-center group shadow-xs">
-                    <span class="tracking-widest uppercase font-bold" data-i18n="settings.quit">Spiel beenden</span>
+                    <span class="tracking-widest uppercase font-bold" data-i18n="settings.quit">Quit the game</span>
                 </button>
             </div>
 
@@ -728,7 +727,7 @@
             
             <div>
                 <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden');" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
-                    <span>◀</span> <span data-i18n="settings.backToMenu">Zurück zum Hauptmenü</span>
+                    <span>◀</span> <span data-i18n="settings.backToMenu">Back to the main menu</span>
                 </button>
             </div>
             
@@ -745,11 +744,11 @@
             <details class="group">
                 <summary class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700 pb-1 cursor-pointer list-none flex items-center gap-2 hover:text-slate-200 transition-colors marker:content-['']">
                     <span class="transition-transform group-open:rotate-90 text-slate-600">▶</span>
-                    <span data-i18n="credits.title">Credits & Lizenzen</span>
+                    <span data-i18n="credits.title">Credits & licences</span>
                 </summary>
                 <div class="mt-2 bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-3 font-mono leading-relaxed">
-                    <p><strong class="text-slate-300 font-sans" data-i18n="credits.dev">Entwicklung & Design:</strong><br> Schnaftikus Games</p>
-                    <p><strong class="text-slate-300 font-sans" data-i18n="credits.music">Musik Lizenzen (Creative Commons BY 4.0):</strong><br>
+                    <p><strong class="text-slate-300 font-sans" data-i18n="credits.dev">Development & design:</strong><br> Schnaftikus Games</p>
+                    <p><strong class="text-slate-300 font-sans" data-i18n="credits.music">Music licences (Creative Commons BY 4.0):</strong><br>
                         "Local Forecast - Elevator", "Chill Wave", "Movement Proposition", "Disco con Tutti", "Hard Boiled", "Bossa Antiqua" <br>
                         by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">incompetech.com</a>).<br>
                         Licensed under Creative Commons: By Attribution 4.0 License <br>
@@ -767,67 +766,66 @@
 
 <div id="save-export-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
-        <button onclick="engine.ui.closeModals()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+        <button onclick="engine.ui.closeModals()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
         <div class="flex items-center gap-4 p-5 border-b border-slate-800">
             <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-950 border border-blue-500/25 shadow-inner">
                 <img src="assets/img/ui/ui_export.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='💾'">
             </div>
             <div class="flex flex-col min-w-0">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400" data-i18n="export.title">Spielstand sichern</span>
-                <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="export.label">Dein Code</h2>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400" data-i18n="export.title">Save your progress</span>
+                <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="export.label">Your code</h2>
             </div>
         </div>
 
         <div class="p-5 space-y-3">
-            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="export.hint">
-                Der Code enthält dein Archiv: gefundene Gegenstände, Erfolge, Statistiken und deinen Ruf im Kollegium.
-                <span class="text-slate-500" data-i18n="export.hint2">Ein laufender Arbeitstag oder eine begonnene Woche reisen nicht mit.</span>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                <span data-i18n="export.hint">The code holds your archive: items found, achievements, statistics and your standing with the colleagues.</span>
+                <span class="text-slate-500" data-i18n="export.hint2">A workday in progress or a started week do not travel with it.</span>
             </p>
 
             <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-blue-500 resize-none custom-scrollbar break-all" readonly></textarea>
 
             <button onclick="engine.ui.copyToClipboard()" class="w-full bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]">
-                <img src="assets/img/ui/ui_copy.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='📋'"> <span data-i18n="export.copy">In Zwischenablage kopieren</span>
+                <img src="assets/img/ui/ui_copy.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='📋'"> <span data-i18n="export.copy">Copy to clipboard</span>
             </button>
-            <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4" data-i18n="export.copied">Code kopiert!</div>
+            <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4" data-i18n="export.copied">Code copied!</div>
         </div>
     </div>
 </div>
 
 <div id="save-import-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box accent-red bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
-        <button onclick="engine.ui.closeModals()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+        <button onclick="engine.ui.closeModals()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
         <div class="flex items-center gap-4 p-5 border-b border-slate-800">
             <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-950 border border-red-500/25 shadow-inner">
                 <img src="assets/img/ui/ui_import.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='📂'">
             </div>
             <div class="flex flex-col min-w-0">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-red-400" data-i18n="import.title">Spielstand laden</span>
-                <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="import.label">Code einfügen</h2>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-red-400" data-i18n="import.title">Load a save</span>
+                <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="import.label">Paste the code</h2>
             </div>
         </div>
 
         <div class="p-5 space-y-3">
             <p class="text-xs text-slate-400 leading-relaxed" data-i18n="import.hint">
-                Füge den Code ein, den du auf dem anderen Gerät kopiert hast.
+                Paste the code you copied on the other device.
             </p>
 
-            <textarea id="import-area" data-i18n-attr="placeholder=import.placeholder" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-red-500 resize-none custom-scrollbar break-all" placeholder="Code hier einfügen ..."></textarea>
+            <textarea id="import-area" data-i18n-attr="placeholder=import.placeholder" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-red-500 resize-none custom-scrollbar break-all" placeholder="Paste the code here ..."></textarea>
 
             <div class="bg-slate-950/60 border border-red-900/40 rounded-lg p-3 flex gap-2.5 items-start">
                 <img src="assets/img/ui/ui_warning.webp" alt="" width="18" height="18" class="w-[18px] h-[18px] shrink-0 mt-0.5 select-none" onerror="this.outerHTML='⚠'">
                 <span class="text-xs text-slate-300 leading-snug" data-i18n="import.warning">
-                    Dein bisheriges Archiv wird ersetzt: Gegenstände, Erfolge, Statistiken und Ruf.
-                    Ein angefangener Arbeitstag oder eine laufende Woche werden dabei verworfen.
+                    Your current archive will be replaced: items, achievements, statistics and standing. A workday in progress or a running week are discarded.
                 </span>
             </div>
 
             <button onclick="engine.ui.performImport()" class="w-full bg-red-600 hover:bg-red-500 border border-red-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest shadow-lg transition-all hover:scale-[1.02]" data-i18n="import.confirm">
-                Spielstand ersetzen
+                Replace save
             </button>
-            <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4" data-i18n="import.error">Fehler!</div>
+            <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4" data-i18n="import.error">Error!</div>
         </div>
     </div>
 </div>
@@ -837,11 +835,11 @@
 <!-- EXCUSE MODAL START -->
 <div id="excuse-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
 	<div class="neon-box accent-cyan bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
-		<button onclick="engine.closeExcuseModal()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+		<button onclick="engine.closeExcuseModal()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
 		<h2 class="text-lg font-bold text-slate-200 mb-2 uppercase tracking-wider flex items-center gap-2.5">
 			<img src="assets/img/ui/ui_excuse.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='🃏'">
-			<span data-i18n="excuse.title">Notfall-Ausrede erfinden</span>
+			<span data-i18n="excuse.title">Invent an emergency excuse</span>
 		</h2>
 		
 		<div class="bg-slate-800 p-4 border border-slate-700 rounded-md mb-6">
@@ -850,18 +848,17 @@
 		</div>
 
 		<p class="text-sm text-slate-400 mb-6" data-i18n="excuse.hint">
-			Das aktuelle Problem wird dadurch nur vertagt und wandert ungelöst 
-			zurück in den Pool. Du hast pro Schicht nur begrenzt Ausreden zur Verfügung.
+			This only postpones the problem, which goes back into the pool unsolved. You have a limited number of excuses per shift.
 		</p>
 
 		<div class="flex justify-end gap-3 mt-4 border-t border-slate-700 pt-4">
 			<button onclick="engine.closeExcuseModal()"
 				class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 text-sm rounded-sm transition-colors" data-i18n="common.cancel">
-				Abbrechen
+				Cancel
 			</button>
 			<button onclick="engine.confirmExcuse()"
 				class="px-4 py-2 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-sm transition-colors border border-blue-500" data-i18n="excuse.confirm">
-				Bestätigen und fliehen
+				Confirm and flee
 			</button>
 		</div>
 	</div>
@@ -871,40 +868,40 @@
 <!-- REPORT MODAL START -->
 <div id="report-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
     <div class="neon-box accent-red bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
-        <button onclick="engine.closeReportModal()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+        <button onclick="engine.closeReportModal()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         
         <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <img src="assets/img/ui/ui_bug.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block select-none" onerror="this.outerHTML='🐞'"> <span data-i18n="report.title">Bug / Feedback melden</span>
+            <img src="assets/img/ui/ui_bug.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block select-none" onerror="this.outerHTML='🐞'"> <span data-i18n="report.title">Report a bug / give feedback</span>
         </h2>
         
         <div class="space-y-4">
             <div>
-                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.category">Kategorie</label>
+                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.category">Category</label>
                 <select id="report-category" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500">
-                    <option value="Fehler" data-i18n="report.cat.bug">🐛 Fehler / Absturz</option>
-                    <option value="Rechtschreibfehler" data-i18n="report.cat.typo">📝 Rechtschreibfehler</option>
-                    <option value="Logik" data-i18n="report.cat.logic">🤯 Unlogischer Inhalt</option>
-                    <option value="Schwierigkeitsgrad" data-i18n="report.cat.balance">⚖️ Zu schwer / Zu leicht</option>
-                    <option value="Idee" data-i18n="report.cat.idea">💡 Idee / Vorschlag</option>
+                    <option value="Fehler" data-i18n="report.cat.bug">🐛 Bug / crash</option>
+                    <option value="Rechtschreibfehler" data-i18n="report.cat.typo">📝 Spelling mistake</option>
+                    <option value="Logik" data-i18n="report.cat.logic">🤯 Content that makes no sense</option>
+                    <option value="Schwierigkeitsgrad" data-i18n="report.cat.balance">⚖️ Too hard / too easy</option>
+                    <option value="Idee" data-i18n="report.cat.idea">💡 Idea / suggestion</option>
                 </select>
             </div>
 
             <div>
-                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.description">Beschreibung</label>
-                <textarea id="report-desc" data-i18n-attr="placeholder=report.placeholder" rows="4" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500" placeholder="Was ist passiert? Welches Event war komisch?"></textarea>
+                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.description">Description</label>
+                <textarea id="report-desc" data-i18n-attr="placeholder=report.placeholder" rows="4" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500" placeholder="What happened? Which event was odd?"></textarea>
             </div>
 
             <div class="bg-slate-800/50 p-2 rounded-sm border border-slate-700/50">
                 <p class="text-[10px] text-slate-500" data-i18n="report.privacy">
-                    ℹ️ Das System hängt zur Fehleranalyse automatisch aktuelle Diagnosedaten (letztes Event, Uhrzeit, Inventar & Log-Auszug) an dein Ticket an.
+                    ℹ️ For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.
                 </p>
             </div>
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-            <button onclick="engine.closeReportModal()" class="px-4 py-2 text-slate-300 hover:text-white text-sm" data-i18n="common.cancel">Abbrechen</button>
+            <button onclick="engine.closeReportModal()" class="px-4 py-2 text-slate-300 hover:text-white text-sm" data-i18n="common.cancel">Cancel</button>
             <button onclick="engine.sendReportMail()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-sm font-bold shadow-lg flex items-center gap-2">
-                <img src="assets/img/ui/ui_mail.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block select-none" onerror="this.outerHTML='📧'"> <span data-i18n="report.submit">Ticket eröffnen</span> 
+                <img src="assets/img/ui/ui_mail.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block select-none" onerror="this.outerHTML='📧'"> <span data-i18n="report.submit">Open a ticket</span> 
             </button>
         </div>
     </div>
@@ -918,13 +915,13 @@
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
                 <img src="assets/img/ui/set_keys.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='⌨️'">
-                <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5" data-i18n="keybind.title">TASTENBELEGUNG</h2>
+                <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5" data-i18n="keybind.title">KEY BINDINGS</h2>
             </div>
-            <button onclick="engine.closeKeybinds()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            <button onclick="engine.closeKeybinds()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
         <div class="p-5 overflow-y-auto w-full space-y-4 flex-1 min-h-0">
-            <p class="text-xs text-slate-400 mb-4" data-i18n="keybind.subtitle">Klicke auf eine Taste, um sie neu zuzuweisen.</p>
+            <p class="text-xs text-slate-400 mb-4" data-i18n="keybind.subtitle">Click a key to reassign it.</p>
             
             <div id="keybind-list">
                 <!-- Rendered by src/components/KeybindView.svelte -->
@@ -932,10 +929,10 @@
 
             <div class="grid grid-cols-2 gap-3 mt-4">
                 <button onclick="engine.resetKeybinds()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-xs" data-i18n="keybind.reset">
-                    Standard
+                    Default
                 </button>
                 <button onclick="engine.closeKeybinds()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-lg" data-i18n="keybind.done">
-                    Fertig
+                    Done
                 </button>
             </div>
             
@@ -953,16 +950,16 @@
             <div class="flex items-center gap-3">
                 <img src="assets/img/ui/ui_globe.webp" alt="" width="28" height="28" class="w-7 h-7 inline-block shrink-0 select-none drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" onerror="this.outerHTML='&lt;span class=&quot;text-2xl drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]&quot;&gt;🌍&lt;/span&gt;'">
                 <div class="flex flex-col">
-                    <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="globalStats.title">Globale Statistiken</h2>
-                    <span class="text-[10px] text-blue-400 font-mono" data-i18n="globalStats.subtitle">Wie schlägst du dich gegen den Rest der Welt?</span>
+                    <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="globalStats.title">Global statistics</h2>
+                    <span class="text-[10px] text-blue-400 font-mono" data-i18n="globalStats.subtitle">How are you doing against the rest of the world?</span>
                 </div>
             </div>
-            <button onclick="engine.closeGlobalStats()" aria-label="Schließen" title="Schließen" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            <button onclick="engine.closeGlobalStats()" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
         <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6">
             <div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm" data-i18n="globalStats.connecting">
-                Verbinde mit Steam-Servern...
+                Connecting to Steam servers...
             </div>
         </div>
     </div>

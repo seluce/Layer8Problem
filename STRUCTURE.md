@@ -215,12 +215,22 @@ missing from the English tree would otherwise only surface at runtime, as
 reported under "NOCH DEUTSCH": not an error, but the work list.
 
 **`lint-i18n.mjs` checks the interface strings**, and it exists because a
-missing key goes wrong **quietly**: `t()` falls back to German and then to the
+missing key goes wrong **quietly**: `t()` falls back to English and then to the
 key itself, so a typo does not throw but writes `settings.langauge` into a menu
 nobody opens twice. It checks that every key used sits in both dictionaries,
 that both carry the same set of keys, and that none is unused. No pattern can
 read computed keys; for those there is the note `// i18n-uses: a.b, c.d` — one
 line per registration.
+
+It also holds the fallback text in `index.html` against `en.js`, and guards the
+two ways a mark can destroy what it sits on. **`data-i18n` assigns
+`textContent`, which owns the whole element:** on an empty one (rule 2a) the
+text goes nowhere and the sentence beside it belongs to the parent; on one that
+carries child markup (rule 2b) that markup is deleted at startup, in every
+language. The second was found on 17.08.2026 with `scan-strings.mjs` — the log
+arrow and the second half of the export hint had been gone for as long as they
+had existed, and no check could see it, because the fallback text they were
+attached to was perfectly correct. A `<span>` around the text alone fixes both.
 
 `report-prose.mjs` is not a build gate but a report for editorial work: the exit
 code is always 0, every finding is reading material. Call it with a pool
