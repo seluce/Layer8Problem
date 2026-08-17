@@ -12,6 +12,7 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
 
+    import { t } from '../i18n/i18n.svelte.js';
     // Drawing area in user units; the SVG scales along via viewBox.
     const W = 520, H = 180;
     const PAD = { l: 30, r: 10, t: 12, b: 22 };
@@ -21,17 +22,18 @@
     // The day runs from 8:00 to at least 16:30 - unless someone stayed
     // longer, in which case the axis grows with it.
     const tMin = 8 * 60;
-    const tMax = $derived(Math.max(16 * 60 + 30, ...points.map(p => p.t)));
+    const tMax = $derived(Math.max(16 * 60 + 30, ...points.map(p => p.m)));
 
     const x = (t) => PAD.l + ((t - tMin) / (tMax - tMin)) * (W - PAD.l - PAD.r);
     const y = (v) => PAD.t + (1 - Math.min(100, Math.max(0, v)) / 100) * (H - PAD.t - PAD.b);
 
-    const line = (key) => points.map(p => `${x(p.t).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
+    const line = (key) => points.map(p => `${x(p.m).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
 
     const SERIES = [
-        { key: 'f', label: 'Faulheit', color: '#34d399' },
-        { key: 'a', label: 'Aggro',    color: '#fb923c' },
-        { key: 'c', label: 'Chef',     color: '#ef4444' }
+        // i18n-uses: stat.lazy, stat.aggro, stat.boss.short
+        { key: 'l', label: 'stat.lazy',       color: '#34d399' },
+        { key: 'a', label: 'stat.aggro',      color: '#fb923c' },
+        { key: 'b', label: 'stat.boss.short', color: '#ef4444' }
     ];
 
     // Full hours as the time axis, so the day is recognisable.
@@ -45,7 +47,7 @@
 
 {#if points.length > 1}
     <svg viewBox="0 0 {W} {H}" class="w-full h-auto" role="img"
-         aria-label="Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag">
+         aria-label={t('chart.aria')}>
 
         <!-- Horizontal guide lines at 0, 50 and 100 percent -->
         {#each [0, 50, 100] as v}
@@ -67,7 +69,7 @@
         {#each SERIES as s}
             <polyline points={line(s.key)} fill="none" stroke={s.color}
                       stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
-            <circle cx={x(points[points.length - 1].t)} cy={y(points[points.length - 1][s.key])}
+            <circle cx={x(points[points.length - 1].m)} cy={y(points[points.length - 1][s.key])}
                     r="2.5" fill={s.color} />
         {/each}
     </svg>
@@ -76,12 +78,12 @@
         {#each SERIES as s}
             <span class="flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
                 <span class="inline-block w-3 h-0.5 rounded-full" style="background:{s.color}"></span>
-                {s.label}
+                {t(s.label)}
             </span>
         {/each}
     </div>
 {:else}
     <p class="text-[11px] text-slate-500 font-mono text-center py-4">
-        Zu wenige Entscheidungen für eine Kurve.
+        {t('chart.tooFew')}
     </p>
 {/if}

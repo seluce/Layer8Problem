@@ -8,15 +8,21 @@
   where an element ended up on screen.
 
   What this component owns is the markup and the content. The ids stay because
-  updatePosition() addresses them.
+  updatePosition() addresses them — and #tut-advance-btn because the confirm
+  key in engine.js clicks it.
 
-  `desc` may contain markup from the tutorial data, hence {@html}. It is
-  authored text, never player input.
+  tutorial.js fills state.tutorialPointer; it must not write into these nodes.
+  It used to, and the button it built by hand carried no id, so the confirm
+  key found nothing and the keyboard could not get through the tutorial.
+
+  `desc` carries markup from the dictionary (tutorial.step.*), hence {@html}.
+  It is authored text, never player input.
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { tutorial } from '../tutorial.js';
 
+    import { t } from '../i18n/i18n.svelte.js';
     const tip = $derived(state.tutorialPointer);
 </script>
 
@@ -34,7 +40,7 @@
                 <span class="block mt-4 border-t border-cyan-800 pt-3 pointer-events-auto">
                     <button type="button" id="tut-advance-btn" onclick={() => tutorial.advance()}
                           class="cursor-pointer w-full bg-cyan-900/40 hover:bg-cyan-800/60 border border-cyan-700 rounded-lg py-2 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors">
-                        <span>▶</span> Verstanden
+                        <span>▶</span> {t('tutorial.gotIt')}
                     </button>
                 </span>
             {/if}

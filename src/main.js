@@ -10,13 +10,22 @@
  *
  * Order matters: tutorial.js publishes window.tutorial, which engine.init()
  * checks for, and the engine has to exist before components read its state.
+ *
+ * Since 6.0 there is a step in front of all of it. The event pools exist in two
+ * languages (src/data/de, src/data/en) and the core tier is loaded rather than
+ * statically imported, so nothing may render before the language is settled and
+ * that tier is in - a component reading DB.items during mount would otherwise
+ * find nothing. Hence the awaits below, and hence engine.init() moving out of
+ * engine.js into this file.
  */
 
 import { mount } from 'svelte';
 
 import './app.css';
 import './tutorial.js';
-import './engine.js';
+import { engine } from './engine.js';
+import { loadCore } from './data.js';
+import { initLanguage, applyStaticStrings, t } from './i18n/i18n.svelte.js';
 
 import StatsHeader from './components/StatsHeader.svelte';
 import LogFeed from './components/LogFeed.svelte';
@@ -41,6 +50,12 @@ import AchievementToasts from './components/AchievementToasts.svelte';
 import TerminalHeader from './components/TerminalHeader.svelte';
 import BoardView from './components/BoardView.svelte';
 import IntranetView from './components/intranet/IntranetView.svelte';
+
+// 1. Which language, 2. that language's core data, 3. the engine, 4. the screen.
+const language = await initLanguage();
+applyStaticStrings();
+await loadCore(language);
+engine.init();
 
 mount(StatsHeader, { target: document.getElementById('stats-header') });
 mount(LogFeed,     { target: document.getElementById('log-feed') });
@@ -73,14 +88,19 @@ mount(IntranetView,   { target: document.getElementById('intranet-root') });
    administration is part of the target audience and deserves a
    greeting. The game's only deliberate console output — everything
    else there is diagnostics.
+
+   Which is why it takes t() and not fixed English: GLOSSAR 2b keeps
+   the console English because a log is read by the maintainer, but
+   this line is addressed to the player. H.A.L.G.E.R.D. follows the
+   player's language everywhere else - tutorial, log lines - and this
+   was the one place he did not.
+
+   The only multi-line dictionary value in the project. The blank
+   lines carry the timing, so the whole greeting is one entry rather
+   than five, and whoever translates it next can regroup them.
    ============================================================ */
 console.log(
-    '%c H.A.L.G.E.R.D. %c\n\n' +
-    'Sie haben die Konsole geöffnet.\n' +
-    'Natürlich haben Sie die Konsole geöffnet.\n\n' +
-    'Ich protokolliere das nicht. Ich protokolliere gar nichts.\n' +
-    'Das ist eine Zusicherung, keine Tatsachenbehauptung.\n\n' +
-    'Schönen Arbeitstag, Mitarbeiter 404.\n',
+    '%c H.A.L.G.E.R.D. %c\n\n' + t('console.greeting') + '\n',
     'background:#f59e0b;color:#0f172a;font-weight:bold;padding:2px 8px;border-radius:2px',
     'color:#94a3b8;font-family:monospace;line-height:1.5'
 );

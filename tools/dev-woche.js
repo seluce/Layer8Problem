@@ -24,6 +24,13 @@
     const s = e.state;
     const NAMEN = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
 
+    // German labels for the three week levels. Deliberately local and not
+    // taken from the dictionary: this helper prints for the developer, and
+    // its output stays German even when the game runs in English. WEEK_DIFFS
+    // carries a `key` since 6.0 - the `name` field it used to carry was a
+    // German display string and is gone.
+    const STUFEN = { easy: 'Erholt', normal: 'Genervt', hard: 'Urlaubsreif' };
+
     /** Builds believable past days so the week's balance sheet has content. */
     const logBis = (tag, { hart = false } = {}) => {
         s.week.weekLog = [];
@@ -31,11 +38,11 @@
             s.week.weekLog.push({
                 dayIndex: i,
                 endTickets: hart ? 3 + i : Math.max(0, 5 - i),
-                endAl: hart ? 40 + i * 8 : 25 + i * 4,
-                endCr: hart ? 30 + i * 6 : 20 + i * 3,
-                endFl: 20 + i * 7,
+                endA: hart ? 40 + i * 8 : 25 + i * 4,
+                endB: hart ? 30 + i * 6 : 20 + i * 3,
+                endL: 20 + i * 7,
                 peakA: hart ? 70 + i * 4 : 45 + i * 5,
-                peakC: hart ? 55 + i * 5 : 35 + i * 4,
+                peakB: hart ? 55 + i * 5 : 35 + i * 4,
                 coffee: 2 + (i % 3),
                 mailsIgnored: i % 2,
             });
@@ -47,12 +54,12 @@
         s.statHistory = [];
         const schritte = 10;
         for (let i = 0; i <= schritte; i++) {
-            const t = 8 * 60 + Math.round(((s.time - 8 * 60) / schritte) * i);
+            const m = 8 * 60 + Math.round(((s.time - 8 * 60) / schritte) * i);
             s.statHistory.push({
-                t,
-                f: Math.round(s.fl * (i / schritte)),
+                m,
+                l: Math.round(s.fl * (i / schritte)),
                 a: Math.round(s.al * (0.35 + 0.65 * (i / schritte))),
-                c: Math.round(s.cr * (0.3 + 0.7 * (i / schritte))),
+                b: Math.round(s.cr * (0.3 + 0.7 * (i / schritte))),
             });
         }
     };
@@ -88,7 +95,7 @@
             kurve();
             anzeigen();
             e.setTerminalIdle();
-            console.log(`▶ ${NAMEN[s.week.dayIndex - 1]}, ${e.WEEK_DIFFS[stufe].name}, ` +
+            console.log(`▶ ${NAMEN[s.week.dayIndex - 1]}, ${STUFEN[e.WEEK_DIFFS[stufe].key]}, ` +
                         `${Math.floor(s.time / 60)}:${String(s.time % 60).padStart(2, '0')} Uhr, ` +
                         `${s.tickets} Tickets`);
             return dev;
@@ -374,9 +381,9 @@
 
             const seen = new Set(s.archive.seenEvents ?? []);
             const flags = new Set(s.archive.seenFlags ?? []);
-            console.log(`${entry.name} - ${entry.rolle}  [${entry.open ? 'offen' : 'zu'}]`);
-            console.log(entry.kopf);
-            for (const n of entry.notizen ?? []) {
+            console.log(`${entry.name} - ${entry.role}  [${entry.open ? 'offen' : 'zu'}]`);
+            console.log(entry.summary);
+            for (const n of entry.notes ?? []) {
                 const have = n.flag ? flags.has(n.flag) : seen.has(n.seen);
                 console.log(`  ${have ? '✓' : '·'} ${n.text}`);
                 if (!have) console.log(`      fehlt: ${n.flag ? 'Fahne ' + n.flag : 'Ereignis ' + n.seen}`);
@@ -402,7 +409,7 @@
             for (const entry of list) {
                 if (id && entry.id !== id) continue;
                 (entry.seen ?? []).slice(0, 1).forEach(x => ev.add(x));
-                const notes = anzahl == null ? (entry.notizen ?? []) : (entry.notizen ?? []).slice(0, anzahl);
+                const notes = anzahl == null ? (entry.notes ?? []) : (entry.notes ?? []).slice(0, anzahl);
                 for (const n of notes) { if (n.flag) fl.add(n.flag); else ev.add(n.seen); }
             }
             s.archive.seenEvents = [...ev];

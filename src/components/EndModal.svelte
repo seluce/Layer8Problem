@@ -19,6 +19,7 @@
     import DayChart from './DayChart.svelte';
     import DayReport from './DayReport.svelte';
     import DiaryEntry from './DiaryEntry.svelte';
+    import { t, tf } from '../i18n/i18n.svelte.js';
 
     const modal = $derived(game.modal);
 
@@ -26,22 +27,34 @@
     let showChart = $state(game.autoChart ?? false);
     let showDiary = $state(false);
 
-    // First match wins; red is the default.
-    const THEMES = [
-        { match: ['FEIERABEND', 'GESCHAFFT', 'ÜBERLEBT'], title: 'text-green-500',  border: 'border-green-500' },
-        { match: ['GALA VORBEI'],       title: 'text-pink-500',   border: 'border-pink-500' },
-        { match: ['VENTIL', 'RAGE'],    title: 'text-orange-500', border: 'border-orange-500' }
-    ];
-    const DEFAULT_THEME = { title: 'text-red-500', border: 'border-red-600' };
+    // The colour follows the outcome, not the wording. It used to be picked by
+    // searching the title for 'FEIERABEND', 'ÜBERLEBT', 'GEFEUERT' and the
+    // like - words that come out of the dictionary and are already English on
+    // the other side, so a survived week would have been painted in the colour
+    // of a failure with nothing to report it. The end object has carried
+    // `cause` and `isWin` all along.
+    const THEME = {
+        party: { title: 'text-pink-500',   border: 'border-pink-500' },
+        win:   { title: 'text-green-500',  border: 'border-green-500' },
+        rage:  { title: 'text-orange-500', border: 'border-orange-500' },
+        loss:  { title: 'text-red-500',    border: 'border-red-600' }
+    };
 
-    const theme = $derived(
-        THEMES.find(t => t.match.some(m => (modal.title ?? '').includes(m))) ?? DEFAULT_THEME
-    );
+    const theme = $derived((() => {
+        // The gala is a win too, so it has to be asked about first.
+        if (modal.cause === 'party') return THEME.party;
+        if (modal.isWin) return THEME.win;
+        // cause for an ending, tone for the aggro valve's warning box.
+        if (modal.cause === 'rage' || modal.tone === 'rage') return THEME.rage;
+        return THEME.loss;
+    })());
 
     // Anything that ends the run needs a reload; a mere warning can be
-    // dismissed and play continues.
-    const FINAL = ['QUIT', 'GEFEUERT', 'FEIERABEND', 'GALA VORBEI'];
-    const isFinal = $derived(modal.isEnd || FINAL.some(m => (modal.title ?? '').includes(m)));
+    // dismissed and play continues. showEnd() marks every ending with isEnd,
+    // and the three showModal() callers (valve, valve, ticket jam) pass false -
+    // so the flag alone answers this, and the list of German title fragments
+    // that used to stand beside it answered nothing it did not.
+    const isFinal = $derived(!!modal.isEnd);
 
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
@@ -51,6 +64,12 @@
     const isNight = $derived(!!modal.isNight);
     const rnd = (v) => Math.round(v ?? 0);
 
+    // Declared here rather than beside the loop in the markup: the mark is a
+    // line comment, and markup only has HTML comments - whose closing bracket
+    // ends up inside the key.
+    // i18n-uses: week.short.mon, week.short.tue, week.short.wed
+    // i18n-uses: week.short.thu, week.short.fri
+
     // Context: what this day means for the career. The counters live in the
     // archive and survive a restart, which turns single days into a run.
     const stats = $derived(game.archive?.stats ?? {});
@@ -59,10 +78,10 @@
     const tally = $derived(
         modal.isWeek
             ? ((stats.weeksStarted ?? 0) > 1
-                ? `Arbeitswoche Nr. ${stats.weeksStarted} · ${stats.weeksSurvived ?? 0} überstanden`
+                ? tf('end.tally.week', { no: stats.weeksStarted, survived: stats.weeksSurvived ?? 0 })
                 : null)
             : ((stats.daysStarted ?? 0) > 1
-                ? `Arbeitstag Nr. ${stats.daysStarted} · ${stats.daysSurvived ?? 0} überstanden`
+                ? tf('end.tally.day', { no: stats.daysStarted, survived: stats.daysSurvived ?? 0 })
                 : null)
     );
 </script>
@@ -102,27 +121,27 @@
                      at the end, so until then the night is the only place that
                      can put a day into context. -->
                 <div class="flex items-center gap-1.5 mb-3">
-                    {#each ['Mo','Di','Mi','Do','Fr'] as tag, i}
+                    {#each ['mon','tue','wed','thu','fri'] as day, i}
                         <span class="flex-1 text-center text-[9px] font-bold uppercase tracking-widest py-1 rounded-sm border
                                      {i < game.week.dayIndex
                                         ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
                                         : i === game.week.dayIndex
                                           ? 'bg-slate-800 border-slate-500 text-white'
                                           : 'bg-slate-900/40 border-slate-800 text-slate-600'}">
-                            {tag}
+                            {t(`week.short.${day}`)}
                         </span>
                     {/each}
                 </div>
-                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">Das nimmst du mit in den {modal.nextDay}</div>
-                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>Tickets</span>
+                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: modal.nextDay })}</div>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>{t('stat.tickets')}</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
-                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>Aggro</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>{t('stat.aggro')}</span>
                     <span><span class="text-slate-500">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
-                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_eye.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '📡'}>Chef-Radar</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_eye.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '📡'}>{t('stat.radar')}</span>
                     <span><span class="text-slate-500">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
-                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_lazy.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🦥'}>Faulheit</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_lazy.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🦥'}>{t('stat.lazy')}</span>
                     <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
-                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>Ausreden</span>
+                <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>{t('stat.excuses')}</span>
                     <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
                 {#if modal.night.sleepText}
                     <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{modal.night.sleepText}</div>
@@ -136,7 +155,7 @@
                     <button type="button" onclick={() => showChart = !showChart}
                             aria-expanded={showChart}
                             class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
-                        {showChart ? '▾' : '▸'} Tagesverlauf
+                        {showChart ? '▾' : '▸'} {t('end.toggle.chart')}
                     </button>
                 {/if}
                 {#if hasDiary}
@@ -146,7 +165,7 @@
                         {showDiary ? '▾' : '▸'}
             <img src="assets/img/ui/ui_book.webp" alt="" width="14" height="14"
                  class="w-3.5 h-3.5 inline-block align-[-0.15em] mx-1 select-none"
-                 onerror={(e) => e.currentTarget.outerHTML = '📖'}>Logbuch
+                 onerror={(e) => e.currentTarget.outerHTML = '📖'}>{t('end.toggle.diary')}
                     </button>
                 {/if}
             </div>
@@ -167,7 +186,8 @@
         <button onclick={() => isNight ? engine.continueWeekNight()
                              : isFinal ? location.reload() : engine.closeModal()}
                 class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
-            {isNight ? `WEITER · ${(modal.nextDay ?? '').toUpperCase()}` : isFinal ? 'NEUSTART' : 'VERSTANDEN'}
+            {isNight ? tf('end.btn.next', { day: (modal.nextDay ?? '').toUpperCase() })
+              : isFinal ? t('end.btn.restart') : t('end.btn.ok')}
         </button>
     </div>
 {/if}

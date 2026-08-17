@@ -3,9 +3,9 @@
  *
  * Plays whole workdays (8:00 to 16:30) against the real data pools and
  * reproduces the engine formulas exactly:
- *   - fl += f                                (laziness unscaled)
+ *   - fl += l                                (laziness unscaled)
  *   - al += a > 0 ? ceil(a * diff) : a       (a rise in anger scales)
- *   - cr += c > 0 ? ceil(c * diff * (1 + fl/200)) : c   (radar scales twice)
+ *   - cr += b > 0 ? ceil(b * diff * (1 + fl/200)) : b   (radar scales twice)
  *   - tickets: +1 per started 30 minutes (capped at 16:30), -1 per call
  *   - mail chance per action: min(35%, 15% * diff + 4% * tickets), 25-min cooldown
  *   - valves: anger and radar reset once each to 30/50/60, a loss after that
@@ -16,13 +16,41 @@
  *   - no excuses (results are therefore a lower bound on the survival rate)
  *   - no alcohol or special effects, no tutorial, no party
  *
- * Usage: node tools/simulate-day.mjs [days per cell, default 1500]
+ * Usage: node tools/simulate-day.mjs [days per cell, default 1500] [--lang=de|en]
+ *        node tools/simulate-day.mjs 3000 --lang=en
+ *
+ * Both trees must produce the same numbers: only prose differs between them, so
+ * a deviation means a number was touched while translating.
  */
-import { DB, ensure } from '../src/data.js';
+import { DB, ensure, loadCore, currentLanguage } from '../src/data.js';
 
+// The count is read from the arguments that are NOT flags. Straight
+// process.argv[2] would parse `--lang=en` as the day count and run NaN days.
+const args = process.argv.slice(2);
+const positional = args.filter(a => !a.startsWith('-'));
+
+const langArg = args.find(a => a.startsWith('--lang='));
+const lang = langArg ? langArg.slice('--lang='.length) : 'de';
+if (lang !== 'de' && lang !== 'en') {
+    console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+    process.exit(1);
+}
+
+// loadCore BEFORE ensure: ensure() files each pool under whatever language is
+// current when it runs, so loading first and switching after leaves German
+// pools on DB under an English label.
+await loadCore(lang);
 await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 'lunch');
 
-const DAYS = parseInt(process.argv[2] ?? '1500', 10);
+// loadCore falls back to German when a tree cannot be read. Without this an
+// English run would quietly report German numbers — and matching numbers are
+// exactly what this tool is for.
+if (currentLanguage() !== lang) {
+    console.error(`Sprache "${lang}" konnte nicht geladen werden — die Simulation liest "${currentLanguage()}".`);
+    process.exit(1);
+}
+
+const DAYS = parseInt(positional[0] ?? '1500', 10);
 
 // Experiment parameters for counter-variants (defaults = current state):
 //   --lazydiv=300     lazyMult = 1 + fl/300 instead of fl/200
@@ -76,10 +104,10 @@ function unlocked(opts, inv) {
 // Danger score of an option, seen from the current state.
 function danger(o, s) {
     const a = (o.a ?? 0) > 0 ? Math.ceil(o.a * statMult(s)) : (o.a ?? 0);
-    const cRaw = (o.c ?? 0) > 0 ? Math.ceil(o.c * statMult(s) * lazyMult(s)) : (o.c ?? 0);
+    const bRaw = (o.b ?? 0) > 0 ? Math.ceil(o.b * statMult(s) * lazyMult(s)) : (o.b ?? 0);
     const wA = s.rageUsed ? 3 : (s.al >= 70 ? 2 : 1);
-    const wC = s.chefUsed ? 3 : (s.cr >= 70 ? 2.5 : 2);
-    return a * wA + cRaw * wC + (o.f ?? 0) * 0.6 + (o.m ?? 0) * 0.05;
+    const wB = s.chefUsed ? 3 : (s.cr >= 70 ? 2.5 : 2);
+    return a * wA + bRaw * wB + (o.l ?? 0) * 0.6 + (o.m ?? 0) * 0.05;
 }
 
 const STRATEGIES = {
@@ -105,7 +133,7 @@ const STRATEGIES = {
 
 // ---------- applying effects (the exact engine formulas) ----------
 function apply(s, o, poolType) {
-    const m = o.m ?? 0, f = o.f ?? 0, a = o.a ?? 0, c = o.c ?? 0;
+    const m = o.m ?? 0, l = o.l ?? 0, a = o.a ?? 0, b = o.b ?? 0;
 
     if (poolType === 'calls') s.tickets = Math.max(0, s.tickets - 1);
 
@@ -117,12 +145,12 @@ function apply(s, o, poolType) {
     s.time += m;
 
     const lazy = lazyMult(s);
-    s.fl += f;
+    s.fl += l;
     s.al += a > 0 ? Math.ceil(a * statMult(s)) : a;
-    const cEff = c > 0 ? Math.ceil(c * statMult(s) * lazy) : c;
-    s.cr += cEff;
-    s.radarPaid += Math.max(0, cEff);
-    s.radarBase += Math.max(0, c);
+    const bEff = b > 0 ? Math.ceil(b * statMult(s) * lazy) : b;
+    s.cr += bEff;
+    s.radarPaid += Math.max(0, bEff);
+    s.radarBase += Math.max(0, b);
 
     if (o.next) s.flags.add(o.next);
     if (o.nextEmail) s.linkedMail.push(o.nextEmail);
@@ -263,7 +291,7 @@ function playDay(diffCfg, stratName) {
 }
 
 // ---------- evaluation ----------
-console.log(`Simulation: ${DAYS} Tage je Zelle, 3 Schwierigkeiten x 3 Spielertypen\n`);
+console.log(`Simulation (${lang}): ${DAYS} Tage je Zelle, 3 Schwierigkeiten x 3 Spielertypen\n`);
 if (VALVES) DIFFS.forEach((d, i) => d.valveReset = VALVES[i]);
 // Stat multiplier as in engine_events: formulas only, not identity (mail
 // chance, tickets and excuses still go through mult).

@@ -28,7 +28,7 @@
     // noted in STRUCTURE.md.
     import { state as game } from '../engine/engine_state.svelte.js';
     import { KEYS } from '../engine/keys.js';
-    import { DB } from '../data.js';
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
     import ItemTooltip from './ItemTooltip.svelte';
 
     // Image files that failed to load. Until now the symbol was simply drawn
@@ -44,13 +44,13 @@
 
     // Trophies are shown apart from ordinary equipment: they mark a story
     // branch rather than something you carry around.
-    const items = $derived(Object.entries(DB.items).map(([id, item]) => ({ id, item, unlocked: owned.includes(id) })));
+    const items = $derived(Object.entries(tree().items).map(([id, item]) => ({ id, item, unlocked: owned.includes(id) })));
     const normalItems = $derived(items.filter(e => !e.item.quest));
     const questItems  = $derived(items.filter(e => e.item.quest));
 
     const foundItems  = $derived(items.filter(e => e.unlocked).length);
     const itemPercent = $derived(items.length ? Math.round(foundItems / items.length * 100) : 0);
-    const achPercent  = $derived(DB.achievements.length ? Math.round(earned.length / DB.achievements.length * 100) : 0);
+    const achPercent  = $derived(tree().achievements.length ? Math.round(earned.length / tree().achievements.length * 100) : 0);
 
     const stats = $derived(game.archive.stats ?? { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 });
 
@@ -60,9 +60,10 @@
      * ledgers share a place and a shape - and the choice is remembered,
      * because whoever plays the week wants to see the week next time too.
      */
+    // i18n-uses: stats.mode.day, stats.mode.week
     const MODES = [
-        { key: 'day',  label: 'Arbeitstag',   accent: 'text-blue-400',   border: 'border-blue-500/60' },
-        { key: 'week', label: 'Arbeitswoche', accent: 'text-purple-400', border: 'border-purple-500/60' }
+        { key: 'day',  accent: 'text-blue-400',   border: 'border-blue-500/60' },
+        { key: 'week', accent: 'text-purple-400', border: 'border-purple-500/60' }
     ];
 
     let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
@@ -72,37 +73,46 @@
     };
 
     // Same four questions per mode, different unit: days here, weeks there.
+    // The words are shared with the worldwide statistics panel, which asks the
+    // very same four.
+    // i18n-uses: stats.started, stats.survived, stats.rageQuits, stats.fired
     const COUNTERS = {
         day: [
             // Not daysStarted: that one numbers every day Mueller ever lived,
             // week days included. The sum of the three day-mode keys is what
             // the bars underneath add up to.
-            { key: 'dayRunsStarted', label: 'Begonnen', tone: 'text-slate-200' },
-            { key: 'daysSurvived', label: 'Überlebt',   tone: 'text-emerald-400' },
-            { key: 'daysRageQuit', label: 'Rage Quits', tone: 'text-orange-400' },
-            { key: 'daysFired',    label: 'Gefeuert',   tone: 'text-red-500' }
+            { key: 'dayRunsStarted', label: 'stats.started',   tone: 'text-slate-200' },
+            { key: 'daysSurvived',   label: 'stats.survived',  tone: 'text-emerald-400' },
+            { key: 'daysRageQuit',   label: 'stats.rageQuits', tone: 'text-orange-400' },
+            { key: 'daysFired',      label: 'stats.fired',     tone: 'text-red-500' }
         ],
         week: [
-            { key: 'weeksStarted',  label: 'Begonnen',   tone: 'text-slate-200' },
-            { key: 'weeksSurvived', label: 'Überlebt',   tone: 'text-emerald-400' },
-            { key: 'weeksRageQuit', label: 'Rage Quits', tone: 'text-orange-400' },
-            { key: 'weeksFired',    label: 'Gefeuert',   tone: 'text-red-500' }
+            { key: 'weeksStarted',  label: 'stats.started',   tone: 'text-slate-200' },
+            { key: 'weeksSurvived', label: 'stats.survived',  tone: 'text-emerald-400' },
+            { key: 'weeksRageQuit', label: 'stats.rageQuits', tone: 'text-orange-400' },
+            { key: 'weeksFired',    label: 'stats.fired',     tone: 'text-red-500' }
         ]
     };
 
     // The bars say more than one overall rate: someone who survived ten
     // Fridays but no Monday sees exactly that - and the same holds for the
     // week, where the three states are the real difficulty.
+    //
+    // The day levels are named after weekdays and the week levels after the
+    // state you turn up in; both sets already exist in the dictionary, so this
+    // list holds the key and not the word.
+    // i18n-uses: week.day.fri, week.day.wed, week.day.mon
+    // i18n-uses: week.diff.easy, week.diff.normal, week.diff.hard
     const LEVELS = {
         day: [
-            { key: 'easy',   label: 'Freitag',     bar: 'bg-green-500' },
-            { key: 'normal', label: 'Mittwoch',    bar: 'bg-blue-500' },
-            { key: 'hard',   label: 'Montag',      bar: 'bg-red-500' }
+            { key: 'easy',   label: 'week.day.fri',    bar: 'bg-green-500' },
+            { key: 'normal', label: 'week.day.wed',    bar: 'bg-blue-500' },
+            { key: 'hard',   label: 'week.day.mon',    bar: 'bg-red-500' }
         ],
         week: [
-            { key: 'easy',   label: 'Erholt',      bar: 'bg-green-500' },
-            { key: 'normal', label: 'Genervt',     bar: 'bg-amber-500' },
-            { key: 'hard',   label: 'Urlaubsreif', bar: 'bg-red-500' }
+            { key: 'easy',   label: 'week.diff.easy',   bar: 'bg-green-500' },
+            { key: 'normal', label: 'week.diff.normal', bar: 'bg-amber-500' },
+            { key: 'hard',   label: 'week.diff.hard',   bar: 'bg-red-500' }
         ]
     };
 
@@ -125,8 +135,15 @@
     const hasLevels = $derived(levels.some(l => l.started > 0));
 
     // Only while no week has been survived yet: how far the best run got.
-    const WEEK_BEST = ['–', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'ganze Woche'];
-    const weekBest = $derived(WEEK_BEST[Math.min(5, stats.weekBestDay ?? 0)]);
+    // Index 0 is a dash, not a word - nothing to translate about it.
+    // i18n-uses: week.day.mon, week.day.tue, week.day.wed, week.day.thu
+    // i18n-uses: archive.weekBest.full
+    const WEEK_BEST = ['–', 'week.day.mon', 'week.day.tue', 'week.day.wed',
+                       'week.day.thu', 'archive.weekBest.full'];
+    const weekBest = $derived((() => {
+        const entry = WEEK_BEST[Math.min(5, stats.weekBestDay ?? 0)];
+        return entry === '–' ? entry : t(entry);
+    })());
     const showBest = $derived(mode === 'week'
         && (stats.weekBestDay ?? 0) > 0 && (stats.weeksSurvived ?? 0) === 0);
 
@@ -134,7 +151,7 @@
     // there. One shared number would have counted two different things.
     const streak      = $derived(mode === 'day' ? (stats.streak ?? 0) : (stats.weekStreak ?? 0));
     const streakBest  = $derived(mode === 'day' ? (stats.streakBest ?? 0) : (stats.weekStreakBest ?? 0));
-    const streakLabel = $derived(mode === 'day' ? 'Tage am Stück' : 'Wochen am Stück');
+    const streakLabel = $derived(mode === 'day' ? t('archive.streak.days') : t('archive.streak.weeks'));
 
     // Small print: only show what actually happened. The numbers carry the
     // colour of their stat - orange for the valve, red for the boss - so the
@@ -145,21 +162,22 @@
         const vent = mode === 'day' ? stats.ventSaves    : stats.weekVentSaves;
         const warn = mode === 'day' ? stats.warningsChef : stats.weekWarningsChef;
         return [
-            vent ? { value: vent, text: 'durch das Ventil gerettet', tone: 'text-orange-400' } : null,
-            warn ? { value: warn, text: 'abgemahnt',                 tone: 'text-red-500' } : null
+            vent ? { value: vent, text: t('archive.vent'),   tone: 'text-orange-400' } : null,
+            warn ? { value: warn, text: t('archive.warned'), tone: 'text-red-500' } : null
         ].filter(Boolean);
     });
 
     // How hard it was when the achievement was earned. Anything recorded before
     // the difficulty was tracked counts as easy.
+    // i18n-uses: archive.badge.hard, archive.badge.normal, archive.badge.easy
     const DIFFICULTY = {
-        hard:   { border: 'border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]', badge: 'text-red-400 border-red-500/30 bg-red-950/30',     label: 'SCHWER' },
-        normal: { border: 'border-blue-500/50 bg-blue-900/10',                                     badge: 'text-blue-400 border-blue-500/30 bg-blue-950/30',  label: 'MITTEL' },
-        easy:   { border: 'border-green-500/50 bg-green-900/10',                                   badge: 'text-green-400 border-green-500/30 bg-green-950/30', label: 'EINFACH' }
+        hard:   { border: 'border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]', badge: 'text-red-400 border-red-500/30 bg-red-950/30',     label: 'archive.badge.hard' },
+        normal: { border: 'border-blue-500/50 bg-blue-900/10',                                     badge: 'text-blue-400 border-blue-500/30 bg-blue-950/30',  label: 'archive.badge.normal' },
+        easy:   { border: 'border-green-500/50 bg-green-900/10',                                   badge: 'text-green-400 border-green-500/30 bg-green-950/30', label: 'archive.badge.easy' }
     };
 
     const achievements = $derived(
-        DB.achievements.map(ach => {
+        tree().achievements.map(ach => {
             const unlocked = earned.includes(ach.id);
             const diff = DIFFICULTY[game.archive.achievementDiffs?.[ach.id] ?? 'easy'] ?? DIFFICULTY.easy;
             return {
@@ -261,7 +279,7 @@
     {@const pos = tooltipPosition(index)}
     <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, quest)} flex items-center justify-center text-xl cursor-help transition-all relative group {pinned === entry.id ? 'ring-2 ring-slate-400/70' : ''}"
          data-arch-tile role="button" tabindex="0"
-         aria-label={entry.unlocked ? entry.item.name : (quest ? '???' : 'Unbekannt')}
+         aria-label={entry.unlocked ? entry.item.name : (quest ? '???' : t('archive.unknown'))}
          onclick={() => toggle(entry.id)}
          onkeydown={(e) => keyToggle(e, entry.id)}>
         {#if !entry.unlocked}?
@@ -273,7 +291,7 @@
         {/if}
 
         <ItemTooltip item={entry.item} pinned={pinned === entry.id}
-                     locked={!entry.unlocked} lockedTitle={quest ? '???' : 'Unbekannt'} {pos} />
+                     locked={!entry.unlocked} lockedTitle={quest ? '???' : t('archive.unknown')} {pos} />
     </div>
 {/snippet}
 
@@ -282,7 +300,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_items.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '📦'}> Items</span>
+                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_items.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '📦'}> {t('archive.items')}</span>
                     <span class="text-xs font-mono text-slate-300">{foundItems} / {items.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -292,8 +310,8 @@
 
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_medal.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '🏅'}> Erfolge</span>
-                    <span class="text-xs font-mono text-slate-300">{earned.length} / {DB.achievements.length}</span>
+                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_medal.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '🏅'}> {t('archive.achievements')}</span>
+                    <span class="text-xs font-mono text-slate-300">{earned.length} / {tree().achievements.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                     <div class="h-full bg-linear-to-r from-purple-600 to-purple-400 transition-all duration-1000" style="width: {achPercent}%"></div>
@@ -313,7 +331,7 @@
                                    {mode === m.key
                                      ? `bg-slate-800 ${m.accent} ${m.border}`
                                      : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
-                        {m.label}
+                        {t(`stats.mode.${m.key}`)}
                     </button>
                 {/each}
             </div>
@@ -321,7 +339,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {#each counters as stat (stat.key)}
                     <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
-                        <span class="text-[9px] text-slate-500 uppercase tracking-widest">{stat.label}</span>
+                        <span class="text-[9px] text-slate-500 uppercase tracking-widest">{t(stat.label)}</span>
                         <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{counterValue(stat.key)}</span>
                     </div>
                 {/each}
@@ -334,13 +352,13 @@
                  of capitals - that reads as a sentence. -->
             <div class="flex items-center justify-between px-3 py-2 bg-slate-800/40 rounded-sm border border-slate-700/30">
                 <span class="text-[10px] text-slate-400 uppercase tracking-widest">
-                    Serie{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[11px] ml-2">bester Lauf: {weekBest}</span>{/if}
+                    {t('archive.streak')}{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[11px] ml-2">{tf('archive.bestRun', { day: weekBest })}</span>{/if}
                 </span>
                 <span class="flex items-baseline gap-1.5 font-mono">
                     <span class="text-base font-bold {streak > 0 ? 'text-amber-400' : 'text-slate-500'}">{streak}</span>
                     <span class="text-[11px] text-slate-400">{streakLabel}</span>
                     <span class="text-slate-700 px-1">·</span>
-                    <span class="text-[11px] text-slate-400">Rekord</span>
+                    <span class="text-[11px] text-slate-400">{t('archive.record')}</span>
                     <span class="text-base font-bold {streakBest > 0 ? 'text-slate-200' : 'text-slate-500'}">{streakBest}</span>
                 </span>
             </div>
@@ -350,7 +368,7 @@
                 <div class="space-y-1 px-1 pt-0.5">
                     {#each levels as level (level.key)}
                         <div class="flex items-center gap-2">
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-20 shrink-0">{level.label}</span>
+                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-20 shrink-0">{t(level.label)}</span>
                             <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full {level.bar} rounded-full transition-all" style="width: {level.percent}%"></div>
                             </div>
@@ -362,7 +380,7 @@
                 </div>
             {:else}
                 <p class="text-[10px] text-slate-600 text-center py-2">
-                    {mode === 'day' ? 'Noch kein Arbeitstag begonnen.' : 'Noch keine Arbeitswoche begonnen.'}
+                    {mode === 'day' ? t('archive.noRun.day') : t('archive.noRun.week')}
                 </p>
             {/if}
 
@@ -378,7 +396,7 @@
     </div>
 
     <div class="mb-8" onfocusout={unpinOnFocusOut}>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">GEFUNDENE AUSRÜSTUNG</h3>
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.items')}</h3>
         <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
             {#each normalItems as entry, i (entry.id)}
                 {@render tile(entry, i)}
@@ -388,7 +406,7 @@
 
     {#if questItems.length > 0}
         <div class="mb-8" onfocusout={unpinOnFocusOut}>
-            <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">LEGENDÄRE TROPHÄEN</h3>
+            <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.trophies')}</h3>
             <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
                 {#each questItems as entry, i (entry.id)}
                     {@render tile(entry, i)}
@@ -398,7 +416,7 @@
     {/if}
 
     <div>
-        <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">ERRUNGENSCHAFTEN</h3>
+        <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {#each achievements as row (row.ach.id)}
                 <div class="flex gap-3 p-3 rounded-sm border transition-all hover:bg-slate-800 group relative
@@ -418,9 +436,9 @@
                         <div class="flex items-start gap-2 mb-0.5">
                             <div class="font-bold text-xs leading-tight {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
                             {#if row.unlocked}
-                                <span class="text-[9px] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{row.diff.label}</span>
+                                <span class="text-[9px] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{t(row.diff.label)}</span>
                             {:else}
-                                <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">GESPERRT</span>
+                                <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">{t('archive.locked')}</span>
                             {/if}
                         </div>
                         <!-- No line-clamp: 33 of 54 texts are longer than two

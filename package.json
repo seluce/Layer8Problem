@@ -1,6 +1,6 @@
 {
   "name": "layer8problem",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Layer8Problem - SysAdmin Survival Simulator",
   "author": "seluce",
   "license": "MIT",
@@ -19,12 +19,16 @@
     "build": "vite build",
     "preview": "vite preview --outDir docs",
     "lint:data": "node tools/lint-data.mjs",
+    "lint:data:en": "node tools/lint-data.mjs --lang=en",
+    "lint:i18n": "node tools/lint-i18n.mjs",
+    "lint:parity": "node tools/lint-parity.mjs",
+    "lint:all": "npm run lint:data && npm run lint:data:en && npm run lint:i18n && npm run lint:parity",
     "start": "npm run build && electron .",
     "start:dev": "electron .",
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
     "sim": "node tools/simulate-day.mjs",
-    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs",
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
     "sim:week": "node tools/simulate-week.mjs"
   },
   "build": {
@@ -52,7 +56,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "electron": "^43.4.0",
     "electron-builder": "^26.15.3",
-    "svelte": "^5.56.8",
+    "svelte": "^5.56.9",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.1"
   },

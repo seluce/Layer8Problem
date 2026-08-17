@@ -7,8 +7,13 @@
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
+
+    // The state holds WHICH excuse was drawn, not its wording, so the sentence
+    // follows a language switch.
+    const excuse = $derived(renderRecipe(state.currentExcuse) ?? '');
 </script>
 
 <p id="excuse-text" class="text-base text-slate-300 italic">
-    "{state.currentExcuse}"
+    "{excuse}"
 </p>

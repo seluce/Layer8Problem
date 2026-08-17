@@ -1,7 +1,7 @@
 /**
  * Game database.
  *
- * Split into two tiers. The eager tier is everything needed before the player
+ * Split into two tiers. The core tier is everything needed before the player
  * clicks anything: characters, items, morning moods, the news ticker, the
  * tutorial and the achievement list. Together roughly 60 KB.
  *
@@ -13,68 +13,158 @@
  * DB stays one object throughout: lazy pools are undefined until loaded, never
  * missing keys on a different object. Anything reading a pool must go through
  * ensure() first.
+ *
+ * --- LANGUAGE (6.0) ---
+ *
+ * Every pool exists twice, under src/data/de and src/data/en. Both trees carry
+ * the same ids, story flags, character names and numbers; only the prose
+ * differs. Two consequences worth knowing before touching anything here:
+ *
+ *   - A save file is language independent. Nothing persisted refers to a text,
+ *     so switching mid-week is safe and needs no migration.
+ *   - The core tier can no longer be a static import, because the language is
+ *     not known until localStorage and the browser have been asked. loadCore()
+ *     has to be awaited before the first component mounts - see src/main.js.
+ *
+ * Why not Paraglide: it bundles every message of a language into one store,
+ * which would put 1.2 MB into the first parse and undo the lazy pools. It would
+ * also take away the per-pool structure that lint-data.mjs and report-prose.mjs
+ * check today.
  */
 
-import { achievements } from './data/data_achievements.js';
-import { chars }        from './data/data_chars.js';
-import { excuses }      from './data/data_excuses.js';
-import { items }        from './data/data_items.js';
-import { moods }        from './data/data_moods.js';
-import { newsTicker }   from './data/data_newsTicker.js';
-import { special }      from './data/data_special.js';
-import { tutorial }     from './data/data_tutorial.js';
+/** Pools loaded on first use. Key === the name the module exports. */
+const POOL_NAMES = [
+    'board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails',
+    'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server',
+    'sidequests'
+];
 
-export const DB = {
-    achievements,
-    chars,
-    excuses,
-    items,
-    moods,
-    newsTicker,
-    special,
-    tutorial
-};
+/** Needed before the first click, so these come in one go at boot. */
+const CORE_NAMES = [
+    'achievements', 'chars', 'excuses', 'items', 'moods', 'newsTicker',
+    'special', 'tutorial'
+];
 
-// Loaders for the deferred pools. The dynamic import() is what lets the browser
-// fetch these separately instead of bundling them into the first parse.
-const LOADERS = {
-    board:      () => import('./data/data_board.js'),
-    bossfights: () => import('./data/data_bossfights.js'),
-    calls:      () => import('./data/data_calls.js'),
-    coffee:     () => import('./data/data_coffee.js'),
-    compendium: () => import('./data/data_compendium.js'),
-    diary:      () => import('./data/data_diary.js'),
-    emails:     () => import('./data/data_emails.js'),
-    intranet:   () => import('./data/data_intranet.js'),
-    lunch:      () => import('./data/data_lunch.js'),
-    meetings:   () => import('./data/data_meetings.js'),
-    party:      () => import('./data/data_party.js'),
-    reputation: () => import('./data/data_reputation.js'),
-    server:     () => import('./data/data_server.js'),
-    sidequests: () => import('./data/data_sidequests.js')
-};
+/**
+ * The loaded pools.
+ *
+ * A plain object, and deliberately so: the Node tools import this module
+ * without the Svelte loader, so nothing in here may be a rune. The cost is that
+ * setLanguage() swapping its contents is a change no component can see.
+ *
+ * **A component therefore never imports DB - it goes through `tree()` in
+ * src/i18n/i18n.svelte.js**, which reads the language rune on the way past. The
+ * engine imports DB directly and is right to: it is not reactive and re-reads
+ * on every call.
+ */
+export const DB = {};
+
+/**
+ * The tree everything loads from.
+ *
+ * Deliberately not exported as a mutable binding: callers ask via
+ * currentLanguage() and change it through setLanguage(), so there is one place
+ * that knows the cache has to be dropped along with it.
+ */
+let language = 'de';
+
+export const currentLanguage = () => language;
+
+/**
+ * One loader for both trees.
+ *
+ * One branch per tree, each with a STATIC prefix and a single variable. That
+ * shape is the one Vite's dynamic-import-vars plugin handles reliably; a
+ * specifier carrying two variables (`./data/${lang}/data_${name}.js`) has to
+ * be resolved through a wider glob, and anything the glob misses fails at
+ * RUNTIME with "Unknown variable dynamic import" rather than at build time.
+ *
+ * The duplication is two lines and cannot drift: both branches take the same
+ * name. Plain Node - which is how the tools import this module - resolves
+ * either specifier directly.
+ *
+ * **The `de` branch is "not en", not a fallback.** It reads like one now that
+ * FALLBACK_LANGUAGE says 'en', and the two would look as though they disagree.
+ * They never meet: every caller comes through LANGUAGES, so `lang` is 'de' or
+ * 'en' and this ternary only ever picks the tree it was asked for.
+ * FALLBACK_LANGUAGE is for the other case - the asked-for tree failing to
+ * arrive - and by then the branch here has already done its job.
+ */
+const importPool = (lang, name) => (lang === 'en'
+    ? import(`./data/en/data_${name}.js`)
+    : import(`./data/de/data_${name}.js`));
 
 // In-flight requests, so two callers asking for the same pool at the same time
 // share one network request instead of racing.
-const pending = {};
+let pending = {};
+
+/**
+ * Loads the core tier for a language and makes it the current one.
+ *
+ * Must be awaited before anything renders. Everything after this point may
+ * assume DB.items, DB.chars and the rest are present.
+ *
+ * @param {string} lang 'de' or 'en'
+ */
+export async function loadCore(lang = language) {
+    try {
+        await fillCore(lang);
+    } catch (err) {
+        // A language that cannot load must not brick the game. Without this
+        // the promise rejected, engine.init() never finished, and every view
+        // that reads DB came up empty - an archive with nothing in it and a
+        // settings dialog that opens blank, with only the console saying why.
+        if (lang === FALLBACK_LANGUAGE) throw err;
+        console.error(`Language "${lang}" could not be loaded, falling back to `
+                    + `"${FALLBACK_LANGUAGE}".`, err);
+        await fillCore(FALLBACK_LANGUAGE);
+    }
+}
+
+/**
+ * The tree to load when the wanted one will not come.
+ *
+ * A different case from a missing dictionary key, and worth its own thought:
+ * this is the whole prose corpus, not one string. Both trees ship in the same
+ * build, so neither is the safer bet technically - which makes it a question
+ * about the reader. Whoever ends up here is reading a language they did not
+ * ask for either way; English is the one more of them can read.
+ *
+ * Note the asymmetry this creates, because it is the real cost: the language
+ * named HERE is the one whose own failure is fatal. loadCore() rethrows rather
+ * than recurse, so a broken English tree now takes the game down instead of
+ * quietly serving German. That is the trade, and it is deliberate.
+ */
+const FALLBACK_LANGUAGE = 'en';
+
+async function fillCore(lang) {
+    const loaded = await Promise.all(CORE_NAMES.map(name => importPool(lang, name)));
+    language = lang;
+    CORE_NAMES.forEach((name, i) => { DB[name] = loaded[i][name]; });
+}
 
 /**
  * Guarantees the named pools are present on DB before continuing.
  * Already-loaded pools resolve immediately, so calling this on every action is
- * cheap — no need to track what has been loaded at the call site.
+ * cheap - no need to track what has been loaded at the call site.
  *
  * @param {...string} names pool keys, e.g. ensure('coffee', 'bossfights')
  */
 export function ensure(...names) {
     return Promise.all(names.map(name => {
         if (DB[name]) return Promise.resolve();
-        if (!LOADERS[name]) {
+        if (!POOL_NAMES.includes(name)) {
             console.warn(`Unknown data pool: ${name}`);
             return Promise.resolve();
         }
         if (!pending[name]) {
-            pending[name] = LOADERS[name]()
-                .then(mod => { DB[name] = mod[name]; })
+            const forLanguage = language;
+            pending[name] = importPool(forLanguage, name)
+                .then(mod => {
+                    // A switch while this was in flight would otherwise file the
+                    // old tree's pool under the new language.
+                    if (forLanguage === language) DB[name] = mod[name];
+                })
                 .catch(err => {
                     // Let a later attempt retry rather than caching the failure.
                     delete pending[name];
@@ -84,6 +174,28 @@ export function ensure(...names) {
         }
         return pending[name];
     }));
+}
+
+/**
+ * Switches trees and reloads whatever was already in memory.
+ *
+ * The pools are cached on DB (`if (DB[name]) return` above), so a switch has to
+ * drop that cache or the old language simply stays.
+ *
+ * Since 6.0 this is also the game's own path - the switch no longer reloads.
+ * i18n.switchLanguage() awaits this and only then moves its language rune, so
+ * nothing renders against the half-emptied tree; the loop above deletes every
+ * key SYNCHRONOUSLY, and for the length of the await DB really is empty.
+ *
+ * @param {string} lang 'de' or 'en'
+ */
+export async function setLanguage(lang) {
+    if (lang === language) return;
+    const loaded = POOL_NAMES.filter(name => DB[name]);
+    for (const key of Object.keys(DB)) delete DB[key];
+    pending = {};
+    await loadCore(lang);
+    if (loaded.length) await ensure(...loaded);
 }
 
 /**
@@ -98,6 +210,6 @@ export function prefetchAll() {
     idle(() => {
         // Swallow failures here: ensure() will retry at the actual call site,
         // and a warm-up that fails must not surface as an error to the player.
-        ensure(...Object.keys(LOADERS)).catch(() => {});
+        ensure(...POOL_NAMES).catch(() => {});
     });
 }

@@ -43,7 +43,8 @@
  */
 import { DB } from '../data.js';
 import { KEYS } from './keys.js';
-import { WEEK_DAY_NAMES } from './engine_week.js';
+import { dayName } from './engine_week.js';
+import { t, tf } from '../i18n/i18n.svelte.js';
 
 /**
  * How many recently used lines to remember. A week run writes five entries
@@ -54,9 +55,22 @@ const MEMORY = 150;
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-/** Turns ["A", "B", "C"] into the phrase "A, B und C". */
+/**
+ * Turns ["A", "B", "C"] into the phrase "A, B und C".
+ *
+ * The conjunction goes through the dictionary rather than sitting in this
+ * line, and it is a whole pattern rather than a bare word: German and English
+ * happen to agree on "head, conjunction, last", but a fixed `und` in the
+ * middle of {list} was appearing in every English diary entry, and a language
+ * that puts the joint somewhere else would have no way to say so.
+ */
 const formatList = (arr) =>
-    arr.length <= 1 ? (arr[0] ?? '') : `${arr.slice(0, -1).join(', ')} und ${arr[arr.length - 1]}`;
+    arr.length <= 1
+        ? (arr[0] ?? '')
+        : tf('diary.listJoin', {
+            head: arr.slice(0, -1).join(t('diary.listSeparator')),
+            last: arr[arr.length - 1]
+        });
 
 /** Replaces {name} placeholders. Unknown ones stay put and become visible. */
 const fill = (text, tokens) => text.replace(/\{(\w+)\}/g, (whole, key) => tokens[key] ?? whole);
@@ -65,7 +79,7 @@ const fits = (fragment, day) => {
     try {
         return !!fragment.when(day);
     } catch (err) {
-        console.error(`Tagebuch: Bedingung von "${fragment.id}" ist gestolpert`, err);
+        console.error(`Diary: the condition of "${fragment.id}" stumbled`, err);
         return false;
     }
 };
@@ -140,8 +154,8 @@ function factsOf(state, endReason) {
     const history = Array.isArray(state.statHistory) ? state.statHistory : [];
     let peak = { t: 8 * 60, v: 0 };
     for (const point of history) {
-        const v = Math.max(point.a ?? 0, point.c ?? 0);
-        if (v > peak.v) peak = { t: point.t ?? peak.t, v };
+        const v = Math.max(point.a ?? 0, point.b ?? 0);
+        if (v > peak.v) peak = { t: point.m ?? peak.t, v };
     }
 
     // Who moved today. Reputation on its own says nothing about the day - the
@@ -193,7 +207,18 @@ function factsOf(state, endReason) {
     };
 }
 
-const WEEKDAY = { easy: 'Freitag', normal: 'Mittwoch', hard: 'Montag' };
+/**
+ * Which calendar day a difficulty stands for, as an index into WEEK_DAY_KEYS:
+ * Friday, Wednesday, Monday.
+ *
+ * Held as an index and resolved through dayName(), not as a word. Up to here
+ * this was `{ easy: 'Freitag', … }`, and the word went straight into {weekday}
+ * of the diary prose - so the English day mode wrote "A Montag straight out of
+ * the textbook". It is the same failure WEEK_DAY_KEYS was built for, one file
+ * further on, and it survived because nothing compares against this value: it
+ * is only ever printed.
+ */
+const WEEKDAY_INDEX = { easy: 4, normal: 2, hard: 0 };
 
 /**
  * @returns {{paragraphs: {text: string, tone: string}[]}} in reading order.
@@ -205,8 +230,8 @@ export function buildDiary(state, endReason, partyText = '') {
         // prefetchAll() warms this pool while the intro modal is up, so it is
         // there hours of game time before anyone clocks off. If it is not, the
         // day still deserves a closing line.
-        console.error('Tagebuch: der Textbestand ist nicht geladen');
-        return { paragraphs: [{ text: 'Kein Eintrag. Der Tag war lang genug.', tone: 'final' }] };
+        console.error('Diary: the text pool is not loaded');
+        return { paragraphs: [{ text: t('diary.empty'), tone: 'final' }] };
     }
 
     const day = factsOf(state, endReason);
@@ -220,7 +245,7 @@ export function buildDiary(state, endReason, partyText = '') {
         streak: String(day.streak), restdays: String(day.weekRest),
         // In a week {weekday} is the real calendar day - the difficulty
         // mapping would claim Mittwoch five times in a row.
-        weekday: day.week ? WEEK_DAY_NAMES[day.weekDay - 1] : WEEKDAY[day.difficulty],
+        weekday: dayName(day.week ? day.weekDay - 1 : WEEKDAY_INDEX[day.difficulty]),
         party: partyText
     };
 

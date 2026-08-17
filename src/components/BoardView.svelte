@@ -14,8 +14,17 @@
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
+    import { tree } from '../i18n/i18n.svelte.js';
 
-    const notes = $derived(state.boardNotes ?? []);
+    // The day records WHICH notes are pinned up, by id; the notes themselves
+    // are prose and stay in the tree. Read back through tree(), so the wall
+    // follows a language switch. An id whose note has since been edited away
+    // simply drops off the wall.
+    const notes = $derived(
+        (state.boardNotes ?? [])
+            .map(id => (tree().board ?? []).find(n => n.id === id))
+            .filter(Boolean)
+    );
 
     // Shared base for every piece of paper. The gentle lift on hover used to
     // sit on the customer quote alone, which made that one note feel alive and

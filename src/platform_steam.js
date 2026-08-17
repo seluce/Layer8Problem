@@ -87,9 +87,9 @@ export const desktop = {
         }
     },
 
-    presence: (text) => {
+    presence: (token) => {
         try {
-            ipcRenderer.send('steam-set-status', text);
+            ipcRenderer.send('steam-set-status', token);
         } catch (err) {
             console.warn("Rich presence could not be set.", err);
         }
@@ -122,6 +122,16 @@ export const desktop = {
             return await ipcRenderer.invoke('steam-get-global-stats');
         } catch (err) {
             console.warn("Global stats could not be fetched.", err);
+            return null;
+        }
+    },
+
+    language: async () => {
+        try {
+            return await ipcRenderer.invoke('steam-get-language');
+        } catch (err) {
+            // Not worth a warning: detection falls back to the browser, which
+            // is the same thing the web build does.
             return null;
         }
     }

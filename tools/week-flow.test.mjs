@@ -18,14 +18,22 @@ globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
     querySelectorAll: () => [],
+    // useLanguage() sets <html lang> on its way past - the automatic
+    // hyphenation of long words follows that attribute.
+    documentElement: { lang: '' },
 };
 
-const { DB, ensure } = await import('../src/data.js');
+const { DB, ensure, loadCore } = await import('../src/data.js');
+// 6.0: the core tier is loaded, not statically imported. German is the source.
+await loadCore('de');
+await ensure('lore');
 const { buildDiary } = await import('../src/engine/engine_diary.js');
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
+const { renderRecipe } = await import('../src/engine/recipe.js');
+const { useLanguage } = await import('../src/i18n/i18n.svelte.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
@@ -49,8 +57,12 @@ const engine = {
     closeSettings() {}, updatePhoneVisibility() {}, checkForNews() {},
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
     setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
-    setTerminalResult(text, m, f, a, c, action, buttonText) { calls.termResult = { action, buttonText }; },
-    log(text) { (calls.logs ??= []).push(text); },
+    setTerminalResult(text, m, l, a, b, action, buttonKey) { calls.termResult = { action, buttonKey }; },
+    // Since 6.0 log() is handed a RECIPE, not a sentence. The stub keeps it as
+    // it arrives: a test that asserts on the rendered German would be asserting
+    // on the display, and the whole point of the recipe is that the display is
+    // no longer where the identity lives.
+    log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'Tagebuch-Stub',
 };
@@ -139,10 +151,10 @@ await ok('Freitag 16:30 → WOCHE ÜBERLEBT mit Bilanz, Statistiken, Slot geräu
     engine.startWeek('easy');
     state.week.dayIndex = 5;
     state.week.weekLog = [
-        { dayIndex: 1, endTickets: 4, endFl: 20, endAl: 31, endCr: 24, coffee: 3, mailsIgnored: 1 },
-        { dayIndex: 2, endTickets: 2, endFl: 27, endAl: 35, endCr: 28, coffee: 2, mailsIgnored: 0 },
-        { dayIndex: 3, endTickets: 5, endFl: 34, endAl: 43, endCr: 33, coffee: 4, mailsIgnored: 2 },
-        { dayIndex: 4, endTickets: 3, endFl: 41, endAl: 47, endCr: 37, coffee: 1, mailsIgnored: 0 },
+        { dayIndex: 1, endTickets: 4, endL: 20, endA: 31, endB: 24, coffee: 3, mailsIgnored: 1 },
+        { dayIndex: 2, endTickets: 2, endL: 27, endA: 35, endB: 28, coffee: 2, mailsIgnored: 0 },
+        { dayIndex: 3, endTickets: 5, endL: 34, endA: 43, endB: 33, coffee: 4, mailsIgnored: 2 },
+        { dayIndex: 4, endTickets: 3, endL: 41, endA: 47, endB: 37, coffee: 1, mailsIgnored: 0 },
     ];
     state.time = 16 * 60 + 30; state.tickets = 6; state.coffeeConsumed = 2;
     state.fl = 52; state.al = 44; state.cr = 39;
@@ -175,7 +187,9 @@ await ok('Rage Quit am Mittwoch: Tagesnennung, weeksRageQuit, Ventil zählt 1×'
     state.al = 100;
     state.rageWarningReceived = true;                           // Wochen-Ventil verbraucht
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd.title, 'RAGE QUIT');
+    // cause, not the title: the title is a dictionary entry and reads
+    // differently in the other language.
+    assert.equal(state.pendingEnd.cause, 'rage');
     assert.ok(state.pendingEnd.lead.includes('Die Woche endet am Mittwoch.'));
     engine.finishGame();
 
@@ -207,7 +221,7 @@ await ok('9 Tickets übertragen + Morgen-Stimmung Tickets (Urlaubsreif +3) = sof
 
     assert.equal(state.tickets, 12);
     assert.ok(calls.end, 'Wochen-Endscreen muss erschienen sein');
-    assert.equal(calls.end.title, 'GEFEUERT');
+    assert.equal(calls.end.cause, 'tickets');
     assert.ok(calls.end.lead.includes('Donnerstag'));
     assert.equal(state.archive.stats.weeksFired, 1);
     assert.equal(state.week.active, false);
@@ -236,6 +250,87 @@ await ok('offerResume(week) findet den Wochen-Slot und routet resumeDay → resu
     assert.equal(state.week.dayIndex, 2);
     assert.equal(state.tickets, 4);
     assert.equal(state.time, 11 * 60);
+});
+await ok('Ein Spielstand aus 5.0 bringt seine Tageskurve mit (Migration)', () => {
+    resetState();
+    // Genau die Form, die 5.0 geschrieben hat: t für die Uhrzeit, f/a/c für
+    // die drei Balken. Alle Leser greifen mit `?? 0` zu — ohne Migration
+    // fiele die Kurve lautlos auf null, statt einen Fehler zu werfen.
+    const alt = {
+        time: 11 * 60, difficultyMult: 1.0,
+        statHistory: [{ t: 480, f: 0, a: 0, c: 0 }, { t: 620, f: 25, a: 40, c: 35 }]
+    };
+    engine.applyRestoredDay(alt);
+
+    assert.deepEqual(state.statHistory, [
+        { m: 480, l: 0,  a: 0,  b: 0 },
+        { m: 620, l: 25, a: 40, b: 35 }
+    ], 'alter Kurvenpunkt nicht umgesetzt');
+
+    // Zweimal angewandt darf nichts kaputtmachen — ein neuer Punkt trägt
+    // kein t und fällt durch die Bedingung.
+    const nochmal = engine.migrateStatPoints(state.statHistory);
+    assert.deepEqual(nochmal, state.statHistory, 'Migration ist nicht idempotent');
+});
+await ok('Die Startzeile eines alten Spielstands nennt die laufende Version', () => {
+    resetState();
+    // Ein Stand, der unter 5.0 gespeichert wurde. init() schreibt die
+    // Versionszeile als ersten Protokolleintrag der Sitzung, und weil
+    // setDifficulty den Tag nicht zurücksetzt, wandert sie mit in den
+    // Spielstand. Unverändert wiederhergestellt behauptet das Protokoll eine
+    // andere Version als die Kopfzeile daneben.
+    const alt = {
+        time: 11 * 60, difficultyMult: 1.0,
+        logEntries: [
+            { id: 1, time: '08:00', msg: 'System v5.0.0 geladen. Warte auf User...', color: '' },
+            { id: 2, time: '08:00', msg: 'Modus: MITTWOCH. Business as usual.',     color: '' },
+            { id: 3, time: '09:15', msg: 'Kaffee geholt.',                          color: '' }
+        ]
+    };
+    engine.applyRestoredDay(alt);
+
+    // Die Startzeile wird beim Wiederherstellen zum Rezept gemacht - das ist
+    // die eine Stelle, an der eine 5.x-Zeile ihre Kennung zurückbekommt. Also
+    // wird gerendert geprüft und nicht auf ein Feld geschaut.
+    const start = renderRecipe(state.logEntries[0]);
+    assert.ok(start.includes(engine.VERSION),
+              `Startzeile nennt nicht ${engine.VERSION}: ${start}`);
+    assert.ok(!start.includes('v5.0.0'), 'alte Version steht noch da');
+    assert.equal(state.logEntries[0].msg, undefined, 'der alte Satz steht noch im Eintrag');
+    // Der Rest des Protokolls ist Gedächtnis und bleibt unangetastet.
+    assert.equal(state.logEntries[1].msg, 'Modus: MITTWOCH. Business as usual.');
+    assert.equal(state.logEntries[2].msg, 'Kaffee geholt.');
+    assert.equal(state.logEntries.length, 3, 'Eintrag dazu- oder weggekommen');
+});
+await ok('Ohne Startzeile wird nichts umgeschrieben', () => {
+    resetState();
+    // Ein späterer Tag einer Woche: der Zähler läuft weiter, id 1 kommt nicht
+    // vor. Und ein langer Tag schiebt die Startzeile ohnehin aus dem Puffer.
+    const alt = {
+        time: 11 * 60, difficultyMult: 1.0,
+        logEntries: [
+            { id: 47, time: '08:00', msg: 'Modus: MITTWOCH. Business as usual.', color: '' },
+            { id: 48, time: '09:15', msg: 'Kaffee geholt.',                      color: '' }
+        ]
+    };
+    engine.applyRestoredDay(alt);
+    assert.deepEqual(state.logEntries.map(e => e.msg),
+                     ['Modus: MITTWOCH. Business as usual.', 'Kaffee geholt.']);
+});
+await ok('Eine Wochenzeile aus 5.0 kommt mit (Migration)', () => {
+    resetState();
+    const alt = [
+        { dayIndex: 1, endTickets: 4, endFl: 20, endAl: 31, endCr: 24, peakA: 50, peakC: 30, coffee: 3, mailsIgnored: 1 },
+        { dayIndex: 2, endTickets: 2, endL: 27, endA: 35, endB: 28, peakA: 40, peakB: 40, coffee: 2, mailsIgnored: 0 }
+    ];
+    const neu = engine.migrateWeekLog(alt);
+
+    assert.deepEqual(neu[0], { dayIndex: 1, endTickets: 4, coffee: 3, mailsIgnored: 1,
+                               endL: 20, endA: 31, endB: 24, peakA: 50, peakB: 30 },
+                     'alte Wochenzeile nicht umgesetzt');
+    assert.deepEqual(neu[1], alt[1], 'neue Wochenzeile angefasst');
+    assert.equal(neu[0].endFl, undefined, 'alter Schlüssel überlebt');
+    assert.equal(neu[0].peakC, undefined, 'alter Schlüssel überlebt');
 });
 await ok('Nacht-Checkpoint (Morgen ungespielt) routet Resume durch den Morgen', () => {
     resetState();
@@ -391,6 +486,33 @@ await ok('Tagesmodus kennt keine Kontingente (spend ist No-op)', () => {
     engine.spendContingent('coffee');
     assert.deepEqual(state.week.contingents ?? {}, {});
 });
+// ------------------------------------------------------- Statuswerte (v5.0)
+console.log('Statuswerte:');
+await ok('Werte bleiben beim Zuweisen in 0..100', () => {
+    resetState();
+    state.fl = 98;
+    events.addStat.call(engine, 'fl', 7);
+    assert.equal(state.fl, 100, 'über 100 gerutscht');
+    state.al = 3;
+    events.addStat.call(engine, 'al', -20);
+    assert.equal(state.al, 0, 'unter 0 gerutscht');
+});
+await ok('Ein Ereignis kann die Anzeige nicht überschießen lassen', () => {
+    resetState();
+    state.fl = 96; state.al = 95; state.cr = 97;
+    // resolveTerminal is the path the phone sidequests take as well
+    events.resolveTerminal.call(engine, { m: 5, l: 15, a: 20, b: 25, r: 'x' }, 'sidequest');
+    for (const k of ['fl', 'al', 'cr'])
+        assert.ok(state[k] <= 100, `${k} steht bei ${state[k]}`);
+});
+await ok('Die Todesschwelle wird bei genau 100 noch erreicht', () => {
+    resetState();
+    state.al = 90;
+    events.addStat.call(engine, 'al', 50);   // würde ohne Deckel 140 ergeben
+    assert.equal(state.al, 100, 'Deckel verfehlt');
+    assert.ok(state.al >= 100, 'Todesprüfung (>= 100) griffe nicht mehr');
+});
+
 // -------------------------------------------------------------- Musik (v5.0)
 console.log('Musik:');
 {
@@ -450,6 +572,139 @@ console.log('Musik:');
                   `Blende überschreibt den Regler: ${mus.bgmTracks[key].volume}`);
     });
 }
+
+// ------------------------------------------- Mittagspause mit Fahnen (v5.1)
+console.log('Mittagspause:');
+await ensure('lunch');
+const origRenderTerminal = engine.renderTerminal;
+await ok('Ein Nachklang erscheint nicht ohne seine Fahne', async () => {
+    resetState();
+    state.week = { active: true, dayIndex: 3 };
+    state.storyFlags = {};
+    let gezogen = [];
+    engine.renderTerminal = (ev) => gezogen.push(ev.id);
+    for (let i = 0; i < 25; i++) { state.usedIDs.clear(); await engine.triggerLunch(); }
+    const nach = gezogen.filter(id => id.startsWith('lunch_nach_'));
+    assert.equal(nach.length, 0, `ohne Vorgeschichte gezogen: ${nach.join(', ')}`);
+});
+await ok('Mit Fahne kommt der Nachklang mit derselben 30-Prozent-Chance', async () => {
+    // Same rule as the action pools (FOLLOWUP_CHANCE), so a single draw
+    // proves nothing - the rate does.
+    resetState();
+    state.week = { active: true, dayIndex: 3 };
+    state.storyFlags = { path_lunch_gelaufen: 2 };   // gestern gesetzt
+    let nach = 0;
+    const N = 600;
+    engine.renderTerminal = (ev) => { if (ev.id.startsWith('lunch_nach_')) nach++; };
+    for (let i = 0; i < N; i++) { state.usedIDs.clear(); await engine.triggerLunch(); }
+    const quote = nach / N;
+    assert.ok(Math.abs(quote - events.FOLLOWUP_CHANCE) < 0.08,
+              `Quote ${(quote * 100).toFixed(1)}% weicht von ${events.FOLLOWUP_CHANCE * 100}% ab`);
+});
+await ok('Am selben Tag noch nicht', async () => {
+    resetState();
+    state.week = { active: true, dayIndex: 2 };
+    state.storyFlags = { path_lunch_gelaufen: 2 };   // heute gesetzt
+    let gezogen = [];
+    engine.renderTerminal = (ev) => gezogen.push(ev.id);
+    for (let i = 0; i < 15; i++) { state.usedIDs.clear(); await engine.triggerLunch(); }
+    assert.ok(!gezogen.some(id => id.startsWith('lunch_nach_')), 'reqStoryAge greift nicht');
+});
+engine.renderTerminal = origRenderTerminal;   // Gerüst wiederherstellen
+
+// ---------------------------------------------- Wissen: neu/gelesen (v5.1)
+await ensure('compendium');
+console.log('Wissen, Neu-Markierung:');
+await ok('Ein frisch geöffneter Eintrag gilt als neu', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.seenFlags = [];
+    state.archive.knowledgeRead = {};
+    const e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.open, true);
+    assert.equal(e.unread, true, 'nicht als neu erkannt');
+});
+await ok('Gelesen heißt gelesen', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    let e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    engine.markKnowledgeRead('sonntag', e.notes.length);
+    e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.unread, false, 'bleibt trotz Lesen neu');
+});
+await ok('Eine spätere Notiz macht den Eintrag wieder neu', () => {
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    engine.markKnowledgeRead('sonntag', 1);
+    // second scene experienced later
+    state.archive.seenEvents.push('cof_sonntag_2');
+    const e = engine.knowledgeEntries().find(x => x.id === 'sonntag');
+    assert.equal(e.notes.length, 2);
+    assert.equal(e.unread, true, 'Nachschlag nicht gemeldet');
+});
+await ok('Eine Fahnen-Notiz allein öffnet den Eintrag nicht', () => {
+    // The gap the other three miss: notes unlock via `seen` OR via `flag`, and
+    // a flag can be raised while none of the entry's sighting events has been
+    // opened. Without the `open` guard the register would highlight an entry
+    // the player has not met yet.
+    resetState();
+    state.archive.seenEvents = [];
+    state.archive.seenFlags = ['path_flirt_date'];
+    state.archive.knowledgeRead = {};
+    const e = engine.knowledgeEntries().find(x => x.id === 'sarah');
+    assert.equal(e.open, false, 'gilt fälschlich als getroffen');
+    assert.ok(e.notes.length > 0, 'Fahnen-Notiz nicht freigeschaltet');
+    assert.equal(e.unread, false, 'ungeöffneter Eintrag meldet sich als neu');
+});
+await ok('Das Wissen folgt der Sprache', async () => {
+    // knowledgeEntries() lief über DB statt über tree(). Das ist die Falle aus
+    // CLAUDE.md: DB ist ein einfaches Objekt, der Sprachwechsel füllt es neu,
+    // und ein $derived, das nur DB liest, merkt davon nichts. In der Komponente
+    // wechselten dadurch die Reiter, während Rolle und Notizen deutsch stehen
+    // blieben — am 17.08.2026 am laufenden Spiel gesehen.
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    const rolle = () => engine.knowledgeEntries().find(x => x.id === 'sonntag')?.role;
+
+    await useLanguage('de');
+    await loadCore('de');
+    await ensure('compendium');
+    const de = rolle();
+
+    await useLanguage('en');
+    await loadCore('en');
+    await ensure('compendium');
+    const en = rolle();
+
+    await useLanguage('de');
+    await loadCore('de');
+    await ensure('compendium');
+
+    assert.ok(de && en, 'ein Baum lieferte nichts');
+    assert.notEqual(de, en, `die Rolle bleibt in beiden Bäumen "${de}"`);
+    assert.equal(rolle(), de, 'kommt nicht zurück');
+
+    // Und die Prüfung, die tatsächlich beißt. Die drei Zusicherungen oben
+    // halten auch dann, wenn man wieder direkt auf DB zugreift — in Node
+    // liefert tree() einfach DB, der Unterschied ist reine Svelte-Reaktivität
+    // und hier nicht zu sehen. Gemessen: die Mutationsprobe schlug nicht an.
+    // Also wird die Quelle gelesen, wie i18n.test.mjs es bei index.html tut.
+    const quelle = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const stelle = quelle.slice(quelle.indexOf('knowledgeEntries:'), quelle.indexOf('markKnowledgeRead:'));
+    assert.ok(stelle.includes('tree().compendium'),
+              'knowledgeEntries liest den Baum nicht über tree() — die Komponente merkt den Sprachwechsel dann nicht');
+    assert.ok(!/\bDB\.compendium/.test(stelle),
+              'knowledgeEntries greift wieder direkt auf DB zu');
+});
+await ok('Was man nie getroffen hat, ist nicht neu', () => {
+    resetState();
+    state.archive.seenEvents = [];
+    state.archive.knowledgeRead = {};
+    assert.equal(engine.knowledgeEntries().some(e => e.unread), false, 'ungeöffnete Einträge melden sich');
+});
 
 // ------------------------------------------------------ Boot-Sequenz (v5.0)
 console.log('Startbildschirm:');
@@ -601,7 +856,7 @@ await ok('Der Effekt hängt wirklich am Öffnen eines Ereignisses', () => {
     assert.equal(state.cr, 45, 'Haken in renderTerminal fehlt');
     assert.equal(calls.termEvent.charName, 'Dr. Wichtig');
 });
-await ok('use.cr und use.rep wirken beim Benutzen', () => {
+await ok('use.b und use.rep wirken beim Benutzen', () => {
     resetState();
     state.time = 600;
     state.inventory = [{ id: 'voodoo_doll', used: false }];
@@ -718,9 +973,46 @@ await ok('Freitag 15:00-Übergang bewaffnet den ZUM-WOCHENMEETING-Knopf', () => 
     state.week.dayIndex = 5;
     state.time = 14 * 60 + 55; state.lunchDone = true;
     state.currentEventId = 'x'; state.currentEventType = 'coffee';
-    engine.resolveTerminal({ r: 'Test.', m: 10, f: 0, a: 0, c: 0 }, 'coffee');
+    engine.resolveTerminal({ r: 'Test.', m: 10, l: 0, a: 0, b: 0 }, 'coffee');
     assert.equal(calls.termResult.action, 'triggerMeeting');
-    assert.equal(calls.termResult.buttonText, 'ZUM WOCHENMEETING');
+    // Kennung statt Anzeigetext: der Knopf trägt seit 6.0 den Schlüssel, und
+    // ein Vergleich gegen 'ZUM WOCHENMEETING' hätte nur auf Deutsch geprüft.
+    assert.equal(calls.termResult.buttonKey, 'terminal.btn.meeting');
+});
+await ok('Das Meeting vergibt keine Tickets — dein Beispiel: 15:10 bis 16:10', () => {
+    // Die Zählung läuft über GRENZEN, nicht über Dauer: 15:10 bis 16:10 steigt
+    // über 15:30 und 16:00, das wären zwei. Das Meeting ist davon ausgenommen.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10;
+    state.tickets = 4;
+    engine.resolveTerminal({ r: 'Meeting vorbei.', m: 60, l: 0, a: 0, b: 0 }, 'meeting');
+    assert.equal(state.tickets, 4, 'das Meeting hat Tickets vergeben');
+    assert.equal(state.time, 16 * 60 + 10, 'die Zeit muss trotzdem vergehen');
+});
+await ok('Die Gegenprobe: dieselbe Strecke als gewöhnliches Ereignis kostet zwei', () => {
+    // Ohne diese Zeile prüft die vorige nichts — sie bewiese nur, dass
+    // irgendetwas keine Tickets vergibt.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10;
+    state.tickets = 4;
+    engine.resolveTerminal({ r: 'Kaffee.', m: 60, l: 0, a: 0, b: 0 }, 'coffee');
+    assert.equal(state.tickets, 6, 'die Grenzen 15:30 und 16:00 fehlen');
+});
+await ok('Nach dem Meeting zählt der Rest des Tages normal weiter', () => {
+    // Ausgenommen, nicht verschoben: die Rechnung hängt an der Uhr, nicht an
+    // einer zweiten, unsichtbaren Zeit.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10; state.tickets = 0;
+    engine.resolveTerminal({ r: 'Meeting vorbei.', m: 60, l: 0, a: 0, b: 0 }, 'meeting');
+    assert.equal(state.tickets, 0);
+    engine.resolveTerminal({ r: 'Kaffee.', m: 20, l: 0, a: 0, b: 0 }, 'coffee');
+    assert.equal(state.tickets, 1, '16:10 bis 16:30 ist genau eine Grenze');
 });
 await ok('Kein Meeting-Knopf: Mo–Do, Tagesmodus, oder Meeting schon erledigt', () => {
     resetState();
@@ -728,12 +1020,12 @@ await ok('Kein Meeting-Knopf: Mo–Do, Tagesmodus, oder Meeting schon erledigt',
     state.week.dayIndex = 3;                                    // Mittwoch
     state.time = 14 * 60 + 55; state.lunchDone = true;
     state.currentEventId = 'x'; state.currentEventType = 'coffee';
-    engine.resolveTerminal({ r: 'Test.', m: 10, f: 0, a: 0, c: 0 }, 'coffee');
+    engine.resolveTerminal({ r: 'Test.', m: 10, l: 0, a: 0, b: 0 }, 'coffee');
     assert.equal(calls.termResult.action, 'reset');
 
     state.week.dayIndex = 5; state.meetingDone = true;          // Freitag, aber erledigt
     state.time = 15 * 60 + 30;
-    engine.resolveTerminal({ r: 'Test.', m: 10, f: 0, a: 0, c: 0 }, 'coffee');
+    engine.resolveTerminal({ r: 'Test.', m: 10, l: 0, a: 0, b: 0 }, 'coffee');
     assert.equal(calls.termResult.action, 'reset');
 });
 await ok('triggerMeeting: zieht aus dem Pool, setzt meetingDone, Gala-Variante greift', async () => {
@@ -801,10 +1093,10 @@ await ok('finishParty schließt die Woche: Zähler, Bilanz unter dem Party-Repor
     engine.startWeek('easy');
     state.week.dayIndex = 5;
     state.week.weekLog = [
-        { dayIndex: 1, endTickets: 2, peakA: 50, peakC: 30, coffee: 2, mailsIgnored: 0 },
-        { dayIndex: 2, endTickets: 1, peakA: 40, peakC: 40, coffee: 1, mailsIgnored: 1 },
-        { dayIndex: 3, endTickets: 3, peakA: 70, peakC: 20, coffee: 3, mailsIgnored: 0 },
-        { dayIndex: 4, endTickets: 2, peakA: 60, peakC: 50, coffee: 2, mailsIgnored: 1 },
+        { dayIndex: 1, endTickets: 2, peakA: 50, peakB: 30, coffee: 2, mailsIgnored: 0 },
+        { dayIndex: 2, endTickets: 1, peakA: 40, peakB: 40, coffee: 1, mailsIgnored: 1 },
+        { dayIndex: 3, endTickets: 3, peakA: 70, peakB: 20, coffee: 3, mailsIgnored: 0 },
+        { dayIndex: 4, endTickets: 2, peakA: 60, peakB: 50, coffee: 2, mailsIgnored: 1 },
     ];
     engine.saveWeek();
     state.currentPartyKey = 'layer8_party_played_easy';
@@ -813,7 +1105,7 @@ await ok('finishParty schließt die Woche: Zähler, Bilanz unter dem Party-Repor
     await ensure('party');
     engine.finishParty('SYNERGY!', 'Testabend.');
 
-    assert.equal(calls.end.title, 'GALA VORBEI');
+    assert.equal(calls.end.cause, 'party');
     assert.ok(calls.end.text.includes('Wochen-Bilanz'));        // Bilanz unter dem Party-Report
     assert.ok(calls.end.text.includes('WOCHE (Erholt)'));       // Party-Bilanz-Name week-aware
     assert.equal(state.archive.stats.weeksSurvived, 1);
@@ -928,11 +1220,17 @@ await ok('Der Ergebnis-Knopf sagt bei der Nacht nicht GAME OVER', () => {
     assert.equal(state.pendingEnd.isNight, true);
 
     // The branch that labels the button (engine_events.resolveTerminal):
-    // isNight has to come BEFORE the failure branch.
+    // isNight has to come BEFORE the failure branch. Anchored on the KEY, not
+    // on the caption - the caption moved into the dictionary in 6.0 and the
+    // English one does not say GAME OVER in German.
+    //
+    // Auf die ZUWEISUNG gesucht, nicht auf den Schlüssel: seit die Kennung
+    // statt des Wortes reist, steht derselbe Schlüssel weiter oben auch in
+    // einer `i18n-uses`-Anmeldung, und die Suche fand den Kommentar.
     const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
     const iNight = src.indexOf('this.state.pendingEnd.isNight');
-    const iOver  = src.indexOf("DAS WAR'S... (GAME OVER)");
-    assert.ok(iNight > 0 && iNight < iOver, 'isNight-Zweig fehlt oder kommt zu spät');
+    const iOver  = src.indexOf("btnKey = 'terminal.btn.gameOver'");
+    assert.ok(iNight > 0 && iOver > 0 && iNight < iOver, 'isNight-Zweig fehlt oder kommt zu spät');
 });
 await ok('Die Nacht liefert ganze Zahlen (keine 25.08 % im Kopfbereich)', () => {
     // The case from play testing: Erholt, night 2 (wear 10 pp), rAl = 0.62
@@ -1048,6 +1346,33 @@ await ok('Der Endbildschirm kennzeichnet Wochen-Enden über das End-Objekt', () 
 });
 
 // -------------------------------------------------------- Steam-Zuordnung
+console.log('Steam-Präsenz:');
+await ok('Die Präsenz reist als Kennung, nicht als Satz', async () => {
+    // Ein fertiger Satz käme bei Steam über %statustext% wörtlich heraus und
+    // zeigte JEDEM Freund die Sprache des Spielers. Eine Kennung löst Steam in
+    // der Sprache dessen auf, der hinsieht — und kein Prüfer hier drin würde
+    // den Unterschied bemerken, weil beides „funktioniert".
+    const { PRESENCE_TOKEN } = await import('../src/engine/presence.js');
+    const { platform } = await import('../src/platform.js');
+    // core.updatePresence, nicht engine.updatePresence: der Aufbau dieser Reihe
+    // ersetzt es oben durch eine Attrappe, und die prüfte sich selbst.
+    const { core } = await import('../src/engine/engine_core.js');
+
+    const gesendet = [];
+    const echt = platform.presence;
+    platform.presence = (token) => gesendet.push(token);
+
+    core.updatePresence('coffee');
+    core.updatePresence('gibtesnicht');
+    platform.presence = echt;
+
+    assert.deepEqual(gesendet, [PRESENCE_TOKEN + 'coffee', PRESENCE_TOKEN + 'fallback']);
+    for (const token of gesendet) {
+        assert.ok(token.startsWith('#'), `keine Steam-Kennung: ${token}`);
+        assert.ok(!/\s/.test(token), `sieht nach einem Satz aus: ${token}`);
+    }
+});
+
 console.log('Steam-Statistiken:');
 await ok('Kein Wochentag wird als Tageslauf gemeldet', () => {
     const src = readFileSync(new URL('../src/platform_steam.js', import.meta.url), 'utf-8');
@@ -1270,15 +1595,15 @@ await ok('Der Rucksack-Deckel greift, Werkzeuge sind bewusst ausgenommen', async
     const werkzeug  = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
     // Consumables first, then tools until the cap is exceeded
-    for (const id of verbrauch) engine.grantItem(id, 'ITEM');
-    for (const id of werkzeug.slice(0, 4)) engine.grantItem(id, 'ITEM');
+    for (const id of verbrauch) engine.grantItem(id);
+    for (const id of werkzeug.slice(0, 4)) engine.grantItem(id);
     const zaehlbar = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
     assert.ok(zaehlbar > 10, `Werkzeuge müssen den Deckel überschreiten dürfen (${zaehlbar})`);
 
     // One more consumable is turned away now
     const vorher = state.inventory.length;
     state.inventory = state.inventory.filter(i => i.id !== verbrauch[0]);
-    engine.grantItem(verbrauch[0], 'ITEM');
+    engine.grantItem(verbrauch[0]);
     assert.ok(!state.inventory.some(i => i.id === verbrauch[0]),
         'bei vollem Rucksack darf kein Verbrauchsgut mehr dazukommen');
 
@@ -1340,9 +1665,24 @@ await ok('Die Karriere-Sicht sieht auch reine Wochen-Spieler', () => {
 await ok('Die Firmenchronik bleibt für Wochen-Spieler erzählbar', () => {
     resetState();
     state.archive.stats = { survived_week_normal: 11, weeksRageQuit: 1, daysStarted: 15 };
-    const zeile = engine.composeChronicleLine();
-    assert.ok(typeof zeile === 'string' && zeile.length > 40,
-        'die Chronik fällt für Wochen-Spieler auf eine leere Zeile zurück');
+    // Since 6.0 the composer returns an id and the numbers, not a sentence -
+    // the words live in data_lore.js. What matters here is unchanged: a week
+    // player must not fall through to an empty chronicle.
+    const picked = engine.composeChronicleLine();
+    assert.ok(picked && picked.id, 'die Chronik fällt für Wochen-Spieler auf keine Zeile zurück');
+    assert.ok(DB.lore.lines[picked.id], `unbekannte Chronik-Kennung: ${picked.id}`);
+});
+
+await ok('Eine Chronik-Zeile bekommt ihre Zahlen eingesetzt', () => {
+    resetState();
+    state.archive.chronicle = [
+        { day: 3, id: 'rage_many_a', vars: { rage: 4 } },
+        { day: 2, text: 'Ein Eintrag aus 5.0, ohne Kennung' }
+    ];
+    const entries = engine.chronicleEntries();
+    assert.equal(entries.length, 1, 'der Eintrag ohne Kennung wird nicht verworfen');
+    assert.ok(entries[0].text.includes('4'), 'die Zahl wurde nicht eingesetzt');
+    assert.ok(!entries[0].text.includes('{rage}'), 'der Platzhalter steht noch da');
 });
 await ok('Das schwarze Brett deckelt reaktive Zettel, damit es über die Woche wechselt', () => {
     const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
@@ -1362,9 +1702,9 @@ await ok('Wegwerfen macht Platz und trifft nur den einen Gegenstand', async () =
     const werkzeug  = ids.find(i => DB.items[i].keep && !DB.items[i].quest);
     const trophaee  = ids.find(i => DB.items[i].quest);
 
-    for (const id of verbrauch) engine.grantItem(id, 'ITEM');
-    engine.grantItem(werkzeug, 'ITEM');
-    if (trophaee) engine.grantItem(trophaee, 'ITEM');
+    for (const id of verbrauch) engine.grantItem(id);
+    engine.grantItem(werkzeug);
+    if (trophaee) engine.grantItem(trophaee);
     const vorher = state.inventory.length;
 
     engine.state.pendingItem = werkzeug;
@@ -1388,13 +1728,13 @@ await ok('Nach dem Wegwerfen passt wieder ein Verbrauchsgut hinein', async () =>
     const werkzeuge = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
     // Fill the backpack past the cap using tools
-    for (const id of werkzeuge.slice(0, 10)) engine.grantItem(id, 'ITEM');
-    engine.grantItem(verbrauch[0], 'ITEM');
+    for (const id of werkzeuge.slice(0, 10)) engine.grantItem(id);
+    engine.grantItem(verbrauch[0]);
     assert.ok(!state.inventory.some(i => i.id === verbrauch[0]), 'Voraussetzung: der Rucksack ist voll');
 
     engine.state.pendingItem = werkzeuge[0];
     engine.confirmDiscardItem();
-    engine.grantItem(verbrauch[0], 'ITEM');
+    engine.grantItem(verbrauch[0]);
     assert.ok(state.inventory.some(i => i.id === verbrauch[0]),
         'nach dem Wegwerfen muss wieder Platz sein');
 });
@@ -1530,7 +1870,7 @@ await ok('Der Vorspann greift auf, wie der Tag gelaufen ist', async () => {
     assert.match(lead(2, 25, 25, 30), /^16:30 Uhr/);
 });
 await ok('Die Ticket-Schwelle ist erreichbar', () => {
-    // Bei zehn Tickets endet der Tag, ein Viertel von neun sind drei.
+    // Ten tickets end the day, and a quarter of nine is three.
     const hoechstwert = Math.ceil(9 * 0.25);
     const src = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
     const m = src.match(/report\.ticketsAfter >= (\d+)/);
@@ -1564,7 +1904,10 @@ await ok('Jeder Morgen bekommt seine eigene Zeile', () => {
         calls.logs = [];
         state.modal = { open: true, isNight: true };
         engine.continueWeekNight();
-        zeilen.add(calls.logs.find(l => /Dienstag|Mittwoch|Donnerstag|Freitag/.test(l)));
+        // Compared by IDENTITY, not by the German word: the morning line is a
+        // recipe now, and its key is what makes one morning a different morning.
+        const morgen = calls.logs.find(l => typeof l?.k === 'string' && l.k.startsWith('week.morning.'));
+        zeilen.add(JSON.stringify(morgen));
     }
     assert.equal(zeilen.size, 4, 'die vier Morgen müssen sich unterscheiden');
 });

@@ -11,9 +11,24 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { DB } from '../data.js';
 
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
     const phone = $derived(state.phone);
+
+    /*
+     * A bubble carries a RECIPE, not a sentence - see engine/recipe.js. These
+     * three resolve it on every paint, which is what makes an open chat follow
+     * a language switch instead of standing there in the language it was
+     * spoken in. The initial is derived from the resolved name rather than
+     * stored, so it follows too.
+     *
+     * A recipe that will not resolve renders empty rather than throwing: a
+     * chat with a blank bubble is odd, a chat that crashes is worse.
+     */
+    const text    = (msg) => renderRecipe(msg?.text) ?? '';
+    const sender  = (msg) => renderRecipe(msg?.sender) ?? '';
+    const initial = (msg) => (sender(msg).charAt(0) || '?').toUpperCase();
 
     const pad = (n) => String(n).padStart(2, '0');
     const clock = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
@@ -24,7 +39,7 @@
         return key.replace(/^Arrow/, '').toUpperCase();
     };
 
-    const itemName = (id) => DB.items[id]?.name ?? id;
+    const itemName = (id) => tree().items[id]?.name ?? id;
 
     /** Name of the item an option needs but the player does not have. */
     function missingItem(opt) {
@@ -86,13 +101,13 @@
                                          output for a decorative image. -->
                                     <img src={msg.img} alt="" class="w-full h-full object-cover" />
                                 {:else}
-                                    {msg.avatar}
+                                    {initial(msg)}
                                 {/if}
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{msg.sender}</span>
-                                <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed">
-                                    {msg.text}
+                                <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{sender(msg)}</span>
+                                <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed wrap-break-word">
+                                    {text(msg)}
                                 </div>
                             </div>
                         </div>
@@ -109,18 +124,18 @@
                 {:else if msg.side === 'system'}
                     <div class="w-full flex justify-center my-4 fade-in">
                         <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-inner text-center max-w-[90%]">
-                            {msg.text}
+                            {text(msg)}
                         </div>
                     </div>
                 {:else if msg.side === 'error'}
-                    <div class="text-center text-xs text-red-500 my-2">{msg.text}</div>
+                    <div class="text-center text-xs text-red-500 my-2">{text(msg)}</div>
                 {:else}
                     <div class="w-full flex justify-end mb-4 fade-in">
                         <div class="max-w-[85%] flex flex-col items-end">
-                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed">
-                                {msg.text}
+                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
+                                {text(msg)}
                             </div>
-                            <span class="text-[10px] text-slate-500 mr-1 mt-0.5">Gelesen</span>
+                            <span class="text-[10px] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
                         </div>
                     </div>
                 {/if}
@@ -135,10 +150,10 @@
                 <button class="w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 rounded-lg px-3 py-2 text-xs text-left transition-colors flex justify-between items-center group
                                {o.missing ? 'opacity-50 cursor-not-allowed' : ''}"
                         disabled={!!o.missing}
-                        onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem)}>
+                        onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem, o.index)}>
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         {#if o.missing}
-                            <img src="assets/img/ui/ui_locked.webp" alt="Gesperrt"
+                            <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
                                  width="16" height="16" class="w-5 h-5 shrink-0 select-none"
                                  onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
                         {:else}
@@ -148,7 +163,7 @@
                     </div>
                     <div class="shrink-0 flex items-center h-full gap-2">
                         {#if o.missing}
-                            <span class="text-[10px]">(Fehlt: {o.missing})</span>
+                            <span class="text-[10px]">{tf('phone.missing', { item: o.missing })}</span>
                         {:else}
                             {#if o.consumes}
                                 <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">−{o.consumes}</span>
@@ -178,8 +193,8 @@
                      width="28" height="28" class="w-7 h-7 shrink-0 select-none"
                      onerror={(e) => e.currentTarget.outerHTML = '📩'}>
                 <span class="block">
-                    <span class="block text-[10px] font-bold">NEUE NACHRICHT</span>
-                    <span class="block text-[9px]">Jetzt lesen...</span>
+                    <span class="block text-[10px] font-bold">{t('phone.newMessage')}</span>
+                    <span class="block text-[9px]">{t('phone.readNow')}</span>
                 </span>
             </button>
         {/if}

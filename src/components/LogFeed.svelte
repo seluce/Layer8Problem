@@ -11,13 +11,26 @@
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
 
-    const entries = $derived([...state.logEntries].reverse());
+    // renderRecipe() reads the language rune on its way past, so this recomputes
+    // on a switch and every line written as a recipe repaints in the new
+    // language. A line written by 5.x carries plain text and stays as it is,
+    // for as long as the day it belongs to.
+    //
+    // null means the recipe no longer resolves - content edited away under a
+    // save. Such a line is dropped rather than guessed at; see engine/recipe.js.
+    const entries = $derived(
+        [...state.logEntries]
+            .reverse()
+            .map(e => ({ ...e, text: renderRecipe(e) }))
+            .filter(e => e.text !== null)
+    );
 </script>
 
 {#each entries as entry (entry.id)}
     <div>
         <span class="text-slate-500">[{entry.time}]</span>
-        <span class={entry.color}>{entry.msg}</span>
+        <span class={entry.color}>{entry.text}</span>
     </div>
 {/each}

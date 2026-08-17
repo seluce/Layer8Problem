@@ -4,9 +4,9 @@
  * Plays whole weeks against the real data pools. Shares the exact engine
  * formulas with tools/simulate-day.mjs (kept in sync by hand — change one,
  * check the other):
- *   - fl += f                                 (laziness unscaled)
+ *   - fl += l                                 (laziness unscaled)
  *   - al += a > 0 ? ceil(a * mult) : a
- *   - cr += c > 0 ? ceil(c * mult * (1 + fl/200)) : c
+ *   - cr += b > 0 ? ceil(b * mult * (1 + fl/200)) : b
  *   - tickets: +1 per started 30 minutes (accrual capped at 16:30), -1 per call
  *   - mail chance per action: min(35%, 15% * mult + 4% * tickets), 25-min cooldown
  *   - end conditions in engine order: anger, tickets >= 10, 16:30, radar
@@ -44,7 +44,8 @@
  *      carry-over. Bases 0.75/0.85/0.95 with ramp +0.04/day land the mean of
  *      vernunft+gelegenheit inside all three target corridors.
  *
- * Usage: node tools/simulate-week.mjs [weeks per cell, default 600]
+ * Usage: node tools/simulate-week.mjs [weeks per cell, default 600] [--lang=de|en]
+ *   --lang=de|en    which data tree to play; both must produce the same numbers
  *   --wear=10       recovery degradation in pp per night (floor 10%)
  *   --deckel=45     max absolute recovery points per night and stat (999 = off)
  *   --ramp=0.04     day multiplier ramp per day
@@ -53,11 +54,35 @@
  *   --contscale=1.0 scales the contingent MAX values
  *   --nocontingent  disable daily pool contingents (starvation experiment)
  */
-import { DB, ensure } from '../src/data.js';
+import { DB, ensure, loadCore, currentLanguage } from '../src/data.js';
 
+// The count is read from the arguments that are NOT flags. Straight
+// process.argv[2] would parse `--lang=en` as the week count and run NaN weeks.
+const args = process.argv.slice(2);
+const positional = args.filter(a => !a.startsWith('-'));
+
+const langArg = args.find(a => a.startsWith('--lang='));
+const lang = langArg ? langArg.slice('--lang='.length) : 'de';
+if (lang !== 'de' && lang !== 'en') {
+    console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+    process.exit(1);
+}
+
+// loadCore BEFORE ensure: ensure() files each pool under whatever language is
+// current when it runs, so loading first and switching after leaves German
+// pools on DB under an English label.
+await loadCore(lang);
 await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 'lunch');
 
-const WEEKS = parseInt(process.argv[2] ?? '600', 10);
+// loadCore falls back to German when a tree cannot be read. Without this an
+// English run would quietly report German numbers — and matching numbers are
+// exactly what this tool is for.
+if (currentLanguage() !== lang) {
+    console.error(`Sprache "${lang}" konnte nicht geladen werden — die Simulation liest "${currentLanguage()}".`);
+    process.exit(1);
+}
+
+const WEEKS = parseInt(positional[0] ?? '600', 10);
 const ARG = (name, def) => {
     const hit = process.argv.find(a => a.startsWith(`--${name}=`));
     return hit ? parseFloat(hit.split('=')[1]) : def;
@@ -87,9 +112,9 @@ const NIGHT_HALF  = process.argv.includes('--nighthalf');
 // The idle click of an exhausted contingent (week_idle vector). Knobs kept
 // from the 2026-08 starvation experiment that settled a-5 -> a0 and the
 // raised caps (old wall: ~12 idle clicks/week for SENSIBLE play).
-//   --idlem=20 --idlef=5 --idlea=0   (defaults = live data)
+//   --idlem=20 --idlel=5 --idlea=0   (defaults = live data)
 const IDLE_M = ARG('idlem', 20);
-const IDLE_F = ARG('idlef', 5);
+const IDLE_L = ARG('idlel', 5);
 const IDLE_A = ARG('idlea', 0);
 // --bases=0.85,0.95,1.05 overrides the three difficulty base multipliers.
 // Calibration finding: five days at day-mode-normal intensity compound to
@@ -153,10 +178,10 @@ const lazyMult = (s) => 1 + s.fl / 200;
 // ---------- danger score & strategies (same weights as the day simulator) ----------
 function danger(o, s) {
     const a = (o.a ?? 0) > 0 ? Math.ceil(o.a * s.mult) : (o.a ?? 0);
-    const cRaw = (o.c ?? 0) > 0 ? Math.ceil(o.c * s.mult * lazyMult(s)) : (o.c ?? 0);
+    const bRaw = (o.b ?? 0) > 0 ? Math.ceil(o.b * s.mult * lazyMult(s)) : (o.b ?? 0);
     const wA = s.rageUsed ? 3 : (s.al >= 70 ? 2 : 1);
-    const wC = s.chefUsed ? 3 : (s.cr >= 70 ? 2.5 : 2);
-    return a * wA + cRaw * wC + (o.f ?? 0) * 0.6 + (o.m ?? 0) * 0.05;
+    const wB = s.chefUsed ? 3 : (s.cr >= 70 ? 2.5 : 2);
+    return a * wA + bRaw * wB + (o.l ?? 0) * 0.6 + (o.m ?? 0) * 0.05;
 }
 
 const pickReason = (opts, s) => opts.reduce((a, b) => danger(a, s) <= danger(b, s) ? a : b);
@@ -198,20 +223,25 @@ function actionFor(strat, s) {
 
 // ---------- applying effects (the exact engine formulas) ----------
 function apply(s, o, poolType) {
-    const m = o.m ?? 0, f = o.f ?? 0, a = o.a ?? 0, c = o.c ?? 0;
+    const m = o.m ?? 0, l = o.l ?? 0, a = o.a ?? 0, b = o.b ?? 0;
 
     if (poolType === 'calls') s.tickets = Math.max(0, s.tickets - 1);
 
-    const oldChunk = Math.floor(s.time / 30);
-    const capped = Math.min(s.time + m, SHIFT_END);
-    const chunks = Math.max(0, Math.floor(capped / 30) - oldChunk);
-    s.tickets += chunks;
+    // The weekly meeting grants no tickets - compulsory, unanswerable and of a
+    // length nobody can read off the screen. Mirrors the exemption in
+    // engine_events.resolveTerminal(); the two formulas are a copy of each
+    // other on purpose, so a change here has to be made there as well.
+    if (poolType !== 'meeting') {
+        const oldChunk = Math.floor(s.time / 30);
+        const capped = Math.min(s.time + m, SHIFT_END);
+        s.tickets += Math.max(0, Math.floor(capped / 30) - oldChunk);
+    }
     s.time += m;
 
     const lazy = lazyMult(s);
-    s.fl += f;
+    s.fl += l;
     s.al += a > 0 ? Math.ceil(a * s.mult) : a;
-    s.cr += c > 0 ? Math.ceil(c * s.mult * lazy) : c;
+    s.cr += b > 0 ? Math.ceil(b * s.mult * lazy) : b;
 
     if (o.next) s.flags.set(o.next, s.dayIndex);
     if (o.nextEmail) s.linkedMail.push(o.nextEmail);
@@ -325,7 +355,7 @@ function playWeekDay(s, cfg, strat, dayIndex) {
             if (cont[action] <= 0 || !pool.length) {
                 // Contingent used up or pool dry: the week_idle fallback (time passes)
                 s.starveClicks++;
-                apply(s, { m: IDLE_M, f: IDLE_F, a: IDLE_A }, 'fallback');
+                apply(s, { m: IDLE_M, l: IDLE_L, a: IDLE_A }, 'fallback');
                 end = checkEnd(s);
                 if (end) return end;
                 continue;
@@ -446,7 +476,7 @@ function summarize(s) {
 
 // ---------- evaluation ----------
 if (BASES) WDIFFS.forEach((d, i) => d.base = BASES[i]);
-console.log(`Wochen-Simulation: ${WEEKS} Wochen je Zelle | wear=${WEAR}pp deckel=${DECKEL} ramp=${RAMP} rscale=${RSCALE} meeting=${MEET}min` +
+console.log(`Wochen-Simulation (${lang}): ${WEEKS} Wochen je Zelle | wear=${WEAR}pp deckel=${DECKEL} ramp=${RAMP} rscale=${RSCALE} meeting=${MEET}min` +
     (NO_CONT ? " | KONTINGENTE AUS" : ` | contscale=${CONTSCALE}`) + (NIGHT_HALF ? " | nacht=halbieren" : NIGHT_T_SET ? ` | nachttickets=${NIGHT_T}` : ` | nachtbehalt=${NIGHT_KEEP}`) + '\n');
 
 const DAY_NAMES = ['Mo', 'Di', 'Mi', 'Do', 'Fr'];

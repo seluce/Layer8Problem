@@ -88,7 +88,7 @@ export const audio = {
                 osc.stop(t + 0.25);
             }
         } catch(e) {
-            console.warn("Audio Fehler:", e);
+            console.warn("Audio error:", e);
         }
     },
 	
@@ -176,7 +176,7 @@ export const audio = {
                         // Fixed style without native looping (e.g. the style was
                         // switched while this track was already running): restart
                         // it by hand, as before.
-                        this.bgmTracks[key].play().catch(e => console.warn("Musik konnte nicht starten:", e));
+                        this.bgmTracks[key].play().catch(e => console.warn("Music could not start:", e));
                     }
                 });
             }
@@ -286,7 +286,7 @@ export const audio = {
                 .catch(e => {
                     // Autoplay blocked: leave the volume usable for the retry.
                     track.volume = this.state.musicVolume;
-                    console.warn("Musik Autoplay blockiert:", e);
+                    console.warn("Music autoplay blocked:", e);
                 });
         }
     },

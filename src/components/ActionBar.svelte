@@ -21,14 +21,16 @@
 <script>
     import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import { t } from '../i18n/i18n.svelte.js';
 
     // The emoji stays in the table as a fallback: if an icon file is ever
     // missing, the button keeps its meaning instead of showing an empty box.
+    // i18n-uses: action.coffee, action.sidequest, action.server, action.calls
     const ACTIONS = [
-        { id: 'btn-coffee',    type: 'coffee',    bind: 'actCoffee', icon: '☕', label: 'KAFFEE',     tone: 'text-amber-500' },
-        { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'DIENSTGANG', tone: 'text-purple-500' },
-        { id: 'btn-server',    type: 'server',    bind: 'actServer', icon: '💾', label: 'SERVERRAUM', tone: 'text-emerald-500' },
-        { id: 'btn-calls',     type: 'calls',     bind: 'actCall',   icon: '📞', label: 'ANRUF',      tone: 'text-blue-400' }
+        { id: 'btn-coffee',    type: 'coffee',    bind: 'actCoffee', icon: '☕', label: 'action.coffee',    tone: 'text-amber-500' },
+        { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'action.sidequest', tone: 'text-purple-500' },
+        { id: 'btn-server',    type: 'server',    bind: 'actServer', icon: '💾', label: 'action.server',    tone: 'text-emerald-500' },
+        { id: 'btn-calls',     type: 'calls',     bind: 'actCall',   icon: '📞', label: 'action.calls',     tone: 'text-blue-400' }
     ];
 
     // Calls are the only way to work tickets off, but that does not make them
@@ -59,7 +61,7 @@
         <img src="assets/img/actions/act_{action.type}.webp" alt=""
              width="28" height="28" class="w-8 h-8 relative select-none"
              onerror={(e) => e.currentTarget.outerHTML = `<span class="text-xl relative">${action.icon}</span>`}>
-        <span class="text-[10px] md:text-xs font-bold relative">{action.label}</span>
+        <span class="text-[10px] md:text-xs font-bold relative">{t(action.label)}</span>
 
         {#if state.showHotkeys}
             <kbd class="key-hint absolute top-1.5 right-1.5">

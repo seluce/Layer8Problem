@@ -7,6 +7,8 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import { t } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
 
     const view = $derived(state.terminal.morning ?? {});
 </script>
@@ -17,7 +19,7 @@
              width="36" height="36" class="w-9 h-9 shrink-0 select-none"
              onerror={(e) => e.currentTarget.outerHTML = '<span class="text-3xl">🌅</span>'}>
         <div class="flex flex-col">
-            <span class="text-slate-400 font-black uppercase tracking-widest text-sm">DER MORGEN DANACH</span>
+            <span class="text-slate-400 font-black uppercase tracking-widest text-sm">{t('morning.title')}</span>
             <h2 class="text-2xl font-bold text-white">{view.title}</h2>
         </div>
     </div>
@@ -27,11 +29,12 @@
     </div>
 
     <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
-        Startbedingungen: {@html view.conditions ?? ''}
+        {t('morning.conditions')}
+        {#if view.conditions}<span class={view.conditions.cls}>{renderRecipe(view.conditions) ?? ''}</span>{/if}
     </div>
 
     <button data-continue onclick={() => engine.reset()}
             class="w-full text-center p-4 rounded-xl border border-slate-500 bg-slate-800 hover:bg-slate-700 hover:border-white transition-all font-bold uppercase tracking-wider">
-        Den Arbeitstag beginnen
+        {t('morning.start')}
     </button>
 </div>

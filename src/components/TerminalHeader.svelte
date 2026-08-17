@@ -11,15 +11,24 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import { t } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
+
+    // The day records WHICH headline is running; the words come back out of the
+    // tree, so the ticker follows a language switch.
+    const news = $derived(renderRecipe(state.activeNews));
 </script>
 
-{#if state.activeNewsText}
-    {#key state.activeNewsText}
+{#if news}
+    {#key news}
         <div class="w-full h-4 overflow-hidden flex items-center news-fade"
              style="-webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent); mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);">
             <div class="whitespace-nowrap inline-block" style="padding-left: 100%; animation: newsScroll 30s linear forwards;">
-                <span class="text-amber-500 font-bold mr-2">[GLOBAL CORP BROADCAST]</span>
-                <span class="text-slate-300 font-normal uppercase tracking-wide">{state.activeNewsText}</span>
+                <!-- Identical in both languages on purpose: a machine speaking, see
+                     GLOSSAR 2a. It sits in the dictionary all the same, so the
+                     sameness is a recorded decision and not a missed string. -->
+                <span class="text-amber-500 font-bold mr-2">{t('ticker.broadcast')}</span>
+                <span class="text-slate-300 font-normal uppercase tracking-wide">{news}</span>
             </div>
         </div>
     {/key}

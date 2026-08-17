@@ -20,6 +20,7 @@
     // noted in STRUCTURE.md.
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import { LANGUAGES, language, switchLanguage, t } from '../i18n/i18n.svelte.js';
 
     // The switch is the same nine-utility construction on every row, so it is
     // named once. Written out in full, not assembled, so Tailwind can find it.
@@ -47,36 +48,46 @@
     const RESET_IDLE  = 'text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-700 border-slate-600 hover:border-slate-400';
     const RESET_ARMED = 'text-red-300 bg-red-950/40 border-red-500/70';
 
-    const MUSIC_STYLES = [
-        ['radio',     'Radio (Abwechselnd)'],
-        ['elevator',  'Fahrstuhl (Klassisch)'],
-        ['lofi',      'Lofi (Entspannt)'],
-        ['detective', 'Detektiv (Noir)'],
-        ['bossa',     'Lounge (Bossa)']
-    ];
+    // $derived, not const, and that is the whole point of this page: this is
+    // the one screen from which the language can be changed, so it is the one
+    // screen that must survive the change. A plain const would read the
+    // dictionary once at mount and keep the words of the language the player
+    // just left - on the very row they used to leave it.
+    const MUSIC_STYLES = $derived([
+        ['radio',     t('set.music.radio')],
+        ['elevator',  t('set.music.elevator')],
+        ['lofi',      t('set.music.lofi')],
+        ['detective', t('set.music.detective')],
+        ['bossa',     t('set.music.bossa')]
+    ]);
 
-    const TEXT_SIZES = [
-        ['normal', 'Normal'],
-        ['large',  'Groß'],
-        ['xlarge', 'Sehr groß']
-    ];
+    const TEXT_SIZES = $derived([
+        ['normal', t('set.textSize.normal')],
+        ['large',  t('set.textSize.large')],
+        ['xlarge', t('set.textSize.xlarge')]
+    ]);
+
+    // Each language names itself, so the entry stays readable from the wrong
+    // side: 'Deutsch' and 'English' read the same in both dictionaries.
+    // i18n-uses: language.name.de, language.name.en
+    const LANGUAGE_OPTIONS = $derived(LANGUAGES.map(l => [l, t(`language.name.${l}`)]));
 
     // Two presets rather than one: the pickers ask different questions, so a
     // single value could only ever answer one of them. Both default to 'ask',
     // which is the behaviour players already know.
-    const DIFFICULTIES = [
-        ['ask',    'Jedes Mal fragen'],
-        ['easy',   'Freitag (Leicht)'],
-        ['normal', 'Mittwoch (Normal)'],
-        ['hard',   'Montag (Schwer)']
-    ];
+    const DIFFICULTIES = $derived([
+        ['ask',    t('set.diff.ask')],
+        ['easy',   t('set.diff.easy')],
+        ['normal', t('set.diff.normal')],
+        ['hard',   t('set.diff.hard')]
+    ]);
 
-    const WEEK_DIFFICULTIES = [
-        ['ask',    'Jedes Mal fragen'],
-        ['easy',   'Erholt (Leicht)'],
-        ['normal', 'Genervt (Normal)'],
-        ['hard',   'Urlaubsreif (Schwer)']
-    ];
+    const WEEK_DIFFICULTIES = $derived([
+        ['ask',    t('set.diff.ask')],
+        ['easy',   t('set.week.easy')],
+        ['normal', t('set.week.normal')],
+        ['hard',   t('set.week.hard')]
+    ]);
 
     // Icon, wording and wiring of every row, in the order they appear.
     //
@@ -84,125 +95,136 @@
     // state: reading game.visualFX here registers the dependency. set() goes to
     // the engine function rather than to the field, because those functions are
     // where localStorage and the side effects live.
-    const SECTIONS = [
+    const SECTIONS = $derived([
         {
-            title: 'Tastatur & Eingabe',
-            accent: 'text-amber-400',
+            // First, and titled in both languages: someone who landed in the
+            // wrong one is looking for exactly this row and cannot read the
+            // rest of the page to find it.
+            title: t('language.label'),
+            accent: 'text-blue-400',
             grid: false,
             rows: [
-                { kind: 'link', icon: '⌨️', img: 'set_keys', title: 'Tastenbelegung anpassen',
-                  desc: 'Hotkeys für Menüs & Aktionen ändern',
-                  act: () => engine.openKeybinds() }
+                { kind: 'select', icon: '🌐', img: 'set_language', title: t('language.label'),
+                  desc: t('language.hint'),
+                  focus: 'focus:border-blue-500', options: LANGUAGE_OPTIONS,
+                  get: () => language(), set: (v) => switchLanguage(v) }
             ]
         },
         {
-            title: 'Audio & Sounds',
+            title: t('set.section.audio'),
             accent: 'text-amber-400',
             grid: true,
             rows: [
-                { kind: 'slider', icon: '🔔', img: 'set_sfx', title: 'Effekte',
-                  desc: 'Klicks & Benachrichtigungen',
+                { kind: 'slider', icon: '🔔', img: 'set_sfx', title: t('set.sfx.title'),
+                  desc: t('set.sfx.desc'),
                   get: () => game.audioEffects, set: (v) => engine.toggleAudio(v),
                   level: () => game.audioVolume, setLevel: (v) => engine.setVolume(v),
-                  step: 0.05, levelTitle: 'Lautstärke der Effekte' },
+                  step: 0.05, levelTitle: t('set.sfx.level') },
 
-                { kind: 'slider', icon: '🎵', img: 'set_music', title: 'Musik',
-                  desc: 'Hintergrund-Gedudel & Boss-Beats',
+                { kind: 'slider', icon: '🎵', img: 'set_music', title: t('set.music.title'),
+                  desc: t('set.music.desc'),
                   get: () => game.musicEnabled, set: (v) => engine.toggleMusic(v),
                   level: () => game.musicVolume, setLevel: (v) => engine.setMusicVolume(v),
-                  step: 0.01, levelTitle: 'Lautstärke der Musik' },
+                  step: 0.01, levelTitle: t('set.music.level') },
 
-                { kind: 'select', icon: '📻', img: 'set_musicstyle', title: 'Musik-Stil',
-                  desc: 'Wähle deinen musikalischen Wahnsinn.',
+                { kind: 'select', icon: '📻', img: 'set_musicstyle', title: t('set.musicStyle.title'),
+                  desc: t('set.musicStyle.desc'),
                   focus: 'focus:border-amber-500', options: MUSIC_STYLES,
                   get: () => game.musicStyle, set: (v) => engine.changeMusicStyle(v) }
             ]
         },
         {
-            title: 'Anzeige & Layout',
+            title: t('set.section.display'),
             accent: 'text-cyan-400',
             grid: true,
             rows: [
-                { kind: 'select', icon: '🔠', img: 'set_textsize', title: 'Textgröße',
-                  desc: 'Dieses Spiel ist zum Lesen da. Nimm die Größe, die dir liegt.',
+                { kind: 'select', icon: '🔠', img: 'set_textsize', title: t('set.textSize.title'),
+                  desc: t('set.textSize.desc'),
                   focus: 'focus:border-cyan-500', options: TEXT_SIZES,
                   get: () => game.textSize ?? 'normal', set: (v) => engine.setTextSize(v) },
 
-                { kind: 'toggle', icon: '🗜️', img: 'set_compact', title: 'Kompaktmodus',
-                  desc: 'Verkleinert Abstände im UI. Ideal für kleinere Auflösungen.',
+                { kind: 'toggle', icon: '🗜️', img: 'set_compact', title: t('set.compact.title'),
+                  desc: t('set.compact.desc'),
                   get: () => game.compactMode, set: (v) => engine.toggleCompactMode(v) },
 
-                { kind: 'toggle', icon: '📱', img: 'set_phonemin', title: 'Handy aut. minimieren',
-                  desc: 'Blendet inaktives Handy bei kompakter Anzeige aus.',
+                { kind: 'toggle', icon: '📱', img: 'set_phonemin', title: t('set.autoHidePhone.title'),
+                  desc: t('set.autoHidePhone.desc'),
                   inactive: () => wide,
-                  inactiveNote: 'Ohne Wirkung: Dein Fenster ist breit genug, das Handy bleibt sichtbar.',
+                  inactiveNote: t('set.autoHidePhone.inactive'),
                   get: () => game.autoHidePhone, set: (v) => engine.toggleAutoHidePhone(v) },
 
-                { kind: 'toggle', icon: '💓', img: 'set_pulse', title: 'Warn-Pulsieren (>80%)',
-                  desc: 'Terminal-Rand leuchtet bei hohem Stress rot auf.',
+                { kind: 'toggle', icon: '💓', img: 'set_pulse', title: t('set.fx.title'),
+                  desc: t('set.fx.desc'),
                   get: () => game.visualFX, set: (v) => engine.toggleFX(v) },
 
-                { kind: 'toggle', icon: '🫨', img: 'set_shake', title: 'Kamera-Wackeln',
-                  desc: 'Bildschirm bebt bei kritischen Fehlern.',
+                { kind: 'toggle', icon: '🫨', img: 'set_shake', title: t('set.shake.title'),
+                  desc: t('set.shake.desc'),
                   get: () => game.screenShake, set: (v) => engine.toggleShake(v) },
 
-                { kind: 'toggle', icon: '💬', img: 'set_chatanim', title: 'Smartphone-Animation',
-                  desc: 'Kein "Tippt..." Delay bei Chats.',
+                { kind: 'toggle', icon: '💬', img: 'set_chatanim', title: t('set.fastChat.title'),
+                  desc: t('set.fastChat.desc'),
                   get: () => game.fastChat, set: (v) => engine.toggleFastChat(v) },
 
-                { kind: 'toggle', icon: '📺', img: 'set_scanlines', title: 'Bildschirm-Textur',
-                  desc: 'Feine Scanlines und Glimmen auf dem Terminal.',
+                { kind: 'toggle', icon: '📺', img: 'set_scanlines', title: t('set.scanlines.title'),
+                  desc: t('set.scanlines.desc'),
                   get: () => game.scanlines !== false, set: (v) => engine.toggleScanlines(v) }
             ]
         },
         {
-            title: 'Gameplay & Komfort',
+            title: t('set.section.gameplay'),
             accent: 'text-emerald-400',
             grid: true,
             rows: [
-                { kind: 'select', icon: '⏱️', img: 'set_difficulty', title: 'Arbeitstag vorwählen',
-                  desc: 'Überspringt die Tageswahl beim Start.',
+                { kind: 'select', icon: '⏱️', img: 'set_difficulty', title: t('set.defaultDiff.title'),
+                  desc: t('set.defaultDiff.desc'),
                   focus: 'focus:border-emerald-500', options: DIFFICULTIES,
                   get: () => game.defaultDiff, set: (v) => engine.saveDefaultDifficulty(v) },
 
-                { kind: 'select', icon: '🗓️', img: 'set_difficulty_week', title: 'Arbeitswoche vorwählen',
-                  desc: 'Überspringt die Zustandswahl beim Start.',
+                { kind: 'select', icon: '🗓️', img: 'set_difficulty_week', title: t('set.defaultWeek.title'),
+                  desc: t('set.defaultWeek.desc'),
                   focus: 'focus:border-emerald-500', options: WEEK_DIFFICULTIES,
                   get: () => game.defaultWeekDiff, set: (v) => engine.saveDefaultWeekDifficulty(v) },
 
-                { kind: 'toggle', icon: '⚡', img: 'set_fastitems', title: 'Schnelle Items',
-                  desc: 'Nahrung ohne Bestätigung nutzen.',
+                { kind: 'toggle', icon: '⚡', img: 'set_fastitems', title: t('set.oneClick.title'),
+                  desc: t('set.oneClick.desc'),
                   get: () => game.oneClickItem, set: (v) => engine.toggleOneClick(v) },
 
-                { kind: 'toggle', icon: '📈', img: 'set_chart', title: 'Verlauf sofort zeigen',
-                  desc: 'Öffnet die Tageskurve im Endbildschirm automatisch.',
+                { kind: 'toggle', icon: '📈', img: 'set_chart', title: t('set.autoChart.title'),
+                  desc: t('set.autoChart.desc'),
                   get: () => !!game.autoChart, set: (v) => engine.toggleAutoChart(v) }
             ]
         },
         {
-            title: 'Herausforderung',
+            title: t('set.section.challenge'),
             accent: 'text-red-400',
             grid: true,
             rows: [
-                { kind: 'toggle', icon: '❓', img: 'set_hidestats', title: 'Werte verbergen',
-                  desc: 'Blendet exakte %-Zahlen aus.',
+                { kind: 'toggle', icon: '❓', img: 'set_hidestats', title: t('set.blindStats.title'),
+                  desc: t('set.blindStats.desc'),
                   get: () => game.blindStats, set: (v) => engine.toggleBlindStats(v) },
 
-                { kind: 'toggle', icon: '❔', img: 'set_hidetickets', title: 'Tickets verbergen',
-                  desc: 'Blendet Ticket-Anzahl aus.',
+                { kind: 'toggle', icon: '❔', img: 'set_hidetickets', title: t('set.blindTickets.title'),
+                  desc: t('set.blindTickets.desc'),
                   get: () => game.blindTickets, set: (v) => engine.toggleBlindTickets(v) }
             ]
         },
         {
-            title: 'Einstellungen verwalten',
+            // Keyboard and reset used to be a section each, one row apiece -
+            // two headings and two gaps for two controls. They are both "the
+            // system rather than the game", so they share a heading now.
+            title: t('set.section.system'),
             accent: 'text-slate-400',
-            grid: false,
+            grid: true,
             rows: [
-                { kind: 'reset', icon: '♻️', img: 'set_reset', title: 'Auf Standard zurücksetzen',
-                  desc: 'Setzt alle Optionen dieser Seite zurück. Spielstand, Archiv und Erfolge bleiben unangetastet.' }
+                { kind: 'link', icon: '⌨️', img: 'set_keys', title: t('set.keybind.title'),
+                  desc: t('set.keybind.desc'),
+                  act: () => engine.openKeybinds() },
+
+                { kind: 'reset', icon: '♻️', img: 'set_reset', title: t('set.reset.title'),
+                  desc: t('set.reset.desc') }
             ]
         }
-    ];
+    ]);
 </script>
 
 {#snippet info(row, iconClass)}
@@ -311,7 +333,7 @@
         </div>
         <button type="button" onclick={() => engine.confirmResetSettings()}
                 class="{RESET_BASE} {game.settingsResetArmed ? RESET_ARMED : RESET_IDLE}">
-            {game.settingsResetArmed ? 'Wirklich?' : 'Zurücksetzen'}
+            {game.settingsResetArmed ? t('set.reset.confirm') : t('set.reset.button')}
         </button>
     </div>
 {/snippet}
@@ -330,12 +352,12 @@
     {/if}
 {/snippet}
 
-<div class="space-y-8">
+<div class="space-y-6">
     {#each SECTIONS as section (section.title)}
         <div>
-            <h3 class="text-[10px] font-bold {section.accent} uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">{section.title}</h3>
+            <h3 class="text-[10px] font-bold {section.accent} uppercase tracking-widest mb-2 border-b border-slate-700 pb-1">{section.title}</h3>
             {#if section.grid}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {#each section.rows as row (row.title)}
                         {@render control(row)}
                     {/each}

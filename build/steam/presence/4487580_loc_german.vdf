@@ -1,0 +1,18 @@
+"lang"
+{
+	"Language"	"german"
+	"Tokens"
+	{
+		"#DisplayStatus"	"%statustext%"
+		"#Status_coffee"	"Holt sich (noch) einen Kaffee"
+		"#Status_sidequest"	"Ist auf Dienstgang unterwegs"
+		"#Status_server"	"Versteckt sich im Serverraum"
+		"#Status_calls"	"Schlägt sich mit User-Problemen rum"
+		"#Status_boss"	"Steckt in einer absoluten Katastrophe!"
+		"#Status_rep"	"Unterhält sich mit dem Kollegium"
+		"#Status_lunch"	"Macht gerade Mittagspause"
+		"#Status_party"	"Überlebt die Synergy-Gala"
+		"#Status_system"	"Starrt mit leerem Blick auf den Monitor"
+		"#Status_fallback"	"Verzweifelt am IT-Support"
+	}
+}

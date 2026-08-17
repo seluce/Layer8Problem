@@ -1,132 +1,62 @@
 <!--
   The Wall of Deals, formerly public/assets/intranet/sales.html.
 
-  Same five deals as before, but as data rather than five copies of the same
-  card - which is what the next step needs, when the wall starts reacting to
-  Markus' reputation and to deals the player saved or lost today.
+  The five printed deals moved into data_intranet.js with 6.0 - which is what
+  the note here already announced. They now sit next to the two reactive ones
+  and are rendered by the same block instead of a near-copy of it.
 
-  The badge classes are written out in full so the Tailwind scanner finds
-  them. Never assembled from parts.
+  The badge classes stay in THIS file, written out in full, because the
+  Tailwind scanner reads source and would never see a class name assembled in
+  a data file. The data says which tone, the component says what that looks
+  like.
 -->
 <script>
     import { state as game } from '../../engine/engine_state.svelte.js';
 
+    const page = $derived(game.intranetData?.sales?.page ?? null);
+
     // The extra entry follows Markus' standing with you, the cancelled
-    // recurring meeting follows today's story flag.
-    const extra = $derived([game.intranetData?.sales?.extra, game.intranetData?.sales?.phoenix].filter(Boolean));
+    // recurring meeting follows today's story flag. Reactive first, then the
+    // printed wall.
+    const reactive = $derived([game.intranetData?.sales?.extra, game.intranetData?.sales?.phoenix].filter(Boolean));
+    const deals = $derived([...reactive, ...(page?.deals ?? [])]);
 
     // Whole class names, mapped from a key. Never assembled from parts, and
     // never written in the data file - the scanner would not find them there.
     const TONES = {
-        good: 'bg-emerald-900/30 text-emerald-400 border border-emerald-800',
-        bad:  'bg-red-900/30 text-red-400 border border-red-800',
-        dead: 'bg-slate-700 text-slate-400 border border-slate-600'
+        signed: 'bg-amber-900/30 text-amber-400 border border-amber-800',
+        good:   'bg-emerald-900/30 text-emerald-400 border border-emerald-800',
+        pilot:  'bg-blue-900/30 text-blue-400 border border-blue-800',
+        bad:    'bg-red-900/30 text-red-400 border border-red-800',
+        dead:   'bg-slate-700 text-slate-400 border border-slate-600'
     };
-
-    const DEALS = [
-        {
-            icon: '🤝',
-            customer: 'MegaCorp Industries',
-            badge: 'Vertrag unterzeichnet',
-            badgeClass: 'bg-amber-900/30 text-amber-400 border border-amber-800',
-            product: 'Prädiktive Blockchain-Infrastruktur',
-            rows: [
-                { label: 'Vertraglich zugesichert:', text: 'Das System erkennt Serverausfälle 24 Stunden bevor sie passieren und repariert die Hardware durch maschinelles Lernen selbstständig.' },
-                { label: 'Rollout:', text: 'Ende des Monats. Der Kunde erwartet den Login-Link am Freitag.' }
-            ]
-        },
-        {
-            icon: '📦',
-            customer: 'Global Logistics',
-            badge: 'Live',
-            badgeClass: 'bg-emerald-900/30 text-emerald-400 border border-emerald-800',
-            product: 'Pre-Crime Delivery AI',
-            rows: [
-                { label: 'Vertraglich zugesichert:', text: 'Die Software weiß, was der Endkunde bestellt, bevor er überhaupt daran denkt, und leitet den Versandprozess proaktiv ein.' },
-                { label: `Markus' Erfolgsnotiz:`, text: `"Hab dem Kunden gesagt, unser Algorithmus liest Gehirnströme. Wir schicken einfach zufällig Pakete an irgendwelche Adressen und nennen es 'Proaktive Synergie'. Der Vorstand hat es geliebt!"` }
-            ]
-        },
-        {
-            icon: '🛡️',
-            customer: 'Local Bank Ltd.',
-            badge: 'SLA Aktiv',
-            badgeClass: 'bg-amber-900/30 text-amber-400 border border-amber-800',
-            product: '100% Unhackbarer Offline-Cloud-Speicher',
-            rows: [
-                { label: 'Vertraglich zugesichert:', text: 'Die Daten des Kunden sind weltweit per App in Echtzeit abrufbar, liegen aber physisch getrennt vom Internet in einem Vakuum.' },
-                { label: 'Kundennotiz:', text: `Der CIO der Bank war begeistert von Markus' Konzept des 'Wireless-Kabels'.` }
-            ]
-        },
-        {
-            icon: '📠',
-            customer: 'Bundesamt für Digitalisierung',
-            badge: 'Pilotprojekt',
-            badgeClass: 'bg-blue-900/30 text-blue-400 border border-blue-800',
-            product: 'Fax-to-Blockchain Bridge',
-            rows: [
-                { label: 'Vertraglich zugesichert:', text: 'Herkömmliche Faxgeräte der Behörde werden durch ein Firmware-Update nativ mit der Krypto-Cloud verbunden. Stempel werden als NFTs gespeichert.' },
-                { label: `Markus' Erfolgsnotiz:`, text: `"Das war der leichteste Pitch des Jahres. Die Behörde wollte unbedingt 'was mit Krypto' machen. Wir drucken einfach QR-Codes aus."` }
-            ]
-        },
-        {
-            icon: '📉',
-            customer: 'Startup XYZ',
-            badge: 'Proof of Concept',
-            badgeClass: 'bg-slate-700 text-slate-400 border border-slate-600',
-            product: 'Agile Legacy-Integration',
-            dim: true,
-            rows: [
-                { label: 'Vertraglich zugesichert:', text: 'Unsere Cloud-Software ist nativ abwärtskompatibel zu MS-DOS 6.22.' },
-                { label: 'Status:', text: 'Warten auf Freigabe. Der Kunde sucht derzeit noch nach einem 5,25-Zoll-Diskettenlaufwerk für die Installation.' }
-            ]
-        }
-    ];
 </script>
 
+{#if page}
 <div class="max-w-5xl mx-auto mt-8 px-4 pb-12">
     <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-black mb-2 text-white">🏆 Wall of Deals</h1>
-            <p class="text-slate-400">Erfolgreich abgeschlossene Deals. Was unser Sales-Team für GlobalCorp gesichert hat.</p>
+            <h1 class="text-3xl font-black mb-2 text-white">{page.title}</h1>
+            <p class="text-slate-400">{page.subtitle}</p>
         </div>
         <div class="text-left md:text-right bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-md">
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Team-Leader</p>
-            <p class="font-bold text-amber-500">Markus (Senior VP of Synergies)</p>
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">{page.leaderLabel}</p>
+            <p class="font-bold text-amber-500">{page.leader}</p>
         </div>
     </div>
 
     <div class="space-y-6">
-        {#each extra as deal (deal.customer)}
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.tone === 'dead' ? 'opacity-75' : ''}">
+        {#each deals as deal (deal.customer)}
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.dim || deal.tone === 'dead' ? 'opacity-75' : ''}">
                 <div class="flex flex-col justify-center shrink-0">
                     <span class="text-5xl">{deal.icon}</span>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">
-                        <h3 class="font-bold text-xl text-white">Kunde: {deal.customer}</h3>
-                        <span class="{TONES[deal.tone]} text-xs font-bold px-2 py-0.5 rounded-sm uppercase">{deal.badge}</span>
+                        <h3 class="font-bold text-xl text-white">{page.customerLabel} {deal.customer}</h3>
+                        <span class="{TONES[deal.tone] ?? TONES.dead} text-xs font-bold px-2 py-0.5 rounded-sm uppercase">{deal.badge}</span>
                     </div>
-                    <p class="text-slate-300 mb-4 font-medium text-lg border-b border-slate-700 pb-4">Verkauftes Produkt: "{deal.product}"</p>
-                    <div class="text-sm text-slate-400 space-y-2">
-                        {#each deal.rows as row (row.label)}
-                            <p><span class="font-bold text-slate-300">{row.label}</span> {row.text}</p>
-                        {/each}
-                    </div>
-                </div>
-            </div>
-        {/each}
-
-        {#each DEALS as deal (deal.customer)}
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.dim ? 'opacity-75' : ''}">
-                <div class="flex flex-col justify-center shrink-0">
-                    <span class="text-5xl">{deal.icon}</span>
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="font-bold text-xl text-white">Kunde: {deal.customer}</h3>
-                        <span class="{deal.badgeClass} text-xs font-bold px-2 py-0.5 rounded-sm uppercase">{deal.badge}</span>
-                    </div>
-                    <p class="text-slate-300 mb-4 font-medium text-lg border-b border-slate-700 pb-4">Verkauftes Produkt: "{deal.product}"</p>
+                    <p class="text-slate-300 mb-4 font-medium text-lg border-b border-slate-700 pb-4">{page.productLabel} "{deal.product}"</p>
                     <div class="text-sm text-slate-400 space-y-2">
                         {#each deal.rows as row (row.label)}
                             <p><span class="font-bold text-slate-300">{row.label}</span> {row.text}</p>
@@ -137,3 +67,4 @@
         {/each}
     </div>
 </div>
+{/if}

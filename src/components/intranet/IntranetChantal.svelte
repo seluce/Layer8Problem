@@ -14,14 +14,15 @@
 
     const post  = $derived(game.intranetData?.chantal?.top ?? null);
     const older = $derived(game.intranetData?.chantal?.older ?? null);
+    const page  = $derived(game.intranetData?.chantal?.page ?? null);
 </script>
 
 <div class="max-w-3xl mx-auto mt-12 px-4 pb-12 space-y-8">
 
     <div class="text-center mb-12">
         <div class="inline-block bg-slate-800 p-4 rounded-full shadow-lg border border-slate-700 mb-4 text-4xl">🧘‍♀️</div>
-        <h1 class="text-4xl font-black text-pink-400 mb-2 tracking-tight">Mindful Workspace</h1>
-        <p class="text-pink-300/70 font-medium">Dein digitaler Safe-Space für agile Achtsamkeit.</p>
+        <h1 class="text-4xl font-black text-pink-400 mb-2 tracking-tight">{page?.title}</h1>
+        <p class="text-pink-300/70 font-medium">{page?.subtitle}</p>
     </div>
 
     {#if post}
@@ -34,7 +35,9 @@
                 {#each post.paragraphs as text, i (i)}
                     <p>{@html text}</p>
                 {/each}
-                <p class="font-bold text-pink-400 mt-6">In tiefer Verbundenheit zu euren KPIs,<br>Eure Chantal 💕</p>
+                <p class="font-bold text-pink-400 mt-6">
+                    {#each page?.signoff ?? [] as line, i (i)}{line}<br>{/each}
+                </p>
             </div>
         </div>
     {/if}

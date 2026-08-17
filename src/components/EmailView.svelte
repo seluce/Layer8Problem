@@ -13,6 +13,7 @@
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
+    import { t } from '../i18n/i18n.svelte.js';
     const mail = $derived(state.email ?? {});
     const paragraphs = $derived((mail.body ?? '').split('\n'));
 
@@ -21,18 +22,65 @@
 
     const initial = $derived((mail.sender ?? '?').charAt(0).toUpperCase());
 
-    // Who gets dragged into the thread. Pure flavour, derived from the sender.
-    const CC_RULES = [
-        [/chef|management/, 'Rechtsabteilung; HR'],
-        [/kevin/,           'Mama; World_of_Warcraft_Gilde'],
-        [/marketing|chantal/, 'Alle Mitarbeiter (ALL); Presse'],
-        [/buchhaltung|elster/, 'Finanzamt; Controlling'],
-        [/hr|personal/,     'Betriebsrat'],
-        [/sicherheit|wachschutz/, 'Polizei (Notruf)'],
-        [/prinz/,           '']   // scammers rarely CC anyone
-    ];
+    // Who gets dragged into the thread. Pure flavour, keyed off mail.senderId.
+    //
+    // This used to match the sender PROSE (/buchhaltung|elster/, /sicherheit/),
+    // which worked for exactly as long as data_emails.js was German: the day it
+    // was translated every mail would have fallen through to the default, with
+    // no error and no failing test. Hence senderId in the data - an identifier
+    // survives translation, a display string does not.
+    //
+    // Senders not listed here get the default distribution list. The list is
+    // per SENDER, not per department: 'Betriebsrat', 'Betriebsrat (Uwe)' and
+    // 'Betriebsrat (Umfrage)' are three senders and stay three ids.
+    //
+    // This table reproduces what the patterns did, mail for mail, INCLUDING
+    // three results nobody chose:
+    //   - hr_feelgood_management and office_management land on the boss because
+    //     /chef|management/ came first and matched the word "Management"
+    //   - system_notification lands on HR because "BenacHRichtigung" contains
+    //     the letters of /hr/
+    //   - `boss` (Dr. Wichtig, 10 mails) gets the DEFAULT list: "Dr. Wichtig"
+    //     matches no pattern, least of all /chef/
+    // Changing any of them is a player-visible edit to the CC line and belongs
+    // in its own decision, not in a rebuild that has to prove it changed
+    // nothing. Listed in UEBERGABE.md.
+    // i18n-uses: email.cc.boss, email.cc.kevin, email.cc.marketing
+    // i18n-uses: email.cc.accounting, email.cc.hr, email.cc.security
+    const CC_BY_SENDER = {
+        hr_feelgood_management: 'email.cc.boss',
+        office_management:      'email.cc.boss',
+
+        kevin_apprentice:       'email.cc.kevin',
+        kevin_private:          'email.cc.kevin',
+
+        chantal_marketing:      'email.cc.marketing',
+        chantal_private:        'email.cc.marketing',
+
+        elster_accounts:        'email.cc.accounting',
+        wuttke_accounts:        'email.cc.accounting',
+        sandra_accounts:        'email.cc.accounting',
+
+        hr_sabine:              'email.cc.hr',
+        hr_automated:           'email.cc.hr',
+        hr_system:              'email.cc.hr',
+        hr_survey_bot:          'email.cc.hr',
+        hr_compliance_bot:      'email.cc.hr',
+        hr_department:          'email.cc.hr',
+        staff_development:      'email.cc.hr',
+        system_notification:    'email.cc.hr',   // inherited accident, see above
+
+        security_office:        'email.cc.security',
+        security_guards:        'email.cc.security',
+
+        prince_scam:            null   // scammers rarely CC anyone
+    };
     const cc = $derived(
-        CC_RULES.find(([re]) => re.test((mail.sender ?? '').toLowerCase()))?.[1] ?? 'IT-Verteiler'
+        (() => {
+            if (!(mail.senderId in CC_BY_SENDER)) return t('email.cc.default');
+            const key = CC_BY_SENDER[mail.senderId];
+            return key ? t(key) : '';
+        })()
     );
 
     const hotkey = (index) => {
@@ -82,7 +130,7 @@
             <div class="text-sm text-slate-300 truncate">{mail.subj}</div>
             {#if cc}
                 <div class="flex gap-2 text-[10px] mt-1">
-                    <span class="w-6 text-slate-500 font-bold text-right">CC:</span>
+                    <span class="w-6 text-slate-500 font-bold text-right">{t('email.cc')}</span>
                     <span class="text-slate-500">{cc}</span>
                 </div>
             {/if}
@@ -107,7 +155,7 @@
                     <span class="mr-2 transition-colors duration-75 text-base shrink-0
                                  {o.isDelete ? 'text-slate-600 group-hover:text-red-500' : 'text-slate-500 group-hover:text-blue-400'}">
                         {#if o.isDelete}
-                            <img src="assets/img/ui/ui_trash.webp" alt="Löschen"
+                            <img src="assets/img/ui/ui_trash.webp" alt={t('email.delete')}
                                  width="18" height="18" class="w-5 h-5 select-none"
                                  onerror={(e) => e.currentTarget.outerHTML = '🗑️'}>
                         {:else}➥{/if}

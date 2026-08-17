@@ -1,117 +1,126 @@
 # Layer8Problem
 
-> *"Das Problem befindet sich in der Regel ca. 30 cm vor dem Bildschirm."*
+> *"The problem is usually located about 30 cm in front of the screen."*
 
-**Ein satirischer SysAdmin-Simulator.** Du bist die IT von GlobalCorp. Einer.
-Für alle. Zwischen Chantal aus dem Marketing, einem Chef, der IT für
-Voodoo-Zauber hält, und einem Ticketzähler, der niemals rückwärts läuft.
+**A satirical sysadmin simulator.** You are GlobalCorp's IT department. One
+person. For everyone. Between Chantal from marketing, a boss who thinks IT is
+voodoo, and a ticket counter that never runs backwards.
 
-### [▶ Im Browser spielen](https://seluce.github.io/Layer8Problem) · [Auf Steam kaufen](https://store.steampowered.com/app/4487580/Layer8Problem/)
+### [▶ Play in the browser](https://seluce.github.io/Layer8Problem) · [Buy on Steam](https://store.steampowered.com/app/4487580/Layer8Problem/)
 
-Kostenlos im Browser, keine Anmeldung, kein Download. Läuft auf dem Handy
-genauso wie am Rechner.
+Free in the browser, no sign-up, no download. Runs on a phone as well as on a
+desktop.
 
 ---
 
-## Zwei Spielarten
+## Two ways to play
 
-**Arbeitstag** — Eine Schicht von 08:00 bis 16:30 Uhr. Überlebe bis Feierabend.
-Abends ist alles vergessen, morgen beginnst du wieder bei null. Wähle vorher,
-wie sehr du dein Leben hasst: entspannter Freitag, normaler Mittwoch oder
-Montag.
+**Working Day** — one shift, 08:00 to 16:30. Survive until clocking-off time.
+By evening everything is forgotten and tomorrow you start from zero again.
+Choose beforehand how much you hate your life: a relaxed Friday, an ordinary
+Wednesday, or a Monday.
 
-**Arbeitswoche** — Montag bis Freitag am Stück. Nichts wird über Nacht
-vergessen: Was du heute liegen lässt, liegt morgen noch da. Dein Rucksack
-kommt mit, dein Ruf auch, deine Faulheit sowieso. Ventil und Abmahnung gibt es
-nur einmal pro Woche, nicht pro Tag. Wer scheitert, verliert die ganze Woche.
+**Working Week** — Monday to Friday in one go. Nothing is forgotten overnight:
+what you leave lying around today is still lying there tomorrow. Your backpack
+comes with you, so does your reputation, and your laziness certainly does. The
+valve and the written warning come once per week, not once per day. Fail, and
+you lose the whole week.
 
-## Worum es geht
+## What it is about
 
-Alle 30 Minuten knallt ein Ticket in dein System. Bei zehn offenen Tickets
-kollabiert es und du bist raus. Also nimmst du Anrufe an, rennst in den
-Serverraum, holst Kaffee und gehst Dienstgänge — und behältst dabei drei Werte
-im Auge:
+Every 30 minutes a ticket lands in your system. At ten open tickets it
+collapses and you are out. So you take calls, run to the server room, fetch
+coffee and go on errands — keeping an eye on three values while you do:
 
 | | |
 |---|---|
-| <img src="public/assets/img/ui/ui_lazy.webp" width="22" alt=""> **Faulheit** | Je höher, desto härter bestraft der Chef deine Fehler. |
-| <img src="public/assets/img/ui/ui_angry.webp" width="22" alt=""> **Aggro** | Bei 100 % rastest du aus. Das Ventil öffnet genau einmal. |
-| <img src="public/assets/img/ui/ui_eye.webp" width="22" alt=""> **Chef-Radar** | Bei 100 % gibt es eine Abmahnung. Danach die Kündigung. |
+| <img src="public/assets/img/ui/ui_lazy.webp" width="22" alt=""> **Laziness** | The higher it is, the harder the boss punishes your mistakes. |
+| <img src="public/assets/img/ui/ui_angry.webp" width="22" alt=""> **Aggro** | At 100 % you blow up. The valve opens exactly once. |
+| <img src="public/assets/img/ui/ui_eye.webp" width="22" alt=""> **Boss Radar** | At 100 % you get a written warning. After that, the sack. |
 
-Jede Entscheidung kostet Zeit, und die Uhr läuft nur in eine Richtung.
+Every decision costs time, and the clock only runs one way.
 
-## Was dich erwartet
+## What to expect
 
-- **Über 1.200 Ereignisse** in Serverraum, Kaffeeküche, am Telefon, auf dem
-  Dienstgang und im Postfach — plus Bossfights, Mittagspausen und einer
-  Firmen-Gala, die nur die Hartnäckigsten je zu sehen bekommen.
-- **Entscheidungen mit Gedächtnis.** Der Rechner, den du Kevin hast neu
-  aufsetzen lassen, steht Stunden später im Rack — mit Drachenaufkleber und
-  einem Programm, das Rechenleistung nach Übersee verkauft. Wer Gabi hat
-  auflaufen lassen, findet in der Teeküche eine Schublade, die es vorher nicht
-  gab.
-- **Acht Kollegen mit eigenem Ruf**, die sich merken, wie du dich entschieden
-  hast — und irgendwann zurückzahlen. In beide Richtungen.
-- **32 Gegenstände** zum Finden und kreativen Zweckentfremden. Panzertape
-  flickt mehr, als es sollte, und manches wirkt, ohne dass man es anfasst.
-- **27 Erfolge**, gestuft nach Schwierigkeit, dazu ein Archiv, ein Tagebuch,
-  das jeden Abend deinen Tag erzählt, und eine Firmenchronik zum Weiterschreiben.
-- **Voller Tastatur-Support** mit frei belegbaren Tasten. Ein Tutorial gibt es
-  auch, falls du lieber an die Hand genommen wirst.
+- **Over 1,300 events** in the server room, the coffee kitchen, on the phone, out
+  on errands and in your inbox — plus boss fights, lunch breaks and a company
+  gala that only the most stubborn ever get to see.
+- **German and English**, in full — not just the menus, but every single event.
+  You can switch mid-game: the save file does not depend on the language, so the
+  week carries on exactly where it was.
+- **Decisions with a memory.** The machine you had Kevin reinstall turns up in
+  the rack hours later — with a dragon sticker and a program selling compute
+  power overseas. Leave Gabi hanging and you will find a drawer in the tea
+  kitchen that was not there before.
+- **Seven colleagues with their own reputation**, who remember how you decided —
+  and pay you back eventually. In both directions.
+- **32 items** to find and repurpose creatively. Duct tape fixes more than it
+  should, and some things work without being touched at all.
+- **27 achievements**, graded by difficulty, plus an archive, a diary that
+  narrates your day every evening, and a company chronicle to keep writing.
+- **Full keyboard support** with freely assignable keys. There is a tutorial
+  too, if you would rather be walked through it.
 
-## Warum Steam, wenn es kostenlos läuft?
+## Why Steam, when it runs for free?
 
-Das Spiel bleibt im Browser vollständig und kostenlos. Wer die Entwicklung
-unterstützen möchte, bekommt auf Steam ein paar technische Annehmlichkeiten:
+The game stays complete and free in the browser. Anyone who wants to support
+development gets a few technical conveniences on Steam:
 
-- **Offline spielbar** — im Zug, im Flugzeug, im Serverkeller
-- **Steam-Errungenschaften** und **weltweite Statistiken** — sieh, wie oft der
-  Rest der Welt hingeworfen hat
-- **Cloud-Speicher** — Archiv, Erfolge und Statistiken reisen mit, und der
-  laufende Durchgang ebenso: mittags auf dem Laptop anfangen, abends am
-  Rechner weiterleiden
-- **Dynamischer Status** — deine Freundesliste erfährt, ob du gerade
-  *"Im Serverraum versteckt"* bist oder *"Die Synergy-Gala überlebst"*
+- **Playable offline** — on the train, on a plane, in the server basement
+- **Steam achievements** and **global statistics** — see how often the rest of
+  the world has thrown in the towel
+- **Cloud saves** — archive, achievements and statistics travel with you, and so
+  does the run in progress: start at lunchtime on the laptop, carry on suffering
+  at the desktop in the evening
+- **Dynamic status** — your friends list finds out whether you are currently
+  *"Hiding in the server room"* or *"Surviving the Synergy Gala"*
 
-Beide Fassungen laufen auf demselben Inhaltsstand.
+Both versions run on the same content.
 
 ---
 
-## Für Entwickler
+## For developers
 
-Svelte 5 (Runes), Vite, Tailwind CSS 4. Die Steam-Fassung ist dieselbe
-Anwendung in Electron. Die Web-Version wird aus `main:/docs` über GitHub Pages
-ausgeliefert, der Build wird also mitcommittet.
+Svelte 5 (runes), Vite, Tailwind CSS 4. The Steam version is the same
+application in Electron. The web version is served from `main:/docs` via GitHub
+Pages, so the build is committed along with the source.
 
 ```bash
 npm install
-npm run dev            # Entwicklungsserver
-npm run build          # Build nach docs/
-npm run preview        # gebaute Fassung ansehen (nicht per Doppelklick öffnen)
+npm run dev            # development server on port 8080
+npm run build          # build into docs/
+npm run preview        # inspect the built version (do not open it by double-click)
 ```
 
-Werkzeuge im Ordner `tools/`:
+**The game data exists twice:** `src/data/de/` is the source, `src/data/en/` the
+English version — 23 files each. Both carry the same ids, story flags, character
+names and numbers; only the prose differs. That is what makes a save file
+language-independent. Touch one file and you touch both.
+
+Tools live in `tools/`:
 
 ```bash
-npm run lint:data      # prüft alle Ereignis-Daten auf Struktur und Regeln
-npm test               # Testsuiten für den Wochenmodus
-npm run sim            # simuliert tausende Arbeitstage für die Balance
-npm run sim:week       # dasselbe für ganze Wochen
+npm run lint:all       # the gate: data (both trees), interface strings, parity
+npm run lint:data      # the German data tree only
+npm run lint:parity    # holds the two trees against each other
+npm test               # four test suites
+npm run sim            # simulates thousands of working days for balance
+npm run sim:week       # the same for whole weeks
 ```
 
-Wer Ereignisse schreiben möchte: `EVENTS.md` erklärt das Datenformat, von der
-einfachen Option bis zur verzweigten Gesprächskette. `STRUCTURE.md` erklärt,
-warum welche Datei wo liegt.
+If you would like to write events: `EVENTS.md` explains the data format, from
+the simple option to the branching dialogue chain. `STRUCTURE.md` explains why
+which file lives where, and `tools/TOOLS.md` describes every tool in detail.
 
-## Lizenz & Kleingedrucktes
+## Licence & small print
 
-Reine Satire. Ähnlichkeiten mit realen Personen, Firmen oder cholerischen
-Vorgesetzten sind zufällig, aber vermutlich unvermeidbar.
+Pure satire. Any resemblance to real people, companies or choleric superiors is
+coincidental, but probably unavoidable.
 
-Web-Version und Quellcode stehen unter der **MIT-Lizenz**. Du darfst den Code
-studieren, nutzen und für eigene, nicht-kommerzielle Ableger verändern —
-bitte mit Namensnennung (**seluce**).
+The web version and the source code are under the **MIT licence**. You may
+study the code, use it and modify it for your own non-commercial spin-offs —
+please with attribution (**seluce**).
 
 ---
 
-*Erstellt mit viel Koffein, Panzertape und Liebe zum Detail.*
+*Made with a great deal of caffeine, duct tape and attention to detail.*

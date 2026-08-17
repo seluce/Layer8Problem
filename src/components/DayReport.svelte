@@ -8,27 +8,29 @@
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
+    import { t } from '../i18n/i18n.svelte.js';
 
     let { cause = null } = $props();
 
+    // i18n-uses: dayReport.diff.easy, dayReport.diff.hard, dayReport.diff.normal
     const DIFF = [
-        { test: (m) => m < 1.0,  label: 'FREITAG (Leicht)' },
-        { test: (m) => m > 1.0,  label: 'MONTAG (Schwer)' },
-        { test: () => true,      label: 'MITTWOCH (Normal)' }
+        { test: (m) => m < 1.0,  label: 'dayReport.diff.easy' },
+        { test: (m) => m > 1.0,  label: 'dayReport.diff.hard' },
+        { test: () => true,      label: 'dayReport.diff.normal' }
     ];
-    const diffName = $derived(DIFF.find(d => d.test(game.difficultyMult)).label);
+    const diffName = $derived(t(DIFF.find(d => d.test(game.difficultyMult)).label));
 
     // Which value ended the day? Only these causes point at a bar; clocking
     // off and the party have no culprit.
     const CULPRIT = { rage: 'al', chef: 'cr' };
 
     const stats = $derived([
-        { key: 'fl', label: 'Faulheit', value: Math.round(game.fl), color: 'text-emerald-400',
+        { key: 'fl', label: t('stat.lazy'),        value: Math.round(game.fl), color: 'text-emerald-400',
           badge: null },
-        { key: 'al', label: 'Aggro',    value: Math.round(game.al), color: 'text-orange-400',
-          badge: game.rageWarningReceived ? { text: 'VENTIL GENUTZT', cls: 'text-orange-400 border-orange-500/80 bg-orange-950/30 -rotate-3' } : null },
-        { key: 'cr', label: 'Radar',    value: Math.round(game.cr), color: 'text-red-500',
-          badge: game.chefWarningReceived ? { text: 'ABGEMAHNT', cls: 'text-red-500 border-red-500/80 bg-red-950/30 rotate-2' } : null }
+        { key: 'al', label: t('stat.aggro'),       value: Math.round(game.al), color: 'text-orange-400',
+          badge: game.rageWarningReceived ? { text: t('dayReport.valveUsed'), cls: 'text-orange-400 border-orange-500/80 bg-orange-950/30 -rotate-3' } : null },
+        { key: 'cr', label: t('stat.radar.short'), value: Math.round(game.cr), color: 'text-red-500',
+          badge: game.chefWarningReceived ? { text: t('team.reprimanded'), cls: 'text-red-500 border-red-500/80 bg-red-950/30 rotate-2' } : null }
     ]);
 
     const guilty = $derived(CULPRIT[cause] ?? null);
@@ -36,7 +38,7 @@
 
 <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
     <div class="text-[10px] text-slate-500 uppercase tracking-widest mb-3">
-        Tagesbericht: <span class="text-white font-bold">{diffName}</span>
+        {t('dayReport.title')} <span class="text-white font-bold">{diffName}</span>
     </div>
 
     <div class="grid grid-cols-3 gap-2 text-center font-mono">
@@ -47,7 +49,7 @@
                 <span class="text-[10px] text-slate-400">{s.label}</span>
 
                 {#if guilty === s.key}
-                    <span class="text-[9px] font-bold {s.color} mt-1 tracking-wider">← HIER WAR SCHLUSS</span>
+                    <span class="text-[9px] font-bold {s.color} mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
                 {/if}
 
                 {#if s.badge}
@@ -62,8 +64,8 @@
     {#if cause === 'tickets'}
         <div class="mt-3 pt-3 border-t border-slate-800 text-center">
             <span class="text-purple-400 font-mono font-bold text-lg">{game.tickets}</span>
-            <span class="text-[10px] text-slate-400 ml-1 uppercase tracking-widest">offene Tickets</span>
-            <span class="block text-[9px] font-bold text-purple-400 mt-1 tracking-wider">← HIER WAR SCHLUSS</span>
+            <span class="text-[10px] text-slate-400 ml-1 uppercase tracking-widest">{t('dayReport.openTickets')}</span>
+            <span class="block text-[9px] font-bold text-purple-400 mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
         </div>
     {/if}
 </div>

@@ -1,515 +1,559 @@
+[6.0.0] - 2026-08-17
+
+This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.
+
+English:
+* The game is now available in English. In full, not in parts: every event, the inbox, the phone chat, the intranet, the noticeboard, the knowledge, the company chronicle, the achievements, the morning moods, the excuses, the news ticker, the diary and every label around them. Around 11,600 texts, a good 650 standard pages.
+* It was translated scene by scene, not word by word. Where a punchline does not carry in English, it has been rebuilt - Kevin's nickname for Miller, for instance. What draws its effect from the German stays German: the Mettigel, the TÜV, the Döner, the colleagues' names. Müller is called Miller, which is the literal translation and the same joke: the most common surname in the country, and therefore nobody in particular.
+* There are two places to switch: at the bottom of the start screen with a plain DE | EN, and in the settings. The one on the start screen is deliberate - anyone who ends up with the wrong language cannot go looking for a settings menu whose label is in the wrong language too. On the first start the browser decides, in the Steam version the language set there; anyone who has played before stays with German.
+* The switch happens on the spot, without reloading and without losing anything: in the middle of the day, in the middle of an event, in the middle of a phone chat. Everything on screen comes along, the log and the open conversation included - a week you began in German can be finished in English. Save files are language-independent.
+* In the Steam version, everyone now reads the friends list in their own language. Until now it showed the player's - play in German and you were off fetching coffee for your English friends as well.
+
+Lunch break:
+* The break now has a memory too. Run ten kilometres with the running group and you feel it on the stairs the next day; let the sales rep take you out for sushi and you find a summary in your inbox in the morning saying "as discussed", although nothing was discussed.
+* The seat at the board's table stays free for a day and waits. At the old table, Kevin and Chantal have made room as well.
+
+Emergencies:
+* Eight new incidents, making thirty-eight: an expired certificate in the customer shop, both ends of a network cable in the same socket, a manufacturer recall affecting your devices of all things, the annual test of the emergency power supply, an air conditioning unit set a little too well, a delivery in the fire escape, an update that redistributes itself, and a call in which everything is right except the department.
+* Two of the new ones have a continuation. The call from head office becomes a story over three days that can be read up in the knowledge - if you follow it to the end.
+* An emergency now has a tomorrow. Eight incidents get an aftershock the next day: the smell after the capacitor and the inspection report, the koi in the water butt in the meeting room, the invoice for the emergency router, Kevin's four handwritten pages after the near-deletion.
+* The titles are no longer named after their type of disaster but after what actually happens - the display already writes NOTFALL in red anyway. Four incidents previously had practically the same name.
+* The texts have been reworked: fewer capitals, fewer exclamation marks, and more precision instead. An emergency becomes tense through what you see, not through punctuation.
+
+The weekly meeting:
+* Twelve chains instead of six - so Friday repeats itself after twelve weeks at the earliest. New among them: the evaluation of the staff survey, a video link to the Southern branch with no sound, an appointment nobody attends, the preparation for the external audit, a pilot project with an assistant that has learned from your own ticket replies, and a workshop about too many meetings.
+* All the meetings have got longer: three decisions instead of two and twice as many exits. The new middle section is what really makes meetings drag - the slide afterwards, the follow-up question, the colleague who would like to add something.
+* No tickets come in while the meeting runs - everybody is sitting in the same room, after all. It lasts three quarters of an hour and there is no leaving it, so until now Friday could end in a dismissal there was no way to prevent, in the closing scene of a week you had otherwise survived. The time it costs stays, so the afternoon is as tight as it was.
+
+The knowledge:
+* The book now also covers the summer party, the weekly meeting, the consultancies, two persistent senders from the inbox and Jürgen from sales.
+* Entries with unread notes highlight their number in the register. Open the book and you land directly on the new entry; after that the number sits there quietly again.
+* Each of the seven colleagues has gained a note from the personal encounters - it records what you only find out about somebody once you have dealt with them for a while.
+
+Bug fixes:
+* Nine result texts told the player what the display underneath shows anyway - "Das Radar sinkt massiv" stood directly above "Chef -10". They now describe what actually happens instead of reading the number out. Nobody in this building knows they have a radar.
+* Very long words with no break point - the coffee machine's error code, for instance - pushed the event text off the screen on a phone. Such words now wrap, and ordinary tapeworms are hyphenated rather than stretched. Affects events, results, the phone chat and the knowledge.
+* A phone errand could briefly show a bar above 100 % before it snapped back. The value was never really higher; the display was a blink ahead of the cap.
+* Continue a day that was saved before an update and the log named the version from back then, while the terminal header next to it named the new one. Both now agree.
+* Kevin is the apprentice, not an intern - he had been promoted in five places, from his own call heading to a morning mood. Bernd is in sales, not logistics. The thick manual is Windows-95-Handbuch in all twelve places. And the boss's office is below the server room, not above it, which is why everything drips into it.
+* Where two places named different figures, the smaller one was right: a full descaling takes seventy-five minutes and not ninety, and the ten minutes in the tea kitchen stay ten minutes - they are still the most relaxing of the day.
+* Six spelling mistakes that had been standing since 5.0, among them a "Taffe" travelling across the table and a bellowed "STEKCER ZIEHEN, SIE IDIOT!". Plus three small corrections in the knowledge and the errands: Herr Aluhut has exactly one alias and not several, Frau Elster now accepts the donut that was actually put in front of her, and the error message stammered at Sarah from HR is complete.
+
+The summer party:
+* The six stations in the foyer now carry images of their own instead of emoji - beer mug, salad bowl, disco ball, armchair, cigarette and toilet. Emoji are drawn by the operating system and looked different under Windows, under Linux and in the Steam overlay; the foyer is by far the most-seen screen of the evening and now looks the same everywhere.
+
+For developers:
+* The four effects have the same names everywhere: m for minutes, l for laziness, a for aggro, b for boss. Before, f and c were German mnemonics in an otherwise English data model. Affected are options, fail and results (15,322 keys), the item blocks use and passive, the curve point in statHistory and the week row in weekLog. The time in the curve point is m now, no longer t - in an option, t is the button text, and the same letter with two meanings was exactly the confusion that was meant to go.
+* The running state deliberately stays state.fl, state.al and state.cr, as do the display ids. The boundary is a rule rather than a list of exceptions: what you write carries letters, what runs carries fl/al/cr.
+* Save files from 5.0 need nothing - statHistory and weekLog are converted on loading, on both resume paths and without anything being lost. Results no longer understand min, fl, al and cr as second names; the data checker reports them as an unknown field, so an overlooked key turns red rather than quietly turning into zero.
+
+---
+
 [5.0.0] - 2026-08-12
 
-Bisher war ein Arbeitstag eine Insel: Was morgens begann, war abends
-vergessen. Diese Fassung stellt daneben eine zweite Spielart, in der nichts
-vergessen wird - fünf Tage am Stück, mit allem, was man mitschleppt. Dazu
-bekommt die Oberfläche zum ersten Mal eigene Symbole statt Emojis.
+Until now a working day was an island: what began in the morning was forgotten by the evening. This version puts a second way to play beside it, one in which nothing is forgotten - five days in a row, with everything you drag along. On top of that, the interface gets icons of its own instead of emoji for the first time.
 
-Die Arbeitswoche:
-* Ein zweiter Modus, gleichrangig neben dem Arbeitstag: Montag bis Freitag am Stück. Wer scheitert, beendet die ganze Woche - nicht nur den Tag.
-* Gewählt wird nicht der Wochentag, sondern Müllers Zustand: Erholt, Genervt oder Urlaubsreif. Er bestimmt, womit der Montag beginnt und wie gut die Nächte erholen.
-* Über Nacht bleibt fast alles: Rucksack, Ruf, Faulheit, gelesene Ereignisse und die Geschichten, die noch weitergehen. Von den offenen Tickets bleibt ein Viertel, aufgerundet - kein Ticket ist je geschenkt, aber vier abgearbeitete sparen eines für morgen.
-* Aggro und Chef-Radar erholen sich prozentual, und die Erholung wird von Nacht zu Nacht schlechter. Der Freitag ist nicht schwerer, weil das Spiel härter wird, sondern weil vier Tage in den Knochen stecken.
-* Ventil und Abmahnung gibt es einmal pro WOCHE statt einmal pro Tag. Wer am Dienstag ausrastet, hat bis Freitag keine zweite Chance.
-* Gegenstände lassen sich im Rucksack wegwerfen. Der Rucksack fasst weiterhin zehn Stück und nichts stapelt sich - über eine ganze Woche wurde daraus aber eine Sackgasse, weil Werkzeuge beim Aufsammeln am Deckel vorbeigehen und irgendwann kein Verbrauchsgut mehr hineinpasste. Jetzt ist es eine Entscheidung: den Schraubenzieher behalten oder Platz für den Donut schaffen.
-* Der Nacht-Bildschirm zeigt vor dem Schlafengehen, was der nächste Morgen erbt: Tickets, Werte und Ausreden im Vorher-nachher, dazu eine Zeile darüber, wie die Nacht war. Ein Streifen über den fünf Wochentagen zeigt, wo du gerade stehst. Der Abend ist zum Planen da.
-* Die Zeile unter der Überschrift greift auf, wie der Tag gelaufen ist - ob du mit vollem Postkorb ins Bett gehst, ob der Puls noch oben ist oder ob zum ersten Mal seit langem nichts offen war. Auch jeder Morgen begrüßt dich anders.
-* Der Freitag hat ein Finale: Ab 15 Uhr führt der Weg ins Wochenmeeting - mit dem Chef, wechselnden externen Beratern und einer Tagesordnung, die niemanden interessiert. Erst danach ist Feierabend, auch wenn es darüber später als halb fünf wird.
-* Am Ende steht die Wochen-Bilanz: pro Tag die Werte, mit denen er in die Nacht ging, darunter die Summen. Wer scheitert, sieht, an welchem Tag es riss.
-* Das Tagebuch kennt die Woche: eigene Auftakte je Wochentag, ein Nachtrag darüber, was mit ins Bett genommen wird, und ein eigener Text für den überstandenen Freitag.
-* Damit kein Bereich leergeklickt werden kann, hat jeder Pool ein Tagespensum. Ist es aufgebraucht, kostet der Griff dorthin trotzdem Zeit - der Serverraum ist dann eben verdächtig still.
-* Drei neue Erfolge: Wochenendlich, Eisern und Blanker Freitag. Alle drei sind wie gewohnt nach Schwierigkeit gestuft.
-* Eine unterbrochene Woche geht nicht verloren. Beim nächsten Start bietet der Arbeitswochen-Knopf sie mit Wochentag, Uhrzeit und offenen Tickets zum Weitermachen an - der angefangene Arbeitstag wartet unabhängig davon an seinem eigenen Knopf.
+The Working Week:
+* A second mode, equal in standing to the Working Day: Monday to Friday in one go. Fail and you end the whole week - not just the day.
+* What you choose is not the weekday but Miller's condition: rested, irritated or in need of a holiday. It determines what Monday starts with and how well the nights restore you.
+* Almost everything survives the night: backpack, reputation, laziness, events already seen and the stories still running. A quarter of the open tickets remain, rounded up - no ticket is ever a gift, but four cleared save one for tomorrow.
+* Aggro and boss radar recover proportionally, and the recovery gets worse from night to night. Friday is not harder because the game gets tougher, but because four days are in your bones.
+* The valve and the written warning come once per WEEK instead of once per day. Blow up on Tuesday and you have no second chance until Friday.
+* Items can be thrown away in the backpack. The backpack still holds ten and nothing stacks - across a whole week that became a dead end, because tools slip past the cap when picked up and eventually no consumable would fit any more. Now it is a decision: keep the screwdriver or make room for the donut.
+* Before you go to sleep, the night screen shows what the next morning inherits: tickets, values and excuses as before-and-after, plus a line above about how the night went. A strip across the five weekdays shows where you currently stand. The evening is for planning.
+* The line under the heading picks up how the day went - whether you go to bed with a full inbox, whether your pulse is still up, or whether for the first time in ages nothing was left open. Every morning greets you differently as well.
+* Friday has a finale: from 15:00 the way leads into the weekly meeting - with the boss, a rotating cast of external consultants and an agenda that interests nobody. Only after that do you clock off, even if it runs past half four.
+* At the end comes the week summary: per day the values it went into the night with, and the totals underneath. If you fail, you can see which day it tore.
+* The diary knows about the week: its own openings per weekday, an addendum about what is taken to bed, and a text of its own for a Friday survived.
+* So that no area can be clicked empty, every pool has a daily quota. Once it is used up, reaching for it still costs time - the server room is simply suspiciously quiet then.
+* Three new achievements: Weekended, Cast Iron and Clean Friday. All three are graded by difficulty as usual.
+* An interrupted week is not lost. On the next start the Working Week button offers it for continuation, with weekday, time and open tickets - the working day already begun waits independently at its own button.
 
-Die Synergy-Gala:
-* Der Abend hat jetzt eine Uhrzeit. Die Feier beginnt um 17 Uhr, und jede Station bringt eine halbe Stunde - wer auf die Uhr sieht, weiß ungefähr, wie lange es noch dauert, ohne dass ihm jemand eine Fortschrittsanzeige hinstellt.
-* Der Vorraum sieht nicht mehr zwölfmal gleich aus: Zu Beginn stehen die Leute noch in Grüppchen, später ist kein Durchkommen, in der letzten Stunde suchen die ersten ihre Jacken.
-* Wer die Gala am Ende einer Arbeitswoche erreicht, bekommt das auch gesagt - fünf Tage am Stück sind ein anderer Anlass als ein einzelner Freitag.
+The Synergy Gala:
+* The evening now has a time. The party starts at 17:00 and every station brings half an hour - glance at the clock and you roughly know how much longer it will take, without anybody putting a progress bar in front of you.
+* The foyer no longer looks the same twelve times over: at the start people are still standing in little groups, later there is no getting through, and in the last hour the first ones are looking for their coats.
+* Anyone reaching the gala at the end of a working week is told so - five days in a row are a different occasion from a single Friday.
 
-Mehrtägige Geschichten:
-* Rund 50 neue Ereignisse in Serverraum, Kaffeeküche, Dienstgang und am Telefon - zum ersten Mal als Geschichten, die über mehrere Tage gehen: Was am Montag aufgeschoben wird, eskaliert übermorgen; was bestellt ist, kommt frühestens am nächsten Tag; wer einmal diskret geholfen hat, ist ab jetzt "die Nummer". Im Arbeitstag stehen die Auftakte ganz normal im Pool - die Fortsetzungen gehören der Woche.
-* Folgen springen auch zwischen den Bereichen: Die Abkürzung im Serverraum klingelt später am Telefon, und ein Kaltakquise-Anruf steht tags darauf leibhaftig am Empfang - "wie telefonisch vereinbart".
-* Der Dienstgang nutzt seine zwei Gesichter als Erzählmittel: Manche Geschichte beginnt als Chat auf dem Handy und endet im Terminal, eine läuft andersherum.
-* Neue Gesichter machen GlobalCorp größer: Herr Blaschke vom Gebäudemanagement, Frau Sonntag aus der Buchhaltung, ein Herr in Grau mit Transformationsprojekt, Herr Grabowski (seit sieben Jahren in Rente, ruft trotzdem einmal im Jahr an) und die Niederlassung Süd, die nie ans Telefon geht.
+Multi-day stories:
+* Around 50 new events in the server room, the coffee kitchen, out on errands and on the phone - for the first time as stories that run across several days: what is put off on Monday escalates the day after tomorrow; what is ordered arrives the next day at the earliest; help somebody out discreetly once and from then on you are "the number". In the Working Day the openings sit in the pool perfectly normally - the continuations belong to the week.
+* Consequences also jump between areas: the shortcut in the server room rings on the phone later, and a cold-call turns up in person at reception the following day - "as agreed on the telephone".
+* The errands use their two faces as a narrative device: some stories start as a chat on the phone and end in the terminal, one runs the other way round.
+* New faces make GlobalCorp bigger: Herr Blaschke from facilities, Frau Sonntag from accounts, a man in grey with a transformation project, Herr Grabowski (retired seven years ago, still calls once a year) and the Southern branch, which never answers the phone.
 
-Das Wissen:
-* Ein neuer Punkt in der Leiste, zwischen Team und Archiv. Müller notiert dort, was er über dieses Haus herausfindet: über die Kollegen, über die Leute, die immer wieder anrufen, über Räume und über Vorgänge, die niemand angefangen hat und die trotzdem laufen.
-* Die Seiten füllen sich von allein. Wer jemandem begegnet, schlägt seinen Eintrag auf; wer eine Geschichte weiterspielt, bekommt die nächste Notiz. Was noch fehlt, steht als leere Zeile da - man sieht, dass eine Seite unfertig ist, aber nicht, was darauf fehlen wird.
-* Aufgebaut wie ein Notizbuch: links das Register, rechts die aufgeschlagene Seite, oben die vier Bereiche mit eigener Farbe. Auf dem Handy ist das Register die Seite, und ein Tipp blättert um.
-* Der Fortschritt gehört zur Laufbahn, nicht zum Tag. Was einmal notiert ist, bleibt notiert - auch über Wochen und Neuanfänge hinweg.
-* Dazu ein neuer Fall im Dienstgang: eine verwüstete Toilette, drei Beobachtungen und ein Abgleich der Zutrittsprotokolle. Wer über drei Tage dranbleibt, erfährt, wer es war. Ob das hilft, ist eine andere Frage.
+The knowledge:
+* A new item in the bar, between Team and Archive. Miller records there what he finds out about this building: about the colleagues, about the people who keep calling, about rooms and about affairs nobody started that are running all the same.
+* The pages fill themselves. Meet somebody and their entry opens; play a story further and you get the next note. What is still missing sits there as an empty line - you can see that a page is unfinished, but not what will be missing from it.
+* Built like a notebook: the register on the left, the open page on the right, the four areas along the top each with their own colour. On a phone the register is the page, and a tap turns it.
+* Progress belongs to the career, not to the day. What is once recorded stays recorded - across weeks and fresh starts alike.
+* Plus a new case out on errands: a wrecked toilet, three observations and a comparison of the access logs. Stick with it over three days and you find out who it was. Whether that helps is another question.
 
-Gegenstände:
-* Zwei Neuzugänge, beide mit Haken. Die Voodoo-Puppe des Chefs senkt die Aggro spürbar - aber zwei Etagen höher verspürt Dr. Wichtig einen Krampf und muss aus unerfindlichen Gründen an dich denken, das Radar steigt. Die Notfall-Krawatte wirkt von allein: Trägt man exakt sein Modell, hält er einen bei jeder Begegnung kurz für einen der Ihren. Beide sind dort versteckt, wo niemand ein Geschenk erwartet.
-* Jeder Gegenstand hat jetzt seine eigene Abklingzeit. Bisher gab es im ganzen Rucksack nur eine - beim Stressball allein fiel das nie auf, mit dem zweiten Werkzeug hätte das Kneten die Puppe gesperrt.
+Items:
+* Two new arrivals, both with a catch. The boss's voodoo doll lowers aggro noticeably - but two floors up, Dr. Wichtig feels a cramp and finds himself thinking of you for no discernible reason, and the radar rises. The emergency tie works by itself: wear exactly his model and at every encounter he briefly takes you for one of his own. Both are hidden where nobody expects a present.
+* Every item now has a cooldown of its own. Until now there was only one for the whole backpack - with the stress ball alone that never showed, but with the second tool, squeezing it would have locked the doll.
 
-Der Rucksack:
-* Die Kacheln stehen jetzt sauber im Raster, auch wenn nur ein Gegenstand darin liegt. Die Beschriftungen hingen vorher unter den Kacheln und schoben die Zeilen auseinander - auf dem Handy fiel das Raster dadurch sichtbar auseinander.
-* Der Wegwerfen-Knopf hält sich zurück, bis man ihn braucht, und färbt sich erst dann rot - im selben Ton wie die Sicherheitsabfrage, die danach kommt. Die Erklärzeile ist weg: Die Kacheln leuchten ohnehin rot, und der Text hat beim Erscheinen das ganze Raster nach unten geschoben.
+The backpack:
+* The tiles now sit cleanly in the grid, even with only one item in it. The labels used to hang under the tiles and pushed the rows apart - on a phone that visibly broke the grid up.
+* The discard button holds back until you need it, and only then turns red - in the same shade as the confirmation that follows. The explanatory line is gone: the tiles glow red anyway, and the text pushed the whole grid down when it appeared.
 
-Einstellungen:
-* "Handy aut. minimieren" ist am breiten Bildschirm ausgegraut und sagt auch, warum: Dort bleibt das Handy ohnehin sichtbar, die Einstellung kann nichts bewirken. Vorher ließ sich der Schalter umlegen, ohne dass etwas passierte. Wird das Fenster schmaler, ist er sofort wieder da - der gespeicherte Wert bleibt unangetastet.
+Settings:
+* "Minimise phone automatically" is greyed out on a wide screen, and says why: the phone stays visible there anyway, so the setting can have no effect. Before, the switch could be flipped without anything happening. Make the window narrower and it is back immediately - the stored value is untouched.
 
-Musik:
-* Die Musik wechselt nicht mehr mit einem Schnitt. Beim Bossfight bricht die Bürobeschallung ab, statt einfach zu verstummen, und die Kampfmusik setzt hart ein - danach kommt das Büro sanft zurück. Auffallen soll das nicht; es fällt vorher auf, wenn es fehlt.
-* Wer in den Einstellungen einen festen Musikstil gewählt hat, hört ihn ohne die kurze Lücke am Ende jedes Durchlaufs. Im Radio-Modus bleibt alles wie gehabt, dort muss ein Stück zu Ende sein, damit das nächste gewählt werden kann.
+Music:
+* The music no longer changes with a cut. During a boss fight the office soundtrack breaks off instead of simply falling silent, and the fight music comes in hard - afterwards the office returns gently. It is not meant to be noticed; it is noticed beforehand, when it is missing.
+* Anyone who has chosen a fixed music style in the settings hears it without the short gap at the end of each pass. In radio mode everything stays as it was; there a track has to finish before the next can be chosen.
 
-Der Startbildschirm:
-* Der Hochfahr-Text meldet jetzt die Lage, statt jeden Morgen dasselbe zu behaupten: übernommene Tickets, das Chef-Radar vom Vortag, was im Rucksack liegt. Am Montag steht dort die gewählte Startbedingung, am Freitag zuerst der Termin, den man nicht vergessen sollte.
-* Ab dem zweiten Arbeitstag fällt die Begrüßung mit Firmenname und Copyright weg - fünf Morgen pro Woche brauchen keine fünf Vorstellungsrunden. Der Start ist dadurch spürbar kürzer.
-* Die übrigen Zeilen wechseln von Mal zu Mal. Die Ausreden-Datenbank lädt mal ein anderes Modul, die Zahl der ignorierten Anfragen stimmt nie zweimal, und gelegentlich fällt auf, wann das Backup zuletzt geprüft wurde.
+The start screen:
+* The boot text now reports the situation instead of claiming the same thing every morning: tickets carried over, the boss radar from the previous day, what is in the backpack. On Monday it shows the chosen starting condition, on Friday first of all the appointment you should not forget.
+* From the second working day onwards, the greeting with the company name and copyright is dropped - five mornings a week do not need five rounds of introductions. That makes the start noticeably shorter.
+* The remaining lines change from one time to the next. The excuse database loads a different module now and then, the number of ignored requests is never the same twice, and occasionally you notice when the backup was last checked.
 
-Archiv & Statistiken:
-* Das Archiv lässt sich zwischen Arbeitstag und Arbeitswoche umschalten. Beide Ansichten zeigen dieselben vier Zahlen in ihrer Einheit und darunter, wie oft welcher Wochentag beziehungsweise welcher Zustand überstanden wurde. Die zuletzt gewählte Ansicht wird gemerkt.
-* Die Gegenstands-Kacheln im Archiv tragen jetzt dieselben Beschreibungen wie der Rucksack: Name, Text und die Zeile, ob sich ein Gegenstand verbraucht - per Maus beim Überfahren, am Handy und auf dem Steam Deck per Fingertipp. Bisher stand dort nur der Name, und den bekam nur die Maus zu sehen. Nicht gefundene Gegenstände bleiben ein Fragezeichen.
-* Als überlebt zählt eine Woche nur mit erreichtem Freitagabend. Jeder Abbruch unterwegs landet bei Rage Quit oder Gefeuert.
-* Die weltweiten Steam-Statistiken haben denselben Umschalter bekommen, mit eigenen Vergleichswerten und eigenen Diagnosen für die Woche. Fehlen weltweite Daten für einen Modus, sagt die Anzeige das, statt leere Balken zu zeichnen.
-* In den Einstellungen lassen sich beide Modi vorwählen, getrennt voneinander: ein fester Wochentag für den Arbeitstag, ein fester Zustand für die Arbeitswoche. Beides steht auf "Jedes Mal fragen".
+Archive & statistics:
+* The archive can be switched between Working Day and Working Week. Both views show the same four figures in their own unit, and underneath, how often which weekday or which condition was survived. The view chosen last is remembered.
+* The item tiles in the archive now carry the same descriptions as the backpack: name, text and the line saying whether an item is used up - by hovering with the mouse, by tapping on a phone and on the Steam Deck. Until now only the name was there, and only the mouse got to see it. Items not yet found stay a question mark.
+* A week counts as survived only with Friday evening reached. Every abandonment along the way lands under Rage Quit or Fired.
+* The global Steam statistics have been given the same switch, with their own comparison values and their own diagnoses for the week. If global data is missing for a mode, the display says so instead of drawing empty bars.
+* Both modes can be preselected in the settings, separately from each other: a fixed weekday for the Working Day, a fixed condition for the Working Week. Both are set to "Ask every time".
 
-Anzeige & Layout:
-* Die Oberfläche trägt eigene Symbole statt Emojis: 69 gezeichnete Icons für Aktionsleiste, Terminal-Kopf, Schnellstartleiste, Einstellungen, Menü, Dialoge und den Nacht-Bildschirm - im selben getuschten Stil wie die Gegenstände und Porträts. Wo dasselbe gemeint ist, steht auch dasselbe Symbol: Die Schnecke aus dem Überlebens-Handbuch taucht abends bei der Faulheit wieder auf, der Pokal der Schnellstartleiste im Kopf des Archivs. Fehlt eine Datei, erscheint wieder das alte Emoji.
-* Die Schwierigkeitswahl zeigt gezeichnete Motive: ein Kalenderblatt je Wochentag mit einem Fünf-Punkte-Streifen, der die Lage in der Woche verrät, und für den Wochenmodus Müllers Tasse in drei Zuständen.
-* Alle Fenster folgen einer Form. Erfolgsmeldung, Gegenstands-Nachfrage sowie Sichern und Laden waren jeweils eigene Bauarten aus verschiedenen Zeiten; sie sehen jetzt aus wie der Rest des Spiels: dunkles Panel mit Akzentkante, Symbol auf einem Sockel neben der Überschrift, Warnhinweise in einem abgesetzten Kasten. "Spielstand löschen" ist als das gekennzeichnet, was es ist.
-* Alle Fenster tragen jetzt die farbige Kante am oberen Rand, die im Spiel sonst jedes Panel auszeichnet - Archiv, Einstellungen, Tastenbelegung, Statistiken, Ausreden und die Fehlermeldung hatten stattdessen eigene Rahmen aus früheren Zeiten. Auch die Ecken sind überall gleich: Der farbige Streifen wirkt nur bei scharfer Kante als durchgehende Linie.
-* Die Schließen-Kreuze hatten vier verschiedene Größen und zwei verschiedene Zeichen. Jetzt sind sie überall gleich groß, deutlich leichter zu treffen als vorher - was besonders am Handy und auf dem Steam Deck auffällt - und für Vorleseprogramme endlich beschriftet.
-* Sichern und Laden sagen außerdem, worum es geht: Der Code enthält das Archiv - gefundene Gegenstände, Erfolge, Statistiken und den Ruf im Kollegium -, aber keinen laufenden Arbeitstag und keine begonnene Woche.
-* Das Startfenster ist neu aufgeteilt. Der Begrüßungstext steht oben über die volle Breite, darunter stehen beide Modi als gleichwertige Karten nebeneinander, rechts das Überlebens-Handbuch. Die rechte Spalte läuft nicht mehr halb leer.
-* Im Menü (ESC) führt ein neues Feld zurück ins Hauptmenü, um den Modus zu wechseln. Der laufende Durchgang wird dabei gesichert und später zum Weitermachen angeboten.
-* Im Wochenmodus zeigt die Kopfleiste neben der Uhrzeit den Wochentag und den Fortschritt (MO, 1/5) - in derselben Farbe wie die Uhr daneben.
+Display & layout:
+* The interface carries icons of its own instead of emoji: 69 drawn icons for the action bar, terminal header, quick-start bar, settings, menu, dialogues and the night screen - in the same inked style as the items and portraits. Where the same thing is meant, the same icon appears: the snail from the survival manual turns up again by the laziness in the evening, the trophy from the quick-start bar in the archive header. If a file is missing, the old emoji appears again.
+* The difficulty selection shows drawn motifs: a calendar page per weekday with a five-dot strip revealing where it sits in the week, and for the week mode Miller's mug in three states.
+* All windows follow one form. The achievement message, the item prompt, and saving and loading were each their own construction from different eras; they now look like the rest of the game: a dark panel with an accent edge, an icon on a plinth next to the heading, warnings in a set-off box. "Delete save file" is marked as what it is.
+* All windows now carry the coloured edge along the top that distinguishes every panel elsewhere in the game - the archive, settings, key bindings, statistics, excuses and the error message had frames of their own from earlier times instead. The corners are the same everywhere too: the coloured strip only reads as a continuous line with a sharp edge.
+* The close crosses came in four different sizes and two different characters. They are now the same size everywhere, considerably easier to hit than before - which shows especially on a phone and on the Steam Deck - and at last labelled for screen readers.
+* Saving and loading also say what they are about: the code contains the archive - items found, achievements, statistics and your reputation among the colleagues - but no working day in progress and no week already begun.
+* The start window has been re-laid-out. The welcome text sits at the top across the full width, both modes stand beneath it as equal cards side by side, and the survival manual is on the right. The right-hand column no longer runs half empty.
+* In the menu (ESC), a new item leads back to the main menu to change mode. The run in progress is saved in doing so and offered for continuation later.
+* In week mode the header bar shows the weekday and the progress next to the time (MO, 1/5) - in the same colour as the clock beside it.
 
-Steam-Fassung:
-* Der laufende Durchgang wandert jetzt mit in die Steam-Cloud - beim Arbeitstag wie bei der Arbeitswoche. Bisher reiste nur das Archiv; eine angefangene Woche blieb auf dem Rechner, auf dem sie begonnen wurde. Gesichert wird während des Spiels regelmäßig und an den Bruchpunkten sofort, also nach jeder Nacht und am Ende eines Laufs.
-* Liegt auf beiden Rechnern ein Durchgang, gewinnt der zuletzt gespielte. Wurde ein Lauf auf dem anderen Rechner zu Ende gebracht, verschwindet der zurückgebliebene Rest, statt sich noch einmal fortsetzen zu lassen.
+Steam version:
+* The run in progress now travels to the Steam cloud as well - for the Working Day as for the Working Week. Until now only the archive travelled; a week already begun stayed on the machine it was begun on. It is saved regularly during play and immediately at the break points, that is after every night and at the end of a run.
+* If there is a run on both machines, the one played most recently wins. If a run was finished on the other machine, the remnant left behind disappears rather than offering itself for continuation again.
 
-Fehlerkorrekturen:
-* Ein einzelnes Ereignis kann bis zu vier Stunden kosten. Damit konnte die Mittagspause um halb vier angekündigt werden, weil sie bis dahin nur "irgendwann nach zwölf" kannte. Sie hat jetzt ein Fenster bis 14 Uhr; wer es überspringt, arbeitet durch - gemerkt hat es niemand.
-* Die Auswahlfelder in den Einstellungen richteten sich in der Breite nach ihrem längsten Eintrag. Nebeneinanderliegende Zeilen liefen dadurch sichtbar auseinander; jetzt sind alle gleich breit.
-* Im Startfenster benutzten Export und Import zwei verschiedene Sinnbilder für dasselbe Paar. Beide tragen jetzt dasselbe Motiv in zwei Richtungen.
-* Die Merkliste des Tagebuchs (zuletzt benutzte Sätze, damit sich morgen nichts wiederholt) hing an einem ungültigen Speicher-Schlüssel und überlebte dadurch den harten Reset - das Tagebuch mied danach Sätze eines gelöschten Spielstands. Sie hat jetzt einen richtigen Namen und wird beim Reset mit abgeräumt.
+Bug fixes:
+* A single event can cost up to four hours. That meant the lunch break could be announced at half three, because until then it only knew "some time after twelve". It now has a window up to 14:00; skip it and you work through - nobody noticed.
+* The dropdowns in the settings sized themselves by their longest entry. Adjacent rows visibly drifted apart as a result; now they are all the same width.
+* In the start window, export and import used two different symbols for the same pair. Both now carry the same motif in two directions.
+* The diary's memory list (recently used sentences, so that nothing repeats tomorrow) hung on an invalid storage key and therefore survived the hard reset - after which the diary avoided sentences from a deleted save file. It now has a proper name and is cleared out along with the reset.
 
-* Beim Partner-Buffet in der Kantine verlangte "Alles fotografieren und Frau Elster schicken" grundlos die Schwarze Karte des Prinzen - die Option war damit für fast alle unerreichbar. Sie steht jetzt jedem offen.
-* Anrufer erklärten ihre Stimmung im Namen ("Die Sekretärin (Wütend)"), und manche Antwort trug ein Etikett vor der eigentlichen Entscheidung ("Tech-Pfusch: ..."). Die Stimmung steht im Text, wo sie immer schon stand; die Etiketten sind weg - sieben Titel, fünfundzwanzig Antworten. Abteilungs-Zusätze wie "(Buchhaltung)" bleiben, das ist Anruferanzeige.
-* Textpflege im Bestand: zwei Tippfehler und eine Handvoll fester Uhrzeiten in Ereignissen, die zu jeder Tageszeit auftreten können ("Um 13 Uhr bricht Panik aus" - auch um neun).
+* At the partner buffet in the canteen, "Photograph everything and send it to Frau Elster" demanded the prince's black card for no reason - which made the option unreachable for almost everyone. It is now open to all.
+* Callers explained their mood in their name ("Die Sekretärin (Wütend)"), and some answers carried a tag in front of the actual decision ("Tech-Pfusch: ..."). The mood is in the text, where it always was; the tags are gone - seven titles, twenty-five answers. Department suffixes such as "(Buchhaltung)" stay, that is caller display.
+* Text maintenance in the stock: two typos and a handful of fixed clock times in events that can occur at any time of day ("Um 13 Uhr bricht Panik aus" - at nine as well).
 
-Für Entwickler:
-* Das Wissen speichert Beweise statt Freischaltungen: state.archive führt seenEvents und seenFlags, alles Weitere wird beim Öffnen daraus abgeleitet. Später ergänzte Notizen leuchten dadurch rückwirkend für bestehende Spielstände auf. Der Datenprüfer hält die Einträge an die Belege: Ereignis-IDs und Fahnen werden gegen den Bestand geprüft, und ein Eintrag darf höchstens so viele Notizen führen, wie er Szenen zitiert.
-* Gegenstände: Abklingzeiten liegen in state.itemCooldowns je Gegenstands-ID, use versteht zusätzlich cr, rep und wait, und die neue Klasse passive wirkt beim Öffnen eines Ereignisses mit der hinterlegten Figur. Der Datenprüfer kennt alle neuen Felder und erzwingt: Kosten nur mit Abklingzeit, passive Wirkungen nur negativ, req und rem nie zugleich auf demselben Gegenstand.
-* Der Wochenmodus liegt vollständig in src/engine/engine_week.js. Der Tagesmodus ist unverändert: state.difficultyMult bleibt seine Identitätsgrenze, alle Formelstellen lesen effMult() beziehungsweise statMult(), und die Nacht setzt den Tag über freshDay() zurück und schreibt danach nur den Übertrag zurück - ein neu hinzugefügtes Tagesfeld kann dort nicht vergessen werden.
-* Zähler sind nach Modus getrennt: Wochentage erhöhen die Tageszähler nicht mehr, die Woche zählt über recordWeekResult(). Die Serie zählt weiterhin modusübergreifend, weil ein überlebter Wochentag ein überlebter Tag ist.
-* Vier neue Steam-Statistiken (stat_weeks_started, _survived, _ragequit, _fired), und stat_started wird nicht mehr aus daysStarted gespeist - dieser Zähler nummeriert die Firmenchronik und enthält deshalb auch Wochentage. Die Abfrage in main.cjs holt jetzt acht Namen statt vier.
-* tools/simulate-week.mjs (npm run sim:week) rechnet ganze Wochen durch, mit denselben Formeln wie der Tages-Simulator. Die Balance der Woche wurde damit vor dem Bauen kalibriert.
-* Drei Test-Suiten unter tools/ (npm test) prüfen Fundament, Ablauf und das Entwickler-Werkzeug der Woche gegen die echten Module - 88 Tests.
-* tools/dev-woche.js legt in der Browser-Konsole Testbefehle für den Wochenmodus an: einen beliebigen Wochentag herstellen, den Nacht-Bildschirm oder das Freitagsfinale auslösen, die Gala freischalten, Zähler ansehen und leeren.
+For developers:
+* The knowledge stores evidence rather than unlocks: state.archive keeps seenEvents and seenFlags, and everything else is derived from them when it is opened. Notes added later therefore light up retrospectively for existing save files. The data checker holds the entries to their evidence: event ids and flags are checked against the stock, and an entry may carry at most as many notes as it cites scenes.
+* Items: cooldowns live in state.itemCooldowns per item id, use additionally understands cr, rep and wait, and the new class passive takes effect when an event with the associated character is opened. The data checker knows all the new fields and enforces: costs only with a cooldown, passive effects only negative, req and rem never together on the same item.
+* The week mode lives entirely in src/engine/engine_week.js. The day mode is unchanged: state.difficultyMult remains its identity boundary, all formula sites read effMult() or statMult(), and the night resets the day through freshDay() and afterwards writes back only the carry-over - a newly added day field cannot be forgotten there.
+* Counters are separated by mode: weekdays no longer increment the day counters, and the week counts through recordWeekResult(). The streak still counts across modes, because a survived weekday is a survived day.
+* Four new Steam statistics (stat_weeks_started, _survived, _ragequit, _fired), and stat_started is no longer fed from daysStarted - that counter numbers the company chronicle and therefore also contains weekdays. The query in main.cjs now fetches eight names instead of four.
+* tools/simulate-week.mjs (npm run sim:week) computes whole weeks, with the same formulas as the day simulator. The week's balance was calibrated with it before building.
+* Three test suites under tools/ (npm test) check the foundation, the flow and the developer tool of the week against the real modules - 88 tests.
+* tools/dev-woche.js sets up test commands for the week mode in the browser console: produce any weekday, trigger the night screen or the Friday finale, unlock the gala, view and clear counters.
 
 
 [4.1.0] - 2026-08-07
 
-Ein Pflege-Update: dieselben Ereignisse, dieselben Folgen - aber besser
-erzählt, einheitlich beschriftet und von einer Reihe alter Macken befreit.
+A maintenance update: the same events, the same consequences - but better told, consistently labelled and freed of a series of old quirks.
 
-Ereignisse & Texte:
-* Sämtliche Ereignisse wurden redaktionell überarbeitet, in mehreren Durchgängen: erst gegen Kargheit und wörtliche Wiederholung, dann gegen den Erzähler, der seine Pointen erklärt. Schlusssätze wie "Du hast gewonnen, aber du bist ein Monster" sind gestrichen oder durch eine Reaktion ersetzt - das Urteil fällt wieder der Spieler. Optionen und Auswirkungen sind unverändert.
-* Das Tagebuch am Feierabend erzählt vom Tag statt von den Erfolgen: ob es früh brannte oder erst nach zwei kippte, wie viele Tassen es gebraucht hat, wer heute anders über einen denkt als heute Morgen. Zuletzt benutzte Sätze werden übersprungen - Wiederholungen sind selten geworden.
-* Auftakte und Formulierungen klingen nicht mehr nach Schablone: Baukasten-Sätze wie "plötzlich", "Du hast X, aber Y" oder "Du fühlst dich ..." stehen nur noch dort, wo sie eine Figur oder eine Pointe tragen.
+Events & texts:
+* Every event has been editorially reworked, in several passes: first against bareness and verbatim repetition, then against the narrator who explains his own punchlines. Closing sentences like "Du hast gewonnen, aber du bist ein Monster" have been cut or replaced with a reaction - the verdict is the player's again. Options and effects are unchanged.
+* The diary at clocking-off time tells you about the day rather than about the achievements: whether it was on fire early or only tipped over after two, how many mugs it took, who thinks differently of you this evening than they did this morning. Recently used sentences are skipped - repetitions have become rare.
+* Openings and phrasings no longer sound like a template: kit-built sentences such as "plötzlich", "Du hast X, aber Y" or "Du fühlst dich ..." now appear only where they carry a character or a punchline.
 
-Anzeige & Layout:
-* Die Auswahl-Buttons verraten nicht mehr vorab, was eine Option bedeutet. Beschriftungen im Etiketten-Stil ("Lüge: ...", "Auflegen (Angst)", "Tech-Lösung: ...") sind auf das umgestellt, was Müller tut oder sagt.
-* Im Rucksack öffnen sich die Gegenstands-Beschreibungen jetzt auch per Fingertipp - wichtig am Handy und auf dem Steam Deck. Ein Tipp zeigt, ein zweiter benutzt.
-* Bilder stehen beim Öffnen sofort da: Porträts, Gegenstände und Trophäen werden beim Start vorgeladen.
-* Im Messenger sind die Handlungs-Knöpfe kürzer ("[Chat stummschalten]" statt "[System: Chat stummschalten]"), und Chats mit bekannten Figuren zeigen ihr Porträt statt der Initiale - in Gruppen-Chats sogar pro Nachricht.
-* Die Erzähltexte stehen nicht mehr in Anführungszeichen. Die Hülle behauptete einen Sprecher, den es nicht gibt; wörtliche Rede ist ohnehin im Text markiert.
+Display & layout:
+* The option buttons no longer give away in advance what an option means. Labels in the tag style ("Lüge: ...", "Auflegen (Angst)", "Tech-Lösung: ...") have been converted into what Miller does or says.
+* In the backpack the item descriptions now also open on a tap - important on a phone and on the Steam Deck. One tap shows, a second uses.
+* Images are there immediately when something opens: portraits, items and trophies are preloaded at startup.
+* In the messenger the action buttons are shorter ("[Chat stummschalten]" instead of "[System: Chat stummschalten]"), and chats with known characters show their portrait instead of the initial - in group chats even per message.
+* The narrative texts are no longer in quotation marks. The wrapper claimed a speaker who does not exist; direct speech is marked within the text anyway.
 
-Fehlerkorrekturen:
-* Die geleakte Kündigungsliste lässt sich jetzt wie jede andere Mail löschen und ignorieren.
-* Im Gruppen-Chat der Kollegen wirkt die Ruf-Strafe fürs Ignorieren der Lästerei jetzt wie vorgesehen.
-* Die Tastenbelegung zeigt zuverlässig, welche Taste schon vergeben oder reserviert ist.
-* Die Ausrede wird pro Ereignis gezogen statt bei jedem Öffnen des Fensters - der Vorrat ließ sich vorher folgenlos durchblättern.
-* Anruf-Knopf und Ticket-Zähler warnen jetzt bei derselben Zahl: ab acht.
-* Im Archiv schimmerte hinter freigestellten Gegenständen das Symbol durch, und im Rucksack ragten die Beschreibungen auf schmalen Bildschirmen über den Rand. Beides behoben.
-* Das Tagebuch verschluckt keine Begegnungen mehr, wenn ein Tag mehrere hergab.
-* "Auf Standard zurücksetzen" aktualisiert jetzt auch die sichtbaren Schalter.
-* Escape war eine Hintertür an Entscheidungen vorbei: Über der Weiterspielen-Frage, der Tageswahl und offenen Mails öffnete es das Menü darüber - ein Klick konnte dort den angebotenen Tag verwerfen. Geschlossen.
-* Das "…"-Abzeichen an Antworten verspricht nur noch dann ein Weiterreden, wenn tatsächlich ein Gesprächsknoten folgt.
-* Spielstand exportieren und importieren funktioniert wieder, über das Startfenster wie über die Einstellungen.
-* Am Handy scrollte die Seite hinter gestapelten Fenstern, sobald das obere geschlossen wurde.
-* Drei Mittags-Optionen verbrauchten ihren Gegenstand nicht (Energy Drink in der Sonne, Donut essen beziehungsweise verschenken). Jetzt kostet der Konsum, was der Text behauptet.
-* Schreib-, Grammatik- und Logikfehler in diversen Ereignissen behoben, darunter ein vermischtes Sprichwort und zweimal das falsche Geschlecht der Fremdscham.
+Bug fixes:
+* The leaked redundancy list can now be deleted and ignored like any other mail.
+* In the colleagues' group chat, the reputation penalty for ignoring the gossip now works as intended.
+* The key bindings reliably show which key is already assigned or reserved.
+* The excuse is drawn per event rather than every time the window is opened - previously the supply could be leafed through without consequence.
+* The call button and the ticket counter now warn at the same figure: from eight.
+* In the archive the icon shimmered through behind cut-out items, and in the backpack the descriptions protruded past the edge on narrow screens. Both fixed.
+* The diary no longer swallows encounters when a day produced several.
+* "Reset to defaults" now updates the visible switches as well.
+* Escape was a back door past decisions: over the continue prompt, the day selection and open mails it opened the menu on top - and a click there could discard the day being offered. Closed.
+* The "…" badge on answers only promises further conversation when a dialogue node actually follows.
+* Exporting and importing a save file works again, from the start window as from the settings.
+* On a phone the page scrolled behind stacked windows as soon as the top one was closed.
+* Three lunch options did not consume their item (energy drink in the sun, eating or giving away the donut). Now consumption costs what the text claims.
+* Spelling, grammar and logic errors in various events fixed, among them a mixed-up proverb and, twice, the wrong gender for Fremdscham.
 
-Für Entwickler:
-* Der Daten-Prüfer (npm run lint:data) kennt fünf neue Regeln, darunter unbekannte Felder je Kontext: Ein req in einer Mail ist jetzt ein Fehler statt ein stiller Blindgänger. Die Regeln fanden zwei Altlasten, darunter die verschluckte Ruf-Wirkung oben.
-* Die Beschriftung einer Antwort heißt in allen Datendateien t; im Postfach hieß dasselbe Feld historisch btn.
-* Phone-Ereignisse werten char auch pro Knoten aus - für Gruppen-Chats; char: null erzwingt die Initiale.
-* Der Prosa-Bericht (tools/report-prose.mjs) hat drei Abschnitte mehr: Alt-Register in Beschriftungen (auch zusammengesetzte Präfixe wie "Tech-Lösung:"), Schablonen in Auftakten und eine Frequenz-Zählung wiederkehrender Formulierungsmuster - Letztere bewusst als Leseliste und Vorher-nachher-Messung, nicht als Fehlerliste.
-* Einstellungen und Tastenbelegung sind eigenständige Komponenten; kein Bedienelement wird mehr beim Öffnen von außen befüllt.
-* Overlays laufen alle über dieselben drei Funktionen (showOverlay, hideOverlay, isOverlayOpen), die Bildlauf-Sperre über eine Menge benannter Halter - beides beendet je eine Klasse stiller Fehler, darunter einen reproduzierbaren Datenverlust-Pfad.
-* Was ein Gegenstand bewirkt, steht komplett beim Gegenstand (use-Block in data_items.js) statt an fünf Stellen. Alle 30 Gegenstände verhalten sich unverändert, nachgemessen.
-* PROGRESS_KEYS in keys.js ist jetzt tatsächlich die Liste, nach der gelöscht wird.
+For developers:
+* The data checker (npm run lint:data) knows five new rules, among them unknown fields per context: a req in a mail is now an error rather than a silent dud. The rules found two legacy problems, including the swallowed reputation effect above.
+* The label of an answer is called t in all data files; in the inbox the same field was historically called btn.
+* Phone events evaluate char per node as well - for group chats; char: null forces the initial.
+* The prose report (tools/report-prose.mjs) has three more sections: the old register in labels (compound prefixes such as "Tech-Lösung:" included), templates in openings, and a frequency count of recurring phrasing patterns - the last deliberately as a reading list and a before/after measurement, not as a list of errors.
+* Settings and key bindings are standalone components; no control is filled in from outside on opening any more.
+* Overlays all run through the same three functions (showOverlay, hideOverlay, isOverlayOpen), and the scroll lock through a set of named holders - each ends a class of silent bugs, one of them a reproducible data-loss path.
+* What an item does lives entirely with the item (the use block in data_items.js) instead of in five places. All 30 items behave unchanged, measured.
+* PROGRESS_KEYS in keys.js is now actually the list that deletion works from.
 
 
 [4.0.0] - 2026-08-03
 
-Die größte Aktualisierung, die dieses Spiel je bekommen hat. Unter der
-Oberfläche wurde die gesamte Grundlage erneuert, darüber sind über 165 neue
-Ereignisse dazugekommen. Wer zuletzt Version 3.2.2 gespielt hat, findet ein
-anderes Spiel vor.
+The biggest update this game has ever had. Beneath the surface the entire foundation was renewed, and above it more than 165 new events have arrived. Anyone whose last game was version 3.2.2 will find a different one.
 
-Neuerungen:
-* Über 165 neue Ereignisse in allen fünf Bereichen des Arbeitstags: 41 im Serverraum (wo sich jetzt auch Chantal, Markus, Gabi und Dr. Wichtig verirren - bislang gehörte der Raum Kevin und Egon allein), 21 an der Kaffeemaschine, 27 auf dem Dienstgang und 17 im Postfach. Darunter die ENTKALKEN-Krise samt Kevins Instant-Schwarzmarkt, Dr. Wichtig vor zwei Knöpfen ("Machen Sie mir das, was ich immer trinke"), das Rätsel um "Projekt Phoenix", Kevins vier Sprachnachrichten (4:32 Minuten, Inhalt: der Bildschirm ist "komisch") und die Abwesenheitsnotiz-Endlosschleife mit 14 Mails pro Minute. Frau Elster schreibt zum ersten Mal überhaupt.
-* Das Telefon war bisher die häufigste Handlung mit den wenigsten Folgen. Das ist vorbei: Der Anrufpool ist um mehr als ein Drittel gewachsen, und jeder zweite Anruf kann dich später einholen. Neu unter anderem die Kollegin, deren Kamera schwarz bleibt (der bequemste Weg endet damit, dass der Kunde ihren gesamten Bildschirm sieht), und ein Serientermin ohne Organisator, der seit vier Jahren bei 17 Personen im Kalender steht - wer ihn löscht, schickt am Dienstag vier Leute in einen leeren Raum.
-* Entscheidungen bleiben nicht mehr am Telefon: 12 Anrufe wirken an einem anderen Ort weiter. Der Rechner, den Kevin nach deiner Anweisung neu aufgesetzt hat, steht später im Serverraum im Rack - verkabelt, mit Drachenaufkleber und einem Programm, das Rechenleistung nach Übersee verkauft. Das Passwort, das du am Telefon durchgegeben hast, klebt beim nächsten Dienstgang am Monitor. Und wer Gabi hat auflaufen lassen, findet in der Teeküche eine Schublade, die es vorher nicht gab.
-* Auch alte Bekannte haben jetzt ein Gedächtnis, und je nach Entscheidung ein anderes: Wer Kevin zum Formatieren zwingt, bekommt einen Rechner mit einem Betriebssystem unklarer Herkunft zurück - wer ihm hilft, bekommt seine Mutter mit einem Laptop an den Empfang. Wer Chantals Erpressung kontert, bekommt eine Aussprache; wer einknickt, hat am Nachmittag den halben Vertrieb am Telefon, weil sich herumgesprochen hat, dass die IT freischaltet, wenn man höflich fragt.
-* Rund 20 Nebenaufgaben, die bisher nur in der Steam-Fassung enthalten waren, stehen jetzt auch im Browser zur Verfügung. Beide Fassungen laufen ab sofort auf demselben Stand.
-* Ein unterbrochener Arbeitstag ist nicht mehr verloren. Das Spiel sichert nach jedem Ereignis; wer den Browser schließt oder abstürzt, wird beim nächsten Start gefragt, ob er weiterarbeiten möchte - mit Wochentag, Uhrzeit und offenen Tickets als Gedächtnisstütze.
-* Der Endbildschirm wurde neu gebaut. Er hebt in der Bilanz den Wert hervor, an dem der Tag zerbrochen ist, und bietet zwei Dinge zum Aufklappen: den Tagesverlauf als Kurve - man sieht endlich, dass der Ausraster um kurz vor zwei schon um halb elf angelegt war - und das persönliche Logbuch als beschriebenes Blatt Papier.
-* Die Team-Übersicht zeigt, was der Tag bewegt hat: neben jedem Kollegen die Veränderung seit heute Morgen, unter dem Balken der Abstand zur nächsten Stufe. Der absolute Wert allein sagt schließlich nicht, ob man gerade etwas richtig macht.
-* Das Archiv zählt nicht mehr nur vier Zahlen: Serie überstandener Tage samt Rekord, drei Balken für Freitag, Mittwoch und Montag einzeln - wer zehn Freitage überlebt hat, aber keinen Montag, sieht genau das - und eine Fußzeile mit Ventil-Rettungen und Abmahnungen.
-* Gegenstände verraten jetzt, ob sie den Einsatz überleben: wiederverwendbar, verbraucht sich oder Trophäe. Bislang erfuhr man das erst, wenn etwas weg war.
-* Wer einen Arbeitstag von der ersten Minute an im Blindflug übersteht - ohne Prozentwerte, ohne Ticketzähler -, findet im Logbuch einen Nachtrag dazu. Wer die Zahlen erst mittags ausblendet, bekommt ihn nicht.
-* Eine Ereignisreihe zieht sich durch drei Bereiche des Hauses und beginnt völlig harmlos. Beim zweiten Mal wundert man sich, beim dritten Mal bleiben nur noch Antworten übrig, die man besser nicht laut sagt.
-* Die Firmenchronik hat leere Seiten am Ende, und niemand hat Müller verboten, etwas zu ergänzen: ein handschriftlicher Satz pro Arbeitstag, der sich danach richtet, was ihm widerfahren ist. Wer schon mehrfach das Gebäude verlassen hat, ohne sich zu verabschieden, schreibt anders als jemand in seiner ersten Woche. Die Einträge bleiben im Archiv stehen.
-* Das Schwarze Brett hängt nicht mehr fest: 29 Zettel statt 6, jeder Arbeitstag bekommt seine eigene Auswahl - von der Tippgemeinschaft, die seit elf Jahren nicht gewinnt, bis zum Ficus namens Hubert, der einen Paten sucht. 8 Aushänge hängen nur dort, wenn du sie verursacht hast: Wer den Kaffee mit Essig entkalkt hat, findet die Beschwerde der zweiten Etage.
-* Das Firmen-Intranet weiß, wer du bist. Der "Mitarbeiter des Monats" geht an den Kollegen, der am meisten von dir hält - und wird nicht vergeben, wenn niemand die Schwelle erreicht. Der Company Feed meldet in bestem Unternehmensdeutsch, was du heute angerichtet hast: dieselben Vorfälle, die am Schwarzen Brett ehrlich kommentiert werden, hier als Prozess oder Erfolg. Dazu eine Wall of Deals, die gerettete und geplatzte Abschlüsse kennt, ein Impressum, dessen Fassungsnummer mit jedem Arbeitstag steigt, ohne dass je jemand erfahren hätte, was geändert wurde - und eine Kennzahl des Tages, die deinen Ticketbestand als betriebswirtschaftliche Abweichung ausweist. Kein Besuch sieht aus wie der vorherige.
-* Hinter dem Login der Personalabteilung liegt eine zweite Personalakte. Es ist deine. Sie führt Abmahnungen, unentschuldigte Abgänge und ein Gehalt, das nicht steigt - je besser dein Ruf im Haus, desto ausdrücklicher begründet die Personalabteilung, warum eine Anpassung nicht erforderlich ist. Das Passwort ist dasselbe wie beim ersten Konto, denn GlobalCorp vergibt nur eines. Es steht im Nachrichtenticker und in einer neuen E-Mail, mit der die Personalentwicklung es versehentlich an die IT schickt, weil du ja ohnehin den ganzen Tag mit Computern arbeitest.
-* Zwei Kleinigkeiten für Leute, die genau hinsehen: Einmal pro Arbeitstag passiert um Punkt 13:37 Uhr etwas im Protokoll. Und wer die Entwicklerkonsole öffnet, wird dort von H.A.L.G.E.R.D. persönlich begrüßt.
+New:
+* Over 165 new events across all five areas of the working day: 41 in the server room (where Chantal, Markus, Gabi and Dr. Wichtig now lose their way too - until now the room belonged to Kevin and Egon alone), 21 at the coffee machine, 27 out on errands and 17 in the inbox. Among them the ENTKALKEN crisis complete with Kevin's instant black market, Dr. Wichtig in front of two buttons ("Machen Sie mir das, was ich immer trinke"), the riddle of "Projekt Phoenix", Kevin's four voice messages (4:32 minutes, content: the screen is "odd") and the out-of-office infinite loop at 14 mails a minute. Frau Elster writes for the very first time.
+* The phone used to be the most frequent action with the fewest consequences. That is over: the call pool has grown by more than a third, and every second call can catch up with you later. New among them the colleague whose camera stays black (the most convenient route ends with the client seeing her entire screen), and a recurring appointment with no organiser that has been in 17 people's calendars for four years - delete it and on Tuesday you send four people into an empty room.
+* Decisions no longer stay on the phone: 12 calls carry on somewhere else. The machine Kevin reinstalled on your instructions turns up in the rack in the server room later - cabled, with a dragon sticker and a program selling compute power overseas. The password you passed on over the phone is stuck to the monitor on your next errand. And if you left Gabi hanging, you will find a drawer in the tea kitchen that was not there before.
+* Old acquaintances now have a memory too, and a different one depending on your decision: force Kevin to format and you get a machine back with an operating system of unclear provenance - help him and you get his mother with a laptop at reception. Counter Chantal's blackmail and you get it out in the open; give in and half of sales is on the phone in the afternoon, because word has got around that IT unlocks things if you ask nicely.
+* Around 20 side tasks that were previously only in the Steam version are now available in the browser too. Both versions are on the same content from now on.
+* An interrupted working day is no longer lost. The game saves after every event; close the browser or crash and on the next start you are asked whether you would like to carry on working - with weekday, time and open tickets as a reminder.
+* The end screen has been rebuilt. In the summary it highlights the value the day broke on, and offers two things to unfold: the course of the day as a curve - you can finally see that the blow-up just before two was already set up at half ten - and your personal logbook as a written-on sheet of paper.
+* The team overview shows what the day has moved: next to each colleague the change since this morning, and under the bar the distance to the next tier. The absolute value alone does not, after all, tell you whether you are currently doing something right.
+* The archive counts more than four figures now: a streak of days survived with its record, three bars for Friday, Wednesday and Monday separately - survive ten Fridays but no Mondays and you see exactly that - and a footer with valve rescues and written warnings.
+* Items now reveal whether they survive being used: reusable, consumed or trophy. Until now you only found out once something was gone.
+* Survive a working day flying blind from the very first minute - no percentages, no ticket counter - and you find an addendum about it in the logbook. Hide the numbers only from lunchtime onwards and you do not get it.
+* One series of events runs through three areas of the building and starts entirely harmlessly. The second time you wonder, and the third time the only answers left are ones you had better not say out loud.
+* The company chronicle has blank pages at the back, and nobody has forbidden Miller from adding something: one handwritten sentence per working day, depending on what has befallen him. Somebody who has already left the building several times without saying goodbye writes differently from somebody in their first week. The entries stay in the archive.
+* The noticeboard is no longer stuck: 29 notes instead of 6, and every working day gets its own selection - from the lottery syndicate that has not won in eleven years to the ficus called Hubert looking for a sponsor. 8 notices only hang there if you caused them: descale the coffee with vinegar and you find the complaint from the second floor.
+* The company intranet knows who you are. "Employee of the Month" goes to the colleague who thinks most of you - and is not awarded at all if nobody reaches the threshold. The Company Feed reports in the finest corporate German what you have got up to today: the same incidents that are honestly commented on the noticeboard, here as a process or a success. Plus a Wall of Deals that knows about deals saved and deals lost, an imprint whose version number rises with every working day without anyone ever finding out what was changed - and a key figure of the day presenting your ticket backlog as a business variance. No visit looks like the last one.
+* Behind the HR login lies a second personnel file. It is yours. It keeps written warnings, unexcused departures and a salary that does not rise - the better your standing in the building, the more explicitly HR justifies why an adjustment is not required. The password is the same as for the first account, because GlobalCorp only issues one. It is in the news ticker and in a new email with which staff development accidentally sends it to IT, since you work with computers all day anyway.
+* Two small things for people who look closely: once per working day, something happens in the log at exactly 13:37. And anyone opening the developer console is greeted there by H.A.L.G.E.R.D. in person.
 
-Spielbalance:
-* Der Mittwoch hat angezogen: Statuswirkungen fallen auf dem normalen Schwierigkeitsgrad um zehn Prozent kräftiger aus. Eine eigens gebaute Tages-Simulation zeigte, dass ein aufmerksamer Spieler ihn fast risikofrei überstand. Freitag und Montag bleiben unverändert.
-* 15 neue Ereignisse sind Fallen: Situationen, in denen die Antwort, die vernünftig klingt, nicht die ist, die vernünftig ist. Ein kritisches Zwei-Minuten-Update, eine aufgehaltene Tür, herrenloser Kuchen im Flur. 8 davon lassen den Bildschirm wackeln - wer in den Köder tritt, merkt es sofort.
-* Der Morgen entscheidet mehr als bisher: Neben Ärger, Chef-Aufmerksamkeit und Verschlafen gibt es Tickets, die über Nacht aufgelaufen sind, ein gestrichenes Ausreden-Kontingent - und eine Ausrede extra, wenn das Haus ausnahmsweise für dich spielt. 18 neue Morgentexte, und die Werte richten sich nach dem Wochentag: Freitag verzeiht, Montag nicht.
-* 3 neue Mittagspausen, zwei davon mit doppeltem Boden: ein kostenloses Buffet, gesponsert ausgerechnet von dem Dienstleister, der die interne IT ablösen will, und eine Kochvorführung an der falschen Steckdose.
-* Die Katastrophen sind unnachgiebiger: Wer den Countdown verstreichen lässt, fährt bei allen 30 schlechter als mit der schlechtesten aktiven Entscheidung - bislang war Nichtstun in vier Fällen die bequemere Wahl. Notlösungen ohne passendes Werkzeug kosten dort mehr, wo die Folgen offensichtlich waren: Ein Vorstands-Livestream in 240p bleibt eben ein blamierter Vorstand.
-* Zeit absitzen ohne Konsequenz gibt es nicht mehr. Keine Aktion dauert unter zwei Minuten (knapp 190 Antworten waren fast umsonst), lange Aktionen haben durchgehend Folgen, 10 zeitraubende Antworten im Altbestand blieben bisher folgenlos, und vier Antworten drehten die Uhr sogar zurück.
+Game balance:
+* Wednesday has tightened up: stat effects come out ten percent stronger on the normal difficulty. A purpose-built day simulation showed that an attentive player got through it almost risk-free. Friday and Monday are unchanged.
+* 15 new events are traps: situations in which the answer that sounds sensible is not the one that is sensible. A critical two-minute update, a door held open, ownerless cake in the corridor. 8 of them make the screen shake - step on the bait and you notice immediately.
+* The morning decides more than before: alongside irritation, the boss's attention and oversleeping, there are tickets that have piled up overnight, a cancelled excuse allowance - and one extra excuse when the building plays for you for once. 18 new morning texts, and the values follow the weekday: Friday forgives, Monday does not.
+* 3 new lunch breaks, two of them with a false bottom: a free buffet sponsored, of all people, by the service provider that wants to replace internal IT, and a cookery demonstration on the wrong socket.
+* The disasters are less forgiving: let the countdown run out and in all 30 you fare worse than with the worst active decision - until now doing nothing was the more comfortable choice in four cases. Improvised fixes without the right tool cost more where the consequences were obvious: a board livestream in 240p is still an embarrassed board.
+* Sitting out time without consequence is gone. No action takes less than two minutes (nearly 190 answers were almost free), long actions have consequences throughout, 10 time-consuming answers in the old stock had none until now, and four answers even turned the clock back.
 
-Anzeige & Layout:
-* Die Reihenfolge der Antwortmöglichkeiten ist neu verteilt. Bisher stand in über der Hälfte aller Ereignisse die günstigste Antwort ganz oben - wer das bemerkte, klickte fortan die erste Zeile, und die Entscheidung fand nicht mehr statt. Jetzt liegt die beste Wahl gleich verteilt auf allen Plätzen. Abbrechen, Ignorieren, Auflegen und Löschen bleiben dort, wo man sie sucht: ganz unten.
-* Das Terminal ist keine schwarze Leere mehr: ein Hauch Röhrenmonitor mit feinen Scanlines und schwachem Glimmen aus der Bildmitte. Alles statisch, nichts flackert, und abschaltbar. Terminal und Statusleiste liegen jetzt auf zwei Ebenen, damit der Blick dorthin geht, wo etwas passiert.
-* Die abgerundeten Ecken sind deutlich schärfer. Die bisherigen 8 bis 12 Pixel waren zeitgemäßes Web-Design und passten nicht zu einer Firmensoftware, die seit den Neunzigern kein Update gesehen hat.
-* Das Terminal wechselt seine Farbe mit der Art des Ereignisses - blau beim Anruf, rot im Notfall, gelb bei einer Begegnung. Die Ergebnis-Anzeige ist das Geschwister der Ereignis-Karte statt eines schwebenden grauen Kastens.
-* Die Tastatur-Hinweise sehen aus wie kleine Tastenkappen statt wie graue Kästchen und fahren beim Drücken sichtbar in den Sockel. An allen vier Orten identisch - Aktionsleiste, Antworten, Handy und Postfach hatten bisher leicht andere.
-* Der Anruf-Knopf sieht aus wie die drei anderen. Bislang war er dauerhaft hervorgehoben und damit die naheliegende Wahl - dabei geht es gerade darum, die Mischung selbst zu finden. Die Hervorhebung erscheint erst, wenn die Tickets kritisch werden.
-* Antwortmöglichkeiten zeigen an, wenn sie einen Gegenstand verbrauchen, und zwar solange sie noch wählbar sind. Gesperrte melden einheitlich "Fehlt: <Gegenstand>".
-* Die Ergebnistexte enthalten keine technischen Hinweise mehr wie "(Inventar +1)". Das doppelte nur, was ohnehin sichtbar ist; 86 Stellen bereinigt.
-* Der Nachrichtenticker läuft gleichmäßig schnell. Bislang brauchte jede Meldung dieselben 30 Sekunden, unabhängig von ihrer Länge - die längsten waren kaum lesbar. Schrift etwas größer und nicht mehr durchgehend in Großbuchstaben.
-* Modale, Ereignis-Karten und die Startsequenz blenden weich ein statt hart aufzuspringen; Erfolgs-Meldungen blenden sauber aus.
+Display & layout:
+* The order of the answer options has been redistributed. Until now the cheapest answer was at the top in over half of all events - anyone who noticed clicked the first line from then on, and the decision no longer happened. Now the best choice is evenly distributed across all the slots. Cancel, ignore, hang up and delete stay where people look for them: right at the bottom.
+* The terminal is no longer a black void: a hint of a CRT monitor with fine scanlines and a faint glow from the centre of the screen. All static, nothing flickers, and it can be switched off. The terminal and the status bar now sit on two levels, so that the eye goes where something is happening.
+* The rounded corners are considerably sharper. The previous 8 to 12 pixels were contemporary web design and did not suit corporate software that has not seen an update since the nineties.
+* The terminal changes colour with the type of event - blue for a call, red for an emergency, yellow for an encounter. The result display is the sibling of the event card rather than a floating grey box.
+* The keyboard hints look like little keycaps instead of grey boxes and visibly sink into their base when pressed. Identical in all four places - the action bar, the answers, the phone and the inbox all had slightly different ones before.
+* The call button looks like the other three. Until now it was permanently highlighted and therefore the obvious choice - when the whole point is to find the mix yourself. The highlight now only appears once the tickets become critical.
+* Answer options indicate when they consume an item, and do so while they are still selectable. Locked ones uniformly report "Fehlt: <item>".
+* The result texts no longer contain technical notes such as "(Inventar +1)". That only duplicated what is visible anyway; 86 places cleaned up.
+* The news ticker runs at an even speed. Until now every item took the same 30 seconds regardless of its length - the longest were barely readable. The type is slightly larger and no longer entirely in capitals.
+* Modals, event cards and the start sequence fade in softly instead of snapping open; achievement messages fade out cleanly.
 
-Einstellungen:
-* Aufgeräumt: Warn-Pulsieren, Kamera-Wackeln und Handy-Tempo standen unter "Gameplay & Komfort", obwohl sie reine Anzeigesachen sind. Die beiden Verbergen-Optionen haben einen eigenen Abschnitt "Herausforderung" bekommen, denn sie sind kein Komfort, sondern ein Schwierigkeitsgrad.
-* Neu: Textgröße in drei Stufen, ein Schalter für die Bildschirm-Textur, die Tageskurve im Endbildschirm gleich geöffnet - und ein Knopf, der alle Einstellungen zurücksetzt. Der laufende Arbeitstag geht dabei nicht verloren.
-* Die Inventarplätze lassen sich jetzt auch mit der Tastatur bedienen, und die Bestätigen-Taste funktioniert auch im Tutorial-Auswahlfenster beim Spielstart.
+Settings:
+* Tidied up: the warning pulse, the camera shake and the phone speed sat under "Gameplay & comfort" although they are purely display matters. The two hiding options have been given a section of their own, "Challenge", because they are not comfort but a difficulty setting.
+* New: text size in three steps, a switch for the screen texture, the day curve on the end screen open by default - and a button that resets all settings. The working day in progress is not lost in doing so.
+* The inventory slots can now be operated with the keyboard, and the confirm key also works in the tutorial selection window at the start of the game.
 
-Fehlerkorrekturen:
-* Bei 38 Ereignissen fehlte das Bild des Kollegen, um den es ging - Kevins Sprachnachrichten, Egons Groll, Gabis Panik und der Chefsessel zeigten eine leere Karte. Vier Ereignisse wirken jetzt auf das Verhältnis zu dem Kollegen, um den es die ganze Zeit ging, und in einem Fall bekam der Falsche die Anerkennung.
- 16 Ereignisse teilten sich versehentlich eine Kennung mit einem anderen. Da pro Tag jede Kennung nur einmal vorkommt, sperrten sich diese Paare gegenseitig aus - erreichbar war immer nur die Hälfte. Betroffen: die Ketten um Toilette, Kuchen, Feueralarm, Drucker und Bürostuhl.
-* 5 Ereignisse waren gar nicht erreichbar, weil ihre Voraussetzung nirgends erfüllt werden konnte: die Gerüchteküche um die alte Liste, Egons Mülltrennung, Kevins Petition, die Bowl-Lieferung und Kevins RGB-Idee.
-* Das Party-Ende "INSIDER" ließ sich nicht abschließen: Der Ergebnistext enthält wörtliche Rede, wodurch die Schaltfläche technisch unbrauchbar wurde. Sonderzeichen können jetzt generell keine Schaltfläche mehr lahmlegen.
-* Ruf-Änderungen aus Telefonketten wurden nie angewendet. 37 Gesprächsausgänge sahen eine Auswirkung auf das Verhältnis zu einem Kollegen vor, die schlicht verlorenging.
-* Sieben Antwortmöglichkeiten versprachen Gegenstände, die es nicht gibt oder deren Name falsch geschrieben war - das Paket von Gabi, der Kaffee für die Pflanze, die gebunkerte Tonerkartusche. Der heiße Kaffee für Gabi war dauerhaft gesperrt, und beim Brandschutz blieb der Feuerlöscher trotz "Löscher abgeben & flüchten" im Rucksack.
-* Zwei E-Mails trugen denselben Betreff und blockierten sich gegenseitig. Das Postfach unterscheidet Mails jetzt an ihrer Kennung statt am Betreff.
-* Das Ereignis "Materialermüdung" hat eine dritte Antwort ohne Gegenstand bekommen. Wer den Stressball weggeworfen hatte und kein Panzertape besaß, saß sonst vor zwei gesperrten Antworten fest.
-* Beim Serverraum-Ereignis um die alte Liste blieb "Nichts anfassen und gehen" ohne Folgen. Kevin findet die Liste jetzt stattdessen selbst.
-* "Spielstand löschen" setzt nun auch das Tutorial zurück, und der Tutorial-Fortschritt wird beim Export und Import tatsächlich übertragen. Beim Abgleich mit der Steam Cloud wird er nur noch freigeschaltet und nie mehr zurückgesetzt.
-* Der Ticket-Zähler wurde auf kleinen Bildschirmen größer dargestellt als die Uhrzeit daneben; im Ruhebildschirm passte sich die Schrift nach der ersten Rückkehr nicht mehr an die Breite an.
-* Der Zeitbalken eines Notfalls begann beim zweiten Vorfall nicht wieder bei voll, sondern mit dem Rest des vorherigen. Während der Synergy-Gala konnte weiterhin eine Büro-Nachricht im Ticker erscheinen.
-* 10 Ergebnistexte waren nur Stichworte ("Maximaler Stress.", "Du rennst los.") und benannten einen Zustand, statt die Szene zu zeigen.
-* In einem Privatanruf standen Formatierungszeichen mitten im Text. Im Fehlerbericht war die Inventarliste unbrauchbar, und der Schwierigkeitsgrad wurde immer als "Normal" gemeldet.
+Bug fixes:
+* In 38 events the picture of the colleague concerned was missing - Kevin's voice messages, Egon's grudge, Gabi's panic and the boss's chair showed an empty card. Four events now affect the relationship with the colleague it was about all along, and in one case the wrong person got the credit.
+16 events accidentally shared an id with another. Since each id occurs only once per day, these pairs locked each other out - only ever half of them was reachable. Affected: the chains around the toilet, the cake, the fire alarm, the printer and the office chair.
+* 5 events were not reachable at all, because their precondition could not be met anywhere: the rumour mill around the old list, Egon's waste separation, Kevin's petition, the bowl delivery and Kevin's RGB idea.
+* The party ending "INSIDER" could not be completed: the result text contains direct speech, which made the button technically unusable. Special characters can no longer disable a button in general.
+* Reputation changes from phone chains were never applied. 37 conversation exits specified an effect on the relationship with a colleague that was simply lost.
+* Seven answer options promised items that do not exist or whose name was misspelled - the parcel from Gabi, the coffee for the plant, the hoarded toner cartridge. The hot coffee for Gabi was permanently locked, and in the fire-safety event the extinguisher stayed in the backpack despite "Hand over the extinguisher & flee".
+* Two emails carried the same subject line and blocked each other. The inbox now distinguishes mails by their id rather than by their subject.
+* The event "Materialermüdung" has been given a third answer without an item. Anyone who had thrown away the stress ball and had no duct tape was otherwise stuck in front of two locked answers.
+* In the server-room event about the old list, "Touch nothing and leave" had no consequences. Kevin now finds the list himself instead.
+* "Delete save file" now also resets the tutorial, and tutorial progress is actually transferred on export and import. When syncing with the Steam Cloud it is only ever unlocked and never reset again.
+* The ticket counter was displayed larger than the time next to it on small screens; on the idle screen the type no longer adapted to the width after the first return.
+* The time bar of an emergency did not start full again on the second incident but with what was left of the previous one. During the Synergy Gala an office message could still appear in the ticker.
+* 10 result texts were only keywords ("Maximaler Stress.", "Du rennst los.") and named a state instead of showing the scene.
+* In one private call, formatting characters sat in the middle of the text. In the error report the inventory list was unusable, and the difficulty was always reported as "Normal".
 
-System & Stabilität:
-* Das Spiel startet deutlich schneller. Bisher wurden sämtliche Ereignistexte beim Aufruf der Seite geladen, auch die des Party-Finales, das die meisten nie sehen. Nun lädt zunächst nur das Nötigste, der Rest kommt im Hintergrund nach - die Datenmenge beim Start sinkt um rund 92 Prozent. Auch die Musikstücke laden erst, wenn sie gespielt werden.
-* Die Schriftart wird als WOFF2 ausgeliefert statt als TTF: 41 statt 540 Kilobyte. Die Erfolgs-Bilder liegen nun als WebP vor.
-* Tritt ein unerwarteter Fehler auf, wird die Bedienung automatisch wieder freigegeben, statt den Tag einzufrieren. Zuvor half nur ein Neuladen - womit der gesamte Arbeitstag verloren war.
-* Beim Neustart eines Tages blieben einzelne Zustände aus dem vorherigen Durchlauf erhalten: Eine offene Handy-Nachricht oder ein angefangenes Gespräch tauchte mitten am neuen Vormittag wieder auf. Auch abgelaufene Zeitgeber wurden nicht gelöst, was dazu führen konnte, dass für den Rest des Tages keine E-Mails mehr eintrafen.
-* Das Aktivitätsprotokoll wird beim Anhängen nicht mehr vollständig neu aufgebaut. Bei langen Arbeitstagen führte das zu Verzögerungen, unterbrach Animationen und hob Textmarkierungen auf. Zusätzlich ist es auf die letzten 50 Einträge begrenzt.
-* Browser- und Desktop-Fassung teilen sich dieselbe Startseite. Menüpunkte blenden sich selbstständig ein oder aus: Vollbild, "Spiel beenden" und die globalen Statistiken nur in der Steam-Fassung, der Verweis auf die Projektseite nur im Browser. Wer über Steam gekauft hat, bekommt keine Kaufaufforderung mehr.
+System & stability:
+* The game starts considerably faster. Until now all the event texts were loaded when the page was called up, including those of the party finale that most people never see. Now only the essentials load first and the rest follows in the background - the amount of data at startup drops by around 92 percent. The music tracks, too, only load when they are played.
+* The typeface is delivered as WOFF2 rather than TTF: 41 kilobytes instead of 540. The achievement images are now WebP.
+* If an unexpected error occurs, the controls are automatically released again instead of freezing the day. Before, only a reload helped - which meant the whole working day was lost.
+* On restarting a day, individual states from the previous run were retained: an open phone message or a conversation already begun would reappear in the middle of the new morning. Expired timers were not cleared either, which could mean no more emails arrived for the rest of the day.
+* The activity log is no longer rebuilt in full when something is appended. On long working days that caused delays, interrupted animations and cleared text selections. It is also capped at the last 50 entries.
+* The browser and desktop versions share the same start page. Menu items show and hide themselves: full screen, "Quit game" and the global statistics only in the Steam version, the link to the project page only in the browser. Anyone who bought through Steam no longer gets a purchase prompt.
 
-Für Entwickler:
-* Umstieg auf Vite mit Svelte 5. Die Oberfläche besteht aus 34 Komponenten statt aus zusammengesetzten HTML-Zeichenketten; rund 1.200 Zeilen Anzeige-Code sind entfallen, darunter buildEventHTML (228 Zeilen), openArchive (231) und renderGlobalStats (158).
-* Der Spielzustand ist reaktiv ($state in engine_state.svelte.js). Die Engine verändert ihn wie zuvor, die Anzeige folgt von selbst.
-* Tailwind CSS 4 statt der Vorgängerversion. Am Aussehen ändert das nichts, die Grundlage ist wieder aktuell.
-* Die sieben Intranet-Seiten sind Komponenten statt eigenständiger HTML-Dateien in einem iframe. Die alte Konstruktion brauchte eine handkopierte Tailwind-Ausgabe für ein Dokument, das der Bundler nie zu sehen bekam - veraltete diese Kopie, wurden die Seiten roh dargestellt. Jetzt teilen sie sich den Build des Spiels, und der Compiler prüft sie mit.
-* Der Build landet in docs/, weil GitHub Pages direkt aus dem Branch ausliefert (main + /docs). Der Build wird mitcommittet; Electron-Loader und Paketierung ziehen ebenfalls auf docs/.
-* Neue Plattform-Schicht (platform.js / platform_steam.js): Cloud-Speicher, Erfolge, Statistiken, Status in der Freundesliste, Vollbild und externe Links laufen über eine gemeinsame Schnittstelle. Die Engine kennt Electron und Steam nicht mehr direkt.
-* Die Engine wurde entflochten. checkEndConditions (176 Zeilen mit zwei wortgleichen Duplikaten und zwanzig Textblöcken mitten in der Ablauflogik) besteht jetzt aus einer 46-zeiligen Weiche und fünf benannten Funktionen. Für Gegenstände, Ruf-Änderungen und den Tagesbeginn gibt es je eine gemeinsame Funktion statt zwei bis drei fast gleicher Fassungen - eine davon hatte eine Regel nicht gekannt.
-* Sämtliche localStorage-Schlüssel wohnen in keys.js, das Zustand, Oberfläche und Audio gemeinsam importieren. Zuvor lagen sie als nackte Zeichenketten über mehrere Dateien verstreut - exakt die Fehlerklasse, die den Tutorial-Merker aus dem Tritt gebracht hatte.
-* Neue Fabrikfunktion freshDay() liefert den kompletten Tageszustand; der Tagesneustart ersetzt ihn in einem Schritt statt rund 45 Felder einzeln zurückzusetzen. Ein neues Feld kann nicht mehr vergessen werden - dieselbe Quelle bestimmt auch, was in den Zwischenstand gesichert wird.
-* Weitere Wiederholungen zusammengefasst: Das Öffnen und Schließen von Vollbild-Fenstern stand an 33 Stellen als je drei Zeilen - wo eine die Bildlauf-Sperre vergaß, scrollte die Seite hinter dem Dialog weiter. Die Regel, wie oft ein Folge-Ereignis Vorrang bekommt, lag dreifach im Code und steht jetzt als benannte Konstante da; an dieser Zahl hängt das Erzähltempo eines ganzen Arbeitstags.
-* Die Antwortmöglichkeiten werden nicht mehr als Text in die Seite geschrieben. Die action-Einträge in data_party.js sind strukturierte Objekte statt ausführbarer Zeichenketten; aufgelöst wird über eine Methodensuche, nicht über eval.
-* Die Mittagspause ist ein eigener Ereignis-Pool (data_lunch.js) statt einer Eigenschaft in data_special.js. Mit 44 Einträgen ist sie so groß wie ein halber Kaffee-Pool und lädt jetzt wie alle anderen erst bei Bedarf. Nebeneffekt: Sie durchläuft erstmals den Daten-Prüfer, der prompt vier fast folgenlose Antworten von bis zu dreißig Minuten fand.
-* Jedes Dienstgang-Ereignis deklariert seine Art (kind: text oder phone); bislang fehlte die Angabe bei 63 Ereignissen.
-* Neues Prüfwerkzeug tools/lint-data.mjs (npm run lint:data): doppelte Kennungen, kaputte Gegenstandsverweise, unerreichbare Dialogzweige, tote Story-Verzweigungen, Ereignisse mit ausschließlich gegenstandspflichtigen Antworten, Verstöße gegen die Balancing-Grundregeln, reqStory an Brett und Intranet, Auszeichnungen in reinen Textfeldern und Zeitbezüge in Folge-Ereignissen. Alles Fehler, die im Spiel niemandem auffallen, sondern nur dazu führen, dass etwas nie erscheint.
-* Neues Werkzeug tools/simulate-day.mjs (npm run sim): spielt komplette Arbeitstage gegen die echten Datenpools mit den exakten Engine-Formeln durch - vier Spielertypen, drei Schwierigkeiten. Die Balance-Änderungen dieser Version sind damit gegengerechnet statt geraten.
-* Zwei Einmal-Werkzeuge, beide wiederholbar: tools/reorder-opts.mjs verteilt die Optionsreihenfolge, tools/normalize-quotes.mjs vereinheitlicht die Anführungszeichen in Quelltext und Spieltext.
-* STRUCTURE.md beschreibt den Aufbau des Projekts und die Konventionen für die Datendateien.
+For developers:
+* Move to Vite with Svelte 5. The interface consists of 34 components instead of assembled HTML strings; around 1,200 lines of display code have gone, among them buildEventHTML (228 lines), openArchive (231) and renderGlobalStats (158).
+* The game state is reactive ($state in engine_state.svelte.js). The engine changes it as before, and the display follows by itself.
+* Tailwind CSS 4 instead of the previous version. That changes nothing about the appearance; the foundation is current again.
+* The seven intranet pages are components rather than standalone HTML files in an iframe. The old construction needed a hand-copied Tailwind output for a document the bundler never got to see - and when that copy went stale, the pages were displayed raw. Now they share the game's build, and the compiler checks them too.
+* The build lands in docs/, because GitHub Pages serves directly from the branch (main + /docs). The build is committed along with the source; the Electron loader and the packaging move to docs/ as well.
+* A new platform layer (platform.js / platform_steam.js): cloud saves, achievements, statistics, friends-list status, full screen and external links all run through a common interface. The engine no longer knows Electron and Steam directly.
+* The engine has been untangled. checkEndConditions (176 lines with two word-for-word duplicates and twenty blocks of text in the middle of the control flow) now consists of a 46-line switch and five named functions. For items, reputation changes and the start of the day there is one shared function each instead of two or three near-identical versions - one of which had not known about a rule.
+* All the localStorage keys live in keys.js, which state, interface and audio import together. Before that they lay scattered across several files as bare strings - exactly the class of bug that had knocked the tutorial marker out of step.
+* A new factory function freshDay() supplies the complete day state; the day restart replaces it in one step instead of resetting around 45 fields individually. A new field can no longer be forgotten - the same source also determines what is written to the interim save.
+* Further repetitions consolidated: opening and closing full-screen windows stood in 33 places as three lines each - and where one forgot the scroll lock, the page kept scrolling behind the dialogue. The rule for how often a follow-up event gets priority sat in the code three times and now stands there as a named constant; the narrative pace of a whole working day hangs on that number.
+* The answer options are no longer written into the page as text. The action entries in data_party.js are structured objects rather than executable strings; they are resolved through a method lookup, not through eval.
+* The lunch break is an event pool of its own (data_lunch.js) rather than a property in data_special.js. At 44 entries it is as big as half a coffee pool and now loads on demand like all the others. Side effect: it goes through the data checker for the first time, which promptly found four almost consequence-free answers of up to thirty minutes.
+* Every errand event declares its kind (kind: text or phone); until now the field was missing on 63 events.
+* A new checking tool, tools/lint-data.mjs (npm run lint:data): duplicate ids, broken item references, unreachable dialogue branches, dead story branches, events with nothing but item-requiring answers, breaches of the basic balancing rules, reqStory on the noticeboard and the intranet, markup in plain text fields, and time references in follow-up events. All of them errors nobody notices in the game; they only mean something never appears.
+* A new tool, tools/simulate-day.mjs (npm run sim): plays complete working days against the real data pools with the exact engine formulas - four player types, three difficulties. The balance changes in this version have been calculated against it rather than guessed.
+* Two one-off tools, both repeatable: tools/reorder-opts.mjs distributes the option order, tools/normalize-quotes.mjs normalises the quotation marks in source and game text.
+* STRUCTURE.md describes the structure of the project and the conventions for the data files.
 
 
 [3.2.2] - 2026-04-08
 
-Neuerungen:
-* Ab sofort gibt es im Spiel die Möglichkeit, sich mit einer kreativen Notfall-Ausrede temporär aus anstrengenden Problemen und Konversationen herauszuziehen.
+New:
+* From now on the game lets you extract yourself temporarily from taxing problems and conversations with a creative emergency excuse.
 
-System & Stabilität:
-* Die Dateistruktur der Spieldaten wurden auf einen modernen Standard (Module) umgestellt. Das verbessert die Ladezeiten, macht das Spiel performanter und bereitet die Architektur auf zukünftige, größere Inhalts-Updates vor.
+System & stability:
+* The file structure of the game data has been moved to a modern standard (modules). That improves loading times, makes the game more performant and prepares the architecture for larger content updates to come.
 
-Fehlerkorrekturen:
-* Ein Anzeigefehler bei den "Löschen & Ignorieren"-Buttons im E-Mail-System wurde behoben, durch den das Papierkorb-Icon doppelt gerendert wurde.
-* Der Wechsel des Musikstils wird nun auch dann korrekt im Hintergrund verarbeitet und beim nächsten Einschalten angewendet, wenn die Musik zum Zeitpunkt des Wechsels pausiert war.
+Bug fixes:
+* A display bug on the "Löschen & Ignorieren" buttons in the email system has been fixed, which rendered the wastebasket icon twice.
+* A change of music style is now correctly processed in the background and applied the next time the music is switched on, even if the music was paused at the moment of the change.
 
 [3.2.1] - 2026-04-04
 
-Neuerungen:
-* E-Mails haben nun einen Ingame-Cooldown von 25 Minuten, um ständiges Dauerfeuer zu vermeiden. Zudem verbrauchen Antworten nun dynamisch Ingame-Zeit und können Items (Loot) gewähren.
+New:
+* Emails now have an in-game cooldown of 25 minutes to avoid constant barrage. Answers also consume in-game time dynamically now and can grant items (loot).
 
-Anzeige & Layout:
-* Neu erbeutete Items "fliegen" nun mit einer kurzen Animation in den Rucksack, damit Trophäen im Inventar besser wahrgenommen werden.
+Display & layout:
+* Newly looted items now "fly" into the backpack with a short animation, so that trophies in the inventory are better noticed.
 
-Fehlerkorrekturen:
-* Ein Fehler im Radio-Modus (Hintergrundmusik) wurde behoben, durch den die automatische Wiedergabe des nächsten Titels im Leerlauf abbrach.
-* Ein Darstellungsfehler wurde behoben, durch den der "Löschen & Ignorieren"-Button bei aktiven Hotkey-Overlays manchmal nicht gerendert wurde.
-* Das E-Mail-System wurde von harten Code-Abhängigkeiten befreit. Dadurch entstehen keine doppelten "Löschen"-Optionen mehr.
-* Weitere kleine Fehlerkorrekturen im Hintergrund, Behebung von Tippfehlern und Textanpassungen.
+Bug fixes:
+* A bug in radio mode (background music) has been fixed, which stopped the next track playing automatically while idle.
+* A rendering bug has been fixed, which sometimes stopped the "Löschen & Ignorieren" button being drawn while hotkey overlays were active.
+* The email system has been freed of hard code dependencies. As a result, no more duplicate "delete" options arise.
+* Further small bug fixes in the background, typo corrections and text adjustments.
 
 [3.2.0] - 2026-03-28
 
-Neuerungen:
-* Der neue Radio-Modus spielt verschiedene Tracks (inklusive neuer Lofi- und Jazz-Beats) abwechselnd ab. Alternativ lässt sich jeder Track auch weiterhin einzeln auf Dauerschleife stellen.
-* Ein Rage Quit bei 100% Aggro beendet das Spiel nicht mehr sofort. Beim ersten Ausraster zieht sich Müller nun kurz zurück, um Dampf abzulassen.
-* Die Warnungen für das Chef-Radar und das neue Aggro-Ventil sind nicht mehr statisch. Es gibt nun jeweils 10 wechselnde Varianten, die per Zufall abgespielt werden.
+New:
+* The new radio mode plays various tracks in turn (including new lo-fi and jazz beats). Alternatively, every track can still be set to loop individually.
+* A rage quit at 100 % aggro no longer ends the game immediately. On the first blow-up Miller now withdraws briefly to let off steam.
+* The warnings for the boss radar and the new aggro valve are no longer static. There are now 10 alternating variants of each, played at random.
 
-Anzeige & Layout:
-* Wurde das Aggro-Ventil genutzt oder eine Abmahnung kassiert, wird dies nun am Ende des Tages als Warn-Badge auf dem Tagesbericht und im persönlichen Logbuch verewigt.
-* Das End-Modal passt sich nun optisch mit eigenen Akzentfarben dem jeweiligen Ausgang des Tages an (Feierabend, Rage Quit, Kündigung).
+Display & layout:
+* If the aggro valve was used or a written warning collected, this is now immortalised at the end of the day as a warning badge on the daily report and in the personal logbook.
+* The end modal now adapts visually with its own accent colours to the respective outcome of the day (clocking off, rage quit, dismissal).
 
-Balancing & Fehlerkorrekturen:
-* Die Dauer des Timers beim Lesen von E-Mails wurde von 15 auf 20 Sekunden erhöht, um unnötige Hektik bei einer eingehenden E-Mail zu nehmen.
-* Offene Tickets werden bei der Endabrechnung nur noch bis 16:30 Uhr gezählt. Späte Ereignisse generieren keine Tickets mehr nach Schichtende.
-* Nach einem Bosskampf läuft die dramatische Musik im Tagesbericht nicht mehr unpassend weiter, sondern wechselt nahtlos zurück zur normalen Büromusik.
-* Materialermüdung: Der Anti-Stressball verliert etwas an Wirkung und senkt die Aggro nun stündlich um 5 Punkte (zuvor 10).
-* Weitere kleine Fehlerkorrekturen im Hintergrund, Behebung von Tippfehlern und Textanpassungen.
+Balancing & bug fixes:
+* The duration of the timer for reading emails has been increased from 15 to 20 seconds, to take the unnecessary rush out of an incoming email.
+* Open tickets are only counted up to 16:30 in the final reckoning. Late events no longer generate tickets after the end of the shift.
+* After a boss fight the dramatic music no longer carries on incongruously into the daily report but switches back seamlessly to the normal office music.
+* Material fatigue: the anti-stress ball loses a little of its effect and now lowers aggro by 5 points per hour (previously 10).
+* Further small bug fixes in the background, typo corrections and text adjustments.
 
 [3.1.0] - 2026-03-26
 
-Neuerungen:
-* Beim manuellen "Tag neu starten" gibt es nun eine atmosphärische Boot-Sequenz inklusive klassischem PC-Beep, die das System spürbar hochfährt
-* Items können in Smartphone-Events nun auch direkt bei der Antwortauswahl als Voraussetzung gefordert oder verbraucht werden 
-* Kassiert man eine Abmahnung vom Chef, prangt nun ein unübersehbarer roter Stempel auf der eigenen Profilkarte im Team-Modal
-* Eine geführte, interaktive Simulation bringt neuen SysAdmins die Überlebensgrundlagen bei GlobalCorp nun im Tutorial bei
-* Der GlobalCorp News-Ticker informiert am Terminal nun sporadisch über firmeninterne Neuigkeiten
-* Das Firmen-Intranet wurde um eine versteckte, streng vertrauliche HR-Akte erweitert
+New:
+* A manual "restart day" now comes with an atmospheric boot sequence, complete with the classic PC beep, that noticeably brings the system up
+* Items can now also be demanded as a precondition or consumed directly at the answer selection in smartphone events
+* Collect a written warning from the boss and an unmissable red stamp now sits on your own profile card in the team modal
+* A guided, interactive simulation now teaches new sysadmins the basics of survival at GlobalCorp in the tutorial
+* The GlobalCorp news ticker now sporadically reports company news at the terminal
+* The company intranet has been extended with a hidden, strictly confidential HR file
 
-System & Stabilität:
-* Das Speichersystem (Export und Import) wurde massiv gehärtet und ist nun zukunftssicher
-* Veraltete Spielinhalte werden beim Laden älterer Speicherstände nun automatisch bereinigt
+System & stability:
+* The save system (export and import) has been hardened considerably and is now future-proof
+* Outdated game content is now cleaned up automatically when older save files are loaded
 
-Fehlerkorrekturen:
-* Ein kritischer Absturz-Fehler beim Importieren von älteren Speicherständen wurde behoben
+Bug fixes:
+* A critical crash when importing older save files has been fixed
 
 [3.0.0] - 2026-03-23
 
-Neuerungen:
-* Das Browserspiel hat keine externen Abhängigkeiten mehr (Tailwind CDN, Google Fonts, Grafiken lokal eingebunden)
-* Offline-Modus ist nun möglich, wenn das gesamte Projekt heruntergeladen wird
-* Die Spieleinstellungen wurden überarbeitet und bieten jetzt mehr Sound- und Tastatur-Einstellungen
-* Drei verschiedene Arten von Musik hinzugefügt (Allgemein, Bossfights und für die Gala)
-* Das Start-Modal wurde optisch überarbeitet, sieht nun moderner aus und zeigt das Logo des Spiels
-* Alle Erfolge haben jetzt eine eigene Grafik und bieten auf dem Rechner einen starken Hover-Effekt
-* Die Charakter-Porträts werden bei charakterbezogenen Events jetzt visuell im Terminal dargestellt
-* Die Items bieten im Rucksack nun ein detailliertes Tooltip-Fenster mit Flavor-Texten beim Hovern
-* Automatische Sortierung von Items im Schnell-Inventar und Rucksack (Verbrauchsgegenstände bleiben griffbereit)
-* Verbrauchsgegenstände (wie z. B. Donuts oder Energy Drinks) können nun mehrfach gesammelt und im Inventar gehalten werden
-* Eine neue, geheime Intranet-Seite wurde hinzugefügt und wartet darauf, entdeckt zu werden
-* Das Mittagessen hat nun ein eigenes Icon und einen eigenen farblichen Rahmen
-* Einige weitere Events wurden für die verschiedenen Aktionen hinzugefügt
+New:
+* The browser game no longer has any external dependencies (Tailwind CDN, Google Fonts, graphics included locally)
+* Offline mode is now possible if the whole project is downloaded
+* The game settings have been reworked and now offer more sound and keyboard options
+* Three different kinds of music added (general, boss fights and for the gala)
+* The start modal has been visually reworked, now looks more modern and shows the game's logo
+* All achievements now have a graphic of their own and offer a strong hover effect on a desktop
+* The character portraits are now displayed visually in the terminal for character-related events
+* Items now offer a detailed tooltip window with flavour texts on hover in the backpack
+* Automatic sorting of items in the quick inventory and the backpack (consumables stay within reach)
+* Consumables (donuts or energy drinks, for instance) can now be collected and held in the inventory more than once
+* A new, secret intranet page has been added and is waiting to be discovered
+* Lunch now has an icon and a coloured frame of its own
+* Several further events have been added for the various actions
 
-Fehlerkorrekturen:
-* Ein Fehler wurde behoben, durch den die Luftpolsterfolie (bubble_wrap) nicht eingesetzt werden konnte
-* E-Mail Performance-Probleme wurden behoben (Ruckeln und träges Verhalten der auswählbaren Optionen)
-* Story-Flags (Folgeentscheidungen) werden bei "Tag neu starten" jetzt korrekt zurückgesetzt
-* Eintreffende E-Mails werden während eines Bossfights nun zuverlässig blockiert (falsches Timer-Verhalten behoben)
-* Ein Anzeige-Fehler wurde behoben, bei dem im Tagesbericht noch Erfolge aus einem vorherigen, abgebrochenen Spieldurchlauf aufgelistet wurden
-* Ein kritischer Fehler wurde behoben, der das Spiel einfrieren ließ, wenn kurz vor Feierabend (und gleichzeitigem Start der Gala) eine E-Mail oder ein Anruf beendet wurde
-* Ein Exploit beim Morgen-Ereignis "Verschlafen" wurde behoben, sodass der Zeitverlust von 30 Minuten nun ordnungsgemäß mit einem Support-Ticket bestraft wird
-* Ein Fehler wurde behoben, bei dem sich E-Mail-Fenster fälschlicherweise mitten in der Synergy-Gala öffnen konnten, da Hintergrund-Timer nicht korrekt gestoppt wurden
-* Ein Fehler wurde behoben, bei dem unsichtbare Hintergrund-Timer weiterliefen, was dazu führen konnte, dass Ereignisse während des Game-Over-Bildschirms ausgelöst wurden
-* Ein Fehler wurde behoben, bei dem verzögerte Folge-E-Mails nach einem Neustart ("Tag neu starten") fälschlicherweise im neuen Spieldurchlauf auftauchen konnten
-* Ein Fehler wurde behoben, bei dem unsichtbare Hintergrund-Timer des Handys nach einem Abbruch weiterliefen und im neuen Tag versehentlich Aktionen auslösten
-* Ein Logikfehler von Items wurde behoben. Wenn das Inventar voll war, konnten Items verloren gehen, selbst wenn im selben Schritt Items verloren hat
-* Ein Logikfehler im E-Mail-Spamfilter wurde korrigiert, der nach einem Neustart des Tages versehentlich legitime Nachrichten blockieren konnte
-* Ein Logikfehler wurde behoben, bei dem Gegenstände, die man über das Handy erhalten hat, das reguläre Inventar-Limit ignorieren konnten
-* E-Mail-Ketten werden nicht mehr durch zufällige Mails unterbrochen und es gibt einen kurzen Cooldown nach dem Schließen des Fensters
-* Ein kritischer Fehler wurde behoben, der dafür sorgte, dass der Party-Modus nach einem Neustart aktiv blieb und das Spiel blockierte
-* Ein Fehler wurde behoben, durch den Items mit Abklingzeit (z. B. der Stressball) nach einem Neustart dauerhaft gesperrt bleiben konnten
-* Ein Fehler beim "Tag neu starten" wurde korrigiert, sodass die Abmahnung vom Chef nun ordnungsgemäß zurückgesetzt wird
-* Weitere, kleine Fehlerkorrekturen und strukturelle Anpassungen im Backend
+Bug fixes:
+* A bug has been fixed which meant the bubble wrap (bubble_wrap) could not be used
+* Email performance problems have been fixed (stuttering and sluggish behaviour of the selectable options)
+* Story flags (follow-up decisions) are now correctly reset on "restart day"
+* Incoming emails are now reliably blocked during a boss fight (incorrect timer behaviour fixed)
+* A display bug has been fixed in which the daily report still listed achievements from a previous, abandoned run
+* A critical bug has been fixed which froze the game if an email or a call was finished shortly before clocking off (with the gala starting at the same time)
+* An exploit in the morning event "Verschlafen" has been fixed, so that the loss of 30 minutes is now properly punished with a support ticket
+* A bug has been fixed in which email windows could wrongly open in the middle of the Synergy Gala, because background timers were not stopped correctly
+* A bug has been fixed in which invisible background timers kept running, which could cause events to be triggered during the game-over screen
+* A bug has been fixed in which delayed follow-up emails could wrongly turn up in the new run after a restart ("restart day")
+* A bug has been fixed in which invisible background timers of the phone kept running after an abort and accidentally triggered actions on the new day
+* A logic bug with items has been fixed. When the inventory was full, items could be lost even if items were lost in the same step
+* A logic bug in the email spam filter has been corrected, which could accidentally block legitimate messages after a restart of the day
+* A logic bug has been fixed in which items received through the phone could ignore the regular inventory limit
+* Email chains are no longer interrupted by random mails, and there is a short cooldown after the window is closed
+* A critical bug has been fixed which meant party mode stayed active after a restart and blocked the game
+* A bug has been fixed which could leave items with a cooldown (the stress ball, for instance) permanently locked after a restart
+* A bug in "restart day" has been corrected, so that the written warning from the boss is now properly reset
+* Further small bug fixes and structural adjustments in the backend
 
 \[2.8.1] - 2026-02-29
-* Folge-Events bei Begegnungen haben nun auch eine höhere Priorisierung (30%), wenn vorhanden
-* Kritischer Bugfix bei Begegnungen-Events, welche nicht immer Folge-Events zuverlässig ausgelöst haben
-* Kompaktmodus merkt sich jetzt den aktivierten Zustand (zu finden in den Systemeinstellungen)
+* Follow-up events in encounters now also get a higher priority (30%), where they exist
+* Critical bug fix for encounter events, which did not always trigger follow-up events reliably
+* Compact mode now remembers that it is switched on (to be found in the system settings)
 
 \[2.8.0] - 2026-02-29
-* Folge-Events haben eine höhere Priorisierung (30%) im Pool, wenn diese freigeschaltet sind
-* Neue Events für Bossfights, Mittagessen, Kaffee, Dienstgang, Serverraum und Anruf 
-* Spieleinstellungen "Handy aut. minimieren" ist nun standardmäßig auf aktiv gesetzt
-* Phone-Events Werte werden nun in der data.js einheitlich definiert (anstatt fl,al,cr nun f,a,c)
-* Kleine Korrekturen von einigen Events, die gemeldet wurden sind
+* Follow-up events have a higher priority (30%) in the pool once they are unlocked
+* New events for boss fights, lunch, coffee, errands, the server room and calls
+* The game setting "Minimise phone automatically" is now on by default
+* Phone event values are now defined consistently in data.js (f,a,c instead of fl,al,cr)
+* Small corrections to a number of events that were reported
 
 \[2.7.0] - 2026-02-27
-* Die große Firmenfeier startet, nachdem alle Character-Events erfolgreich gesammelt wurden sind
-* Internet-Archivment wurde durch das neue Synergy-Veteran Archivment ersetzt
-* Das Menü bietet jetzt weitere Spieleinstellungen zum Anpassen (Komptaktlayout und Handy minimieren)
-* Scroll-Chaining im aktiven Modal (z.b Intro, Teams, Menü, etc.) wurde behoben
-* Das Ergebnis beim Endergebnis wird jetzt in der richtigen Farbe dargestellt 
-* Alle Events mit 0 Minuten Optionen wurden auf 2 Minuten angehoben
-* Kleine weitere Fehlerkorrekturen für Events und im Backend
+* The big company party starts once all the character events have been successfully collected
+* The Internet achievement has been replaced by the new Synergy Veteran achievement
+* The menu now offers further game settings to adjust (compact layout and minimise phone)
+* Scroll chaining in the active modal (intro, teams, menu, etc.) has been fixed
+* The result on the end screen is now displayed in the right colour
+* All events with 0-minute options have been raised to 2 minutes
+* Further small bug fixes for events and in the backend
 
 \[2.6.0] - 2026-02-24
-* Das Menü bietet jetzt weitere Spieleinstellungen zum Anpassen
-* Standardmäßg sind Pulsieren von Aggro / Wut und die Wiedergabe von Tönen aktiv
-* Die Darstellung der Kartine wurde für mobile Geräte optimiert
+* The menu now offers further game settings to adjust
+* By default, the pulsing of aggro / anger and the playing of sounds are on
+* The presentation of the canteen has been optimised for mobile devices
 
 \[2.5.2] - 2026-02-22
-* Das letzte Mood-Event wird nun gespeichert, sodass es nächsten Tag nicht nochmal erscheint
-* Weitere Mood-Events, um mehr Abwechslung bei den Events zu erhalten
-* Weitere Tagebuch-Einträge, um mehr Abwechslung beim Tagebuch zu erhalten
-* Ein paar weitere Events für Kaffee, Dienstgang, Serverraum und Mittagessen
-* Kleine Fehlerkorrekturen im Backend
+* The last mood event is now saved, so that it does not appear again the next day
+* Further mood events, for more variety among the events
+* Further diary entries, for more variety in the diary
+* A few more events for coffee, errands, the server room and lunch
+* Small bug fixes in the backend
 
 \[2.5.1] - 2026-02-21
-* Im aktiven Tutorial sind nun die Aktion Buttons nicht mehr deaktiviert 
-* Globale Statistiken sind von Menü ins Archiv umgezogen
-* Globale Statistiken sammelt nun auch begonnene Tage 
-* Leicht angepasstest Layout fürs Archiv
+* In the active tutorial the action buttons are no longer disabled
+* The global statistics have moved from the menu into the archive
+* The global statistics now also collect days started
+* Slightly adjusted layout for the archive
 
 \[2.5.0] - 2026-02-21
-* Es gibt jetzt ein globales Menü und es lässt sich via ESC öffnen / schließen
-* Es gibt nun ein Stimmungs-Modal, was die Stimmung von Herrn Müller zu Tagesbeginn erläutert
-* Zwei neue Verbrauchsgegenstände wurden ins Spiel integriert, welche man bisher zufällig erhalten kann
-* Beim Bestätigungs-Modal für Verbrauchsgegenstände wird nun das korrekte Bild geladen
-* Bei Events sind nun Absätze (\n) möglich, wie es bereits für einige Calls Events existierte
-* Einige neue Call-Events wurden hinzugefügt, um den Pool für Calls zu erweitern
-* Der Blur-Effekt greift nun zusätzlich für den Geburtstagskuchen, wenn man es zulässt
+* There is now a global menu, and it can be opened / closed with ESC
+* There is now a mood modal explaining Herr Müller's mood at the start of the day
+* Two new consumables have been integrated into the game, which can so far be obtained at random
+* The confirmation modal for consumables now loads the correct image
+* Paragraphs (\n) are now possible in events, as they already were for some call events
+* Some new call events have been added to extend the pool for calls
+* The blur effect now also applies to the birthday cake, if you allow it
 
 \[2.4.1] - 2026-02-20
-* Kritischer Bugfix für Phone Events, wodurch nun StoryFlags (Next/ReqStory) korrekt angewendet werden
-* Spenden-Event Link öffnet sich nun korrekt im neuen Fenster
+* Critical bug fix for phone events, so that story flags (Next/ReqStory) are now applied correctly
+* The donation event link now opens correctly in a new window
 
 \[2.4.0] - 2026-02-20
-* Rep-Events (Begegnungen) haben nun auch Filler-Standalone-Events, damit sich jeder Charakter lebendiger anfühlt
-* Viele Phone-Events wurden vom Text her überarbeitet, damit es sich mehr wie ein richtiger Chat anfühlt
-* Ruf-System greift nun auch bei Phone Events, wenn es im jeweiligen Event für ein Character vergeben wird
-* Ein paar Phone-Events wurden durch neue ersetzt, inklusive entsprechender Folge-Events
-* Eine Sidequest fürs Spenden wurde eingeführt und sich nahtlos ins Spiel integriert (es gibt kein Vorteil bei diesem Event)
+* Rep events (encounters) now also have filler standalone events, so that every character feels more alive
+* Many phone events have been reworked in their text, so that it feels more like a real chat
+* The reputation system now also applies to phone events, where it is assigned for a character in the event concerned
+* A few phone events have been replaced by new ones, including their follow-up events
+* A side quest for donating has been introduced and integrated seamlessly into the game (there is no advantage in this event)
 
 \[2.3.3] - 2026-02-19
-* Events mit viel Text oder Optionen sind jetzt bei erhöhter Skalierung oder mit niedriger Auflösung am Desktop lesbar
-* Log-Beschreibung bei Reputations-Events (Begegnungen) sind nun einheitlich zum restlichen Log
+* Events with a lot of text or options are now readable at increased scaling or at a low resolution on the desktop
+* The log description for reputation events (encounters) is now consistent with the rest of the log
 
 \[2.3.2] - 2026-02-19
-* E-Mails treten nicht mehr während eines Bossfight auf (Vermeidung von zwei gleichzeitigen Timer)
-* Bossfights werden jetzt erst ab 9:00 ausgelöst, um den Tag ruhiger zu starten
-* Aktive Events haben nun den Titel wie die ausgewählte Aktion (Kaffee, Dienstgang, Serverraum, Anruf)
-* Rep-Events (Begegnungen) haben nun standardmäßig das Buch als Icon
-* Schwierigkeits-Modal lässt sich nun auf mobilen Geräten wie das Start-Modal korrekt bedienen 
-* Einige Altasten und Korrekturen im Backend (engine.js) durchgeführt
- 
+* Emails no longer occur during a boss fight (avoiding two simultaneous timers)
+* Boss fights are now only triggered from 9:00 onwards, for a quieter start to the day
+* Active events now have the title of the selected action (coffee, errand, server room, call)
+* Rep events (encounters) now have the book as their icon by default
+* The difficulty modal can now be operated correctly on mobile devices, like the start modal
+* Some legacy problems dealt with and corrections made in the backend (engine.js)
+
 \[2.3.1] - 2026-02-18
-* Bugfix für Events, wenn Minuten nicht gesetzt waren (Spiel meldete NaN als Fehler)
-* Es wurde immer ein Fail bei Bossfight ausgelöst, auch wenn eine Option gewählt wurde
-* Korrektur einiger Events, wo die Minuten gefehlt haben oder im falschen Format waren 
+* Bug fix for events where minutes were not set (the game reported NaN as an error)
+* A fail was always triggered in a boss fight, even when an option had been chosen
+* Correction of some events where the minutes were missing or in the wrong format
 
 \[2.3.0] - 2026-02-18
-* Bossfights Timer wurde nun in das Event eingebaut, damit es ein einheitliches Design hat
-* Verschiedene Fehlerkorrekturen für den Bossfight (Dauer der Animation und Logik wann Bossfights auftreten)
-* Es gibt nun Reputations-Events, welche sich bei positiver / negativer Reputation auswirkt
-* Story-Events der Charactere wurden nach Reputation verschoben und angepasst (2teiler anstatt 3)
-* Neue Events für Kaffee und für Side-Quest, die im normalen Pool mit vorkommen können
-* Kleine optische Event-Anpassungen, wo der Rand nun passend zum Event gefärbt wird
-* Kleine Fehlerkorrekturen im Code, welche im Backend aufgetreten sind
+* The boss fight timer has now been built into the event, so that it has a consistent design
+* Various bug fixes for the boss fight (duration of the animation and the logic of when boss fights occur)
+* There are now reputation events, which take effect at positive / negative reputation
+* The characters' story events have been moved over to reputation and adjusted (two parts instead of three)
+* New events for coffee and for side quests, which can also occur in the normal pool
+* Small visual event adjustments, where the border is now coloured to match the event
+* Small bug fixes in the code that had come up in the backend
 
 \[2.2.0] - 2026-02-16
-* Ruf-System wurde eingeführt (findet man über "TEAM") für Koffee, Side-Quest Server und Calls
-* Ein kleiner Schluck bei Bernd zeigt, dass man nicht auf der Arbeit trinken sollte (Easter-Egg)
-* Gemeldete Fehler für Statuswerte wurden korrigiert (danke fürs Feedback!)
+* The reputation system has been introduced (found under "TEAM") for coffee, side-quest server and calls
+* A small sip with Bernd shows that you should not drink at work (easter egg)
+* Reported bugs with the stats have been corrected (thanks for the feedback!)
 
 \[2.1.0] - 2026-02-14
 
-* Das Sammelbuch (Archiv) lässt sich nun über das Start-Modal exportieren und importieren
-* Manche Optionen waren in den verschiedenen Events nicht auswählbar, was nun korrigiert wurde
-* Kleine Rechtschreibfehler bei verschiedenene Events wurden korrigiert
-* Kleine Optische Anpassungen am Start Modal, um es optisch etwas aufzuwerten
+* The collection book (archive) can now be exported and imported from the start modal
+* Some options were not selectable in various events, which has now been corrected
+* Small spelling mistakes in various events have been corrected
+* Small visual adjustments to the start modal, to smarten it up a little
 
 \[2.0.0] - 2026-02-13
 
-* Server, Coffee und Side-Quests haben jetzt bei beinahe allen Events Folge-Events. Jede Entscheidung wird neue Events erzeugen!
-* Es gibt nun die Option Gegenstände wieder abzugeben, wenn diese im Inventar sind (remove item)
-* Zeiten werden nicht mehr vorher dargestellt, damit jede Entscheidung wohlüberlegt sein sollte
+* Server, coffee and side quests now have follow-up events on almost every event. Every decision will generate new events!
+* There is now the option of handing items back in when they are in the inventory (remove item)
+* Times are no longer shown in advance, so that every decision has to be thought through
 
 \[1.5.0] - 2026-02-12
 
-* Es gibt jetzt ein kleines Tagesbuch, was den Arbeitstag am Endergebnis zusammenfasst
-* Ein neues (Secret)-Event (Easter-Egg) wurde in den Pool hinzugefügt
+* There is now a small diary summarising the working day on the end screen
+* A new (secret) event (easter egg) has been added to the pool
 
 \[1.4.0] - 2026-02-11
 
-* Die Animation für das Verändern der Statuswerte werden nun flüssiger dargestellt
-* Bei Statusveränderungen gib es nun ergänzend schwebende Zahlen bei den Statuswerten
-* Im jeweiligen Event-Ergebnis werden nun die Statuswerte dargestellt
-* Ein neues (Secret)-Event (Easter-Egg) wurde in den Pool hinzugefügt
-* Ein neuer Erfolg zum Entdecken wurde hinzugefügt
+* The animation for changing the stats is now displayed more smoothly
+* Stat changes are now additionally accompanied by floating numbers at the stats
+* The stats are now shown in the respective event result
+* A new (secret) event (easter egg) has been added to the pool
+* A new achievement to discover has been added
 
 \[1.3.1] - 2026-02-10
 
-* Die Personen im Kollegium / Team haben ein Zoom im Desktop Modus
-* Zwei bestehende Events wurden aufgebohrt, um das Item Cable mehr ins Spiel zu bringen
+* The people in the team have a zoom in desktop mode
+* Two existing events have been beefed up, to bring the cable item more into the game
 
 \[1.3.0] - 2026-02-09
 
-* Das Kollegium / Team hat nun Bilder für die jeweilige Person
-* Gegenstände haben nun ein richtiges Bild für das Inventar und Archiv
-* Questreihen der jeweiligen Character haben nun ein Buch als Icon
-* Fehlerkorrekturen für Phone-Events, wo sich die Statuswerte nicht aktualisiert haben
-* Einige Events hatten wifi\_note als Anforderung, was nun entfernt wurde
+* The team now has pictures for each person
+* Items now have a proper image for the inventory and the archive
+* The quest series of the respective characters now have a book as their icon
+* Bug fixes for phone events, where the stats did not update
+* Some events had wifi\_note as a requirement, which has now been removed
 
 \[1.2.0] - 2026-02-07
 
-* Melden Funktion eingebaut, um Kontakt mit mir aufzunehmen (Fehler, Feedbacks, Allgemeines)
-* Kleine Korrekturen bei verschiedenen Events, um das Balancing anzupassen.
+* Report function built in, to get in touch with me (bugs, feedback, general)
+* Small corrections to various events, to adjust the balancing.
 
 \[1.1.2] - 2026-02-05
 
-* Einige E-Mails hatten keine ID, wo durch sie häufiger als einmalig kommen konnten.
-* Einige neue Folgeevents für verschiedene Bereiche
-* Duplikate wurden bereinigt
+* Some emails had no id, which meant they could arrive more than once.
+* Some new follow-up events for various areas
+* Duplicates have been cleaned up
 
 \[1.1.1] - 2026-02-05
 
-* Ein Event war in der falschen Kategorie zugewiesen, was behoben wurde
-* Einige neue Folgeevents für Serverraum und Sidequests (Phone)
+* One event was assigned to the wrong category, which has been fixed
+* Some new follow-up events for the server room and side quests (phone)
 
 \[1.1.0] - 2026-02-05
 
-* E-Mails wurden überarbeitet (neues Design, neue Logik, mobiloptimiert)
-* Erfolge sind nun sichtbar und haben ein Hinweis zur Freischaltung
-* Das Ergebnis des Messengers wird jetzt automatisch korrekt dargestellt
-* Korrekturen im Backend und Altlasten wurden bereinigt
+* Emails have been reworked (new design, new logic, mobile-optimised)
+* Achievements are now visible and have a hint on how to unlock them
+* The result of the messenger is now displayed correctly and automatically
+* Corrections in the backend, and legacy problems cleaned up
 
 \[1.0.2] - 2026-02-04
 
-* Schnell-Inventar und Rucksack sind optisch identisch
-* Im Sammelbuch (Erfolge) sind noch offene Items und Erfolge besser erkennbar
-* Die Breite und Höhe der Events sind für mobile Geräte besser optimiert
-* Die neuen Anrufe enthalten nun alle relevanten Gesprächsinformation zu Beginn
-* Bei Side-Quests und Serverraum wurden die Icons korrigiert, welche im Event sichtbar waren.
+* The quick inventory and the backpack are visually identical
+* In the collection book (achievements), items and achievements still outstanding are easier to make out
+* The width and height of the events are better optimised for mobile devices
+* The new calls now contain all the relevant conversation information at the start
+* In side quests and the server room the icons visible in the event have been corrected.
 
 \[1.0.1] - 2026-02-03
 
-* Kleinen Übersetzungsfehler korrigiert
-* Buttongröße für die Antworten im Terminal und Chat wurden optimiert
+* Small translation error corrected
+* The button size for the answers in the terminal and the chat has been optimised
 
 \[1.0.0] - 2026-02-03
 
-* Neues Chat- \& Entscheidungs-Layout für alle Aktionen
-* Neue Telefonart wurde zusätzlich hinzugefügt ( Live-Telefonate)
-* Dynamische Quests wurden eingeführt, wo durch manche Events von Entscheidungen abhängig sind
-* Character-Missionen für die wichtigen Personen wurde hinzugefügt (Die Verdächtigen)
-* Archiv \& Sammelbuch wurde hinzugefügt und speichert diese im LocalStorage
-* Legendäre Trophäen und neue Items wurde hinzugefügt
+* New chat \& decision layout for all actions
+* A new kind of telephone call has been added as well (live calls)
+* Dynamic quests have been introduced, whereby some events depend on decisions
+* Character missions for the important people have been added (The Suspects)
+* Archive \& collection book have been added and are saved in localStorage
+* Legendary trophies and new items have been added

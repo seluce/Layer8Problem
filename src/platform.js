@@ -31,8 +31,12 @@ export const platform = {
     /** Reports a counter. `key` is the internal stat name, `value` the new total. */
     stat: (key, value) => {},
 
-    /** Sets the "currently playing" status text shown to friends. */
-    presence: (text) => {},
+    /**
+     * Sets the status shown to friends. Takes a Steam rich presence TOKEN
+     * (`#Status_coffee`), not a sentence - Steam resolves it in the language of
+     * whoever is looking. See engine_core.updatePresence().
+     */
+    presence: (token) => {},
 
     /** Toggles fullscreen. The browser handles this natively, so it is a no-op here. */
     fullscreen: () => {},
@@ -47,7 +51,16 @@ export const platform = {
     shareUrl: () => window.location.href,
 
     /** Aggregated worldwide statistics, or null when unavailable. */
-    globalStats: async () => null
+    globalStats: async () => null,
+
+    /**
+     * The language Steam was told to start the game in, or null.
+     *
+     * Steam keeps a per-game language setting that can differ from the one the
+     * operating system reports, so on the desktop this outranks
+     * navigator.language. The browser has nothing to answer here.
+     */
+    language: async () => null
 };
 
 // --- DESKTOP UPGRADE ---

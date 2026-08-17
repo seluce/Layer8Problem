@@ -21,6 +21,7 @@
 <script>
     import { state as game } from '../../engine/engine_state.svelte.js';
     import { engine } from '../../engine.js';
+    import { t } from '../../i18n/i18n.svelte.js';
 
     import IntranetDashboard from './IntranetDashboard.svelte';
     import IntranetChantal from './IntranetChantal.svelte';
@@ -30,25 +31,34 @@
     import IntranetHR from './IntranetHR.svelte';
     import IntranetImpressum from './IntranetImpressum.svelte';
 
+    // The browser window is interface, not content: the tab, the address bar
+    // and the navigation belong to this component, and their words come from
+    // the dictionary. What the PAGES themselves say lives in
+    // data_intranet.js - that split is why the frame is translated here and
+    // the pages are translated there.
+    //
+    // The URLs stay German. They are addresses of a German company's intranet,
+    // and that is part of the joke rather than something to translate.
+    //
     // The accent colours are written out as whole class names so the Tailwind
     // scanner finds them in this file. Never assemble them from parts.
-    const PAGES = [
-        { id: 'dashboard', label: 'Dashboard',     accent: 'text-blue-400',    nav: true,
+    const PAGES = $derived([
+        { id: 'dashboard', label: t('intranet.nav.dashboard'),     accent: 'text-blue-400',    nav: true,
           url: 'https://hub.globalcorp.internal/',                 view: IntranetDashboard },
-        { id: 'chantal',   label: 'Feel-Good Hub', accent: 'text-pink-400',    nav: true,
+        { id: 'chantal',   label: t('intranet.nav.chantal'), accent: 'text-pink-400',    nav: true,
           url: 'https://hub.globalcorp.internal/mindful/',         view: IntranetChantal },
-        { id: 'vision',    label: 'Vision',        accent: 'text-emerald-400', nav: true,
+        { id: 'vision',    label: t('intranet.nav.vision'),        accent: 'text-emerald-400', nav: true,
           url: 'https://hub.globalcorp.internal/vision/interview', view: IntranetVision },
-        { id: 'sales',     label: 'Sales',         accent: 'text-amber-400',   nav: true,
+        { id: 'sales',     label: t('intranet.nav.sales'),         accent: 'text-amber-400',   nav: true,
           url: 'https://hub.globalcorp.internal/sales/deals',      view: IntranetSales },
-        { id: 'kantine',   label: 'Kantine',       accent: 'text-red-400',     nav: true,
+        { id: 'kantine',   label: t('intranet.nav.kantine'),       accent: 'text-red-400',     nav: true,
           url: 'https://hub.globalcorp.internal/food-synergies',   view: IntranetKantine },
-        { id: 'hr',        label: 'Human Capital', accent: 'text-purple-400',  nav: true,
+        { id: 'hr',        label: t('intranet.nav.hr'), accent: 'text-purple-400',  nav: true,
           url: 'https://hub.globalcorp.internal/human-capital/',   view: IntranetHR },
         // Reachable through the footer only, exactly as before.
-        { id: 'impressum', label: 'Impressum',     accent: 'text-slate-400',   nav: false,
+        { id: 'impressum', label: t('intranet.nav.impressum'),     accent: 'text-slate-400',   nav: false,
           url: 'https://hub.globalcorp.internal/legal/impressum',  view: IntranetImpressum }
-    ];
+    ]);
 
     let pageId = $state('dashboard');
 
@@ -73,7 +83,7 @@
             <div class="bg-slate-950 pr-2 pl-4 py-2 flex items-center border-b border-slate-800 shrink-0 select-none">
 
                 <div class="bg-slate-900 text-slate-300 text-xs px-4 py-1.5 rounded-t-md flex items-center gap-2 border-t border-x border-slate-700 mt-2 min-w-[150px]">
-                    <span>🌍</span> GlobalCorp Hub
+                    <span>🌍</span> {t('intranet.tab')}
                 </div>
 
                 <div class="flex-1 max-w-xl mx-4 mt-2 hidden md:block">
@@ -85,7 +95,7 @@
 
                 <div class="ml-auto mt-2">
                     <button type="button" onclick={() => engine.closeIntranet()}
-                            aria-label="Intranet schließen"
+                            aria-label={t('intranet.close')}
                             class="text-slate-400 hover:bg-red-600 hover:text-white px-3 py-1 rounded-sm transition-colors flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -122,7 +132,7 @@
                 <footer class="max-w-6xl mx-auto mt-12 mb-6 px-4 text-center border-t border-slate-800 pt-6">
                     <button type="button" onclick={() => (pageId = 'impressum')}
                             class="text-xs text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-widest font-bold">
-                        Rechtliche Hinweise &amp; Impressum
+                        {t('intranet.footer.legal')}
                     </button>
                 </footer>
 

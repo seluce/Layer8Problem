@@ -1,0 +1,996 @@
+// i18n-status: translated
+/**
+ * The lunch break.
+ *
+ * Sat in data_special.js as lunchEvents until v4.0.0. With 44 entries it has
+ * long been a full event pool like coffee or the server room, and
+ * triggerLunch() uses it exactly that way - so it belongs in a file of its own
+ * and loads on demand like the others. It is needed at twelve at the earliest;
+ * it has no business in the first load.
+ *
+ * --- ADDRESS AND REGISTER (6.0) ---
+ *
+ * German carries the distance between Dr Wichtig and the running club in the
+ * pronoun. English has no such pronoun, and the bare surname is no help here:
+ * this pool has Dr Wichtig, the running club and Sabine all calling him plain
+ * "Müller". The distance therefore sits in the register - full forms and whole
+ * sentences for anyone who would use "Sie", contractions and ellipsis for
+ * anyone who would use "du". The form of address itself follows the source
+ * word for word: "Müller" becomes "Miller", "Herr Müller" would become
+ * "Mr Miller" (which never occurs in this pool). Nothing is added.
+ *
+ * Names stay German, including in prose - only the honorific goes British and
+ * loses its full stop: Ms Elster, Dr Wichtig. The rep keys are identifiers and
+ * keep the German spelling, which lint-parity enforces.
+ */
+export const lunch = [
+	{
+		id: "lunch_canteen",
+		title: "LUNCH: CANTEEN",
+		text: "Today it is 'Jägerschnitzel Surprise'. The pack is jostling at the counter. What do you do?",
+		opts: [
+			{
+				t: "Headphones on, corner table",
+				m: 30, l: 5, a: -10, b: 0,
+				r: "You shut the room out, scroll through memes and ignore the world. Glorious quiet."
+			},
+			{
+				t: "Sit with the others",
+				m: 45, l: -5, a: 10, b: -5,
+				r: "You listen to stories about Chantal's cat. Dull, but you were seen. Good for the 'team spirit'."
+			}
+		]
+	},
+	{
+		id: "lunch_desk",
+		title: "LUNCH: AT YOUR DESK",
+		text: "You stay in the office to avoid people. In front of you lies a sad packed sandwich, already curling slightly at the edges.",
+		opts: [
+			{
+				t: "Watch a series in a tiny window",
+				rep: { "Dr. Wichtig": -5 },
+				m: 60, l: 20, a: -20, b: 10,
+				r: "Finger poised over 'Alt-Tab'. You get through two episodes. Unfortunately the picture is reflected in your glasses when the boss walks in. Trouble!"
+			},
+			{
+				t: "Keep working one-handed",
+				rep: { "Dr. Wichtig": 2 },
+				m: 30, l: -10, a: 20, b: -10,
+				r: "Multitasking. You close tickets with your right hand and eat with your left. The boss nods approvingly on his way past. Your keyboard now crunches with crumbs."
+			}
+		]
+	},
+	{
+		id: "lunch_vegan",
+		title: "LUNCH: VEGAN DAY",
+		text: "The canteen is serving nothing but lumps of tofu in house sauce. There is a conspicuous quiet at the tables, and the mood is tipping towards hostile.",
+		opts: [
+			{ t: "Run to the Döner place", m: 45, l: 5, a: -20, b: 5, r: "You come back reeking of garlic. You are happy; your colleagues wrinkle their noses." },
+			{ t: "Eat it and complain", m: 45, l: 0, a: 15, b: 0, r: "Nothing bonds a team like complaining together." }
+		]
+	},
+	{
+		id: "lunch_client_emergency",
+		title: "LUNCH: THE BOSS ALARM",
+		text: "You are just unwrapping your sandwich when the boss appears in front of you, out of breath. 'Miller! Client Schmitz has a total internet outage! You will have to go there IMMEDIATELY! This is an emergency! You can eat your sandwich in the car!'",
+		opts: [
+			{
+				t: "Insist on your statutory break",
+				rep: { "Dr. Wichtig": -10 },
+				m: 30, l: 5, a: -10, b: 15,
+				r: "You bite into your sandwich with great deliberation and tap your watch. The boss goes red, snorts and storms off to do it himself. Your lunch suddenly tastes of victory."
+			},
+			{
+				t: "Grab the sandwich and race off",
+				rep: { "Dr. Wichtig": 10 },
+				m: 60, l: -20, a: 25, b: -15,
+				r: "You force the sandwich down at 180 on the motorway. At the client's, the plug was loose. You get heartburn; the boss celebrates your heroic dedication."
+			}
+		]
+	},
+	{
+		id: "lunch_pizza",
+		title: "LUNCH: THE PIZZA DEBATE",
+		text: "The team wants to order pizza. The debate has been running for 20 minutes. 'Pineapple does not belong on it!' versus 'I am lactose intolerant!'. Your break drains away.",
+		opts: [
+			{ t: "Drop out and eat your sandwich", m: 30, l: 10, a: -10, b: 0, r: "You eat your dry sandwich while the others are still arguing. Peaceful, and a little sad." },
+			{ t: "'SALAMI FOR EVERYONE!'", m: 45, l: -5, a: 10, b: 0, r: "You have ordered. The vegans hate you and you are full. The steady grumbling in the background gets to you anyway." }
+		]
+	},
+	{
+		id: "lunch_business",
+		title: "LUNCH: THE BUSINESS LUNCH",
+		text: "An oily sales rep invites you out to lunch. There is expensive sushi. What he actually wants is to sell you a wildly overpriced firewall solution.",
+		opts: [
+			{ t: "Take the free meal", next: "path_lunch_sushi", m: 90, l: 20, a: -10, b: -5, r: "The sushi was divine. You promised to 'give it some thought' (a lie). Break overrun." },
+			{ t: "Decline politely", m: 30, l: -5, a: 0, b: 5, r: "You stay at your desk. Your integrity is intact. Your stomach is not." }
+		]
+	},
+	{
+		id: "lunch_doener",
+		title: "LUNCH: DÖNER DAY",
+		text: "The Döner shop round the corner is celebrating an anniversary. Döner for €2.50. The queue reaches out onto the street. The smell is persuasive.",
+		opts: [
+			{
+				t: "Go to the bakery instead",
+				m: 20, l: 5, a: 5, b: 5,
+				r: "You fetch a dry cheese roll. It tastes of cardboard and responsibility. Envy of the Döner eaters gnaws at you."
+			},
+			{
+				t: "Join the queue! €2.50 is unbeatable!",
+				m: 50, l: 10, a: 15, b: 5,
+				r: "You waited 40 minutes and inhaled the lot in 5. You come back late, breathing garlic. But you saved money!"
+			}
+		]
+	},
+	{
+		id: "lunch_sleep",
+		title: "LUNCH: FOOD COMA",
+		text: "You have eaten too much. The 'schnitzel coma' sets in. Your eyelids weigh tonnes. The server room is nice and cool...",
+		opts: [
+			{ t: "Power nap in the server room", m: 45, l: 25, a: -20, b: 10, r: "You fell asleep! You wake up with a keyboard imprint on your face. Hopefully nobody saw you." },
+			{ t: "Double espresso", m: 10, l: -5, a: 5, b: 0, r: "The palpitations arrive. You are awake. Your hands are shaking. Productivity: questionable." }
+		]
+	},
+	{
+		id: "lunch_foodtruck",
+		title: "LUNCH: STREET FOOD FESTIVAL",
+		text: "There are food trucks in the car park. It smells of 'pulled jackfruit' and 'artisan burgers'. The prices are high, the queues enormous. Your colleagues call over: 'Coming with us? It's the big thing right now!'",
+		opts: [
+			{
+				t: "Stay in and eat leftovers",
+				m: 10, l: -5, a: 5, b: -5,
+				r: "You eat an old cereal bar from your drawer while the others enjoy themselves outside. You resisted the hype. You are still hungry."
+			},
+			{
+				t: "Get the 'organic burger' for €15",
+				rep: { "Dr. Wichtig": -2 },
+				m: 75, l: 10, a: -10, b: 10,
+				r: "You waited 60 minutes. The burger was tiny and delicious. You come back massively late. The boss taps his watch: 'Was the burger made of gold, Miller?'"
+			},
+			{
+				t: "Take the cheap hot dog stand",
+				m: 20, l: 0, a: 20, b: 0,
+				r: "No queue, only €2. A bargain! After the first bite your stomach starts making threats. The afternoon is going to be... explosive."
+			}
+		]
+	},
+	{
+		id: "lunch_ceo_table",
+		char: "Dr. Wichtig",
+		title: "LUNCH: THE CEO WAVES",
+		text: "You walk into the canteen with your tray (lentil stew). Dr Wichtig waves you over from the 'board table'. 'Miller! Come and sit with me! You and I must have a talk.' Everyone in the room is staring at you.",
+		opts: [
+			{
+				t: "Bring up a pay rise",
+				rep: { "Dr. Wichtig": -15 },
+				m: 45, l: 0, a: 10, b: 50,
+				r: "Very bad idea. He chokes on his prawn. 'Miller, not while we are eating!' The mood turns on the spot. He makes a note of it, and not a kind one."
+			},
+			{
+				t: "Pretend you are getting a call",
+				rep: { "Dr. Wichtig": 2 },
+				m: 5, l: 10, a: -5, b: 5,
+				r: "You hold the phone to your ear: 'Oh, server emergency! Have to run!' You leave with the tray still in your hands. A narrow escape, and he looks offended."
+			},
+			{
+				t: "Sit down and risk the small talk", next: "path_lunch_vorstandstisch",
+				rep: { "Dr. Wichtig": 5 },
+				m: 60, l: -10, a: 20, b: -25,
+				r: "You sweat through your shirt. You laugh at his unfunny jokes. It pays off: he considers you a 'good man' now, and that goodwill carries for weeks. Your food, meanwhile, has gone cold."
+			}
+		]
+	},
+	{
+		id: "lunch_microwave_war",
+		title: "LUNCH: MICROWAVE WAR",
+		text: "Two microwaves are broken, one still works. A queue of 10 people. At the front, someone from Sales is heating up fish (timer: 10 minutes). The stench is spreading. The mood is highly explosive.",
+		opts: [
+			{
+				t: "Escape to the Döner shop",
+				m: 45, l: 10, a: -5, b: 0,
+				r: "You hold your breath and run for it, away from the stench. The Döner outside tastes of freedom (and onions)."
+			},
+			{
+				t: "Just pull the plug",
+				m: 5, l: 5, a: -10, b: 10,
+				r: "You pull the plug on your way past. 'Whoops, must have tripped a fuse.' The fish man swears and can prove nothing. The crowd cheers you quietly. You are the hero of the day."
+			},
+			{
+				t: "Kick up a loud fuss",
+				m: 30, l: 0, a: 25, b: 0,
+				r: "You bellow across the kitchen: 'FISH?! SERIOUSLY?! ARE WE AT THE DOCKS?!' A heated debate breaks out. Your food is still cold."
+			}
+		]
+	},
+	{
+		id: "lunch_jogging",
+		title: "LUNCH: THE RUNNING GROUP",
+		text: "The 'high performers' are lacing up their running shoes. 'All right, Miller? Coming along? 10k on your lunch break! Clears the head for maximum productivity!' They look fit, and slightly manic.",
+		opts: [
+			{
+				t: "Run with them! 10k is nothing!", next: "path_lunch_gelaufen",
+				m: 70, l: -20, a: 30, b: -10,
+				r: "You die. Twice. You come back drenched in sweat with a scarlet face. You can barely type from exhaustion. But they accept you as one of their own now."
+			},
+			{
+				t: "Watch from the window",
+				m: 30, l: 10, a: -10, b: 0,
+				r: "You eat a chocolate bar with relish and watch them suffer outside in the drizzle. This is true relaxation."
+			},
+			{
+				t: "'Sorry, my knee...'",
+				m: 5, l: 5, a: 0, b: 0,
+				r: "The classic. They nod sympathetically, and slightly contemptuously. You shuffle off towards the canteen at your leisure."
+			}
+		]
+	},
+	{
+		id: "lunch_no_money",
+		title: "LUNCH: WALLET LEFT UPSTAIRS",
+		text: "You have loaded up the expensive schnitzel. At the till you reach into your pocket... EMPTY! The wallet is upstairs. The queue behind you is getting restless. The cashier, Ms 'Dragon', drums her fingers.",
+		opts: [
+			{
+				t: "Put the food back",
+				m: 15, l: 0, a: 20, b: 0,
+				r: "You have to carry the schnitzel back while everybody stares. 'Shame! Shame!' You eat dry bread at your desk."
+			},
+			{
+				t: "'I'll fetch it right now!'",
+				m: 20, l: -5, a: 10, b: 0,
+				r: "You run up, get money, run down. Your seat is gone, the schnitzel is cold. Pure stress."
+			},
+			{
+				t: "Tap Kevin the apprentice for cash",
+				m: 10, l: 5, a: -5, b: 0,
+				r: "Kevin is standing behind you. 'Could you just...?' He pays for you, proudly. Now you owe the apprentice one. He will make it count ('Could you just fix my printer?')."
+			}
+		]
+	},
+	{
+		id: "lunch_boring_cake",
+		title: "LUNCH: THE DRY CAKE",
+		text: "Sabine from Accounts herds everybody into the kitchen. 'I have baked! Vegan courgette cake, no sugar!' She expects everyone to sing 'Happy Birthday'. The silence is excruciating.",
+		opts: [
+			{
+				t: "Eat a slice and fake an 'mmm'",
+				m: 20, l: 0, a: 10, b: -5,
+				r: "The cake tastes of cardboard and sadness. Sabine beams: 'Thanks, Miller, you're the only one here with any taste!' You force it down."
+			},
+			{
+				t: "Fake an escape",
+				m: 5, l: 5, a: -5, b: 0,
+				r: "You mumble 'Meeting!' and hurry out. You hear Sabine sigh behind you. A narrow escape."
+			},
+			{
+				t: "'I hate courgette.'",
+				m: 5, l: 0, a: -5, b: 10,
+				r: "Sabine almost starts crying. Your colleagues glare at you. At least you do not have to eat the stuff."
+			}
+		]
+	},
+	{
+		id: "lunch_server_fire",
+		title: "LUNCH: RED ALERT",
+		text: "You have just bitten into your sandwich when the sirens go off. Push notification: 'SERVER ROOM TEMPERATURE CRITICAL! EMERGENCY SHUTDOWN IN 60 SECONDS!' If the server goes down, the company stops.",
+		opts: [
+			{
+				t: "Run for it! The sandwich comes along!",
+				m: 10, l: -20, a: 20, b: -20,
+				r: "You sprint off, sandwich in hand. You kick the door open and throw the window wide. The temperature drops. You have crumbs in your beard and the day is saved. The boss nods his approval."
+			},
+			{
+				t: "Stay seated. I am on my break.",
+				m: 30, l: 10, a: -10, b: 80,
+				r: "You carry on chewing with relish. Then the lights go out. Silence. The UPS starts beeping. The boss comes running in: 'MILLER?! WHERE WERE YOU?!' That is going to be a hefty written warning."
+			},
+			{
+				t: "Send Kevin the apprentice",
+				m: 5, l: 5, a: 10, b: 10,
+				r: "You ring Kevin: 'Run, lad!'. He stumbles in, panics and pulls the wrong plug. Chaos breaks out. Officially, though, it was not you."
+			}
+		]
+	},
+	{
+		id: "lunch_merger_rumor",
+		title: "LUNCH: THE RUMOUR MILL EXPLODES",
+		text: "There is panic in the canteen. Somebody found 'secret files' in the photocopier. The company is supposedly being sold to a Chinese conglomerate tomorrow. Everyone is shaking for their jobs. 'Are we all getting sacked?!'",
+		opts: [
+			{
+				t: "Corner the boss at the counter",
+				rep: { "Dr. Wichtig": 2 },
+				m: 10, l: 0, a: 0, b: 10,
+				r: "You back the boss into the corner between the salad and the soup. He laughs nervously: 'No comment.' Aha! The silence confirms everything!"
+			},
+			{
+				t: "Call out: 'I'm already learning Mandarin!'",
+				rep: { "Dr. Wichtig": -5 },
+				m: 30, l: 10, a: -10, b: 20,
+				r: "You tell wild horror stories about labour camps. Your colleagues are close to tears. The chaos is glorious. Productivity for the afternoon: zero. The boss is furious."
+			},
+			{
+				t: "'It's all just rumours.'",
+				m: 30, l: -5, a: 10, b: -5,
+				r: "You play the rock in the surf: 'That was probably just a misprint.' People calm down a little. Dull, but responsible."
+			}
+		]
+	},
+	{
+		id: "lunch_schnitzel_gate",
+		title: "LUNCH: THE LAST SCHNITZEL",
+		text: "It is 'Schnitzel Thursday'. The sacred tradition. You are at the serving hatch. There is exactly ONE schnitzel left. You reach for it... at the same moment as sales manager 'Muscle Markus'. He glares at you.",
+		opts: [
+			{
+				t: "Back down and take the salad",
+				m: 10, l: 0, a: 20, b: 0,
+				r: "You pull your hand back, nervously. Markus laughs in triumph: 'Victim!' You grind through dry leaves without enthusiasm and hate your life. Your anger boils."
+			},
+			{
+				t: "'I was first!'",
+				m: 20, l: -5, a: 10, b: 5,
+				r: "You plant your feet. The canteen lady steps in, exasperated: 'Pipe down, the pair of you! I'm cutting it in half!' You get half a schnitzel. A grubby partial victory."
+			},
+			{
+				t: "Cough on the schnitzel 'by accident'",
+				m: 5, l: 5, a: -5, b: 20,
+				r: "You cough loudly and wetly straight onto the breadcrumbs. Markus recoils in disgust: 'Revolting, keep the muck!' You have the schnitzel. You are also patient zero in everyone's mind now."
+			}
+		]
+	},
+	{
+		id: "lunch_leftovers",
+		title: "LUNCH: THE BATTLE OF THE LEFTOVERS",
+		text: "The secretary calls out: 'There are canapés left over from the board meeting! In Room 302!' That is the signal. The entire workforce charges off like a zombie apocalypse. Free salmon canapés!",
+		opts: [
+			{
+				t: "Run with them! Elbows out!",
+				m: 15, l: -5, a: -10, b: 0,
+				r: "You throw yourself bodily into the scrum. You come away with three salmon rolls and a muffin. A complete success!"
+			},
+			{
+				t: "Go later. I am not an animal.",
+				m: 10, l: 0, a: 10, b: 0,
+				r: "You stroll over once the mob has gone. All that is left is a half-eaten cucumber sandwich and crumbs. Well. Life punishes those who come late."
+			},
+			{
+				t: "Use the chaos and steal the good coffee",
+				m: 5, l: 0, a: -5, b: 0,
+				r: "While everybody fights over the food, you calmly help yourself to the expensive jug milk and the premium coffee. Strategically sound."
+			}
+		]
+	},
+	{
+		id: "lunch_rooftop",
+		title: "LUNCH: THE SECRET ROOF",
+		text: "You know a trick for getting onto the flat roof. A view across the grey city. Nobody bothers you. The wind is cold, though.",
+		opts: [
+			{ t: "Enjoy the view", m: 60, l: 20, a: -30, b: 0, r: "You almost lose track of time. You come back 10 minutes late and relaxed." },
+			{ t: "Throw paper aeroplanes", req: "manual", m: 30, l: 10, a: -10, b: 0, r: "You tear pages out of the manual and fold them into gliders. They sail down onto the boss's parking space. Risky, and funny." },
+			{ t: "Energy drink in the sun", rem: "energy", m: 30, l: 0, a: -20, b: 0, r: "Caffeine and UV. You are vibrating with energy." }
+		]
+	},
+	{
+		id: "lunch_tupper_gamble",
+		title: "LUNCH: TUPPERWARE ROULETTE",
+		text: "There are 5 identical unlabelled tubs in the kitchen. Your colleagues are playing 'Russian roulette'. One holds excellent lasagne. One holds mould from 2021.",
+		opts: [
+			{ t: "Do not play", m: 10, l: 0, a: 5, b: 0, r: "You stick with the dry sandwich you brought. No risk, no glory, no mould." },
+			{ t: "Open tub 1", m: 30, l: 0, a: -10, b: 0, r: "Jackpot! Lasagne! The day is saved." },
+			{ t: "Open tub 3", m: 45, l: -20, a: 30, b: 0, r: "It was the mould. You spend the break retching in the toilets. Saved: €3. Lost: the afternoon." }
+		]
+	},
+	{
+		id: "lunch_fancy_restaurant",
+		title: "LUNCH: THE POSH ITALIAN",
+		text: "Your colleagues want to go to 'Il Prezzo', the upmarket Italian. A pizza costs €25. Everyone looks at you expectantly: 'Coming, or are you skint?'",
+		opts: [
+			{
+				t: "Slap the 'Black Card' on the table",
+				req: "black_card",
+				m: 90, l: 50, a: -50, b: -20,
+				r: "You casually pay for the ENTIRE TABLE with the prince's card. Your colleagues nearly drop to their knees. As of today you are the king of the office.",
+				next: "prince_active"
+			},
+			{
+				t: "'Too expensive for dough.'",
+				m: 30, l: 5, a: -5, b: 0,
+				r: "You get a Döner instead. Better looking. And filling. And it does not cost €25."
+			},
+			{
+				t: "Go along and order only water",
+				m: 60, l: -5, a: 10, b: 0,
+				r: "You sip a glass of tap water for 60 minutes while the others feast on truffle pasta. Utterly humiliating."
+			}
+		]
+	},
+	{
+		id: "lunch_sleep_car",
+		title: "LUNCH: SLEEPING IN THE CAR",
+		text: "You sneak into the underground car park like a criminal. Your car is your fortress. You put the seat back. Silence at last, only the distant hum of the ventilation.",
+		opts: [
+			{
+				t: "Sleep without an alarm",
+				rep: { "Dr. Wichtig": -10 },
+				m: 90, l: 30, a: -30, b: 20,
+				r: "You fall into a coma. You wake up completely fogged. What year is it? You look at the clock: SH*T! You were gone for 90 minutes. The boss has been looking for you."
+			},
+			{
+				t: "Leave the engine running for the air conditioning",
+				m: 45, l: 20, a: -10, b: 0,
+				r: "Beautifully cool. You listen to the radio quietly and relax. Unfortunately the lights are sucking at the battery. Here's hoping the thing still starts this evening."
+			},
+			{
+				t: "Set an alarm for 20 minutes",
+				m: 30, l: 15, a: -10, b: 0,
+				r: "The perfect power nap. You wake up exactly on time, wipe the drool from the corner of your mouth and go back to work refreshed."
+			}
+		]
+	},
+	{
+		id: "lunch_gym",
+		title: "LUNCH: CORPORATE FITNESS",
+		text: "HR has set up a 'pop-up gym' in the conference room. 'Sweat for success'. The trainer is already shouting.",
+		opts: [
+			{ t: "Sabotage it", m: 10, l: 5, a: -5, b: 10, r: "You turn the heating up to 30 degrees. The session is called off. Thank you, hero." },
+			{ t: "Take part", rep: { "Dr. Wichtig": 2 }, m: 45, l: -10, a: 10, b: -5, r: "You did press-ups in a suit. You now smell like a polecat. The boss saw it, though." },
+			{ t: "Watch and eat a doughnut", rem: "donut", m: 30, l: 10, a: -10, b: 5, r: "You eat a doughnut while your colleagues suffer. HR gives you a look." }
+		]
+	},
+	{
+		id: "lunch_supermarket",
+		title: "LUNCH: SUPERMARKET COMBAT",
+		text: "Just a quick roll from the supermarket - what could possibly happen? Pensioner invasion! All three tills are jammed with people determined to pay the exact amount ('Hold on, I have it in coins!').",
+		opts: [
+			{
+				t: "'MAKE WAY! I'M A DOCTOR!'",
+				m: 15, l: 5, a: -5, b: 10,
+				r: "The crowd parts reverently like the Red Sea. You scan your Mettbrötchen like a cardiac surgeon. Behind you, a pensioner shakes her head very slowly."
+			},
+			{
+				t: "Dump the shopping on a shelf and flee",
+				m: 10, l: 0, a: 10, b: 0,
+				r: "You leave the banana among the shampoos and run for the door. Hunger is bad. This queue is worse."
+			},
+			{
+				t: "Queue up properly and wait",
+				m: 40, l: -5, a: 20, b: 0,
+				r: "The lady in front of you pays €4.99 entirely in 1 and 2 cent coins. You stare at the clock. Getting back in time will be tight, and the roll tastes of pure rage."
+			}
+		]
+	},
+	{
+		id: "lunch_canteen_crash",
+		title: "LUNCH: SYSTEM FAILURE",
+		text: "You are at the front of the canteen queue with your tray. The till crashes. Windows updates are installing (1 of 45). The queue behind you grumbles. The cashier looks at you pleadingly: 'You're from IT, though, aren't you?'",
+		opts: [
+			{
+				t: "Wait your turn",
+				m: 45, l: 10, a: 20, b: 0,
+				r: "You stare at the progress bar for 45 minutes while your food goes cold. The colleagues behind you hold YOU responsible for the update. The mood is at rock bottom."
+			},
+			{
+				t: "Abandon the tray and go to the bakery",
+				m: 25, l: 0, a: 5, b: 5,
+				r: "You leave, exasperated. 25 minutes of walking and queueing at the bakery for a dry cheese roll. At least you escaped the update."
+			},
+			{
+				t: "Rebuild the till",
+				rep: { "Dr. Wichtig": 5 },
+				m: 40, l: -15, a: 15, b: -10,
+				r: "You spend 40 minutes of your break debugging the till system. Your food is free and you have effectively worked straight through. Your break is gone."
+			}
+		]
+	},
+	{
+		id: "lunch_microwave_queue",
+		title: "LUNCH: MICROWAVE QUEUE",
+		text: "Your pasta is cold, and only one of the three microwaves still works. There is a queue of 4 people in front of it. At the head of it, the sales manager is patiently defrosting an entirely frozen chicken.",
+		opts: [
+			{
+				t: "Wait, grinding your teeth",
+				m: 35, l: 10, a: 25, b: 0,
+				r: "You stand in the corridor for 35 minutes. By the time it is your turn you have exactly 3 minutes to force down the boiling hot pasta. Awful."
+			},
+			{
+				t: "Bribe your way forward with the doughnut",
+				rem: "donut",
+				m: 15, l: 5, a: -10, b: 0,
+				r: "You hand the bloke in front of you the doughnut. He lets you through. 15 minutes later you are fed and relaxed. Here's to corruption!"
+			},
+			{
+				t: "Eat the pasta stone cold",
+				m: 10, l: 0, a: 30, b: 0,
+				r: "You have no time for this nonsense. You eat the pasta straight out of the fridge. It takes 10 minutes and leaves you queasy and thoroughly aggressive."
+			}
+		]
+	},
+	{
+		id: "lunch_smalltalk_hell",
+		title: "LUNCH: THE TALKER",
+		text: "You have found yourself a quiet corner in the kitchen. Then Sabine (HR) sits down with you, uninvited. 'Oh, good, just the person! I absolutely have to tell you about my yoga retreat in Bali!' She takes a deep breath.",
+		opts: [
+			{
+				t: "Headphones on and nod",
+				req: "headphones",
+				m: 30, l: 20, a: -10, b: 0,
+				r: "You listen to gentle death metal while Sabine moves her mouth silently for 30 minutes. You eat in peace and she thinks you are a wonderful listener."
+			},
+			{
+				t: "'I feel sick!'",
+				m: 5, l: 0, a: 20, b: 10,
+				r: "You run to the toilets after 5 minutes and leave your food behind. Your break is over. You are hungry and angry with yourself."
+			},
+			{
+				t: "Listen politely",
+				rep: { "Gabi": 5 },
+				m: 40, l: 15, a: 15, b: 0,
+				r: "You nod for 40 minutes. You now know the names of every stray dog on Bali and their spirit animals. Your brain is mush."
+			}
+		]
+	},
+	{
+		id: "lunch_slow_delivery",
+		title: "LUNCH: LIEFERANDO DRAMA",
+		text: "You have ordered a pizza. The app says: '2 minutes away'. The driver's GPS dot has been circling the block for 20 minutes. He cannot find the entrance.",
+		opts: [
+			{
+				t: "Wait at the window out of sheer stubbornness",
+				m: 45, l: 10, a: 20, b: 0,
+				r: "After a full 45 minutes he finally turns up. You spent your entire break waiting and swearing out of the window. Your stomach is growling ominously."
+			},
+			{
+				t: "Cancel the order and eat a snack",
+				m: 10, l: 5, a: 25, b: 0,
+				r: "You cancel, get a chocolate bar from the machine and carry on working. You only lost 10 minutes; the hunger makes you unbearable until clocking-off time."
+			},
+			{
+				t: "Go outside and find him",
+				m: 30, l: -10, a: 15, b: 0,
+				r: "You wander through the drizzle for 30 minutes until you find him two streets away. The pizza is lukewarm and you are completely out of breath. Worst break ever."
+			}
+		]
+	},
+	{
+		id: "lunch_boss_table",
+		title: "LUNCH: THE BOSS'S TABLE",
+		text: "The canteen is packed. The only free seat is directly opposite Dr Wichtig. He waves you over: 'Miller! Come over here and keep me company!'",
+		opts: [
+			{
+				t: "Turn round and eat in the server room",
+				rep: { "Dr. Wichtig": -10 },
+				m: 25, l: 15, a: -5, b: 15,
+				r: "You act as though you had not seen him. You hide in the dark server room for 25 minutes. Peaceful; the boss noticed your escape precisely."
+			},
+			{
+				t: "Sit down and endure the mentoring",
+				rep: { "Dr. Wichtig": 15 },
+				m: 45, l: -10, a: 20, b: -20,
+				r: "You sit bolt upright for 45 minutes while he tells you about his triumphs at golf. Your food sits in your stomach, undigested. Pure stress, and good for the career."
+			},
+			{
+				t: "Bolt your food and escape",
+				rep: { "Dr. Wichtig": -5 },
+				m: 15, l: 0, a: 25, b: 5,
+				r: "You inhale your schnitzel in record time. 'Got to see to the server, chief!' He looks at your empty plates, puzzled. You have heartburn for the rest of the day."
+			}
+		]
+	},
+	{
+		id: "lunch_mandatory_walk",
+		title: "LUNCH: THE COMPULSORY LAP",
+		text: "You are about to take a bite when the agile project lead grabs your arm. 'Right then, Miller, you have sat down long enough! We are doing the 'Healthy Brain Walk' round the block! Come along, fresh air makes you productive!'",
+		opts: [
+			{
+				t: "Give in to the peer pressure and go",
+				m: 40, l: -15, a: 15, b: -5,
+				r: "You march through the industrial estate for 40 minutes. You come back sweaty, with blisters, and hungrier than before. The team loves you for it."
+			},
+			{
+				t: "Peel off halfway",
+				m: 20, l: 10, a: -5, b: 5,
+				r: "The moment he looks away, you slip off towards the Döner shop. 20 minutes later you are sitting on a bench with hot food. Here's hoping he does not notice you are missing."
+			},
+			{
+				t: "Refuse, aggressively",
+				m: 5, l: 0, a: 10, b: 15,
+				r: "You pull free. 'I am not paid to go for walks!' He calls you a 'drag on the corporate culture' on the intranet. You are back at your desk within 5 minutes."
+			}
+		]
+	},
+	{
+		id: "lunch_throat_singing",
+		title: "LUNCH: A CULTURAL BREAK",
+		text: "HR has come up with something special for the 'Diversity Lunch'. In the middle of the canteen sits a Mongolian throat-singing band, droning extremely loudly. The tables are vibrating. Nobody dares say anything.",
+		opts: [
+			{
+				t: "Just drone along",
+				m: 45, l: -10, a: -15, b: 15,
+				r: "You close your eyes and join the deep 'Ooooommmm'. The vibrations loosen the knots in your back. The Sales lot stare at you, disturbed. You could not care less. You are one with the server."
+			},
+			{
+				t: "Leave the room at speed",
+				m: 30, l: 5, a: 10, b: 0,
+				r: "This is simply too much for a Tuesday lunchtime. You turn on your heel, buy a dry cheese roll at the kiosk and eat it shivering in the car park. At least you have absolute quiet out there."
+			},
+			{
+				t: "Put on the noise-cancelling headphones",
+				req: "headphones",
+				m: 30, l: -15, a: -10, b: 0,
+				r: "You press the button and the world falls silent. All you can see is four wildly gesticulating men in traditional dress while you chew your pasta undisturbed."
+			}
+		]
+	},
+	{
+		id: "lunch_chili_war",
+		title: "LUNCH: THE FIGHT FOR THE CHILLI",
+		text: "The canteen is serving the legendary chilli con carne. There is one ladleful left in the pot. Sales manager Markus is standing next to you, growling: 'I closed three deals today. I need this.'",
+		opts: [
+			{
+				t: "Shove him aside and take it",
+				rep: { "Markus": -15 },
+				m: 30, l: -10, a: 5, b: 5,
+				r: "IT priority beats Sales! You take the last ladleful without a shred of remorse. The chilli is heavenly and warms your soul. Markus watches you chew, eyes narrowed, full of hate. It was worth it."
+			},
+			{
+				t: "Unwrap your own sandwich",
+				rem: "sandwich",
+				m: 30, l: -15, a: -5, b: 0,
+				r: "'Go on, Markus. You look pale.' You open your backpack and bite into your own, perfect pastrami sandwich. He is completely thrown by the generosity while you chew on cloud nine."
+			},
+			{
+				t: "Sneeze very loudly over the pot",
+				m: 20, l: 0, a: -5, b: 15,
+				r: "'Haaaa-tchoo!' You fake a massive, wet sneeze directly over the pot. Markus recoils in disgust and loses his appetite. The chilli is all yours, and HR will certainly hear about the incident."
+			}
+		]
+	},
+	{
+		id: "lunch_fish_microwave",
+		title: "LUNCH: BIOLOGICAL WEAPON",
+		text: "Halfway to the microwave you walk into a wall of stench. Kevin the apprentice is reheating yesterday's cod. The smell genuinely stings the eyes.",
+		opts: [
+			{
+				t: "Pull the microwave's plug",
+				rep: { "Kevin": -10 },
+				m: 30, l: -5, a: 5, b: 0,
+				r: "You walk over without a word and pull the plug. 'Fish is a sackable offence, Kevin. Learn the unwritten rules.' You eat your own food cold today, but at least you are not breathing that cloud."
+			},
+			{
+				t: "Leave the building, retching",
+				m: 45, l: 0, a: 10, b: 0,
+				r: "The stench triggers your escape reflex. You storm out of the building and buy a wildly overpriced Döner from the place round the corner. It costs money and time and saves you from genuine trauma."
+			},
+			{
+				t: "Ventilate with the fire extinguisher",
+				req: "fire_ext",
+				m: 10, l: 0, a: -5, b: 10,
+				r: "HISS! One short, hard blast of CO2 into the kitchen drives out the biting fish smell and Kevin with it, coughing, into the corridor. Undeniably aggressive, and absolutely effective for the air quality."
+			}
+		]
+	},
+	{
+		id: "lunch_tupperware",
+		title: "LUNCH: THE RELIC",
+		text: "Right at the back of the fridge stands an unlabelled tub. The contents are unidentifiable, greyish-green, extremely swollen and apparently moving very slightly. An ecosystem in its own right.",
+		opts: [
+			{
+				t: "Seal it with duct tape",
+				req: "tape",
+				m: 15, l: -5, a: 0, b: 5,
+				r: "You get out your faithful roll of duct tape and wrap three thick layers around the tub as a precaution, so it cannot burst. You feel like a bomb disposal officer. The problem is preserved for posterity."
+			},
+			{
+				t: "Open the lid, bravely",
+				m: 30, l: 10, a: 15, b: 10,
+				r: "PFFFFT! A foul, sour overpressure hisses out into the room. You are immediately and violently unwell, your stomach turns and your entire lunch break is finished. You need to sit by an open window, urgently."
+			},
+			{
+				t: "Summon Egon with a priority ticket",
+				rep: { "Egon": 5 },
+				m: 30, l: -10, a: -5, b: 0,
+				r: "This is a case for facility management. Egon arrives in heavy work gloves. He seizes the cursed thing and disposes of it in the hazardous waste, swearing throughout. A genuine team effort that saves the department."
+			}
+		]
+	},
+	{
+		id: "lunch_kicker_bros",
+		title: "LUNCH: THE ALPHA TOURNAMENT",
+		text: "You want to sit in peace, but the Sales bros drag you over to the table football. 'Come on, IT! Show us whether you've got analogue reflexes too!' They grin down at you.",
+		opts: [
+			{
+				t: "Pocket the ball and walk away",
+				m: 15, l: -5, a: 10, b: 5,
+				r: "You do not say a single word, reach into the pitch mid-game, take the ball, put it in your pocket and stroll off to eat your sandwich. Ultimate dominance. They stare after you, speechless."
+			},
+			{
+				t: "Down the energy drink and destroy them",
+				rem: "energy",
+				m: 30, l: -15, a: -10, b: 5,
+				r: "The taurine hits hard. Your reactions multiply tenfold. You play like a god unleashed and destroy them 10-0. They stand there in silence, humiliated. The honour of IT shines brighter than ever."
+			},
+			{
+				t: "Play extremely badly on purpose",
+				m: 30, l: -5, a: 5, b: 0,
+				r: "You have absolutely no appetite for this contest. You deliberately score three embarrassing own goals. They lose all respect for you and all interest in you on the spot. They leave you alone for the rest of the year."
+			}
+		]
+	},
+	{
+		id: "lunch_mettigel",
+		title: "LUNCH: RAW DANGER",
+		text: "It is Ms Elster's birthday, and she has put a traditional 'Mettigel' out in the unrefrigerated kitchenette. It is high summer. It has been standing there for 4 hours.",
+		opts: [
+			{
+				t: "Eat chocolate from your own supply instead",
+				rem: "chocolate",
+				m: 30, l: -15, a: -5, b: 0,
+				r: "You are not risking your life for an office snack. You ignore the ticking biological time bomb and reach for your own, shelf-stable sugar reserves. Better safe than sorry."
+			},
+			{
+				t: "Eat a large piece of it",
+				m: 45, l: 20, a: 10, b: 0,
+				r: "The meat tastes surprisingly good. It takes under 20 minutes to put you flat on the floor of the company toilets, drenched in sweat, begging for release."
+			},
+			{
+				t: "Throw the hedgehog in the bin",
+				rep: { "Frau Elster": -20 },
+				m: 15, l: 0, a: 5, b: 15,
+				r: "You save the entire company from a certain wave of salmonella and sink the meat. Ms Elster catches you at it and weeps bitter tears, because 'nobody in this building appreciates her traditional handiwork'."
+			}
+		]
+	},
+	{
+		id: "lunch_nap_attack",
+		title: "LUNCH: INTERRUPTED SLEEP",
+		text: "You are lying on the sofa in the dark break room, almost asleep. The door flies open. Chantal turns on the brutally bright light and starts recording voice messages at volume.",
+		opts: [
+			{
+				t: "Get up and growl at her",
+				rep: { "Chantal": -10 },
+				m: 15, l: 5, a: 15, b: 0,
+				r: "Your pulse goes from nought to a hundred. 'OUT!' you bellow, in the raw, scratchy voice of the sleep-deprived. She drops her phone and runs. Your territory is defended; you are now wide awake and furious."
+			},
+			{
+				t: "Throw the stress ball at the light switch",
+				req: "stressball",
+				m: 30, l: -10, a: -5, b: 5,
+				r: "THWACK! A perfect blind throw. The ball hits the switch and the light goes out. Chantal squeaks in panic and flees the supposed 'poltergeist'. You sink back into sleep, grinning."
+			},
+			{
+				t: "Build a sleep mask out of duct tape",
+				req: "tape",
+				m: 45, l: -15, a: 5, b: 0,
+				r: "Arguing only costs energy. You tear off a strip and stick it over your eyes as a mask. Chantal giggles and takes a photo of you for Instagram, and it bothers you not at all - you can carry on sleeping."
+			}
+		]
+	},
+	{
+		id: "lunch_teambuilding_pizza",
+		title: "LUNCH: THE PIZZA TRAP",
+		text: "The CEO has ordered pizza! It is a trap: while everyone is chewing, he switches on the projector. 'Let us talk about the new KPIs in the ticket system!'",
+		opts: [
+			{
+				t: "Argue against the KPIs with your mouth full",
+				rep: { "Dr. Wichtig": 10 },
+				m: 60, l: 10, a: 10, b: 5,
+				r: "Something in you snaps. Mouth full, you start tearing into the new rules. Your colleagues roll their eyes. Your restful break is gone; the CEO appreciates your 'passionate commitment'."
+			},
+			{
+				t: "Open the Windows 95 manual and read",
+				req: "manual",
+				m: 45, l: -10, a: 0, b: -5,
+				r: "You open the great tome and pretend to be studying ancient network protocols. The boss respects this 'self-directed professional development' and leaves you entirely alone with his tiresome questions."
+			},
+			{
+				t: "Grab two slices and escape",
+				m: 15, l: -5, a: 5, b: 10,
+				r: "The hit-and-run! You snatch two large slices of salami pizza and flee to the server room. It costs you on team spirit and it saves your hard-earned free time."
+			}
+		]
+	},
+	{
+		id: "lunch_fridge_thief",
+		title: "LUNCH: THE THIEF",
+		text: "Somebody has been stealing food lately. You have brought in an expensive chocolate pudding and you are afraid to leave it unguarded in the fridge.",
+		opts: [
+			{
+				t: "Stick a false label on it",
+				m: 30, l: -10, a: -5, b: 0,
+				r: "You take a Post-it and write 'Medical stool sample - Dr Wichtig' on it in spidery handwriting. Nobody in the entire building dares so much as look at the thing. Pure psychological warfare."
+			},
+			{
+				t: "Hide and lie in wait for the thief",
+				m: 45, l: 10, a: 10, b: 5,
+				r: "You spend your entire break kneeling behind the door next to the fridge. Your legs go numb and the thief simply does not appear. You sacrificed your precious free time for absolutely nothing."
+			},
+			{
+				t: "Secure the tub with cable ties",
+				req: "zip_ties",
+				m: 30, l: -10, a: 0, b: 0,
+				r: "It is a maximum security wing now. You lash the container shut in every direction. The thief would have to bring loppers to get at it. Your pudding is entirely safe and tastes all the better for it."
+			}
+		]
+	},
+	{
+		id: "lunch_server_zen",
+		title: "LUNCH: THE IT TEMPLE",
+		text: "Two departments are shouting at each other in the corridor. You have no strength left for people. You take your food and go into the cool server room.",
+		opts: [
+			{
+				t: "Sit on the floor and stare into space",
+				m: 30, l: -10, a: -5, b: 0,
+				r: "You do not eat at all. You sit cross-legged on the cool raised floor and stare into the dark. Thirty minutes without a single human voice."
+			},
+			{
+				t: "Untangle cables and meditate",
+				req: "cable",
+				m: 45, l: -15, a: -10, b: 0,
+				r: "While you eat slowly, you arrange the patch cables in the rack, lovingly and with extreme symmetry. The monotonous hum of the fans and the rhythmic blinking of the LEDs heal your broken admin soul, piece by piece."
+			},
+			{
+				t: "Sacrifice a doughnut and relax",
+				rem: "donut",
+				m: 30, l: -15, a: -15, b: 0,
+				r: "Cool, filtered air, the hypnotic rush of heavy machinery and pure, unhealthy sugar in your veins. You have sealed yourself off and arrived in absolute sysadmin heaven."
+			}
+		]
+	},
+	{
+		id: "lunch_cheap_ceo",
+		title: "LUNCH: PROFIT SHARING",
+		text: "The CEO emails: 'Thanks to record revenue, lunch is on the company!' In the canteen there is a single box from McDonald's. That is ONE lukewarm cheeseburger per person. The box is nearly empty.",
+		opts: [
+			{
+				t: "Let Kevin the apprentice go first",
+				rep: { "Kevin": 5 },
+				m: 5, l: 0, a: 10, b: 0,
+				r: "You step back and leave the last of the food to the hungry apprentice. You smile bravely while the bottomless, disrespectful cheek of the wealthy management makes your blood boil."
+			},
+			{
+				t: "Unwrap your gourmet sandwich",
+				rem: "sandwich",
+				m: 30, l: -15, a: -10, b: 0,
+				r: "You withdraw from the scrum, pointedly, and bite into your excellent pastrami sandwich, grinning. While the others squabble over sad leftovers, you have escaped the system in style."
+			},
+			{
+				t: "Snatch the last burger from Markus",
+				rep: { "Markus": -5 },
+				m: 10, l: -5, a: 15, b: 0,
+				r: "Survival of the fittest! You secure the lukewarm patty. It tastes of pure stinginess and disappointment, and at least you won this small, primitive power struggle against the arrogant sales manager."
+			}
+		]
+	},
+	{
+		id: "lunch_sponsorenlauf",
+		title: "LUNCH: THE PARTNERS' BUFFET",
+		text: "A buffet has been set up in the canteen: 'Free for all employees - presented by our new IT services provider!' There is fillet of beef, three kinds of dessert and a display stand carrying the logo of a company that put in a bid last week to replace the internal IT department. Which is to say, to replace you.",
+		opts: [
+			{
+				t: "Walk past the buffet, pointedly",
+				m: 30, l: 0, a: 20, b: -10,
+				r: "You get a roll from the vending machine and eat it visibly next to the display stand. A gesture nobody understands except you - and the sales rep, who understands it perfectly well and avoids you from then on. Hunger and principle are rarely the same thing."
+			},
+			{
+				t: "Draw the sales rep into a technical conversation",
+				m: 60, l: -10, a: 10, b: -15,
+				r: "You ask about migration paths, legacy interfaces and support for line-of-business applications from 2009. After forty minutes he is visibly worn down and you know their weak points. You missed the food entirely. You have ammunition."
+			},
+			{
+				t: "Photograph everything and send it to Ms Elster",
+				m: 20, l: 0, a: -5, b: -20,
+				r: "You document the buffet like a loss adjuster and send the pictures to Accounts with a question about the hospitality threshold. Ms Elster's reply arrives within minutes: 'I will take it from here.' By the afternoon the buffet is being dismantled 'for formal reasons'. The provider has not sold anything yet and already has an enemy."
+			},
+			{
+				t: "Free is free - dig in",
+				m: 45, l: 10, a: -15, b: 30,
+				r: "The fillet is outstanding, and at the precise moment you go back for seconds, the provider's sales rep takes a photograph 'for the record'. It surfaces later in his presentation, slide 12: 'The IT department is already looking forward to working with us.' Dr Wichtig has seen that slide."
+			}
+		]
+	},
+	{
+		id: "lunch_thermomix",
+		title: "LUNCH: THE DEMONSTRATION",
+		text: "Somebody from Admin has brought in an all-in-one cooking machine and is cooking for everybody in the kitchenette. It smells fantastic. There is a catch: the machine is on the only free socket in the kitchen - and the fridge holding a colleague's insulin is on an extension lead that is growing noticeably warm.",
+		opts: [
+			{
+				t: "Sort the power out first, eat afterwards",
+				m: 30, l: -10, a: 5, b: -10,
+				r: "You run an extension cable in from the corridor, put the machine on a circuit of its own and label the fridge's supply. Ten minutes of work in your break - and a plate that is still warm when you finally sit down. Nobody noticed that something just failed to happen."
+			},
+			{
+				t: "Have the demonstration stopped",
+				m: 15, l: 0, a: 30, b: 0,
+				r: "You pull the plug and explain the wiring. Technically unassailable, socially a disaster: twelve hungry people watch their lunch go cold half-cooked, and the woman from Admin packs up without a word. You are right. You eat alone."
+			},
+			{
+				t: "Eat with the others, it will sort itself out",
+				m: 45, l: 15, a: 10, b: 25,
+				r: "The food is excellent. The extension lead gives up at 13:40, the fridge stands dead for two hours without anyone noticing, and the question of why IT did not see this coming is asked by precisely the colleague whose medication was inside it. It turned out all right this time. The sentence 'IT was eating too' stays in the room regardless."
+			}
+		]
+	},
+	{
+		id: "lunch_gruppenfoto",
+		title: "LUNCH: THE GROUP PHOTO",
+		text: "Chantal intercepts you with your plate in your hand: 'We're doing the team photo for the careers page NOW! Everyone's out in the courtyard already!' It is six degrees outside. Your food is warm. Both of those will change over the next twenty minutes.",
+		opts: [
+			{
+				t: "Send Kevin instead, he has more hair",
+				m: 10, l: 10, a: 0, b: 10,
+				r: "Kevin is delighted and ends up in the front row of the final picture, captioned: 'Our IT'. He is in his third month of training. On the careers page he is the face of your department now, and two applications come in addressed to 'Dear Mr Kevin'."
+			},
+			{
+				t: "Put the headphones on and pretend you heard nothing",
+				req: "headphones",
+				m: 5, l: 15, a: -15, b: 5,
+				r: "The oldest trick in the open-plan office, executed with the calm of a professional: eyes on the screen, headphones on, a slight nod to the beat. Chantal waves twice, shrugs and moves on. You eat hot food in peace and nobody can hold anything against you. Only you know that you heard every word."
+			},
+			{
+				t: "Go along and smile",
+				m: 40, l: -5, a: 20, b: -10,
+				r: "Twenty minutes in the courtyard, eighty exposures, because Markus blinks in every one. Your food is cold, your fingers are numb, and in the final picture you are at the back left, half hidden behind Kevin. The caption on the careers page reads: 'A team that sticks together.'"
+			},
+			{
+				t: "Refuse - a break is a break",
+				m: 5, l: 5, a: -10, b: 20,
+				r: "You finish your food in peace. IT is missing from the photo entirely - which nobody notices until Dr Wichtig spots it six weeks later on the finished careers page and asks, in the departmental meeting, whether 'IT does not see itself as part of the team'. The question sounds harmless. It is not."
+			}
+		]
+	},
+
+/* -------------------------------------------------------------------------
+   Multi-day lunches (v5.1). The pool had no chain at all, although lunch is
+   the one thing that happens every single day - which makes it the most
+   natural place for a "yesterday over food". The openers above set the flags,
+   the next midday lives here. Gated in engine_events.triggerLunch, with the
+   same FOLLOWUP_CHANCE the action pools use.
+   ------------------------------------------------------------------------- */
+	{
+		id: "lunch_nach_lauf",
+		reqStory: "path_lunch_gelaufen",
+		reqStoryAge: 1,
+		title: "LUNCH: THE ACHE",
+		text: "Ten kilometres turned out to be considerably further yesterday than they sounded in the invitation. You took the stairs down to the basement sideways this morning. In the canteen the running group is waving at you from a distance, and one of them is holding up two pairs of shoes.",
+		opts: [
+			{ t: "Run with them again", m: 45, l: -10, a: 10, b: 0,
+			  r: "You run again. After four kilometres the pain stops and turns into something else that almost feels good. Back at your desk you sit motionless for half an hour, regretting nothing, and not quite nothing either." },
+			{ t: "Say no and stay seated", m: 30, l: 5, a: -10, b: 0,
+			  r: "You decline without justifying yourself. One of the runners says 'Shame' and even means it. Over your food you realise they are going to ask you every time from now on, and that is not bad news." },
+			{ t: "Ask whether there is a shorter route", m: 35, l: -5, a: -5, b: 0,
+			  r: "There is. Five kilometres, Tuesdays, smaller group, less conversation about metrics. Two people from Accounts have been running it for months, and nobody in the building knew." }
+		]
+	},
+	{
+		id: "lunch_nach_sushi",
+		reqStory: "path_lunch_sushi",
+		reqStoryAge: 1,
+		title: "LUNCH: THE FOLLOW-UP",
+		text: "The sushi was excellent, the firewall solution was not. Today there is an email in the inbox: a summary of yesterday's conversation, three pages, with a quotation attached and one sentence you do not like. 'As discussed.' Nothing was discussed.",
+		opts: [
+			{ t: "Set out plainly what was actually discussed", m: 20, l: -5, a: 5, b: 5,
+			  r: "You reply in four sentences: no requirement, no commitment, no meeting. The answer comes back within minutes and is exceptionally friendly. The quotation remains valid. It will always remain valid." },
+			{ t: "Do not reply", m: 5, l: 10, a: 0, b: 5,
+			  r: "You do not reply. After three days the reminder arrives, after two weeks the phone call, after a month the quotation is sitting in the boss's inbox. 'As discussed' is still in it." },
+			{ t: "Forward the email to Ms Elster", m: 15, l: -5, a: -5, b: 0,
+			  rep: { "Frau Elster": 5 },
+			  r: "Ms Elster reads what was supposedly discussed yesterday and rings him herself. What she says, nobody knows. The rep never gets in touch again, and in hindsight that sushi was the most expensive meal you have ever had for free." }
+		]
+	},
+	{
+		id: "lunch_nach_vorstand",
+		reqStory: "path_lunch_vorstandstisch",
+		reqStoryAge: 1,
+		title: "LUNCH: THE SEAT IS FREE",
+		text: "You arrive at the counter, take a tray, and see that there is a free chair at the board table. Dr Wichtig does not look up, but the chair stands a little way out, the way a chair is pulled out when somebody is meant to come. At your old table, Kevin and Chantal have already made room.",
+		opts: [
+			{ t: "Sit with Kevin and Chantal", m: 30, l: 0, a: -10, b: 0,
+			  rep: { "Kevin": 5, "Chantal": 5 },
+			  r: "You sit down with the two of them. It gets loud, it is about nothing at all, and it is the first break in weeks that feels like one. The chair at the board table stays empty and is pushed back in eventually." },
+			{ t: "Take the seat at the board table", m: 35, l: -5, a: 5, b: -10,
+			  rep: { "Dr. Wichtig": 5, "Kevin": -5 },
+			  r: "You sit down. The talk is about figures you can say nothing about, and about people sitting two tables away. Afterwards you know three things you would rather not know, and all three of them concern colleagues." },
+			{ t: "Take the tray and eat at your desk", m: 20, l: 10, a: 5, b: 0,
+			  r: "You take the tray back to your desk. From there you can see both tables through the glass wall, and neither of them misses you. It is a quiet half hour and not a good one." }
+		]
+	},
+];

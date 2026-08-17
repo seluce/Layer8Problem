@@ -1,5 +1,40 @@
 import { DB, ensure } from '../data.js';
+import { t, tf } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
+import { PLAYER_CHAR, charDisplayName } from './chars.js';
+import { findEventById, itemNameValue } from './recipe.js';
+
+/**
+ * One coloured sentence for the morning screen's status line.
+ *
+ * The colour stays in the code, the sentence goes in the dictionary: nobody
+ * translating a line has to edit markup, and the class name stays a whole
+ * literal. Tailwind reads the source - a name put together at runtime is
+ * invisible to it and the colour then disappears without a word of warning.
+ */
+// The morning's status line, as a recipe plus the colour it is drawn in.
+// Used to return an HTML fragment, which meant the sentence was rendered
+// here and frozen in the language it was rendered in; components/
+// MorningView.svelte builds the span itself now and resolves on every paint.
+const moodLine = (cls, recipe) => ({ cls, ...recipe });
+
+/**
+ * The same event, out of the tree that is loaded NOW.
+ *
+ * Both trees carry the same ids - that is the rule the whole bilingual build
+ * rests on (CLAUDE.md) - so an id is enough to find the other language's copy
+ * of the scene a player is looking at.
+ *
+ * A search rather than a type-to-pool table on purpose: the type on screen can
+ * be 'rep' (pool `reputation`), 'sidequest' (pool `sidequests`) or the
+ * synthesised 'boss', and the two idle screens live under DB.special one level
+ * deeper again. A table would have to know all of that and would go quietly
+ * wrong the day a pool is renamed; a scan over a few thousand objects costs
+ * nothing on an event that happens when a player picks a language.
+ *
+ * The depth stops at 3 (DB -> special -> week_idle -> entry), which is as deep
+ * as an event ever sits. That also keeps it out of `nodes` and `opts`.
+ */
 
 export const events = {
 
@@ -151,13 +186,18 @@ export const events = {
      *
      * Until v4.0.0 this sat in the file twice, almost word for word (mail and
      * terminal), which had already led to one copy not knowing a rule.
+     *
+     * `kind` picks the log caption and is an identifier, not a caption itself:
+     * the mail says RECEIVED where the terminal says ITEM, and a caption
+     * handed in from outside would be a display string travelling through the
+     * engine - which is how the German edition used to be the only one that
+     * worked.
      */
-    grantItem: function(itemId, logLabel = 'ITEM') {
+    grantItem: function(itemId, kind = 'found') {
         if (!itemId) return;
         const dbItem = DB.items[itemId];
         const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
         const alreadyHas = this.state.inventory.some(i => i.id === itemId);
-        const itemName = dbItem ? dbItem.name : itemId;
 
         // Trophies and permanent tools do not count towards capacity
         const normalCount = this.state.inventory.filter(i => {
@@ -168,13 +208,14 @@ export const events = {
         if (isPermanent && alreadyHas) return;   // still verworfen
 
         if (!isPermanent && normalCount >= 10) {
-            this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
             return;
         }
 
         this.state.inventory.push({ id: itemId, used: false });
         this.addToArchive('items', itemId);
-        this.log(`${logLabel}: ${itemName}`, "text-yellow-400");
+        this.log({ k: kind === 'received' ? 'log.item.received' : 'log.item.found',
+                   v: { item: itemNameValue(itemId) } }, "text-yellow-400");
         if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
             this.animateItemToBackpack(dbItem.img);
         }
@@ -252,23 +293,38 @@ export const events = {
             const p = DB.items[entry.id]?.passive;
             if (!p || p.onChar !== charName) continue;
 
-            if (p.cr) {
-                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.cr));
-                this.showFloatingText('val-cr', p.cr);
+            if (p.b) {
+                this.state.cr = Math.max(0, Math.min(100, this.state.cr + p.b));
+                this.showFloatingText('val-cr', p.b);
             }
-            if (p.al) {
-                this.state.al = Math.max(0, Math.min(100, this.state.al + p.al));
-                this.showFloatingText('val-al', p.al);
+            if (p.a) {
+                this.state.al = Math.max(0, Math.min(100, this.state.al + p.a));
+                this.showFloatingText('val-al', p.a);
             }
-            if (p.fl) {
-                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.fl));
-                this.showFloatingText('val-fl', p.fl);
+            if (p.l) {
+                this.state.fl = Math.max(0, Math.min(100, this.state.fl + p.l));
+                this.showFloatingText('val-fl', p.l);
             }
             // A number floating up on its own looks like a bug. The log line
             // says who caused it, and it is not optional for that reason.
-            this.log(p.log, p.color ?? 'text-slate-300');
+            this.log({ ref: { p: 'items', i: entry.id, path: ['passive', 'log'] } }, p.color ?? 'text-slate-300');
         }
         this.updateUI();
+    },
+
+    /**
+     * Adds to a stat and keeps it in 0..100 immediately.
+     *
+     * The clamp used to live in updateUI() alone. With runes the bars read
+     * state.fl directly and redraw the moment it changes, so a value of 105
+     * was on screen for one frame before updateUI() pulled it back - visible
+     * as a bar that overshoots and then settles. Clamping where the value is
+     * written removes that intermediate state, and protects any path that
+     * changes a stat without calling updateUI() straight after.
+     */
+    addStat: function(key, delta) {
+        if (!delta) return;
+        this.state[key] = Math.max(0, Math.min(100, this.state[key] + delta));
     },
 
     applyReputation: function(rep) {
@@ -302,50 +358,61 @@ export const events = {
         this.state.emailPending = true; // Blockiert checkRandomEmail
         // -------------------------------------------
 
-        // Game logic
-        let message = "";
+        // Game logic. `message` is a RECIPE, not a sentence - see
+        // engine/recipe.js. The mail on screen and the index of the option
+        // inside it are the identity of what was answered, and both are here.
+        const mailId = this.state.email?.id ?? null;
+        const optIndex = opt ? (this.state.email?.opts ?? []).indexOf(opt) : -1;
+        const optRef = (mailId && optIndex > -1)
+            ? (field) => ({ ref: { i: mailId, path: ['opts', optIndex, field] } })
+            : () => null;
+
+        let message = null;
         let color = "";
 
         if(timeout) {
             let penalty = Math.ceil(10 * this.effMult());
-            this.state.cr += penalty;
+            this.addStat('cr', penalty);
             this.state.emailsIgnored++;
-            message = `E-MAIL IGNORIERT! Radar +${penalty}%`;
+            message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";
         } else if(opt) {
             if (opt.ignoreEmail) {
-                // Work out whether a penalty applied, so the log can mention it
-                let penaltyText = opt.c > 0 ? ` Radar +${Math.ceil(opt.c * this.effMult())}%` : "";
-                message = `E-MAIL IGNORIERT!${penaltyText}`;
+                // Two whole sentences instead of a fragment glued onto one:
+                // the penalty does not sit at the end of the sentence in every
+                // language, and half a sentence cannot be reordered.
+                const penalty = opt.b > 0 ? Math.ceil(opt.b * this.effMult()) : 0;
+                message = penalty > 0 ? { k: 'log.email.ignoredRadar', v: { value: penalty } }
+                                      : { k: 'log.email.ignored' };
                 color = "text-red-500 font-bold";
             } else {
-                message = `Gesendet: "${opt.t}"`;
+                message = { k: 'log.email.sent', v: { text: optRef('t') ?? opt.t } };
                 color = "text-blue-400";
             }
 
             let mult = this.effMult();
             
             // Cache the final values for the animation
-            let addedF = opt.f || 0;
+            let addedL = opt.l || 0;
             let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
-            let addedC = opt.c ? Math.ceil(opt.c * mult) : 0;
+            let addedB = opt.b ? Math.ceil(opt.b * mult) : 0;
 
-            if(addedF) this.state.fl += addedF;
-            if(addedA) this.state.al += addedA;
-            if(addedC) this.state.cr += addedC;
+            this.addStat('fl', addedL);
+            this.addStat('al', addedA);
+            this.addStat('cr', addedB);
 
             // --- Floating text for mails ---
-            if (addedF !== 0) this.showFloatingText('val-fl', addedF);
+            if (addedL !== 0) this.showFloatingText('val-fl', addedL);
             if (addedA !== 0) this.showFloatingText('val-al', addedA);
-            if (addedC !== 0) this.showFloatingText('val-cr', addedC);
+            if (addedB !== 0) this.showFloatingText('val-cr', addedB);
             // --------------------------------------
-            
+
             // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
-            
-            this.triggerShake(addedA, addedC);
 
-            this.grantItem(opt.loot, 'ERHALTEN');
+            this.triggerShake(addedA, addedB);
+
+            this.grantItem(opt.loot, 'received');
 
             // 2. TIME LOGIC (opt.m)
             if (opt.m) {
@@ -359,10 +426,13 @@ export const events = {
 
             // 4. TEXT LOGIC (opt.r)
             if (opt.r) {
+                const rRef = optRef('r');
                 if (opt.ignoreEmail) {
-                    setTimeout(() => this.log(`${opt.r}`, "text-slate-500 italic"), 500);
+                    setTimeout(() => this.log(rRef ?? { msg: String(opt.r) },
+                                              "text-slate-500 italic"), 500);
                 } else {
-                    setTimeout(() => this.log(`Re: ${opt.r}`, "text-slate-400 italic"), 500);
+                    setTimeout(() => this.log({ k: 'log.email.reply', v: { text: rRef ?? opt.r } },
+                                              "text-slate-400 italic"), 500);
                 }
             }
 
@@ -389,7 +459,7 @@ export const events = {
         }
         // ----------------------------------------------
         
-        this.log(message, color);
+        if (message) this.log(message, color);
         this.updateUI();
         if (this.state.pendingEnd) this.finishGame();
     },
@@ -410,7 +480,7 @@ export const events = {
 				tutorial.hidePointer();
                 this.renderTerminal(tutEvent, type);
             } else {
-                this.log("H.A.L.G.E.R.D.: Diese Aktion ist in der aktuellen Simulationsphase nicht vorgesehen.", "text-red-500");
+                this.log({ k: 'log.halgerd.notInPhase' }, "text-red-500");
             }
             return; // Cancel the normal trigger!
         }
@@ -431,7 +501,7 @@ export const events = {
             try {
                 await ensure(poolName, 'bossfights', 'reputation');
             } catch (err) {
-                this.log("H.A.L.G.E.R.D.: Daten konnten nicht geladen werden. Bitte erneut versuchen.", "text-red-500");
+                this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
                 return;
             } finally {
                 this.state.isLoadingPool = false;
@@ -503,7 +573,8 @@ export const events = {
                 }
                 
                 if (intervention) {
-                    this.log(`Begegnung: ${intervention.title}`, "text-yellow-400");
+                    this.log({ k: 'log.encounter',
+                   v: { title: { ref: { i: intervention.id, path: ['title'] } } } }, "text-yellow-400");
                     
                     // Rendered as type 'rep' for the golden styling
                     this.renderTerminal(intervention, 'rep'); 
@@ -613,7 +684,8 @@ export const events = {
     },
 
     resolveBossFail: function(failData) {
-        this.resolveTerminal(failData, 'boss');
+        this.resolveTerminal(failData, 'boss',
+            this.state.currentEventId ? { ref: { i: this.state.currentEventId, path: ['fail', 'r'] } } : null);
     },
     
     handleSideQuest: function() {
@@ -634,7 +706,7 @@ export const events = {
                 this.renderTerminal(this.weekIdleEvent('sidequest'), 'sidequest');
                 return;
             }
-            this.log("Gerade nichts los.");
+            this.log({ k: 'log.nothingUp' });
             return;
         }
 
@@ -651,7 +723,7 @@ export const events = {
 
             // Show the notification
             this.state.phone.notification = true;
-            this.log("Handy: " + ev.title);
+            this.log({ k: 'log.phone', v: { text: { ref: { i: ev.id, path: ['title'] } } } });
             
             // --- show the phone and scroll to it ---
             this.updatePhoneVisibility();
@@ -702,28 +774,123 @@ export const events = {
         const node = ev.nodes[nodeId];
         if (!node) { console.error("Node not found:", nodeId); return; }
 
-        // Node char convention, mirrored from the phone (EVENTS.md, 9):
-        // a node's own char beats the event char, char: null forces none.
-        // This is what lets one meeting chain switch speakers mid-dialogue.
-        const charName = ('char' in node) ? node.char : ev.char;
+        // Which node is on screen. currentChainEvent alone does not say, and
+        // relocaliseScene() has to repaint exactly this one after a language
+        // switch. Runtime only: saveDay() bails while an event is open, so it
+        // never reaches a save file and needs no migration.
+        this.state.currentChainNode = nodeId;
+
+        // Node char convention (EVENTS.md, 4): a node's own char beats the
+        // event char, char: null forces none. This is what lets one meeting
+        // chain switch speakers mid-dialogue - and in the stock the meetings
+        // are the only pool that uses it.
+        const charName = charDisplayName(('char' in node) ? node.char : ev.char);
 
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || "Anruf", node.text, node.opts, true, charName, ev.nodes);
+        this.setTerminalEvent(type, ev.title || t('event.title.call'), node.text, node.opts, true, charName, ev.nodes);
     },
 
     // 2. OLD SYSTEM (simple events)
     // Hands the event to the terminal component, which renders it.
     renderEventHTML: function(ev, type) {
-        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, ev.char);
+        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, charDisplayName(ev.char));
+    },
+
+    /**
+     * Repaints the terminal out of the tree that is loaded now.
+     *
+     * Registered against onLanguageChange() in engine.js and called after the
+     * new tree is in. Everything else on screen follows the language on its
+     * own: the dictionary sits behind a rune, the shell in index.html is
+     * refilled by applyStaticStrings(), and the idle screen already stores
+     * keys rather than words. What cannot follow is the scene, because its
+     * title, its text and its option captions were copied out of the old tree
+     * into state.terminal at the moment it opened.
+     *
+     * Deliberately NOT renderTerminal(): that one starts an event - it books
+     * the id as used, records it as seen and applies passive items. This is a
+     * repaint, and the two must not be the same function. Both branches below
+     * end in the same pure setTerminalEvent() the first render used.
+     *
+     * What it no longer has to touch, because those surfaces now follow on
+     * their own: the result screen, the morning's status line, the log and the
+     * bubbles of a phone chat. All four used to be frozen here on the argument
+     * that a record should keep the language it was written in - and the
+     * argument did not survive contact with the running game. The log is the
+     * account of everything the player has done, half of it in the other
+     * language reads as a fault, and the same goes for a chat you are still in.
+     *
+     * They record IDENTITIES now rather than sentences (engine/recipe.js), so
+     * LogFeed, PhoneView, ResultView and MorningView resolve them on every
+     * paint and this function has no work left there.
+     *
+     * What it still does is the SCENE, and only the scene: an event's title,
+     * text and captions were copied out of the tree into state.terminal at the
+     * moment it opened, and a view model is not something a recipe can stand
+     * in for.
+     */
+    relocaliseScene: function() {
+        this.relocalisePhone();
+
+        const term = this.state.terminal;
+
+        // The morning mood: title and text come straight from DB.moods and are
+        // re-drawable from the id; the status line under them does not, so it
+        // stays as it stands.
+        if (term.mode === 'morning' && this.state.lastMoodId) {
+            const mood = (DB.moods ?? []).find(m => m.id === this.state.lastMoodId);
+            if (mood) this.setTerminalMorning(mood.title, mood.text, term.morning?.conditions ?? '');
+            return;
+        }
+
+        if (term.mode !== 'event') return;
+
+        const ev = findEventById(DB, this.state.currentEventId);
+        if (!ev) return;
+
+        if (term.event?.isChain && this.state.currentChainNode) {
+            this.state.currentChainEvent = ev;
+            this.renderChainNode(this.state.currentChainNode);
+        } else {
+            this.renderEventHTML(ev, this.state.currentEventType);
+        }
+    },
+
+    /**
+     * The open phone chat, as far as it can follow.
+     *
+     * The bubbles stay - they are what was said, in the language it was said
+     * in. The REPLIES do not: they are the choice the player is about to make,
+     * and German buttons under an English chat is the one place where leaving
+     * things alone would actually get in the way.
+     *
+     * Nothing happens while a reply is in flight (options empty during the
+     * typing delay), which is also the only window in which the next node is
+     * not yet the one written down.
+     */
+    relocalisePhone: function() {
+        const phone = this.state.phone;
+        if (!phone?.open || !phone.node || !phone.options?.length) return;
+
+        const ev = findEventById(DB, this.state.currentPhoneEvent?.id);
+        const node = ev?.nodes?.[phone.node];
+        if (!node) return;
+
+        this.state.currentPhoneEvent = ev;
+        phone.appName = ev.appName ?? phone.appName;
+        phone.options = node.opts || [];
     },
 
     // 3. SHARED HTML TEMPLATE
     // Routes a chosen option to whatever handles it.
-    chooseOption: function(opt) {
+    chooseOption: function(opt, index = -1) {
         const ev = this.state.terminal.event ?? {};
         if (opt.action) return this.runAction(opt.action);
         if (ev.isChain) return this.handleChainChoice(opt.next);
-        return this.resolveTerminal(opt, ev.type);
+        return this.resolveTerminal(opt, ev.type,
+            index > -1 && this.state.currentEventId
+                ? { ref: { i: this.state.currentEventId, path: ['opts', index, 'r'] } }
+                : null);
     },
 
     // Calls an engine method named by the data.
@@ -756,25 +923,28 @@ export const events = {
         // Case 2: a result, ending the chain
         if (ev.results && ev.results[nextId]) {
             const res = ev.results[nextId];
-            // Chain results use their own field names (txt/min/fl/al/cr);
-            // map them onto the option shape resolveTerminal expects.
+            // A result names its text `txt`; the effects carry the same letters
+            // as an option. It used to accept min/fl/al/cr as second names as
+            // well - an alias kept for events that have long since gone, and
+            // used by not one place in the data. Dropped with the rename.
             this.resolveTerminal({
                 r:    res.txt,
-                m:    res.min || res.m || 0,
-                f:    res.fl  || res.f || 0,
-                a:    res.al  || res.a || 0,
-                c:    res.cr  || res.c || 0,
+                m:    res.m || 0,
+                l:    res.l || 0,
+                a:    res.a || 0,
+                b:    res.b || 0,
                 loot: res.loot || null,
                 rem:  res.rem  || null,
                 next: res.next || null,
                 rep:  res.rep  || null
-            }, this.state.currentChainType);
+            }, this.state.currentChainType,
+               ev.id ? { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } : null);
             this.state.currentChainEvent = null;
             return;
         }
 
-        console.error("Chain Error: Ziel nicht gefunden", nextId);
-        this.resolveTerminal({ r: "Verbindung unterbrochen." }, "calls");
+        console.error("Chain error: target not found", nextId);
+        this.resolveTerminal({ r: t('event.chainBroken') }, "calls", { k: 'event.chainBroken' });
     },
 
     /**
@@ -785,12 +955,17 @@ export const events = {
      * object had to be JSON-parsed back out of an HTML attribute. It now takes
      * the option object as authored in the data files.
      *
-     * @param {object} opt  { r, m, f, a, c, loot, rem, next, rep }
+     * @param {object} opt  { r, m, l, a, b, loot, rem, next, rep }
      * @param {string} type event pool the option came from
      */
-    resolveTerminal: function(opt, type) {
+    resolveTerminal: function(opt, type, resRecipe = null) {
         opt = opt || {};
         let res = opt.r;
+        // How the result line finds its way back into the log in whatever
+        // language is running. Each caller knows its own identity and hands it
+        // over; see engine/recipe.js. Without one the line is a literal, which
+        // is the honest answer for text that was composed here.
+        let recipe = resRecipe;
         const loot = opt.loot || null;
         const rem  = opt.rem  || null;
         const next = opt.next || null;
@@ -798,9 +973,9 @@ export const events = {
 
         // Numeric fallbacks: data files omit values that are zero.
         const m = typeof opt.m === 'number' ? opt.m : 0;
-        const f = typeof opt.f === 'number' ? opt.f : 0;
+        const l = typeof opt.l === 'number' ? opt.l : 0;
         const a = typeof opt.a === 'number' ? opt.a : 0;
-        const c = typeof opt.c === 'number' ? opt.c : 0;
+        const b = typeof opt.b === 'number' ? opt.b : 0;
 
         this.playAudio('ui');
 	
@@ -813,13 +988,15 @@ export const events = {
 	
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
-            res = "Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...";
+            res = t('event.cmd.intranet');
+            recipe = { k: 'event.cmd.intranet' };
             this.openIntranet();
         }
 
         // --- BOARD TRIGGER ---
         if (res === "CMD:OPEN_BOARD") {
-            res = "Du vertiefst dich in die faszinierende Welt der Firmen-Aushänge...";
+            res = t('event.cmd.board');
+            recipe = { k: 'event.cmd.board' };
             this.openBoard();
         }
         // --------------------------------
@@ -829,20 +1006,44 @@ export const events = {
 		// Drinking with Bernd, or the rum cake
         if (next === 'path_bernd_drunk' || next === 'path_cake_drunk') {
             this.state.drunkEndTime = this.state.time + m + 60; 
-            this.log("Alles dreht sich ein bisschen...", "text-purple-400 italic");
+            this.log({ k: 'log.drunk' }, "text-purple-400 italic");
         }
 
         // Zeit & Tickets
-        let oldTimeChunk = Math.floor(this.state.time / 30);
-
-        // Tickets only accrue up to closing time at 16:30
-        const SHIFT_END_TIME = 16 * 60 + 30; 
-        let cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
-
-        let newTimeChunk = Math.floor(cappedTime / 30);
-        let newTickets = Math.max(0, newTimeChunk - oldTimeChunk); 
-
-        this.state.tickets += newTickets;
+        //
+        // Tickets are counted by BOUNDARY, not by duration: every half hour the
+        // clock steps over adds one. Which is why an option's cost decides how
+        // many arrive - 15:10 to 16:10 crosses 15:30 and 16:00, so two.
+        //
+        // The weekly meeting is exempt, and that is the one exception in the
+        // whole model. Its runtime simply does not count:
+        //
+        //   - it is COMPULSORY. Friday does not end until it is over, so this
+        //     is the one stretch a player cannot decide against;
+        //   - it is UNANSWERABLE. Calls are the only thing that removes a
+        //     ticket, and the action bar is gone while the meeting runs;
+        //   - it is UNSEEABLE. The twelve chains run 35 to 60 minutes and the
+        //     start lands anywhere past 15:00, so the same meeting costs one
+        //     ticket or two depending on two things nobody can read off the
+        //     screen. Measured over 1,883 Fridays: one ticket in 63% of runs,
+        //     two in 37%, and in up to 7% of them the second one was fatal -
+        //     after the week had in effect been survived.
+        //
+        // The lunch break is deliberately NOT exempt although it can run
+        // longer (up to 90 minutes): it is chosen, it sits mid-day, and the
+        // afternoon that follows is long enough to work the ticket off again.
+        //
+        // Skipped rather than time-shifted. A paused ticket clock would mean a
+        // second, invisible sense of time running beside the visible one, and
+        // with at most 45 minutes left after a meeting the two would come to
+        // the same thing anyway.
+        if (type !== 'meeting') {
+            const SHIFT_END_TIME = 16 * 60 + 30;   // tickets stop at closing time
+            const oldTimeChunk = Math.floor(this.state.time / 30);
+            const cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
+            const newTimeChunk = Math.floor(cappedTime / 30);
+            this.state.tickets += Math.max(0, newTimeChunk - oldTimeChunk);
+        }
         
         if (type === 'calls') { 
             this.state.tickets = Math.max(0, this.state.tickets - 1);
@@ -866,7 +1067,7 @@ export const events = {
             if (this.state.time < LUNCH_UNTIL) {
                 triggerLunch = true;
             } else {
-                this.log("Die Mittagspause ist heute ausgefallen. Gemerkt hat es niemand.", "text-slate-500");
+                this.log({ k: 'log.lunchMissed' }, "text-slate-500");
             }
         }
 
@@ -892,24 +1093,24 @@ export const events = {
         let diffMult = this.statMult();
         let lazyMult = 1 + (this.state.fl / 200);
 
-        this.state.fl += f;
+        this.addStat('fl', l);
         let finalA = a > 0 ? Math.ceil(a * diffMult) : a;
-        this.state.al += finalA;
+        this.addStat('al', finalA);
 
-        let finalC = c;
-        if (c > 0) {
-            finalC = Math.ceil(c * diffMult * lazyMult);
+        let finalB = b;
+        if (b > 0) {
+            finalB = Math.ceil(b * diffMult * lazyMult);
         } else {
-            finalC = c; 
+            finalB = b;
         }
-        this.state.cr += finalC;
+        this.addStat('cr', finalB);
 
         // --- Floating Text ---
-        if (f !== 0) this.showFloatingText('val-fl', f);
+        if (l !== 0) this.showFloatingText('val-fl', l);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
-        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
-        
-        this.triggerShake(finalA, finalC);
+        if (finalB !== 0) this.showFloatingText('val-cr', finalB);
+
+        this.triggerShake(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
@@ -937,20 +1138,25 @@ export const events = {
                 // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
                 let removedName = DB.items[rem] ? DB.items[rem].name : rem;
-                this.log(`Verloren: ${removedName}`, "text-orange-400");
+                this.log({ k: 'log.itemLost', v: { item: itemNameValue(rem) } }, "text-orange-400");
             }
         }
         // --------------------------------
 
         // --- ITEM LOGIC: LOOT ---
-        this.grantItem(loot, 'ITEM');
+        this.grantItem(loot);
         
-        this.log(res);
+        this.log(recipe ?? { msg: String(res ?? '') });
         this.updateUI();
 
         // UI Rendern
+        // The key travels, not the word - see setTerminalResult. Which also
+        // means lint-i18n can no longer see these five as used, so they are
+        // declared here by hand.
+        // i18n-uses: terminal.btn.lunch, terminal.btn.meeting, terminal.btn.continue
+        // i18n-uses: terminal.btn.clockOff, terminal.btn.gameOver
         let btnAction = triggerLunch ? "triggerLunch" : triggerMeeting ? "triggerMeeting" : "reset";
-        let btnText = triggerLunch ? "ZUR MITTAGSPAUSE" : triggerMeeting ? "ZUM WOCHENMEETING" : "WEITER";
+        let btnKey = triggerLunch ? 'terminal.btn.lunch' : triggerMeeting ? 'terminal.btn.meeting' : 'terminal.btn.continue';
         let btnColor = "bg-blue-600 hover:bg-blue-500";
 
         if (this.state.pendingEnd) {
@@ -959,28 +1165,30 @@ export const events = {
             // case below and shouts GAME OVER before the night screen. ---
             if (this.state.pendingEnd.isNight) {
                 btnAction = "finishGame";
-                btnText = "FEIERABEND MACHEN 🎉";
+                btnKey = 'terminal.btn.clockOff';
                 btnColor = "bg-green-600 hover:bg-green-500";
             }
             // --- The disguised party trap ---
             else if (this.state.pendingEnd.isParty) {
                 btnAction = "startParty";
-                btnText = "FEIERABEND MACHEN 🎉"; // deliberately identical to the normal win
+                btnKey = 'terminal.btn.clockOff';       // the same key as the normal win, so the
+                                                        // disguise cannot come apart in translation
                 btnColor = "bg-pink-600 hover:bg-pink-500"; // A nasty pink as a small hint
             } else {
                 // --- normal ending ---
                 btnAction = "finishGame";
                 if (this.state.pendingEnd.isWin) {
-                    btnText = "FEIERABEND MACHEN 🎉";
+                    btnKey = 'terminal.btn.clockOff';
                     btnColor = "bg-green-600 hover:bg-green-500";
                 } else {
-                    btnText = "DAS WAR'S... (GAME OVER)";
+                    btnKey = 'terminal.btn.gameOver';
                     btnColor = "bg-red-600 hover:bg-red-500";
                 }
             }
         }
 
-        this.setTerminalResult(res, m, f, finalA, finalC, btnAction, btnText, btnColor);
+        this.setTerminalResult(recipe ?? { msg: String(res ?? '') },
+                               m, l, finalA, finalB, btnAction, btnKey, btnColor);
     },
 
     // async: lunch is its own pool and loads on demand like the others.
@@ -989,6 +1197,24 @@ export const events = {
     triggerLunch: async function() {
         await ensure('lunch');
         let pool = DB.lunch ?? [];
+
+        // Story gate and follow-up priority, exactly as in the action pools
+        // (see the intervention check above): a continuation must not turn up
+        // without its prerequisite, and it jumps the queue with the same
+        // FOLLOWUP_CHANCE. Lunch used to draw from the raw pool, which was
+        // harmless only while no lunch event carried a reqStory.
+        const fortsetzungen = pool.filter(ev => ev.reqStory && this.storyGateOpen(ev)
+                                                && !this.state.usedIDs.has(ev.id));
+        const grundpool = pool.filter(ev => !ev.reqStory);
+
+        if (fortsetzungen.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
+            pool = fortsetzungen;
+        } else if (grundpool.length > 0) {
+            pool = grundpool;
+        } else {
+            // Fallback: nothing but continuations left and the roll failed
+            pool = fortsetzungen;
+        }
         // Week mode: no repeated lunch within one week (design 6.3). The day
         // mode keeps drawing from the full pool - within a single day a
         // repeat is impossible anyway, so behaviour stays identical.
@@ -998,7 +1224,7 @@ export const events = {
         }
         if (!pool.length) {
             // Should never happen; better to skip the break than to hang.
-            console.warn('Mittagspausen-Pool nicht verfügbar, überspringe die Pause.');
+            console.warn('Lunch pool unavailable, skipping the break.');
             this.reset();
             return;
         }
@@ -1030,31 +1256,37 @@ export const events = {
      * exactly, so this checks whether it passed the mark in the last step.
      * Once a day, purely decorative: no values, no consequences, just a line
      * in the log for those who look.
+     *
+     * The lines themselves live in data_special.js, drawn like the valve texts.
+     * They are scene prose, so they belong with the data in both languages -
+     * the interface dictionary is for captions.
      */
     checkLeetMoment: function(timeBefore) {
         const LEET = 13 * 60 + 37;
         if (this.state.leetSeen) return;
         if (timeBefore >= LEET || this.state.time < LEET) return;
 
+        // Core data missing (tools, tests): no line rather than a crash, and
+        // the moment is not marked as seen, so a later crossing still counts.
+        const lines = DB.special?.leet;
+        if (!lines?.length) return;
+
         this.state.leetSeen = true;
-        const lines = [
-            "13:37 Uhr. Für den Bruchteil einer Sekunde läuft alles rund. Kein Ticket, kein Anruf, kein Chef. Dann ist es 13:38.",
-            "13:37 Uhr. Sämtliche LEDs im Serverraum blinken für einen Moment im selben Takt. Du bist der einzige Mensch im Gebäude, dem das etwas bedeutet.",
-            "13:37 Uhr. Die Uhr steht kurz still, das Gebäude atmet aus, und irgendwo öffnet sich eine Datei ohne Zutun. Vermutlich Einbildung.",
-            "13:37 Uhr. Du blickst auf die Uhr und nickst anerkennend. Niemand nickt zurück. Niemand hat es gesehen.",
-            "13:37 Uhr. Der Drucker im dritten Stock gibt ein einzelnes, wohlklingendes Piepen von sich und schweigt für den Rest des Tages."
-        ];
-        this.log(lines[Math.floor(Math.random() * lines.length)], "text-cyan-400 italic");
+        // The INDEX is written down, not the line it drew: both trees carry the
+        // same list length (lint-parity enforces it), so the same index is the
+        // same joke in the other language.
+        const pick = Math.floor(Math.random() * lines.length);
+        this.log({ ref: { p: 'special', path: ['leet', pick] } }, "text-cyan-400 italic");
     },
 
     recordStatPoint: function() {
         const h = this.state.statHistory;
         if (!h || h.length > 200) return;
         h.push({
-            t: this.state.time,
-            f: Math.round(this.state.fl),
+            m: this.state.time,
+            l: Math.round(this.state.fl),
             a: Math.round(this.state.al),
-            c: Math.round(this.state.cr)
+            b: Math.round(this.state.cr)
         });
     },
 
@@ -1085,7 +1317,7 @@ export const events = {
                 availableMoods = forced;
             } else {
                 const known = [...new Set(DB.moods.map(m => m.effect))].join(', ');
-                console.warn(`Unbekannte Morgen-Kategorie "${forceEffect}". Vorhanden: ${known}`);
+                console.warn(`Unknown morning category "${forceEffect}". Available: ${known}`);
             }
         }
         
@@ -1093,41 +1325,41 @@ export const events = {
         this.state.lastMoodId = mood.id; // remembered for next time
         
         // 2. Mechanik sicher anwenden
-        let statHtml = "";
+        let statHtml = null;
         
         // The morning scales with the weekday: Friday forgives, Monday does
         // not. 15 points become 12 / 15 / 19.
         const moodVal = Math.round(15 * this.effMult());
 
         if (mood.effect === "aggro") {
-            this.state.al += moodVal;
-            statHtml = `<span class='text-orange-400 font-bold'>+${moodVal}% Aggro</span>`;
-        } 
+            this.addStat('al', moodVal);
+            statHtml = moodLine('text-orange-400 font-bold', { k: 'morning.effect.aggro', v: { value: moodVal } });
+        }
         else if (mood.effect === "radar") {
-            this.state.cr += moodVal;
-            statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
-        } 
+            this.addStat('cr', moodVal);
+            statHtml = moodLine('text-red-500 font-bold', { k: 'morning.effect.radar', v: { value: moodVal } });
+        }
         else if (mood.effect === "lazy") {
-            this.state.fl += moodVal;
+            this.addStat('fl', moodVal);
             this.state.time += 30; // Time lost to oversleeping
             this.state.tickets += 1; // penalty for the thirty minutes lost
-            statHtml = `<span class='text-emerald-400 font-bold'>Start 08:30 Uhr & +${moodVal}% Faulheit</span>`;
-        } 
+            statHtml = moodLine('text-emerald-400 font-bold', { k: 'morning.effect.lazy', v: { value: moodVal } });
+        }
         // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
             const extra = this.difficultyTier(); // 1/2/3 extra tickets by chosen level, week-aware
             this.state.tickets += extra;
-            statHtml = `<span class='text-red-400 font-bold'>${extra} Tickets warten bereits auf dich</span>`;
+            statHtml = moodLine('text-red-400 font-bold', { k: 'morning.effect.tickets', v: { count: extra } });
         }
         // --- Excuses: the stock of white lies is no longer a constant ---
         else if (mood.effect === "excuse_minus") {
             if (this.state.excusesLeft > 0) {
                 this.state.excusesLeft--;
-                statHtml = "<span class='text-red-400 font-bold'>Eine Ausrede weniger als sonst</span>";
+                statHtml = moodLine('text-red-400 font-bold', { k: 'morning.effect.excuseMinus' });
             } else {
                 // Nothing left to cancel - the day starts badly all the same
-                this.state.cr += moodVal;
-                statHtml = `<span class='text-red-500 font-bold'>+${moodVal}% Chef-Radar</span>`;
+                this.addStat('cr', moodVal);
+                statHtml = moodLine('text-red-500 font-bold', { k: 'morning.effect.radar', v: { value: moodVal } });
             }
         }
         else if (mood.effect === "excuse_plus") {
@@ -1139,23 +1371,22 @@ export const events = {
                 : Infinity;
             if (this.state.excusesLeft < deckel) {
                 this.state.excusesLeft++;
-                statHtml = "<span class='text-cyan-400 font-bold'>Eine Ausrede extra in der Hinterhand</span>";
+                statHtml = moodLine('text-cyan-400 font-bold', { k: 'morning.effect.excusePlus' });
             } else {
-                statHtml = "<span class='text-slate-400 font-bold'>Dein Vorrat an Ausreden ist ohnehin voll</span>";
+                statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.excuseFull' });
             }
         }
 
         else if (mood.effect === "normal") {
-            statHtml = "<span class='text-slate-400 font-bold'>Neutral. Der ganz normale Wahnsinn beginnt.</span>";
-        } 
+            statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
+        }
         else if (mood.effect === "snack") {
             // Snacks only
             const possibleItems = ["energy", "donut", "sandwich", "chocolate"];
             const rItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
             this.state.inventory.push({ id: rItem, used: false });
             this.addToArchive('items', rItem);
-            let itemName = DB.items[rItem] ? DB.items[rItem].name : rItem;
-            statHtml = `<span class='text-yellow-400 font-bold'>Inventar: ${itemName} erhalten!</span>`;
+            statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
             if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
         }
 
@@ -1186,7 +1417,7 @@ export const events = {
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         
         if (pool.length === 0) {
-            this.log("Hier ist gerade nichts mehr los. Versuch einen anderen Ort.", "text-slate-500");
+            this.log({ k: 'party.noStation' }, "text-slate-500");
             return;
         }
         
@@ -1202,33 +1433,35 @@ export const events = {
         this.state.isPartyMode = false;
         
         // --- UNLOCK THE GALA ACHIEVEMENT ---
-        this.unlockAchievement('ach_party', '🎉 Synergy-Veteran', 'Du hast die legendäre Firmenfeier überlebt.');
+        this.unlockAchievement('ach_party');
 
         // 2. Assemble the party report box
-        let diffName = "MITTWOCH (Normal)";
-        if (this.state.difficultyMult < 1.0) diffName = "FREITAG (Leicht)";
-        if (this.state.difficultyMult > 1.0) diffName = "MONTAG (Schwer)";
-        if (this.state.week.active) diffName = `WOCHE (${this.WEEK_DIFFS[this.state.week.level].name})`;
+        // The same three captions the day report uses, from the same keys:
+        // both name the day that has just ended, so they must not drift.
+        let diffName = t('dayReport.diff.normal');
+        if (this.state.difficultyMult < 1.0) diffName = t('dayReport.diff.easy');
+        if (this.state.difficultyMult > 1.0) diffName = t('dayReport.diff.hard');
+        if (this.state.week.active) diffName = tf('week.badge', { mode: t(`week.diff.${this.WEEK_DIFFS[this.state.week.level].key}`) });
 
         let statsHTML = `
             <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
-                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">Party-Bilanz: <span class="text-white font-bold">${diffName}</span></div>
+                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">${t('party.report.title')} <span class="text-white font-bold">${diffName}</span></div>
                 <div class="grid grid-cols-2 gap-2 text-center font-mono">
                     <div class="flex flex-col">
                         <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
-                        <span class="text-[10px] text-slate-400">CHILL-FAKTOR</span>
+                        <span class="text-[10px] text-slate-400">${t('party.report.chill')}</span>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
-                        <span class="text-[10px] text-slate-400">FREMDSCHAM</span>
+                        <span class="text-[10px] text-slate-400">${t('party.report.cringe')}</span>
                     </div>
                 </div>
             </div>
         `;
 
         // Collect the day's achievements
-        let achHTML = this.state.achievedTitles.length > 0 ? 
-            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">Heutige Errungenschaften:</div>${this.state.achievedTitles.map(t => `<div class="text-xs text-slate-300">🏆 ${t}</div>`).join('')}</div>` 
+        let achHTML = this.state.achievedIds.length > 0 ? 
+            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">${t('achievement.today')}</div>${this.state.achievedIds.map(id => (DB.achievements ?? []).find(a => a.id === id)).filter(Boolean).map(a => `<div class="text-xs text-slate-300">🏆 ${a.icon ?? ''} ${a.title}</div>`).join('')}</div>` 
             : "";
 
         let fullReport = statsHTML + achHTML;
@@ -1244,17 +1477,17 @@ export const events = {
         // be built BEFORE endWeek() - it reads the still-active week.
         let weekHTML = '';
         let warWoche = false;
-        let leadText = "Der Abend ist vorbei. Ein Arbeitstag für die Geschichtsbücher.";
+        let leadText = t('party.end.leadDay');
         if (this.state.week.active) {
             warWoche = true;
             this.recordWeekResult('survived', 5);
             weekHTML = this.buildWeekBalanceHTML({ isWin: true });
             this.endWeek();
-            leadText = "Der Abend ist vorbei. Eine Arbeitswoche für die Geschichtsbücher.";
+            leadText = t('party.end.leadWeek');
         }
 
         this.showEnd({
-            title: "GALA VORBEI",
+            title: t('party.end.title'),
             lead: leadText,
             text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
             cause: "party",
@@ -1277,10 +1510,11 @@ export const events = {
             notification: false,
             appName: ev.appName,
             messages: [],
-            options: []
+            options: [],
+            node: null          // set by renderPhoneNode, read by relocaliseScene
         };
 
-        this.renderPhoneNode(ev.nodes[ev.startNode]);
+        this.renderPhoneNode(ev.startNode);
     },
 
     // --- PHONE CONVERSATION ---
@@ -1302,15 +1536,22 @@ export const events = {
 
     // Appends the incoming message and offers the node's replies.
     // components/PhoneView.svelte renders both.
-    renderPhoneNode: function(node) {
+    //
+    // Takes the node's ID rather than the node, the same way renderChainNode
+    // does, so that the id can be written down: relocaliseScene() needs it to
+    // put the replies back in the new language after a language switch.
+    renderPhoneNode: function(nodeId) {
         const ev = this.state.currentPhoneEvent;
+        const node = ev.nodes[nodeId];
+        if (!node) { console.error("Phone node not found:", nodeId); return; }
+        this.state.phone.node = nodeId;
 
         // Portrait resolution, per node: a node's own char wins, otherwise
         // the node inherits the event's char. `char: null` on a node forces
         // the initial even inside a character chat (an anonymous voice in a
         // group); no char anywhere keeps the plain initial - like contacts
         // without a picture in a real messenger.
-        const charName = node.char !== undefined ? node.char : ev.char;
+        const charName = charDisplayName(node.char !== undefined ? node.char : ev.char);
         const contact = charName ? DB.chars?.find(c => c.name === charName) ?? null : null;
 
         // The sender label follows the NODE char only: a 1:1 chat keeps the
@@ -1318,34 +1559,49 @@ export const events = {
         // existing chats look exactly as before. Only a node marked with its
         // own char writes that character's name above the bubble - like a
         // named voice inside a group.
-        const sender = (node.char ? contact?.name : null) ?? ev.title ?? "Unbekannt";
+        // Both the bubble and the name above it are RECIPES - see
+        // engine/recipe.js. A character's name is the same in both trees and
+        // stays a literal; the chat's own title comes out of the tree and needs
+        // a reference; an unknown sender is a dictionary entry. The initial is
+        // derived from whatever the name renders to, so it follows as well.
+        const senderRecipe = (node.char && contact?.name) ? { msg: contact.name }
+                           : ev.title                     ? { ref: { i: ev.id, path: ['title'] } }
+                           :                                { k: 'phone.unknownSender' };
 
         this.addPhoneMessage({
             side: 'in',
-            text: node.text,
-            sender,
-            avatar: sender.charAt(0).toUpperCase(),
+            text: { ref: { i: ev.id, path: ['nodes', nodeId, 'text'] } },
+            sender: senderRecipe,
             img: contact?.img ?? null
         });
 
         this.state.phone.options = node.opts || [];
     },
 
-    handlePhoneChoice: function(text, nextId, remId) {
+    handlePhoneChoice: function(text, nextId, remId, index = -1) {
 		this.playAudio('phone');
         // Re-entrance guard: no options on screen means a reply is already in
         // flight. Used to be a check on the buttons' innerHTML.
         if (this.state.phone.options.length === 0) return;
+        const fromNode = this.state.phone.node;
         this.state.phone.options = [];
 
-        this.addPhoneMessage({ side: 'out', text });
+        // What Miller sent is the caption of the option he pressed, so the node
+        // and its index are the identity. `text` stays as the fallback for the
+        // keyboard path, which has no index to give.
+        const evNow = this.state.currentPhoneEvent;
+        this.addPhoneMessage({
+            side: 'out',
+            text: (evNow?.id && fromNode && index > -1)
+                ? { ref: { i: evNow.id, path: ['nodes', fromNode, 'opts', index, 't'] } }
+                : { msg: String(text ?? '') }
+        });
 
         if (remId) {
             let itemIndex = this.state.inventory.findIndex(i => i.id === remId);
             if (itemIndex > -1) {
-                let itemName = DB.items[remId] ? DB.items[remId].name : remId;
                 this.state.inventory.splice(itemIndex, 1);
-                this.log(`Verloren: ${itemName}`, "text-orange-400");
+                this.log({ k: 'log.itemLost', v: { item: itemNameValue(remId) } }, "text-orange-400");
                 this.updateUI(); // reflect the inventory change right away
             }
         }
@@ -1357,7 +1613,7 @@ export const events = {
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
-            this.addPhoneMessage({ side: 'error', text: '- Verbindung abgebrochen -' });
+            this.addPhoneMessage({ side: 'error', text: { k: 'phone.disconnected' } });
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -1380,33 +1636,31 @@ export const events = {
                 }).length;
 
                 if (!isPermanent && normalCount >= 10) {
-                    let itemName = dbItem ? dbItem.name : res.loot;
-                    this.log(`Rucksack voll (10/10)! ${itemName} liegengelassen.`, "text-slate-500 italic");
+                    this.log({ k: 'log.backpackFull', v: { item: itemNameValue(res.loot) } }, "text-slate-500 italic");
                 } else {
                     this.state.inventory.push({ id: res.loot, used: false });
                     this.addToArchive('items', res.loot);
-                    let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
-                    this.log("ERHALTEN: " + itemName, "text-yellow-400");
+                    this.log({ k: 'log.item.received', v: { item: itemNameValue(res.loot) } }, "text-yellow-400");
                     if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
                 }
             }
             
         // Stats Update
-        let finalF = res.f || 0;
+        let finalL = res.l || 0;
         let finalA = res.a || 0;
-        let finalC = res.c || 0;
+        let finalB = res.b || 0;
 
-        this.state.fl += finalF;
-        this.state.al += finalA;
-        this.state.cr += finalC;
+        this.addStat('fl', finalL);
+        this.addStat('al', finalA);
+        this.addStat('cr', finalB);
 
         // --- Floating text for the phone ---
-        if (finalF !== 0) this.showFloatingText('val-fl', finalF);
+        if (finalL !== 0) this.showFloatingText('val-fl', finalL);
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
-        if (finalC !== 0) this.showFloatingText('val-cr', finalC);
+        if (finalB !== 0) this.showFloatingText('val-cr', finalB);
         // ------------------------------------
-        
-        this.triggerShake(finalA, finalC);
+
+        this.triggerShake(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
@@ -1436,12 +1690,14 @@ export const events = {
                 if (loadingId) this.removePhoneMessage(loadingId);
 
                 // System message, centred and grey
-                this.addPhoneMessage({ side: 'system', text: res.txt });
+                this.addPhoneMessage({ side: 'system',
+                                       text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } });
 
                 if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
                 this.state.phoneReadTimer = setTimeout(() => {
                     this.closePhone();
-                    this.log("Handy: " + res.txt);
+                    this.log({ k: 'log.phone',
+                               v: { text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } } });
                     const beforePhone = this.state.time;
                     this.state.time += 15;
                     this.checkLeetMoment(beforePhone);
@@ -1474,7 +1730,7 @@ export const events = {
             if (this.state.phoneTypeTimer) clearTimeout(this.state.phoneTypeTimer);
             this.state.phoneTypeTimer = setTimeout(() => {
                 if (loadingId) this.removePhoneMessage(loadingId);
-                this.renderPhoneNode(ev.nodes[nextId]);
+                this.renderPhoneNode(nextId);
             }, typingDuration);
         }
     },

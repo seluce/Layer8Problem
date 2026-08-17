@@ -35,24 +35,24 @@
     // noted in STRUCTURE.md.
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { DB } from '../data.js';
     import ItemTooltip from './ItemTooltip.svelte';
 
+    import { t, tf, tree } from '../i18n/i18n.svelte.js';
     // Minutes an item still has to cool down; 0 or less means ready. Reads the
     // item's own clock, so several cooldown items no longer share one.
     const waitFor = (id) => {
-        const cd = DB.items[id]?.use?.cooldown ?? 0;
+        const cd = tree().items[id]?.use?.cooldown ?? 0;
         return cd ? cd - (game.time - (game.itemCooldowns?.[id] ?? -100000)) : 0;
     };
     // Usable, how long it rests and whether it survives - all of that is in
     // data_items.js under `use`. Nothing about items is listed here.
-    const usable = (id) => !!DB.items[id]?.use;
-    const cooldownOf = (id) => DB.items[id]?.use?.cooldown ?? 0;
+    const usable = (id) => !!tree().items[id]?.use;
+    const cooldownOf = (id) => tree().items[id]?.use?.cooldown ?? 0;
     const isConsumable = (id) => usable(id) && !cooldownOf(id);
 
     const entries = $derived(
         game.inventory.map((entry, i) => {
-            const item = DB.items[entry.id];
+            const item = tree().items[entry.id];
             return { entry, item, quest: !!item?.quest, key: `${entry.id}-${i}` };
         })
     );
@@ -167,7 +167,7 @@
         }
         if (row.quest) return 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
 
-        if (DB.items[row.entry.id]?.use?.cooldown) {
+        if (tree().items[row.entry.id]?.use?.cooldown) {
             return (waitFor(row.entry.id) <= 0
                 ? 'inv-slot relative group cursor-default cursor-pointer border-green-500 hover:bg-green-900/20'
                 : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
@@ -191,21 +191,24 @@
 
         if (row.quest) {
             if (id === 'corp_chronicles') engine.showLoreModal();
-            else engine.log(`Erinnerung: ${row.item?.name ?? id}`, 'text-amber-400');
+            else engine.log(tf('log.item.reminder', { item: row.item?.name ?? id }), 'text-amber-400');
             return;
         }
 
-        if (DB.items[id]?.use?.cooldown) {
+        if (tree().items[id]?.use?.cooldown) {
             const wait = waitFor(id);
             if (wait <= 0) engine.askUseItem(id);
-            else engine.log(`${DB.items[id].use.wait ?? `${row.item?.name ?? id} braucht noch etwas Zeit`} (${wait} Min).`, 'text-slate-500');
+            else engine.log(tf('log.item.cooldown', {
+                line: tree().items[id].use.wait ?? tf('item.cooldown.fallback', { item: row.item?.name ?? id }),
+                wait
+            }), 'text-slate-500');
             return;
         }
 
         if (isConsumable(id)) engine.askUseItem(id);
         // A passive item has no button. Without this line clicking it does
         // nothing at all, which reads as broken rather than as by design.
-        else if (DB.items[id]?.passive) engine.log(`${row.item?.name ?? id} wirkt von allein, sobald es darauf ankommt.`, 'text-slate-500 italic');
+        else if (tree().items[id]?.passive) engine.log(tf('log.item.passive', { item: row.item?.name ?? id }), 'text-slate-500 italic');
     }
 
     /**
@@ -269,7 +272,7 @@
         {/if}
 
 
-        {#if !row.quest && DB.items[row.entry.id]?.use?.cooldown}
+        {#if !row.quest && tree().items[row.entry.id]?.use?.cooldown}
             {#if waitFor(row.entry.id) <= 0}
                 <div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full animate-pulse border-2 border-slate-900"></div>
             {:else}
@@ -291,7 +294,7 @@
      onfocusout={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) pinned = null; }}>
     <div>
         <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
-            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ausrüstung</h3>
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('inv.equipment')}</h3>
 
             <!-- Two different things, so they must not look alike: the counter
                  is information and keeps its frame, throwing away is a rarely
@@ -302,12 +305,12 @@
                 <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
                              font-mono text-[11px] tabular-nums
                              {normal.length >= MIN_SLOTS ? 'text-amber-400' : 'text-slate-400'}">
-                    {normal.length}/{MIN_SLOTS} Gegenstände
+                    {tf('inv.count', { have: normal.length, max: MIN_SLOTS })}
                 </span>
 
                 <button type="button"
                         aria-pressed={discardMode}
-                        title={discardMode ? 'Auswahl beenden' : 'Gegenstand wegwerfen'}
+                        title={discardMode ? t('inv.discard.stop') : t('inv.discard.start')}
                         onclick={() => { discardMode = !discardMode; pinned = null; }}
                         class="h-8 px-2.5 rounded-md flex items-center gap-1.5
                                text-[11px] font-bold transition-colors
@@ -317,7 +320,7 @@
                     <img src="assets/img/ui/ui_trash.webp" alt="" width="14" height="14"
                          class="w-3.5 h-3.5 select-none pointer-events-none {discardMode ? '' : 'opacity-70'}"
                          onerror={(e) => e.currentTarget.remove()}>
-                    {discardMode ? 'Fertig' : 'Wegwerfen'}
+                    {discardMode ? t('inv.discard.done') : t('inv.discard.arm')}
                 </button>
             </div>
         </div>
@@ -343,7 +346,7 @@
 
     {#if quest.length > 0}
         <div>
-            <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">TROPHÄEN & ERINNERUNGEN</h3>
+            <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('inv.trophies')}</h3>
             <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4 [&>*]:min-w-0">
                 {#each quest as row, i (row.key)}
                     {@render slot(row, i)}

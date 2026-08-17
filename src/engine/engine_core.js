@@ -1,9 +1,12 @@
 import { KEYS } from './keys.js';
+import { SvelteSet } from 'svelte/reactivity';
+import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
 import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
+import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
  * The gala runs on its own clock. Twelve stations at half an hour each carry
@@ -74,7 +77,7 @@ export const core = {
 
         this.renderHeader();
         this.updateUI();
-        this.log(`System ${this.VERSION} geladen. Warte auf User...`);
+        this.log({ k: 'log.systemLoaded', v: { version: this.VERSION } });
     },
 
     /**
@@ -213,21 +216,31 @@ export const core = {
         platform.save(this.buildCloudPayload());
     },
 
-    // Maps the current activity onto the status line friends can see.
-    // No-op outside the desktop build.
+    /**
+     * Maps the current activity onto the status line friends can see.
+     * No-op outside the desktop build.
+     *
+     * Sends a TOKEN, not a sentence. Up to 6.0 this passed the finished
+     * `t('presence.coffee')` string, which Steam then printed verbatim through
+     * `#DisplayStatus` = `%statustext%` - so the friends list showed the
+     * language the PLAYER had picked, to everyone looking. Steam resolves a
+     * token per viewer instead: the German friend of an English player reads
+     * German, and the other way round.
+     *
+     * The words themselves stay in src/i18n - they are ours, they belong where
+     * lint-i18n and lint-parity can see them. tools/make-steam-presence.mjs
+     * turns them into the two .vdf files for the Steamworks backend, which is
+     * why the keys below are declared by hand: nothing calls t() on them here
+     * any more.
+     *
+     * i18n-uses: presence.coffee, presence.sidequest, presence.server
+     * i18n-uses: presence.calls, presence.boss, presence.rep
+     * i18n-uses: presence.lunch, presence.party, presence.system
+     * i18n-uses: presence.fallback
+     */
     updatePresence: function(type) {
-        const TEXTS = {
-            coffee:    "Holt sich (noch) einen Kaffee",
-            sidequest: "Ist auf Dienstgang unterwegs",
-            server:    "Versteckt sich im Serverraum",
-            calls:     "Schlägt sich mit User-Problemen rum",
-            boss:      "Steckt in einer absoluten Katastrophe!",
-            rep:       "Unterhält sich mit dem Kollegium",
-            lunch:     "Macht gerade Mittagspause",
-            party:     "Überlebt die Synergy-Gala",
-            system:    "Starrt mit leerem Blick auf den Monitor"
-        };
-        platform.presence(TEXTS[type] || "Verzweifelt am IT-Support");
+        const known = PRESENCE_TYPES.includes(type) ? type : 'fallback';
+        platform.presence(PRESENCE_TOKEN + known);
     },
 
     loadSystem: function() {
@@ -310,7 +323,7 @@ export const core = {
         } catch (e) {
             // Storage full or private mode: the day carries on, it simply is
             // not saved.
-            console.warn('Tag konnte nicht gesichert werden:', e);
+            console.warn('Day could not be saved:', e);
         }
     },
 
@@ -329,16 +342,57 @@ export const core = {
     },
 
     /**
+     * Carries the two recorded shapes of a save across the 6.0 rename.
+     *
+     * Up to 5.0 a curve point read `{ t, f, a, c }` and a week row carried
+     * `endFl/endAl/endCr` and `peakC`; both now use the option letters
+     * (`m` minute, `l` laziness, `a` aggro, `b` boss). 5.0 is published, so
+     * those saves are out there, and every reader of these two shapes falls
+     * back with `?? 0` - an unmigrated save would not fail, it would draw a
+     * flat line at zero and pick different diary lines, silently.
+     *
+     * Both shapes are small and unambiguous - an old point carries `t` and no
+     * `m` - so this is a rename, not a guess. Neither runs more than once: the
+     * migrated object no longer matches its own condition.
+     */
+    migrateStatPoints: function(history) {
+        if (!Array.isArray(history)) return history;
+        return history.map(p =>
+            (p && typeof p === 'object' && p.m === undefined && p.t !== undefined)
+                ? { m: p.t, l: p.f ?? 0, a: p.a ?? 0, b: p.c ?? 0 }
+                : p);
+    },
+
+    migrateWeekLog: function(log) {
+        if (!Array.isArray(log)) return log;
+        return log.map(d => {
+            if (!d || typeof d !== 'object') return d;
+            if (d.endFl === undefined && d.endAl === undefined &&
+                d.endCr === undefined && d.peakC === undefined) return d;
+            const { endFl, endAl, endCr, peakC, ...rest } = d;
+            if (endFl !== undefined) rest.endL = endFl;
+            if (endAl !== undefined) rest.endA = endAl;
+            if (endCr !== undefined) rest.endB = endCr;
+            if (peakC !== undefined) rest.peakB = peakC;
+            return rest;
+        });
+    },
+
+    /**
      * Writes a stored day snapshot back onto the state. Shared by the day
      * resume, the week resume and the week's soft reset, so the three can
      * never disagree about what restoring a day means.
      */
     applyRestoredDay: function(day) {
+        // SvelteSet, not Set: a restored day must not come back less reactive
+        // than a fresh one, or the party hub stops greying out its stations
+        // after a resume and only after a resume. See engine_state.svelte.js.
         const SETS = ['usedIDs', 'usedEmails'];
         for (const [key, value] of Object.entries(day)) {
             if (key === 'savedAt') continue;
-            this.state[key] = SETS.includes(key) ? new Set(value ?? []) : value;
+            this.state[key] = SETS.includes(key) ? new SvelteSet(value ?? []) : value;
         }
+        this.state.statHistory = this.migrateStatPoints(this.state.statHistory);
 
         // The log counter lives on the engine object, not in the day state:
         // after a reload it would start at zero again and hand out ids the
@@ -346,11 +400,54 @@ export const core = {
         // keys in the LogFeed.
         this._logId = Math.max(0, ...(this.state.logEntries ?? []).map(e => e?.id ?? 0));
 
+        this.refreshBootLogEntry();
+
         // Rebuild display and flow
         for (const key of DAY_TIMERS) this.state[key] = null;
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
-        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
+    },
+
+    /**
+     * Restamps the boot line of a restored log with the version that is
+     * actually running.
+     *
+     * init() writes "System v6.0.0 loaded" as the FIRST log entry of a session,
+     * before any day exists, and setDifficulty() does not clear the log - so
+     * that line travels into the day save. Restore it verbatim and the log
+     * announces the version the save was written under while the terminal
+     * header two centimetres above shows the running one. Someone who saved
+     * under 5.0 and resumed after an update read "System v5.0.0" under
+     * "TicketSystem v6.0.0".
+     *
+     * The line is restamped rather than kept because it is not a record of
+     * anything that happened in the office: it is the machine announcing
+     * itself, the same statement the header makes, and it has to be true of the
+     * engine running now.
+     *
+     * The RECIPE is rewritten, not a sentence written over it. Since 6.0 the
+     * entry stores `{ k, v }` and the display resolves it (engine/recipe.js), so
+     * assigning `msg` would have had no effect at all - the recipe wins - while
+     * leaving a stale sentence in the save. Stamping the value instead fixes
+     * the version AND keeps the line able to follow a language switch. An entry
+     * from 5.x has only text; it is turned into a recipe here, which is the one
+     * place a 5.x line can be given its identity back.
+     *
+     * Found by identity, not by text: id 1 is the first log() of a session, and
+     * init()'s line is the first log() there is. A day that ran long enough to
+     * push it past LOG_MAX_ENTRIES simply has nothing to restamp, and a later
+     * day of a week never carries id 1 because the counter keeps running. No
+     * saved field is read, so saves written before this fix are covered too -
+     * which matters, because those are the only ones that can show it.
+     */
+    refreshBootLogEntry: function() {
+        const boot = (this.state.logEntries ?? []).find(e => e?.id === 1);
+        if (!boot) return;
+        boot.k = 'log.systemLoaded';
+        boot.v = { version: this.VERSION };
+        boot.ref = undefined;
+        delete boot.msg;
     },
 
     /** Restores a saved run and picks up again in a paused state. */
@@ -372,7 +469,7 @@ export const core = {
         this.updateUI();
         this.disableButtons(false);
         this.setTerminalIdle();
-        this.log("Sitzung wiederhergestellt. Wo waren wir...", "text-blue-400");
+        this.log({ k: 'log.sessionRestored' }, "text-blue-400");
         this.playMusic('office');
         this.updatePresence('system');
     },
@@ -409,11 +506,36 @@ export const core = {
         const flags = new Set(this.state.archive.seenFlags ?? []);
         const known = (n) => (n.flag ? flags.has(n.flag) : seen.has(n.seen));
 
-        return (DB.compendium ?? []).map(e => {
+        const read = this.state.archive.knowledgeRead ?? {};
+
+        // tree() rather than DB, and that is not cosmetic: this runs inside a
+        // $derived in components/KnowledgeView.svelte, and DB is a plain object
+        // the language switch refills. Read directly, the derived has nothing
+        // to notice - the tabs around it would change language while the notes
+        // and roles stayed behind. The trap CLAUDE.md documents for `DB`.
+        return (tree().compendium ?? []).map(e => {
             const open  = (e.seen ?? []).some(id => seen.has(id));
-            const notes = (e.notizen ?? []).filter(known).map(n => n.text);
-            return { ...e, open, notes, total: (e.notizen ?? []).length };
+            const notes = (e.notes ?? []).filter(known).map(n => n.text);
+            // Counting notes rather than storing a boolean is what makes a
+            // later note re-flag an entry that was read months ago.
+            const unread = open && notes.length > (read[e.id] ?? 0);
+            return { ...e, open, notes, unread, total: (e.notes ?? []).length };
         });
+    },
+
+    /**
+     * Records how much of an entry has been read. Called by the knowledge view
+     * when an entry is displayed.
+     *
+     * Writes through to storage, because the marker is progress: quitting after
+     * reading must not bring every entry back as unread. The early return keeps
+     * that from turning into a save on every render.
+     */
+    markKnowledgeRead: function(id, count) {
+        if (!this.state.archive.knowledgeRead) this.state.archive.knowledgeRead = {};
+        if (this.state.archive.knowledgeRead[id] === count) return;
+        this.state.archive.knowledgeRead[id] = count;
+        this.saveSystem();
     },
 
     saveSystem: function() {
@@ -479,7 +601,8 @@ export const core = {
         const dayNo = archive.stats?.daysStarted ?? 1;
         if (archive.chronicle.some(e => e.day === dayNo)) return false;
 
-        archive.chronicle.push({ day: dayNo, text: this.composeChronicleLine() });
+        // The id and the numbers, not the sentence: see data_lore.js.
+        archive.chronicle.push({ day: dayNo, ...this.composeChronicleLine() });
         // Twelve is plenty: the book should look used, not like a diary.
         if (archive.chronicle.length > 12) archive.chronicle.shift();
 
@@ -516,82 +639,62 @@ export const core = {
         const fired = st.fired;
         const streak = st.streakBest;
 
+        // Ids only. Which line can be drawn is a question about the save, and
+        // that belongs here; what the line SAYS is in data_lore.js.
         const pool = [];
 
-        // --- The very first entry ---
-        if ((st.daysStarted ?? 0) <= 1 && !survived) {
-            pool.push(
-                "Ich habe dieses Buch im Serverraum gefunden, hinter einem Rack, unter einer Staubschicht von zwei Jahrzehnten. Der letzte Eintrag ist von 2012. Ich weiß nicht, ob mir jemand die Erlaubnis erteilt hat, hier etwas zu ergänzen. Ich weiß auch nicht, wen ich fragen sollte.",
-                "Erster Eintrag. Ich bin seit Kurzem für die IT zuständig. Es gibt keine Übergabe, keine Dokumentation und niemanden, der mir sagen könnte, warum in Rack 5 ein Server läuft, den keiner bestellt hat. Ich fange trotzdem an."
-            );
-        }
+        if ((st.daysStarted ?? 0) <= 1 && !survived) pool.push('first_found', 'first_entry');
 
-        // --- Meltdowns ---
-        if (rage >= 3) {
-            pool.push(
-                `Zur Vollständigkeit: Ich habe an ${rage} Tagen dieses Gebäude verlassen, ohne mich zu verabschieden. Die Chronik führt keine Rubrik dafür. Ich lege hiermit eine an.`,
-                "Nachtrag zur Firmengeschichte: Es gibt einen Punkt, an dem ein Mensch aufhört, Tickets zu lesen. Er liegt näher, als die Geschäftsleitung vermutet. Ich habe ihn mehrfach vermessen."
-            );
-        } else if (rage > 0) {
-            pool.push("Ich sollte erwähnen, dass ich einmal gegangen bin, bevor der Tag zu Ende war. Es steht in keiner Akte. Es steht jetzt hier.");
-        }
+        if (rage >= 3)     pool.push('rage_many_a', 'rage_many_b');
+        else if (rage > 0) pool.push('rage_once');
 
-        // --- Dismissals ---
-        if (fired >= 2) {
-            pool.push(`Man hat mich ${fired} Mal aus diesem Haus begleitet. Ich bin ${fired} Mal wiedergekommen. Über eine der beiden Seiten sagt das mehr aus als über die andere.`);
-        }
+        if (fired >= 2) pool.push('fired_repeat');
 
-        // --- Endurance ---
-        if (survived >= 20) {
-            pool.push(
-                `${survived} überstandene Arbeitstage. In der Chronik steht viel über Visionen, Meilensteine und Wachstum. Über das Durchhalten steht nichts. Es ist die einzige Fähigkeit, die hier tatsächlich gebraucht wird.`,
-                "Ich habe in diesem Haus mehr Arbeitstage überlebt als der Betriebsrat Sitzungen hatte. Beides hat ungefähr gleich viel verändert."
-            );
-        } else if (survived >= 8) {
-            pool.push(`Zwischenstand: ${survived} Tage. Das Gebäude hat aufgehört, mich zu überraschen, und das ist die beunruhigendste Entwicklung bisher.`);
-        }
-        if (streak >= 5) {
-            pool.push(`Persönliche Bestmarke: ${streak} Tage in Folge ohne Zwischenfall. Meine Familie hält mich inzwischen für berufstätig.`);
-        }
+        if (survived >= 20)     pool.push('survived_many_a', 'survived_many_b');
+        else if (survived >= 8) pool.push('survived_mid');
 
-        // --- How things stand with the boss ---
+        if (streak >= 5) pool.push('streak_best');
+
         const chef = rep['Dr. Wichtig'] ?? 0;
-        if (chef >= 40) {
-            pool.push("Der CEO grüßt mich seit Neuestem mit Namen. Ich bin unsicher, ob das eine Auszeichnung ist oder der Beginn von etwas, das ich nicht überblicke.");
-        } else if (chef <= -40) {
-            pool.push("Zur Sachlage: Die Geschäftsleitung und ich haben ein professionelles Verhältnis. Das heißt, wir schweigen uns in unterschiedlichen Stockwerken an.");
-        }
+        if (chef >= 40)       pool.push('chef_high');
+        else if (chef <= -40) pool.push('chef_low');
 
-        // --- The colleagues ---
-        const kevin = rep['Kevin'] ?? 0;
-        if (kevin >= 50) {
-            pool.push("Der Azubi hat heute etwas repariert, ohne zu fragen, und es war richtig. Sollte diese Chronik je jemand weiterführen: Er wird es sein.");
-        }
-        const egon = rep['Egon'] ?? 0;
-        if (egon >= 50) {
-            pool.push("Der Hausmeister kennt jeden Raum dieses Hauses, auch die, die im Grundriss fehlen. Er steht in keiner Chronik. Er sollte am Anfang stehen.");
-        }
-        const elster = rep['Frau Elster'] ?? 0;
-        if (elster >= 50) {
-            pool.push("Die Buchhaltung hat mir heute Kuchen gebracht. Ich vermerke das hier, weil es sonst niemand glauben wird.");
-        }
+        if ((rep['Kevin'] ?? 0) >= 50)       pool.push('kevin');
+        if ((rep['Egon'] ?? 0) >= 50)        pool.push('egon');
+        if ((rep['Frau Elster'] ?? 0) >= 50) pool.push('elster');
 
-        // --- Traces of specific events ---
-        if (flags['path_phoenix_gabi'] || flags['path_phoenix_nutzen']) {
-            pool.push("Anmerkung für spätere Leser: Es gibt in diesem Haus einen Raum, der seit Jahren gebucht und nie belegt ist, und einen Benutzerzugang, der einem Mann gehört, der 2016 gegangen ist. Ich habe aufgehört, danach zu fragen.");
-        }
-        if (flags['path_doku_todo'] || flags['path_doku_start']) {
-            pool.push("Ich habe angefangen zu dokumentieren. Nach zwei Stunden war klar: Die Dokumentation wäre umfangreicher als die Anlage, die sie beschreibt. Ich habe trotzdem weitergemacht.");
-        }
+        if (flags['path_phoenix_gabi'] || flags['path_phoenix_nutzen']) pool.push('phoenix');
+        if (flags['path_doku_todo'] || flags['path_doku_start'])        pool.push('doku');
 
-        // --- The fallback, always available ---
-        pool.push(
-            "Es ist wieder ein Tag vergangen. Die Anlage läuft, die Tickets sind offen, das Haus steht. Mehr wird von dieser Chronik auch in den letzten hundert Jahren nicht berichtet worden sein.",
-            "Nichts Bemerkenswertes. Ich schreibe es trotzdem auf, damit später jemand weiß, dass hier jemand war."
-        );
+        pool.push('plain_a', 'plain_b');
 
-        return pool[Math.floor(Math.random() * pool.length)];
+        return {
+            id: pool[Math.floor(Math.random() * pool.length)],
+            vars: { rage, fired, survived, streak }
+        };
     },
+
+    /**
+     * The chronicle as the view needs it: one finished sentence per entry.
+     *
+     * Entries written before 6.0 carried the rendered German sentence and no
+     * id. They are dropped rather than shown: a chronicle that reads half in
+     * German and half in English after a language switch is worse than one
+     * that starts again. The chronicle is flavour, never progress.
+     */
+    chronicleEntries: function() {
+        const lines = DB.lore?.lines ?? {};
+        return (this.state.archive.chronicle ?? [])
+            .filter(e => e.id && lines[e.id])
+            .map(e => ({
+                day: e.day,
+                text: Object.entries(e.vars ?? {}).reduce(
+                    (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+                    lines[e.id]
+                )
+            }));
+    },
+
 
     /** Short weekday name derived from the difficulty. */
     difficultyKey: function() {
@@ -721,12 +824,15 @@ export const core = {
             const savedWeek = this.loadWeek();
             if (!savedWeek) return false;
             this._resumeKind = 'week';
-            const t = savedWeek.day?.time ?? 8 * 60;
-            const clock = `${pad(Math.floor(t / 60))}:${pad(t % 60)}`;
+            // Not `t`: that is the dictionary lookup imported at the top of
+            // this file, and a local of the same name shadows it silently.
+            const minutes = savedWeek.day?.time ?? 8 * 60;
+            const clock = `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
             const cfg = this.WEEK_DIFFS[savedWeek.week.level];
-            const dayName = this.WEEK_DAY_NAMES[savedWeek.week.dayIndex - 1];
+            // i18n-uses: week.day.mon, week.day.wed, week.day.fri
+            const dayName = this.dayName(savedWeek.week.dayIndex - 1);
             if (info) info.textContent =
-                `Arbeitswoche (${cfg.name}) · ${dayName} · Stand ${clock} Uhr · ${savedWeek.day?.tickets ?? 0} offene Tickets`;
+                tf('resume.week', { mode: t(`week.diff.${cfg.key}`), day: dayName, clock, tickets: savedWeek.day?.tickets ?? 0 });
             this.showOverlay(resumeModal);
             return true;
         }
@@ -735,9 +841,14 @@ export const core = {
         if (!saved) return false;
         this._resumeKind = 'day';
         const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
-        const DIFF = saved.difficultyMult < 1.0 ? 'Freitag'
-                   : saved.difficultyMult > 1.0 ? 'Montag' : 'Mittwoch';
-        if (info) info.textContent = `${DIFF} · Stand ${clock} Uhr · ${saved.tickets ?? 0} offene Tickets`;
+        // The day mode names itself after a weekday, so the dictionary already
+        // has the word - week.day.fri and friends, the same ones the week mode
+        // uses. No second set for the same five days.
+        const dayKey = saved.difficultyMult < 1.0 ? 'fri'
+                     : saved.difficultyMult > 1.0 ? 'mon' : 'wed';
+        if (info) info.textContent = tf('resume.day', {
+            mode: t(`week.day.${dayKey}`), clock, tickets: saved.tickets ?? 0
+        });
         this.showOverlay(resumeModal);
         return true;
     },
@@ -752,17 +863,17 @@ export const core = {
         if (level === 'easy') {
             this.state.difficultyMult = 0.8;
             this.state.excusesLeft = 3;
-            this.log("Modus: FREITAG. Entspann dich.", "text-green-400");
+            this.log({ k: 'mode.easy' }, 'text-green-400');
         } else if (level === 'normal') {
             this.state.difficultyMult = 1.0;
             this.state.excusesLeft = 2;
-            this.log("Modus: MITTWOCH. Business as usual.", "text-blue-400");
+            this.log({ k: 'mode.normal' }, 'text-blue-400');
         } else if (level === 'hard') {
             this.state.difficultyMult = 1.25;
             this.state.tickets = 2;
             this.state.al = 0;
             this.state.excusesLeft = 1;
-            this.log("Modus: MONTAG. Viel Glück.", "text-red-500 font-bold");
+            this.log({ k: 'mode.hard' }, 'text-red-500 font-bold');
         }
         
         this.updateUI();
@@ -813,13 +924,13 @@ export const core = {
                 // evening has come: arrival, peak, and the hour in which the
                 // room slowly empties.
                 const hub = DB.party.find(e => e.id === 'party_hub');
-                const fassungen = hub?.textByProgress;
-                if (fassungen?.length) {
-                    const stufe = Math.min(
-                        fassungen.length - 1,
-                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / fassungen.length))
+                const versions = hub?.textByProgress;
+                if (versions?.length) {
+                    const stage = Math.min(
+                        versions.length - 1,
+                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / versions.length))
                     );
-                    this.renderTerminal({ ...hub, text: fassungen[stufe] }, 'party');
+                    this.renderTerminal({ ...hub, text: versions[stage] }, 'party');
                 } else {
                     this.renderTerminal(hub, 'party');
                 }
@@ -928,11 +1039,11 @@ export const core = {
         // Clean up phone, mail and log
         document.getElementById('email-modal')?.classList.add('hidden');
         // Back to standby; PhoneView.svelte follows the state.
-        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [] };
+        this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
         
         // The log array is part of freshDay(), so it was already emptied
         // above along with the rest of the day.
-        this.log("System-Neustart initiiert...", "text-blue-400");
+        this.log({ k: 'log.systemRestart' }, "text-blue-400");
         
         // Restart through the normal morning path
         this.updateUI();
@@ -949,34 +1060,34 @@ export const core = {
         // 1. 'Der Asket' (no coffee) - from 16:00
         // Rewards enduring the aggro without help
         if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
-            this.unlockAchievement('ach_ascetic', '🧘 Der Asket', '16 Uhr und kein Tropfen Kaffee. Du bestehst aus purer Willenskraft.');
+            this.unlockAchievement('ach_ascetic');
         }
 
         // 2. CAFFEINE OVERLOAD (too much coffee)
         // Raised to 8 - roughly one trip to the machine per hour
         if(this.state.coffeeConsumed >= 8 && !this.hasAch('ach_coffee')) {
-            this.unlockAchievement('ach_coffee', '🫀 Herzrasen', '8 Tassen. Du kannst Farben hören und die Zeit anhalten.');
+            this.unlockAchievement('ach_coffee');
         }
 
         // 3. GHOSTING (ignoring mails)
         // Raised to 5 - genuinely dangerous for the radar value
         if(this.state.emailsIgnored >= 5 && !this.hasAch('ach_ignore')) {
-            this.unlockAchievement('ach_ignore', '👻 Ghosting-Profi', '5 Mails ignoriert. Deine "Entf"-Taste glüht.');
+            this.unlockAchievement('ach_ignore');
         }
 
         // 4. BLACK HOLE (full inventory)
         // Set to 8 - you have to hoard even the junk
         if(this.state.inventory.length >= 5 && !this.hasAch('ach_hoarder')) {
-            this.unlockAchievement('ach_hoarder', '🛒 Loot-Goblin', 'Dein Rucksack platzt. Brauchst du den alten Donut wirklich noch?');
+            this.unlockAchievement('ach_hoarder');
         }
 
         // --- STAT THRESHOLDS ---
         if(this.state.fl >= 80 && this.state.fl < 100 && !this.hasAch('ach_lazy')) {
-            this.unlockAchievement('ach_lazy', '🦥 Faulpelz', '80% Faulheit. Du hast das Nichtstun zur Kunstform erhoben.');
+            this.unlockAchievement('ach_lazy');
         }
         
         if (this.state.al >= 95 && !this.hasAch('ach_rage')) { // raised to 95% - riskier
-            this.unlockAchievement('ach_rage', '🤬 180 Puls', 'Nur noch ein dummer Anruf und es knallt. (95% Aggro)');
+            this.unlockAchievement('ach_rage');
         }
 
         // --- ITEM SETS ---
@@ -985,88 +1096,111 @@ export const core = {
         const tools = ['tape', 'screw', 'kabel', 'manual'];
         const hasAllTools = tools.every(toolId => this.state.inventory.find(i => i.id === toolId));
         if(hasAllTools && !this.hasAch('ach_macgyver')) {
-            this.unlockAchievement('ach_macgyver', '🛠️ MacGyver', 'Tape, Kabel, Schrauber & Handbuch. Du brauchst keine IT, du brauchst Kaugummi.');
+            this.unlockAchievement('ach_macgyver');
         }
         
         // MILLIONAIRE
         if(this.state.inventory.find(i => i.id === 'black_card') && !this.hasAch('ach_rich')) {
-            this.unlockAchievement('ach_rich', '💸 Der Millionär', 'Du hast dem Prinzen vertraut. Kündigung ist raus!');
+            this.unlockAchievement('ach_rich');
         }
         
         // MR ROBOT
         if(this.state.inventory.find(i => i.id === 'admin_pw') && !this.hasAch('ach_hacker')) {
-            this.unlockAchievement('ach_hacker', '💻 Mr. Robot', 'Root-Rechte. Jetzt gehört das Netzwerk dir.');
+            this.unlockAchievement('ach_hacker');
         }
 
         if(this.state.inventory.find(i => i.id === 'contract') && !this.hasAch('ach_wolf')) {
-            this.unlockAchievement('ach_wolf', '📈 Wolf of Wall Street', 'Du hast den Chef besiegt. 500€ mehr Gehalt!');
+            this.unlockAchievement('ach_wolf');
         }
 
         // --- LATE GAME CHALLENGES (time dependent) ---
         
         // NINJA (secretly lazy) - from 14:00
         if(this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
-            this.unlockAchievement('ach_ninja', '🥷 Ninja', 'Fast unsichtbar für den Chef.');
+            this.unlockAchievement('ach_ninja');
         }
 
         // 'Zen Meister' (no anger) - from 15:00
         if(this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
-            this.unlockAchievement('ach_zen', '🕊️ Zen-Meister', '15 Uhr und die Ruhe selbst. Bist du überhaupt wach?');
+            this.unlockAchievement('ach_zen');
         }
 
         // EMPLOYEE OF THE MONTH (anti-lazy) - from 16:00
         if (this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
-            this.unlockAchievement('ach_workaholic', '👔 Streber', 'Du hast tatsächlich gearbeitet? Du machst uns anderen schlecht!');
+            this.unlockAchievement('ach_workaholic');
         }
 
         // Exactly 9 tickets, one below the limit. One more call would end it.
         if (this.state.time >= 975 && this.state.tickets === 9 && !this.hasAch('ach_risk')) {
-            this.unlockAchievement('ach_risk', '🎢 Drahtseilakt', 'Feierabend mit 9 offenen Tickets. Das war verdammt knapp.');
+            this.unlockAchievement('ach_risk');
         }
 
         // INBOX ZERO - Ab 16:20
         if (this.state.time >= 980 && this.state.tickets === 0 && !this.hasAch('ach_clean')) {
-            this.unlockAchievement('ach_clean', '✨ Inbox Zero', 'Alle Tickets erledigt? Das System glaubt, es ist ein Fehler.');
+            this.unlockAchievement('ach_clean');
         }
 
         // 'Tanz auf dem Vulkan' (high-risk survival) - from 16:20
         if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
-            this.unlockAchievement('ach_survivor', '🌋 Tanz auf dem Vulkan', 'Maximaler Stress kurz vor Feierabend. Du brauchst Urlaub.');
+            this.unlockAchievement('ach_survivor');
         }
         
         // CHARACTER QUESTS
         if(this.state.inventory.find(i => i.id === 'kevin_ram') && !this.hasAch('ach_mentor')) {
-            this.unlockAchievement('ach_mentor', '👨‍👦 Der Mentor', 'Du hast Kevin gerettet. Er wird es nie vergessen (leider).');
+            this.unlockAchievement('ach_mentor');
         }
 
         if(this.state.inventory.find(i => i.id === 'golden_stapler') && !this.hasAch('ach_ally')) {
-            this.unlockAchievement('ach_ally', 'Marketing-Allianz', 'Du und Chantal: Ein tödliches Team.');
+            this.unlockAchievement('ach_ally');
         }
 
         if(this.state.inventory.find(i => i.id === 'master_key') && !this.hasAch('ach_keymaster')) {
-            this.unlockAchievement('ach_keymaster', 'Keymaster', 'Egon vertraut dir blind.');
+            this.unlockAchievement('ach_keymaster');
         }
 
         if(this.state.inventory.find(i => i.id === 'mixtape') && !this.hasAch('ach_rockstar')) {
-            this.unlockAchievement('ach_rockstar', 'Metal Queen', 'Laut, schnell und loyal.');
+            this.unlockAchievement('ach_rockstar');
         }
 
         if(this.state.inventory.find(i => i.id === 'scotch_bottle') && !this.hasAch('ach_closer')) {
-            this.unlockAchievement('ach_closer', 'The Closer', 'Markus und du: Ein profitables Team.');
+            this.unlockAchievement('ach_closer');
         }
 
         if(this.state.inventory.find(i => i.id === 'cat_pic') && !this.hasAch('ach_cat_whisperer')) {
-            this.unlockAchievement('ach_cat_whisperer', 'Katzenflüsterer', 'Rüdiger mag dich. Frau Elster auch.');
+            this.unlockAchievement('ach_cat_whisperer');
         }
 
         if(this.state.inventory.find(i => i.id === 'corp_chronicles') && !this.hasAch('ach_lore')) {
-            this.unlockAchievement('ach_lore', 'Der Historiker', 'Du kennst nun die Wahrheit. Manche Türen sollten besser geschlossen bleiben.');
+            this.unlockAchievement('ach_lore');
         }
     },
 
     hasAch: function(id) { return this.state.achievements.includes(id); },
 
-    unlockAchievement: function(id, title, text) {
+    /**
+     * Awards an achievement.
+     *
+     * Takes the id ALONE (6.0). Until then every call site passed the title and
+     * the description as well, which meant 27 German strings lived in the
+     * engine while data_achievements.js described the same 27 achievements -
+     * and eighteen of them had drifted apart, unnoticed, because nothing
+     * compares a toast against an archive entry.
+     *
+     * The split that survived the clean-up is a real one and is now in the data
+     * file: `desc` describes the achievement for the archive and names the
+     * condition, `toast` is the moment it is earned and may be shorter or
+     * funnier. Where an achievement has no `toast`, the description does both.
+     */
+    unlockAchievement: function(id) {
+        const entry = (DB.achievements ?? []).find(a => a.id === id);
+        if (!entry) {
+            // A typo in an id used to award a nameless achievement; now it is
+            // visible. lint-data.mjs checks the same thing before the build.
+            console.warn(`Unknown achievement id: ${id}`);
+            return;
+        }
+        const title = `${entry.icon ?? ''} ${entry.title}`.trim();
+        const text  = entry.toast ?? entry.desc;
         // 1. Session check: already earned during THIS run?
         // If so, bail out immediately - stops it spamming inside the loop
         if (this.state.achievements.includes(id)) {
@@ -1102,7 +1236,9 @@ export const core = {
 
         // Record it for this session so check 1 catches it on the next frame
         this.state.achievements.push(id);
-        this.state.achievedTitles.push(title);
+        // The id, not the words: the end screen resolves it at render time,
+        // so a saved day carries no language with it.
+        this.state.achievedIds.push(id);
 
         // Always report it, even when the local archive already knows the
         // achievement — the backend may be out of sync with this machine.
@@ -1111,8 +1247,12 @@ export const core = {
         // Feedback (log and toast) only for a new entry or an upgrade
         if (isNewOrBetter) {
             
-            // Prepare the log line
-            let logText = `ERFOLG FREIGESCHALTET: ${title}`;
+            // Prepare the log line. A RECIPE, not a sentence - the title comes
+            // out of the achievement tree and the tier out of the dictionary,
+            // so both are recorded as identities and rendered by whoever draws
+            // the line. See engine/recipe.js.
+            const titleRef = { ref: { i: id, path: ['title'] } };
+            let logLine = { k: 'achievement.log.unlocked', v: { title: titleRef } };
             let logColor = "text-yellow-400 font-bold"; // Standard Gold
             let toastDesc = text;
 
@@ -1120,18 +1260,26 @@ export const core = {
             let isUpgrade = false;
             if (savedDiffVal > 0) {
                 // The tiers are named after the day mode's weekdays, but a week
-                // run earns them too - there the names are Mueller's condition.
-                const dayNames  = ["", "FREITAG", "MITTWOCH", "MONTAG"];
-                const weekNames = ["", "ERHOLT", "GENERVT", "URLAUBSREIF"];
-                const stufe = (this.state.week.active ? weekNames : dayNames)[currentDiffVal];
+                // run earns them too - there the names are Miller's condition.
+                // Both sets already label the two difficulty pickers, so they
+                // are read from there instead of spelled out a second time:
+                // written twice, they drift, and nothing would report it.
+                // Upper case is the log line's own doing, not the label's.
+                // i18n-uses: diff.easy.name, diff.normal.name, diff.hard.name
+                // i18n-uses: week.diff.easy, week.diff.normal, week.diff.hard
+                const dayKeys  = ["", "diff.easy.name", "diff.normal.name", "diff.hard.name"];
+                const weekKeys = ["", "week.diff.easy", "week.diff.normal", "week.diff.hard"];
+                const tierKey = (this.state.week.active ? weekKeys : dayKeys)[currentDiffVal];
+                const tier = t(tierKey).toUpperCase();
                 isUpgrade = true;
-                logText = `ERFOLG AUFGEWERTET: ${title} (${stufe})`;
+                logLine = { k: 'achievement.log.upgraded',
+                            v: { title: titleRef, tier: { k: tierKey, up: true } } };
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
-                toastDesc = `Aufgewertet auf ${stufe}.`;
+                toastDesc = tf('achievement.upgradedTo', { tier });
             }
 
             // A. Write the log line
-            this.log(logText, logColor);
+            this.log(logLine, logColor);
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
@@ -1228,10 +1376,10 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.rage;
-        let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Aggro auf ${resetTo}% gesetzt).`;
-        if (this.difficultyTier() === 3) warningText += " Deine Nerven liegen trotzdem noch blank!";
+        let warningText = tf('valve.rage', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        if (this.difficultyTier() === 3) warningText += ' ' + t('valve.rage.hard');
 
-        this.showModal("VENTIL GEÖFFNET", warningText, false);
+        this.showModal(t('valve.rage.title'), warningText, false, 'rage');
         return true;
     },
 
@@ -1248,10 +1396,10 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.chef;
-        let warningText = `${texts[Math.floor(Math.random() * texts.length)]} (Radar auf ${resetTo}% gesetzt).`;
-        if (this.difficultyTier() === 3) warningText += " Seine Adern an der Schläfe pulsieren bedenklich.";
+        let warningText = tf('valve.chef', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        if (this.difficultyTier() === 3) warningText += ' ' + t('valve.chef.hard');
 
-        this.showModal("ABMAHNUNG", warningText, false);
+        this.showModal(t('valve.chef.title'), warningText, false);
         return true;
     },
 
@@ -1300,23 +1448,23 @@ export const core = {
         if (this.state.al >= 100) {
             if (this.openRageValve()) return;
             this.queueEnd({
-                title: "RAGE QUIT",
-                lead: this.weekFailLead("Du hast den Monitor aus dem Fenster geworfen. Es hat sich gut angefühlt."),
+                title: t('end.rageTitle'),
+                lead: this.weekFailLead(t('end.rageQuit')),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
         }
         // B. TICKET-LAWINE
         else if (this.state.tickets >= 10) {
             this.queueEnd({
-                title: "GEFEUERT",
-                lead: this.weekFailLead("Zu viele offene Tickets! Das System ist kollabiert."),
+                title: t('end.firedTitle'),
+                lead: this.weekFailLead(t('end.ticketsLead')),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
         // C. Early warning at seven tickets
         else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
-            this.showModal("WARNUNG", "Ticket-Stau! Schließe Anrufe ab, um Tickets zu reduzieren, sonst fliegst du!", false);
+            this.showModal(t('warning.title'), t('warning.ticketJam'), false);
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
         else if (this.state.time >= 16 * 60 + 30) {
@@ -1340,8 +1488,8 @@ export const core = {
                         if (party) { this.state.pendingEnd = party; return; }
                     }
                     this.queueEnd({
-                        title: "WOCHE ÜBERLEBT",
-                        lead: "Freitag, 16:30 Uhr. Fünf Tage GlobalCorp am Stück – und du stehst noch.",
+                        title: t('end.weekTitle'),
+                        lead: t('end.weekLead'),
                         cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
                     });
                 }
@@ -1352,8 +1500,8 @@ export const core = {
             if (party) { this.state.pendingEnd = party; return; }
 
             this.queueEnd({
-                title: "FEIERABEND",
-                lead: "16:30! Du hast den Tag überlebt.",
+                title: t('end.dayTitle'),
+                lead: t('end.dayLead'),
                 cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
             });
         }
@@ -1361,8 +1509,8 @@ export const core = {
         else if (this.state.cr >= 100) {
             if (this.issueChefWarning()) return;
             this.queueEnd({
-                title: "GEFEUERT",
-                lead: this.weekFailLead("Der Sicherheitsdienst begleitet dich raus. Deine Karriere hier ist vorbei."),
+                title: t('end.firedTitle'),
+                lead: this.weekFailLead(t('end.firedLead')),
                 cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
             });
         }
@@ -1454,8 +1602,7 @@ export const core = {
         if (auftakt && this.state.week.active) {
             this.renderTerminal({
                 ...auftakt,
-                text: "Fünf Tage. Montag bis Freitag, ohne einen einzigen davon abzugeben.\n\n"
-                    + auftakt.text
+                text: t('party.weekIntro') + '\n\n' + auftakt.text
             }, 'party');
         } else {
             this.renderTerminal(auftakt, 'party');

@@ -12,6 +12,7 @@
 <script>
     import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
 
+    import { t } from '../i18n/i18n.svelte.js';
     const pad = (n) => String(n).padStart(2, '0');
 
     const clock = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
@@ -35,7 +36,10 @@
     const radarPulse = $derived(state.visualFX && state.cr >= 80 ? 'pulse-red' : '');
 
     /** Weekday shorthand for the week mode, matching the calendar icons. */
-    const WEEK_SHORT = ['MO', 'DI', 'MI', 'DO', 'FR'];
+    // i18n-uses: week.short.mon, week.short.tue, week.short.wed
+    // i18n-uses: week.short.thu, week.short.fri
+    const WEEK_SHORT = ['week.short.mon', 'week.short.tue', 'week.short.wed',
+                        'week.short.thu', 'week.short.fri'];
 </script>
 
 <!--
@@ -48,24 +52,24 @@
 <div id="clock-container"
      class="neon-box panel-raised border-blue col-span-2 lg:col-span-1 p-2 grid items-start justify-items-center content-center gap-x-3 {state.week.active ? 'grid-cols-[1fr_auto_1fr]' : 'grid-cols-1'}">
 
-    <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">Uhrzeit</span>
+    <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">{t('header.clock')}</span>
     {#if state.week.active}
         <span class="self-stretch w-px bg-blue-500/25"></span>
-        <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">Tag</span>
+        <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">{t('header.day')}</span>
     {/if}
 
     <div id="clock" class="text-3xl lg:text-4xl font-black text-white leading-none mt-1.5">{clock}</div>
     {#if state.week.active}
         <div class="self-stretch w-px bg-blue-500/25"></div>
         <div class="flex flex-col items-center mt-1.5">
-            <span class="text-3xl lg:text-4xl font-black text-white leading-none">{WEEK_SHORT[state.week.dayIndex - 1]}</span>
+            <span class="text-3xl lg:text-4xl font-black text-white leading-none">{t(WEEK_SHORT[state.week.dayIndex - 1])}</span>
             <span class="text-[10px] text-blue-400 font-bold leading-none mt-1.5">{state.week.dayIndex}/5</span>
         </div>
     {/if}
 </div>
 
 <div id="ticket-container" class="neon-box panel-raised border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
-    <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">OFFENE TICKETS</span>
+    <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">{t('header.openTickets')}</span>
     <!--
       The old updateUI() rewrote className here and dropped the responsive
       text-3xl lg:text-4xl in favour of a fixed text-4xl on its first run, so
@@ -76,12 +80,14 @@
          class="text-3xl lg:text-4xl font-black text-white ticket-counter {state.tickets >= TICKET_WARNING ? 'ticket-pulse' : ''}">
         {ticketText}
     </div>
-    <div class="text-[8px] text-slate-500">Max: 10</div>
+    <div class="text-[8px] text-slate-500">{t('header.maxTickets')}</div>
 </div>
 
 <div id="stat-row-fl" class="neon-box panel-raised border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
-    <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400">
-        <span>FAULHEIT</span><span id="val-fl">{flText}</span>
+    <!-- uppercase by CSS, so the name itself lives once in the dictionary -
+         it is one of the four cross-cutting stat words, see GLOSSAR 3a. -->
+    <div class="flex justify-between text-xs font-bold mb-1 text-emerald-400 uppercase">
+        <span>{t('stat.lazy')}</span><span id="val-fl">{flText}</span>
     </div>
     <div class="h-2 bg-slate-800 rounded-full">
         <div id="bar-fl" class="h-full bg-emerald-500 transition-all duration-800 ease-out" style="width: {bar(state.fl)}%"></div>
@@ -89,8 +95,8 @@
 </div>
 
 <div id="stat-row-al" class="neon-box panel-raised border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {aggroPulse}">
-    <div class="flex justify-between text-xs font-bold mb-1 text-orange-400">
-        <span>AGGRO</span><span id="val-al">{alText}</span>
+    <div class="flex justify-between text-xs font-bold mb-1 text-orange-400 uppercase">
+        <span>{t('stat.aggro')}</span><span id="val-al">{alText}</span>
     </div>
     <div class="h-2 bg-slate-800 rounded-full">
         <div id="bar-al" class="h-full bg-orange-500 transition-all duration-800 ease-out" style="width: {bar(state.al)}%"></div>
@@ -98,8 +104,8 @@
 </div>
 
 <div id="stat-row-cr" class="neon-box panel-raised border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {radarPulse}">
-    <div class="flex justify-between text-xs font-bold mb-1 text-red-500">
-        <span>CHEF-RADAR</span><span id="val-cr">{crText}</span>
+    <div class="flex justify-between text-xs font-bold mb-1 text-red-500 uppercase">
+        <span>{t('stat.radar')}</span><span id="val-cr">{crText}</span>
     </div>
     <div class="h-2 bg-slate-800 rounded-full">
         <div id="bar-cr" class="h-full bg-red-600 transition-all duration-800 ease-out" style="width: {bar(state.cr)}%"></div>
