@@ -640,6 +640,7 @@ export const en = {
 
     'week.log.start':              'Mode: WORKING WEEK ({mode}). Five days. Everything counts.',
     'week.log.meetingCancelled':   'The meeting room is double-booked. The meeting is off. Nobody complains.',
+    'week.log.meetingNoTickets':   'Half the building is sitting in the same room - while nobody is at their desk, no ticket comes in either.',
     'week.log.resumed':            'Session restored. {day}, the week carries on...',
     'week.log.noRun':              'No week in progress. Back to workday mode.',
     'week.log.restart':            'Back to Monday. New week, same company.',

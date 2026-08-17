@@ -934,6 +934,41 @@ await ok('Freitag 15:00-Übergang bewaffnet den ZUM-WOCHENMEETING-Knopf', () => 
     // ein Vergleich gegen 'ZUM WOCHENMEETING' hätte nur auf Deutsch geprüft.
     assert.equal(calls.termResult.buttonKey, 'terminal.btn.meeting');
 });
+await ok('Das Meeting vergibt keine Tickets — dein Beispiel: 15:10 bis 16:10', () => {
+    // Die Zählung läuft über GRENZEN, nicht über Dauer: 15:10 bis 16:10 steigt
+    // über 15:30 und 16:00, das wären zwei. Das Meeting ist davon ausgenommen.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10;
+    state.tickets = 4;
+    engine.resolveTerminal({ r: 'Meeting vorbei.', m: 60, l: 0, a: 0, b: 0 }, 'meeting');
+    assert.equal(state.tickets, 4, 'das Meeting hat Tickets vergeben');
+    assert.equal(state.time, 16 * 60 + 10, 'die Zeit muss trotzdem vergehen');
+});
+await ok('Die Gegenprobe: dieselbe Strecke als gewöhnliches Ereignis kostet zwei', () => {
+    // Ohne diese Zeile prüft die vorige nichts — sie bewiese nur, dass
+    // irgendetwas keine Tickets vergibt.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10;
+    state.tickets = 4;
+    engine.resolveTerminal({ r: 'Kaffee.', m: 60, l: 0, a: 0, b: 0 }, 'coffee');
+    assert.equal(state.tickets, 6, 'die Grenzen 15:30 und 16:00 fehlen');
+});
+await ok('Nach dem Meeting zählt der Rest des Tages normal weiter', () => {
+    // Ausgenommen, nicht verschoben: die Rechnung hängt an der Uhr, nicht an
+    // einer zweiten, unsichtbaren Zeit.
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 5; state.lunchDone = true; state.meetingDone = true;
+    state.time = 15 * 60 + 10; state.tickets = 0;
+    engine.resolveTerminal({ r: 'Meeting vorbei.', m: 60, l: 0, a: 0, b: 0 }, 'meeting');
+    assert.equal(state.tickets, 0);
+    engine.resolveTerminal({ r: 'Kaffee.', m: 20, l: 0, a: 0, b: 0 }, 'coffee');
+    assert.equal(state.tickets, 1, '16:10 bis 16:30 ist genau eine Grenze');
+});
 await ok('Kein Meeting-Knopf: Mo–Do, Tagesmodus, oder Meeting schon erledigt', () => {
     resetState();
     engine.startWeek('easy');

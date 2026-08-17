@@ -646,6 +646,7 @@ export const de = {
 
     'week.log.start':              'Modus: ARBEITSWOCHE ({mode}). Fünf Tage. Alles zählt.',
     'week.log.meetingCancelled':   'Der Besprechungsraum ist doppelt gebucht. Das Meeting fällt aus. Niemand beschwert sich.',
+    'week.log.meetingNoTickets':   'Das halbe Haus sitzt im selben Raum — solange niemand am Platz ist, kommt auch kein Ticket rein.',
     'week.log.resumed':            'Sitzung wiederhergestellt. {day}, die Woche läuft weiter...',
     'week.log.noRun':              'Kein Wochenlauf gefunden. Zurück in den Tagesmodus.',
     'week.log.restart':            'Zurück auf Montag. Neue Woche, gleiche Firma.',

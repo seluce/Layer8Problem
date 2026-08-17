@@ -227,10 +227,15 @@ function apply(s, o, poolType) {
 
     if (poolType === 'calls') s.tickets = Math.max(0, s.tickets - 1);
 
-    const oldChunk = Math.floor(s.time / 30);
-    const capped = Math.min(s.time + m, SHIFT_END);
-    const chunks = Math.max(0, Math.floor(capped / 30) - oldChunk);
-    s.tickets += chunks;
+    // The weekly meeting grants no tickets - compulsory, unanswerable and of a
+    // length nobody can read off the screen. Mirrors the exemption in
+    // engine_events.resolveTerminal(); the two formulas are a copy of each
+    // other on purpose, so a change here has to be made there as well.
+    if (poolType !== 'meeting') {
+        const oldChunk = Math.floor(s.time / 30);
+        const capped = Math.min(s.time + m, SHIFT_END);
+        s.tickets += Math.max(0, Math.floor(capped / 30) - oldChunk);
+    }
     s.time += m;
 
     const lazy = lazyMult(s);

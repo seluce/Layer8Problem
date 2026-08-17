@@ -416,6 +416,12 @@ export const week = {
         const galaTonight = !!this.partyInvitation();
         const startNode = (galaTonight && ev.startNodeGala) ? ev.startNodeGala : ev.startNode;
 
+        // Says out loud what resolveTerminal does quietly: no tickets while the
+        // meeting runs. A rule the player cannot see is a rule they cannot plan
+        // around, and this one decides Fridays. It reads as the joke it is -
+        // nobody files a ticket because everybody is sitting in the same room.
+        this.log({ k: 'week.log.meetingNoTickets' }, 'text-purple-400');
+
         this.renderTerminal({ ...ev, startNode }, 'meeting');
     },
 

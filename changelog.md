@@ -23,6 +23,7 @@ Emergencies:
 The weekly meeting:
 * Twelve chains instead of six - so Friday repeats itself after twelve weeks at the earliest. New among them: the evaluation of the staff survey, a video link to the Southern branch with no sound, an appointment nobody attends, the preparation for the external audit, a pilot project with an assistant that has learned from your own ticket replies, and a workshop about too many meetings.
 * All the meetings have got longer: three decisions instead of two and twice as many exits. The new middle section is what really makes meetings drag - the slide afterwards, the follow-up question, the colleague who would like to add something.
+* No tickets come in while the meeting runs - everybody is sitting in the same room, after all. It lasts three quarters of an hour and there is no leaving it, so until now Friday could end in a dismissal there was no way to prevent, in the closing scene of a week you had otherwise survived. The time it costs stays, so the afternoon is as tight as it was.
 
 The knowledge:
 * The book now also covers the summer party, the weekly meeting, the consultancies, two persistent senders from the inbox and Jürgen from sales.
