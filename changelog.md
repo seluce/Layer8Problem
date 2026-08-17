@@ -1,8 +1,3 @@
-[Unreleased]
-
-For developers:
-* The character portraits and the item pictures were being shipped many times larger than anything ever displays them. The portraits were 2048 px against a largest actual size of 140 CSS px - the team view scales to 2.25 on hover, which is the biggest they ever get - and the items were 1024 px (five of them 2048, three an odd 609) against 80 px in the confirmation dialogue. Portraits are 512 px now and items 256 px, which is what every other picture family in the game already used. That is 5.4 MB less to download, from 24.6 MB down to 19.2 MB, with the same picture on screen: measured against a lossless reference, the average deviation over the opaque pixels is 4.5 of 255 for the portraits and transparency is preserved exactly. Nothing was redrawn, and the originals stay in the repository history.
-
 [6.0.0] - 2026-08-17
 
 This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.
@@ -40,6 +35,7 @@ Bug fixes:
 * Very long words with no break point - the coffee machine's error code, for instance - pushed the event text off the screen on a phone. Such words now wrap, and ordinary tapeworms are hyphenated rather than stretched. Affects events, results, the phone chat and the knowledge.
 * A phone errand could briefly show a bar above 100 % before it snapped back. The value was never really higher; the display was a blink ahead of the cap.
 * Continue a day that was saved before an update and the log named the version from back then, while the terminal header next to it named the new one. Both now agree.
+* Begin a second day in the same session and it started with the tickets and the stats of the first one. Choosing the difficulty only set what the difficulty itself decides and left everything else standing - on Friday and Wednesday nothing at all was cleared, and even Monday carried the laziness and the boss radar across. A day starts as a day now.
 * Kevin is the apprentice, not an intern - he had been promoted in five places, from his own call heading to a morning mood. Bernd is in sales, not logistics. The thick manual is Windows-95-Handbuch in all twelve places. And the boss's office is below the server room, not above it, which is why everything drips into it.
 * Where two places named different figures, the smaller one was right: a full descaling takes seventy-five minutes and not ninety, and the ten minutes in the tea kitchen stay ten minutes - they are still the most relaxing of the day.
 * Six spelling mistakes that had been standing since 5.0, among them a "Taffe" travelling across the table and a bellowed "STEKCER ZIEHEN, SIE IDIOT!". Plus three small corrections in the knowledge and the errands: Herr Aluhut has exactly one alias and not several, Frau Elster now accepts the donut that was actually put in front of her, and the error message stammered at Sarah from HR is complete.
