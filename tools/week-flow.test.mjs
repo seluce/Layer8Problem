@@ -18,6 +18,9 @@ globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
     querySelectorAll: () => [],
+    // useLanguage() sets <html lang> on its way past - the automatic
+    // hyphenation of long words follows that attribute.
+    documentElement: { lang: '' },
 };
 
 const { DB, ensure, loadCore } = await import('../src/data.js');
@@ -30,6 +33,7 @@ const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
+const { useLanguage } = await import('../src/i18n/i18n.svelte.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
@@ -653,6 +657,47 @@ await ok('Eine Fahnen-Notiz allein öffnet den Eintrag nicht', () => {
     assert.equal(e.open, false, 'gilt fälschlich als getroffen');
     assert.ok(e.notes.length > 0, 'Fahnen-Notiz nicht freigeschaltet');
     assert.equal(e.unread, false, 'ungeöffneter Eintrag meldet sich als neu');
+});
+await ok('Das Wissen folgt der Sprache', async () => {
+    // knowledgeEntries() lief über DB statt über tree(). Das ist die Falle aus
+    // CLAUDE.md: DB ist ein einfaches Objekt, der Sprachwechsel füllt es neu,
+    // und ein $derived, das nur DB liest, merkt davon nichts. In der Komponente
+    // wechselten dadurch die Reiter, während Rolle und Notizen deutsch stehen
+    // blieben — am 17.08.2026 am laufenden Spiel gesehen.
+    resetState();
+    state.archive.seenEvents = ['cof_sonntag_1'];
+    state.archive.knowledgeRead = {};
+    const rolle = () => engine.knowledgeEntries().find(x => x.id === 'sonntag')?.role;
+
+    await useLanguage('de');
+    await loadCore('de');
+    await ensure('compendium');
+    const de = rolle();
+
+    await useLanguage('en');
+    await loadCore('en');
+    await ensure('compendium');
+    const en = rolle();
+
+    await useLanguage('de');
+    await loadCore('de');
+    await ensure('compendium');
+
+    assert.ok(de && en, 'ein Baum lieferte nichts');
+    assert.notEqual(de, en, `die Rolle bleibt in beiden Bäumen "${de}"`);
+    assert.equal(rolle(), de, 'kommt nicht zurück');
+
+    // Und die Prüfung, die tatsächlich beißt. Die drei Zusicherungen oben
+    // halten auch dann, wenn man wieder direkt auf DB zugreift — in Node
+    // liefert tree() einfach DB, der Unterschied ist reine Svelte-Reaktivität
+    // und hier nicht zu sehen. Gemessen: die Mutationsprobe schlug nicht an.
+    // Also wird die Quelle gelesen, wie i18n.test.mjs es bei index.html tut.
+    const quelle = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const stelle = quelle.slice(quelle.indexOf('knowledgeEntries:'), quelle.indexOf('markKnowledgeRead:'));
+    assert.ok(stelle.includes('tree().compendium'),
+              'knowledgeEntries liest den Baum nicht über tree() — die Komponente merkt den Sprachwechsel dann nicht');
+    assert.ok(!/\bDB\.compendium/.test(stelle),
+              'knowledgeEntries greift wieder direkt auf DB zu');
 });
 await ok('Was man nie getroffen hat, ist nicht neu', () => {
     resetState();

@@ -47,6 +47,9 @@
     // away the cast and turn the notebook into a collection checklist; the
     // counter in the tab already says that there is more to find.
     const entries = $derived(all.filter(e => e.cat === cat && e.open));
+    // Below md the register and the page are the same screen; this is which of
+    // the two is showing.
+    const onPage = $derived(selectedId !== null);
 
     const found = $derived(all.reduce((n, e) => n + e.notes.length, 0));
     const total = $derived(all.reduce((n, e) => n + e.total, 0));
@@ -62,17 +65,81 @@
         ?? null
     );
 
-    // Reading is a side effect, so it belongs in an effect, not in $derived.
+    /*
+     * Is the open page actually on screen?
+     *
+     * Below md the register IS the screen and the page is display:none until a
+     * name is tapped - see the two class lists further down. That matters here
+     * and not only for the layout: the marker used to be stamped as read the
+     * moment an entry became `current`, so on a phone the bold number went out
+     * under the player's eyes while the note behind it had never been shown.
+     */
+    let wide = $state(true);
     $effect(() => {
-        if (current?.unread) engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+        const query = window.matchMedia('(min-width: 768px)');
+        const update = () => { wide = query.matches; };
+        update();
+        query.addEventListener('change', update);
+        return () => query.removeEventListener('change', update);
+    });
+    const pageVisible = $derived(wide || onPage);
+
+
+    /*
+     * Opening the book jumps to what changed.
+     *
+     * Two things stood in the way of the "you land on the new entry" promise:
+     * the register is filtered to the CURRENT category, so a new note in one of
+     * the other three was invisible - and 52 of the 59 entries live outside the
+     * one the book starts on - and `selectedId` outlives every close, because
+     * this component is mounted once and only hidden. After the first click
+     * ever, the book therefore always reopened on the last entry read.
+     *
+     * Not a $derived: this has to happen ON OPENING and never again, or the
+     * jump would fight every click the player makes afterwards. `wasOpen` is a
+     * plain variable on purpose - a rune here would make the effect its own
+     * dependency.
+     */
+    let wasOpen = false;
+    let settled = $state(false);
+    $effect(() => {
+        const open = game.knowledgeOpen;
+        if (open && !wasOpen) {
+            const fresh = all.find(e => e.open && e.unread);
+            // Nothing new: leave the player where they were.
+            if (fresh) { cat = fresh.cat; selectedId = null; }
+            settled = true;
+        }
+        if (!open) settled = false;
+        wasOpen = open;
+    });
+
+    /*
+     * Reading is a side effect, so it belongs in an effect, not in $derived.
+     * Only what was actually put in front of the player counts as read.
+     *
+     * `settled` is what keeps this from firing on the opening flush, while the
+     * jump above has not moved the category yet. Without it the first unread
+     * entry of the PREVIOUS category is stamped as read on the way past - a
+     * measured mistake, not a hypothetical one: opening with three new notes
+     * marked Kevin read while the book was travelling to Herr Blaschke.
+     */
+    $effect(() => {
+        if (!settled) return;
+        if (pageVisible && current?.unread) {
+            engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+        }
     });
 
 
-    const onPage = $derived(selectedId !== null);
     const missing = $derived(current ? Math.max(0, current.total - current.notes.length) : 0);
 
     const switchCat = (id) => { cat = id; selectedId = null; };
     const countOf = (id) => all.filter(e => e.cat === id && e.open).length;
+    // Same treatment as in the register, for the same reason: without it, a
+    // second new note in another category stays invisible even after the jump
+    // above has taken the player to the first one.
+    const unreadIn = (id) => all.some(e => e.cat === id && e.unread);
 </script>
 
 <div class="flex flex-col flex-1 overflow-hidden">
@@ -86,7 +153,8 @@
                 class="px-4 py-2.5 text-[10px] font-bold tracking-[0.14em] border-b-2 -mb-px transition-colors
                        {cat === c.id ? c.tab : 'border-transparent text-slate-500 hover:text-slate-300'}">
                 {t(c.label)}
-                <span class="ml-1.5 font-normal opacity-60 tabular-nums">
+                <span class="ml-1.5 tabular-nums transition-colors
+                             {unreadIn(c.id) ? 'text-slate-100 font-bold' : 'font-normal opacity-60'}">
                     {countOf(c.id)}/{all.filter(e => e.cat === c.id).length}
                 </span>
             </button>

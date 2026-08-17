@@ -1,6 +1,6 @@
 import { KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
-import { t, tf } from '../i18n/i18n.svelte.js';
+import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
@@ -508,7 +508,12 @@ export const core = {
 
         const read = this.state.archive.knowledgeRead ?? {};
 
-        return (DB.compendium ?? []).map(e => {
+        // tree() rather than DB, and that is not cosmetic: this runs inside a
+        // $derived in components/KnowledgeView.svelte, and DB is a plain object
+        // the language switch refills. Read directly, the derived has nothing
+        // to notice - the tabs around it would change language while the notes
+        // and roles stayed behind. The trap CLAUDE.md documents for `DB`.
+        return (tree().compendium ?? []).map(e => {
             const open  = (e.seen ?? []).some(id => seen.has(id));
             const notes = (e.notes ?? []).filter(known).map(n => n.text);
             // Counting notes rather than storing a boolean is what makes a
