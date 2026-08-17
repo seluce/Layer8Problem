@@ -1,4 +1,4 @@
-[6.0.0] - 2026-08-16
+[6.0.0] - 2026-08-17
 
 This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.
 
