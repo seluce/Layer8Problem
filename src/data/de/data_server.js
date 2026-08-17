@@ -415,7 +415,7 @@ export const server = [
         text: "Zwei Stunden nachdem du das Rig abgeschaltet hast, stürmt der Chef rein. 'Müller! Das gesamte E-Mail-Archiv von 1990 bis 2005 ist offline! Das lief auf dem Legacy-Cluster hinter Rack 4!'",
         opts: [
             { 
-                t: "Ehrlich sein: 'Ich hab's ausgemacht.'", 
+                t: "'Ich hab's ausgemacht.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, l: 0, a: 0, b: 30, 
                 r: "Der Chef starrt dich an. 'Sie haben das Backup-System für illegalen Stromverbrauch gehalten? Müller, ich weiß nicht, ob Sie zu schlau oder zu dumm für diesen Job sind.'" 
@@ -2239,7 +2239,7 @@ export const server = [
                 r: "Du ziehst dem Ventilator den Stecker. 'Sorry, Chef.' Er nimmt das Ding und geht. Berta wird sofort wieder heiß. Du musst jetzt pusten." 
             },
             { 
-                t: "Frech werden: 'Sie schwitzen für die Firma'", 
+                t: "'Sie schwitzen für die Firma.'", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 2, l: 0, a: 10, b: 30, 
                 r: "'Opfer müssen gebracht werden.' Der Chef explodiert fast. Er reißt den Ventilator an sich und knallt die Tür zu. Die Abmahnung schreibt er vermutlich noch im Gehen." 
@@ -2578,7 +2578,7 @@ export const server = [
                 r: "'Okay, aber nur nachts.' Kevin jubelt. Du weißt genau, dass das illegal ist. Aber wer kann diesen Hundeaugen widerstehen?" 
             },
             { 
-                t: "Streng bleiben: 'Nein!'", 
+                t: "Hart ablehnen: 'Nein!'", 
                 rep: { "Kevin": -5 }, 
                 m: 5, l: 0, a: 5, b: -10,
                 r: "'Das ist Firmeneigentum, Kevin.' Er schlurft deprimiert davon. Er muss die Spielzeugautos wohl zurückgeben. Du hast das Stromnetz gerettet." 
@@ -2705,7 +2705,7 @@ export const server = [
         text: "Der IT-Leiter steht vor dem Rack. Er hat Tränen in den Augen. 'Es ist... wunderschön. Niemand darf das mehr anfassen! Ich erkläre dieses Rack zur Sperrzone!'",
         opts: [
             { 
-                t: "Genervt sein: 'Wir müssen aber arbeiten'", 
+                t: "'Wir müssen aber arbeiten.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, l: 0, a: 5, b: 5, 
                 r: "'Chef, ich muss an Port 43.' Er funkelt dich böse an. 'Wagen Sie es nicht, die Symmetrie zu zerstören!' Toll, jetzt ist das Rack nutzlos." 

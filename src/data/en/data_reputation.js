@@ -635,7 +635,7 @@ export const reputation = [
                 r: "It is a solid gold-plated stapler. 'Siphoned off the marketing budget,' she winks. 'Nobody takes the two of us on.' The most powerful ally in the company is now yours." 
             },
             { 
-                t: "Stay modest: 'It was a pleasure.'", 
+                t: "'It was a pleasure.'", 
                 rep: { "Chantal": 10 },
                 m: 5, l: 5, a: -10, b: 0, 
                 r: "Chantal nods. 'You are okay, Miller. Genuinely okay.' She keeps the stapler. What you get is her lasting respect." 
@@ -1727,7 +1727,7 @@ export const reputation = [
                 r: "You take the tablet off him. 'Only a cache error, boss. I am cleaning up the Matrix.' You clear the history. He lets out a long breath. 'Miller, you are a rock in the surf. I will not forget this.'" 
             },
             { 
-                t: "Be honest: 'That was the 2018 Christmas party...'", 
+                t: "'That was the 2018 Christmas party...'", 
                 next: "path_ceo_shame",
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, l: 0, a: 10, b: 5, 

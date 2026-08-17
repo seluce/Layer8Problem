@@ -158,7 +158,7 @@ export const calls = [
 				text: "Eine heisere Stimme brüllt ins Telefon: 'MÜLLER?! Wo sind meine Lizenzen?! Ich verliere hier Millionen pro Sekunde!'\n\nDer Mann klingt cholerisch.",
 				opts: [
 					{ t: "Panisch auflegen", next: "hangup" },
-					{ t: "Professionell bleiben: 'Wer sind Sie?'", next: "ask_who" }
+					{ t: "Ruhig nachfragen: 'Wer sind Sie?'", next: "ask_who" }
 				]
 			},
 			hangup: {
@@ -1415,7 +1415,7 @@ export const calls = [
             root: {
                 text: "'Hallo? Ich stehe unten. 15 Pizzen 'Quattro Stagioni' für die IT? Der Aufzug ist kaputt, können Sie runterkommen?'\n\nDu hast nichts bestellt. Aber es riecht bis hier oben.",
                 opts: [
-                    { t: "Ehrlich sein: 'Falsch verbunden'", next: "res_honest" },
+                    { t: "'Falsch verbunden.'", next: "res_honest" },
                     { t: "'Ich komme!' rufen und die Pizza abgreifen", next: "steal_pizza" }
                 ]
             },
@@ -1487,7 +1487,7 @@ export const calls = [
             "root": {
                 text: "Frau Jablonski muss dir ein temporäres Passwort buchstabieren. 'Also, das Passwort ist: A wie... Apfel. C wie... Ceylan? Oder Z? Nein, Moment, C wie Chamäleon!'\n\nDu spürst, wie du langsam aber sicher wertvolle Lebenszeit verlierst.",
                 opts: [
-                    { t: "Geduldig bleiben: 'Meinen Sie C wie Cäsar?'", next: "nato_c" },
+                    { t: "'Meinen Sie C wie Cäsar?'", next: "nato_c" },
                     { t: "'Lesen Sie einfach das ganze Wort vor.'", next: "nato_word" }
                 ]
             },
@@ -2052,7 +2052,7 @@ export const calls = [
                 text: "Sabine von HR ruft an. Sie klingt extrem formell. 'Herr Müller. Wir haben eine... Beschwerde von Frau Elster vorliegen. Es geht um unangemessenes Verhalten am Arbeitsplatz in Bezug auf Auszubildende.'",
                 opts: [
                     { t: "'Sein Pulli hing im Lüfter!'", next: "hr_explain" },
-                    { t: "Empört sein: 'Das ist Verleumdung!'", next: "hr_deny" }
+                    { t: "'Das ist Verleumdung!'", next: "hr_deny" }
                 ]
             },
             "hr_explain": {

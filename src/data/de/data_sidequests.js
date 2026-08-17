@@ -2133,7 +2133,7 @@ export const sidequests = [
                 r: "Du hackst dich ins Kantinen-System und löschst den Eintrag. Leider kommt der echte Chef gerade rein und fragt, warum sein Konto gesperrt ist. 'Müller... wissen Sie was davon?'" 
             },
             { 
-                t: "Bescheiden bleiben: 'War ein Systemfehler'", 
+                t: "'War ein Systemfehler.'", 
                 m: 5, l: 0, a: 5, b: 0, 
                 r: "Du meldest es der IT. 'Die KI spinnt mal wieder.' Niemand stellt Fragen. Aber der Hummer taucht auch nicht auf. Du hast nichts gewonnen, außer Angst." 
             }
@@ -2364,7 +2364,7 @@ export const sidequests = [
                 r: "Du isst den Kuchen. Er schmeckt nach Marzipan und Bestechung. Eine mächtige Verbündete im Büro zu haben, ist Gold wert." 
             },
             { 
-                t: "Frech werden: 'Ich mache das nur für Rüdiger.'", 
+                t: "'Ich mache das nur für Rüdiger.'", 
                 rep: { "Frau Elster": 5 },
                 m: 2, l: 0, a: 5, b: 0, 
                 r: "Sie zieht eine Augenbraue hoch. 'Seien Sie nicht unverschämt, Müller.' Sie geht, aber man merkt, dass sie dich jetzt respektiert." 
@@ -3029,7 +3029,7 @@ export const sidequests = [
         text: "Der Praktikant hat aus Panik vor dir wirklich seine Sachen gepackt und ist gegangen. HR ruft an: 'Müller! Was haben Sie dem armen Jungen gesagt?! Wir müssen jetzt neu ausschreiben!'",
         opts: [
             { 
-                t: "Ahnungslos tun: 'Er war wohl überlastet.'", 
+                t: "'Er war wohl überlastet.'", 
                 m: 5, l: 0, a: 5, b: 5, 
                 r: "Du erklärst es zum allgemeinen Leistungsdruck. Die Firma fragt sich, ob das Onboarding zu hart ist." 
             },
@@ -6108,7 +6108,7 @@ export const sidequests = [
         text: "Deine Suche im HR-Bereich war verdächtig. Frau Elster ermahnt dich: 'Die Flure sind kein Privat-Detektivbüro, Müller!'",
         opts: [
             { 
-                t: "Pampig werden: 'Mein Eigentum!'", 
+                t: "'Mein Eigentum!'", 
                 rep: { "Frau Elster": -10 },
                 m: 5, l: 0, a: 10, b: 10, 
                 r: "Sie verfasst eine sehr wütende Aktennotiz über dich. Nicht gut." 

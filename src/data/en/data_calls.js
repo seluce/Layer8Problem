@@ -162,7 +162,7 @@ export const calls = [
 				text: "A hoarse voice bellows into the phone: 'MILLER?! Where are my licences?! I am losing millions a second here!'\n\nThe man sounds apoplectic.",
 				opts: [
 					{ t: "Hang up in a panic", next: "hangup" },
-					{ t: "Stay professional: 'Who is this?'", next: "ask_who" }
+					{ t: "Ask calmly: 'Who is this?'", next: "ask_who" }
 				]
 			},
 			hangup: {
@@ -1419,7 +1419,7 @@ export const calls = [
             root: {
                 text: "'Hello? I am downstairs. 15 'Quattro Stagioni' pizzas for IT? The lift is broken, can you come down?'\n\nYou have not ordered anything. But you can smell it from up here.",
                 opts: [
-                    { t: "Be honest: 'Wrong number'", next: "res_honest" },
+                    { t: "'Wrong number.'", next: "res_honest" },
                     { t: "Shout 'On my way!' and grab the pizzas", next: "steal_pizza" }
                 ]
             },
@@ -1491,7 +1491,7 @@ export const calls = [
             "root": {
                 text: "Ms Jablonski has to spell a temporary password out to you. 'Right, the password is: A for... apple. C for... Ceylon? Or Z? No, hold on, C for chameleon!'\n\nYou can feel yourself losing valuable years of your life, slowly but surely.",
                 opts: [
-                    { t: "Stay patient: 'Do you mean C for Charlie?'", next: "nato_c" },
+                    { t: "'Do you mean C for Charlie?'", next: "nato_c" },
                     { t: "'Just read me the whole word.'", next: "nato_word" }
                 ]
             },
@@ -2056,7 +2056,7 @@ export const calls = [
                 text: "Sabine from HR rings. She sounds extremely formal. 'Mr Miller. We have a... complaint from Ms Elster on file. It concerns inappropriate conduct in the workplace with regard to apprentices.'",
                 opts: [
                     { t: "'His jumper was caught in the fan!'", next: "hr_explain" },
-                    { t: "Be outraged: 'That is slander!'", next: "hr_deny" }
+                    { t: "'That is slander!'", next: "hr_deny" }
                 ]
             },
             "hr_explain": {

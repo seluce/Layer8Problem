@@ -609,7 +609,7 @@ export const reputation = [
                 r: "Es ist ein massiv vergoldeter Tacker. 'Vom Marketing-Budget abgezweigt', zwinkert sie. 'Niemand legt sich mit uns an.' Du hast jetzt die mächtigste Verbündete der Firma." 
             },
             { 
-                t: "Bescheiden bleiben: 'War mir ein Vergnügen.'", 
+                t: "'War mir ein Vergnügen.'", 
                 rep: { "Chantal": 10 },
                 m: 5, l: 5, a: -10, b: 0, 
                 r: "Chantal nickt. 'Du bist okay, Müller. Echt okay.' Sie behält den Tacker, aber du hast ihren ewigen Respekt." 
@@ -1701,7 +1701,7 @@ export const reputation = [
                 r: "Du nimmst ihm das Tablet ab. 'Nur Cache-Fehler, Chef. Ich bereinige die Matrix.' Du löschst den Verlauf. Er atmet tief durch. 'Müller, Sie sind ein Fels in der Brandung. Das vergesse ich Ihnen nicht.'" 
             },
             { 
-                t: "Ehrlich sein: 'Das war die Weihnachtsfeier 2018...'", 
+                t: "'Das war die Weihnachtsfeier 2018...'", 
                 next: "path_ceo_shame",
                 rep: { "Dr. Wichtig": -10 },
                 m: 5, l: 0, a: 10, b: 5, 

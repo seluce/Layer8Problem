@@ -746,7 +746,7 @@ export const coffee = [
                 r: "Du hast ein Zeichen gesetzt. Es ist zwar unpraktisch für alle, aber niemand wird mehr wagen, dir die Milch wegzunehmen. Respekt durch Angst." 
             },
             { 
-                t: "Unschuldig tun: 'Wer macht denn sowas?'",
+                t: "'Wer macht denn sowas?'",
                 rep: { "Kevin": -5 }, 
                 m: 2, l: 5, a: 0, b: 0, 
                 r: "Die Kollegen tuscheln. 'Bestimmt der Kevin.' Du nickst eifrig. Sündenböcke sind wichtig für das Betriebsklima." 
@@ -1276,7 +1276,7 @@ export const coffee = [
                 r: "Der Chef wirkt kurz verwirrt, nickt dann aber anerkennend. 'Wow. Das ist ja noch positiver als mein Coach. Weiter so!' Er macht sich eine Notiz: 'Müller = Visionär'." 
             },
             { 
-                t: "Ehrlich sein: 'Ja, wir haben ein riesiges Problem.'", 
+                t: "'Ja, wir haben ein riesiges Problem.'", 
 				rep: { "Dr. Wichtig": -10 },	
                 m: 5, l: 0, a: 10, b: 20, 
                 r: "Das Dauerlächeln bekommt Risse. 'PROBLEM?! Wir haben keine Probleme! Wir haben nur Dornen im Auge des Erfolgs!' Er hält dir einen 20-minütigen Vortrag über Positivität. Du hast jetzt Kopfschmerzen." 
@@ -2320,7 +2320,7 @@ export const coffee = [
                 r: "Du atmest tief ein. Fünf Minuten Zen-Modus. Du spürst, wie dein Blutdruck sinkt. Du bist eins mit dem Universum. Ein seltener Moment des Friedens." 
             },
             { 
-                t: "Misstrauisch werden: 'Wo sind alle?'", 
+                t: "Misstrauisch umsehen: 'Wo sind alle?'", 
                 next: "path_silence_drill", 
                 m: 2, l: 0, a: 5, b: 0, 
                 r: "Du schaust dich um. Niemand da. Auch nicht im Flur. Ein kalter Schauer läuft dir über den Rücken. Irgendwas stimmt hier nicht." 

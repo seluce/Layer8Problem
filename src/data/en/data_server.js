@@ -442,7 +442,7 @@ export const server = [
         text: "Two hours after you switched the rig off, the boss storms in. 'Miller! The entire email archive from 1990 to 2005 is offline! That was running on the legacy cluster behind Rack 4!'",
         opts: [
             { 
-                t: "Be honest: 'I switched it off.'", 
+                t: "'I switched it off.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, l: 0, a: 0, b: 30, 
                 r: "The boss stares at you. 'You took the backup system for an illegal power draw? Miller, I do not know whether you are too clever or too stupid for this job.'" 
@@ -2266,7 +2266,7 @@ export const server = [
                 r: "You pull the fan's plug. 'Sorry, boss.' He takes the thing and goes. Berta heats up again at once. Now you have to blow." 
             },
             { 
-                t: "Get cheeky: 'You are sweating for the firm'", 
+                t: "'You are sweating for the firm.'", 
 				rep: { "Dr. Wichtig": -15 },
                 m: 2, l: 0, a: 10, b: 30, 
                 r: "'Sacrifices have to be made.' The boss very nearly explodes. He snatches the fan to him and slams the door. He is probably writing the written warning as he walks." 
@@ -2605,7 +2605,7 @@ export const server = [
                 r: "'All right, but only at night.' Kevin cheers. You know perfectly well that it is illegal. Who can resist those puppy eyes, though?" 
             },
             { 
-                t: "Stay strict: 'No!'", 
+                t: "Refuse flatly: 'No!'", 
                 rep: { "Kevin": -5 }, 
                 m: 5, l: 0, a: 5, b: -10,
                 r: "'That is company property, Kevin.' He shuffles off, dejected. He will have to take the toy cars back. You have saved the power grid." 
@@ -2732,7 +2732,7 @@ export const server = [
         text: "The head of IT is standing in front of the rack. There are tears in his eyes. 'It is... beautiful. Nobody is to touch this again! I hereby declare this rack a restricted zone!'",
         opts: [
             { 
-                t: "Get irritated: 'We do have to work, though'", 
+                t: "'We do have to work, though.'", 
 				rep: { "Dr. Wichtig": -5 },
                 m: 5, l: 0, a: 5, b: 5, 
                 r: "'Boss, I need to get at Port 43.' He glares at you. 'Do not dare destroy the symmetry!' Wonderful. Now the rack is useless." 

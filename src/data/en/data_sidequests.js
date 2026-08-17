@@ -2181,7 +2181,7 @@ export const sidequests = [
                 r: "You hack into the canteen system and delete the entry. Unfortunately the real boss walks in just then and asks why his account is blocked. 'Miller... do you know anything about this?'" 
             },
             { 
-                t: "Stay modest: 'It was a system error'", 
+                t: "'It was a system error.'", 
                 m: 5, l: 0, a: 5, b: 0, 
                 r: "You report it to IT. 'The AI is playing up again.' Nobody asks questions. The lobster does not turn up either. You have gained nothing except fear." 
             }
@@ -2412,7 +2412,7 @@ export const sidequests = [
                 r: "You eat the cake. It tastes of marzipan and bribery. Having a powerful ally in the office is worth its weight in gold." 
             },
             { 
-                t: "Be cheeky: 'I only do it for Rüdiger.'", 
+                t: "'I only do it for Rüdiger.'", 
                 rep: { "Frau Elster": 5 },
                 m: 2, l: 0, a: 5, b: 0, 
                 r: "She raises an eyebrow. 'Do not be impertinent, Miller.' She leaves, and you can tell that she respects you now." 
@@ -3077,7 +3077,7 @@ export const sidequests = [
         text: "In his panic at you, the intern really did pack his things and leave. HR rings: 'Miller! What did you say to the poor boy?! We have to advertise the post all over again!'",
         opts: [
             { 
-                t: "Play innocent: 'He was overworked, I think.'", 
+                t: "'He was overworked, I think.'", 
                 m: 5, l: 0, a: 5, b: 5, 
                 r: "You put it down to general performance pressure. The company wonders whether the onboarding is too harsh." 
             },
@@ -6156,7 +6156,7 @@ export const sidequests = [
         text: "Your search in the HR area looked suspicious. Ms Elster admonishes you: 'The corridors are not a private detective agency, Miller!'",
         opts: [
             { 
-                t: "Get shirty: 'My property!'", 
+                t: "'My property!'", 
                 rep: { "Frau Elster": -10 },
                 m: 5, l: 0, a: 10, b: 10, 
                 r: "She writes a very angry note for the file about you. Not good." 

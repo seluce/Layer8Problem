@@ -778,7 +778,7 @@ export const coffee = [
                 r: "You have made a statement. Inconvenient for everybody, and nobody will dare take your milk again. Respect through fear." 
             },
             { 
-                t: "Play innocent: 'Who would do such a thing?'",
+                t: "'Who would do such a thing?'",
                 rep: { "Kevin": -5 }, 
                 m: 2, l: 5, a: 0, b: 0, 
                 r: "Colleagues whisper. 'Kevin, obviously.' You nod eagerly. Scapegoats matter to the mood of a building." 
@@ -1308,7 +1308,7 @@ export const coffee = [
                 r: "The boss looks briefly confused, then nods his approval. 'Wow. That is more positive than my own coach. Keep it up!' He makes himself a note: 'Miller = visionary'." 
             },
             { 
-                t: "Be honest: 'Yes, we have an enormous problem.'", 
+                t: "'Yes, we have an enormous problem.'", 
 				rep: { "Dr. Wichtig": -10 },	
                 m: 5, l: 0, a: 10, b: 20, 
                 r: "The permanent smile develops cracks. 'PROBLEM?! We have no problems! We have thorns in the eye of success!' He gives you a 20-minute lecture on positivity. You come away with a headache." 
@@ -2352,7 +2352,7 @@ export const coffee = [
                 r: "You breathe in deeply. Five minutes of Zen mode. Your blood pressure drops, and you can tell. You are one with the universe. A rare moment of peace." 
             },
             { 
-                t: "Turn suspicious: 'Where is everybody?'", 
+                t: "Look around uneasily: 'Where is everybody?'", 
                 next: "path_silence_drill", 
                 m: 2, l: 0, a: 5, b: 0, 
                 r: "You look around. Nobody there. Nobody in the corridor either. A cold shiver runs down your spine. Something here is not right." 
