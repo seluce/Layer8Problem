@@ -853,29 +853,47 @@ export const core = {
         return true;
     },
 
-    // Applies the difficulty, then starts the day (or the tutorial)
+    /**
+     * Applies the difficulty, then starts the day (or the tutorial).
+     *
+     * REPLACES the day rather than adjusting fields on it, the same way
+     * softReset() does. Up to 6.0 it only set what the level itself changes,
+     * and everything else stayed as it stood - so a day begun after another
+     * one inherited its tickets and its stats. On easy and normal not a single
+     * value was cleared; even hard carried laziness and the boss radar across,
+     * because only tickets and aggro were named.
+     *
+     * That is why it bit after the TUTORIAL: whatever the lesson left behind
+     * travelled into the day that followed it, and a Friday could open with a
+     * ticket that Friday never issues.
+     *
+     * freshDay() derives tickets and excuses from the multiplier already -
+     * 2 and 1 above 1.0, none and 3 below, none and 2 at it - which is exactly
+     * what the three branches used to spell out by hand. One source, and a new
+     * day field can no longer be forgotten here.
+     */
     setDifficulty: function(level) {
         this.hideOverlay('difficulty-modal');
         
         // Lock the buttons for the half second of setup
         this.disableButtons(true);
-        
-        if (level === 'easy') {
-            this.state.difficultyMult = 0.8;
-            this.state.excusesLeft = 3;
-            this.log({ k: 'mode.easy' }, 'text-green-400');
-        } else if (level === 'normal') {
-            this.state.difficultyMult = 1.0;
-            this.state.excusesLeft = 2;
-            this.log({ k: 'mode.normal' }, 'text-blue-400');
-        } else if (level === 'hard') {
-            this.state.difficultyMult = 1.25;
-            this.state.tickets = 2;
-            this.state.al = 0;
-            this.state.excusesLeft = 1;
-            this.log({ k: 'mode.hard' }, 'text-red-500 font-bold');
-        }
-        
+
+        const mult = level === 'easy' ? 0.8 : level === 'hard' ? 1.25 : 1.0;
+
+        // The log is the one thing that outlives this: init() writes the
+        // version line as the first entry of the SESSION, before any day
+        // exists, and refreshBootLogEntry() relies on finding it again with
+        // id 1. Clearing it here would take that line away and leave the
+        // restamp with nothing to stamp - so it is carried over by hand.
+        const { logEntries, lastLogMsg } = this.state;
+        Object.assign(this.state, freshDay(mult), { logEntries, lastLogMsg });
+        this.state.difficultyMult = mult;
+
+        // i18n-uses: mode.easy, mode.normal, mode.hard
+        if (level === 'easy')      this.log({ k: 'mode.easy' },   'text-green-400');
+        else if (level === 'hard') this.log({ k: 'mode.hard' },   'text-red-500 font-bold');
+        else                       this.log({ k: 'mode.normal' }, 'text-blue-400');
+
         this.updateUI();
 
         // Start the tutorial, delayed so the UI has finished rendering
