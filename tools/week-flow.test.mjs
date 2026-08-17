@@ -967,6 +967,52 @@ await ok('Terminal-Kette: Node-char schlägt Event-char, null erzwingt keinen', 
     engine.renderChainNode('niemand');
     assert.equal(calls.termEvent.charName, null);               // char: null erzwingt Initiale/nichts
 });
+await ok('setDifficulty legt einen frischen Tag an, statt Felder nachzubessern', () => {
+    // Der Fehler, den es abfängt: bis 6.0 setzte setDifficulty nur, was die
+    // Stufe selbst ändert. Alles andere blieb stehen, also erbte ein Tag die
+    // Tickets und Werte des vorigen. Auf leicht und normal wurde gar nichts
+    // geleert, auf schwer blieben Faulheit und Chef-Radar. Gemeldet nach dem
+    // Tutorial: was die Lektion hinterließ, wanderte in den Tag danach.
+    for (const [stufe, tickets, ausreden, mult] of
+         [['easy', 0, 3, 0.8], ['normal', 0, 2, 1.0], ['hard', 2, 1, 1.25]]) {
+        resetState();
+        Object.assign(state, {
+            tickets: 7, fl: 40, al: 30, cr: 20,
+            coffeeConsumed: 9, emailsIgnored: 4, time: 11 * 60,
+            inventory: [{ id: 'donut', used: false }]
+        });
+        engine.setDifficulty(stufe);
+
+        assert.equal(state.tickets, tickets, `${stufe}: Tickets übernommen`);
+        assert.equal(state.excusesLeft, ausreden, `${stufe}: Ausreden falsch`);
+        assert.equal(state.difficultyMult, mult, `${stufe}: Multiplikator falsch`);
+        for (const feld of ['fl', 'al', 'cr', 'coffeeConsumed', 'emailsIgnored']) {
+            assert.equal(state[feld], 0, `${stufe}: ${feld} übernommen`);
+        }
+        assert.deepEqual(state.inventory, [], `${stufe}: Rucksack übernommen`);
+        assert.equal(state.time, 8 * 60, `${stufe}: Uhrzeit übernommen`);
+    }
+});
+await ok('setDifficulty behält das Protokoll — die Versionszeile gehört der Sitzung', () => {
+    // freshDay() leert logEntries. Die Startzeile schreibt init() aber VOR
+    // jedem Tag, und refreshBootLogEntry() findet sie über id 1 wieder.
+    resetState();
+    // Direkt in den Zustand gelegt: der Prüfstand ersetzt engine.log durch eine
+    // Attrappe, ein Aufruf käme also nie im Protokoll an.
+    state.logEntries.push({ k: 'log.systemLoaded', v: { version: engine.VERSION },
+                            id: 1, time: '08:00', color: '' });
+    const start = state.logEntries.at(-1);
+    const vorher = state.logEntries.length;
+    calls.logs = [];
+
+    engine.setDifficulty('normal');
+
+    assert.ok(state.logEntries.some(e => e.id === start.id), 'die Startzeile ist weg');
+    assert.equal(state.logEntries.length, vorher, 'es wurde etwas aus dem Protokoll entfernt');
+    // Die Moduszeile geht durch die log-Attrappe des Prüfstands, nicht in den
+    // Zustand — dort wird sie geprüft.
+    assert.ok(calls.logs.some(l => l?.k === 'mode.normal'), 'die Moduszeile fehlt');
+});
 await ok('Freitag 15:00-Übergang bewaffnet den ZUM-WOCHENMEETING-Knopf', () => {
     resetState();
     engine.startWeek('easy');

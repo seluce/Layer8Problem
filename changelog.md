@@ -1,3 +1,8 @@
+[Unreleased]
+
+For developers:
+* The character portraits and the item pictures were being shipped many times larger than anything ever displays them. The portraits were 2048 px against a largest actual size of 140 CSS px - the team view scales to 2.25 on hover, which is the biggest they ever get - and the items were 1024 px (five of them 2048, three an odd 609) against 80 px in the confirmation dialogue. Portraits are 512 px now and items 256 px, which is what every other picture family in the game already used. That is 5.4 MB less to download, from 24.6 MB down to 19.2 MB, with the same picture on screen: measured against a lossless reference, the average deviation over the opaque pixels is 4.5 of 255 for the portraits and transparency is preserved exactly. Nothing was redrawn, and the originals stay in the repository history.
+
 [6.0.0] - 2026-08-17
 
 This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.
