@@ -111,16 +111,6 @@
             ]
         },
         {
-            title: t('set.section.input'),
-            accent: 'text-amber-400',
-            grid: false,
-            rows: [
-                { kind: 'link', icon: '⌨️', img: 'set_keys', title: t('set.keybind.title'),
-                  desc: t('set.keybind.desc'),
-                  act: () => engine.openKeybinds() }
-            ]
-        },
-        {
             title: t('set.section.audio'),
             accent: 'text-amber-400',
             grid: true,
@@ -219,10 +209,17 @@
             ]
         },
         {
-            title: t('set.section.manage'),
+            // Keyboard and reset used to be a section each, one row apiece -
+            // two headings and two gaps for two controls. They are both "the
+            // system rather than the game", so they share a heading now.
+            title: t('set.section.system'),
             accent: 'text-slate-400',
-            grid: false,
+            grid: true,
             rows: [
+                { kind: 'link', icon: '⌨️', img: 'set_keys', title: t('set.keybind.title'),
+                  desc: t('set.keybind.desc'),
+                  act: () => engine.openKeybinds() },
+
                 { kind: 'reset', icon: '♻️', img: 'set_reset', title: t('set.reset.title'),
                   desc: t('set.reset.desc') }
             ]
@@ -355,12 +352,12 @@
     {/if}
 {/snippet}
 
-<div class="space-y-8">
+<div class="space-y-6">
     {#each SECTIONS as section (section.title)}
         <div>
-            <h3 class="text-[10px] font-bold {section.accent} uppercase tracking-widest mb-3 border-b border-slate-700 pb-1">{section.title}</h3>
+            <h3 class="text-[10px] font-bold {section.accent} uppercase tracking-widest mb-2 border-b border-slate-700 pb-1">{section.title}</h3>
             {#if section.grid}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {#each section.rows as row (row.title)}
                         {@render control(row)}
                     {/each}

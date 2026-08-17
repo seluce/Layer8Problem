@@ -76,7 +76,6 @@ export const en = {
     'import.accepted':             'Accepted. The game is restarting ...',
     'import.unreadable':           'The code cannot be read. Did you copy all of it?',
 
-    'set.section.input':         'Keyboard & input',
     'set.keybind.title':         'Change key bindings',
     'set.keybind.desc':          'Change hotkeys for menus & actions',
     'set.section.audio':         'Audio & sound',
@@ -117,7 +116,7 @@ export const en = {
     'set.blindStats.desc':       'Hides the exact percentages.',
     'set.blindTickets.title':    'Hide the tickets',
     'set.blindTickets.desc':     'Hides the ticket count.',
-    'set.section.manage':        'Manage settings',
+    'set.section.system':        'System & management',
     'set.reset.title':           'Reset to defaults',
     'set.reset.desc':            'Resets every option on this page. Your save, archive and achievements are untouched.',
     'set.music.radio':           'Radio (mixed)',

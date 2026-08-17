@@ -50,8 +50,8 @@
             100% { transform: translateX(-100%); }
         }
     </style>
-  <script type="module" crossorigin src="./build/index-B7VGAafc.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-CeDCFDJH.css">
+  <script type="module" crossorigin src="./build/index-CAWaAzO3.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-CScc5Pkv.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -613,7 +613,7 @@
 
 <!-- Systemsteuerung MODAL START -->
 <div id="settings-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
-    <div class="neon-box accent-amber bg-slate-900 max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
+    <div class="neon-box accent-amber bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
 
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
             <div class="flex items-center gap-3">
@@ -726,7 +726,7 @@
 
         </div>
 
-        <div id="menu-settings-view" class="hidden p-5 space-y-8 overflow-y-auto w-full flex-1 min-h-0">
+        <div id="menu-settings-view" class="hidden p-5 space-y-6 overflow-y-auto w-full flex-1 min-h-0">
             
             <div>
                 <button onclick="document.getElementById('menu-settings-view').classList.add('hidden'); document.getElementById('menu-main-view').classList.remove('hidden');" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
@@ -738,9 +738,18 @@
                 <!-- Rendered by src/components/SettingsView.svelte -->
             </div>
 
-            <div>
-                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-700 pb-1" data-i18n="credits.title">Credits & Lizenzen</h3>
-                <div class="bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-3 font-mono leading-relaxed">
+            <!--
+              Collapsed by default. The credits are read once and cost 237 px of
+              a panel that is scrolled every time - a native <details> keeps them
+              one click away without an overlay of its own, and brings keyboard
+              and screen-reader behaviour with it.
+            -->
+            <details class="group">
+                <summary class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700 pb-1 cursor-pointer list-none flex items-center gap-2 hover:text-slate-200 transition-colors marker:content-['']">
+                    <span class="transition-transform group-open:rotate-90 text-slate-600">▶</span>
+                    <span data-i18n="credits.title">Credits & Lizenzen</span>
+                </summary>
+                <div class="mt-2 bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 text-xs text-slate-400 space-y-3 font-mono leading-relaxed">
                     <p><strong class="text-slate-300 font-sans" data-i18n="credits.dev">Entwicklung & Design:</strong><br> Schnaftikus Games</p>
                     <p><strong class="text-slate-300 font-sans" data-i18n="credits.music">Musik Lizenzen (Creative Commons BY 4.0):</strong><br>
                         "Local Forecast - Elevator", "Chill Wave", "Movement Proposition", "Disco con Tutti", "Hard Boiled", "Bossa Antiqua" <br>
@@ -749,7 +758,7 @@
                         <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">http://creativecommons.org/licenses/by/4.0/</a>
                     </p>
                 </div>
-            </div>
+            </details>
 
         </div>
     </div>

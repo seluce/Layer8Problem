@@ -83,7 +83,6 @@ export const de = {
     'import.accepted':             'Übernommen. Das Spiel startet neu ...',
     'import.unreadable':           'Der Code lässt sich nicht lesen. Vollständig kopiert?',
 
-    'set.section.input':         'Tastatur & Eingabe',
     'set.keybind.title':         'Tastenbelegung anpassen',
     'set.keybind.desc':          'Hotkeys für Menüs & Aktionen ändern',
     'set.section.audio':         'Audio & Sounds',
@@ -124,7 +123,7 @@ export const de = {
     'set.blindStats.desc':       'Blendet exakte %-Zahlen aus.',
     'set.blindTickets.title':    'Tickets verbergen',
     'set.blindTickets.desc':     'Blendet Ticket-Anzahl aus.',
-    'set.section.manage':        'Einstellungen verwalten',
+    'set.section.system':        'System & Verwaltung',
     'set.reset.title':           'Auf Standard zurücksetzen',
     'set.reset.desc':            'Setzt alle Optionen dieser Seite zurück. Spielstand, Archiv und Erfolge bleiben unangetastet.',
     'set.music.radio':           'Radio (Abwechselnd)',
