@@ -2,6 +2,7 @@ import { DB, ensure } from '../data.js';
 import { t, tf } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
 import { PLAYER_CHAR, charDisplayName } from './chars.js';
+import { findEventById, itemNameValue } from './recipe.js';
 
 /**
  * One coloured sentence for the morning screen's status line.
@@ -11,7 +12,11 @@ import { PLAYER_CHAR, charDisplayName } from './chars.js';
  * literal. Tailwind reads the source - a name put together at runtime is
  * invisible to it and the colour then disappears without a word of warning.
  */
-const moodLine = (cssClass, text) => `<span class='${cssClass}'>${text}</span>`;
+// The morning's status line, as a recipe plus the colour it is drawn in.
+// Used to return an HTML fragment, which meant the sentence was rendered
+// here and frozen in the language it was rendered in; components/
+// MorningView.svelte builds the span itself now and resolves on every paint.
+const moodLine = (cls, recipe) => ({ cls, ...recipe });
 
 /**
  * The same event, out of the tree that is loaded NOW.
@@ -30,15 +35,6 @@ const moodLine = (cssClass, text) => `<span class='${cssClass}'>${text}</span>`;
  * The depth stops at 3 (DB -> special -> week_idle -> entry), which is as deep
  * as an event ever sits. That also keeps it out of `nodes` and `opts`.
  */
-function findEventById(node, id, depth = 0) {
-    if (!node || typeof node !== 'object' || depth > 3) return null;
-    if (node.id === id) return node;
-    for (const child of Object.values(node)) {
-        const hit = findEventById(child, id, depth + 1);
-        if (hit) return hit;
-    }
-    return null;
-}
 
 export const events = {
 
@@ -202,7 +198,6 @@ export const events = {
         const dbItem = DB.items[itemId];
         const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
         const alreadyHas = this.state.inventory.some(i => i.id === itemId);
-        const itemName = dbItem ? dbItem.name : itemId;
 
         // Trophies and permanent tools do not count towards capacity
         const normalCount = this.state.inventory.filter(i => {
@@ -213,13 +208,14 @@ export const events = {
         if (isPermanent && alreadyHas) return;   // still verworfen
 
         if (!isPermanent && normalCount >= 10) {
-            this.log(tf('log.backpackFull', { item: itemName }), "text-slate-500 italic");
+            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
             return;
         }
 
         this.state.inventory.push({ id: itemId, used: false });
         this.addToArchive('items', itemId);
-        this.log(tf(kind === 'received' ? 'log.item.received' : 'log.item.found', { item: itemName }), "text-yellow-400");
+        this.log({ k: kind === 'received' ? 'log.item.received' : 'log.item.found',
+                   v: { item: itemNameValue(itemId) } }, "text-yellow-400");
         if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
             this.animateItemToBackpack(dbItem.img);
         }
@@ -311,7 +307,7 @@ export const events = {
             }
             // A number floating up on its own looks like a bug. The log line
             // says who caused it, and it is not optional for that reason.
-            this.log(p.log, p.color ?? 'text-slate-300');
+            this.log({ ref: { p: 'items', i: entry.id, path: ['passive', 'log'] } }, p.color ?? 'text-slate-300');
         }
         this.updateUI();
     },
@@ -362,15 +358,23 @@ export const events = {
         this.state.emailPending = true; // Blockiert checkRandomEmail
         // -------------------------------------------
 
-        // Game logic
-        let message = "";
+        // Game logic. `message` is a RECIPE, not a sentence - see
+        // engine/recipe.js. The mail on screen and the index of the option
+        // inside it are the identity of what was answered, and both are here.
+        const mailId = this.state.email?.id ?? null;
+        const optIndex = opt ? (this.state.email?.opts ?? []).indexOf(opt) : -1;
+        const optRef = (mailId && optIndex > -1)
+            ? (field) => ({ ref: { i: mailId, path: ['opts', optIndex, field] } })
+            : () => null;
+
+        let message = null;
         let color = "";
 
         if(timeout) {
             let penalty = Math.ceil(10 * this.effMult());
             this.addStat('cr', penalty);
             this.state.emailsIgnored++;
-            message = tf('log.email.ignoredRadar', { value: penalty });
+            message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";
         } else if(opt) {
             if (opt.ignoreEmail) {
@@ -378,11 +382,11 @@ export const events = {
                 // the penalty does not sit at the end of the sentence in every
                 // language, and half a sentence cannot be reordered.
                 const penalty = opt.b > 0 ? Math.ceil(opt.b * this.effMult()) : 0;
-                message = penalty > 0 ? tf('log.email.ignoredRadar', { value: penalty })
-                                      : t('log.email.ignored');
+                message = penalty > 0 ? { k: 'log.email.ignoredRadar', v: { value: penalty } }
+                                      : { k: 'log.email.ignored' };
                 color = "text-red-500 font-bold";
             } else {
-                message = tf('log.email.sent', { text: opt.t });
+                message = { k: 'log.email.sent', v: { text: optRef('t') ?? opt.t } };
                 color = "text-blue-400";
             }
 
@@ -422,10 +426,13 @@ export const events = {
 
             // 4. TEXT LOGIC (opt.r)
             if (opt.r) {
+                const rRef = optRef('r');
                 if (opt.ignoreEmail) {
-                    setTimeout(() => this.log(`${opt.r}`, "text-slate-500 italic"), 500);
+                    setTimeout(() => this.log(rRef ?? { msg: String(opt.r) },
+                                              "text-slate-500 italic"), 500);
                 } else {
-                    setTimeout(() => this.log(tf('log.email.reply', { text: opt.r }), "text-slate-400 italic"), 500);
+                    setTimeout(() => this.log({ k: 'log.email.reply', v: { text: rRef ?? opt.r } },
+                                              "text-slate-400 italic"), 500);
                 }
             }
 
@@ -452,7 +459,7 @@ export const events = {
         }
         // ----------------------------------------------
         
-        this.log(message, color);
+        if (message) this.log(message, color);
         this.updateUI();
         if (this.state.pendingEnd) this.finishGame();
     },
@@ -473,7 +480,7 @@ export const events = {
 				tutorial.hidePointer();
                 this.renderTerminal(tutEvent, type);
             } else {
-                this.log(t('log.halgerd.notInPhase'), "text-red-500");
+                this.log({ k: 'log.halgerd.notInPhase' }, "text-red-500");
             }
             return; // Cancel the normal trigger!
         }
@@ -494,7 +501,7 @@ export const events = {
             try {
                 await ensure(poolName, 'bossfights', 'reputation');
             } catch (err) {
-                this.log(t('log.halgerd.loadFailed'), "text-red-500");
+                this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
                 return;
             } finally {
                 this.state.isLoadingPool = false;
@@ -566,7 +573,8 @@ export const events = {
                 }
                 
                 if (intervention) {
-                    this.log(tf('log.encounter', { title: intervention.title }), "text-yellow-400");
+                    this.log({ k: 'log.encounter',
+                   v: { title: { ref: { i: intervention.id, path: ['title'] } } } }, "text-yellow-400");
                     
                     // Rendered as type 'rep' for the golden styling
                     this.renderTerminal(intervention, 'rep'); 
@@ -676,7 +684,8 @@ export const events = {
     },
 
     resolveBossFail: function(failData) {
-        this.resolveTerminal(failData, 'boss');
+        this.resolveTerminal(failData, 'boss',
+            this.state.currentEventId ? { ref: { i: this.state.currentEventId, path: ['fail', 'r'] } } : null);
     },
     
     handleSideQuest: function() {
@@ -697,7 +706,7 @@ export const events = {
                 this.renderTerminal(this.weekIdleEvent('sidequest'), 'sidequest');
                 return;
             }
-            this.log(t('log.nothingUp'));
+            this.log({ k: 'log.nothingUp' });
             return;
         }
 
@@ -714,7 +723,7 @@ export const events = {
 
             // Show the notification
             this.state.phone.notification = true;
-            this.log(tf('log.phone', { text: ev.title }));
+            this.log({ k: 'log.phone', v: { text: { ref: { i: ev.id, path: ['title'] } } } });
             
             // --- show the phone and scroll to it ---
             this.updatePhoneVisibility();
@@ -803,18 +812,22 @@ export const events = {
      * repaint, and the two must not be the same function. Both branches below
      * end in the same pure setTerminalEvent() the first render used.
      *
-     * What it does not touch, and why:
-     *   - a RESULT screen. Its text is the `r` of an option already chosen,
-     *     and choosing it again is out of the question - resolveTerminal moves
-     *     stats, items and flags. Its button follows the language, because
-     *     that one is a dictionary key rather than a word (see setTerminalResult).
-     *   - the morning's status line, for the same reason: the sentence is the
-     *     record of a stat change that has already happened.
-     *   - the log, and for the same reason the bubbles of a phone chat: both
-     *     are a record of things already said. Decided this way - an hour-old
-     *     line keeps the language it was written in, exactly as a logbook
-     *     would. The chat's REPLIES are a different matter and do get redrawn
-     *     below: they are not history, they are the button about to be pressed.
+     * What it no longer has to touch, because those surfaces now follow on
+     * their own: the result screen, the morning's status line, the log and the
+     * bubbles of a phone chat. All four used to be frozen here on the argument
+     * that a record should keep the language it was written in - and the
+     * argument did not survive contact with the running game. The log is the
+     * account of everything the player has done, half of it in the other
+     * language reads as a fault, and the same goes for a chat you are still in.
+     *
+     * They record IDENTITIES now rather than sentences (engine/recipe.js), so
+     * LogFeed, PhoneView, ResultView and MorningView resolve them on every
+     * paint and this function has no work left there.
+     *
+     * What it still does is the SCENE, and only the scene: an event's title,
+     * text and captions were copied out of the tree into state.terminal at the
+     * moment it opened, and a view model is not something a recipe can stand
+     * in for.
      */
     relocaliseScene: function() {
         this.relocalisePhone();
@@ -870,11 +883,14 @@ export const events = {
 
     // 3. SHARED HTML TEMPLATE
     // Routes a chosen option to whatever handles it.
-    chooseOption: function(opt) {
+    chooseOption: function(opt, index = -1) {
         const ev = this.state.terminal.event ?? {};
         if (opt.action) return this.runAction(opt.action);
         if (ev.isChain) return this.handleChainChoice(opt.next);
-        return this.resolveTerminal(opt, ev.type);
+        return this.resolveTerminal(opt, ev.type,
+            index > -1 && this.state.currentEventId
+                ? { ref: { i: this.state.currentEventId, path: ['opts', index, 'r'] } }
+                : null);
     },
 
     // Calls an engine method named by the data.
@@ -921,13 +937,14 @@ export const events = {
                 rem:  res.rem  || null,
                 next: res.next || null,
                 rep:  res.rep  || null
-            }, this.state.currentChainType);
+            }, this.state.currentChainType,
+               ev.id ? { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } : null);
             this.state.currentChainEvent = null;
             return;
         }
 
         console.error("Chain error: target not found", nextId);
-        this.resolveTerminal({ r: t('event.chainBroken') }, "calls");
+        this.resolveTerminal({ r: t('event.chainBroken') }, "calls", { k: 'event.chainBroken' });
     },
 
     /**
@@ -941,9 +958,14 @@ export const events = {
      * @param {object} opt  { r, m, l, a, b, loot, rem, next, rep }
      * @param {string} type event pool the option came from
      */
-    resolveTerminal: function(opt, type) {
+    resolveTerminal: function(opt, type, resRecipe = null) {
         opt = opt || {};
         let res = opt.r;
+        // How the result line finds its way back into the log in whatever
+        // language is running. Each caller knows its own identity and hands it
+        // over; see engine/recipe.js. Without one the line is a literal, which
+        // is the honest answer for text that was composed here.
+        let recipe = resRecipe;
         const loot = opt.loot || null;
         const rem  = opt.rem  || null;
         const next = opt.next || null;
@@ -967,12 +989,14 @@ export const events = {
         // --- INTRANET TRIGGER  ---
         if (res === "CMD:OPEN_INTRANET") {
             res = t('event.cmd.intranet');
+            recipe = { k: 'event.cmd.intranet' };
             this.openIntranet();
         }
 
         // --- BOARD TRIGGER ---
         if (res === "CMD:OPEN_BOARD") {
             res = t('event.cmd.board');
+            recipe = { k: 'event.cmd.board' };
             this.openBoard();
         }
         // --------------------------------
@@ -982,7 +1006,7 @@ export const events = {
 		// Drinking with Bernd, or the rum cake
         if (next === 'path_bernd_drunk' || next === 'path_cake_drunk') {
             this.state.drunkEndTime = this.state.time + m + 60; 
-            this.log(t('log.drunk'), "text-purple-400 italic");
+            this.log({ k: 'log.drunk' }, "text-purple-400 italic");
         }
 
         // Zeit & Tickets
@@ -1019,7 +1043,7 @@ export const events = {
             if (this.state.time < LUNCH_UNTIL) {
                 triggerLunch = true;
             } else {
-                this.log(t('log.lunchMissed'), "text-slate-500");
+                this.log({ k: 'log.lunchMissed' }, "text-slate-500");
             }
         }
 
@@ -1090,7 +1114,7 @@ export const events = {
                 // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
                 let removedName = DB.items[rem] ? DB.items[rem].name : rem;
-                this.log(tf('log.itemLost', { item: removedName }), "text-orange-400");
+                this.log({ k: 'log.itemLost', v: { item: itemNameValue(rem) } }, "text-orange-400");
             }
         }
         // --------------------------------
@@ -1098,7 +1122,7 @@ export const events = {
         // --- ITEM LOGIC: LOOT ---
         this.grantItem(loot);
         
-        this.log(res);
+        this.log(recipe ?? { msg: String(res ?? '') });
         this.updateUI();
 
         // UI Rendern
@@ -1139,7 +1163,8 @@ export const events = {
             }
         }
 
-        this.setTerminalResult(res, m, l, finalA, finalB, btnAction, btnKey, btnColor);
+        this.setTerminalResult(recipe ?? { msg: String(res ?? '') },
+                               m, l, finalA, finalB, btnAction, btnKey, btnColor);
     },
 
     // async: lunch is its own pool and loads on demand like the others.
@@ -1223,7 +1248,11 @@ export const events = {
         if (!lines?.length) return;
 
         this.state.leetSeen = true;
-        this.log(lines[Math.floor(Math.random() * lines.length)], "text-cyan-400 italic");
+        // The INDEX is written down, not the line it drew: both trees carry the
+        // same list length (lint-parity enforces it), so the same index is the
+        // same joke in the other language.
+        const pick = Math.floor(Math.random() * lines.length);
+        this.log({ ref: { p: 'special', path: ['leet', pick] } }, "text-cyan-400 italic");
     },
 
     recordStatPoint: function() {
@@ -1272,7 +1301,7 @@ export const events = {
         this.state.lastMoodId = mood.id; // remembered for next time
         
         // 2. Mechanik sicher anwenden
-        let statHtml = "";
+        let statHtml = null;
         
         // The morning scales with the weekday: Friday forgives, Monday does
         // not. 15 points become 12 / 15 / 19.
@@ -1280,33 +1309,33 @@ export const events = {
 
         if (mood.effect === "aggro") {
             this.addStat('al', moodVal);
-            statHtml = moodLine('text-orange-400 font-bold', tf('morning.effect.aggro', { value: moodVal }));
+            statHtml = moodLine('text-orange-400 font-bold', { k: 'morning.effect.aggro', v: { value: moodVal } });
         }
         else if (mood.effect === "radar") {
             this.addStat('cr', moodVal);
-            statHtml = moodLine('text-red-500 font-bold', tf('morning.effect.radar', { value: moodVal }));
+            statHtml = moodLine('text-red-500 font-bold', { k: 'morning.effect.radar', v: { value: moodVal } });
         }
         else if (mood.effect === "lazy") {
             this.addStat('fl', moodVal);
             this.state.time += 30; // Time lost to oversleeping
             this.state.tickets += 1; // penalty for the thirty minutes lost
-            statHtml = moodLine('text-emerald-400 font-bold', tf('morning.effect.lazy', { value: moodVal }));
+            statHtml = moodLine('text-emerald-400 font-bold', { k: 'morning.effect.lazy', v: { value: moodVal } });
         }
         // --- A morning with history: tickets that piled up overnight ---
         else if (mood.effect === "tickets") {
             const extra = this.difficultyTier(); // 1/2/3 extra tickets by chosen level, week-aware
             this.state.tickets += extra;
-            statHtml = moodLine('text-red-400 font-bold', tf('morning.effect.tickets', { count: extra }));
+            statHtml = moodLine('text-red-400 font-bold', { k: 'morning.effect.tickets', v: { count: extra } });
         }
         // --- Excuses: the stock of white lies is no longer a constant ---
         else if (mood.effect === "excuse_minus") {
             if (this.state.excusesLeft > 0) {
                 this.state.excusesLeft--;
-                statHtml = moodLine('text-red-400 font-bold', t('morning.effect.excuseMinus'));
+                statHtml = moodLine('text-red-400 font-bold', { k: 'morning.effect.excuseMinus' });
             } else {
                 // Nothing left to cancel - the day starts badly all the same
                 this.addStat('cr', moodVal);
-                statHtml = moodLine('text-red-500 font-bold', tf('morning.effect.radar', { value: moodVal }));
+                statHtml = moodLine('text-red-500 font-bold', { k: 'morning.effect.radar', v: { value: moodVal } });
             }
         }
         else if (mood.effect === "excuse_plus") {
@@ -1318,14 +1347,14 @@ export const events = {
                 : Infinity;
             if (this.state.excusesLeft < deckel) {
                 this.state.excusesLeft++;
-                statHtml = moodLine('text-cyan-400 font-bold', t('morning.effect.excusePlus'));
+                statHtml = moodLine('text-cyan-400 font-bold', { k: 'morning.effect.excusePlus' });
             } else {
-                statHtml = moodLine('text-slate-400 font-bold', t('morning.effect.excuseFull'));
+                statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.excuseFull' });
             }
         }
 
         else if (mood.effect === "normal") {
-            statHtml = moodLine('text-slate-400 font-bold', t('morning.effect.normal'));
+            statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
         }
         else if (mood.effect === "snack") {
             // Snacks only
@@ -1333,8 +1362,7 @@ export const events = {
             const rItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
             this.state.inventory.push({ id: rItem, used: false });
             this.addToArchive('items', rItem);
-            let itemName = DB.items[rItem] ? DB.items[rItem].name : rItem;
-            statHtml = moodLine('text-yellow-400 font-bold', tf('morning.effect.snack', { item: itemName }));
+            statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
             if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
         }
 
@@ -1365,7 +1393,7 @@ export const events = {
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         
         if (pool.length === 0) {
-            this.log(t('party.noStation'), "text-slate-500");
+            this.log({ k: 'party.noStation' }, "text-slate-500");
             return;
         }
         
@@ -1507,34 +1535,49 @@ export const events = {
         // existing chats look exactly as before. Only a node marked with its
         // own char writes that character's name above the bubble - like a
         // named voice inside a group.
-        const sender = (node.char ? contact?.name : null) ?? ev.title ?? t('phone.unknownSender');
+        // Both the bubble and the name above it are RECIPES - see
+        // engine/recipe.js. A character's name is the same in both trees and
+        // stays a literal; the chat's own title comes out of the tree and needs
+        // a reference; an unknown sender is a dictionary entry. The initial is
+        // derived from whatever the name renders to, so it follows as well.
+        const senderRecipe = (node.char && contact?.name) ? { msg: contact.name }
+                           : ev.title                     ? { ref: { i: ev.id, path: ['title'] } }
+                           :                                { k: 'phone.unknownSender' };
 
         this.addPhoneMessage({
             side: 'in',
-            text: node.text,
-            sender,
-            avatar: sender.charAt(0).toUpperCase(),
+            text: { ref: { i: ev.id, path: ['nodes', nodeId, 'text'] } },
+            sender: senderRecipe,
             img: contact?.img ?? null
         });
 
         this.state.phone.options = node.opts || [];
     },
 
-    handlePhoneChoice: function(text, nextId, remId) {
+    handlePhoneChoice: function(text, nextId, remId, index = -1) {
 		this.playAudio('phone');
         // Re-entrance guard: no options on screen means a reply is already in
         // flight. Used to be a check on the buttons' innerHTML.
         if (this.state.phone.options.length === 0) return;
+        const fromNode = this.state.phone.node;
         this.state.phone.options = [];
 
-        this.addPhoneMessage({ side: 'out', text });
+        // What Miller sent is the caption of the option he pressed, so the node
+        // and its index are the identity. `text` stays as the fallback for the
+        // keyboard path, which has no index to give.
+        const evNow = this.state.currentPhoneEvent;
+        this.addPhoneMessage({
+            side: 'out',
+            text: (evNow?.id && fromNode && index > -1)
+                ? { ref: { i: evNow.id, path: ['nodes', fromNode, 'opts', index, 't'] } }
+                : { msg: String(text ?? '') }
+        });
 
         if (remId) {
             let itemIndex = this.state.inventory.findIndex(i => i.id === remId);
             if (itemIndex > -1) {
-                let itemName = DB.items[remId] ? DB.items[remId].name : remId;
                 this.state.inventory.splice(itemIndex, 1);
-                this.log(tf('log.itemLost', { item: itemName }), "text-orange-400");
+                this.log({ k: 'log.itemLost', v: { item: itemNameValue(remId) } }, "text-orange-400");
                 this.updateUI(); // reflect the inventory change right away
             }
         }
@@ -1546,7 +1589,7 @@ export const events = {
         
         if (!validNext) {
             console.error("Missing Node:", nextId);
-            this.addPhoneMessage({ side: 'error', text: t('phone.disconnected') });
+            this.addPhoneMessage({ side: 'error', text: { k: 'phone.disconnected' } });
             setTimeout(() => {
                 this.closePhone();
                 this.state.activeEvent = false;
@@ -1569,13 +1612,11 @@ export const events = {
                 }).length;
 
                 if (!isPermanent && normalCount >= 10) {
-                    let itemName = dbItem ? dbItem.name : res.loot;
-                    this.log(tf('log.backpackFull', { item: itemName }), "text-slate-500 italic");
+                    this.log({ k: 'log.backpackFull', v: { item: itemNameValue(res.loot) } }, "text-slate-500 italic");
                 } else {
                     this.state.inventory.push({ id: res.loot, used: false });
                     this.addToArchive('items', res.loot);
-                    let itemName = DB.items[res.loot] ? DB.items[res.loot].name : res.loot;
-                    this.log(tf('log.item.received', { item: itemName }), "text-yellow-400");
+                    this.log({ k: 'log.item.received', v: { item: itemNameValue(res.loot) } }, "text-yellow-400");
                     if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
                 }
             }
@@ -1625,12 +1666,14 @@ export const events = {
                 if (loadingId) this.removePhoneMessage(loadingId);
 
                 // System message, centred and grey
-                this.addPhoneMessage({ side: 'system', text: res.txt });
+                this.addPhoneMessage({ side: 'system',
+                                       text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } });
 
                 if (this.state.phoneReadTimer) clearTimeout(this.state.phoneReadTimer);
                 this.state.phoneReadTimer = setTimeout(() => {
                     this.closePhone();
-                    this.log(tf('log.phone', { text: res.txt }));
+                    this.log({ k: 'log.phone',
+                               v: { text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } } });
                     const beforePhone = this.state.time;
                     this.state.time += 15;
                     this.checkLeetMoment(beforePhone);

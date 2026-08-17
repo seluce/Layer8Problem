@@ -77,7 +77,7 @@ export const core = {
 
         this.renderHeader();
         this.updateUI();
-        this.log(tf('log.systemLoaded', { version: this.VERSION }));
+        this.log({ k: 'log.systemLoaded', v: { version: this.VERSION } });
     },
 
     /**
@@ -424,8 +424,15 @@ export const core = {
      * The line is restamped rather than kept because it is not a record of
      * anything that happened in the office: it is the machine announcing
      * itself, the same statement the header makes, and it has to be true of the
-     * engine running now. That is what separates it from every other log entry,
-     * which stays exactly as it was written - including its language.
+     * engine running now.
+     *
+     * The RECIPE is rewritten, not a sentence written over it. Since 6.0 the
+     * entry stores `{ k, v }` and the display resolves it (engine/recipe.js), so
+     * assigning `msg` would have had no effect at all - the recipe wins - while
+     * leaving a stale sentence in the save. Stamping the value instead fixes
+     * the version AND keeps the line able to follow a language switch. An entry
+     * from 5.x has only text; it is turned into a recipe here, which is the one
+     * place a 5.x line can be given its identity back.
      *
      * Found by identity, not by text: id 1 is the first log() of a session, and
      * init()'s line is the first log() there is. A day that ran long enough to
@@ -436,7 +443,11 @@ export const core = {
      */
     refreshBootLogEntry: function() {
         const boot = (this.state.logEntries ?? []).find(e => e?.id === 1);
-        if (boot) boot.msg = tf('log.systemLoaded', { version: this.VERSION });
+        if (!boot) return;
+        boot.k = 'log.systemLoaded';
+        boot.v = { version: this.VERSION };
+        boot.ref = undefined;
+        delete boot.msg;
     },
 
     /** Restores a saved run and picks up again in a paused state. */
@@ -458,7 +469,7 @@ export const core = {
         this.updateUI();
         this.disableButtons(false);
         this.setTerminalIdle();
-        this.log(t('log.sessionRestored'), "text-blue-400");
+        this.log({ k: 'log.sessionRestored' }, "text-blue-400");
         this.playMusic('office');
         this.updatePresence('system');
     },
@@ -847,17 +858,17 @@ export const core = {
         if (level === 'easy') {
             this.state.difficultyMult = 0.8;
             this.state.excusesLeft = 3;
-            this.log(t('mode.easy'), 'text-green-400');
+            this.log({ k: 'mode.easy' }, 'text-green-400');
         } else if (level === 'normal') {
             this.state.difficultyMult = 1.0;
             this.state.excusesLeft = 2;
-            this.log(t('mode.normal'), 'text-blue-400');
+            this.log({ k: 'mode.normal' }, 'text-blue-400');
         } else if (level === 'hard') {
             this.state.difficultyMult = 1.25;
             this.state.tickets = 2;
             this.state.al = 0;
             this.state.excusesLeft = 1;
-            this.log(t('mode.hard'), 'text-red-500 font-bold');
+            this.log({ k: 'mode.hard' }, 'text-red-500 font-bold');
         }
         
         this.updateUI();
@@ -1027,7 +1038,7 @@ export const core = {
         
         // The log array is part of freshDay(), so it was already emptied
         // above along with the rest of the day.
-        this.log(t('log.systemRestart'), "text-blue-400");
+        this.log({ k: 'log.systemRestart' }, "text-blue-400");
         
         // Restart through the normal morning path
         this.updateUI();
@@ -1231,8 +1242,12 @@ export const core = {
         // Feedback (log and toast) only for a new entry or an upgrade
         if (isNewOrBetter) {
             
-            // Prepare the log line
-            let logText = tf('achievement.log.unlocked', { title });
+            // Prepare the log line. A RECIPE, not a sentence - the title comes
+            // out of the achievement tree and the tier out of the dictionary,
+            // so both are recorded as identities and rendered by whoever draws
+            // the line. See engine/recipe.js.
+            const titleRef = { ref: { i: id, path: ['title'] } };
+            let logLine = { k: 'achievement.log.unlocked', v: { title: titleRef } };
             let logColor = "text-yellow-400 font-bold"; // Standard Gold
             let toastDesc = text;
 
@@ -1252,13 +1267,14 @@ export const core = {
                 const tierKey = (this.state.week.active ? weekKeys : dayKeys)[currentDiffVal];
                 const tier = t(tierKey).toUpperCase();
                 isUpgrade = true;
-                logText = tf('achievement.log.upgraded', { title, tier });
+                logLine = { k: 'achievement.log.upgraded',
+                            v: { title: titleRef, tier: { k: tierKey, up: true } } };
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
                 toastDesc = tf('achievement.upgradedTo', { tier });
             }
 
             // A. Write the log line
-            this.log(logText, logColor);
+            this.log(logLine, logColor);
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.

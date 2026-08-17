@@ -64,7 +64,7 @@ function recoverFromError(err) {
     try {
         engine.state.activeEvent = false;
         engine.disableButtons(false);
-        engine.log(t('log.halgerd.internalError'), "text-red-500");
+        engine.log({ k: 'log.halgerd.internalError' }, "text-red-500");
     } catch (recoveryError) {
         // Engine not far enough along to recover — nothing sensible left to do.
         console.error("Recovery failed:", recoveryError);

@@ -13,7 +13,22 @@
     import { engine } from '../engine.js';
 
     import { t, tf, tree } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
     const phone = $derived(state.phone);
+
+    /*
+     * A bubble carries a RECIPE, not a sentence - see engine/recipe.js. These
+     * three resolve it on every paint, which is what makes an open chat follow
+     * a language switch instead of standing there in the language it was
+     * spoken in. The initial is derived from the resolved name rather than
+     * stored, so it follows too.
+     *
+     * A recipe that will not resolve renders empty rather than throwing: a
+     * chat with a blank bubble is odd, a chat that crashes is worse.
+     */
+    const text    = (msg) => renderRecipe(msg?.text) ?? '';
+    const sender  = (msg) => renderRecipe(msg?.sender) ?? '';
+    const initial = (msg) => (sender(msg).charAt(0) || '?').toUpperCase();
 
     const pad = (n) => String(n).padStart(2, '0');
     const clock = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
@@ -86,13 +101,13 @@
                                          output for a decorative image. -->
                                     <img src={msg.img} alt="" class="w-full h-full object-cover" />
                                 {:else}
-                                    {msg.avatar}
+                                    {initial(msg)}
                                 {/if}
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{msg.sender}</span>
+                                <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{sender(msg)}</span>
                                 <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed wrap-break-word">
-                                    {msg.text}
+                                    {text(msg)}
                                 </div>
                             </div>
                         </div>
@@ -109,16 +124,16 @@
                 {:else if msg.side === 'system'}
                     <div class="w-full flex justify-center my-4 fade-in">
                         <div class="bg-slate-800/80 text-slate-400 px-3 py-1 rounded-full text-xs border border-slate-700 shadow-inner text-center max-w-[90%]">
-                            {msg.text}
+                            {text(msg)}
                         </div>
                     </div>
                 {:else if msg.side === 'error'}
-                    <div class="text-center text-xs text-red-500 my-2">{msg.text}</div>
+                    <div class="text-center text-xs text-red-500 my-2">{text(msg)}</div>
                 {:else}
                     <div class="w-full flex justify-end mb-4 fade-in">
                         <div class="max-w-[85%] flex flex-col items-end">
                             <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
-                                {msg.text}
+                                {text(msg)}
                             </div>
                             <span class="text-[10px] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
                         </div>
@@ -135,7 +150,7 @@
                 <button class="w-full bg-slate-800 hover:bg-blue-600 text-blue-400 hover:text-white border border-slate-600 hover:border-blue-500 rounded-lg px-3 py-2 text-xs text-left transition-colors flex justify-between items-center group
                                {o.missing ? 'opacity-50 cursor-not-allowed' : ''}"
                         disabled={!!o.missing}
-                        onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem)}>
+                        onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem, o.index)}>
                     <div class="flex items-center gap-2 flex-1 mr-2">
                         {#if o.missing}
                             <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}

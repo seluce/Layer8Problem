@@ -1,5 +1,6 @@
 import { DB } from '../data.js';
 import { t, tf } from '../i18n/i18n.svelte.js';
+import { itemNameValue } from './recipe.js';
 
 export const inventory = {
 
@@ -36,8 +37,13 @@ export const inventory = {
             if (wait > 0) {
                 // The item says how it phrases its own pause; the fallback
                 // keeps a new item from sounding like the stress ball.
-                const line = use.wait ?? tf('item.cooldown.fallback', { item: item?.name ?? t('item.fallbackName') });
-                this.log(tf('log.item.cooldown', { line, wait }), "text-slate-500");
+                // Two nested sentences, both keeping their identity: the item's
+                // own wording if it has one, otherwise the dictionary fallback
+                // naming the item.
+                const line = use.wait
+                    ? { ref: { p: 'items', i: id, path: ['use', 'wait'] } }
+                    : tf('item.cooldown.fallback', { item: item?.name ?? t('item.fallbackName') });
+                this.log({ k: 'log.item.cooldown', v: { line, wait } }, "text-slate-500");
                 return; // No modal, abort right away
             }
         }
@@ -114,7 +120,7 @@ export const inventory = {
                     this.showFloatingText('val-cr', use.b);
                 }
                 if (use.rep) this.applyReputation(use.rep);
-                this.log(use.log, use.color);
+                this.log({ ref: { p: 'items', i: id, path: ['use', 'log'] } }, use.color);
             }
         }
 
@@ -179,9 +185,8 @@ export const inventory = {
         this.closeItemConfirm();
         if (i === -1) return;
 
-        const name = DB.items[id]?.name ?? id;
         this.state.inventory.splice(i, 1);
-        this.log(tf('log.item.discarded', { item: name }), 'text-slate-500 italic');
+        this.log({ k: 'log.item.discarded', v: { item: itemNameValue(id) } }, 'text-slate-500 italic');
         this.updateUI();
         this.saveDay();
     },

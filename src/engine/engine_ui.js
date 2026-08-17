@@ -3,6 +3,7 @@ import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 import { WEEK_DIFFS } from './engine_week.js';
+import { recipeKey, renderRecipe } from './recipe.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
@@ -11,7 +12,7 @@ export const ui = {
 
     // --- NEWS TICKER ---
     checkForNews: function() {
-        if (this.state.activeNewsText !== null) return;
+        if (this.state.activeNews !== null) return;
         
         if (typeof DB === 'undefined' || !DB.newsTicker) return;
 
@@ -20,8 +21,10 @@ export const ui = {
 
         // 5% Chance
         if (Math.random() <= 0.05) {
-            const randomIndex = Math.floor(Math.random() * DB.newsTicker.length);
-            this.state.activeNewsText = DB.newsTicker[randomIndex];
+            // The draw is recorded, not the line it produced: both trees carry
+            // the same list length, so the same index is the same headline.
+            const pick = Math.floor(Math.random() * DB.newsTicker.length);
+            this.state.activeNews = { ref: { p: 'newsTicker', path: [pick] } };
             this.state.lastNewsTime = this.state.time;
             this.renderHeader();
         }
@@ -45,12 +48,12 @@ export const ui = {
     // The header line is components/TerminalHeader.svelte; this only decides
     // how long a news item stays before the version number returns.
     renderHeader: function() {
-        if (!this.state.activeNewsText) return;
+        if (this.state.activeNews === null) return;
 
         if (this.state.newsTimer) clearTimeout(this.state.newsTimer);
         this.state.newsTimer = setTimeout(() => {
-            this.state.activeNewsText = null;
-        }, this.newsDuration(this.state.activeNewsText));
+            this.state.activeNews = null;
+        }, this.newsDuration(renderRecipe(this.state.activeNews)));
     },
 
     updateUI: function() {
@@ -264,6 +267,9 @@ export const ui = {
     // on render, so it changes with everything else. The prose above it cannot
     // follow - it is the outcome of an option already chosen - and that is the
     // documented split, not an oversight.
+    // `text` is a RECIPE, not a sentence - components/ResultView.svelte resolves
+    // it on every paint, so a finished result follows a language switch like
+    // everything else recorded. See engine/recipe.js.
     setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
@@ -284,11 +290,31 @@ export const ui = {
         this.state.buttonsDisabled = disable;
     },
 
-    log: function(msg, colorClass) {
-        // Skip a message identical to the previous one - stops the log
-        // exploding when the player hammers a button.
-        if (this.state.lastLogMsg === msg) return;
-        this.state.lastLogMsg = msg;
+    /**
+     * Writes one line into the activity log.
+     *
+     * Takes either a finished string, as it always did, or a RECIPE - see
+     * engine/recipe.js. A recipe is what lets the line follow a language
+     * switch instead of staying in the language it happened to be written in:
+     *
+     *     this.log(t('log.email.sent'), 'text-blue-400')       // frozen
+     *     this.log({ k: 'log.email.sent' }, 'text-blue-400')   // follows
+     *
+     * A recipe is stored as the recipe and NOTHING else - no rendered copy
+     * beside it. The line is resolved by whoever draws it, every time, which is
+     * what lets it follow a switch. A string is still accepted and stored as
+     * `msg`, which now means one thing only: this line has no identity to hold.
+     */
+    log: function(spec, colorClass) {
+        const entry = (spec && typeof spec === 'object') ? { ...spec } : { msg: String(spec ?? '') };
+
+        // Skip a line identical to the previous one - stops the log exploding
+        // when the player hammers a button. Compared by IDENTITY, not by the
+        // finished sentence: two unlike events that happen to read alike used
+        // to be folded into one, and the same event in two languages was not.
+        const key = recipeKey(entry);
+        if (this.state.lastLogMsg === key) return;
+        this.state.lastLogMsg = key;
 
         const h = Math.floor(this.state.time / 60);
         const m = this.state.time % 60;
@@ -296,9 +322,9 @@ export const ui = {
         // Rendered by components/LogFeed.svelte. The id only has to be unique
         // for the keyed each block, so a counter is enough.
         this.state.logEntries.push({
+            ...entry,
             id: this._logId = (this._logId || 0) + 1,
             time: `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`,
-            msg: msg,
             color: colorClass || ''
         });
 
@@ -486,8 +512,8 @@ export const ui = {
         // reward for actually fleeing, not a gallery to leaf through.
         if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
             this.state.currentExcuse = DB.excuses?.length
-                ? DB.excuses[Math.floor(Math.random() * DB.excuses.length)]
-                : t('excuse.fallback');
+                ? { ref: { p: 'excuses', path: [Math.floor(Math.random() * DB.excuses.length)] } }
+                : { k: 'excuse.fallback' };
             this.state.excuseFor = this.state.currentEventId;
         }
 
@@ -519,7 +545,7 @@ export const ui = {
         }
         
         this.closeExcuseModal();
-        this.log(t('excuse.success'), "text-blue-400 italic");
+        this.log({ k: 'excuse.success' }, "text-blue-400 italic");
         
         // Back to idle
         this.state.activeEvent = false;
@@ -792,7 +818,9 @@ export const ui = {
             const general = pool.filter(n => !n.reqStory)
                                 .sort(() => Math.random() - 0.5)
                                 .slice(0, Math.max(4, 8 - reactive.length));
-            this.state.boardNotes = [...reactive, ...general];
+            // Ids only - components/BoardView.svelte reads the notes back out
+            // of the tree, so the wall follows a language switch.
+            this.state.boardNotes = [...reactive, ...general].map(n => n.id);
         }
 
         this.showOverlay('board-modal', false);

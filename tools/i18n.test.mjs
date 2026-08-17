@@ -28,6 +28,8 @@ Object.defineProperty(globalThis, 'navigator', {
 // way through. A page with no marks in it is the honest answer out here.
 globalThis.document = { documentElement: { lang: '' }, querySelectorAll: () => [] };
 globalThis.location = { reload() { reloaded = true; } };
+// engine_state.svelte.js asks it once, at module load, for the touch default.
+globalThis.matchMedia = () => ({ matches: false, addEventListener() {} });
 let reloaded = false;
 
 const { platform } = await import('../src/platform.js');
@@ -391,6 +393,100 @@ await ok('Der Startbildschirm bietet jede Sprache an', async () => {
         assert.ok(html.includes(`html[lang="${lang}"] .lang-opt[data-lang="${lang}"]`),
                   `keine Hervorhebung für ${lang}`);
     }
+});
+
+console.log('Aufgezeichnete Prosa (Rezepte):');
+
+/*
+ * Since 6.0 a log line, a chat bubble, the ticker and the excuse record an
+ * IDENTITY rather than a sentence, so they follow a language switch. The suite
+ * lives here because the promise is a language promise, and it is the promise
+ * that would break silently: a recipe that stops resolving does not throw, it
+ * quietly shows the wrong language or nothing at all.
+ */
+const { renderRecipe, recipeKey, itemNameValue } = await import('../src/engine/recipe.js');
+const { loadCore, ensure } = await import('../src/data.js');
+
+const inBoth = async (recipe) => {
+    const out = {};
+    for (const lang of ['de', 'en']) {
+        await i18n.useLanguage(lang);
+        await loadCore(lang);
+        await ensure('items', 'special', 'coffee', 'excuses', 'newsTicker');
+        out[lang] = renderRecipe(recipe);
+    }
+    return out;
+};
+
+await ok('Ein Verweis in den Datenbaum folgt der Sprache', async () => {
+    const r = await inBoth({ ref: { p: 'items', i: 'donut', path: ['use', 'log'] } });
+    assert.ok(r.de && r.en, 'eine Seite lieferte nichts');
+    assert.notEqual(r.de, r.en, 'der Verweis liefert in beiden Bäumen dasselbe');
+});
+
+await ok('Ein gezogener Zufallstreffer kommt als derselbe Treffer zurück', async () => {
+    // Der Index wird aufgeschrieben, nicht das Ergebnis - beide Bäume tragen
+    // dieselbe Listenlänge, das erzwingt lint-parity.
+    const r = await inBoth({ ref: { p: 'special', path: ['leet', 1] } });
+    assert.ok(r.de.startsWith('13:37') && r.en.startsWith('13:37'), 'nicht dieselbe Zeile');
+    assert.notEqual(r.de, r.en);
+});
+
+await ok('Ein Wert im Satz wird mit aufgelöst', async () => {
+    const r = await inBoth({ k: 'log.item.found', v: { item: itemNameValue('donut') } });
+    assert.ok(r.de.includes('Donut'), r.de);
+    assert.ok(r.en.includes('doughnut'), r.en);
+});
+
+await ok('Ein Rezept im Rezept löst über beide Ebenen auf', async () => {
+    const r = await inBoth({ k: 'log.item.cooldown',
+                             v: { line: { k: 'item.cooldown.fallback', v: { item: itemNameValue('donut') } },
+                                  wait: 5 } });
+    assert.ok(r.de.includes('Donut') && r.en.includes('doughnut'), JSON.stringify(r));
+    assert.notEqual(r.de, r.en);
+});
+
+await ok('Eine Zeile aus 5.x bleibt stehen und wechselt nicht', async () => {
+    const r = await inBoth({ msg: 'Zeile aus einem alten Spielstand' });
+    assert.equal(r.de, r.en, 'ein Literal darf nicht wechseln');
+    assert.equal(r.de, 'Zeile aus einem alten Spielstand');
+});
+
+await ok('Ein Rezept ins Leere entfällt, statt zu raten', async () => {
+    // Inhalt wandert zwischen Fassungen. Lieber eine Zeile weniger als ein
+    // Satz in der Sprache, aus der der Spieler gerade weggeschaltet hat.
+    for (const kaputt of [{ ref: { i: 'gibt_es_nicht', path: ['x'] } },
+                          { k: 'gibt.es.nicht' },
+                          { k: 'log.item.found', v: { item: { ref: { i: 'weg', path: ['t'] } } } }]) {
+        assert.equal(renderRecipe(kaputt), null, JSON.stringify(kaputt));
+    }
+    // Und ein Rezept, das zusätzlich einen Satz trüge, nimmt ihn NICHT. Ohne
+    // diese Zeile bemerkt die Probe nicht, wenn der alte Rückfall zurückkommt:
+    // die drei oben tragen gar keinen, es gäbe also nichts zu greifen.
+    assert.equal(renderRecipe({ ref: { i: 'weg', path: ['x'] }, msg: 'alter Satz' }), null,
+                 'ein Rezept greift wieder auf einen mitgespeicherten Satz zurück');
+    assert.equal(renderRecipe({ k: 'gibt.es.nicht', msg: 'alter Satz' }), null,
+                 'ein Schlüssel greift wieder auf einen mitgespeicherten Satz zurück');
+});
+
+await ok('Der Doppler-Schutz vergleicht Kennungen, nicht Sätze', async () => {
+    const a = { k: 'log.item.found', v: { item: 'Donut' } };
+    const b = { k: 'log.item.found', v: { item: 'Donut' } };
+    const c = { k: 'log.item.found', v: { item: 'Hammer' } };
+    assert.equal(recipeKey(a), recipeKey(b), 'dasselbe Ereignis zählt als verschieden');
+    assert.notEqual(recipeKey(a), recipeKey(c), 'zwei Ereignisse fallen zusammen');
+});
+
+await ok('Kein aufgezeichnetes Feld hält noch einen fertigen Satz', async () => {
+    // Die Regel, auf der das alles ruht: der Zustand hält die Kennung, die
+    // Anzeige rendert. Ein Feld, das wieder Prosa speichert, bricht sie leise.
+    const { freshDay } = await import('../src/engine/engine_state.svelte.js');
+    const day = freshDay();
+    for (const key of ['currentExcuse', 'activeNews']) {
+        assert.ok(!(typeof day[key] === 'string' && day[key].length),
+                  `${key} hält wieder Text statt einer Kennung`);
+    }
+    assert.deepEqual(day.boardNotes, [], 'boardNotes hält wieder Zettel statt Ids');
 });
 
 console.log(`\n${passed} Tests bestanden.`);

@@ -63,6 +63,23 @@ const note = (key, where) => {
 const RE_CALL = /\btf?\(([^)]*)\)/g;
 const RE_KEY  = /['"`]([a-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)+)['"`]/g;
 
+/*
+ * Keys inside a RECIPE - `this.log({ k: 'log.item.found', v: { … } })`.
+ *
+ * Since 6.0 a recorded line stores its key instead of the sentence t() would
+ * have produced (src/engine/recipe.js), so the key no longer sits inside a
+ * t() call and RE_CALL walks straight past it. Thirty-five entries reported as
+ * unused the first time this ran, every one of them in daily use.
+ *
+ * The rest of the LINE is taken and handed to RE_KEY, for the same reason
+ * RE_CALL takes the whole call rather than the first argument: a key can be
+ * conditional, and both branches are real -
+ *     { k: kind === 'received' ? 'log.item.received' : 'log.item.found' }
+ * A computed key is as invisible here as anywhere else and is declared with an
+ * i18n-uses comment.
+ */
+const RE_RECIPE = /\bk:\s*(.*)$/gm;
+
 // Markup marks. The attr form carries several pairs at once.
 const RE_MARK = /\bdata-i18n(?:-html)?\s*=\s*"([^"]+)"/g;
 const RE_ATTR = /\bdata-i18n-attr\s*=\s*"([^"]+)"/g;
@@ -116,6 +133,12 @@ function scan(file) {
             // A computed key cannot be checked. It is declared with an
             // i18n-uses comment instead; reporting it here would be a
             // permanent false alarm.
+            if (m[1].includes('${')) continue;
+            note(m[1], where);
+        }
+    }
+    for (const recipe of src.matchAll(RE_RECIPE)) {
+        for (const m of recipe[1].matchAll(RE_KEY)) {
             if (m[1].includes('${')) continue;
             note(m[1], where);
         }

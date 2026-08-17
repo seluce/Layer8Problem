@@ -220,7 +220,8 @@ export const week = {
         this.incrementStat('weeksStarted');
         this.incrementStat('weeksStarted_' + level);   // gives the archive bars a base
 
-        this.log(tf('week.log.start', { mode: t(`week.diff.${cfg.key}`).toUpperCase() }), 'text-purple-400 font-bold');
+        this.log({ k: 'week.log.start',
+                   v: { mode: { k: `week.diff.${cfg.key}`, up: true } } }, 'text-purple-400 font-bold');
     },
 
     /** Back to plain day mode. Does not touch the running day. */
@@ -399,7 +400,7 @@ export const week = {
         if (!pool.length) {
             // Should never happen (one meeting per week, weekly usedIDs) -
             // better a fallen-through meeting than a frozen Friday.
-            this.log(t('week.log.meetingCancelled'), 'text-purple-400');
+            this.log({ k: 'week.log.meetingCancelled' }, 'text-purple-400');
             this.reset();
             return;
         }
@@ -532,8 +533,8 @@ export const week = {
         // i18n-uses: week.morning.2, week.morning.3, week.morning.4, week.morning.5
         const dayIndex = this.state.week.dayIndex;
         const morning = dayIndex >= 2 && dayIndex <= 5
-            ? t(`week.morning.${dayIndex}`)
-            : tf('week.morning.other', { day: this.weekDayName() });
+            ? { k: `week.morning.${dayIndex}` }
+            : { k: 'week.morning.other', v: { day: { k: `week.day.${WEEK_DAY_KEYS[dayIndex - 1] ?? WEEK_DAY_KEYS[0]}` } } };
         this.log(morning, 'text-purple-400');
 
         this.playBootSequence(() => { this.reset(); });
@@ -690,7 +691,9 @@ export const week = {
         }
 
         this.setTerminalIdle();
-        this.log(tf('week.log.resumed', { day: this.weekDayName() }), 'text-purple-400');
+        this.log({ k: 'week.log.resumed',
+                   v: { day: { k: `week.day.${WEEK_DAY_KEYS[(this.state.week?.dayIndex ?? 1) - 1] ?? WEEK_DAY_KEYS[0]}` } } },
+                 'text-purple-400');
     },
 
     /**
@@ -717,7 +720,7 @@ export const week = {
 
         this.endWeek();                       // week off, saved slot dropped
         if (!level) {                         // should not happen, but never strand the player
-            this.log(t('week.log.noRun'), 'text-orange-400');
+            this.log({ k: 'week.log.noRun' }, 'text-orange-400');
             this.softReset();
             return;
         }
@@ -729,7 +732,7 @@ export const week = {
 
         this.startWeek(level);                // Monday again, with its starting condition
         this.renderHeader();
-        this.log(t('week.log.restart'), 'text-purple-400');
+        this.log({ k: 'week.log.restart' }, 'text-purple-400');
         this.updateUI();
 
         this.playBootSequence(() => { this.reset(); });

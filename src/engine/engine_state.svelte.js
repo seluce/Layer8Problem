@@ -32,6 +32,8 @@ export function freshDay(mult = 1.0) {
         // Which notes are pinned to the board today. Drawn once by
         // engine_ui.openBoard(); reopening must not reshuffle them, or the
         // wall stops feeling like a place.
+        // Note IDS, not the notes themselves. A note is prose and belongs in
+        // the tree; what the day decided is only WHICH ones are pinned up.
         boardNotes: [],
         // 'use' or 'discard' - which question the item dialog is asking
         pendingItemMode: null,
@@ -57,7 +59,9 @@ export function freshDay(mult = 1.0) {
         // excuse per event: closing and reopening the dialog must not deal a
         // new one, or a player can leaf through the whole pool without ever
         // spending an excuse.
-        currentExcuse: '',
+        // A RECIPE, not the sentence - see engine/recipe.js. Which excuse was
+        // drawn is the day's decision; the wording belongs to the tree.
+        currentExcuse: null,
         excuseFor: null,
 
         // Progress
@@ -124,7 +128,10 @@ export function freshDay(mult = 1.0) {
 
         // News ticker
         lastNewsTime: 0,
-        activeNewsText: null,
+        // Likewise the ticker. A recipe rather than a bare index, because the
+        // tutorial puts a dictionary line up there instead of a pool entry -
+        // one mechanism covers both.
+        activeNews: null,
         lastMoodId: null,
         lastLogMsg: "",
 

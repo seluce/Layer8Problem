@@ -46,7 +46,7 @@ const tutorial = {
         engine.state.activeEvent = false; 
         engine.state.morningMoodShown = true; 
         
-        engine.state.activeNewsText = t('tutorial.ticker');
+        engine.state.activeNews = { k: 'tutorial.ticker' };
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
         
         if (!this.hooksInjected && typeof engine !== 'undefined') {
@@ -81,7 +81,7 @@ const tutorial = {
                 if (tutorial.isActive) {
                     // During step 8 only the donut may be used
                     if (tutorial.step === 8 && id !== 'donut') {
-                        engine.log(t('tutorial.log.focusDonut'), "text-red-500 font-bold");
+                        engine.log({ k: 'tutorial.log.focusDonut' }, "text-red-500 font-bold");
                         return; // modal stays closed
                     }
                     // Otherwise the modal may open -> turn the background down
@@ -145,7 +145,7 @@ const tutorial = {
         // direct innerHTML write here would tear out the nodes it tracks.
         engine.setTerminalIdle('halgerd');
 
-        engine.log(t('tutorial.log.init'), "text-cyan-400 font-bold");
+        engine.log({ k: 'tutorial.log.init' }, "text-cyan-400 font-bold");
         
         this.applyStepLogic();
     },
@@ -162,10 +162,10 @@ const tutorial = {
         engine.state.morningMoodShown = false;
         engine.state.activeEvent = false;
         
-        engine.state.activeNewsText = null;
+        engine.state.activeNews = null;
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
 
-        engine.log(t('tutorial.log.skipped'), "text-cyan-400 font-bold");
+        engine.log({ k: 'tutorial.log.skipped' }, "text-cyan-400 font-bold");
         engine.reset(); 
     },
 

@@ -8,6 +8,7 @@
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
 
     const view = $derived(state.terminal.morning ?? {});
 </script>
@@ -28,7 +29,8 @@
     </div>
 
     <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
-        {t('morning.conditions')} {@html view.conditions ?? ''}
+        {t('morning.conditions')}
+        {#if view.conditions}<span class={view.conditions.cls}>{renderRecipe(view.conditions) ?? ''}</span>{/if}
     </div>
 
     <button data-continue onclick={() => engine.reset()}

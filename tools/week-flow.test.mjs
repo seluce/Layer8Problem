@@ -29,6 +29,7 @@ const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
+const { renderRecipe } = await import('../src/engine/recipe.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
@@ -53,7 +54,11 @@ const engine = {
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
     setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
     setTerminalResult(text, m, l, a, b, action, buttonKey) { calls.termResult = { action, buttonKey }; },
-    log(text) { (calls.logs ??= []).push(text); },
+    // Since 6.0 log() is handed a RECIPE, not a sentence. The stub keeps it as
+    // it arrives: a test that asserts on the rendered German would be asserting
+    // on the display, and the whole point of the recipe is that the display is
+    // no longer where the identity lives.
+    log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'Tagebuch-Stub',
 };
@@ -280,9 +285,14 @@ await ok('Die Startzeile eines alten Spielstands nennt die laufende Version', ()
     };
     engine.applyRestoredDay(alt);
 
-    assert.ok(state.logEntries[0].msg.includes(engine.VERSION),
-              `Startzeile nennt nicht ${engine.VERSION}: ${state.logEntries[0].msg}`);
-    assert.ok(!state.logEntries[0].msg.includes('v5.0.0'), 'alte Version steht noch da');
+    // Die Startzeile wird beim Wiederherstellen zum Rezept gemacht - das ist
+    // die eine Stelle, an der eine 5.x-Zeile ihre Kennung zurückbekommt. Also
+    // wird gerendert geprüft und nicht auf ein Feld geschaut.
+    const start = renderRecipe(state.logEntries[0]);
+    assert.ok(start.includes(engine.VERSION),
+              `Startzeile nennt nicht ${engine.VERSION}: ${start}`);
+    assert.ok(!start.includes('v5.0.0'), 'alte Version steht noch da');
+    assert.equal(state.logEntries[0].msg, undefined, 'der alte Satz steht noch im Eintrag');
     // Der Rest des Protokolls ist Gedächtnis und bleibt unangetastet.
     assert.equal(state.logEntries[1].msg, 'Modus: MITTWOCH. Business as usual.');
     assert.equal(state.logEntries[2].msg, 'Kaffee geholt.');
@@ -1814,7 +1824,10 @@ await ok('Jeder Morgen bekommt seine eigene Zeile', () => {
         calls.logs = [];
         state.modal = { open: true, isNight: true };
         engine.continueWeekNight();
-        zeilen.add(calls.logs.find(l => /Dienstag|Mittwoch|Donnerstag|Freitag/.test(l)));
+        // Compared by IDENTITY, not by the German word: the morning line is a
+        // recipe now, and its key is what makes one morning a different morning.
+        const morgen = calls.logs.find(l => typeof l?.k === 'string' && l.k.startsWith('week.morning.'));
+        zeilen.add(JSON.stringify(morgen));
     }
     assert.equal(zeilen.size, 4, 'die vier Morgen müssen sich unterscheiden');
 });

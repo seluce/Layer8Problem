@@ -184,7 +184,7 @@
         {#each options as o (o.index)}
             <button class={o.locked ? LOCKED_CLASS : OPEN_CLASS}
                     disabled={!!o.locked}
-                    onclick={() => engine.chooseOption(o.opt)}>
+                    onclick={() => engine.chooseOption(o.opt, o.index)}>
                 <div class="flex items-center flex-1 mr-2 min-w-0">
                     <span class="mr-3 text-xl shrink-0">
                         {#if o.locked}

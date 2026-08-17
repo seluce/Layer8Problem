@@ -11,6 +11,7 @@
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
 
     const view = $derived(state.terminal.result ?? {});
 
@@ -29,7 +30,7 @@
     // URLs are detected and turned into anchors.
     const URL_RE = /(https?:\/\/[^\s)]+)/g;
     const parts = $derived(
-        String(view.text ?? '').split(URL_RE).map(chunk => ({
+        String(renderRecipe(view.text) ?? '').split(URL_RE).map(chunk => ({
             text: chunk,
             href: /^https?:\/\//.test(chunk) ? chunk : null
         }))
