@@ -1451,20 +1451,20 @@ export const sidequests = [
         text: "Auf dem Spülkasten der Toilette liegt einsam ein USB-Stick. Mit dickem, roten Edding steht darauf geschrieben: 'STRENG PRIVAT! NICHT ANFASSEN!'. Es ist der klassische Köder. Deine Admin-Finger kribbeln, als wäre es der Ring der Macht.",
         opts: [
             { 
-                t: "Todsünde begehen: Am PC anschließen", 
+                t: "Die Todsünde begehen und ihn am PC anschließen", 
                 req: "usb_stick", 
                 next: "path_stick_godmode", 
                 m: 10, l: 5, a: 0, b: 20, 
                 r: "Die Neugier gewinnt in Rekordzeit. Du steckst ihn ein. *Klick*. Ein Fenster öffnet sich. Keine Pornos, kein Virus. Sondern eine Datei namens 'MASTER_CONTROL_V3.exe'. Du startest sie. Ein grüner Totenkopf erscheint. Du ziehst den Stick schnell wieder ab. Hoffentlich hat das keiner gesehen." 
             },
             { 
-                t: "Paranoid werden: Im Klo runterspülen", 
+                t: "Paranoid werden und ihn im Klo runterspülen", 
                 next: "path_stick_hunt", 
                 m: 5, l: 0, a: 5, b: 0, 
                 r: "Du nimmst den Stick mit spitzen Fingern, wirfst ihn in die Schüssel und drückst ab. *Gurgel... Weg.* Keine Forensik der Welt holt den wieder zurück." 
             },
             { 
-                t: "Brav sein: Am Empfang abgeben", 
+                t: "Brav sein und ihn am Empfang abgeben", 
                 next: "path_stick_hunt", 
                 rep: { "Gabi": 2 },
                 m: 10, l: -5, a: 0, b: -5, 
@@ -4055,7 +4055,7 @@ export const sidequests = [
                 opts: [ 
                     { t: "Leite sofort die Notabschaltung ein!", next: "shutdown" }, 
                     { t: "Zwing die Lüfter auf 100% Leistung!", next: "fan_boost" }, 
-                    { t: "Warnung ignorieren und stummschalten.", next: "ignore" } 
+                    { t: "[Warnung ignorieren und stummschalten]", next: "ignore" } 
                 ] 
             }, 
             "fan_boost": { 
@@ -4130,14 +4130,14 @@ export const sidequests = [
             "root": {
                 text: "@channel: Bowls sind da! ✨ Namaste, Kollegen! Du öffnest deine 'Buddha-Gold-Bowl'. Inhalt: 3 Blätter Spinat, eine halbe Avocado (braun) und etwas, das wie Vogelfutter aussieht. Preis: 18,50€.",
                 opts: [
-                    { t: "So tun, als ob es schmeckt.", next: "pretend" },
-                    { t: "Im Geheimen zum Dönerladen rennen.", next: "secret_kebab" }
+                    { t: "[So tun, als ob es schmeckt]", next: "pretend" },
+                    { t: "[Im Geheimen zum Dönerladen rennen]", next: "secret_kebab" }
                 ]
             },
             "pretend": {
                 text: "Chantal: 'Spürst du die Energie?!' Du spürst vor allem den Hunger. Dein Magen knurrt so laut, dass das Meeting unterbrochen wird.",
                 opts: [
-                    { t: "Lächeln und winken.", next: "res_hungry" }
+                    { t: "[Lächeln und winken]", next: "res_hungry" }
                 ]
             }
         },
@@ -4766,8 +4766,8 @@ export const sidequests = [
                 text: "Hallo Mama! Mein Handy ist leider in die Toilette gefallen. Das ist meine neue Nummer. Kannst du mir dringend 500 Euro per PayPal überweisen? Kuss!",
                 opts: [
                     { t: "Hallo 'Kind'. Ich habe deine IP zurückverfolgt.", next: "scam_ip" },
-                    { t: "Einen präparierten Trojaner-Link zurücksenden.", next: "scam_trojan" },
-                    { t: "Nummer blockieren", next: "res_block" }
+                    { t: "[Einen präparierten Trojaner-Link zurücksenden]", next: "scam_trojan" },
+                    { t: "[Nummer blockieren]", next: "res_block" }
                 ]
             },
             scam_ip: {
@@ -5002,14 +5002,14 @@ export const sidequests = [
             root: {
                 text: "Ihr Paket (1) hat offene Gebühren (2,99 EUR). Bitte sofort via Link bezahlen, sonst Retoure: hxxp://zoll-gebuehr-scam.to/pay",
                 opts: [
-                    { t: "Ignorieren und löschen", next: "res_spam_ignore" },
-                    { t: "Mit einem SQL-Injection-String antworten", next: "spam_sql" }
+                    { t: "[Ignorieren und löschen]", next: "res_spam_ignore" },
+                    { t: "[Mit einem SQL-Injection-String antworten]", next: "spam_sql" }
                 ]
             },
             spam_sql: {
                 text: "Error 500: Internal Server Error. Database connection failed.",
                 opts: [
-                    { t: "Böse grinsen", next: "res_spam_hacked" }
+                    { t: "[Böse grinsen]", next: "res_spam_hacked" }
                 ]
             }
         },
@@ -5092,8 +5092,8 @@ export const sidequests = [
             root: {
                 text: "Hey Müller! Du warst seit exakt 412 Tagen nicht mehr im Gym. Deine Muskeln vermissen dich! Komm vorbei und pump das Eisen!",
                 opts: [
-                    { t: "Abo direkt per App kündigen", next: "gym_cancel" },
-                    { t: "Traurig den weichen Bauch anspannen", next: "gym_sad" }
+                    { t: "[Abo direkt per App kündigen]", next: "gym_cancel" },
+                    { t: "[Traurig den weichen Bauch anspannen]", next: "gym_sad" }
                 ]
             },
             gym_cancel: {
@@ -5223,7 +5223,7 @@ export const sidequests = [
                 opts: [
                     { t: "Das Ding ist 200 Euro wert!", next: "ebay_argue" },
                     { t: "Welche Cola?", next: "ebay_cola" },
-                    { t: "Einfach ignorieren", next: "res_ebay_ignore" }
+                    { t: "[Einfach ignorieren]", next: "res_ebay_ignore" }
                 ]
             },
             ebay_argue: {
@@ -5290,8 +5290,8 @@ export const sidequests = [
             root: {
                 text: "CHANTAL: '@channel Team! \u2728 Ich sammle für die Buddha-Gold-Bowls vom neuen Superfood-Lieferservice. 18,50\u20ac pro Person. Wer ist dabei? Denkt an eure Chakren!'",
                 opts: [
-                    { t: "Mitbestellen. Teamgeist und so.", next: "join" },
-                    { t: "Höflich ablehnen.", next: "decline" },
+                    { t: "[Mitbestellen] Teamgeist und so.", next: "join" },
+                    { t: "[Höflich ablehnen]", next: "decline" },
                     { t: "'Machen wir nicht lieber Pizza?'", next: "pizza" }
                 ]
             },

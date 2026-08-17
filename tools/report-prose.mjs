@@ -514,7 +514,10 @@ section('Auffällige Optionsbeschriftungen (überlang oder ASCII-Pfeil)', labels
 // Target style (4.1): options are natural verb phrases from Mueller's
 // perspective ("Ihn vor dem Spinat-Kern warnen") or bare direct speech.
 // Legacy registers to migrate: "Aktion (Hinweis)" and "Haltung: ..." prefixes.
-const legacyLabels = [];
+// Capture 2 is whatever follows the colon, which is what tells the house form
+// ("Ihn ablenken: 'Feueralarm!'") from a verdict ("Völlige Panik: Wegrennen").
+const PREFIX = /^([A-ZÄÖÜ][\wäöüß-]*(?:\s+[\wäöüß-]+){0,2}):\s+(.+)$/;
+const legacyLabels = [], quoteLabels = [];
 for (const r of records) {
   // Option labels are the fields ending in .t, exactly as in section 6c.
   // Until the twentieth session those were the only labels left after the
@@ -533,14 +536,21 @@ for (const r of records) {
   const t = norm(r.text);
   if (/\([^)]*\)\s*$/.test(t))
     legacyLabels.push(`[${loc(r)}] Klammer:  "${t}"`);
-  // Composite category prefixes ("Tech-Lösung:") slipped past the single-word
-  // pattern because of the capital after the hyphen. Catch the generic family
-  // only; character prefixes stay legal ("MacGyver-Lösung:" fails the
-  // lowercase-first-part test, "Bullshit-Bingo:" fails the second word).
-  else if ((/^[A-ZÄÖÜ][a-zäöüß-]+:\s/.test(t) || /^[A-ZÄÖÜ][a-zäöüß]+-(Lösung|Protokoll):\s/.test(t)) && !/^(https?|Betreff):/i.test(t))
-    legacyLabels.push(`[${loc(r)}] Präfix:   "${t}"`);
+  // Up to THREE words before the colon. The old pattern took exactly one, so
+  // "Paranoid werden: Im Klo runterspülen" walked past it and the section
+  // reported 0 for a pool that had five of them.
+  else if (PREFIX.test(t) && !/^(https?|Betreff|Subject|Re|WG|Error \d)/i.test(t)) {
+    // "Handlung: 'Zitat'" is the house form and by far the larger group - the
+    // left half says what Miller does, the right half what he says. Only the
+    // left half can be a verdict, so the two are listed apart: mixing them
+    // buries five real findings under 130 correct labels, and a section nobody
+    // reads is a section that finds nothing.
+    if (/^["'„]/.test(PREFIX.exec(t)[2])) quoteLabels.push(`[${loc(r)}] "${t}"`);
+    else legacyLabels.push(`[${loc(r)}] Präfix:   "${t}"`);
+  }
 }
 section('Alt-Register Optionsbeschriftungen (Migrationsliste zum Hausstil)', legacyLabels, 900);
+section('Etikett vor wörtlicher Rede — nur die LINKE Hälfte prüfen: benennt sie die Handlung oder bewertet sie die Wahl?', quoteLabels, 900);
 
 /* ---------- 7) emails: sender inventory & name variants ---------- */
 if (pools.includes('emails')) {

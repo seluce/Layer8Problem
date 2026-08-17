@@ -4103,7 +4103,7 @@ export const sidequests = [
                 opts: [ 
                     { t: "Initiate the emergency shutdown immediately!", next: "shutdown" }, 
                     { t: "Force the fans to 100% power!", next: "fan_boost" }, 
-                    { t: "Ignore the warning and mute it.", next: "ignore" } 
+                    { t: "[Ignore the warning and mute it]", next: "ignore" } 
                 ] 
             }, 
             "fan_boost": { 
@@ -4178,14 +4178,14 @@ export const sidequests = [
             "root": {
                 text: "@channel: Bowls are here! ✨ Namaste, colleagues! You open your 'Buddha Gold Bowl'. Contents: 3 leaves of spinach, half an avocado (brown) and something that looks like birdseed. Price: €18.50.",
                 opts: [
-                    { t: "Pretend it tastes good.", next: "pretend" },
-                    { t: "Run to the kebab shop in secret.", next: "secret_kebab" }
+                    { t: "[Pretend it tastes good]", next: "pretend" },
+                    { t: "[Run to the kebab shop in secret]", next: "secret_kebab" }
                 ]
             },
             "pretend": {
                 text: "Chantal: 'Can you sense the energy?!' What you mostly sense is hunger. Your stomach rumbles so loudly that the meeting is interrupted.",
                 opts: [
-                    { t: "Smile and wave.", next: "res_hungry" }
+                    { t: "[Smile and wave]", next: "res_hungry" }
                 ]
             }
         },
@@ -4814,8 +4814,8 @@ export const sidequests = [
                 text: "Hello Mum! Sadly my phone fell in the toilet. This is my new number. Could you urgently transfer me €500 by PayPal? Love you!",
                 opts: [
                     { t: "Hello 'child'. I have traced your IP.", next: "scam_ip" },
-                    { t: "Send back a doctored Trojan link.", next: "scam_trojan" },
-                    { t: "Block the number", next: "res_block" }
+                    { t: "[Send back a doctored Trojan link]", next: "scam_trojan" },
+                    { t: "[Block the number]", next: "res_block" }
                 ]
             },
             scam_ip: {
@@ -5050,14 +5050,14 @@ export const sidequests = [
             root: {
                 text: "Your parcel (1) has outstanding charges (€2.99). Please pay immediately via link, otherwise return to sender: hxxp://customs-fee-scam.to/pay",
                 opts: [
-                    { t: "Ignore and delete", next: "res_spam_ignore" },
-                    { t: "Reply with an SQL injection string", next: "spam_sql" }
+                    { t: "[Ignore and delete]", next: "res_spam_ignore" },
+                    { t: "[Reply with an SQL injection string]", next: "spam_sql" }
                 ]
             },
             spam_sql: {
                 text: "Error 500: Internal Server Error. Database connection failed.",
                 opts: [
-                    { t: "Grin wickedly", next: "res_spam_hacked" }
+                    { t: "[Grin wickedly]", next: "res_spam_hacked" }
                 ]
             }
         },
@@ -5140,8 +5140,8 @@ export const sidequests = [
             root: {
                 text: "Hey Miller! You have not been to the gym for exactly 412 days. Your muscles miss you! Come in and pump some iron!",
                 opts: [
-                    { t: "Cancel the membership straight through the app", next: "gym_cancel" },
-                    { t: "Sadly tense your soft stomach", next: "gym_sad" }
+                    { t: "[Cancel the membership straight through the app]", next: "gym_cancel" },
+                    { t: "[Sadly tense your soft stomach]", next: "gym_sad" }
                 ]
             },
             gym_cancel: {
@@ -5271,7 +5271,7 @@ export const sidequests = [
                 opts: [
                     { t: "That thing is worth €200!", next: "ebay_argue" },
                     { t: "Which Coke?", next: "ebay_cola" },
-                    { t: "Simply ignore it", next: "res_ebay_ignore" }
+                    { t: "[Simply ignore it]", next: "res_ebay_ignore" }
                 ]
             },
             ebay_argue: {
@@ -5338,8 +5338,8 @@ export const sidequests = [
             root: {
                 text: "CHANTAL: '@channel Team! ✨ I am collecting for the Buddha Gold Bowls from the new superfood delivery service. €18.50 per person. Who is in? Think of your chakras!'",
                 opts: [
-                    { t: "Order with them. Team spirit and all that.", next: "join" },
-                    { t: "Decline politely.", next: "decline" },
+                    { t: "[Order with them] Team spirit and all that.", next: "join" },
+                    { t: "[Decline politely]", next: "decline" },
                     { t: "'Should we not do pizza instead?'", next: "pizza" }
                 ]
             },

@@ -176,7 +176,7 @@ export const coffee = [
                 r: "You turn on your heel and flee back to your office. The boss watches you go, baffled. No coffee. No dressing-down either." 
             },
             { 
-                t: "Barefaced fib: 'It is for the external consultant!'", 
+                t: "'It is for the external consultant!'", 
                 next: "path_boss_consultant",
 				rep: { "Dr. Wichtig": 5 },
                 m: 5, l: 10, a: 5, b: -10,
@@ -1380,7 +1380,7 @@ export const coffee = [
         text: "An all-staff email from Financial Control: 'Attention! We have a discrepancy in the premium coffee stock. 1 cup is missing. Consumption will be reconciled against the security cameras with immediate effect.'",
         opts: [
             { 
-                t: "Lie proactively: 'The machine was leaking!'", 
+                t: "'The machine was leaking!'", 
                 m: 5, l: 5, a: 0, b: 10, 
                 r: "You hit 'Reply All'. 'Saw coffee water running out. Somebody tell facilities!' Everybody thanks you for your vigilance. Genius." 
             },
@@ -2748,7 +2748,7 @@ export const coffee = [
         text: "You walk straight into the boss. He stares at the enormous grease stain on your shirt and the crumbs at the corner of your mouth. 'Miller? Have you been eating from the board's buffet?'",
         opts: [
             { 
-                t: "Play dumb: 'I ate my packed lunch.'", 
+                t: "'I ate my packed lunch.'", 
                 rep: { "Dr. Wichtig": -2 },	      
                 m: 2, l: 5, a: 0, b: 0, 
                 r: "You point at the stain. 'Liver sausage, sir. Nasty stuff.' He wrinkles his nose and keeps his distance. 'Go and wash. You smell of fish.' You have escaped." 
@@ -3828,7 +3828,7 @@ export const coffee = [
         text: "You fetch yourself a coffee. The room is empty. 'Billie Jean' is stuck in your head and you let yourself go. You pull off a perfect moonwalk, grab your crotch and execute a wild spin. When you open your eyes you are staring straight into a running camera lens. Behind it the boss is giving a live interview for the 'GlobalCorp Investor Day'.",
         opts: [
             { 
-                t: "Total panic: run for it", 
+                t: "Run for it in a panic", 
                 next: "path_dance_flee", 
                 m: 5, l: 0, a: 30, b: 10, 
                 r: "Your eyes go wide, you let out a small shriek and sprint out of shot. An unspeakably embarrassing exit, now preserved for ever in the company archive and on the internet." 

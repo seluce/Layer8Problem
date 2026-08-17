@@ -144,7 +144,7 @@ export const coffee = [
                 r: "Du drehst dich auf dem Absatz um und fliehst zurück in dein Büro. Der Chef schaut dir verwirrt nach. Kein Kaffee, aber immerhin keine Standpauke." 
             },
             { 
-                t: "Dreiste Notlüge: 'Ist für den externen Berater!'", 
+                t: "'Ist für den externen Berater!'", 
                 next: "path_boss_consultant",
 				rep: { "Dr. Wichtig": 5 },
                 m: 5, l: 10, a: 5, b: -10,
@@ -1348,7 +1348,7 @@ export const coffee = [
         text: "Eine Rundmail vom Controlling: 'Achtung! Wir haben eine Differenz im Premium-Kaffee-Bestand. 1 Tasse fehlt. Der Verbrauch wird ab sofort mit den Sicherheitskameras abgeglichen.'",
         opts: [
             { 
-                t: "Proaktiv lügen: 'Die Maschine hat geleckt!'", 
+                t: "'Die Maschine hat geleckt!'", 
                 m: 5, l: 5, a: 0, b: 10, 
                 r: "Du antwortest 'Reply All'. 'Habe gesehen, wie Kaffeewasser ausgelaufen ist. Technik informieren!' Alle danken dir für deine Wachsamkeit. Genius." 
             },
@@ -2716,7 +2716,7 @@ export const coffee = [
         text: "Du läufst dem Chef in die Arme. Er starrt auf den riesigen Fettfleck auf deinem Hemd und die Krümel im Mundwinkel. 'Müller? Haben Sie etwa vom Vorstandsbuffet gegessen?'",
         opts: [
             { 
-                t: "Dumm stellen: 'Habe mein Pausenbrot gegessen.'", 
+                t: "'Habe mein Pausenbrot gegessen.'", 
                 rep: { "Dr. Wichtig": -2 },	      
                 m: 2, l: 5, a: 0, b: 0, 
                 r: "Du zeigst auf den Fleck. 'Leberwurst, Chef. Ganz übel.' Er rümpft die Nase und geht auf Abstand. 'Waschen Sie sich. Sie riechen nach Fisch.' Du bist entkommen." 
@@ -3796,7 +3796,7 @@ export const coffee = [
         text: "Du holst dir einen Kaffee. Der Raum ist leer. Du hast einen absoluten Ohrwurm von 'Billie Jean' und lässt dich treiben. Du ziehst einen perfekten Moonwalk ab, greifst in den Schritt und machst eine wilde Drehung. Als du die Augen aufmachst, starrst du direkt in eine laufende Kameralinse. Der Chef gibt dahinter gerade ein Live-Interview für den 'GlobalCorp Investor Day'.",
         opts: [
             { 
-                t: "Völlige Panik: Sofort wegrennen", 
+                t: "Panisch wegrennen", 
                 next: "path_dance_flee", 
                 m: 5, l: 0, a: 30, b: 10, 
                 r: "Du reißt die Augen auf, kreischt leise und sprintest aus dem Bild. Ein unfassbar peinlicher Abgang, der jetzt für immer im Firmen-Archiv und im Internet steht." 
