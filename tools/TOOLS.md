@@ -93,7 +93,8 @@ German and presenting the report as English.
 
 **No gate.** The tool always exits with 0 and is deliberately kept out of the
 build: whether a repeated sentence is a lazy copy or a running gag is decided by
-a human. Ten sections:
+a human. Eleven sections (with the mail pool selected, two more follow as 12
+and 13; 1 to 11 keep their numbers whatever the selection):
 
 1. verbatim repeated sentences across different events
 2. repeated word sequences from five words up ← **the most useful section**
@@ -103,8 +104,14 @@ a human. Ten sections:
 6. template constructions as a frequency **baseline** (twelve patterns)
 7. telegraph candidates: events with very short result texts
 8. thin openings (scene text under 80 characters)
-9. conspicuous option labels
-10. the old register in labels (the migration list)
+9. conspicuous option labels (over-long, or an ASCII arrow)
+10. the old register in labels: a prefix or a trailing bracket — the migration
+    list to the house style
+11. the etiquette before direct speech. **Only the LEFT half is at issue:** does
+    it name the action („Zettel schreiben:") or judge the choice („Der
+    Klassiker:")? Kept apart from 10 because mixing them buries a handful of
+    real findings under 130 correct labels. A prefix with a quotation inside it
+    („Taktik 'Verbrannte Erde':") slips past both — one case in the stock
 
 **Section 3 checks both languages** — `Faulheit`/`Chef-Radar` and
 `Laziness`/`Boss Radar` sit in one list, because a German stat in an English

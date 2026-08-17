@@ -237,8 +237,10 @@ code is always 0, every finding is reading material. Call it with a pool
 (`node tools/report-prose.mjs coffee`) or without for all of them. It reports
 verbatim repeated sentences and word sequences across event boundaries,
 stat language in narrative text ("Aggro steigt"), typo patterns, ageing
-references, result texts that are too terse, thin openings, conspicuous labels,
-the old register in options (section 9) and opening templates (section 10). The
+references, result texts that are too terse, thin openings, conspicuous labels
+(section 9), the old register in options (10) and the etiquette before direct
+speech (11). With the mail pool selected two more sections follow; 1 to 11 keep
+their numbers whatever the selection. The
 tool knows the legitimate exceptions and does not report them: subject lines,
 caller displays, chat messages and deliberate onomatopoeia.
 
@@ -346,14 +348,24 @@ marks the irony of a "'versehentlichen'" sabotage, an em dash the afterthought.
 Action buttons end without a full stop, spoken sentences with normal
 punctuation; the guideline is under 60 characters. Exempt is whatever has to be
 real: subject lines in the inbox, caller displays on the phone screen, ticket
-statuses and the parodied descaling software with its 73 steps. Section 9 of the
-prose report lists what is still in the old register.
+statuses and the parodied descaling software with its 73 steps. Section 10 of
+the prose report lists what is still in the old register.
+
+**Section 11 is the neighbouring case and not the same one.** „Handlung:
+'Zitat'" is the house form - the left half says what Miller does, the right half
+what he says - so the section asks one question only: does the left half NAME
+the action or JUDGE the choice? „Zettel schreiben:" names, „Der Klassiker:"
+judges. The two are listed apart because mixing them buries a handful of real
+findings under 130 correct labels. A prefix carrying a quotation („Taktik
+'Verbrannte Erde':") slips past both patterns - one case in the stock, measured
+on 17.08.2026, and worth knowing before the number is read as complete.
 
 **Openings without a template.** The first sentence of an event carries the
 scene. "Du willst…" only when the joke sits in the same sentence; entrances
 vary instead of every colleague "in der Tür steht"; "plötzlich" only when the
-surprise is the content and not merely a filler. Section 10 of the prose report
-watches over this.
+surprise is the content and not merely a filler. **No section watches this by
+pattern** - section 6 measures templates in the prose at large and section 8 the
+openings that are merely short, so this one is held by hand.
 
 **Result keys start with `res_`.** The terminal appends a "…" badge to every
 chain option whose target is *not* named that way — the sign that the

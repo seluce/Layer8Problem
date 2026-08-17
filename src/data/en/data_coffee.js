@@ -526,7 +526,7 @@ export const coffee = [
                 r: "You run over to the hipster roastery next door and invest €15 of your own money. The coffee tastes of unicorn tears and love, and it leaves you skint for the rest of the month." 
             },
             { 
-                t: "The classic: plug out, plug in", 
+                t: "Unplug it, plug it back in", 
                 next: "path_revolte_reboot", 
                 m: 5, l: 5, a: 5, b: 0, 
                 r: "The machine shuts down... reboots... and shows 'FEED ME' again immediately. A gleeful 8-bit laugh comes out of the speaker with it. It is cleverer than you." 

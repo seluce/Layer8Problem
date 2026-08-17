@@ -494,7 +494,7 @@ export const coffee = [
                 r: "Du rennst zum Hipster-Röster nebenan und investierst 15€ aus eigener Tasche. Der Kaffee schmeckt nach Einhorn-Tränen und Liebe, aber du bist für den Rest des Monats pleite." 
             },
             { 
-                t: "Der Klassiker: Stecker raus, Stecker rein", 
+                t: "Stecker raus, Stecker rein", 
                 next: "path_revolte_reboot", 
                 m: 5, l: 5, a: 5, b: 0, 
                 r: "Die Maschine fährt runter... bootet neu... und zeigt sofort wieder 'FEED ME'. Dazu ertönt ein hämisches 8-Bit-Lachen aus dem Lautsprecher. Sie ist klüger als du." 
