@@ -110,7 +110,7 @@ npm run sim:week       # the same for whole weeks
 
 If you would like to write events: `EVENTS.md` explains the data format, from
 the simple option to the branching dialogue chain. `STRUCTURE.md` explains why
-which file lives where, and `tools/WERKZEUGE.md` describes every tool in detail.
+which file lives where, and `tools/TOOLS.md` describes every tool in detail.
 
 ## Licence & small print
 

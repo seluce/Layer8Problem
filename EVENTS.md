@@ -36,22 +36,22 @@ The basic type, as it appears in coffee, server room, errands and calls:
 
 ```js
 {
-    id: "cof_spinat_1",                          // Pflicht: eindeutig über ALLE Pools hinweg
-    char: "Chantal",                             // optional: zeigt Chantals Porträt neben dem Text
-    title: "Der Spinat-Kern",                    // Pflicht: Überschrift der Ereignis-Karte
-    text: "Chantal steht mit einer Tasse vor dem Automaten und liest die Anzeige, als wäre sie ein Vertrag. 'Was ist ein Kern-Spülgang und warum betrifft mich das?'",   // Pflicht: der Auftakt
-    opts: [                                      // Pflicht: zwei bis vier Auswahlen, meist drei
+    id: "cof_spinat_1",                          // required: unique across ALL pools
+    char: "Chantal",                             // optional: shows Chantal's portrait beside the text
+    title: "Der Spinat-Kern",                    // required: the heading of the event card
+    text: "Chantal steht mit einer Tasse vor dem Automaten und liest die Anzeige, als wäre sie ein Vertrag. 'Was ist ein Kern-Spülgang und warum betrifft mich das?'",   // required: the opening
+    opts: [                                      // required: two to four options, usually three
         {
-            t: "Ihr erklären, was der Automat gerade tut",   // Pflicht: der Button-Text
-            next: "path_spinat_erklaert",        // optional: setzt ein Story-Flag für Folge-Ereignisse
-            rep: { "Chantal": 5, "Kevin": -2 },  // optional: Ruf bei Kollegen
-            m: 5, l: 0, a: 0, b: 0,              // Hausstil: immer alle vier, auch als 0
-                                                 // (Ausnahme Firmenfeier: nur l und a, siehe 9)
-            r: "Zwei Minuten Erklärung, danach nickt sie zufrieden und drückt trotzdem den falschen Knopf. Immerhin weiß sie jetzt, welchen."   // Pflicht: das Ergebnis
+            t: "Ihr erklären, was der Automat gerade tut",   // required: the button label
+            next: "path_spinat_erklaert",        // optional: sets a story flag for follow-up events
+            rep: { "Chantal": 5, "Kevin": -2 },  // optional: reputation with colleagues
+            m: 5, l: 0, a: 0, b: 0,              // house style: always all four, zeros included
+                                                 // (exception, the party: only l and a, see 9)
+            r: "Zwei Minuten Erklärung, danach nickt sie zufrieden und drückt trotzdem den falschen Knopf. Immerhin weiß sie jetzt, welchen."   // required: the result
         },
         {
             t: "Ihr den Donut aus dem Rucksack anbieten",
-            rem: "donut",                        // optional: verbraucht den Gegenstand
+            rem: "donut",                        // optional: consumes the item
             rep: { "Chantal": 10 },
             m: 5, l: 5, a: -5, b: 0,
             r: "Sie isst ihn ohne Nachfrage und ohne Danke. Der Automat ist vergessen, das Problem gelöst, der Donut weg."
@@ -210,7 +210,7 @@ reputation system.
 ```js
 {
     id: "srv_kevin_rack_1",
-    char: "Kevin",              // Porträt aus data_chars.js
+    char: "Kevin",              // portrait from data_chars.js
     title: "Der Drachenaufkleber",
     text: "...",
     opts: [ /* ... */ ]
@@ -239,7 +239,7 @@ An option can continue a story: `next` sets an invisible marker (a story flag),
 and a second event with `reqStory` on the same name can appear from then on.
 
 ```js
-// Teil 1 — die Auswahl setzt das Flag:
+// Part 1 - the option sets the flag:
 {
     id: "srv_kabel_1",
     title: "Das beschriftete Kabel",
@@ -258,7 +258,7 @@ and a second event with `reqStory` on the same name can appear from then on.
         }
     ]
 },
-// Teil 2 — erscheint nur, wenn das Flag gesetzt wurde:
+// Part 2 - only appears once the flag has been set:
 {
     id: "srv_kabel_2",
     char: "Gabi",
@@ -449,7 +449,7 @@ usually the quiet choice: say nothing, look at the clock, let somebody else do
 it.
 
 ```js
-// Anruf mit Verlauf (data_calls.js):
+// A call with a course of its own (data_calls.js):
 {
     id: "call_meyer_monitor_1",
     char: "Frau Elster",
@@ -481,7 +481,7 @@ it.
             txt: "Sie bedankt sich knapp und beendet das Gespräch. Irgendwann im nächsten Monat taucht ein Beleg wieder auf, den du längst abgeschrieben hattest. Zufälle gibt es.",
             rep: { "Frau Elster": 10 },
             m: 5, l: 0, a: 0, b: 0,
-            next: "path_elster_gutschein"        // Story-Flag für ein Folgeereignis
+            next: "path_elster_gutschein"        // story flag for a follow-up event
         },
         res_statistik: {
             txt: "Am Telefon herrscht Stille von der Sorte, die man in der Buchhaltung ein Jahr lang aufbewahrt. Dann ein sehr höfliches 'Danke, Herr Müller.'",
@@ -539,7 +539,7 @@ documented and taken:
             ]
         },
         zusage: {
-            char: "Kevin",        // nur diese Nachricht trägt Kevins Namen und Gesicht
+            char: "Kevin",        // only this message carries Kevin's name and face
             text: "Du machst die Deko!! Egon darf NICHTS merken!!! 🎉🎉",
             opts: [
                 { t: "Verlass dich auf mich.", next: "res_zugesagt" },
@@ -586,7 +586,7 @@ friendship and enmity strands to the same character come about:
     id: "rep_kevin_energy_1",
     char: "Kevin",
     title: "Der stille Tribut",
-    reqRep: { "Kevin": 20 },        // Pflicht: erscheint ab Ruf +20 bei Kevin
+    reqRep: { "Kevin": 20 },        // required: appears from reputation +20 with Kevin
     text: "Kevin schiebt dir wortlos einen Energydrink über den Tisch. Auf dem Etikett klebt ein Post-it: 'Für den Boss'. Er sagt nichts dazu und schaut auch nicht hoch.",
     opts: [
         {
@@ -603,7 +603,7 @@ friendship and enmity strands to the same character come about:
         }
     ]
 },
-// Die Feind-Variante: reqRep negativ, hier "höchstens -30":
+// The enemy variant: reqRep negative, here "at most -30":
 {
     id: "rep_kevin_maus_1",
     char: "Kevin",
@@ -815,7 +815,7 @@ counts as ignored.
 {
     id: "mail_gewinnspiel_1",
     sender: "Lotterie International",
-    senderId: "lottery_scam",         // Pflicht: die Kennung, nie übersetzt
+    senderId: "lottery_scam",         // required: the identifier, never translated
     subj: "Dringend: Ihr Gewinn verfällt HEUTE!",
     body: "Sehr geehrter Gewinner,\n\nSie haben 2.000.000 Euro gewonnen. Zur Auszahlung benötigen wir lediglich eine Bearbeitungsgebühr von 49,99 Euro.",
     opts: [
@@ -837,7 +837,7 @@ counts as ignored.
     id: "mail_gewinnspiel_2",
     sender: "Lotterie International",
     senderId: "lottery_scam",
-    linked: true,                     // kommt nur über die Kette, nie zufällig
+    linked: true,                     // arrives only through the chain, never at random
     subj: "Re: Ihr Gewinn - NEUE Konditionen!",
     body: "Guter Verhandler! Neue Gebühr: nur noch 29,99 Euro. Letztes Angebot!",
     opts: [
@@ -907,7 +907,7 @@ engine.state.storyFlags.path_sleep_fort = true;
 engine.state.usedIDs.delete("srv_sleep_2a");
 const _p = engine.pickFromPool;
 engine.pickFromPool = p => (engine.pickFromPool = _p, p.find(e => e.id === "srv_sleep_2a"));
-engine.trigger("server");   // "coffee", "calls" oder "sidequest" für die anderen Bereiche
+engine.trigger("server");   // "coffee", "calls" or "sidequest" for the other areas
 ```
 
 For the week mode there is more: paste `tools/dev-woche.js` into the console and

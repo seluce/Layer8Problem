@@ -46,7 +46,7 @@ tools/
   make-steam-presence.mjs      friends-list strings for Steamworks
   make-steam-achievements.mjs  achievement strings for Steamworks
   dev-woche.js          console tool for the week mode, see below
-  WERKZEUGE.md          manual for everything in this folder
+  TOOLS.md              manual for everything in this folder
   *.test.mjs            four test suites, npm test
   register.mjs          loader hook for the tests
   svelte-loader.mjs     compiles .svelte.js for the tests
@@ -250,7 +250,7 @@ never off the number from `lint-parity`, which only counts from four words up.
 the already-translated stock; many translation-born echoes are four words long
 and therefore sit below the prose report's threshold.
 
-A complete manual for every tool is in `tools/WERKZEUGE.md`.
+A complete manual for every tool is in `tools/TOOLS.md`.
 
 ## Tests
 
@@ -494,7 +494,7 @@ rewrite it on every change and remove the rings.
 | Code, comments, identifiers, file names | **English**, without exception |
 | Game texts | **German and English** — `src/data/de/` is the source, `src/data/en/` the version beside it |
 | Interface strings | both, in `src/i18n/de.js` and `en.js` |
-| Documentation (`README`, `STRUCTURE`, `EVENTS`, `WERKZEUGE`, `changelog`) | **English** |
+| Documentation (`README`, `STRUCTURE`, `EVENTS`, `TOOLS`, `changelog`) | **English** |
 | Tool output (linters, simulators, reports) | **German** |
 | Commit messages | **English** since 6.0, format `type(scope): description` |
 
