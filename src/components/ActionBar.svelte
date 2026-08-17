@@ -12,8 +12,14 @@
   changes and className is written exactly once.
 
   Put a state-derived value in there and the attribute gets rewritten on every
-  update — silently wiping whatever tutorial.js set. `disabled` is bound
-  separately and is safe.
+  update — silently wiping whatever tutorial.js set.
+
+  `disabled` used to be called safe here, and that was wrong: it is bound to
+  state, so it is rewritten on every update just the same. tutorial.js set
+  `btn.disabled = false` on the highlighted button and Svelte put it back on the
+  next render — the tutorial pointed at the CALL button and the button could not
+  be pressed. Which button the tutorial has unlocked is therefore state as well,
+  and it is read here rather than written from outside.
 
   `relative` is now always set rather than added when the badge appears. Without
   offsets it changes nothing visually, and it saves a classList call.
@@ -50,7 +56,7 @@
 {#each ACTIONS as action (action.id)}
     <button id={action.id}
             class="action-btn relative {action.tone}"
-            disabled={state.buttonsDisabled}
+            disabled={state.buttonsDisabled && action.id !== state.tutorialUnlocked}
             onclick={() => engine.trigger(action.type)}>
         {#if urgent && action.type === 'calls'}
             <!-- An overlay rather than a conditional class: the button's class

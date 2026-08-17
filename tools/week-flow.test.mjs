@@ -967,6 +967,29 @@ await ok('Terminal-Kette: Node-char schlägt Event-char, null erzwingt keinen', 
     engine.renderChainNode('niemand');
     assert.equal(calls.termEvent.charName, null);               // char: null erzwingt Initiale/nichts
 });
+await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
+    // Das Feld gehört zum Tag, sonst überlebt eine Freigabe den Neustart.
+    resetState();
+    assert.equal(state.tutorialUnlocked, null, 'tutorialUnlocked fehlt in freshDay');
+
+    // Die Bindung selbst ist hier nicht prüfbar — ActionBar ist eine
+    // Komponente, und disableButtons ist im Prüfstand ohnehin eine Attrappe.
+    // Genau dort saß der Fehler aber: `disabled` hing
+    // allein an buttonsDisabled, also hat Svelte das btn.disabled = false aus
+    // tutorial.js beim nächsten Zeichnen wieder überschrieben — der Zeiger
+    // zeigte auf ANRUF und der Knopf ließ sich nicht drücken. Deshalb wird die
+    // Quelle gelesen, wie i18n.test.mjs es bei index.html tut.
+    const bar = readFileSync(new URL('../src/components/ActionBar.svelte', import.meta.url), 'utf-8');
+    const zeile = bar.split('\n').find(l => l.includes('disabled={'));
+    assert.ok(zeile, 'ActionBar bindet disabled nicht mehr');
+    assert.ok(zeile.includes('tutorialUnlocked'),
+              'ActionBar sperrt wieder ohne Rücksicht auf die Tutorial-Freigabe: ' + zeile.trim());
+
+    // Und die Gegenrichtung: das Tutorial muss die Freigabe auch setzen.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+    assert.ok(/tutorialUnlocked\s*=\s*id/.test(tut),
+              'highlightAction gibt den Knopf nicht mehr über den Zustand frei');
+});
 await ok('setDifficulty legt einen frischen Tag an, statt Felder nachzubessern', () => {
     // Der Fehler, den es abfängt: bis 6.0 setzte setDifficulty nur, was die
     // Stufe selbst ändert. Alles andere blieb stehen, also erbte ein Tag die
