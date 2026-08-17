@@ -159,6 +159,7 @@ const tutorial = {
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         this.isActive = false;
 
+        engine.state.tutorialUnlocked = null;
         engine.state.morningMoodShown = false;
         engine.state.activeEvent = false;
         
@@ -171,6 +172,9 @@ const tutorial = {
 
     applyStepLogic: function() {
         engine.disableButtons(true);
+        // Every step shuts the bar again first; an action step reopens exactly
+        // one button through highlightAction().
+        engine.state.tutorialUnlocked = null;
         
         // Clean up before rendering the next step
         this.clearGlows();
@@ -223,6 +227,12 @@ const tutorial = {
     },
 
     highlightAction: function(id, title, desc) {
+        // Through the state, because ActionBar binds `disabled` to it and
+        // would otherwise put the lock straight back on the next render. The
+        // line below still matters for btn-team and btn-inventory, which live
+        // in index.html and are nobody's component.
+        engine.state.tutorialUnlocked = id;
+
         let btn = document.getElementById(id);
         if(btn) {
             btn.disabled = false;
@@ -391,6 +401,7 @@ const tutorial = {
         }
         
         this.clearGlows();
+        engine.state.tutorialUnlocked = null;
         
         // --- Restore the dimmed buttons ---
         const buttons = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls'];

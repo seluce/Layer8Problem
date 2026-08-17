@@ -81,6 +81,17 @@ export function freshDay(mult = 1.0) {
         activeEvent: false,
         isLoadingPool: false,   // guards the async gap while a data pool loads
         buttonsDisabled: false, // action bar locked while an event resolves
+
+        // The one action button the tutorial has unlocked while the rest of
+        // the bar stays shut, by id, or null.
+        //
+        // It has to live in the state and not on the element: ActionBar binds
+        // `disabled` to buttonsDisabled, so Svelte rewrites the attribute on
+        // every update and a `btn.disabled = false` set from tutorial.js is
+        // gone again by the next render. That is exactly what happened - the
+        // tutorial pointed at the CALL button and the button could not be
+        // pressed.
+        tutorialUnlocked: null,
         bossBarPercent: 100,    // boss fight timer bar, read by EventView.svelte
         bootLines: [],          // startup sequence, read by BootView.svelte
         dayActive: false,
