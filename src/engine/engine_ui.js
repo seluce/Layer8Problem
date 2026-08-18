@@ -493,7 +493,12 @@ export const ui = {
             // isWin picks the colour of the screen, which the component used
             // to guess by looking for German words in the title.
             isWeek: end.isWeek ?? false,
-            isWin: end.isWin ?? false
+            isWin: end.isWin ?? false,
+            // Which level and which weekday the report belongs to. Ids, not
+            // words - components/DayReport.svelte resolves them, so the header
+            // follows a language switch like everything else.
+            weekMode: end.weekMode ?? null,
+            weekDay: end.weekDay ?? null
         };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);

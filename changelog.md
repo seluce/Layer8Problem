@@ -9,6 +9,8 @@ Presentation:
 Bug fixes:
 * Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.
 * In the tutorial, opening the backpack, tapping an item and then cancelling brought the glowing button back on top of the open backpack. It could be clicked there, and the action started behind the window that was still open. Nothing on the board lights up any more while a window is up; the step comes back when you close it.
+* At the end of a working week the day report underneath the balance sheet was headed "Wednesday (normal)" - on a Friday, and in a week you had picked "In need of leave" for. It said that in every week, on every day and at every level, because it was reading the setting of the single-day mode, which a week does not have. It now names the day it is actually reporting on and the condition you chose: "Friday (in need of leave)".
+* The weekly balance counted "1 Tickets" and "1 Mails ignoriert". One ticket is a ticket.
 
 ---
 

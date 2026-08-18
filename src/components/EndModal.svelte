@@ -110,7 +110,8 @@
         {/if}
 
         {#if isFinal}
-            <DayReport cause={modal.cause} />
+            <DayReport cause={modal.cause}
+                       week={modal.isWeek ? { mode: modal.weekMode, day: modal.weekDay } : null} />
         {/if}
 
         <!-- The night: what tomorrow inherits, before and after sleep. The

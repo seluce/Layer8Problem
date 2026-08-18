@@ -1012,21 +1012,20 @@ await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
     assert.ok(/tutorialUnlocked\s*=\s*id/.test(tut),
               'highlightAction gibt den Knopf nicht mehr über den Zustand frei');
 
-    // Seit 6.1 laufen auch Abdunklung und Leuchtring über den Zustand. Vorher
-    // setzte tutorial.js sie am Element, und das hielt nur, solange nichts
-    // Abgeleitetes im class-Attribut stand — eine Absprache, die niemand sieht.
+    // Since 6.1 the dimming and the ring come out of the state as well. Before
+    // that tutorial.js set them on the element, which only held while nothing
+    // state-derived stood in the class attribute - an unwritten agreement.
     assert.ok(bar.includes('state.tutorialStep'),
               'ActionBar zeichnet die Tutorial-Abdunklung nicht mehr aus dem Zustand');
     assert.ok(!tut.includes('opacity-50'),
               'tutorial.js schreibt wieder Klassen an die vier Knöpfe der Leiste');
 });
 await ok('Der Abschlussschirm des Tutorials trägt eigene i18n-Marken', () => {
-    // Der Fehler, den es abfängt: showConclusion() schrieb Text über die
-    // Elemente, die weiter data-i18n="tutorial.ask.*" trugen. Ein
-    // Sprachwechsel lässt applyStaticStrings() laufen — und die setzte die
-    // EINGANGSFRAGE zurück, unter der der Abschlussknopf stehenblieb, in der
-    // alten Sprache. Erreichbar war es nicht, weil Esc bei offenem Fenster
-    // früh aussteigt: es hing an genau einer Wache.
+    // The fault it catches: showConclusion() wrote text over the elements that
+    // still carried data-i18n="tutorial.ask.*". A language switch runs
+    // applyStaticStrings(), which put the opening QUESTION back with the finish
+    // button still underneath it, in the old language. It was not reachable,
+    // because Escape bows out while this modal is open - it hung on one guard.
     const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
 
     assert.ok(!/innerText\s*=\s*t\(|innerHTML\s*=\s*t\(/.test(tut),
@@ -1037,11 +1036,11 @@ await ok('Der Abschlussschirm des Tutorials trägt eigene i18n-Marken', () => {
               'der Schirm wird nicht mehr über applyStaticStrings gefüllt');
 });
 await ok('Die Fehlerbremse hebt die Tutorial-Sperre nicht auf', () => {
-    // Der Fehler, den es abfängt: recoverFromError() holt die Oberfläche aus
-    // einem abgestürzten Zug zurück und rief dafür disableButtons(false).
-    // Während des Tutorials waren danach alle vier Knöpfe abgedunkelt UND
-    // klickbar — die Anzeige sagte gesperrt, der Knopf ließ sich drücken.
-    // Nachgestellt mit einem geworfenen Fehler mitten in Schritt 1.
+    // The fault it catches: recoverFromError() pulls the interface out of a
+    // crashed action and called disableButtons(false) to do it. During the
+    // tutorial that left all four buttons dimmed AND clickable - the display
+    // said locked, the button let itself be pressed. Reproduced with a thrown
+    // error in the middle of step 1.
     const src = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     const bremse = src.slice(src.indexOf('function recoverFromError'),
                              src.indexOf('window.addEventListener'));
@@ -1051,11 +1050,11 @@ await ok('Die Fehlerbremse hebt die Tutorial-Sperre nicht auf', () => {
               'recoverFromError stellt den Schritt nicht wieder her');
 });
 await ok('Die Sprechblase des Tutorials trägt Schlüssel, keine Sätze', () => {
-    // Der Fehler, den es abfängt: tutorial.js löste die Schritttexte mit t()
-    // auf und legte fertige Sätze in state.tutorialPointer. Ein Sprachwechsel
-    // mitten im Tutorial ließ die Leiste auf COFFEE springen, während die
-    // Blase darüber weiter „Kaffee holen" sagte — bis zum nächsten Schritt.
-    // Dieselbe Klasse wie das Protokoll vor den Rezepten.
+    // The fault it catches: tutorial.js resolved the step texts with t() and
+    // put finished sentences into state.tutorialPointer. A language switch
+    // mid-lesson moved the bar to COFFEE while the bubble above it still said
+    // "Kaffee holen", until the step changed. The same class of break the log
+    // had before the recipes.
     const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
     assert.ok(!/t\('tutorial\.step\./.test(tut),
               'tutorial.js löst die Schritttexte wieder selbst auf');
@@ -1064,13 +1063,45 @@ await ok('Die Sprechblase des Tutorials trägt Schlüssel, keine Sätze', () => 
     assert.ok(ptr.includes('t(tip.titleKey)') && ptr.includes('t(tip.descKey)'),
               'TutorialPointer löst die Schlüssel nicht mehr selbst auf');
 });
+await ok('Ein Ticket ist ein Ticket, und der Bericht kennt seine Woche', () => {
+    // Two faults on one screen, found by playing the week through: "1 tickets"
+    // (the balance had no singular) and a day report that read "WEDNESDAY
+    // (normal)" in EVERY week - it hung on difficultyMult, which stays at 1.0
+    // in week mode. The level and the day therefore have to travel on the end
+    // object: finishWeek() clears week.active before the screen is built.
+    resetState();
+    engine.startWeek('hard');
+    state.week.dayIndex = 5;
+    state.week.weekLog = [
+        { dayIndex: 1, endTickets: 1, endL: 10, endA: 20, endB: 15, coffee: 1, mailsIgnored: 1 },
+    ];
+    state.time = 16 * 60 + 30; state.tickets = 4; state.meetingDone = true;
+    state.fl = 30; state.al = 40; state.cr = 20;
+    engine.checkEndConditions();
+    engine.finishGame();
+
+    // Singular where one is meant - and the plural form must NOT be there.
+    assert.ok(calls.end.text.includes(tf('week.summary.valuesOne', { tickets: 1, fl: 10, al: 20, cr: 15 })),
+              'die Montagszeile sagt nicht „1 Ticket"');
+    assert.ok(!calls.end.text.includes(tf('week.summary.values', { tickets: 1, fl: 10, al: 20, cr: 15 })),
+              'die Mehrzahlfassung steht bei einem Ticket noch da');
+    assert.ok(calls.end.text.includes(tf('week.summary.totalsOne', { coffee: 1, mails: 1 })),
+              'die Summenzeile sagt nicht „1 Mail"');
+    // ...and the plural stays plural.
+    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 4, fl: 30, al: 40, cr: 20 })),
+              'die Freitagszeile steht nicht in der Mehrzahl');
+
+    // The day report is handed the level and the day, as an id and a number.
+    assert.equal(calls.end.weekMode, 'hard', 'die Wochenstufe reist nicht mit');
+    assert.equal(calls.end.weekDay, 5, 'der Wochentag reist nicht mit');
+});
 await ok('Der Spielstand hat kein Mitspracherecht beim Tutorial', () => {
-    // Der Fehler, den es abfängt: `tutorialStep` und `tutorialUnlocked` stehen
-    // in freshDay(), und saveDay() leitet seine Felder genau daraus ab — also
-    // wanderten sie in den Spielstand. Wer das Tutorial über „Hauptmenü"
-    // verließ, schrieb Schritt 2 mit in die Ablage; beim Weiterarbeiten stand
-    // die Leiste dann den ganzen Tag abgedunkelt da, ohne Tutorial, das sie
-    // wieder aufhellt. Sie gehören der Sitzung, nicht dem Arbeitstag.
+    // The fault it catches: tutorialStep and tutorialUnlocked live in
+    // freshDay(), and saveDay() derives its fields from exactly that - so they
+    // went into the save. Leaving the tutorial through the main menu wrote step
+    // 2 to storage, and carrying on afterwards left the bar dimmed for the rest
+    // of the day with no tutorial left to undim it. They belong to the session,
+    // not to the workday.
     resetState();
     state.time = 9 * 60;
     state.tutorialStep = 2;
@@ -1083,8 +1114,8 @@ await ok('Der Spielstand hat kein Mitspracherecht beim Tutorial', () => {
     assert.equal(abgelegt.tutorialUnlocked, undefined,
                  'tutorialUnlocked steht im Spielstand');
 
-    // Und die Gegenrichtung: ein Spielstand aus einem Entwicklungsbau, der die
-    // Felder noch trägt, darf sie nicht zurückschreiben.
+    // And the other direction: a save from a dev build that still carries the
+    // fields must not write them back.
     resetState();
     engine.applyRestoredDay({ time: 9 * 60, tutorialStep: 2, tutorialUnlocked: 'btn-coffee' });
     assert.equal(state.tutorialStep, null, 'tutorialStep kam aus dem Spielstand zurück');

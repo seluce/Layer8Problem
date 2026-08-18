@@ -385,6 +385,7 @@ export const de = {
     'dayReport.diff.easy':         'FREITAG (Leicht)',
     'dayReport.diff.normal':       'MITTWOCH (Normal)',
     'dayReport.diff.hard':         'MONTAG (Schwer)',
+    'dayReport.diff.week':         '{day} ({mode})',
     'dayReport.valveUsed':         'VENTIL GENUTZT',
     'dayReport.endedHere':         '← HIER WAR SCHLUSS',
     'dayReport.openTickets':       'offene Tickets',
@@ -640,7 +641,9 @@ export const de = {
     'week.badge':                  'WOCHE ({mode})',
     'week.summary.title':          'Wochen-Bilanz · {mode}',
     'week.summary.legend':         'F Faulheit · A Aggro · C Chef',
+    'week.summary.valuesOne':      '{tickets} Ticket · F {fl} · A {al} · C {cr}',
     'week.summary.values':         '{tickets} Tickets · F {fl} · A {al} · C {cr}',
+    'week.summary.totalsOne':      '☕ {coffee}× Kaffee · 📧 {mails} Mail ignoriert',
     'week.summary.totals':         '☕ {coffee}× Kaffee · 📧 {mails} Mails ignoriert',
     'week.endsOn':                 '{base} Die Woche endet am {day}.',
 

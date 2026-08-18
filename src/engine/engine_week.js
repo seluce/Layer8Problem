@@ -561,7 +561,15 @@ export const week = {
         end.text = this.buildWeekBalanceHTML(end);
         // endWeek() below clears week.active, so the screen cannot ask the
         // state what mode it belonged to - it travels on the end object.
+        //
+        // The level and the day travel for the same reason, and as an ID and a
+        // NUMBER rather than as words: the day report used to name neither and
+        // fell back on difficultyMult, which stays at 1.0 in a week by design -
+        // so it read "WEDNESDAY (normal)" on every day of every week, directly
+        // under a balance sheet headed IN NEED OF LEAVE.
         end.isWeek = true;
+        end.weekMode = this.WEEK_DIFFS[w.level].key;
+        end.weekDay = w.dayIndex;
 
         this.clearDay();
         this.endWeek();                                  // week.active off, slot cleared
@@ -643,9 +651,14 @@ export const week = {
         const s = this.state, w = s.week;
         const line = (icon, name, right) =>
             `<div class="flex justify-between gap-4"><span>${icon} ${name}</span><span class="text-slate-400">${right}</span></div>`;
-        const values = (tickets, fl, al, cr) => tf('week.summary.values', {
-            tickets, fl: Math.round(fl), al: Math.round(al), cr: Math.round(cr)
-        });
+        // One ticket is a ticket, not tickets - the same shape boot.carry and
+        // knowledge.missing already use. The count decides the KEY, because a
+        // plural rule glued on afterwards belongs to one language only.
+        // i18n-uses: week.summary.values, week.summary.valuesOne
+        const values = (tickets, fl, al, cr) =>
+            tf(tickets === 1 ? 'week.summary.valuesOne' : 'week.summary.values', {
+                tickets, fl: Math.round(fl), al: Math.round(al), cr: Math.round(cr)
+            });
 
         const rows = w.weekLog.map(d => line('✓', dayName(d.dayIndex - 1),
             values(d.endTickets, d.endL ?? 0, d.endA ?? 0, d.endB ?? 0)));
@@ -663,7 +676,8 @@ export const week = {
                 `<span class="text-[9px] text-slate-600">${t('week.summary.legend')}</span>` +
             `</div>` +
             rows.join('') +
-            `<div class="pt-2 mt-2 border-t border-slate-800 text-slate-400">${tf('week.summary.totals', { coffee, mails })}</div>` +
+            // i18n-uses: week.summary.totals, week.summary.totalsOne
+            `<div class="pt-2 mt-2 border-t border-slate-800 text-slate-400">${tf(mails === 1 ? 'week.summary.totalsOne' : 'week.summary.totals', { coffee, mails })}</div>` +
             `</div>`;
     },
 

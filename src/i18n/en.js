@@ -378,6 +378,7 @@ export const en = {
     'dayReport.diff.easy':         'FRIDAY (easy)',
     'dayReport.diff.normal':       'WEDNESDAY (normal)',
     'dayReport.diff.hard':         'MONDAY (hard)',
+    'dayReport.diff.week':         '{day} ({mode})',
     'dayReport.valveUsed':         'VALVE USED',
     'dayReport.endedHere':         '← THIS IS WHERE IT ENDED',
     'dayReport.openTickets':       'open tickets',
@@ -634,7 +635,9 @@ export const en = {
     'week.badge':                  'WEEK ({mode})',
     'week.summary.title':          'Weekly balance · {mode}',
     'week.summary.legend':         'L Laziness · A Aggro · B Boss',
+    'week.summary.valuesOne':      '{tickets} ticket · L {fl} · A {al} · B {cr}',
     'week.summary.values':         '{tickets} tickets · L {fl} · A {al} · B {cr}',
+    'week.summary.totalsOne':      '☕ {coffee}× coffee · 📧 {mails} mail ignored',
     'week.summary.totals':         '☕ {coffee}× coffee · 📧 {mails} mails ignored',
     'week.endsOn':                 '{base} The week ends on {day}.',
 
