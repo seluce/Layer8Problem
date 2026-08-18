@@ -6,6 +6,10 @@ Presentation:
 * The browser tab has an icon of its own instead of a fire emoji. Emoji are drawn by the operating system and looked different under Windows, under Linux and in the Steam overlay - the same reason the summer party swapped its stations for images in 6.0. The new one is a burning monitor in the flat vector style of the interface icons, and it still reads at sixteen pixels.
 * The character and item pictures are delivered at the size they are actually shown at. A portrait 64 pixels wide was being downloaded at 2048 - sixteen times the edge length, which is 256 times the area. The drawings themselves are untouched, nothing looks different; the download is 5.4 MB smaller, from 24.6 down to 19.2.
 
+Bug fixes:
+* Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.
+* In the tutorial, opening the backpack, tapping an item and then cancelling brought the glowing button back on top of the open backpack. It could be clicked there, and the action started behind the window that was still open. Nothing on the board lights up any more while a window is up; the step comes back when you close it.
+
 ---
 
 [6.0.0] - 2026-08-17
