@@ -181,8 +181,8 @@ npm run sim:week 300                # smoke test
 npm run sim:week 300 -- --lang=en   # English tree (double dash, see 3)
 ```
 
-Five strategies (among them `vernunft` = always the safest choice,
-`gelegenheit`, `kaffeejunkie`) times three levels of recovery (rested /
+Five strategies (among them `sensible` = always the safest choice,
+`casual`, `coffeeAddict`) times three levels of recovery (rested /
 irritated / in need of a holiday). Output per cell: week survival rate, deaths
 by weekday and cause, average day reached, ticket carry-over, excuses, idle
 clicks, "pool empty before Friday", wins after a crisis evening.
@@ -191,7 +191,7 @@ Switches:
 
 ```
 --wear=10          wear on the night's recovery, in percentage points
---deckel=45        absolute upper limit of the night's recovery
+--cap=45           absolute upper limit of the night's recovery
 --ramp=0.04        rise of the day multiplier per weekday
 --rscale=1.0       scaling of the recovery rates
 --nightkeep=0.25   share that carries over the night
@@ -264,34 +264,34 @@ findings, defaults, archive counters.
 ## 6. `dev-woche.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
-`dev.hilfe()` lists everything. Indispensable for the three-parters, because it
+`dev.help()` lists everything. Indispensable for the three-parters, because it
 lets you produce any weekday.
 
 ```
 SETUP
-  dev.tag(3, 'normal', {tickets: 5, al: 60})   any weekday
-  dev.kontingente()                            draws per pool today
-  dev.vorschau()                               what the night leaves behind
+  dev.day(3, 'normal', {tickets: 5, al: 60})   any weekday
+  dev.quotas()                                 draws per pool today
+  dev.preview()                                what the night leaves behind
 
 SCENARIOS
-  dev.feierabend(2) / dev.feierabend(2, true)  Tuesday 16:20
-  dev.nacht()          the night screen immediately
-  dev.freitag() / dev.freitag('knapp')
-  dev.meeting()        straight into the weekly meeting
-  dev.gewonnen()       Friday 16:30, week survived
-  dev.raus('rage'|'tickets'|'chef', tag)       targeted failure
-  dev.morgentod(4)     death during the morning mood
-  dev.gala()           unlock the gala, then dev.meeting()
-  dev.leerlauf('server')                       empty the quota
+  dev.clockOff(2) / dev.clockOff(2, true)      Tuesday 16:20
+  dev.night()                                  the night screen immediately
+  dev.friday() / dev.friday('tight')
+  dev.meeting()                                straight into the weekly meeting
+  dev.won()                                    Friday 16:30, week survived
+  dev.out('rage'|'tickets'|'chef', day)        targeted failure
+  dev.morningDeath(4)                          death during the morning mood
+  dev.gala()                                   unlock the gala, then dev.meeting()
+  dev.idle('server')                           empty the quota
 
-SAVE FILE
-  dev.zaehler() / dev.zaehlerLeeren()
-  dev.sichern() / dev.zurueck()                before/after
-  dev.aufraeumen()                             discard the week
+SAVES
+  dev.counters() / dev.clearCounters()
+  dev.backup() / dev.restore()                 before/after
+  dev.dropWeek()                               discard the week
 ```
 
-**`dev.sichern()` before experimenting**, then `dev.zurueck()` and reload.
-`dev.zaehlerLeeren()` clears the test rubbish out of the archive counters —
+**`dev.backup()` before experimenting**, then `dev.restore()` and reload.
+`dev.clearCounters()` clears the test rubbish out of the archive counters —
 otherwise trial runs distort the statistics permanently.
 
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up

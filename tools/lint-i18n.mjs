@@ -148,7 +148,7 @@ function scan(file) {
         for (const pair of m[1].split(';')) {
             const [attr, key] = pair.split('=').map(s => s?.trim());
             if (!attr || !key) {
-                err(`${where}: data-i18n-attr "${pair}" ist kein Paar aus Attribut=Schlüssel`);
+                err(`${where}: data-i18n-attr "${pair}" is not an attribute=key pair`);
                 continue;
             }
             note(key, `${where} (${attr})`);
@@ -206,7 +206,7 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
     if (!(key in en)) continue;                       // reported below anyway
     const wanted = String(en[key]).replace(/\s+/g, ' ').trim();
     if (fallback !== wanted) {
-        err(`index.html: Rückfalltext zu "${key}" weicht von en.js ab\n`
+        err(`index.html: the fallback text for "${key}" differs from en.js\n`
           + `      Markup:  "${fallback}"\n`
           + `      en.js:   "${wanted}"`);
     }
@@ -237,9 +237,9 @@ for (const form of ['data-i18n', 'data-i18n-html']) {
         if (tagStart === -1) continue;
         const tag = html.slice(tagStart + 1, tagStart + 20).match(/^[a-zA-Z][a-zA-Z0-9-]*/)?.[0].toLowerCase();
         if (tag && VOID_TAGS.has(tag)) {
-            err(`index.html: ${form}="${m[1]}" sitzt auf <${tag}> — ein leeres Element trägt keinen Text.\n`
-              + `      Der Text daneben gehört dem Elternknoten und bleibt in jeder Sprache deutsch.\n`
-              + `      Gehört in ein <span> um den Text herum.`);
+            err(`index.html: ${form}="${m[1]}" sits on <${tag}> - an empty element carries no text.\n`
+              + `      The text beside it belongs to the parent node and stays put in every language.\n`
+              + `      It belongs in a <span> around the text.`);
         }
     }
 }
@@ -278,9 +278,9 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
     if (close === -1) continue;
     const inner = html.slice(open + 1, close);
     if (inner.includes('<')) {
-        err(`index.html: data-i18n="${m[1]}" sitzt auf <${tag}>, das noch Markup enthält.\n`
-          + `      textContent ersetzt den ganzen Inhalt — das Markup ist beim Start weg.\n`
-          + `      Gehört in ein <span> nur um den Text herum.`);
+        err(`index.html: data-i18n="${m[1]}" sits on <${tag}>, which still contains markup.\n`
+          + `      textContent replaces the whole content - the markup is gone at startup.\n`
+          + `      It belongs in a <span> around the text alone.`);
     }
 }
 
@@ -288,23 +288,23 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
 
 for (const [key, places] of used) {
     const where = [...new Set(places)].join(', ');
-    if (!(key in de)) err(`Schlüssel "${key}" fehlt in de.js — benutzt in ${where}`);
-    if (!(key in en)) err(`Schlüssel "${key}" fehlt in en.js — benutzt in ${where}`);
+    if (!(key in de)) err(`key "${key}" is missing from de.js - used in ${where}`);
+    if (!(key in en)) err(`key "${key}" is missing from en.js - used in ${where}`);
 }
 
 /* ---------- 4) The two dictionaries have to match ---------- */
 
 for (const key of Object.keys(de)) {
-    if (!(key in en)) err(`Schlüssel "${key}" steht in de.js, fehlt in en.js`);
+    if (!(key in en)) err(`key "${key}" is in de.js, missing from en.js`);
 }
 for (const key of Object.keys(en)) {
-    if (!(key in de)) err(`Schlüssel "${key}" steht in en.js, fehlt in de.js`);
+    if (!(key in de)) err(`key "${key}" is in en.js, missing from de.js`);
 }
 
 /* ---------- 5) Defined but never asked for ---------- */
 
 for (const key of Object.keys(de)) {
-    if (!used.has(key)) warn(`Schlüssel "${key}" wird nirgends benutzt — Rest einer Umbenennung?`);
+    if (!used.has(key)) warn(`key "${key}" is used nowhere - left over from a rename?`);
 }
 
 /* ---------- 6) English that is still German ---------- */
@@ -337,9 +337,9 @@ const identical = Object.keys(de).filter(
     key => key in en && de[key] === en[key] && !SAME_BY_DESIGN.has(key)
 );
 if (identical.length) {
-    info(`${identical.length} Einträge lauten auf Englisch wie auf Deutsch:`);
+    info(`${identical.length} entries read the same in English as in German:`);
     for (const key of identical.slice(0, 20)) info(`    ${key}  "${de[key]}"`);
-    if (identical.length > 20) info(`    … und ${identical.length - 20} weitere`);
+    if (identical.length > 20) info(`    … and ${identical.length - 20} more`);
 }
 
 /* ---------- 7) A component must read the data tree through tree() ---------- */
@@ -374,10 +374,10 @@ for (const datei of svelteDateien) {
     for (const m of text.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*data\.js'/g)) {
         const namen = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
         if (namen.includes('DB'))
-            err(`${wo}: importiert DB direkt aus data.js — in einer Komponente wird der Datenbaum über tree() gelesen, sonst friert sie beim Sprachwechsel in ihrer Sprache ein`);
+            err(`${wo}: imports DB straight from data.js - in a component the data tree is read through tree(), or it freezes in its language on a switch`);
     }
 }
-info(`${svelteDateien.length} Komponenten auf den Zugriff über tree() geprüft`);
+info(`${svelteDateien.length} components checked for access through tree()`);
 
 /* ---------- 8) Every data-action has to resolve ---------- */
 
@@ -432,22 +432,22 @@ for (const datei of quellenMitMarken) {
     const wo = relative(ROOT, datei);
     if (wo === 'src/actions.js') continue;          // documents the old form in prose
     for (const m of readFileSync(datei, 'utf-8').matchAll(/onclick="[^"]*"/g))
-        err(`${wo}: baut "${m[0].slice(0, 40)}…" — gebautes Markup trägt eine data-action, keinen Code`);
+        err(`${wo}: builds "${m[0].slice(0, 40)}…" - built markup carries a data-action, not code`);
 }
 const inTabelle = new Set(
     [...tabellenBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
 
-if (!inTabelle.size) err('src/actions.js: keine Tabelleneinträge gefunden — hat sich der Aufbau geändert?');
+if (!inTabelle.size) err('src/actions.js: no table entries found - has the layout changed?');
 
 for (const name of imMarkup) {
     if (!inTabelle.has(name))
-        err(`index.html: data-action="${name}" steht in keiner Tabelle — src/actions.js`);
+        err(`index.html: data-action="${name}" is in no table - src/actions.js`);
 }
 for (const name of inTabelle) {
     if (!imMarkup.has(name))
-        warn(`src/actions.js: "${name}" wird von keinem Element benutzt — Rest einer Umbenennung?`);
+        warn(`src/actions.js: "${name}" is used by no element - left over from a rename?`);
 }
-info(`${imMarkup.size} data-action-Marken gegen ${inTabelle.size} Tabelleneinträge geprüft`);
+info(`${imMarkup.size} data-action marks checked against ${inTabelle.size} table entries`);
 
 /* ---------- Report ---------- */
 
@@ -456,7 +456,7 @@ const show = (title, list) => {
     for (const m of list) console.log(m.startsWith('    ') ? m : ` ${m.startsWith(' ') ? '' : '✗ '}${m}`);
 };
 
-console.log(`\nOberflächentexte: ${Object.keys(de).length} Schlüssel, ${used.size} davon im Einsatz`);
+console.log(`\nInterface strings: ${Object.keys(de).length} keys, ${used.size} of them in use`);
 
 if (errors.length) show('FEHLER', errors);
 if (warns.length) {
@@ -468,7 +468,7 @@ if (infos.length) {
     for (const m of infos) console.log(m.startsWith('    ') ? m : ` i ${m}`);
 }
 
-if (!errors.length && !warns.length) console.log('\n✅ Oberflächentexte sind sauber.\n');
+if (!errors.length && !warns.length) console.log('\n✅ The interface strings are clean.\n');
 else console.log('');
 
 process.exitCode = errors.length ? 1 : 0;

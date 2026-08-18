@@ -58,14 +58,14 @@ const reset = (languages = []) => {
     reloaded = false;
 };
 
-console.log('Sprachwahl:');
+console.log('Language selection:');
 
-await ok('Ohne alles: Englisch', async () => {
+await ok('With nothing at all: English', async () => {
     reset();
     assert.equal(await i18n.detectLanguage(), 'en');
 });
 
-await ok('Die gespeicherte Wahl schlägt alles andere', async () => {
+await ok('The stored choice beats everything else', async () => {
     reset(['de-DE']);
     localStorage.setItem(KEYS.language, 'en');
     platform.isDesktop = true;
@@ -73,46 +73,46 @@ await ok('Die gespeicherte Wahl schlägt alles andere', async () => {
     assert.equal(await i18n.detectLanguage(), 'en');
 });
 
-await ok('Eine unbekannte gespeicherte Sprache wird verworfen', async () => {
+await ok('An unknown stored language is discarded', async () => {
     reset(['fr-FR']);
     localStorage.setItem(KEYS.language, 'kl');   // Klingon, one hopes
     assert.equal(await i18n.detectLanguage(), 'en');
 });
 
-await ok('Wer schon gespielt hat, bleibt bei Deutsch', async () => {
+await ok('Anyone who has played before stays on German', async () => {
     reset(['en-US']);
     localStorage.setItem('layer8_archive', '{}');
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-await ok('Auch der Tutorial-Schlüssel zählt als Vorgeschichte', async () => {
+await ok('The tutorial key counts as history too', async () => {
     // Not prefixed layer8_ - the one key that would slip through a naive check.
     reset(['en-US']);
     localStorage.setItem('sysadmin_tutorial_done', 'true');
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-await ok('Eine reine Einstellung zählt ebenfalls', async () => {
+await ok('A settings key alone counts as well', async () => {
     // Someone who turned the music down but never finished a day still played.
     reset(['en-US']);
     localStorage.setItem(KEYS.musicVolume, '0.3');
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-await ok('Fremde Schlüssel im Speicher zählen nicht', async () => {
+await ok('Foreign keys in storage do not count', async () => {
     reset(['en-US']);
     localStorage.setItem('some_other_site', 'x');
     assert.equal(await i18n.detectLanguage(), 'en');
 });
 
-await ok('Steam schlägt den Browser', async () => {
+await ok('Steam beats the browser', async () => {
     reset(['en-US']);
     platform.isDesktop = true;
     platform.language = async () => 'german';
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-await ok('Steam wird nur auf dem Desktop gefragt', async () => {
+await ok('Steam is only asked on the desktop', async () => {
     // A witness rather than a throw: detectLanguage catches everything Steam
     // does and falls through, so an exception here would prove nothing.
     reset(['en-US']);
@@ -120,50 +120,50 @@ await ok('Steam wird nur auf dem Desktop gefragt', async () => {
     platform.isDesktop = false;
     platform.language = async () => { asked = true; return 'german'; };
     assert.equal(await i18n.detectLanguage(), 'en');
-    assert.equal(asked, false, 'Steam wurde im Browser gefragt');
+    assert.equal(asked, false, 'Steam was asked in the browser');
 });
 
-await ok('Eine Steam-Sprache ohne Fassung fällt auf den Browser zurück', async () => {
+await ok('A Steam language with no version falls back on the browser', async () => {
     reset(['de-AT']);
     platform.isDesktop = true;
     platform.language = async () => 'french';
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-await ok('Der Browser wird über das Präfix gelesen', async () => {
+await ok('The browser preference is read by prefix', async () => {
     for (const tag of ['de-DE', 'de-AT', 'de-CH', 'DE', 'de']) {
         reset([tag]);
         assert.equal(await i18n.detectLanguage(), 'de', tag);
     }
 });
 
-await ok('Die Reihenfolge der Browser-Wünsche wird eingehalten', async () => {
+await ok("The order of the browser's wishes is kept", async () => {
     reset(['fr-FR', 'en-GB', 'de-DE']);
-    assert.equal(await i18n.detectLanguage(), 'en', 'nicht der erste Treffer');
+    assert.equal(await i18n.detectLanguage(), 'en', 'not the first match');
 });
 
-await ok('navigator.language reicht, wenn es keine Liste gibt', async () => {
+await ok('navigator.language is enough when there is no list', async () => {
     reset();
     globalThis.navigator.languages = undefined;
     globalThis.navigator.language = 'de-DE';
     assert.equal(await i18n.detectLanguage(), 'de');
 });
 
-console.log('Umschalten:');
+console.log('Switching over:');
 
-await ok('Der Wechsel merkt sich die Wahl und lädt NICHT neu', async () => {
+await ok('The switch remembers the choice and does NOT reload', async () => {
     reset(['de-DE']);
     await i18n.useLanguage('de');
     await i18n.switchLanguage('en');
     assert.equal(localStorage.getItem(KEYS.language), 'en');
-    assert.equal(reloaded, false, 'hat trotzdem neu geladen');
-    // Die drei Dinge, die am Wechsel hängen, einzeln:
-    assert.equal(i18n.language(), 'en', 'die laufende Sprache steht noch alt');
-    assert.equal(i18n.t('language.label'), 'Language', 't() liefert noch alt');
-    assert.equal(document.documentElement.lang, 'en', '<html lang> steht noch alt');
+    assert.equal(reloaded, false, 'it reloaded anyway');
+    // The three things that hang on the switch, one at a time:
+    assert.equal(i18n.language(), 'en', 'the running language is still the old one');
+    assert.equal(i18n.t('language.label'), 'Language', 't() still answers with the old language');
+    assert.equal(document.documentElement.lang, 'en', '<html lang> is still the old one');
 });
 
-await ok('Der Wechsel meldet sich bei den Zuhörern — genau einmal', async () => {
+await ok('The switch reports to the listeners - exactly once', async () => {
     reset(['de-DE']);
     await i18n.useLanguage('de');
     const heard = [];
@@ -171,27 +171,27 @@ await ok('Der Wechsel meldet sich bei den Zuhörern — genau einmal', async () 
     await i18n.switchLanguage('en');
     off();
     assert.deepEqual(heard, ['en']);
-    // Nach dem Abmelden ist Ruhe — sonst hinge jede Sitzung eines Tests im
-    // nächsten mit drin.
+    // After unsubscribing there is quiet - otherwise every test's session would
+    // hang over into the next one.
     await i18n.switchLanguage('de');
     assert.deepEqual(heard, ['en']);
 });
 
-await ok('Die Rune springt erst, wenn der Datenbaum steht', async () => {
-    // Die Reihenfolge ist die eigentliche Arbeit von switchLanguage. Springt
-    // die Rune zuerst, zeichnen alle t() gegen Pools, die noch die alte
-    // Sprache tragen — und setLanguage() leert DB synchron, es wären für einen
-    // Moment gar keine.
+await ok('The rune moves only once the data tree is in place', async () => {
+    // The order is the real work switchLanguage does. If the rune moves first,
+    // every t() draws against pools still carrying the old language - and
+    // setLanguage() empties DB synchronously, so for a moment there would be
+    // none at all.
     //
-    // Sichtbar ist der Unterschied nur WÄHREND des Ladens, also wird hier
-    // absichtlich nicht abgewartet: bei richtiger Reihenfolge hält useLanguage
-    // sofort am await, bei falscher hat es die Rune schon gesetzt.
+    // The difference only shows WHILE loading, so this deliberately does not
+    // await: with the right order useLanguage stops at its await straight away,
+    // with the wrong one it has already moved the rune.
     reset(['de-DE']);
     await i18n.useLanguage('de');
     const { currentLanguage } = await import('../src/data.js');
 
     const running = i18n.switchLanguage('en');
-    assert.equal(i18n.language(), 'de', 'die Rune ist dem Baum vorausgesprungen');
+    assert.equal(i18n.language(), 'de', 'the rune moved ahead of the tree');
     assert.equal(currentLanguage(), 'de');
 
     await running;
@@ -199,18 +199,18 @@ await ok('Die Rune springt erst, wenn der Datenbaum steht', async () => {
     assert.equal(currentLanguage(), 'en');
 });
 
-await ok('Die laufende Sprache löst nichts aus', async () => {
+await ok('The running language triggers nothing', async () => {
     reset(['de-DE']);
     await i18n.useLanguage('de');
     let heard = 0;
     const off = i18n.onLanguageChange(() => heard++);
     await i18n.switchLanguage(i18n.language());
     off();
-    assert.equal(reloaded, false, 'unnötiges Neuladen');
-    assert.equal(heard, 0, 'unnötiger Neuaufbau');
+    assert.equal(reloaded, false, 'a needless reload');
+    assert.equal(heard, 0, 'a needless rebuild');
 });
 
-await ok('Eine unbekannte Sprache wird abgewiesen', async () => {
+await ok('An unknown language is refused', async () => {
     reset(['de-DE']);
     await i18n.useLanguage('de');
     await i18n.switchLanguage('kl');
@@ -219,53 +219,53 @@ await ok('Eine unbekannte Sprache wird abgewiesen', async () => {
     assert.equal(reloaded, false);
 });
 
-console.log('Oberflächentexte:');
+console.log('Interface strings:');
 
-await ok('initLanguage setzt das lang-Attribut', async () => {
+await ok('initLanguage sets the lang attribute', async () => {
     reset(['de-DE']);
     await i18n.initLanguage();
     assert.equal(document.documentElement.lang, 'de');
     assert.equal(i18n.language(), 'de');
 });
 
-await ok('t() liefert die Sprache, die läuft', async () => {
+await ok('t() answers in the language that is running', async () => {
     await i18n.useLanguage('de');
     assert.equal(i18n.t('language.label'), 'Sprache');
     await i18n.useLanguage('en');
     assert.equal(i18n.t('language.label'), 'Language');
 });
 
-await ok('Ein fehlender Eintrag fällt auf Englisch und dann auf den Schlüssel', async () => {
-    // Auf Deutsch gespielt: der Rückfall greift sichtbar, der Schlüssel bleibt
-    // die letzte Stufe. Vor 6.0 zeigte diese Probe nur die letzte Stufe, weil
-    // Deutsch selbst der Rückfall war - sie hätte einen falsch herum gedrehten
-    // Rückfall nicht bemerkt.
+await ok('A missing entry falls back on English and then on the key', async () => {
+    // Played in German: the fallback visibly bites, and the key stays the last
+    // step. Before 6.0 this probe only showed that last step, because German was
+    // the fallback itself - it would not have noticed a fallback turned the wrong
+    // way round.
     await i18n.useLanguage('de');
     assert.equal(i18n.t('language.label'), 'Sprache');
-    assert.equal(i18n.t('gibt.es.nicht'), 'gibt.es.nicht');
+    assert.equal(i18n.t('does.not.exist'), 'does.not.exist');
 
-    // Ein Schlüssel, den nur en.js trägt, gibt es im Bestand nicht - dafür
-    // sorgt Regel 4 des Prüfers. Also wird einer eingesetzt und wieder
-    // weggenommen: ohne Rückfall stünde hier der Schlüssel selbst.
+    // A key that only en.js carries does not exist in the stock - rule 4 of the
+    // linter sees to that. So one is put in and taken out again: with no fallback
+    // the key itself would stand here.
     const { de } = await import('../src/i18n/de.js');
     const { en } = await import('../src/i18n/en.js');
     const key = 'language.label';
     const kept = de[key];
     delete de[key];
-    assert.equal(i18n.t(key), en[key], 'fällt nicht auf Englisch');
+    assert.equal(i18n.t(key), en[key], 'does not fall back on English');
     de[key] = kept;
 });
 
-await ok('Beide Wörterbücher tragen dieselben Schlüssel', async () => {
+await ok('Both dictionaries carry the same set of keys', async () => {
     const { de } = await import('../src/i18n/de.js');
     const { en } = await import('../src/i18n/en.js');
     const missing = Object.keys(de).filter(k => !(k in en));
     const extra   = Object.keys(en).filter(k => !(k in de));
-    assert.deepEqual(missing, [], 'fehlt auf Englisch');
-    assert.deepEqual(extra,   [], 'fehlt auf Deutsch');
+    assert.deepEqual(missing, [], 'missing from the English side');
+    assert.deepEqual(extra,   [], 'missing from the German side');
 });
 
-console.log('Statisches Markup:');
+console.log('Static markup:');
 
 /**
  * Enough of a DOM for applyStaticStrings.
@@ -291,23 +291,23 @@ function fakeRoot(specs) {
     };
 }
 
-await ok('data-i18n schreibt Text, nicht Markup', async () => {
+await ok('data-i18n writes text, not markup', async () => {
     await i18n.useLanguage('de');
     const root = fakeRoot([['i18n', 'intro.archive']]);
     i18n.applyStaticStrings(root);
     assert.equal(root.nodes[0].textContent, 'Archiv');
-    assert.equal(root.nodes[0].innerHTML, '', 'als Markup eingesetzt');
+    assert.equal(root.nodes[0].innerHTML, '', 'inserted as markup');
 });
 
-await ok('data-i18n-html schreibt Markup', async () => {
+await ok('data-i18n-html writes markup', async () => {
     await i18n.useLanguage('de');
     const root = fakeRoot([['i18nHtml', 'intro.pitch']]);
     i18n.applyStaticStrings(root);
-    assert.ok(root.nodes[0].innerHTML.includes('<strong'), 'Markup fehlt');
-    assert.equal(root.nodes[0].textContent, '', 'als Text eingesetzt');
+    assert.ok(root.nodes[0].innerHTML.includes('<strong'), 'the markup is missing');
+    assert.equal(root.nodes[0].textContent, '', 'inserted as text');
 });
 
-await ok('data-i18n-attr setzt jedes genannte Attribut', async () => {
+await ok('data-i18n-attr sets every attribute it names', async () => {
     await i18n.useLanguage('en');
     const root = fakeRoot([['i18nAttr', 'alt=intro.logoAlt;title=intro.archive']]);
     i18n.applyStaticStrings(root);
@@ -315,14 +315,14 @@ await ok('data-i18n-attr setzt jedes genannte Attribut', async () => {
     assert.equal(root.nodes[0].attrs.title, 'Archive');
 });
 
-await ok('Ein fehlender Schlüssel bleibt lesbar stehen', async () => {
+await ok('A missing key stays on screen as a readable marker', async () => {
     await i18n.useLanguage('de');
-    const root = fakeRoot([['i18n', 'gibt.es.nicht']]);
+    const root = fakeRoot([['i18n', 'does.not.exist']]);
     i18n.applyStaticStrings(root);
-    assert.equal(root.nodes[0].textContent, 'gibt.es.nicht');
+    assert.equal(root.nodes[0].textContent, 'does.not.exist');
 });
 
-await ok('Die Sprache entscheidet, was eingesetzt wird', async () => {
+await ok('The language decides what is filled in', async () => {
     const root = fakeRoot([['i18n', 'intro.mode.day.name']]);
     await i18n.useLanguage('de');
     i18n.applyStaticStrings(root);
@@ -332,14 +332,14 @@ await ok('Die Sprache entscheidet, was eingesetzt wird', async () => {
     assert.equal(root.nodes[0].textContent, 'Workday');
 });
 
-console.log('Steam-Präsenz:');
+console.log('Steam presence:');
 
-await ok('Jede Tätigkeit hat einen Text, jeder Text eine Tätigkeit', async () => {
-    // Der Bogen reicht über drei Stellen, die nichts voneinander wissen:
-    // engine_core sendet die Kennung, das Wörterbuch hält den Satz, und
-    // make-steam-presence schreibt die .vdf daraus. Fehlt ein Satz, steht in
-    // der Freundesliste ein nacktes "#Status_lunch" — sichtbar für andere,
-    // unsichtbar für jeden Prüfer hier.
+await ok('Every activity has a text, every text an activity', async () => {
+    // The arc spans three places that know nothing of one another: engine_core
+    // sends the id, the dictionary holds the sentence, and make-steam-presence
+    // writes the .vdf from it. With a sentence missing, the friends list shows a
+    // bare "#Status_lunch" - visible to other people, invisible to every checker
+    // in here.
     const { PRESENCE_ALL } = await import('../src/engine/presence.js');
     const { de } = await import('../src/i18n/de.js');
     const { en } = await import('../src/i18n/en.js');
@@ -348,16 +348,17 @@ await ok('Jede Tätigkeit hat einen Text, jeder Text eine Tätigkeit', async () 
         const vorhanden = Object.keys(dict).filter(k => k.startsWith('presence.'))
                                            .map(k => k.slice('presence.'.length));
         assert.deepEqual([...vorhanden].sort(), [...PRESENCE_ALL].sort(),
-                         `${name}: presence.* und PRESENCE_ALL laufen auseinander`);
+                         `${name}: presence.* and PRESENCE_ALL have drifted apart`);
     }
 });
 
-await ok('Jeder Erfolg steht in der Steam-Reihenfolge, mit Titel und Hinweis', async () => {
-    // Steamworks benennt Erfolge über ihre POSITION (NEW_ACHIEVEMENT_1_7_NAME),
-    // und diese Position ist NICHT die der Datendatei — die drei Wochen-Erfolge
-    // stehen dort oben und in Steam unten. Ein neuer Erfolg, der nicht hinten
-    // angehängt wird, verschiebt alle folgenden: jeder Erfolg im Shop trüge
-    // dann den Namen seines Nachbarn, in einer Sprache, die niemand hier liest.
+await ok('Every achievement is in the Steam order, with title and hint', async () => {
+    // Steamworks names achievements by their POSITION
+    // (NEW_ACHIEVEMENT_1_7_NAME), and that position is NOT the one in the data
+    // file - the three week achievements sit at the top there and at the bottom
+    // in Steam. A new achievement that is not appended shifts every one after it:
+    // each achievement in the shop would then carry its neighbour's name, in a
+    // language nobody here reads.
     const { readFileSync } = await import('node:fs');
     const { achievements: dea } = await import('../src/data/de/data_achievements.js');
     const { achievements: ena } = await import('../src/data/en/data_achievements.js');
@@ -366,22 +367,22 @@ await ok('Jeder Erfolg steht in der Steam-Reihenfolge, mit Titel und Hinweis', a
     const block = werkzeug.slice(werkzeug.indexOf('const STEAM_ORDER'), werkzeug.indexOf('];', werkzeug.indexOf('const STEAM_ORDER')));
     const order = [...block.matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
 
-    assert.equal(order.length, dea.length, 'STEAM_ORDER und der Baum sind verschieden lang');
-    assert.equal(new Set(order).size, order.length, 'eine Kennung steht doppelt in STEAM_ORDER');
+    assert.equal(order.length, dea.length, 'STEAM_ORDER and the tree are of different lengths');
+    assert.equal(new Set(order).size, order.length, 'an id stands twice in STEAM_ORDER');
     for (const baum of [['de', dea], ['en', ena]]) {
         const [name, tree] = baum;
         assert.deepEqual([...order].sort(), tree.map(a => a.id).sort(),
-                         `${name}: STEAM_ORDER und der Baum führen verschiedene Erfolge`);
+                         `${name}: STEAM_ORDER and the tree hold different achievements`);
         for (const a of tree) {
-            assert.ok(a.title, `${name}: ${a.id} ohne Titel`);
-            assert.ok(a.hint,  `${name}: ${a.id} ohne hint — desc wäre ein Spoiler`);
+            assert.ok(a.title, `${name}: ${a.id} has no title`);
+            assert.ok(a.hint,  `${name}: ${a.id} has no hint - desc would be a spoiler`);
         }
     }
 });
 
-console.log('Verdrahtung:');
+console.log('Wiring:');
 
-await ok('Der Startbildschirm bietet jede Sprache an', async () => {
+await ok('The start screen offers every language', async () => {
     // The switch in index.html is static markup, so nothing in the module graph
     // would notice if a language were added to LANGUAGES and forgotten there.
     // This is the only check that would. Since 6.1 the button carries a
@@ -389,15 +390,15 @@ await ok('Der Startbildschirm bietet jede Sprache an', async () => {
     const { readFileSync } = await import('node:fs');
     const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
     for (const lang of i18n.LANGUAGES) {
-        assert.ok(html.includes(`data-lang="${lang}"`), `kein Knopf für ${lang}`);
+        assert.ok(html.includes(`data-lang="${lang}"`), `no button for ${lang}`);
         assert.ok(html.includes(`data-action="switchLanguage" data-arg="${lang}"`),
-                  `nicht verdrahtet: ${lang}`);
+                  `not wired up: ${lang}`);
         assert.ok(html.includes(`html[lang="${lang}"] .lang-opt[data-lang="${lang}"]`),
-                  `keine Hervorhebung für ${lang}`);
+                  `no highlight for ${lang}`);
     }
 });
 
-console.log('Aufgezeichnete Prosa (Rezepte):');
+console.log('Recorded prose (recipes):');
 
 /*
  * Since 6.0 a log line, a chat bubble, the ticker and the excuse record an
@@ -420,27 +421,27 @@ const inBoth = async (recipe) => {
     return out;
 };
 
-await ok('Ein Verweis in den Datenbaum folgt der Sprache', async () => {
+await ok('A reference into the data tree follows the language', async () => {
     const r = await inBoth({ ref: { p: 'items', i: 'donut', path: ['use', 'log'] } });
-    assert.ok(r.de && r.en, 'eine Seite lieferte nichts');
-    assert.notEqual(r.de, r.en, 'der Verweis liefert in beiden Bäumen dasselbe');
+    assert.ok(r.de && r.en, 'one side delivered nothing');
+    assert.notEqual(r.de, r.en, 'the reference delivers the same in both trees');
 });
 
-await ok('Ein gezogener Zufallstreffer kommt als derselbe Treffer zurück', async () => {
-    // Der Index wird aufgeschrieben, nicht das Ergebnis - beide Bäume tragen
-    // dieselbe Listenlänge, das erzwingt lint-parity.
+await ok('A random draw comes back as the same draw', async () => {
+    // The index is recorded, not the result - both trees carry the same list
+    // lengths, which lint-parity enforces.
     const r = await inBoth({ ref: { p: 'special', path: ['leet', 1] } });
-    assert.ok(r.de.startsWith('13:37') && r.en.startsWith('13:37'), 'nicht dieselbe Zeile');
+    assert.ok(r.de.startsWith('13:37') && r.en.startsWith('13:37'), 'not the same line');
     assert.notEqual(r.de, r.en);
 });
 
-await ok('Ein Wert im Satz wird mit aufgelöst', async () => {
+await ok('A value inside the sentence is resolved with it', async () => {
     const r = await inBoth({ k: 'log.item.found', v: { item: itemNameValue('donut') } });
     assert.ok(r.de.includes('Donut'), r.de);
     assert.ok(r.en.includes('doughnut'), r.en);
 });
 
-await ok('Ein Rezept im Rezept löst über beide Ebenen auf', async () => {
+await ok('A recipe inside a recipe resolves through both levels', async () => {
     const r = await inBoth({ k: 'log.item.cooldown',
                              v: { line: { k: 'item.cooldown.fallback', v: { item: itemNameValue('donut') } },
                                   wait: 5 } });
@@ -448,79 +449,78 @@ await ok('Ein Rezept im Rezept löst über beide Ebenen auf', async () => {
     assert.notEqual(r.de, r.en);
 });
 
-await ok('Eine Zeile aus 5.x bleibt stehen und wechselt nicht', async () => {
-    const r = await inBoth({ msg: 'Zeile aus einem alten Spielstand' });
-    assert.equal(r.de, r.en, 'ein Literal darf nicht wechseln');
-    assert.equal(r.de, 'Zeile aus einem alten Spielstand');
+await ok('A line from 5.x stays put and does not switch', async () => {
+    const r = await inBoth({ msg: 'A line from an old save' });
+    assert.equal(r.de, r.en, 'a literal must not switch');
+    assert.equal(r.de, 'A line from an old save');
 });
 
-await ok('Ein Rezept ins Leere entfällt, statt zu raten', async () => {
-    // Inhalt wandert zwischen Fassungen. Lieber eine Zeile weniger als ein
-    // Satz in der Sprache, aus der der Spieler gerade weggeschaltet hat.
+await ok('A recipe into nothing is dropped rather than guessed at', async () => {
+    // Content moves between versions. Better one line fewer than a sentence in
+    // the language the player has just switched away from.
     for (const kaputt of [{ ref: { i: 'gibt_es_nicht', path: ['x'] } },
-                          { k: 'gibt.es.nicht' },
+                          { k: 'does.not.exist' },
                           { k: 'log.item.found', v: { item: { ref: { i: 'weg', path: ['t'] } } } }]) {
         assert.equal(renderRecipe(kaputt), null, JSON.stringify(kaputt));
     }
-    // Und ein Rezept, das zusätzlich einen Satz trüge, nimmt ihn NICHT. Ohne
-    // diese Zeile bemerkt die Probe nicht, wenn der alte Rückfall zurückkommt:
-    // die drei oben tragen gar keinen, es gäbe also nichts zu greifen.
-    assert.equal(renderRecipe({ ref: { i: 'weg', path: ['x'] }, msg: 'alter Satz' }), null,
-                 'ein Rezept greift wieder auf einen mitgespeicherten Satz zurück');
-    assert.equal(renderRecipe({ k: 'gibt.es.nicht', msg: 'alter Satz' }), null,
-                 'ein Schlüssel greift wieder auf einen mitgespeicherten Satz zurück');
+    // And a recipe that also carried a sentence does NOT take it. Without this
+    // line the probe would not notice the old fallback coming back: the three
+    // above carry none at all, so there would be nothing to reach for.
+    assert.equal(renderRecipe({ ref: { i: 'weg', path: ['x'] }, msg: 'an old sentence' }), null,
+                 'a recipe falls back on a stored sentence again');
+    assert.equal(renderRecipe({ k: 'does.not.exist', msg: 'an old sentence' }), null,
+                 'a key falls back on a stored sentence again');
 });
 
-await ok('Der Doppler-Schutz vergleicht Kennungen, nicht Sätze', async () => {
+await ok('The duplicate guard compares identities, not sentences', async () => {
     const a = { k: 'log.item.found', v: { item: 'Donut' } };
     const b = { k: 'log.item.found', v: { item: 'Donut' } };
     const c = { k: 'log.item.found', v: { item: 'Hammer' } };
-    assert.equal(recipeKey(a), recipeKey(b), 'dasselbe Ereignis zählt als verschieden');
-    assert.notEqual(recipeKey(a), recipeKey(c), 'zwei Ereignisse fallen zusammen');
+    assert.equal(recipeKey(a), recipeKey(b), 'the same event counts as different');
+    assert.notEqual(recipeKey(a), recipeKey(c), 'two events are folded into one');
 });
 
-await ok('Der Endschirm folgt dem Sprachwechsel', async () => {
-    // Die drei Formen, in denen ein End- oder Nachtschirm seine Zeilen hält.
-    // Jede muss in beiden Bäumen etwas anderes sagen - täte sie es nicht, wäre
-    // der Schirm eingefroren und niemand würde es merken.
+await ok('The end screen follows a language switch', async () => {
+    // The three forms in which an end or night screen holds its lines. Each has
+    // to say something different in the two trees - if it did not, the screen
+    // would be frozen and nobody would notice.
     const titel = await inBoth({ k: 'end.weekTitle' });
-    assert.ok(titel.de && titel.en, 'eine Seite lieferte nichts');
-    assert.notEqual(titel.de, titel.en, 'der Titel wechselt nicht mit');
+    assert.ok(titel.de && titel.en, 'one side delivered nothing');
+    assert.notEqual(titel.de, titel.en, 'the title does not switch along');
 
-    // Satz im Satz im Satz: der Wochenzusatz umschließt den Vorspann, und der
-    // Wochentag sitzt als eigenes Rezept darin.
+    // A sentence in a sentence in a sentence: the week note wraps the lead, and
+    // the weekday sits inside it as a recipe of its own.
     const vorspann = await inBoth({ k: 'week.endsOn',
                                     v: { base: { k: 'end.rageQuit' }, day: { k: 'week.day.wed' } } });
-    assert.notEqual(vorspann.de, vorspann.en, 'der Vorspann wechselt nicht mit');
+    assert.notEqual(vorspann.de, vorspann.en, 'the lead does not switch along');
     assert.ok(vorspann.de.includes('Mittwoch'), vorspann.de);
     assert.ok(vorspann.en.includes('Wednesday'), vorspann.en);
 
-    // Und die Großschreibung gehört dem Schirm, nicht dem Wörterbucheintrag:
-    // der Nachttitel schrie sein Datum früher per .toUpperCase(), was ein
-    // fertiger Satz noch konnte und ein Rezept über `up` erledigt.
+    // And the capitals belong to the screen, not to the dictionary entry: the
+    // night headline used to shout its date through .toUpperCase(), which a
+    // finished sentence could still do and a recipe does through `up`.
     const nacht = await inBoth({ k: 'week.night.title', v: { day: { k: 'week.day.tue', up: true } } });
     assert.ok(nacht.de.includes('DIENSTAG'), nacht.de);
     assert.ok(nacht.en.includes('TUESDAY'), nacht.en);
 });
 
-await ok('Kein aufgezeichnetes Feld hält noch einen fertigen Satz', async () => {
-    // Die Regel, auf der das alles ruht: der Zustand hält die Kennung, die
-    // Anzeige rendert. Ein Feld, das wieder Prosa speichert, bricht sie leise.
+await ok('No recorded field holds a finished sentence any more', async () => {
+    // The rule all of this rests on: the state holds the identity, the display
+    // renders. A field that stores prose again breaks it quietly.
     const { freshDay, state } = await import('../src/engine/engine_state.svelte.js');
     const day = freshDay();
     for (const key of ['currentExcuse', 'activeNews']) {
         assert.ok(!(typeof day[key] === 'string' && day[key].length),
-                  `${key} hält wieder Text statt einer Kennung`);
+                  `${key} holds text again instead of an identity`);
     }
-    assert.deepEqual(day.boardNotes, [], 'boardNotes hält wieder Zettel statt Ids');
+    assert.deepEqual(day.boardNotes, [], 'boardNotes holds notes again instead of ids');
 
-    // Und der Endschirm, seit 6.1 der letzte, der noch Prosa hielt: die zwei
-    // Blöcke, die als HTML kamen, sind Felder für Momentaufnahmen, und der
-    // Stempel für die Sprache ist da. Ein Zustand, der sie nicht führt, ist ein
-    // Zustand, in dem showEnd() wieder Text ablegen könnte.
+    // And the end screen, the last one to hold prose until 6.1: the two blocks
+    // that used to arrive as HTML are snapshot fields now. A state that does not
+    // carry them is a state in which showEnd() could put text back.
     for (const key of ['balance', 'party']) {
-        assert.ok(key in state.modal, `state.modal führt ${key} nicht mehr`);
+        assert.ok(key in state.modal, `state.modal no longer carries ${key}`);
     }
 });
 
-console.log(`\n${passed} Tests bestanden.`);
+console.log(`\n${passed} checks passed.`);

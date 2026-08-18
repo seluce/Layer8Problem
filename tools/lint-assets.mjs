@@ -73,7 +73,7 @@ for (const datei of dateien) {
     const wo = relative(ROOT, datei);
     for (const treffer of new Set(text.match(LITERAL) ?? [])) {
         literale++;
-        if (!vorhanden(treffer)) err(`${wo}: "${treffer}" gibt es nicht`);
+        if (!vorhanden(treffer)) err(`${wo}: "${treffer}" does not exist`);
     }
 }
 
@@ -85,7 +85,7 @@ for (const lang of ['de', 'en']) {
     for (const a of achievements) {
         if (!a.img) continue;
         ausDaten++;
-        if (!vorhanden(a.img)) err(`data_achievements (${lang}): ${a.id} zeigt auf "${a.img}" — gibt es nicht`);
+        if (!vorhanden(a.img)) err(`data_achievements (${lang}): ${a.id} points at "${a.img}" - there is no such file`);
     }
 }
 
@@ -158,14 +158,14 @@ let gebaut = 0;
 for (const m of MUSTER) {
     const werte = [...new Set(m.werte())];
     if (!werte.length) {
-        err(`${m.wo}: keine Werte für "${m.was}" gefunden — hat sich die Schreibweise geändert?`);
+        err(`${m.wo}: no values found for "${m.was}" - has the spelling changed?`);
         continue;
     }
     for (const v of werte) {
         gebaut++;
-        if (!vorhanden(m.pfad(v))) err(`${m.wo}: "${m.pfad(v)}" gibt es nicht (aus "${m.was}")`);
+        if (!vorhanden(m.pfad(v))) err(`${m.wo}: "${m.pfad(v)}" does not exist (from "${m.was}")`);
     }
-    info(`${m.was} — ${werte.length} Werte geprüft`);
+    info(`${m.was} - ${werte.length} values checked`);
 }
 
 /* ---------- 4) the net: an unknown runtime pattern ---------- */
@@ -184,7 +184,7 @@ for (const datei of dateien) {
     const wo = relative(ROOT, datei);
     for (const treffer of new Set(readFileSync(datei, 'utf-8').match(GEBAUT) ?? [])) {
         if (bekannt.has(wo + '|' + treffer.replace(/[{$].*$/, ''))) continue;
-        warn(`${wo}: "${treffer}…" wird zur Laufzeit zusammengesetzt und von nichts geprüft — Muster in tools/lint-assets.mjs eintragen`);
+        warn(`${wo}: "${treffer}…" is built at runtime and checked by nothing - add the pattern in tools/lint-assets.mjs`);
     }
 }
 
@@ -200,13 +200,13 @@ const bestand = (() => {
     return n;
 })();
 
-console.log(`\nBildverweise: ${literale} feste, ${ausDaten} aus den Datenbäumen, ${gebaut} zur Laufzeit gebaut — Bestand ${bestand} Dateien`);
+console.log(`\nImage references: ${literale} fixed, ${ausDaten} from the data trees, ${gebaut} built at runtime - stock ${bestand} files`);
 for (const i of infos) console.log(` i ${i}`);
 for (const w of warns) console.log(` ! ${w}`);
 for (const e of errors) console.log(` ✗ ${e}`);
 
 if (errors.length) {
-    console.log(`\n❌ ${errors.length} Bildverweis(e) zeigen ins Leere\n`);
+    console.log(`\n❌ ${errors.length} image reference(s) lead nowhere\n`);
     process.exit(1);
 }
-console.log(`\n✅ Jeder Bildverweis findet seine Datei${warns.length ? ` (${warns.length} Warnung(en))` : ''}\n`);
+console.log(`\n✅ Every image reference finds its file${warns.length ? ` (${warns.length} warning(s))` : ''}\n`);

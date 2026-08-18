@@ -82,111 +82,111 @@ reset();
 const src = readFileSync(new URL('./dev-woche.js', import.meta.url), 'utf-8');
 new Function(src)();
 const dev = window.dev;
-assert.ok(dev, 'dev wurde nicht angelegt');
+assert.ok(dev, 'dev was not created');
 
 let passed = 0;
 const ok = async (name, fn) => { await fn(); passed++; console.log('  ✓ ' + name); };
 
-console.log('Aufbau:');
-await ok('dev.tag() setzt Tag, Stufe, Werte und füllt das weekLog', () => {
+console.log('Setup:');
+await ok('dev.day() sets day, level and values and fills the weekLog', () => {
     reset();
-    dev.tag(3, 'normal', { tickets: 5, al: 60 });
+    dev.day(3, 'normal', { tickets: 5, al: 60 });
     assert.equal(state.week.active, true);
     assert.equal(state.week.dayIndex, 3);
     assert.equal(state.week.level, 'normal');
     assert.equal(state.tickets, 5);
     assert.equal(state.al, 60);
-    assert.equal(state.week.weekLog.length, 2);          // Montag und Dienstag
-    assert.ok(state.statHistory.length > 5);             // Diagramm hat Daten
+    assert.equal(state.week.weekLog.length, 2);          // Monday and Tuesday
+    assert.ok(state.statHistory.length > 5);             // the chart has data
 });
-await ok('dev.kontingente() und dev.vorschau() laufen ohne Fehler', () => {
+await ok('dev.quotas() and dev.preview() run without error', () => {
     reset();
-    dev.tag(2, 'easy');
-    dev.kontingente();
-    dev.vorschau();
+    dev.day(2, 'easy');
+    dev.quotas();
+    dev.preview();
 });
-await ok('dev.leerlauf() erschöpft genau einen Pool', () => {
+await ok('dev.idle() exhausts exactly one pool', () => {
     reset();
-    dev.tag(2, 'normal');
-    dev.leerlauf('server');
+    dev.day(2, 'normal');
+    dev.idle('server');
     assert.equal(engine.weekContingentLeft('server'), 0);
     assert.ok(engine.weekContingentLeft('coffee') > 0);
 });
 
-console.log('Nacht:');
-await ok('dev.feierabend(2) stellt 16:20 ein, ohne die Nacht schon auszulösen', () => {
+console.log('The night:');
+await ok('dev.clockOff(2) sets 16:20 without triggering the night yet', () => {
     reset();
-    dev.tag(1, 'normal');
-    dev.feierabend(2);
+    dev.day(1, 'normal');
+    dev.clockOff(2);
     assert.equal(state.week.dayIndex, 2);
     assert.equal(state.time, 16 * 60 + 20);
     assert.equal(state.pendingEnd, null);
 });
-await ok('dev.nacht() zeigt den Nacht-Screen mit Gepäck und Schlaftext', () => {
-    dev.nacht();
+await ok('dev.night() shows the night screen with baggage and sleep line', () => {
+    dev.night();
     assert.equal(state.modal.isNight, true);
     assert.deepEqual(state.modal.nextDay, dayNameValue(2));
     assert.ok(state.modal.night.ticketsAfter <= state.modal.night.ticketsBefore);
-    assert.ok(state.modal.night.sleep?.ref, 'der Schlaftext reist nicht als Verweis');
-    assert.equal(calls.end, null);                       // kein Endscreen
+    assert.ok(state.modal.night.sleep?.ref, 'the sleep line does not travel as a reference');
+    assert.equal(calls.end, null);                       // no end screen
 });
-await ok('dev.feierabend(4, true) löst direkt aus', () => {
+await ok('dev.clockOff(4, true) triggers straight away', () => {
     reset();
-    dev.tag(1, 'hard');
-    dev.feierabend(4, true);
+    dev.day(1, 'hard');
+    dev.clockOff(4, true);
     assert.equal(state.modal.isNight, true);
     assert.deepEqual(state.modal.nextDay, dayNameValue(4));
 });
-await ok('dev.nacht() am Freitag warnt statt zu brechen', () => {
+await ok('dev.night() on a Friday warns instead of breaking', () => {
     reset();
-    dev.tag(5, 'normal');
-    dev.nacht();
+    dev.day(5, 'normal');
+    dev.night();
     assert.equal(state.modal.isNight ?? false, false);
 });
 
-console.log('Freitag:');
-await ok('dev.freitag() setzt 14:50 mit vier Tagen Vorgeschichte', () => {
+console.log('Friday:');
+await ok('dev.friday() sets 14:50 with four days of history', () => {
     reset();
-    dev.freitag();
+    dev.friday();
     assert.equal(state.week.dayIndex, 5);
     assert.equal(state.time, 14 * 60 + 50);
     assert.equal(state.week.weekLog.length, 4);
     assert.equal(state.meetingDone, false);
 });
-await ok('dev.freitag("knapp") liefert die harte Variante', () => {
+await ok('dev.friday("tight") delivers the hard variant', () => {
     reset();
-    dev.freitag('knapp');
+    dev.friday('tight');
     assert.equal(state.tickets, 8);
     assert.equal(state.excusesLeft, 0);
 });
-await ok('dev.meeting() startet eine echte Meeting-Kette', async () => {
+await ok('dev.meeting() starts a real meeting chain', async () => {
     reset();
-    dev.freitag();
+    dev.friday();
     await ensure('meetings');
     dev.meeting();
-    await new Promise(r => setTimeout(r, 30));           // triggerMeeting ist async
+    await new Promise(r => setTimeout(r, 30));           // triggerMeeting is async
     assert.equal(calls.terminal?.[1], 'meeting');
     assert.ok(calls.terminal[0].id.startsWith('meet_'));
     assert.ok(calls.terminal[0].startNode);
     assert.equal(state.meetingDone, true);
 });
 
-console.log('Enden:');
-await ok('dev.gewonnen() zeigt die Wochen-Bilanz mit fünf Zeilen', () => {
+console.log('Endings:');
+await ok('dev.won() shows the week balance with five rows', () => {
     reset();
-    dev.tag(1, 'easy');
-    dev.gewonnen();
-    assert.ok(calls.end, 'Endscreen fehlt');
+    dev.day(1, 'easy');
+    dev.won();
+    assert.ok(calls.end, 'the end screen is missing');
     assert.deepEqual(calls.end.title, { k: 'end.weekTitle' });
-    // Die Bilanz ist eine Momentaufnahme (6.1): fünf Zeilen, je ein Tagesindex.
+    // The balance sheet is a snapshot (6.1): five rows, one day index each.
     assert.deepEqual(calls.end.balance.rows.map(r => r.day), [0, 1, 2, 3, 4]);
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
 });
-await ok('dev.raus("rage", 3) endet am Mittwoch mit Tagesnennung', () => {
+await ok('dev.out("rage", 3) ends on Wednesday and names the day', () => {
     reset();
-    dev.tag(1, 'normal');
-    dev.raus('rage', 3);
+    dev.day(1, 'normal');
+    dev.out('rage', 3);
     // cause, not the title: the title is a dictionary entry and reads
     // differently in the other language.
     assert.equal(calls.end.cause, 'rage');
@@ -196,82 +196,82 @@ await ok('dev.raus("rage", 3) endet am Mittwoch mit Tagesnennung', () => {
                      { day: 2, win: false, title: { k: 'end.rageTitle' } });
     assert.equal(state.archive.stats.weeksRageQuit, 1);
 });
-await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
+await ok('dev.out("tickets", 4) and dev.out("chef", 2) end correctly', () => {
     reset();
-    dev.tag(1, 'normal');
-    dev.raus('tickets', 4);
+    dev.day(1, 'normal');
+    dev.out('tickets', 4);
     // Both ways out are titled GEFEUERT; only the cause tells them apart.
     assert.equal(calls.end.cause, 'tickets');
     assert.deepEqual(calls.end.lead.v.day, dayNameValue(3));
 
     reset();
-    dev.tag(1, 'normal');
-    dev.raus('chef', 2);
+    dev.day(1, 'normal');
+    dev.out('chef', 2);
     assert.equal(calls.end.cause, 'chef');
     assert.deepEqual(calls.end.lead.v.day, dayNameValue(1));
 });
-await ok('dev.morgentod() beendet die Woche in der Morgenstimmung', () => {
+await ok('dev.morningDeath() ends the week in the morning mood', () => {
     reset();
-    dev.morgentod(4);
-    assert.ok(calls.end, 'Endscreen fehlt');
+    dev.morningDeath(4);
+    assert.ok(calls.end, 'the end screen is missing');
     assert.deepEqual(calls.end.lead.v.day, dayNameValue(3));
     assert.equal(state.week.active, false);
 });
 
-console.log('Gala:');
-await ok('dev.gala() erfüllt die Voraussetzungen und öffnet den Gala-Knoten', async () => {
+console.log('The gala:');
+await ok('dev.gala() meets the requirements and opens the gala node', async () => {
     reset();
-    dev.tag(1, 'normal');
+    dev.day(1, 'normal');
     dev.gala();
-    assert.ok(engine.partyInvitation(), 'Gala müsste jetzt zünden');
+    assert.ok(engine.partyInvitation(), 'the gala should fire now');
     await ensure('meetings');
     dev.meeting();
     await new Promise(r => setTimeout(r, 30));
     const ev = calls.terminal[0];
     const quelle = DB.meetings.find(m => m.id === ev.id);
     if (quelle.startNodeGala) {
-        assert.equal(ev.startNode, quelle.startNodeGala, 'Meeting müsste auf dem Gala-Knoten öffnen');
+        assert.equal(ev.startNode, quelle.startNodeGala, 'the meeting should open on the gala node');
     }
 });
-await ok('nach dev.gala() endet der Freitag in der Feier statt in der Bilanz', () => {
+await ok('after dev.gala() the Friday ends in the party, not in the balance sheet', () => {
     state.time = 16 * 60 + 30;
     state.pendingEnd = null;
     engine.checkEndConditions();
     assert.equal(state.pendingEnd?.isParty, true);
 });
 
-console.log('Spielstand:');
-await ok('dev.sichern()/dev.zurueck() stellen die Schlüssel wieder her', () => {
+console.log('Saves:');
+await ok('dev.backup()/dev.restore() put the keys back', () => {
     reset();
-    dev.tag(2, 'normal');
+    dev.day(2, 'normal');
     engine.saveWeek();
     const vorher = store.get('layer8_week');
-    dev.sichern();
+    dev.backup();
     store.delete('layer8_week');
-    dev.zurueck();
+    dev.restore();
     assert.equal(store.get('layer8_week'), vorher);
 });
-await ok('dev.aufraeumen() verwirft die Woche', () => {
+await ok('dev.dropWeek() discards the week', () => {
     reset();
-    dev.tag(3, 'hard');
+    dev.day(3, 'hard');
     engine.saveWeek();
-    dev.aufraeumen();
+    dev.dropWeek();
     assert.equal(engine.loadWeek(), null);
     assert.equal(state.week.active, false);
 });
-await ok('dev.zaehler() und dev.zaehlerLeeren() räumen den Teststand auf', () => {
+await ok('dev.counters() and dev.clearCounters() tidy the test state up', () => {
     reset();
-    dev.tag(3, 'normal');
+    dev.day(3, 'normal');
     state.rageWarningReceived = true;                           // writes weekVentSaves below
     engine.recordWeekResult('survived', 5);
     assert.ok((state.archive.stats.weeksStarted ?? 0) > 0);
     assert.equal(state.archive.stats.weekVentSaves, 1);
-    dev.zaehler();
-    dev.zaehlerLeeren();
+    dev.counters();
+    dev.clearCounters();
     assert.equal(state.archive.stats.weeksStarted ?? 0, 0);
     assert.equal(state.archive.stats.weekVentSaves ?? 0, 0);    // week keys are run counters too
     assert.equal(state.archive.stats.daysStarted, 0);
 });
-await ok('dev.hilfe() läuft', () => { dev.hilfe(); });
+await ok('dev.help() runs', () => { dev.help(); });
 
-console.log(`\n${passed} Tests bestanden.`);
+console.log(`\n${passed} checks passed.`);

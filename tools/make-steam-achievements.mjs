@@ -61,24 +61,24 @@ const outDir = process.argv.includes('--out')
 let broken = 0;
 const fail = (text) => { console.error(` ✗ ${text}`); broken++; };
 
-if (new Set(STEAM_ORDER).size !== STEAM_ORDER.length) fail('STEAM_ORDER enthält eine Kennung doppelt');
+if (new Set(STEAM_ORDER).size !== STEAM_ORDER.length) fail('STEAM_ORDER contains an id twice');
 
 for (const { steam, tree } of DICTIONARIES) {
     for (const id of STEAM_ORDER) {
         const a = tree.find(x => x.id === id);
-        if (!a)        { fail(`${steam}: "${id}" gibt es im Baum nicht`); continue; }
-        if (!a.title)  fail(`${steam}: "${id}" hat keinen Titel`);
-        if (!a.hint)   fail(`${steam}: "${id}" hat keinen hint — desc wäre ein Spoiler`);
+        if (!a)        { fail(`${steam}: there is no "${id}" in the tree`); continue; }
+        if (!a.title)  fail(`${steam}: "${id}" has no title`);
+        if (!a.hint)   fail(`${steam}: "${id}" has no hint - desc would be a spoiler`);
     }
-    // Ein Erfolg, den es im Spiel gibt und in Steam nicht, kann nie erreicht
-    // werden — und fällt sonst niemandem auf.
+    // An achievement that exists in the game and not in Steam can never be
+    // earned - and nobody else would notice.
     for (const a of tree) {
-        if (!STEAM_ORDER.includes(a.id)) fail(`${steam}: "${a.id}" fehlt in STEAM_ORDER — in Steamworks anlegen und HINTEN anhängen`);
+        if (!STEAM_ORDER.includes(a.id)) fail(`${steam}: "${a.id}" is missing from STEAM_ORDER - create it in Steamworks and APPEND it`);
     }
 }
 
 if (broken) {
-    console.error(`\n${broken} Fehler — nichts geschrieben.`);
+    console.error(`\n${broken} faults - nothing written.`);
     process.exit(1);
 }
 
@@ -106,6 +106,6 @@ for (const { steam, tree } of DICTIONARIES) {
     console.log(`  ${file}  —  ${STEAM_ORDER.length} Erfolge`);
 }
 
-console.log('\n✅ In Steamworks unter "Stats & Achievements" hochladen.');
-console.log('   ACHTUNG: heißt genauso wie die Rich-Presence-Datei, geht aber');
-console.log('   an eine andere Stelle. Nicht verwechseln.');
+console.log('\n✅ Upload in Steamworks under "Stats & Achievements".');
+console.log('   NOTE: same name as the rich presence file, but it goes');
+console.log('   somewhere else. Do not confuse the two.');

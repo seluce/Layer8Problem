@@ -60,7 +60,7 @@ const GERMAN = /[äöüßÄÖÜ]|\b(nicht|und|der|das|ist|ein|eine|sich|dass|wir
 
 if (!GERMAN.test('Der Chef sieht dich an und sagt nichts dazu.') ||
     GERMAN.test('The boss looks at you and says nothing about it.')) {
-    console.error('Der Sprachdetektor ist kaputt — Abbruch, bevor er etwas durchwinkt.');
+    console.error('The language detector is broken - stopping before it waves anything through.');
     process.exit(1);
 }
 
@@ -128,7 +128,7 @@ for (const name of pools) {
     const enPool = en[name];
     const enEntries = new Map(entries(enPool));
 
-    console.log(`\n=== ${name} — ${deEntries.length} Einträge ===\n`);
+    console.log(`\n=== ${name} - ${deEntries.length} entries ===\n`);
 
     for (const [id, deEntry] of deEntries) {
         const enEntry = Array.isArray(enPool)
@@ -156,7 +156,7 @@ for (const name of pools) {
 
         const flagged = onlyGerman ? same.filter(f => GERMAN.test(f.de)) : same;
         const mark = same.length === 0 ? '✓' : ' ';
-        console.log(`${mark} ${id}: ${fields.length} Felder, ${same.length} identisch`);
+        console.log(`${mark} ${id}: ${fields.length} fields, ${same.length} identical`);
 
         if (showList) {
             for (const f of flagged) {
@@ -171,22 +171,22 @@ for (const name of pools) {
 
 /* ---------- summary ---------- */
 
-console.log(`\n--- je Feld ---`);
+console.log(`\n--- per field ---`);
 const width = Math.max(...[...perKey.keys()].map(k => k.length), 8);
 for (const [key, s] of [...perKey].sort((a, b) => b[1].total - a[1].total)) {
     console.log(
-        `${key.padEnd(width)}  gesamt ${String(s.total).padStart(5)}` +
-        `   identisch ${String(s.same).padStart(5)}` +
-        `   davon deutsch ${String(s.german).padStart(5)}` +
-        `   >=4 Wörter ${String(s.long).padStart(5)}  (nur die sieht lint-parity)`
+        `${key.padEnd(width)}  total  ${String(s.total).padStart(5)}` +
+        `   identical  ${String(s.same).padStart(5)}` +
+        `   of them German ${String(s.german).padStart(5)}` +
+        `   >=4 words   ${String(s.long).padStart(5)}  (only these are visible to lint-parity)`
     );
 }
 
 console.log(
-    `\nGESAMT  ${grandTotal} Textfelder · ${grandSame} identisch · ` +
-    `${grandTotal - grandSame} verschieden · ${grandGerman} der identischen sind erkennbar deutsch`
+    `\nTOTAL   ${grandTotal} text fields · ${grandSame} identical · ` +
+    `${grandTotal - grandSame} different · ${grandGerman} of the identical ones are recognisably German`
 );
 console.log(
-    `Der Detektor ist ein Sieb, keine Garantie: "Seit 2019 in Kraft" trägt keines ` +
-    `seiner Wörter.\nJedes identische Feld gehört gelesen, nicht gezählt.`
+    `The detector is a sieve, not a guarantee: "Seit 2019 in Kraft" carries none ` +
+    `of its words.\nEvery identical field is there to be read, not counted.`
 );

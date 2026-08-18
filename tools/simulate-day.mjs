@@ -32,7 +32,7 @@ const positional = args.filter(a => !a.startsWith('-'));
 const langArg = args.find(a => a.startsWith('--lang='));
 const lang = langArg ? langArg.slice('--lang='.length) : 'de';
 if (lang !== 'de' && lang !== 'en') {
-    console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+    console.error(`Unknown language "${lang}". Available: de, en`);
     process.exit(1);
 }
 
@@ -46,7 +46,7 @@ await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 
 // English run would quietly report German numbers — and matching numbers are
 // exactly what this tool is for.
 if (currentLanguage() !== lang) {
-    console.error(`Sprache "${lang}" konnte nicht geladen werden — die Simulation liest "${currentLanguage()}".`);
+    console.error(`Language "${lang}" could not be loaded - the simulation is reading "${currentLanguage()}".`);
     process.exit(1);
 }
 
@@ -116,11 +116,11 @@ const STRATEGIES = {
 
     // Weighs the real danger: radar counts double, triple once the valve is
     // spent; laziness counts as a future radar amplifier.
-    vernunft: (opts, s) => opts.reduce((a, b) => danger(a, s) <= danger(b, s) ? a : b),
+    sensible: (opts, s) => opts.reduce((a, b) => danger(a, s) <= danger(b, s) ? a : b),
 
     // Reads along, avoids only the obviously worst answer and picks randomly
     // among the rest - the realistic casual player.
-    gelegenheit: (opts, s) => {
+    casual: (opts, s) => {
         if (opts.length <= 1) return opts[0];
         const sorted = [...opts].sort((x, y) => danger(x, s) - danger(y, s));
         const rest = sorted.slice(0, -1);
@@ -211,8 +211,8 @@ function playDay(diffCfg, stratName) {
     while (true) {
         // Action choice per player type
         let action;
-        if (s.tickets >= (stratName === 'vernunft' ? 5 : 6)) action = 'calls';
-        else if ((stratName === 'vernunft' || stratName === 'gelegenheit') && s.al >= 70) action = 'coffee';
+        if (s.tickets >= (stratName === 'sensible' ? 5 : 6)) action = 'calls';
+        else if ((stratName === 'sensible' || stratName === 'casual') && s.al >= 70) action = 'coffee';
         else action = rnd(['coffee', 'server', 'sidequests', 'calls']);
 
         // Boss chance from 9:00 onwards
@@ -239,7 +239,7 @@ function playDay(diffCfg, stratName) {
         // Excuse: a thinking player escapes an event whose best answer is
         // still bad (engine: the event ends, short pause).
         const canExcuse = s.excusesLeft > 0 && poolType !== 'boss'
-            && (stratName === 'vernunft' || stratName === 'gelegenheit');
+            && (stratName === 'sensible' || stratName === 'casual');
         if (canExcuse && ev.opts?.length) {
             const avX = unlocked(ev.opts, s.inv);
             const best = Math.min(...(avX.length ? avX : ev.opts).map(o => danger(o, s)));
@@ -291,7 +291,7 @@ function playDay(diffCfg, stratName) {
 }
 
 // ---------- evaluation ----------
-console.log(`Simulation (${lang}): ${DAYS} Tage je Zelle, 3 Schwierigkeiten x 3 Spielertypen\n`);
+console.log(`Simulation (${lang}): ${DAYS} days per cell, 3 difficulties x 3 player types\n`);
 if (VALVES) DIFFS.forEach((d, i) => d.valveReset = VALVES[i]);
 // Stat multiplier as in engine_events: formulas only, not identity (mail
 // chance, tickets and excuses still go through mult).
@@ -317,12 +317,12 @@ for (const diff of DIFFS) {
         const medLoss = lossTime.length ? lossTime[Math.floor(lossTime.length / 2)] : 0;
         const fmt = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
         console.log(
-            `  ${strat.padEnd(8)} Sieg ${(100 * R.WIN / DAYS).toFixed(1).padStart(5)}% | ` +
-            `Rage ${(100 * R.RAGE / DAYS).toFixed(1).padStart(4)}% Tickets ${(100 * R.TICKETS / DAYS).toFixed(1).padStart(4)}% Gefeuert ${(100 * R.FIRED / DAYS).toFixed(1).padStart(4)}% | ` +
-            `Ventil A/C ${(100 * valveA / DAYS).toFixed(0)}%/${(100 * valveC / DAYS).toFixed(0)}% | ` +
-            `Ø Mails ${(mails / DAYS).toFixed(1)} Anrufe ${(calls / DAYS).toFixed(1)} Events ${(events / DAYS).toFixed(1)} | ` +
-            `Sieg-Endwerte F/A/R ${(endFl / wins).toFixed(0)}/${(endAl / wins).toFixed(0)}/${(endCr / wins).toFixed(0)} | ` +
-            `Radar-Aufschlag x${(lazyShare / DAYS).toFixed(2)} | Verlust-Median ${fmt(medLoss)}`
+            `  ${strat.padEnd(8)} win ${(100 * R.WIN / DAYS).toFixed(1).padStart(5)}% | ` +
+            `Rage ${(100 * R.RAGE / DAYS).toFixed(1).padStart(4)}% Tickets ${(100 * R.TICKETS / DAYS).toFixed(1).padStart(4)}% Fired ${(100 * R.FIRED / DAYS).toFixed(1).padStart(4)}% | ` +
+            `valve A/B ${(100 * valveA / DAYS).toFixed(0)}%/${(100 * valveC / DAYS).toFixed(0)}% | ` +
+            `avg mails ${(mails / DAYS).toFixed(1)} calls ${(calls / DAYS).toFixed(1)} events ${(events / DAYS).toFixed(1)} | ` +
+            `end values on a win L/A/B ${(endFl / wins).toFixed(0)}/${(endAl / wins).toFixed(0)}/${(endCr / wins).toFixed(0)} | ` +
+            `radar surcharge x${(lazyShare / DAYS).toFixed(2)} | median loss ${fmt(medLoss)}`
         );
     }
     console.log('');

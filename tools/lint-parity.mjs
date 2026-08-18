@@ -74,17 +74,17 @@ async function snapshot(lang) {
       return new Set(readdirSync(new URL(`../src/data/${lang}/`, import.meta.url))
         .filter(f => f.endsWith('.js')));
     } catch {
-      err(`src/data/${lang}/ fehlt komplett`);
+      err(`src/data/${lang}/ is missing entirely`);
       return new Set();
     }
   };
   const deFiles = list('de'), enFiles = list('en');
-  for (const f of deFiles) if (!enFiles.has(f)) err(`src/data/en/${f} fehlt — der Build bricht erst im Browser ab`);
-  for (const f of enFiles) if (!deFiles.has(f)) err(`src/data/de/${f} fehlt — der Build bricht erst im Browser ab`);
+  for (const f of deFiles) if (!enFiles.has(f)) err(`src/data/en/${f} is missing - the build only fails in the browser`);
+  for (const f of enFiles) if (!deFiles.has(f)) err(`src/data/de/${f} is missing - the build only fails in the browser`);
   for (const name of POOLS) {
     const file = `data_${name}.js`;
     for (const [lang, files] of [['de', deFiles], ['en', enFiles]])
-      if (!files.has(file)) err(`src/data/${lang}/${file} fehlt, wird aber in data.js aufgeführt`);
+      if (!files.has(file)) err(`src/data/${lang}/${file} is missing but listed in data.js`);
   }
 }
 
@@ -97,11 +97,11 @@ const isProse = (value) => typeof value === 'string' && value.trim().split(/\s+/
 function compare(a, b, path) {
     if (Array.isArray(a) || Array.isArray(b)) {
         if (!Array.isArray(a) || !Array.isArray(b)) {
-            err(`${path}: einmal Liste, einmal nicht`);
+            err(`${path}: a list on one side, not on the other`);
             return;
         }
         if (a.length !== b.length) {
-            err(`${path}: ${a.length} Einträge auf Deutsch, ${b.length} auf Englisch`);
+            err(`${path}: ${a.length} entries in German, ${b.length} in English`);
             return;
         }
         a.forEach((item, i) => compare(item, b[i], `${path}[${i}]`));
@@ -110,32 +110,32 @@ function compare(a, b, path) {
 
     if (a && b && typeof a === 'object' && typeof b === 'object') {
         const keysA = Object.keys(a), keysB = Object.keys(b);
-        for (const k of keysA) if (!(k in b)) err(`${path}.${k}: fehlt im englischen Baum`);
-        for (const k of keysB) if (!(k in a)) err(`${path}.${k}: fehlt im deutschen Baum`);
+        for (const k of keysA) if (!(k in b)) err(`${path}.${k}: missing from the English tree`);
+        for (const k of keysB) if (!(k in a)) err(`${path}.${k}: missing from the German tree`);
         for (const k of keysA) if (k in b) compare(a[k], b[k], `${path}.${k}`);
         return;
     }
 
     if (typeof a !== typeof b) {
-        err(`${path}: ${typeof a} gegen ${typeof b}`);
+        err(`${path}: ${typeof a} against ${typeof b}`);
         return;
     }
 
     // Numbers carry the balance. One changed number and the English edition
     // plays differently, with nothing on screen to show it.
     if (typeof a === 'number' && a !== b) {
-        err(`${path}: ${a} gegen ${b} — Zahlen sind keine Übersetzung`);
+        err(`${path}: ${a} against ${b} - figures are not a translation`);
         return;
     }
     if (typeof a === 'boolean' && a !== b) {
-        err(`${path}: ${a} gegen ${b}`);
+        err(`${path}: ${a} against ${b}`);
         return;
     }
 
     if (typeof a === 'string') {
         const key = path.slice(path.lastIndexOf('.') + 1).replace(/\[\d+\]$/, '');
         if (ID_KEYS.has(key)) {
-            if (a !== b) err(`${path}: Kennung "${a}" gegen "${b}" — Kennungen bleiben gleich`);
+            if (a !== b) err(`${path}: id "${a}" against "${b}" - ids stay the same`);
             return;
         }
         if (a === b && isProse(a)) todos.push(`${path}: "${a.slice(0, 70)}${a.length > 70 ? '…' : ''}"`);
@@ -149,21 +149,21 @@ for (const pool of pools) {
 
 /* ---------- Report ---------- */
 
-console.log(`\nGleichlauf der Sprachbäume — ${pools.length} Bestände geprüft`);
+console.log(`\nThe two language trees in step - ${pools.length} pools checked`);
 
 if (errors.length) {
     console.log(`\nFEHLER (${errors.length})\n`);
     for (const m of errors.slice(0, 60)) console.log(` ✗ ${m}`);
-    if (errors.length > 60) console.log(`   … und ${errors.length - 60} weitere`);
+    if (errors.length > 60) console.log(`   … and ${errors.length - 60} more`);
 }
 
 // Not an error: during the translation this is the work still ahead. It only
 // becomes a finding once a pool is marked translated.
 console.log(`\nNOCH DEUTSCH (${todos.length} Textstellen)\n`);
 for (const m of todos.slice(0, 15)) console.log(` i ${m}`);
-if (todos.length > 15) console.log(`   … und ${todos.length - 15} weitere`);
+if (todos.length > 15) console.log(`   … and ${todos.length - 15} more`);
 
-if (!errors.length) console.log('\n✅ Beide Bäume laufen gleich.\n');
+if (!errors.length) console.log('\n✅ Both trees run in step.\n');
 else console.log('');
 
 process.exitCode = errors.length ? 1 : 0;

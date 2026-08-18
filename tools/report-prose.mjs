@@ -79,10 +79,10 @@ const LEGIT_TRIPLES = ['Bissspuren', 'Stillleg', 'Fitnessstudio', 'volllaufen', 
 // References that will age badly. Extend as needed - this list is the
 // editorial memory of "we decided that dates the game".
 const DATED = [
-  [/iPhone\s*1?\d\b/i,         'konkrete iPhone-Generation (ab 20 gilt Parodie)'],
+  [/iPhone\s*1?\d\b/i,         'a specific iPhone generation (from 20 on it reads as parody)'],
   [/\bM[1-9]\s*(Pro|Max)\b/,   'konkrete Apple-Chip-Generation'],
   [/MacBook[^.!?]*M\d/,        'konkrete MacBook-Generation'],
-  [/Barbie(?! Girl)/,          'Kino-Sommer 2023 (Barbie Girl von Aqua ist zeitlos)'],
+  [/Barbie(?! Girl)/,          'cinema summer 2023 (Barbie Girl by Aqua is timeless)'],
   [/Oppenheimer/,              'Kino-Sommer 2023'],
   [/\bSims\s*\d\b/,            'konkrete Spiele-Version']
 ];
@@ -95,19 +95,19 @@ const DATED = [
 // English names are the ones fixed in GLOSSAR section 3a - Laziness, Aggro,
 // Boss Radar - so "Aggro" is the only entry that already covered both.
 const MECHANICS = [
-  [/\bAggro\b/,                'Statuswert "Aggro" beim Namen genannt'],
-  [/Chef-?Radar/i,             'Statuswert "Chef-Radar" beim Namen genannt'],
-  [/Boss[- ]?Radar/i,          'Statuswert "Boss Radar" beim Namen genannt'],
-  [/\b(d|m)ein(em|en)?\s+Radar\b/i, 'Statuswert "Chef-Radar" als "dein/mein Radar" genannt'],
-  [/\b(your|my)\s+radar\b/i,   'Statuswert "Boss Radar" als "your/my radar" genannt'],
-  [/\bFaulheit\b/,             'Statuswert "Faulheit" beim Namen genannt (prüfen)'],
-  [/\bLaziness\b/i,            'Statuswert "Laziness" beim Namen genannt (prüfen)'],
-  [/Stimmung\s*[+-]\s*\d/,     'Zahlenwert im Erzähltext'],
-  [/\bMood\s*[+-]\s*\d/i,      'Zahlenwert im Erzähltext'],
-  [/\bRadar\s*[+-]\s*\d/,      'Zahlenwert im Erzähltext'],
-  [/Radar[- ]?(Bonus|Malus|Penalty)/i, 'Statuswert-Effekt beim Namen genannt'],
-  [/[+-]\d+\s*(Punkte|Prozentpunkte)\b/, 'Zahlenwert im Erzähltext'],
-  [/[+-]\d+\s*(points?|percentage\s+points?)\b/i, 'Zahlenwert im Erzähltext']
+  [/\bAggro\b/,                'the stat "Aggro" called by its name'],
+  [/Chef-?Radar/i,             'the stat "Chef-Radar" called by its name'],
+  [/Boss[- ]?Radar/i,          'the stat "Boss Radar" called by its name'],
+  [/\b(d|m)ein(em|en)?\s+Radar\b/i, 'the stat "Chef-Radar" called "dein/mein Radar"'],
+  [/\b(your|my)\s+radar\b/i,   'the stat "Boss Radar" called "your/my radar"'],
+  [/\bFaulheit\b/,             'the stat "Faulheit" called by its name (check)'],
+  [/\bLaziness\b/i,            'the stat "Laziness" called by its name (check)'],
+  [/Stimmung\s*[+-]\s*\d/,     'a figure in the narrative text'],
+  [/\bMood\s*[+-]\s*\d/i,      'a figure in the narrative text'],
+  [/\bRadar\s*[+-]\s*\d/,      'a figure in the narrative text'],
+  [/Radar[- ]?(Bonus|Malus|Penalty)/i, 'a stat effect called by its name'],
+  [/[+-]\d+\s*(Punkte|Prozentpunkte)\b/, 'a figure in the narrative text'],
+  [/[+-]\d+\s*(points?|percentage\s+points?)\b/i, 'a figure in the narrative text']
 ];
 
 // Sender grouping (emails): tokens that are roles/departments, not names.
@@ -152,7 +152,7 @@ const args = process.argv.slice(2);
 const langArg = args.find(a => a.startsWith('--lang='));
 const lang = langArg ? langArg.slice('--lang='.length) : 'de';
 if (lang !== 'de' && lang !== 'en') {
-  console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+  console.error(`Unknown language "${lang}". Available: de, en`);
   process.exit(1);
 }
 
@@ -160,7 +160,7 @@ const wanted = args.filter(a => !a.startsWith('-'));
 const pools = wanted.length ? wanted : ALL_POOLS;
 for (const p of pools) {
   if (!ALL_POOLS.includes(p)) {
-    console.error(`Unbekannter Pool "${p}". Verfügbar: ${ALL_POOLS.join(', ')}`);
+    console.error(`Unknown pool "${p}". Available: ${ALL_POOLS.join(', ')}`);
     process.exit(1);
   }
 }
@@ -177,7 +177,7 @@ await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet',
 // loadCore falls back to German when a tree cannot be read. Reporting the
 // language that actually loaded keeps a fallback from passing as an English run.
 if (currentLanguage() !== lang) {
-  console.error(`Sprache "${lang}" konnte nicht geladen werden — der Bericht liest "${currentLanguage()}".`);
+  console.error(`Language "${lang}" could not be loaded - the report is reading "${currentLanguage()}".`);
   process.exit(1);
 }
 
@@ -223,7 +223,7 @@ for (const pool of pools) {
   if (TREE_POOLS.has(pool)) { walkTree(pool, DB[pool], ''); continue; }
   const entries = pool === 'board' ? (DB.board ?? []) : (DB[pool] ?? []);
   for (const ev of entries) {
-    const id = ev.id ?? '(ohne id)';
+    const id = ev.id ?? '(no id)';
     push(pool, id, 'title', 'label', ev.title);
     push(pool, id, 'subj',  'label', ev.subj);
     push(pool, id, 'text',  'prose', ev.text);
@@ -271,11 +271,11 @@ const section = (title, findings, cap = 60) => {
   sectionNo++;
   console.log(`\n== ${sectionNo}) ${title} — ${findings.length} Befund${findings.length === 1 ? '' : 'e'} ==`);
   findings.slice(0, cap).forEach(f => console.log('  ' + f));
-  if (findings.length > cap) console.log(`  … und ${findings.length - cap} weitere`);
+  if (findings.length > cap) console.log(`  … and ${findings.length - cap} more`);
 };
 
 console.log(`Layer8Problem Prosa-Bericht (${lang}) — Pools: ${pools.join(', ')}`);
-console.log(`${records.length} Textfelder erfasst, davon ${prose.length} Erzähltexte.`);
+console.log(`${records.length} text fields collected, ${prose.length} of them narrative.`);
 
 /* ---------- 1) verbatim repeated sentences ---------- */
 // Split narration into sentences, count identical ones across DIFFERENT
@@ -294,7 +294,7 @@ for (const r of prose) {
 const dupSentences = [...sentMap.entries()]
   .filter(([, m]) => m.size >= 2)
   .sort((a, b) => b[1].size - a[1].size);
-section('Wörtlich wiederholte Sätze (über verschiedene Ereignisse)',
+section('Sentences repeated word for word (across different events)',
   dupSentences.map(([s, m]) => `${m.size}x  "${s}"\n      → ${[...m.keys()].join(', ')}`));
 
 /* ---------- 2) repeated word sequences (n-grams) ---------- */
@@ -322,7 +322,7 @@ for (let n = NGRAM_MAX; n >= NGRAM_MIN; n--) {
   }
 }
 accepted.sort((a, b) => b.ids.size - a.ids.size || b.ph.length - a.ph.length);
-section('Wiederholte Wortfolgen (5+ Wörter, über verschiedene Ereignisse)',
+section('Repeated word sequences (5+ words, across different events)',
   accepted.map(a => `${a.ids.size}x  "${a.ph}"\n      → ${[...a.ids].join(', ')}`));
 
 /* ---------- 3) mechanics leaking into narration ---------- */
@@ -333,7 +333,7 @@ for (const r of records) {
     if (m) mech.push(`[${loc(r)}] ${r.field}: "…${norm(r.text).slice(Math.max(0, r.text.indexOf(m[0]) - 25), r.text.indexOf(m[0]) + m[0].length + 25)}…" (${why})`);
   }
 }
-section('Spielmechanik im Erzähltext', mech);
+section('Game mechanics in the narrative text', mech);
 
 /* ---------- 4) typo candidates ---------- */
 // Tripled consonants are usually typos ("gewonnnen"); tripled vowels are
@@ -346,7 +346,7 @@ const PUNCT = [
   [/,,/,               'doppeltes Komma'],
   // A dot followed by a word character is a domain or file extension (.ru,
   // .exe) and no finding.
-  [/\s+(?:[,;]|\.(?![.\w]))/, 'Leerzeichen vor Satzzeichen (Sprechpause " ..." ist erlaubt)'],
+  [/\s+(?:[,;]|\.(?![.\w]))/, 'a space before punctuation (the spoken pause " ..." is allowed)'],
   [/ {2,}/,            'doppeltes Leerzeichen']
 ];
 for (const r of records) {
@@ -375,7 +375,7 @@ for (const r of records) {
     if (m) dated.push(`[${loc(r)}] ${r.field}: "${m[0]}" (${why})`);
   }
 }
-section('Referenzen, die das Spiel altern lassen', dated);
+section('References that make the game age', dated);
 
 /* ---------- 5b) template constructions (editorial frequency baseline) ---------- */
 // The measurable share of the editorial brief "Weg von KI-Prosa": phrasings
@@ -442,12 +442,12 @@ for (const [label, re] of TEMPLATES) {
 }
 tmplRows.sort((a, b) => b.total - a.total);
 sectionNo++;
-console.log(`\n== ${sectionNo}) Schablonen-Konstruktionen (Frequenz-Baseline der Redaktion) — ${tmplRows.reduce((a, r) => a + r.total, 0)} Treffer in ${tmplRows.length} Mustern ==`);
+console.log(`\n== ${sectionNo}) Template constructions (the editorial frequency baseline) - ${tmplRows.reduce((a, r) => a + r.total, 0)} hits across ${tmplRows.length} patterns ==`);
 for (const row of tmplRows) {
   const dist = [...row.perPool.entries()].sort((a, b) => b[1] - a[1]).map(([p, c]) => `${p} ${c}`).join(', ');
   console.log(`  ${String(row.total).padStart(3)}x  ${row.label}   (${dist})`);
   row.where.slice(0, 10).forEach(w => console.log(`        ${w}`));
-  if (row.where.length > 10) console.log(`        … und ${row.where.length - 10} weitere — Muster: ${row.re}`);
+  if (row.where.length > 10) console.log(`        … and ${row.where.length - 10} more - pattern: ${row.re}`);
 }
 
 /* ---------- 6) telegraph events: the rewrite queue ---------- */
@@ -470,8 +470,8 @@ const telegraph = [...perEvent.entries()]
   .map(([k, lens]) => [k, Math.round(lens.reduce((a, b) => a + b, 0) / lens.length), lens.length])
   .filter(([, avg]) => avg < SHORT_RESULT)
   .sort((a, b) => a[1] - b[1]);
-section(`Telegraf-Kandidaten (Ø Ergebnistext unter ${SHORT_RESULT} Zeichen — die Überarbeitungsliste)`,
-  telegraph.map(([k, avg, n]) => `Ø ${String(avg).padStart(3)} Zeichen bei ${n} Ergebnissen  [${k}]`), 120);
+section(`Telegraph candidates (average result text under ${SHORT_RESULT} characters - the rework list)`,
+  telegraph.map(([k, avg, n]) => `avg ${String(avg).padStart(3)} characters over ${n} results  [${k}]`), 120);
 
 /* ---------- 6b) thin openings ---------- */
 // An event or chain root whose scene text is shorter than the buttons below
@@ -493,7 +493,7 @@ for (const pool of pools) {
   }
 }
 thin.sort((a, b) => a[1] - b[1]);
-section('Dünne Auftakte (Szenentext unter 80 Zeichen vor einer Entscheidung)',
+section('Thin openings (scene text under 80 characters before a decision)',
   thin.map(([k, len, t]) => `${String(len).padStart(3)} Zeichen  [${k}]  "${t}"`), 80);
 
 /* ---------- 6c) conspicuous option labels ---------- */
@@ -508,7 +508,7 @@ for (const r of records) {
   if (/->/.test(r.text))
     labels.push(`[${loc(r)}] ${r.field}: ASCII-Pfeil "${norm(r.text)}"`);
 }
-section('Auffällige Optionsbeschriftungen (überlang oder ASCII-Pfeil)', labels, 60);
+section('Conspicuous option captions (over-long or an ASCII arrow)', labels, 60);
 
 /* ---------- 6d) legacy label registers (migration worklist) ---------- */
 // Target style (4.1): options are natural verb phrases from Mueller's
@@ -546,11 +546,11 @@ for (const r of records) {
     // buries five real findings under 130 correct labels, and a section nobody
     // reads is a section that finds nothing.
     if (/^["'„]/.test(PREFIX.exec(t)[2])) quoteLabels.push(`[${loc(r)}] "${t}"`);
-    else legacyLabels.push(`[${loc(r)}] Präfix:   "${t}"`);
+    else legacyLabels.push(`[${loc(r)}] prefix:   "${t}"`);
   }
 }
-section('Alt-Register Optionsbeschriftungen (Migrationsliste zum Hausstil)', legacyLabels, 900);
-section('Etikett vor wörtlicher Rede — nur die LINKE Hälfte prüfen: benennt sie die Handlung oder bewertet sie die Wahl?', quoteLabels, 900);
+section('Option captions in the old register (the migration list towards house style)', legacyLabels, 900);
+section('Label before direct speech - check the LEFT half only: does it name the action or judge the choice?', quoteLabels, 900);
 
 /* ---------- 7) emails: sender inventory & name variants ---------- */
 if (pools.includes('emails')) {
@@ -581,4 +581,4 @@ if (pools.includes('emails')) {
     .forEach(([s, c]) => console.log(`  ${String(c).padStart(3)}x  ${s}`));
 }
 
-console.log('\nFertig. Befunde sind Lesestoff, keine Fehlerliste — geändert wird nur, was redaktionell entschieden ist.');
+console.log('\nDone. Findings are reading matter, not a list of faults - only what has been decided editorially gets changed.');
