@@ -1366,6 +1366,11 @@ export const core = {
      * The four endings only differed in title, line and cause - the sequence
      * (record the outcome, build the diary, set pendingEnd) was the same all
      * four times. finishGame() picks it up later.
+     *
+     * Title and lead arrive as RECIPES, not as sentences (6.1). The end screen
+     * is the one screen a player holds still and reads, so it is the last place
+     * that may store rendered prose - see src/engine/recipe.js and
+     * components/EndModal.svelte, which resolves both on the way to the screen.
      */
     queueEnd: function({ title, lead, cause, outcome, diaryKey, isWin }) {
         this.recordDayResult(outcome);
@@ -1462,16 +1467,16 @@ export const core = {
         if (this.state.al >= 100) {
             if (this.openRageValve()) return;
             this.queueEnd({
-                title: t('end.rageTitle'),
-                lead: this.weekFailLead(t('end.rageQuit')),
+                title: { k: 'end.rageTitle' },
+                lead: this.weekFailLead({ k: 'end.rageQuit' }),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
         }
         // B. TICKET-LAWINE
         else if (this.state.tickets >= 10) {
             this.queueEnd({
-                title: t('end.firedTitle'),
-                lead: this.weekFailLead(t('end.ticketsLead')),
+                title: { k: 'end.firedTitle' },
+                lead: this.weekFailLead({ k: 'end.ticketsLead' }),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
@@ -1502,8 +1507,8 @@ export const core = {
                         if (party) { this.state.pendingEnd = party; return; }
                     }
                     this.queueEnd({
-                        title: t('end.weekTitle'),
-                        lead: t('end.weekLead'),
+                        title: { k: 'end.weekTitle' },
+                        lead: { k: 'end.weekLead' },
                         cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
                     });
                 }
@@ -1514,8 +1519,8 @@ export const core = {
             if (party) { this.state.pendingEnd = party; return; }
 
             this.queueEnd({
-                title: t('end.dayTitle'),
-                lead: t('end.dayLead'),
+                title: { k: 'end.dayTitle' },
+                lead: { k: 'end.dayLead' },
                 cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
             });
         }
@@ -1523,8 +1528,8 @@ export const core = {
         else if (this.state.cr >= 100) {
             if (this.issueChefWarning()) return;
             this.queueEnd({
-                title: t('end.firedTitle'),
-                lead: this.weekFailLead(t('end.firedLead')),
+                title: { k: 'end.firedTitle' },
+                lead: this.weekFailLead({ k: 'end.firedLead' }),
                 cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
             });
         }
@@ -1678,8 +1683,8 @@ export const core = {
     // The texts and the conditions that pick them live in data/data_diary.js,
     // the assembly in engine_diary.js. This method stays so the two call sites
     // keep reading the same.
-    generateDiaryEntry: function(endReason, partyText = "") {
-        return buildDiary(this.state, endReason, partyText);
+    generateDiaryEntry: function(endReason, partyValue = "") {
+        return buildDiary(this.state, endReason, partyValue);
     },
 
 };

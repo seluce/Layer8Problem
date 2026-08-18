@@ -325,7 +325,13 @@ export const state = $state({
     intranetData: null,
 
     // The big centre modal. components/EndModal.svelte renders it.
-    modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null },
+    //
+    // `title` and `lead` hold RECIPES on an end or night screen (a plain string
+    // on a warning, which is dismissed long before anything can switch the
+    // language), `balance` and `party` are snapshots of numbers and ids, and
+    // `diary` is the draw the page was made from - nothing here is a sentence.
+    modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null,
+             balance: null, party: null },
 
     // Achievement notifications currently on screen.
     // components/AchievementToasts.svelte renders them.

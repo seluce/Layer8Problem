@@ -479,16 +479,48 @@ await ok('Der Doppler-Schutz vergleicht Kennungen, nicht Sätze', async () => {
     assert.notEqual(recipeKey(a), recipeKey(c), 'zwei Ereignisse fallen zusammen');
 });
 
+await ok('Der Endschirm folgt dem Sprachwechsel', async () => {
+    // Die drei Formen, in denen ein End- oder Nachtschirm seine Zeilen hält.
+    // Jede muss in beiden Bäumen etwas anderes sagen - täte sie es nicht, wäre
+    // der Schirm eingefroren und niemand würde es merken.
+    const titel = await inBoth({ k: 'end.weekTitle' });
+    assert.ok(titel.de && titel.en, 'eine Seite lieferte nichts');
+    assert.notEqual(titel.de, titel.en, 'der Titel wechselt nicht mit');
+
+    // Satz im Satz im Satz: der Wochenzusatz umschließt den Vorspann, und der
+    // Wochentag sitzt als eigenes Rezept darin.
+    const vorspann = await inBoth({ k: 'week.endsOn',
+                                    v: { base: { k: 'end.rageQuit' }, day: { k: 'week.day.wed' } } });
+    assert.notEqual(vorspann.de, vorspann.en, 'der Vorspann wechselt nicht mit');
+    assert.ok(vorspann.de.includes('Mittwoch'), vorspann.de);
+    assert.ok(vorspann.en.includes('Wednesday'), vorspann.en);
+
+    // Und die Großschreibung gehört dem Schirm, nicht dem Wörterbucheintrag:
+    // der Nachttitel schrie sein Datum früher per .toUpperCase(), was ein
+    // fertiger Satz noch konnte und ein Rezept über `up` erledigt.
+    const nacht = await inBoth({ k: 'week.night.title', v: { day: { k: 'week.day.tue', up: true } } });
+    assert.ok(nacht.de.includes('DIENSTAG'), nacht.de);
+    assert.ok(nacht.en.includes('TUESDAY'), nacht.en);
+});
+
 await ok('Kein aufgezeichnetes Feld hält noch einen fertigen Satz', async () => {
     // Die Regel, auf der das alles ruht: der Zustand hält die Kennung, die
     // Anzeige rendert. Ein Feld, das wieder Prosa speichert, bricht sie leise.
-    const { freshDay } = await import('../src/engine/engine_state.svelte.js');
+    const { freshDay, state } = await import('../src/engine/engine_state.svelte.js');
     const day = freshDay();
     for (const key of ['currentExcuse', 'activeNews']) {
         assert.ok(!(typeof day[key] === 'string' && day[key].length),
                   `${key} hält wieder Text statt einer Kennung`);
     }
     assert.deepEqual(day.boardNotes, [], 'boardNotes hält wieder Zettel statt Ids');
+
+    // Und der Endschirm, seit 6.1 der letzte, der noch Prosa hielt: die zwei
+    // Blöcke, die als HTML kamen, sind Felder für Momentaufnahmen, und der
+    // Stempel für die Sprache ist da. Ein Zustand, der sie nicht führt, ist ein
+    // Zustand, in dem showEnd() wieder Text ablegen könnte.
+    for (const key of ['balance', 'party']) {
+        assert.ok(key in state.modal, `state.modal führt ${key} nicht mehr`);
+    }
 });
 
 console.log(`\n${passed} Tests bestanden.`);

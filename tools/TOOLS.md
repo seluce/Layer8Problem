@@ -213,7 +213,7 @@ runs per cell fluctuate by several percentage points.
 ## 5. `npm test` — the four test suites, in both languages
 
 ```
-npm test        # 16 / 137 / 20 / 38, then the same four again with --lang=en
+npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -225,6 +225,15 @@ comparison against display text into a failure. Before 6.1 the suites only ever
 saw German, and `t()` falling back to German in Node made that invisible: the
 week balance comparisons were green while the English legend read `L/A/B` above
 rows labelled `F/A/C`.
+
+> **And the second run has to STAY in its language.** One test in `week-flow`
+> switches on purpose, to hold the two trees against each other — it used to
+> switch back to a hard-coded `'de'`, so the whole English run went German from
+> that line on: two thirds of the largest suite, silently, and green. Seven old
+> comparisons against German display text were living in that shadow. The last
+> check in the suite now holds `language()` **and** `currentLanguage()` against
+> `LANG`, so the next one is caught at once. Whoever switches, switches back to
+> `LANG`.
 
 Runs under `node --conditions browser --import ./tools/register.mjs`.
 `register.mjs` hooks in `svelte-loader.mjs` so that `engine_state.svelte.js` is

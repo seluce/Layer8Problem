@@ -8,8 +8,14 @@
 
   Until v4.0.0 all of this arrived from the engine as one HTML string. Now it
   hands over fields (lead, cause, diary) and the parts are components of their
-  own. `text` still exists: warnings and the party bring a summary of their
-  own.
+  own. `text` still exists: a warning brings a line of its own.
+
+  Since 6.1 the screen renders rather than repeats. Title and lead arrive as
+  recipes, the week balance and the gala report as snapshots of numbers and ids,
+  the diary as the draw it was made from — so all of it follows a language switch
+  where it stands. The modal is held open for as long as the player wants to read
+  it, which makes it the last place in the game that could store a finished
+  sentence, and it no longer does.
 -->
 <script>
     // Renamed so the $state rune stays usable in this file - see the pitfall
@@ -19,9 +25,22 @@
     import DayChart from './DayChart.svelte';
     import DayReport from './DayReport.svelte';
     import DiaryEntry from './DiaryEntry.svelte';
+    import PartyReport from './PartyReport.svelte';
+    import WeekBalance from './WeekBalance.svelte';
+    import { renderRecipe } from '../engine/recipe.js';
     import { t, tf } from '../i18n/i18n.svelte.js';
 
     const modal = $derived(game.modal);
+
+    // A recorded line as it should read right now. A warning still hands over a
+    // finished string - it is dismissed with a keystroke and has no diary under
+    // it - so both forms are accepted and only one of them is a recipe.
+    const say = (value) => (typeof value === 'string' ? value : renderRecipe(value) ?? '');
+
+    const title = $derived(say(modal.title));
+    const lead = $derived(say(modal.lead));
+    const nextDay = $derived(say(modal.nextDay));
+    const sleep = $derived(modal.night?.sleep ? say(modal.night.sleep) : '');
 
     // Anyone who always wants the curve can set that in the options.
     let showChart = $state(game.autoChart ?? false);
@@ -91,7 +110,7 @@
          button through #modal-content. -->
     <div id="modal-content" class="max-w-2xl w-full bg-slate-900 border-2 {theme.border} p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto">
 
-        <h1 class="text-4xl font-black {theme.title} mb-1">{modal.title}</h1>
+        <h1 class="text-4xl font-black {theme.title} mb-1">{title}</h1>
 
         {#if tally && isFinal}
             <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
@@ -99,14 +118,23 @@
             <div class="mb-4"></div>
         {/if}
 
-        {#if modal.lead}
-            <p class="text-lg text-slate-300 italic mb-2">{modal.lead}</p>
+        {#if lead}
+            <p class="text-lg text-slate-300 italic mb-2">{lead}</p>
         {/if}
 
-        <!-- Warnings and the party bring their own text. It comes from the
-             engine, never from the player. -->
+        <!-- A warning brings its own line. It comes from the engine, never from
+             the player. -->
         {#if modal.text}
             <div class="text-lg text-slate-300 italic">{@html modal.text}</div>
+        {/if}
+
+        <!-- The gala's summary, and under it the week balance. Both used to be
+             HTML built by the engine and handed over inside `text`. -->
+        {#if modal.party}
+            <PartyReport report={modal.party} />
+        {/if}
+        {#if modal.balance}
+            <WeekBalance balance={modal.balance} />
         {/if}
 
         {#if isFinal}
@@ -133,7 +161,7 @@
                         </span>
                     {/each}
                 </div>
-                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: modal.nextDay })}</div>
+                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>{t('stat.tickets')}</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>{t('stat.aggro')}</span>
@@ -144,8 +172,10 @@
                     <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>{t('stat.excuses')}</span>
                     <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
-                {#if modal.night.sleepText}
-                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{modal.night.sleepText}</div>
+                <!-- The line about the night itself: prose from the data tree,
+                     so it arrives as a path into that tree (see queueNightEnd). -->
+                {#if sleep}
+                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{sleep}</div>
                 {/if}
             </div>
         {/if}
@@ -177,7 +207,9 @@
                 </div>
             {/if}
 
-            {#if showDiary}
+            <!-- hasDiary as well as the toggle: the chart can hold this block
+                 open on its own. -->
+            {#if showDiary && hasDiary}
                 <div class="mb-6 py-2">
                     <DiaryEntry diary={modal.diary} />
                 </div>
@@ -187,7 +219,7 @@
         <button onclick={() => isNight ? engine.continueWeekNight()
                              : isFinal ? location.reload() : engine.closeModal()}
                 class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
-            {isNight ? tf('end.btn.next', { day: (modal.nextDay ?? '').toUpperCase() })
+            {isNight ? tf('end.btn.next', { day: nextDay.toUpperCase() })
               : isFinal ? t('end.btn.restart') : t('end.btn.ok')}
         </button>
     </div>

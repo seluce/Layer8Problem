@@ -23,7 +23,7 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
-  components/           38 Svelte components, 8 of them for the intranet
+  components/           40 Svelte components, 8 of them for the intranet
   engine/               12 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on
@@ -427,6 +427,58 @@ settings, archive, difficulty — deliberately sits outside.
 same file. Svelte reads `$name` as a store subscription, and `state` is not a
 store. For element references an attachment is the better route anyway, see
 `PhoneView.svelte`.
+
+### The state holds the identity, the display renders (6.1)
+
+`src/engine/recipe.js` states the rule for the log and the phone: a line that
+stays on screen stores WHAT it says, not the sentence it said. Since 6.1 the same
+rule covers `state.modal`, which was the last surface still keeping finished
+prose — and the one held open longest, because an end screen is read rather than
+glanced at.
+
+| Field | Holds |
+|---|---|
+| `title`, `lead` | a recipe (`{k}` / `{k, v}`); a plain string only on a warning box |
+| `balance` | the week's figures — level as an id, days as indices, values as numbers |
+| `party` | the gala report: the ending as a reference into the tree, achievements as ids |
+| `night.sleep` | a path into `special.week_sleep`, so the draw is recorded and not its result |
+| `nextDay` | the weekday as a recipe, via `dayNameValue()` |
+| `diary` | the DRAW the page was made from — see below |
+| `text` | a warning's own line, and nothing else any more |
+
+`components/EndModal.svelte` resolves all of it on the way to the screen;
+`WeekBalance.svelte` and `PartyReport.svelte` draw the two blocks that used to
+arrive as HTML strings. That removed a trap as well as a translation gap: the
+balance sheet had to be built before `endWeek()` cleared the week, and a snapshot
+cannot forget what a builder can — which the gala had already got wrong once.
+
+### The diary is a draw, not a page
+
+`buildDiary()` used to hand over finished paragraphs, which made it the one part
+of the screen that could not be told again. It now writes down **what was
+drawn**: per paragraph a list of parts, and a part is either one line
+(`{ref: {p:'diary', path:[slot, poolIndex, 'lines', lineIndex]}}`) or an intro
+with the clauses it wraps. `renderDiary()` — the only place that turns any of it
+into a sentence — resolves the paths, ties the clauses together with
+`diary.listJoin` and fills the marks in.
+
+Three things this rests on, each of which breaks quietly if it is dropped:
+
+- **The pool index, not the filtered one.** Lines are drawn from the fragments
+  that FIT; the path has to name the position in the whole slot. Writing down the
+  filtered index points at a different fragment as soon as one before it does not
+  fit — which is the normal case, not the edge.
+- **`renderDiary()` reads through `tree()`, never `DB`.** It runs inside a
+  `$derived`. In Node the two are the same object, so only the browser would show
+  it: the page would stay in yesterday's language while the frame around it
+  changed.
+- **Two of the marks are not figures.** `{weekday}` is a dictionary entry and
+  `{party}` is prose from the data tree, so both travel as recipes; the rest are
+  numbers and colleagues' names, which read the same in either tree.
+
+A part that will not resolve drops its paragraph rather than being guessed at,
+and so does a mark that stays unfilled — a paragraph with a hole in it is not the
+paragraph. An entry from before 6.1 carries `text` and renders as it stands.
 
 ## The week mode
 

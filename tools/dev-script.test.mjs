@@ -36,7 +36,7 @@ const LANG = (process.argv.find(a => a.startsWith('--lang=')) ?? '').split('=')[
 await loadCore(LANG);
 
 const { useLanguage, t, tf } = await import('../src/i18n/i18n.svelte.js');
-const { dayName } = await import('../src/engine/engine_week.js');
+const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 await useLanguage(LANG);
 
 const { core } = await import('../src/engine/engine_core.js');
@@ -125,9 +125,9 @@ await ok('dev.feierabend(2) stellt 16:20 ein, ohne die Nacht schon auszulösen',
 await ok('dev.nacht() zeigt den Nacht-Screen mit Gepäck und Schlaftext', () => {
     dev.nacht();
     assert.equal(state.modal.isNight, true);
-    assert.equal(state.modal.nextDay, dayName(2));
+    assert.deepEqual(state.modal.nextDay, dayNameValue(2));
     assert.ok(state.modal.night.ticketsAfter <= state.modal.night.ticketsBefore);
-    assert.ok(typeof state.modal.night.sleepText === 'string');
+    assert.ok(state.modal.night.sleep?.ref, 'der Schlaftext reist nicht als Verweis');
     assert.equal(calls.end, null);                       // kein Endscreen
 });
 await ok('dev.feierabend(4, true) löst direkt aus', () => {
@@ -135,7 +135,7 @@ await ok('dev.feierabend(4, true) löst direkt aus', () => {
     dev.tag(1, 'hard');
     dev.feierabend(4, true);
     assert.equal(state.modal.isNight, true);
-    assert.equal(state.modal.nextDay, dayName(4));
+    assert.deepEqual(state.modal.nextDay, dayNameValue(4));
 });
 await ok('dev.nacht() am Freitag warnt statt zu brechen', () => {
     reset();
@@ -177,11 +177,9 @@ await ok('dev.gewonnen() zeigt die Wochen-Bilanz mit fünf Zeilen', () => {
     dev.tag(1, 'easy');
     dev.gewonnen();
     assert.ok(calls.end, 'Endscreen fehlt');
-    assert.equal(calls.end.title, t('end.weekTitle'));
-    assert.ok(calls.end.text.includes(t('week.summary.legend')));
-    for (let i = 0; i < 5; i++) {
-        assert.ok(calls.end.text.includes(dayName(i)), dayName(i) + ' fehlt in der Bilanz');
-    }
+    assert.deepEqual(calls.end.title, { k: 'end.weekTitle' });
+    // Die Bilanz ist eine Momentaufnahme (6.1): fünf Zeilen, je ein Tagesindex.
+    assert.deepEqual(calls.end.balance.rows.map(r => r.day), [0, 1, 2, 3, 4]);
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
 });
@@ -192,8 +190,10 @@ await ok('dev.raus("rage", 3) endet am Mittwoch mit Tagesnennung', () => {
     // cause, not the title: the title is a dictionary entry and reads
     // differently in the other language.
     assert.equal(calls.end.cause, 'rage');
-    assert.ok(calls.end.lead.includes(tf('week.endsOn', { base: '', day: dayName(2) }).trim()));
-    assert.ok(calls.end.text.includes(`✗ ${dayName(2)}`));
+    assert.deepEqual(calls.end.lead,
+                     { k: 'week.endsOn', v: { base: { k: 'end.rageQuit' }, day: dayNameValue(2) } });
+    assert.deepEqual(calls.end.balance.rows.at(-1),
+                     { day: 2, win: false, title: { k: 'end.rageTitle' } });
     assert.equal(state.archive.stats.weeksRageQuit, 1);
 });
 await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
@@ -202,19 +202,19 @@ await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
     dev.raus('tickets', 4);
     // Both ways out are titled GEFEUERT; only the cause tells them apart.
     assert.equal(calls.end.cause, 'tickets');
-    assert.ok(calls.end.lead.includes(dayName(3)));
+    assert.deepEqual(calls.end.lead.v.day, dayNameValue(3));
 
     reset();
     dev.tag(1, 'normal');
     dev.raus('chef', 2);
     assert.equal(calls.end.cause, 'chef');
-    assert.ok(calls.end.lead.includes(dayName(1)));
+    assert.deepEqual(calls.end.lead.v.day, dayNameValue(1));
 });
 await ok('dev.morgentod() beendet die Woche in der Morgenstimmung', () => {
     reset();
     dev.morgentod(4);
     assert.ok(calls.end, 'Endscreen fehlt');
-    assert.ok(calls.end.lead.includes(dayName(3)));
+    assert.deepEqual(calls.end.lead.v.day, dayNameValue(3));
     assert.equal(state.week.active, false);
 });
 

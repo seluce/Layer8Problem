@@ -1,5 +1,5 @@
 import { KEYS } from './keys.js';
-import { t, tf } from '../i18n/i18n.svelte.js';
+import { t } from '../i18n/i18n.svelte.js';
 import { freshDay, snapshotDay } from './engine_state.svelte.js';
 import { platform } from '../platform.js';
 import { DB, ensure } from '../data.js';
@@ -70,6 +70,25 @@ export const WEEK_DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri'];
 // i18n-uses: week.day.mon, week.day.tue, week.day.wed, week.day.thu, week.day.fri
 /** @param {number} index 0-based day of the week */
 export const dayName = (index) => t(`week.day.${WEEK_DAY_KEYS[index] ?? WEEK_DAY_KEYS[0]}`);
+
+/**
+ * The same day as a recipe VALUE rather than as the word (6.1).
+ *
+ * dayName() renders; this one names. Four sentences on the end and night
+ * screens carry a weekday inside them, and those screens are held for as long
+ * as the player wants to read them - so they must store the id and resolve on
+ * the way to the screen, exactly like a log line does. See src/engine/recipe.js
+ * for the form; `up` upper-cases at render time, which is what the night
+ * headline used to do with .toUpperCase() before there was anything to
+ * re-render.
+ *
+ * @param {number} index 0-based day of the week
+ * @param {boolean} [up] upper-case the result
+ */
+export const dayNameValue = (index, up = false) => {
+    const value = { k: `week.day.${WEEK_DAY_KEYS[index] ?? WEEK_DAY_KEYS[0]}` };
+    return up ? { ...value, up: true } : value;
+};
 
 /**
  * Daily pool contingents (design 6.2), shared with tools/simulate-week.mjs.
@@ -148,6 +167,7 @@ export const week = {
     WEEK_TUNING,
     WEEK_DAY_KEYS,
     dayName,
+    dayNameValue,
 
     /**
      * The plain difficulty multiplier - the number the day mode calls
@@ -189,9 +209,14 @@ export const week = {
         return m >= 1.25 ? 3 : (m >= 1.0 ? 2 : 1);
     },
 
-    /** "Montag" ... "Freitag" for headers, logs and the night screen. */
+    /** "Montag" ... "Freitag" for headers and logs - rendered on the spot. */
     weekDayName: function() {
         return dayName((this.state.week?.dayIndex ?? 1) - 1);
+    },
+
+    /** The same day as a recipe value, for anything that stays on screen. */
+    weekDayValue: function(up = false) {
+        return dayNameValue((this.state.week?.dayIndex ?? 1) - 1, up);
     },
 
     /**
@@ -427,10 +452,18 @@ export const week = {
 
     // --- END OF A WEEK DAY ------------------------------------------------
 
-    /** Appends the week note to a fail lead while a week runs. */
+    /**
+     * Appends the week note to a fail lead while a week runs.
+     *
+     * Both halves stay recipes. The lead sits on the end screen for as long as
+     * the player wants to read it, and a sentence that has already been
+     * rendered cannot follow a language switch - src/engine/recipe.js has the
+     * full argument, and `week.endsOn` is the case it was written for: a
+     * dictionary sentence with another dictionary sentence inside it.
+     */
     weekFailLead: function(base) {
         return this.state.week.active
-            ? tf('week.endsOn', { base, day: this.weekDayName() })
+            ? { k: 'week.endsOn', v: { base, day: this.weekDayValue() } }
             : base;
     },
 
@@ -450,17 +483,21 @@ export const week = {
      * and the front belongs to whatever stood out.
      */
     nightLead: function(remaining, report) {
-        const rest = remaining === 1 ? t('week.night.lastDay')
-                                     : tf('week.night.remaining', { days: remaining });
+        const rest = remaining === 1 ? { k: 'week.night.lastDay' }
+                                     : { k: 'week.night.remaining', v: { days: remaining } };
 
         // Ceiling: the day ends at ten tickets, and a quarter of nine is
         // three - anything above that can never occur.
-        if (report.ticketsAfter >= 3)  return tf('week.night.tickets', { rest });
-        if (report.ticketsAfter === 0) return tf('week.night.clean', { rest });
-        if (report.alAfter >= 55)      return tf('week.night.aggro', { rest });
-        if (report.crAfter >= 55)      return tf('week.night.radar', { rest });
-        if (report.fl >= 60)           return tf('week.night.lazy', { rest });
-        return tf('week.night.plain', { rest });
+        //
+        // Written out six times rather than through a little helper on purpose:
+        // lint-i18n reads the key off the line it stands on, and a key handed
+        // to a function is as invisible to it as a computed one.
+        if (report.ticketsAfter >= 3)  return { k: 'week.night.tickets', v: { rest } };
+        if (report.ticketsAfter === 0) return { k: 'week.night.clean', v: { rest } };
+        if (report.alAfter >= 55)      return { k: 'week.night.aggro', v: { rest } };
+        if (report.crAfter >= 55)      return { k: 'week.night.radar', v: { rest } };
+        if (report.fl >= 60)           return { k: 'week.night.lazy', v: { rest } };
+        return { k: 'week.night.plain', v: { rest } };
     },
 
     queueNightEnd: function() {
@@ -481,29 +518,48 @@ export const week = {
 
         // One line about the night itself (data_special.week_sleep): level
         // picks the register, 'worn' takes over once the wear shows.
-        const sleepPool = DB.special?.week_sleep?.[s.week.level];
+        //
+        // The DRAW is recorded, not its result (6.1). This line sits on a screen
+        // the player holds open, and it is prose from the data tree - so it
+        // travels as a path into that tree and is resolved on the way to the
+        // screen. Both trees carry the same list lengths (lint-parity), so the
+        // index lands on the counterpart of the same sentence.
+        const level = s.week.level;
         const sleepStage = s.week.dayIndex >= 3 ? 'worn' : 'fresh';
+        const sleepLines = DB.special?.week_sleep?.[level]?.[sleepStage] ?? [];
+
         // Monday and Tuesday both draw from "fresh", Wednesday and Thursday
         // both from "worn" - with two lines per stage that made a repeat
         // inside a single week a 75% affair. Remembering the last one takes
         // that down to zero as long as a stage holds more than one line.
-        let sleepLines = sleepPool?.[sleepStage] ?? [];
-        if (sleepLines.length > 1 && this._lastSleepText) {
-            const unheard = sleepLines.filter(line => line !== this._lastSleepText);
-            if (unheard.length) sleepLines = unheard;
+        //
+        // Remembered as an INDEX, and only within the same register: the old
+        // guard compared the finished sentence, which no longer exists here,
+        // and an index from the other stage would name a different line.
+        let choices = sleepLines.map((_, i) => i);
+        const last = this._lastSleep;
+        if (choices.length > 1 && last && last.level === level && last.stage === sleepStage) {
+            const unheard = choices.filter(i => i !== last.index);
+            if (unheard.length) choices = unheard;
         }
-        preview.report.sleepText = sleepLines.length
-            ? sleepLines[Math.floor(Math.random() * sleepLines.length)]
-            : '';
-        this._lastSleepText = preview.report.sleepText;
+
+        if (choices.length) {
+            const index = choices[Math.floor(Math.random() * choices.length)];
+            preview.report.sleep = { ref: { p: 'special', path: ['week_sleep', level, sleepStage, index] } };
+            this._lastSleep = { level, stage: sleepStage, index };
+        } else {
+            preview.report.sleep = null;
+        }
 
         s.pendingEnd = {
             isNight: true,
-            title: tf('week.night.title', { day: this.weekDayName().toUpperCase() }),
+            title: { k: 'week.night.title', v: { day: this.weekDayValue(true) } },
             lead: this.nightLead(remaining, preview.report),
             diary: this.generateDiaryEntry('WIN'),
             night: preview.report,
-            nextDay: dayName(s.week.dayIndex),
+            // Tomorrow, as a recipe: it names the button and the carry-over
+            // header, and both are read on a screen that stands still.
+            nextDay: dayNameValue(s.week.dayIndex),
         };
     },
 
@@ -558,7 +614,7 @@ export const week = {
         const outcome = end.isWin ? 'survived' : (end.cause === 'rage' ? 'rage' : 'fired');
 
         this.recordWeekResult(outcome, daysCompleted);   // reads difficultyKey -> before endWeek
-        end.text = this.buildWeekBalanceHTML(end);
+        end.balance = this.buildWeekBalance(end);        // reads week.weekLog -> before endWeek
         // endWeek() below clears week.active, so the screen cannot ask the
         // state what mode it belonged to - it travels on the end object.
         //
@@ -635,50 +691,51 @@ export const week = {
     /**
      * The balance sheet: one line per day, then the week totals.
      *
+     * NUMBERS, not markup (6.1). Up to here this built the finished HTML and
+     * handed it to the end screen as a string, which froze it in the language
+     * it was built in - the one block on that screen made entirely of figures
+     * was also the one that could not follow a switch. components/WeekBalance
+     * .svelte draws it now and reads every word through t() on the way past.
+     *
+     * That fixes a second thing at the same time. endWeek() empties state.week
+     * a line later, so the old builder HAD to run before it and could never be
+     * called again; the comment saying so was the only thing keeping the order
+     * honest, and the gala forgot it once already. A snapshot cannot forget: it
+     * carries what it needs.
+     *
      * Each day closes with the values it handed to the next morning, not with
      * its peak - the peak was a number without consequences, while these three
      * are exactly what the night worked on and what the following day started
-     * from. Abbreviated to keep the row on one line; the header carries the
-     * legend once. The initials belong to the DICTIONARY, not to this code:
-     * German shortens Faulheit/Aggro/Chef to F/A/C, English
-     * Laziness/Aggro/Boss to L/A/B (GLOSSAR §3a). They were hard-wired here as
-     * F/A/C until the twentieth session, so an English week showed a legend
-     * reading "L Laziness · A Aggro · B Boss" above rows labelled F/A/C - the
-     * one place where the letters have to agree, and the only one where they
-     * did not.
+     * from. The letters of the legend belong to the DICTIONARY (German shortens
+     * Faulheit/Aggro/Chef to F/A/C, English Laziness/Aggro/Boss to L/A/B,
+     * GLOSSAR SS3a) and now sit next to the rows that use them, in one file.
+     *
+     * @returns {{mode: string, rows: object[], coffee: number, mails: number}}
      */
-    buildWeekBalanceHTML: function(end) {
+    buildWeekBalance: function(end) {
         const s = this.state, w = s.week;
-        const line = (icon, name, right) =>
-            `<div class="flex justify-between gap-4"><span>${icon} ${name}</span><span class="text-slate-400">${right}</span></div>`;
-        // One ticket is a ticket, not tickets - the same shape boot.carry and
-        // knowledge.missing already use. The count decides the KEY, because a
-        // plural rule glued on afterwards belongs to one language only.
-        // i18n-uses: week.summary.values, week.summary.valuesOne
-        const values = (tickets, fl, al, cr) =>
-            tf(tickets === 1 ? 'week.summary.valuesOne' : 'week.summary.values', {
-                tickets, fl: Math.round(fl), al: Math.round(al), cr: Math.round(cr)
-            });
+        const round = (row) => ({ ...row, l: Math.round(row.l), a: Math.round(row.a), b: Math.round(row.b) });
 
-        const rows = w.weekLog.map(d => line('✓', dayName(d.dayIndex - 1),
-            values(d.endTickets, d.endL ?? 0, d.endA ?? 0, d.endB ?? 0)));
+        // day is the 0-based index components/WeekBalance.svelte hands to
+        // dayName() - an index, never the word, for the reason WEEK_DAY_KEYS
+        // exists at all.
+        const rows = w.weekLog.map(d => round({
+            day: d.dayIndex - 1, win: true,
+            tickets: d.endTickets, l: d.endL ?? 0, a: d.endA ?? 0, b: d.endB ?? 0
+        }));
 
         rows.push(end.isWin
-            ? line('✓', dayName(w.dayIndex - 1), values(s.tickets, s.fl, s.al, s.cr))
-            : line('✗', dayName(w.dayIndex - 1), end.title));
+            ? round({ day: w.dayIndex - 1, win: true, tickets: s.tickets, l: s.fl, a: s.al, b: s.cr })
+            // The failed day names its cause instead of its figures, and the
+            // title is a recipe by now - so it is passed on, not rendered.
+            : { day: w.dayIndex - 1, win: false, title: end.title });
 
-        const coffee = w.weekLog.reduce((n, d) => n + (d.coffee || 0), 0) + s.coffeeConsumed;
-        const mails  = w.weekLog.reduce((n, d) => n + (d.mailsIgnored || 0), 0) + s.emailsIgnored;
-
-        return `<div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1">` +
-            `<div class="flex justify-between items-baseline gap-4 mb-2">` +
-                `<span class="text-[10px] uppercase tracking-widest text-purple-400">${tf('week.summary.title', { mode: t(`week.diff.${WEEK_DIFFS[w.level].key}`) })}</span>` +
-                `<span class="text-[9px] text-slate-600">${t('week.summary.legend')}</span>` +
-            `</div>` +
-            rows.join('') +
-            // i18n-uses: week.summary.totals, week.summary.totalsOne
-            `<div class="pt-2 mt-2 border-t border-slate-800 text-slate-400">${tf(mails === 1 ? 'week.summary.totalsOne' : 'week.summary.totals', { coffee, mails })}</div>` +
-            `</div>`;
+        return {
+            mode: WEEK_DIFFS[w.level].key,
+            rows,
+            coffee: w.weekLog.reduce((n, d) => n + (d.coffee || 0), 0) + s.coffeeConsumed,
+            mails:  w.weekLog.reduce((n, d) => n + (d.mailsIgnored || 0), 0) + s.emailsIgnored,
+        };
     },
 
     // --- RESUME & RESTART -------------------------------------------------

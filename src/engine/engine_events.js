@@ -1,5 +1,5 @@
 import { DB, ensure } from '../data.js';
-import { t, tf } from '../i18n/i18n.svelte.js';
+import { t } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
 import { PLAYER_CHAR, charDisplayName } from './chars.js';
 import { findEventById, itemNameValue } from './recipe.js';
@@ -885,18 +885,26 @@ export const events = {
     // Routes a chosen option to whatever handles it.
     chooseOption: function(opt, index = -1) {
         const ev = this.state.terminal.event ?? {};
-        if (opt.action) return this.runAction(opt.action);
+        const located = index > -1 && !!this.state.currentEventId;
+        // An action's arguments can end up on screen - the gala's ending is
+        // named in them - so the action is told WHERE they stand, not just what
+        // they said. Same shape as the option reference below it.
+        if (opt.action) return this.runAction(opt.action,
+            located ? { i: this.state.currentEventId, path: ['opts', index, 'action', 'args'] } : null);
         if (ev.isChain) return this.handleChainChoice(opt.next);
         return this.resolveTerminal(opt, ev.type,
-            index > -1 && this.state.currentEventId
-                ? { ref: { i: this.state.currentEventId, path: ['opts', index, 'r'] } }
-                : null);
+            located ? { ref: { i: this.state.currentEventId, path: ['opts', index, 'r'] } } : null);
     },
 
     // Calls an engine method named by the data.
     // Deliberately a lookup and not eval(): the data describes WHICH method to
     // call, it does not carry executable code.
-    runAction: function(action) {
+    //
+    // `argsRef` is the path to the action's own arguments in the data tree. It
+    // travels as one extra argument after the declared ones, which is why only
+    // finishParty() takes it: the other action in the stock,
+    // goToPartyStation(), puts nothing on screen that could need re-reading.
+    runAction: function(action, argsRef = null) {
         if (typeof action !== 'object' || !action.fn) {
             console.error("Invalid action, expected { fn, args }:", action);
             return;
@@ -906,7 +914,7 @@ export const events = {
             console.error(`Unknown action: ${action.fn}`);
             return;
         }
-        return fn.apply(this, action.args || []);
+        return fn.apply(this, [...(action.args || []), argsRef]);
     },
 
 
@@ -1425,7 +1433,21 @@ export const events = {
         this.renderTerminal(ev, 'party');
     },
 
-    finishParty: function(title, text) {
+    /**
+     * The gala's end screen - the second way a week can end.
+     *
+     * Everything on it used to be assembled here as HTML: the ending's name, the
+     * two figures, the achievements of the evening, and the week balance
+     * underneath. A string cannot follow a language switch, so since 6.1 this
+     * builds a SNAPSHOT and components/PartyReport.svelte draws it. Only the
+     * ending's name is prose, and it lives in the data tree - so it travels as a
+     * reference to the tree instead of as the word it happened to say.
+     *
+     * @param {string} title    the ending's name, as the data spelled it
+     * @param {string} text     the ending's prose, for the diary
+     * @param {object} [argsRef] path to those two in the tree, from runAction()
+     */
+    finishParty: function(title, text, argsRef = null) {
         // 1. Only mark it as played at the very last moment
         if (this.state.currentPartyKey) {
             localStorage.setItem(this.state.currentPartyKey, 'true'); 
@@ -1435,75 +1457,64 @@ export const events = {
         // --- UNLOCK THE GALA ACHIEVEMENT ---
         this.unlockAchievement('ach_party');
 
-        // 2. Assemble the party report box
-        // The same three captions the day report uses, from the same keys:
-        // both name the day that has just ended, so they must not drift.
-        let diffName = t('dayReport.diff.normal');
-        if (this.state.difficultyMult < 1.0) diffName = t('dayReport.diff.easy');
-        if (this.state.difficultyMult > 1.0) diffName = t('dayReport.diff.hard');
-        if (this.state.week.active) diffName = tf('week.badge', { mode: t(`week.diff.${this.WEEK_DIFFS[this.state.week.level].key}`) });
-
-        let statsHTML = `
-            <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
-                <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">${t('party.report.title')} <span class="text-white font-bold">${diffName}</span></div>
-                <div class="grid grid-cols-2 gap-2 text-center font-mono">
-                    <div class="flex flex-col">
-                        <span class="text-emerald-400 font-bold text-xl">${Math.round(this.state.fl)}%</span>
-                        <span class="text-[10px] text-slate-400">${t('party.report.chill')}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-orange-400 font-bold text-xl">${Math.round(this.state.al)}%</span>
-                        <span class="text-[10px] text-slate-400">${t('party.report.cringe')}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Collect the day's achievements
-        let achHTML = this.state.achievedIds.length > 0 ? 
-            `<div class="mt-2 border-t border-slate-700 pt-2"><div class="font-bold text-yellow-400 mb-2 text-xs uppercase">${t('achievement.today')}</div>${this.state.achievedIds.map(id => (DB.achievements ?? []).find(a => a.id === id)).filter(Boolean).map(a => `<div class="text-xs text-slate-300">🏆 ${a.icon ?? ''} ${a.title}</div>`).join('')}</div>` 
-            : "";
-
-        let fullReport = statsHTML + achHTML;
+        // 2. The party report, as figures and ids
+        // The level travels as an id and the day mode's three captions come from
+        // the same keys the day report uses: both name the day that has just
+        // ended, so they must not drift.
+        const mult = this.state.difficultyMult;
+        const report = {
+            subtitle: argsRef ? { ref: { ...argsRef, path: [...argsRef.path, 0] } } : title,
+            l: Math.round(this.state.fl),
+            a: Math.round(this.state.al),
+            mode: this.state.week.active
+                ? { week: true, level: this.WEEK_DIFFS[this.state.week.level].key }
+                : { week: false, diff: mult < 1.0 ? 'easy' : mult > 1.0 ? 'hard' : 'normal' },
+            // Ids: the component reads their titles out of the running tree.
+            //
+            // De-duplicated, and that is not cosmetic. achievedIds gets a push
+            // per unlock, so an achievement upgraded to a better grade on the
+            // same evening stands in it twice - the old string version listed
+            // the same trophy twice and nobody noticed. A keyed list cannot
+            // even be drawn from that, which is how it was found: the report
+            // threw each_key_duplicate and took the whole end screen with it.
+            achievements: [...new Set(this.state.achievedIds)],
+        };
 
         // 3. Generate the diary (including the party ending)
+        //
+        // The ending's prose goes into the page as the {party} mark, and it is
+        // prose from the data tree - so it travels the same way the subtitle
+        // above does, as a reference rather than as the words that came in.
         this.recordDayResult('survived');
-        let diary = this.generateDiaryEntry("PARTY", text);
+        const partyValue = argsRef ? { ref: { ...argsRef, path: [...argsRef.path, 1] } } : text;
+        const diary = this.generateDiaryEntry("PARTY", partyValue);
 
-        // 4. Show the end modal - the hidden [PARTY] marker drives the colour
-        let subtitleHTML = `<div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">${title}</div>`;
-        // A gala on the Friday of a week closes the WEEK as well: counters,
-        // balance sheet below the party report, save slot. The balance must
-        // be built BEFORE endWeek() - it reads the still-active week.
-        let weekHTML = '';
-        let warWoche = false;
-        let leadText = t('party.end.leadDay');
-        let weekMode = null, weekDay = null;
+        // 4. A gala on the Friday of a week closes the WEEK as well: counters,
+        // balance sheet below the party report, save slot. Level and day are
+        // read BEFORE endWeek(), which empties the week - finishWeek() takes the
+        // same two along, and the gala must not be the poorer of the two paths.
+        let balance = null, isWeek = false, weekMode = null, weekDay = null;
         if (this.state.week.active) {
-            warWoche = true;
-            // Read BEFORE endWeek(), for the same reason the balance sheet is
-            // built before it: afterwards the state no longer knows which week
-            // this was. finishWeek() takes the same two along - the gala is the
-            // second way a week can end, and it must not be the poorer one.
+            isWeek = true;
             weekMode = this.WEEK_DIFFS[this.state.week.level].key;
             weekDay = this.state.week.dayIndex;
             this.recordWeekResult('survived', 5);
-            weekHTML = this.buildWeekBalanceHTML({ isWin: true });
+            balance = this.buildWeekBalance({ isWin: true });
             this.endWeek();
-            leadText = t('party.end.leadWeek');
         }
 
         this.showEnd({
-            title: t('party.end.title'),
-            lead: leadText,
-            text: subtitleHTML + fullReport + weekHTML,   // Party-eigene Zusammenfassung
+            title: { k: 'party.end.title' },
+            lead: isWeek ? { k: 'party.end.leadWeek' } : { k: 'party.end.leadDay' },
             cause: "party",
             diary,
+            party: report,
+            balance,
             isWin: true,
             // endWeek() ran above, so the state no longer knows which mode
             // this ending came from - the header would otherwise have read
             // "Arbeitstag Nr." above a week that was survived.
-            isWeek: warWoche,
+            isWeek,
             weekMode,
             weekDay
         });

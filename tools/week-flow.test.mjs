@@ -23,7 +23,7 @@ globalThis.document = {
     documentElement: { lang: '' },
 };
 
-const { DB, ensure, loadCore } = await import('../src/data.js');
+const { DB, ensure, loadCore, currentLanguage } = await import('../src/data.js');
 
 // 6.0: the core tier is loaded, not statically imported. German is the source,
 // and it stays the default here - but the suite runs in EITHER language now:
@@ -39,7 +39,7 @@ const { DB, ensure, loadCore } = await import('../src/data.js');
 const LANG = (process.argv.find(a => a.startsWith('--lang=')) ?? '').split('=')[1] || 'de';
 await loadCore(LANG);
 await ensure('lore');
-const { buildDiary } = await import('../src/engine/engine_diary.js');
+const { buildDiary, renderDiary } = await import('../src/engine/engine_diary.js');
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
@@ -48,13 +48,13 @@ const { week } = await import('../src/engine/engine_week.js');
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
-const { useLanguage, t, tf } = await import('../src/i18n/i18n.svelte.js');
+const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
 // SAME dictionary the engine reads, never through the German words themselves.
 // A test that spells out display text passes in one language and says nothing
 // about the other - and it stayed green while the English weekly balance was
 // demonstrably wrong (GLOSSAR 7b, case twenty-nine).
-const { dayName } = await import('../src/engine/engine_week.js');
+const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
@@ -145,8 +145,11 @@ await ok('16:30 an Tag 2 queued die Nacht statt Feierabend, Gala unterdrückt', 
     engine.partyInvitation = realParty;
 
     assert.equal(state.pendingEnd.isNight, true);
-    assert.equal(state.pendingEnd.title, tf('week.night.title', { day: dayName(1).toUpperCase() }));
-    assert.equal(state.pendingEnd.nextDay, dayName(2));
+    // Identities, not words: both stand on a screen that is held open, so both
+    // are recipes and the display resolves them (6.1).
+    assert.deepEqual(state.pendingEnd.title, { k: 'week.night.title', v: { day: dayNameValue(1, true) } });
+    assert.deepEqual(state.pendingEnd.nextDay, dayNameValue(2));
+    assert.equal(renderRecipe(state.pendingEnd.title), tf('week.night.title', { day: dayName(1).toUpperCase() }));
     assert.equal(state.pendingEnd.night.ticketsAfter, 2);       // ceil(8*0.25)
     assert.equal(state.archive.stats.daysSurvived ?? 0, 0);     // Tageszähler bleiben rein
     assert.equal(state.archive.stats.survived_week_normal, 1);  // gezählt wird im Wochen-Namensraum
@@ -185,18 +188,23 @@ await ok('Freitag 16:30 → WOCHE ÜBERLEBT mit Bilanz, Statistiken, Slot geräu
     state.fl = 52; state.al = 44; state.cr = 39;
     state.meetingDone = true;              // der Freitag endet erst nach dem Meeting
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd.title, t('end.weekTitle'));
+    assert.deepEqual(state.pendingEnd.title, { k: 'end.weekTitle' });
     engine.finishGame();
 
     assert.ok(calls.end);
-    assert.ok(calls.end.text.includes(tf('week.summary.title', { mode: t('week.diff.easy') })));
-    assert.ok(calls.end.text.includes(`✓ ${dayName(4)}`));
-    assert.ok(calls.end.text.includes(tf('week.summary.totals', { coffee: 12, mails: 3 })));  // 3+2+4+1+2
-    // Closing values instead of the peak, abbreviated, legend in the header
-    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 4, fl: 20, al: 31, cr: 24 })), 'Montagszeile');
-    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 6, fl: 52, al: 44, cr: 39 })), 'Freitagszeile');
-    assert.ok(calls.end.text.includes(t('week.summary.legend')), 'Legende');
-    assert.ok(!calls.end.text.includes('Peak'), 'Peak muss verschwunden sein');
+    // Die Bilanz reist als Momentaufnahme, nicht als HTML (6.1): Stufe als
+    // Kennung, Tage als Index, Werte als Zahlen. Was daraus auf dem Schirm
+    // wird, entscheidet components/WeekBalance.svelte — und damit die Sprache,
+    // die gerade läuft.
+    const bilanz = calls.end.balance;
+    assert.equal(calls.end.text ?? '', '', 'die Bilanz darf nicht mehr als Text mitreisen');
+    assert.equal(bilanz.mode, 'easy');
+    assert.equal(bilanz.rows.length, 5, 'vier Log-Tage und der Freitag');
+    // Endwerte statt Spitzen, gerundet
+    assert.deepEqual(bilanz.rows[0], { day: 0, win: true, tickets: 4, l: 20, a: 31, b: 24 }, 'Montagszeile');
+    assert.deepEqual(bilanz.rows[4], { day: 4, win: true, tickets: 6, l: 52, a: 44, b: 39 }, 'Freitagszeile');
+    assert.equal(bilanz.coffee, 12);                            // 3+2+4+1+2
+    assert.equal(bilanz.mails, 3);
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.archive.stats.weeksSurvived_easy, 1);    // Wochen-Abschluss, eigener Key
     assert.equal(state.archive.stats.survived_week_easy, 1);    // der Freitag als Wochen-TAG
@@ -214,15 +222,160 @@ await ok('Rage Quit am Mittwoch: Tagesnennung, weeksRageQuit, Ventil zählt 1×'
     // cause, not the title: the title is a dictionary entry and reads
     // differently in the other language.
     assert.equal(state.pendingEnd.cause, 'rage');
-    assert.ok(state.pendingEnd.lead.includes(tf('week.endsOn', { base: '', day: dayName(2) }).trim()));
+    // Ein Satz im Satz: der Wochenzusatz umschließt den Vorspann, beide als
+    // Rezept, der Tag als Kennung.
+    assert.deepEqual(state.pendingEnd.lead,
+                     { k: 'week.endsOn', v: { base: { k: 'end.rageQuit' }, day: dayNameValue(2) } });
+    assert.ok(renderRecipe(state.pendingEnd.lead).includes(dayName(2)));
     engine.finishGame();
 
-    assert.ok(calls.end.text.includes(`✗ ${dayName(2)}`));
+    // Der gescheiterte Tag nennt seinen Grund statt seiner Zahlen — und der
+    // Grund ist der Titel des Schirms, also ebenfalls ein Rezept.
+    assert.deepEqual(calls.end.balance.rows.at(-1),
+                     { day: 2, win: false, title: { k: 'end.rageTitle' } });
     assert.equal(state.archive.stats.weeksRageQuit, 1);
     assert.equal(state.archive.stats.weekBestDay, 2);           // zwei Tage geschafft
     assert.equal(state.archive.stats.weekVentSaves, 1);         // once per week, in the week's own key
     assert.equal(state.archive.stats.ventSaves ?? 0, 0);        // the day key stays day mode only
     assert.equal(state.week.active, false);
+});
+await ok('Der Endschirm zeichnet Kennungen auf, keine Sätze', () => {
+    // Die Regel aus src/engine/recipe.js, angewandt auf den letzten Schirm, der
+    // sie noch brach: der Zustand hält die Kennung, die Anzeige rendert. Ein
+    // Endschirm steht so lange, wie der Spieler ihn liest — er ist damit die
+    // empfindlichste Stelle im Spiel für einen fertigen Satz.
+    resetState();
+    engine.startWeek('normal');
+    state.week.dayIndex = 4;
+    state.week.weekLog = [
+        { dayIndex: 1, endTickets: 2, endL: 10, endA: 20, endB: 10, coffee: 1, mailsIgnored: 0 },
+        { dayIndex: 2, endTickets: 3, endL: 20, endA: 30, endB: 20, coffee: 1, mailsIgnored: 1 },
+        { dayIndex: 3, endTickets: 4, endL: 30, endA: 40, endB: 30, coffee: 1, mailsIgnored: 0 },
+    ];
+    state.tickets = 10;
+    engine.checkEndConditions();
+    engine.finishGame();
+
+    const end = calls.end;
+    // Kein Feld hält Prosa: Titel und Vorspann sind Rezepte, die Bilanz sind
+    // Zahlen, und `text` ist leer — den brauchen nur noch die Warnfenster.
+    assert.equal(typeof end.title, 'object', 'der Titel ist wieder ein Satz');
+    assert.equal(typeof end.lead, 'object', 'der Vorspann ist wieder ein Satz');
+    assert.deepEqual(end.title, { k: 'end.firedTitle' });
+    assert.equal(end.lead.k, 'week.endsOn');
+    assert.equal(end.lead.v.base.k, 'end.ticketsLead');
+    assert.deepEqual(end.lead.v.day, dayNameValue(3));
+    assert.equal(end.text ?? '', '', 'auf dem Endschirm steht wieder fertiges HTML');
+    for (const row of end.balance.rows) {
+        for (const feld of ['tickets', 'l', 'a', 'b']) {
+            if (row[feld] !== undefined) assert.equal(typeof row[feld], 'number', `${feld} ist keine Zahl`);
+        }
+    }
+    // Und beide Rezepte lösen in der laufenden Sprache auf, statt als Schlüssel
+    // stehen zu bleiben.
+    assert.equal(renderRecipe(end.title), t('end.firedTitle'));
+    assert.ok(renderRecipe(end.lead).includes(dayName(3)));
+});
+await ok('Der Party-Bericht nennt jeden Erfolg genau einmal', () => {
+    // achievedIds bekommt pro Freischaltung einen Eintrag, also steht ein am
+    // selben Abend hochgestufter Erfolg zweimal darin. Die alte Textfassung
+    // zeigte den Pokal dann doppelt; die Liste mit Schlüsseln lässt sich daraus
+    // gar nicht zeichnen - im gespielten Spiel warf sie each_key_duplicate und
+    // nahm den ganzen Endschirm mit.
+    resetState();
+    state.achievedIds = ['ach_party', 'ach_ninja', 'ach_party'];
+    state.isPartyMode = true; state.partyProgress = 12;
+    engine.finishParty('SYNERGY!', 'Testabend.');
+    const ids = calls.end.party.achievements;
+    assert.equal(new Set(ids).size, ids.length, 'ein Erfolg steht doppelt im Bericht');
+    assert.ok(ids.includes('ach_party') && ids.includes('ach_ninja'), JSON.stringify(ids));
+});
+await ok('Das Tagebuch zeichnet den Zug auf, nicht die Seite', async () => {
+    // Die letzte Stelle, die noch Prosa hielt. Aufgeschrieben wird jetzt, WELCHE
+    // Zeilen gezogen wurden - Pfade in den Baum - und welche Marken hineingehen;
+    // renderDiary() setzt die Sätze daraus zusammen. Damit folgt auch die Seite
+    // einem Sprachwechsel, und der Sprachstempel auf dem Modal konnte fallen.
+    resetState();
+    await ensure('diary');
+    engine.startWeek('normal');
+    state.week.dayIndex = 3;
+    const entry = buildDiary(state, 'WIN');
+
+    assert.ok(entry.paragraphs.length >= 3, 'zu wenige Absätze für die Probe');
+    for (const p of entry.paragraphs) {
+        assert.equal(p.text, undefined, 'ein Absatz hält wieder einen fertigen Satz');
+        assert.ok(Array.isArray(p.parts) && p.parts.length, 'ein Absatz hat keine Teile');
+        for (const teil of p.parts) {
+            const verweis = teil.ref ?? teil.intro?.ref;
+            assert.ok(verweis, 'ein Teil ist kein Verweis: ' + JSON.stringify(teil));
+            assert.equal(verweis.p, 'diary');
+            assert.equal(verweis.path[0] in DB.diary, true, `Platz ${verweis.path[0]} gibt es nicht`);
+            assert.ok(DB.diary[verweis.path[0]][verweis.path[1]], 'der Pfad zeigt ins Leere');
+        }
+    }
+    // Die Marken sind Zahlen und Namen - bis auf den Wochentag, der ein Rezept ist.
+    assert.deepEqual(entry.tokens.weekday, dayNameValue(2));
+
+    // Und gerendert kommt daraus eine Seite ohne offene Marken.
+    const seite = renderDiary(entry);
+    assert.equal(seite.dayIndex, 2);
+    assert.equal(seite.paragraphs.length, entry.paragraphs.length);
+    for (const p of seite.paragraphs) {
+        assert.ok(p.text.length, 'ein Absatz bleibt leer');
+        assert.ok(!/\{\w+\}/.test(p.text), p.text);
+    }
+});
+await ok('Eine Seite aus 5.x bleibt stehen, ein Verweis ins Leere entfällt', () => {
+    // Zwei Ränder, beide aus derselben Regel: was keine Kennung hat, wird
+    // gezeigt wie es dasteht; was eine hat, die nicht auflöst, entfällt - statt
+    // geraten zu werden. Dieselbe Antwort wie in recipe.js.
+    const alt = renderDiary({ dayIndex: 1, paragraphs: [{ text: 'Aus einem alten Spielstand.', tone: 'body' }] });
+    assert.equal(alt.paragraphs[0].text, 'Aus einem alten Spielstand.');
+
+    const weg = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
+        { tone: 'body', parts: [{ ref: { p: 'diary', path: ['gibtesnicht', 0, 'lines', 0] } }] },
+    ] });
+    assert.equal(weg.paragraphs.length, 0, 'ein Verweis ins Leere wurde geraten');
+
+    // Und ein Absatz mit einem Loch darin ist nicht der Absatz.
+    const loch = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
+        { tone: 'body', parts: [{ ref: { p: 'diary', path: ['mood', 0, 'lines', 0] } }] },
+    ] });
+    for (const p of loch.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
+});
+await ok('Die Anzeige rendert, was der Schirm aufgeschrieben hat', () => {
+    // Svelte-Komponenten laufen hier nicht, also wird die Quelle gelesen - wie
+    // bei der Sprechblase und dem Abschlussschirm des Tutorials. Geprüft wird
+    // genau das, was der Zustand NICHT mehr tut.
+    const modalSrc = readFileSync(new URL('../src/components/EndModal.svelte', import.meta.url), 'utf-8');
+    assert.ok(/renderRecipe/.test(modalSrc), 'EndModal löst keine Rezepte auf');
+    assert.ok(/showDiary && hasDiary/.test(modalSrc), 'der aufgeklappte Absatz hängt nur am Schalter');
+
+    const buchSrc = readFileSync(new URL('../src/components/DiaryEntry.svelte', import.meta.url), 'utf-8');
+    assert.ok(/renderDiary\(diary\)/.test(buchSrc), 'die Tagebuchseite wird nicht gerendert, sondern übernommen');
+
+    // Und die Regel, an der genau dieser Renderer still bräche: er läuft in
+    // einem $derived, liest also über tree(). Direkt über DB gelesen bliebe die
+    // Seite deutsch, während der Rahmen ringsum wechselt - in Node fällt das
+    // nicht auf, weil dort beide dasselbe Objekt sind.
+    const tagebuchSrc = readFileSync(new URL('../src/engine/engine_diary.js', import.meta.url), 'utf-8');
+    const renderer = tagebuchSrc.slice(tagebuchSrc.indexOf('export function renderDiary'));
+    assert.ok(/tree\(\)/.test(renderer), 'renderDiary liest nicht über tree()');
+    assert.ok(!/\bDB\./.test(renderer), 'renderDiary greift wieder direkt auf DB zu');
+
+    const bilanzSrc = readFileSync(new URL('../src/components/WeekBalance.svelte', import.meta.url), 'utf-8');
+    // Die Legende und die zwei Ein-/Mehrzahlfassungen wurden bis 6.1 im Bauer
+    // gerendert und hier am fertigen Text geprüft. Jetzt entscheidet sie die
+    // Komponente - also steht hier, dass sie die Schlüssel überhaupt kennt.
+    for (const key of ['week.summary.legend', 'week.summary.title',
+                       'week.summary.valuesOne', 'week.summary.values',
+                       'week.summary.totalsOne', 'week.summary.totals']) {
+        assert.ok(bilanzSrc.includes(key), `WeekBalance kennt ${key} nicht`);
+    }
+    assert.ok(/dayName\(/.test(bilanzSrc), 'die Bilanz nennt den Tag nicht über dayName()');
+
+    const partySrc = readFileSync(new URL('../src/components/PartyReport.svelte', import.meta.url), 'utf-8');
+    assert.ok(/tree\(\)/.test(partySrc), 'der Party-Bericht liest die Erfolge nicht über tree()');
 });
 await ok('recordDayResult zählt Ventil-Flags im Wochenmodus NICHT täglich', () => {
     resetState();
@@ -246,7 +399,8 @@ await ok('9 Tickets übertragen + Morgen-Stimmung Tickets (Urlaubsreif +3) = sof
     assert.equal(state.tickets, 12);
     assert.ok(calls.end, 'Wochen-Endscreen muss erschienen sein');
     assert.equal(calls.end.cause, 'tickets');
-    assert.ok(calls.end.lead.includes(dayName(3)));
+    assert.deepEqual(calls.end.lead,
+                     { k: 'week.endsOn', v: { base: { k: 'end.ticketsLead' }, day: dayNameValue(3) } });
     assert.equal(state.archive.stats.weeksFired, 1);
     assert.equal(state.week.active, false);
 });
@@ -703,13 +857,17 @@ await ok('Das Wissen folgt der Sprache', async () => {
     await ensure('compendium');
     const en = rolle();
 
-    await useLanguage('de');
-    await loadCore('de');
+    // ZURÜCK AUF LANG, nicht auf 'de'. Bis 6.1 stand hier hart 'de', und damit
+    // lief der --lang=en-Durchgang ab dieser Zeile deutsch weiter — zwei Drittel
+    // des Prüfstands, still, mit grünem Ergebnis. Genau die Lücke, für die der
+    // zweite Durchgang gebaut wurde.
+    await useLanguage(LANG);
+    await loadCore(LANG);
     await ensure('compendium');
 
     assert.ok(de && en, 'ein Baum lieferte nichts');
     assert.notEqual(de, en, `die Rolle bleibt in beiden Bäumen "${de}"`);
-    assert.equal(rolle(), de, 'kommt nicht zurück');
+    assert.equal(rolle(), LANG === 'en' ? en : de, 'kommt nicht zurück');
 
     // Und die Prüfung, die tatsächlich beißt. Die drei Zusicherungen oben
     // halten auch dann, wenn man wieder direkt auf DB zugreift — in Node
@@ -745,14 +903,14 @@ await ok('Der Start meldet die übernommenen Tickets', () => {
     state.week = { active: true, dayIndex: 2 };
     state.tickets = 4;
     const lines = ui.buildBootLines.call(engine);
-    assert.ok(lines.some(l => l.includes('Übernehme offene Tickets: 4')), lines.join(' | '));
+    assert.ok(lines.includes(tf('boot.carry.tickets', { tickets: 4 })), lines.join(' | '));
 });
 await ok('Am Freitag steht das Meeting an erster Stelle', () => {
     resetState();
     state.week = { active: true, dayIndex: 5 };
     state.tickets = 6;
     const lines = ui.buildBootLines.call(engine);
-    const idx = lines.findIndex(l => l.includes('WOCHENMEETING'));
+    const idx = lines.findIndex(l => l === t('boot.meeting'));
     assert.ok(idx > 0 && idx < 3, `Meeting an Position ${idx}: ${lines.join(' | ')}`);
 });
 await ok('Ohne Woche bleibt der volle Begrüßungskopf', () => {
@@ -770,9 +928,13 @@ await ok('Montag nennt die Startbedingung statt eines Übertrags', () => {
     state.week = { active: true, level: 'hard', dayIndex: 1 };
     state.tickets = 2; state.al = 10;
     const lines = ui.buildBootLines.call(engine);
-    assert.ok(!lines.some(l => l.includes('Übernehme offene Tickets')), lines.join(' | '));
-    assert.ok(!lines.some(l => l.includes('Vortag')), lines.join(' | '));
-    assert.ok(lines.some(l => l.includes('URLAUBSREIF')), 'Startbedingung fehlt');
+    // Gegen das Wörterbuch, nicht gegen den deutschen Satz: bis 6.1 stand hier
+    // „Übernehme offene Tickets" und „Vortag", und beides hielt nur, solange der
+    // englische Durchgang nie englisch war (siehe „Das Wissen folgt der Sprache").
+    assert.ok(!lines.includes(tf('boot.carry.tickets', { tickets: 2 })), lines.join(' | '));
+    assert.ok(!lines.includes(tf('boot.carry.radar', { value: 10 })), lines.join(' | '));
+    assert.ok(lines.includes(tf('boot.startCondition', { mode: t('week.diff.hard').toUpperCase() })),
+              'Startbedingung fehlt');
 });
 await ok('Der Arbeitstag meldet nie einen Übertrag', () => {
     // The day restart plays the boot sequence BEFORE reset(), so the state
@@ -783,8 +945,18 @@ await ok('Der Arbeitstag meldet nie einen Übertrag', () => {
     state.tickets = 7; state.cr = 60; state.al = 80;
     state.inventory = [{ id: 'tape' }, { id: 'donut' }];
     const lines = ui.buildBootLines.call(engine);
-    for (const wort of ['Übernehme', 'Vortag', 'Rucksack-Inventur', 'Resttage', 'WOCHENMEETING'])
-        assert.ok(!lines.some(l => l.includes(wort)), `"${wort}" im Tagesmodus: ${lines.join(' | ')}`);
+    // Jede Übertragszeile, wie sie für diesen Zustand lauten würde - keine davon
+    // darf im Tagesmodus stehen.
+    const uebertrag = {
+        'boot.carry.tickets':  tf('boot.carry.tickets', { tickets: 7 }),
+        'boot.carry.radar':    tf('boot.carry.radar', { value: 60 }),
+        'boot.carry.aggro':    tf('boot.carry.aggro', { value: 80 }),
+        'boot.carry.itemMany': tf('boot.carry.itemMany', { items: 2 }),
+        'boot.carry.daysLeft': tf('boot.carry.daysLeft', { days: 5 }),
+        'boot.meeting':        t('boot.meeting'),
+    };
+    for (const [key, zeile] of Object.entries(uebertrag))
+        assert.ok(!lines.includes(zeile), `"${key}" im Tagesmodus: ${lines.join(' | ')}`);
 });
 
 // ------------------------------------------------------- compendium (v5.0)
@@ -812,7 +984,10 @@ await ok('Eine Begegnung öffnet den Kopf, die Notiz folgt dem Beweis', () => {
     const sonntag = engine.knowledgeEntries().find(e => e.id === 'sonntag');
     assert.equal(sonntag.open, true, 'Kopf nicht freigeschaltet');
     assert.equal(sonntag.notes.length, 1, 'genau die erlebte Notiz erwartet');
-    assert.ok(sonntag.notes[0].includes('zweimal aus und wieder ein'));
+    // Verglichen wird über die Kennung des Beweises, nicht über den deutschen
+    // Satz: die Notiz trägt ein `seen`, und das ist in beiden Bäumen dasselbe.
+    const quelle = (DB.compendium ?? []).find(e => e.id === 'sonntag');
+    assert.equal(sonntag.notes[0], quelle.notes.find(n => n.seen === 'cof_sonntag_1').text);
 });
 await ok('Fahnen schalten Notizen genauso frei wie Ereignisse', () => {
     resetState();
@@ -821,7 +996,8 @@ await ok('Fahnen schalten Notizen genauso frei wie Ereignisse', () => {
     const b = engine.knowledgeEntries().find(e => e.id === 'blaschke');
     assert.equal(b.open, true);
     assert.equal(b.notes.length, 1);
-    assert.ok(b.notes[0].includes('Rhythmus'));
+    const blaschke = (DB.compendium ?? []).find(e => e.id === 'blaschke');
+    assert.equal(b.notes[0], blaschke.notes.find(n => n.flag === 'srv_marder_meldung').text);
 });
 await ok('Der Beweis wird beim Öffnen eines Ereignisses aufgezeichnet', () => {
     resetState();
@@ -1127,16 +1303,14 @@ await ok('Ein Ticket ist ein Ticket, und der Bericht kennt seine Woche', () => {
     engine.checkEndConditions();
     engine.finishGame();
 
-    // Singular where one is meant - and the plural form must NOT be there.
-    assert.ok(calls.end.text.includes(tf('week.summary.valuesOne', { tickets: 1, fl: 10, al: 20, cr: 15 })),
-              'die Montagszeile sagt nicht „1 Ticket"');
-    assert.ok(!calls.end.text.includes(tf('week.summary.values', { tickets: 1, fl: 10, al: 20, cr: 15 })),
-              'die Mehrzahlfassung steht bei einem Ticket noch da');
-    assert.ok(calls.end.text.includes(tf('week.summary.totalsOne', { coffee: 1, mails: 1 })),
-              'die Summenzeile sagt nicht „1 Mail"');
-    // ...and the plural stays plural.
-    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 4, fl: 30, al: 40, cr: 20 })),
-              'die Freitagszeile steht nicht in der Mehrzahl');
+    // Die Zahl wählt den Schlüssel, und die Zahl reist in der Momentaufnahme:
+    // eins bleibt eins, vier bleibt vier. Welchen der beiden Schlüssel
+    // components/WeekBalance.svelte daraus wählt, hält die Quellenprobe weiter
+    // unten fest — hier steht, was sie zu entscheiden bekommt.
+    assert.equal(calls.end.balance.rows[0].tickets, 1, 'die Montagszeile trägt nicht die Eins');
+    assert.equal(calls.end.balance.rows[1].tickets, 4, 'die Freitagszeile trägt nicht die Vier');
+    assert.equal(calls.end.balance.mails, 1, 'die Summenzeile trägt nicht die Eins');
+    assert.equal(calls.end.balance.coffee, 1);
 
     // The day report is handed the level and the day, as an id and a number.
     assert.equal(calls.end.weekMode, 'hard', 'die Wochenstufe reist nicht mit');
@@ -1318,7 +1492,7 @@ await ok('Freitag 16:30: erst das Meeting, dann Gala oder Bilanz', () => {
     state.pendingEnd = null;
     engine.partyInvitation = () => null;
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd.title, t('end.weekTitle'));
+    assert.deepEqual(state.pendingEnd.title, { k: 'end.weekTitle' });
 
     engine.partyInvitation = realParty;
 });
@@ -1354,8 +1528,14 @@ await ok('finishParty schließt die Woche: Zähler, Bilanz unter dem Party-Repor
     engine.finishParty('SYNERGY!', 'Testabend.');
 
     assert.equal(calls.end.cause, 'party');
-    assert.ok(calls.end.text.includes(t('week.summary.legend')));  // Bilanz unter dem Party-Report
-    assert.ok(calls.end.text.includes('WOCHE (Erholt)'));       // Party-Bilanz-Name week-aware
+    assert.ok(calls.end.balance, 'die Bilanz fehlt unter dem Party-Report');
+    // Der Party-Bericht kennt die Woche — als Kennung, nicht als „WOCHE (Erholt)".
+    // Der deutsche Anzeigetext stand hier bis 6.1 und wäre im englischen Lauf
+    // gefallen, sobald der überhaupt englisch läuft.
+    assert.deepEqual(calls.end.party.mode, { week: true, level: 'easy' });
+    assert.equal(calls.end.balance.mode, 'easy');
+    // Ohne Optionspfad (direkter Aufruf) bleibt die Endung das Wort, das kam.
+    assert.equal(calls.end.party.subtitle, 'SYNERGY!');
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
     assert.equal(engine.loadWeek(), null);
@@ -1373,14 +1553,145 @@ await ok('Tagebuch: {weekday} ist in der Woche der echte Kalendertag', async () 
 
     engine.startWeek('easy');                                   // Erholt = easy
     state.week.dayIndex = 3;
-    let entry = buildDiary(state, 'WIN');
-    assert.equal(entry.paragraphs[0].text, 'Heute ist Mittwoch, noch 2 Tage.');
+    // Die Marke reist als Rezept mit und wird erst beim Zeichnen eingesetzt -
+    // im englischen Baum heißt derselbe Index Wednesday.
+    let seite = renderDiary(buildDiary(state, 'WIN'));
+    assert.equal(seite.paragraphs[0].text, `Heute ist ${dayName(2)}, noch 2 Tage.`);
 
     engine.endWeek();
     state.difficultyMult = 0.8;                                 // Tagesmodus easy
-    entry = buildDiary(state, 'WIN');
-    assert.ok(entry.paragraphs[0].text.startsWith('Heute ist Freitag'));
+    seite = renderDiary(buildDiary(state, 'WIN'));
+    // Im Tagesmodus steht der Schwierigkeitsgrad für einen Kalendertag: easy ist
+    // der Freitag (WEEKDAY_INDEX in engine_diary.js), auch hier über den Index.
+    assert.ok(seite.paragraphs[0].text.startsWith(`Heute ist ${dayName(4)}`), seite.paragraphs[0].text);
     DB.diary = origDiary;
+});
+await ok('Tagebuch: der Kopf nennt denselben Tag wie die Prosa', async () => {
+    // Der Kopf der Seite leitete seinen Wochentag selbst aus difficultyMult ab -
+    // der Frage des TAGESmodus. Im Wochenmodus bleibt der Wert bei seiner
+    // Identität 1.0, also stand über einem Freitag „Mittwoch", fünf Tage lang,
+    // auf jeder Stufe. Dieselbe Familie wie der Tagesbericht eine Datei weiter.
+    // Jetzt reist der Tag mit, und {weekday} kommt aus derselben Antwort.
+    resetState();
+    await ensure('diary');
+    const origDiary = DB.diary;
+    DB.diary = { mood: [{ id: 't_kopf', when: () => true, lines: ['{weekday}.'] }] };
+
+    engine.startWeek('easy');                                   // easy = Freitag im Tagesmodus
+    for (const tag of [1, 3, 5]) {
+        state.week.dayIndex = tag;
+        const seite = renderDiary(buildDiary(state, 'WIN'));
+        assert.equal(seite.dayIndex, tag - 1, `Tag ${tag}: der Kopf zeigt den falschen Tag`);
+        assert.equal(seite.paragraphs[0].text, `${dayName(tag - 1)}.`, 'Kopf und Prosa laufen auseinander');
+    }
+
+    engine.endWeek();                                           // Tagesmodus: die Stufe steht für einen Tag
+    state.difficultyMult = 0.8;
+    assert.equal(buildDiary(state, 'WIN').dayIndex, 4, 'Erholt ist der Freitag');
+    state.difficultyMult = 1.5;
+    assert.equal(buildDiary(state, 'WIN').dayIndex, 0, 'Urlaubsreif ist der Montag');
+    state.difficultyMult = 1.0;
+    assert.equal(buildDiary(state, 'WIN').dayIndex, 2, 'Genervt ist der Mittwoch');
+
+    DB.diary = origDiary;
+});
+await ok('Die Gala reicht ihre Endung zweimal als Verweis weiter', async () => {
+    // Zwei Wege aus denselben Aktionsargumenten: Argument 0 ist der Name der
+    // Endung über dem Party-Bericht, Argument 1 ihre Prosa, die als {party} in
+    // die Tagebuchseite geht. Beides ist Datenbaum-Text und reist deshalb als
+    // Pfad - im Spiel baut chooseOption() ihn aus dem geklickten Optionsindex.
+    resetState();
+    await ensure('party');
+    state.isPartyMode = true; state.partyProgress = 12;
+    const argsRef = { i: 'party_finale_rage', path: ['opts', 0, 'action', 'args'] };
+
+    const orig = engine.generateDiaryEntry;
+    let gesehen = null;
+    engine.generateDiaryEntry = (grund, wert) => { gesehen = { grund, wert }; return 'Stub'; };
+    engine.finishParty('LEGENDE', 'Die Tirade.', argsRef);
+    engine.generateDiaryEntry = orig;
+
+    assert.equal(gesehen.grund, 'PARTY');
+    assert.deepEqual(gesehen.wert, { ref: { ...argsRef, path: ['opts', 0, 'action', 'args', 1] } },
+                     'die Prosa geht nicht als Verweis ins Tagebuch');
+    assert.deepEqual(calls.end.party.subtitle, { ref: { ...argsRef, path: ['opts', 0, 'action', 'args', 0] } },
+                     'der Name der Endung geht nicht als Verweis auf den Schirm');
+    // Und beide zeigen wirklich auf das, was sie sollen - gehalten gegen den
+    // Baum, nicht gegen „LEGENDE": der englische Durchgang sagt dort LEGEND.
+    const finale = DB.party.find(ev => ev.id === 'party_finale_rage').opts[0].action.args;
+    assert.equal(renderRecipe(calls.end.party.subtitle), finale[0]);
+    assert.equal(renderRecipe(gesehen.wert), finale[1]);
+    assert.ok(finale[1].length > 100, 'Argument 1 ist nicht die lange Prosa');
+});
+await ok('Das Tagebuch setzt die Gala-Endung aus dem Baum ein', async () => {
+    resetState();
+    await ensure('diary');
+    await ensure('party');
+    const origDiary = DB.diary;
+    DB.diary = { ending: [{ id: 't_gala', when: () => true, lines: ['Dann kam die Gala. {party}'] }] };
+    const wert = { ref: { i: 'party_finale_rage', path: ['opts', 0, 'action', 'args', 1] } };
+
+    const entry = buildDiary(state, 'PARTY', wert);
+    assert.deepEqual(entry.tokens.party, wert, 'die Marke hält nicht den Verweis');
+
+    const erwartet = DB.party.find(ev => ev.id === 'party_finale_rage').opts[0].action.args[1];
+    assert.equal(renderDiary(entry).paragraphs[0].text, `Dann kam die Gala. ${erwartet}`);
+
+    DB.diary = origDiary;
+});
+await ok('Der Pfad nennt das Bruchstück, aus dem die Zeile kam', async () => {
+    // Die Hälfte des Pfades, an der es still bricht: gezogen wird aus den
+    // PASSENDEN Bruchstücken, gezeigt werden muss auf die Stelle im ganzen Platz.
+    // Wer den gefilterten Index aufschreibt, zeigt auf ein anderes Bruchstück,
+    // sobald eines davor nicht passt - und das ist der Normalfall, nicht der
+    // Rand. Beide Sorten Platz werden geprüft: Wahl und Sammlung.
+    resetState();
+    await ensure('diary');
+    const origDiary = DB.diary;
+    DB.diary = {
+        mood: [{ id: 'm_nein', when: () => false, lines: ['FALSCH-A'] },
+               { id: 'm_ja',   when: () => true,  lines: ['RICHTIG-A'] }],
+        encounters: [{ id: 'e_nein', when: () => false, lines: ['FALSCH-B'] },
+                     { id: 'e_ja',   when: () => true,  lines: ['RICHTIG-B'] }],
+        encountersIntro: [{ id: 'i_nein', when: () => false, lines: ['FALSCH-C {list}'] },
+                          { id: 'i_ja',   when: () => true,  lines: ['RICHTIG-C {list}'] }],
+    };
+
+    const seite = renderDiary(buildDiary(state, 'WIN'));
+    const texte = seite.paragraphs.map(p => p.text);
+    assert.deepEqual(texte, ['RICHTIG-A', 'RICHTIG-C RICHTIG-B'], JSON.stringify(texte));
+
+    DB.diary = origDiary;
+});
+await ok('Dieselbe Seite, in beiden Sprachen erzählt', async () => {
+    // Der Nachweis, für den der ganze Umbau da ist: EINMAL aufgezeichnet, zweimal
+    // erzählt. Alle 217 Zeilen des Bestandes unterscheiden sich zwischen den
+    // Bäumen (gemessen), ein gleich gebliebener Absatz wäre also ein Absatz, der
+    // dem Wechsel nicht gefolgt ist.
+    resetState();
+    await ensure('diary');
+    engine.startWeek('normal');
+    state.week.dayIndex = 3;
+    state.tickets = 3; state.coffeeConsumed = 2; state.rageWarningReceived = true;
+    const entry = buildDiary(state, 'WIN');
+
+    const erzaehlen = async (lang) => {
+        await useLanguage(lang);
+        await loadCore(lang);
+        await ensure('diary');
+        return renderDiary(entry).paragraphs.map(p => p.text);
+    };
+    const de = await erzaehlen('de');
+    const en = await erzaehlen('en');
+    await useLanguage(LANG); await loadCore(LANG); await ensure('diary');   // zurück auf LANG
+
+    assert.ok(de.length >= 3, 'zu wenige Absätze für die Probe');
+    assert.equal(de.length, en.length, 'die Seite verliert beim Wechsel Absätze');
+    for (let i = 0; i < de.length; i++) {
+        assert.ok(de[i].length && en[i].length, `Absatz ${i} bleibt leer`);
+        assert.notEqual(de[i], en[i], `Absatz ${i} folgt dem Wechsel nicht: ${de[i]}`);
+        assert.ok(!/\{\w+\}/.test(en[i]), en[i]);
+    }
 });
 await ok('Tagebuch: Wochen-Lauf liefert Absätze ohne offene Platzhalter', async () => {
     resetState();
@@ -1388,23 +1699,30 @@ await ok('Tagebuch: Wochen-Lauf liefert Absätze ohne offene Platzhalter', async
     engine.startWeek('hard');
     state.week.dayIndex = 2;
     state.tickets = 4; state.rageWarningReceived = true;
-    const entry = buildDiary(state, 'WIN');
-    assert.ok(entry.paragraphs.length >= 3);
-    for (const p of entry.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
+    const seite = renderDiary(buildDiary(state, 'WIN'));
+    assert.ok(seite.paragraphs.length >= 3);
+    for (const p of seite.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
 });
 await ok('Schlaftext: Level wählt das Register, ab Nacht 3 die abgenutzte Variante', () => {
     resetState();
     engine.startWeek('hard');
     state.week.dayIndex = 1; state.time = 16 * 60 + 30; state.ticketWarning = true;
     engine.checkEndConditions();
-    const fresh = DB.special.week_sleep.hard.fresh;
-    assert.ok(fresh.includes(state.pendingEnd.night.sleepText));
+    // Der Zug wird aufgeschrieben, nicht sein Ergebnis (6.1) - geprüft wird also
+    // der Pfad, und dass er auf die richtige Liste zeigt.
+    const frisch = state.pendingEnd.night.sleep.ref.path;
+    assert.deepEqual(frisch.slice(0, 3), ['week_sleep', 'hard', 'fresh']);
+    assert.ok(DB.special.week_sleep.hard.fresh[frisch[3]], 'der Pfad zeigt ins Leere');
 
     state.pendingEnd = null;
     state.week.dayIndex = 4; state.morningMoodShown = true;
     engine.checkEndConditions();
-    const worn = DB.special.week_sleep.hard.worn;
-    assert.ok(worn.includes(state.pendingEnd.night.sleepText));
+    const abgenutzt = state.pendingEnd.night.sleep.ref.path;
+    assert.deepEqual(abgenutzt.slice(0, 3), ['week_sleep', 'hard', 'worn']);
+    assert.ok(DB.special.week_sleep.hard.worn[abgenutzt[3]], 'der Pfad zeigt ins Leere');
+    // Und er löst in der laufenden Sprache auf, statt als Pfad stehen zu bleiben.
+    assert.equal(renderRecipe(state.pendingEnd.night.sleep),
+                 DB.special.week_sleep.hard.worn[abgenutzt[3]]);
     state.pendingEnd = null;
 });
 await ok('Achievements: alle drei sind stufenfähig, keiner ist an einen Zustand gebunden', () => {
@@ -1719,7 +2037,7 @@ await ok('Das Freitagsfinale wird nicht von der Uhr überholt', () => {
 
     state.meetingDone = true;
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd?.title, t('end.weekTitle'));
+    assert.deepEqual(state.pendingEnd?.title, { k: 'end.weekTitle' });
 });
 await ok('Mo–Do bleibt vom Meeting-Schutz unberührt', () => {
     resetState();
@@ -2043,7 +2361,7 @@ await ok('Die Nacht schreibt sofort, nicht erst nach der Drosselung', () => {
 
     engine.startWeek('easy');
     state.morningMoodShown = true;
-    state.modal = { open: true, isNight: true, nextDay: 'Dienstag' };
+    state.modal = { open: true, isNight: true, nextDay: dayNameValue(1) };
     engine.continueWeekNight();
     assert.ok(schreibt >= 1, 'die Nacht muss die Drosselung übergehen');
 
@@ -2093,13 +2411,15 @@ await ok('Aus der Woche heraus beginnt die Gala mit einer eigenen Zeile', async 
     state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
-    assert.ok(/Fünf Tage/.test(calls.terminal[0].text), 'die Woche wird nicht erwähnt');
+    const ausDerWoche = calls.terminal[0].text;
 
     resetState();                                               // Tagesmodus: unverändert
     state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
-    assert.ok(!/Fünf Tage/.test(calls.terminal[0].text), 'im Tagesmodus fehl am Platz');
+    // Verglichen werden die zwei Fassungen, nicht eine deutsche Wendung: dass
+    // die Woche eine eigene Zeile bekommt, sagt der Unterschied.
+    assert.notEqual(ausDerWoche, calls.terminal[0].text, 'die Woche bekommt keine eigene Zeile');
 });
 
 // -------------------------------------------------- Der Tageswechsel
@@ -2115,12 +2435,17 @@ await ok('Der Vorspann greift auf, wie der Tag gelaufen ist', async () => {
         engine.queueNightEnd();
         return state.pendingEnd.lead;
     };
-    assert.match(lead(9, 20, 20, 20), /Tickets nimmst du mit/);
-    assert.match(lead(0, 20, 20, 20), /Keine offenen Tickets/);
-    assert.match(lead(2, 100, 20, 20), /Puls/);
-    assert.match(lead(2, 20, 100, 20), /Chef/);
-    assert.match(lead(2, 20, 20, 80), /wenig bewegt/);
-    assert.match(lead(2, 25, 25, 30), /^16:30 Uhr/);
+    // Sechs Schlüssel, keine sechs deutschen Wendungen. Die Muster standen hier
+    // bis 6.1 und hielten nur, weil der englische Lauf ab Zeile 721 deutsch
+    // weiterlief; jetzt ist der Vorspann ein Rezept und nennt seine Kennung.
+    assert.equal(lead(9, 20, 20, 20).k, 'week.night.tickets');
+    assert.equal(lead(0, 20, 20, 20).k, 'week.night.clean');
+    assert.equal(lead(2, 100, 20, 20).k, 'week.night.aggro');
+    assert.equal(lead(2, 20, 100, 20).k, 'week.night.radar');
+    assert.equal(lead(2, 20, 20, 80).k, 'week.night.lazy');
+    assert.equal(lead(2, 25, 25, 30).k, 'week.night.plain');
+    // Und der Satz im Satz: der Restzähler sitzt als eigenes Rezept darin.
+    assert.deepEqual(lead(2, 25, 25, 30).v.rest, { k: 'week.night.remaining', v: { days: 3 } });
 });
 await ok('Die Ticket-Schwelle ist erreichbar', () => {
     // Ten tickets end the day, and a quarter of nine is three.
@@ -2141,7 +2466,7 @@ await ok('Zwei Nächte hintereinander zeigen nie denselben Schlaftext', async ()
         state.tickets = 2; state.al = 25; state.cr = 25; state.fl = 30;
         state.time = 16 * 60 + 30; state.ticketWarning = true; state.pendingEnd = null;
         engine.queueNightEnd();
-        gesehen.push(state.pendingEnd.night.sleepText);
+        gesehen.push(JSON.stringify(state.pendingEnd.night.sleep));
     }
     for (let i = 1; i < gesehen.length; i++) {
         assert.notEqual(gesehen[i], gesehen[i - 1], `Nacht ${i + 1} wiederholt den Vortext`);
@@ -2163,6 +2488,17 @@ await ok('Jeder Morgen bekommt seine eigene Zeile', () => {
         zeilen.add(JSON.stringify(morgen));
     }
     assert.equal(zeilen.size, 4, 'die vier Morgen müssen sich unterscheiden');
+});
+
+await ok('Der Prüfstand läuft am Ende noch in seiner Sprache', () => {
+    // Die Falle, in der zwei Drittel dieses Prüfstands lagen: „Das Wissen folgt
+    // der Sprache" schaltete zum Vergleichen um und stellte hart auf 'de'
+    // zurück. Ab dort lief der --lang=en-Durchgang deutsch weiter, still und
+    // grün. Wer künftig zum Vergleichen umschaltet, stellt auf LANG zurück -
+    // diese Zeile merkt es sofort.
+    assert.equal(language(), LANG, 'ein Test hat die Sprache umgestellt und nicht zurückgesetzt');
+    // Beide Hälften: die Rune für die Oberfläche und der geladene Datenbaum.
+    assert.equal(currentLanguage(), LANG, 'der Datenbaum steht in der anderen Sprache');
 });
 
 console.log(`\n${passed} Tests bestanden.`);

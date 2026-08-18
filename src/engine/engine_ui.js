@@ -459,15 +459,21 @@ export const ui = {
      * and says 'BLOW-OFF' in the other language.
      */
     showModal: function(title, text, isEnd, tone = null) {
+        // One shape for the box, whoever opens it. A warning has no balance
+        // sheet and no gala report, but the fields are named rather than left
+        // absent, so that reading one of them somewhere never depends on which
+        // function opened the window.
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
-                             lead: '', cause: null, diary: null, tone };
+                             lead: '', cause: null, diary: null, tone,
+                             balance: null, party: null };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
     },
 
     closeModal: function() {
         this.state.modal = { open: false, title: '', text: '', isEnd: false,
-                             lead: '', cause: null, diary: null };
+                             lead: '', cause: null, diary: null,
+                             balance: null, party: null };
         this.hideOverlay('modal-overlay');
         this.updateUI();
     },
@@ -482,7 +488,7 @@ export const ui = {
         this.state.modal = {
             open: true,
             title: end.title,
-            text: end.text ?? '',      // only the party still uses free text
+            text: end.text ?? '',      // nothing uses this any more; a warning does
             lead: end.lead ?? '',
             cause: end.cause ?? null,
             diary: end.diary ?? null,
@@ -498,7 +504,13 @@ export const ui = {
             // words - components/DayReport.svelte resolves them, so the header
             // follows a language switch like everything else.
             weekMode: end.weekMode ?? null,
-            weekDay: end.weekDay ?? null
+            weekDay: end.weekDay ?? null,
+            // The two blocks that used to arrive as finished HTML. Both are
+            // snapshots of NUMBERS and IDS now, so the components draw them in
+            // whatever language is running - and neither depends on state the
+            // ending has already cleared.
+            balance: end.balance ?? null,
+            party: end.party ?? null
         };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
