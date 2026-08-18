@@ -999,6 +999,33 @@ await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
     assert.ok(!tut.includes('opacity-50'),
               'tutorial.js schreibt wieder Klassen an die vier Knöpfe der Leiste');
 });
+await ok('Der Spielstand hat kein Mitspracherecht beim Tutorial', () => {
+    // Der Fehler, den es abfängt: `tutorialStep` und `tutorialUnlocked` stehen
+    // in freshDay(), und saveDay() leitet seine Felder genau daraus ab — also
+    // wanderten sie in den Spielstand. Wer das Tutorial über „Hauptmenü"
+    // verließ, schrieb Schritt 2 mit in die Ablage; beim Weiterarbeiten stand
+    // die Leiste dann den ganzen Tag abgedunkelt da, ohne Tutorial, das sie
+    // wieder aufhellt. Sie gehören der Sitzung, nicht dem Arbeitstag.
+    resetState();
+    state.time = 9 * 60;
+    state.tutorialStep = 2;
+    state.tutorialUnlocked = 'btn-coffee';
+    engine.saveDay();
+
+    const abgelegt = JSON.parse(store.get('layer8_day'));
+    assert.equal(abgelegt.tutorialStep, undefined,
+                 'tutorialStep steht im Spielstand');
+    assert.equal(abgelegt.tutorialUnlocked, undefined,
+                 'tutorialUnlocked steht im Spielstand');
+
+    // Und die Gegenrichtung: ein Spielstand aus einem Entwicklungsbau, der die
+    // Felder noch trägt, darf sie nicht zurückschreiben.
+    resetState();
+    engine.applyRestoredDay({ time: 9 * 60, tutorialStep: 2, tutorialUnlocked: 'btn-coffee' });
+    assert.equal(state.tutorialStep, null, 'tutorialStep kam aus dem Spielstand zurück');
+    assert.equal(state.tutorialUnlocked, null, 'tutorialUnlocked kam aus dem Spielstand zurück');
+    assert.equal(state.time, 9 * 60, 'der übrige Tag wird nicht mehr eingespielt');
+});
 await ok('setDifficulty legt einen frischen Tag an, statt Felder nachzubessern', () => {
     // Der Fehler, den es abfängt: bis 6.0 setzte setDifficulty nur, was die
     // Stufe selbst ändert. Alles andere blieb stehen, also erbte ein Tag die

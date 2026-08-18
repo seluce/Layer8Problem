@@ -194,6 +194,21 @@ export const DAY_TIMERS = [
 ];
 
 /**
+ * Tutorial fields: part of the day, deliberately not part of the save.
+ *
+ * They say which step the action bar is showing and which button that step has
+ * freed - and both are only true while the lesson is running. A reload ends the
+ * lesson, so a save that carried them restores a bar that is dimmed with
+ * nothing left to undim it. That is not theory: leave the tutorial through the
+ * main menu and the day is written to storage mid-step.
+ *
+ * Same argument as DAY_TIMERS above - they belong to the session, not to the
+ * workday. saveDay() skips them on the way out, applyRestoredDay() on the way
+ * back in; a save is never allowed a say over the tutorial.
+ */
+export const TUTORIAL_FIELDS = ['tutorialStep', 'tutorialUnlocked'];
+
+/**
  * Mutable game state.
  *
  * The .svelte.js extension is what lets this file use runes. Wrapping the

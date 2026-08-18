@@ -5,7 +5,7 @@ import { t, tf, tree } from '../i18n/i18n.svelte.js';
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
+import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -309,7 +309,9 @@ export const core = {
             for (const key of Object.keys(freshDay())) {
                 // Running timers belong to this session; after a reload they
                 // point nowhere. They stay out and restart on resume anyway.
-                if (DAY_TIMERS.includes(key)) continue;
+                // The tutorial fields stay out for the same reason - see
+                // TUTORIAL_FIELDS.
+                if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
                 const value = this.state[key];
                 day[key] = value instanceof Set ? [...value] : value;
             }
@@ -389,7 +391,10 @@ export const core = {
         // after a resume and only after a resume. See engine_state.svelte.js.
         const SETS = ['usedIDs', 'usedEmails'];
         for (const [key, value] of Object.entries(day)) {
-            if (key === 'savedAt') continue;
+            // savedAt is bookkeeping, the tutorial fields describe a lesson
+            // that is not running any more - a save from a dev build may still
+            // carry them.
+            if (key === 'savedAt' || TUTORIAL_FIELDS.includes(key)) continue;
             this.state[key] = SETS.includes(key) ? new SvelteSet(value ?? []) : value;
         }
         this.state.statHistory = this.migrateStatPoints(this.state.statHistory);
