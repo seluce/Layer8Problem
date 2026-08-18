@@ -8,6 +8,7 @@ Presentation:
 * The character and item pictures are delivered at the size they are actually shown at. A portrait 64 pixels wide was being downloaded at 2048 - sixteen times the edge length, which is 256 times the area. The drawings themselves are untouched, nothing looks different; the download is 5.4 MB smaller, from 24.6 down to 19.2.
 
 Bug fixes:
+* Escape opened the settings on top of the knowledge book instead of closing the book, and did the same over the week's condition picker. Both answer to Escape like every other window now.
 * The diary could stay empty for a whole session and show a single line instead of the page - most reliably if you switched language on the start screen. It now asks for its texts itself instead of relying on the background warm-up.
 * Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.
 * In the tutorial, opening the backpack, tapping an item and then cancelling brought the glowing button back on top of the open backpack. It could be clicked there, and the action started behind the window that was still open. Nothing on the board lights up any more while a window is up; the step comes back when you close it.

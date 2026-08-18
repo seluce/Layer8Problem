@@ -553,6 +553,32 @@ await ok('softReset during a week restarts the week on Monday', () => {
     assert.equal(state.archive.stats.weeksStarted, 2, 'a restart is a new attempt');
     assert.ok(calls.boots >= 1);
 });
+await ok('Every overlay answers to Escape, or is a named exception', () => {
+    // The knowledge modal did not: Escape fell straight through its branch and
+    // opened the SETTINGS on top of it. The week's condition picker had the same
+    // hole. One forgotten line in a chain of fifteen is invisible by reading -
+    // so the chain is held against the markup instead.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const esc = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const ui  = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+
+    const kette = esc.slice(esc.indexOf("key === 'escape'"), esc.indexOf('HOTKEY BLOCKING'));
+    const start = (ui.match(/STARTUP_OVERLAYS:\s*\[([^\]]*)\]/) ?? [, ''])[1];
+
+    // Named exceptions, each for a reason that stands in engine.js:
+    //   settings-modal  IS the target of the last branch
+    //   modal-overlay   branch D - a warning closes, an ending does not
+    //   email-modal     branch A - an open mail is a decision, not a window
+    //   tut-ask-modal   branch A - a question, not a window
+    const ausnahmen = new Set(['settings-modal', 'modal-overlay', 'email-modal', 'tut-ask-modal']);
+
+    const overlays = [...new Set([...html.matchAll(/id="([a-z-]+-modal)"/g)].map(m => m[1]))];
+    assert.ok(overlays.length >= 15, `only ${overlays.length} overlays found - has the markup changed?`);
+
+    const stumm = overlays.filter(id =>
+        !ausnahmen.has(id) && !kette.includes(`'${id}'`) && !start.includes(`'${id}'`));
+    assert.deepEqual(stumm, [], `Escape does not reach: ${stumm.join(', ')}`);
+});
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
     // the overlay leaves the old screen mounted behind it. softReset() and

@@ -445,8 +445,13 @@ export const ui = {
      * Escape does not dismiss them, and the day cannot be restarted - a restart
      * would call clearDay() and throw away the very save the resume dialog is
      * offering.
+     *
+     * The week's condition picker belongs here as much as the day's (6.1). It
+     * was in neither list: not a startup window, and not in the Escape chain
+     * either - so Escape fell through to the bottom and opened the settings on
+     * top of the picker, the same way it did for the knowledge modal.
      */
-    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal'],
+    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal', 'week-modal'],
 
     isStartupOverlayOpen: function() {
         return this.STARTUP_OVERLAYS.some(id => this.isOverlayOpen(id));
