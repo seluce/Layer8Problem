@@ -12,6 +12,9 @@ Bug fixes:
 * At the end of a working week the day report underneath the balance sheet was headed "Wednesday (normal)" - on a Friday, and in a week you had picked "In need of leave" for. It said that in every week, on every day and at every level, because it was reading the setting of the single-day mode, which a week does not have. It now names the day it is actually reporting on and the condition you chose: "Friday (in need of leave)".
 * The weekly balance counted "1 Tickets" and "1 Mails ignoriert". One ticket is a ticket.
 
+Under the hood:
+* Three parts of the machinery were rebuilt so they can no longer break in silence: the interface no longer carries program code of its own, the tutorial no longer reaches into the controls behind the game's back, and a set of faults that used to pass unnoticed - a missing icon, a wrong reference, a screen left in the old language - are now caught while the game is built. None of it shows while playing.
+
 ---
 
 [6.0.0] - 2026-08-17
