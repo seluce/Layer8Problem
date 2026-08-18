@@ -209,6 +209,27 @@ export const DAY_TIMERS = [
 export const TUTORIAL_FIELDS = ['tutorialStep', 'tutorialUnlocked'];
 
 /**
+ * The day, as it goes into storage.
+ *
+ * freshDay() decides which fields belong to a day, and the two lists above
+ * decide which of them a save has no business carrying. That is one rule, and
+ * it used to stand twice: saveDay() and saveWeek() held the same loop with the
+ * same two exclusions, character for character. A third exclusion would have
+ * had to be found in both.
+ *
+ * Sets become arrays on the way out, because JSON has no Set.
+ */
+export function snapshotDay(state) {
+    const day = {};
+    for (const key of Object.keys(freshDay())) {
+        if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
+        const value = state[key];
+        day[key] = value instanceof Set ? [...value] : value;
+    }
+    return day;
+}
+
+/**
  * Mutable game state.
  *
  * The .svelte.js extension is what lets this file use runes. Wrapping the

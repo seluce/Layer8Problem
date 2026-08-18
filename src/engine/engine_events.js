@@ -1478,8 +1478,15 @@ export const events = {
         let weekHTML = '';
         let warWoche = false;
         let leadText = t('party.end.leadDay');
+        let weekMode = null, weekDay = null;
         if (this.state.week.active) {
             warWoche = true;
+            // Read BEFORE endWeek(), for the same reason the balance sheet is
+            // built before it: afterwards the state no longer knows which week
+            // this was. finishWeek() takes the same two along - the gala is the
+            // second way a week can end, and it must not be the poorer one.
+            weekMode = this.WEEK_DIFFS[this.state.week.level].key;
+            weekDay = this.state.week.dayIndex;
             this.recordWeekResult('survived', 5);
             weekHTML = this.buildWeekBalanceHTML({ isWin: true });
             this.endWeek();
@@ -1496,7 +1503,9 @@ export const events = {
             // endWeek() ran above, so the state no longer knows which mode
             // this ending came from - the header would otherwise have read
             // "Arbeitstag Nr." above a week that was survived.
-            isWeek: warWoche
+            isWeek: warWoche,
+            weekMode,
+            weekDay
         });
     },
 

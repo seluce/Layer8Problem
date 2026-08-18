@@ -5,7 +5,7 @@ import { t, tf, tree } from '../i18n/i18n.svelte.js';
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS } from './engine_state.svelte.js';
+import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -305,16 +305,7 @@ export const core = {
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
 
         try {
-            const day = {};
-            for (const key of Object.keys(freshDay())) {
-                // Running timers belong to this session; after a reload they
-                // point nowhere. They stay out and restart on resume anyway.
-                // The tutorial fields stay out for the same reason - see
-                // TUTORIAL_FIELDS.
-                if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
-                const value = this.state[key];
-                day[key] = value instanceof Set ? [...value] : value;
-            }
+            const day = snapshotDay(this.state);
             // Not part of freshDay, but still part of the day:
             day.difficultyMult = this.state.difficultyMult;
             day.reputation = { ...this.state.reputation };

@@ -1711,6 +1711,11 @@ await ok('Das Gala-Ende kennzeichnet die überstandene Woche', () => {
     state.isPartyMode = true; state.partyProgress = 12;
     engine.finishParty('party_finale_standard');
     assert.equal(calls.end?.isWeek, true, 'Kopfzeile zeigte den Tageszähler');
+    // Die Gala ist der ZWEITE Weg, auf dem eine Woche endet. Ohne diese beiden
+    // Felder nahm der Tagesbericht darunter seinen Standardwert und las
+    // „MONTAG (Genervt)" — an einem Freitag, auf jeder Stufe.
+    assert.equal(calls.end?.weekMode, 'normal', 'die Wochenstufe reist über die Gala nicht mit');
+    assert.equal(calls.end?.weekDay, 5, 'der Wochentag reist über die Gala nicht mit');
     assert.equal(state.archive.stats.weeksSurvived, 1);
 
     resetState();                                               // Tagesmodus bleibt Tag

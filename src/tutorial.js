@@ -1,9 +1,29 @@
 import { tick } from 'svelte';
 import { applyStaticStrings } from './i18n/i18n.svelte.js';
 
+/**
+ * The look of a highlight, in one place.
+ *
+ * These names stood in four places before 6.1 - once per adding function, once
+ * in clearGlows() and once in ActionBar - and they only worked while all four
+ * agreed. Miss one class in clearGlows() and the light never goes out again:
+ * no error, no warning, just a ring that stays.
+ *
+ * RING is what an info step wears. GLOW adds the pulse and belongs to a step
+ * that wants something PRESSED. clearGlows() removes the superset, so it can
+ * never fall behind either of them.
+ *
+ * Written as literals so Tailwind sees them: it reads this file (see the
+ * @source list in app.css) and would generate nothing for a name assembled at
+ * runtime.
+ */
+export const RING_CLASSES = ['ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]'];
+export const GLOW_CLASSES = ['animate-pulse', ...RING_CLASSES];
+
 const tutorial = {
     isActive: false,
     step: 0,
+    askButtonsMarkup: null,   // the question's two buttons, kept while the closing screen is up
     pointerTimeout: null,
     hooksInjected: false,
     currentTarget: null,
@@ -36,10 +56,8 @@ const tutorial = {
      *
      * Whoever shows the window says which face it wears, so nothing has to be
      * put back afterwards. The buttons are markup, so the question's pair is
-     * kept rather than written out a second time in here.
+     * kept in askButtonsMarkup rather than written out a second time in here.
      */
-    askButtonsMarkup: null,
-
     dressAskModal: function(face) {
         const askModal = document.getElementById('tut-ask-modal');
         if (!askModal) return null;
@@ -83,7 +101,7 @@ const tutorial = {
         allElements.forEach(id => {
             let el = document.getElementById(id);
             if(el) {
-                el.classList.remove('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+                el.classList.remove(...GLOW_CLASSES);
             }
         });
     },
@@ -328,7 +346,7 @@ const tutorial = {
         let el = document.getElementById('btn-team');
         if(!el) return;
 
-        el.classList.add('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+        el.classList.add(...GLOW_CLASSES);
 
         setTimeout(() => {
             this.showPointer(el, titleKey, descKey, false);
@@ -342,7 +360,7 @@ const tutorial = {
         ids.forEach(id => {
             let el = document.getElementById(id);
             if(el) {
-                el.classList.add('ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+                el.classList.add(...RING_CLASSES);
                 
                 if (id === 'stat-row-al' || id === 'btn-inventory' || !anchorEl) {
                     anchorEl = el;

@@ -22,6 +22,7 @@
     import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
+    import { GLOW_CLASSES } from '../tutorial.js';
 
     // The emoji stays in the table as a fallback: if an icon file is ever
     // missing, the button keeps its meaning instead of showing an empty box.
@@ -40,10 +41,10 @@
     // actionable instead of just "this one is important".
     const urgent = $derived(state.tickets >= TICKET_WARNING);
 
-    // Whole class names, never composed - Tailwind reads this file as source
-    // and cannot see a name that is put together at runtime. `relative` is on
-    // the button already, so the ring does not have to bring it along.
-    const GLOW = 'animate-pulse ring-2 ring-cyan-500 z-2500 shadow-[0_0_15px_rgba(6,182,212,0.5)]';
+    // The ring is the same look the DOM-side highlights wear, so it comes from
+    // the same list rather than from a second copy that has to be kept in step.
+    // The names are literals over there, which is what Tailwind needs.
+    const GLOW = GLOW_CLASSES.join(' ');
     const DIM  = 'opacity-50';
 
     // Nothing while no step is on display, which is the normal state of the

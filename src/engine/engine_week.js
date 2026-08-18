@@ -1,6 +1,6 @@
 import { KEYS } from './keys.js';
 import { t, tf } from '../i18n/i18n.svelte.js';
-import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS } from './engine_state.svelte.js';
+import { freshDay, snapshotDay } from './engine_state.svelte.js';
 import { platform } from '../platform.js';
 import { DB, ensure } from '../data.js';
 
@@ -768,12 +768,7 @@ export const week = {
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
 
         try {
-            const day = {};
-            for (const key of Object.keys(freshDay())) {
-                if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
-                const value = this.state[key];
-                day[key] = value instanceof Set ? [...value] : value;
-            }
+            const day = snapshotDay(this.state);
             const payload = {
                 week: { ...this.state.week, weekLog: [...this.state.week.weekLog] },
                 day,
