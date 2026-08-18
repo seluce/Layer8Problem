@@ -387,6 +387,13 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
 // and had to be extended for every new page - three times, each time after the
 // check had already wrongly rejected correct data. A declared kind fails the
 // other way round: an unknown one is reported instead of quietly skipped.
+/*
+ * The six stations of the summer party. The list is here rather than in the
+ * engine because the engine never needed it: engine_events filters
+ * `ev.loc === loc` and takes whatever it is given.
+ */
+const PARTY_LOCS = new Set(['bar', 'buffet', 'dance', 'lounge', 'outside', 'toilet']);
+
 const PAGE_TONES = new Set(['slate', 'red', 'blue', 'amber', 'purple']);
 // Badge tones on the Wall of Deals. Mirrors TONES in IntranetSales.svelte -
 // an unknown one there falls back to grey, which reads as a design choice
@@ -985,7 +992,19 @@ for (const p of POOLS) {
           err(`${ctx} opts[${i}]: "m" wirkt auf der Feier nicht — die Uhr läuft über zwölf Stationen zu je 30 Minuten`);
         if (o.b !== undefined)
           err(`${ctx} opts[${i}]: "b" wirkt auf der Feier nicht — nach Feierabend gibt es kein Chef-Radar und kein Spielende`);
+        // checkPool sends the option to a station, and the same six names are
+        // the file names of the foyer icons - see tools/lint-assets.mjs.
+        if (o.checkPool !== undefined && !PARTY_LOCS.has(o.checkPool))
+          err(`${ctx} opts[${i}]: checkPool "${o.checkPool}" ist keine Station — erlaubt: ${[...PARTY_LOCS].join(', ')}`);
       });
+
+      // The station an event belongs to. engine_events filters on ev.loc ===
+      // loc and validates NOTHING: an invented station costs no error and no
+      // warning, it simply means the event is never drawn. Which is the worst
+      // way for written work to disappear - it is in the tree, it lints clean,
+      // and no player will ever see it.
+      if (ev.loc !== undefined && !PARTY_LOCS.has(ev.loc))
+        err(`${ctx}: loc "${ev.loc}" ist keine Station — das Ereignis wird nie gezogen. Erlaubt: ${[...PARTY_LOCS].join(', ')}`);
     }
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
       checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'am Knoten');

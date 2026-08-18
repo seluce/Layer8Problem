@@ -154,7 +154,8 @@ npm run lint:data      data check (German tree)
 npm run lint:data:en   the same for the English one
 npm run lint:i18n      interface strings
 npm run lint:parity    parity of both trees, file inventory included
-npm run lint:all       all four in sequence — the gate
+npm run lint:assets    every image reference against the stock
+npm run lint:all       all five in sequence — the gate
 npm test               four suites × two languages: week mode, console tool, i18n
 npm run sim            day simulation for balance
 npm run sim:week       week simulation for balance

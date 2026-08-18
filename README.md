@@ -103,6 +103,7 @@ Tools live in `tools/`:
 npm run lint:all       # the gate: data (both trees), interface strings, parity
 npm run lint:data      # the German data tree only
 npm run lint:parity    # holds the two trees against each other
+npm run lint:assets    # every image reference, runtime-built ones included
 npm test               # four test suites, run in both languages
 npm run sim            # simulates thousands of working days for balance
 npm run sim:week       # the same for whole weeks

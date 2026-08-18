@@ -342,6 +342,43 @@ if (identical.length) {
     if (identical.length > 20) info(`    … und ${identical.length - 20} weitere`);
 }
 
+/* ---------- 7) A component must read the data tree through tree() ---------- */
+
+/*
+ * `DB` is a plain object. data.js empties and refills it on a language switch,
+ * so a component that reads `DB.items` directly has nothing to notice: no
+ * error, no warning, the dictionary strings around it change and the tree text
+ * stays put. The backpack read "Alter Donut (Use)" - half a language each.
+ *
+ * tree() reads the language rune on the way past, which is what makes the
+ * component a reader of it. The rule is in CLAUDE.md; until 6.1 nothing held
+ * anyone to it, and it held only because everyone happened to remember.
+ *
+ * The engine may import DB as before: it is not reactive and re-reads on every
+ * call. This check is about components only.
+ */
+const KOMPONENTEN = join(ROOT, 'src/components');
+const svelteDateien = [];
+(function sammeln(dir) {
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) sammeln(full);
+        else if (entry.endsWith('.svelte')) svelteDateien.push(full);
+    }
+})(KOMPONENTEN);
+
+for (const datei of svelteDateien) {
+    const text = readFileSync(datei, 'utf-8');
+    const wo = relative(ROOT, datei);
+    // An import of DB out of data.js - under any name it is given.
+    for (const m of text.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*data\.js'/g)) {
+        const namen = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
+        if (namen.includes('DB'))
+            err(`${wo}: importiert DB direkt aus data.js — in einer Komponente wird der Datenbaum über tree() gelesen, sonst friert sie beim Sprachwechsel in ihrer Sprache ein`);
+    }
+}
+info(`${svelteDateien.length} Komponenten auf den Zugriff über tree() geprüft`);
+
 /* ---------- Report ---------- */
 
 const show = (title, list) => {
