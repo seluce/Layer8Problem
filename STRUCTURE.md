@@ -17,14 +17,16 @@ src/
   main.js               entry point: stylesheet, engine, mounting the components
   app.css               Tailwind directives, @source list, custom classes
   engine.js             bootstrap, keyboard control, global error catcher
+  actions.js            what a button in index.html is allowed to do
   data.js               database, split into immediate and deferred
   tutorial.js
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
   components/           38 Svelte components, 8 of them for the intranet
-  engine/               11 modules; engine_state.svelte.js holds the state,
-                        engine_week.js the week mode
+  engine/               12 modules; engine_state.svelte.js holds the state,
+                        engine_week.js the week mode, engine_hooks.js the
+                        observer list the tutorial listens on
   data/de/              23 data files, the German source
   data/en/              the same 23, in English
   i18n/                 language selection and interface strings
@@ -37,6 +39,7 @@ tools/
   lint-data.mjs         data check, npm run lint:data (and :en)
   lint-i18n.mjs         interface strings, npm run lint:i18n
   lint-parity.mjs       parity of the two language trees, npm run lint:parity
+  lint-assets.mjs       every image reference against the stock, npm run lint:assets
   simulate-day.mjs      day simulation, npm run sim
   simulate-week.mjs     week simulation, npm run sim:week
   report-prose.mjs      prose and style report, node tools/report-prose.mjs [pool]
@@ -504,6 +507,35 @@ there and you are calling `undefined`.
 That was exactly the case for two versions: export and import threw on click,
 the global error catcher swallowed it, and for the player nothing happened. From
 inside the inner object the engine is reached through `engine.`.
+
+## How the shell and the tutorial reach the engine (6.1)
+
+Two places where markup and engine meet, and both used to meet through a
+global.
+
+**A button names an intent, it does not carry code.** `index.html` held 66
+inline `onclick` handlers until 6.1. Now a button carries
+`data-action="openTeam"`, an argument in `data-arg`, and `src/actions.js` holds
+the table one delegated listener resolves against. Nothing is evaluated: a name
+that is not in the table does nothing and says so in the console. `lint-i18n`
+holds every mark against the table in both directions — including marks built at
+runtime, which is how the closing screen's button is made — and rejects built
+`onclick` outright.
+
+**The engine tells, the tutorial listens.** `tutorial.js` used to overwrite
+seven engine methods and never put them back. `engine/engine_hooks.js` gives the
+engine an observer list in the shape `onLanguageChange()` already had: `on()`
+returns the way to stop, `emit()` says what happened, and the six names in
+`ENGINE_EVENTS` are declared so a typo throws.
+
+One of the seven was never a notification. `askUseItem` has to be able to say
+NO — at step 8 the lesson refuses every item but the doughnut — so the veto is
+its own thing: `setItemGuard()` / `allowsItem()`. A listener list would have
+swallowed the refusal with nothing failing.
+
+The engine reads `engine.lesson`, which the tutorial registers itself in at
+load. That is what opened the import circle: `tutorial.js → engine.js` is a
+line, and no global is left.
 
 ## What deliberately does not live in components
 
