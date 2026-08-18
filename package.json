@@ -28,8 +28,10 @@
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
     "sim": "node tools/simulate-day.mjs",
-    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
-    "sim:week": "node tools/simulate-week.mjs"
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en",
+    "sim:week": "node tools/simulate-week.mjs",
+    "test:de": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
+    "test:en": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en"
   },
   "build": {
     "appId": "com.layer8problem.game",
@@ -54,6 +56,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
+    "acorn": "^8.18.0",
     "electron": "^43.4.0",
     "electron-builder": "^26.15.3",
     "svelte": "^5.56.9",

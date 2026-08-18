@@ -210,11 +210,21 @@ in `data_special.js`.
 **Always compare against a fresh baseline run**, not against memory — even 300
 runs per cell fluctuate by several percentage points.
 
-## 5. `npm test` — the four test suites
+## 5. `npm test` — the four test suites, in both languages
 
 ```
-npm test        # 16 / 126 / 20 / 30
+npm test        # 16 / 137 / 20 / 38, then the same four again with --lang=en
+npm run test:de # one language only, while working
+npm run test:en
 ```
+
+**Why twice:** every suite takes `--lang=en` and loads the other tree. Both
+trees carry the same ids, story flags and numbers, so anything a test actually
+checks holds in both languages — which makes the second run cheap and turns any
+comparison against display text into a failure. Before 6.1 the suites only ever
+saw German, and `t()` falling back to German in Node made that invisible: the
+week balance comparisons were green while the English legend read `L/A/B` above
+rows labelled `F/A/C`.
 
 Runs under `node --conditions browser --import ./tools/register.mjs`.
 `register.mjs` hooks in `svelte-loader.mjs` so that `engine_state.svelte.js` is

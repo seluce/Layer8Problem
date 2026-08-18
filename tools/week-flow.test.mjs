@@ -24,8 +24,20 @@ globalThis.document = {
 };
 
 const { DB, ensure, loadCore } = await import('../src/data.js');
-// 6.0: the core tier is loaded, not statically imported. German is the source.
-await loadCore('de');
+
+// 6.0: the core tier is loaded, not statically imported. German is the source,
+// and it stays the default here - but the suite runs in EITHER language now:
+//
+//     node ... tools/week-flow.test.mjs --lang=en
+//
+// That is the point of holding expectations against the dictionary instead of
+// against German words. Both trees carry the same ids, story flags and numbers
+// (CLAUDE.md), so everything these tests actually check is the same in both;
+// only the words differ, and no comparison runs over words any more. A suite
+// that only ever sees one language cannot say a word about the other - and this
+// one stayed green while the English weekly balance was demonstrably wrong.
+const LANG = (process.argv.find(a => a.startsWith('--lang=')) ?? '').split('=')[1] || 'de';
+await loadCore(LANG);
 await ensure('lore');
 const { buildDiary } = await import('../src/engine/engine_diary.js');
 const { core } = await import('../src/engine/engine_core.js');
@@ -33,11 +45,21 @@ const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
-const { useLanguage } = await import('../src/i18n/i18n.svelte.js');
+const { useLanguage, t, tf } = await import('../src/i18n/i18n.svelte.js');
+// dayName() and the balance keys: the bench names what it expects through the
+// SAME dictionary the engine reads, never through the German words themselves.
+// A test that spells out display text passes in one language and says nothing
+// about the other - and it stayed green while the English weekly balance was
+// demonstrably wrong (GLOSSAR 7b, case twenty-nine).
+const { dayName } = await import('../src/engine/engine_week.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
 const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
+
+// The rune decides what t() answers; loadCore() above has already put the
+// matching tree in place, so this only moves the pointer.
+await useLanguage(LANG);
 
 // --- engine composition with UI stubs (later spread wins) --------------------
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
@@ -120,8 +142,8 @@ await ok('16:30 an Tag 2 queued die Nacht statt Feierabend, Gala unterdrückt', 
     engine.partyInvitation = realParty;
 
     assert.equal(state.pendingEnd.isNight, true);
-    assert.equal(state.pendingEnd.title, 'DIENSTAG GESCHAFFT');
-    assert.equal(state.pendingEnd.nextDay, 'Mittwoch');
+    assert.equal(state.pendingEnd.title, tf('week.night.title', { day: dayName(1).toUpperCase() }));
+    assert.equal(state.pendingEnd.nextDay, dayName(2));
     assert.equal(state.pendingEnd.night.ticketsAfter, 2);       // ceil(8*0.25)
     assert.equal(state.archive.stats.daysSurvived ?? 0, 0);     // Tageszähler bleiben rein
     assert.equal(state.archive.stats.survived_week_normal, 1);  // gezählt wird im Wochen-Namensraum
@@ -160,18 +182,17 @@ await ok('Freitag 16:30 → WOCHE ÜBERLEBT mit Bilanz, Statistiken, Slot geräu
     state.fl = 52; state.al = 44; state.cr = 39;
     state.meetingDone = true;              // der Freitag endet erst nach dem Meeting
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd.title, 'WOCHE ÜBERLEBT');
+    assert.equal(state.pendingEnd.title, t('end.weekTitle'));
     engine.finishGame();
 
     assert.ok(calls.end);
-    assert.ok(calls.end.text.includes('Wochen-Bilanz'));
-    assert.ok(calls.end.text.includes('Erholt'));
-    assert.ok(calls.end.text.includes('✓ Freitag'));
-    assert.ok(calls.end.text.includes('☕ 12× Kaffee'));         // 3+2+4+1+2
+    assert.ok(calls.end.text.includes(tf('week.summary.title', { mode: t('week.diff.easy') })));
+    assert.ok(calls.end.text.includes(`✓ ${dayName(4)}`));
+    assert.ok(calls.end.text.includes(tf('week.summary.totals', { coffee: 12, mails: 3 })));  // 3+2+4+1+2
     // Closing values instead of the peak, abbreviated, legend in the header
-    assert.ok(calls.end.text.includes('4 Tickets · F 20 · A 31 · C 24'), 'Montagszeile');
-    assert.ok(calls.end.text.includes('6 Tickets · F 52 · A 44 · C 39'), 'Freitagszeile');
-    assert.ok(calls.end.text.includes('F Faulheit · A Aggro · C Chef'), 'Legende');
+    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 4, fl: 20, al: 31, cr: 24 })), 'Montagszeile');
+    assert.ok(calls.end.text.includes(tf('week.summary.values', { tickets: 6, fl: 52, al: 44, cr: 39 })), 'Freitagszeile');
+    assert.ok(calls.end.text.includes(t('week.summary.legend')), 'Legende');
     assert.ok(!calls.end.text.includes('Peak'), 'Peak muss verschwunden sein');
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.archive.stats.weeksSurvived_easy, 1);    // Wochen-Abschluss, eigener Key
@@ -190,10 +211,10 @@ await ok('Rage Quit am Mittwoch: Tagesnennung, weeksRageQuit, Ventil zählt 1×'
     // cause, not the title: the title is a dictionary entry and reads
     // differently in the other language.
     assert.equal(state.pendingEnd.cause, 'rage');
-    assert.ok(state.pendingEnd.lead.includes('Die Woche endet am Mittwoch.'));
+    assert.ok(state.pendingEnd.lead.includes(tf('week.endsOn', { base: '', day: dayName(2) }).trim()));
     engine.finishGame();
 
-    assert.ok(calls.end.text.includes('✗ Mittwoch'));
+    assert.ok(calls.end.text.includes(`✗ ${dayName(2)}`));
     assert.equal(state.archive.stats.weeksRageQuit, 1);
     assert.equal(state.archive.stats.weekBestDay, 2);           // zwei Tage geschafft
     assert.equal(state.archive.stats.weekVentSaves, 1);         // once per week, in the week's own key
@@ -222,7 +243,7 @@ await ok('9 Tickets übertragen + Morgen-Stimmung Tickets (Urlaubsreif +3) = sof
     assert.equal(state.tickets, 12);
     assert.ok(calls.end, 'Wochen-Endscreen muss erschienen sein');
     assert.equal(calls.end.cause, 'tickets');
-    assert.ok(calls.end.lead.includes('Donnerstag'));
+    assert.ok(calls.end.lead.includes(dayName(3)));
     assert.equal(state.archive.stats.weeksFired, 1);
     assert.equal(state.week.active, false);
 });
@@ -1219,7 +1240,7 @@ await ok('Freitag 16:30: erst das Meeting, dann Gala oder Bilanz', () => {
     state.pendingEnd = null;
     engine.partyInvitation = () => null;
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd.title, 'WOCHE ÜBERLEBT');
+    assert.equal(state.pendingEnd.title, t('end.weekTitle'));
 
     engine.partyInvitation = realParty;
 });
@@ -1255,7 +1276,7 @@ await ok('finishParty schließt die Woche: Zähler, Bilanz unter dem Party-Repor
     engine.finishParty('SYNERGY!', 'Testabend.');
 
     assert.equal(calls.end.cause, 'party');
-    assert.ok(calls.end.text.includes('Wochen-Bilanz'));        // Bilanz unter dem Party-Report
+    assert.ok(calls.end.text.includes(t('week.summary.legend')));  // Bilanz unter dem Party-Report
     assert.ok(calls.end.text.includes('WOCHE (Erholt)'));       // Party-Bilanz-Name week-aware
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
@@ -1620,7 +1641,7 @@ await ok('Das Freitagsfinale wird nicht von der Uhr überholt', () => {
 
     state.meetingDone = true;
     engine.checkEndConditions();
-    assert.equal(state.pendingEnd?.title, 'WOCHE ÜBERLEBT');
+    assert.equal(state.pendingEnd?.title, t('end.weekTitle'));
 });
 await ok('Mo–Do bleibt vom Meeting-Schutz unberührt', () => {
     resetState();

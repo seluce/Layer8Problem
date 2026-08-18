@@ -15,6 +15,9 @@ globalThis.window.matchMedia = () => ({ matches: false });
 globalThis.document = {
     getElementById: (id) => ({ id, textContent: '', classList: { add() {}, remove() {} } }),
     querySelectorAll: () => [],
+    // useLanguage() sets <html lang> on its way past - the automatic
+    // hyphenation of long words follows that attribute.
+    documentElement: { lang: '' },
 };
 
 const { DB, ensure, loadCore } = await import('../src/data.js');
@@ -24,7 +27,17 @@ const { DB, ensure, loadCore } = await import('../src/data.js');
 // this step gets an empty DB - and the failure is silent, because
 // triggerMorningMood() answers a missing DB.moods with its fallback and
 // returns before any end condition is checked.
-await loadCore('de');
+//
+// German is the default; --lang=en runs the same suite against the other tree.
+// Both trees carry the same ids and numbers, so everything checked here is the
+// same in both - which only holds as long as no comparison runs over display
+// text. See the head of week-flow.test.mjs.
+const LANG = (process.argv.find(a => a.startsWith('--lang=')) ?? '').split('=')[1] || 'de';
+await loadCore(LANG);
+
+const { useLanguage, t, tf } = await import('../src/i18n/i18n.svelte.js');
+const { dayName } = await import('../src/engine/engine_week.js');
+await useLanguage(LANG);
 
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
@@ -111,7 +124,7 @@ await ok('dev.feierabend(2) stellt 16:20 ein, ohne die Nacht schon auszulösen',
 await ok('dev.nacht() zeigt den Nacht-Screen mit Gepäck und Schlaftext', () => {
     dev.nacht();
     assert.equal(state.modal.isNight, true);
-    assert.equal(state.modal.nextDay, 'Mittwoch');
+    assert.equal(state.modal.nextDay, dayName(2));
     assert.ok(state.modal.night.ticketsAfter <= state.modal.night.ticketsBefore);
     assert.ok(typeof state.modal.night.sleepText === 'string');
     assert.equal(calls.end, null);                       // kein Endscreen
@@ -121,7 +134,7 @@ await ok('dev.feierabend(4, true) löst direkt aus', () => {
     dev.tag(1, 'hard');
     dev.feierabend(4, true);
     assert.equal(state.modal.isNight, true);
-    assert.equal(state.modal.nextDay, 'Freitag');
+    assert.equal(state.modal.nextDay, dayName(4));
 });
 await ok('dev.nacht() am Freitag warnt statt zu brechen', () => {
     reset();
@@ -163,10 +176,10 @@ await ok('dev.gewonnen() zeigt die Wochen-Bilanz mit fünf Zeilen', () => {
     dev.tag(1, 'easy');
     dev.gewonnen();
     assert.ok(calls.end, 'Endscreen fehlt');
-    assert.equal(calls.end.title, 'WOCHE ÜBERLEBT');
-    assert.ok(calls.end.text.includes('Wochen-Bilanz'));
-    for (const tag of ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']) {
-        assert.ok(calls.end.text.includes(tag), tag + ' fehlt in der Bilanz');
+    assert.equal(calls.end.title, t('end.weekTitle'));
+    assert.ok(calls.end.text.includes(t('week.summary.legend')));
+    for (let i = 0; i < 5; i++) {
+        assert.ok(calls.end.text.includes(dayName(i)), dayName(i) + ' fehlt in der Bilanz');
     }
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
@@ -178,8 +191,8 @@ await ok('dev.raus("rage", 3) endet am Mittwoch mit Tagesnennung', () => {
     // cause, not the title: the title is a dictionary entry and reads
     // differently in the other language.
     assert.equal(calls.end.cause, 'rage');
-    assert.ok(calls.end.lead.includes('Die Woche endet am Mittwoch.'));
-    assert.ok(calls.end.text.includes('✗ Mittwoch'));
+    assert.ok(calls.end.lead.includes(tf('week.endsOn', { base: '', day: dayName(2) }).trim()));
+    assert.ok(calls.end.text.includes(`✗ ${dayName(2)}`));
     assert.equal(state.archive.stats.weeksRageQuit, 1);
 });
 await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
@@ -188,19 +201,19 @@ await ok('dev.raus("tickets", 4) und dev.raus("chef", 2) enden korrekt', () => {
     dev.raus('tickets', 4);
     // Both ways out are titled GEFEUERT; only the cause tells them apart.
     assert.equal(calls.end.cause, 'tickets');
-    assert.ok(calls.end.lead.includes('Donnerstag'));
+    assert.ok(calls.end.lead.includes(dayName(3)));
 
     reset();
     dev.tag(1, 'normal');
     dev.raus('chef', 2);
     assert.equal(calls.end.cause, 'chef');
-    assert.ok(calls.end.lead.includes('Dienstag'));
+    assert.ok(calls.end.lead.includes(dayName(1)));
 });
 await ok('dev.morgentod() beendet die Woche in der Morgenstimmung', () => {
     reset();
     dev.morgentod(4);
     assert.ok(calls.end, 'Endscreen fehlt');
-    assert.ok(calls.end.lead.includes('Donnerstag'));
+    assert.ok(calls.end.lead.includes(dayName(3)));
     assert.equal(state.week.active, false);
 });
 

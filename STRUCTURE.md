@@ -47,7 +47,7 @@ tools/
   make-steam-achievements.mjs  achievement strings for Steamworks
   dev-woche.js          console tool for the week mode, see below
   TOOLS.md              manual for everything in this folder
-  *.test.mjs            four test suites, npm test
+  *.test.mjs            four test suites, npm test (de and en)
   register.mjs          loader hook for the tests
   svelte-loader.mjs     compiles .svelte.js for the tests
 ```
@@ -155,7 +155,7 @@ npm run lint:data:en   the same for the English one
 npm run lint:i18n      interface strings
 npm run lint:parity    parity of both trees, file inventory included
 npm run lint:all       all four in sequence — the gate
-npm test               four test suites: week mode, console tool, i18n
+npm test               four suites × two languages: week mode, console tool, i18n
 npm run sim            day simulation for balance
 npm run sim:week       week simulation for balance
 npm start              builds and starts Electron
@@ -269,6 +269,13 @@ A complete manual for every tool is in `tools/TOOLS.md`.
 `npm test` runs four suites in sequence: the foundation and the flow of the week
 mode, the console tool, and the language layer. They run against the **real**
 modules, not against replicas — only display and audio are substituted.
+
+**And it runs them twice, once per language** (`--lang=en`, since 6.1). Both
+trees carry the same ids and numbers, so a test that checks behaviour passes in
+both — and one that holds display text against a German word does not. That was
+not theory: the six comparisons in the week balance stayed green while the
+English legend and the row labels disagreed. `npm run test:de` and
+`npm run test:en` run a single language while working.
 
 That takes two devices, which sit in `register.mjs` and `svelte-loader.mjs`: the
 loader hook sends every `.svelte.js` file through `compileModule()` so that the

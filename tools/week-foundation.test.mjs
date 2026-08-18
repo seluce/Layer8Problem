@@ -12,9 +12,18 @@ globalThis.localStorage = {
 globalThis.window = globalThis;
 globalThis.window.matchMedia = () => ({ matches: false });
 
-const { week, computeNightCarry, WEEK_DIFFS, WEEK_TUNING } =
+const { week, computeNightCarry, WEEK_DIFFS, WEEK_TUNING, dayName } =
     await import('../src/engine/engine_week.js');
 const { freshDay, state } = await import('../src/engine/engine_state.svelte.js');
+
+// The day name is a dictionary entry; held against the German word this test
+// says nothing about the English tree. So it is named through dayName() - and
+// the suite is run in both languages, because an expectation that resolves the
+// same way the code does proves nothing while only one language is ever loaded.
+// See the head of week-flow.test.mjs.
+const LANG = (process.argv.find(a => a.startsWith('--lang=')) ?? '').split('=')[1] || 'de';
+const { useLanguage } = await import('../src/i18n/i18n.svelte.js');
+await useLanguage(LANG);
 
 let passed = 0;
 const ok = (name, fn) => { fn(); passed++; console.log('  ✓ ' + name); };
@@ -124,7 +133,7 @@ ok('advanceWeekNight: freshDay-Reset + Übertrag + weekLog + dayIndex', () => {
     const report = engine.advanceWeekNight();
 
     assert.equal(state.week.dayIndex, 2);                       // Dienstag
-    assert.equal(engine.weekDayName(), 'Dienstag');
+    assert.equal(engine.weekDayName(), dayName(1));
     assert.equal(state.week.weekLog.length, 1);
     assert.equal(state.week.weekLog[0].endTickets, 9);
     assert.equal(state.week.weekLog[0].peakA, 95);
