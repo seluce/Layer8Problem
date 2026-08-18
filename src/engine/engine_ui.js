@@ -470,11 +470,29 @@ export const ui = {
         this.showOverlay(overlay);
     },
 
-    closeModal: function() {
+    /**
+     * Empties the box and hides it - without repainting.
+     *
+     * The state is the truth here and the overlay only carries it: since 6.1
+     * components/EndModal.svelte renders off `modal.open`, so hiding the
+     * container alone leaves the old screen mounted behind it. A restart did
+     * exactly that, and the end screen it had just cleared away was still in
+     * the state afterwards.
+     *
+     * Separate from closeModal() because of the repaint: a restart calls this
+     * while the day it is tearing down is still in the state, and updateUI()
+     * runs checkEndConditions() - which would read those dying values and queue
+     * an ending for a day that is about to be replaced.
+     */
+    dismissModal: function() {
         this.state.modal = { open: false, title: '', text: '', isEnd: false,
                              lead: '', cause: null, diary: null,
                              balance: null, party: null };
         this.hideOverlay('modal-overlay');
+    },
+
+    closeModal: function() {
+        this.dismissModal();
         this.updateUI();
     },
 

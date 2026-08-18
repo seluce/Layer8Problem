@@ -480,6 +480,41 @@ await ok('The duplicate guard compares identities, not sentences', async () => {
     assert.notEqual(recipeKey(a), recipeKey(c), 'two events are folded into one');
 });
 
+await ok('A switch in mid-load keeps the pool, and keeps it in the new tree', async () => {
+    // The race the diary was found through. setLanguage() empties DB, clears
+    // `pending` and reloads what it saw - and it used to look only at what had
+    // already ARRIVED. A pool still in flight was then either dropped, or filed
+    // under the OLD tree by the `forLanguage === language` guard in ensure().
+    // Fourteen pools recover at their call site. The diary has none, so it
+    // stayed empty for the whole session: "No entry. The day was long enough."
+    const { ensure, setLanguage, DB, currentLanguage } = await import('../src/data.js');
+    if (currentLanguage() !== 'de') await setLanguage('de');
+    await i18n.useLanguage('de');
+    await ensure('board');
+    const deutsch = JSON.stringify(DB.board).slice(0, 300);
+
+    delete DB.board;
+    const unterwegs = ensure('board');        // deliberately NOT awaited
+    await setLanguage('en');                  // switched right into it
+    await unterwegs.catch(() => {});
+    await new Promise(r => setTimeout(r, 30));
+
+    assert.ok(DB.board, 'the pool was dropped by the switch and never asked for again');
+    assert.notEqual(JSON.stringify(DB.board).slice(0, 300), deutsch,
+                    'the pool survived the switch but stayed in the old tree');
+
+    await setLanguage('de');
+    await i18n.useLanguage('de');
+});
+await ok('setLanguage counts what is in flight, not only what has arrived', async () => {
+    // The check above depends on timing; this one does not.
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(new URL('../src/data.js', import.meta.url), 'utf-8');
+    const fn = src.slice(src.indexOf('export async function setLanguage'));
+    assert.ok(/POOL_NAMES\.filter\(name => DB\[name\] \|\| pending\[name\]\)/.test(fn),
+              'setLanguage looks only at the finished pools again');
+});
+
 await ok('The end screen follows a language switch', async () => {
     // The three forms in which an end or night screen holds its lines. Each has
     // to say something different in the two trees - if it did not, the screen

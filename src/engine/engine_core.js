@@ -951,7 +951,20 @@ export const core = {
             }
             return;
         }
-        
+
+        // The diary, fetched at the START of the day although it is written at
+        // the END of it (6.1).
+        //
+        // It is the one deferred pool with no ensure() at its call site:
+        // buildDiary() reads DB.diary straight and falls back to a single line
+        // if it is not there, silently. The other fourteen ask for themselves
+        // when they are needed, so a warm-up that did not happen costs them a
+        // moment and nothing else. This one has no such moment - by the time
+        // the page is written the day is over. Asked for here, hours of play
+        // ahead of the first reader, and deliberately not awaited: nothing on
+        // the morning screen depends on it.
+        ensure('diary').catch(() => { /* buildDiary falls back, as it always did */ });
+
         // --- TUTORIAL HOOK ---
         if (this.lesson?.isActive) {
             this.state.activeEvent = false;
@@ -1026,10 +1039,7 @@ export const core = {
 
         // Close every menu
         this.closeSettings();
-        const overlay = document.getElementById('modal-overlay');
-        if (overlay) {
-            this.hideOverlay(overlay);
-        }
+        this.dismissModal();
 
         // Replace the whole day rather than resetting fields one by one, so a
         // newly added field can never be forgotten here.

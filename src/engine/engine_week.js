@@ -791,8 +791,7 @@ export const week = {
         this.stopMusic();
         this.clearDayTimers();
         this.closeSettings();
-        const overlay = document.getElementById('modal-overlay');
-        if (overlay) this.hideOverlay(overlay);
+        this.dismissModal();
         document.getElementById('email-modal')?.classList.add('hidden');
 
         this.endWeek();                       // week off, saved slot dropped

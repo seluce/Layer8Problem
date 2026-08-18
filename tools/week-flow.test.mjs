@@ -76,6 +76,7 @@ const engine = {
     showModal() {},
     showEnd(end) { calls.end = end; state.modal = { open: true, ...end, isEnd: true }; },
     closeModal() { state.modal = { open: false }; },
+    dismissModal() { state.modal = { open: false }; },
     showFloatingText() {}, triggerShake() {}, animateItemToBackpack() {},
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { calls.boots++; cb(); },
@@ -544,13 +545,50 @@ await ok('softReset during a week restarts the week on Monday', () => {
     assert.equal(state.week.active, true, 'the week has to be running');
     assert.equal(state.week.dayIndex, 1, 'back to Monday');
     assert.equal(state.week.level, 'normal', 'the condition stays as chosen');
-    assert.equal(state.week.weekLog.length, 0, 'altes Protokoll verworfen');
+    assert.equal(state.week.weekLog.length, 0, 'the old log was not discarded');
     // No fixed values here: the restart plays Monday morning right away and
     // its mood is random. What matters is that the baggage is gone.
     assert.ok(state.tickets < 7, `tickets not reset: ${state.tickets}`);
     assert.ok(state.al < 80, `aggro not reset: ${state.al}`);
     assert.equal(state.archive.stats.weeksStarted, 2, 'a restart is a new attempt');
     assert.ok(calls.boots >= 1);
+});
+await ok('A restart clears the end screen out of the state, not only off the screen', () => {
+    // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
+    // the overlay leaves the old screen mounted behind it. softReset() and
+    // softResetWeek() used to do exactly that: seen in the played game, the
+    // rage-quit screen was still in the state after the restart.
+    resetState();
+    ui.showEnd.call(engine, { title: { k: 'end.weekTitle' }, isWin: true });
+    assert.equal(state.modal.open, true, 'the screen did not open');
+
+    ui.dismissModal.call(engine);
+    assert.equal(state.modal.open, false, 'the end screen is still in the state');
+    assert.equal(state.modal.isEnd, false, 'isEnd survived');
+    assert.equal(state.modal.title, '', 'the title survived');
+
+    // And both restarts go through it rather than hiding the container by hand.
+    const wSrc = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
+    const cSrc = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const woche = wSrc.slice(wSrc.indexOf('softResetWeek: function'), wSrc.indexOf('softResetWeek: function') + 900);
+    const tag = cSrc.slice(cSrc.indexOf('softReset: function'), cSrc.indexOf('softReset: function') + 900);
+    assert.ok(/dismissModal\(\)/.test(woche), 'softResetWeek hides the overlay by hand again');
+    assert.ok(/dismissModal\(\)/.test(tag), 'softReset hides the overlay by hand again');
+});
+await ok('The day asks for the diary, the one pool with no call site of its own', () => {
+    // buildDiary() reads DB.diary straight and falls back to a single line if it
+    // is missing - silently. Seen in the played game: a whole day, and the night
+    // screen said "No entry. The day was long enough." So the day start asks for
+    // it, hours before the page is written.
+    const src = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const reset = src.slice(src.indexOf('reset: function'), src.indexOf('clearDayTimers: function'));
+    assert.ok(/ensure\('diary'\)/.test(reset), 'reset() no longer asks for the diary');
+
+    // And the warm-up that is supposed to cover it has to be given a deadline:
+    // requestIdleCallback promises nothing on its own.
+    const dataSrc = readFileSync(new URL('../src/data.js', import.meta.url), 'utf-8');
+    const pre = dataSrc.slice(dataSrc.indexOf('export function prefetchAll'));
+    assert.ok(/timeout:\s*\d+/.test(pre), 'prefetchAll runs without a deadline again');
 });
 await ok('Resuming raises nothing - five interruptions move no counter', () => {
     resetState();
