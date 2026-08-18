@@ -92,6 +92,17 @@ export function freshDay(mult = 1.0) {
         // tutorial pointed at the CALL button and the button could not be
         // pressed.
         tutorialUnlocked: null,
+
+        // The tutorial step the action bar is showing, or null when it is
+        // showing none: before the lesson starts, and while a modal has taken
+        // over and clearGlows() has switched the lights off. ActionBar dims the
+        // locked buttons off this field and rings the free one off
+        // tutorialUnlocked above - two questions, because an info step dims the
+        // whole bar without freeing anything.
+        //
+        // tutorial.step stays the lesson's own counter. This is what is on
+        // display, not where the lesson stands.
+        tutorialStep: null,
         bossBarPercent: 100,    // boss fight timer bar, read by EventView.svelte
         bootLines: [],          // startup sequence, read by BootView.svelte
         dayActive: false,

@@ -971,6 +971,7 @@ await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
     // Das Feld gehört zum Tag, sonst überlebt eine Freigabe den Neustart.
     resetState();
     assert.equal(state.tutorialUnlocked, null, 'tutorialUnlocked fehlt in freshDay');
+    assert.equal(state.tutorialStep, null, 'tutorialStep fehlt in freshDay');
 
     // Die Bindung selbst ist hier nicht prüfbar — ActionBar ist eine
     // Komponente, und disableButtons ist im Prüfstand ohnehin eine Attrappe.
@@ -989,6 +990,14 @@ await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
     const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
     assert.ok(/tutorialUnlocked\s*=\s*id/.test(tut),
               'highlightAction gibt den Knopf nicht mehr über den Zustand frei');
+
+    // Seit 6.1 laufen auch Abdunklung und Leuchtring über den Zustand. Vorher
+    // setzte tutorial.js sie am Element, und das hielt nur, solange nichts
+    // Abgeleitetes im class-Attribut stand — eine Absprache, die niemand sieht.
+    assert.ok(bar.includes('state.tutorialStep'),
+              'ActionBar zeichnet die Tutorial-Abdunklung nicht mehr aus dem Zustand');
+    assert.ok(!tut.includes('opacity-50'),
+              'tutorial.js schreibt wieder Klassen an die vier Knöpfe der Leiste');
 });
 await ok('setDifficulty legt einen frischen Tag an, statt Felder nachzubessern', () => {
     // Der Fehler, den es abfängt: bis 6.0 setzte setDifficulty nur, was die

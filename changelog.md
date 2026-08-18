@@ -1,3 +1,13 @@
+[6.1.0] - unreleased
+
+Everything here is measured against 6.0. This version is about stability: not much to see, and a few things that can no longer quietly break.
+
+Presentation:
+* The browser tab has an icon of its own instead of a fire emoji. Emoji are drawn by the operating system and looked different under Windows, under Linux and in the Steam overlay - the same reason the summer party swapped its stations for images in 6.0. The new one is a burning monitor in the flat vector style of the interface icons, and it still reads at sixteen pixels.
+* The character and item pictures are delivered at the size they are actually shown at. A portrait 64 pixels wide was being downloaded at 2048 - sixteen times the edge length, which is 256 times the area. The drawings themselves are untouched, nothing looks different; the download is 5.4 MB smaller, from 24.6 down to 19.2.
+
+---
+
 [6.0.0] - 2026-08-17
 
 This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.

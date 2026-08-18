@@ -23,9 +23,17 @@ const tutorial = {
         }
     },
 
-    // NEW: one central place to switch off all the lights
+    // One central place to switch off all the lights.
+    //
+    // The action bar is not in the list: it draws its own from the state, so
+    // one field switches all four off at once. It has to go out here, because
+    // a ringed button sits at z-2500 and would otherwise shine through the
+    // modal that has just opened - applyStepLogic() turns the step back on
+    // when the modal closes.
     clearGlows: function() {
-        const allElements = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls', 'ticket-container', 'clock-container', 'stat-row-fl', 'stat-row-al', 'stat-row-cr', 'stats-container', 'btn-inventory', 'btn-team', 'inventory-grid'];
+        engine.state.tutorialStep = null;
+
+        const allElements = ['ticket-container', 'clock-container', 'stat-row-fl', 'stat-row-al', 'stat-row-cr', 'stats-container', 'btn-inventory', 'btn-team', 'inventory-grid'];
         allElements.forEach(id => {
             let el = document.getElementById(id);
             if(el) {
@@ -160,6 +168,7 @@ const tutorial = {
         this.isActive = false;
 
         engine.state.tutorialUnlocked = null;
+        engine.state.tutorialStep = null;
         engine.state.morningMoodShown = false;
         engine.state.activeEvent = false;
         
@@ -178,13 +187,10 @@ const tutorial = {
         
         // Clean up before rendering the next step
         this.clearGlows();
-        
-        // Restore button opacity
-        const buttons = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls'];
-        buttons.forEach(id => {
-            let el = document.getElementById(id);
-            if(el) el.classList.add('opacity-50');
-        });
+
+        // ...and switch the bar back on. This dims all four; an action step
+        // takes one of them back out through highlightAction().
+        engine.state.tutorialStep = this.step;
 
         if (this.step === 1) {
             this.highlightAction('btn-calls', t('tutorial.step.call.title'), t('tutorial.step.call.desc'));
@@ -219,30 +225,40 @@ const tutorial = {
             }
         }
         else if (this.step === 9) {
-            this.highlightAction('btn-team', t('tutorial.step.team.title'), t('tutorial.step.team.desc'));
+            this.highlightTeam(t('tutorial.step.team.title'), t('tutorial.step.team.desc'));
         }
         else if (this.step === 10) {
             this.hidePointer();
         }
     },
 
+    // One of the four bar buttons. Nothing is written into the element: it
+    // belongs to ActionBar, which takes the lock off it and gives it the ring
+    // as soon as it reads its id here. It is looked up only as an anchor for
+    // the bubble.
     highlightAction: function(id, title, desc) {
-        // Through the state, because ActionBar binds `disabled` to it and
-        // would otherwise put the lock straight back on the next render. The
-        // line below still matters for btn-team and btn-inventory, which live
-        // in index.html and are nobody's component.
         engine.state.tutorialUnlocked = id;
 
         let btn = document.getElementById(id);
         if(btn) {
-            btn.disabled = false;
-            btn.classList.remove('opacity-50');
-            btn.classList.add('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
-            
             setTimeout(() => {
                 this.showPointer(btn, title, desc, false);
             }, 50);
         }
+    },
+
+    // The team button. It lives in index.html and belongs to no component, so
+    // it keeps the DOM path - pulse included, which the info steps do not
+    // carry. It frees nothing: the bar stays shut for this step.
+    highlightTeam: function(title, desc) {
+        let el = document.getElementById('btn-team');
+        if(!el) return;
+
+        el.classList.add('animate-pulse', 'ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
+
+        setTimeout(() => {
+            this.showPointer(el, title, desc, false);
+        }, 50);
     },
 
     highlightInfo: function(idOrArray, title, desc, isInfoStep = true) {
@@ -252,7 +268,6 @@ const tutorial = {
         ids.forEach(id => {
             let el = document.getElementById(id);
             if(el) {
-                el.classList.remove('opacity-50');
                 el.classList.add('ring-2', 'ring-cyan-500', 'z-2500', 'relative', 'shadow-[0_0_15px_rgba(6,182,212,0.5)]');
                 
                 if (id === 'stat-row-al' || id === 'btn-inventory' || !anchorEl) {
@@ -400,15 +415,10 @@ const tutorial = {
             engine.hideOverlay(askModal);
         }
         
+        // clearGlows() has already cleared tutorialStep, which is what takes
+        // the dimming off all four buttons at once.
         this.clearGlows();
         engine.state.tutorialUnlocked = null;
-        
-        // --- Restore the dimmed buttons ---
-        const buttons = ['btn-coffee', 'btn-sidequest', 'btn-server', 'btn-calls'];
-        buttons.forEach(id => {
-            let el = document.getElementById(id);
-            if(el) el.classList.remove('opacity-50');
-        });
 
         engine.softReset();
     },
