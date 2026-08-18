@@ -879,11 +879,11 @@
             <div>
                 <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.category">Category</label>
                 <select id="report-category" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500">
-                    <option value="Fehler" data-i18n="report.cat.bug">🐛 Bug / crash</option>
-                    <option value="Rechtschreibfehler" data-i18n="report.cat.typo">📝 Spelling mistake</option>
-                    <option value="Logik" data-i18n="report.cat.logic">🤯 Content that makes no sense</option>
-                    <option value="Schwierigkeitsgrad" data-i18n="report.cat.balance">⚖️ Too hard / too easy</option>
-                    <option value="Idee" data-i18n="report.cat.idea">💡 Idea / suggestion</option>
+                    <option value="Fehler" data-i18n="report.cat.bug">Bug / crash</option>
+                    <option value="Rechtschreibfehler" data-i18n="report.cat.typo">Spelling mistake</option>
+                    <option value="Logik" data-i18n="report.cat.logic">Content that makes no sense</option>
+                    <option value="Schwierigkeitsgrad" data-i18n="report.cat.balance">Too hard / too easy</option>
+                    <option value="Idee" data-i18n="report.cat.idea">Idea / suggestion</option>
                 </select>
             </div>
 
@@ -893,8 +893,8 @@
             </div>
 
             <div class="bg-slate-800/50 p-2 rounded-sm border border-slate-700/50">
-                <p class="text-[10px] text-slate-500" data-i18n="report.privacy">
-                    ℹ️ For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.
+                <p class="text-[10px] text-slate-500 flex items-start gap-2.5">
+                    <img src="assets/img/ui/ui_info.webp" alt="" width="14" height="14" class="w-3.5 h-3.5 shrink-0 mt-0.5 select-none" onerror="this.outerHTML='ℹ️'"><span data-i18n="report.privacy">For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.</span>
                 </p>
             </div>
         </div>
