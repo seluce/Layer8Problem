@@ -63,7 +63,18 @@ function recoverFromError(err) {
 
     try {
         engine.state.activeEvent = false;
-        engine.disableButtons(false);
+
+        // While the tutorial runs, the bar belongs to the lesson. Unlocking it
+        // here left all four buttons dimmed and clickable at once - the display
+        // said "shut", the button said "press me", and a press earned the
+        // player a red "not in this phase". Its own step logic knows which
+        // button is free and puts the lights back with it.
+        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+            tutorial.applyStepLogic();
+        } else {
+            engine.disableButtons(false);
+        }
+
         engine.log({ k: 'log.halgerd.internalError' }, "text-red-500");
     } catch (recoveryError) {
         // Engine not far enough along to recover — nothing sensible left to do.

@@ -999,6 +999,50 @@ await ok('Die Aktionsleiste respektiert die Tutorial-Freigabe', () => {
     assert.ok(!tut.includes('opacity-50'),
               'tutorial.js schreibt wieder Klassen an die vier Knöpfe der Leiste');
 });
+await ok('Der Abschlussschirm des Tutorials trägt eigene i18n-Marken', () => {
+    // Der Fehler, den es abfängt: showConclusion() schrieb Text über die
+    // Elemente, die weiter data-i18n="tutorial.ask.*" trugen. Ein
+    // Sprachwechsel lässt applyStaticStrings() laufen — und die setzte die
+    // EINGANGSFRAGE zurück, unter der der Abschlussknopf stehenblieb, in der
+    // alten Sprache. Erreichbar war es nicht, weil Esc bei offenem Fenster
+    // früh aussteigt: es hing an genau einer Wache.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+
+    assert.ok(!/innerText\s*=\s*t\(|innerHTML\s*=\s*t\(/.test(tut),
+              'tutorial.js schreibt wieder fertigen Text über die Marken');
+    assert.ok(tut.includes("'tutorial.done.title'") && tut.includes("'tutorial.done.text'"),
+              'der Abschlussschirm setzt seine Marken nicht mehr');
+    assert.ok(tut.includes('applyStaticStrings('),
+              'der Schirm wird nicht mehr über applyStaticStrings gefüllt');
+});
+await ok('Die Fehlerbremse hebt die Tutorial-Sperre nicht auf', () => {
+    // Der Fehler, den es abfängt: recoverFromError() holt die Oberfläche aus
+    // einem abgestürzten Zug zurück und rief dafür disableButtons(false).
+    // Während des Tutorials waren danach alle vier Knöpfe abgedunkelt UND
+    // klickbar — die Anzeige sagte gesperrt, der Knopf ließ sich drücken.
+    // Nachgestellt mit einem geworfenen Fehler mitten in Schritt 1.
+    const src = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const bremse = src.slice(src.indexOf('function recoverFromError'),
+                             src.indexOf('window.addEventListener'));
+    assert.ok(bremse.includes('tutorial.isActive'),
+              'recoverFromError fragt das Tutorial nicht mehr');
+    assert.ok(bremse.includes('tutorial.applyStepLogic()'),
+              'recoverFromError stellt den Schritt nicht wieder her');
+});
+await ok('Die Sprechblase des Tutorials trägt Schlüssel, keine Sätze', () => {
+    // Der Fehler, den es abfängt: tutorial.js löste die Schritttexte mit t()
+    // auf und legte fertige Sätze in state.tutorialPointer. Ein Sprachwechsel
+    // mitten im Tutorial ließ die Leiste auf COFFEE springen, während die
+    // Blase darüber weiter „Kaffee holen" sagte — bis zum nächsten Schritt.
+    // Dieselbe Klasse wie das Protokoll vor den Rezepten.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+    assert.ok(!/t\('tutorial\.step\./.test(tut),
+              'tutorial.js löst die Schritttexte wieder selbst auf');
+
+    const ptr = readFileSync(new URL('../src/components/TutorialPointer.svelte', import.meta.url), 'utf-8');
+    assert.ok(ptr.includes('t(tip.titleKey)') && ptr.includes('t(tip.descKey)'),
+              'TutorialPointer löst die Schlüssel nicht mehr selbst auf');
+});
 await ok('Der Spielstand hat kein Mitspracherecht beim Tutorial', () => {
     // Der Fehler, den es abfängt: `tutorialStep` und `tutorialUnlocked` stehen
     // in freshDay(), und saveDay() leitet seine Felder genau daraus ab — also

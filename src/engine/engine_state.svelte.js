@@ -313,7 +313,11 @@ export const state = $state({
     // Tutorial speech bubble. components/TutorialPointer.svelte renders it;
     // tutorial.js still positions it, because that needs real element
     // measurements.
-    tutorialPointer: { visible: false, faded: true, title: '', desc: '', confirmable: false },
+    //
+    // KEYS, not sentences: the component resolves them, so the bubble follows
+    // a language switch like everything else on screen. Held as finished text
+    // it froze in the language the step opened in.
+    tutorialPointer: { visible: false, faded: true, titleKey: '', descKey: '', confirmable: false },
 
     // Aggregated Steam figures. Desktop only; stays in its loading state on
     // the web because platform.globalStats() resolves to null there.

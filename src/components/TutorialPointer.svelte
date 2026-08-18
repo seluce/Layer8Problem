@@ -15,8 +15,14 @@
   It used to, and the button it built by hand carried no id, so the confirm
   key found nothing and the keyboard could not get through the tutorial.
 
-  `desc` carries markup from the dictionary (tutorial.step.*), hence {@html}.
-  It is authored text, never player input.
+  The two texts arrive as KEYS and are resolved here, which is what lets the
+  bubble follow a language switch: t() read from markup makes this component a
+  reader of the language rune. tutorial.js used to resolve them and hand over
+  finished sentences, and those stayed put - the bar underneath read COFFEE
+  while the bubble still said "Kaffee holen".
+
+  The description carries markup from the dictionary (tutorial.step.*), hence
+  {@html}. It is authored text, never player input.
 -->
 <script>
     import { state } from '../engine/engine_state.svelte.js';
@@ -30,9 +36,9 @@
      class="fixed z-3000 flex-col pointer-events-auto transition-opacity duration-300 w-[280px] max-w-[90vw]
             {tip.visible ? 'flex' : 'hidden'} {tip.faded ? 'opacity-0' : ''}">
     <div class="bg-slate-900 border border-cyan-500 p-4 rounded-xl shadow-[0_0_30px_rgba(6,182,212,0.4)] text-white text-center relative pointer-events-auto z-10">
-        <h4 id="tut-pointer-title" class="font-black text-cyan-400 mb-1 uppercase tracking-widest text-xs">{tip.title}</h4>
+        <h4 id="tut-pointer-title" class="font-black text-cyan-400 mb-1 uppercase tracking-widest text-xs">{t(tip.titleKey)}</h4>
         <p id="tut-pointer-desc" class="text-xs text-slate-300 leading-relaxed pointer-events-auto">
-            {@html tip.desc}
+            {@html t(tip.descKey)}
 
             {#if tip.confirmable}
                 <!-- Info steps have nothing to click on the board, so they carry
