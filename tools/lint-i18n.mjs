@@ -379,6 +379,50 @@ for (const datei of svelteDateien) {
 }
 info(`${svelteDateien.length} Komponenten auf den Zugriff über tree() geprüft`);
 
+/* ---------- 8) Every data-action has to resolve ---------- */
+
+/*
+ * The markup used to carry its own JavaScript - onclick="engine.openTeam()",
+ * sixty-six times. A typo in one of those was a runtime error that fired the
+ * day somebody pressed that one button, and nothing before that would have
+ * said a word.
+ *
+ * Since 6.1 the markup names an INTENT and src/actions.js decides what it
+ * means. That moves the failure from runtime to here: a name the table does
+ * not know is an error before it ships.
+ *
+ * The other direction is a warning, not an error: an entry nobody uses is
+ * usually the remains of a rename, but it may also be waiting for markup that
+ * is still being written.
+ */
+/*
+ * Read as text, not imported: actions.js pulls in the engine, and the engine
+ * pulls in engine_state.svelte.js, whose runes need the Svelte loader that
+ * only the test bench sets up. The linter stays a plain node script.
+ *
+ * The keys sit at exactly one indent level inside the ACTIONS object, which is
+ * what separates them from the bodies of the multi-line entries.
+ */
+const actionsQuelle = readFileSync(join(ROOT, 'src/actions.js'), 'utf-8');
+const tabellenBlock = actionsQuelle.slice(
+    actionsQuelle.indexOf('const ACTIONS = {'),
+    actionsQuelle.indexOf('export const ACTION_NAMES'));
+const imMarkup = new Set([...html.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+const inTabelle = new Set(
+    [...tabellenBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
+
+if (!inTabelle.size) err('src/actions.js: keine Tabelleneinträge gefunden — hat sich der Aufbau geändert?');
+
+for (const name of imMarkup) {
+    if (!inTabelle.has(name))
+        err(`index.html: data-action="${name}" steht in keiner Tabelle — src/actions.js`);
+}
+for (const name of inTabelle) {
+    if (!imMarkup.has(name))
+        warn(`src/actions.js: "${name}" wird von keinem Element benutzt — Rest einer Umbenennung?`);
+}
+info(`${imMarkup.size} data-action-Marken gegen ${inTabelle.size} Tabelleneinträge geprüft`);
+
 /* ---------- Report ---------- */
 
 const show = (title, list) => {

@@ -14,7 +14,7 @@
     import { state as game } from '../engine/engine_state.svelte.js';
 
     import { t, tf } from '../i18n/i18n.svelte.js';
-    const engine = () => window.engine;
+    import { engine } from '../engine.js';
 
     // Each category carries its own colour so a long register stays readable
     // at a glance - and so the modal is not three shades of grey.
@@ -37,7 +37,7 @@
     const all = $derived.by(() => {
         if (!game.knowledgeOpen) return [];
         game.archive.seenEvents?.length;   // dependency, deliberately read
-        return engine()?.knowledgeEntries?.() ?? [];
+        return engine.knowledgeEntries?.() ?? [];
     });
 
     // Only categories that actually have entries get a tab.
@@ -127,7 +127,7 @@
     $effect(() => {
         if (!settled) return;
         if (pageVisible && current?.unread) {
-            engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+            engine.markKnowledgeRead?.(current.id, current.notes.length);
         }
     });
 

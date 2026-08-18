@@ -1,4 +1,5 @@
 import { tick } from 'svelte';
+import { engine } from './engine.js';
 import { applyStaticStrings } from './i18n/i18n.svelte.js';
 
 /**
@@ -32,10 +33,9 @@ const tutorial = {
     start: function() {
         if (localStorage.getItem(engine.KEYS.tutorialDone) === 'true') return;
         
-        if (typeof engine !== 'undefined') {
-            engine.state.morningMoodShown = true; 
-            engine.state.activeEvent = true; 
-        }
+        engine.state.morningMoodShown = true;
+        engine.state.activeEvent = true;
+
         
         const askModal = this.dressAskModal('ask');
         if(askModal) {
@@ -121,7 +121,7 @@ const tutorial = {
         engine.state.activeNews = { k: 'tutorial.ticker' };
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
         
-        if (!this.hooksInjected && typeof engine !== 'undefined') {
+        if (!this.hooksInjected) {
             
             // --- TEAM MODAL HOOKS ---
             const origOpenTeam = engine.openTeam;

@@ -24,13 +24,25 @@ const engine = {
     ...week,
 
     // 3. Language. Not a module of its own: these two are all the rest of the
-    //    game needs, and the inline handlers in index.html reach them through
-    //    window.engine like everything else in the static shell.
+    //    game needs, and the shell reaches them through src/actions.js.
     switchLanguage,
     language
 };
 
-// Expose the engine globally (inline onclick handlers in index.html rely on this)
+/*
+ * The global, and the one reason it is still here.
+ *
+ * Until 6.1 it carried the sixty-six inline onclick handlers in index.html.
+ * Those are data-action marks now and go through src/actions.js, which imports
+ * the engine like every component does - so the shell no longer needs it.
+ *
+ * What still does is tools/dev-woche.js: it is pasted into the browser console,
+ * and something pasted into a console cannot import anything. That is the whole
+ * remaining purpose, and it is worth one line.
+ *
+ * window.tutorial exists for a different reason again: the engine reads
+ * `tutorial` as a bare global to avoid closing an import circle.
+ */
 window.engine = engine;
 
 // The one thing a language switch cannot repaint by itself: the scene in the
@@ -85,9 +97,8 @@ function recoverFromError(err) {
 window.addEventListener('error', (e) => recoverFromError(e.error || e.message));
 window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason));
 
-// Also exported so components can import it instead of reaching for the
-// global. window.engine stays for the inline handlers still left in
-// index.html.
+// The way everything inside the bundle reaches the engine - components,
+// actions.js and the tutorial. The global above is for the console tool only.
 export { engine };
 
 // Deliberately NOT booted here (6.0).

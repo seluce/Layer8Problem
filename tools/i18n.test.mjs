@@ -382,14 +382,16 @@ await ok('Jeder Erfolg steht in der Steam-Reihenfolge, mit Titel und Hinweis', a
 console.log('Verdrahtung:');
 
 await ok('Der Startbildschirm bietet jede Sprache an', async () => {
-    // The switch in index.html is static markup with an inline handler, so
-    // nothing in the module graph would notice if a language were added to
-    // LANGUAGES and forgotten there. This is the only check that would.
+    // The switch in index.html is static markup, so nothing in the module graph
+    // would notice if a language were added to LANGUAGES and forgotten there.
+    // This is the only check that would. Since 6.1 the button carries a
+    // data-action mark instead of an inline handler - src/actions.js.
     const { readFileSync } = await import('node:fs');
     const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
     for (const lang of i18n.LANGUAGES) {
         assert.ok(html.includes(`data-lang="${lang}"`), `kein Knopf für ${lang}`);
-        assert.ok(html.includes(`engine.switchLanguage('${lang}')`), `nicht verdrahtet: ${lang}`);
+        assert.ok(html.includes(`data-action="switchLanguage" data-arg="${lang}"`),
+                  `nicht verdrahtet: ${lang}`);
         assert.ok(html.includes(`html[lang="${lang}"] .lang-opt[data-lang="${lang}"]`),
                   `keine Hervorhebung für ${lang}`);
     }
