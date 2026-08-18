@@ -895,9 +895,9 @@ export const core = {
         // Start the tutorial, delayed so the UI has finished rendering
         setTimeout(() => {
             // Read the flag straight from storage
-            if (typeof tutorial !== 'undefined' && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
+            if (this.lesson && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
                 // Not played yet -> show the modal, the game waits for the click
-                tutorial.start();
+                this.lesson.start();
             } else {
                 // Already done or unavailable -> straight into the day
                 this.reset();
@@ -953,11 +953,11 @@ export const core = {
         }
         
         // --- TUTORIAL HOOK ---
-        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+        if (this.lesson?.isActive) {
             this.state.activeEvent = false;
             this.setTerminalIdle('halgerd');
             
-            tutorial.advance();
+            this.lesson.advance();
             return; // keeps mail, news and the morning mood out of the party
         }
         // -----------------------------------------------------------------

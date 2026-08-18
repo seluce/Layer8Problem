@@ -2,6 +2,7 @@ import { state } from './engine/engine_state.svelte.js';
 import { audio } from './engine/engine_audio.js';
 import { core } from './engine/engine_core.js';
 import { events } from './engine/engine_events.js';
+import { hooks } from './engine/engine_hooks.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 import { week } from './engine/engine_week.js';
@@ -19,6 +20,7 @@ const engine = {
     ...audio,
     ...core,
     ...events,
+    ...hooks,
     ...inventory,
     ...ui,
     ...week,
@@ -40,8 +42,8 @@ const engine = {
  * and something pasted into a console cannot import anything. That is the whole
  * remaining purpose, and it is worth one line.
  *
- * window.tutorial exists for a different reason again: the engine reads
- * `tutorial` as a bare global to avoid closing an import circle.
+ * window.tutorial is gone as of 6.1: the lesson registers itself in
+ * engine.lesson instead, so the engine never reaches for a global either.
  */
 window.engine = engine;
 
@@ -81,8 +83,8 @@ function recoverFromError(err) {
         // said "shut", the button said "press me", and a press earned the
         // player a red "not in this phase". Its own step logic knows which
         // button is free and puts the lights back with it.
-        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
-            tutorial.applyStepLogic();
+        if (engine.lesson?.isActive) {
+            engine.lesson.applyStepLogic();
         } else {
             engine.disableButtons(false);
         }

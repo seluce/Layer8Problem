@@ -43,6 +43,9 @@ const { buildDiary } = await import('../src/engine/engine_diary.js');
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
+// The hooks travel with the engine in src/engine.js, so the bench composes the
+// same way: without them emit() is missing and the inventory throws.
+const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, t, tf } = await import('../src/i18n/i18n.svelte.js');
@@ -65,7 +68,7 @@ await useLanguage(LANG);
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
-    ...core, ...events, ...week, ...inventory,
+    ...core, ...events, ...week, ...inventory, ...hooks,
     showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
     hideOverlay() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
@@ -1035,6 +1038,48 @@ await ok('Der Abschlussschirm des Tutorials trägt eigene i18n-Marken', () => {
     assert.ok(tut.includes('applyStaticStrings('),
               'der Schirm wird nicht mehr über applyStaticStrings gefüllt');
 });
+await ok('Die Engine meldet, statt sich überschreiben zu lassen', async () => {
+    // Bis 6.1 wickelte tutorial.js sieben Engine-Methoden ein und nahm sie NIE
+    // zurück: Stunden nach der Lektion lief jeder dieser Aufrufe weiter durch
+    // einen Wrapper. Jetzt meldet die Engine, das Tutorial hört zu — und meldet
+    // sich wieder ab.
+    const { hooks, ENGINE_EVENTS } = await import('../src/engine/engine_hooks.js');
+
+    let gehoert = 0;
+    const ab = hooks.on('openTeam', () => gehoert++);
+    hooks.emit('openTeam');
+    assert.equal(gehoert, 1, 'die Meldung kommt nicht an');
+    ab();
+    hooks.emit('openTeam');
+    assert.equal(gehoert, 1, 'nach dem Abmelden wird weiter zugestellt');
+
+    // Ein Name, den es nicht gibt, fliegt sofort — statt still nie zu feuern.
+    assert.throws(() => hooks.on('opneTeam', () => {}), /Unknown engine event/);
+    assert.throws(() => hooks.emit('opneTeam'), /Unknown engine event/);
+
+    // Die Rückfrage ist etwas anderes als eine Meldung: sie darf nein sagen.
+    // Ohne sie wäre die Donut-Sperre aus Schritt 8 lautlos verschwunden.
+    assert.equal(hooks.allowsItem('donut'), true, 'ohne Wache ist alles erlaubt');
+    const zurueck = hooks.setItemGuard((id) => id === 'donut');
+    assert.equal(hooks.allowsItem('donut'), true);
+    assert.equal(hooks.allowsItem('stressball'), false, 'die Wache wird nicht gefragt');
+    zurueck();
+    assert.equal(hooks.allowsItem('stressball'), true, 'die Wache bleibt nach dem Abmelden stehen');
+
+    // Ein Zuhörer, der wirft, darf den Aufrufer nicht mitreißen.
+    const ab2 = hooks.on('closeTeam', () => { throw new Error('Probe'); });
+    assert.doesNotThrow(() => hooks.emit('closeTeam'), 'ein kaputter Zuhörer reißt die Engine mit');
+    ab2();
+
+    // Und die Gegenrichtung in der Quelle: kein Wrapper mehr, keine Globale.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+    assert.ok(!/engine\.[a-zA-Z]+ = function/.test(tut),
+              'tutorial.js überschreibt wieder Engine-Methoden');
+    assert.ok(!tut.includes('window.tutorial'),
+              'tutorial.js legt wieder eine Globale an');
+    assert.ok(/deafen/.test(tut), 'es gibt keinen Weg mehr, sich abzumelden');
+    assert.equal(ENGINE_EVENTS.length, 6, 'die Liste der Meldungen hat sich geändert');
+});
 await ok('Die Fehlerbremse hebt die Tutorial-Sperre nicht auf', () => {
     // The fault it catches: recoverFromError() pulls the interface out of a
     // crashed action and called disableButtons(false) to do it. During the
@@ -1044,9 +1089,11 @@ await ok('Die Fehlerbremse hebt die Tutorial-Sperre nicht auf', () => {
     const src = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     const bremse = src.slice(src.indexOf('function recoverFromError'),
                              src.indexOf('window.addEventListener'));
-    assert.ok(bremse.includes('tutorial.isActive'),
+    // Seit 6.1 fragt sie den Anmeldeplatz statt einer nackten Globale — die
+    // Aussage ist dieselbe, die Schreibweise nicht.
+    assert.ok(bremse.includes('lesson?.isActive'),
               'recoverFromError fragt das Tutorial nicht mehr');
-    assert.ok(bremse.includes('tutorial.applyStepLogic()'),
+    assert.ok(bremse.includes('lesson.applyStepLogic()'),
               'recoverFromError stellt den Schritt nicht wieder her');
 });
 await ok('Die Sprechblase des Tutorials trägt Schlüssel, keine Sätze', () => {

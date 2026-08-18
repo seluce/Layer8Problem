@@ -407,7 +407,33 @@ const actionsQuelle = readFileSync(join(ROOT, 'src/actions.js'), 'utf-8');
 const tabellenBlock = actionsQuelle.slice(
     actionsQuelle.indexOf('const ACTIONS = {'),
     actionsQuelle.indexOf('export const ACTION_NAMES'));
-const imMarkup = new Set([...html.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+/*
+ * index.html is not the only place a mark can appear: dressAskModal() builds
+ * the closing screen's button as a string. That button carried an inline
+ * handler until 6.1, and when the global behind it went away it silently did
+ * nothing - the lesson simply would not end, with no error anywhere. So the
+ * sources are read too.
+ */
+const quellenMitMarken = [];
+(function sammelnJs(dir) {
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) { if (entry !== 'data') sammelnJs(full); }
+        else if (/\.(js|svelte)$/.test(entry)) quellenMitMarken.push(full);
+    }
+})(join(ROOT, 'src'));
+
+const markenQuellen = [html, ...quellenMitMarken.map(f => readFileSync(f, 'utf-8'))].join('\n');
+const imMarkup = new Set([...markenQuellen.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+
+// And the rule the other way round: markup that is BUILT may not carry code.
+// The check that caught nothing in index.html has to reach the strings too.
+for (const datei of quellenMitMarken) {
+    const wo = relative(ROOT, datei);
+    if (wo === 'src/actions.js') continue;          // documents the old form in prose
+    for (const m of readFileSync(datei, 'utf-8').matchAll(/onclick="[^"]*"/g))
+        err(`${wo}: baut "${m[0].slice(0, 40)}…" — gebautes Markup trägt eine data-action, keinen Code`);
+}
 const inTabelle = new Set(
     [...tabellenBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
 

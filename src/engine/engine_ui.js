@@ -612,11 +612,13 @@ export const ui = {
     openTeam: function() {
         const modal = document.getElementById('team-modal');
         this.showOverlay(modal);
+        this.emit('openTeam');
     },
 
     closeTeam: function() {
         const modal = document.getElementById('team-modal');
         this.hideOverlay(modal);
+        this.emit('closeTeam');
     },
 
     // --- INTRANET SYSTEM ---
@@ -1294,7 +1296,7 @@ export const ui = {
         const softResetBtn = document.getElementById('btn-soft-reset');
 
         if (softResetBtn) {
-            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
+            const isTutorialActive = !!this.lesson?.isActive;
             const locked = this.isStartupOverlayOpen() || isTutorialActive;
 
             softResetBtn.classList.toggle('opacity-40', locked);

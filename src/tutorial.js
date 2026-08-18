@@ -26,7 +26,7 @@ const tutorial = {
     step: 0,
     askButtonsMarkup: null,   // the question's two buttons, kept while the closing screen is up
     pointerTimeout: null,
-    hooksInjected: false,
+    unsubscribe: [],   // how to stop listening again; see listen()
     currentTarget: null,
     scrollAttached: false,
 
@@ -76,7 +76,7 @@ const tutorial = {
             // the question's buttons have in index.html.
             // i18n-uses: tutorial.done.start
             buttons.innerHTML = done
-                ? `<button id="tut-finish-btn" onclick="tutorial.finish()" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
+                ? `<button id="tut-finish-btn" data-action="tutorial.finish" class="w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white font-bold py-3 px-4 rounded-sm transition-all border border-cyan-700 hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2">
                         <span class="text-lg">▶</span> <span data-i18n="tutorial.done.start"></span>
                     </button>`
                 : this.askButtonsMarkup;
@@ -106,6 +106,57 @@ const tutorial = {
         });
     },
 
+    /**
+     * Subscribes to the engine for the length of the lesson.
+     *
+     * Until 6.1 this block overwrote seven engine methods and never put them
+     * back - see engine/engine_hooks.js. The six below only ever wanted to know
+     * that something had happened; askUseItem was the odd one out and is a
+     * question the engine asks, not a message it sends.
+     */
+    listen: function() {
+        if (this.unsubscribe.length) return;      // run() can be reached twice
+
+        this.unsubscribe = [
+            engine.on('openTeam', () => {
+                this.hidePointer();
+                this.clearGlows();                 // mute the background
+                if (this.step === 9) this.advance();
+            }),
+            engine.on('closeTeam', () => {
+                if (this.step === 10) { this.step = 11; this.showConclusion(); }
+                else this.applyStepLogic();
+            }),
+            engine.on('openInventory', () => { this.hidePointer(); this.clearGlows(); }),
+            engine.on('closeInventory', () => this.applyStepLogic()),
+            engine.on('closeItemConfirm', () => this.applyStepLogic()),
+            engine.on('confirmUseItem', () => {
+                engine.closeInventory();
+                if (this.step === 8) this.advance();
+                else this.applyStepLogic();        // ate something during step 6 -> show step 6 again
+            }),
+
+            // The veto. During step 8 only the doughnut may be used; everything
+            // else earns a line in the log and the modal stays shut.
+            engine.setItemGuard((id) => {
+                if (!this.isActive) return true;
+                if (this.step === 8 && id !== 'donut') {
+                    engine.log({ k: 'tutorial.log.focusDonut' }, "text-red-500 font-bold");
+                    return false;
+                }
+                this.hidePointer();
+                this.clearGlows();                 // a modal is about to cover the board
+                return true;
+            }),
+        ];
+    },
+
+    /** Hands everything back. The old wrappers had no way to do this. */
+    deafen: function() {
+        for (const ab of this.unsubscribe) ab();
+        this.unsubscribe = [];
+    },
+
     run: function() {
         const askModal = document.getElementById('tut-ask-modal');
         if(askModal) {
@@ -121,90 +172,8 @@ const tutorial = {
         engine.state.activeNews = { k: 'tutorial.ticker' };
         if (typeof engine.renderHeader === 'function') engine.renderHeader();
         
-        if (!this.hooksInjected) {
-            
-            // --- TEAM MODAL HOOKS ---
-            const origOpenTeam = engine.openTeam;
-            engine.openTeam = function(...args) {
-                if (origOpenTeam) origOpenTeam.apply(this, args);
-                if (tutorial.isActive) {
-                    tutorial.hidePointer(); 
-                    tutorial.clearGlows(); // Mute the background
-                    if (tutorial.step === 9) tutorial.advance(); 
-                }
-            };
+        this.listen();
 
-            const origCloseTeam = engine.closeTeam;
-            engine.closeTeam = function(...args) {
-                if (origCloseTeam) origCloseTeam.apply(this, args);
-                if (tutorial.isActive) {
-                    if (tutorial.step === 10) {
-                        tutorial.step = 11; 
-                        tutorial.showConclusion();
-                    } else {
-                        tutorial.applyStepLogic(); // UI wiederherstellen
-                    }
-                }
-            };
-
-            // --- ITEM HOOKS ---
-            const origAskUseItem = engine.askUseItem;
-            engine.askUseItem = function(id) {
-                if (tutorial.isActive) {
-                    // During step 8 only the donut may be used
-                    if (tutorial.step === 8 && id !== 'donut') {
-                        engine.log({ k: 'tutorial.log.focusDonut' }, "text-red-500 font-bold");
-                        return; // modal stays closed
-                    }
-                    // Otherwise the modal may open -> turn the background down
-                    tutorial.hidePointer();
-                    tutorial.clearGlows();
-                }
-                if (origAskUseItem) origAskUseItem.call(this, id);
-            };
-
-            const origConfirmUseItem = engine.confirmUseItem;
-            engine.confirmUseItem = function(...args) {
-                if (origConfirmUseItem) origConfirmUseItem.apply(this, args);
-                if (tutorial.isActive) {
-                    if (typeof engine.closeInventory === 'function') engine.closeInventory();
-                    
-                    if (tutorial.step === 8) {
-                        tutorial.advance(); 
-                    } else {
-                        tutorial.applyStepLogic(); // The player e.g. ate something during step 6 -> show step 6 again
-                    }
-                }
-            };
-
-            const origCloseItemConfirm = engine.closeItemConfirm;
-            engine.closeItemConfirm = function(...args) {
-                if (origCloseItemConfirm) origCloseItemConfirm.apply(this, args);
-                if (tutorial.isActive) {
-                    tutorial.applyStepLogic(); // Cancelled -> bring everything back into view
-                }
-            };
-
-            // --- INVENTORY HOOKS ---
-            const origOpenInventory = engine.openInventory;
-            engine.openInventory = function(...args) {
-                if (origOpenInventory) origOpenInventory.apply(this, args);
-                if (tutorial.isActive) {
-                    tutorial.hidePointer();
-                    tutorial.clearGlows();
-                }
-            };
-
-            const origCloseInventory = engine.closeInventory;
-            engine.closeInventory = function(...args) {
-                if (origCloseInventory) origCloseInventory.apply(this, args);
-                if (tutorial.isActive) {
-                    tutorial.applyStepLogic(); 
-                }
-            };
-
-            this.hooksInjected = true;
-        }
 
         engine.state.tickets = 1;
         engine.state.fl = 0;
@@ -230,6 +199,7 @@ const tutorial = {
 
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         this.isActive = false;
+        this.deafen();
 
         engine.state.tutorialUnlocked = null;
         engine.state.tutorialStep = null;
@@ -489,6 +459,7 @@ const tutorial = {
 
     finish: function() {
         this.isActive = false;
+        this.deafen();
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         
         const askModal = document.getElementById('tut-ask-modal');
@@ -511,8 +482,13 @@ const tutorial = {
     }
 };
 
-// The engine checks for a bare `tutorial` identifier, and index.html calls
-// tutorial.* from inline handlers. As an ES module this file no longer
-// creates a global by itself, so it is published explicitly.
-window.tutorial = tutorial;
+// The engine asks the lesson a few things - whether one is running, which step
+// it is on - and used to reach a bare `tutorial` global to do it. It reads this
+// slot now: registered from this side, so the engine never has to import a file
+// that imports the engine.
+//
+// Set at load rather than at run(): engine.setDifficulty() calls start() before
+// any lesson exists, and `isActive` is the switch, exactly as it was.
+engine.lesson = tutorial;
+
 export { tutorial };

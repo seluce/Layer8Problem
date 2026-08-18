@@ -8,7 +8,7 @@
  * the architecture, not a leftover: components render state, the engine
  * renders chrome.
  *
- * Order matters: tutorial.js publishes window.tutorial, which engine.init()
+ * Order matters: tutorial.js registers itself as engine.lesson, which engine.init()
  * checks for, and the engine has to exist before components read its state.
  *
  * Since 6.0 there is a step in front of all of it. The event pools exist in two

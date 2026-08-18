@@ -45,7 +45,7 @@ export const events = {
     checkRandomEmail: function() {
         // 1. Basic checks (open? on the move? tutorial?)
         if(this.state.isEmailOpen || this.state.emailPending) return; 
-        if(typeof tutorial !== 'undefined' && tutorial.isActive) return;
+        if (this.lesson?.isActive) return;
         if (this.state.isPartyMode) return;
 
         // --- INGAME-ZEIT COOLDOWN ---
@@ -473,11 +473,11 @@ export const events = {
         if(this.state.activeEvent) return;
         
         // --- TUTORIAL HOOK ---
-        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+        if (this.lesson?.isActive) {
             // Pull the exact event for the current tutorial step
-            let tutEvent = DB.tutorial.find(e => e.type === type && e.step === tutorial.step);
+            let tutEvent = DB.tutorial.find(e => e.type === type && e.step === this.lesson.step);
             if (tutEvent) {
-				tutorial.hidePointer();
+				this.lesson.hidePointer();
                 this.renderTerminal(tutEvent, type);
             } else {
                 this.log({ k: 'log.halgerd.notInPhase' }, "text-red-500");

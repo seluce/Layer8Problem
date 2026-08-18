@@ -28,6 +28,7 @@
  */
 
 import { engine } from './engine.js';
+import { tutorial } from './tutorial.js';
 
 /**
  * The table. Every entry takes (arg, element) - both optional, and most
@@ -70,11 +71,16 @@ const ACTIONS = {
     returnToMenu:       () => engine.returnToMenu(),
 
     // --- the tutorial ---------------------------------------------------
-    // Reached through the global on purpose: the engine and the tutorial know
-    // each other in both directions, and a static import here would close that
-    // circle. See src/tutorial.js.
-    'tutorial.run':     () => window.tutorial?.run(),
-    'tutorial.skip':    () => window.tutorial?.skip(),
+    // An ordinary import: actions.js -> tutorial.js -> engine.js is a line, not
+    // a circle. The engine reaches the lesson the other way round, through the
+    // slot it registers itself in - see engine/engine_hooks.js.
+    'tutorial.run':     () => tutorial.run(),
+    'tutorial.skip':    () => tutorial.skip(),
+    // The closing screen's button is BUILT AT RUNTIME by dressAskModal(). It
+    // carried onclick="tutorial.finish()" until the global went away, and then
+    // it silently did nothing - the lesson would not end. A mark reaches the
+    // same table as everything else, and lint-i18n now reads the sources too.
+    'tutorial.finish':  () => tutorial.finish(),
 
     // --- settings -------------------------------------------------------
     openSettings:       () => engine.openSettings(),

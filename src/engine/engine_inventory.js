@@ -11,11 +11,13 @@ export const inventory = {
         const modal = document.getElementById('inventory-modal');
         if (!modal) return;
         this.showOverlay(modal);
+        this.emit('openInventory');
     },
 
     closeInventory: function() {
         const modal = document.getElementById('inventory-modal');
         this.hideOverlay(modal);
+        this.emit('closeInventory');
     },
 		
     // --- ITEM SYSTEM (with confirmation prompt) ---
@@ -26,6 +28,11 @@ export const inventory = {
     // data_items.js. This function only asks the questions that are about
     // timing and settings, not about the item itself.
     askUseItem: function(id) {
+        // The one place the engine ASKS instead of telling: during step 8 the
+        // tutorial refuses everything but the doughnut, and the modal stays
+        // shut. See engine_hooks.js.
+        if (!this.allowsItem(id)) return;
+
         const item = DB.items[id];
         const use = item?.use;
 
@@ -127,6 +134,7 @@ export const inventory = {
         this.updateUI(); // Balken updaten
         if (isInvOpen) this.openInventory(); // Redraw the inventory (the item is gone)
         this.state.pendingItem = null;
+        this.emit('confirmUseItem');
     },
 
     /**
@@ -196,6 +204,7 @@ export const inventory = {
         this.hideOverlay('item-confirm-modal');
         this.state.pendingItem = null;
         this.state.pendingItemMode = null;
+        this.emit('closeItemConfirm');
     },
 
 };
