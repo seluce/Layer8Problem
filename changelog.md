@@ -11,6 +11,7 @@ The texts:
 * Twenty-four result texts have gained a beat. They said in one line what had cost you an hour or a written warning, or passed a verdict where a scene belonged - "Du sortierst Papier." for forty-five minutes of invoices, "Du lässt sie in Ruhe." for a colleague crying behind Rack 4. Each now says what the time or the trouble actually was. The punchlines that work short stay short; nothing was stretched.
 
 Bug fixes:
+* The diesel Golf on the charging point had two owners: have it towed and a new man from sales came running, while the furious follow-up mail was Egon's. It is Egon's Golf in both places now - he was only fetching bread rolls.
 * Five result texts still read the display out - "Deine Wut sinkt massiv" stood directly above "Aggro -20", one word away from the nine fixed in 6.0. They now say what happens at the machine and on the phone instead of what the bar does.
 * Escape opened the settings on top of the knowledge book instead of closing the book, and did the same over the week's condition picker. Both answer to Escape like every other window now.
 * The diary could stay empty for a whole session and show a single line instead of the page - most reliably if you switched language on the start screen. It now asks for its texts itself instead of relying on the background warm-up.

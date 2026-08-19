@@ -1163,7 +1163,7 @@ export const emails = [
         subj: "E-Ladesäule blockiert",
         body: "Ein alter Diesel-Golf blockiert die einzige Ladesäule für E-Autos. Kennzeichen: DU-MM 123.",
         opts: [
-            { t: "Abschleppdienst rufen", r: "Der Abschleppwagen ist schneller da als jeder Techniker, den du je bestellt hast. Der Golf hängt bereits am Haken, als der Fahrer aus dem Gebäude gerannt kommt - es ist der neue Kollege aus dem Vertrieb. Er weiß jetzt, wo die Ladesäule ist. Und wer die IT ist.", m: 5, l: -5, a: -5, b: 0, nextEmail: "mail_charging_tow" },
+            { t: "Abschleppdienst rufen", r: "Der Abschleppwagen ist schneller da als jeder Techniker, den du je bestellt hast. Der Golf hängt bereits am Haken, als der Fahrer aus dem Gebäude gerannt kommt - es ist Egon, mit einer Brötchentüte in der Hand. Er weiß jetzt, dass die Ladesäule kein Brötchenparkplatz ist. Wer den Wagen bestellt hat, weiß er noch nicht.", m: 5, l: -5, a: -5, b: 0, nextEmail: "mail_charging_tow" },
             { t: "Zettel dran: 'Idiot'", r: "Du klemmst den Zettel unter den Scheibenwischer, direkt über das Kennzeichen, das eigentlich schon alles sagt. Am Nachmittag steckt einer unter deinem Scheibenwischer. Er ist länger.", m: 5, l: 0, a: 5, b: 0 },
             { t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, l: 0, a: 0, b: 10, ignoreEmail: true }
         ]
