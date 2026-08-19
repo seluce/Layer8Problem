@@ -160,23 +160,23 @@ export const core = {
      * Only if the payload was written AFTER our local save does the second
      * reading apply, and the local leftover goes.
      */
-    adoptCloudRun: function(key, roh, runSyncedAt) {
-        const zeit = (text) => {
+    adoptCloudRun: function(key, raw, runSyncedAt) {
+        const savedAt = (text) => {
             try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
         };
 
-        let lokal = null;
-        try { lokal = localStorage.getItem(key); } catch { return; }
+        let local = null;
+        try { local = localStorage.getItem(key); } catch { return; }
 
-        if (!roh) {
-            if (lokal && runSyncedAt && runSyncedAt > zeit(lokal)) {
+        if (!raw) {
+            if (local && runSyncedAt && runSyncedAt > savedAt(local)) {
                 try { localStorage.removeItem(key); } catch { /* never mind */ }
             }
             return;
         }
 
-        if (!lokal || zeit(roh) > zeit(lokal)) {
-            try { localStorage.setItem(key, roh); } catch { /* storage full */ }
+        if (!local || savedAt(raw) > savedAt(local)) {
+            try { localStorage.setItem(key, raw); } catch { /* storage full */ }
         }
     },
 
@@ -572,11 +572,11 @@ export const core = {
      */
     careerStats: function() {
         const st = this.state.archive.stats ?? {};
-        const wochentage = (st.survived_week_easy ?? 0)
+        const weekDays = (st.survived_week_easy ?? 0)
                          + (st.survived_week_normal ?? 0)
                          + (st.survived_week_hard ?? 0);
         return {
-            survived:   (st.daysSurvived ?? 0) + wochentage,
+            survived:   (st.daysSurvived ?? 0) + weekDays,
             rage:       (st.daysRageQuit ?? 0) + (st.weeksRageQuit ?? 0),
             fired:      (st.daysFired ?? 0) + (st.weeksFired ?? 0),
             streak:     Math.max(st.streak ?? 0, (st.weekStreak ?? 0) * 5),
@@ -651,9 +651,9 @@ export const core = {
 
         if (streak >= 5) pool.push('streak_best');
 
-        const chef = rep['Dr. Wichtig'] ?? 0;
-        if (chef >= 40)       pool.push('chef_high');
-        else if (chef <= -40) pool.push('chef_low');
+        const boss = rep['Dr. Wichtig'] ?? 0;
+        if (boss >= 40)       pool.push('chef_high');
+        else if (boss <= -40) pool.push('chef_low');
 
         if ((rep['Kevin'] ?? 0) >= 50)       pool.push('kevin');
         if ((rep['Egon'] ?? 0) >= 50)        pool.push('egon');
@@ -1627,14 +1627,14 @@ export const core = {
         // And the trap closes: render the opening party event. Coming out of
         // a week the gala is the end of five days, not of one - one line is
         // enough to tie the two modes together.
-        const auftakt = DB.party.find(e => e.id === 'party_start');
-        if (auftakt && this.state.week.active) {
+        const opening = DB.party.find(e => e.id === 'party_start');
+        if (opening && this.state.week.active) {
             this.renderTerminal({
-                ...auftakt,
-                text: t('party.weekIntro') + '\n\n' + auftakt.text
+                ...opening,
+                text: t('party.weekIntro') + '\n\n' + opening.text
             }, 'party');
         } else {
-            this.renderTerminal(auftakt, 'party');
+            this.renderTerminal(opening, 'party');
         }
     },
     

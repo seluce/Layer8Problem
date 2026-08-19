@@ -1211,17 +1211,17 @@ export const events = {
         // without its prerequisite, and it jumps the queue with the same
         // FOLLOWUP_CHANCE. Lunch used to draw from the raw pool, which was
         // harmless only while no lunch event carried a reqStory.
-        const fortsetzungen = pool.filter(ev => ev.reqStory && this.storyGateOpen(ev)
+        const followUps = pool.filter(ev => ev.reqStory && this.storyGateOpen(ev)
                                                 && !this.state.usedIDs.has(ev.id));
-        const grundpool = pool.filter(ev => !ev.reqStory);
+        const basePool = pool.filter(ev => !ev.reqStory);
 
-        if (fortsetzungen.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
-            pool = fortsetzungen;
-        } else if (grundpool.length > 0) {
-            pool = grundpool;
+        if (followUps.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
+            pool = followUps;
+        } else if (basePool.length > 0) {
+            pool = basePool;
         } else {
             // Fallback: nothing but continuations left and the roll failed
-            pool = fortsetzungen;
+            pool = followUps;
         }
         // Week mode: no repeated lunch within one week (design 6.3). The day
         // mode keeps drawing from the full pool - within a single day a
@@ -1374,10 +1374,10 @@ export const events = {
             // The week mode caps the stock (design 4.4). Without this check
             // the morning mood would have walked straight past that cap and
             // the stock could grow without limit across the five days.
-            const deckel = this.state.week.active
+            const cap = this.state.week.active
                 ? this.WEEK_DIFFS[this.state.week.level].excuseCap
                 : Infinity;
-            if (this.state.excusesLeft < deckel) {
+            if (this.state.excusesLeft < cap) {
                 this.state.excusesLeft++;
                 statHtml = moodLine('text-cyan-400 font-bold', { k: 'morning.effect.excusePlus' });
             } else {
