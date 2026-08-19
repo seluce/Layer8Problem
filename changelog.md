@@ -6,6 +6,7 @@ Presentation:
 * The bug report form has lost its emoji; the note underneath carries a proper interface icon.
 * The browser tab has an icon of its own - a burning monitor in the style of the interface icons - instead of a fire emoji that looked different on every system.
 * Character and item pictures are delivered at the size they are shown at. Nothing looks different; the download is 5.4 MB smaller.
+* Several achievements at once - one long action can cross several gates - now arrive one after the other, stay a little longer together, and the stack slides when one leaves.
 
 The texts:
 * Twenty-four result texts have gained a beat. They said in one line what had cost an hour or a written warning, or passed a verdict where a scene belonged. The punchlines that work short stay short.

@@ -10,6 +10,11 @@
   With out:fly the engine simply drops the entry and Svelte keeps the element
   alive until the animation has finished. One source of truth for the timing.
 
+  Several at once (one long action crossing several achievement gates) stack
+  as a column; the engine staggers their arrival and stretches their lifetime,
+  see showToast() in engine_core.js. animate:flip is the third part: when the
+  top toast leaves, the ones below slide into place instead of jumping.
+
   The layout follows the house panel (see .achievement-toast in app.css): dark
   background, amber edge on top, the medal on its own plinth. The three lines
   are deliberately different sizes - label, title, description - because the
@@ -18,6 +23,7 @@
 -->
 <script>
     import { fly } from 'svelte/transition';
+    import { flip } from 'svelte/animate';
     import { state } from '../engine/engine_state.svelte.js';
     import { t } from '../i18n/i18n.svelte.js';
 
@@ -30,7 +36,8 @@
 {#each state.toasts as toast (toast.id)}
     <div class="achievement-toast"
          in:fly={{ x: 300, duration: 500 }}
-         out:fly={{ x: 300, duration: 500 }}>
+         out:fly={{ x: 300, duration: 500 }}
+         animate:flip={{ duration: 300 }}>
         <div class="ach-icon">
             <img src="assets/img/ui/ui_medal.webp" alt="" width="30" height="30"
                  class="w-[30px] h-[30px] select-none"

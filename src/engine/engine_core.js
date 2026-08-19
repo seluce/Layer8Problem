@@ -1307,17 +1307,59 @@ export const core = {
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
-            const toastId = this._toastId = (this._toastId || 0) + 1;
-            this.state.toasts.push({ id: toastId, title, desc: toastDesc, upgrade: isUpgrade });
-
-            setTimeout(() => {
-                const k = this.state.toasts.findIndex(t => t.id === toastId);
-                if (k > -1) this.state.toasts.splice(k, 1);
-            }, 4000);   // Svelte plays the exit animation after this
+            this.showToast({ title, desc: toastDesc, upgrade: isUpgrade });
         }
 
         // 3. Always persist in the background, in case this was an upgrade
         this.saveAchievementToArchive(id, currentDiffVal);
+    },
+
+    /**
+     * Puts one toast on the stack and takes it off again later. Three things
+     * here are about SEVERAL toasts at once, which happens whenever one long
+     * action crosses more than one achievement gate - a 90-minute lunch from
+     * 14:30 lands on 16:00 and can earn Ninja, Zen and Employee of the Month
+     * in a single click:
+     *
+     *  - toasts that arrive within a burst fly in one after the other, 300 ms
+     *    apart, instead of appearing as one block;
+     *  - a toast stays a second longer for every other toast already showing,
+     *    four seconds alone and never more than seven - three titles and three
+     *    descriptions need more than one's reading time;
+     *  - the component animates the remaining toasts into place when one
+     *    leaves (animate:flip), so the stack slides instead of jumping.
+     *
+     * The stack itself was always correct: a flex column, no overlap, and four
+     * high fits on a phone. Measured 19/08/2026 before this was written.
+     */
+    TOAST_LIFE_MS: 4000,
+    TOAST_LIFE_PER_NEIGHBOUR_MS: 1000,
+    TOAST_LIFE_MAX_MS: 7000,
+    TOAST_STAGGER_MS: 300,
+
+    showToast: function({ title, desc, upgrade = false }) {
+        const id = this._toastId = (this._toastId || 0) + 1;
+
+        // A burst is everything that arrives within one stagger step of the
+        // previous toast's scheduled entry. The first of a burst shows at once.
+        const now = Date.now();
+        const lastDue = this._toastLastDue ?? 0;
+        const delay = now < lastDue + this.TOAST_STAGGER_MS
+            ? Math.max(0, lastDue + this.TOAST_STAGGER_MS - now)
+            : 0;
+        this._toastLastDue = now + delay;
+
+        const show = () => {
+            const neighbours = this.state.toasts.length;
+            this.state.toasts.push({ id, title, desc, upgrade });
+            const life = Math.min(this.TOAST_LIFE_MAX_MS,
+                                  this.TOAST_LIFE_MS + neighbours * this.TOAST_LIFE_PER_NEIGHBOUR_MS);
+            setTimeout(() => {
+                const k = this.state.toasts.findIndex(t => t.id === id);
+                if (k > -1) this.state.toasts.splice(k, 1);
+            }, life);   // Svelte plays the exit animation after this
+        };
+        if (delay > 0) setTimeout(show, delay); else show();
     },
 
     // Stores an achievement together with the difficulty it was earned on
