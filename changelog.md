@@ -7,14 +7,15 @@ Presentation:
 * The browser tab has an icon of its own - a burning monitor in the style of the interface icons - instead of a fire emoji that looked different on every system.
 * Character and item pictures are delivered at the size they are shown at. Nothing looks different; the download is 5.4 MB smaller.
 * Several achievements at once - one long action can cross several gates - now arrive one after the other, stay a little longer together, and the stack slides when one leaves.
+* The boss-fight countdown bar runs smoothly instead of stepping twenty times a second.
 
 The texts:
 * Twenty-four result texts have gained a beat. They said in one line what had cost an hour or a written warning, or passed a verdict where a scene belonged. The punchlines that work short stay short.
+* Five result texts still read the display out ("Deine Wut sinkt massiv" above "Aggro -20"). They say what happens instead.
 
 Bug fixes:
 * The knowledge note on Wuttke's Excel mail quoted a subject line the mail never had. It reads the mail it describes now.
 * The towed Golf on the charging point belongs to Egon in both places now - the tow result used to name a man from sales while the furious follow-up mail was Egon's.
-* Five result texts still read the display out ("Deine Wut sinkt massiv" above "Aggro -20"). They say what happens instead.
 * Escape closes the knowledge book and the week's condition picker instead of opening the settings on top of them.
 * The diary could stay empty for a whole session, most reliably after a language switch on the start screen. It fetches its texts itself now.
 * Switching language during the tutorial left the speech bubble in the old language. It comes along now, at whatever step you are on.

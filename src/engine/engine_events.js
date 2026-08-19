@@ -664,10 +664,13 @@ export const events = {
         this.applyPassiveItems(boss.char);
         this.renderEventHTML(boss, 'boss');
 
-        // Milliseconds, so the bar animates smoothly
+        // Milliseconds. The 50 ms tick is the LOGIC's resolution, not the
+        // picture's: on its own it moves the bar in visible 0.33% jumps, a
+        // frame in three. EventView.svelte lays a 75 ms width transition over
+        // it, and the browser interpolates the steps away.
         let totalTimeMs = boss.timer * 1000;
         let currentTimeMs = totalTimeMs;
-        const updateInterval = 50; // 50ms steps keep the bar fluid
+        const updateInterval = 50;
 
         this.state.bossTimer = setInterval(() => {
             currentTimeMs -= updateInterval;
