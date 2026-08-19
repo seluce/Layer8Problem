@@ -843,7 +843,7 @@ for (const id of itemIds) {
     if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role and summary are required`);
     // The view groups and colours by category, so an unknown one would show up
     // in no tab at all - invisible, without anything failing.
-    if (!['team', 'person', 'ort', 'vorgang'].includes(e.cat))
+    if (!['team', 'person', 'place', 'matter'].includes(e.cat))
       err(`${ctx}: cat "${e.cat}" is unknown - team, person, ort, vorgang are allowed`);
     if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
     ids.add(e.id);
@@ -883,10 +883,19 @@ for (const id of itemIds) {
 /* ---------- 7) Mail convention: the delete option ---------- */
 // The delete option must carry ignoreEmail: true and sit at the BOTTOM of
 // the list. Chain follow-ups without any delete option are fine by design.
+//
+// The label is read in BOTH languages, mirrored like BOILERPLATE in
+// report-prose: the flag is the identifier the game compares on, but the one
+// thing this rule exists to catch - a delete option whose flag is MISSING -
+// can only be recognised by its label. Until 6.1 the pattern knew the German
+// label alone, so the English tree passed with a flag removed (proved by
+// mutation on 19/08/2026: "✅ The data is clean" over a missing ignoreEmail).
+// The two labels are the only forms in the stock, 149 each.
+const DELETE_LABEL = /Löschen & Ignorieren|Delete & ignore/;
 for (const ev of DB.emails) {
   const opts = ev.opts ?? [];
   opts.forEach((o, idx) => {
-    const isDelete = /Löschen & Ignorieren/.test(o.t ?? '') || o.ignoreEmail;
+    const isDelete = DELETE_LABEL.test(o.t ?? '') || o.ignoreEmail;
     if (!isDelete) return;
     if (!o.ignoreEmail) err(`[emails/${ev.id}] delete option without ignoreEmail: true`);
     if (idx !== opts.length - 1) err(`[emails/${ev.id}] the delete option is not in last position`);
