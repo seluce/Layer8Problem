@@ -539,7 +539,7 @@ export const bossfights = [
             {
                 t: "Wait for the engineer",
                 m: 120, l: 30, a: 25, b: 5,
-                r: "Two hours of captivity. Colleagues start growling at one another."
+                r: "Two hours of captivity. In the first there are still jokes in the corridor; in the second the colleagues start growling at one another. The engineer arrives, moves one cable and asks why nobody did that themselves."
             },
             {
                 t: "Fetch Egon - he has a key for everything",
@@ -559,7 +559,7 @@ export const bossfights = [
             {
                 t: "Throw the doors open and hope",
                 m: 60, l: 15, a: 15, b: 10,
-                r: "The warm office air streams in. Several servers crash, the core just about survives."
+                r: "The warm office air streams in, and for an hour you stand in the doorway watching the thermostat count down a degree at a time. Several servers crash, the core just about survives."
             },
             {
                 t: "Flash-freeze it with the fire extinguisher",

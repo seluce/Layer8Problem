@@ -1956,7 +1956,7 @@ export const server = [
             { 
                 t: "Leise wieder rausgehen", 
                 m: 2, l: 0, a: 0, b: 0, 
-                r: "Du lässt sie in Ruhe." 
+                r: "Du gehst rückwärts zur Tür und ziehst sie so leise zu, wie eine Serverraumtür eben zugeht. Das Summen der Racks deckt den Rest. Ihr redet später nicht darüber."
             }
         ]
     },
@@ -3100,7 +3100,7 @@ export const server = [
                 t: "'Das war nur der Datenschutz-Troll.'",
                 rep: { "Egon": -10 }, 
                 m: 2, l: 5, a: 5, b: 5, 
-                r: "Egon flucht lautstark am Telefon über die IT." 
+                r: "'Der was?' Egon glaubt kein Wort und flucht trotzdem — nicht über dich, über 'die IT' im Allgemeinen, und die bist ab jetzt du. Den Berg fegt er weg. Langsam."
             }
         ]
     },
@@ -3582,7 +3582,7 @@ export const server = [
             { 
                 t: "Gründlich im Bad Hände waschen", 
                 m: 10, l: 5, a: 0, b: 0, 
-                r: "Du investierst Arbeitszeit in Hygiene. Sehr löblich." 
+                r: "Das Wasser läuft erst schwarz, dann grau, dann lange nicht klar. Der Kollege am Nachbarbecken nimmt zwei Schritte Abstand und stellt keine Fragen. Zehn Minuten später riechst du nach Flüssigseife statt nach Unterboden."
             }
         ]
     },

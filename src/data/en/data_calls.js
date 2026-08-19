@@ -150,7 +150,7 @@ export const calls = [
 			text: "There's water dripping from the ceiling in the server room. It's neon green. Shall I put buckets under it or is that coolant off the aliens?",
 			opts: [
 				{ t: "Never mind, let it drip", m: 5, l: 30, a: 0, b: 40, rep: { "Egon": -5 }, next: "path_egon_switch", r: "A switch has shorted out. The internet on Floor 3 is gone. Oops." },
-				{ t: "Run down there right now!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "It was energy drink from the floor above. An apprentice spilled some. Servers saved." }
+				{ t: "Run down there right now!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "You run to the server room, pull the wet ceiling tile and follow the green trail one floor up. It was energy drink from the floor above. An apprentice spilled some. Servers saved, carpet not." }
 			]
 		},
 		{
@@ -892,7 +892,7 @@ export const calls = [
 			{
 				t: "Hang up",
 				m: 2, l: 5, a: 0, b: 10,
-				r: "No lunch for you today."
+				r: "No lunch for you today; you steer clear of the canteen. Tomorrow you get the small ladle there. Mr Löffel does not forget a number that hung up on him."
 			}
 		]
 	},
@@ -906,7 +906,7 @@ export const calls = [
 				t: "Order a restart", 
 				rep: { "Frau Elster": 2 },
 				m: 5, l: 10, a: 10, b: 0, 
-				r: "That worked. She still seems shaken." 
+				r: "'Restart it. The button with the circle.' The screen comes back, the spreadsheet with it. She thanks you three times and then asks quietly where the spreadsheet was all that time."
 			},
 			{ 
 				t: "'Have you raised a ticket?'", next: "path_excel_ticket", 
@@ -1919,7 +1919,7 @@ export const calls = [
                 next: "path_chantal_listen",
                 rep: { "Chantal": 10 },
                 m: 45, l: 10, a: 20, b: -5,
-                r: "You spend 45 minutes hearing how hard life is as a content creator."
+                r: "You spend 45 minutes hearing how hard life is as a content creator. The algorithm, the reach, some rival who supposedly copies everything. Finally she thanks you and announces that she will be calling more often now. That is a threat."
             }
         ]
     },

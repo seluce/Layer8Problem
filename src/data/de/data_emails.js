@@ -174,7 +174,7 @@ export const emails = [
 		subj: "DRINGEND: E-Learning 'Richtiges Sitzen' überfällig",
 		body: "Sehr geehrter Mitarbeiter, unser System zeigt an, dass Sie das Pflichtmodul 'Ergonomie am Arbeitsplatz Teil 4b: Der perfekte 90-Grad-Winkel' noch nicht absolviert haben. Das Video dauert 45 Minuten und kann nicht übersprungen werden. Bitte erledigen Sie dies bis EOB, andernfalls wird Ihr Zugang gesperrt.",
 		opts: [
-			{ t: "Als 'Erledigt' markieren", r: "Du manipulierst die Datenbank. Risiko, aber spart Zeit.", m: 2, l: 0, a: -5, b: 5 },
+			{ t: "Als 'Erledigt' markieren", r: "Du setzt das Häkchen direkt in der Kurstabelle, Abschlussdatum gestern, Punktzahl 100. Zwei Minuten später bedankt sich der Bot für deine 'vorbildliche Teilnahme'. Solche Tabellen liest sonst niemand. Meistens.", m: 2, l: 0, a: -5, b: 5 },
 			{ t: "Video laufen lassen", r: "Du lässt das Video im Hintergrund laufen. Der Ton nervt, aber du bist compliant.", m: 5, l: 10, a: 5, b: -5 },
 			{ t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht. Die nächste Mahnung kommt bestimmt.", m: 2, l: 0, a: 0, b: 10, ignoreEmail: true }
 		]
@@ -1164,7 +1164,7 @@ export const emails = [
         body: "Ein alter Diesel-Golf blockiert die einzige Ladesäule für E-Autos. Kennzeichen: DU-MM 123.",
         opts: [
             { t: "Abschleppdienst rufen", r: "Der Abschleppwagen ist schneller da als jeder Techniker, den du je bestellt hast. Der Golf hängt bereits am Haken, als der Fahrer aus dem Gebäude gerannt kommt - es ist der neue Kollege aus dem Vertrieb. Er weiß jetzt, wo die Ladesäule ist. Und wer die IT ist.", m: 5, l: -5, a: -5, b: 0, nextEmail: "mail_charging_tow" },
-            { t: "Zettel dran: 'Idiot'", r: "Passiv-aggressiv ist dein Stil.", m: 5, l: 0, a: 5, b: 0 },
+            { t: "Zettel dran: 'Idiot'", r: "Du klemmst den Zettel unter den Scheibenwischer, direkt über das Kennzeichen, das eigentlich schon alles sagt. Am Nachmittag steckt einer unter deinem Scheibenwischer. Er ist länger.", m: 5, l: 0, a: 5, b: 0 },
             { t: "Löschen & Ignorieren", r: "E-Mail kommentarlos gelöscht.", m: 2, l: 0, a: 0, b: 10, ignoreEmail: true }
         ]
     },

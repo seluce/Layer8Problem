@@ -6277,7 +6277,7 @@ export const sidequests = [
                 t: "'Ist ein Survival-Training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, l: 5, a: -5, b: -5, 
-                r: "Der Chef findet dich urkomisch." 
+                r: "Er lacht noch lauter und nimmt den Satz mit: Im nächsten Meeting stellt er dich als 'unseren Polarforscher' vor. Die Flocken wehen weiter herein, aber der Chef lacht mit dir. Solange es lustig bleibt."
             },
             { 
                 t: "Ihm pampig kommen", 

@@ -445,6 +445,13 @@ const TEMPLATES = [
   ['„Dafür …“ (Satzanfang)',       new RegExp(SENT_START + 'Dafür\\b', 'g')],
   ['„Am Ende …“ (Satzanfang)',     new RegExp(SENT_START + 'Am Ende\\b', 'g')],
   ['„Und wieder (einmal) …“',      new RegExp(SENT_START + 'Und wieder\\b', 'g')],
+  // The shrug refrain - "Nicht dein Zirkus, nicht deine Affen", "Nicht mein
+  // Ticket, nicht mein Problem". Fourteen in each tree on 19/08/2026, always
+  // the same two words in the same place: sentence start, walking away. That
+  // is either a running gag or a stamp, and the row exists so the number is in
+  // front of whoever decides; a "nicht" mid-sentence is ordinary German and
+  // stays out, hence the sentence-start anchor.
+  ['„Nicht dein X, nicht dein Y“',  new RegExp(SENT_START + 'Nicht (?:d|m)eine? [\\wÄÖÜäöüß-]+, nicht (?:d|m)eine?\\b', 'g')],
 
   ['„You feel …“',                 /\byou feel\b/gi],
   ['„You X, but Y“ (Satzanfang)',  new RegExp(SENT_START + 'You [^.!?"\\n]{2,60}, but ', 'g')],
@@ -457,7 +464,8 @@ const TEMPLATES = [
   ['„Sometimes …“ (Satzanfang)',   new RegExp(SENT_START + 'Sometimes\\b', 'g')],
   ['„Then again / On the plus side …“', new RegExp(SENT_START + '(?:Then again|On the plus side|In return)\\b', 'g')],
   ['„In the end …“ (Satzanfang)',  new RegExp(SENT_START + 'In the end\\b', 'g')],
-  ['„Once again …“',               new RegExp(SENT_START + '(?:Once again|Yet again)\\b', 'g')]
+  ['„Once again …“',               new RegExp(SENT_START + '(?:Once again|Yet again)\\b', 'g')],
+  ['„Not your X, not your Y“',     new RegExp(SENT_START + "Not (?:your|my) [\\w'-]+, not (?:your|my)\\b", 'g')]
 ];
 const tmplRows = [];
 for (const [label, re] of TEMPLATES) {

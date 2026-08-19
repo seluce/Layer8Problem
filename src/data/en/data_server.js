@@ -1983,7 +1983,7 @@ export const server = [
             { 
                 t: "Quietly leave again", 
                 m: 2, l: 0, a: 0, b: 0, 
-                r: "You leave her in peace." 
+                r: "You back out to the door and pull it shut as quietly as a server room door will shut. The hum of the racks covers the rest. Neither of you mentions it later."
             }
         ]
     },
@@ -3127,7 +3127,7 @@ export const server = [
                 t: "'That was only the data protection troll.'",
                 rep: { "Egon": -10 }, 
                 m: 2, l: 5, a: 5, b: 5, 
-                r: "Egon swears loudly down the phone about IT." 
+                r: "'The what?' Egon buys none of it and swears anyway — not at you, at 'IT' in general, which from now on means you. He does sweep the heap up. Slowly." 
             }
         ]
     },
@@ -3609,7 +3609,7 @@ export const server = [
             { 
                 t: "Wash your hands thoroughly in the toilets", 
                 m: 10, l: 5, a: 0, b: 0, 
-                r: "You invest working time in hygiene. Highly commendable." 
+                r: "The water runs black, then grey, then for a long time not clear. The colleague at the next basin takes two steps back and asks no questions. Ten minutes later you smell of liquid soap instead of underfloor." 
             }
         ]
     },

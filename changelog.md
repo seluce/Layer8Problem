@@ -7,9 +7,11 @@ Presentation:
 * The browser tab has an icon of its own instead of a fire emoji. Emoji are drawn by the operating system and looked different under Windows, under Linux and in the Steam overlay - the same reason the summer party swapped its stations for images in 6.0. The new one is a burning monitor in the flat vector style of the interface icons, and it still reads at sixteen pixels.
 * The character and item pictures are delivered at the size they are actually shown at. A portrait 64 pixels wide was being downloaded at 2048 - sixteen times the edge length, which is 256 times the area. The drawings themselves are untouched, nothing looks different; the download is 5.4 MB smaller, from 24.6 down to 19.2.
 
+The texts:
+* Twenty-four result texts have gained a beat. They said in one line what had cost you an hour or a written warning, or passed a verdict where a scene belonged - "Du sortierst Papier." for forty-five minutes of invoices, "Du lässt sie in Ruhe." for a colleague crying behind Rack 4. Each now says what the time or the trouble actually was. The punchlines that work short stay short; nothing was stretched.
+
 Bug fixes:
 * Five result texts still read the display out - "Deine Wut sinkt massiv" stood directly above "Aggro -20", one word away from the nine fixed in 6.0. They now say what happens at the machine and on the phone instead of what the bar does.
-* Twelve result texts said in one line what had cost you an hour, or a written warning - "Du sortierst Papier." for forty-five minutes of invoices. Each has gained the beat that says what the time or the trouble actually was; the punchlines that work short stay short.
 * Escape opened the settings on top of the knowledge book instead of closing the book, and did the same over the week's condition picker. Both answer to Escape like every other window now.
 * The diary could stay empty for a whole session and show a single line instead of the page - most reliably if you switched language on the start screen. It now asks for its texts itself instead of relying on the background warm-up.
 * Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.

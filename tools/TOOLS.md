@@ -144,7 +144,7 @@ synonym. Whether a hit is the player's value or a character's temper — Gabi's
 blood sugar rises, her rage drops — is a human read; the report only surfaces
 it.
 
-**Section 6 measures both languages, in two mirrored sets of twelve patterns
+**Section 6 measures both languages, in two mirrored sets of thirteen patterns
 each.** A pattern with no hits drops out of the report, so a German run shows
 only German lines. The mirroring is deliberate: the section is a before/after
 gauge, and two languages counting different things cannot be held against each
@@ -156,6 +156,14 @@ together with „Immerhin", because it is the same move and English has one word
 for both. Measured: „Immerhin" 13 times, „Wenigstens" 3 times. All pools 227 →
 **230 hits**, lunch alone 12 → **14**. Older notes with the smaller figures mean
 the same stock.
+
+**And again on 19/08/2026, in both languages:** the shrug refrain „Nicht dein
+X, nicht dein Y" / „Not your X, not your Y" („Nicht dein Zirkus, nicht deine
+Affen", „Nicht mein Ticket, nicht mein Problem") is a thirteenth row. Twelve
+hits in the prose of each tree, fourteen by plain grep (two sit in labels or
+mid-sentence and stay out by design). All pools 239 → **251** in German, 10 →
+**22** in English. Whether it is a running gag or a stamp is not decided by
+the row; the row only keeps the number in view.
 
 **Method:** write first, then measure, then correct. A before/after comparison
 rather than a target of zero — section 6 is *supposed* to have hits. Intended

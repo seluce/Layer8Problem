@@ -499,7 +499,7 @@ export const bossfights = [
             { 
                 t: "Auf den Techniker warten", 
                 m: 120, l: 30, a: 25, b: 5, 
-                r: "Zwei Stunden Gefangenschaft. Die Kollegen fangen an, sich gegenseitig anzuknurren." 
+                r: "Zwei Stunden Gefangenschaft. In der ersten wird im Flur noch gescherzt, in der zweiten fangen die Kollegen an, sich gegenseitig anzuknurren. Der Techniker kommt, steckt ein Kabel um und fragt, warum das niemand selbst gemacht hat."
             },
             { 
                 t: "Egon holen - der hat für alles einen Schlüssel", 
@@ -519,7 +519,7 @@ export const bossfights = [
             { 
                 t: "Die Türen aufreißen und hoffen", 
                 m: 60, l: 15, a: 15, b: 10, 
-                r: "Die warme Büroluft strömt rein. Einige Server stürzen ab, der Core überlebt gerade so." 
+                r: "Die warme Büroluft strömt rein, und eine Stunde lang stehst du in der Tür und siehst dem Thermostat zu, wie es Grad für Grad herunterzählt. Einige Server stürzen ab, der Core überlebt gerade so."
             },
             { 
                 t: "Mit dem Feuerlöscher schockfrosten", 

@@ -6325,7 +6325,7 @@ export const sidequests = [
                 t: "'It is survival training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, l: 5, a: -5, b: -5, 
-                r: "The boss finds you hilarious." 
+                r: "He laughs even louder and keeps the line: in the next meeting he introduces you as 'our polar explorer'. The flakes keep blowing in, but the boss is laughing with you. For as long as it stays funny."
             },
             { 
                 t: "Get shirty with him", 

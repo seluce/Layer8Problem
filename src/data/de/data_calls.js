@@ -146,7 +146,7 @@ export const calls = [
 			text: "Im Serverraum tropft es von der Decke. Das Wasser ist neongrün. Soll ich Eimer drunterstellen oder ist das Kühlflüssigkeit von den Aliens?",
 			opts: [
 				{ t: "Egal, lass tropfen", m: 5, l: 30, a: 0, b: 40, rep: { "Egon": -5 }, next: "path_egon_switch", r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." },
-				{ t: "Sofort hinrennen!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." }
+				{ t: "Sofort hinrennen!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "Du rennst in den Serverraum, ziehst die nasse Deckenplatte und folgst der grünen Spur ein Stockwerk nach oben. Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet, Teppich nicht." }
 			]
 		},
 		{
@@ -888,7 +888,7 @@ export const calls = [
 			{ 
 				t: "Auflegen", 
 				m: 2, l: 5, a: 0, b: 10, 
-				r: "Kein Mittagessen für dich heute." 
+				r: "Kein Mittagessen für dich heute; du meidest die Kantine. Morgen bekommst du dort die kleine Kelle. Herr Löffel vergisst keine Nummer, die aufgelegt hat."
 			}
 		]
 	},
@@ -902,7 +902,7 @@ export const calls = [
 				t: "Neustart befehlen", 
 				rep: { "Frau Elster": 2 },
 				m: 5, l: 10, a: 10, b: 0, 
-				r: "Hat funktioniert, aber sie wirkt immer noch verstört." 
+				r: "'Neu starten. Der Knopf mit dem Kreis.' Der Bildschirm kommt zurück, die Tabelle auch. Sie bedankt sich dreimal und fragt dann leise, wo die Tabelle die ganze Zeit war."
 			},
 			{ 
 				t: "'Haben Sie ein Ticket?'", next: "path_excel_ticket", 
@@ -1915,7 +1915,7 @@ export const calls = [
                 next: "path_chantal_listen",
                 rep: { "Chantal": 10 },
                 m: 45, l: 10, a: 20, b: -5, 
-                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist." 
+                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist. Der Algorithmus, die Reichweite, irgendeine Konkurrentin, die angeblich alles kopiert. Zum Schluss bedankt sie sich und kündigt an, sich jetzt öfter zu melden. Das ist eine Drohung."
             }
         ]
     },
