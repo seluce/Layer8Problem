@@ -4,7 +4,7 @@
  * colleagues; everyone else lives here.
  *
  * Structure of an entry:
- *   id, cat        internal id and category: 'person', 'ort' or 'vorgang'.
+ *   id, cat        internal id and category: 'team', 'person', 'place' or 'matter'.
  *                  The view groups by it and gives each category its own
  *                  colour, so the register stays readable once it is long.
  *   name, role     heading and subheading
@@ -342,8 +342,12 @@ export const compendium = [
     /* ----------------------------------------------------------------- KOLLEGIUM
        The seven with a reputation bar. Team stays the at-a-glance view of how
        they feel about you right now; here stands what you have learned about
-       them, permanently. Their heads are unlocked from the first shift, since
-       Müller has worked alongside them for years - only the notes are earned. */
+       them, permanently. Heads and notes are both earned: a head opens with
+       the first of its `seen` events, like every other entry - Müller has
+       worked alongside them for years, but the player has not, and a book
+       that is full on page one has nothing left to give. Decided 19/08/2026;
+       until then this comment claimed the heads were open from the first
+       shift, which the code never did. */
     {
         id: "k_kevin", cat: "team", name: "Kevin", role: "Auszubildender",
         summary: "Lernt schnell, nur selten das, was auf dem Ausbildungsplan steht. Fragt zu spät und meldet zu ehrlich.",
@@ -452,7 +456,7 @@ export const compendium = [
     /* -------------------------------------------------------------------- ORTE */
     {
         id: "serverraum",
-        cat: "ort",
+        cat: "place",
         name: "Der Serverraum",
         role: "Dein Revier",
         summary: "Der einzige Raum im Haus, in dem Ursache und Wirkung noch zusammenhängen. Dafür rächt sich hier alles zeitversetzt.",
@@ -469,7 +473,7 @@ export const compendium = [
     },
     {
         id: "teekueche",
-        cat: "ort",
+        cat: "place",
         name: "Die Teeküche",
         role: "Nachrichtenzentrale",
         summary: "Hier weiß man Dinge früher als im Intranet und genauer als in jeder Rundmail. Der Preis ist, dass man auch selbst zum Thema wird.",
@@ -486,7 +490,7 @@ export const compendium = [
     },
     {
         id: "kreativ2",
-        cat: "ort",
+        cat: "place",
         name: "Raum \"Kreativ 2\"",
         role: "Besprechungsraum, dauerbelegt",
         summary: "Seit Monaten ganztägig gebucht und immer leer. Der Raum ist der Beweis, dass in diesem Haus ein Termin mehr wiegt als ein Mensch.",
@@ -499,7 +503,7 @@ export const compendium = [
     },
     {
         id: "chefbuero",
-        cat: "ort",
+        cat: "place",
         name: "Das Chefbüro",
         role: "Etage unter dem Serverraum",
         summary: "Eckbüro mit Aquarium, Perserteppich und Auszeichnungen an der Wand. Liegt ausgerechnet direkt unter dem Serverraum.",
@@ -512,7 +516,7 @@ export const compendium = [
     },
     {
         id: "kopierraum",
-        cat: "ort",
+        cat: "place",
         name: "Der Kopierraum",
         role: "Zwischen Flur und Teeküche",
         summary: "Fensterlos, laut und der einzige Raum, in dem man ungestört ist. Deshalb wird hier alles gemacht, nur selten kopiert.",
@@ -525,7 +529,7 @@ export const compendium = [
     },
     {
         id: "raucherecke",
-        cat: "ort",
+        cat: "place",
         name: "Der Hintereingang",
         role: "Innenhof, Raucherecke",
         summary: "Die informellste Adresse des Hauses. Wer hier zehn Minuten steht, erfährt mehr als in jedem Meeting.",
@@ -538,7 +542,7 @@ export const compendium = [
     },
     {
         id: "gala",
-        cat: "ort",
+        cat: "place",
         name: "Die Sommerfeier",
         role: "Einmal im Jahr, Pflichtveranstaltung",
         summary: "Ein Abend, an dem sich alle Dinge erlauben, für die sie sich am Montag schämen werden. Die Firma bezahlt, das Gebäude hält, der Rest ist Verhandlungssache.",
@@ -556,7 +560,7 @@ export const compendium = [
     },
     {
         id: "kantine",
-        cat: "ort",
+        cat: "place",
         name: "Die Kantine",
         role: "Untergeschoss",
         summary: "Der einzige Ort im Haus, an dem Titel wirklich wichtig sind. Wer hier falsch anredet, wartet länger auf sein Essen.",
@@ -574,7 +578,7 @@ export const compendium = [
     },
     {
         id: "aufzug",
-        cat: "ort",
+        cat: "place",
         name: "Der Aufzug",
         role: "Zwischen zweitem und drittem Stock",
         summary: "Bleibt zuverlässig an derselben Stelle stehen. Wer ihn nimmt, spart Treppen und riskiert ein Gespräch.",
@@ -587,7 +591,7 @@ export const compendium = [
     },
     {
         id: "rack7",
-        cat: "ort",
+        cat: "place",
         name: "Rack 7",
         role: "Serverraum, hintere Reihe",
         summary: "Das Rack, an dem sich alles sammelt, was im Serverraum nicht sein sollte. Es ist nie kaputt. Es ist nur anders.",
@@ -600,7 +604,7 @@ export const compendium = [
     },
     {
         id: "ostfluegel",
-        cat: "ort",
+        cat: "place",
         name: "Ostflügel",
         role: "Treppenhaus, drittes Obergeschoss",
         summary: "Der Weg zum Archiv, und die einzige Etage, auf der man das Gebäude gegen sich arbeiten spürt.",
@@ -613,7 +617,7 @@ export const compendium = [
     },
     {
         id: "raum_211",
-        cat: "ort",
+        cat: "place",
         name: "Raum 2.11",
         role: "Besprechungsraum, laut Belegung frei",
         summary: "Ein Raum, der offiziell leer steht und trotzdem nie leer ist. Wer hier sitzt, gehört dazu — das genügt diesem Haus als Nachweis.",
@@ -626,7 +630,7 @@ export const compendium = [
     },
     {
         id: "nl_sued",
-        cat: "ort",
+        cat: "place",
         name: "Niederlassung Süd",
         role: "Standort, nie betreten",
         summary: "Existiert als Telefonnummer und als Handschrift auf Zetteln. Gesehen hat sie hier niemand.",
@@ -641,7 +645,7 @@ export const compendium = [
     /* ---------------------------------------------------------------- VORGÄNGE */
     {
         id: "ticket_108",
-        cat: "vorgang",
+        cat: "matter",
         name: "Ticket 108",
         role: "Offen seit sieben Jahren",
         summary: "Das älteste offene Ticket der Firma. Es hat drei IT-Leitungen überlebt und einen Anrufer, der nie aufgegeben hat.",
@@ -654,7 +658,7 @@ export const compendium = [
     },
     {
         id: "transformation",
-        cat: "vorgang",
+        cat: "matter",
         name: "Das Transformationsprojekt",
         role: "Existiert seit einem Kick-off",
         summary: "Ein Projekt, das nur deshalb existiert, weil jemand es ausgesprochen und einen Termin dafür eingestellt hat. Genau so entstehen hier alle.",
@@ -667,7 +671,7 @@ export const compendium = [
     },
     {
         id: "rademacher",
-        cat: "vorgang",
+        cat: "matter",
         name: "Das Konto Rademacher",
         role: "IT-Leitung bis 2016",
         summary: "Dein Vor-Vorgänger ist seit Jahren weg. Sein Benutzerkonto nicht. Es bucht, es meldet sich an, es lebt.",
@@ -680,7 +684,7 @@ export const compendium = [
     },
     {
         id: "gruender",
-        cat: "vorgang",
+        cat: "matter",
         name: "Der Baron von Gier",
         role: "Firmengründer",
         summary: "Hinterlässt Anweisungen an Orten, an denen niemand sie sucht, und ein Gründungsjahr, das erst an einer Klotür wieder auftaucht.",
@@ -693,7 +697,7 @@ export const compendium = [
     },
     {
         id: "betriebsrat",
-        cat: "vorgang",
+        cat: "matter",
         name: "Der Betriebsrat",
         role: "Tagt monatlich",
         summary: "Nimmt jedes Anliegen sehr ernst und behandelt es beim nächsten Mal. Das nächste Mal ist immer nach dem Problem.",
@@ -706,7 +710,7 @@ export const compendium = [
     },
     {
         id: "kuehlschrank",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Kühlschrank-Ordnung",
         role: "Teeküche, ungeschriebenes Recht",
         summary: "Der am strengsten durchgesetzte Regelkatalog des Hauses. Er steht nirgends und alle kennen ihn.",
@@ -719,7 +723,7 @@ export const compendium = [
     },
     {
         id: "kaffeekasse",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Vertrauenskasse",
         role: "Seit Jahren im Minus",
         summary: "Ein Sparschwein neben einer Strichliste. Die Liste stimmt immer, die Kasse nie. Beides gilt als Naturgesetz.",
@@ -732,7 +736,7 @@ export const compendium = [
     },
     {
         id: "notfallplan",
-        cat: "vorgang",
+        cat: "matter",
         name: "Notfallplan 2009",
         role: "Streng vertraulich, hinter Rack 4",
         summary: "Ein verstaubter Ordner, den dein Vorgänger dort deponiert hat. Oder versteckt. Der Unterschied ist nicht mehr feststellbar.",
@@ -745,7 +749,7 @@ export const compendium = [
     },
     {
         id: "prinz",
-        cat: "vorgang",
+        cat: "matter",
         name: "S.K.H. Prinz Abubakar",
         role: "Royal Bank of Zamunda",
         summary: "Die einzige Vorschussbetrugsmasche der Weltgeschichte, die keine war. Das macht die Sache nicht besser, nur komplizierter.",
@@ -760,7 +764,7 @@ export const compendium = [
     },
     {
         id: "wc_fall",
-        cat: "vorgang",
+        cat: "matter",
         name: "Der Fall des stillen Örtchens",
         role: "Herrentoilette, zweiter Stock",
         summary: "Drei Vorfälle in einer Woche, ein Tatort, der jedes Mal beseitigt wird, bevor jemand hinsieht. Der einzige Fall dieses Hauses, der sich tatsächlich aufklären ließ.",
@@ -775,7 +779,7 @@ export const compendium = [
     },
     {
         id: "anruferin",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Frau aus der Zentrale",
         role: "Existiert nicht, ruft trotzdem an",
         summary: "Freundlich, sachkundig, mit der richtigen Nummer im Display. Alles an ihr stimmt bis auf die Abteilung, die sie nennt — und die gibt es in dieser Firma nicht.",
@@ -790,7 +794,7 @@ export const compendium = [
     },
     {
         id: "karteileiche",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Karteileiche",
         role: "Ein Konto ohne Mensch",
         summary: "Wer geht, verschwindet aus der Kantine, aus dem Verteiler und aus dem Gedächtnis. Aus dem System nicht.",
@@ -803,7 +807,7 @@ export const compendium = [
     },
     {
         id: "premium_trick",
-        cat: "vorgang",
+        cat: "matter",
         name: "Der Premium-Trick",
         role: "Teeküche, mündlich überliefert",
         summary: "Espresso drücken, den Becher-Sensor zuhalten, warten. Die Maschine gibt die teure Röstung heraus. Jedes Mal.",
@@ -816,7 +820,7 @@ export const compendium = [
     },
     {
         id: "hof_maeuse",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Mäuse im Hof",
         role: "Innenhof, Bestand wachsend",
         summary: "Eine humane Lösung mit Folgen. Wer im Haus fängt und draußen freilässt, hat nichts gelöst, nur verlagert.",
@@ -829,7 +833,7 @@ export const compendium = [
     },
     {
         id: "bandarchiv",
-        cat: "vorgang",
+        cat: "matter",
         name: "Das Bandarchiv",
         role: "Serverraum, unterste Reihe",
         summary: "Vierzig Kassetten mit Kürzeln, die niemand mehr auflösen kann. Lesegeräte dafür gibt es im Haus keine mehr.",
@@ -842,7 +846,7 @@ export const compendium = [
     },
     {
         id: "wochenmeeting",
-        cat: "vorgang",
+        cat: "matter",
         name: "Das Wochenmeeting",
         role: "Freitagnachmittag, Besprechungsraum",
         summary: "Der Abschluss jeder Arbeitswoche. Man berichtet, was war, und erfährt dabei, was es in Wirklichkeit gewesen sein soll.",
@@ -858,7 +862,7 @@ export const compendium = [
     },
     {
         id: "berater",
-        cat: "vorgang",
+        cat: "matter",
         name: "Die Berater",
         role: "Synerqon · Norden & Kessler · McKandy",
         summary: "Drei Firmen, ein Auftreten. Sie begleiten die Transformation seit Jahren und sind sich darin einig, dass sie noch nicht abgeschlossen ist.",
