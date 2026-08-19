@@ -208,7 +208,7 @@ export const compendium = [
         summary: "Uses his inbox for everything other people keep separate devices for. Nobody ever explained to him where work ends and the shopping list starts.",
         seen: ["mail_wuttke_excel", "mail_wuttke_1", "mail_wuttke_ai", "mail_software_1"],
         notes: [
-            { seen: "mail_wuttke_excel", text: "'I DIDN'T DO ANYTHING, HONESTLY' sits in the subject line, in capitals. What was deleted was column G." },
+            { seen: "mail_wuttke_excel", text: "The subject line shouts HELP; the first sentence under it is 'I didn't do anything, honestly'. What was deleted was column G." },
             { seen: "mail_wuttke_1",     text: "Writes his search queries as emails. 'goulash recipe easy quick no peppers', no subject, no doubt about the recipient." },
             { seen: "mail_wuttke_ai",    text: "Takes the automatic reply for a person and thanks Outlook. Then he orders cream and pasta from it, not the spiral kind." },
             { seen: "mail_software_1",   text: "Installs free software because the machine is more colourful afterwards, and passes the link on out of collegiality. That is precisely where the work begins." }

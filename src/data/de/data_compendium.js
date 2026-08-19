@@ -175,7 +175,7 @@ export const compendium = [
         summary: "Benutzt das Postfach für alles, wofür andere getrennte Geräte haben. Die Grenze zwischen Arbeit und Einkaufszettel ist ihm nie erklärt worden.",
         seen: ["mail_wuttke_excel", "mail_wuttke_1", "mail_wuttke_ai", "mail_software_1"],
         notes: [
-            { seen: "mail_wuttke_excel", text: "'Ich habe nichts gemacht, ehrlich' steht in Großbuchstaben in der Betreffzeile. Gelöscht wurde Spalte G." },
+            { seen: "mail_wuttke_excel", text: "Die Betreffzeile schreit HILFE, der erste Satz darunter heißt 'Ich habe nichts gemacht, ehrlich'. Gelöscht wurde Spalte G." },
             { seen: "mail_wuttke_1",     text: "Schreibt Suchanfragen als Mail. 'Gulasch Rezept einfach schnell ohne Paprika', kein Betreff, kein Empfängerzweifel." },
             { seen: "mail_wuttke_ai",    text: "Hält die automatische Antwort für einen Menschen und bedankt sich bei Outlook. Dann bestellt er bei ihm Sahne und Nudeln, keine Spiralnudeln." },
             { seen: "mail_software_1",   text: "Installiert Gratis-Software, weil der Rechner danach bunter ist, und bietet den Link kollegial weiter. Genau dort beginnt die Arbeit." }
