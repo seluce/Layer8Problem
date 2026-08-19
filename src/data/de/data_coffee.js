@@ -3012,7 +3012,7 @@ export const coffee = [
                 t: "Den Stapel selbst abarbeiten", 
                 rep: { "Dr. Wichtig": 5 }, 
                 m: 45, l: -20, a: 20, b: 0, 
-                r: "Du sortierst Papier. Der Kaffee war gut, aber der Preis war zu hoch." 
+                r: "Du sortierst Rechnungen nach Datum, dann nach Betrag, dann wieder nach Datum, weil das Post-it nicht sagt, wonach. Eine Dreiviertelstunde später ist der Stapel sortiert. Der Kaffee war gut, aber der Preis war zu hoch."
             }
         ]
     },
@@ -3359,7 +3359,7 @@ export const coffee = [
             { 
                 t: "Zum Depot fahren", 
                 m: 45, l: -20, a: 10, b: 0, 
-                r: "Du holst es selbst ab. Das hat dich fast eine Stunde gekostet." 
+                r: "Du fährst zum Depot, stehst hinter drei Leuten mit Retouren und weist dich aus, um ein Paket abzuholen, auf dem 'Empfänger unbekannt verzogen' klebt. Das hat dich fast eine Stunde gekostet, und Gabi hat mit jeder Minute davon gerechnet."
             },
             { 
                 t: "Ausrasten", 

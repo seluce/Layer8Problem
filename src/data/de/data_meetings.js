@@ -423,7 +423,7 @@ export const meetings = [
 		},
 		results: {
 			res_eingang: {
-				txt: "Zwei Klicks, das Bild steht. Frau Kienzle bedankt sich beim Chef.",
+				txt: "Zwei Klicks, das Bild steht. Frau Kienzle bedankt sich beim Chef. Du sagst nichts, und der Chef nimmt den Dank an. Das Angebot für den 'präsentationsfähigen Raum' liegt am nächsten Tag in deinem Postfach, weitergeleitet, mit einem Wort: 'Prüfen.'",
 				m: 45, l: 0, a: 10, b: -5
 			},
 			res_leiter: {

@@ -714,7 +714,7 @@ export const bossfights = [
             {
                 t: "Barricade yourself in the server room",
                 m: 60, l: 10, a: 15, b: 5,
-                r: "You secure the door and wait until the withdrawal symptoms among your colleagues subside."
+                r: "You secure the door and wait until the withdrawal symptoms among your colleagues subside. For an hour you listen through the door as the building goes quieter, then louder. When you come out, nobody is pressing the machine any more. They are just sitting next to it."
             },
             {
                 t: "Eat a doughnut to steady yourself",

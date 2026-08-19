@@ -3044,7 +3044,7 @@ export const coffee = [
                 t: "Work through the stack yourself", 
                 rep: { "Dr. Wichtig": 5 }, 
                 m: 45, l: -20, a: 20, b: 0, 
-                r: "You sort paper. The coffee was good; the price was too high." 
+                r: "You sort invoices by date, then by amount, then by date again, because the Post-it does not say which. Three quarters of an hour later the pile is in order. The coffee was good; the price was too high."
             }
         ]
     },
@@ -3391,7 +3391,7 @@ export const coffee = [
             { 
                 t: "Drive to the depot", 
                 m: 45, l: -20, a: 10, b: 0, 
-                r: "You collect it yourself. That cost you nearly an hour." 
+                r: "You drive to the depot, stand behind three people with returns and show ID to collect a parcel with 'Addressee gone away' stuck on it. That cost you nearly an hour, and Gabi had counted on every minute of it." 
             },
             { 
                 t: "Lose it", 

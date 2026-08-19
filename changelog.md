@@ -9,6 +9,7 @@ Presentation:
 
 Bug fixes:
 * Five result texts still read the display out - "Deine Wut sinkt massiv" stood directly above "Aggro -20", one word away from the nine fixed in 6.0. They now say what happens at the machine and on the phone instead of what the bar does.
+* Twelve result texts said in one line what had cost you an hour, or a written warning - "Du sortierst Papier." for forty-five minutes of invoices. Each has gained the beat that says what the time or the trouble actually was; the punchlines that work short stay short.
 * Escape opened the settings on top of the knowledge book instead of closing the book, and did the same over the week's condition picker. Both answer to Escape like every other window now.
 * The diary could stay empty for a whole session and show a single line instead of the page - most reliably if you switched language on the start screen. It now asks for its texts itself instead of relying on the background warm-up.
 * Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.

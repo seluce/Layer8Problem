@@ -242,9 +242,10 @@ code is always 0, every finding is reading material. Call it with a pool
 verbatim repeated sentences and word sequences across event boundaries,
 stat language in narrative text ("Aggro steigt"), typo patterns, ageing
 references, result texts that are too terse, thin openings, conspicuous labels
-(section 9), the old register in options (10) and the etiquette before direct
-speech (11). With the mail pool selected two more sections follow; 1 to 11 keep
-their numbers whatever the selection. The
+(section 9), the old register in options (10), the etiquette before direct
+speech (11) and single results whose text is thin against a heavy effect (12).
+With the mail pool selected two more sections follow; 1 to 12 keep their
+numbers whatever the selection. The
 tool knows the legitimate exceptions and does not report them: subject lines,
 caller displays, chat messages and deliberate onomatopoeia.
 

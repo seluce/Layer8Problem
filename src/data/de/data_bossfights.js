@@ -674,7 +674,7 @@ export const bossfights = [
             { 
                 t: "Im Serverraum verbarrikadieren", 
                 m: 60, l: 10, a: 15, b: 5, 
-                r: "Du sicherst die Tür und wartest, bis der Entzug bei den Kollegen nachlässt." 
+                r: "Du sicherst die Tür und wartest, bis der Entzug bei den Kollegen nachlässt. Eine Stunde lang hörst du durch die Tür zu, wie das Haus erst leiser und dann lauter wird. Als du rauskommst, drückt niemand mehr auf den Automaten. Sie sitzen nur noch daneben."
             },
             { 
                 t: "Einen Donut zur Beruhigung essen", 

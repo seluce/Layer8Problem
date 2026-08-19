@@ -19,7 +19,8 @@
  *  4. typo candidates (tripled consonants, broken punctuation)
  *  5. references that date the game (product versions, 2023 pop culture)
  *  6. telegraph-style events: many ultra-short result texts (rewrite queue)
- *  7. emails only: sender inventory + one person under several names
+ *  7. single results whose text is thin against a heavy effect (reading list)
+ *  8. emails only: sender inventory + one person under several names
  *
  * What it cannot judge: whether a text sounds human. That part stays
  * manual; this report only decides where to look first.
@@ -168,6 +169,11 @@ const NOT_A_NAME = new Set([
 
 const SHORT_RESULT = 60;   // chars; below this a result text counts as telegraph
 const NGRAM_MAX = 8, NGRAM_MIN = 5;
+
+// Section 12: a single result is "thin" below THIN_RESULT chars, and its effect
+// is "heavy" from HEAVY_MINUTES minutes, or HEAVY_STAT points of aggro or boss,
+// or when it opens a chain. See the section itself for why both halves matter.
+const THIN_RESULT = 80, HEAVY_MINUTES = 30, HEAVY_STAT = 20;
 
 /* ---------- gather texts ---------- */
 // One record per player-facing string: { pool, id, field, kind, text }
@@ -579,6 +585,55 @@ for (const r of records) {
 }
 section('Option captions in the old register (the migration list towards house style)', legacyLabels, 900);
 section('Label before direct speech - check the LEFT half only: does it name the action or judge the choice?', quoteLabels, 900);
+
+/* ---------- 12) heavy effect, thin text ---------- */
+// Section 7 measures the EVENT - the average over its results - and so found
+// two events in a stock where the operator, playing it, kept meeting single
+// results that felt too short. Those are individual texts, and short is
+// relative to what they cost: 58 characters after "m: 2" is a beat, 58
+// characters after "m: 60" is an hour nobody explains ("Du bleibst ruhig,
+// während er schreit. Es war nur der Akku."). So this section takes the single
+// result and holds its length against its effect. A finding is a result under
+// THIN_RESULT chars that costs HEAVY_MINUTES minutes or more, moves aggro or
+// boss by HEAVY_STAT or more, or opens a chain - a chain start is the one place
+// a short text also has to carry a promise. Shortest first.
+//
+// Same reading rule as section 7: a hit is a place to READ, and "Alles ist
+// aus. Auch das Licht. Aber die Türen sind offen." over a b: 20 is a punchline
+// that stays. The doctrine's line is "too short only when it lacks the moment,
+// not when it lacks words"; the numbers only say where to look first.
+//
+// Boilerplate (the deletion line, "Du legst auf.") and CMD: results are not
+// prose and stay out, chat bubbles are short by design. Sits here rather than
+// beside section 7 so that 8 to 11 keep the numbers STRUCTURE.md and TOOLS.md
+// quote.
+const effects = e => ['m', 'l', 'a', 'b'].filter(k => e[k] !== undefined)
+  .map(k => `${k}${e[k] >= 0 ? '+' : ''}${e[k]}`).join(' ') + (e.next ? ` →${e.next}` : '');
+const heavy = e => Math.abs(e.m ?? 0) >= HEAVY_MINUTES || Math.abs(e.a ?? 0) >= HEAVY_STAT
+                || Math.abs(e.b ?? 0) >= HEAVY_STAT || Boolean(e.next);
+const thinHeavy = [];
+for (const pool of pools) {
+  if (TREE_POOLS.has(pool)) continue;
+  const entries = pool === 'board' ? (DB.board ?? []) : (DB[pool] ?? []);
+  if (!Array.isArray(entries)) continue;
+  for (const ev of entries) {
+    if (ev.kind === 'phone') continue;
+    const results = [];
+    (ev.opts ?? []).forEach((o, i) => results.push([`opts[${i}]`, o.t, o, o.r]));
+    for (const [rid, res] of Object.entries(ev.results ?? {})) results.push([`!${rid}`, rid, res, res.txt ?? res.r]);
+    if (ev.fail) results.push(['fail', 'fail', ev.fail, ev.fail.r ?? ev.fail.txt]);
+    for (const [field, label, eff, text] of results) {
+      if (typeof text !== 'string') continue;
+      const t = norm(text);
+      if (BOILERPLATE.has(t) || t.startsWith('CMD:')) continue;
+      if (t.length < THIN_RESULT && heavy(eff))
+        thinHeavy.push([t.length, `${String(t.length).padStart(3)} chars  [${pool}/${ev.id}] ${field} "${norm(label ?? '')}"  (${effects(eff)})\n      "${t}"`]);
+    }
+  }
+}
+thinHeavy.sort((a, b) => a[0] - b[0]);
+section(`Heavy effect, thin text (a result under ${THIN_RESULT} characters that costs ${HEAVY_MINUTES}+ minutes, moves aggro or boss by ${HEAVY_STAT}+, or opens a chain - read these first)`,
+  thinHeavy.map(([, line]) => line), 120);
 
 /* ---------- 7) emails: sender inventory & name variants ---------- */
 if (pools.includes('emails')) {

@@ -429,7 +429,7 @@ export const meetings = [
 		},
 		results: {
 			res_eingang: {
-				txt: "Two clicks and the picture is there. Ms Kienzle thanks the boss.",
+				txt: "Two clicks and the picture is there. Ms Kienzle thanks the boss. You say nothing, and the boss accepts the thanks. The quotation for the 'presentation-ready room' is in your inbox the next day, forwarded, with one word: 'Review.'",
 				m: 45, l: 0, a: 10, b: -5
 			},
 			res_leiter: {

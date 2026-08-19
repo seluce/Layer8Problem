@@ -93,8 +93,8 @@ German and presenting the report as English.
 
 **No gate.** The tool always exits with 0 and is deliberately kept out of the
 build: whether a repeated sentence is a lazy copy or a running gag is decided by
-a human. Eleven sections (with the mail pool selected, two more follow as 12
-and 13; 1 to 11 keep their numbers whatever the selection):
+a human. Twelve sections (with the mail pool selected, two more follow as 13
+and 14; 1 to 12 keep their numbers whatever the selection):
 
 1. verbatim repeated sentences across different events
 2. repeated word sequences from five words up ← **the most useful section**
@@ -112,6 +112,23 @@ and 13; 1 to 11 keep their numbers whatever the selection):
     Klassiker:")? Kept apart from 10 because mixing them buries a handful of
     real findings under 130 correct labels. A prefix with a quotation inside it
     („Taktik 'Verbrannte Erde':") slips past both — one case in the stock
+12. heavy effect, thin text: a **single** result under 80 characters that costs
+    30+ minutes, moves aggro or boss by 20+, or opens a chain — the reading
+    list, shortest first. Sits at the end so 8 to 11 keep their numbers
+
+**Section 7 measures the event, section 12 the single result.** Section 7 takes
+the average over an event's results and so found two events in a stock where a
+player kept meeting single results that felt too short; those are individual
+texts, and short is relative to what they cost — 58 characters after `m: 2` is
+a beat, 58 characters after `m: 60` is an hour nobody explains. Section 12
+holds the single result against its effect. Both are reading lists, not
+rewrite orders: the doctrine's line is "too short only when it lacks the
+moment, not when it lacks words", and „Alles ist aus. Auch das Licht. Aber die
+Türen sind offen." over a `b: 20` is a punchline that stays. Measured on
+19/08/2026 before the first pass: **41 findings in German, 66 in English**
+(English is simply more compact — the 29 English-only hits were all faithful
+translations of German texts just over the line). Read the German list, it is
+the source tree; the English follows.
 
 **Section 3 checks both languages** — `Faulheit`/`Chef-Radar` and
 `Laziness`/`Boss Radar` sit in one list, because a German stat in an English

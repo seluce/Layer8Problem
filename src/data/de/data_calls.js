@@ -89,7 +89,7 @@ export const calls = [
 		text: "Müller! Ich bin am Flughafen. Mein iPad geht nicht! Ich drücke den Knopf und nichts passiert! FIXEN SIE DAS REMOTE! SOFORT! Ich verliere hier Millionen!",
 		opts: [
 			{ t: "'Sonnenwinde stören die Leitung.'", m: 5, l: 30, a: 0, b: 25, rep: { "Dr. Wichtig": 5 }, next: "path_ceo_sonnenwind", r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." },
-			{ t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "Du bleibst ruhig, während er schreit. Es war nur der Akku." },
+			{ t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "Du bleibst ruhig, während er schreit. Eine Stunde lang knetest du und sagst an den richtigen Stellen 'Ja', bis er von selbst auf das Akkusymbol schaut. Es war nur der Akku." },
 			{ t: "Ist der Akku leer?", m: 60, l: -10, a: 30, b: -10, rep: { "Dr. Wichtig": -5 }, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." }
 		]
 	},
@@ -270,7 +270,7 @@ export const calls = [
 			text: "Du, ich hab das Internet kaputt gemacht. Ich brauch das Admin-Passwort um den Treiber neu zu starten. Der Chef killt mich sonst!",
 			opts: [
 				{ t: "Passwort eingeben", req: "admin_pw", rep: { "Kevin": 10 }, m: 5, l: 20, a: 0, b: 0, r: "Du loggst dich remote ein, zack, fertig. Kevin himmelt dich an." },
-				{ t: "Hingehen und fixen", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Ohne das Passwort musstest du den Safe-Mode nutzen. Hat ewig gedauert." }
+				{ t: "Hingehen und fixen", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Ohne das Passwort bleibt nur der abgesicherte Modus: Treiber runter, Treiber drauf, drei Neustarts, Kevin die ganze Zeit hinter dir. Eine Stunde für etwas, das mit dem Passwort ein Klick gewesen wäre." }
 			]
 		},
 		{
@@ -287,7 +287,7 @@ export const calls = [
 			title: "Herr Schmidt (Vertrieb)",
 			text: "Herr Müller! Ich bin beim Kunden und mein Hotspot geht nicht! Ich hab das Kennwort auf so einen gelben Zettel geschrieben, aber ich weiß nicht mehr wo der ist! Helfen Sie mir, schnell!",
 			opts: [
-				{ t: "'Tja, Pech gehabt.'", m: 2, l: 10, a: 0, b: 20, r: "Du legst auf. Das wird ein riesiges Nachspiel haben." },
+				{ t: "'Tja, Pech gehabt.'", m: 2, l: 10, a: 0, b: 20, r: "Du legst auf. Schmidt sitzt beim Kunden ohne Netz, und die nächste Nummer, die er wählt, ist nicht die der IT. Das wird ein riesiges Nachspiel haben." },
 				{ t: "Kennwort vorlesen", req: "wifi_note", m: 5, l: 10, a: -10, b: -10, r: "Du liest das Passwort vom Zettel vor, den du gefunden hast. Schmidt jubelt: 'Sie sind ein Gott!'" },
 				{ t: "Reset durchführen", m: 45, l: -10, a: 25, b: -5, r: "Du musstest den Hotspot komplett zurücksetzen. Schmidt musste 45 Min warten. Er war stinksauer." }
 			]
@@ -460,7 +460,7 @@ export const calls = [
 		opts: [
 			{ t: "Schraubendreher nutzen", req: "screw", m: 30, l: -10, a: 5, b: 0, r: "Du bist hingegangen, hast das Gehäuse geöffnet und die CD gerettet. Es war eine Schlager-CD." },
 			{ t: "Mit Klebeband angeln", req: "tape", m: 20, l: -5, a: 10, b: 0, r: "Du hast Tape an einen Stift geklebt und gefischt. Hat geklappt! MacGyver-Style." },
-			{ t: "Neuen PC bestellen", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "Das war dem Chef zu teuer. Abmahnung droht." }
+			{ t: "Neuen PC bestellen", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "Die Bestellung geht zur Freigabe an den Chef, Begründung: 'CD im Lüftungsschlitz'. Er sagt persönlich Nein, in deiner Bürotür. Abmahnung droht." }
 		]
 	},
 	{
