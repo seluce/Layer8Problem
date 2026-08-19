@@ -117,6 +117,16 @@ and 13; 1 to 11 keep their numbers whatever the selection):
 `Laziness`/`Boss Radar` sit in one list, because a German stat in an English
 text (and the other way round) is a finding as well.
 
+**Since 6.1 it also catches the bar read out under a synonym:** `Wut`/`Zorn`/
+`Ärger` and `anger`/`fury`/`rage` next to a direction verb (`sinkt`, `steigt`,
+`fällt`, `klettert` — `sinks`, `drops`, `falls`, `rises`, `climbs`), in either
+order and at most three words apart. "Deine Wut sinkt massiv." over an
+"Aggro -20" is the leak the 6.0 pass removed nine times as "Radar", and six of
+them survived that pass because the list knew the stat's name and not its
+synonym. Whether a hit is the player's value or a character's temper — Gabi's
+blood sugar rises, her rage drops — is a human read; the report only surfaces
+it.
+
 **Section 6 measures both languages, in two mirrored sets of twelve patterns
 each.** A pattern with no hits drops out of the report, so a German run shows
 only German lines. The mirroring is deliberate: the section is a before/after

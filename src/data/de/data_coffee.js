@@ -3447,7 +3447,7 @@ export const coffee = [
             { 
                 t: "Den ersten Kaffee andächtig zapfen", 
                 m: 10, l: 10, a: -20, b: 0, 
-                r: "Dein erster gezapfter Kaffee ist eine Offenbarung. Perfekte Crema, perfekte Temperatur. Dieser Kaffee heilt Wunden. Deine Wut sinkt massiv." 
+                r: "Dein erster gezapfter Kaffee ist eine Offenbarung. Perfekte Crema, perfekte Temperatur. Dieser Kaffee heilt Wunden. Mit dem ersten Schluck sind die fünfundsiebzig Minuten Zahnbürste abgegolten."
             },
             { 
                 t: "Ein 'Außer Betrieb' Schild anbringen", 
@@ -4527,7 +4527,7 @@ export const coffee = [
             {
                 t: "Anstellen und mitmachen",
                 m: 20, l: 10, a: -10, b: 10,
-                r: "Zwanzig Minuten in der Schlange, dafür der beste Kaffee, den dieses Haus zu bieten hat. Die Wut sinkt merklich. Der Zeitverlust ist der Preis, und heute zahlst du ihn gern."
+                r: "Zwanzig Minuten in der Schlange, dafür der beste Kaffee, den dieses Haus zu bieten hat. Als du dran bist, hältst du den Sensor zu wie alle anderen, und die Maschine macht ihr Geräusch auch für dich. Der Zeitverlust ist der Preis, und heute zahlst du ihn gern."
             },
             {
                 t: "Warten, bis die Schlange weg ist",
@@ -4585,7 +4585,7 @@ export const coffee = [
             {
                 t: "Freundlich vertrösten und Kaffee holen",
                 m: 10, l: 5, a: -5, b: 5,
-                r: "Du sagst zweimal 'schicken Sie mir eine Mail' und kommst tatsächlich an deinen Kaffee. Die Wut sinkt ein wenig, aber nicht so weit wie sonst. Für einen ruhigen Kaffee war heute jemand anderes zuständig."
+                r: "Du sagst zweimal 'schicken Sie mir eine Mail' und kommst tatsächlich an deinen Kaffee. Trinken musst du ihn mit dem Rücken zu den beiden, und Stimmen kommen leider auch von hinten. Für einen ruhigen Kaffee war heute jemand anderes zuständig."
             },
             {
                 t: "Die Sache im Stehen klären",
@@ -4609,7 +4609,7 @@ export const coffee = [
             {
                 t: "Ihn nach dem Hamster fragen",
                 m: 10, l: 0, a: -15, b: 5,
-                r: "Der Hamster heißt Puschel, ist sechs Jahre alt und damit uralt für einen Hamster. Der Praktikant zeigt dir vierzehn Fotos. Du lachst zum ersten Mal an diesem Tag, und die Wut fällt spürbar ab."
+                r: "Der Hamster heißt Puschel, ist sechs Jahre alt und damit uralt für einen Hamster. Der Praktikant zeigt dir vierzehn Fotos. Du lachst zum ersten Mal an diesem Tag und schaust dir alle vierzehn an."
             },
             {
                 t: "Ihm zeigen, wie die Maschine funktioniert",

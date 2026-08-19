@@ -68,7 +68,7 @@ export const calls = [
 				t: "Shout at him: 'ARE YOU INSANE?!'",
 				rep: { "Kevin": -5 },
 				m: 15, l: 0, a: -20, b: 20,
-				r: "You bellow into the phone loud enough for the next office to hear. Kevin cries quietly at the other end. Your anger drops a little, even though the PC is still broken."
+				r: "You bellow into the phone loud enough for the next office to hear. Kevin cries quietly at the other end. That did help. Not the PC, but you."
 			},
 			{
 				t: "'Format it! Learn from it!'",

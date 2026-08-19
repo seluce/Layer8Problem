@@ -64,7 +64,7 @@ export const calls = [
 				t: "Ihn anschreien: 'BIST DU WAHNSINNIG?!'",
 				rep: { "Kevin": -5 }, 
 				m: 15, l: 0, a: -20, b: 20,
-				r: "Du brüllst so laut ins Telefon, dass man es im Nachbarbüro hört. Kevin weint leise am anderen Ende. Deine Wut sinkt etwas, auch wenn der PC immer noch kaputt ist." 
+				r: "Du brüllst so laut ins Telefon, dass man es im Nachbarbüro hört. Kevin weint leise am anderen Ende. Geholfen hat es. Dem PC nicht, aber dir."
 			},
 			{ 
 				t: "'Formatieren! Lern was draus!'", 

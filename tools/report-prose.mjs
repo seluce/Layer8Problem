@@ -94,6 +94,26 @@ const DATED = [
 // too, and a language-dependent set could silently pick the wrong half. The
 // English names are the ones fixed in GLOSSAR section 3a - Laziness, Aggro,
 // Boss Radar - so "Aggro" is the only entry that already covered both.
+//
+// The synonym rows at the end exist because a result text can read the bar
+// out without naming it: "Deine Wut sinkt massiv." over an "Aggro -15" is the
+// same leak as "Das Radar sinkt massiv" over a "Chef -10", one word removed,
+// and six of them survived the 6.0 pass unseen because this list knew "Aggro"
+// and not "Wut". Noun and direction verb in either order, at most three words
+// apart, so "die Wut in dir sinkt" is caught and "die Wut ist ein Zustand.
+// Der Kaffee sinkt" is not. Whether a hit is the PLAYER's value or a
+// character's temper ("Gabis Wut sinkt") stays a human read - the report only
+// puts it in front of one.
+//
+// `\b` in a JavaScript regex without the u flag knows only ASCII word
+// characters, so "\bÄrger" never matches; the German rows spell the boundary
+// out as a lookaround.
+const DE_ANGER = '(?:Wut|Zorn|Ärger)';
+const DE_MOVES = '(?:sinkt|steigt|fällt|klettert)';
+const DE_GAP   = '(?:\\s+[\\wÄÖÜäöüß-]+){0,3}\\s+';
+const EN_ANGER = '(?:anger|fury|rage)';
+const EN_MOVES = '(?:sinks|drops|falls|rises|climbs)';
+const EN_GAP   = "(?:\\s+[\\w'-]+){0,3}\\s+";
 const MECHANICS = [
   [/\bAggro\b/,                'the stat "Aggro" called by its name'],
   [/Chef-?Radar/i,             'the stat "Chef-Radar" called by its name'],
@@ -107,7 +127,15 @@ const MECHANICS = [
   [/\bRadar\s*[+-]\s*\d/,      'a figure in the narrative text'],
   [/Radar[- ]?(Bonus|Malus|Penalty)/i, 'a stat effect called by its name'],
   [/[+-]\d+\s*(Punkte|Prozentpunkte)\b/, 'a figure in the narrative text'],
-  [/[+-]\d+\s*(points?|percentage\s+points?)\b/i, 'a figure in the narrative text']
+  [/[+-]\d+\s*(points?|percentage\s+points?)\b/i, 'a figure in the narrative text'],
+  [new RegExp(`(?<![\\wÄÖÜäöüß])${DE_ANGER}\\b${DE_GAP}${DE_MOVES}\\b`),
+                               'the stat "Aggro" read out as "Wut/Zorn/Ärger" plus a direction verb'],
+  [new RegExp(`\\b${DE_MOVES}\\b${DE_GAP}${DE_ANGER}(?![\\wÄÖÜäöüß])`),
+                               'the stat "Aggro" read out as a direction verb plus "Wut/Zorn/Ärger"'],
+  [new RegExp(`\\b${EN_ANGER}\\b${EN_GAP}${EN_MOVES}\\b`, 'i'),
+                               'the stat "Aggro" read out as "anger/fury/rage" plus a direction verb'],
+  [new RegExp(`\\b${EN_MOVES}\\b${EN_GAP}${EN_ANGER}\\b`, 'i'),
+                               'the stat "Aggro" read out as a direction verb plus "anger/fury/rage"']
 ];
 
 // Sender grouping (emails): tokens that are roles/departments, not names.
