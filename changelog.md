@@ -3,28 +3,28 @@
 Everything here is measured against 6.0. This version is about stability: not much to see, and a few things that can no longer quietly break.
 
 Presentation:
-* The bug report form has lost its emoji: the five in front of the categories, and the one in the note underneath, which is a proper interface icon now.
-* The browser tab has an icon of its own instead of a fire emoji. Emoji are drawn by the operating system and looked different under Windows, under Linux and in the Steam overlay - the same reason the summer party swapped its stations for images in 6.0. The new one is a burning monitor in the flat vector style of the interface icons, and it still reads at sixteen pixels.
-* The character and item pictures are delivered at the size they are actually shown at. A portrait 64 pixels wide was being downloaded at 2048 - sixteen times the edge length, which is 256 times the area. The drawings themselves are untouched, nothing looks different; the download is 5.4 MB smaller, from 24.6 down to 19.2.
+* The bug report form has lost its emoji; the note underneath carries a proper interface icon.
+* The browser tab has an icon of its own - a burning monitor in the style of the interface icons - instead of a fire emoji that looked different on every system.
+* Character and item pictures are delivered at the size they are shown at. Nothing looks different; the download is 5.4 MB smaller.
 
 The texts:
-* Twenty-four result texts have gained a beat. They said in one line what had cost you an hour or a written warning, or passed a verdict where a scene belonged - "Du sortierst Papier." for forty-five minutes of invoices, "Du lässt sie in Ruhe." for a colleague crying behind Rack 4. Each now says what the time or the trouble actually was. The punchlines that work short stay short; nothing was stretched.
+* Twenty-four result texts have gained a beat. They said in one line what had cost an hour or a written warning, or passed a verdict where a scene belonged. The punchlines that work short stay short.
 
 Bug fixes:
-* The diesel Golf on the charging point had two owners: have it towed and a new man from sales came running, while the furious follow-up mail was Egon's. It is Egon's Golf in both places now - he was only fetching bread rolls.
-* Five result texts still read the display out - "Deine Wut sinkt massiv" stood directly above "Aggro -20", one word away from the nine fixed in 6.0. They now say what happens at the machine and on the phone instead of what the bar does.
-* Escape opened the settings on top of the knowledge book instead of closing the book, and did the same over the week's condition picker. Both answer to Escape like every other window now.
-* The diary could stay empty for a whole session and show a single line instead of the page - most reliably if you switched language on the start screen. It now asks for its texts itself instead of relying on the background warm-up.
-* Switch the language during the tutorial and its speech bubble stayed in the language you had begun in, while the buttons beneath it had already changed - COFFEE below, "Kaffee holen" above. The bubble now comes along with the rest of the screen, in both directions and at whatever step you are on.
-* In the tutorial, opening the backpack, tapping an item and then cancelling brought the glowing button back on top of the open backpack. It could be clicked there, and the action started behind the window that was still open. Nothing on the board lights up any more while a window is up; the step comes back when you close it.
-* At the end of a working week the day report underneath the balance sheet was headed "Wednesday (normal)" - on a Friday, and in a week you had picked "In need of leave" for. It said that in every week, on every day and at every level, because it was reading the setting of the single-day mode, which a week does not have. It now names the day it is actually reporting on and the condition you chose: "Friday (in need of leave)".
-* The weekly balance counted "1 Tickets" and "1 Mails ignoriert". One ticket is a ticket.
-* On the summer party's closing screen, an achievement you had earned twice that evening - once and then again at a better grade - was listed twice in the trophies of the night. Every trophy is named once now.
-* The diary page was headed with the wrong weekday during a working week: it said Wednesday from Monday to Friday, whatever condition you had picked. It now carries the day it was written on - the same day the entry itself talks about.
+* The towed Golf on the charging point belongs to Egon in both places now - the tow result used to name a man from sales while the furious follow-up mail was Egon's.
+* Five result texts still read the display out ("Deine Wut sinkt massiv" above "Aggro -20"). They say what happens instead.
+* Escape closes the knowledge book and the week's condition picker instead of opening the settings on top of them.
+* The diary could stay empty for a whole session, most reliably after a language switch on the start screen. It fetches its texts itself now.
+* Switching language during the tutorial left the speech bubble in the old language. It comes along now, at whatever step you are on.
+* In the tutorial, cancelling an item brought the glowing button back on top of the open backpack, where it could be clicked. Nothing lights up while a window is open.
+* The day report under the weekly balance sheet was headed "Wednesday (normal)" on every day of every week. It names the actual day and the condition you chose.
+* The weekly balance said "1 Tickets" and "1 Mails ignoriert". One ticket is a ticket.
+* An achievement earned twice on the party evening - once, then again at a better grade - was listed twice among the trophies. Once now.
+* The diary page carried the wrong weekday during a working week. It carries the day it was written on.
 
 Under the hood:
-* Three parts of the machinery were rebuilt so they can no longer break in silence: the interface no longer carries program code of its own, the tutorial no longer reaches into the controls behind the game's back, and a set of faults that used to pass unnoticed - a missing icon, a wrong reference, a screen left in the old language - are now caught while the game is built. None of it shows while playing.
-* The closing and night screens no longer store the sentences they show, but what they mean, so they are drawn in whatever language is running - end of day, end of week, the night between two working days and the summer party alike, the diary page included. Nothing about them looks different.
+* Three parts of the machinery were rebuilt so they can no longer break in silence: the interface carries no program code of its own, the tutorial no longer reaches into the controls behind the game's back, and faults that used to pass unnoticed - a missing icon, a wrong reference, a screen left in the old language - are caught while the game is built.
+* The closing and night screens store what they mean rather than the sentences they show, so a language switch redraws them completely - end of day, end of week, the night between days, the party and the diary page alike.
 
 ---
 
