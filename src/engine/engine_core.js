@@ -409,7 +409,7 @@ export const core = {
      * Restamps the boot line of a restored log with the version that is
      * actually running.
      *
-     * init() writes "System v6.0.0 loaded" as the FIRST log entry of a session,
+     * init() writes "System <version> loaded" as the FIRST log entry of a session,
      * before any day exists, and setDifficulty() does not clear the log - so
      * that line travels into the day save. Restore it verbatim and the log
      * announces the version the save was written under while the terminal
