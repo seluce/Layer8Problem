@@ -653,7 +653,24 @@ export const events = {
         this.state.activeEvent = true;
         this.state.usedIDs.add(boss.id);
         this.disableButtons(true);
-		
+
+        // The same bookkeeping renderTerminal does - the boss fight is the one
+        // event that renders without it, and both lines are load-bearing:
+        //
+        //  - currentEventId is where every result RECIPE points. Since 6.0 the
+        //    result screen resolves { ref: { i: currentEventId, ... } } on
+        //    every paint, and with the id still on the PREVIOUS event the
+        //    timeout looked up fail.r on an event that has no fail - stat
+        //    chips applied, text box empty. A chosen option pointed at the
+        //    previous event's same-numbered option the same way. Before 6.0
+        //    the literal text travelled along, which is why this only broke
+        //    when the recipes arrived.
+        //  - recordSeen is what the knowledge book unlocks on; three of its
+        //    notes trigger on boss ids and could never light up.
+        this.state.currentEventId = boss.id;
+        this.state.currentEventType = 'boss';
+        this.recordSeen('event', boss.id);
+
 		// ---> Boss music <---
         this.playMusic('boss');
         this.updatePresence('boss');

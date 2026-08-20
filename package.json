@@ -58,11 +58,11 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "acorn": "^8.18.0",
-    "electron": "^43.4.0",
+    "electron": "^43.4.1",
     "electron-builder": "^26.15.3",
     "svelte": "^5.56.9",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   },
   "dependencies": {
     "steamworks.js": "^0.4.0"
