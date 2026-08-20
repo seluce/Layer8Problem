@@ -16,6 +16,7 @@ The texts:
 * Five result texts still read the display out ("Deine Wut sinkt massiv" above "Aggro -20"). They say what happens instead.
 
 Bug fixes:
+* On Linux with two graphics cards the Steam version could take so long to start that Steam gave up. It starts immediately now, with hardware acceleration as before.
 * Let a boss fight's countdown run out and the stats hit, but the result box stayed empty. The failure text shows again, and the knowledge notes that unlock on boss fights can actually unlock now.
 * The knowledge note on Wuttke's Excel mail quoted a subject line the mail never had. It reads the mail it describes now.
 * The towed Golf on the charging point belongs to Egon in both places now - the tow result used to name a man from sales while the furious follow-up mail was Egon's.
