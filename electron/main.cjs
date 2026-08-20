@@ -221,6 +221,28 @@ ipcMain.on('toggle-fullscreen', () => {
     }
 });
 
+// Linux, hybrid graphics: skip Chromium's Vulkan probe.
+//
+// The overlay hook below forces --in-process-gpu (steamworks.js appends it, so
+// Steam's renderer can reach our GL context). That moves GPU initialisation
+// into the main process - and on a laptop with two cards the probe walks every
+// installed driver profile, which wakes the discrete GPU. Measured on Linux
+// Mint with an RTX 3060 beside an AMD Cezanne: seconds before the window
+// appears, long enough for a launch through Steam to give up. Without the
+// overlay preloaded the same build starts instantly, which is why it only ever
+// failed under Steam.
+//
+// Skipping the Vulkan probe removes the stall (measured: instant) and costs
+// nothing here - the game is DOM and composites through GL either way.
+//
+// Two switches that fixed it in testing and are deliberately NOT used:
+// __GLX_VENDOR_LIBRARY_NAME=mesa would drop a machine whose only card is the
+// NVIDIA one to software rendering, and --use-gl=desktop no longer exists in
+// this Electron ("Requested GL implementation (gl=none,angle=none) not found").
+if (process.platform === 'linux') {
+    app.commandLine.appendSwitch('disable-features', 'Vulkan');
+}
+
 // Steam overlay hook for Electron. Must run BEFORE whenReady()
 try {
     require('steamworks.js').electronEnableSteamOverlay();

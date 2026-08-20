@@ -92,6 +92,17 @@ export function freshDay(mult = 1.0) {
         // tutorial pointed at the CALL button and the button could not be
         // pressed.
         tutorialUnlocked: null,
+
+        // The tutorial step the action bar is showing, or null when it is
+        // showing none: before the lesson starts, and while a modal has taken
+        // over and clearGlows() has switched the lights off. ActionBar dims the
+        // locked buttons off this field and rings the free one off
+        // tutorialUnlocked above - two questions, because an info step dims the
+        // whole bar without freeing anything.
+        //
+        // tutorial.step stays the lesson's own counter. This is what is on
+        // display, not where the lesson stands.
+        tutorialStep: null,
         bossBarPercent: 100,    // boss fight timer bar, read by EventView.svelte
         bootLines: [],          // startup sequence, read by BootView.svelte
         dayActive: false,
@@ -181,6 +192,42 @@ export const DAY_TIMERS = [
     'bossTimer', 'emailTimer', 'emailDelayTimer', 'emailChainTimer',
     'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer'
 ];
+
+/**
+ * Tutorial fields: part of the day, deliberately not part of the save.
+ *
+ * They say which step the action bar is showing and which button that step has
+ * freed - and both are only true while the lesson is running. A reload ends the
+ * lesson, so a save that carried them restores a bar that is dimmed with
+ * nothing left to undim it. That is not theory: leave the tutorial through the
+ * main menu and the day is written to storage mid-step.
+ *
+ * Same argument as DAY_TIMERS above - they belong to the session, not to the
+ * workday. saveDay() skips them on the way out, applyRestoredDay() on the way
+ * back in; a save is never allowed a say over the tutorial.
+ */
+export const TUTORIAL_FIELDS = ['tutorialStep', 'tutorialUnlocked'];
+
+/**
+ * The day, as it goes into storage.
+ *
+ * freshDay() decides which fields belong to a day, and the two lists above
+ * decide which of them a save has no business carrying. That is one rule, and
+ * it used to stand twice: saveDay() and saveWeek() held the same loop with the
+ * same two exclusions, character for character. A third exclusion would have
+ * had to be found in both.
+ *
+ * Sets become arrays on the way out, because JSON has no Set.
+ */
+export function snapshotDay(state) {
+    const day = {};
+    for (const key of Object.keys(freshDay())) {
+        if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
+        const value = state[key];
+        day[key] = value instanceof Set ? [...value] : value;
+    }
+    return day;
+}
 
 /**
  * Mutable game state.
@@ -278,7 +325,13 @@ export const state = $state({
     intranetData: null,
 
     // The big centre modal. components/EndModal.svelte renders it.
-    modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null },
+    //
+    // `title` and `lead` hold RECIPES on an end or night screen (a plain string
+    // on a warning, which is dismissed long before anything can switch the
+    // language), `balance` and `party` are snapshots of numbers and ids, and
+    // `diary` is the draw the page was made from - nothing here is a sentence.
+    modal: { open: false, title: '', text: '', isEnd: false, lead: '', cause: null, diary: null,
+             balance: null, party: null },
 
     // Achievement notifications currently on screen.
     // components/AchievementToasts.svelte renders them.
@@ -287,7 +340,11 @@ export const state = $state({
     // Tutorial speech bubble. components/TutorialPointer.svelte renders it;
     // tutorial.js still positions it, because that needs real element
     // measurements.
-    tutorialPointer: { visible: false, faded: true, title: '', desc: '', confirmable: false },
+    //
+    // KEYS, not sentences: the component resolves them, so the bubble follows
+    // a language switch like everything else on screen. Held as finished text
+    // it froze in the language the step opened in.
+    tutorialPointer: { visible: false, faded: true, titleKey: '', descKey: '', confirmable: false },
 
     // Aggregated Steam figures. Desktop only; stays in its loading state on
     // the web because platform.globalStats() resolves to null there.

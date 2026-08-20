@@ -54,13 +54,13 @@ export const en = {
 
     'report.title':                'Report a bug / give feedback',
     'report.category':             'Category',
-    'report.cat.bug':              '🐛 Bug / crash',
-    'report.cat.typo':             '📝 Spelling mistake',
-    'report.cat.logic':            '🤯 Content that makes no sense',
-    'report.cat.balance':          '⚖️ Too hard / too easy',
-    'report.cat.idea':             '💡 Idea / suggestion',
+    'report.cat.bug':              'Bug / crash',
+    'report.cat.typo':             'Spelling mistake',
+    'report.cat.logic':            'Content that makes no sense',
+    'report.cat.balance':          'Too hard / too easy',
+    'report.cat.idea':             'Idea / suggestion',
     'report.description':          'Description',
-    'report.privacy':              'ℹ️ For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.',
+    'report.privacy':              'For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.',
     'report.submit':               'Open a ticket',
 
     'settings.softReset.week':     'Restart the week',
@@ -378,6 +378,7 @@ export const en = {
     'dayReport.diff.easy':         'FRIDAY (easy)',
     'dayReport.diff.normal':       'WEDNESDAY (normal)',
     'dayReport.diff.hard':         'MONDAY (hard)',
+    'dayReport.diff.week':         '{day} ({mode})',
     'dayReport.valveUsed':         'VALVE USED',
     'dayReport.endedHere':         '← THIS IS WHERE IT ENDED',
     'dayReport.openTickets':       'open tickets',
@@ -416,6 +417,7 @@ export const en = {
     'inv.slot.use':                '{item} (Use)',
 
     'phone.read':                  'Read',
+    'phone.typing':                'typing …',
     'phone.newMessage':            'NEW MESSAGE',
     'phone.readNow':               'Read it now...',
 
@@ -634,7 +636,9 @@ export const en = {
     'week.badge':                  'WEEK ({mode})',
     'week.summary.title':          'Weekly balance · {mode}',
     'week.summary.legend':         'L Laziness · A Aggro · B Boss',
+    'week.summary.valuesOne':      '{tickets} ticket · L {fl} · A {al} · B {cr}',
     'week.summary.values':         '{tickets} tickets · L {fl} · A {al} · B {cr}',
+    'week.summary.totalsOne':      '☕ {coffee}× coffee · 📧 {mails} mail ignored',
     'week.summary.totals':         '☕ {coffee}× coffee · 📧 {mails} mails ignored',
     'week.endsOn':                 '{base} The week ends on {day}.',
 

@@ -226,7 +226,7 @@ export const emails = [
 		subj: "URGENT: e-learning 'Sitting properly' overdue",
 		body: "Dear Employee, our system indicates that you have not yet completed the mandatory module 'Ergonomics at the workstation part 4b: the perfect 90-degree angle'. The video runs for 45 minutes and cannot be skipped. Please complete this by EOB, otherwise your access will be suspended.",
 		opts: [
-			{ t: "Mark as 'completed'", r: "You edit the database directly. A risk, but it saves time.", m: 2, l: 0, a: -5, b: 5 },
+			{ t: "Mark as 'completed'", r: "You set the tick straight in the course table, completion date yesterday, score 100. Two minutes later the bot thanks you for your 'exemplary participation'. Nobody else reads tables like that. Mostly.", m: 2, l: 0, a: -5, b: 5 },
 			{ t: "Let the video run", r: "You leave the video running in the background. The audio grates, but you are compliant.", m: 5, l: 10, a: 5, b: -5 },
 			{ t: "Delete & ignore", r: "Email deleted without comment. The next reminder is bound to come.", m: 2, l: 0, a: 0, b: 10, ignoreEmail: true }
 		]
@@ -1214,8 +1214,8 @@ export const emails = [
         subj: "Charging point blocked",
         body: "An old diesel Golf is blocking the only charging point for electric cars. Registration: DU-MM 123.",
         opts: [
-            { t: "Call the recovery truck", r: "The truck arrives faster than any technician you have ever booked. The Golf is already on the hook when the driver comes running out of the building - it is the new man from sales. He now knows where the charging point is. And who IT is.", m: 5, l: -5, a: -5, b: 0, nextEmail: "mail_charging_tow" },
-            { t: "Note on the windscreen: 'Idiot'", r: "Passive-aggressive is your style.", m: 5, l: 0, a: 5, b: 0 },
+            { t: "Call the recovery truck", r: "The truck arrives faster than any technician you have ever booked. The Golf is already on the hook when the driver comes running out of the building - it is Egon, with a bag of bread rolls in his hand. He now knows the charging point is not a bread-roll bay. Who ordered the truck, he does not know yet.", m: 5, l: -5, a: -5, b: 0, nextEmail: "mail_charging_tow" },
+            { t: "Note on the windscreen: 'Idiot'", r: "You tuck the note under the wiper, right above the number plate, which already says it all. In the afternoon there is one under your wiper. It is longer.", m: 5, l: 0, a: 5, b: 0 },
             { t: "Delete & ignore", r: "Email deleted without comment.", m: 2, l: 0, a: 0, b: 10, ignoreEmail: true }
         ]
     },

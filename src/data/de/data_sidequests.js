@@ -3064,7 +3064,7 @@ export const sidequests = [
                 loot: "sandwich", 
                 next: "path_delivery_keep", 
                 m: 2, l: -5, a: -5, b: 5, 
-                r: "Du nimmst das Essen an dich. Gratis-Lunch auf Firmenkosten!" 
+                r: "Du nimmst die Tüte mit ins Büro und schiebst sie in die unterste Schublade. Gratis-Lunch auf Firmenkosten! Es riecht schon jetzt bis in den Flur."
             }
         ]
     },
@@ -6038,7 +6038,7 @@ export const sidequests = [
                 t: "Die Postfiliale anrufen", 
                 next: "path_delivery_call", 
                 m: 10, l: -5, a: -5, b: 0, 
-                r: "Du verbringst 30 Minuten in der Warteschleife. Deine Lebenszeit verrinnt." 
+                r: "Du wählst die Hotline und landest in der Warteschleife. 'Für Elise', in Endlosschleife, dazwischen eine Stimme, die deine Position nennt: elf. Ein Stück später: elf. Deine Lebenszeit verrinnt."
             },
             { 
                 t: "Die Flure nach Kartons absuchen", 
@@ -6277,7 +6277,7 @@ export const sidequests = [
                 t: "'Ist ein Survival-Training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, l: 5, a: -5, b: -5, 
-                r: "Der Chef findet dich urkomisch." 
+                r: "Er lacht noch lauter und nimmt den Satz mit: Im nächsten Meeting stellt er dich als 'unseren Polarforscher' vor. Die Flocken wehen weiter herein, aber der Chef lacht mit dir. Solange es lustig bleibt."
             },
             { 
                 t: "Ihm pampig kommen", 

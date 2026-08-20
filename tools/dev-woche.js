@@ -4,13 +4,13 @@
 
    Paste into the browser console (F12 -> Console), ideally while a week is
    already running or straight from the title screen. Everything then lives
-   under `dev.`; `dev.hilfe()` lists the commands.
+   under `dev.`; `dev.help()` lists the commands.
 
    All of it works on the real state through the normal engine paths, so what
    gets tested is what a player triggers - no special route that behaves
    differently when it matters.
 
-   Note: the scenarios write into the running save. Call `dev.sichern()` first
+   Note: the scenarios write into the running save. Call `dev.backup()` first
    if a real run is worth keeping.
 
    Commands are German because the person using them is - the comments are
@@ -19,20 +19,20 @@
 
 (() => {
     const e = window.engine;
-    if (!e) { console.error('engine nicht gefunden - läuft das Spiel?'); return; }
+    if (!e) { console.error('engine not found - is the game running?'); return; }
 
     const s = e.state;
-    const NAMEN = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
+    const DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
 
     // German labels for the three week levels. Deliberately local and not
     // taken from the dictionary: this helper prints for the developer, and
     // its output stays German even when the game runs in English. WEEK_DIFFS
     // carries a `key` since 6.0 - the `name` field it used to carry was a
     // German display string and is gone.
-    const STUFEN = { easy: 'Erholt', normal: 'Genervt', hard: 'Urlaubsreif' };
+    const LEVELS = { easy: 'rested', normal: 'fed up', hard: 'in need of leave' };
 
     /** Builds believable past days so the week's balance sheet has content. */
-    const logBis = (tag, { hart = false } = {}) => {
+    const logUpTo = (tag, { hart = false } = {}) => {
         s.week.weekLog = [];
         for (let i = 1; i < tag; i++) {
             s.week.weekLog.push({
@@ -50,7 +50,7 @@
     };
 
     /** A few data points, otherwise the day chart on the end screen stays empty. */
-    const kurve = () => {
+    const curve = () => {
         s.statHistory = [];
         const schritte = 10;
         for (let i = 0; i <= schritte; i++) {
@@ -64,38 +64,38 @@
         }
     };
 
-    const anzeigen = () => { e.renderHeader(); e.updateUI(); };
+    const refresh = () => { e.renderHeader(); e.updateUI(); };
 
     const dev = {
 
         // ---------------------------------------------------------------
-        // Grundlage
+        // the groundwork
         // ---------------------------------------------------------------
 
         /**
          * Puts the week on a given day and condition.
-         * dev.tag(3, 'normal', { tickets: 5, al: 60 })
+         * dev.day(3, 'normal', { tickets: 5, al: 60 })
          */
-        tag(nummer = 1, stufe = 'normal', werte = {}) {
-            if (!s.week.active) e.startWeek(stufe);
-            s.week.level = stufe;
-            s.week.dayIndex = Math.min(5, Math.max(1, nummer));
+        day(number = 1, level = 'normal', values = {}) {
+            if (!s.week.active) e.startWeek(level);
+            s.week.level = level;
+            s.week.dayIndex = Math.min(5, Math.max(1, number));
             s.week.contingents = {};
-            logBis(s.week.dayIndex, { hart: werte.hart });
+            logUpTo(s.week.dayIndex, { hart: values.hart });
 
-            s.time = werte.zeit ?? 10 * 60;
-            s.tickets = werte.tickets ?? 3;
-            s.al = werte.al ?? 35;
-            s.cr = werte.cr ?? 25;
-            s.fl = werte.fl ?? 30;
-            s.excusesLeft = werte.ausreden ?? 2;
+            s.time = values.zeit ?? 10 * 60;
+            s.tickets = values.tickets ?? 3;
+            s.al = values.al ?? 35;
+            s.cr = values.cr ?? 25;
+            s.fl = values.fl ?? 30;
+            s.excusesLeft = values.ausreden ?? 2;
             s.morningMoodShown = true;
             s.ticketWarning = s.tickets >= 7;
             s.buttonsDisabled = false;
-            kurve();
-            anzeigen();
+            curve();
+            refresh();
             e.setTerminalIdle();
-            console.log(`▶ ${NAMEN[s.week.dayIndex - 1]}, ${STUFEN[e.WEEK_DIFFS[stufe].key]}, ` +
+            console.log(`▶ ${DAY_NAMES[s.week.dayIndex - 1]}, ${LEVELS[e.WEEK_DIFFS[level].key]}, ` +
                         `${Math.floor(s.time / 60)}:${String(s.time % 60).padStart(2, '0')} Uhr, ` +
                         `${s.tickets} Tickets`);
             return dev;
@@ -109,20 +109,20 @@
          * Just before the end of any weekday. The next action click triggers
          * the night screen, so what you see is the real route rather than
          * only the result.
-         * dev.feierabend(2)          Tuesday evening
-         * dev.feierabend(2, true)    ...and fire it right away
+         * dev.clockOff(2)          Tuesday evening
+         * dev.clockOff(2, true)    ...and fire it right away
          */
-        feierabend(tagNr = 2, sofort = false) {
-            dev.tag(tagNr, s.week.level ?? 'normal',
+        clockOff(tagNr = 2, sofort = false) {
+            dev.day(tagNr, s.week.level ?? 'normal',
                     { zeit: 16 * 60 + 20, tickets: 6, al: 62, cr: 48, fl: 55 });
-            console.log('16:20 Uhr. Eine Aktion, dann kommt die Nacht.');
-            if (sofort) dev.nacht();
+            console.log('16:20. One action, then the night comes.');
+            if (sofort) dev.night();
             return dev;
         },
 
         /** Forces the night screen without waiting for an action. */
-        nacht() {
-            if (s.week.dayIndex >= 5) { console.warn('Freitag hat keine Nacht - nimm dev.freitag()'); return dev; }
+        night() {
+            if (s.week.dayIndex >= 5) { console.warn('Friday has no night - use dev.friday()'); return dev; }
             s.time = 16 * 60 + 30;
             s.pendingEnd = null;
             e.queueNightEnd();
@@ -138,29 +138,29 @@
          * Friday, 14:50, four days already behind you. After the next action
          * the button reads "ZUM WOCHENMEETING"; from there it is not far to
          * 16:30.
-         * dev.freitag()            a solid week
-         * dev.freitag('knapp')     carrying baggage: 8 tickets, high values
+         * dev.friday()            a solid week
+         * dev.friday('tight')     carrying baggage: 8 tickets, high values
          */
-        freitag(art = 'solide') {
-            const knapp = art === 'knapp';
-            dev.tag(5, s.week.level ?? 'normal', {
+        friday(kind = 'solide') {
+            const tight = kind === 'tight';
+            dev.day(5, s.week.level ?? 'normal', {
                 zeit: 14 * 60 + 50,
-                tickets: knapp ? 8 : 4,
-                al: knapp ? 78 : 45,
-                cr: knapp ? 71 : 38,
-                fl: knapp ? 68 : 40,
-                ausreden: knapp ? 0 : 2,
-                hart: knapp,
+                tickets: tight ? 8 : 4,
+                al: tight ? 78 : 45,
+                cr: tight ? 71 : 38,
+                fl: tight ? 68 : 40,
+                ausreden: tight ? 0 : 2,
+                hart: tight,
             });
             s.meetingDone = false;
-            console.log('Freitag 14:50. Eine Aktion -> der Knopf führt ins Wochenmeeting.');
-            if (knapp) console.log('Knappe Variante: 8 Tickets, keine Ausreden mehr. Bei 10 ist Schluss.');
+            console.log('Friday 14:50. One action -> the button leads into the weekly meeting.');
+            if (tight) console.log('The tight variant: 8 tickets, no excuses left. At 10 it is over.');
             return dev;
         },
 
         /** Jumps straight into the weekly meeting. */
         meeting() {
-            if (!s.week.active) { console.warn('Keine Woche aktiv - erst dev.freitag()'); return dev; }
+            if (!s.week.active) { console.warn('No week running - dev.friday() first'); return dev; }
             s.week.dayIndex = 5;
             s.time = 15 * 60 + 10;
             s.meetingDone = false;
@@ -173,8 +173,8 @@
         // ---------------------------------------------------------------
 
         /** Friday 16:30 - the week is survived, the balance sheet appears. */
-        gewonnen() {
-            dev.tag(5, s.week.level ?? 'normal',
+        won() {
+            dev.day(5, s.week.level ?? 'normal',
                     { zeit: 16 * 60 + 29, tickets: 3, al: 52, cr: 44, fl: 61 });
             s.meetingDone = true;
             s.time = 16 * 60 + 30;
@@ -187,20 +187,20 @@
         /**
          * Failing mid-week. Shows the weekday in the lead-in and the balance
          * sheet with the ✗ on the day it ended.
-         * dev.raus('rage', 3)     anger overflows on Wednesday
-         * dev.raus('tickets', 4)  ticket pile-up on Thursday
-         * dev.raus('chef', 2)     radar full on Tuesday
+         * dev.out('rage', 3)     anger overflows on Wednesday
+         * dev.out('tickets', 4)  ticket pile-up on Thursday
+         * dev.out('chef', 2)     radar full on Tuesday
          */
-        raus(art = 'rage', tagNr = 3) {
-            dev.tag(tagNr, s.week.level ?? 'normal', { zeit: 13 * 60 + 40, hart: true });
+        out(kind = 'rage', tagNr = 3) {
+            dev.day(tagNr, s.week.level ?? 'normal', { zeit: 13 * 60 + 40, hart: true });
             // Mark valve and warning as spent, otherwise they catch the first
             // overflow - exactly as they would in a real week.
             s.rageWarningReceived = true;
             s.chefWarningReceived = true;
-            if (art === 'rage') s.al = 100;
-            else if (art === 'chef') s.cr = 100;
+            if (kind === 'rage') s.al = 100;
+            else if (kind === 'chef') s.cr = 100;
             else s.tickets = 10;
-            kurve();
+            curve();
             s.pendingEnd = null;
             e.checkEndConditions();
             e.finishGame();
@@ -212,8 +212,8 @@
          * day before it starts. For completeness - in a real game this needs a
          * thoroughly botched previous day.
          */
-        morgentod(tagNr = 4) {
-            dev.tag(tagNr, 'hard', { zeit: 8 * 60, tickets: 9 });
+        morningDeath(tagNr = 4) {
+            dev.day(tagNr, 'hard', { zeit: 8 * 60, tickets: 9 });
             s.morningMoodShown = false;
             s.rageWarningReceived = true;
             s.chefWarningReceived = true;
@@ -232,20 +232,20 @@
          * party follows at 16:30.
          */
         gala() {
-            const noetig = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
+            const needed = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
                             'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
             const a = s.archive;
-            a.achievements = [...new Set([...(a.achievements ?? []), ...noetig])];
+            a.achievements = [...new Set([...(a.achievements ?? []), ...needed])];
             a.achievementDiffs = a.achievementDiffs ?? {};
-            for (const id of noetig) a.achievementDiffs[id] = 'hard';   // deckt jede Stufe ab
+            for (const id of needed) a.achievementDiffs[id] = 'hard';   // covers every grade
             e.saveSystem();
 
-            const stufe = e.difficultyTier() === 1 ? 'easy' : e.difficultyTier() === 3 ? 'hard' : 'normal';
-            localStorage.removeItem(e.KEYS.partyPlayed[stufe]);
+            const level = e.difficultyTier() === 1 ? 'easy' : e.difficultyTier() === 3 ? 'hard' : 'normal';
+            localStorage.removeItem(e.KEYS.partyPlayed[level]);
 
-            dev.freitag('solide');
-            console.log(`Gala freigeschaltet (Stufe ${stufe}). Jetzt dev.meeting() - ` +
-                        'die Ansage kommt im Meeting, die Feier um 16:30.');
+            dev.friday('solide');
+            console.log(`Gala unlocked (level ${level}). Now dev.meeting() - ` +
+                        'the announcement comes in the meeting, the party at 16:30.');
             return dev;
         },
 
@@ -254,25 +254,25 @@
         // ---------------------------------------------------------------
 
         /** Empties one daily allowance to see the idle texts. */
-        leerlauf(pool = 'coffee') {
-            if (!s.week.active) { console.warn('Nur im Wochenmodus'); return dev; }
+        idle(pool = 'coffee') {
+            if (!s.week.active) { console.warn('Week mode only'); return dev; }
             s.week.contingents = s.week.contingents ?? {};
             s.week.contingents[e.contingentKey(pool)] = 0;
-            console.log(`Kontingent "${pool}" aufgebraucht - der nächste Klick zeigt den Leerlauf-Text.`);
+            console.log(`quota "${pool}" used up - the next click shows the idle text.`);
             return dev;
         },
 
         /** Shows how many moves are left in each pool today. */
-        kontingente() {
-            if (!s.week.active) { console.warn('Nur im Wochenmodus'); return dev; }
+        quotas() {
+            if (!s.week.active) { console.warn('Week mode only'); return dev; }
             console.table(['coffee', 'server', 'calls', 'sidequests']
-                .map(p => ({ Pool: p, Übrig: e.weekContingentLeft(p) })));
+                .map(p => ({ pool: p, left: e.weekContingentLeft(p) })));
             return dev;
         },
 
         /** Previews the coming night without triggering it. */
-        vorschau() {
-            if (!s.week.active) { console.warn('Nur im Wochenmodus'); return dev; }
+        preview() {
+            if (!s.week.active) { console.warn('Week mode only'); return dev; }
             const cfg = e.WEEK_DIFFS[s.week.level];
             const behalten = Math.ceil(s.tickets * 0.25);
             const nacht = s.week.dayIndex;
@@ -294,13 +294,13 @@
         // ---------------------------------------------------------------
 
         /** Shows the counters that feed the archive and Steam. */
-        zaehler() {
+        counters() {
             const st = s.archive.stats ?? {};
             console.table({
-                'Tage begonnen': (st.started_easy ?? 0) + (st.started_normal ?? 0) + (st.started_hard ?? 0),
-                'Tage überlebt': st.daysSurvived ?? 0,
-                'Wochen begonnen': st.weeksStarted ?? 0,
-                'Wochen überlebt': st.weeksSurvived ?? 0,
+                'days started': (st.started_easy ?? 0) + (st.started_normal ?? 0) + (st.started_hard ?? 0),
+                'days survived': st.daysSurvived ?? 0,
+                'weeks started': st.weeksStarted ?? 0,
+                'weeks survived': st.weeksSurvived ?? 0,
                 'Karrieretage (Chronik)': st.daysStarted ?? 0,
             });
             return dev;
@@ -308,10 +308,10 @@
 
         /**
          * Zeroes every run counter. Testing inevitably produces statistical
-         * litter (each dev.tag() starts a week); this clears it before a clean
+         * litter (each dev.day() starts a week); this clears it before a clean
          * measurement. Achievements and found items stay untouched.
          */
-        zaehlerLeeren() {
+        clearCounters() {
             const st = s.archive.stats ?? (s.archive.stats = {});
             for (const key of Object.keys(st)) {
                 // 'week' covers every week key at once: weeksStarted and
@@ -324,60 +324,60 @@
             }
             Object.assign(st, { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 });
             e.saveSystem();
-            console.log('Lauf-Zähler geleert. Erfolge und Items bleiben.');
+            console.log('Run counters cleared. Achievements and items stay.');
             return dev;
         },
 
-        sichern() {
+        backup() {
             dev._sicherung = JSON.stringify({
                 woche: localStorage.getItem(e.KEYS.weekState),
-                tag: localStorage.getItem(e.KEYS.dayState),
+                day: localStorage.getItem(e.KEYS.dayState),
                 archiv: localStorage.getItem(e.KEYS.archive),
             });
-            console.log('Gesichert. Zurück mit dev.zurueck() und danach neu laden.');
+            console.log('Backed up. Back with dev.restore(), then reload.');
             return dev;
         },
 
-        zurueck() {
+        restore() {
             if (!dev._sicherung) { console.warn('Nichts gesichert.'); return dev; }
             const d = JSON.parse(dev._sicherung);
             const setz = (k, v) => v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v);
             setz(e.KEYS.weekState, d.woche);
             setz(e.KEYS.dayState, d.tag);
             setz(e.KEYS.archive, d.archiv);
-            console.log('Wiederhergestellt. Jetzt die Seite neu laden.');
+            console.log('Restored. Now reload the page.');
             return dev;
         },
 
         /** Abandon the week and return to day mode. */
-        aufraeumen() {
+        dropWeek() {
             e.clearWeek();
             e.endWeek();
-            console.log('Wochen-Speicherstand gelöscht. Seite neu laden.');
+            console.log('Week save deleted. Reload the page.');
             return dev;
         },
 
         // ---------------------------------------------------------------
-        // Wissen (Kompendium)
+        // knowledge (the compendium)
         // ---------------------------------------------------------------
 
         /**
          * Shows every entry with the notes earned so far. Without arguments
          * it is a table; with an id it prints that entry in full, including
          * which trigger is still missing for each locked note.
-         * dev.wissen()  /  dev.wissen('blaschke')
+         * dev.knowledge()  /  dev.knowledge('blaschke')
          */
-        wissen(id) {
+        knowledge(id) {
             const entries = e.knowledgeEntries?.() ?? [];
-            if (!entries.length) { console.warn('Kompendium nicht geladen - Wissen einmal öffnen.'); return dev; }
+            if (!entries.length) { console.warn('Compendium not loaded - open the knowledge once.'); return dev; }
 
             if (!id) {
                 console.table(Object.fromEntries(entries.map(x =>
-                    [x.id, { Name: x.name, Kopf: x.open ? 'offen' : 'zu', Notizen: `${x.notes.length}/${x.total}` }])));
+                    [x.id, { name: x.name, entry: x.open ? 'open' : 'shut', notes: `${x.notes.length}/${x.total}` }])));
                 return dev;
             }
             const entry = entries.find(x => x.id === id);
-            if (!entry) { console.warn(`Kein Eintrag "${id}".`); return dev; }
+            if (!entry) { console.warn(`No entry "${id}".`); return dev; }
 
             const seen = new Set(s.archive.seenEvents ?? []);
             const flags = new Set(s.archive.seenFlags ?? []);
@@ -386,7 +386,7 @@
             for (const n of entry.notes ?? []) {
                 const have = n.flag ? flags.has(n.flag) : seen.has(n.seen);
                 console.log(`  ${have ? '✓' : '·'} ${n.text}`);
-                if (!have) console.log(`      fehlt: ${n.flag ? 'Fahne ' + n.flag : 'Ereignis ' + n.seen}`);
+                if (!have) console.log(`      missing: ${n.flag ? 'flag ' + n.flag : 'event ' + n.seen}`);
             }
             return dev;
         },
@@ -394,15 +394,15 @@
         /**
          * Fakes the evidence instead of the result, so the same derivation
          * runs that a real playthrough would trigger.
-         * dev.wissenFuellen()            everything
-         * dev.wissenFuellen('sonntag')   one entry
-         * dev.wissenFuellen('sonntag', 2)  head plus the first two notes
+         * dev.fillKnowledge()            everything
+         * dev.fillKnowledge('sonntag')   one entry
+         * dev.fillKnowledge('sonntag', 2)  head plus the first two notes
          */
-        wissenFuellen(id, anzahl) {
+        fillKnowledge(id, anzahl) {
             // knowledgeEntries() carries the raw entry along, so the console
             // does not need access to DB (the engine only exposes functions).
             const list = e.knowledgeEntries?.() ?? [];
-            if (!list.length) { console.warn('Kompendium nicht geladen - Wissen einmal öffnen.'); return dev; }
+            if (!list.length) { console.warn('Compendium not loaded - open the knowledge once.'); return dev; }
 
             const ev = new Set(s.archive.seenEvents ?? []);
             const fl = new Set(s.archive.seenFlags ?? []);
@@ -415,12 +415,12 @@
             s.archive.seenEvents = [...ev];
             s.archive.seenFlags = [...fl];
             e.saveSystem();
-            console.log(`Wissen gefüllt${id ? ' fuer ' + id : ''}. Modal neu öffnen.`);
+            console.log(`Knowledge filled${id ? ' for ' + id : ''}. Reopen the modal.`);
             return dev;
         },
 
         /** Wipes the evidence - back to an empty compendium. */
-        wissenLeeren() {
+        clearKnowledge() {
             s.archive.seenEvents = [];
             s.archive.seenFlags = [];
             e.saveSystem();
@@ -428,49 +428,49 @@
             return dev;
         },
 
-        hilfe() {
+        help() {
             console.log(`
-Layer8Problem - Testbefehle Arbeitswoche
+Layer8Problem - test commands for the working week
 ────────────────────────────────────────────────────────────
-AUFBAU
-  dev.tag(3, 'normal', {tickets: 5, al: 60})   beliebiger Wochentag
-  dev.kontingente()                            Züge pro Pool heute
-  dev.vorschau()                               was die Nacht übrig lässt
+SETUP
+  dev.day(3, 'normal', {tickets: 5, al: 60})   any weekday
+  dev.quotas()                                 draws per pool today
+  dev.preview()                                what the night leaves behind
 
-SZENARIEN
-  dev.feierabend(2)        Dienstag 16:20 - eine Aktion, dann Nacht
-  dev.feierabend(2, true)  dasselbe, aber sofort ausgelöst
-  dev.nacht()              Nacht-Screen sofort
-  dev.freitag()            Freitag 14:50, solide Woche
-  dev.freitag('knapp')     Freitag mit 8 Tickets und ohne Ausreden
-  dev.meeting()            direkt ins Wochenmeeting
-  dev.gewonnen()           Freitag 16:30 - Woche überstanden
-  dev.raus('rage', 3)      Aggro läuft am Mittwoch über
-  dev.raus('tickets', 4)   Ticketstau am Donnerstag
-  dev.raus('chef', 2)      Chef-Radar voll am Dienstag
-  dev.morgentod(4)         Tod in der Morgenstimmung
-  dev.gala()               Gala freischalten, dann dev.meeting()
-  dev.leerlauf('server')   Kontingent leeren, Leerlauf-Text sehen
+SCENARIOS
+  dev.clockOff(2)         Tuesday 16:20 - one action, then the night
+  dev.clockOff(2, true)   the same, but triggered at once
+  dev.night()             the night screen straight away
+  dev.friday()            Friday 14:50, a solid week
+  dev.friday('tight')     Friday with 8 tickets and no excuses
+  dev.meeting()           straight into the weekly meeting
+  dev.won()               Friday 16:30 - the week survived
+  dev.out('rage', 3)      aggro overflows on Wednesday
+  dev.out('tickets', 4)   ticket jam on Thursday
+  dev.out('chef', 2)      boss radar full on Tuesday
+  dev.morningDeath(4)     death in the morning mood
+  dev.gala()              unlock the gala, then dev.meeting()
+  dev.idle('server')      empty a quota, see the idle text
 
-WISSEN (Kompendium)
-  dev.wissen()                                 Übersicht aller Einträge
-  dev.wissen('blaschke')                       ein Eintrag im Detail
-  dev.wissenFuellen()                          alles freischalten
-  dev.wissenFuellen('sonntag')                 nur diesen Eintrag
-  dev.wissenFuellen('sonntag', 2)              Kopf plus zwei Notizen
-  dev.wissenLeeren()                           zurück auf leer
+KNOWLEDGE (compendium)
+  dev.knowledge()                    an overview of every entry
+  dev.knowledge('blaschke')          one entry in detail
+  dev.fillKnowledge()                unlock everything
+  dev.fillKnowledge('sonntag')       this entry only
+  dev.fillKnowledge('sonntag', 2)    the entry plus two notes
+  dev.clearKnowledge()               back to empty
 
-SPIELSTAND
-  dev.zaehler()                                Archiv-Zähler anzeigen
-  dev.zaehlerLeeren()                          Zähler auf null (Testmüll)
-  dev.sichern() / dev.zurueck()                vorher/nachher
-  dev.aufraeumen()                             Woche verwerfen
+SAVES
+  dev.counters()                     show the archive counters
+  dev.clearCounters()                counters to zero (test litter)
+  dev.backup() / dev.restore()       before / after
+  dev.dropWeek()                     discard the week
 ────────────────────────────────────────────────────────────`);
             return dev;
         },
     };
 
     window.dev = dev;
-    console.log('%cTestwerkzeug bereit.%c  dev.hilfe() zeigt alle Befehle.',
+    console.log('%cTest tool ready.%c  dev.help() lists every command.',
                 'color:#a855f7;font-weight:bold', 'color:inherit');
 })();

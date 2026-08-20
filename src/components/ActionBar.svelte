@@ -3,31 +3,26 @@
 
   Renders into #action-bar, which keeps its grid classes.
 
-  Two deliberate choices:
+  Everything the tutorial does to this bar comes out of the state: tutorialStep
+  says a step is on display, tutorialUnlocked says which one button is free.
+  Lock, dimming and ring are drawn from those two here, and tutorial.js writes
+  nothing into these elements any more.
 
-  Nothing derived from $state may go into the class attribute here. tutorial.js
-  adds and removes `opacity-50` on these buttons by id, and that only survives
-  because Svelte's set_class caches the last value and skips the write when the
-  string is unchanged. `action.tone` comes from a module constant, so it never
-  changes and className is written exactly once.
+  Until 6.1 it set opacity-50 and the ring from outside, by id, and that only
+  held because nothing state-derived stood in the class attribute: Svelte's
+  set_class caches the last value and skips the write while the string is
+  unchanged. The same trap had already caught `disabled` in 6.0 - tutorial.js
+  set btn.disabled = false, Svelte put the lock straight back, and the pointer
+  aimed at a button that could not be pressed.
 
-  Put a state-derived value in there and the attribute gets rewritten on every
-  update — silently wiping whatever tutorial.js set.
-
-  `disabled` used to be called safe here, and that was wrong: it is bound to
-  state, so it is rewritten on every update just the same. tutorial.js set
-  `btn.disabled = false` on the highlighted button and Svelte put it back on the
-  next render — the tutorial pointed at the CALL button and the button could not
-  be pressed. Which button the tutorial has unlocked is therefore state as well,
-  and it is read here rather than written from outside.
-
-  `relative` is now always set rather than added when the badge appears. Without
+  `relative` is always set rather than added when the badge appears. Without
   offsets it changes nothing visually, and it saves a classList call.
 -->
 <script>
     import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
+    import { GLOW_CLASSES } from '../tutorial.js';
 
     // The emoji stays in the table as a fallback: if an icon file is ever
     // missing, the button keeps its meaning instead of showing an empty box.
@@ -46,6 +41,21 @@
     // actionable instead of just "this one is important".
     const urgent = $derived(state.tickets >= TICKET_WARNING);
 
+    // The ring is the same look the DOM-side highlights wear, so it comes from
+    // the same list rather than from a second copy that has to be kept in step.
+    // The names are literals over there, which is what Tailwind needs.
+    const GLOW = GLOW_CLASSES.join(' ');
+    const DIM  = 'opacity-50';
+
+    // Nothing while no step is on display, which is the normal state of the
+    // game. z-2500 lifts the ringed button over every modal but the pointer
+    // bubble, so it goes out again the moment a modal takes over - see
+    // clearGlows() in tutorial.js.
+    const tutorialLook = (id) => {
+        if (state.tutorialStep === null) return '';
+        return id === state.tutorialUnlocked ? GLOW : DIM;
+    };
+
     // "ArrowUp" reads better as "UP" on a badge that is nine pixels wide.
     const keyLabel = (bind) => {
         const key = state.keyBinds[bind] ?? '';
@@ -55,12 +65,13 @@
 
 {#each ACTIONS as action (action.id)}
     <button id={action.id}
-            class="action-btn relative {action.tone}"
+            class="action-btn relative {action.tone} {tutorialLook(action.id)}"
             disabled={state.buttonsDisabled && action.id !== state.tutorialUnlocked}
             onclick={() => engine.trigger(action.type)}>
         {#if urgent && action.type === 'calls'}
-            <!-- An overlay rather than a conditional class: the button's class
-                 attribute has to stay free of state, see the note above. -->
+            <!-- An overlay rather than a class on the button: the tint has to
+                 lie over the base background from .action-btn, and a bg-* class
+                 would replace that background instead of tinting it. -->
             <span class="absolute inset-0 bg-blue-900/30 border border-blue-800 pointer-events-none" style="border-radius: inherit"></span>
         {/if}
 

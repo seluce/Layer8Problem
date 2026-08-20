@@ -54,14 +54,14 @@ for (const { steam, dict } of DICTIONARIES) {
     const have = Object.keys(dict).filter(k => k.startsWith('presence.'))
                                   .map(k => k.slice('presence.'.length));
     for (const type of TYPES) {
-        if (!have.includes(type)) { console.error(` ✗ ${steam}: kein Text für "${type}"`); broken++; }
+        if (!have.includes(type)) { console.error(` ✗ ${steam}: no text for "${type}"`); broken++; }
     }
     for (const key of have) {
-        if (!TYPES.includes(key)) { console.error(` ✗ ${steam}: "presence.${key}" wird nie gesendet`); broken++; }
+        if (!TYPES.includes(key)) { console.error(` ✗ ${steam}: "presence.${key}" is never sent`); broken++; }
     }
 }
 if (broken) {
-    console.error(`\n${broken} Fehler — nichts geschrieben.`);
+    console.error(`\n${broken} faults - nothing written.`);
     process.exit(1);
 }
 
@@ -96,6 +96,6 @@ for (const { steam, dict } of DICTIONARIES) {
     console.log(`  ${file}  —  ${tokens.length} Tokens`);
 }
 
-console.log(`\n✅ ${DICTIONARIES.length} Dateien geschrieben. In Steamworks unter`);
-console.log('   "Rich Presence Localization" hochladen — VOR dem Build, der die');
+console.log(`\n✅ ${DICTIONARIES.length} files written. In Steamworks under`);
+console.log('   Upload "Rich Presence Localization" - BEFORE the build that puts');
 console.log('   neuen Tokens sendet.');

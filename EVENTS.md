@@ -911,5 +911,5 @@ engine.trigger("server");   // "coffee", "calls" or "sidequest" for the other ar
 ```
 
 For the week mode there is more: paste `tools/dev-woche.js` into the console and
-`dev.hilfe()` lists everything — produce any weekday, trigger the night, unlock
+`dev.help()` lists everything — produce any weekday, trigger the night, unlock
 the gala.

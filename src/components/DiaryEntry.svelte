@@ -8,22 +8,32 @@
 
   The paragraphs arrive as data from engine/engine_diary.js: a list in
   reading order, each with a tone that decides how it is set.
+
+  Since 6.1 they arrive as the DRAW rather than as the finished page — which
+  lines were taken, and which marks go into them. renderDiary() puts the
+  sentences together here, so the page follows a language switch like everything
+  else on the screen it sits on.
 -->
 <script>
-    import { state as game } from '../engine/engine_state.svelte.js';
-
+    import { dayName } from '../engine/engine_week.js';
+    import { renderDiary } from '../engine/engine_diary.js';
     import { t, tf } from '../i18n/i18n.svelte.js';
     let { diary } = $props();
 
-    // The weekday follows from the difficulty - that is what the levels are
-    // called in the game, and the diary plays along.
-    const WEEKDAY = [
-        { test: (m) => m < 1.0, label: 'week.day.fri' },
-        { test: (m) => m > 1.0, label: 'week.day.mon' },
-        { test: () => true,     label: 'week.day.wed' }
-    ];
-    // i18n-uses: week.day.fri, week.day.mon, week.day.wed
-    const weekday = $derived(t(WEEKDAY.find(d => d.test(game.difficultyMult)).label));
+    // The page as it reads right now. renderDiary() goes through tree(), so
+    // this derived is a reader of the language rune.
+    const page = $derived(renderDiary(diary));
+
+    // The day this page belongs to, handed in with the paragraphs.
+    //
+    // It used to be worked out here from difficultyMult - which is the DAY
+    // mode's question. In a week that value stays at its identity 1.0 by
+    // design, so a page written on a Friday was headed "Mittwoch", five days
+    // running, at every level. Exactly the failure the day report had one file
+    // over. engine_diary.dayIndexOf() answers it once now, and the {weekday}
+    // inside the prose comes from the same call, so the header and the text
+    // cannot say different days.
+    const weekday = $derived(dayName(page.dayIndex));
 
     // A list rather than fixed fields, so a new slot in the diary does not
     // need a change here. The order is the order of the page; the blind-run
@@ -31,7 +41,7 @@
     // styling: added afterwards, like a note that only occurred to you as you
     // were shutting the book.
     const paragraphs = $derived(
-        (diary?.paragraphs ?? []).map(p => ({
+        page.paragraphs.map(p => ({
             text: p.text,
             warn: p.tone === 'warn',
             note: p.tone === 'note',

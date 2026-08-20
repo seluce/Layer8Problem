@@ -12,10 +12,10 @@
  *   - end conditions in engine order: anger, tickets >= 10, 16:30, radar
  *
  * Week rules under test (see DESIGN-4.2-WOCHE.md):
- *   - difficulty = recovery quality: Erholt / Genervt / Urlaubsreif
+ *   - difficulty = recovery quality: rested / fed up / in need of leave
  *   - day multiplier = base + RAMP * (dayIndex - 1), no Wednesday quirk
  *   - night carry-over: tickets and fl 1:1; al/cr recover by R_al/R_cr,
- *     capped at DECKEL absolute points, R degrades by WEAR pp per night (floor 10%)
+ *     capped at CAP absolute points, R degrades by WEAR pp per night (floor 10%)
  *   - anger valve and chef warning once per WEEK
  *   - excuses: pool with nightly +1, hard cap = start + 2 (5/4/3)
  *   - morning end-check (death at breakfast is allowed by design)
@@ -42,12 +42,12 @@
  *   2. Week days must sit BELOW their single-day counterparts: five days at
  *      day-normal intensity compound to 0.77^5 = 27 percent before any
  *      carry-over. Bases 0.75/0.85/0.95 with ramp +0.04/day land the mean of
- *      vernunft+gelegenheit inside all three target corridors.
+ *      sensible+casual inside all three target corridors.
  *
  * Usage: node tools/simulate-week.mjs [weeks per cell, default 600] [--lang=de|en]
  *   --lang=de|en    which data tree to play; both must produce the same numbers
  *   --wear=10       recovery degradation in pp per night (floor 10%)
- *   --deckel=45     max absolute recovery points per night and stat (999 = off)
+ *   --cap=45     max absolute recovery points per night and stat (999 = off)
  *   --ramp=0.04     day multiplier ramp per day
  *   --rscale=1.0    scales all recovery rates (calibration knob)
  *   --meeting=50    Friday meeting time cost in minutes (0 = off)
@@ -64,7 +64,7 @@ const positional = args.filter(a => !a.startsWith('-'));
 const langArg = args.find(a => a.startsWith('--lang='));
 const lang = langArg ? langArg.slice('--lang='.length) : 'de';
 if (lang !== 'de' && lang !== 'en') {
-    console.error(`Unbekannte Sprache "${lang}". Verfügbar: de, en`);
+    console.error(`Unknown language "${lang}". Available: de, en`);
     process.exit(1);
 }
 
@@ -78,7 +78,7 @@ await ensure('coffee', 'server', 'calls', 'sidequests', 'emails', 'bossfights', 
 // English run would quietly report German numbers — and matching numbers are
 // exactly what this tool is for.
 if (currentLanguage() !== lang) {
-    console.error(`Sprache "${lang}" konnte nicht geladen werden — die Simulation liest "${currentLanguage()}".`);
+    console.error(`Language "${lang}" could not be loaded - the simulation is reading "${currentLanguage()}".`);
     process.exit(1);
 }
 
@@ -88,7 +88,7 @@ const ARG = (name, def) => {
     return hit ? parseFloat(hit.split('=')[1]) : def;
 };
 const WEAR      = ARG('wear', 10);      // calibrated v1
-const DECKEL    = ARG('deckel', 45);    // calibrated v1
+const CAP    = ARG('cap', 45);    // calibrated v1
 const RAMP      = ARG('ramp', 0.04);    // calibrated v1
 const RSCALE    = ARG('rscale', 1.0);
 const MEET      = ARG('meeting', 50);
@@ -130,12 +130,12 @@ const ACTION_POOLS = ['coffee', 'server', 'calls', 'sidequests'];
 const MAXC = { coffee: 20, server: 20, calls: 17, sidequests: 26 };
 const MINC = 8;
 
-// Calibrated v1 (2026-08-08). Anchor: the mean of vernunft and gelegenheit
+// Calibrated v1 (2026-08-08). Anchor: the mean of sensible and casual
 // hits the target corridors 55-65 / 35-45 / 15-25 percent.
 const WDIFFS = [
-    { name: 'Erholt (leicht)',      base: 0.75, startTickets: 0, startAl: 0,  valveReset: 30, exStart: 3, rAl: 0.72, rCr: 0.60 },
-    { name: 'Genervt (mittel)',     base: 0.85, startTickets: 1, startAl: 0,  valveReset: 50, exStart: 2, rAl: 0.60, rCr: 0.48 },
-    { name: 'Urlaubsreif (schwer)', base: 0.95, startTickets: 2, startAl: 10, valveReset: 60, exStart: 1, rAl: 0.42, rCr: 0.30 },
+    { name: 'rested (easy)',      base: 0.75, startTickets: 0, startAl: 0,  valveReset: 30, exStart: 3, rAl: 0.72, rCr: 0.60 },
+    { name: 'fed up (medium)',     base: 0.85, startTickets: 1, startAl: 0,  valveReset: 50, exStart: 2, rAl: 0.60, rCr: 0.48 },
+    { name: 'in need of leave (hard)', base: 0.95, startTickets: 2, startAl: 10, valveReset: 60, exStart: 1, rAl: 0.42, rCr: 0.30 },
 ];
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -194,30 +194,30 @@ const pickCasual = (opts, s) => {
 
 const STRATEGIES = {
     // The calibration anchors from the day simulator:
-    vernunft:    pickReason,
-    gelegenheit: pickCasual,
+    sensible:    pickReason,
+    casual: pickCasual,
 
     // Thesis 6 (snowball): a casual who saves items until Thursday/Friday ...
-    horter: (opts, s) => {
-        if (s.dayIndex >= 4) return STRATEGIES.verbraucher(opts, s);
+    hoarder: (opts, s) => {
+        if (s.dayIndex >= 4) return STRATEGIES.spender(opts, s);
         const noRem = opts.filter(o => !o.rem);
         return pickCasual(noRem.length ? noRem : opts, s);
     },
     // ... versus a casual who spends items the moment an option allows it.
-    verbraucher: (opts, s) => {
+    spender: (opts, s) => {
         const rem = opts.filter(o => o.rem);
         if (rem.length) return pickReason(rem, s);
         return pickCasual(opts, s);
     },
 
     // Thesis 2/3 (starvation): hammers the coffee button all week.
-    kaffeejunkie: pickCasual,
+    coffeeAddict: pickCasual,
 };
 
 function actionFor(strat, s) {
-    if (s.tickets >= (strat === 'vernunft' ? 5 : 6)) return 'calls';
-    if (strat === 'kaffeejunkie') return 'coffee';
-    if ((strat === 'vernunft' || strat === 'gelegenheit' || strat === 'horter' || strat === 'verbraucher') && s.al >= 70) return 'coffee';
+    if (s.tickets >= (strat === 'sensible' ? 5 : 6)) return 'calls';
+    if (strat === 'coffeeAddict') return 'coffee';
+    if ((strat === 'sensible' || strat === 'casual' || strat === 'hoarder' || strat === 'spender') && s.al >= 70) return 'coffee';
     return rnd(ACTION_POOLS);
 }
 
@@ -302,8 +302,8 @@ function morning(s, cfg) {
 function night(s, cfg, nightIndex) {
     const rAl = Math.max(0.10, cfg.rAl * RSCALE - WEAR / 100 * (nightIndex - 1));
     const rCr = Math.max(0.10, cfg.rCr * RSCALE - WEAR / 100 * (nightIndex - 1));
-    s.al = Math.max(0, s.al - Math.min(s.al * rAl, DECKEL));
-    s.cr = Math.max(0, s.cr - Math.min(s.cr * rCr, DECKEL));
+    s.al = Math.max(0, s.al - Math.min(s.al * rAl, CAP));
+    s.cr = Math.max(0, s.cr - Math.min(s.cr * rCr, CAP));
     if (s.excusesLeft >= s.exCap) s.wastedRegen++;
     s.excusesLeft = Math.min(s.excusesLeft + 1, s.exCap);
     if (NIGHT_HALF) s.tickets = Math.floor(s.tickets / 2);
@@ -372,7 +372,7 @@ function playWeekDay(s, cfg, strat, dayIndex) {
         s.currentPool = poolType;
 
         // Excuse: a thinking player escapes an event whose best answer is still bad
-        const canExcuse = s.excusesLeft > 0 && poolType !== 'boss' && strat !== 'kaffeejunkie';
+        const canExcuse = s.excusesLeft > 0 && poolType !== 'boss' && strat !== 'coffeeAddict';
         if (canExcuse && ev.opts?.length) {
             const avX = unlocked(ev.opts, s);
             const best = Math.min(...(avX.length ? avX : ev.opts).map(o => danger(o, s)));
@@ -476,10 +476,10 @@ function summarize(s) {
 
 // ---------- evaluation ----------
 if (BASES) WDIFFS.forEach((d, i) => d.base = BASES[i]);
-console.log(`Wochen-Simulation (${lang}): ${WEEKS} Wochen je Zelle | wear=${WEAR}pp deckel=${DECKEL} ramp=${RAMP} rscale=${RSCALE} meeting=${MEET}min` +
-    (NO_CONT ? " | KONTINGENTE AUS" : ` | contscale=${CONTSCALE}`) + (NIGHT_HALF ? " | nacht=halbieren" : NIGHT_T_SET ? ` | nachttickets=${NIGHT_T}` : ` | nachtbehalt=${NIGHT_KEEP}`) + '\n');
+console.log(`Week simulation (${lang}): ${WEEKS} weeks per cell | wear=${WEAR}pp cap=${CAP} ramp=${RAMP} rscale=${RSCALE} meeting=${MEET}min` +
+    (NO_CONT ? " | QUOTAS OFF" : ` | contscale=${CONTSCALE}`) + (NIGHT_HALF ? " | night=halved" : NIGHT_T_SET ? ` | nighttickets=${NIGHT_T}` : ` | nightkeep=${NIGHT_KEEP}`) + '\n');
 
-const DAY_NAMES = ['Mo', 'Di', 'Mi', 'Do', 'Fr'];
+const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 for (const cfg of WDIFFS) {
     console.log(`=== ${cfg.name} (Basis x${cfg.base}, Fr x${(cfg.base + RAMP * 4).toFixed(2)}) ===`);
     for (const strat of Object.keys(STRATEGIES)) {
@@ -505,13 +505,13 @@ for (const cfg of WDIFFS) {
         const pct = (n) => (100 * n / WEEKS).toFixed(1).padStart(5);
         const dayStr = byDay.map((n, i) => `${DAY_NAMES[i]} ${(100 * n / WEEKS).toFixed(0)}%`).join(' ');
         console.log(
-            `  ${strat.padEnd(12)} Woche ${pct(R.WIN)}% | Tode: ${dayStr} (Morgen ${(100 * morningDeaths / WEEKS).toFixed(1)}%) | ` +
+            `  ${strat.padEnd(12)} week ${pct(R.WIN)}% | deaths: ${dayStr} (morning ${(100 * morningDeaths / WEEKS).toFixed(1)}%) | ` +
             `Rage ${pct(R.RAGE)}% Tickets ${pct(R.TICKETS)}% Chef ${pct(R.FIRED)}%`);
         console.log(
-            `  ${''.padEnd(12)} Ø Tag erreicht ${(bestDaySum / WEEKS).toFixed(2)} | Ticket-Übertrag Ø ${carriedN ? (carried / carriedN).toFixed(1) : '-'} | ` +
-            `Ausreden Ø ${(exSpent / WEEKS).toFixed(1)} (verpufft ${(wasted / WEEKS).toFixed(1)}) | ` +
-            `lazy Fr x${lazyN ? (lazySum / lazyN).toFixed(2) : '-'} | Leerlauf ${(starve / WEEKS).toFixed(1)}/Wo | ` +
-            `Pool leer vor Fr ${(100 * poolEmpty / WEEKS).toFixed(1)}% | Sieg nach Krisenabend ${disWeeks ? (100 * disWins / disWeeks).toFixed(0) : '-'}% (n=${disWeeks})`);
+            `  ${''.padEnd(12)} avg day ${(bestDaySum / WEEKS).toFixed(2)} | avg ticket carry ${carriedN ? (carried / carriedN).toFixed(1) : '-'} | ` +
+            `avg excuses ${(exSpent / WEEKS).toFixed(1)} (wasted ${(wasted / WEEKS).toFixed(1)}) | ` +
+            `lazy Fri x${lazyN ? (lazySum / lazyN).toFixed(2) : '-'} | idle ${(starve / WEEKS).toFixed(1)}/wk | ` +
+            `pool empty before Fri ${(100 * poolEmpty / WEEKS).toFixed(1)}% | win after a crisis evening ${disWeeks ? (100 * disWins / disWeeks).toFixed(0) : '-'}% (n=${disWeeks})`);
     }
     console.log('');
 }

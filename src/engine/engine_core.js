@@ -5,7 +5,7 @@ import { t, tf, tree } from '../i18n/i18n.svelte.js';
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS } from './engine_state.svelte.js';
+import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -160,23 +160,23 @@ export const core = {
      * Only if the payload was written AFTER our local save does the second
      * reading apply, and the local leftover goes.
      */
-    adoptCloudRun: function(key, roh, runSyncedAt) {
-        const zeit = (text) => {
+    adoptCloudRun: function(key, raw, runSyncedAt) {
+        const savedAt = (text) => {
             try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
         };
 
-        let lokal = null;
-        try { lokal = localStorage.getItem(key); } catch { return; }
+        let local = null;
+        try { local = localStorage.getItem(key); } catch { return; }
 
-        if (!roh) {
-            if (lokal && runSyncedAt && runSyncedAt > zeit(lokal)) {
+        if (!raw) {
+            if (local && runSyncedAt && runSyncedAt > savedAt(local)) {
                 try { localStorage.removeItem(key); } catch { /* never mind */ }
             }
             return;
         }
 
-        if (!lokal || zeit(roh) > zeit(lokal)) {
-            try { localStorage.setItem(key, roh); } catch { /* storage full */ }
+        if (!local || savedAt(raw) > savedAt(local)) {
+            try { localStorage.setItem(key, raw); } catch { /* storage full */ }
         }
     },
 
@@ -305,14 +305,7 @@ export const core = {
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
 
         try {
-            const day = {};
-            for (const key of Object.keys(freshDay())) {
-                // Running timers belong to this session; after a reload they
-                // point nowhere. They stay out and restart on resume anyway.
-                if (DAY_TIMERS.includes(key)) continue;
-                const value = this.state[key];
-                day[key] = value instanceof Set ? [...value] : value;
-            }
+            const day = snapshotDay(this.state);
             // Not part of freshDay, but still part of the day:
             day.difficultyMult = this.state.difficultyMult;
             day.reputation = { ...this.state.reputation };
@@ -389,7 +382,10 @@ export const core = {
         // after a resume and only after a resume. See engine_state.svelte.js.
         const SETS = ['usedIDs', 'usedEmails'];
         for (const [key, value] of Object.entries(day)) {
-            if (key === 'savedAt') continue;
+            // savedAt is bookkeeping, the tutorial fields describe a lesson
+            // that is not running any more - a save from a dev build may still
+            // carry them.
+            if (key === 'savedAt' || TUTORIAL_FIELDS.includes(key)) continue;
             this.state[key] = SETS.includes(key) ? new SvelteSet(value ?? []) : value;
         }
         this.state.statHistory = this.migrateStatPoints(this.state.statHistory);
@@ -576,11 +572,11 @@ export const core = {
      */
     careerStats: function() {
         const st = this.state.archive.stats ?? {};
-        const wochentage = (st.survived_week_easy ?? 0)
+        const weekDays = (st.survived_week_easy ?? 0)
                          + (st.survived_week_normal ?? 0)
                          + (st.survived_week_hard ?? 0);
         return {
-            survived:   (st.daysSurvived ?? 0) + wochentage,
+            survived:   (st.daysSurvived ?? 0) + weekDays,
             rage:       (st.daysRageQuit ?? 0) + (st.weeksRageQuit ?? 0),
             fired:      (st.daysFired ?? 0) + (st.weeksFired ?? 0),
             streak:     Math.max(st.streak ?? 0, (st.weekStreak ?? 0) * 5),
@@ -655,9 +651,9 @@ export const core = {
 
         if (streak >= 5) pool.push('streak_best');
 
-        const chef = rep['Dr. Wichtig'] ?? 0;
-        if (chef >= 40)       pool.push('chef_high');
-        else if (chef <= -40) pool.push('chef_low');
+        const boss = rep['Dr. Wichtig'] ?? 0;
+        if (boss >= 40)       pool.push('chef_high');
+        else if (boss <= -40) pool.push('chef_low');
 
         if ((rep['Kevin'] ?? 0) >= 50)       pool.push('kevin');
         if ((rep['Egon'] ?? 0) >= 50)        pool.push('egon');
@@ -899,9 +895,9 @@ export const core = {
         // Start the tutorial, delayed so the UI has finished rendering
         setTimeout(() => {
             // Read the flag straight from storage
-            if (typeof tutorial !== 'undefined' && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
+            if (this.lesson && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
                 // Not played yet -> show the modal, the game waits for the click
-                tutorial.start();
+                this.lesson.start();
             } else {
                 // Already done or unavailable -> straight into the day
                 this.reset();
@@ -955,13 +951,26 @@ export const core = {
             }
             return;
         }
-        
+
+        // The diary, fetched at the START of the day although it is written at
+        // the END of it (6.1).
+        //
+        // It is the one deferred pool with no ensure() at its call site:
+        // buildDiary() reads DB.diary straight and falls back to a single line
+        // if it is not there, silently. The other fourteen ask for themselves
+        // when they are needed, so a warm-up that did not happen costs them a
+        // moment and nothing else. This one has no such moment - by the time
+        // the page is written the day is over. Asked for here, hours of play
+        // ahead of the first reader, and deliberately not awaited: nothing on
+        // the morning screen depends on it.
+        ensure('diary').catch(() => { /* buildDiary falls back, as it always did */ });
+
         // --- TUTORIAL HOOK ---
-        if (typeof tutorial !== 'undefined' && tutorial.isActive) {
+        if (this.lesson?.isActive) {
             this.state.activeEvent = false;
             this.setTerminalIdle('halgerd');
             
-            tutorial.advance();
+            this.lesson.advance();
             return; // keeps mail, news and the morning mood out of the party
         }
         // -----------------------------------------------------------------
@@ -1030,10 +1039,7 @@ export const core = {
 
         // Close every menu
         this.closeSettings();
-        const overlay = document.getElementById('modal-overlay');
-        if (overlay) {
-            this.hideOverlay(overlay);
-        }
+        this.dismissModal();
 
         // Replace the whole day rather than resetting fields one by one, so a
         // newly added field can never be forgotten here.
@@ -1301,17 +1307,59 @@ export const core = {
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
-            const toastId = this._toastId = (this._toastId || 0) + 1;
-            this.state.toasts.push({ id: toastId, title, desc: toastDesc, upgrade: isUpgrade });
-
-            setTimeout(() => {
-                const k = this.state.toasts.findIndex(t => t.id === toastId);
-                if (k > -1) this.state.toasts.splice(k, 1);
-            }, 4000);   // Svelte plays the exit animation after this
+            this.showToast({ title, desc: toastDesc, upgrade: isUpgrade });
         }
 
         // 3. Always persist in the background, in case this was an upgrade
         this.saveAchievementToArchive(id, currentDiffVal);
+    },
+
+    /**
+     * Puts one toast on the stack and takes it off again later. Three things
+     * here are about SEVERAL toasts at once, which happens whenever one long
+     * action crosses more than one achievement gate - a 90-minute lunch from
+     * 14:30 lands on 16:00 and can earn Ninja, Zen and Employee of the Month
+     * in a single click:
+     *
+     *  - toasts that arrive within a burst fly in one after the other, 300 ms
+     *    apart, instead of appearing as one block;
+     *  - a toast stays a second longer for every other toast already showing,
+     *    four seconds alone and never more than seven - three titles and three
+     *    descriptions need more than one's reading time;
+     *  - the component animates the remaining toasts into place when one
+     *    leaves (animate:flip), so the stack slides instead of jumping.
+     *
+     * The stack itself was always correct: a flex column, no overlap, and four
+     * high fits on a phone. Measured 19/08/2026 before this was written.
+     */
+    TOAST_LIFE_MS: 4000,
+    TOAST_LIFE_PER_NEIGHBOUR_MS: 1000,
+    TOAST_LIFE_MAX_MS: 7000,
+    TOAST_STAGGER_MS: 300,
+
+    showToast: function({ title, desc, upgrade = false }) {
+        const id = this._toastId = (this._toastId || 0) + 1;
+
+        // A burst is everything that arrives within one stagger step of the
+        // previous toast's scheduled entry. The first of a burst shows at once.
+        const now = Date.now();
+        const lastDue = this._toastLastDue ?? 0;
+        const delay = now < lastDue + this.TOAST_STAGGER_MS
+            ? Math.max(0, lastDue + this.TOAST_STAGGER_MS - now)
+            : 0;
+        this._toastLastDue = now + delay;
+
+        const show = () => {
+            const neighbours = this.state.toasts.length;
+            this.state.toasts.push({ id, title, desc, upgrade });
+            const life = Math.min(this.TOAST_LIFE_MAX_MS,
+                                  this.TOAST_LIFE_MS + neighbours * this.TOAST_LIFE_PER_NEIGHBOUR_MS);
+            setTimeout(() => {
+                const k = this.state.toasts.findIndex(t => t.id === id);
+                if (k > -1) this.state.toasts.splice(k, 1);
+            }, life);   // Svelte plays the exit animation after this
+        };
+        if (delay > 0) setTimeout(show, delay); else show();
     },
 
     // Stores an achievement together with the difficulty it was earned on
@@ -1370,6 +1418,11 @@ export const core = {
      * The four endings only differed in title, line and cause - the sequence
      * (record the outcome, build the diary, set pendingEnd) was the same all
      * four times. finishGame() picks it up later.
+     *
+     * Title and lead arrive as RECIPES, not as sentences (6.1). The end screen
+     * is the one screen a player holds still and reads, so it is the last place
+     * that may store rendered prose - see src/engine/recipe.js and
+     * components/EndModal.svelte, which resolves both on the way to the screen.
      */
     queueEnd: function({ title, lead, cause, outcome, diaryKey, isWin }) {
         this.recordDayResult(outcome);
@@ -1466,16 +1519,16 @@ export const core = {
         if (this.state.al >= 100) {
             if (this.openRageValve()) return;
             this.queueEnd({
-                title: t('end.rageTitle'),
-                lead: this.weekFailLead(t('end.rageQuit')),
+                title: { k: 'end.rageTitle' },
+                lead: this.weekFailLead({ k: 'end.rageQuit' }),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
         }
         // B. TICKET-LAWINE
         else if (this.state.tickets >= 10) {
             this.queueEnd({
-                title: t('end.firedTitle'),
-                lead: this.weekFailLead(t('end.ticketsLead')),
+                title: { k: 'end.firedTitle' },
+                lead: this.weekFailLead({ k: 'end.ticketsLead' }),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
         }
@@ -1506,8 +1559,8 @@ export const core = {
                         if (party) { this.state.pendingEnd = party; return; }
                     }
                     this.queueEnd({
-                        title: t('end.weekTitle'),
-                        lead: t('end.weekLead'),
+                        title: { k: 'end.weekTitle' },
+                        lead: { k: 'end.weekLead' },
                         cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
                     });
                 }
@@ -1518,8 +1571,8 @@ export const core = {
             if (party) { this.state.pendingEnd = party; return; }
 
             this.queueEnd({
-                title: t('end.dayTitle'),
-                lead: t('end.dayLead'),
+                title: { k: 'end.dayTitle' },
+                lead: { k: 'end.dayLead' },
                 cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
             });
         }
@@ -1527,8 +1580,8 @@ export const core = {
         else if (this.state.cr >= 100) {
             if (this.issueChefWarning()) return;
             this.queueEnd({
-                title: t('end.firedTitle'),
-                lead: this.weekFailLead(t('end.firedLead')),
+                title: { k: 'end.firedTitle' },
+                lead: this.weekFailLead({ k: 'end.firedLead' }),
                 cause: "chef", outcome: "chef", diaryKey: "FIRED", isWin: false
             });
         }
@@ -1616,14 +1669,14 @@ export const core = {
         // And the trap closes: render the opening party event. Coming out of
         // a week the gala is the end of five days, not of one - one line is
         // enough to tie the two modes together.
-        const auftakt = DB.party.find(e => e.id === 'party_start');
-        if (auftakt && this.state.week.active) {
+        const opening = DB.party.find(e => e.id === 'party_start');
+        if (opening && this.state.week.active) {
             this.renderTerminal({
-                ...auftakt,
-                text: t('party.weekIntro') + '\n\n' + auftakt.text
+                ...opening,
+                text: t('party.weekIntro') + '\n\n' + opening.text
             }, 'party');
         } else {
-            this.renderTerminal(auftakt, 'party');
+            this.renderTerminal(opening, 'party');
         }
     },
     
@@ -1682,8 +1735,8 @@ export const core = {
     // The texts and the conditions that pick them live in data/data_diary.js,
     // the assembly in engine_diary.js. This method stays so the two call sites
     // keep reading the same.
-    generateDiaryEntry: function(endReason, partyText = "") {
-        return buildDiary(this.state, endReason, partyText);
+    generateDiaryEntry: function(endReason, partyValue = "") {
+        return buildDiary(this.state, endReason, partyValue);
     },
 
 };

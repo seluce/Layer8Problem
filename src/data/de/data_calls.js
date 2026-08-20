@@ -64,7 +64,7 @@ export const calls = [
 				t: "Ihn anschreien: 'BIST DU WAHNSINNIG?!'",
 				rep: { "Kevin": -5 }, 
 				m: 15, l: 0, a: -20, b: 20,
-				r: "Du brüllst so laut ins Telefon, dass man es im Nachbarbüro hört. Kevin weint leise am anderen Ende. Deine Wut sinkt etwas, auch wenn der PC immer noch kaputt ist." 
+				r: "Du brüllst so laut ins Telefon, dass man es im Nachbarbüro hört. Kevin weint leise am anderen Ende. Geholfen hat es. Dem PC nicht, aber dir."
 			},
 			{ 
 				t: "'Formatieren! Lern was draus!'", 
@@ -89,7 +89,7 @@ export const calls = [
 		text: "Müller! Ich bin am Flughafen. Mein iPad geht nicht! Ich drücke den Knopf und nichts passiert! FIXEN SIE DAS REMOTE! SOFORT! Ich verliere hier Millionen!",
 		opts: [
 			{ t: "'Sonnenwinde stören die Leitung.'", m: 5, l: 30, a: 0, b: 25, rep: { "Dr. Wichtig": 5 }, next: "path_ceo_sonnenwind", r: "Er glaubt es sofort. 'Verdammte Technik!' Er kauft sich eine Zeitung. Risiko: Hoch, aber erfolgreich." },
-			{ t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "Du bleibst ruhig, während er schreit. Es war nur der Akku." },
+			{ t: "Stressball kneten", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "Du bleibst ruhig, während er schreit. Eine Stunde lang knetest du und sagst an den richtigen Stellen 'Ja', bis er von selbst auf das Akkusymbol schaut. Es war nur der Akku." },
 			{ t: "Ist der Akku leer?", m: 60, l: -10, a: 30, b: -10, rep: { "Dr. Wichtig": -5 }, r: "Es war der Akku. Er hat kein Kabel dabei und gibt dir die Schuld. Er schreit dich 10 Min an, warum du nicht hellsehen konntest." }
 		]
 	},
@@ -146,7 +146,7 @@ export const calls = [
 			text: "Im Serverraum tropft es von der Decke. Das Wasser ist neongrün. Soll ich Eimer drunterstellen oder ist das Kühlflüssigkeit von den Aliens?",
 			opts: [
 				{ t: "Egal, lass tropfen", m: 5, l: 30, a: 0, b: 40, rep: { "Egon": -5 }, next: "path_egon_switch", r: "Ein Switch ist kurzgeschlossen. Das Internet in Etage 3 ist weg. Ups." },
-				{ t: "Sofort hinrennen!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet." }
+				{ t: "Sofort hinrennen!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "Du rennst in den Serverraum, ziehst die nasse Deckenplatte und folgst der grünen Spur ein Stockwerk nach oben. Es war Energy-Drink vom Stockwerk drüber. Ein Azubi hat gekleckert. Server gerettet, Teppich nicht." }
 			]
 		},
 		{
@@ -270,7 +270,7 @@ export const calls = [
 			text: "Du, ich hab das Internet kaputt gemacht. Ich brauch das Admin-Passwort um den Treiber neu zu starten. Der Chef killt mich sonst!",
 			opts: [
 				{ t: "Passwort eingeben", req: "admin_pw", rep: { "Kevin": 10 }, m: 5, l: 20, a: 0, b: 0, r: "Du loggst dich remote ein, zack, fertig. Kevin himmelt dich an." },
-				{ t: "Hingehen und fixen", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Ohne das Passwort musstest du den Safe-Mode nutzen. Hat ewig gedauert." }
+				{ t: "Hingehen und fixen", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Ohne das Passwort bleibt nur der abgesicherte Modus: Treiber runter, Treiber drauf, drei Neustarts, Kevin die ganze Zeit hinter dir. Eine Stunde für etwas, das mit dem Passwort ein Klick gewesen wäre." }
 			]
 		},
 		{
@@ -287,7 +287,7 @@ export const calls = [
 			title: "Herr Schmidt (Vertrieb)",
 			text: "Herr Müller! Ich bin beim Kunden und mein Hotspot geht nicht! Ich hab das Kennwort auf so einen gelben Zettel geschrieben, aber ich weiß nicht mehr wo der ist! Helfen Sie mir, schnell!",
 			opts: [
-				{ t: "'Tja, Pech gehabt.'", m: 2, l: 10, a: 0, b: 20, r: "Du legst auf. Das wird ein riesiges Nachspiel haben." },
+				{ t: "'Tja, Pech gehabt.'", m: 2, l: 10, a: 0, b: 20, r: "Du legst auf. Schmidt sitzt beim Kunden ohne Netz, und die nächste Nummer, die er wählt, ist nicht die der IT. Das wird ein riesiges Nachspiel haben." },
 				{ t: "Kennwort vorlesen", req: "wifi_note", m: 5, l: 10, a: -10, b: -10, r: "Du liest das Passwort vom Zettel vor, den du gefunden hast. Schmidt jubelt: 'Sie sind ein Gott!'" },
 				{ t: "Reset durchführen", m: 45, l: -10, a: 25, b: -5, r: "Du musstest den Hotspot komplett zurücksetzen. Schmidt musste 45 Min warten. Er war stinksauer." }
 			]
@@ -460,7 +460,7 @@ export const calls = [
 		opts: [
 			{ t: "Schraubendreher nutzen", req: "screw", m: 30, l: -10, a: 5, b: 0, r: "Du bist hingegangen, hast das Gehäuse geöffnet und die CD gerettet. Es war eine Schlager-CD." },
 			{ t: "Mit Klebeband angeln", req: "tape", m: 20, l: -5, a: 10, b: 0, r: "Du hast Tape an einen Stift geklebt und gefischt. Hat geklappt! MacGyver-Style." },
-			{ t: "Neuen PC bestellen", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "Das war dem Chef zu teuer. Abmahnung droht." }
+			{ t: "Neuen PC bestellen", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "Die Bestellung geht zur Freigabe an den Chef, Begründung: 'CD im Lüftungsschlitz'. Er sagt persönlich Nein, in deiner Bürotür. Abmahnung droht." }
 		]
 	},
 	{
@@ -888,7 +888,7 @@ export const calls = [
 			{ 
 				t: "Auflegen", 
 				m: 2, l: 5, a: 0, b: 10, 
-				r: "Kein Mittagessen für dich heute." 
+				r: "Kein Mittagessen für dich heute; du meidest die Kantine. Morgen bekommst du dort die kleine Kelle. Herr Löffel vergisst keine Nummer, die aufgelegt hat."
 			}
 		]
 	},
@@ -902,7 +902,7 @@ export const calls = [
 				t: "Neustart befehlen", 
 				rep: { "Frau Elster": 2 },
 				m: 5, l: 10, a: 10, b: 0, 
-				r: "Hat funktioniert, aber sie wirkt immer noch verstört." 
+				r: "'Neu starten. Der Knopf mit dem Kreis.' Der Bildschirm kommt zurück, die Tabelle auch. Sie bedankt sich dreimal und fragt dann leise, wo die Tabelle die ganze Zeit war."
 			},
 			{ 
 				t: "'Haben Sie ein Ticket?'", next: "path_excel_ticket", 
@@ -1915,7 +1915,7 @@ export const calls = [
                 next: "path_chantal_listen",
                 rep: { "Chantal": 10 },
                 m: 45, l: 10, a: 20, b: -5, 
-                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist." 
+                r: "Du musst dir 45 Minuten lang anhören, wie hart das Leben als Content-Creator ist. Der Algorithmus, die Reichweite, irgendeine Konkurrentin, die angeblich alles kopiert. Zum Schluss bedankt sie sich und kündigt an, sich jetzt öfter zu melden. Das ist eine Drohung."
             }
         ]
     },

@@ -148,7 +148,7 @@ function scan(file) {
         for (const pair of m[1].split(';')) {
             const [attr, key] = pair.split('=').map(s => s?.trim());
             if (!attr || !key) {
-                err(`${where}: data-i18n-attr "${pair}" ist kein Paar aus Attribut=Schlüssel`);
+                err(`${where}: data-i18n-attr "${pair}" is not an attribute=key pair`);
                 continue;
             }
             note(key, `${where} (${attr})`);
@@ -206,7 +206,7 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
     if (!(key in en)) continue;                       // reported below anyway
     const wanted = String(en[key]).replace(/\s+/g, ' ').trim();
     if (fallback !== wanted) {
-        err(`index.html: Rückfalltext zu "${key}" weicht von en.js ab\n`
+        err(`index.html: the fallback text for "${key}" differs from en.js\n`
           + `      Markup:  "${fallback}"\n`
           + `      en.js:   "${wanted}"`);
     }
@@ -237,9 +237,9 @@ for (const form of ['data-i18n', 'data-i18n-html']) {
         if (tagStart === -1) continue;
         const tag = html.slice(tagStart + 1, tagStart + 20).match(/^[a-zA-Z][a-zA-Z0-9-]*/)?.[0].toLowerCase();
         if (tag && VOID_TAGS.has(tag)) {
-            err(`index.html: ${form}="${m[1]}" sitzt auf <${tag}> — ein leeres Element trägt keinen Text.\n`
-              + `      Der Text daneben gehört dem Elternknoten und bleibt in jeder Sprache deutsch.\n`
-              + `      Gehört in ein <span> um den Text herum.`);
+            err(`index.html: ${form}="${m[1]}" sits on <${tag}> - an empty element carries no text.\n`
+              + `      The text beside it belongs to the parent node and stays put in every language.\n`
+              + `      It belongs in a <span> around the text.`);
         }
     }
 }
@@ -278,9 +278,9 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
     if (close === -1) continue;
     const inner = html.slice(open + 1, close);
     if (inner.includes('<')) {
-        err(`index.html: data-i18n="${m[1]}" sitzt auf <${tag}>, das noch Markup enthält.\n`
-          + `      textContent ersetzt den ganzen Inhalt — das Markup ist beim Start weg.\n`
-          + `      Gehört in ein <span> nur um den Text herum.`);
+        err(`index.html: data-i18n="${m[1]}" sits on <${tag}>, which still contains markup.\n`
+          + `      textContent replaces the whole content - the markup is gone at startup.\n`
+          + `      It belongs in a <span> around the text alone.`);
     }
 }
 
@@ -288,23 +288,23 @@ for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) {
 
 for (const [key, places] of used) {
     const where = [...new Set(places)].join(', ');
-    if (!(key in de)) err(`Schlüssel "${key}" fehlt in de.js — benutzt in ${where}`);
-    if (!(key in en)) err(`Schlüssel "${key}" fehlt in en.js — benutzt in ${where}`);
+    if (!(key in de)) err(`key "${key}" is missing from de.js - used in ${where}`);
+    if (!(key in en)) err(`key "${key}" is missing from en.js - used in ${where}`);
 }
 
 /* ---------- 4) The two dictionaries have to match ---------- */
 
 for (const key of Object.keys(de)) {
-    if (!(key in en)) err(`Schlüssel "${key}" steht in de.js, fehlt in en.js`);
+    if (!(key in en)) err(`key "${key}" is in de.js, missing from en.js`);
 }
 for (const key of Object.keys(en)) {
-    if (!(key in de)) err(`Schlüssel "${key}" steht in en.js, fehlt in de.js`);
+    if (!(key in de)) err(`key "${key}" is in en.js, missing from de.js`);
 }
 
 /* ---------- 5) Defined but never asked for ---------- */
 
 for (const key of Object.keys(de)) {
-    if (!used.has(key)) warn(`Schlüssel "${key}" wird nirgends benutzt — Rest einer Umbenennung?`);
+    if (!used.has(key)) warn(`key "${key}" is used nowhere - left over from a rename?`);
 }
 
 /* ---------- 6) English that is still German ---------- */
@@ -337,10 +337,117 @@ const identical = Object.keys(de).filter(
     key => key in en && de[key] === en[key] && !SAME_BY_DESIGN.has(key)
 );
 if (identical.length) {
-    info(`${identical.length} Einträge lauten auf Englisch wie auf Deutsch:`);
+    info(`${identical.length} entries read the same in English as in German:`);
     for (const key of identical.slice(0, 20)) info(`    ${key}  "${de[key]}"`);
-    if (identical.length > 20) info(`    … und ${identical.length - 20} weitere`);
+    if (identical.length > 20) info(`    … and ${identical.length - 20} more`);
 }
+
+/* ---------- 7) A component must read the data tree through tree() ---------- */
+
+/*
+ * `DB` is a plain object. data.js empties and refills it on a language switch,
+ * so a component that reads `DB.items` directly has nothing to notice: no
+ * error, no warning, the dictionary strings around it change and the tree text
+ * stays put. The backpack read "Alter Donut (Use)" - half a language each.
+ *
+ * tree() reads the language rune on the way past, which is what makes the
+ * component a reader of it. The rule is in CLAUDE.md; until 6.1 nothing held
+ * anyone to it, and it held only because everyone happened to remember.
+ *
+ * The engine may import DB as before: it is not reactive and re-reads on every
+ * call. This check is about components only.
+ */
+const KOMPONENTEN = join(ROOT, 'src/components');
+const svelteDateien = [];
+(function sammeln(dir) {
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) sammeln(full);
+        else if (entry.endsWith('.svelte')) svelteDateien.push(full);
+    }
+})(KOMPONENTEN);
+
+for (const datei of svelteDateien) {
+    const text = readFileSync(datei, 'utf-8');
+    const wo = relative(ROOT, datei);
+    // An import of DB out of data.js - under any name it is given.
+    for (const m of text.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*data\.js'/g)) {
+        const namen = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
+        if (namen.includes('DB'))
+            err(`${wo}: imports DB straight from data.js - in a component the data tree is read through tree(), or it freezes in its language on a switch`);
+    }
+}
+info(`${svelteDateien.length} components checked for access through tree()`);
+
+/* ---------- 8) Every data-action has to resolve ---------- */
+
+/*
+ * The markup used to carry its own JavaScript - onclick="engine.openTeam()",
+ * sixty-six times. A typo in one of those was a runtime error that fired the
+ * day somebody pressed that one button, and nothing before that would have
+ * said a word.
+ *
+ * Since 6.1 the markup names an INTENT and src/actions.js decides what it
+ * means. That moves the failure from runtime to here: a name the table does
+ * not know is an error before it ships.
+ *
+ * The other direction is a warning, not an error: an entry nobody uses is
+ * usually the remains of a rename, but it may also be waiting for markup that
+ * is still being written.
+ */
+/*
+ * Read as text, not imported: actions.js pulls in the engine, and the engine
+ * pulls in engine_state.svelte.js, whose runes need the Svelte loader that
+ * only the test bench sets up. The linter stays a plain node script.
+ *
+ * The keys sit at exactly one indent level inside the ACTIONS object, which is
+ * what separates them from the bodies of the multi-line entries.
+ */
+const actionsQuelle = readFileSync(join(ROOT, 'src/actions.js'), 'utf-8');
+const tabellenBlock = actionsQuelle.slice(
+    actionsQuelle.indexOf('const ACTIONS = {'),
+    actionsQuelle.indexOf('export const ACTION_NAMES'));
+/*
+ * index.html is not the only place a mark can appear: dressAskModal() builds
+ * the closing screen's button as a string. That button carried an inline
+ * handler until 6.1, and when the global behind it went away it silently did
+ * nothing - the lesson simply would not end, with no error anywhere. So the
+ * sources are read too.
+ */
+const quellenMitMarken = [];
+(function sammelnJs(dir) {
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) { if (entry !== 'data') sammelnJs(full); }
+        else if (/\.(js|svelte)$/.test(entry)) quellenMitMarken.push(full);
+    }
+})(join(ROOT, 'src'));
+
+const markenQuellen = [html, ...quellenMitMarken.map(f => readFileSync(f, 'utf-8'))].join('\n');
+const imMarkup = new Set([...markenQuellen.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+
+// And the rule the other way round: markup that is BUILT may not carry code.
+// The check that caught nothing in index.html has to reach the strings too.
+for (const datei of quellenMitMarken) {
+    const wo = relative(ROOT, datei);
+    if (wo === 'src/actions.js') continue;          // documents the old form in prose
+    for (const m of readFileSync(datei, 'utf-8').matchAll(/onclick="[^"]*"/g))
+        err(`${wo}: builds "${m[0].slice(0, 40)}…" - built markup carries a data-action, not code`);
+}
+const inTabelle = new Set(
+    [...tabellenBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
+
+if (!inTabelle.size) err('src/actions.js: no table entries found - has the layout changed?');
+
+for (const name of imMarkup) {
+    if (!inTabelle.has(name))
+        err(`index.html: data-action="${name}" is in no table - src/actions.js`);
+}
+for (const name of inTabelle) {
+    if (!imMarkup.has(name))
+        warn(`src/actions.js: "${name}" is used by no element - left over from a rename?`);
+}
+info(`${imMarkup.size} data-action marks checked against ${inTabelle.size} table entries`);
 
 /* ---------- Report ---------- */
 
@@ -349,7 +456,7 @@ const show = (title, list) => {
     for (const m of list) console.log(m.startsWith('    ') ? m : ` ${m.startsWith(' ') ? '' : '✗ '}${m}`);
 };
 
-console.log(`\nOberflächentexte: ${Object.keys(de).length} Schlüssel, ${used.size} davon im Einsatz`);
+console.log(`\nInterface strings: ${Object.keys(de).length} keys, ${used.size} of them in use`);
 
 if (errors.length) show('FEHLER', errors);
 if (warns.length) {
@@ -361,7 +468,7 @@ if (infos.length) {
     for (const m of infos) console.log(m.startsWith('    ') ? m : ` i ${m}`);
 }
 
-if (!errors.length && !warns.length) console.log('\n✅ Oberflächentexte sind sauber.\n');
+if (!errors.length && !warns.length) console.log('\n✅ The interface strings are clean.\n');
 else console.log('');
 
 process.exitCode = errors.length ? 1 : 0;

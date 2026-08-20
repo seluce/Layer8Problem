@@ -3044,7 +3044,7 @@ export const coffee = [
                 t: "Work through the stack yourself", 
                 rep: { "Dr. Wichtig": 5 }, 
                 m: 45, l: -20, a: 20, b: 0, 
-                r: "You sort paper. The coffee was good; the price was too high." 
+                r: "You sort invoices by date, then by amount, then by date again, because the Post-it does not say which. Three quarters of an hour later the pile is in order. The coffee was good; the price was too high."
             }
         ]
     },
@@ -3391,7 +3391,7 @@ export const coffee = [
             { 
                 t: "Drive to the depot", 
                 m: 45, l: -20, a: 10, b: 0, 
-                r: "You collect it yourself. That cost you nearly an hour." 
+                r: "You drive to the depot, stand behind three people with returns and show ID to collect a parcel with 'Addressee gone away' stuck on it. That cost you nearly an hour, and Gabi had counted on every minute of it." 
             },
             { 
                 t: "Lose it", 
@@ -3479,7 +3479,7 @@ export const coffee = [
             { 
                 t: "Reverently draw the first coffee", 
                 m: 10, l: 10, a: -20, b: 0, 
-                r: "Your first drawn coffee is a revelation. Perfect crema, perfect temperature. This coffee heals wounds. Your rage drops away massively." 
+                r: "Your first drawn coffee is a revelation. Perfect crema, perfect temperature. This coffee heals wounds. With the first sip, the seventy-five minutes with the toothbrush are paid in full."
             },
             { 
                 t: "Put an 'Out of Service' sign on it", 
@@ -4559,7 +4559,7 @@ export const coffee = [
             {
                 t: "Join the queue and join in",
                 m: 20, l: 10, a: -10, b: 10,
-                r: "Twenty minutes in the queue, and in exchange the best coffee this building has to offer. The rage drops noticeably. The lost time is the price, and today you pay it gladly."
+                r: "Twenty minutes in the queue, and in exchange the best coffee this building has to offer. When your turn comes you hold the sensor shut like everybody else, and the machine makes its noise for you too. The lost time is the price, and today you pay it gladly."
             },
             {
                 t: "Wait until the queue has gone",
@@ -4617,7 +4617,7 @@ export const coffee = [
             {
                 t: "Put them off pleasantly and fetch coffee",
                 m: 10, l: 5, a: -5, b: 5,
-                r: "You say 'send me an email' twice and do actually reach your coffee. The rage falls a little, not as far as usual. Somebody else was responsible for a quiet coffee today."
+                r: "You say 'send me an email' twice and do actually reach your coffee. You have to drink it with your back to the two of them, and voices, unfortunately, come from behind as well. Somebody else was responsible for a quiet coffee today."
             },
             {
                 t: "Settle the matter standing up",
@@ -4641,7 +4641,7 @@ export const coffee = [
             {
                 t: "Ask him about the hamster",
                 m: 10, l: 0, a: -15, b: 5,
-                r: "The hamster is called Puschel, is six years old and therefore ancient for a hamster. The intern shows you fourteen photographs. You laugh for the first time today, and the anger falls away perceptibly."
+                r: "The hamster is called Puschel, is six years old and therefore ancient for a hamster. The intern shows you fourteen photographs. You laugh for the first time today and look at all fourteen."
             },
             {
                 t: "Show him how the machine works",

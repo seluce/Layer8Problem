@@ -445,8 +445,13 @@ export const ui = {
      * Escape does not dismiss them, and the day cannot be restarted - a restart
      * would call clearDay() and throw away the very save the resume dialog is
      * offering.
+     *
+     * The week's condition picker belongs here as much as the day's (6.1). It
+     * was in neither list: not a startup window, and not in the Escape chain
+     * either - so Escape fell through to the bottom and opened the settings on
+     * top of the picker, the same way it did for the knowledge modal.
      */
-    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal'],
+    STARTUP_OVERLAYS: ['intro-modal', 'resume-modal', 'difficulty-modal', 'week-modal'],
 
     isStartupOverlayOpen: function() {
         return this.STARTUP_OVERLAYS.some(id => this.isOverlayOpen(id));
@@ -459,16 +464,40 @@ export const ui = {
      * and says 'BLOW-OFF' in the other language.
      */
     showModal: function(title, text, isEnd, tone = null) {
+        // One shape for the box, whoever opens it. A warning has no balance
+        // sheet and no gala report, but the fields are named rather than left
+        // absent, so that reading one of them somewhere never depends on which
+        // function opened the window.
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
-                             lead: '', cause: null, diary: null, tone };
+                             lead: '', cause: null, diary: null, tone,
+                             balance: null, party: null };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
     },
 
-    closeModal: function() {
+    /**
+     * Empties the box and hides it - without repainting.
+     *
+     * The state is the truth here and the overlay only carries it: since 6.1
+     * components/EndModal.svelte renders off `modal.open`, so hiding the
+     * container alone leaves the old screen mounted behind it. A restart did
+     * exactly that, and the end screen it had just cleared away was still in
+     * the state afterwards.
+     *
+     * Separate from closeModal() because of the repaint: a restart calls this
+     * while the day it is tearing down is still in the state, and updateUI()
+     * runs checkEndConditions() - which would read those dying values and queue
+     * an ending for a day that is about to be replaced.
+     */
+    dismissModal: function() {
         this.state.modal = { open: false, title: '', text: '', isEnd: false,
-                             lead: '', cause: null, diary: null };
+                             lead: '', cause: null, diary: null,
+                             balance: null, party: null };
         this.hideOverlay('modal-overlay');
+    },
+
+    closeModal: function() {
+        this.dismissModal();
         this.updateUI();
     },
 
@@ -482,7 +511,7 @@ export const ui = {
         this.state.modal = {
             open: true,
             title: end.title,
-            text: end.text ?? '',      // only the party still uses free text
+            text: end.text ?? '',      // nothing uses this any more; a warning does
             lead: end.lead ?? '',
             cause: end.cause ?? null,
             diary: end.diary ?? null,
@@ -493,7 +522,18 @@ export const ui = {
             // isWin picks the colour of the screen, which the component used
             // to guess by looking for German words in the title.
             isWeek: end.isWeek ?? false,
-            isWin: end.isWin ?? false
+            isWin: end.isWin ?? false,
+            // Which level and which weekday the report belongs to. Ids, not
+            // words - components/DayReport.svelte resolves them, so the header
+            // follows a language switch like everything else.
+            weekMode: end.weekMode ?? null,
+            weekDay: end.weekDay ?? null,
+            // The two blocks that used to arrive as finished HTML. Both are
+            // snapshots of NUMBERS and IDS now, so the components draw them in
+            // whatever language is running - and neither depends on state the
+            // ending has already cleared.
+            balance: end.balance ?? null,
+            party: end.party ?? null
         };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
@@ -607,11 +647,13 @@ export const ui = {
     openTeam: function() {
         const modal = document.getElementById('team-modal');
         this.showOverlay(modal);
+        this.emit('openTeam');
     },
 
     closeTeam: function() {
         const modal = document.getElementById('team-modal');
         this.hideOverlay(modal);
+        this.emit('closeTeam');
     },
 
     // --- INTRANET SYSTEM ---
@@ -1289,7 +1331,7 @@ export const ui = {
         const softResetBtn = document.getElementById('btn-soft-reset');
 
         if (softResetBtn) {
-            const isTutorialActive = typeof tutorial !== 'undefined' && tutorial.isActive;
+            const isTutorialActive = !!this.lesson?.isActive;
             const locked = this.isStartupOverlayOpen() || isTutorialActive;
 
             softResetBtn.classList.toggle('opacity-40', locked);

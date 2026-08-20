@@ -22,14 +22,17 @@
     "lint:data:en": "node tools/lint-data.mjs --lang=en",
     "lint:i18n": "node tools/lint-i18n.mjs",
     "lint:parity": "node tools/lint-parity.mjs",
-    "lint:all": "npm run lint:data && npm run lint:data:en && npm run lint:i18n && npm run lint:parity",
+    "lint:assets": "node tools/lint-assets.mjs",
+    "lint:all": "npm run lint:data && npm run lint:data:en && npm run lint:i18n && npm run lint:parity && npm run lint:assets",
     "start": "npm run build && electron .",
     "start:dev": "electron .",
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
     "sim": "node tools/simulate-day.mjs",
-    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
-    "sim:week": "node tools/simulate-week.mjs"
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en",
+    "sim:week": "node tools/simulate-week.mjs",
+    "test:de": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
+    "test:en": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en"
   },
   "build": {
     "appId": "com.layer8problem.game",
@@ -54,11 +57,12 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
-    "electron": "^43.4.0",
+    "acorn": "^8.18.0",
+    "electron": "^43.4.1",
     "electron-builder": "^26.15.3",
     "svelte": "^5.56.9",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.2.1"
+    "vite": "^8.2.2"
   },
   "dependencies": {
     "steamworks.js": "^0.4.0"

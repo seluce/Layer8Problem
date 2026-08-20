@@ -93,8 +93,8 @@ German and presenting the report as English.
 
 **No gate.** The tool always exits with 0 and is deliberately kept out of the
 build: whether a repeated sentence is a lazy copy or a running gag is decided by
-a human. Eleven sections (with the mail pool selected, two more follow as 12
-and 13; 1 to 11 keep their numbers whatever the selection):
+a human. Twelve sections (with the mail pool selected, two more follow as 13
+and 14; 1 to 12 keep their numbers whatever the selection):
 
 1. verbatim repeated sentences across different events
 2. repeated word sequences from five words up ← **the most useful section**
@@ -112,12 +112,39 @@ and 13; 1 to 11 keep their numbers whatever the selection):
     Klassiker:")? Kept apart from 10 because mixing them buries a handful of
     real findings under 130 correct labels. A prefix with a quotation inside it
     („Taktik 'Verbrannte Erde':") slips past both — one case in the stock
+12. heavy effect, thin text: a **single** result under 80 characters that costs
+    30+ minutes, moves aggro or boss by 20+, or opens a chain — the reading
+    list, shortest first. Sits at the end so 8 to 11 keep their numbers
+
+**Section 7 measures the event, section 12 the single result.** Section 7 takes
+the average over an event's results and so found two events in a stock where a
+player kept meeting single results that felt too short; those are individual
+texts, and short is relative to what they cost — 58 characters after `m: 2` is
+a beat, 58 characters after `m: 60` is an hour nobody explains. Section 12
+holds the single result against its effect. Both are reading lists, not
+rewrite orders: the doctrine's line is "too short only when it lacks the
+moment, not when it lacks words", and „Alles ist aus. Auch das Licht. Aber die
+Türen sind offen." over a `b: 20` is a punchline that stays. Measured on
+19/08/2026 before the first pass: **41 findings in German, 66 in English**
+(English is simply more compact — the 29 English-only hits were all faithful
+translations of German texts just over the line). Read the German list, it is
+the source tree; the English follows.
 
 **Section 3 checks both languages** — `Faulheit`/`Chef-Radar` and
 `Laziness`/`Boss Radar` sit in one list, because a German stat in an English
 text (and the other way round) is a finding as well.
 
-**Section 6 measures both languages, in two mirrored sets of twelve patterns
+**Since 6.1 it also catches the bar read out under a synonym:** `Wut`/`Zorn`/
+`Ärger` and `anger`/`fury`/`rage` next to a direction verb (`sinkt`, `steigt`,
+`fällt`, `klettert` — `sinks`, `drops`, `falls`, `rises`, `climbs`), in either
+order and at most three words apart. "Deine Wut sinkt massiv." over an
+"Aggro -20" is the leak the 6.0 pass removed nine times as "Radar", and six of
+them survived that pass because the list knew the stat's name and not its
+synonym. Whether a hit is the player's value or a character's temper — Gabi's
+blood sugar rises, her rage drops — is a human read; the report only surfaces
+it.
+
+**Section 6 measures both languages, in two mirrored sets of thirteen patterns
 each.** A pattern with no hits drops out of the report, so a German run shows
 only German lines. The mirroring is deliberate: the section is a before/after
 gauge, and two languages counting different things cannot be held against each
@@ -129,6 +156,14 @@ together with „Immerhin", because it is the same move and English has one word
 for both. Measured: „Immerhin" 13 times, „Wenigstens" 3 times. All pools 227 →
 **230 hits**, lunch alone 12 → **14**. Older notes with the smaller figures mean
 the same stock.
+
+**And again on 19/08/2026, in both languages:** the shrug refrain „Nicht dein
+X, nicht dein Y" / „Not your X, not your Y" („Nicht dein Zirkus, nicht deine
+Affen", „Nicht mein Ticket, nicht mein Problem") is a thirteenth row. Twelve
+hits in the prose of each tree, fourteen by plain grep (two sit in labels or
+mid-sentence and stay out by design). All pools 239 → **251** in German, 10 →
+**22** in English. Whether it is a running gag or a stamp is not decided by
+the row; the row only keeps the number in view.
 
 **Method:** write first, then measure, then correct. A before/after comparison
 rather than a target of zero — section 6 is *supposed* to have hits. Intended
@@ -181,8 +216,8 @@ npm run sim:week 300                # smoke test
 npm run sim:week 300 -- --lang=en   # English tree (double dash, see 3)
 ```
 
-Five strategies (among them `vernunft` = always the safest choice,
-`gelegenheit`, `kaffeejunkie`) times three levels of recovery (rested /
+Five strategies (among them `sensible` = always the safest choice,
+`casual`, `coffeeAddict`) times three levels of recovery (rested /
 irritated / in need of a holiday). Output per cell: week survival rate, deaths
 by weekday and cause, average day reached, ticket carry-over, excuses, idle
 clicks, "pool empty before Friday", wins after a crisis evening.
@@ -191,7 +226,7 @@ Switches:
 
 ```
 --wear=10          wear on the night's recovery, in percentage points
---deckel=45        absolute upper limit of the night's recovery
+--cap=45           absolute upper limit of the night's recovery
 --ramp=0.04        rise of the day multiplier per weekday
 --rscale=1.0       scaling of the recovery rates
 --nightkeep=0.25   share that carries over the night
@@ -210,11 +245,30 @@ in `data_special.js`.
 **Always compare against a fresh baseline run**, not against memory — even 300
 runs per cell fluctuate by several percentage points.
 
-## 5. `npm test` — the four test suites
+## 5. `npm test` — the four test suites, in both languages
 
 ```
-npm test        # 16 / 126 / 20 / 30
+npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
+npm run test:de # one language only, while working
+npm run test:en
 ```
+
+**Why twice:** every suite takes `--lang=en` and loads the other tree. Both
+trees carry the same ids, story flags and numbers, so anything a test actually
+checks holds in both languages — which makes the second run cheap and turns any
+comparison against display text into a failure. Before 6.1 the suites only ever
+saw German, and `t()` falling back to German in Node made that invisible: the
+week balance comparisons were green while the English legend read `L/A/B` above
+rows labelled `F/A/C`.
+
+> **And the second run has to STAY in its language.** One test in `week-flow`
+> switches on purpose, to hold the two trees against each other — it used to
+> switch back to a hard-coded `'de'`, so the whole English run went German from
+> that line on: two thirds of the largest suite, silently, and green. Seven old
+> comparisons against German display text were living in that shadow. The last
+> check in the suite now holds `language()` **and** `currentLanguage()` against
+> `LANG`, so the next one is caught at once. Whoever switches, switches back to
+> `LANG`.
 
 Runs under `node --conditions browser --import ./tools/register.mjs`.
 `register.mjs` hooks in `svelte-loader.mjs` so that `engine_state.svelte.js` is
@@ -245,34 +299,34 @@ findings, defaults, archive counters.
 ## 6. `dev-woche.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
-`dev.hilfe()` lists everything. Indispensable for the three-parters, because it
+`dev.help()` lists everything. Indispensable for the three-parters, because it
 lets you produce any weekday.
 
 ```
 SETUP
-  dev.tag(3, 'normal', {tickets: 5, al: 60})   any weekday
-  dev.kontingente()                            draws per pool today
-  dev.vorschau()                               what the night leaves behind
+  dev.day(3, 'normal', {tickets: 5, al: 60})   any weekday
+  dev.quotas()                                 draws per pool today
+  dev.preview()                                what the night leaves behind
 
 SCENARIOS
-  dev.feierabend(2) / dev.feierabend(2, true)  Tuesday 16:20
-  dev.nacht()          the night screen immediately
-  dev.freitag() / dev.freitag('knapp')
-  dev.meeting()        straight into the weekly meeting
-  dev.gewonnen()       Friday 16:30, week survived
-  dev.raus('rage'|'tickets'|'chef', tag)       targeted failure
-  dev.morgentod(4)     death during the morning mood
-  dev.gala()           unlock the gala, then dev.meeting()
-  dev.leerlauf('server')                       empty the quota
+  dev.clockOff(2) / dev.clockOff(2, true)      Tuesday 16:20
+  dev.night()                                  the night screen immediately
+  dev.friday() / dev.friday('tight')
+  dev.meeting()                                straight into the weekly meeting
+  dev.won()                                    Friday 16:30, week survived
+  dev.out('rage'|'tickets'|'chef', day)        targeted failure
+  dev.morningDeath(4)                          death during the morning mood
+  dev.gala()                                   unlock the gala, then dev.meeting()
+  dev.idle('server')                           empty the quota
 
-SAVE FILE
-  dev.zaehler() / dev.zaehlerLeeren()
-  dev.sichern() / dev.zurueck()                before/after
-  dev.aufraeumen()                             discard the week
+SAVES
+  dev.counters() / dev.clearCounters()
+  dev.backup() / dev.restore()                 before/after
+  dev.dropWeek()                               discard the week
 ```
 
-**`dev.sichern()` before experimenting**, then `dev.zurueck()` and reload.
-`dev.zaehlerLeeren()` clears the test rubbish out of the archive counters —
+**`dev.backup()` before experimenting**, then `dev.restore()` and reload.
+`dev.clearCounters()` clears the test rubbish out of the archive counters —
 otherwise trial runs distort the statistics permanently.
 
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up

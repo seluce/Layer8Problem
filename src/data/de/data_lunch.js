@@ -50,7 +50,7 @@ export const lunch = [
 			text: "Die Kantine serviert heute ausschließlich Tofu-Klumpen in Sauce nach Hausart. An den Tischen wird auffällig leise gegessen, und die Stimmung kippt Richtung aggressiv.",
 			opts: [
 				{ t: "Zum Döner-Mann rennen", m: 45, l: 5, a: -20, b: 5, r: "Du kommst mit Knoblauchfahne zurück. Du bist glücklich, die Kollegen rümpfen die Nase." },
-				{ t: "Mitessen und meckern", m: 45, l: 0, a: 15, b: 0, r: "Gemeinsames Meckern verbindet das Team." }
+				{ t: "Mitessen und meckern", m: 45, l: 0, a: 15, b: 0, r: "Du setzt dich dazu und schiebst den Tofu von einer Tellerseite auf die andere. Nach dem dritten Bissen wird am Tisch doch geredet, ausschließlich über das Essen. Gemeinsames Meckern verbindet das Team." }
 			]
 		},
 		{
@@ -348,7 +348,7 @@ export const lunch = [
 			title: "MITTAG: DAS GEHEIME DACH",
 			text: "Du kennst einen Trick, wie man auf das Flachdach kommt. Aussicht über die graue Stadt. Niemand nervt dich. Aber der Wind ist kalt.",
 			opts: [
-				{ t: "Aussicht genießen", m: 60, l: 20, a: -30, b: 0, r: "Fast vergisst du die Zeit. Du kommst 10 Minuten zu spät, aber entspannt." },
+				{ t: "Aussicht genießen", m: 60, l: 20, a: -30, b: 0, r: "Du setzt dich mit dem Rücken an den warmen Lüftungsschacht und siehst der Stadt beim Grausein zu. Fast vergisst du die Zeit. Du kommst 10 Minuten zu spät, aber entspannt." },
 				{ t: "Papierflieger werfen", req: "manual", m: 30, l: 10, a: -10, b: 0, r: "Du reißt Seiten aus dem Handbuch und baust Flieger. Sie segeln auf den Parkplatz des Chefs. Riskant, aber lustig." },
 				{ t: "Energy Drink in der Sonne", rem: "energy", m: 30, l: 0, a: -20, b: 0, r: "Koffein und UV-Strahlung. Du vibrierst vor Energie." }
 			]

@@ -68,7 +68,7 @@ export const calls = [
 				t: "Shout at him: 'ARE YOU INSANE?!'",
 				rep: { "Kevin": -5 },
 				m: 15, l: 0, a: -20, b: 20,
-				r: "You bellow into the phone loud enough for the next office to hear. Kevin cries quietly at the other end. Your anger drops a little, even though the PC is still broken."
+				r: "You bellow into the phone loud enough for the next office to hear. Kevin cries quietly at the other end. That did help. Not the PC, but you."
 			},
 			{
 				t: "'Format it! Learn from it!'",
@@ -93,7 +93,7 @@ export const calls = [
 		text: "Miller! I am at the airport. My iPad is not working! I press the button and nothing happens! FIX IT REMOTELY! RIGHT NOW! I am losing millions out here!",
 		opts: [
 			{ t: "'Solar winds are interfering with the line.'", m: 5, l: 30, a: 0, b: 25, rep: { "Dr. Wichtig": 5 }, next: "path_ceo_sonnenwind", r: "He believes it instantly. 'Bloody technology!' He goes and buys a newspaper. Risk: high, but it worked." },
-			{ t: "Squeeze the stress ball", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "You stay calm while he shouts. It was only the battery." },
+			{ t: "Squeeze the stress ball", req: "stressball", rep: { "Dr. Wichtig": 2 }, m: 60, l: -10, a: -10, b: -10, r: "You stay calm while he shouts. For an hour you knead and say 'yes' in the right places, until he looks at the battery icon by himself. It was only the battery." },
 			{ t: "Is the battery flat?", m: 60, l: -10, a: 30, b: -10, rep: { "Dr. Wichtig": -5 }, r: "It was the battery. He has no cable with him and blames you. He shouts at you for 10 minutes about why you could not read his mind." }
 		]
 	},
@@ -150,7 +150,7 @@ export const calls = [
 			text: "There's water dripping from the ceiling in the server room. It's neon green. Shall I put buckets under it or is that coolant off the aliens?",
 			opts: [
 				{ t: "Never mind, let it drip", m: 5, l: 30, a: 0, b: 40, rep: { "Egon": -5 }, next: "path_egon_switch", r: "A switch has shorted out. The internet on Floor 3 is gone. Oops." },
-				{ t: "Run down there right now!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "It was energy drink from the floor above. An apprentice spilled some. Servers saved." }
+				{ t: "Run down there right now!", m: 45, l: -20, a: 20, b: -15, rep: { "Egon": 5 }, r: "You run to the server room, pull the wet ceiling tile and follow the green trail one floor up. It was energy drink from the floor above. An apprentice spilled some. Servers saved, carpet not." }
 			]
 		},
 		{
@@ -274,7 +274,7 @@ export const calls = [
 			text: "Hey, I broke the internet. I need the admin password to restart the driver. The boss'll kill me otherwise!",
 			opts: [
 				{ t: "Type the password in", req: "admin_pw", rep: { "Kevin": 10 }, m: 5, l: 20, a: 0, b: 0, r: "You log in remotely, bang, done. Kevin gazes at you in pure adoration." },
-				{ t: "Go over and fix it", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Without the password you had to go in through safe mode. It took an age." }
+				{ t: "Go over and fix it", rep: { "Kevin": 2 }, m: 60, l: -20, a: 20, b: -10, r: "Without the password it is safe mode or nothing: driver off, driver on, three restarts, Kevin behind you the whole time. An hour for something that would have been one click with the password." }
 			]
 		},
 		{
@@ -291,7 +291,7 @@ export const calls = [
 			title: "Herr Schmidt (Sales)",
 			text: "Mr Miller! I am at the client's and my hotspot will not work! I wrote the password on one of those yellow notes, but I cannot remember where it is! Help me, quickly!",
 			opts: [
-				{ t: "'Well, bad luck.'", m: 2, l: 10, a: 0, b: 20, r: "You hang up. There will be an enormous amount of fallout." },
+				{ t: "'Well, bad luck.'", m: 2, l: 10, a: 0, b: 20, r: "You hang up. Schmidt is sitting at the client's with no connection, and the next number he dials is not IT's. There will be an enormous amount of fallout." },
 				{ t: "Read the password out", req: "wifi_note", m: 5, l: 10, a: -10, b: -10, r: "You read the password off the note you found. Schmidt cheers: 'You are a god!'" },
 				{ t: "Do a full reset", m: 45, l: -10, a: 25, b: -5, r: "You had to reset the hotspot completely. Schmidt had to wait 45 minutes. He was livid." }
 			]
@@ -464,7 +464,7 @@ export const calls = [
 		opts: [
 			{ t: "Use a screwdriver", req: "screw", m: 30, l: -10, a: 5, b: 0, r: "You went over, opened the case and rescued the CD. It was a schmaltzy-pop CD." },
 			{ t: "Fish it out with tape", req: "tape", m: 20, l: -5, a: 10, b: 0, r: "You stuck duct tape to a pen and went fishing. Worked a treat! Pure MacGyver." },
-			{ t: "Order a new PC", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "That was too expensive for the boss. A written warning is on the cards." }
+			{ t: "Order a new PC", rep: { "Dr. Wichtig": -5 }, m: 10, l: 10, a: -5, b: 20, r: "The order goes to the boss for sign-off, reason given: 'CD in the ventilation slot'. He says no in person, in your office doorway. A written warning is on the cards." }
 		]
 	},
 	{
@@ -892,7 +892,7 @@ export const calls = [
 			{
 				t: "Hang up",
 				m: 2, l: 5, a: 0, b: 10,
-				r: "No lunch for you today."
+				r: "No lunch for you today; you steer clear of the canteen. Tomorrow you get the small ladle there. Mr Löffel does not forget a number that hung up on him."
 			}
 		]
 	},
@@ -906,7 +906,7 @@ export const calls = [
 				t: "Order a restart", 
 				rep: { "Frau Elster": 2 },
 				m: 5, l: 10, a: 10, b: 0, 
-				r: "That worked. She still seems shaken." 
+				r: "'Restart it. The button with the circle.' The screen comes back, the spreadsheet with it. She thanks you three times and then asks quietly where the spreadsheet was all that time."
 			},
 			{ 
 				t: "'Have you raised a ticket?'", next: "path_excel_ticket", 
@@ -1919,7 +1919,7 @@ export const calls = [
                 next: "path_chantal_listen",
                 rep: { "Chantal": 10 },
                 m: 45, l: 10, a: 20, b: -5,
-                r: "You spend 45 minutes hearing how hard life is as a content creator."
+                r: "You spend 45 minutes hearing how hard life is as a content creator. The algorithm, the reach, some rival who supposedly copies everything. Finally she thanks you and announces that she will be calling more often now. That is a threat."
             }
         ]
     },

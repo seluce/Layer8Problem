@@ -1,3 +1,40 @@
+[6.1.0] - unreleased
+
+Everything here is measured against 6.0. This version is about stability: not much to see, and a few things that can no longer quietly break.
+
+Presentation:
+* The bug report form has lost its emoji; the note underneath carries a proper interface icon.
+* The browser tab has an icon of its own - a burning monitor in the style of the interface icons - instead of a fire emoji that looked different on every system.
+* Character and item pictures are delivered at the size they are shown at. Nothing looks different; the download is 5.4 MB smaller.
+* Several achievements at once - one long action can cross several gates - now arrive one after the other, stay a little longer together, and the stack slides when one leaves.
+* The boss-fight countdown bar runs smoothly instead of stepping twenty times a second.
+* On the desktop the phone grows while a chat is open, so a long message no longer has to be scrolled through a tiny window. Only the log below makes room - buttons and inventory stay put - and it comes back when the chat ends.
+* Chat bubbles slide in from their own side instead of just fading, and the chat header shows who is typing.
+
+The texts:
+* Twenty-four result texts have gained a beat. They said in one line what had cost an hour or a written warning, or passed a verdict where a scene belonged. The punchlines that work short stay short.
+* Five result texts still read the display out ("Deine Wut sinkt massiv" above "Aggro -20"). They say what happens instead.
+
+Bug fixes:
+* On Linux with two graphics cards the Steam version could take so long to start that Steam gave up. It starts immediately now, with hardware acceleration as before.
+* Let a boss fight's countdown run out and the stats hit, but the result box stayed empty. The failure text shows again, and the knowledge notes that unlock on boss fights can actually unlock now.
+* The knowledge note on Wuttke's Excel mail quoted a subject line the mail never had. It reads the mail it describes now.
+* The towed Golf on the charging point belongs to Egon in both places now - the tow result used to name a man from sales while the furious follow-up mail was Egon's.
+* Escape closes the knowledge book and the week's condition picker instead of opening the settings on top of them.
+* The diary could stay empty for a whole session, most reliably after a language switch on the start screen. It fetches its texts itself now.
+* Switching language during the tutorial left the speech bubble in the old language. It comes along now, at whatever step you are on.
+* In the tutorial, cancelling an item brought the glowing button back on top of the open backpack, where it could be clicked. Nothing lights up while a window is open.
+* The day report under the weekly balance sheet was headed "Wednesday (normal)" on every day of every week. It names the actual day and the condition you chose.
+* The weekly balance said "1 Tickets" and "1 Mails ignoriert". One ticket is a ticket.
+* An achievement earned twice on the party evening - once, then again at a better grade - was listed twice among the trophies. Once now.
+* The diary page carried the wrong weekday during a working week. It carries the day it was written on.
+
+Under the hood:
+* Three parts of the machinery were rebuilt so they can no longer break in silence: the interface carries no program code of its own, the tutorial no longer reaches into the controls behind the game's back, and faults that used to pass unnoticed - a missing icon, a wrong reference, a screen left in the old language - are caught while the game is built.
+* The closing and night screens store what they mean rather than the sentences they show, so a language switch redraws them completely - end of day, end of week, the night between days, the party and the diary page alike.
+
+---
+
 [6.0.0] - 2026-08-17
 
 This version was called 5.1 while it was being built and is released as 6.0, because the English language version joined it. The last released version is 5.0 - everything listed here has come about since then.

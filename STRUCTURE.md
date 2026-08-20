@@ -17,14 +17,16 @@ src/
   main.js               entry point: stylesheet, engine, mounting the components
   app.css               Tailwind directives, @source list, custom classes
   engine.js             bootstrap, keyboard control, global error catcher
+  actions.js            what a button in index.html is allowed to do
   data.js               database, split into immediate and deferred
   tutorial.js
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
-  components/           38 Svelte components, 8 of them for the intranet
-  engine/               11 modules; engine_state.svelte.js holds the state,
-                        engine_week.js the week mode
+  components/           40 Svelte components, 8 of them for the intranet
+  engine/               12 modules; engine_state.svelte.js holds the state,
+                        engine_week.js the week mode, engine_hooks.js the
+                        observer list the tutorial listens on
   data/de/              23 data files, the German source
   data/en/              the same 23, in English
   i18n/                 language selection and interface strings
@@ -37,6 +39,7 @@ tools/
   lint-data.mjs         data check, npm run lint:data (and :en)
   lint-i18n.mjs         interface strings, npm run lint:i18n
   lint-parity.mjs       parity of the two language trees, npm run lint:parity
+  lint-assets.mjs       every image reference against the stock, npm run lint:assets
   simulate-day.mjs      day simulation, npm run sim
   simulate-week.mjs     week simulation, npm run sim:week
   report-prose.mjs      prose and style report, node tools/report-prose.mjs [pool]
@@ -47,7 +50,7 @@ tools/
   make-steam-achievements.mjs  achievement strings for Steamworks
   dev-woche.js          console tool for the week mode, see below
   TOOLS.md              manual for everything in this folder
-  *.test.mjs            four test suites, npm test
+  *.test.mjs            four test suites, npm test (de and en)
   register.mjs          loader hook for the tests
   svelte-loader.mjs     compiles .svelte.js for the tests
 ```
@@ -154,8 +157,9 @@ npm run lint:data      data check (German tree)
 npm run lint:data:en   the same for the English one
 npm run lint:i18n      interface strings
 npm run lint:parity    parity of both trees, file inventory included
-npm run lint:all       all four in sequence — the gate
-npm test               four test suites: week mode, console tool, i18n
+npm run lint:assets    every image reference against the stock
+npm run lint:all       all five in sequence — the gate
+npm test               four suites × two languages: week mode, console tool, i18n
 npm run sim            day simulation for balance
 npm run sim:week       week simulation for balance
 npm start              builds and starts Electron
@@ -238,9 +242,10 @@ code is always 0, every finding is reading material. Call it with a pool
 verbatim repeated sentences and word sequences across event boundaries,
 stat language in narrative text ("Aggro steigt"), typo patterns, ageing
 references, result texts that are too terse, thin openings, conspicuous labels
-(section 9), the old register in options (10) and the etiquette before direct
-speech (11). With the mail pool selected two more sections follow; 1 to 11 keep
-their numbers whatever the selection. The
+(section 9), the old register in options (10), the etiquette before direct
+speech (11) and single results whose text is thin against a heavy effect (12).
+With the mail pool selected two more sections follow; 1 to 12 keep their
+numbers whatever the selection. The
 tool knows the legitimate exceptions and does not report them: subject lines,
 caller displays, chat messages and deliberate onomatopoeia.
 
@@ -269,6 +274,13 @@ A complete manual for every tool is in `tools/TOOLS.md`.
 `npm test` runs four suites in sequence: the foundation and the flow of the week
 mode, the console tool, and the language layer. They run against the **real**
 modules, not against replicas — only display and audio are substituted.
+
+**And it runs them twice, once per language** (`--lang=en`, since 6.1). Both
+trees carry the same ids and numbers, so a test that checks behaviour passes in
+both — and one that holds display text against a German word does not. That was
+not theory: the six comparisons in the week balance stayed green while the
+English legend and the row labels disagreed. `npm run test:de` and
+`npm run test:en` run a single language while working.
 
 That takes two devices, which sit in `register.mjs` and `svelte-loader.mjs`: the
 loader hook sends every `.svelte.js` file through `compileModule()` so that the
@@ -417,6 +429,58 @@ same file. Svelte reads `$name` as a store subscription, and `state` is not a
 store. For element references an attachment is the better route anyway, see
 `PhoneView.svelte`.
 
+### The state holds the identity, the display renders (6.1)
+
+`src/engine/recipe.js` states the rule for the log and the phone: a line that
+stays on screen stores WHAT it says, not the sentence it said. Since 6.1 the same
+rule covers `state.modal`, which was the last surface still keeping finished
+prose — and the one held open longest, because an end screen is read rather than
+glanced at.
+
+| Field | Holds |
+|---|---|
+| `title`, `lead` | a recipe (`{k}` / `{k, v}`); a plain string only on a warning box |
+| `balance` | the week's figures — level as an id, days as indices, values as numbers |
+| `party` | the gala report: the ending as a reference into the tree, achievements as ids |
+| `night.sleep` | a path into `special.week_sleep`, so the draw is recorded and not its result |
+| `nextDay` | the weekday as a recipe, via `dayNameValue()` |
+| `diary` | the DRAW the page was made from — see below |
+| `text` | a warning's own line, and nothing else any more |
+
+`components/EndModal.svelte` resolves all of it on the way to the screen;
+`WeekBalance.svelte` and `PartyReport.svelte` draw the two blocks that used to
+arrive as HTML strings. That removed a trap as well as a translation gap: the
+balance sheet had to be built before `endWeek()` cleared the week, and a snapshot
+cannot forget what a builder can — which the gala had already got wrong once.
+
+### The diary is a draw, not a page
+
+`buildDiary()` used to hand over finished paragraphs, which made it the one part
+of the screen that could not be told again. It now writes down **what was
+drawn**: per paragraph a list of parts, and a part is either one line
+(`{ref: {p:'diary', path:[slot, poolIndex, 'lines', lineIndex]}}`) or an intro
+with the clauses it wraps. `renderDiary()` — the only place that turns any of it
+into a sentence — resolves the paths, ties the clauses together with
+`diary.listJoin` and fills the marks in.
+
+Three things this rests on, each of which breaks quietly if it is dropped:
+
+- **The pool index, not the filtered one.** Lines are drawn from the fragments
+  that FIT; the path has to name the position in the whole slot. Writing down the
+  filtered index points at a different fragment as soon as one before it does not
+  fit — which is the normal case, not the edge.
+- **`renderDiary()` reads through `tree()`, never `DB`.** It runs inside a
+  `$derived`. In Node the two are the same object, so only the browser would show
+  it: the page would stay in yesterday's language while the frame around it
+  changed.
+- **Two of the marks are not figures.** `{weekday}` is a dictionary entry and
+  `{party}` is prose from the data tree, so both travel as recipes; the rest are
+  numbers and colleagues' names, which read the same in either tree.
+
+A part that will not resolve drops its paragraph rather than being guessed at,
+and so does a mark that stays unfilled — a paragraph with a hole in it is not the
+paragraph. An entry from before 6.1 carries `text` and renders as it stands.
+
 ## The week mode
 
 `engine_week.js` carries the entire mode. Two rules keep the day mode clear of
@@ -496,6 +560,35 @@ there and you are calling `undefined`.
 That was exactly the case for two versions: export and import threw on click,
 the global error catcher swallowed it, and for the player nothing happened. From
 inside the inner object the engine is reached through `engine.`.
+
+## How the shell and the tutorial reach the engine (6.1)
+
+Two places where markup and engine meet, and both used to meet through a
+global.
+
+**A button names an intent, it does not carry code.** `index.html` held 66
+inline `onclick` handlers until 6.1. Now a button carries
+`data-action="openTeam"`, an argument in `data-arg`, and `src/actions.js` holds
+the table one delegated listener resolves against. Nothing is evaluated: a name
+that is not in the table does nothing and says so in the console. `lint-i18n`
+holds every mark against the table in both directions — including marks built at
+runtime, which is how the closing screen's button is made — and rejects built
+`onclick` outright.
+
+**The engine tells, the tutorial listens.** `tutorial.js` used to overwrite
+seven engine methods and never put them back. `engine/engine_hooks.js` gives the
+engine an observer list in the shape `onLanguageChange()` already had: `on()`
+returns the way to stop, `emit()` says what happened, and the six names in
+`ENGINE_EVENTS` are declared so a typo throws.
+
+One of the seven was never a notification. `askUseItem` has to be able to say
+NO — at step 8 the lesson refuses every item but the doughnut — so the veto is
+its own thing: `setItemGuard()` / `allowsItem()`. A listener list would have
+swallowed the refusal with nothing failing.
+
+The engine reads `engine.lesson`, which the tutorial registers itself in at
+load. That is what opened the import circle: `tutorial.js → engine.js` is a
+line, and no global is left.
 
 ## What deliberately does not live in components
 

@@ -37,7 +37,7 @@ const LANG_ARG = process.argv.find(a => a.startsWith('--lang='));
 const LANG = LANG_ARG ? LANG_ARG.slice(7) : 'de';
 if (LANG_ARG) process.argv.splice(process.argv.indexOf(LANG_ARG), 1);
 if (!['de', 'en'].includes(LANG)) {
-    console.error(`Unbekannte Sprache "${LANG}". Erlaubt: de, en`);
+    console.error(`Unknown language "${LANG}". Allowed: de, en`);
     process.exit(2);
 }
 await loadCore(LANG);
@@ -59,12 +59,12 @@ const charNames = new Set([...DB.chars.map(c => c.name), 'PLAYER']);
 const idMap = new Map();
 for (const p of POOLS) {
   for (const ev of DB[p]) {
-    if (!ev.id) { err(`[${p}] Event ohne ID: "${ev.title}"`); continue; }
+    if (!ev.id) { err(`[${p}] event with no id: "${ev.title}"`); continue; }
     (idMap.get(ev.id) ?? idMap.set(ev.id, []).get(ev.id)).push(p);
   }
 }
 for (const [id, pools] of idMap) {
-  if (pools.length > 1) err(`Doppelte Event-ID "${id}" in ${pools.join(' + ')} — usedIDs blockiert beide gleichzeitig`);
+  if (pools.length > 1) err(`duplicate event id "${id}" in ${pools.join(' + ')} - usedIDs blocks both at once`);
 }
 
 /* ---------- 2) References and story flags ---------- */
@@ -83,23 +83,23 @@ const noteFlag = (flag, where) => {
 };
 
 const checkOpt = (o, ctx) => {
-  if (o.t === undefined) err(`${ctx}: Option ohne Button-Text`);
+  if (o.t === undefined) err(`${ctx}: option with no button text`);
   // In the messenger a pair of brackets already says "this is an action, not a
   // message". The System: prefix in front of it was historical and cost eight
   // characters of a very narrow bubble. It stays allowed inside chat texts,
   // where it is the messenger's own notice rather than a label.
   if (/^\s*\[\s*System\s*:/i.test(o.t ?? ''))
-    err(`${ctx}: Beschriftung mit "[System: …]" — im Chat tragen Handlungen nur die eckigen Klammern`);
+    err(`${ctx}: caption with "[System: …]" - in a chat, actions carry the square brackets alone`);
   for (const [k, label] of [['loot', 'loot'], ['req', 'req'], ['rem', 'rem']]) {
-    if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" existiert nicht in DB.items`);
+    if (o[k] && !itemIds.has(o[k])) err(`${ctx}: ${label} "${o[k]}" does not exist in DB.items`);
   }
   // req and rem both demand the item; they differ only in whether it
   // survives (EventView.lockReason gates on either). Both on the same item
   // is therefore redundant - and worse, it hides the answer to the one
   // question that matters when reading the data: does the player lose it?
   if (o.req && o.rem && o.req === o.rem)
-    err(`${ctx}: req und rem auf "${o.req}" — beides zugleich ist widersprüchlich. Bleibt der Gegenstand, nur req; wird er abgegeben oder verbraucht, nur rem.`);
-  if (o.rep) for (const n of Object.keys(o.rep)) if (!charNames.has(n)) err(`${ctx}: rep-Charakter "${n}" nicht in DB.chars`);
+    err(`${ctx}: req and rem both on "${o.req}" - the two together contradict each other. If the item stays, req alone; if it is handed over or used up, rem alone.`);
+  if (o.rep) for (const n of Object.keys(o.rep)) if (!charNames.has(n)) err(`${ctx}: rep character "${n}" is not in DB.chars`);
   if (o.next) flagsSet.add(o.next);
 };
 
@@ -111,8 +111,8 @@ for (const p of POOLS) {
     if (ev.reqStory && ev.text) {
       const m = ev.text.match(/(Sekunden später|Minuten später|Kaum (hast|bist|warst)|Keine (Minute|Sekunde)|Sofort danach|Direkt (danach|im Anschluss)|Im selben Moment|Postwendend|Kurz darauf)/);
       if (m) warn(ev.reqStoryAge != null
-        ? `${ctx}: Folge-Ereignis mit reqStoryAge behauptet unmittelbare Nähe ("${m[0]}") — der Auslöser liegt mindestens eine Nacht zurück`
-        : `${ctx}: Folge-Ereignis behauptet unmittelbare Nähe ("${m[0]}") — es kann Stunden später kommen`);
+        ? `${ctx}: a follow-up with reqStoryAge claims to happen right afterwards ("${m[0]}") - the trigger is at least one night ago`
+        : `${ctx}: a follow-up claims to happen right afterwards ("${m[0]}") - it can come hours later`);
       // The other direction: the trigger happened during THIS workday, so a
       // follow-up must not push it into the past. "gestern" is wrong even
       // when it sounds harmless, and it becomes wrong twice over once story
@@ -156,20 +156,20 @@ for (const p of POOLS) {
         // same-day follow-ups.
         if (ev.reqStoryAge != null) continue;
         const g = txt.match(timeRef);
-        if (g) info(`${ctx} ${field}: Zeitbezug "${g[0]}" im Folge-Ereignis — gilt er wirklich nicht dem Auslöser? Der liegt im selben Arbeitstag.`);
+        if (g) info(`${ctx} ${field}: a time reference "${g[0]}" in a follow-up - does it really not refer to the trigger? That is in the same working day.`);
       }
     }
     // Dreiteiler predicates (v5.0): age needs a flag, ranges must be
     // playable, and Friday-only is a dangling-chain trap (random draws
     // compete against the whole pool on a single day).
     if (ev.reqStoryAge != null && !ev.reqStory)
-      err(`${ctx}: reqStoryAge ohne reqStory — das Alter braucht eine Fahne`);
+      err(`${ctx}: reqStoryAge without reqStory - an age needs a flag`);
     if (ev.reqStoryAge != null && (!Number.isInteger(ev.reqStoryAge) || ev.reqStoryAge < 1 || ev.reqStoryAge > 4))
-      err(`${ctx}: reqStoryAge ${ev.reqStoryAge} — erlaubt ist 1 bis 4 (Nächte seit dem Auslöser)`);
+      err(`${ctx}: reqStoryAge ${ev.reqStoryAge} - 1 to 4 is allowed (nights since the trigger)`);
     if (ev.reqWeekDayMin != null && (!Number.isInteger(ev.reqWeekDayMin) || ev.reqWeekDayMin < 2 || ev.reqWeekDayMin > 5))
-      err(`${ctx}: reqWeekDayMin ${ev.reqWeekDayMin} — erlaubt ist 2 bis 5 (Montag wäre wirkungslos)`);
+      err(`${ctx}: reqWeekDayMin ${ev.reqWeekDayMin} - 2 to 5 is allowed (Monday would have no effect)`);
     if (ev.reqWeekDayMin === 5)
-      warn(`${ctx}: reqWeekDayMin 5 — nur Freitag ist eine Baumelfalle, das Ereignis konkurriert an einem einzigen Tag gegen den ganzen Pool. Lieber 4.`);
+      warn(`${ctx}: reqWeekDayMin 5 - Friday alone is a dangling trap, the event competes on one single day against the whole pool. Better 4.`);
     // Events in the random pools fire at ANY time of the workday - a text
     // that pins the scene to a clock time ("Um kurz nach elf zuckt das
     // Licht") is wrong for most draws. References to before 08:00 or to
@@ -199,14 +199,14 @@ for (const p of POOLS) {
         for (const [field, txt] of clockTexts) {
           if (typeof txt !== 'string') continue;
           const c = txt.match(clockRe);
-          if (c) warn(`${ctx} ${field}: Uhrzeit "${c[0].trim()}" — das Ereignis kann zu jeder Tageszeit gezogen werden. Vergangenheit vor 8:00 oder Abend/Zukunft sind ok: dann in clockReviewed eintragen.`);
+          if (c) warn(`${ctx} ${field}: a clock time "${c[0].trim()}" - the event can be drawn at any hour. A past before 8:00, or an evening or future, is fine: enter it in clockReviewed then.`);
         }
       }
     }
     if (p === 'sidequests' && ev.kind !== 'text' && ev.kind !== 'phone')
-      warn(`${ctx}: kind fehlt oder unbekannt ("${ev.kind}") — Dienstgänge brauchen "text" oder "phone"`);
+      warn(`${ctx}: kind missing or unknown ("${ev.kind}") - errands need "text" or "phone"`);
     if (ev.reqStory) (flagsReq.get(ev.reqStory) ?? flagsReq.set(ev.reqStory, []).get(ev.reqStory)).push(ctx);
-    if (ev.char && !charNames.has(ev.char)) err(`${ctx}: char "${ev.char}" nicht in DB.chars`);
+    if (ev.char && !charNames.has(ev.char)) err(`${ctx}: char "${ev.char}" is not in DB.chars`);
     // Node-level chars (phone chats): a node's own char must exist too.
     // `char: null` is legitimate - it forces the anonymous initial inside
     // a character chat and must not be reported.
@@ -216,8 +216,8 @@ for (const p of POOLS) {
     // meetings stay protected through the rep key check above.
     if (p !== 'meetings')
       for (const [nid, node] of Object.entries(ev.nodes ?? {}))
-        if (node.char && !charNames.has(node.char)) err(`${ctx} Node "${nid}": char "${node.char}" nicht in DB.chars`);
-    if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" nicht in DB.chars`);
+        if (node.char && !charNames.has(node.char)) err(`${ctx} node "${nid}": char "${node.char}" is not in DB.chars`);
+    if (ev.reqRep) for (const n of Object.keys(ev.reqRep)) if (!charNames.has(n)) err(`${ctx}: reqRep "${n}" is not in DB.chars`);
 
     for (const o of ev.opts ?? []) {
       checkOpt(o, ctx);
@@ -227,19 +227,19 @@ for (const p of POOLS) {
     if (!ev.nodes) continue;
 
     /* --- Chain-Events --- */
-    if (!ev.startNode) { err(`${ctx}: nodes ohne startNode`); continue; }
-    if (!ev.nodes[ev.startNode]) err(`${ctx}: startNode "${ev.startNode}" existiert nicht`);
+    if (!ev.startNode) { err(`${ctx}: nodes without a startNode`); continue; }
+    if (!ev.nodes[ev.startNode]) err(`${ctx}: startNode "${ev.startNode}" does not exist`);
 
     for (const [nid, node] of Object.entries(ev.nodes)) {
       for (const o of node.opts ?? []) {
         checkOpt(o, `${ctx}#${nid}`);
         if (o.action) continue;
-        if (!o.next) { err(`${ctx}#${nid}: Option "${o.t}" ohne next -> Sackgasse`); continue; }
-        if (!ev.nodes[o.next] && !ev.results?.[o.next]) err(`${ctx}#${nid}: next "${o.next}" zeigt ins Leere`);
+        if (!o.next) { err(`${ctx}#${nid}: option "${o.t}" has no next -> dead end`); continue; }
+        if (!ev.nodes[o.next] && !ev.results?.[o.next]) err(`${ctx}#${nid}: next "${o.next}" leads nowhere`);
       }
     }
     for (const [rid, res] of Object.entries(ev.results ?? {})) {
-      if (res.txt === undefined) err(`${ctx}!${rid}: result ohne txt -> zeigt "undefined"`);
+      if (res.txt === undefined) err(`${ctx}!${rid}: result without txt -> shows "undefined"`);
       if (res.next) noteFlag(res.next, `${ctx}!${rid}`);   // chain result -> story flag
       for (const k of ['loot', 'rem']) if (res[k] && !itemIds.has(res[k])) err(`${ctx}!${rid}: ${k} "${res[k]}" unbekannt`);
     }
@@ -271,7 +271,7 @@ for (const p of POOLS) {
     const checkFree = (opts, where) => {
       if (!opts?.length) return;
       if (opts.every(o => o.req || o.rem))
-        err(`${where}: ALLE ${opts.length} Optionen brauchen ein Item -> Event kann sich komplett sperren`);
+        err(`${where}: ALL ${opts.length} options need an item -> the event can lock itself completely`);
     };
     checkFree(ev.opts, ctx);
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) checkFree(node.opts, `${ctx}#${nid}`);
@@ -286,13 +286,13 @@ const numCheck = (o, ctx) => {
   const m = o.m;
   for (const k of ['l', 'a', 'b']) {
     const v = o[k];
-    if (typeof v === 'number' && v % 5 !== 0) warn(`${ctx}: ${k}:${v} liegt nicht im 5er-Raster`);
+    if (typeof v === 'number' && v % 5 !== 0) warn(`${ctx}: ${k}:${v} is off the grid of five`);
   }
   if (typeof m === 'number') {
-    if (m < 2) err(`${ctx}: m:${m} — keine Aktion dauert unter 2 Minuten, und Zeit läuft nie rückwärts`);
+    if (m < 2) err(`${ctx}: m:${m} - no action takes under 2 minutes, and time never runs backwards`);
     const impact = Math.abs(o.l || 0) + Math.abs(o.a || 0) + Math.abs(o.b || 0);
     if (m >= 15 && impact < 10 && !o.loot && !o.rep)
-      warn(`${ctx}: m:${m} bei Gesamtwirkung ${impact} — Gratis-Vorspuler ohne Konsequenz`);
+      warn(`${ctx}: m:${m} at a total impact of ${impact} - a free fast-forward with no consequence`);
   }
 };
 for (const p of POOLS) {
@@ -317,8 +317,8 @@ const reactive = [
 for (const [where, entries] of reactive) {
   const seen = new Map();
   for (const e of entries) {
-    const ctx = `[${where}/${e.id ?? '(ohne id)'}]`;
-    if (!e.id) err(`${ctx}: Eintrag ohne id`);
+    const ctx = `[${where}/${e.id ?? '(no id)'}]`;
+    if (!e.id) err(`${ctx}: entry with no id`);
     else seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
     if (e.reqStory) (flagsReq.get(e.reqStory) ?? flagsReq.set(e.reqStory, []).get(e.reqStory)).push(ctx);
   }
@@ -327,7 +327,7 @@ for (const [where, entries] of reactive) {
 
 // Every character named as employee of the month has to exist.
 for (const name of Object.keys(DB.intranet?.employee ?? {}))
-  if (!charNames.has(name)) err(`[intranet/employee] "${name}" nicht in DB.chars`);
+  if (!charNames.has(name)) err(`[intranet/employee] "${name}" is not in DB.chars`);
 
 /* ---------- 2d2) Achievements the engine hands out ---------- */
 // Since 6.0 unlockAchievement() takes an id alone and looks the words up here.
@@ -342,15 +342,15 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
     catch { continue; }
     for (const m of src.matchAll(/unlockAchievement\(\s*'([^']+)'/g)) {
       awarded.add(m[1]);
-      if (!known.has(m[1])) err(`[achievements] "${m[1]}" wird in ${file} vergeben, steht aber nicht in data_achievements.js`);
+      if (!known.has(m[1])) err(`[achievements] "${m[1]}" is awarded in ${file} but is not in data_achievements.js`);
     }
     // The old three-argument form would silently pass its own text again.
     for (const m of src.matchAll(/unlockAchievement\(\s*'[^']+'\s*,/g))
-      err(`[achievements] ${file}: unlockAchievement mit mehr als der ID — Titel und Text stehen in data_achievements.js`);
+      err(`[achievements] ${file}: unlockAchievement with more than the id - title and text live in data_achievements.js`);
   }
   for (const a of DB.achievements ?? []) {
     if (a.toast && a.toast === a.desc)
-      warn(`[achievements] "${a.id}": toast ist wortgleich mit desc — dann kann das Feld weg`);
+      warn(`[achievements] "${a.id}": toast is word for word the same as desc - then the field can go`);
   }
 }
 
@@ -361,18 +361,18 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
 {
   const VARS = new Set(['{rage}', '{fired}', '{survived}', '{streak}']);
   for (const [id, line] of Object.entries(DB.lore?.lines ?? {})) {
-    if (typeof line !== 'string' || !line.trim()) { err(`[lore/${id}]: leer`); continue; }
+    if (typeof line !== 'string' || !line.trim()) { err(`[lore/${id}]: empty`); continue; }
     for (const ph of line.match(/\{[a-zA-Z]+\}/g) ?? [])
-      if (!VARS.has(ph)) err(`[lore/${id}]: Platzhalter ${ph} wird von niemandem ersetzt`);
+      if (!VARS.has(ph)) err(`[lore/${id}]: placeholder ${ph} is replaced by nobody`);
   }
   const years = new Set();
   for (const [i, ch] of (DB.lore?.chapters ?? []).entries()) {
     const ctx = `[lore/chapters[${i}]]`;
-    if (!ch.year) { err(`${ctx}: year fehlt — die Ansicht schlüsselt danach`); continue; }
-    if (years.has(ch.year)) err(`${ctx}: Jahr "${ch.year}" doppelt — {#each} braucht es eindeutig`);
+    if (!ch.year) { err(`${ctx}: year is missing - the view keys on it`); continue; }
+    if (years.has(ch.year)) err(`${ctx}: year "${ch.year}" is duplicated - {#each} needs it unique`);
     years.add(ch.year);
-    if (!ch.title) err(`${ctx}: title fehlt`);
-    if (!ch.paragraphs?.length) err(`${ctx} "${ch.year}": keine paragraphs`);
+    if (!ch.title) err(`${ctx}: title is missing`);
+    if (!ch.paragraphs?.length) err(`${ctx} "${ch.year}": no paragraphs`);
   }
 }
 
@@ -387,6 +387,13 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
 // and had to be extended for every new page - three times, each time after the
 // check had already wrongly rejected correct data. A declared kind fails the
 // other way round: an unknown one is reported instead of quietly skipped.
+/*
+ * The six stations of the summer party. The list is here rather than in the
+ * engine because the engine never needed it: engine_events filters
+ * `ev.loc === loc` and takes whatever it is given.
+ */
+const PARTY_LOCS = new Set(['bar', 'buffet', 'dance', 'lounge', 'outside', 'toilet']);
+
 const PAGE_TONES = new Set(['slate', 'red', 'blue', 'amber', 'purple']);
 // Badge tones on the Wall of Deals. Mirrors TONES in IntranetSales.svelte -
 // an unknown one there falls back to grey, which reads as a design choice
@@ -411,8 +418,8 @@ const uniqueBy = (list, pick, ctx, what) => {
   const seen = new Set();
   for (const [i, entry] of (list ?? []).entries()) {
     const key = pick(entry);
-    if (!key) { err(`${ctx}[${i}]: ${what} fehlt — die Ansicht schlüsselt danach`); continue; }
-    if (seen.has(key)) err(`${ctx}[${i}]: ${what} "${key}" doppelt — {#each} braucht es eindeutig`);
+    if (!key) { err(`${ctx}[${i}]: ${what} is missing - the view keys on it`); continue; }
+    if (seen.has(key)) err(`${ctx}[${i}]: ${what} "${key}" is duplicated - {#each} needs it unique`);
     seen.add(key);
   }
 };
@@ -422,82 +429,82 @@ for (const [pageName, src] of Object.entries(DB.intranet ?? {})) {
   if (!page) continue;
   const ctx = `[intranet/${pageName}/page]`;
 
-  if (!page.kind) { err(`${ctx}: kind fehlt — die Seite muss ihre Form ansagen`); continue; }
+  if (!page.kind) { err(`${ctx}: kind is missing - the page has to announce its shape`); continue; }
   const required = PAGE_SHAPES[page.kind];
   if (!required) {
     err(`${ctx}: kind "${page.kind}" unbekannt. Erlaubt: ${Object.keys(PAGE_SHAPES).join(', ')}`);
     continue;
   }
-  for (const key of required) if (!page[key]) err(`${ctx}: ${key} fehlt (kind "${page.kind}")`);
+  for (const key of required) if (!page[key]) err(`${ctx}: ${key} is missing (kind "${page.kind}")`);
 
   // Placeholders are filled in by the component. A typo shows up as a literal
   // brace on screen, which nobody reports as a bug.
   for (const ph of (page.versionLine ?? '').match(/\{[a-zA-Z]+\}/g) ?? [])
     if (!['{version}', '{note}'].includes(ph))
-      err(`${ctx}: Platzhalter ${ph} in versionLine wird von niemandem ersetzt`);
+      err(`${ctx}: placeholder ${ph} in versionLine is replaced by nobody`);
 
   if (page.kind === 'sections') {
     uniqueBy(page.sections, s => s.title, `${ctx} sections`, 'title');
     for (const [i, sec] of (page.sections ?? []).entries()) {
       const sctx = `${ctx} sections[${i}] "${sec.title ?? '?'}"`;
       if (sec.tone && !PAGE_TONES.has(sec.tone))
-        err(`${sctx}: tone "${sec.tone}" unbekannt — die Ansicht fällt still auf slate zurück`);
+        err(`${sctx}: tone "${sec.tone}" is unknown - the view falls back on slate without a word`);
       if (!LISTS.some(k => sec[k]?.length))
-        err(`${sctx}: weder block, paragraphs noch items — bliebe leer`);
+        err(`${sctx}: neither block, paragraphs nor items - it would stay empty`);
       for (const k of LISTS)
-        if (sec[k] && !Array.isArray(sec[k])) err(`${sctx}: ${k} muss eine Liste sein`);
+        if (sec[k] && !Array.isArray(sec[k])) err(`${sctx}: ${k} has to be a list`);
       if (sec.lead && !sec.items?.length)
-        warn(`${sctx}: lead ohne items — die Einleitung führt ins Leere`);
+        warn(`${sctx}: a lead with no items - the introduction leads nowhere`);
     }
 
   } else if (page.kind === 'interview') {
     uniqueBy(page.turns, t => t.q, `${ctx} turns`, 'Frage');
     for (const [i, turn] of (page.turns ?? []).entries()) {
-      if (!turn.a) err(`${ctx} turns[${i}]: Antwort fehlt`);
+      if (!turn.a) err(`${ctx} turns[${i}]: the answer is missing`);
       // q is plain text, a goes through {@html}. Markup in the question would
       // be readable on screen instead of rendered.
       if (turn.q && /<[a-z][^>]*>/i.test(turn.q))
-        err(`${ctx} turns[${i}]: Markup in der Frage — sie wird als Text ausgegeben`);
+        err(`${ctx} turns[${i}]: markup in the question - it is printed as text`);
     }
     // The extra question is inserted before the last pair, so there has to be
     // one to insert it before.
     if ((page.turns?.length ?? 0) < 2)
-      err(`${ctx}: weniger als zwei Paare — die Zusatzfrage hätte keinen Platz`);
+      err(`${ctx}: fewer than two pairs - the follow-up question would have no room`);
 
   } else if (page.kind === 'deals') {
     uniqueBy(page.deals, d => d.customer, `${ctx} deals`, 'Kunde');
     for (const [i, deal] of (page.deals ?? []).entries()) {
       const dctx = `${ctx} deals[${i}] "${deal.customer ?? '?'}"`;
-      if (!deal.tone) err(`${dctx}: tone fehlt — das Abzeichen bliebe grau`);
+      if (!deal.tone) err(`${dctx}: tone is missing - the badge would stay grey`);
       else if (!DEAL_TONES.has(deal.tone))
-        err(`${dctx}: tone "${deal.tone}" unbekannt — die Ansicht fällt still auf grau zurück`);
-      if (!deal.rows?.length) err(`${dctx}: keine rows`);
+        err(`${dctx}: tone "${deal.tone}" is unknown - the view falls back on grey without a word`);
+      if (!deal.rows?.length) err(`${dctx}: no rows`);
       uniqueBy(deal.rows, r => r.label, `${dctx} rows`, 'Zeilentitel');
     }
 
   } else if (page.kind === 'header') {
     if (page.signoff && !Array.isArray(page.signoff))
-      err(`${ctx}: signoff muss eine Liste sein — je Zeile ein Eintrag`);
+      err(`${ctx}: signoff has to be a list - one entry per line`);
 
   } else if (page.kind === 'panel') {
     if (page.incidentLabel && !Array.isArray(page.incidentLabel))
-      err(`${ctx}: incidentLabel muss eine Liste sein — je Zeile ein Eintrag`);
+      err(`${ctx}: incidentLabel has to be a list - one entry per line`);
 
   } else if (page.kind === 'records') {
     for (const key of ['title', 'subtitle', 'userLabel', 'passLabel', 'denied', 'submit'])
-      if (!page.login?.[key]) err(`${ctx}: login.${key} fehlt`);
+      if (!page.login?.[key]) err(`${ctx}: login.${key} is missing`);
 
     // Schnösel's record is fixed here; Müller's is assembled in the component
     // from the archive and only contributes labels.
     const rec = page.schnoesel ?? {};
     for (const key of ['recordId', 'name', 'role', 'status'])
-      if (!rec[key]) err(`${ctx} schnoesel: ${key} fehlt`);
+      if (!rec[key]) err(`${ctx} schnoesel: ${key} is missing`);
     uniqueBy(rec.master, r => r.label, `${ctx} schnoesel.master`, 'Feldname');
-    uniqueBy(rec.documents, d => d.id, `${ctx} schnoesel.documents`, 'Kennung');
+    uniqueBy(rec.documents, d => d.id, `${ctx} schnoesel.documents`, 'id');
     uniqueBy(rec.notes, n => n.title, `${ctx} schnoesel.notes`, 'Titel');
     for (const [i, row] of (rec.master ?? []).entries())
       if (!row.value && !row.lines?.length)
-        err(`${ctx} schnoesel.master[${i}] "${row.label}": weder value noch lines — bliebe leer`);
+        err(`${ctx} schnoesel.master[${i}] "${row.label}": neither value nor lines - it would stay empty`);
     for (const [i, note] of (rec.notes ?? []).entries())
       if (note.tone && !['good', 'bad', 'neutral'].includes(note.tone))
         err(`${ctx} schnoesel.notes[${i}]: tone "${note.tone}" unbekannt`);
@@ -517,36 +524,36 @@ for (const [pageName, src] of Object.entries(DB.intranet ?? {})) {
       return inTicker || inMails || inRecord;
     };
     for (const [i, acc] of (page.accounts ?? []).entries()) {
-      if (!acc.user || !acc.record) { err(`${ctx} accounts[${i}]: user und record sind Pflicht`); continue; }
+      if (!acc.user || !acc.record) { err(`${ctx} accounts[${i}]: user and record are required`); continue; }
       if (acc.user !== acc.user.toLowerCase())
-        err(`${ctx} accounts[${i}]: "${acc.user}" — die Anmeldung vergleicht kleingeschrieben`);
+        err(`${ctx} accounts[${i}]: "${acc.user}" - the login compares in lower case`);
       if (!page[acc.record])
-        err(`${ctx} accounts[${i}]: record "${acc.record}" gibt es auf dieser Seite nicht`);
+        err(`${ctx} accounts[${i}]: record "${acc.record}" does not exist on this page`);
       if (!findable(acc.user))
-        err(`${ctx} accounts[${i}]: "${acc.user}" steht weder im Ticker, noch in einer Mail, noch in der Support-Zeile — der Spieler kann den Namen nirgends ablesen`);
+        err(`${ctx} accounts[${i}]: "${acc.user}" appears neither in the ticker, nor in a mail, nor in the support line - the player can read the name off nowhere`);
     }
 
     // The career notes: {count} is replaced by the engine, nothing else is.
     for (const [key, note] of Object.entries(src.careerNotes ?? {})) {
       const nctx = `[intranet/${pageName}] careerNotes.${key}`;
-      if (!note.title || !note.text) err(`${nctx}: title und text sind Pflicht`);
+      if (!note.title || !note.text) err(`${nctx}: title and text are required`);
       if (note.tone && !['good', 'bad', 'neutral'].includes(note.tone))
         err(`${nctx}: tone "${note.tone}" unbekannt`);
       for (const ph of `${note.title}${note.text}`.match(/\{[a-zA-Z]+\}/g) ?? [])
-        if (ph !== '{count}') err(`${nctx}: Platzhalter ${ph} wird von niemandem ersetzt`);
+        if (ph !== '{count}') err(`${nctx}: placeholder ${ph} is replaced by nobody`);
     }
 
     // {month} is replaced by the component. Anything else stays on screen.
     for (const ph of (page.mueller?.statusTemplate ?? '').match(/\{[a-zA-Z]+\}/g) ?? [])
-      if (ph !== '{month}') err(`${ctx} mueller: Platzhalter ${ph} wird von niemandem ersetzt`);
+      if (ph !== '{month}') err(`${ctx} mueller: placeholder ${ph} is replaced by nobody`);
 
   } else if (page.kind === 'menu') {
     // The id, not the day name: the canteen matches today against it,
     // and it is the same in both trees.
-    uniqueBy(page.menu, r => r.id, `${ctx} menu`, 'Kennung');
+    uniqueBy(page.menu, r => r.id, `${ctx} menu`, 'id');
     for (const row of [...(page.menu ?? []), page.saturday].filter(Boolean)) {
       for (const slot of ['classic', 'veggie']) {
-        if (!row[slot]?.name) err(`${ctx} "${row.day ?? '?'}": ${slot}.name fehlt — die Zeile bliebe leer`);
+        if (!row[slot]?.name) err(`${ctx} "${row.day ?? '?'}": ${slot}.name is missing - the row would stay empty`);
       }
     }
   }
@@ -557,22 +564,22 @@ const mailIdSeen = new Map();
 const subjSeen = new Map();
 for (const e of DB.emails) {
   const ctx = `[emails/${e.id ?? e.subj}]`;
-  if (!e.id) err(`${ctx}: keine id — usedEmails nutzt die id als Schlüssel!`);
+  if (!e.id) err(`${ctx}: no id - usedEmails uses the id as its key!`);
   else mailIdSeen.set(e.id, (mailIdSeen.get(e.id) ?? 0) + 1);
-  if (!e.subj) err(`${ctx}: kein subj — die Mail hätte keinen Betreff im Posteingang`);
+  if (!e.subj) err(`${ctx}: no subj - the mail would have no subject in the inbox`);
   else subjSeen.set(e.subj, (subjSeen.get(e.subj) ?? 0) + 1);
   for (const o of e.opts ?? []) {
     checkOpt(o, ctx);
     if (o.next) noteFlag(o.next, ctx);
-    if (o.nextEmail && !DB.emails.some(x => x.id === o.nextEmail)) err(`${ctx}: nextEmail "${o.nextEmail}" existiert nicht`);
+    if (o.nextEmail && !DB.emails.some(x => x.id === o.nextEmail)) err(`${ctx}: nextEmail "${o.nextEmail}" does not exist`);
   }
 }
-for (const [id, c] of mailIdSeen) if (c > 1) err(`Doppelte Mail-ID "${id}" (${c}x) — usedEmails blockiert beide, nextEmail trifft die falsche`);
-for (const [s, c] of subjSeen) if (c > 1) warn(`Doppelter Mail-Betreff "${s}" (${c}x) — nur kosmetisch, wirkt im Spiel aber wie dieselbe Mail`);
+for (const [id, c] of mailIdSeen) if (c > 1) err(`duplicate mail id "${id}" (${c}x) - usedEmails blocks both, nextEmail hits the wrong one`);
+for (const [s, c] of subjSeen) if (c > 1) warn(`duplicate mail subject "${s}" (${c}x) - only cosmetic, but in the game it reads as the same mail`);
 
 /* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
-  if (!flagsSet.has(flag)) err(`Story-Flag "${flag}" wird NIE gesetzt, aber gefordert von ${ctxs.join(', ')} -> toter Content`);
+  if (!flagsSet.has(flag)) err(`story flag "${flag}" is NEVER set but required by ${ctxs.join(', ')} -> dead content`);
 }
 
 /* ---------- 4b) Orphaned flags: set, but required by nobody ---------- */
@@ -599,7 +606,7 @@ for (const [flag, wheres] of flagsSetWhere) {
     if (compFlags.has(flag)) continue;
     if (engineSource.includes(`'${flag}'`) || engineSource.includes(`"${flag}"`)) continue;
     const list = wheres.length > 3 ? `${wheres.slice(0, 3).join(', ')} … (+${wheres.length - 3})` : wheres.join(', ');
-    warn(`Story-Flag "${flag}" wird gesetzt, aber von keinem Ereignis gefordert -> Sackgasse (${list})`);
+    warn(`story flag "${flag}" is set but required by no event -> dead end (${list})`);
 }
 
 /* ---------- 4c) Text quality ---------- */
@@ -608,12 +615,12 @@ const PLACEHOLDER = /\b(TODO|TBD|FIXME|XXX|Lorem ipsum|Platzhalter)\b/i;
 const checkText = (ctx, field, txt) => {
     if (typeof txt !== 'string') return;
 
-    if (txt !== txt.trim())        warn(`${ctx} ${field}: führendes oder folgendes Leerzeichen`);
+    if (txt !== txt.trim())        warn(`${ctx} ${field}: a leading or trailing space`);
     if (/ {2,}/.test(txt))         warn(`${ctx} ${field}: doppeltes Leerzeichen`);
-    if (PLACEHOLDER.test(txt))     err (`${ctx} ${field}: Platzhalter im Text`);
+    if (PLACEHOLDER.test(txt))     err (`${ctx} ${field}: a placeholder in the text`);
 
     const t = txt.trim();
-    if (t.length === 0) { err(`${ctx} ${field}: leerer Text`); return; }
+    if (t.length === 0) { err(`${ctx} ${field}: empty text`); return; }
 
     // Markup in fields that are rendered as plain text.
     // Event and mail texts go through EventView/EmailView, which split them on
@@ -622,7 +629,7 @@ const checkText = (ctx, field, txt) => {
     // intranet, the tutorial and the morning moods go through {@html}, and
     // none of them passes through here.
     const markup = t.match(/<\/?(br|b|i|u|p|em|strong|span|div|ul|ol|li|h[1-6])\b[^>]*>/i);
-    if (markup) err(`${ctx} ${field}: Auszeichnung "${markup[0]}" in einem Feld, das als reiner Text ausgegeben wird — benutze \\n für einen Absatz`);
+    if (markup) err(`${ctx} ${field}: markup "${markup[0]}" in a field that is printed as plain text - use \\n for a paragraph break`);
 
     // First-order quotes are single throughout the game: 'so'. Double
     // ones belong inside a quote within a quote. A text with double
@@ -631,10 +638,10 @@ const checkText = (ctx, field, txt) => {
     // exceptions grew where a file was single quoted in the source and
     // typing " inside the text was simply the more convenient key.
     if (t.includes('"') && !t.includes("'"))
-        warn(`${ctx} ${field}: doppelte Anführungszeichen in erster Ordnung — im Spieltext gilt 'so', doppelte nur verschachtelt`);
+        warn(`${ctx} ${field}: double quotation marks at the first level - game text uses 'these', double ones only when nested`);
 
     // Two dots are neither a full stop nor an ellipsis, they are a typo.
-    if (/(?<!\.)\.\.(?!\.)/.test(t)) warn(`${ctx} ${field}: doppelter Punkt (".." statt "..." oder ".")`);
+    if (/(?<!\.)\.\.(?!\.)/.test(t)) warn(`${ctx} ${field}: a double full stop (".." instead of "..." or ".")`);
 
     // Only prose gets a length check. Button labels are supposed to be terse
     // ("Auflegen.", "Ignorieren") and would otherwise drown the report.
@@ -642,7 +649,7 @@ const checkText = (ctx, field, txt) => {
     // CMD: values are control commands for the engine (open the intranet or
     // the bulletin board), not sentences - they are meant to be short.
     const isCommand = /^CMD:[A-Z_]+$/.test(t);
-    if (isProse && !isCommand && t.length < 20) info(`${ctx} ${field}: sehr kurz ("${t}")`);
+    if (isProse && !isCommand && t.length < 20) info(`${ctx} ${field}: very short ("${t}")`);
 
     // Unbalanced quotation marks suggest a truncated sentence
     for (const q of ['"', '„', '»']) {
@@ -650,7 +657,7 @@ const checkText = (ctx, field, txt) => {
         const open  = (t.match(new RegExp(q === '"' ? '"' : q, 'g')) || []).length;
         const shut  = q === '"' ? open : (t.match(new RegExp(close, 'g')) || []).length;
         if (q === '"' ? open % 2 !== 0 : open !== shut) {
-            warn(`${ctx} ${field}: unpaarige Anführungszeichen (${q})`);
+            warn(`${ctx} ${field}: unpaired quotation marks (${q})`);
             break;
         }
     }
@@ -716,9 +723,9 @@ for (const p of POOLS) {
       // the matching reputation strand.
       for (const key of ['req', 'rem'])
         if (o[key] && DB.items[o[key]]?.quest)
-          err(`[${p}/${ev.id}] opt.${key} verlangt den Quest-Gegenstand "${o[key]}" — Trophäen sind nur lootbar`);
-      if (o.r.includes('\\')) warn(`[${p}/${ev.id}] opt.r enthält Backslash`);
-      if (/<[a-zA-Z/]/.test(o.r)) err(`[${p}/${ev.id}] opt.r enthält HTML-Tag — Ergebnistexte werden als Klartext ausgegeben, das Markup wäre sichtbar`);
+          err(`[${p}/${ev.id}] opt.${key} demands the quest item "${o[key]}" - trophies can only be looted`);
+      if (o.r.includes('\\')) warn(`[${p}/${ev.id}] opt.r contains a backslash`);
+      if (/<[a-zA-Z/]/.test(o.r)) err(`[${p}/${ev.id}] opt.r contains an HTML tag - result texts are printed as plain text, so the markup would show`);
     }
   }
 }
@@ -732,7 +739,7 @@ for (const p of POOLS) for (const ev of DB[p]) {
   Object.values(ev.results ?? {}).forEach(collect);
 }
 DB.emails.forEach(e => (e.opts ?? []).forEach(collect));
-for (const id of itemIds) if (!used.has(id)) info(`Item "${id}" (${DB.items[id].name}) wird von keinem Event vergeben/verlangt`);
+for (const id of itemIds) if (!used.has(id)) info(`item "${id}" (${DB.items[id].name}) is awarded or demanded by no event`);
 
 /* ---------- 6b) Usable items ---------- */
 // `use` is what makes an item usable: it drives the backpack buttons, the
@@ -748,38 +755,38 @@ for (const id of itemIds) {
   const ctx = `Item "${id}"`;
 
   for (const k of ['desc', 'warn', 'log', 'color'])
-    if (!use[k]) err(`${ctx}: use.${k} fehlt — ohne das bleibt der Dialog oder das Protokoll leer`);
+    if (!use[k]) err(`${ctx}: use.${k} is missing - without it the dialog or the log stays empty`);
 
   for (const k of Object.keys(use))
-    if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} ist kein bekanntes Feld`);
+    if (!USE_FIELDS.includes(k)) err(`${ctx}: use.${k} is not a known field`);
 
   // A trade-off item pays with reputation. Unlike an event choice it can be
   // triggered again and again, so the ceiling here is tighter than the ±5
   // of an event - and a permanent one without a cooldown has no ceiling.
   if (use.rep) {
     for (const [n, v] of Object.entries(use.rep)) {
-      if (!charNames.has(n)) err(`${ctx}: use.rep-Charakter "${n}" nicht in DB.chars`);
-      if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} — ein Gegenstand ist wiederholt benutzbar, hier hoechstens ±5`);
+      if (!charNames.has(n)) err(`${ctx}: use.rep character "${n}" is not in DB.chars`);
+      if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} - an item can be used again and again, so at most ±5 here`);
     }
   }
   if (item.keep && !use.cooldown && (use.b || use.rep))
-    err(`${ctx}: bleibender Gegenstand mit Kosten (use.b/use.rep) braucht eine cooldown — sonst beliebig oft auslösbar`);
+    err(`${ctx}: an item that stays and has a cost (use.b/use.rep) needs a cooldown - otherwise it can be triggered any number of times`);
 
   if (!use.a && !use.l)
-    err(`${ctx}: use ohne Wirkung — a oder l muss gesetzt sein`);
+    err(`${ctx}: use with no effect - a or l has to be set`);
 
   for (const k of ['a', 'l'])
     if (use[k] !== undefined && !(use[k] < 0))
-      err(`${ctx}: use.${k} muss negativ sein (Werte werden gesenkt), ist ${use[k]}`);
+      err(`${ctx}: use.${k} has to be negative (values are lowered), it is ${use[k]}`);
 
   if (use.cooldown && !item.keep)
-    err(`${ctx}: use.cooldown ohne keep — was verbraucht wird, braucht keine Wartezeit`);
+    err(`${ctx}: use.cooldown without keep - what is consumed needs no waiting time`);
 
   if (item.keep && !use.cooldown)
-    err(`${ctx}: keep ohne use.cooldown — wäre unbegrenzt oft benutzbar`);
+    err(`${ctx}: keep without use.cooldown - it could be used without limit`);
 
   if (item.quest)
-    err(`${ctx}: Quest-Items sind Trophäen und dürfen kein use haben`);
+    err(`${ctx}: quest items are trophies and may not have a use`);
 }
 
 /* ---------- 6c) Passive items ---------- */
@@ -795,24 +802,24 @@ for (const id of itemIds) {
   const ctx = `Item "${id}"`;
 
   for (const k of Object.keys(pas))
-    if (!PASSIVE_FIELDS.includes(k)) err(`${ctx}: passive.${k} ist kein bekanntes Feld`);
+    if (!PASSIVE_FIELDS.includes(k)) err(`${ctx}: passive.${k} is not a known field`);
 
-  if (!pas.onChar) err(`${ctx}: passive ohne onChar — ein Effekt ohne Auslöser feuert nie`);
-  else if (!charNames.has(pas.onChar)) err(`${ctx}: passive.onChar "${pas.onChar}" nicht in DB.chars`);
+  if (!pas.onChar) err(`${ctx}: passive without onChar - an effect with no trigger never fires`);
+  else if (!charNames.has(pas.onChar)) err(`${ctx}: passive.onChar "${pas.onChar}" is not in DB.chars`);
 
-  if (!pas.log) err(`${ctx}: passive ohne log — eine Zahl, die ohne Klick erscheint, sieht sonst wie ein Fehler aus`);
-  if (!pas.a && !pas.l && !pas.b) err(`${ctx}: passive ohne Wirkung — l, a oder b muss gesetzt sein`);
-  if (!item.keep) err(`${ctx}: passive ohne keep — ein Verbrauchsgut kann nicht dauerhaft wirken`);
-  if (item.quest) err(`${ctx}: Quest-Items sind Trophäen und dürfen kein passive haben`);
+  if (!pas.log) err(`${ctx}: passive without log - a figure that appears without a click otherwise looks like a fault`);
+  if (!pas.a && !pas.l && !pas.b) err(`${ctx}: passive with no effect - l, a or b has to be set`);
+  if (!item.keep) err(`${ctx}: passive without keep - a consumable cannot have a lasting effect`);
+  if (item.quest) err(`${ctx}: quest items are trophies and may not have a passive`);
 
   // The player never chooses to trigger it, so it may only ever help; a
   // passive penalty would be an invisible tax nobody can avoid.
   for (const k of ['al', 'fl', 'cr'])
     if (pas[k] !== undefined && !(pas[k] < 0))
-      err(`${ctx}: passive.${k} muss negativ sein — ein Effekt ohne Entscheidung darf nicht schaden, ist ${pas[k]}`);
+      err(`${ctx}: passive.${k} has to be negative - an effect without a decision must not hurt, it is ${pas[k]}`);
   for (const k of ['al', 'fl', 'cr'])
     if (typeof pas[k] === 'number' && Math.abs(pas[k]) > 10)
-      warn(`${ctx}: passive.${k} ${pas[k]} — wirkt bei JEDEM Auftritt der Figur, hoechstens -10`);
+      warn(`${ctx}: passive.${k} ${pas[k]} - it applies on EVERY appearance of the character, so at most -10`);
 }
 
 /* ---------- 6d) Compendium ---------- */
@@ -832,21 +839,21 @@ for (const id of itemIds) {
   for (const e of DB.compendium ?? []) {
     const ctx = `Kompendium "${e.id ?? '?'}"`;
     for (const k of Object.keys(e))
-      if (!FIELDS.includes(k)) err(`${ctx}: ${k} ist kein bekanntes Feld`);
-    if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role und summary sind Pflicht`);
+      if (!FIELDS.includes(k)) err(`${ctx}: ${k} is not a known field`);
+    if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role and summary are required`);
     // The view groups and colours by category, so an unknown one would show up
     // in no tab at all - invisible, without anything failing.
-    if (!['team', 'person', 'ort', 'vorgang'].includes(e.cat))
-      err(`${ctx}: cat "${e.cat}" unbekannt — erlaubt sind team, person, ort, vorgang`);
+    if (!['team', 'person', 'place', 'matter'].includes(e.cat))
+      err(`${ctx}: cat "${e.cat}" is unknown - team, person, ort, vorgang are allowed`);
     if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
     ids.add(e.id);
 
-    if (!(e.seen ?? []).length) err(`${ctx}: ohne seen wird der Kopf nie freigeschaltet`);
+    if (!(e.seen ?? []).length) err(`${ctx}: with no seen the entry is never unlocked`);
     for (const id of e.seen ?? [])
-      if (!istQuelle(id)) err(`${ctx}: seen "${id}" ist weder Ereignis noch Mail`);
+      if (!istQuelle(id)) err(`${ctx}: seen "${id}" is neither an event nor a mail`);
 
     const notes = e.notes ?? [];
-    if (notes.length < 3) warn(`${ctx}: nur ${notes.length} Notizen — unter drei wirkt ein Eintrag dünn`);
+    if (notes.length < 3) warn(`${ctx}: only ${notes.length} notes - under three an entry feels thin`);
     // An entry may hold as many notes as it has distinct scenes to draw on,
     // plus one for the pattern that emerges across them. This ties the length
     // to the evidence rather than to a category: the colleagues and the big
@@ -855,19 +862,19 @@ for (const id of itemIds) {
     const quellen = new Set([...(e.seen ?? []), ...notes.map(n => n.flag ?? n.seen)]).size;
     const maxNotes = Math.min(8, Math.max(3, quellen));
     if (notes.length > maxNotes)
-      warn(`${ctx}: ${notes.length} Notizen bei ${quellen} Quellen — höchstens ${maxNotes}, sonst wird erfunden statt beobachtet`);
+      warn(`${ctx}: ${notes.length} notes for ${quellen} sources - at most ${maxNotes}, or it is invention rather than observation`);
 
     const texte = new Set();
     for (const [i, n] of notes.entries()) {
       const nctx = `${ctx} notes[${i}]`;
       for (const k of Object.keys(n))
-        if (!NOTE_FIELDS.includes(k)) err(`${nctx}: ${k} ist kein bekanntes Feld`);
-      if (!n.text) err(`${nctx}: ohne text`);
-      if (!n.seen && !n.flag) err(`${nctx}: ohne Auslöser (seen oder flag) erscheint die Notiz nie`);
-      if (n.seen && n.flag) err(`${nctx}: seen und flag zugleich — ein Auslöser genügt`);
-      if (n.seen && !istQuelle(n.seen)) err(`${nctx}: seen "${n.seen}" ist weder Ereignis noch Mail`);
-      if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: Fahne "${n.flag}" wird von keinem Ereignis gesetzt`);
-      if (n.text && texte.has(n.text)) err(`${nctx}: Notiztext doppelt`);
+        if (!NOTE_FIELDS.includes(k)) err(`${nctx}: ${k} is not a known field`);
+      if (!n.text) err(`${nctx}: without text`);
+      if (!n.seen && !n.flag) err(`${nctx}: with no trigger (seen or flag) the note never appears`);
+      if (n.seen && n.flag) err(`${nctx}: seen and flag together - one trigger is enough`);
+      if (n.seen && !istQuelle(n.seen)) err(`${nctx}: seen "${n.seen}" is neither an event nor a mail`);
+      if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: flag "${n.flag}" is set by no event`);
+      if (n.text && texte.has(n.text)) err(`${nctx}: the note text is duplicated`);
       if (n.text) texte.add(n.text);
     }
   }
@@ -876,13 +883,22 @@ for (const id of itemIds) {
 /* ---------- 7) Mail convention: the delete option ---------- */
 // The delete option must carry ignoreEmail: true and sit at the BOTTOM of
 // the list. Chain follow-ups without any delete option are fine by design.
+//
+// The label is read in BOTH languages, mirrored like BOILERPLATE in
+// report-prose: the flag is the identifier the game compares on, but the one
+// thing this rule exists to catch - a delete option whose flag is MISSING -
+// can only be recognised by its label. Until 6.1 the pattern knew the German
+// label alone, so the English tree passed with a flag removed (proved by
+// mutation on 19/08/2026: "✅ The data is clean" over a missing ignoreEmail).
+// The two labels are the only forms in the stock, 149 each.
+const DELETE_LABEL = /Löschen & Ignorieren|Delete & ignore/;
 for (const ev of DB.emails) {
   const opts = ev.opts ?? [];
   opts.forEach((o, idx) => {
-    const isDelete = /Löschen & Ignorieren/.test(o.t ?? '') || o.ignoreEmail;
+    const isDelete = DELETE_LABEL.test(o.t ?? '') || o.ignoreEmail;
     if (!isDelete) return;
-    if (!o.ignoreEmail) err(`[emails/${ev.id}] Löschen-Option ohne ignoreEmail: true`);
-    if (idx !== opts.length - 1) err(`[emails/${ev.id}] Löschen-Option steht nicht an letzter Position`);
+    if (!o.ignoreEmail) err(`[emails/${ev.id}] delete option without ignoreEmail: true`);
+    if (idx !== opts.length - 1) err(`[emails/${ev.id}] the delete option is not in last position`);
   });
 }
 
@@ -961,7 +977,7 @@ const checkKeys = (obj, allowed, ctx, what) => {
   if (!obj || typeof obj !== 'object') return;
   for (const k of Object.keys(obj)) {
     if (allowed.includes(k)) continue;
-    err(`${ctx}: unbekanntes Feld "${k}" ${what} — Tippfehler, oder ein Feld, das die Engine an dieser Stelle nicht liest`);
+    err(`${ctx}: unknown field "${k}" ${what} - a typo, or a field the engine does not read at this point`);
   }
 };
 
@@ -970,8 +986,8 @@ for (const p of POOLS) {
   const optKeys = p === 'party' ? [...OPT_KEYS, 'checkPool'] : OPT_KEYS;
   for (const ev of DB[p]) {
     const ctx = `[${p}/${ev.id}]`;
-    checkKeys(ev, eventKeys, ctx, 'am Ereignis');
-    (ev.opts ?? []).forEach((o, i) => checkKeys(o, optKeys, `${ctx} opts[${i}]`, 'in der Auswahl'));
+    checkKeys(ev, eventKeys, ctx, 'on the event');
+    (ev.opts ?? []).forEach((o, i) => checkKeys(o, optKeys, `${ctx} opts[${i}]`, 'in the option list'));
 
     // The party runs after hours, and two fields have no meaning there. The
     // engine would happily process both - m is overwritten a moment later by
@@ -982,25 +998,37 @@ for (const p of POOLS) {
     if (p === 'party') {
       (ev.opts ?? []).forEach((o, i) => {
         if (o.m !== undefined)
-          err(`${ctx} opts[${i}]: "m" wirkt auf der Feier nicht — die Uhr läuft über zwölf Stationen zu je 30 Minuten`);
+          err(`${ctx} opts[${i}]: "m" has no effect at the party - the clock runs over twelve stations of 30 minutes each`);
         if (o.b !== undefined)
-          err(`${ctx} opts[${i}]: "b" wirkt auf der Feier nicht — nach Feierabend gibt es kein Chef-Radar und kein Spielende`);
+          err(`${ctx} opts[${i}]: "b" has no effect at the party - after hours there is no boss radar and no game over`);
+        // checkPool sends the option to a station, and the same six names are
+        // the file names of the foyer icons - see tools/lint-assets.mjs.
+        if (o.checkPool !== undefined && !PARTY_LOCS.has(o.checkPool))
+          err(`${ctx} opts[${i}]: checkPool "${o.checkPool}" is not a station - allowed: ${[...PARTY_LOCS].join(', ')}`);
       });
+
+      // The station an event belongs to. engine_events filters on ev.loc ===
+      // loc and validates NOTHING: an invented station costs no error and no
+      // warning, it simply means the event is never drawn. Which is the worst
+      // way for written work to disappear - it is in the tree, it lints clean,
+      // and no player will ever see it.
+      if (ev.loc !== undefined && !PARTY_LOCS.has(ev.loc))
+        err(`${ctx}: loc "${ev.loc}" is not a station - the event is never drawn. Allowed: ${[...PARTY_LOCS].join(', ')}`);
     }
     for (const [nid, node] of Object.entries(ev.nodes ?? {})) {
-      checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'am Knoten');
+      checkKeys(node, NODE_KEYS, `${ctx}#${nid}`, 'on the node');
       (node.opts ?? []).forEach((o, i) =>
-        checkKeys(o, NODE_OPT_KEYS, `${ctx}#${nid}[${i}]`, 'in der Knoten-Auswahl (Wirkungen gehören ins Result)'));
+        checkKeys(o, NODE_OPT_KEYS, `${ctx}#${nid}[${i}]`, 'in the node option list (effects belong in the result)'));
     }
     for (const [rid, res] of Object.entries(ev.results ?? {}))
-      checkKeys(res, RESULT_KEYS, `${ctx}!${rid}`, 'im Result');
-    if (ev.fail) checkKeys(ev.fail, FAIL_KEYS, `${ctx}.fail`, 'im Zeitablauf');
+      checkKeys(res, RESULT_KEYS, `${ctx}!${rid}`, 'in the result');
+    if (ev.fail) checkKeys(ev.fail, FAIL_KEYS, `${ctx}.fail`, 'in the time-out branch');
   }
 }
 for (const ev of DB.emails) {
   const ctx = `[emails/${ev.id}]`;
-  checkKeys(ev, MAIL_KEYS, ctx, 'an der Mail');
-  (ev.opts ?? []).forEach((o, i) => checkKeys(o, MAIL_OPT_KEYS, `${ctx} opts[${i}]`, 'in der Auswahl'));
+  checkKeys(ev, MAIL_KEYS, ctx, 'on the mail');
+  (ev.opts ?? []).forEach((o, i) => checkKeys(o, MAIL_OPT_KEYS, `${ctx} opts[${i}]`, 'in the option list'));
 }
 
 /* ---------- 10) Result keys: the res_ prefix ---------- */
@@ -1017,7 +1045,7 @@ for (const ev of DB.emails) {
       for (const rid of Object.keys(ev.results ?? {}))
         if (!rid.startsWith('res_')) stray.push(`${p}/${ev.id}!${rid}`);
   if (stray.length)
-    info(`${stray.length} Result-Schlüssel ohne res_-Präfix (Stil, keine Funktion — Anzeige und Engine schlagen strukturell nach; neue Results bitte mit Präfix anlegen)`);
+    info(`${stray.length} result keys without the res_ prefix (style, not function - display and engine look them up structurally; please give new results the prefix)`);
 }
 
 /* ---------- 11) The diary ---------- */
@@ -1136,18 +1164,18 @@ for (const ev of DB.emails) {
 
   const seenIds = new Set();
   for (const [slot, fragments] of Object.entries(DB.diary)) {
-    if (!Array.isArray(fragments)) { err(`[diary/${slot}]: kein Array`); continue; }
+    if (!Array.isArray(fragments)) { err(`[diary/${slot}]: not an array`); continue; }
 
     fragments.forEach((f, i) => {
       const ctx = `[diary/${slot}#${f.id ?? i}]`;
-      if (!f.id) err(`${ctx}: Baustein ohne id — die Wiederholungs-Sperre merkt sich ids`);
-      else if (seenIds.has(f.id)) err(`${ctx}: id "${f.id}" gibt es doppelt`);
+      if (!f.id) err(`${ctx}: fragment with no id - the anti-repetition memory remembers ids`);
+      else if (seenIds.has(f.id)) err(`${ctx}: id "${f.id}" exists twice`);
       else seenIds.add(f.id);
 
-      if (typeof f.when !== 'function') { err(`${ctx}: when fehlt oder ist keine Funktion`); return; }
-      if (!Array.isArray(f.lines) || f.lines.length === 0) { err(`${ctx}: keine Zeilen`); return; }
+      if (typeof f.when !== 'function') { err(`${ctx}: when is missing or is not a function`); return; }
+      if (!Array.isArray(f.lines) || f.lines.length === 0) { err(`${ctx}: no lines`); return; }
       f.lines.forEach((line, k) => {
-        if (typeof line !== 'string' || !line.trim()) err(`${ctx} lines[${k}]: leer`);
+        if (typeof line !== 'string' || !line.trim()) err(`${ctx} lines[${k}]: empty`);
         else checkText(ctx, `lines[${k}]`, line);
       });
 
@@ -1155,25 +1183,25 @@ for (const ev of DB.emails) {
       // symptom is a line that never shows up.
       const source = f.when.toString();
       for (const [, id] of source.matchAll(/\bach\(\s*['"]([^'"]+)['"]\s*\)/g))
-        if (!achIds.has(id)) err(`${ctx}: Erfolg "${id}" existiert nicht`);
+        if (!achIds.has(id)) err(`${ctx}: achievement "${id}" does not exist`);
       for (const [, id] of source.matchAll(/\bitem\(\s*['"]([^'"]+)['"]\s*\)/g))
-        if (!itemIds.has(id)) err(`${ctx}: Gegenstand "${id}" existiert nicht`);
+        if (!itemIds.has(id)) err(`${ctx}: item "${id}" does not exist`);
 
       let fitted = 0;
       for (const day of days) {
         try { if (f.when(day)) fitted++; }
         catch (e) { err(`${ctx}: Bedingung stolpert (${e.message})`); return; }
       }
-      if (fitted === 0) warn(`${ctx}: die Bedingung passt auf keinen denkbaren Tag — die Zeilen erscheinen nie`);
+      if (fitted === 0) warn(`${ctx}: the condition fits no conceivable day - the lines never appear`);
 
       // Placeholders: the sentence around a list needs its {list}.
       if (Object.values(LIST_SLOTS).includes(slot))
         f.lines.forEach((line, k) => {
-          if (!line.includes('{list}')) err(`${ctx} lines[${k}]: {list} fehlt — die Aufzählung hätte keinen Platz`);
+          if (!line.includes('{list}')) err(`${ctx} lines[${k}]: {list} is missing - the list would have no room`);
         });
       else
         f.lines.forEach((line, k) => {
-          if (line.includes('{list}')) err(`${ctx} lines[${k}]: {list} steht ausserhalb eines Aufzählungs-Auftakts`);
+          if (line.includes('{list}')) err(`${ctx} lines[${k}]: {list} stands outside a list intro`);
         });
     });
   }
@@ -1181,23 +1209,23 @@ for (const ev of DB.emails) {
   // A choice slot with no fitting fragment yields an empty line. For the ending
   // that is the worst case: the day would close without a closing sentence.
   for (const slot of CHOICE_SLOTS) {
-    if (!DB.diary[slot]) { err(`[diary/${slot}]: Platz fehlt`); continue; }
+    if (!DB.diary[slot]) { err(`[diary/${slot}]: the slot is missing`); continue; }
     if (slot === 'postscript') continue;   // may stay empty, it is an afterword
     const orphans = days.filter(d => !DB.diary[slot].some(f => { try { return f.when(d); } catch { return false; } }));
     if (orphans.length) {
       const ends = [...new Set(orphans.map(d => d.end))].join(', ');
-      err(`[diary/${slot}]: kein Baustein passt für ${ends} — der Absatz bliebe leer`);
+      err(`[diary/${slot}]: no fragment fits ${ends} - the paragraph would stay empty`);
     }
   }
 
   // Every collecting slot needs its intro, or the clauses stand there bare.
   for (const [listSlot, introSlot] of Object.entries(LIST_SLOTS)) {
-    if (!DB.diary[listSlot]) err(`[diary/${listSlot}]: Platz fehlt`);
-    if (!DB.diary[introSlot]) err(`[diary/${introSlot}]: Auftakt zu ${listSlot} fehlt`);
+    if (!DB.diary[listSlot]) err(`[diary/${listSlot}]: the slot is missing`);
+    if (!DB.diary[introSlot]) err(`[diary/${introSlot}]: the intro for ${listSlot} is missing`);
   }
 
   const total = Object.values(DB.diary).flat().reduce((n, f) => n + (f.lines?.length ?? 0), 0);
-  info(`Tagebuch: ${Object.values(DB.diary).flat().length} Bausteine mit ${total} Zeilen in ${Object.keys(DB.diary).length} Plätzen`);
+  info(`diary: ${Object.values(DB.diary).flat().length} fragments with ${total} lines in ${Object.keys(DB.diary).length} slots`);
 }
 
 /* ---------- Output ---------- */
@@ -1208,5 +1236,5 @@ const section = (title, list, sym) => {
 section('FEHLER', errors, '✗');
 section('WARNUNGEN', warns, '!');
 section('INFO', infos, 'i');
-console.log(`\n${errors.length ? '❌ Fehler gefunden.' : '✅ Daten sind sauber.'}`);
+console.log(`\n${errors.length ? '❌ Faults found.' : '✅ The data is clean.'}`);
 process.exit(errors.length ? 1 : 0);

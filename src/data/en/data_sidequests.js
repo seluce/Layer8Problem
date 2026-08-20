@@ -3112,7 +3112,7 @@ export const sidequests = [
                 loot: "sandwich", 
                 next: "path_delivery_keep", 
                 m: 2, l: -5, a: -5, b: 5, 
-                r: "You take the food into your possession. Free lunch at the company's expense!" 
+                r: "You take the bag to your office and slide it into the bottom drawer. Free lunch at the company's expense! It already smells all the way out into the corridor."
             }
         ]
     },
@@ -6086,7 +6086,7 @@ export const sidequests = [
                 t: "Ring the sorting office", 
                 next: "path_delivery_call", 
                 m: 10, l: -5, a: -5, b: 0, 
-                r: "You spend 30 minutes in the queue. Your life ebbs away." 
+                r: "You dial the hotline and land in the queue. 'Für Elise', on a loop, with a voice cutting in to give your position: eleven. A while later: eleven. Your life ebbs away."
             },
             { 
                 t: "Search the corridors for boxes", 
@@ -6325,7 +6325,7 @@ export const sidequests = [
                 t: "'It is survival training!'", 
                 rep: { "Dr. Wichtig": 5 },
                 m: 10, l: 5, a: -5, b: -5, 
-                r: "The boss finds you hilarious." 
+                r: "He laughs even louder and keeps the line: in the next meeting he introduces you as 'our polar explorer'. The flakes keep blowing in, but the boss is laughing with you. For as long as it stays funny."
             },
             { 
                 t: "Get shirty with him", 

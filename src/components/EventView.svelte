@@ -152,8 +152,12 @@
 
     {#if ev.type === 'boss'}
         <div class="w-full h-4 bg-red-950/50 rounded-full mb-6 border border-red-500/30 overflow-hidden relative">
-            <!-- Width comes from state so the timer never has to find this element. -->
-            <div class="h-full ease-linear shadow-red-500/50 shadow-md
+            <!-- Width comes from state so the timer never has to find this element.
+                 The engine ticks every 50 ms; the width transition (75 ms, a
+                 shade longer to absorb timer jitter) lets the browser interpolate
+                 between those steps, so the bar moves at full frame rate instead
+                 of jumping a third of a percent twenty times a second. -->
+            <div class="h-full transition-[width] duration-75 ease-linear shadow-red-500/50 shadow-md
                         {state.bossBarPercent < 30 ? 'bg-red-600 animate-pulse' : 'bg-linear-to-r from-red-600 to-red-500'}"
                  style="width: {state.bossBarPercent}%"></div>
         </div>

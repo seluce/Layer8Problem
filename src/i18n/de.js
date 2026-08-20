@@ -61,13 +61,13 @@ export const de = {
 
     'report.title':                'Bug / Feedback melden',
     'report.category':             'Kategorie',
-    'report.cat.bug':              '🐛 Fehler / Absturz',
-    'report.cat.typo':             '📝 Rechtschreibfehler',
-    'report.cat.logic':            '🤯 Unlogischer Inhalt',
-    'report.cat.balance':          '⚖️ Zu schwer / Zu leicht',
-    'report.cat.idea':             '💡 Idee / Vorschlag',
+    'report.cat.bug':              'Fehler / Absturz',
+    'report.cat.typo':             'Rechtschreibfehler',
+    'report.cat.logic':            'Unlogischer Inhalt',
+    'report.cat.balance':          'Zu schwer / Zu leicht',
+    'report.cat.idea':             'Idee / Vorschlag',
     'report.description':          'Beschreibung',
-    'report.privacy':              'ℹ️ Das System hängt zur Fehleranalyse automatisch aktuelle Diagnosedaten (letztes Event, Uhrzeit, Inventar & Log-Auszug) an dein Ticket an.',
+    'report.privacy':              'Das System hängt zur Fehleranalyse automatisch aktuelle Diagnosedaten (letztes Event, Uhrzeit, Inventar & Log-Auszug) an dein Ticket an.',
     'report.submit':               'Ticket eröffnen',
 
     'settings.softReset.week':     'Woche neu starten',
@@ -385,6 +385,7 @@ export const de = {
     'dayReport.diff.easy':         'FREITAG (Leicht)',
     'dayReport.diff.normal':       'MITTWOCH (Normal)',
     'dayReport.diff.hard':         'MONTAG (Schwer)',
+    'dayReport.diff.week':         '{day} ({mode})',
     'dayReport.valveUsed':         'VENTIL GENUTZT',
     'dayReport.endedHere':         '← HIER WAR SCHLUSS',
     'dayReport.openTickets':       'offene Tickets',
@@ -423,6 +424,7 @@ export const de = {
     'inv.slot.use':                '{item} (Benutzen)',
 
     'phone.read':                  'Gelesen',
+    'phone.typing':                'tippt …',
     'phone.newMessage':            'NEUE NACHRICHT',
     'phone.readNow':               'Jetzt lesen...',
 
@@ -640,7 +642,9 @@ export const de = {
     'week.badge':                  'WOCHE ({mode})',
     'week.summary.title':          'Wochen-Bilanz · {mode}',
     'week.summary.legend':         'F Faulheit · A Aggro · C Chef',
+    'week.summary.valuesOne':      '{tickets} Ticket · F {fl} · A {al} · C {cr}',
     'week.summary.values':         '{tickets} Tickets · F {fl} · A {al} · C {cr}',
+    'week.summary.totalsOne':      '☕ {coffee}× Kaffee · 📧 {mails} Mail ignoriert',
     'week.summary.totals':         '☕ {coffee}× Kaffee · 📧 {mails} Mails ignoriert',
     'week.endsOn':                 '{base} Die Woche endet am {day}.',
 

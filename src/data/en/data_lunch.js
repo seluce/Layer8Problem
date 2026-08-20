@@ -66,7 +66,7 @@ export const lunch = [
 		text: "The canteen is serving nothing but lumps of tofu in house sauce. There is a conspicuous quiet at the tables, and the mood is tipping towards hostile.",
 		opts: [
 			{ t: "Run to the Döner place", m: 45, l: 5, a: -20, b: 5, r: "You come back reeking of garlic. You are happy; your colleagues wrinkle their noses." },
-			{ t: "Eat it and complain", m: 45, l: 0, a: 15, b: 0, r: "Nothing bonds a team like complaining together." }
+			{ t: "Eat it and complain", m: 45, l: 0, a: 15, b: 0, r: "You sit down with them and push the tofu from one side of the plate to the other. After the third bite the table does start talking, exclusively about the food. Nothing bonds a team like complaining together." }
 		]
 	},
 	{
@@ -364,7 +364,7 @@ export const lunch = [
 		title: "LUNCH: THE SECRET ROOF",
 		text: "You know a trick for getting onto the flat roof. A view across the grey city. Nobody bothers you. The wind is cold, though.",
 		opts: [
-			{ t: "Enjoy the view", m: 60, l: 20, a: -30, b: 0, r: "You almost lose track of time. You come back 10 minutes late and relaxed." },
+			{ t: "Enjoy the view", m: 60, l: 20, a: -30, b: 0, r: "You sit down with your back against the warm ventilation shaft and watch the city being grey. You almost lose track of time. You come back 10 minutes late and relaxed." },
 			{ t: "Throw paper aeroplanes", req: "manual", m: 30, l: 10, a: -10, b: 0, r: "You tear pages out of the manual and fold them into gliders. They sail down onto the boss's parking space. Risky, and funny." },
 			{ t: "Energy drink in the sun", rem: "energy", m: 30, l: 0, a: -20, b: 0, r: "Caffeine and UV. You are vibrating with energy." }
 		]

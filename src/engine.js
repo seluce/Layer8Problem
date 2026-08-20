@@ -2,6 +2,7 @@ import { state } from './engine/engine_state.svelte.js';
 import { audio } from './engine/engine_audio.js';
 import { core } from './engine/engine_core.js';
 import { events } from './engine/engine_events.js';
+import { hooks } from './engine/engine_hooks.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 import { week } from './engine/engine_week.js';
@@ -19,18 +20,31 @@ const engine = {
     ...audio,
     ...core,
     ...events,
+    ...hooks,
     ...inventory,
     ...ui,
     ...week,
 
     // 3. Language. Not a module of its own: these two are all the rest of the
-    //    game needs, and the inline handlers in index.html reach them through
-    //    window.engine like everything else in the static shell.
+    //    game needs, and the shell reaches them through src/actions.js.
     switchLanguage,
     language
 };
 
-// Expose the engine globally (inline onclick handlers in index.html rely on this)
+/*
+ * The global, and the one reason it is still here.
+ *
+ * Until 6.1 it carried the sixty-six inline onclick handlers in index.html.
+ * Those are data-action marks now and go through src/actions.js, which imports
+ * the engine like every component does - so the shell no longer needs it.
+ *
+ * What still does is tools/dev-woche.js: it is pasted into the browser console,
+ * and something pasted into a console cannot import anything. That is the whole
+ * remaining purpose, and it is worth one line.
+ *
+ * window.tutorial is gone as of 6.1: the lesson registers itself in
+ * engine.lesson instead, so the engine never reaches for a global either.
+ */
 window.engine = engine;
 
 // The one thing a language switch cannot repaint by itself: the scene in the
@@ -63,7 +77,18 @@ function recoverFromError(err) {
 
     try {
         engine.state.activeEvent = false;
-        engine.disableButtons(false);
+
+        // While the tutorial runs, the bar belongs to the lesson. Unlocking it
+        // here left all four buttons dimmed and clickable at once - the display
+        // said "shut", the button said "press me", and a press earned the
+        // player a red "not in this phase". Its own step logic knows which
+        // button is free and puts the lights back with it.
+        if (engine.lesson?.isActive) {
+            engine.lesson.applyStepLogic();
+        } else {
+            engine.disableButtons(false);
+        }
+
         engine.log({ k: 'log.halgerd.internalError' }, "text-red-500");
     } catch (recoveryError) {
         // Engine not far enough along to recover — nothing sensible left to do.
@@ -74,9 +99,8 @@ function recoverFromError(err) {
 window.addEventListener('error', (e) => recoverFromError(e.error || e.message));
 window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason));
 
-// Also exported so components can import it instead of reaching for the
-// global. window.engine stays for the inline handlers still left in
-// index.html.
+// The way everything inside the bundle reaches the engine - components,
+// actions.js and the tutorial. The global above is for the console tool only.
 export { engine };
 
 // Deliberately NOT booted here (6.0).
@@ -132,6 +156,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }
         if (isVisible('archive-modal')) { engine.closeArchive(); return; }
+        if (isVisible('knowledge-modal')) { engine.closeKnowledge(); return; }
         if (engine.state.intranetOpen) { engine.closeIntranet(); return; }
         if (isVisible('board-modal')) { engine.closeBoard(); return; }
         

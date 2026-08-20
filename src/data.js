@@ -191,7 +191,14 @@ export function ensure(...names) {
  */
 export async function setLanguage(lang) {
     if (lang === language) return;
-    const loaded = POOL_NAMES.filter(name => DB[name]);
+    // Loaded OR still in flight (6.1). Taking only the finished ones dropped
+    // whatever the warm-up happened to be fetching at that moment: `pending` is
+    // cleared a line below, and the in-flight import is then discarded by the
+    // `forLanguage === language` guard in ensure() - so that pool was gone for
+    // the session unless somebody asked for it again. Every pool but the diary
+    // has an ensure() at its call site and quietly recovered; the diary has
+    // none and stayed empty, which is the bug this was found through.
+    const loaded = POOL_NAMES.filter(name => DB[name] || pending[name]);
     for (const key of Object.keys(DB)) delete DB[key];
     pending = {};
     await loadCore(lang);
@@ -207,9 +214,14 @@ export async function setLanguage(lang) {
  */
 export function prefetchAll() {
     const idle = window.requestIdleCallback || (fn => setTimeout(fn, 200));
+    // WITH a timeout. requestIdleCallback promises nothing on its own: measured
+    // on a busy page it never fired at all, while a stripped-down page in the
+    // same browser was served after a millisecond. Without the timeout the
+    // warm-up is a hope, and every pool that has no ensure() at its call site
+    // rides on that hope.
     idle(() => {
         // Swallow failures here: ensure() will retry at the actual call site,
         // and a warm-up that fails must not surface as an error to the player.
         ensure(...POOL_NAMES).catch(() => {});
-    });
+    }, { timeout: 2000 });
 }

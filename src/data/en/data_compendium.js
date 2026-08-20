@@ -5,7 +5,7 @@
  * colleagues; everyone else lives here.
  *
  * Structure of an entry:
- *   id, cat        internal id and category: 'person', 'ort' or 'vorgang'.
+ *   id, cat        internal id and category: 'team', 'person', 'place' or 'matter'.
  *                  The view groups by it and gives each category its own
  *                  colour, so the register stays readable once it is long.
  *   name, role     heading and subheading
@@ -208,7 +208,7 @@ export const compendium = [
         summary: "Uses his inbox for everything other people keep separate devices for. Nobody ever explained to him where work ends and the shopping list starts.",
         seen: ["mail_wuttke_excel", "mail_wuttke_1", "mail_wuttke_ai", "mail_software_1"],
         notes: [
-            { seen: "mail_wuttke_excel", text: "'I DIDN'T DO ANYTHING, HONESTLY' sits in the subject line, in capitals. What was deleted was column G." },
+            { seen: "mail_wuttke_excel", text: "The subject line shouts HELP; the first sentence under it is 'I didn't do anything, honestly'. What was deleted was column G." },
             { seen: "mail_wuttke_1",     text: "Writes his search queries as emails. 'goulash recipe easy quick no peppers', no subject, no doubt about the recipient." },
             { seen: "mail_wuttke_ai",    text: "Takes the automatic reply for a person and thanks Outlook. Then he orders cream and pasta from it, not the spiral kind." },
             { seen: "mail_software_1",   text: "Installs free software because the machine is more colourful afterwards, and passes the link on out of collegiality. That is precisely where the work begins." }
@@ -375,8 +375,12 @@ export const compendium = [
     /* ---------------------------------------------------------------- THE TEAM
        The seven with a reputation bar. Team stays the at-a-glance view of how
        they feel about you right now; here stands what you have learned about
-       them, permanently. Their heads are unlocked from the first shift, since
-       Müller has worked alongside them for years - only the notes are earned.
+       them, permanently. Heads and notes are both earned: a head opens with
+       the first of its `seen` events, like every other entry - Müller has
+       worked alongside them for years, but the player has not, and a book
+       that is full on page one has nothing left to give. Decided 19/08/2026;
+       until then this comment claimed the heads were open from the first
+       shift, which the code never did.
        The names are the ones from data_chars.js, word for word: they key
        state.reputation and they are what the team cards show. */
     {
@@ -487,7 +491,7 @@ export const compendium = [
     /* ------------------------------------------------------------------ PLACES */
     {
         id: "serverraum",
-        cat: "ort",
+        cat: "place",
         name: "The Server Room",
         role: "Your patch",
         summary: "The only room in the building where cause and effect still hang together. In return, everything in here takes its revenge on a delay.",
@@ -504,7 +508,7 @@ export const compendium = [
     },
     {
         id: "teekueche",
-        cat: "ort",
+        cat: "place",
         name: "The Kitchenette",
         role: "News exchange",
         summary: "In here you know things earlier than the intranet and more precisely than any all-staff email. The price is that you become a subject yourself.",
@@ -521,7 +525,7 @@ export const compendium = [
     },
     {
         id: "kreativ2",
-        cat: "ort",
+        cat: "place",
         name: "Room 'Creative 2'",
         role: "Meeting room, permanently booked",
         summary: "Booked all day for months and always empty. The room is the proof that an appointment weighs more than a person in this building.",
@@ -534,7 +538,7 @@ export const compendium = [
     },
     {
         id: "chefbuero",
-        cat: "ort",
+        cat: "place",
         name: "The Boss's Office",
         role: "The floor below the server room",
         summary: "Corner office with an aquarium, a Persian rug and awards on the wall. Sits, of all places, directly below the server room.",
@@ -547,7 +551,7 @@ export const compendium = [
     },
     {
         id: "kopierraum",
-        cat: "ort",
+        cat: "place",
         name: "The Copier Room",
         role: "Between the corridor and the kitchenette",
         summary: "Windowless, loud and the only room where nobody disturbs you. Which is why everything happens in here, and rarely any copying.",
@@ -560,7 +564,7 @@ export const compendium = [
     },
     {
         id: "raucherecke",
-        cat: "ort",
+        cat: "place",
         name: "The Back Entrance",
         role: "Courtyard, smoking corner",
         summary: "The most informal address in the building. Stand here for ten minutes and you learn more than in any meeting.",
@@ -573,7 +577,7 @@ export const compendium = [
     },
     {
         id: "gala",
-        cat: "ort",
+        cat: "place",
         name: "The Summer Party",
         role: "Once a year, attendance compulsory",
         summary: "An evening on which everybody allows themselves the things they will be ashamed of on Monday. The company pays, the building holds, the rest is a matter for negotiation.",
@@ -591,7 +595,7 @@ export const compendium = [
     },
     {
         id: "kantine",
-        cat: "ort",
+        cat: "place",
         name: "The Canteen",
         role: "Basement",
         summary: "The only place in the building where titles genuinely matter. Get the form of address wrong here and you wait longer for your food.",
@@ -609,7 +613,7 @@ export const compendium = [
     },
     {
         id: "aufzug",
-        cat: "ort",
+        cat: "place",
         name: "The Lift",
         role: "Between the second and third floor",
         summary: "Reliably stops in the same place. Take it and you save yourself stairs and risk a conversation.",
@@ -622,7 +626,7 @@ export const compendium = [
     },
     {
         id: "rack7",
-        cat: "ort",
+        cat: "place",
         name: "Rack 7",
         role: "Server room, back row",
         summary: "The rack where everything collects that has no business in the server room. It is never broken. It is only different.",
@@ -635,7 +639,7 @@ export const compendium = [
     },
     {
         id: "ostfluegel",
-        cat: "ort",
+        cat: "place",
         name: "The East Wing",
         role: "Stairwell, third floor",
         summary: "The way to the archive, and the only floor where you can feel the building working against you.",
@@ -648,7 +652,7 @@ export const compendium = [
     },
     {
         id: "raum_211",
-        cat: "ort",
+        cat: "place",
         name: "Room 2.11",
         role: "Meeting room, free according to the bookings",
         summary: "A room that officially stands empty and is never empty. Whoever is sitting in here belongs — and that is proof enough for this building.",
@@ -661,7 +665,7 @@ export const compendium = [
     },
     {
         id: "nl_sued",
-        cat: "ort",
+        cat: "place",
         name: "Southern Branch",
         role: "A site, never set foot in",
         summary: "Exists as a phone number and as handwriting on notes. Nobody here has ever seen it.",
@@ -676,7 +680,7 @@ export const compendium = [
     /* ----------------------------------------------------------------- MATTERS */
     {
         id: "ticket_108",
-        cat: "vorgang",
+        cat: "matter",
         name: "Ticket 108",
         role: "Open for seven years",
         summary: "The oldest open ticket in the company. It has outlived three heads of IT and one caller who never gave up.",
@@ -689,7 +693,7 @@ export const compendium = [
     },
     {
         id: "transformation",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Transformation Project",
         role: "Has existed since one kick-off",
         summary: "A project that exists solely because somebody said it out loud and put a meeting in the calendar for it. That is exactly how all of them come about here.",
@@ -702,7 +706,7 @@ export const compendium = [
     },
     {
         id: "rademacher",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Rademacher Account",
         role: "Head of IT until 2016",
         summary: "Your predecessor's predecessor has been gone for years. His user account has not. It books, it logs in, it lives.",
@@ -715,7 +719,7 @@ export const compendium = [
     },
     {
         id: "gruender",
-        cat: "vorgang",
+        cat: "matter",
         name: "Baron von Greed",
         role: "Founder of the company",
         summary: "Leaves instructions in places where nobody looks for them, and a founding year that only turns up again on a toilet door.",
@@ -728,7 +732,7 @@ export const compendium = [
     },
     {
         id: "betriebsrat",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Works Council",
         role: "Meets monthly",
         summary: "Takes every concern very seriously and deals with it next time. Next time is always after the problem.",
@@ -741,7 +745,7 @@ export const compendium = [
     },
     {
         id: "kuehlschrank",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Fridge Regulations",
         role: "Kitchenette, unwritten law",
         summary: "The most strictly enforced body of rules in the building. It is written down nowhere and everybody knows it.",
@@ -754,7 +758,7 @@ export const compendium = [
     },
     {
         id: "kaffeekasse",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Honesty Box",
         role: "In the red for years",
         summary: "A piggy bank next to a tally sheet. The sheet is always right, the box never. Both count as laws of nature.",
@@ -767,7 +771,7 @@ export const compendium = [
     },
     {
         id: "notfallplan",
-        cat: "vorgang",
+        cat: "matter",
         name: "Emergency Plan 2009",
         role: "Strictly confidential, behind Rack 4",
         summary: "A dusty folder your predecessor deposited there. Or hid. The difference can no longer be established.",
@@ -780,7 +784,7 @@ export const compendium = [
     },
     {
         id: "prinz",
-        cat: "vorgang",
+        cat: "matter",
         name: "HRH Prince Abubakar",
         role: "Royal Bank of Zamunda",
         summary: "The only advance-fee scam in world history that was not one. That does not make the business any better, only more complicated.",
@@ -795,7 +799,7 @@ export const compendium = [
     },
     {
         id: "wc_fall",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Case of the Smallest Room",
         role: "Gents, second floor",
         summary: "Three incidents in one week, and a crime scene that is cleared away every time before anybody sees it. The only case in this building that could actually be solved.",
@@ -810,7 +814,7 @@ export const compendium = [
     },
     {
         id: "anruferin",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Woman from Head Office",
         role: "Does not exist, rings anyway",
         summary: "Friendly, well informed, with the right number on the display. Everything about her checks out except the department she names — and that department does not exist in this company.",
@@ -825,7 +829,7 @@ export const compendium = [
     },
     {
         id: "karteileiche",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Ghost Account",
         role: "An account with no person",
         summary: "Whoever leaves disappears from the canteen, from the mailing list and from memory. Not from the system.",
@@ -838,7 +842,7 @@ export const compendium = [
     },
     {
         id: "premium_trick",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Premium Trick",
         role: "Kitchenette, passed on by word of mouth",
         summary: "Press espresso, hold the cup sensor shut, wait. The machine gives out the expensive roast. Every time.",
@@ -851,7 +855,7 @@ export const compendium = [
     },
     {
         id: "hof_maeuse",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Mice in the Courtyard",
         role: "Courtyard, population growing",
         summary: "A humane solution with consequences. Catch them inside and let them go outside and you have solved nothing, only moved it.",
@@ -864,7 +868,7 @@ export const compendium = [
     },
     {
         id: "bandarchiv",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Tape Archive",
         role: "Server room, bottom row",
         summary: "Forty cartridges with abbreviations nobody can decode any more. There is not a drive left in the building that reads them.",
@@ -877,7 +881,7 @@ export const compendium = [
     },
     {
         id: "wochenmeeting",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Weekly Meeting",
         role: "Friday afternoon, meeting room",
         summary: "The close of every working week. You report what happened and learn in the process what it is supposed to have been in reality.",
@@ -893,7 +897,7 @@ export const compendium = [
     },
     {
         id: "berater",
-        cat: "vorgang",
+        cat: "matter",
         name: "The Consultants",
         role: "Synerqon · Norden & Kessler · McKandy",
         summary: "Three firms, one manner. They have been accompanying the transformation for years and are agreed that it is not finished yet.",

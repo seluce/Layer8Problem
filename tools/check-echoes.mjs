@@ -127,7 +127,7 @@ const oldGrams = grams(corpus.flatMap(harvest));
 
 /* ---------- report ---------- */
 
-console.log(`\n=== ${pools.join(', ')} — ${N}-Wort-Folgen (${lang}) ===`);
+console.log(`\n=== ${pools.join(', ')} - sequences of ${N} words (${lang}) ===`);
 console.log(`Alter Bestand: ${corpus.join(', ')}\n`);
 
 const crossing = [];
@@ -137,7 +137,7 @@ for (const [g, ids] of blockGrams) {
 }
 crossing.sort((a, b) => (b.ids.length + b.old.length) - (a.ids.length + a.old.length));
 
-console.log(`--- 1) auch im alten Bestand: ${crossing.length} Folgen ---`);
+console.log(`--- 1) also in the old stock: ${crossing.length} sequences ---`);
 for (const { g, ids, old } of crossing) {
     console.log(`  "${g}"`);
     console.log(`      Block: ${ids.slice(0, 4).join(', ')}${ids.length > 4 ? ` (+${ids.length - 4})` : ''}`);
@@ -147,14 +147,14 @@ for (const { g, ids, old } of crossing) {
 const inner = [...blockGrams].filter(([, ids]) => ids.size > MIN)
     .sort((a, b) => b[1].size - a[1].size);
 
-console.log(`\n--- 2) über mehr als ${MIN} Einträge im Block: ${inner.length} Folgen ---`);
+console.log(`\n--- 2) across more than ${MIN} entries in the block: ${inner.length} sequences ---`);
 for (const [g, ids] of inner) {
     console.log(`  ${String(ids.size).padStart(2)}× "${g}"  ${[...ids].slice(0, 5).join(', ')}`);
 }
 
 console.log(
-    `\nZahlen zum Fortschreiben: ${crossing.length} gegen den alten Bestand, ` +
-    `${inner.length} innerhalb des Blocks.\n` +
-    `Nach JEDER Reparatur noch einmal laufen lassen — in drei von vier Blöcken war\n` +
-    `eine Reparatur selbst ein Echo, und dann steigt die Zahl statt zu fallen.`
+    `\nFigures to carry forward: ${crossing.length} against the old stock, ` +
+    `${inner.length} inside the block.\n` +
+    `Run it again after EVERY repair - in three blocks out of four a repair was\n` +
+    `itself an echo, and then the figure rises instead of falling.`
 );

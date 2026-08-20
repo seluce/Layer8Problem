@@ -111,9 +111,9 @@ const DEFAULT_TARGETS = [
  * src/data/ is the event pools - 23 files per tree, checked by lint-parity.
  */
 const SKIPPED = [
-    ['src/i18n/de.js', 'Wörterbuch, deutsch von Haus aus'],
-    ['src/i18n/en.js', 'Wörterbuch, geprüft von lint-i18n Regel 4'],
-    ['src/data', 'Ereignis-Pools, geprüft von lint-parity']
+    ['src/i18n/de.js', 'the dictionary, German by nature'],
+    ['src/i18n/en.js', 'the dictionary, checked by lint-i18n rule 4'],
+    ['src/data', 'the event pools, checked by lint-parity']
 ];
 
 const CODE = new Set(['.js', '.mjs', '.cjs']);
@@ -165,7 +165,7 @@ function collect(rel) {
     try {
         info = statSync(abs);
     } catch {
-        console.error(` ✗ nicht gefunden: ${rel}`);
+        console.error(` ✗ not found: ${rel}`);
         return;
     }
     if (info.isDirectory()) {
@@ -473,15 +473,15 @@ const keep = (entry) => {
     return true;
 };
 
-console.log('Zeichenketten-Durchgang — alles, kein Sprachfilter');
-console.log(`Suchraum: ${files.length} Dateien`
+console.log('String pass - everything, no language filter');
+console.log(`Search space: ${files.length} files`
     + (targets.length ? ` (${targets.join(', ')})` : ' (Standardraum)'));
 if (!targets.length) {
-    for (const [path, why] of SKIPPED) console.log(`  übersprungen: ${path} — ${why}`);
+    for (const [path, why] of SKIPPED) console.log(`  skipped: ${path} - ${why}`);
 }
-if (ONLY_SENTENCES) console.log('  Zweitgriff: nur Zeichenketten mit Leerzeichen');
-if (ONLY_NOUNS) console.log('  Zweitgriff: nur Einzelwörter mit großem Anfangsbuchstaben');
-if (ALL_ATTRS) console.log('  alle Attribute, auch die strukturellen');
+if (ONLY_SENTENCES) console.log('  second pass: only strings containing a space');
+if (ONLY_NOUNS) console.log('  second pass: only single words starting with a capital');
+if (ALL_ATTRS) console.log('  every attribute, the structural ones included');
 console.log('');
 
 let total = 0;
@@ -515,7 +515,7 @@ for (const rel of files) {
     if (error) {
         broken++;
         console.log(`${rel}`);
-        console.log(`   ✗ nicht lesbar: ${error}`);
+        console.log(`   ✗ not readable: ${error}`);
         console.log('');
         continue;
     }
@@ -535,13 +535,13 @@ for (const rel of files) {
 }
 
 console.log('---');
-console.log(`${total} Zeichenketten in ${perFile.filter(f => f[1]).length} von ${files.length} Dateien`);
-if (broken) console.log(` ✗ ${broken} Datei(en) nicht lesbar`);
+console.log(`${total} strings in ${perFile.filter(f => f[1]).length} of ${files.length} files`);
+if (broken) console.log(` ✗ ${broken} file(s) not readable`);
 console.log('');
-console.log('Je Datei (gezeigt / gefunden):');
+console.log('Per file (shown / found):');
 for (const [rel, shown, all] of perFile.sort((a, b) => b[1] - a[1])) {
     if (!all) continue;
     console.log(`  ${String(shown).padStart(5)} / ${String(all).padStart(5)}  ${rel}`);
 }
 console.log('');
-console.log('Kein Befund ist ein Fehler. Gelesen wird von Hand.');
+console.log('No finding is a fault. The reading is done by hand.');

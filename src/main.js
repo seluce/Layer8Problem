@@ -8,7 +8,7 @@
  * the architecture, not a leftover: components render state, the engine
  * renders chrome.
  *
- * Order matters: tutorial.js publishes window.tutorial, which engine.init()
+ * Order matters: tutorial.js registers itself as engine.lesson, which engine.init()
  * checks for, and the engine has to exist before components read its state.
  *
  * Since 6.0 there is a step in front of all of it. The event pools exist in two
@@ -24,6 +24,7 @@ import { mount } from 'svelte';
 import './app.css';
 import './tutorial.js';
 import { engine } from './engine.js';
+import { wireActions } from './actions.js';
 import { loadCore } from './data.js';
 import { initLanguage, applyStaticStrings, t } from './i18n/i18n.svelte.js';
 
@@ -56,6 +57,11 @@ const language = await initLanguage();
 applyStaticStrings();
 await loadCore(language);
 engine.init();
+
+// One delegated listener for every data-action in index.html. Before it, the
+// markup carried its own onclick handlers and reached the engine through a
+// global; see src/actions.js.
+wireActions();
 
 mount(StatsHeader, { target: document.getElementById('stats-header') });
 mount(LogFeed,     { target: document.getElementById('log-feed') });

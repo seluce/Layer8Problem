@@ -74,7 +74,7 @@ for (const file of readdirSync(DIRECTORY).filter(f => f.startsWith('data_') && f
         const before = literals(text).map(node => node.value);
         const after = literals(result).map(node => node.value);
         if (JSON.stringify(before) !== JSON.stringify(after)) {
-            console.error(`${file}: Notation — Inhalt hätte sich verändert, übersprungen`);
+            console.error(`${file}: notation - the content would have changed, skipped`);
         } else {
             text = result;
             totalNotation += singleQuoted;
@@ -95,7 +95,7 @@ for (const file of readdirSync(DIRECTORY).filter(f => f.startsWith('data_') && f
         const after = literals(result).map(node => node.value);
         const changed = before.filter((v, i) => v !== after[i]);
         if (changed.length !== count || changed.some(v => !v.includes('"'))) {
-            console.error(`${file}: Spieltext — unerwartete Abweichung, übersprungen`);
+            console.error(`${file}: game text - unexpected difference, skipped`);
         } else {
             text = result;
             totalText += count;
@@ -107,5 +107,5 @@ for (const file of readdirSync(DIRECTORY).filter(f => f.startsWith('data_') && f
     console.log(`${file.padEnd(22)} Notation: ${String(singleQuoted).padStart(4)} | Spieltext: ${firstOrder.length}`);
 }
 
-console.log(`\nNotation umgestellt: ${totalNotation} | Spieltexte umgestellt: ${totalText} | Verschachtelungen unberührt: ${totalNested}`);
-if (REPORT_ONLY) console.log('(--dry: nichts geschrieben)');
+console.log(`\nNotation converted: ${totalNotation} | game texts converted: ${totalText} | nestings untouched: ${totalNested}`);
+if (REPORT_ONLY) console.log('(--dry: nothing written)');

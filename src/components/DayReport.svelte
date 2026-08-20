@@ -8,9 +8,13 @@
 -->
 <script>
     import { state as game } from '../engine/engine_state.svelte.js';
-    import { t } from '../i18n/i18n.svelte.js';
+    import { dayName } from '../engine/engine_week.js';
+    import { t, tf } from '../i18n/i18n.svelte.js';
 
-    let { cause = null } = $props();
+    // `week` is { mode, day } while a week is being reported, null in day mode.
+    // It has to be handed in: finishWeek() clears week.active before the screen
+    // is built, so the state can no longer be asked - see showEnd().
+    let { cause = null, week = null } = $props();
 
     // i18n-uses: dayReport.diff.easy, dayReport.diff.hard, dayReport.diff.normal
     const DIFF = [
@@ -18,7 +22,18 @@
         { test: (m) => m > 1.0,  label: 'dayReport.diff.hard' },
         { test: () => true,      label: 'dayReport.diff.normal' }
     ];
-    const diffName = $derived(t(DIFF.find(d => d.test(game.difficultyMult)).label));
+
+    // In a week the three labels above are the wrong question: they name the
+    // DAY mode's level, and difficultyMult stays at 1.0 in a week by design, so
+    // the answer was always "WEDNESDAY (normal)" - on a Friday, in a week
+    // headed IN NEED OF LEAVE. The week names its own day and its own level.
+    // i18n-uses: week.diff.easy, week.diff.hard, week.diff.normal
+    const diffName = $derived(week
+        ? tf('dayReport.diff.week', {
+              day:  dayName((week.day ?? 1) - 1).toUpperCase(),
+              mode: t(`week.diff.${week.mode ?? 'normal'}`)
+          })
+        : t(DIFF.find(d => d.test(game.difficultyMult)).label));
 
     // Which value ended the day? Only these causes point at a bar; clocking
     // off and the party have no culprit.

@@ -14,7 +14,7 @@
     import { state as game } from '../engine/engine_state.svelte.js';
 
     import { t, tf } from '../i18n/i18n.svelte.js';
-    const engine = () => window.engine;
+    import { engine } from '../engine.js';
 
     // Each category carries its own colour so a long register stays readable
     // at a glance - and so the modal is not three shades of grey.
@@ -25,9 +25,9 @@
           bullet: 'text-violet-600',  tab: 'border-violet-400 text-violet-300',   rule: 'border-violet-800' },
         { id: 'person',  label: 'knowledge.cat.person', text: 'text-emerald-400', dim: 'text-emerald-900',
           bullet: 'text-emerald-600', tab: 'border-emerald-400 text-emerald-300', rule: 'border-emerald-800' },
-        { id: 'ort',     label: 'knowledge.cat.place', text: 'text-sky-400',     dim: 'text-sky-900',
+        { id: 'place',   label: 'knowledge.cat.place', text: 'text-sky-400',     dim: 'text-sky-900',
           bullet: 'text-sky-600',     tab: 'border-sky-400 text-sky-300',         rule: 'border-sky-800' },
-        { id: 'vorgang', label: 'knowledge.cat.matter', text: 'text-amber-400',   dim: 'text-amber-900',
+        { id: 'matter',  label: 'knowledge.cat.matter', text: 'text-amber-400',   dim: 'text-amber-900',
           bullet: 'text-amber-600',   tab: 'border-amber-400 text-amber-300',     rule: 'border-amber-800' }
     ];
 
@@ -37,7 +37,7 @@
     const all = $derived.by(() => {
         if (!game.knowledgeOpen) return [];
         game.archive.seenEvents?.length;   // dependency, deliberately read
-        return engine()?.knowledgeEntries?.() ?? [];
+        return engine.knowledgeEntries?.() ?? [];
     });
 
     // Only categories that actually have entries get a tab.
@@ -127,7 +127,7 @@
     $effect(() => {
         if (!settled) return;
         if (pageVisible && current?.unread) {
-            engine()?.markKnowledgeRead?.(current.id, current.notes.length);
+            engine.markKnowledgeRead?.(current.id, current.notes.length);
         }
     });
 
