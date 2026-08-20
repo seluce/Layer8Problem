@@ -62,6 +62,10 @@
         }))
     );
 
+    // The typing bubble is a message like any other, so the header status is
+    // derived from the list rather than kept as a second flag.
+    const isTyping = $derived((phone.messages ?? []).some(m => m.side === 'typing'));
+
     // Scrolls to the newest message.
     //
     // An attachment rather than bind:this plus $effect, because the $state rune
@@ -86,12 +90,15 @@
     <div class="flex-1 bg-slate-800 flex flex-col h-full overflow-hidden">
         <div class="bg-indigo-600 p-2 text-xs font-bold text-white flex justify-between shrink-0">
             <span>{phone.appName}</span>
+            {#if isTyping}
+                <span class="font-normal text-indigo-200 animate-pulse">{t('phone.typing')}</span>
+            {/if}
         </div>
 
         <div {@attach autoScroll} class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0">
             {#each phone.messages as msg (msg.id)}
                 {#if msg.side === 'in'}
-                    <div class="w-full flex justify-start mb-4 fade-in">
+                    <div class="w-full flex justify-start mb-4 chat-in-left">
                         <div class="flex items-end gap-2 max-w-[85%]">
                             <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0 overflow-hidden">
                                 {#if msg.img}
@@ -114,7 +121,7 @@
                     </div>
                 {:else if msg.side === 'typing'}
                     <!-- Three bouncing dots while the other side "types". -->
-                    <div class="w-full flex justify-start mb-2 fade-in">
+                    <div class="w-full flex justify-start mb-2 chat-in-left">
                         <div class="bg-slate-700 px-4 py-3 rounded-2xl rounded-bl-none ml-10 flex items-center gap-1 h-10 w-16">
                             <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></div>
                             <div class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
@@ -130,7 +137,7 @@
                 {:else if msg.side === 'error'}
                     <div class="text-center text-xs text-red-500 my-2">{text(msg)}</div>
                 {:else}
-                    <div class="w-full flex justify-end mb-4 fade-in">
+                    <div class="w-full flex justify-end mb-4 chat-in-right">
                         <div class="max-w-[85%] flex flex-col items-end">
                             <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
                                 {text(msg)}

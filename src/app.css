@@ -395,12 +395,45 @@
    restarts it, which is exactly when it should run. */
 @utility fade-in { animation: fade-in 0.2s ease-out; }
 
+/* Chat bubbles slide in the way modern messengers do: up and slightly from
+   their own side - incoming from the left, replies from the right. The system
+   and error lines keep the plain fade; they are notices, not speech. */
+@utility chat-in-left { animation: chat-in-left 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+@utility chat-in-right { animation: chat-in-right 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* While the chat is open, the phone takes the right-hand column and in the
+   panel below (#side-panel) only the LOG gives way - the button row and the
+   inventory grid keep their place, the log's divider stays as the fold line.
+   That is one property, not a calculation: the log (#log-feed) is flex-1
+   with basis 0, so it only ever fills space the panel has LEFT OVER - set
+   the panel to its content size (flex-basis auto, grow 0) and the log's
+   contribution is its divider and nothing else. Measured before any of this
+   existed: at 1280x720 a long message had 85px of reading room under 171px
+   of reply buttons. #app-actions only exists while the chat is open, so
+   :has() is exactly that switch, and everything returns by itself when the
+   chat closes. Desktop only: below lg the columns stack and the phone
+   already grows with its content. No transition on purpose - flex-basis
+   auto does not animate, and half-animated redistribution reads worse than
+   one clean fold.
+
+   OUTSIDE every @layer, and that placement is load-bearing: both elements
+   carry the utility `flex-2`, and a layered rule loses to the utilities
+   layer whatever its specificity - inside @layer components this rule
+   matched, applied nothing, and looked simply absent. Unlayered author CSS
+   outranks all layers. */
+@media (min-width: 1024px) {
+    #smartphone:has(#app-actions) { flex-grow: 10; }
+    #smartphone:has(#app-actions) + #side-panel { flex: 0 0 auto; }
+}
+
 /* 4. KEYFRAMES (no layer, plain CSS) */
 @keyframes pulse-red { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 @keyframes pulse-red-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 50% { box-shadow: 0 0 14px 3px rgba(239, 68, 68, 0.65); } }
 @keyframes pulse-orange-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } 50% { box-shadow: 0 0 14px 3px rgba(249, 115, 22, 0.65); } }
 @keyframes slide-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 @keyframes fade-in { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes chat-in-left { 0% { opacity: 0; transform: translate(-10px, 8px); } 100% { opacity: 1; transform: none; } }
+@keyframes chat-in-right { 0% { opacity: 0; transform: translate(10px, 8px); } 100% { opacity: 1; transform: none; } }
 @keyframes pop-in { 0% { opacity: 0; transform: scale(0.95) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
 @keyframes shake {

@@ -424,6 +424,7 @@ export const de = {
     'inv.slot.use':                '{item} (Benutzen)',
 
     'phone.read':                  'Gelesen',
+    'phone.typing':                'tippt …',
     'phone.newMessage':            'NEUE NACHRICHT',
     'phone.readNow':               'Jetzt lesen...',
 

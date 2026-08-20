@@ -8,6 +8,8 @@ Presentation:
 * Character and item pictures are delivered at the size they are shown at. Nothing looks different; the download is 5.4 MB smaller.
 * Several achievements at once - one long action can cross several gates - now arrive one after the other, stay a little longer together, and the stack slides when one leaves.
 * The boss-fight countdown bar runs smoothly instead of stepping twenty times a second.
+* On the desktop the phone grows while a chat is open, so a long message no longer has to be scrolled through a tiny window. Only the log below makes room - buttons and inventory stay put - and it comes back when the chat ends.
+* Chat bubbles slide in from their own side instead of just fading, and the chat header shows who is typing.
 
 The texts:
 * Twenty-four result texts have gained a beat. They said in one line what had cost an hour or a written warning, or passed a verdict where a scene belonged. The punchlines that work short stay short.

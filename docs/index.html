@@ -51,8 +51,8 @@
             100% { transform: translateX(-100%); }
         }
     </style>
-  <script type="module" crossorigin src="./build/index-DOVU_GII.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-cClIl7yq.css">
+  <script type="module" crossorigin src="./build/index-BDASYjrc.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-BUezFYHB.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -237,7 +237,10 @@
                 <!-- Rendered by src/components/PhoneView.svelte -->
             </div>
             
-            <div class="flex-2 neon-box accent-slate p-3 flex flex-col min-h-0 overflow-hidden shrink-0">
+            <!-- The id is a CSS hook: while the chat is open, app.css grows the
+                 phone above and this panel drops to content size - the log
+                 below its divider is the only part that gives way. -->
+            <div id="side-panel" class="flex-2 neon-box accent-slate p-3 flex flex-col min-h-0 overflow-hidden shrink-0">
                 <div class="grid grid-cols-3 gap-y-1.5 items-center [&>*]:min-w-0
                             sm:flex sm:flex-wrap sm:gap-x-4 sm:gap-y-1
                             border-b border-slate-800 pb-1.5 sm:pb-1 mb-2 shrink-0">
