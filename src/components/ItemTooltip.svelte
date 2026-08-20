@@ -30,8 +30,11 @@
 
 <div class="absolute bottom-[110%] {pos.box} mb-2 w-56 p-3 bg-slate-950 border border-slate-600 rounded-lg shadow-xl {pinned ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 focus-within:opacity-100 transition-opacity pointer-events-none z-50 text-left">
     {#if locked}
-        <div class="font-bold text-slate-400 text-sm border-b border-slate-700 pb-1 mb-1">{lockedTitle}</div>
-        <div class="text-[10px] text-slate-500 italic leading-snug">{t('item.notFound')}</div>
+        <!-- Grey rather than the amber of a found item, but readable: at
+             slate-400/500 the locked box was the faintest thing on screen and
+             sat right over the section heading. -->
+        <div class="font-bold text-slate-200 text-sm border-b border-slate-700 pb-1 mb-1">{lockedTitle}</div>
+        <div class="text-[10px] text-slate-400 italic leading-snug">{t('item.notFound')}</div>
     {:else}
         <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{item.name}</div>
         <div class="text-[10px] text-slate-300 italic leading-snug">{item.flavor ?? t('item.noInfo')}</div>

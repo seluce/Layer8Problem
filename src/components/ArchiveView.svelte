@@ -187,8 +187,16 @@
         })
     );
 
+    // Dimming a locked tile is done with per-colour alpha, NOT with `opacity`.
+    // The difference is not cosmetic: `opacity` applies to an element AND every
+    // descendant, and the tooltip is a child of the tile. With opacity-50 the
+    // box went half transparent along with it, so the "GEFUNDENE AUSRÜSTUNG"
+    // heading behind it bled through and neither was readable. Alpha on the
+    // individual colours dims exactly the tile - border, background, the "?" -
+    // and leaves the tooltip alone. The values are the old ones at half
+    // strength, so the grid looks as it did.
     const itemBorder = (unlocked, quest) => {
-        if (!unlocked) return 'border-slate-700 opacity-50 text-slate-600 bg-slate-900 border-dashed';
+        if (!unlocked) return 'border-slate-700/50 text-slate-600/50 bg-slate-900/50 border-dashed';
         return quest
             ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
             : 'border-slate-500/50 text-slate-200 bg-slate-800';

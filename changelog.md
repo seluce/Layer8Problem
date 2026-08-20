@@ -1,4 +1,11 @@
-[6.1.0] - unreleased
+[6.2.0] - unreleased
+
+Bug fixes:
+* In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
+
+---
+
+[6.1.0] - 2026-08-20
 
 Everything here is measured against 6.0. This version is about stability: not much to see, and a few things that can no longer quietly break.
 
