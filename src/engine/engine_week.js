@@ -581,7 +581,14 @@ export const week = {
      */
     continueWeekNight: function() {
         this.playAudio('ui');
-        this.closeModal();
+        // dismissModal, NOT closeModal: closeModal runs updateUI, whose
+        // checkEndConditions re-reads the DYING day - pendingEnd is already
+        // null, the clock still stands past 16:30, so queueNightEnd() fired a
+        // second time and recordDayResult('survived') double-counted every
+        // week night into the archive and the Steam stats. The exact trap the
+        // dismissModal doc-comment describes; advanceWeekNight repaints
+        // through reset() anyway.
+        this.dismissModal();
 
         this.advanceWeekNight();
         this.saveWeek();                        // the night IS the checkpoint

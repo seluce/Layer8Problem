@@ -216,10 +216,19 @@ document.addEventListener('keydown', (event) => {
         }
         
         // B: modals (warning letter, ending, item confirm)
-        const okBtn = document.querySelector('#modal-content button');
+        // The continue button carries data-modal-continue (EndModal.svelte).
+        // "First button in the modal" stopped being it in 6.1, when the
+        // chart/diary toggles moved above it - Space then only flipped the
+        // curve and no keyboard ever passed a week night. The bare-button
+        // fallback stays for modal content that predates the marker.
+        const okBtn = document.querySelector('#modal-content button[data-modal-continue]')
+                   ?? document.querySelector('#modal-content button');
         if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
-        // The item confirmation modal - the green "use" button is the second one in the grid
-        const itemUseBtn = document.querySelector('#item-confirm-modal button.bg-green-600');
+        // The item confirmation modal. By id: the class-based selector
+        // (bg-green-600) went stale the day the button was restyled to
+        // emerald, and the miss fell through to branch D below - which then
+        // clicked the screen BEHIND the open dialog.
+        const itemUseBtn = document.getElementById('item-confirm-use');
         if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
 
         // C: accept the phone notification
@@ -234,8 +243,11 @@ document.addEventListener('keydown', (event) => {
         // data-continue attribute — matching on the caption text broke as
         // soon as a label was reworded, and "exactly one button on screen"
         // was only ever a proxy for the same idea.
+        // Visibility-guarded like its siblings: without the check, Space
+        // reached this button THROUGH any overlay standing above the terminal
+        // (an open item dialog, a mail) and resolved the screen behind it.
         const contBtn = document.querySelector('#terminal-content button[data-continue]');
-        if (contBtn) { contBtn.click(); return; }
+        if (contBtn && contBtn.offsetParent !== null) { contBtn.click(); return; }
     }
 
     // 4. ACTION SHORTCUTS (Q, W, E, R)

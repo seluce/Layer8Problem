@@ -117,8 +117,12 @@ export const inventory = {
             }
 
             if (takes) {
-                if (use.a) this.state.al = Math.max(0, this.state.al + use.a);
-                if (use.l) this.state.fl = Math.max(0, this.state.fl + use.l);
+                // Both bounds on every stat. Until 6.2 a and l only had the
+                // floor, while the comment below claimed parity with the event
+                // path - a positive use.a/use.l overshot 100 for one frame
+                // until updateUI re-clamped.
+                if (use.a) this.state.al = Math.max(0, Math.min(100, this.state.al + use.a));
+                if (use.l) this.state.fl = Math.max(0, Math.min(100, this.state.fl + use.l));
                 // b and rep make trade-off items possible: relief now, paid
                 // for on the boss's radar or in someone's regard. Same clamps
                 // as the event path, so an item cannot do what an event may not.
@@ -131,7 +135,21 @@ export const inventory = {
             }
         }
 
-        this.updateUI(); // Balken updaten
+        this.updateUI(); // redraw the bars
+
+        // updateUI ran checkEndConditions, and an item alone can end the day
+        // (a use.b that lands the radar on 100 with the warning spent). Every
+        // sibling that applies effects follows up - resolveTerminal via its
+        // result button, resolveEmail with exactly this call - but here the
+        // fired state sat stranded: buttons enabled, saveDay refusing, and the
+        // ending only surfaced after the next unrelated event.
+        if (this.state.pendingEnd) {
+            this.state.pendingItem = null;
+            this.emit('confirmUseItem');
+            this.finishGame();
+            return;
+        }
+
         if (isInvOpen) this.openInventory(); // Redraw the inventory (the item is gone)
         this.state.pendingItem = null;
         this.emit('confirmUseItem');

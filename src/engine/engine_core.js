@@ -46,6 +46,53 @@ export const core = {
         return target;
     },
 
+    /**
+     * Union of two archives - cumulative career data, so nothing regresses:
+     * id lists unite, counters take the maximum, achievement grades keep the
+     * better rank. Reputation is the one part that legitimately moves both
+     * ways and has no timestamp to arbitrate with, so the machine you are on
+     * keeps its values and the cloud only fills names it does not know.
+     */
+    mergeArchives: function(local, cloud) {
+        const out = JSON.parse(JSON.stringify(local ?? {}));
+        const c = cloud ?? {};
+
+        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags', 'chronicle']) {
+            const list = Array.isArray(out[key]) ? out[key] : (out[key] = []);
+            const seen = new Set(list.map(x => JSON.stringify(x)));
+            for (const x of (Array.isArray(c[key]) ? c[key] : [])) {
+                const id = JSON.stringify(x);
+                if (!seen.has(id)) { list.push(x); seen.add(id); }
+            }
+        }
+
+        for (const key of ['stats', 'knowledgeRead']) {
+            const map = out[key] ?? (out[key] = {});
+            for (const [k, v] of Object.entries(c[key] ?? {})) {
+                if (typeof v === 'number') map[k] = Math.max(map[k] ?? 0, v);
+                else if (!(k in map)) map[k] = v;
+            }
+        }
+
+        const RANK = { easy: 1, normal: 2, hard: 3 };
+        out.achievementDiffs = out.achievementDiffs ?? {};
+        for (const [id, diff] of Object.entries(c.achievementDiffs ?? {})) {
+            const cur = out.achievementDiffs[id];
+            if (!cur || (RANK[diff] ?? 1) > (RANK[cur] ?? 1)) out.achievementDiffs[id] = diff;
+        }
+
+        out.reputation = out.reputation ?? {};
+        for (const [k, v] of Object.entries(c.reputation ?? {})) {
+            if (!(k in out.reputation)) out.reputation[k] = v;
+        }
+
+        // Whatever a future version adds: local wins, the cloud fills gaps.
+        for (const [k, v] of Object.entries(c)) {
+            if (!(k in out)) out[k] = JSON.parse(JSON.stringify(v));
+        }
+        return out;
+    },
+
     // async because the desktop build has to await its cloud save before the
     // local archive is read. On the web platform.load() resolves immediately.
     init: async function() {
@@ -129,8 +176,22 @@ export const core = {
         if (!cloud) return;
 
         if (cloud.archive) {
-            const template = JSON.parse(JSON.stringify(this.state.archive));
-            const merged = this.deepMerge(template, cloud.archive);
+            // Merged into the LOCAL archive, and by union rather than
+            // overwrite. The old code merged the cloud into the boot DEFAULTS
+            // (loadSystem has not run yet, state.archive is empty here) and
+            // wrote the result over localStorage - one fresh day on a second
+            // machine then uploaded a near-empty archive, and the next launch
+            // on the main machine regressed fifty days of achievements, items
+            // and chronicle to it. The archive is cumulative career data, so
+            // the union never regresses either side; adoptCloudRun's recency
+            // logic does not apply because there is no archive timestamp to
+            // compare.
+            let localArchive = null;
+            try { localArchive = JSON.parse(localStorage.getItem(this.KEYS.archive)); }
+            catch { /* corrupted local archive: treat as absent */ }
+            const base = this.deepMerge(JSON.parse(JSON.stringify(this.state.archive)),
+                                        localArchive ?? {});
+            const merged = this.mergeArchives(base, cloud.archive);
             localStorage.setItem(this.KEYS.archive, JSON.stringify(merged));
         }
 
@@ -140,9 +201,13 @@ export const core = {
         // every single launch.
         if (cloud.tutorial === 'true') localStorage.setItem(this.KEYS.tutorialDone, 'true');
 
-        if (cloud.party_easy)   localStorage.setItem(this.KEYS.partyPlayed.easy,   cloud.party_easy);
-        if (cloud.party_normal) localStorage.setItem(this.KEYS.partyPlayed.normal, cloud.party_normal);
-        if (cloud.party_hard)   localStorage.setItem(this.KEYS.partyPlayed.hard,   cloud.party_hard);
+        // Same guard as the tutorial flag, for the same reason: the payload
+        // carries the STRING "false" for a gala never played, and a plain
+        // truthiness check let a second machine's "false" overwrite a local
+        // "true" - the once-per-tier gala was offered again.
+        if (cloud.party_easy === 'true')   localStorage.setItem(this.KEYS.partyPlayed.easy,   'true');
+        if (cloud.party_normal === 'true') localStorage.setItem(this.KEYS.partyPlayed.normal, 'true');
+        if (cloud.party_hard === 'true')   localStorage.setItem(this.KEYS.partyPlayed.hard,   'true');
 
         this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.runSyncedAt);
         this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.runSyncedAt);
@@ -303,6 +368,11 @@ export const core = {
         // A running week saves as one unit - the day slot never holds a half-week.
         if (this.state.week.active) { this.saveWeek(); return; }
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
+        // The lesson is not a workday. setTerminalIdle saves after every
+        // completed step, so without this guard a tab closed mid-tutorial
+        // came back as "SESSION INTERRUPTED" and resumed a mangled pseudo-day
+        // - tickets forced to 1, no morning, the tutorial never marked done.
+        if (this.lesson?.isActive) return;
 
         try {
             const day = snapshotDay(this.state);
@@ -677,9 +747,16 @@ export const core = {
      * id. They are dropped rather than shown: a chronicle that reads half in
      * German and half in English after a language switch is worse than one
      * that starts again. The chronicle is flavour, never progress.
+     *
+     * Takes the lore tree as a PARAMETER so the caller can hand in
+     * tree().lore: a $derived that resolved this through DB alone had no
+     * reactive language source and Müller's handwritten entries stayed in the
+     * pre-switch language while the chapters around them followed - the exact
+     * DB trap CLAUDE.md documents. DB stays the fallback for engine-internal
+     * callers.
      */
-    chronicleEntries: function() {
-        const lines = DB.lore?.lines ?? {};
+    chronicleEntries: function(loreTree = DB.lore) {
+        const lines = loreTree?.lines ?? {};
         return (this.state.archive.chronicle ?? [])
             .filter(e => e.id && lines[e.id])
             .map(e => ({
@@ -884,6 +961,14 @@ export const core = {
         const { logEntries, lastLogMsg } = this.state;
         Object.assign(this.state, freshDay(mult), { logEntries, lastLogMsg });
         this.state.difficultyMult = mult;
+
+        // The same seeding every other day-start path does (softReset,
+        // softResetWeek, advanceWeekNight) - this one skipped it, so on every
+        // picker-started day the team view's deltas computed against an empty
+        // baseline (frozen at 0 all day), the diary could never name who
+        // moved, and a fully blind day was not recorded as blind.
+        this.state.repAtStart = { ...this.state.reputation };
+        this.state.blindRun = this.state.blindStats && this.state.blindTickets;
 
         // i18n-uses: mode.easy, mode.normal, mode.hard
         if (level === 'easy')      this.log({ k: 'mode.easy' },   'text-green-400');

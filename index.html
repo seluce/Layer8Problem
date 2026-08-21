@@ -282,7 +282,14 @@
 <!-- Buttons rendered by src/components/ActionBar.svelte -->
     <div id="action-bar" class="h-20 grid grid-cols-4 gap-2 lg:gap-4 shrink-0"></div>
 
-    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/90 z-50 flex items-center justify-center p-3 md:p-8">
+    <!-- z-1500: warnings and endings must stand ABOVE the side panels
+         (inventory/team 1100, item-confirm/intranet 1200, board 1300) - at the
+         old z-50 a chef warning raised from inside the open backpack rendered
+         invisibly behind it, and the confirm key clicked its unseen button.
+         Deliberately BELOW the mail (2000), the tutorial layers (2100+) and
+         the fullscreen views (9999+); the achievement toasts sit at 1600 to
+         keep floating above endings, as they always have. -->
+    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/90 z-1500 flex items-center justify-center p-3 md:p-8">
         <!-- Rendered by src/components/EndModal.svelte -->
     </div>
 

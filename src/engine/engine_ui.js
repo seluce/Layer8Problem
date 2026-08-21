@@ -1753,9 +1753,12 @@ export const ui = {
                        : "normal";
 
             // --- FIND THE LAST EVENT ---
+            // activeEvent is a BOOLEAN; the id lives in currentEventId - the
+            // old `s.activeEvent?.id` could never match, so the one fact a
+            // reporter is on (which event broke) never reached the ticket.
             let lastEventID = "no data";
-            if (s.activeEvent?.id) lastEventID = s.activeEvent.id + " (active)";
-            else if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (phone)";
+            if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (phone)";
+            else if (s.currentEventId) lastEventID = s.currentEventId + (s.activeEvent ? " (active)" : " (last)");
             else if (s.storyFlags && Object.keys(s.storyFlags).length > 0) {
                 const flags = Object.keys(s.storyFlags);
                 lastEventID = flags[flags.length - 1] + " (last flag)";
@@ -1765,8 +1768,12 @@ export const ui = {
             let logText = "(log empty)";
 
             if (this.state.logEntries.length > 0) {
+                // Through the resolver, not e.msg: since the recipe conversion
+                // an entry stores {k,v}/{ref} and no msg, so the report's log
+                // block was a chain of "undefined" - the maintainer's main
+                // diagnostic channel, empty.
                 let rawText = [...this.state.logEntries].reverse()
-                    .map(e => `[${e.time}] ${e.msg}`).join(" // ");
+                    .map(e => `[${e.time}] ${renderRecipe(e) ?? ''}`).join(" // ");
                 if (rawText.length > 2000) rawText = rawText.substring(0, 2000) + "...";
                 logText = rawText;
             }

@@ -1,7 +1,21 @@
 [6.2.0] - unreleased
 
 Bug fixes:
+* The confirm key stopped working on end and night screens in 6.1 - it was hitting the day-curve toggle instead of the continue button. It also targets the item dialog's use button again, and no longer clicks through an open dialog onto the screen behind it.
+* A warning or ending raised while the backpack, the intranet or the noticeboard was open appeared invisibly behind it. Warnings stand above the panels now.
+* A tab closed in the middle of the tutorial came back as an interrupted workday and resumed as a broken day. The lesson no longer saves itself as one.
+* The excuse button appeared during tutorial events and could derail the lesson. It waits until the real day starts.
+* After a language switch, Müller's handwritten entries at the back of the chronicle stayed in the old language while the chapters changed. They follow now.
+* Switching language at an unlucky moment could leave one event pool in the old language or empty for the rest of the session, and a quick double switch could end on the wrong language. All three timings are safe now.
+* In week mode, the silent hotline still answered tickets: with the day's calls spent, clicking the idle line kept removing one ticket per click. The idle line is idle now.
+* Mails now weigh the same as everything else: they quietly used a softer difficulty multiplier, shrank relief values on easy days, and their minutes never brought tickets. One formula everywhere.
+* Phone-chat endings now cost the time they say and take the items they say. Every chat ending used to cost a flat 15 minutes whatever was written, no ticket ever arrived during one, and the prince's black card stayed in the backpack after returning his millions.
+* Steam only: playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine also stays played.
+* The bug-report form sent a log made of "undefined" lines and never named the event it was filed from. Both work again.
+* Every survived week night was counted twice in the career statistics - the archive bars and the Steam counters grew at double speed. Once now.
+* An ending caused purely by using an item was queued but never shown - the dismissal only appeared after the next unrelated event. It shows immediately now, and item effects clamp at 100 like everything else.
 * In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
+* On a day started from the picker, the team view's "what today moved" arrows stayed frozen at zero and the diary could never name who moved - the morning baseline was never taken. It is now, on every start path.
 
 ---
 

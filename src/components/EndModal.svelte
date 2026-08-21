@@ -216,7 +216,12 @@
             {/if}
         {/if}
 
-        <button onclick={() => isNight ? engine.continueWeekNight()
+        <!-- data-modal-continue is the confirm key's anchor (engine.js). The
+             chart/diary toggles render above this button, so "first button in
+             #modal-content" stopped meaning "the continue button" in 6.1 -
+             Space then only flipped the day curve open and shut. -->
+        <button data-modal-continue
+                onclick={() => isNight ? engine.continueWeekNight()
                              : isFinal ? location.reload() : engine.closeModal()}
                 class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
             {isNight ? tf('end.btn.next', { day: nextDay.toUpperCase() })

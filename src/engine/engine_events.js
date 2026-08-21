@@ -390,12 +390,20 @@ export const events = {
                 color = "text-blue-400";
             }
 
-            let mult = this.effMult();
-            
+            // The SAME formula as resolveTerminal, because a letter is not a
+            // different kind of trouble: mails used effMult (day-normal 1.0
+            // where the terminal hardens to 1.1), scaled NEGATIVE values too
+            // (an a:-5 relief shrank on easy), and skipped the laziness
+            // surcharge on the radar entirely - while the simulator modelled
+            // mails with the terminal formula, so every measurement diverged
+            // from the shipped behaviour.
+            const diffMult = this.statMult();
+            const lazyMult = 1 + (this.state.fl / 200);
+
             // Cache the final values for the animation
             let addedL = opt.l || 0;
-            let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
-            let addedB = opt.b ? Math.ceil(opt.b * mult) : 0;
+            let addedA = (opt.a ?? 0) > 0 ? Math.ceil(opt.a * diffMult) : (opt.a || 0);
+            let addedB = (opt.b ?? 0) > 0 ? Math.ceil(opt.b * diffMult * lazyMult) : (opt.b || 0);
 
             this.addStat('fl', addedL);
             this.addStat('al', addedA);
@@ -414,12 +422,10 @@ export const events = {
 
             this.grantItem(opt.loot, 'received');
 
-            // 2. TIME LOGIC (opt.m)
-            if (opt.m) {
-                const before = this.state.time;
-                this.state.time += opt.m;
-                this.checkLeetMoment(before);
-            }
+            // 2. TIME LOGIC (opt.m) - through the shared clock: mail time
+            // used to pass without booking the half-hour boundary tickets
+            // every other path books.
+            if (opt.m) this.advanceClock(opt.m);
 
             // 3. REPUTATION LOGIC (opt.rep)
             this.applyReputation(opt.rep);
@@ -976,6 +982,31 @@ export const events = {
     },
 
     /**
+     * THE clock. Advances time, books the half-hour boundary tickets that
+     * pass with it (capped at 16:30 - see the design note inside
+     * resolveTerminal for why tickets count by boundary), and checks the
+     * 13:37 moment.
+     *
+     * One function for every path that moves time, and that is the point:
+     * the phone results had a copy that moved time WITHOUT tickets (and a
+     * flat 15 minutes at that), the mails another one - three clocks that
+     * each told a slightly different time, while the simulator modelled all
+     * of them like the terminal. countTickets is false only for the weekly
+     * meeting, the one stretch whose runtime deliberately does not count.
+     */
+    advanceClock: function(minutes, countTickets = true) {
+        const before = this.state.time;
+        if (countTickets) {
+            const SHIFT_END_TIME = 16 * 60 + 30;   // tickets stop at closing time
+            const oldChunk = Math.floor(before / 30);
+            const capped = Math.min(before + minutes, SHIFT_END_TIME);
+            this.state.tickets += Math.max(0, Math.floor(capped / 30) - oldChunk);
+        }
+        this.state.time += minutes;
+        this.checkLeetMoment(before);
+    },
+
+    /**
      * Applies a chosen option and advances the day.
      *
      * Used to take eleven positional parameters, hand-serialised into an inline
@@ -1065,22 +1096,21 @@ export const events = {
         // second, invisible sense of time running beside the visible one, and
         // with at most 45 minutes left after a meeting the two would come to
         // the same thing anyway.
-        if (type !== 'meeting') {
-            const SHIFT_END_TIME = 16 * 60 + 30;   // tickets stop at closing time
-            const oldTimeChunk = Math.floor(this.state.time / 30);
-            const cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
-            const newTimeChunk = Math.floor(cappedTime / 30);
-            this.state.tickets += Math.max(0, newTimeChunk - oldTimeChunk);
-        }
-        
-        if (type === 'calls') { 
+        // Answering a call clears a ticket - a REAL call. The idle fallbacks
+        // (fallback_week_* for a spent contingent, fallback_empty for a dry
+        // pool) render with the pool's type and used to walk through this
+        // branch too: with the calls contingent spent, every click on "the
+        // hotline is silent" still removed a ticket for 20 minutes - a
+        // farmable sink the design comment on the contingent explicitly rules
+        // out, and one the week simulator never modelled. Ids, not display
+        // text: the fallback_ prefix is the idle family's naming convention
+        // in data_special.js.
+        if (type === 'calls' && !this.state.currentEventId?.startsWith('fallback_')) {
             this.state.tickets = Math.max(0, this.state.tickets - 1);
         }
 
-        const timeBefore = this.state.time;
-        this.state.time += m;
-        this.checkLeetMoment(timeBefore);
-        
+        this.advanceClock(m, type !== 'meeting');
+
         // Lunch check, with a window rather than an open-ended threshold.
         // A single option can cost up to four hours (the boss fights), so one
         // choice can carry the clock from 11:50 straight past the afternoon -
@@ -1665,7 +1695,19 @@ export const events = {
         // FALL A: STORY ENDE (Result)
         if (ev.results && ev.results[nextId]) {
             let res = ev.results[nextId];
-            
+
+            // The authored removal, finally applied - and BEFORE the loot, so
+            // the freed slot is there for it. res.rem was never read anywhere:
+            // sq_prince_return removes the black card and grants the prince's
+            // letter, yet the card stayed in the backpack forever.
+            if (res.rem) {
+                const remIndex = this.state.inventory.findIndex(i => i.id === res.rem);
+                if (remIndex > -1) {
+                    this.state.inventory.splice(remIndex, 1);
+                    this.log({ k: 'log.itemLost', v: { item: itemNameValue(res.rem) } }, "text-orange-400");
+                }
+            }
+
             // Loot & Items Logic
             if(res.loot && !this.state.inventory.find(i => i.id === res.loot)) {
                 let dbItem = DB.items[res.loot];
@@ -1738,9 +1780,12 @@ export const events = {
                     this.closePhone();
                     this.log({ k: 'log.phone',
                                v: { text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } } });
-                    const beforePhone = this.state.time;
-                    this.state.time += 15;
-                    this.checkLeetMoment(beforePhone);
+                    // The authored cost, through the shared clock (boundary
+                    // tickets included). Every phone result used to charge a
+                    // flat 15 minutes whatever the data said - m:2 and m:20
+                    // cost the same, and no ticket ever arrived during a
+                    // chat. 15 stays the fallback for a result without m.
+                    this.advanceClock(typeof res.m === 'number' ? res.m : 15);
                     this.updateUI();
                     
                     if (this.state.pendingEnd) {
