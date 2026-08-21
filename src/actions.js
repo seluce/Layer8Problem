@@ -141,10 +141,7 @@ export const ACTION_NAMES = Object.keys(ACTIONS);
  * icon or a span inside it, and the click lands on the child.
  */
 export function wireActions() {
-    document.addEventListener('click', (event) => {
-        const el = event.target.closest?.('[data-action]');
-        if (!el) return;
-
+    const run = (el) => {
         const name = el.dataset.action;
         const fn = ACTIONS[name];
         if (!fn) {
@@ -154,5 +151,25 @@ export function wireActions() {
             return;
         }
         fn(el.dataset.arg, el);
+    };
+
+    document.addEventListener('click', (event) => {
+        const el = event.target.closest?.('[data-action]');
+        if (el) run(el);
+    });
+
+    // Enter and Space on a focused mark, so a data-action DIV behaves like
+    // the button it stands for. The click listener alone left the six
+    // side-panel controls (inventory, team, knowledge, archive, settings,
+    // log) mouse-only - no key binding opens them either, and the house rule
+    // says clickable elements answer to the keyboard. Real <button> marks
+    // fire click on Enter/Space natively; the guard keeps them from running
+    // twice.
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const el = event.target.closest?.('[data-action]');
+        if (!el || el.tagName === 'BUTTON' || el.tagName === 'A') return;
+        event.preventDefault();   // Space must not scroll the page
+        run(el);
     });
 }

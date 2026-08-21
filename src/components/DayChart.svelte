@@ -22,12 +22,17 @@
     // The day runs from 8:00 to at least 16:30 - unless someone stayed
     // longer, in which case the axis grows with it.
     const tMin = 8 * 60;
-    const tMax = $derived(Math.max(16 * 60 + 30, ...points.map(p => p.m)));
+    // ?? 0 on every read - the statHistory reader contract (CLAUDE.md): a
+    // missing key draws a flat line. Read raw, one point without m made tMax
+    // NaN, which poisoned x() for every point, and one missing stat put NaN
+    // into the polyline - SVG then dropped the whole curve silently, the
+    // exact opposite of what the contract promises.
+    const tMax = $derived(Math.max(16 * 60 + 30, ...points.map(p => p.m ?? 0)));
 
     const x = (t) => PAD.l + ((t - tMin) / (tMax - tMin)) * (W - PAD.l - PAD.r);
     const y = (v) => PAD.t + (1 - Math.min(100, Math.max(0, v)) / 100) * (H - PAD.t - PAD.b);
 
-    const line = (key) => points.map(p => `${x(p.m).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
+    const line = (key) => points.map(p => `${x(p.m ?? 0).toFixed(1)},${y(p[key] ?? 0).toFixed(1)}`).join(' ');
 
     const SERIES = [
         // i18n-uses: stat.lazy, stat.aggro, stat.boss.short

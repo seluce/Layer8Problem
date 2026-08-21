@@ -54,6 +54,11 @@ export function freshDay(mult = 1.0) {
         statHistory: [{ m: 8 * 60, l: 0, a: 0, b: 0 }],
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
+        // Counted directly when the player spends one. The diary used to
+        // derive this from "start value minus what is left", which broke the
+        // moment excusesLeft GREW past its start (the nightly +1, the morning
+        // mood): a lie actually told that day then reported as zero.
+        excusesUsed: 0,
 
         // The excuse currently on offer, and the event it was drawn for. One
         // excuse per event: closing and reopening the dialog must not deal a
@@ -183,14 +188,21 @@ export function freshDay(mult = 1.0) {
         emailCooldownTimer: null,
         phoneTypeTimer: null,
         phoneReadTimer: null,
-        newsTimer: null
+        newsTimer: null,
+        // The boot line-printer chain and the week picker's delayed reset()
+        // shared one property of every timer above - they fire into whatever
+        // day exists later - without sharing the registry: a restart during
+        // the boot animation ran TWO chains at once, interleaved their lines
+        // and ended in a double reset().
+        bootTimer: null
     };
 }
 
 /** Timer fields cleared on every day restart. Kept next to the factory so the two stay in sync. */
 export const DAY_TIMERS = [
     'bossTimer', 'emailTimer', 'emailDelayTimer', 'emailChainTimer',
-    'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer'
+    'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer',
+    'bootTimer'
 ];
 
 /**
@@ -444,8 +456,14 @@ export const state = $state({
             if (!defaults.hasOwnProperty(k)) delete saved[k];
         }
 
-        // Fill in missing keys
-        for (let k in defaults) { if (!saved[k]) saved[k] = defaults[k]; }
+        // Fill in missing keys - and repair non-STRING values, not just
+        // missing ones. A hand-edited or corrupted store could carry a
+        // number here, and keyBinds.confirm.toLowerCase() then threw on
+        // every keypress, which is exactly what this factory exists to
+        // prevent.
+        for (let k in defaults) {
+            if (!saved[k] || typeof saved[k] !== 'string') saved[k] = defaults[k];
+        }
         return saved;
     })(),
     isBindingKey: false,

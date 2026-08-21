@@ -41,6 +41,13 @@ export const events = {
     // How often an unlocked follow-up beats a fresh event. See pickFromPool.
     FOLLOWUP_CHANCE: 0.30,
 
+    // How long an open mail waits before it resolves itself. ONE number: the
+    // countdown bar in EmailView.svelte reads it for its animation duration -
+    // until 6.2 the 20 seconds were written twice (engine timeout and CSS
+    // keyframe length), the exact two-places-one-schedule drift the toast
+    // header comment records as having already happened once.
+    EMAIL_DURATION_MS: 20000,
+
     // --- EMAIL SYSTEM (clean light / logic fixes) ---
     checkRandomEmail: function() {
         // 1. Basic checks (open? on the move? tutorial?)
@@ -142,7 +149,7 @@ export const events = {
             this.showOverlay(modal);
         }
 
-        const DURATION = 20000;
+        const DURATION = this.EMAIL_DURATION_MS;
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         this.state.emailTimer = setTimeout(() => {
             this.resolveEmail(null, true); 
@@ -193,8 +200,9 @@ export const events = {
      * engine - which is how the German edition used to be the only one that
      * worked.
      */
+    /** @returns {boolean} whether the item actually landed in the backpack */
     grantItem: function(itemId, kind = 'found') {
-        if (!itemId) return;
+        if (!itemId) return false;
         const dbItem = DB.items[itemId];
         const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
         const alreadyHas = this.state.inventory.some(i => i.id === itemId);
@@ -205,11 +213,11 @@ export const events = {
             return db && !db.quest;
         }).length;
 
-        if (isPermanent && alreadyHas) return;   // still verworfen
+        if (isPermanent && alreadyHas) return false;   // still verworfen
 
         if (!isPermanent && normalCount >= 10) {
             this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
-            return;
+            return false;
         }
 
         this.state.inventory.push({ id: itemId, used: false });
@@ -219,6 +227,7 @@ export const events = {
         if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
             this.animateItemToBackpack(dbItem.img);
         }
+        return true;
     },
 
     /**
@@ -513,6 +522,12 @@ export const events = {
                 this.state.isLoadingPool = false;
                 this.disableButtons(false);
             }
+
+            // Re-checked after the await: a restart during a cold-pool load
+            // clears the day (freshDay), and the continuation would then open
+            // an un-asked-for event into the fresh boot - the boot keeps
+            // activeEvent true for exactly this kind of gate.
+            if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
         }
 
         // ---------------------------------------------------------
@@ -745,6 +760,16 @@ export const events = {
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
             this.recordSeen('event', ev.id);
+            // The same bookkeeping renderTerminal does - this branch was the
+            // second event path without it (the boss fight was the first,
+            // fixed in 6.1): with the id still on the PREVIOUS event, the
+            // mail system whitelisted or blocked mails against the wrong
+            // event (a chat could never be followed by one), and rich
+            // presence kept showing the previous activity for the whole
+            // conversation.
+            this.state.currentEventId = ev.id;
+            this.state.currentEventType = 'sidequest';   // the pool it came from
+            this.updatePresence('sidequest');
             this.applyPassiveItems(ev.char);
 
             // Show the notification
@@ -877,6 +902,11 @@ export const events = {
         if (term.event?.isChain && this.state.currentChainNode) {
             this.state.currentChainEvent = ev;
             this.renderChainNode(this.state.currentChainNode);
+        } else if (this.state.currentEventType === 'party' && this.partyStageText(ev)) {
+            // The hub renders a spread copy with the stage text substituted -
+            // repainting the raw event rewound the evening's arc to the
+            // arrival prose. Same formula as the first paint, one method.
+            this.renderEventHTML({ ...ev, text: this.partyStageText(ev) }, 'party');
         } else {
             this.renderEventHTML(ev, this.state.currentEventType);
         }
@@ -896,15 +926,23 @@ export const events = {
      */
     relocalisePhone: function() {
         const phone = this.state.phone;
-        if (!phone?.open || !phone.node || !phone.options?.length) return;
+        if (!phone?.open) return;
 
         const ev = findEventById(DB, this.state.currentPhoneEvent?.id);
-        const node = ev?.nodes?.[phone.node];
-        if (!node) return;
+        if (!ev) return;
 
+        // ALWAYS re-point the event at the new tree while the chat is open -
+        // not only when reply buttons are showing. During the typing window
+        // the options are empty and the old guard bailed here, so the pending
+        // type-timer then walked the PRE-switch object and served the next
+        // node's buttons from the old language.
         this.state.currentPhoneEvent = ev;
         phone.appName = ev.appName ?? phone.appName;
-        phone.options = node.opts || [];
+
+        const node = phone.node ? ev.nodes?.[phone.node] : null;
+        if (node && phone.options?.length) {
+            phone.options = node.opts || [];
+        }
     },
 
     // 3. SHARED HTML TEMPLATE
@@ -1439,13 +1477,18 @@ export const events = {
             statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
         }
         else if (mood.effect === "snack") {
-            // Snacks only
+            // Snacks only - through grantItem, which owns the capacity rule.
+            // The raw push here walked past the hard cap of ten: in week mode
+            // the backpack carries over, and a full one gained an eleventh
+            // item with no word about it. If the pack is full the morning
+            // falls back to its plain line and grantItem's log entry says why.
             const possibleItems = ["energy", "donut", "sandwich", "chocolate"];
             const rItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
-            this.state.inventory.push({ id: rItem, used: false });
-            this.addToArchive('items', rItem);
-            statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
-            if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
+            if (this.grantItem(rItem)) {
+                statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
+            } else {
+                statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
+            }
         }
 
         // Refresh immediately so bars and clock are correct
@@ -1708,24 +1751,13 @@ export const events = {
                 }
             }
 
-            // Loot & Items Logic
-            if(res.loot && !this.state.inventory.find(i => i.id === res.loot)) {
-                let dbItem = DB.items[res.loot];
-                let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
-                let normalCount = this.state.inventory.filter(i => {
-                    let db = DB.items[i.id];
-                    return db && !db.quest;
-                }).length;
-
-                if (!isPermanent && normalCount >= 10) {
-                    this.log({ k: 'log.backpackFull', v: { item: itemNameValue(res.loot) } }, "text-slate-500 italic");
-                } else {
-                    this.state.inventory.push({ id: res.loot, used: false });
-                    this.addToArchive('items', res.loot);
-                    this.log({ k: 'log.item.received', v: { item: itemNameValue(res.loot) } }, "text-yellow-400");
-                    if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
-                }
-            }
+            // Loot through the one shared path. This block was a third,
+            // drifted copy of the grantItem rules: its outer guard skipped
+            // the grant whenever ANY copy was in the backpack, while
+            // grantItem blocks duplicates only for permanent items and lets
+            // consumables stack to the cap - a consumable chat reward was
+            // silently dropped if the player already held one.
+            this.grantItem(res.loot, 'received');
             
         // Stats Update
         let finalL = res.l || 0;

@@ -8,6 +8,18 @@ Bug fixes:
 * After a language switch, Müller's handwritten entries at the back of the chronicle stayed in the old language while the chapters changed. They follow now.
 * Switching language at an unlucky moment could leave one event pool in the old language or empty for the rest of the session, and a quick double switch could end on the wrong language. All three timings are safe now.
 * In week mode, the silent hotline still answered tickets: with the day's calls spent, clicking the idle line kept removing one ticket per click. The idle line is idle now.
+* After a phone chat, no mail could ever follow and the Steam status still showed the previous activity. Chats book themselves properly now.
+* The backpack, team, knowledge, archive and settings buttons in the side panel can be reached and pressed with the keyboard.
+* Small screen repairs: the hover zoom on a locked achievement no longer slides under the neighbouring cards, the day/week choice is shared between archive and world statistics within a session, "always show the curve" takes effect at the very next night screen, the knowledge book's top edge has its intended green, and a damaged day curve draws a flat line instead of nothing.
+* Toggling the music off and quickly on again went permanently silent, and dragging the volume slider while the music was stopping left it playing although it was switched off. Both settings behave now.
+* In a browser's private mode the game broke mid-action on every save attempt; it plays on without saving now, like it always should have. A corrupted key-binding entry no longer breaks every keypress either.
+* A day ending while a mail was open left the dead mail standing over the night screen, and answering it leaked into the finished day. The mail closes with the day now.
+* Restarting during the boot animation ran two boot sequences at once and reset the day twice; a double click on the party invitation with a slow connection could crash the evening. Both hold steady now.
+* Switching language while the chat's three dots were bouncing served the next reply buttons in the old language, and switching during the summer party rewound the hub text to the arrival prose. Both follow completely now.
+* The chronicle refused to be written on a fresh morning until you had done something. It accepts the pen right away.
+* The diary claimed a day without lies as soon as your excuse stock had grown overnight, even if you had just used one. It counts what you actually spend.
+* "Der Faulpelz" was unreachable for the laziest possible player - laziness pinned at 100 never counted as 80 or more. It does now.
+* A consumable reward from a chat was silently dropped if you already carried one, and a snack morning could stuff an eleventh item into a full backpack. All loot goes through the one shared path now.
 * Mails now weigh the same as everything else: they quietly used a softer difficulty multiplier, shrank relief values on easy days, and their minutes never brought tickets. One formula everywhere.
 * Phone-chat endings now cost the time they say and take the items they say. Every chat ending used to cost a flat 15 minutes whatever was written, no ticket ever arrived during one, and the prince's black card stayed in the backpack after returning his millions.
 * Steam only: playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine also stays played.

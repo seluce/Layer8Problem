@@ -67,6 +67,13 @@
     ];
 
     let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
+    // Re-read the shared tab every time the archive opens. Both panels mount
+    // at boot, so the one-time initializer above only synced them across app
+    // restarts - a WEEK choice made in the other panel this session never
+    // arrived here.
+    $effect(() => {
+        if (game.archiveOpen) mode = localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day';
+    });
     const setMode = (key) => {
         mode = key;
         try { localStorage.setItem(KEYS.statsTab, key); } catch { /* private mode */ }
@@ -427,7 +434,13 @@
         <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {#each achievements as row (row.ach.id)}
+                <!-- md:hover:z-50 on the ROW: opacity-60 and grayscale on a
+                     locked card each open a stacking context, so the icon's
+                     own hover zoom (z-50 on the child) could never rise above
+                     LATER sibling cards and clipped mid-zoom. Lifting the
+                     hovered row itself puts the whole context on top. -->
                 <div class="flex gap-3 p-3 rounded-sm border transition-all hover:bg-slate-800 group relative
+                            md:hover:z-50
                             {row.unlocked ? `opacity-100 border-solid bg-slate-900/40 ${row.diff.border}` : 'border-slate-700 opacity-60 border-dashed grayscale bg-slate-950/30'}">
                     <div class={row.ach.img
                         ? 'w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50'

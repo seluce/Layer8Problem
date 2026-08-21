@@ -393,7 +393,12 @@ export const week = {
         this.startWeek(level);
         this.renderHeader();
         this.updateUI();
-        setTimeout(() => { this.reset(); }, 500);
+        // Registered like every other pending step (DAY_TIMERS): untracked,
+        // this reset() fired into whatever existed 500ms later.
+        this.state.bootTimer = setTimeout(() => {
+            this.state.bootTimer = null;
+            this.reset();
+        }, 500);
     },
 
     // --- THE FRIDAY MEETING (design 8.1) ----------------------------------

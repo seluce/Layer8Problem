@@ -169,11 +169,11 @@
 
         if (tree().items[row.entry.id]?.use?.cooldown) {
             return (waitFor(row.entry.id) <= 0
-                ? 'inv-slot relative group cursor-default cursor-pointer border-green-500 hover:bg-green-900/20'
+                ? 'inv-slot relative group cursor-pointer border-green-500 hover:bg-green-900/20'
                 : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
         }
         if (isConsumable(row.entry.id)) {
-            return 'inv-slot relative group cursor-default cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
+            return 'inv-slot relative group cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
         }
         return 'inv-slot relative group cursor-default' + ring;
     }

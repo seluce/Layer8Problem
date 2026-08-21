@@ -114,7 +114,10 @@
           not restart.
         -->
         {#key mail.id ?? mail.subj}
-            <div class="h-full bg-blue-500 email-timer-bar"></div>
+            <!-- Duration from the engine's own constant, so the bar and the
+                 timeout can never drift apart again. -->
+            <div class="h-full bg-blue-500 email-timer-bar"
+                 style="animation-duration: {engine.EMAIL_DURATION_MS}ms"></div>
         {/key}
     </div>
 
@@ -175,10 +178,12 @@
 
 <style>
     /* Runs once on mount. The {#key} block above recreates the element for each
-       new mail, which restarts the animation without any JavaScript. */
+       new mail, which restarts the animation without any JavaScript. The
+       DURATION is deliberately absent here - it comes inline from
+       engine.EMAIL_DURATION_MS, the same constant the engine's timeout uses. */
     .email-timer-bar {
         width: 100%;
-        animation: email-countdown 20000ms linear forwards;
+        animation: email-countdown linear forwards;
     }
 
     @keyframes email-countdown {

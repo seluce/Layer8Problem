@@ -607,12 +607,19 @@ export const core = {
     saveSystem: function() {
         // Copy the current reputation into the archive before writing
         this.state.archive.reputation = { ...this.state.reputation };
-        
-        // Then persist
-        localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
-        
-        // Key bindings are persisted too
-        localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
+
+        // Guarded like saveDay and saveWeek: this runs in the MIDDLE of
+        // resolving an action (applyReputation, incrementStat, loot), and in
+        // private mode or on a full quota an unguarded setItem threw there -
+        // the option's outcome was half-applied and the result screen never
+        // came. The game keeps playing without persistence, which is what
+        // the two siblings already did.
+        try {
+            localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
+            localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
+        } catch (e) {
+            console.warn('System state could not be saved:', e);
+        }
 
         // Mirror progress to cloud storage (desktop only, no-op on the web).
         platform.save(this.buildCloudPayload());
@@ -660,11 +667,40 @@ export const core = {
         };
     },
 
+    /**
+     * The party hub's stage prose for the current progress, or null when the
+     * event carries no textByProgress. ONE formula for both places that
+     * render the hub - the first paint and the language-switch repaint; the
+     * repaint used to take the raw event and rewound the evening's arc to
+     * the arrival text.
+     */
+    partyStageText: function(ev) {
+        const versions = ev?.textByProgress;
+        if (!versions?.length) return null;
+        const stage = Math.min(
+            versions.length - 1,
+            Math.floor(this.state.partyProgress / (PARTY_STATIONS / versions.length))
+        );
+        return versions[stage];
+    },
+
+    /**
+     * Which career day an entry written NOW belongs to. daysStarted counts on
+     * the first ACTION (markDayStarted), so on a fresh morning it still holds
+     * yesterday's number - the gate then matched yesterday's entry and refused
+     * to write until the player had acted. Before the first action the entry
+     * belongs to the day that is about to start.
+     */
+    chronicleDayNo: function() {
+        return (this.state.archive.stats?.daysStarted ?? 0)
+             + (this.state.dayActive ? 0 : 1);
+    },
+
     addChronicleEntry: function() {
         const archive = this.state.archive;
         archive.chronicle ??= [];
 
-        const dayNo = archive.stats?.daysStarted ?? 1;
+        const dayNo = this.chronicleDayNo();
         if (archive.chronicle.some(e => e.day === dayNo)) return false;
 
         // The id and the numbers, not the sentence: see data_lore.js.
@@ -679,7 +715,7 @@ export const core = {
 
     /** Has today's line already been written? Drives the button state. */
     chronicleWrittenToday: function() {
-        const dayNo = this.state.archive.stats?.daysStarted ?? 1;
+        const dayNo = this.chronicleDayNo();
         return (this.state.archive.chronicle ?? []).some(e => e.day === dayNo);
     },
 
@@ -1023,16 +1059,8 @@ export const core = {
                 // evening has come: arrival, peak, and the hour in which the
                 // room slowly empties.
                 const hub = DB.party.find(e => e.id === 'party_hub');
-                const versions = hub?.textByProgress;
-                if (versions?.length) {
-                    const stage = Math.min(
-                        versions.length - 1,
-                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / versions.length))
-                    );
-                    this.renderTerminal({ ...hub, text: versions[stage] }, 'party');
-                } else {
-                    this.renderTerminal(hub, 'party');
-                }
+                const staged = this.partyStageText(hub);
+                this.renderTerminal(staged ? { ...hub, text: staged } : hub, 'party');
             }
             return;
         }
@@ -1191,7 +1219,11 @@ export const core = {
         }
 
         // --- STAT THRESHOLDS ---
-        if(this.state.fl >= 80 && this.state.fl < 100 && !this.hasAch('ach_lazy')) {
+        // No upper bound: the 80-99 window could be jumped in one clamped
+        // step (79 plus a big l lands on 100), and the laziest possible
+        // playstyle - pinned at 100 all afternoon - never earned the badge
+        // that describes it.
+        if(this.state.fl >= 80 && !this.hasAch('ach_lazy')) {
             this.unlockAchievement('ach_lazy');
         }
         
@@ -1673,6 +1705,18 @@ export const core = {
     },
     
 	finishGame: function() {
+        // A day can end while a mail is open (the chat's read-timer finishes
+        // the day, a boss timeout resolves) - the modal then stood stranded
+        // over the end screen with no countdown running, and answering it
+        // wrote stats into the finished day. Closed the way the boss fight
+        // closes it before rendering.
+        if (this.state.isEmailOpen) {
+            if (this.state.emailTimer) { clearTimeout(this.state.emailTimer); this.state.emailTimer = null; }
+            const emailModal = document.getElementById('email-modal');
+            if (emailModal) this.hideOverlay(emailModal);
+            this.state.isEmailOpen = false;
+        }
+
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
             
@@ -1720,10 +1764,19 @@ export const core = {
     // async: the party pool is only fetched when the finale actually happens,
     // which most players never reach.
     startParty: async function() {
-        await ensure('party');
-        this.playAudio('ui');
+        // Claim the marker BEFORE the await: with a cold pool the fetch
+        // suspends here, and a double-click (or a restart during the load,
+        // which nulls pendingEnd through freshDay) let the continuation
+        // dereference null - the party half-started on a day that no longer
+        // existed and then threw. Claiming first makes the second caller a
+        // no-op, and the null check covers the reset case.
         const endData = this.state.pendingEnd;
+        if (!endData?.partyKey) return;
         this.state.pendingEnd = null; // clear the marker
+
+        await ensure('party');
+        if (this.state.isPartyMode) return;   // a second continuation lost the race
+        this.playAudio('ui');
         
         // Switch into party mode
         this.state.isPartyMode = true;

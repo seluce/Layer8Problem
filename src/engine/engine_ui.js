@@ -574,6 +574,7 @@ export const ui = {
         }
 
         this.state.excusesLeft--;
+        this.state.excusesUsed = (this.state.excusesUsed ?? 0) + 1;   // the diary counts lies told
 
         // Spent: the next event deals a new one. Without this the same text
         // would come back if the engine draws this event again later - fleeing
@@ -1051,15 +1052,20 @@ export const ui = {
 
         let i = 0;
         
+        // Every step stores its handle in state.bootTimer (registered in
+        // DAY_TIMERS): unregistered, the chain could not be stopped - a
+        // restart during the boot animation ran two chains at once,
+        // interleaving their lines and ending in a double reset().
         const printLine = () => {
             if (i < bootLines.length) {
                 this.state.bootLines.push(bootLines[i]);
                 i++;
                 // Between 300 and 600 milliseconds per line
-                setTimeout(printLine, 300 + Math.random() * 300);
+                this.state.bootTimer = setTimeout(printLine, 300 + Math.random() * 300);
             } else {
                 // Hold for 1.5 seconds so the last line can be read
-                setTimeout(() => {
+                this.state.bootTimer = setTimeout(() => {
+                    this.state.bootTimer = null;
                     this.state.activeEvent = false;
                     this.disableButtons(false);
                     if (callback) callback();

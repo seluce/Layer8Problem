@@ -192,10 +192,15 @@ export const audio = {
             if (this.state.currentMusicTrack === 'boss' || this.state.currentMusicTrack === 'gala') {
                 this.playMusic(this.state.currentMusicTrack);
             } else {
-                this.playMusic('office'); 
+                this.playMusic('office');
             }
         } else {
-            this.stopMusic();
+            // Instant, exactly as stopMusic's own docstring prescribes for
+            // this switch. With the default 400ms fade, off-and-on within
+            // the fade window went permanently silent: playMusic saw the
+            // still-audible track and returned, then the fade's callback
+            // paused it - and nothing ever asked for music again.
+            this.stopMusic(0);
         }
     },
     
@@ -228,12 +233,21 @@ export const audio = {
         this.state.musicVolume = parseFloat(val);
         localStorage.setItem(KEYS.musicVolume, val);
         if (this.bgmTracks) {
+            // Only the track that is currently MEANT to be audible follows
+            // the slider immediately (cancelling its fade-in, which would
+            // otherwise carry on towards the old target and undo the
+            // slider). Every other running fade is a fade-OUT whose done()
+            // is the only thing that ever pauses that track - the old loop
+            // cancelled those too, and dragging the slider during a stop
+            // left the outgoing track playing forever, even with the music
+            // switched off. Paused tracks pick the new volume up on their
+            // next play().
             for (let key in this.bgmTracks) {
-                // Cancel a running fade first - otherwise it would carry on
-                // towards its old target and undo the slider a moment later.
-                clearInterval(this.fadeTimers[key]);
-                delete this.fadeTimers[key];
-                this.bgmTracks[key].volume = this.state.musicVolume;
+                if (key === this.state.currentMusicTrack && this.state.musicEnabled) {
+                    clearInterval(this.fadeTimers[key]);
+                    delete this.fadeTimers[key];
+                    this.bgmTracks[key].volume = this.state.musicVolume;
+                }
             }
         }
     },

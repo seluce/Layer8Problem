@@ -44,6 +44,13 @@
 
     // Anyone who always wants the curve can set that in the options.
     let showChart = $state(game.autoChart ?? false);
+    // Re-seeded on every open: the component mounts once at boot, so the
+    // initializer captured the setting exactly once - flip "always show the
+    // curve" mid-week and the following night screens ignored it until a
+    // full reload.
+    $effect(() => {
+        if (modal.open) showChart = game.autoChart ?? false;
+    });
     let showDiary = $state(false);
 
     // The colour follows the outcome, not the wording. It used to be picked by
