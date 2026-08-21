@@ -345,9 +345,9 @@ await ok('Every activity has a text, every text an activity', async () => {
     const { en } = await import('../src/i18n/en.js');
 
     for (const [name, dict] of [['de', de], ['en', en]]) {
-        const vorhanden = Object.keys(dict).filter(k => k.startsWith('presence.'))
+        const present = Object.keys(dict).filter(k => k.startsWith('presence.'))
                                            .map(k => k.slice('presence.'.length));
-        assert.deepEqual([...vorhanden].sort(), [...PRESENCE_ALL].sort(),
+        assert.deepEqual([...present].sort(), [...PRESENCE_ALL].sort(),
                          `${name}: presence.* and PRESENCE_ALL have drifted apart`);
     }
 });

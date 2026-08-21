@@ -364,7 +364,7 @@ export const events = {
         
         // --- CHANGE 1: block the system straight away ---
         this.state.isEmailOpen = false;
-        this.state.emailPending = true; // Blockiert checkRandomEmail
+        this.state.emailPending = true; // blocks checkRandomEmail
         // -------------------------------------------
 
         // Game logic. `message` is a RECIPE, not a sentence - see
@@ -1106,7 +1106,7 @@ export const events = {
             this.log({ k: 'log.drunk' }, "text-purple-400 italic");
         }
 
-        // Zeit & Tickets
+        // Time & tickets
         //
         // Tickets are counted by BOUNDARY, not by duration: every half hour the
         // clock steps over adds one. Which is why an option's cost decides how
@@ -1233,7 +1233,6 @@ export const events = {
             if (index > -1) {
                 // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
-                let removedName = DB.items[rem] ? DB.items[rem].name : rem;
                 this.log({ k: 'log.itemLost', v: { item: itemNameValue(rem) } }, "text-orange-400");
             }
         }
@@ -1245,7 +1244,7 @@ export const events = {
         this.log(recipe ?? { msg: String(res ?? '') });
         this.updateUI();
 
-        // UI Rendern
+        // Render the UI
         // The key travels, not the word - see setTerminalResult. Which also
         // means lint-i18n can no longer see these five as used, so they are
         // declared here by hand.

@@ -268,8 +268,8 @@ await ok('The end screen records identities, not sentences', () => {
     assert.deepEqual(end.lead.v.day, dayNameValue(3));
     assert.equal(end.text ?? '', '', 'the end screen carries finished HTML again');
     for (const row of end.balance.rows) {
-        for (const feld of ['tickets', 'l', 'a', 'b']) {
-            if (row[feld] !== undefined) assert.equal(typeof row[feld], 'number', `${feld} is not a number`);
+        for (const statField of ['tickets', 'l', 'a', 'b']) {
+            if (row[statField] !== undefined) assert.equal(typeof row[statField], 'number', `${statField} is not a number`);
         }
     }
     // And both recipes resolve in the running language instead of standing
@@ -317,10 +317,10 @@ await ok('The diary records the draw, not the page', async () => {
     assert.deepEqual(entry.tokens.weekday, dayNameValue(2));
 
     // And rendered, it comes out as a page with no open marks.
-    const seite = renderDiary(entry);
-    assert.equal(seite.dayIndex, 2);
-    assert.equal(seite.paragraphs.length, entry.paragraphs.length);
-    for (const p of seite.paragraphs) {
+    const diaryPage = renderDiary(entry);
+    assert.equal(diaryPage.dayIndex, 2);
+    assert.equal(diaryPage.paragraphs.length, entry.paragraphs.length);
+    for (const p of diaryPage.paragraphs) {
         assert.ok(p.text.length, 'a paragraph comes out empty');
         assert.ok(!/\{\w+\}/.test(p.text), p.text);
     }
@@ -596,9 +596,9 @@ await ok('A restart clears the end screen out of the state, not only off the scr
     // And both restarts go through it rather than hiding the container by hand.
     const wSrc = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
     const cSrc = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
-    const woche = wSrc.slice(wSrc.indexOf('softResetWeek: function'), wSrc.indexOf('softResetWeek: function') + 900);
+    const weekSlice = wSrc.slice(wSrc.indexOf('softResetWeek: function'), wSrc.indexOf('softResetWeek: function') + 900);
     const tag = cSrc.slice(cSrc.indexOf('softReset: function'), cSrc.indexOf('softReset: function') + 900);
-    assert.ok(/dismissModal\(\)/.test(woche), 'softResetWeek hides the overlay by hand again');
+    assert.ok(/dismissModal\(\)/.test(weekSlice), 'softResetWeek hides the overlay by hand again');
     assert.ok(/dismissModal\(\)/.test(tag), 'softReset hides the overlay by hand again');
 });
 await ok('The day asks for the diary, the one pool with no call site of its own', () => {
@@ -936,8 +936,8 @@ await ok('The knowledge follows the language', async () => {
     // DB, the difference is pure Svelte reactivity and cannot be seen here.
     // Measured: the mutation probe did not fire. So the source is read, the way
     // i18n.test.mjs does it for index.html.
-    const quelle = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
-    const stelle = quelle.slice(quelle.indexOf('knowledgeEntries:'), quelle.indexOf('markKnowledgeRead:'));
+    const source = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const stelle = source.slice(source.indexOf('knowledgeEntries:'), source.indexOf('markKnowledgeRead:'));
     assert.ok(stelle.includes('tree().compendium'),
               "knowledgeEntries does not read the tree through tree() - the component then misses the language switch");
     assert.ok(!/\bDB\.compendium/.test(stelle),
@@ -1049,8 +1049,8 @@ await ok('An encounter opens the entry, the note follows the evidence', () => {
     assert.equal(sonntag.notes.length, 1, 'exactly the note that was lived through is expected');
     // Compared through the identity of the evidence, not through the German
     // sentence: the note carries a `seen`, and that is the same in both trees.
-    const quelle = (DB.compendium ?? []).find(e => e.id === 'sonntag');
-    assert.equal(sonntag.notes[0], quelle.notes.find(n => n.seen === 'cof_sonntag_1').text);
+    const source = (DB.compendium ?? []).find(e => e.id === 'sonntag');
+    assert.equal(sonntag.notes[0], source.notes.find(n => n.seen === 'cof_sonntag_1').text);
 });
 await ok('Flags unlock notes just as events do', () => {
     resetState();
@@ -1283,13 +1283,13 @@ await ok('The engine reports rather than letting itself be overwritten', async (
     // again.
     const { hooks, ENGINE_EVENTS } = await import('../src/engine/engine_hooks.js');
 
-    let gehoert = 0;
-    const ab = hooks.on('openTeam', () => gehoert++);
+    let heard = 0;
+    const ab = hooks.on('openTeam', () => heard++);
     hooks.emit('openTeam');
-    assert.equal(gehoert, 1, 'the notice does not arrive');
+    assert.equal(heard, 1, 'the notice does not arrive');
     ab();
     hooks.emit('openTeam');
-    assert.equal(gehoert, 1, 'delivery carries on after unsubscribing');
+    assert.equal(heard, 1, 'delivery carries on after unsubscribing');
 
     // A name that does not exist throws at once - instead of quietly never firing.
     assert.throws(() => hooks.on('opneTeam', () => {}), /Unknown engine event/);
@@ -1424,8 +1424,8 @@ await ok('setDifficulty creates a fresh day instead of patching fields', () => {
         assert.equal(state.tickets, tickets, `${stufe}: tickets carried over`);
         assert.equal(state.excusesLeft, ausreden, `${stufe}: Ausreden falsch`);
         assert.equal(state.difficultyMult, mult, `${stufe}: Multiplikator falsch`);
-        for (const feld of ['fl', 'al', 'cr', 'coffeeConsumed', 'emailsIgnored']) {
-            assert.equal(state[feld], 0, `${stufe}: ${feld} carried over`);
+        for (const statField of ['fl', 'al', 'cr', 'coffeeConsumed', 'emailsIgnored']) {
+            assert.equal(state[statField], 0, `${stufe}: ${statField} carried over`);
         }
         assert.deepEqual(state.inventory, [], `${stufe}: backpack carried over`);
         assert.equal(state.time, 8 * 60, `${stufe}: clock carried over`);
@@ -1617,15 +1617,15 @@ await ok('Diary: in a week {weekday} is the real calendar day', async () => {
     state.week.dayIndex = 3;
     // The mark travels as a recipe and is filled in only when the page is drawn -
     // in the English tree the same index is called Wednesday.
-    let seite = renderDiary(buildDiary(state, 'WIN'));
-    assert.equal(seite.paragraphs[0].text, `Today is ${dayName(2)}, 2 days to go.`);
+    let diaryPage = renderDiary(buildDiary(state, 'WIN'));
+    assert.equal(diaryPage.paragraphs[0].text, `Today is ${dayName(2)}, 2 days to go.`);
 
     engine.endWeek();
     state.difficultyMult = 0.8;                                 // day mode, easy
-    seite = renderDiary(buildDiary(state, 'WIN'));
+    diaryPage = renderDiary(buildDiary(state, 'WIN'));
     // In day mode the difficulty stands for a calendar day: easy is the Friday
     // (WEEKDAY_INDEX in engine_diary.js), here too through the index.
-    assert.ok(seite.paragraphs[0].text.startsWith(`Today is ${dayName(4)}`), seite.paragraphs[0].text);
+    assert.ok(diaryPage.paragraphs[0].text.startsWith(`Today is ${dayName(4)}`), diaryPage.paragraphs[0].text);
     DB.diary = origDiary;
 });
 await ok('Diary: the header names the same day as the prose', async () => {
@@ -1642,9 +1642,9 @@ await ok('Diary: the header names the same day as the prose', async () => {
     engine.startWeek('easy');                                   // easy = the Friday in day mode
     for (const tag of [1, 3, 5]) {
         state.week.dayIndex = tag;
-        const seite = renderDiary(buildDiary(state, 'WIN'));
-        assert.equal(seite.dayIndex, tag - 1, `day ${tag}: the header shows the wrong day`);
-        assert.equal(seite.paragraphs[0].text, `${dayName(tag - 1)}.`, 'header and prose disagree');
+        const diaryPage = renderDiary(buildDiary(state, 'WIN'));
+        assert.equal(diaryPage.dayIndex, tag - 1, `day ${tag}: the header shows the wrong day`);
+        assert.equal(diaryPage.paragraphs[0].text, `${dayName(tag - 1)}.`, 'header and prose disagree');
     }
 
     engine.endWeek();                                           // day mode: the level stands for a day
@@ -1668,22 +1668,22 @@ await ok('The gala passes its ending on twice, as a reference', async () => {
     const argsRef = { i: 'party_finale_rage', path: ['opts', 0, 'action', 'args'] };
 
     const orig = engine.generateDiaryEntry;
-    let gesehen = null;
-    engine.generateDiaryEntry = (grund, wert) => { gesehen = { grund, wert }; return 'Stub'; };
+    let seen = null;
+    engine.generateDiaryEntry = (reason, value) => { seen = { reason, value }; return 'Stub'; };
     engine.finishParty('LEGENDE', 'Die Tirade.', argsRef);
     engine.generateDiaryEntry = orig;
 
-    assert.equal(gesehen.grund, 'PARTY');
-    assert.deepEqual(gesehen.wert, { ref: { ...argsRef, path: ['opts', 0, 'action', 'args', 1] } },
+    assert.equal(seen.reason, 'PARTY');
+    assert.deepEqual(seen.value, { ref: { ...argsRef, path: ['opts', 0, 'action', 'args', 1] } },
                      'the prose does not go into the diary as a reference');
     assert.deepEqual(calls.end.party.subtitle, { ref: { ...argsRef, path: ['opts', 0, 'action', 'args', 0] } },
                      'the ending name does not go onto the screen as a reference');
     // And both really point at what they should - held against the tree, not
     // against "LEGENDE": the English run says LEGEND there.
-    const finale = DB.party.find(ev => ev.id === 'party_finale_rage').opts[0].action.args;
-    assert.equal(renderRecipe(calls.end.party.subtitle), finale[0]);
-    assert.equal(renderRecipe(gesehen.wert), finale[1]);
-    assert.ok(finale[1].length > 100, 'argument 1 is not the long prose');
+    const finaleArgs = DB.party.find(ev => ev.id === 'party_finale_rage').opts[0].action.args;
+    assert.equal(renderRecipe(calls.end.party.subtitle), finaleArgs[0]);
+    assert.equal(renderRecipe(seen.value), finaleArgs[1]);
+    assert.ok(finaleArgs[1].length > 100, 'argument 1 is not the long prose');
 });
 await ok("The diary fills in the gala's ending from the tree", async () => {
     resetState();
@@ -1691,10 +1691,10 @@ await ok("The diary fills in the gala's ending from the tree", async () => {
     await ensure('party');
     const origDiary = DB.diary;
     DB.diary = { ending: [{ id: 't_gala', when: () => true, lines: ['Then came the gala. {party}'] }] };
-    const wert = { ref: { i: 'party_finale_rage', path: ['opts', 0, 'action', 'args', 1] } };
+    const argRef = { ref: { i: 'party_finale_rage', path: ['opts', 0, 'action', 'args', 1] } };
 
-    const entry = buildDiary(state, 'PARTY', wert);
-    assert.deepEqual(entry.tokens.party, wert, 'the mark does not hold the reference');
+    const entry = buildDiary(state, 'PARTY', argRef);
+    assert.deepEqual(entry.tokens.party, argRef, 'the mark does not hold the reference');
 
     const expected = DB.party.find(ev => ev.id === 'party_finale_rage').opts[0].action.args[1];
     assert.equal(renderDiary(entry).paragraphs[0].text, `Then came the gala. ${expected}`);
@@ -1719,9 +1719,9 @@ await ok('The path names the fragment the line came from', async () => {
                           { id: 'i_ja',   when: () => true,  lines: ['RICHTIG-C {list}'] }],
     };
 
-    const seite = renderDiary(buildDiary(state, 'WIN'));
-    const texte = seite.paragraphs.map(p => p.text);
-    assert.deepEqual(texte, ['RICHTIG-A', 'RICHTIG-C RICHTIG-B'], JSON.stringify(texte));
+    const diaryPage = renderDiary(buildDiary(state, 'WIN'));
+    const pageTexts = diaryPage.paragraphs.map(p => p.text);
+    assert.deepEqual(pageTexts, ['RICHTIG-A', 'RICHTIG-C RICHTIG-B'], JSON.stringify(pageTexts));
 
     DB.diary = origDiary;
 });
@@ -1736,14 +1736,14 @@ await ok('The same page, told in both languages', async () => {
     state.tickets = 3; state.coffeeConsumed = 2; state.rageWarningReceived = true;
     const entry = buildDiary(state, 'WIN');
 
-    const erzaehlen = async (lang) => {
+    const narrate = async (lang) => {
         await useLanguage(lang);
         await loadCore(lang);
         await ensure('diary');
         return renderDiary(entry).paragraphs.map(p => p.text);
     };
-    const de = await erzaehlen('de');
-    const en = await erzaehlen('en');
+    const de = await narrate('de');
+    const en = await narrate('en');
     await useLanguage(LANG); await loadCore(LANG); await ensure('diary');   // back to LANG
 
     assert.ok(de.length >= 3, 'too few paragraphs for the probe');
@@ -1760,9 +1760,9 @@ await ok('Diary: a week run delivers paragraphs with no open placeholders', asyn
     engine.startWeek('hard');
     state.week.dayIndex = 2;
     state.tickets = 4; state.rageWarningReceived = true;
-    const seite = renderDiary(buildDiary(state, 'WIN'));
-    assert.ok(seite.paragraphs.length >= 3);
-    for (const p of seite.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
+    const diaryPage = renderDiary(buildDiary(state, 'WIN'));
+    assert.ok(diaryPage.paragraphs.length >= 3);
+    for (const p of diaryPage.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
 });
 await ok('Sleep line: the level picks the register, from night 3 on the worn one', () => {
     resetState();
@@ -1906,11 +1906,11 @@ await ok('defaultWeekDiff skips the condition picker', () => {
     state.defaultWeekDiff = 'ask';
 });
 await ok('"ask" and an unknown value still show the picker', () => {
-    for (const wert of ['ask', 'kaputt']) {
+    for (const variantKey of ['ask', 'kaputt']) {
         resetState();
-        state.defaultWeekDiff = wert;
+        state.defaultWeekDiff = variantKey;
         engine.startWeekSelect();
-        assert.ok(calls.overlays.includes('week-modal'), `the picker is missing for "${wert}"`);
+        assert.ok(calls.overlays.includes('week-modal'), `the picker is missing for "${variantKey}"`);
         assert.equal(state.week.active, false);
     }
     state.defaultWeekDiff = 'ask';
@@ -2229,8 +2229,8 @@ await ok('The backpack cap holds, tools are deliberately exempt', async () => {
     // Consumables first, then tools until the cap is exceeded
     for (const id of verbrauch) engine.grantItem(id);
     for (const id of werkzeug.slice(0, 4)) engine.grantItem(id);
-    const zaehlbar = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
-    assert.ok(zaehlbar > 10, `tools have to be allowed past the cap (${zaehlbar})`);
+    const countable = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
+    assert.ok(countable > 10, `tools have to be allowed past the cap (${countable})`);
 
     // One more consumable is turned away now
     const vorher = state.inventory.length;
@@ -2457,13 +2457,13 @@ await ok('The foyer changes as the evening goes on', async () => {
     resetState();
     await ensure('party');
     state.isPartyMode = true;
-    const gesehen = new Set();
+    const seenArgs = new Set();
     for (const p of [0, 5, 11]) {
         state.partyProgress = p;
         engine.reset();
-        gesehen.add(calls.terminal[0].text);
+        seenArgs.add(calls.terminal[0].text);
     }
-    assert.equal(gesehen.size, 3, 'three stages have to show three versions');
+    assert.equal(seenArgs.size, 3, 'three stages have to show three versions');
 });
 await ok('Coming out of a week, the gala opens with a line of its own', async () => {
     resetState();
@@ -2510,27 +2510,27 @@ await ok('The lead-in picks up how the day went', async () => {
 });
 await ok('The ticket threshold is reachable', () => {
     // Ten tickets end the day, and a quarter of nine is three.
-    const hoechstwert = Math.ceil(9 * 0.25);
+    const ceiling = Math.ceil(9 * 0.25);
     const src = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
     const m = src.match(/report\.ticketsAfter >= (\d+)/);
     assert.ok(m, 'threshold not found');
-    assert.ok(Number(m[1]) <= hoechstwert,
-        `threshold ${m[1]} is above the maximum ${hoechstwert} - a dead branch`);
+    assert.ok(Number(m[1]) <= ceiling,
+        `threshold ${m[1]} is above the maximum ${ceiling} - a dead branch`);
 });
 await ok('Two nights in a row never show the same sleep line', async () => {
     resetState();
     await ensure('special');
     engine.startWeek('normal');
-    const gesehen = [];
+    const seenArgs = [];
     for (let d = 1; d <= 4; d++) {
         state.week.dayIndex = d;
         state.tickets = 2; state.al = 25; state.cr = 25; state.fl = 30;
         state.time = 16 * 60 + 30; state.ticketWarning = true; state.pendingEnd = null;
         engine.queueNightEnd();
-        gesehen.push(JSON.stringify(state.pendingEnd.night.sleep));
+        seenArgs.push(JSON.stringify(state.pendingEnd.night.sleep));
     }
-    for (let i = 1; i < gesehen.length; i++) {
-        assert.notEqual(gesehen[i], gesehen[i - 1], `night ${i + 1} repeats the previous line`);
+    for (let i = 1; i < seenArgs.length; i++) {
+        assert.notEqual(seenArgs[i], seenArgs[i - 1], `night ${i + 1} repeats the previous line`);
     }
 });
 await ok('Every morning gets a line of its own', () => {

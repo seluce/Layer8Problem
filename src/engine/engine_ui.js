@@ -1,4 +1,5 @@
 import { KEYS, PROGRESS_KEYS } from './keys.js';
+import { formatClock } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -316,15 +317,12 @@ export const ui = {
         if (this.state.lastLogMsg === key) return;
         this.state.lastLogMsg = key;
 
-        const h = Math.floor(this.state.time / 60);
-        const m = this.state.time % 60;
-
         // Rendered by components/LogFeed.svelte. The id only has to be unique
         // for the keyed each block, so a counter is enough.
         this.state.logEntries.push({
             ...entry,
             id: this._logId = (this._logId || 0) + 1,
-            time: `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`,
+            time: formatClock(this.state.time),
             color: colorClass || ''
         });
 
@@ -899,10 +897,10 @@ export const ui = {
             // Laziness is always green
             color = 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]';
         } else if (elementId === 'val-al') {
-            // Aggro = Immer Orange
+            // Aggro is always orange
             color = 'text-orange-400 drop-shadow-[0_0_10px_rgba(251,146,60,0.8)]';
         } else if (elementId === 'val-cr') {
-            // Chef/Radar = Immer Rot
+            // Boss radar is always red
             color = 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]';
         }
 
@@ -1185,7 +1183,7 @@ export const ui = {
 
                 const data = JSON.parse(jsonString);
 
-                // Validierung
+                // Validation
                 if (!data.arc || !Array.isArray(data.arc.items)) {
                     // Never reaches the player: the catch below logs this and
                     // shows import.unreadable instead. A console message, so
@@ -1462,7 +1460,7 @@ export const ui = {
      * Untouched: the save, the archive, achievements and the running day.
      */
     resetSettings: function() {
-        // Anzeige & Layout
+        // Display & layout
         this.setTextSize('normal');
         this.toggleCompactMode(false);
         this.toggleAutoHidePhone(false);
@@ -1476,7 +1474,7 @@ export const ui = {
         this.toggleOneClick(false);
         this.toggleAutoChart(false);
 
-        // Herausforderung
+        // Challenge
         this.toggleBlindStats(false);
         this.toggleBlindTickets(false);
 
@@ -1743,9 +1741,7 @@ export const ui = {
             // greppable no matter who filed it. Nothing here goes through t().
             const s = this.state || {};
             const min = s.time || 480;
-            const hh = Math.floor(min / 60).toString().padStart(2, '0');
-            const mm = (min % 60).toString().padStart(2, '0');
-            const prettyTime = `${hh}:${mm}`;
+            const prettyTime = formatClock(min);
             // inventory holds objects, not ids - joining it straight produced
             // a list of [object Object] in every report so far.
             const invList = s.inventory?.length ? s.inventory.map(i => i.id).join(", ") : "(empty)";

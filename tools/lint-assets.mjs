@@ -44,11 +44,11 @@ const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
 
 /** Does public/<path> exist? Every path in the sources is relative to public/. */
-const vorhanden = (p) => existsSync(join(PUBLIC, p));
+const onDisk = (p) => existsSync(join(PUBLIC, p));
 
 /* ---------- collect the sources ---------- */
 
-const dateien = [];
+const files = [];
 function walk(dir) {
     for (const entry of readdirSync(dir)) {
         const full = join(dir, entry);
@@ -56,36 +56,36 @@ function walk(dir) {
             if (entry === 'node_modules') continue;
             walk(full);
         } else if (/\.(js|mjs|svelte|html)$/.test(entry)) {
-            dateien.push(full);
+            files.push(full);
         }
     }
 }
 walk(join(ROOT, 'src'));
-dateien.push(join(ROOT, 'index.html'));
+files.push(join(ROOT, 'index.html'));
 
 /* ---------- 1) literal paths ---------- */
 
 const LITERAL = /assets\/img\/[a-z]+\/[A-Za-z0-9_.-]+\.(?:webp|png|svg|ico)/g;
-let literale = 0;
+let literalCount = 0;
 
-for (const datei of dateien) {
-    const text = readFileSync(datei, 'utf-8');
-    const wo = relative(ROOT, datei);
-    for (const treffer of new Set(text.match(LITERAL) ?? [])) {
-        literale++;
-        if (!vorhanden(treffer)) err(`${wo}: "${treffer}" does not exist`);
+for (const file of files) {
+    const text = readFileSync(file, 'utf-8');
+    const where = relative(ROOT, file);
+    for (const hit of new Set(text.match(LITERAL) ?? [])) {
+        literalCount++;
+        if (!onDisk(hit)) err(`${where}: "${hit}" does not exist`);
     }
 }
 
 /* ---------- 2) img: out of the data trees ---------- */
 
-let ausDaten = 0;
+let fromData = 0;
 for (const lang of ['de', 'en']) {
     const { achievements } = await import(`../src/data/${lang}/data_achievements.js`);
     for (const a of achievements) {
         if (!a.img) continue;
-        ausDaten++;
-        if (!vorhanden(a.img)) err(`data_achievements (${lang}): ${a.id} points at "${a.img}" - there is no such file`);
+        fromData++;
+        if (!onDisk(a.img)) err(`data_achievements (${lang}): ${a.id} points at "${a.img}" - there is no such file`);
     }
 }
 
@@ -93,11 +93,11 @@ for (const lang of ['de', 'en']) {
 
 /*
  * Each entry names one interpolation in the sources and every value that can
- * reach it. `werte` reads those values back out of the same file, so the list
+ * reach it. `candidates` reads those values back out of the same file, so the list
  * cannot fall behind the code: add a fifth action button and the check covers
  * it on the next run without anybody remembering this file.
  */
-const quelle = (p) => readFileSync(join(ROOT, p), 'utf-8');
+const source = (p) => readFileSync(join(ROOT, p), 'utf-8');
 
 /** Every checkPool a party option carries, out of both trees. */
 const PARTY_POOLS = await (async () => {
@@ -109,63 +109,63 @@ const PARTY_POOLS = await (async () => {
     return [...s];
 })();
 
-const MUSTER = [
+const RUNTIME_PATTERNS = [
     {
-        wo: 'src/components/ActionBar.svelte',
-        was: 'assets/img/actions/act_{action.type}.webp',
-        werte: () => [...quelle('src/components/ActionBar.svelte')
+        where: 'src/components/ActionBar.svelte',
+        what: 'assets/img/actions/act_{action.type}.webp',
+        candidates: () => [...source('src/components/ActionBar.svelte')
             .matchAll(/type:\s*'([a-z]+)'/g)].map(m => m[1]),
-        pfad: (v) => `assets/img/actions/act_${v}.webp`,
+        buildPath: (v) => `assets/img/actions/act_${v}.webp`,
     },
     {
-        wo: 'src/components/SettingsView.svelte',
-        was: 'assets/img/ui/{row.img}.webp',
-        werte: () => [...quelle('src/components/SettingsView.svelte')
+        where: 'src/components/SettingsView.svelte',
+        what: 'assets/img/ui/{row.img}.webp',
+        candidates: () => [...source('src/components/SettingsView.svelte')
             .matchAll(/img:\s*'([A-Za-z0-9_-]+)'/g)].map(m => m[1]),
-        pfad: (v) => `assets/img/ui/${v}.webp`,
+        buildPath: (v) => `assets/img/ui/${v}.webp`,
     },
     {
         // The event frame, one look per event type - plus the FALLBACK, which
         // is the one nobody thinks of and the one that shows up when a type is
         // unknown.
-        wo: 'src/components/EventView.svelte',
-        was: 'assets/img/actions/{style.img}.webp',
-        werte: () => [...quelle('src/components/EventView.svelte')
+        where: 'src/components/EventView.svelte',
+        what: 'assets/img/actions/{style.img}.webp',
+        candidates: () => [...source('src/components/EventView.svelte')
             .matchAll(/img:\s*'(act_[A-Za-z0-9_-]+)'/g)].map(m => m[1]),
-        pfad: (v) => `assets/img/actions/${v}.webp`,
+        buildPath: (v) => `assets/img/actions/${v}.webp`,
     },
     {
         // The idle monitor: the plain system screen and H.A.L.G.E.R.D. - the
         // very icon that sat in the wrong folder for a whole release.
-        wo: 'src/components/Terminal.svelte',
-        was: 'assets/img/actions/{idle.img}.webp',
-        werte: () => [...quelle('src/components/Terminal.svelte')
+        where: 'src/components/Terminal.svelte',
+        what: 'assets/img/actions/{idle.img}.webp',
+        candidates: () => [...source('src/components/Terminal.svelte')
             .matchAll(/img:\s*'(act_[A-Za-z0-9_-]+)'/g)].map(m => m[1]),
-        pfad: (v) => `assets/img/actions/${v}.webp`,
+        buildPath: (v) => `assets/img/actions/${v}.webp`,
     },
     {
         // The stations of the party foyer. The values are not in the component
         // at all - they come out of the DATA tree, as checkPool on a party
         // option, and CLAUDE.md notes that nothing validates them.
-        wo: 'src/components/EventView.svelte',
-        was: 'assets/img/party/{o.opt.checkPool}.webp',
-        werte: () => PARTY_POOLS,
-        pfad: (v) => `assets/img/party/${v}.webp`,
+        where: 'src/components/EventView.svelte',
+        what: 'assets/img/party/{o.opt.checkPool}.webp',
+        candidates: () => PARTY_POOLS,
+        buildPath: (v) => `assets/img/party/${v}.webp`,
     },
 ];
 
-let gebaut = 0;
-for (const m of MUSTER) {
-    const werte = [...new Set(m.werte())];
-    if (!werte.length) {
-        err(`${m.wo}: no values found for "${m.was}" - has the spelling changed?`);
+let builtCount = 0;
+for (const m of RUNTIME_PATTERNS) {
+    const candidates = [...new Set(m.candidates())];
+    if (!candidates.length) {
+        err(`${m.where}: no values found for "${m.what}" - has the spelling changed?`);
         continue;
     }
-    for (const v of werte) {
-        gebaut++;
-        if (!vorhanden(m.pfad(v))) err(`${m.wo}: "${m.pfad(v)}" does not exist (from "${m.was}")`);
+    for (const v of candidates) {
+        builtCount++;
+        if (!onDisk(m.buildPath(v))) err(`${m.where}: "${m.buildPath(v)}" does not exist (from "${m.what}")`);
     }
-    info(`${m.was} - ${werte.length} values checked`);
+    info(`${m.what} - ${candidates.length} values checked`);
 }
 
 /* ---------- 4) the net: an unknown runtime pattern ---------- */
@@ -175,32 +175,32 @@ for (const m of MUSTER) {
  * this file has to know about. The two above are subtracted by their location;
  * whatever is left is new and unchecked.
  */
-const GEBAUT = /assets\/img\/[a-z]+\/[^"'`\s]*[{$]/g;
+const BUILT_AT_RUNTIME = /assets\/img\/[a-z]+\/[^"'`\s]*[{$]/g;
 // Per FOLDER, not per file: EventView builds two of them, and a file that
 // already carries one known pattern must not go blind for a second.
-const bekannt = new Set(MUSTER.map(m => m.wo + '|' + m.was.replace(/\{.*$/, '')));
+const knownPatterns = new Set(RUNTIME_PATTERNS.map(m => m.where + '|' + m.what.replace(/\{.*$/, '')));
 
-for (const datei of dateien) {
-    const wo = relative(ROOT, datei);
-    for (const treffer of new Set(readFileSync(datei, 'utf-8').match(GEBAUT) ?? [])) {
-        if (bekannt.has(wo + '|' + treffer.replace(/[{$].*$/, ''))) continue;
-        warn(`${wo}: "${treffer}…" is built at runtime and checked by nothing - add the pattern in tools/lint-assets.mjs`);
+for (const file of files) {
+    const where = relative(ROOT, file);
+    for (const hit of new Set(readFileSync(file, 'utf-8').match(BUILT_AT_RUNTIME) ?? [])) {
+        if (knownPatterns.has(where + '|' + hit.replace(/[{$].*$/, ''))) continue;
+        warn(`${where}: "${hit}…" is built at runtime and checked by nothing - add the pattern in tools/lint-assets.mjs`);
     }
 }
 
 /* ---------- Report ---------- */
 
-const bestand = (() => {
+const stockCount = (() => {
     let n = 0;
-    const zaehl = (d) => { for (const e of readdirSync(d)) {
+    const countDir = (d) => { for (const e of readdirSync(d)) {
         const f = join(d, e);
-        statSync(f).isDirectory() ? zaehl(f) : n++;
+        statSync(f).isDirectory() ? countDir(f) : n++;
     } };
-    zaehl(join(PUBLIC, 'assets/img'));
+    countDir(join(PUBLIC, 'assets/img'));
     return n;
 })();
 
-console.log(`\nImage references: ${literale} fixed, ${ausDaten} from the data trees, ${gebaut} built at runtime - stock ${bestand} files`);
+console.log(`\nImage references: ${literalCount} fixed, ${fromData} from the data trees, ${builtCount} built at runtime - stock ${stockCount} files`);
 for (const i of infos) console.log(` i ${i}`);
 for (const w of warns) console.log(` ! ${w}`);
 for (const e of errors) console.log(` ✗ ${e}`);

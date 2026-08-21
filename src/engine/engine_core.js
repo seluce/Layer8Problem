@@ -5,7 +5,7 @@ import { t, tf, tree } from '../i18n/i18n.svelte.js';
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay } from './engine_state.svelte.js';
+import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay, formatClock } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -926,7 +926,6 @@ export const core = {
     offerResume: function(kind) {
         const resumeModal = document.getElementById('resume-modal');
         if (!resumeModal) return false;
-        const pad = (n) => String(n).padStart(2, '0');
         const info = document.getElementById('resume-info');
 
         if (kind === 'week') {
@@ -936,7 +935,7 @@ export const core = {
             // Not `t`: that is the dictionary lookup imported at the top of
             // this file, and a local of the same name shadows it silently.
             const minutes = savedWeek.day?.time ?? 8 * 60;
-            const clock = `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+            const clock = formatClock(minutes);
             const cfg = this.WEEK_DIFFS[savedWeek.week.level];
             // i18n-uses: week.day.mon, week.day.wed, week.day.fri
             const dayName = this.dayName(savedWeek.week.dayIndex - 1);
@@ -949,7 +948,7 @@ export const core = {
         const saved = this.loadDay();
         if (!saved) return false;
         this._resumeKind = 'day';
-        const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
+        const clock = formatClock(saved.time);
         // The day mode names itself after a weekday, so the dictionary already
         // has the word - week.day.fri and friends, the same ones the week mode
         // uses. No second set for the same five days.
@@ -1524,9 +1523,9 @@ export const core = {
      */
     valveResetValue: function() {
         const tier = this.difficultyTier();               // week-aware, see engine_week.js
-        if (tier === 1) return 30;                        // Freitag / Erholt
-        if (tier === 3) return 60;                        // Montag / Urlaubsreif
-        return 50;                                        // Mittwoch / Genervt
+        if (tier === 1) return 30;                        // easy tier: "Freitag" / "Erholt"
+        if (tier === 3) return 60;                        // hard tier: "Montag" / "Urlaubsreif"
+        return 50;                                        // normal tier: "Mittwoch" / "Genervt"
     },
 
     /**

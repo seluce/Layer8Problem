@@ -95,7 +95,7 @@ export const inventory = {
         const id = this.state.pendingItem;
         if (!id) return;
 
-        this.closeItemConfirm(); // Fenster zu
+        this.closeItemConfirm(); // window shut
 
         // Is the inventory open? Decides whether the view needs refreshing.
         const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');

@@ -198,6 +198,17 @@ export function freshDay(mult = 1.0) {
     };
 }
 
+/**
+ * The wall clock as the game prints it: minutes since midnight -> "HH:MM".
+ * One formatter for every surface - before 6.2 this pair of lines existed
+ * six times across components and engine, and the next tweak (or the next
+ * copy forgetting the padStart) had six places to miss.
+ */
+export function formatClock(minutes) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+}
+
 /** Timer fields cleared on every day restart. Kept next to the factory so the two stay in sync. */
 export const DAY_TIMERS = [
     'bossTimer', 'emailTimer', 'emailDelayTimer', 'emailChainTimer',
@@ -231,10 +242,18 @@ export const TUTORIAL_FIELDS = ['tutorialStep', 'tutorialUnlocked'];
  *
  * Sets become arrays on the way out, because JSON has no Set.
  */
+// The key set of a day, computed once: it does not depend on the multiplier,
+// and snapshotDay runs after every single action - building a full day object
+// (two Sets, a dozen arrays) just to enumerate its keys was a per-click
+// allocation for a static list. Still derived FROM the factory, so a newly
+// added day field cannot be forgotten here.
+const DAY_FIELDS = Object.keys(freshDay()).filter(
+    key => !DAY_TIMERS.includes(key) && !TUTORIAL_FIELDS.includes(key)
+);
+
 export function snapshotDay(state) {
     const day = {};
-    for (const key of Object.keys(freshDay())) {
-        if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
+    for (const key of DAY_FIELDS) {
         const value = state[key];
         day[key] = value instanceof Set ? [...value] : value;
     }

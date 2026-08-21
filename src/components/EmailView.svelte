@@ -10,15 +10,14 @@
   is only the visible half of that.
 -->
 <script>
-    import { state } from '../engine/engine_state.svelte.js';
+    import { state, formatClock } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
     import { t } from '../i18n/i18n.svelte.js';
     const mail = $derived(state.email ?? {});
     const paragraphs = $derived((mail.body ?? '').split('\n'));
 
-    const pad = (n) => String(n).padStart(2, '0');
-    const timestamp = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
+    const timestamp = $derived(formatClock(state.time));
 
     const initial = $derived((mail.sender ?? '?').charAt(0).toUpperCase());
 

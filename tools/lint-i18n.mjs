@@ -358,18 +358,18 @@ if (identical.length) {
  * call. This check is about components only.
  */
 const KOMPONENTEN = join(ROOT, 'src/components');
-const svelteDateien = [];
+const svelteFiles = [];
 (function sammeln(dir) {
     for (const entry of readdirSync(dir)) {
         const full = join(dir, entry);
         if (statSync(full).isDirectory()) sammeln(full);
-        else if (entry.endsWith('.svelte')) svelteDateien.push(full);
+        else if (entry.endsWith('.svelte')) svelteFiles.push(full);
     }
 })(KOMPONENTEN);
 
-for (const datei of svelteDateien) {
-    const text = readFileSync(datei, 'utf-8');
-    const wo = relative(ROOT, datei);
+for (const file of svelteFiles) {
+    const text = readFileSync(file, 'utf-8');
+    const wo = relative(ROOT, file);
     // An import of DB out of data.js - under any name it is given.
     for (const m of text.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*data\.js'/g)) {
         const namen = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
@@ -377,7 +377,7 @@ for (const datei of svelteDateien) {
             err(`${wo}: imports DB straight from data.js - in a component the data tree is read through tree(), or it freezes in its language on a switch`);
     }
 }
-info(`${svelteDateien.length} components checked for access through tree()`);
+info(`${svelteFiles.length} components checked for access through tree()`);
 
 /* ---------- 8) Every data-action has to resolve ---------- */
 
@@ -414,24 +414,24 @@ const tabellenBlock = actionsQuelle.slice(
  * nothing - the lesson simply would not end, with no error anywhere. So the
  * sources are read too.
  */
-const quellenMitMarken = [];
+const sourcesWithMarks = [];
 (function sammelnJs(dir) {
     for (const entry of readdirSync(dir)) {
         const full = join(dir, entry);
         if (statSync(full).isDirectory()) { if (entry !== 'data') sammelnJs(full); }
-        else if (/\.(js|svelte)$/.test(entry)) quellenMitMarken.push(full);
+        else if (/\.(js|svelte)$/.test(entry)) sourcesWithMarks.push(full);
     }
 })(join(ROOT, 'src'));
 
-const markenQuellen = [html, ...quellenMitMarken.map(f => readFileSync(f, 'utf-8'))].join('\n');
-const imMarkup = new Set([...markenQuellen.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+const markSources = [html, ...sourcesWithMarks.map(f => readFileSync(f, 'utf-8'))].join('\n');
+const imMarkup = new Set([...markSources.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
 
 // And the rule the other way round: markup that is BUILT may not carry code.
 // The check that caught nothing in index.html has to reach the strings too.
-for (const datei of quellenMitMarken) {
-    const wo = relative(ROOT, datei);
+for (const file of sourcesWithMarks) {
+    const wo = relative(ROOT, file);
     if (wo === 'src/actions.js') continue;          // documents the old form in prose
-    for (const m of readFileSync(datei, 'utf-8').matchAll(/onclick="[^"]*"/g))
+    for (const m of readFileSync(file, 'utf-8').matchAll(/onclick="[^"]*"/g))
         err(`${wo}: builds "${m[0].slice(0, 40)}…" - built markup carries a data-action, not code`);
 }
 const inTabelle = new Set(

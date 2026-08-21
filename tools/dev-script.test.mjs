@@ -228,9 +228,9 @@ await ok('dev.gala() meets the requirements and opens the gala node', async () =
     dev.meeting();
     await new Promise(r => setTimeout(r, 30));
     const ev = calls.terminal[0];
-    const quelle = DB.meetings.find(m => m.id === ev.id);
-    if (quelle.startNodeGala) {
-        assert.equal(ev.startNode, quelle.startNodeGala, 'the meeting should open on the gala node');
+    const source = DB.meetings.find(m => m.id === ev.id);
+    if (source.startNodeGala) {
+        assert.equal(ev.startNode, source.startNodeGala, 'the meeting should open on the gala node');
     }
 });
 await ok('after dev.gala() the Friday ends in the party, not in the balance sheet', () => {

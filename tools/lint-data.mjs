@@ -831,7 +831,7 @@ for (const id of itemIds) {
   // A compendium note may cite a mail as well as an event - mails are not part
   // of POOLS, so idMap alone would reject every one of them.
   const mailIds = new Set((DB.emails ?? []).map(m => m.id));
-  const istQuelle = (id) => idMap.has(id) || mailIds.has(id);
+  const isSource = (id) => idMap.has(id) || mailIds.has(id);
 
   const FIELDS = ['id', 'cat', 'name', 'role', 'summary', 'seen', 'notes'];
   const NOTE_FIELDS = ['seen', 'flag', 'text'];
@@ -850,7 +850,7 @@ for (const id of itemIds) {
 
     if (!(e.seen ?? []).length) err(`${ctx}: with no seen the entry is never unlocked`);
     for (const id of e.seen ?? [])
-      if (!istQuelle(id)) err(`${ctx}: seen "${id}" is neither an event nor a mail`);
+      if (!isSource(id)) err(`${ctx}: seen "${id}" is neither an event nor a mail`);
 
     const notes = e.notes ?? [];
     if (notes.length < 3) warn(`${ctx}: only ${notes.length} notes - under three an entry feels thin`);
@@ -859,12 +859,12 @@ for (const id of itemIds) {
     // to the evidence rather than to a category: the colleagues and the big
     // rooms earn eight, a walk-on with two appearances does not. Eight is the
     // hard ceiling either way - beyond that a page stops being read.
-    const quellen = new Set([...(e.seen ?? []), ...notes.map(n => n.flag ?? n.seen)]).size;
-    const maxNotes = Math.min(8, Math.max(3, quellen));
+    const sourceIds = new Set([...(e.seen ?? []), ...notes.map(n => n.flag ?? n.seen)]).size;
+    const maxNotes = Math.min(8, Math.max(3, sourceIds));
     if (notes.length > maxNotes)
-      warn(`${ctx}: ${notes.length} notes for ${quellen} sources - at most ${maxNotes}, or it is invention rather than observation`);
+      warn(`${ctx}: ${notes.length} notes for ${sourceIds} sources - at most ${maxNotes}, or it is invention rather than observation`);
 
-    const texte = new Set();
+    const noteTexts = new Set();
     for (const [i, n] of notes.entries()) {
       const nctx = `${ctx} notes[${i}]`;
       for (const k of Object.keys(n))
@@ -872,10 +872,10 @@ for (const id of itemIds) {
       if (!n.text) err(`${nctx}: without text`);
       if (!n.seen && !n.flag) err(`${nctx}: with no trigger (seen or flag) the note never appears`);
       if (n.seen && n.flag) err(`${nctx}: seen and flag together - one trigger is enough`);
-      if (n.seen && !istQuelle(n.seen)) err(`${nctx}: seen "${n.seen}" is neither an event nor a mail`);
+      if (n.seen && !isSource(n.seen)) err(`${nctx}: seen "${n.seen}" is neither an event nor a mail`);
       if (n.flag && !flagsSetWhere.has(n.flag)) err(`${nctx}: flag "${n.flag}" is set by no event`);
-      if (n.text && texte.has(n.text)) err(`${nctx}: the note text is duplicated`);
-      if (n.text) texte.add(n.text);
+      if (n.text && noteTexts.has(n.text)) err(`${nctx}: the note text is duplicated`);
+      if (n.text) noteTexts.add(n.text);
     }
   }
 }
