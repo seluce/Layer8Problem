@@ -38,7 +38,7 @@ const engine = {
  * Those are data-action marks now and go through src/actions.js, which imports
  * the engine like every component does - so the shell no longer needs it.
  *
- * What still does is tools/dev-woche.js: it is pasted into the browser console,
+ * What still does is tools/dev-week.js: it is pasted into the browser console,
  * and something pasted into a console cannot import anything. That is the whole
  * remaining purpose, and it is worth one line.
  *

@@ -12,9 +12,6 @@
 
    Note: the scenarios write into the running save. Call `dev.backup()` first
    if a real run is worth keeping.
-
-   Commands are German because the person using them is - the comments are
-   English like everywhere else in the repository.
    ========================================================================= */
 
 (() => {
@@ -22,27 +19,27 @@
     if (!e) { console.error('engine not found - is the game running?'); return; }
 
     const s = e.state;
-    const DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
+    const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-    // German labels for the three week levels. Deliberately local and not
-    // taken from the dictionary: this helper prints for the developer, and
-    // its output stays German even when the game runs in English. WEEK_DIFFS
-    // carries a `key` since 6.0 - the `name` field it used to carry was a
-    // German display string and is gone.
+    // Labels for the three week levels. Deliberately local and not taken
+    // from the dictionary: this helper prints for the developer, whatever
+    // language the game itself runs in. WEEK_DIFFS carries a `key` since
+    // 6.0 - the `name` field it used to carry was a German display string
+    // and is gone.
     const LEVELS = { easy: 'rested', normal: 'fed up', hard: 'in need of leave' };
 
     /** Builds believable past days so the week's balance sheet has content. */
-    const logUpTo = (tag, { hart = false } = {}) => {
+    const logUpTo = (day, { hard = false } = {}) => {
         s.week.weekLog = [];
-        for (let i = 1; i < tag; i++) {
+        for (let i = 1; i < day; i++) {
             s.week.weekLog.push({
                 dayIndex: i,
-                endTickets: hart ? 3 + i : Math.max(0, 5 - i),
-                endA: hart ? 40 + i * 8 : 25 + i * 4,
-                endB: hart ? 30 + i * 6 : 20 + i * 3,
+                endTickets: hard ? 3 + i : Math.max(0, 5 - i),
+                endA: hard ? 40 + i * 8 : 25 + i * 4,
+                endB: hard ? 30 + i * 6 : 20 + i * 3,
                 endL: 20 + i * 7,
-                peakA: hart ? 70 + i * 4 : 45 + i * 5,
-                peakB: hart ? 55 + i * 5 : 35 + i * 4,
+                peakA: hard ? 70 + i * 4 : 45 + i * 5,
+                peakB: hard ? 55 + i * 5 : 35 + i * 4,
                 coffee: 2 + (i % 3),
                 mailsIgnored: i % 2,
             });
@@ -52,14 +49,14 @@
     /** A few data points, otherwise the day chart on the end screen stays empty. */
     const curve = () => {
         s.statHistory = [];
-        const schritte = 10;
-        for (let i = 0; i <= schritte; i++) {
-            const m = 8 * 60 + Math.round(((s.time - 8 * 60) / schritte) * i);
+        const steps = 10;
+        for (let i = 0; i <= steps; i++) {
+            const m = 8 * 60 + Math.round(((s.time - 8 * 60) / steps) * i);
             s.statHistory.push({
                 m,
-                l: Math.round(s.fl * (i / schritte)),
-                a: Math.round(s.al * (0.35 + 0.65 * (i / schritte))),
-                b: Math.round(s.cr * (0.3 + 0.7 * (i / schritte))),
+                l: Math.round(s.fl * (i / steps)),
+                a: Math.round(s.al * (0.35 + 0.65 * (i / steps))),
+                b: Math.round(s.cr * (0.3 + 0.7 * (i / steps))),
             });
         }
     };
@@ -81,14 +78,14 @@
             s.week.level = level;
             s.week.dayIndex = Math.min(5, Math.max(1, number));
             s.week.contingents = {};
-            logUpTo(s.week.dayIndex, { hart: values.hart });
+            logUpTo(s.week.dayIndex, { hard: values.hard });
 
-            s.time = values.zeit ?? 10 * 60;
+            s.time = values.time ?? 10 * 60;
             s.tickets = values.tickets ?? 3;
             s.al = values.al ?? 35;
             s.cr = values.cr ?? 25;
             s.fl = values.fl ?? 30;
-            s.excusesLeft = values.ausreden ?? 2;
+            s.excusesLeft = values.excuses ?? 2;
             s.morningMoodShown = true;
             s.ticketWarning = s.tickets >= 7;
             s.buttonsDisabled = false;
@@ -96,8 +93,8 @@
             refresh();
             e.setTerminalIdle();
             console.log(`▶ ${DAY_NAMES[s.week.dayIndex - 1]}, ${LEVELS[e.WEEK_DIFFS[level].key]}, ` +
-                        `${Math.floor(s.time / 60)}:${String(s.time % 60).padStart(2, '0')} Uhr, ` +
-                        `${s.tickets} Tickets`);
+                        `${Math.floor(s.time / 60)}:${String(s.time % 60).padStart(2, '0')}, ` +
+                        `${s.tickets} tickets`);
             return dev;
         },
 
@@ -112,11 +109,11 @@
          * dev.clockOff(2)          Tuesday evening
          * dev.clockOff(2, true)    ...and fire it right away
          */
-        clockOff(tagNr = 2, sofort = false) {
-            dev.day(tagNr, s.week.level ?? 'normal',
-                    { zeit: 16 * 60 + 20, tickets: 6, al: 62, cr: 48, fl: 55 });
+        clockOff(dayNo = 2, atOnce = false) {
+            dev.day(dayNo, s.week.level ?? 'normal',
+                    { time: 16 * 60 + 20, tickets: 6, al: 62, cr: 48, fl: 55 });
             console.log('16:20. One action, then the night comes.');
-            if (sofort) dev.night();
+            if (atOnce) dev.night();
             return dev;
         },
 
@@ -141,16 +138,16 @@
          * dev.friday()            a solid week
          * dev.friday('tight')     carrying baggage: 8 tickets, high values
          */
-        friday(kind = 'solide') {
+        friday(kind = 'solid') {
             const tight = kind === 'tight';
             dev.day(5, s.week.level ?? 'normal', {
-                zeit: 14 * 60 + 50,
+                time: 14 * 60 + 50,
                 tickets: tight ? 8 : 4,
                 al: tight ? 78 : 45,
                 cr: tight ? 71 : 38,
                 fl: tight ? 68 : 40,
-                ausreden: tight ? 0 : 2,
-                hart: tight,
+                excuses: tight ? 0 : 2,
+                hard: tight,
             });
             s.meetingDone = false;
             console.log('Friday 14:50. One action -> the button leads into the weekly meeting.');
@@ -175,7 +172,7 @@
         /** Friday 16:30 - the week is survived, the balance sheet appears. */
         won() {
             dev.day(5, s.week.level ?? 'normal',
-                    { zeit: 16 * 60 + 29, tickets: 3, al: 52, cr: 44, fl: 61 });
+                    { time: 16 * 60 + 29, tickets: 3, al: 52, cr: 44, fl: 61 });
             s.meetingDone = true;
             s.time = 16 * 60 + 30;
             s.pendingEnd = null;
@@ -191,8 +188,8 @@
          * dev.out('tickets', 4)  ticket pile-up on Thursday
          * dev.out('chef', 2)     radar full on Tuesday
          */
-        out(kind = 'rage', tagNr = 3) {
-            dev.day(tagNr, s.week.level ?? 'normal', { zeit: 13 * 60 + 40, hart: true });
+        out(kind = 'rage', dayNo = 3) {
+            dev.day(dayNo, s.week.level ?? 'normal', { time: 13 * 60 + 40, hard: true });
             // Mark valve and warning as spent, otherwise they catch the first
             // overflow - exactly as they would in a real week.
             s.rageWarningReceived = true;
@@ -212,8 +209,8 @@
          * day before it starts. For completeness - in a real game this needs a
          * thoroughly botched previous day.
          */
-        morningDeath(tagNr = 4) {
-            dev.day(tagNr, 'hard', { zeit: 8 * 60, tickets: 9 });
+        morningDeath(dayNo = 4) {
+            dev.day(dayNo, 'hard', { time: 8 * 60, tickets: 9 });
             s.morningMoodShown = false;
             s.rageWarningReceived = true;
             s.chefWarningReceived = true;
@@ -243,7 +240,7 @@
             const level = e.difficultyTier() === 1 ? 'easy' : e.difficultyTier() === 3 ? 'hard' : 'normal';
             localStorage.removeItem(e.KEYS.partyPlayed[level]);
 
-            dev.friday('solide');
+            dev.friday('solid');
             console.log(`Gala unlocked (level ${level}). Now dev.meeting() - ` +
                         'the announcement comes in the meeting, the party at 16:30.');
             return dev;
@@ -274,17 +271,17 @@
         preview() {
             if (!s.week.active) { console.warn('Week mode only'); return dev; }
             const cfg = e.WEEK_DIFFS[s.week.level];
-            const behalten = Math.ceil(s.tickets * 0.25);
-            const nacht = s.week.dayIndex;
-            const abnutzung = 0.10 * (nacht - 1);
-            const rAl = Math.max(0.10, cfg.rAl - abnutzung);
-            const rCr = Math.max(0.10, cfg.rCr - abnutzung);
+            const kept = Math.ceil(s.tickets * 0.25);
+            const nightNo = s.week.dayIndex;
+            const wear = 0.10 * (nightNo - 1);
+            const rAl = Math.max(0.10, cfg.rAl - wear);
+            const rCr = Math.max(0.10, cfg.rCr - wear);
             console.table({
-                Tickets: { vorher: s.tickets, nachher: behalten },
-                Aggro: { vorher: Math.round(s.al), nachher: Math.round(Math.max(0, s.al - Math.min(s.al * rAl, 45))) },
-                'Chef-Radar': { vorher: Math.round(s.cr), nachher: Math.round(Math.max(0, s.cr - Math.min(s.cr * rCr, 45))) },
-                Faulheit: { vorher: Math.round(s.fl), nachher: Math.round(s.fl) },
-                Ausreden: { vorher: s.excusesLeft, nachher: Math.min(s.excusesLeft + 1, cfg.excuseCap) },
+                tickets: { before: s.tickets, after: kept },
+                aggro: { before: Math.round(s.al), after: Math.round(Math.max(0, s.al - Math.min(s.al * rAl, 45))) },
+                'boss radar': { before: Math.round(s.cr), after: Math.round(Math.max(0, s.cr - Math.min(s.cr * rCr, 45))) },
+                laziness: { before: Math.round(s.fl), after: Math.round(s.fl) },
+                excuses: { before: s.excusesLeft, after: Math.min(s.excusesLeft + 1, cfg.excuseCap) },
             });
             return dev;
         },
@@ -301,7 +298,7 @@
                 'days survived': st.daysSurvived ?? 0,
                 'weeks started': st.weeksStarted ?? 0,
                 'weeks survived': st.weeksSurvived ?? 0,
-                'Karrieretage (Chronik)': st.daysStarted ?? 0,
+                'career days (chronicle)': st.daysStarted ?? 0,
             });
             return dev;
         },
@@ -329,22 +326,22 @@
         },
 
         backup() {
-            dev._sicherung = JSON.stringify({
-                woche: localStorage.getItem(e.KEYS.weekState),
+            dev._backup = JSON.stringify({
+                week: localStorage.getItem(e.KEYS.weekState),
                 day: localStorage.getItem(e.KEYS.dayState),
-                archiv: localStorage.getItem(e.KEYS.archive),
+                archive: localStorage.getItem(e.KEYS.archive),
             });
             console.log('Backed up. Back with dev.restore(), then reload.');
             return dev;
         },
 
         restore() {
-            if (!dev._sicherung) { console.warn('Nichts gesichert.'); return dev; }
-            const d = JSON.parse(dev._sicherung);
-            const setz = (k, v) => v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v);
-            setz(e.KEYS.weekState, d.woche);
-            setz(e.KEYS.dayState, d.tag);
-            setz(e.KEYS.archive, d.archiv);
+            if (!dev._backup) { console.warn('Nothing backed up.'); return dev; }
+            const d = JSON.parse(dev._backup);
+            const set = (k, v) => v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v);
+            set(e.KEYS.weekState, d.week);
+            set(e.KEYS.dayState, d.day);
+            set(e.KEYS.archive, d.archive);
             console.log('Restored. Now reload the page.');
             return dev;
         },
@@ -381,7 +378,7 @@
 
             const seen = new Set(s.archive.seenEvents ?? []);
             const flags = new Set(s.archive.seenFlags ?? []);
-            console.log(`${entry.name} - ${entry.role}  [${entry.open ? 'offen' : 'zu'}]`);
+            console.log(`${entry.name} - ${entry.role}  [${entry.open ? 'open' : 'shut'}]`);
             console.log(entry.summary);
             for (const n of entry.notes ?? []) {
                 const have = n.flag ? flags.has(n.flag) : seen.has(n.seen);
@@ -398,7 +395,7 @@
          * dev.fillKnowledge('sonntag')   one entry
          * dev.fillKnowledge('sonntag', 2)  head plus the first two notes
          */
-        fillKnowledge(id, anzahl) {
+        fillKnowledge(id, count) {
             // knowledgeEntries() carries the raw entry along, so the console
             // does not need access to DB (the engine only exposes functions).
             const list = e.knowledgeEntries?.() ?? [];
@@ -409,7 +406,7 @@
             for (const entry of list) {
                 if (id && entry.id !== id) continue;
                 (entry.seen ?? []).slice(0, 1).forEach(x => ev.add(x));
-                const notes = anzahl == null ? (entry.notes ?? []) : (entry.notes ?? []).slice(0, anzahl);
+                const notes = count == null ? (entry.notes ?? []) : (entry.notes ?? []).slice(0, count);
                 for (const n of notes) { if (n.flag) fl.add(n.flag); else ev.add(n.seen); }
             }
             s.archive.seenEvents = [...ev];
@@ -424,7 +421,7 @@
             s.archive.seenEvents = [];
             s.archive.seenFlags = [];
             e.saveSystem();
-            console.log('Wissen geleert.');
+            console.log('Knowledge cleared.');
             return dev;
         },
 
