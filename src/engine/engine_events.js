@@ -883,6 +883,13 @@ export const events = {
     relocaliseScene: function() {
         this.relocalisePhone();
 
+        // A running news ticker restarts in the new language ({#key news}
+        // recreates the element, so the scroll begins on the right again) -
+        // renderHeader() restarts the removal timer to match, with the new
+        // text's duration. Without this the old clock kept running and the
+        // ticker vanished mid-scroll.
+        this.renderHeader();
+
         const term = this.state.terminal;
 
         // The morning mood: title and text come straight from DB.moods and are

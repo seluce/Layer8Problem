@@ -90,7 +90,7 @@ const engine = {
     // no longer where the identity lives.
     log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
-    generateDiaryEntry: () => 'Tagebuch-Stub',
+    generateDiaryEntry: () => 'diary stub',
 };
 
 const resetState = () => {
@@ -2549,6 +2549,32 @@ await ok('Every morning gets a line of its own', () => {
         zeilen.add(JSON.stringify(morgen));
     }
     assert.equal(zeilen.size, 4, 'the four mornings have to differ');
+});
+
+await ok('A language switch restarts the news ticker clock', () => {
+    resetState();
+    // A miniature engine: relocaliseScene from events, the header clock from
+    // ui - the harness engine above stubs renderHeader away, and the point
+    // here is the real one. The component side ({#key news} recreating the
+    // element) cannot run without a DOM; what CAN be checked is its partner:
+    // the removal timer has to restart alongside, or the recreated scroll
+    // vanishes mid-run on the old clock.
+    const mini = {
+        state,
+        relocaliseScene: events.relocaliseScene,
+        relocalisePhone() {},
+        renderHeader: ui.renderHeader,
+        newsDuration: ui.newsDuration,
+    };
+    state.activeNews = { msg: 'probe headline' };
+    mini.renderHeader();
+    const clockBefore = state.newsTimer;
+    assert.ok(clockBefore, 'no removal clock started at all');
+    mini.relocaliseScene();
+    assert.notEqual(state.newsTimer, clockBefore, 'the ticker clock did not restart');
+    clearTimeout(state.newsTimer);
+    state.newsTimer = null;
+    state.activeNews = null;
 });
 
 await ok('The suite is still running in its own language at the end', () => {

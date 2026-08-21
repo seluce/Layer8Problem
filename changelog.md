@@ -28,6 +28,7 @@ Bug fixes:
 * An ending caused purely by using an item was queued but never shown - the dismissal only appeared after the next unrelated event. It shows immediately now, and item effects clamp at 100 like everything else.
 * In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
 * On a day started from the picker, the team view's "what today moved" arrows stayed frozen at zero and the diary could never name who moved - the morning baseline was never taken. It is now, on every start path.
+* Switching language while the news ticker was running restarted the scroll but not its clock, so the headline vanished mid-run. It now restarts with its full run time - and the scroll speed finally matches how long a headline actually stays.
 
 ---
 
