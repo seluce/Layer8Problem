@@ -117,7 +117,7 @@ export const inventory = {
             }
 
             if (takes) {
-                // Both bounds on every stat. Until 6.2 a and l only had the
+                // Both bounds on every stat. Until 6.1.1 a and l only had the
                 // floor, while the comment below claimed parity with the event
                 // path - a positive use.a/use.l overshot 100 for one frame
                 // until updateUI re-clamped.

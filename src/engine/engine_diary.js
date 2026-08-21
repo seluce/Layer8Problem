@@ -197,7 +197,7 @@ function factsOf(state, endReason) {
         coffee: state.coffeeConsumed ?? 0,
         mailsIgnored: state.emailsIgnored ?? 0,
         tickets: state.tickets ?? 0,
-        // Counted at the spend site since 6.2. The old derivation (mode start
+        // Counted at the spend site since 6.1.1. The old derivation (mode start
         // value minus what is left) reported zero as soon as excusesLeft had
         // grown past its start - nightly +1, morning mood - although a lie
         // had actually been told that day.

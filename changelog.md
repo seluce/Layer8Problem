@@ -1,4 +1,6 @@
-[6.2.0] - unreleased
+[6.1.1] - unreleased
+
+Everything here is measured against 6.1. A patch: bug fixes only, no new content.
 
 Bug fixes:
 * The confirm key stopped working on end and night screens in 6.1 - it was hitting the day-curve toggle instead of the continue button. It also targets the item dialog's use button again, and no longer clicks through an open dialog onto the screen behind it.

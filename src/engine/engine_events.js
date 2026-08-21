@@ -43,7 +43,7 @@ export const events = {
 
     // How long an open mail waits before it resolves itself. ONE number: the
     // countdown bar in EmailView.svelte reads it for its animation duration -
-    // until 6.2 the 20 seconds were written twice (engine timeout and CSS
+    // until 6.1.1 the 20 seconds were written twice (engine timeout and CSS
     // keyframe length), the exact two-places-one-schedule drift the toast
     // header comment records as having already happened once.
     EMAIL_DURATION_MS: 20000,

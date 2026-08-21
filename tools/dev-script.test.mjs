@@ -246,7 +246,7 @@ await ok('dev.backup()/dev.restore() put all three keys back', () => {
     dev.day(2, 'normal');
     engine.saveWeek();
     // The day key is seeded by hand: dev.day() runs the week, not a day, and
-    // the point is that restore() writes the key back at all - up to 6.2 it
+    // the point is that restore() writes the key back at all - up to 6.1.1 it
     // read a stale field name and DELETED the day state instead.
     store.set('layer8_day', '{"probe":true}');
     const weekBefore = store.get('layer8_week');

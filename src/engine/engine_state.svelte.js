@@ -200,7 +200,7 @@ export function freshDay(mult = 1.0) {
 
 /**
  * The wall clock as the game prints it: minutes since midnight -> "HH:MM".
- * One formatter for every surface - before 6.2 this pair of lines existed
+ * One formatter for every surface - before 6.1.1 this pair of lines existed
  * six times across components and engine, and the next tweak (or the next
  * copy forgetting the padStart) had six places to miss.
  */
