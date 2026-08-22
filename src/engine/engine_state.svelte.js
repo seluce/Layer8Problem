@@ -355,6 +355,15 @@ export const state = $state({
     // before it is ever read, and it has no business in the day's save file.
     intranetData: null,
 
+    // The five DRAWS of the current visit, as indices into the pools.
+    //
+    // Kept apart from the prose above so the pages can be composed a second
+    // time without turning into different pages: a language switch has to
+    // change the words and nothing else. Indices survive the switch because
+    // both trees carry the same rows in the same order - the rule the whole
+    // bilingual build rests on, and lint:parity enforces it.
+    intranetPicks: null,
+
     // The big centre modal. components/EndModal.svelte renders it.
     //
     // `title` and `lead` hold RECIPES on an end or night screen (a plain string

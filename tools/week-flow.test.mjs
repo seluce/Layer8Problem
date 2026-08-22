@@ -2157,6 +2157,38 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('The intranet composes twice without becoming a different page', async () => {
+    // Five things on these pages are drawn. Composing again - which is what a
+    // language switch now does - must change the words and nothing else.
+    resetState();
+    await ensure('intranet');
+    // engine_ui is not spread into the harness engine (its functions want a
+    // DOM); buildIntranet is pure computation, so it gets its own shell.
+    const pages = { ...engine, ...ui };
+    pages.buildIntranet();
+    const first = JSON.parse(JSON.stringify(state.intranetData));
+    const drawn = state.intranetPicks;
+    assert.ok(drawn, 'the visit recorded no draws at all');
+
+    pages.buildIntranet(true);
+    assert.equal(state.intranetPicks, drawn, 'the draws were rolled again');
+    for (const field of ['feed', 'status', 'vision_quote']) {
+        assert.deepEqual(state.intranetData[field], first[field], `${field} reshuffled`);
+    }
+    assert.deepEqual(state.intranetData.chantal.older, first.chantal.older, 'the old post changed');
+    assert.deepEqual(state.intranetData.kantine.hygiene, first.kantine.hygiene, 'the hygiene line changed');
+
+    // A fresh VISIT draws again - that is the design, and the reason the two
+    // steps had to be told apart in the first place.
+    pages.buildIntranet();
+    assert.notEqual(state.intranetPicks, drawn, 'a new visit reused the old draws');
+
+    // ...and the switch actually reaches it, keeping the draws.
+    const shellSrc = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.ok(/onLanguageChange\([\s\S]{0,700}?buildIntranet\(true\)/.test(shellSrc),
+              'a language switch no longer re-composes the company pages');
+});
+
 await ok('An open mail follows a language switch', async () => {
     // state.email held a raw reference into the tree it was drawn from, and
     // EmailView reads sender, subject, body and every reply straight off it.

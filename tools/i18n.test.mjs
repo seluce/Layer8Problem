@@ -539,6 +539,34 @@ await ok('The end screen follows a language switch', async () => {
     assert.ok(nightTitle.en.includes('TUESDAY'), nightTitle.en);
 });
 
+await ok('The company pages follow a language switch', async () => {
+    // buildIntranet() copies prose out of the tree, and it used to run only on
+    // opening: the browser frame around the pages changed language while some
+    // three hundred lines of page text stood still.
+    const { ui } = await import('../src/engine/engine_ui.js');
+    const { state } = await import('../src/engine/engine_state.svelte.js');
+    const shell = { state, ...ui, careerStats: () => ({ streak: 0, streakBest: 0, survived: 0, rage: 0, warningsChef: 0, ventSaves: 0 }), difficultyKey: () => 'normal' };
+
+    const seen = {};
+    for (const lang of ['de', 'en']) {
+        await i18n.useLanguage(lang);
+        await loadCore(lang);
+        await ensure('intranet');
+        // First time round it draws; the second composes with the SAME draws,
+        // which is exactly what the language handler does.
+        shell.buildIntranet(lang === 'en');
+        seen[lang] = JSON.parse(JSON.stringify(state.intranetData));
+    }
+
+    assert.notDeepEqual(seen.de.kpi, seen.en.kpi, 'the key figure did not switch along');
+    assert.notEqual(JSON.stringify(seen.de.hr.page), JSON.stringify(seen.en.hr.page),
+                    'the personnel page did not switch along');
+    assert.notEqual(JSON.stringify(seen.de.dashboard.page), JSON.stringify(seen.en.dashboard.page),
+                    'the start page did not switch along');
+    // ...and the draws stayed put, so it is the same page in another language.
+    assert.deepEqual(seen.de.status.length, seen.en.status.length, 'the status block changed size');
+});
+
 await ok('No recorded field holds a finished sentence any more', async () => {
     // The rule all of this rests on: the state holds the identity, the display
     // renders. A field that stores prose again breaks it quietly.
