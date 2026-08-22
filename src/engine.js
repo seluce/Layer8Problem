@@ -62,11 +62,6 @@ onLanguageChange(() => {
     // heading carries a mark that applyStaticStrings() would put the WRONG
     // question back over a discard dialog.
     engine.dressItemConfirm();
-    // The company pages are composed out of the tree when they open, and that
-    // was the only time they were composed. Only the words change here - the
-    // draws of this visit are kept, so the feed does not reshuffle under the
-    // reader's hands.
-    if (engine.state.intranetOpen) engine.buildIntranet(true);
 });
 
 /**

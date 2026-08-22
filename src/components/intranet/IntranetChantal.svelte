@@ -10,11 +10,12 @@
   authored in data_intranet.js, never player input.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const post  = $derived(game.intranetData?.chantal?.top ?? null);
-    const older = $derived(game.intranetData?.chantal?.older ?? null);
-    const page  = $derived(game.intranetData?.chantal?.page ?? null);
+    const pages = $derived(intranetPages());
+    const post  = $derived(pages?.chantal?.top ?? null);
+    const older = $derived(pages?.chantal?.older ?? null);
+    const page  = $derived(pages?.chantal?.page ?? null);
 </script>
 
 <div class="max-w-3xl mx-auto mt-12 px-4 pb-12 space-y-8">

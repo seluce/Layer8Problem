@@ -14,9 +14,9 @@
   component now only decides how a section looks, never what it says.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const legal = $derived(game.intranetData?.impressum ?? null);
+    const legal = $derived(intranetPages()?.impressum ?? null);
     const page  = $derived(legal?.page ?? null);
 
     // Whole class names, never assembled: Tailwind scans the source, and a
