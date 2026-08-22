@@ -879,7 +879,12 @@ export const week = {
 
     /** Discards the saved week (week over, or a deliberate restart). */
     clearWeek: function() {
-        try { localStorage.removeItem(KEYS.weekState); } catch { /* never mind */ }
+        try {
+            localStorage.removeItem(KEYS.weekState);
+            // See engine_core.clearDay(): an empty slot has to carry WHEN it
+            // became empty, or the cloud reads it as "no week, as of now".
+            localStorage.setItem(KEYS.weekClearedAt, String(Date.now()));
+        } catch { /* never mind */ }
     },
 
 };

@@ -2157,6 +2157,68 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('A ticket warning does not swallow the end of the day', () => {
+    // The one combination every other 16:30 test steps around by setting
+    // ticketWarning beforehand: ONE action crosses closing time AND pushes the
+    // pile to seven. The warning is a notice; the day still has to end.
+    resetState();
+    state.ticketWarning = false;
+    state.tickets = 7;
+    state.time = 16 * 60 + 30;
+
+    engine.checkEndConditions();
+
+    // showModal is a bare stub in this harness; the flag is what the warning
+    // leaves behind either way.
+    assert.equal(state.ticketWarning, true, 'the warning did not fire at all');
+    assert.ok(state.pendingEnd, 'the warning ate the chain and the day ran on');
+    assert.equal(state.pendingEnd.cause, 'time');
+});
+
+await ok('The same holds for a week night', () => {
+    resetState();
+    engine.startWeek('normal');
+    state.week.dayIndex = 2;
+    state.ticketWarning = false;
+    state.tickets = 7;
+    state.time = 16 * 60 + 30;
+
+    engine.checkEndConditions();
+    assert.ok(state.pendingEnd, 'the night was skipped');
+    assert.equal(state.pendingEnd.isNight, true);
+});
+
+await ok('The rage valve rescues without hiding closing time', async () => {
+    resetState();
+    await ensure('special');
+    state.rageWarningReceived = false;          // the weekly valve is unspent
+    state.al = 100;
+    state.time = 16 * 60 + 30;
+
+    engine.checkEndConditions();
+
+    assert.ok(state.al < 100, 'the valve did not open - this proves nothing');
+    assert.ok(state.pendingEnd, 'the valve swallowed closing time');
+    assert.equal(state.pendingEnd.cause, 'time');
+});
+
+await ok('reset() shows a queued ending instead of going idle', () => {
+    // Belt and braces for the same class: whatever queues an ending, the one
+    // continue action that never looked now does.
+    resetState();
+    state.dayActive = true;
+    state.pendingEnd = {
+        title: { k: 'end.dayTitle' }, lead: { k: 'end.dayLead' },
+        cause: 'time', outcome: 'survived', diaryKey: 'WIN', isWin: true,
+    };
+    calls.end = null;
+
+    engine.reset();
+
+    assert.ok(calls.end, 'reset() went idle with an ending waiting');
+    assert.equal(state.pendingEnd, null, 'the ending was not consumed');
+});
+
 await ok('The reset buttons are re-dressed after a language switch', () => {
     const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
     const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
@@ -2463,6 +2525,43 @@ await ok('The payload carries day, week and a timestamp', () => {
     assert.equal(p.day, '{"savedAt":1}');
     assert.equal(p.week, '{"savedAt":2}');
     assert.ok(p.runSyncedAt > 0, 'runSyncedAt is missing');
+});
+await ok('A day played here does not delete a week over there', () => {
+    // Machine A has never started a week and plays a single day. Its payload
+    // used to say "no week, as of now" - and machine B read that as newer than
+    // its own half-finished week and threw five days of play away.
+    resetState();
+    store.set('layer8_day', '{"savedAt":5000}');
+    const fromA = engine.buildCloudPayload();
+    assert.equal(fromA.week, null, 'precondition: A has no week');
+    assert.equal(fromA.weekSyncedAt, 0, 'an empty slot argued from the clock again');
+
+    // Machine B, with a week from three days ago.
+    resetState();
+    store.set('layer8_week', '{"savedAt":1000}');
+    engine.adoptCloudRun('layer8_week', fromA.week, fromA.weekSyncedAt);
+    assert.ok(store.get('layer8_week'),
+              'a machine that never had a week deleted one');
+});
+await ok('A week finished here still clears the remainder over there', () => {
+    // The other half - the case the stamp exists for. A really did play it out.
+    resetState();
+    store.set('layer8_week', '{"savedAt":1000}');
+    engine.clearWeek();
+    const fromA = engine.buildCloudPayload();
+    assert.equal(fromA.week, null);
+    assert.ok(fromA.weekSyncedAt > 1000, 'finishing the week was not recorded');
+
+    resetState();
+    store.set('layer8_week', '{"savedAt":1000}');
+    engine.adoptCloudRun('layer8_week', fromA.week, fromA.weekSyncedAt);
+    assert.equal(store.get('layer8_week'), undefined, 'the finished week was left standing');
+
+    // And a 6.1 payload, which carries no per-slot stamp at all, may not
+    // delete anything on the strength of a guess.
+    store.set('layer8_week', '{"savedAt":1000}');
+    engine.adoptCloudRun('layer8_week', null, undefined);
+    assert.ok(store.get('layer8_week'), 'an old payload was allowed to delete a week');
 });
 await ok('The newer run wins, the older overwrites nothing', () => {
     resetState();

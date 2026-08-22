@@ -209,8 +209,13 @@ export const core = {
         if (cloud.party_normal === 'true') localStorage.setItem(this.KEYS.partyPlayed.normal, 'true');
         if (cloud.party_hard === 'true')   localStorage.setItem(this.KEYS.partyPlayed.hard,   'true');
 
-        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.runSyncedAt);
-        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.runSyncedAt);
+        // Per slot, and NOT falling back to the old shared stamp: a 6.1 payload
+        // cannot say which of its two slots it actually knew about, and acting
+        // on that guess is what deleted runs. An old payload therefore never
+        // removes anything - the worst it can do is leave a finished run
+        // offered once more, which costs a click instead of a week.
+        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.daySyncedAt);
+        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.weekSyncedAt);
     },
 
     /**
@@ -225,6 +230,21 @@ export const core = {
      * Only if the payload was written AFTER our local save does the second
      * reading apply, and the local leftover goes.
      */
+    /**
+     * What this machine knows about one run slot, as a timestamp.
+     *
+     * A live run speaks for itself through its own savedAt. An empty slot
+     * speaks through the moment it was emptied here - and says nothing at all
+     * (0) if this machine never had a run in it.
+     */
+    slotStamp: function(stateKey, clearedKey) {
+        try {
+            const raw = localStorage.getItem(stateKey);
+            if (raw) return JSON.parse(raw)?.savedAt ?? 0;
+            return Number(localStorage.getItem(clearedKey)) || 0;
+        } catch { return 0; }
+    },
+
     adoptCloudRun: function(key, raw, runSyncedAt) {
         const savedAt = (text) => {
             try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
@@ -262,6 +282,19 @@ export const core = {
             party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
             day:          localStorage.getItem(this.KEYS.dayState),
             week:         localStorage.getItem(this.KEYS.weekState),
+            // ONE stamp used to cover BOTH slots, and that cost runs.
+            // `runSyncedAt: Date.now()` says "this is the state of play, now" -
+            // true for the slot this machine actually used, and a lie about
+            // the other one. Play a single day here and the payload also
+            // claimed "no week, as of now"; the other machine read that as
+            // newer than its half-finished week and deleted five days of play.
+            //
+            // Each slot now carries its own: the run's own savedAt while there
+            // is one, otherwise the moment this machine finished that run off
+            // (0 = never had one, so it may not argue against anybody).
+            daySyncedAt:  this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt),
+            weekSyncedAt: this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt),
+            // Kept for machines still on 6.1, which read only this one.
             runSyncedAt:  Date.now()
         };
     },
@@ -566,7 +599,13 @@ export const core = {
 
     /** Discards the saved day (end of day, or a deliberate restart). */
     clearDay: function() {
-        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
+        try {
+            localStorage.removeItem(this.KEYS.dayState);
+            // Stamped so the cloud can tell "played it out here" apart from
+            // "never had one". Without it an empty slot argued from the moment
+            // of the UPLOAD, and that deleted runs on the other machine.
+            localStorage.setItem(this.KEYS.dayClearedAt, String(Date.now()));
+        } catch { /* never mind */ }
     },
 
     /**
@@ -1071,6 +1110,14 @@ export const core = {
             }
             return;
         }
+
+        // A queued ending outranks going idle. checkEndConditions can queue one
+        // from a pass that did not build the button for it - a warning modal
+        // dismissed on the same action that crossed 16:30 - and reset() was
+        // the ONE continue action in the engine that never looked. Without
+        // this the player got a free action after closing time, and a death
+        // inside it was dropped on the floor.
+        if (this.state.pendingEnd) { this.finishGame(); return; }
 
         // The diary, fetched at the START of the day although it is written at
         // the END of it (6.1).
@@ -1639,30 +1686,48 @@ export const core = {
         // An ending is already queued - checking again would duplicate it
         if (this.state.pendingEnd) return;
 
-        // A. AUSRASTER
-        if (this.state.al >= 100) {
-            if (this.openRageValve()) return;
+        // Endings END the chain; a rescue and a warning do not.
+        //
+        // All five used to be one else-if strand, which reads well and was
+        // wrong twice: the ticket warning (C) and both valves (A, E) leave
+        // without queueing anything, and everything BELOW them - clocking off
+        // above all - was then skipped for that pass. One action that crossed
+        // 16:30 and pushed you to seven tickets showed the warning and left
+        // the day running: the result button said WEITER, and the free action
+        // that followed could not kill you any more, because the next pass
+        // short-circuits on the pendingEnd this one had finally queued - with
+        // recordDayResult('survived') already booked. So the ranking stays
+        // (rage > tickets > clock > radar), but only a real ending returns.
+        //
+        // Every 16:30 test in week-flow.test.mjs used to set ticketWarning
+        // beforehand to step around exactly this.
+
+        // A. AUSRASTER - the valve rescues, and the day carries on being checked
+        if (this.state.al >= 100 && !this.openRageValve()) {
             this.queueEnd({
                 title: { k: 'end.rageTitle' },
                 lead: this.weekFailLead({ k: 'end.rageQuit' }),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
+            return;
         }
         // B. TICKET-LAWINE
-        else if (this.state.tickets >= 10) {
+        if (this.state.tickets >= 10) {
             this.queueEnd({
                 title: { k: 'end.firedTitle' },
                 lead: this.weekFailLead({ k: 'end.ticketsLead' }),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
+            return;
         }
-        // C. Early warning at seven tickets
-        else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
+        // C. Early warning at seven tickets. A NOTICE, not an ending - it says
+        // its piece and lets the rest of the chain run.
+        if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal(t('warning.title'), t('warning.ticketJam'), false);
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
-        else if (this.state.time >= 16 * 60 + 30) {
+        if (this.state.time >= 16 * 60 + 30) {
             // Week mode: Monday to Thursday end in a night, Friday ends the
             // run. The gala never fires mid-week; Friday's gala returns
             // together with the meeting finale (v5.0, package 3).
@@ -1699,9 +1764,10 @@ export const core = {
                 lead: { k: 'end.dayLead' },
                 cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
             });
+            return;
         }
         // E. CHEF-RADAR
-        else if (this.state.cr >= 100) {
+        if (this.state.cr >= 100) {
             if (this.issueChefWarning()) return;
             this.queueEnd({
                 title: { k: 'end.firedTitle' },

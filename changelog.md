@@ -1,6 +1,6 @@
 [6.1.1] - unreleased
 
-Everything here is measured against 6.1. A patch: bug fixes only, no new content.
+Everything here is measured against 6.1. This update is a large one, and it is bug fixes from end to end - not a single new feature. 6.0 and 6.1 brought a lot of new ground: the second language, the week campaign, the compendium, the gala. What matters now is that all of it runs cleanly, rather than piling more on top of it.
 
 Bug fixes:
 * The confirm key stopped working on end and night screens in 6.1 - it was hitting the day-curve toggle instead of the continue button. It also targets the item dialog's use button again, and no longer clicks through an open dialog onto the screen behind it.
@@ -30,6 +30,8 @@ Bug fixes:
 * An ending caused purely by using an item was queued but never shown - the dismissal only appeared after the next unrelated event. It shows immediately now, and item effects clamp at 100 like everything else.
 * In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
 * On a day started from the picker, the team view's "what today moved" arrows stayed frozen at zero and the diary could never name who moved - the morning baseline was never taken. It is now, on every start path.
+* An action that crossed closing time and raised the ticket warning at the same moment left the day running: the button said CONTINUE instead of CLOCK OFF, and the extra action that followed could not end the day any more - a collapse in it was thrown away and the day still counted as survived. In week mode the night screen then showed numbers the next morning did not start from. Warnings have their say and the day ends anyway. The same held for the safety valve at full anger.
+* Steam only: playing a single day on one machine could delete a week in progress on the other - five days of play gone. Each save slot now carries its own timestamp, so an empty slot only clears the other machine's run when this one actually played it out.
 * Switching language with the settings open put the calm caption back on an armed "delete save" button while it stayed armed - the next click would have deleted the save without asking again. It disarms now. The restart button also stopped promising "the day at 08:00" during a week.
 * Ignoring a mail logged a smaller radar penalty than it actually charged - the log said one number while the bar and the floating text said another. One number now.
 * An interrupted day or week that arrived damaged could show a clock reading NaN:NaN, or break the game behind the resume dialog. Damaged saves are refused instead of offered.
