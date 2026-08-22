@@ -416,11 +416,17 @@ export const week = {
      * node - the announcement comes out of a consultant's mouth.
      */
     triggerMeeting: async function() {
-        await ensure('meetings');
-
+        // Set BEFORE the await, which is what the sentence below always said
+        // and the code did not: on a cold pool two clicks ran two
+        // continuations, drew twice from a three-entry weekly pool, applied
+        // the passive item bonus twice and wrote two entries into the archive.
+        //
         // Set before anything can fail: the walk to the meeting room happens
         // once, whatever the room turns out to contain.
+        if (this.state.meetingDone) return;
         this.state.meetingDone = true;
+
+        await ensure('meetings');
 
         // usedIDs lives inside one week, so without a longer memory the same
         // finale could turn up two weeks in a row - with three chains that is
@@ -604,7 +610,9 @@ export const week = {
         this.saveWeek();                        // the night IS the checkpoint
         this.syncRun(true);                     // and the moment one switches machines
 
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // See engine_core.softReset(): a raw classList leaves the mail in the
+        // scroll-lock set for good, and the hotkeys test that set.
+        this.hideOverlay('email-modal');
         this.renderHeader();
         this.updateUI();
         // Five mornings a week, and it used to be the same sentence every
@@ -809,7 +817,9 @@ export const week = {
         this.clearDayTimers();
         this.closeSettings();
         this.dismissModal();
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // See engine_core.softReset(): a raw classList leaves the mail in the
+        // scroll-lock set for good, and the hotkeys test that set.
+        this.hideOverlay('email-modal');
 
         this.endWeek();                       // week off, saved slot dropped
         if (!level) {                         // should not happen, but never strand the player

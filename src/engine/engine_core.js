@@ -17,6 +17,9 @@ const PARTY_END      = 23 * 60;
 const PARTY_STATIONS = 12;
 const PARTY_STEP     = (PARTY_END - PARTY_START) / PARTY_STATIONS;   // 30 minutes
 
+/** How many lines the company chronicle keeps. Shared with mergeArchives(). */
+const CHRONICLE_MAX = 12;
+
 export const core = {
 
     // Single source of truth for every localStorage key the game touches.
@@ -57,7 +60,7 @@ export const core = {
         const out = JSON.parse(JSON.stringify(local ?? {}));
         const c = cloud ?? {};
 
-        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags', 'chronicle']) {
+        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags']) {
             const list = Array.isArray(out[key]) ? out[key] : (out[key] = []);
             const seen = new Set(list.map(x => JSON.stringify(x)));
             for (const x of (Array.isArray(c[key]) ? c[key] : [])) {
@@ -73,6 +76,27 @@ export const core = {
                 else if (!(k in map)) map[k] = v;
             }
         }
+
+        // The chronicle is NOT an id list, which is where it used to sit.
+        //
+        // An entry is { day, id, vars } with a RANDOMLY drawn id, so two
+        // machines writing a line for the same career day produce two objects
+        // that differ - the id union kept both and the book showed the same day
+        // twice. And the twelve-line cap trims one per ADD, so a merged book of
+        // twenty stayed at twenty for good.
+        //
+        // One line per day, the local one wins (as reputation does), then the
+        // cap is applied to the result.
+        const byDay = new Map();
+        for (const entry of (Array.isArray(c.chronicle) ? c.chronicle : [])) {
+            if (entry && typeof entry.day === 'number') byDay.set(entry.day, entry);
+        }
+        for (const entry of (Array.isArray(out.chronicle) ? out.chronicle : [])) {
+            if (entry && typeof entry.day === 'number') byDay.set(entry.day, entry);
+        }
+        out.chronicle = [...byDay.values()]
+            .sort((a, b) => a.day - b.day)
+            .slice(-CHRONICLE_MAX);
 
         const RANK = { easy: 1, normal: 2, hard: 3 };
         out.achievementDiffs = out.achievementDiffs ?? {};
@@ -753,7 +777,7 @@ export const core = {
         // The id and the numbers, not the sentence: see data_lore.js.
         archive.chronicle.push({ day: dayNo, ...this.composeChronicleLine() });
         // Twelve is plenty: the book should look used, not like a diary.
-        if (archive.chronicle.length > 12) archive.chronicle.shift();
+        if (archive.chronicle.length > CHRONICLE_MAX) archive.chronicle.shift();
 
         this.saveSystem();
         this.playAudio('ui');
@@ -1059,8 +1083,17 @@ export const core = {
 
         this.updateUI();
 
-        // Start the tutorial, delayed so the UI has finished rendering
-        setTimeout(() => {
+        // Start the tutorial, delayed so the UI has finished rendering.
+        //
+        // Registered in DAY_TIMERS like every other pending step - the day
+        // twin of the week picker's timer, which was converted in 6.1 and left
+        // this one standing. Untracked, it survived clearDayTimers(): pick a
+        // day, press Escape, restart inside half a second, and the orphan
+        // fired reset() into the running boot. The morning screen was painted
+        // over the boot animation, wiped by the boot's own reset(), and its
+        // stat effect stood there unexplained.
+        this.state.bootTimer = setTimeout(() => {
+            this.state.bootTimer = null;
             // Read the flag straight from storage
             if (this.lesson && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
                 // Not played yet -> show the modal, the game waits for the click
@@ -1228,7 +1261,11 @@ export const core = {
         this.renderHeader();
         
         // Clean up phone, mail and log
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // hideOverlay, not a raw classList: showOverlay registered the mail as
+        // a scroll-lock holder, and only hideOverlay releases it. Left in the
+        // set, body keeps overflow-hidden - which is exactly what both hotkey
+        // branches test, so Q/W/E/R and 1/2/3 stayed dead for the session.
+        this.hideOverlay('email-modal');
         // Back to standby; PhoneView.svelte follows the state.
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
         
@@ -1326,7 +1363,12 @@ export const core = {
         }
 
         // Exactly 9 tickets, one below the limit. One more call would end it.
-        if (this.state.time >= 975 && this.state.tickets === 9 && !this.hasAch('ach_risk')) {
+        // `>= 9`, not `=== 9`: advanceClock can book two or three half-hour
+        // boundaries in one option, so from eight tickets a long action lands
+        // on ten and the nine is never observed - the pile went through it all
+        // the same. checkAchievements runs before checkEndConditions, so the
+        // badge is still awarded on the action that ends the day.
+        if (this.state.time >= 975 && this.state.tickets >= 9 && !this.hasAch('ach_risk')) {
             this.unlockAchievement('ach_risk');
         }
 
@@ -1849,6 +1891,16 @@ export const core = {
 
         await ensure('party');
         if (this.state.isPartyMode) return;   // a second continuation lost the race
+
+        // The one end path that did not do what finishGame does. A chain or
+        // delay timer can drop a mail over the pink result screen, and the
+        // confirm key reaches the button behind it - the gala then began under
+        // an open mail whose countdown clearDayTimers() had just killed.
+        if (this.state.isEmailOpen) {
+            if (this.state.emailTimer) { clearTimeout(this.state.emailTimer); this.state.emailTimer = null; }
+            this.hideOverlay('email-modal');
+            this.state.isEmailOpen = false;
+        }
         this.playAudio('ui');
         
         // Switch into party mode
