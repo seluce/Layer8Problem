@@ -1,4 +1,4 @@
-import { KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
 import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
@@ -199,6 +199,11 @@ export const core = {
         const cloud = await platform.load();
         if (!cloud) return;
 
+        // A reset recorded on another machine is applied FIRST, before the
+        // union below can lovingly restore what the player asked to have
+        // deleted. See adoptCloudReset().
+        this.adoptCloudReset(cloud.resetAt);
+
         if (cloud.archive) {
             // Merged into the LOCAL archive, and by union rather than
             // overwrite. The old code merged the cloud into the boot DEFAULTS
@@ -269,6 +274,52 @@ export const core = {
         } catch { return 0; }
     },
 
+    /**
+     * Removes every trace of the career on THIS machine.
+     *
+     * PROGRESS_KEYS is the one list of what a reset removes; clearDay and
+     * clearWeek run afterwards so the two cleared-at stamps are re-written -
+     * a machine that has just wiped its runs HAS finished them off, and its
+     * next payload may say so.
+     */
+    wipeProgress: function() {
+        for (const key of PROGRESS_KEYS) {
+            try { localStorage.removeItem(key); } catch { /* never mind */ }
+        }
+        this.clearDay();
+        this.clearWeek();
+    },
+
+    /**
+     * Applies a hard reset recorded on another machine - exactly once.
+     *
+     * The archive union is built so that nothing is ever lost, and the hard
+     * reset is the one action where losing everything is the point. An EMPTY
+     * payload cannot express that: the union reads emptiness as "nothing to
+     * add", and the next launch of any other machine restored the career -
+     * which made the delete button a lie on Steam.
+     *
+     * So the reset travels as a TIMESTAMP instead, in every payload. Each
+     * machine remembers the newest one it has applied; only a strictly newer
+     * stamp wipes, so the same reset is applied once and never again.
+     *
+     * Two machines resetting independently: the newest reset wins, and takes
+     * anything played between the two with it. Whoever presses "delete
+     * permanently" means the career, not a version of it.
+     */
+    adoptCloudReset: function(resetAt) {
+        if (!resetAt) return false;
+        let seen = 0;
+        try { seen = Number(localStorage.getItem(this.KEYS.resetSeenAt)) || 0; }
+        catch { /* unreadable: treat as never */ }
+        if (resetAt <= seen) return false;
+
+        this.wipeProgress();
+        try { localStorage.setItem(this.KEYS.resetSeenAt, String(resetAt)); }
+        catch { /* storage full: the wipe still happened, worst case it repeats */ }
+        return true;
+    },
+
     adoptCloudRun: function(key, raw, runSyncedAt) {
         const savedAt = (text) => {
             try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
@@ -318,6 +369,12 @@ export const core = {
             // (0 = never had one, so it may not argue against anybody).
             daySyncedAt:  this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt),
             weekSyncedAt: this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt),
+            // The tombstone: when a career was last deleted, as far as this
+            // machine knows (0 = never). In EVERY payload, not only the one
+            // pushed at the moment of the reset - the other machine may not
+            // launch for days, and by then the newest payload is an ordinary
+            // one written during post-reset play.
+            resetAt:      Number(localStorage.getItem(this.KEYS.resetSeenAt)) || 0,
             // Kept for machines still on 6.1, which read only this one.
             runSyncedAt:  Date.now()
         };

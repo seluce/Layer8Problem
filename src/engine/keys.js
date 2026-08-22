@@ -28,6 +28,15 @@ export const KEYS = {
                     normal: 'layer8_party_played_normal',
                     hard:   'layer8_party_played_hard' },
 
+    // --- Reset bookkeeping (survives the hard reset ON PURPOSE) ---
+    // The newest hard reset this machine has applied, as a timestamp. Every
+    // cloud payload carries it, so the reset reaches the other machines and
+    // is applied there exactly once - see engine_core.adoptCloudReset().
+    // NOT in PROGRESS_KEYS: wipe it with the rest and the machine forgets
+    // that it has already applied the reset, and applies it again on every
+    // launch.
+    resetSeenAt:   'layer8_reset_seen',
+
     // --- Settings (deliberately survive the hard reset) ---
     language:      'layer8_lang',        // 'de' or 'en', see src/i18n/i18n.svelte.js
     statsTab:      'layer8_stats_tab',     // last stats view (archive and global): 'day' or 'week'

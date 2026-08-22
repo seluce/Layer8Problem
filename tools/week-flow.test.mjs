@@ -59,7 +59,7 @@ const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
 const { intranetPages } = await import('../src/engine/intranet_pages.js');
-const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
+const { state, freshDay, freshArchive } = await import('../src/engine/engine_state.svelte.js');
 
 // The rune decides what t() answers; loadCore() above has already put the
 // matching tree in place, so this only moves the pointer.
@@ -2780,6 +2780,69 @@ await ok('A week finished here still clears the remainder over there', () => {
     engine.adoptCloudRun('layer8_week', null, undefined);
     assert.ok(store.get('layer8_week'), 'an old payload was allowed to delete a week');
 });
+await ok('A hard reset reaches the other machine exactly once', () => {
+    // The union restores everything an empty payload cannot express, so the
+    // reset travels as a timestamp and is applied where it lands - once.
+    resetState();
+    store.set('layer8_archive', JSON.stringify({ achievements: ['ach_old'] }));
+    store.set('layer8_week', '{"week":{"active":true},"savedAt":100}');
+
+    assert.equal(engine.adoptCloudReset(5000), true, 'a newer tombstone was ignored');
+    assert.equal(store.get('layer8_archive'), undefined, 'the archive survived the reset');
+    assert.equal(store.get('layer8_week'), undefined, 'the running week survived the reset');
+    assert.equal(store.get('layer8_reset_seen'), '5000', 'the applied reset was not recorded');
+
+    // The SAME tombstone again - post-reset progress has to be safe from it.
+    store.set('layer8_archive', JSON.stringify({ achievements: ['ach_new'] }));
+    assert.equal(engine.adoptCloudReset(5000), false);
+    assert.ok(store.get('layer8_archive'), 'the same reset wiped twice');
+
+    // An older one does nothing, and a 6.1 payload carries none at all.
+    assert.equal(engine.adoptCloudReset(4000), false);
+    assert.equal(engine.adoptCloudReset(undefined), false);
+    assert.ok(store.get('layer8_archive'), 'an old or absent tombstone wiped');
+});
+
+await ok('The tombstone rides along and beats the union', async () => {
+    // Every payload carries it, not only the one pushed at the reset itself -
+    // the other machine may not launch for days.
+    resetState();
+    store.set('layer8_reset_seen', '7000');
+    assert.equal(engine.buildCloudPayload().resetAt, 7000, 'the payload dropped the tombstone');
+
+    // Machine B: a full local archive meets the post-reset payload of A.
+    // The wipe has to come BEFORE the union, or the union restores the career.
+    resetState();
+    store.set('layer8_archive', JSON.stringify({ achievements: ['ach_old'], items: ['donut'] }));
+    const { platform } = await import('../src/platform.js');
+    const realLoad = platform.load;
+    platform.load = async () => ({ resetAt: 9000, archive: { achievements: ['ach_after'] } });
+    try { await engine.loadCloudSave(); } finally { platform.load = realLoad; }
+
+    const merged = JSON.parse(store.get('layer8_archive'));
+    assert.ok(!merged.achievements.includes('ach_old'), 'the wiped career came back through the union');
+    assert.ok(merged.achievements.includes('ach_after'), 'post-reset progress was lost');
+    assert.equal(store.get('layer8_reset_seen'), '9000');
+});
+
+await ok('The reset button stamps first and derives its empty archive', () => {
+    // The half a harness cannot click: held against the source, like the
+    // reset-button dressing above.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const block = uiSrc.slice(uiSrc.indexOf('triggerHardReset:'), uiSrc.indexOf('// Step 1: arm it.'));
+    const stampAt = block.indexOf('KEYS.resetSeenAt');
+    assert.ok(stampAt >= 0, 'the reset no longer stamps the tombstone');
+    assert.ok(stampAt < block.indexOf('buildCloudPayload'),
+              'the tombstone is stamped after the payload reads it');
+    assert.ok(block.includes('wipeProgress()'), 'the reset keeps its own wipe list again');
+    assert.ok(block.includes('freshArchive()'), 'the empty archive is hand-built again');
+
+    // ...and the factory carries every field the old literal dropped.
+    for (const field of ['seenEvents', 'seenFlags', 'knowledgeRead', 'chronicle', 'stats']) {
+        assert.ok(field in freshArchive(), `freshArchive lost ${field}`);
+    }
+});
+
 await ok('The newer run wins, the older overwrites nothing', () => {
     resetState();
     engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":3},"savedAt":1000}', 2000);
