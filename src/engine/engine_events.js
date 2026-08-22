@@ -104,7 +104,18 @@ export const events = {
     // async: the mail pool loads on demand, see data.js
     triggerEmail: async function(forcedId = null) {
         await ensure('emails');
-		
+
+        // Re-checked after the await, like trigger() does. Cancelling a timer
+        // cannot reach a call already suspended in here, and the mail pool is
+        // cold for the first half minute of a day: the continuation could
+        // resume after clocking off, into the gala, or into a restart, and
+        // then unconditionally opened an overlay and armed a fresh 20-second
+        // timer on a day whose timers had already been cleared.
+        if (this.state.pendingEnd || this.state.isPartyMode) {
+            this.state.emailPending = false;
+            return;
+        }
+
         // Never fire during a boss fight
         if (this.state.bossTimer || this.state.currentEventType === 'boss') {
             this.state.emailPending = false;
@@ -1307,7 +1318,18 @@ export const events = {
     // prefetchAll() fetches it in the background long before noon; the await
     // here covers the case of someone being faster than the connection.
     triggerLunch: async function() {
-        await ensure('lunch');
+        // The same claim trigger() makes, and for the same reason: the result
+        // button is never disabled, so on a cold pool two clicks ran two
+        // continuations - two renderTerminal calls, the passive item bonus
+        // applied twice and two ids burned. lunchDone cannot guard it, it was
+        // already set when the button was armed.
+        if (!DB.lunch) {
+            if (this.state.isLoadingPool) return;
+            this.state.isLoadingPool = true;
+            try { await ensure('lunch'); }
+            finally { this.state.isLoadingPool = false; }
+            if (this.state.pendingEnd || this.state.isPartyMode) return;
+        }
         let pool = DB.lunch ?? [];
 
         // Story gate and follow-up priority, exactly as in the action pools

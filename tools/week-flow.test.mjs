@@ -2157,6 +2157,82 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('A cold mail does not open into a finished day', async () => {
+    // Cancelling a timer cannot reach a call already suspended in the await.
+    resetState();
+    state.pendingEnd = { cause: 'time' };
+    await engine.triggerEmail();
+    assert.equal(state.isEmailOpen, false, 'a mail opened over a day that was already over');
+
+    resetState();
+    state.isPartyMode = true;
+    await engine.triggerEmail();
+    assert.equal(state.isEmailOpen, false, 'a mail opened into the gala');
+});
+
+await ok('The gala closes an open mail behind it', async () => {
+    resetState();
+    await ensure('party');
+    state.isEmailOpen = true;
+    state.emailTimer = setTimeout(() => {}, 60000);
+    state.pendingEnd = { isParty: true, partyKey: 'party_easy', diffStr: 'easy' };
+    await engine.startParty();
+    assert.equal(state.isEmailOpen, false, 'the gala began under an open mail');
+    assert.equal(state.emailTimer, null, 'the mail countdown was left running');
+});
+
+await ok('The risk badge survives a double ticket boundary', () => {
+    // A long option books two half-hour boundaries at once: from eight the
+    // pile lands on ten and the nine is never seen, though it went through it.
+    resetState();
+    state.time = 16 * 60 + 20;
+    state.tickets = 10;
+    engine.checkAchievements();
+    assert.ok(calls.achs.includes('ach_risk'), 'the badge was lost to the jump');
+});
+
+await ok('The day starter is a registered timer', () => {
+    resetState();
+    engine.setDifficulty('normal');
+    assert.ok(state.bootTimer, 'the 500ms starter is untracked again');
+    engine.clearDayTimers();
+    assert.equal(state.bootTimer, null, 'clearDayTimers cannot reach it');
+});
+
+await ok('The chronicle unites by day, not by object', () => {
+    // An entry carries a randomly drawn id, so two machines writing for the
+    // same career day produce two objects that differ.
+    const local = { chronicle: [{ day: 3, id: 'a' }, { day: 5, id: 'b' }] };
+    const cloud = { chronicle: [{ day: 3, id: 'c' }, { day: 4, id: 'd' }] };
+    const out = engine.mergeArchives(local, cloud);
+    assert.equal(out.chronicle.length, 3, 'the same day survived twice');
+    assert.equal(out.chronicle.find(e => e.day === 3).id, 'a', 'the local line did not win');
+    assert.deepEqual(out.chronicle.map(e => e.day), [3, 4, 5], 'the book is out of order');
+
+    // The cap belongs to the RESULT: it used to trim one per addition, so a
+    // merged book simply stayed too long.
+    const ten = (from) => ({ chronicle: Array.from({ length: 10 }, (_, i) => ({ day: from + i, id: 'x' })) });
+    const big = engine.mergeArchives(ten(1), ten(20));
+    assert.equal(big.chronicle.length, 12, 'a merged book grew past the cap');
+    assert.equal(big.chronicle.at(-1).day, 29, 'the cap kept the oldest instead of the newest');
+});
+
+await ok('An overlay is never hidden past its scroll lock', () => {
+    // showOverlay registers a scroll-lock holder and only hideOverlay releases
+    // it. A raw classList left the mail in the set for the session, and body
+    // kept overflow-hidden - which is precisely what both hotkey branches test.
+    for (const file of ['engine_core.js', 'engine_week.js', 'engine_ui.js', 'engine_events.js']) {
+        const src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8');
+        const raw = src.match(/getElementById\('[a-z-]*modal'\)\??\.classList\.add\('hidden'\)/g);
+        assert.equal(raw, null, `${file} hides a modal past hideOverlay: ${raw}`);
+    }
+    // And the meeting claims its one-shot BEFORE the await, not after.
+    const weekSrc = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
+    const body = weekSrc.slice(weekSrc.indexOf('triggerMeeting: async function'));
+    assert.ok(body.indexOf('this.state.meetingDone = true;') < body.indexOf('await ensure'),
+              'triggerMeeting sets its flag after the await again');
+});
+
 await ok('Mails and items are drawn on the day curve', async () => {
     // The chart and the diary's peak both come out of statHistory, and the two
     // biggest sources of boss radar in the game were writing into neither: a
