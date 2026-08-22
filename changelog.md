@@ -2,49 +2,45 @@
 
 Everything here is measured against 6.1. This update is a large one, and it is bug fixes from end to end - not a single new feature. 6.0 and 6.1 brought a lot of new ground: the second language, the week campaign, the compendium, the gala. What matters now is that all of it runs cleanly, rather than piling more on top of it.
 
-Bug fixes:
-* The confirm key stopped working on end and night screens in 6.1 - it was hitting the day-curve toggle instead of the continue button. It also targets the item dialog's use button again, and no longer clicks through an open dialog onto the screen behind it.
-* A warning or ending raised while the backpack, the intranet or the noticeboard was open appeared invisibly behind it. Warnings stand above the panels now.
-* A tab closed in the middle of the tutorial came back as an interrupted workday and resumed as a broken day. The lesson no longer saves itself as one.
-* The excuse button appeared during tutorial events and could derail the lesson. It waits until the real day starts.
-* After a language switch, Müller's handwritten entries at the back of the chronicle stayed in the old language while the chapters changed. They follow now.
-* Switching language at an unlucky moment could leave one event pool in the old language or empty for the rest of the session, and a quick double switch could end on the wrong language. All three timings are safe now.
-* In week mode, the silent hotline still answered tickets: with the day's calls spent, clicking the idle line kept removing one ticket per click. The idle line is idle now.
-* After a phone chat, no mail could ever follow and the Steam status still showed the previous activity. Chats book themselves properly now.
-* The backpack, team, knowledge, archive and settings buttons in the side panel can be reached and pressed with the keyboard.
-* Small screen repairs: the hover zoom on a locked achievement no longer slides under the neighbouring cards, the day/week choice is shared between archive and world statistics within a session, "always show the curve" takes effect at the very next night screen, the knowledge book's top edge has its intended green, and a damaged day curve draws a flat line instead of nothing.
-* Toggling the music off and quickly on again went permanently silent, and dragging the volume slider while the music was stopping left it playing although it was switched off. Both settings behave now.
-* In a browser's private mode the game broke mid-action on every save attempt; it plays on without saving now, like it always should have. A corrupted key-binding entry no longer breaks every keypress either.
-* A day ending while a mail was open left the dead mail standing over the night screen, and answering it leaked into the finished day. The mail closes with the day now.
-* Restarting during the boot animation ran two boot sequences at once and reset the day twice; a double click on the party invitation with a slow connection could crash the evening. Both hold steady now.
-* Switching language while the chat's three dots were bouncing served the next reply buttons in the old language, and switching during the summer party rewound the hub text to the arrival prose. Both follow completely now.
-* The chronicle refused to be written on a fresh morning until you had done something. It accepts the pen right away.
-* The diary claimed a day without lies as soon as your excuse stock had grown overnight, even if you had just used one. It counts what you actually spend.
-* "Der Faulpelz" was unreachable for the laziest possible player - laziness pinned at 100 never counted as 80 or more. It does now.
-* A consumable reward from a chat was silently dropped if you already carried one, and a snack morning could stuff an eleventh item into a full backpack. All loot goes through the one shared path now.
-* Mails now weigh the same as everything else: they quietly used a softer difficulty multiplier, shrank relief values on easy days, and their minutes never brought tickets. One formula everywhere.
-* Phone-chat endings now cost the time they say and take the items they say. Every chat ending used to cost a flat 15 minutes whatever was written, no ticket ever arrived during one, and the prince's black card stayed in the backpack after returning his millions.
-* Steam only: playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine also stays played.
-* The bug-report form sent a log made of "undefined" lines and never named the event it was filed from. Both work again.
-* Every survived week night was counted twice in the career statistics - the archive bars and the Steam counters grew at double speed. Once now.
-* An ending caused purely by using an item was queued but never shown - the dismissal only appeared after the next unrelated event. It shows immediately now, and item effects clamp at 100 like everything else.
-* In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
-* On a day started from the picker, the team view's "what today moved" arrows stayed frozen at zero and the diary could never name who moved - the morning baseline was never taken. It is now, on every start path.
-* Steam only: "Delete save permanently" deleted only the machine it was pressed on. The cloud is built to never lose anything, so the next launch of a second machine quietly brought the whole career back. The reset itself now travels to every machine and is applied there exactly once - and the game waits for the cloud to take it before restarting.
-* The company intranet follows a language switch too - the browser frame around the pages used to change while some three hundred lines of page text stood still. It keeps the posts and quotes of the visit you are on: the words change, the page does not.
-* Three more things now follow a language switch instead of standing still: an open mail, which kept sender, subject, body and all its replies in the old language while its frame changed around them; an achievement notice, which kept its title and text for the seconds it was on screen; and the item dialog, whose heading could even flip to the wrong question - "Use item" over a window whose button said Discard.
-* Timing repairs around slow connections and fast clicks: a mail could still open onto a day that was already over or into the summer party; two quick clicks on the lunch break or the weekly meeting drew two events instead of one, applying a passive item's bonus twice; the gala could begin underneath an open mail; and restarting within half a second of picking a difficulty painted the morning screen over the running boot sequence.
+The rules of the game:
+* An action that crossed closing time and raised the ticket warning at the same moment left the day running - and the extra action that followed could no longer end it, however badly it went. Warnings have their say and the day ends anyway; the same held for the safety valve at full anger.
+* Mails now weigh the same as everything else: they quietly used a softer difficulty multiplier, shrank relief values on easy days, and their minutes never brought tickets.
+* Ignoring a mail logged a smaller radar penalty than the bar actually moved. One number now.
+* Phone-chat endings now cost the time they say and take the items they say - every ending used to cost a flat 15 minutes, and the prince's black card stayed in the backpack after returning his millions.
+* In week mode, the silent hotline still answered tickets: with the day's calls spent, clicking the idle line kept removing one ticket per click.
+* An ending caused purely by using an item was queued but only shown after the next unrelated event. It shows immediately now.
+* A consumable reward from a chat was silently dropped if you already carried one, and a snack morning could stuff an eleventh item into a full backpack.
+* The day curve ignored mails and items - a day that went badly wrong could show a chart with no spike in it, and the diary then called it calm.
+* The diary claimed a day without lies as soon as your excuse stock had grown overnight, even if you had just used one. The chronicle also accepts the pen on a fresh morning now.
+* "Sloth" was unreachable with laziness pinned at 100, and "High-Wire Act" was skipped when one long action carried the tickets straight from eight to ten. Both can be earned now.
+* On a day started from the picker, the team view's arrows stayed frozen at zero and the diary could never name who moved.
+
+Steam and a second machine:
+* Playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine stays played, and the chronicle no longer shows the same day twice.
+* Playing a single day on one machine could delete a week in progress on the other - five days of play gone. Each save slot carries its own timestamp now.
+* "Delete save permanently" deleted only the machine it was pressed on; the cloud quietly brought the career back. The reset now reaches every machine and is applied there exactly once.
+* Every survived week night was counted twice in the career statistics.
+* After a phone chat, no mail could ever follow and the Steam status still showed the previous activity.
+
+Switching language:
+* The company intranet, an open mail, an achievement notice, the chat's reply buttons, the summer party's hub text, Müller's handwritten chronicle entries and the backpack's log lines all follow a language switch now instead of standing still in the old one.
+* The item dialog follows too - its heading could even flip to the wrong question: "Use item" over a window whose button said Discard.
+* An unlucky moment could leave one event pool in the old language or empty for the rest of the session, and a quick double switch could end on the wrong language.
+* The news ticker restarted its scroll but not its clock, so the headline vanished mid-run - and its speed finally matches how long a headline stays.
+* Switching with the settings open put the calm caption back on an armed "delete save" button - the next click would have deleted the save without asking again. It disarms now. The restart button also stopped promising "the day at 08:00" during a week.
+
+Screen, sound and input:
+* The confirm key stopped working on end and night screens in 6.1, and could click through an open dialog onto the screen behind it.
+* A warning or ending raised while the backpack, the intranet or the noticeboard was open appeared invisibly behind it.
+* A day ending while a mail was open left the dead mail standing over the night screen, and answering it leaked into the finished day.
 * Returning to the title screen or into a week night while a mail was open could leave the keyboard shortcuts dead for the rest of the session.
-* Steam only: with the same career day written on two machines, the company chronicle showed that day twice and the book stopped keeping itself to twelve lines.
-* "Auf Kante genaht" could not be earned if one long action carried the ticket pile straight from eight to ten - the nine was passed but never seen.
-* The day curve ignored mails and items. Ignored letters are the biggest single source of boss radar in the game, and none of it was drawn - a day that went badly wrong could show a chart with no spike in it, and the diary read that flat line as a calm day. Both are on the curve now.
-* Four lines the backpack writes into the log - the reminder on a keepsake, the two cooldown notes and the note on a passive item - stayed in the language they were clicked in while every other line followed a language switch.
-* An action that crossed closing time and raised the ticket warning at the same moment left the day running: the button said CONTINUE instead of CLOCK OFF, and the extra action that followed could not end the day any more - a collapse in it was thrown away and the day still counted as survived. In week mode the night screen then showed numbers the next morning did not start from. Warnings have their say and the day ends anyway. The same held for the safety valve at full anger.
-* Steam only: playing a single day on one machine could delete a week in progress on the other - five days of play gone. Each save slot now carries its own timestamp, so an empty slot only clears the other machine's run when this one actually played it out.
-* Switching language with the settings open put the calm caption back on an armed "delete save" button while it stayed armed - the next click would have deleted the save without asking again. It disarms now. The restart button also stopped promising "the day at 08:00" during a week.
-* Ignoring a mail logged a smaller radar penalty than it actually charged - the log said one number while the bar and the floating text said another. One number now.
-* An interrupted day or week that arrived damaged could show a clock reading NaN:NaN, or break the game behind the resume dialog. Damaged saves are refused instead of offered.
-* Switching language while the news ticker was running restarted the scroll but not its clock, so the headline vanished mid-run. It now restarts with its full run time - and the scroll speed finally matches how long a headline actually stays.
+* Repairs around slow connections and fast clicks: a mail could open onto a finished day or into the gala, a double click on the lunch break, the weekly meeting or the party invitation drew twice or crashed the evening, and restarting during the boot animation ran two boot sequences at once.
+* A tab closed in the middle of the tutorial came back as a broken workday, and the excuse button could derail the lesson.
+* Damaged save data is refused instead of showing a clock reading NaN:NaN or breaking behind the resume dialog. In a browser's private mode the game plays on without saving instead of breaking mid-action, and a corrupted key binding no longer breaks every keypress.
+* Toggling the music off and quickly on again went permanently silent, and the volume slider could leave the music playing although it was switched off.
+* The backpack, team, knowledge, archive and settings buttons can be reached and pressed with the keyboard.
+* Small screen repairs: the hover zoom on a locked achievement no longer slides under its neighbours, the day/week choice is shared between archive and world statistics, "always show the curve" takes effect at the very next night screen, the knowledge book's top edge has its intended green, a damaged day curve draws a flat line instead of nothing, and the hint on an unfound archive item sits on solid ground instead of shining through its heading.
+* The bug-report form sends a readable log and names its event again.
 
 ---
 
