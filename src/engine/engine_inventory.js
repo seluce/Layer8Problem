@@ -88,23 +88,9 @@ export const inventory = {
             return; // stop here, no modal
         }
 
-        // With an image, build an img tag carrying the matching classes;
-        // otherwise fall back to the emoji.
-        // innerHTML on purpose: the content contains an img tag
-        let displayContent = "❓";
-        if (item) {
-            displayContent = item.img
-                ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
-                : item.icon;
-        }
-
         this.state.pendingItem = id;
-
         this.setItemConfirmMode('use');
-        document.getElementById('item-confirm-icon').innerHTML = displayContent;
-        document.getElementById('item-confirm-title').innerText = item ? item.name : id;
-        document.getElementById('item-confirm-desc').innerText = use?.desc ?? t('item.effect.unknown');
-        document.getElementById('item-confirm-warn').innerText = use?.warn ?? t('item.warn.consumed');
+        this.dressItemConfirm();
 
         this.showOverlay('item-confirm-modal');
     },
@@ -188,12 +174,52 @@ export const inventory = {
      * every one of those has cost an afternoon when the markup changed. Here
      * the two buttons simply take turns being hidden.
      */
+    /**
+     * The four fields of the item dialog, painted from state.
+     *
+     * Written straight into the DOM by askUseItem/askDiscardItem until 6.1.1,
+     * with no way to do it a second time - so a language switch left name,
+     * effect and warning standing in the old language. The heading was worse
+     * than frozen: `#item-confirm-kind` carries data-i18n="item.confirm.title",
+     * and applyStaticStrings() put "Use item" back over a dialog whose visible
+     * button was DISCARD. state.pendingItem and state.pendingItemMode always
+     * held everything needed to rebuild it; nobody did.
+     */
+    dressItemConfirm: function() {
+        const id = this.state.pendingItem;
+        if (!id) return;
+
+        const item = DB.items[id];
+        const discarding = this.state.pendingItemMode === 'discard';
+        const use = item?.use;
+
+        const icon  = document.getElementById('item-confirm-icon');
+        const title = document.getElementById('item-confirm-title');
+        const desc  = document.getElementById('item-confirm-desc');
+        const warn  = document.getElementById('item-confirm-warn');
+        const kind  = document.getElementById('item-confirm-kind');
+
+        if (icon) icon.innerHTML = item?.img
+            ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
+            : (item?.icon ?? '❓');
+        if (title) title.innerText = item ? item.name : id;
+        if (kind) kind.innerText = t(discarding ? 'item.confirm.title.discard' : 'item.confirm.title');
+
+        if (discarding) {
+            if (desc) desc.innerText = t(item?.keep ? 'item.discard.reusable' : 'item.discard.consumable');
+            if (warn) warn.innerText = t('item.discard.warn');
+        } else {
+            if (desc) desc.innerText = use?.desc ?? t('item.effect.unknown');
+            if (warn) warn.innerText = use?.warn ?? t('item.warn.consumed');
+        }
+    },
+
     setItemConfirmMode: function(mode) {
         this.state.pendingItemMode = mode;
-        const kind = document.getElementById('item-confirm-kind');
         const useBtn = document.getElementById('item-confirm-use');
         const dropBtn = document.getElementById('item-confirm-discard');
-        if (kind) kind.innerText = t(mode === 'discard' ? 'item.confirm.title.discard' : 'item.confirm.title');
+        // The heading belongs to dressItemConfirm(), which is the one that can
+        // be run again; this keeps only what a repaint must not undo.
         useBtn?.classList.toggle('hidden', mode === 'discard');
         dropBtn?.classList.toggle('hidden', mode !== 'discard');
     },
@@ -214,14 +240,7 @@ export const inventory = {
 
         this.state.pendingItem = id;
         this.setItemConfirmMode('discard');
-
-        document.getElementById('item-confirm-icon').innerHTML = item.img
-            ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
-            : (item.icon ?? '❓');
-        document.getElementById('item-confirm-title').innerText = item.name;
-        document.getElementById('item-confirm-desc').innerText =
-            t(item.keep ? 'item.discard.reusable' : 'item.discard.consumable');
-        document.getElementById('item-confirm-warn').innerText = t('item.discard.warn');
+        this.dressItemConfirm();
 
         this.showOverlay('item-confirm-modal');
     },
