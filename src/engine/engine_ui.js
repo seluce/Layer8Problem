@@ -718,39 +718,15 @@ export const ui = {
      *
      * The engine picks, the components render - same split as everywhere else.
      */
-    /**
-     * The draws of ONE visit, as indices rather than as rows.
-     *
-     * Five things on these pages are random, and a language switch must not
-     * re-roll them: the words change, the page does not. So the draw and the
-     * composing are two steps now - openIntranet() does both, a switch repeats
-     * only the second.
-     */
-    drawIntranetPicks: function(src) {
-        const pick = (n) => Math.floor(Math.random() * n);
-        const order = (n) => [...Array(n).keys()].sort(() => Math.random() - 0.5);
-        return {
-            // The whole order, not the slice: how many general posts are shown
-            // depends on how many reactive ones there are, and that follows the
-            // story flags - so it is decided again while composing.
-            general:      order(src.feed.filter(p => !p.reqStory).length),
-            vision:       pick(src.visions.length),
-            status:       order(src.status.length),
-            chantalOlder: pick(src.chantal.older.length),
-            hygiene:      pick(src.hygiene.length),
-        };
-    },
-
-    /**
-     * @param {boolean} [keepPicks] compose again with the draws of this visit,
-     *        instead of drawing new ones - what a language switch needs.
-     */
-    buildIntranet: function(keepPicks = false) {
+    buildIntranet: function() {
         const src = DB.intranet;
         if (!src) return;
 
-        const picks = (keepPicks && this.state.intranetPicks) || this.drawIntranetPicks(src);
-        this.state.intranetPicks = picks;
+        // Drawn fresh on every visit, so a second look at the same page is not
+        // the same page. What is drawn is an INDEX - the row itself is looked
+        // up while the page is painted, see engine/intranet_pages.js.
+        const pick = (n) => Math.floor(Math.random() * n);
+        const order = (n) => [...Array(n).keys()].sort(() => Math.random() - 0.5);
 
         const rep = this.state.reputation ?? {};
         const flags = this.state.storyFlags ?? {};
@@ -767,48 +743,45 @@ export const ui = {
         // Employee of the month. 20 is the FRIENDLY threshold the team view
         // uses; below it the award is not given. If the whole house is on your
         // side, the jury runs out of alternatives.
-        let employee;
-        if (values.every(v => v >= 20)) {
-            employee = { ...src.employeeSelf, self: true };
-        } else if ((rep[best] ?? 0) >= 20) {
-            employee = { name: best, ...src.employee[best] };
-        } else {
-            employee = { name: src.employeeNone.title, role: '', reason: src.employeeNone.reason, none: true };
-        }
+        const employee = values.every(v => v >= 20) ? { kind: 'self' }
+                       : (rep[best] ?? 0) >= 20     ? { kind: 'best', name: best }
+                       : { kind: 'none' };
 
-        // Feed: everything you caused today first, filled up to four.
-        const reactive = src.feed.filter(p => p.reqStory && flags[p.reqStory]);
-        const generalPool = src.feed.filter(p => !p.reqStory);
-        const general = picks.general
-            .slice(0, Math.max(2, 4 - reactive.length))
-            .map(i => generalPool[i])
-            .filter(Boolean);
-        const feed = [...reactive, ...general].slice(0, 4);
+        // Feed: everything you caused today first, filled up to four. Indices
+        // into src.feed, so the row is found again in either tree.
+        const reactiveIdx = src.feed.map((p, i) => [p, i])
+                                    .filter(([p]) => p.reqStory && flags[p.reqStory])
+                                    .map(([, i]) => i);
+        const generalIdx = src.feed.map((p, i) => [p, i]).filter(([p]) => !p.reqStory).map(([, i]) => i);
+        const feed = [...reactiveIdx,
+                      ...order(generalIdx.length)
+                          .slice(0, Math.max(2, 4 - reactiveIdx.length))
+                          .map(i => generalIdx[i])].slice(0, 4);
 
         // Days without an incident in the server room. Zero on most days.
         // The personnel file knows nothing about modes - see careerStats().
+        //
         // `this`, not the window global: engine_ui does not import the engine,
         // so this line reached for window.engine and made the whole function
         // untestable outside a browser. Every module is spread into the one
         // engine object, so `this` is the same thing - minus the global.
         const career = this.careerStats();
         const streak = career.streak;
-        const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
+        const incidentIdx = Math.max(0, src.incident.findIndex(i => streak >= i.min));
 
         // Key figure of the day. Anyone playing without a ticket counter must not
         // get it back here - the company simply withholds the figure, which is
         // exactly what it would do.
         const tickets = this.state.tickets ?? 0;
         const kpi = this.state.blindTickets
-            ? { value: src.kpi.blind.value, text: src.kpi.blind.text }
-            : { value: String(tickets), text: (src.kpi.levels.find(l => tickets >= l.min) ?? src.kpi.levels.at(-1)).text };
+            ? { blind: true }
+            : { blind: false, tickets,
+                levelIdx: Math.max(0, src.kpi.levels.findIndex(l => tickets >= l.min)) };
 
         // The canteen plan hangs there all week; only the issue line knows the
         // time of day.
-        const t = this.state.time ?? 0;
-        const service = { ...(t < 11 * 60 + 45 ? src.service.before
-                            : t <= 13 * 60 + 15 ? src.service.open
-                            : src.service.after) };
+        const clock = this.state.time ?? 0;
+        const service = clock < 11 * 60 + 45 ? 'before' : clock <= 13 * 60 + 15 ? 'open' : 'after';
 
         const dayKey = this.difficultyKey();
         // An id, not a weekday name: the canteen highlights today by
@@ -817,87 +790,67 @@ export const ui = {
         // highlight, nothing to notice.
         const today = dayKey === 'easy' ? 'fri' : dayKey === 'hard' ? 'mon' : 'wed';
 
-        // Human Capital: Müller's own file.
-        const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
+        // Human Capital: Müller's own file. Condition here, wording in
+        // data_intranet.js - so only the KEY and the number travel.
         const notes = [];
-        const push = (tone, title, text) => notes.push({ tone, title, text });
+        if (career.warningsChef)    notes.push({ key: 'warningsChef', count: career.warningsChef });
+        if (career.rage)            notes.push({ key: 'rage', count: career.rage });
+        if (career.ventSaves)       notes.push({ key: 'ventSaves', count: career.ventSaves });
+        if (career.streakBest >= 3) notes.push({ key: 'streakBest', count: career.streakBest });
+        if (career.survived)        notes.push({ key: 'survived', count: career.survived });
 
-        // Condition here, wording in data_intranet.js. Both used to live in
-        // this file, which meant five paragraphs of HR prose sat in the engine.
-        const note = (key, count) => {
-            const n = src.hr.careerNotes?.[key];
-            if (n) push(n.tone, n.title.replace('{count}', count), n.text);
-        };
-        if (career.warningsChef) note('warningsChef', career.warningsChef);
-        if (career.rage)         note('rage', career.rage);
-        if (career.ventSaves)    note('ventSaves', career.ventSaves);
-        if (career.streakBest >= 3) note('streakBest', career.streakBest);
-        if (career.survived)     note('survived', career.survived);
-        if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
-
+        // IDENTITIES ONLY - no prose past this point.
+        //
+        // Up to 6.1.1 this object held the finished rows out of the tree, and
+        // it was built on opening and never again: a language switch changed
+        // the browser frame and left three hundred lines of page text in the
+        // old language. Now it says WHICH row, and components/intranet/ looks
+        // the words up through tree() while it draws. A page added later is
+        // safe by construction, and week-flow.test refuses any prose that
+        // finds its way back in here.
         this.state.intranetData = {
             employee,
             feed,
-            incident: { days: streak, note: incident.note },
-            // The fixed frame of the start page. Not reactive, but the
-            // component reads one object rather than two sources.
-            dashboard: { page: src.dashboard.page },
-            vision_quote: src.visions[picks.vision],
-            status: picks.status.slice(0, 3).map(i => src.status[i]).filter(Boolean),
+            incident: { days: streak, idx: incidentIdx },
+            visionQuote: pick(src.visions.length),
+            status: order(src.status.length).slice(0, 3),
             kpi,
 
             chantal: {
-                top: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
-                older: src.chantal.older[picks.chantalOlder],
-                page: src.chantal.page
+                top: average >= 20 ? 'high' : average <= -20 ? 'low' : null,
+                olderIdx: pick(src.chantal.older.length),
             },
 
             vision: {
-                extra: done.includes('ach_wolf') ? src.vision.boss
-                     : (rep['Dr. Wichtig'] ?? 0) >= 20 ? src.vision.good
-                     : (rep['Dr. Wichtig'] ?? 0) <= -20 ? src.vision.bad
+                extra: done.includes('ach_wolf') ? 'boss'
+                     : (rep['Dr. Wichtig'] ?? 0) >= 20 ? 'good'
+                     : (rep['Dr. Wichtig'] ?? 0) <= -20 ? 'bad'
                      : null,
-                note: done.includes('ach_hacker') ? src.vision.editorNote : null,
-                page: src.vision.page
+                note: done.includes('ach_hacker'),
             },
 
             sales: {
-                extra: (rep['Markus'] ?? 0) >= 20 ? src.sales.good
-                     : (rep['Markus'] ?? 0) <= -20 ? src.sales.bad
+                extra: (rep['Markus'] ?? 0) >= 20 ? 'good'
+                     : (rep['Markus'] ?? 0) <= -20 ? 'bad'
                      : null,
-                phoenix: flags['path_phoenix_storno'] ? src.sales.phoenix : null,
-                page: src.sales.page
+                phoenix: !!flags['path_phoenix_storno'],
             },
 
-            kantine: {
-                page: src.kantine.page,
-                today,
-                service,
-                hygiene: src.hygiene[picks.hygiene],
-                done: this.state.lunchDone ? src.service.done : null
-            },
+            kantine: { today, service, hygieneIdx: pick(src.hygiene.length), done: !!this.state.lunchDone },
 
             impressum: {
                 version: src.impressum.baseVersion + (stats.daysStarted ?? 0),
-                note: src.impressum.versionNote,
-                clause: src.impressum.clauses.find(c => (stats.daysRageQuit ?? 0) >= c.minRage) ?? null,
-                // The static paragraphs, handed through unchanged. They do not
-                // react to anything - they are here because the component reads
-                // one object, not two sources.
-                page: src.impressum.page
+                clauseIdx: (() => {
+                    const i = src.impressum.clauses.findIndex(c => (stats.daysRageQuit ?? 0) >= c.minRage);
+                    return i < 0 ? null : i;
+                })(),
             },
 
             hr: {
-                page: src.hr.page,
-                policy: src.hr.policy,
-                support: src.hr.support,
                 probation: Math.min(14, Math.max(1, stats.daysStarted ?? 1)),
-                salary: src.hr.salary,
-                salaryNote: src.hr.salaryNote,
-                loyalty,
+                loyaltyIdx: Math.max(0, src.hr.loyalty.findIndex(l => average >= l.min)),
                 notes,
-                documents: src.hr.documents
-            }
+            },
         };
     },
 

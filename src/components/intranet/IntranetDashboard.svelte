@@ -13,9 +13,9 @@
   The feed texts contain no markup and are authored in data_intranet.js.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const data = $derived(game.intranetData);
+    const data = $derived(intranetPages());
     const page = $derived(data?.dashboard?.page ?? null);
 
     // Whole class names, mapped from a key that comes out of the data file.

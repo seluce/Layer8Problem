@@ -58,6 +58,7 @@ const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
 const { ui } = await import('../src/engine/engine_ui.js');
+const { intranetPages } = await import('../src/engine/intranet_pages.js');
 const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
 
 // The rune decides what t() answers; loadCore() above has already put the
@@ -2157,36 +2158,49 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
-await ok('The intranet composes twice without becoming a different page', async () => {
-    // Five things on these pages are drawn. Composing again - which is what a
-    // language switch now does - must change the words and nothing else.
+await ok('The intranet keeps no prose in the state', async () => {
+    // The rule this rests on: buildIntranet decides WHAT the pages are about
+    // and writes down indices and keys; intranet_pages.js looks the words up
+    // through tree() while they are drawn. Prose in the state means a page
+    // that cannot follow a language switch - which is exactly how three
+    // hundred lines of it came to stand still.
     resetState();
     await ensure('intranet');
-    // engine_ui is not spread into the harness engine (its functions want a
-    // DOM); buildIntranet is pure computation, so it gets its own shell.
-    const pages = { ...engine, ...ui };
+    const pages = { ...engine, ...ui };     // engine_ui is not in the harness engine
     pages.buildIntranet();
-    const first = JSON.parse(JSON.stringify(state.intranetData));
-    const drawn = state.intranetPicks;
-    assert.ok(drawn, 'the visit recorded no draws at all');
 
-    pages.buildIntranet(true);
-    assert.equal(state.intranetPicks, drawn, 'the draws were rolled again');
-    for (const field of ['feed', 'status', 'vision_quote']) {
-        assert.deepEqual(state.intranetData[field], first[field], `${field} reshuffled`);
+    const walk = (value, path) => {
+        if (typeof value === 'string') {
+            // Ids, keys and numbers-as-text are identities and stay short.
+            assert.ok(value.length <= 24, `intranetData.${path} holds prose: "${value.slice(0, 40)}…"`);
+        } else if (Array.isArray(value)) {
+            value.forEach((v, i) => walk(v, `${path}[${i}]`));
+        } else if (value && typeof value === 'object') {
+            for (const [k, v] of Object.entries(value)) walk(v, `${path}.${k}`);
+        }
+    };
+    walk(state.intranetData, '');
+
+    // ...and the pages still come out whole on the other side.
+    const drawn = intranetPages();
+    assert.ok(drawn?.hr?.page && drawn?.dashboard?.page, 'the pages no longer compose');
+    assert.equal(drawn.feed.length, state.intranetData.feed.length, 'the feed lost rows on the way');
+    assert.ok(drawn.hr.notes.length, 'the personnel file has no lines at all');
+});
+
+await ok('No intranet component reads the state directly', () => {
+    // The durable half: a page added later cannot bring the fault back,
+    // because reading intranetData in a component is what caused it.
+    const dir = new URL('../src/components/intranet/', import.meta.url);
+    let checked = 0;
+    for (const file of readdirSync(dir)) {
+        if (!file.endsWith('.svelte')) continue;
+        checked++;
+        const src = readFileSync(new URL(file, dir), 'utf-8');
+        assert.ok(!/intranetData/.test(src),
+                  `${file} reads intranetData - the words belong in tree(), not in the state`);
     }
-    assert.deepEqual(state.intranetData.chantal.older, first.chantal.older, 'the old post changed');
-    assert.deepEqual(state.intranetData.kantine.hygiene, first.kantine.hygiene, 'the hygiene line changed');
-
-    // A fresh VISIT draws again - that is the design, and the reason the two
-    // steps had to be told apart in the first place.
-    pages.buildIntranet();
-    assert.notEqual(state.intranetPicks, drawn, 'a new visit reused the old draws');
-
-    // ...and the switch actually reaches it, keeping the draws.
-    const shellSrc = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
-    assert.ok(/onLanguageChange\([\s\S]{0,700}?buildIntranet\(true\)/.test(shellSrc),
-              'a language switch no longer re-composes the company pages');
+    assert.ok(checked >= 7, 'the intranet folder was not read at all');
 });
 
 await ok('An open mail follows a language switch', async () => {

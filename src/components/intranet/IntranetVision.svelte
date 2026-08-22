@@ -14,9 +14,9 @@
   where a question can stand, not about what it says.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const vision = $derived(game.intranetData?.vision ?? null);
+    const vision = $derived(intranetPages()?.vision ?? null);
     const page   = $derived(vision?.page ?? null);
 
     // Everything except the closing pair, which is rendered after the extra.

@@ -540,31 +540,40 @@ await ok('The end screen follows a language switch', async () => {
 });
 
 await ok('The company pages follow a language switch', async () => {
-    // buildIntranet() copies prose out of the tree, and it used to run only on
-    // opening: the browser frame around the pages changed language while some
-    // three hundred lines of page text stood still.
+    // buildIntranet() decides ONCE what the pages are about and writes down
+    // indices and keys. The words are looked up while the page is drawn - so
+    // the switch below rebuilds nothing at all, and the pages come out in the
+    // other language anyway. That is the whole point of the split.
     const { ui } = await import('../src/engine/engine_ui.js');
     const { state } = await import('../src/engine/engine_state.svelte.js');
-    const shell = { state, ...ui, careerStats: () => ({ streak: 0, streakBest: 0, survived: 0, rage: 0, warningsChef: 0, ventSaves: 0 }), difficultyKey: () => 'normal' };
+    const { intranetPages } = await import('../src/engine/intranet_pages.js');
+    const shell = {
+        state, ...ui,
+        careerStats: () => ({ streak: 0, streakBest: 0, survived: 0, rage: 0, warningsChef: 0, ventSaves: 0 }),
+        difficultyKey: () => 'normal',
+    };
 
-    const seen = {};
-    for (const lang of ['de', 'en']) {
-        await i18n.useLanguage(lang);
-        await loadCore(lang);
-        await ensure('intranet');
-        // First time round it draws; the second composes with the SAME draws,
-        // which is exactly what the language handler does.
-        shell.buildIntranet(lang === 'en');
-        seen[lang] = JSON.parse(JSON.stringify(state.intranetData));
+    await i18n.useLanguage('de');
+    await loadCore('de');
+    await ensure('intranet');
+    shell.buildIntranet();
+    const decided = JSON.stringify(state.intranetData);
+    const de = JSON.parse(JSON.stringify(intranetPages()));
+
+    await i18n.useLanguage('en');
+    await loadCore('en');
+    await ensure('intranet');
+    const en = JSON.parse(JSON.stringify(intranetPages()));   // NOT rebuilt
+
+    assert.equal(JSON.stringify(state.intranetData), decided,
+                 'the decisions changed - only the words were supposed to');
+    for (const page of ['dashboard', 'hr', 'kantine', 'impressum']) {
+        assert.notEqual(JSON.stringify(de[page].page), JSON.stringify(en[page].page),
+                        `the ${page} page did not switch along`);
     }
-
-    assert.notDeepEqual(seen.de.kpi, seen.en.kpi, 'the key figure did not switch along');
-    assert.notEqual(JSON.stringify(seen.de.hr.page), JSON.stringify(seen.en.hr.page),
-                    'the personnel page did not switch along');
-    assert.notEqual(JSON.stringify(seen.de.dashboard.page), JSON.stringify(seen.en.dashboard.page),
-                    'the start page did not switch along');
-    // ...and the draws stayed put, so it is the same page in another language.
-    assert.deepEqual(seen.de.status.length, seen.en.status.length, 'the status block changed size');
+    assert.notEqual(JSON.stringify(de.kpi), JSON.stringify(en.kpi), 'the key figure did not switch along');
+    assert.equal(de.feed.length, en.feed.length, 'the feed changed size');
+    assert.equal(de.hr.notes.length, en.hr.notes.length, 'the personnel file changed size');
 });
 
 await ok('No recorded field holds a finished sentence any more', async () => {
