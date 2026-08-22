@@ -903,6 +903,7 @@ export const events = {
      */
     relocaliseScene: function() {
         this.relocalisePhone();
+        this.relocaliseMail();
 
         // A running news ticker restarts in the new language ({#key news}
         // recreates the element, so the scroll begins on the right again) -
@@ -938,6 +939,29 @@ export const events = {
         } else {
             this.renderEventHTML(ev, this.state.currentEventType);
         }
+    },
+
+    /**
+     * The open mail, which held a raw reference into the old tree.
+     *
+     * `state.email = email` puts the pool object itself into the state, and
+     * EmailView reads sender, subject, body and every reply caption straight
+     * off it - so a switch left the whole letter standing while the frame
+     * around it changed. Unlike the phone, nothing here is "what was already
+     * said": a mail is one screen the player is still reading and about to
+     * answer, so all of it follows.
+     *
+     * The id is the join, as everywhere else. A mail that is not in the new
+     * tree keeps the old text rather than emptying the window - the parity
+     * linter makes that case theoretical, but an empty letter would be worse
+     * than a stale one.
+     */
+    relocaliseMail: function() {
+        if (!this.state.isEmailOpen) return;
+        const id = this.state.email?.id;
+        if (!id) return;
+        const fresh = (DB.emails ?? []).find(m => m.id === id);
+        if (fresh) this.state.email = fresh;
     },
 
     /**

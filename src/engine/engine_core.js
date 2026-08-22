@@ -1491,7 +1491,11 @@ export const core = {
             const titleRef = { ref: { i: id, path: ['title'] } };
             let logLine = { k: 'achievement.log.unlocked', v: { title: titleRef } };
             let logColor = "text-yellow-400 font-bold"; // Standard Gold
-            let toastDesc = text;
+            // A RECIPE, exactly like the log line four lines below it - the
+            // toast used to hold the finished words, so a language switch
+            // inside its four to seven seconds left it standing in the old
+            // language while the log entry underneath it changed.
+            let toastDesc = { ref: { i: id, path: [entry.toast ? 'toast' : 'desc'] } };
 
             // Upgrade case, e.g. easy -> hard
             let isUpgrade = false;
@@ -1512,7 +1516,7 @@ export const core = {
                 logLine = { k: 'achievement.log.upgraded',
                             v: { title: titleRef, tier: { k: tierKey, up: true } } };
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
-                toastDesc = tf('achievement.upgradedTo', { tier });
+                toastDesc = { k: 'achievement.upgradedTo', v: { tier: { k: tierKey, up: true } } };
             }
 
             // A. Write the log line
@@ -1520,7 +1524,7 @@ export const core = {
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
-            this.showToast({ title, desc: toastDesc, upgrade: isUpgrade });
+            this.showToast({ title: titleRef, desc: toastDesc, upgrade: isUpgrade });
         }
 
         // 3. Always persist in the background, in case this was an upgrade

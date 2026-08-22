@@ -2157,6 +2157,58 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('An open mail follows a language switch', async () => {
+    // state.email held a raw reference into the tree it was drawn from, and
+    // EmailView reads sender, subject, body and every reply straight off it.
+    resetState();
+    await ensure('emails');
+    const first = (DB.emails ?? [])[0];
+    assert.ok(first?.id, 'no mail in the tree - this check has no subject');
+
+    state.isEmailOpen = true;
+    // A stale copy standing in for "the letter as it was drawn in the other
+    // language": same id, different words.
+    state.email = { ...first, subj: 'STALE', body: 'STALE' };
+    engine.relocaliseMail();
+    assert.notEqual(state.email.subj, 'STALE', 'the subject stayed in the old language');
+    assert.equal(state.email.id, first.id, 'the mail was swapped for a different one');
+
+    // With no mail open it must not touch anything.
+    resetState();
+    state.isEmailOpen = false;
+    state.email = { id: first.id, subj: 'STALE' };
+    engine.relocaliseMail();
+    assert.equal(state.email.subj, 'STALE', 'a closed mail was repainted');
+});
+
+await ok('Toast and item dialog carry identities, not words', () => {
+    // The toast: both fields are recipes now, like the log line written four
+    // lines above them in the same function. Asserted on the source because
+    // this harness stubs unlockAchievement away.
+    const coreSrc = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    assert.ok(/showToast\(\{ title: titleRef, desc: toastDesc/.test(coreSrc),
+              'the toast is handed finished words again');
+    assert.ok(/let toastDesc = \{ ref:/.test(coreSrc),
+              'the toast description is not a recipe');
+    assert.ok(/toastDesc = \{ k: 'achievement.upgradedTo'/.test(coreSrc),
+              'the upgrade toast is not a recipe');
+    const toastSrc = readFileSync(new URL('../src/components/AchievementToasts.svelte', import.meta.url), 'utf-8');
+    assert.ok(/renderRecipe\(toast\.desc\)/.test(toastSrc),
+              'the toast component does not render its recipe');
+    assert.ok(/renderRecipe\(title\)/.test(toastSrc),
+              'the toast title is not rendered as a recipe');
+
+    // The item dialog: a repaint path exists and the switch uses it.
+    const invSrc = readFileSync(new URL('../src/engine/engine_inventory.js', import.meta.url), 'utf-8');
+    const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.ok(/dressItemConfirm\s*:/.test(invSrc), 'the item dialog has no repaint method');
+    assert.ok(/onLanguageChange\([\s\S]{0,400}?dressItemConfirm\(\)/.test(shell),
+              'a language switch does not repaint the item dialog');
+    // ...and askUseItem/askDiscardItem go through it rather than writing again.
+    assert.equal((invSrc.match(/getElementById\('item-confirm-title'\)/g) ?? []).length, 1,
+                 'the dialog is written from more than one place again');
+});
+
 await ok('A cold mail does not open into a finished day', async () => {
     // Cancelling a timer cannot reach a call already suspended in the await.
     resetState();
@@ -2861,7 +2913,7 @@ await ok('A language switch restarts the news ticker clock', () => {
     const mini = {
         state,
         relocaliseScene: events.relocaliseScene,
-        relocalisePhone() {},
+        relocalisePhone() {}, relocaliseMail() {},
         renderHeader: ui.renderHeader,
         newsDuration: ui.newsDuration,
     };

@@ -58,6 +58,10 @@ window.engine = engine;
 onLanguageChange(() => {
     engine.relocaliseScene();
     engine.dressResetButtons();
+    // Painted straight into the DOM with no repaint path of its own, and its
+    // heading carries a mark that applyStaticStrings() would put the WRONG
+    // question back over a discard dialog.
+    engine.dressItemConfirm();
 });
 
 /**
