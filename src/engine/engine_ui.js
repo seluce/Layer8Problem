@@ -718,9 +718,39 @@ export const ui = {
      *
      * The engine picks, the components render - same split as everywhere else.
      */
-    buildIntranet: function() {
+    /**
+     * The draws of ONE visit, as indices rather than as rows.
+     *
+     * Five things on these pages are random, and a language switch must not
+     * re-roll them: the words change, the page does not. So the draw and the
+     * composing are two steps now - openIntranet() does both, a switch repeats
+     * only the second.
+     */
+    drawIntranetPicks: function(src) {
+        const pick = (n) => Math.floor(Math.random() * n);
+        const order = (n) => [...Array(n).keys()].sort(() => Math.random() - 0.5);
+        return {
+            // The whole order, not the slice: how many general posts are shown
+            // depends on how many reactive ones there are, and that follows the
+            // story flags - so it is decided again while composing.
+            general:      order(src.feed.filter(p => !p.reqStory).length),
+            vision:       pick(src.visions.length),
+            status:       order(src.status.length),
+            chantalOlder: pick(src.chantal.older.length),
+            hygiene:      pick(src.hygiene.length),
+        };
+    },
+
+    /**
+     * @param {boolean} [keepPicks] compose again with the draws of this visit,
+     *        instead of drawing new ones - what a language switch needs.
+     */
+    buildIntranet: function(keepPicks = false) {
         const src = DB.intranet;
         if (!src) return;
+
+        const picks = (keepPicks && this.state.intranetPicks) || this.drawIntranetPicks(src);
+        this.state.intranetPicks = picks;
 
         const rep = this.state.reputation ?? {};
         const flags = this.state.storyFlags ?? {};
@@ -748,20 +778,22 @@ export const ui = {
 
         // Feed: everything you caused today first, filled up to four.
         const reactive = src.feed.filter(p => p.reqStory && flags[p.reqStory]);
-        const general = src.feed.filter(p => !p.reqStory)
-                                .sort(() => Math.random() - 0.5)
-                                .slice(0, Math.max(2, 4 - reactive.length));
+        const generalPool = src.feed.filter(p => !p.reqStory);
+        const general = picks.general
+            .slice(0, Math.max(2, 4 - reactive.length))
+            .map(i => generalPool[i])
+            .filter(Boolean);
         const feed = [...reactive, ...general].slice(0, 4);
 
         // Days without an incident in the server room. Zero on most days.
         // The personnel file knows nothing about modes - see careerStats().
-        const career = engine.careerStats();
+        // `this`, not the window global: engine_ui does not import the engine,
+        // so this line reached for window.engine and made the whole function
+        // untestable outside a browser. Every module is spread into the one
+        // engine object, so `this` is the same thing - minus the global.
+        const career = this.careerStats();
         const streak = career.streak;
         const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
-
-        // Everything drawn fresh on every visit, so a second look at the same
-        // page is not the same page.
-        const draw = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
         // Key figure of the day. Anyone playing without a ticket counter must not
         // get it back here - the company simply withholds the figure, which is
@@ -810,13 +842,13 @@ export const ui = {
             // The fixed frame of the start page. Not reactive, but the
             // component reads one object rather than two sources.
             dashboard: { page: src.dashboard.page },
-            vision_quote: draw(src.visions),
-            status: [...src.status].sort(() => Math.random() - 0.5).slice(0, 3),
+            vision_quote: src.visions[picks.vision],
+            status: picks.status.slice(0, 3).map(i => src.status[i]).filter(Boolean),
             kpi,
 
             chantal: {
                 top: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
-                older: draw(src.chantal.older),
+                older: src.chantal.older[picks.chantalOlder],
                 page: src.chantal.page
             },
 
@@ -841,7 +873,7 @@ export const ui = {
                 page: src.kantine.page,
                 today,
                 service,
-                hygiene: draw(src.hygiene),
+                hygiene: src.hygiene[picks.hygiene],
                 done: this.state.lunchDone ? src.service.done : null
             },
 
