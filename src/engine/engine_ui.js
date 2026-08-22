@@ -1,5 +1,5 @@
-import { KEYS, PROGRESS_KEYS } from './keys.js';
-import { formatClock } from './engine_state.svelte.js';
+import { KEYS } from './keys.js';
+import { formatClock, freshArchive } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -1298,35 +1298,48 @@ export const ui = {
     triggerHardReset: function(btn) {
         if (btn.dataset.armed === "true") {
             // Step 2: execute.
-            // This used to remove a non-existent 'tutorialSeen' key, which meant a
-            // hard reset wiped the archive but left the tutorial marked as done.
-            // The list is no longer kept here: PROGRESS_KEYS in keys.js is the
-            // one place that says what a reset removes, which is what that file
-            // claimed all along while this function maintained its own copy.
-            // Deliberately NOT in it: keyBinds and every settings and audio key.
-            // A hard reset wipes the save, not the preferences of the person in
-            // front of the screen.
-            for (const key of PROGRESS_KEYS) localStorage.removeItem(key);
+            //
+            // The tombstone comes FIRST, because the payload below reads it.
+            // Emptying the cloud is not enough since the union rewrite:
+            // "empty" reads as "nothing to add", the other machine kept its
+            // full archive, uploaded it, and the next launch here brought the
+            // career back - the button deleted nothing, politely. The
+            // timestamp travels with every payload from now on, and each
+            // machine applies it exactly once (engine_core.adoptCloudReset).
+            localStorage.setItem(KEYS.resetSeenAt, String(Date.now()));
 
-            // The interrupted workday goes too. Without this the reload would
-            // offer to resume a day that belongs to the save just wiped - and
-            // the day carries its own copy of the reputation, so finishing it
-            // would write part of the old progress back into the empty archive.
-            engine.clearDay();
+            // One routine for the wipe, shared with the machine on the OTHER
+            // side of the tombstone. PROGRESS_KEYS is the single list of what
+            // a reset removes; settings, audio and key bindings survive on
+            // purpose - a reset wipes the save, not the preferences of the
+            // person in front of the screen.
+            engine.wipeProgress();
 
-            // Push the emptied state to cloud storage as well, otherwise the
-            // next launch would pull the old archive straight back in.
-            engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
+            // The in-memory archive too, and out of the one factory: the
+            // hand-built literal that stood here dropped seenEvents,
+            // seenFlags, knowledgeRead and the chronicle - harmless only
+            // because every reader guards, and exactly the hand-kept-list
+            // mistake PROGRESS_KEYS was invented against.
+            engine.state.archive = freshArchive();
             engine.state.defaultDiff = 'ask';
             engine.state.defaultWeekDiff = 'ask';
-            platform.save(engine.buildCloudPayload());
-            
+
+            // platform.save is fire-and-forget by contract, so the push is
+            // given a head start but not the power to block: the reload waits
+            // for it OR four seconds, whichever ends first. Before this it
+            // raced a one-second timer and usually won - usually.
+            const pushed = Promise.resolve(platform.save(engine.buildCloudPayload()))
+                .catch(() => { /* the local wipe stands either way */ });
+
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = t('settings.hardReset.restarting');
             
             btn.className = "w-full text-left px-4 py-3 bg-red-600 border border-red-500 rounded-lg text-white text-sm font-bold flex justify-center items-center mt-2 shadow-md";
             
-            setTimeout(() => location.reload(), 1000);
+            setTimeout(() => {
+                Promise.race([pushed, new Promise(r => setTimeout(r, 4000))])
+                    .then(() => location.reload());
+            }, 1000);
         } else {
             // Step 1: arm it.
             btn.dataset.armed = "true";

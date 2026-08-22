@@ -317,6 +317,40 @@ export function snapshotDay(state) {
  */
 export const TICKET_WARNING = 8;
 
+/**
+ * The archive as a new career starts it.
+ *
+ * ONE source for the shape: the boot state below and the hard reset both take
+ * it from here. The reset used to build its own literal and dropped
+ * seenEvents, seenFlags, knowledgeRead and the chronicle on the way - the
+ * hand-maintained-list mistake PROGRESS_KEYS exists to prevent, one file over.
+ *
+ * stats and chronicle are seeded here although the running game also creates
+ * them on demand (`archive.stats ?? {}`, `archive.chronicle ??= []`): a shape
+ * with every field is one a test can hold other shapes against.
+ */
+export function freshArchive() {
+    return {
+        items: [],
+        achievements: [],
+        achievementDiffs: {},
+        reputation: {},
+        // Evidence for the compendium: which events were opened and which
+        // story flags were raised, across the whole career. Stored raw rather
+        // than as unlocked entries, so notes added in a later version light up
+        // for players who already saw the scene.
+        seenEvents: [],
+        seenFlags: [],
+        // Per compendium entry: how many notes had been read the last time it
+        // was opened. An entry counts as unread again once it has more than
+        // that, so a later note re-flags an entry that was already seen.
+        knowledgeRead: {},
+        // The lore book's handwritten page and the career counters.
+        chronicle: [],
+        stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 },
+    };
+}
+
 export const state = $state({
 
     ...freshDay(1.0),
@@ -382,23 +416,9 @@ export const state = $state({
     // the web because platform.globalStats() resolves to null there.
     globalStats: { data: null, loading: false, failed: false },
 
-    // Persistent archive (survives a day restart, mirrored into localStorage)
-    archive: {
-        items: [],
-        achievements: [],
-        achievementDiffs: {},
-        reputation: {},
-        // Evidence for the compendium: which events were opened and which
-        // story flags were raised, across the whole career. Stored raw rather
-        // than as unlocked entries, so notes added in a later version light up
-        // for players who already saw the scene.
-        seenEvents: [],
-        seenFlags: [],
-        // Per compendium entry: how many notes had been read the last time it
-        // was opened. An entry counts as unread again once it has more than
-        // that, so a later note re-flags an entry that was already seen.
-        knowledgeRead: {}
-    },
+    // Persistent archive (survives a day restart, mirrored into localStorage).
+    // The shape lives in freshArchive() above, which the hard reset uses too.
+    archive: freshArchive(),
 
     // Whether the knowledge modal is on screen; the view builds on demand.
     knowledgeOpen: false,
