@@ -197,15 +197,15 @@ await ok('Friday 16:30 -> week survived, with balance sheet, statistics and a cl
     // an id, the days as indices, the values as numbers. What becomes of it on
     // screen is decided by components/WeekBalance.svelte - and therefore by
     // whatever language is running.
-    const bilanz = calls.end.balance;
+    const weekBalance = calls.end.balance;
     assert.equal(calls.end.text ?? '', '', 'the balance sheet must no longer travel as text');
-    assert.equal(bilanz.mode, 'easy');
-    assert.equal(bilanz.rows.length, 5, 'four logged days and the Friday');
+    assert.equal(weekBalance.mode, 'easy');
+    assert.equal(weekBalance.rows.length, 5, 'four logged days and the Friday');
     // closing values instead of peaks, rounded
-    assert.deepEqual(bilanz.rows[0], { day: 0, win: true, tickets: 4, l: 20, a: 31, b: 24 }, 'Montagszeile');
-    assert.deepEqual(bilanz.rows[4], { day: 4, win: true, tickets: 6, l: 52, a: 44, b: 39 }, 'Freitagszeile');
-    assert.equal(bilanz.coffee, 12);                            // 3+2+4+1+2
-    assert.equal(bilanz.mails, 3);
+    assert.deepEqual(weekBalance.rows[0], { day: 0, win: true, tickets: 4, l: 20, a: 31, b: 24 }, 'Montagszeile');
+    assert.deepEqual(weekBalance.rows[4], { day: 4, win: true, tickets: 6, l: 52, a: 44, b: 39 }, 'Freitagszeile');
+    assert.equal(weekBalance.coffee, 12);                            // 3+2+4+1+2
+    assert.equal(weekBalance.mails, 3);
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.archive.stats.weeksSurvived_easy, 1);    // a completed week, its own key
     assert.equal(state.archive.stats.survived_week_easy, 1);    // the Friday as a week DAY
@@ -305,12 +305,12 @@ await ok('The diary records the draw, not the page', async () => {
     for (const p of entry.paragraphs) {
         assert.equal(p.text, undefined, 'a paragraph holds a finished sentence again');
         assert.ok(Array.isArray(p.parts) && p.parts.length, 'a paragraph has no parts');
-        for (const teil of p.parts) {
-            const verweis = teil.ref ?? teil.intro?.ref;
-            assert.ok(verweis, 'a part is not a reference: ' + JSON.stringify(teil));
-            assert.equal(verweis.p, 'diary');
-            assert.equal(verweis.path[0] in DB.diary, true, `there is no slot ${verweis.path[0]}`);
-            assert.ok(DB.diary[verweis.path[0]][verweis.path[1]], 'the path leads nowhere');
+        for (const diaryPart of p.parts) {
+            const partRef = diaryPart.ref ?? diaryPart.intro?.ref;
+            assert.ok(partRef, 'a part is not a reference: ' + JSON.stringify(diaryPart));
+            assert.equal(partRef.p, 'diary');
+            assert.equal(partRef.path[0] in DB.diary, true, `there is no slot ${partRef.path[0]}`);
+            assert.ok(DB.diary[partRef.path[0]][partRef.path[1]], 'the path leads nowhere');
         }
     }
     // The marks are figures and names - except the weekday, which is a recipe.
@@ -329,19 +329,19 @@ await ok('A page from 5.x stays put, a reference into nothing is dropped', () =>
     // Two edges, both from the same rule: what has no identity is shown as it
     // stands; what has one that will not resolve is dropped rather than guessed
     // at. The same answer recipe.js gives.
-    const alt = renderDiary({ dayIndex: 1, paragraphs: [{ text: 'From an old save.', tone: 'body' }] });
-    assert.equal(alt.paragraphs[0].text, 'From an old save.');
+    const fromOldSave = renderDiary({ dayIndex: 1, paragraphs: [{ text: 'From an old save.', tone: 'body' }] });
+    assert.equal(fromOldSave.paragraphs[0].text, 'From an old save.');
 
-    const weg = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
+    const droppedLine = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
         { tone: 'body', parts: [{ ref: { p: 'diary', path: ['gibtesnicht', 0, 'lines', 0] } }] },
     ] });
-    assert.equal(weg.paragraphs.length, 0, 'a reference into nothing was guessed at');
+    assert.equal(droppedLine.paragraphs.length, 0, 'a reference into nothing was guessed at');
 
     // And a paragraph with a hole in it is not the paragraph.
-    const loch = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
+    const gap = renderDiary({ dayIndex: 0, tokens: {}, paragraphs: [
         { tone: 'body', parts: [{ ref: { p: 'diary', path: ['mood', 0, 'lines', 0] } }] },
     ] });
-    for (const p of loch.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
+    for (const p of gap.paragraphs) assert.ok(!/\{\w+\}/.test(p.text), p.text);
 });
 await ok('The display renders what the screen wrote down', () => {
     // Svelte components do not run here, so the source is read - as it is for
@@ -351,28 +351,28 @@ await ok('The display renders what the screen wrote down', () => {
     assert.ok(/renderRecipe/.test(modalSrc), 'EndModal does not resolve recipes');
     assert.ok(/showDiary && hasDiary/.test(modalSrc), 'the unfolded block hangs on the toggle alone');
 
-    const buchSrc = readFileSync(new URL('../src/components/DiaryEntry.svelte', import.meta.url), 'utf-8');
-    assert.ok(/renderDiary\(diary\)/.test(buchSrc), 'the diary page is taken over rather than rendered');
+    const entrySrc = readFileSync(new URL('../src/components/DiaryEntry.svelte', import.meta.url), 'utf-8');
+    assert.ok(/renderDiary\(diary\)/.test(entrySrc), 'the diary page is taken over rather than rendered');
 
     // And the rule this very renderer would break quietly: it runs inside a
     // $derived, so it reads through tree(). Read straight off DB the page would
     // stay in one language while the frame around it changed - in Node that does
     // not show, because there the two are the same object.
-    const tagebuchSrc = readFileSync(new URL('../src/engine/engine_diary.js', import.meta.url), 'utf-8');
-    const renderer = tagebuchSrc.slice(tagebuchSrc.indexOf('export function renderDiary'));
+    const diarySrc = readFileSync(new URL('../src/engine/engine_diary.js', import.meta.url), 'utf-8');
+    const renderer = diarySrc.slice(diarySrc.indexOf('export function renderDiary'));
     assert.ok(/tree\(\)/.test(renderer), 'renderDiary does not read through tree()');
     assert.ok(!/\bDB\./.test(renderer), 'renderDiary reaches straight for DB again');
 
-    const bilanzSrc = readFileSync(new URL('../src/components/WeekBalance.svelte', import.meta.url), 'utf-8');
+    const balanceSrc = readFileSync(new URL('../src/components/WeekBalance.svelte', import.meta.url), 'utf-8');
     // Up to 6.1 the legend and the two singular/plural forms were rendered in the
     // builder and checked here against the finished text. The component decides
     // them now - so what stands here is that it knows the keys at all.
     for (const key of ['week.summary.legend', 'week.summary.title',
                        'week.summary.valuesOne', 'week.summary.values',
                        'week.summary.totalsOne', 'week.summary.totals']) {
-        assert.ok(bilanzSrc.includes(key), `WeekBalance does not know ${key}`);
+        assert.ok(balanceSrc.includes(key), `WeekBalance does not know ${key}`);
     }
-    assert.ok(/dayName\(/.test(bilanzSrc), 'the balance sheet does not name the day through dayName()');
+    assert.ok(/dayName\(/.test(balanceSrc), 'the balance sheet does not name the day through dayName()');
 
     const partySrc = readFileSync(new URL('../src/components/PartyReport.svelte', import.meta.url), 'utf-8');
     assert.ok(/tree\(\)/.test(partySrc), 'the party report does not read the achievements through tree()');
@@ -478,11 +478,11 @@ await ok('A 5.0 save brings its day curve along (migration)', () => {
     // Exactly the shape 5.0 wrote: t for the clock, f/a/c for the three bars.
     // Every reader accesses them with `?? 0` - without a migration the curve
     // would quietly drop to zero instead of throwing.
-    const alt = {
+    const oldPoints = {
         time: 11 * 60, difficultyMult: 1.0,
         statHistory: [{ t: 480, f: 0, a: 0, c: 0 }, { t: 620, f: 25, a: 40, c: 35 }]
     };
-    engine.applyRestoredDay(alt);
+    engine.applyRestoredDay(oldPoints);
 
     assert.deepEqual(state.statHistory, [
         { m: 480, l: 0,  a: 0,  b: 0 },
@@ -491,8 +491,8 @@ await ok('A 5.0 save brings its day curve along (migration)', () => {
 
     // Applied twice it must break nothing - a new point carries no t and falls
     // through the condition.
-    const nochmal = engine.migrateStatPoints(state.statHistory);
-    assert.deepEqual(nochmal, state.statHistory, 'the migration is not idempotent');
+    const again = engine.migrateStatPoints(state.statHistory);
+    assert.deepEqual(again, state.statHistory, 'the migration is not idempotent');
 });
 await ok('The boot line of an old save names the running version', () => {
     resetState();
@@ -500,7 +500,7 @@ await ok('The boot line of an old save names the running version', () => {
     // first log entry, and because setDifficulty does not reset the day it
     // travels into the save with it. Restored unchanged, the log claims a
     // different version from the header beside it.
-    const alt = {
+    const oldPoints = {
         time: 11 * 60, difficultyMult: 1.0,
         logEntries: [
             { id: 1, time: '08:00', msg: 'System v5.0.0 loaded. Waiting for user...', color: '' },
@@ -508,7 +508,7 @@ await ok('The boot line of an old save names the running version', () => {
             { id: 3, time: '09:15', msg: 'Kaffee geholt.',                          color: '' }
         ]
     };
-    engine.applyRestoredDay(alt);
+    engine.applyRestoredDay(oldPoints);
 
     // On restoring, the boot line is turned into a recipe - the one place where a
     // 5.x line gets its identity back. So it is checked rendered rather than by
@@ -527,31 +527,31 @@ await ok('With no boot line nothing is rewritten', () => {
     resetState();
     // A later day of a week: the counter runs on, id 1 does not occur. And a long
     // day pushes the boot line out of the buffer anyway.
-    const alt = {
+    const oldPoints = {
         time: 11 * 60, difficultyMult: 1.0,
         logEntries: [
             { id: 47, time: '08:00', msg: 'Modus: MITTWOCH. Business as usual.', color: '' },
             { id: 48, time: '09:15', msg: 'Kaffee geholt.',                      color: '' }
         ]
     };
-    engine.applyRestoredDay(alt);
+    engine.applyRestoredDay(oldPoints);
     assert.deepEqual(state.logEntries.map(e => e.msg),
                      ['Modus: MITTWOCH. Business as usual.', 'Kaffee geholt.']);
 });
 await ok('A 5.0 week row comes along (migration)', () => {
     resetState();
-    const alt = [
+    const oldRows = [
         { dayIndex: 1, endTickets: 4, endFl: 20, endAl: 31, endCr: 24, peakA: 50, peakC: 30, coffee: 3, mailsIgnored: 1 },
         { dayIndex: 2, endTickets: 2, endL: 27, endA: 35, endB: 28, peakA: 40, peakB: 40, coffee: 2, mailsIgnored: 0 }
     ];
-    const neu = engine.migrateWeekLog(alt);
+    const migrated = engine.migrateWeekLog(oldRows);
 
-    assert.deepEqual(neu[0], { dayIndex: 1, endTickets: 4, coffee: 3, mailsIgnored: 1,
+    assert.deepEqual(migrated[0], { dayIndex: 1, endTickets: 4, coffee: 3, mailsIgnored: 1,
                                endL: 20, endA: 31, endB: 24, peakA: 50, peakB: 30 },
                      'the old week row was not converted');
-    assert.deepEqual(neu[1], alt[1], 'neue Wochenzeile angefasst');
-    assert.equal(neu[0].endFl, undefined, 'an old key survives');
-    assert.equal(neu[0].peakC, undefined, 'an old key survives');
+    assert.deepEqual(migrated[1], oldRows[1], 'neue Wochenzeile angefasst');
+    assert.equal(migrated[0].endFl, undefined, 'an old key survives');
+    assert.equal(migrated[0].peakC, undefined, 'an old key survives');
 });
 await ok('A night checkpoint (morning unplayed) routes the resume through the morning', () => {
     resetState();
@@ -606,7 +606,7 @@ await ok('Every overlay answers to Escape, or is a named exception', () => {
     const esc = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     const ui  = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
 
-    const kette = esc.slice(esc.indexOf("key === 'escape'"), esc.indexOf('HOTKEY BLOCKING'));
+    const escChain = esc.slice(esc.indexOf("key === 'escape'"), esc.indexOf('HOTKEY BLOCKING'));
     const start = (ui.match(/STARTUP_OVERLAYS:\s*\[([^\]]*)\]/) ?? [, ''])[1];
 
     // Named exceptions, each for a reason that stands in engine.js:
@@ -614,14 +614,14 @@ await ok('Every overlay answers to Escape, or is a named exception', () => {
     //   modal-overlay   branch D - a warning closes, an ending does not
     //   email-modal     branch A - an open mail is a decision, not a window
     //   tut-ask-modal   branch A - a question, not a window
-    const ausnahmen = new Set(['settings-modal', 'modal-overlay', 'email-modal', 'tut-ask-modal']);
+    const allowedOverlays = new Set(['settings-modal', 'modal-overlay', 'email-modal', 'tut-ask-modal']);
 
     const overlays = [...new Set([...html.matchAll(/id="([a-z-]+-modal)"/g)].map(m => m[1]))];
     assert.ok(overlays.length >= 15, `only ${overlays.length} overlays found - has the markup changed?`);
 
-    const stumm = overlays.filter(id =>
-        !ausnahmen.has(id) && !kette.includes(`'${id}'`) && !start.includes(`'${id}'`));
-    assert.deepEqual(stumm, [], `Escape does not reach: ${stumm.join(', ')}`);
+    const silent = overlays.filter(id =>
+        !allowedOverlays.has(id) && !escChain.includes(`'${id}'`) && !start.includes(`'${id}'`));
+    assert.deepEqual(silent, [], `Escape does not reach: ${silent.join(', ')}`);
 });
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
@@ -667,19 +667,19 @@ await ok('Resuming raises nothing - five interruptions move no counter', () => {
     state.dayActive = true;                                     // the day has already been played
     engine.incrementStat('daysStarted');
     engine.incrementStat('started_week_easy');
-    const vorher = JSON.stringify(state.archive.stats);
+    const before = JSON.stringify(state.archive.stats);
 
     for (let i = 0; i < 5; i++) {
         engine.saveWeek();
         const slot = store.get('layer8_week');
-        const archiv = JSON.parse(JSON.stringify(state.archive.stats));
+        const snapshot = JSON.parse(JSON.stringify(state.archive.stats));
         resetState();
-        state.archive.stats = archiv;
+        state.archive.stats = snapshot;
         store.set('layer8_week', slot);
         engine.offerResume('week');
         engine.resumeDay();
     }
-    assert.equal(JSON.stringify(state.archive.stats), vorher, 'resuming counted');
+    assert.equal(JSON.stringify(state.archive.stats), before, 'resuming counted');
     assert.equal(state.week.active, true);
 });
 
@@ -826,13 +826,13 @@ console.log('Music:');
         state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
         mus.initMusic();
         mus.playMusic('office');
-        const alt = state.currentMusicTrack;
+        const previousTrack = state.currentMusicTrack;
         await wait(700);
         mus.playMusic('boss');
         await wait(500);
-        assert.ok(mus.bgmTracks[alt].paused, 'the old track keeps playing');
+        assert.ok(mus.bgmTracks[previousTrack].paused, 'the old track keeps playing');
         // must not stay at 0, or a later play() without fade would be silent
-        assert.ok(Math.abs(mus.bgmTracks[alt].volume - 0.8) < 0.02, 'the volume was not reset');
+        assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - 0.8) < 0.02, 'the volume was not reset');
     });
 
     await ok('A fixed style loops seamlessly, the radio does not', () => {
@@ -951,17 +951,17 @@ await ok('The knowledge follows the language', async () => {
     resetState();
     state.archive.seenEvents = ['cof_sonntag_1'];
     state.archive.knowledgeRead = {};
-    const rolle = () => engine.knowledgeEntries().find(x => x.id === 'sonntag')?.role;
+    const roleOf = () => engine.knowledgeEntries().find(x => x.id === 'sonntag')?.role;
 
     await useLanguage('de');
     await loadCore('de');
     await ensure('compendium');
-    const de = rolle();
+    const de = roleOf();
 
     await useLanguage('en');
     await loadCore('en');
     await ensure('compendium');
-    const en = rolle();
+    const en = roleOf();
 
     // BACK TO LANG, not to 'de'. Up to 6.1 a hard-coded 'de' stood here, so the
     // --lang=en run carried on in German from this line - two thirds of the
@@ -973,7 +973,7 @@ await ok('The knowledge follows the language', async () => {
 
     assert.ok(de && en, 'one tree delivered nothing');
     assert.notEqual(de, en, `the role stays "${de}" in both trees`);
-    assert.equal(rolle(), LANG === 'en' ? en : de, 'it does not come back');
+    assert.equal(roleOf(), LANG === 'en' ? en : de, 'it does not come back');
 
     // And the check that actually bites. The three assertions above hold even
     // if someone reaches straight for DB again - in Node tree() simply answers
@@ -981,10 +981,10 @@ await ok('The knowledge follows the language', async () => {
     // Measured: the mutation probe did not fire. So the source is read, the way
     // i18n.test.mjs does it for index.html.
     const source = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
-    const stelle = source.slice(source.indexOf('knowledgeEntries:'), source.indexOf('markKnowledgeRead:'));
-    assert.ok(stelle.includes('tree().compendium'),
+    const section = source.slice(source.indexOf('knowledgeEntries:'), source.indexOf('markKnowledgeRead:'));
+    assert.ok(section.includes('tree().compendium'),
               "knowledgeEntries does not read the tree through tree() - the component then misses the language switch");
-    assert.ok(!/\bDB\.compendium/.test(stelle),
+    assert.ok(!/\bDB\.compendium/.test(section),
               'knowledgeEntries reaches straight for DB again');
 });
 await ok('What you have never met is not new', () => {
@@ -1054,7 +1054,7 @@ await ok('A workday never reports a carry-over', () => {
     const lines = ui.buildBootLines.call(engine);
     // Every carry-over line as it would read for this state - none of them may
     // stand in day mode.
-    const uebertrag = {
+    const carryFields = {
         'boot.carry.tickets':  tf('boot.carry.tickets', { tickets: 7 }),
         'boot.carry.radar':    tf('boot.carry.radar', { value: 60 }),
         'boot.carry.aggro':    tf('boot.carry.aggro', { value: 80 }),
@@ -1062,8 +1062,8 @@ await ok('A workday never reports a carry-over', () => {
         'boot.carry.daysLeft': tf('boot.carry.daysLeft', { days: 5 }),
         'boot.meeting':        t('boot.meeting'),
     };
-    for (const [key, zeile] of Object.entries(uebertrag))
-        assert.ok(!lines.includes(zeile), `"${key}" in day mode: ${lines.join(' | ')}`);
+    for (const [key, carried] of Object.entries(carryFields))
+        assert.ok(!lines.includes(carried), `"${key}" in day mode: ${lines.join(' | ')}`);
 });
 
 // ------------------------------------------------------- compendium (v5.0)
@@ -1287,10 +1287,10 @@ await ok('The action bar respects what the tutorial has unlocked', () => {
     // the pointer pointed at CALL and the button could not be pressed. So the
     // source is read, the way i18n.test.mjs does it for index.html.
     const bar = readFileSync(new URL('../src/components/ActionBar.svelte', import.meta.url), 'utf-8');
-    const zeile = bar.split('\n').find(l => l.includes('disabled={'));
-    assert.ok(zeile, 'ActionBar no longer binds disabled');
-    assert.ok(zeile.includes('tutorialUnlocked'),
-              'ActionBar locks again regardless of what the tutorial unlocked: ' + zeile.trim());
+    const disabledLine = bar.split('\n').find(l => l.includes('disabled={'));
+    assert.ok(disabledLine, 'ActionBar no longer binds disabled');
+    assert.ok(disabledLine.includes('tutorialUnlocked'),
+              'ActionBar locks again regardless of what the tutorial unlocked: ' + disabledLine.trim());
 
     // And the other direction: the tutorial has to set the unlock as well.
     const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
@@ -1342,10 +1342,10 @@ await ok('The engine reports rather than letting itself be overwritten', async (
     // A veto is something other than a notice: it may say no. Without it the
     // doughnut lock from step 8 would have vanished without a sound.
     assert.equal(hooks.allowsItem('donut'), true, 'with no guard everything is allowed');
-    const zurueck = hooks.setItemGuard((id) => id === 'donut');
+    const restore = hooks.setItemGuard((id) => id === 'donut');
     assert.equal(hooks.allowsItem('donut'), true);
     assert.equal(hooks.allowsItem('stressball'), false, 'the guard is not asked');
-    zurueck();
+    restore();
     assert.equal(hooks.allowsItem('stressball'), true, 'the guard stays behind after unsubscribing');
 
     // A listener that throws must not take the caller with it.
@@ -1369,13 +1369,13 @@ await ok("The error brake does not lift the tutorial's lock", () => {
     // said locked, the button let itself be pressed. Reproduced with a thrown
     // error in the middle of step 1.
     const src = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
-    const bremse = src.slice(src.indexOf('function recoverFromError'),
+    const recoverBlock = src.slice(src.indexOf('function recoverFromError'),
                              src.indexOf('window.addEventListener'));
     // Since 6.1 it asks the registration slot rather than a bare global - the
     // statement is the same, the spelling is not.
-    assert.ok(bremse.includes('lesson?.isActive'),
+    assert.ok(recoverBlock.includes('lesson?.isActive'),
               'recoverFromError no longer asks the tutorial');
-    assert.ok(bremse.includes('lesson.applyStepLogic()'),
+    assert.ok(recoverBlock.includes('lesson.applyStepLogic()'),
               'recoverFromError no longer restores the step');
 });
 await ok("The tutorial's speech bubble carries keys, not sentences", () => {
@@ -1435,10 +1435,10 @@ await ok('The save has no say in the tutorial', () => {
     state.tutorialUnlocked = 'btn-coffee';
     engine.saveDay();
 
-    const abgelegt = JSON.parse(store.get('layer8_day'));
-    assert.equal(abgelegt.tutorialStep, undefined,
+    const stored = JSON.parse(store.get('layer8_day'));
+    assert.equal(stored.tutorialStep, undefined,
                  'tutorialStep is in the save');
-    assert.equal(abgelegt.tutorialUnlocked, undefined,
+    assert.equal(stored.tutorialUnlocked, undefined,
                  'tutorialUnlocked is in the save');
 
     // And the other direction: a save from a dev build that still carries the
@@ -1484,13 +1484,13 @@ await ok('setDifficulty keeps the log - the version line belongs to the session'
     state.logEntries.push({ k: 'log.systemLoaded', v: { version: engine.VERSION },
                             id: 1, time: '08:00', color: '' });
     const start = state.logEntries.at(-1);
-    const vorher = state.logEntries.length;
+    const before = state.logEntries.length;
     calls.logs = [];
 
     engine.setDifficulty('normal');
 
     assert.ok(state.logEntries.some(e => e.id === start.id), 'the boot line is gone');
-    assert.equal(state.logEntries.length, vorher, 'something was removed from the log');
+    assert.equal(state.logEntries.length, before, 'something was removed from the log');
     // The mode line goes through the suite's log stub, not into the state - that
     // is where it is checked.
     assert.ok(calls.logs.some(l => l?.k === 'mode.normal'), 'the mode line is missing');
@@ -1815,19 +1815,19 @@ await ok('Sleep line: the level picks the register, from night 3 on the worn one
     engine.checkEndConditions();
     // The draw is recorded, not its result (6.1) - so what is checked is the path,
     // and that it points at the right list.
-    const frisch = state.pendingEnd.night.sleep.ref.path;
-    assert.deepEqual(frisch.slice(0, 3), ['week_sleep', 'hard', 'fresh']);
-    assert.ok(DB.special.week_sleep.hard.fresh[frisch[3]], 'the path leads nowhere');
+    const freshPath = state.pendingEnd.night.sleep.ref.path;
+    assert.deepEqual(freshPath.slice(0, 3), ['week_sleep', 'hard', 'fresh']);
+    assert.ok(DB.special.week_sleep.hard.fresh[freshPath[3]], 'the path leads nowhere');
 
     state.pendingEnd = null;
     state.week.dayIndex = 4; state.morningMoodShown = true;
     engine.checkEndConditions();
-    const abgenutzt = state.pendingEnd.night.sleep.ref.path;
-    assert.deepEqual(abgenutzt.slice(0, 3), ['week_sleep', 'hard', 'worn']);
-    assert.ok(DB.special.week_sleep.hard.worn[abgenutzt[3]], 'the path leads nowhere');
+    const wornPath = state.pendingEnd.night.sleep.ref.path;
+    assert.deepEqual(wornPath.slice(0, 3), ['week_sleep', 'hard', 'worn']);
+    assert.ok(DB.special.week_sleep.hard.worn[wornPath[3]], 'the path leads nowhere');
     // And it resolves in the running language instead of standing there as a path.
     assert.equal(renderRecipe(state.pendingEnd.night.sleep),
-                 DB.special.week_sleep.hard.worn[abgenutzt[3]]);
+                 DB.special.week_sleep.hard.worn[wornPath[3]]);
     state.pendingEnd = null;
 });
 await ok('Achievements: all three can be graded, none is tied to one condition', () => {
@@ -1923,7 +1923,7 @@ await ok('The night screen and the state show exactly the same values', () => {
     state.al = 71; state.cr = 43; state.tickets = 5;
     state.time = 16 * 60 + 30; state.ticketWarning = true;
     engine.checkEndConditions();
-    const gezeigt = state.pendingEnd.night;
+    const shown = state.pendingEnd.night;
     engine.finishGame();
     engine.continueWeekNight();
 
@@ -1932,9 +1932,9 @@ await ok('The night screen and the state show exactly the same values', () => {
     // random. saveWeek() writes the state before that - exactly what the
     // screen promised.
     const stand = engine.loadWeek().day;
-    assert.equal(stand.al, gezeigt.alAfter);
-    assert.equal(stand.cr, gezeigt.crAfter);
-    assert.equal(stand.tickets, gezeigt.ticketsAfter);
+    assert.equal(stand.al, shown.alAfter);
+    assert.equal(stand.cr, shown.crAfter);
+    assert.equal(stand.tickets, shown.ticketsAfter);
 });
 
 // --------------------------------------------- the working-week default
@@ -1950,7 +1950,7 @@ await ok('defaultWeekDiff skips the condition picker', () => {
     state.defaultWeekDiff = 'ask';
 });
 await ok('"ask" and an unknown value still show the picker', () => {
-    for (const variantKey of ['ask', 'kaputt']) {
+    for (const variantKey of ['ask', 'nonsense']) {
         resetState();
         state.defaultWeekDiff = variantKey;
         engine.startWeekSelect();
@@ -2029,16 +2029,16 @@ await ok('The presence travels as an identity, not as a sentence', async () => {
     // replaces it with a stub, and that would only be checking itself.
     const { core } = await import('../src/engine/engine_core.js');
 
-    const gesendet = [];
-    const echt = platform.presence;
-    platform.presence = (token) => gesendet.push(token);
+    const sent = [];
+    const realPresence = platform.presence;
+    platform.presence = (token) => sent.push(token);
 
     core.updatePresence('coffee');
     core.updatePresence('gibtesnicht');
-    platform.presence = echt;
+    platform.presence = realPresence;
 
-    assert.deepEqual(gesendet, [PRESENCE_TOKEN + 'coffee', PRESENCE_TOKEN + 'fallback']);
-    for (const token of gesendet) {
+    assert.deepEqual(sent, [PRESENCE_TOKEN + 'coffee', PRESENCE_TOKEN + 'fallback']);
+    for (const token of sent) {
         assert.ok(token.startsWith('#'), `not a Steam identity: ${token}`);
         assert.ok(!/\s/.test(token), `looks like a sentence: ${token}`);
     }
@@ -2063,9 +2063,9 @@ await ok('A week run produces week counters only', () => {
     engine.recordDayResult('survived');
     engine.recordWeekResult('survived', 5);
     const st = state.archive.stats;
-    for (const tagesKey of ['daysSurvived', 'daysRageQuit', 'daysFired',
+    for (const dayKey of ['daysSurvived', 'daysRageQuit', 'daysFired',
                             'started_easy', 'started_normal', 'started_hard']) {
-        assert.ok(!(st[tagesKey] > 0), `${tagesKey} was raised in week mode`);
+        assert.ok(!(st[dayKey] > 0), `${dayKey} was raised in week mode`);
     }
     assert.equal(st.weeksStarted, 1);
     assert.equal(st.weeksSurvived, 1);
@@ -2477,23 +2477,23 @@ await ok('Quotas survive a resume', () => {
     state.morningMoodShown = true;
     engine.spendContingent('coffee');
     engine.spendContingent('coffee');
-    const vorher = engine.weekContingentLeft('coffee');
+    const before = engine.weekContingentLeft('coffee');
     engine.saveWeek();
     const slot = store.get('layer8_week');
-    const archiv = JSON.parse(JSON.stringify(state.archive.stats));
+    const snapshot = JSON.parse(JSON.stringify(state.archive.stats));
     resetState();
-    state.archive.stats = archiv;
+    state.archive.stats = snapshot;
     store.set('layer8_week', slot);
     engine.offerResume('week');
     engine.resumeDay();
-    assert.equal(engine.weekContingentLeft('coffee'), vorher);
+    assert.equal(engine.weekContingentLeft('coffee'), before);
 });
 
 await ok('The meeting does not repeat in consecutive weeks', async () => {
     resetState();
     await ensure('meetings');
     state.archive.seenMeetings = [];
-    const folge = [];
+    const sequence = [];
     for (let w = 0; w < 6; w++) {
         Object.assign(state, freshDay(1.0));            // a new week, fresh usedIDs
         engine.startWeek('normal');
@@ -2501,11 +2501,11 @@ await ok('The meeting does not repeat in consecutive weeks', async () => {
         state.meetingDone = false;
         engine.triggerMeeting();
         await new Promise(r => setTimeout(r, 10));
-        folge.push(calls.terminal[0].id);
+        sequence.push(calls.terminal[0].id);
         engine.endWeek();
     }
-    for (let i = 1; i < folge.length; i++) {
-        assert.notEqual(folge[i], folge[i - 1], `week ${i + 1} repeats the finale`);
+    for (let i = 1; i < sequence.length; i++) {
+        assert.notEqual(sequence[i], sequence[i - 1], `week ${i + 1} repeats the finale`);
     }
     // The memory must never empty the pool completely
     assert.ok(state.archive.seenMeetings.length < DB.meetings.length);
@@ -2537,20 +2537,20 @@ await ok('The backpack cap holds, tools are deliberately exempt', async () => {
     engine.startWeek('easy');
     await ensure('items');
     const ids = Object.keys(DB.items);
-    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);   // nine of them
-    const werkzeug  = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
+    const consumables = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);   // nine of them
+    const toolIds  = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
     // Consumables first, then tools until the cap is exceeded
-    for (const id of verbrauch) engine.grantItem(id);
-    for (const id of werkzeug.slice(0, 4)) engine.grantItem(id);
+    for (const id of consumables) engine.grantItem(id);
+    for (const id of toolIds.slice(0, 4)) engine.grantItem(id);
     const countable = state.inventory.filter(i => !DB.items[i.id]?.quest).length;
     assert.ok(countable > 10, `tools have to be allowed past the cap (${countable})`);
 
     // One more consumable is turned away now
-    const vorher = state.inventory.length;
-    state.inventory = state.inventory.filter(i => i.id !== verbrauch[0]);
-    engine.grantItem(verbrauch[0]);
-    assert.ok(!state.inventory.some(i => i.id === verbrauch[0]),
+    const before = state.inventory.length;
+    state.inventory = state.inventory.filter(i => i.id !== consumables[0]);
+    engine.grantItem(consumables[0]);
+    assert.ok(!state.inventory.some(i => i.id === consumables[0]),
         'with a full backpack no consumable may be added');
 
     // The night carries the state over unchanged
@@ -2562,11 +2562,11 @@ await ok('The backpack cap holds, tools are deliberately exempt', async () => {
 await ok('The tutorial does not run on into week mode', () => {
     resetState();
     store.delete('sysadmin_tutorial_done');          // a first-time player
-    let tutorialGestartet = false;
-    globalThis.tutorial = { isActive: false, start() { tutorialGestartet = true; } };
+    let tutorialStarted = false;
+    globalThis.tutorial = { isActive: false, start() { tutorialStarted = true; } };
 
     engine.setWeekDifficulty('normal');
-    assert.equal(tutorialGestartet, false, 'the week must not start the tutorial');
+    assert.equal(tutorialStarted, false, 'the week must not start the tutorial');
     assert.equal(state.week.active, true);
     assert.equal(state.tickets, 1, 'the starting condition itself stays untouched');
 
@@ -2644,24 +2644,24 @@ await ok('Discarding makes room and hits only that one item', async () => {
     engine.startWeek('easy');
     await ensure('items');
     const ids = Object.keys(DB.items);
-    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
-    const werkzeug  = ids.find(i => DB.items[i].keep && !DB.items[i].quest);
-    const trophaee  = ids.find(i => DB.items[i].quest);
+    const consumables = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    const toolId  = ids.find(i => DB.items[i].keep && !DB.items[i].quest);
+    const trophy  = ids.find(i => DB.items[i].quest);
 
-    for (const id of verbrauch) engine.grantItem(id);
-    engine.grantItem(werkzeug);
-    if (trophaee) engine.grantItem(trophaee);
-    const vorher = state.inventory.length;
+    for (const id of consumables) engine.grantItem(id);
+    engine.grantItem(toolId);
+    if (trophy) engine.grantItem(trophy);
+    const before = state.inventory.length;
 
-    engine.state.pendingItem = werkzeug;
+    engine.state.pendingItem = toolId;
     engine.confirmDiscardItem();
-    assert.equal(state.inventory.length, vorher - 1);
-    assert.ok(!state.inventory.some(i => i.id === werkzeug), 'the tool is still in the backpack');
-    assert.ok(state.inventory.some(i => i.id === verbrauch[0]), 'some other item was removed');
+    assert.equal(state.inventory.length, before - 1);
+    assert.ok(!state.inventory.some(i => i.id === toolId), 'the tool is still in the backpack');
+    assert.ok(state.inventory.some(i => i.id === consumables[0]), 'some other item was removed');
 
     // Trophies are never offered for discarding in the first place
-    if (trophaee) {
-        engine.askDiscardItem(trophaee);
+    if (trophy) {
+        engine.askDiscardItem(trophy);
         assert.notEqual(state.pendingItemMode, 'discard', 'trophies must not be discardable');
     }
 });
@@ -2670,18 +2670,18 @@ await ok('After discarding, one consumable fits again', async () => {
     engine.startWeek('easy');
     await ensure('items');
     const ids = Object.keys(DB.items);
-    const verbrauch = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
-    const werkzeuge = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
+    const consumables = ids.filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    const toolIds = ids.filter(i => DB.items[i].keep && !DB.items[i].quest);
 
     // Fill the backpack past the cap using tools
-    for (const id of werkzeuge.slice(0, 10)) engine.grantItem(id);
-    engine.grantItem(verbrauch[0]);
-    assert.ok(!state.inventory.some(i => i.id === verbrauch[0]), 'precondition: the backpack is full');
+    for (const id of toolIds.slice(0, 10)) engine.grantItem(id);
+    engine.grantItem(consumables[0]);
+    assert.ok(!state.inventory.some(i => i.id === consumables[0]), 'precondition: the backpack is full');
 
-    engine.state.pendingItem = werkzeuge[0];
+    engine.state.pendingItem = toolIds[0];
     engine.confirmDiscardItem();
-    engine.grantItem(verbrauch[0]);
-    assert.ok(state.inventory.some(i => i.id === verbrauch[0]),
+    engine.grantItem(consumables[0]);
+    assert.ok(state.inventory.some(i => i.id === consumables[0]),
         'after discarding there has to be room again');
 });
 
@@ -2758,24 +2758,24 @@ await ok('Finished elsewhere clears up, an old payload does not', () => {
 await ok('A broken payload is discarded, not thrown', () => {
     resetState();
     store.set('layer8_week', 'not json');
-    engine.adoptCloudRun('layer8_week', '{ kaputt', 5000);
+    engine.adoptCloudRun('layer8_week', '{ broken', 5000);
     engine.adoptCloudRun('layer8_day', undefined, undefined);
 });
 await ok('The night writes at once, not after the throttle', () => {
     resetState();
-    let schreibt = 0;
+    let writeCount = 0;
     const orig = engine.buildCloudPayload.bind(engine);
-    engine.buildCloudPayload = () => { schreibt++; return orig(); };
+    engine.buildCloudPayload = () => { writeCount++; return orig(); };
 
     engine._lastRunSync = Date.now();                           // the throttle is active
     engine.syncRun();
-    assert.equal(schreibt, 0, 'throttled it has to stay silent');
+    assert.equal(writeCount, 0, 'throttled it has to stay silent');
 
     engine.startWeek('easy');
     state.morningMoodShown = true;
     state.modal = { open: true, isNight: true, nextDay: dayNameValue(1) };
     engine.continueWeekNight();
-    assert.ok(schreibt >= 1, 'the night has to bypass the throttle');
+    assert.ok(writeCount >= 1, 'the night has to bypass the throttle');
 
     engine.buildCloudPayload = orig;
 });
@@ -2823,7 +2823,7 @@ await ok('Coming out of a week, the gala opens with a line of its own', async ()
     state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
-    const ausDerWoche = calls.terminal[0].text;
+    const fromTheWeek = calls.terminal[0].text;
 
     resetState();                                               // day mode: unchanged
     state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
@@ -2831,7 +2831,7 @@ await ok('Coming out of a week, the gala opens with a line of its own', async ()
     await new Promise(r => setTimeout(r, 20));
     // The two versions are compared, not a German turn of phrase: the difference
     // is what says the week gets a line of its own.
-    assert.notEqual(ausDerWoche, calls.terminal[0].text, 'the week gets no line of its own');
+    assert.notEqual(fromTheWeek, calls.terminal[0].text, 'the week gets no line of its own');
 });
 
 // ------------------------------------------------------ the changeover
@@ -2887,7 +2887,7 @@ await ok('Two nights in a row never show the same sleep line', async () => {
 await ok('Every morning gets a line of its own', () => {
     resetState();
     engine.startWeek('easy');
-    const zeilen = new Set();
+    const seenLines = new Set();
     for (let d = 2; d <= 5; d++) {
         state.week.dayIndex = d - 1;
         state.morningMoodShown = true;
@@ -2896,10 +2896,10 @@ await ok('Every morning gets a line of its own', () => {
         engine.continueWeekNight();
         // Compared by IDENTITY, not by the German word: the morning line is a
         // recipe now, and its key is what makes one morning a different morning.
-        const morgen = calls.logs.find(l => typeof l?.k === 'string' && l.k.startsWith('week.morning.'));
-        zeilen.add(JSON.stringify(morgen));
+        const morningLine = calls.logs.find(l => typeof l?.k === 'string' && l.k.startsWith('week.morning.'));
+        seenLines.add(JSON.stringify(morningLine));
     }
-    assert.equal(zeilen.size, 4, 'the four mornings have to differ');
+    assert.equal(seenLines.size, 4, 'the four mornings have to differ');
 });
 
 await ok('A language switch restarts the news ticker clock', () => {
