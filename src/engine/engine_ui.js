@@ -11,6 +11,46 @@ const LOG_MAX_ENTRIES = 50;
 
 export const ui = {
 
+    /**
+     * The captions of the two reset buttons, which no mark can write.
+     *
+     * Both spans carry a data-i18n mark for their RESTING text, and
+     * applyStaticStrings() overwrites every marked element on a language
+     * switch - unconditionally, which is the point of a mark. These two say
+     * something the mark cannot know:
+     *
+     *   - the soft reset restarts the WEEK in a week, not "the day at 08:00",
+     *     and the mark puts the day wording back;
+     *   - the hard reset is a two-step button. Armed, it asks "are you sure?"
+     *     while `dataset.armed` says true. The mark restored the calm caption
+     *     and left the flag standing, so the next click deleted the save
+     *     WITHOUT the second question.
+     *
+     * So they are dressed here, from openSettings and again after every
+     * switch. Disarming rather than re-asking is deliberate: after a repaint
+     * the visible button is the calm one, and the state now matches it.
+     */
+    dressResetButtons: function() {
+        // In a week the button does not restart "the day at 08:00" - it
+        // returns to the last night checkpoint, which can be a different
+        // weekday entirely. Saying 08:00 there would be a plain lie.
+        const title = document.getElementById('text-soft-reset');
+        const sub = document.getElementById('sub-soft-reset');
+        const inWeek = this.state.week.active;
+        if (title) title.innerText = t(inWeek ? 'settings.softReset.week' : 'settings.softReset.day');
+        if (sub) sub.innerText = t(inWeek ? 'settings.softReset.weekSub' : 'settings.softReset.sub');
+
+        const resetBtn = document.getElementById('btn-hard-reset');
+        if (resetBtn) {
+            resetBtn.dataset.armed = "false";
+            const textSpan = document.getElementById('text-hard-reset');
+            const iconSpan = document.getElementById('icon-hard-reset');
+            if (textSpan) textSpan.innerText = t('settings.hardReset.short');
+            if (iconSpan) iconSpan.className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
+            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
+        }
+    },
+
     // --- NEWS TICKER ---
     checkForNews: function() {
         if (this.state.activeNews !== null) return;
@@ -1343,26 +1383,10 @@ export const ui = {
             softResetBtn.classList.toggle('grayscale', locked);
             softResetBtn.disabled = locked;
 
-            // In a week the button does not restart "the day at 08:00" - it
-            // returns to the last night checkpoint, which can be a different
-            // weekday entirely. Saying 08:00 there would be a plain lie.
-            // In a week the button restarts the WEEK, not the day - the label
-            // has to say so, otherwise it promises the wrong scope.
-            const title = document.getElementById('text-soft-reset');
-            const sub = document.getElementById('sub-soft-reset');
-            const inWeek = this.state.week.active;
-            if (title) title.innerText = t(inWeek ? 'settings.softReset.week' : 'settings.softReset.day');
-            if (sub) sub.innerText = t(inWeek ? 'settings.softReset.weekSub' : 'settings.softReset.sub');
         }
         // -------------------------------------------------------------
-        
-        const resetBtn = document.getElementById('btn-hard-reset');
-        if (resetBtn) {
-            resetBtn.dataset.armed = "false";
-            document.getElementById('text-hard-reset').innerText = t('settings.hardReset.short');
-            document.getElementById('icon-hard-reset').className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
-        }
+
+        this.dressResetButtons();
 
         const mainView = document.getElementById('menu-main-view');
         const settingsView = document.getElementById('menu-settings-view');

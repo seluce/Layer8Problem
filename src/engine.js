@@ -51,7 +51,14 @@ window.engine = engine;
 // terminal was copied out of the old data tree when it opened. Registered from
 // this side rather than imported from the other, because i18n knows nothing
 // about the engine and should stay that way.
-onLanguageChange(() => engine.relocaliseScene());
+// The settings dialog is the ONE place a switch can be triggered from during
+// play, so it is also the one dialog that is always open while its own strings
+// are being replaced. Its two reset buttons say more than their marks can, and
+// the armed hard reset kept its flag while losing its question.
+onLanguageChange(() => {
+    engine.relocaliseScene();
+    engine.dressResetButtons();
+});
 
 /**
  * Global safety net.

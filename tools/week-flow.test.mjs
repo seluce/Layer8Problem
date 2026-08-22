@@ -407,6 +407,50 @@ await ok("9 tickets carried + the morning mood's tickets (in need of leave, +3) 
 
 // ----------------------------------------------------------- resume & restart
 console.log('Resume & restart:');
+
+// A save slot is not only written by saveDay/saveWeek. adoptCloudRun writes
+// whatever the cloud hands over into an empty slot, unvalidated, so the
+// loaders are the last gate before the payload becomes the running game.
+await ok('A day payload that is not a day is refused', () => {
+    resetState();
+    for (const junk of ['[]', '5', '"x"', 'null', '{}', '{"time":"noon"}']) {
+        store.set('layer8_day', junk);
+        assert.equal(engine.loadDay(), null, `loadDay swallowed ${junk}`);
+    }
+    // And the honest one still gets through.
+    resetState();
+    state.time = 11 * 60; state.dayActive = true;
+    engine.saveDay();
+    assert.ok(engine.loadDay(), 'a real day is no longer offered');
+});
+
+await ok('A week payload without its day is refused', () => {
+    resetState();
+    // Everything loadWeek used to check is correct here - only the day is
+    // missing, and resumeWeek would hand that to Object.entries().
+    store.set('layer8_week',
+              '{"week":{"active":true,"level":"easy","dayIndex":3,"weekLog":[]},"savedAt":9}');
+    assert.equal(engine.loadWeek(), null);
+    store.set('layer8_week',
+              '{"week":{"active":true,"level":"easy","dayIndex":3,"weekLog":[]},"day":"x","savedAt":9}');
+    assert.equal(engine.loadWeek(), null);
+});
+
+await ok('A curve point missing a key does not poison the week ledger', () => {
+    resetState();
+    engine.startWeek('normal');
+    state.time = 16 * 60 + 30;
+    // What an unmigrated or foreign save can hold: a point without `b`, and
+    // a null element. Every other reader answers both with `?? 0`.
+    state.statHistory = [{ m: 600, l: 10, a: 40 }, null, { m: 700, l: 20, a: 55, b: 30 }];
+    engine.advanceWeekNight();
+    const row = state.week.weekLog[0];
+    assert.equal(row.peakA, 55);
+    assert.equal(row.peakB, 30);
+    assert.ok(Number.isFinite(row.peakA) && Number.isFinite(row.peakB),
+              'a peak arrived as NaN and would be stored as null');
+});
+
 await ok('offerResume(week) finds the week slot and routes resumeDay to resumeWeek', () => {
     resetState();
     engine.startWeek('normal');
@@ -2113,6 +2157,43 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('The reset buttons are re-dressed after a language switch', () => {
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const html  = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+
+    // The collision this rests on: the spans carry a data-i18n mark for their
+    // resting text, and applyStaticStrings() writes EVERY mark on a switch -
+    // over a soft-reset button that has to name the week, and over a hard
+    // reset that may be armed and asking.
+    for (const id of ['text-soft-reset', 'sub-soft-reset', 'text-hard-reset']) {
+        const tag = html.match(new RegExp(`<span id="${id}"[^>]*>`));
+        assert.ok(tag, `${id} is gone from the markup`);
+        assert.ok(tag[0].includes('data-i18n='), `${id} lost its mark - this check has no subject any more`);
+        assert.ok(uiSrc.includes(`getElementById('${id}')`), `${id} is not dressed from the engine any more`);
+    }
+    assert.ok(/dressResetButtons\s*:/.test(uiSrc), 'the dressing is no longer a method of its own');
+    assert.ok(/onLanguageChange\([\s\S]{0,300}?dressResetButtons\(\)/.test(shell),
+              'a language switch no longer re-dresses the reset buttons');
+});
+await ok('The mail log prints the number the bar actually moved', () => {
+    resetState();
+    // The laziness surcharge is what pulled the two apart: it is in the
+    // applied value and was missing from the sentence.
+    state.fl = 60;
+    state.isEmailOpen = true;
+    state.email = { id: 'probe', opts: [] };
+    calls.logs = [];
+
+    const before = state.cr;
+    engine.resolveEmail({ t: 'ignore', ignoreEmail: true, b: 10 }, false);
+    const moved = state.cr - before;
+
+    const line = (calls.logs ?? []).find(l => l?.k === 'log.email.ignoredRadar');
+    assert.ok(line, 'the radar line was not logged at all');
+    assert.ok(moved > 10, 'the surcharge did not apply - this test would prove nothing');
+    assert.equal(line.v.value, moved, 'the log and the bar report different numbers');
+});
 await ok('The excuse cap holds for the morning mood as well', () => {
     resetState();
     engine.startWeek('hard');                                   // a cap of 3

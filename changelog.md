@@ -30,6 +30,9 @@ Bug fixes:
 * An ending caused purely by using an item was queued but never shown - the dismissal only appeared after the next unrelated event. It shows immediately now, and item effects clamp at 100 like everything else.
 * In the archive, the hint on an item you have not found yet was half transparent, so the section heading behind it showed through and neither could be read. It sits on solid ground now.
 * On a day started from the picker, the team view's "what today moved" arrows stayed frozen at zero and the diary could never name who moved - the morning baseline was never taken. It is now, on every start path.
+* Switching language with the settings open put the calm caption back on an armed "delete save" button while it stayed armed - the next click would have deleted the save without asking again. It disarms now. The restart button also stopped promising "the day at 08:00" during a week.
+* Ignoring a mail logged a smaller radar penalty than it actually charged - the log said one number while the bar and the floating text said another. One number now.
+* An interrupted day or week that arrived damaged could show a clock reading NaN:NaN, or break the game behind the resume dialog. Damaged saves are refused instead of offered.
 * Switching language while the news ticker was running restarted the scroll but not its clock, so the headline vanished mid-run. It now restarts with its full run time - and the scroll speed finally matches how long a headline actually stays.
 
 ---

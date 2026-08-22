@@ -284,8 +284,13 @@ export const week = {
             dayIndex: w.dayIndex,
             endTickets: s.tickets,
             endA: Math.round(s.al), endB: Math.round(s.cr), endL: Math.round(s.fl),
-            peakA: Math.max(0, ...hist.map(p => p.a)),
-            peakB: Math.max(0, ...hist.map(p => p.b)),
+            // `?? 0` like every other reader of a curve point (DayChart,
+            // engine_diary, EndModal). This was the one place that trusted the
+            // key to be there: a point without `b` made Math.max return NaN,
+            // which JSON.stringify writes into the ledger as null - and the
+            // save carries it for good. A null point threw outright.
+            peakA: Math.max(0, ...hist.map(p => p?.a ?? 0)),
+            peakB: Math.max(0, ...hist.map(p => p?.b ?? 0)),
             coffee: s.coffeeConsumed,
             mailsIgnored: s.emailsIgnored,
         });
@@ -860,6 +865,12 @@ export const week = {
             if (!p?.week?.active) return null;
             if (!(p.week.dayIndex >= 1 && p.week.dayIndex <= 5)) return null;
             if (!WEEK_DIFFS[p.week.level]) return null;
+            // The day was the one part nobody checked. resumeWeek hands it
+            // straight to applyRestoredDay, which does Object.entries(day) and
+            // throws on a missing one - the engine died behind the resume
+            // dialog, which had already guarded itself with `p.day?.time ?? 480`
+            // one file away.
+            if (!p.day || typeof p.day !== 'object' || Array.isArray(p.day)) return null;
             return p;
         } catch {
             return null;

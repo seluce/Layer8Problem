@@ -386,19 +386,6 @@ export const events = {
             message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";
         } else if(opt) {
-            if (opt.ignoreEmail) {
-                // Two whole sentences instead of a fragment glued onto one:
-                // the penalty does not sit at the end of the sentence in every
-                // language, and half a sentence cannot be reordered.
-                const penalty = opt.b > 0 ? Math.ceil(opt.b * this.effMult()) : 0;
-                message = penalty > 0 ? { k: 'log.email.ignoredRadar', v: { value: penalty } }
-                                      : { k: 'log.email.ignored' };
-                color = "text-red-500 font-bold";
-            } else {
-                message = { k: 'log.email.sent', v: { text: optRef('t') ?? opt.t } };
-                color = "text-blue-400";
-            }
-
             // The SAME formula as resolveTerminal, because a letter is not a
             // different kind of trouble: mails used effMult (day-normal 1.0
             // where the terminal hardens to 1.1), scaled NEGATIVE values too
@@ -413,6 +400,23 @@ export const events = {
             let addedL = opt.l || 0;
             let addedA = (opt.a ?? 0) > 0 ? Math.ceil(opt.a * diffMult) : (opt.a || 0);
             let addedB = (opt.b ?? 0) > 0 ? Math.ceil(opt.b * diffMult * lazyMult) : (opt.b || 0);
+
+            // Computed BEFORE the sentence, because the sentence quotes it.
+            // When the application moved onto the terminal formula in 6.1.1
+            // this line stayed on effMult: the log said "Radar +10%" while the
+            // bar moved 11 - and the floating text over the bar, which reads
+            // the applied value, said 11 too. Two numbers for one event.
+            if (opt.ignoreEmail) {
+                // Two whole sentences instead of a fragment glued onto one:
+                // the penalty does not sit at the end of the sentence in every
+                // language, and half a sentence cannot be reordered.
+                message = addedB > 0 ? { k: 'log.email.ignoredRadar', v: { value: addedB } }
+                                     : { k: 'log.email.ignored' };
+                color = "text-red-500 font-bold";
+            } else {
+                message = { k: 'log.email.sent', v: { text: optRef('t') ?? opt.t } };
+                color = "text-blue-400";
+            }
 
             this.addStat('fl', addedL);
             this.addStat('al', addedA);

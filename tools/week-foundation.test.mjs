@@ -1,6 +1,7 @@
 // Foundation tests for the v5.0 week module.
 // Run: node --conditions browser --import ./test/register.mjs test/week-foundation.test.mjs
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 // Minimal browser shims so the real modules load unchanged.
 const store = new Map();
@@ -15,6 +16,7 @@ globalThis.window.matchMedia = () => ({ matches: false });
 const { week, computeNightCarry, WEEK_DIFFS, WEEK_TUNING, dayName } =
     await import('../src/engine/engine_week.js');
 const { freshDay, state } = await import('../src/engine/engine_state.svelte.js');
+const { core } = await import('../src/engine/engine_core.js');
 
 // The day name is a dictionary entry; held against the German word this test
 // says nothing about the English tree. So it is named through dayName() - and
@@ -161,7 +163,7 @@ ok('saveWeek/loadWeek round trip, clearWeek tidies up', () => {
     engine.clearWeek();
     assert.equal(engine.loadWeek(), null);
 });
-ok('loadWeek verwirft kaputte Nutzlasten', () => {
+ok('loadWeek discards broken payloads', () => {
     localStorage.setItem('layer8_week', '{"week":{"active":true,"level":"turbo","dayIndex":9}}');
     assert.equal(engine.loadWeek(), null);
     localStorage.setItem('layer8_week', 'not json');
@@ -171,6 +173,69 @@ ok('endWeek: back into day mode, the day values untouched', () => {
     engine.endWeek();
     assert.equal(state.week.active, false);
     assert.equal(dayEngine(1.0).statMult(), 1.1);               // the quirk lives on
+});
+
+// The simulator is a SECOND copy of the week's numbers.
+//
+// tools/simulate-week.mjs runs as plain node - no browser condition, no Svelte
+// register - so it cannot import engine_week.js and carries its own WDIFFS
+// table instead. That is a rebuild of a formula, the exact shape that has
+// already cost this project three divergences (the mail formula, the phone
+// times, the idle sink) and two more inside one file (the mail countdown and
+// the news ticker, both written twice).
+//
+// This suite CAN import the engine, and it can read the simulator as text -
+// the same trick dev-script.test.mjs uses on the console helper. So the two
+// copies are held against each other here. It matters most in the very moment
+// the drift would be invisible: during the coming week recalibration, where
+// somebody tunes a number in one file and measures in the other.
+//
+// If the simulator ever gains the loader flags in package.json, delete this
+// and import WEEK_DIFFS there instead - one copy beats a guarded second one.
+ok('The simulator carries the same week numbers as the engine', () => {
+    const src = readFileSync(new URL('./simulate-week.mjs', import.meta.url), 'utf-8');
+
+    const table = src.match(/const WDIFFS = \[([\s\S]*?)\];/);
+    assert.ok(table, 'the simulator no longer has a WDIFFS table - has it been rewritten?');
+
+    const rows = table[1].split('\n').filter(l => l.includes('base:'));
+    assert.equal(rows.length, 3, 'the simulator no longer describes exactly three levels');
+
+    // Read as text on purpose: eval would run the tool, and the point is to
+    // compare what is WRITTEN there against what the engine computes.
+    const num = (row, key) => {
+        const hit = row.match(new RegExp(`\\b${key}:\\s*(-?[0-9.]+)`));
+        assert.ok(hit, `the simulator's row is missing ${key}`);
+        return Number(hit[1]);
+    };
+
+    // The valve reset lives in engine_core, which this suite otherwise does
+    // not need - composed here alone so the tier switch can be ASKED rather
+    // than copied a third time.
+    const tiers = { state, ...week, ...core };
+
+    // Same order as the engine's three levels; the simulator names them in
+    // prose ("rested (easy)"), so the position is the only honest join.
+    ['easy', 'normal', 'hard'].forEach((level, i) => {
+        const row = rows[i], cfg = WEEK_DIFFS[level];
+        assert.equal(num(row, 'base'), cfg.base, `${level}: base drifted apart`);
+        assert.equal(num(row, 'startTickets'), cfg.startTickets, `${level}: startTickets drifted apart`);
+        assert.equal(num(row, 'startAl'), cfg.startAl, `${level}: startAl drifted apart`);
+        assert.equal(num(row, 'exStart'), cfg.excuseStart, `${level}: excuseStart drifted apart`);
+        assert.equal(num(row, 'rAl'), cfg.rAl, `${level}: the aggro recovery drifted apart`);
+        assert.equal(num(row, 'rCr'), cfg.rCr, `${level}: the boss recovery drifted apart`);
+
+        // The valve reset does not live in WEEK_DIFFS but in a tier switch,
+        // so it is asked of the engine the way the game asks: through the tier.
+        state.week = { active: true, level, dayIndex: 1 };
+        assert.equal(num(row, 'valveReset'), tiers.valveResetValue(),
+                     `${level}: the valve reset value drifted apart`);
+    });
+    state.week = { active: false, level: null, dayIndex: 1 };
+
+    // And the one number both files spell out by hand.
+    assert.ok(/const SHIFT_END = 16 \* 60 \+ 30;/.test(src),
+              'the simulator no longer closes the shift at 16:30 like the engine');
 });
 
 console.log(`\n${passed} checks passed.`);

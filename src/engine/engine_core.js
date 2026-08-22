@@ -396,8 +396,16 @@ export const core = {
             const raw = localStorage.getItem(this.KEYS.dayState);
             if (!raw) return null;
             const day = JSON.parse(raw);
+            // It has to BE a day. JSON.parse is happy with '[]', '5' and '"x"',
+            // and none of them has a time, so the old check (`time >= 990`) let
+            // them through: the resume dialog then read NaN:NaN off the clock,
+            // and applyRestoredDay walked Object.entries('x') and wrote state['0'].
+            // A payload can reach the slot from the cloud without ever passing
+            // saveDay, so the loader is the last gate.
+            if (!day || typeof day !== 'object' || Array.isArray(day)) return null;
+            if (typeof day.time !== 'number' || !Number.isFinite(day.time)) return null;
             // A day that was already over is not offered.
-            if (!day || day.time >= 16 * 60 + 30) return null;
+            if (day.time >= 16 * 60 + 30) return null;
             return day;
         } catch {
             return null;
