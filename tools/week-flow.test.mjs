@@ -2,7 +2,7 @@
 // modules, with the UI and audio layers stubbed out.
 // Run: node --conditions browser --import ./test/register.mjs test/week-flow.test.mjs
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 // --- browser shims -----------------------------------------------------------
 const store = new Map();
@@ -2157,6 +2157,49 @@ await ok('Mon-Thu is untouched by the meeting guard', () => {
 
 // --------------------------------------------- edge cases (acceptance)
 console.log('Edge cases:');
+await ok('Mails and items are drawn on the day curve', async () => {
+    // The chart and the diary's peak both come out of statHistory, and the two
+    // biggest sources of boss radar in the game were writing into neither: a
+    // day whose spike came from ignored letters drew a flat line, and the
+    // diary could then describe it as calm.
+    resetState();
+    state.isEmailOpen = true;
+    state.email = { id: 'probe', opts: [] };
+    const beforeMail = state.statHistory.length;
+    engine.resolveEmail({ t: 'ignore', ignoreEmail: true, b: 10 }, false);
+    assert.equal(state.statHistory.length, beforeMail + 1, 'the mail left no point behind');
+
+    resetState();
+    await ensure('items');
+    const movesStats = Object.keys(DB.items).find(id => {
+        const use = DB.items[id].use;
+        return use && !use.cooldown && (use.a || use.l || use.b);
+    });
+    assert.ok(movesStats, 'no usable item in the tree - this check has no subject');
+    engine.grantItem(movesStats);
+    state.pendingItem = movesStats;
+    const beforeItem = state.statHistory.length;
+    engine.confirmUseItem();
+    assert.equal(state.statHistory.length, beforeItem + 1, 'the item left no point behind');
+});
+
+await ok('No component writes a finished sentence into the log', () => {
+    // A log line holds an identity and renders at paint time, so it follows a
+    // language switch. Four component lines were built with tf() instead and
+    // stayed in whatever language they were clicked in - in a log where every
+    // other line changed around them.
+    const dir = new URL('../src/components/', import.meta.url);
+    let checked = 0;
+    for (const file of readdirSync(dir)) {
+        if (!file.endsWith('.svelte')) continue;
+        checked++;
+        const src = readFileSync(new URL(file, dir), 'utf-8');
+        assert.ok(!/engine\.log\(\s*tf?\(/.test(src),
+                  `${file} logs a rendered sentence - it would freeze in the language it was written in`);
+    }
+    assert.ok(checked > 20, 'the component folder was not read at all');
+});
+
 await ok('A ticket warning does not swallow the end of the day', () => {
     // The one combination every other 16:30 test steps around by setting
     // ticketWarning beforehand: ONE action crosses closing time AND pushes the

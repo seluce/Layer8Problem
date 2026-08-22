@@ -67,14 +67,11 @@
 
         if (slot.hasCooldown) {
             if (slot.ready) engine.askUseItem(slot.id);
-            // The same two patterns InventoryFull.act() uses. Built by hand
-            // here until 6.0, which put a German sentence and a glued-on "Min"
-            // into the English game - the item's own `use.wait` line covered it
-            // for every item that has one, so the fallback never showed.
-            else engine.log(tf('log.item.cooldown', {
-                line: tree().items[slot.id]?.use?.wait ?? tf('item.cooldown.fallback', { item: slot.name }),
-                wait: slot.wait
-            }), 'text-slate-500');
+            // Built by hand here until 6.0, which put a German sentence and a
+            // glued-on "Min" into the English game, and still as a finished
+            // sentence until 6.1.1, which froze the line in whatever language
+            // it was clicked in. The engine owns the wording now.
+            else engine.log(engine.itemCooldownLine(slot.id, slot.wait), 'text-slate-500');
             return;
         }
 

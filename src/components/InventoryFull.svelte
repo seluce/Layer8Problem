@@ -38,6 +38,9 @@
     import ItemTooltip from './ItemTooltip.svelte';
 
     import { t, tf, tree } from '../i18n/i18n.svelte.js';
+    // A log line carries an IDENTITY, never a finished sentence - otherwise it
+    // freezes in the language it was written in. See engine/recipe.js.
+    import { itemNameValue } from '../engine/recipe.js';
     // Minutes an item still has to cool down; 0 or less means ready. Reads the
     // item's own clock, so several cooldown items no longer share one.
     const waitFor = (id) => {
@@ -191,24 +194,22 @@
 
         if (row.quest) {
             if (id === 'corp_chronicles') engine.showLoreModal();
-            else engine.log(tf('log.item.reminder', { item: row.item?.name ?? id }), 'text-amber-400');
+            else engine.log({ k: 'log.item.reminder', v: { item: itemNameValue(id) } }, 'text-amber-400');
             return;
         }
 
         if (tree().items[id]?.use?.cooldown) {
             const wait = waitFor(id);
             if (wait <= 0) engine.askUseItem(id);
-            else engine.log(tf('log.item.cooldown', {
-                line: tree().items[id].use.wait ?? tf('item.cooldown.fallback', { item: row.item?.name ?? id }),
-                wait
-            }), 'text-slate-500');
+            // The engine builds this one, so all three callers say it alike.
+            else engine.log(engine.itemCooldownLine(id, wait), 'text-slate-500');
             return;
         }
 
         if (isConsumable(id)) engine.askUseItem(id);
         // A passive item has no button. Without this line clicking it does
         // nothing at all, which reads as broken rather than as by design.
-        else if (tree().items[id]?.passive) engine.log(tf('log.item.passive', { item: row.item?.name ?? id }), 'text-slate-500 italic');
+        else if (tree().items[id]?.passive) engine.log({ k: 'log.item.passive', v: { item: itemNameValue(id) } }, 'text-slate-500 italic');
     }
 
     /**

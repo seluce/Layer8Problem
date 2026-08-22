@@ -428,6 +428,12 @@ export const events = {
             if (addedB !== 0) this.showFloatingText('val-cr', addedB);
             // --------------------------------------
 
+            // Same for the curve: mails are the single biggest source of boss
+            // radar in the game, and none of it was drawn. A day whose spike
+            // came entirely from ignored letters showed a chart without a
+            // spike, and the diary read that flat line as a calm day.
+            this.recordStatPoint();
+
             // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
 

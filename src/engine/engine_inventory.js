@@ -27,6 +27,29 @@ export const inventory = {
     // What an item does and what the dialog says about it comes from
     // data_items.js. This function only asks the questions that are about
     // timing and settings, not about the item itself.
+    /**
+     * The line an item writes when it is not ready yet.
+     *
+     * Built in ONE place because three call it: this file, and both inventory
+     * components. Those two assembled it themselves with tf() - and tf()
+     * returns a finished SENTENCE, so a cooldown line was pinned to the
+     * language it was clicked in while every other line in the log followed a
+     * switch. A recipe travels as an identity and renders on the way out.
+     *
+     * The fallback is a recipe too now, for the same reason: it used to be the
+     * one half of this line that could still freeze.
+     */
+    itemCooldownLine: function(id, wait) {
+        const item = DB.items?.[id];
+        // The item says how it phrases its own pause; the fallback keeps a new
+        // item from sounding like the stress ball.
+        const line = item?.use?.wait
+            ? { ref: { p: 'items', i: id, path: ['use', 'wait'] } }
+            : { k: 'item.cooldown.fallback',
+                v: { item: item ? itemNameValue(id) : { k: 'item.fallbackName' } } };
+        return { k: 'log.item.cooldown', v: { line, wait } };
+    },
+
     askUseItem: function(id) {
         // The one place the engine ASKS instead of telling: during step 8 the
         // tutorial refuses everything but the doughnut, and the modal stays
@@ -47,10 +70,7 @@ export const inventory = {
                 // Two nested sentences, both keeping their identity: the item's
                 // own wording if it has one, otherwise the dictionary fallback
                 // naming the item.
-                const line = use.wait
-                    ? { ref: { p: 'items', i: id, path: ['use', 'wait'] } }
-                    : tf('item.cooldown.fallback', { item: item?.name ?? t('item.fallbackName') });
-                this.log({ k: 'log.item.cooldown', v: { line, wait } }, "text-slate-500");
+                this.log(this.itemCooldownLine(id, wait), "text-slate-500");
                 return; // No modal, abort right away
             }
         }
@@ -132,6 +152,11 @@ export const inventory = {
                 }
                 if (use.rep) this.applyReputation(use.rep);
                 this.log({ ref: { p: 'items', i: id, path: ['use', 'log'] } }, use.color);
+                // The day curve has to see this. An item can move three stats
+                // at once, and without a point the chart drew a straight line
+                // through the change - and the diary, which derives its peak
+                // from the same history, could call such a day calm.
+                this.recordStatPoint();
             }
         }
 
