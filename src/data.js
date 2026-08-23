@@ -107,6 +107,7 @@ let pending = {};
  * @param {string} lang 'de' or 'en'
  */
 export async function loadCore(lang = language) {
+    targetLanguage = lang;
     try {
         await fillCore(lang);
     } catch (err) {
@@ -117,6 +118,7 @@ export async function loadCore(lang = language) {
         if (lang === FALLBACK_LANGUAGE) throw err;
         console.error(`Language "${lang}" could not be loaded, falling back to `
                     + `"${FALLBACK_LANGUAGE}".`, err);
+        targetLanguage = FALLBACK_LANGUAGE;
         await fillCore(FALLBACK_LANGUAGE);
     }
 }
@@ -137,8 +139,24 @@ export async function loadCore(lang = language) {
  */
 const FALLBACK_LANGUAGE = 'en';
 
+/*
+ * `language` is the successfully LOADED language (the fallback path depends on
+ * that meaning: currentLanguage() must never claim a tree that failed to
+ * arrive). `targetLanguage` is what everything loading RIGHT NOW should belong
+ * to - it moves at the START of a switch, `language` at its END. ensure()
+ * binds to the target: bound to `language`, a pool requested during the switch
+ * window imported the OLD tree, and depending on timing either survived the
+ * guard (a German pool cached inside an English session) or was discarded
+ * with its registration left behind (a pool dead for the rest of the session).
+ * The generation counter makes overlapping core loads last-one-wins.
+ */
+let targetLanguage = null;
+let coreGeneration = 0;
+
 async function fillCore(lang) {
+    const gen = ++coreGeneration;
     const loaded = await Promise.all(CORE_NAMES.map(name => importPool(lang, name)));
+    if (gen !== coreGeneration) return;   // a newer switch superseded this load
     language = lang;
     CORE_NAMES.forEach((name, i) => { DB[name] = loaded[i][name]; });
 }
@@ -158,19 +176,30 @@ export function ensure(...names) {
             return Promise.resolve();
         }
         if (!pending[name]) {
-            const forLanguage = language;
-            pending[name] = importPool(forLanguage, name)
+            // Bound to the TARGET, not the loaded language: during a switch
+            // the loaded one is still the old one, and binding to it imported
+            // the old tree (see the note above fillCore).
+            const forLanguage = targetLanguage ?? language;
+            const p = importPool(forLanguage, name)
                 .then(mod => {
-                    // A switch while this was in flight would otherwise file the
-                    // old tree's pool under the new language.
-                    if (forLanguage === language) DB[name] = mod[name];
+                    if (forLanguage === (targetLanguage ?? language)) {
+                        DB[name] = mod[name];
+                    } else if (pending[name] === p) {
+                        // Stale import: drop the registration too, or every
+                        // later ensure() adopts this resolved-but-empty
+                        // promise and the pool stays dead for the session.
+                        delete pending[name];
+                    }
                 })
                 .catch(err => {
-                    // Let a later attempt retry rather than caching the failure.
-                    delete pending[name];
+                    // Let a later attempt retry rather than caching the
+                    // failure - but only remove OUR registration: after a
+                    // switch the same name may already belong to a newer one.
+                    if (pending[name] === p) delete pending[name];
                     console.error(`Could not load data pool "${name}":`, err);
                     throw err;
                 });
+            pending[name] = p;
         }
         return pending[name];
     }));
@@ -190,7 +219,11 @@ export function ensure(...names) {
  * @param {string} lang 'de' or 'en'
  */
 export async function setLanguage(lang) {
-    if (lang === language) return;
+    // Compared against the TARGET: against the loaded language, a quick
+    // EN-then-DE double click hit the early return on the second click
+    // (the first switch had not finished loading, so `language` still said
+    // DE) and the session ended on the wrong language.
+    if (lang === (targetLanguage ?? language)) return;
     // Loaded OR still in flight (6.1). Taking only the finished ones dropped
     // whatever the warm-up happened to be fetching at that moment: `pending` is
     // cleared a line below, and the in-flight import is then discarded by the

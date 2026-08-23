@@ -22,8 +22,12 @@
     // GlobalCorp and would never devote a chapter to a systems administrator -
     // but he found the volume, the last entry is from 2012, and there is space
     // left on the page.
-    // Rendered by the engine: the archive stores ids, not sentences.
-    const written = $derived(engine.chronicleEntries?.() ?? []);
+    // Rendered by the engine: the archive stores ids, not sentences. The lore
+    // tree is handed in via tree() so this derived HAS a reactive language
+    // source - resolved through DB alone it never re-ran on a switch and the
+    // handwritten entries stayed in the old language while the chapters
+    // around them followed.
+    const written = $derived(engine.chronicleEntries?.(tree().lore) ?? []);
     const CHRONICLE = $derived(tree().lore?.chapters ?? []);
     const doneToday = $derived(engine.chronicleWrittenToday?.() ?? false);
 

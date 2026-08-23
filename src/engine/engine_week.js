@@ -284,8 +284,13 @@ export const week = {
             dayIndex: w.dayIndex,
             endTickets: s.tickets,
             endA: Math.round(s.al), endB: Math.round(s.cr), endL: Math.round(s.fl),
-            peakA: Math.max(0, ...hist.map(p => p.a)),
-            peakB: Math.max(0, ...hist.map(p => p.b)),
+            // `?? 0` like every other reader of a curve point (DayChart,
+            // engine_diary, EndModal). This was the one place that trusted the
+            // key to be there: a point without `b` made Math.max return NaN,
+            // which JSON.stringify writes into the ledger as null - and the
+            // save carries it for good. A null point threw outright.
+            peakA: Math.max(0, ...hist.map(p => p?.a ?? 0)),
+            peakB: Math.max(0, ...hist.map(p => p?.b ?? 0)),
             coffee: s.coffeeConsumed,
             mailsIgnored: s.emailsIgnored,
         });
@@ -393,7 +398,12 @@ export const week = {
         this.startWeek(level);
         this.renderHeader();
         this.updateUI();
-        setTimeout(() => { this.reset(); }, 500);
+        // Registered like every other pending step (DAY_TIMERS): untracked,
+        // this reset() fired into whatever existed 500ms later.
+        this.state.bootTimer = setTimeout(() => {
+            this.state.bootTimer = null;
+            this.reset();
+        }, 500);
     },
 
     // --- THE FRIDAY MEETING (design 8.1) ----------------------------------
@@ -406,11 +416,26 @@ export const week = {
      * node - the announcement comes out of a consultant's mouth.
      */
     triggerMeeting: async function() {
-        await ensure('meetings');
-
+        // Set BEFORE the await, which is what the sentence below always said
+        // and the code did not: on a cold pool two clicks ran two
+        // continuations, drew twice from a three-entry weekly pool, applied
+        // the passive item bonus twice and wrote two entries into the archive.
+        //
         // Set before anything can fail: the walk to the meeting room happens
         // once, whatever the room turns out to contain.
+        if (this.state.meetingDone) return;
         this.state.meetingDone = true;
+
+        try { await ensure('meetings'); }
+        catch {
+            // Rolled back like startParty's marker: latched before the await
+            // (a double click must not draw twice), un-latched on a failed
+            // fetch (one offline blip must not turn the meeting button dead
+            // and end Friday without its finale).
+            this.state.meetingDone = false;
+            this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
+            return;
+        }
 
         // usedIDs lives inside one week, so without a longer memory the same
         // finale could turn up two weeks in a row - with three chains that is
@@ -581,13 +606,22 @@ export const week = {
      */
     continueWeekNight: function() {
         this.playAudio('ui');
-        this.closeModal();
+        // dismissModal, NOT closeModal: closeModal runs updateUI, whose
+        // checkEndConditions re-reads the DYING day - pendingEnd is already
+        // null, the clock still stands past 16:30, so queueNightEnd() fired a
+        // second time and recordDayResult('survived') double-counted every
+        // week night into the archive and the Steam stats. The exact trap the
+        // dismissModal doc-comment describes; advanceWeekNight repaints
+        // through reset() anyway.
+        this.dismissModal();
 
         this.advanceWeekNight();
         this.saveWeek();                        // the night IS the checkpoint
         this.syncRun(true);                     // and the moment one switches machines
 
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // See engine_core.softReset(): a raw classList leaves the mail in the
+        // scroll-lock set for good, and the hotkeys test that set.
+        this.hideOverlay('email-modal');
         this.renderHeader();
         this.updateUI();
         // Five mornings a week, and it used to be the same sentence every
@@ -792,7 +826,9 @@ export const week = {
         this.clearDayTimers();
         this.closeSettings();
         this.dismissModal();
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // See engine_core.softReset(): a raw classList leaves the mail in the
+        // scroll-lock set for good, and the hotkeys test that set.
+        this.hideOverlay('email-modal');
 
         this.endWeek();                       // week off, saved slot dropped
         if (!level) {                         // should not happen, but never strand the player
@@ -848,6 +884,12 @@ export const week = {
             if (!p?.week?.active) return null;
             if (!(p.week.dayIndex >= 1 && p.week.dayIndex <= 5)) return null;
             if (!WEEK_DIFFS[p.week.level]) return null;
+            // The day was the one part nobody checked. resumeWeek hands it
+            // straight to applyRestoredDay, which does Object.entries(day) and
+            // throws on a missing one - the engine died behind the resume
+            // dialog, which had already guarded itself with `p.day?.time ?? 480`
+            // one file away.
+            if (!p.day || typeof p.day !== 'object' || Array.isArray(p.day)) return null;
             return p;
         } catch {
             return null;
@@ -856,7 +898,12 @@ export const week = {
 
     /** Discards the saved week (week over, or a deliberate restart). */
     clearWeek: function() {
-        try { localStorage.removeItem(KEYS.weekState); } catch { /* never mind */ }
+        try {
+            localStorage.removeItem(KEYS.weekState);
+            // See engine_core.clearDay(): an empty slot has to carry WHEN it
+            // became empty, or the cloud reads it as "no week, as of now".
+            localStorage.setItem(KEYS.weekClearedAt, String(Date.now()));
+        } catch { /* never mind */ }
     },
 
 };

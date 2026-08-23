@@ -357,27 +357,27 @@ if (identical.length) {
  * The engine may import DB as before: it is not reactive and re-reads on every
  * call. This check is about components only.
  */
-const KOMPONENTEN = join(ROOT, 'src/components');
-const svelteDateien = [];
-(function sammeln(dir) {
+const COMPONENTS_DIR = join(ROOT, 'src/components');
+const svelteFiles = [];
+(function collect(dir) {
     for (const entry of readdirSync(dir)) {
         const full = join(dir, entry);
-        if (statSync(full).isDirectory()) sammeln(full);
-        else if (entry.endsWith('.svelte')) svelteDateien.push(full);
+        if (statSync(full).isDirectory()) collect(full);
+        else if (entry.endsWith('.svelte')) svelteFiles.push(full);
     }
-})(KOMPONENTEN);
+})(COMPONENTS_DIR);
 
-for (const datei of svelteDateien) {
-    const text = readFileSync(datei, 'utf-8');
-    const wo = relative(ROOT, datei);
+for (const file of svelteFiles) {
+    const text = readFileSync(file, 'utf-8');
+    const where = relative(ROOT, file);
     // An import of DB out of data.js - under any name it is given.
     for (const m of text.matchAll(/import\s*\{([^}]*)\}\s*from\s*'[^']*data\.js'/g)) {
-        const namen = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
-        if (namen.includes('DB'))
-            err(`${wo}: imports DB straight from data.js - in a component the data tree is read through tree(), or it freezes in its language on a switch`);
+        const names = m[1].split(',').map(x => x.trim().split(/\s+as\s+/)[0].trim());
+        if (names.includes('DB'))
+            err(`${where}: imports DB straight from data.js - in a component the data tree is read through tree(), or it freezes in its language on a switch`);
     }
 }
-info(`${svelteDateien.length} components checked for access through tree()`);
+info(`${svelteFiles.length} components checked for access through tree()`);
 
 /* ---------- 8) Every data-action has to resolve ---------- */
 
@@ -403,10 +403,10 @@ info(`${svelteDateien.length} components checked for access through tree()`);
  * The keys sit at exactly one indent level inside the ACTIONS object, which is
  * what separates them from the bodies of the multi-line entries.
  */
-const actionsQuelle = readFileSync(join(ROOT, 'src/actions.js'), 'utf-8');
-const tabellenBlock = actionsQuelle.slice(
-    actionsQuelle.indexOf('const ACTIONS = {'),
-    actionsQuelle.indexOf('export const ACTION_NAMES'));
+const actionsSource = readFileSync(join(ROOT, 'src/actions.js'), 'utf-8');
+const tableBlock = actionsSource.slice(
+    actionsSource.indexOf('const ACTIONS = {'),
+    actionsSource.indexOf('export const ACTION_NAMES'));
 /*
  * index.html is not the only place a mark can appear: dressAskModal() builds
  * the closing screen's button as a string. That button carried an inline
@@ -414,40 +414,40 @@ const tabellenBlock = actionsQuelle.slice(
  * nothing - the lesson simply would not end, with no error anywhere. So the
  * sources are read too.
  */
-const quellenMitMarken = [];
-(function sammelnJs(dir) {
+const sourcesWithMarks = [];
+(function collectJs(dir) {
     for (const entry of readdirSync(dir)) {
         const full = join(dir, entry);
-        if (statSync(full).isDirectory()) { if (entry !== 'data') sammelnJs(full); }
-        else if (/\.(js|svelte)$/.test(entry)) quellenMitMarken.push(full);
+        if (statSync(full).isDirectory()) { if (entry !== 'data') collectJs(full); }
+        else if (/\.(js|svelte)$/.test(entry)) sourcesWithMarks.push(full);
     }
 })(join(ROOT, 'src'));
 
-const markenQuellen = [html, ...quellenMitMarken.map(f => readFileSync(f, 'utf-8'))].join('\n');
-const imMarkup = new Set([...markenQuellen.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
+const markSources = [html, ...sourcesWithMarks.map(f => readFileSync(f, 'utf-8'))].join('\n');
+const inMarkup = new Set([...markSources.matchAll(/data-action="([^"]+)"/g)].map(m => m[1]));
 
 // And the rule the other way round: markup that is BUILT may not carry code.
 // The check that caught nothing in index.html has to reach the strings too.
-for (const datei of quellenMitMarken) {
-    const wo = relative(ROOT, datei);
-    if (wo === 'src/actions.js') continue;          // documents the old form in prose
-    for (const m of readFileSync(datei, 'utf-8').matchAll(/onclick="[^"]*"/g))
-        err(`${wo}: builds "${m[0].slice(0, 40)}…" - built markup carries a data-action, not code`);
+for (const file of sourcesWithMarks) {
+    const where = relative(ROOT, file);
+    if (where === 'src/actions.js') continue;          // documents the old form in prose
+    for (const m of readFileSync(file, 'utf-8').matchAll(/onclick="[^"]*"/g))
+        err(`${where}: builds "${m[0].slice(0, 40)}…" - built markup carries a data-action, not code`);
 }
-const inTabelle = new Set(
-    [...tabellenBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
+const inTable = new Set(
+    [...tableBlock.matchAll(/^ {4}'?([A-Za-z][A-Za-z0-9_.]*)'?:\s/gm)].map(m => m[1]));
 
-if (!inTabelle.size) err('src/actions.js: no table entries found - has the layout changed?');
+if (!inTable.size) err('src/actions.js: no table entries found - has the layout changed?');
 
-for (const name of imMarkup) {
-    if (!inTabelle.has(name))
+for (const name of inMarkup) {
+    if (!inTable.has(name))
         err(`index.html: data-action="${name}" is in no table - src/actions.js`);
 }
-for (const name of inTabelle) {
-    if (!imMarkup.has(name))
+for (const name of inTable) {
+    if (!inMarkup.has(name))
         warn(`src/actions.js: "${name}" is used by no element - left over from a rename?`);
 }
-info(`${imMarkup.size} data-action marks checked against ${inTabelle.size} table entries`);
+info(`${inMarkup.size} data-action marks checked against ${inTable.size} table entries`);
 
 /* ---------- Report ---------- */
 

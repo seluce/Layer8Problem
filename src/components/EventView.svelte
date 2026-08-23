@@ -62,10 +62,14 @@
             .join('')
     );
 
+    // engine.lesson is where the tutorial lives since 6.1 - the old guard
+    // tested the removed global `tutorial`, was therefore always false, and
+    // the excuse button rendered mid-lesson: clicking it opened the excuse
+    // modal over the scripted step and fleeing derailed the pointer's anchor.
     const showExcuse = $derived(
         EXCUSE_TYPES.includes(ev.type)
         && state.excusesLeft > 0
-        && !(typeof tutorial !== 'undefined' && tutorial.isActive)
+        && !engine.lesson?.isActive
     );
 
     // Hotkeys 1-3 are rebindable, 4-6 are fixed (party stations).

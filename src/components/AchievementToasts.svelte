@@ -26,11 +26,15 @@
     import { flip } from 'svelte/animate';
     import { state } from '../engine/engine_state.svelte.js';
     import { t } from '../i18n/i18n.svelte.js';
+    import { renderRecipe } from '../engine/recipe.js';
 
     // Titles carry their own emoji ("🗓️ Wochenendlich"). Next to the medal on
     // its plinth that would be a second symbol on the same line, so the toast
     // shows the name alone. The log keeps the emoji.
-    const withoutIcon = (title) => String(title ?? '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
+    // Both fields carry an IDENTITY, not words - so a toast follows a
+    // language switch inside its own lifetime like everything else does.
+    const withoutIcon = (title) =>
+        String(renderRecipe(title) ?? '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
 </script>
 
 {#each state.toasts as toast (toast.id)}
@@ -46,7 +50,7 @@
         <div class="ach-text">
             <span class="ach-label">{toast.upgrade ? t('achievement.upgraded') : t('achievement.unlocked')}</span>
             <span class="ach-title">{withoutIcon(toast.title)}</span>
-            <span class="ach-desc">{toast.desc}</span>
+            <span class="ach-desc">{renderRecipe(toast.desc) ?? ''}</span>
         </div>
     </div>
 {/each}

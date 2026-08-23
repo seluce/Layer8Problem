@@ -36,7 +36,7 @@
  * --- NAMES AND HEADINGS (6.0) ---
  *
  * `name` is a card heading, not an identifier: the view, the engine, the
- * tests and dev-woche.js all address an entry by `id`, and lint-parity does
+ * tests and dev-week.js all address an entry by `id`, and lint-parity does
  * not list `name` among the id keys. It is therefore free - but it is not
  * free of consequence, because the seven `cat: "team"` heads sit in the same
  * modal as the team cards, which read their names from data_chars.js and

@@ -141,7 +141,7 @@ console.log(`--- 1) also in the old stock: ${crossing.length} sequences ---`);
 for (const { g, ids, old } of crossing) {
     console.log(`  "${g}"`);
     console.log(`      Block: ${ids.slice(0, 4).join(', ')}${ids.length > 4 ? ` (+${ids.length - 4})` : ''}`);
-    console.log(`      alt  : ${old.slice(0, 4).join(', ')}${old.length > 4 ? ` (+${old.length - 4})` : ''}`);
+    console.log(`      old  : ${old.slice(0, 4).join(', ')}${old.length > 4 ? ` (+${old.length - 4})` : ''}`);
 }
 
 const inner = [...blockGrams].filter(([, ids]) => ids.size > MIN)

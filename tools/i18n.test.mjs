@@ -345,9 +345,9 @@ await ok('Every activity has a text, every text an activity', async () => {
     const { en } = await import('../src/i18n/en.js');
 
     for (const [name, dict] of [['de', de], ['en', en]]) {
-        const vorhanden = Object.keys(dict).filter(k => k.startsWith('presence.'))
+        const present = Object.keys(dict).filter(k => k.startsWith('presence.'))
                                            .map(k => k.slice('presence.'.length));
-        assert.deepEqual([...vorhanden].sort(), [...PRESENCE_ALL].sort(),
+        assert.deepEqual([...present].sort(), [...PRESENCE_ALL].sort(),
                          `${name}: presence.* and PRESENCE_ALL have drifted apart`);
     }
 });
@@ -363,14 +363,14 @@ await ok('Every achievement is in the Steam order, with title and hint', async (
     const { achievements: dea } = await import('../src/data/de/data_achievements.js');
     const { achievements: ena } = await import('../src/data/en/data_achievements.js');
 
-    const werkzeug = readFileSync(new URL('./make-steam-achievements.mjs', import.meta.url), 'utf-8');
-    const block = werkzeug.slice(werkzeug.indexOf('const STEAM_ORDER'), werkzeug.indexOf('];', werkzeug.indexOf('const STEAM_ORDER')));
+    const toolSource = readFileSync(new URL('./make-steam-achievements.mjs', import.meta.url), 'utf-8');
+    const block = toolSource.slice(toolSource.indexOf('const STEAM_ORDER'), toolSource.indexOf('];', toolSource.indexOf('const STEAM_ORDER')));
     const order = [...block.matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
 
     assert.equal(order.length, dea.length, 'STEAM_ORDER and the tree are of different lengths');
     assert.equal(new Set(order).size, order.length, 'an id stands twice in STEAM_ORDER');
-    for (const baum of [['de', dea], ['en', ena]]) {
-        const [name, tree] = baum;
+    for (const pair of [['de', dea], ['en', ena]]) {
+        const [name, tree] = pair;
         assert.deepEqual([...order].sort(), tree.map(a => a.id).sort(),
                          `${name}: STEAM_ORDER and the tree hold different achievements`);
         for (const a of tree) {
@@ -458,15 +458,15 @@ await ok('A line from 5.x stays put and does not switch', async () => {
 await ok('A recipe into nothing is dropped rather than guessed at', async () => {
     // Content moves between versions. Better one line fewer than a sentence in
     // the language the player has just switched away from.
-    for (const kaputt of [{ ref: { i: 'gibt_es_nicht', path: ['x'] } },
+    for (const broken of [{ ref: { i: 'gibt_es_nicht', path: ['x'] } },
                           { k: 'does.not.exist' },
-                          { k: 'log.item.found', v: { item: { ref: { i: 'weg', path: ['t'] } } } }]) {
-        assert.equal(renderRecipe(kaputt), null, JSON.stringify(kaputt));
+                          { k: 'log.item.found', v: { item: { ref: { i: 'gone', path: ['t'] } } } }]) {
+        assert.equal(renderRecipe(broken), null, JSON.stringify(broken));
     }
     // And a recipe that also carried a sentence does NOT take it. Without this
     // line the probe would not notice the old fallback coming back: the three
     // above carry none at all, so there would be nothing to reach for.
-    assert.equal(renderRecipe({ ref: { i: 'weg', path: ['x'] }, msg: 'an old sentence' }), null,
+    assert.equal(renderRecipe({ ref: { i: 'gone', path: ['x'] }, msg: 'an old sentence' }), null,
                  'a recipe falls back on a stored sentence again');
     assert.equal(renderRecipe({ k: 'does.not.exist', msg: 'an old sentence' }), null,
                  'a key falls back on a stored sentence again');
@@ -491,16 +491,16 @@ await ok('A switch in mid-load keeps the pool, and keeps it in the new tree', as
     if (currentLanguage() !== 'de') await setLanguage('de');
     await i18n.useLanguage('de');
     await ensure('board');
-    const deutsch = JSON.stringify(DB.board).slice(0, 300);
+    const germanBefore = JSON.stringify(DB.board).slice(0, 300);
 
     delete DB.board;
-    const unterwegs = ensure('board');        // deliberately NOT awaited
+    const inFlight = ensure('board');        // deliberately NOT awaited
     await setLanguage('en');                  // switched right into it
-    await unterwegs.catch(() => {});
+    await inFlight.catch(() => {});
     await new Promise(r => setTimeout(r, 30));
 
     assert.ok(DB.board, 'the pool was dropped by the switch and never asked for again');
-    assert.notEqual(JSON.stringify(DB.board).slice(0, 300), deutsch,
+    assert.notEqual(JSON.stringify(DB.board).slice(0, 300), germanBefore,
                     'the pool survived the switch but stayed in the old tree');
 
     await setLanguage('de');
@@ -519,24 +519,61 @@ await ok('The end screen follows a language switch', async () => {
     // The three forms in which an end or night screen holds its lines. Each has
     // to say something different in the two trees - if it did not, the screen
     // would be frozen and nobody would notice.
-    const titel = await inBoth({ k: 'end.weekTitle' });
-    assert.ok(titel.de && titel.en, 'one side delivered nothing');
-    assert.notEqual(titel.de, titel.en, 'the title does not switch along');
+    const endTitle = await inBoth({ k: 'end.weekTitle' });
+    assert.ok(endTitle.de && endTitle.en, 'one side delivered nothing');
+    assert.notEqual(endTitle.de, endTitle.en, 'the title does not switch along');
 
     // A sentence in a sentence in a sentence: the week note wraps the lead, and
     // the weekday sits inside it as a recipe of its own.
-    const vorspann = await inBoth({ k: 'week.endsOn',
+    const weekLead = await inBoth({ k: 'week.endsOn',
                                     v: { base: { k: 'end.rageQuit' }, day: { k: 'week.day.wed' } } });
-    assert.notEqual(vorspann.de, vorspann.en, 'the lead does not switch along');
-    assert.ok(vorspann.de.includes('Mittwoch'), vorspann.de);
-    assert.ok(vorspann.en.includes('Wednesday'), vorspann.en);
+    assert.notEqual(weekLead.de, weekLead.en, 'the lead does not switch along');
+    assert.ok(weekLead.de.includes('Mittwoch'), weekLead.de);
+    assert.ok(weekLead.en.includes('Wednesday'), weekLead.en);
 
     // And the capitals belong to the screen, not to the dictionary entry: the
     // night headline used to shout its date through .toUpperCase(), which a
     // finished sentence could still do and a recipe does through `up`.
-    const nacht = await inBoth({ k: 'week.night.title', v: { day: { k: 'week.day.tue', up: true } } });
-    assert.ok(nacht.de.includes('DIENSTAG'), nacht.de);
-    assert.ok(nacht.en.includes('TUESDAY'), nacht.en);
+    const nightTitle = await inBoth({ k: 'week.night.title', v: { day: { k: 'week.day.tue', up: true } } });
+    assert.ok(nightTitle.de.includes('DIENSTAG'), nightTitle.de);
+    assert.ok(nightTitle.en.includes('TUESDAY'), nightTitle.en);
+});
+
+await ok('The company pages follow a language switch', async () => {
+    // buildIntranet() decides ONCE what the pages are about and writes down
+    // indices and keys. The words are looked up while the page is drawn - so
+    // the switch below rebuilds nothing at all, and the pages come out in the
+    // other language anyway. That is the whole point of the split.
+    const { ui } = await import('../src/engine/engine_ui.js');
+    const { state } = await import('../src/engine/engine_state.svelte.js');
+    const { intranetPages } = await import('../src/engine/intranet_pages.js');
+    const shell = {
+        state, ...ui,
+        careerStats: () => ({ streak: 0, streakBest: 0, survived: 0, rage: 0, warningsChef: 0, ventSaves: 0 }),
+        difficultyKey: () => 'normal',
+    };
+
+    await i18n.useLanguage('de');
+    await loadCore('de');
+    await ensure('intranet');
+    shell.buildIntranet();
+    const decided = JSON.stringify(state.intranetData);
+    const de = JSON.parse(JSON.stringify(intranetPages()));
+
+    await i18n.useLanguage('en');
+    await loadCore('en');
+    await ensure('intranet');
+    const en = JSON.parse(JSON.stringify(intranetPages()));   // NOT rebuilt
+
+    assert.equal(JSON.stringify(state.intranetData), decided,
+                 'the decisions changed - only the words were supposed to');
+    for (const page of ['dashboard', 'hr', 'kantine', 'impressum']) {
+        assert.notEqual(JSON.stringify(de[page].page), JSON.stringify(en[page].page),
+                        `the ${page} page did not switch along`);
+    }
+    assert.notEqual(JSON.stringify(de.kpi), JSON.stringify(en.kpi), 'the key figure did not switch along');
+    assert.equal(de.feed.length, en.feed.length, 'the feed changed size');
+    assert.equal(de.hr.notes.length, en.hr.notes.length, 'the personnel file changed size');
 });
 
 await ok('No recorded field holds a finished sentence any more', async () => {

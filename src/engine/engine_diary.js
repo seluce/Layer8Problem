@@ -183,8 +183,6 @@ function factsOf(state, endReason) {
         if (delta < down.by) down = { name, by: delta };
     }
 
-    const excusesStart = difficulty === 'easy' ? 3 : difficulty === 'hard' ? 1 : 2;
-
     return {
         end: endReason,
         survived: endReason === 'WIN' || endReason === 'PARTY',
@@ -199,7 +197,11 @@ function factsOf(state, endReason) {
         coffee: state.coffeeConsumed ?? 0,
         mailsIgnored: state.emailsIgnored ?? 0,
         tickets: state.tickets ?? 0,
-        excusesUsed: Math.max(0, excusesStart - (state.excusesLeft ?? excusesStart)),
+        // Counted at the spend site since 6.1.1. The old derivation (mode start
+        // value minus what is left) reported zero as soon as excusesLeft had
+        // grown past its start - nightly +1, morning mood - although a lie
+        // had actually been told that day.
+        excusesUsed: state.excusesUsed ?? 0,
         items: (state.inventory ?? []).length,
         endHour: Math.floor((state.time ?? 8 * 60) / 60),
         peakHour: Math.floor(peak.t / 60),

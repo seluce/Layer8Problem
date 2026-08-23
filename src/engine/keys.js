@@ -14,6 +14,12 @@ export const KEYS = {
     archive:      'layer8_archive',
     dayState:     'layer8_day',        // running workday, see engine_core.saveDay()
     weekState:    'layer8_week',       // running work week, see engine_week.saveWeek()
+    // When this machine last FINISHED OFF a run. An empty slot means two
+    // different things - "never played one" or "played it out here" - and the
+    // cloud needs to tell them apart before it deletes the other machine's
+    // run. See engine_core.adoptCloudRun().
+    dayClearedAt:  'layer8_day_cleared',
+    weekClearedAt: 'layer8_week_cleared',
     defaultDiff:  'layer8_default_diff',      // preselected workday
     defaultWeekDiff: 'layer8_default_week_diff', // preselected work week
     diaryRecent:  'layer8_diary_recent',  // diary lines used recently, see engine_diary.loadMemory()
@@ -21,6 +27,15 @@ export const KEYS = {
     partyPlayed:  { easy:   'layer8_party_played_easy',
                     normal: 'layer8_party_played_normal',
                     hard:   'layer8_party_played_hard' },
+
+    // --- Reset bookkeeping (survives the hard reset ON PURPOSE) ---
+    // The newest hard reset this machine has applied, as a timestamp. Every
+    // cloud payload carries it, so the reset reaches the other machines and
+    // is applied there exactly once - see engine_core.adoptCloudReset().
+    // NOT in PROGRESS_KEYS: wipe it with the rest and the machine forgets
+    // that it has already applied the reset, and applies it again on every
+    // launch.
+    resetSeenAt:   'layer8_reset_seen',
 
     // --- Settings (deliberately survive the hard reset) ---
     language:      'layer8_lang',        // 'de' or 'en', see src/i18n/i18n.svelte.js
@@ -64,6 +79,8 @@ export const PROGRESS_KEYS = [
     KEYS.archive,
     KEYS.dayState,
     KEYS.weekState,
+    KEYS.dayClearedAt,
+    KEYS.weekClearedAt,
     KEYS.defaultDiff,
     KEYS.defaultWeekDiff,
     KEYS.diaryRecent,

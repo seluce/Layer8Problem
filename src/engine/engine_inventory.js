@@ -27,6 +27,29 @@ export const inventory = {
     // What an item does and what the dialog says about it comes from
     // data_items.js. This function only asks the questions that are about
     // timing and settings, not about the item itself.
+    /**
+     * The line an item writes when it is not ready yet.
+     *
+     * Built in ONE place because three call it: this file, and both inventory
+     * components. Those two assembled it themselves with tf() - and tf()
+     * returns a finished SENTENCE, so a cooldown line was pinned to the
+     * language it was clicked in while every other line in the log followed a
+     * switch. A recipe travels as an identity and renders on the way out.
+     *
+     * The fallback is a recipe too now, for the same reason: it used to be the
+     * one half of this line that could still freeze.
+     */
+    itemCooldownLine: function(id, wait) {
+        const item = DB.items?.[id];
+        // The item says how it phrases its own pause; the fallback keeps a new
+        // item from sounding like the stress ball.
+        const line = item?.use?.wait
+            ? { ref: { p: 'items', i: id, path: ['use', 'wait'] } }
+            : { k: 'item.cooldown.fallback',
+                v: { item: item ? itemNameValue(id) : { k: 'item.fallbackName' } } };
+        return { k: 'log.item.cooldown', v: { line, wait } };
+    },
+
     askUseItem: function(id) {
         // The one place the engine ASKS instead of telling: during step 8 the
         // tutorial refuses everything but the doughnut, and the modal stays
@@ -47,10 +70,7 @@ export const inventory = {
                 // Two nested sentences, both keeping their identity: the item's
                 // own wording if it has one, otherwise the dictionary fallback
                 // naming the item.
-                const line = use.wait
-                    ? { ref: { p: 'items', i: id, path: ['use', 'wait'] } }
-                    : tf('item.cooldown.fallback', { item: item?.name ?? t('item.fallbackName') });
-                this.log({ k: 'log.item.cooldown', v: { line, wait } }, "text-slate-500");
+                this.log(this.itemCooldownLine(id, wait), "text-slate-500");
                 return; // No modal, abort right away
             }
         }
@@ -68,23 +88,9 @@ export const inventory = {
             return; // stop here, no modal
         }
 
-        // With an image, build an img tag carrying the matching classes;
-        // otherwise fall back to the emoji.
-        // innerHTML on purpose: the content contains an img tag
-        let displayContent = "❓";
-        if (item) {
-            displayContent = item.img
-                ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
-                : item.icon;
-        }
-
         this.state.pendingItem = id;
-
         this.setItemConfirmMode('use');
-        document.getElementById('item-confirm-icon').innerHTML = displayContent;
-        document.getElementById('item-confirm-title').innerText = item ? item.name : id;
-        document.getElementById('item-confirm-desc').innerText = use?.desc ?? t('item.effect.unknown');
-        document.getElementById('item-confirm-warn').innerText = use?.warn ?? t('item.warn.consumed');
+        this.dressItemConfirm();
 
         this.showOverlay('item-confirm-modal');
     },
@@ -95,7 +101,7 @@ export const inventory = {
         const id = this.state.pendingItem;
         if (!id) return;
 
-        this.closeItemConfirm(); // Fenster zu
+        this.closeItemConfirm(); // window shut
 
         // Is the inventory open? Decides whether the view needs refreshing.
         const isInvOpen = !document.getElementById('inventory-modal').classList.contains('hidden');
@@ -117,8 +123,12 @@ export const inventory = {
             }
 
             if (takes) {
-                if (use.a) this.state.al = Math.max(0, this.state.al + use.a);
-                if (use.l) this.state.fl = Math.max(0, this.state.fl + use.l);
+                // Both bounds on every stat. Until 6.1.1 a and l only had the
+                // floor, while the comment below claimed parity with the event
+                // path - a positive use.a/use.l overshot 100 for one frame
+                // until updateUI re-clamped.
+                if (use.a) this.state.al = Math.max(0, Math.min(100, this.state.al + use.a));
+                if (use.l) this.state.fl = Math.max(0, Math.min(100, this.state.fl + use.l));
                 // b and rep make trade-off items possible: relief now, paid
                 // for on the boss's radar or in someone's regard. Same clamps
                 // as the event path, so an item cannot do what an event may not.
@@ -128,10 +138,29 @@ export const inventory = {
                 }
                 if (use.rep) this.applyReputation(use.rep);
                 this.log({ ref: { p: 'items', i: id, path: ['use', 'log'] } }, use.color);
+                // The day curve has to see this. An item can move three stats
+                // at once, and without a point the chart drew a straight line
+                // through the change - and the diary, which derives its peak
+                // from the same history, could call such a day calm.
+                this.recordStatPoint();
             }
         }
 
-        this.updateUI(); // Balken updaten
+        this.updateUI(); // redraw the bars
+
+        // updateUI ran checkEndConditions, and an item alone can end the day
+        // (a use.b that lands the radar on 100 with the warning spent). Every
+        // sibling that applies effects follows up - resolveTerminal via its
+        // result button, resolveEmail with exactly this call - but here the
+        // fired state sat stranded: buttons enabled, saveDay refusing, and the
+        // ending only surfaced after the next unrelated event.
+        if (this.state.pendingEnd) {
+            this.state.pendingItem = null;
+            this.emit('confirmUseItem');
+            this.finishGame();
+            return;
+        }
+
         if (isInvOpen) this.openInventory(); // Redraw the inventory (the item is gone)
         this.state.pendingItem = null;
         this.emit('confirmUseItem');
@@ -145,12 +174,52 @@ export const inventory = {
      * every one of those has cost an afternoon when the markup changed. Here
      * the two buttons simply take turns being hidden.
      */
+    /**
+     * The four fields of the item dialog, painted from state.
+     *
+     * Written straight into the DOM by askUseItem/askDiscardItem until 6.1.1,
+     * with no way to do it a second time - so a language switch left name,
+     * effect and warning standing in the old language. The heading was worse
+     * than frozen: `#item-confirm-kind` carries data-i18n="item.confirm.title",
+     * and applyStaticStrings() put "Use item" back over a dialog whose visible
+     * button was DISCARD. state.pendingItem and state.pendingItemMode always
+     * held everything needed to rebuild it; nobody did.
+     */
+    dressItemConfirm: function() {
+        const id = this.state.pendingItem;
+        if (!id) return;
+
+        const item = DB.items[id];
+        const discarding = this.state.pendingItemMode === 'discard';
+        const use = item?.use;
+
+        const icon  = document.getElementById('item-confirm-icon');
+        const title = document.getElementById('item-confirm-title');
+        const desc  = document.getElementById('item-confirm-desc');
+        const warn  = document.getElementById('item-confirm-warn');
+        const kind  = document.getElementById('item-confirm-kind');
+
+        if (icon) icon.innerHTML = item?.img
+            ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
+            : (item?.icon ?? '❓');
+        if (title) title.innerText = item ? item.name : id;
+        if (kind) kind.innerText = t(discarding ? 'item.confirm.title.discard' : 'item.confirm.title');
+
+        if (discarding) {
+            if (desc) desc.innerText = t(item?.keep ? 'item.discard.reusable' : 'item.discard.consumable');
+            if (warn) warn.innerText = t('item.discard.warn');
+        } else {
+            if (desc) desc.innerText = use?.desc ?? t('item.effect.unknown');
+            if (warn) warn.innerText = use?.warn ?? t('item.warn.consumed');
+        }
+    },
+
     setItemConfirmMode: function(mode) {
         this.state.pendingItemMode = mode;
-        const kind = document.getElementById('item-confirm-kind');
         const useBtn = document.getElementById('item-confirm-use');
         const dropBtn = document.getElementById('item-confirm-discard');
-        if (kind) kind.innerText = t(mode === 'discard' ? 'item.confirm.title.discard' : 'item.confirm.title');
+        // The heading belongs to dressItemConfirm(), which is the one that can
+        // be run again; this keeps only what a repaint must not undo.
         useBtn?.classList.toggle('hidden', mode === 'discard');
         dropBtn?.classList.toggle('hidden', mode !== 'discard');
     },
@@ -171,14 +240,7 @@ export const inventory = {
 
         this.state.pendingItem = id;
         this.setItemConfirmMode('discard');
-
-        document.getElementById('item-confirm-icon').innerHTML = item.img
-            ? `<img src="${item.img}" class="w-full h-full object-contain drop-shadow-md" alt="${item.name}">`
-            : (item.icon ?? '❓');
-        document.getElementById('item-confirm-title').innerText = item.name;
-        document.getElementById('item-confirm-desc').innerText =
-            t(item.keep ? 'item.discard.reusable' : 'item.discard.consumable');
-        document.getElementById('item-confirm-warn').innerText = t('item.discard.warn');
+        this.dressItemConfirm();
 
         this.showOverlay('item-confirm-modal');
     },

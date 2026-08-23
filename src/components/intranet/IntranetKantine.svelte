@@ -13,9 +13,9 @@
   already suffered through carries a note.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const kantine = $derived(game.intranetData?.kantine ?? null);
+    const kantine = $derived(intranetPages()?.kantine ?? null);
     const page    = $derived(kantine?.page ?? null);
 
     const SERVICE_TONE = {

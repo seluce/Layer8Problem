@@ -54,6 +54,11 @@ export function freshDay(mult = 1.0) {
         statHistory: [{ m: 8 * 60, l: 0, a: 0, b: 0 }],
         tickets: mult > 1.0 ? 2 : 0,                                  // Monday starts in the hole
         excusesLeft: mult < 1.0 ? 3 : (mult > 1.0 ? 1 : 2),
+        // Counted directly when the player spends one. The diary used to
+        // derive this from "start value minus what is left", which broke the
+        // moment excusesLeft GREW past its start (the nightly +1, the morning
+        // mood): a lie actually told that day then reported as zero.
+        excusesUsed: 0,
 
         // The excuse currently on offer, and the event it was drawn for. One
         // excuse per event: closing and reopening the dialog must not deal a
@@ -183,14 +188,32 @@ export function freshDay(mult = 1.0) {
         emailCooldownTimer: null,
         phoneTypeTimer: null,
         phoneReadTimer: null,
-        newsTimer: null
+        newsTimer: null,
+        // The boot line-printer chain and the week picker's delayed reset()
+        // shared one property of every timer above - they fire into whatever
+        // day exists later - without sharing the registry: a restart during
+        // the boot animation ran TWO chains at once, interleaved their lines
+        // and ended in a double reset().
+        bootTimer: null
     };
+}
+
+/**
+ * The wall clock as the game prints it: minutes since midnight -> "HH:MM".
+ * One formatter for every surface - before 6.1.1 this pair of lines existed
+ * six times across components and engine, and the next tweak (or the next
+ * copy forgetting the padStart) had six places to miss.
+ */
+export function formatClock(minutes) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
 /** Timer fields cleared on every day restart. Kept next to the factory so the two stay in sync. */
 export const DAY_TIMERS = [
     'bossTimer', 'emailTimer', 'emailDelayTimer', 'emailChainTimer',
-    'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer'
+    'emailCooldownTimer', 'phoneTypeTimer', 'phoneReadTimer', 'newsTimer',
+    'bootTimer'
 ];
 
 /**
@@ -219,10 +242,18 @@ export const TUTORIAL_FIELDS = ['tutorialStep', 'tutorialUnlocked'];
  *
  * Sets become arrays on the way out, because JSON has no Set.
  */
+// The key set of a day, computed once: it does not depend on the multiplier,
+// and snapshotDay runs after every single action - building a full day object
+// (two Sets, a dozen arrays) just to enumerate its keys was a per-click
+// allocation for a static list. Still derived FROM the factory, so a newly
+// added day field cannot be forgotten here.
+const DAY_FIELDS = Object.keys(freshDay()).filter(
+    key => !DAY_TIMERS.includes(key) && !TUTORIAL_FIELDS.includes(key)
+);
+
 export function snapshotDay(state) {
     const day = {};
-    for (const key of Object.keys(freshDay())) {
-        if (DAY_TIMERS.includes(key) || TUTORIAL_FIELDS.includes(key)) continue;
+    for (const key of DAY_FIELDS) {
         const value = state[key];
         day[key] = value instanceof Set ? [...value] : value;
     }
@@ -286,6 +317,40 @@ export function snapshotDay(state) {
  */
 export const TICKET_WARNING = 8;
 
+/**
+ * The archive as a new career starts it.
+ *
+ * ONE source for the shape: the boot state below and the hard reset both take
+ * it from here. The reset used to build its own literal and dropped
+ * seenEvents, seenFlags, knowledgeRead and the chronicle on the way - the
+ * hand-maintained-list mistake PROGRESS_KEYS exists to prevent, one file over.
+ *
+ * stats and chronicle are seeded here although the running game also creates
+ * them on demand (`archive.stats ?? {}`, `archive.chronicle ??= []`): a shape
+ * with every field is one a test can hold other shapes against.
+ */
+export function freshArchive() {
+    return {
+        items: [],
+        achievements: [],
+        achievementDiffs: {},
+        reputation: {},
+        // Evidence for the compendium: which events were opened and which
+        // story flags were raised, across the whole career. Stored raw rather
+        // than as unlocked entries, so notes added in a later version light up
+        // for players who already saw the scene.
+        seenEvents: [],
+        seenFlags: [],
+        // Per compendium entry: how many notes had been read the last time it
+        // was opened. An entry counts as unread again once it has more than
+        // that, so a later note re-flags an entry that was already seen.
+        knowledgeRead: {},
+        // The lore book's handwritten page and the career counters.
+        chronicle: [],
+        stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 },
+    };
+}
+
 export const state = $state({
 
     ...freshDay(1.0),
@@ -324,6 +389,7 @@ export const state = $state({
     // before it is ever read, and it has no business in the day's save file.
     intranetData: null,
 
+
     // The big centre modal. components/EndModal.svelte renders it.
     //
     // `title` and `lead` hold RECIPES on an end or night screen (a plain string
@@ -350,23 +416,9 @@ export const state = $state({
     // the web because platform.globalStats() resolves to null there.
     globalStats: { data: null, loading: false, failed: false },
 
-    // Persistent archive (survives a day restart, mirrored into localStorage)
-    archive: {
-        items: [],
-        achievements: [],
-        achievementDiffs: {},
-        reputation: {},
-        // Evidence for the compendium: which events were opened and which
-        // story flags were raised, across the whole career. Stored raw rather
-        // than as unlocked entries, so notes added in a later version light up
-        // for players who already saw the scene.
-        seenEvents: [],
-        seenFlags: [],
-        // Per compendium entry: how many notes had been read the last time it
-        // was opened. An entry counts as unread again once it has more than
-        // that, so a later note re-flags an entry that was already seen.
-        knowledgeRead: {}
-    },
+    // Persistent archive (survives a day restart, mirrored into localStorage).
+    // The shape lives in freshArchive() above, which the hard reset uses too.
+    archive: freshArchive(),
 
     // Whether the knowledge modal is on screen; the view builds on demand.
     knowledgeOpen: false,
@@ -444,8 +496,14 @@ export const state = $state({
             if (!defaults.hasOwnProperty(k)) delete saved[k];
         }
 
-        // Fill in missing keys
-        for (let k in defaults) { if (!saved[k]) saved[k] = defaults[k]; }
+        // Fill in missing keys - and repair non-STRING values, not just
+        // missing ones. A hand-edited or corrupted store could carry a
+        // number here, and keyBinds.confirm.toLowerCase() then threw on
+        // every keypress, which is exactly what this factory exists to
+        // prevent.
+        for (let k in defaults) {
+            if (!saved[k] || typeof saved[k] !== 'string') saved[k] = defaults[k];
+        }
         return saved;
     })(),
     isBindingKey: false,

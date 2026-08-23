@@ -41,6 +41,13 @@ export const events = {
     // How often an unlocked follow-up beats a fresh event. See pickFromPool.
     FOLLOWUP_CHANCE: 0.30,
 
+    // How long an open mail waits before it resolves itself. ONE number: the
+    // countdown bar in EmailView.svelte reads it for its animation duration -
+    // until 6.1.1 the 20 seconds were written twice (engine timeout and CSS
+    // keyframe length), the exact two-places-one-schedule drift the toast
+    // header comment records as having already happened once.
+    EMAIL_DURATION_MS: 20000,
+
     // --- EMAIL SYSTEM (clean light / logic fixes) ---
     checkRandomEmail: function() {
         // 1. Basic checks (open? on the move? tutorial?)
@@ -97,7 +104,18 @@ export const events = {
     // async: the mail pool loads on demand, see data.js
     triggerEmail: async function(forcedId = null) {
         await ensure('emails');
-		
+
+        // Re-checked after the await, like trigger() does. Cancelling a timer
+        // cannot reach a call already suspended in here, and the mail pool is
+        // cold for the first half minute of a day: the continuation could
+        // resume after clocking off, into the gala, or into a restart, and
+        // then unconditionally opened an overlay and armed a fresh 20-second
+        // timer on a day whose timers had already been cleared.
+        if (this.state.pendingEnd || this.state.isPartyMode) {
+            this.state.emailPending = false;
+            return;
+        }
+
         // Never fire during a boss fight
         if (this.state.bossTimer || this.state.currentEventType === 'boss') {
             this.state.emailPending = false;
@@ -142,7 +160,7 @@ export const events = {
             this.showOverlay(modal);
         }
 
-        const DURATION = 20000;
+        const DURATION = this.EMAIL_DURATION_MS;
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
         this.state.emailTimer = setTimeout(() => {
             this.resolveEmail(null, true); 
@@ -193,8 +211,9 @@ export const events = {
      * engine - which is how the German edition used to be the only one that
      * worked.
      */
+    /** @returns {boolean} whether the item actually landed in the backpack */
     grantItem: function(itemId, kind = 'found') {
-        if (!itemId) return;
+        if (!itemId) return false;
         const dbItem = DB.items[itemId];
         const isPermanent = dbItem && (dbItem.keep || dbItem.quest);
         const alreadyHas = this.state.inventory.some(i => i.id === itemId);
@@ -205,11 +224,11 @@ export const events = {
             return db && !db.quest;
         }).length;
 
-        if (isPermanent && alreadyHas) return;   // still verworfen
+        if (isPermanent && alreadyHas) return false;   // still discarded
 
         if (!isPermanent && normalCount >= 10) {
             this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
-            return;
+            return false;
         }
 
         this.state.inventory.push({ id: itemId, used: false });
@@ -219,6 +238,7 @@ export const events = {
         if (dbItem?.img && typeof this.animateItemToBackpack === 'function') {
             this.animateItemToBackpack(dbItem.img);
         }
+        return true;
     },
 
     /**
@@ -355,7 +375,7 @@ export const events = {
         
         // --- CHANGE 1: block the system straight away ---
         this.state.isEmailOpen = false;
-        this.state.emailPending = true; // Blockiert checkRandomEmail
+        this.state.emailPending = true; // blocks checkRandomEmail
         // -------------------------------------------
 
         // Game logic. `message` is a RECIPE, not a sentence - see
@@ -373,29 +393,45 @@ export const events = {
         if(timeout) {
             let penalty = Math.ceil(10 * this.effMult());
             this.addStat('cr', penalty);
+            // The expired letter is on the curve like the answered one - this
+            // branch was missed when mails joined the chart, and the laziest
+            // radar source stayed invisible on it.
+            this.recordStatPoint();
             this.state.emailsIgnored++;
             message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";
         } else if(opt) {
+            // The SAME formula as resolveTerminal, because a letter is not a
+            // different kind of trouble: mails used effMult (day-normal 1.0
+            // where the terminal hardens to 1.1), scaled NEGATIVE values too
+            // (an a:-5 relief shrank on easy), and skipped the laziness
+            // surcharge on the radar entirely - while the simulator modelled
+            // mails with the terminal formula, so every measurement diverged
+            // from the shipped behaviour.
+            const diffMult = this.statMult();
+            const lazyMult = 1 + (this.state.fl / 200);
+
+            // Cache the final values for the animation
+            let addedL = opt.l || 0;
+            let addedA = (opt.a ?? 0) > 0 ? Math.ceil(opt.a * diffMult) : (opt.a || 0);
+            let addedB = (opt.b ?? 0) > 0 ? Math.ceil(opt.b * diffMult * lazyMult) : (opt.b || 0);
+
+            // Computed BEFORE the sentence, because the sentence quotes it.
+            // When the application moved onto the terminal formula in 6.1.1
+            // this line stayed on effMult: the log said "Radar +10%" while the
+            // bar moved 11 - and the floating text over the bar, which reads
+            // the applied value, said 11 too. Two numbers for one event.
             if (opt.ignoreEmail) {
                 // Two whole sentences instead of a fragment glued onto one:
                 // the penalty does not sit at the end of the sentence in every
                 // language, and half a sentence cannot be reordered.
-                const penalty = opt.b > 0 ? Math.ceil(opt.b * this.effMult()) : 0;
-                message = penalty > 0 ? { k: 'log.email.ignoredRadar', v: { value: penalty } }
-                                      : { k: 'log.email.ignored' };
+                message = addedB > 0 ? { k: 'log.email.ignoredRadar', v: { value: addedB } }
+                                     : { k: 'log.email.ignored' };
                 color = "text-red-500 font-bold";
             } else {
                 message = { k: 'log.email.sent', v: { text: optRef('t') ?? opt.t } };
                 color = "text-blue-400";
             }
-
-            let mult = this.effMult();
-            
-            // Cache the final values for the animation
-            let addedL = opt.l || 0;
-            let addedA = opt.a ? Math.ceil(opt.a * mult) : 0;
-            let addedB = opt.b ? Math.ceil(opt.b * mult) : 0;
 
             this.addStat('fl', addedL);
             this.addStat('al', addedA);
@@ -407,6 +443,12 @@ export const events = {
             if (addedB !== 0) this.showFloatingText('val-cr', addedB);
             // --------------------------------------
 
+            // Same for the curve: mails are the single biggest source of boss
+            // radar in the game, and none of it was drawn. A day whose spike
+            // came entirely from ignored letters showed a chart without a
+            // spike, and the diary read that flat line as a calm day.
+            this.recordStatPoint();
+
             // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
 
@@ -414,12 +456,10 @@ export const events = {
 
             this.grantItem(opt.loot, 'received');
 
-            // 2. TIME LOGIC (opt.m)
-            if (opt.m) {
-                const before = this.state.time;
-                this.state.time += opt.m;
-                this.checkLeetMoment(before);
-            }
+            // 2. TIME LOGIC (opt.m) - through the shared clock: mail time
+            // used to pass without booking the half-hour boundary tickets
+            // every other path books.
+            if (opt.m) this.advanceClock(opt.m);
 
             // 3. REPUTATION LOGIC (opt.rep)
             this.applyReputation(opt.rep);
@@ -507,6 +547,12 @@ export const events = {
                 this.state.isLoadingPool = false;
                 this.disableButtons(false);
             }
+
+            // Re-checked after the await: a restart during a cold-pool load
+            // clears the day (freshDay), and the continuation would then open
+            // an un-asked-for event into the fresh boot - the boot keeps
+            // activeEvent true for exactly this kind of gate.
+            if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
         }
 
         // ---------------------------------------------------------
@@ -739,6 +785,16 @@ export const events = {
             this.state.usedIDs.add(ev.id);
             this.disableButtons(true);
             this.recordSeen('event', ev.id);
+            // The same bookkeeping renderTerminal does - this branch was the
+            // second event path without it (the boss fight was the first,
+            // fixed in 6.1): with the id still on the PREVIOUS event, the
+            // mail system whitelisted or blocked mails against the wrong
+            // event (a chat could never be followed by one), and rich
+            // presence kept showing the previous activity for the whole
+            // conversation.
+            this.state.currentEventId = ev.id;
+            this.state.currentEventType = 'sidequest';   // the pool it came from
+            this.updatePresence('sidequest');
             this.applyPassiveItems(ev.char);
 
             // Show the notification
@@ -851,6 +907,14 @@ export const events = {
      */
     relocaliseScene: function() {
         this.relocalisePhone();
+        this.relocaliseMail();
+
+        // A running news ticker restarts in the new language ({#key news}
+        // recreates the element, so the scroll begins on the right again) -
+        // renderHeader() restarts the removal timer to match, with the new
+        // text's duration. Without this the old clock kept running and the
+        // ticker vanished mid-scroll.
+        this.renderHeader();
 
         const term = this.state.terminal;
 
@@ -871,9 +935,37 @@ export const events = {
         if (term.event?.isChain && this.state.currentChainNode) {
             this.state.currentChainEvent = ev;
             this.renderChainNode(this.state.currentChainNode);
+        } else if (this.state.currentEventType === 'party' && this.partyStageText(ev)) {
+            // The hub renders a spread copy with the stage text substituted -
+            // repainting the raw event rewound the evening's arc to the
+            // arrival prose. Same formula as the first paint, one method.
+            this.renderEventHTML({ ...ev, text: this.partyStageText(ev) }, 'party');
         } else {
             this.renderEventHTML(ev, this.state.currentEventType);
         }
+    },
+
+    /**
+     * The open mail, which held a raw reference into the old tree.
+     *
+     * `state.email = email` puts the pool object itself into the state, and
+     * EmailView reads sender, subject, body and every reply caption straight
+     * off it - so a switch left the whole letter standing while the frame
+     * around it changed. Unlike the phone, nothing here is "what was already
+     * said": a mail is one screen the player is still reading and about to
+     * answer, so all of it follows.
+     *
+     * The id is the join, as everywhere else. A mail that is not in the new
+     * tree keeps the old text rather than emptying the window - the parity
+     * linter makes that case theoretical, but an empty letter would be worse
+     * than a stale one.
+     */
+    relocaliseMail: function() {
+        if (!this.state.isEmailOpen) return;
+        const id = this.state.email?.id;
+        if (!id) return;
+        const fresh = (DB.emails ?? []).find(m => m.id === id);
+        if (fresh) this.state.email = fresh;
     },
 
     /**
@@ -890,15 +982,23 @@ export const events = {
      */
     relocalisePhone: function() {
         const phone = this.state.phone;
-        if (!phone?.open || !phone.node || !phone.options?.length) return;
+        if (!phone?.open) return;
 
         const ev = findEventById(DB, this.state.currentPhoneEvent?.id);
-        const node = ev?.nodes?.[phone.node];
-        if (!node) return;
+        if (!ev) return;
 
+        // ALWAYS re-point the event at the new tree while the chat is open -
+        // not only when reply buttons are showing. During the typing window
+        // the options are empty and the old guard bailed here, so the pending
+        // type-timer then walked the PRE-switch object and served the next
+        // node's buttons from the old language.
         this.state.currentPhoneEvent = ev;
         phone.appName = ev.appName ?? phone.appName;
-        phone.options = node.opts || [];
+
+        const node = phone.node ? ev.nodes?.[phone.node] : null;
+        if (node && phone.options?.length) {
+            phone.options = node.opts || [];
+        }
     },
 
     // 3. SHARED HTML TEMPLATE
@@ -976,6 +1076,31 @@ export const events = {
     },
 
     /**
+     * THE clock. Advances time, books the half-hour boundary tickets that
+     * pass with it (capped at 16:30 - see the design note inside
+     * resolveTerminal for why tickets count by boundary), and checks the
+     * 13:37 moment.
+     *
+     * One function for every path that moves time, and that is the point:
+     * the phone results had a copy that moved time WITHOUT tickets (and a
+     * flat 15 minutes at that), the mails another one - three clocks that
+     * each told a slightly different time, while the simulator modelled all
+     * of them like the terminal. countTickets is false only for the weekly
+     * meeting, the one stretch whose runtime deliberately does not count.
+     */
+    advanceClock: function(minutes, countTickets = true) {
+        const before = this.state.time;
+        if (countTickets) {
+            const SHIFT_END_TIME = 16 * 60 + 30;   // tickets stop at closing time
+            const oldChunk = Math.floor(before / 30);
+            const capped = Math.min(before + minutes, SHIFT_END_TIME);
+            this.state.tickets += Math.max(0, Math.floor(capped / 30) - oldChunk);
+        }
+        this.state.time += minutes;
+        this.checkLeetMoment(before);
+    },
+
+    /**
      * Applies a chosen option and advances the day.
      *
      * Used to take eleven positional parameters, hand-serialised into an inline
@@ -1037,7 +1162,7 @@ export const events = {
             this.log({ k: 'log.drunk' }, "text-purple-400 italic");
         }
 
-        // Zeit & Tickets
+        // Time & tickets
         //
         // Tickets are counted by BOUNDARY, not by duration: every half hour the
         // clock steps over adds one. Which is why an option's cost decides how
@@ -1065,22 +1190,21 @@ export const events = {
         // second, invisible sense of time running beside the visible one, and
         // with at most 45 minutes left after a meeting the two would come to
         // the same thing anyway.
-        if (type !== 'meeting') {
-            const SHIFT_END_TIME = 16 * 60 + 30;   // tickets stop at closing time
-            const oldTimeChunk = Math.floor(this.state.time / 30);
-            const cappedTime = Math.min(this.state.time + m, SHIFT_END_TIME);
-            const newTimeChunk = Math.floor(cappedTime / 30);
-            this.state.tickets += Math.max(0, newTimeChunk - oldTimeChunk);
-        }
-        
-        if (type === 'calls') { 
+        // Answering a call clears a ticket - a REAL call. The idle fallbacks
+        // (fallback_week_* for a spent contingent, fallback_empty for a dry
+        // pool) render with the pool's type and used to walk through this
+        // branch too: with the calls contingent spent, every click on "the
+        // hotline is silent" still removed a ticket for 20 minutes - a
+        // farmable sink the design comment on the contingent explicitly rules
+        // out, and one the week simulator never modelled. Ids, not display
+        // text: the fallback_ prefix is the idle family's naming convention
+        // in data_special.js.
+        if (type === 'calls' && !this.state.currentEventId?.startsWith('fallback_')) {
             this.state.tickets = Math.max(0, this.state.tickets - 1);
         }
 
-        const timeBefore = this.state.time;
-        this.state.time += m;
-        this.checkLeetMoment(timeBefore);
-        
+        this.advanceClock(m, type !== 'meeting');
+
         // Lunch check, with a window rather than an open-ended threshold.
         // A single option can cost up to four hours (the boss fights), so one
         // choice can carry the clock from 11:50 straight past the afternoon -
@@ -1165,7 +1289,6 @@ export const events = {
             if (index > -1) {
                 // Remove exactly one item at that index
                 this.state.inventory.splice(index, 1);
-                let removedName = DB.items[rem] ? DB.items[rem].name : rem;
                 this.log({ k: 'log.itemLost', v: { item: itemNameValue(rem) } }, "text-orange-400");
             }
         }
@@ -1177,7 +1300,7 @@ export const events = {
         this.log(recipe ?? { msg: String(res ?? '') });
         this.updateUI();
 
-        // UI Rendern
+        // Render the UI
         // The key travels, not the word - see setTerminalResult. Which also
         // means lint-i18n can no longer see these five as used, so they are
         // declared here by hand.
@@ -1223,7 +1346,18 @@ export const events = {
     // prefetchAll() fetches it in the background long before noon; the await
     // here covers the case of someone being faster than the connection.
     triggerLunch: async function() {
-        await ensure('lunch');
+        // The same claim trigger() makes, and for the same reason: the result
+        // button is never disabled, so on a cold pool two clicks ran two
+        // continuations - two renderTerminal calls, the passive item bonus
+        // applied twice and two ids burned. lunchDone cannot guard it, it was
+        // already set when the button was armed.
+        if (!DB.lunch) {
+            if (this.state.isLoadingPool) return;
+            this.state.isLoadingPool = true;
+            try { await ensure('lunch'); }
+            finally { this.state.isLoadingPool = false; }
+            if (this.state.pendingEnd || this.state.isPartyMode) return;
+        }
         let pool = DB.lunch ?? [];
 
         // Story gate and follow-up priority, exactly as in the action pools
@@ -1409,13 +1543,18 @@ export const events = {
             statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
         }
         else if (mood.effect === "snack") {
-            // Snacks only
+            // Snacks only - through grantItem, which owns the capacity rule.
+            // The raw push here walked past the hard cap of ten: in week mode
+            // the backpack carries over, and a full one gained an eleventh
+            // item with no word about it. If the pack is full the morning
+            // falls back to its plain line and grantItem's log entry says why.
             const possibleItems = ["energy", "donut", "sandwich", "chocolate"];
             const rItem = possibleItems[Math.floor(Math.random() * possibleItems.length)];
-            this.state.inventory.push({ id: rItem, used: false });
-            this.addToArchive('items', rItem);
-            statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
-            if (DB.items[rItem] && DB.items[rItem].img) { this.animateItemToBackpack(DB.items[rItem].img); }
+            if (this.grantItem(rItem)) {
+                statHtml = moodLine('text-yellow-400 font-bold', { k: 'morning.effect.snack', v: { item: itemNameValue(rItem) } });
+            } else {
+                statHtml = moodLine('text-slate-400 font-bold', { k: 'morning.effect.normal' });
+            }
         }
 
         // Refresh immediately so bars and clock are correct
@@ -1665,25 +1804,26 @@ export const events = {
         // FALL A: STORY ENDE (Result)
         if (ev.results && ev.results[nextId]) {
             let res = ev.results[nextId];
-            
-            // Loot & Items Logic
-            if(res.loot && !this.state.inventory.find(i => i.id === res.loot)) {
-                let dbItem = DB.items[res.loot];
-                let isPermanent = dbItem && (dbItem.keep || dbItem.quest);
-                let normalCount = this.state.inventory.filter(i => {
-                    let db = DB.items[i.id];
-                    return db && !db.quest;
-                }).length;
 
-                if (!isPermanent && normalCount >= 10) {
-                    this.log({ k: 'log.backpackFull', v: { item: itemNameValue(res.loot) } }, "text-slate-500 italic");
-                } else {
-                    this.state.inventory.push({ id: res.loot, used: false });
-                    this.addToArchive('items', res.loot);
-                    this.log({ k: 'log.item.received', v: { item: itemNameValue(res.loot) } }, "text-yellow-400");
-                    if (DB.items[res.loot] && DB.items[res.loot].img) { this.animateItemToBackpack(DB.items[res.loot].img); }
+            // The authored removal, finally applied - and BEFORE the loot, so
+            // the freed slot is there for it. res.rem was never read anywhere:
+            // sq_prince_return removes the black card and grants the prince's
+            // letter, yet the card stayed in the backpack forever.
+            if (res.rem) {
+                const remIndex = this.state.inventory.findIndex(i => i.id === res.rem);
+                if (remIndex > -1) {
+                    this.state.inventory.splice(remIndex, 1);
+                    this.log({ k: 'log.itemLost', v: { item: itemNameValue(res.rem) } }, "text-orange-400");
                 }
             }
+
+            // Loot through the one shared path. This block was a third,
+            // drifted copy of the grantItem rules: its outer guard skipped
+            // the grant whenever ANY copy was in the backpack, while
+            // grantItem blocks duplicates only for permanent items and lets
+            // consumables stack to the cap - a consumable chat reward was
+            // silently dropped if the player already held one.
+            this.grantItem(res.loot, 'received');
             
         // Stats Update
         let finalL = res.l || 0;
@@ -1738,9 +1878,12 @@ export const events = {
                     this.closePhone();
                     this.log({ k: 'log.phone',
                                v: { text: { ref: { i: ev.id, path: ['results', nextId, 'txt'] } } } });
-                    const beforePhone = this.state.time;
-                    this.state.time += 15;
-                    this.checkLeetMoment(beforePhone);
+                    // The authored cost, through the shared clock (boundary
+                    // tickets included). Every phone result used to charge a
+                    // flat 15 minutes whatever the data said - m:2 and m:20
+                    // cost the same, and no ticket ever arrived during a
+                    // chat. 15 stays the fallback for a result without m.
+                    this.advanceClock(typeof res.m === 'number' ? res.m : 15);
                     this.updateUI();
                     
                     if (this.state.pendingEnd) {
