@@ -1,4 +1,4 @@
-[6.1.1] - unreleased
+[6.1.1] - 2026-08-23
 
 Everything here is measured against 6.1. This update is a large one, and it is bug fixes from end to end - not a single new feature. 6.0 and 6.1 brought a lot of new ground: the second language, the week campaign, the compendium, the gala. What matters now is that all of it runs cleanly, rather than piling more on top of it.
 
