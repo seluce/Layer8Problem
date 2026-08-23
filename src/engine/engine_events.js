@@ -224,7 +224,7 @@ export const events = {
             return db && !db.quest;
         }).length;
 
-        if (isPermanent && alreadyHas) return false;   // still verworfen
+        if (isPermanent && alreadyHas) return false;   // still discarded
 
         if (!isPermanent && normalCount >= 10) {
             this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
@@ -393,6 +393,10 @@ export const events = {
         if(timeout) {
             let penalty = Math.ceil(10 * this.effMult());
             this.addStat('cr', penalty);
+            // The expired letter is on the curve like the answered one - this
+            // branch was missed when mails joined the chart, and the laziest
+            // radar source stayed invisible on it.
+            this.recordStatPoint();
             this.state.emailsIgnored++;
             message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";

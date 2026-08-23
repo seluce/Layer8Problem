@@ -69,10 +69,20 @@ export const core = {
             }
         }
 
+        // Counters only grow, so max() unites them - except the two that
+        // legitimately FALL: streak and weekStreak reset to 0 on a failure,
+        // and max() made that break vanish between two machines (the failed
+        // day uploaded 0, the other side answered with its remembered 12,
+        // and the unbroken streak travelled back). For these the cloud value
+        // wins outright - the cloud is the latest upload of whichever
+        // machine played last, which is what the pre-union overwrite got
+        // right for exactly this pair.
+        const FOLLOWS_LATEST = new Set(['streak', 'weekStreak']);
         for (const key of ['stats', 'knowledgeRead']) {
             const map = out[key] ?? (out[key] = {});
             for (const [k, v] of Object.entries(c[key] ?? {})) {
-                if (typeof v === 'number') map[k] = Math.max(map[k] ?? 0, v);
+                if (key === 'stats' && FOLLOWS_LATEST.has(k)) map[k] = v;
+                else if (typeof v === 'number') map[k] = Math.max(map[k] ?? 0, v);
                 else if (!(k in map)) map[k] = v;
             }
         }
@@ -349,6 +359,8 @@ export const core = {
     // the other machine tell an abandoned run apart from one that was finished
     // here afterwards (see loadCloudSave).
     buildCloudPayload: function() {
+        const daySyncedAt  = this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt);
+        const weekSyncedAt = this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt);
         return {
             archive:      this.state.archive,
             tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
@@ -367,16 +379,23 @@ export const core = {
             // Each slot now carries its own: the run's own savedAt while there
             // is one, otherwise the moment this machine finished that run off
             // (0 = never had one, so it may not argue against anybody).
-            daySyncedAt:  this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt),
-            weekSyncedAt: this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt),
+            daySyncedAt, weekSyncedAt,
             // The tombstone: when a career was last deleted, as far as this
             // machine knows (0 = never). In EVERY payload, not only the one
             // pushed at the moment of the reset - the other machine may not
             // launch for days, and by then the newest payload is an ordinary
             // one written during post-reset play.
             resetAt:      Number(localStorage.getItem(this.KEYS.resetSeenAt)) || 0,
-            // Kept for machines still on 6.1, which read only this one.
-            runSyncedAt:  Date.now()
+            // For machines still on 6.1, which read ONE shared stamp and use
+            // it only to DELETE a local run when the payload's slot is empty.
+            // Sending the upload moment here kept the flagship bug of this
+            // release alive across versions: a 6.1.1 machine playing one
+            // quick day said "no week, as of now", and a 6.1.0 reader deleted
+            // five days of play on the strength of it. The MINIMUM of the two
+            // slot stamps is the most a shared field can honestly claim - a
+            // 6.1.0 reader then clears only runs older than both slots, and a
+            // slot this machine never touched (stamp 0) protects everything.
+            runSyncedAt:  Math.min(daySyncedAt, weekSyncedAt)
         };
     },
 
@@ -1789,24 +1808,22 @@ export const core = {
         // An ending is already queued - checking again would duplicate it
         if (this.state.pendingEnd) return;
 
-        // Endings END the chain; a rescue and a warning do not.
+        // One box at a time, and nothing gets lost.
         //
-        // All five used to be one else-if strand, which reads well and was
-        // wrong twice: the ticket warning (C) and both valves (A, E) leave
-        // without queueing anything, and everything BELOW them - clocking off
-        // above all - was then skipped for that pass. One action that crossed
-        // 16:30 and pushed you to seven tickets showed the warning and left
-        // the day running: the result button said WEITER, and the free action
-        // that followed could not kill you any more, because the next pass
-        // short-circuits on the pendingEnd this one had finally queued - with
-        // recordDayResult('survived') already booked. So the ranking stays
-        // (rage > tickets > clock > radar), but only a real ending returns.
-        //
-        // Every 16:30 test in week-flow.test.mjs used to set ticketWarning
-        // beforehand to step around exactly this.
+        // Two rules shape this chain since 6.1.1. First: an ending queued on
+        // ANY pass is shown - reset() checks pendingEnd, so the old failure
+        // (the warning ate the pass, closing it queued the end, and the
+        // WEITER button then dropped it on the floor) cannot happen. Second:
+        // a branch that shows a modal ends the pass - showModal owns a single
+        // box, and letting the chain run on painted the chef warning straight
+        // over the rage valve's explanation when one action crossed both
+        // thresholds. Closing any modal re-runs this chain (closeModal ->
+        // updateUI), so the boxes come one after the other and the ending
+        // arrives last. Ranking unchanged: rage > tickets > clock > radar.
 
-        // A. AUSRASTER - the valve rescues, and the day carries on being checked
-        if (this.state.al >= 100 && !this.openRageValve()) {
+        // A. AUSRASTER
+        if (this.state.al >= 100) {
+            if (this.openRageValve()) return;      // rescued - the valve box has the stage
             this.queueEnd({
                 title: { k: 'end.rageTitle' },
                 lead: this.weekFailLead({ k: 'end.rageQuit' }),
@@ -1823,11 +1840,12 @@ export const core = {
             });
             return;
         }
-        // C. Early warning at seven tickets. A NOTICE, not an ending - it says
-        // its piece and lets the rest of the chain run.
+        // C. Early warning at seven tickets. A notice, not an ending - but it
+        // holds the stage like one; the re-check on closing carries on here.
         if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal(t('warning.title'), t('warning.ticketJam'), false);
+            return;
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
         if (this.state.time >= 16 * 60 + 30) {
@@ -1950,7 +1968,17 @@ export const core = {
         if (!endData?.partyKey) return;
         this.state.pendingEnd = null; // clear the marker
 
-        await ensure('party');
+        try { await ensure('party'); }
+        catch {
+            // The claim rolls BACK on a failed fetch. Claimed and not
+            // restored, one offline blip ate the marker and the pink
+            // FEIERABEND button clicked into nothing for the rest of the
+            // run - the claim protects against a double click, the rollback
+            // keeps the button alive for a retry.
+            this.state.pendingEnd = endData;
+            this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
+            return;
+        }
         if (this.state.isPartyMode) return;   // a second continuation lost the race
 
         // The one end path that did not do what finishGame does. A chain or
