@@ -2343,6 +2343,14 @@ await ok('Mails and items are drawn on the day curve', async () => {
     engine.resolveEmail({ t: 'ignore', ignoreEmail: true, b: 10 }, false);
     assert.equal(state.statHistory.length, beforeMail + 1, 'the mail left no point behind');
 
+    // The TIMED-OUT letter too - the branch the first pass missed, and the
+    // laziest radar source of all.
+    state.isEmailOpen = true;
+    state.email = { id: 'probe2', opts: [] };
+    const beforeTimeout = state.statHistory.length;
+    engine.resolveEmail(null, true);
+    assert.equal(state.statHistory.length, beforeTimeout + 1, 'the expired mail left no point behind');
+
     resetState();
     await ensure('items');
     const movesStats = Object.keys(DB.items).find(id => {
@@ -2377,17 +2385,20 @@ await ok('No component writes a finished sentence into the log', () => {
 await ok('A ticket warning does not swallow the end of the day', () => {
     // The one combination every other 16:30 test steps around by setting
     // ticketWarning beforehand: ONE action crosses closing time AND pushes the
-    // pile to seven. The warning is a notice; the day still has to end.
+    // pile to seven. Since the one-box-at-a-time rework the warning holds the
+    // stage for its pass; closing it re-runs the chain (closeModal ->
+    // updateUI), and reset()'s pendingEnd guard shows what that queues. The
+    // second call below IS that re-run.
     resetState();
     state.ticketWarning = false;
     state.tickets = 7;
     state.time = 16 * 60 + 30;
 
     engine.checkEndConditions();
-
-    // showModal is a bare stub in this harness; the flag is what the warning
-    // leaves behind either way.
     assert.equal(state.ticketWarning, true, 'the warning did not fire at all');
+    assert.equal(state.pendingEnd, null, 'an ending was queued behind the open warning box');
+
+    engine.checkEndConditions();                 // the re-check on closing
     assert.ok(state.pendingEnd, 'the warning ate the chain and the day ran on');
     assert.equal(state.pendingEnd.cause, 'time');
 });
@@ -2401,6 +2412,7 @@ await ok('The same holds for a week night', () => {
     state.time = 16 * 60 + 30;
 
     engine.checkEndConditions();
+    engine.checkEndConditions();                 // the re-check on closing
     assert.ok(state.pendingEnd, 'the night was skipped');
     assert.equal(state.pendingEnd.isNight, true);
 });
@@ -2413,10 +2425,78 @@ await ok('The rage valve rescues without hiding closing time', async () => {
     state.time = 16 * 60 + 30;
 
     engine.checkEndConditions();
-
     assert.ok(state.al < 100, 'the valve did not open - this proves nothing');
+    assert.equal(state.pendingEnd, null, 'an ending was queued behind the valve box');
+
+    engine.checkEndConditions();                 // the re-check on closing
     assert.ok(state.pendingEnd, 'the valve swallowed closing time');
     assert.equal(state.pendingEnd.cause, 'time');
+});
+
+await ok('Two thresholds in one action show two boxes, one after the other', async () => {
+    // The regression the release review caught: with the chain falling
+    // through, one action pushing BOTH al and cr to 100 painted the chef
+    // warning straight over the rage valve's explanation - showModal owns a
+    // single box. One box per pass now; the re-check brings the next.
+    resetState();
+    await ensure('special');
+    state.rageWarningReceived = false;
+    state.chefWarningReceived = false;
+    state.al = 100;
+    state.cr = 100;
+
+    engine.checkEndConditions();
+    assert.equal(state.rageWarningReceived, true, 'the valve did not take the first pass');
+    assert.equal(state.chefWarningReceived, false, 'the chef warning painted over the valve box');
+
+    engine.checkEndConditions();                 // the re-check on closing
+    assert.equal(state.chefWarningReceived, true, 'the chef warning never got its turn');
+    assert.equal(state.pendingEnd, null, 'a rescued day queued an ending anyway');
+});
+
+await ok('The streak break travels between two machines', () => {
+    // streak and weekStreak are the two counters that legitimately FALL -
+    // max() made a failed day vanish: the fail uploaded 0, the other machine
+    // answered with its remembered 12, and the unbroken streak came back.
+    const merged = engine.mergeArchives(
+        { stats: { streak: 12, weekStreak: 3, daysSurvived: 50 } },
+        { stats: { streak: 0,  weekStreak: 0, daysSurvived: 48 } });
+    assert.equal(merged.stats.streak, 0, 'the streak break was eaten by max()');
+    assert.equal(merged.stats.weekStreak, 0, 'the week streak break was eaten');
+    assert.equal(merged.stats.daysSurvived, 50, 'a cumulative counter stopped uniting');
+});
+
+await ok('The legacy stamp cannot delete what this machine never touched', () => {
+    // 6.1.0 readers use runSyncedAt only to DELETE a local run when the
+    // payload's slot is empty. Sending Date.now() there kept the flagship bug
+    // of this release alive across versions; the minimum of the two slot
+    // stamps is the most a shared field can honestly claim.
+    resetState();
+    store.set('layer8_day', '{"savedAt":5000}');    // day live, week never played
+    const p = engine.buildCloudPayload();
+    assert.equal(p.runSyncedAt, 0, 'an untouched slot no longer protects the other machine');
+
+    // Both slots really finished off: the shared stamp may clean up, but only
+    // as far as the OLDER of the two.
+    resetState();
+    store.set('layer8_day_cleared', '3000');
+    store.set('layer8_week_cleared', '9000');
+    assert.equal(engine.buildCloudPayload().runSyncedAt, 3000);
+});
+
+await ok('A failed pool fetch rolls its claim back', () => {
+    // Behaviourally unreachable in this harness (the pools are warm), so the
+    // rollback is held against the source: the claim before the await guards
+    // the double click, the rollback in the catch keeps the button alive.
+    const weekSrc = readFileSync(new URL('../src/engine/engine_week.js', import.meta.url), 'utf-8');
+    const meeting = weekSrc.slice(weekSrc.indexOf('triggerMeeting: async function'));
+    assert.ok(/catch[\s\S]{0,400}?meetingDone = false/.test(meeting),
+              'triggerMeeting keeps its claim on a failed fetch - the button dies');
+
+    const coreSrc = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const party = coreSrc.slice(coreSrc.indexOf('startParty: async function'));
+    assert.ok(/catch[\s\S]{0,400}?pendingEnd = endData/.test(party),
+              'startParty keeps its claim on a failed fetch - the gala button dies');
 });
 
 await ok('reset() shows a queued ending instead of going idle', () => {
@@ -2849,7 +2929,7 @@ await ok('The newer run wins, the older overwrites nothing', () => {
     assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 3, 'not carried over');
 
     engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":4},"savedAt":5000}', 6000);
-    assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 4, 'neuerer Stand ignoriert');
+    assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 4, 'a newer state was ignored');
 
     engine.adoptCloudRun('layer8_week', '{"week":{"dayIndex":1},"savedAt":10}', 20);
     assert.equal(JSON.parse(store.get('layer8_week')).week.dayIndex, 4, 'the older state won');
