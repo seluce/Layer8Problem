@@ -1,4 +1,4 @@
-// Runs every scenario of tools/dev-woche.js against the real engine modules,
+// Runs every scenario of tools/dev-week.js against the real engine modules,
 // so a broken console helper is caught here and not in Ferris' browser.
 // Run: node --conditions browser --import ./test/register.mjs test/dev-script.test.mjs
 import assert from 'node:assert/strict';
@@ -59,7 +59,7 @@ const engine = {
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { cb(); }, closeSettings() {}, updatePhoneVisibility() {},
     checkForNews() {}, log() {}, unlockAchievement() {},
-    generateDiaryEntry: () => 'Tagebuch-Stub',
+    generateDiaryEntry: () => 'diary stub',
 };
 window.engine = engine;
 
@@ -79,7 +79,7 @@ const reset = () => {
 // Path is relative to this file, so a clean checkout runs it too - it used to
 // point at a session working directory that does not exist in the repository.
 reset();
-const src = readFileSync(new URL('./dev-woche.js', import.meta.url), 'utf-8');
+const src = readFileSync(new URL('./dev-week.js', import.meta.url), 'utf-8');
 new Function(src)();
 const dev = window.dev;
 assert.ok(dev, 'dev was not created');
@@ -228,9 +228,9 @@ await ok('dev.gala() meets the requirements and opens the gala node', async () =
     dev.meeting();
     await new Promise(r => setTimeout(r, 30));
     const ev = calls.terminal[0];
-    const quelle = DB.meetings.find(m => m.id === ev.id);
-    if (quelle.startNodeGala) {
-        assert.equal(ev.startNode, quelle.startNodeGala, 'the meeting should open on the gala node');
+    const source = DB.meetings.find(m => m.id === ev.id);
+    if (source.startNodeGala) {
+        assert.equal(ev.startNode, source.startNodeGala, 'the meeting should open on the gala node');
     }
 });
 await ok('after dev.gala() the Friday ends in the party, not in the balance sheet', () => {
@@ -241,15 +241,22 @@ await ok('after dev.gala() the Friday ends in the party, not in the balance shee
 });
 
 console.log('Saves:');
-await ok('dev.backup()/dev.restore() put the keys back', () => {
+await ok('dev.backup()/dev.restore() put all three keys back', () => {
     reset();
     dev.day(2, 'normal');
     engine.saveWeek();
-    const vorher = store.get('layer8_week');
+    // The day key is seeded by hand: dev.day() runs the week, not a day, and
+    // the point is that restore() writes the key back at all - up to 6.1.1 it
+    // read a stale field name and DELETED the day state instead.
+    store.set('layer8_day', '{"probe":true}');
+    const weekBefore = store.get('layer8_week');
+    const dayBefore = store.get('layer8_day');
     dev.backup();
     store.delete('layer8_week');
+    store.delete('layer8_day');
     dev.restore();
-    assert.equal(store.get('layer8_week'), vorher);
+    assert.equal(store.get('layer8_week'), weekBefore);
+    assert.equal(store.get('layer8_day'), dayBefore);
 });
 await ok('dev.dropWeek() discards the week', () => {
     reset();

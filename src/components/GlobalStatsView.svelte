@@ -35,6 +35,14 @@
     ];
 
     let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
+    // Re-read the shared tab on every open: openGlobalStats() replaces
+    // game.globalStats each time, which makes it the open signal. The
+    // one-time initializer above only synced the two panels across app
+    // restarts, not within a session.
+    $effect(() => {
+        game.globalStats;
+        mode = localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day';
+    });
     const setMode = (key) => {
         mode = key;
         try { localStorage.setItem(KEYS.statsTab, key); } catch { /* private mode */ }

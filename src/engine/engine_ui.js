@@ -1,4 +1,5 @@
-import { KEYS, PROGRESS_KEYS } from './keys.js';
+import { KEYS } from './keys.js';
+import { formatClock, freshArchive } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -9,6 +10,46 @@ import { recipeKey, renderRecipe } from './recipe.js';
 const LOG_MAX_ENTRIES = 50;
 
 export const ui = {
+
+    /**
+     * The captions of the two reset buttons, which no mark can write.
+     *
+     * Both spans carry a data-i18n mark for their RESTING text, and
+     * applyStaticStrings() overwrites every marked element on a language
+     * switch - unconditionally, which is the point of a mark. These two say
+     * something the mark cannot know:
+     *
+     *   - the soft reset restarts the WEEK in a week, not "the day at 08:00",
+     *     and the mark puts the day wording back;
+     *   - the hard reset is a two-step button. Armed, it asks "are you sure?"
+     *     while `dataset.armed` says true. The mark restored the calm caption
+     *     and left the flag standing, so the next click deleted the save
+     *     WITHOUT the second question.
+     *
+     * So they are dressed here, from openSettings and again after every
+     * switch. Disarming rather than re-asking is deliberate: after a repaint
+     * the visible button is the calm one, and the state now matches it.
+     */
+    dressResetButtons: function() {
+        // In a week the button does not restart "the day at 08:00" - it
+        // returns to the last night checkpoint, which can be a different
+        // weekday entirely. Saying 08:00 there would be a plain lie.
+        const title = document.getElementById('text-soft-reset');
+        const sub = document.getElementById('sub-soft-reset');
+        const inWeek = this.state.week.active;
+        if (title) title.innerText = t(inWeek ? 'settings.softReset.week' : 'settings.softReset.day');
+        if (sub) sub.innerText = t(inWeek ? 'settings.softReset.weekSub' : 'settings.softReset.sub');
+
+        const resetBtn = document.getElementById('btn-hard-reset');
+        if (resetBtn) {
+            resetBtn.dataset.armed = "false";
+            const textSpan = document.getElementById('text-hard-reset');
+            const iconSpan = document.getElementById('icon-hard-reset');
+            if (textSpan) textSpan.innerText = t('settings.hardReset.short');
+            if (iconSpan) iconSpan.className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
+            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
+        }
+    },
 
     // --- NEWS TICKER ---
     checkForNews: function() {
@@ -316,15 +357,12 @@ export const ui = {
         if (this.state.lastLogMsg === key) return;
         this.state.lastLogMsg = key;
 
-        const h = Math.floor(this.state.time / 60);
-        const m = this.state.time % 60;
-
         // Rendered by components/LogFeed.svelte. The id only has to be unique
         // for the keyed each block, so a counter is enough.
         this.state.logEntries.push({
             ...entry,
             id: this._logId = (this._logId || 0) + 1,
-            time: `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`,
+            time: formatClock(this.state.time),
             color: colorClass || ''
         });
 
@@ -574,6 +612,7 @@ export const ui = {
         }
 
         this.state.excusesLeft--;
+        this.state.excusesUsed = (this.state.excusesUsed ?? 0) + 1;   // the diary counts lies told
 
         // Spent: the next event deals a new one. Without this the same text
         // would come back if the engine draws this event again later - fleeing
@@ -683,6 +722,12 @@ export const ui = {
         const src = DB.intranet;
         if (!src) return;
 
+        // Drawn fresh on every visit, so a second look at the same page is not
+        // the same page. What is drawn is an INDEX - the row itself is looked
+        // up while the page is painted, see engine/intranet_pages.js.
+        const pick = (n) => Math.floor(Math.random() * n);
+        const order = (n) => [...Array(n).keys()].sort(() => Math.random() - 0.5);
+
         const rep = this.state.reputation ?? {};
         const flags = this.state.storyFlags ?? {};
         const stats = this.state.archive?.stats ?? {};
@@ -698,46 +743,45 @@ export const ui = {
         // Employee of the month. 20 is the FRIENDLY threshold the team view
         // uses; below it the award is not given. If the whole house is on your
         // side, the jury runs out of alternatives.
-        let employee;
-        if (values.every(v => v >= 20)) {
-            employee = { ...src.employeeSelf, self: true };
-        } else if ((rep[best] ?? 0) >= 20) {
-            employee = { name: best, ...src.employee[best] };
-        } else {
-            employee = { name: src.employeeNone.title, role: '', reason: src.employeeNone.reason, none: true };
-        }
+        const employee = values.every(v => v >= 20) ? { kind: 'self' }
+                       : (rep[best] ?? 0) >= 20     ? { kind: 'best', name: best }
+                       : { kind: 'none' };
 
-        // Feed: everything you caused today first, filled up to four.
-        const reactive = src.feed.filter(p => p.reqStory && flags[p.reqStory]);
-        const general = src.feed.filter(p => !p.reqStory)
-                                .sort(() => Math.random() - 0.5)
-                                .slice(0, Math.max(2, 4 - reactive.length));
-        const feed = [...reactive, ...general].slice(0, 4);
+        // Feed: everything you caused today first, filled up to four. Indices
+        // into src.feed, so the row is found again in either tree.
+        const reactiveIdx = src.feed.map((p, i) => [p, i])
+                                    .filter(([p]) => p.reqStory && flags[p.reqStory])
+                                    .map(([, i]) => i);
+        const generalIdx = src.feed.map((p, i) => [p, i]).filter(([p]) => !p.reqStory).map(([, i]) => i);
+        const feed = [...reactiveIdx,
+                      ...order(generalIdx.length)
+                          .slice(0, Math.max(2, 4 - reactiveIdx.length))
+                          .map(i => generalIdx[i])].slice(0, 4);
 
         // Days without an incident in the server room. Zero on most days.
         // The personnel file knows nothing about modes - see careerStats().
-        const career = engine.careerStats();
+        //
+        // `this`, not the window global: engine_ui does not import the engine,
+        // so this line reached for window.engine and made the whole function
+        // untestable outside a browser. Every module is spread into the one
+        // engine object, so `this` is the same thing - minus the global.
+        const career = this.careerStats();
         const streak = career.streak;
-        const incident = src.incident.find(i => streak >= i.min) ?? src.incident.at(-1);
-
-        // Everything drawn fresh on every visit, so a second look at the same
-        // page is not the same page.
-        const draw = (pool) => pool[Math.floor(Math.random() * pool.length)];
+        const incidentIdx = Math.max(0, src.incident.findIndex(i => streak >= i.min));
 
         // Key figure of the day. Anyone playing without a ticket counter must not
         // get it back here - the company simply withholds the figure, which is
         // exactly what it would do.
         const tickets = this.state.tickets ?? 0;
         const kpi = this.state.blindTickets
-            ? { value: src.kpi.blind.value, text: src.kpi.blind.text }
-            : { value: String(tickets), text: (src.kpi.levels.find(l => tickets >= l.min) ?? src.kpi.levels.at(-1)).text };
+            ? { blind: true }
+            : { blind: false, tickets,
+                levelIdx: Math.max(0, src.kpi.levels.findIndex(l => tickets >= l.min)) };
 
         // The canteen plan hangs there all week; only the issue line knows the
         // time of day.
-        const t = this.state.time ?? 0;
-        const service = { ...(t < 11 * 60 + 45 ? src.service.before
-                            : t <= 13 * 60 + 15 ? src.service.open
-                            : src.service.after) };
+        const clock = this.state.time ?? 0;
+        const service = clock < 11 * 60 + 45 ? 'before' : clock <= 13 * 60 + 15 ? 'open' : 'after';
 
         const dayKey = this.difficultyKey();
         // An id, not a weekday name: the canteen highlights today by
@@ -746,87 +790,67 @@ export const ui = {
         // highlight, nothing to notice.
         const today = dayKey === 'easy' ? 'fri' : dayKey === 'hard' ? 'mon' : 'wed';
 
-        // Human Capital: Müller's own file.
-        const loyalty = src.hr.loyalty.find(l => average >= l.min) ?? src.hr.loyalty.at(-1);
+        // Human Capital: Müller's own file. Condition here, wording in
+        // data_intranet.js - so only the KEY and the number travel.
         const notes = [];
-        const push = (tone, title, text) => notes.push({ tone, title, text });
+        if (career.warningsChef)    notes.push({ key: 'warningsChef', count: career.warningsChef });
+        if (career.rage)            notes.push({ key: 'rage', count: career.rage });
+        if (career.ventSaves)       notes.push({ key: 'ventSaves', count: career.ventSaves });
+        if (career.streakBest >= 3) notes.push({ key: 'streakBest', count: career.streakBest });
+        if (career.survived)        notes.push({ key: 'survived', count: career.survived });
 
-        // Condition here, wording in data_intranet.js. Both used to live in
-        // this file, which meant five paragraphs of HR prose sat in the engine.
-        const note = (key, count) => {
-            const n = src.hr.careerNotes?.[key];
-            if (n) push(n.tone, n.title.replace('{count}', count), n.text);
-        };
-        if (career.warningsChef) note('warningsChef', career.warningsChef);
-        if (career.rage)         note('rage', career.rage);
-        if (career.ventSaves)    note('ventSaves', career.ventSaves);
-        if (career.streakBest >= 3) note('streakBest', career.streakBest);
-        if (career.survived)     note('survived', career.survived);
-        if (!notes.length) push(src.hr.traitsNone.tone, src.hr.traitsNone.title, src.hr.traitsNone.text);
-
+        // IDENTITIES ONLY - no prose past this point.
+        //
+        // Up to 6.1.1 this object held the finished rows out of the tree, and
+        // it was built on opening and never again: a language switch changed
+        // the browser frame and left three hundred lines of page text in the
+        // old language. Now it says WHICH row, and components/intranet/ looks
+        // the words up through tree() while it draws. A page added later is
+        // safe by construction, and week-flow.test refuses any prose that
+        // finds its way back in here.
         this.state.intranetData = {
             employee,
             feed,
-            incident: { days: streak, note: incident.note },
-            // The fixed frame of the start page. Not reactive, but the
-            // component reads one object rather than two sources.
-            dashboard: { page: src.dashboard.page },
-            vision_quote: draw(src.visions),
-            status: [...src.status].sort(() => Math.random() - 0.5).slice(0, 3),
+            incident: { days: streak, idx: incidentIdx },
+            visionQuote: pick(src.visions.length),
+            status: order(src.status.length).slice(0, 3),
             kpi,
 
             chantal: {
-                top: average >= 20 ? src.chantal.high : average <= -20 ? src.chantal.low : null,
-                older: draw(src.chantal.older),
-                page: src.chantal.page
+                top: average >= 20 ? 'high' : average <= -20 ? 'low' : null,
+                olderIdx: pick(src.chantal.older.length),
             },
 
             vision: {
-                extra: done.includes('ach_wolf') ? src.vision.boss
-                     : (rep['Dr. Wichtig'] ?? 0) >= 20 ? src.vision.good
-                     : (rep['Dr. Wichtig'] ?? 0) <= -20 ? src.vision.bad
+                extra: done.includes('ach_wolf') ? 'boss'
+                     : (rep['Dr. Wichtig'] ?? 0) >= 20 ? 'good'
+                     : (rep['Dr. Wichtig'] ?? 0) <= -20 ? 'bad'
                      : null,
-                note: done.includes('ach_hacker') ? src.vision.editorNote : null,
-                page: src.vision.page
+                note: done.includes('ach_hacker'),
             },
 
             sales: {
-                extra: (rep['Markus'] ?? 0) >= 20 ? src.sales.good
-                     : (rep['Markus'] ?? 0) <= -20 ? src.sales.bad
+                extra: (rep['Markus'] ?? 0) >= 20 ? 'good'
+                     : (rep['Markus'] ?? 0) <= -20 ? 'bad'
                      : null,
-                phoenix: flags['path_phoenix_storno'] ? src.sales.phoenix : null,
-                page: src.sales.page
+                phoenix: !!flags['path_phoenix_storno'],
             },
 
-            kantine: {
-                page: src.kantine.page,
-                today,
-                service,
-                hygiene: draw(src.hygiene),
-                done: this.state.lunchDone ? src.service.done : null
-            },
+            kantine: { today, service, hygieneIdx: pick(src.hygiene.length), done: !!this.state.lunchDone },
 
             impressum: {
                 version: src.impressum.baseVersion + (stats.daysStarted ?? 0),
-                note: src.impressum.versionNote,
-                clause: src.impressum.clauses.find(c => (stats.daysRageQuit ?? 0) >= c.minRage) ?? null,
-                // The static paragraphs, handed through unchanged. They do not
-                // react to anything - they are here because the component reads
-                // one object, not two sources.
-                page: src.impressum.page
+                clauseIdx: (() => {
+                    const i = src.impressum.clauses.findIndex(c => (stats.daysRageQuit ?? 0) >= c.minRage);
+                    return i < 0 ? null : i;
+                })(),
             },
 
             hr: {
-                page: src.hr.page,
-                policy: src.hr.policy,
-                support: src.hr.support,
                 probation: Math.min(14, Math.max(1, stats.daysStarted ?? 1)),
-                salary: src.hr.salary,
-                salaryNote: src.hr.salaryNote,
-                loyalty,
+                loyaltyIdx: Math.max(0, src.hr.loyalty.findIndex(l => average >= l.min)),
                 notes,
-                documents: src.hr.documents
-            }
+            },
         };
     },
 
@@ -898,10 +922,10 @@ export const ui = {
             // Laziness is always green
             color = 'text-green-400 drop-shadow-[0_0_10px_rgba(74,222,128,0.8)]';
         } else if (elementId === 'val-al') {
-            // Aggro = Immer Orange
+            // Aggro is always orange
             color = 'text-orange-400 drop-shadow-[0_0_10px_rgba(251,146,60,0.8)]';
         } else if (elementId === 'val-cr') {
-            // Chef/Radar = Immer Rot
+            // Boss radar is always red
             color = 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]';
         }
 
@@ -1051,15 +1075,20 @@ export const ui = {
 
         let i = 0;
         
+        // Every step stores its handle in state.bootTimer (registered in
+        // DAY_TIMERS): unregistered, the chain could not be stopped - a
+        // restart during the boot animation ran two chains at once,
+        // interleaving their lines and ending in a double reset().
         const printLine = () => {
             if (i < bootLines.length) {
                 this.state.bootLines.push(bootLines[i]);
                 i++;
                 // Between 300 and 600 milliseconds per line
-                setTimeout(printLine, 300 + Math.random() * 300);
+                this.state.bootTimer = setTimeout(printLine, 300 + Math.random() * 300);
             } else {
                 // Hold for 1.5 seconds so the last line can be read
-                setTimeout(() => {
+                this.state.bootTimer = setTimeout(() => {
+                    this.state.bootTimer = null;
                     this.state.activeEvent = false;
                     this.disableButtons(false);
                     if (callback) callback();
@@ -1179,7 +1208,7 @@ export const ui = {
 
                 const data = JSON.parse(jsonString);
 
-                // Validierung
+                // Validation
                 if (!data.arc || !Array.isArray(data.arc.items)) {
                     // Never reaches the player: the catch below logs this and
                     // shows import.unreadable instead. A console message, so
@@ -1269,35 +1298,48 @@ export const ui = {
     triggerHardReset: function(btn) {
         if (btn.dataset.armed === "true") {
             // Step 2: execute.
-            // This used to remove a non-existent 'tutorialSeen' key, which meant a
-            // hard reset wiped the archive but left the tutorial marked as done.
-            // The list is no longer kept here: PROGRESS_KEYS in keys.js is the
-            // one place that says what a reset removes, which is what that file
-            // claimed all along while this function maintained its own copy.
-            // Deliberately NOT in it: keyBinds and every settings and audio key.
-            // A hard reset wipes the save, not the preferences of the person in
-            // front of the screen.
-            for (const key of PROGRESS_KEYS) localStorage.removeItem(key);
+            //
+            // The tombstone comes FIRST, because the payload below reads it.
+            // Emptying the cloud is not enough since the union rewrite:
+            // "empty" reads as "nothing to add", the other machine kept its
+            // full archive, uploaded it, and the next launch here brought the
+            // career back - the button deleted nothing, politely. The
+            // timestamp travels with every payload from now on, and each
+            // machine applies it exactly once (engine_core.adoptCloudReset).
+            localStorage.setItem(KEYS.resetSeenAt, String(Date.now()));
 
-            // The interrupted workday goes too. Without this the reload would
-            // offer to resume a day that belongs to the save just wiped - and
-            // the day carries its own copy of the reputation, so finishing it
-            // would write part of the old progress back into the empty archive.
-            engine.clearDay();
+            // One routine for the wipe, shared with the machine on the OTHER
+            // side of the tombstone. PROGRESS_KEYS is the single list of what
+            // a reset removes; settings, audio and key bindings survive on
+            // purpose - a reset wipes the save, not the preferences of the
+            // person in front of the screen.
+            engine.wipeProgress();
 
-            // Push the emptied state to cloud storage as well, otherwise the
-            // next launch would pull the old archive straight back in.
-            engine.state.archive = { items: [], achievements: [], achievementDiffs: {}, reputation: {}, stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 } };
+            // The in-memory archive too, and out of the one factory: the
+            // hand-built literal that stood here dropped seenEvents,
+            // seenFlags, knowledgeRead and the chronicle - harmless only
+            // because every reader guards, and exactly the hand-kept-list
+            // mistake PROGRESS_KEYS was invented against.
+            engine.state.archive = freshArchive();
             engine.state.defaultDiff = 'ask';
             engine.state.defaultWeekDiff = 'ask';
-            platform.save(engine.buildCloudPayload());
-            
+
+            // platform.save is fire-and-forget by contract, so the push is
+            // given a head start but not the power to block: the reload waits
+            // for it OR four seconds, whichever ends first. Before this it
+            // raced a one-second timer and usually won - usually.
+            const pushed = Promise.resolve(platform.save(engine.buildCloudPayload()))
+                .catch(() => { /* the local wipe stands either way */ });
+
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = t('settings.hardReset.restarting');
             
             btn.className = "w-full text-left px-4 py-3 bg-red-600 border border-red-500 rounded-lg text-white text-sm font-bold flex justify-center items-center mt-2 shadow-md";
             
-            setTimeout(() => location.reload(), 1000);
+            setTimeout(() => {
+                Promise.race([pushed, new Promise(r => setTimeout(r, 4000))])
+                    .then(() => location.reload());
+            }, 1000);
         } else {
             // Step 1: arm it.
             btn.dataset.armed = "true";
@@ -1339,26 +1381,10 @@ export const ui = {
             softResetBtn.classList.toggle('grayscale', locked);
             softResetBtn.disabled = locked;
 
-            // In a week the button does not restart "the day at 08:00" - it
-            // returns to the last night checkpoint, which can be a different
-            // weekday entirely. Saying 08:00 there would be a plain lie.
-            // In a week the button restarts the WEEK, not the day - the label
-            // has to say so, otherwise it promises the wrong scope.
-            const title = document.getElementById('text-soft-reset');
-            const sub = document.getElementById('sub-soft-reset');
-            const inWeek = this.state.week.active;
-            if (title) title.innerText = t(inWeek ? 'settings.softReset.week' : 'settings.softReset.day');
-            if (sub) sub.innerText = t(inWeek ? 'settings.softReset.weekSub' : 'settings.softReset.sub');
         }
         // -------------------------------------------------------------
-        
-        const resetBtn = document.getElementById('btn-hard-reset');
-        if (resetBtn) {
-            resetBtn.dataset.armed = "false";
-            document.getElementById('text-hard-reset').innerText = t('settings.hardReset.short');
-            document.getElementById('icon-hard-reset').className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
-        }
+
+        this.dressResetButtons();
 
         const mainView = document.getElementById('menu-main-view');
         const settingsView = document.getElementById('menu-settings-view');
@@ -1456,7 +1482,7 @@ export const ui = {
      * Untouched: the save, the archive, achievements and the running day.
      */
     resetSettings: function() {
-        // Anzeige & Layout
+        // Display & layout
         this.setTextSize('normal');
         this.toggleCompactMode(false);
         this.toggleAutoHidePhone(false);
@@ -1470,7 +1496,7 @@ export const ui = {
         this.toggleOneClick(false);
         this.toggleAutoChart(false);
 
-        // Herausforderung
+        // Challenge
         this.toggleBlindStats(false);
         this.toggleBlindTickets(false);
 
@@ -1737,9 +1763,7 @@ export const ui = {
             // greppable no matter who filed it. Nothing here goes through t().
             const s = this.state || {};
             const min = s.time || 480;
-            const hh = Math.floor(min / 60).toString().padStart(2, '0');
-            const mm = (min % 60).toString().padStart(2, '0');
-            const prettyTime = `${hh}:${mm}`;
+            const prettyTime = formatClock(min);
             // inventory holds objects, not ids - joining it straight produced
             // a list of [object Object] in every report so far.
             const invList = s.inventory?.length ? s.inventory.map(i => i.id).join(", ") : "(empty)";
@@ -1753,9 +1777,12 @@ export const ui = {
                        : "normal";
 
             // --- FIND THE LAST EVENT ---
+            // activeEvent is a BOOLEAN; the id lives in currentEventId - the
+            // old `s.activeEvent?.id` could never match, so the one fact a
+            // reporter is on (which event broke) never reached the ticket.
             let lastEventID = "no data";
-            if (s.activeEvent?.id) lastEventID = s.activeEvent.id + " (active)";
-            else if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (phone)";
+            if (s.currentPhoneEvent?.id) lastEventID = s.currentPhoneEvent.id + " (phone)";
+            else if (s.currentEventId) lastEventID = s.currentEventId + (s.activeEvent ? " (active)" : " (last)");
             else if (s.storyFlags && Object.keys(s.storyFlags).length > 0) {
                 const flags = Object.keys(s.storyFlags);
                 lastEventID = flags[flags.length - 1] + " (last flag)";
@@ -1765,8 +1792,12 @@ export const ui = {
             let logText = "(log empty)";
 
             if (this.state.logEntries.length > 0) {
+                // Through the resolver, not e.msg: since the recipe conversion
+                // an entry stores {k,v}/{ref} and no msg, so the report's log
+                // block was a chain of "undefined" - the maintainer's main
+                // diagnostic channel, empty.
                 let rawText = [...this.state.logEntries].reverse()
-                    .map(e => `[${e.time}] ${e.msg}`).join(" // ");
+                    .map(e => `[${e.time}] ${renderRecipe(e) ?? ''}`).join(" // ");
                 if (rawText.length > 2000) rawText = rawText.substring(0, 2000) + "...";
                 logText = rawText;
             }

@@ -11,14 +11,15 @@
   like.
 -->
 <script>
-    import { state as game } from '../../engine/engine_state.svelte.js';
+    import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const page = $derived(game.intranetData?.sales?.page ?? null);
+    const pages = $derived(intranetPages());
+    const page = $derived(pages?.sales?.page ?? null);
 
     // The extra entry follows Markus' standing with you, the cancelled
     // recurring meeting follows today's story flag. Reactive first, then the
     // printed wall.
-    const reactive = $derived([game.intranetData?.sales?.extra, game.intranetData?.sales?.phoenix].filter(Boolean));
+    const reactive = $derived([pages?.sales?.extra, pages?.sales?.phoenix].filter(Boolean));
     const deals = $derived([...reactive, ...(page?.deals ?? [])]);
 
     // Whole class names, mapped from a key. Never assembled from parts, and

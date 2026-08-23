@@ -1,4 +1,50 @@
-[6.1.0] - unreleased
+[6.1.1] - 2026-08-23
+
+Everything here is measured against 6.1. This update is a large one, and it is bug fixes from end to end - not a single new feature. 6.0 and 6.1 brought a lot of new ground: the second language, the week campaign, the compendium, the gala. What matters now is that all of it runs cleanly, rather than piling more on top of it.
+
+The rules of the game:
+* An action that crossed closing time and raised the ticket warning at the same moment left the day running - and the extra action that followed could no longer end it, however badly it went. Warnings have their say and the day ends anyway; the same held for the safety valve at full anger.
+* Mails now weigh the same as everything else: they quietly used a softer difficulty multiplier, shrank relief values on easy days, and their minutes never brought tickets.
+* Ignoring a mail logged a smaller radar penalty than the bar actually moved. One number now.
+* Phone-chat endings now cost the time they say and take the items they say - every ending used to cost a flat 15 minutes, and the prince's black card stayed in the backpack after returning his millions.
+* In week mode, the silent hotline still answered tickets: with the day's calls spent, clicking the idle line kept removing one ticket per click.
+* An ending caused purely by using an item was queued but only shown after the next unrelated event. It shows immediately now.
+* A consumable reward from a chat was silently dropped if you already carried one, and a snack morning could stuff an eleventh item into a full backpack.
+* The day curve ignored mails and items - a day that went badly wrong could show a chart with no spike in it, and the diary then called it calm.
+* The diary claimed a day without lies as soon as your excuse stock had grown overnight, even if you had just used one. The chronicle also accepts the pen on a fresh morning now.
+* "Sloth" was unreachable with laziness pinned at 100, and "High-Wire Act" was skipped when one long action carried the tickets straight from eight to ten. Both can be earned now.
+* On a day started from the picker, the team view's arrows stayed frozen at zero and the diary could never name who moved.
+
+Steam and a second machine:
+* Playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine stays played, and the chronicle no longer shows the same day twice.
+* Playing a single day on one machine could delete a week in progress on the other - five days of play gone. Each save slot carries its own timestamp now.
+* "Delete save permanently" deleted only the machine it was pressed on; the cloud quietly brought the career back. The reset now reaches every machine and is applied there exactly once.
+* Every survived week night was counted twice in the career statistics.
+* After a phone chat, no mail could ever follow and the Steam status still showed the previous activity.
+
+Switching language:
+* The company intranet, an open mail, an achievement notice, the chat's reply buttons, the summer party's hub text, Müller's handwritten chronicle entries and the backpack's log lines all follow a language switch now instead of standing still in the old one.
+* The item dialog follows too - its heading could even flip to the wrong question: "Use item" over a window whose button said Discard.
+* An unlucky moment could leave one event pool in the old language or empty for the rest of the session, and a quick double switch could end on the wrong language.
+* The news ticker restarted its scroll but not its clock, so the headline vanished mid-run - and its speed finally matches how long a headline stays.
+* Switching with the settings open put the calm caption back on an armed "delete save" button - the next click would have deleted the save without asking again. It disarms now. The restart button also stopped promising "the day at 08:00" during a week.
+
+Screen, sound and input:
+* The confirm key stopped working on end and night screens in 6.1, and could click through an open dialog onto the screen behind it.
+* A warning or ending raised while the backpack, the intranet or the noticeboard was open appeared invisibly behind it.
+* A day ending while a mail was open left the dead mail standing over the night screen, and answering it leaked into the finished day.
+* Returning to the title screen or into a week night while a mail was open could leave the keyboard shortcuts dead for the rest of the session.
+* Repairs around slow connections and fast clicks: a mail could open onto a finished day or into the gala, a double click on the lunch break, the weekly meeting or the party invitation drew twice or crashed the evening, and restarting during the boot animation ran two boot sequences at once.
+* A tab closed in the middle of the tutorial came back as a broken workday, and the excuse button could derail the lesson.
+* Damaged save data is refused instead of showing a clock reading NaN:NaN or breaking behind the resume dialog. In a browser's private mode the game plays on without saving instead of breaking mid-action, and a corrupted key binding no longer breaks every keypress.
+* Toggling the music off and quickly on again went permanently silent, and the volume slider could leave the music playing although it was switched off.
+* The backpack, team, knowledge, archive and settings buttons can be reached and pressed with the keyboard.
+* Small screen repairs: the hover zoom on a locked achievement no longer slides under its neighbours, the day/week choice is shared between archive and world statistics, "always show the curve" takes effect at the very next night screen, the knowledge book's top edge has its intended green, a damaged day curve draws a flat line instead of nothing, and the hint on an unfound archive item sits on solid ground instead of shining through its heading.
+* The bug-report form sends a readable log and names its event again.
+
+---
+
+[6.1.0] - 2026-08-20
 
 Everything here is measured against 6.0. This version is about stability: not much to see, and a few things that can no longer quietly break.
 

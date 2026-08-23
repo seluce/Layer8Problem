@@ -10,12 +10,10 @@
   between body and the grid and change the layout.
 -->
 <script>
-    import { state, TICKET_WARNING } from '../engine/engine_state.svelte.js';
+    import { state, TICKET_WARNING, formatClock } from '../engine/engine_state.svelte.js';
 
     import { t } from '../i18n/i18n.svelte.js';
-    const pad = (n) => String(n).padStart(2, '0');
-
-    const clock = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
+    const clock = $derived(formatClock(state.time));
 
     // Blind mode hides the numbers but not the bars — that is the point of it:
     // you still see roughly where you stand, just not exactly.

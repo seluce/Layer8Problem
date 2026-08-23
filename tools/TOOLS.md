@@ -17,7 +17,7 @@ the repository root.
 | Day simulator | `npm run sim [n] [--lang=en]` | before every balance decision (day) |
 | Week simulator | `npm run sim:week [n] [--lang=en]` | before every balance decision (week) |
 | Test suites | `npm test` | before every delivery |
-| Console tool | `tools/dev-woche.js` into the browser console | play testing on the live game |
+| Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
 | Parity checker | `npm run lint:parity` | after **every** translation, gate at 0 errors |
 | Field scanner | `node tools/scan-fields.mjs <pool> [--list] [--german] [--key=field]` | **proof of completeness** for a translation block, no gate |
@@ -279,7 +279,7 @@ engine modules, not against dummies.
 |---|---|
 | `week-foundation.test.mjs` | the foundation of the week module (state, transitions) |
 | `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed |
-| `dev-script.test.mjs` | every scenario of `dev-woche.js` against the real engine |
+| `dev-script.test.mjs` | every scenario of `dev-week.js` against the real engine |
 | `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER` |
 
 Sections in `week-flow` (sorted by topic): entering the mode, clocking off, the
@@ -296,7 +296,7 @@ findings, defaults, archive counters.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
 
-## 6. `dev-woche.js` — the console tool
+## 6. `dev-week.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
 `dev.help()` lists everything. Indispensable for the three-parters, because it

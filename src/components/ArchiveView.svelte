@@ -67,6 +67,13 @@
     ];
 
     let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
+    // Re-read the shared tab every time the archive opens. Both panels mount
+    // at boot, so the one-time initializer above only synced them across app
+    // restarts - a WEEK choice made in the other panel this session never
+    // arrived here.
+    $effect(() => {
+        if (game.archiveOpen) mode = localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day';
+    });
     const setMode = (key) => {
         mode = key;
         try { localStorage.setItem(KEYS.statsTab, key); } catch { /* private mode */ }
@@ -187,8 +194,16 @@
         })
     );
 
+    // Dimming a locked tile is done with per-colour alpha, NOT with `opacity`.
+    // The difference is not cosmetic: `opacity` applies to an element AND every
+    // descendant, and the tooltip is a child of the tile. With opacity-50 the
+    // box went half transparent along with it, so the "GEFUNDENE AUSRÜSTUNG"
+    // heading behind it bled through and neither was readable. Alpha on the
+    // individual colours dims exactly the tile - border, background, the "?" -
+    // and leaves the tooltip alone. The values are the old ones at half
+    // strength, so the grid looks as it did.
     const itemBorder = (unlocked, quest) => {
-        if (!unlocked) return 'border-slate-700 opacity-50 text-slate-600 bg-slate-900 border-dashed';
+        if (!unlocked) return 'border-slate-700/50 text-slate-600/50 bg-slate-900/50 border-dashed';
         return quest
             ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
             : 'border-slate-500/50 text-slate-200 bg-slate-800';
@@ -419,7 +434,13 @@
         <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {#each achievements as row (row.ach.id)}
+                <!-- md:hover:z-50 on the ROW: opacity-60 and grayscale on a
+                     locked card each open a stacking context, so the icon's
+                     own hover zoom (z-50 on the child) could never rise above
+                     LATER sibling cards and clipped mid-zoom. Lifting the
+                     hovered row itself puts the whole context on top. -->
                 <div class="flex gap-3 p-3 rounded-sm border transition-all hover:bg-slate-800 group relative
+                            md:hover:z-50
                             {row.unlocked ? `opacity-100 border-solid bg-slate-900/40 ${row.diff.border}` : 'border-slate-700 opacity-60 border-dashed grayscale bg-slate-950/30'}">
                     <div class={row.ach.img
                         ? 'w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50'

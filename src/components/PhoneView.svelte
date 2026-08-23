@@ -9,7 +9,7 @@
   Visibility() hides the whole phone when the "auto-hide" setting is on.
 -->
 <script>
-    import { state } from '../engine/engine_state.svelte.js';
+    import { state, formatClock } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
     import { t, tf, tree } from '../i18n/i18n.svelte.js';
@@ -30,8 +30,7 @@
     const sender  = (msg) => renderRecipe(msg?.sender) ?? '';
     const initial = (msg) => (sender(msg).charAt(0) || '?').toUpperCase();
 
-    const pad = (n) => String(n).padStart(2, '0');
-    const clock = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
+    const clock = $derived(formatClock(state.time));
 
     const hotkey = (index) => {
         if (!state.showHotkeys) return '';

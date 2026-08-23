@@ -48,7 +48,7 @@ tools/
   normalize-quotes.mjs  quotation marks, one-off
   make-steam-presence.mjs      friends-list strings for Steamworks
   make-steam-achievements.mjs  achievement strings for Steamworks
-  dev-woche.js          console tool for the week mode, see below
+  dev-week.js          console tool for the week mode, see below
   TOOLS.md              manual for everything in this folder
   *.test.mjs            four test suites, npm test (de and en)
   register.mjs          loader hook for the tests
@@ -185,7 +185,7 @@ day model does not silently shift the week calculation. The week's calibration
 sits inside it as the default, and `npm run sim:week` reproduces it without
 parameters.
 
-`dev-woche.js` is not imported but pasted into the browser console. After that
+`dev-week.js` is not imported but pasted into the browser console. After that
 `dev.` will produce any weekday, trigger the night screen or the Friday finale,
 unlock the gala, and clear up the counters that testing inevitably creates.
 

@@ -910,6 +910,6 @@ engine.pickFromPool = p => (engine.pickFromPool = _p, p.find(e => e.id === "srv_
 engine.trigger("server");   // "coffee", "calls" or "sidequest" for the other areas
 ```
 
-For the week mode there is more: paste `tools/dev-woche.js` into the console and
+For the week mode there is more: paste `tools/dev-week.js` into the console and
 `dev.help()` lists everything — produce any weekday, trigger the night, unlock
 the gala.

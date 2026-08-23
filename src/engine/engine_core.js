@@ -1,11 +1,11 @@
-import { KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
 import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay } from './engine_state.svelte.js';
+import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay, formatClock } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -16,6 +16,9 @@ const PARTY_START    = 17 * 60;
 const PARTY_END      = 23 * 60;
 const PARTY_STATIONS = 12;
 const PARTY_STEP     = (PARTY_END - PARTY_START) / PARTY_STATIONS;   // 30 minutes
+
+/** How many lines the company chronicle keeps. Shared with mergeArchives(). */
+const CHRONICLE_MAX = 12;
 
 export const core = {
 
@@ -44,6 +47,84 @@ export const core = {
             }
         }
         return target;
+    },
+
+    /**
+     * Union of two archives - cumulative career data, so nothing regresses:
+     * id lists unite, counters take the maximum, achievement grades keep the
+     * better rank. Reputation is the one part that legitimately moves both
+     * ways and has no timestamp to arbitrate with, so the machine you are on
+     * keeps its values and the cloud only fills names it does not know.
+     */
+    mergeArchives: function(local, cloud) {
+        const out = JSON.parse(JSON.stringify(local ?? {}));
+        const c = cloud ?? {};
+
+        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags']) {
+            const list = Array.isArray(out[key]) ? out[key] : (out[key] = []);
+            const seen = new Set(list.map(x => JSON.stringify(x)));
+            for (const x of (Array.isArray(c[key]) ? c[key] : [])) {
+                const id = JSON.stringify(x);
+                if (!seen.has(id)) { list.push(x); seen.add(id); }
+            }
+        }
+
+        // Counters only grow, so max() unites them - except the two that
+        // legitimately FALL: streak and weekStreak reset to 0 on a failure,
+        // and max() made that break vanish between two machines (the failed
+        // day uploaded 0, the other side answered with its remembered 12,
+        // and the unbroken streak travelled back). For these the cloud value
+        // wins outright - the cloud is the latest upload of whichever
+        // machine played last, which is what the pre-union overwrite got
+        // right for exactly this pair.
+        const FOLLOWS_LATEST = new Set(['streak', 'weekStreak']);
+        for (const key of ['stats', 'knowledgeRead']) {
+            const map = out[key] ?? (out[key] = {});
+            for (const [k, v] of Object.entries(c[key] ?? {})) {
+                if (key === 'stats' && FOLLOWS_LATEST.has(k)) map[k] = v;
+                else if (typeof v === 'number') map[k] = Math.max(map[k] ?? 0, v);
+                else if (!(k in map)) map[k] = v;
+            }
+        }
+
+        // The chronicle is NOT an id list, which is where it used to sit.
+        //
+        // An entry is { day, id, vars } with a RANDOMLY drawn id, so two
+        // machines writing a line for the same career day produce two objects
+        // that differ - the id union kept both and the book showed the same day
+        // twice. And the twelve-line cap trims one per ADD, so a merged book of
+        // twenty stayed at twenty for good.
+        //
+        // One line per day, the local one wins (as reputation does), then the
+        // cap is applied to the result.
+        const byDay = new Map();
+        for (const entry of (Array.isArray(c.chronicle) ? c.chronicle : [])) {
+            if (entry && typeof entry.day === 'number') byDay.set(entry.day, entry);
+        }
+        for (const entry of (Array.isArray(out.chronicle) ? out.chronicle : [])) {
+            if (entry && typeof entry.day === 'number') byDay.set(entry.day, entry);
+        }
+        out.chronicle = [...byDay.values()]
+            .sort((a, b) => a.day - b.day)
+            .slice(-CHRONICLE_MAX);
+
+        const RANK = { easy: 1, normal: 2, hard: 3 };
+        out.achievementDiffs = out.achievementDiffs ?? {};
+        for (const [id, diff] of Object.entries(c.achievementDiffs ?? {})) {
+            const cur = out.achievementDiffs[id];
+            if (!cur || (RANK[diff] ?? 1) > (RANK[cur] ?? 1)) out.achievementDiffs[id] = diff;
+        }
+
+        out.reputation = out.reputation ?? {};
+        for (const [k, v] of Object.entries(c.reputation ?? {})) {
+            if (!(k in out.reputation)) out.reputation[k] = v;
+        }
+
+        // Whatever a future version adds: local wins, the cloud fills gaps.
+        for (const [k, v] of Object.entries(c)) {
+            if (!(k in out)) out[k] = JSON.parse(JSON.stringify(v));
+        }
+        return out;
     },
 
     // async because the desktop build has to await its cloud save before the
@@ -128,9 +209,28 @@ export const core = {
         const cloud = await platform.load();
         if (!cloud) return;
 
+        // A reset recorded on another machine is applied FIRST, before the
+        // union below can lovingly restore what the player asked to have
+        // deleted. See adoptCloudReset().
+        this.adoptCloudReset(cloud.resetAt);
+
         if (cloud.archive) {
-            const template = JSON.parse(JSON.stringify(this.state.archive));
-            const merged = this.deepMerge(template, cloud.archive);
+            // Merged into the LOCAL archive, and by union rather than
+            // overwrite. The old code merged the cloud into the boot DEFAULTS
+            // (loadSystem has not run yet, state.archive is empty here) and
+            // wrote the result over localStorage - one fresh day on a second
+            // machine then uploaded a near-empty archive, and the next launch
+            // on the main machine regressed fifty days of achievements, items
+            // and chronicle to it. The archive is cumulative career data, so
+            // the union never regresses either side; adoptCloudRun's recency
+            // logic does not apply because there is no archive timestamp to
+            // compare.
+            let localArchive = null;
+            try { localArchive = JSON.parse(localStorage.getItem(this.KEYS.archive)); }
+            catch { /* corrupted local archive: treat as absent */ }
+            const base = this.deepMerge(JSON.parse(JSON.stringify(this.state.archive)),
+                                        localArchive ?? {});
+            const merged = this.mergeArchives(base, cloud.archive);
             localStorage.setItem(this.KEYS.archive, JSON.stringify(merged));
         }
 
@@ -140,12 +240,21 @@ export const core = {
         // every single launch.
         if (cloud.tutorial === 'true') localStorage.setItem(this.KEYS.tutorialDone, 'true');
 
-        if (cloud.party_easy)   localStorage.setItem(this.KEYS.partyPlayed.easy,   cloud.party_easy);
-        if (cloud.party_normal) localStorage.setItem(this.KEYS.partyPlayed.normal, cloud.party_normal);
-        if (cloud.party_hard)   localStorage.setItem(this.KEYS.partyPlayed.hard,   cloud.party_hard);
+        // Same guard as the tutorial flag, for the same reason: the payload
+        // carries the STRING "false" for a gala never played, and a plain
+        // truthiness check let a second machine's "false" overwrite a local
+        // "true" - the once-per-tier gala was offered again.
+        if (cloud.party_easy === 'true')   localStorage.setItem(this.KEYS.partyPlayed.easy,   'true');
+        if (cloud.party_normal === 'true') localStorage.setItem(this.KEYS.partyPlayed.normal, 'true');
+        if (cloud.party_hard === 'true')   localStorage.setItem(this.KEYS.partyPlayed.hard,   'true');
 
-        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.runSyncedAt);
-        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.runSyncedAt);
+        // Per slot, and NOT falling back to the old shared stamp: a 6.1 payload
+        // cannot say which of its two slots it actually knew about, and acting
+        // on that guess is what deleted runs. An old payload therefore never
+        // removes anything - the worst it can do is leave a finished run
+        // offered once more, which costs a click instead of a week.
+        this.adoptCloudRun(this.KEYS.dayState,  cloud.day,  cloud.daySyncedAt);
+        this.adoptCloudRun(this.KEYS.weekState, cloud.week, cloud.weekSyncedAt);
     },
 
     /**
@@ -160,6 +269,67 @@ export const core = {
      * Only if the payload was written AFTER our local save does the second
      * reading apply, and the local leftover goes.
      */
+    /**
+     * What this machine knows about one run slot, as a timestamp.
+     *
+     * A live run speaks for itself through its own savedAt. An empty slot
+     * speaks through the moment it was emptied here - and says nothing at all
+     * (0) if this machine never had a run in it.
+     */
+    slotStamp: function(stateKey, clearedKey) {
+        try {
+            const raw = localStorage.getItem(stateKey);
+            if (raw) return JSON.parse(raw)?.savedAt ?? 0;
+            return Number(localStorage.getItem(clearedKey)) || 0;
+        } catch { return 0; }
+    },
+
+    /**
+     * Removes every trace of the career on THIS machine.
+     *
+     * PROGRESS_KEYS is the one list of what a reset removes; clearDay and
+     * clearWeek run afterwards so the two cleared-at stamps are re-written -
+     * a machine that has just wiped its runs HAS finished them off, and its
+     * next payload may say so.
+     */
+    wipeProgress: function() {
+        for (const key of PROGRESS_KEYS) {
+            try { localStorage.removeItem(key); } catch { /* never mind */ }
+        }
+        this.clearDay();
+        this.clearWeek();
+    },
+
+    /**
+     * Applies a hard reset recorded on another machine - exactly once.
+     *
+     * The archive union is built so that nothing is ever lost, and the hard
+     * reset is the one action where losing everything is the point. An EMPTY
+     * payload cannot express that: the union reads emptiness as "nothing to
+     * add", and the next launch of any other machine restored the career -
+     * which made the delete button a lie on Steam.
+     *
+     * So the reset travels as a TIMESTAMP instead, in every payload. Each
+     * machine remembers the newest one it has applied; only a strictly newer
+     * stamp wipes, so the same reset is applied once and never again.
+     *
+     * Two machines resetting independently: the newest reset wins, and takes
+     * anything played between the two with it. Whoever presses "delete
+     * permanently" means the career, not a version of it.
+     */
+    adoptCloudReset: function(resetAt) {
+        if (!resetAt) return false;
+        let seen = 0;
+        try { seen = Number(localStorage.getItem(this.KEYS.resetSeenAt)) || 0; }
+        catch { /* unreadable: treat as never */ }
+        if (resetAt <= seen) return false;
+
+        this.wipeProgress();
+        try { localStorage.setItem(this.KEYS.resetSeenAt, String(resetAt)); }
+        catch { /* storage full: the wipe still happened, worst case it repeats */ }
+        return true;
+    },
+
     adoptCloudRun: function(key, raw, runSyncedAt) {
         const savedAt = (text) => {
             try { return JSON.parse(text)?.savedAt ?? 0; } catch { return 0; }
@@ -189,6 +359,8 @@ export const core = {
     // the other machine tell an abandoned run apart from one that was finished
     // here afterwards (see loadCloudSave).
     buildCloudPayload: function() {
+        const daySyncedAt  = this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt);
+        const weekSyncedAt = this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt);
         return {
             archive:      this.state.archive,
             tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
@@ -197,7 +369,33 @@ export const core = {
             party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
             day:          localStorage.getItem(this.KEYS.dayState),
             week:         localStorage.getItem(this.KEYS.weekState),
-            runSyncedAt:  Date.now()
+            // ONE stamp used to cover BOTH slots, and that cost runs.
+            // `runSyncedAt: Date.now()` says "this is the state of play, now" -
+            // true for the slot this machine actually used, and a lie about
+            // the other one. Play a single day here and the payload also
+            // claimed "no week, as of now"; the other machine read that as
+            // newer than its half-finished week and deleted five days of play.
+            //
+            // Each slot now carries its own: the run's own savedAt while there
+            // is one, otherwise the moment this machine finished that run off
+            // (0 = never had one, so it may not argue against anybody).
+            daySyncedAt, weekSyncedAt,
+            // The tombstone: when a career was last deleted, as far as this
+            // machine knows (0 = never). In EVERY payload, not only the one
+            // pushed at the moment of the reset - the other machine may not
+            // launch for days, and by then the newest payload is an ordinary
+            // one written during post-reset play.
+            resetAt:      Number(localStorage.getItem(this.KEYS.resetSeenAt)) || 0,
+            // For machines still on 6.1, which read ONE shared stamp and use
+            // it only to DELETE a local run when the payload's slot is empty.
+            // Sending the upload moment here kept the flagship bug of this
+            // release alive across versions: a 6.1.1 machine playing one
+            // quick day said "no week, as of now", and a 6.1.0 reader deleted
+            // five days of play on the strength of it. The MINIMUM of the two
+            // slot stamps is the most a shared field can honestly claim - a
+            // 6.1.0 reader then clears only runs older than both slots, and a
+            // slot this machine never touched (stamp 0) protects everything.
+            runSyncedAt:  Math.min(daySyncedAt, weekSyncedAt)
         };
     },
 
@@ -303,6 +501,11 @@ export const core = {
         // A running week saves as one unit - the day slot never holds a half-week.
         if (this.state.week.active) { this.saveWeek(); return; }
         if (this.state.activeEvent || this.state.pendingEnd || this.state.isPartyMode) return;
+        // The lesson is not a workday. setTerminalIdle saves after every
+        // completed step, so without this guard a tab closed mid-tutorial
+        // came back as "SESSION INTERRUPTED" and resumed a mangled pseudo-day
+        // - tickets forced to 1, no morning, the tutorial never marked done.
+        if (this.lesson?.isActive) return;
 
         try {
             const day = snapshotDay(this.state);
@@ -326,8 +529,16 @@ export const core = {
             const raw = localStorage.getItem(this.KEYS.dayState);
             if (!raw) return null;
             const day = JSON.parse(raw);
+            // It has to BE a day. JSON.parse is happy with '[]', '5' and '"x"',
+            // and none of them has a time, so the old check (`time >= 990`) let
+            // them through: the resume dialog then read NaN:NaN off the clock,
+            // and applyRestoredDay walked Object.entries('x') and wrote state['0'].
+            // A payload can reach the slot from the cloud without ever passing
+            // saveDay, so the loader is the last gate.
+            if (!day || typeof day !== 'object' || Array.isArray(day)) return null;
+            if (typeof day.time !== 'number' || !Number.isFinite(day.time)) return null;
             // A day that was already over is not offered.
-            if (!day || day.time >= 16 * 60 + 30) return null;
+            if (day.time >= 16 * 60 + 30) return null;
             return day;
         } catch {
             return null;
@@ -488,7 +699,13 @@ export const core = {
 
     /** Discards the saved day (end of day, or a deliberate restart). */
     clearDay: function() {
-        try { localStorage.removeItem(this.KEYS.dayState); } catch { /* never mind */ }
+        try {
+            localStorage.removeItem(this.KEYS.dayState);
+            // Stamped so the cloud can tell "played it out here" apart from
+            // "never had one". Without it an empty slot argued from the moment
+            // of the UPLOAD, and that deleted runs on the other machine.
+            localStorage.setItem(this.KEYS.dayClearedAt, String(Date.now()));
+        } catch { /* never mind */ }
     },
 
     /**
@@ -537,12 +754,19 @@ export const core = {
     saveSystem: function() {
         // Copy the current reputation into the archive before writing
         this.state.archive.reputation = { ...this.state.reputation };
-        
-        // Then persist
-        localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
-        
-        // Key bindings are persisted too
-        localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
+
+        // Guarded like saveDay and saveWeek: this runs in the MIDDLE of
+        // resolving an action (applyReputation, incrementStat, loot), and in
+        // private mode or on a full quota an unguarded setItem threw there -
+        // the option's outcome was half-applied and the result screen never
+        // came. The game keeps playing without persistence, which is what
+        // the two siblings already did.
+        try {
+            localStorage.setItem(this.KEYS.archive, JSON.stringify(this.state.archive));
+            localStorage.setItem(this.KEYS.keyBinds, JSON.stringify(this.state.keyBinds));
+        } catch (e) {
+            console.warn('System state could not be saved:', e);
+        }
 
         // Mirror progress to cloud storage (desktop only, no-op on the web).
         platform.save(this.buildCloudPayload());
@@ -590,17 +814,46 @@ export const core = {
         };
     },
 
+    /**
+     * The party hub's stage prose for the current progress, or null when the
+     * event carries no textByProgress. ONE formula for both places that
+     * render the hub - the first paint and the language-switch repaint; the
+     * repaint used to take the raw event and rewound the evening's arc to
+     * the arrival text.
+     */
+    partyStageText: function(ev) {
+        const versions = ev?.textByProgress;
+        if (!versions?.length) return null;
+        const stage = Math.min(
+            versions.length - 1,
+            Math.floor(this.state.partyProgress / (PARTY_STATIONS / versions.length))
+        );
+        return versions[stage];
+    },
+
+    /**
+     * Which career day an entry written NOW belongs to. daysStarted counts on
+     * the first ACTION (markDayStarted), so on a fresh morning it still holds
+     * yesterday's number - the gate then matched yesterday's entry and refused
+     * to write until the player had acted. Before the first action the entry
+     * belongs to the day that is about to start.
+     */
+    chronicleDayNo: function() {
+        return (this.state.archive.stats?.daysStarted ?? 0)
+             + (this.state.dayActive ? 0 : 1);
+    },
+
     addChronicleEntry: function() {
         const archive = this.state.archive;
         archive.chronicle ??= [];
 
-        const dayNo = archive.stats?.daysStarted ?? 1;
+        const dayNo = this.chronicleDayNo();
         if (archive.chronicle.some(e => e.day === dayNo)) return false;
 
         // The id and the numbers, not the sentence: see data_lore.js.
         archive.chronicle.push({ day: dayNo, ...this.composeChronicleLine() });
         // Twelve is plenty: the book should look used, not like a diary.
-        if (archive.chronicle.length > 12) archive.chronicle.shift();
+        if (archive.chronicle.length > CHRONICLE_MAX) archive.chronicle.shift();
 
         this.saveSystem();
         this.playAudio('ui');
@@ -609,7 +862,7 @@ export const core = {
 
     /** Has today's line already been written? Drives the button state. */
     chronicleWrittenToday: function() {
-        const dayNo = this.state.archive.stats?.daysStarted ?? 1;
+        const dayNo = this.chronicleDayNo();
         return (this.state.archive.chronicle ?? []).some(e => e.day === dayNo);
     },
 
@@ -677,9 +930,16 @@ export const core = {
      * id. They are dropped rather than shown: a chronicle that reads half in
      * German and half in English after a language switch is worse than one
      * that starts again. The chronicle is flavour, never progress.
+     *
+     * Takes the lore tree as a PARAMETER so the caller can hand in
+     * tree().lore: a $derived that resolved this through DB alone had no
+     * reactive language source and Müller's handwritten entries stayed in the
+     * pre-switch language while the chapters around them followed - the exact
+     * DB trap CLAUDE.md documents. DB stays the fallback for engine-internal
+     * callers.
      */
-    chronicleEntries: function() {
-        const lines = DB.lore?.lines ?? {};
+    chronicleEntries: function(loreTree = DB.lore) {
+        const lines = loreTree?.lines ?? {};
         return (this.state.archive.chronicle ?? [])
             .filter(e => e.id && lines[e.id])
             .map(e => ({
@@ -813,7 +1073,6 @@ export const core = {
     offerResume: function(kind) {
         const resumeModal = document.getElementById('resume-modal');
         if (!resumeModal) return false;
-        const pad = (n) => String(n).padStart(2, '0');
         const info = document.getElementById('resume-info');
 
         if (kind === 'week') {
@@ -823,7 +1082,7 @@ export const core = {
             // Not `t`: that is the dictionary lookup imported at the top of
             // this file, and a local of the same name shadows it silently.
             const minutes = savedWeek.day?.time ?? 8 * 60;
-            const clock = `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+            const clock = formatClock(minutes);
             const cfg = this.WEEK_DIFFS[savedWeek.week.level];
             // i18n-uses: week.day.mon, week.day.wed, week.day.fri
             const dayName = this.dayName(savedWeek.week.dayIndex - 1);
@@ -836,7 +1095,7 @@ export const core = {
         const saved = this.loadDay();
         if (!saved) return false;
         this._resumeKind = 'day';
-        const clock = `${pad(Math.floor(saved.time / 60))}:${pad(saved.time % 60)}`;
+        const clock = formatClock(saved.time);
         // The day mode names itself after a weekday, so the dictionary already
         // has the word - week.day.fri and friends, the same ones the week mode
         // uses. No second set for the same five days.
@@ -885,6 +1144,14 @@ export const core = {
         Object.assign(this.state, freshDay(mult), { logEntries, lastLogMsg });
         this.state.difficultyMult = mult;
 
+        // The same seeding every other day-start path does (softReset,
+        // softResetWeek, advanceWeekNight) - this one skipped it, so on every
+        // picker-started day the team view's deltas computed against an empty
+        // baseline (frozen at 0 all day), the diary could never name who
+        // moved, and a fully blind day was not recorded as blind.
+        this.state.repAtStart = { ...this.state.reputation };
+        this.state.blindRun = this.state.blindStats && this.state.blindTickets;
+
         // i18n-uses: mode.easy, mode.normal, mode.hard
         if (level === 'easy')      this.log({ k: 'mode.easy' },   'text-green-400');
         else if (level === 'hard') this.log({ k: 'mode.hard' },   'text-red-500 font-bold');
@@ -892,8 +1159,17 @@ export const core = {
 
         this.updateUI();
 
-        // Start the tutorial, delayed so the UI has finished rendering
-        setTimeout(() => {
+        // Start the tutorial, delayed so the UI has finished rendering.
+        //
+        // Registered in DAY_TIMERS like every other pending step - the day
+        // twin of the week picker's timer, which was converted in 6.1 and left
+        // this one standing. Untracked, it survived clearDayTimers(): pick a
+        // day, press Escape, restart inside half a second, and the orphan
+        // fired reset() into the running boot. The morning screen was painted
+        // over the boot animation, wiped by the boot's own reset(), and its
+        // stat effect stood there unexplained.
+        this.state.bootTimer = setTimeout(() => {
+            this.state.bootTimer = null;
             // Read the flag straight from storage
             if (this.lesson && localStorage.getItem(this.KEYS.tutorialDone) !== 'true') {
                 // Not played yet -> show the modal, the game waits for the click
@@ -938,19 +1214,19 @@ export const core = {
                 // evening has come: arrival, peak, and the hour in which the
                 // room slowly empties.
                 const hub = DB.party.find(e => e.id === 'party_hub');
-                const versions = hub?.textByProgress;
-                if (versions?.length) {
-                    const stage = Math.min(
-                        versions.length - 1,
-                        Math.floor(this.state.partyProgress / (PARTY_STATIONS / versions.length))
-                    );
-                    this.renderTerminal({ ...hub, text: versions[stage] }, 'party');
-                } else {
-                    this.renderTerminal(hub, 'party');
-                }
+                const staged = this.partyStageText(hub);
+                this.renderTerminal(staged ? { ...hub, text: staged } : hub, 'party');
             }
             return;
         }
+
+        // A queued ending outranks going idle. checkEndConditions can queue one
+        // from a pass that did not build the button for it - a warning modal
+        // dismissed on the same action that crossed 16:30 - and reset() was
+        // the ONE continue action in the engine that never looked. Without
+        // this the player got a free action after closing time, and a death
+        // inside it was dropped on the floor.
+        if (this.state.pendingEnd) { this.finishGame(); return; }
 
         // The diary, fetched at the START of the day although it is written at
         // the END of it (6.1).
@@ -1061,7 +1337,11 @@ export const core = {
         this.renderHeader();
         
         // Clean up phone, mail and log
-        document.getElementById('email-modal')?.classList.add('hidden');
+        // hideOverlay, not a raw classList: showOverlay registered the mail as
+        // a scroll-lock holder, and only hideOverlay releases it. Left in the
+        // set, body keeps overflow-hidden - which is exactly what both hotkey
+        // branches test, so Q/W/E/R and 1/2/3 stayed dead for the session.
+        this.hideOverlay('email-modal');
         // Back to standby; PhoneView.svelte follows the state.
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
         
@@ -1106,7 +1386,11 @@ export const core = {
         }
 
         // --- STAT THRESHOLDS ---
-        if(this.state.fl >= 80 && this.state.fl < 100 && !this.hasAch('ach_lazy')) {
+        // No upper bound: the 80-99 window could be jumped in one clamped
+        // step (79 plus a big l lands on 100), and the laziest possible
+        // playstyle - pinned at 100 all afternoon - never earned the badge
+        // that describes it.
+        if(this.state.fl >= 80 && !this.hasAch('ach_lazy')) {
             this.unlockAchievement('ach_lazy');
         }
         
@@ -1155,7 +1439,12 @@ export const core = {
         }
 
         // Exactly 9 tickets, one below the limit. One more call would end it.
-        if (this.state.time >= 975 && this.state.tickets === 9 && !this.hasAch('ach_risk')) {
+        // `>= 9`, not `=== 9`: advanceClock can book two or three half-hour
+        // boundaries in one option, so from eight tickets a long action lands
+        // on ten and the nine is never observed - the pile went through it all
+        // the same. checkAchievements runs before checkEndConditions, so the
+        // badge is still awarded on the action that ends the day.
+        if (this.state.time >= 975 && this.state.tickets >= 9 && !this.hasAch('ach_risk')) {
             this.unlockAchievement('ach_risk');
         }
 
@@ -1278,7 +1567,11 @@ export const core = {
             const titleRef = { ref: { i: id, path: ['title'] } };
             let logLine = { k: 'achievement.log.unlocked', v: { title: titleRef } };
             let logColor = "text-yellow-400 font-bold"; // Standard Gold
-            let toastDesc = text;
+            // A RECIPE, exactly like the log line four lines below it - the
+            // toast used to hold the finished words, so a language switch
+            // inside its four to seven seconds left it standing in the old
+            // language while the log entry underneath it changed.
+            let toastDesc = { ref: { i: id, path: [entry.toast ? 'toast' : 'desc'] } };
 
             // Upgrade case, e.g. easy -> hard
             let isUpgrade = false;
@@ -1299,7 +1592,7 @@ export const core = {
                 logLine = { k: 'achievement.log.upgraded',
                             v: { title: titleRef, tier: { k: tierKey, up: true } } };
                 logColor = "text-purple-400 font-bold"; // Upgrade Lila
-                toastDesc = tf('achievement.upgradedTo', { tier });
+                toastDesc = { k: 'achievement.upgradedTo', v: { tier: { k: tierKey, up: true } } };
             }
 
             // A. Write the log line
@@ -1307,7 +1600,7 @@ export const core = {
 
             // B. Show the toast
             // Rendered by components/AchievementToasts.svelte.
-            this.showToast({ title, desc: toastDesc, upgrade: isUpgrade });
+            this.showToast({ title: titleRef, desc: toastDesc, upgrade: isUpgrade });
         }
 
         // 3. Always persist in the background, in case this was an upgrade
@@ -1407,9 +1700,9 @@ export const core = {
      */
     valveResetValue: function() {
         const tier = this.difficultyTier();               // week-aware, see engine_week.js
-        if (tier === 1) return 30;                        // Freitag / Erholt
-        if (tier === 3) return 60;                        // Montag / Urlaubsreif
-        return 50;                                        // Mittwoch / Genervt
+        if (tier === 1) return 30;                        // easy tier: "Freitag" / "Erholt"
+        if (tier === 3) return 60;                        // hard tier: "Montag" / "Urlaubsreif"
+        return 50;                                        // normal tier: "Mittwoch" / "Genervt"
     },
 
     /**
@@ -1515,30 +1808,47 @@ export const core = {
         // An ending is already queued - checking again would duplicate it
         if (this.state.pendingEnd) return;
 
+        // One box at a time, and nothing gets lost.
+        //
+        // Two rules shape this chain since 6.1.1. First: an ending queued on
+        // ANY pass is shown - reset() checks pendingEnd, so the old failure
+        // (the warning ate the pass, closing it queued the end, and the
+        // WEITER button then dropped it on the floor) cannot happen. Second:
+        // a branch that shows a modal ends the pass - showModal owns a single
+        // box, and letting the chain run on painted the chef warning straight
+        // over the rage valve's explanation when one action crossed both
+        // thresholds. Closing any modal re-runs this chain (closeModal ->
+        // updateUI), so the boxes come one after the other and the ending
+        // arrives last. Ranking unchanged: rage > tickets > clock > radar.
+
         // A. AUSRASTER
         if (this.state.al >= 100) {
-            if (this.openRageValve()) return;
+            if (this.openRageValve()) return;      // rescued - the valve box has the stage
             this.queueEnd({
                 title: { k: 'end.rageTitle' },
                 lead: this.weekFailLead({ k: 'end.rageQuit' }),
                 cause: "rage", outcome: "rage", diaryKey: "RAGE", isWin: false
             });
+            return;
         }
         // B. TICKET-LAWINE
-        else if (this.state.tickets >= 10) {
+        if (this.state.tickets >= 10) {
             this.queueEnd({
                 title: { k: 'end.firedTitle' },
                 lead: this.weekFailLead({ k: 'end.ticketsLead' }),
                 cause: "tickets", outcome: "tickets", diaryKey: "TICKETS", isWin: false
             });
+            return;
         }
-        // C. Early warning at seven tickets
-        else if (this.state.tickets >= 7 && !this.state.ticketWarning) {
+        // C. Early warning at seven tickets. A notice, not an ending - but it
+        // holds the stage like one; the re-check on closing carries on here.
+        if (this.state.tickets >= 7 && !this.state.ticketWarning) {
             this.state.ticketWarning = true;
             this.showModal(t('warning.title'), t('warning.ticketJam'), false);
+            return;
         }
         // D. CLOCKING OFF - or the gala, when everything for it is in place
-        else if (this.state.time >= 16 * 60 + 30) {
+        if (this.state.time >= 16 * 60 + 30) {
             // Week mode: Monday to Thursday end in a night, Friday ends the
             // run. The gala never fires mid-week; Friday's gala returns
             // together with the meeting finale (v5.0, package 3).
@@ -1575,9 +1885,10 @@ export const core = {
                 lead: { k: 'end.dayLead' },
                 cause: "time", outcome: "survived", diaryKey: "WIN", isWin: true
             });
+            return;
         }
         // E. CHEF-RADAR
-        else if (this.state.cr >= 100) {
+        if (this.state.cr >= 100) {
             if (this.issueChefWarning()) return;
             this.queueEnd({
                 title: { k: 'end.firedTitle' },
@@ -1588,6 +1899,18 @@ export const core = {
     },
     
 	finishGame: function() {
+        // A day can end while a mail is open (the chat's read-timer finishes
+        // the day, a boss timeout resolves) - the modal then stood stranded
+        // over the end screen with no countdown running, and answering it
+        // wrote stats into the finished day. Closed the way the boss fight
+        // closes it before rendering.
+        if (this.state.isEmailOpen) {
+            if (this.state.emailTimer) { clearTimeout(this.state.emailTimer); this.state.emailTimer = null; }
+            const emailModal = document.getElementById('email-modal');
+            if (emailModal) this.hideOverlay(emailModal);
+            this.state.isEmailOpen = false;
+        }
+
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
             
@@ -1635,10 +1958,39 @@ export const core = {
     // async: the party pool is only fetched when the finale actually happens,
     // which most players never reach.
     startParty: async function() {
-        await ensure('party');
-        this.playAudio('ui');
+        // Claim the marker BEFORE the await: with a cold pool the fetch
+        // suspends here, and a double-click (or a restart during the load,
+        // which nulls pendingEnd through freshDay) let the continuation
+        // dereference null - the party half-started on a day that no longer
+        // existed and then threw. Claiming first makes the second caller a
+        // no-op, and the null check covers the reset case.
         const endData = this.state.pendingEnd;
+        if (!endData?.partyKey) return;
         this.state.pendingEnd = null; // clear the marker
+
+        try { await ensure('party'); }
+        catch {
+            // The claim rolls BACK on a failed fetch. Claimed and not
+            // restored, one offline blip ate the marker and the pink
+            // FEIERABEND button clicked into nothing for the rest of the
+            // run - the claim protects against a double click, the rollback
+            // keeps the button alive for a retry.
+            this.state.pendingEnd = endData;
+            this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
+            return;
+        }
+        if (this.state.isPartyMode) return;   // a second continuation lost the race
+
+        // The one end path that did not do what finishGame does. A chain or
+        // delay timer can drop a mail over the pink result screen, and the
+        // confirm key reaches the button behind it - the gala then began under
+        // an open mail whose countdown clearDayTimers() had just killed.
+        if (this.state.isEmailOpen) {
+            if (this.state.emailTimer) { clearTimeout(this.state.emailTimer); this.state.emailTimer = null; }
+            this.hideOverlay('email-modal');
+            this.state.isEmailOpen = false;
+        }
+        this.playAudio('ui');
         
         // Switch into party mode
         this.state.isPartyMode = true;

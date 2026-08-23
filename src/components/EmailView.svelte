@@ -10,15 +10,14 @@
   is only the visible half of that.
 -->
 <script>
-    import { state } from '../engine/engine_state.svelte.js';
+    import { state, formatClock } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
     import { t } from '../i18n/i18n.svelte.js';
     const mail = $derived(state.email ?? {});
     const paragraphs = $derived((mail.body ?? '').split('\n'));
 
-    const pad = (n) => String(n).padStart(2, '0');
-    const timestamp = $derived(`${pad(Math.floor(state.time / 60))}:${pad(state.time % 60)}`);
+    const timestamp = $derived(formatClock(state.time));
 
     const initial = $derived((mail.sender ?? '?').charAt(0).toUpperCase());
 
@@ -114,7 +113,10 @@
           not restart.
         -->
         {#key mail.id ?? mail.subj}
-            <div class="h-full bg-blue-500 email-timer-bar"></div>
+            <!-- Duration from the engine's own constant, so the bar and the
+                 timeout can never drift apart again. -->
+            <div class="h-full bg-blue-500 email-timer-bar"
+                 style="animation-duration: {engine.EMAIL_DURATION_MS}ms"></div>
         {/key}
     </div>
 
@@ -175,10 +177,12 @@
 
 <style>
     /* Runs once on mount. The {#key} block above recreates the element for each
-       new mail, which restarts the animation without any JavaScript. */
+       new mail, which restarts the animation without any JavaScript. The
+       DURATION is deliberately absent here - it comes inline from
+       engine.EMAIL_DURATION_MS, the same constant the engine's timeout uses. */
     .email-timer-bar {
         width: 100%;
-        animation: email-countdown 20000ms linear forwards;
+        animation: email-countdown linear forwards;
     }
 
     @keyframes email-countdown {

@@ -239,7 +239,11 @@
 
     /* ACHIEVEMENTS */
     #achievement-container {
-        position: fixed; bottom: 100px; right: 20px; z-index: 100;
+        /* 1600: one step above #modal-overlay (1500), so an achievement earned
+           at the day's end keeps floating over the end screen - the same
+           relative order the old 100-over-50 pair had. Still below the mail
+           (2000) and everything above it. */
+        position: fixed; bottom: 100px; right: 20px; z-index: 1600;
         display: flex; flex-direction: column; gap: 10px; pointer-events: none;
     }
     /* The toast used to be a solid green block with white text on it - the
