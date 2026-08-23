@@ -426,7 +426,16 @@ export const week = {
         if (this.state.meetingDone) return;
         this.state.meetingDone = true;
 
-        await ensure('meetings');
+        try { await ensure('meetings'); }
+        catch {
+            // Rolled back like startParty's marker: latched before the await
+            // (a double click must not draw twice), un-latched on a failed
+            // fetch (one offline blip must not turn the meeting button dead
+            // and end Friday without its finale).
+            this.state.meetingDone = false;
+            this.log({ k: 'log.halgerd.loadFailed' }, "text-red-500");
+            return;
+        }
 
         // usedIDs lives inside one week, so without a longer memory the same
         // finale could turn up two weeks in a row - with three chains that is
