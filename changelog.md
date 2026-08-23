@@ -19,6 +19,7 @@ Steam and a second machine:
 * Playing on a second machine could overwrite the first machine's career - achievements, found items and the chronicle regressed to the newer install. The two archives unite now and nothing is lost; a summer party played on one machine stays played, and the chronicle no longer shows the same day twice.
 * Playing a single day on one machine could delete a week in progress on the other - five days of play gone. Each save slot carries its own timestamp now.
 * "Delete save permanently" deleted only the machine it was pressed on; the cloud quietly brought the career back. The reset now reaches every machine and is applied there exactly once.
+* The weekly meeting told your friends list "despairing at the IT helpdesk" - it had no status line of its own and fell through to the catch-all, for the fifty minutes a meeting takes. It has one now.
 * Every survived week night was counted twice in the career statistics.
 * After a phone chat, no mail could ever follow and the Steam status still showed the previous activity.
 
@@ -37,6 +38,7 @@ Screen, sound and input:
 * Repairs around slow connections and fast clicks: a mail could open onto a finished day or into the gala, a double click on the lunch break, the weekly meeting or the party invitation drew twice or crashed the evening, and restarting during the boot animation ran two boot sequences at once.
 * A tab closed in the middle of the tutorial came back as a broken workday, and the excuse button could derail the lesson.
 * Damaged save data is refused instead of showing a clock reading NaN:NaN or breaking behind the resume dialog. In a browser's private mode the game plays on without saving instead of breaking mid-action, and a corrupted key binding no longer breaks every keypress.
+* Switching the music on during a boss fight or the summer party started the office music over it. The switch now asks what is happening rather than what was last playing.
 * Toggling the music off and quickly on again went permanently silent, and the volume slider could leave the music playing although it was switched off.
 * The backpack, team, knowledge, archive and settings buttons can be reached and pressed with the keyboard.
 * Small screen repairs: the hover zoom on a locked achievement no longer slides under its neighbours, the day/week choice is shared between archive and world statistics, "always show the curve" takes effect at the very next night screen, the knowledge book's top edge has its intended green, a damaged day curve draws a flat line instead of nothing, and the hint on an unfound archive item sits on solid ground instead of shining through its heading.

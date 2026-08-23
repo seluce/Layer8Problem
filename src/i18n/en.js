@@ -212,6 +212,7 @@ export const en = {
     'presence.boss':               'Stuck in an absolute catastrophe!',
     'presence.rep':                'Chatting with the colleagues',
     'presence.lunch':              'On a lunch break',
+    'presence.meeting':            'Sitting out the weekly meeting',
     'presence.party':              'Surviving the Synergy Gala',
     'presence.system':             'Staring blankly at the monitor',
     'presence.fallback':           'Despairing at the IT helpdesk',

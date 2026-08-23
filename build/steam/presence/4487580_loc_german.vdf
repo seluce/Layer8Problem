@@ -11,6 +11,7 @@
 		"#Status_boss"	"Steckt in einer absoluten Katastrophe!"
 		"#Status_rep"	"Unterhält sich mit dem Kollegium"
 		"#Status_lunch"	"Macht gerade Mittagspause"
+		"#Status_meeting"	"Sitzt das Wochenmeeting ab"
 		"#Status_party"	"Überlebt die Synergy-Gala"
 		"#Status_system"	"Starrt mit leerem Blick auf den Monitor"
 		"#Status_fallback"	"Verzweifelt am IT-Support"
