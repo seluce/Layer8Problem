@@ -93,9 +93,9 @@ for (const { steam, dict } of DICTIONARIES) {
 
     const file = join(outDir, `${APP_ID}_loc_${steam}.vdf`);
     writeFileSync(file, vdf, 'utf-8');
-    console.log(`  ${file}  —  ${tokens.length} Tokens`);
+    console.log(`  ${file}  -  ${tokens.length} tokens`);
 }
 
-console.log(`\n✅ ${DICTIONARIES.length} files written. In Steamworks under`);
-console.log('   Upload "Rich Presence Localization" - BEFORE the build that puts');
-console.log('   neuen Tokens sendet.');
+console.log(`\n✅ ${DICTIONARIES.length} files written. Upload them in Steamworks`);
+console.log('   under "Rich Presence Localization" - BEFORE the build that sends');
+console.log('   the new tokens, or the friends list shows the bare token.');

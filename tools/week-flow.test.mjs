@@ -2255,6 +2255,56 @@ await ok('Toast and item dialog carry identities, not words', () => {
                  'the dialog is written from more than one place again');
 });
 
+await ok('Switching the music on picks the track of the moment', async () => {
+    // playMusic() leaves on its first line while music is off, BEFORE it
+    // records a track - so a boss fight or a gala begun in silence never wrote
+    // its name down, and the toggle read the office track from before it.
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const box = { state, ...audio };
+
+    resetState();
+    state.isPartyMode = false; state.bossTimer = null; state.currentEventType = null;
+    assert.equal(box.situationTrack(), 'office', 'an ordinary day no longer asks for office music');
+
+    // A boss fight, recognised the way the rest of the engine recognises one.
+    state.bossTimer = 1;
+    assert.equal(box.situationTrack(), 'boss', 'the boss fight would get office music');
+    state.bossTimer = null; state.currentEventType = 'boss';
+    assert.equal(box.situationTrack(), 'boss', 'the boss event would get office music');
+
+    // The gala outranks everything.
+    state.currentEventType = null; state.isPartyMode = true;
+    assert.equal(box.situationTrack(), 'gala', 'the gala would get office music');
+    state.bossTimer = 1;
+    assert.equal(box.situationTrack(), 'gala', 'the gala lost to a leftover boss timer');
+
+    // And the stale memory must not decide any more: a finished fight cannot
+    // bring its own music back.
+    resetState();
+    state.currentMusicTrack = 'boss';
+    assert.equal(box.situationTrack(), 'office', 'a finished fight still claims its music');
+});
+
+await ok('The weekly meeting has a status line of its own', async () => {
+    // renderTerminal passes the event type straight to updatePresence, so the
+    // meeting always sent one - it just was not a known activity and landed on
+    // the catch-all, which told friends "despairing at the IT helpdesk" for the
+    // fifty minutes of a meeting.
+    const { PRESENCE_TYPES } = await import('../src/engine/presence.js');
+    assert.ok(PRESENCE_TYPES.includes('meeting'), 'the meeting falls back to the catch-all again');
+
+    const sent = [];
+    const { platform } = await import('../src/platform.js');
+    const real = platform.presence;
+    platform.presence = (token) => sent.push(token);
+    try {
+        // core's own, not the harness stub of the same name.
+        core.updatePresence.call({}, 'meeting');
+        core.updatePresence.call({}, 'nonsense');
+    } finally { platform.presence = real; }
+    assert.deepEqual(sent, ['#Status_meeting', '#Status_fallback']);
+});
+
 await ok('A cold mail does not open into a finished day', async () => {
     // Cancelling a timer cannot reach a call already suspended in the await.
     resetState();

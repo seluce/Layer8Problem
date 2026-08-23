@@ -183,17 +183,30 @@ export const audio = {
         }
     },
 
+    /**
+     * Which track belongs to what is happening RIGHT NOW.
+     *
+     * Asked of the GAME, not of currentMusicTrack - because that field is
+     * exactly what is missing in the case this exists for. playMusic() leaves
+     * on its first line while music is switched off, before it records
+     * anything, so a boss fight or a gala begun in silence never wrote its
+     * name down. Switching the music on in the middle of one then read the
+     * office track from before it and played that, over the fight.
+     *
+     * Reading the situation also ends the opposite case: a fight that is over
+     * can no longer bring its own music back on the next toggle.
+     */
+    situationTrack: function() {
+        if (this.state.isPartyMode) return 'gala';
+        if (this.state.bossTimer || this.state.currentEventType === 'boss') return 'boss';
+        return 'office';
+    },
+
     toggleMusic: function(isOn) {
         this.state.musicEnabled = isOn;
         localStorage.setItem(KEYS.musicEnabled, isOn);
         if (isOn) {
-            // Check whether a special track (boss/gala) should be playing.
-            // Otherwise ask for 'office' so playMusic() re-evaluates the current style.
-            if (this.state.currentMusicTrack === 'boss' || this.state.currentMusicTrack === 'gala') {
-                this.playMusic(this.state.currentMusicTrack);
-            } else {
-                this.playMusic('office');
-            }
+            this.playMusic(this.situationTrack());
         } else {
             // Instant, exactly as stopMusic's own docstring prescribes for
             // this switch. With the default 400ms fade, off-and-on within

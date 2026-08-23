@@ -219,6 +219,7 @@ export const de = {
     'presence.boss':               'Steckt in einer absoluten Katastrophe!',
     'presence.rep':                'Unterhält sich mit dem Kollegium',
     'presence.lunch':              'Macht gerade Mittagspause',
+    'presence.meeting':            'Sitzt das Wochenmeeting ab',
     'presence.party':              'Überlebt die Synergy-Gala',
     'presence.system':             'Starrt mit leerem Blick auf den Monitor',
     'presence.fallback':           'Verzweifelt am IT-Support',

@@ -20,7 +20,7 @@
 
 /** One per activity. 'fallback' is missing on purpose - it is what an unknown type becomes. */
 export const PRESENCE_TYPES = ['coffee', 'sidequest', 'server', 'calls', 'boss',
-                               'rep', 'lunch', 'party', 'system'];
+                               'rep', 'lunch', 'meeting', 'party', 'system'];
 
 /** Steam localisation tokens start with '#'. '#Status_coffee' and friends. */
 export const PRESENCE_TOKEN = '#Status_';
