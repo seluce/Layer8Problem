@@ -433,7 +433,8 @@ export const core = {
      *
      * i18n-uses: presence.coffee, presence.sidequest, presence.server
      * i18n-uses: presence.calls, presence.boss, presence.rep
-     * i18n-uses: presence.lunch, presence.party, presence.system
+     * i18n-uses: presence.lunch, presence.meeting, presence.party
+     * i18n-uses: presence.system
      * i18n-uses: presence.fallback
      */
     updatePresence: function(type) {
