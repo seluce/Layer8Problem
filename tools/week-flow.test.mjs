@@ -1636,7 +1636,10 @@ await ok('finishParty closes the week: counters, balance sheet under the party r
         { dayIndex: 4, endTickets: 2, peakA: 60, peakB: 50, coffee: 2, mailsIgnored: 1 },
     ];
     engine.saveWeek();
-    state.currentPartyKey = 'layer8_party_played';
+    // A party begun under 6.1 and resumed here: the day snapshot carries a
+    // LEGACY key. finishParty has to mark both generations, or the evening
+    // stays open in this session's own books.
+    state.currentPartyKey = 'layer8_party_played_easy';
     state.isPartyMode = true;
     state.dayActive = true;
     state.currentEventId = 'party_finale_gossip';   // the evening the player had
@@ -1659,8 +1662,10 @@ await ok('finishParty closes the week: counters, balance sheet under the party r
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
     assert.equal(engine.loadWeek(), null);
-    assert.equal(localStorage.getItem('layer8_party_played'), 'true');
+    assert.equal(localStorage.getItem('layer8_party_played_easy'), 'true', 'the resumed save key was dropped');
+    assert.equal(localStorage.getItem('layer8_party_played'), 'true', 'this version own flag was not set');
     localStorage.removeItem('layer8_party_played');
+    localStorage.removeItem('layer8_party_played_easy');
 });
 
 // --------------------------------------------- diary, sleep, archive (3c)
@@ -2376,6 +2381,20 @@ await ok('The gala page survives what the daily lines do not', () => {
     assert.equal(merged.gala?.finale, 'hero', 'the other machine lost its gala in the union');
 });
 
+await ok('An import replaces the gala state, both halves together', () => {
+    // The lock this guards against: a never-played code nulls arc.gala
+    // through deepMerge (null takes the primitive branch), and a raise-only
+    // flag then disagreed with the archive - invitation blocked forever,
+    // ach_party unreachable. An import is a REPLACE: the flag follows the
+    // code in both directions, and the 6.1 leftovers go with it.
+    const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const block = src.slice(src.indexOf('const mergedArchive'), src.indexOf('engine.clearDay()'));
+    assert.ok(/else localStorage\.removeItem\(engine\.KEYS\.partyPlayed\)/.test(block),
+              'the import no longer clears the flag for a never-played code - the lock is back');
+    assert.ok(/LEGACY_PARTY_KEYS.*removeItem/.test(block.replace(/\n/g, ' ')),
+              'the import leaves 6.1 flags behind for the migration to resurrect');
+});
+
 await ok('The gala badge shows once, not a grade', async () => {
     // It can never be re-earned, so a difficulty grade on it would promise an
     // upgrade that cannot happen. The archive reads `once` off the tree.
@@ -2907,8 +2926,12 @@ await ok('An import clears the week slot as well', () => {
     // but the order can be pinned down here. Without clearWeek() a foreign
     // archive would meet a running week.
     const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    // Anchored on the function's END rather than a fixed width: a comment
+    // added inside the import once pushed clearDay past the old 4000-char
+    // window and this check cried wolf.
     const i = src.indexOf('performImport');
-    const block = src.slice(i, i + 4000);
+    const end = src.indexOf('closeSettings', i);
+    const block = src.slice(i, end > i ? end : i + 8000);
     assert.ok(block.includes('engine.clearDay()'), 'clearDay is missing');
     assert.ok(block.includes('engine.clearWeek()'), 'clearWeek is missing - the week survives the import');
 });

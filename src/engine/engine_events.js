@@ -1607,10 +1607,16 @@ export const events = {
      * @param {object} [argsRef] path to those two in the tree, from runAction()
      */
     finishParty: function(title, text, argsRef = null) {
-        // 1. Only mark it as played at the very last moment
+        // 1. Only mark it as played at the very last moment.
+        //
+        // BOTH keys on purpose: currentPartyKey is part of the day snapshot,
+        // so a party begun under 6.1 and resumed here carries a legacy key -
+        // writing only that one left the 6.2 flag unset until the next boot's
+        // migration, and the evening could be offered again within the session.
         if (this.state.currentPartyKey) {
-            localStorage.setItem(this.state.currentPartyKey, 'true'); 
+            localStorage.setItem(this.state.currentPartyKey, 'true');
         }
+        localStorage.setItem(this.KEYS.partyPlayed, 'true');
         this.state.isPartyMode = false;
         
         // --- UNLOCK THE GALA ACHIEVEMENT ---

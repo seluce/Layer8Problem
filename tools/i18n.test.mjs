@@ -352,6 +352,40 @@ await ok('Every activity has a text, every text an activity', async () => {
     }
 });
 
+await ok('The tracked Steam files match what the trees would generate', async () => {
+    // The generators are run BY HAND and their output is committed. Nothing
+    // used to compare the two, so a changed hint shipped a stale .vdf: the
+    // Steam overlay kept promising the per-tier gala the 6.2 rework abolished.
+    // Same drift class as the simulator constants - so the same cure: hold the
+    // committed file against the source of truth, per line.
+    const { readFileSync } = await import('node:fs');
+    const esc = (text) => text.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+    const { achievements: dea } = await import('../src/data/de/data_achievements.js');
+    const { achievements: ena } = await import('../src/data/en/data_achievements.js');
+    const { de } = await import('../src/i18n/de.js');
+    const { en } = await import('../src/i18n/en.js');
+
+    for (const [file, tree, dict] of [
+        ['german', dea, de],
+        ['english', ena, en],
+    ]) {
+        const ach = readFileSync(new URL(`../build/steam/achievements/4487580_loc_${file}.vdf`, import.meta.url), 'utf-8');
+        for (const a of tree) {
+            assert.ok(ach.includes(`"${esc(a.title)}"`),
+                      `${file} achievements .vdf: title of ${a.id} is stale - run tools/make-steam-achievements.mjs and re-upload`);
+            assert.ok(ach.includes(`"${esc(a.hint)}"`),
+                      `${file} achievements .vdf: hint of ${a.id} is stale - run tools/make-steam-achievements.mjs and re-upload`);
+        }
+
+        const pres = readFileSync(new URL(`../build/steam/presence/4487580_loc_${file}.vdf`, import.meta.url), 'utf-8');
+        for (const [key, sentence] of Object.entries(dict).filter(([k]) => k.startsWith('presence.'))) {
+            assert.ok(pres.includes(`"${esc(sentence)}"`),
+                      `${file} presence .vdf: ${key} is stale - run tools/make-steam-presence.mjs and re-upload`);
+        }
+    }
+});
+
 await ok('Every achievement is in the Steam order, with title and hint', async () => {
     // Steamworks names achievements by their POSITION
     // (NEW_ACHIEVEMENT_1_7_NAME), and that position is NOT the one in the data

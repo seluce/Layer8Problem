@@ -152,7 +152,7 @@
 {/each}
 
 {#if houseWon}
-    <div class="sm:col-span-2 text-center border border-pink-800/60 bg-pink-950/20 rounded-lg px-4 py-3">
+    <div class="md:col-span-2 text-center border border-pink-800/60 bg-pink-950/20 rounded-lg px-4 py-3">
         <p class="text-pink-300 text-sm font-bold tracking-wide">{t('team.houseWon')}</p>
     </div>
 {/if}

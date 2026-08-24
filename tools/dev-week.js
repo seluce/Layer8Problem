@@ -233,9 +233,11 @@
             const a = s.archive;
             a.achievements = [...new Set([...(a.achievements ?? []), ...needed])];
             a.achievementDiffs = a.achievementDiffs ?? {};
-            e.saveSystem();
-
+            // Clear BEFORE saveSystem: it pushes the cloud payload, and the
+            // old order uploaded party='true' one line before removing it -
+            // the next boot then re-locked the scenario from the cloud.
             localStorage.removeItem(e.KEYS.partyPlayed);
+            e.saveSystem();
 
             dev.friday('solid');
             console.log('Gala unlocked. Now dev.meeting() - the announcement ' +

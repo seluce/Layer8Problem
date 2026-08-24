@@ -1,4 +1,4 @@
-import { KEYS } from './keys.js';
+import { KEYS, LEGACY_PARTY_KEYS } from './keys.js';
 import { formatClock, freshArchive } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
@@ -670,7 +670,13 @@ export const ui = {
     
     // --- LORE SYSTEM ---
     // The book itself is components/LoreView.svelte.
-    showLoreModal: function() {
+    showLoreModal: async function() {
+        // The book reads chapters, chronicle lines and the gala page straight
+        // out of the pool; opened cold it would show empty pages until a
+        // language switch. prefetchAll() masks this in practice - the await
+        // makes it true by construction. A failed fetch still opens the book:
+        // empty pages beat a dead button.
+        try { await ensure('lore'); } catch { /* the book opens with what there is */ }
         this.state.loreOpen = true;
         this.lockScroll('lore');
     },
@@ -1231,12 +1237,22 @@ export const ui = {
                 // `if (data.tut)` would reset the flag on every import.
                 if (data.tut === 'true') localStorage.setItem(engine.KEYS.tutorialDone, 'true');
 
-                // Any of the three 6.1 fields means the evening was seen; one
-                // flag carries it now. See engine_core.partyInvitation().
-                if (data.party === 'true' || data.party_easy === 'true' ||
-                    data.party_normal === 'true' || data.party_hard === 'true') {
-                    localStorage.setItem(engine.KEYS.partyPlayed, 'true');
-                }
+                // The gala flag FOLLOWS THE CODE, both ways. An import is a
+                // replace, not a merge - raise-only here (copied from the
+                // cloud path, where it is right) let a never-played code
+                // null out arc.gala through deepMerge while the local flag
+                // stayed 'true': the invitation blocked forever, and with
+                // ach_party only ever awarded by finishParty, the evening
+                // and its page were gone for good. Clearing the flag with
+                // the record keeps the pair consistent - the gala is simply
+                // re-earnable, as it was on the machine the code came from.
+                const played = data.party === 'true' || data.party_easy === 'true' ||
+                               data.party_normal === 'true' || data.party_hard === 'true';
+                if (played) localStorage.setItem(engine.KEYS.partyPlayed, 'true');
+                else localStorage.removeItem(engine.KEYS.partyPlayed);
+                // The 6.1 leftovers go either way, or migratePartyFlag would
+                // resurrect the replaced career's evening at the next boot.
+                for (const key of LEGACY_PARTY_KEYS) localStorage.removeItem(key);
 
                 // Same reason as in the hard reset: a running run belongs to
                 // the save that was just replaced. Resuming it would mix the
@@ -1772,9 +1788,10 @@ export const ui = {
             const invList = s.inventory?.length ? s.inventory.map(i => i.id).join(", ") : "(empty)";
             // There is no state.difficulty - the value is difficultyMult, so
             // every report claimed "Normal" regardless of the day chosen. The
-            // identifier, not the label: engine_core reads the same three
-            // words off partyInvitation(), and a translated name here would
-            // make the ticket depend on the reporter's language.
+            // identifier, not the label: the same three words difficultyKey()
+            // uses everywhere (partyInvitation carried them too, until the
+            // gala stopped caring about tiers in 6.2), and a translated name
+            // here would make the ticket depend on the reporter's language.
             const diff = s.difficultyMult < 1.0 ? "easy"
                        : s.difficultyMult > 1.0 ? "hard"
                        : "normal";
