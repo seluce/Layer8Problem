@@ -1974,6 +1974,28 @@ export const core = {
         }
     },
     
+    /**
+     * The day is over: take the music away and let the screen be read.
+     *
+     * All three endings used to switch BACK to office music here - the point
+     * being to leave the boss or gala track behind. But what follows is a
+     * reading moment: the day report, the curve, the diary page, or the
+     * night's carry-over. Silence after the noise carries that better than
+     * any track, and it costs nothing. The music returns by itself on the
+     * way out: the night through softResetWeek, both endings through the
+     * reload the end screen's button performs.
+     *
+     * Without the fade, deliberately, and for the reason toggleMusic gives at
+     * length: a fade leaves the track unpaused, playMusic() returns early on
+     * a still-audible track, and the fade's callback then pauses it - so a
+     * player who clicks on within the fade window would get silence for the
+     * rest of the run. A hard cut cannot race anything, and at the end of a
+     * working day it is the better beat anyway.
+     */
+    silenceForTheScreen: function() {
+        this.stopMusic(0);
+    },
+
 	finishGame: function() {
         // A day can end while a mail is open (the chat's read-timer finishes
         // the day, a boss timeout resolves) - the modal then stood stranded
@@ -1998,7 +2020,7 @@ export const core = {
             // Monday to Thursday in a week: the day ends in a night, not in
             // an end screen. The run carries on tomorrow.
             if (end.isNight) {
-                this.playMusic('office');
+                this.silenceForTheScreen();
                 this.clearDayTimers();
                 this.state.emailPending = false;
                 this.showNightScreen(end);
@@ -2009,7 +2031,7 @@ export const core = {
             // Any real ending while a week runs ends the WEEK - win on
             // Friday, fail on any day, always with the week balance sheet.
             if (this.state.week.active) {
-                this.playMusic('office');
+                this.silenceForTheScreen();
                 this.clearDayTimers();
                 this.state.emailPending = false;
                 this.finishWeek(end);
@@ -2017,8 +2039,7 @@ export const core = {
                 return;
             }
             
-            // Drop the boss music and return to the chosen office style
-            this.playMusic('office');
+            this.silenceForTheScreen();
             
             // Freeze every background activity once the day is really over
             this.clearDayTimers();

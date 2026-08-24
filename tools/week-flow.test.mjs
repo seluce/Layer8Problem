@@ -2395,6 +2395,26 @@ await ok('An import replaces the gala state, both halves together', () => {
               'the import leaves 6.1 flags behind for the migration to resurrect');
 });
 
+await ok('Every ending screen is a silent one', () => {
+    // Night, week balance and day end all used to switch back to office music
+    // here; what follows each of them is something to read. The music comes
+    // back on the way out - the night through softResetWeek, both endings
+    // through the reload the button performs.
+    const src = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const start = src.indexOf('finishGame: function');
+    const body = src.slice(start, src.indexOf('startParty: async function', start));
+    assert.ok(body.length > 500, 'the finishGame slice is empty - the anchors moved');
+    assert.ok(!/playMusic\('office'\)/.test(body), 'an ending starts the office music again');
+    assert.equal((body.match(/silenceForTheScreen\(\)/g) ?? []).length, 3,
+                 'not every ending falls silent');
+
+    // Hard cut, not a fade: a fade leaves the track unpaused, and a player
+    // clicking on inside the fade window would be left in silence for good -
+    // the trap toggleMusic documents.
+    const fn = src.slice(src.indexOf('silenceForTheScreen: function'));
+    assert.ok(/stopMusic\(0\)/.test(fn.slice(0, 200)), 'the silence fades again - it can race the way out');
+});
+
 await ok('An item that moves three stats shows three numbers', async () => {
     // Up to 6.2 only use.b floated one. Drinking a coffee moved the laziness
     // bar with nothing to say it had, and the single item touching the boss
