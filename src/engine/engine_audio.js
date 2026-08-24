@@ -75,6 +75,27 @@ export const audio = {
                 gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.4); 
                 osc.start(t);
                 osc.stop(t + 0.45);
+            } else if (type === 'impact') {
+                // The one harsh voice in the set. Everything else here is a
+                // sine or a square blip; a heavy hit gets a sawtooth dropping
+                // through the floor, because it has to read as damage next to
+                // four friendly beeps.
+                //
+                // NOT a human scream, deliberately: this game has no audio
+                // FILES at all - every sound is synthesised - and by GLOSSAR
+                // 2a the machine is what speaks. The screen shakes, so the
+                // terminal takes the hit; Mueller stays quiet.
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, t);
+                osc.frequency.exponentialRampToValueAtTime(48, t + 0.16);
+
+                gain.gain.setValueAtTime(0.001 * vol, t);
+                gain.gain.linearRampToValueAtTime(0.22 * vol, t + 0.012);
+                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.18);
+
+                osc.start(t);
+                osc.stop(t + 0.2);
+
             } else if (type === 'boot') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(1000, t);

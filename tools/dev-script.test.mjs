@@ -55,7 +55,7 @@ const engine = {
     showEnd(end) { calls.end = end; state.modal = { open: true, ...end, isEnd: true }; },
     closeModal() { state.modal = { open: false }; },
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
-    showFloatingText() {}, triggerShake() {}, animateItemToBackpack() {},
+    showFloatingText() {}, reportImpact() {}, animateItemToBackpack() {},
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { cb(); }, closeSettings() {}, updatePhoneVisibility() {},
     checkForNews() {}, log() {}, unlockAchievement() {},

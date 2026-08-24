@@ -452,7 +452,7 @@ export const events = {
             // The ignore flag in the data files feeds the ghosting stat
             if(opt.ignoreEmail) this.state.emailsIgnored++;
 
-            this.triggerShake(addedA, addedB);
+            this.reportImpact(addedA, addedB);
 
             this.grantItem(opt.loot, 'received');
 
@@ -1262,7 +1262,7 @@ export const events = {
         if (finalA !== 0) this.showFloatingText('val-al', finalA);
         if (finalB !== 0) this.showFloatingText('val-cr', finalB);
 
-        this.triggerShake(finalA, finalB);
+        this.reportImpact(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();
@@ -1851,7 +1851,7 @@ export const events = {
         if (finalB !== 0) this.showFloatingText('val-cr', finalB);
         // ------------------------------------
 
-        this.triggerShake(finalA, finalB);
+        this.reportImpact(finalA, finalB);
 
         // Record a point for the day curve on the end screen.
         this.recordStatPoint();

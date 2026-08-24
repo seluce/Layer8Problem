@@ -2,6 +2,10 @@
 
 Content and clarity, no balance changes yet.
 
+Sound and feedback:
+* A decision that costs 30 or more anger or boss radar now makes a sound - a short, low hit, in the same synthesised voice as the rest of the game. Until now those moments were the only ones with no sound at all, while a menu click had one.
+* That sound answers to the sound setting, the shaking to the shaking setting. Switching the shaking off used to take the feedback away entirely; now it comes through the other ear.
+
 The Synergy Gala:
 * The invitation used to ask for its eight badges on the difficulty you were playing, and it could be earned once per difficulty. That was meant kindly, but the evening is the same on all three - and anyone who played mixed difficulties ended up with eight badges spread over three tiers, no complete tier, and no way to find out why. The eight now count wherever you earned them, and the evening happens once per career.
 * You can see who you have already won over: the team view marks a colleague whose own story you have seen through, and says so once the whole house is behind you. What the invitation still wants beyond that is left for you to work out.

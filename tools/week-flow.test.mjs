@@ -78,7 +78,7 @@ const engine = {
     showEnd(end) { calls.end = end; state.modal = { open: true, ...end, isEnd: true }; },
     closeModal() { state.modal = { open: false }; },
     dismissModal() { state.modal = { open: false }; },
-    showFloatingText() {}, triggerShake() {}, animateItemToBackpack() {},
+    showFloatingText() {}, reportImpact() {}, animateItemToBackpack() {},
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { calls.boots++; cb(); },
     closeSettings() {}, updatePhoneVisibility() {}, checkForNews() {},
@@ -2393,6 +2393,26 @@ await ok('An import replaces the gala state, both halves together', () => {
               'the import no longer clears the flag for a never-played code - the lock is back');
     assert.ok(/LEGACY_PARTY_KEYS.*removeItem/.test(block.replace(/\n/g, ' ')),
               'the import leaves 6.1 flags behind for the migration to resurrect');
+});
+
+await ok('A heavy hit reports on every channel left switched on', () => {
+    // The threshold belongs to the EVENT, the channels to the SETTINGS. Up to
+    // 6.2 the whole thing sat behind screenShake, so switching the shaking off
+    // - the switch a motion-sensitive player reaches for - also removed the
+    // only feedback the heaviest moments had.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const body = uiSrc.slice(uiSrc.indexOf('reportImpact: function'),
+                             uiSrc.indexOf('animate-shake', uiSrc.indexOf('reportImpact: function')));
+    assert.ok(/if \(a < 30 && c < 30\) return;/.test(body), 'the threshold moved or changed');
+    assert.ok(body.indexOf("playAudio('impact')") < body.indexOf('state.screenShake'),
+              'the sound is behind the shake setting again - it must answer to the audio one');
+
+    // ...and the sound exists in the one place sounds are made.
+    const audioSrc = readFileSync(new URL('../src/engine/engine_audio.js', import.meta.url), 'utf-8');
+    assert.ok(/type === 'impact'/.test(audioSrc), 'there is no impact sound to play');
+
+    // Relief stays quiet, as it always has.
+    assert.ok(/a < 30 && c < 30/.test(body), 'negative values could now fire the impact');
 });
 
 await ok('The gala badge shows once, not a grade', async () => {

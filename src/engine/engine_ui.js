@@ -963,18 +963,34 @@ export const ui = {
         }, 3000);
     },
     
-    triggerShake: function(a, c) {
+    /**
+     * A decision landed hard - say so, on every channel the player left on.
+     *
+     * The THRESHOLD belongs to the event, the CHANNELS belong to the settings,
+     * and that separation is the point. Up to 6.2 the whole thing sat behind
+     * `screenShake`, so the heaviest moments in the game were completely
+     * silent for anyone who had switched the shaking off - and that switch is
+     * exactly the one a player with motion sensitivity reaches for. They lost
+     * the feedback entirely rather than getting it in another form. Now the
+     * sound answers to the audio setting and the shake to the shake setting;
+     * playAudio() checks its own.
+     *
+     * Above 30 on aggro or the boss radar. Relief (negative values) stays
+     * quiet, as it always has.
+     */
+    reportImpact: function(a, c) {
+        if (a < 30 && c < 30) return;
+
+        this.playAudio('impact');
+
         if (!this.state.screenShake) return;
-        // Only shakes for decisions with heavy consequences, above 30
-        if (a >= 30 || c >= 30) {
+        document.body.classList.remove('animate-shake');
+        void document.body.offsetWidth; // force a reflow so the animation restarts
+        document.body.classList.add('animate-shake');
+
+        setTimeout(() => {
             document.body.classList.remove('animate-shake');
-            void document.body.offsetWidth; // force a reflow so the animation restarts
-            document.body.classList.add('animate-shake');
-            
-            setTimeout(() => {
-                document.body.classList.remove('animate-shake');
-            }, 500);
-        }
+        }, 500);
     },
     
     /**
