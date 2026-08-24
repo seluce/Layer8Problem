@@ -6,6 +6,8 @@ The Synergy Gala:
 * The invitation used to ask for its eight badges on the difficulty you were playing, and it could be earned once per difficulty. That was meant kindly, but the evening is the same on all three - and anyone who played mixed difficulties ended up with eight badges spread over three tiers, no complete tier, and no way to find out why. The eight now count wherever you earned them, and the evening happens once per career.
 * You can see who you have already won over: the team view marks a colleague whose own story you have seen through, and says so once the whole house is behind you. What the invitation still wants beyond that is left for you to work out.
 * The noticeboard and the company intranet have each heard of the gala - one wondering, one in writing.
+* The evening itself got denser. The smokers' corner remembers something about 2019, Egon runs a late-night taxi service, the mirror ritual in the washroom gained a participant, and an escape across the car park now ends the way Chantal decides. Only the silent smoke stays a two-option moment - on purpose. Two scenes found their missing portraits, and the hub now tells its evening in four stages instead of three.
+* An echo trimmed on each side: one refrain no longer appears twice in the same evening, and one English phrase no longer three times.
 * The evening is written into Müller's chronicle at the back of the company history - one line for each of the five ways it can end, in his own hand. It is a page of its own rather than a day's entry, so it stays there while the daily lines come and go.
 * In the archive the gala no longer carries a difficulty grade. It is a single evening per career, and a grade there promised an upgrade that can never come.
 

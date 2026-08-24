@@ -20,6 +20,7 @@ export const party = [
 		textByProgress: [
 			"Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Noch riecht es nach Bohnerwachs statt nach Bier. Die Leute stehen in Grüppchen und halten ihre Gläser wie Schutzschilde. Wohin jetzt?",
 			"Der Bass ist lauter geworden, oder du bist es gewohnt.\n\nIm Vorraum ist kein Durchkommen mehr. Jemand hat den Sticker von deiner Stirn abgezogen und an die Wand geklebt, gleich neben drei andere. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?",
+			"Die Krawatten sind gelockert und die Gespräche eine Spur zu laut.\n\nIm Vorraum übt ein Kollege halblaut eine Rede, die er nie halten wird. Jemand fragt dich zum dritten Mal, ob du 'der von der IT' bist. Wohin jetzt?",
 			"Die Musik läuft weiter, aber es tanzt niemand mehr.\n\nIm Vorraum stehen halbleere Gläser auf jeder Fläche, die nicht senkrecht ist. Zwei Kollegen suchen ihre Jacken, ein dritter erklärt jemandem sehr ausführlich das Ticketsystem. Wohin noch?"
 		],
 		text: "Das Neonlicht flackert ungesund und aus den Boxen dröhnt der Bass.\n\nDu stehst im Vorraum. Die Luft ist stickig, der Lärm ohrenbetäubend. Du siehst Kollegen, die sich heute Dinge erlauben, für die sie sich am Montag in Grund und Boden schämen werden. Wohin jetzt?",
@@ -59,6 +60,7 @@ export const party = [
 	},
 	{
 		id: "party_bar_3", loc: "bar",
+		char: "Kevin",
 		title: "Der zapfende Azubi",
 		text: "Der externe Barkeeper ist rauchen gegangen. Kevin versucht heimlich, ein Bier zu zapfen. Er reißt den Hahn auf. Das Glas besteht zu 95% aus Schaum, das Fass spuckt und das teure Pils droht überzulaufen.",
 		opts: [
@@ -317,11 +319,12 @@ export const party = [
 		opts: [
 			{ t: "'Bin noch auf der Afterparty!'", a: 20, l: 0, r: "Du tippst schnell die Antwort und schickst die Nachricht ab. Das gibt heute Nacht zu Hause garantiert ein kolossales Beziehungs-Drama für den Besitzer.", next: "party_hub" },
 			{ t: "Handy am Empfang abgeben", l: -5, a: 5, r: "Du bringst das klingelnde Gerät artig zu Gabi an den Empfang. Irgendjemand wird sich morgen sehr freuen.", next: "party_hub" },
-			{ t: "Ignorieren", l: 10, a: 0, r: "Einfach wegsehen. Nicht dein Handy, nicht dein Drama, nicht deine Baustelle. Du schlenderst weiter und lässt das Ding fröhlich in der Dunkelheit vor sich hin blinken.", next: "party_hub" }
+			{ t: "Ignorieren", l: 10, a: 0, r: "Einfach wegsehen. Fremdes Handy, fremdes Drama. Du schlenderst weiter und lässt das Ding fröhlich in der Dunkelheit vor sich hin blinken.", next: "party_hub" }
 		]
 	},
 	{
 		id: "party_lounge_7", loc: "lounge",
+		char: "Dr. Wichtig",
 		title: "Awkward Silence",
 		text: "Du setzt dich erschöpft in einen Sessel. Erst dann merkst du, dass im Sessel direkt daneben der CEO sitzt. Er starrt stumm in sein Whiskey-Glas. Er sieht dich an. Du ihn. Stille.",
 		opts: [
@@ -338,7 +341,8 @@ export const party = [
 		text: "Du trittst nach draußen. Es nieselt leicht. Ein paar frierende Kollegen aus der Buchhaltung stehen unter dem Vordach und rauchen schweigend. Die Stimmung ist angenehm melancholisch.",
 		opts: [
 			{ t: "Sich stumm dazustellen", l: 20, a: -15, r: "Du lehnst dich an die kalte, feuchte Hauswand. Niemand sagt ein Wort, man hört nur das leise Knistern der Zigaretten.", next: "party_hub" },
-			{ t: "Nach Feuer fragen, obwohl du nicht rauchst", l: 5, a: 5, r: "Du versuchst krampfhaft, dazuzugehören. Die rauchenden Kollegen schauen dich misstrauisch an. Du tust peinlich berührt so, als hättest du deine Zigaretten drinnen vergessen, und schleichst wieder rein.", next: "party_hub" }
+			{ t: "Nach Feuer fragen, obwohl du nicht rauchst", l: 5, a: 5, r: "Du versuchst krampfhaft, dazuzugehören. Die älteste Buchhalterin mustert dich lange, reicht dir dann wortlos eine Zigarette und gibt dir Feuer. 'Sie sehen aus, als hätten Sie es nötig, Müller.' Du rauchst zum ersten Mal seit dem Abi. Es ist furchtbar. Es ist großartig.", next: "party_hub" },
+			{ t: "'Schöner Abend.'", l: 15, a: -5, r: "Die Raucher lachen trocken, wie auf ein Stichwort. 'Sie hätten 2019 dabei sein müssen', sagt einer und zieht an seiner Zigarette. 'Als der Alte auf die Bühne...' Drinnen wechselt die Musik, und er verstummt, als hätte jemand einen Schalter umgelegt. Mehr kriegst du an diesem Abend nicht aus ihm heraus.", next: "party_hub" }
 		]
 	},
 	{
@@ -347,7 +351,8 @@ export const party = [
 		text: "Ein völlig unbekannter Kollege aus der IT-Infrastruktur flucht lautstark in sein Handy. Sein Uber hat ihn versetzt. Er hat offensichtlich Schlagseite.",
 		opts: [
 			{ t: "Ihn ignorieren", a: 10, l: 5, r: "Du zuckst mit den Schultern. Sollen ihn doch die Wölfe im Industriegebiet holen. Du drehst dich um und gehst wieder rein ins Warme.", next: "party_hub" },
-			{ t: "Ihm helfen, ein Taxi zu rufen", l: -10, a: -10, r: "Du besorgst ihm über deine App einen Wagen. Er fällt dir lallend um den Hals und drückt dich feucht-fröhlich an sich.", next: "party_hub" }
+			{ t: "Ihm helfen, ein Taxi zu rufen", l: -10, a: -10, r: "Du besorgst ihm über deine App einen Wagen. Er fällt dir lallend um den Hals. 'Du bist der Einzige hier, der weiß, was ein Subnetz ist!', schluchzt er. Am Montag steht ein Kaffee auf deinem Schreibtisch, daneben ein Post-it: 'Schulde dir was. R.'", next: "party_hub" },
+			{ t: "Egon als Fahrdienst organisieren", l: 10, a: -5, r: "Du kennst den einen Mann, der um diese Zeit noch nüchtern und motorisiert ist. Fünf Minuten später verfrachtet Egon den Kollegen zwischen Leiter und Werkzeugkisten auf die Ladefläche des Hausmeister-Transporters. 'Aber nicht auf die Sicherungen kotzen', knurrt er und fährt los.", next: "party_hub" }
 		]
 	},
 	{
@@ -356,7 +361,7 @@ export const party = [
 		text: "Die Hintertür ist ins Schloss gefallen. Jemand hat den Pappbecher weggeschoben. Du und drei andere steht jetzt im Regen und kommt nicht mehr rein.",
 		opts: [
 			{ t: "An die Scheibe hämmern", a: 20, l: -5, r: "Du schlägst wie ein Verrückter gegen die dicke Scheibe. Nach ewig langen Minuten macht Kevin grinsend auf und lacht euch aus. Du bist klitschnass und deine Laune ist im Keller.", next: "party_hub" },
-			{ t: "Die Gunst nutzen und heimgehen", l: 40, a: -10, r: "Das Universum hat ein klares Zeichen gesetzt. Du nutzt die perfekte Ausrede, läufst direkt zu deinem Auto und machst (zumindest im Kopf) zufrieden Feierabend.", next: "party_hub" }
+			{ t: "Die Gunst nutzen und heimgehen", l: 40, a: -10, r: "Das Universum hat ein klares Zeichen gesetzt. Du bist schon halb über den Parkplatz, die Autoschlüssel in der Hand, die Freiheit zum Greifen nah — da steht Chantal am Tor, als hätte sie auf dich gewartet. 'Müüüller! Die Tombola!' Sie hakt dich unter und schleift dich zurück in den Saal. Es gibt keine Tombola. Es gab nie eine Tombola. Aber die zwei Minuten Parkplatz waren die reinste Erholung.", next: "party_hub" }
 		]
 	},
 	{
@@ -417,7 +422,8 @@ export const party = [
 		text: "Du stehst am Waschbecken. Ein Vertriebler wäscht sich die Hände, starrt sich tief in den Spiegel und murmelt: 'Du bist ein Tiger. Du bist ein Macher.' Er bereitet sich auf den Flirt vor.",
 		opts: [
 			{ t: "'Gib's ihnen, Tiger!'", l: 5, a: -5, r: "Er schaut dich erst völlig überrascht an, grinst dann breit und zeigt dir mit beiden Händen die Finger-Pistolen.", next: "party_hub" },
-			{ t: "Kommentarlos die Hände trocknen", a: 10, l: 0, r: "Du schüttelst nur leicht den Kopf über so viel aufgesetzte Verkäufer-Psyche, ziehst dir stumm ein Papiertuch und verlässt den Raum. Leute gibt's, die gibt's gar nicht.", next: "party_hub" }
+			{ t: "Kommentarlos die Hände trocknen", a: 10, l: 0, r: "Du schüttelst nur leicht den Kopf über so viel aufgesetzte Verkäufer-Psyche, ziehst dir stumm ein Papiertuch und verlässt den Raum. Leute gibt's, die gibt's gar nicht.", next: "party_hub" },
+			{ t: "Sich danebenstellen und mitmachen", l: 10, a: -10, r: "Du stellst dich ans Becken daneben, starrst in den Spiegel und murmelst: 'Du bist ein Hypervisor. Du verteilst Ressourcen.' Der Vertriebler nickt ernst und wiederholt es. Ihr steht zwei Minuten schweigend nebeneinander und motiviert euch vor dem Spiegel. Es ist das ehrlichste Gespräch des Abends.", next: "party_hub" }
 		]
 	},
 	{

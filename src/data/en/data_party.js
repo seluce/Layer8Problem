@@ -28,8 +28,12 @@
 // four-word floor - "FINALE: BOFH MELTDOWN" is three tokens, not four - so the
 // pool reports 0 there.
 //
-// textByProgress holds three versions of the hub text (arrival, peak, last
-// hour), read in engine_core.js - prose, and translated.
+// textByProgress holds four versions of the hub text since 6.2 (arrival,
+// peak, tipping point, last hour), read in engine_core.js - prose, translated.
+//
+// 6.2 also adds three options (outside_1, outside_2, toilet_2), two char tags
+// (bar_3, lounge_7) and rewrites four results - counted on top of the ledger
+// figures above, which describe the 6.0 translation pass.
 //
 // Section 6 of the prose report had to land on 0 here, and the German has
 // eleven hits in five patterns. The English templates are NOT the same
@@ -69,6 +73,7 @@ export const party = [
 		textByProgress: [
 			"The neon light flickers unhealthily and the bass thumps out of the speakers.\n\nYou are standing in the anteroom. It still smells of floor polish rather than of beer. People are standing about in little groups holding their glasses like shields. Where to now?",
 			"The bass has got louder, or you have got used to it.\n\nThere is no getting through the anteroom any more. Somebody has peeled the label off your forehead and stuck it to the wall, right beside three others. You can see colleagues allowing themselves things today that they will be mortified about on Monday. Where to now?",
+			"The ties have come loose and the conversations are a shade too loud.\n\nIn the anteroom a colleague is half-audibly rehearsing a speech he will never give. Somebody asks you for the third time whether you are 'the one from IT'. Where to now?",
 			"The music plays on, but nobody is dancing any more.\n\nIn the anteroom there are half-empty glasses on every surface that is not vertical. Two colleagues are looking for their jackets, a third is explaining the ticket system to somebody at considerable length. Where else is there?"
 		],
 		text: "The neon light flickers unhealthily and the bass thumps out of the speakers.\n\nYou are standing in the anteroom. The air is stuffy, the noise deafening. You can see colleagues allowing themselves things today that they will be mortified about on Monday. Where to now?",
@@ -108,6 +113,7 @@ export const party = [
 	},
 	{
 		id: "party_bar_3", loc: "bar",
+		char: "Kevin",
 		title: "The Apprentice on the Pumps",
 		text: "The hired barman has gone for a cigarette. Kevin is secretly trying to pull a beer. He yanks the tap wide open. The glass is 95% froth, the barrel is spitting, and the expensive pils is about to overflow.",
 		opts: [
@@ -366,11 +372,12 @@ export const party = [
 		opts: [
 			{ t: "'Still at the afterparty!'", a: 20, l: 0, r: "You type the reply quickly and send the message. That will guarantee a colossal domestic drama for the owner tonight.", next: "party_hub" },
 			{ t: "Hand the phone in at Reception", l: -5, a: 5, r: "You take the ringing device dutifully to Gabi at Reception. Somebody will be very pleased tomorrow.", next: "party_hub" },
-			{ t: "Ignore it", l: 10, a: 0, r: "Simply look away. Not your phone, not your drama, not your building site. You stroll on and leave the thing blinking away cheerfully in the darkness.", next: "party_hub" }
+			{ t: "Ignore it", l: 10, a: 0, r: "Simply look away. Somebody else's phone, somebody else's drama. You stroll on and leave the thing blinking away cheerfully in the darkness.", next: "party_hub" }
 		]
 	},
 	{
 		id: "party_lounge_7", loc: "lounge",
+		char: "Dr. Wichtig",
 		title: "Awkward Silence",
 		text: "You sink exhausted into an armchair. Only then do you notice that the CEO is sitting in the armchair right beside it. He is staring silently into his whisky glass. He looks at you. You look at him. Silence.",
 		opts: [
@@ -387,7 +394,8 @@ export const party = [
 		text: "You step outside. It is drizzling lightly. A few shivering colleagues from Accounts are standing under the canopy smoking in silence. The mood is pleasantly melancholy.",
 		opts: [
 			{ t: "Join them without a word", l: 20, a: -15, r: "You lean against the cold, damp wall of the building. Nobody says a word, all you hear is the quiet crackle of the cigarettes.", next: "party_hub" },
-			{ t: "Ask for a light although you do not smoke", l: 5, a: 5, r: "You try desperately to belong. The smoking colleagues look at you suspiciously. In embarrassment you pretend to have left your cigarettes inside, and creep back in.", next: "party_hub" }
+			{ t: "Ask for a light although you do not smoke", l: 5, a: 5, r: "You try desperately to belong. The oldest of the accountants studies you at length, then hands you a cigarette without a word and gives you a light. 'You look as though you need it, Miller.' You smoke your first cigarette since school. It is terrible. It is glorious.", next: "party_hub" },
+			{ t: "'Lovely evening.'", l: 15, a: -5, r: "The smokers laugh drily, as if on cue. 'You should have been there in 2019,' says one, drawing on his cigarette. 'When the old man got up on that stage...' Inside, the music changes, and he falls silent as though somebody had flipped a switch. You will get nothing more out of him tonight.", next: "party_hub" }
 		]
 	},
 	{
@@ -396,7 +404,8 @@ export const party = [
 		text: "A completely unknown colleague from IT Infrastructure is swearing loudly into his phone. His Uber has stood him up. He is plainly listing to one side.",
 		opts: [
 			{ t: "Ignore him", a: 10, l: 5, r: "You shrug. Let the wolves of the industrial estate have him. You turn round and go back inside into the warm.", next: "party_hub" },
-			{ t: "Help him call a taxi", l: -10, a: -10, r: "You get him a car through your app. He falls slurring round your neck and hugs you damply.", next: "party_hub" }
+			{ t: "Help him call a taxi", l: -10, a: -10, r: "You get him a car through your app. He falls slurring round your neck. 'You are the only one here who knows what a subnet is!', he sobs. On Monday there is a coffee on your desk, with a post-it beside it: 'Owe you one. R.'", next: "party_hub" },
+			{ t: "Arrange Egon as the taxi service", l: 10, a: -5, r: "You know the one man who is still sober and motorised at this hour. Five minutes later Egon is loading the colleague onto the bed of the caretaker's van, between a ladder and the toolboxes. 'But no throwing up on the fuses,' he growls, and drives off.", next: "party_hub" }
 		]
 	},
 	{
@@ -405,7 +414,7 @@ export const party = [
 		text: "The back door has swung shut. Somebody has kicked the paper cup away. You and three others are now standing in the rain with no way back in.",
 		opts: [
 			{ t: "Hammer on the glass", a: 20, l: -5, r: "You beat on the thick pane like a madman. After endless minutes Kevin opens up, grinning, and laughs at you all. You are soaked through and your mood is in the cellar.", next: "party_hub" },
-			{ t: "Take the opportunity and go home", l: 40, a: -10, r: "The universe has given a clear sign. You take the perfect excuse, walk straight to your car and knock off for the day, contentedly (in your head, at least).", next: "party_hub" }
+			{ t: "Take the opportunity and go home", l: 40, a: -10, r: "The universe has given a clear sign. You are already halfway across the car park, car keys in hand, freedom within reach - and there stands Chantal at the gate, as though she had been waiting for you. 'Miiiller! The tombola!' She links arms with you and hauls you back into the hall. There is no tombola. There never was a tombola. But those two minutes of car park were the purest recovery of the evening.", next: "party_hub" }
 		]
 	},
 	{
@@ -424,7 +433,7 @@ export const party = [
 		text: "The new intern is standing in the wind in a thin party dress, shivering like a leaf while she waits for her Uber. She looks wretched.",
 		opts: [
 			{ t: "Chivalrously offer your jacket", l: -10, a: -15, r: "She takes your warm jacket with enormous gratitude and wraps herself up in it. Now you are the one standing in the cold wind freezing your backside off.", next: "party_hub" },
-			{ t: "Offer advice: 'Move about, that warms you up!'", a: 15, l: 5, r: "You clap your hands and cheer her on. She stares at you in disbelief and loathing. 'Thanks for nothing, you tosser.' Mission botched.", next: "party_hub" },
+			{ t: "Offer advice: 'Move about, that warms you up!'", a: 15, l: 5, r: "You clap your hands and cheer her on. She gives you a look of pure, wind-chilled loathing. 'Thanks for nothing, you tosser.' Mission botched.", next: "party_hub" },
 			{ t: "Go back inside - too cold out here", l: 15, a: 0, r: "You have absolutely no wish to catch pneumonia for somebody else. You mumble a 'good luck' and flee quickly back into the heated lobby.", next: "party_hub" }
 		]
 	},
@@ -466,7 +475,8 @@ export const party = [
 		text: "You are standing at the basin. A sales man is washing his hands, staring deep into the mirror and muttering: 'You are a tiger. You are a doer.' He is preparing to flirt.",
 		opts: [
 			{ t: "'Give them hell, tiger!'", l: 5, a: -5, r: "He looks at you in complete surprise at first, then grins broadly and gives you finger guns with both hands.", next: "party_hub" },
-			{ t: "Dry your hands without comment", a: 10, l: 0, r: "You merely shake your head slightly at so much manufactured salesman's psychology, take a paper towel in silence and leave the room. There are people, and then there are people.", next: "party_hub" }
+			{ t: "Dry your hands without comment", a: 10, l: 0, r: "You merely shake your head slightly at so much manufactured salesman's psychology, take a paper towel in silence and leave the room. There are people, and then there are people.", next: "party_hub" },
+			{ t: "Stand beside him and join in", l: 10, a: -10, r: "You take the basin next to his, stare into the mirror and murmur: 'You are a hypervisor. You allocate resources.' The sales man nods gravely and repeats it. The two of you stand there for two minutes, motivating yourselves in silence. It is the most honest conversation of the evening.", next: "party_hub" }
 		]
 	},
 	{
@@ -495,7 +505,7 @@ export const party = [
 		opts: [
 			{ t: "Give up in irritation and leave", a: 15, l: 5, r: "You pull your trousers back up and leave the cubicle swearing. This company cannot even manage simple door locks. How is the network supposed to work?", next: "party_hub" },
 			{ t: "Go through with the acrobatics", l: 10, a: 10, r: "You cramp your leg and brace your foot against the door while trying to conduct your business. It works, after a fashion. Your leg is still trembling as you wash your hands.", next: "party_hub" },
-			{ t: "Simply leave the door open", a: 30, l: 0, r: "Anyone who looks in has only themselves to blame! An unsuspecting colleague pushes the door open, stares at you in disbelief and flees at once with a loud 'sorry!'.", next: "party_hub" }
+			{ t: "Simply leave the door open", a: 30, l: 0, r: "Anyone who looks in has only themselves to blame! An unsuspecting colleague pushes the door open, freezes in the doorway, mumbles a loud 'sorry!' and flees.", next: "party_hub" }
 		]
 	},
 	{
