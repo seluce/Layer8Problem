@@ -2395,6 +2395,54 @@ await ok('An import replaces the gala state, both halves together', () => {
               'the import leaves 6.1 flags behind for the migration to resurrect');
 });
 
+await ok('An item that moves three stats shows three numbers', async () => {
+    // Up to 6.2 only use.b floated one. Drinking a coffee moved the laziness
+    // bar with nothing to say it had, and the single item touching the boss
+    // radar was the only one that looked as though it had worked.
+    resetState();
+    await ensure('items');
+    const shown = [];
+    const realFloat = engine.showFloatingText;
+    engine.showFloatingText = (id, v) => shown.push(id);
+
+    const movesAll = Object.keys(DB.items).find(id => {
+        const use = DB.items[id].use;
+        return use && !use.cooldown && use.a && use.l;
+    });
+    try {
+        if (movesAll) {
+            engine.grantItem(movesAll);
+            state.pendingItem = movesAll;
+            engine.confirmUseItem();
+        }
+    } finally { engine.showFloatingText = realFloat; }
+
+    if (movesAll) {
+        assert.ok(shown.includes('val-al'), 'the aggro change stayed invisible');
+        assert.ok(shown.includes('val-fl'), 'the laziness change stayed invisible');
+    }
+
+    // ...and the rule itself, so a new stat cannot be added without its number.
+    const src = readFileSync(new URL('../src/engine/engine_inventory.js', import.meta.url), 'utf-8');
+    const block = src.slice(src.indexOf('if (takes) {'), src.indexOf('applyReputation(use.rep)'));
+    for (const [field, bar] of [['use.a', 'val-al'], ['use.l', 'val-fl'], ['use.b', 'val-cr']]) {
+        assert.ok(block.includes(`showFloatingText('${bar}'`), `${field} moves a bar with no number`);
+    }
+});
+
+await ok('A colleague on stage in a boss fight has a face', async () => {
+    // Of 38 boss fights exactly one carried a char tag, though two more have a
+    // colleague as the whole scene. The rest are infrastructure emergencies
+    // with nobody in them - no portrait is right there.
+    await ensure('bossfights');
+    for (const [id, who] of [['boss_db_purge', 'Kevin'], ['boss_generator_test', 'Egon']]) {
+        const ev = (DB.bossfights ?? []).find(b => b.id === id);
+        assert.ok(ev, `${id} is gone`);
+        assert.equal(ev.char, who, `${id} lost its portrait`);
+        assert.ok(ev.text.includes(who), `${id} no longer has ${who} on stage - drop the tag`);
+    }
+});
+
 await ok('A heavy hit reports on every channel left switched on', () => {
     // The threshold belongs to the EVENT, the channels to the SETTINGS. Up to
     // 6.2 the whole thing sat behind screenShake, so switching the shaking off

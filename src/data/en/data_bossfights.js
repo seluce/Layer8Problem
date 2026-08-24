@@ -99,6 +99,7 @@ export const bossfights = [
 	},
 	{
 		id: "boss_db_purge",
+		char: "Kevin",
 		title: "Kevin and the Deletion Script",
 		text: "Kevin is standing very upright in front of his screen and saying nothing. On the screen a deletion script is running against the live database. The progress bar is at eleven per cent.",
 		timer: 8,
@@ -802,6 +803,7 @@ export const bossfights = [
 	},
 	{
 		id: "boss_generator_test",
+		char: "Egon",
 		title: "The Annual Standby Power Test",
 		timer: 12,
 		text: "Egon has started the annual test of the standby generator, as he does every year, with a clipboard. The generator starts up. What does not happen: the changeover back to mains power. According to the sticker the diesel lasts forty-two minutes.",

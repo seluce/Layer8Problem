@@ -127,8 +127,19 @@ export const inventory = {
                 // floor, while the comment below claimed parity with the event
                 // path - a positive use.a/use.l overshot 100 for one frame
                 // until updateUI re-clamped.
-                if (use.a) this.state.al = Math.max(0, Math.min(100, this.state.al + use.a));
-                if (use.l) this.state.fl = Math.max(0, Math.min(100, this.state.fl + use.l));
+                // Each of the three floats its number, the way every other
+                // path does. Until 6.2 only `b` below had one - and since
+                // EVERY usable item relieves aggro while only the three
+                // trade-off ones raise the boss radar, the silent case was
+                // the ordinary one: the bar moved and nothing said so.
+                if (use.a) {
+                    this.state.al = Math.max(0, Math.min(100, this.state.al + use.a));
+                    this.showFloatingText('val-al', use.a);
+                }
+                if (use.l) {
+                    this.state.fl = Math.max(0, Math.min(100, this.state.fl + use.l));
+                    this.showFloatingText('val-fl', use.l);
+                }
                 // b and rep make trade-off items possible: relief now, paid
                 // for on the boss's radar or in someone's regard. Same clamps
                 // as the event path, so an item cannot do what an event may not.

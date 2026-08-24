@@ -59,6 +59,7 @@ export const bossfights = [
 	},
 	{
 		id: "boss_db_purge",
+		char: "Kevin",
 		title: "Kevin und das Löschskript",
 		text: "Kevin steht sehr aufrecht vor seinem Bildschirm und sagt nichts. Auf dem Bildschirm läuft ein Löschskript gegen die Live-Datenbank. Der Fortschrittsbalken ist bei elf Prozent.",
 		timer: 8,
@@ -762,6 +763,7 @@ export const bossfights = [
 	},
 	{
 		id: "boss_generator_test",
+		char: "Egon",
 		title: "Der Jahrestest des Notstroms",
 		timer: 12,
 		text: "Egon hat den Jahrestest des Notstromaggregats gestartet, wie jedes Jahr, mit Klemmbrett. Das Aggregat springt an. Was nicht passiert: die Umschaltung zurück auf Netzstrom. Der Diesel reicht laut Aufkleber für zweiundvierzig Minuten.",
