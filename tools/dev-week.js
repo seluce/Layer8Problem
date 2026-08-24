@@ -223,9 +223,8 @@
         // ---------------------------------------------------------------
 
         /**
-         * Unlocks the gala requirements for the current tier (eight
-         * achievements at a matching rank, gala not played yet) and sets up
-         * Friday afternoon. The meeting then opens on its gala node and the
+         * Unlocks the gala requirements (the eight badges, evening not seen
+         * yet) and sets up Friday afternoon. The meeting then opens on its gala node and the
          * party follows at 16:30.
          */
         gala() {
@@ -234,15 +233,13 @@
             const a = s.archive;
             a.achievements = [...new Set([...(a.achievements ?? []), ...needed])];
             a.achievementDiffs = a.achievementDiffs ?? {};
-            for (const id of needed) a.achievementDiffs[id] = 'hard';   // covers every grade
             e.saveSystem();
 
-            const level = e.difficultyTier() === 1 ? 'easy' : e.difficultyTier() === 3 ? 'hard' : 'normal';
-            localStorage.removeItem(e.KEYS.partyPlayed[level]);
+            localStorage.removeItem(e.KEYS.partyPlayed);
 
             dev.friday('solid');
-            console.log(`Gala unlocked (level ${level}). Now dev.meeting() - ` +
-                        'the announcement comes in the meeting, the party at 16:30.');
+            console.log('Gala unlocked. Now dev.meeting() - the announcement ' +
+                        'comes in the meeting, the party at 16:30.');
             return dev;
         },
 

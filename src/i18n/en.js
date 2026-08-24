@@ -266,6 +266,8 @@ export const en = {
     'team.reprimanded':            'WRITTEN WARNING',
     'team.todayChange':            'Change since this morning',
     'team.toNext':                 '{gap} more to {level}',
+    'team.wonOver':                  'You saw this one through.',
+    'team.houseWon':                 'The whole house is behind you. Word is that gets noticed upstairs.',
 
     'archive.title':               'Career progress',
     'archive.subtitle':            'Your collected works of madness.',
@@ -289,6 +291,7 @@ export const en = {
     'archive.badge.hard':          'HARD',
     'archive.badge.normal':        'MEDIUM',
     'archive.badge.easy':          'EASY',
+    'archive.badge.once':          'ONCE',
 
     // Shared by the archive panel and the worldwide statistics: same two
     // ledgers, same four questions, so the same words.
@@ -360,6 +363,7 @@ export const en = {
     'lore.lastPages.title':        'The last pages',
     'lore.lastPages.body':         'This is where the official chronicle stops. The last entry from corporate communications is years old — it seems nothing has happened for a long while that anyone thought worth recording. The remaining pages are blank.',
     'lore.entry.sign':             '— M., workday {day}',
+    'lore.gala.label':             'The gala',
     'lore.done':                   'That is enough for today. The ink has to dry anyway.',
     'lore.add':                    'Add something',
     'lore.addHint':                'Nobody gave you permission. Nobody forbade it either.',

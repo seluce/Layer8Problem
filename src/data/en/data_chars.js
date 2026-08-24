@@ -21,10 +21,16 @@
 // still reports under lint-parity - 1, not 0.
 
 export const chars = [
+	/* `ach` names the badge this person's own story ends in - the eight the
+	   gala invitation asks for, minus ach_lore, which belongs to the company
+	   and not to a colleague. Ids, so both trees stay identical.
+	   The list itself lives in engine_core.PARTY_BADGES. */
+
 
 	{
 		name: "Kevin",
 		role: "The Apprentice",
+		ach: "ach_mentor",
 		img: "assets/img/chars/kevin.webp",
 		icon: "🧢",
 		desc: "His 'oops' costs the company around €50,000 a year. Thinks the 'cloud' is something off the weather forecast. Forever trying to install Minecraft on the server."
@@ -32,6 +38,7 @@ export const chars = [
 	{
 		name: "Chantal",
 		role: "Marketing & Feel Good",
+		ach: "ach_ally",
 		img: "assets/img/chars/chantal.webp",
 		icon: "💅",
 		desc: "Uses words like 'synergy' and 'mindset' but has no idea how to open a PDF. Demands new Apple products daily, because the colour 'holo pink' brings out her creativity."
@@ -39,6 +46,7 @@ export const chars = [
 	{
 		name: "Egon",
 		role: "Caretaker",
+		ach: "ach_keymaster",
 		img: "assets/img/chars/egon.webp",
 		icon: "🔧",
 		desc: "The true ruler of the building. Hates technology, loves his keys. Ask him and everything was better back then (1980), the cables above all."
@@ -46,6 +54,7 @@ export const chars = [
 	{
 		name: "Dr. Wichtig",
 		role: "The CEO",
+		ach: "ach_wolf",
 		img: "assets/img/chars/wichtig.webp",
 		icon: "👔",
 		desc: "Has visions that are physically impossible. Fond of ringing from inside tunnels to complain about the reception. Thinks AI can make coffee."
@@ -53,6 +62,7 @@ export const chars = [
 	{
 		name: "Frau Elster",
 		role: "Accounts",
+		ach: "ach_cat_whisperer",
 		img: "assets/img/chars/elster.webp",
 		icon: "🦉",
 		desc: "Guardian of Excel and of the fridge. Has eyes like a hawk for a missing receipt or a wrongly sorted bin. Her cat 'Rüdiger' is her only friend."
@@ -60,6 +70,7 @@ export const chars = [
 	{
 		name: "Markus",
 		role: "Head of Sales",
+		ach: "ach_closer",
 		img: "assets/img/chars/markus.webp",
 		icon: "💪",
 		desc: "Sells the customer things we do not have. Fond of bellowing 'Time is money!' while playing Solitaire. His printer is his personal arch-enemy."
@@ -67,6 +78,7 @@ export const chars = [
 	{
 		name: "Gabi",
 		role: "Reception",
+		ach: "ach_rockstar",
 		img: "assets/img/chars/gabi.webp",
 		icon: "☎️",
 		desc: "The switchboard. Knows everything about everyone before it happens. Rings IT when the mouse is empty (or the coffee)."

@@ -36,6 +36,16 @@
     // nothing to report it.
     const isPlayer = (char) => char.player === true;
 
+    // Whether this colleague's own story has been seen through - the badge
+    // data_chars.js names in `ach`.
+    //
+    // Drawn as a quiet mark and NEVER as a counter. Seven identical marks
+    // appearing one after another say what they mean by themselves, and the
+    // player is meant to wonder what they add up to rather than read a
+    // checklist. The eighth thing the invitation asks for is not a person at
+    // all (engine_core.PARTY_BADGES) and deliberately has no row here.
+    const wonOver = (char) => !!char.ach && (state.archive.achievements ?? []).includes(char.ach);
+
     const team = $derived(
         tree().chars.map(char => {
             const player = isPlayer(char);
@@ -46,13 +56,19 @@
             const level = LEVELS.find(l => rep >= l.min) ?? LEVELS[3];
             const nextUp = LEVELS.filter(l => l.min > rep).at(-1);
             return {
-                char, player, rep, level, today,
+                char, player, rep, level, today, won: wonOver(char),
                 // How far is it to the next level up?
                 toNext: nextUp ? { text: levelText(nextUp), gap: nextUp.min - rep } : null,
                 // -100..100 mapped onto 0..100 so the centre line sits at 50%.
                 fill: (rep + 100) / 2
             };
         })
+    );
+
+    // Only once every colleague is behind you - and only then does the game
+    // say so out loud.
+    const houseWon = $derived(
+        team.some(m => m.char.ach) && team.filter(m => m.char.ach).every(m => m.won)
     );
 </script>
 
@@ -85,7 +101,18 @@
                      way - Chantal became "Chant…". Stacked, both fit. -->
                 <div class="flex justify-between items-start gap-2 mb-1">
                     <div class="flex flex-col min-w-0">
-                        <h3 class="font-bold text-white text-lg truncate">{member.char.name}</h3>
+                        <h3 class="font-bold text-white text-lg truncate flex items-center gap-1.5">
+                            {member.char.name}
+                            {#if member.won}
+                                <!-- A picture like everywhere else, with the
+                                     house fallback: a missing file shows the
+                                     glyph instead of nothing at all. -->
+                                <img src="assets/img/ui/ui_medal.webp" alt={t('team.wonOver')}
+                                     title={t('team.wonOver')} width="16" height="16"
+                                     class="w-4 h-4 shrink-0 select-none"
+                                     onerror={(e) => e.currentTarget.outerHTML = '<span class=\'text-pink-400 text-sm\'>❖</span>'}>
+                            {/if}
+                        </h3>
                         <span class="text-[0.625rem] text-slate-400 uppercase tracking-wider truncate">{member.char.role}</span>
                     </div>
 
@@ -123,3 +150,9 @@
         </div>
     </div>
 {/each}
+
+{#if houseWon}
+    <div class="sm:col-span-2 text-center border border-pink-800/60 bg-pink-950/20 rounded-lg px-4 py-3">
+        <p class="text-pink-300 text-sm font-bold tracking-wide">{t('team.houseWon')}</p>
+    </div>
+{/if}

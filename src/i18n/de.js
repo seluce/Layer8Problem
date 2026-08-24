@@ -273,6 +273,8 @@ export const de = {
     'team.reprimanded':            'ABGEMAHNT',
     'team.todayChange':            'Veränderung seit heute Morgen',
     'team.toNext':                 'noch {gap} bis {level}',
+    'team.wonOver':                  'Diese Geschichte hast du zu Ende gebracht.',
+    'team.houseWon':                 'Die Belegschaft steht hinter dir. Man munkelt, so etwas fällt oben auf.',
 
     'archive.title':               'Karriere-Fortschritt',
     'archive.subtitle':            'Deine gesammelten Werke des Wahnsinns.',
@@ -296,6 +298,7 @@ export const de = {
     'archive.badge.hard':          'SCHWER',
     'archive.badge.normal':        'MITTEL',
     'archive.badge.easy':          'EINFACH',
+    'archive.badge.once':          'EINMALIG',
 
     // Shared by the archive panel and the worldwide statistics: same two
     // ledgers, same four questions, so the same words.
@@ -367,6 +370,7 @@ export const de = {
     'lore.lastPages.title':        'Die letzten Seiten',
     'lore.lastPages.body':         'Hier hört die offizielle Chronik auf. Der letzte Eintrag der Unternehmenskommunikation ist Jahre alt — es scheint seit Längerem nichts mehr passiert zu sein, das jemand für festhaltenswert hielt. Die restlichen Seiten sind leer.',
     'lore.entry.sign':             '— M., Arbeitstag {day}',
+    'lore.gala.label':             'Die Gala',
     'lore.done':                   'Für heute steht genug drin. Die Tinte muss ohnehin trocknen.',
     'lore.add':                    'Etwas hinzufügen',
     'lore.addHint':                'Niemand hat es dir erlaubt. Niemand hat es dir verboten.',

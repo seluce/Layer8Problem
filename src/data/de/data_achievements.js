@@ -39,6 +39,6 @@ export const achievements = [
 	{ id: "ach_wolf", icon: "📈", img: "assets/img/achievements/ach_wolf.webp", title: "Wolf of Wall Street", desc: "Du hast den Chef besiegt. Der Vertrag gehört dir.", hint: "Gewinne die harte Verhandlung gegen den Endgegner." },
 
 	// GALA PARTY
-	{ id: "ach_party", icon: "🎉", img: "assets/img/achievements/ach_party.webp", title: "Synergy-Veteran", desc: "Du hast die legendäre Firmenfeier überlebt und bist in die Geschichte eingegangen.", hint: "Beweise dich auf allen Ebenen, um die ultimative Einladung zu erhalten." }
+	{ id: "ach_party", once: true, icon: "🎉", img: "assets/img/achievements/ach_party.webp", title: "Synergy-Veteran", desc: "Du hast die legendäre Firmenfeier überlebt und bist in die Geschichte eingegangen.", hint: "Gewinne jeden im Haus für dich - und finde heraus, was die Firma verschweigt." }
 
 ];

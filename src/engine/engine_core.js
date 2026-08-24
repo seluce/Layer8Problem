@@ -1,4 +1,4 @@
-import { KEYS, PROGRESS_KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS, LEGACY_PARTY_KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
 import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
@@ -16,6 +16,15 @@ const PARTY_START    = 17 * 60;
 const PARTY_END      = 23 * 60;
 const PARTY_STATIONS = 12;
 const PARTY_STEP     = (PARTY_END - PARTY_START) / PARTY_STATIONS;   // 30 minutes
+
+/**
+ * The eight the invitation asks for: every colleague in the house once, and
+ * the company's own buried history. data_chars.js records which badge belongs
+ * to whom (`ach`) - that is what the team view draws; ach_lore belongs to
+ * nobody and stays the open question.
+ */
+export const PARTY_BADGES = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
+                             'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
 
 /** How many lines the company chronicle keeps. Shared with mergeArchives(). */
 const CHRONICLE_MAX = 12;
@@ -119,6 +128,12 @@ export const core = {
         for (const [k, v] of Object.entries(c.reputation ?? {})) {
             if (!(k in out.reputation)) out.reputation[k] = v;
         }
+
+        // The gala needs a rule of its own, and the reason is the catch-all
+        // below: it only fills keys that are MISSING, and `gala` is present
+        // and null until the evening happens. Without this, a machine that
+        // never got there would out-vote the one that did.
+        out.gala = out.gala ?? c.gala ?? null;
 
         // Whatever a future version adds: local wins, the cloud fills gaps.
         for (const [k, v] of Object.entries(c)) {
@@ -244,9 +259,12 @@ export const core = {
         // carries the STRING "false" for a gala never played, and a plain
         // truthiness check let a second machine's "false" overwrite a local
         // "true" - the once-per-tier gala was offered again.
-        if (cloud.party_easy === 'true')   localStorage.setItem(this.KEYS.partyPlayed.easy,   'true');
-        if (cloud.party_normal === 'true') localStorage.setItem(this.KEYS.partyPlayed.normal, 'true');
-        if (cloud.party_hard === 'true')   localStorage.setItem(this.KEYS.partyPlayed.hard,   'true');
+        // The 6.1 fields still count: a machine on the old version keeps
+        // sending them, and either way the evening was seen.
+        if (cloud.party === 'true' || cloud.party_easy === 'true' ||
+            cloud.party_normal === 'true' || cloud.party_hard === 'true') {
+            localStorage.setItem(this.KEYS.partyPlayed, 'true');
+        }
 
         // Per slot, and NOT falling back to the old shared stamp: a 6.1 payload
         // cannot say which of its two slots it actually knew about, and acting
@@ -359,14 +377,16 @@ export const core = {
     // the other machine tell an abandoned run apart from one that was finished
     // here afterwards (see loadCloudSave).
     buildCloudPayload: function() {
+        const played = localStorage.getItem(this.KEYS.partyPlayed) || "false";
         const daySyncedAt  = this.slotStamp(this.KEYS.dayState,  this.KEYS.dayClearedAt);
         const weekSyncedAt = this.slotStamp(this.KEYS.weekState, this.KEYS.weekClearedAt);
         return {
             archive:      this.state.archive,
             tutorial:     localStorage.getItem(this.KEYS.tutorialDone) || "false",
-            party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
-            party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
-            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
+            // One flag now; the three 6.1 fields are written from it so a
+            // machine still on the old version does not offer the evening again.
+            party:        played,
+            party_easy:   played, party_normal: played, party_hard: played,
             day:          localStorage.getItem(this.KEYS.dayState),
             week:         localStorage.getItem(this.KEYS.weekState),
             // ONE stamp used to cover BOTH slots, and that cost runs.
@@ -443,6 +463,7 @@ export const core = {
     },
 
     loadSystem: function() {
+        this.migratePartyFlag();
         const data = localStorage.getItem(this.KEYS.archive);
         
         DB.chars.forEach(char => {
@@ -859,6 +880,45 @@ export const core = {
         this.saveSystem();
         this.playAudio('ui');
         return true;
+    },
+
+    /**
+     * Writes the gala into the career book - once, and for good.
+     *
+     * Its OWN field rather than a thirteenth chronicle entry, for three
+     * reasons that all end the same way: the entry would not survive.
+     * addChronicleEntry allows one line per career day and the gala falls on a
+     * day that usually already has one; the twelve-line cap drops the oldest,
+     * so the evening would quietly disappear after twelve more days; and
+     * mergeArchives unites chronicle entries BY DAY, so a second machine's
+     * daily line and the gala would fight over the same slot.
+     *
+     * A field of its own has none of those problems, and mergeArchives already
+     * carries it across machines through its "local wins, the cloud fills
+     * gaps" clause - which is exactly right for something that happens once.
+     *
+     * The finale is read off currentEventId: reset() renders the finale event
+     * by id, so at this point it names the evening the player actually had.
+     */
+    recordGala: function() {
+        const archive = this.state.archive;
+        if (archive.gala) return false;              // one evening, one record
+
+        const id = String(this.state.currentEventId ?? '');
+        const finale = id.startsWith('party_finale_') ? id.slice('party_finale_'.length) : 'standard';
+        archive.gala = { finale, day: this.chronicleDayNo() };
+        this.saveSystem();
+        return true;
+    },
+
+    /**
+     * The gala page as the lore view draws it, or null before the evening.
+     * Resolved out of the tree on every call, like chronicleEntries().
+     */
+    galaEntry: function(loreTree = DB.lore) {
+        const gala = this.state.archive.gala;
+        const text = loreTree?.gala?.[gala?.finale];
+        return text ? { day: gala.day, text } : null;
     },
 
     /** Has today's line already been written? Drives the button state. */
@@ -1775,26 +1835,41 @@ export const core = {
      * least on the difficulty being played today - collecting them on Friday
      * does not hand you the party on Monday. And once per difficulty.
      */
+    /**
+     * The gala: one evening, and once per career.
+     *
+     * Up to 6.1 this asked for the eight badges AT THE TIER being played and
+     * fired once per tier - kindly meant, so the evening could be reached
+     * three times. Two facts made that a bad bargain. The evening is IDENTICAL
+     * on all three tiers (diffStr only ever picked the flag and one log line),
+     * so the reward for re-earning eight quest chains on a harder day was the
+     * evening you had already seen. And because a badge records its BEST tier,
+     * anyone playing mixed difficulties ended up with eight badges spread over
+     * three tiers and no complete tier at all: all of the work, no invitation,
+     * and nothing on screen to say why.
+     *
+     * So the eight count wherever they were earned. Better one gala that is
+     * actually reached than three that are not.
+     */
     partyInvitation: function() {
-        // Tier-based so week runs map onto the day ranks: a week on Genervt
-        // asks for the same achievement grade as Mittwoch and shares its
-        // played-once flag - the gala stays a once-per-tier finale. Day mode
-        // resolves to exactly the historical values.
-        const needed = this.difficultyTier();
-        const diffStr = needed === 1 ? 'easy' : needed === 3 ? 'hard' : 'normal';
-        const DIFF_RANK = { easy: 1, normal: 2, hard: 3 };
-
-        const REQUIRED = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
-                          'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
         const unlocked = this.state.archive.achievements ?? [];
-        const diffs = this.state.archive.achievementDiffs ?? {};
+        if (!PARTY_BADGES.every(id => unlocked.includes(id))) return null;
+        if (localStorage.getItem(this.KEYS.partyPlayed) === 'true') return null;
+        return { isParty: true, partyKey: this.KEYS.partyPlayed };
+    },
 
-        const isVeteran = REQUIRED.every(id =>
-            unlocked.includes(id) && (DIFF_RANK[diffs[id]] ?? 1) >= needed);
-
-        const partyKey = this.KEYS.partyPlayed[diffStr];
-        if (!isVeteran || localStorage.getItem(partyKey) === 'true') return null;
-        return { isParty: true, partyKey, diffStr };
+    /**
+     * Carries the three 6.1 gala flags onto the single one. Runs at boot after
+     * the cloud has had its say - an old payload may have just written a
+     * legacy flag, and whoever has seen the evening is not sent to it again.
+     */
+    migratePartyFlag: function() {
+        try {
+            if (localStorage.getItem(this.KEYS.partyPlayed) === 'true') return;
+            if (LEGACY_PARTY_KEYS.some(k => localStorage.getItem(k) === 'true')) {
+                localStorage.setItem(this.KEYS.partyPlayed, 'true');
+            }
+        } catch { /* unreadable storage: offered once more, no harm done */ }
     },
 
     /**
@@ -2013,7 +2088,7 @@ export const core = {
         this.clearDayTimers();
         this.state.emailPending = false;
         
-        this.log(`SYSTEM OVERRIDE: GALA (${endData.diffStr.toUpperCase()})`, "text-pink-500 font-bold");
+        this.log('SYSTEM OVERRIDE: GALA', "text-pink-500 font-bold");
 		
 		// ---> START THE GALA MUSIC <---
         this.playMusic('gala');
@@ -2053,12 +2128,13 @@ export const core = {
     exportSaveGame: function() {
         // Field names are part of the public save-code format and must stay
         // stable — older codes in circulation still use them.
+        const partyFlag = localStorage.getItem(this.KEYS.partyPlayed) || "false";
         const data = {
             arc:          this.state.archive,
             tut:          localStorage.getItem(this.KEYS.tutorialDone) || "false",
-            party_easy:   localStorage.getItem(this.KEYS.partyPlayed.easy)   || "false",
-            party_normal: localStorage.getItem(this.KEYS.partyPlayed.normal) || "false",
-            party_hard:   localStorage.getItem(this.KEYS.partyPlayed.hard)   || "false",
+            // Three field names for one flag: the save-code format is public
+            // and codes in circulation still carry them.
+            party_easy:   partyFlag, party_normal: partyFlag, party_hard: partyFlag,
             salt:         Math.floor(Math.random() * 999999) // makes every code unique
         };
 

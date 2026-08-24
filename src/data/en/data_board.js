@@ -63,6 +63,13 @@
  */
 export const board = [
 
+    {
+        id: "board_gala_rumour", kind: "note", paper: "#fce7f3", tilt: "-2deg", pin: "#db2777",
+        title: "A question for the room", titleTone: "#9d174d",
+        body: "Has any of you actually ever been to this <strong>Synergy Gala</strong>? <br>Four years I have worked here and I have never seen an invitation. Word is not everybody gets one. <br>Word is you have to earn it. Off whom, exactly?",
+        sign: "- (no name)"
+    },
+
     // ---------- The originals ----------
     {
         id: "board_yoghurt", kind: "note", paper: "#fef9c3", tilt: "1deg", pin: "#dc2626",

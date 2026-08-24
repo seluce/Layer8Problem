@@ -176,7 +176,17 @@
 
     // How hard it was when the achievement was earned. Anything recorded before
     // the difficulty was tracked counts as easy.
+    //
+    // ONCE is not a difficulty. The gala is a single evening per career (6.2),
+    // so its badge can never be improved on - showing it a grade would promise
+    // an upgrade that cannot happen. data_achievements.js marks it `once`.
     // i18n-uses: archive.badge.hard, archive.badge.normal, archive.badge.easy
+    // i18n-uses: archive.badge.once
+    const ONCE = {
+        border: 'border-pink-500/50 bg-pink-900/10 shadow-[0_0_10px_rgba(236,72,153,0.12)]',
+        badge:  'text-pink-300 border-pink-500/30 bg-pink-950/30',
+        label:  'archive.badge.once',
+    };
     const DIFFICULTY = {
         hard:   { border: 'border-red-500/50 bg-red-900/10 shadow-[0_0_10px_rgba(239,68,68,0.1)]', badge: 'text-red-400 border-red-500/30 bg-red-950/30',     label: 'archive.badge.hard' },
         normal: { border: 'border-blue-500/50 bg-blue-900/10',                                     badge: 'text-blue-400 border-blue-500/30 bg-blue-950/30',  label: 'archive.badge.normal' },
@@ -186,7 +196,9 @@
     const achievements = $derived(
         tree().achievements.map(ach => {
             const unlocked = earned.includes(ach.id);
-            const diff = DIFFICULTY[game.archive.achievementDiffs?.[ach.id] ?? 'easy'] ?? DIFFICULTY.easy;
+            const diff = ach.once
+                ? ONCE
+                : (DIFFICULTY[game.archive.achievementDiffs?.[ach.id] ?? 'easy'] ?? DIFFICULTY.easy);
             return {
                 ach, unlocked, diff,
                 desc: unlocked ? ach.desc : (ach.hint || '???')

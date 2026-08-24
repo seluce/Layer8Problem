@@ -1231,9 +1231,12 @@ export const ui = {
                 // `if (data.tut)` would reset the flag on every import.
                 if (data.tut === 'true') localStorage.setItem(engine.KEYS.tutorialDone, 'true');
 
-                if (data.party_easy) localStorage.setItem(engine.KEYS.partyPlayed.easy, data.party_easy);
-                if (data.party_normal) localStorage.setItem(engine.KEYS.partyPlayed.normal, data.party_normal);
-                if (data.party_hard) localStorage.setItem(engine.KEYS.partyPlayed.hard, data.party_hard);
+                // Any of the three 6.1 fields means the evening was seen; one
+                // flag carries it now. See engine_core.partyInvitation().
+                if (data.party === 'true' || data.party_easy === 'true' ||
+                    data.party_normal === 'true' || data.party_hard === 'true') {
+                    localStorage.setItem(engine.KEYS.partyPlayed, 'true');
+                }
 
                 // Same reason as in the hard reset: a running run belongs to
                 // the save that was just replaced. Resuming it would mix the

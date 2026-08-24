@@ -70,6 +70,6 @@ export const achievements = [
 	{ id: "ach_wolf", icon: "📈", img: "assets/img/achievements/ach_wolf.webp", title: "Wolf of Wall Street", desc: "You have beaten the boss. The contract is yours.", hint: "Win the hard negotiation against the final boss." },
 
 	// GALA PARTY
-	{ id: "ach_party", icon: "🎉", img: "assets/img/achievements/ach_party.webp", title: "Synergy Veteran", desc: "You survived the legendary company party and passed into history.", hint: "Prove yourself on every level to earn the ultimate invitation." }
+	{ id: "ach_party", once: true, icon: "🎉", img: "assets/img/achievements/ach_party.webp", title: "Synergy Veteran", desc: "You survived the legendary company party and passed into history.", hint: "Win over everyone in the house - and find out what the company is not saying." }
 
 ];

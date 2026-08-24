@@ -1,3 +1,16 @@
+[6.2.0] - unreleased
+
+Content and clarity, no balance changes yet.
+
+The Synergy Gala:
+* The invitation used to ask for its eight badges on the difficulty you were playing, and it could be earned once per difficulty. That was meant kindly, but the evening is the same on all three - and anyone who played mixed difficulties ended up with eight badges spread over three tiers, no complete tier, and no way to find out why. The eight now count wherever you earned them, and the evening happens once per career.
+* You can see who you have already won over: the team view marks a colleague whose own story you have seen through, and says so once the whole house is behind you. What the invitation still wants beyond that is left for you to work out.
+* The noticeboard and the company intranet have each heard of the gala - one wondering, one in writing.
+* The evening is written into Müller's chronicle at the back of the company history - one line for each of the five ways it can end, in his own hand. It is a page of its own rather than a day's entry, so it stays there while the daily lines come and go.
+* In the archive the gala no longer carries a difficulty grade. It is a single evening per career, and a grade there promised an upgrade that can never come.
+
+---
+
 [6.1.1] - 2026-08-23
 
 Everything here is measured against 6.1. This update is a large one, and it is bug fixes from end to end - not a single new feature. 6.0 and 6.1 brought a lot of new ground: the second language, the week campaign, the compendium, the gala. What matters now is that all of it runs cleanly, rather than piling more on top of it.

@@ -24,9 +24,10 @@ export const KEYS = {
     defaultWeekDiff: 'layer8_default_week_diff', // preselected work week
     diaryRecent:  'layer8_diary_recent',  // diary lines used recently, see engine_diary.loadMemory()
     tutorialDone: 'sysadmin_tutorial_done',
-    partyPlayed:  { easy:   'layer8_party_played_easy',
-                    normal: 'layer8_party_played_normal',
-                    hard:   'layer8_party_played_hard' },
+    // The gala is one evening, seen once per career (6.2). Up to 6.1 there
+    // were three flags, one per difficulty - see engine_core.partyInvitation()
+    // for why that went.
+    partyPlayed:  'layer8_party_played',
 
     // --- Reset bookkeeping (survives the hard reset ON PURPOSE) ---
     // The newest hard reset this machine has applied, as a timestamp. Every
@@ -63,6 +64,18 @@ export const KEYS = {
 };
 
 /**
+ * The three per-difficulty gala flags 6.1 wrote.
+ *
+ * Read once by engine_core.migratePartyFlag() and never again - they exist so
+ * a player who already saw the evening is not sent to it a second time.
+ */
+export const LEGACY_PARTY_KEYS = [
+    'layer8_party_played_easy',
+    'layer8_party_played_normal',
+    'layer8_party_played_hard',
+];
+
+/**
  * Everything a full reset has to remove.
  *
  * Exists because right here something was forgotten twice already: first the
@@ -85,5 +98,8 @@ export const PROGRESS_KEYS = [
     KEYS.defaultWeekDiff,
     KEYS.diaryRecent,
     KEYS.tutorialDone,
-    ...Object.values(KEYS.partyPlayed)
+    KEYS.partyPlayed,
+    // Still cleared by a reset, or the migration below would resurrect a gala
+    // the player just deleted.
+    ...LEGACY_PARTY_KEYS,
 ];

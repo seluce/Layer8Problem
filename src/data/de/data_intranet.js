@@ -85,6 +85,11 @@ export const intranet = {
 
         // ---------- Always available ----------
         {
+            id: "feed_gala", author: "Personalabteilung", handle: "@HR_Compliance",
+            initials: "HR", tone: "#f9a8d4",
+            text: "Zur wiederholten Nachfrage bezüglich der Synergy-Gala: Einladungen ergehen an Mitarbeitende, die sich abteilungsübergreifend bewährt haben. Die Prüfung erfolgt laufend. Von Einzelanfragen bitten wir abzusehen."
+        },
+        {
             id: "feed_tasse", author: "Chantal", handle: "@HR_FeelGood",
             initials: "CH", tone: "#f472b6",
             text: "Wer hat meine 'Good Vibes Only' Tasse aus der Spülmaschine genommen, ohne sie auszuräumen? Die Vibes sind jetzt im Minusbereich!! 😭🧘‍♀️"

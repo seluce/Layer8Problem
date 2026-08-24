@@ -103,6 +103,9 @@ const resetState = () => {
     // Friday would otherwise end in the party instead of the balance sheet.
     state.archive.achievements = [];
     state.archive.achievementDiffs = {};
+    // The evening is once per career, so a run that had one would refuse to
+    // record the next test's.
+    state.archive.gala = null;
     state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
@@ -1583,7 +1586,7 @@ await ok('Friday 16:30: the meeting first, then the gala or the balance sheet', 
     state.week.dayIndex = 5;
     state.time = 16 * 60 + 30;
     const realParty = engine.partyInvitation;
-    engine.partyInvitation = () => ({ isParty: true, partyKey: 'k', diffStr: 'easy' });
+    engine.partyInvitation = () => ({ isParty: true, partyKey: 'k' });
 
     // Without the meeting nothing ends - the button leads to the meeting room.
     state.meetingDone = false;
@@ -1603,18 +1606,23 @@ await ok('Friday 16:30: the meeting first, then the gala or the balance sheet', 
 
     engine.partyInvitation = realParty;
 });
-await ok('partyInvitation goes by grade: week_normal asks for the Wednesday rank and shares the played key', () => {
+await ok('Day mode and week mode share the one gala', () => {
+    // The evening is a career event, not a per-mode one: a week run and a
+    // workday look at the same flag, so seeing it in one mode does not leave
+    // it standing open in the other.
     resetState();
     engine.startWeek('normal');
     const REQUIRED = ['ach_mentor', 'ach_ally', 'ach_keymaster', 'ach_rockstar',
                       'ach_closer', 'ach_cat_whisperer', 'ach_lore', 'ach_wolf'];
     state.archive.achievements = [...REQUIRED];
-    state.archive.achievementDiffs = Object.fromEntries(REQUIRED.map(id => [id, 'normal']));
     const party = engine.partyInvitation();
-    assert.ok(party);
-    assert.equal(party.diffStr, 'normal');                      // the day rank, a shared key
-    localStorage.setItem(party.partyKey, 'true');               // the Wednesday gala has already been played
-    assert.equal(engine.partyInvitation(), null);
+    assert.ok(party, 'the week no longer offers the gala');
+    assert.equal(party.partyKey, 'layer8_party_played');
+
+    localStorage.setItem(party.partyKey, 'true');
+    assert.equal(engine.partyInvitation(), null, 'the week offered it twice');
+    engine.endWeek();                                   // back into day mode
+    assert.equal(engine.partyInvitation(), null, 'the day mode offered it again');
     localStorage.removeItem(party.partyKey);
 });
 await ok('finishParty closes the week: counters, balance sheet under the party report, slot emptied', async () => {
@@ -1628,13 +1636,18 @@ await ok('finishParty closes the week: counters, balance sheet under the party r
         { dayIndex: 4, endTickets: 2, peakA: 60, peakB: 50, coffee: 2, mailsIgnored: 1 },
     ];
     engine.saveWeek();
-    state.currentPartyKey = 'layer8_party_played_easy';
+    state.currentPartyKey = 'layer8_party_played';
     state.isPartyMode = true;
+    state.dayActive = true;
+    state.currentEventId = 'party_finale_gossip';   // the evening the player had
     const { ensure } = await import('../src/data.js');
     await ensure('party');
     engine.finishParty('SYNERGY!', 'Testabend.');
 
     assert.equal(calls.end.cause, 'party');
+    // The evening goes into the career book on its way out - the one place
+    // that knows which finale it was.
+    assert.equal(state.archive.gala?.finale, 'gossip', 'finishParty did not record the gala');
     assert.ok(calls.end.balance, 'the balance sheet is missing under the party report');
     // The party report knows the week - as an id, not as "WOCHE (Erholt)". The
     // German display text stood here up to 6.1 and would have fallen in the
@@ -1646,8 +1659,8 @@ await ok('finishParty closes the week: counters, balance sheet under the party r
     assert.equal(state.archive.stats.weeksSurvived, 1);
     assert.equal(state.week.active, false);
     assert.equal(engine.loadWeek(), null);
-    assert.equal(localStorage.getItem('layer8_party_played_easy'), 'true');
-    localStorage.removeItem('layer8_party_played_easy');
+    assert.equal(localStorage.getItem('layer8_party_played'), 'true');
+    localStorage.removeItem('layer8_party_played');
 });
 
 // --------------------------------------------- diary, sleep, archive (3c)
@@ -2305,6 +2318,146 @@ await ok('The weekly meeting has a status line of its own', async () => {
     assert.deepEqual(sent, ['#Status_meeting', '#Status_fallback']);
 });
 
+await ok('The gala writes itself into the career book, once', async () => {
+    // Its own field, not a chronicle entry: the daily line already owns that
+    // day, the twelve-line cap would drop it later, and mergeArchives unites
+    // chronicle entries BY DAY - it would have lost all three ways.
+    resetState();
+    await ensure('lore');
+    state.archive.stats = { daysStarted: 30 };
+    state.dayActive = true;                    // the evening belongs to the day just played
+    state.currentEventId = 'party_finale_rage';
+
+    assert.equal(engine.recordGala(), true, 'the evening was not recorded');
+    assert.equal(state.archive.gala.finale, 'rage', 'the wrong finale was written down');
+    assert.equal(state.archive.gala.day, 30);
+
+    // A second evening cannot happen, but a second call must not overwrite.
+    state.currentEventId = 'party_finale_hero';
+    assert.equal(engine.recordGala(), false, 'the record was written twice');
+    assert.equal(state.archive.gala.finale, 'rage', 'the record was overwritten');
+
+    // It reads back as a page, out of the tree.
+    const page = engine.galaEntry(DB.lore);
+    assert.ok(page?.text?.length > 40, 'the gala page has no text');
+    assert.equal(page.day, 30);
+
+    // And an unknown finale falls back rather than showing an empty page.
+    resetState();
+    state.currentEventId = 'something_else';
+    engine.recordGala();
+    assert.equal(state.archive.gala.finale, 'standard', 'an unknown ending had no fallback');
+    assert.ok(engine.galaEntry(DB.lore)?.text, 'the fallback has no page');
+
+    // Before the evening: nothing.
+    resetState();
+    assert.equal(engine.galaEntry(DB.lore), null, 'a gala was shown that never happened');
+});
+
+await ok('The gala page survives what the daily lines do not', () => {
+    // The three ways a chronicle entry would have been lost.
+    resetState();
+    state.archive.stats = { daysStarted: 5 };
+    state.dayActive = true;
+    state.currentEventId = 'party_finale_hero';
+    engine.recordGala();
+
+    // 1. the day already has its line - the gala is untouched by that guard
+    engine.addChronicleEntry();
+    assert.ok(state.archive.gala, 'the daily line displaced the gala');
+
+    // 2. twelve more days do not push it out
+    state.archive.chronicle = Array.from({ length: 20 }, (_, i) => ({ day: i + 100, id: 'plain_a', vars: {} }));
+    assert.ok(state.archive.gala, 'the cap swept the gala away');
+
+    // 3. and the union across two machines keeps it
+    const merged = engine.mergeArchives({ gala: null, chronicle: [] },
+                                        { gala: { finale: 'hero', day: 5 }, chronicle: [] });
+    assert.equal(merged.gala?.finale, 'hero', 'the other machine lost its gala in the union');
+});
+
+await ok('The gala badge shows once, not a grade', async () => {
+    // It can never be re-earned, so a difficulty grade on it would promise an
+    // upgrade that cannot happen. The archive reads `once` off the tree.
+    await ensure('achievements');
+    const gala = (DB.achievements ?? []).find(a => a.id === 'ach_party');
+    assert.ok(gala, 'the gala achievement is gone');
+    assert.equal(gala.once, true, 'ach_party no longer says it is a one-off');
+    const others = (DB.achievements ?? []).filter(a => a.once);
+    assert.equal(others.length, 1, 'more than one achievement claims to be once-only');
+
+    const src = readFileSync(new URL('../src/components/ArchiveView.svelte', import.meta.url), 'utf-8');
+    assert.ok(/ach\.once\s*\n?\s*\?\s*ONCE/.test(src) || /ach\.once\s*\?\s*ONCE/.test(src),
+              'the archive no longer gives a one-off its own badge');
+});
+
+await ok('The gala asks for the whole house, on any difficulty', async () => {
+    // 6.1 wanted the eight badges AT the tier being played and fired once per
+    // tier - unreachable for anyone playing mixed difficulties, and the reward
+    // was the same evening again. One condition, one evening now.
+    const { PARTY_BADGES } = await import('../src/engine/engine_core.js');
+    assert.equal(PARTY_BADGES.length, 8);
+
+    resetState();
+    state.archive.achievements = [...PARTY_BADGES];
+    state.archive.achievementDiffs = Object.fromEntries(PARTY_BADGES.map(id => [id, 'easy']));
+    state.difficultyMult = 1.25;                      // earned on easy, played on hard
+    assert.ok(engine.partyInvitation(), 'badges from an easier day no longer count');
+
+    // One short is no invitation.
+    state.archive.achievements = PARTY_BADGES.slice(0, 7);
+    assert.equal(engine.partyInvitation(), null, 'seven badges were enough');
+
+    // And once seen, never again - on any difficulty.
+    state.archive.achievements = [...PARTY_BADGES];
+    store.set('layer8_party_played', 'true');
+    assert.equal(engine.partyInvitation(), null, 'the evening was offered twice');
+    for (const mult of [0.8, 1.0, 1.25]) {
+        state.difficultyMult = mult;
+        assert.equal(engine.partyInvitation(), null, `still offered at x${mult}`);
+    }
+});
+
+await ok('A gala seen on 6.1 is not offered again', () => {
+    // Each of the three old flags means the evening was seen.
+    for (const legacy of ['layer8_party_played_easy', 'layer8_party_played_normal',
+                          'layer8_party_played_hard']) {
+        resetState();
+        store.set(legacy, 'true');
+        engine.migratePartyFlag();
+        assert.equal(store.get('layer8_party_played'), 'true', `${legacy} was not carried over`);
+    }
+    // Nothing to carry, nothing invented.
+    resetState();
+    engine.migratePartyFlag();
+    assert.equal(store.get('layer8_party_played'), undefined, 'an unplayed gala was marked as seen');
+
+    // ...and a hard reset takes the legacy flags with it, or the migration
+    // would resurrect a gala the player just deleted.
+    for (const legacy of ['layer8_party_played_easy', 'layer8_party_played_normal',
+                          'layer8_party_played_hard']) {
+        store.set(legacy, 'true');
+    }
+    engine.wipeProgress();
+    engine.migratePartyFlag();
+    assert.equal(store.get('layer8_party_played'), undefined, 'the reset left a legacy flag behind');
+});
+
+await ok('Every colleague badge is one the invitation asks for', async () => {
+    // data_chars.js says which badge belongs to whom; engine_core owns the
+    // list. Drifting apart would leave a mark in the team view that means
+    // nothing, or a colleague whose story never gets one.
+    const { PARTY_BADGES } = await import('../src/engine/engine_core.js');
+    const owned = (DB.chars ?? []).filter(c => c.ach).map(c => c.ach);
+    assert.equal(owned.length, 7, 'the house is no longer seven colleagues');
+    for (const ach of owned) {
+        assert.ok(PARTY_BADGES.includes(ach), `${ach} is on a colleague but not on the invitation`);
+    }
+    // Exactly one thing the invitation wants belongs to nobody: the history.
+    const orphans = PARTY_BADGES.filter(id => !owned.includes(id));
+    assert.deepEqual(orphans, ['ach_lore'], 'the open question changed');
+});
+
 await ok('A cold mail does not open into a finished day', async () => {
     // Cancelling a timer cannot reach a call already suspended in the await.
     resetState();
@@ -2323,7 +2476,7 @@ await ok('The gala closes an open mail behind it', async () => {
     await ensure('party');
     state.isEmailOpen = true;
     state.emailTimer = setTimeout(() => {}, 60000);
-    state.pendingEnd = { isParty: true, partyKey: 'party_easy', diffStr: 'easy' };
+    state.pendingEnd = { isParty: true, partyKey: 'layer8_party_played' };
     await engine.startParty();
     assert.equal(state.isEmailOpen, false, 'the gala began under an open mail');
     assert.equal(state.emailTimer, null, 'the mail countdown was left running');
@@ -3024,7 +3177,7 @@ console.log('The gala:');
 await ok('The clock carries the evening from 17:00 to 23:00', async () => {
     resetState();
     await ensure('party');
-    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    state.pendingEnd = { isParty: true, partyKey: 'k' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
     assert.equal(state.time, 17 * 60, 'the gala starts at 17:00');
@@ -3059,13 +3212,13 @@ await ok('Coming out of a week, the gala opens with a line of its own', async ()
     resetState();
     await ensure('party');
     engine.startWeek('normal');
-    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    state.pendingEnd = { isParty: true, partyKey: 'k' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
     const fromTheWeek = calls.terminal[0].text;
 
     resetState();                                               // day mode: unchanged
-    state.pendingEnd = { isParty: true, partyKey: 'k', diffStr: 'normal' };
+    state.pendingEnd = { isParty: true, partyKey: 'k' };
     engine.startParty();
     await new Promise(r => setTimeout(r, 20));
     // The two versions are compared, not a German turn of phrase: the difference

@@ -113,6 +113,11 @@ export const intranet = {
 
         // ---------- Always available ----------
         {
+            id: "feed_gala", author: "Human Capital", handle: "@HR_Compliance",
+            initials: "HR", tone: "#f9a8d4",
+            text: "Regarding the repeated enquiries about the Synergy Gala: invitations are issued to staff who have proven themselves across departments. Assessment is ongoing. We ask that you refrain from individual requests."
+        },
+        {
             id: "feed_tasse", author: "Chantal", handle: "@HR_FeelGood",
             initials: "CH", tone: "#f472b6",
             text: "Who took my 'Good Vibes Only' mug out of the dishwasher without emptying the rest of it? The vibes are in the negative now!! 😭🧘‍♀️"

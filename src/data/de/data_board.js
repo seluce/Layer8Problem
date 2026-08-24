@@ -25,6 +25,13 @@
  */
 export const board = [
 
+    {
+        id: "board_gala_rumour", kind: "note", paper: "#fce7f3", tilt: "-2deg", pin: "#db2777",
+        title: "Frage an die Runde", titleTone: "#9d174d",
+        body: "War von euch eigentlich schon mal jemand auf dieser <strong>Synergy-Gala</strong>? <br>Ich arbeite hier seit vier Jahren und habe noch nie eine Einladung gesehen. Angeblich kriegt die nicht jeder. <br>Angeblich muss man sich das verdienen. Von wem denn?",
+        sign: "- (kein Name)"
+    },
+
     // ---------- The originals ----------
     {
         id: "board_yoghurt", kind: "note", paper: "#fef9c3", tilt: "1deg", pin: "#dc2626",

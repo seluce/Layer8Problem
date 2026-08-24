@@ -86,5 +86,16 @@ export const lore = {
         doku: "Ich habe angefangen zu dokumentieren. Nach zwei Stunden war klar: Die Dokumentation wäre umfangreicher als die Anlage, die sie beschreibt. Ich habe trotzdem weitergemacht.",
         plain_a: "Es ist wieder ein Tag vergangen. Die Anlage läuft, die Tickets sind offen, das Haus steht. Mehr wird von dieser Chronik auch in den letzten hundert Jahren nicht berichtet worden sein.",
         plain_b: "Nichts Bemerkenswertes. Ich schreibe es trotzdem auf, damit später jemand weiß, dass hier jemand war."
+    },
+
+    /* The one evening, one line per finale. Written by
+       engine_core.recordGala(), read back by galaEntry(). Not part of `lines`:
+       the gala is not a day of the career, it is the exception to it. */
+    gala: {
+        standard: "Die Synergy-Gala hat stattgefunden, und ich war da. Diese Chronik verzeichnet für das Haus zwei Weltkriege, vier Umstrukturierungen und eine Fax-Revolution. Über den Abend selbst schreibe ich nichts weiter. Wer dabei war, weiß es. Wer nicht dabei war, glaubt es ohnehin nicht.",
+        hero: "Ich habe die Gala nüchtern, höflich und bei klarem Verstand verlassen. Von allem, was ich in diesem Haus zustande gebracht habe, ist das statistisch das Unwahrscheinlichste.",
+        rage: "Ich habe auf der Gala ein Mikrofon in die Hand genommen. Was danach kam, steht in keinem Protokoll, weil niemand mitgeschrieben hat. Es war trotzdem der ehrlichste Vortrag, den dieses Unternehmen je gehört hat.",
+        houdini: "Ich war auf der Gala. Ich bin gegangen, ohne dass es jemand bemerkt hat. Beides ließe sich belegen, aber nur eines davon werde ich hier ausführen.",
+        gossip: "Auf der Gala habe ich mehr über dieses Unternehmen erfahren als in sämtlichen Betriebsversammlungen zusammen. Nichts davon war offiziell, alles davon war wahr. Ich schreibe es nicht auf. Ich weiß jetzt aber, wo es steht."
     }
 };

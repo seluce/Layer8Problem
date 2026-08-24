@@ -31,6 +31,12 @@
     const CHRONICLE = $derived(tree().lore?.chapters ?? []);
     const doneToday = $derived(engine.chronicleWrittenToday?.() ?? false);
 
+    // The gala, if it ever happened. Its own page rather than a thirteenth
+    // daily line - it is not a day of the career, it is the exception to it,
+    // and it must not be pushed out by the twelve-line cap. See
+    // engine_core.recordGala().
+    const gala = $derived(engine.galaEntry?.(tree().lore) ?? null);
+
     function addLine() {
         engine.addChronicleEntry();
     }
@@ -90,6 +96,27 @@
                             </span>
                         </div>
                     {/each}
+
+                    {#if gala}
+                        <!-- Set apart on purpose: pressed into the book rather
+                             than written into the run of days, and it stays
+                             there while the daily lines come and go. -->
+                        <div class="mb-5 mt-8 pl-4 py-3 border-l-4 border-[#b3627a] bg-[#f3e3e8]/60 rounded-r-sm"
+                             style="rotate:0.3deg">
+                            <span class="block text-[10px] uppercase tracking-[0.2em] text-[#b3627a] mb-1"
+                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                                {t('lore.gala.label')}
+                            </span>
+                            <p class="text-[#33475b] text-[17px] leading-[30px]"
+                               style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                                {gala.text}
+                            </p>
+                            <span class="block text-right text-[11px] text-[#7a6a52] mt-1"
+                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                                {tf('lore.entry.sign', { day: gala.day })}
+                            </span>
+                        </div>
+                    {/if}
 
                     <div class="mt-4">
                         {#if doneToday}

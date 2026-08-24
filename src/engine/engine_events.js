@@ -1616,6 +1616,11 @@ export const events = {
         // --- UNLOCK THE GALA ACHIEVEMENT ---
         this.unlockAchievement('ach_party');
 
+        // ...and the evening goes into the career book. Before the flag above
+        // is read anywhere, and before isPartyMode is forgotten: this is the
+        // one moment that knows which finale the player got.
+        this.recordGala();
+
         // 2. The party report, as figures and ids
         // The level travels as an id and the day mode's three captions come from
         // the same keys the day report uses: both name the day that has just

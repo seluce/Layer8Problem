@@ -87,5 +87,16 @@ export const lore = {
         doku: "I started documenting. After two hours it was clear that the documentation would be larger than the system it describes. I carried on anyway.",
         plain_a: "Another day has passed. The system runs, the tickets are open, the building stands. This chronicle will not have reported much more than that over the last hundred years either.",
         plain_b: "Nothing of note. I am writing it down anyway, so that later someone knows that somebody was here."
+    },
+
+    /* The one evening, one line per finale. Written by
+       engine_core.recordGala(), read back by galaEntry(). Not part of `lines`:
+       the gala is not a day of the career, it is the exception to it. */
+    gala: {
+        standard: "The Synergy Gala took place, and I was there. This chronicle records two world wars, four restructurings and a fax revolution for this building. About the evening itself I will write nothing further. Those who were there know. Those who were not would not believe it anyway.",
+        hero: "I left the gala sober, polite and in full possession of my faculties. Of everything I have managed in this building, that is statistically the least likely.",
+        rage: "At the gala I picked up a microphone. What came after it appears in no minutes, because nobody was taking any. It was still the most honest presentation this company has ever heard.",
+        houdini: "I was at the gala. I left without anyone noticing. Both could be proven, but only one of them will be set out here.",
+        gossip: "At the gala I learned more about this company than in every staff meeting put together. None of it was official, all of it was true. I am not writing it down. But I now know where it is kept."
     }
 };

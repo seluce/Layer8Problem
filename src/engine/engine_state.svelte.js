@@ -347,6 +347,9 @@ export function freshArchive() {
         knowledgeRead: {},
         // The lore book's handwritten page and the career counters.
         chronicle: [],
+        // The one evening, if it happened: { finale, day }. Its own field and
+        // NOT a chronicle entry - see engine_core.recordGala().
+        gala: null,
         stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 },
     };
 }
