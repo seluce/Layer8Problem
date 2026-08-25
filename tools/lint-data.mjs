@@ -376,6 +376,42 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
   }
 }
 
+/* ---------- 2d4) The gala page ---------- */
+// engine_core.recordGala() derives the finale from the event id
+// (`party_finale_rage` -> `rage`) and looks the line up in lore.gala. Nothing
+// on the way validates that join: an id it does not recognise falls back to
+// 'standard', so a finale without its own page throws nothing and warns
+// nothing - Mueller simply writes the wrong evening into the chronicle, and
+// the only reader who could catch it is one who knows all five lines by
+// heart. Same class as the loc check in section 9, and the same cure.
+{
+  const PREFIX = 'party_finale_';
+  const finales = new Set(
+    (DB.party ?? [])
+      .map(ev => String(ev.id ?? ''))
+      .filter(id => id.startsWith(PREFIX))
+      .map(id => id.slice(PREFIX.length))
+  );
+  const pages = DB.lore?.gala ?? {};
+
+  // The fallback itself. Every id recordGala() does not know lands on it, so
+  // its absence would not be a missing page but a missing floor.
+  if (!pages.standard)
+    err(`[lore/gala]: "standard" is missing - it is the fallback recordGala() writes for every id it does not recognise`);
+
+  for (const key of finales)
+    if (!pages[key])
+      err(`[lore/gala]: finale "${PREFIX}${key}" has no page - the chronicle quietly records the "standard" evening instead`);
+
+  for (const [key, text] of Object.entries(pages)) {
+    if (typeof text !== 'string' || !text.trim()) { err(`[lore/gala/${key}]: empty`); continue; }
+    // 'standard' is exempt: it is reachable through the fallback even if no
+    // event of that name exists.
+    if (key !== 'standard' && !finales.has(key))
+      err(`[lore/gala/${key}]: no finale "${PREFIX}${key}" leads here - the page is written and unreachable`);
+  }
+}
+
 /* ---------- 2e) Intranet page bodies ---------- */
 // Since 6.0 the static paragraphs of an intranet page live here rather than in
 // its component (see data_intranet.js). The component only decides how a
