@@ -225,6 +225,11 @@
     // keyboard need this; a mouse still gets the tooltip from :hover alone.
     let pinned = $state(null);
 
+    // Whether the last press came from a finger or a pen. Read in the click
+    // handler, because a click event does not carry the pointer type in every
+    // browser. Same mechanism as InventoryFull.
+    let coarsePress = $state(false);
+
     // The grids are grid-cols-6 md:grid-cols-8 lg:grid-cols-10, so the column
     // a tile sits in depends on the viewport - same reasoning as in
     // InventoryFull, just with the archive's breakpoints.
@@ -279,10 +284,22 @@
         return { box: 'left-1/2 -translate-x-1/2', arrow: 'left-1/2 -translate-x-1/2' };
     }
 
-    // A tap or click toggles the tooltip. The archive is for looking, not
-    // for using, so there is no second meaning to separate - mouse, finger
-    // and keyboard share the one gesture, and hover keeps working on top.
-    const toggle = (id) => { pinned = pinned === id ? null : id; };
+    // A tap pins the tooltip, a mouse click does not.
+    //
+    // The archive is for looking, so there is no second meaning to separate the
+    // way the backpack separates showing from using. But the pointer types still
+    // differ, and up to 6.2 this ignored that: a mouse click pinned the box, and
+    // it then stood over the grid until the next click landed somewhere else -
+    // long after the pointer, and its hover, had moved on. The backpack never
+    // did this (InventoryFull.activate acts at once on a mouse), so the two
+    // drifted apart on the one surface that is meant to feel identical.
+    //
+    // With a mouse the box is already on screen from :hover and needs no pin.
+    // Keyboard has no hover at all, so it pins like touch.
+    const toggle = (id, coarse) => {
+        if (!coarse) { pinned = null; return; }
+        pinned = pinned === id ? null : id;
+    };
 
     // stopPropagation keeps Enter and Space away from the global key
     // handling in engine.js, so a focused tile does not also fire the
@@ -291,7 +308,7 @@
         if (event.key !== 'Enter' && event.key !== ' ') return;
         event.preventDefault();
         event.stopPropagation();
-        toggle(id);
+        toggle(id, true);
     }
 
     // Focus leaving a grid unpins, so a keyboard user tabbing onwards does
@@ -307,7 +324,8 @@
     <div class="aspect-square rounded-sm border {itemBorder(entry.unlocked, quest)} flex items-center justify-center text-xl cursor-help transition-all relative group {pinned === entry.id ? 'ring-2 ring-slate-400/70' : ''}"
          data-arch-tile role="button" tabindex="0"
          aria-label={entry.unlocked ? entry.item.name : (quest ? '???' : t('archive.unknown'))}
-         onclick={() => toggle(entry.id)}
+         onpointerdown={(e) => (coarsePress = e.pointerType !== 'mouse')}
+         onclick={() => toggle(entry.id, coarsePress)}
          onkeydown={(e) => keyToggle(e, entry.id)}>
         {#if !entry.unlocked}?
         {:else if hasPicture(entry.item)}

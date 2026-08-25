@@ -70,6 +70,13 @@ What it finds — throughout, things that fail **quietly** at runtime:
   discarded at runtime
 - markup in fields that are output as plain text; invisible characters
 - items: the `use` block complete, `passive` valid, costs only with a cooldown
+- **the party's six stations** (6.1): `loc` and an option's `checkPool` against
+  the closed list — the engine filters on `loc` and validates nothing, so an
+  invented station is simply an event that is never drawn
+- **the gala's five finales** (6.2): every `party_finale_*` needs its line in
+  `data_lore.js` under `gala` and every line its finale, the `standard`
+  fallback included. Without the pair the chronicle quietly records the
+  standard evening
 - the diary: conditions that stumble or fit no conceivable day
 
 **Introduced a new field? Then add it here** (`EVENT_KEYS`, `OPT_KEYS`,
