@@ -1829,13 +1829,6 @@ export const core = {
     },
 
     /**
-     * Is the gala due instead of clocking off?
-     *
-     * Condition: all eight reputation achievements are in, each earned at
-     * least on the difficulty being played today - collecting them on Friday
-     * does not hand you the party on Monday. And once per difficulty.
-     */
-    /**
      * The gala: one evening, and once per career.
      *
      * Up to 6.1 this asked for the eight badges AT THE TIER being played and
@@ -1982,7 +1975,7 @@ export const core = {
      * reading moment: the day report, the curve, the diary page, or the
      * night's carry-over. Silence after the noise carries that better than
      * any track, and it costs nothing. The music returns by itself on the
-     * way out: the night through softResetWeek, both endings through the
+     * way out: the night through continueWeekNight, both endings through the
      * reload the end screen's button performs.
      *
      * Without the fade, deliberately, and for the reason toggleMusic gives at

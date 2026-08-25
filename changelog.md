@@ -5,7 +5,7 @@ Content and clarity, no balance changes yet.
 Sound and feedback:
 * When the day ends the music stops. The report, the curve and the diary page are there to be read, and silence after eight hours of office noise carries that better than another track. It comes back with the next morning.
 * A decision that costs 30 or more anger or boss radar now makes a sound - a short, low hit, in the same synthesised voice as the rest of the game. Until now those moments were the only ones with no sound at all, while a menu click had one.
-* Using an item shows what it did on every bar it moves. Only the boss radar had a floating number, and only three items raise it - so for every other item the anger bar simply dropped with nothing to say it had.
+* Using an item shows what it did on every bar it moves. Only the boss radar had a floating number, and exactly one item raises it - so for every other item the bar simply dropped with nothing to say it had.
 * Kevin and Egon have faces in the two emergencies that are entirely about them. The other boss fights are infrastructure with nobody in them, and stay that way.
 * That sound answers to the sound setting, the shaking to the shaking setting. Switching the shaking off used to take the feedback away entirely; now it comes through the other ear.
 

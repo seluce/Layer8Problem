@@ -128,9 +128,9 @@ export const inventory = {
                 // path - a positive use.a/use.l overshot 100 for one frame
                 // until updateUI re-clamped.
                 // Each of the three floats its number, the way every other
-                // path does. Until 6.2 only `b` below had one - and since
-                // EVERY usable item relieves aggro while only the three
-                // trade-off ones raise the boss radar, the silent case was
+                // path does. Until 6.2 only `b` below had one - and exactly
+                // ONE item raises the boss radar (voodoo_doll), while all six
+                // others relieve aggro or laziness. So the silent case was
                 // the ordinary one: the bar moved and nothing said so.
                 if (use.a) {
                     this.state.al = Math.max(0, Math.min(100, this.state.al + use.a));
