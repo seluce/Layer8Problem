@@ -1269,8 +1269,8 @@ const section = (title, list, sym) => {
   console.log(`\n${title} (${list.length})`);
   list.forEach(m => console.log(` ${sym} ${m}`));
 };
-section('FEHLER', errors, '✗');
-section('WARNUNGEN', warns, '!');
+section('ERRORS', errors, '✗');
+section('WARNINGS', warns, '!');
 section('INFO', infos, 'i');
 console.log(`\n${errors.length ? '❌ Faults found.' : '✅ The data is clean.'}`);
 process.exit(errors.length ? 1 : 0);

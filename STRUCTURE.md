@@ -610,11 +610,19 @@ rewrite it on every change and remove the rings.
 | Game texts | **German and English** — `src/data/de/` is the source, `src/data/en/` the version beside it |
 | Interface strings | both, in `src/i18n/de.js` and `en.js` |
 | Documentation (`README`, `STRUCTURE`, `EVENTS`, `TOOLS`, `changelog`) | **English** |
-| Tool output (linters, simulators, reports) | **German** |
+| Tool output (linters, simulators, reports) | **English** since 6.1 — see below |
 | Commit messages | **English** since 6.0, format `type(scope): description` |
 
 The game is set in a German office, and writing starts in German — the German
-tree is the source, the English one the translation. The tool output stays
-German because nobody outside development reads it; commit messages went English
-with 6.0, because they stand on GitHub next to the code and the documentation.
-Commits from before that stay as they are.
+tree is the source, the English one the translation. Commit messages went English
+with 6.0, because they stand on GitHub next to the code and the documentation;
+commits from before that stay as they are.
+
+**Everything under `tools/` followed with 6.1**, including what the tools print:
+comments, test names, assertion messages, linter findings, the console helper's
+menu. Up to then the rule here read „tool output: German — nobody outside
+development reads it", which stopped being true the moment the repository went
+to GitHub, where a stranger met 164 German comments around English code. The
+**only** German that stays is German that is the SUBJECT: the phrase patterns
+`lint-data`, `report-prose` and `scan-fields` search German prose with, and
+German examples quoted inside a comment or asserted in a test.

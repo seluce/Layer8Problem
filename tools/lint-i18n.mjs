@@ -458,9 +458,9 @@ const show = (title, list) => {
 
 console.log(`\nInterface strings: ${Object.keys(de).length} keys, ${used.size} of them in use`);
 
-if (errors.length) show('FEHLER', errors);
+if (errors.length) show('ERRORS', errors);
 if (warns.length) {
-    console.log(`\nWARNUNGEN (${warns.length})\n`);
+    console.log(`\nWARNINGS (${warns.length})\n`);
     for (const m of warns) console.log(` ! ${m}`);
 }
 if (infos.length) {

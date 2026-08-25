@@ -152,7 +152,7 @@ for (const pool of pools) {
 console.log(`\nThe two language trees in step - ${pools.length} pools checked`);
 
 if (errors.length) {
-    console.log(`\nFEHLER (${errors.length})\n`);
+    console.log(`\nERRORS (${errors.length})\n`);
     for (const m of errors.slice(0, 60)) console.log(` ✗ ${m}`);
     if (errors.length > 60) console.log(`   … and ${errors.length - 60} more`);
 }
