@@ -99,10 +99,13 @@ missing or deliberately absent.
 | `sender`, `senderId`, `subj`, `body`, `linked` | mails only | See section 10. |
 | `textByProgress` | party foyer | `party_hub` only: foyer text per progress. Not a field for contributions. |
 
-> **`loc` is checked by nothing.** `engine_events` filters `ev.loc === loc`, and
-> the data checker knows no list of locations. A typo or an invented location
-> gives **0 errors, 0 warnings** — and an event that is never drawn. The same
-> kind of silence as a wrong icon path.
+> **The runtime does not check `loc` — the linter does.** `engine_events`
+> filters `ev.loc === loc` and validates nothing, so at runtime a typo or an
+> invented location gives **0 errors, 0 warnings** and an event that is never
+> drawn — the same kind of silence as a wrong icon path. **`lint-data` has held
+> `loc` and the option's `checkPool` against the six since 6.1** and names the
+> allowed ones in the message. The linter is the only guard, which is why a new
+> station has to be added to `PARTY_LOCS` there as well.
 
 The data checker reports every field the engine does not read **at that
 position**. A `reqStory` on a lunch break is therefore no longer a silent dud
@@ -727,8 +730,9 @@ more field:
 - `loc` (**compulsory**): `"bar"`, `"buffet"`, `"dance"`, `"lounge"`, `"outside"`
   or `"toilet"` — six locations with seven events each. On visiting a location
   the game randomly draws an event not yet experienced there. **The list is
-  closed and is checked by nothing:** a location that does not exist produces an
-  event that is never drawn, without a single message.
+  closed.** The engine does not enforce it — a location that does not exist
+  produces an event that is never drawn, without a single message — but
+  `lint-data` has since 6.1, against `PARTY_LOCS`.
 
 In the options, `next: "party_hub"` leads back to the location overview and
 increments the evening's progress — that is how most party options end.
@@ -749,9 +753,12 @@ different here, and all three follow from it being after hours:
 The linter reports `m` and `b` as errors — the engine would happily process both,
 to no effect, and a value that silently does nothing is worse than one that fails
 loudly. `rep`, `loot`, `req` and `rem` remain permitted but appear in none of the
-137 existing options. The normal case is: `l`, `a` and `next`. After enough
+140 existing options. The normal case is: `l`, `a` and `next`. After enough
 stations the evening triggers one of the finales; the `party_finale_*` events are
-hard-wired and need no contributions.
+hard-wired and need no contributions. Should one ever be added: its id is also
+the key of its line in Mueller's chronicle (`data_lore.js`, `gala`), and since
+6.2 `lint-data` demands the pair in both directions — without the line the
+chronicle would quietly record the `standard` evening instead.
 
 ```js
 {
