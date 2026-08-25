@@ -1,4 +1,4 @@
-[6.2.0] - unreleased
+[6.2.0] - 2026-08-25
 
 Content and clarity, no balance changes yet.
 
