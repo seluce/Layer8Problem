@@ -255,8 +255,8 @@ for (const p of POOLS) {
         }
       }
     }
-    for (const nid of Object.keys(ev.nodes)) if (!reached.has(nid)) warn(`${ctx}: Node "${nid}" unerreichbar`);
-    for (const rid of Object.keys(ev.results ?? {})) if (!reached.has(rid)) warn(`${ctx}: Result "${rid}" unerreichbar`);
+    for (const nid of Object.keys(ev.nodes)) if (!reached.has(nid)) warn(`${ctx}: node "${nid}" is unreachable`);
+    for (const rid of Object.keys(ev.results ?? {})) if (!reached.has(rid)) warn(`${ctx}: result "${rid}" is unreachable`);
   }
 }
 

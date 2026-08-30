@@ -85,7 +85,7 @@ missing or deliberately absent.
 | `text` | compulsory, except in chains (there the text sits in the nodes) | The opening. `\n` produces a paragraph. |
 | `opts` | compulsory, except in chains | The options, see below. |
 | `char` | optional everywhere | Shows a character's portrait. The name **exactly** as in `data_chars.js`. |
-| `reqStory` | coffee, server room, calls, errands, encounters | Precondition: the event only appears once this story flag is set. Lunch break, boss fight and party do **not** evaluate the field. |
+| `reqStory` | coffee, server room, calls, errands, encounters, lunch break | Precondition: the event only appears once this story flag is set, and a continuation jumps the queue with the same `FOLLOWUP_CHANCE` as everywhere else. **Boss fight and party do not evaluate the field** — there it is a silent dud, and `lint-data` rejects it as an unknown field at that position. The lunch break used to ignore it too and no longer does (three lunch events depend on it). |
 | `reqStoryAge` | coffee, server room, calls, errands — only together with `reqStory` | Week mode: the flag has to be at least this many **nights** old (1 = tomorrow at the earliest). Never satisfiable in day mode, see section 3. |
 | `reqWeekDayMin` | coffee, server room, calls, errands | Week mode: appears **from** this weekday onwards (2 = Tuesday … 5 = Friday), not only on it. Never satisfiable in day mode. |
 | `reqRep` | encounters, effectively compulsory there | Reputation threshold, see section 6. 139 of the 140 encounters carry one; the exception is a follow-up for which the `reqStory` suffices as a precondition. |
