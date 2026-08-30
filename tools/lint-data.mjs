@@ -354,6 +354,50 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
   }
 }
 
+/* ---------- 2d5) Item ids the engine names ---------- */
+// The engine reaches into the backpack by literal id, and nothing held those
+// literals against the stock. That is not theory: 'cable' was called 'kabel'
+// until 6.0, the rename reached data_items.js and not the MacGyver tool set in
+// engine_core, and the achievement was unreachable for four releases. It cost
+// no error and no warning - the set simply never completed, and an achievement
+// nobody earns looks exactly like an achievement nobody has earned YET.
+//
+// Two shapes carry these ids, and both are read as text, like 2d2 above:
+//   i.id === 'x' / id === 'x'   a single item, compared straight
+//   const set = ['a', 'b'] ...  an item SET, entries compared through a loop
+// An id that is neither an item nor an event is the typo this exists for -
+// event ids are allowed because the same comparison shape reads DB.party.
+{
+  const itemIds = new Set(Object.keys(DB.items ?? {}));
+  const eventIds = new Set();
+  for (const p of POOLS) for (const ev of DB[p] ?? []) if (ev.id) eventIds.add(ev.id);
+  for (const ev of DB.emails ?? []) if (ev.id) eventIds.add(ev.id);
+
+  const known = (id) => itemIds.has(id) || eventIds.has(id);
+
+  for (const file of ['engine_core.js', 'engine_ui.js', 'engine_events.js', 'engine_week.js', 'engine_inventory.js']) {
+    let src = '';
+    try { src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8'); }
+    catch { continue; }
+
+    for (const m of src.matchAll(/\bid === '([a-z_0-9]+)'/g))
+      if (!known(m[1]))
+        err(`[engine/${file}] compares against id "${m[1]}", which is neither an item nor an event`);
+
+    // An item SET: a const array of bare ids whose entries are compared to an
+    // id just below it. Written this way once (the MacGyver tools); a second
+    // one written the same way is picked up without touching this check.
+    for (const m of src.matchAll(/const\s+(\w+)\s*=\s*\[((?:\s*'[a-z_0-9]+'\s*,?)+)\]\s*;/g)) {
+      const [, name, body] = m;
+      const after = src.slice(m.index, m.index + 400);
+      if (!new RegExp(`\\b${name}\\b[\\s\\S]{0,200}?\\.id\\s*===`).test(after)) continue;
+      for (const q of body.matchAll(/'([a-z_0-9]+)'/g))
+        if (!itemIds.has(q[1]))
+          err(`[engine/${file}] the item set "${name}" names "${q[1]}", which is not an item - the set can never complete`);
+    }
+  }
+}
+
 /* ---------- 2d3) The chronicle ---------- */
 // The archive stores an id and a set of numbers; the words are here. A line
 // asking for a placeholder the engine does not fill would print a literal

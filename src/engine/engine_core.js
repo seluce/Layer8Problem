@@ -1462,7 +1462,13 @@ export const core = {
         // --- ITEM SETS ---
         
         // MACGYVER (needs tape, screwdriver, cable, manual)
-        const tools = ['tape', 'screw', 'kabel', 'manual'];
+        //
+        // 'cable' was 'kabel' until 6.0, when the German item ids went
+        // English. The rename reached data_items.js and not this line, so the
+        // set could never be complete and the achievement was unreachable for
+        // four releases. lint-data section 2d5 holds these ids against the
+        // stock now.
+        const tools = ['tape', 'screw', 'cable', 'manual'];
         const hasAllTools = tools.every(toolId => this.state.inventory.find(i => i.id === toolId));
         if(hasAllTools && !this.hasAch('ach_macgyver')) {
             this.unlockAchievement('ach_macgyver');
