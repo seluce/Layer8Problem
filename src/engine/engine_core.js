@@ -974,7 +974,16 @@ export const core = {
         if ((rep['Frau Elster'] ?? 0) >= 50) pool.push('elster');
 
         if (flags['path_phoenix_gabi'] || flags['path_phoenix_nutzen']) pool.push('phoenix');
-        if (flags['path_doku_todo'] || flags['path_doku_start'])        pool.push('doku');
+        // path_doku_jetzt is the branch where Miller actually documents -
+        // the line says "Ich habe trotzdem weitergemacht", and only this
+        // branch earns it. Until 6.2.1 this asked for path_doku_todo and
+        // path_doku_start, two flags that never existed in any tree (the
+        // event is CALLED srv_doku_todo; its flags are path_doku_jetzt,
+        // _september and _kevin), so the line was unreachable from the day
+        // it was written. Same class as the MacGyver tool set, and the same
+        // guard covers it now: lint-data holds these literals against the
+        // data (section 4, engine side).
+        if (flags['path_doku_jetzt'])                                   pool.push('doku');
 
         pool.push('plain_a', 'plain_b');
 

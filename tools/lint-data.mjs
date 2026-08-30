@@ -662,6 +662,30 @@ for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`story flag "${flag}" is NEVER set but required by ${ctxs.join(', ')} -> dead content`);
 }
 
+// The ENGINE asks for flags too, and its literals used to be checked by
+// nobody: composeChronicleLine() shipped asking for path_doku_todo and
+// path_doku_start - flags that never existed in any tree (the event is CALLED
+// srv_doku_todo) - so the doku chronicle line was unreachable from the day it
+// was written, at 0 errors and 0 warnings. Same class as the MacGyver tool
+// set in 2d5. Read as text like 2d2 and 2d5. `flags[...]` is the one shape
+// that carries a flag literal today; the hasStoryFlag(...) pattern below is
+// there for the helper the engine may grow - it guards nothing yet.
+{
+  for (const file of ['engine_core.js', 'engine_ui.js', 'engine_events.js', 'engine_week.js', 'engine_diary.js']) {
+    let src = '';
+    try { src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8'); }
+    catch { continue; }
+    const seen = new Set();
+    for (const m of [...src.matchAll(/flags\[\s*'([a-z_0-9]+)'\s*\]/g),
+                     ...src.matchAll(/hasStoryFlag\(\s*'([a-z_0-9]+)'/g)]) {
+      if (seen.has(m[1])) continue;
+      seen.add(m[1]);
+      if (!flagsSet.has(m[1]))
+        err(`[engine/${file}] asks for story flag "${m[1]}", which nothing in the data ever sets - the branch is dead`);
+    }
+  }
+}
+
 /* ---------- 4b) Orphaned flags: set, but required by nobody ---------- */
 // A flag nobody requires is a dead end: the player made a decision that
 // leads nowhere. Usually a renamed follow-up event or one that never got
