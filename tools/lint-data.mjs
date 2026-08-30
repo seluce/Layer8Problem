@@ -1038,13 +1038,12 @@ for (const ev of DB.emails) {
 // silently dropped at runtime - `ep` instead of `rep` cost one sidequest its
 // whole reputation effect for two versions. The lists below are what the engine
 // actually reads AT THAT PLACE, which is stricter than "the field exists
-// somewhere": reqStory on a lunch event is never evaluated (triggerLunch draws
-// at random without filtering), req/rem in a mail is never checked, and a node
+// somewhere": req/rem in a mail is never checked, and a node
 // option only ever carries t/next - its m, rep or r would go nowhere, because a
 // chain applies the values of the RESULT it ends in.
 const EVENT_KEYS = {
   _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
-  bossfights: ['timer', 'fail'],
+  bossfights: ['timer', 'fail', 'reqStory', 'reqStoryAge'],   // gated in engine_events since 6.2.1; reqWeekDayMin deliberately not blessed yet
   calls:      ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   coffee:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   server:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
