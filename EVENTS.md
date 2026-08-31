@@ -85,8 +85,8 @@ missing or deliberately absent.
 | `text` | compulsory, except in chains (there the text sits in the nodes) | The opening. `\n` produces a paragraph. |
 | `opts` | compulsory, except in chains | The options, see below. |
 | `char` | optional everywhere | Shows a character's portrait. The name **exactly** as in `data_chars.js`. |
-| `reqStory` | coffee, server room, calls, errands, encounters | Precondition: the event only appears once this story flag is set. Lunch break, boss fight and party do **not** evaluate the field. |
-| `reqStoryAge` | coffee, server room, calls, errands — only together with `reqStory` | Week mode: the flag has to be at least this many **nights** old (1 = tomorrow at the earliest). Never satisfiable in day mode, see section 3. |
+| `reqStory` | coffee, server room, calls, errands, encounters, lunch break, boss fights | Precondition: the event only appears once this story flag is set, and a continuation jumps the queue with the same `FOLLOWUP_CHANCE` as everywhere else. **The party does not evaluate the field** — there it is a silent dud, and `lint-data` rejects it as an unknown field at that position. The lunch break and the boss fights both used to ignore it and no longer do; see section 8 for what a gated emergency means. |
+| `reqStoryAge` | coffee, server room, calls, errands, lunch break, boss fights — only together with `reqStory` | Week mode: the flag has to be at least this many **nights** old (1 = tomorrow at the earliest). Never satisfiable in day mode, see section 3. |
 | `reqWeekDayMin` | coffee, server room, calls, errands | Week mode: appears **from** this weekday onwards (2 = Tuesday … 5 = Friday), not only on it. Never satisfiable in day mode. |
 | `reqRep` | encounters, effectively compulsory there | Reputation threshold, see section 6. 139 of the 140 encounters carry one; the exception is a follow-up for which the `reqStory` suffices as a precondition. |
 | `kind` | errands, compulsory there | `"text"` (terminal) or `"phone"` (phone chat). All 308 carry it. |
@@ -660,6 +660,19 @@ The emergency with a countdown. Two more compulsory fields:
 
 - `timer`: the seconds the bar runs (8 to 20 in the stock, usually 10 or 12).
 - `fail`: what happens if nobody decides. Built like an option, only without `t`.
+
+**A boss fight may carry `reqStory` and `reqStoryAge` since 6.2.1**, so an
+emergency can be the consequence of an earlier one rather than pure weather.
+Nothing in the stock uses it yet. It works the other way round already: eight
+boss fights SET a flag through an option's `next` — `path_boss_fire_geloescht`
+and its seven siblings — and the eight `srv_nach_*` evenings in the server room
+take them up a day later with `reqStoryAge: 1`, so yesterday's fire still
+smells today. `reqWeekDayMin` stays unblessed for the pool until something
+wants it.
+
+Mind the draw when you gate one: a disaster fires on a 5% roll on every button,
+and both draws filter the pool the same way. Gate every boss fight and there is
+no disaster left — which is a handled state, not a crash, but also not a game.
 
 ```js
 {

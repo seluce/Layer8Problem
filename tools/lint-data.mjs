@@ -255,8 +255,8 @@ for (const p of POOLS) {
         }
       }
     }
-    for (const nid of Object.keys(ev.nodes)) if (!reached.has(nid)) warn(`${ctx}: Node "${nid}" unerreichbar`);
-    for (const rid of Object.keys(ev.results ?? {})) if (!reached.has(rid)) warn(`${ctx}: Result "${rid}" unerreichbar`);
+    for (const nid of Object.keys(ev.nodes)) if (!reached.has(nid)) warn(`${ctx}: node "${nid}" is unreachable`);
+    for (const rid of Object.keys(ev.results ?? {})) if (!reached.has(rid)) warn(`${ctx}: result "${rid}" is unreachable`);
   }
 }
 
@@ -351,6 +351,50 @@ for (const name of Object.keys(DB.intranet?.employee ?? {}))
   for (const a of DB.achievements ?? []) {
     if (a.toast && a.toast === a.desc)
       warn(`[achievements] "${a.id}": toast is word for word the same as desc - then the field can go`);
+  }
+}
+
+/* ---------- 2d5) Item ids the engine names ---------- */
+// The engine reaches into the backpack by literal id, and nothing held those
+// literals against the stock. That is not theory: 'cable' was called 'kabel'
+// until 6.0, the rename reached data_items.js and not the MacGyver tool set in
+// engine_core, and the achievement was unreachable for four releases. It cost
+// no error and no warning - the set simply never completed, and an achievement
+// nobody earns looks exactly like an achievement nobody has earned YET.
+//
+// Two shapes carry these ids, and both are read as text, like 2d2 above:
+//   i.id === 'x' / id === 'x'   a single item, compared straight
+//   const set = ['a', 'b'] ...  an item SET, entries compared through a loop
+// An id that is neither an item nor an event is the typo this exists for -
+// event ids are allowed because the same comparison shape reads DB.party.
+{
+  const itemIds = new Set(Object.keys(DB.items ?? {}));
+  const eventIds = new Set();
+  for (const p of POOLS) for (const ev of DB[p] ?? []) if (ev.id) eventIds.add(ev.id);
+  for (const ev of DB.emails ?? []) if (ev.id) eventIds.add(ev.id);
+
+  const known = (id) => itemIds.has(id) || eventIds.has(id);
+
+  for (const file of ['engine_core.js', 'engine_ui.js', 'engine_events.js', 'engine_week.js', 'engine_inventory.js']) {
+    let src = '';
+    try { src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8'); }
+    catch { continue; }
+
+    for (const m of src.matchAll(/\bid === '([a-z_0-9]+)'/g))
+      if (!known(m[1]))
+        err(`[engine/${file}] compares against id "${m[1]}", which is neither an item nor an event`);
+
+    // An item SET: a const array of bare ids whose entries are compared to an
+    // id just below it. Written this way once (the MacGyver tools); a second
+    // one written the same way is picked up without touching this check.
+    for (const m of src.matchAll(/const\s+(\w+)\s*=\s*\[((?:\s*'[a-z_0-9]+'\s*,?)+)\]\s*;/g)) {
+      const [, name, body] = m;
+      const after = src.slice(m.index, m.index + 400);
+      if (!new RegExp(`\\b${name}\\b[\\s\\S]{0,200}?\\.id\\s*===`).test(after)) continue;
+      for (const q of body.matchAll(/'([a-z_0-9]+)'/g))
+        if (!itemIds.has(q[1]))
+          err(`[engine/${file}] the item set "${name}" names "${q[1]}", which is not an item - the set can never complete`);
+    }
   }
 }
 
@@ -616,6 +660,30 @@ for (const [s, c] of subjSeen) if (c > 1) warn(`duplicate mail subject "${s}" ($
 /* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`story flag "${flag}" is NEVER set but required by ${ctxs.join(', ')} -> dead content`);
+}
+
+// The ENGINE asks for flags too, and its literals used to be checked by
+// nobody: composeChronicleLine() shipped asking for path_doku_todo and
+// path_doku_start - flags that never existed in any tree (the event is CALLED
+// srv_doku_todo) - so the doku chronicle line was unreachable from the day it
+// was written, at 0 errors and 0 warnings. Same class as the MacGyver tool
+// set in 2d5. Read as text like 2d2 and 2d5. `flags[...]` is the one shape
+// that carries a flag literal today; the hasStoryFlag(...) pattern below is
+// there for the helper the engine may grow - it guards nothing yet.
+{
+  for (const file of ['engine_core.js', 'engine_ui.js', 'engine_events.js', 'engine_week.js', 'engine_diary.js']) {
+    let src = '';
+    try { src = readFileSync(new URL(`../src/engine/${file}`, import.meta.url), 'utf-8'); }
+    catch { continue; }
+    const seen = new Set();
+    for (const m of [...src.matchAll(/flags\[\s*'([a-z_0-9]+)'\s*\]/g),
+                     ...src.matchAll(/hasStoryFlag\(\s*'([a-z_0-9]+)'/g)]) {
+      if (seen.has(m[1])) continue;
+      seen.add(m[1]);
+      if (!flagsSet.has(m[1]))
+        err(`[engine/${file}] asks for story flag "${m[1]}", which nothing in the data ever sets - the branch is dead`);
+    }
+  }
 }
 
 /* ---------- 4b) Orphaned flags: set, but required by nobody ---------- */
@@ -970,13 +1038,12 @@ for (const ev of DB.emails) {
 // silently dropped at runtime - `ep` instead of `rep` cost one sidequest its
 // whole reputation effect for two versions. The lists below are what the engine
 // actually reads AT THAT PLACE, which is stricter than "the field exists
-// somewhere": reqStory on a lunch event is never evaluated (triggerLunch draws
-// at random without filtering), req/rem in a mail is never checked, and a node
+// somewhere": req/rem in a mail is never checked, and a node
 // option only ever carries t/next - its m, rep or r would go nowhere, because a
 // chain applies the values of the RESULT it ends in.
 const EVENT_KEYS = {
   _common:    ['id', 'char', 'title', 'text', 'opts', 'startNode', 'nodes', 'results'],
-  bossfights: ['timer', 'fail'],
+  bossfights: ['timer', 'fail', 'reqStory', 'reqStoryAge'],   // gated in engine_events since 6.2.1; reqWeekDayMin deliberately not blessed yet
   calls:      ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   coffee:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],
   server:     ['reqStory', 'reqStoryAge', 'reqWeekDayMin', 'webOnly'],

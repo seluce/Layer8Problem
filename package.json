@@ -1,6 +1,6 @@
 {
   "name": "layer8problem",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "description": "Layer8Problem - SysAdmin Survival Simulator",
   "author": "seluce",
   "license": "MIT",
@@ -58,9 +58,9 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "acorn": "^8.18.0",
-    "electron": "^43.4.1",
+    "electron": "^44.0.0",
     "electron-builder": "^26.15.3",
-    "svelte": "^5.56.10",
+    "svelte": "^5.57.0",
     "tailwindcss": "^4.3.3",
     "vite": "^8.2.2"
   },

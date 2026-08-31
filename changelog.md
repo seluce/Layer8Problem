@@ -1,3 +1,13 @@
+[6.2.1] - 2026-08-31
+
+Maintenance, and two things the game held out but never handed over: an achievement and a chronicle line.
+
+* MacGyver never completed. The tool set was looking for a cable under a name the game stopped using in 6.0, so however much you collected, it stayed one short. It works now.
+* One of Müller's chronicle lines could never be written: the evening he actually documents the server room asked after a flag under the wrong name. The pen works now.
+* Svelte and Electron are a version further on. Nothing in the game changes with it.
+
+---
+
 [6.2.0] - 2026-08-25
 
 Content and clarity, no balance changes yet.

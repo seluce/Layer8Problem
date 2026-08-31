@@ -352,6 +352,56 @@ await ok('Every activity has a text, every text an activity', async () => {
     }
 });
 
+await ok('Every activity the engine sends is a known one', async () => {
+    // The other half of the check above. That one holds PRESENCE_ALL against
+    // the dictionaries - the list against its sentences. This one holds the
+    // list against REALITY: the activity strings the engine actually sends.
+    //
+    // updatePresence() maps anything it does not recognise onto 'fallback',
+    // and at runtime that is not an error - it is a wrong sentence in OTHER
+    // PEOPLE'S friends lists. It has happened: in 6.1.1 the weekly meeting was
+    // a new type nobody had added to PRESENCE_TYPES, so for the fifty minutes
+    // a meeting takes, friends read "despairing at the IT helpdesk". Nothing
+    // in here noticed, because the dictionaries and the list agreed with each
+    // other - they just did not agree with the engine.
+    //
+    // Three routes reach updatePresence, and all three carry a literal:
+    //   updatePresence('x')       directly
+    //   renderTerminal(ev, 'x')   it hands its type straight on
+    //   trigger('x')              its type travels into renderTerminal
+    // Read as TEXT, the way lint-data reads unlockAchievement and
+    // dev-script.test reads the console helper - the alternative is booting
+    // the whole engine to find four string literals.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const { PRESENCE_TYPES } = await import('../src/engine/presence.js');
+
+    const files = ['src/engine.js',
+                   ...readdirSync('src/engine').filter(f => f.endsWith('.js')).map(f => 'src/engine/' + f)];
+    const sent = new Map();                       // type -> where it was seen
+    for (const file of files) {
+        const src = readFileSync(file, 'utf8');
+        const note = (m, how) => { if (!sent.has(m)) sent.set(m, `${file} (${how})`); };
+        for (const m of src.matchAll(/updatePresence\(\s*'([a-z_]+)'/g))            note(m[1], 'updatePresence');
+        // [^;]* rather than [^)]*: the first argument may itself contain
+        // brackets - DB.party.find(...) does - but never a semicolon.
+        for (const m of src.matchAll(/renderTerminal\([^;]*?,\s*'([a-z_]+)'\s*\)/g)) note(m[1], 'renderTerminal');
+        for (const m of src.matchAll(/\btrigger\(\s*'([a-z_]+)'/g))                 note(m[1], 'trigger');
+    }
+
+    assert.ok(sent.size > 0, 'no activity found at all - the patterns have gone stale');
+
+    for (const [type, where] of sent) {
+        assert.ok(PRESENCE_TYPES.includes(type),
+                  `"${type}" is sent in ${where} but is not in PRESENCE_TYPES - `
+                  + `the friends list would show the fallback sentence instead`);
+    }
+    for (const type of PRESENCE_TYPES) {
+        assert.ok(sent.has(type),
+                  `PRESENCE_TYPES carries "${type}", but nothing in the engine sends it - `
+                  + `either the route was renamed or the entry is dead`);
+    }
+});
+
 await ok('The tracked Steam files match what the trees would generate', async () => {
     // The generators are run BY HAND and their output is committed. Nothing
     // used to compare the two, so a changed hint shipped a stale .vdf: the

@@ -560,7 +560,17 @@ export const events = {
         // ---------------------------------------------------------
         // 5% chance, on every button including calls and sidequests.
         // If the boss shows up, nothing else matters.
-        let bossPool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
+        // The gate belongs on BOTH boss draws and has to say the same thing
+        // in each: this one decides WHETHER a disaster pre-empts the click,
+        // triggerBossFight() picks WHICH. If the two filters disagreed, this
+        // one could swallow the action and the other return on an empty pool.
+        //
+        // Until 6.2.1 neither asked - a boss fight could not carry a
+        // precondition, though eight of them SET one (path_boss_*, taken up
+        // by the srv_nach_* evenings a day later). Now the road runs both
+        // ways; no boss fight uses it yet.
+        let bossPool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id)
+                                                  && this.storyGateOpen(ev));
         
         if (this.state.time > 540 && bossPool.length > 0 && Math.random() < 0.05) {
              this.triggerBossFight();
@@ -690,7 +700,10 @@ export const events = {
         }
         // ------------------------------------------
 		
-        let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id));
+        // Same filter as the pre-emption check above, deliberately - see the
+        // comment there. An empty pool is already a handled state.
+        let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id)
+                                              && this.storyGateOpen(ev));
         
         if(pool.length === 0) return; 
      

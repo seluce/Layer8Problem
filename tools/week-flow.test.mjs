@@ -900,6 +900,51 @@ await ok('Not on the same day', async () => {
 });
 engine.renderTerminal = origRenderTerminal;   // restore the scaffolding
 
+// --------------------------------- boss fights honour the story gate (6.2.1)
+// The mechanic has NO content using it, which is exactly why it is tested:
+// eight boss fights SET a flag (path_boss_*, taken up by srv_nach_* a day
+// later), none has ever been able to REQUIRE one. Added in 6.2.1 so the road
+// runs both ways. An untested mechanic nobody uses rots without a sound - the
+// lesson of the MacGyver tool set.
+console.log('Boss fights, story gate:');
+await ensure('bossfights');
+{
+    const GATED = { id: 'boss_test_gated', title: 'x', text: 'x', timer: 20,
+                    reqStory: 'tst_boss_flag', opts: [{ t: 'x', r: 'x' }] };
+    const pick = () => {
+        // The filter both draw sites share. Read through the engine rather
+        // than rebuilt here, so the test cannot agree with a copy of itself.
+        return DB.bossfights.filter(ev => !state.usedIDs.has(ev.id) && engine.storyGateOpen(ev));
+    };
+    DB.bossfights.push(GATED);
+    try {
+        await ok('A boss fight with an unmet reqStory is not in the pool', () => {
+            resetState();
+            state.storyFlags = {};
+            assert.ok(!pick().some(e => e.id === GATED.id), 'the gated fight was offered');
+            assert.ok(pick().length > 0, 'the gate emptied the whole pool');
+        });
+        await ok('With the flag set it is', () => {
+            resetState();
+            state.storyFlags = { tst_boss_flag: true };
+            assert.ok(pick().some(e => e.id === GATED.id), 'the gated fight stayed out');
+        });
+        await ok('Both boss draws carry the same filter', () => {
+            // They must agree: the first decides WHETHER a disaster pre-empts
+            // the click, the second WHICH one. Disagreeing filters would let
+            // the first swallow the action and the second return on an empty
+            // pool - the click lost with nothing on screen.
+            const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+            const draws = [...src.matchAll(/DB\.bossfights\.filter\(([\s\S]{0,200}?)\)\s*;/g)];
+            assert.equal(draws.length, 2, `expected 2 boss draws, found ${draws.length}`);
+            for (const d of draws)
+                assert.match(d[1], /storyGateOpen/, 'a boss draw skips the story gate');
+        });
+    } finally {
+        DB.bossfights.splice(DB.bossfights.indexOf(GATED), 1);
+    }
+}
+
 // ------------------------------------------ knowledge: unread/read (v5.1)
 await ensure('compendium');
 console.log('Knowledge, unread marker:');
