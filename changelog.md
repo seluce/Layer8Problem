@@ -1,4 +1,4 @@
-[6.2.1] - 2026-08-30
+[6.2.1] - 2026-08-31
 
 Maintenance, and two things the game held out but never handed over: an achievement and a chronicle line.
 
