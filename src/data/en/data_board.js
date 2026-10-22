@@ -204,7 +204,7 @@ export const board = [
     {
         id: "board_language", kind: "official", paper: "#ffffff", tilt: "0deg", pin: "#4338ca",
         icon: "💬", dept: "Internal Communications",
-        title: "Language Guide 2026",
+        title: "Language Guide, Version 4",
         body: "To sharpen our shared communication culture we are replacing, with immediate effect:",
         items: ["'problem' with 'challenge'", "'mistake' with 'learning curve'", "'we have no budget' with 'we are prioritising differently'"],
         foot: "The guide is binding. Queries are a challenge. - Internal Communications"
@@ -249,7 +249,7 @@ export const board = [
     {
         id: "board_egon_deal", kind: "tape", paper: "#fefce8", tilt: "2deg",
         reqStory: "path_exting_lager",
-        body: "To IT: the stock in <strong>K3</strong> has been topped up again.<br>Two fire extinguishers, tested, sticker valid to 2029.<br>I shall say nothing if you say nothing.<br>— E."
+        body: "To IT: the stock in <strong>K3</strong> has been topped up again.<br>Two fire extinguishers, freshly tested.<br>I shall say nothing if you say nothing.<br>— E."
     },
     {
         id: "board_audit", kind: "alert", paper: "#ffffff", tilt: "1deg", pin: "#dc2626", edge: "#dc2626",

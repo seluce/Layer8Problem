@@ -1438,6 +1438,66 @@ for (const ev of DB.emails) {
     if (!used.has(cmd)) warn(`"${cmd}" is handled in engine_events.js but no data file uses it - dead code, or an entrance nobody can reach`);
 }
 
+/* ---------- 13) Years the calendar can overtake ---------- */
+// The game is played for years after a line is written. Three kinds of year
+// go wrong on their own, at 0 errors and 0 warnings:
+//   - one that lies ahead flips from "soon" to "over": 'taken into the 2027
+//     procurement round. Until then...'
+//   - one that means "now" is stale the January after: 'as of 2026'
+//   - one with an age beside it is wrong a little more every year: 'PHOENIX -
+//     1998 - ... running for 25 years' was right in 2023 and only then
+// A past year on its own is left alone - it only grows older, which mostly
+// makes it funnier ('a receipt from 2023'). Reviewed exceptions go into
+// yearReviewed, the way clock times go into clockReviewed.
+//
+// The present is read from the clock. Warnings can therefore only disappear
+// with time, never appear on their own: the gate cannot turn red on New
+// Year's Day, and a year written today that lies ahead is caught today.
+// Since 6.3, after thirteen such lines were found by hand (GLOSSAR, 6.3).
+{
+  const NOW = new Date().getFullYear();
+  const YEAR = /(?<!\d)(1[89]\d\d|20\d\d)(?!\d)/g;
+  // A sum of money is not a year: '2000€', '2000 Euro'.
+  const MONEY_AFTER = /^\s?(€|Euro|EUR\b)/;
+  const AGE = LANG === 'en' ? /\b\d+\s+years?\b/i : /\b\d+\s+Jahren?\b/;
+  // Keys that hold identifiers, not text a player reads.
+  const NOT_TEXT = new Set(['id', 'seen', 'next', 'reqStory', 'flag', 'img', 'startNode', 'startNodeGala',
+    'nextEmail', 'senderId', 'loot', 'req', 'rem', 'char', 'onChar', 'kind', 'cat', 'effect', 'fn',
+    'loc', 'checkPool', 'type', 'tone', 'icon', 'take']);
+  // 'pool/id': why the year may stand. Empty since 6.3 - every year that was
+  // found is either past or has been rewritten without one.
+  const yearReviewed = new Map([]);
+
+  const check = (text, where, path) => {
+    if (yearReviewed.has(where)) return;
+    const years = [...text.matchAll(YEAR)].filter(m => !MONEY_AFTER.test(text.slice(m.index + 4)));
+    for (const m of years)
+      if (+m[1] >= NOW)
+        warn(`[${where}] ${path}: "${m[1]}" is this year or later - the sentence goes wrong once the calendar passes it. Say it without the year ('the procurement round after next'), or enter it in yearReviewed`);
+    // The whole field, not the sentence: the case that prompted this check
+    // put the year and the age in two sentences side by side ("'PHOENIX -
+    // 1998 - Do Not Touch'. It has been running for 25 years."), and a
+    // sentence-by-sentence check stayed silent on exactly that one - the
+    // mutation probe caught it. Measured on the whole stock: no field
+    // carries a year and an age that belong to different things.
+    const age = years.length ? text.match(AGE) : null;
+    if (age)
+      warn(`[${where}] ${path}: a year and an age in one text ("${years[0][1]}" ... "${age[0]}") - the sum is right for one year only`);
+  };
+  const walk = (node, pool, id, path) => {
+    const where = id ? `${pool}/${id}` : pool;
+    if (typeof node === 'string') { check(node, where, path); return; }
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, pool, x?.id ?? id, x?.id ? '' : `${path}[${i}]`)); return; }
+    if (node && typeof node === 'object')
+      for (const [k, v] of Object.entries(node)) if (!NOT_TEXT.has(k)) walk(v, pool, id, path ? `${path}.${k}` : k);
+  };
+  for (const [pool, data] of Object.entries(DB)) walk(data, pool, '', '');
+
+  // The interface strings too: a year in a label overtakes itself the same way.
+  const dict = (await import(`../src/i18n/${LANG}.js`))[LANG] ?? {};
+  for (const [key, text] of Object.entries(dict)) if (typeof text === 'string') check(text, `i18n/${key}`, '');
+}
+
 /* ---------- Output ---------- */
 const section = (title, list, sym) => {
   console.log(`\n${title} (${list.length})`);

@@ -85,6 +85,14 @@ What it finds — throughout, things that fail **quietly** at runtime:
   one closing line is marked `lands` and it is not the first (without it the
   roll never reaches the backpack); and the machine's prose goes through the
   same text rules as every event
+- **years the calendar overtakes** (6.3, section 13): a year that is this
+  year or later reads wrong once it has passed ('the 2027 procurement round
+  ... until then'), and a year with an age beside it in the same field is
+  right for one year only ('1998 ... running for 25 years'). Past years on
+  their own are left alone. Sums of money are not years (`2000€`).
+  Reviewed exceptions go into `yearReviewed`. The present is read from the
+  clock, so warnings can only disappear with time, never appear on New
+  Year's Day. The interface strings are checked too
 - **doors** (section 12b): a result starting with `CMD:` has to be a command
   `engine_events.js` handles — the list is read out of that file — and every
   command it handles has to be used somewhere. A typo would otherwise reach the

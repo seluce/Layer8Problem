@@ -4,6 +4,7 @@ Something on the third floor for anyone who can keep a secret, and new parts und
 
 * Kevin knows a corner of the building that is on no plan. In the working week it is worth going back - as long as nobody asks who restocks it.
 * Space no longer presses the button behind an open window, and the action keys no longer start anything behind the noticeboard.
+* A handful of notices and mails no longer name a year the calendar would sooner or later overtake.
 * Under the hood, Svelte, Vite, Electron and the build tools are on their current versions.
 
 ---

@@ -1971,7 +1971,7 @@ export const coffee = [
 		char: "Egon",
         title: "Feat of Engineering",
         reqStory: "path_machine_tape",
-        text: "Egon the caretaker stands before your tape masterpiece. He nods slowly, with approval. 'Clean work, Miller. I could not have done it better. That will hold until 2030.' He gives you a firm clap on the shoulder.",
+        text: "Egon the caretaker stands before your tape masterpiece. He nods slowly, with approval. 'Clean work, Miller. I could not have done it better. That will hold for ten years.' He gives you a firm clap on the shoulder.",
         opts: [
             { 
                 t: "'Duct tape sorts everything.'", 

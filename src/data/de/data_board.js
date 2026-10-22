@@ -166,7 +166,7 @@ export const board = [
     {
         id: "board_language", kind: "official", paper: "#ffffff", tilt: "0deg", pin: "#4338ca",
         icon: "💬", dept: "Interne Kommunikation",
-        title: "Sprachleitfaden 2026",
+        title: "Sprachleitfaden, Fassung 4",
         body: "Zur Schärfung unserer gemeinsamen Kommunikationskultur ersetzen wir ab sofort:",
         items: ["'Problem' durch 'Herausforderung'", "'Fehler' durch 'Lernkurve'", "'Wir haben kein Budget' durch 'Wir priorisieren anders'"],
         foot: "Der Leitfaden ist verbindlich. Rückfragen sind eine Herausforderung. - Interne Kommunikation"
@@ -211,7 +211,7 @@ export const board = [
     {
         id: "board_egon_deal", kind: "tape", paper: "#fefce8", tilt: "2deg",
         reqStory: "path_exting_lager",
-        body: "An die IT: Der Bestand in <strong>K3</strong> ist wieder aufgefüllt.<br>Zwei Feuerlöscher, geprüft, Plakette bis 2029.<br>Ich sage nichts, wenn Sie nichts sagen.<br>— E."
+        body: "An die IT: Der Bestand in <strong>K3</strong> ist wieder aufgefüllt.<br>Zwei Feuerlöscher, frisch geprüft.<br>Ich sage nichts, wenn Sie nichts sagen.<br>— E."
     },
     {
         id: "board_audit", kind: "alert", paper: "#ffffff", tilt: "1deg", pin: "#dc2626", edge: "#dc2626",

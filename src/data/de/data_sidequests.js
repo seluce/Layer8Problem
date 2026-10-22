@@ -1267,7 +1267,7 @@ export const sidequests = [
 		char: "Frau Elster",
         kind: "text",
         title: "Der Drache bewacht den Hort",
-        text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budget 2024', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
+        text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budgetplanung', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
         opts: [
             { 
                 t: "Das Fenster aufreißen und auf Zugluft setzen",
@@ -6490,7 +6490,7 @@ export const sidequests = [
         {
             t: "Das Konto endlich ordnungsgemäß stilllegen",
             m: 15, l: -5, a: 5, b: -5,
-            r: "Bei der Stilllegung findest du: 4.213 ungelesene Mails, eine Weiterleitungsregel an eine externe Adresse und einen Kalender voller Serientermine bis 2031. Du beendest alles, dokumentierst sauber und fühlst dich, als hättest du ein Gespenst pensioniert."
+            r: "Bei der Stilllegung findest du: 4.213 ungelesene Mails, eine Weiterleitungsregel an eine externe Adresse und einen Kalender voller Serientermine ohne Enddatum. Du beendest alles, dokumentierst sauber und fühlst dich, als hättest du ein Gespenst pensioniert."
         },
         {
             t: "Rademacher eine Mail schreiben",
@@ -7212,7 +7212,7 @@ export const sidequests = [
         {
             t: "Neutral protokollieren, Zahlen still korrigieren",
             m: 20, l: -5, a: 10, b: -10,
-            r: "Du protokollierst jede Aussage korrekt - und ergänzt in Klammern die aktuellen Zahlen ('Anm. d. Protokolls: Stand 2026 abweichend'). Das Protokoll geht an alle, inklusive Dr. Wichtig. Die Anmerkungen wirken wie ein stiller Anwalt. Punkt 3 stirbt in der nächsten Sitzung leise an Faktenlage."
+            r: "Du protokollierst jede Aussage korrekt - und ergänzt in Klammern die aktuellen Zahlen ('Anm. d. Protokolls: aktueller Stand abweichend'). Das Protokoll geht an alle, inklusive Dr. Wichtig. Die Anmerkungen wirken wie ein stiller Anwalt. Punkt 3 stirbt in der nächsten Sitzung leise an Faktenlage."
         }
     ]
 },

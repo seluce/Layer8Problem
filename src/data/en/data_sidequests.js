@@ -1315,7 +1315,7 @@ export const sidequests = [
 		char: "Frau Elster",
         kind: "text",
         title: "The Dragon Guards the Hoard",
-        text: "Ms Elster is sitting with folded arms on the file 'Budget 2024' that you urgently need. 'I am not releasing that! Over my dead body!' She looks pale and low on sugar. Her stomach rumbles audibly.",
+        text: "Ms Elster is sitting with folded arms on the file 'Budget Planning' that you urgently need. 'I am not releasing that! Over my dead body!' She looks pale and low on sugar. Her stomach rumbles audibly.",
         opts: [
             { 
                 t: "Fling the window open and rely on the draught",
@@ -6538,7 +6538,7 @@ export const sidequests = [
         {
             t: "Finally disable the account properly",
             m: 15, l: -5, a: 5, b: -5,
-            r: "While disabling it you find: 4,213 unread emails, a forwarding rule to an external address and a calendar full of recurring meetings up to 2031. You end it all, document it cleanly and feel as though you have pensioned off a ghost."
+            r: "While disabling it you find: 4,213 unread emails, a forwarding rule to an external address and a calendar full of recurring meetings with no end date. You end it all, document it cleanly and feel as though you have pensioned off a ghost."
         },
         {
             t: "Write Rademacher an email",
@@ -7260,7 +7260,7 @@ export const sidequests = [
         {
             t: "Take neutral minutes and quietly correct the figures",
             m: 20, l: -5, a: 10, b: -10,
-            r: "You minute every statement correctly - and add the current figures in brackets ('Note from the minutes: 2026 figures differ'). The minutes go to everybody, Dr Wichtig included. The notes work like a silent advocate. Item 3 dies quietly of the facts in the next session."
+            r: "You minute every statement correctly - and add the current figures in brackets ('Note from the minutes: current figures differ'). The minutes go to everybody, Dr Wichtig included. The notes work like a silent advocate. Item 3 dies quietly of the facts in the next session."
         }
     ]
 },
