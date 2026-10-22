@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <img src="screenshots/serverraum.webp" width="100%" alt="The server room: an event with three options, two of them locked behind an item that is missing">
+  <img src="screenshots/serverraum.webp" width="100%" alt="The server room: Markus wants to know which of the boxes is the private cloud he has already sold">
 </p>
 
 ---
@@ -69,7 +69,7 @@ and you lose the whole week.
   <tr>
     <td width="50%">
       <img src="screenshots/intranet.webp" alt="The GlobalCorp intranet with corporate announcements">
-      <br><sub><b>The company intranet.</b> Days without incident in the server room: 0. The counter was reset this morning, as on most days.</sub>
+      <br><sub><b>The company intranet.</b> Four days without an incident in the server room, and an upward trend detected. The open-ticket deviation has been reported to the division head; a reply is not provided for.</sub>
     </td>
     <td width="50%">
       <img src="screenshots/team.webp" alt="The team view with seven colleagues and their reputation bars">
@@ -79,7 +79,7 @@ and you lose the whole week.
   <tr>
     <td width="50%">
       <img src="screenshots/brett.webp" alt="The notice board with handwritten and printed notes">
-      <br><sub><b>The notice board.</b> Eight notes out of thirty, redrawn every morning — from the red-level security warning to the lift share with conditions attached.</sub>
+      <br><sub><b>The notice board.</b> Eight notes out of thirty, redrawn every morning — among them a shredder going free to a good home, tear-off tabs included.</sub>
     </td>
     <td width="50%">
       <img src="screenshots/archiv.webp" alt="Career progress with found items, trophies and statistics">
