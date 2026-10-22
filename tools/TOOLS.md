@@ -83,7 +83,10 @@ What it finds — throughout, things that fail **quietly** at runtime:
   has a compartment; `limitRule` points at a rule that exists; the crank's
   beats - the time with nothing new to read - stay under twenty seconds, and
   the whole run, reading time included, under ninety (measured with
-  `crankDelays`, the function the window paces itself with); exactly
+  `crankDelays`, the function the window paces itself with); every take
+  leaves a note in the knowledge book - `VENDING_FLAGS` in the engine is held
+  against the takes and against the compendium notes, in both directions,
+  and its flags count as set for the compendium check; exactly
   one closing line is marked `lands` and it is not the first (without it the
   roll never reaches the backpack); and the machine's prose goes through the
   same text rules as every event

@@ -658,6 +658,22 @@ for (const e of DB.emails) {
 for (const [id, c] of mailIdSeen) if (c > 1) err(`duplicate mail id "${id}" (${c}x) - usedEmails blocks both, nextEmail hits the wrong one`);
 for (const [s, c] of subjSeen) if (c > 1) warn(`duplicate mail subject "${s}" (${c}x) - only cosmetic, but in the game it reads as the same mail`);
 
+/* ---------- 3b) Flags the engine raises itself ---------- */
+// The vending machine notes each take in archive.seenFlags for the knowledge
+// entry 'vending'. No event sets those flags, so without this 6d would call
+// every one of its notes dead. Read as text, like VENDING_TAKES in section 12,
+// which also holds the list against the takes and the notes.
+const vendingFlags = new Map();
+{
+  const src = readFileSync('src/engine/engine_vending.js', 'utf8');
+  const listed = src.match(/const VENDING_FLAGS = \{([^}]*)\}/);
+  if (!listed) err('[vending]: VENDING_FLAGS not found in engine_vending.js - the knowledge notes cannot be checked');
+  else for (const [, take, flag] of listed[1].matchAll(/([a-z0-9]+):\s*'([a-z_0-9]+)'/g)) {
+    vendingFlags.set(take, flag);
+    noteFlag(flag, 'engine/engine_vending.js');
+  }
+}
+
 /* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`story flag "${flag}" is NEVER set but required by ${ctxs.join(', ')} -> dead content`);
@@ -1375,6 +1391,18 @@ for (const ev of DB.emails) {
     });
     for (const k of takes)
       if (listed && !offered.has(k)) err(`${ctx}: no compartment offers "${k}" - the window has a button for it and the machine has nothing behind it`);
+
+    // Every take leaves a note in the knowledge book (VENDING_FLAGS, read in
+    // 3b). A take without a flag leaves nothing; a flag no note asks for is a
+    // gap that can never close - the engine source names it, so 4b would not
+    // call it orphaned, and nothing else would notice.
+    const asked = new Set((DB.compendium ?? []).flatMap(e => (e.notes ?? []).map(n => n.flag)).filter(Boolean));
+    for (const k of takes)
+      if (!vendingFlags.has(k)) err(`${ctx}: take "${k}" has no entry in VENDING_FLAGS - it leaves no note in the knowledge book`);
+    for (const [k, flag] of vendingFlags) {
+      if (!takes.has(k)) err(`${ctx}: VENDING_FLAGS names "${k}", which is not a take`);
+      if (!asked.has(flag)) err(`${ctx}: no knowledge note asks for "${flag}" - taking "${k}" leaves nothing in the book`);
+    }
 
     const rules = V.rules?.list ?? [];
     const limit = V.rules?.limitRule;

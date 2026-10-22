@@ -3250,6 +3250,33 @@ await ok('House rule 2: one take per visit, whatever it was', async () => {
     engine.closeVending();
 });
 
+await ok('Each take leaves its note in the knowledge book, C4 once the roll has landed', async () => {
+    // One take per visit, three notes in the book: the gaps are the reason to
+    // come back and take something else. Career flags only - a week story flag
+    // here would be a flag nothing follows.
+    await ensure('compendium');
+    resetState();
+    engine.startWeek('easy');
+    state.archive.seenFlags = [];
+    await engine.openVending();
+    engine.vendingTake('magazine');
+    assert.ok(state.archive.seenFlags.includes('vending_magazine'), 'reading the magazine left no note');
+    assert.equal(state.storyFlags.vending_magazine, undefined, 'the take became a story flag of the week');
+    engine.closeVending();
+
+    await engine.openVending();
+    engine.vendingTake('c4');
+    assert.ok(!state.archive.seenFlags.includes('vending_c4'), 'C4 is known before the roll has landed');
+    engine.vendingDeliver();
+    assert.ok(state.archive.seenFlags.includes('vending_c4'), 'the roll landed and left no note');
+    engine.closeVending();
+
+    const entry = DB.compendium.find(e => e.id === 'vending');
+    assert.ok(entry, 'the knowledge book has no entry for the machine');
+    for (const flag of ['vending_magazine', 'vending_printout', 'vending_c4'])
+        assert.ok(entry.notes.some(n => n.flag === flag), `no note asks for ${flag}`);
+});
+
 await ok('Nothing is taken from a machine that is not open', () => {
     resetState();
     assert.equal(engine.vendingTake('c4'), false);

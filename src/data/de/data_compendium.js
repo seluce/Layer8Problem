@@ -15,6 +15,9 @@
  *   notes          one line each, unlocked by evidence:
  *                    seen: "<event id>"   the event was opened
  *                    flag: "<story flag>" the flag was set
+ *                  Three flags come from the engine, not from an event: the
+ *                  vending machine's takes (VENDING_FLAGS, engine_vending.js),
+ *                  one note each in 'vending'. lint-data knows them.
  *
  * Two rules that keep this from becoming a text dump:
  *
@@ -587,6 +590,19 @@ export const compendium = [
             { seen: "cof_elevator_stuck_1", text: "Bleibt zwischen dem zweiten und dritten Stock hängen. Immer dort, nie woanders." },
             { seen: "cof_elevator_2a",      text: "Der Nothalt-Knopf wird hier nicht für Notfälle benutzt, sondern für Gespräche unter vier Augen." },
             { seen: "cof_elevator_stuck_1", text: "Wer die Treppe nimmt, verliert eine Minute. Wer den Aufzug nimmt, verliert manchmal zwanzig." }
+        ]
+    },
+    {
+        id: "vending",
+        cat: "place",
+        name: "Dritter Stock, hinten",
+        role: "Treppenhaus, wo die Lampe flackert",
+        summary: "Ein alter Snackautomat, seit dem Umbau ausgestöpselt. Befüllt wird er nicht mehr, geliefert wird trotzdem.",
+        seen: ["sq_kevin_geheim_2"],
+        notes: [
+            { flag: "vending_magazine", text: "MEHRWERT, das Magazin der Geschäftsführung, hat genau einen Vertriebsweg, und der hat keinen Strom. Verkaufte Auflage: null." },
+            { flag: "vending_printout", text: "Hier sollte Chantals Wohlfühl-Ecke entstehen: gedimmtes Licht, eine Sitzbank, ein Automat mit gesunden Snacks. Das Licht flackert, die Bank fehlt, der Automat hat keinen Strom. Facility ist informiert." },
+            { flag: "vending_c4",       text: "Fach C4 liefert, nach elf Umdrehungen von Hand. Auf dem Etikett steht als Haltbarkeit 'ja', und bisher hat das gestimmt." }
         ]
     },
     {

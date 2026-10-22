@@ -388,7 +388,7 @@ entry.
 
 The format and the four categories are in the header comment of
 `src/data/de/data_compendium.js`. New entries are checked by `npm run lint:data`
-along with everything else. The stock: 59 entries with 257 notes between them.
+along with everything else. The stock: 60 entries with 260 notes between them.
 
 ## 4. Conversations with a course: `nodes` and `results`
 

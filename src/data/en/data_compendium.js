@@ -16,6 +16,9 @@
  *   notes          one line each, unlocked by evidence:
  *                    seen: "<event id>"   the event was opened
  *                    flag: "<story flag>" the flag was set
+ *                  Three flags come from the engine, not from an event: the
+ *                  vending machine's takes (VENDING_FLAGS, engine_vending.js),
+ *                  one note each in 'vending'. lint-data knows them.
  *
  * Two rules that keep this from becoming a text dump:
  *
@@ -622,6 +625,19 @@ export const compendium = [
             { seen: "cof_elevator_stuck_1", text: "Gets stuck between the second and third floor. Always there, never anywhere else." },
             { seen: "cof_elevator_2a",      text: "The emergency stop button is not used in here for emergencies, it is used for a word in private." },
             { seen: "cof_elevator_stuck_1", text: "Take the stairs and you lose a minute. Take the lift and you sometimes lose twenty." }
+        ]
+    },
+    {
+        id: "vending",
+        cat: "place",
+        name: "Third Floor, Back Section",
+        role: "The stairwell where the light flickers",
+        summary: "An old vending machine, unplugged since the refit. Nobody restocks it any more, and deliveries come all the same.",
+        seen: ["sq_kevin_geheim_2"],
+        notes: [
+            { flag: "vending_magazine", text: "ADDED VALUE, the management magazine, has exactly one distribution channel, and it has no power. Copies sold: zero." },
+            { flag: "vending_printout", text: "Chantal's wellbeing corner was to go here: dimmed lighting, a bench, a vending machine with healthy snacks. The light flickers, the bench is missing, the machine has no power. Facilities is in the loop." },
+            { flag: "vending_c4",       text: "Compartment C4 delivers, after eleven turns by hand. The label gives the best-before as 'yes', and so far that has held." }
         ]
     },
     {

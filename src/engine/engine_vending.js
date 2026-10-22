@@ -22,6 +22,14 @@ import { ensure } from '../data.js';
 // that lights up and does nothing.
 const VENDING_TAKES = ['magazine', 'printout', 'c4'];
 
+// What each take leaves in the career, for the knowledge entry 'vending': one
+// note per take, each hanging on one of these flags. A visit allows one take,
+// so the book shows the other two as gaps - the reason to come back and take
+// something else. Only archive.seenFlags gets them, never the week's story
+// flags: nothing in the game follows from them but the note. lint-data reads
+// this list and holds it against VENDING_TAKES and the compendium.
+const VENDING_FLAGS = { magazine: 'vending_magazine', printout: 'vending_printout', c4: 'vending_c4' };
+
 // Reading pace for the crank, about 200 words a minute. Until 6.3.0 each line
 // waited only its own beat, 0.5 to 2.3 seconds whatever came before it, and a
 // line of ninety characters was gone under the next one before it was read.
@@ -80,6 +88,9 @@ export const vendingMachine = {
         if (!v || v.taken) return false;
         if (!VENDING_TAKES.includes(kind)) return false;
         v.taken = kind;
+        // A magazine is read the moment it drops. C4 is known only once the
+        // roll has landed, so its note waits for vendingDeliver.
+        if (kind !== 'c4') this.noteVendingTake(kind);
         return true;
     },
 
@@ -96,7 +107,18 @@ export const vendingMachine = {
         const v = this.state.vending;
         if (!v || v.taken !== 'c4' || v.delivered) return false;
         v.delivered = true;
+        this.noteVendingTake('c4');
         return this.grantItem('sandwich', 'found');
+    },
+
+    /**
+     * Records a take for the knowledge book, and saves straight away: the
+     * window can be closed and the tab with it, and a note the player has
+     * earned should not depend on the next action saving it.
+     */
+    noteVendingTake: function(kind) {
+        this.recordSeen('flag', VENDING_FLAGS[kind]);
+        this.saveSystem();
     },
 
     /**
