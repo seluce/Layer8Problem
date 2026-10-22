@@ -1341,13 +1341,18 @@ for (const ev of DB.emails) {
 //     the glass with nothing behind it in the machine
 //   - limitRule past the end of the list: rule 2 is never underlined, and the
 //     either-or of every visit has no visible reason
-//   - a crank that is long on the SCREEN. The design is that it only feels
-//     long - fifteen seconds, with the clock untouched. A minute of real
-//     waiting is not the joke any more.
+//   - a crank that WAITS too long. Since 6.3.0 each line stays until the one
+//     before it can have been read (crankDelays, engine_vending.js), and the
+//     `ms` beats come on top of that. The beats are the time in which there
+//     is nothing new to read - that sum keeps the old limit of twenty
+//     seconds. The whole run, reading included, is held against a second
+//     limit, measured with the window's own function.
 {
   const V = DB.vending;
   const ctx = '[vending]';
-  const CRANK_MAX_MS = 20000;
+  const CRANK_BEATS_MAX_MS = 20000;
+  const CRANK_SCREEN_MAX_MS = 90000;
+  const { crankDelays } = await import('../src/engine/engine_vending.js');
   if (!V) err(`${ctx}: the pool is missing - data_vending.js did not load`);
   else {
     const engineVending = readFileSync('src/engine/engine_vending.js', 'utf8');
@@ -1377,14 +1382,18 @@ for (const ev of DB.emails) {
       err(`${ctx} rules.limitRule ${limit}: not a rule on the list (0-${rules.length - 1}) - the either-or would have no visible reason`);
     if (!(V.rules?.members ?? []).length) err(`${ctx} rules.members: the sheet has nobody on it`);
 
-    let total = 0;
-    [...(V.crank ?? []), ...(V.crankEnd ?? [])].forEach((line, i) => {
-      if (typeof line.ms !== 'number' || line.ms < 0) err(`${ctx} crank line ${i}: "ms" has to be a number of milliseconds`);
-      else total += line.ms;
+    let beats = 0, timed = true;
+    const crankLines = [...(V.crank ?? []), ...(V.crankEnd ?? [])];
+    crankLines.forEach((line, i) => {
+      if (typeof line.ms !== 'number' || line.ms < 0) { err(`${ctx} crank line ${i}: "ms" has to be a number of milliseconds`); timed = false; }
+      else beats += line.ms;
       if (!line.text) err(`${ctx} crank line ${i}: no text`);
     });
-    if (total > CRANK_MAX_MS)
-      err(`${ctx}: the crank takes ${(total / 1000).toFixed(1)} s on screen (limit ${CRANK_MAX_MS / 1000} s) - it is meant to FEEL long, not to be`);
+    if (beats > CRANK_BEATS_MAX_MS)
+      err(`${ctx}: the crank's beats add up to ${(beats / 1000).toFixed(1)} s with nothing new to read (limit ${CRANK_BEATS_MAX_MS / 1000} s) - the player waits instead of reading`);
+    const screen = timed ? crankDelays(crankLines).reduce((a, b) => a + b, 0) : 0;
+    if (screen > CRANK_SCREEN_MAX_MS)
+      err(`${ctx}: the crank runs ${(screen / 1000).toFixed(1)} s on screen, reading time included (limit ${CRANK_SCREEN_MAX_MS / 1000} s) - shorten the lines, not the beats`);
 
     // The roll is delivered at the closing line marked `lands`. None, and the
     // crank runs to its end and nothing reaches the backpack; two, and the

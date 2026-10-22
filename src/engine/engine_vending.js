@@ -11,8 +11,9 @@
  * It opens only from sq_kevin_geheim_3 through CMD:OPEN_VENDING, and that option
  * has already charged its minutes through resolveTerminal - so lunch, the
  * Friday meeting and closing time were checked on the way in, and nothing in
- * here touches the clock. The crank takes fifteen seconds on screen and none
- * on the clock, which is the joke: it only FEELS long.
+ * here touches the clock. The crank takes about a minute on screen and none
+ * on the clock, which is the joke: an afternoon on the page, two minutes on
+ * the clock.
  */
 import { ensure } from '../data.js';
 
@@ -20,6 +21,35 @@ import { ensure } from '../data.js';
 // `take` in data_vending.js that is not on this list would be a compartment
 // that lights up and does nothing.
 const VENDING_TAKES = ['magazine', 'printout', 'c4'];
+
+// Reading pace for the crank, about 200 words a minute. Until 6.3.0 each line
+// waited only its own beat, 0.5 to 2.3 seconds whatever came before it, and a
+// line of ninety characters was gone under the next one before it was read.
+const READ_MS_PER_CHAR = 45;
+
+/**
+ * When each crank line appears: the time it takes to read the line before it,
+ * plus the beat the data gives the line itself (`ms`). The rhythm stays in the
+ * data - quick into it, the ninth turn hangs, the fall is fast - and the
+ * reading time sits underneath it, so nobody is rushed and nobody waits.
+ *
+ * One entry more than there are lines: the last one is the reading time of
+ * the final line, which the result card waits for. A card that came with the
+ * label line would draw the eye away from it before the punchline.
+ *
+ * lint-data adds these up with this same function, so its limit measures what
+ * the screen does rather than the beats alone.
+ *
+ * @param {{ms: number, text: string}[]} lines the crank and its closing lines
+ * @returns {number[]} milliseconds before each line, and before the card
+ */
+export function crankDelays(lines) {
+    const read = (line) => Math.round((line?.text?.length ?? 0) * READ_MS_PER_CHAR);
+    return [
+        ...lines.map((line, i) => line.ms + (i ? read(lines[i - 1]) : 0)),
+        read(lines[lines.length - 1]),
+    ];
+}
 
 export const vendingMachine = {
 

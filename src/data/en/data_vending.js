@@ -59,11 +59,13 @@ export const vending = {
     plug: "The plug is lying next to it.",
 
     /* ----------------------------------------------------------------
-       C4, by hand. `ms` is how long a line waits before it appears -
-       about eighteen seconds in all, and unevenly: quick into it, sticky in
-       the middle, the ninth turn hangs, then the fall. No counter and no
-       bar: a player who knows there are eleven turns counts them down, one
-       who does not wonders at every turn whether this ever ends.
+       C4, by hand. `ms` is the beat a line waits on top of the time it
+       takes to read the one before it (crankDelays, engine_vending.js) -
+       about a minute in all, eighteen seconds of it beats, and unevenly:
+       quick into it, sticky in the middle, the ninth turn hangs, then the
+       fall. No counter and no bar: a player who knows there are eleven
+       turns counts them down, one who does not wonders at every turn
+       whether this ever ends.
 
        The text claims hours - sleeping on your feet, knowing the coil
        better than colleagues, surprise that it is still light - and the

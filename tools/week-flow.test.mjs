@@ -47,7 +47,7 @@ const { week } = await import('../src/engine/engine_week.js');
 // same way: without them emit() is missing and the inventory throws.
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
-const { vendingMachine } = await import('../src/engine/engine_vending.js');
+const { vendingMachine, crankDelays } = await import('../src/engine/engine_vending.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -3329,6 +3329,22 @@ await ok('No key reaches through a window over the terminal', () => {
     state.vendingOpen = true;
     assert.equal(ui.windowOverTerminal.call(asked), true, 'the vending machine does not count as a window');
     state.vendingOpen = false;
+});
+
+await ok('A crank line waits until the one before it can have been read', () => {
+    // Up to 6.3.0 a line waited only its own beat, and the operator could not
+    // keep up: ninety characters were covered by the next line after 0.6 s.
+    const lines = [...DB.vending.crank, ...DB.vending.crankEnd];
+    const delays = crankDelays(lines);
+    assert.equal(delays.length, lines.length + 1, 'one delay per line, and one for the card');
+    assert.equal(delays[0], lines[0].ms, 'the first line has nothing before it to read');
+    for (let i = 1; i < lines.length; i++)
+        assert.ok(delays[i] > lines[i].ms, `line ${i} gets only its beat, no time to read line ${i - 1}`);
+    // The longer the line before, the longer the wait - same beat, more words.
+    const [short, long] = crankDelays([{ ms: 0, text: 'x'.repeat(10) }, { ms: 500, text: '' }, { ms: 0, text: 'x'.repeat(90) }, { ms: 500, text: '' }])
+        .filter((_, i) => i === 1 || i === 3);
+    assert.ok(long > short + 2000, `ninety characters bought ${long - short} ms more than ten`);
+    assert.ok(delays.at(-1) > 2000, 'the card arrives with the label line instead of after it');
 });
 
 // ----------------------------------------------------- cloud synchronisation

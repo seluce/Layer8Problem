@@ -80,8 +80,10 @@ What it finds — throughout, things that fail **quietly** at runtime:
 - the diary: conditions that stumble or fit no conceivable day
 - **the vending machine** (6.3, section 12): every compartment's `take` is one
   the engine accepts (`VENDING_TAKES` in `engine_vending.js`) and every take
-  has a compartment; `limitRule` points at a rule that exists; the crank stays
-  under twenty seconds on screen, because it is meant to *feel* long; exactly
+  has a compartment; `limitRule` points at a rule that exists; the crank's
+  beats - the time with nothing new to read - stay under twenty seconds, and
+  the whole run, reading time included, under ninety (measured with
+  `crankDelays`, the function the window paces itself with); exactly
   one closing line is marked `lands` and it is not the first (without it the
   roll never reaches the backpack); and the machine's prose goes through the
   same text rules as every event

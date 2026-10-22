@@ -11,37 +11,57 @@
 
   The crank runs on screen and never on the clock. The minutes were charged by
   the option that opened the window, and nothing here advances time. The roll
-  is delivered at the line marked `lands`, not at the end of the text.
+  is delivered at the line marked `lands`, not at the end of the text. Each
+  line waits until the one before it can have been read (crankDelays in
+  engine_vending.js), then for its own beat.
+
+  After the choice the glass folds down to a row of compartment labels with
+  the used one lit, and the view follows what the choice opened. Twelve
+  compartments that stayed open above a running crank made the choice easy to
+  miss, and on a phone they pushed the crank below the fold.
 -->
 <script>
     // Imported as `game`, not `state`, and that is load-bearing: this file needs
     // the $state rune, and with an import named `state` in scope Svelte reads
     // `$state(...)` as a store subscription and the window dies on mount with
     // "e.subscribe is not a function". See CLAUDE.md.
+    import { slide, fade } from 'svelte/transition';
     import { state as game } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import { crankDelays } from '../engine/engine_vending.js';
     import { t, tree } from '../i18n/i18n.svelte.js';
 
     const V = $derived(tree().vending);
     const taken = $derived(game.vending?.taken ?? null);
 
-    // The crank: how many of its lines are showing, and how many of the two
-    // that follow it. `delivered` is null until the sandwich has fallen, then
-    // whether it made it into the backpack.
+    // The crank: how many of its lines are showing, and how many of the
+    // closing lines. `delivered` is null until the sandwich has landed, then
+    // whether it made it into the backpack; `cardShown` comes once the last
+    // line has had its reading time.
     let crankShown = $state(0);
     let endShown = $state(0);
     let delivered = $state(null);
+    let cardShown = $state(false);
     let timer = null;
+
+    // The glass folds a moment after the choice, so the used compartment is
+    // seen lit before the others go. A block on its way out no longer
+    // updates, so the lighting has to happen while the grid is still in.
+    let folded = $state(false);
+    let foldTimer = null;
 
     // A window closed halfway stops the crank and forgets it. The next visit
     // starts with a still coil.
     $effect(() => {
         if (game.vendingOpen) return;
         clearTimeout(timer);
-        timer = null;
+        clearTimeout(foldTimer);
+        timer = foldTimer = null;
+        folded = false;
         crankShown = 0;
         endShown = 0;
         delivered = null;
+        cardShown = false;
     });
 
     // The closing line where the roll lands in the flap. From there on it is
@@ -57,21 +77,44 @@
     function runCrank() {
         const steps = V?.crank ?? [];
         const all = [...steps, ...(V?.crankEnd ?? [])];
+        const delays = crankDelays(all);
         let i = 0;
         const next = () => {
+            if (i === all.length) { cardShown = true; return; }
             if (i < steps.length) crankShown = i + 1;
             else {
                 endShown = i - steps.length + 1;
                 if (i - steps.length === landsAt) delivered = engine.vendingDeliver();
             }
             i++;
-            if (i < all.length) timer = setTimeout(next, all[i].ms);
+            timer = setTimeout(next, delays[i]);
         };
-        if (all.length) timer = setTimeout(next, all[0].ms);
+        if (all.length) timer = setTimeout(next, delays[0]);
     }
+
+    // How long the used compartment stays lit before the glass folds, and how
+    // long the folding takes. The view moves once it is done.
+    const FOLD_PAUSE = 300;
+    const FOLD_MS = 400;
+
+    // The section the choice opened scrolls to the top of the window, once
+    // the glass has folded. On a screen where everything fits nothing moves.
+    const reveal = (node) => {
+        const id = setTimeout(() => node.scrollIntoView({ behavior: 'smooth', block: 'start' }), FOLD_PAUSE + FOLD_MS);
+        return () => clearTimeout(id);
+    };
+
+    // A crank line that arrives below the edge brings the view down with it,
+    // only as far as needed: whoever scrolled up to reread is not pulled
+    // anywhere while the newest line is still in sight.
+    const follow = (node) => {
+        const id = setTimeout(() => node.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+        return () => clearTimeout(id);
+    };
 
     function take(kind) {
         if (!engine.vendingTake(kind)) return;
+        foldTimer = setTimeout(() => { folded = true; }, FOLD_PAUSE);
         if (kind === 'c4') runCrank();
     }
 
@@ -108,37 +151,48 @@
                 <!-- THE MACHINE -->
                 <h3 class="text-[0.65rem] tracking-[0.2em] uppercase text-cyan-400 pb-1.5 mb-2.5 border-b border-slate-800">{t('vending.machine')}</h3>
                 <div class="glass relative rounded border border-slate-700/70 p-3 md:p-4 overflow-hidden">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {#each V.slots as slot, i (slot.id)}
-                            {#if slot.take}
-                                <button type="button"
-                                        onclick={() => take(slot.take)}
-                                        disabled={taken !== null}
-                                        class="text-left rounded-sm border p-2 min-h-16 flex flex-col gap-1 transition-colors
-                                               {taken === null ? 'bg-slate-900 border-slate-600/80 hover:border-slate-400 hover:bg-slate-800/70' : ''}
-                                               {taken !== null && !(taken === slot.take && firstOf(slot.take) === i) ? 'bg-slate-950 border-slate-800 opacity-40' : ''}
-                                               {taken === slot.take && firstOf(slot.take) === i ? 'bg-slate-900 border-slate-600 outline outline-1 outline-amber-500 outline-offset-2' : ''}">
-                                    <span class="text-[0.6rem] tracking-[0.16em] text-slate-400">{slot.id}{#if !slot.img && slot.sub}<span class="ml-1.5">· {slot.sub}</span>{/if}</span>
-                                    {#if slot.img}
-                                        <span class="flex items-center gap-2">
-                                            <img src={slot.img} alt="" width="44" height="44" class="w-11 h-11 shrink-0 object-contain select-none">
-                                            <span class="text-[0.7rem] leading-snug text-slate-300">
-                                                {slot.name}<br>{slot.sub}<br>
-                                                {#if slot.was}<s class="text-slate-500 mr-1.5">{slot.was}</s>{/if}{slot.price}
+                    {#if !folded}
+                        <div out:slide={{ duration: FOLD_MS }} class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            {#each V.slots as slot, i (slot.id)}
+                                {#if slot.take}
+                                    <button type="button"
+                                            onclick={() => take(slot.take)}
+                                            disabled={taken !== null}
+                                            class="text-left rounded-sm border p-2 min-h-16 flex flex-col gap-1 transition-colors
+                                                   {taken === null ? 'bg-slate-900 border-slate-600/80 hover:border-slate-400 hover:bg-slate-800/70' : ''}
+                                                   {taken !== null && !(taken === slot.take && firstOf(slot.take) === i) ? 'bg-slate-950 border-slate-800 opacity-40' : ''}
+                                                   {taken === slot.take && firstOf(slot.take) === i ? 'bg-slate-900 border-slate-600 outline outline-1 outline-amber-500 outline-offset-2' : ''}">
+                                        <span class="text-[0.6rem] tracking-[0.16em] text-slate-400">{slot.id}{#if !slot.img && slot.sub}<span class="ml-1.5">· {slot.sub}</span>{/if}</span>
+                                        {#if slot.img}
+                                            <span class="flex items-center gap-2">
+                                                <img src={slot.img} alt="" width="44" height="44" class="w-11 h-11 shrink-0 object-contain select-none">
+                                                <span class="text-[0.7rem] leading-snug text-slate-300">
+                                                    {slot.name}<br>{slot.sub}<br>
+                                                    {#if slot.was}<s class="text-slate-500 mr-1.5">{slot.was}</s>{/if}{slot.price}
+                                                </span>
                                             </span>
-                                        </span>
                                     {:else}
-                                        <span class="text-[0.7rem] leading-snug text-slate-300">{slot.text}</span>
-                                    {/if}
-                                </button>
+                                            <span class="text-[0.7rem] leading-snug text-slate-300">{slot.text}</span>
+                                        {/if}
+                                    </button>
                             {:else}
-                                <div class="rounded-sm border border-slate-800 bg-slate-950/70 p-2 min-h-16 flex flex-col gap-1">
-                                    <span class="text-[0.6rem] tracking-[0.16em] text-slate-600">{slot.id}</span>
-                                    <span class="text-[0.7rem] leading-snug text-slate-500">{slot.text}</span>
-                                </div>
-                            {/if}
-                        {/each}
-                    </div>
+                                    <div class="rounded-sm border border-slate-800 bg-slate-950/70 p-2 min-h-16 flex flex-col gap-1">
+                                        <span class="text-[0.6rem] tracking-[0.16em] text-slate-600">{slot.id}</span>
+                                        <span class="text-[0.7rem] leading-snug text-slate-500">{slot.text}</span>
+                                    </div>
+                                {/if}
+                            {/each}
+                        </div>
+                    {:else}
+                        <!-- The folded glass: every compartment by its label, the used
+                             one lit. What it was is the heading of the section below. -->
+                        <div in:fade={{ delay: FOLD_MS / 2, duration: 300 }} class="grid grid-cols-6 md:grid-cols-12 gap-1">
+                            {#each V.slots as slot, i (slot.id)}
+                                <span class="rounded-sm border py-1 text-center text-[0.6rem] tracking-[0.16em]
+                                             {i === firstOf(taken) ? 'border-amber-500 bg-slate-900 text-amber-400' : 'border-slate-800 bg-slate-950/70 text-slate-600'}">{slot.id}</span>
+                            {/each}
+                        </div>
+                    {/if}
                     <div class="mt-3 pt-2 border-t border-dashed border-slate-700/70 flex flex-wrap gap-x-4 gap-y-1 text-[0.6rem] text-slate-500">
                         {#each V.plate as row}
                             <span><span class="text-slate-400">{row.label}</span> {row.value}</span>
@@ -149,24 +203,24 @@
 
                 <!-- C4 -->
                 {#if taken === 'c4'}
-                    <h3 class="text-[0.65rem] tracking-[0.2em] uppercase text-amber-500 pb-1.5 mb-2.5 mt-6 border-b border-slate-800">{t('vending.crank')}</h3>
+                    <h3 {@attach reveal} class="text-[0.65rem] tracking-[0.2em] uppercase text-amber-500 pb-1.5 mb-2.5 mt-6 border-b border-slate-800 scroll-mt-4">{t('vending.crank')}</h3>
                     <div class="rounded border border-slate-800 bg-slate-950/60 p-3 md:p-4 text-xs leading-relaxed">
                         {#each V.crank.slice(0, crankShown) as line, n}
-                            <div class="line"><span class="text-slate-600">{n ? String(n).padStart(2, '0') : '··'}</span>  <span class="text-slate-400">{line.text}</span></div>
+                            <div {@attach follow} class="line"><span class="text-slate-600">{n ? String(n).padStart(2, '0') : '··'}</span>  <span class="text-slate-400">{line.text}</span></div>
                         {/each}
                         {#each V.crankEnd.slice(0, endShown) as line}
-                            <div class="line text-slate-100">{line.text}</div>
+                            <div {@attach follow} class="line text-slate-100">{line.text}</div>
                         {/each}
                         <!-- The roll is the player's from the thud on, but the card waits
-                             for the last line: the label is the reveal, and a card naming
-                             it two lines earlier would give it away. -->
-                        {#if delivered === true && endShown === V.crankEnd.length}
-                            <div class="line mt-3 inline-flex items-center gap-2 rounded border border-green-900 bg-green-950/50 px-3 py-1.5 text-green-300">
+                             until the last line has been read: the label is the reveal, and
+                             a green card arriving with it pulls the eye off the punchline. -->
+                        {#if delivered === true && cardShown}
+                            <div {@attach follow} class="line mt-3 inline-flex items-center gap-2 rounded border border-green-900 bg-green-950/50 px-3 py-1.5 text-green-300">
                                 <img src="assets/img/items/sandwich.webp" alt="" width="20" height="20" class="w-5 h-5 select-none">
                                 {tree().items?.sandwich?.name}
                             </div>
-                        {:else if delivered === false && endShown === V.crankEnd.length}
-                            <div class="line mt-2 text-slate-400 italic">{V.crankFull}</div>
+                        {:else if delivered === false && cardShown}
+                            <div {@attach follow} class="line mt-2 text-slate-400 italic">{V.crankFull}</div>
                         {/if}
                     </div>
                 {/if}
@@ -174,7 +228,7 @@
                 <!-- MEHRWERT -->
                 {#if taken === 'magazine'}
                     {@const M = V.magazine}
-                    <h3 class="text-[0.65rem] tracking-[0.2em] uppercase text-[#c9a24a] pb-1.5 mb-2.5 mt-6 border-b border-slate-800">{M.heading}</h3>
+                    <h3 {@attach reveal} class="text-[0.65rem] tracking-[0.2em] uppercase text-[#c9a24a] pb-1.5 mb-2.5 mt-6 border-b border-slate-800 scroll-mt-4">{M.heading}</h3>
                     <p class="text-xs mb-3 text-slate-400">{M.drop}</p>
                     <div class="grid md:grid-cols-[16rem_1fr] gap-4 items-start">
                         <div class="relative aspect-[3/4] w-full max-w-64 mx-auto rounded-sm border border-[#2c3b57] bg-linear-to-b from-[#1f2a40] to-[#101725] p-4 flex flex-col shadow-xl">
@@ -214,7 +268,7 @@
                 <!-- CHANTAL'S PRINTOUT -->
                 {#if taken === 'printout'}
                     {@const P = V.printout}
-                    <h3 class="text-[0.65rem] tracking-[0.2em] uppercase text-[#cfc9bb] pb-1.5 mb-2.5 mt-6 border-b border-slate-800">{P.heading}</h3>
+                    <h3 {@attach reveal} class="text-[0.65rem] tracking-[0.2em] uppercase text-[#cfc9bb] pb-1.5 mb-2.5 mt-6 border-b border-slate-800 scroll-mt-4">{P.heading}</h3>
                     <p class="text-xs mb-3 text-slate-400">{P.drop}</p>
                     <div class="printout relative px-5 py-5 md:px-6 text-[#3f444c]">
                         <span class="streak" aria-hidden="true"></span>
