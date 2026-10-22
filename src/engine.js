@@ -269,8 +269,8 @@ document.addEventListener('keydown', (event) => {
 
     // 4. ACTION SHORTCUTS (Q, W, E, R)
     // Only while no event, no open mail and no window is up. The scroll lock
-    // alone did not say so: the noticeboard and the team view do not set it,
-    // and Q started a coffee break behind them.
+    // alone did not say so: the noticeboard opens without it, and Q started a
+    // coffee break behind the board.
     if (!engine.state.activeEvent && !engine.state.isEmailOpen && !document.body.classList.contains('overflow-hidden')
         && !engine.windowOverTerminal()) {
         if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { engine.trigger('coffee'); return; }

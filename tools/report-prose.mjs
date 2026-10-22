@@ -40,12 +40,18 @@ import { DB, ensure, loadCore, currentLanguage } from '../src/data.js';
 const ALL_POOLS = ['server', 'coffee', 'calls', 'sidequests', 'emails', 'meetings',
                    'lunch', 'party', 'reputation', 'bossfights', 'special', 'board',
                    'diary', 'moods', 'achievements', 'excuses', 'newsTicker',
-                   'tutorial', 'chars'];
+                   'tutorial', 'chars', 'vending'];
 
 // Pools that are not arrays of events but trees of text: a plain list of
 // strings (excuses, newsTicker) or sections holding line lists (diary). They
 // are walked leaf by leaf, the way `special` always has been.
-const TREE_POOLS = new Set(['special', 'diary', 'excuses', 'newsTicker']);
+const TREE_POOLS = new Set(['special', 'diary', 'excuses', 'newsTicker', 'vending']);
+
+// Keys in a tree pool that hold no prose. The vending machine (6.3) is the
+// first tree with ids, picture paths and emoji between its sentences - walked
+// blind, the picture path that three compartments share would come out as a
+// repeated sentence. The type plate is the machine talking, not prose.
+const TREE_SKIP = { vending: new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'plate']) };
 
 // Sentences that repeat by design. Exact match after normalisation.
 //
@@ -206,7 +212,7 @@ await loadCore(lang);
 await ensure('board', 'bossfights', 'calls', 'coffee', 'emails', 'intranet',
              'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests',
              'diary', 'moods', 'achievements', 'excuses', 'newsTicker',
-             'tutorial', 'chars');
+             'tutorial', 'chars', 'vending');
 
 // loadCore falls back to German when a tree cannot be read. Reporting the
 // language that actually loaded keeps a fallback from passing as an English run.
@@ -249,7 +255,10 @@ const walkTree = (pool, node, path, chain = []) => {
     return;
   }
   if (node && typeof node === 'object') {
-    for (const [k, v] of Object.entries(node)) walkTree(pool, v, path ? `${path}.${k}` : k, chain);
+    for (const [k, v] of Object.entries(node)) {
+      if (TREE_SKIP[pool]?.has(k)) continue;
+      walkTree(pool, v, path ? `${path}.${k}` : k, chain);
+    }
   }
 };
 

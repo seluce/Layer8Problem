@@ -103,7 +103,11 @@ node tools/report-prose.mjs lunch --lang=en   # English tree
 ```
 
 Pools: `server coffee calls sidequests emails meetings lunch party reputation
-bossfights special board`.
+bossfights special board diary moods achievements excuses newsTicker tutorial
+chars vending`. The intranet stays out on purpose (component-rendered, a tone of
+its own). `special`, `diary`, `excuses`, `newsTicker` and `vending` are trees of
+text rather than event lists and are walked leaf by leaf; for `vending` the ids,
+picture paths, emoji and the type plate are skipped.
 
 **`--lang=de|en`, default `de`.** The language is in the report's header line;
 if the requested tree does not load, the tool aborts rather than falling back to

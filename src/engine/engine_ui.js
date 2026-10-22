@@ -490,9 +490,9 @@ export const ui = {
      * not: Space pressed the continue button behind an open noticeboard - and
      * behind the vending machine, whose option can carry the clock past noon,
      * so the button under it may well say lunch break, or at 16:30 closing
-     * time, and either started behind the player's back. The noticeboard and
-     * the team view do not lock the page's scrolling either, so Q, W, E and R
-     * went through them too and started a coffee break behind the board.
+     * time, and either started behind the player's back. The noticeboard is
+     * also the one window that opens without locking the page's scrolling, so
+     * Q, W, E and R went through it too and started a coffee break behind it.
      *
      * The same windows the Escape key closes in src/engine.js, asked through
      * the same encoding. The mail and the warning letters are not on the list:

@@ -1,9 +1,10 @@
 [6.3.0] - 2026-10-22
 
-Something on the third floor, for anyone who can keep a secret.
+Something on the third floor for anyone who can keep a secret, and new parts under the hood.
 
 * Kevin knows a corner of the building that is on no plan. In the working week it is worth going back - as long as nobody asks who restocks it.
-* Svelte, Vite, Electron and the build tools are on their current versions.
+* Space no longer presses the button behind an open window, and the action keys no longer start anything behind the noticeboard.
+* Under the hood, Svelte, Vite, Electron and the build tools are on their current versions.
 
 ---
 
