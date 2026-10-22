@@ -3,7 +3,7 @@
 Something on the third floor for anyone who can keep a secret, and new parts under the hood.
 
 New:
-* Kevin knows a corner of the building that is on no plan. In the working week it is worth going back - as long as nobody asks who restocks it.
+* Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
 
 The texts:
 * A handful of notices and mails no longer name a year the calendar would sooner or later overtake.

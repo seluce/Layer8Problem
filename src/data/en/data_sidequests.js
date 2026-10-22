@@ -7774,49 +7774,25 @@ export const sidequests = [
     id: "sq_kevin_geheim_2",
     char: "Kevin",
     kind: "text",
+    title: "Back Section, Third Floor",
     reqStory: "sq_kevin_termin",
     reqStoryAge: 1,
-    title: "Back Section, Third Floor",
-    text: "Kevin is waiting in the stairwell where the light flickers, and looks round twice although nobody is there. Then he steps aside. Behind him stands an old vending machine, unplugged, no price labels. 'That has not been restocked since the refit', says Kevin. 'But compartment C4 is jammed. And deliveries still go into C4. Do not ask why.'",
+    text: "Kevin is waiting in the stairwell where the light flickers, and looks round twice although nobody is there. Then he steps aside. Behind him stands an old vending machine, unplugged. 'That has not been restocked since the refit', says Kevin. 'But compartment C4 is jammed. And deliveries still go into C4. Do not ask why.' He nods solemnly. 'Welcome to the club.' Which club, you do not ask. When you look up from the machine, he is already on the stairs.",
     opts: [
         {
-            t: "'Kevin. Who restocks a dead machine?'",
-            m: 10, l: 0, a: 5, b: 0,
+            t: "'Kevin! Who restocks a dead machine?'",
             rep: { "Kevin": -5 },
-            r: "Kevin looks at you for a long moment. 'Do you always have to ask everything to death?' He takes the sandwich himself and goes. The light flickers after you."
+            m: 10, l: 0, a: 5, b: 0,
+            r: "Kevin stops on the stairs and looks at you for a long moment. 'Do you always have to ask everything to death?' He comes back up the steps and stands in front of the glass until you have gone. The light flickers after you."
         },
-        {
-            t: "Open compartment C4",
-            loot: "sandwich",
-            next: "sq_kevin_c4",
-            m: 10, l: 0, a: -10, b: 0,
-            r: "The compartment gives way after a gentle tug. Inside: one shrink-wrapped sandwich, best-before date in the distant future, origin unclear. Kevin nods solemnly. 'Welcome to the club.' Which club, you do not ask. Some doors are better closed behind you."
-        },
-        {
-            t: "Let Kevin have the sandwich",
-            next: "sq_kevin_c4",
-            rep: { "Kevin": 5 },
-            m: 5, l: 0, a: -5, b: 0,
-            r: "'You do not want it?' Kevin takes it with the respect of a man who can appreciate self-denial. The compartment jams shut again. You take no loot away, only a location and a procedure. Knowledge is a supply too."
-        }
-    ]
-},
-{
-    id: "sq_kevin_geheim_3",
-    kind: "text",
-    reqStory: "sq_kevin_c4",
-    reqStoryAge: 1,
-    title: "Third Floor, Back Section",
-    text: "Your way takes you through the stairwell on the third floor. At the back, where the light flickers, stands the vending machine, as unplugged as last time. Through the glass you can see that something is lying in C4 again.",
-    opts: [
         {
             t: "Crouch down in front of the glass",
-            m: 2, l: 0, a: 0, b: 0,
+            m: 10, l: 0, a: -10, b: 0,
             r: "CMD:OPEN_VENDING"
         },
         {
             t: "Keep walking",
-            m: 2, l: 0, a: 0, b: 0,
+            m: 5, l: 0, a: 0, b: 0,
             r: "You keep walking. Behind you the light flickers once, as if it had expected more of you."
         }
     ]

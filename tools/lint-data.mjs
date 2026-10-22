@@ -1435,7 +1435,7 @@ for (const ev of DB.emails) {
       if (node.startsWith('CMD:')) (used.get(node) ?? used.set(node, []).get(node)).push(path);
       return;
     }
-    // An entry with an id is named by it: "sidequests/sq_kevin_geheim_3" finds
+    // An entry with an id is named by it: "sidequests/sq_kevin_geheim_2" finds
     // the event, "sidequests[292]" sends you counting.
     if (Array.isArray(node)) { node.forEach((x, i) => walk(x, x?.id ? `${path}/${x.id}` : `${path}[${i}]`)); return; }
     if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`);

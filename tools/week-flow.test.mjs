@@ -3179,43 +3179,50 @@ await ok('After discarding, one consumable fits again', async () => {
 // travels between machines.
 console.log('The vending machine:');
 await ensure('sidequests', 'vending', 'items');
-const kevinTwo   = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_2');
-const kevinThree = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_3');
+const kevinOne = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_1');
+const kevinTwo = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_2');
 const settle = () => new Promise(r => setTimeout(r, 0));   // openVending awaits the pool
 
-await ok('Only the two options that keep house rule 1 lead to the machine', () => {
-    assert.ok(kevinTwo && kevinThree, 'the chain is incomplete');
-    // Option 1 asks who restocks a dead machine - exactly what rule 1 forbids.
-    assert.equal(kevinTwo.opts[0].next, undefined, 'asking who restocks it must not open the way');
-    assert.equal(kevinTwo.opts[1].next, 'sq_kevin_c4');
-    assert.equal(kevinTwo.opts[2].next, 'sq_kevin_c4');
-    assert.equal(kevinThree.reqStory, 'sq_kevin_c4');
-    assert.equal(kevinThree.reqStoryAge, 1);
-    assert.equal(kevinThree.opts[0].r, 'CMD:OPEN_VENDING');
+await ok('Two parts: the chat, then the machine - and asking keeps you out', () => {
+    // Until 6.3.0 there were three: Kevin showed the machine, and only a
+    // second follow-up a night later opened the window. Three week days in a
+    // row for one easter egg - 0.5 visits in twenty simulated weeks.
+    assert.ok(kevinOne && kevinTwo, 'the chain is incomplete');
+    assert.equal(DB.sidequests.some(e => e.id === 'sq_kevin_geheim_3'), false, 'the third part is back');
+    const agreed = Object.values(kevinOne.results).filter(r => r.next === 'sq_kevin_termin');
+    assert.equal(agreed.length, 1, "exactly one ending of Kevin's chat makes the appointment");
+    assert.equal(kevinTwo.reqStory, 'sq_kevin_termin');
+    assert.equal(kevinTwo.reqStoryAge, 1);
+    // House rule 1, 'Nicht fragen, wer befüllt': the question is option 1.
+    const doors = kevinTwo.opts.filter(o => o.r === 'CMD:OPEN_VENDING');
+    assert.equal(doors.length, 1, 'one way into the machine');
+    assert.notEqual(kevinTwo.opts[0].r, 'CMD:OPEN_VENDING', 'asking who restocks it must not open the window');
+    assert.ok(kevinTwo.opts.every(o => !o.next && !o.loot), 'nothing follows the machine, and the roll comes only out of C4');
 });
 
 await ok('The machine is there from the next day on, and only in a week', () => {
     resetState();
     engine.startWeek('easy');
     state.week.dayIndex = 2;
-    engine.setStoryFlag('sq_kevin_c4');
-    assert.equal(engine.storyGateOpen(kevinThree), false, 'not on the day Kevin showed it');
+    engine.setStoryFlag('sq_kevin_termin');
+    assert.equal(engine.storyGateOpen(kevinTwo), false, 'not on the day Kevin wrote');
     state.week.dayIndex = 3;
-    assert.equal(engine.storyGateOpen(kevinThree), true, 'the day after, it has to be there');
+    assert.equal(engine.storyGateOpen(kevinTwo), true, 'the day after, it has to be there');
 
     resetState();                          // a single day has no "tomorrow"
-    engine.setStoryFlag('sq_kevin_c4');
-    assert.equal(engine.storyGateOpen(kevinThree), false, 'a day run must not reach it');
+    engine.setStoryFlag('sq_kevin_termin');
+    assert.equal(engine.storyGateOpen(kevinTwo), false, 'a day run must not reach it');
 });
 
-await ok('The way in costs two minutes, the machine itself none', async () => {
+await ok('The way in costs its minutes, the machine itself none', async () => {
     resetState();
     engine.startWeek('easy');
     state.time = 10 * 60;
-    engine.resolveTerminal(kevinThree.opts[0], 'sidequest');
+    const door = kevinTwo.opts.find(o => o.r === 'CMD:OPEN_VENDING');
+    engine.resolveTerminal(door, 'sidequest');
     await settle();
     assert.equal(state.vendingOpen, true, 'CMD:OPEN_VENDING did not open the window');
-    assert.equal(state.time, 10 * 60 + kevinThree.opts[0].m, 'the option has to charge its minutes');
+    assert.equal(state.time, 10 * 60 + door.m, 'the option has to charge its minutes');
     const before = state.time;
     engine.vendingTake('c4');
     engine.vendingDeliver();

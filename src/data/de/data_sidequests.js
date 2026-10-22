@@ -7726,49 +7726,25 @@ export const sidequests = [
     id: "sq_kevin_geheim_2",
     char: "Kevin",
     kind: "text",
+    title: "Hinterer Teil, dritter Stock",
     reqStory: "sq_kevin_termin",
     reqStoryAge: 1,
-    title: "Hinterer Teil, dritter Stock",
-    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt, ohne Preisschilder. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.'",
+    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.' Er nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Als du vom Automaten aufsiehst, ist er schon auf der Treppe.",
     opts: [
         {
-            t: "'Kevin. Wer beliefert einen toten Automaten?'",
-            m: 10, l: 0, a: 5, b: 0,
+            t: "'Kevin! Wer beliefert einen toten Automaten?'",
             rep: { "Kevin": -5 },
-            r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+            m: 10, l: 0, a: 5, b: 0,
+            r: "Kevin bleibt auf der Treppe stehen und sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er kommt die Stufen wieder hoch und stellt sich vor die Scheibe, bis du gegangen bist. Die Lampe flackert dir hinterher."
         },
-        {
-            t: "Fach C4 öffnen",
-            loot: "sandwich",
-            next: "sq_kevin_c4",
-            m: 10, l: 0, a: -10, b: 0,
-            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
-        },
-        {
-            t: "Das Sandwich Kevin überlassen",
-            next: "sq_kevin_c4",
-            rep: { "Kevin": 5 },
-            m: 5, l: 0, a: -5, b: 0,
-            r: "'Du willst nicht?' Kevin nimmt es mit dem Respekt eines Mannes, der Verzicht einordnen kann. Das Fach klemmt wieder zu. Beute nimmst du keine mit, nur Standort und Verfahren. Wissen ist auch ein Vorrat."
-        }
-    ]
-},
-{
-    id: "sq_kevin_geheim_3",
-    kind: "text",
-    reqStory: "sq_kevin_c4",
-    reqStoryAge: 1,
-    title: "Dritter Stock, hinten",
-    text: "Dein Weg führt dich durchs Treppenhaus im dritten Stock. Hinten, wo die Lampe flackert, steht der Automat, ausgestöpselt wie beim letzten Mal. Durch die Scheibe siehst du, dass in C4 wieder etwas liegt.",
-    opts: [
         {
             t: "Vor der Scheibe in die Hocke gehen",
-            m: 2, l: 0, a: 0, b: 0,
+            m: 10, l: 0, a: -10, b: 0,
             r: "CMD:OPEN_VENDING"
         },
         {
             t: "Weitergehen",
-            m: 2, l: 0, a: 0, b: 0,
+            m: 5, l: 0, a: 0, b: 0,
             r: "Du gehst weiter. Hinter dir flackert die Lampe einmal, als hätte sie mehr von dir erwartet."
         }
     ]

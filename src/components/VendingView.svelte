@@ -1,7 +1,7 @@
 <!--
   The dead vending machine on the third floor, back section (6.3).
 
-  Opened by sq_kevin_geheim_3 through CMD:OPEN_VENDING. Everything it says is
+  Opened by sq_kevin_geheim_2 through CMD:OPEN_VENDING. Everything it says is
   in data_vending.js; this file is the glass, the crank and the paper.
 
   One take per visit, and the engine holds the rule (engine_vending.vendingTake):

@@ -387,7 +387,7 @@ export const state = $state({
     intranetOpen: false,
 
     // The dead vending machine on the third floor (6.3), opened by
-    // sq_kevin_geheim_3 through CMD:OPEN_VENDING. `vending` is THIS visit:
+    // sq_kevin_geheim_2 through CMD:OPEN_VENDING. `vending` is THIS visit:
     // what was taken (one of 'magazine', 'printout', 'c4' - house rule 2 allows
     // a single one) and whether the sandwich has fallen yet. Outside freshDay()
     // on purpose: a visit lasts as long as the window is open and has no

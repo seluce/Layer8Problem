@@ -2,10 +2,12 @@
 /**
  * The vending machine on the third floor, back section (6.3).
  *
- * Kevin shows it in sq_kevin_geheim_2: unplugged, not restocked since the
- * refit, and yet something is still delivered to C4. sq_kevin_geheim_3 brings
- * the player back, and its first option opens this window through
- * CMD:OPEN_VENDING (components/VendingView.svelte).
+ * Kevin shows it in sq_kevin_geheim_2, a day or more after his chat
+ * (sq_kevin_geheim_1): unplugged, not restocked since the refit, and yet
+ * something is still delivered to C4. Then he leaves, and the option that
+ * crouches in front of the glass opens this window through CMD:OPEN_VENDING
+ * (components/VendingView.svelte). Two parts since 6.3.0; a third, a return
+ * visit a night later, made the machine a matter of three week days in a row.
  *
  * NOT the coffee machine. The tea kitchen has one of those, with its error
  * E-52, Frau Sonntag, and the chrome trial model Herr Kowalski brings and takes

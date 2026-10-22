@@ -8,12 +8,12 @@
  * part of that bench, because most of it needs the DOM.
  *
  * The window is components/VendingView.svelte, the words are data_vending.js.
- * It opens only from sq_kevin_geheim_3 through CMD:OPEN_VENDING, and that option
+ * It opens only from sq_kevin_geheim_2 through CMD:OPEN_VENDING, and that option
  * has already charged its minutes through resolveTerminal - so lunch, the
  * Friday meeting and closing time were checked on the way in, and nothing in
  * here touches the clock. The crank takes about a minute on screen and none
- * on the clock, which is the joke: an afternoon on the page, two minutes on
- * the clock.
+ * of its own on the clock, which is the joke: an afternoon on the page, and
+ * the clock only knows the ten minutes Kevin's visit costs.
  */
 import { ensure } from '../data.js';
 
