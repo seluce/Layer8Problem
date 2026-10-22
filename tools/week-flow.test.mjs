@@ -3277,6 +3277,21 @@ await ok('Each take leaves its note in the knowledge book, C4 once the roll has 
         assert.ok(entry.notes.some(n => n.flag === flag), `no note asks for ${flag}`);
 });
 
+await ok('A day that ends with the machine open closes it', async () => {
+    // Found by the 6.3 edge-case pass: a mail on a timer can drop over the
+    // machine, and answering it at 16:25 ends the day from up there. The
+    // machine stood open the next morning, its take still unspent.
+    resetState();
+    engine.startWeek('easy');
+    await engine.openVending();
+    state.time = 16 * 60 + 31;
+    engine.checkEndConditions();
+    assert.ok(state.pendingEnd, 'closing time did not end the day');
+    engine.finishGame();
+    assert.equal(state.vendingOpen, false, 'the machine outlived the day');
+    assert.equal(state.vending, null, 'the unspent take outlived the day');
+});
+
 await ok('Nothing is taken from a machine that is not open', () => {
     resetState();
     assert.equal(engine.vendingTake('c4'), false);

@@ -2017,6 +2017,12 @@ export const core = {
             this.state.isEmailOpen = false;
         }
 
+        // The vending machine the same way (6.3): a mail can drop over it on a
+        // timer, and answering that mail at 16:25 ends the day from up there.
+        // The end screen stood above the machine, and the machine was still
+        // open the next morning - with the visit's take unspent.
+        if (this.state.vendingOpen) this.closeVending();
+
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
             
