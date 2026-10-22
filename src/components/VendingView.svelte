@@ -10,7 +10,8 @@
   only after the choice, on the compartment that was used.
 
   The crank runs on screen and never on the clock. The minutes were charged by
-  the option that opened the window, and nothing here advances time.
+  the option that opened the window, and nothing here advances time. The roll
+  is delivered at the line marked `lands`, not at the end of the text.
 -->
 <script>
     // Imported as `game`, not `state`, and that is load-bearing: this file needs
@@ -43,16 +44,28 @@
         delivered = null;
     });
 
+    // The closing line where the roll lands in the flap. From there on it is
+    // the player's: the lift and the label that follow are epilogue, and
+    // whoever shuts the flap during them was done, not impatient.
+    const landsAt = $derived((V?.crankEnd ?? []).findIndex(line => line.lands));
+
+    // The text says the stairwell light stops flickering to watch the fall,
+    // so it does - from the first closing line until the landing. A lamp
+    // that kept flickering under "it stops flickering" would contradict it.
+    const lampStill = $derived(landsAt > 0 && endShown >= 1 && endShown <= landsAt);
+
     function runCrank() {
         const steps = V?.crank ?? [];
         const all = [...steps, ...(V?.crankEnd ?? [])];
         let i = 0;
         const next = () => {
             if (i < steps.length) crankShown = i + 1;
-            else endShown = i - steps.length + 1;
+            else {
+                endShown = i - steps.length + 1;
+                if (i - steps.length === landsAt) delivered = engine.vendingDeliver();
+            }
             i++;
             if (i < all.length) timer = setTimeout(next, all[i].ms);
-            else delivered = engine.vendingDeliver();
         };
         if (all.length) timer = setTimeout(next, all[0].ms);
     }
@@ -84,7 +97,7 @@
         <div class="w-full h-full md:h-auto md:max-h-[92vh] md:max-w-4xl flex flex-col bg-slate-900 border border-slate-800 border-t-2 border-t-amber-500 md:rounded-md shadow-2xl">
 
             <div class="flex items-center gap-3 px-4 md:px-5 py-3 border-b border-slate-800 bg-slate-950 shrink-0">
-                <span class="lamp text-lg select-none" aria-hidden="true">🔦</span>
+                <span class="lamp text-lg select-none {lampStill ? 'still' : ''}" aria-hidden="true">🔦</span>
                 <h2 id="vending-title" class="flex-1 text-sm md:text-base font-black tracking-[0.18em] uppercase text-slate-100">{V.title}</h2>
                 <button type="button" onclick={() => engine.closeVending()} aria-label={t('vending.close')}
                         class="text-slate-500 hover:text-slate-200 px-2 py-1 transition-colors">✕</button>
@@ -144,12 +157,15 @@
                         {#each V.crankEnd.slice(0, endShown) as line}
                             <div class="line text-slate-100">{line.text}</div>
                         {/each}
-                        {#if delivered === true}
+                        <!-- The roll is the player's from the thud on, but the card waits
+                             for the last line: the label is the reveal, and a card naming
+                             it two lines earlier would give it away. -->
+                        {#if delivered === true && endShown === V.crankEnd.length}
                             <div class="line mt-3 inline-flex items-center gap-2 rounded border border-green-900 bg-green-950/50 px-3 py-1.5 text-green-300">
                                 <img src="assets/img/items/sandwich.webp" alt="" width="20" height="20" class="w-5 h-5 select-none">
                                 {tree().items?.sandwich?.name}
                             </div>
-                        {:else if delivered === false}
+                        {:else if delivered === false && endShown === V.crankEnd.length}
                             <div class="line mt-2 text-slate-400 italic">{V.crankFull}</div>
                         {/if}
                     </div>
@@ -275,6 +291,7 @@
 
     /* The stairwell light. A dip now and then, never a strobe. */
     .lamp { animation: flicker 4s infinite; }
+    .lamp.still { animation: none; }
     @keyframes flicker {
         0%, 96%, 100% { opacity: 1; }
         96.5% { opacity: 0.25; }

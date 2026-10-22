@@ -1386,9 +1386,19 @@ for (const ev of DB.emails) {
     if (total > CRANK_MAX_MS)
       err(`${ctx}: the crank takes ${(total / 1000).toFixed(1)} s on screen (limit ${CRANK_MAX_MS / 1000} s) - it is meant to FEEL long, not to be`);
 
+    // The roll is delivered at the closing line marked `lands`. None, and the
+    // crank runs to its end and nothing reaches the backpack; two, and the
+    // window only ever finds the first. On the first line it would land
+    // before it fell, and the stairwell light would have no moment to stop.
+    const landings = (V.crankEnd ?? []).map((line, i) => line.lands ? i : -1).filter(i => i >= 0);
+    if (landings.length !== 1)
+      err(`${ctx} crankEnd: ${landings.length} lines marked "lands" - exactly one has to be, or the roll ${landings.length ? 'lands twice' : 'never reaches the backpack'}`);
+    else if (landings[0] === 0)
+      err(`${ctx} crankEnd[0]: the roll lands on the first closing line - it has to fall first`);
+
     // The prose follows the same rules as every event. The type plate is the
     // machine talking and stays out; ids, pictures and emoji are not prose.
-    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'plate']);
+    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'plate']);
     const walk = (node, path) => {
       if (typeof node === 'string') { checkText(ctx, path, node); return; }
       if (Array.isArray(node)) { node.forEach((x, i) => walk(x, `${path}[${i}]`)); return; }

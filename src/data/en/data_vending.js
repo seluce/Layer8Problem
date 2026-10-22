@@ -60,35 +60,47 @@ export const vending = {
 
     /* ----------------------------------------------------------------
        C4, by hand. `ms` is how long a line waits before it appears -
-       fifteen seconds in all, and unevenly: quick into it, sticky in the
-       middle, the ninth turn hangs, then it falls fast. No counter and no
+       about eighteen seconds in all, and unevenly: quick into it, sticky in
+       the middle, the ninth turn hangs, then the fall. No counter and no
        bar: a player who knows there are eleven turns counts them down, one
        who does not wonders at every turn whether this ever ends.
 
        The text claims hours - sleeping on your feet, knowing the coil
        better than colleagues, surprise that it is still light - and the
-       lift that sets off downstairs on turn four arrives upstairs as the
-       sandwich falls. It took one lift ride. Nothing says so.
+       lift that sets off downstairs on turn four arrives upstairs once the
+       roll has landed. It took one lift ride. Nothing says so.
+
+       It does not simply fall: it comes loose, hits the glass, hangs on by
+       a corner, and the light stops flickering to watch. `lands` marks the
+       thud in the flap - from that line on the roll is the player's
+       (VendingView delivers it there), and the lift and the label after it
+       are epilogue. Whoever shuts the flap during the epilogue was done,
+       not impatient. The window holds the stairwell light still from the
+       first closing line until the landing, because the text says it stops.
        ---------------------------------------------------------------- */
     crank: [
         { ms: 0,    text: "You reach through the flap and get hold of the coil. It is cold and greasy." },
-        { ms: 700,  text: "First turn. Far at the back, something moves." },
-        { ms: 900,  text: "Second. The light above you flickers in time with it. That is a coincidence." },
-        { ms: 1100, text: "Third. Nothing." },
-        { ms: 1400, text: "Fourth. Somewhere downstairs, a lift sets off." },
-        { ms: 1600, text: "Fifth. You wonder whether it is possible to sleep standing up." },
-        { ms: 1700, text: "Sixth. You count out loud, because nobody else is going to." },
-        { ms: 1800, text: "Seventh. By now you know this coil better than most of your colleagues." },
-        { ms: 1900, text: "Eighth. In your head, Kevin says: 'Welcome to the club.'" },
-        { ms: 2700, text: "Ninth. You glance at the window and are surprised that it is still light." },
-        { ms: 700,  text: "Tenth. Something tips." },
-        { ms: 500,  text: "Eleventh. It falls." }
+        { ms: 600,  text: "First turn. Far at the back, something moves." },
+        { ms: 800,  text: "Second. The light above you flickers in time with it. That is a coincidence." },
+        { ms: 1000, text: "Third. Nothing." },
+        { ms: 1200, text: "Fourth. Somewhere downstairs, a lift sets off." },
+        { ms: 1300, text: "Fifth. You wonder whether it is possible to sleep standing up." },
+        { ms: 1400, text: "Sixth. You count out loud, because nobody else is going to." },
+        { ms: 1500, text: "Seventh. By now you know this coil better than most of your colleagues." },
+        { ms: 1600, text: "Eighth. In your head, Kevin says: 'Welcome to the club.'" },
+        { ms: 2300, text: "Ninth. You glance at the window and are surprised that it is still light." },
+        { ms: 600,  text: "Tenth. Something tips." },
+        { ms: 500,  text: "Eleventh. It comes loose." }
     ],
     crankEnd: [
+        { ms: 700,  text: "The light above you stops flickering. It is watching too." },
+        { ms: 900,  text: "It hits the glass, turns once and catches on the edge by one corner." },
+        { ms: 1000, text: "It wobbles. Slides a little. Catches again." },
+        { ms: 900,  text: "Then a dull thud in the flap.", lands: true },
         { ms: 900,  text: "Behind you the lift doors open. The lift from before. It has only just got up here." },
-        { ms: 1300, text: "In the flap lies a filled roll, shrink-wrapped. The label says 'Best before:', and after it somebody has written 'yes' by hand." }
+        { ms: 1200, text: "In the flap lies a filled roll, shrink-wrapped. The label says 'Best before:', and after it somebody has written 'yes' by hand." }
     ],
-    // A full backpack: the sandwich stays where it fell.
+    // A full backpack: the roll stays where it landed.
     crankFull: "Your backpack is full. The roll stays in the flap, for the next member of the club.",
 
     /* ----------------------------------------------------------------

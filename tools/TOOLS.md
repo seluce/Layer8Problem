@@ -81,8 +81,10 @@ What it finds — throughout, things that fail **quietly** at runtime:
 - **the vending machine** (6.3, section 12): every compartment's `take` is one
   the engine accepts (`VENDING_TAKES` in `engine_vending.js`) and every take
   has a compartment; `limitRule` points at a rule that exists; the crank stays
-  under twenty seconds on screen, because it is meant to *feel* long; and the
-  machine's prose goes through the same text rules as every event
+  under twenty seconds on screen, because it is meant to *feel* long; exactly
+  one closing line is marked `lands` and it is not the first (without it the
+  roll never reaches the backpack); and the machine's prose goes through the
+  same text rules as every event
 - **doors** (section 12b): a result starting with `CMD:` has to be a command
   `engine_events.js` handles — the list is read out of that file — and every
   command it handles has to be used somewhere. A typo would otherwise reach the

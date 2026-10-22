@@ -58,35 +58,47 @@ export const vending = {
 
     /* ----------------------------------------------------------------
        C4, by hand. `ms` is how long a line waits before it appears -
-       fifteen seconds in all, and unevenly: quick into it, sticky in the
-       middle, the ninth turn hangs, then it falls fast. No counter and no
+       about eighteen seconds in all, and unevenly: quick into it, sticky in
+       the middle, the ninth turn hangs, then the fall. No counter and no
        bar: a player who knows there are eleven turns counts them down, one
        who does not wonders at every turn whether this ever ends.
 
        The text claims hours - sleeping on your feet, knowing the coil
        better than colleagues, surprise that it is still light - and the
-       lift that sets off downstairs on turn four arrives upstairs as the
-       sandwich falls. It took one lift ride. Nothing says so.
+       lift that sets off downstairs on turn four arrives upstairs once the
+       roll has landed. It took one lift ride. Nothing says so.
+
+       It does not simply fall: it comes loose, hits the glass, hangs on by
+       a corner, and the light stops flickering to watch. `lands` marks the
+       thud in the flap - from that line on the roll is the player's
+       (VendingView delivers it there), and the lift and the label after it
+       are epilogue. Whoever shuts the flap during the epilogue was done,
+       not impatient. The window holds the stairwell light still from the
+       first closing line until the landing, because the text says it stops.
        ---------------------------------------------------------------- */
     crank: [
         { ms: 0,    text: "Du greifst durch die Klappe und bekommst die Spirale zu fassen. Sie ist kalt und fettig." },
-        { ms: 700,  text: "Erste Umdrehung. Weit hinten bewegt sich etwas." },
-        { ms: 900,  text: "Zweite. Die Lampe über dir flackert im Takt mit. Das ist Zufall." },
-        { ms: 1100, text: "Dritte. Nichts." },
-        { ms: 1400, text: "Vierte. Unten im Haus setzt sich ein Aufzug in Bewegung." },
-        { ms: 1600, text: "Fünfte. Du überlegst, ob man im Stehen schlafen kann." },
-        { ms: 1700, text: "Sechste. Du zählst laut mit, weil es sonst niemand tut." },
-        { ms: 1800, text: "Siebte. Du kennst diese Spirale inzwischen besser als die meisten Kollegen." },
-        { ms: 1900, text: "Achte. In deinem Kopf sagt Kevin: 'Willkommen im Club.'" },
-        { ms: 2700, text: "Neunte. Du siehst zum Fenster und bist überrascht, dass es noch hell ist." },
-        { ms: 700,  text: "Zehnte. Etwas kippt." },
-        { ms: 500,  text: "Elfte. Es fällt." }
+        { ms: 600,  text: "Erste Umdrehung. Weit hinten bewegt sich etwas." },
+        { ms: 800,  text: "Zweite. Die Lampe über dir flackert im Takt mit. Das ist Zufall." },
+        { ms: 1000, text: "Dritte. Nichts." },
+        { ms: 1200, text: "Vierte. Unten im Haus setzt sich ein Aufzug in Bewegung." },
+        { ms: 1300, text: "Fünfte. Du überlegst, ob man im Stehen schlafen kann." },
+        { ms: 1400, text: "Sechste. Du zählst laut mit, weil es sonst niemand tut." },
+        { ms: 1500, text: "Siebte. Du kennst diese Spirale inzwischen besser als die meisten Kollegen." },
+        { ms: 1600, text: "Achte. In deinem Kopf sagt Kevin: 'Willkommen im Club.'" },
+        { ms: 2300, text: "Neunte. Du siehst zum Fenster und bist überrascht, dass es noch hell ist." },
+        { ms: 600,  text: "Zehnte. Etwas kippt." },
+        { ms: 500,  text: "Elfte. Es löst sich." }
     ],
     crankEnd: [
+        { ms: 700,  text: "Die Lampe über dir hört auf zu flackern. Sie sieht auch zu." },
+        { ms: 900,  text: "Es schlägt gegen die Scheibe, dreht sich einmal und bleibt mit einer Ecke an der Kante hängen." },
+        { ms: 1000, text: "Es wackelt. Rutscht ein Stück. Hängt wieder." },
+        { ms: 900,  text: "Dann ein dumpfer Schlag in der Klappe.", lands: true },
         { ms: 900,  text: "Hinter dir geht die Aufzugstür auf. Der Aufzug von vorhin. Er ist gerade erst oben angekommen." },
-        { ms: 1300, text: "In der Klappe liegt ein belegtes Brötchen, eingeschweißt. Auf dem Etikett steht 'Mindestens haltbar bis:', und dahinter hat jemand von Hand 'ja' geschrieben." }
+        { ms: 1200, text: "In der Klappe liegt ein belegtes Brötchen, eingeschweißt. Auf dem Etikett steht 'Mindestens haltbar bis:', und dahinter hat jemand von Hand 'ja' geschrieben." }
     ],
-    // A full backpack: the sandwich stays where it fell.
+    // A full backpack: the roll stays where it landed.
     crankFull: "Dein Rucksack ist voll. Das Brötchen bleibt in der Klappe liegen, für den Nächsten im Club.",
 
     /* ----------------------------------------------------------------
