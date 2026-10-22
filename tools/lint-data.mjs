@@ -23,7 +23,7 @@
  */
 
 import { readFileSync, readdirSync } from 'fs';
-import { DB, ensure, loadCore } from '../src/data.js';
+import { DB, ensure, loadCore, POOL_NAMES } from '../src/data.js';
 /**
  * Language (6.0): the pools live under src/data/<lang>. Pass --lang=en to run
  * against the English tree; without it the German source is checked. The core
@@ -43,7 +43,8 @@ if (!['de', 'en'].includes(LANG)) {
 await loadCore(LANG);
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
+// data.js's own list, not a copy: a pool added there is loaded here too.
+await ensure(...POOL_NAMES);
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -1329,6 +1330,102 @@ for (const ev of DB.emails) {
 
   const total = Object.values(DB.diary).flat().reduce((n, f) => n + (f.lines?.length ?? 0), 0);
   info(`diary: ${Object.values(DB.diary).flat().length} fragments with ${total} lines in ${Object.keys(DB.diary).length} slots`);
+}
+
+/* ---------- 12) The vending machine (6.3) ---------- */
+// data_vending.js is not an event pool, so nothing above reads it. These fail
+// silently at runtime, which is why they are checked here:
+//   - a `take` the engine does not accept: the compartment lights up and a
+//     click does nothing (engine_vending.js, VENDING_TAKES)
+//   - a take the engine accepts that no compartment offers: a button below
+//     the glass with nothing behind it in the machine
+//   - limitRule past the end of the list: rule 2 is never underlined, and the
+//     either-or of every visit has no visible reason
+//   - a crank that is long on the SCREEN. The design is that it only feels
+//     long - fifteen seconds, with the clock untouched. A minute of real
+//     waiting is not the joke any more.
+{
+  const V = DB.vending;
+  const ctx = '[vending]';
+  const CRANK_MAX_MS = 20000;
+  if (!V) err(`${ctx}: the pool is missing - data_vending.js did not load`);
+  else {
+    const engineVending = readFileSync('src/engine/engine_vending.js', 'utf8');
+    const listed = engineVending.match(/const VENDING_TAKES = \[([^\]]*)\]/);
+    if (!listed) err(`${ctx}: VENDING_TAKES not found in engine_vending.js - the compartments cannot be checked`);
+    const takes = new Set(listed ? [...listed[1].matchAll(/'([a-z0-9]+)'/g)].map(m => m[1]) : []);
+
+    const ids = new Set(), offered = new Set();
+    (V.slots ?? []).forEach((slot, i) => {
+      const sctx = `${ctx} slots[${i}]`;
+      if (!slot.id) err(`${sctx}: a compartment with no id`);
+      else if (ids.has(slot.id)) err(`${sctx}: compartment "${slot.id}" appears twice`);
+      else ids.add(slot.id);
+      if (slot.take) {
+        offered.add(slot.take);
+        if (!takes.has(slot.take))
+          err(`${sctx}: take "${slot.take}" is not one the engine accepts (${[...takes].join(', ')}) - a compartment that does nothing`);
+        if (slot.take !== 'c4' && !slot.img) warn(`${sctx}: a "${slot.take}" compartment with no picture`);
+      } else if (!slot.text) err(`${sctx}: a compartment with nothing to take needs a line saying what is in it`);
+    });
+    for (const k of takes)
+      if (listed && !offered.has(k)) err(`${ctx}: no compartment offers "${k}" - the window has a button for it and the machine has nothing behind it`);
+
+    const rules = V.rules?.list ?? [];
+    const limit = V.rules?.limitRule;
+    if (!Number.isInteger(limit) || limit < 0 || limit >= rules.length)
+      err(`${ctx} rules.limitRule ${limit}: not a rule on the list (0-${rules.length - 1}) - the either-or would have no visible reason`);
+    if (!(V.rules?.members ?? []).length) err(`${ctx} rules.members: the sheet has nobody on it`);
+
+    let total = 0;
+    [...(V.crank ?? []), ...(V.crankEnd ?? [])].forEach((line, i) => {
+      if (typeof line.ms !== 'number' || line.ms < 0) err(`${ctx} crank line ${i}: "ms" has to be a number of milliseconds`);
+      else total += line.ms;
+      if (!line.text) err(`${ctx} crank line ${i}: no text`);
+    });
+    if (total > CRANK_MAX_MS)
+      err(`${ctx}: the crank takes ${(total / 1000).toFixed(1)} s on screen (limit ${CRANK_MAX_MS / 1000} s) - it is meant to FEEL long, not to be`);
+
+    // The prose follows the same rules as every event. The type plate is the
+    // machine talking and stays out; ids, pictures and emoji are not prose.
+    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'plate']);
+    const walk = (node, path) => {
+      if (typeof node === 'string') { checkText(ctx, path, node); return; }
+      if (Array.isArray(node)) { node.forEach((x, i) => walk(x, `${path}[${i}]`)); return; }
+      if (node && typeof node === 'object')
+        for (const [k, v] of Object.entries(node)) if (!SKIP.has(k)) walk(v, path ? `${path}.${k}` : k);
+    };
+    walk(V, '');
+  }
+}
+
+/* ---------- 12b) Engine commands in result texts ---------- */
+// A result that starts with CMD: is an instruction, not a sentence:
+// resolveTerminal swaps it for a log line and opens a window. Only the
+// commands it knows are swapped - any other, a typo or one the engine has
+// dropped, reaches the player word for word, at 0 errors and 0 warnings. So
+// every CMD: in the data has to be one engine_events.js handles, and every one
+// it handles has to be used somewhere, or it is a door nobody can reach.
+{
+  const events = readFileSync('src/engine/engine_events.js', 'utf8');
+  const known = new Set([...events.matchAll(/res === "(CMD:[A-Z_]+)"/g)].map(m => m[1]));
+  if (!known.size) err('engine_events.js: no CMD: handler found - the commands cannot be checked');
+  const used = new Map();
+  const walk = (node, path) => {
+    if (typeof node === 'string') {
+      if (node.startsWith('CMD:')) (used.get(node) ?? used.set(node, []).get(node)).push(path);
+      return;
+    }
+    // An entry with an id is named by it: "sidequests/sq_kevin_geheim_3" finds
+    // the event, "sidequests[292]" sends you counting.
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, x?.id ? `${path}/${x.id}` : `${path}[${i}]`)); return; }
+    if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`);
+  };
+  for (const [name, pool] of Object.entries(DB)) walk(pool, name);
+  for (const [cmd, where] of used)
+    if (!known.has(cmd)) err(`${where[0]}: "${cmd}" is not a command engine_events.js handles - the player would read it as text`);
+  for (const cmd of known)
+    if (!used.has(cmd)) warn(`"${cmd}" is handled in engine_events.js but no data file uses it - dead code, or an entrance nobody can reach`);
 }
 
 /* ---------- Output ---------- */

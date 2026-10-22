@@ -78,6 +78,15 @@ What it finds — throughout, things that fail **quietly** at runtime:
   fallback included. Without the pair the chronicle quietly records the
   standard evening
 - the diary: conditions that stumble or fit no conceivable day
+- **the vending machine** (6.3, section 12): every compartment's `take` is one
+  the engine accepts (`VENDING_TAKES` in `engine_vending.js`) and every take
+  has a compartment; `limitRule` points at a rule that exists; the crank stays
+  under twenty seconds on screen, because it is meant to *feel* long; and the
+  machine's prose goes through the same text rules as every event
+- **doors** (section 12b): a result starting with `CMD:` has to be a command
+  `engine_events.js` handles — the list is read out of that file — and every
+  command it handles has to be used somewhere. A typo would otherwise reach the
+  player word for word, at 0 errors and 0 warnings
 
 **Introduced a new field? Then add it here** (`EVENT_KEYS`, `OPT_KEYS`,
 `USE_FIELDS`, `PASSIVE_FIELDS`), otherwise it is an error.
@@ -503,7 +512,7 @@ What is checked:
    and nothing on screen shows it.
 4. **Prose has to differ** — a text that reads verbatim the same in both trees
    has not been translated yet. That is **not an error** but the work list; it
-   appears under "NOCH DEUTSCH".
+   appears under "STILL GERMAN".
 
 What is not checked is whether the English is any good. No tool can do that.
 
@@ -514,7 +523,11 @@ had one line fewer.
 
 ### When a file is missing from the English tree
 
-Since 6.0 the parity checker also compares the **file inventory** of both trees.
+Since 6.0 the parity checker also compares the **file inventory** of both trees,
+and since 6.3 in both directions: a data file that `data.js` does not list is an
+error too. The pool lists themselves are no longer copied into the checker but
+imported from `data.js` (`POOL_NAMES`, `CORE_NAMES`) — until then a pool added
+there and forgotten here went through as "in step" without ever being compared.
 Without it the symptom only surfaces in the browser, as
 `Unknown variable dynamic import: ./data/en/data_xyz.js`, followed by a game
 with empty views — empty archive, empty settings. The bundler is looking for the

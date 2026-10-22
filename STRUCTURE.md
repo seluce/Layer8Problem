@@ -23,12 +23,13 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
-  components/           40 Svelte components, 8 of them for the intranet
-  engine/               12 modules; engine_state.svelte.js holds the state,
+  components/           41 Svelte components, 8 of them for the intranet
+  engine/               15 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
-                        observer list the tutorial listens on
-  data/de/              23 data files, the German source
-  data/en/              the same 23, in English
+                        observer list the tutorial listens on,
+                        engine_vending.js the machine on the third floor
+  data/de/              24 data files, the German source
+  data/en/              the same 24, in English
   i18n/                 language selection and interface strings
   assets/               processed by Vite, see below
 
@@ -216,7 +217,7 @@ the rest), same numbers (`m`, `l`, `a`, `b`, `timer`, reputation values,
 thresholds) — and since 6.0 the same **file inventory** as well, because a file
 missing from the English tree would otherwise only surface at runtime, as
 `Unknown variable dynamic import`. Prose that reads identically in both trees is
-reported under "NOCH DEUTSCH": not an error, but the work list.
+reported under "STILL GERMAN": not an error, but the work list.
 
 **`lint-i18n.mjs` checks the interface strings**, and it exists because a
 missing key goes wrong **quietly**: `t()` falls back to English and then to the

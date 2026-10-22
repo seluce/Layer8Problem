@@ -386,6 +386,17 @@ export const state = $state({
     // browser window and the pages inside it; nothing exists until it opens.
     intranetOpen: false,
 
+    // The dead vending machine on the third floor (6.3), opened by
+    // sq_kevin_geheim_3 through CMD:OPEN_VENDING. `vending` is THIS visit:
+    // what was taken (one of 'magazine', 'printout', 'c4' - house rule 2 allows
+    // a single one) and whether the sandwich has fallen yet. Outside freshDay()
+    // on purpose: a visit lasts as long as the window is open and has no
+    // business in the day's save file. What outlives it - how often the
+    // machine was visited, and where the player signed - is career, and sits
+    // in archive.stats.
+    vendingOpen: false,
+    vending: null,
+
     // What the company pages say about you right now. Filled by
     // engine_ui.buildIntranet() on every open, so the feed can mention what
     // happened an hour ago. Deliberately outside freshDay(): it is rebuilt

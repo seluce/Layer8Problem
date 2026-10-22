@@ -47,6 +47,7 @@ const { week } = await import('../src/engine/engine_week.js');
 // same way: without them emit() is missing and the inventory throws.
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
+const { vendingMachine } = await import('../src/engine/engine_vending.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -69,9 +70,10 @@ await useLanguage(LANG);
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
-    ...core, ...events, ...week, ...inventory, ...hooks,
+    ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
     showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
     hideOverlay() {},
+    lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
     showModal() {},
@@ -3168,6 +3170,165 @@ await ok('After discarding, one consumable fits again', async () => {
     engine.grantItem(consumables[0]);
     assert.ok(state.inventory.some(i => i.id === consumables[0]),
         'after discarding there has to be room again');
+});
+
+// ------------------------------------------------- the vending machine (6.3)
+// Kevin's dead machine on the third floor. What is held here is what the
+// design promised: who gets there, when, what it costs, that one take is all a
+// visit allows, and that the sheet on the glass fills over the weeks and
+// travels between machines.
+console.log('The vending machine:');
+await ensure('sidequests', 'vending', 'items');
+const kevinTwo   = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_2');
+const kevinThree = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_3');
+const settle = () => new Promise(r => setTimeout(r, 0));   // openVending awaits the pool
+
+await ok('Only the two options that keep house rule 1 lead to the machine', () => {
+    assert.ok(kevinTwo && kevinThree, 'the chain is incomplete');
+    // Option 1 asks who restocks a dead machine - exactly what rule 1 forbids.
+    assert.equal(kevinTwo.opts[0].next, undefined, 'asking who restocks it must not open the way');
+    assert.equal(kevinTwo.opts[1].next, 'sq_kevin_c4');
+    assert.equal(kevinTwo.opts[2].next, 'sq_kevin_c4');
+    assert.equal(kevinThree.reqStory, 'sq_kevin_c4');
+    assert.equal(kevinThree.reqStoryAge, 1);
+    assert.equal(kevinThree.opts[0].r, 'CMD:OPEN_VENDING');
+});
+
+await ok('The machine is there from the next day on, and only in a week', () => {
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 2;
+    engine.setStoryFlag('sq_kevin_c4');
+    assert.equal(engine.storyGateOpen(kevinThree), false, 'not on the day Kevin showed it');
+    state.week.dayIndex = 3;
+    assert.equal(engine.storyGateOpen(kevinThree), true, 'the day after, it has to be there');
+
+    resetState();                          // a single day has no "tomorrow"
+    engine.setStoryFlag('sq_kevin_c4');
+    assert.equal(engine.storyGateOpen(kevinThree), false, 'a day run must not reach it');
+});
+
+await ok('The way in costs two minutes, the machine itself none', async () => {
+    resetState();
+    engine.startWeek('easy');
+    state.time = 10 * 60;
+    engine.resolveTerminal(kevinThree.opts[0], 'sidequest');
+    await settle();
+    assert.equal(state.vendingOpen, true, 'CMD:OPEN_VENDING did not open the window');
+    assert.equal(state.time, 10 * 60 + kevinThree.opts[0].m, 'the option has to charge its minutes');
+    const before = state.time;
+    engine.vendingTake('c4');
+    engine.vendingDeliver();
+    assert.equal(state.time, before, 'the crank must not move the clock');
+    engine.closeVending();
+    assert.equal(state.vendingOpen, false);
+    assert.equal(state.vending, null, 'the visit has to be forgotten on closing');
+});
+
+await ok('House rule 2: one take per visit, whatever it was', async () => {
+    resetState();
+    engine.startWeek('easy');
+    await engine.openVending();
+    assert.equal(engine.vendingTake('magazine'), true);
+    assert.equal(engine.vendingTake('c4'), false, 'a second take in the same visit');
+    assert.equal(engine.vendingDeliver(), false, 'the roll fell although C4 was not the take');
+    engine.closeVending();
+
+    await engine.openVending();
+    assert.equal(engine.vendingTake('nonsense'), false, 'an unknown take was accepted');
+    assert.equal(engine.vendingTake('c4'), true, 'the unknown take used up the visit');
+    assert.equal(engine.vendingDeliver(), true);
+    assert.equal(engine.vendingDeliver(), false, 'the roll fell twice');
+    assert.equal(state.inventory.filter(i => i.id === 'sandwich').length, 1);
+    engine.closeVending();
+});
+
+await ok('Nothing is taken from a machine that is not open', () => {
+    resetState();
+    assert.equal(engine.vendingTake('c4'), false);
+    assert.equal(engine.vendingDeliver(), false);
+});
+
+await ok('A full backpack leaves the roll in the flap', async () => {
+    resetState();
+    engine.startWeek('easy');
+    const consumables = Object.keys(DB.items).filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    for (let n = 0; n < 10; n++) engine.grantItem(consumables[n % consumables.length]);
+    const held = state.inventory.filter(i => i.id === 'sandwich').length;
+    await engine.openVending();
+    engine.vendingTake('c4');
+    assert.equal(engine.vendingDeliver(), false, 'a full backpack took the roll');
+    assert.equal(state.inventory.filter(i => i.id === 'sandwich').length, held);
+    engine.closeVending();
+});
+
+await ok('The sheet fills over the weeks and keeps the signature where it was made', async () => {
+    resetState();
+    const total = DB.vending.rules.members.length;
+    await engine.openVending(); engine.closeVending();
+    assert.equal(state.archive.stats.vendingVisits, 1, 'the visit was not counted');
+    assert.equal(engine.vendingMembersShown(total), 2, 'two names on the first visit');
+    for (let n = 0; n < 8; n++) { await engine.openVending(); engine.closeVending(); }
+    assert.equal(engine.vendingMembersShown(total), total, 'never more names than the sheet has');
+
+    resetState();
+    assert.equal(engine.vendingSign(2), true);
+    assert.equal(state.archive.stats.vendingSignedAt, 2);
+    assert.equal(engine.vendingSign(4), false, 'signed twice');
+    assert.equal(state.archive.stats.vendingSignedAt, 2, 'the signature moved');
+});
+
+await ok('Visits and the signature travel between computers', () => {
+    const merged = engine.mergeArchives(
+        { stats: { vendingVisits: 3 } },
+        { stats: { vendingVisits: 5, vendingSignedAt: 2 } });
+    assert.equal(merged.stats.vendingVisits, 5, 'visits from the other machine were lost');
+    assert.equal(merged.stats.vendingSignedAt, 2, 'the signature did not arrive');
+    const kept = engine.mergeArchives(
+        { stats: { vendingSignedAt: 3 } },
+        { stats: { vendingVisits: 1 } });
+    assert.equal(kept.stats.vendingSignedAt, 3, 'an unsigned machine undid the signature');
+});
+
+await ok('A visit is not part of the day save, and Escape closes it', () => {
+    const dayFields = Object.keys(freshDay(1.0));
+    assert.ok(!dayFields.includes('vending') && !dayFields.includes('vendingOpen'),
+        'the visit leaked into the save file');
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.match(keys, /engine\.state\.vendingOpen\) \{ engine\.closeVending\(\); return; \}/,
+        'Escape no longer closes the machine');
+});
+
+await ok('No key reaches through a window over the terminal', () => {
+    // Found by the 6.3 audit: Space pressed the continue button BEHIND the open
+    // vending machine - and behind the noticeboard, where it had done so all
+    // along. The button may say lunch break or closing time.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(keys, /contBtn\.offsetParent !== null && !engine\.windowOverTerminal\(\)/,
+        'Space presses the continue button through a window again');
+    const actions = keys.slice(keys.indexOf('// 4. ACTION SHORTCUTS'), keys.indexOf('// 5. OPTION SHORTCUTS'));
+    assert.match(actions, /!engine\.windowOverTerminal\(\)/, 'Q, W, E and R reach through a window again');
+
+    // Every window Escape closes is on the list - except the three the
+    // keyboard deals with itself before it gets that far.
+    const escapes = new Set([...keys.matchAll(/isVisible\('([a-z-]+)'\)/g)].map(m => m[1]));
+    const listed = new Set([...uiSrc.match(/WINDOWS_OVER_TERMINAL = \[([\s\S]*?)\]/)[1].matchAll(/'([a-z-]+)'/g)].map(m => m[1]));
+    for (const id of escapes) {
+        if (['email-modal', 'modal-overlay', 'tut-ask-modal'].includes(id)) continue;
+        assert.ok(listed.has(id), `"${id}" closes on Escape but is missing from WINDOWS_OVER_TERMINAL`);
+    }
+
+    // The bench's document stub answers "visible" for every id, which would
+    // make this true whatever the machine does - the mutation probe caught
+    // exactly that. So the DOM half is told nothing is open, and the state
+    // half has to carry the answer on its own, both ways.
+    resetState();
+    const asked = { ...engine, isOverlayOpen: () => false };
+    assert.equal(ui.windowOverTerminal.call(asked), false, 'a window is reported where none is open');
+    state.vendingOpen = true;
+    assert.equal(ui.windowOverTerminal.call(asked), true, 'the vending machine does not count as a window');
+    state.vendingOpen = false;
 });
 
 // ----------------------------------------------------- cloud synchronisation

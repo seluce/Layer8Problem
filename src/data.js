@@ -32,15 +32,23 @@
  * check today.
  */
 
-/** Pools loaded on first use. Key === the name the module exports. */
-const POOL_NAMES = [
+/**
+ * Pools loaded on first use. Key === the name the module exports.
+ *
+ * Exported, together with CORE_NAMES, so the tools read the ONE list rather
+ * than keeping their own. Until 6.3 lint-parity carried a copy, and a pool
+ * added here but not there was never compared at all: the file inventory only
+ * caught a file missing from one tree, not a file both trees had and nobody
+ * listed.
+ */
+export const POOL_NAMES = [
     'board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails',
     'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server',
-    'sidequests'
+    'sidequests', 'vending'
 ];
 
 /** Needed before the first click, so these come in one go at boot. */
-const CORE_NAMES = [
+export const CORE_NAMES = [
     'achievements', 'chars', 'excuses', 'items', 'moods', 'newsTicker',
     'special', 'tutorial'
 ];

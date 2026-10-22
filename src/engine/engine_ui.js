@@ -9,6 +9,14 @@ import { recipeKey, renderRecipe } from './recipe.js';
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
 
+// The windows that can stand over the terminal while a result is on screen -
+// see windowOverTerminal(). The same ones the Escape key closes.
+const WINDOWS_OVER_TERMINAL = [
+    'item-confirm-modal', 'keybind-modal', 'save-export-modal', 'save-import-modal',
+    'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
+    'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
+];
+
 export const ui = {
 
     /**
@@ -473,6 +481,27 @@ export const ui = {
     isOverlayOpen: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         return !!el && !el.classList.contains('hidden');
+    },
+
+    /**
+     * Does a window stand over the terminal?
+     *
+     * The keyboard asks this before it reaches THROUGH one. Until 6.3 it did
+     * not: Space pressed the continue button behind an open noticeboard - and
+     * behind the vending machine, whose option can carry the clock past noon,
+     * so the button under it may well say lunch break, or at 16:30 closing
+     * time, and either started behind the player's back. The noticeboard and
+     * the team view do not lock the page's scrolling either, so Q, W, E and R
+     * went through them too and started a coffee break behind the board.
+     *
+     * The same windows the Escape key closes in src/engine.js, asked through
+     * the same encoding. The mail and the warning letters are not on the list:
+     * the keyboard handles both itself, before it gets this far.
+     */
+    windowOverTerminal: function() {
+        const s = this.state;
+        if (s.intranetOpen || s.loreOpen || s.vendingOpen) return true;
+        return WINDOWS_OVER_TERMINAL.some(id => this.isOverlayOpen(id));
     },
 
     /**

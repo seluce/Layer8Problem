@@ -7739,15 +7739,37 @@ export const sidequests = [
         },
         {
             t: "Fach C4 öffnen",
-            m: 10, l: 0, a: -10, b: 0,
             loot: "sandwich",
+            next: "sq_kevin_c4",
+            m: 10, l: 0, a: -10, b: 0,
             r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
         },
         {
             t: "Das Sandwich Kevin überlassen",
-            m: 5, l: 0, a: -5, b: 0,
+            next: "sq_kevin_c4",
             rep: { "Kevin": 5 },
+            m: 5, l: 0, a: -5, b: 0,
             r: "'Du willst nicht?' Kevin nimmt es mit dem Respekt eines Mannes, der Verzicht einordnen kann. Das Fach klemmt wieder zu. Beute nimmst du keine mit, nur Standort und Verfahren. Wissen ist auch ein Vorrat."
+        }
+    ]
+},
+{
+    id: "sq_kevin_geheim_3",
+    kind: "text",
+    reqStory: "sq_kevin_c4",
+    reqStoryAge: 1,
+    title: "Dritter Stock, hinten",
+    text: "Dein Weg führt dich durchs Treppenhaus im dritten Stock. Hinten, wo die Lampe flackert, steht der Automat, ausgestöpselt wie beim letzten Mal. Durch die Scheibe siehst du, dass in C4 wieder etwas liegt.",
+    opts: [
+        {
+            t: "Vor der Scheibe in die Hocke gehen",
+            m: 2, l: 0, a: 0, b: 0,
+            r: "CMD:OPEN_VENDING"
+        },
+        {
+            t: "Weitergehen",
+            m: 2, l: 0, a: 0, b: 0,
+            r: "Du gehst weiter. Hinter dir flackert die Lampe einmal, als hätte sie mehr von dir erwartet."
         }
     ]
 },

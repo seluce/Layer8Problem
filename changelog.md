@@ -1,3 +1,12 @@
+[6.3.0] - 2026-10-22
+
+Something on the third floor, for anyone who can keep a secret.
+
+* Kevin knows a corner of the building that is on no plan. In the working week it is worth going back - as long as nobody asks who restocks it.
+* Svelte, Vite, Electron and the build tools are on their current versions.
+
+---
+
 [6.2.1] - 2026-08-31
 
 Maintenance, and two things the game held out but never handed over: an achievement and a chronicle line.

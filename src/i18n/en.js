@@ -533,6 +533,20 @@ export const en = {
     'board.subtitle':              '"Communication is the key (which unfortunately sticks)."',
     'board.close':                 'CLOSE',
 
+    // The vending machine on the third floor (6.3). Only the frame: the
+    // compartments, the crank, both magazines and the house rules are data,
+    // in data_vending.js - that is where the jokes live.
+    'vending.machine':             'The machine',
+    'vending.crank':               'Compartment C4, by hand',
+    'vending.tape':                'Inside the glass, with sticky tape',
+    'vending.take.magazine':       'Pull out an ADDED VALUE',
+    'vending.take.printout':        "Pull out Chantal's printout",
+    'vending.take.c4':             'Turn compartment C4 by hand',
+    'vending.sign':                'Add your name to the house rules',
+    'vending.leave':               'Close the flap and go',
+    'vending.leaveAfter':          'Push the flap fully shut and go',
+    'vending.close':               'Close',
+
     'keybind.title':               'KEY BINDINGS',
     'keybind.subtitle':            'Click a key to reassign it.',
     'keybind.reset':               'Default',
@@ -745,6 +759,7 @@ export const en = {
     'event.chainBroken':           'Connection lost.',
     'event.cmd.intranet':          'You click frantically on the bookmark. The old intranet groans into life...',
     'event.cmd.board':             'You lose yourself in the fascinating world of company notices...',
+    'event.cmd.vending':           'You crouch down in front of the glass. The light above you flickers...',
 
     'terminal.btn.lunch':          'OFF TO LUNCH',
     'terminal.btn.meeting':        'OFF TO THE WEEKLY MEETING',

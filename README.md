@@ -145,7 +145,7 @@ npm run preview        # inspect the built version (do not open it by double-cli
 ```
 
 **The game data exists twice:** `src/data/de/` is the source, `src/data/en/` the
-English version — 23 files each. Both carry the same ids, story flags, character
+English version — 24 files each. Both carry the same ids, story flags, character
 names and numbers; only the prose differs. That is what makes a save file
 language-independent. Touch one file and you touch both.
 

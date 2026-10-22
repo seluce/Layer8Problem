@@ -7787,15 +7787,37 @@ export const sidequests = [
         },
         {
             t: "Open compartment C4",
-            m: 10, l: 0, a: -10, b: 0,
             loot: "sandwich",
+            next: "sq_kevin_c4",
+            m: 10, l: 0, a: -10, b: 0,
             r: "The compartment gives way after a gentle tug. Inside: one shrink-wrapped sandwich, best-before date in the distant future, origin unclear. Kevin nods solemnly. 'Welcome to the club.' Which club, you do not ask. Some doors are better closed behind you."
         },
         {
             t: "Let Kevin have the sandwich",
-            m: 5, l: 0, a: -5, b: 0,
+            next: "sq_kevin_c4",
             rep: { "Kevin": 5 },
+            m: 5, l: 0, a: -5, b: 0,
             r: "'You do not want it?' Kevin takes it with the respect of a man who can appreciate self-denial. The compartment jams shut again. You take no loot away, only a location and a procedure. Knowledge is a supply too."
+        }
+    ]
+},
+{
+    id: "sq_kevin_geheim_3",
+    kind: "text",
+    reqStory: "sq_kevin_c4",
+    reqStoryAge: 1,
+    title: "Third Floor, Back Section",
+    text: "Your way takes you through the stairwell on the third floor. At the back, where the light flickers, stands the vending machine, as unplugged as last time. Through the glass you can see that something is lying in C4 again.",
+    opts: [
+        {
+            t: "Crouch down in front of the glass",
+            m: 2, l: 0, a: 0, b: 0,
+            r: "CMD:OPEN_VENDING"
+        },
+        {
+            t: "Keep walking",
+            m: 2, l: 0, a: 0, b: 0,
+            r: "You keep walking. Behind you the light flickers once, as if it had expected more of you."
         }
     ]
 },

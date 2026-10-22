@@ -8,7 +8,7 @@ JavaScript objects in `data_*.js` (one file per area: `data_coffee.js`,
 event is simply one more object in the array of the appropriate file.
 
 **Every one of these files exists twice.** `src/data/de/` is the source,
-`src/data/en/` the English version — 23 files each. Both carry **the same ids,
+`src/data/en/` the English version — 24 files each. Both carry **the same ids,
 story flags, character names and numbers**; only the prose differs. That is what
 makes a save file language-independent and lets you switch in the middle of the
 week. A contribution therefore needs **both** versions — the same `id`, the same
@@ -89,7 +89,7 @@ missing or deliberately absent.
 | `reqStoryAge` | coffee, server room, calls, errands, lunch break, boss fights — only together with `reqStory` | Week mode: the flag has to be at least this many **nights** old (1 = tomorrow at the earliest). Never satisfiable in day mode, see section 3. |
 | `reqWeekDayMin` | coffee, server room, calls, errands | Week mode: appears **from** this weekday onwards (2 = Tuesday … 5 = Friday), not only on it. Never satisfiable in day mode. |
 | `reqRep` | encounters, effectively compulsory there | Reputation threshold, see section 6. 139 of the 140 encounters carry one; the exception is a follow-up for which the `reqStory` suffices as a precondition. |
-| `kind` | errands, compulsory there | `"text"` (terminal) or `"phone"` (phone chat). All 308 carry it. |
+| `kind` | errands, compulsory there | `"text"` (terminal) or `"phone"` (phone chat). All 309 carry it. |
 | `appName` | errand chat, compulsory there | Which app displays the chat, e.g. `"WhatsApp"`, `"Teams"`, `"Signal"`. All 57 chats carry it. **Display text, not an identifier** — generic words are translated (`"Anruf"` → `"Call"`), brand names are not. |
 | `startNode`, `nodes`, `results` | calls, errands, weekly meeting | A conversation with a course of its own instead of a single decision, see section 4. |
 | `startNodeGala` | weekly meeting | A second opening node: it applies when the gala is due that evening — the announcement comes in the meeting, see section 4. |
@@ -116,7 +116,7 @@ but an error.
 | Field | Effect |
 |---|---|
 | `t` | Compulsory: the label of the button — the same in every area, the inbox included. |
-| `r` | Compulsory: the result text. It also goes into the log afterwards. |
+| `r` | Compulsory: the result text. It also goes into the log afterwards. **Exception: a door.** A result of exactly `CMD:OPEN_BOARD`, `CMD:OPEN_INTRANET` or `CMD:OPEN_VENDING` is an instruction rather than a sentence — the log gets a fixed line and the window opens. `lint-data` (section 12b) reads the list out of `engine_events.js`: any other `CMD:` would reach the player word for word, and is an error. |
 | `m` | Costs minutes of playing time. The working day is limited; this is the real currency. |
 | `l` | Laziness (positive = lazier). Applies 1:1. |
 | `a` | Aggro. Positive values are scaled up with the difficulty, negative ones apply 1:1. |
@@ -900,7 +900,7 @@ follow-up events, and invisible special characters that creep in while copying.
 
 The **parity checker** then holds both trees against each other: same shape, same
 ids, same numbers. A text that reads verbatim the same in both trees has not been
-translated yet — it reports that under "NOCH DEUTSCH", and that is not an error
+translated yet — it reports that under "STILL GERMAN", and that is not an error
 but the work list. A changed number, by contrast, is one: the English version
 then plays differently, and nothing on screen shows it.
 
