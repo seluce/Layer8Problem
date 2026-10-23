@@ -1201,13 +1201,13 @@ for (const ev of DB.emails) {
   // makes every condition on it false, and the check would report perfectly
   // good fragments as unreachable.
   const FIGURES = [
-    { events: 4,  boss: 0, lunch: false, leet: false, coffee: 0, mailsIgnored: 0,
+    { events: 4,  boss: 0, lunch: false, leet: false, vending: false, coffee: 0, mailsIgnored: 0,
       tickets: 0,  excusesUsed: 0, items: 0,  endHour: 9,  peakHour: 9,  peakValue: 10,
       upBy: 0,  downBy: 0,  streak: 0 },
-    { events: 18, boss: 1, lunch: true,  leet: false, coffee: 2, mailsIgnored: 1,
+    { events: 18, boss: 1, lunch: true,  leet: false, vending: false, coffee: 2, mailsIgnored: 1,
       tickets: 3,  excusesUsed: 1, items: 3,  endHour: 13, peakHour: 15, peakValue: 65,
       upBy: 7,  downBy: 6,  streak: 3 },
-    { events: 34, boss: 2, lunch: true,  leet: true,  coffee: 6, mailsIgnored: 5,
+    { events: 34, boss: 2, lunch: true,  leet: true,  vending: true,  coffee: 6, mailsIgnored: 5,
       tickets: 9,  excusesUsed: 2, items: 7,  endHour: 16, peakHour: 10, peakValue: 92,
       upBy: 20, downBy: 25, streak: 7 }
   ];
@@ -1239,6 +1239,9 @@ for (const ev of DB.emails) {
       server: between(0, 14), calls: between(0, 14), quests: between(0, 14),
       events: between(0, 40), boss: between(0, 3),
       lunch: rnd() < 0.6, leet: rnd() < 0.3,
+      // Not drawn from rnd(): one more draw would shift every later day of
+      // the seeded 300 and could cost a rare fragment its only fitting day.
+      vending: i % 7 === 0,
       coffee: between(0, 8), mailsIgnored: between(0, 6),
       tickets: between(0, 10), excusesUsed: between(0, 3), items: between(0, 8),
       // A day that was survived always ends at half past four; only a day

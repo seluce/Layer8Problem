@@ -67,6 +67,7 @@ export const vendingMachine = {
         try { await ensure('vending'); } catch { /* the window opens with what there is */ }
         const stats = this.state.archive.stats ??= {};
         stats.vendingVisits = (stats.vendingVisits ?? 0) + 1;
+        this.state.vendingVisited = true;   // for tonight's diary
         this.state.vending = { taken: null, delivered: false };
         this.state.vendingOpen = true;
         this.lockScroll('vending');

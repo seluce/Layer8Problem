@@ -16,6 +16,7 @@
  *   boss         boss fights fought
  *   lunch        the break was taken
  *   leet         the 13:37 moment was seen
+ *   vending      the machine on the third floor was opened (6.3)
  *   coffee       cups drunk
  *   mailsIgnored mails deleted or run out on
  *   tickets      still open at the end
@@ -194,6 +195,7 @@ function factsOf(state, endReason) {
         events: used.length,
         lunch: !!state.lunchDone,
         leet: !!state.leetSeen,
+        vending: !!state.vendingVisited,
         coffee: state.coffeeConsumed ?? 0,
         mailsIgnored: state.emailsIgnored ?? 0,
         tickets: state.tickets ?? 0,

@@ -43,6 +43,12 @@ export function freshDay(mult = 1.0) {
         // Has the 13:37 moment already been shown today? (see checkLeetMoment)
         leetSeen: false,
 
+        // Was the vending machine on the third floor opened today? Only the
+        // diary asks, and Mueller then refuses to write about it (6.3,
+        // data_diary.js, detail_vending). Day-scoped on purpose: a reloaded
+        // day still knows, and the next morning forgets.
+        vendingVisited: false,
+
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,
         // ~40 steps a day) so it can travel into the archive later if wanted.

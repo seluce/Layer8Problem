@@ -693,6 +693,17 @@ export const diary = {
             ]
         },
         {
+            // The machine on the third floor (6.3). Mueller refuses to write it
+            // down - in his own diary - which is Kevin's 'die lesen mit' taken
+            // seriously. Rank 3: rarer than any figure of the day, so it wins.
+            id: "detail_vending", rank: 3, when: d => d.vending,
+            lines: [
+                "I am writing nothing about the third floor in here. You never know who is reading along.",
+                "Today I was at the back of the third floor. This book has nothing more to say about it.",
+                "I am leaving one part of this day out. Anyone in the club knows which."
+            ]
+        },
+        {
             id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
             lines: [
                 "{streak} days in a row got through. My expectations of myself are sinking pleasingly fast."

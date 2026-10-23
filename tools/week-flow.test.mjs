@@ -3337,6 +3337,28 @@ await ok('The music ducks once for the fall and comes back once', async () => {
     assert.equal(fades.length, 0, 'music that is switched off was faded');
 });
 
+await ok("That evening the diary refuses to write about it", async () => {
+    // 'die lesen mit': Mueller leaves the third floor out of his own diary.
+    // Rank 3 in the detail slot, so the coffee count of the same day loses.
+    await ensure('diary');
+    const at = DB.diary.detail.findIndex(f => f.id === 'detail_vending');
+    assert.ok(at >= 0, 'the diary has no line for the machine');
+    const mentions = (entry) => entry.paragraphs.some(p => (p.parts ?? []).some(part => {
+        const ref = part.ref ?? part.intro?.ref;
+        return ref?.path?.[0] === 'detail' && ref.path[1] === at;
+    }));
+
+    resetState();
+    engine.startWeek('easy');
+    state.coffeeConsumed = 6;                       // a detail that would otherwise win
+    assert.equal(mentions(buildDiary(state, 'WIN')), false, 'the machine is written about on a day without it');
+    await engine.openVending();
+    engine.closeVending();
+    assert.equal(state.vendingVisited, true, 'the visit was not noted for the day');
+    assert.equal(mentions(buildDiary(state, 'WIN')), true, 'the diary does not mention the third floor');
+    assert.ok(Object.keys(freshDay(1.0)).includes('vendingVisited'), 'the next morning would still remember it');
+});
+
 await ok('Nothing is taken from a machine that is not open', () => {
     resetState();
     assert.equal(engine.vendingTake('c4'), false);
