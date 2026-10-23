@@ -79,27 +79,34 @@ export const vending = {
        are epilogue. Whoever shuts the flap during the epilogue was done,
        not impatient. The window holds the stairwell light still from the
        first closing line until the landing, because the text says it stops.
+
+       `sound` is what the line is heard as, one of VENDING_SOUNDS in
+       engine_audio.js (lint-data holds it there): every turn the same
+       clack, then glass, a scrape, the thud and the lift's chime. From the
+       light that stops flickering through the thud the office music ducks,
+       so the fall happens in near silence and the chime brings the music
+       back. Same in both trees: a sound is data, not translation.
        ---------------------------------------------------------------- */
     crank: [
         { ms: 0,    text: "Du greifst durch die Klappe und bekommst die Spirale zu fassen. Sie ist kalt und fettig." },
-        { ms: 600,  text: "Erste Umdrehung. Weit hinten bewegt sich etwas." },
-        { ms: 800,  text: "Zweite. Die Lampe über dir flackert im Takt mit. Das ist Zufall." },
-        { ms: 1000, text: "Dritte. Nichts." },
-        { ms: 1200, text: "Vierte. Unten im Haus setzt sich ein Aufzug in Bewegung." },
-        { ms: 1300, text: "Fünfte. Du überlegst, ob man im Stehen schlafen kann." },
-        { ms: 1400, text: "Sechste. Du zählst laut mit, weil es sonst niemand tut." },
-        { ms: 1500, text: "Siebte. Du kennst diese Spirale inzwischen besser als die meisten Kollegen." },
-        { ms: 1600, text: "Achte. In deinem Kopf sagt Kevin: 'Willkommen im Club.'" },
-        { ms: 2300, text: "Neunte. Du siehst zum Fenster und bist überrascht, dass es noch hell ist." },
-        { ms: 600,  text: "Zehnte. Etwas kippt." },
-        { ms: 500,  text: "Elfte. Es löst sich." }
+        { ms: 600,  text: "Erste Umdrehung. Weit hinten bewegt sich etwas.", sound: "crank" },
+        { ms: 800,  text: "Zweite. Die Lampe über dir flackert im Takt mit. Das ist Zufall.", sound: "crank" },
+        { ms: 1000, text: "Dritte. Nichts.", sound: "crank" },
+        { ms: 1200, text: "Vierte. Unten im Haus setzt sich ein Aufzug in Bewegung.", sound: "crank" },
+        { ms: 1300, text: "Fünfte. Du überlegst, ob man im Stehen schlafen kann.", sound: "crank" },
+        { ms: 1400, text: "Sechste. Du zählst laut mit, weil es sonst niemand tut.", sound: "crank" },
+        { ms: 1500, text: "Siebte. Du kennst diese Spirale inzwischen besser als die meisten Kollegen.", sound: "crank" },
+        { ms: 1600, text: "Achte. In deinem Kopf sagt Kevin: 'Willkommen im Club.'", sound: "crank" },
+        { ms: 2300, text: "Neunte. Du siehst zum Fenster und bist überrascht, dass es noch hell ist.", sound: "crank" },
+        { ms: 600,  text: "Zehnte. Etwas kippt.", sound: "crank" },
+        { ms: 500,  text: "Elfte. Es löst sich.", sound: "crank" }
     ],
     crankEnd: [
         { ms: 700,  text: "Die Lampe über dir hört auf zu flackern. Sie sieht auch zu." },
-        { ms: 900,  text: "Es schlägt gegen die Scheibe, dreht sich einmal und bleibt mit einer Ecke an der Kante hängen." },
-        { ms: 1000, text: "Es wackelt. Rutscht ein Stück. Hängt wieder." },
-        { ms: 900,  text: "Dann ein dumpfer Schlag in der Klappe.", lands: true },
-        { ms: 900,  text: "Hinter dir geht die Aufzugstür auf. Der Aufzug von vorhin. Er ist gerade erst oben angekommen." },
+        { ms: 900,  text: "Es schlägt gegen die Scheibe, dreht sich einmal und bleibt mit einer Ecke an der Kante hängen.", sound: "glass" },
+        { ms: 1000, text: "Es wackelt. Rutscht ein Stück. Hängt wieder.", sound: "scrape" },
+        { ms: 900,  text: "Dann ein dumpfer Schlag in der Klappe.", lands: true, sound: "thud" },
+        { ms: 900,  text: "Hinter dir geht die Aufzugstür auf. Der Aufzug von vorhin. Er ist gerade erst oben angekommen.", sound: "ding" },
         { ms: 1200, text: "In der Klappe liegt ein belegtes Brötchen, eingeschweißt. Auf dem Etikett steht 'Mindestens haltbar bis:', und dahinter hat jemand von Hand 'ja' geschrieben." }
     ],
     // A full backpack: the roll stays where it landed.

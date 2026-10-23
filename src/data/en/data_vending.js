@@ -81,27 +81,34 @@ export const vending = {
        are epilogue. Whoever shuts the flap during the epilogue was done,
        not impatient. The window holds the stairwell light still from the
        first closing line until the landing, because the text says it stops.
+
+       `sound` is what the line is heard as, one of VENDING_SOUNDS in
+       engine_audio.js (lint-data holds it there): every turn the same
+       clack, then glass, a scrape, the thud and the lift's chime. From the
+       light that stops flickering through the thud the office music ducks,
+       so the fall happens in near silence and the chime brings the music
+       back. Same in both trees: a sound is data, not translation.
        ---------------------------------------------------------------- */
     crank: [
         { ms: 0,    text: "You reach through the flap and get hold of the coil. It is cold and greasy." },
-        { ms: 600,  text: "First turn. Far at the back, something moves." },
-        { ms: 800,  text: "Second. The light above you flickers in time with it. That is a coincidence." },
-        { ms: 1000, text: "Third. Nothing." },
-        { ms: 1200, text: "Fourth. Somewhere downstairs, a lift sets off." },
-        { ms: 1300, text: "Fifth. You wonder whether it is possible to sleep standing up." },
-        { ms: 1400, text: "Sixth. You count out loud, because nobody else is going to." },
-        { ms: 1500, text: "Seventh. By now you know this coil better than most of your colleagues." },
-        { ms: 1600, text: "Eighth. In your head, Kevin says: 'Welcome to the club.'" },
-        { ms: 2300, text: "Ninth. You glance at the window and are surprised that it is still light." },
-        { ms: 600,  text: "Tenth. Something tips." },
-        { ms: 500,  text: "Eleventh. It comes loose." }
+        { ms: 600,  text: "First turn. Far at the back, something moves.", sound: "crank" },
+        { ms: 800,  text: "Second. The light above you flickers in time with it. That is a coincidence.", sound: "crank" },
+        { ms: 1000, text: "Third. Nothing.", sound: "crank" },
+        { ms: 1200, text: "Fourth. Somewhere downstairs, a lift sets off.", sound: "crank" },
+        { ms: 1300, text: "Fifth. You wonder whether it is possible to sleep standing up.", sound: "crank" },
+        { ms: 1400, text: "Sixth. You count out loud, because nobody else is going to.", sound: "crank" },
+        { ms: 1500, text: "Seventh. By now you know this coil better than most of your colleagues.", sound: "crank" },
+        { ms: 1600, text: "Eighth. In your head, Kevin says: 'Welcome to the club.'", sound: "crank" },
+        { ms: 2300, text: "Ninth. You glance at the window and are surprised that it is still light.", sound: "crank" },
+        { ms: 600,  text: "Tenth. Something tips.", sound: "crank" },
+        { ms: 500,  text: "Eleventh. It comes loose.", sound: "crank" }
     ],
     crankEnd: [
         { ms: 700,  text: "The light above you stops flickering. It is watching too." },
-        { ms: 900,  text: "It hits the glass, turns once and catches on the edge by one corner." },
-        { ms: 1000, text: "It wobbles. Slides a little. Catches again." },
-        { ms: 900,  text: "Then a dull thud in the flap.", lands: true },
-        { ms: 900,  text: "Behind you the lift doors open. The lift from before. It has only just got up here." },
+        { ms: 900,  text: "It hits the glass, turns once and catches on the edge by one corner.", sound: "glass" },
+        { ms: 1000, text: "It wobbles. Slides a little. Catches again.", sound: "scrape" },
+        { ms: 900,  text: "Then a dull thud in the flap.", lands: true, sound: "thud" },
+        { ms: 900,  text: "Behind you the lift doors open. The lift from before. It has only just got up here.", sound: "ding" },
         { ms: 1200, text: "In the flap lies a filled roll, shrink-wrapped. The label says 'Best before:', and after it somebody has written 'yes' by hand." }
     ],
     // A full backpack: the roll stays where it landed.

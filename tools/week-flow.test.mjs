@@ -3310,6 +3310,33 @@ await ok('A day that ends with its windows open closes them', async () => {
     assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
 });
 
+await ok('The music ducks once for the fall and comes back once', async () => {
+    // The window calls duckMusic from a reactive effect, which may say the
+    // same thing many times over; each repeat would start a fresh fade. And a
+    // track that is not playing has nothing to duck - nor music switched off.
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const fades = [];
+    const track = { paused: false, volume: 0.2 };
+    const box = {
+        ...audio,
+        state: { musicEnabled: true, musicVolume: 0.2, currentMusicTrack: 'elevator' },
+        bgmTracks: { elevator: track },
+        fadeTrack(key, target) { fades.push([key, +target.toFixed(3)]); },
+    };
+    box.duckMusic(false);
+    assert.equal(fades.length, 0, 'un-ducking music that was never ducked started a fade');
+    box.duckMusic(true); box.duckMusic(true);
+    assert.deepEqual(fades, [['elevator', 0.024]], 'the duck has to fade once, to a fraction of the volume');
+    box.duckMusic(false); box.duckMusic(false);
+    assert.deepEqual(fades[1], ['elevator', 0.2], 'the music has to come back to its own volume');
+    assert.equal(fades.length, 2, 'the way back faded twice');
+
+    fades.length = 0;
+    box.state.musicEnabled = false;
+    box.duckMusic(true); box.duckMusic(false);
+    assert.equal(fades.length, 0, 'music that is switched off was faded');
+});
+
 await ok('Nothing is taken from a machine that is not open', () => {
     resetState();
     assert.equal(engine.vendingTake('c4'), false);

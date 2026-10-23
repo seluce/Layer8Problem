@@ -51,7 +51,7 @@ const TREE_POOLS = new Set(['special', 'diary', 'excuses', 'newsTicker', 'vendin
 // first tree with ids, picture paths and emoji between its sentences - walked
 // blind, the picture path that three compartments share would come out as a
 // repeated sentence. The type plate is the machine talking, not prose.
-const TREE_SKIP = { vending: new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'plate']) };
+const TREE_SKIP = { vending: new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'sound', 'plate']) };
 
 // Sentences that repeat by design. Exact match after normalisation.
 //
@@ -87,11 +87,11 @@ const LEGIT_TRIPLES = ['Bissspuren', 'Stillleg', 'Fitnessstudio', 'volllaufen', 
 // editorial memory of "we decided that dates the game".
 const DATED = [
   [/iPhone\s*1?\d\b/i,         'a specific iPhone generation (from 20 on it reads as parody)'],
-  [/\bM[1-9]\s*(Pro|Max)\b/,   'konkrete Apple-Chip-Generation'],
-  [/MacBook[^.!?]*M\d/,        'konkrete MacBook-Generation'],
+  [/\bM[1-9]\s*(Pro|Max)\b/,   'a specific Apple chip generation'],
+  [/MacBook[^.!?]*M\d/,        'a specific MacBook generation'],
   [/Barbie(?! Girl)/,          'cinema summer 2023 (Barbie Girl by Aqua is timeless)'],
-  [/Oppenheimer/,              'Kino-Sommer 2023'],
-  [/\bSims\s*\d\b/,            'konkrete Spiele-Version']
+  [/Oppenheimer/,              'cinema summer 2023'],
+  [/\bSims\s*\d\b/,            'a specific game version']
 ];
 
 // Mechanics vocabulary that must never surface in narration.
@@ -312,7 +312,7 @@ const loc = r => `${r.pool}/${r.id}`;
 let sectionNo = 0;
 const section = (title, findings, cap = 60) => {
   sectionNo++;
-  console.log(`\n== ${sectionNo}) ${title} — ${findings.length} Befund${findings.length === 1 ? '' : 'e'} ==`);
+  console.log(`\n== ${sectionNo}) ${title} — ${findings.length} finding${findings.length === 1 ? '' : 's'} ==`);
   findings.slice(0, cap).forEach(f => console.log('  ' + f));
   if (findings.length > cap) console.log(`  … and ${findings.length - cap} more`);
 };
@@ -384,13 +384,13 @@ section('Game mechanics in the narrative text', mech);
 // Legit triple-consonant compounds exist (Bestellliste) - hence "candidates".
 const typo = [];
 const PUNCT = [
-  [/[!?]\./,           'Satzzeichen-Doppel ("!." / "?.")'],
-  [/(?<!\.)\.\.(?!\.)/,'zwei Punkte statt drei'],
-  [/,,/,               'doppeltes Komma'],
+  [/[!?]\./,           'doubled punctuation ("!." / "?.")'],
+  [/(?<!\.)\.\.(?!\.)/,'two dots instead of three'],
+  [/,,/,               'a double comma'],
   // A dot followed by a word character is a domain or file extension (.ru,
   // .exe) and no finding.
   [/\s+(?:[,;]|\.(?![.\w]))/, 'a space before punctuation (the spoken pause " ..." is allowed)'],
-  [/ {2,}/,            'doppeltes Leerzeichen']
+  [/ {2,}/,            'a double space']
 ];
 for (const r of records) {
   const t = r.text;
@@ -402,13 +402,13 @@ for (const r of records) {
           && !/([aeiouäöü])\1\1/i.test(triWord)
           && !INTENDED_TYPOS.some(w => t.includes(w))
           && !LEGIT_TRIPLES.some(w => triWord.toLowerCase().includes(w.toLowerCase())))
-    typo.push(`[${loc(r)}] ${r.field}: dreifacher Konsonant "…${norm(t).slice(Math.max(0, t.indexOf(tri[0]) - 15), t.indexOf(tri[0]) + 18)}…"`);
+    typo.push(`[${loc(r)}] ${r.field}: triple consonant "…${norm(t).slice(Math.max(0, t.indexOf(tri[0]) - 15), t.indexOf(tri[0]) + 18)}…"`);
   for (const [re, why] of PUNCT) {
     const m = t.match(re);
     if (m) typo.push(`[${loc(r)}] ${r.field}: ${why} "…${norm(t).slice(Math.max(0, t.indexOf(m[0]) - 20), t.indexOf(m[0]) + m[0].length + 20)}…"`);
   }
 }
-section('Tippfehler-Kandidaten', typo);
+section('Typo candidates', typo);
 
 /* ---------- 5) dated references ---------- */
 const dated = [];
@@ -555,9 +555,9 @@ for (const r of records) {
   // Option labels are the fields ending in .t; title and subj are headings.
   if (r.kind !== 'label' || !/\.t$/.test(r.field)) continue;
   if (norm(r.text).length > 80)
-    labels.push(`[${loc(r)}] ${r.field}: ${norm(r.text).length} Zeichen "${norm(r.text).slice(0, 70)}…"`);
+    labels.push(`[${loc(r)}] ${r.field}: ${norm(r.text).length} characters "${norm(r.text).slice(0, 70)}…"`);
   if (/->/.test(r.text))
-    labels.push(`[${loc(r)}] ${r.field}: ASCII-Pfeil "${norm(r.text)}"`);
+    labels.push(`[${loc(r)}] ${r.field}: ASCII arrow "${norm(r.text)}"`);
 }
 section('Conspicuous option captions (over-long or an ASCII arrow)', labels, 60);
 
@@ -586,7 +586,7 @@ for (const r of records) {
   if (phoneIds.has(loc(r))) continue;
   const t = norm(r.text);
   if (/\([^)]*\)\s*$/.test(t))
-    legacyLabels.push(`[${loc(r)}] Klammer:  "${t}"`);
+    legacyLabels.push(`[${loc(r)}] bracket:  "${t}"`);
   // Up to THREE words before the colon. The old pattern took exactly one, so
   // "Paranoid werden: Im Klo runterspülen" walked past it and the section
   // reported 0 for a pool that had five of them.
@@ -670,13 +670,13 @@ if (pools.includes('emails')) {
   const variants = [...byName.entries()]
     .filter(([, set]) => set.size >= 2)
     .sort((a, b) => b[1].size - a[1].size);
-  section('Eine Person, mehrere Absender-Schreibweisen',
+  section('One person, several spellings of the sender',
     variants.map(([name, set]) => `${name}: ${[...set].map(s => `"${s}"`).join('  |  ')}`));
 
   // Canon check: which sender names collide with DB.chars roles is a human
   // read; the inventory makes it a two-minute read instead of a grep session.
   sectionNo++;
-  console.log(`\n== ${sectionNo}) Absender-Inventar (${senders.size} verschiedene) ==`);
+  console.log(`\n== ${sectionNo}) sender inventory (${senders.size} different) ==`);
   [...senders.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .forEach(([s, c]) => console.log(`  ${String(c).padStart(3)}x  ${s}`));
 }

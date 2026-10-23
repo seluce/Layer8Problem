@@ -15,6 +15,11 @@
   line waits until the one before it can have been read (crankDelays in
   engine_vending.js), then for its own beat.
 
+  Each line plays the `sound` it carries in the data, and the office music
+  ducks from the light that stops flickering through the thud - the fall
+  happens in near silence, and the lift's chime brings the music back. A magazine or the
+  printout is one clack and a paper flop: the drop text says 'one turn'.
+
   After the choice the glass folds down to a row of compartment labels with
   the used one lit, and the view follows what the choice opened. Twelve
   compartments that stayed open above a running crank made the choice easy to
@@ -31,7 +36,13 @@
     import { crankDelays } from '../engine/engine_vending.js';
     import { t, tree } from '../i18n/i18n.svelte.js';
 
-    const V = $derived(tree().vending);
+    // Read only while the window is open, and that is load-bearing: the pool
+    // is loaded by openVending(), and a $derived recomputes only when what it
+    // read changes - DB is not reactive. Read once before the load (the music
+    // effect below reads it at mount, through lampStill) and it stayed empty
+    // for good: the window never opened again. Depending on vendingOpen
+    // re-reads it on every open, after the load.
+    const V = $derived(game.vendingOpen ? tree().vending : null);
     const taken = $derived(game.vending?.taken ?? null);
 
     // The crank: how many of its lines are showing, and how many of the
@@ -49,6 +60,7 @@
     // updates, so the lighting has to happen while the grid is still in.
     let folded = $state(false);
     let foldTimer = null;
+    let dropTimer = null;
 
     // A window closed halfway stops the crank and forgets it. The next visit
     // starts with a still coil.
@@ -56,7 +68,8 @@
         if (game.vendingOpen) return;
         clearTimeout(timer);
         clearTimeout(foldTimer);
-        timer = foldTimer = null;
+        clearTimeout(dropTimer);
+        timer = foldTimer = dropTimer = null;
         folded = false;
         crankShown = 0;
         endShown = 0;
@@ -74,6 +87,14 @@
     // that kept flickering under "it stops flickering" would contradict it.
     const lampStill = $derived(landsAt > 0 && endShown >= 1 && endShown <= landsAt);
 
+    // The music holds its breath one line longer than the light: from the
+    // light that stops flickering through the thud, so the roll lands in near
+    // silence, and the lift's chime brings it back. Closing the window, or a
+    // day that ends over it, resets the crank - so the music always returns.
+    // duckMusic ignores a repeat of what it already does.
+    const musicDown = $derived(landsAt > 0 && endShown >= 1 && endShown <= landsAt + 1);
+    $effect(() => engine.duckMusic(musicDown));
+
     function runCrank() {
         const steps = V?.crank ?? [];
         const all = [...steps, ...(V?.crankEnd ?? [])];
@@ -81,6 +102,7 @@
         let i = 0;
         const next = () => {
             if (i === all.length) { cardShown = true; return; }
+            if (all[i].sound) engine.playAudio(all[i].sound);
             if (i < steps.length) crankShown = i + 1;
             else {
                 endShown = i - steps.length + 1;
@@ -115,7 +137,10 @@
     function take(kind) {
         if (!engine.vendingTake(kind)) return;
         foldTimer = setTimeout(() => { folded = true; }, FOLD_PAUSE);
-        if (kind === 'c4') runCrank();
+        if (kind === 'c4') { runCrank(); return; }
+        // 'Eine Umdrehung, und das vorderste Heft fällt': one clack, a paper flop.
+        engine.playAudio('crank');
+        dropTimer = setTimeout(() => engine.playAudio('paper'), 280);
     }
 
     // Only the front compartment of a kind counts as the one used; the other

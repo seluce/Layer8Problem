@@ -323,7 +323,7 @@ for (const [where, entries] of reactive) {
     else seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
     if (e.reqStory) (flagsReq.get(e.reqStory) ?? flagsReq.set(e.reqStory, []).get(e.reqStory)).push(ctx);
   }
-  for (const [id, c] of seen) if (c > 1) err(`Doppelte ID "${id}" in ${where} (${c}x)`);
+  for (const [id, c] of seen) if (c > 1) err(`duplicate id "${id}" in ${where} (${c}x)`);
 }
 
 // Every character named as employee of the month has to exist.
@@ -737,7 +737,7 @@ const checkText = (ctx, field, txt) => {
     if (typeof txt !== 'string') return;
 
     if (txt !== txt.trim())        warn(`${ctx} ${field}: a leading or trailing space`);
-    if (/ {2,}/.test(txt))         warn(`${ctx} ${field}: doppeltes Leerzeichen`);
+    if (/ {2,}/.test(txt))         warn(`${ctx} ${field}: a double space`);
     if (PLACEHOLDER.test(txt))     err (`${ctx} ${field}: a placeholder in the text`);
 
     const t = txt.trim();
@@ -958,15 +958,15 @@ for (const id of itemIds) {
   const NOTE_FIELDS = ['seen', 'flag', 'text'];
   const ids = new Set();
   for (const e of DB.compendium ?? []) {
-    const ctx = `Kompendium "${e.id ?? '?'}"`;
+    const ctx = `compendium "${e.id ?? '?'}"`;
     for (const k of Object.keys(e))
       if (!FIELDS.includes(k)) err(`${ctx}: ${k} is not a known field`);
     if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role and summary are required`);
     // The view groups and colours by category, so an unknown one would show up
     // in no tab at all - invisible, without anything failing.
     if (!['team', 'person', 'place', 'matter'].includes(e.cat))
-      err(`${ctx}: cat "${e.cat}" is unknown - team, person, ort, vorgang are allowed`);
-    if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
+      err(`${ctx}: cat "${e.cat}" is unknown - team, person, place, matter are allowed`);
+    if (ids.has(e.id)) err(`${ctx}: duplicate id`);
     ids.add(e.id);
 
     if (!(e.seen ?? []).length) err(`${ctx}: with no seen the entry is never unlocked`);
@@ -1033,7 +1033,7 @@ for (const ev of DB.emails) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.codePointAt(i);
       if (cp === 0x200B || cp === 0xFEFF)
-        err(`[${where}] unsichtbares Zeichen U+${cp.toString(16).toUpperCase()} an Position ${i}`);
+        err(`[${where}] invisible character U+${cp.toString(16).toUpperCase()} at position ${i}`);
       if (cp === 0xFE0F) {
         const prev = i > 0 ? str.codePointAt(i - (str.charCodeAt(i - 1) >= 0xDC00 ? 2 : 1)) : 0;
         if (prev < 0x2000 || prev === 0xFE0F)
@@ -1369,6 +1369,7 @@ for (const ev of DB.emails) {
   const CRANK_BEATS_MAX_MS = 20000;
   const CRANK_SCREEN_MAX_MS = 90000;
   const { crankDelays } = await import('../src/engine/engine_vending.js');
+  const { VENDING_SOUNDS } = await import('../src/engine/engine_audio.js');
   if (!V) err(`${ctx}: the pool is missing - data_vending.js did not load`);
   else {
     const engineVending = readFileSync('src/engine/engine_vending.js', 'utf8');
@@ -1416,6 +1417,10 @@ for (const ev of DB.emails) {
       if (typeof line.ms !== 'number' || line.ms < 0) { err(`${ctx} crank line ${i}: "ms" has to be a number of milliseconds`); timed = false; }
       else beats += line.ms;
       if (!line.text) err(`${ctx} crank line ${i}: no text`);
+      // playAudio() takes any name and simply makes no sound for one it does
+      // not know - a misspelt clack is silence, at 0 errors and 0 warnings.
+      if (line.sound !== undefined && !VENDING_SOUNDS.includes(line.sound))
+        err(`${ctx} crank line ${i}: sound "${line.sound}" is not one the machine has (${VENDING_SOUNDS.join(', ')}) - the line would play nothing`);
     });
     if (beats > CRANK_BEATS_MAX_MS)
       err(`${ctx}: the crank's beats add up to ${(beats / 1000).toFixed(1)} s with nothing new to read (limit ${CRANK_BEATS_MAX_MS / 1000} s) - the player waits instead of reading`);
@@ -1435,7 +1440,7 @@ for (const ev of DB.emails) {
 
     // The prose follows the same rules as every event. The type plate is the
     // machine talking and stays out; ids, pictures and emoji are not prose.
-    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'plate']);
+    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'sound', 'plate']);
     const walk = (node, path) => {
       if (typeof node === 'string') { checkText(ctx, path, node); return; }
       if (Array.isArray(node)) { node.forEach((x, i) => walk(x, `${path}[${i}]`)); return; }
