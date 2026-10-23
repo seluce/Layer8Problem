@@ -1,9 +1,9 @@
-[6.3.0] - 2026-10-22
+[6.3.0] - 2026-10-23
 
 Something on the third floor for anyone who can keep a secret, and new parts under the hood.
 
 New:
-* Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
+* A new easter egg: Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
 
 The texts:
 * Miller's diary repeats itself less, and now remembers a day with the noticeboard, the intranet or the company chronicle in it - and a little more besides.
