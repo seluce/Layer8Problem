@@ -27,7 +27,7 @@
     import IntranetChantal from './IntranetChantal.svelte';
     import IntranetVision from './IntranetVision.svelte';
     import IntranetSales from './IntranetSales.svelte';
-    import IntranetKantine from './IntranetKantine.svelte';
+    import IntranetCanteen from './IntranetCanteen.svelte';
     import IntranetHR from './IntranetHR.svelte';
     import IntranetImpressum from './IntranetImpressum.svelte';
 
@@ -51,8 +51,8 @@
           url: 'https://hub.globalcorp.internal/vision/interview', view: IntranetVision },
         { id: 'sales',     label: t('intranet.nav.sales'),         accent: 'text-amber-400',   nav: true,
           url: 'https://hub.globalcorp.internal/sales/deals',      view: IntranetSales },
-        { id: 'kantine',   label: t('intranet.nav.kantine'),       accent: 'text-red-400',     nav: true,
-          url: 'https://hub.globalcorp.internal/food-synergies',   view: IntranetKantine },
+        { id: 'canteen',   label: t('intranet.nav.canteen'),       accent: 'text-red-400',     nav: true,
+          url: 'https://hub.globalcorp.internal/food-synergies',   view: IntranetCanteen },
         { id: 'hr',        label: t('intranet.nav.hr'), accent: 'text-purple-400',  nav: true,
           url: 'https://hub.globalcorp.internal/human-capital/',   view: IntranetHR },
         // Reachable through the footer only, exactly as before.

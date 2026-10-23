@@ -86,12 +86,12 @@ export function intranetPages() {
             page: src.sales.page,
         },
 
-        kantine: {
-            page: src.kantine.page,
-            today: data.kantine?.today,
-            service: { ...(src.service[data.kantine?.service] ?? src.service.before) },
-            hygiene: row(src.hygiene, data.kantine?.hygieneIdx),
-            done: data.kantine?.done ? src.service.done : null,
+        canteen: {
+            page: src.canteen.page,
+            today: data.canteen?.today,
+            service: { ...(src.service[data.canteen?.service] ?? src.service.before) },
+            hygiene: row(src.hygiene, data.canteen?.hygieneIdx),
+            done: data.canteen?.done ? src.service.done : null,
         },
 
         impressum: {

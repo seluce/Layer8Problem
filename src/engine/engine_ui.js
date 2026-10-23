@@ -901,7 +901,7 @@ export const ui = {
                 phoenix: !!flags['path_phoenix_storno'],
             },
 
-            kantine: { today, service, hygieneIdx: pick(src.hygiene.length), done: !!this.state.lunchDone },
+            canteen: { today, service, hygieneIdx: pick(src.hygiene.length), done: !!this.state.lunchDone },
 
             impressum: {
                 version: src.impressum.baseVersion + (stats.daysStarted ?? 0),

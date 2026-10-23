@@ -340,7 +340,7 @@ export const intranet = {
        The plan on the wall. Five working days plus the Saturday row,
        which has its own colours and a second line under the day name.
        ================================================================ */
-    kantine: {
+    canteen: {
         page: {
             kind: "menu",
             title: "Cafeteria: \"The Agile Kitchen\" 🥗",

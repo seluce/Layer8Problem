@@ -19,7 +19,7 @@ export const de = {
     'intranet.nav.chantal':        'Feel-Good Hub',
     'intranet.nav.vision':         'Vision',
     'intranet.nav.sales':          'Sales',
-    'intranet.nav.kantine':        'Kantine',
+    'intranet.nav.canteen':        'Kantine',
     'intranet.nav.hr':             'Human Capital',
     'intranet.nav.impressum':      'Impressum',
 
