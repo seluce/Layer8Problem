@@ -726,6 +726,7 @@ export const ui = {
         // empty pages beat a dead button.
         try { await ensure('lore'); } catch { /* the book opens with what there is */ }
         this.state.loreOpen = true;
+        this.state.loreRead = true;          // for tonight's diary
         this.lockScroll('lore');
     },
 
@@ -759,7 +760,17 @@ export const ui = {
         await ensure('intranet');
         this.buildIntranet();
         this.state.intranetOpen = true;
+        this.state.intranetVisited = true;   // for tonight's diary
         this.lockScroll('intranet');
+    },
+
+    /**
+     * A personnel file opened behind the HR login, for tonight's diary.
+     * By record id, never by name: the account names differ by language.
+     */
+    noteHrRecord: function(record) {
+        const read = this.state.hrRecordsRead ??= [];
+        if (record && !read.includes(record)) read.push(record);
     },
 
     /**

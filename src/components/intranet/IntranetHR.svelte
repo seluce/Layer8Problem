@@ -18,6 +18,7 @@
 <script>
     import { state as game } from '../../engine/engine_state.svelte.js';
     import { intranetPages } from '../../engine/intranet_pages.js';
+    import { engine } from '../../engine.js';
 
     const data = $derived(intranetPages()?.hr ?? null);
     const page = $derived(data?.page ?? null);
@@ -64,6 +65,7 @@
         if (account && pass.trim() === PASSWORD) {
             file = account.record;
             failed = false;
+            engine.noteHrRecord(account.record);   // tonight's diary knows
         } else {
             failed = true;
             pass = '';

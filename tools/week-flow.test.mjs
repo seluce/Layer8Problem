@@ -3359,6 +3359,43 @@ await ok("That evening the diary refuses to write about it", async () => {
     assert.ok(Object.keys(freshDay(1.0)).includes('vendingVisited'), 'the next morning would still remember it');
 });
 
+await ok('The other easter eggs leave their line in the diary too', async () => {
+    // Noticeboard, intranet, the personnel files behind the HR login and the
+    // chronicle (6.3). Each through its real opener, then the evening's detail
+    // line. The day is set up so that no figure competes: 3 tickets, 2 cups.
+    await ensure('diary', 'board', 'intranet', 'lore');
+    const detailOf = (entry) => {
+        for (const p of entry.paragraphs) for (const part of (p.parts ?? [])) {
+            const ref = part.ref ?? part.intro?.ref;
+            if (ref?.path?.[0] === 'detail') return DB.diary.detail[ref.path[1]].id;
+        }
+        return null;
+    };
+    const day = () => { resetState(); engine.startWeek('easy'); state.tickets = 3; state.coffeeConsumed = 2; };
+    const asUi = { ...engine, buildIntranet() {} };   // the page itself needs the DOM
+
+    day();
+    assert.equal(detailOf(buildDiary(state, 'WIN')), null, 'a plain day already has a detail line - the probe would prove nothing');
+
+    day(); await ui.openBoard.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_board', 'the noticeboard is not in the diary');
+    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_intranet', 'the intranet is not in the diary');
+    day(); await ui.showLoreModal.call(asUi); ui.closeLoreModal.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_lore', 'the chronicle is not in the diary');
+    day(); ui.noteHrRecord.call(asUi, 'mueller');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_own', 'his own file is not in the diary');
+    day(); ui.noteHrRecord.call(asUi, 'schnoesel');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_other', "Schnösel's file is not in the diary");
+
+    // The intranet and a file on the same day: the file is the secret, it wins.
+    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi); ui.noteHrRecord.call(asUi, 'mueller');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_own', 'the plain intranet outranked the personnel file');
+    // Closing the window keeps the note: the diary is written at night.
+    for (const key of ['intranetVisited', 'hrRecordsRead', 'loreRead'])
+        assert.ok(Object.keys(freshDay(1.0)).includes(key), `${key} would outlive the day`);
+});
+
 await ok('Nothing is taken from a machine that is not open', () => {
     resetState();
     assert.equal(engine.vendingTake('c4'), false);

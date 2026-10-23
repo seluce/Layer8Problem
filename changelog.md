@@ -6,6 +6,7 @@ New:
 * Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
 
 The texts:
+* Miller's diary now remembers a day with the noticeboard, the intranet or the company chronicle in it - and a little more besides.
 * A handful of notices and mails no longer name a year the calendar would sooner or later overtake.
 
 Bug fixes:

@@ -679,6 +679,54 @@ export const diary = {
             ]
         },
         {
+            // The noticeboard, opened while the coffee machine dawdles
+            // (cof_bulletin_board). Rank 2: it draws against the day's figures.
+            id: "detail_board", rank: 2, when: d => d.board,
+            lines: [
+                "Beim Warten auf den Kaffee das Schwarze Brett gelesen. Ich weiß jetzt Dinge über dieses Haus, nach denen ich nicht gefragt habe.",
+                "Am Schwarzen Brett hängt, was niemand per Mail zu schreiben wagt. Ich habe alles gelesen.",
+                "Das Schwarze Brett studiert. Der Kaffee war danach kalt, die Zettel waren es wert."
+            ]
+        },
+        {
+            // The intranet, opened in a panic with Dr. Wichtig in the doorway
+            // (sq_boss_snoop). Rank 2, like the board.
+            id: "detail_intranet", rank: 2, when: d => d.intranet,
+            lines: [
+                "Als Dr. Wichtig in der Tür stand, war auf meinem Bildschirm zufällig das Intranet offen. Er wirkte zufrieden.",
+                "Heute war ich im Intranet. Nicht freiwillig, aber gründlich.",
+                "Ich habe den Speiseplan der Agile Kitchen gelesen, von vorn bis hinten. So sieht Panik bei mir aus."
+            ]
+        },
+        {
+            // Behind the HR login: Mueller's own file. Rank 3 - a secret
+            // inside the intranet, and rarer than anything else on the page.
+            id: "detail_hr_own", rank: 3, when: d => d.hrOwn,
+            lines: [
+                "Heute meine eigene Personalakte gelesen. Die Firma kennt mich besser, als mir lieb ist, und schlechter, als ich dachte.",
+                "Meine Personalakte ist gut geschützt: mit demselben Passwort wie jede andere."
+            ]
+        },
+        {
+            // Behind the HR login: Schnösel's file, the password off the
+            // ticker. Rank 3, like his own.
+            id: "detail_hr_other", rank: 3, when: d => d.hrOther,
+            lines: [
+                "Ich weiß jetzt, was in Schnösels Personalakte steht. Das Passwort stand im Ticker. Schuld ist die IT, also ich.",
+                "Schnösels Personalakte gelesen. Vierzehn Monate Probezeit, drei Stunden Anfahrt, und er hat sich trotzdem beworben."
+            ]
+        },
+        {
+            // The company chronicle, from the book in the backpack. Rank 1:
+            // it can be opened every day, and should not crowd out the day.
+            id: "detail_lore", rank: 1, when: d => d.lore,
+            lines: [
+                "Heute in der Firmenchronik gelesen. Der Baron hätte mich eingestellt, fürchte ich.",
+                "Ich habe in der Chronik geblättert. Jede Krise dieser Firma sieht im Rückblick wie ein Plan aus.",
+                "Die Firmenchronik gelesen. Ganz hinten ist noch Platz, und ich weiß, wer ihn füllt."
+            ]
+        },
+        {
             id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
             lines: [
                 "{streak} Tage am Stück überstanden. Meine Erwartungen an mich selbst sinken erfreulich schnell."

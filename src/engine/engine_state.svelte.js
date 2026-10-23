@@ -43,11 +43,21 @@ export function freshDay(mult = 1.0) {
         // Has the 13:37 moment already been shown today? (see checkLeetMoment)
         leetSeen: false,
 
-        // Was the vending machine on the third floor opened today? Only the
-        // diary asks, and Mueller then refuses to write about it (6.3,
-        // data_diary.js, detail_vending). Day-scoped on purpose: a reloaded
-        // day still knows, and the next morning forgets.
+        // What the day's easter eggs left behind, for tonight's diary (6.3,
+        // data_diary.js, the detail slot). Day-scoped on purpose: a reloaded
+        // day still knows, and the next morning forgets. The noticeboard needs
+        // no field of its own - boardNotes above is drawn on its first open.
+        //   vendingVisited  the machine on the third floor was opened -
+        //                   Mueller then refuses to write about it
+        //   intranetVisited the intranet was opened
+        //   hrRecordsRead   which personnel files were opened behind the HR
+        //                   login: 'schnoesel', 'mueller' (record ids from
+        //                   data_intranet.js, hr.page.accounts)
+        //   loreRead        the company chronicle was opened
         vendingVisited: false,
+        intranetVisited: false,
+        hrRecordsRead: [],
+        loreRead: false,
 
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,

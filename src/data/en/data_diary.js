@@ -704,6 +704,54 @@ export const diary = {
             ]
         },
         {
+            // The noticeboard, opened while the coffee machine dawdles
+            // (cof_bulletin_board). Rank 2: it draws against the day's figures.
+            id: "detail_board", rank: 2, when: d => d.board,
+            lines: [
+                "Read the noticeboard while waiting for the coffee. I now know things about this building I never asked about.",
+                "The noticeboard holds everything nobody dares to put in an email. I read all of it.",
+                "Studied the noticeboard. The coffee was cold afterwards; the notes were worth it."
+            ]
+        },
+        {
+            // The intranet, opened in a panic with Dr. Wichtig in the doorway
+            // (sq_boss_snoop). Rank 2, like the board.
+            id: "detail_intranet", rank: 2, when: d => d.intranet,
+            lines: [
+                "When Dr Wichtig stood in the doorway, the intranet happened to be open on my screen. He seemed pleased.",
+                "Today I was on the intranet. Not voluntarily, but thoroughly.",
+                "I read the Agile Kitchen's menu from top to bottom. That is what panic looks like on me."
+            ]
+        },
+        {
+            // Behind the HR login: Mueller's own file. Rank 3 - a secret
+            // inside the intranet, and rarer than anything else on the page.
+            id: "detail_hr_own", rank: 3, when: d => d.hrOwn,
+            lines: [
+                "Read my own personnel file today. The company knows me better than I would like, and worse than I thought.",
+                "My personnel file is well protected: by the same password as every other one."
+            ]
+        },
+        {
+            // Behind the HR login: Schnösel's file, the password off the
+            // ticker. Rank 3, like his own.
+            id: "detail_hr_other", rank: 3, when: d => d.hrOther,
+            lines: [
+                "I now know what is in Schnösel's personnel file. The password was on the ticker. IT is to blame, which is to say me.",
+                "Read Schnösel's personnel file. Fourteen months' probation, three hours to get here, and he applied anyway."
+            ]
+        },
+        {
+            // The company chronicle, from the book in the backpack. Rank 1:
+            // it can be opened every day, and should not crowd out the day.
+            id: "detail_lore", rank: 1, when: d => d.lore,
+            lines: [
+                "Read in the company chronicle today. The Baron would have hired me, I fear.",
+                "Leafed through the chronicle. Every crisis this company ever had looks like a plan in hindsight.",
+                "Read the company chronicle. There is still room at the very back, and I know who fills it."
+            ]
+        },
+        {
             id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
             lines: [
                 "{streak} days in a row got through. My expectations of myself are sinking pleasingly fast."

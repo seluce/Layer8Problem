@@ -17,6 +17,12 @@
  *   lunch        the break was taken
  *   leet         the 13:37 moment was seen
  *   vending      the machine on the third floor was opened (6.3)
+ *   board / intranet / lore
+ *                the noticeboard, the intranet, the company chronicle was
+ *                opened today (6.3)
+ *   hrOwn / hrOther
+ *                Mueller's own personnel file, or Schnösel's, was read behind
+ *                the HR login (6.3)
  *   coffee       cups drunk
  *   mailsIgnored mails deleted or run out on
  *   tickets      still open at the end
@@ -196,6 +202,13 @@ function factsOf(state, endReason) {
         lunch: !!state.lunchDone,
         leet: !!state.leetSeen,
         vending: !!state.vendingVisited,
+        // boardNotes is drawn on the board's first open of the day, so a
+        // filled list is the visit.
+        board: (state.boardNotes?.length ?? 0) > 0,
+        intranet: !!state.intranetVisited,
+        hrOwn: (state.hrRecordsRead ?? []).includes('mueller'),
+        hrOther: (state.hrRecordsRead ?? []).includes('schnoesel'),
+        lore: !!state.loreRead,
         coffee: state.coffeeConsumed ?? 0,
         mailsIgnored: state.emailsIgnored ?? 0,
         tickets: state.tickets ?? 0,
