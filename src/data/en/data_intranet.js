@@ -204,7 +204,7 @@ export const intranet = {
             id: "feed_kalk_ignor", reqStory: "path_kalk_ignor",
             author: "Central Purchasing", handle: "@Procurement",
             initials: "CP", tone: "#60a5fa",
-            text: "Good news: the request for descaler has been taken into the 2027 procurement round. Until then, holding the button down counts as an officially signed-off interim solution. Many thanks to IT for the pragmatic attitude."
+            text: "Good news: the request for descaler has been taken into the procurement round after next. Until then, holding the button down counts as an officially signed-off interim solution. Many thanks to IT for the pragmatic attitude."
         },
         {
             id: "feed_karton", reqStory: "path_karton_kult",
@@ -946,7 +946,7 @@ export const intranet = {
             {
                 min: -100,
                 label: "flight risk elevated",
-                text: "There are reservations among his colleagues. As a countermeasure, a personal meeting has been scheduled. The appointment falls in the fourth quarter of 2029."
+                text: "There are reservations among his colleagues. As a countermeasure, a personal meeting has been scheduled. The appointment falls in the fourth quarter, three years from now."
             }
         ],
 

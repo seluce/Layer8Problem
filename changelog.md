@@ -1,3 +1,23 @@
+[6.3.0] - 2026-10-23
+
+Something on the third floor for anyone who can keep a secret, and new parts under the hood.
+
+New:
+* A new easter egg: Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
+
+The texts:
+* Miller's diary repeats itself less, and now remembers a day with the noticeboard, the intranet or the company chronicle in it - and a little more besides.
+* A handful of notices and mails no longer name a year the calendar would sooner or later overtake.
+
+Bug fixes:
+* Space no longer presses the button behind an open window, and the action keys no longer start anything behind the noticeboard.
+* The intranet, the noticeboard and the company chronicle now close with the day instead of standing open into the next morning.
+
+Under the hood:
+* Svelte, Vite, Electron and the build tools are on their current versions.
+
+---
+
 [6.2.1] - 2026-08-31
 
 Maintenance, and two things the game held out but never handed over: an achievement and a chronicle line.

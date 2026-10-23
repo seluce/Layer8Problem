@@ -1931,7 +1931,7 @@ export const server = [
     {
         id: "srv_label_fail",
         title: "The Electrician's Blunder",
-        text: "You stare at the air conditioning control panel. A handwritten note is stuck over the dials: 'WARNING: The electrician was colour-blind! BLUE heats (Warm) and RED cools (Cold)! Do not touch, not being repaired until 2030.'",
+        text: "You stare at the air conditioning control panel. A handwritten note is stuck over the dials: 'WARNING: The electrician was colour-blind! BLUE heats (Warm) and RED cools (Cold)! Do not touch, not being repaired until the next refit.'",
         opts: [
             { 
                 t: "Ignore the note", 
@@ -2967,7 +2967,7 @@ export const server = [
                 t: "Wipe the dust off and investigate",
                 next: "path_ghost_found",
                 m: 15, l: -10, a: 5, b: 0,
-                r: "You wipe the dust away. Label: 'Project PHOENIX - 1998 - Do Not Touch'. It has been running for 25 years. Respect."
+                r: "You wipe the dust away. Label: 'Project PHOENIX - 1998 - Do Not Touch'. It has been running ever since. Not one restart. Respect."
             },
             { 
                 t: "Ignore it",

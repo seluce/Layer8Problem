@@ -23,12 +23,13 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
-  components/           40 Svelte components, 8 of them for the intranet
-  engine/               12 modules; engine_state.svelte.js holds the state,
+  components/           41 Svelte components, 8 of them for the intranet
+  engine/               15 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
-                        observer list the tutorial listens on
-  data/de/              23 data files, the German source
-  data/en/              the same 23, in English
+                        observer list the tutorial listens on,
+                        engine_vending.js the machine on the third floor
+  data/de/              24 data files, the German source
+  data/en/              the same 24, in English
   i18n/                 language selection and interface strings
   assets/               processed by Vite, see below
 
@@ -44,8 +45,6 @@ tools/
   simulate-week.mjs     week simulation, npm run sim:week
   report-prose.mjs      prose and style report, node tools/report-prose.mjs [pool]
   scan-fields.mjs       every text field of both trees, with no word floor
-  check-echoes.mjs      word-sequence echoes against the already-translated stock
-  normalize-quotes.mjs  quotation marks, one-off
   make-steam-presence.mjs      friends-list strings for Steamworks
   make-steam-achievements.mjs  achievement strings for Steamworks
   dev-week.js          console tool for the week mode, see below
@@ -216,7 +215,7 @@ the rest), same numbers (`m`, `l`, `a`, `b`, `timer`, reputation values,
 thresholds) — and since 6.0 the same **file inventory** as well, because a file
 missing from the English tree would otherwise only surface at runtime, as
 `Unknown variable dynamic import`. Prose that reads identically in both trees is
-reported under "NOCH DEUTSCH": not an error, but the work list.
+reported under "STILL GERMAN": not an error, but the work list.
 
 **`lint-i18n.mjs` checks the interface strings**, and it exists because a
 missing key goes wrong **quietly**: `t()` falls back to English and then to the
@@ -249,23 +248,16 @@ numbers whatever the selection. The
 tool knows the legitimate exceptions and does not report them: subject lines,
 caller displays, chat messages and deliberate onomatopoeia.
 
-`normalize-quotes.mjs` is a one-off tool, and repeatable — a second run changes
-nothing. It makes two passes over the quotation marks, see below. `--dry`
-reports without writing.
-
 The order of the options was distributed once with `reorder-opts.mjs`
 (beforehand the cheapest option sat at the top in 53 % of events). That script
 is done and removed. The target distribution is in `EVENT-DOKTRIN.md` §2a and
 has been held by hand ever since; it belongs re-measured after every wave,
 because the obvious solution drifts upwards on its own while writing.
 
-Two tools carry the bilingual work, and neither is a gate: `scan-fields.mjs`
+One tool carries the bilingual work, and it is not a gate: `scan-fields.mjs`
 reports **every** text field of both trees as identical or different, with no
 word floor — that is how the completeness of a translation block is proven,
 never off the number from `lint-parity`, which only counts from four words up.
-`check-echoes.mjs` looks for word sequences of the freshly translated pool in
-the already-translated stock; many translation-born echoes are four words long
-and therefore sit below the prose report's threshold.
 
 A complete manual for every tool is in `tools/TOOLS.md`.
 

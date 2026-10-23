@@ -9,6 +9,14 @@ import { recipeKey, renderRecipe } from './recipe.js';
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
 
+// The windows that can stand over the terminal while a result is on screen -
+// see windowOverTerminal(). The same ones the Escape key closes.
+const WINDOWS_OVER_TERMINAL = [
+    'item-confirm-modal', 'keybind-modal', 'save-export-modal', 'save-import-modal',
+    'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
+    'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
+];
+
 export const ui = {
 
     /**
@@ -476,6 +484,46 @@ export const ui = {
     },
 
     /**
+     * Does a window stand over the terminal?
+     *
+     * The keyboard asks this before it reaches THROUGH one. Until 6.3 it did
+     * not: Space pressed the continue button behind an open noticeboard - and
+     * behind the vending machine, whose option can carry the clock past noon,
+     * so the button under it may well say lunch break, or at 16:30 closing
+     * time, and either started behind the player's back. The noticeboard is
+     * also the one window that opens without locking the page's scrolling, so
+     * Q, W, E and R went through it too and started a coffee break behind it.
+     *
+     * The same windows the Escape key closes in src/engine.js, asked through
+     * the same encoding. The mail and the warning letters are not on the list:
+     * the keyboard handles both itself, before it gets this far.
+     */
+    windowOverTerminal: function() {
+        const s = this.state;
+        if (s.intranetOpen || s.loreOpen || s.vendingOpen) return true;
+        return WINDOWS_OVER_TERMINAL.some(id => this.isOverlayOpen(id));
+    },
+
+    /**
+     * Closes the windows that belong to the working day, for finishGame().
+     *
+     * A mail can drop over any of them on its two-second timer, and answering
+     * it near closing time ends the day from up there. Until 6.3 every one of
+     * them outlived the day: the intranet stood over the next morning's
+     * terminal, the noticeboard too - empty, because the new day had cleared
+     * its notes - the vending machine with its take unspent, and the
+     * chronicle even covered the night screen, standing above it. Measured in
+     * the built game, Tuesday into Wednesday. Each closer is safe on a window
+     * that is not open.
+     */
+    closeDayWindows: function() {
+        if (this.state.intranetOpen) this.closeIntranet();
+        if (this.state.loreOpen) this.closeLoreModal();
+        if (this.state.vendingOpen) this.closeVending();
+        if (this.isOverlayOpen('board-modal')) this.closeBoard();
+    },
+
+    /**
      * The windows that stand between loading the page and playing: the intro,
      * the question about an interrupted workday, and the difficulty picker.
      *
@@ -678,6 +726,7 @@ export const ui = {
         // empty pages beat a dead button.
         try { await ensure('lore'); } catch { /* the book opens with what there is */ }
         this.state.loreOpen = true;
+        this.state.loreRead = true;          // for tonight's diary
         this.lockScroll('lore');
     },
 
@@ -711,7 +760,17 @@ export const ui = {
         await ensure('intranet');
         this.buildIntranet();
         this.state.intranetOpen = true;
+        this.state.intranetVisited = true;   // for tonight's diary
         this.lockScroll('intranet');
+    },
+
+    /**
+     * A personnel file opened behind the HR login, for tonight's diary.
+     * By record id, never by name: the account names differ by language.
+     */
+    noteHrRecord: function(record) {
+        const read = this.state.hrRecordsRead ??= [];
+        if (record && !read.includes(record)) read.push(record);
     },
 
     /**

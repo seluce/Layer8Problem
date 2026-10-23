@@ -1,5 +1,111 @@
 import { KEYS } from './keys.js';
 
+// --- The vending machine's voice (6.3) ---------------------------------------
+// The first sounds in the set that are more than one oscillator: a coil, a
+// pane of glass and a magazine need noise, and noise needs a buffer. Still no
+// audio FILES - generated like everything else here; by GLOSSAR 2a the
+// machine is what speaks, and this one is a machine. Loudness stays at the
+// level of the rest - measured, not guessed: rendered offline at 50% volume,
+// each lands between 0.07 and 0.11 peak like the game's own clicks and mails.
+// Filtered noise loses most of its energy in the filter, which is why the
+// scrape's numbers look large. The low thump peaks higher (0.19) because the
+// ear hears low notes quieter. Whether they SOUND right was decided by ear, on
+// a probe page that played each one next to the game's own; the page went
+// once they were accepted.
+
+let noise = null;
+const noiseBuffer = (ctx) => {
+    if (noise && noise.sampleRate === ctx.sampleRate) return noise;
+    noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const d = noise.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    return noise;
+};
+
+// One shape for both helpers: up from silence in `attack`, down again over
+// `dur`. Exponential ramps cannot reach zero, hence the 0.0001 at both ends.
+const envelope = (ctx, t, peak, attack, dur) => {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(peak, t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(ctx.destination);
+    return g;
+};
+
+/** Filtered noise: ticks, clacks, scrapes, paper. */
+const burst = (ctx, t, { dur, filter = 'bandpass', freq, to = freq, q = 1, peak, attack = 0.002 }) => {
+    const src = ctx.createBufferSource();
+    src.buffer = noiseBuffer(ctx);
+    const f = ctx.createBiquadFilter();
+    f.type = filter;
+    f.Q.value = q;
+    f.frequency.setValueAtTime(freq, t);
+    if (to !== freq) f.frequency.exponentialRampToValueAtTime(to, t + dur);
+    src.connect(f);
+    f.connect(envelope(ctx, t, peak, attack, dur));
+    // A different stretch of the buffer each time, so two ticks never match.
+    src.start(t, Math.random() * 0.5);
+    src.stop(t + dur + 0.02);
+};
+
+/** A pitched voice that falls or rings out: knocks, glass, the lift. */
+const ring = (ctx, t, { wave = 'sine', freq, to = freq, dur, peak, attack = 0.003 }) => {
+    const o = ctx.createOscillator();
+    o.type = wave;
+    o.frequency.setValueAtTime(freq, t);
+    if (to !== freq) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    o.connect(envelope(ctx, t, peak, attack, dur));
+    o.start(t);
+    o.stop(t + dur + 0.02);
+};
+
+const VENDING_VOICES = {
+    // One turn of the coil by hand: the pawl ticks over three teeth, then the
+    // coil drops into place with a clack and a knock through the cabinet.
+    // Every turn sounds the same - the sameness is the joke.
+    crank: (ctx, t, v) => {
+        for (const [dt, p] of [[0, 0.10], [0.035, 0.08], [0.07, 0.06]])
+            burst(ctx, t + dt, { dur: 0.018, freq: 3200, q: 4, peak: p * v });
+        burst(ctx, t + 0.12, { dur: 0.05, freq: 1300, q: 2.5, peak: 0.22 * v });
+        ring(ctx, t + 0.12, { freq: 150, to: 70, dur: 0.08, peak: 0.18 * v });
+    },
+    // The roll hits the pane: a dull knock with a short glassy ring on top.
+    glass: (ctx, t, v) => {
+        burst(ctx, t, { dur: 0.02, filter: 'highpass', freq: 2500, peak: 0.10 * v });
+        ring(ctx, t, { freq: 220, to: 160, dur: 0.06, peak: 0.12 * v });
+        ring(ctx, t, { freq: 1180, dur: 0.22, peak: 0.07 * v });
+        ring(ctx, t, { freq: 2960, dur: 0.12, peak: 0.03 * v });
+    },
+    // It slides a little and catches again: a rising scrape, then a tick.
+    scrape: (ctx, t, v) => {
+        burst(ctx, t, { dur: 0.32, freq: 700, to: 1600, q: 1.2, peak: 0.45 * v, attack: 0.04 });
+        burst(ctx, t + 0.34, { dur: 0.03, freq: 1300, q: 1.5, peak: 0.30 * v });
+    },
+    // The thud in the flap: low and soft, then the flap rattles twice.
+    thud: (ctx, t, v) => {
+        ring(ctx, t, { freq: 115, to: 42, dur: 0.28, peak: 0.42 * v });
+        burst(ctx, t, { dur: 0.09, filter: 'lowpass', freq: 380, peak: 0.30 * v });
+        burst(ctx, t + 0.07, { dur: 0.03, freq: 650, q: 3, peak: 0.06 * v });
+        burst(ctx, t + 0.13, { dur: 0.025, freq: 700, q: 3, peak: 0.035 * v });
+    },
+    // The lift arrives: one soft chime with a long tail. One, because it came
+    // UP - two chimes would be a lift going down.
+    ding: (ctx, t, v) => {
+        ring(ctx, t, { freq: 1046.5, dur: 1.6, peak: 0.10 * v, attack: 0.004 });
+        ring(ctx, t, { freq: 2093, dur: 0.6, peak: 0.025 * v });
+        ring(ctx, t, { freq: 3140, dur: 0.25, peak: 0.012 * v });
+    },
+    // A magazine or the printout drops into the flap: a paper flop.
+    paper: (ctx, t, v) => {
+        burst(ctx, t, { dur: 0.12, filter: 'lowpass', freq: 2600, to: 900, peak: 0.26 * v, attack: 0.004 });
+        burst(ctx, t, { dur: 0.015, filter: 'highpass', freq: 3500, peak: 0.11 * v });
+    },
+};
+
+/** The names a `sound` in data_vending.js may carry. lint-data checks them. */
+export const VENDING_SOUNDS = Object.keys(VENDING_VOICES);
+
 export const audio = {
 
    // --- SYNTHETISCHER SOUND ---
@@ -21,6 +127,11 @@ export const audio = {
             }
             
             const t = this.audioCtx.currentTime + 0.015; 
+
+            // The vending machine's sounds build their own graphs.
+            const voice = VENDING_VOICES[type];
+            if (voice) { voice(this.audioCtx, t, vol); return; }
+
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
             
@@ -365,6 +476,24 @@ export const audio = {
         }
     },
     
+    /**
+     * Holds the office music down while something on screen wants silence:
+     * the vending machine's fall (6.3), from the moment the stairwell light
+     * stops flickering until the lift arrives. Fades rather than cuts, and
+     * only the track that is meant to be audible - a paused or switched-off
+     * track has nothing to duck. Idempotent, so a reactive caller may say
+     * false as often as it likes.
+     */
+    musicDucked: false,
+    duckMusic: function(on) {
+        if (on === this.musicDucked) return;
+        this.musicDucked = on;
+        const key = this.state.currentMusicTrack;
+        const track = this.bgmTracks?.[key];
+        if (!this.state.musicEnabled || !track || track.paused) return;
+        this.fadeTrack(key, on ? this.state.musicVolume * 0.12 : this.state.musicVolume, on ? 900 : 700);
+    },
+
     setVolume: function(val) {
         this.state.audioVolume = parseFloat(val);
         localStorage.setItem(KEYS.audioVolume, val);

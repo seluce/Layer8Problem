@@ -1315,7 +1315,7 @@ export const sidequests = [
 		char: "Frau Elster",
         kind: "text",
         title: "The Dragon Guards the Hoard",
-        text: "Ms Elster is sitting with folded arms on the file 'Budget 2024' that you urgently need. 'I am not releasing that! Over my dead body!' She looks pale and low on sugar. Her stomach rumbles audibly.",
+        text: "Ms Elster is sitting with folded arms on the file 'Budget Planning' that you urgently need. 'I am not releasing that! Over my dead body!' She looks pale and low on sugar. Her stomach rumbles audibly.",
         opts: [
             { 
                 t: "Fling the window open and rely on the draught",
@@ -6538,7 +6538,7 @@ export const sidequests = [
         {
             t: "Finally disable the account properly",
             m: 15, l: -5, a: 5, b: -5,
-            r: "While disabling it you find: 4,213 unread emails, a forwarding rule to an external address and a calendar full of recurring meetings up to 2031. You end it all, document it cleanly and feel as though you have pensioned off a ghost."
+            r: "While disabling it you find: 4,213 unread emails, a forwarding rule to an external address and a calendar full of recurring meetings with no end date. You end it all, document it cleanly and feel as though you have pensioned off a ghost."
         },
         {
             t: "Write Rademacher an email",
@@ -7260,7 +7260,7 @@ export const sidequests = [
         {
             t: "Take neutral minutes and quietly correct the figures",
             m: 20, l: -5, a: 10, b: -10,
-            r: "You minute every statement correctly - and add the current figures in brackets ('Note from the minutes: 2026 figures differ'). The minutes go to everybody, Dr Wichtig included. The notes work like a silent advocate. Item 3 dies quietly of the facts in the next session."
+            r: "You minute every statement correctly - and add the current figures in brackets ('Note from the minutes: current figures differ'). The minutes go to everybody, Dr Wichtig included. The notes work like a silent advocate. Item 3 dies quietly of the facts in the next session."
         }
     ]
 },
@@ -7774,28 +7774,26 @@ export const sidequests = [
     id: "sq_kevin_geheim_2",
     char: "Kevin",
     kind: "text",
+    title: "Back Section, Third Floor",
     reqStory: "sq_kevin_termin",
     reqStoryAge: 1,
-    title: "Back Section, Third Floor",
-    text: "Kevin is waiting in the stairwell where the light flickers, and looks round twice although nobody is there. Then he steps aside. Behind him stands an old vending machine, unplugged, no price labels. 'That has not been restocked since the refit', says Kevin. 'But compartment C4 is jammed. And deliveries still go into C4. Do not ask why.'",
+    text: "Kevin is waiting in the stairwell where the light flickers, and looks round twice although nobody is there. Then he steps aside. Behind him stands an old vending machine, unplugged. 'That has not been restocked since the refit', says Kevin. 'But compartment C4 is jammed. And deliveries still go into C4. Do not ask why.' He nods solemnly. 'Welcome to the club.' Which club, you do not ask. When you look up from the machine, he is already on the stairs.",
     opts: [
         {
-            t: "'Kevin. Who restocks a dead machine?'",
-            m: 10, l: 0, a: 5, b: 0,
+            t: "'Kevin! Who restocks a dead machine?'",
             rep: { "Kevin": -5 },
-            r: "Kevin looks at you for a long moment. 'Do you always have to ask everything to death?' He takes the sandwich himself and goes. The light flickers after you."
+            m: 10, l: 0, a: 5, b: 0,
+            r: "Kevin stops on the stairs and looks at you for a long moment. 'Do you always have to ask everything to death?' He comes back up the steps and stands in front of the glass until you have gone. The light flickers after you."
         },
         {
-            t: "Open compartment C4",
+            t: "Crouch down in front of the glass",
             m: 10, l: 0, a: -10, b: 0,
-            loot: "sandwich",
-            r: "The compartment gives way after a gentle tug. Inside: one shrink-wrapped sandwich, best-before date in the distant future, origin unclear. Kevin nods solemnly. 'Welcome to the club.' Which club, you do not ask. Some doors are better closed behind you."
+            r: "CMD:OPEN_VENDING"
         },
         {
-            t: "Let Kevin have the sandwich",
-            m: 5, l: 0, a: -5, b: 0,
-            rep: { "Kevin": 5 },
-            r: "'You do not want it?' Kevin takes it with the respect of a man who can appreciate self-denial. The compartment jams shut again. You take no loot away, only a location and a procedure. Knowledge is a supply too."
+            t: "Keep walking",
+            m: 5, l: 0, a: 0, b: 0,
+            r: "You keep walking. Behind you the light flickers once, as if it had expected more of you."
         }
     ]
 },

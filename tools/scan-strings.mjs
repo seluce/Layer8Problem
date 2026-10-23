@@ -108,7 +108,7 @@ const DEFAULT_TARGETS = [
  * lint-i18n rule 4. Six hundred and fifty entries would bury every other
  * finding, and not one of them would be new.
  *
- * src/data/ is the event pools - 23 files per tree, checked by lint-parity.
+ * src/data/ is the event pools - 24 files per tree, checked by lint-parity.
  */
 const SKIPPED = [
     ['src/i18n/de.js', 'the dictionary, German by nature'],

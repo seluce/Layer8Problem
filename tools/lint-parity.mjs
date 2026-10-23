@@ -31,16 +31,15 @@
  */
 
 import { readdirSync } from 'fs';
-import { DB, loadCore, ensure, setLanguage } from '../src/data.js';
+import { DB, loadCore, ensure, setLanguage, POOL_NAMES, CORE_NAMES } from '../src/data.js';
 
-const POOLS = [
-    'board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails',
-    'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests',
-    'achievements', 'chars', 'excuses', 'items', 'moods', 'newsTicker',
-    'special', 'tutorial'
-];
-
-const LAZY = POOLS.slice(0, 15);
+// The lists data.js loads from, not a copy of them. Until 6.3 this file kept
+// its own, and a pool added in data.js but not here was never compared: the
+// inventory below caught a file missing from ONE tree, not a file both trees
+// had and nobody had listed. data_vending.js went through as "in step" that
+// way on its first run, with German prose in the English tree.
+const POOLS = [...POOL_NAMES, ...CORE_NAMES];
+const LAZY = POOL_NAMES;
 
 /** Keys whose value is an identifier: it must be identical in both trees. */
 const ID_KEYS = new Set([
@@ -86,6 +85,10 @@ async function snapshot(lang) {
     for (const [lang, files] of [['de', deFiles], ['en', enFiles]])
       if (!files.has(file)) err(`src/data/${lang}/${file} is missing but listed in data.js`);
   }
+  // The other direction: a data file that data.js never loads is dead weight
+  // at best, and at worst a pool somebody believes is in the game.
+  const listed = new Set(POOLS.map(name => `data_${name}.js`));
+  for (const f of deFiles) if (!listed.has(f)) err(`src/data/de/${f} is in the tree but not in data.js's pool lists`);
 }
 
 const de = await snapshot('de');
@@ -159,7 +162,7 @@ if (errors.length) {
 
 // Not an error: during the translation this is the work still ahead. It only
 // becomes a finding once a pool is marked translated.
-console.log(`\nNOCH DEUTSCH (${todos.length} Textstellen)\n`);
+console.log(`\nSTILL GERMAN (${todos.length} passages)\n`);
 for (const m of todos.slice(0, 15)) console.log(` i ${m}`);
 if (todos.length > 15) console.log(`   … and ${todos.length - 15} more`);
 

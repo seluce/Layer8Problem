@@ -103,7 +103,7 @@ for (const { steam, tree } of DICTIONARIES) {
 
     const file = join(outDir, `${APP_ID}_loc_${steam}.vdf`);
     writeFileSync(file, vdf, 'utf-8');
-    console.log(`  ${file}  —  ${STEAM_ORDER.length} Erfolge`);
+    console.log(`  ${file}  —  ${STEAM_ORDER.length} achievements`);
 }
 
 console.log('\n✅ Upload in Steamworks under "Stats & Achievements".');

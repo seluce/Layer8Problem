@@ -23,7 +23,7 @@
  */
 
 import { readFileSync, readdirSync } from 'fs';
-import { DB, ensure, loadCore } from '../src/data.js';
+import { DB, ensure, loadCore, POOL_NAMES } from '../src/data.js';
 /**
  * Language (6.0): the pools live under src/data/<lang>. Pass --lang=en to run
  * against the English tree; without it the German source is checked. The core
@@ -43,7 +43,8 @@ if (!['de', 'en'].includes(LANG)) {
 await loadCore(LANG);
 
 // The event pools load lazily at runtime (see data.js); pull them all in first.
-await ensure('board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails', 'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server', 'sidequests');
+// data.js's own list, not a copy: a pool added there is loaded here too.
+await ensure(...POOL_NAMES);
 
 const errors = [], warns = [], infos = [];
 const err = m => errors.push(m), warn = m => warns.push(m), info = m => infos.push(m);
@@ -322,7 +323,7 @@ for (const [where, entries] of reactive) {
     else seen.set(e.id, (seen.get(e.id) ?? 0) + 1);
     if (e.reqStory) (flagsReq.get(e.reqStory) ?? flagsReq.set(e.reqStory, []).get(e.reqStory)).push(ctx);
   }
-  for (const [id, c] of seen) if (c > 1) err(`Doppelte ID "${id}" in ${where} (${c}x)`);
+  for (const [id, c] of seen) if (c > 1) err(`duplicate id "${id}" in ${where} (${c}x)`);
 }
 
 // Every character named as employee of the month has to exist.
@@ -657,6 +658,22 @@ for (const e of DB.emails) {
 for (const [id, c] of mailIdSeen) if (c > 1) err(`duplicate mail id "${id}" (${c}x) - usedEmails blocks both, nextEmail hits the wrong one`);
 for (const [s, c] of subjSeen) if (c > 1) warn(`duplicate mail subject "${s}" (${c}x) - only cosmetic, but in the game it reads as the same mail`);
 
+/* ---------- 3b) Flags the engine raises itself ---------- */
+// The vending machine notes each take in archive.seenFlags for the knowledge
+// entry 'vending'. No event sets those flags, so without this 6d would call
+// every one of its notes dead. Read as text, like VENDING_TAKES in section 12,
+// which also holds the list against the takes and the notes.
+const vendingFlags = new Map();
+{
+  const src = readFileSync('src/engine/engine_vending.js', 'utf8');
+  const listed = src.match(/const VENDING_FLAGS = \{([^}]*)\}/);
+  if (!listed) err('[vending]: VENDING_FLAGS not found in engine_vending.js - the knowledge notes cannot be checked');
+  else for (const [, take, flag] of listed[1].matchAll(/([a-z0-9]+):\s*'([a-z_0-9]+)'/g)) {
+    vendingFlags.set(take, flag);
+    noteFlag(flag, 'engine/engine_vending.js');
+  }
+}
+
 /* ---------- 4) Dead story flags ---------- */
 for (const [flag, ctxs] of flagsReq) {
   if (!flagsSet.has(flag)) err(`story flag "${flag}" is NEVER set but required by ${ctxs.join(', ')} -> dead content`);
@@ -720,7 +737,7 @@ const checkText = (ctx, field, txt) => {
     if (typeof txt !== 'string') return;
 
     if (txt !== txt.trim())        warn(`${ctx} ${field}: a leading or trailing space`);
-    if (/ {2,}/.test(txt))         warn(`${ctx} ${field}: doppeltes Leerzeichen`);
+    if (/ {2,}/.test(txt))         warn(`${ctx} ${field}: a double space`);
     if (PLACEHOLDER.test(txt))     err (`${ctx} ${field}: a placeholder in the text`);
 
     const t = txt.trim();
@@ -941,15 +958,15 @@ for (const id of itemIds) {
   const NOTE_FIELDS = ['seen', 'flag', 'text'];
   const ids = new Set();
   for (const e of DB.compendium ?? []) {
-    const ctx = `Kompendium "${e.id ?? '?'}"`;
+    const ctx = `compendium "${e.id ?? '?'}"`;
     for (const k of Object.keys(e))
       if (!FIELDS.includes(k)) err(`${ctx}: ${k} is not a known field`);
     if (!e.id || !e.name || !e.role || !e.summary) err(`${ctx}: id, name, role and summary are required`);
     // The view groups and colours by category, so an unknown one would show up
     // in no tab at all - invisible, without anything failing.
     if (!['team', 'person', 'place', 'matter'].includes(e.cat))
-      err(`${ctx}: cat "${e.cat}" is unknown - team, person, ort, vorgang are allowed`);
-    if (ids.has(e.id)) err(`${ctx}: doppelte ID`);
+      err(`${ctx}: cat "${e.cat}" is unknown - team, person, place, matter are allowed`);
+    if (ids.has(e.id)) err(`${ctx}: duplicate id`);
     ids.add(e.id);
 
     if (!(e.seen ?? []).length) err(`${ctx}: with no seen the entry is never unlocked`);
@@ -1016,7 +1033,7 @@ for (const ev of DB.emails) {
     for (let i = 0; i < str.length; i++) {
       const cp = str.codePointAt(i);
       if (cp === 0x200B || cp === 0xFEFF)
-        err(`[${where}] unsichtbares Zeichen U+${cp.toString(16).toUpperCase()} an Position ${i}`);
+        err(`[${where}] invisible character U+${cp.toString(16).toUpperCase()} at position ${i}`);
       if (cp === 0xFE0F) {
         const prev = i > 0 ? str.codePointAt(i - (str.charCodeAt(i - 1) >= 0xDC00 ? 2 : 1)) : 0;
         if (prev < 0x2000 || prev === 0xFE0F)
@@ -1184,13 +1201,13 @@ for (const ev of DB.emails) {
   // makes every condition on it false, and the check would report perfectly
   // good fragments as unreachable.
   const FIGURES = [
-    { events: 4,  boss: 0, lunch: false, leet: false, coffee: 0, mailsIgnored: 0,
+    { events: 4,  boss: 0, lunch: false, leet: false, vending: false, board: false, intranet: false, hrOwn: false, hrOther: false, lore: false, coffee: 0, mailsIgnored: 0,
       tickets: 0,  excusesUsed: 0, items: 0,  endHour: 9,  peakHour: 9,  peakValue: 10,
       upBy: 0,  downBy: 0,  streak: 0 },
-    { events: 18, boss: 1, lunch: true,  leet: false, coffee: 2, mailsIgnored: 1,
+    { events: 18, boss: 1, lunch: true,  leet: false, vending: false, board: true,  intranet: false, hrOwn: false, hrOther: true,  lore: false, coffee: 2, mailsIgnored: 1,
       tickets: 3,  excusesUsed: 1, items: 3,  endHour: 13, peakHour: 15, peakValue: 65,
       upBy: 7,  downBy: 6,  streak: 3 },
-    { events: 34, boss: 2, lunch: true,  leet: true,  coffee: 6, mailsIgnored: 5,
+    { events: 34, boss: 2, lunch: true,  leet: true,  vending: true,  board: true,  intranet: true,  hrOwn: true,  hrOther: true,  lore: true,  coffee: 6, mailsIgnored: 5,
       tickets: 9,  excusesUsed: 2, items: 7,  endHour: 16, peakHour: 10, peakValue: 92,
       upBy: 20, downBy: 25, streak: 7 }
   ];
@@ -1222,6 +1239,12 @@ for (const ev of DB.emails) {
       server: between(0, 14), calls: between(0, 14), quests: between(0, 14),
       events: between(0, 40), boss: between(0, 3),
       lunch: rnd() < 0.6, leet: rnd() < 0.3,
+      // Not drawn from rnd(): one more draw would shift every later day of
+      // the seeded 300 and could cost a rare fragment its only fitting day.
+      // Hence the easter eggs of 6.3 come from the day's number instead.
+      vending: i % 7 === 0,
+      board: i % 6 === 1, intranet: i % 6 === 2, lore: i % 5 === 3,
+      hrOwn: i % 9 === 4, hrOther: i % 9 === 5,
       coffee: between(0, 8), mailsIgnored: between(0, 6),
       tickets: between(0, 10), excusesUsed: between(0, 3), items: between(0, 8),
       // A day that was survived always ends at half past four; only a day
@@ -1329,6 +1352,198 @@ for (const ev of DB.emails) {
 
   const total = Object.values(DB.diary).flat().reduce((n, f) => n + (f.lines?.length ?? 0), 0);
   info(`diary: ${Object.values(DB.diary).flat().length} fragments with ${total} lines in ${Object.keys(DB.diary).length} slots`);
+}
+
+/* ---------- 12) The vending machine (6.3) ---------- */
+// data_vending.js is not an event pool, so nothing above reads it. These fail
+// silently at runtime, which is why they are checked here:
+//   - a `take` the engine does not accept: the compartment lights up and a
+//     click does nothing (engine_vending.js, VENDING_TAKES)
+//   - a take the engine accepts that no compartment offers: a button below
+//     the glass with nothing behind it in the machine
+//   - limitRule past the end of the list: rule 2 is never underlined, and the
+//     either-or of every visit has no visible reason
+//   - a crank that WAITS too long. Since 6.3.0 each line stays until the one
+//     before it can have been read (crankDelays, engine_vending.js), and the
+//     `ms` beats come on top of that. The beats are the time in which there
+//     is nothing new to read - that sum keeps the old limit of twenty
+//     seconds. The whole run, reading included, is held against a second
+//     limit, measured with the window's own function.
+{
+  const V = DB.vending;
+  const ctx = '[vending]';
+  const CRANK_BEATS_MAX_MS = 20000;
+  const CRANK_SCREEN_MAX_MS = 90000;
+  const { crankDelays } = await import('../src/engine/engine_vending.js');
+  const { VENDING_SOUNDS } = await import('../src/engine/engine_audio.js');
+  if (!V) err(`${ctx}: the pool is missing - data_vending.js did not load`);
+  else {
+    const engineVending = readFileSync('src/engine/engine_vending.js', 'utf8');
+    const listed = engineVending.match(/const VENDING_TAKES = \[([^\]]*)\]/);
+    if (!listed) err(`${ctx}: VENDING_TAKES not found in engine_vending.js - the compartments cannot be checked`);
+    const takes = new Set(listed ? [...listed[1].matchAll(/'([a-z0-9]+)'/g)].map(m => m[1]) : []);
+
+    const ids = new Set(), offered = new Set();
+    (V.slots ?? []).forEach((slot, i) => {
+      const sctx = `${ctx} slots[${i}]`;
+      if (!slot.id) err(`${sctx}: a compartment with no id`);
+      else if (ids.has(slot.id)) err(`${sctx}: compartment "${slot.id}" appears twice`);
+      else ids.add(slot.id);
+      if (slot.take) {
+        offered.add(slot.take);
+        if (!takes.has(slot.take))
+          err(`${sctx}: take "${slot.take}" is not one the engine accepts (${[...takes].join(', ')}) - a compartment that does nothing`);
+        if (slot.take !== 'c4' && !slot.img) warn(`${sctx}: a "${slot.take}" compartment with no picture`);
+      } else if (!slot.text) err(`${sctx}: a compartment with nothing to take needs a line saying what is in it`);
+    });
+    for (const k of takes)
+      if (listed && !offered.has(k)) err(`${ctx}: no compartment offers "${k}" - the window has a button for it and the machine has nothing behind it`);
+
+    // Every take leaves a note in the knowledge book (VENDING_FLAGS, read in
+    // 3b). A take without a flag leaves nothing; a flag no note asks for is a
+    // gap that can never close - the engine source names it, so 4b would not
+    // call it orphaned, and nothing else would notice.
+    const asked = new Set((DB.compendium ?? []).flatMap(e => (e.notes ?? []).map(n => n.flag)).filter(Boolean));
+    for (const k of takes)
+      if (!vendingFlags.has(k)) err(`${ctx}: take "${k}" has no entry in VENDING_FLAGS - it leaves no note in the knowledge book`);
+    for (const [k, flag] of vendingFlags) {
+      if (!takes.has(k)) err(`${ctx}: VENDING_FLAGS names "${k}", which is not a take`);
+      if (!asked.has(flag)) err(`${ctx}: no knowledge note asks for "${flag}" - taking "${k}" leaves nothing in the book`);
+    }
+
+    const rules = V.rules?.list ?? [];
+    const limit = V.rules?.limitRule;
+    if (!Number.isInteger(limit) || limit < 0 || limit >= rules.length)
+      err(`${ctx} rules.limitRule ${limit}: not a rule on the list (0-${rules.length - 1}) - the either-or would have no visible reason`);
+    if (!(V.rules?.members ?? []).length) err(`${ctx} rules.members: the sheet has nobody on it`);
+
+    let beats = 0, timed = true;
+    const crankLines = [...(V.crank ?? []), ...(V.crankEnd ?? [])];
+    crankLines.forEach((line, i) => {
+      if (typeof line.ms !== 'number' || line.ms < 0) { err(`${ctx} crank line ${i}: "ms" has to be a number of milliseconds`); timed = false; }
+      else beats += line.ms;
+      if (!line.text) err(`${ctx} crank line ${i}: no text`);
+      // playAudio() takes any name and simply makes no sound for one it does
+      // not know - a misspelt clack is silence, at 0 errors and 0 warnings.
+      if (line.sound !== undefined && !VENDING_SOUNDS.includes(line.sound))
+        err(`${ctx} crank line ${i}: sound "${line.sound}" is not one the machine has (${VENDING_SOUNDS.join(', ')}) - the line would play nothing`);
+    });
+    if (beats > CRANK_BEATS_MAX_MS)
+      err(`${ctx}: the crank's beats add up to ${(beats / 1000).toFixed(1)} s with nothing new to read (limit ${CRANK_BEATS_MAX_MS / 1000} s) - the player waits instead of reading`);
+    const screen = timed ? crankDelays(crankLines).reduce((a, b) => a + b, 0) : 0;
+    if (screen > CRANK_SCREEN_MAX_MS)
+      err(`${ctx}: the crank runs ${(screen / 1000).toFixed(1)} s on screen, reading time included (limit ${CRANK_SCREEN_MAX_MS / 1000} s) - shorten the lines, not the beats`);
+
+    // The roll is delivered at the closing line marked `lands`. None, and the
+    // crank runs to its end and nothing reaches the backpack; two, and the
+    // window only ever finds the first. On the first line it would land
+    // before it fell, and the stairwell light would have no moment to stop.
+    const landings = (V.crankEnd ?? []).map((line, i) => line.lands ? i : -1).filter(i => i >= 0);
+    if (landings.length !== 1)
+      err(`${ctx} crankEnd: ${landings.length} lines marked "lands" - exactly one has to be, or the roll ${landings.length ? 'lands twice' : 'never reaches the backpack'}`);
+    else if (landings[0] === 0)
+      err(`${ctx} crankEnd[0]: the roll lands on the first closing line - it has to fall first`);
+
+    // The prose follows the same rules as every event. The type plate is the
+    // machine talking and stays out; ids, pictures and emoji are not prose.
+    const SKIP = new Set(['id', 'take', 'img', 'emoji', 'signoffEmoji', 'ms', 'lands', 'sound', 'plate']);
+    const walk = (node, path) => {
+      if (typeof node === 'string') { checkText(ctx, path, node); return; }
+      if (Array.isArray(node)) { node.forEach((x, i) => walk(x, `${path}[${i}]`)); return; }
+      if (node && typeof node === 'object')
+        for (const [k, v] of Object.entries(node)) if (!SKIP.has(k)) walk(v, path ? `${path}.${k}` : k);
+    };
+    walk(V, '');
+  }
+}
+
+/* ---------- 12b) Engine commands in result texts ---------- */
+// A result that starts with CMD: is an instruction, not a sentence:
+// resolveTerminal swaps it for a log line and opens a window. Only the
+// commands it knows are swapped - any other, a typo or one the engine has
+// dropped, reaches the player word for word, at 0 errors and 0 warnings. So
+// every CMD: in the data has to be one engine_events.js handles, and every one
+// it handles has to be used somewhere, or it is a door nobody can reach.
+{
+  const events = readFileSync('src/engine/engine_events.js', 'utf8');
+  const known = new Set([...events.matchAll(/res === "(CMD:[A-Z_]+)"/g)].map(m => m[1]));
+  if (!known.size) err('engine_events.js: no CMD: handler found - the commands cannot be checked');
+  const used = new Map();
+  const walk = (node, path) => {
+    if (typeof node === 'string') {
+      if (node.startsWith('CMD:')) (used.get(node) ?? used.set(node, []).get(node)).push(path);
+      return;
+    }
+    // An entry with an id is named by it: "sidequests/sq_kevin_geheim_2" finds
+    // the event, "sidequests[292]" sends you counting.
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, x?.id ? `${path}/${x.id}` : `${path}[${i}]`)); return; }
+    if (node && typeof node === 'object') for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`);
+  };
+  for (const [name, pool] of Object.entries(DB)) walk(pool, name);
+  for (const [cmd, where] of used)
+    if (!known.has(cmd)) err(`${where[0]}: "${cmd}" is not a command engine_events.js handles - the player would read it as text`);
+  for (const cmd of known)
+    if (!used.has(cmd)) warn(`"${cmd}" is handled in engine_events.js but no data file uses it - dead code, or an entrance nobody can reach`);
+}
+
+/* ---------- 13) Years the calendar can overtake ---------- */
+// The game is played for years after a line is written. Three kinds of year
+// go wrong on their own, at 0 errors and 0 warnings:
+//   - one that lies ahead flips from "soon" to "over": 'taken into the 2027
+//     procurement round. Until then...'
+//   - one that means "now" is stale the January after: 'as of 2026'
+//   - one with an age beside it is wrong a little more every year: 'PHOENIX -
+//     1998 - ... running for 25 years' was right in 2023 and only then
+// A past year on its own is left alone - it only grows older, which mostly
+// makes it funnier ('a receipt from 2023'). Reviewed exceptions go into
+// yearReviewed, the way clock times go into clockReviewed.
+//
+// The present is read from the clock. Warnings can therefore only disappear
+// with time, never appear on their own: the gate cannot turn red on New
+// Year's Day, and a year written today that lies ahead is caught today.
+// Since 6.3, after thirteen such lines were found by hand (GLOSSAR, 6.3).
+{
+  const NOW = new Date().getFullYear();
+  const YEAR = /(?<!\d)(1[89]\d\d|20\d\d)(?!\d)/g;
+  // A sum of money is not a year: '2000€', '2000 Euro'.
+  const MONEY_AFTER = /^\s?(€|Euro|EUR\b)/;
+  const AGE = LANG === 'en' ? /\b\d+\s+years?\b/i : /\b\d+\s+Jahren?\b/;
+  // Keys that hold identifiers, not text a player reads.
+  const NOT_TEXT = new Set(['id', 'seen', 'next', 'reqStory', 'flag', 'img', 'startNode', 'startNodeGala',
+    'nextEmail', 'senderId', 'loot', 'req', 'rem', 'char', 'onChar', 'kind', 'cat', 'effect', 'fn',
+    'loc', 'checkPool', 'type', 'tone', 'icon', 'take']);
+  // 'pool/id': why the year may stand. Empty since 6.3 - every year that was
+  // found is either past or has been rewritten without one.
+  const yearReviewed = new Map([]);
+
+  const check = (text, where, path) => {
+    if (yearReviewed.has(where)) return;
+    const years = [...text.matchAll(YEAR)].filter(m => !MONEY_AFTER.test(text.slice(m.index + 4)));
+    for (const m of years)
+      if (+m[1] >= NOW)
+        warn(`[${where}] ${path}: "${m[1]}" is this year or later - the sentence goes wrong once the calendar passes it. Say it without the year ('the procurement round after next'), or enter it in yearReviewed`);
+    // The whole field, not the sentence: the case that prompted this check
+    // put the year and the age in two sentences side by side ("'PHOENIX -
+    // 1998 - Do Not Touch'. It has been running for 25 years."), and a
+    // sentence-by-sentence check stayed silent on exactly that one - the
+    // mutation probe caught it. Measured on the whole stock: no field
+    // carries a year and an age that belong to different things.
+    const age = years.length ? text.match(AGE) : null;
+    if (age)
+      warn(`[${where}] ${path}: a year and an age in one text ("${years[0][1]}" ... "${age[0]}") - the sum is right for one year only`);
+  };
+  const walk = (node, pool, id, path) => {
+    const where = id ? `${pool}/${id}` : pool;
+    if (typeof node === 'string') { check(node, where, path); return; }
+    if (Array.isArray(node)) { node.forEach((x, i) => walk(x, pool, x?.id ?? id, x?.id ? '' : `${path}[${i}]`)); return; }
+    if (node && typeof node === 'object')
+      for (const [k, v] of Object.entries(node)) if (!NOT_TEXT.has(k)) walk(v, pool, id, path ? `${path}.${k}` : k);
+  };
+  for (const [pool, data] of Object.entries(DB)) walk(data, pool, '', '');
+
+  // The interface strings too: a year in a label overtakes itself the same way.
+  const dict = (await import(`../src/i18n/${LANG}.js`))[LANG] ?? {};
+  for (const [key, text] of Object.entries(dict)) if (typeof text === 'string') check(text, `i18n/${key}`, '');
 }
 
 /* ---------- Output ---------- */

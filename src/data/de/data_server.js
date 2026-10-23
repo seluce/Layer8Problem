@@ -1904,7 +1904,7 @@ export const server = [
     {
         id: "srv_label_fail",
         title: "Der Elektriker-Fail",
-        text: "Du starrst auf das Bedienfeld der Klimaanlage. Ein handgeschriebener Zettel klebt über den Reglern: 'ACHTUNG: Der Elektriker war farbenblind! BLAU heizt (Warm) und ROT kühlt (Kalt)! Nicht anfassen, wird erst 2030 repariert.'",
+        text: "Du starrst auf das Bedienfeld der Klimaanlage. Ein handgeschriebener Zettel klebt über den Reglern: 'ACHTUNG: Der Elektriker war farbenblind! BLAU heizt (Warm) und ROT kühlt (Kalt)! Nicht anfassen, wird erst beim nächsten Umbau repariert.'",
         opts: [
             { 
                 t: "Zettel ignorieren", 
@@ -2940,7 +2940,7 @@ export const server = [
                 t: "Staub abwischen & untersuchen",
                 next: "path_ghost_found",
                 m: 15, l: -10, a: 5, b: 0,
-                r: "Du wischst den Staub weg. Aufkleber: 'Projekt PHOENIX - 1998 - Do Not Touch'. Es läuft seit 25 Jahren. Respekt."
+                r: "Du wischst den Staub weg. Aufkleber: 'Projekt PHOENIX - 1998 - Do Not Touch'. Es läuft seitdem. Ohne einen einzigen Neustart. Respekt."
             },
             { 
                 t: "Ignorieren",

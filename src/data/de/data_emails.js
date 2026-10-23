@@ -218,7 +218,7 @@ export const emails = [
 		id: "mail_ceo_vision",
 		sender: "Dr. Wichtig", 
 		senderId: "boss",
-		subj: "Vision 2030 - Ihre Ideen!",
+		subj: "Vision 20XX - Ihre Ideen!",
 		body: "Liebes Team, ich hatte heute Nacht im Wellness-Retreat eine Vision. Wir müssen 'Agiler' werden. Ich möchte, dass jeder von Ihnen mir bis 12 Uhr ein 10-seitiges Konzept schickt, wie wir KI nutzen können, um Kaffee zu sparen. Denken Sie 'Out of the Box'! Go, Go, Go!",
 		opts: [
 			{ t: "Ehrlich antworten", r: "Du schreibst: 'Das ist Unsinn.' Der Chef merkt sich deinen Namen und war nicht begeistert.", m: 5, l: 0, a: 10, b: 20 },
@@ -530,7 +530,7 @@ export const emails = [
 		id: "mail_vacation_denied",
 		sender: "HR (Automated)", 
 		senderId: "hr_automated",
-		subj: "Ihr Urlaubsantrag 2028",
+		subj: "Ihr Urlaubsantrag für übernächsten Sommer",
 		body: "Status-Update zu Ihrem Antrag 'Sommerurlaub': ABGELEHNT. \nBegründung: 'Zu dieser Zeit könnte theoretisch ein Server ausfallen. Wir brauchen Sie stand-by.'",
 		opts: [
 			{ t: "Krankenschein planen", r: "Wenn du nicht frei kriegst, bist du halt 'krank'. Du grinst böse und planst deinen 'Husten'.", m: 5, l: 10, a: -10, b: 0 },

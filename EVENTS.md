@@ -8,7 +8,7 @@ JavaScript objects in `data_*.js` (one file per area: `data_coffee.js`,
 event is simply one more object in the array of the appropriate file.
 
 **Every one of these files exists twice.** `src/data/de/` is the source,
-`src/data/en/` the English version — 23 files each. Both carry **the same ids,
+`src/data/en/` the English version — 24 files each. Both carry **the same ids,
 story flags, character names and numbers**; only the prose differs. That is what
 makes a save file language-independent and lets you switch in the middle of the
 week. A contribution therefore needs **both** versions — the same `id`, the same
@@ -116,7 +116,7 @@ but an error.
 | Field | Effect |
 |---|---|
 | `t` | Compulsory: the label of the button — the same in every area, the inbox included. |
-| `r` | Compulsory: the result text. It also goes into the log afterwards. |
+| `r` | Compulsory: the result text. It also goes into the log afterwards. **Exception: a door.** A result of exactly `CMD:OPEN_BOARD`, `CMD:OPEN_INTRANET` or `CMD:OPEN_VENDING` is an instruction rather than a sentence — the log gets a fixed line and the window opens. `lint-data` (section 12b) reads the list out of `engine_events.js`: any other `CMD:` would reach the player word for word, and is an error. |
 | `m` | Costs minutes of playing time. The working day is limited; this is the real currency. |
 | `l` | Laziness (positive = lazier). Applies 1:1. |
 | `a` | Aggro. Positive values are scaled up with the difficulty, negative ones apply 1:1. |
@@ -388,7 +388,7 @@ entry.
 
 The format and the four categories are in the header comment of
 `src/data/de/data_compendium.js`. New entries are checked by `npm run lint:data`
-along with everything else. The stock: 59 entries with 257 notes between them.
+along with everything else. The stock: 60 entries with 260 notes between them.
 
 ## 4. Conversations with a course: `nodes` and `results`
 
@@ -900,7 +900,7 @@ follow-up events, and invisible special characters that creep in while copying.
 
 The **parity checker** then holds both trees against each other: same shape, same
 ids, same numbers. A text that reads verbatim the same in both trees has not been
-translated yet — it reports that under "NOCH DEUTSCH", and that is not an error
+translated yet — it reports that under "STILL GERMAN", and that is not an error
 but the work list. A changed number, by contrast, is one: the English version
 then plays differently, and nothing on screen shows it.
 

@@ -21,38 +21,9 @@
     <meta name="theme-color" content="#020617">
 
 
-    <style>
-        /* Platform-conditional blocks. .platform-desktop starts hidden so the
-           web build never flashes buttons it does not support; engine.init()
-           strips the class on desktop and removes the .platform-web elements. */
-        .platform-desktop { display: none !important; }
-
-        /* Language switch on the start screen.
-           Driven by <html lang>, which src/i18n/i18n.svelte.js sets before anything
-           renders. Both options stay on screen and only the highlight moves:
-           the intro modal is visible from the first paint, so hiding one of
-           them would flash the wrong label for as long as the module takes to
-           run. A moving highlight is the same information without the flicker.
-           Written here rather than as utilities because Tailwind has no
-           variant for an attribute on <html>. */
-        .lang-opt { opacity: .45; }
-        .lang-opt:hover { opacity: .8; }
-        html[lang="de"] .lang-opt[data-lang="de"],
-        html[lang="en"] .lang-opt[data-lang="en"] {
-            opacity: 1;
-            color: #60a5fa;
-            cursor: default;
-        }
-
-        /* News ticker. Was injected into the header on every news item, which
-           re-created the rule dozens of times per day. */
-        @keyframes newsScroll {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-    </style>
-  <script type="module" crossorigin src="./build/index-Dt72mEVf.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-BfLhmBSE.css">
+    <style>.platform-desktop{display:none!important}.lang-opt{opacity:.45}.lang-opt:hover{opacity:.8}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{opacity:1;color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
+  <script type="module" crossorigin src="./build/index-B1wKZ3LZ.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-DwaIiDlX.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -593,6 +564,10 @@
 <!-- The intranet is rendered by src/components/intranet/IntranetView.svelte,
      browser window included. See engine.openIntranet(). -->
 <div id="intranet-root"></div>
+
+<!-- The vending machine on the third floor (6.3) is
+     src/components/VendingView.svelte, window included. See engine.openVending(). -->
+<div id="vending-root"></div>
 
 <!-- SCHWARZES BRETT MODAL START -->
 <div id="board-modal" class="fixed inset-0 hidden bg-black/90 z-1300 items-center justify-center p-0 md:p-8 fade-in overflow-hidden">

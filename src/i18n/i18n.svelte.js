@@ -56,11 +56,6 @@ function rawStoredLanguage() {
     }
 }
 
-/** The language the player chose, or null if they never chose a valid one. */
-export function storedLanguage() {
-    return clean(rawStoredLanguage());
-}
-
 /** Has this browser played before? Then it played in German. */
 function hasHistory() {
     try {

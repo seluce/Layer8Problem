@@ -1939,7 +1939,7 @@ export const coffee = [
 		char: "Egon",
         title: "Ingenieurs-Kunst",
         reqStory: "path_machine_tape",
-        text: "Hausmeister Egon steht vor deinem Tape-Kunstwerk. Er nickt langsam und anerkennend. 'Saubere Arbeit, Müller. Hätte ich nicht besser machen können. Das hält bis 2030.' Er klopft dir fest auf die Schulter.",
+        text: "Hausmeister Egon steht vor deinem Tape-Kunstwerk. Er nickt langsam und anerkennend. 'Saubere Arbeit, Müller. Hätte ich nicht besser machen können. Das hält zehn Jahre.' Er klopft dir fest auf die Schulter.",
         opts: [
             { 
                 t: "'Panzertape regelt alles.'", 

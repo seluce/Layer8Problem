@@ -50,6 +50,7 @@ import SettingsView  from './components/SettingsView.svelte';
 import AchievementToasts from './components/AchievementToasts.svelte';
 import TerminalHeader from './components/TerminalHeader.svelte';
 import BoardView from './components/BoardView.svelte';
+import VendingView from './components/VendingView.svelte';
 import IntranetView from './components/intranet/IntranetView.svelte';
 
 // 1. Which language, 2. that language's core data, 3. the engine, 4. the screen.
@@ -86,6 +87,7 @@ mount(AchievementToasts, { target: document.getElementById('achievement-containe
 mount(TerminalHeader, { target: document.getElementById('terminal-header-right') });
 mount(BoardView,      { target: document.getElementById('board-notes') });
 mount(IntranetView,   { target: document.getElementById('intranet-root') });
+mount(VendingView,    { target: document.getElementById('vending-root') });
 
 /* ============================================================
    For those who look.

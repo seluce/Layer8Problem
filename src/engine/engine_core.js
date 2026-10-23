@@ -2017,6 +2017,12 @@ export const core = {
             this.state.isEmailOpen = false;
         }
 
+        // The day's windows the same way (6.3): intranet, noticeboard,
+        // chronicle and vending machine. A mail can drop over any of them, and
+        // answering it at 16:25 ends the day from up there - each window was
+        // still open the next morning. See engine_ui.closeDayWindows.
+        this.closeDayWindows();
+
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
             

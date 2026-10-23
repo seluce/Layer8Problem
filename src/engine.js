@@ -5,11 +5,12 @@ import { events } from './engine/engine_events.js';
 import { hooks } from './engine/engine_hooks.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
+import { vendingMachine } from './engine/engine_vending.js';
 import { week } from './engine/engine_week.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v6.2.1",
+    VERSION: "v6.3.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -23,6 +24,7 @@ const engine = {
     ...hooks,
     ...inventory,
     ...ui,
+    ...vendingMachine,
     ...week,
 
     // 3. Language. Not a module of its own: these two are all the rest of the
@@ -169,6 +171,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('archive-modal')) { engine.closeArchive(); return; }
         if (isVisible('knowledge-modal')) { engine.closeKnowledge(); return; }
         if (engine.state.intranetOpen) { engine.closeIntranet(); return; }
+        if (engine.state.vendingOpen) { engine.closeVending(); return; }
         if (isVisible('board-modal')) { engine.closeBoard(); return; }
         
         if (isVisible('excuse-modal')) { engine.closeExcuseModal(); return; }
@@ -257,13 +260,19 @@ document.addEventListener('keydown', (event) => {
         // Visibility-guarded like its siblings: without the check, Space
         // reached this button THROUGH any overlay standing above the terminal
         // (an open item dialog, a mail) and resolved the screen behind it.
+        // offsetParent only says the button is rendered, not that it can be
+        // seen - a window over the terminal covers it without hiding it, and
+        // Space pressed it through the noticeboard and the vending machine.
         const contBtn = document.querySelector('#terminal-content button[data-continue]');
-        if (contBtn && contBtn.offsetParent !== null) { contBtn.click(); return; }
+        if (contBtn && contBtn.offsetParent !== null && !engine.windowOverTerminal()) { contBtn.click(); return; }
     }
 
     // 4. ACTION SHORTCUTS (Q, W, E, R)
-    // Only while no event, no open mail and no fullscreen modal is active
-    if (!engine.state.activeEvent && !engine.state.isEmailOpen && !document.body.classList.contains('overflow-hidden')) {
+    // Only while no event, no open mail and no window is up. The scroll lock
+    // alone did not say so: the noticeboard opens without it, and Q started a
+    // coffee break behind the board.
+    if (!engine.state.activeEvent && !engine.state.isEmailOpen && !document.body.classList.contains('overflow-hidden')
+        && !engine.windowOverTerminal()) {
         if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { engine.trigger('coffee'); return; }
         if (key === engine.state.keyBinds.actQuest.toLowerCase()) { engine.trigger('sidequest'); return; }
         if (key === engine.state.keyBinds.actServer.toLowerCase()) { engine.trigger('server'); return; }

@@ -176,7 +176,7 @@ export const intranet = {
             id: "feed_kalk_ignor", reqStory: "path_kalk_ignor",
             author: "Zentraler Einkauf", handle: "@Beschaffung",
             initials: "ZE", tone: "#60a5fa",
-            text: "Gute Nachricht: Der Antrag auf Entkalker wurde in die Beschaffungsrunde 2027 aufgenommen. Bis dahin gilt das Gedrückthalten der Taste als offiziell freigegebene Übergangslösung. Vielen Dank an die IT für die pragmatische Haltung."
+            text: "Gute Nachricht: Der Antrag auf Entkalker wurde in die übernächste Beschaffungsrunde aufgenommen. Bis dahin gilt das Gedrückthalten der Taste als offiziell freigegebene Übergangslösung. Vielen Dank an die IT für die pragmatische Haltung."
         },
         {
             id: "feed_karton", reqStory: "path_karton_kult",
@@ -940,7 +940,7 @@ export const intranet = {
             {
                 min: -100,
                 label: "Fluchtrisiko erhöht",
-                text: "Im Kollegenkreis bestehen Vorbehalte. Als Gegenmaßnahme wurde ein persönliches Gespräch terminiert. Der Termin liegt im vierten Quartal 2029."
+                text: "Im Kollegenkreis bestehen Vorbehalte. Als Gegenmaßnahme wurde ein persönliches Gespräch terminiert. Der Termin liegt im vierten Quartal, in drei Jahren."
             }
         ],
 

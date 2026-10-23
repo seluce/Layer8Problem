@@ -652,79 +652,153 @@ export const diary = {
             id: "detail_lunch", rank: 1, when: d => d.lunch,
             lines: [
                 "Immerhin Mittag gemacht. Zwanzig Minuten, in denen niemand etwas von mir wollte, sind hier eine Währung.",
-                "Die Mittagspause war der einzige Termin heute, den ich freiwillig wahrgenommen habe."
+                "Die Mittagspause war der einzige Termin heute, den ich freiwillig wahrgenommen habe.",
+                "In der Mittagspause habe ich gegessen, ohne dabei auf einen Bildschirm zu sehen. Es war ungewohnt."
             ]
         },
         {
             id: "detail_items", rank: 1, when: d => d.items >= 5,
             lines: [
-                "Der Rucksack ist am Abend schwerer als am Morgen. Nichts davon gehört mir, und niemand wird danach fragen."
+                "Der Rucksack ist am Abend schwerer als am Morgen. Nichts davon gehört mir, und niemand wird danach fragen.",
+                "Im Rucksack sammelt sich, was andere liegen gelassen haben. Ich bin das Fundbüro dieser Firma.",
+                "{items} Dinge im Rucksack. Irgendwann brauche ich jedes davon, ich weiß nur nicht, wann."
             ]
         },
         {
             id: "detail_leet", rank: 1, when: d => d.leet,
             lines: [
-                "Um 13:37 Uhr habe ich auf die Uhr gesehen und mich anschließend darüber geärgert, dass es mir aufgefallen ist."
+                "Um 13:37 Uhr habe ich auf die Uhr gesehen und mich anschließend darüber geärgert, dass es mir aufgefallen ist.",
+                "13:37 Uhr. Ich habe es bemerkt und niemandem gesagt. Das ist der Unterschied zwischen Kevin und mir.",
+                "Heute war es wieder 13:37 Uhr. Die Uhr macht das jeden Tag, und ich falle jeden Tag darauf herein."
+            ]
+        },
+        {
+            // The machine on the third floor (6.3). Mueller refuses to write it
+            // down - in his own diary - which is Kevin's 'die lesen mit' taken
+            // seriously. Rank 3: rarer than any figure of the day, so it wins.
+            id: "detail_vending", rank: 3, when: d => d.vending,
+            lines: [
+                "Über den dritten Stock schreibe ich hier nichts. Man weiß nie, wer mitliest.",
+                "Heute war ich hinten im dritten Stock. Mehr steht dazu nicht in diesem Buch.",
+                "Eine Stelle in diesem Tag lasse ich aus. Wer im Club ist, weiß, welche."
+            ]
+        },
+        {
+            // The noticeboard, opened while the coffee machine dawdles
+            // (cof_bulletin_board). Rank 2: it draws against the day's figures.
+            id: "detail_board", rank: 2, when: d => d.board,
+            lines: [
+                "Beim Warten auf den Kaffee das Schwarze Brett gelesen. Ich weiß jetzt Dinge über dieses Haus, nach denen ich nicht gefragt habe.",
+                "Am Schwarzen Brett hängt, was niemand per Mail zu schreiben wagt. Ich habe alles gelesen.",
+                "Das Schwarze Brett studiert. Der Kaffee war danach kalt, die Zettel waren es wert."
+            ]
+        },
+        {
+            // The intranet, opened in a panic with Dr. Wichtig in the doorway
+            // (sq_boss_snoop). Rank 2, like the board.
+            id: "detail_intranet", rank: 2, when: d => d.intranet,
+            lines: [
+                "Als Dr. Wichtig in der Tür stand, war auf meinem Bildschirm zufällig das Intranet offen. Er wirkte zufrieden.",
+                "Heute war ich im Intranet. Nicht freiwillig, aber gründlich.",
+                "Ich habe den Speiseplan der Agile Kitchen gelesen, von vorn bis hinten. So sieht Panik bei mir aus."
+            ]
+        },
+        {
+            // Behind the HR login: Mueller's own file. Rank 3 - a secret
+            // inside the intranet, and rarer than anything else on the page.
+            id: "detail_hr_own", rank: 3, when: d => d.hrOwn,
+            lines: [
+                "Heute meine eigene Personalakte gelesen. Die Firma kennt mich besser, als mir lieb ist, und schlechter, als ich dachte.",
+                "Meine Personalakte ist gut geschützt: mit demselben Passwort wie jede andere."
+            ]
+        },
+        {
+            // Behind the HR login: Schnösel's file, the password off the
+            // ticker. Rank 3, like his own.
+            id: "detail_hr_other", rank: 3, when: d => d.hrOther,
+            lines: [
+                "Ich weiß jetzt, was in Schnösels Personalakte steht. Das Passwort stand im Ticker. Schuld ist die IT, also ich.",
+                "Schnösels Personalakte gelesen. Vierzehn Monate Probezeit, drei Stunden Anfahrt, und er hat sich trotzdem beworben."
+            ]
+        },
+        {
+            // The company chronicle, from the book in the backpack. Rank 1:
+            // it can be opened every day, and should not crowd out the day.
+            id: "detail_lore", rank: 1, when: d => d.lore,
+            lines: [
+                "Heute in der Firmenchronik gelesen. Der Baron hätte mich eingestellt, fürchte ich.",
+                "Ich habe in der Chronik geblättert. Jede Krise dieser Firma sieht im Rückblick wie ein Plan aus.",
+                "Die Firmenchronik gelesen. Ganz hinten ist noch Platz, und ich weiß, wer ihn füllt."
             ]
         },
         {
             id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
             lines: [
-                "{streak} Tage am Stück überstanden. Meine Erwartungen an mich selbst sinken erfreulich schnell."
+                "{streak} Tage am Stück überstanden. Meine Erwartungen an mich selbst sinken erfreulich schnell.",
+                "Der {streak}. Tag in Folge ohne Katastrophe. Langsam werde ich misstrauisch.",
+                "{streak} Tage hintereinander durchgehalten. Wenn das so weitergeht, erwartet man das bald von mir."
             ]
         },
     ],
 
     // The colleagues, measured against this morning rather than against zero.
     //
-    // KNOWN THIN SPOT: people_both, detail_items, detail_leet and detail_streak
-    // carry two lines or one. The memory in engine_diary.js can only skip a
-    // line while another one is left, so on two days with the same constellation
-    // these do repeat. Three lines per fragment is the number that makes the
-    // skipping work; whoever picks this up next should write the missing ones
-    // rather than add more fragments.
+    // Three lines per fragment is the number that makes the memory in
+    // engine_diary.js work: it can only skip a line while another one is left,
+    // so with two the same constellation alternates, with one it repeats word
+    // for word. Since 6.3 the fragments that fit nearly every day carry three:
+    // all of `people` (some colleague moves on most days), detail_leet (nearly
+    // every day crosses 13:37), detail_lunch, detail_items and detail_streak.
+    // What still has two fits rarer days; end_party has one because the gala
+    // happens once in a career. New lines before new fragments.
     people: [
         // Who moved today - reputation against where it stood this morning.
         {
             id: "people_both", rank: 3, when: d => d.upBy >= 5 && d.downBy >= 5,
             lines: [
                 "Unterm Strich: {up} mag mich heute mehr, {down} deutlich weniger. In dieser Firma ist das vermutlich ein Nullsummenspiel.",
-                "Ich habe heute bei {up} gewonnen und bei {down} verloren. Die Bilanz zieht ohnehin jemand anderes."
+                "Ich habe heute bei {up} gewonnen und bei {down} verloren. Die Bilanz zieht ohnehin jemand anderes.",
+                "{up} lächelt, {down} nicht. Irgendwo dazwischen habe ich heute gearbeitet."
             ]
         },
         {
             id: "people_up_strong", rank: 2, when: d => d.upBy >= 15,
             lines: [
                 "{up} hat heute die Seite gewechselt, und zwar auf meine. Ich sollte das nutzen, solange es hält.",
-                "Bei {up} habe ich {upBy} Punkte gutgemacht. So etwas hält erfahrungsgemäß bis zur nächsten Störung."
+                "Bei {up} habe ich {upBy} Punkte gutgemacht. So etwas hält erfahrungsgemäß bis zur nächsten Störung.",
+                "Was ich heute für {up} getan habe, weiß ich nicht mehr genau. {up} offenbar schon."
             ]
         },
         {
             id: "people_down_strong", rank: 2, when: d => d.downBy >= 15,
             lines: [
                 "{down} spricht seit heute Nachmittag nur noch das Nötigste mit mir. Verdient, aber unangenehm.",
-                "Bei {down} habe ich an einem einzigen Tag verspielt, was ich mir über Wochen aufgebaut hatte."
+                "Bei {down} habe ich an einem einzigen Tag verspielt, was ich mir über Wochen aufgebaut hatte.",
+                "Falls {down} mich morgen nicht grüßt: Ich weiß, warum, und ich würde es an der Stelle auch nicht tun."
             ]
         },
         {
             id: "people_up", rank: 1, when: d => d.upBy >= 5,
             lines: [
                 "{up} war heute auffällig freundlich. Entweder habe ich etwas richtig gemacht, oder es kommt noch eine Bitte.",
-                "Immerhin {up} scheint mit dem Tag zufrieden zu sein. Einer von uns beiden also."
+                "Immerhin {up} scheint mit dem Tag zufrieden zu sein. Einer von uns beiden also.",
+                "{up} hat mir heute die Tür aufgehalten. Bei uns zählt das als Gehaltserhöhung."
             ]
         },
         {
             id: "people_down", rank: 1, when: d => d.downBy >= 5,
             lines: [
                 "{down} hat mich heute anders angesehen als gestern, und nicht zum Besseren.",
-                "Bei {down} steht seit heute etwas offen, das sich mit Arbeit nicht begleichen lässt."
+                "Bei {down} steht seit heute etwas offen, das sich mit Arbeit nicht begleichen lässt.",
+                "Als ich heute an {down} vorbeiging, wurde das Seufzen lauter. Ich nehme es zur Kenntnis."
             ]
         },
         {
             id: "people_quiet", rank: 0, when: d => d.upBy < 5 && d.downBy < 5 && d.events >= 10,
             lines: [
                 "Zwischenmenschlich ist heute nichts passiert. Für einen Sysadmin ist das der Idealzustand.",
-                "Niemand mag mich heute mehr oder weniger als gestern. Ich werte das als Erfolg."
+                "Niemand mag mich heute mehr oder weniger als gestern. Ich werte das als Erfolg.",
+                "Mit niemandem gestritten, mit niemandem verbrüdert. Die Kollegen und ich haben heute höflich aneinander vorbeigearbeitet."
             ]
         },
     ],

@@ -20,7 +20,7 @@
 
     // Müller's own additions at the back of the book. The chronicle belongs to
     // GlobalCorp and would never devote a chapter to a systems administrator -
-    // but he found the volume, the last entry is from 2012, and there is space
+    // but he found the volume, the last entry is from 2024, and there is space
     // left on the page.
     // Rendered by the engine: the archive stores ids, not sentences. The lore
     // tree is handed in via tree() so this derived HAS a reactive language

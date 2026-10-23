@@ -1267,7 +1267,7 @@ export const sidequests = [
 		char: "Frau Elster",
         kind: "text",
         title: "Der Drache bewacht den Hort",
-        text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budget 2024', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
+        text: "Frau Elster sitzt mit verschränkten Armen auf dem Aktenordner 'Budgetplanung', den du dringend brauchst. 'Den gebe ich nicht raus! Nur über meine Leiche!' Sie sieht blass und unterzuckert aus. Ihr Magen knurrt hörbar.",
         opts: [
             { 
                 t: "Das Fenster aufreißen und auf Zugluft setzen",
@@ -6490,7 +6490,7 @@ export const sidequests = [
         {
             t: "Das Konto endlich ordnungsgemäß stilllegen",
             m: 15, l: -5, a: 5, b: -5,
-            r: "Bei der Stilllegung findest du: 4.213 ungelesene Mails, eine Weiterleitungsregel an eine externe Adresse und einen Kalender voller Serientermine bis 2031. Du beendest alles, dokumentierst sauber und fühlst dich, als hättest du ein Gespenst pensioniert."
+            r: "Bei der Stilllegung findest du: 4.213 ungelesene Mails, eine Weiterleitungsregel an eine externe Adresse und einen Kalender voller Serientermine ohne Enddatum. Du beendest alles, dokumentierst sauber und fühlst dich, als hättest du ein Gespenst pensioniert."
         },
         {
             t: "Rademacher eine Mail schreiben",
@@ -7212,7 +7212,7 @@ export const sidequests = [
         {
             t: "Neutral protokollieren, Zahlen still korrigieren",
             m: 20, l: -5, a: 10, b: -10,
-            r: "Du protokollierst jede Aussage korrekt - und ergänzt in Klammern die aktuellen Zahlen ('Anm. d. Protokolls: Stand 2026 abweichend'). Das Protokoll geht an alle, inklusive Dr. Wichtig. Die Anmerkungen wirken wie ein stiller Anwalt. Punkt 3 stirbt in der nächsten Sitzung leise an Faktenlage."
+            r: "Du protokollierst jede Aussage korrekt - und ergänzt in Klammern die aktuellen Zahlen ('Anm. d. Protokolls: aktueller Stand abweichend'). Das Protokoll geht an alle, inklusive Dr. Wichtig. Die Anmerkungen wirken wie ein stiller Anwalt. Punkt 3 stirbt in der nächsten Sitzung leise an Faktenlage."
         }
     ]
 },
@@ -7726,28 +7726,26 @@ export const sidequests = [
     id: "sq_kevin_geheim_2",
     char: "Kevin",
     kind: "text",
+    title: "Hinterer Teil, dritter Stock",
     reqStory: "sq_kevin_termin",
     reqStoryAge: 1,
-    title: "Hinterer Teil, dritter Stock",
-    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt, ohne Preisschilder. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.'",
+    text: "Kevin wartet im Treppenhaus, wo die Lampe flackert, und sieht sich zweimal um, obwohl niemand da ist. Dann tritt er zur Seite. Hinter ihm steht ein alter Snackautomat, ausgestöpselt. 'Der wird seit dem Umbau nicht mehr befüllt', sagt Kevin. 'Aber Fach C4 klemmt. Und in C4 wird immer noch geliefert. Frag nicht, warum.' Er nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Als du vom Automaten aufsiehst, ist er schon auf der Treppe.",
     opts: [
         {
-            t: "'Kevin. Wer beliefert einen toten Automaten?'",
-            m: 10, l: 0, a: 5, b: 0,
+            t: "'Kevin! Wer beliefert einen toten Automaten?'",
             rep: { "Kevin": -5 },
-            r: "Kevin sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er nimmt das Sandwich selbst und geht. Die Lampe flackert dir hinterher."
+            m: 10, l: 0, a: 5, b: 0,
+            r: "Kevin bleibt auf der Treppe stehen und sieht dich lange an. 'Musst du immer alles kaputt fragen?' Er kommt die Stufen wieder hoch und stellt sich vor die Scheibe, bis du gegangen bist. Die Lampe flackert dir hinterher."
         },
         {
-            t: "Fach C4 öffnen",
+            t: "Vor der Scheibe in die Hocke gehen",
             m: 10, l: 0, a: -10, b: 0,
-            loot: "sandwich",
-            r: "Das Fach gibt nach einem sanften Ruck nach. Darin: ein eingeschweißtes Sandwich, Haltbarkeitsdatum in ferner Zukunft, Herkunft unklar. Kevin nickt feierlich. 'Willkommen im Club.' Welcher Club, fragst du nicht. Manche Türen schließt man besser hinter sich."
+            r: "CMD:OPEN_VENDING"
         },
         {
-            t: "Das Sandwich Kevin überlassen",
-            m: 5, l: 0, a: -5, b: 0,
-            rep: { "Kevin": 5 },
-            r: "'Du willst nicht?' Kevin nimmt es mit dem Respekt eines Mannes, der Verzicht einordnen kann. Das Fach klemmt wieder zu. Beute nimmst du keine mit, nur Standort und Verfahren. Wissen ist auch ein Vorrat."
+            t: "Weitergehen",
+            m: 5, l: 0, a: 0, b: 0,
+            r: "Du gehst weiter. Hinter dir flackert die Lampe einmal, als hätte sie mehr von dir erwartet."
         }
     ]
 },

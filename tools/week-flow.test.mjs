@@ -47,6 +47,7 @@ const { week } = await import('../src/engine/engine_week.js');
 // same way: without them emit() is missing and the inventory throws.
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
+const { vendingMachine, crankDelays } = await import('../src/engine/engine_vending.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -69,9 +70,10 @@ await useLanguage(LANG);
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
-    ...core, ...events, ...week, ...inventory, ...hooks,
+    ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
     showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
     hideOverlay() {},
+    lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
     showModal() {},
@@ -92,6 +94,11 @@ const engine = {
     log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'diary stub',
+    // finishGame() closes the day's windows through engine_ui. These five touch
+    // nothing but state, the stubbed overlay and the fake document, so the real
+    // ones run here: a stub would make the day-end test pass whatever they do.
+    closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
+    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard, isOverlayOpen: ui.isOverlayOpen,
 };
 
 const resetState = () => {
@@ -3168,6 +3175,344 @@ await ok('After discarding, one consumable fits again', async () => {
     engine.grantItem(consumables[0]);
     assert.ok(state.inventory.some(i => i.id === consumables[0]),
         'after discarding there has to be room again');
+});
+
+// ------------------------------------------------- the vending machine (6.3)
+// Kevin's dead machine on the third floor. What is held here is what the
+// design promised: who gets there, when, what it costs, that one take is all a
+// visit allows, and that the sheet on the glass fills over the weeks and
+// travels between machines.
+console.log('The vending machine:');
+await ensure('sidequests', 'vending', 'items');
+const kevinOne = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_1');
+const kevinTwo = DB.sidequests.find(e => e.id === 'sq_kevin_geheim_2');
+const settle = () => new Promise(r => setTimeout(r, 0));   // openVending awaits the pool
+
+await ok('Two parts: the chat, then the machine - and asking keeps you out', () => {
+    // Until 6.3.0 there were three: Kevin showed the machine, and only a
+    // second follow-up a night later opened the window. Three week days in a
+    // row for one easter egg - 0.5 visits in twenty simulated weeks.
+    assert.ok(kevinOne && kevinTwo, 'the chain is incomplete');
+    assert.equal(DB.sidequests.some(e => e.id === 'sq_kevin_geheim_3'), false, 'the third part is back');
+    const agreed = Object.values(kevinOne.results).filter(r => r.next === 'sq_kevin_termin');
+    assert.equal(agreed.length, 1, "exactly one ending of Kevin's chat makes the appointment");
+    assert.equal(kevinTwo.reqStory, 'sq_kevin_termin');
+    assert.equal(kevinTwo.reqStoryAge, 1);
+    // House rule 1, 'Nicht fragen, wer befüllt': the question is option 1.
+    const doors = kevinTwo.opts.filter(o => o.r === 'CMD:OPEN_VENDING');
+    assert.equal(doors.length, 1, 'one way into the machine');
+    assert.notEqual(kevinTwo.opts[0].r, 'CMD:OPEN_VENDING', 'asking who restocks it must not open the window');
+    assert.ok(kevinTwo.opts.every(o => !o.next && !o.loot), 'nothing follows the machine, and the roll comes only out of C4');
+});
+
+await ok('The machine is there from the next day on, and only in a week', () => {
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 2;
+    engine.setStoryFlag('sq_kevin_termin');
+    assert.equal(engine.storyGateOpen(kevinTwo), false, 'not on the day Kevin wrote');
+    state.week.dayIndex = 3;
+    assert.equal(engine.storyGateOpen(kevinTwo), true, 'the day after, it has to be there');
+
+    resetState();                          // a single day has no "tomorrow"
+    engine.setStoryFlag('sq_kevin_termin');
+    assert.equal(engine.storyGateOpen(kevinTwo), false, 'a day run must not reach it');
+});
+
+await ok('The way in costs its minutes, the machine itself none', async () => {
+    resetState();
+    engine.startWeek('easy');
+    state.time = 10 * 60;
+    const door = kevinTwo.opts.find(o => o.r === 'CMD:OPEN_VENDING');
+    engine.resolveTerminal(door, 'sidequest');
+    await settle();
+    assert.equal(state.vendingOpen, true, 'CMD:OPEN_VENDING did not open the window');
+    assert.equal(state.time, 10 * 60 + door.m, 'the option has to charge its minutes');
+    const before = state.time;
+    engine.vendingTake('c4');
+    engine.vendingDeliver();
+    assert.equal(state.time, before, 'the crank must not move the clock');
+    engine.closeVending();
+    assert.equal(state.vendingOpen, false);
+    assert.equal(state.vending, null, 'the visit has to be forgotten on closing');
+});
+
+await ok('House rule 2: one take per visit, whatever it was', async () => {
+    resetState();
+    engine.startWeek('easy');
+    await engine.openVending();
+    assert.equal(engine.vendingTake('magazine'), true);
+    assert.equal(engine.vendingTake('c4'), false, 'a second take in the same visit');
+    assert.equal(engine.vendingDeliver(), false, 'the roll fell although C4 was not the take');
+    engine.closeVending();
+
+    await engine.openVending();
+    assert.equal(engine.vendingTake('nonsense'), false, 'an unknown take was accepted');
+    assert.equal(engine.vendingTake('c4'), true, 'the unknown take used up the visit');
+    assert.equal(engine.vendingDeliver(), true);
+    assert.equal(engine.vendingDeliver(), false, 'the roll fell twice');
+    assert.equal(state.inventory.filter(i => i.id === 'sandwich').length, 1);
+    engine.closeVending();
+});
+
+await ok('Each take leaves its note in the knowledge book, C4 once the roll has landed', async () => {
+    // One take per visit, three notes in the book: the gaps are the reason to
+    // come back and take something else. Career flags only - a week story flag
+    // here would be a flag nothing follows.
+    await ensure('compendium');
+    resetState();
+    engine.startWeek('easy');
+    state.archive.seenFlags = [];
+    await engine.openVending();
+    engine.vendingTake('magazine');
+    assert.ok(state.archive.seenFlags.includes('vending_magazine'), 'reading the magazine left no note');
+    assert.equal(state.storyFlags.vending_magazine, undefined, 'the take became a story flag of the week');
+    engine.closeVending();
+
+    await engine.openVending();
+    engine.vendingTake('c4');
+    assert.ok(!state.archive.seenFlags.includes('vending_c4'), 'C4 is known before the roll has landed');
+    engine.vendingDeliver();
+    assert.ok(state.archive.seenFlags.includes('vending_c4'), 'the roll landed and left no note');
+    engine.closeVending();
+
+    const entry = DB.compendium.find(e => e.id === 'vending');
+    assert.ok(entry, 'the knowledge book has no entry for the machine');
+    for (const flag of ['vending_magazine', 'vending_printout', 'vending_c4'])
+        assert.ok(entry.notes.some(n => n.flag === flag), `no note asks for ${flag}`);
+});
+
+await ok('A day that ends with its windows open closes them', async () => {
+    // Found by the 6.3 edge-case pass: a mail on a timer can drop over a
+    // window, and answering it at 16:25 ends the day from up there. The
+    // vending machine, the intranet, the noticeboard and the chronicle all
+    // stood open the next morning.
+    resetState();
+    engine.startWeek('easy');
+    await engine.openVending();
+    state.intranetOpen = true;
+    state.loreOpen = true;
+    let boardClosed = false;
+    const closeBoard = engine.closeBoard;
+    engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
+    try {
+        state.time = 16 * 60 + 31;
+        engine.checkEndConditions();
+        assert.ok(state.pendingEnd, 'closing time did not end the day');
+        engine.finishGame();
+    } finally { engine.closeBoard = closeBoard; }
+    assert.equal(state.vendingOpen, false, 'the machine outlived the day');
+    assert.equal(state.vending, null, 'the unspent take outlived the day');
+    assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
+    assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
+    // The fake document reports every overlay as open, so the board is asked
+    // for - what is held here is that finishGame asks at all.
+    assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
+});
+
+await ok('The music ducks once for the fall and comes back once', async () => {
+    // The window calls duckMusic from a reactive effect, which may say the
+    // same thing many times over; each repeat would start a fresh fade. And a
+    // track that is not playing has nothing to duck - nor music switched off.
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const fades = [];
+    const track = { paused: false, volume: 0.2 };
+    const box = {
+        ...audio,
+        state: { musicEnabled: true, musicVolume: 0.2, currentMusicTrack: 'elevator' },
+        bgmTracks: { elevator: track },
+        fadeTrack(key, target) { fades.push([key, +target.toFixed(3)]); },
+    };
+    box.duckMusic(false);
+    assert.equal(fades.length, 0, 'un-ducking music that was never ducked started a fade');
+    box.duckMusic(true); box.duckMusic(true);
+    assert.deepEqual(fades, [['elevator', 0.024]], 'the duck has to fade once, to a fraction of the volume');
+    box.duckMusic(false); box.duckMusic(false);
+    assert.deepEqual(fades[1], ['elevator', 0.2], 'the music has to come back to its own volume');
+    assert.equal(fades.length, 2, 'the way back faded twice');
+
+    fades.length = 0;
+    box.state.musicEnabled = false;
+    box.duckMusic(true); box.duckMusic(false);
+    assert.equal(fades.length, 0, 'music that is switched off was faded');
+});
+
+await ok("That evening the diary refuses to write about it", async () => {
+    // 'die lesen mit': Mueller leaves the third floor out of his own diary.
+    // Rank 3 in the detail slot, so the coffee count of the same day loses.
+    await ensure('diary');
+    const at = DB.diary.detail.findIndex(f => f.id === 'detail_vending');
+    assert.ok(at >= 0, 'the diary has no line for the machine');
+    const mentions = (entry) => entry.paragraphs.some(p => (p.parts ?? []).some(part => {
+        const ref = part.ref ?? part.intro?.ref;
+        return ref?.path?.[0] === 'detail' && ref.path[1] === at;
+    }));
+
+    resetState();
+    engine.startWeek('easy');
+    state.coffeeConsumed = 6;                       // a detail that would otherwise win
+    assert.equal(mentions(buildDiary(state, 'WIN')), false, 'the machine is written about on a day without it');
+    await engine.openVending();
+    engine.closeVending();
+    assert.equal(state.vendingVisited, true, 'the visit was not noted for the day');
+    assert.equal(mentions(buildDiary(state, 'WIN')), true, 'the diary does not mention the third floor');
+    assert.ok(Object.keys(freshDay(1.0)).includes('vendingVisited'), 'the next morning would still remember it');
+});
+
+await ok('What the diary says nearly every evening comes in three versions', async () => {
+    // The diary's memory can only skip a line while another is left: with two
+    // lines a frequent fragment alternates, with one it repeats word for word.
+    // These fit nearly every day (6.3) - a colleague moves on most days, and
+    // most days cross 13:37.
+    await ensure('diary');
+    const all = Object.values(DB.diary).filter(Array.isArray).flat();
+    const daily = [...DB.diary.people.map(f => f.id), 'detail_leet', 'detail_lunch', 'detail_items', 'detail_streak'];
+    for (const id of daily) {
+        const f = all.find(x => x.id === id);
+        assert.ok(f, `${id} is gone`);
+        assert.ok(f.lines.length >= 3, `${id} has ${f.lines.length} line(s) - it will repeat`);
+    }
+});
+
+await ok('The other easter eggs leave their line in the diary too', async () => {
+    // Noticeboard, intranet, the personnel files behind the HR login and the
+    // chronicle (6.3). Each through its real opener, then the evening's detail
+    // line. The day is set up so that no figure competes: 3 tickets, 2 cups.
+    await ensure('diary', 'board', 'intranet', 'lore');
+    const detailOf = (entry) => {
+        for (const p of entry.paragraphs) for (const part of (p.parts ?? [])) {
+            const ref = part.ref ?? part.intro?.ref;
+            if (ref?.path?.[0] === 'detail') return DB.diary.detail[ref.path[1]].id;
+        }
+        return null;
+    };
+    const day = () => { resetState(); engine.startWeek('easy'); state.tickets = 3; state.coffeeConsumed = 2; };
+    const asUi = { ...engine, buildIntranet() {} };   // the page itself needs the DOM
+
+    day();
+    assert.equal(detailOf(buildDiary(state, 'WIN')), null, 'a plain day already has a detail line - the probe would prove nothing');
+
+    day(); await ui.openBoard.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_board', 'the noticeboard is not in the diary');
+    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_intranet', 'the intranet is not in the diary');
+    day(); await ui.showLoreModal.call(asUi); ui.closeLoreModal.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_lore', 'the chronicle is not in the diary');
+    day(); ui.noteHrRecord.call(asUi, 'mueller');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_own', 'his own file is not in the diary');
+    day(); ui.noteHrRecord.call(asUi, 'schnoesel');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_other', "Schnösel's file is not in the diary");
+
+    // The intranet and a file on the same day: the file is the secret, it wins.
+    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi); ui.noteHrRecord.call(asUi, 'mueller');
+    assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_own', 'the plain intranet outranked the personnel file');
+    // Closing the window keeps the note: the diary is written at night.
+    for (const key of ['intranetVisited', 'hrRecordsRead', 'loreRead'])
+        assert.ok(Object.keys(freshDay(1.0)).includes(key), `${key} would outlive the day`);
+});
+
+await ok('Nothing is taken from a machine that is not open', () => {
+    resetState();
+    assert.equal(engine.vendingTake('c4'), false);
+    assert.equal(engine.vendingDeliver(), false);
+});
+
+await ok('A full backpack leaves the roll in the flap', async () => {
+    resetState();
+    engine.startWeek('easy');
+    const consumables = Object.keys(DB.items).filter(i => !DB.items[i].quest && !DB.items[i].keep);
+    for (let n = 0; n < 10; n++) engine.grantItem(consumables[n % consumables.length]);
+    const held = state.inventory.filter(i => i.id === 'sandwich').length;
+    await engine.openVending();
+    engine.vendingTake('c4');
+    assert.equal(engine.vendingDeliver(), false, 'a full backpack took the roll');
+    assert.equal(state.inventory.filter(i => i.id === 'sandwich').length, held);
+    engine.closeVending();
+});
+
+await ok('The sheet fills over the weeks and keeps the signature where it was made', async () => {
+    resetState();
+    const total = DB.vending.rules.members.length;
+    await engine.openVending(); engine.closeVending();
+    assert.equal(state.archive.stats.vendingVisits, 1, 'the visit was not counted');
+    assert.equal(engine.vendingMembersShown(total), 2, 'two names on the first visit');
+    for (let n = 0; n < 8; n++) { await engine.openVending(); engine.closeVending(); }
+    assert.equal(engine.vendingMembersShown(total), total, 'never more names than the sheet has');
+
+    resetState();
+    assert.equal(engine.vendingSign(2), true);
+    assert.equal(state.archive.stats.vendingSignedAt, 2);
+    assert.equal(engine.vendingSign(4), false, 'signed twice');
+    assert.equal(state.archive.stats.vendingSignedAt, 2, 'the signature moved');
+});
+
+await ok('Visits and the signature travel between computers', () => {
+    const merged = engine.mergeArchives(
+        { stats: { vendingVisits: 3 } },
+        { stats: { vendingVisits: 5, vendingSignedAt: 2 } });
+    assert.equal(merged.stats.vendingVisits, 5, 'visits from the other machine were lost');
+    assert.equal(merged.stats.vendingSignedAt, 2, 'the signature did not arrive');
+    const kept = engine.mergeArchives(
+        { stats: { vendingSignedAt: 3 } },
+        { stats: { vendingVisits: 1 } });
+    assert.equal(kept.stats.vendingSignedAt, 3, 'an unsigned machine undid the signature');
+});
+
+await ok('A visit is not part of the day save, and Escape closes it', () => {
+    const dayFields = Object.keys(freshDay(1.0));
+    assert.ok(!dayFields.includes('vending') && !dayFields.includes('vendingOpen'),
+        'the visit leaked into the save file');
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.match(keys, /engine\.state\.vendingOpen\) \{ engine\.closeVending\(\); return; \}/,
+        'Escape no longer closes the machine');
+});
+
+await ok('No key reaches through a window over the terminal', () => {
+    // Found by the 6.3 audit: Space pressed the continue button BEHIND the open
+    // vending machine - and behind the noticeboard, where it had done so all
+    // along. The button may say lunch break or closing time.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(keys, /contBtn\.offsetParent !== null && !engine\.windowOverTerminal\(\)/,
+        'Space presses the continue button through a window again');
+    const actions = keys.slice(keys.indexOf('// 4. ACTION SHORTCUTS'), keys.indexOf('// 5. OPTION SHORTCUTS'));
+    assert.match(actions, /!engine\.windowOverTerminal\(\)/, 'Q, W, E and R reach through a window again');
+
+    // Every window Escape closes is on the list - except the three the
+    // keyboard deals with itself before it gets that far.
+    const escapes = new Set([...keys.matchAll(/isVisible\('([a-z-]+)'\)/g)].map(m => m[1]));
+    const listed = new Set([...uiSrc.match(/WINDOWS_OVER_TERMINAL = \[([\s\S]*?)\]/)[1].matchAll(/'([a-z-]+)'/g)].map(m => m[1]));
+    for (const id of escapes) {
+        if (['email-modal', 'modal-overlay', 'tut-ask-modal'].includes(id)) continue;
+        assert.ok(listed.has(id), `"${id}" closes on Escape but is missing from WINDOWS_OVER_TERMINAL`);
+    }
+
+    // The bench's document stub answers "visible" for every id, which would
+    // make this true whatever the machine does - the mutation probe caught
+    // exactly that. So the DOM half is told nothing is open, and the state
+    // half has to carry the answer on its own, both ways.
+    resetState();
+    const asked = { ...engine, isOverlayOpen: () => false };
+    assert.equal(ui.windowOverTerminal.call(asked), false, 'a window is reported where none is open');
+    state.vendingOpen = true;
+    assert.equal(ui.windowOverTerminal.call(asked), true, 'the vending machine does not count as a window');
+    state.vendingOpen = false;
+});
+
+await ok('A crank line waits until the one before it can have been read', () => {
+    // Up to 6.3.0 a line waited only its own beat, and the operator could not
+    // keep up: ninety characters were covered by the next line after 0.6 s.
+    const lines = [...DB.vending.crank, ...DB.vending.crankEnd];
+    const delays = crankDelays(lines);
+    assert.equal(delays.length, lines.length + 1, 'one delay per line, and one for the card');
+    assert.equal(delays[0], lines[0].ms, 'the first line has nothing before it to read');
+    for (let i = 1; i < lines.length; i++)
+        assert.ok(delays[i] > lines[i].ms, `line ${i} gets only its beat, no time to read line ${i - 1}`);
+    // The longer the line before, the longer the wait - same beat, more words.
+    const [short, long] = crankDelays([{ ms: 0, text: 'x'.repeat(10) }, { ms: 500, text: '' }, { ms: 0, text: 'x'.repeat(90) }, { ms: 500, text: '' }])
+        .filter((_, i) => i === 1 || i === 3);
+    assert.ok(long > short + 2000, `ninety characters bought ${long - short} ms more than ten`);
+    assert.ok(delays.at(-1) > 2000, 'the card arrives with the label line instead of after it');
 });
 
 // ----------------------------------------------------- cloud synchronisation

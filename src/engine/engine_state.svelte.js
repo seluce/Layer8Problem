@@ -43,6 +43,22 @@ export function freshDay(mult = 1.0) {
         // Has the 13:37 moment already been shown today? (see checkLeetMoment)
         leetSeen: false,
 
+        // What the day's easter eggs left behind, for tonight's diary (6.3,
+        // data_diary.js, the detail slot). Day-scoped on purpose: a reloaded
+        // day still knows, and the next morning forgets. The noticeboard needs
+        // no field of its own - boardNotes above is drawn on its first open.
+        //   vendingVisited  the machine on the third floor was opened -
+        //                   Mueller then refuses to write about it
+        //   intranetVisited the intranet was opened
+        //   hrRecordsRead   which personnel files were opened behind the HR
+        //                   login: 'schnoesel', 'mueller' (record ids from
+        //                   data_intranet.js, hr.page.accounts)
+        //   loreRead        the company chronicle was opened
+        vendingVisited: false,
+        intranetVisited: false,
+        hrRecordsRead: [],
+        loreRead: false,
+
         // Stat curve of the day, one point per decision. The end screen draws
         // it; nothing else reads it. Kept flat and tiny (four numbers a step,
         // ~40 steps a day) so it can travel into the archive later if wanted.
@@ -385,6 +401,17 @@ export const state = $state({
     // The company intranet. components/intranet/IntranetView.svelte renders the
     // browser window and the pages inside it; nothing exists until it opens.
     intranetOpen: false,
+
+    // The dead vending machine on the third floor (6.3), opened by
+    // sq_kevin_geheim_2 through CMD:OPEN_VENDING. `vending` is THIS visit:
+    // what was taken (one of 'magazine', 'printout', 'c4' - house rule 2 allows
+    // a single one) and whether the sandwich has fallen yet. Outside freshDay()
+    // on purpose: a visit lasts as long as the window is open and has no
+    // business in the day's save file. What outlives it - how often the
+    // machine was visited, and where the player signed - is career, and sits
+    // in archive.stats.
+    vendingOpen: false,
+    vending: null,
 
     // What the company pages say about you right now. Filled by
     // engine_ui.buildIntranet() on every open, so the feed can mention what

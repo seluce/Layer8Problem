@@ -1165,6 +1165,16 @@ export const events = {
             recipe = { k: 'event.cmd.board' };
             this.openBoard();
         }
+
+        // --- VENDING MACHINE TRIGGER (6.3) ---
+        // lint-data reads the commands out of this file, so a data file can
+        // name only one that is handled here - CMD:OPEN_VENDNIG would otherwise
+        // land in the log as text, at 0 errors and 0 warnings.
+        if (res === "CMD:OPEN_VENDING") {
+            res = t('event.cmd.vending');
+            recipe = { k: 'event.cmd.vending' };
+            this.openVending();
+        }
         // --------------------------------
 
         if(type === 'coffee') this.state.coffeeConsumed++;

@@ -21,15 +21,13 @@ the repository root.
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
 | Parity checker | `npm run lint:parity` | after **every** translation, gate at 0 errors |
 | Field scanner | `node tools/scan-fields.mjs <pool> [--list] [--german] [--key=field]` | **proof of completeness** for a translation block, no gate |
-| Echo check | `node tools/check-echoes.mjs <pool> [--n=4]` | after every translation block **and after every repair**, no gate |
 | String pass | `node tools/scan-strings.mjs [path …] [--sentences] [--nouns] [--all-attrs]` | before claiming a **code** surface is done, no gate |
-| Quotation marks | `node tools/normalize-quotes.mjs --dry` | rarely, after importing foreign text |
 | Steam presence | `node tools/make-steam-presence.mjs` | when a `presence.*` string changes; upload the output to Steamworks |
 | Steam achievements | `node tools/make-steam-achievements.mjs` | when an achievement title or `hint` changes, or an achievement is added |
 
 **The order of a content session:** write in German → `lint:data` →
 `report-prose` → translate → `scan-fields` as proof of completeness →
-`check-echoes` → `lint:all` (both trees, interface strings, parity) →
+`lint:all` (both trees, interface strings, parity) →
 `npm test` → `sim`/`sim:week` as a smoke test → ship.
 
 ---
@@ -78,6 +76,32 @@ What it finds — throughout, things that fail **quietly** at runtime:
   fallback included. Without the pair the chronicle quietly records the
   standard evening
 - the diary: conditions that stumble or fit no conceivable day
+- **the vending machine** (6.3, section 12): every compartment's `take` is one
+  the engine accepts (`VENDING_TAKES` in `engine_vending.js`) and every take
+  has a compartment; `limitRule` points at a rule that exists; the crank's
+  beats - the time with nothing new to read - stay under twenty seconds, and
+  the whole run, reading time included, under ninety (measured with
+  `crankDelays`, the function the window paces itself with); every `sound`
+  on a crank line is one `engine_audio.js` has (`VENDING_SOUNDS`) - an
+  unknown one plays nothing and throws nothing; every take
+  leaves a note in the knowledge book - `VENDING_FLAGS` in the engine is held
+  against the takes and against the compendium notes, in both directions,
+  and its flags count as set for the compendium check; exactly
+  one closing line is marked `lands` and it is not the first (without it the
+  roll never reaches the backpack); and the machine's prose goes through the
+  same text rules as every event
+- **years the calendar overtakes** (6.3, section 13): a year that is this
+  year or later reads wrong once it has passed ('the 2027 procurement round
+  ... until then'), and a year with an age beside it in the same field is
+  right for one year only ('1998 ... running for 25 years'). Past years on
+  their own are left alone. Sums of money are not years (`2000€`).
+  Reviewed exceptions go into `yearReviewed`. The present is read from the
+  clock, so warnings can only disappear with time, never appear on New
+  Year's Day. The interface strings are checked too
+- **doors** (section 12b): a result starting with `CMD:` has to be a command
+  `engine_events.js` handles — the list is read out of that file — and every
+  command it handles has to be used somewhere. A typo would otherwise reach the
+  player word for word, at 0 errors and 0 warnings
 
 **Introduced a new field? Then add it here** (`EVENT_KEYS`, `OPT_KEYS`,
 `USE_FIELDS`, `PASSIVE_FIELDS`), otherwise it is an error.
@@ -92,7 +116,11 @@ node tools/report-prose.mjs lunch --lang=en   # English tree
 ```
 
 Pools: `server coffee calls sidequests emails meetings lunch party reputation
-bossfights special board`.
+bossfights special board diary moods achievements excuses newsTicker tutorial
+chars vending`. The intranet stays out on purpose (component-rendered, a tone of
+its own). `special`, `diary`, `excuses`, `newsTicker` and `vending` are trees of
+text rather than event lists and are walked leaf by leaf; for `vending` the ids,
+picture paths, emoji and the type plate are skipped.
 
 **`--lang=de|en`, default `de`.** The language is in the report's header line;
 if the requested tree does not load, the tool aborts rather than falling back to
@@ -339,29 +367,9 @@ otherwise trial runs distort the statistics permanently.
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up
 in the test suite, not first in the browser.
 
-## 7. `normalize-quotes.mjs` — quotation marks
+## 7. Retired tools
 
-```
-node tools/normalize-quotes.mjs --dry     # report only
-node tools/normalize-quotes.mjs           # write
-node tools/normalize-quotes.mjs src/data  # restrict to a directory
-```
-
-Two passes that look the same and are not:
-
-1. **Notation** — how a string is written in the source file. The project uses
-   double quotation marks throughout. Important beyond taste: tools that search
-   the files as text skip a file written differently, and do so **silently**.
-2. **Text** — what the player reads. House rule: first order `'so'`, second
-   order `"so"` (that is, the usual nesting with the roles swapped, fitting a
-   game that imitates a terminal).
-
-It works through the parser, never through search-and-replace, and checks its
-own result before writing. Even so: **always `--dry` first.**
-
-## 8. Retired tools
-
-Two tools used to live here and have been **removed**. They remain only as a
+Four tools used to live here and have been **removed**. They remain only as a
 note, so that nobody finds them in an older note and goes looking:
 
 - **`audit-stats.mjs`** — checked the signs of the stats against the house rules
@@ -373,6 +381,18 @@ note, so that nobody finds them in an older note and goes looking:
   the cheapest sat at the top in 53 % of events). The distribution has been held
   by hand ever since; the target values and the measured state are in
   `EVENT-DOKTRIN.md` §2a.
+- **`normalize-quotes.mjs`** (removed 23/10/2026) — put the quotation marks
+  of every data file into house style, through the parser, in two passes:
+  the notation in the source and the marks the player reads. Its last run
+  changed nothing in either pass. The visible half is a `lint-data` warning
+  (double quotation marks at the first level), and a run over every text at
+  once is exactly the pattern run `CLAUDE.md` rules out; a stray mark is
+  fixed by hand where the linter names it.
+- **`check-echoes.mjs`** (removed 23/10/2026) — looked for word sequences of a
+  freshly translated pool in the already-translated stock, to catch a
+  translation repeating its own phrasing. Built for the translation phase,
+  which is over; echoes within the game `report-prose` finds anyway, and on a
+  new block it reported mostly stock phrases ('on the third floor').
 
 ---
 
@@ -503,7 +523,7 @@ What is checked:
    and nothing on screen shows it.
 4. **Prose has to differ** — a text that reads verbatim the same in both trees
    has not been translated yet. That is **not an error** but the work list; it
-   appears under "NOCH DEUTSCH".
+   appears under "STILL GERMAN".
 
 What is not checked is whether the English is any good. No tool can do that.
 
@@ -514,7 +534,11 @@ had one line fewer.
 
 ### When a file is missing from the English tree
 
-Since 6.0 the parity checker also compares the **file inventory** of both trees.
+Since 6.0 the parity checker also compares the **file inventory** of both trees,
+and since 6.3 in both directions: a data file that `data.js` does not list is an
+error too. The pool lists themselves are no longer copied into the checker but
+imported from `data.js` (`POOL_NAMES`, `CORE_NAMES`) — until then a pool added
+there and forgotten here went through as "in step" without ever being compared.
 Without it the symptom only surfaces in the browser, as
 `Unknown variable dynamic import: ./data/en/data_xyz.js`, followed by a game
 with empty views — empty archive, empty settings. The bundler is looking for the
@@ -634,46 +658,9 @@ has become one of the three passes above.
 (capitalised single words — German nouns sit there). Neither catches anything
 extra; they only make 400 lines bearable.
 
-**acorn is not in `package.json`.** It arrives with Vite, and
-`normalize-quotes.mjs` has been importing it undeclared for just as long. That
-holds today and is worth a `devDependencies` entry the next time the file is
-opened.
-
----
-
-## `check-echoes.mjs` — the word-sequence check
-
-```
-node tools/check-echoes.mjs emails          # the four-word level
-node tools/check-echoes.mjs emails --n=6    # the sharp grip
-node tools/check-echoes.mjs emails --min=1  # pairs within the block as well
-```
-
-**No gate.** Two questions in one run: which word sequences of the freshly
-translated pool also appear in the **already translated** files, and which run
-across more than `--min` entries within the block.
-
-**Why alongside `report-prose` and not behind it:** its section 2 starts at
-**five** words. Many translation-born echoes are four long — "the two of you",
-"in the middle of", "and that is precisely the". The maxim from GLOSSAR §7b:
-where German has several words for the same thing and English one obvious one,
-the echo comes into being during translation and appears in no source.
-
-**Run it again after every repair.** In four out of five blocks a repair was
-itself an echo; the numbers have to fall **monotonically**. If one rises, the
-last repair was one.
-
-> **`TRANSLATED` in the head of the tool has to grow with it.** If a finished
-> pool is not in there, the new block is held against a still-German stock, and
-> **every** sequence looks unique.
->
-> **The probe:** a tool that reports 0 belongs held against a known hit. With
-> the stock fully translated, `check-echoes meetings --n=6` reports **36**
-> (measured 16/08/2026). In the thirteenth session it was 22 — the number
-> **rises** as further pools move into `TRANSLATED`, because then there is more
-> stock to compare against. Take an older number as the target and you will
-> mistake a grown comparison set for a bug.
-
+**acorn is not in `package.json`.** It arrives with Vite, and this tool
+imports it undeclared. That holds today and is worth a `devDependencies`
+entry the next time the file is opened.
 
 ---
 

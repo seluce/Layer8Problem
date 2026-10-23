@@ -540,6 +540,20 @@ export const de = {
     'board.subtitle':              '"Kommunikation ist der Schlüssel (der leider klemmt)."',
     'board.close':                 'SCHLIESSEN',
 
+    // The vending machine on the third floor (6.3). Only the frame: the
+    // compartments, the crank, both magazines and the house rules are data,
+    // in data_vending.js - that is where the jokes live.
+    'vending.machine':             'Der Automat',
+    'vending.crank':               'Fach C4, von Hand',
+    'vending.tape':                'Innen an der Scheibe, mit Tesafilm',
+    'vending.take.magazine':       'Ein MEHRWERT ziehen',
+    'vending.take.printout':        'Chantals Ausdruck ziehen',
+    'vending.take.c4':             'Fach C4 von Hand drehen',
+    'vending.sign':                'Sich in die Hausordnung eintragen',
+    'vending.leave':               'Klappe zu und gehen',
+    'vending.leaveAfter':          'Klappe ganz zudrücken und gehen',
+    'vending.close':               'Schließen',
+
     'keybind.title':               'TASTENBELEGUNG',
     'keybind.subtitle':            'Klicke auf eine Taste, um sie neu zuzuweisen.',
     'keybind.reset':               'Standard',
@@ -752,6 +766,7 @@ export const de = {
     'event.chainBroken':           'Verbindung unterbrochen.',
     'event.cmd.intranet':          'Du klickst hektisch auf das Lesezeichen. Das alte Intranet lädt ächzend...',
     'event.cmd.board':             'Du vertiefst dich in die faszinierende Welt der Firmen-Aushänge...',
+    'event.cmd.vending':           'Du gehst vor der Scheibe in die Hocke. Die Lampe über dir flackert...',
 
     'terminal.btn.lunch':          'ZUR MITTAGSPAUSE',
     'terminal.btn.meeting':        'ZUM WOCHENMEETING',

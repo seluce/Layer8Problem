@@ -30,7 +30,7 @@
 export const newsTicker = [
 
 	"System info for our new Junior Assistant, Justus-Aurelius: as Ms Miller, who normally handles onboarding, is currently residing in the burnout clinic and I have absolutely no idea how her regular system works, you will be receiving your credentials today via the broadcast system. Login: j_schnoesel / Pass: Synergy123! Please never change the password, it confuses the database.",
-	"In pursuit of our sustainability targets ('Green Synergy 2030') we ask all staff to give up their parking space voluntarily. The areas thus freed will be sublet, most lucratively, to the law firm next door with immediate effect. Win-win for the environment and for our shareholders!",
+	"In pursuit of our sustainability targets ('Green Synergy 2.0') we ask all staff to give up their parking space voluntarily. The areas thus freed will be sublet, most lucratively, to the law firm next door with immediate effect. Win-win for the environment and for our shareholders!",
 	"Internal notice: following evaluation of the quarterly figures, the planned budget for ergonomic office chairs is cancelled in its entirety. The funds will instead flow as a special bonus into the board's new task force project 'Agile Mindset 4.0'.",
 	"Global Corp celebrates the successful rollout of the new AI-assisted HR software 'FireBot 3000'. In the same movement we say farewell to 40% of the workforce on the third floor. To the remaining staff we wish a productive 'Do-More-With-Less' Tuesday!",
 	"Important information from facilities management: the tap water in Building B has been classified as 'not potable' by the health authority for the time being. Global Corp Premium Mineral Water is available in the cafeteria from now on at only €4.50 a bottle.",
