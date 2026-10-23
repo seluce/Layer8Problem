@@ -3359,6 +3359,21 @@ await ok("That evening the diary refuses to write about it", async () => {
     assert.ok(Object.keys(freshDay(1.0)).includes('vendingVisited'), 'the next morning would still remember it');
 });
 
+await ok('What the diary says nearly every evening comes in three versions', async () => {
+    // The diary's memory can only skip a line while another is left: with two
+    // lines a frequent fragment alternates, with one it repeats word for word.
+    // These fit nearly every day (6.3) - a colleague moves on most days, and
+    // most days cross 13:37.
+    await ensure('diary');
+    const all = Object.values(DB.diary).filter(Array.isArray).flat();
+    const daily = [...DB.diary.people.map(f => f.id), 'detail_leet', 'detail_lunch', 'detail_items', 'detail_streak'];
+    for (const id of daily) {
+        const f = all.find(x => x.id === id);
+        assert.ok(f, `${id} is gone`);
+        assert.ok(f.lines.length >= 3, `${id} has ${f.lines.length} line(s) - it will repeat`);
+    }
+});
+
 await ok('The other easter eggs leave their line in the diary too', async () => {
     // Noticeboard, intranet, the personnel files behind the HR login and the
     // chronicle (6.3). Each through its real opener, then the evening's detail

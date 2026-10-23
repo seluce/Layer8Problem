@@ -678,19 +678,24 @@ export const diary = {
             id: "detail_lunch", rank: 1, when: d => d.lunch,
             lines: [
                 "Took a lunch break, at least. Twenty minutes in which nobody wanted anything from me are a currency around here.",
-                "The lunch break was the only appointment today that I kept voluntarily."
+                "The lunch break was the only appointment today that I kept voluntarily.",
+                "Over lunch I ate without looking at a screen. It felt strange."
             ]
         },
         {
             id: "detail_items", rank: 1, when: d => d.items >= 5,
             lines: [
-                "The backpack is heavier in the evening than it was in the morning. None of it belongs to me, and nobody is going to ask after it."
+                "The backpack is heavier in the evening than it was in the morning. None of it belongs to me, and nobody is going to ask after it.",
+                "My backpack fills up with whatever other people leave lying around. I am this company's lost property office.",
+                "{items} things in my backpack. I shall need every one of them eventually; I just do not know when."
             ]
         },
         {
             id: "detail_leet", rank: 1, when: d => d.leet,
             lines: [
-                "At 13:37 I looked at the clock and was then annoyed with myself for having noticed."
+                "At 13:37 I looked at the clock and was then annoyed with myself for having noticed.",
+                "13:37. I noticed and told nobody. That is the difference between Kevin and me.",
+                "It was 13:37 again today. The clock does it every day, and every day I fall for it."
             ]
         },
         {
@@ -755,61 +760,71 @@ export const diary = {
         {
             id: "detail_streak", rank: 1, when: d => d.survived && d.streak >= 3,
             lines: [
-                "{streak} days in a row got through. My expectations of myself are sinking pleasingly fast."
+                "{streak} days in a row got through. My expectations of myself are sinking pleasingly fast.",
+                "That makes {streak} days without a disaster. I am slowly growing suspicious.",
+                "Held out for {streak} days running. If this goes on, people will start to expect it of me."
             ]
         },
     ],
 
     // The colleagues, measured against this morning rather than against zero.
     //
-    // KNOWN THIN SPOT: people_both, detail_items, detail_leet and detail_streak
-    // carry two lines or one. The memory in engine_diary.js can only skip a
-    // line while another one is left, so on two days with the same constellation
-    // these do repeat. Three lines per fragment is the number that makes the
-    // skipping work; whoever picks this up next should write the missing ones
-    // rather than add more fragments.
+    // Three lines per fragment is the number that makes the memory in
+    // engine_diary.js work: it can only skip a line while another one is left,
+    // so with two the same constellation alternates, with one it repeats word
+    // for word. Since 6.3 the fragments that fit nearly every day carry three:
+    // all of `people` (some colleague moves on most days), detail_leet (nearly
+    // every day crosses 13:37), detail_lunch, detail_items and detail_streak.
+    // What still has two fits rarer days; end_party has one because the gala
+    // happens once in a career. New lines before new fragments.
     people: [
         // Who moved today - reputation against where it stood this morning.
         {
             id: "people_both", rank: 3, when: d => d.upBy >= 5 && d.downBy >= 5,
             lines: [
                 "All told: {up} likes me more today, {down} considerably less. In this company that is presumably a zero-sum game.",
-                "Today I gained with {up} and lost with {down}. Somebody else draws up the balance anyway."
+                "Today I gained with {up} and lost with {down}. Somebody else draws up the balance anyway.",
+                "{up} is smiling, {down} is not. Somewhere in between, I did some work today."
             ]
         },
         {
             id: "people_up_strong", rank: 2, when: d => d.upBy >= 15,
             lines: [
                 "{up} changed sides today, and to mine at that. I ought to make use of it while it lasts.",
-                "I made up {upBy} points with {up}. In my experience that sort of thing lasts until the next disruption."
+                "I made up {upBy} points with {up}. In my experience that sort of thing lasts until the next disruption.",
+                "I no longer remember exactly what I did for {up} today. {up} evidently does."
             ]
         },
         {
             id: "people_down_strong", rank: 2, when: d => d.downBy >= 15,
             lines: [
                 "Since this afternoon {down} has spoken only the bare minimum to me. Deserved, but unpleasant.",
-                "With {down} I threw away in a single day what I had built up over weeks."
+                "With {down} I threw away in a single day what I had built up over weeks.",
+                "Should {down} not say hello to me tomorrow: I know why, and in that position I would not either."
             ]
         },
         {
             id: "people_up", rank: 1, when: d => d.upBy >= 5,
             lines: [
                 "{up} was conspicuously friendly today. Either I did something right, or a request is on its way.",
-                "{up} at least appears to be content with the day. So one of the two of us is."
+                "{up} at least appears to be content with the day. So one of the two of us is.",
+                "{up} held the door for me today. Around here that counts as a pay rise."
             ]
         },
         {
             id: "people_down", rank: 1, when: d => d.downBy >= 5,
             lines: [
                 "{down} looked at me differently today than yesterday, and not for the better.",
-                "Since today there is something outstanding with {down} that cannot be settled with work."
+                "Since today there is something outstanding with {down} that cannot be settled with work.",
+                "When I walked past {down} today, the sighing grew louder. Duly noted."
             ]
         },
         {
             id: "people_quiet", rank: 0, when: d => d.upBy < 5 && d.downBy < 5 && d.events >= 10,
             lines: [
                 "Nothing happened on the interpersonal front today. For a sysadmin that is the ideal state.",
-                "Nobody likes me more or less today than yesterday. I count that as a success."
+                "Nobody likes me more or less today than yesterday. I count that as a success.",
+                "No quarrels, no new alliances. My colleagues and I worked politely past one another today."
             ]
         },
     ],
