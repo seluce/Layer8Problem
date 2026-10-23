@@ -94,6 +94,11 @@ const engine = {
     log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'diary stub',
+    // finishGame() closes the day's windows through engine_ui. These five touch
+    // nothing but state, the stubbed overlay and the fake document, so the real
+    // ones run here: a stub would make the day-end test pass whatever they do.
+    closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
+    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard, isOverlayOpen: ui.isOverlayOpen,
 };
 
 const resetState = () => {
@@ -3277,19 +3282,32 @@ await ok('Each take leaves its note in the knowledge book, C4 once the roll has 
         assert.ok(entry.notes.some(n => n.flag === flag), `no note asks for ${flag}`);
 });
 
-await ok('A day that ends with the machine open closes it', async () => {
-    // Found by the 6.3 edge-case pass: a mail on a timer can drop over the
-    // machine, and answering it at 16:25 ends the day from up there. The
-    // machine stood open the next morning, its take still unspent.
+await ok('A day that ends with its windows open closes them', async () => {
+    // Found by the 6.3 edge-case pass: a mail on a timer can drop over a
+    // window, and answering it at 16:25 ends the day from up there. The
+    // vending machine, the intranet, the noticeboard and the chronicle all
+    // stood open the next morning.
     resetState();
     engine.startWeek('easy');
     await engine.openVending();
-    state.time = 16 * 60 + 31;
-    engine.checkEndConditions();
-    assert.ok(state.pendingEnd, 'closing time did not end the day');
-    engine.finishGame();
+    state.intranetOpen = true;
+    state.loreOpen = true;
+    let boardClosed = false;
+    const closeBoard = engine.closeBoard;
+    engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
+    try {
+        state.time = 16 * 60 + 31;
+        engine.checkEndConditions();
+        assert.ok(state.pendingEnd, 'closing time did not end the day');
+        engine.finishGame();
+    } finally { engine.closeBoard = closeBoard; }
     assert.equal(state.vendingOpen, false, 'the machine outlived the day');
     assert.equal(state.vending, null, 'the unspent take outlived the day');
+    assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
+    assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
+    // The fake document reports every overlay as open, so the board is asked
+    // for - what is held here is that finishGame asks at all.
+    assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
 });
 
 await ok('Nothing is taken from a machine that is not open', () => {

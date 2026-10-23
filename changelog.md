@@ -10,6 +10,7 @@ The texts:
 
 Bug fixes:
 * Space no longer presses the button behind an open window, and the action keys no longer start anything behind the noticeboard.
+* The intranet, the noticeboard and the company chronicle now close with the day instead of standing open into the next morning.
 
 Under the hood:
 * Svelte, Vite, Electron and the build tools are on their current versions.

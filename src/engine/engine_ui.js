@@ -505,6 +505,25 @@ export const ui = {
     },
 
     /**
+     * Closes the windows that belong to the working day, for finishGame().
+     *
+     * A mail can drop over any of them on its two-second timer, and answering
+     * it near closing time ends the day from up there. Until 6.3 every one of
+     * them outlived the day: the intranet stood over the next morning's
+     * terminal, the noticeboard too - empty, because the new day had cleared
+     * its notes - the vending machine with its take unspent, and the
+     * chronicle even covered the night screen, standing above it. Measured in
+     * the built game, Tuesday into Wednesday. Each closer is safe on a window
+     * that is not open.
+     */
+    closeDayWindows: function() {
+        if (this.state.intranetOpen) this.closeIntranet();
+        if (this.state.loreOpen) this.closeLoreModal();
+        if (this.state.vendingOpen) this.closeVending();
+        if (this.isOverlayOpen('board-modal')) this.closeBoard();
+    },
+
+    /**
      * The windows that stand between loading the page and playing: the intro,
      * the question about an interrupted workday, and the difficulty picker.
      *

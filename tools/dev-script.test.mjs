@@ -60,6 +60,9 @@ const engine = {
     playBootSequence(cb) { cb(); }, closeSettings() {}, updatePhoneVisibility() {},
     checkForNews() {}, log() {}, unlockAchievement() {},
     generateDiaryEntry: () => 'diary stub',
+    // finishGame() closes the day's windows (engine_ui); none is open here, and
+    // week-flow.test.mjs runs the real one.
+    closeDayWindows() {},
 };
 window.engine = engine;
 
