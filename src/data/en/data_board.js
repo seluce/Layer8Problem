@@ -1,3 +1,4 @@
+// i18n-status: translated
 /**
  * The community board.
  *

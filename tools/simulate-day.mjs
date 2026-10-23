@@ -84,9 +84,9 @@ const lazyMult = (s) => (NO_LAZY_EASY && s.diff < 1.0) ? 1
 const SHIFT_END = 16 * 60 + 30;
 
 const DIFFS = [
-    { name: 'Freitag (leicht)',  mult: 0.8,  startTickets: 0, valveReset: 30 },
-    { name: 'Mittwoch (normal)', mult: 1.0,  startTickets: 0, valveReset: 50 },
-    { name: 'Montag (schwer)',   mult: 1.25, startTickets: 2, valveReset: 60 },
+    { name: 'Friday (easy)',     mult: 0.8,  startTickets: 0, valveReset: 30 },
+    { name: 'Wednesday (normal)', mult: 1.0,  startTickets: 0, valveReset: 50 },
+    { name: 'Monday (hard)',     mult: 1.25, startTickets: 2, valveReset: 60 },
 ];
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -112,7 +112,7 @@ function danger(o, s) {
 
 const STRATEGIES = {
     // Clicks anything - the lower bound of understanding the game.
-    zufall: (opts, s) => rnd(opts),
+    random: (opts, s) => rnd(opts),
 
     // Weighs the real danger: radar counts double, triple once the valve is
     // spent; laziness counts as a future radar amplifier.

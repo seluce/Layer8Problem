@@ -1,3 +1,4 @@
+// i18n-status: translated
 /**
  * The diary at the end of the day.
  *

@@ -1,3 +1,4 @@
+// i18n-status: translated
 /*
  * The Friday meeting pool (v5.0 week mode, design 8.1).
  *

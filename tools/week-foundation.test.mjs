@@ -34,7 +34,7 @@ const ok = (name, fn) => { fn(); passed++; console.log('  ✓ ' + name); };
 console.log('Multipliers (day mode, identical values):');
 const dayEngine = (mult) => ({ state: { difficultyMult: mult, week: { active: false } }, ...week });
 
-ok('Freitag 0.8: statMult 0.8, effMult 0.8, Tier 1', () => {
+ok('Friday 0.8: statMult 0.8, effMult 0.8, tier 1', () => {
     const e = dayEngine(0.8);
     assert.equal(e.statMult(), 0.8); assert.equal(e.effMult(), 0.8); assert.equal(e.difficultyTier(), 1);
 });
@@ -42,7 +42,7 @@ ok('Wednesday 1.0: statMult 1.1 (the quirk!), effMult 1.0, tier 2', () => {
     const e = dayEngine(1.0);
     assert.equal(e.statMult(), 1.1); assert.equal(e.effMult(), 1.0); assert.equal(e.difficultyTier(), 2);
 });
-ok('Montag 1.25: statMult 1.25, effMult 1.25, Tier 3', () => {
+ok('Monday 1.25: statMult 1.25, effMult 1.25, tier 3', () => {
     const e = dayEngine(1.25);
     assert.equal(e.statMult(), 1.25); assert.equal(e.effMult(), 1.25); assert.equal(e.difficultyTier(), 3);
 });
