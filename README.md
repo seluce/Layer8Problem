@@ -104,7 +104,7 @@ and you lose the whole week.
   kitchen that was not there before.
 - **Seven colleagues with their own reputation**, who remember how you decided —
   and pay you back eventually. In both directions.
-- **32 items** to find and repurpose creatively. Duct tape fixes more than it
+- **33 items** to find and repurpose creatively. Duct tape fixes more than it
   should, and some things work without being touched at all.
 - **27 achievements**, graded by difficulty, plus an archive, a diary that
   narrates your day every evening, and a company chronicle to keep writing.

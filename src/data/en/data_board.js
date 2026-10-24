@@ -266,5 +266,13 @@ export const board = [
         title: "NEW: THE IT WIKI", titleTone: "#065f46",
         body: "There is now a <strong>guide to screen brightness</strong>. With pictures.<br>Further articles will follow as further problems arise. They will arise.",
         sign: "- Kevin from IT"
+    },
+    {
+        // The orgone strand (6.3): the tray that went in with the others.
+        id: "board_orgone_tray", kind: "note", paper: "#fefce8", tilt: "-1deg", pin: "#b45309",
+        reqStory: "orgone_invoice",
+        title: "WHOSE IS THE TRAY WITH THE COIL?", titleTone: "#78350f",
+        body: "Among the trays in the kitchenette there is one with a <strong>copper coil</strong>. My marble cake tasted of coins on it.<br>Please collect or label it.",
+        sign: "- R. Sonntag (Accounts)"
     }
 ];

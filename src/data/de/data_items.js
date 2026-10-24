@@ -8,7 +8,8 @@
  * here, a CONSUMABLES list in two components, and two if-chains in
  * engine_inventory.js. A new snack meant editing five spots.
  *
- *   use.a / use.l     how far aggro and laziness drop (negative numbers)
+ *   use.a / use.l     how far aggro and laziness drop (negative numbers);
+ *                     use.l may be a price next to aggro relief (orgone tray)
  *   use.desc          the line above the confirm button
  *   use.warn          the small print below it
  *   use.log           what the log says afterwards
@@ -97,6 +98,13 @@ export const items = {
                warn: "Drei Stunden Ruhe danach. Und Dr. Wichtig mag dich jedes Mal ein kleines Stück weniger, ohne sagen zu können, warum.",
                log:  "Du piekst die Nadel in den Stoffbauch. Zwei Etagen höher verzieht Dr. Wichtig das Gesicht, greift sich in die Seite und denkt aus unerfindlichen Gründen an dich. (Aggro -20, Chef +10)",
                color: "text-fuchsia-400" } },
+    "orgone_accumulator": { icon: "🔶", name: "Orgon-Akkumulator", flavor: "'Bernsteinfarbenes Harz, eine Kupferspirale, ein kleiner Kristall. Befreit laut Beipackzettel Lebensmittel von Strichcode-Strahlung. Nachweislich hält es Äpfel fest.'", keep: true, img: "assets/img/items/orgone_accumulator.webp",
+        use: { a: -5, l: 10, cooldown: 120,
+               desc: "Senkt AGGRO um -5, hebt FAULHEIT um +10. Das Feld wirkt auf alles Lebendige.",
+               wait: "Das Feld lädt sich noch auf. So steht es im Beipackzettel.",
+               warn: "Zwei Stunden Ladezeit danach. Und wer einmal die Hände auf das Tablett gelegt hat, steht so schnell nicht wieder auf.",
+               log:  "Du legst die Hände auf das Tablett und atmest. Die Kupferspirale ist kühl unter den Fingern. Du bleibst noch ein bisschen so. (Aggro -5, Faulheit +10)",
+               color: "text-amber-400" } },
     "tie": { icon: "👔", name: "Notfall-Krawatte", flavor: "'Hängt seit 2016 hinter der Bürotür, für den Fall der Fälle. Dunkelblau mit diagonalen Streifen - exakt das Modell, das Dr. Wichtig seit seiner Beförderung trägt.'", keep: true, img: "assets/img/items/tie.webp",
         passive: { onChar: "Dr. Wichtig", b: -5,
                    log: "Dr. Wichtigs Blick bleibt an deiner Krawatte hängen. Es ist seine. Für einen Moment hält er dich für einen der Ihren. (Chef -5)",

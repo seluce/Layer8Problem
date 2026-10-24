@@ -8235,4 +8235,38 @@ export const sidequests = [
         }
     ]
 },
+/* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+   fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+   orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+   orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+   orgone_mocked -> callback. */
+{
+    id: "sq_orgone_parcel",
+    kind: "text",
+    title: "Lieferung für die IT",
+    reqStory: "orgone_ordered",
+    reqStoryAge: 1,
+    text: "Auf deinem Platz liegt ein flaches Paket, schwerer als erwartet. Absender: Orgonwerk Sonnenhang. Darin, in Holzwolle, ein Tablett aus bernsteinfarbenem Harz mit Kupferspirale und Kristall, eine Rechnung über 189 Euro und eine Karte in Schreibschrift: 'Möge Ihr Arbeitsplatz frei atmen.'",
+    opts: [
+        {
+            t: "Das Tablett unter den Monitor legen",
+            next: "orgone_desk",
+            m: 10, l: -5, a: -5, b: 0,
+            r: "Der Monitor steht jetzt vier Zentimeter höher, genau auf Augenhöhe. Wenn der Bildschirmschoner läuft, schimmert darunter die Kupferspirale."
+        },
+        {
+            t: "Einpacken",
+            loot: "orgone_accumulator",
+            next: "orgone_kept",
+            m: 5, l: 5, a: -5, b: 0,
+            r: "Du schiebst das Tablett in den Rucksack. Die Karte steckst du dazu, falls jemand fragt."
+        },
+        {
+            t: "Zu den Tabletts in der Teeküche legen und die Rechnung einreichen",
+            next: "orgone_invoice",
+            m: 15, l: 0, a: -10, b: 5,
+            r: "Du legst es zu den zwanzig Tabletts aus dem Konferenzbedarf. Die Rechnung landet in Dr. Wichtigs Fach, Kostenstelle Gesundheitsmanagement."
+        }
+    ]
+},
 ];

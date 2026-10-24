@@ -315,7 +315,7 @@ export const party = [
 	{
 		id: "party_lounge_6", loc: "lounge",
 		title: "Das verlorene Smartphone",
-		text: "Auf dem kleinen Beistelltisch blinkt ein verwaistes iPhone. Eine Nachricht von 'Hasi ❤️' ploppt auf: 'Wann kommst du endlich heim?!'",
+		text: "Auf dem kleinen Beistelltisch blinkt ein verwaistes iPhone. Eine Nachricht von 'Hasi' ploppt auf, ein rotes Herz hinter dem Namen: 'Wann kommst du endlich heim?!'",
 		opts: [
 			{ t: "'Bin noch auf der Afterparty!'", a: 20, l: 0, r: "Du tippst schnell die Antwort und schickst die Nachricht ab. Das gibt heute Nacht zu Hause garantiert ein kolossales Beziehungs-Drama für den Besitzer.", next: "party_hub" },
 			{ t: "Handy am Empfang abgeben", l: -5, a: 5, r: "Du bringst das klingelnde Gerät artig zu Gabi an den Empfang. Irgendjemand wird sich morgen sehr freuen.", next: "party_hub" },

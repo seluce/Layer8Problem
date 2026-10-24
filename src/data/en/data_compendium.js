@@ -262,12 +262,13 @@ export const compendium = [
         name: "Mr Tinfoil",
         role: "Purchasing",
         summary: "That is not his name. Announces himself on the phone as the Owl or not at all, depending on the situation, and whispers on principle.",
-        seen: ["call_aluhut", "call_aluhut_1", "call_aluhut_2", "call_aluhut_folie"],
+        seen: ["call_aluhut", "call_aluhut_1", "call_aluhut_2", "call_aluhut_folie", "srv_orgone_purchasing"],
         notes: [
             { seen: "call_aluhut",       text: "Has sealed his microphone with chewing gum. Technically effective, which is the annoying part." },
             { seen: "call_aluhut_1",     text: "His mouse blinks in Morse code. Every mouse blinks; he is the only one listening." },
             { seen: "call_aluhut_2",     text: "Rings under a cover name. The number stays the same." },
-            { seen: "call_aluhut_folie", text: "Whatever works on him spreads through Purchasing. Three routers in tinfoil go back to exactly one good piece of advice." }
+            { seen: "call_aluhut_folie", text: "Whatever works on him spreads through Purchasing. Three routers in tinfoil go back to exactly one good piece of advice." },
+            { seen: "srv_orgone_purchasing", text: "Releases hardware only once it has been neutralised. A resin tray with a copper coil counts as proof for him." }
         ]
     },
     {

@@ -227,5 +227,13 @@ export const board = [
         title: "NEU: DAS IT-WIKI", titleTone: "#065f46",
         body: "Es gibt jetzt eine <strong>Anleitung zur Bildschirmhelligkeit</strong>. Mit Bildern.<br>Weitere Artikel folgen, sobald weitere Probleme auftreten. Sie werden auftreten.",
         sign: "- Kevin von der IT"
+    },
+    {
+        // The orgone strand (6.3): the tray that went in with the others.
+        id: "board_orgone_tray", kind: "note", paper: "#fefce8", tilt: "-1deg", pin: "#b45309",
+        reqStory: "orgone_invoice",
+        title: "WEM GEHÖRT DAS TABLETT MIT DER SPIRALE?", titleTone: "#78350f",
+        body: "Unter den Tabletts in der Teeküche ist eins mit <strong>Kupferspirale</strong>. Mein Marmorkuchen hat darauf nach Münzen geschmeckt.<br>Bitte abholen oder beschriften.",
+        sign: "- R. Sonntag (Buchhaltung)"
     }
 ];

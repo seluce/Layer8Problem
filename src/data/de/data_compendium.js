@@ -229,12 +229,13 @@ export const compendium = [
         name: "Herr Aluhut",
         role: "Einkauf",
         summary: "Heißt anders. Meldet sich am Telefon je nach Lage als Eule oder gar nicht, und flüstert grundsätzlich.",
-        seen: ["call_aluhut", "call_aluhut_1", "call_aluhut_2", "call_aluhut_folie"],
+        seen: ["call_aluhut", "call_aluhut_1", "call_aluhut_2", "call_aluhut_folie", "srv_orgone_purchasing"],
         notes: [
             { seen: "call_aluhut",       text: "Hat das Mikrofon mit Kaugummi verschlossen. Technisch gesehen wirksam, das ist das Ärgerliche daran." },
             { seen: "call_aluhut_1",     text: "Seine Maus blinkt im Morsecode. Jede Maus blinkt, aber er ist der Einzige, der zuhört." },
             { seen: "call_aluhut_2",     text: "Ruft unter einem Decknamen an. Die Nummer bleibt dieselbe." },
-            { seen: "call_aluhut_folie", text: "Was bei ihm hilft, verbreitet sich im Einkauf. Drei Router in Alufolie gehen auf genau einen guten Rat zurück." }
+            { seen: "call_aluhut_folie", text: "Was bei ihm hilft, verbreitet sich im Einkauf. Drei Router in Alufolie gehen auf genau einen guten Rat zurück." },
+            { seen: "srv_orgone_purchasing", text: "Gibt Hardware erst frei, wenn sie entstört ist. Ein Harztablett mit Kupferspirale gilt ihm als Nachweis." }
         ]
     },
     {

@@ -4267,4 +4267,129 @@ export const calls = [
 			}
 		]
 	},
+	/* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+	   fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+	   orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+	   orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+	   orgone_mocked -> callback. */
+	{
+		id: "call_orgone_hotline",
+		title: "Eine freie Minute",
+		reqStory: "orgone_tray",
+		startNode: "root",
+		nodes: {
+			root: {
+				text: "Das Telefon ist einen Moment still, und Dr. Wichtig geht gerade hinter dir vorbei. Du greifst zum Hörer, als wäre etwas dringend, und wählst die Hotline vom Etikett in der Teeküche. Es klingelt zweimal.\n\n'Orgonwerk Sonnenhang, Sie sprechen mit Frau Sanftleben. Wie darf ich Ihre Energie unterstützen?'",
+				opts: [
+					{ t: "'Ich hätte gern so ein Tablett.'", next: "order" },
+					{ t: "'Entstört das auch Kollegen?'", next: "mock" },
+					{ t: "Auflegen.", next: "hangup" }
+				]
+			},
+			order: {
+				text: "'Eine wunderbare Entscheidung. Das Modell für den Arbeitsplatz entstört bis zu zwölf Äpfel gleichzeitig. Darf ich die Rechnung an Ihre Firma stellen?'",
+				opts: [
+					{ t: "'Gern. Abteilung IT.'", next: "res_order" },
+					{ t: "'Was genau entstört es denn?'", next: "explain" },
+					{ t: "'Doch nicht, danke.'", next: "res_hangup" }
+				]
+			},
+			mock: {
+				text: "Eine kurze Pause. Dann, unverändert sanft: 'Das Feld wirkt auf alles Lebendige. Bei manchen dauert es länger.' Im Hintergrund plätschert ein Zimmerbrunnen.",
+				opts: [
+					{ t: "'Dann nehme ich eins für mich.'", next: "res_order" },
+					{ t: "'Ich melde mich.'", next: "res_mock" },
+					{ t: "Auflegen.", next: "res_hangup" }
+				]
+			},
+			hangup: {
+				text: "Du legst auf, bevor sie den Satz beendet. Unter einer Nummer von einem Etikett hinter der Kaffeemaschine hat wirklich jemand abgenommen. Du siehst den Hörer eine Weile an.",
+				opts: [
+					{ t: "Weiterarbeiten.", next: "res_hangup" },
+					{ t: "Noch einmal wählen.", next: "redial" }
+				]
+			},
+			explain: {
+				text: "'Alles, was einen Strichcode trägt. Obst, Akten, Netzteile.' Sie sagt es so, wie andere Leute Öffnungszeiten sagen. 'Der Strichcode speichert, was er gesehen hat. Das Tablett nimmt es ihm wieder ab.'",
+				opts: [
+					{ t: "'Überzeugt. Abteilung IT.'", next: "res_order" },
+					{ t: "'Ich überlege es mir.'", next: "res_mock" }
+				]
+			},
+			redial: {
+				text: "Es klingelt einmal. 'Orgonwerk Sonnenhang, Frau Sanftleben. Wir wurden eben getrennt. Das passiert, wenn das Feld stark ist.'",
+				opts: [
+					{ t: "'Ich hätte gern so ein Tablett.'", next: "order" },
+					{ t: "'Falsch verbunden.'", next: "res_hangup" }
+				]
+			}
+		},
+		results: {
+			res_order: {
+				txt: "Frau Sanftleben nimmt die Bestellung auf und fragt zum Schluss nach deinem Sternzeichen. Für die Lieferung, sagt sie. Hinter dir nickt Dr. Wichtig im Vorbeigehen.",
+				m: 10, l: 0, a: -5, b: -5,
+				next: "orgone_ordered"
+			},
+			res_mock: {
+				txt: "'Ich sende Ihnen gern Unterlagen.' Du hast ihr weder Namen noch Adresse genannt.",
+				m: 5, l: 5, a: -10, b: -5,
+				next: "orgone_mocked"
+			},
+			res_hangup: {
+				txt: "Im Ticketsystem steht der Anruf als erledigt.",
+				m: 5, l: 5, a: 0, b: -5
+			}
+		}
+	},
+	{
+		id: "call_orgone_invoice",
+		char: "Frau Elster",
+		title: "Frau Elster (Buchhaltung)",
+		reqStory: "orgone_invoice",
+		reqStoryAge: 1,
+		text: "'Herr Müller. Mir liegt eine Rechnung vor. Orgonwerk Sonnenhang, ein Akkumulator, 189 Euro, Kostenstelle Gesundheitsmanagement. Dr. Wichtig hat abgezeichnet, ohne sie zu lesen. Ich habe sie gelesen.'",
+		opts: [
+			{
+				t: "'Es geht um die Gesundheit der Belegschaft.'",
+				rep: { "Frau Elster": -5 },
+				m: 10, l: 0, a: 5, b: 5,
+				r: "'Dann hätte ich gern den Nachweis der Wirksamkeit. In Kopie.' Sie wartet. Später liegt die Rechnung wieder auf deinem Platz, mit einem gelben Klebezettel: 'Nachweis fehlt. F. Elster'"
+			},
+			{
+				t: "'Ziehen Sie es von meinem Gehalt ab.'",
+				rep: { "Frau Elster": 5 },
+				m: 5, l: 0, a: 10, b: -5,
+				r: "Sie schweigt einen Moment. 'Das ist ungewöhnlich korrekt, Herr Müller.' Du hörst, wie sie es einträgt, mit Lineal."
+			},
+			{
+				t: "'Welche Rechnung?'",
+				rep: { "Frau Elster": -5 },
+				m: 5, l: 5, a: -5, b: 15,
+				r: "'Diese hier.' Du hörst Papier rascheln. 'Ich lege sie zur Innenrevision. Der Stapel ist nicht hoch. Sie wird auffallen.'"
+			}
+		]
+	},
+	{
+		id: "call_orgone_callback",
+		title: "Ein Rückruf",
+		reqStory: "orgone_mocked",
+		text: "'Herr Müller? Hier ist noch einmal Frau Sanftleben vom Orgonwerk Sonnenhang.' Du hast ihr deinen Namen nie genannt. 'Unser Gespräch hat mich nicht losgelassen. Ich habe Ihnen ein Angebot zusammengestellt: zwei Akkumulatoren zum Preis von einem. Einen für Sie und einen für den Kollegen, der Sie so belastet.'",
+		opts: [
+			{
+				t: "'Woher haben Sie meinen Namen?'",
+				m: 10, l: 0, a: 15, b: 0,
+				r: "'Die Energie findet ihren Weg', sagt sie freundlich. Du fragst noch zweimal. Sie antwortet zweimal genauso."
+			},
+			{
+				t: "'Schicken Sie den zweiten an den Einkauf.'",
+				m: 5, l: 5, a: -10, b: 5,
+				r: "Du nennst ihr nur die Abteilung. 'Das genügt', sagt sie. 'Die Richtigen finden wir immer.'"
+			},
+			{
+				t: "'Ich bin leider schon versorgt.'",
+				m: 5, l: 0, a: -5, b: 0,
+				r: "'Dann wünsche ich Ihnen weiterhin ein freies Feld.' Sie legt auf, ohne Abschied."
+			}
+		]
+	},
 ];

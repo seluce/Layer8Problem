@@ -478,7 +478,7 @@ export const en = {
     'terminal.halgerd.sub':        'Awaiting input...',
 
     'event.missing':               'Missing: {item}',
-    'event.notReady':              'Not ready yet',
+    'event.notReady':              '{item}: {wait} min to go',
     'event.useExcuse':             'Use an excuse ({left} left)',
 
     'email.delete':                'Delete',
