@@ -820,7 +820,7 @@ export const coffee = [
             { 
                 t: "Just give him a 'thumbs up'", 
                 m: 5, l: -5, a: 10, b: 5,
-                r: "You grin and hold up a 👍. Jürgen beams, claps you on the shoulder and goes. 10 min later an email arrives: 'Thanks for helping with the move on Saturday!'. Damn." 
+                r: "You grin and give him a thumbs up. Jürgen beams, claps you on the shoulder and goes. 10 min later an email arrives: 'Thanks for helping with the move on Saturday!'. Damn." 
             },
             { 
                 t: "Lift an ear cup: 'EH?!'", 
@@ -4987,6 +4987,81 @@ export const coffee = [
                 t: "Listen, tamp, learn",
                 m: 20, l: 0, a: -15, b: 0,
                 r: "The third attempt runs dark and thick, the crema holds. Gabi tastes it and nods once. 'There you are, then.' You drink the finest coffee in your company history standing between the parcel desk and the doorbell panel, and from now on you have a standing offer here."
+            }
+        ]
+    },
+    /* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+       fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+       orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+       orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+       orgone_mocked -> callback. */
+    {
+        id: "cof_orgone_1",
+        title: "The Empty Bowl",
+        text: "You get yourself a coffee. The fruit bowl next to the machine is empty. At your last coffee there were still apples in it.",
+        opts: [
+            {
+                t: "Look around the kitchenette",
+                next: "orgone_tray",
+                m: 10, l: 0, a: -10, b: 0,
+                r: "The apples are lying behind the coffee machine on a tray of amber resin with a copper coil and a small crystal cast into it. A label is stuck to the rim: 'ORGONE ACCUMULATOR – frees food from barcode radiation', with a hotline underneath. Next to it, a note: 'Please do not take off the tray. Neutralised. – Purchasing'."
+            },
+            {
+                t: "Take the coffee and go back to your desk",
+                m: 5, l: 0, a: -5, b: 0,
+                r: "You take the coffee to your desk and drink it while it is still hot. From the kitchenette somebody asks where the apples have gone."
+            },
+            {
+                t: "Post a photo of the empty bowl in the company chat",
+                m: 5, l: 5, a: -10, b: 10,
+                r: "Three thumbs up, one crying face. Then Markus from Sales: 'WHERE IS THE FRUIT??', with an apple after every word. Among those reading along: Dr Wichtig."
+            }
+        ]
+    },
+    {
+        id: "cof_orgone_barcodes",
+        title: "Restocked",
+        reqStory: "orgone_tray",
+        text: "The fruit bowl is full again, but the tray with the copper coil has gone. Every apple and every banana still carries the wholesaler's barcode. In front of them stands a note: 'Do not eat. Not neutralised. – Purchasing'. Nobody takes anything.",
+        opts: [
+            {
+                t: "Peel off the barcodes",
+                m: 10, l: -5, a: 10, b: 0,
+                r: "You peel off sticker after sticker, some only in shreds, and stick them on Purchasing's note until it can no longer be read. Ten minutes later the bowl is half empty."
+            },
+            {
+                t: "Put the fruit on the orgone accumulator",
+                req: "orgone_accumulator",
+                m: 5, l: -5, a: -10, b: 0,
+                r: "You lay the fruit on your tray for a moment, barcodes facing up, and then back in the bowl. Next to it you stick a note of your own: 'Neutralised. – IT'. The first banana is gone before the tray is back in your backpack."
+            },
+            {
+                t: "Bite into it, barcode and all, and hold eye contact",
+                m: 5, l: 0, a: -15, b: 5,
+                r: "You take an apple, sticker facing out, and bite into it while a man from Purchasing watches you through the glass door. You chew slowly. He leaves first."
+            }
+        ]
+    },
+    {
+        id: "cof_orgone_aura",
+        title: "Feedback Without the Round",
+        reqStory: "orgone_desk",
+        text: "Agile Coach Torben steps up beside you at the coffee machine. 'I was at your desk earlier. Something is different there.' He tilts his head and studies you. 'Your aura is considerably less grey today.'",
+        opts: [
+            {
+                t: "'That is the orgone accumulator under my monitor.'",
+                m: 15, l: 0, a: 10, b: 0,
+                r: "Torben's eyes go wide. 'Is there a version for teams?' Before you can answer, he has put you down for the next retro. Topic: energy work in the workplace."
+            },
+            {
+                t: "'I simply slept well.'",
+                m: 5, l: 0, a: -10, b: 0,
+                r: "'Sleep is a form of work too', says Torben earnestly, and writes it down. By the afternoon it is the status line on his profile."
+            },
+            {
+                t: "'Thanks. I am working on it.'",
+                m: 5, l: 0, a: -5, b: -5,
+                r: "Torben beams. 'That is exactly the attitude I shall mention to Dr Wichtig later.' Then, more quietly: 'Let us talk about it, really openly. Not today. But soon.'"
             }
         ]
     },

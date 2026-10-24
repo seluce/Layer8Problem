@@ -1,9 +1,10 @@
-[6.3.0] - 2026-10-23
+[6.3.0] - 2026-10-24
 
-Something on the third floor for anyone who can keep a secret, and new parts under the hood.
+A secret for anyone who can keep one, a small story about fruit, and new parts under the hood.
 
 New:
-* A new easter egg: Kevin knows a corner of the building that is on no plan. In the working week it is worth taking him up on it - as long as nobody asks who restocks it.
+* A new easter egg. Kevin knows more about this building than its floor plan does.
+* The fruit has gone missing from the kitchenette. Where it turns up is the start of a small story - and of a new item.
 
 The texts:
 * Miller's diary repeats itself less, and now remembers a day with the noticeboard, the intranet or the company chronicle in it - and a little more besides.
@@ -12,6 +13,7 @@ The texts:
 Bug fixes:
 * Space no longer presses the button behind an open window, and the action keys no longer start anything behind the noticeboard.
 * The intranet, the noticeboard and the company chronicle now close with the day instead of standing open into the next morning.
+* An option that waits for a cooling item now says which item and how many minutes are left, instead of only "Not ready yet".
 
 Under the hood:
 * Svelte, Vite, Electron and the build tools are on their current versions.

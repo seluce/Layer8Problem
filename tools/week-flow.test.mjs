@@ -1231,7 +1231,7 @@ await ok('use.b and use.rep take effect on use', () => {
     assert.equal(state.reputation['Dr. Wichtig'], -2, 'reputation was not deducted');
     assert.equal(state.itemCooldowns.voodoo_doll, 600, 'the cooldown was not set');
     // keep: true - the doll stays in the backpack
-    assert.ok(state.inventory.some(i => i.id === 'voodoo_doll'), 'Puppe verschwunden');
+    assert.ok(state.inventory.some(i => i.id === 'voodoo_doll'), 'the doll vanished from the backpack');
 });
 await ok('The boss value stays capped at 100', () => {
     resetState();
@@ -3513,6 +3513,83 @@ await ok('A crank line waits until the one before it can have been read', () => 
         .filter((_, i) => i === 1 || i === 3);
     assert.ok(long > short + 2000, `ninety characters bought ${long - short} ms more than ten`);
     assert.ok(delays.at(-1) > 2000, 'the card arrives with the label line instead of after it');
+});
+
+// ------------------------------------------------- the orgone strand (6.3)
+// The empty fruit bowl, Purchasing's orgone tray, a call to its hotline and
+// what Miller does with his own. Held here: which part opens which, that the
+// parcel needs a night, and that the tray is a keepsake with a price.
+console.log('The orgone strand:');
+await ensure('coffee', 'calls', 'sidequests', 'server', 'items', 'board');
+const orgone = (pool, id) => DB[pool].find(e => e.id === id);
+
+await ok('Every part opens the next, and only the next', () => {
+    const bowl = orgone('coffee', 'cof_orgone_1');
+    const hotline = orgone('calls', 'call_orgone_hotline');
+    const parcel = orgone('sidequests', 'sq_orgone_parcel');
+    assert.ok(bowl && hotline && parcel, 'the strand is incomplete');
+    assert.deepEqual(bowl.opts.map(o => o.next ?? null), ['orgone_tray', null, null], 'only looking around finds the tray');
+    for (const [pool, id] of [['calls', 'call_orgone_hotline'], ['coffee', 'cof_orgone_barcodes']])
+        assert.equal(orgone(pool, id).reqStory, 'orgone_tray', `${id} does not hang on the tray`);
+    assert.equal(hotline.results.res_order.next, 'orgone_ordered');
+    assert.equal(hotline.results.res_mock.next, 'orgone_mocked');
+    assert.equal(hotline.results.res_hangup.next, undefined, 'hanging up must lead nowhere');
+    assert.equal(parcel.reqStory, 'orgone_ordered');
+    assert.equal(parcel.reqStoryAge, 1, 'the parcel cannot arrive on the day it was ordered');
+    assert.deepEqual(parcel.opts.map(o => o.next), ['orgone_desk', 'orgone_kept', 'orgone_invoice']);
+    const after = { orgone_kept: ['server', 'srv_orgone_purchasing'], orgone_desk: ['coffee', 'cof_orgone_aura'],
+                    orgone_invoice: ['calls', 'call_orgone_invoice'], orgone_mocked: ['calls', 'call_orgone_callback'] };
+    for (const [flag, [pool, id]] of Object.entries(after))
+        assert.equal(orgone(pool, id)?.reqStory, flag, `${id} does not follow ${flag}`);
+    assert.ok(DB.board.some(n => n.reqStory === 'orgone_invoice'), 'the board does not notice the twenty-first tray');
+});
+
+await ok('The parcel waits a night; a single day ends at the order', () => {
+    const parcel = orgone('sidequests', 'sq_orgone_parcel');
+    resetState();
+    engine.startWeek('easy');
+    state.week.dayIndex = 2;
+    engine.setStoryFlag('orgone_ordered');
+    assert.equal(engine.storyGateOpen(parcel), false, 'the parcel came on the day it was ordered');
+    state.week.dayIndex = 3;
+    assert.equal(engine.storyGateOpen(parcel), true, 'the parcel has to come the day after');
+    resetState();
+    engine.setStoryFlag('orgone_ordered');
+    assert.equal(engine.storyGateOpen(parcel), false, 'a day run has no tomorrow for the parcel');
+});
+
+await ok('Using the tray calms you and keeps you sitting', () => {
+    resetState();
+    state.time = 600;
+    state.al = 40; state.fl = 20;
+    state.inventory = [{ id: 'orgone_accumulator', used: false }];
+    state.pendingItem = 'orgone_accumulator';
+    engine.confirmUseItem();
+    assert.equal(state.al, 35, 'aggro was not lowered');
+    assert.equal(state.fl, 30, 'laziness did not rise - the price is missing');
+    assert.ok(state.inventory.some(i => i.id === 'orgone_accumulator'), 'the tray was used up');
+    assert.equal(state.itemCooldowns.orgone_accumulator, 600, 'the pause did not start');
+});
+
+await ok('The tray is a keepsake with a price, and it opens two doors', () => {
+    const item = DB.items.orgone_accumulator;
+    assert.ok(item, 'the item is missing');
+    assert.equal(item.keep, true, 'the tray must survive being used');
+    // Not the voodoo doll's trade: the price is laziness, and laziness makes
+    // every later rise of the boss radar a little steeper. And a trade to
+    // weigh, not to press blindly: the price outweighs the relief.
+    assert.ok(item.use.a < 0 && item.use.l > 0 && !item.use.b && item.use.cooldown > 0, 'relief now, paid for in laziness, then a pause');
+    assert.ok(item.use.l > -item.use.a, 'the tray relieves more than it costs - it would be pressed whenever it is ready');
+    for (const [pool, id] of [['server', 'srv_orgone_purchasing'], ['coffee', 'cof_orgone_barcodes']]) {
+        const opts = orgone(pool, id).opts;
+        assert.equal(opts.filter(o => o.req === 'orgone_accumulator').length, 1, `${id} has no door for the tray`);
+        assert.ok(opts.every(o => o.rem !== 'orgone_accumulator'), `${id} would take the tray away`);
+    }
+    resetState();
+    engine.startWeek('easy');
+    engine.resolveTerminal(orgone('sidequests', 'sq_orgone_parcel').opts[1], 'sidequest');
+    assert.ok(state.inventory.some(i => i.id === 'orgone_accumulator'), 'packing the tray did not put it in the backpack');
+    assert.equal(state.storyFlags.orgone_kept, state.week.dayIndex);
 });
 
 // ----------------------------------------------------- cloud synchronisation

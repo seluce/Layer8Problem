@@ -67,6 +67,8 @@ What it finds — throughout, things that fail **quietly** at runtime:
 - unknown fields — the quietest bug there is: a typo parses cleanly and is
   discarded at runtime
 - markup in fields that are output as plain text; invisible characters
+- **emoji in event prose** (6.3): the terminal describes; mails, phone chats
+  and the intranet are typed by their characters and keep theirs
 - items: the `use` block complete, `passive` valid, costs only with a cooldown
 - **the party's six stations** (6.1): `loc` and an option's `checkPool` against
   the closed list — the engine filters on `loc` and validates nothing, so an
@@ -460,7 +462,9 @@ and two languages that is not a possibility but a certainty.
 What is checked:
 
 1. Every key used in the source is in **both** dictionaries.
-2. Both dictionaries carry the same set of keys.
+2. Both dictionaries carry the same set of keys, and each key the same
+   `{placeholders}` (6.3). `tf()` fills what the text asks for and drops the
+   rest silently, so a `{wait}` missing in one language just loses the number.
 3. No entry is unused — otherwise a rename leaves the old one standing.
 4. Entries whose English reads verbatim like the German. During the interface
    pass that is the work list; afterwards it is a finding.

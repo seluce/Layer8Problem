@@ -485,7 +485,7 @@ export const de = {
     'terminal.halgerd.sub':        'Warte auf Eingabe...',
 
     'event.missing':               'Fehlt: {item}',
-    'event.notReady':              'Noch nicht bereit',
+    'event.notReady':              '{item}: noch {wait} Min',
     'event.useExcuse':             'Ausrede nutzen ({left} übrig)',
 
     'email.delete':                'Löschen',

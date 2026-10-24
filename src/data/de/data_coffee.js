@@ -788,7 +788,7 @@ export const coffee = [
             { 
                 t: "Einfach 'Daumen hoch' zeigen", 
                 m: 5, l: -5, a: 10, b: 5,
-                r: "Du grinst und machst 👍. Jürgen strahlt, klopft dir auf die Schulter und geht. 10 Min später kommt eine Mail: 'Danke, dass du am Samstag beim Umzug hilfst!'. Verdammt." 
+                r: "Du grinst und hebst den Daumen. Jürgen strahlt, klopft dir auf die Schulter und geht. 10 Min später kommt eine Mail: 'Danke, dass du am Samstag beim Umzug hilfst!'. Verdammt." 
             },
             { 
                 t: "Kopfhörer lüften: 'HÄ?!'", 
@@ -4955,6 +4955,81 @@ export const coffee = [
                 t: "Zuhören, tampen, lernen",
                 m: 20, l: 0, a: -15, b: 0,
                 r: "Der dritte Versuch läuft dunkel und dick, die Crema steht. Gabi probiert, nickt einmal. 'Geht doch.' Du trinkst den besten Kaffee deiner Firmengeschichte im Stehen zwischen Paketannahme und Klingelschild, und ab jetzt hast du hier ein stehendes Angebot."
+            }
+        ]
+    },
+    /* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+       fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+       orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+       orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+       orgone_mocked -> callback. */
+    {
+        id: "cof_orgone_1",
+        title: "Die leere Schale",
+        text: "Du ziehst dir einen Kaffee. Die Obstschale neben der Maschine ist leer. Beim letzten Kaffee lagen noch Äpfel darin.",
+        opts: [
+            {
+                t: "Sich in der Teeküche umsehen",
+                next: "orgone_tray",
+                m: 10, l: 0, a: -10, b: 0,
+                r: "Die Äpfel liegen hinter der Kaffeemaschine auf einem Tablett aus bernsteinfarbenem Harz, in das eine Kupferspirale und ein kleiner Kristall eingegossen sind. Auf dem Rand klebt ein Etikett: 'ORGON-AKKUMULATOR – befreit Lebensmittel von Strichcode-Strahlung', darunter eine Hotline. Daneben ein Zettel: 'Bitte nicht vom Tablett nehmen. Entstört. – Einkauf'."
+            },
+            {
+                t: "Kaffee nehmen und zurück an den Platz",
+                m: 5, l: 0, a: -5, b: 0,
+                r: "Du trägst den Kaffee an deinen Platz und trinkst ihn, solange er noch heiß ist. Aus der Teeküche fragt jemand, wo die Äpfel hin sind."
+            },
+            {
+                t: "Ein Foto der leeren Schale in den Firmenchat stellen",
+                m: 5, l: 5, a: -10, b: 10,
+                r: "Drei Daumen hoch, ein weinendes Gesicht. Dann Markus aus dem Vertrieb: 'WO IST DAS OBST??', hinter jedem Wort ein Apfel. Unter den Mitlesenden: Dr. Wichtig."
+            }
+        ]
+    },
+    {
+        id: "cof_orgone_barcodes",
+        title: "Nachschub",
+        reqStory: "orgone_tray",
+        text: "Die Obstschale ist wieder voll, das Tablett mit der Kupferspirale dagegen weg. Auf jedem Apfel und jeder Banane klebt noch der Strichcode vom Großhandel. Davor steht ein Zettel: 'Nicht essen. Nicht entstört. – Einkauf'. Niemand nimmt etwas.",
+        opts: [
+            {
+                t: "Die Strichcodes abziehen",
+                m: 10, l: -5, a: 10, b: 0,
+                r: "Du ziehst Aufkleber um Aufkleber ab, manche nur in Fetzen, und klebst sie auf den Zettel des Einkaufs, bis man ihn nicht mehr lesen kann. Zehn Minuten später ist die Schale halb leer."
+            },
+            {
+                t: "Das Obst auf den Orgon-Akkumulator legen",
+                req: "orgone_accumulator",
+                m: 5, l: -5, a: -10, b: 0,
+                r: "Du legst das Obst für einen Moment auf dein Tablett, Strichcodes nach oben, und dann zurück in die Schale. Daneben klebst du einen eigenen Zettel: 'Entstört. – IT'. Die erste Banane ist weg, bevor das Tablett wieder im Rucksack ist."
+            },
+            {
+                t: "Mit Strichcode hineinbeißen und Blickkontakt halten",
+                m: 5, l: 0, a: -15, b: 5,
+                r: "Du nimmst einen Apfel, Aufkleber nach vorn, und beißt hinein, während dich durch die Glastür ein Mann aus dem Einkauf beobachtet. Du kaust langsam. Er geht zuerst."
+            }
+        ]
+    },
+    {
+        id: "cof_orgone_aura",
+        title: "Feedback ohne Runde",
+        reqStory: "orgone_desk",
+        text: "Agile Coach Torben stellt sich an der Kaffeemaschine neben dich. 'Ich war vorhin an deinem Platz. Da ist was anders.' Er legt den Kopf schief und sieht dich lange an. 'Deine Aura ist heute deutlich weniger grau.'",
+        opts: [
+            {
+                t: "'Das ist der Orgon-Akkumulator unter meinem Monitor.'",
+                m: 15, l: 0, a: 10, b: 0,
+                r: "Torbens Augen werden weit. 'Gibt es das auch für Teams?' Bevor du antworten kannst, hat er dich für die nächste Retro eingetragen. Thema: Energiearbeit am Arbeitsplatz."
+            },
+            {
+                t: "'Ich habe einfach gut geschlafen.'",
+                m: 5, l: 0, a: -10, b: 0,
+                r: "'Schlaf ist auch eine Form von Arbeit', sagt Torben ernst und schreibt es sich auf. Am Nachmittag steht der Satz als Status in seinem Profil."
+            },
+            {
+                t: "'Danke. Ich arbeite daran.'",
+                m: 5, l: 0, a: -5, b: -5,
+                r: "Torben strahlt. 'Genau diese Haltung erwähne ich nachher bei Dr. Wichtig.' Dann, leiser: 'Lass uns da mal ganz offen drüber reden. Nicht heute. Aber bald.'"
             }
         ]
     },

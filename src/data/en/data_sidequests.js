@@ -8283,4 +8283,38 @@ export const sidequests = [
         }
     ]
 },
+/* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+   fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+   orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+   orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+   orgone_mocked -> callback. */
+{
+    id: "sq_orgone_parcel",
+    kind: "text",
+    title: "A Delivery for IT",
+    reqStory: "orgone_ordered",
+    reqStoryAge: 1,
+    text: "On your desk lies a flat parcel, heavier than expected. Sender: Orgonwerk Sonnenhang. Inside, in wood wool, a tray of amber resin with a copper coil and a crystal, an invoice for €189 and a card in handwriting: 'May your workplace breathe freely.'",
+    opts: [
+        {
+            t: "Put the tray under the monitor",
+            next: "orgone_desk",
+            m: 10, l: -5, a: -5, b: 0,
+            r: "The monitor now stands four centimetres higher, exactly at eye level. When the screensaver runs, the copper coil glints underneath."
+        },
+        {
+            t: "Pack it",
+            loot: "orgone_accumulator",
+            next: "orgone_kept",
+            m: 5, l: 5, a: -5, b: 0,
+            r: "You slide the tray into your backpack. The card goes in too, in case anyone asks."
+        },
+        {
+            t: "Put it with the trays in the kitchenette and submit the invoice",
+            next: "orgone_invoice",
+            m: 15, l: 0, a: -10, b: 5,
+            r: "You put it with the twenty trays from the conference supplies. The invoice goes into Dr Wichtig's in-tray, cost centre Health Management."
+        }
+    ]
+},
 ];

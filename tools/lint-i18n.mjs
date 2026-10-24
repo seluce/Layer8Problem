@@ -16,7 +16,7 @@
  *
  * What it checks:
  *   1. every key used in code exists in both dictionaries
- *   2. both dictionaries carry the same key set
+ *   2. both dictionaries carry the same key set, with the same {placeholders}
  *   3. no dictionary entry is unused (a rename leaves the old one behind)
  *   4. entries whose English still reads exactly like the German - during the
  *      interface pass that is the to-do list, afterwards it is a finding
@@ -299,6 +299,20 @@ for (const key of Object.keys(de)) {
 }
 for (const key of Object.keys(en)) {
     if (!(key in de)) err(`key "${key}" is in en.js, missing from de.js`);
+}
+
+/* ---------- 4b) ... and the same placeholders ---------- */
+// tf() fills what the text asks for and drops the rest without a word, so a
+// {wait} missing from one language is a lock that names the item and not the
+// minutes - in that language only. The other way round the reader gets the
+// braces themselves.
+
+const placeholders = (text) =>
+    typeof text === 'string' ? [...new Set([...text.matchAll(/\{(\w+)\}/g)].map(m => m[1]))].sort() : [];
+for (const key of Object.keys(de)) {
+    if (!(key in en)) continue;
+    const a = placeholders(de[key]).join(', '), b = placeholders(en[key]).join(', ');
+    if (a !== b) err(`key "${key}" has different placeholders - de: {${a}}, en: {${b}}`);
 }
 
 /* ---------- 5) Defined but never asked for ---------- */

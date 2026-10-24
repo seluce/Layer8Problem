@@ -88,11 +88,16 @@
      * For a locked option that difference is irrelevant — you do not have it
      * either way — so both say the same thing. The distinction belongs on the
      * options you CAN take, see consumes() below.
+     *
+     * A cooling item names itself and its wait. 'Not ready yet' alone left the
+     * player guessing wherever the label does not mention the item - Markus'
+     * 'Nochmal drohen' is the stress ball without saying so.
      */
     function lockReason(opt) {
         if (opt.req) {
             if (!state.inventory.find(i => i.id === opt.req && !i.used)) return tf('event.missing', { item: itemName(opt.req) });
-            if (cooldownLeft(opt.req) > 0) return t('event.notReady');
+            const wait = cooldownLeft(opt.req);
+            if (wait > 0) return tf('event.notReady', { item: itemName(opt.req), wait });
         }
         if (opt.rem && !state.inventory.find(i => i.id === opt.rem)) {
             return tf('event.missing', { item: itemName(opt.rem) });

@@ -5674,4 +5674,33 @@ export const server = [
           r: "You put the notes away. She will not come back, at any rate not on this number. Whether she tries it on at another firm you will never learn, and that is the kind of question that comes back at night." }
     ]
 },
+/* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+   fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+   orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+   orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+   orgone_mocked -> callback. */
+{
+    id: "srv_orgone_purchasing",
+    title: "Delivery on Hold",
+    reqStory: "orgone_kept",
+    text: "The power supplies for the new switch are missing. According to the system they have been sitting in Purchasing for days, but they have not been released. You ring. Mr Tinfoil whispers: 'Mr Miller? The boxes have barcodes. You know what that means. I cannot release them like that, not in good conscience.'",
+    opts: [
+        {
+            t: "Read him the declaration of conformity",
+            m: 20, l: -5, a: 15, b: 0,
+            r: "You read him the CE marking, the test number and the manufacturer's address. He listens patiently. 'A manufacturer would write that too.'"
+        },
+        {
+            t: "Lay the power supplies on the orgone accumulator",
+            req: "orgone_accumulator",
+            m: 15, l: -5, a: -10, b: -5,
+            r: "In Purchasing you lay the power supplies on the tray, one after another, and ring him. A long silence. Then, whispered: 'Released. At last someone who takes precautions.'"
+        },
+        {
+            t: "Fetch the power supplies from Purchasing without a release",
+            m: 10, l: 0, a: -5, b: 10,
+            r: "You hang up and fetch them from Purchasing yourself. Shortly afterwards a mail reports an 'unauthorised radiation leak in Purchasing', copied to Dr Wichtig."
+        }
+    ]
+},
 ];

@@ -5647,4 +5647,33 @@ export const server = [
           r: "Du legst die Notizen weg. Sie kommt nicht wieder, jedenfalls nicht unter dieser Nummer. Ob sie es bei einer anderen Firma versucht, erfährst du nie, und das ist die Art Frage, die nachts wiederkommt." }
     ]
 },
+/* The orgone strand (6.3): the fruit bowl is empty, Purchasing has put the
+   fruit on an orgone tray. Not the fruit BASKET of sq_obstkorb_*.
+   orgone_tray -> hotline, barcodes; orgone_ordered -> parcel a night later;
+   orgone_kept / _desk / _invoice -> purchasing / aura / invoice + board;
+   orgone_mocked -> callback. */
+{
+    id: "srv_orgone_purchasing",
+    title: "Gesperrte Lieferung",
+    reqStory: "orgone_kept",
+    text: "Für den neuen Switch fehlen die Netzteile. Laut System liegen sie seit Tagen im Einkauf, freigegeben sind sie nicht. Du rufst an. Herr Aluhut flüstert: 'Herr Müller? Die Kartons haben Strichcodes. Sie wissen, was das heißt. So kann ich die nicht freigeben, nicht mit gutem Gewissen.'",
+    opts: [
+        {
+            t: "Ihm die Konformitätserklärung vorlesen",
+            m: 20, l: -5, a: 15, b: 0,
+            r: "Du liest ihm CE-Kennzeichnung, Prüfnummer und Herstelleranschrift vor. Er hört geduldig zu. 'Das würde ein Hersteller auch schreiben.'"
+        },
+        {
+            t: "Die Netzteile auf den Orgon-Akkumulator legen",
+            req: "orgone_accumulator",
+            m: 15, l: -5, a: -10, b: -5,
+            r: "Du legst die Netzteile im Einkauf auf das Tablett, eins nach dem anderen, und rufst ihn an. Lange Stille. Dann, geflüstert: 'Freigegeben. Endlich jemand, der vorsorgt.'"
+        },
+        {
+            t: "Die Netzteile ohne Freigabe aus dem Einkauf holen",
+            m: 10, l: 0, a: -5, b: 10,
+            r: "Du legst auf und holst sie dir selbst aus dem Einkauf. Kurz darauf meldet eine Mail einen 'unautorisierten Strahlungsaustritt im Einkauf', in Kopie an Dr. Wichtig."
+        }
+    ]
+},
 ];

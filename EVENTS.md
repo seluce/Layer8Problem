@@ -89,7 +89,7 @@ missing or deliberately absent.
 | `reqStoryAge` | coffee, server room, calls, errands, lunch break, boss fights — only together with `reqStory` | Week mode: the flag has to be at least this many **nights** old (1 = tomorrow at the earliest). Never satisfiable in day mode, see section 3. |
 | `reqWeekDayMin` | coffee, server room, calls, errands | Week mode: appears **from** this weekday onwards (2 = Tuesday … 5 = Friday), not only on it. Never satisfiable in day mode. |
 | `reqRep` | encounters, effectively compulsory there | Reputation threshold, see section 6. 139 of the 140 encounters carry one; the exception is a follow-up for which the `reqStory` suffices as a precondition. |
-| `kind` | errands, compulsory there | `"text"` (terminal) or `"phone"` (phone chat). All 308 carry it. |
+| `kind` | errands, compulsory there | `"text"` (terminal) or `"phone"` (phone chat). All 309 carry it. |
 | `appName` | errand chat, compulsory there | Which app displays the chat, e.g. `"WhatsApp"`, `"Teams"`, `"Signal"`. All 57 chats carry it. **Display text, not an identifier** — generic words are translated (`"Anruf"` → `"Call"`), brand names are not. |
 | `startNode`, `nodes`, `results` | calls, errands, weekly meeting | A conversation with a course of its own instead of a single decision, see section 4. |
 | `startNodeGala` | weekly meeting | A second opening node: it applies when the gala is due that evening — the announcement comes in the meeting, see section 4. |
@@ -176,6 +176,10 @@ with the real pools and the engine formulas.
 - **Result texts show the consequence, not the mechanics.** No "(Inventar +1)",
   no "Maximaler Stress." — what the player can see anyway does not need writing
   down, and a keyword is not a scene.
+- **No emoji in the narration.** The terminal describes what there is to see:
+  Markus writes „WO IST DAS OBST??", *hinter jedem Wort ein Apfel*; Miller
+  *hebt den Daumen*. Emoji belong to what a character types — mails, the
+  smartphone chat, the intranet. `lint-data` reports one anywhere else.
 - **The best answer is not always at the top.** Spread it across the slots. Only
   cancelling, ignoring, hanging up and deleting belong at the end, where people
   look for them.
@@ -388,7 +392,7 @@ entry.
 
 The format and the four categories are in the header comment of
 `src/data/de/data_compendium.js`. New entries are checked by `npm run lint:data`
-along with everything else. The stock: 60 entries with 260 notes between them.
+along with everything else. The stock: 60 entries with 261 notes between them.
 
 ## 4. Conversations with a course: `nodes` and `results`
 
@@ -495,7 +499,7 @@ it.
 }
 ```
 
-## 5. Der Dienstgang als Chat: `kind: "phone"`
+## 5. The errand as a chat: `kind: "phone"`
 
 A phone chat is the same node construction as in section 4, with three more
 fields: `kind: "phone"`, `appName` (which app displays the chat) and `title`

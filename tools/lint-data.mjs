@@ -890,15 +890,18 @@ for (const id of itemIds) {
       if (Math.abs(v) > 5) warn(`${ctx}: use.rep ${n}:${v} - an item can be used again and again, so at most ±5 here`);
     }
   }
-  if (item.keep && !use.cooldown && (use.b || use.rep))
-    err(`${ctx}: an item that stays and has a cost (use.b/use.rep) needs a cooldown - otherwise it can be triggered any number of times`);
+  if (item.keep && !use.cooldown && (use.b || use.rep || use.l > 0))
+    err(`${ctx}: an item that stays and has a cost (use.b/use.rep/a positive use.l) needs a cooldown - otherwise it can be triggered any number of times`);
 
-  if (!use.a && !use.l)
-    err(`${ctx}: use with no effect - a or l has to be set`);
-
-  for (const k of ['a', 'l'])
-    if (use[k] !== undefined && !(use[k] < 0))
-      err(`${ctx}: use.${k} has to be negative (values are lowered), it is ${use[k]}`);
+  // Using an item relieves: aggro or laziness goes down. Since 6.3 laziness
+  // may also be the PRICE, but only next to relief in aggro - the orgone tray
+  // calms you and keeps you sitting. Aggro never goes up by an item.
+  if (!(use.a < 0) && !(use.l < 0))
+    err(`${ctx}: use with no relief - a or l has to go down`);
+  if (use.a !== undefined && !(use.a < 0))
+    err(`${ctx}: use.a has to be negative (an item never raises aggro), it is ${use.a}`);
+  if (use.l !== undefined && use.l >= 0 && !(use.a < 0))
+    err(`${ctx}: use.l ${use.l} is a price only next to relief in aggro - without it the item does nothing good`);
 
   if (use.cooldown && !item.keep)
     err(`${ctx}: use.cooldown without keep - what is consumed needs no waiting time`);
@@ -1037,7 +1040,7 @@ for (const ev of DB.emails) {
       if (cp === 0xFE0F) {
         const prev = i > 0 ? str.codePointAt(i - (str.charCodeAt(i - 1) >= 0xDC00 ? 2 : 1)) : 0;
         if (prev < 0x2000 || prev === 0xFE0F)
-          err(`[${where}] verwaister Variation-Selektor U+FE0F an Position ${i} ("${str.slice(0, 24)}…")`);
+          err(`[${where}] orphaned variation selector U+FE0F at position ${i} ("${str.slice(0, 24)}…")`);
       }
     }
   };
@@ -1048,6 +1051,28 @@ for (const ev of DB.emails) {
   };
   for (const p of POOLS) for (const ev of DB[p]) walk(ev, `${p}/${ev.id}`);
   DB.emails.forEach(ev => walk(ev, `emails/${ev.id}`));
+}
+
+/* ---------- 8b) No emoji in the narration ---------- */
+// What the terminal tells is described, never drawn: 'hebst den Daumen', not a
+// thumb glyph. The interface replaced its emoji with drawn icons, and an emoji
+// in event prose is the one that stayed - in whatever the system font makes of
+// it. Mails, phone chats and the intranet are typed by the people in them and
+// keep theirs; `icon`, `emoji` and `img` are pictures, not prose.
+{
+  const PICTURE = /\p{Extended_Pictographic}/u;
+  const NOT_PROSE = new Set(['icon', 'emoji', 'signoffEmoji', 'img']);
+  const walk = (obj, where) => {
+    if (typeof obj === 'string') {
+      const hit = obj.match(PICTURE);
+      if (hit) err(`[${where}] emoji ${hit[0]} in event prose - describe it instead ("${obj.slice(0, 40)}…")`);
+      return;
+    }
+    if (Array.isArray(obj)) return obj.forEach(v => walk(v, where));
+    if (obj && typeof obj === 'object')
+      for (const [k, v] of Object.entries(obj)) if (!NOT_PROSE.has(k)) walk(v, where);
+  };
+  for (const p of POOLS) for (const ev of DB[p]) if (ev.kind !== 'phone') walk(ev, `${p}/${ev.id}`);
 }
 
 /* ---------- 9) Unknown fields ---------- */

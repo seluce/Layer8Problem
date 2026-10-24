@@ -14,7 +14,8 @@
  * here, a CONSUMABLES list in two components, and two if-chains in
  * engine_inventory.js. A new snack meant editing five spots.
  *
- *   use.a / use.l     how far aggro and laziness drop (negative numbers)
+ *   use.a / use.l     how far aggro and laziness drop (negative numbers);
+ *                     use.l may be a price next to aggro relief (orgone tray)
  *   use.desc          the line above the confirm button
  *   use.warn          the small print below it
  *   use.log           what the log says afterwards
@@ -103,6 +104,13 @@ export const items = {
                warn: "Three hours of quiet afterwards. And Dr Wichtig likes you a little less each time, without being able to say why.",
                log:  "You jab the needle into the fabric belly. Two floors up Dr Wichtig winces, reaches for his side and thinks of you for reasons he cannot fathom. (Aggro -20, Boss Radar +10)",
                color: "text-fuchsia-400" } },
+    "orgone_accumulator": { icon: "🔶", name: "Orgone accumulator", flavor: "'Amber resin, a copper coil, a small crystal. According to the leaflet it frees food from barcode radiation. It has been proven to hold apples.'", keep: true, img: "assets/img/items/orgone_accumulator.webp",
+        use: { a: -5, l: 10, cooldown: 120,
+               desc: "Lowers AGGRO by -5, raises LAZINESS by +10. The field works on everything that lives.",
+               wait: "The field is still recharging. So says the leaflet.",
+               warn: "Two hours of recharging afterwards. And once you have laid your hands on the tray, you do not get up again in a hurry.",
+               log:  "You lay your hands on the tray and breathe. The copper coil is cool under your fingers. You stay like that a little longer. (Aggro -5, Laziness +10)",
+               color: "text-amber-400" } },
     "tie": { icon: "👔", name: "Emergency tie", flavor: "'Has hung behind the office door since 2016, just in case. Navy blue with diagonal stripes - precisely the model Dr Wichtig has worn since his promotion.'", keep: true, img: "assets/img/items/tie.webp",
         passive: { onChar: "Dr. Wichtig", b: -5,
                    log: "Dr Wichtig's eye catches on your tie. It is his. For a moment he takes you for one of his own. (Boss Radar -5)",

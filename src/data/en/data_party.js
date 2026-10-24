@@ -368,7 +368,7 @@ export const party = [
 	{
 		id: "party_lounge_6", loc: "lounge",
 		title: "The Lost Smartphone",
-		text: "An abandoned iPhone is blinking on the little side table. A message from 'Bunny ❤️' pops up: 'When are you finally coming home?!'",
+		text: "An abandoned iPhone is blinking on the little side table. A message from 'Bunny' pops up, a red heart after the name: 'When are you finally coming home?!'",
 		opts: [
 			{ t: "'Still at the afterparty!'", a: 20, l: 0, r: "You type the reply quickly and send the message. That will guarantee a colossal domestic drama for the owner tonight.", next: "party_hub" },
 			{ t: "Hand the phone in at Reception", l: -5, a: 5, r: "You take the ringing device dutifully to Gabi at Reception. Somebody will be very pleased tomorrow.", next: "party_hub" },
