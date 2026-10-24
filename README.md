@@ -27,7 +27,7 @@
 </p>
 
 <p align="center">
-  <img src="screenshots/serverraum.webp" width="100%" alt="The server room: Markus wants to know which of the boxes is the private cloud he has already sold">
+  <img src="screenshots/server_room.webp" width="100%" alt="The server room: Markus wants to know which of the boxes is the private cloud he has already sold">
 </p>
 
 ---
@@ -78,11 +78,11 @@ and you lose the whole week.
   </tr>
   <tr>
     <td width="50%">
-      <img src="screenshots/brett.webp" alt="The notice board with handwritten and printed notes">
+      <img src="screenshots/noticeboard.webp" alt="The notice board with handwritten and printed notes">
       <br><sub><b>The notice board.</b> Eight notes out of thirty, redrawn every morning — among them a shredder going free to a good home, tear-off tabs included.</sub>
     </td>
     <td width="50%">
-      <img src="screenshots/archiv.webp" alt="Career progress with found items, trophies and statistics">
+      <img src="screenshots/archive.webp" alt="Career progress with found items, trophies and statistics">
       <br><sub><b>Career progress.</b> What you found, what you earned, and how often you walked out — kept across every working day.</sub>
     </td>
   </tr>

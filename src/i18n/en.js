@@ -12,7 +12,7 @@ export const en = {
     'intranet.nav.chantal':        'Feel-Good Hub',
     'intranet.nav.vision':         'Vision',
     'intranet.nav.sales':          'Sales',
-    'intranet.nav.kantine':        'Canteen',
+    'intranet.nav.canteen':        'Canteen',
     'intranet.nav.hr':             'Human Capital',
     'intranet.nav.impressum':      'Legal',
 

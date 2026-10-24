@@ -6,7 +6,7 @@
 //   employee.Markus.role / sales.page.leader / hr.page.schnoesel.role
 //       the satirical job titles - the Denglisch IS the joke, like
 //       "Senior Nutrition Artist" (GLOSSAR §3c)
-//   sales.page.title "🏆 Wall of Deals" / kantine.page.title "The Agile Kitchen"
+//   sales.page.title "🏆 Wall of Deals" / canteen.page.title "The Agile Kitchen"
 //       already English in the German source
 //   impressum §1 "GlobalCorp International Synergy GmbH & Co. KGaA"
 //       company name including its legal form (GLOSSAR §3)
@@ -22,7 +22,7 @@
 //
 // Three pairs have to stay word for word identical or they drift apart in
 // silence: visions[0] = dashboard.page.visionFallback, hygiene[0] starts with
-// kantine.page.hygieneFallback, and vision.good.question = vision.bad.question.
+// canteen.page.hygieneFallback, and vision.good.question = vision.bad.question.
 /**
  * What the intranet knows about you.
  *
@@ -360,7 +360,7 @@ export const intranet = {
         }
     },
 
-    kantine: {
+    canteen: {
         page: {
             kind: "menu",
             title: "Cafeteria: \"The Agile Kitchen\" 🥗",
@@ -687,7 +687,7 @@ export const intranet = {
        change with the clock - only the issue line above it does.
        ================================================================ */
     hygiene: [
-        // The first sentence is also kantine.page.hygieneFallback, shown before
+        // The first sentence is also canteen.page.hygieneFallback, shown before
         // the pool has been drawn from. It has to stay word for word identical.
         "The microwave in the east wing remains out of use until further notice. Somebody tried to cook frozen fish on the 'defrost' setting for 45 minutes. The smell has settled into the paint on the walls.",
         "The fridge in the canteen has been defrosted. Part of the contents was older than the fridge. The remainder was not identified.",

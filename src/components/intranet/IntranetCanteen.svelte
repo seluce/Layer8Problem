@@ -15,8 +15,8 @@
 <script>
     import { intranetPages } from '../../engine/intranet_pages.js';
 
-    const kantine = $derived(intranetPages()?.kantine ?? null);
-    const page    = $derived(kantine?.page ?? null);
+    const canteen = $derived(intranetPages()?.canteen ?? null);
+    const page    = $derived(canteen?.page ?? null);
 
     const SERVICE_TONE = {
         wait:   'border-l-amber-500 text-amber-200/90 bg-amber-900/20',
@@ -29,12 +29,12 @@
 <div class="max-w-5xl mx-auto mt-8 px-4 pb-12">
     <h1 class="text-3xl font-black mb-8 text-white">{page?.title}</h1>
 
-    {#if kantine?.service}
-        <div class="mb-6 border-l-4 p-4 rounded-sm text-sm {SERVICE_TONE[kantine.service.tone]}">
-            <span class="font-bold uppercase tracking-wide">{kantine.service.label}</span>
-            <span class="opacity-80"> — {kantine.service.note}</span>
-            {#if kantine.done}
-                <span class="opacity-80"> {kantine.done}</span>
+    {#if canteen?.service}
+        <div class="mb-6 border-l-4 p-4 rounded-sm text-sm {SERVICE_TONE[canteen.service.tone]}">
+            <span class="font-bold uppercase tracking-wide">{canteen.service.label}</span>
+            <span class="opacity-80"> — {canteen.service.note}</span>
+            {#if canteen.done}
+                <span class="opacity-80"> {canteen.done}</span>
             {/if}
         </div>
     {/if}
@@ -49,13 +49,13 @@
 
         {#each page?.menu ?? [] as row, i (row.id)}
             <div class="flex flex-col md:grid md:grid-cols-5 rounded-xl md:rounded-none border md:border-none md:border-b md:border-slate-700/50 hover:bg-slate-700/30 p-4 md:p-0 gap-3 md:gap-0 shadow-xs md:shadow-none
-                        {row.id === kantine?.today
+                        {row.id === canteen?.today
                             ? 'bg-amber-900/20 md:bg-amber-900/10 border-amber-800/50'
                             : `bg-slate-800 border-slate-700 ${i % 2 === 0 ? 'md:bg-transparent' : 'md:bg-slate-800/30'}`}">
                 <div class="md:col-span-1 md:p-4 font-bold text-lg md:text-base border-b border-slate-700/50 md:border-none pb-2 md:pb-0 flex flex-col md:justify-center
-                            {row.id === kantine?.today ? 'text-amber-400' : 'text-slate-300'}">
+                            {row.id === canteen?.today ? 'text-amber-400' : 'text-slate-300'}">
                     <span>{row.day}</span>
-                    {#if row.id === kantine?.today}
+                    {#if row.id === canteen?.today}
                         <span class="text-[0.625rem] md:text-xs font-normal text-amber-500/80 uppercase tracking-wider mt-0.5">{page?.todayLabel}</span>
                     {/if}
                 </div>
@@ -93,6 +93,6 @@
 
     <div class="mt-8 bg-slate-800 border border-red-900/50 p-6 rounded-xl border-l-4 border-l-red-500 shadow-md">
         <h3 class="font-bold mb-2 text-white">{page?.hygieneTitle}</h3>
-        <p class="text-sm text-slate-400">{kantine?.hygiene ?? page?.hygieneFallback}</p>
+        <p class="text-sm text-slate-400">{canteen?.hygiene ?? page?.hygieneFallback}</p>
     </div>
 </div>

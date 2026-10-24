@@ -651,7 +651,7 @@ await ok('The company pages follow a language switch', async () => {
 
     assert.equal(JSON.stringify(state.intranetData), decided,
                  'the decisions changed - only the words were supposed to');
-    for (const page of ['dashboard', 'hr', 'kantine', 'impressum']) {
+    for (const page of ['dashboard', 'hr', 'canteen', 'impressum']) {
         assert.notEqual(JSON.stringify(de[page].page), JSON.stringify(en[page].page),
                         `the ${page} page did not switch along`);
     }
