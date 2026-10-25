@@ -623,6 +623,12 @@ export const de = {
 
     'common.back':                 '← Zurück',
 
+    // Namen für die drei Fenster, die keine eigene Überschrift tragen.
+    // Ein Vorlesegerät nennt sonst nur "Dialog".
+    'a11y.dialog.intro':           'Startbildschirm',
+    'a11y.dialog.system':          'Systemmeldung',
+    'a11y.dialog.mail':            'E-Mail',
+
     'intro.storageLost':           'Dieser Browser lässt die Seite nicht speichern. Dein Fortschritt hält, bis der Tab geschlossen wird – Export sichert ihn.',
 
     'intro.handbook.title':        'Überlebens-Handbuch',

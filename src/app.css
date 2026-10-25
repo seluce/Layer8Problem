@@ -478,6 +478,27 @@
 }
 
 /* ============================================================
+   THE FOCUS RING
+   Deliberately outside the @layer blocks, for the same reason as the
+   text size below: a utility class would otherwise beat it.
+
+   Nothing in the game drew one until 6.4. Tab through the settings and
+   the screen said nothing about where you were - the switches even
+   carried peer-focus:outline-hidden, which took away the one ring the
+   browser offered. The game is fully playable from the keyboard
+   (Q/W/E/R, 1-3, Space, rebindable), so the one thing missing was being
+   able to SEE it.
+
+   :focus-visible, not :focus — a mouse click must not leave a ring
+   behind on every button it touches.
+   ============================================================ */
+:focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ============================================================
    TEXT SIZE
    Deliberately outside the @layer blocks: Tailwind's utilities live
    in a later layer and would otherwise beat any rule, no matter how

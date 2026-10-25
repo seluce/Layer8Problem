@@ -528,12 +528,63 @@ export const ui = {
      * Accepts an element or an id, because half the call sites already hold
      * the element and the other half only know its name.
      */
+    /**
+     * The open window the keyboard belongs to, or null.
+     *
+     * Highest z-index wins, because that is what "on top" means here: the
+     * item dialog over the open backpack, a warning over both. Asked by the
+     * Tab handler in src/engine.js - a window marked aria-modal has to keep
+     * the tab order as well, or the keyboard walks out the back of it.
+     */
+    topmostDialog: function() {
+        let best = null, bestZ = -1;
+        for (const el of document.querySelectorAll('[role="dialog"]')) {
+            if (el.classList.contains('hidden')) continue;
+            if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') continue;
+            const z = parseInt(getComputedStyle(el).zIndex, 10) || 0;
+            if (z >= bestZ) { bestZ = z; best = el; }
+        }
+        return best;
+    },
+
+    /** What focusable controls a window holds, in tab order. */
+    FOCUSABLE: 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), '
+             + 'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+
+    focusablesIn: function(el) {
+        return [...(el?.querySelectorAll(this.FOCUSABLE) ?? [])]
+            .filter(node => node.offsetParent !== null || node.tagName === 'INPUT');
+    },
+
+    /**
+     * Where the keyboard was before a window opened, so it can go back.
+     * One entry per open window, because they stack (settings over the intro,
+     * the item dialog over the backpack).
+     */
+    _focusReturn: [],
+
     showOverlay: function(target, lockScroll = true) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
+
+        // The keyboard follows the window. aria-modal tells a SCREEN READER to
+        // ignore what is behind it, but the tab order went on walking through
+        // the controls back there - open the settings over the start screen and
+        // the next Tab landed on EXPORT, behind the dialog, out of sight.
+        // Remembered so closing can hand it back; without that a player who
+        // opens and closes a window finds the keyboard at the top of the page.
+        this._focusReturn.push(document.activeElement);
+        // After the paint, or the first control is not laid out yet and
+        // offsetParent still reads null.
+        setTimeout(() => {
+            if (el.classList.contains('hidden')) return;    // closed again already
+            const first = this.focusablesIn(el)[0];
+            if (first) first.focus();
+            else { el.setAttribute('tabindex', '-1'); el.focus(); }
+        }, 30);
         return el;
     },
 
@@ -548,6 +599,12 @@ export const ui = {
         el.classList.add('hidden');
         el.classList.remove('flex');
         this.releaseScroll(el.id || 'overlay');
+
+        // Hand the keyboard back to whatever opened this window. Guarded: the
+        // button may be gone by now (a component re-rendered), and focusing a
+        // detached node silently moves focus to the body.
+        const back = this._focusReturn.pop();
+        if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
         return el;
     },
 

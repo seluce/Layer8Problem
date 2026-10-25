@@ -617,6 +617,12 @@ export const en = {
 
     'common.back':                 '← Back',
 
+    // Names for the three windows that carry no heading of their own.
+    // A screen reader otherwise announces nothing but "dialog".
+    'a11y.dialog.intro':           'Start screen',
+    'a11y.dialog.system':          'System message',
+    'a11y.dialog.mail':            'Email',
+
     'intro.storageLost':           'This browser does not let the page save. Your progress lasts until the tab closes – Export keeps it.',
 
     'intro.handbook.title':        'Survival handbook',

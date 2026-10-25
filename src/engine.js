@@ -133,6 +133,27 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 
+    // 1b. Tab stays inside the open window.
+    //
+    // aria-modal tells a screen reader to ignore what is behind a dialog; the
+    // TAB ORDER knows nothing about it. Open the settings over the start
+    // screen and the next Tab landed on EXPORT - behind the dialog, invisible,
+    // and pressing it did something the player could not see. Handled before
+    // the form-field guard below, because a dialog full of inputs is exactly
+    // where this matters.
+    if (event.key === 'Tab') {
+        const dialog = engine.topmostDialog();
+        const stops = dialog ? engine.focusablesIn(dialog) : [];
+        if (stops.length) {
+            const first = stops[0], last = stops[stops.length - 1];
+            const here = document.activeElement;
+            if (!dialog.contains(here)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+            else if (event.shiftKey && here === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && here === last) { event.preventDefault(); first.focus(); }
+        }
+        return;
+    }
+
     // Ignore keystrokes inside form fields
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 

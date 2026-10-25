@@ -24,7 +24,12 @@
 
     // The switch is the same nine-utility construction on every row, so it is
     // named once. Written out in full, not assembled, so Tailwind can find it.
-    const SWITCH = 'w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500';
+    // peer-focus-visible:* draws the ring on the VISIBLE switch: the checkbox
+    // itself is sr-only, so the browser's own outline lands on something
+    // nobody can see - which is why outline-hidden sits on it. Until 6.4
+    // nothing took its place, and tabbing through the settings said nothing
+    // about where you were.
+    const SWITCH = 'w-9 h-5 bg-slate-700 peer-focus:outline-hidden peer-focus-visible:ring-2 peer-focus-visible:ring-cyan-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500';
 
     const SLIDER = 'flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500';
 
