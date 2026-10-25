@@ -355,8 +355,26 @@ const tutorial = {
         // 1. Remember the scroll target
         this.currentTarget = targetEl;
 
-        // 2. Scroll it into view - on mobile it is often off-screen
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 2. Scroll it into view - on mobile it is often off-screen. Two things
+        //    the stacked layout changed, both since the action bar is pinned
+        //    to the bottom edge (6.4):
+        //
+        //    - a target INSIDE that bar is already on screen. Centring it
+        //      aims at its natural place at the end of the page and carries
+        //      the player away from what they were reading. Measured at
+        //      375x812 with an event open: the buttons sit visibly at 740..807
+        //      and centring one moved the page from 100 to 419, its very end.
+        //    - "on screen" ends where the bar begins, not at innerHeight.
+        //      Asked of the viewport, a target lying behind the bar counted as
+        //      visible and kept its scroll - and because a highlighted target
+        //      carries z-2500 it then drew ON TOP of the bar.
+        //
+        //    html { scroll-padding-bottom } in app.css keeps the scroll itself
+        //    clear of the bar.
+        const box = targetEl.getBoundingClientRect();
+        const onScreen = engine.pinnedToScreen(targetEl)
+                      || (box.top >= 0 && box.bottom <= engine.usableBottom());
+        if (!onScreen) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         // 3. Hand the content over. TutorialPointer.svelte owns the markup,
         //    including the button an info step needs to carry on - writing

@@ -890,8 +890,10 @@ export const events = {
             this.updatePhoneVisibility();
             setTimeout(() => {
                 const phone = document.getElementById('smartphone');
-                // Only scroll on small screens
-                if(phone && window.innerWidth < 1024) { 
+                // Only on the stacked layout, and through engine_ui's one
+                // answer to what that is - `innerWidth < 1024` disagreed with
+                // the stylesheet at exactly 1024.
+                if (phone && this.phoneLayout()) {
                     phone.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 100);

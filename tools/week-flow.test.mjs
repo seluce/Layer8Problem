@@ -2834,6 +2834,126 @@ await ok('A week leans towards its open threads as Friday nears', () => {
                      'engine and simulator disagree about the follow-up chance');
 });
 
+await ok('On the stacked layout the terminal comes to the player', async () => {
+    // At 375x812 the page is 1838px tall: the four action buttons sat at 1742
+    // and the event at 358, so every action was scroll down, tap, scroll up to
+    // read. The bar is pinned to the bottom edge there (app.css) and this
+    // brings the event back up.
+    const seen = [];
+    const panel = { id: 'terminal', scrollIntoView: (opt) => seen.push(opt) };
+    const realGet = globalThis.document.getElementById;
+    const realMM  = globalThis.window.matchMedia;
+    const bench = { ...ui, state, lesson: null, windowOverTerminal: () => false };
+    try {
+        globalThis.document.getElementById = (id) => (id === 'terminal' ? panel : realGet(id));
+        globalThis.window.matchMedia = (query) => ({ matches: query === ui.PHONE_LAYOUT });
+
+        assert.equal(bench.phoneLayout(), true, 'the stacked layout is not recognised');
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 1, 'the event was not brought into view');
+        // `start`, not `center`: an event card can be taller than the screen,
+        // and centring it pushes its own title off the top.
+        assert.equal(seen[0].block, 'start', 'a tall event card would lose its title');
+
+        // A window over the terminal, and the page must not move behind it.
+        seen.length = 0;
+        bench.windowOverTerminal = () => true;
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the page was dragged around behind an open window');
+
+        // Nor under an open mail. It covers the whole screen and answering it
+        // is a decision of its own, so the page behind it stays where it is.
+        seen.length = 0;
+        bench.windowOverTerminal = () => false;
+        state.isEmailOpen = true;
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the page was dragged around under an open mail');
+        state.isEmailOpen = false;
+
+        // Nor during the tutorial, which scrolls to its own target.
+        seen.length = 0;
+        bench.lesson = { isActive: true };
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the tutorial and the terminal fight over the page');
+
+        // And nothing at all on the side-by-side layout, where the page has no
+        // scroll to give.
+        seen.length = 0;
+        bench.lesson = null;
+        globalThis.window.matchMedia = () => ({ matches: false });
+        assert.equal(bench.phoneLayout(), false);
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the desktop layout scrolls after all');
+    } finally {
+        globalThis.document.getElementById = realGet;
+        globalThis.window.matchMedia = realMM;
+    }
+
+    // The pinned bar covers the bottom of the screen, so "on screen" ends
+    // where the bar begins. The tutorial asked the viewport instead, called a
+    // target lying behind the bar visible and kept its scroll - and since a
+    // highlighted target carries z-2500 it then drew ON TOP of the bar.
+    try {
+        const bar = { id: 'action-bar', getBoundingClientRect: () => ({ top: 700, bottom: 812 }),
+                      contains: (el) => el?.id === 'btn-coffee' };
+        globalThis.document.getElementById = (id) => (id === 'action-bar' ? bar : realGet(id));
+        globalThis.window.matchMedia = (query) => ({ matches: query === ui.PHONE_LAYOUT });
+        globalThis.window.innerHeight = 812;
+        const bench = { ...ui, state };
+
+        assert.equal(bench.usableBottom(), 700, 'the screen is still thought to end behind the bar');
+        // A button INSIDE the pinned bar is on screen by definition. Scrolling
+        // to "reveal" it aims at its natural place at the end of the page.
+        assert.equal(bench.pinnedToScreen({ id: 'btn-coffee' }), true, 'a pinned button counts as scrollable again');
+        assert.equal(bench.pinnedToScreen({ id: 'btn-team' }), false, 'everything counts as pinned');
+
+        globalThis.window.matchMedia = () => ({ matches: false });
+        assert.equal(bench.usableBottom(), 812, 'the side-by-side layout loses screen to a bar it does not pin');
+        assert.equal(bench.pinnedToScreen({ id: 'btn-coffee' }), false, 'nothing is pinned without the stacked layout');
+    } finally {
+        globalThis.document.getElementById = realGet;
+        globalThis.window.matchMedia = realMM;
+    }
+
+    // One breakpoint, two files. The engine asks a media query and the
+    // stylesheet releases the page height - at exactly 1024 the old
+    // `innerWidth < 1024` said desktop while the stylesheet said stacked.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    const width = ui.PHONE_LAYOUT.match(/max-width:\s*(\d+)px/);
+    assert.ok(width, 'PHONE_LAYOUT is no longer a max-width query');
+    assert.ok(css.includes(`@media (max-width: ${width[1]}px)`),
+              `app.css has no @media (max-width: ${width[1]}px) - the two breakpoints have drifted apart`);
+    const block = css.slice(css.indexOf(`@media (max-width: ${width[1]}px)`)).slice(0, 2000);
+    assert.match(block, /#action-bar\s*\{[\s\S]*?position:\s*sticky/,
+                 'the action bar is not pinned on the stacked layout');
+    // scrollIntoView knows nothing about a sticky element, so the scrollport
+    // has to be told where the bar is - otherwise every caller lands behind it.
+    assert.match(block, /scroll-padding-bottom:/,
+                 'nothing keeps a scrolled-to element clear of the pinned bar');
+
+    // Every change of the terminal has to go through it, or the layout only
+    // follows some of the time.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const setter = uiSrc.slice(uiSrc.indexOf('_setTerminal: function'), uiSrc.indexOf('EVENT_CLASS:'));
+    assert.match(setter, /this\.showTerminal\(\)/, '_setTerminal no longer brings the terminal into view');
+
+    // The tutorial scrolls only to a target that is actually off screen: its
+    // own targets are the bar's buttons, and centring a child of a pinned bar
+    // carries the page to its very end.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+    assert.match(tut, /if \(!onScreen\) targetEl\.scrollIntoView/,
+                 'the tutorial centres targets that never left the screen');
+    assert.match(tut, /engine\.pinnedToScreen\(targetEl\)/,
+                 'the tutorial scrolls to reveal a button that is pinned on screen');
+    assert.match(tut, /engine\.usableBottom\(\)/,
+                 'the tutorial measures against the viewport instead of the usable screen');
+});
+
 await ok('A shuffled bag shows everything once before it repeats', async () => {
     const { drawIndex } = await import('../src/engine/draw_bag.js');
     store.clear();

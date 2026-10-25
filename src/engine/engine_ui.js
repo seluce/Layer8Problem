@@ -274,6 +274,79 @@ export const ui = {
         server: '#10b981', coffee: '#f59e0b', party: '#ec4899', lunch: '#14b8a6'
     },
 
+    /**
+     * Is the screen narrow enough that the page stacks and scrolls?
+     *
+     * Below 1025px app.css releases the page height and the five panels sit
+     * underneath each other instead of side by side. ONE answer to that
+     * question, because both the phone's scroll and the terminal's read it,
+     * and the old `innerWidth < 1024` disagreed with the stylesheet's
+     * `max-width: 1024px` at exactly 1024.
+     */
+    PHONE_LAYOUT: '(max-width: 1024px)',
+    phoneLayout: function() {
+        return window.matchMedia?.(this.PHONE_LAYOUT).matches ?? false;
+    },
+
+    /**
+     * Where the usable screen ends.
+     *
+     * On the stacked layout the action bar is pinned over the bottom edge, so
+     * window.innerHeight is NOT where content stops being readable. Anything
+     * asking "is this on screen" has to ask this instead: the tutorial asked
+     * the viewport, called a target behind the bar visible, and skipped the
+     * scroll that would have freed it.
+     */
+    usableBottom: function() {
+        if (!this.phoneLayout()) return window.innerHeight;
+        const bar = document.getElementById('action-bar');
+        const top = bar?.getBoundingClientRect().top;
+        return typeof top === 'number' ? Math.min(window.innerHeight, top) : window.innerHeight;
+    },
+
+    /**
+     * Is this element pinned to the screen rather than scrolled with the page?
+     *
+     * The four action buttons are, on the stacked layout - they live inside
+     * the pinned bar. Scrolling to put one "into view" is both pointless and
+     * harmful: it is already there, and the browser aims at its natural place
+     * at the end of the page.
+     */
+    pinnedToScreen: function(el) {
+        if (!el || !this.phoneLayout()) return false;
+        return document.getElementById('action-bar')?.contains(el) ?? false;
+    },
+
+    /**
+     * Brings the terminal back under the player's eyes.
+     *
+     * On a phone the five panels stack: at 375x812 the page is 1838px tall,
+     * the action bar sits at 1742 and the event at 358. Tapping an action
+     * therefore left the event 652px ABOVE the screen - every single action
+     * was scroll down, tap, scroll up to read, scroll down again, with the
+     * clock running. The bar is pinned to the bottom edge on that layout
+     * (app.css) and the event comes to the player.
+     *
+     * `start`, not `center`: an event card can be taller than the viewport,
+     * and centring it would push its title off the top.
+     *
+     * Not while a window covers the terminal - the same question the keyboard
+     * asks before reaching through one - and not during the tutorial, which
+     * scrolls to its own target and would be fighting over the page.
+     */
+    showTerminal: function() {
+        if (!this.phoneLayout()) return;
+        if (this.windowOverTerminal() || this.state.isEmailOpen) return;
+        if (this.lesson?.isActive) return;
+        // After the paint, so the panel has the height its new content gives it.
+        setTimeout(() => {
+            const panel = document.getElementById('terminal');
+            if (panel && !this.windowOverTerminal()) {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 60);
+    },
+
     _setTerminal: function(className, extra) {
         this.state.terminal = { variant: 'system', className, ...extra };
 
@@ -287,6 +360,10 @@ export const ui = {
             const type = extra?.event?.type;
             panel.style.setProperty('--panel-accent', this.TERMINAL_ACCENTS[type] ?? '#334155');
         }
+
+        // Every change of what the terminal shows runs through here, so this
+        // is the one place the phone layout has to follow.
+        this.showTerminal();
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',

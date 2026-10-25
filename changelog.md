@@ -1,5 +1,8 @@
 [Unreleased]
 
+On a phone:
+* The four action buttons stay on the bottom edge, and the event comes back up to you after every one. Before, each action meant scrolling a thousand pixels down and back.
+
 The day to day:
 * A working week leans towards the threads you have opened as Friday nears, so fewer of them run out of days.
 * Events you have never seen come up a little more often than ones you have.

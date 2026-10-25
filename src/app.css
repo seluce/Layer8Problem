@@ -105,6 +105,36 @@
 
     @media (max-width: 1024px) {
         body { height: auto; overflow-y: auto; }
+
+        /* Anything scrolled into view keeps clear of the pinned bar below.
+           scrollIntoView knows nothing about a sticky element, so the
+           tutorial's target landed BEHIND the bar - and because a highlighted
+           target carries z-2500 it then rendered on top of it, which looked
+           like two bars sitting in each other. 6rem is the bar (5rem plus its
+           padding), and half a rem of air. */
+        html { scroll-padding-bottom: 6.5rem; }
+
+        /* The action bar stays on the bottom edge.
+           Below this width the five panels stack and the page grows past the
+           screen: at 375x812 it is 1838px tall, and the four buttons sat at
+           1742. Every action meant scrolling a thousand pixels down, tapping,
+           and scrolling back up to read - with the clock running. Pinned here,
+           and engine_ui.showTerminal() brings the event to the player.
+
+           The last child of the page, so there is nothing below it to cover:
+           it stays on the edge until its own place at the end is reached.
+           Its own background, or the terminal would scroll through it, and a
+           z-index below the side panels (1100) and far below the modals. */
+        #action-bar {
+            position: sticky;
+            bottom: 0;
+            z-index: 900;
+            background-color: var(--depth-page);
+            padding-block: 0.5rem;
+            /* The page's own bottom padding would otherwise show as a gap
+               under the pinned bar. */
+            margin-bottom: -1rem;
+        }
     }
 }
 
