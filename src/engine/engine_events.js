@@ -325,6 +325,43 @@ export const events = {
     },
 
     /**
+     * May this encounter intercept the player right now?
+     *
+     * BOTH gates, where both are written - the story flag AND the reputation
+     * threshold. Until 6.4 this lived inline in trigger() as a chain of early
+     * returns, and the flag returned first: of the 84 continuations in the
+     * pool, 83 carry a threshold that was therefore never read, and every one
+     * of them was handed out the moment its thread was opened.
+     *
+     * The ladder IS the encounter pool. The opener wants 60, its option pays
+     * 15, and the continuation wants 80 - so the thread opens today and the
+     * next step stays shut until the colleague likes you more. Meeting the
+     * same encounter again carries you from 75 to 90, and then it is there.
+     * One encounter was never meant to pay for its own follow-up, which is
+     * what the tiers (20/40, 60/80 and their negatives) are for.
+     *
+     * A named method rather than a filter body, because that is what hid it:
+     * nothing could ask the rule a question, so nothing noticed when it
+     * stopped asking half of it.
+     */
+    encounterEligible: function(ev) {
+        if (ev.reqStory && !this.storyGateOpen(ev)) return false;
+
+        if (ev.reqRep) {
+            for (const [char, threshold] of Object.entries(ev.reqRep)) {
+                const currentRep = this.state.reputation[char] || 0;
+                // Positive threshold means at least X, negative means at most X
+                if (threshold > 0 && currentRep < threshold) return false;
+                if (threshold < 0 && currentRep > threshold) return false;
+            }
+        }
+
+        // An encounter with neither gate has nothing to qualify on. The pool
+        // has none, and this keeps it that way.
+        return !!(ev.reqStory || ev.reqRep);
+    },
+
+    /**
      * Passive items: they do their work when an event OPENS, before the
      * player has chosen anything - currently gated by the character on
      * screen (data_items.js, `passive`). Deliberately not a flat bonus per
@@ -628,28 +665,9 @@ export const events = {
         // 10% chance, also on every button: a colleague intercepts you.
         if (DB.reputation) {
             
-            // A. Collect every event the player is eligible for (reputation or story flag)
-            let possibleInterventions = DB.reputation.filter(ev => {
-                if (this.state.usedIDs.has(ev.id)) return false; 
-
-                // Story continuation: flag set, and old enough / late enough?
-                if (ev.reqStory) {
-                    return this.storyGateOpen(ev);
-                }
-                
-                // Plain reputation event: check the thresholds
-                if (ev.reqRep) {
-                    for (let [char, threshold] of Object.entries(ev.reqRep)) {
-                        let currentRep = this.state.reputation[char] || 0;
-                        // Positive threshold means at least X, negative means at most X
-                        if (threshold > 0 && currentRep < threshold) return false;
-                        if (threshold < 0 && currentRep > threshold) return false;
-                    }
-                    return true;
-                }
-                
-                return false;
-            });
+            // A. Collect every event the player is eligible for.
+            let possibleInterventions = DB.reputation.filter(ev =>
+                !this.state.usedIDs.has(ev.id) && this.encounterEligible(ev));
 
             // B. Roll: 10% chance an encounter happens at all
             if (possibleInterventions.length > 0 && Math.random() < 0.10) {

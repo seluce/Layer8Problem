@@ -12,6 +12,7 @@ Interface:
 * The day cards promised fewer or more tickets per hour. They now name what actually differs: how many excuses you start with, and how far the valve cools you.
 
 Bug fixes:
+* A colleague's story only goes on once they actually like you that much. The next step used to arrive the moment the thread was opened, whatever the encounter asked for.
 * The knowledge book can be completed again. Entries that only a mail opens stayed dark for good.
 * Keys the game acts on no longer scroll the page as well - on a phone, and in a window smaller than the layout.
 * A browser that refuses the page its storage no longer leaves the start screen dead. The game runs for as long as the tab stays open, and says so.

@@ -1511,6 +1511,47 @@ for (const ev of DB.emails) {
     if (!used.has(cmd)) warn(`"${cmd}" is handled in engine_events.js but no data file uses it - dead code, or an entrance nobody can reach`);
 }
 
+/* ---------- 12c) Encounter continuations against their own opener ---------- */
+// The encounter pool is a LADDER: the opener wants 60, its option pays 15, and
+// the continuation wants 80 - so one encounter cannot pay for its own
+// follow-up, and the next step waits until the colleague likes the player
+// more. engine_events.encounterEligible asks both gates since 6.4; until then
+// the story flag returned first and the threshold was never read.
+//
+// Which means a wrong threshold used to be harmless and is now dead content:
+// a continuation gated against the direction its own opener builds can never
+// be drawn, at 0 errors and 0 warnings. Both halves are checked - the sign,
+// and whether the opener asks about that character at all.
+{
+  const setters = {};
+  const collect = (value, ev) => {
+    if (!value || typeof value !== 'object') return;
+    if (typeof value.next === 'string') (setters[value.next] ??= []).push(ev);
+    for (const inner of Object.values(value)) collect(inner, ev);
+  };
+  for (const pool of POOLS) for (const ev of DB[pool]) collect(ev, ev);
+  DB.emails.forEach(ev => collect(ev, ev));
+
+  for (const ev of DB.reputation) {
+    if (!ev.reqStory || !ev.reqRep) continue;
+    const openers = setters[ev.reqStory] ?? [];
+    if (!openers.length) continue;                 // section 2 reports the orphan itself
+
+    for (const [char, want] of Object.entries(ev.reqRep)) {
+      const asked = openers.map(o => o.reqRep?.[char]).filter(v => v !== undefined);
+      if (!asked.length) {
+        warn(`[reputation/${ev.id}] wants ${char} ${want}, but ${openers.map(o => o.id).join(', ')} `
+           + `asks nothing of ${char} - the threshold may be out of reach from there`);
+        continue;
+      }
+      if (asked.some(v => Math.sign(v) !== Math.sign(want))) {
+        err(`[reputation/${ev.id}] wants ${char} ${want}, its opener wants ${asked.join('/')} - `
+          + `the continuation is gated against the direction its own thread builds and can never be drawn`);
+      }
+    }
+  }
+}
+
 /* ---------- 13) Years the calendar can overtake ---------- */
 // The game is played for years after a line is written. Three kinds of year
 // go wrong on their own, at 0 errors and 0 warnings:

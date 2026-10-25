@@ -2770,6 +2770,51 @@ await ok('The boss clock stops while a window covers the fight', () => {
               'the guard sits after the decrement');
 });
 
+await ok('An encounter continuation needs the flag AND the reputation', async () => {
+    // The ladder the encounter pool is built on: the opener wants 60, its
+    // option pays 15, and the continuation wants 80 - so one encounter cannot
+    // pay for its own follow-up. Until 6.4 the flag was checked first and
+    // returned, so 83 of the 84 continuations arrived the moment their thread
+    // was opened, the contract and the gala among them.
+    resetState();
+    await ensure('reputation');
+    const cont = DB.reputation.find(e => e.id === 'rep_ceo_story_2a');
+    assert.ok(cont?.reqStory && cont?.reqRep, 'the chain this rests on has changed shape');
+    const [[char, threshold]] = Object.entries(cont.reqRep);
+
+    state.storyFlags = {};
+    state.reputation[char] = 100;
+    assert.equal(engine.encounterEligible(cont), false, 'the flag is not being asked for');
+
+    // Flag set, but the colleague does not like the player that much yet -
+    // which is exactly where a freshly opened thread leaves them.
+    state.storyFlags[cont.reqStory] = true;
+    state.reputation[char] = threshold - 5;
+    assert.equal(engine.encounterEligible(cont), false,
+                 'the continuation arrives below its own threshold again');
+
+    state.reputation[char] = threshold;
+    assert.equal(engine.encounterEligible(cont), true, 'the earned continuation stays shut');
+
+    // The other direction, for the strands that need a colleague to dislike
+    // the player: a negative threshold is an upper bound.
+    const sour = DB.reputation.find(e => e.reqRep && Object.values(e.reqRep).some(v => v < 0));
+    if (sour) {
+        const [[sChar, sWant]] = Object.entries(sour.reqRep).filter(([, v]) => v < 0);
+        if (sour.reqStory) state.storyFlags[sour.reqStory] = true;
+        state.reputation[sChar] = sWant + 5;              // not sour enough
+        assert.equal(engine.encounterEligible(sour), false, 'a negative threshold is not a ceiling');
+        state.reputation[sChar] = sWant;
+        assert.equal(engine.encounterEligible(sour), true, 'a met negative threshold stays shut');
+    }
+
+    // And the filter in trigger() has to go through this method, or the rule
+    // can quietly stop being asked a second time.
+    const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+    assert.match(src, /DB\.reputation\.filter\(ev =>[\s\S]{0,120}?this\.encounterEligible\(ev\)\)/,
+                 'the encounter draw no longer asks encounterEligible');
+});
+
 await ok('A week leans towards its open threads as Friday nears', () => {
     resetState();
     assert.equal(engine.followUpChance(), engine.FOLLOWUP_CHANCE, 'the day mode is no longer flat');

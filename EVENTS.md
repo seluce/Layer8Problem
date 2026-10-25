@@ -634,9 +634,14 @@ friendship and enmity strands to the same character come about:
 }
 ```
 
-Continuations work as they do everywhere (`next` → `reqStory`); they may
-additionally carry a `reqRep` again, but they do not have to — with the flag
-set, the story itself is often precondition enough.
+Continuations work as they do everywhere (`next` → `reqStory`), and a
+`reqRep` beside it is a SECOND gate, not a note: both have to be met. That is
+the ladder the pool is built on — the opener wants 60, its option pays 15, and
+the continuation wants 80, so one encounter cannot pay for its own follow-up
+and the next step waits until the colleague likes the player more. A
+continuation may leave the threshold out, and then the flag is enough; written
+down, it counts. Until 6.4 the engine read the flag and returned, so 83 of the
+84 continuations arrived the moment their thread was opened.
 
 Encounters are not drawn through the action bar: they intercept the player with
 a 10 % probability before any action.
