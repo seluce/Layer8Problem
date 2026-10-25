@@ -465,7 +465,7 @@ export const en = {
     'end.toggle.chart':            'Day curve',
     'end.toggle.diary':            'Logbook',
 
-    'chart.aria':                  'Laziness, Aggro and Boss Radar over the workday',
+    'chart.aria':                  'Laziness, Aggro, Boss Radar and open tickets over the workday',
     'chart.tooFew':                'Too few decisions to draw a curve.',
 
     'diary.header':                'Logbook — {day}',

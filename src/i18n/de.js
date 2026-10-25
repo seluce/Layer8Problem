@@ -472,7 +472,7 @@ export const de = {
     'end.toggle.chart':            'Tagesverlauf',
     'end.toggle.diary':            'Logbuch',
 
-    'chart.aria':                  'Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag',
+    'chart.aria':                  'Verlauf von Faulheit, Aggro, Chef-Radar und offenen Tickets über den Arbeitstag',
     'chart.tooFew':                'Zu wenige Entscheidungen für eine Kurve.',
 
     'diary.header':                'Logbuch — {day}',

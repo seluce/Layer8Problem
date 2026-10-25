@@ -625,6 +625,18 @@ export const core = {
      * `m` - so this is a rename, not a guess. Neither runs more than once: the
      * migrated object no longer matches its own condition.
      */
+    /**
+     * Old curve points, made readable.
+     *
+     * Up to 5.0 a point read { t, f, a, c } - `t` for the minute, the same
+     * letter an option spends on its button text. Now { m, l, a, b }.
+     *
+     * `tk` (open tickets) joined in 6.4 and is deliberately NOT filled in
+     * here: a point from an older save had tickets, nobody wrote them down,
+     * and inventing a zero would draw a flat line along the bottom that says
+     * "no tickets all day". The chart asks whether any point carries one and
+     * leaves the line out otherwise. Absence is the honest answer.
+     */
     migrateStatPoints: function(history) {
         if (!Array.isArray(history)) return history;
         return history.map(p =>

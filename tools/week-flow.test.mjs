@@ -511,6 +511,44 @@ await ok('A 5.0 save brings its day curve along (migration)', () => {
     // through the condition.
     const again = engine.migrateStatPoints(state.statHistory);
     assert.deepEqual(again, state.statHistory, 'the migration is not idempotent');
+
+    // `tk` is deliberately NOT invented for an old point: that day had
+    // tickets, nobody wrote them down, and a zero would draw a flat line
+    // along the bottom saying "not one ticket all day".
+    for (const p of state.statHistory) {
+        assert.equal('tk' in p, false, 'the migration invents a ticket count the old save never had');
+    }
+});
+
+await ok('A curve point carries the ticket pile', () => {
+    // The pile is the most common way to lose a day, and the chart on the one
+    // screen a player holds still and reads left it out until 6.4. A save
+    // format, so it comes with a migration and this test (CLAUDE.md).
+    resetState();
+    state.statHistory = [];
+    state.time = 9 * 60;
+    state.tickets = 4;
+    state.fl = 10; state.al = 20; state.cr = 30;
+    events.recordStatPoint.call(engine);
+    assert.deepEqual(state.statHistory.at(-1), { m: 540, l: 10, a: 20, b: 30, tk: 4 },
+                     'the point no longer carries what it is read for');
+
+    // And the chart draws the line only where there is one to draw.
+    const chart = readFileSync(new URL('../src/components/DayChart.svelte', import.meta.url), 'utf-8');
+    assert.match(chart, /points\.some\(p => p\.tk !== undefined\)/,
+                 'the chart no longer asks whether the tickets were recorded');
+
+    // Four lines, four patterns: three curves told apart by colour alone are
+    // three curves for anyone who cannot tell those colours apart.
+    const dashes = [...chart.matchAll(/dash: '([^']+)'/g)].map(m => m[1]);
+    assert.equal(dashes.length, 4, `expected four dash patterns, found ${dashes.length}`);
+    assert.equal(new Set(dashes).size, 4, `two lines share a pattern: ${dashes.join(' | ')}`);
+    assert.match(chart, /stroke-dasharray=\{s\.dash\}/, 'the lines no longer carry their pattern');
+    assert.match(chart, /stroke-dasharray=\{TICKETS\.dash\}/, 'the ticket line lost its pattern');
+    // The legend has to show the same patterns, or it is the one place that
+    // still says colour only.
+    const legend = chart.slice(chart.indexOf('<div class="flex justify-center'));
+    assert.match(legend, /stroke-dasharray=\{s\.dash\}/, 'the legend shows colour swatches again');
 });
 await ok('The boot line of an old save names the running version', () => {
     resetState();

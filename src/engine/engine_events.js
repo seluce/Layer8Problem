@@ -1545,6 +1545,20 @@ export const events = {
         this.log({ ref: { p: 'special', path: ['leet', pick] } }, "text-cyan-400 italic");
     },
 
+    /**
+     * A point on the day's curve.
+     *
+     * `tk` is the open tickets, and it joined the other four in 6.4: the pile
+     * is the most common way to lose a day and the end screen's chart did not
+     * draw it, so the one screen a player holds still and reads left out the
+     * thing that most often ended the run.
+     *
+     * A save format, so the rules of CLAUDE.md apply: a reader takes every key
+     * with `?? 0`, migrateStatPoints carries the old shape across, and
+     * week-flow.test.mjs holds both. Old points carry no `tk` at all, and the
+     * chart draws no ticket line for them rather than a flat zero - they had
+     * tickets, nobody wrote them down.
+     */
     recordStatPoint: function() {
         const h = this.state.statHistory;
         if (!h || h.length > 200) return;
@@ -1552,7 +1566,8 @@ export const events = {
             m: this.state.time,
             l: Math.round(this.state.fl),
             a: Math.round(this.state.al),
-            b: Math.round(this.state.cr)
+            b: Math.round(this.state.cr),
+            tk: this.state.tickets
         });
     },
 
