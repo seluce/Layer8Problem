@@ -127,11 +127,11 @@
         <div class="flex-1 min-w-0">
             <div class="flex justify-between items-baseline gap-2">
                 <span class="font-bold text-slate-100 truncate">{mail.sender}</span>
-                <span class="text-[10px] text-slate-500 shrink-0">{timestamp}</span>
+                <span class="text-[0.625rem] text-slate-500 shrink-0">{timestamp}</span>
             </div>
             <div class="text-sm text-slate-300 truncate">{mail.subj}</div>
             {#if cc}
-                <div class="flex gap-2 text-[10px] mt-1">
+                <div class="flex gap-2 text-[0.625rem] mt-1">
                     <span class="w-6 text-slate-500 font-bold text-right">{t('email.cc')}</span>
                     <span class="text-slate-500">{cc}</span>
                 </div>

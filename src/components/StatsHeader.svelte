@@ -22,12 +22,23 @@
     const crText = $derived(state.blindStats ? '?%' : `${state.cr}%`);
     const ticketText = $derived(state.blindTickets ? '?' : state.tickets);
 
-    // The engine does not clamp the stats, so they can dip below zero after a
-    // generous option. A negative width is invalid CSS and gets dropped, which
-    // leaves the bar at width:auto — full width. The old code set style.width
-    // through the CSSOM, where an invalid value is ignored and the previous one
-    // survives, so this only became visible with Svelte.
+    // addStat() clamps every stat to 0..100 where it is written, so this is a
+    // second line of defence rather than the only one - any path that sets a
+    // stat without going through it would otherwise hand CSS a negative width,
+    // which is invalid, gets dropped, and leaves the bar at width:auto: full.
+    // The old engine set style.width through the CSSOM, where an invalid value
+    // is ignored and the previous one survives, so it only showed with Svelte.
     const bar = (value) => Math.min(100, Math.max(0, value));
+
+    // The two one-time saves, once they are spent. Until 6.4 nothing said so
+    // while the day ran: the modal announced it once, the day report named it
+    // afterwards, and the written warning had a stamp in the team view - behind
+    // a button. In a week they are spent once for all five days, so a 100% on
+    // Thursday ends the run because of Monday, with nothing on screen to say
+    // that the net was already gone.
+    const valveSpent = $derived(!!state.rageWarningReceived);
+    const warned     = $derived(!!state.chefWarningReceived);
+    const MARK = 'shrink-0 text-[0.5rem] font-bold tracking-widest px-1 py-px rounded-sm leading-normal';
 
     // Pulsing is tied to the visual effects setting, same as before.
     const aggroPulse = $derived(state.visualFX && state.al >= 80 ? 'pulse-orange' : '');
@@ -50,10 +61,10 @@
 <div id="clock-container"
      class="neon-box panel-raised border-blue col-span-2 lg:col-span-1 p-2 grid items-start justify-items-center content-center gap-x-3 {state.week.active ? 'grid-cols-[1fr_auto_1fr]' : 'grid-cols-1'}">
 
-    <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">{t('header.clock')}</span>
+    <span class="text-[0.625rem] text-blue-400 font-bold uppercase leading-none">{t('header.clock')}</span>
     {#if state.week.active}
         <span class="self-stretch w-px bg-blue-500/25"></span>
-        <span class="text-[10px] text-blue-400 font-bold uppercase leading-none">{t('header.day')}</span>
+        <span class="text-[0.625rem] text-blue-400 font-bold uppercase leading-none">{t('header.day')}</span>
     {/if}
 
     <div id="clock" class="text-3xl lg:text-4xl font-black text-white leading-none mt-1.5">{clock}</div>
@@ -61,13 +72,13 @@
         <div class="self-stretch w-px bg-blue-500/25"></div>
         <div class="flex flex-col items-center mt-1.5">
             <span class="text-3xl lg:text-4xl font-black text-white leading-none">{t(WEEK_SHORT[state.week.dayIndex - 1])}</span>
-            <span class="text-[10px] text-blue-400 font-bold leading-none mt-1.5">{state.week.dayIndex}/5</span>
+            <span class="text-[0.625rem] text-blue-400 font-bold leading-none mt-1.5">{state.week.dayIndex}/5</span>
         </div>
     {/if}
 </div>
 
 <div id="ticket-container" class="neon-box panel-raised border-purple p-2 flex flex-col justify-center items-center col-span-2 lg:col-span-1 relative">
-    <span class="text-[10px] text-purple-400 font-bold uppercase mb-1">{t('header.openTickets')}</span>
+    <span class="text-[0.625rem] text-purple-400 font-bold uppercase mb-1">{t('header.openTickets')}</span>
     <!--
       The old updateUI() rewrote className here and dropped the responsive
       text-3xl lg:text-4xl in favour of a fixed text-4xl on its first run, so
@@ -78,7 +89,7 @@
          class="text-3xl lg:text-4xl font-black text-white ticket-counter {state.tickets >= TICKET_WARNING ? 'ticket-pulse' : ''}">
         {ticketText}
     </div>
-    <div class="text-[8px] text-slate-500">{t('header.maxTickets')}</div>
+    <div class="text-[0.5rem] text-slate-500">{t('header.maxTickets')}</div>
 </div>
 
 <div id="stat-row-fl" class="neon-box panel-raised border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">
@@ -93,8 +104,15 @@
 </div>
 
 <div id="stat-row-al" class="neon-box panel-raised border-orange p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {aggroPulse}">
-    <div class="flex justify-between text-xs font-bold mb-1 text-orange-400 uppercase">
-        <span>{t('stat.aggro')}</span><span id="val-al">{alText}</span>
+    <div class="flex justify-between items-center text-xs font-bold mb-1 text-orange-400 uppercase">
+        <span class="flex items-center gap-1.5 min-w-0">
+            <span class="truncate">{t('stat.aggro')}</span>
+            {#if valveSpent}
+                <span class="{MARK} border border-orange-500/70 bg-orange-950/40 text-orange-400/90"
+                      title={t('dayReport.valveUsed')}>{t('header.valveSpent')}</span>
+            {/if}
+        </span>
+        <span id="val-al">{alText}</span>
     </div>
     <div class="h-2 bg-slate-800 rounded-full">
         <div id="bar-al" class="h-full bg-orange-500 transition-all duration-800 ease-out" style="width: {bar(state.al)}%"></div>
@@ -102,8 +120,19 @@
 </div>
 
 <div id="stat-row-cr" class="neon-box panel-raised border-red p-2 flex flex-col justify-center col-span-2 lg:col-span-1 {radarPulse}">
-    <div class="flex justify-between text-xs font-bold mb-1 text-red-500 uppercase">
-        <span>{t('stat.radar')}</span><span id="val-cr">{crText}</span>
+    <div class="flex justify-between items-center text-xs font-bold mb-1 text-red-500 uppercase">
+        <span class="flex items-center gap-1.5 min-w-0">
+            <!-- The short name while the mark is up: at the largest text size
+                 "Chef-Radar" and "Abmahnung" do not both fit, and a label cut
+                 to "CHEF-R…" reads like a bug. The bar's colour carries the
+                 rest. -->
+            <span class="truncate">{t(warned ? 'stat.radar.short' : 'stat.radar')}</span>
+            {#if warned}
+                <span class="{MARK} border border-red-500/70 bg-red-950/40 text-red-400"
+                      title={t('team.reprimanded')}>{t('header.warned')}</span>
+            {/if}
+        </span>
+        <span id="val-cr">{crText}</span>
     </div>
     <div class="h-2 bg-slate-800 rounded-full">
         <div id="bar-cr" class="h-full bg-red-600 transition-all duration-800 ease-out" style="width: {bar(state.cr)}%"></div>

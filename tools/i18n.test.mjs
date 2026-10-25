@@ -679,4 +679,30 @@ await ok('No recorded field holds a finished sentence any more', async () => {
     }
 });
 
+await ok('No type size is written in pixels', async () => {
+    // The text-size setting works on the ROOT font size, because Tailwind
+    // sizes type in rem (see the note in app.css). A size written in px is
+    // therefore the one thing that setting cannot reach - and up to 6.3 the
+    // 155 of them were exactly the small print that needed it most: the log,
+    // the handbook, the setting descriptions, the badges.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const files = ['index.html'];
+    const walk = (dir) => {
+        for (const entry of readdirSync(dir, { withFileTypes: true })) {
+            const p = dir + '/' + entry.name;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(svelte|js|html)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+
+    const offenders = [];
+    for (const file of files) {
+        for (const hit of readFileSync(file, 'utf8').matchAll(/text-\[\d+px\]/g)) {
+            offenders.push(`${file}: ${hit[0]}`);
+        }
+    }
+    assert.deepEqual(offenders, [], 'type sizes in px do not follow the text-size setting');
+});
+
 console.log(`\n${passed} checks passed.`);

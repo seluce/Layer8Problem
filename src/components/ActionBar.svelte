@@ -78,7 +78,7 @@
         <img src="assets/img/actions/act_{action.type}.webp" alt=""
              width="28" height="28" class="w-8 h-8 relative select-none"
              onerror={(e) => e.currentTarget.outerHTML = `<span class="text-xl relative">${action.icon}</span>`}>
-        <span class="text-[10px] md:text-xs font-bold relative">{t(action.label)}</span>
+        <span class="text-[0.625rem] md:text-xs font-bold relative">{t(action.label)}</span>
 
         {#if state.showHotkeys}
             <kbd class="key-hint absolute top-1.5 right-1.5">

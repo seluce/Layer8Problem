@@ -150,7 +150,7 @@
             <button
                 onclick={() => switchCat(c.id)}
                 aria-current={cat === c.id ? 'page' : undefined}
-                class="px-4 py-2.5 text-[10px] font-bold tracking-[0.14em] border-b-2 -mb-px transition-colors
+                class="px-4 py-2.5 text-[0.625rem] font-bold tracking-[0.14em] border-b-2 -mb-px transition-colors
                        {cat === c.id ? c.tab : 'border-transparent text-slate-500 hover:text-slate-300'}">
                 {t(c.label)}
                 <span class="ml-1.5 tabular-nums transition-colors
@@ -159,7 +159,7 @@
                 </span>
             </button>
         {/each}
-        <span class="ml-auto self-center pr-4 text-[10px] text-slate-600 tabular-nums hidden sm:block">
+        <span class="ml-auto self-center pr-4 text-[0.625rem] text-slate-600 tabular-nums hidden sm:block">
             {tf('knowledge.notes', { found, total })}
         </span>
     </div>
@@ -185,7 +185,7 @@
                                  amber is already the Vorgänge category, so a coloured
                                  counter would be invisible in that tab. Brightness
                                  works in all four. -->
-                            <span class="ml-auto text-[10px] tabular-nums shrink-0 transition-colors
+                            <span class="ml-auto text-[0.625rem] tabular-nums shrink-0 transition-colors
                                          {e.unread ? 'text-slate-100 font-bold' : e.open ? 'text-slate-500' : 'text-slate-700'}">
                                 {e.open ? `${e.notes.length}/${e.total}` : '–'}
                             </span>
@@ -205,13 +205,13 @@
         <section class="flex-1 overflow-y-auto {onPage ? 'flex flex-col' : 'hidden md:flex md:flex-col'}">
             {#if current}
                 <button onclick={() => (selectedId = null)}
-                        class="md:hidden text-left px-4 py-3 text-[11px] text-slate-400 hover:text-white border-b border-slate-800 shrink-0">
+                        class="md:hidden text-left px-4 py-3 text-[0.6875rem] text-slate-400 hover:text-white border-b border-slate-800 shrink-0">
                     &larr; {t('knowledge.index')}
                 </button>
 
                 <div class="p-5">
                     <h3 class="text-lg font-bold {theme.text}">{current.name}</h3>
-                    <p class="text-[11px] text-slate-500 mb-4">{current.role}</p>
+                    <p class="text-[0.6875rem] text-slate-500 mb-4">{current.role}</p>
 
                     <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5 wrap-break-word">
                         {current.summary}
@@ -236,7 +236,7 @@
                     </ul>
 
                     {#if missing > 0}
-                        <p class="mt-5 text-[10px] text-slate-600">
+                        <p class="mt-5 text-[0.625rem] text-slate-600">
                             {missing === 1 ? tf('knowledge.missing.one', { count: missing }) : tf('knowledge.missing.many', { count: missing })}
                         </p>
                     {/if}

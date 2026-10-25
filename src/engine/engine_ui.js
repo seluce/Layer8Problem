@@ -5,6 +5,7 @@ import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 import { WEEK_DIFFS } from './engine_week.js';
 import { recipeKey, renderRecipe } from './recipe.js';
+import { drawIndex } from './draw_bag.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
@@ -72,7 +73,10 @@ export const ui = {
         if (Math.random() <= 0.05) {
             // The draw is recorded, not the line it produced: both trees carry
             // the same list length, so the same index is the same headline.
-            const pick = Math.floor(Math.random() * DB.newsTicker.length);
+            // Drawn without replacement (draw_bag.js) - rolling afresh showed
+            // the same headline up to seven times a career while others never
+            // came up at all.
+            const pick = drawIndex('newsTicker', DB.newsTicker.length);
             this.state.activeNews = { ref: { p: 'newsTicker', path: [pick] } };
             this.state.lastNewsTime = this.state.time;
             this.renderHeader();
@@ -144,7 +148,8 @@ export const ui = {
         
         if (this.state.drunkEndTime > this.state.time) {
             const remaining = this.state.drunkEndTime - this.state.time;
-            // Scales from 6px down to 0px over sixty minutes
+            // 3px when the drinking is over (drunkEndTime sits an hour past
+            // it), fading to 0 over that hour of game time
             blurVal = Math.max(0, (remaining / 60) * 3);
         }
 
@@ -319,10 +324,14 @@ export const ui = {
     // `text` is a RECIPE, not a sentence - components/ResultView.svelte resolves
     // it on every paint, so a finished result follows a language switch like
     // everything else recorded. See engine/recipe.js.
-    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor) {
+    // `tickets` is what the decision did to the pile, plus or minus. The card
+    // showed minutes and the three bars but never this, although the pile is
+    // the most common way to lose: 82 options in the stock cost an hour or
+    // more, which is two tickets, and the longest costs eight.
+    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
-            result: { text, m, l, a, b, action, buttonKey, buttonColor }
+            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets }
         });
     },
 
@@ -638,7 +647,7 @@ export const ui = {
         // reward for actually fleeing, not a gallery to leaf through.
         if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
             this.state.currentExcuse = DB.excuses?.length
-                ? { ref: { p: 'excuses', path: [Math.floor(Math.random() * DB.excuses.length)] } }
+                ? { ref: { p: 'excuses', path: [drawIndex('excuses', DB.excuses.length)] } }
                 : { k: 'excuse.fallback' };
             this.state.excuseFor = this.state.currentEventId;
         }
@@ -1289,19 +1298,18 @@ export const ui = {
 
                 const data = JSON.parse(jsonString);
 
-                // Validation
-                if (!data.arc || !Array.isArray(data.arc.items)) {
-                    // Never reaches the player: the catch below logs this and
-                    // shows import.unreadable instead. A console message, so
-                    // it speaks English like its neighbours.
-                    throw new Error("Malformed data structure.");
-                }
+                // Validation. Shape by shape against freshArchive(), not just
+                // "items is an array" - see engine_core.cleanArchive. Whatever
+                // it throws never reaches the player: the catch below logs it
+                // and shows import.unreadable instead, which is why those
+                // messages speak English like their neighbours.
+                const archive = engine.cleanArchive(data.arc);
 
                 // --- SAFE MERGE ---
                 // Start from the current archive template
                 const currentTemplate = JSON.parse(JSON.stringify(engine.state.archive));
                 // Merge the imported save into it without losing new fields
-                const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
+                const mergedArchive = engine.deepMerge(currentTemplate, archive);
 
                 // Save the repaired and merged archive
                 localStorage.setItem(engine.KEYS.archive, JSON.stringify(mergedArchive));
@@ -1335,6 +1343,26 @@ export const ui = {
                 // and a whole week would drag four of them along.
                 engine.clearDay();
                 engine.clearWeek();
+
+                // --- AND TELL THE CLOUD, BEFORE THE RELOAD ---
+                //
+                // On the desktop the import used to undo itself. Nothing wrote
+                // the cloud copy here, so the reload below found the REPLACED
+                // career still sitting in savegame.dat - and loadCloudSave
+                // unites rather than overwrites (rightly: the archive is
+                // cumulative and a union never regresses a second machine).
+                // The imported career therefore got everything the old one had
+                // handed straight back to it, and an import of one achievement
+                // came back carrying three.
+                //
+                // An import is a REPLACE, so the cloud has to be told what it
+                // now holds. buildCloudPayload reads the flags out of
+                // localStorage - all of them already written above - and the
+                // archive out of state, which the import did not touch; hence
+                // the assignment. `force` skips the 30-second throttle, and on
+                // the web platform.save is a no-op, so nothing happens there.
+                engine.state.archive = mergedArchive;
+                engine.syncRun(true);
 
                 msg.innerText = t('import.accepted');
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
@@ -1685,7 +1713,8 @@ export const ui = {
     },
 
     shareGame: function(btn) {
-        // Desktop hands out the store page, the browser its own URL.
+        // Desktop hands out the store page; the browser its own URL, or the
+        // game's page where that is not the same thing (platform.shareUrl).
         const shareUrl = platform.shareUrl();
 
         const shareData = {
@@ -1867,9 +1896,20 @@ export const ui = {
             // uses everywhere (partyInvitation carried them too, until the
             // gala stopped caring about tiers in 6.2), and a translated name
             // here would make the ticket depend on the reporter's language.
-            const diff = s.difficultyMult < 1.0 ? "easy"
-                       : s.difficultyMult > 1.0 ? "hard"
-                       : "normal";
+            // In a WEEK difficultyMult is 1.0 for all five days (the level
+            // lives in state.week.level), so every week report claimed
+            // "normal" - the one mode where the level and the day it broke on
+            // matter most.
+            const diff = s.week?.active
+                ? `week ${s.week.level} / day ${s.week.dayIndex}`
+                : s.difficultyMult < 1.0 ? "easy"
+                : s.difficultyMult > 1.0 ? "hard"
+                : "normal";
+
+            // What a maintainer cannot ask the reporter for afterwards: which
+            // build, which shell, which language. A ticket without them starts
+            // with three questions.
+            const build = `${this.VERSION} ${platform.isDesktop ? 'desktop' : 'web'} / ${language()}`;
 
             // --- FIND THE LAST EVENT ---
             // activeEvent is a BOOLEAN; the id lives in currentEventId - the
@@ -1900,6 +1940,7 @@ export const ui = {
             // --- ASSEMBLE ---
             const logData = 
 `=== STATUS ===
+🏷 Build:     ${build}
 📍 Event:     ${lastEventID}
 🕒 Time:      ${prettyTime}
 💀 Diff:      ${diff}

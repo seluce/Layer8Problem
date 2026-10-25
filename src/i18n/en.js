@@ -401,6 +401,8 @@ export const en = {
     'morning.conditions':          'Starting conditions:',
 
     'header.maxTickets':           'Max: 10',
+    'header.valveSpent':           'Valve',
+    'header.warned':               'Warning',
 
     'end.btn.next':                'CARRY ON · {day}',
     'end.btn.restart':             'RESTART',
@@ -615,6 +617,8 @@ export const en = {
 
     'common.back':                 '← Back',
 
+    'intro.storageLost':           'This browser does not let the page save. Your progress lasts until the tab closes – Export keeps it.',
+
     'intro.handbook.title':        'Survival handbook',
     'intro.handbook.tickets.name': 'TICKETS',
     'intro.handbook.tickets.desc': 'One more every 30 minutes. At 10 open tickets it is over.',
@@ -635,18 +639,18 @@ export const en = {
     'diff.subtitle':               'How much do you hate your life today?',
     'diff.easy.name':              'FRIDAY',
     'diff.easy.motto':             '"Hands in the air, the weekend is here!"',
-    'diff.easy.p1':                '✔ Fewer tickets',
-    'diff.easy.p2':                '✔ Colleagues are relaxed',
+    'diff.easy.p1':                '✔ Three excuses in reserve',
+    'diff.easy.p2':                '✔ The valve cools you to 30%',
     'diff.easy.p3':                '✔ Lower multiplier (0.8x)',
     'diff.normal.name':            'WEDNESDAY',
     'diff.normal.motto':           '"Halfway there. The madness is routine."',
-    'diff.normal.p1':              '● Standard madness',
-    'diff.normal.p2':              '● Normal ticket rate',
+    'diff.normal.p1':              '● Two excuses in reserve',
+    'diff.normal.p2':              '● The valve cools you to 50%',
     'diff.normal.p3':              '● Standard multiplier (1.0x)',
     'diff.hard.name':              'MONDAY',
     'diff.hard.motto':             '"Why am I doing this to myself?"',
     'diff.hard.p1':                '⚠ Starts with 2 tickets',
-    'diff.hard.p2':                '⚠ Higher ticket rate',
+    'diff.hard.p2':                '⚠ One excuse, valve only to 60%',
     'diff.hard.p3':                '⚠ Higher multiplier (1.25x)',
 
     'week.diff.easy':              'Rested',

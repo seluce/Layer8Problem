@@ -124,7 +124,7 @@ export { engine };
 // language decides which data tree DB is filled from. main.js now calls
 // engine.init() itself, after the language is settled and the core tier is in.
 
-// --- GLOBALE TASTATUR-STEUERUNG ---
+// --- GLOBAL KEYBOARD CONTROL ---
 document.addEventListener('keydown', (event) => {
     // 1. Is the player currently rebinding a key?
     if (engine.state.isBindingKey) {
@@ -136,8 +136,14 @@ document.addEventListener('keydown', (event) => {
     // Ignore keystrokes inside form fields
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
+    // A key the game acts on belongs to the game. Without preventDefault the
+    // browser acts on it as well: Space scrolls the page wherever it can
+    // scroll - below 1025 px, or in an embed smaller than the layout, such as
+    // itch.io's - and a bound arrow key does the same.
+    const press = (button) => { event.preventDefault(); button.click(); };
+
     let key = event.key.toLowerCase();
-    if (key === ' ') key = 'space'; // Leertaste normalisieren
+    if (key === ' ') key = 'space'; // normalise the space bar
 
     // 2. Escape always closes the topmost overlay
     if (key === 'escape') {
@@ -213,8 +219,8 @@ document.addEventListener('keydown', (event) => {
             // The "Verstanden" button in the tooltip. TutorialPointer.svelte
             // attaches its handler the Svelte way, so there is no onclick
             // attribute left to select on — a stable id does the job instead.
-            const verstandenBtn = document.getElementById('tut-advance-btn');
-            if (verstandenBtn) { verstandenBtn.click(); return; }
+            const advanceBtn = document.getElementById('tut-advance-btn');
+            if (advanceBtn) { press(advanceBtn); return; }
         }
         
         const tutModal = document.getElementById('tut-ask-modal');
@@ -224,9 +230,9 @@ document.addEventListener('keydown', (event) => {
             // triggers the recommended button. Both carry stable ids now
             // instead of onclick-attribute lookups.
             const finishBtn = document.getElementById('tut-finish-btn');
-            if (finishBtn) { finishBtn.click(); return; }
+            if (finishBtn) { press(finishBtn); return; }
             const startBtn = document.getElementById('tut-start-btn');
-            if (startBtn) { startBtn.click(); return; }
+            if (startBtn) { press(startBtn); return; }
         }
         
         // B: modals (warning letter, ending, item confirm)
@@ -237,18 +243,18 @@ document.addEventListener('keydown', (event) => {
         // fallback stays for modal content that predates the marker.
         const okBtn = document.querySelector('#modal-content button[data-modal-continue]')
                    ?? document.querySelector('#modal-content button');
-        if (okBtn && okBtn.offsetParent !== null) { okBtn.click(); return; }
+        if (okBtn && okBtn.offsetParent !== null) { press(okBtn); return; }
         // The item confirmation modal. By id: the class-based selector
         // (bg-green-600) went stale the day the button was restyled to
         // emerald, and the miss fell through to branch D below - which then
         // clicked the screen BEHIND the open dialog.
         const itemUseBtn = document.getElementById('item-confirm-use');
-        if (itemUseBtn && itemUseBtn.offsetParent !== null) { itemUseBtn.click(); return; }
+        if (itemUseBtn && itemUseBtn.offsetParent !== null) { press(itemUseBtn); return; }
 
         // C: accept the phone notification
         const phoneNotif = document.getElementById('phone-notification');
         if (phoneNotif && phoneNotif.offsetParent !== null && !phoneNotif.classList.contains('hidden')) {
-            phoneNotif.click();
+            press(phoneNotif);
             return;
         }
 
@@ -264,7 +270,7 @@ document.addEventListener('keydown', (event) => {
         // seen - a window over the terminal covers it without hiding it, and
         // Space pressed it through the noticeboard and the vending machine.
         const contBtn = document.querySelector('#terminal-content button[data-continue]');
-        if (contBtn && contBtn.offsetParent !== null && !engine.windowOverTerminal()) { contBtn.click(); return; }
+        if (contBtn && contBtn.offsetParent !== null && !engine.windowOverTerminal()) { press(contBtn); return; }
     }
 
     // 4. ACTION SHORTCUTS (Q, W, E, R)
@@ -273,10 +279,13 @@ document.addEventListener('keydown', (event) => {
     // coffee break behind the board.
     if (!engine.state.activeEvent && !engine.state.isEmailOpen && !document.body.classList.contains('overflow-hidden')
         && !engine.windowOverTerminal()) {
-        if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { engine.trigger('coffee'); return; }
-        if (key === engine.state.keyBinds.actQuest.toLowerCase()) { engine.trigger('sidequest'); return; }
-        if (key === engine.state.keyBinds.actServer.toLowerCase()) { engine.trigger('server'); return; }
-        if (key === engine.state.keyBinds.actCall.toLowerCase()) { engine.trigger('calls'); return; }
+        // preventDefault spelled out rather than wrapped: i18n.test.mjs reads
+        // the four trigger() calls out of this file to hold the friends-list
+        // activities against PRESENCE_TYPES, and a wrapper hides them from it.
+        if (key === engine.state.keyBinds.actCoffee.toLowerCase()) { event.preventDefault(); engine.trigger('coffee'); return; }
+        if (key === engine.state.keyBinds.actQuest.toLowerCase()) { event.preventDefault(); engine.trigger('sidequest'); return; }
+        if (key === engine.state.keyBinds.actServer.toLowerCase()) { event.preventDefault(); engine.trigger('server'); return; }
+        if (key === engine.state.keyBinds.actCall.toLowerCase()) { event.preventDefault(); engine.trigger('calls'); return; }
     }
 
     // 5. OPTION SHORTCUTS (1, 2, 3 - plus 4, 5, 6 during the party)
@@ -303,12 +312,12 @@ document.addEventListener('keydown', (event) => {
             visibleOptions = Array.from(termActions).filter(b => !b.hasAttribute('data-continue'));
         }
 
-        if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) visibleOptions[0].click();
-        if (key === engine.state.keyBinds.opt2.toLowerCase() && visibleOptions[1]) visibleOptions[1].click();
-        if (key === engine.state.keyBinds.opt3.toLowerCase() && visibleOptions[2]) visibleOptions[2].click();
-        
-        if (key === '4' && visibleOptions[3]) visibleOptions[3].click();
-        if (key === '5' && visibleOptions[4]) visibleOptions[4].click();
-        if (key === '6' && visibleOptions[5]) visibleOptions[5].click();
+        if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) press(visibleOptions[0]);
+        if (key === engine.state.keyBinds.opt2.toLowerCase() && visibleOptions[1]) press(visibleOptions[1]);
+        if (key === engine.state.keyBinds.opt3.toLowerCase() && visibleOptions[2]) press(visibleOptions[2]);
+
+        if (key === '4' && visibleOptions[3]) press(visibleOptions[3]);
+        if (key === '5' && visibleOptions[4]) press(visibleOptions[4]);
+        if (key === '6' && visibleOptions[5]) press(visibleOptions[5]);
     }
 });

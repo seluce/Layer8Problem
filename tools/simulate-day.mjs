@@ -91,6 +91,17 @@ const DIFFS = [
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+/**
+ * The engine clamps every stat to 0..100 where it is written
+ * (engine_events.addStat); this simulator did not, so a run could bank a
+ * reserve the game never grants - see the longer note in simulate-week.mjs.
+ */
+const clampStats = (s) => {
+    s.fl = Math.max(0, Math.min(100, s.fl));
+    s.al = Math.max(0, Math.min(100, s.al));
+    s.cr = Math.max(0, Math.min(100, s.cr));
+};
+
 // ---------- how the three player types choose ----------
 function unlocked(opts, inv) {
     return opts.filter(o => {
@@ -149,6 +160,7 @@ function apply(s, o, poolType) {
     s.al += a > 0 ? Math.ceil(a * statMult(s)) : a;
     const bEff = b > 0 ? Math.ceil(b * statMult(s) * lazy) : b;
     s.cr += bEff;
+    clampStats(s);
     s.radarPaid += Math.max(0, bEff);
     s.radarBase += Math.max(0, b);
 
@@ -204,6 +216,7 @@ function playDay(diffCfg, stratName) {
     if (mood < 0.1) s.al += 15;
     else if (mood < 0.2) s.cr += 15;
     else if (mood < 0.3) { s.fl += 15; s.time += 30; s.tickets += 1; }
+    clampStats(s);
 
     const poolFor = (type) => DB[type].filter(ev =>
         !s.used.has(ev.id) && (!ev.reqStory || s.flags.has(ev.reqStory)) && !ev.webOnly);
@@ -270,7 +283,11 @@ function playDay(diffCfg, stratName) {
             if (Math.random() < chance) {
                 let mail = null;
                 if (s.linkedMail.length) {
-                    mail = DB.emails.find(e => e.id === s.linkedMail.shift());
+                    // shift() OUTSIDE the predicate - see the note in
+                    // simulate-week.mjs. Inside, find() drained the queue
+                    // against the wrong candidates and almost never matched.
+                    const wanted = s.linkedMail.shift();
+                    mail = DB.emails.find(e => e.id === wanted);
                 } else {
                     const mp = DB.emails.filter(e => !e.linked && !s.usedMails.has(e.id));
                     if (mp.length) mail = rnd(mp);

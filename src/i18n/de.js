@@ -408,6 +408,8 @@ export const de = {
     'morning.conditions':          'Startbedingungen:',
 
     'header.maxTickets':           'Max: 10',
+    'header.valveSpent':           'Ventil',
+    'header.warned':               'Abmahnung',
 
     'end.btn.next':                'WEITER · {day}',
     'end.btn.restart':             'NEUSTART',
@@ -621,6 +623,8 @@ export const de = {
 
     'common.back':                 '← Zurück',
 
+    'intro.storageLost':           'Dieser Browser lässt die Seite nicht speichern. Dein Fortschritt hält, bis der Tab geschlossen wird – Export sichert ihn.',
+
     'intro.handbook.title':        'Überlebens-Handbuch',
     'intro.handbook.tickets.name': 'TICKETS',
     'intro.handbook.tickets.desc': 'Alle 30 Minuten kommt eines dazu. Ab 10 offenen Tickets ist Schluss.',
@@ -641,18 +645,18 @@ export const de = {
     'diff.subtitle':               'Wie sehr hasst du dein Leben heute?',
     'diff.easy.name':              'FREITAG',
     'diff.easy.motto':             '"Hoch die Hände, Wochenende!"',
-    'diff.easy.p1':                '✔ Weniger Tickets',
-    'diff.easy.p2':                '✔ Kollegen sind entspannt',
+    'diff.easy.p1':                '✔ Drei Ausreden in der Hinterhand',
+    'diff.easy.p2':                '✔ Das Ventil kühlt auf 30 %',
     'diff.easy.p3':                '✔ Geringerer Multiplikator (0.8x)',
     'diff.normal.name':            'MITTWOCH',
     'diff.normal.motto':           '"Bergfest. Der Wahnsinn ist Routine."',
-    'diff.normal.p1':              '● Standard Wahnsinn',
-    'diff.normal.p2':              '● Normale Ticket-Rate',
+    'diff.normal.p1':              '● Zwei Ausreden in der Hinterhand',
+    'diff.normal.p2':              '● Das Ventil kühlt auf 50 %',
     'diff.normal.p3':              '● Standard Multiplikator (1.0x)',
     'diff.hard.name':              'MONTAG',
     'diff.hard.motto':             '"Warum tue ich mir das an?"',
     'diff.hard.p1':                '⚠ Startet mit 2 Tickets',
-    'diff.hard.p2':                '⚠ Erhöhte Ticket-Rate',
+    'diff.hard.p2':                '⚠ Eine Ausrede, Ventil nur auf 60 %',
     'diff.hard.p3':                '⚠ Erhöhter Multiplikator (1.25x)',
 
     'week.diff.easy':              'Erholt',

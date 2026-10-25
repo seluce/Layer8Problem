@@ -86,11 +86,11 @@
                         <!-- Handwriting: another ink, a slight tilt, ruled lines -->
                         <div class="mb-5 pl-4 py-2 border-l-2 border-[#7a6a52]"
                              style="rotate:-0.4deg">
-                            <p class="text-[#33475b] text-[17px] leading-[30px]"
+                            <p class="text-[#33475b] text-[1.0625rem] leading-[30px]"
                                style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {entry.text}
                             </p>
-                            <span class="block text-right text-[11px] text-[#7a6a52] mt-1"
+                            <span class="block text-right text-[0.6875rem] text-[#7a6a52] mt-1"
                                   style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {tf('lore.entry.sign', { day: entry.day })}
                             </span>
@@ -103,15 +103,15 @@
                              there while the daily lines come and go. -->
                         <div class="mb-5 mt-8 pl-4 py-3 border-l-4 border-[#b3627a] bg-[#f3e3e8]/60 rounded-r-sm"
                              style="rotate:0.3deg">
-                            <span class="block text-[10px] uppercase tracking-[0.2em] text-[#b3627a] mb-1"
+                            <span class="block text-[0.625rem] uppercase tracking-[0.2em] text-[#b3627a] mb-1"
                                   style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {t('lore.gala.label')}
                             </span>
-                            <p class="text-[#33475b] text-[17px] leading-[30px]"
+                            <p class="text-[#33475b] text-[1.0625rem] leading-[30px]"
                                style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {gala.text}
                             </p>
-                            <span class="block text-right text-[11px] text-[#7a6a52] mt-1"
+                            <span class="block text-right text-[0.6875rem] text-[#7a6a52] mt-1"
                                   style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {tf('lore.entry.sign', { day: gala.day })}
                             </span>
@@ -120,7 +120,7 @@
 
                     <div class="mt-4">
                         {#if doneToday}
-                            <p class="text-[13px] text-[#8d6e63] italic">
+                            <p class="text-[0.8125rem] text-[#8d6e63] italic">
                                 {t('lore.done')}
                             </p>
                         {:else}
@@ -130,7 +130,7 @@
                                      class="w-4 h-4 inline-block align-[-0.2em] mr-1.5 select-none"
                                      onerror={(e) => e.currentTarget.outerHTML = '🖊️'}> {t('lore.add')}
                             </button>
-                            <p class="text-[11px] text-[#8d6e63] italic mt-2">
+                            <p class="text-[0.6875rem] text-[#8d6e63] italic mt-2">
                                 {t('lore.addHint')}
                             </p>
                         {/if}

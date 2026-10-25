@@ -5,7 +5,7 @@ import { t, tf, tree } from '../i18n/i18n.svelte.js';
 import { DB, ensure, prefetchAll } from '../data.js';
 import { buildDiary } from './engine_diary.js';
 import { platform, applyPlatformVisibility } from '../platform.js';
-import { freshDay, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay, formatClock } from './engine_state.svelte.js';
+import { freshDay, freshArchive, DAY_TIMERS, TUTORIAL_FIELDS, snapshotDay, formatClock } from './engine_state.svelte.js';
 import { PRESENCE_TYPES, PRESENCE_TOKEN } from './presence.js';
 
 /**
@@ -38,9 +38,53 @@ export const core = {
     // nothing, which is exactly how the tutorial flag got out of sync.
     KEYS,
 
+    /**
+     * Holds an imported archive against the shape freshArchive() defines.
+     *
+     * Until 6.4 the only check was "arc.items is an array". A hand-edited code
+     * could therefore put a string where the achievements belong or a number
+     * where the counters do, and the game stored it - on the desktop straight
+     * into Steam Cloud, where it outlives the browser that produced it.
+     *
+     * Checked against the TEMPLATE rather than a hand-written list, so a new
+     * archive field is covered the day it is added - the drift PROGRESS_KEYS
+     * exists against, one file over.
+     *
+     * Returns the fields worth keeping: anything of the wrong shape, and any
+     * name the archive does not have, is dropped and left at its default.
+     * Throws when there is nothing worth importing at all.
+     */
+    cleanArchive: function(raw) {
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+            throw new Error("Archive is not an object.");
+        }
+        if (!Array.isArray(raw.items)) throw new Error("Archive without an item list.");
+
+        const shapeOf = (v) => Array.isArray(v) ? 'array' : v === null ? 'null' : typeof v;
+        const clean = {};
+        for (const [key, want] of Object.entries(freshArchive())) {
+            if (!Object.hasOwn(raw, key)) continue;
+            const value = raw[key];
+            // The gala is an object or null; every other field keeps the shape
+            // its default has.
+            const ok = key === 'gala'
+                ? (value === null || shapeOf(value) === 'object')
+                : shapeOf(value) === shapeOf(want);
+            if (ok) clean[key] = value;
+            else console.warn(`Import: archive field "${key}" has the wrong shape and stays at its default.`);
+        }
+        return clean;
+    },
+
     // --- HELPER FOR SAFE SAVE/LOAD MERGING ---
     deepMerge: function(target, source) {
         for (const key in source) {
+            // A save file is DATA, and these three names are not. JSON.parse
+            // keeps "__proto__" as an ordinary own property, so without this
+            // line a crafted import wrote onto Object.prototype through this
+            // very loop and changed every object in the page - in a desktop
+            // build that is a page with Node access.
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
             // Arrays are replaced wholesale - safest for the inventory and similar lists
             if (Array.isArray(source[key])) {
                 target[key] = [...source[key]];

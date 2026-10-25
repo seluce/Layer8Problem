@@ -23,6 +23,7 @@ export const KEYS = {
     defaultDiff:  'layer8_default_diff',      // preselected workday
     defaultWeekDiff: 'layer8_default_week_diff', // preselected work week
     diaryRecent:  'layer8_diary_recent',  // diary lines used recently, see engine_diary.loadMemory()
+    drawBags:     'layer8_draw_bags',     // what is left of each shuffled text bag, see draw_bag.js
     tutorialDone: 'sysadmin_tutorial_done',
     // The gala is one evening, seen once per career (6.2). Up to 6.1 there
     // were three flags, one per difficulty - see engine_core.partyInvitation()
@@ -97,6 +98,7 @@ export const PROGRESS_KEYS = [
     KEYS.defaultDiff,
     KEYS.defaultWeekDiff,
     KEYS.diaryRecent,
+    KEYS.drawBags,
     KEYS.tutorialDone,
     KEYS.partyPlayed,
     // Still cleared by a reset, or the migration below would resurrect a gala

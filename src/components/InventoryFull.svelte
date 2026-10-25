@@ -285,7 +285,7 @@
     </div>
 
     <!-- Always rendered, empty for a free slot, so all cells match in height. -->
-    <div class="h-4 mt-1 w-full text-center text-[8px] leading-4 text-slate-400 truncate pointer-events-none">
+    <div class="h-4 mt-1 w-full text-center text-[0.5rem] leading-4 text-slate-400 truncate pointer-events-none">
         {row.item ? row.item.name : ''}
     </div>
 </div>
@@ -304,7 +304,7 @@
                  when it can do damage, and never before. -->
             <div class="flex items-center gap-1">
                 <span class="h-8 px-2.5 rounded-md border border-slate-800 bg-slate-900/60 flex items-center
-                             font-mono text-[11px] tabular-nums
+                             font-mono text-[0.6875rem] tabular-nums
                              {normal.length >= MIN_SLOTS ? 'text-amber-400' : 'text-slate-400'}">
                     {tf('inv.count', { have: normal.length, max: MIN_SLOTS })}
                 </span>
@@ -314,7 +314,7 @@
                         title={discardMode ? t('inv.discard.stop') : t('inv.discard.start')}
                         onclick={() => { discardMode = !discardMode; pinned = null; }}
                         class="h-8 px-2.5 rounded-md flex items-center gap-1.5
-                               text-[11px] font-bold transition-colors
+                               text-[0.6875rem] font-bold transition-colors
                                {discardMode
                                  ? 'bg-red-950/40 border border-red-900/60 text-red-300'
                                  : 'text-slate-500 hover:text-red-300 hover:bg-red-950/40'}">

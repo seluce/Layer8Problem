@@ -120,7 +120,7 @@
         <h1 class="text-4xl font-black {theme.title} mb-1">{title}</h1>
 
         {#if tally && isFinal}
-            <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
+            <div class="text-[0.625rem] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
         {:else}
             <div class="mb-4"></div>
         {/if}
@@ -158,7 +158,7 @@
                      can put a day into context. -->
                 <div class="flex items-center gap-1.5 mb-3">
                     {#each ['mon','tue','wed','thu','fri'] as day, i}
-                        <span class="flex-1 text-center text-[9px] font-bold uppercase tracking-widest py-1 rounded-sm border
+                        <span class="flex-1 text-center text-[0.5625rem] font-bold uppercase tracking-widest py-1 rounded-sm border
                                      {i < game.week.dayIndex
                                         ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
                                         : i === game.week.dayIndex
@@ -168,7 +168,7 @@
                         </span>
                     {/each}
                 </div>
-                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
+                <div class="text-[0.625rem] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>{t('stat.tickets')}</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>{t('stat.aggro')}</span>
@@ -182,7 +182,7 @@
                 <!-- The line about the night itself: prose from the data tree,
                      so it arrives as a path into that tree (see queueNightEnd). -->
                 {#if sleep}
-                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{sleep}</div>
+                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[0.6875rem] leading-relaxed">{sleep}</div>
                 {/if}
             </div>
         {/if}
@@ -192,14 +192,14 @@
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
                             aria-expanded={showChart}
-                            class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
                         {showChart ? '▾' : '▸'} {t('end.toggle.chart')}
                     </button>
                 {/if}
                 {#if hasDiary}
                     <button type="button" onclick={() => showDiary = !showDiary}
                             aria-expanded={showDiary}
-                            class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
                         {showDiary ? '▾' : '▸'}
             <img src="assets/img/ui/ui_book.webp" alt="" width="14" height="14"
                  class="w-3.5 h-3.5 inline-block align-[-0.15em] mx-1 select-none"

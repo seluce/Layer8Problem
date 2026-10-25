@@ -41,17 +41,17 @@
 <div class="text-3xl font-black text-white text-center mb-6 uppercase tracking-wider not-italic">{subtitle}</div>
 
 <div class="bg-slate-950 p-4 rounded-lg border border-pink-500/50 my-4 shadow-inner shadow-pink-900/10">
-    <div class="text-[10px] text-pink-400 uppercase tracking-widest mb-2">
+    <div class="text-[0.625rem] text-pink-400 uppercase tracking-widest mb-2">
         {t('party.report.title')} <span class="text-white font-bold">{badge}</span>
     </div>
     <div class="grid grid-cols-2 gap-2 text-center font-mono">
         <div class="flex flex-col">
             <span class="text-emerald-400 font-bold text-xl">{report.l}%</span>
-            <span class="text-[10px] text-slate-400">{t('party.report.chill')}</span>
+            <span class="text-[0.625rem] text-slate-400">{t('party.report.chill')}</span>
         </div>
         <div class="flex flex-col">
             <span class="text-orange-400 font-bold text-xl">{report.a}%</span>
-            <span class="text-[10px] text-slate-400">{t('party.report.cringe')}</span>
+            <span class="text-[0.625rem] text-slate-400">{t('party.report.cringe')}</span>
         </div>
     </div>
 </div>

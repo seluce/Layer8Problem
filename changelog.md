@@ -1,3 +1,28 @@
+[Unreleased]
+
+The day to day:
+* A working week leans towards the threads you have opened as Friday nears, so fewer of them run out of days.
+* Events you have never seen come up a little more often than ones you have.
+* Morning moods, ticker headlines and excuses no longer repeat until the whole list has had its turn.
+
+Interface:
+* Aggro and the boss radar say when the one-time save is spent - in a working week that is once for all five days.
+* The result card names what a decision did to the ticket pile.
+* The text size setting now reaches the small print too - the log, the handbook, the settings and the badges stayed put however large you set it.
+* The day cards promised fewer or more tickets per hour. They now name what actually differs: how many excuses you start with, and how far the valve cools you.
+
+Bug fixes:
+* The knowledge book can be completed again. Entries that only a mail opens stayed dark for good.
+* Keys the game acts on no longer scroll the page as well - on a phone, and in a window smaller than the layout.
+* A browser that refuses the page its storage no longer leaves the start screen dead. The game runs for as long as the tab stays open, and says so.
+* The music stops when you switch away from the tab, and carries on where it was when you come back.
+* On iPhone and iPad the music volume slider works. It used to do nothing, and the music played at full volume.
+* An emergency no longer counts down behind an open window. The clock runs while the fight is on screen.
+* On Steam an imported save no longer hands the replaced career back to itself.
+* The game refuses to run twice at once, where two windows shared one save file.
+
+---
+
 [6.3.0] - 2026-10-24
 
 A secret for anyone who can keep one, a small story about fruit, and new parts under the hood.

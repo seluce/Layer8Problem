@@ -81,14 +81,14 @@
 
     <div class="flex justify-center gap-4 mt-1">
         {#each SERIES as s}
-            <span class="flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
+            <span class="flex items-center gap-1.5 text-[0.625rem] font-mono text-slate-400">
                 <span class="inline-block w-3 h-0.5 rounded-full" style="background:{s.color}"></span>
                 {t(s.label)}
             </span>
         {/each}
     </div>
 {:else}
-    <p class="text-[11px] text-slate-500 font-mono text-center py-4">
+    <p class="text-[0.6875rem] text-slate-500 font-mono text-center py-4">
         {t('chart.tooFew')}
     </p>
 {/if}
