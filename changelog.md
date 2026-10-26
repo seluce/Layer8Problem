@@ -1,4 +1,6 @@
-[Unreleased]
+[6.4.0] - 2026-10-26
+
+A day worth passing on, a phone that plays like one, and a word of warning before the things that arrive uninvited.
 
 On a phone:
 * The four action buttons stay on the bottom edge, and the event comes back up to you after every one. Before, each action meant scrolling a thousand pixels down and back.
