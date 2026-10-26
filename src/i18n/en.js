@@ -405,6 +405,15 @@ export const en = {
     'header.warned':               'Warning',
 
     'end.btn.next':                'CARRY ON · {day}',
+    // H.A.L.G.E.R.D. explains the two things that arrive uninvited - once
+    // per career, each before its clock starts.
+    'hint.mail.title':             'SYSTEM MESSAGE: INBOX',
+    'hint.mail.text':              'H.A.L.G.E.R.D.: An email has reached your inbox.<br><br>It disappears by itself after 20 seconds. That is not a solution but a decision with consequences - like every other answer.<br><br>Read it. Then decide.',
+    'hint.boss.title':             'SYSTEM MESSAGE: EMERGENCY',
+    'hint.boss.text':              'H.A.L.G.E.R.D.: Something has broken.<br><br>From now the clock runs in seconds rather than minutes. If it runs out, the system decides in your place.<br><br>The system was not built for that.',
+    'end.share.btn':               'Share the day',
+    'end.share.saved':             'Picture saved.',
+    'end.share.failed':            'The picture could not be made.',
     'end.btn.restart':             'RESTART',
     'end.btn.ok':                  'UNDERSTOOD',
 

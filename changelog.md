@@ -9,6 +9,8 @@ The day to day:
 * Morning moods, ticker headlines and excuses no longer repeat until the whole list has had its turn.
 
 Interface:
+* The end of a day can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there.
+* The first email and the first emergency of a career are explained before their clock starts. H.A.L.G.E.R.D. does the explaining, once.
 * Playing from the keyboard shows where you are: every control draws a focus ring, and an open window keeps the keyboard inside it instead of letting it wander off behind.
 * The day curve shows the ticket pile too - the most common way to lose a day was the one thing it did not draw. Each line has a pattern of its own now, so they can be told apart without relying on colour.
 * Aggro and the boss radar say when the one-time save is spent - in a working week that is once for all five days.

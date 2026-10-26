@@ -692,14 +692,21 @@ export const ui = {
      * rather than read off the title, because the title is a dictionary entry
      * and says 'BLOW-OFF' in the other language.
      */
-    showModal: function(title, text, isEnd, tone = null) {
+    /**
+     * @param {Function|null} then  what happens once the player has read it.
+     *        For the two hints that stand IN FRONT of something (the first
+     *        mail of a career, the first emergency): the thing they explain
+     *        carries a clock, so it may not start while the explanation is
+     *        still on screen. See engine_events.firstTimeHint.
+     */
+    showModal: function(title, text, isEnd, tone = null, then = null) {
         // One shape for the box, whoever opens it. A warning has no balance
         // sheet and no gala report, but the fields are named rather than left
         // absent, so that reading one of them somewhere never depends on which
         // function opened the window.
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
                              lead: '', cause: null, diary: null, tone,
-                             balance: null, party: null };
+                             balance: null, party: null, then };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
     },
@@ -726,8 +733,11 @@ export const ui = {
     },
 
     closeModal: function() {
+        // Read before dismissing: dismissModal empties the state.
+        const then = this.state.modal?.then;
         this.dismissModal();
         this.updateUI();
+        if (typeof then === 'function') then();
     },
 
     /**
@@ -1844,6 +1854,95 @@ export const ui = {
         this.state.defaultWeekDiff = val;
         localStorage.setItem(engine.KEYS.defaultWeekDiff, val);
         this.playAudio('ui');
+    },
+
+    /**
+     * The day as a picture, handed to whatever the device shares with.
+     *
+     * The game is free and lives on being shown to somebody; all a player
+     * could pass on was the address, which says nothing about the afternoon
+     * they just had. share_card.js draws it, this hands it over: the share
+     * sheet where there is one (a phone), a download where there is not (a
+     * desktop browser, and Electron, which has no navigator.share at all).
+     *
+     * The button says what happened, because a share sheet that never opens
+     * and a file that lands in Downloads look identical from the sofa.
+     */
+    shareDayCard: async function(btn) {
+        const textSpan = btn?.querySelector('#text-share-card') || btn;
+        const resting = textSpan?.innerText;
+        // The two the button says for itself travel as keys through say(), so
+        // lint-i18n cannot see them in a t() call and they are declared here.
+        // i18n-uses: end.share.saved, end.share.failed
+        const say = (key) => { if (textSpan) textSpan.innerText = t(key); };
+        const restore = () => setTimeout(() => { if (textSpan && resting !== undefined) textSpan.innerText = resting; }, 2600);
+
+        try {
+            const { CARD, drawDayCard } = await import('./share_card.js');
+            const canvas = document.createElement('canvas');
+            canvas.width = CARD.w; canvas.height = CARD.h;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('no 2d context');
+
+            const m = this.state.modal ?? {};
+            const say2 = (v) => (typeof v === 'string' ? v : renderRecipe(v) ?? '');
+            // i18n-uses: diff.easy.name, diff.normal.name, diff.hard.name
+            const mode = this.state.week.active
+                ? tf('week.badge', { mode: t(`week.diff.${this.state.week.level}`) })
+                : t(`diff.${this.difficultyKey()}.name`);
+
+            drawDayCard(ctx, {
+                title: say2(m.title),
+                lead: say2(m.lead),
+                mode,
+                isWin: !!m.isWin,
+                url: platform.shareUrl(),
+                // statHistory is ONE DAY. In a week the heading says the
+                // week and the panel shows one of its five, so the panel
+                // names which - otherwise the picture claims more than it
+                // draws.
+                // weekDayName(), not dayName(dayIndex): the index on the state
+                // counts from one and dayName from zero, so the raw value
+                // names Monday for every day of the week. The helper exists
+                // for exactly that, and every other caller uses it.
+                curveLabel: this.state.week.active
+                    ? `${t('end.toggle.chart')} · ${this.weekDayName()}`
+                    : t('end.toggle.chart'),
+                points: this.state.statHistory ?? [],
+                stats: [
+                    { label: t('stat.lazy'),        value: `${Math.round(this.state.fl)}%`, colour: '#34d399' },
+                    { label: t('stat.aggro'),       value: `${Math.round(this.state.al)}%`, colour: '#fb923c' },
+                    { label: t('stat.radar.short'), value: `${Math.round(this.state.cr)}%`, colour: '#ef4444' },
+                    { label: t('stat.tickets'),     value: String(this.state.tickets),      colour: '#c084fc' },
+                ],
+            });
+
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            if (!blob) throw new Error('the canvas produced no picture');
+            const file = new File([blob], 'layer8problem.png', { type: 'image/png' });
+
+            // A phone opens its share sheet; everything else gets a file.
+            if (navigator.canShare?.({ files: [file] })) {
+                await navigator.share({ files: [file], title: t('settings.share.title'), text: t('settings.share.text') });
+                restore();
+                return;
+            }
+
+            const href = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = `layer8problem-${new Date().toISOString().slice(0, 10)}.png`;
+            link.click();
+            URL.revokeObjectURL(href);
+            say('end.share.saved');
+            restore();
+        } catch (err) {
+            // A share sheet the player closed is not a failure.
+            if (err?.name === 'AbortError') { restore(); return; }
+            console.warn('Day card could not be produced:', err);
+            say('end.share.failed');
+            restore();
+        }
     },
 
     shareGame: function(btn) {

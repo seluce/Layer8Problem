@@ -412,6 +412,15 @@ export const de = {
     'header.warned':               'Abmahnung',
 
     'end.btn.next':                'WEITER · {day}',
+    // H.A.L.G.E.R.D. erklärt die zwei Dinge, die ungefragt hereinkommen -
+    // einmal je Karriere, jeweils bevor ihre Uhr läuft.
+    'hint.mail.title':             'SYSTEMMELDUNG: POSTEINGANG',
+    'hint.mail.text':              'H.A.L.G.E.R.D.: Eine E-Mail erreicht Ihr Postfach.<br><br>Sie verschwindet nach 20 Sekunden von selbst. Das ist keine Lösung, sondern eine Entscheidung mit Folgen - wie jede andere Antwort auch.<br><br>Lesen Sie. Dann entscheiden Sie.',
+    'hint.boss.title':             'SYSTEMMELDUNG: NOTFALL',
+    'hint.boss.text':              'H.A.L.G.E.R.D.: Es ist etwas kaputtgegangen.<br><br>Ab jetzt läuft die Uhr in Sekunden statt in Minuten. Läuft sie ab, entscheidet das System an Ihrer Stelle.<br><br>Das System ist dafür nicht gebaut.',
+    'end.share.btn':               'Tag teilen',
+    'end.share.saved':             'Bild gespeichert.',
+    'end.share.failed':            'Das Bild ließ sich nicht erzeugen.',
     'end.btn.restart':             'NEUSTART',
     'end.btn.ok':                  'VERSTANDEN',
 

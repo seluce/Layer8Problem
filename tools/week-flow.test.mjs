@@ -65,6 +65,7 @@ const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 const { ui } = await import('../src/engine/engine_ui.js');
 const { intranetPages } = await import('../src/engine/intranet_pages.js');
 const { state, freshDay, freshArchive } = await import('../src/engine/engine_state.svelte.js');
+const { KEYS } = await import('../src/engine/keys.js');
 
 // The rune decides what t() answers; loadCore() above has already put the
 // matching tree in place, so this only moves the pointer.
@@ -80,10 +81,12 @@ const engine = {
     lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
-    showModal() {},
+    // The real three, not stubs: since 6.4 a notice can carry a continuation
+    // (the hint in front of the first mail and the first emergency), and a
+    // stub that forgets it would make the bench prove the opposite of the
+    // game. They touch nothing but the state and the stubbed overlay.
+    showModal: ui.showModal, closeModal: ui.closeModal, dismissModal: ui.dismissModal,
     showEnd(end) { calls.end = end; state.modal = { open: true, ...end, isEnd: true }; },
-    closeModal() { state.modal = { open: false }; },
-    dismissModal() { state.modal = { open: false }; },
     showFloatingText() {}, reportImpact() {}, animateItemToBackpack() {},
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { calls.boots++; cb(); },
@@ -126,6 +129,11 @@ const resetState = () => {
     calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.achStufen = []; calls.reloaded = false; calls.termResult = null;
     engine._resumeKind = null;
     store.clear();
+    // The bench plays an ordinary day, not the first minute of a career: the
+    // two hints that stand in front of the first mail and the first emergency
+    // have been read. Their own test clears these again (6.4).
+    store.set(KEYS.seenFirstMail, 'true');
+    store.set(KEYS.seenFirstBoss, 'true');
 };
 
 let passed = 0;
@@ -518,6 +526,73 @@ await ok('A 5.0 save brings its day curve along (migration)', () => {
     for (const p of state.statHistory) {
         assert.equal('tk' in p, false, 'the migration invents a ticket count the old save never had');
     }
+});
+
+await ok('The day card draws what the end screen shows', async () => {
+    // The game is free and lives on being shown to somebody, and all a player
+    // could hand over was the address. Drawn on a canvas rather than carried
+    // over from the SVG: a foreign font taints a canvas and the picture cannot
+    // be read back at all. Checked through a stub context, so the bench needs
+    // no browser - what matters is WHAT it draws, in what order.
+    const { CARD, drawDayCard } = await import('../src/engine/share_card.js');
+    assert.deepEqual(CARD, { w: 1200, h: 630 }, 'the card is no longer the size a chat shows unscaled');
+
+    const calls = [];
+    const ctx = new Proxy({}, {
+        get: (_, prop) => {
+            if (prop === 'measureText') return (s) => ({ width: String(s).length * 10 });
+            if (prop === 'getImageData') return () => ({ data: [] });
+            return (...args) => { calls.push(prop + '(' + args.join(',') + ')'); };
+        },
+        set: (_, prop, value) => { calls.push(prop + '=' + value); return true; },
+    });
+
+    const points = [
+        { m: 480, l: 0,  a: 0,  b: 0,  tk: 0 },
+        { m: 700, l: 20, a: 90, b: 40, tk: 5 },
+        { m: 990, l: 50, a: 60, b: 95, tk: 9 },
+    ];
+    drawDayCard(ctx, {
+        title: 'Feierabend', lead: 'Ein Satz dazu.', mode: 'MITTWOCH', isWin: true,
+        curveLabel: 'Tagesverlauf',
+        url: 'https://example.invalid/game', points,
+        stats: [{ label: 'Faulheit', value: '50%', colour: '#34d399' }],
+    });
+
+    const text = calls.join(' | ');
+    assert.match(text, /fillText\(Feierabend/, 'the verdict is missing from the card');
+    assert.match(text, /fillText\(FAULHEIT/, 'the stat labels are missing');
+    assert.match(text, /fillText\(https:\/\/example\.invalid\/game/, 'nobody could find the game from this card');
+    assert.match(text, /strokeStyle=#34d399/, 'the laziness line was not drawn');
+    assert.match(text, /strokeStyle=#c084fc/, 'the ticket line was not drawn');
+    // Solid: this card differs from the end screen on purpose, because four
+    // dashed lines crossing each other at this size read as a scribble. The
+    // guide line keeps its dashes, so the reset after it is what matters.
+    assert.match(text, /setLineDash\(\)[\s\S]*strokeStyle=#34d399/,
+                 'the curve inherits the guide line\'s dashes again');
+    // And a key, or the picture is four coloured lines and no answer.
+    assert.match(text, /fillText\(FAULHEIT,92/, 'the card carries no key for its curve');
+
+    // Scales, or the lines float over an empty box: a stranger cannot tell
+    // which way is bad, over how long, or that ten tickets is the end.
+    assert.match(text, /fillText\(100,/, 'the percent scale is gone');
+    assert.match(text, /fillText\(08,/, 'the hours are gone, so the shape has no duration');
+    assert.match(text, /fillText\(10,/, 'the ticket scale is gone');
+    // And a name for what the panel shows: statHistory is ONE DAY, so in a
+    // week the heading says the week while the panel shows one of its five.
+    assert.match(text, /fillText\(TAGESVERLAUF,/, 'the curve does not say what it is');
+    // Won and lost days must not look the same at a glance.
+    assert.match(text, /fillStyle=#34d399[\s\S]*fillRect\(0,0,1200,6\)/, 'a won day carries no accent of its own');
+
+    // An older day recorded no tickets at all, and the card must not invent a
+    // flat zero along the bottom for it - same rule as the end screen.
+    const older = calls.length;
+    calls.length = 0;
+    drawDayCard(ctx, { title: 'x', lead: 'x', mode: 'x', isWin: false, url: 'x', stats: [], curveLabel: 'x',
+                       points: points.map(({ tk, ...rest }) => rest) });
+    assert.ok(older > 0);
+    assert.equal(calls.join(' | ').includes('strokeStyle=#c084fc'), false,
+                 'the card drew a ticket line for a day that never recorded one');
 });
 
 await ok('A curve point carries the ticket pile', () => {
@@ -1262,6 +1337,49 @@ await ok('The evidence is recorded when an event opens', () => {
     events.renderTerminal.call(engine, { id: 'tst_seen', title: 'T', text: 'x', opts: [] }, 'server');
     assert.ok(state.archive.seenEvents.includes('tst_seen'), 'the hook is missing');
 });
+await ok('The first mail and the first emergency are explained first', async () => {
+    // Both carry a clock - 20 seconds and 8 to 20 - so the explanation stands
+    // IN FRONT of the thing and the clock starts afterwards. An explanation
+    // that eats the time it explains would be the joke the game already makes.
+    // Taught where it happens: on the start screen it made the page scroll,
+    // and a rule read before the first day is forgotten by the time it counts.
+    resetState();
+    await ensure('emails');
+    store.delete(KEYS.seenFirstMail);
+
+    await engine.triggerEmail('mail_cake_1');
+    assert.equal(state.isEmailOpen, false, 'the first mail opened on top of its own explanation');
+    assert.equal(state.modal.open, true, 'nothing was explained');
+    assert.equal(state.modal.isEnd, false, 'the hint is an ending, not a notice');
+    assert.equal(typeof state.modal.then, 'function', 'the mail has no way of arriving afterwards');
+    assert.equal(store.get(KEYS.seenFirstMail), 'true', 'the hint would come back a second time');
+
+    // Reading it hands over to the thing it explained.
+    engine.closeModal();
+    await new Promise(r => setTimeout(r, 60));
+    assert.equal(state.isEmailOpen, true, 'the mail never arrived after its explanation');
+
+    // And a career that has read it is not stopped again.
+    resetState();
+    state.isEmailOpen = false;
+    await engine.triggerEmail('mail_cake_2');
+    assert.equal(state.modal.open, false, 'the hint came back for a career that had read it');
+    assert.equal(state.isEmailOpen, true, 'the mail did not open');
+
+    // The emergency, the same way.
+    resetState();
+    await ensure('bossfights');
+    store.delete(KEYS.seenFirstBoss);
+    state.time = 10 * 60;
+    engine.triggerBossFight();
+    assert.equal(state.modal.open, true, 'the first emergency started unannounced');
+    assert.equal(state.bossTimer, null, 'the countdown was already running behind the explanation');
+    engine.closeModal();
+    assert.ok(state.bossTimer, 'the emergency never started after its explanation');
+    clearInterval(state.bossTimer);
+    state.bossTimer = null;
+});
+
 await ok('A mail counts as seen, so a mail-only entry can open', async () => {
     // Until 6.4 nothing recorded a mail. Two entries and eleven notes hang on
     // mail ids alone and could therefore never light up - with lint-data

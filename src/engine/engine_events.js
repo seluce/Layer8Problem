@@ -102,6 +102,29 @@ export const events = {
         }
     },
 
+    /**
+     * Explains, once per career, a thing that arrives uninvited.
+     *
+     * The two of them are the mail and the emergency, and both come with a
+     * clock - 20 seconds and 8 to 20. So the explanation stands IN FRONT of
+     * the thing rather than beside it: the player reads, says they have read
+     * it, and only then does the clock start. An explanation that eats the
+     * time it is explaining would be the joke the game is already making.
+     *
+     * Taught where it happens rather than listed on the start screen. That was
+     * the first attempt and it made the page scroll - and a rule read before
+     * the first day is a rule nobody remembers by the time it matters.
+     *
+     * @returns {boolean} true if the hint took over; the caller then returns
+     *          and is called again from the hint's own continuation.
+     */
+    firstTimeHint: function(key, titleKey, textKey, then) {
+        if (localStorage.getItem(key) === 'true') return false;
+        try { localStorage.setItem(key, 'true'); } catch { /* no storage, no second chance */ }
+        this.showModal(t(titleKey), t(textKey), false, 'halgerd', then);
+        return true;
+    },
+
     // Opens the mail overlay
     // async: the mail pool loads on demand, see data.js
     triggerEmail: async function(forcedId = null) {
@@ -145,6 +168,15 @@ export const events = {
         }
 
         if (!email) return;
+
+        // The first mail of a career gets a word of warning first, and opens
+        // from its continuation - with the flag already set, that second pass
+        // walks straight through to the window below.
+        // i18n-uses: hint.mail.title, hint.mail.text
+        if (this.firstTimeHint(this.KEYS.seenFirstMail, 'hint.mail.title', 'hint.mail.text',
+                               () => this.triggerEmail(email.id))) {
+            return;
+        }
 
         // 1. FREEZE & STATUS
         this.state.usedEmails.add(email.id);
@@ -768,9 +800,17 @@ export const events = {
         let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id)
                                               && this.storyGateOpen(ev));
         
-        if(pool.length === 0) return; 
-     
-        let boss = pool[Math.floor(Math.random() * pool.length)]; 
+        if(pool.length === 0) return;
+
+        // Same as the mail: the first emergency of a career is explained
+        // before its countdown starts, and begins from the continuation.
+        // i18n-uses: hint.boss.title, hint.boss.text
+        if (this.firstTimeHint(this.KEYS.seenFirstBoss, 'hint.boss.title', 'hint.boss.text',
+                               () => this.triggerBossFight())) {
+            return;
+        }
+
+        let boss = pool[Math.floor(Math.random() * pool.length)];
 
         this.state.activeEvent = true;
         this.state.usedIDs.add(boss.id);
