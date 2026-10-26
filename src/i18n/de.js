@@ -408,12 +408,12 @@ export const de = {
     'morning.conditions':          'Startbedingungen:',
 
     'header.maxTickets':           'Max: 10',
-    'header.valveSpent':           'Ventil',
-    'header.warned':               'Abmahnung',
+    'header.valveSpent':           'Genutzt',
+    'header.warned':               'Abgemahnt',
 
     'end.btn.next':                'WEITER · {day}',
-    // H.A.L.G.E.R.D. erklärt die zwei Dinge, die ungefragt hereinkommen -
-    // einmal je Karriere, jeweils bevor ihre Uhr läuft.
+    // H.A.L.G.E.R.D. explaining the two things that arrive uninvited - once
+    // per career, each before its clock starts.
     'hint.mail.title':             'SYSTEMMELDUNG: POSTEINGANG',
     'hint.mail.text':              'H.A.L.G.E.R.D.: Eine E-Mail erreicht Ihr Postfach.<br><br>Sie verschwindet nach 20 Sekunden von selbst. Das ist keine Lösung, sondern eine Entscheidung mit Folgen - wie jede andere Antwort auch.<br><br>Lesen Sie. Dann entscheiden Sie.',
     'hint.boss.title':             'SYSTEMMELDUNG: NOTFALL',
@@ -482,6 +482,9 @@ export const de = {
     'end.toggle.diary':            'Logbuch',
 
     'chart.aria':                  'Verlauf von Faulheit, Aggro, Chef-Radar und offenen Tickets über den Arbeitstag',
+    // A day recorded before 6.4 carries no ticket counts, so the picture has
+    // three lines and the label must not announce a fourth.
+    'chart.aria.noTickets':        'Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag',
     'chart.tooFew':                'Zu wenige Entscheidungen für eine Kurve.',
 
     'diary.header':                'Logbuch — {day}',
@@ -632,8 +635,10 @@ export const de = {
 
     'common.back':                 '← Zurück',
 
-    // Namen für die drei Fenster, die keine eigene Überschrift tragen.
-    // Ein Vorlesegerät nennt sonst nur "Dialog".
+    // Names for the three windows that carry no heading of their own.
+    // A screen reader otherwise announces nothing but "dialog".
+    'a11y.dialog.intranet':        'GlobalCorp-Intranet',
+    'a11y.dialog.lore':            'Firmenchronik',
     'a11y.dialog.intro':           'Startbildschirm',
     'a11y.dialog.system':          'Systemmeldung',
     'a11y.dialog.mail':            'E-Mail',

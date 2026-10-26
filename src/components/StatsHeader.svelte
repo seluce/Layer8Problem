@@ -36,6 +36,13 @@
     // a button. In a week they are spent once for all five days, so a 100% on
     // Thursday ends the run because of Monday, with nothing on screen to say
     // that the net was already gone.
+    // A STATE, not a thing. The first attempt read "Ventil" / "Valve", which
+    // a player meets as "you have a valve" - the opposite of what it means.
+    // The participle belongs to the row it sits on: the aggro row has one
+    // one-time save, so "spent" can only be about that, and the radar row's
+    // "warned" says what was received. The full wording stays in the title.
+    // "Written warning" itself does not fit: 84px beside the name and the
+    // percentage in a box of 190.
     const valveSpent = $derived(!!state.rageWarningReceived);
     const warned     = $derived(!!state.chefWarningReceived);
     const MARK = 'shrink-0 text-[0.5rem] font-bold tracking-widest px-1 py-px rounded-sm leading-normal';

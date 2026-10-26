@@ -3,7 +3,7 @@ import { formatClock, freshArchive } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
-import { WEEK_DIFFS } from './engine_week.js';
+import { WEEK_DIFFS, dayName } from './engine_week.js';
 import { recipeKey, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
@@ -540,8 +540,16 @@ export const ui = {
         let best = null, bestZ = -1;
         for (const el of document.querySelectorAll('[role="dialog"]')) {
             if (el.classList.contains('hidden')) continue;
-            if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') continue;
-            const z = parseInt(getComputedStyle(el).zIndex, 10) || 0;
+            const cs = getComputedStyle(el);
+            if (el.offsetParent === null && cs.position !== 'fixed') continue;
+            // All 21 dialogs are `fixed`, so the line above never rejects one
+            // and the `hidden` class is doing all the work. A window hidden
+            // some OTHER way would therefore collect the keyboard and trap Tab
+            // inside a box nobody can see - which is exactly the shape of the
+            // 4.1 failure recorded under isOverlayOpen(). Nothing hides with an
+            // inline style today; this is here so that it cannot start.
+            if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+            const z = parseInt(cs.zIndex, 10) || 0;
             if (z >= bestZ) { bestZ = z; best = el; }
         }
         return best;
@@ -566,6 +574,9 @@ export const ui = {
     showOverlay: function(target, lockScroll = true) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
+        // Asked BEFORE the class comes off: the stack below must only grow
+        // when a window actually opens.
+        const wasOpen = this.isOverlayOpen(el);
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
@@ -576,12 +587,27 @@ export const ui = {
         // the next Tab landed on EXPORT, behind the dialog, out of sight.
         // Remembered so closing can hand it back; without that a player who
         // opens and closes a window finds the keyboard at the top of the page.
-        this._focusReturn.push(document.activeElement);
+        //
+        // Only on a window that was closed. Shown over itself - the mail hint
+        // replacing the box already on modal-overlay, a second showModal from
+        // the chain in checkEndConditions - it would push a second entry that
+        // nothing ever pops, and from then on every close hands the keyboard
+        // one window too far back: with the Tab trap, to a control behind a
+        // dialog that is still open.
+        if (!wasOpen) this._focusReturn.push(document.activeElement);
         // After the paint, or the first control is not laid out yet and
         // offsetParent still reads null.
         setTimeout(() => {
             if (el.classList.contains('hidden')) return;    // closed again already
-            const first = this.focusablesIn(el)[0];
+            const stops = this.focusablesIn(el);
+            // The control the CONFIRM KEY would press, where the window names
+            // one - otherwise the ring sits on one button while Space presses
+            // another. On the end screen that cost the whole report: the ring
+            // landed on the day-curve toggle, Space pressed RESTART, and the
+            // page reloaded under a player who thought they were opening a
+            // chart. Ring and key have to agree.
+            const primary = stops.find(node => node.hasAttribute('data-modal-continue'));
+            const first = primary ?? stops[0];
             if (first) first.focus();
             else { el.setAttribute('tabindex', '-1'); el.focus(); }
         }, 30);
@@ -596,6 +622,7 @@ export const ui = {
     hideOverlay: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
+        const wasOpen = this.isOverlayOpen(el);
         el.classList.add('hidden');
         el.classList.remove('flex');
         this.releaseScroll(el.id || 'overlay');
@@ -603,8 +630,18 @@ export const ui = {
         // Hand the keyboard back to whatever opened this window. Guarded: the
         // button may be gone by now (a component re-rendered), and focusing a
         // detached node silently moves focus to the body.
-        const back = this._focusReturn.pop();
-        if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
+        //
+        // Only for a window that WAS open, for the same reason the push is
+        // conditional. Several callers hide on spec rather than on state:
+        // closeModals() hides both save dialogs though one of them is open at
+        // most, triggerBossFight() asks whether the mail overlay EXISTS, and
+        // reset() hides it unconditionally. Each of those popped the return
+        // target of whatever window still stood underneath. releaseScroll is
+        // a Set and survives being called twice; a stack does not.
+        if (wasOpen) {
+            const back = this._focusReturn.pop();
+            if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
+        }
         return el;
     },
 
@@ -1869,13 +1906,22 @@ export const ui = {
      * and a file that lands in Downloads look identical from the sofa.
      */
     shareDayCard: async function(btn) {
+        // The resting label is read off the live button, so a second tap
+        // inside the 2.6 seconds would capture "Picture saved." as the text to
+        // go back to - and keep it for good. One card at a time.
+        if (this._sharing) return;
+        this._sharing = true;
+
         const textSpan = btn?.querySelector('#text-share-card') || btn;
         const resting = textSpan?.innerText;
         // The two the button says for itself travel as keys through say(), so
         // lint-i18n cannot see them in a t() call and they are declared here.
         // i18n-uses: end.share.saved, end.share.failed
         const say = (key) => { if (textSpan) textSpan.innerText = t(key); };
-        const restore = () => setTimeout(() => { if (textSpan && resting !== undefined) textSpan.innerText = resting; }, 2600);
+        const restore = () => setTimeout(() => {
+            if (textSpan && resting !== undefined) textSpan.innerText = resting;
+            this._sharing = false;
+        }, 2600);
 
         try {
             const { CARD, drawDayCard } = await import('./share_card.js');
@@ -1886,9 +1932,15 @@ export const ui = {
 
             const m = this.state.modal ?? {};
             const say2 = (v) => (typeof v === 'string' ? v : renderRecipe(v) ?? '');
+            // The week travels on the modal, exactly as it does for DayReport:
+            // by the time this screen stands, finishWeek() has called endWeek()
+            // and state.week is empty again. Asking the state here labelled
+            // every week card with the DAY mode - and since difficultyMult
+            // stays at 1.0 in a week by design, that label was always "Normal".
             // i18n-uses: diff.easy.name, diff.normal.name, diff.hard.name
-            const mode = this.state.week.active
-                ? tf('week.badge', { mode: t(`week.diff.${this.state.week.level}`) })
+            const isWeek = !!m.isWeek;
+            const mode = isWeek
+                ? tf('week.badge', { mode: t(`week.diff.${m.weekMode ?? 'normal'}`) })
                 : t(`diff.${this.difficultyKey()}.name`);
 
             drawDayCard(ctx, {
@@ -1901,12 +1953,11 @@ export const ui = {
                 // week and the panel shows one of its five, so the panel
                 // names which - otherwise the picture claims more than it
                 // draws.
-                // weekDayName(), not dayName(dayIndex): the index on the state
-                // counts from one and dayName from zero, so the raw value
-                // names Monday for every day of the week. The helper exists
-                // for exactly that, and every other caller uses it.
-                curveLabel: this.state.week.active
-                    ? `${t('end.toggle.chart')} · ${this.weekDayName()}`
+                // modal.weekDay counts from one and dayName from zero, hence
+                // the -1. weekDayName() is the helper for exactly that, but it
+                // reads state.week - which is cleared by the time we are here.
+                curveLabel: isWeek
+                    ? `${t('end.toggle.chart')} · ${dayName((m.weekDay ?? 1) - 1)}`
                     : t('end.toggle.chart'),
                 points: this.state.statHistory ?? [],
                 stats: [
@@ -1933,7 +1984,11 @@ export const ui = {
             link.href = href;
             link.download = `layer8problem-${new Date().toISOString().slice(0, 10)}.png`;
             link.click();
-            URL.revokeObjectURL(href);
+            // Not in the same breath as the click: the download is QUEUED,
+            // and a URL revoked before the browser has fetched it leaves the
+            // player with a failed download and no message - the button still
+            // says the picture was saved.
+            setTimeout(() => URL.revokeObjectURL(href), 10000);
             say('end.share.saved');
             restore();
         } catch (err) {

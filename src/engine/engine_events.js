@@ -120,6 +120,15 @@ export const events = {
      */
     firstTimeHint: function(key, titleKey, textKey, then) {
         if (localStorage.getItem(key) === 'true') return false;
+        // A box already on screen owns modal-overlay, and showModal REPLACES
+        // its contents rather than standing on them - checkEndConditions is
+        // built around that and returns after each one. The mail arrives on a
+        // two-second timer, so it can land on the rage valve's explanation or
+        // the written warning, and then the player never reads why aggro
+        // dropped or that the one-time save of the day is spent.
+        // The flag stays unset and the hint comes with the next one; the mail
+        // meanwhile opens its own window over the box, as it did before 6.4.
+        if (this.state.modal?.open) return false;
         try { localStorage.setItem(key, 'true'); } catch { /* no storage, no second chance */ }
         this.showModal(t(titleKey), t(textKey), false, 'halgerd', then);
         return true;

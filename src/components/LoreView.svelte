@@ -45,7 +45,10 @@
 </script>
 
 {#if state.loreOpen}
-    <div class="fixed inset-0 bg-black/90 z-9999 flex items-center justify-center p-4 fade-in">
+    <!-- A dialog like every other window (6.4); see the note in
+         IntranetView.svelte for why a state-flag window was missed. -->
+    <div class="fixed inset-0 bg-black/90 z-9999 flex items-center justify-center p-4 fade-in"
+         role="dialog" aria-modal="true" aria-label={t('a11y.dialog.lore')}>
         <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
 
             <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
@@ -86,7 +89,7 @@
                         <!-- Handwriting: another ink, a slight tilt, ruled lines -->
                         <div class="mb-5 pl-4 py-2 border-l-2 border-[#7a6a52]"
                              style="rotate:-0.4deg">
-                            <p class="text-[#33475b] text-[1.0625rem] leading-[30px]"
+                            <p class="text-[#33475b] text-[1.0625rem] leading-[1.875rem]"
                                style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {entry.text}
                             </p>
@@ -107,7 +110,7 @@
                                   style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {t('lore.gala.label')}
                             </span>
-                            <p class="text-[#33475b] text-[1.0625rem] leading-[30px]"
+                            <p class="text-[#33475b] text-[1.0625rem] leading-[1.875rem]"
                                style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
                                 {gala.text}
                             </p>

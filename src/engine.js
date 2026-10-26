@@ -234,6 +234,21 @@ document.addEventListener('keydown', (event) => {
 
     // 3. CONFIRM (popups, answering the phone, continue buttons)
     if (key === engine.state.keyBinds.confirm.toLowerCase()) {
+        // A button the player has tabbed to answers for ITSELF.
+        //
+        // Since 6.4 focus moves into a window when it opens and Tab stays
+        // inside it, so there is a focused button to speak of - and press()
+        // below calls preventDefault, which takes away the browser's own
+        // "space activates the focused button". Without this line the ring sat
+        // on "Share the day" while Space pressed RESTART underneath it: the
+        // report, the curve and the picture gone, on the one screen a player
+        // holds still and reads. Enter was unaffected, which is how it hid.
+        const here = document.activeElement;
+        if (here?.tagName === 'BUTTON' && !here.disabled
+            && engine.topmostDialog()?.contains(here)) {
+            return;
+        }
+
         // A: Tutorial
         const tutPointer = document.getElementById('tut-pointer');
         if (tutPointer && !tutPointer.classList.contains('hidden')) {

@@ -99,7 +99,7 @@
 
 {#if points.length > 1}
     <svg viewBox="0 0 {W} {H}" class="w-full h-auto" role="img"
-         aria-label={t('chart.aria')}>
+         aria-label={t(hasTickets ? 'chart.aria' : 'chart.aria.noTickets')}>
 
         <!-- Horizontal guide lines at 0, 50 and 100 percent -->
         {#each [0, 50, 100] as v}

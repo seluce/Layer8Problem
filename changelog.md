@@ -5,17 +5,18 @@ On a phone:
 
 The day to day:
 * A working week leans towards the threads you have opened as Friday nears, so fewer of them run out of days.
-* Events you have never seen come up a little more often than ones you have.
-* Morning moods, ticker headlines and excuses no longer repeat until the whole list has had its turn.
+* Events you have never seen are given preference over ones you have.
+* Morning moods, ticker headlines and excuses no longer repeat until every one of their kind has had its turn.
 
 Interface:
-* The end of a day can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there.
+* A finished day, and a finished working week, can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there. On the browser version the picture carries the game's own address.
 * The first email and the first emergency of a career are explained before their clock starts. H.A.L.G.E.R.D. does the explaining, once.
+* A screen reader is told what the log writes, and the day curve says which lines it draws.
 * Playing from the keyboard shows where you are: every control draws a focus ring, and an open window keeps the keyboard inside it instead of letting it wander off behind.
 * The day curve shows the ticket pile too - the most common way to lose a day was the one thing it did not draw. Each line has a pattern of its own now, so they can be told apart without relying on colour.
 * Aggro and the boss radar say when the one-time save is spent - in a working week that is once for all five days.
 * The result card names what a decision did to the ticket pile.
-* The text size setting now reaches the small print too - the log, the handbook, the settings and the badges stayed put however large you set it.
+* The text size setting now reaches the small print too - the log, the handbook, the settings, the badges, the key caps on the buttons and the achievement notices all stayed put however large you set it.
 * The day cards promised fewer or more tickets per hour. They now name what actually differs: how many excuses you start with, and how far the valve cools you.
 
 Bug fixes:
@@ -28,6 +29,7 @@ Bug fixes:
 * An emergency no longer counts down behind an open window. The clock runs while the fight is on screen.
 * On Steam an imported save no longer hands the replaced career back to itself.
 * The game refuses to run twice at once, where two windows shared one save file.
+* On Steam a save can no longer be left half-written if the game stops while saving.
 
 ---
 

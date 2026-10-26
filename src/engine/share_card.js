@@ -42,7 +42,7 @@ const COLOURS = {
  * key the end screen's legend provides.
  */
 /** Read by the ticket axis as well as by the line itself. */
-export const TICKET_COLOUR = '#c084fc';
+const TICKET_COLOUR = '#c084fc';
 
 const SERIES = [
     { key: 'l',  colour: '#34d399' },

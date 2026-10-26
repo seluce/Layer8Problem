@@ -14,6 +14,9 @@ globalThis.localStorage = {
 globalThis.window = globalThis;
 globalThis.window.matchMedia = () => ({ matches: false });
 const fakeEl = () => ({ textContent: '', innerText: '', innerHTML: '', classList: { add() {}, remove() {}, toggle() {}, contains: () => false }, id: '' });
+/** Which overlays the bench has on screen; see isOverlayOpen below. */
+const openOverlays = new Set();
+const overlayId = (t) => (typeof t === 'string' ? t : (t?.id ?? 'el'));
 globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
@@ -76,8 +79,15 @@ const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
     ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
-    showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
-    hideOverlay() {},
+    showOverlay(t) { const id = overlayId(t); calls.overlays.push(id); openOverlays.add(id); },
+    hideOverlay(t) { openOverlays.delete(overlayId(t)); },
+    // Answered off that set rather than off the fake document. Every element
+    // the stub hands out reports no classes at all, so the real
+    // isOverlayOpen() said YES to every id it was ever asked about - which
+    // pinned windowOverTerminal() at true and, with it, the boss clock's own
+    // guard: state.bossTimer could not tick down anywhere in this suite, and
+    // the 6.4 pause had to be held by reading the source instead.
+    isOverlayOpen: (t) => openOverlays.has(overlayId(t)),
     lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
@@ -105,14 +115,16 @@ const engine = {
     // nothing but state, the stubbed overlay and the fake document, so the real
     // ones run here: a stub would make the day-end test pass whatever they do.
     closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
-    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard, isOverlayOpen: ui.isOverlayOpen,
+    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard,
     // The boss clock asks this before every tick (6.4), so the bench carries
-    // the real one rather than a stub that would answer whatever suits.
+    // the real one rather than a stub that would answer whatever suits. It
+    // only answers honestly because isOverlayOpen above does.
     windowOverTerminal: ui.windowOverTerminal,
 };
 
 const resetState = () => {
     Object.assign(state, freshDay(1.0));
+    openOverlays.clear();         // a window left open by one test is a window the next one asks about
     state.difficultyMult = 1.0;   // freshDay does not carry it - otherwise a value leaks from the last test
     state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
     state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
@@ -567,9 +579,25 @@ await ok('The day card draws what the end screen shows', async () => {
     assert.match(text, /strokeStyle=#c084fc/, 'the ticket line was not drawn');
     // Solid: this card differs from the end screen on purpose, because four
     // dashed lines crossing each other at this size read as a scribble. The
-    // guide line keeps its dashes, so the reset after it is what matters.
-    assert.match(text, /setLineDash\(\)[\s\S]*strokeStyle=#34d399/,
-                 'the curve inherits the guide line\'s dashes again');
+    // guide lines ARE dashed, so what has to hold is that none of their dashes
+    // is still active when a curve is stroked.
+    //
+    // Walked rather than matched. /setLineDash\(\)[\s\S]*strokeStyle=/ was the
+    // first attempt and could not fail: the guide loop's last pass is the 100%
+    // line, which is solid, so an empty setLineDash() stands between the
+    // guides and the curves whether or not anything reset it. This holds the
+    // outcome instead, and so it also catches the real risk - reordering those
+    // three guide values, which leaves the loop ending on a dashed line.
+    const CURVES = ['#34d399', '#fb923c', '#ef4444', '#c084fc'];
+    let dash = '';
+    let pen = '';
+    for (const call of calls) {
+        if (call.startsWith('setLineDash(')) dash = call.slice('setLineDash('.length, -1);
+        else if (call.startsWith('strokeStyle=')) pen = call.slice('strokeStyle='.length);
+        else if (call === 'stroke()' && CURVES.includes(pen)) {
+            assert.equal(dash, '', 'the curve inherits the guide line\'s dashes again');
+        }
+    }
     // And a key, or the picture is four coloured lines and no answer.
     assert.match(text, /fillText\(FAULHEIT,92/, 'the card carries no key for its curve');
 
@@ -577,7 +605,12 @@ await ok('The day card draws what the end screen shows', async () => {
     // which way is bad, over how long, or that ten tickets is the end.
     assert.match(text, /fillText\(100,/, 'the percent scale is gone');
     assert.match(text, /fillText\(08,/, 'the hours are gone, so the shape has no duration');
-    assert.match(text, /fillText\(10,/, 'the ticket scale is gone');
+    // Told apart from the '10' on the hour axis by the colour set right
+    // before it - the two are the same two characters, and matching the text
+    // alone passed with the whole ticket scale commented out.
+    const ticketScale = calls.some((c, i) => c === 'fillStyle=#c084fc'
+        && calls.slice(i + 1, i + 4).some(next => next.startsWith('fillText(10,')));
+    assert.ok(ticketScale, 'the ticket scale is gone');
     // And a name for what the panel shows: statHistory is ONE DAY, so in a
     // week the heading says the week while the panel shows one of its five.
     assert.match(text, /fillText\(TAGESVERLAUF,/, 'the curve does not say what it is');
@@ -970,7 +1003,11 @@ console.log('Music:');
         state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'lofi';
         mus.initMusic();
         mus.playMusic('office');
-        await wait(700);
+        // 750 for a 600 ms fade-in, like the test above it: while
+        // fadeTimers[key] is still set syncMusicToVisibility returns without
+        // pausing, so an overrun here would fail the tab assertion further
+        // down rather than a volume - and look like a broken feature.
+        await wait(750);
         const key = state.currentMusicTrack;
         assert.equal(mus.bgmTracks[key].paused, false, 'nothing was playing to begin with');
 
@@ -999,8 +1036,11 @@ console.log('Music:');
         assert.equal(probe.canSetVolume(locked), false, 'a refused volume passed as settable');
         // And with no audio graph to be had either, nothing throws: the fade
         // runs, it just stays inaudible - exactly as before this existed.
+        // That is all the line below holds. The fake reads back 1 whatever is
+        // written and gainNodes is empty, so it cannot observe the write; what
+        // would fail here is a throw.
         probe.setTrackVolume('locked', 0.4);
-        assert.equal(probe.trackVolume('locked'), 1);
+        assert.equal(probe.trackVolume('locked'), 1, 'a refused volume became something other than 1');
 
         const open = { volume: 1 };
         const fine = { ...audio, state, bgmTracks: { open }, gainNodes: {}, volumeWorks: null };
@@ -2910,12 +2950,71 @@ await ok('The result card carries what the decision did to the ticket pile', () 
     assert.equal(calls.termResult.tickets, 0, 'the meeting charged tickets after all');
 });
 
+await ok('The shared card names the week it came from, not the day mode', async () => {
+    // finishWeek() calls endWeek() BEFORE showEnd(), so by the time the end
+    // screen stands state.week is empty again - its own comment says so, and
+    // the mode and the day travel on the end object for exactly that reason.
+    // shareDayCard asked the state anyway: every week card was labelled with
+    // the DAY mode, and since difficultyMult stays at 1.0 in a week by
+    // design, difficultyKey() answered "normal" - the one mode a week can
+    // never be in. The curve label lost its weekday the same way.
+    //
+    // Read off the canvas rather than the return value: the card is a
+    // picture, so what it SAYS is the only thing worth holding.
+    resetState();
+    const drawn = [];
+    const ctx = new Proxy({}, {
+        get: (_, prop) => {
+            if (prop === 'measureText') return (str) => ({ width: String(str).length * 10 });
+            if (prop === 'getImageData') return () => ({ data: [] });
+            return (...args) => { drawn.push(prop + '(' + args.join(',') + ')'); };
+        },
+        set: () => true,
+    });
+    const realCreate = globalThis.document.createElement;
+    globalThis.document.createElement = () => ({
+        width: 0, height: 0,
+        getContext: () => ctx,
+        toBlob: (cb) => cb(null),       // no blob, so the share stops right after the drawing
+    });
+    try {
+        // The state a week leaves behind: cleared, with the week on the modal.
+        state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
+        // A curve to draw, or the panel and its label are skipped entirely.
+        state.statHistory = [{ m: 480, l: 0, a: 0, b: 0, tk: 0 },
+                             { m: 700, l: 20, a: 90, b: 40, tk: 5 },
+                             { m: 990, l: 50, a: 60, b: 95, tk: 9 }];
+        state.modal = { open: true, title: 'Feierabend', lead: 'Ein Satz.', isEnd: true,
+                        isWin: true, isWeek: true, weekMode: 'hard', weekDay: 3 };
+        await ui.shareDayCard.call(engine, null);   // not on the bench's engine; the real one, bound to it
+
+        const said = drawn.join(' | ');
+        const badge = tf('week.badge', { mode: t('week.diff.hard') });
+        assert.ok(said.includes('fillText(' + badge),
+                  `the card is not labelled with the week: ${badge} missing`);
+        // Uppercased on the card, like every heading on it.
+        assert.ok(said.includes(t('week.day.wed').toUpperCase()),
+                  'the curve no longer names which of the five days it draws');
+        // And the mode slot is not the day mode's own name. Which is where
+        // this hid so well: the day levels ARE named after weekdays, so
+        // difficultyKey() answering "normal" put MITTWOCH / WEDNESDAY on the
+        // card - a plausible-looking word in the right place, on a Thursday
+        // of a hard week. Held on the call rather than the text, because the
+        // weekday legitimately appears again inside the curve label.
+        assert.ok(!drawn.some(c => c.startsWith('fillText(' + t('diff.normal.name') + ',')),
+                  'the day mode is still drawn as the card\'s mode');
+    } finally {
+        globalThis.document.createElement = realCreate;
+        engine._sharing = false;
+    }
+});
+
 await ok('The boss clock stops while a window covers the fight', () => {
     // Escape during a fight opens the settings, and until 6.4 the countdown
     // ran on behind them - the one key that looks like a way out was the
-    // fastest way to lose. Asserted on the source: the tick is a closure
-    // inside setInterval, and the bench's document reports every overlay as
-    // open, so a live fight here could never tick either way.
+    // fastest way to lose. Read off the source because the guard's POSITION
+    // is what matters and a running fight cannot show that; the test below
+    // drives the clock itself.
     const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
     const tick = src.match(/state\.bossTimer = setInterval\(\(\) => \{([\s\S]*?)\n {8}\}, updateInterval\);/);
     assert.ok(tick, 'the boss interval no longer looks the way this check reads it');
@@ -2924,6 +3023,63 @@ await ok('The boss clock stops while a window covers the fight', () => {
     // And the guard has to come BEFORE the decrement, or it does nothing.
     assert.ok(tick[1].indexOf('windowOverTerminal') < tick[1].indexOf('currentTimeMs -='),
               'the guard sits after the decrement');
+});
+
+await ok('The boss clock runs, holds behind a window, and runs out', async () => {
+    // The live half, possible since 6.4.1: until the bench answered honestly
+    // about open windows, windowOverTerminal() was true here whatever was on
+    // screen, the guard above was permanently taken, and bossTimer could not
+    // tick down anywhere in this suite - so nothing held the countdown
+    // itself, only the shape of its guard.
+    //
+    // The interval is captured rather than waited out: boss.timer is 8 to 20
+    // SECONDS, which is not a test, it is a pause.
+    resetState();
+    await ensure('bossfights');
+    store.set(KEYS.seenFirstBoss, 'true');   // the explanation has its own check above
+    state.time = 10 * 60;
+
+    const realSet = globalThis.setInterval;
+    const realClear = globalThis.clearInterval;
+    const realFail = engine.resolveBossFail;
+    let tick = null;
+    let failed = false;
+    globalThis.setInterval = (fn) => { tick = fn; return 'boss-interval'; };
+    globalThis.clearInterval = () => {};
+    // Watched rather than read off the terminal afterwards: the fail resolves
+    // into a result screen and the day carries on from there, so by the end of
+    // this the terminal is idle again.
+    engine.resolveBossFail = function(d) { failed = true; return realFail.call(this, d); };
+    try {
+        engine.triggerBossFight();
+        assert.ok(tick, 'the emergency started without a clock');
+        assert.equal(state.bossBarPercent, 100, 'the bar did not start full');
+
+        tick();
+        const moved = state.bossBarPercent;
+        assert.ok(moved < 100, 'the clock never moved');
+
+        // Escape opens the settings over the fight. The bar has to stand.
+        engine.showOverlay('settings-modal');
+        tick(); tick(); tick();
+        assert.equal(state.bossBarPercent, moved, 'the countdown ran on behind an open window');
+
+        engine.hideOverlay('settings-modal');
+        tick();
+        assert.ok(state.bossBarPercent < moved, 'the clock never picked up again');
+
+        // And it still ends. Capped well above the 400 ticks a 20-second
+        // fight needs, so a clock that cannot reach zero fails here rather
+        // than hanging the suite.
+        for (let i = 0; i < 2000 && state.bossBarPercent > 0; i++) tick();
+        assert.equal(state.bossBarPercent, 0, 'the bar never reached the bottom');
+        assert.ok(failed, 'running out of time resolved nothing');
+    } finally {
+        globalThis.setInterval = realSet;
+        globalThis.clearInterval = realClear;
+        engine.resolveBossFail = realFail;
+        state.bossTimer = null;
+    }
 });
 
 await ok('An encounter continuation needs the flag AND the reputation', async () => {
@@ -2954,15 +3110,23 @@ await ok('An encounter continuation needs the flag AND the reputation', async ()
 
     // The other direction, for the strands that need a colleague to dislike
     // the player: a negative threshold is an upper bound.
-    const sour = DB.reputation.find(e => e.reqRep && Object.values(e.reqRep).some(v => v < 0));
-    if (sour) {
-        const [[sChar, sWant]] = Object.entries(sour.reqRep).filter(([, v]) => v < 0);
-        if (sour.reqStory) state.storyFlags[sour.reqStory] = true;
-        state.reputation[sChar] = sWant + 5;              // not sour enough
-        assert.equal(engine.encounterEligible(sour), false, 'a negative threshold is not a ceiling');
-        state.reputation[sChar] = sWant;
-        assert.equal(engine.encounterEligible(sour), true, 'a met negative threshold stays shut');
-    }
+    // A CONTINUATION of one, so both halves are asked here too - the first
+    // candidate the pool offers (rep_kevin_simple_bad_1) carries no reqStory,
+    // and this half then held the ceiling alone. 41 of the 69 qualify.
+    const sour = DB.reputation.find(e => e.reqStory && e.reqRep
+                                         && Object.values(e.reqRep).some(v => v < 0));
+    assert.ok(sour, 'this half has no subject any more');
+    const [[sChar, sWant]] = Object.entries(sour.reqRep).filter(([, v]) => v < 0);
+
+    state.storyFlags = {};
+    state.reputation[sChar] = sWant;
+    assert.equal(engine.encounterEligible(sour), false, 'the flag is not being asked for on a sour strand');
+
+    state.storyFlags[sour.reqStory] = true;
+    state.reputation[sChar] = sWant + 5;              // not sour enough
+    assert.equal(engine.encounterEligible(sour), false, 'a negative threshold is not a ceiling');
+    state.reputation[sChar] = sWant;
+    assert.equal(engine.encounterEligible(sour), true, 'a met negative threshold stays shut');
 
     // And the filter in trigger() has to go through this method, or the rule
     // can quietly stop being asked a second time.
@@ -3117,10 +3281,27 @@ await ok('A shuffled bag shows everything once before it repeats', async () => {
     const first = Array.from({ length: 8 }, () => drawIndex('tst_bag', 8));
     assert.deepEqual([...first].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5, 6, 7],
                      'a cycle did not show every entry exactly once');
-    // Shuffled, not counted off: eight in ascending order would be a bug of
-    // its own. (One cycle in 40,320 is the identity, so this is a weak check
-    // on purpose - the point above is the one that matters.)
-    assert.equal(new Set(first).size, 8);
+    // Shuffled, not counted off. The check above cannot see this at all - it
+    // sorts before comparing, so it passes on 0,1,...,7 - and the Set it used
+    // to be followed by could not fail either, since a set of eight distinct
+    // numbers is what the sorted compare just proved. Order has to be looked
+    // at. Across six bags rather than one, because a single shuffle IS the
+    // identity once in 40,320; six in a row is that to the sixth.
+    //
+    // Held against 7,6,...,0, not 0,1,...,7: the bag is filled in order and
+    // drawn with pop(), so an unshuffled one comes out BACKWARDS. The first
+    // version of this check compared against ascending, passed on a Fisher-
+    // Yates turned into a no-op, and proved nothing - the mutation probe is
+    // the only reason that is not still the case.
+    let shuffled = false;
+    for (let i = 0; i < 6 && !shuffled; i++) {
+        store.clear();
+        const bag = Array.from({ length: 8 }, () => drawIndex('tst_order', 8));
+        shuffled = bag.some((v, idx) => v !== 7 - idx);
+    }
+    assert.ok(shuffled, 'the bag counts off in order instead of shuffling');
+    store.clear();
+    Array.from({ length: 8 }, () => drawIndex('tst_bag', 8));   // emptied again for the refill below
 
     // Empty, so the next draw refills.
     const next = drawIndex('tst_bag', 8);
@@ -3140,6 +3321,11 @@ await ok('A shuffled bag shows everything once before it repeats', async () => {
         const blind = drawIndex('tst_bag', 5);
         assert.ok(blind >= 0 && blind < 5, 'a refused storage broke the draw');
     } finally { globalThis.localStorage = realStore; }
+
+    // This test clears the store, and the two first-time hints live in it -
+    // so the flags are put back rather than left for whichever later test
+    // happens to trigger a mail or an emergency first.
+    resetState();
 });
 
 await ok('The morning odds are still the share of the entries', () => {
@@ -3232,11 +3418,24 @@ await ok('An import tells the cloud what it replaced, before the reload', async 
     } finally { platform.save = realSave; }
 
     const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
-    const block = uiSrc.slice(uiSrc.indexOf('performImport: function'));
+    // Brace-matched, not sliced to the end of the file. engine_ui.js holds a
+    // second location.reload() in another function, so a window running to
+    // EOF was satisfied by THAT one: move the reload out of performImport
+    // altogether and the order check still passed.
+    const start = uiSrc.indexOf('performImport: function');
+    assert.ok(start > -1, 'performImport is no longer where this check looks');
+    let depth = 0, end = -1;
+    for (let i = uiSrc.indexOf('{', start); i < uiSrc.length; i++) {
+        if (uiSrc[i] === '{') depth++;
+        else if (uiSrc[i] === '}' && --depth === 0) { end = i; break; }
+    }
+    assert.ok(end > start, 'performImport does not close where this check can find it');
+    const block = uiSrc.slice(start, end);
     const sync = block.indexOf('engine.syncRun(true)');
     const reload = block.indexOf('location.reload()');
     assert.ok(sync > -1, 'the import no longer writes the cloud copy');
-    assert.ok(reload > -1 && sync < reload, 'the import reloads before it tells the cloud');
+    assert.ok(reload > -1, 'the import no longer reloads, or does it somewhere else');
+    assert.ok(sync < reload, 'the import reloads before it tells the cloud');
 });
 
 await ok('The chronicle unites by day, not by object', () => {
@@ -3872,6 +4071,7 @@ await ok('A day that ends with its windows open closes them', async () => {
     await engine.openVending();
     state.intranetOpen = true;
     state.loreOpen = true;
+    engine.showOverlay('board-modal');   // the board is a plain overlay, so it is opened as one
     let boardClosed = false;
     const closeBoard = engine.closeBoard;
     engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
@@ -3885,8 +4085,6 @@ await ok('A day that ends with its windows open closes them', async () => {
     assert.equal(state.vending, null, 'the unspent take outlived the day');
     assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
     assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
-    // The fake document reports every overlay as open, so the board is asked
-    // for - what is held here is that finishGame asks at all.
     assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
 });
 
@@ -4067,16 +4265,20 @@ await ok('No key reaches through a window over the terminal', () => {
         assert.ok(listed.has(id), `"${id}" closes on Escape but is missing from WINDOWS_OVER_TERMINAL`);
     }
 
-    // The bench's document stub answers "visible" for every id, which would
-    // make this true whatever the machine does - the mutation probe caught
-    // exactly that. So the DOM half is told nothing is open, and the state
-    // half has to carry the answer on its own, both ways.
+    // Both halves of the question, on an empty bench: the state flags first,
+    // then the overlay list. Until 6.4.1 the fake document answered "visible"
+    // for every id, so the first of these would have been true whatever the
+    // machine did - the mutation probe caught exactly that, and the bench's
+    // own isOverlayOpen now answers off a set instead.
     resetState();
-    const asked = { ...engine, isOverlayOpen: () => false };
-    assert.equal(ui.windowOverTerminal.call(asked), false, 'a window is reported where none is open');
+    assert.equal(engine.windowOverTerminal(), false, 'a window is reported where none is open');
     state.vendingOpen = true;
-    assert.equal(ui.windowOverTerminal.call(asked), true, 'the vending machine does not count as a window');
+    assert.equal(engine.windowOverTerminal(), true, 'the vending machine does not count as a window');
     state.vendingOpen = false;
+    engine.showOverlay('board-modal');
+    assert.equal(engine.windowOverTerminal(), true, 'the noticeboard does not count as a window');
+    engine.hideOverlay('board-modal');
+    assert.equal(engine.windowOverTerminal(), false, 'the board is still counted after it closed');
 });
 
 await ok('A crank line waits until the one before it can have been read', () => {

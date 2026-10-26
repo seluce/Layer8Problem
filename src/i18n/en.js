@@ -401,8 +401,8 @@ export const en = {
     'morning.conditions':          'Starting conditions:',
 
     'header.maxTickets':           'Max: 10',
-    'header.valveSpent':           'Valve',
-    'header.warned':               'Warning',
+    'header.valveSpent':           'Spent',
+    'header.warned':               'Warned',
 
     'end.btn.next':                'CARRY ON · {day}',
     // H.A.L.G.E.R.D. explains the two things that arrive uninvited - once
@@ -475,6 +475,9 @@ export const en = {
     'end.toggle.diary':            'Logbook',
 
     'chart.aria':                  'Laziness, Aggro, Boss Radar and open tickets over the workday',
+    // A day recorded before 6.4 carries no ticket counts, so the picture has
+    // three lines and the label must not announce a fourth.
+    'chart.aria.noTickets':        'Laziness, Aggro and Boss Radar over the workday',
     'chart.tooFew':                'Too few decisions to draw a curve.',
 
     'diary.header':                'Logbook — {day}',
@@ -628,6 +631,8 @@ export const en = {
 
     // Names for the three windows that carry no heading of their own.
     // A screen reader otherwise announces nothing but "dialog".
+    'a11y.dialog.intranet':        'GlobalCorp intranet',
+    'a11y.dialog.lore':            'Company chronicle',
     'a11y.dialog.intro':           'Start screen',
     'a11y.dialog.system':          'System message',
     'a11y.dialog.mail':            'Email',
