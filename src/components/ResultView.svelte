@@ -15,9 +15,16 @@
 
     const view = $derived(state.terminal.result ?? {});
 
-    // Time is only worth a pill when any actually passed.
+    // Time is only worth a pill when any actually passed. Tickets likewise -
+    // and they are the pill this card was missing: the pile is the most
+    // common way to lose, every half hour the clock steps over adds one, and
+    // nothing on screen tied the two together. A call that clears one shows
+    // -1 here for the same reason. Hidden for anyone playing with the ticket
+    // counter switched off, which is what that setting asks for.
     const pills = $derived([
         ...(view.m > 0 ? [{ label: t('result.minutes'), value: view.m, tone: 'text-blue-400' }] : []),
+        ...(view.tickets && !state.blindTickets
+            ? [{ label: t('stat.tickets'), value: view.tickets, tone: 'text-purple-400' }] : []),
         { label: t('stat.lazy'),       value: view.l ?? 0, tone: 'text-green-400' },
         { label: t('stat.aggro'),      value: view.a ?? 0, tone: 'text-orange-400' },
         { label: t('stat.boss.short'), value: view.b ?? 0, tone: 'text-red-500' }

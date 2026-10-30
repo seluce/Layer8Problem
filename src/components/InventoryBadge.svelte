@@ -19,5 +19,5 @@
 </script>
 
 {#if overflow > 0}
-    <span class="bg-amber-500 text-black text-[9px] font-bold px-1.5 rounded-full">+{overflow}</span>
+    <span class="bg-amber-500 text-black text-[0.5625rem] font-bold px-1.5 rounded-full">+{overflow}</span>
 {/if}

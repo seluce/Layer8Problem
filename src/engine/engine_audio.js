@@ -108,7 +108,7 @@ export const VENDING_SOUNDS = Object.keys(VENDING_VOICES);
 
 export const audio = {
 
-   // --- SYNTHETISCHER SOUND ---
+   // --- SYNTHESIZED SOUND ---
     audioCtx: null,
     playAudio: function(type = 'ui') {
         if (!this.state.audioEffects) return;
@@ -227,6 +227,101 @@ export const audio = {
     // --- MUSIC SYSTEM ---
     bgmTracks: null,
     fadeTimers: {},        // one running fade per track, keyed by track name
+    gainNodes: {},         // only on platforms that refuse track.volume, see below
+    volumeWorks: null,     // memoised answer of canSetVolume()
+
+    /**
+     * Does this browser let a script set a media element's volume?
+     *
+     * iOS says yes and means no: `track.volume = 0.2` is accepted, ignored and
+     * reads back as 1. So on iPhone and iPad the music played at full blast
+     * whatever the slider said, the slider did nothing, and every fade - in,
+     * out, the vending machine's duck - was a hard cut. Asked by probing
+     * rather than by sniffing the user agent, and asked once.
+     */
+    canSetVolume: function(track) {
+        if (this.volumeWorks === null) {
+            const before = track.volume;
+            track.volume = 0.123;
+            this.volumeWorks = Math.abs(track.volume - 0.123) < 0.001;
+            track.volume = before;
+        }
+        return this.volumeWorks;
+    },
+
+    /**
+     * A gain node in front of the speakers: the one volume knob iOS obeys.
+     *
+     * Built on first use and kept - createMediaElementSource may be called
+     * only ONCE per element, and from then on that element is audible only
+     * through the graph. Which is also why the context has to be running:
+     * routed into a suspended context, the track plays to nobody.
+     *
+     * Returns null if the graph cannot be built, and the caller falls back to
+     * the element's own volume - no worse than before this existed.
+     */
+    musicGain: function(key) {
+        if (this.gainNodes[key]) return this.gainNodes[key];
+        const track = this.bgmTracks?.[key];
+        if (!track) return null;
+        try {
+            if (!this.audioCtx) {
+                this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const source = this.audioCtx.createMediaElementSource(track);
+            const gain = this.audioCtx.createGain();
+            source.connect(gain);
+            gain.connect(this.audioCtx.destination);
+            this.gainNodes[key] = gain;
+            return gain;
+        } catch (err) {
+            console.warn("Music gain unavailable:", err);
+            return null;
+        }
+    },
+
+    /** How loud `key` is right now, whichever knob is carrying it. */
+    trackVolume: function(key) {
+        const track = this.bgmTracks?.[key];
+        if (!track) return 0;
+        if (this.canSetVolume(track)) return track.volume;
+        return this.gainNodes[key]?.gain.value ?? track.volume;
+    },
+
+    /** Sets how loud `key` is, through whichever knob this platform obeys. */
+    setTrackVolume: function(key, value) {
+        const track = this.bgmTracks?.[key];
+        if (!track) return;
+        const v = Math.max(0, Math.min(1, value));
+        if (this.canSetVolume(track)) { track.volume = v; return; }
+        const gain = this.musicGain(key);
+        if (gain) gain.gain.value = v;
+        else track.volume = v;          // refused anyway, but it costs nothing
+    },
+
+    /**
+     * Music in a tab nobody is looking at is noise from somewhere.
+     *
+     * Paused on the way out and picked up again on the way back - a pause, not
+     * a stop, so it carries on where it was. Only a track this did pause comes
+     * back: one that a fade is putting to bed, or that the game replaced while
+     * the tab was away, is none of its business.
+     */
+    musicPausedByTab: false,
+    syncMusicToVisibility: function() {
+        const key = this.state.currentMusicTrack;
+        const track = this.bgmTracks?.[key];
+        if (document.hidden) {
+            if (!track || track.paused || this.fadeTimers[key]) return;
+            track.pause();
+            this.musicPausedByTab = true;
+            return;
+        }
+        if (!this.musicPausedByTab) return;
+        this.musicPausedByTab = false;
+        if (!this.state.musicEnabled || !track || !track.paused) return;
+        track.play().catch(() => { /* back without a gesture: the next action starts it */ });
+    },
 
     /**
      * Fades a track's volume and calls back when it arrives. Without this every
@@ -244,10 +339,10 @@ export const audio = {
         clearInterval(this.fadeTimers[key]);
 
         const step = 25;
-        const from = track.volume;
+        const from = this.trackVolume(key);
         const diff = target - from;
         if (ms <= 0 || Math.abs(diff) < 0.01) {
-            track.volume = Math.max(0, Math.min(1, target));
+            this.setTrackVolume(key, target);
             done?.();
             return;
         }
@@ -256,7 +351,7 @@ export const audio = {
         this.fadeTimers[key] = setInterval(() => {
             passed += step;
             const t = Math.min(1, passed / ms);
-            track.volume = Math.max(0, Math.min(1, from + diff * t));
+            this.setTrackVolume(key, from + diff * t);
             if (t >= 1) {
                 clearInterval(this.fadeTimers[key]);
                 delete this.fadeTimers[key];
@@ -266,6 +361,11 @@ export const audio = {
     },
 
     initMusic: function() {
+        // Registered here rather than at module scope: the tracks have to exist
+        // before anything can be paused, and this runs exactly once.
+        // Optional-call because the test bench's document has no listeners.
+        document.addEventListener?.('visibilitychange', () => this.syncMusicToVisibility());
+
         this.bgmTracks = {
             'elevator': new Audio('assets/music/elevator.opus'),
             'lofi': new Audio('assets/music/chillwave.opus'),
@@ -284,7 +384,7 @@ export const audio = {
             this.bgmTracks[key].preload = 'none';
 
             if (key === 'boss' || key === 'gala') {
-                this.bgmTracks[key].loop = true; // Boss & Gala loopen endlos
+                this.bgmTracks[key].loop = true; // boss and gala loop forever
             } else {
                 // Radio mode has to hear the end of a track to pick the next
                 // one, so it cannot loop. A fixed style repeats the same track
@@ -391,7 +491,7 @@ export const audio = {
                 if (key === this.state.currentMusicTrack && this.state.musicEnabled) {
                     clearInterval(this.fadeTimers[key]);
                     delete this.fadeTimers[key];
-                    this.bgmTracks[key].volume = this.state.musicVolume;
+                    this.setTrackVolume(key, this.state.musicVolume);
                 }
             }
         }
@@ -439,12 +539,15 @@ export const audio = {
             // A boss fight should hit; everything else eases in.
             const fadeIn = actualTrack === 'boss' ? 250 : 600;
             clearInterval(this.fadeTimers[actualTrack]);
-            track.volume = 0;
+            this.setTrackVolume(actualTrack, 0);
+            // Where the gain node carries the volume, the track is audible only
+            // through the graph - and a suspended context plays to nobody.
+            if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
             track.play()
                 .then(() => this.fadeTrack(actualTrack, this.state.musicVolume, fadeIn))
                 .catch(e => {
                     // Autoplay blocked: leave the volume usable for the retry.
-                    track.volume = this.state.musicVolume;
+                    this.setTrackVolume(actualTrack, this.state.musicVolume);
                     console.warn("Music autoplay blocked:", e);
                 });
         }
@@ -464,14 +567,14 @@ export const audio = {
             if (track.paused) continue;
             if (ms <= 0) {
                 track.pause();
-                track.volume = this.state.musicVolume;   // ready for the next play()
+                this.setTrackVolume(key, this.state.musicVolume);   // ready for the next play()
                 continue;
             }
             this.fadeTrack(key, 0, ms, () => {
                 track.pause();
                 // Restore the target volume, otherwise the track would start
                 // silent the next time it is played without a fade.
-                track.volume = this.state.musicVolume;
+                this.setTrackVolume(key, this.state.musicVolume);
             });
         }
     },

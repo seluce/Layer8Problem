@@ -401,8 +401,19 @@ export const en = {
     'morning.conditions':          'Starting conditions:',
 
     'header.maxTickets':           'Max: 10',
+    'header.valveSpent':           'Spent',
+    'header.warned':               'Warned',
 
     'end.btn.next':                'CARRY ON · {day}',
+    // H.A.L.G.E.R.D. explains the two things that arrive uninvited - once
+    // per career, each before its clock starts.
+    'hint.mail.title':             'SYSTEM MESSAGE: INBOX',
+    'hint.mail.text':              'H.A.L.G.E.R.D.: An email has reached your inbox.<br><br>It disappears by itself after 20 seconds. That is not a solution but a decision with consequences - like every other answer.<br><br>Read it. Then decide.',
+    'hint.boss.title':             'SYSTEM MESSAGE: EMERGENCY',
+    'hint.boss.text':              'H.A.L.G.E.R.D.: Something has broken.<br><br>From now the clock runs in seconds rather than minutes. If it runs out, the system decides in your place.<br><br>The system was not built for that.',
+    'end.share.btn':               'Share the day',
+    'end.share.saved':             'Picture saved.',
+    'end.share.failed':            'The picture could not be made.',
     'end.btn.restart':             'RESTART',
     'end.btn.ok':                  'UNDERSTOOD',
 
@@ -463,7 +474,10 @@ export const en = {
     'end.toggle.chart':            'Day curve',
     'end.toggle.diary':            'Logbook',
 
-    'chart.aria':                  'Laziness, Aggro and Boss Radar over the workday',
+    'chart.aria':                  'Laziness, Aggro, Boss Radar and open tickets over the workday',
+    // A day recorded before 6.4 carries no ticket counts, so the picture has
+    // three lines and the label must not announce a fourth.
+    'chart.aria.noTickets':        'Laziness, Aggro and Boss Radar over the workday',
     'chart.tooFew':                'Too few decisions to draw a curve.',
 
     'diary.header':                'Logbook — {day}',
@@ -615,6 +629,16 @@ export const en = {
 
     'common.back':                 '← Back',
 
+    // Names for the three windows that carry no heading of their own.
+    // A screen reader otherwise announces nothing but "dialog".
+    'a11y.dialog.intranet':        'GlobalCorp intranet',
+    'a11y.dialog.lore':            'Company chronicle',
+    'a11y.dialog.intro':           'Start screen',
+    'a11y.dialog.system':          'System message',
+    'a11y.dialog.mail':            'Email',
+
+    'intro.storageLost':           'This browser does not let the page save. Your progress lasts until the tab closes – Export keeps it.',
+
     'intro.handbook.title':        'Survival handbook',
     'intro.handbook.tickets.name': 'TICKETS',
     'intro.handbook.tickets.desc': 'One more every 30 minutes. At 10 open tickets it is over.',
@@ -635,18 +659,18 @@ export const en = {
     'diff.subtitle':               'How much do you hate your life today?',
     'diff.easy.name':              'FRIDAY',
     'diff.easy.motto':             '"Hands in the air, the weekend is here!"',
-    'diff.easy.p1':                '✔ Fewer tickets',
-    'diff.easy.p2':                '✔ Colleagues are relaxed',
+    'diff.easy.p1':                '✔ Three excuses in reserve',
+    'diff.easy.p2':                '✔ The valve cools you to 30%',
     'diff.easy.p3':                '✔ Lower multiplier (0.8x)',
     'diff.normal.name':            'WEDNESDAY',
     'diff.normal.motto':           '"Halfway there. The madness is routine."',
-    'diff.normal.p1':              '● Standard madness',
-    'diff.normal.p2':              '● Normal ticket rate',
+    'diff.normal.p1':              '● Two excuses in reserve',
+    'diff.normal.p2':              '● The valve cools you to 50%',
     'diff.normal.p3':              '● Standard multiplier (1.0x)',
     'diff.hard.name':              'MONDAY',
     'diff.hard.motto':             '"Why am I doing this to myself?"',
     'diff.hard.p1':                '⚠ Starts with 2 tickets',
-    'diff.hard.p2':                '⚠ Higher ticket rate',
+    'diff.hard.p2':                '⚠ One excuse, valve only to 60%',
     'diff.hard.p3':                '⚠ Higher multiplier (1.25x)',
 
     'week.diff.easy':              'Rested',

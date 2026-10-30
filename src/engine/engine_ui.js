@@ -3,8 +3,9 @@ import { formatClock, freshArchive } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
-import { WEEK_DIFFS } from './engine_week.js';
+import { WEEK_DIFFS, dayName } from './engine_week.js';
 import { recipeKey, renderRecipe } from './recipe.js';
+import { drawIndex } from './draw_bag.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
@@ -72,7 +73,10 @@ export const ui = {
         if (Math.random() <= 0.05) {
             // The draw is recorded, not the line it produced: both trees carry
             // the same list length, so the same index is the same headline.
-            const pick = Math.floor(Math.random() * DB.newsTicker.length);
+            // Drawn without replacement (draw_bag.js) - rolling afresh showed
+            // the same headline up to seven times a career while others never
+            // came up at all.
+            const pick = drawIndex('newsTicker', DB.newsTicker.length);
             this.state.activeNews = { ref: { p: 'newsTicker', path: [pick] } };
             this.state.lastNewsTime = this.state.time;
             this.renderHeader();
@@ -144,7 +148,8 @@ export const ui = {
         
         if (this.state.drunkEndTime > this.state.time) {
             const remaining = this.state.drunkEndTime - this.state.time;
-            // Scales from 6px down to 0px over sixty minutes
+            // 3px when the drinking is over (drunkEndTime sits an hour past
+            // it), fading to 0 over that hour of game time
             blurVal = Math.max(0, (remaining / 60) * 3);
         }
 
@@ -269,6 +274,79 @@ export const ui = {
         server: '#10b981', coffee: '#f59e0b', party: '#ec4899', lunch: '#14b8a6'
     },
 
+    /**
+     * Is the screen narrow enough that the page stacks and scrolls?
+     *
+     * Below 1025px app.css releases the page height and the five panels sit
+     * underneath each other instead of side by side. ONE answer to that
+     * question, because both the phone's scroll and the terminal's read it,
+     * and the old `innerWidth < 1024` disagreed with the stylesheet's
+     * `max-width: 1024px` at exactly 1024.
+     */
+    PHONE_LAYOUT: '(max-width: 1024px)',
+    phoneLayout: function() {
+        return window.matchMedia?.(this.PHONE_LAYOUT).matches ?? false;
+    },
+
+    /**
+     * Where the usable screen ends.
+     *
+     * On the stacked layout the action bar is pinned over the bottom edge, so
+     * window.innerHeight is NOT where content stops being readable. Anything
+     * asking "is this on screen" has to ask this instead: the tutorial asked
+     * the viewport, called a target behind the bar visible, and skipped the
+     * scroll that would have freed it.
+     */
+    usableBottom: function() {
+        if (!this.phoneLayout()) return window.innerHeight;
+        const bar = document.getElementById('action-bar');
+        const top = bar?.getBoundingClientRect().top;
+        return typeof top === 'number' ? Math.min(window.innerHeight, top) : window.innerHeight;
+    },
+
+    /**
+     * Is this element pinned to the screen rather than scrolled with the page?
+     *
+     * The four action buttons are, on the stacked layout - they live inside
+     * the pinned bar. Scrolling to put one "into view" is both pointless and
+     * harmful: it is already there, and the browser aims at its natural place
+     * at the end of the page.
+     */
+    pinnedToScreen: function(el) {
+        if (!el || !this.phoneLayout()) return false;
+        return document.getElementById('action-bar')?.contains(el) ?? false;
+    },
+
+    /**
+     * Brings the terminal back under the player's eyes.
+     *
+     * On a phone the five panels stack: at 375x812 the page is 1838px tall,
+     * the action bar sits at 1742 and the event at 358. Tapping an action
+     * therefore left the event 652px ABOVE the screen - every single action
+     * was scroll down, tap, scroll up to read, scroll down again, with the
+     * clock running. The bar is pinned to the bottom edge on that layout
+     * (app.css) and the event comes to the player.
+     *
+     * `start`, not `center`: an event card can be taller than the viewport,
+     * and centring it would push its title off the top.
+     *
+     * Not while a window covers the terminal - the same question the keyboard
+     * asks before reaching through one - and not during the tutorial, which
+     * scrolls to its own target and would be fighting over the page.
+     */
+    showTerminal: function() {
+        if (!this.phoneLayout()) return;
+        if (this.windowOverTerminal() || this.state.isEmailOpen) return;
+        if (this.lesson?.isActive) return;
+        // After the paint, so the panel has the height its new content gives it.
+        setTimeout(() => {
+            const panel = document.getElementById('terminal');
+            if (panel && !this.windowOverTerminal()) {
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 60);
+    },
+
     _setTerminal: function(className, extra) {
         this.state.terminal = { variant: 'system', className, ...extra };
 
@@ -282,6 +360,10 @@ export const ui = {
             const type = extra?.event?.type;
             panel.style.setProperty('--panel-accent', this.TERMINAL_ACCENTS[type] ?? '#334155');
         }
+
+        // Every change of what the terminal shows runs through here, so this
+        // is the one place the phone layout has to follow.
+        this.showTerminal();
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
@@ -319,10 +401,14 @@ export const ui = {
     // `text` is a RECIPE, not a sentence - components/ResultView.svelte resolves
     // it on every paint, so a finished result follows a language switch like
     // everything else recorded. See engine/recipe.js.
-    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor) {
+    // `tickets` is what the decision did to the pile, plus or minus. The card
+    // showed minutes and the three bars but never this, although the pile is
+    // the most common way to lose: 82 options in the stock cost an hour or
+    // more, which is two tickets, and the longest costs eight.
+    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
-            result: { text, m, l, a, b, action, buttonKey, buttonColor }
+            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets }
         });
     },
 
@@ -442,12 +528,89 @@ export const ui = {
      * Accepts an element or an id, because half the call sites already hold
      * the element and the other half only know its name.
      */
+    /**
+     * The open window the keyboard belongs to, or null.
+     *
+     * Highest z-index wins, because that is what "on top" means here: the
+     * item dialog over the open backpack, a warning over both. Asked by the
+     * Tab handler in src/engine.js - a window marked aria-modal has to keep
+     * the tab order as well, or the keyboard walks out the back of it.
+     */
+    topmostDialog: function() {
+        let best = null, bestZ = -1;
+        for (const el of document.querySelectorAll('[role="dialog"]')) {
+            if (el.classList.contains('hidden')) continue;
+            const cs = getComputedStyle(el);
+            if (el.offsetParent === null && cs.position !== 'fixed') continue;
+            // All 21 dialogs are `fixed`, so the line above never rejects one
+            // and the `hidden` class is doing all the work. A window hidden
+            // some OTHER way would therefore collect the keyboard and trap Tab
+            // inside a box nobody can see - which is exactly the shape of the
+            // 4.1 failure recorded under isOverlayOpen(). Nothing hides with an
+            // inline style today; this is here so that it cannot start.
+            if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+            const z = parseInt(cs.zIndex, 10) || 0;
+            if (z >= bestZ) { bestZ = z; best = el; }
+        }
+        return best;
+    },
+
+    /** What focusable controls a window holds, in tab order. */
+    FOCUSABLE: 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), '
+             + 'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+
+    focusablesIn: function(el) {
+        return [...(el?.querySelectorAll(this.FOCUSABLE) ?? [])]
+            .filter(node => node.offsetParent !== null || node.tagName === 'INPUT');
+    },
+
+    /**
+     * Where the keyboard was before a window opened, so it can go back.
+     * One entry per open window, because they stack (settings over the intro,
+     * the item dialog over the backpack).
+     */
+    _focusReturn: [],
+
     showOverlay: function(target, lockScroll = true) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
+        // Asked BEFORE the class comes off: the stack below must only grow
+        // when a window actually opens.
+        const wasOpen = this.isOverlayOpen(el);
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
+
+        // The keyboard follows the window. aria-modal tells a SCREEN READER to
+        // ignore what is behind it, but the tab order went on walking through
+        // the controls back there - open the settings over the start screen and
+        // the next Tab landed on EXPORT, behind the dialog, out of sight.
+        // Remembered so closing can hand it back; without that a player who
+        // opens and closes a window finds the keyboard at the top of the page.
+        //
+        // Only on a window that was closed. Shown over itself - the mail hint
+        // replacing the box already on modal-overlay, a second showModal from
+        // the chain in checkEndConditions - it would push a second entry that
+        // nothing ever pops, and from then on every close hands the keyboard
+        // one window too far back: with the Tab trap, to a control behind a
+        // dialog that is still open.
+        if (!wasOpen) this._focusReturn.push(document.activeElement);
+        // After the paint, or the first control is not laid out yet and
+        // offsetParent still reads null.
+        setTimeout(() => {
+            if (el.classList.contains('hidden')) return;    // closed again already
+            const stops = this.focusablesIn(el);
+            // The control the CONFIRM KEY would press, where the window names
+            // one - otherwise the ring sits on one button while Space presses
+            // another. On the end screen that cost the whole report: the ring
+            // landed on the day-curve toggle, Space pressed RESTART, and the
+            // page reloaded under a player who thought they were opening a
+            // chart. Ring and key have to agree.
+            const primary = stops.find(node => node.hasAttribute('data-modal-continue'));
+            const first = primary ?? stops[0];
+            if (first) first.focus();
+            else { el.setAttribute('tabindex', '-1'); el.focus(); }
+        }, 30);
         return el;
     },
 
@@ -459,9 +622,26 @@ export const ui = {
     hideOverlay: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         if (!el) return null;
+        const wasOpen = this.isOverlayOpen(el);
         el.classList.add('hidden');
         el.classList.remove('flex');
         this.releaseScroll(el.id || 'overlay');
+
+        // Hand the keyboard back to whatever opened this window. Guarded: the
+        // button may be gone by now (a component re-rendered), and focusing a
+        // detached node silently moves focus to the body.
+        //
+        // Only for a window that WAS open, for the same reason the push is
+        // conditional. Several callers hide on spec rather than on state:
+        // closeModals() hides both save dialogs though one of them is open at
+        // most, triggerBossFight() asks whether the mail overlay EXISTS, and
+        // reset() hides it unconditionally. Each of those popped the return
+        // target of whatever window still stood underneath. releaseScroll is
+        // a Set and survives being called twice; a stack does not.
+        if (wasOpen) {
+            const back = this._focusReturn.pop();
+            if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
+        }
         return el;
     },
 
@@ -549,14 +729,21 @@ export const ui = {
      * rather than read off the title, because the title is a dictionary entry
      * and says 'BLOW-OFF' in the other language.
      */
-    showModal: function(title, text, isEnd, tone = null) {
+    /**
+     * @param {Function|null} then  what happens once the player has read it.
+     *        For the two hints that stand IN FRONT of something (the first
+     *        mail of a career, the first emergency): the thing they explain
+     *        carries a clock, so it may not start while the explanation is
+     *        still on screen. See engine_events.firstTimeHint.
+     */
+    showModal: function(title, text, isEnd, tone = null, then = null) {
         // One shape for the box, whoever opens it. A warning has no balance
         // sheet and no gala report, but the fields are named rather than left
         // absent, so that reading one of them somewhere never depends on which
         // function opened the window.
         this.state.modal = { open: true, title, text, isEnd: !!isEnd,
                              lead: '', cause: null, diary: null, tone,
-                             balance: null, party: null };
+                             balance: null, party: null, then };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
     },
@@ -583,8 +770,11 @@ export const ui = {
     },
 
     closeModal: function() {
+        // Read before dismissing: dismissModal empties the state.
+        const then = this.state.modal?.then;
         this.dismissModal();
         this.updateUI();
+        if (typeof then === 'function') then();
     },
 
     /**
@@ -638,7 +828,7 @@ export const ui = {
         // reward for actually fleeing, not a gallery to leaf through.
         if (!this.state.currentExcuse || this.state.excuseFor !== this.state.currentEventId) {
             this.state.currentExcuse = DB.excuses?.length
-                ? { ref: { p: 'excuses', path: [Math.floor(Math.random() * DB.excuses.length)] } }
+                ? { ref: { p: 'excuses', path: [drawIndex('excuses', DB.excuses.length)] } }
                 : { k: 'excuse.fallback' };
             this.state.excuseFor = this.state.currentEventId;
         }
@@ -1289,19 +1479,18 @@ export const ui = {
 
                 const data = JSON.parse(jsonString);
 
-                // Validation
-                if (!data.arc || !Array.isArray(data.arc.items)) {
-                    // Never reaches the player: the catch below logs this and
-                    // shows import.unreadable instead. A console message, so
-                    // it speaks English like its neighbours.
-                    throw new Error("Malformed data structure.");
-                }
+                // Validation. Shape by shape against freshArchive(), not just
+                // "items is an array" - see engine_core.cleanArchive. Whatever
+                // it throws never reaches the player: the catch below logs it
+                // and shows import.unreadable instead, which is why those
+                // messages speak English like their neighbours.
+                const archive = engine.cleanArchive(data.arc);
 
                 // --- SAFE MERGE ---
                 // Start from the current archive template
                 const currentTemplate = JSON.parse(JSON.stringify(engine.state.archive));
                 // Merge the imported save into it without losing new fields
-                const mergedArchive = engine.deepMerge(currentTemplate, data.arc);
+                const mergedArchive = engine.deepMerge(currentTemplate, archive);
 
                 // Save the repaired and merged archive
                 localStorage.setItem(engine.KEYS.archive, JSON.stringify(mergedArchive));
@@ -1335,6 +1524,26 @@ export const ui = {
                 // and a whole week would drag four of them along.
                 engine.clearDay();
                 engine.clearWeek();
+
+                // --- AND TELL THE CLOUD, BEFORE THE RELOAD ---
+                //
+                // On the desktop the import used to undo itself. Nothing wrote
+                // the cloud copy here, so the reload below found the REPLACED
+                // career still sitting in savegame.dat - and loadCloudSave
+                // unites rather than overwrites (rightly: the archive is
+                // cumulative and a union never regresses a second machine).
+                // The imported career therefore got everything the old one had
+                // handed straight back to it, and an import of one achievement
+                // came back carrying three.
+                //
+                // An import is a REPLACE, so the cloud has to be told what it
+                // now holds. buildCloudPayload reads the flags out of
+                // localStorage - all of them already written above - and the
+                // archive out of state, which the import did not touch; hence
+                // the assignment. `force` skips the 30-second throttle, and on
+                // the web platform.save is a no-op, so nothing happens there.
+                engine.state.archive = mergedArchive;
+                engine.syncRun(true);
 
                 msg.innerText = t('import.accepted');
                 msg.className = "text-xs text-green-500 font-bold transition-opacity";
@@ -1684,8 +1893,116 @@ export const ui = {
         this.playAudio('ui');
     },
 
+    /**
+     * The day as a picture, handed to whatever the device shares with.
+     *
+     * The game is free and lives on being shown to somebody; all a player
+     * could pass on was the address, which says nothing about the afternoon
+     * they just had. share_card.js draws it, this hands it over: the share
+     * sheet where there is one (a phone), a download where there is not (a
+     * desktop browser, and Electron, which has no navigator.share at all).
+     *
+     * The button says what happened, because a share sheet that never opens
+     * and a file that lands in Downloads look identical from the sofa.
+     */
+    shareDayCard: async function(btn) {
+        // The resting label is read off the live button, so a second tap
+        // inside the 2.6 seconds would capture "Picture saved." as the text to
+        // go back to - and keep it for good. One card at a time.
+        if (this._sharing) return;
+        this._sharing = true;
+
+        const textSpan = btn?.querySelector('#text-share-card') || btn;
+        const resting = textSpan?.innerText;
+        // The two the button says for itself travel as keys through say(), so
+        // lint-i18n cannot see them in a t() call and they are declared here.
+        // i18n-uses: end.share.saved, end.share.failed
+        const say = (key) => { if (textSpan) textSpan.innerText = t(key); };
+        const restore = () => setTimeout(() => {
+            if (textSpan && resting !== undefined) textSpan.innerText = resting;
+            this._sharing = false;
+        }, 2600);
+
+        try {
+            const { CARD, drawDayCard } = await import('./share_card.js');
+            const canvas = document.createElement('canvas');
+            canvas.width = CARD.w; canvas.height = CARD.h;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('no 2d context');
+
+            const m = this.state.modal ?? {};
+            const say2 = (v) => (typeof v === 'string' ? v : renderRecipe(v) ?? '');
+            // The week travels on the modal, exactly as it does for DayReport:
+            // by the time this screen stands, finishWeek() has called endWeek()
+            // and state.week is empty again. Asking the state here labelled
+            // every week card with the DAY mode - and since difficultyMult
+            // stays at 1.0 in a week by design, that label was always "Normal".
+            // i18n-uses: diff.easy.name, diff.normal.name, diff.hard.name
+            const isWeek = !!m.isWeek;
+            const mode = isWeek
+                ? tf('week.badge', { mode: t(`week.diff.${m.weekMode ?? 'normal'}`) })
+                : t(`diff.${this.difficultyKey()}.name`);
+
+            drawDayCard(ctx, {
+                title: say2(m.title),
+                lead: say2(m.lead),
+                mode,
+                isWin: !!m.isWin,
+                url: platform.shareUrl(),
+                // statHistory is ONE DAY. In a week the heading says the
+                // week and the panel shows one of its five, so the panel
+                // names which - otherwise the picture claims more than it
+                // draws.
+                // modal.weekDay counts from one and dayName from zero, hence
+                // the -1. weekDayName() is the helper for exactly that, but it
+                // reads state.week - which is cleared by the time we are here.
+                curveLabel: isWeek
+                    ? `${t('end.toggle.chart')} · ${dayName((m.weekDay ?? 1) - 1)}`
+                    : t('end.toggle.chart'),
+                points: this.state.statHistory ?? [],
+                stats: [
+                    { label: t('stat.lazy'),        value: `${Math.round(this.state.fl)}%`, colour: '#34d399' },
+                    { label: t('stat.aggro'),       value: `${Math.round(this.state.al)}%`, colour: '#fb923c' },
+                    { label: t('stat.radar.short'), value: `${Math.round(this.state.cr)}%`, colour: '#ef4444' },
+                    { label: t('stat.tickets'),     value: String(this.state.tickets),      colour: '#c084fc' },
+                ],
+            });
+
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            if (!blob) throw new Error('the canvas produced no picture');
+            const file = new File([blob], 'layer8problem.png', { type: 'image/png' });
+
+            // A phone opens its share sheet; everything else gets a file.
+            if (navigator.canShare?.({ files: [file] })) {
+                await navigator.share({ files: [file], title: t('settings.share.title'), text: t('settings.share.text') });
+                restore();
+                return;
+            }
+
+            const href = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = href;
+            link.download = `layer8problem-${new Date().toISOString().slice(0, 10)}.png`;
+            link.click();
+            // Not in the same breath as the click: the download is QUEUED,
+            // and a URL revoked before the browser has fetched it leaves the
+            // player with a failed download and no message - the button still
+            // says the picture was saved.
+            setTimeout(() => URL.revokeObjectURL(href), 10000);
+            say('end.share.saved');
+            restore();
+        } catch (err) {
+            // A share sheet the player closed is not a failure.
+            if (err?.name === 'AbortError') { restore(); return; }
+            console.warn('Day card could not be produced:', err);
+            say('end.share.failed');
+            restore();
+        }
+    },
+
     shareGame: function(btn) {
-        // Desktop hands out the store page, the browser its own URL.
+        // Desktop hands out the store page; the browser its own URL, or the
+        // game's page where that is not the same thing (platform.shareUrl).
         const shareUrl = platform.shareUrl();
 
         const shareData = {
@@ -1867,9 +2184,20 @@ export const ui = {
             // uses everywhere (partyInvitation carried them too, until the
             // gala stopped caring about tiers in 6.2), and a translated name
             // here would make the ticket depend on the reporter's language.
-            const diff = s.difficultyMult < 1.0 ? "easy"
-                       : s.difficultyMult > 1.0 ? "hard"
-                       : "normal";
+            // In a WEEK difficultyMult is 1.0 for all five days (the level
+            // lives in state.week.level), so every week report claimed
+            // "normal" - the one mode where the level and the day it broke on
+            // matter most.
+            const diff = s.week?.active
+                ? `week ${s.week.level} / day ${s.week.dayIndex}`
+                : s.difficultyMult < 1.0 ? "easy"
+                : s.difficultyMult > 1.0 ? "hard"
+                : "normal";
+
+            // What a maintainer cannot ask the reporter for afterwards: which
+            // build, which shell, which language. A ticket without them starts
+            // with three questions.
+            const build = `${this.VERSION} ${platform.isDesktop ? 'desktop' : 'web'} / ${language()}`;
 
             // --- FIND THE LAST EVENT ---
             // activeEvent is a BOOLEAN; the id lives in currentEventId - the
@@ -1900,6 +2228,7 @@ export const ui = {
             // --- ASSEMBLE ---
             const logData = 
 `=== STATUS ===
+🏷 Build:     ${build}
 📍 Event:     ${lastEventID}
 🕒 Time:      ${prettyTime}
 💀 Diff:      ${diff}

@@ -188,7 +188,7 @@
         {:else if ev.charName}
             <div class="hidden sm:flex shrink-0 w-28 h-28 md:w-32 md:h-32 bg-slate-900 border border-slate-600 rounded-xl shadow-lg flex-col items-center justify-center gap-1.5 px-1">
                 <div class="w-14 h-14 rounded-full bg-slate-700 border border-slate-500 flex items-center justify-center text-xl font-black text-slate-200">{initials}</div>
-                <span class="text-[10px] text-slate-400 font-mono text-center leading-tight">{ev.charName}</span>
+                <span class="text-[0.625rem] text-slate-400 font-mono text-center leading-tight">{ev.charName}</span>
             </div>
         {/if}
     </div>
@@ -226,7 +226,7 @@
                 </div>
                 <div class="shrink-0 flex items-center h-full gap-2">
                     {#if o.consumes}
-                        <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">
+                        <span class="text-[0.625rem] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">
                             −{o.consumes}
                         </span>
                     {/if}

@@ -408,8 +408,19 @@ export const de = {
     'morning.conditions':          'Startbedingungen:',
 
     'header.maxTickets':           'Max: 10',
+    'header.valveSpent':           'Genutzt',
+    'header.warned':               'Abgemahnt',
 
     'end.btn.next':                'WEITER · {day}',
+    // H.A.L.G.E.R.D. explaining the two things that arrive uninvited - once
+    // per career, each before its clock starts.
+    'hint.mail.title':             'SYSTEMMELDUNG: POSTEINGANG',
+    'hint.mail.text':              'H.A.L.G.E.R.D.: Eine E-Mail erreicht Ihr Postfach.<br><br>Sie verschwindet nach 20 Sekunden von selbst. Das ist keine Lösung, sondern eine Entscheidung mit Folgen - wie jede andere Antwort auch.<br><br>Lesen Sie. Dann entscheiden Sie.',
+    'hint.boss.title':             'SYSTEMMELDUNG: NOTFALL',
+    'hint.boss.text':              'H.A.L.G.E.R.D.: Es ist etwas kaputtgegangen.<br><br>Ab jetzt läuft die Uhr in Sekunden statt in Minuten. Läuft sie ab, entscheidet das System an Ihrer Stelle.<br><br>Das System ist dafür nicht gebaut.',
+    'end.share.btn':               'Tag teilen',
+    'end.share.saved':             'Bild gespeichert.',
+    'end.share.failed':            'Das Bild ließ sich nicht erzeugen.',
     'end.btn.restart':             'NEUSTART',
     'end.btn.ok':                  'VERSTANDEN',
 
@@ -470,7 +481,10 @@ export const de = {
     'end.toggle.chart':            'Tagesverlauf',
     'end.toggle.diary':            'Logbuch',
 
-    'chart.aria':                  'Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag',
+    'chart.aria':                  'Verlauf von Faulheit, Aggro, Chef-Radar und offenen Tickets über den Arbeitstag',
+    // A day recorded before 6.4 carries no ticket counts, so the picture has
+    // three lines and the label must not announce a fourth.
+    'chart.aria.noTickets':        'Verlauf von Faulheit, Aggro und Chef-Radar über den Arbeitstag',
     'chart.tooFew':                'Zu wenige Entscheidungen für eine Kurve.',
 
     'diary.header':                'Logbuch — {day}',
@@ -621,6 +635,16 @@ export const de = {
 
     'common.back':                 '← Zurück',
 
+    // Names for the three windows that carry no heading of their own.
+    // A screen reader otherwise announces nothing but "dialog".
+    'a11y.dialog.intranet':        'GlobalCorp-Intranet',
+    'a11y.dialog.lore':            'Firmenchronik',
+    'a11y.dialog.intro':           'Startbildschirm',
+    'a11y.dialog.system':          'Systemmeldung',
+    'a11y.dialog.mail':            'E-Mail',
+
+    'intro.storageLost':           'Dieser Browser lässt die Seite nicht speichern. Dein Fortschritt hält, bis der Tab geschlossen wird – Export sichert ihn.',
+
     'intro.handbook.title':        'Überlebens-Handbuch',
     'intro.handbook.tickets.name': 'TICKETS',
     'intro.handbook.tickets.desc': 'Alle 30 Minuten kommt eines dazu. Ab 10 offenen Tickets ist Schluss.',
@@ -641,18 +665,18 @@ export const de = {
     'diff.subtitle':               'Wie sehr hasst du dein Leben heute?',
     'diff.easy.name':              'FREITAG',
     'diff.easy.motto':             '"Hoch die Hände, Wochenende!"',
-    'diff.easy.p1':                '✔ Weniger Tickets',
-    'diff.easy.p2':                '✔ Kollegen sind entspannt',
+    'diff.easy.p1':                '✔ Drei Ausreden in der Hinterhand',
+    'diff.easy.p2':                '✔ Das Ventil kühlt auf 30 %',
     'diff.easy.p3':                '✔ Geringerer Multiplikator (0.8x)',
     'diff.normal.name':            'MITTWOCH',
     'diff.normal.motto':           '"Bergfest. Der Wahnsinn ist Routine."',
-    'diff.normal.p1':              '● Standard Wahnsinn',
-    'diff.normal.p2':              '● Normale Ticket-Rate',
+    'diff.normal.p1':              '● Zwei Ausreden in der Hinterhand',
+    'diff.normal.p2':              '● Das Ventil kühlt auf 50 %',
     'diff.normal.p3':              '● Standard Multiplikator (1.0x)',
     'diff.hard.name':              'MONTAG',
     'diff.hard.motto':             '"Warum tue ich mir das an?"',
     'diff.hard.p1':                '⚠ Startet mit 2 Tickets',
-    'diff.hard.p2':                '⚠ Erhöhte Ticket-Rate',
+    'diff.hard.p2':                '⚠ Eine Ausrede, Ventil nur auf 60 %',
     'diff.hard.p3':                '⚠ Erhöhter Multiplikator (1.25x)',
 
     'week.diff.easy':              'Erholt',

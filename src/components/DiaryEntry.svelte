@@ -55,19 +55,19 @@
         <div class="bg-[#f4ecd8] text-slate-800 rounded-sm px-6 py-5 text-left
                     border border-[#d8cdb4] shadow-inner"
              style="background-image:
-                        repeating-linear-gradient(0deg, transparent 0 27px, rgba(120,130,150,0.18) 27px 28px),
+                        repeating-linear-gradient(0deg, transparent 0 1.6875rem, rgba(120,130,150,0.18) 1.6875rem 1.75rem),
                         linear-gradient(180deg, #f7f1e0 0%, #efe5cd 100%);">
 
             <!-- Header like a notebook: weekday, with the rule underneath -->
             <div class="flex items-baseline justify-between border-b-2 border-[#c8b99b] pb-1 mb-3">
-                <span class="font-serif font-bold text-[15px] tracking-wide">{tf('diary.header', { day: weekday })}</span>
-                <span class="font-serif text-[11px] text-slate-600 italic">{t('diary.personal')}</span>
+                <span class="font-serif font-bold text-[0.9375rem] tracking-wide">{tf('diary.header', { day: weekday })}</span>
+                <span class="font-serif text-[0.6875rem] text-slate-600 italic">{t('diary.personal')}</span>
             </div>
 
-            <div class="space-y-3 font-serif text-[13px] leading-[28px]">
+            <div class="space-y-3 font-serif text-[0.8125rem] leading-[1.75rem]">
                 {#each paragraphs as p, i (i)}
                     {#if p.note}
-                        <p class="text-[12px] leading-[26px] text-slate-700 border-l-2 border-[#c8b99b] pl-3 ml-1">
+                        <p class="text-[0.75rem] leading-[1.625rem] text-slate-700 border-l-2 border-[#c8b99b] pl-3 ml-1">
                             {p.text}
                         </p>
                     {:else}
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Signature line; the initials are the player character's -->
-            <div class="mt-4 text-right font-serif italic text-slate-600 text-[12px]">— M.</div>
+            <div class="mt-4 text-right font-serif italic text-slate-600 text-[0.75rem]">— M.</div>
         </div>
     </div>
 {/if}

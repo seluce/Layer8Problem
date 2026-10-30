@@ -53,6 +53,9 @@ What it finds — throughout, things that fail **quietly** at runtime:
 - `loot`/`req`/`rem` on items that do not exist; quest items as a condition
   (trophies are lootable only)
 - `char`/`rep`/`reqRep` names that are not in `data_chars.js`
+- **encounter continuations against their own opener** (6.4): a `reqRep` next
+  to a `reqStory` is a second gate since the engine asks both, so a threshold
+  pointing the other way is content nobody can reach
 - story flags that are demanded but never set (dead content) — and, the other
   way round, flags that are set with no taker (a dead end)
 - chains: `next` into the void, unreachable nodes and results, dead ends

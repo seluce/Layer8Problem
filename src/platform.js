@@ -13,6 +13,12 @@
  * Every method must stay safe to call unconditionally: the engine never asks
  * whether it is on desktop before calling one of these.
  */
+// Hosts that serve the game from somewhere other than its own page, and the
+// page to hand out instead. See shareUrl() below.
+const FRONT_DOORS = [
+    { host: /(^|\.)itch\.zone$/, url: 'https://seluce.itch.io/layer8problem' },
+];
+
 export const platform = {
 
     // True only in the Electron/Steam build. Used to toggle UI that makes no
@@ -47,8 +53,21 @@ export const platform = {
     /** Opens a URL outside the game. */
     openExternal: (url) => window.open(url, '_blank', 'noopener'),
 
-    /** The URL to hand out when the player shares the game. */
-    shareUrl: () => window.location.href,
+    /**
+     * The URL to hand out when the player shares the game.
+     *
+     * Where the game is SERVED from is not always where a player should be
+     * sent. itch.io runs HTML games from itch.zone, under a number that
+     * changes with every upload - so a shared link rots, and whoever follows
+     * it lands on the bare game instead of its page with the description,
+     * the comments and the rating. Known hosts therefore name their front
+     * door; anywhere else shares the address it is running on, which is
+     * right for GitHub Pages and for anyone hosting their own copy.
+     */
+    shareUrl: () => {
+        const door = FRONT_DOORS.find(entry => entry.host.test(window.location.hostname));
+        return door ? door.url : window.location.href;
+    },
 
     /** Aggregated worldwide statistics, or null when unavailable. */
     globalStats: async () => null,

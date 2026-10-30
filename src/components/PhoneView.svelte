@@ -111,7 +111,7 @@
                                 {/if}
                             </div>
                             <div class="flex flex-col">
-                                <span class="text-[10px] text-slate-400 ml-1 mb-0.5">{sender(msg)}</span>
+                                <span class="text-[0.625rem] text-slate-400 ml-1 mb-0.5">{sender(msg)}</span>
                                 <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed wrap-break-word">
                                     {text(msg)}
                                 </div>
@@ -141,7 +141,7 @@
                             <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
                                 {text(msg)}
                             </div>
-                            <span class="text-[10px] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
+                            <span class="text-[0.625rem] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
                         </div>
                     </div>
                 {/if}
@@ -169,10 +169,10 @@
                     </div>
                     <div class="shrink-0 flex items-center h-full gap-2">
                         {#if o.missing}
-                            <span class="text-[10px]">{tf('phone.missing', { item: o.missing })}</span>
+                            <span class="text-[0.625rem]">{tf('phone.missing', { item: o.missing })}</span>
                         {:else}
                             {#if o.consumes}
-                                <span class="text-[10px] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">−{o.consumes}</span>
+                                <span class="text-[0.625rem] font-normal text-amber-500/90 bg-amber-950/30 border border-amber-800/50 px-1.5 py-0.5 rounded-sm whitespace-nowrap">−{o.consumes}</span>
                             {/if}
                         {/if}
                         {#if !o.missing && o.key}
@@ -199,8 +199,8 @@
                      width="28" height="28" class="w-7 h-7 shrink-0 select-none"
                      onerror={(e) => e.currentTarget.outerHTML = '📩'}>
                 <span class="block">
-                    <span class="block text-[10px] font-bold">{t('phone.newMessage')}</span>
-                    <span class="block text-[9px]">{t('phone.readNow')}</span>
+                    <span class="block text-[0.625rem] font-bold">{t('phone.newMessage')}</span>
+                    <span class="block text-[0.5625rem]">{t('phone.readNow')}</span>
                 </span>
             </button>
         {/if}

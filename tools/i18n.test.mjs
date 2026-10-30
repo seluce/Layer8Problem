@@ -679,4 +679,58 @@ await ok('No recorded field holds a finished sentence any more', async () => {
     }
 });
 
+await ok('No type size is written in pixels', async () => {
+    // The text-size setting works on the ROOT font size, because Tailwind
+    // sizes type in rem (see the note in app.css). A size written in px is
+    // therefore the one thing that setting cannot reach - and up to 6.3 the
+    // 155 of them were exactly the small print that needed it most: the log,
+    // the handbook, the setting descriptions, the badges.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    // Resolved against this file, not the working directory: run from
+    // anywhere but the repository root, walk('src') found nothing and the
+    // check passed on an empty list.
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const files = ['index.html'];
+    const walk = (dir) => {
+        for (const entry of readdirSync(root + dir, { withFileTypes: true })) {
+            const p = dir + '/' + entry.name;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(svelte|js|html|css)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+
+    const offenders = [];
+    for (const file of files) {
+        let src = readFileSync(root + file, 'utf8');
+        // A stylesheet is read without its comments: the note in app.css
+        // RECOUNTS the 155 px sizes 6.4 converted, down to "text-[8px] to
+        // text-[17px]", and a check that reads its own history as a finding
+        // forces the history to be deleted. Only .css, where every comment
+        // has this one shape - doing it to .svelte would let a /* inside a
+        // string swallow real markup.
+        if (file.endsWith('.css')) src = src.replace(/\/\*[\s\S]*?\*\//g, '');
+        // leading-[] as well as text-[]: a line-height in px beside type in
+        // rem does not just fail to scale, it DRIFTS - the diary's lines are
+        // ruled by a background gradient and the text sits on them, so the
+        // two have to be in the same unit or large text walks off the paper.
+        for (const hit of src.matchAll(/(?:text|leading)-\[\d+px\]/g)) {
+            offenders.push(`${file}: ${hit[0]}`);
+        }
+        // The stylesheet too, which the Tailwind form above cannot see. It
+        // held seven of them - the key caps, the achievement toast, the
+        // inventory glyph - all of them small print, which is the text the
+        // setting exists for. The setting's OWN root sizes are the one
+        // legitimate px here: they are what everything else is relative to.
+        for (const line of src.split('\n')) {
+            if (/html\.text-size-/.test(line)) continue;
+            for (const hit of line.matchAll(/font-size:\s*[\d.]+px/g)) {
+                offenders.push(`${file}: ${hit[0]}`);
+            }
+        }
+    }
+    assert.deepEqual(offenders, [], 'type sizes in px do not follow the text-size setting');
+});
+
 console.log(`\n${passed} checks passed.`);

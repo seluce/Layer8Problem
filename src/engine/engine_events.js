@@ -3,6 +3,7 @@ import { t } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
 import { PLAYER_CHAR, charDisplayName } from './chars.js';
 import { findEventById, itemNameValue } from './recipe.js';
+import { drawIndex } from './draw_bag.js';
 
 /**
  * One coloured sentence for the morning screen's status line.
@@ -38,7 +39,8 @@ const moodLine = (cls, recipe) => ({ cls, ...recipe });
 
 export const events = {
 
-    // How often an unlocked follow-up beats a fresh event. See pickFromPool.
+    // How often an unlocked follow-up beats a fresh event in the day mode.
+    // The week leans further as it runs out of days; see followUpChance().
     FOLLOWUP_CHANCE: 0.30,
 
     // How long an open mail waits before it resolves itself. ONE number: the
@@ -55,7 +57,7 @@ export const events = {
         if (this.lesson?.isActive) return;
         if (this.state.isPartyMode) return;
 
-        // --- INGAME-ZEIT COOLDOWN ---
+        // --- IN-GAME-TIME COOLDOWN ---
         // Block if a mail already arrived within the last 25 in-game minutes
         if (this.state.lastEmailTime && (this.state.time - this.state.lastEmailTime < 25)) return;
         // ---------------------------------
@@ -98,6 +100,38 @@ export const events = {
                 this.triggerEmail(); 
             }, 2000);
         }
+    },
+
+    /**
+     * Explains, once per career, a thing that arrives uninvited.
+     *
+     * The two of them are the mail and the emergency, and both come with a
+     * clock - 20 seconds and 8 to 20. So the explanation stands IN FRONT of
+     * the thing rather than beside it: the player reads, says they have read
+     * it, and only then does the clock start. An explanation that eats the
+     * time it is explaining would be the joke the game is already making.
+     *
+     * Taught where it happens rather than listed on the start screen. That was
+     * the first attempt and it made the page scroll - and a rule read before
+     * the first day is a rule nobody remembers by the time it matters.
+     *
+     * @returns {boolean} true if the hint took over; the caller then returns
+     *          and is called again from the hint's own continuation.
+     */
+    firstTimeHint: function(key, titleKey, textKey, then) {
+        if (localStorage.getItem(key) === 'true') return false;
+        // A box already on screen owns modal-overlay, and showModal REPLACES
+        // its contents rather than standing on them - checkEndConditions is
+        // built around that and returns after each one. The mail arrives on a
+        // two-second timer, so it can land on the rage valve's explanation or
+        // the written warning, and then the player never reads why aggro
+        // dropped or that the one-time save of the day is spent.
+        // The flag stays unset and the hint comes with the next one; the mail
+        // meanwhile opens its own window over the box, as it did before 6.4.
+        if (this.state.modal?.open) return false;
+        try { localStorage.setItem(key, 'true'); } catch { /* no storage, no second chance */ }
+        this.showModal(t(titleKey), t(textKey), false, 'halgerd', then);
+        return true;
     },
 
     // Opens the mail overlay
@@ -144,11 +178,25 @@ export const events = {
 
         if (!email) return;
 
+        // The first mail of a career gets a word of warning first, and opens
+        // from its continuation - with the flag already set, that second pass
+        // walks straight through to the window below.
+        // i18n-uses: hint.mail.title, hint.mail.text
+        if (this.firstTimeHint(this.KEYS.seenFirstMail, 'hint.mail.title', 'hint.mail.text',
+                               () => this.triggerEmail(email.id))) {
+            return;
+        }
+
         // 1. FREEZE & STATUS
         this.state.usedEmails.add(email.id);
-        this.state.isEmailOpen = true; 
+        // A mail is seen the moment its window opens, like an event in the
+        // terminal. Until 6.4 nothing recorded it, and the knowledge entries
+        // that only mails unlock - Sabine, Wuttke, eleven notes - stayed dark
+        // for good, while lint-data accepted the mail ids as their sources.
+        this.recordSeen('event', email.id);
+        this.state.isEmailOpen = true;
 
-        // 2. UI REFERENZEN
+        // 2. UI REFERENCES
         // Everything the window shows comes from here; components/
         // EmailView.svelte does the rendering, including the countdown bar.
         this.state.email = email;
@@ -168,20 +216,58 @@ export const events = {
     },
 
     /**
+     * How often an unlocked follow-up beats a fresh event, by weekday.
+     *
+     * A single day has one number; a week leans towards the threads it has
+     * opened as it runs out of days. Measured over 20-week careers: a little
+     * over half the follow-ups a player unlocked were never drawn before the
+     * week ended, which is the one kind of content a player KNOWS is missing -
+     * they opened the thread themselves. The day mode keeps the flat 30%,
+     * where there is no Friday to lean towards.
+     */
+    FOLLOWUP_BY_DAY: [0.30, 0.30, 0.35, 0.45, 0.55],
+    followUpChance: function() {
+        if (!this.state.week.active) return this.FOLLOWUP_CHANCE;
+        return this.FOLLOWUP_BY_DAY[this.state.week.dayIndex - 1] ?? this.FOLLOWUP_CHANCE;
+    },
+
+    /**
+     * Leans a draw towards events this career has never shown.
+     *
+     * `usedIDs` only remembers the running week, so week two met a quarter of
+     * its events again and week five three fifths of them. The archive knows
+     * better and nothing was asking it. A LEAN, not a rule: four draws in ten
+     * still come from the whole pool, so a known scene can turn up again and
+     * the pools do not feel exhausted - and once everything is seen, nothing
+     * changes at all.
+     *
+     * Not applied to the encounter pool: that one is reserved for the quest
+     * items, and a second preference on top of its own filter is a lever on
+     * the gala's pacing (see CLAUDE.md).
+     */
+    UNSEEN_CHANCE: 0.60,
+    preferUnseen: function(list) {
+        if (list.length < 2 || Math.random() >= this.UNSEEN_CHANCE) return list;
+        const seen = new Set(this.state.archive.seenEvents ?? []);
+        const fresh = list.filter(ev => !seen.has(ev.id));
+        return fresh.length ? fresh : list;
+    },
+
+    /**
      * Picks one event from a pool, giving unlocked follow-ups priority.
      *
-     * Follow-ups jump the queue 30% of the time. That number is the whole
-     * pacing of a day: too high and every thread resolves within minutes, too
-     * low and half the written follow-ups are never seen. It lived in three
-     * places, so changing it meant changing it three times.
+     * The follow-up chance is the whole pacing of a day: too high and every
+     * thread resolves within minutes, too low and half the written follow-ups
+     * are never seen. It lived in three places, so changing it meant changing
+     * it three times.
      */
     pickFromPool: function(pool) {
         if (!pool?.length) return null;
         const followUps = pool.filter(ev => ev.reqStory);
         const base = pool.filter(ev => !ev.reqStory);
-        const draw = (list) => list[Math.floor(Math.random() * list.length)];
+        const draw = (list) => { const l = this.preferUnseen(list); return l[Math.floor(Math.random() * l.length)]; };
 
-        if (followUps.length && Math.random() < this.FOLLOWUP_CHANCE) return draw(followUps);
+        if (followUps.length && Math.random() < this.followUpChance()) return draw(followUps);
         if (base.length) return draw(base);
         return followUps.length ? draw(followUps) : null;   // only follow-ups left
     },
@@ -277,6 +363,43 @@ export const events = {
             if (!this.state.week?.active || this.state.week.dayIndex < ev.reqWeekDayMin) return false;
         }
         return true;
+    },
+
+    /**
+     * May this encounter intercept the player right now?
+     *
+     * BOTH gates, where both are written - the story flag AND the reputation
+     * threshold. Until 6.4 this lived inline in trigger() as a chain of early
+     * returns, and the flag returned first: of the 84 continuations in the
+     * pool, 83 carry a threshold that was therefore never read, and every one
+     * of them was handed out the moment its thread was opened.
+     *
+     * The ladder IS the encounter pool. The opener wants 60, its option pays
+     * 15, and the continuation wants 80 - so the thread opens today and the
+     * next step stays shut until the colleague likes you more. Meeting the
+     * same encounter again carries you from 75 to 90, and then it is there.
+     * One encounter was never meant to pay for its own follow-up, which is
+     * what the tiers (20/40, 60/80 and their negatives) are for.
+     *
+     * A named method rather than a filter body, because that is what hid it:
+     * nothing could ask the rule a question, so nothing noticed when it
+     * stopped asking half of it.
+     */
+    encounterEligible: function(ev) {
+        if (ev.reqStory && !this.storyGateOpen(ev)) return false;
+
+        if (ev.reqRep) {
+            for (const [char, threshold] of Object.entries(ev.reqRep)) {
+                const currentRep = this.state.reputation[char] || 0;
+                // Positive threshold means at least X, negative means at most X
+                if (threshold > 0 && currentRep < threshold) return false;
+                if (threshold < 0 && currentRep > threshold) return false;
+            }
+        }
+
+        // An encounter with neither gate has nothing to qualify on. The pool
+        // has none, and this keeps it that way.
+        return !!(ev.reqStory || ev.reqRep);
     },
 
     /**
@@ -583,28 +706,9 @@ export const events = {
         // 10% chance, also on every button: a colleague intercepts you.
         if (DB.reputation) {
             
-            // A. Collect every event the player is eligible for (reputation or story flag)
-            let possibleInterventions = DB.reputation.filter(ev => {
-                if (this.state.usedIDs.has(ev.id)) return false; 
-
-                // Story continuation: flag set, and old enough / late enough?
-                if (ev.reqStory) {
-                    return this.storyGateOpen(ev);
-                }
-                
-                // Plain reputation event: check the thresholds
-                if (ev.reqRep) {
-                    for (let [char, threshold] of Object.entries(ev.reqRep)) {
-                        let currentRep = this.state.reputation[char] || 0;
-                        // Positive threshold means at least X, negative means at most X
-                        if (threshold > 0 && currentRep < threshold) return false;
-                        if (threshold < 0 && currentRep > threshold) return false;
-                    }
-                    return true;
-                }
-                
-                return false;
-            });
+            // A. Collect every event the player is eligible for.
+            let possibleInterventions = DB.reputation.filter(ev =>
+                !this.state.usedIDs.has(ev.id) && this.encounterEligible(ev));
 
             // B. Roll: 10% chance an encounter happens at all
             if (possibleInterventions.length > 0 && Math.random() < 0.10) {
@@ -617,7 +721,7 @@ export const events = {
 
                 // Same rule as the action pools: continuations first, then
                 // ordinary encounters.
-                if (storyEvents.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
+                if (storyEvents.length > 0 && Math.random() < this.followUpChance()) {
                     intervention = storyEvents[Math.floor(Math.random() * storyEvents.length)];
                 } 
                 else if (baseEvents.length > 0) {
@@ -705,9 +809,17 @@ export const events = {
         let pool = DB.bossfights.filter(ev => !this.state.usedIDs.has(ev.id)
                                               && this.storyGateOpen(ev));
         
-        if(pool.length === 0) return; 
-     
-        let boss = pool[Math.floor(Math.random() * pool.length)]; 
+        if(pool.length === 0) return;
+
+        // Same as the mail: the first emergency of a career is explained
+        // before its countdown starts, and begins from the continuation.
+        // i18n-uses: hint.boss.title, hint.boss.text
+        if (this.firstTimeHint(this.KEYS.seenFirstBoss, 'hint.boss.title', 'hint.boss.text',
+                               () => this.triggerBossFight())) {
+            return;
+        }
+
+        let boss = pool[Math.floor(Math.random() * pool.length)];
 
         this.state.activeEvent = true;
         this.state.usedIDs.add(boss.id);
@@ -749,8 +861,17 @@ export const events = {
         const updateInterval = 50;
 
         this.state.bossTimer = setInterval(() => {
+            // The clock runs while the fight is ON SCREEN. Open the settings,
+            // the backpack or the team view and the card is covered - until
+            // 6.4 it kept counting down behind them, and Escape during a fight
+            // opens the settings, so the one key that looks like a way out was
+            // the fastest way to lose. The emergency stays an emergency: the
+            // same question the keyboard asks before reaching through a
+            // window, so the list cannot drift apart.
+            if (this.windowOverTerminal()) return;
+
             currentTimeMs -= updateInterval;
-            
+
             // The bar reads this from state; EventView.svelte also switches to
             // the pulsing red below 30% on its own.
             this.state.bossBarPercent = Math.max(0, currentTimeMs / totalTimeMs * 100);
@@ -818,8 +939,10 @@ export const events = {
             this.updatePhoneVisibility();
             setTimeout(() => {
                 const phone = document.getElementById('smartphone');
-                // Only scroll on small screens
-                if(phone && window.innerWidth < 1024) { 
+                // Only on the stacked layout, and through engine_ui's one
+                // answer to what that is - `innerWidth < 1024` disagreed with
+                // the stylesheet at exactly 1024.
+                if (phone && this.phoneLayout()) {
                     phone.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 100);
@@ -1185,6 +1308,12 @@ export const events = {
             this.log({ k: 'log.drunk' }, "text-purple-400 italic");
         }
 
+        // What the decision does to the ticket pile, for the result card. Read
+        // off the counter rather than recomputed, so the card cannot drift
+        // from the two places that change it: a real call clears one, and the
+        // clock adds one per half hour it steps over. Both happen below.
+        const ticketsBefore = this.state.tickets;
+
         // Time & tickets
         //
         // Tickets are counted by BOUNDARY, not by duration: every half hour the
@@ -1362,7 +1491,8 @@ export const events = {
         }
 
         this.setTerminalResult(recipe ?? { msg: String(res ?? '') },
-                               m, l, finalA, finalB, btnAction, btnKey, btnColor);
+                               m, l, finalA, finalB, btnAction, btnKey, btnColor,
+                               this.state.tickets - ticketsBefore);
     },
 
     // async: lunch is its own pool and loads on demand like the others.
@@ -1392,7 +1522,7 @@ export const events = {
                                                 && !this.state.usedIDs.has(ev.id));
         const basePool = pool.filter(ev => !ev.reqStory);
 
-        if (followUps.length > 0 && Math.random() < this.FOLLOWUP_CHANCE) {
+        if (followUps.length > 0 && Math.random() < this.followUpChance()) {
             pool = followUps;
         } else if (basePool.length > 0) {
             pool = basePool;
@@ -1464,6 +1594,20 @@ export const events = {
         this.log({ ref: { p: 'special', path: ['leet', pick] } }, "text-cyan-400 italic");
     },
 
+    /**
+     * A point on the day's curve.
+     *
+     * `tk` is the open tickets, and it joined the other four in 6.4: the pile
+     * is the most common way to lose a day and the end screen's chart did not
+     * draw it, so the one screen a player holds still and reads left out the
+     * thing that most often ended the run.
+     *
+     * A save format, so the rules of CLAUDE.md apply: a reader takes every key
+     * with `?? 0`, migrateStatPoints carries the old shape across, and
+     * week-flow.test.mjs holds both. Old points carry no `tk` at all, and the
+     * chart draws no ticket line for them rather than a flat zero - they had
+     * tickets, nobody wrote them down.
+     */
     recordStatPoint: function() {
         const h = this.state.statHistory;
         if (!h || h.length > 200) return;
@@ -1471,7 +1615,8 @@ export const events = {
             m: this.state.time,
             l: Math.round(this.state.fl),
             a: Math.round(this.state.al),
-            b: Math.round(this.state.cr)
+            b: Math.round(this.state.cr),
+            tk: this.state.tickets
         });
     },
 
@@ -1489,27 +1634,34 @@ export const events = {
         this.disableButtons(false);
         this.state.activeEvent = false;
 
-        // 1. Draw a random morning mood, avoiding an immediate repeat
-        let availableMoods = DB.moods.filter(m => m.id !== this.state.lastMoodId);
-        
-        // Fallback for the theoretical case of a single remaining entry
-        if (availableMoods.length === 0) availableMoods = DB.moods; 
-
-        // Test path: narrow to one category (see the comment above)
-        if (forceEffect) {
-            const forced = DB.moods.filter(m => m.effect === forceEffect);
-            if (forced.length) {
-                availableMoods = forced;
-            } else {
-                const known = [...new Set(DB.moods.map(m => m.effect))].join(', ');
-                console.warn(`Unknown morning category "${forceEffect}". Available: ${known}`);
-            }
+        // 1. Draw the morning mood: the CATEGORY by the real distribution, the
+        //    TEXT out of that category's own bag (see draw_bag.js).
+        //
+        //    Drawing an index into the whole list and taking its category
+        //    keeps the odds exactly where they were - a category's chance IS
+        //    its share of the 118 entries. One bag over all 118 would get the
+        //    odds right only across a full cycle of some twenty-four weeks,
+        //    and would guarantee a late stretch with no quiet morning left in
+        //    it at all, because the 60 quiet entries would be used up. 63 of
+        //    the 118 never appeared in twenty weeks before this.
+        let effect = forceEffect;                 // test path, see the comment above
+        if (effect && !DB.moods.some(m => m.effect === effect)) {
+            const known = [...new Set(DB.moods.map(m => m.effect))].join(', ');
+            console.warn(`Unknown morning category "${effect}". Available: ${known}`);
+            effect = null;
         }
-        
-        let mood = availableMoods[Math.floor(Math.random() * availableMoods.length)];
+        if (!effect) effect = DB.moods[Math.floor(Math.random() * DB.moods.length)].effect;
+
+        const group = DB.moods.filter(m => m.effect === effect);
+        let mood = group[drawIndex('mood_' + effect, group.length)];
+        // An immediate repeat can now only happen at a bag's boundary; one
+        // further draw settles it.
+        if (group.length > 1 && mood.id === this.state.lastMoodId) {
+            mood = group[drawIndex('mood_' + effect, group.length)];
+        }
         this.state.lastMoodId = mood.id; // remembered for next time
         
-        // 2. Mechanik sicher anwenden
+        // 2. Apply the mechanics safely
         let statHtml = null;
         
         // The morning scales with the weekday: Friday forgives, Monday does

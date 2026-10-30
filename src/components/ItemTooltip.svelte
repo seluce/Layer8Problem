@@ -34,13 +34,13 @@
              slate-400/500 the locked box was the faintest thing on screen and
              sat right over the section heading. -->
         <div class="font-bold text-slate-200 text-sm border-b border-slate-700 pb-1 mb-1">{lockedTitle}</div>
-        <div class="text-[10px] text-slate-400 italic leading-snug">{t('item.notFound')}</div>
+        <div class="text-[0.625rem] text-slate-400 italic leading-snug">{t('item.notFound')}</div>
     {:else}
         <div class="font-bold text-amber-400 text-sm border-b border-slate-700 pb-1 mb-1">{item.name}</div>
-        <div class="text-[10px] text-slate-300 italic leading-snug">{item.flavor ?? t('item.noInfo')}</div>
+        <div class="text-[0.625rem] text-slate-300 italic leading-snug">{item.flavor ?? t('item.noInfo')}</div>
         <!-- Whether an item survives being used was written down nowhere -
              you found out once it was gone. -->
-        <div class="text-[9px] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
+        <div class="text-[0.5625rem] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
                     {item.quest ? 'text-amber-500' : item.passive ? 'text-indigo-300' : item.keep ? 'text-sky-400' : 'text-slate-500'}">
             {#if item.quest}{t('item.kind.trophy')}
             {:else if item.passive}{t('item.kind.passive')}

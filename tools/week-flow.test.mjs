@@ -14,10 +14,17 @@ globalThis.localStorage = {
 globalThis.window = globalThis;
 globalThis.window.matchMedia = () => ({ matches: false });
 const fakeEl = () => ({ textContent: '', innerText: '', innerHTML: '', classList: { add() {}, remove() {}, toggle() {}, contains: () => false }, id: '' });
+/** Which overlays the bench has on screen; see isOverlayOpen below. */
+const openOverlays = new Set();
+const overlayId = (t) => (typeof t === 'string' ? t : (t?.id ?? 'el'));
 globalThis.location = { reload() { calls.reloaded = true; } };
 globalThis.document = {
     getElementById: (id) => { const el = fakeEl(); el.id = id; return el; },
     querySelectorAll: () => [],
+    // The music follows the tab since 6.4; the bench drives
+    // syncMusicToVisibility() by hand and only needs the flag to exist.
+    hidden: false,
+    addEventListener() {},
     // useLanguage() sets <html lang> on its way past - the automatic
     // hyphenation of long words follows that attribute.
     documentElement: { lang: '' },
@@ -61,6 +68,7 @@ const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 const { ui } = await import('../src/engine/engine_ui.js');
 const { intranetPages } = await import('../src/engine/intranet_pages.js');
 const { state, freshDay, freshArchive } = await import('../src/engine/engine_state.svelte.js');
+const { KEYS } = await import('../src/engine/keys.js');
 
 // The rune decides what t() answers; loadCore() above has already put the
 // matching tree in place, so this only moves the pointer.
@@ -71,22 +79,31 @@ const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
     ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
-    showOverlay(t) { calls.overlays.push(typeof t === 'string' ? t : (t?.id ?? 'el')); },
-    hideOverlay() {},
+    showOverlay(t) { const id = overlayId(t); calls.overlays.push(id); openOverlays.add(id); },
+    hideOverlay(t) { openOverlays.delete(overlayId(t)); },
+    // Answered off that set rather than off the fake document. Every element
+    // the stub hands out reports no classes at all, so the real
+    // isOverlayOpen() said YES to every id it was ever asked about - which
+    // pinned windowOverTerminal() at true and, with it, the boss clock's own
+    // guard: state.bossTimer could not tick down anywhere in this suite, and
+    // the 6.4 pause had to be held by reading the source instead.
+    isOverlayOpen: (t) => openOverlays.has(overlayId(t)),
     lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
-    showModal() {},
+    // The real three, not stubs: since 6.4 a notice can carry a continuation
+    // (the hint in front of the first mail and the first emergency), and a
+    // stub that forgets it would make the bench prove the opposite of the
+    // game. They touch nothing but the state and the stubbed overlay.
+    showModal: ui.showModal, closeModal: ui.closeModal, dismissModal: ui.dismissModal,
     showEnd(end) { calls.end = end; state.modal = { open: true, ...end, isEnd: true }; },
-    closeModal() { state.modal = { open: false }; },
-    dismissModal() { state.modal = { open: false }; },
     showFloatingText() {}, reportImpact() {}, animateItemToBackpack() {},
     playMusic() {}, stopMusic() {}, playAudio() {}, updatePresence() {},
     playBootSequence(cb) { calls.boots++; cb(); },
     closeSettings() {}, updatePhoneVisibility() {}, checkForNews() {},
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
     setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
-    setTerminalResult(text, m, l, a, b, action, buttonKey) { calls.termResult = { action, buttonKey }; },
+    setTerminalResult(text, m, l, a, b, action, buttonKey, buttonColor, tickets) { calls.termResult = { m, l, a, b, action, buttonKey, tickets }; },
     // Since 6.0 log() is handed a RECIPE, not a sentence. The stub keeps it as
     // it arrives: a test that asserts on the rendered German would be asserting
     // on the display, and the whole point of the recipe is that the display is
@@ -98,11 +115,16 @@ const engine = {
     // nothing but state, the stubbed overlay and the fake document, so the real
     // ones run here: a stub would make the day-end test pass whatever they do.
     closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
-    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard, isOverlayOpen: ui.isOverlayOpen,
+    closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard,
+    // The boss clock asks this before every tick (6.4), so the bench carries
+    // the real one rather than a stub that would answer whatever suits. It
+    // only answers honestly because isOverlayOpen above does.
+    windowOverTerminal: ui.windowOverTerminal,
 };
 
 const resetState = () => {
     Object.assign(state, freshDay(1.0));
+    openOverlays.clear();         // a window left open by one test is a window the next one asks about
     state.difficultyMult = 1.0;   // freshDay does not carry it - otherwise a value leaks from the last test
     state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
     state.archive.stats = { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 };
@@ -119,6 +141,11 @@ const resetState = () => {
     calls.overlays = []; calls.end = null; calls.boots = 0; calls.terminal = null; calls.achs = []; calls.achStufen = []; calls.reloaded = false; calls.termResult = null;
     engine._resumeKind = null;
     store.clear();
+    // The bench plays an ordinary day, not the first minute of a career: the
+    // two hints that stand in front of the first mail and the first emergency
+    // have been read. Their own test clears these again (6.4).
+    store.set(KEYS.seenFirstMail, 'true');
+    store.set(KEYS.seenFirstBoss, 'true');
 };
 
 let passed = 0;
@@ -504,6 +531,132 @@ await ok('A 5.0 save brings its day curve along (migration)', () => {
     // through the condition.
     const again = engine.migrateStatPoints(state.statHistory);
     assert.deepEqual(again, state.statHistory, 'the migration is not idempotent');
+
+    // `tk` is deliberately NOT invented for an old point: that day had
+    // tickets, nobody wrote them down, and a zero would draw a flat line
+    // along the bottom saying "not one ticket all day".
+    for (const p of state.statHistory) {
+        assert.equal('tk' in p, false, 'the migration invents a ticket count the old save never had');
+    }
+});
+
+await ok('The day card draws what the end screen shows', async () => {
+    // The game is free and lives on being shown to somebody, and all a player
+    // could hand over was the address. Drawn on a canvas rather than carried
+    // over from the SVG: a foreign font taints a canvas and the picture cannot
+    // be read back at all. Checked through a stub context, so the bench needs
+    // no browser - what matters is WHAT it draws, in what order.
+    const { CARD, drawDayCard } = await import('../src/engine/share_card.js');
+    assert.deepEqual(CARD, { w: 1200, h: 630 }, 'the card is no longer the size a chat shows unscaled');
+
+    const calls = [];
+    const ctx = new Proxy({}, {
+        get: (_, prop) => {
+            if (prop === 'measureText') return (s) => ({ width: String(s).length * 10 });
+            if (prop === 'getImageData') return () => ({ data: [] });
+            return (...args) => { calls.push(prop + '(' + args.join(',') + ')'); };
+        },
+        set: (_, prop, value) => { calls.push(prop + '=' + value); return true; },
+    });
+
+    const points = [
+        { m: 480, l: 0,  a: 0,  b: 0,  tk: 0 },
+        { m: 700, l: 20, a: 90, b: 40, tk: 5 },
+        { m: 990, l: 50, a: 60, b: 95, tk: 9 },
+    ];
+    drawDayCard(ctx, {
+        title: 'Feierabend', lead: 'Ein Satz dazu.', mode: 'MITTWOCH', isWin: true,
+        curveLabel: 'Tagesverlauf',
+        url: 'https://example.invalid/game', points,
+        stats: [{ label: 'Faulheit', value: '50%', colour: '#34d399' }],
+    });
+
+    const text = calls.join(' | ');
+    assert.match(text, /fillText\(Feierabend/, 'the verdict is missing from the card');
+    assert.match(text, /fillText\(FAULHEIT/, 'the stat labels are missing');
+    assert.match(text, /fillText\(https:\/\/example\.invalid\/game/, 'nobody could find the game from this card');
+    assert.match(text, /strokeStyle=#34d399/, 'the laziness line was not drawn');
+    assert.match(text, /strokeStyle=#c084fc/, 'the ticket line was not drawn');
+    // Solid: this card differs from the end screen on purpose, because four
+    // dashed lines crossing each other at this size read as a scribble. The
+    // guide lines ARE dashed, so what has to hold is that none of their dashes
+    // is still active when a curve is stroked.
+    //
+    // Walked rather than matched. /setLineDash\(\)[\s\S]*strokeStyle=/ was the
+    // first attempt and could not fail: the guide loop's last pass is the 100%
+    // line, which is solid, so an empty setLineDash() stands between the
+    // guides and the curves whether or not anything reset it. This holds the
+    // outcome instead, and so it also catches the real risk - reordering those
+    // three guide values, which leaves the loop ending on a dashed line.
+    const CURVES = ['#34d399', '#fb923c', '#ef4444', '#c084fc'];
+    let dash = '';
+    let pen = '';
+    for (const call of calls) {
+        if (call.startsWith('setLineDash(')) dash = call.slice('setLineDash('.length, -1);
+        else if (call.startsWith('strokeStyle=')) pen = call.slice('strokeStyle='.length);
+        else if (call === 'stroke()' && CURVES.includes(pen)) {
+            assert.equal(dash, '', 'the curve inherits the guide line\'s dashes again');
+        }
+    }
+    // And a key, or the picture is four coloured lines and no answer.
+    assert.match(text, /fillText\(FAULHEIT,92/, 'the card carries no key for its curve');
+
+    // Scales, or the lines float over an empty box: a stranger cannot tell
+    // which way is bad, over how long, or that ten tickets is the end.
+    assert.match(text, /fillText\(100,/, 'the percent scale is gone');
+    assert.match(text, /fillText\(08,/, 'the hours are gone, so the shape has no duration');
+    // Told apart from the '10' on the hour axis by the colour set right
+    // before it - the two are the same two characters, and matching the text
+    // alone passed with the whole ticket scale commented out.
+    const ticketScale = calls.some((c, i) => c === 'fillStyle=#c084fc'
+        && calls.slice(i + 1, i + 4).some(next => next.startsWith('fillText(10,')));
+    assert.ok(ticketScale, 'the ticket scale is gone');
+    // And a name for what the panel shows: statHistory is ONE DAY, so in a
+    // week the heading says the week while the panel shows one of its five.
+    assert.match(text, /fillText\(TAGESVERLAUF,/, 'the curve does not say what it is');
+    // Won and lost days must not look the same at a glance.
+    assert.match(text, /fillStyle=#34d399[\s\S]*fillRect\(0,0,1200,6\)/, 'a won day carries no accent of its own');
+
+    // An older day recorded no tickets at all, and the card must not invent a
+    // flat zero along the bottom for it - same rule as the end screen.
+    const older = calls.length;
+    calls.length = 0;
+    drawDayCard(ctx, { title: 'x', lead: 'x', mode: 'x', isWin: false, url: 'x', stats: [], curveLabel: 'x',
+                       points: points.map(({ tk, ...rest }) => rest) });
+    assert.ok(older > 0);
+    assert.equal(calls.join(' | ').includes('strokeStyle=#c084fc'), false,
+                 'the card drew a ticket line for a day that never recorded one');
+});
+
+await ok('A curve point carries the ticket pile', () => {
+    // The pile is the most common way to lose a day, and the chart on the one
+    // screen a player holds still and reads left it out until 6.4. A save
+    // format, so it comes with a migration and this test (CLAUDE.md).
+    resetState();
+    state.statHistory = [];
+    state.time = 9 * 60;
+    state.tickets = 4;
+    state.fl = 10; state.al = 20; state.cr = 30;
+    events.recordStatPoint.call(engine);
+    assert.deepEqual(state.statHistory.at(-1), { m: 540, l: 10, a: 20, b: 30, tk: 4 },
+                     'the point no longer carries what it is read for');
+
+    // And the chart draws the line only where there is one to draw.
+    const chart = readFileSync(new URL('../src/components/DayChart.svelte', import.meta.url), 'utf-8');
+    assert.match(chart, /points\.some\(p => p\.tk !== undefined\)/,
+                 'the chart no longer asks whether the tickets were recorded');
+
+    // Four lines, four patterns: three curves told apart by colour alone are
+    // three curves for anyone who cannot tell those colours apart.
+    const dashes = [...chart.matchAll(/dash: '([^']+)'/g)].map(m => m[1]);
+    assert.equal(dashes.length, 4, `expected four dash patterns, found ${dashes.length}`);
+    assert.equal(new Set(dashes).size, 4, `two lines share a pattern: ${dashes.join(' | ')}`);
+    assert.match(chart, /stroke-dasharray=\{s\.dash\}/, 'the lines no longer carry their pattern');
+    assert.match(chart, /stroke-dasharray=\{TICKETS\.dash\}/, 'the ticket line lost its pattern');
+    // The legend has to show the same patterns, or it is the one place that
+    // still says colour only.
+    const legend = chart.slice(chart.indexOf('<div class="flex justify-center'));
+    assert.match(legend, /stroke-dasharray=\{s\.dash\}/, 'the legend shows colour swatches again');
 });
 await ok('The boot line of an old save names the running version', () => {
     resetState();
@@ -846,6 +999,57 @@ console.log('Music:');
         assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - 0.8) < 0.02, 'the volume was not reset');
     });
 
+    await ok('The music follows the tab, but only what it paused itself', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'lofi';
+        mus.initMusic();
+        mus.playMusic('office');
+        // 750 for a 600 ms fade-in, like the test above it: while
+        // fadeTimers[key] is still set syncMusicToVisibility returns without
+        // pausing, so an overrun here would fail the tab assertion further
+        // down rather than a volume - and look like a broken feature.
+        await wait(750);
+        const key = state.currentMusicTrack;
+        assert.equal(mus.bgmTracks[key].paused, false, 'nothing was playing to begin with');
+
+        globalThis.document.hidden = true;
+        mus.syncMusicToVisibility();
+        assert.ok(mus.bgmTracks[key].paused, 'the music played on in a tab nobody was looking at');
+
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.equal(mus.bgmTracks[key].paused, false, 'the music never came back');
+
+        // A track the GAME stopped is none of its business - otherwise coming
+        // back to the tab would resurrect music that was switched off.
+        mus.stopMusic(0);
+        globalThis.document.hidden = true;  mus.syncMusicToVisibility();
+        globalThis.document.hidden = false; mus.syncMusicToVisibility();
+        assert.ok(mus.bgmTracks[key].paused, 'a stopped track came back with the tab');
+    });
+
+    await ok('A platform that refuses track.volume is noticed', () => {
+        // iOS accepts `track.volume = x`, ignores it and reads back 1, so the
+        // slider and every fade were silently dead there. Detected by probing,
+        // never by sniffing the user agent.
+        const locked = { get volume() { return 1; }, set volume(v) { /* as iOS does */ } };
+        const probe = { ...audio, state, bgmTracks: { locked }, gainNodes: {}, volumeWorks: null, audioCtx: null };
+        assert.equal(probe.canSetVolume(locked), false, 'a refused volume passed as settable');
+        // And with no audio graph to be had either, nothing throws: the fade
+        // runs, it just stays inaudible - exactly as before this existed.
+        // That is all the line below holds. The fake reads back 1 whatever is
+        // written and gainNodes is empty, so it cannot observe the write; what
+        // would fail here is a throw.
+        probe.setTrackVolume('locked', 0.4);
+        assert.equal(probe.trackVolume('locked'), 1, 'a refused volume became something other than 1');
+
+        const open = { volume: 1 };
+        const fine = { ...audio, state, bgmTracks: { open }, gainNodes: {}, volumeWorks: null };
+        assert.equal(fine.canSetVolume(open), true, 'a working volume was taken for broken');
+        fine.setTrackVolume('open', 0.4);
+        assert.ok(Math.abs(fine.trackVolume('open') - 0.4) < 1e-9, 'the element was not set');
+        assert.deepEqual(fine.gainNodes, {}, 'a graph was built where none was needed');
+    });
+
     await ok('A fixed style loops seamlessly, the radio does not', () => {
         state.musicEnabled = false; state.musicStyle = 'radio';
         mus.initMusic();
@@ -882,19 +1086,24 @@ await ok('An aftershock does not appear without its flag', async () => {
     const after = drawn.filter(id => id.startsWith('lunch_nach_'));
     assert.equal(after.length, 0, `drawn with no history: ${after.join(', ')}`);
 });
-await ok('With the flag the aftershock comes at the same 30 per cent chance', async () => {
-    // Same rule as the action pools (FOLLOWUP_CHANCE), so a single draw
-    // proves nothing - the rate does.
+await ok('With the flag the aftershock comes at the weekday\'s own chance', async () => {
+    // Same rule as the action pools, so a single draw proves nothing - the
+    // rate does. Held against followUpChance() rather than the flat 30%: the
+    // week leans further as Friday nears (6.4), and a Wednesday asked for 30%
+    // was a test that passed on the noise.
     resetState();
     state.week = { active: true, dayIndex: 3 };
     state.storyFlags = { path_lunch_gelaufen: 2 };   // set yesterday
+    const expected = engine.followUpChance();
+    assert.ok(expected > 0, 'the weekday no longer has a chance of its own');
+
     let after = 0;
     const N = 600;
     engine.renderTerminal = (ev) => { if (ev.id.startsWith('lunch_nach_')) after++; };
     for (let i = 0; i < N; i++) { state.usedIDs.clear(); await engine.triggerLunch(); }
     const rate = after / N;
-    assert.ok(Math.abs(rate - events.FOLLOWUP_CHANCE) < 0.08,
-              `the rate ${(rate * 100).toFixed(1)}% differs from ${events.FOLLOWUP_CHANCE * 100}%`);
+    assert.ok(Math.abs(rate - expected) < 0.08,
+              `the rate ${(rate * 100).toFixed(1)}% differs from ${(expected * 100).toFixed(0)}%`);
 });
 await ok('Not on the same day', async () => {
     resetState();
@@ -1167,6 +1376,70 @@ await ok('The evidence is recorded when an event opens', () => {
     state.archive.seenEvents = [];
     events.renderTerminal.call(engine, { id: 'tst_seen', title: 'T', text: 'x', opts: [] }, 'server');
     assert.ok(state.archive.seenEvents.includes('tst_seen'), 'the hook is missing');
+});
+await ok('The first mail and the first emergency are explained first', async () => {
+    // Both carry a clock - 20 seconds and 8 to 20 - so the explanation stands
+    // IN FRONT of the thing and the clock starts afterwards. An explanation
+    // that eats the time it explains would be the joke the game already makes.
+    // Taught where it happens: on the start screen it made the page scroll,
+    // and a rule read before the first day is forgotten by the time it counts.
+    resetState();
+    await ensure('emails');
+    store.delete(KEYS.seenFirstMail);
+
+    await engine.triggerEmail('mail_cake_1');
+    assert.equal(state.isEmailOpen, false, 'the first mail opened on top of its own explanation');
+    assert.equal(state.modal.open, true, 'nothing was explained');
+    assert.equal(state.modal.isEnd, false, 'the hint is an ending, not a notice');
+    assert.equal(typeof state.modal.then, 'function', 'the mail has no way of arriving afterwards');
+    assert.equal(store.get(KEYS.seenFirstMail), 'true', 'the hint would come back a second time');
+
+    // Reading it hands over to the thing it explained.
+    engine.closeModal();
+    await new Promise(r => setTimeout(r, 60));
+    assert.equal(state.isEmailOpen, true, 'the mail never arrived after its explanation');
+
+    // And a career that has read it is not stopped again.
+    resetState();
+    state.isEmailOpen = false;
+    await engine.triggerEmail('mail_cake_2');
+    assert.equal(state.modal.open, false, 'the hint came back for a career that had read it');
+    assert.equal(state.isEmailOpen, true, 'the mail did not open');
+
+    // The emergency, the same way.
+    resetState();
+    await ensure('bossfights');
+    store.delete(KEYS.seenFirstBoss);
+    state.time = 10 * 60;
+    engine.triggerBossFight();
+    assert.equal(state.modal.open, true, 'the first emergency started unannounced');
+    assert.equal(state.bossTimer, null, 'the countdown was already running behind the explanation');
+    engine.closeModal();
+    assert.ok(state.bossTimer, 'the emergency never started after its explanation');
+    clearInterval(state.bossTimer);
+    state.bossTimer = null;
+});
+
+await ok('A mail counts as seen, so a mail-only entry can open', async () => {
+    // Until 6.4 nothing recorded a mail. Two entries and eleven notes hang on
+    // mail ids alone and could therefore never light up - with lint-data
+    // accepting those ids as sources, so nothing anywhere said so.
+    resetState();
+    await ensure('emails');
+    state.archive.seenEvents = [];
+    await engine.triggerEmail('mail_cake_1');
+    assert.ok(state.archive.seenEvents.includes('mail_cake_1'), 'an opened mail left no trace');
+
+    // The player-visible half: the entries whose every source is a mail.
+    const mails = new Set(DB.emails.map(e => e.id));
+    const mailOnly = (DB.compendium ?? []).filter(e => (e.seen ?? []).length
+                                                    && (e.seen ?? []).every(id => mails.has(id)));
+    assert.ok(mailOnly.length, 'no mail-only entry left - this check has no subject any more');
+    state.archive.seenEvents = mailOnly.flatMap(e => e.seen);
+    for (const entry of mailOnly) {
+        const live = engine.knowledgeEntries().find(e => e.id === entry.id);
+        assert.equal(live.open, true, `${entry.id} stays shut although its mail was read`);
+    }
 });
 
 // --------------------------------------------------- item cooldowns (v5.0)
@@ -2651,12 +2924,518 @@ await ok('The risk badge survives a double ticket boundary', () => {
     assert.ok(calls.achs.includes('ach_risk'), 'the badge was lost to the jump');
 });
 
+await ok('The result card carries what the decision did to the ticket pile', () => {
+    // The pile is the most common way to lose and the card never named it.
+    // Read off the counter, so the number cannot drift from the two places
+    // that change it: the clock adds one per half hour it steps over, a real
+    // call clears one.
+    resetState();
+    state.time = 8 * 60;
+    state.tickets = 4;
+    engine.resolveTerminal({ r: 'x', m: 60, l: 0, a: 0, b: 0 }, 'coffee');
+    assert.equal(calls.termResult.tickets, 2, 'an hour of coffee booked the wrong number');
+
+    resetState();
+    state.time = 8 * 60;
+    state.tickets = 4;
+    state.currentEventId = 'call_test';
+    engine.resolveTerminal({ r: 'x', m: 10, l: 0, a: 0, b: 0 }, 'calls');
+    assert.equal(calls.termResult.tickets, -1, 'the ticket a call clears is not shown');
+
+    // The meeting is the one stretch whose runtime does not count, and the
+    // card has to say so rather than invent an hour's worth.
+    resetState();
+    state.time = 15 * 60;
+    engine.resolveTerminal({ r: 'x', m: 60, l: 0, a: 0, b: 0 }, 'meeting');
+    assert.equal(calls.termResult.tickets, 0, 'the meeting charged tickets after all');
+});
+
+await ok('The shared card names the week it came from, not the day mode', async () => {
+    // finishWeek() calls endWeek() BEFORE showEnd(), so by the time the end
+    // screen stands state.week is empty again - its own comment says so, and
+    // the mode and the day travel on the end object for exactly that reason.
+    // shareDayCard asked the state anyway: every week card was labelled with
+    // the DAY mode, and since difficultyMult stays at 1.0 in a week by
+    // design, difficultyKey() answered "normal" - the one mode a week can
+    // never be in. The curve label lost its weekday the same way.
+    //
+    // Read off the canvas rather than the return value: the card is a
+    // picture, so what it SAYS is the only thing worth holding.
+    resetState();
+    const drawn = [];
+    const ctx = new Proxy({}, {
+        get: (_, prop) => {
+            if (prop === 'measureText') return (str) => ({ width: String(str).length * 10 });
+            if (prop === 'getImageData') return () => ({ data: [] });
+            return (...args) => { drawn.push(prop + '(' + args.join(',') + ')'); };
+        },
+        set: () => true,
+    });
+    const realCreate = globalThis.document.createElement;
+    globalThis.document.createElement = () => ({
+        width: 0, height: 0,
+        getContext: () => ctx,
+        toBlob: (cb) => cb(null),       // no blob, so the share stops right after the drawing
+    });
+    try {
+        // The state a week leaves behind: cleared, with the week on the modal.
+        state.week = { active: false, level: null, dayIndex: 1, weekLog: [], repAtWeekStart: {} };
+        // A curve to draw, or the panel and its label are skipped entirely.
+        state.statHistory = [{ m: 480, l: 0, a: 0, b: 0, tk: 0 },
+                             { m: 700, l: 20, a: 90, b: 40, tk: 5 },
+                             { m: 990, l: 50, a: 60, b: 95, tk: 9 }];
+        state.modal = { open: true, title: 'Feierabend', lead: 'Ein Satz.', isEnd: true,
+                        isWin: true, isWeek: true, weekMode: 'hard', weekDay: 3 };
+        await ui.shareDayCard.call(engine, null);   // not on the bench's engine; the real one, bound to it
+
+        const said = drawn.join(' | ');
+        const badge = tf('week.badge', { mode: t('week.diff.hard') });
+        assert.ok(said.includes('fillText(' + badge),
+                  `the card is not labelled with the week: ${badge} missing`);
+        // Uppercased on the card, like every heading on it.
+        assert.ok(said.includes(t('week.day.wed').toUpperCase()),
+                  'the curve no longer names which of the five days it draws');
+        // And the mode slot is not the day mode's own name. Which is where
+        // this hid so well: the day levels ARE named after weekdays, so
+        // difficultyKey() answering "normal" put MITTWOCH / WEDNESDAY on the
+        // card - a plausible-looking word in the right place, on a Thursday
+        // of a hard week. Held on the call rather than the text, because the
+        // weekday legitimately appears again inside the curve label.
+        assert.ok(!drawn.some(c => c.startsWith('fillText(' + t('diff.normal.name') + ',')),
+                  'the day mode is still drawn as the card\'s mode');
+    } finally {
+        globalThis.document.createElement = realCreate;
+        engine._sharing = false;
+    }
+});
+
+await ok('The boss clock stops while a window covers the fight', () => {
+    // Escape during a fight opens the settings, and until 6.4 the countdown
+    // ran on behind them - the one key that looks like a way out was the
+    // fastest way to lose. Read off the source because the guard's POSITION
+    // is what matters and a running fight cannot show that; the test below
+    // drives the clock itself.
+    const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+    const tick = src.match(/state\.bossTimer = setInterval\(\(\) => \{([\s\S]*?)\n {8}\}, updateInterval\);/);
+    assert.ok(tick, 'the boss interval no longer looks the way this check reads it');
+    assert.match(tick[1], /if \(this\.windowOverTerminal\(\)\) return;/,
+                 'the boss clock counts down behind an open window again');
+    // And the guard has to come BEFORE the decrement, or it does nothing.
+    assert.ok(tick[1].indexOf('windowOverTerminal') < tick[1].indexOf('currentTimeMs -='),
+              'the guard sits after the decrement');
+});
+
+await ok('The boss clock runs, holds behind a window, and runs out', async () => {
+    // The live half, possible since 6.4.1: until the bench answered honestly
+    // about open windows, windowOverTerminal() was true here whatever was on
+    // screen, the guard above was permanently taken, and bossTimer could not
+    // tick down anywhere in this suite - so nothing held the countdown
+    // itself, only the shape of its guard.
+    //
+    // The interval is captured rather than waited out: boss.timer is 8 to 20
+    // SECONDS, which is not a test, it is a pause.
+    resetState();
+    await ensure('bossfights');
+    store.set(KEYS.seenFirstBoss, 'true');   // the explanation has its own check above
+    state.time = 10 * 60;
+
+    const realSet = globalThis.setInterval;
+    const realClear = globalThis.clearInterval;
+    const realFail = engine.resolveBossFail;
+    let tick = null;
+    let failed = false;
+    globalThis.setInterval = (fn) => { tick = fn; return 'boss-interval'; };
+    globalThis.clearInterval = () => {};
+    // Watched rather than read off the terminal afterwards: the fail resolves
+    // into a result screen and the day carries on from there, so by the end of
+    // this the terminal is idle again.
+    engine.resolveBossFail = function(d) { failed = true; return realFail.call(this, d); };
+    try {
+        engine.triggerBossFight();
+        assert.ok(tick, 'the emergency started without a clock');
+        assert.equal(state.bossBarPercent, 100, 'the bar did not start full');
+
+        tick();
+        const moved = state.bossBarPercent;
+        assert.ok(moved < 100, 'the clock never moved');
+
+        // Escape opens the settings over the fight. The bar has to stand.
+        engine.showOverlay('settings-modal');
+        tick(); tick(); tick();
+        assert.equal(state.bossBarPercent, moved, 'the countdown ran on behind an open window');
+
+        engine.hideOverlay('settings-modal');
+        tick();
+        assert.ok(state.bossBarPercent < moved, 'the clock never picked up again');
+
+        // And it still ends. Capped well above the 400 ticks a 20-second
+        // fight needs, so a clock that cannot reach zero fails here rather
+        // than hanging the suite.
+        for (let i = 0; i < 2000 && state.bossBarPercent > 0; i++) tick();
+        assert.equal(state.bossBarPercent, 0, 'the bar never reached the bottom');
+        assert.ok(failed, 'running out of time resolved nothing');
+    } finally {
+        globalThis.setInterval = realSet;
+        globalThis.clearInterval = realClear;
+        engine.resolveBossFail = realFail;
+        state.bossTimer = null;
+    }
+});
+
+await ok('An encounter continuation needs the flag AND the reputation', async () => {
+    // The ladder the encounter pool is built on: the opener wants 60, its
+    // option pays 15, and the continuation wants 80 - so one encounter cannot
+    // pay for its own follow-up. Until 6.4 the flag was checked first and
+    // returned, so 83 of the 84 continuations arrived the moment their thread
+    // was opened, the contract and the gala among them.
+    resetState();
+    await ensure('reputation');
+    const cont = DB.reputation.find(e => e.id === 'rep_ceo_story_2a');
+    assert.ok(cont?.reqStory && cont?.reqRep, 'the chain this rests on has changed shape');
+    const [[char, threshold]] = Object.entries(cont.reqRep);
+
+    state.storyFlags = {};
+    state.reputation[char] = 100;
+    assert.equal(engine.encounterEligible(cont), false, 'the flag is not being asked for');
+
+    // Flag set, but the colleague does not like the player that much yet -
+    // which is exactly where a freshly opened thread leaves them.
+    state.storyFlags[cont.reqStory] = true;
+    state.reputation[char] = threshold - 5;
+    assert.equal(engine.encounterEligible(cont), false,
+                 'the continuation arrives below its own threshold again');
+
+    state.reputation[char] = threshold;
+    assert.equal(engine.encounterEligible(cont), true, 'the earned continuation stays shut');
+
+    // The other direction, for the strands that need a colleague to dislike
+    // the player: a negative threshold is an upper bound.
+    // A CONTINUATION of one, so both halves are asked here too - the first
+    // candidate the pool offers (rep_kevin_simple_bad_1) carries no reqStory,
+    // and this half then held the ceiling alone. 41 of the 69 qualify.
+    const sour = DB.reputation.find(e => e.reqStory && e.reqRep
+                                         && Object.values(e.reqRep).some(v => v < 0));
+    assert.ok(sour, 'this half has no subject any more');
+    const [[sChar, sWant]] = Object.entries(sour.reqRep).filter(([, v]) => v < 0);
+
+    state.storyFlags = {};
+    state.reputation[sChar] = sWant;
+    assert.equal(engine.encounterEligible(sour), false, 'the flag is not being asked for on a sour strand');
+
+    state.storyFlags[sour.reqStory] = true;
+    state.reputation[sChar] = sWant + 5;              // not sour enough
+    assert.equal(engine.encounterEligible(sour), false, 'a negative threshold is not a ceiling');
+    state.reputation[sChar] = sWant;
+    assert.equal(engine.encounterEligible(sour), true, 'a met negative threshold stays shut');
+
+    // And the filter in trigger() has to go through this method, or the rule
+    // can quietly stop being asked a second time.
+    const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+    assert.match(src, /DB\.reputation\.filter\(ev =>[\s\S]{0,120}?this\.encounterEligible\(ev\)\)/,
+                 'the encounter draw no longer asks encounterEligible');
+});
+
+await ok('A week leans towards its open threads as Friday nears', () => {
+    resetState();
+    assert.equal(engine.followUpChance(), engine.FOLLOWUP_CHANCE, 'the day mode is no longer flat');
+
+    state.week = { active: true, level: 'normal', dayIndex: 1, weekLog: [], repAtWeekStart: {} };
+    const byDay = [1, 2, 3, 4, 5].map(d => { state.week.dayIndex = d; return engine.followUpChance(); });
+    assert.deepEqual(byDay, engine.FOLLOWUP_BY_DAY, 'the weekday no longer decides');
+    assert.ok(byDay[4] > byDay[0], 'Friday leans no further than Monday');
+
+    // The simulator carries the same table, or every week number is measured
+    // against a different game than the one being played - which is exactly
+    // what the three corrections of 6.4 were about.
+    const sim = readFileSync(new URL('../tools/simulate-week.mjs', import.meta.url), 'utf-8');
+    const table = sim.match(/const FOLLOWUP_BY_DAY = \[([^\]]+)\]/);
+    assert.ok(table, 'the simulator has no follow-up table any more');
+    assert.deepEqual(table[1].split(',').map(parseFloat), engine.FOLLOWUP_BY_DAY,
+                     'engine and simulator disagree about the follow-up chance');
+});
+
+await ok('On the stacked layout the terminal comes to the player', async () => {
+    // At 375x812 the page is 1838px tall: the four action buttons sat at 1742
+    // and the event at 358, so every action was scroll down, tap, scroll up to
+    // read. The bar is pinned to the bottom edge there (app.css) and this
+    // brings the event back up.
+    const seen = [];
+    const panel = { id: 'terminal', scrollIntoView: (opt) => seen.push(opt) };
+    const realGet = globalThis.document.getElementById;
+    const realMM  = globalThis.window.matchMedia;
+    const bench = { ...ui, state, lesson: null, windowOverTerminal: () => false };
+    try {
+        globalThis.document.getElementById = (id) => (id === 'terminal' ? panel : realGet(id));
+        globalThis.window.matchMedia = (query) => ({ matches: query === ui.PHONE_LAYOUT });
+
+        assert.equal(bench.phoneLayout(), true, 'the stacked layout is not recognised');
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 1, 'the event was not brought into view');
+        // `start`, not `center`: an event card can be taller than the screen,
+        // and centring it pushes its own title off the top.
+        assert.equal(seen[0].block, 'start', 'a tall event card would lose its title');
+
+        // A window over the terminal, and the page must not move behind it.
+        seen.length = 0;
+        bench.windowOverTerminal = () => true;
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the page was dragged around behind an open window');
+
+        // Nor under an open mail. It covers the whole screen and answering it
+        // is a decision of its own, so the page behind it stays where it is.
+        seen.length = 0;
+        bench.windowOverTerminal = () => false;
+        state.isEmailOpen = true;
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the page was dragged around under an open mail');
+        state.isEmailOpen = false;
+
+        // Nor during the tutorial, which scrolls to its own target.
+        seen.length = 0;
+        bench.lesson = { isActive: true };
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the tutorial and the terminal fight over the page');
+
+        // And nothing at all on the side-by-side layout, where the page has no
+        // scroll to give.
+        seen.length = 0;
+        bench.lesson = null;
+        globalThis.window.matchMedia = () => ({ matches: false });
+        assert.equal(bench.phoneLayout(), false);
+        bench.showTerminal();
+        await new Promise(r => setTimeout(r, 120));
+        assert.equal(seen.length, 0, 'the desktop layout scrolls after all');
+    } finally {
+        globalThis.document.getElementById = realGet;
+        globalThis.window.matchMedia = realMM;
+    }
+
+    // The pinned bar covers the bottom of the screen, so "on screen" ends
+    // where the bar begins. The tutorial asked the viewport instead, called a
+    // target lying behind the bar visible and kept its scroll - and since a
+    // highlighted target carries z-2500 it then drew ON TOP of the bar.
+    try {
+        const bar = { id: 'action-bar', getBoundingClientRect: () => ({ top: 700, bottom: 812 }),
+                      contains: (el) => el?.id === 'btn-coffee' };
+        globalThis.document.getElementById = (id) => (id === 'action-bar' ? bar : realGet(id));
+        globalThis.window.matchMedia = (query) => ({ matches: query === ui.PHONE_LAYOUT });
+        globalThis.window.innerHeight = 812;
+        const bench = { ...ui, state };
+
+        assert.equal(bench.usableBottom(), 700, 'the screen is still thought to end behind the bar');
+        // A button INSIDE the pinned bar is on screen by definition. Scrolling
+        // to "reveal" it aims at its natural place at the end of the page.
+        assert.equal(bench.pinnedToScreen({ id: 'btn-coffee' }), true, 'a pinned button counts as scrollable again');
+        assert.equal(bench.pinnedToScreen({ id: 'btn-team' }), false, 'everything counts as pinned');
+
+        globalThis.window.matchMedia = () => ({ matches: false });
+        assert.equal(bench.usableBottom(), 812, 'the side-by-side layout loses screen to a bar it does not pin');
+        assert.equal(bench.pinnedToScreen({ id: 'btn-coffee' }), false, 'nothing is pinned without the stacked layout');
+    } finally {
+        globalThis.document.getElementById = realGet;
+        globalThis.window.matchMedia = realMM;
+    }
+
+    // One breakpoint, two files. The engine asks a media query and the
+    // stylesheet releases the page height - at exactly 1024 the old
+    // `innerWidth < 1024` said desktop while the stylesheet said stacked.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    const width = ui.PHONE_LAYOUT.match(/max-width:\s*(\d+)px/);
+    assert.ok(width, 'PHONE_LAYOUT is no longer a max-width query');
+    assert.ok(css.includes(`@media (max-width: ${width[1]}px)`),
+              `app.css has no @media (max-width: ${width[1]}px) - the two breakpoints have drifted apart`);
+    const block = css.slice(css.indexOf(`@media (max-width: ${width[1]}px)`)).slice(0, 2000);
+    assert.match(block, /#action-bar\s*\{[\s\S]*?position:\s*sticky/,
+                 'the action bar is not pinned on the stacked layout');
+    // scrollIntoView knows nothing about a sticky element, so the scrollport
+    // has to be told where the bar is - otherwise every caller lands behind it.
+    assert.match(block, /scroll-padding-bottom:/,
+                 'nothing keeps a scrolled-to element clear of the pinned bar');
+
+    // Every change of the terminal has to go through it, or the layout only
+    // follows some of the time.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const setter = uiSrc.slice(uiSrc.indexOf('_setTerminal: function'), uiSrc.indexOf('EVENT_CLASS:'));
+    assert.match(setter, /this\.showTerminal\(\)/, '_setTerminal no longer brings the terminal into view');
+
+    // The tutorial scrolls only to a target that is actually off screen: its
+    // own targets are the bar's buttons, and centring a child of a pinned bar
+    // carries the page to its very end.
+    const tut = readFileSync(new URL('../src/tutorial.js', import.meta.url), 'utf-8');
+    assert.match(tut, /if \(!onScreen\) targetEl\.scrollIntoView/,
+                 'the tutorial centres targets that never left the screen');
+    assert.match(tut, /engine\.pinnedToScreen\(targetEl\)/,
+                 'the tutorial scrolls to reveal a button that is pinned on screen');
+    assert.match(tut, /engine\.usableBottom\(\)/,
+                 'the tutorial measures against the viewport instead of the usable screen');
+});
+
+await ok('A shuffled bag shows everything once before it repeats', async () => {
+    const { drawIndex } = await import('../src/engine/draw_bag.js');
+    store.clear();
+
+    const first = Array.from({ length: 8 }, () => drawIndex('tst_bag', 8));
+    assert.deepEqual([...first].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5, 6, 7],
+                     'a cycle did not show every entry exactly once');
+    // Shuffled, not counted off. The check above cannot see this at all - it
+    // sorts before comparing, so it passes on 0,1,...,7 - and the Set it used
+    // to be followed by could not fail either, since a set of eight distinct
+    // numbers is what the sorted compare just proved. Order has to be looked
+    // at. Across six bags rather than one, because a single shuffle IS the
+    // identity once in 40,320; six in a row is that to the sixth.
+    //
+    // Held against 7,6,...,0, not 0,1,...,7: the bag is filled in order and
+    // drawn with pop(), so an unshuffled one comes out BACKWARDS. The first
+    // version of this check compared against ascending, passed on a Fisher-
+    // Yates turned into a no-op, and proved nothing - the mutation probe is
+    // the only reason that is not still the case.
+    let shuffled = false;
+    for (let i = 0; i < 6 && !shuffled; i++) {
+        store.clear();
+        const bag = Array.from({ length: 8 }, () => drawIndex('tst_order', 8));
+        shuffled = bag.some((v, idx) => v !== 7 - idx);
+    }
+    assert.ok(shuffled, 'the bag counts off in order instead of shuffling');
+    store.clear();
+    Array.from({ length: 8 }, () => drawIndex('tst_bag', 8));   // emptied again for the refill below
+
+    // Empty, so the next draw refills.
+    const next = drawIndex('tst_bag', 8);
+    assert.ok(next >= 0 && next < 8, 'the bag did not refill');
+
+    // A pool that shrank between versions drops the indices it no longer has.
+    store.clear();
+    drawIndex('tst_shrink', 20);
+    const after = Array.from({ length: 3 }, () => drawIndex('tst_shrink', 3));
+    assert.ok(after.every(i => i >= 0 && i < 3), 'a stale index survived a shrunken pool');
+
+    // Bags are a convenience, not state anything follows from: with no storage
+    // at all the draw still answers.
+    const realStore = globalThis.localStorage;
+    try {
+        globalThis.localStorage = { getItem() { throw new Error('nope'); }, setItem() { throw new Error('nope'); } };
+        const blind = drawIndex('tst_bag', 5);
+        assert.ok(blind >= 0 && blind < 5, 'a refused storage broke the draw');
+    } finally { globalThis.localStorage = realStore; }
+
+    // This test clears the store, and the two first-time hints live in it -
+    // so the flags are put back rather than left for whichever later test
+    // happens to trigger a mail or an emergency first.
+    resetState();
+});
+
+await ok('The morning odds are still the share of the entries', () => {
+    // The bag is per CATEGORY, and the category is drawn as an index into the
+    // whole list - that line IS the distribution (60 of 118 mornings quiet).
+    // One bag over all 118 would keep the odds only across a full cycle and
+    // guarantee a late stretch with no quiet morning left in it.
+    const src = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+    assert.match(src, /effect = DB\.moods\[Math\.floor\(Math\.random\(\) \* DB\.moods\.length\)\]\.effect/,
+                 'the morning category is no longer drawn by its share of the list');
+    assert.match(src, /drawIndex\('mood_' \+ effect, group\.length\)/,
+                 'the morning text is no longer drawn from its category bag');
+});
+
 await ok('The day starter is a registered timer', () => {
     resetState();
     engine.setDifficulty('normal');
     assert.ok(state.bootTimer, 'the 500ms starter is untracked again');
     engine.clearDayTimers();
     assert.equal(state.bootTimer, null, 'clearDayTimers cannot reach it');
+});
+
+await ok('A browser that refuses its storage still boots', async () => {
+    // Some browsers throw on the mere mention of localStorage: site data
+    // blocked, some private modes, third-party storage blocked for a game
+    // embedded in somebody else's page. engine_state reads its settings while
+    // the module LOADS, so the throw stopped every import behind it and the
+    // start screen stood there with no button doing anything.
+    const real = globalThis.localStorage;
+    try {
+        Object.defineProperty(globalThis, 'localStorage', {
+            configurable: true,
+            get() { throw new Error('storage denied'); },
+        });
+        const guard = await import('../src/storage_guard.js');
+        assert.equal(guard.storageLost, true, 'the refusal went unnoticed');
+        // What it puts in place has to behave like a Storage, or every reader
+        // and writer of a setting breaks one line further on.
+        localStorage.setItem('layer8_probe', 'x');
+        assert.equal(localStorage.getItem('layer8_probe'), 'x');
+        assert.equal(localStorage.getItem('layer8_never_written'), null);
+        assert.equal(localStorage.length, 1);
+        localStorage.removeItem('layer8_probe');
+        assert.equal(localStorage.getItem('layer8_probe'), null);
+    } finally {
+        Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: real });
+    }
+});
+
+await ok('An imported archive is held against its own shape', () => {
+    // Until 6.4 the only check was "items is an array", and deepMerge walked
+    // whatever came with it.
+    const good = { items: ['donut'], achievements: ['ach_wolf'], stats: { daysStarted: 3 }, gala: null };
+    assert.deepEqual(engine.cleanArchive(good), good, 'a sound archive did not survive');
+
+    // Wrong shapes are dropped, not stored: the field stays at its default.
+    const bent = engine.cleanArchive({ items: [], achievements: 'oops', stats: 5, seenEvents: {}, gala: null });
+    assert.deepEqual(bent, { items: [], gala: null }, 'a bent field was taken as it came');
+
+    // A name the archive does not have never reaches the merge.
+    assert.deepEqual(engine.cleanArchive({ items: [], invented: 'x' }), { items: [] });
+
+    for (const junk of [null, 'nope', 42, [], {}, { items: 'donut' }]) {
+        assert.throws(() => engine.cleanArchive(junk), `${JSON.stringify(junk)} passed as an archive`);
+    }
+
+    // And the merge itself refuses the three names that are not data. Without
+    // this, a crafted code reached Object.prototype - in a desktop build that
+    // is a page with Node access.
+    const payload = JSON.parse('{"items":[],"__proto__":{"polluted":"yes"}}');
+    engine.deepMerge({ items: [] }, payload);
+    assert.equal({}.polluted, undefined, 'an import wrote onto Object.prototype');
+});
+
+await ok('An import tells the cloud what it replaced, before the reload', async () => {
+    // loadCloudSave UNITES rather than overwrites - rightly, the archive is
+    // cumulative career data. So on the desktop the import undid itself: the
+    // reload found the replaced career still in savegame.dat and handed it
+    // back. The order is the whole fix, hence the source check below.
+    const { platform } = await import('../src/platform.js');
+    const realSave = platform.save;
+    const sent = [];
+    try {
+        platform.save = (payload) => sent.push(payload);
+        resetState();
+        state.archive.items = ['donut'];
+        engine.syncRun(true);
+        assert.equal(sent.length, 1, 'a forced sync never reached the cloud');
+        assert.deepEqual(sent[0].archive.items, ['donut'], 'the payload carries another archive');
+    } finally { platform.save = realSave; }
+
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    // Brace-matched, not sliced to the end of the file. engine_ui.js holds a
+    // second location.reload() in another function, so a window running to
+    // EOF was satisfied by THAT one: move the reload out of performImport
+    // altogether and the order check still passed.
+    const start = uiSrc.indexOf('performImport: function');
+    assert.ok(start > -1, 'performImport is no longer where this check looks');
+    let depth = 0, end = -1;
+    for (let i = uiSrc.indexOf('{', start); i < uiSrc.length; i++) {
+        if (uiSrc[i] === '{') depth++;
+        else if (uiSrc[i] === '}' && --depth === 0) { end = i; break; }
+    }
+    assert.ok(end > start, 'performImport does not close where this check can find it');
+    const block = uiSrc.slice(start, end);
+    const sync = block.indexOf('engine.syncRun(true)');
+    const reload = block.indexOf('location.reload()');
+    assert.ok(sync > -1, 'the import no longer writes the cloud copy');
+    assert.ok(reload > -1, 'the import no longer reloads, or does it somewhere else');
+    assert.ok(sync < reload, 'the import reloads before it tells the cloud');
 });
 
 await ok('The chronicle unites by day, not by object', () => {
@@ -3292,6 +4071,7 @@ await ok('A day that ends with its windows open closes them', async () => {
     await engine.openVending();
     state.intranetOpen = true;
     state.loreOpen = true;
+    engine.showOverlay('board-modal');   // the board is a plain overlay, so it is opened as one
     let boardClosed = false;
     const closeBoard = engine.closeBoard;
     engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
@@ -3305,8 +4085,6 @@ await ok('A day that ends with its windows open closes them', async () => {
     assert.equal(state.vending, null, 'the unspent take outlived the day');
     assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
     assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
-    // The fake document reports every overlay as open, so the board is asked
-    // for - what is held here is that finishGame asks at all.
     assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
 });
 
@@ -3487,16 +4265,20 @@ await ok('No key reaches through a window over the terminal', () => {
         assert.ok(listed.has(id), `"${id}" closes on Escape but is missing from WINDOWS_OVER_TERMINAL`);
     }
 
-    // The bench's document stub answers "visible" for every id, which would
-    // make this true whatever the machine does - the mutation probe caught
-    // exactly that. So the DOM half is told nothing is open, and the state
-    // half has to carry the answer on its own, both ways.
+    // Both halves of the question, on an empty bench: the state flags first,
+    // then the overlay list. Until 6.4.1 the fake document answered "visible"
+    // for every id, so the first of these would have been true whatever the
+    // machine did - the mutation probe caught exactly that, and the bench's
+    // own isOverlayOpen now answers off a set instead.
     resetState();
-    const asked = { ...engine, isOverlayOpen: () => false };
-    assert.equal(ui.windowOverTerminal.call(asked), false, 'a window is reported where none is open');
+    assert.equal(engine.windowOverTerminal(), false, 'a window is reported where none is open');
     state.vendingOpen = true;
-    assert.equal(ui.windowOverTerminal.call(asked), true, 'the vending machine does not count as a window');
+    assert.equal(engine.windowOverTerminal(), true, 'the vending machine does not count as a window');
     state.vendingOpen = false;
+    engine.showOverlay('board-modal');
+    assert.equal(engine.windowOverTerminal(), true, 'the noticeboard does not count as a window');
+    engine.hideOverlay('board-modal');
+    assert.equal(engine.windowOverTerminal(), false, 'the board is still counted after it closed');
 });
 
 await ok('A crank line waits until the one before it can have been read', () => {

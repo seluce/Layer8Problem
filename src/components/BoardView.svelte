@@ -51,7 +51,7 @@
                 <div class="w-4 h-4 rounded-full absolute -top-2 left-4 shadow-xs" style="background:{note.pin}"></div>
                 <h3 class="font-bold underline mb-2">{note.title}</h3>
                 <p class="leading-relaxed text-xs">{@html note.body}</p>
-                <span class="block mt-4 text-[10px] text-slate-500 font-bold uppercase">{note.sign}</span>
+                <span class="block mt-4 text-[0.625rem] text-slate-500 font-bold uppercase">{note.sign}</span>
                 <!-- Coffee ring, because of course there is one -->
                 <div class="absolute -bottom-4 -right-4 w-16 h-16 rounded-full border-4 border-[#d7ccc8] opacity-30 pointer-events-none"></div>
             </div>
@@ -66,12 +66,12 @@
                 <h4 class="font-bold text-sm mb-2 text-slate-800">{note.title}</h4>
                 <p class="text-xs text-slate-600 leading-relaxed mb-3">{@html note.body}</p>
                 {#if note.items?.length}
-                    <ul class="list-disc pl-4 text-[10px] text-slate-600 space-y-1 mb-3">
+                    <ul class="list-disc pl-4 text-[0.625rem] text-slate-600 space-y-1 mb-3">
                         {#each note.items as item, i (i)}<li>{item}</li>{/each}
                     </ul>
                 {/if}
                 {#if note.foot}
-                    <div class="bg-slate-100 text-slate-500 text-[9px] p-2 text-center italic">{note.foot}</div>
+                    <div class="bg-slate-100 text-slate-500 text-[0.5625rem] p-2 text-center italic">{note.foot}</div>
                 {/if}
             </div>
 
@@ -82,12 +82,12 @@
                 <p class="font-bold text-xs text-red-600 mb-2 uppercase border-b border-red-200 pb-1">{note.sub}</p>
                 <p class="text-xs text-slate-700 mb-2 leading-relaxed">{@html note.body}</p>
                 {#if note.note}
-                    <p class="text-[10px] text-slate-500 italic mt-2">{note.note}</p>
+                    <p class="text-[0.625rem] text-slate-500 italic mt-2">{note.note}</p>
                 {/if}
                 <!-- The tear-off tabs nobody ever takes -->
                 <div class="flex justify-between mt-4 border-t border-dashed border-slate-300 pt-1">
                     {#each note.tabs as tab, i (i)}
-                        <div class="w-1/5 {i < note.tabs.length - 1 ? 'border-r border-dashed border-slate-300' : ''} h-10 text-[8px] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">{tab}</div>
+                        <div class="w-1/5 {i < note.tabs.length - 1 ? 'border-r border-dashed border-slate-300' : ''} h-10 text-[0.5rem] text-slate-400 rotate-90 flex items-center justify-center cursor-pointer hover:text-red-500 hover:font-bold transition-colors">{tab}</div>
                     {/each}
                 </div>
             </div>
@@ -100,7 +100,7 @@
                 <h5 class="font-serif font-bold text-sm leading-tight mb-2 text-slate-900">{note.sub}</h5>
                 <p class="font-serif text-xs text-justify leading-snug text-slate-800">{@html note.body}</p>
                 {#if note.stamp}
-                    <div class="mt-3 text-[10px] font-bold text-red-600 -rotate-3 border-2 border-red-600 inline-block px-2 py-0.5 rounded-xs transform origin-left">{note.stamp}</div>
+                    <div class="mt-3 text-[0.625rem] font-bold text-red-600 -rotate-3 border-2 border-red-600 inline-block px-2 py-0.5 rounded-xs transform origin-left">{note.stamp}</div>
                 {/if}
             </div>
 
@@ -111,7 +111,7 @@
                 <p class="text-xs font-bold text-slate-800 mb-2">{note.sub}</p>
                 <p class="text-xs text-slate-600 leading-relaxed mb-2">{@html note.body}</p>
                 {#if note.sign}
-                    <p class="mt-3 text-[10px] font-bold text-slate-400 text-right">{note.sign}</p>
+                    <p class="mt-3 text-[0.625rem] font-bold text-slate-400 text-right">{note.sign}</p>
                 {/if}
             </div>
 

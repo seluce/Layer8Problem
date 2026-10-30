@@ -345,7 +345,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_items.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '📦'}> {t('archive.items')}</span>
+                    <span class="text-[0.625rem] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_items.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '📦'}> {t('archive.items')}</span>
                     <span class="text-xs font-mono text-slate-300">{foundItems} / {items.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -355,7 +355,7 @@
 
             <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-lg shadow-xs">
                 <div class="flex justify-between items-end mb-1.5">
-                    <span class="text-[10px] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_medal.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '🏅'}> {t('archive.achievements')}</span>
+                    <span class="text-[0.625rem] font-bold text-purple-400 uppercase tracking-widest flex items-center gap-1.5"><img src="assets/img/ui/ui_medal.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror={(ev) => ev.currentTarget.outerHTML = '🏅'}> {t('archive.achievements')}</span>
                     <span class="text-xs font-mono text-slate-300">{earned.length} / {tree().achievements.length}</span>
                 </div>
                 <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800">
@@ -372,7 +372,7 @@
                 {#each MODES as m (m.key)}
                     <button type="button" onclick={() => setMode(m.key)}
                             aria-pressed={mode === m.key}
-                            class="flex-1 text-[10px] font-bold uppercase tracking-widest py-1.5 rounded-sm border transition-colors
+                            class="flex-1 text-[0.625rem] font-bold uppercase tracking-widest py-1.5 rounded-sm border transition-colors
                                    {mode === m.key
                                      ? `bg-slate-800 ${m.accent} ${m.border}`
                                      : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
@@ -384,7 +384,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {#each counters as stat (stat.key)}
                     <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
-                        <span class="text-[9px] text-slate-500 uppercase tracking-widest">{t(stat.label)}</span>
+                        <span class="text-[0.5625rem] text-slate-500 uppercase tracking-widest">{t(stat.label)}</span>
                         <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{counterValue(stat.key)}</span>
                     </div>
                 {/each}
@@ -396,14 +396,14 @@
                  sits right behind the number rather than in a spaced-out line
                  of capitals - that reads as a sentence. -->
             <div class="flex items-center justify-between px-3 py-2 bg-slate-800/40 rounded-sm border border-slate-700/30">
-                <span class="text-[10px] text-slate-400 uppercase tracking-widest">
-                    {t('archive.streak')}{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[11px] ml-2">{tf('archive.bestRun', { day: weekBest })}</span>{/if}
+                <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest">
+                    {t('archive.streak')}{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[0.6875rem] ml-2">{tf('archive.bestRun', { day: weekBest })}</span>{/if}
                 </span>
                 <span class="flex items-baseline gap-1.5 font-mono">
                     <span class="text-base font-bold {streak > 0 ? 'text-amber-400' : 'text-slate-500'}">{streak}</span>
-                    <span class="text-[11px] text-slate-400">{streakLabel}</span>
+                    <span class="text-[0.6875rem] text-slate-400">{streakLabel}</span>
                     <span class="text-slate-700 px-1">·</span>
-                    <span class="text-[11px] text-slate-400">{t('archive.record')}</span>
+                    <span class="text-[0.6875rem] text-slate-400">{t('archive.record')}</span>
                     <span class="text-base font-bold {streakBest > 0 ? 'text-slate-200' : 'text-slate-500'}">{streakBest}</span>
                 </span>
             </div>
@@ -413,24 +413,24 @@
                 <div class="space-y-1 px-1 pt-0.5">
                     {#each levels as level (level.key)}
                         <div class="flex items-center gap-2">
-                            <span class="text-[9px] text-slate-500 uppercase tracking-widest w-20 shrink-0">{t(level.label)}</span>
+                            <span class="text-[0.5625rem] text-slate-500 uppercase tracking-widest w-20 shrink-0">{t(level.label)}</span>
                             <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full {level.bar} rounded-full transition-all" style="width: {level.percent}%"></div>
                             </div>
-                            <span class="font-mono text-[10px] text-slate-400 w-14 text-right shrink-0">
+                            <span class="font-mono text-[0.625rem] text-slate-400 w-14 text-right shrink-0">
                                 {level.survived}/{level.started}
                             </span>
                         </div>
                     {/each}
                 </div>
             {:else}
-                <p class="text-[10px] text-slate-600 text-center py-2">
+                <p class="text-[0.625rem] text-slate-600 text-center py-2">
                     {mode === 'day' ? t('archive.noRun.day') : t('archive.noRun.week')}
                 </p>
             {/if}
 
             {#if footnotes.length}
-                <p class="text-[11px] text-slate-400 text-center pt-1 flex items-center justify-center gap-2 flex-wrap">
+                <p class="text-[0.6875rem] text-slate-400 text-center pt-1 flex items-center justify-center gap-2 flex-wrap">
                     {#each footnotes as note, i (note.text)}
                         {#if i > 0}<span class="text-slate-600">·</span>{/if}
                         <span><span class="font-bold font-mono {note.tone}">{note.value}×</span> {note.text}</span>
@@ -487,9 +487,9 @@
                         <div class="flex items-start gap-2 mb-0.5">
                             <div class="font-bold text-xs leading-tight {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
                             {#if row.unlocked}
-                                <span class="text-[9px] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{t(row.diff.label)}</span>
+                                <span class="text-[0.5625rem] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{t(row.diff.label)}</span>
                             {:else}
-                                <span class="text-[9px] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">{t('archive.locked')}</span>
+                                <span class="text-[0.5625rem] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">{t('archive.locked')}</span>
                             {/if}
                         </div>
                         <!-- No line-clamp: 33 of 54 texts are longer than two
@@ -497,7 +497,7 @@
                              longer tells you what to do. The grid stretches
                              the cards of a row to the same height anyway, so
                              nothing turns into a staircase. -->
-                        <div class="text-[10px] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
+                        <div class="text-[0.625rem] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
                     </div>
                 </div>
             {/each}

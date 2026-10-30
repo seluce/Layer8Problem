@@ -75,7 +75,13 @@
 </script>
 
 {#if game.intranetOpen}
-    <div class="fixed inset-0 bg-black/90 z-1200 flex items-center justify-center p-2 md:p-8">
+    <!-- A dialog like every other window (6.4). It opens off a state flag
+         rather than through showOverlay, so it was missed at first: the tab
+         order walked straight out of it into the controls behind, where Enter
+         pressed an action button the player could not see. topmostDialog()
+         reads role and z-index, so the attributes are all it needs. -->
+    <div class="fixed inset-0 bg-black/90 z-1200 flex items-center justify-center p-2 md:p-8"
+         role="dialog" aria-modal="true" aria-label={t('a11y.dialog.intranet')}>
 
         <div class="bg-slate-900 w-[95vw] max-w-[1400px] h-[95vh] flex flex-col rounded-lg shadow-2xl overflow-hidden ring-1 ring-slate-700">
 

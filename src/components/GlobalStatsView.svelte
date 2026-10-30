@@ -212,7 +212,7 @@
         {#each MODES as m (m.key)}
             <button type="button" onclick={() => setMode(m.key)}
                     aria-pressed={mode === m.key}
-                    class="flex-1 text-[10px] font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
+                    class="flex-1 text-[0.625rem] font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
                            {mode === m.key
                              ? `bg-slate-800 ${m.accent} ${m.border}`
                              : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
@@ -228,7 +228,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono">
             {#each TOTALS as total (total.key)}
                 <div>
-                    <div class="text-[10px] text-slate-500 uppercase tracking-widest">{t(total.label)}</div>
+                    <div class="text-[0.625rem] text-slate-500 uppercase tracking-widest">{t(total.label)}</div>
                     <div class="text-xl font-bold {total.tone}">{num(world[total.key])}</div>
                 </div>
             {/each}
@@ -251,11 +251,11 @@
 
             <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-5 border-b border-slate-700 pb-2 flex items-center justify-between">
                 <span>{t('stats.profile.title')}</span>
-                <span class="text-[9px] text-slate-500 font-normal hidden sm:inline">{t('stats.profile.marker')}</span>
+                <span class="text-[0.5625rem] text-slate-500 font-normal hidden sm:inline">{t('stats.profile.marker')}</span>
             </h3>
 
             {#if !mineReady}
-                <p class="text-[11px] text-slate-500 italic mb-4">
+                <p class="text-[0.6875rem] text-slate-500 italic mb-4">
                     {t('stats.profile.none')}
                 </p>
             {/if}
@@ -277,7 +277,7 @@
                             <div class="{row.bar} h-full transition-all duration-1000" style="width: {row.my * 100}%"></div>
                         </div>
                         {#if mineReady}
-                            <div class="text-[10px] text-slate-400 italic mt-0.5">{row.comment}</div>
+                            <div class="text-[0.625rem] text-slate-400 italic mt-0.5">{row.comment}</div>
                         {/if}
                     </div>
                 {/each}

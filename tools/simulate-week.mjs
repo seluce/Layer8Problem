@@ -132,14 +132,35 @@ const MINC = 8;
 
 // Calibrated v1 (2026-08-08). Anchor: the mean of sensible and casual
 // hits the target corridors 55-65 / 35-45 / 15-25 percent.
+// `tier` is engine.difficultyTier() for this level (engine_week.js): 1/2/3 by
+// the level CHOSEN, which is what the overnight-tickets morning mood pays out.
+// Derived from `base` it was always 1 here, because every week base is below
+// 1.1 - so the hard week collected one ticket a bad morning instead of three.
 const WDIFFS = [
-    { name: 'rested (easy)',      base: 0.75, startTickets: 0, startAl: 0,  valveReset: 30, exStart: 3, rAl: 0.72, rCr: 0.60 },
-    { name: 'fed up (medium)',     base: 0.85, startTickets: 1, startAl: 0,  valveReset: 50, exStart: 2, rAl: 0.60, rCr: 0.48 },
-    { name: 'in need of leave (hard)', base: 0.95, startTickets: 2, startAl: 10, valveReset: 60, exStart: 1, rAl: 0.42, rCr: 0.30 },
+    { name: 'rested (easy)',      tier: 1, base: 0.75, startTickets: 0, startAl: 0,  valveReset: 30, exStart: 3, rAl: 0.72, rCr: 0.60 },
+    { name: 'fed up (medium)',     tier: 2, base: 0.85, startTickets: 1, startAl: 0,  valveReset: 50, exStart: 2, rAl: 0.60, rCr: 0.48 },
+    { name: 'in need of leave (hard)', tier: 3, base: 0.95, startTickets: 2, startAl: 10, valveReset: 60, exStart: 1, rAl: 0.42, rCr: 0.30 },
 ];
 
 const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+/** engine_events.FOLLOWUP_BY_DAY - keep the two in step. */
+const FOLLOWUP_BY_DAY = [0.30, 0.30, 0.35, 0.45, 0.55];
 const clamp = (lo, v, hi) => Math.max(lo, Math.min(v, hi));
+
+/**
+ * The engine clamps every stat to 0..100 where it is written
+ * (engine_events.addStat); the simulators did not. A run could therefore bank
+ * a reserve the game never grants - days ended at laziness -43 and boss radar
+ * -72, states no bar can hold - and every week number measured before 6.4 was
+ * taken against a kinder game than the one being played. Adding it costs the
+ * casual bot 17 points on a rested week.
+ */
+const clampStats = (s) => {
+    s.fl = clamp(0, s.fl, 100);
+    s.al = clamp(0, s.al, 100);
+    s.cr = clamp(0, s.cr, 100);
+};
 
 // ---------- counted inventory (the engine's backpack, cap 10) ----------
 function invNormalCount(s) {
@@ -242,6 +263,7 @@ function apply(s, o, poolType) {
     s.fl += l;
     s.al += a > 0 ? Math.ceil(a * s.mult) : a;
     s.cr += b > 0 ? Math.ceil(b * s.mult * lazy) : b;
+    clampStats(s);
 
     if (o.next) s.flags.set(o.next, s.dayIndex);
     if (o.nextEmail) s.linkedMail.push(o.nextEmail);
@@ -285,7 +307,7 @@ function morning(s, cfg) {
     else if (roll < 30) { s.fl += moodVal; s.time += 30; s.tickets += 1; } // lazy
     else if (roll < 40) grant(s, rnd(['energy', 'donut', 'sandwich', 'chocolate'])); // snack
     else if (roll < 46) {                                                  // tickets overnight
-        s.tickets += cfg.base >= 1.2 ? 3 : (cfg.base >= 1.1 ? 2 : 1);
+        s.tickets += cfg.tier;                 // engine: difficultyTier(), 1/2/3
     }
     else if (roll < 52) {                                                  // excuse_minus
         if (s.excusesLeft > 0) s.excusesLeft--;
@@ -295,6 +317,7 @@ function morning(s, cfg) {
         s.excusesLeft = Math.min(s.excusesLeft + 1, s.exCap);
     }
     // else: normal (60/118)
+    clampStats(s);
     return checkEnd(s);                                                    // death at breakfast
 }
 
@@ -363,7 +386,11 @@ function playWeekDay(s, cfg, strat, dayIndex) {
             cont[action]--;
             const fu = pool.filter(e => e.reqStory);
             const base = pool.filter(e => !e.reqStory);
-            ev = (fu.length && Math.random() < 0.30) ? rnd(fu)
+            // engine: FOLLOWUP_BY_DAY, the week leans towards its open threads
+            // as it runs out of days. Unseen events are preferred too
+            // (engine.preferUnseen), which a single week cannot model - the
+            // archive is a career, and a week here starts from nothing.
+            ev = (fu.length && Math.random() < FOLLOWUP_BY_DAY[s.dayIndex - 1]) ? rnd(fu)
                : (base.length ? rnd(base) : rnd(fu));
         }
 
@@ -416,7 +443,14 @@ function playWeekDay(s, cfg, strat, dayIndex) {
             if (Math.random() < chance) {
                 let mail = null;
                 if (s.linkedMail.length) {
-                    mail = DB.emails.find(e => e.id === s.linkedMail.shift());
+                    // shift() OUTSIDE the predicate. Inside, find() ran it once
+                    // per candidate: the first mail in the pool was held against
+                    // the first queued id, the second against the next one -
+                    // usually undefined - and the queue drained without a match.
+                    // So the 63 linked mails, 39% of the pool, never played in
+                    // any balance number taken before 6.4.
+                    const wanted = s.linkedMail.shift();
+                    mail = DB.emails.find(e => e.id === wanted);
                 } else {
                     let mp = DB.emails.filter(e => !e.linked && !s.usedMails.has(e.id));
                     if (!mp.length) {                       // engine: exhausted set clears

@@ -88,7 +88,7 @@
 <div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mt-4 rounded-lg border border-slate-700/50">
     <div class="flex flex-col flex-1">
         <span class="text-sm font-medium text-slate-200 leading-tight">{t('keybind.hotkeys')}</span>
-        <span class="text-[10px] text-slate-500 mt-1">{t('keybind.hotkeyHint')}</span>
+        <span class="text-[0.625rem] text-slate-500 mt-1">{t('keybind.hotkeyHint')}</span>
     </div>
     <label class="relative inline-flex items-center cursor-pointer shrink-0">
         <input type="checkbox" class="sr-only peer" aria-label={t('keybind.hotkeys')}

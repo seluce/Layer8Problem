@@ -105,6 +105,36 @@
 
     @media (max-width: 1024px) {
         body { height: auto; overflow-y: auto; }
+
+        /* Anything scrolled into view keeps clear of the pinned bar below.
+           scrollIntoView knows nothing about a sticky element, so the
+           tutorial's target landed BEHIND the bar - and because a highlighted
+           target carries z-2500 it then rendered on top of it, which looked
+           like two bars sitting in each other. 6rem is the bar (5rem plus its
+           padding), and half a rem of air. */
+        html { scroll-padding-bottom: 6.5rem; }
+
+        /* The action bar stays on the bottom edge.
+           Below this width the five panels stack and the page grows past the
+           screen: at 375x812 it is 1838px tall, and the four buttons sat at
+           1742. Every action meant scrolling a thousand pixels down, tapping,
+           and scrolling back up to read - with the clock running. Pinned here,
+           and engine_ui.showTerminal() brings the event to the player.
+
+           The last child of the page, so there is nothing below it to cover:
+           it stays on the edge until its own place at the end is reached.
+           Its own background, or the terminal would scroll through it, and a
+           z-index below the side panels (1100) and far below the modals. */
+        #action-bar {
+            position: sticky;
+            bottom: 0;
+            z-index: 900;
+            background-color: var(--depth-page);
+            padding-block: 0.5rem;
+            /* The page's own bottom padding would otherwise show as a gap
+               under the pinned bar. */
+            margin-bottom: -1rem;
+        }
     }
 }
 
@@ -131,7 +161,7 @@
         min-width: 1.6em;
         padding: 3px 6px 4px;
         font-family: var(--font-mono, ui-monospace), monospace;
-        font-size: 11px;
+        font-size: 0.6875rem;
         font-weight: 700;
         line-height: 1;
         letter-spacing: 0.03em;
@@ -161,7 +191,7 @@
             0 1px 2px rgba(0, 0, 0, 0.45);
     }
 
-    body.compact-mode .key-hint { font-size: 10px; padding: 2px 5px 3px; }
+    body.compact-mode .key-hint { font-size: 0.625rem; padding: 2px 5px 3px; }
     /* PANELS
        Every panel carries a coloured top edge — the one element of this design
        that is not generic. It comes from a variable so the terminal can change
@@ -279,21 +309,21 @@
 
     .achievement-toast .ach-label {
         display: block;
-        font-size: 9px; line-height: 1.2; letter-spacing: 0.14em;
+        font-size: 0.5625rem; line-height: 1.2; letter-spacing: 0.14em;
         text-transform: uppercase; font-weight: 700;
         color: #f59e0b;
     }
 
     .achievement-toast .ach-title {
         display: block;
-        font-size: 14px; line-height: 1.25; font-weight: 800;
+        font-size: 0.875rem; line-height: 1.25; font-weight: 800;
         color: #f8fafc;
         margin-top: 2px;
     }
 
     .achievement-toast .ach-desc {
         display: block;
-        font-size: 11px; line-height: 1.35;
+        font-size: 0.6875rem; line-height: 1.35;
         color: #94a3b8;
         margin-top: 3px;
     }
@@ -313,7 +343,7 @@
     .inv-slot {
         background: #1e293b; border: 1px solid #334155; height: 40px; width: 40px;
         border-radius: 2px; display: flex; justify-content: center; align-items: center;
-        font-size: 20px; cursor: pointer; position: relative;
+        font-size: 1.25rem; cursor: pointer; position: relative;
         transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -329,7 +359,7 @@
     }
 
     .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
-    .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 10px; color: #10b981; }
+    .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 0.625rem; color: #10b981; }
 
     /* BUTTONS */
     .action-btn {
@@ -448,6 +478,27 @@
 }
 
 /* ============================================================
+   THE FOCUS RING
+   Deliberately outside the @layer blocks, for the same reason as the
+   text size below: a utility class would otherwise beat it.
+
+   Nothing in the game drew one until 6.4. Tab through the settings and
+   the screen said nothing about where you were - the switches even
+   carried peer-focus:outline-hidden, which took away the one ring the
+   browser offered. The game is fully playable from the keyboard
+   (Q/W/E/R, 1-3, Space, rebindable), so the one thing missing was being
+   able to SEE it.
+
+   :focus-visible, not :focus — a mouse click must not leave a ring
+   behind on every button it touches.
+   ============================================================ */
+:focus-visible {
+    outline: 2px solid #22d3ee;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ============================================================
    TEXT SIZE
    Deliberately outside the @layer blocks: Tailwind's utilities live
    in a later layer and would otherwise beat any rule, no matter how
@@ -455,6 +506,15 @@
    on individual elements — Tailwind sizes type in rem, i.e. relative
    to exactly this value. So everything grows evenly: events, phone,
    inbox, team, archive and the menus.
+
+   Which is why no type size in this project may be written in PIXELS.
+   Up to 6.3 the small print was: 155 uses of text-[8px] to text-[17px],
+   and px is px whatever the root says — so the log, the handbook, the
+   setting descriptions, the ticket cap and half the badges were the only
+   things in the game that did not grow, exactly the text that needed it
+   most. They are arbitrary values in rem now (8px = 0.5rem at the default
+   16px root, so nothing looks different until the setting is touched).
+   A new one belongs in rem as well.
    ============================================================ */
 html.text-size-large  { font-size: 17px; }
 html.text-size-xlarge { font-size: 18.5px; }

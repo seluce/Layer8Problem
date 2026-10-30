@@ -78,15 +78,26 @@ ipcMain.handle('read-savegame', () => {
     return null;
 });
 
-// Write the save file to disk
+// Write the save file to disk.
+//
+// Through a temp file and a rename, not straight over the real one: a
+// writeFileSync truncates its target first, so a crash, a power cut or Steam
+// closing the game mid-write left a half-written savegame.dat behind - and
+// that is the whole career, with the cloud copy about to be overwritten by it.
+// A rename inside the same directory is atomic, so the file on disk is either
+// the old save or the new one and never half of either.
 ipcMain.on('write-savegame', (event, jsonData) => {
     const savePath = path.join(app.getPath('userData'), 'savegame.dat');
+    const tempPath = savePath + '.tmp';
     try {
         // Encode as Base64 so the file is not trivially editable
         const encodedData = Buffer.from(jsonData, 'utf8').toString('base64');
-        fs.writeFileSync(savePath, encodedData, 'utf8');
+        fs.writeFileSync(tempPath, encodedData, 'utf8');
+        fs.renameSync(tempPath, savePath);
     } catch (err) {
         console.error("Cloud save: write failed:", err);
+        // Leave no half-written leftover standing around for the next write.
+        try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch { /* nothing to clean */ }
     }
 });
 
@@ -250,7 +261,24 @@ try {
     console.warn("Steam overlay could not be initialised.", err);
 }
 
-app.whenReady().then(createWindow);
+// One copy of the game at a time.
+//
+// Two windows share one savegame.dat and one Steam session: the second one
+// reads the save at startup and the first one overwrites it at the next
+// action, so whichever is closed last decides - and the other career is gone
+// with no message anywhere. Started twice (Steam plus a desktop shortcut, or
+// an impatient second click), the second instance now hands the job to the
+// first and leaves.
+if (!app.requestSingleInstanceLock()) {
+    app.quit();
+} else {
+    app.on('second-instance', () => {
+        if (!win) return;
+        if (win.isMinimized()) win.restore();
+        win.focus();
+    });
+    app.whenReady().then(createWindow);
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

@@ -1,3 +1,40 @@
+[6.4.0] - 2026-10-26
+
+A day worth passing on, a phone that plays like one, and a word of warning before the things that arrive uninvited.
+
+On a phone:
+* The four action buttons stay on the bottom edge, and the event comes back up to you after every one. Before, each action meant scrolling a thousand pixels down and back.
+
+The day to day:
+* A working week leans towards the threads you have opened as Friday nears, so fewer of them run out of days.
+* Events you have never seen are given preference over ones you have.
+* Morning moods, ticker headlines and excuses no longer repeat until every one of their kind has had its turn.
+
+Interface:
+* A finished day, and a finished working week, can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there. On the browser version the picture carries the game's own address.
+* The first email and the first emergency of a career are explained before their clock starts. H.A.L.G.E.R.D. does the explaining, once.
+* A screen reader is told what the log writes, and the day curve says which lines it draws.
+* Playing from the keyboard shows where you are: every control draws a focus ring, and an open window keeps the keyboard inside it instead of letting it wander off behind.
+* The day curve shows the ticket pile too - the most common way to lose a day was the one thing it did not draw. Each line has a pattern of its own now, so they can be told apart without relying on colour.
+* Aggro and the boss radar say when the one-time save is spent - in a working week that is once for all five days.
+* The result card names what a decision did to the ticket pile.
+* The text size setting now reaches the small print too - the log, the handbook, the settings, the badges, the key caps on the buttons and the achievement notices all stayed put however large you set it.
+* The day cards promised fewer or more tickets per hour. They now name what actually differs: how many excuses you start with, and how far the valve cools you.
+
+Bug fixes:
+* A colleague's story only goes on once they actually like you that much. The next step used to arrive the moment the thread was opened, whatever the encounter asked for.
+* The knowledge book can be completed again. Entries that only a mail opens stayed dark for good.
+* Keys the game acts on no longer scroll the page as well - on a phone, and in a window smaller than the layout.
+* A browser that refuses the page its storage no longer leaves the start screen dead. The game runs for as long as the tab stays open, and says so.
+* The music stops when you switch away from the tab, and carries on where it was when you come back.
+* On iPhone and iPad the music volume slider works. It used to do nothing, and the music played at full volume.
+* An emergency no longer counts down behind an open window. The clock runs while the fight is on screen.
+* On Steam an imported save no longer hands the replaced career back to itself.
+* The game refuses to run twice at once, where two windows shared one save file.
+* On Steam a save can no longer be left half-written if the game stops while saving.
+
+---
+
 [6.3.0] - 2026-10-24
 
 A secret for anyone who can keep one, a small story about fruit, and new parts under the hood.

@@ -45,13 +45,13 @@
 
 <div class="bg-slate-950 border border-slate-700 rounded-lg p-4 my-3 text-left font-mono text-xs space-y-1">
     <div class="flex justify-between items-baseline gap-4 mb-2">
-        <span class="text-[10px] uppercase tracking-widest text-purple-400">{tf('week.summary.title', { mode })}</span>
+        <span class="text-[0.625rem] uppercase tracking-widest text-purple-400">{tf('week.summary.title', { mode })}</span>
         <!-- The legend carries the initials once, and they belong to the
              dictionary: German shortens Faulheit/Aggro/Chef to F/A/C, English
              Laziness/Aggro/Boss to L/A/B. This is the one place where the
              letters have to agree with the rows above, and now they sit in the
              same file as those rows. -->
-        <span class="text-[9px] text-slate-600">{t('week.summary.legend')}</span>
+        <span class="text-[0.5625rem] text-slate-600">{t('week.summary.legend')}</span>
     </div>
 
     {#each balance.rows ?? [] as row (row.day)}

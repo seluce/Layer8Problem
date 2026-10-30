@@ -19,6 +19,9 @@
  * engine.js into this file.
  */
 
+// First, before any module that reads localStorage while it loads.
+import { storageLost } from './storage_guard.js';
+
 import { mount } from 'svelte';
 
 import './app.css';
@@ -56,6 +59,7 @@ import IntranetView from './components/intranet/IntranetView.svelte';
 // 1. Which language, 2. that language's core data, 3. the engine, 4. the screen.
 const language = await initLanguage();
 applyStaticStrings();
+if (storageLost) document.getElementById('storage-notice')?.classList.replace('hidden', 'flex');
 await loadCore(language);
 engine.init();
 

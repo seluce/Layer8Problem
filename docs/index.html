@@ -22,14 +22,14 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{opacity:.45}.lang-opt:hover{opacity:.8}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{opacity:1;color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-kBMNijEZ.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-DwaIiDlX.css">
+  <script type="module" crossorigin src="./build/index-BBgzWnkb.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-DgvAY1W1.css">
 </head>
 <body class="text-xs md:text-sm">
     
     <div id="achievement-container"></div>
 
-	<div id="intro-modal" class="fixed inset-0 bg-black/90 z-999 flex items-center justify-center p-4 md:p-8">
+	<div id="intro-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=a11y.dialog.intro" class="fixed inset-0 bg-black/90 z-999 flex items-center justify-center p-4 md:p-8">
 		<div class="neon-box accent-blue bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative max-h-[90vh] overflow-y-auto custom-scrollbar">
 
 			<!-- Language, deliberately unlabelled.
@@ -38,7 +38,7 @@
 			     work without reading, and they sit here because this is the first
 			     thing anyone sees. The regular control lives in the settings for
 			     everyone who wants to change it later. -->
-			<div class="absolute top-3 right-3 flex items-center gap-1 text-[10px] font-bold tracking-widest z-10">
+			<div class="absolute top-3 right-3 flex items-center gap-1 text-[0.625rem] font-bold tracking-widest z-10">
 				<button type="button" class="lang-opt px-1 py-0.5 transition-opacity" data-lang="de"
 				        lang="de" title="Auf Deutsch spielen"
 				        data-action="switchLanguage" data-arg="de">DE</button>
@@ -65,7 +65,7 @@
 
 				<!-- Choice first: both modes are peers, so they get the same weight. -->
 				<div class="flex flex-col gap-3">
-					<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500 px-1" data-i18n="intro.modes.title">How much madness would you like?</h2>
+					<h2 class="text-[0.625rem] font-bold uppercase tracking-widest text-slate-500 px-1" data-i18n="intro.modes.title">How much madness would you like?</h2>
 
 					<button data-action="start"
                         class="group relative overflow-hidden w-full text-left bg-linear-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-xl p-4 flex items-center gap-4 transition-all shadow-[0_0_20px_rgba(0,0,0,0.35)] hover:scale-[1.02] hover:shadow-[0_0_28px_rgba(0,0,0,0.5)]">
@@ -73,9 +73,9 @@
                         <span class="flex flex-col min-w-0">
                             <span class="flex items-center gap-2 flex-wrap">
                                 <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.day.name">Workday</span>
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.day.badge">Single run</span>
+                                <span class="text-[0.5625rem] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.day.badge">Single run</span>
                             </span>
-                            <span class="text-[11px] leading-snug text-blue-100/90 mt-1" data-i18n="intro.mode.day.desc">One shift, 08:00 to 16:30. By the evening it is all forgotten.</span>
+                            <span class="text-[0.6875rem] leading-snug text-blue-100/90 mt-1" data-i18n="intro.mode.day.desc">One shift, 08:00 to 16:30. By the evening it is all forgotten.</span>
                         </span>
                     </button>
 
@@ -85,10 +85,10 @@
                         <span class="flex flex-col min-w-0">
                             <span class="flex items-center gap-2 flex-wrap">
                                 <span class="text-white font-black uppercase tracking-widest text-base" data-i18n="intro.mode.week.name">Working week</span>
-                                <span class="text-[9px] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.week.badge">Campaign</span>
+                                <span class="text-[0.5625rem] font-bold uppercase tracking-widest text-white/80 bg-white/15 border border-white/20 rounded-sm px-1.5 py-0.5" data-i18n="intro.mode.week.badge">Campaign</span>
                             </span>
-                            <span class="text-[11px] leading-snug text-purple-100/90 mt-1" data-i18n="intro.mode.week.desc">Monday to Friday in one go. Tickets, stats and backpack survive the night – getting thrown out ends the week.</span>
-                            <span id="week-tutorial-hint" class="text-[10px] leading-snug text-amber-200/90 mt-1.5 flex items-start gap-1.5">
+                            <span class="text-[0.6875rem] leading-snug text-purple-100/90 mt-1" data-i18n="intro.mode.week.desc">Monday to Friday in one go. Tickets, stats and backpack survive the night – getting thrown out ends the week.</span>
+                            <span id="week-tutorial-hint" class="text-[0.625rem] leading-snug text-amber-200/90 mt-1.5 flex items-start gap-1.5">
                                 <span aria-hidden="true">⚠</span>
                                 <span data-i18n="intro.mode.week.tutorialHint">The tutorial only runs in Workday. For a first attempt the single day is the gentler school.</span>
                             </span>
@@ -97,11 +97,11 @@
 
 					<div class="grid grid-cols-2 gap-3 pt-2">
 						<button data-action="openArchive"
-                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <img src="assets/img/ui/ui_archive.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🏆'"> <span data-i18n="intro.archive">Archive</span>
                         </button>
 						<button data-action="openSettings"
-                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <img src="assets/img/ui/ui_menu.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='⚙️'"> <span data-i18n="intro.settings">Options</span>
                         </button>
 					</div>
@@ -110,23 +110,31 @@
 					     through its settings menu, which the intro can open directly. -->
 					<div class="platform-web grid grid-cols-2 gap-3">
 						<button data-action="ui.openExportModal"
-                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <img src="assets/img/ui/ui_export.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='💾'"> <span data-i18n="intro.export">Export</span>
                         </button>
 						<button data-action="ui.openImportModal"
-                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <img src="assets/img/ui/ui_import.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='📂'"> <span data-i18n="intro.import">Import</span>
                         </button>
 					</div>
 
+					<!-- Shown by main.js when the browser refuses this page its
+					     storage (src/storage_guard.js): the game runs, but only for
+					     as long as the tab is open. -->
+					<p id="storage-notice" class="hidden text-[0.6875rem] leading-snug text-amber-200/90 items-start gap-1.5 px-1">
+						<span aria-hidden="true">⚠</span>
+						<span data-i18n="intro.storageLost">This browser does not let the page save. Your progress lasts until the tab closes – Export keeps it.</span>
+					</p>
+
 					<!-- Desktop build only: the browser has F11 and a tab close button -->
 					<div class="platform-desktop grid grid-cols-2 gap-3">
 						<button data-action="toggleFullscreen"
-                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500 text-slate-300 hover:text-cyan-400 py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+                            class="group bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500 text-slate-300 hover:text-cyan-400 py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
                             <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='🔲'"> <span data-i18n="intro.fullscreen">Full screen</span>
                         </button>
 						<button data-action="quitGame"
-							class="group bg-slate-800 hover:bg-red-950/40 border border-slate-600 hover:border-red-500 text-slate-300 hover:text-red-400 py-3 rounded-xl font-bold uppercase transition-all text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-xs">
+							class="group bg-slate-800 hover:bg-red-950/40 border border-slate-600 hover:border-red-500 text-slate-300 hover:text-red-400 py-3 rounded-xl font-bold uppercase transition-all text-[0.6875rem] tracking-widest flex items-center justify-center gap-2 shadow-xs">
 							<span class="text-base text-red-500/80 group-hover:text-red-500 group-hover:scale-125 transition-transform">⏻</span> <span data-i18n="intro.quit">Quit</span>
 						</button>
 					</div>
@@ -134,7 +142,7 @@
 
 				<!-- The rules, one line each. Same order as the header bar reads. -->
 				<aside class="bg-black/30 p-5 lg:p-6 rounded-xl border border-slate-700/80 text-xs font-mono shadow-inner">
-					<h2 class="text-slate-300 font-black border-b border-slate-700/50 pb-3 mb-4 tracking-widest uppercase flex items-center gap-2 text-[11px]">
+					<h2 class="text-slate-300 font-black border-b border-slate-700/50 pb-3 mb-4 tracking-widest uppercase flex items-center gap-2 text-[0.6875rem]">
 						<img src="assets/img/ui/ui_book.webp" alt="" width="22" height="22" class="w-[22px] h-[22px] select-none" onerror="this.outerHTML='📋'"> <span data-i18n="intro.handbook.title">Survival handbook</span>
 					</h2>
 					<ul class="space-y-3.5">
@@ -143,7 +151,7 @@
                                 <img src="assets/img/ui/ui_ticket.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-purple-400 tracking-wider text-[11px]" data-i18n="intro.handbook.tickets.name">TICKETS</strong>
+                                <strong class="text-purple-400 tracking-wider text-[0.6875rem]" data-i18n="intro.handbook.tickets.name">TICKETS</strong>
                                 <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.tickets.desc">One more every 30 minutes. At 10 open tickets it is over.</span>
                             </span>
                         </li>
@@ -152,7 +160,7 @@
                                 <img src="assets/img/ui/ui_lazy.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-emerald-400 tracking-wider text-[11px]" data-i18n="intro.handbook.lazy.name">LAZINESS</strong>
+                                <strong class="text-emerald-400 tracking-wider text-[0.6875rem]" data-i18n="intro.handbook.lazy.name">LAZINESS</strong>
                                 <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.lazy.desc">Too high? The boss punishes mistakes harder.</span>
                             </span>
                         </li>
@@ -161,7 +169,7 @@
                                 <img src="assets/img/ui/ui_angry.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-orange-400 tracking-wider text-[11px]" data-i18n="intro.handbook.aggro.name">AGGRO</strong>
+                                <strong class="text-orange-400 tracking-wider text-[0.6875rem]" data-i18n="intro.handbook.aggro.name">AGGRO</strong>
                                 <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.aggro.desc">At 100 % you get one blow-off. After that comes the rage quit.</span>
                             </span>
                         </li>
@@ -170,7 +178,7 @@
                                 <img src="assets/img/ui/ui_eye.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-red-400 tracking-wider text-[11px]" data-i18n="intro.handbook.radar.name">BOSS RADAR</strong>
+                                <strong class="text-red-400 tracking-wider text-[0.6875rem]" data-i18n="intro.handbook.radar.name">BOSS RADAR</strong>
                                 <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.radar.desc">At 100 % there is a written warning. After that, the sack.</span>
                             </span>
                         </li>
@@ -179,7 +187,7 @@
                                 <img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='•'">
                             </span>
                             <span class="flex flex-col min-w-0">
-                                <strong class="text-amber-400 tracking-wider text-[11px]" data-i18n="intro.handbook.loot.name">LOOT</strong>
+                                <strong class="text-amber-400 tracking-wider text-[0.6875rem]" data-i18n="intro.handbook.loot.name">LOOT</strong>
                                 <span class="text-slate-400 leading-snug" data-i18n="intro.handbook.loot.desc">Find items to solve problems creatively.</span>
                             </span>
                         </li>
@@ -196,7 +204,7 @@
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
         <div id="terminal" class="flex-2 neon-box panel-sunken terminal-screen p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 text-right text-[10px] text-slate-500 transition-all duration-500"><!-- Rendered by src/components/TerminalHeader.svelte --></div>
+            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 text-right text-[0.625rem] text-slate-500 transition-all duration-500"><!-- Rendered by src/components/TerminalHeader.svelte --></div>
             
             <!-- Rendered by src/components/Terminal.svelte -->
             <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-40"></div>
@@ -217,37 +225,46 @@
                             border-b border-slate-800 pb-1.5 sm:pb-1 mb-2 shrink-0">
                     <div class="contents">
                         <div id="btn-inventory" data-action="openInventory" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 -ml-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="nav.inventory">INVENTORY</span></span>
+                            <span class="text-[0.625rem] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="nav.inventory">INVENTORY</span></span>
                             <!-- Rendered by src/components/InventoryBadge.svelte -->
                             <span id="inv-badge"></span>
                         </div>
 
                         <div id="btn-team" data-action="openTeam" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-white font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_team.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='👥'"><span data-i18n="nav.team">TEAM</span></span>
+                            <span class="text-[0.625rem] text-white font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_team.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='👥'"><span data-i18n="nav.team">TEAM</span></span>
                         </div>
 
                         <div data-action="openKnowledge" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center justify-between group">
-                            <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">KNOWLEDGE</span></span>
+                            <span class="text-[0.625rem] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">KNOWLEDGE</span></span>
                         </div>
 
                         <div data-action="openArchive" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
-                            <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIVE</span></span>
+                            <span class="text-[0.625rem] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIVE</span></span>
                         </div>
 
                         <div data-action="openSettings" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-1.5">
-                            <span class="text-[10px] text-slate-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'"><span data-i18n="nav.settings">SETTINGS</span></span>
+                            <span class="text-[0.625rem] text-slate-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_menu.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='⚙️'"><span data-i18n="nav.settings">SETTINGS</span></span>
                         </div>
                     </div>
 
-                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[10px] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto">
-                        <span data-i18n="nav.log">LOG</span> <span id="log-arrow" class="text-[8px] lg:hidden">▼</span>
+                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[0.625rem] text-slate-500 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto">
+                        <span data-i18n="nav.log">LOG</span> <span id="log-arrow" class="text-[0.5rem] lg:hidden">▼</span>
                     </span>
                 </div>
                 
                 <div id="inventory-grid" class="grid grid-cols-5 gap-2 mb-4 shrink-0"></div>
                 
-                <!-- Entries rendered by src/components/LogFeed.svelte -->
-                <div id="log-feed" class="hidden lg:block flex-1 overflow-y-auto font-mono text-[10px] space-y-1 text-slate-400 border-t border-slate-800 pt-2 min-h-0"></div>
+                <!-- Entries rendered by src/components/LogFeed.svelte
+
+                     aria-live since 6.4: a screen reader is told nothing when a
+                     chosen option resolves - focus stays where it was and the
+                     result card simply appears. The log line is the short
+                     version of what just happened, so it is the one place
+                     worth speaking. `polite` waits for a pause instead of
+                     cutting in, and additions are read on their own rather
+                     than the whole list being read again. -->
+                <div id="log-feed" aria-live="polite" aria-atomic="false"
+                     class="hidden lg:block flex-1 overflow-y-auto font-mono text-[0.625rem] space-y-1 text-slate-400 border-t border-slate-800 pt-2 min-h-0"></div>
             </div>
         </div>
     </div>
@@ -262,12 +279,12 @@
          Deliberately BELOW the mail (2000), the tutorial layers (2100+) and
          the fullscreen views (9999+); the achievement toasts sit at 1600 to
          keep floating above endings, as they always have. -->
-    <div id="modal-overlay" class="fixed inset-0 hidden bg-black/90 z-1500 flex items-center justify-center p-3 md:p-8">
+    <div id="modal-overlay" role="dialog" aria-modal="true" data-i18n-attr="aria-label=a11y.dialog.system" class="fixed inset-0 hidden bg-black/90 z-1500 flex items-center justify-center p-3 md:p-8">
         <!-- Rendered by src/components/EndModal.svelte -->
     </div>
 
 <!-- INVENTAR MODAL START -->		
-	<div id="inventory-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
+	<div id="inventory-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=inv.title" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
             <button data-action="closeInventory" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
             <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="inv.title">YOUR INVENTORY</span></h2>
@@ -276,14 +293,14 @@
             <div id="full-inventory-grid"></div>
             
             <div class="mt-6 text-center">
-                <button data-action="closeInventory" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Close</button>
+                <button data-action="closeInventory" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Close</button>
             </div>
         </div>
     </div>
 <!-- INVENTAR MODAL END -->	
 
 <!-- ITEM CONFIRM MODAL START -->	
-    <div id="item-confirm-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-6">
+    <div id="item-confirm-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=item.confirm.title" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-6">
         <!-- House shape: dark panel, accent edge on top, the item on its own
              plinth like in the quick inventory. This used to be a centred
              column of text with no visible ties to the rest of the game. -->
@@ -295,14 +312,14 @@
                     📦
                 </div>
                 <div class="flex flex-col min-w-0">
-                    <span id="item-confirm-kind" class="text-[10px] font-bold uppercase tracking-widest text-amber-500" data-i18n="item.confirm.title">Use item</span>
+                    <span id="item-confirm-kind" class="text-[0.625rem] font-bold uppercase tracking-widest text-amber-500" data-i18n="item.confirm.title">Use item</span>
                     <h3 id="item-confirm-title" class="text-lg font-black text-white leading-tight mt-0.5">ITEM NAME</h3>
                 </div>
             </div>
 
             <div class="p-5 space-y-3">
                 <div>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500" data-i18n="item.confirm.effect">Effect</span>
+                    <span class="text-[0.625rem] font-bold uppercase tracking-widest text-slate-500" data-i18n="item.confirm.effect">Effect</span>
                     <p id="item-confirm-desc" class="text-emerald-400 font-bold text-sm leading-snug mt-0.5">Effect: ???</p>
                 </div>
 
@@ -316,7 +333,7 @@
 
             <div class="grid grid-cols-2 gap-3 p-5 pt-0">
                 <button data-action="closeItemConfirm"
-                        class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors" data-i18n="common.cancel">
+                        class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[0.6875rem] transition-colors" data-i18n="common.cancel">
                     Cancel
                 </button>
                 <!-- Two buttons rather than one that gets relabelled: the
@@ -324,11 +341,11 @@
                      need. Rewriting className at runtime is the trap that
                      cost an afternoon elsewhere. -->
                 <button id="item-confirm-use" data-action="confirmUseItem"
-                        class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/40 text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all hover:scale-[1.03]" data-i18n="item.confirm.use">
+                        class="bg-emerald-600 hover:bg-emerald-500 border border-emerald-400/40 text-white py-3 rounded-lg font-bold uppercase tracking-widest text-[0.6875rem] shadow-lg transition-all hover:scale-[1.03]" data-i18n="item.confirm.use">
                     Use
                 </button>
                 <button id="item-confirm-discard" data-action="confirmDiscardItem"
-                        class="hidden bg-red-950/40 hover:bg-red-900/50 border border-red-900/60 hover:border-red-600 text-red-300 hover:text-red-200 py-3 rounded-lg font-bold uppercase tracking-widest text-[11px] transition-colors" data-i18n="item.confirm.discard">
+                        class="hidden bg-red-950/40 hover:bg-red-900/50 border border-red-900/60 hover:border-red-600 text-red-300 hover:text-red-200 py-3 rounded-lg font-bold uppercase tracking-widest text-[0.6875rem] transition-colors" data-i18n="item.confirm.discard">
                     Throw away
                 </button>
             </div>
@@ -337,7 +354,7 @@
 <!-- ITEM CONFIRM MODAL END -->	
 
 <!-- KOLLEGIUM / TEAM MODAL START -->	
-	<div id="team-modal" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
+	<div id="team-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=team.title" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
         <div class="neon-box accent-slate bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button data-action="closeTeam" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
             <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_team.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='👥'"><span data-i18n="team.title">THE COLLEAGUES (The Usual Suspects)</span></h2>
@@ -356,7 +373,7 @@
     <!-- Rendered by src/components/LoreView.svelte -->
     <div id="lore-root"></div>
 
-    <div id="archive-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
+    <div id="archive-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=archive.title" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
         <div class="neon-box accent-purple bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
             <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
@@ -380,7 +397,7 @@
 <!-- ARCHIV MODAL END -->
 
 <!-- WISSEN MODAL START -->
-    <div id="knowledge-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
+    <div id="knowledge-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=knowledge.title" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
         <div class="neon-box accent-green bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden h-[85vh] md:h-[78vh]">
 
             <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
@@ -407,19 +424,19 @@
 	
 <!-- E-MAIL MODAL START -->
 <!-- Contents rendered by src/components/EmailView.svelte -->
-<div id="email-modal" class="fixed inset-0 z-2000 hidden items-center justify-center bg-black/90 p-4"></div>
+<div id="email-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=a11y.dialog.mail" class="fixed inset-0 z-2000 hidden items-center justify-center bg-black/90 p-4"></div>
 
 <!-- E-MAIL MODAL END -->
 
 <!-- SCHWIERIGKEIT MODAL START -->
     <!-- Interrupted workday: appears before the day is picked, when a saved
          state is waiting to be resumed (see engine_core.saveDay). -->
-    <div id="resume-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
+    <div id="resume-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=resume.title" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
             <div class="mb-3"><img src="assets/img/ui/ui_clock.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;🕗&lt;/span&gt;'"></div>
             <h2 class="text-2xl font-black text-white mb-2" data-i18n="resume.title">SESSION INTERRUPTED</h2>
             <p class="text-slate-400 text-sm mb-1" data-i18n="resume.subtitle">Your last run was never finished.</p>
-            <p id="resume-info" class="text-[11px] font-mono text-blue-400 mb-6"></p>
+            <p id="resume-info" class="text-[0.6875rem] font-mono text-blue-400 mb-6"></p>
 
             <div class="flex flex-col sm:flex-row gap-3">
                 <button data-action="resumeDay"
@@ -431,11 +448,11 @@
                     Discard
                 </button>
             </div>
-            <p class="text-[10px] text-slate-500 mt-4" data-i18n="resume.discardHint">Discarding deletes the unfinished run for good.</p>
+            <p class="text-[0.625rem] text-slate-500 mt-4" data-i18n="resume.discardHint">Discarding deletes the unfinished run for good.</p>
         </div>
     </div>
 
-    <div id="difficulty-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
+    <div id="difficulty-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=diff.title" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2" data-i18n="diff.title">CHOOSE YOUR DAY</h2>
             <p class="text-slate-400 mb-8" data-i18n="diff.subtitle">How much do you hate your life today?</p>
@@ -445,9 +462,9 @@
                     <img src="assets/img/difficulty/day_easy.webp" alt="Torn-off calendar page: Friday" data-i18n-attr="alt=diff.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🍺&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="diff.easy.name">FRIDAY</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.easy.motto">"Hands in the air, the weekend is here!"</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-green-500" data-i18n="diff.easy.p1">✔ Fewer tickets</li>
-                        <li class="text-green-500" data-i18n="diff.easy.p2">✔ Colleagues are relaxed</li>
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
+                        <li class="text-green-500" data-i18n="diff.easy.p1">✔ Three excuses in reserve</li>
+                        <li class="text-green-500" data-i18n="diff.easy.p2">✔ The valve cools you to 30%</li>
                         <li class="text-green-500" data-i18n="diff.easy.p3">✔ Lower multiplier (0.8x)</li>
                     </ul>
                 </button>
@@ -456,9 +473,9 @@
                     <img src="assets/img/difficulty/day_normal.webp" alt="Calendar page: Wednesday" data-i18n-attr="alt=diff.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;☕&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-blue-400 mb-2" data-i18n="diff.normal.name">WEDNESDAY</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.normal.motto">"Halfway there. The madness is routine."</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
-                        <li class="text-blue-500" data-i18n="diff.normal.p1">● Standard madness</li>
-                        <li class="text-blue-500" data-i18n="diff.normal.p2">● Normal ticket rate</li>
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
+                        <li class="text-blue-500" data-i18n="diff.normal.p1">● Two excuses in reserve</li>
+                        <li class="text-blue-500" data-i18n="diff.normal.p2">● The valve cools you to 50%</li>
                         <li class="text-blue-500" data-i18n="diff.normal.p3">● Standard multiplier (1.0x)</li>
                     </ul>
                 </button>
@@ -467,33 +484,33 @@
                     <img src="assets/img/difficulty/day_hard.webp" alt="Crumpled calendar page with a coffee stain: Monday" data-i18n-attr="alt=diff.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;💀&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="diff.hard.name">MONDAY</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="diff.hard.motto">"Why am I doing this to myself?"</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
                         <li class="text-red-500" data-i18n="diff.hard.p1">⚠ Starts with 2 tickets</li>
-                        <li class="text-red-500" data-i18n="diff.hard.p2">⚠ Higher ticket rate</li>
+                        <li class="text-red-500" data-i18n="diff.hard.p2">⚠ One excuse, valve only to 60%</li>
                         <li class="text-red-500" data-i18n="diff.hard.p3">⚠ Higher multiplier (1.25x)</li>
                     </ul>
                 </button>
             </div>
 
             <button data-action="menu.backFromDifficulty"
-                    class="mt-6 text-[11px] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
+                    class="mt-6 text-[0.6875rem] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
                 ← Back
             </button>
         </div>
     </div>
 
-    <div id="week-modal" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
+    <div id="week-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=week.title" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
         <div class="neon-box accent-purple bg-slate-900 max-w-5xl w-full p-6 md:p-8 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
             <h2 class="text-3xl font-black text-white mb-2" data-i18n="week.title">CHOOSE YOUR CONDITION</h2>
             <p class="text-slate-400 mb-2" data-i18n="week.subtitle">Five days in a row. Tickets, stats and backpack survive the night.</p>
-            <p class="text-[11px] text-purple-300 font-mono mb-8" data-i18n="week.warning">⚠ The blow-off and the written warning happen ONCE per week.</p>
+            <p class="text-[0.6875rem] text-purple-300 font-mono mb-8" data-i18n="week.warning">⚠ The blow-off and the written warning happen ONCE per week.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button data-action="setWeekDifficulty" data-arg="easy" class="group relative bg-slate-800 border border-green-500 hover:bg-green-900/20 p-6 rounded-xl transition-all hover:scale-105">
                     <img src="assets/img/difficulty/week_easy.webp" alt="A full, steaming cup of coffee" data-i18n-attr="alt=week.easy.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🌱&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-green-400 mb-2" data-i18n="week.easy.name">RESTED</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.easy.motto">"The holiday was a fortnight ago. It is still working."</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
                         <li class="text-green-500" data-i18n="week.easy.p1">✔ Restful nights</li>
                         <li class="text-green-500" data-i18n="week.easy.p2">✔ 3 excuses (stock up to 5)</li>
                         <li class="text-green-500" data-i18n="week.easy.p3">✔ Gentle start (0.75x, rising)</li>
@@ -504,7 +521,7 @@
                     <img src="assets/img/difficulty/week_normal.webp" alt="A half-empty cup of coffee with a ring stain" data-i18n-attr="alt=week.normal.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;😮‍💨&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-amber-400 mb-2" data-i18n="week.normal.name">FED UP</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.normal.motto">"The week starts the way the last one ended."</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
                         <li class="text-amber-500" data-i18n="week.normal.p1">● 1 ticket already waiting on Monday</li>
                         <li class="text-amber-500" data-i18n="week.normal.p2">● Middling recovery, 2 excuses</li>
                         <li class="text-amber-500" data-i18n="week.normal.p3">● Multiplier 0.85x, rising</li>
@@ -515,7 +532,7 @@
                     <img src="assets/img/difficulty/week_hard.webp" alt="A knocked-over, cracked coffee cup" data-i18n-attr="alt=week.hard.alt" width="80" height="80" class="w-20 h-20 mx-auto mb-2 pointer-events-none select-none drop-shadow-lg" onerror="this.outerHTML='&lt;div class=&quot;text-4xl mb-2&quot;&gt;🫠&lt;/div&gt;'">
                     <h3 class="text-xl font-bold text-red-500 mb-2" data-i18n="week.hard.name">IN NEED OF LEAVE</h3>
                     <div class="text-xs text-slate-300 italic mb-4" data-i18n="week.hard.motto">"Done with everything by Monday."</div>
-                    <ul class="text-left text-[10px] text-slate-400 space-y-1">
+                    <ul class="text-left text-[0.625rem] text-slate-400 space-y-1">
                         <li class="text-red-500" data-i18n="week.hard.p1">⚠ 2 tickets + base aggro on Monday</li>
                         <li class="text-red-500" data-i18n="week.hard.p2">⚠ Barely any recovery, 1 excuse</li>
                         <li class="text-red-500" data-i18n="week.hard.p3">⚠ Multiplier 0.95x, rising</li>
@@ -524,7 +541,7 @@
             </div>
 
             <button data-action="menu.backFromWeek"
-                    class="mt-6 text-[11px] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
+                    class="mt-6 text-[0.6875rem] font-mono uppercase tracking-widest text-slate-500 hover:text-white border border-slate-700 hover:border-slate-500 rounded-sm px-4 py-2 transition-colors" data-i18n="common.back">
                 ← Back
             </button>
         </div>
@@ -532,7 +549,7 @@
 <!-- SCHWIERIGKEIT MODAL END -->
 
 <!-- TUTORIAL MODAL START -->
-    <div id="tut-ask-modal" class="fixed inset-0 z-2100 hidden items-center justify-center bg-black/90 fade-in">
+    <div id="tut-ask-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=tutorial.ask.title" class="fixed inset-0 z-2100 hidden items-center justify-center bg-black/90 fade-in">
         <div class="neon-box accent-cyan bg-slate-900 p-6 md:p-8 max-w-md w-full shadow-[0_0_30px_rgba(6,182,212,0.15)] text-center mx-4 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent"></div>
             
@@ -570,7 +587,7 @@
 <div id="vending-root"></div>
 
 <!-- SCHWARZES BRETT MODAL START -->
-<div id="board-modal" class="fixed inset-0 hidden bg-black/90 z-1300 items-center justify-center p-0 md:p-8 fade-in overflow-hidden">
+<div id="board-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=board.title" class="fixed inset-0 hidden bg-black/90 z-1300 items-center justify-center p-0 md:p-8 fade-in overflow-hidden">
     
     <div class="relative w-full h-full md:max-w-6xl md:h-[90vh] bg-[#dcbfa3] md:rounded-lg shadow-2xl border-x-0 md:border-8 border-[#5d4037] flex flex-col">
         
@@ -578,9 +595,9 @@
 
         <div class="relative z-20 bg-[#5d4037] text-[#fdf6e3] text-center py-3 shadow-md border-b-4 border-[#3e2723] shrink-0">
             <h2 class="text-xl md:text-2xl font-black uppercase tracking-[0.2em] drop-shadow-md" data-i18n="board.title">GlobalCorp • Community Board</h2>
-            <span class="text-[10px] md:text-xs text-[#a1887f] block font-serif opacity-80" data-i18n="board.subtitle">"Communication is the key (which unfortunately sticks)."</span>
+            <span class="text-[0.625rem] md:text-xs text-[#a1887f] block font-serif opacity-80" data-i18n="board.subtitle">"Communication is the key (which unfortunately sticks)."</span>
             
-            <button data-action="closeBoard" class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded-sm shadow-inner transition-colors font-bold tracking-wider" data-i18n="board.close">
+            <button data-action="closeBoard" class="absolute right-4 top-1/2 -translate-y-1/2 text-[0.625rem] md:text-xs bg-[#3e2723] hover:bg-[#2d1b18] text-[#dcbfa3] border border-[#dcbfa3]/30 px-3 py-1.5 rounded-sm shadow-inner transition-colors font-bold tracking-wider" data-i18n="board.close">
                 CLOSE
             </button>
         </div>
@@ -597,7 +614,7 @@
 <!-- SCHWARZES BRETT MODAL END-->
 
 <!-- Systemsteuerung MODAL START -->
-<div id="settings-modal" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
+<div id="settings-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=settings.title" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
     <div class="neon-box accent-amber bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
 
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -615,19 +632,19 @@
                     <div class="absolute -left-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/mode_week.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;↩&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/ui_home.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;↩&lt;/span&gt;'">
                     <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.menu.title">Main menu</span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.menu.switchMode">Change mode</span>
+                    <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.menu.switchMode">Change mode</span>
                 </button>
                 <button id="btn-soft-reset" data-action="softReset" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-blue-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/set_reset.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🔄&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/set_reset.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🔄&lt;/span&gt;'">
                     <span id="text-soft-reset" class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.softReset.day">Restart the day</span>
-                    <span id="sub-soft-reset" class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.softReset.sub">(08:00)</span>
+                    <span id="sub-soft-reset" class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.softReset.sub">(08:00)</span>
                 </button>
                 <button data-action="menu.toSettings" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl transition-all shadow-lg overflow-hidden">
                     <div class="absolute -left-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/ui_menu.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🎛️&lt;/span&gt;'"></div>
                     <img src="assets/img/ui/ui_menu.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🎛️&lt;/span&gt;'">
                     <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.title">Settings</span>
-                    <span class="text-[10px] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.section.settings.sub">Audio, UI, gameplay</span>
+                    <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.section.settings.sub">Audio, UI, gameplay</span>
                 </button>
             </div>
 
@@ -664,7 +681,7 @@
                     </span>
                     <span class="flex flex-col min-w-0">
                         <span id="text-hard-reset" class="text-red-400 text-sm font-medium" data-i18n="settings.hardReset.title">Delete save permanently</span>
-                        <span class="text-[10px] text-slate-500 leading-snug" data-i18n="settings.hardReset.sub">Archive, achievements and statistics. Cannot be undone.</span>
+                        <span class="text-[0.625rem] text-slate-500 leading-snug" data-i18n="settings.hardReset.sub">Archive, achievements and statistics. Cannot be undone.</span>
                     </span>
                 </button>
             </div>
@@ -730,7 +747,7 @@
               and screen-reader behaviour with it.
             -->
             <details class="group">
-                <summary class="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700 pb-1 cursor-pointer list-none flex items-center gap-2 hover:text-slate-200 transition-colors marker:content-['']">
+                <summary class="text-[0.625rem] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700 pb-1 cursor-pointer list-none flex items-center gap-2 hover:text-slate-200 transition-colors marker:content-['']">
                     <span class="transition-transform group-open:rotate-90 text-slate-600">▶</span>
                     <span data-i18n="credits.title">Credits & licences</span>
                 </summary>
@@ -752,7 +769,7 @@
 
 <!-- EXPORT IMPORT MODAL START -->
 
-<div id="save-export-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
+<div id="save-export-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=export.label" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
         <button data-action="ui.closeModals" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
@@ -761,7 +778,7 @@
                 <img src="assets/img/ui/ui_export.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='💾'">
             </div>
             <div class="flex flex-col min-w-0">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400" data-i18n="export.title">Save your progress</span>
+                <span class="text-[0.625rem] font-bold uppercase tracking-widest text-blue-400" data-i18n="export.title">Save your progress</span>
                 <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="export.label">Your code</h2>
             </div>
         </div>
@@ -774,7 +791,7 @@
 
             <textarea id="export-area" class="w-full h-32 bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-hidden focus:border-blue-500 resize-none custom-scrollbar break-all" readonly></textarea>
 
-            <button data-action="ui.copyToClipboard" class="w-full bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]">
+            <button data-action="ui.copyToClipboard" class="w-full bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white py-3 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]">
                 <img src="assets/img/ui/ui_copy.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='📋'"> <span data-i18n="export.copy">Copy to clipboard</span>
             </button>
             <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4" data-i18n="export.copied">Code copied!</div>
@@ -782,7 +799,7 @@
     </div>
 </div>
 
-<div id="save-import-modal" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
+<div id="save-import-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=import.label" class="fixed inset-0 bg-black/90 z-1200 hidden items-center justify-center p-4">
     <div class="neon-box accent-red bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
         <button data-action="ui.closeModals" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
@@ -791,7 +808,7 @@
                 <img src="assets/img/ui/ui_import.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='📂'">
             </div>
             <div class="flex flex-col min-w-0">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-red-400" data-i18n="import.title">Load a save</span>
+                <span class="text-[0.625rem] font-bold uppercase tracking-widest text-red-400" data-i18n="import.title">Load a save</span>
                 <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="import.label">Paste the code</h2>
             </div>
         </div>
@@ -810,7 +827,7 @@
                 </span>
             </div>
 
-            <button data-action="ui.performImport" class="w-full bg-red-600 hover:bg-red-500 border border-red-400/40 text-white py-3 rounded-lg text-[11px] font-bold uppercase tracking-widest shadow-lg transition-all hover:scale-[1.02]" data-i18n="import.confirm">
+            <button data-action="ui.performImport" class="w-full bg-red-600 hover:bg-red-500 border border-red-400/40 text-white py-3 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest shadow-lg transition-all hover:scale-[1.02]" data-i18n="import.confirm">
                 Replace save
             </button>
             <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4" data-i18n="import.error">Error!</div>
@@ -821,7 +838,7 @@
 <!-- EXPORT IMPORT MODAL END -->
 
 <!-- EXCUSE MODAL START -->
-<div id="excuse-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
+<div id="excuse-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=excuse.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
 	<div class="neon-box accent-cyan bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
 		<button data-action="closeExcuseModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
 
@@ -854,7 +871,7 @@
 <!-- EXCUSE MODAL END -->
 
 <!-- REPORT MODAL START -->
-<div id="report-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
+<div id="report-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=report.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
     <div class="neon-box accent-red bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
         <button data-action="closeReportModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         
@@ -880,7 +897,7 @@
             </div>
 
             <div class="bg-slate-800/50 p-2 rounded-sm border border-slate-700/50">
-                <p class="text-[10px] text-slate-500 flex items-start gap-2.5">
+                <p class="text-[0.625rem] text-slate-500 flex items-start gap-2.5">
                     <img src="assets/img/ui/ui_info.webp" alt="" width="14" height="14" class="w-3.5 h-3.5 shrink-0 mt-0.5 select-none" onerror="this.outerHTML='ℹ️'"><span data-i18n="report.privacy">For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.</span>
                 </p>
             </div>
@@ -897,7 +914,7 @@
 <!-- REPORT MODAL END -->
 
 <!-- KEYBOAD BINDING MODAL START -->
-<div id="keybind-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
+<div id="keybind-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=keybind.title" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
     <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -931,7 +948,7 @@
 
 <!-- GLOBALE STATISTIKEN MODAL START -->
 
-<div id="global-stats-modal" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
+<div id="global-stats-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=globalStats.title" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
     <div class="neon-box accent-purple bg-slate-900 max-w-2xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
         
         <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
@@ -939,7 +956,7 @@
                 <img src="assets/img/ui/ui_globe.webp" alt="" width="28" height="28" class="w-7 h-7 inline-block shrink-0 select-none drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]" onerror="this.outerHTML='&lt;span class=&quot;text-2xl drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]&quot;&gt;🌍&lt;/span&gt;'">
                 <div class="flex flex-col">
                     <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="globalStats.title">Global statistics</h2>
-                    <span class="text-[10px] text-blue-400 font-mono" data-i18n="globalStats.subtitle">How are you doing against the rest of the world?</span>
+                    <span class="text-[0.625rem] text-blue-400 font-mono" data-i18n="globalStats.subtitle">How are you doing against the rest of the world?</span>
                 </div>
             </div>
             <button data-action="closeGlobalStats" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>

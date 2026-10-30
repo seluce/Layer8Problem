@@ -60,13 +60,24 @@
     // of a failure with nothing to report it. The end object has carried
     // `cause` and `isWin` all along.
     const THEME = {
-        party: { title: 'text-pink-500',   border: 'border-pink-500' },
-        win:   { title: 'text-green-500',  border: 'border-green-500' },
-        rage:  { title: 'text-orange-500', border: 'border-orange-500' },
-        loss:  { title: 'text-red-500',    border: 'border-red-600' }
+        party:   { title: 'text-pink-500',   border: 'border-pink-500' },
+        win:     { title: 'text-green-500',  border: 'border-green-500' },
+        rage:    { title: 'text-orange-500', border: 'border-orange-500' },
+        loss:    { title: 'text-red-500',    border: 'border-red-600' },
+        halgerd: { title: 'text-cyan-400',   border: 'border-cyan-500' }
     };
 
+    // H.A.L.G.E.R.D. speaking, not the company writing. The two hints in front
+    // of the first mail and the first emergency are HELP, and in the loss
+    // theme they read as a written warning - same red border, same huge
+    // verdict line. They wear the tutorial's face instead: cyan, the robot
+    // above the title, and the text inset in mono, exactly as the tutorial's
+    // own question and closing screen do. Asked first, because a hint carries
+    // no isWin and would otherwise fall through to the red.
+    const isHalgerd = $derived(modal.tone === 'halgerd');
+
     const theme = $derived((() => {
+        if (isHalgerd) return THEME.halgerd;
         // The gala is a win too, so it has to be asked about first.
         if (modal.cause === 'party') return THEME.party;
         if (modal.isWin) return THEME.win;
@@ -115,24 +126,46 @@
 {#if modal.open}
     <!-- Keeps the id: the keyboard handlers in engine.js find the confirm
          button through #modal-content. -->
-    <div id="modal-content" class="max-w-2xl w-full bg-slate-900 border-2 {theme.border} p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto">
+    <!-- `relative` and the narrower width for the hint: it is a short notice,
+         not a report, and its hairline is positioned against this box. -->
+    <div id="modal-content"
+         class="{isHalgerd ? 'max-w-md' : 'max-w-2xl'} w-full bg-slate-900 border-2 {theme.border}
+                p-8 rounded-xl text-center shadow-2xl max-h-[90vh] overflow-y-auto relative overflow-x-hidden">
 
-        <h1 class="text-4xl font-black {theme.title} mb-1">{title}</h1>
-
-        {#if tally && isFinal}
-            <div class="text-[10px] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
+        {#if isHalgerd}
+            <!-- The same face the tutorial wears: the robot, a hairline above
+                 it, a tracked-out heading and the words inset in mono. A hint
+                 is help, and help must not look like the company writing. -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-cyan-500 to-transparent"></div>
+            <div class="mb-4 drop-shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                <img src="assets/img/actions/act_halgerd.webp" alt="" width="56" height="56"
+                     class="w-14 h-14 mx-auto select-none"
+                     onerror={(e) => e.currentTarget.outerHTML = '<span class="text-4xl">🤖</span>'}>
+            </div>
+            <h1 class="text-xl font-black {theme.title} mb-4 uppercase tracking-widest">{title}</h1>
+            {#if modal.text}
+                <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg text-left shadow-inner">
+                    <p class="text-slate-300 text-sm leading-relaxed font-mono">{@html modal.text}</p>
+                </div>
+            {/if}
         {:else}
-            <div class="mb-4"></div>
-        {/if}
+            <h1 class="text-4xl font-black {theme.title} mb-1">{title}</h1>
 
-        {#if lead}
-            <p class="text-lg text-slate-300 italic mb-2">{lead}</p>
-        {/if}
+            {#if tally && isFinal}
+                <div class="text-[0.625rem] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
+            {:else}
+                <div class="mb-4"></div>
+            {/if}
 
-        <!-- A warning brings its own line. It comes from the engine, never from
-             the player. -->
-        {#if modal.text}
-            <div class="text-lg text-slate-300 italic">{@html modal.text}</div>
+            {#if lead}
+                <p class="text-lg text-slate-300 italic mb-2">{lead}</p>
+            {/if}
+
+            <!-- A warning brings its own line. It comes from the engine, never
+                 from the player. -->
+            {#if modal.text}
+                <div class="text-lg text-slate-300 italic">{@html modal.text}</div>
+            {/if}
         {/if}
 
         <!-- The gala's summary, and under it the week balance. Both used to be
@@ -158,7 +191,7 @@
                      can put a day into context. -->
                 <div class="flex items-center gap-1.5 mb-3">
                     {#each ['mon','tue','wed','thu','fri'] as day, i}
-                        <span class="flex-1 text-center text-[9px] font-bold uppercase tracking-widest py-1 rounded-sm border
+                        <span class="flex-1 text-center text-[0.5625rem] font-bold uppercase tracking-widest py-1 rounded-sm border
                                      {i < game.week.dayIndex
                                         ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
                                         : i === game.week.dayIndex
@@ -168,7 +201,7 @@
                         </span>
                     {/each}
                 </div>
-                <div class="text-[10px] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
+                <div class="text-[0.625rem] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>{t('stat.tickets')}</span>
                     <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>{t('stat.aggro')}</span>
@@ -182,7 +215,7 @@
                 <!-- The line about the night itself: prose from the data tree,
                      so it arrives as a path into that tree (see queueNightEnd). -->
                 {#if sleep}
-                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[11px] leading-relaxed">{sleep}</div>
+                    <div class="pt-2 mt-1 border-t border-slate-800 text-slate-400 italic font-sans text-[0.6875rem] leading-relaxed">{sleep}</div>
                 {/if}
             </div>
         {/if}
@@ -192,14 +225,14 @@
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
                             aria-expanded={showChart}
-                            class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
                         {showChart ? '▾' : '▸'} {t('end.toggle.chart')}
                     </button>
                 {/if}
                 {#if hasDiary}
                     <button type="button" onclick={() => showDiary = !showDiary}
                             aria-expanded={showDiary}
-                            class="text-[11px] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
                         {showDiary ? '▾' : '▸'}
             <img src="assets/img/ui/ui_book.webp" alt="" width="14" height="14"
                  class="w-3.5 h-3.5 inline-block align-[-0.15em] mx-1 select-none"
@@ -223,6 +256,20 @@
             {/if}
         {/if}
 
+        <!-- The day as a picture, to pass on. Only where the day is over for
+             good: a week night is half a story, and a warning is not one at
+             all. Above the continue button and NOT carrying
+             data-modal-continue, so the confirm key still finds the right one
+             (see the note below). -->
+        {#if isFinal}
+            <button onclick={(e) => engine.shareDayCard(e.currentTarget)}
+                    class="mt-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500
+                           text-slate-300 hover:text-white px-5 py-2 rounded-sm text-xs font-bold
+                           uppercase tracking-widest transition-colors">
+                <span id="text-share-card">{t('end.share.btn')}</span>
+            </button>
+        {/if}
+
         <!-- data-modal-continue is the confirm key's anchor (engine.js). The
              chart/diary toggles render above this button, so "first button in
              #modal-content" stopped meaning "the continue button" in 6.1 -
@@ -230,7 +277,10 @@
         <button data-modal-continue
                 onclick={() => isNight ? engine.continueWeekNight()
                              : isFinal ? location.reload() : engine.closeModal()}
-                class="bg-white text-black px-8 py-3 rounded-sm font-bold uppercase hover:bg-slate-200 shadow-lg mt-2">
+                class="{isHalgerd
+                    ? 'w-full bg-cyan-900/40 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-700 mt-6'
+                    : 'bg-white text-black hover:bg-slate-200 mt-2'}
+                        px-8 py-3 rounded-sm font-bold uppercase shadow-lg transition-colors">
             {isNight ? tf('end.btn.next', { day: nextDay.toUpperCase() })
               : isFinal ? t('end.btn.restart') : t('end.btn.ok')}
         </button>

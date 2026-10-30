@@ -24,7 +24,12 @@
 
     // The switch is the same nine-utility construction on every row, so it is
     // named once. Written out in full, not assembled, so Tailwind can find it.
-    const SWITCH = 'w-9 h-5 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500';
+    // peer-focus-visible:* draws the ring on the VISIBLE switch: the checkbox
+    // itself is sr-only, so the browser's own outline lands on something
+    // nobody can see - which is why outline-hidden sits on it. Until 6.4
+    // nothing took its place, and tabbing through the settings said nothing
+    // about where you were.
+    const SWITCH = 'w-9 h-5 bg-slate-700 peer-focus:outline-hidden peer-focus-visible:ring-2 peer-focus-visible:ring-cyan-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500';
 
     const SLIDER = 'flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500';
 
@@ -44,7 +49,7 @@
     // of them, which is why the resting state keeps its hover utilities and the
     // armed state does not: while it is asking, it should not react to the
     // mouse at all.
-    const RESET_BASE  = 'shrink-0 text-[11px] font-bold uppercase tracking-widest border rounded-sm px-4 py-2 transition-colors min-w-[7.5rem]';
+    const RESET_BASE  = 'shrink-0 text-[0.6875rem] font-bold uppercase tracking-widest border rounded-sm px-4 py-2 transition-colors min-w-[7.5rem]';
     const RESET_IDLE  = 'text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-700 border-slate-600 hover:border-slate-400';
     const RESET_ARMED = 'text-red-300 bg-red-950/40 border-red-500/70';
 
@@ -238,7 +243,7 @@
     {/if}
     <div class="flex flex-col">
         <span class="text-sm font-medium text-slate-200 leading-tight">{row.title}</span>
-        <span class="text-[10px] text-slate-500 mt-1">{row.desc}</span>
+        <span class="text-[0.625rem] text-slate-500 mt-1">{row.desc}</span>
     </div>
 {/snippet}
 
@@ -265,7 +270,7 @@
             {@render switchInput(row)}
         </div>
         {#if off && row.inactiveNote}
-            <p class="text-[10px] text-amber-500/80 pl-9">{row.inactiveNote}</p>
+            <p class="text-[0.625rem] text-amber-500/80 pl-9">{row.inactiveNote}</p>
         {/if}
     </div>
 {/snippet}
@@ -284,11 +289,11 @@
             {@render switchInput(row)}
         </div>
         <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
-            <span class="text-[10px] text-slate-500">🔈</span>
+            <span class="text-[0.625rem] text-slate-500">🔈</span>
             <input type="range" min="0" max="1" step={row.step} class={SLIDER}
                    aria-label={row.levelTitle}
                    value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}>
-            <span class="text-[10px] text-slate-500">🔊</span>
+            <span class="text-[0.625rem] text-slate-500">🔊</span>
         </div>
     </div>
 {/snippet}
@@ -316,7 +321,7 @@
              onerror={(e) => e.currentTarget.outerHTML = '<span class="text-xl opacity-70 mt-0.5">' + row.icon + '</span>'}>
         <div class="flex flex-col">
             <span class="font-medium leading-tight">{row.title}</span>
-            <span class="text-[10px] text-slate-500 mt-1 font-normal group-hover:text-slate-400 transition-colors">{row.desc}</span>
+            <span class="text-[0.625rem] text-slate-500 mt-1 font-normal group-hover:text-slate-400 transition-colors">{row.desc}</span>
         </div>
     </button>
 {/snippet}
@@ -355,7 +360,7 @@
 <div class="space-y-6">
     {#each SECTIONS as section (section.title)}
         <div>
-            <h3 class="text-[10px] font-bold {section.accent} uppercase tracking-widest mb-2 border-b border-slate-700 pb-1">{section.title}</h3>
+            <h3 class="text-[0.625rem] font-bold {section.accent} uppercase tracking-widest mb-2 border-b border-slate-700 pb-1">{section.title}</h3>
             {#if section.grid}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {#each section.rows as row (row.title)}
