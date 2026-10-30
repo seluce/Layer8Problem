@@ -18,6 +18,39 @@ const WINDOWS_OVER_TERMINAL = [
     'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
 ];
 
+/**
+ * A blob as base64, a slice at a time.
+ *
+ * The card is a 1200x630 PNG. Handing fromCharCode the whole byte array at
+ * once blows the argument limit - and it would do so on the day the picture
+ * grew a little, not on the first try, which is the worst moment to find out.
+ */
+async function blobToBase64(blob) {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let binary = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    }
+    return btoa(binary);
+}
+
+/**
+ * Puts the picture on the clipboard.
+ *
+ * Best effort on purpose: the API wants a secure context and a permission the
+ * shell may refuse, and a picture the player can still find in a folder is not
+ * worth an error message. Says whether it worked, so the button can.
+ */
+async function copyPicture(blob) {
+    try {
+        if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) return false;
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export const ui = {
 
     /**
@@ -1898,12 +1931,21 @@ export const ui = {
      *
      * The game is free and lives on being shown to somebody; all a player
      * could pass on was the address, which says nothing about the afternoon
-     * they just had. share_card.js draws it, this hands it over: the share
-     * sheet where there is one (a phone), a download where there is not (a
-     * desktop browser, and Electron, which has no navigator.share at all).
+     * they just had. share_card.js draws it, this hands it over - by three
+     * roads, because the three shells share in three different ways:
      *
-     * The button says what happened, because a share sheet that never opens
-     * and a file that lands in Downloads look identical from the sofa.
+     *  - a phone opens its share sheet (navigator.share with a file),
+     *  - the desktop shell writes the picture to the player's pictures and
+     *    puts it on the clipboard, asking nobody (see saveSharePicture),
+     *  - a browser downloads it, which is what a browser is for.
+     *
+     * Electron gets its own road because it has NEITHER of the other two:
+     * navigator.share and canShare are both undefined there - measured, not
+     * assumed - and a download makes it prompt for a save path over a window
+     * that starts fullscreen, in front of a Steam Deck player with no mouse.
+     *
+     * The button says which of the three happened, because a share sheet that
+     * never opens and a file that lands somewhere look identical from the sofa.
      */
     shareDayCard: async function(btn) {
         // The resting label is read off the live button, so a second tap
@@ -1970,7 +2012,8 @@ export const ui = {
 
             const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
             if (!blob) throw new Error('the canvas produced no picture');
-            const file = new File([blob], 'layer8problem.png', { type: 'image/png' });
+            const name = `layer8problem-${new Date().toISOString().slice(0, 10)}.png`;
+            const file = new File([blob], name, { type: 'image/png' });
 
             // A phone opens its share sheet; everything else gets a file.
             if (navigator.canShare?.({ files: [file] })) {
@@ -1979,10 +2022,29 @@ export const ui = {
                 return;
             }
 
+            // The desktop shell writes it itself. Measured in Electron 45:
+            // navigator.share and canShare are both undefined there, so the
+            // branch above can never run, and a download would make Electron
+            // ask for a save path - over a window that starts fullscreen, with
+            // no mouse on a Steam Deck. saveSharePicture answers null anywhere
+            // else, and the download below stays the browser's path.
+            //
+            // The clipboard as well, where it is allowed: a file in a folder
+            // is the keepable copy, the clipboard is the one that reaches a
+            // chat window without a detour. file:// counts as a secure
+            // context, so ClipboardItem exists in the shell.
+            // i18n-uses: end.share.copied, end.share.savedTo
+            const folder = await platform.saveSharePicture(name, await blobToBase64(blob));
+            if (folder) {
+                say(await copyPicture(blob) ? 'end.share.copied' : 'end.share.savedTo');
+                restore();
+                return;
+            }
+
             const href = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = href;
-            link.download = `layer8problem-${new Date().toISOString().slice(0, 10)}.png`;
+            link.download = name;
             link.click();
             // Not in the same breath as the click: the download is QUEUED,
             // and a URL revoked before the browser has fetched it leaves the

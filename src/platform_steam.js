@@ -67,6 +67,28 @@ export const desktop = {
         }
     },
 
+    /**
+     * Writes the shared day card next to the player's other pictures.
+     *
+     * The desktop shell has no share sheet - navigator.share and canShare are
+     * both undefined in Electron - and must not be handed a download either:
+     * that prompts for a save path over a fullscreen game. See the channel in
+     * main.cjs.
+     *
+     * @returns {Promise<string|null>} the folder it landed in, or null when it
+     *          could not be written. The caller then falls back to the
+     *          browser's own download rather than losing the picture.
+     */
+    saveSharePicture: async (filename, base64) => {
+        try {
+            const res = await ipcRenderer.invoke('write-share-card', { filename, base64 });
+            return res?.ok ? res.dir : null;
+        } catch (err) {
+            console.warn("Share card could not be written.", err);
+            return null;
+        }
+    },
+
     achievement: (id) => {
         try {
             ipcRenderer.send('steam-unlock-achievement', id);

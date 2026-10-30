@@ -101,6 +101,36 @@ ipcMain.on('write-savegame', (event, jsonData) => {
     }
 });
 
+// The shared day card (6.4).
+//
+// Written here rather than let out as a DOWNLOAD. With no will-download
+// handler Electron falls back to what its own documentation calls the
+// original routine, and that "usually prompts a save dialog" - over a window
+// that starts fullscreen, and on a Steam Deck in front of a player who has no
+// mouse. So the picture goes somewhere predictable without being asked about,
+// and the renderer is told where so the button can say it.
+//
+// Same temp-and-rename as the savegame above, for the same reason: a half
+// written PNG is a broken picture, and this one is meant to be handed on.
+ipcMain.handle('write-share-card', (event, { filename, base64 }) => {
+    try {
+        // basename(): the name is built in the renderer, and a name is all
+        // this channel accepts - never a path of its own choosing.
+        const name = path.basename(String(filename || 'layer8problem.png'));
+        const dir = path.join(app.getPath('pictures'), 'Layer8Problem');
+        fs.mkdirSync(dir, { recursive: true });
+
+        const target = path.join(dir, name);
+        const tempPath = target + '.tmp';
+        fs.writeFileSync(tempPath, Buffer.from(base64, 'base64'));
+        fs.renameSync(tempPath, target);
+        return { ok: true, path: target, dir };
+    } catch (err) {
+        console.error("Share card: write failed:", err);
+        return { ok: false };
+    }
+});
+
 // Force external links into the OS default browser
 ipcMain.on('open-external-browser', (event, url) => {
     try {

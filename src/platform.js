@@ -69,6 +69,13 @@ export const platform = {
         return door ? door.url : window.location.href;
     },
 
+    /**
+     * Where the desktop shell puts a shared picture. The browser has no such
+     * place - it hands the file to the download the shell already has - so it
+     * answers null and the caller falls through to that.
+     */
+    saveSharePicture: async () => null,
+
     /** Aggregated worldwide statistics, or null when unavailable. */
     globalStats: async () => null,
 
