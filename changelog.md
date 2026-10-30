@@ -1,4 +1,4 @@
-[6.4.0] - 2026-10-26
+[6.4.0] - 2026-10-30
 
 A day worth passing on, a phone that plays like one, and a word of warning before the things that arrive uninvited.
 
@@ -11,7 +11,7 @@ The day to day:
 * Morning moods, ticker headlines and excuses no longer repeat until every one of their kind has had its turn.
 
 Interface:
-* A finished day, and a finished working week, can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there. On the browser version the picture carries the game's own address.
+* A finished day, and a finished working week, can be handed on as a picture: the verdict, where the four values ended up, and the curve that got them there. On the browser version the picture carries the game's own address. On Steam it lands in your pictures folder and on the clipboard, without asking where to put it.
 * The first email and the first emergency of a career are explained before their clock starts. H.A.L.G.E.R.D. does the explaining, once.
 * A screen reader is told what the log writes, and the day curve says which lines it draws.
 * Playing from the keyboard shows where you are: every control draws a focus ring, and an open window keeps the keyboard inside it instead of letting it wander off behind.

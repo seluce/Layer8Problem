@@ -411,6 +411,11 @@ export const en = {
     'hint.mail.text':              'H.A.L.G.E.R.D.: An email has reached your inbox.<br><br>It disappears by itself after 20 seconds. That is not a solution but a decision with consequences - like every other answer.<br><br>Read it. Then decide.',
     'hint.boss.title':             'SYSTEM MESSAGE: EMERGENCY',
     'hint.boss.text':              'H.A.L.G.E.R.D.: Something has broken.<br><br>From now the clock runs in seconds rather than minutes. If it runs out, the system decides in your place.<br><br>The system was not built for that.',
+    // The desktop shell writes the picture itself and may put it on the
+    // clipboard too, so it can say which of the two happened - a download
+    // that never was would otherwise report itself as saved.
+    'end.share.savedTo':           'Saved to Pictures.',
+    'end.share.copied':            'Copied and saved.',
     'end.share.btn':               'Share the day',
     'end.share.saved':             'Picture saved.',
     'end.share.failed':            'The picture could not be made.',

@@ -418,6 +418,11 @@ export const de = {
     'hint.mail.text':              'H.A.L.G.E.R.D.: Eine E-Mail erreicht Ihr Postfach.<br><br>Sie verschwindet nach 20 Sekunden von selbst. Das ist keine Lösung, sondern eine Entscheidung mit Folgen - wie jede andere Antwort auch.<br><br>Lesen Sie. Dann entscheiden Sie.',
     'hint.boss.title':             'SYSTEMMELDUNG: NOTFALL',
     'hint.boss.text':              'H.A.L.G.E.R.D.: Es ist etwas kaputtgegangen.<br><br>Ab jetzt läuft die Uhr in Sekunden statt in Minuten. Läuft sie ab, entscheidet das System an Ihrer Stelle.<br><br>Das System ist dafür nicht gebaut.',
+    // The desktop shell writes the picture itself and may put it on the
+    // clipboard too, so it can say which of the two happened - a download
+    // that never was would otherwise report itself as saved.
+    'end.share.savedTo':           'Im Bilder-Ordner.',
+    'end.share.copied':            'Kopiert und gespeichert.',
     'end.share.btn':               'Tag teilen',
     'end.share.saved':             'Bild gespeichert.',
     'end.share.failed':            'Das Bild ließ sich nicht erzeugen.',

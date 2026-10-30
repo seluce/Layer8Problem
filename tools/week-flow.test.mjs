@@ -2950,6 +2950,60 @@ await ok('The result card carries what the decision did to the ticket pile', () 
     assert.equal(calls.termResult.tickets, 0, 'the meeting charged tickets after all');
 });
 
+await ok('The desktop shell writes the card instead of downloading it', async () => {
+    // Electron has no share sheet - navigator.share and canShare are both
+    // undefined there - and a download makes it ask for a save path, over a
+    // window that starts fullscreen and in front of a Steam Deck player with
+    // no mouse. So the shell writes the picture itself. What is held here is
+    // that the download is NOT reached when it does, and that the button says
+    // which of the two things happened.
+    const { platform } = await import('../src/platform.js');
+    const realSave = platform.saveSharePicture;
+
+    resetState();
+    const ctx = new Proxy({}, {
+        get: (_, prop) => {
+            if (prop === 'measureText') return (str) => ({ width: String(str).length * 10 });
+            if (prop === 'getImageData') return () => ({ data: [] });
+            return () => {};
+        },
+        set: () => true,
+    });
+    let downloaded = false;
+    const realCreate = globalThis.document.createElement;
+    globalThis.document.createElement = (tag) => {
+        if (tag === 'a') return { set href(v) {}, set download(v) {}, click() { downloaded = true; } };
+        return { width: 0, height: 0, getContext: () => ctx,
+                 toBlob: (cb) => cb({ arrayBuffer: async () => new Uint8Array([137, 80, 78, 71]).buffer }) };
+    };
+    const realURL = globalThis.URL;
+    globalThis.URL = { createObjectURL: () => 'blob:probe', revokeObjectURL() {} };
+    // The button is read for its resting label, so it carries one.
+    const btn = { innerText: 'TEILEN', querySelector: () => null };
+
+    try {
+        state.modal = { open: true, title: 'x', lead: 'x', isEnd: true, isWin: true };
+
+        // 1. The shell writes it: no download, and the button names the folder.
+        platform.saveSharePicture = async () => '/pictures/Layer8Problem';
+        await ui.shareDayCard.call(engine, btn);
+        assert.equal(downloaded, false, 'the desktop shell was handed a download after all');
+        assert.equal(btn.innerText, t('end.share.savedTo'), 'the button does not say where the picture went');
+
+        // 2. A browser has no such place, so the download stays its road.
+        engine._sharing = false;
+        downloaded = false;
+        platform.saveSharePicture = async () => null;
+        await ui.shareDayCard.call(engine, btn);
+        assert.ok(downloaded, 'the browser lost its download');
+    } finally {
+        platform.saveSharePicture = realSave;
+        globalThis.document.createElement = realCreate;
+        globalThis.URL = realURL;
+        engine._sharing = false;
+    }
+});
+
 await ok('The shared card names the week it came from, not the day mode', async () => {
     // finishWeek() calls endWeek() BEFORE showEnd(), so by the time the end
     // screen stands state.week is empty again - its own comment says so, and
