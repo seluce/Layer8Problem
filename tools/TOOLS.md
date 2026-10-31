@@ -17,6 +17,7 @@ the repository root.
 | Day simulator | `npm run sim [n] [--lang=en]` | before every balance decision (day) |
 | Week simulator | `npm run sim:week [n] [--lang=en]` | before every balance decision (week) |
 | Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
+| Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -328,7 +329,60 @@ finishes a scene, so it stays preferred for good.
 still finds something new every draw, so every rule measures the same and
 the run says nothing.
 
-## 6. `npm test` — the four test suites, in both languages
+## 6. `make-voice.mjs` — which text becomes which audio file
+
+```
+npm run voice:manifest          # write voice/manifest.de.json and .en.json
+npm run lint:voice              # hold both manifests against both trees
+node tools/make-voice.mjs       # report only, write nothing
+```
+
+Narration is pre-rendered rather than spoken at runtime, so that the voice
+sounds the same on every machine. That makes the audio and the prose two
+separate things which CAN drift apart: edit a line and the file still says
+the old one, at 0 errors and 0 warnings. Every entry therefore carries the
+checksum of its source string, and `--check` is the gate that notices.
+
+**What gets a voice: the terminal.** Eleven pools, listed in `TERMINAL` at
+the top of the tool - a new one is added there and nowhere else. Mails, the
+phone, the intranet, the board, the vending machine, the log and the books
+stay for reading: they run at the player's own pace, or they differ from run
+to run. Scenes marked `kind: 'phone'` are skipped inside the terminal pools
+as well.
+
+**Option labels are deliberately absent.** 3470 files for 114 minutes, and a
+read-out list of buttons sounds like a railway announcement. Whoever needs
+them read has a screen reader, supported since 6.4.
+
+**The key is the path from the pool**, with the nearest enclosing `id`
+standing in for the position in its array: `coffee/cof_milk_1/text`,
+`meetings/meet_audit_1/nodes/liste/text`, `party/party_bar_1/opts/1/r`. An
+event that MOVES within its file keeps its audio; only a rewrite of the prose
+invalidates it. The option index in a key can shift when an option is
+inserted - unlike `archive.seenOptions`, that is harmless here, because the
+checksum then fails and the file is simply respoken.
+
+**Both trees must produce the same keys.** They did on the first run, 4651
+each, no difference in either direction - the same rule that `lint:parity`
+enforces for the data.
+
+| | |
+|---|---|
+| pieces | 4651 per language |
+| characters | 806,329 de · 780,560 en |
+| as speech | 14.9 h · 14.5 h |
+
+`transform` in the manifest is the version of the function that turns a
+written line into a spoken one (markup out, `H.A.L.G.E.R.D.` to `Halgerd`).
+Bump it and every entry counts as stale, because every file was made from a
+different text than this version would send - a checksum over the SOURCE
+cannot see that by itself.
+
+**Not part of `lint:all` yet.** Until the audio exists the manifest is a
+plan, and gating every data edit on a plan is noise. It joins the gate with
+the first generated file.
+
+## 7. `npm test` — the four test suites, in both languages
 
 ```
 npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
@@ -379,7 +433,7 @@ findings, defaults, archive counters.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
 
-## 7. `dev-week.js` — the console tool
+## 8. `dev-week.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
 `dev.help()` lists everything. Indispensable for the three-parters, because it
@@ -415,7 +469,7 @@ otherwise trial runs distort the statistics permanently.
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up
 in the test suite, not first in the browser.
 
-## 8. Retired tools
+## 9. Retired tools
 
 Four tools used to live here and have been **removed**. They remain only as a
 note, so that nobody finds them in an older note and goes looking:
