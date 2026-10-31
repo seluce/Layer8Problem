@@ -357,6 +357,16 @@ export function freshArchive() {
         // for players who already saw the scene.
         seenEvents: [],
         seenFlags: [],
+        // Which doors of a scene this career has already opened. The key is
+        // the event id, or `id:node` for a scene inside a nodes block - 313
+        // of the 1612 scenes with a choice carry no id of their own. The
+        // value packs the taken options as a bitmask and, above bit 16, the
+        // option COUNT the scene had when it was written: insert an option
+        // later and every index below it would mean a different door, so a
+        // record whose count no longer matches is dropped rather than
+        // believed. A map and not a list of `id#i` strings: 33 KB against 80
+        // when full, beside the 24 that seenEvents already takes.
+        seenOptions: {},
         // Per compendium entry: how many notes had been read the last time it
         // was opened. An entry counts as unread again once it has more than
         // that, so a later note re-flags an entry that was already seen.

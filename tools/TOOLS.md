@@ -16,6 +16,7 @@ the repository root.
 | Prose report | `node tools/report-prose.mjs [pool …] [--lang=en]` | after every text wave |
 | Day simulator | `npm run sim [n] [--lang=en]` | before every balance decision (day) |
 | Week simulator | `npm run sim:week [n] [--lang=en]` | before every balance decision (week) |
+| Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -285,7 +286,49 @@ in `data_special.js`.
 **Always compare against a fresh baseline run**, not against memory — even 300
 runs per cell fluctuate by several percentage points.
 
-## 5. `npm test` — the four test suites, in both languages
+## 5. `simulate-coverage.mjs` — what a career gets to see
+
+```
+npm run sim:coverage                      # 25 days, 200 careers, the live rule
+npm run sim:coverage 50 -- --runs=400
+npm run sim:coverage -- --compare         # the live rule against three others
+npm run sim:coverage -- --lang=en
+```
+
+The other two simulators answer whether a day can be survived. This one
+answers how much of what is WRITTEN a player ever reaches - and it is the
+only one that can, because the draw's unseen preference lives between days
+and both of the others forget everything overnight (`simulate-week.mjs` says
+so in its own comment).
+
+It keeps `archive.seenEvents` and `archive.seenOptions` across the days as
+the save file does, and **calls the engine's own `preferUnseen()` and
+`openDoorsLeft()`** instead of reproducing them. The day simulator copies the
+formulas because it needs them per step and accepts the drift risk; here
+there is no reason to pay it.
+
+| Column | Means |
+|---|---|
+| events seen | how much of the stock the career ever opened |
+| doors taken | how many of the 2338 options were actually chosen |
+| spent repeats | draws landing on a scene already read to the end - **waste** |
+| open repeats | draws on a KNOWN scene with a door left - the good repeat |
+| most drawn | how often the single most repeated scene came up |
+
+`--compare` puts the live two-stage rule beside `flat` (no preference, as
+before 6.4), `unseen-only` (6.4's first stage alone) and `open-only`. It is
+how the current rule was chosen, and `open-only` is the warning: preferring
+open doors INSTEAD of new scenes looks good on one column and is worse
+everywhere else, because a player who keeps picking the safe answer never
+finishes a scene, so it stays preferred for good.
+
+**Both trees must give the same numbers** - only prose differs between them.
+
+**25 days is the useful default.** Below about two weeks the first stage
+still finds something new every draw, so every rule measures the same and
+the run says nothing.
+
+## 6. `npm test` — the four test suites, in both languages
 
 ```
 npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
@@ -336,7 +379,7 @@ findings, defaults, archive counters.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
 
-## 6. `dev-week.js` — the console tool
+## 7. `dev-week.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
 `dev.help()` lists everything. Indispensable for the three-parters, because it
@@ -372,7 +415,7 @@ otherwise trial runs distort the statistics permanently.
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up
 in the test suite, not first in the browser.
 
-## 7. Retired tools
+## 8. Retired tools
 
 Four tools used to live here and have been **removed**. They remain only as a
 note, so that nobody finds them in an older note and goes looking:

@@ -140,6 +140,23 @@ export const core = {
             }
         }
 
+        // Doors taken unite per scene, which is an OR of the two masks and
+        // not a max(): one machine may have taken option 0, the other option
+        // 2, and max() would answer 4 and lose the first. Masks written
+        // against different option counts cannot be compared at all - the
+        // scene was rewritten between them - so the local one stands.
+        {
+            const shift = 16;
+            const map = out.seenOptions ?? (out.seenOptions = {});
+            for (const [k, v] of Object.entries(c.seenOptions ?? {})) {
+                if (typeof v !== 'number') continue;
+                const mine = map[k];
+                if (typeof mine !== 'number') { map[k] = v; continue; }
+                if ((mine >>> shift) !== (v >>> shift)) continue;   // different scene
+                map[k] = mine | v;
+            }
+        }
+
         // The chronicle is NOT an id list, which is where it used to sit.
         //
         // An entry is { day, id, vars } with a RANDOMLY drawn id, so two

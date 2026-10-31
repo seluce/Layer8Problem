@@ -135,6 +135,9 @@ const resetState = () => {
     // The evening is once per career, so a run that had one would refuse to
     // record the next test's.
     state.archive.gala = null;
+    // Which doors a career has opened (6.5). Nothing else reads it, so
+    // clearing it here cannot reach another test.
+    state.archive.seenOptions = {};
     state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
@@ -4743,6 +4746,146 @@ await ok('The suite is still running in its own language at the end', () => {
     assert.equal(language(), LANG, 'a test switched the language and did not switch back');
     // Both halves: the rune for the interface and the loaded data tree.
     assert.equal(currentLanguage(), LANG, 'the data tree is in the other language');
+});
+
+// ------------------------------------------------- doors taken, and the draw
+
+await ok('A door taken is written down, and the scene has one fewer', () => {
+    resetState();
+    const ev = { id: 'probe_two', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(ev), true, 'an untouched scene has every door');
+    engine.recordOption('probe_two', null, 0, 2);
+    assert.equal(engine.openDoorsLeft(ev), true, 'one of two taken is not all of them');
+    engine.recordOption('probe_two', null, 1, 2);
+    assert.equal(engine.openDoorsLeft(ev), false, 'both taken, nothing left');
+});
+
+await ok('A rewritten scene forgets which door was taken', () => {
+    resetState();
+    // The index is the key, and an option inserted later moves every index
+    // below it. Keeping the old bits would tell the player they have read a
+    // door they never saw, so the record goes instead.
+    engine.recordOption('probe_grow', null, 0, 2);
+    engine.recordOption('probe_grow', null, 1, 2);
+    const twoDoors = { id: 'probe_grow', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(twoDoors), false, 'both doors of the old scene are taken');
+    const threeDoors = { id: 'probe_grow', opts: [{ t: 'a' }, { t: 'neu' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(threeDoors), true, 'a third option voids the old record');
+
+    // And the WRITE has to start over too, not add to bits that now mean
+    // other doors: without that, 0b11 | 0b100 would read as all three taken
+    // and the scene would be spent without the player ever seeing the new
+    // one. Reading alone does not prove this - it was green while the guard
+    // in recordOption was gone.
+    engine.recordOption('probe_grow', null, 2, 3);
+    assert.equal(state.archive.seenOptions.probe_grow, (3 << 16) | 0b100,
+        'only the door just taken is set, the stale bits are dropped');
+    assert.equal(engine.openDoorsLeft(threeDoors), true, 'two of the three are still open');
+});
+
+await ok('A node inside a chain is recorded under its own key', () => {
+    resetState();
+    const chain = {
+        id: 'probe_chain', startNode: 'root',
+        nodes: { root: { opts: [{ t: 'a' }] }, deeper: { opts: [{ t: 'b' }, { t: 'c' }] } },
+    };
+    engine.recordOption('probe_chain', 'root', 0, 1);
+    assert.equal(engine.openDoorsLeft(chain), true, 'the second node is still untouched');
+    // Not under the bare event id: 313 of the scenes with a choice live in a
+    // nodes block and would otherwise all share one record.
+    assert.ok(!('probe_chain' in state.archive.seenOptions), 'the bare id must stay unused');
+    assert.ok('probe_chain:root' in state.archive.seenOptions, 'the node carries its own key');
+    engine.recordOption('probe_chain', 'deeper', 0, 2);
+    engine.recordOption('probe_chain', 'deeper', 1, 2);
+    assert.equal(engine.openDoorsLeft(chain), false, 'every node read to the end');
+});
+
+await ok('The draw takes what was never shown before what has a door open', () => {
+    resetState();
+    const before = engine.UNSEEN_CHANCE;
+    engine.UNSEEN_CHANCE = 1;                      // the dice are not what is under test
+    try {
+        state.archive.seenEvents = ['known'];
+        engine.recordOption('known', null, 0, 2);  // known, one door still open
+        const list = [{ id: 'known', opts: [{}, {}] }, { id: 'brandnew', opts: [{}, {}] }];
+        for (let i = 0; i < 20; i++) {
+            const got = engine.preferUnseen(list);
+            assert.deepEqual(got.map(e => e.id), ['brandnew'],
+                'the never shown one comes first, every time');
+        }
+    } finally {
+        engine.UNSEEN_CHANCE = before;
+        state.archive.seenEvents = [];
+    }
+});
+
+await ok('With nothing new left, the draw leans to the doors still open', () => {
+    resetState();
+    const before = engine.UNSEEN_CHANCE;
+    engine.UNSEEN_CHANCE = 1;
+    try {
+        state.archive.seenEvents = ['spent', 'halfread'];
+        engine.recordOption('spent', null, 0, 2);
+        engine.recordOption('spent', null, 1, 2);     // read to the end
+        engine.recordOption('halfread', null, 0, 2);  // one door left
+        const list = [{ id: 'spent', opts: [{}, {}] }, { id: 'halfread', opts: [{}, {}] }];
+        for (let i = 0; i < 20; i++) {
+            assert.deepEqual(engine.preferUnseen(list).map(e => e.id), ['halfread'],
+                'the spent scene is passed over while another has something left');
+        }
+        // And it never empties the list: all spent means the draw goes on as
+        // before, rather than returning nothing and stalling the day.
+        engine.recordOption('halfread', null, 1, 2);
+        assert.equal(engine.preferUnseen(list).length, 2, 'everything read means no preference');
+    } finally {
+        engine.UNSEEN_CHANCE = before;
+        state.archive.seenEvents = [];
+    }
+});
+
+await ok('Two machines unite the doors they each opened', () => {
+    // An OR, not a max(): one took option 0, the other option 2, and max()
+    // would answer 4 and lose the first.
+    const local = { seenOptions: { scene: (2 << 16) | 0b01 } };
+    const cloud = { seenOptions: { scene: (2 << 16) | 0b10, other: (3 << 16) | 0b100 } };
+    const out = engine.mergeArchives(local, cloud);
+    assert.equal(out.seenOptions.scene & 0xFFFF, 0b11, 'both doors survive the union');
+    assert.equal(out.seenOptions.other, (3 << 16) | 0b100, 'a scene only the cloud knows comes over');
+
+    // Masks written against different option counts describe different
+    // scenes and cannot be OR-ed; the machine you are on keeps its own.
+    const mine  = { seenOptions: { scene: (2 << 16) | 0b01 } };
+    const their = { seenOptions: { scene: (3 << 16) | 0b100 } };
+    assert.equal(engine.mergeArchives(mine, their).seenOptions.scene, (2 << 16) | 0b01,
+        'a rewritten scene is not merged across');
+});
+
+await ok('Answering in the terminal is what writes the door down', () => {
+    resetState();
+    // The six tests above call recordOption directly, so all of them would
+    // stay green if the ONE line in chooseOption that calls it were gone and
+    // the game wrote nothing down ever again. This drives the real path.
+    state.currentEventId = 'probe_flow';
+    state.currentChainNode = null;
+    state.terminal = {
+        mode: 'event',
+        event: { type: 'coffee', title: 't', text: 'x', opts: [{ t: 'a' }, { t: 'b' }], isChain: false },
+    };
+    engine.chooseOption({ t: 'b', m: 0, l: 0, a: 0, b: 0, r: 'x' }, 1);
+    assert.equal(state.archive.seenOptions.probe_flow, (2 << 16) | 0b10,
+        'the second door of a two-door scene, written by the engine itself');
+});
+
+await ok('A save from before the change reads as all doors open', () => {
+    resetState();
+    delete state.archive.seenOptions;              // exactly what an old save carries
+    const ev = { id: 'probe_old', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(ev), true, 'no record means nothing read');
+    assert.doesNotThrow(() => engine.preferUnseen([ev, { id: 'x', opts: [{}] }]),
+        'the draw must not fall over on an archive without the field');
+    // And writing one creates it rather than throwing.
+    engine.recordOption('probe_old', null, 0, 2);
+    assert.equal(typeof state.archive.seenOptions, 'object', 'the field is created on first write');
 });
 
 console.log(`\n${passed} checks passed.`);

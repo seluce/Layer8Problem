@@ -250,7 +250,26 @@ export const events = {
         if (list.length < 2 || Math.random() >= this.UNSEEN_CHANCE) return list;
         const seen = new Set(this.state.archive.seenEvents ?? []);
         const fresh = list.filter(ev => !seen.has(ev.id));
-        return fresh.length ? fresh : list;
+        if (fresh.length) return fresh;
+        // Second stage: once the drawn list holds nothing new, lean towards
+        // the scenes that still have a door this career never opened. The
+        // first stage alone spent its draws on scenes already read to the
+        // end - measured over 25-day careers, 18.6% of all draws. With this
+        // it is 13.2%, and the share of draws landing on a known scene with
+        // something left rises from 33.9% to 39.0%, at the same coverage.
+        //
+        // NOT a replacement for the first stage. Preferring open doors
+        // outright was tried and is worse: a player who keeps picking the
+        // safe answer never finishes a scene, so it would be preferred for
+        // good - 441 events seen against 547, the same scene drawn ten times
+        // over. The order is what makes it work.
+        //
+        // Invisible for roughly the first two weeks of a career, where the
+        // first stage still finds something every time; from there it costs
+        // about 2% on minutes, anger and radar, measured against a noise
+        // band of 0.1%.
+        const open = list.filter(ev => this.openDoorsLeft(ev));
+        return open.length ? open : list;
     },
 
     /**
@@ -428,6 +447,61 @@ export const events = {
         const list = kind === 'flag' ? this.state.archive.seenFlags : this.state.archive.seenEvents;
         if (!list || list.includes(value)) return;
         list.push(value);
+    },
+
+    /**
+     * The key a scene's doors are recorded under. A node inside a chain has
+     * no id of its own, so it is addressed through the event carrying it.
+     */
+    optionKey: function(eventId, node) {
+        return node ? `${eventId}:${node}` : eventId;
+    },
+
+    // Above this bit sits the option count, below it the taken options.
+    OPTION_COUNT_SHIFT: 16,
+
+    /** Writes down which door was taken. See archive.seenOptions. */
+    recordOption: function(eventId, node, index, count) {
+        if (!eventId || index < 0 || index >= count) return;
+        if (count > this.OPTION_COUNT_SHIFT) return;   // would overflow the mask
+        const archive = this.state.archive;
+        const map = archive.seenOptions ?? (archive.seenOptions = {});
+        const key = this.optionKey(eventId, node);
+        const prev = map[key] ?? 0;
+        // A different count means the scene was rewritten since: the old
+        // bits point at doors that have moved, so they go rather than lie.
+        const mask = (prev >>> this.OPTION_COUNT_SHIFT) === count
+            ? prev & ((1 << this.OPTION_COUNT_SHIFT) - 1)
+            : 0;
+        map[key] = (mask | (1 << index)) | (count << this.OPTION_COUNT_SHIFT);
+    },
+
+    /**
+     * Has this scene a door the career has never opened?
+     *
+     * True for a scene never shown at all, which makes this a superset of
+     * the "never seen" test above it. A chain counts as open while ANY of
+     * its nodes has an untaken option - which node the player will reach is
+     * not knowable at draw time. A scene without options has no door and is
+     * spent the moment it has been read once.
+     */
+    openDoorsLeft: function(ev) {
+        const map = this.state.archive.seenOptions ?? {};
+        const shift = this.OPTION_COUNT_SHIFT;
+        const open = (key, opts) => {
+            const n = opts?.length ?? 0;
+            if (!n || n > shift) return false;
+            const v = map[key] ?? 0;
+            if ((v >>> shift) !== n) return true;     // never written, or rewritten
+            return (v & ((1 << shift) - 1)) !== (1 << n) - 1;
+        };
+        if (ev.nodes && ev.startNode) {
+            for (const [name, node] of Object.entries(ev.nodes)) {
+                if (open(this.optionKey(ev.id, name), node?.opts)) return true;
+            }
+            return false;
+        }
+        return open(this.optionKey(ev.id, null), ev.opts);
     },
 
     applyPassiveItems: function(charName) {
@@ -1142,6 +1216,14 @@ export const events = {
     chooseOption: function(opt, index = -1) {
         const ev = this.state.terminal.event ?? {};
         const located = index > -1 && !!this.state.currentEventId;
+        // Which door was taken, for the draw's second stage. terminal.event
+        // carries the options actually on screen, a chain node's as much as
+        // a plain event's, so one line covers both.
+        if (located) {
+            this.recordOption(this.state.currentEventId,
+                              ev.isChain ? this.state.currentChainNode : null,
+                              index, (ev.opts ?? []).length);
+        }
         // An action's arguments can end up on screen - the gala's ending is
         // named in them - so the action is told WHERE they stand, not just what
         // they said. Same shape as the option reference below it.

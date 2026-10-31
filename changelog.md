@@ -1,5 +1,8 @@
 [Unreleased]
 
+The day to day:
+* A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
+
 Bug fixes:
 * On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.
 
