@@ -35,8 +35,9 @@
  * give a model a better sense of pacing. previous_text is the documented cure,
  * BUT it is not documented whether it is billed. At 3185 results with a ~207
  * character opening each, being wrong about that costs about 660,000
- * characters - more than the whole German run. So it stays off until a trial
- * measures it, which is what the usage report below is for.
+ * characters - more than the whole German run. So it stays off until a run
+ * measures it: the report prints credits spent per character, and the same
+ * pool run twice, once with --context, settles it by the ratio.
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -124,7 +125,15 @@ async function call(path, init = {}) {
 
 // --------------------------------------------------------------- the account
 
-/** Characters billed so far. The difference across a run is the true cost. */
+/**
+ * CREDITS spent so far, not characters. The subscription endpoint calls the
+ * field character_count, which is what made an earlier version of this tool
+ * multiply credits by the per-character dollar rate and print a number that
+ * meant nothing. A character is not a credit: the meetings run spoke 46,176
+ * characters and spent 5,754 credits, so one character cost 0.125 credits
+ * there. That rate depends on the model and the plan, so it is reported and
+ * not assumed.
+ */
 async function billedSoFar() {
     const res = await call('/user/subscription');
     if (!res.ok) return null;
@@ -233,8 +242,10 @@ console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
 if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characters as previous_text (billing unknown)`);
-console.log(`  cost    $${(chars / 1000 * rate).toFixed(2)}`
-          + (CONTEXT ? ` spoken, up to $${((chars + ctxChars) / 1000 * rate).toFixed(2)} if context is billed` : ''));
+// At the published pay-as-you-go rate, which is the dearest way to buy it:
+// usage inside a plan's included credits has come out cheaper than this.
+console.log(`  at most $${(chars / 1000 * rate).toFixed(2)} at the published rate`
+          + (CONTEXT ? `, $${((chars + ctxChars) / 1000 * rate).toFixed(2)} if context is billed` : ''));
 
 if (!todo.length) { console.log('\n✅ Nothing to do.\n'); process.exit(0); }
 if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
@@ -298,7 +309,7 @@ mkdirSync(OUT, { recursive: true });
 mkdirSync(MASTER, { recursive: true });
 
 const before = await billedSoFar();
-if (before) console.log(`  billed  ${before.used.toLocaleString('de-DE')} of ${before.limit.toLocaleString('de-DE')} characters before this run`);
+if (before) console.log(`  credits ${(before.limit - before.used).toLocaleString('de-DE')} of ${before.limit.toLocaleString('de-DE')} left on the plan before this run`);
 console.log();
 
 const fmt = cfg.outputFormat ?? 'mp3_44100_128';
@@ -384,10 +395,16 @@ console.log(`\n✅ ${index - failed} pieces, ${sent.toLocaleString('de-DE')} cha
           + (failed ? `, ${failed} failed` : ''));
 if (before && after) {
     const billed = after.used - before.used;
-    console.log(`   billed ${billed.toLocaleString('de-DE')} characters`
-              + `  =  $${(billed / 1000 * rate).toFixed(2)}`
-              + `  (${(billed / Math.max(sent, 1)).toFixed(2)}x what was spoken)`);
-    if (CONTEXT) console.log('   That factor is the answer to whether previous_text is billed.');
+    const per = billed / Math.max(sent, 1);
+    console.log(`   spent ${billed.toLocaleString('de-DE')} credits on ${sent.toLocaleString('de-DE')} characters`
+              + `  =  ${per.toFixed(3)} credits a character`);
+    console.log(`   ${(after.limit - after.used).toLocaleString('de-DE')} credits left on the plan`);
+    if (after.used < after.limit) {
+        console.log(`   at this rate the plan's remainder is worth`
+                  + ` ${Math.floor((after.limit - after.used) / Math.max(per, 1e-9)).toLocaleString('de-DE')} more characters`);
+    }
+    console.log('   (hold that per-character rate against another run: twice the rate with');
+    console.log('    --context on would mean previous_text is billed)');
 }
 const size = todo.reduce((n, e) => {
     const f = `${OUT}/${fileFor(e.key)}.opus`;

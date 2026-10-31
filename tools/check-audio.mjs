@@ -5,8 +5,9 @@
  * The audio sits in the repository ONCE, in docs/, because that is what GitHub
  * Pages serves. public/audio/ is in .gitignore: it is the local staging area
  * the build copies from, not a second committed copy. Committing both would
- * put 276 MiB in the history for German alone, and another full copy on every
- * later re-render.
+ * put 310 MiB in the history for German alone, and another full copy on every
+ * later re-render. (Measured at 201 bytes a character on the meetings pool:
+ * 155 MiB for German, 304 MiB for both languages.)
  *
  * That saving comes with a trap. vite.config.js sets emptyOutDir: true, so a
  * build clears docs/ and rebuilds it out of public/. On a checkout that has

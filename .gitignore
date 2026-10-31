@@ -21,7 +21,7 @@ EVENT-DOKTRIN.md
 # copies from; committing both would put every file in the history twice.
 # voice/master/ holds the provider's MP3s - re-encoding from them is free,
 # re-asking the provider is not. They stay out of the repository and out of
-# the published site: 740 MiB for German alone.
+# the published site: 815 MiB for German alone.
 public/audio/
 voice/master/
 voice/trial/

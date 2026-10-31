@@ -412,7 +412,7 @@ written down, it is reproducible for good.
 
 | Where | What | In the repository? |
 |---|---|---|
-| `voice/master/<lang>/` | the provider's MP3, 740 MiB for German | no |
+| `voice/master/<lang>/` | the provider's MP3, 815 MiB for German | no |
 | `public/audio/<lang>/` | opus at 24 kbps, the build's input | no |
 | `docs/audio/<lang>/` | the same opus, what GitHub Pages serves | **yes** |
 
@@ -422,7 +422,7 @@ go into the repository and never onto the published site.
 
 The opus exists twice on disk and once in git. `public/assets` and
 `docs/assets` show what the alternative looks like: 21 MB of identical
-images, committed twice. For audio that would be 276 MiB for German alone,
+images, committed twice. For audio that would be 310 MiB for German alone,
 and another full copy in the history on every later re-render.
 
 ### Resuming
@@ -454,13 +454,26 @@ documented whether it is billed. The dry run prints both numbers:
 ```
 to do   100 of 4651 pieces, 15.623 characters
 context 15.087 characters as previous_text (billing unknown)
-cost    $1.25 spoken, up to $2.46 if context is billed
+at most $1.25 at the published rate, $2.46 if context is billed
 ```
 
-Close to 1:1 — being wrong about this doubles the run. So it stays off until
-a trial settles it, which the usage report does: the tool reads the account's
-billed character count before and after and prints the ratio against what it
-actually sent. A factor of 1.0 means context is free; 2.0 means it is not.
+Close to 1:1 — being wrong about this doubles the run. So it stays off until a
+run measures it. The report prints **credits spent per character**, and the
+same pool run twice, once with `--context`, settles it by the ratio.
+
+### Credits are not characters
+
+The subscription endpoint calls its counter `character_count`, and it is not
+one. The meetings pool spoke 46,176 characters and spent **5,754 credits** —
+0.125 credits a character on v4 Turbo inside a Starter plan. An earlier
+version of this tool multiplied those credits by the per-character dollar rate
+and printed a figure that meant nothing at all.
+
+So the dollar line before a run is an **upper bound at the published
+pay-as-you-go rate**, which is the dearest way to buy the characters; usage
+inside a plan's included credits has come out cheaper. The line after a run
+reports what was actually spent, in credits, with the rate it worked out to
+and how far the plan's remainder still reaches.
 
 ## 8. `npm test` — the four test suites, in both languages
 
