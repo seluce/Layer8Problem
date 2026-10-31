@@ -12,6 +12,7 @@
  *   --pool=<name>       only this pool
  *   --limit=<n>         only the first n pieces still to do
  *   --model=<id>        override the configured model (for an A/B trial)
+ *   --voice=<id>        override the configured voice (for an A/B trial)
  *   --context           send the scene opening with each result as
  *                       previous_text. OFF by default - see below.
  *   --jobs=<n>          parallel requests (default 2; Starter allows 3)
@@ -39,7 +40,7 @@
  * measures it: the report prints credits spent per character, and the same
  * pool run twice, once with --context, settles it by the ratio.
  */
-import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, renameSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { collectEntries, fileFor } from './voice-text.mjs';
@@ -138,7 +139,12 @@ async function billedSoFar() {
     const res = await call('/user/subscription');
     if (!res.ok) return null;
     const j = await res.json();
-    return { used: j.character_count, limit: j.character_limit };
+    // What a run costs is the fall in what is LEFT, not the rise in
+    // character_count. Spending a plan's own credits raises character_count,
+    // but spending topped-up ones lowers character_limit instead and leaves
+    // character_count where it was - which reported a 6005-character run as
+    // costing nothing, and then divided by that nothing.
+    return { left: j.character_limit - j.character_count, limit: j.character_limit };
 }
 
 if (has('models')) {
@@ -173,8 +179,11 @@ const CONFIG = `${ROOT}voice/run.${LANG}.json`;
 if (!existsSync(CONFIG)) die(`no ${CONFIG.slice(ROOT.length)}. Copy voice/run.example.json and fill it in.`);
 const cfg = JSON.parse(readFileSync(CONFIG, 'utf8'));
 const MODEL = flag('model', cfg.modelId);
+const VOICE = flag('voice', cfg.voiceId);
+/** The configured voice is the only one whose settings are pinned in the file. */
+const OWN_VOICE = VOICE === cfg.voiceId;
 
-if (!cfg.voiceId) die(`voiceId is empty in ${CONFIG.slice(ROOT.length)}.`);
+if (!VOICE) die(`voiceId is empty in ${CONFIG.slice(ROOT.length)}. Run --voices, or pass --voice=<id>.`);
 if (!MODEL) die(`modelId is empty in ${CONFIG.slice(ROOT.length)}. Run with --models to see the choices.`);
 if (!RATE[MODEL]) console.log(`  ! unknown model "${MODEL}" - the cost report below is a guess.`);
 
@@ -220,12 +229,26 @@ const LEDGER = `${MASTER}/ledger.json`;
 // real run without being unrecorded: a trial that dies at piece 60 of 100
 // must not charge for those 60 again on the next attempt.
 const ledger = existsSync(LEDGER) ? JSON.parse(readFileSync(LEDGER, 'utf8')) : {};
-const saveLedger = () => writeFileSync(LEDGER, JSON.stringify(ledger, null, 1));
+const saveLedger = () => {
+    // Write-then-rename, because writeFileSync is not atomic: a kill in the
+    // middle of it leaves a truncated ledger, and a truncated ledger means the
+    // run is forgotten entirely and every finished piece is bought a second
+    // time. Rename within one filesystem is atomic, so the ledger is either
+    // the old one or the new one, never half of either.
+    const tmp = `${LEDGER}.tmp`;
+    writeFileSync(tmp, JSON.stringify(ledger, null, 1));
+    renameSync(tmp, LEDGER);
+};
 
 /** Done means: this exact text, through this exact model, and the file is there. */
 const done = (e) => {
     const r = ledger[e.key];
-    return !!r && r.sha === e.sha && r.model === MODEL && existsSync(`${OUT}/${fileFor(e.key)}.opus`);
+    // r.voice is undefined in entries written before the field existed. Those
+    // are grandfathered deliberately: treating them as stale would re-render -
+    // and re-buy - a finished run the first time this tool was updated.
+    return !!r && r.sha === e.sha && r.model === MODEL
+        && (r.voice === undefined || r.voice === VOICE)
+        && existsSync(`${OUT}/${fileFor(e.key)}.opus`);
 };
 
 let todo = entries.filter(e => !done(e));
@@ -237,7 +260,7 @@ const ctxChars = CONTEXT ? todo.reduce((n, e) => n + (openingFor(e.key)?.length 
 const rate = RATE[MODEL] ?? 0.08;
 
 console.log(`\nGeneration run (${LANG})${TRIAL ? `  TRIAL "${TRIAL}"` : ''}`);
-console.log(`  voice   ${cfg.voiceName ?? cfg.voiceId}`);
+console.log(`  voice   ${OWN_VOICE ? (cfg.voiceName ?? cfg.voiceId) : `${VOICE}   (--voice, settings not pinned)`}`);
 console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
@@ -265,10 +288,10 @@ if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
     const res = await call('/voices');
     if (!res.ok) die(await explain(res, 'the voice list'));
     const { voices } = await res.json();
-    if (!voices.some(v => v.voice_id === cfg.voiceId)) {
+    if (!voices.some(v => v.voice_id === VOICE)) {
         const first = (cfg.voiceName ?? '').split(/[\s-]+/)[0];
         const near = first ? voices.filter(v => v.name.startsWith(first)) : [];
-        die(`this account has no voice ${cfg.voiceId}.\n`
+        die(`this account has no voice ${VOICE}.\n`
           + (near.length ? `  Did you mean:\n${near.map(v => `    ${v.voice_id}  ${v.name}`).join('\n')}\n` : '')
           + '  A voice added from the library gets its OWN id in the account; the id on\n'
           + '  the library page is a different one. Run --voices for the full list.');
@@ -289,10 +312,18 @@ if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
  * the first place. It is simply not pinned, and the run says so rather than
  * pretending otherwise.
  */
-if (cfg.voiceSettings === null || cfg.voiceSettings === undefined) {
-    const res = await call(`/voices/${cfg.voiceId}/settings`);
+let settings = OWN_VOICE ? cfg.voiceSettings : null;
+if (!OWN_VOICE) {
+    // A voice being tried out. Take its own settings for the run so it is heard
+    // the way its maker tuned it, but never write them into the config - those
+    // belong to the voice the config names.
+    const res = await call(`/voices/${VOICE}/settings`);
+    settings = res.ok ? await res.json() : null;
+    console.log(`  settings ${settings ? JSON.stringify(settings) : "the voice's own defaults"}`);
+} else if (settings === null || settings === undefined) {
+    const res = await call(`/voices/${VOICE}/settings`);
     if (res.ok) {
-        cfg.voiceSettings = await res.json();
+        settings = cfg.voiceSettings = await res.json();
         writeFileSync(CONFIG, `${JSON.stringify(cfg, null, 4)}\n`);
         console.log(`  settings pinned in ${CONFIG.slice(ROOT.length)}`);
         console.log(`    ${JSON.stringify(cfg.voiceSettings)}`);
@@ -309,7 +340,7 @@ mkdirSync(OUT, { recursive: true });
 mkdirSync(MASTER, { recursive: true });
 
 const before = await billedSoFar();
-if (before) console.log(`  credits ${(before.limit - before.used).toLocaleString('de-DE')} of ${before.limit.toLocaleString('de-DE')} left on the plan before this run`);
+if (before) console.log(`  credits ${before.left.toLocaleString('de-DE')} left before this run`);
 console.log();
 
 const fmt = cfg.outputFormat ?? 'mp3_44100_128';
@@ -319,14 +350,14 @@ let sent = 0, failed = 0;
 /** One piece. Throws only on something that should stop the whole run. */
 async function speak(e) {
     const body = { text: e.spoken, model_id: MODEL };
-    if (cfg.voiceSettings) body.voice_settings = cfg.voiceSettings;
+    if (settings) body.voice_settings = settings;
     if (CONTEXT) {
         const prev = openingFor(e.key);
         if (prev) body.previous_text = prev;
     }
 
     for (let attempt = 1; ; attempt++) {
-        const res = await call(`/text-to-speech/${cfg.voiceId}?output_format=${fmt}`, {
+        const res = await call(`/text-to-speech/${VOICE}?output_format=${fmt}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -341,7 +372,7 @@ async function speak(e) {
             execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
                 '-i', mp3, '-c:a', 'libopus', '-b:a', bitrate, '-ac', '1',
                 `${OUT}/${fileFor(e.key)}.opus`]);
-            ledger[e.key] = { sha: e.sha, model: MODEL, chars: e.chars };
+            ledger[e.key] = { sha: e.sha, model: MODEL, voice: VOICE, chars: e.chars };
             return true;
         }
 
@@ -394,17 +425,21 @@ const after = await billedSoFar();
 console.log(`\n✅ ${index - failed} pieces, ${sent.toLocaleString('de-DE')} characters spoken`
           + (failed ? `, ${failed} failed` : ''));
 if (before && after) {
-    const billed = after.used - before.used;
-    const per = billed / Math.max(sent, 1);
-    console.log(`   spent ${billed.toLocaleString('de-DE')} credits on ${sent.toLocaleString('de-DE')} characters`
-              + `  =  ${per.toFixed(3)} credits a character`);
-    console.log(`   ${(after.limit - after.used).toLocaleString('de-DE')} credits left on the plan`);
-    if (after.used < after.limit) {
-        console.log(`   at this rate the plan's remainder is worth`
-                  + ` ${Math.floor((after.limit - after.used) / Math.max(per, 1e-9)).toLocaleString('de-DE')} more characters`);
+    const spent = before.left - after.left;
+    const per = spent / Math.max(sent, 1);
+    console.log(`   spent ${spent.toLocaleString('de-DE')} credits on ${sent.toLocaleString('de-DE')} characters`
+              + (per > 0 ? `  =  ${per.toFixed(3)} credits a character` : ''));
+    console.log(`   ${after.left.toLocaleString('de-DE')} credits left`);
+    // Guarded: a counter that has not caught up yet gives per = 0, and
+    // dividing the balance by it once reported eleven trillion characters.
+    if (per >= 0.001) {
+        console.log(`   at this rate that reaches`
+                  + ` ${Math.floor(after.left / per).toLocaleString('de-DE')} more characters`);
+        console.log('   (hold that per-character rate against another run: twice the rate with');
+        console.log('    --context on would mean previous_text is billed)');
+    } else {
+        console.log('   (the account counter has not caught up - no rate to report from this run)');
     }
-    console.log('   (hold that per-character rate against another run: twice the rate with');
-    console.log('    --context on would mean previous_text is billed)');
 }
 const size = todo.reduce((n, e) => {
     const f = `${OUT}/${fileFor(e.key)}.opus`;
