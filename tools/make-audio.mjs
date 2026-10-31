@@ -4,6 +4,7 @@
  * Usage: node tools/make-audio.mjs [--lang=de] [options]
  *
  *   --models            list the models this account may use, then stop
+ *   --voices            list the voices this account HAS, then stop
  *   --dry-run           what would be sent and what it would cost, no calls
  *   --trial=<name>      write into voice/trial/<name>/ instead of the real
  *                       output, with a ledger of its own. A trial can never
@@ -64,26 +65,33 @@ const RATE = { eleven_v4: 0.08, eleven_v3: 0.08, eleven_multilingual_v2: 0.08,
 
 const die = (msg) => { console.error(`✗ ${msg}`); process.exit(1); };
 
+/** What to do about a status, where we know something the provider does not say. */
+const HINT = {
+    401: 'No valid key. Create one at https://elevenlabs.io/app/developers/api-keys -\n'
+       + '    it is shown once. The playground on the website needs no key; the API does.',
+    402: 'Out of credit. Top up at https://elevenlabs.io/app/developers/top-up (minimum $5).\n'
+       + '    Everything already finished is in the ledger and will not be paid for twice.',
+    403: 'The key is valid but not allowed here - check its scope restrictions and its\n'
+       + '    IP allowlist at https://elevenlabs.io/app/developers/api-keys',
+    404: 'The provider does not know this id. Run --voices to see the voices this\n'
+       + '    account actually has.',
+    400: 'If this was about a voice: run --voices. A voice added from the library\n'
+       + '    gets its OWN id in the account, which is not the id on the library page.',
+    422: 'The request was understood and rejected - usually a setting out of range.',
+};
+
 /**
- * A status code with the thing to do about it. "the provider answered 401" is
- * true and useless: the first run of this tool met exactly that, and the
- * answer - no key exists yet, here is where it is made - was nowhere near it.
+ * The provider explains itself in the response body. Throwing that away is how
+ * a bare "the provider answered 400" ended up on screen with nothing to act on,
+ * twice. The body comes first, because it knows more than this table does.
  */
-function explain(status) {
-    if (status === 401) {
-        return 'the key was rejected (401). ELEVENLABS_API_KEY holds something, but not a\n'
-             + '  valid key. Create one at https://elevenlabs.io/app/developers/api-keys\n'
-             + '  - it is shown once. The playground on the website needs no key; the API does.';
-    }
-    if (status === 403) {
-        return 'the key was refused (403). It is valid but not allowed here - check its scope\n'
-             + '  restrictions and its IP allowlist at https://elevenlabs.io/app/developers/api-keys';
-    }
-    if (status === 402) {
-        return 'out of credit (402). Top up at https://elevenlabs.io/app/developers/top-up\n'
-             + '  (minimum $5). Everything finished so far is in the ledger and will not be paid for twice.';
-    }
-    return `the provider answered ${status}`;
+async function explain(res, what) {
+    let detail = '';
+    try { detail = (await res.text()).trim().slice(0, 400); } catch { /* nothing to add */ }
+    const out = [`${what}: the provider answered ${res.status}`];
+    if (detail) out.push(`    ${detail}`);
+    if (HINT[res.status]) out.push(`    ${HINT[res.status]}`);
+    return out.join('\n');
 }
 
 // ------------------------------------------------------------------- the key
@@ -126,7 +134,7 @@ async function billedSoFar() {
 
 if (has('models')) {
     const res = await call('/models');
-    if (!res.ok) die(explain(res.status));
+    if (!res.ok) die(await explain(res, 'the model list'));
     const models = await res.json();
     console.log('\nModels this account may use:\n');
     for (const m of models) {
@@ -135,6 +143,18 @@ if (has('models')) {
         console.log(`  ${m.model_id.padEnd(28)} ${rate ? `$${rate.toFixed(2)}/1k` : '   ?    '}  ${m.name}`);
     }
     console.log('\nPut the one you want into voice/run.<lang>.json as "modelId".\n');
+    process.exit(0);
+}
+
+if (has('voices')) {
+    const res = await call('/voices');
+    if (!res.ok) die(await explain(res, 'the voice list'));
+    const { voices } = await res.json();
+    console.log(`\nVoices this account can use (${voices.length}):\n`);
+    for (const v of voices) console.log(`  ${v.voice_id}  ${(v.category ?? '').padEnd(12)} ${v.name}`);
+    console.log('\nA voice taken from the library has to be ADDED to the account before the API\n'
+              + 'can read its settings. If the one you want is not listed, open it in the voice\n'
+              + 'library in the web app and add it to your voices.\n');
     process.exit(0);
 }
 
@@ -219,20 +239,57 @@ console.log(`  cost    $${(chars / 1000 * rate).toFixed(2)}`
 if (!todo.length) { console.log('\n✅ Nothing to do.\n'); process.exit(0); }
 if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
 
+// ------------------------------------------------------------- the voice check
+
+/**
+ * A voice id the account does not have fails on every single piece, one
+ * error at a time, after the folders are made and the run looks under way.
+ * One call up front turns that into a stop that names the right id.
+ *
+ * The id on a library page is NOT the id the account gets when the voice is
+ * added to it - that is how rKiu7lQ4c5P3az3745s3 reached voice/run.de.json
+ * while the account held the same voice as kkJxCnlRCckmfFvzDW5Q.
+ */
+{
+    const res = await call('/voices');
+    if (!res.ok) die(await explain(res, 'the voice list'));
+    const { voices } = await res.json();
+    if (!voices.some(v => v.voice_id === cfg.voiceId)) {
+        const first = (cfg.voiceName ?? '').split(/[\s-]+/)[0];
+        const near = first ? voices.filter(v => v.name.startsWith(first)) : [];
+        die(`this account has no voice ${cfg.voiceId}.\n`
+          + (near.length ? `  Did you mean:\n${near.map(v => `    ${v.voice_id}  ${v.name}`).join('\n')}\n` : '')
+          + '  A voice added from the library gets its OWN id in the account; the id on\n'
+          + '  the library page is a different one. Run --voices for the full list.');
+    }
+}
+
 // --------------------------------------------------------------- the settings
 
 /**
  * Recorded on the first run and reused after, so a run a year from now sounds
- * like this one. "all on default" is only reproducible while the provider's
- * defaults do not move; written down, it is reproducible for good.
+ * like this one. "Everything on default" is only reproducible while the
+ * provider's defaults stay put; written down, it is reproducible for good.
+ *
+ * NOT fatal when it fails. A voice taken from the library but never added to
+ * the account answers 400 here, and refusing to start over a convenience would
+ * be wrong: leaving voice_settings out of the request makes the provider use
+ * that voice's own defaults, which is what "everything on default" meant in
+ * the first place. It is simply not pinned, and the run says so rather than
+ * pretending otherwise.
  */
-if (!cfg.voiceSettings) {
+if (cfg.voiceSettings === null || cfg.voiceSettings === undefined) {
     const res = await call(`/voices/${cfg.voiceId}/settings`);
-    if (!res.ok) die(explain(res.status));
-    cfg.voiceSettings = await res.json();
-    writeFileSync(CONFIG, `${JSON.stringify(cfg, null, 4)}\n`);
-    console.log(`  settings fetched and written into ${CONFIG.slice(ROOT.length)}:`);
-    console.log(`    ${JSON.stringify(cfg.voiceSettings)}`);
+    if (res.ok) {
+        cfg.voiceSettings = await res.json();
+        writeFileSync(CONFIG, `${JSON.stringify(cfg, null, 4)}\n`);
+        console.log(`  settings pinned in ${CONFIG.slice(ROOT.length)}`);
+        console.log(`    ${JSON.stringify(cfg.voiceSettings)}`);
+    } else {
+        console.log(`  ! ${await explain(res, 'reading the voice settings')}`);
+        console.log('  ! Going on with the provider\'s own defaults for this voice. They are');
+        console.log('  ! NOT written down, so a run months from now could sound different.');
+    }
 }
 
 // -------------------------------------------------------------------- the run
@@ -250,7 +307,8 @@ let sent = 0, failed = 0;
 
 /** One piece. Throws only on something that should stop the whole run. */
 async function speak(e) {
-    const body = { text: e.spoken, model_id: MODEL, voice_settings: cfg.voiceSettings };
+    const body = { text: e.spoken, model_id: MODEL };
+    if (cfg.voiceSettings) body.voice_settings = cfg.voiceSettings;
     if (CONTEXT) {
         const prev = openingFor(e.key);
         if (prev) body.previous_text = prev;
@@ -281,8 +339,7 @@ async function speak(e) {
         // burns money on 4651 identical rejections.
         const retryable = res.status === 429 || res.status >= 500;
         if (!retryable) {
-            const detail = await res.text().catch(() => '');
-            throw new Error(`${explain(res.status)}\n  (on ${e.key})\n  ${detail.slice(0, 200)}`);
+            throw new Error(await explain(res, `"${e.key}"`));
         }
         if (attempt >= 5) { failed++; console.log(`  ! gave up on ${e.key} after ${attempt} attempts (${res.status})`); return false; }
         await new Promise(r => setTimeout(r, 1000 * 2 ** (attempt - 1)));
