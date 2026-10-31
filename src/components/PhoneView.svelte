@@ -98,7 +98,7 @@
             {#each phone.messages as msg (msg.id)}
                 {#if msg.side === 'in'}
                     <div class="w-full flex justify-start mb-4 chat-in-left">
-                        <div class="flex items-end gap-2 max-w-[85%]">
+                        <div class="flex items-end gap-2 min-w-0 max-w-[85%]">
                             <div class="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-300 shrink-0 overflow-hidden">
                                 {#if msg.img}
                                     <!-- Contact photo. alt stays empty on purpose: the
@@ -110,7 +110,7 @@
                                     {initial(msg)}
                                 {/if}
                             </div>
-                            <div class="flex flex-col">
+                            <div class="flex flex-col min-w-0">
                                 <span class="text-[0.625rem] text-slate-400 ml-1 mb-0.5">{sender(msg)}</span>
                                 <div class="bg-slate-700 text-slate-100 px-4 py-2 rounded-2xl rounded-bl-none shadow-md text-sm leading-relaxed wrap-break-word">
                                     {text(msg)}
@@ -137,8 +137,8 @@
                     <div class="text-center text-xs text-red-500 my-2">{text(msg)}</div>
                 {:else}
                     <div class="w-full flex justify-end mb-4 chat-in-right">
-                        <div class="max-w-[85%] flex flex-col items-end">
-                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word">
+                        <div class="max-w-[85%] min-w-0 flex flex-col items-end">
+                            <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word max-w-full">
                                 {text(msg)}
                             </div>
                             <span class="text-[0.625rem] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
@@ -157,7 +157,7 @@
                                {o.missing ? 'opacity-50 cursor-not-allowed' : ''}"
                         disabled={!!o.missing}
                         onclick={() => engine.handlePhoneChoice(o.opt.t, o.opt.next, o.opt.rem, o.index)}>
-                    <div class="flex items-center gap-2 flex-1 mr-2">
+                    <div class="flex items-center gap-2 flex-1 min-w-0 mr-2">
                         {#if o.missing}
                             <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
                                  width="16" height="16" class="w-5 h-5 shrink-0 select-none"
@@ -165,7 +165,7 @@
                         {:else}
                             <span class="opacity-50 group-hover:opacity-100 shrink-0">➤</span>
                         {/if}
-                        <span class="wrap-break-word leading-tight py-1">{o.opt.t}</span>
+                        <span class="wrap-break-word min-w-0 leading-tight py-1">{o.opt.t}</span>
                     </div>
                     <div class="shrink-0 flex items-center h-full gap-2">
                         {#if o.missing}

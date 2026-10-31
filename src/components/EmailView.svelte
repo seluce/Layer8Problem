@@ -153,7 +153,7 @@
                            {o.isDelete
                              ? 'hover:bg-red-950/30 hover:border-red-500/50 text-slate-400 hover:text-red-400'
                              : 'hover:bg-blue-900/30 hover:border-blue-500/50 text-slate-300 hover:text-blue-300'}">
-                <div class="flex items-center flex-1 mr-2">
+                <div class="flex items-center flex-1 min-w-0 mr-2">
                     <span class="mr-2 transition-colors duration-75 text-base shrink-0
                                  {o.isDelete ? 'text-slate-600 group-hover:text-red-500' : 'text-slate-500 group-hover:text-blue-400'}">
                         {#if o.isDelete}
@@ -162,7 +162,7 @@
                                  onerror={(e) => e.currentTarget.outerHTML = '🗑️'}>
                         {:else}➥{/if}
                     </span>
-                    <span class="wrap-break-word leading-tight py-1">{o.opt.t}</span>
+                    <span class="wrap-break-word min-w-0 leading-tight py-1">{o.opt.t}</span>
                 </div>
                 <div class="shrink-0 flex items-center h-full">
                     {#if o.key}

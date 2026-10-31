@@ -1,3 +1,10 @@
+[Unreleased]
+
+Bug fixes:
+* On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.
+
+---
+
 [6.4.0] - 2026-10-30
 
 A day worth passing on, a phone that plays like one, and a word of warning before the things that arrive uninvited.

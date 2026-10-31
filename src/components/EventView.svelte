@@ -173,7 +173,15 @@
     {/if}
 
     <div class="flex gap-4 md:gap-6 items-center mb-8">
-        <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
+        <!-- min-w-0 is load-bearing. A flex child keeps min-width:auto, so it
+             refuses to shrink below its longest unbreakable word - and
+             overflow-wrap:break-word does not lower that minimum, it only
+             breaks once the box is already too narrow. The coffee machine's
+             'ERROR 418.666.KICK_DETECTED...' is 84 characters, which pushed
+             this box to 887px inside a 275px parent on a phone. body carries
+             overflow-hidden, so nothing scrolled: half the sentence was
+             simply gone, at 0 errors and 0 warnings. -->
+        <div class="flex-1 min-w-0 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
             <p class="italic text-slate-300 text-lg leading-relaxed font-serif break-words hyphens-auto">{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}</p>
         </div>
 
@@ -219,7 +227,7 @@
                                  onerror={(e) => e.currentTarget.outerHTML = `<span class="${style.color}">➤</span>`}>
                         {:else}<span class="{style.color} group-hover:text-white transition-colors">➤</span>{/if}
                     </span>
-                    <span class="text-left wrap-break-word py-1">
+                    <span class="text-left wrap-break-word min-w-0 py-1">
                         {o.opt.t}
                         {#if o.locked}<span class="text-sm text-red-500 font-normal ml-2">({o.locked})</span>{/if}
                     </span>
