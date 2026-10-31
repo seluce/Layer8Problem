@@ -18,6 +18,8 @@ the repository root.
 | Week simulator | `npm run sim:week [n] [--lang=en]` | before every balance decision (week) |
 | Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
 | Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
+| Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
+| Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; refuses a build that would delete committed audio |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -382,10 +384,88 @@ cannot see that by itself.
 plan, and gating every data edit on a plan is noise. It joins the gate with
 the first generated file.
 
-## 7. `npm test` — the four test suites, in both languages
+## 7. `make-audio.mjs` — the generation run
 
 ```
-npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
+npm run voice:models                                  # which models this account may use
+npm run voice:audio -- --dry-run                      # what it would send and cost
+npm run voice:audio -- --trial=v4 --pool=coffee --limit=100
+npm run voice:audio                                   # the real run
+```
+
+Reads `voice/manifest.<lang>.json`, sends every piece that is not finished
+yet, and writes two files per piece: the provider's MP3 into
+`voice/master/<lang>/` and an opus into `public/audio/<lang>/`.
+
+**The key comes from `ELEVENLABS_API_KEY` in the environment.** It is never
+written to a file, a log line or an error message — the wrapper around
+`fetch` re-throws a reason of its own, because the original error can carry
+the request headers.
+
+**Who speaks is in `voice/run.<lang>.json`**, which is committed: voice id,
+model, output format, opus bitrate. `voiceSettings` starts as `null` and is
+filled from the provider on the first run and written back. "Everything on
+default" is only reproducible while the provider's defaults stay put;
+written down, it is reproducible for good.
+
+### The three places a file goes
+
+| Where | What | In the repository? |
+|---|---|---|
+| `voice/master/<lang>/` | the provider's MP3, 740 MiB for German | no |
+| `public/audio/<lang>/` | opus at 24 kbps, the build's input | no |
+| `docs/audio/<lang>/` | the same opus, what GitHub Pages serves | **yes** |
+
+The masters are the thing that was bought. Re-encoding to another bitrate
+from them is free; asking the provider again costs the whole run. They never
+go into the repository and never onto the published site.
+
+The opus exists twice on disk and once in git. `public/assets` and
+`docs/assets` show what the alternative looks like: 21 MB of identical
+images, committed twice. For audio that would be 276 MiB for German alone,
+and another full copy in the history on every later re-render.
+
+### Resuming
+
+Every finished piece goes into a ledger beside the masters, with its
+checksum and the model it was made with. An abort therefore costs nothing,
+a rewritten line re-renders alone, and switching the model re-renders
+everything — which is the point.
+
+A run refuses to start if the tree and the manifest disagree, so audio can
+never be bought for a text the gate has not seen.
+
+### `--trial`
+
+Writes into `voice/trial/<name>/`, with a ledger of its own, so a trial can
+never damage a finished run — which is what makes an A/B between two models
+safe — and a trial that dies at piece 60 of 100 does not charge for those 60
+again. The useful shape is one pool in manifest order, so what comes out is a
+real play sequence rather than six pieces picked by hand: that is the only
+way to hear whether the voice holds ACROSS calls, which is the actual risk
+at a median of 171 characters a piece.
+
+### `--context`, and why it is off
+
+`previous_text` sends the scene opening along with a result without speaking
+it, and is the documented cure for short, unstable pieces. It is **not**
+documented whether it is billed. The dry run prints both numbers:
+
+```
+to do   100 of 4651 pieces, 15.623 characters
+context 15.087 characters as previous_text (billing unknown)
+cost    $1.25 spoken, up to $2.46 if context is billed
+```
+
+Close to 1:1 — being wrong about this doubles the run. So it stays off until
+a trial settles it, which the usage report does: the tool reads the account's
+billed character count before and after and prints the ratio against what it
+actually sent. A factor of 1.0 means context is free; 2.0 means it is not.
+
+## 8. `npm test` — the four test suites, in both languages
+
+```
+npm test        # 17 / 248 / 20 / 46, then the same four again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -433,7 +513,7 @@ findings, defaults, archive counters.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
 
-## 8. `dev-week.js` — the console tool
+## 9. `dev-week.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
 `dev.help()` lists everything. Indispensable for the three-parters, because it
@@ -469,7 +549,7 @@ otherwise trial runs distort the statistics permanently.
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up
 in the test suite, not first in the browser.
 
-## 9. Retired tools
+## 10. Retired tools
 
 Four tools used to live here and have been **removed**. They remain only as a
 note, so that nobody finds them in an older note and goes looking:

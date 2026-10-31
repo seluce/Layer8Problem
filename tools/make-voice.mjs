@@ -7,28 +7,20 @@
  * the old one, with nothing to notice it. So every entry carries the checksum
  * of the source string, and --check holds the manifest against the trees.
  *
- * What gets a voice: the terminal. Mails, the phone, the intranet, the board,
- * the vending machine, the log and the books stay for reading - they are
- * read at the player's own pace, or they change from run to run.
- *
- * What does NOT get one: option labels. 3470 files for 114 minutes, and a
- * read-out list of buttons sounds like a railway announcement. Someone who
- * needs them read has a screen reader, supported since 6.4.
- *
  * Usage: node tools/make-voice.mjs [--lang=de|en] [--write] [--check]
  *        --write   create or update voice/manifest.<lang>.json
  *        --check   exit 1 if the manifest and the tree disagree (a gate)
  *        neither   report what would change, touch nothing
  *
- * The provider that speaks the text is deliberately NOT part of this: the
- * manifest says WHAT to say and under which name to file it. Which service
- * says it is one step further on, and changing it must not invalidate 4591
- * files.
+ * What is collected and how it is spelled out loud lives in voice-text.mjs,
+ * which tools/make-audio.mjs reads too. The provider that speaks the text is
+ * deliberately NOT part of either: the manifest says WHAT to say and under
+ * which name to file it. Which service says it is one step further on, and
+ * changing it must not invalidate 4651 files.
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { DB, ensure, loadCore, currentLanguage, POOL_NAMES } from '../src/data.js';
+import { collectEntries, TERMINAL, TRANSFORM } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -37,95 +29,17 @@ const LANG  = flag('lang', 'de');
 const WRITE = args.includes('--write');
 const CHECK = args.includes('--check');
 
-if (LANG !== 'de' && LANG !== 'en') { console.error(`Unknown language "${LANG}".`); process.exit(1); }
-await loadCore(LANG);
-await ensure(...POOL_NAMES);
-if (currentLanguage() !== LANG) {
-    console.error(`Language "${LANG}" could not be loaded - reading "${currentLanguage()}".`);
+let entries, unknownTags;
+try {
+    ({ entries, unknownTags } = await collectEntries(LANG));
+} catch (err) {
+    console.error(err.message);
     process.exit(1);
-}
-
-/** Pools that play in the terminal. A new one is added here and nowhere else. */
-const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights',
-                  'lunch', 'meetings', 'reputation', 'party', 'special', 'tutorial'];
-/** Fields that hold spoken prose. `t` (the button) is deliberately absent. */
-const SPOKEN = new Set(['text', 'r', 'txt']);
-
-/**
- * How the written line becomes the spoken one. Bumped when this function
- * changes, because then every file was made from a different text than the
- * one this version would send - the checksum alone cannot see that.
- */
-const TRANSFORM = 1;
-
-/**
- * Said, not spelled. The screen keeps the dots; a voice reading them out
- * letter by letter turns the company system into a hardware list.
- */
-const SPOKEN_AS = [
-    [/H\.A\.L\.G\.E\.R\.D\./g, 'Halgerd'],
-];
-
-const KNOWN_TAGS = /<br\s*\/?>/gi;
-
-function spokenForm(s) {
-    let out = s.replace(KNOWN_TAGS, ' ');
-    for (const [from, to] of SPOKEN_AS) out = out.replace(from, to);
-    return out.replace(/\s+/g, ' ').trim();
-}
-
-const sha = (s) => createHash('sha1').update(s, 'utf8').digest('hex').slice(0, 12);
-
-/** The audio file a key is filed under. Derived, so it is never stored. */
-export const fileFor = (key) => `${key.replace(/\//g, '--')}.opus`;
-
-// ---------------------------------------------------------------- collecting
-
-const entries = [];
-const unknownTags = new Map();
-
-/**
- * The key is the path from the pool, with the nearest enclosing id standing in
- * for wherever that object sits in its array. An event that moves within its
- * file keeps its files; only a rewrite of the prose invalidates them, which is
- * what the checksum is for. Pools shaped as objects (`special`) fall back to
- * their property names, so no pool needs a case of its own.
- */
-function collect(node, pool, prefix, key) {
-    if (Array.isArray(node)) { node.forEach((v, i) => collect(v, pool, [...prefix, key], String(i))); return; }
-    if (!node || typeof node !== 'object') return;
-    if (node.kind === 'phone') return;
-    const base = typeof node.id === 'string' ? [pool, node.id] : [...prefix, key];
-    for (const [k, v] of Object.entries(node)) {
-        if (typeof v === 'string') {
-            if (!SPOKEN.has(k) || !v.trim()) continue;
-            for (const m of v.match(/<[^>]+>/g) ?? []) {
-                if (!/^<br\s*\/?>$/i.test(m)) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
-            }
-            entries.push({ key: [...base, k].join('/'), src: v });
-        } else {
-            collect(v, pool, base, k);
-        }
-    }
-}
-
-for (const pool of TERMINAL) {
-    const v = DB[pool];
-    if (!v) { console.error(`Pool "${pool}" is not loaded.`); process.exit(1); }
-    collect(v, pool, [pool], '');
 }
 
 // ---------------------------------------------------------------- the report
 
-const seen = new Map();
-for (const e of entries) {
-    if (seen.has(e.key)) { console.error(`Duplicate key: ${e.key}`); process.exit(1); }
-    seen.set(e.key, e);
-    e.spoken = spokenForm(e.src);
-    e.sha = sha(e.src);
-    e.chars = e.spoken.length;
-}
-
+const seen = new Map(entries.map(e => [e.key, e]));
 const MANIFEST = `${ROOT}voice/manifest.${LANG}.json`;
 const old = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : null;
 const oldBy = new Map((old?.entries ?? []).map(e => [e.key, e]));

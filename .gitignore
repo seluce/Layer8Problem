@@ -15,3 +15,13 @@ EVENT-DOKTRIN.md
 .claude/settings.local.json
 .claude/settings.local.json.tmp.*
 .claude/launch.json
+
+# Audio. The opus files live in the repository ONCE, in docs/, because that is
+# what GitHub Pages serves. public/audio/ is the local staging area the build
+# copies from; committing both would put every file in the history twice.
+# voice/master/ holds the provider's MP3s - re-encoding from them is free,
+# re-asking the provider is not. They stay out of the repository and out of
+# the published site: 740 MiB for German alone.
+public/audio/
+voice/master/
+voice/trial/
