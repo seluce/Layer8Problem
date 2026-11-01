@@ -390,6 +390,39 @@ export function freshArchive() {
  * V is "voice" and "vorlesen" at once, which makes it the one letter that
  * means the same thing in both languages.
  */
+/**
+ * The audio levels a new player starts with, and what the settings reset
+ * restores. Named once for the reason DEFAULT_KEYBINDS is: the reset used to
+ * carry its own numbers, and when the music default came down to 0.15 to sit
+ * under the narrator, the reset went on restoring 0.2.
+ */
+export const DEFAULT_SFX_VOLUME = 0.5;
+export const DEFAULT_MUSIC_VOLUME = 0.15;
+export const DEFAULT_NARRATION_VOLUME = 1;
+
+/**
+ * What the narrator reads when it is switched on - each kind can be turned off
+ * on its own in the settings. The button beside the excuse (and V) reads any
+ * scene regardless: it is the player asking, not the narrator offering.
+ *
+ *   events   the terminal's scenes and outcomes
+ *   morning  the morning screen
+ *   valves   the rage valve and the written warning
+ *   halgerd  H.A.L.G.E.R.D.'s two first words and the tutorial
+ */
+export const DEFAULT_NARRATION_KINDS = Object.freeze({
+    events: true, morning: true, valves: true, halgerd: true
+});
+
+/** A stored kinds object made safe: unknown keys dropped, missing ones filled. */
+export function mergeNarrationKinds(saved) {
+    const out = { ...DEFAULT_NARRATION_KINDS };
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+        for (const k of Object.keys(out)) if (typeof saved[k] === 'boolean') out[k] = saved[k];
+    }
+    return out;
+}
+
 export const DEFAULT_KEYBINDS = Object.freeze({
     actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
     opt1: '1', opt2: '2', opt3: '3', confirm: 'Space',
@@ -531,20 +564,24 @@ export const state = $state({
     // User settings
     visualFX: localStorage.getItem(KEYS.visualFX) !== 'false',
     audioEffects: localStorage.getItem(KEYS.audioEffects) !== 'false',
-    audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || '0.5'), // default 50%
+    audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || String(DEFAULT_SFX_VOLUME)),
     musicEnabled: localStorage.getItem(KEYS.musicEnabled) !== 'false',
     // 15% since 6.4, and the number is derived rather than chosen: the
     // recordings come in at -23.6 LUFS, the tracks are levelled to -21.9
     // (engine_audio.MUSIC_TRIM), and 0.15 puts the music 15 dB under the
     // voice - broadcast practice for a bed under narration. Reaches new
     // players only; a stored setting is the player's and is not rewritten.
-    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || '0.15'),
+    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || String(DEFAULT_MUSIC_VOLUME)),
     musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
     // The narrator. On by default - 15 hours of speech is not an easter egg -
     // and at the top of its range, because the recordings come in at -23.6
     // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.
     narrationEnabled: localStorage.getItem(KEYS.narrationEnabled) !== 'false',
-    narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || '1'),
+    narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || String(DEFAULT_NARRATION_VOLUME)),
+    narrationKinds: (() => {
+        try { return mergeNarrationKinds(JSON.parse(localStorage.getItem(KEYS.narrationKinds))); }
+        catch { return mergeNarrationKinds(null); }
+    })(),
     currentMusicTrack: null,
     // The read-aloud button (components/ReadButton.svelte) reads these two,
     // which is why they are here and not on the voice object: the modules are spread

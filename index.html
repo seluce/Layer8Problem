@@ -944,36 +944,6 @@
 <!-- REPORT MODAL END -->
 
 <!-- KEYBOAD BINDING MODAL START -->
-<div id="keybind-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=keybind.title" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
-    <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[95vh]">
-        
-        <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
-            <div class="flex items-center gap-3">
-                <img src="assets/img/ui/set_keys.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='⌨️'">
-                <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5" data-i18n="keybind.title">KEY BINDINGS</h2>
-            </div>
-            <button data-action="closeKeybinds" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-500 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-        </div>
-
-        <div class="p-5 overflow-y-auto w-full space-y-4 flex-1 min-h-0">
-            <p class="text-xs text-slate-400 mb-4" data-i18n="keybind.subtitle">Click a key to reassign it.</p>
-            
-            <div id="keybind-list">
-                <!-- Rendered by src/components/KeybindView.svelte -->
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mt-4">
-                <button data-action="resetKeybinds" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-xs" data-i18n="keybind.reset">
-                    Default
-                </button>
-                <button data-action="closeKeybinds" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-lg transition-colors text-xs uppercase tracking-widest shadow-lg" data-i18n="keybind.done">
-                    Done
-                </button>
-            </div>
-            
-        </div>
-    </div>
-</div>
 <!-- KEYBOAD BINDING MODAL END -->
 
 <!-- GLOBALE STATISTIKEN MODAL START -->

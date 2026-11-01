@@ -4,7 +4,7 @@ Sound:
 * The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
 * H.A.L.G.E.R.D. speaks too: the tutorial, and the two warnings before the first email and the first emergency.
 * The morning screen is read out as well - why the day already starts badly.
-* Letting off steam and the written warning have a voice too, and the outcome they interrupt is read once they are closed.
+* The blow-off and the written warning have a voice too, and the outcome they interrupt is read once they are closed.
 * The narrator pauses while the game is in the background, like the music.
 * The narrator's slider has a line of its own to try, the way the sound and the music do.
 * An email arriving no longer ends the scene being read. It waits, and goes on where it stopped once the mail is answered.
@@ -12,10 +12,15 @@ Sound:
 * A small speaker button beside the excuse reads the scene out, and on an outcome it sits at the end of the numbers. It works with the narrator switched off, so a long scene can be heard once without being read to all day. V does the same from the keyboard, and it can be rebound like the other keys.
 * The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
 
+Settings:
+* The settings are sorted into four tabs - General, Audio, Display and Controls - with room to say what each option does. The key bindings are one of them now, instead of a window of their own.
+* The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
+
 The day to day:
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 
 Bug fixes:
+* Resetting the settings now resets the preset for the working week as well.
 * With only two answers on screen, the 3 key no longer opens the excuse window.
 * The start screen no longer opens with the keyboard sitting on the language switch in its corner. The focus ring appears when you press Tab, which is when it means something.
 * On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.

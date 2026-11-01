@@ -1898,7 +1898,7 @@ export const core = {
         // carries the reset value, and a number cannot be recorded. Spoken
         // through the window's door - the result of the same click is held
         // behind this box until it closes (engine_voice.narrate).
-        this.narrateWindow(line);
+        this.narrateWindow(line, 'valves');
         return true;
     },
 
@@ -1920,7 +1920,7 @@ export const core = {
         if (this.difficultyTier() === 3) warningText += ' ' + t('valve.chef.hard');
 
         this.showModal(t('valve.chef.title'), warningText, false);
-        this.narrateWindow(line);   // see openRageValve
+        this.narrateWindow(line, 'valves');   // see openRageValve
         return true;
     },
 

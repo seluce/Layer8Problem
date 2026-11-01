@@ -6,6 +6,9 @@
   classes and innerText from the engine. That meant the same information lived
   in two places, and the DOM version was the one being asked.
 
+  Since the settings became tabs this is not a window of its own any more but
+  the Controls tab, rendered inside SettingsView.svelte.
+
   Now the list comes from state.keyBinds, and the three visual states - idle,
   waiting for a key, rejecting one - follow from state as well. The engine only
   says WHAT happened; how it looks is decided here.
@@ -21,24 +24,36 @@
     import { engine } from '../engine.js';
 
     import { t, tf } from '../i18n/i18n.svelte.js';
-    // Order and wording of the rows. The separator marks where the actions of
-    // the day end and the answer keys begin.
-    const ROWS = [
-        // i18n-uses: keybind.actCoffee, keybind.actQuest, keybind.actServer, keybind.actCall
-        { action: 'actCoffee', label: 'keybind.actCoffee' },
-        { action: 'actQuest',  label: 'keybind.actQuest' },
-        { action: 'actServer', label: 'keybind.actServer' },
-        { action: 'actCall',   label: 'keybind.actCall' },
-        { separator: true },
-        // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm
-        { action: 'opt1', label: 'keybind.opt1' },
-        { action: 'opt2', label: 'keybind.opt2' },
-        { action: 'opt3', label: 'keybind.opt3' },
-        { action: 'confirm', label: 'keybind.confirm', accent: true },
-        { separator: true },
-        // i18n-uses: keybind.readAloud
-        { action: 'readAloud', label: 'keybind.readAloud' }
+    // Order and wording of the rows, in groups with a heading each - the same
+    // anatomy as the other tabs of the settings, now that the bindings are one
+    // of them. They used to be one list cut by separators, and a separator
+    // has no key of its own: the second one collided with the first in the
+    // keyed each, Svelte threw, and the whole list stayed empty. A group has an
+    // id and a row has its action, so nothing here can repeat.
+    // i18n-uses: keybind.group.actions, keybind.group.answers, keybind.group.hints
+    const GROUPS = [
+        { id: 'actions', title: 'keybind.group.actions', rows: [
+            // i18n-uses: keybind.actCoffee, keybind.actQuest, keybind.actServer, keybind.actCall
+            { action: 'actCoffee', label: 'keybind.actCoffee' },
+            { action: 'actQuest',  label: 'keybind.actQuest' },
+            { action: 'actServer', label: 'keybind.actServer' },
+            { action: 'actCall',   label: 'keybind.actCall' }
+        ] },
+        { id: 'answers', title: 'keybind.group.answers', rows: [
+            // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm
+            { action: 'opt1', label: 'keybind.opt1' },
+            { action: 'opt2', label: 'keybind.opt2' },
+            { action: 'opt3', label: 'keybind.opt3' },
+            { action: 'confirm', label: 'keybind.confirm', accent: true }
+        ] },
+        { id: 'voice', title: 'set.section.narration', rows: [
+            // i18n-uses: keybind.readAloud
+            { action: 'readAloud', label: 'keybind.readAloud' }
+        ] }
     ];
+
+    // A section heading, the same as SettingsView's.
+    const HEADING = 'text-[0.625rem] font-bold text-slate-400 uppercase tracking-widest mb-2 border-b border-slate-700 pb-1';
 
     // "ArrowUp" reads better as "UP" on a button this narrow. A dash for a
     // binding that is empty: that happens when a new action's default key was
@@ -67,38 +82,32 @@
     }
 </script>
 
-<div class="grid gap-3">
-    <!-- The index keys the separators. A fixed 'sep' was fine while there was
-         one; the read-aloud row brought a second, Svelte refused the duplicate
-         key, and the whole list stayed empty - at 0 errors and 0 warnings in
-         lint, tests and build alike. Only opening the menu showed it. -->
-    {#each ROWS as row, i (row.action ?? `sep-${i}`)}
-        {#if row.separator}
-            <div class="h-px bg-slate-700 my-2"></div>
-        {:else}
-            <div class="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 {row.accent ? 'border-l-2 border-l-amber-500' : ''}">
-                <div class="flex flex-col">
-                    <span class="text-sm font-medium text-slate-200">{t(row.label)}</span>
-                </div>
-                <button id="bind-{row.action}" class={buttonClass(row.action)}
-                        aria-label={tf('keybind.aria', { what: t(row.label), key: shownKey(row.action) })}
-                        onclick={() => engine.startBindingKey(row.action)}>
-                    {label(row.action)}
-                </button>
+<div class="space-y-6">
+    {#each GROUPS as group (group.id)}
+        <div>
+            <h3 class={HEADING}>{t(group.title)}</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {#each group.rows as row (row.action)}
+                    <div class="flex justify-between items-center gap-3 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 {row.accent ? 'border-l-2 border-l-amber-500' : ''}">
+                        <span class="text-sm font-medium text-slate-200 min-w-0">{t(row.label)}</span>
+                        <button id="bind-{row.action}" class={buttonClass(row.action)}
+                                aria-label={tf('keybind.aria', { what: t(row.label), key: shownKey(row.action) })}
+                                onclick={() => engine.startBindingKey(row.action)}>
+                            {label(row.action)}
+                        </button>
+                    </div>
+                {/each}
             </div>
-        {/if}
+        </div>
     {/each}
 </div>
 
-<!--
-  mt-4 replaces the gap the parent used to provide: the row sat directly in the
-  dialog's space-y-4 and is now one level deeper, where that spacing no longer
-  reaches it.
--->
-<div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 mt-4 rounded-lg border border-slate-700/50">
-    <div class="flex flex-col flex-1">
+<div class="mt-6">
+<h3 class={HEADING}>{t('keybind.group.hints')}</h3>
+<div class="flex justify-between items-center gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+    <div class="flex flex-col flex-1 min-w-0">
         <span class="text-sm font-medium text-slate-200 leading-tight">{t('keybind.hotkeys')}</span>
-        <span class="text-[0.625rem] text-slate-500 mt-1">{t('keybind.hotkeyHint')}</span>
+        <span class="text-xs text-slate-400 mt-1 leading-snug">{t('keybind.hotkeyHint')}</span>
     </div>
     <label class="relative inline-flex items-center cursor-pointer shrink-0">
         <input type="checkbox" class="sr-only peer" aria-label={t('keybind.hotkeys')}
@@ -106,4 +115,5 @@
                onchange={(e) => engine.toggleShowHotkeys(e.currentTarget.checked)}>
         <div class={SWITCH}></div>
     </label>
+</div>
 </div>

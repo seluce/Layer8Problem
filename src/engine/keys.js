@@ -68,6 +68,7 @@ export const KEYS = {
     musicStyle:    'layer8_music_style',
     narrationEnabled: 'layer8_narration',
     narrationVolume:  'layer8_narration_volume',
+    narrationKinds:   'layer8_narration_kinds',
 };
 
 /**

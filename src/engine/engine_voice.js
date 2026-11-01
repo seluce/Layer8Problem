@@ -1,4 +1,5 @@
 import { KEYS } from './keys.js';
+import { DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
 import { voiceHash } from './sha1.js';
 import { language, t } from '../i18n/i18n.svelte.js';
 
@@ -28,10 +29,12 @@ export const voice = {
     // back while another still stands, and whose line ends with a window.
     lineOwner: null,
     lineOnDemand: false,    // started by the button: the switch does not apply
+    lineKind: null,         // events / morning / valves / halgerd / sample
 
     // A terminal line that arrived while an uninvited window stood over the
     // terminal - see narrate(). Spoken when the last of them closes.
     heldLine: null,
+    heldKind: null,
 
     // A line paused, or held back before it started, because the tab is not
     // being looked at - see syncNarrationToVisibility().
@@ -117,7 +120,7 @@ export const voice = {
      * lines have no recording - but the rule has to hold for the window the
      * PLAYER opened too: the backpack, the archive, the settings.
      */
-    narrate: function(text) {
+    narrate: function(text, kind = 'events') {
         // What the TERMINAL last showed, which is what the read-aloud button
         // offers to read again - set even when a gate below refuses, because
         // the refusal is about a window being in the way and the button is
@@ -141,12 +144,13 @@ export const voice = {
         // and leaves a line that belongs to the window alone.
         if (this._interruptions?.size || this.state.isEmailOpen) {
             this.heldLine = text || null;
+            this.heldKind = kind;
             if (this.lineOwner === 'terminal') this.interrupted = false;
             return;
         }
 
         this.hushNarration();      // also drops a line that was only paused
-        this._speak(text);
+        this._speak(text, false, 'terminal', kind);
     },
 
     /**
@@ -163,9 +167,11 @@ export const voice = {
      * So the gate is the only difference, and it is the caller that knows
      * which side of it the text is on. Everything after the gate is shared.
      */
-    narrateWindow: function(text) {
+    // A window's own text is H.A.L.G.E.R.D. or the lesson unless it says
+    // otherwise - the valves pass 'valves', the settings' sample 'sample'.
+    narrateWindow: function(text, kind = 'halgerd') {
         this.hushNarration();
-        this._speak(text, false, 'window');
+        this._speak(text, false, 'window', kind);
     },
 
     /**
@@ -176,19 +182,24 @@ export const voice = {
      * recorded, anything written since the last render. The player hears
      * nothing and the game carries on.
      */
-    _speak: function(text, onDemand = false, owner = 'terminal') {
+    _speak: function(text, onDemand = false, owner = 'terminal', kind = 'events') {
         if (!text) return;
         // `onDemand` is the button, and it is the one caller allowed past the
         // switch - see replayNarration() for why. The VOLUME still decides
         // either way: zero is a request for silence, not a preference about
         // automatic reading.
         if (!onDemand && !this.state.narrationEnabled) return;
+        // And past the kinds, for the same reason: switching off the morning
+        // screen means "do not read it to me", not "never let me hear it".
+        // The settings' sample always plays - it is what the slider sounds like.
+        if (!onDemand && kind !== 'sample' && !this.kindAllowed(kind)) return;
         if (this.state.narrationVolume <= 0) return;
 
         const el = this._element();
         el.src = `audio/${language()}/${voiceHash(text)}.opus`;
         this.lineOwner = owner;
         this.lineOnDemand = onDemand;
+        this.lineKind = kind;
         this._setNarratorVolume(this.state.narrationVolume);
         // Where the gain node carries the volume the element is audible only
         // through the graph, and a suspended context plays to nobody.
@@ -242,6 +253,25 @@ export const voice = {
      * a request for silence and a button that then does nothing is worse than
      * no button.
      */
+    /** Whether the narrator reads this kind of text on its own. */
+    kindAllowed: function(kind) {
+        const kinds = this.state.narrationKinds ?? DEFAULT_NARRATION_KINDS;
+        return kinds[kind] !== false;
+    },
+
+    /**
+     * One kind on or off. Turning off the kind that is being read right now
+     * stops it - leaving it to run would be the setting saying one thing and
+     * the speakers another. The button is not affected: see _speak.
+     */
+    setNarrationKind: function(kind, on) {
+        if (!Object.hasOwn(DEFAULT_NARRATION_KINDS, kind)) return;
+        this.state.narrationKinds = { ...this.state.narrationKinds, [kind]: !!on };
+        try { localStorage.setItem(KEYS.narrationKinds, JSON.stringify(this.state.narrationKinds)); }
+        catch { /* no storage: the choice lasts the session */ }
+        if (!on && this.speaking && this.lineKind === kind && !this.lineOnDemand) this.hushNarration();
+    },
+
     canReplayNarration: function() {
         return !!this.state.narratable && this.state.narrationVolume > 0;
     },
@@ -250,7 +280,8 @@ export const voice = {
         if (this.speaking) { this.hushNarration(); return; }
         if (!this.state.narratable) return;
         this.hushNarration();       // drops a line that was only paused
-        this._speak(this.state.narratable, true);
+        this._speak(this.state.narratable, true, 'terminal',
+                    this.state.terminal?.mode === 'morning' ? 'morning' : 'events');
     },
 
     /** Stops the line that is running, if one is. Safe to call at any time. */
@@ -261,6 +292,7 @@ export const voice = {
         // window, not one waiting for the tab to come back.
         this.interrupted = false;
         this.heldLine = null;
+        this.heldKind = null;
         this.pausedByTab = false;
         this._done();
     },
@@ -321,9 +353,9 @@ export const voice = {
         // paused, because it is what the player now looks at; spoken directly
         // rather than through narrate(), which would ask state.isEmailOpen.
         if (this.heldLine) {
-            const text = this.heldLine;
+            const text = this.heldLine, kind = this.heldKind ?? 'events';
             this.hushNarration();
-            this._speak(text);
+            this._speak(text, false, 'terminal', kind);
             return;
         }
 
@@ -389,7 +421,7 @@ export const voice = {
      * i18n-uses: set.narration.sample
      */
     previewNarration: function() {
-        this.narrateWindow(t('set.narration.sample'));
+        this.narrateWindow(t('set.narration.sample'), 'sample');
     },
 
     /**

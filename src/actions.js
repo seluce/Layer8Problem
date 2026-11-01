@@ -87,8 +87,6 @@ const ACTIONS = {
     closeSettings:      () => engine.closeSettings(),
     openGlobalStats:    () => engine.openGlobalStats(),
     closeGlobalStats:   () => engine.closeGlobalStats(),
-    closeKeybinds:      () => engine.closeKeybinds(),
-    resetKeybinds:      () => engine.resetKeybinds(),
     triggerHardReset:   (arg, el) => engine.triggerHardReset(el),
     shareGame:          (arg, el) => engine.shareGame(el),
     openExternal:       (arg) => engine.openExternal(arg),
@@ -111,6 +109,7 @@ const ACTIONS = {
         document.getElementById('menu-settings-view')?.classList.remove('hidden');
     },
     'menu.toMain':      () => {
+        engine.cancelBindingKey();
         document.getElementById('menu-settings-view')?.classList.add('hidden');
         document.getElementById('menu-main-view')?.classList.remove('hidden');
     },

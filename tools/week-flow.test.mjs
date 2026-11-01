@@ -4439,6 +4439,109 @@ await ok('Turning the narrator to zero ends the line', () => {
     state.narrationVolume = 0.8;
 });
 
+await ok('Each kind of narration can be switched off, and the button still reads', () => {
+    // The settings let a player choose what the narrator reads of its own
+    // accord: scenes, the morning, the valves, H.A.L.G.E.R.D. and the lesson.
+    // Every one of those is a door that can fail silently - a kind that is
+    // off and still speaks, or one that is on and never does.
+    const { box, file, playing } = voiceBench();
+    state.narrationKinds = { events: true, morning: true, valves: true, halgerd: true };
+
+    box.setNarrationKind('morning', false);
+    box.narrate('A bad morning.', 'morning');
+    assert.equal(playing(), null, 'the morning was read with its kind switched off');
+    box.narrate('A scene.', 'events');
+    assert.equal(playing(), file('A scene.'), 'switching off the morning silenced the scenes');
+
+    box.setNarrationKind('valves', false);
+    box.narrateWindow('You stare at the microwave.', 'valves');
+    assert.equal(playing(), null, 'a valve was read with its kind switched off');
+    box.setNarrationKind('halgerd', false);
+    box.narrateWindow('H.A.L.G.E.R.D.: Notice.');      // a window's text is his by default
+    assert.equal(playing(), null, 'H.A.L.G.E.R.D. spoke with his kind switched off');
+    box.narrateWindow('Test announcement.', 'sample');
+    assert.equal(playing(), file('Test announcement.'), 'the settings sample is subject to the kinds');
+
+    // The button reads regardless: switching a kind off means "do not read it
+    // to me", not "never let me hear it".
+    box.hushNarration();
+    state.narratable = 'A bad morning.';
+    state.terminal = { ...state.terminal, mode: 'morning' };
+    box.replayNarration();
+    assert.equal(playing(), file('A bad morning.'), 'the button refused a kind that was switched off');
+
+    // Switching off the kind that is speaking stops it - unless the player
+    // asked for it with the button.
+    box.setNarrationKind('morning', false);
+    assert.equal(playing(), file('A bad morning.'), 'switching off a kind cut off a line the player asked for');
+    box.hushNarration();
+    box.setNarrationKind('events', true);
+    box.narrate('Another scene.', 'events');
+    box.setNarrationKind('events', false);
+    assert.equal(playing(), null, 'a kind switched off went on being read');
+
+    // A screen held behind a notice keeps its kind when it is finally spoken.
+    box.setNarrationKind('events', true);
+    (box._interruptions = new Set()).add('modal-overlay');
+    box.narrate('A morning behind a notice.', 'morning');
+    box._interruptions.delete('modal-overlay');
+    box.resumeNarration();
+    assert.equal(playing(), null, 'a held morning was read although mornings are switched off');
+
+    state.narrationKinds = { events: true, morning: true, valves: true, halgerd: true };
+});
+
+await ok('Resetting the settings resets every one of them', () => {
+    // The week's preset sat on the settings page and not in resetSettings()
+    // from the day it was added; the narrator was missing too, and the music
+    // came back at 0.2 after its default had dropped to 0.15. Held here as
+    // the page against the reset: every setter the page calls has to be one
+    // the reset calls, or be named below with the reason it is left alone.
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const start = uiSrc.indexOf('    resetSettings: function');
+    const reset = uiSrc.slice(start, uiSrc.indexOf('\n    },', start));
+    const LEFT_ALONE = {
+        confirmResetSettings: 'is the reset',
+        previewNarration: 'plays a sentence, sets nothing',
+        toggleNarration: 'set directly - toggling it on plays the sample over the reset sound',
+        resetKeybinds: 'is called by the reset',
+    };
+    const setters = [...new Set([...page.matchAll(/engine\.(\w+)\(/g)].map(m => m[1]))];
+    assert.ok(setters.length > 20, `expected the page's setters, found ${setters.length}`);
+    const missing = setters.filter(fn => !LEFT_ALONE[fn] && !reset.includes(`this.${fn}(`));
+    assert.deepEqual(missing, [], 'a setting on the page survives a reset');
+    // The language is the one setting that is deliberately kept: a reset that
+    // switched it would leave somebody unable to read the button they pressed.
+    assert.ok(!/switchLanguage/.test(reset), 'the reset changes the language');
+    assert.match(reset, /this\.state\.narrationEnabled = true;/, 'the narrator stays off after a reset');
+    // And the levels come from the same place as a new player's.
+    for (const name of ['DEFAULT_SFX_VOLUME', 'DEFAULT_MUSIC_VOLUME', 'DEFAULT_NARRATION_VOLUME', 'DEFAULT_NARRATION_KINDS']) {
+        assert.ok(reset.includes(name), `the reset carries its own number instead of ${name}`);
+    }
+    assert.ok(!/setMusicVolume\(0\./.test(reset), 'a literal music level is back in the reset');
+});
+
+await ok('A half-done key binding never outlives the key list', () => {
+    // Binding mode listens to the whole document. Since the key bindings are
+    // a tab rather than a window, nothing closes them by itself: another tab,
+    // back to the menu or the menu closed would leave it running, and the
+    // next key pressed anywhere would be bound instead of doing its job.
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    assert.match(page, /function select\(id\) \{\s*if \(game\.isBindingKey\) \{ game\.isBindingKey = false; game\.actionToBind = null; \}/,
+        'changing tabs leaves a key half-bound');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(uiSrc, /closeSettings: function\(\) \{\s*this\.cancelBindingKey\(\);/, 'closing the menu leaves a key half-bound');
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+    assert.match(actions, /'menu\.toMain':\s*\(\) => \{\s*engine\.cancelBindingKey\(\);/, 'going back to the menu leaves a key half-bound');
+    // The window the bindings used to have is gone for good, from every list.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    for (const [name, src] of [['engine_ui', uiSrc], ['engine.js', keys], ['index.html', html]]) {
+        assert.ok(!src.includes('keybind-modal'), `${name} still refers to the old key window`);
+    }
+});
+
 await ok('All six tracks are levelled to one loudness', async () => {
     // Measured with ffmpeg's EBU R128 meter, per whole file, and written down
     // in MUSIC_TRIM. The claim the trim makes is that one slider position is
@@ -4628,15 +4731,21 @@ await ok('A new key binding never lands on a key the player already uses', async
     assert.ok(!/actCoffee: 'q'/.test(uiSrc), 'a second copy of the defaults is back');
     assert.equal(DEFAULT_KEYBINDS.readAloud, 'v');
 
-    // The menu that lists them is a keyed each, and the read-aloud row
-    // brought a second separator. Keyed on a fixed 'sep', the two collided,
-    // Svelte threw, and the menu came up empty - which no gate saw, because a
-    // duplicate key compiles fine and only fails when the list is drawn.
+    // The menu that lists them is a keyed each. With one list cut by
+    // separators, the read-aloud row brought a second separator, the two
+    // collided on a fixed key, Svelte threw and the menu came up empty - which
+    // no gate saw, because a duplicate key compiles fine and only fails when
+    // the list is drawn. Groups keyed by id and rows by their action now; the
+    // ids and the actions have to be distinct for that to hold.
     const menu = readFileSync(new URL('../src/components/KeybindView.svelte', import.meta.url), 'utf-8');
-    const separators = [...menu.matchAll(/\{ separator: true \}/g)].length;
-    assert.ok(separators >= 2, `expected the two separators, found ${separators}`);
-    assert.match(menu, /\{#each ROWS as row, i \(row\.action \?\? `sep-\$\{i\}`\)\}/,
-        'the separators share one key, and the menu throws when it is drawn');
+    assert.match(menu, /\{#each GROUPS as group \(group\.id\)\}/, 'the key groups are not keyed by their id');
+    assert.match(menu, /\{#each group\.rows as row \(row\.action\)\}/, 'the key rows are not keyed by their action');
+    const ids = [...menu.matchAll(/\{ id: '(\w+)'/g)].map(m => m[1]);
+    const acts = [...menu.matchAll(/\{ action: '(\w+)'/g)].map(m => m[1]);
+    assert.equal(new Set(ids).size, ids.length, 'two key groups share an id');
+    assert.equal(new Set(acts).size, acts.length, 'an action is listed twice');
+    // And every binding the game has is on the menu, or it cannot be changed.
+    assert.deepEqual([...acts].sort(), Object.keys(DEFAULT_KEYBINDS).sort(), 'a binding is missing from the key menu');
 
     // Nothing stored: the defaults, all of them.
     assert.deepEqual(mergeKeybinds(null), { ...DEFAULT_KEYBINDS });

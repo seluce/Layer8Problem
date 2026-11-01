@@ -122,8 +122,8 @@ await ok('a window over the terminal silences the narrator', () => {
 // --- 4. What the terminal hands the narrator --------------------------------
 await ok('every terminal screen decides what it speaks', () => {
     const ui = src('engine/engine_ui.js');
-    assert.match(ui, /this\.narrate\(extra\?\.speak \?\? null\);/,
-        '_setTerminal no longer drives the narrator');
+    assert.match(ui, /this\.narrate\(extra\?\.speak \?\? null, extra\?\.mode === 'morning' \? 'morning' : 'events'\);/,
+        '_setTerminal no longer drives the narrator, or no longer says which kind of text it hands over');
     // An event speaks its own text; a result is handed the sentence separately,
     // because what it stores is a recipe.
     assert.match(ui, /mode: 'event',[\s\S]{0,400}?speak: text/, 'an event does not hand over its text');
@@ -187,7 +187,7 @@ await ok(`the ${SPOKEN_KEYS.length} named interface keys are recorded and reacha
 // stays quiet looks exactly like a window with nothing recorded.
 await ok('H.A.L.G.E.R.D. and the lesson have a voice', () => {
     assert.match(code('engine/engine_voice.js'),
-        /previewNarration: function[\s\S]{0,200}?narrateWindow\(t\('set\.narration\.sample'\)\)/,
+        /previewNarration: function[\s\S]{0,200}?narrateWindow\(t\('set\.narration\.sample'\), 'sample'\)/,
         'the settings sample is not spoken');
     assert.match(code('engine/engine_events.js'),
         /firstTimeHint: function[\s\S]{0,900}?this\.narrateWindow\(t\(textKey\)\)/,
@@ -353,8 +353,11 @@ await ok('the rage valve and the written warning read their line', () => {
         const b = body(fn);
         assert.match(b, /const line = texts\[/,
             `${fn} no longer keeps the drawn line apart from the sentence around it`);
-        assert.match(b, /this\.showModal\([\s\S]*?this\.narrateWindow\(line\)/,
-            `${fn} does not speak its line, or speaks it before its window is up`);
+        // With its kind named: as a window's text it would otherwise count as
+        // H.A.L.G.E.R.D.'s, and the valves' switch in the settings would not
+        // reach it - while his would silence it.
+        assert.match(b, /this\.showModal\([\s\S]*?this\.narrateWindow\(line, 'valves'\)/,
+            `${fn} does not speak its line as a valve, or speaks it before its window is up`);
     }
 });
 
@@ -413,12 +416,15 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
         'window text would be offered as the terminal line');
 
     // The switch is skipped for this caller and the volume is not.
-    assert.match(voice, /_speak: function\(text, onDemand = false, owner = 'terminal'\)/, 'there is no on-demand door');
+    assert.match(voice, /_speak: function\(text, onDemand = false, owner = 'terminal', kind = 'events'\)/, 'there is no on-demand door');
+    // The button is past the kinds as well as past the switch.
+    assert.match(voice, /if \(!onDemand && kind !== 'sample' && !this\.kindAllowed\(kind\)\) return;/,
+        'the kinds stop the button too, or stop the settings sample');
     assert.match(voice, /if \(!onDemand && !this\.state\.narrationEnabled\) return;/,
         'the button is refused by the narrator switch');
     assert.match(voice, /if \(this\.state\.narrationVolume <= 0\) return;/,
         'a volume of zero would still speak');
-    assert.match(voice, /replayNarration: function[\s\S]{0,400}?this\._speak\(this\.state\.narratable, true\)/,
+    assert.match(voice, /replayNarration: function[\s\S]{0,400}?this\._speak\(this\.state\.narratable, true,/,
         'the button does not read the terminal line on demand');
     // One button, so a press while it speaks has to stop it.
     assert.match(voice, /replayNarration: function[\s\S]{0,200}?if \(this\.speaking\) \{ this\.hushNarration\(\); return; \}/,

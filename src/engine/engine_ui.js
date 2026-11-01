@@ -1,5 +1,6 @@
 import { KEYS, LEGACY_PARTY_KEYS } from './keys.js';
-import { formatClock, freshArchive, DEFAULT_KEYBINDS } from './engine_state.svelte.js';
+import { formatClock, freshArchive, DEFAULT_KEYBINDS, DEFAULT_SFX_VOLUME, DEFAULT_MUSIC_VOLUME,
+         DEFAULT_NARRATION_VOLUME, DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -39,7 +40,7 @@ for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
 // The windows that can stand over the terminal while a result is on screen -
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
-    'item-confirm-modal', 'keybind-modal', 'save-export-modal', 'save-import-modal',
+    'item-confirm-modal', 'save-export-modal', 'save-import-modal',
     'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
     'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
 ];
@@ -446,7 +447,7 @@ export const ui = {
         // absence is how every other screen stops the voice: idle, morning,
         // boot. See engine_voice.narrate().
         this.showTerminal();
-        this.narrate(extra?.speak ?? null);
+        this.narrate(extra?.speak ?? null, extra?.mode === 'morning' ? 'morning' : 'events');
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
@@ -1830,6 +1831,7 @@ export const ui = {
     },
     
     closeSettings: function() {
+        this.cancelBindingKey();
         const modal = document.getElementById('settings-modal');
         this.hideOverlay(modal);
     },
@@ -1921,8 +1923,10 @@ export const ui = {
         this.toggleFastChat(false);
         this.toggleScanlines(true);
 
-        // Gameplay
+        // Gameplay. The week's preset was on the page and not in here until
+        // the settings were rebuilt into tabs - a reset left it standing.
         this.saveDefaultDifficulty('ask');
+        this.saveDefaultWeekDifficulty('ask');
         this.toggleOneClick(false);
         this.toggleAutoChart(false);
 
@@ -1930,12 +1934,18 @@ export const ui = {
         this.toggleBlindStats(false);
         this.toggleBlindTickets(false);
 
-        // Audio
+        // Audio - the levels a new player starts with, from one place. The
+        // music was reset to 0.2 here after its default had come down to 0.15,
+        // and the narrator was not reset at all.
         this.toggleAudio(true);
-        this.setVolume(0.5);
+        this.setVolume(DEFAULT_SFX_VOLUME);
         this.toggleMusic(true);
-        this.setMusicVolume(0.2);
+        this.setMusicVolume(DEFAULT_MUSIC_VOLUME);
         this.changeMusicStyle('radio');
+        this.state.narrationEnabled = true;
+        try { localStorage.setItem(KEYS.narrationEnabled, true); } catch { /* the session keeps it */ }
+        this.setNarrationVolume(DEFAULT_NARRATION_VOLUME);
+        for (const kind of Object.keys(DEFAULT_NARRATION_KINDS)) this.setNarrationKind(kind, DEFAULT_NARRATION_KINDS[kind]);
 
         // Keyboard: bindings and the key cap hints
         this.resetKeybinds();
@@ -2253,14 +2263,18 @@ export const ui = {
         this.saveSystem();
     },
 
-    openKeybinds: function() {
-        this.showOverlay('keybind-modal');
+    /**
+     * Ends a half-done key binding. Binding mode listens to the whole
+     * document, so leaving it running when the key list goes out of sight -
+     * another tab, back to the menu, the menu closed - would swallow the next
+     * key the player presses anywhere. The key bindings were a window of their
+     * own until the settings became tabs, and closing that window did this.
+     */
+    cancelBindingKey: function() {
+        this.state.isBindingKey = false;
+        this.state.actionToBind = null;
     },
 
-    closeKeybinds: function() {
-        this.state.isBindingKey = false;
-        this.hideOverlay('keybind-modal');
-    },
     
     resetKeybinds: function() {
         // Restore the defaults - the same object a new player starts with.
