@@ -1,7 +1,7 @@
 <!--
   The key bindings.
 
-  Until 4.1 these eight buttons kept their own truth: the current binding was
+  Until 4.1 these buttons kept their own truth: the current binding was
   read back out of the button label, and a conflict was shown by rewriting
   classes and innerText from the engine. That meant the same information lived
   in two places, and the DOM version was the one being asked.
@@ -34,11 +34,17 @@
         { action: 'opt1', label: 'keybind.opt1' },
         { action: 'opt2', label: 'keybind.opt2' },
         { action: 'opt3', label: 'keybind.opt3' },
-        { action: 'confirm', label: 'keybind.confirm', accent: true }
+        { action: 'confirm', label: 'keybind.confirm', accent: true },
+        { separator: true },
+        // i18n-uses: keybind.readAloud
+        { action: 'readAloud', label: 'keybind.readAloud' }
     ];
 
-    // "ArrowUp" reads better as "UP" on a button this narrow.
-    const shownKey = (action) => (game.keyBinds[action] ?? '').replace(/^Arrow/, '').toUpperCase();
+    // "ArrowUp" reads better as "UP" on a button this narrow. A dash for a
+    // binding that is empty: that happens when a new action's default key was
+    // already taken by the player (see DEFAULT_KEYBINDS), and an empty button
+    // looks broken rather than free.
+    const shownKey = (action) => (game.keyBinds[action] || '—').replace(/^Arrow/, '').toUpperCase();
 
     const waiting = (action) => game.isBindingKey && game.actionToBind === action;
 
@@ -62,7 +68,11 @@
 </script>
 
 <div class="grid gap-3">
-    {#each ROWS as row (row.action ?? 'sep')}
+    <!-- The index keys the separators. A fixed 'sep' was fine while there was
+         one; the read-aloud row brought a second, Svelte refused the duplicate
+         key, and the whole list stayed empty - at 0 errors and 0 warnings in
+         lint, tests and build alike. Only opening the menu showed it. -->
+    {#each ROWS as row, i (row.action ?? `sep-${i}`)}
         {#if row.separator}
             <div class="h-px bg-slate-700 my-2"></div>
         {:else}

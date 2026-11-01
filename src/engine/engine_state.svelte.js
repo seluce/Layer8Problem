@@ -380,6 +380,59 @@ export function freshArchive() {
     };
 }
 
+/**
+ * The key bindings a new player starts with, and what the reset button
+ * restores. One copy: until the read-aloud key arrived the same object stood
+ * here and again in engine_ui.resetKeybinds(), and a binding added to one of
+ * them would have been missing after a reset - or missing for everyone who
+ * never pressed it.
+ *
+ * V is "voice" and "vorlesen" at once, which makes it the one letter that
+ * means the same thing in both languages.
+ */
+export const DEFAULT_KEYBINDS = Object.freeze({
+    actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
+    opt1: '1', opt2: '2', opt3: '3', confirm: 'Space',
+    readAloud: 'v'
+});
+
+/**
+ * A player's stored bindings, made safe to use. Pure, and exported so the
+ * week suite can hand it a store and look at what comes out - the factory
+ * below only ever runs once, at module load, against the real localStorage.
+ */
+export function mergeKeybinds(saved) {
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) saved = {};
+    saved = { ...saved };
+    const defaults = DEFAULT_KEYBINDS;
+
+    // Drop obsolete keys left over from older savegames
+    for (let k in saved) {
+        if (!Object.hasOwn(defaults, k)) delete saved[k];
+    }
+
+    // Fill in missing keys - and repair non-STRING values, not just missing
+    // ones. A hand-edited or corrupted store could carry a number here, and
+    // keyBinds.confirm.toLowerCase() then threw on every keypress, which is
+    // exactly what this exists to prevent.
+    //
+    // A binding that is NEW to this player gets its default only if no other
+    // action already holds that key. Somebody who put coffee on V before the
+    // read-aloud key existed would otherwise find both on one key, and
+    // whichever the handler asks first would win without a word. Such a
+    // binding stays empty instead - '' matches no key - and the key menu shows
+    // it as free to set. It is asked again on every start, so it takes its
+    // default the day the player moves the other one away.
+    for (let k in defaults) {
+        if (saved[k] && typeof saved[k] === 'string') continue;
+        const taken = Object.entries(saved)
+            .some(([other, key]) => other !== k && typeof key === 'string'
+                                    && key.toLowerCase() === defaults[k].toLowerCase());
+        saved[k] = taken ? '' : defaults[k];
+    }
+    return saved;
+}
+
 export const state = $state({
 
     ...freshDay(1.0),
@@ -544,26 +597,10 @@ export const state = $state({
         let saved = {};
         try {
             saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};
-            if (typeof saved !== 'object' || Array.isArray(saved)) saved = {};
         } catch {
             saved = {};
         }
-        const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
-
-        // Drop obsolete keys left over from older savegames
-        for (let k in saved) {
-            if (!defaults.hasOwnProperty(k)) delete saved[k];
-        }
-
-        // Fill in missing keys - and repair non-STRING values, not just
-        // missing ones. A hand-edited or corrupted store could carry a
-        // number here, and keyBinds.confirm.toLowerCase() then threw on
-        // every keypress, which is exactly what this factory exists to
-        // prevent.
-        for (let k in defaults) {
-            if (!saved[k] || typeof saved[k] !== 'string') saved[k] = defaults[k];
-        }
-        return saved;
+        return mergeKeybinds(saved);
     })(),
     isBindingKey: false,
     actionToBind: null,

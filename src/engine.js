@@ -316,6 +316,21 @@ document.addEventListener('keydown', (event) => {
         if (contBtn && contBtn.offsetParent !== null && !engine.windowOverTerminal()) { press(contBtn); return; }
     }
 
+    // 3b. READ ALOUD (V unless rebound)
+    // The keyboard twin of the speaker button beside the excuse, for somebody
+    // who plays with the narrator off and wants the odd long scene read. The
+    // same three refusals the button has by construction: not through a window
+    // over the terminal or under a mail, where the button cannot be reached
+    // either, and nothing to do when there is nothing to offer.
+    if (key === engine.state.keyBinds.readAloud.toLowerCase()) {
+        if (engine.windowOverTerminal() || engine.state.isEmailOpen
+            || document.body.classList.contains('overflow-hidden')) return;
+        if (!engine.canReplayNarration()) return;
+        event.preventDefault();
+        engine.replayNarration();
+        return;
+    }
+
     // 4. ACTION SHORTCUTS (Q, W, E, R)
     // Only while no event, no open mail and no window is up. The scroll lock
     // alone did not say so: the noticeboard opens without it, and Q started a
@@ -349,10 +364,15 @@ document.addEventListener('keydown', (event) => {
         else if (document.getElementById('app-actions') && document.getElementById('app-actions').offsetParent !== null) {
             visibleOptions = Array.from(document.querySelectorAll('#app-actions button'));
         } 
-        // C: the terminal
+        // C: the terminal - the OPTIONS, by their mark, and nothing else.
+        //
+        // This took every button in the terminal that was not a continue
+        // button, which counted the tools under the options as options too:
+        // with two of them on screen, 3 opened the excuse window, and the
+        // read-aloud button beside it would have been 4. Found while
+        // giving that button its own key.
         else {
-            const termActions = document.querySelectorAll('#terminal-content button');
-            visibleOptions = Array.from(termActions).filter(b => !b.hasAttribute('data-continue'));
+            visibleOptions = Array.from(document.querySelectorAll('#terminal-content button[data-option]'));
         }
 
         if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) press(visibleOptions[0]);

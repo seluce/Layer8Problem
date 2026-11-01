@@ -1,5 +1,5 @@
 import { KEYS, LEGACY_PARTY_KEYS } from './keys.js';
-import { formatClock, freshArchive } from './engine_state.svelte.js';
+import { formatClock, freshArchive, DEFAULT_KEYBINDS } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -2229,8 +2229,8 @@ export const ui = {
     },
     
     resetKeybinds: function() {
-        // Restore the defaults
-        this.state.keyBinds = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+        // Restore the defaults - the same object a new player starts with.
+        this.state.keyBinds = { ...DEFAULT_KEYBINDS };
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
         

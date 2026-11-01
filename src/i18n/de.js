@@ -399,6 +399,7 @@ export const de = {
     // a press would do now, which is why there are two.
     'term.narrate.read':           'Vorlesen',
     'term.narrate.stop':           'Vorlesen beenden',
+    'term.narrate.withKey':        '{action} ({key})',
 
     'dayReport.title':             'Tagesbericht:',
     'dayReport.diff.easy':         'FREITAG (Leicht)',
@@ -546,6 +547,7 @@ export const de = {
     'keybind.opt2':                'Option 2 (Mitte)',
     'keybind.opt3':                'Option 3 (Unten)',
     'keybind.confirm':             'Bestätigen / Popups / Handy',
+    'keybind.readAloud':           'Vorlesen',
     'keybind.press':               'Drücke Taste...',
     'keybind.aria':                '{what}: Taste {key} ändern',
     'keybind.hotkeys':             'Visuelle Hotkeys',

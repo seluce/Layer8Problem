@@ -209,7 +209,10 @@
 
     <div class="space-y-2.5">
         {#each options as o (o.index)}
-            <button class={o.locked ? LOCKED_CLASS : OPEN_CLASS}
+            <!-- data-option is what the number keys look for (src/engine.js).
+                 Without it they took every button in the terminal, and with two
+                 options the 3 opened the excuse. -->
+            <button data-option class={o.locked ? LOCKED_CLASS : OPEN_CLASS}
                     disabled={!!o.locked}
                     onclick={() => engine.chooseOption(o.opt, o.index)}>
                 <div class="flex items-center flex-1 mr-2 min-w-0">

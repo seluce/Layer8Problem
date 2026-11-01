@@ -4474,6 +4474,70 @@ await ok('A visit is not part of the day save, and Escape closes it', () => {
         'Escape no longer closes the machine');
 });
 
+await ok('The number keys press options and nothing else', () => {
+    // Found while giving the read-aloud button its own key: the option keys
+    // took every button in the terminal that was not a continue button, so
+    // the tools under the options counted as options. With two options on
+    // screen, 3 opened the excuse window - in 6.4.0 already - and the speaker
+    // beside it would have been 4.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const opts = keys.slice(keys.indexOf('// 5. OPTION SHORTCUTS'));
+    assert.match(opts, /querySelectorAll\('#terminal-content button\[data-option\]'\)/,
+        'the number keys take every button in the terminal again');
+
+    const view = readFileSync(new URL('../src/components/EventView.svelte', import.meta.url), 'utf-8');
+    assert.match(view, /<button data-option class=\{o\.locked/, 'the options are not marked as options');
+    // And nothing else carries the mark: the excuse, and the speaker.
+    assert.equal([...view.matchAll(/data-option/g)].length, 2,      // the button and its comment
+        'something besides the options is marked as one');
+    const button = readFileSync(new URL('../src/components/ReadButton.svelte', import.meta.url), 'utf-8');
+    assert.ok(!/data-option/.test(button), 'the read-aloud button is marked as an option');
+});
+
+await ok('A new key binding never lands on a key the player already uses', async () => {
+    const { mergeKeybinds, DEFAULT_KEYBINDS } = await import('../src/engine/engine_state.svelte.js');
+
+    // One copy of the defaults. The reset used to carry its own, and a key
+    // added to one of the two would have gone missing on a reset.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(uiSrc, /this\.state\.keyBinds = \{ \.\.\.DEFAULT_KEYBINDS \};/, 'the reset keeps its own defaults');
+    assert.ok(!/actCoffee: 'q'/.test(uiSrc), 'a second copy of the defaults is back');
+    assert.equal(DEFAULT_KEYBINDS.readAloud, 'v');
+
+    // The menu that lists them is a keyed each, and the read-aloud row
+    // brought a second separator. Keyed on a fixed 'sep', the two collided,
+    // Svelte threw, and the menu came up empty - which no gate saw, because a
+    // duplicate key compiles fine and only fails when the list is drawn.
+    const menu = readFileSync(new URL('../src/components/KeybindView.svelte', import.meta.url), 'utf-8');
+    const separators = [...menu.matchAll(/\{ separator: true \}/g)].length;
+    assert.ok(separators >= 2, `expected the two separators, found ${separators}`);
+    assert.match(menu, /\{#each ROWS as row, i \(row\.action \?\? `sep-\$\{i\}`\)\}/,
+        'the separators share one key, and the menu throws when it is drawn');
+
+    // Nothing stored: the defaults, all of them.
+    assert.deepEqual(mergeKeybinds(null), { ...DEFAULT_KEYBINDS });
+
+    // A store from before the read-aloud key: it gets V.
+    const old = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
+                  opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+    assert.equal(mergeKeybinds(old).readAloud, 'v');
+
+    // ...unless the player put something on V themselves. Then it stays
+    // empty, which matches no key, and coffee keeps the key it was given.
+    const vTaken = mergeKeybinds({ ...old, actCoffee: 'V' });
+    assert.equal(vTaken.actCoffee, 'V');
+    assert.equal(vTaken.readAloud, '', 'the new binding took a key that was already in use');
+
+    // The repairs that were there before still hold.
+    const broken = mergeKeybinds({ confirm: 7, gone: 'x' });
+    assert.equal(broken.confirm, 'Space', 'a number survived as a binding');
+    assert.ok(!('gone' in broken), 'an obsolete binding survived');
+    // And the store handed in is not touched.
+    const stored = { ...old };
+    mergeKeybinds(stored);
+    assert.ok(!('readAloud' in stored), 'the merge wrote into the object it was given');
+});
+
 await ok('No key reaches through a window over the terminal', () => {
     // Found by the 6.3 audit: Space pressed the continue button BEHIND the open
     // vending machine - and behind the noticeboard, where it had done so all

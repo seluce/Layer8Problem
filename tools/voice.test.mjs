@@ -404,6 +404,18 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
     // button alone: a boss fight has no excuse and can still be read out.
     assert.match(markup('components/EventView.svelte'), /\{#if showExcuse \|\| canRead\}/,
         'the row vanishes wherever there is no excuse, and takes the button with it');
+
+    // And its key. The same door and the same refusals as the button: not
+    // through a window, not under a mail, nothing when there is nothing.
+    const keys = src('engine.js');
+    const read = keys.slice(keys.indexOf('// 3b. READ ALOUD'), keys.indexOf('// 4. ACTION SHORTCUTS'));
+    assert.match(read, /key === engine\.state\.keyBinds\.readAloud\.toLowerCase\(\)/, 'the read-aloud key is not handled');
+    assert.match(read, /engine\.windowOverTerminal\(\) \|\| engine\.state\.isEmailOpen/,
+        'the read-aloud key reaches through a window or under a mail');
+    assert.match(read, /if \(!engine\.canReplayNarration\(\)\) return;\s*event\.preventDefault\(\);\s*engine\.replayNarration\(\);/,
+        'the read-aloud key does not use the button\'s door');
+    assert.match(markup('components/KeybindView.svelte'), /\{ action: 'readAloud', label: 'keybind\.readAloud' \}/,
+        'the read-aloud key cannot be rebound');
 });
 
 // --- 10. One process, both trees --------------------------------------------

@@ -391,6 +391,7 @@ export const en = {
     // a press would do now, which is why there are two.
     'term.narrate.read':           'Read this out',
     'term.narrate.stop':           'Stop reading',
+    'term.narrate.withKey':        '{action} ({key})',
 
     'dayReport.title':             'Day report:',
     'dayReport.diff.easy':         'FRIDAY (easy)',
@@ -538,6 +539,7 @@ export const en = {
     'keybind.opt2':                'Option 2 (middle)',
     'keybind.opt3':                'Option 3 (bottom)',
     'keybind.confirm':             'Confirm / popups / phone',
+    'keybind.readAloud':           'Read aloud',
     'keybind.press':               'Press a key...',
     'keybind.aria':                '{what}: change key {key}',
     'keybind.hotkeys':             'Visual hotkeys',

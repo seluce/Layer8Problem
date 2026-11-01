@@ -25,11 +25,17 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
-    import { t } from '../i18n/i18n.svelte.js';
+    import { t, tf } from '../i18n/i18n.svelte.js';
 
     // What a press would DO, for the tooltip and the screen reader.
     // i18n-uses: term.narrate.read, term.narrate.stop
     const action = $derived(state.narrating ? t('term.narrate.stop') : t('term.narrate.read'));
+
+    // Its key, where it has one - in the tooltip, which is where a mouse
+    // player finds out it exists, and in aria-keyshortcuts, which is where a
+    // screen reader looks. Empty when the default was already taken.
+    const key = $derived((state.keyBinds.readAloud ?? '').replace(/^Arrow/, '').toUpperCase());
+    const tip = $derived(key ? tf('term.narrate.withKey', { action, key }) : action);
 </script>
 
 <!-- A real <button>, so Enter works without a handler of its own. Space
@@ -40,8 +46,9 @@
         class={state.narrating
             ? 'shrink-0 p-2 rounded-lg border transition-all bg-emerald-950/40 border-emerald-700 text-emerald-400 hover:text-emerald-300'
             : 'shrink-0 p-2 rounded-lg border transition-all bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'}
-        title={action}
+        title={tip}
         aria-label={action}
+        aria-keyshortcuts={key || undefined}
         onclick={() => engine.replayNarration()}>
     {#if state.narrating}
         <svg viewBox="0 0 24 24" width="16" height="16" class="w-4 h-4" aria-hidden="true">
