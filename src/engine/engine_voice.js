@@ -1,5 +1,5 @@
 import { KEYS } from './keys.js';
-import { DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
+import { DEFAULT_NARRATION_KINDS, clampNarrationRate } from './engine_state.svelte.js';
 import { voiceHash } from './sha1.js';
 import { language, t } from '../i18n/i18n.svelte.js';
 
@@ -80,6 +80,22 @@ export const voice = {
         }
         if (this.narratorNode) this.narratorNode.gain.value = level;
         else el.volume = level;     // refused anyway, but it costs nothing
+    },
+
+    /**
+     * The reading speed, on the element.
+     *
+     * Both rates, because loading a new src resets playbackRate to
+     * defaultPlaybackRate - setting only the first would hold for one line.
+     * preservesPitch is the browsers' default; written out because it is the
+     * whole point: faster, not higher.
+     */
+    _applyNarrationRate: function(el = this.narrator) {
+        if (!el) return;
+        const rate = clampNarrationRate(this.state.narrationRate);
+        el.defaultPlaybackRate = rate;
+        el.playbackRate = rate;
+        el.preservesPitch = true;
     },
 
     /**
@@ -201,6 +217,7 @@ export const voice = {
         this.lineOnDemand = onDemand;
         this.lineKind = kind;
         this._setNarratorVolume(this.state.narrationVolume);
+        this._applyNarrationRate(el);
         // Where the gain node carries the volume the element is audible only
         // through the graph, and a suspended context plays to nobody.
         if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
@@ -439,5 +456,15 @@ export const voice = {
         // offered. Found by the narration audit (01.11.2026).
         if (this.state.narrationVolume <= 0) { this.hushNarration(); return; }
         if (this.speaking) this._setNarratorVolume(this.state.narrationVolume);
+    },
+
+    /**
+     * The speed slider. Like the volume it reaches the line that is speaking,
+     * and the sample plays when the slider is let go (row.settled).
+     */
+    setNarrationRate: function(val) {
+        this.state.narrationRate = clampNarrationRate(val);
+        try { localStorage.setItem(KEYS.narrationRate, String(this.state.narrationRate)); } catch { /* the session keeps it */ }
+        this._applyNarrationRate();
     }
 };

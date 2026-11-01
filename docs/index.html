@@ -22,8 +22,8 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{color:#94a3b8}.lang-opt:hover{color:#e2e8f0}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-DmcR76vJ.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-BMMRqQMa.css">
+  <script type="module" crossorigin src="./build/index-gIVq2Dsi.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-CU0nRpee.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -952,11 +952,11 @@
             <button data-action="closeGlobalStats" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
-        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6">
-            <div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm" data-i18n="globalStats.connecting">
-                Connecting to Steam servers...
-            </div>
-        </div>
+        <!-- Empty on purpose: GlobalStatsView mounts INTO this element and
+             brings its own loading state. A placeholder here is never
+             replaced - mount() appends - and up to 6.4 "Connecting to Steam
+             servers..." stood above the figures once they had arrived. -->
+        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6"></div>
     </div>
 </div>
 

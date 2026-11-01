@@ -232,6 +232,15 @@
         box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
     }
 
+    /* THE SETTINGS DIALOG keeps one height while its tabs are on show.
+       It is centred, and it took its height from the tab on show - so every
+       tab change moved the box, and the tab row with it, up or down by half
+       the difference. Fixed, the row stays where the pointer left it and a
+       long tab scrolls inside. The main menu page keeps its natural height. */
+    #settings-modal > .neon-box:has(> #menu-settings-view:not(.hidden)) {
+        height: min(95vh, 64rem);
+    }
+
     /* THE TERMINAL SCREEN
        #terminal is the stage of the game and used to be a featureless
        hole. A hint of CRT gives the surface life without brightening

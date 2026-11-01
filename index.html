@@ -979,11 +979,11 @@
             <button data-action="closeGlobalStats" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
-        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6">
-            <div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm" data-i18n="globalStats.connecting">
-                Connecting to Steam servers...
-            </div>
-        </div>
+        <!-- Empty on purpose: GlobalStatsView mounts INTO this element and
+             brings its own loading state. A placeholder here is never
+             replaced - mount() appends - and up to 6.4 "Connecting to Steam
+             servers..." stood above the figures once they had arrived. -->
+        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6"></div>
     </div>
 </div>
 

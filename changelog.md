@@ -15,6 +15,7 @@ Sound:
 Settings:
 * The settings are sorted into four tabs - General, Audio, Display and Controls - with room to say what each option does. The key bindings are one of them now, instead of a window of their own.
 * The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
+* The narrator's speed can be set, from slower to twice as fast. The voice keeps its pitch.
 
 The day to day:
 * Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
@@ -30,6 +31,7 @@ Steam:
 
 Bug fixes:
 * Resetting the settings now resets the preset for the working week as well.
+* The global statistics no longer say "Connecting to Steam servers..." above figures that have long arrived.
 * The signatures under the noticeboard's notes could hardly be seen - Kevin's, for one, stood near-white on yellow paper. The tear-off slips and a few other lines in pale grey are darker now too.
 * On a phone, the noticeboard's close button no longer sits on top of the title, the team no longer cuts off a long job title, and the labels in the side panel are no longer clipped at the end.
 * With only two answers on screen, the 3 key no longer opens the excuse window.

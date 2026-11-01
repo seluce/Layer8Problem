@@ -139,6 +139,8 @@ export const en = {
     'set.section.narration':       'Narration',
     'set.section.layout':          'Text and layout',
     'set.section.effects':         'Effects',
+    'set.narration.rate.title':    'Speed',
+    'set.narration.rate.desc':     'How fast it reads. The voice keeps its pitch.',
     'set.narration.kinds.title':   'What is read aloud',
     'set.narration.kinds.desc':    'What the narrator reads of its own accord. The speaker button and the V key read any scene regardless.',
     'set.narration.kinds.off':     'Applies once the narrator is switched on. The speaker button works without it.',
@@ -616,7 +618,6 @@ export const en = {
 
     'globalStats.title':           'Global statistics',
     'globalStats.subtitle':        'How are you doing against the rest of the world?',
-    'globalStats.connecting':      'Connecting to Steam servers...',
 
     'leaderboard.title':           'Leaderboard',
     'leaderboard.subtitle':        'Who lasts the longest in the week?',

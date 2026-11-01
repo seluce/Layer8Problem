@@ -32,7 +32,7 @@
 <script>
     // Renamed so the $state rune stays usable in this file - see the pitfall
     // noted in STRUCTURE.md.
-    import { state as game } from '../engine/engine_state.svelte.js';
+    import { state as game, NARRATION_RATE_MIN, NARRATION_RATE_MAX } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
     import { LANGUAGES, language, switchLanguage, t } from '../i18n/i18n.svelte.js';
     import KeybindView from './KeybindView.svelte';
@@ -47,6 +47,9 @@
     const SWITCH = 'w-9 h-5 bg-slate-700 peer-focus:outline-hidden peer-focus-visible:ring-2 peer-focus-visible:ring-cyan-400 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-slate-900 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-500';
 
     const SLIDER = 'flex-1 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500';
+
+    // The reading speed as a player reads it: "1,25×" in German, "1.25×" in English.
+    const rateLabel = $derived(`${Number(game.narrationRate).toLocaleString(language(), { maximumFractionDigits: 2 })}×`);
 
     // The tab buttons, whole on both sides of the condition: Tailwind reads
     // the source, and a class assembled at runtime would lose its colour.
@@ -392,7 +395,10 @@
 {#snippet narratorRow(row)}
     {@const off = !game.narrationEnabled}
     <div class="flex flex-col gap-3 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
-        <div class="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_14rem_auto] items-center gap-x-4 gap-y-3">
+        <!-- The third column has a width of its own so the speed row below can
+             use the same grid: its slider then starts and ends exactly under
+             this one, with the speed figure where the switch is. -->
+        <div class="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_14rem_3rem] items-center gap-x-4 gap-y-3">
             <div class="flex items-start gap-3 min-w-0 col-start-1 row-start-1">
                 {@render info(row, 'text-xl opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
             </div>
@@ -407,6 +413,24 @@
             <div class="col-start-2 md:col-start-3 row-start-1 justify-self-end">
                 {@render switchInput(row)}
             </div>
+        </div>
+
+        <!-- How fast it reads. The same slider as the level, and like it the
+             sample plays when it is let go, not on every step. -->
+        <div class="border-t border-slate-700/60 pt-3 grid grid-cols-[1fr_auto] md:grid-cols-[1fr_14rem_3rem] items-center gap-x-4 gap-y-2">
+            <div class="flex flex-col min-w-0 col-start-1 row-start-1">
+                <span class="text-xs font-bold text-slate-200">{t('set.narration.rate.title')}</span>
+                <span class="text-xs text-slate-400 leading-snug">{t('set.narration.rate.desc')}</span>
+            </div>
+            <div class="flex items-center gap-2 col-span-2 md:col-span-1 row-start-2 md:row-start-1 md:col-start-2">
+                <span class="text-[0.625rem] text-slate-400" aria-hidden="true">🐢</span>
+                <input type="range" min={NARRATION_RATE_MIN} max={NARRATION_RATE_MAX} step="0.05" class={SLIDER}
+                       aria-label={t('set.narration.rate.title')} aria-valuetext={rateLabel}
+                       value={game.narrationRate} oninput={(e) => engine.setNarrationRate(e.currentTarget.value)}
+                       onchange={() => engine.previewNarration()}>
+                <span class="text-[0.625rem] text-slate-400" aria-hidden="true">🐇</span>
+            </div>
+            <span class="col-start-2 md:col-start-3 row-start-1 justify-self-end text-xs font-mono font-bold text-amber-400 tabular-nums">{rateLabel}</span>
         </div>
 
         <div class="border-t border-slate-700/60 pt-3 flex flex-col gap-2">

@@ -69,6 +69,7 @@ export const KEYS = {
     narrationEnabled: 'layer8_narration',
     narrationVolume:  'layer8_narration_volume',
     narrationKinds:   'layer8_narration_kinds',
+    narrationRate:    'layer8_narration_rate',
 };
 
 /**

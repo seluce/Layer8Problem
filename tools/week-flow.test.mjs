@@ -4527,10 +4527,42 @@ await ok('Resetting the settings resets every one of them', () => {
     assert.ok(!/switchLanguage/.test(reset), 'the reset changes the language');
     assert.match(reset, /this\.state\.narrationEnabled = true;/, 'the narrator stays off after a reset');
     // And the levels come from the same place as a new player's.
-    for (const name of ['DEFAULT_SFX_VOLUME', 'DEFAULT_MUSIC_VOLUME', 'DEFAULT_NARRATION_VOLUME', 'DEFAULT_NARRATION_KINDS']) {
+    for (const name of ['DEFAULT_SFX_VOLUME', 'DEFAULT_MUSIC_VOLUME', 'DEFAULT_NARRATION_VOLUME', 'DEFAULT_NARRATION_RATE', 'DEFAULT_NARRATION_KINDS']) {
         assert.ok(reset.includes(name), `the reset carries its own number instead of ${name}`);
     }
     assert.ok(!/setMusicVolume\(0\./.test(reset), 'a literal music level is back in the reset');
+});
+
+await ok('The reading speed reaches the voice, stays in range and survives a new line', () => {
+    resetState();
+    const saved = engine.narrator;
+    const el = { playbackRate: 1, defaultPlaybackRate: 1, preservesPitch: false };
+    engine.narrator = el;
+    try {
+        engine.setNarrationRate('1.5');
+        assert.equal(state.narrationRate, 1.5);
+        assert.equal(el.playbackRate, 1.5, 'the line that is speaking does not change speed');
+        // A new src resets playbackRate to defaultPlaybackRate - set only the
+        // first and the speed holds for exactly one line.
+        assert.equal(el.defaultPlaybackRate, 1.5, 'the next line would fall back to normal speed');
+        assert.equal(el.preservesPitch, true, 'faster would also mean higher');
+        assert.equal(localStorage.getItem(KEYS.narrationRate), '1.5', 'the speed is not remembered');
+
+        engine.setNarrationRate(9);
+        assert.equal(state.narrationRate, 2, 'a rate above the range got through');
+        engine.setNarrationRate('-1');
+        assert.equal(state.narrationRate, 0.75, 'a rate below the range got through');
+        engine.setNarrationRate('abc');
+        assert.equal(state.narrationRate, 1, 'nonsense is not the default');
+    } finally {
+        engine.narrator = saved;
+        engine.setNarrationRate(1);
+    }
+    // And every line is started at that speed, after its src is set.
+    const voiceSrc = readFileSync(new URL('../src/engine/engine_voice.js', import.meta.url), 'utf-8');
+    const speak = voiceSrc.slice(voiceSrc.indexOf('    _speak: function'), voiceSrc.indexOf('    _unpause: function'));
+    assert.ok(speak.indexOf('el.src =') >= 0 && speak.indexOf('this._applyNarrationRate(el)') > speak.indexOf('el.src ='),
+        'a new line starts at normal speed: the rate is not applied after the src');
 });
 
 await ok('A half-done key binding never outlives the key list', () => {

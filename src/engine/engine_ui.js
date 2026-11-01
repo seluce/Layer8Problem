@@ -1,6 +1,6 @@
 import { KEYS, LEGACY_PARTY_KEYS } from './keys.js';
 import { formatClock, freshArchive, DEFAULT_KEYBINDS, DEFAULT_SFX_VOLUME, DEFAULT_MUSIC_VOLUME,
-         DEFAULT_NARRATION_VOLUME, DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
+         DEFAULT_NARRATION_VOLUME, DEFAULT_NARRATION_RATE, DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
@@ -1991,6 +1991,7 @@ export const ui = {
         this.state.narrationEnabled = true;
         try { localStorage.setItem(KEYS.narrationEnabled, true); } catch { /* the session keeps it */ }
         this.setNarrationVolume(DEFAULT_NARRATION_VOLUME);
+        this.setNarrationRate(DEFAULT_NARRATION_RATE);
         for (const kind of Object.keys(DEFAULT_NARRATION_KINDS)) this.setNarrationKind(kind, DEFAULT_NARRATION_KINDS[kind]);
 
         // Keyboard: bindings and the key cap hints

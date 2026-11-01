@@ -147,6 +147,8 @@ export const de = {
     'set.section.narration':       'Sprachausgabe',
     'set.section.layout':          'Text und Layout',
     'set.section.effects':         'Effekte',
+    'set.narration.rate.title':    'Tempo',
+    'set.narration.rate.desc':     'Wie schnell er vorliest. Die Stimme bleibt dabei gleich hoch.',
     'set.narration.kinds.title':   'Was vorgelesen wird',
     'set.narration.kinds.desc':    'Was der Sprecher von sich aus liest. Der Lautsprecher-Knopf und die Taste V lesen jede Szene trotzdem vor.',
     'set.narration.kinds.off':     'Gilt, sobald der Sprecher eingeschaltet ist. Der Lautsprecher-Knopf funktioniert auch ohne ihn.',
@@ -624,7 +626,6 @@ export const de = {
 
     'globalStats.title':           'Globale Statistiken',
     'globalStats.subtitle':        'Wie schlägst du dich gegen den Rest der Welt?',
-    'globalStats.connecting':      'Verbinde mit Steam-Servern...',
 
     'leaderboard.title':           'Bestenliste',
     'leaderboard.subtitle':        'Wer hält die Woche am längsten durch?',

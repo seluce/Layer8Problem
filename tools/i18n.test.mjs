@@ -786,6 +786,33 @@ await ok('Small print stays readable on the dark panels', async () => {
         'small print on the dark panels: slate-400 or lighter, and nothing under 10 px');
 });
 
+await ok('Every element a component mounts into is empty in the markup', async () => {
+    // mount() APPENDS to its target, it does not replace what stands there.
+    // The global statistics carried a "Connecting to Steam servers..." line
+    // inside theirs, and from the day it was mounted that line stood above
+    // the figures once they had arrived - 6.4 shipped it. The component
+    // brings its own loading state; the markup must bring nothing.
+    const { readFileSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    // Comments may stay inside a target - they explain, and render nothing.
+    const html = readFileSync(root + 'index.html', 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+    const main = readFileSync(root + 'src/main.js', 'utf8');
+    const ids = [...main.matchAll(/^mount\([^\n]*getElementById\('([a-z0-9-]+)'\)/gm)].map(m => m[1]);
+    assert.ok(ids.length >= 20, `only ${ids.length} mount targets found - has main.js changed shape?`);
+
+    const offenders = [];
+    for (const id of ids) {
+        const open = html.match(new RegExp(`<([a-z0-9]+)\\b[^>]*\\bid="${id}"[^>]*>`));
+        if (!open) { offenders.push(`#${id}: not in index.html`); continue; }
+        const rest = html.slice(open.index + open[0].length);
+        if (!new RegExp(`^\\s*</${open[1]}>`).test(rest)) {
+            offenders.push(`#${id}: ${rest.trim().slice(0, 60).replace(/\s+/g, ' ')}`);
+        }
+    }
+    assert.deepEqual(offenders, [], 'a mount target carries markup the component will never replace');
+});
+
 await ok('A flex item that wraps long words can shrink', async () => {
     // A flex item keeps min-width:auto, so it refuses to shrink below its
     // longest UNBREAKABLE word - and overflow-wrap:break-word does not lower

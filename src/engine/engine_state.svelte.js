@@ -401,6 +401,23 @@ export const DEFAULT_MUSIC_VOLUME = 0.15;
 export const DEFAULT_NARRATION_VOLUME = 1;
 
 /**
+ * How fast the narrator reads, as a playback rate. The recordings are made at
+ * one speed and the browser stretches them with the pitch kept, so 1.5 is a
+ * quicker reader rather than a higher voice. The range is what stays
+ * intelligible on the stock voice: below 0.75 the pauses drag, above 2 the
+ * words start to smear.
+ */
+export const DEFAULT_NARRATION_RATE = 1;
+export const NARRATION_RATE_MIN = 0.75;
+export const NARRATION_RATE_MAX = 2;
+/** A stored or typed rate made safe: a number, inside the range. */
+export function clampNarrationRate(v) {
+    const n = parseFloat(v);
+    if (!Number.isFinite(n)) return DEFAULT_NARRATION_RATE;
+    return Math.min(NARRATION_RATE_MAX, Math.max(NARRATION_RATE_MIN, n));
+}
+
+/**
  * What the narrator reads when it is switched on - each kind can be turned off
  * on its own in the settings. The button beside the excuse (and V) reads any
  * scene regardless: it is the player asking, not the narrator offering.
@@ -589,6 +606,7 @@ export const state = $state({
     // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.
     narrationEnabled: localStorage.getItem(KEYS.narrationEnabled) !== 'false',
     narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || String(DEFAULT_NARRATION_VOLUME)),
+    narrationRate: clampNarrationRate(localStorage.getItem(KEYS.narrationRate) ?? DEFAULT_NARRATION_RATE),
     narrationKinds: (() => {
         try { return mergeNarrationKinds(JSON.parse(localStorage.getItem(KEYS.narrationKinds))); }
         catch { return mergeNarrationKinds(null); }
