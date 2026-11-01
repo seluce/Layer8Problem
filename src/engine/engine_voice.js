@@ -23,6 +23,20 @@ export const voice = {
     narratorNode: null,     // only where the element's own volume is refused
     speaking: false,        // moved only through _setSpeaking(), see there
 
+    // Who the running line belongs to: 'terminal' (narrate, the button) or
+    // 'window' (narrateWindow). It decides what an uninvited window may give
+    // back while another still stands, and whose line ends with a window.
+    lineOwner: null,
+    lineOnDemand: false,    // started by the button: the switch does not apply
+
+    // A terminal line that arrived while an uninvited window stood over the
+    // terminal - see narrate(). Spoken when the last of them closes.
+    heldLine: null,
+
+    // A line paused, or held back before it started, because the tab is not
+    // being looked at - see syncNarrationToVisibility().
+    pausedByTab: false,
+
     /** Built on first use; a player with the narrator off never makes one. */
     _element: function() {
         if (this.narrator) return this.narrator;
@@ -104,15 +118,34 @@ export const voice = {
      * PLAYER opened too: the backpack, the archive, the settings.
      */
     narrate: function(text) {
-        this.hushNarration();      // also drops a line that was only paused
         // What the TERMINAL last showed, which is what the read-aloud button
-        // offers to read again - set even when the gate below refuses, because
+        // offers to read again - set even when a gate below refuses, because
         // the refusal is about a window being in the way and the button is
         // underneath it. Window text goes through narrateWindow() and
         // deliberately does NOT land here: the button would otherwise offer to
         // repeat a tutorial bubble over a working day.
         this.state.narratable = text || null;
-        if (this.windowOverTerminal() || this.state.isEmailOpen) return;
+
+        // A window the player opened: the scene is over for now, and a new
+        // one arriving behind it is not read either.
+        if (this.windowOverTerminal()) { this.hushNarration(); return; }
+
+        // An UNINVITED window - a mail, or a notice such as the written
+        // warning - is different, and the notices are why this branch exists.
+        // They open from checkEndConditions() inside the same click that
+        // produces the result, and BEFORE the result reaches the terminal; so
+        // the result used to be read out behind the warning, and anything the
+        // warning had to say itself would have been cut off by it. Now the new screen
+        // is held and spoken when the last such window closes. It supersedes
+        // a terminal line that was only paused - the screen has moved on -
+        // and leaves a line that belongs to the window alone.
+        if (this._interruptions?.size || this.state.isEmailOpen) {
+            this.heldLine = text || null;
+            if (this.lineOwner === 'terminal') this.interrupted = false;
+            return;
+        }
+
+        this.hushNarration();      // also drops a line that was only paused
         this._speak(text);
     },
 
@@ -132,7 +165,7 @@ export const voice = {
      */
     narrateWindow: function(text) {
         this.hushNarration();
-        this._speak(text);
+        this._speak(text, false, 'window');
     },
 
     /**
@@ -143,7 +176,7 @@ export const voice = {
      * recorded, anything written since the last render. The player hears
      * nothing and the game carries on.
      */
-    _speak: function(text, onDemand = false) {
+    _speak: function(text, onDemand = false, owner = 'terminal') {
         if (!text) return;
         // `onDemand` is the button, and it is the one caller allowed past the
         // switch - see replayNarration() for why. The VOLUME still decides
@@ -154,14 +187,32 @@ export const voice = {
 
         const el = this._element();
         el.src = `audio/${language()}/${voiceHash(text)}.opus`;
+        this.lineOwner = owner;
+        this.lineOnDemand = onDemand;
         this._setNarratorVolume(this.state.narrationVolume);
         // Where the gain node carries the volume the element is audible only
         // through the graph, and a suspended context plays to nobody.
         if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
 
+        // Not started in a tab nobody is looking at - loaded, and owed to the
+        // moment the player comes back. The music's rule, and for the same
+        // reason; a boss timer can still resolve a scene while the tab is away.
+        if (globalThis.document?.hidden) { this.pausedByTab = true; return; }
+
         this._setSpeaking(true);
         this.duckMusic(true, 'narration');
         el.play().catch(() => this._done());    // no gesture yet, or no file
+    },
+
+    /** Plays the element from where it stands. The one place a held-back line starts. */
+    _unpause: function() {
+        const el = this.narrator;
+        if (!el || !el.src || el.ended) return;
+        if (!(this.lineOnDemand || this.state.narrationEnabled)) return;
+        if (this.state.narrationVolume <= 0) return;
+        this._setSpeaking(true);
+        this.duckMusic(true, 'narration');
+        el.play().catch(() => this._done());
     },
 
     /**
@@ -206,7 +257,11 @@ export const voice = {
     hushNarration: function() {
         const el = this.narrator;
         if (el && !el.paused) { el.pause(); el.currentTime = 0; }
+        // Owes nothing afterwards: not a paused line, not one held behind a
+        // window, not one waiting for the tab to come back.
         this.interrupted = false;
+        this.heldLine = null;
+        this.pausedByTab = false;
         this._done();
     },
 
@@ -233,31 +288,82 @@ export const voice = {
         this.duckMusic(false, 'narration');
     },
 
+    /**
+     * Called when an uninvited window closes (engine_ui.hideOverlay).
+     *
+     * windowOverTerminal() and NOT state.isEmailOpen, which is the one
+     * question narrate() asks that this one must not. All four closing paths
+     * call hideOverlay() first and clear the flag on the next line - so at the
+     * moment the line would come back, the flag still describes the window
+     * that is going. Asking it here meant the resume never once fired: the
+     * pause held 10.49 seconds of a coffee scene and then threw them away.
+     * dismissModal() has the same shape - it empties state.modal before the
+     * notice disappears - which is why the interruptions are booked when a
+     * window OPENS (engine_ui) rather than asked about when it closes.
+     */
     resumeNarration: function() {
-        if (!this.interrupted) return;
-        this.interrupted = false;
-        const el = this.narrator;
-        // Only if there is still something to say, and nothing has taken the
-        // terminal's place in the meantime.
-        if (!el || !el.src || el.ended) return;
-        if (!this.state.narrationEnabled || this.state.narrationVolume <= 0) return;
+        // A window the player opened on top ends the scene for good - nothing
+        // stays owed, neither the paused line nor one held behind the notice.
+        if (this.windowOverTerminal()) { this.interrupted = false; this.heldLine = null; return; }
 
-        // windowOverTerminal() and NOT state.isEmailOpen, which is the one
-        // question narrate() asks that this one must not.
-        //
-        // All four closing paths call hideOverlay() first and clear the flag
-        // on the next line - so at the moment the line would come back, the
-        // flag still describes the window that is going. Asking it here meant
-        // the resume never once fired: the pause held 10.49 seconds of a
-        // coffee scene and then threw them away. Found in the preview, which
-        // is the only place the order is visible.
-        //
-        // Reordering those four was the other way, and the wrong one: a fifth
-        // closing path would have to remember, and nothing would say so.
+        // Another uninvited window still stands - a mail that dropped onto a
+        // notice, say. Only a line that belongs to a window may come back
+        // then; the terminal is still covered.
+        if (this._interruptions?.size) {
+            if (this.interrupted && this.lineOwner === 'window') {
+                this.interrupted = false;
+                this._unpause();
+            }
+            return;
+        }
+
+        // The last one closed. A screen held behind it wins over anything
+        // paused, because it is what the player now looks at; spoken directly
+        // rather than through narrate(), which would ask state.isEmailOpen.
+        if (this.heldLine) {
+            const text = this.heldLine;
+            this.hushNarration();
+            this._speak(text);
+            return;
+        }
+
+        if (this.interrupted) {
+            this.interrupted = false;
+            // A window's own line ends with its window. Without this the
+            // warning would go on reading after "Understood".
+            if (this.lineOwner === 'window') { this.hushNarration(); return; }
+            this._unpause();
+            return;
+        }
+
+        // Nothing was paused, but the window's own voice may still be running
+        // - the player closed the notice mid-sentence.
+        if (this.speaking && this.lineOwner === 'window') this.hushNarration();
+    },
+
+    /**
+     * The tab, for the same reason as the music: a voice in a tab nobody is
+     * looking at is noise from somewhere. Paused on the way out and picked up
+     * on the way back - including a line that arrived while the tab was away
+     * and was loaded but not started (see _speak).
+     */
+    syncNarrationToVisibility: function() {
+        const el = this.narrator;
+        if (globalThis.document?.hidden) {
+            if (!this.speaking || !el || el.paused) return;
+            el.pause();
+            this.pausedByTab = true;
+            this._setSpeaking(false);
+            this.duckMusic(false, 'narration');
+            return;
+        }
+        if (!this.pausedByTab) return;
+        this.pausedByTab = false;
+        // Not over a window the player opened in the meantime, and not while
+        // a mail or a notice holds the terminal: those settle it on closing.
         if (this.windowOverTerminal()) return;
-        this._setSpeaking(true);
-        this.duckMusic(true, 'narration');
-        el.play().catch(() => this._done());
+        if (this._interruptions?.size && this.lineOwner !== 'window') return;
+        this._unpause();
     },
 
     toggleNarration: function(isOn) {
@@ -294,6 +400,12 @@ export const voice = {
     setNarrationVolume: function(val) {
         this.state.narrationVolume = parseFloat(val);
         localStorage.setItem(KEYS.narrationVolume, val);
+        // Zero ends the line rather than muting it. Muted, it ran on to its
+        // last word with the music still ducked under nobody - up to a minute
+        // of quiet radio on a long scene - and the button that could have
+        // stopped it had already disappeared, because zero is when it is not
+        // offered. Found by the narration audit (01.11.2026).
+        if (this.state.narrationVolume <= 0) { this.hushNarration(); return; }
         if (this.speaking) this._setNarratorVolume(this.state.narrationVolume);
     }
 };

@@ -532,7 +532,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 253 / 20 / 46 / 16, then the same five again with --lang=en
+npm test        # 17 / 256 / 20 / 46 / 17, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -586,7 +586,7 @@ The fifth suite, and the reason it is its own: every link between a sentence on
 screen and the file that speaks it fails SILENTLY. A digest computed one way in
 Node and another way in the browser does not throw — the narrator is simply
 mute, in the shipped game only. A window that forgets to hush reads a result
-out over the noticeboard. Sixteen checks, fifty mutation probes
+out over the noticeboard. Seventeen checks, sixty-two mutation probes
 (01.11.2026).
 
 Six of those checks arrived with the voiced interface strings and the two
@@ -637,6 +637,18 @@ component said in prose that it deliberately does NOT ask
 `narrationEnabled`, and a search of the raw file reads that as asking it — the
 same trap as the reachability check above, and the reason there is now a
 `markup()` helper that strips HTML comments as well.
+
+The seventeenth came with the audit and the two valves, and its first version
+let a probe through: with the rage valve's call deleted, a pattern over the
+whole of `engine_core.js` ran on into `issueChefWarning`, which follows it, and
+found the call there. Each function is cut out on its own now. **A pattern
+over a whole file can always reach the neighbour** — wherever a check is about
+one function, slice that function first.
+
+The behaviour behind the audit is held in `week-flow.test.mjs` on a fake
+element — a notice holding the result and handing it over, a mail dropping onto
+a notice, a hidden tab, a volume of zero — because what has to hold there is
+bookkeeping, and the order of a click is easier to get wrong than to read.
 
 ## 9. `dev-week.js` — the console tool
 

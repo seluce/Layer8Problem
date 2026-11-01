@@ -52,6 +52,15 @@ const WINDOWS_OVER_TERMINAL = [
  * out of the way - and then hand the line back, because nobody chose to leave
  * that scene. Everything on WINDOWS_OVER_TERMINAL is the opposite: the player
  * opened it, which is a decision to stop listening.
+ *
+ * modal-overlay belongs here too, but only while it carries a NOTICE - the
+ * written warning, the rage valve, the ticket jam, H.A.L.G.E.R.D.'s two first
+ * words. The same element also carries the end of the day and the night, and
+ * those end the line instead. Which of the two it is, is decided when the
+ * window OPENS (see interruptsTerminal) and booked in _interruptions: by the
+ * time it closes, dismissModal() has already emptied state.modal, so asking
+ * then would get the answer for a box that is gone - the isEmailOpen trap a
+ * second time.
  */
 const INTERRUPTS_TERMINAL = ['email-modal'];
 
@@ -669,7 +678,17 @@ export const ui = {
         // over itself has covered nothing new, and the startup windows stand
         // over a terminal that is not saying anything yet.
         if (!wasOpen && WINDOWS_OVER_TERMINAL.includes(el.id)) this.hushNarration();
-        if (!wasOpen && INTERRUPTS_TERMINAL.includes(el.id)) this.pauseNarration();
+        if (this.interruptsTerminal(el)) {
+            if (!wasOpen) {
+                (this._interruptions ??= new Set()).add(el.id);
+                this.pauseNarration();
+            }
+        } else if (el.id === 'modal-overlay') {
+            // The end of the day, or the night: the line is over - and so is
+            // a notice this box may have just replaced.
+            this._interruptions?.delete(el.id);
+            this.hushNarration();
+        }
 
         // The keyboard follows the window. aria-modal tells a SCREEN READER to
         // ignore what is behind it, but the tab order went on walking through
@@ -733,8 +752,8 @@ export const ui = {
             const back = this._focusReturn.pop();
             if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
             // The narrator gets its line back - see INTERRUPTS_TERMINAL. A
-            // no-op unless this window is the one that took it.
-            if (INTERRUPTS_TERMINAL.includes(el.id)) this.resumeNarration();
+            // no-op unless this window is one that took it.
+            if (this._interruptions?.delete(el.id)) this.resumeNarration();
         }
         return el;
     },
@@ -752,6 +771,18 @@ export const ui = {
      *
      * One encoding, asked in one place.
      */
+    /**
+     * Does this window, as it is being shown, interrupt the terminal rather
+     * than end what it was saying? See INTERRUPTS_TERMINAL for why the answer
+     * is taken now and not when the window closes.
+     */
+    interruptsTerminal: function(el) {
+        if (INTERRUPTS_TERMINAL.includes(el.id)) return true;
+        if (el.id !== 'modal-overlay') return false;
+        const m = this.state.modal;
+        return !!m?.open && !m.isEnd && !m.isNight;
+    },
+
     isOverlayOpen: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         return !!el && !el.classList.contains('hidden');

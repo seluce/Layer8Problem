@@ -59,6 +59,7 @@ const { voice } = await import('../src/engine/engine_voice.js');
 // Hoisted for the bench below. The music tests further down import it again
 // inside their own scope, which is what they did before and is left alone.
 const { audio } = await import('../src/engine/engine_audio.js');
+const { voiceHash } = await import('../src/engine/sha1.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -4313,6 +4314,129 @@ await ok('An interrupted line keeps its place; a stopped one does not', () => {
     assert.equal(box.interrupted, false, 'silence was recorded as an interrupted line');
     box.resumeNarration();
     assert.equal(el.paused, true, 'closing the mail replayed an old recording');
+});
+
+// The audit that followed the read-aloud button (01.11.2026). One bench for
+// the three tests below: a fake element that records what it was asked to
+// play, and a box with the real voice module on it. The file name a line asks
+// for is its checksum, so `file()` tells the lines apart without a lookup.
+const voiceBench = () => {
+    const el = { paused: true, currentTime: 0, ended: false, src: '', volume: 1,
+                 pause() { this.paused = true; },
+                 play() { this.paused = false; return Promise.resolve(); } };
+    const box = { ...audio, ...voice, state, narrator: el, speaking: false,
+                  bgmTracks: {}, gainNodes: {}, volumeWorks: true,
+                  windowOverTerminal: () => false };
+    state.narrationEnabled = true;
+    state.narrationVolume = 0.8;
+    state.isEmailOpen = false;
+    globalThis.document.hidden = false;
+    const file = (text) => `${voiceHash(text)}.opus`;
+    const playing = () => (el.paused ? null : el.src.split('/').pop());
+    return { el, box, file, playing };
+};
+
+await ok('A notice holds the screen behind it and hands it over on closing', () => {
+    // Found by the audit: the written warning and the rage valve open from
+    // checkEndConditions() INSIDE the click that produces the result, and
+    // before the result is set. So the result was read out behind the
+    // warning, and once the warning had a voice of its own, the result would
+    // have cut it off a moment after it began.
+    const { box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+
+    open('modal-overlay');
+    box.narrateWindow('The boss looms behind you.');
+    box.narrate('Your hands are shaking, but you lift it.');
+    assert.equal(playing(), file('The boss looms behind you.'), 'the result cut the warning off');
+    assert.equal(box.heldLine, 'Your hands are shaking, but you lift it.', 'the result was not kept for later');
+
+    // A mail drops onto the warning: the warning's voice waits for it...
+    open('email-modal');
+    assert.equal(playing(), null, 'the mail did not quieten the warning');
+    close('email-modal');
+    assert.equal(playing(), file('The boss looms behind you.'), 'the warning did not get its voice back');
+    assert.equal(box.heldLine, 'Your hands are shaking, but you lift it.',
+        'the result was spoken while the warning still covered it');
+
+    // ...and closing the warning hands over to the screen behind it.
+    close('modal-overlay');
+    assert.equal(playing(), file('Your hands are shaking, but you lift it.'), 'the held result was never read');
+    assert.equal(box.heldLine, null);
+
+    // A window's own voice ends with its window, when nothing was held.
+    box.hushNarration();
+    open('modal-overlay');
+    box.narrateWindow('You stare at the microwave.');
+    close('modal-overlay');
+    assert.equal(playing(), null, 'the valve went on reading after it was closed');
+
+    // A terminal line that a notice paused is superseded by a newer screen:
+    // closing must play the screen the player now looks at, not the old one.
+    box.narrate('The first scene.');
+    open('modal-overlay');
+    box.narrate('The second scene.');
+    close('modal-overlay');
+    assert.equal(playing(), file('The second scene.'), 'an old scene came back over the new one');
+
+    // The same when the screen behind went quiet rather than new - the
+    // terminal turned idle while the notice stood. Nothing is held then, and
+    // the paused scene must not come back over an empty terminal.
+    box.narrate('A scene that is over.');
+    open('modal-overlay');
+    box.narrate(null);
+    close('modal-overlay');
+    assert.equal(playing(), null, 'a scene came back over an idle terminal');
+
+    // And a window the player opens on top settles everything: nothing owed.
+    box.hushNarration();
+    open('modal-overlay');
+    box.narrate('A result.');
+    box.windowOverTerminal = () => true;
+    close('modal-overlay');
+    assert.equal(playing(), null, 'a held line was spoken behind a window the player opened');
+    assert.equal(box.heldLine, null, 'a held line survived a window that ends the scene');
+});
+
+await ok('The narrator stops for a tab nobody is looking at', () => {
+    // The music has paused for a hidden tab since 6.3; the narrator went on
+    // reading to nobody - and an Electron window that is minimised is a
+    // hidden tab too.
+    const { el, box, file, playing } = voiceBench();
+    box.narrate('A scene.');
+    el.currentTime = 4.2;
+    globalThis.document.hidden = true;  box.syncNarrationToVisibility();
+    assert.equal(playing(), null, 'the narrator read on in a hidden tab');
+    assert.equal(box.speaking, false, 'the music stays ducked for a voice nobody hears');
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), file('A scene.'), 'the line did not come back with the tab');
+    assert.equal(el.currentTime, 4.2, 'the line came back at the wrong place');
+
+    // A line that arrives while the tab is away is loaded, not started.
+    globalThis.document.hidden = true;
+    box.narrate('A boss timer ran out.');
+    assert.equal(playing(), null, 'a new line started in a hidden tab');
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), file('A boss timer ran out.'), 'the line that arrived meanwhile was lost');
+
+    // A tab that comes back to a hushed narrator owes nothing.
+    globalThis.document.hidden = true;  box.syncNarrationToVisibility();
+    box.hushNarration();
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), null, 'a hushed line came back with the tab');
+});
+
+await ok('Turning the narrator to zero ends the line', () => {
+    // Muted rather than stopped, it ran on to its last word with the music
+    // ducked under nobody, and the read-aloud button - not offered at zero -
+    // had already gone, so nothing could stop it.
+    const { box, playing } = voiceBench();
+    box.narrate('A long scene.');
+    box.setNarrationVolume(0);
+    assert.equal(playing(), null, 'the line ran on, muted');
+    assert.equal(box.speaking, false, 'the music stays ducked for a silent line');
+    state.narrationVolume = 0.8;
 });
 
 await ok('All six tracks are levelled to one loudness', async () => {

@@ -1889,10 +1889,16 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.rage;
-        let warningText = tf('valve.rage', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        const line = texts[Math.floor(Math.random() * texts.length)];
+        let warningText = tf('valve.rage', { text: line, value: resetTo });
         if (this.difficultyTier() === 3) warningText += ' ' + t('valve.rage.hard');
 
         this.showModal(t('valve.rage.title'), warningText, false, 'rage');
+        // The drawn line alone, not the window's sentence around it: that one
+        // carries the reset value, and a number cannot be recorded. Spoken
+        // through the window's door - the result of the same click is held
+        // behind this box until it closes (engine_voice.narrate).
+        this.narrateWindow(line);
         return true;
     },
 
@@ -1909,10 +1915,12 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.chef;
-        let warningText = tf('valve.chef', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        const line = texts[Math.floor(Math.random() * texts.length)];
+        let warningText = tf('valve.chef', { text: line, value: resetTo });
         if (this.difficultyTier() === 3) warningText += ' ' + t('valve.chef.hard');
 
         this.showModal(t('valve.chef.title'), warningText, false);
+        this.narrateWindow(line);   // see openRageValve
         return true;
     },
 

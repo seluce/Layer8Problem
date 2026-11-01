@@ -401,7 +401,12 @@ export const audio = {
         // Registered here rather than at module scope: the tracks have to exist
         // before anything can be paused, and this runs exactly once.
         // Optional-call because the test bench's document has no listeners.
-        document.addEventListener?.('visibilitychange', () => this.syncMusicToVisibility());
+        // The narrator follows the same rule from the same event - see
+        // engine_voice.syncNarrationToVisibility().
+        document.addEventListener?.('visibilitychange', () => {
+            this.syncMusicToVisibility();
+            this.syncNarrationToVisibility();
+        });
 
         this.bgmTracks = {
             'elevator': new Audio('assets/music/elevator.opus'),

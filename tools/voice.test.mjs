@@ -294,10 +294,19 @@ await ok('a mail pauses the narrator and gives the line back', () => {
     const ui = src('engine/engine_ui.js');
     assert.match(ui, /const INTERRUPTS_TERMINAL = \[[^\]]*'email-modal'[^\]]*\]/,
         'the mail is not on the interrupting list');
-    assert.match(ui, /if \(!wasOpen && INTERRUPTS_TERMINAL\.includes\(el\.id\)\) this\.pauseNarration\(\);/,
-        'showOverlay does not pause for an interrupting window');
-    assert.match(ui, /if \(INTERRUPTS_TERMINAL\.includes\(el\.id\)\) this\.resumeNarration\(\);/,
+    assert.match(ui, /if \(this\.interruptsTerminal\(el\)\) \{\s*if \(!wasOpen\) \{\s*\(this\._interruptions \?\?= new Set\(\)\)\.add\(el\.id\);\s*this\.pauseNarration\(\);/,
+        'showOverlay does not pause for an interrupting window, or does not book it');
+    assert.match(ui, /if \(this\._interruptions\?\.delete\(el\.id\)\) this\.resumeNarration\(\);/,
         'hideOverlay never gives the line back');
+
+    // The notices on modal-overlay interrupt too, the end of the day and the
+    // night do not - decided at OPENING, because dismissModal() empties
+    // state.modal before the box disappears and a question asked at closing
+    // would be about a box that is gone.
+    assert.match(ui, /interruptsTerminal: function\(el\) \{[\s\S]{0,260}?return !!m\?\.open && !m\.isEnd && !m\.isNight;/,
+        'a notice is not told apart from the end of the day');
+    assert.match(ui, /\} else if \(el\.id === 'modal-overlay'\) \{[\s\S]{0,200}?this\._interruptions\?\.delete\(el\.id\);\s*this\.hushNarration\(\);/,
+        'the end of the day or the night does not end the line');
 
     const voice = src('engine/engine_voice.js');
     // currentTime is what separates the two: hushNarration rewinds, pause does
@@ -313,6 +322,40 @@ await ok('a mail pauses the narrator and gives the line back', () => {
     // on top of the mail keeps the silence.
     assert.match(voice, /resumeNarration: function[\s\S]{0,600}?windowOverTerminal\(\)/,
         'resumeNarration speaks behind a window');
+
+    // A screen that arrives behind an uninvited window is held, not spoken -
+    // the notices open inside the same click, before the result is set.
+    assert.match(code('engine/engine_voice.js'),
+        /if \(this\._interruptions\?\.size \|\| this\.state\.isEmailOpen\) \{\s*this\.heldLine = text \|\| null;/,
+        'a result is read out behind the written warning again');
+});
+
+// --- 8b. The two valves have a voice ----------------------------------------
+//
+// Ten lines each, drawn at random, framed on screen by a sentence with a
+// number in it. What is collected and what is spoken has to be the same
+// string, the drawn line on its own, or the file is bought and never found.
+await ok('the rage valve and the written warning read their line', () => {
+    for (const kind of ['rage', 'chef']) {
+        const got = entries.filter(e => e.key.startsWith(`special/valveTexts/${kind}/`));
+        assert.equal(got.length, 10, `expected the ten ${kind} lines, found ${got.length}`);
+    }
+    // Each function on its own. A pattern over the whole file let the probe
+    // through: with the rage valve's call deleted, the search ran on into
+    // issueChefWarning, which follows it, and found the call there.
+    const core = code('engine/engine_core.js');
+    const body = (fn) => {
+        const start = core.indexOf(`${fn}: function`);
+        assert.ok(start >= 0, `${fn} is gone`);
+        return core.slice(start, core.indexOf('\n    },', start));
+    };
+    for (const fn of ['openRageValve', 'issueChefWarning']) {
+        const b = body(fn);
+        assert.match(b, /const line = texts\[/,
+            `${fn} no longer keeps the drawn line apart from the sentence around it`);
+        assert.match(b, /this\.showModal\([\s\S]*?this\.narrateWindow\(line\)/,
+            `${fn} does not speak its line, or speaks it before its window is up`);
+    }
 });
 
 // --- 9. A language switch on a result screen --------------------------------
@@ -370,7 +413,7 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
         'window text would be offered as the terminal line');
 
     // The switch is skipped for this caller and the volume is not.
-    assert.match(voice, /_speak: function\(text, onDemand = false\)/, 'there is no on-demand door');
+    assert.match(voice, /_speak: function\(text, onDemand = false, owner = 'terminal'\)/, 'there is no on-demand door');
     assert.match(voice, /if \(!onDemand && !this\.state\.narrationEnabled\) return;/,
         'the button is refused by the narrator switch');
     assert.match(voice, /if \(this\.state\.narrationVolume <= 0\) return;/,

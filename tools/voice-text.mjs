@@ -75,6 +75,26 @@ export const SPOKEN_KEYS = [
     'tutorial.done.text',
 ];
 
+/**
+ * Lists of bare strings that are spoken, named by their path.
+ *
+ * The walk below collects a string only as the value of a `text`, `r` or
+ * `txt` field, which is what a scene is made of. These two are not scenes but
+ * lists - one line is drawn when a valve opens - so the walk steps over them,
+ * and that is right for every other list in the trees. Named here instead,
+ * like the interface keys: a list that lands here is bought.
+ *
+ * The rage valve and the written warning. What is SPOKEN is the drawn line on
+ * its own (engine_core.openRageValve / issueChefWarning): the window frames it
+ * with "(Aggro set to 50%)" and on hard with an extra sentence, and neither of
+ * those has a recording - the first carries a number, the second would double
+ * every piece for one flourish.
+ */
+export const SPOKEN_LISTS = [
+    ['special', 'valveTexts', 'rage'],
+    ['special', 'valveTexts', 'chef'],
+];
+
 const DICTS = { de, en };
 
 /**
@@ -261,6 +281,20 @@ export async function collectEntries(lang) {
         const v = DB[pool];
         if (!v) throw new Error(`Pool "${pool}" is not loaded.`);
         collect(v, pool, [pool], '');
+    }
+
+    for (const path of SPOKEN_LISTS) {
+        const list = path.reduce((node, k) => node?.[k], DB);
+        if (!Array.isArray(list) || !list.length) {
+            throw new Error(`Spoken list ${path.join('.')} is missing or empty in ${lang}.`);
+        }
+        list.forEach((v, i) => {
+            if (typeof v !== 'string' || !v.trim()) {
+                throw new Error(`Spoken list ${path.join('.')} holds a non-sentence at ${i}.`);
+            }
+            if (v.includes('{')) throw new Error(`Spoken list ${path.join('.')}/${i} carries a placeholder: ${v}`);
+            entries.push({ key: [...path, String(i)].join('/'), src: v });
+        });
     }
 
     // The named interface strings, under a prefix of their own so they can
