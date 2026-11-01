@@ -10,6 +10,7 @@
  *                       output, with a ledger of its own. A trial can never
  *                       damage a finished run.
  *   --pool=<name>       only this pool
+ *   --key=<part>        only pieces whose key contains this, e.g. one scene
  *   --limit=<n>         only the first n pieces still to do
  *   --model=<id>        override the configured model (for an A/B trial)
  *   --voice=<id>        override the configured voice (for an A/B trial)
@@ -54,6 +55,14 @@ const has  = (n) => args.includes(`--${n}`);
 const LANG    = flag('lang', 'de');
 const TRIAL   = flag('trial', null);
 const POOL    = flag('pool', null);
+/**
+ * One scene, by a piece of its key. Written for the question a respelling
+ * raises: does the voice really say it that way? A trial of the ONE scene
+ * somebody heard it in costs a few dozen credits and settles it by ear, where
+ * --pool would have rendered the first three pieces of a pool that may not
+ * contain the word at all.
+ */
+const KEY     = flag('key', null);
 const LIMIT   = Number(flag('limit', '0')) || 0;
 const JOBS    = Math.max(1, Number(flag('jobs', '2')) || 2);
 const DRY     = has('dry-run');
@@ -89,12 +98,33 @@ const HINT = {
  * twice. The body comes first, because it knows more than this table does.
  */
 async function explain(res, what) {
-    let detail = '';
-    try { detail = (await res.text()).trim().slice(0, 400); } catch { /* nothing to add */ }
+    let body = '';
+    try { body = (await res.text()).trim(); } catch { /* nothing to add */ }
     const out = [`${what}: the provider answered ${res.status}`];
-    if (detail) out.push(`    ${detail}`);
-    if (HINT[res.status]) out.push(`    ${HINT[res.status]}`);
+    if (body) out.push(`    ${body.slice(0, 400)}`);
+    const hint = HINT_BY_CODE[providerCode(body)] ?? HINT[res.status];
+    if (hint) out.push(`    ${hint}`);
     return out.join('\n');
+}
+
+/**
+ * Where the provider's own code says more than the status does.
+ *
+ * An exhausted quota comes back as 401 - the status for a bad key - so the
+ * table above told an operator whose key was perfectly fine to go and make a
+ * new one, in the middle of a run that had simply spent its last 21 credits.
+ * The code in the body is the more specific answer and is asked first.
+ */
+const HINT_BY_CODE = {
+    quota_exceeded: HINT[402],
+};
+
+/** `detail.code`, or `detail.status` where the code is missing; null otherwise. */
+function providerCode(body) {
+    try {
+        const d = JSON.parse(body)?.detail;
+        return d?.code ?? d?.status ?? null;
+    } catch { return null; }
 }
 
 // ------------------------------------------------------------------- the key
@@ -271,6 +301,7 @@ const done = (e) => {
 
 let todo = entries.filter(e => !done(e));
 if (POOL) todo = todo.filter(e => e.key.startsWith(`${POOL}/`));
+if (KEY) todo = todo.filter(e => e.key.includes(KEY));
 if (LIMIT) todo = todo.slice(0, LIMIT);
 
 const chars = todo.reduce((n, e) => n + e.chars, 0);
@@ -281,6 +312,7 @@ console.log(`\nGeneration run (${LANG})${TRIAL ? `  TRIAL "${TRIAL}"` : ''}`);
 console.log(`  voice   ${OWN_VOICE ? (cfg.voiceName ?? cfg.voiceId) : `${VOICE}   (--voice, settings not pinned)`}`);
 console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
+if (KEY) console.log(`  only    keys containing "${KEY}"`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
 if (trusted) console.log(`  ! ${trusted} finished pieces predate a field this tool checks and are taken on trust`);
 if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characters as previous_text (billing unknown)`);

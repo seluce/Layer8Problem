@@ -45,6 +45,13 @@ const src = (f) => readFileSync(`${ROOT}src/${f}`, 'utf8');
 // been deleted. A declaration that a key is used is not a use of it.
 const code = (f) => src(f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 
+// The same for a component, which has HTML comments on top of the other two.
+// Needed for the same reason and found the same way: the header's own comment
+// says it deliberately does NOT ask `narrationEnabled`, and a search of the
+// raw file reads that as asking it.
+const markup = (f) => readFileSync(`${ROOT}src/${f}`, 'utf8')
+    .replace(/<!--[\s\S]*?-->/g, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
 // --- 1. The two implementations of the file name ----------------------------
 //
 // The whole scheme rests on this: Node names the file, the browser asks for it.
@@ -328,6 +335,75 @@ await ok('a result screen speaks again in the new language', () => {
     assert.match(code('tutorial.js'),
         /onLanguageChange\(\(\) => \{[\s\S]{0,600}?if \(!tutorial\.isActive\) return;/,
         'a language switch can speak a tutorial bubble that is no longer on screen');
+});
+
+// --- 9b. The button that reads a scene again --------------------------------
+//
+// Three separate things have to hold, and every one of them fails quietly.
+//
+// The door has to go PAST the narrator's switch, because the player it is for
+// is the one who turned the voice off: a button that refuses for them is a
+// button that does nothing in the only case it was built for, and nothing on
+// screen would say why. The volume is the other way round - zero IS a request
+// for silence, so the button is not offered at all.
+//
+// What it offers has to be the TERMINAL's line and not the last thing spoken.
+// narrateWindow() carries H.A.L.G.E.R.D. and the tutorial bubbles, and if
+// those landed in `narratable` the button would sit over a working day
+// offering to repeat step four of the lesson.
+//
+// And the flag it draws itself from has to reach the view. The modules are
+// spread into `engine` (src/engine.js), so an accessor on the voice object
+// would be flattened to its value at startup and the glyph would stick on
+// whatever it showed first.
+await ok('the read-aloud button reads the terminal, past the switch', () => {
+    const voice = code('engine/engine_voice.js');
+
+    assert.match(voice, /narrate: function[\s\S]{0,800}?this\.state\.narratable = text \|\| null;/,
+        'the terminal line is never offered to the button');
+    assert.ok(!/narrateWindow: function[\s\S]{0,400}?narratable/.test(voice),
+        'window text would be offered as the terminal line');
+
+    // The switch is skipped for this caller and the volume is not.
+    assert.match(voice, /_speak: function\(text, onDemand = false\)/, 'there is no on-demand door');
+    assert.match(voice, /if \(!onDemand && !this\.state\.narrationEnabled\) return;/,
+        'the button is refused by the narrator switch');
+    assert.match(voice, /if \(this\.state\.narrationVolume <= 0\) return;/,
+        'a volume of zero would still speak');
+    assert.match(voice, /replayNarration: function[\s\S]{0,400}?this\._speak\(this\.state\.narratable, true\)/,
+        'the button does not read the terminal line on demand');
+    // One button, so a press while it speaks has to stop it.
+    assert.match(voice, /replayNarration: function[\s\S]{0,200}?if \(this\.speaking\) \{ this\.hushNarration\(\); return; \}/,
+        'pressing it while it speaks does not stop it');
+
+    // The flag reaches the rune state, through one writer.
+    assert.match(voice, /_setSpeaking: function\(on\) \{\s*this\.speaking = on;\s*this\.state\.narrating = on;/,
+        'the speaking flag is not mirrored for the view');
+    const raw = src('engine/engine_voice.js');
+    const direct = [...raw.matchAll(/this\.speaking = /g)].length;
+    assert.equal(direct, 1, `the flag is set in ${direct} places; it has one writer, _setSpeaking()`);
+
+    // When it is offered: once, in the engine, and not on the switch.
+    assert.match(voice, /canReplayNarration: function\(\) \{\s*return !!this\.state\.narratable && this\.state\.narrationVolume > 0;/,
+        'the button is offered on the wrong condition');
+
+    // The button itself.
+    const button = markup('components/ReadButton.svelte');
+    assert.match(button, /onclick=\{\(\) => engine\.replayNarration\(\)\}/, 'the button is wired to nothing');
+    assert.match(button, /\{#if state\.narrating\}[\s\S]{0,200}?<rect/, 'the icon does not follow the voice');
+
+    // Both screens that carry it ask the engine, and neither asks the switch -
+    // which would hide it from exactly the player it is for.
+    for (const f of ['components/EventView.svelte', 'components/ResultView.svelte']) {
+        const view = markup(f);
+        assert.match(view, /\$derived\(engine\.canReplayNarration\(\)\)/, `${f} decides on its own when to show it`);
+        assert.match(view, /\{#if canRead\}[\s\S]{0,40}?<ReadButton \/>/, `${f} never shows the button`);
+        assert.ok(!/narrationEnabled/.test(view), `${f} asks the narrator switch`);
+    }
+    // On an event it shares the excuse's row, and the row has to stand for the
+    // button alone: a boss fight has no excuse and can still be read out.
+    assert.match(markup('components/EventView.svelte'), /\{#if showExcuse \|\| canRead\}/,
+        'the row vanishes wherever there is no excuse, and takes the button with it');
 });
 
 // --- 10. One process, both trees --------------------------------------------

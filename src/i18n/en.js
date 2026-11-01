@@ -386,6 +386,12 @@ export const en = {
     'common.locked':               'Locked',
     'ticker.broadcast':            '[GLOBAL CORP BROADCAST]',
 
+    // The small read-aloud button beside the excuse. It carries an icon and
+    // no text, so these two are its tooltip and its screen-reader name - what
+    // a press would do now, which is why there are two.
+    'term.narrate.read':           'Read this out',
+    'term.narrate.stop':           'Stop reading',
+
     'dayReport.title':             'Day report:',
     'dayReport.diff.easy':         'FRIDAY (easy)',
     'dayReport.diff.normal':       'WEDNESDAY (normal)',

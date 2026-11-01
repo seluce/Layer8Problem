@@ -21,7 +21,7 @@ import { language, t } from '../i18n/i18n.svelte.js';
 export const voice = {
     narrator: null,
     narratorNode: null,     // only where the element's own volume is refused
-    speaking: false,
+    speaking: false,        // moved only through _setSpeaking(), see there
 
     /** Built on first use; a player with the narrator off never makes one. */
     _element: function() {
@@ -65,9 +65,24 @@ export const voice = {
         else el.volume = level;     // refused anyway, but it costs nothing
     },
 
+    /**
+     * The one place the flag moves.
+     *
+     * The read-aloud button has to know whether a line is running, and a
+     * component cannot watch `this.speaking`: the
+     * modules are SPREAD into `engine` (see src/engine.js), so an accessor
+     * declared here would be flattened to its value at startup and never fire
+     * again. The rune state holds the copy a view may read, and this keeps the
+     * two from parting company.
+     */
+    _setSpeaking: function(on) {
+        this.speaking = on;
+        this.state.narrating = on;
+    },
+
     _done: function() {
         if (!this.speaking) return;
-        this.speaking = false;
+        this._setSpeaking(false);
         this.duckMusic(false, 'narration');
     },
 
@@ -90,6 +105,13 @@ export const voice = {
      */
     narrate: function(text) {
         this.hushNarration();      // also drops a line that was only paused
+        // What the TERMINAL last showed, which is what the read-aloud button
+        // offers to read again - set even when the gate below refuses, because
+        // the refusal is about a window being in the way and the button is
+        // underneath it. Window text goes through narrateWindow() and
+        // deliberately does NOT land here: the button would otherwise offer to
+        // repeat a tutorial bubble over a working day.
+        this.state.narratable = text || null;
         if (this.windowOverTerminal() || this.state.isEmailOpen) return;
         this._speak(text);
     },
@@ -121,8 +143,13 @@ export const voice = {
      * recorded, anything written since the last render. The player hears
      * nothing and the game carries on.
      */
-    _speak: function(text) {
-        if (!text || !this.state.narrationEnabled) return;
+    _speak: function(text, onDemand = false) {
+        if (!text) return;
+        // `onDemand` is the button, and it is the one caller allowed past the
+        // switch - see replayNarration() for why. The VOLUME still decides
+        // either way: zero is a request for silence, not a preference about
+        // automatic reading.
+        if (!onDemand && !this.state.narrationEnabled) return;
         if (this.state.narrationVolume <= 0) return;
 
         const el = this._element();
@@ -132,9 +159,47 @@ export const voice = {
         // through the graph, and a suspended context plays to nobody.
         if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
 
-        this.speaking = true;
+        this._setSpeaking(true);
         this.duckMusic(true, 'narration');
         el.play().catch(() => this._done());    // no gesture yet, or no file
+    },
+
+    /**
+     * The small button beside the excuse (and at the end of a result's
+     * pills): read that again, or stop it.
+     *
+     * The third door, and the only one that goes past `narrationEnabled`. That
+     * is the whole point of it. Switching the narrator off is not a request for
+     * silence, it is a request not to be read to automatically - and a scene of
+     * 1,800 characters is exactly where somebody might want it once. Without
+     * this door the button would be dead for every player who had turned the
+     * voice off, which is the player it is for.
+     *
+     * One button, so one press means stop while a line is running. Stop and not
+     * pause: pausing is what an UNINVITED window does to a line (see
+     * pauseNarration), and a press is a decision rather than an interruption.
+     *
+     * No window gate, because it cannot need one - the button sits in the
+     * terminal, so a window over the terminal is a window over the button.
+     */
+    /**
+     * Whether the button is offered at all - asked by both screens that show
+     * it, so the condition exists once. Read inside a $derived it is reactive:
+     * Svelte tracks what a derived reads, through function calls too.
+     *
+     * NOT narrationEnabled, see replayNarration(). The volume, because zero is
+     * a request for silence and a button that then does nothing is worse than
+     * no button.
+     */
+    canReplayNarration: function() {
+        return !!this.state.narratable && this.state.narrationVolume > 0;
+    },
+
+    replayNarration: function() {
+        if (this.speaking) { this.hushNarration(); return; }
+        if (!this.state.narratable) return;
+        this.hushNarration();       // drops a line that was only paused
+        this._speak(this.state.narratable, true);
     },
 
     /** Stops the line that is running, if one is. Safe to call at any time. */
@@ -164,7 +229,7 @@ export const voice = {
         if (!this.speaking || !el || el.paused) return;
         el.pause();
         this.interrupted = true;
-        this.speaking = false;
+        this._setSpeaking(false);
         this.duckMusic(false, 'narration');
     },
 
@@ -190,7 +255,7 @@ export const voice = {
         // Reordering those four was the other way, and the wrong one: a fifth
         // closing path would have to remember, and nothing would say so.
         if (this.windowOverTerminal()) return;
-        this.speaking = true;
+        this._setSpeaking(true);
         this.duckMusic(true, 'narration');
         el.play().catch(() => this._done());
     },

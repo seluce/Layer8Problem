@@ -6,6 +6,7 @@ Sound:
 * The narrator's slider has a line of its own to try, the way the sound and the music do.
 * An email arriving no longer ends the scene being read. It waits, and goes on where it stopped once the mail is answered.
 * Changing language mid-scene starts the new language from the top, on an outcome as well as on an event.
+* A small speaker button beside the excuse reads the scene out, and on an outcome it sits at the end of the numbers. It works with the narrator switched off, so a long scene can be heard once without being read to all day.
 * The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
 
 The day to day:

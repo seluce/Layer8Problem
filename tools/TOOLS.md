@@ -531,7 +531,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 251 / 20 / 46 / 15, then the same five again with --lang=en
+npm test        # 17 / 251 / 20 / 46 / 16, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -585,7 +585,7 @@ The fifth suite, and the reason it is its own: every link between a sentence on
 screen and the file that speaks it fails SILENTLY. A digest computed one way in
 Node and another way in the browser does not throw — the narrator is simply
 mute, in the shipped game only. A window that forgets to hush reads a result
-out over the noticeboard. Fifteen checks, thirty-four mutation probes
+out over the noticeboard. Sixteen checks, fifty mutation probes
 (01.11.2026).
 
 Six of those checks arrived with the voiced interface strings and the two
@@ -621,6 +621,21 @@ English pieces drifted, which reads like a broken tree rather than a mixed one
 the path that drops the cache; the check asserts that every terminal pool
 really changes, because one identical line is ordinary and a whole pool of them
 is the old tree still sitting there.
+
+The sixteenth covers the read-aloud button beside the excuse, and it is three
+checks in one because three separate things about it fail without a sound: the
+door has to go PAST `narrationEnabled` (a button that refuses is a button that
+does nothing in the only case it was built for), `state.narratable` has to come
+from `narrate()` and not from `narrateWindow()` (or it offers to repeat a
+tutorial bubble over a working day), and the speaking flag has to reach the
+rune state through its one writer (or the icon sticks). Both screens that
+carry it have to ask `engine.canReplayNarration()` rather than decide for
+themselves, and the event's tool row has to stand for the button alone, since a
+boss fight has no excuse. Its first version nearly defeated itself: the
+component said in prose that it deliberately does NOT ask
+`narrationEnabled`, and a search of the raw file reads that as asking it — the
+same trap as the reachability check above, and the reason there is now a
+`markup()` helper that strips HTML comments as well.
 
 ## 9. `dev-week.js` — the console tool
 

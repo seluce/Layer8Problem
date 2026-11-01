@@ -493,6 +493,15 @@ export const state = $state({
     narrationEnabled: localStorage.getItem(KEYS.narrationEnabled) !== 'false',
     narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || '1'),
     currentMusicTrack: null,
+    // The read-aloud button (components/ReadButton.svelte) reads these two,
+    // which is why they are here and not on the voice object: the modules are spread
+    // into `engine`, so a component watching a plain property there would never
+    // hear about it again. `narratable` is the sentence the TERMINAL last
+    // showed - window text goes through narrateWindow() and stays out of it, or
+    // the button would offer to repeat a tutorial bubble over a working day.
+    // Neither is in the save: both are outside freshDay().
+    narratable: null,
+    narrating: false,
     oneClickItem: localStorage.getItem(KEYS.oneClickItem) === 'true',
     fastChat: localStorage.getItem(KEYS.fastChat) === 'true',
     blindStats: localStorage.getItem(KEYS.blindStats) === 'true',

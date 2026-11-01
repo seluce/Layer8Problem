@@ -13,6 +13,7 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import ReadButton from './ReadButton.svelte';
 
     import { t, tf, tree } from '../i18n/i18n.svelte.js';
     // i18n-uses: event.type.calls, event.type.boss, event.type.rep
@@ -71,6 +72,11 @@
         && state.excusesLeft > 0
         && !engine.lesson?.isActive
     );
+
+    // The read-aloud button shares the excuse's row. The row stands whenever
+    // either of them does: a boss fight has no excuse and a scene can still
+    // be read out, so the button alone keeps the divider above it.
+    const canRead = $derived(engine.canReplayNarration());
 
     // Hotkeys 1-3 are rebindable, 4-6 are fixed (party stations).
     const hotkey = (index) => {
@@ -248,12 +254,15 @@
             </button>
         {/each}
 
-        {#if showExcuse}
-            <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
-                <button onclick={() => engine.openExcuseModal()}
-                        class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all flex items-center gap-2">
-                    <span>{tf('event.useExcuse', { left: state.excusesLeft })}</span>
-                </button>
+        {#if showExcuse || canRead}
+            <div class="mt-5 w-full flex justify-end items-center gap-2 border-t border-slate-800 pt-4">
+                {#if showExcuse}
+                    <button onclick={() => engine.openExcuseModal()}
+                            class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all flex items-center gap-2">
+                        <span>{tf('event.useExcuse', { left: state.excusesLeft })}</span>
+                    </button>
+                {/if}
+                {#if canRead}<ReadButton />{/if}
             </div>
         {/if}
     </div>
