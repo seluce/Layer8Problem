@@ -11,7 +11,7 @@ import { week } from './engine/engine_week.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v6.4.0",
+    VERSION: "v7.0.0",
 
     // 1. Attach the mutable game state
     state: state,

@@ -98,6 +98,9 @@ and you lose the whole week.
 - **German and English**, in full — not just the menus, but every single event.
   You can switch mid-game: the save file does not depend on the language, so the
   week carries on exactly where it was.
+- **Read out loud** — every scene and every outcome, in both languages, by a
+  synthetic voice (the credits say which). Choose what it reads and how fast,
+  or switch it off and let a button read a single scene when you want one.
 - **Decisions with a memory.** The machine you had Kevin reinstall turns up in
   the rack hours later — with a dragon sticker and a program selling compute
   power overseas. Leave Gabi hanging and you will find a drawer in the tea

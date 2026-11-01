@@ -1,4 +1,6 @@
-[Unreleased]
+[7.0.0] - 2026-11-01
+
+The game reads itself out loud, Steam keeps a leaderboard for the working week, and the menu, the settings and the items are new.
 
 Sound:
 * The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
@@ -12,7 +14,11 @@ Sound:
 * A small speaker button beside the excuse reads the scene out, and on an outcome it sits at the end of the numbers. It works with the narrator switched off, so a long scene can be heard once without being read to all day. V does the same from the keyboard, and it can be rebound like the other keys.
 * The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
 
-Settings:
+Steam:
+* Leaderboards for the working week: one per level, and all three in one list. A week earns a point for every working minute it lasted and, if it made it to Friday evening, a bonus for how calmly it ended. Each entry shows how the week ended and on which values, and opens to show it day by day.
+* The end of a week says what it was worth and whether it beat your best.
+
+Menu and settings:
 * The settings are sorted into four tabs - General, Audio, Display and Controls - with room to say what each option does. The key bindings are one of them now, instead of a window of their own.
 * The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
 * The narrator's speed can be set, from slower to twice as fast. The voice keeps its pitch.
@@ -21,19 +27,14 @@ Settings:
 * The team, the inventory, the excuse and the interrupted session carry the same header bar as the other windows.
 * Escape in the menu goes back one level at a time: from a window to its menu page, from a page to the tiles, from the tiles into the game.
 * The key bindings call the answers answers, explain the space bar and the read-aloud key, and list the keys that cannot be moved: Escape, 4 to 6 and Tab. A key button keeps its width while it waits for the new key.
-* Grey text in the intranet, the day and week pickers, the knowledge book and the chronicle is easier to read, and so are the "Use" and "Confirm and flee" buttons.
 
 The day to day:
 * Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
 * Items in the backpack are larger, and their names have room for two lines.
-* Small grey text is easier to read: hints, counters, captions, the start screen's badges and the achievements still locked in the archive, which used to fade out along with their icon. Nothing is smaller than 10 pixels any more.
+* Small grey text is easier to read: hints, counters, captions, the start screen's badges, the intranet, the day and week pickers, the knowledge book, the chronicle, and the achievements still locked in the archive, which used to fade out along with their icon. Nothing is smaller than 10 pixels any more, and white on a light colour - "Use", "Confirm and flee" - sits on a darker one.
 * A locked answer in a scene can be read now, not just the item it is missing. A setting without effect keeps its explanation readable, too.
 * The volume sliders no longer rest half-faded until touched.
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
-
-Steam:
-* Leaderboards for the working week: one per level, and all three in one list. A week earns a point for every working minute it lasted and, if it made it to Friday evening, a bonus for how calmly it ended. Each entry shows how the week ended and on which values, and opens to show it day by day.
-* The end of a week says what it was worth and whether it beat your best.
 
 Bug fixes:
 * Resetting the settings now resets the preset for the working week as well.
