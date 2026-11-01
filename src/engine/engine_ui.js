@@ -1,22 +1,81 @@
 import { KEYS, LEGACY_PARTY_KEYS } from './keys.js';
-import { formatClock, freshArchive } from './engine_state.svelte.js';
+import { formatClock, freshArchive, DEFAULT_KEYBINDS, DEFAULT_SFX_VOLUME, DEFAULT_MUSIC_VOLUME,
+         DEFAULT_NARRATION_VOLUME, DEFAULT_NARRATION_RATE, DEFAULT_NARRATION_KINDS } from './engine_state.svelte.js';
 import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 import { WEEK_DIFFS, dayName } from './engine_week.js';
+import { BOARD_NAMES, LEVELS } from './leaderboard.js';
 import { recipeKey, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
 
+/**
+ * Has the player done anything yet?
+ *
+ * showOverlay() hands the keyboard to the window it opens, which is right for
+ * a window somebody asked for and wrong for one that is simply THERE when the
+ * page loads: the start screen, and the question about an interrupted workday.
+ * Those took the keyboard before a single key had been pressed - and the start
+ * screen's first control is the DE/EN switch in the corner, so the game opened
+ * with a ring around "DE".
+ *
+ * Whether that ring is DRAWN is a browser's judgement call. :focus-visible is
+ * meant to say "the player is navigating by keyboard", and with no input at
+ * all to judge by, Firefox says yes and Chromium says no. So this was visible
+ * on one browser and invisible on the other, which is why it is a rule here
+ * rather than something to check by eye.
+ *
+ * The first Tab still lands on the first control - engine.js traps Tab inside
+ * the open dialog and focuses it when the keyboard is outside. The ring then
+ * means what it is supposed to mean.
+ */
+let playerHasActed = false;
+for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
+    // Optional-call: the test bench's document has no listeners.
+    document.addEventListener?.(ev, () => { playerHasActed = true; }, { once: true, capture: true });
+}
+
+// The hard reset tile on the menu's "Save game" page, in its three states.
+// engine_ui writes the class list whole (dressResetButtons, triggerHardReset),
+// so the three live here once: until the menu became tiles, the timeout that
+// disarms the button wrote a fourth look of its own, a grey bar.
+const HARD_RESET = {
+    idle:  'group w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-colors bg-red-500/10 border-red-500/40 hover:bg-red-500/20 hover:border-red-400',
+    armed: 'group w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-colors bg-red-600/30 border-red-400 animate-pulse',
+    going: 'w-full flex items-center justify-center gap-4 p-4 rounded-xl border bg-red-600 border-red-400 text-white font-bold',
+};
+const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all';
+
 // The windows that can stand over the terminal while a result is on screen -
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
-    'item-confirm-modal', 'keybind-modal', 'save-export-modal', 'save-import-modal',
-    'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
+    'item-confirm-modal', 'save-export-modal', 'save-import-modal',
+    'report-modal', 'global-stats-modal', 'leaderboard-modal', 'inventory-modal', 'team-modal',
     'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
 ];
+
+/**
+ * The windows that INTERRUPT the terminal rather than replace it.
+ *
+ * A mail is not a window the player opened. It drops on a two-second timer in
+ * the middle of a scene and carries a countdown, so the narrator has to get
+ * out of the way - and then hand the line back, because nobody chose to leave
+ * that scene. Everything on WINDOWS_OVER_TERMINAL is the opposite: the player
+ * opened it, which is a decision to stop listening.
+ *
+ * modal-overlay belongs here too, but only while it carries a NOTICE - the
+ * written warning, the rage valve, the ticket jam, H.A.L.G.E.R.D.'s two first
+ * words. The same element also carries the end of the day and the night, and
+ * those end the line instead. Which of the two it is, is decided when the
+ * window OPENS (see interruptsTerminal) and booked in _interruptions: by the
+ * time it closes, dismissModal() has already emptied state.modal, so asking
+ * then would get the answer for a box that is gone - the isEmailOpen trap a
+ * second time.
+ */
+const INTERRUPTS_TERMINAL = ['email-modal'];
 
 /**
  * A blob as base64, a slice at a time.
@@ -88,8 +147,8 @@ export const ui = {
             const textSpan = document.getElementById('text-hard-reset');
             const iconSpan = document.getElementById('icon-hard-reset');
             if (textSpan) textSpan.innerText = t('settings.hardReset.short');
-            if (iconSpan) iconSpan.className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
+            if (iconSpan) iconSpan.className = HARD_RESET_ICON;
+            resetBtn.className = HARD_RESET.idle;
         }
     },
 
@@ -395,12 +454,19 @@ export const ui = {
         }
 
         // Every change of what the terminal shows runs through here, so this
-        // is the one place the phone layout has to follow.
+        // is the one place the phone layout has to follow - and the one place
+        // the narrator has to. `speak` carries the sentence to read, and its
+        // absence is how every other screen stops the voice: idle, morning,
+        // boot. See engine_voice.narrate().
         this.showTerminal();
+        this.narrate(extra?.speak ?? null, extra?.mode === 'morning' ? 'morning' : 'events');
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
-    IDLE_CLASS: 'flex-1 flex flex-col justify-center items-center text-center opacity-40',
+    // 60, not 40: at 40 the idle screen's one instruction - "choose an action
+    // below", the first line a new player reads in the terminal - measured a
+    // contrast of 3.3. At 60 it passes and still reads as standby.
+    IDLE_CLASS: 'flex-1 flex flex-col justify-center items-center text-center opacity-60',
 
     // Back to the resting screen. `variant` picks between the plain system
     // prompt and the H.A.L.G.E.R.D. one shown during the tutorial.
@@ -418,7 +484,8 @@ export const ui = {
     setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'event',
-            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null }
+            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null },
+            speak: text
         });
     },
 
@@ -438,18 +505,27 @@ export const ui = {
     // showed minutes and the three bars but never this, although the pile is
     // the most common way to lose: 82 options in the stock cost an hour or
     // more, which is two tickets, and the longest costs eight.
-    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0) {
+    // `speak` is the same outcome as a SENTENCE, for the narrator - `text` above
+    // it is a recipe, and a recipe has no words until a component resolves it.
+    // Left out where the line comes from the dictionary rather than from the
+    // tree: an interface string has no recording, and asking for one would be
+    // a request for a file that was never made.
+    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0, speak = null) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
-            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets }
+            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets },
+            speak
         });
     },
 
     // Shows the morning mood before the day starts.
+    // The mood's text is read like a scene; the conditions under it are not,
+    // they carry the morning's price as a number.
     setTerminalMorning: function(title, text, conditions) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'morning',
-            morning: { title, text, conditions }
+            morning: { title, text, conditions },
+            speak: text
         });
     },
 
@@ -613,6 +689,22 @@ export const ui = {
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
+        // The narrator stops when something covers what it is reading. Only on
+        // a window that was CLOSED, and only one from the list - a dialog shown
+        // over itself has covered nothing new, and the startup windows stand
+        // over a terminal that is not saying anything yet.
+        if (!wasOpen && WINDOWS_OVER_TERMINAL.includes(el.id)) this.hushNarration();
+        if (this.interruptsTerminal(el)) {
+            if (!wasOpen) {
+                (this._interruptions ??= new Set()).add(el.id);
+                this.pauseNarration();
+            }
+        } else if (el.id === 'modal-overlay') {
+            // The end of the day, or the night: the line is over - and so is
+            // a notice this box may have just replaced.
+            this._interruptions?.delete(el.id);
+            this.hushNarration();
+        }
 
         // The keyboard follows the window. aria-modal tells a SCREEN READER to
         // ignore what is behind it, but the tab order went on walking through
@@ -632,6 +724,7 @@ export const ui = {
         // offsetParent still reads null.
         setTimeout(() => {
             if (el.classList.contains('hidden')) return;    // closed again already
+            if (!playerHasActed) return;                    // see playerHasActed
             const stops = this.focusablesIn(el);
             // The control the CONFIRM KEY would press, where the window names
             // one - otherwise the ring sits on one button while Space presses
@@ -674,6 +767,9 @@ export const ui = {
         if (wasOpen) {
             const back = this._focusReturn.pop();
             if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
+            // The narrator gets its line back - see INTERRUPTS_TERMINAL. A
+            // no-op unless this window is one that took it.
+            if (this._interruptions?.delete(el.id)) this.resumeNarration();
         }
         return el;
     },
@@ -691,6 +787,18 @@ export const ui = {
      *
      * One encoding, asked in one place.
      */
+    /**
+     * Does this window, as it is being shown, interrupt the terminal rather
+     * than end what it was saying? See INTERRUPTS_TERMINAL for why the answer
+     * is taken now and not when the window closes.
+     */
+    interruptsTerminal: function(el) {
+        if (INTERRUPTS_TERMINAL.includes(el.id)) return true;
+        if (el.id !== 'modal-overlay') return false;
+        const m = this.state.modal;
+        return !!m?.open && !m.isEnd && !m.isNight;
+    },
+
     isOverlayOpen: function(target) {
         const el = typeof target === 'string' ? document.getElementById(target) : target;
         return !!el && !el.classList.contains('hidden');
@@ -948,6 +1056,7 @@ export const ui = {
         // makes it true by construction. A failed fetch still opens the book:
         // empty pages beat a dead button.
         try { await ensure('lore'); } catch { /* the book opens with what there is */ }
+        this.hushNarration();
         this.state.loreOpen = true;
         this.state.loreRead = true;          // for tonight's diary
         this.lockScroll('lore');
@@ -982,6 +1091,7 @@ export const ui = {
     openIntranet: async function() {
         await ensure('intranet');
         this.buildIntranet();
+        this.hushNarration();
         this.state.intranetOpen = true;
         this.state.intranetVisited = true;   // for tonight's diary
         this.lockScroll('intranet');
@@ -1410,7 +1520,8 @@ export const ui = {
     // dialog simply never opened.
     ui: {
         // Opens the export dialog
-        openExportModal: function() {
+        openExportModal: function(from = null) {
+            engine.state.menuReturn = from;
             const modal = document.getElementById('save-export-modal');
             const area = document.getElementById('export-area');
             const msg = document.getElementById('export-msg');
@@ -1427,7 +1538,8 @@ export const ui = {
         },
 
         // Opens the import dialog
-        openImportModal: function() {
+        openImportModal: function(from = null) {
+            engine.state.menuReturn = from;
             const modal = document.getElementById('save-import-modal');
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
@@ -1443,6 +1555,7 @@ export const ui = {
         closeModals: function() {
             engine.hideOverlay('save-export-modal');
             engine.hideOverlay('save-import-modal');
+            engine.backToMenu();
         },
 
         // Kopier-Funktion
@@ -1611,12 +1724,14 @@ export const ui = {
         platform.fullscreen();
     },
 
-    // Contents are rendered by components/GlobalStatsView.svelte.
-    openGlobalStats: function() {
+    // Contents are rendered by components/GlobalStatsView.svelte. `from` is
+    // the menu page it was opened from, if any - see backToMenu().
+    openGlobalStats: function(from = null) {
         this.closeSettings();
 
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
+        this.state.menuReturn = from;
         this.showOverlay(modal);
 
         this.state.globalStats = { data: null, loading: true, failed: false };
@@ -1629,6 +1744,69 @@ export const ui = {
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
         this.hideOverlay(modal);
+        this.backToMenu();
+    },
+
+    /**
+     * A window the menu opened leads back to the menu when it closes.
+     *
+     * The statistics, the leaderboard, the save dialogs and the feedback form
+     * are reached from a menu tile or page, and closing one dropped the
+     * player into the game - one level too far, with the menu gone. Each of
+     * them records the page it came from in state.menuReturn when it opens
+     * (null when it was opened from anywhere else: the end screen, the start
+     * screen), and its close calls this. Escape goes the same way, a level up.
+     */
+    backToMenu: function() {
+        const page = this.state.menuReturn;
+        this.state.menuReturn = null;
+        if (!page) return;
+        this.openSettings();
+        if (page !== 'menu-main-view') this.showMenuPage(page);
+    },
+
+    // The week leaderboards, desktop only. Contents are rendered by
+    // components/LeaderboardView.svelte. Opened from the menu and from the
+    // end screen of a week, which it stands over.
+    openLeaderboard: function(from = null) {
+        this.closeSettings();
+        const modal = document.getElementById('leaderboard-modal');
+        if (!modal) return;
+        this.state.menuReturn = from;
+        this.showOverlay(modal);
+        this.state.leaderboardOpens++;
+        this.loadLeaderboard(this.state.leaderboard.scope ?? 'global');
+    },
+
+    /**
+     * Fetches the three boards for one scope ('global' or 'friends').
+     *
+     * One after the other, not at once: each download is a Steam call result
+     * the library polls for, and three in flight gain nothing but contention.
+     * A newer request - the player flips the scope while this one runs -
+     * takes over, and the older one drops its answer instead of painting it
+     * over the newer.
+     */
+    loadLeaderboard: async function(scope) {
+        const token = (this._leaderboardToken = {});
+        this.state.leaderboard = { scope, boards: null, mine: null, loading: true, failed: false };
+        const boards = {}, mine = {};
+        let reached = false;
+        for (const level of LEVELS) {
+            const res = await platform.leaderboardEntries(BOARD_NAMES[level], scope);
+            if (this._leaderboardToken !== token) return;
+            if (res) reached = true;
+            boards[level] = res?.entries ?? [];
+            mine[level] = res?.mine ?? null;
+        }
+        this.state.leaderboard = { scope, boards, mine, loading: false, failed: !reached };
+    },
+
+    closeLeaderboard: function() {
+        const modal = document.getElementById('leaderboard-modal');
+        if (!modal) return;
+        this.hideOverlay(modal);
+        this.backToMenu();
     },
 
     triggerHardReset: function(btn) {
@@ -1670,7 +1848,7 @@ export const ui = {
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = t('settings.hardReset.restarting');
             
-            btn.className = "w-full text-left px-4 py-3 bg-red-600 border border-red-500 rounded-lg text-white text-sm font-bold flex justify-center items-center mt-2 shadow-md";
+            btn.className = HARD_RESET.going;
             
             setTimeout(() => {
                 Promise.race([pushed, new Promise(r => setTimeout(r, 4000))])
@@ -1683,16 +1861,16 @@ export const ui = {
             const iconSpan = btn.querySelector('#icon-hard-reset');
             
             textSpan.innerText = t('settings.hardReset.confirm');
-            iconSpan.className = "shrink-0"; 
-            
-            btn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/50 border border-red-500 rounded-lg transition-all flex items-center gap-3 animate-pulse shadow-xs";
+            iconSpan.className = "shrink-0";
+
+            btn.className = HARD_RESET.armed;
             
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
                     btn.dataset.armed = "false";
                     textSpan.innerText = t('settings.hardReset.short');
-                    iconSpan.className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-                    btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
+                    iconSpan.className = HARD_RESET_ICON;
+                    btn.className = HARD_RESET.idle;
                 }
             }, 4000);
         }
@@ -1722,20 +1900,63 @@ export const ui = {
 
         this.dressResetButtons();
 
-        const mainView = document.getElementById('menu-main-view');
-        const settingsView = document.getElementById('menu-settings-view');
-        const title = document.getElementById('settings-title');
-        
-        if (mainView && settingsView && title) {
-            mainView.classList.remove('hidden');
-            settingsView.classList.add('hidden');
-            title.innerText = t('settings.title');
+        // The first tile goes back to where the menu was opened from: the
+        // desk during a day, the start screen before one. "Back to work"
+        // over the start screen would promise a desk that is not there.
+        // The marks follow the words, so a language switch keeps them.
+        // i18n-uses: menu.resume, menu.resume.sub, menu.close, menu.close.sub
+        const startup = this.isStartupOverlayOpen();
+        for (const [id, key] of [['text-menu-resume', startup ? 'menu.close' : 'menu.resume'],
+                                 ['sub-menu-resume', startup ? 'menu.close.sub' : 'menu.resume.sub']]) {
+            const el = document.getElementById(id);
+            if (el) { el.dataset.i18n = key; el.innerText = t(key); }
         }
 
+        // Always back to the tiles: a menu closed on a sub-page opened there
+        // again, with a back button where the player expected the menu.
+        this.showMenuPage('menu-main-view', false);
         this.showOverlay(modal);
+    },
+
+    // The menu's pages: the tiles, the settings, and the two behind "Save
+    // game" and "Community". One stands at a time, and the title names it.
+    // The title's mark follows the page, because applyStaticStrings()
+    // rewrites every data-i18n on a language switch - a fixed key there
+    // would rename whichever page was open.
+    // i18n-uses: menu.title, settings.title, menu.save, menu.community
+    MENU_PAGES: {
+        'menu-main-view': 'menu.title',
+        'menu-settings-view': 'settings.title',
+        'menu-save-view': 'menu.save',
+        'menu-community-view': 'menu.community',
+    },
+
+    /** Which menu page stands, or null while the menu is shut. */
+    menuPage: function() {
+        if (!this.isOverlayOpen('settings-modal')) return null;
+        return Object.keys(this.MENU_PAGES).find(id => this.isOverlayOpen(id)) ?? null;
+    },
+
+    showMenuPage: function(id, focus = true) {
+        if (!this.MENU_PAGES[id]) return;
+        // Binding mode listens to the whole document; leaving the key list
+        // has to end it, whichever page the player goes to.
+        this.cancelBindingKey();
+        for (const page of Object.keys(this.MENU_PAGES)) {
+            document.getElementById(page)?.classList.toggle('hidden', page !== id);
+        }
+        const title = document.getElementById('settings-title');
+        if (title) {
+            title.dataset.i18n = this.MENU_PAGES[id];
+            title.innerText = t(this.MENU_PAGES[id]);
+        }
+        // The keyboard follows to the page it is now on, the way it follows a
+        // window into showOverlay(): the button it pressed has just vanished.
+        if (focus) document.getElementById(id)?.querySelector('button')?.focus();
     },
     
     closeSettings: function() {
+        this.cancelBindingKey();
         const modal = document.getElementById('settings-modal');
         this.hideOverlay(modal);
     },
@@ -1827,8 +2048,10 @@ export const ui = {
         this.toggleFastChat(false);
         this.toggleScanlines(true);
 
-        // Gameplay
+        // Gameplay. The week's preset was on the page and not in here until
+        // the settings were rebuilt into tabs - a reset left it standing.
         this.saveDefaultDifficulty('ask');
+        this.saveDefaultWeekDifficulty('ask');
         this.toggleOneClick(false);
         this.toggleAutoChart(false);
 
@@ -1836,12 +2059,19 @@ export const ui = {
         this.toggleBlindStats(false);
         this.toggleBlindTickets(false);
 
-        // Audio
+        // Audio - the levels a new player starts with, from one place. The
+        // music was reset to 0.2 here after its default had come down to 0.15,
+        // and the narrator was not reset at all.
         this.toggleAudio(true);
-        this.setVolume(0.5);
+        this.setVolume(DEFAULT_SFX_VOLUME);
         this.toggleMusic(true);
-        this.setMusicVolume(0.2);
+        this.setMusicVolume(DEFAULT_MUSIC_VOLUME);
         this.changeMusicStyle('radio');
+        this.state.narrationEnabled = true;
+        try { localStorage.setItem(KEYS.narrationEnabled, true); } catch { /* the session keeps it */ }
+        this.setNarrationVolume(DEFAULT_NARRATION_VOLUME);
+        this.setNarrationRate(DEFAULT_NARRATION_RATE);
+        for (const kind of Object.keys(DEFAULT_NARRATION_KINDS)) this.setNarrationKind(kind, DEFAULT_NARRATION_KINDS[kind]);
 
         // Keyboard: bindings and the key cap hints
         this.resetKeybinds();
@@ -2159,18 +2389,22 @@ export const ui = {
         this.saveSystem();
     },
 
-    openKeybinds: function() {
-        this.showOverlay('keybind-modal');
+    /**
+     * Ends a half-done key binding. Binding mode listens to the whole
+     * document, so leaving it running when the key list goes out of sight -
+     * another tab, back to the menu, the menu closed - would swallow the next
+     * key the player presses anywhere. The key bindings were a window of their
+     * own until the settings became tabs, and closing that window did this.
+     */
+    cancelBindingKey: function() {
+        this.state.isBindingKey = false;
+        this.state.actionToBind = null;
     },
 
-    closeKeybinds: function() {
-        this.state.isBindingKey = false;
-        this.hideOverlay('keybind-modal');
-    },
     
     resetKeybinds: function() {
-        // Restore the defaults
-        this.state.keyBinds = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+        // Restore the defaults - the same object a new player starts with.
+        this.state.keyBinds = { ...DEFAULT_KEYBINDS };
         this.state.isBindingKey = false;
         this.state.actionToBind = null;
         
@@ -2190,14 +2424,16 @@ export const ui = {
     // --- RENDER THE VISUAL HOTKEYS ---
     // --- REPORT SYSTEM ---
 
-    openReportModal: function() {
+    openReportModal: function(from = null) {
         const modal = document.getElementById('report-modal');
+        this.state.menuReturn = from;
         this.showOverlay(modal);
     },
 
     closeReportModal: function() {
         const modal = document.getElementById('report-modal');
         this.hideOverlay(modal);
+        this.backToMenu();
     },
 
     sendReportMail: function() {

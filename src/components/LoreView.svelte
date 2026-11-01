@@ -133,7 +133,7 @@
                                      class="w-4 h-4 inline-block align-[-0.2em] mr-1.5 select-none"
                                      onerror={(e) => e.currentTarget.outerHTML = '🖊️'}> {t('lore.add')}
                             </button>
-                            <p class="text-[0.6875rem] text-[#8d6e63] italic mt-2">
+                            <p class="text-[0.6875rem] text-[#6d4c41] italic mt-2">
                                 {t('lore.addHint')}
                             </p>
                         {/if}

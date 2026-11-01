@@ -12,8 +12,13 @@
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
     import { renderRecipe } from '../engine/recipe.js';
+    import ReadButton from './ReadButton.svelte';
 
     const view = $derived(state.terminal.result ?? {});
+
+    // At the end of the pills, the result's counterpart to the excuse row:
+    // the same corner of the card, above the continue button.
+    const canRead = $derived(engine.canReplayNarration());
 
     // Time is only worth a pill when any actually passed. Tickets likewise -
     // and they are the pill this card was missing: the pile is the most
@@ -59,13 +64,16 @@
         <p class="italic text-slate-300 text-lg leading-relaxed font-serif break-words hyphens-auto">{#each parts as part}{#if part.href}<a href={part.href} target="_blank" rel="noopener noreferrer" class="text-blue-400 underline hover:text-blue-300 not-italic">{part.text}</a>{:else}{part.text}{/if}{/each}</p>
     </div>
 
-    <div class="flex flex-wrap gap-2 mt-4">
+    <!-- items-center: the button is a little taller than a pill, and the
+         default stretch would have grown every pill to its height. -->
+    <div class="flex flex-wrap items-center gap-2 mt-4">
         {#each pills as pill (pill.label)}
             <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-bold bg-slate-950/70 border border-slate-700">
                 <span class={pill.tone}>{pill.label}</span>
                 <span class="text-white font-mono ml-0.5">{sign(pill.value)}</span>
             </span>
         {/each}
+        {#if canRead}<span class="ml-auto"><ReadButton /></span>{/if}
     </div>
 
     <button data-continue onclick={() => engine.runAction({ fn: view.action })}

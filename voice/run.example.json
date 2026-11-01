@@ -1,0 +1,9 @@
+{
+    "lang": "xx",
+    "voiceId": "the provider's voice id - not the display name",
+    "voiceName": "what it is called, for the log line only",
+    "modelId": "run: node tools/make-audio.mjs --models",
+    "outputFormat": "mp3_44100_128",
+    "voiceSettings": null,
+    "opusBitrate": "24k"
+}

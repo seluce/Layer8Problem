@@ -108,13 +108,13 @@
                     <h3 class="font-bold mb-3 text-white border-b border-slate-700 pb-2">{page.sectionMaster}</h3>
                     <ul class="space-y-3 text-sm text-slate-300">
                         {#each rec.master as row, i (row.label)}
-                            <li><span class="block text-xs text-slate-500 uppercase {i > 0 ? 'mt-2' : ''}">{row.label}</span>
+                            <li><span class="block text-xs text-slate-400 uppercase {i > 0 ? 'mt-2' : ''}">{row.label}</span>
                             {#if row.lines}
                                 {#each row.lines as line, j (j)}{line}<br>{/each}
                             {:else}
                                 <span class="{VALUE_TONE[row.tone] ?? ''} {row.strong ? 'font-bold text-slate-200' : ''}">{row.value}</span><br>
                             {/if}
-                            {#if row.note}<span class="text-[0.625rem] text-slate-500 leading-relaxed">{row.note}</span>{/if}</li>
+                            {#if row.note}<span class="text-[0.625rem] text-slate-400 leading-relaxed">{row.note}</span>{/if}</li>
                         {/each}
                     </ul>
                 </div>
@@ -131,7 +131,7 @@
                             <details class="group bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
                                 <summary class="px-4 py-3 cursor-pointer font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex justify-between items-center">
                                     <span class="flex items-center gap-2"><span class="text-xl">{doc.icon}</span> {doc.name}</span>
-                                    <span class="text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+                                    <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
                                 </summary>
                                 <div class="p-4 border-t border-slate-700 text-sm text-slate-300 space-y-4 bg-slate-950/50">
                                     {#if doc.intro}
@@ -197,12 +197,12 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label for="hr-user" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{page.login.userLabel}</label>
+                        <label for="hr-user" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{page.login.userLabel}</label>
                         <input type="text" id="hr-user" bind:value={user} onkeydown={onKey} autocomplete="off"
                                class="w-full bg-slate-900 border border-slate-600 rounded-sm p-3 text-slate-200 outline-hidden focus:border-purple-500 transition-colors">
                     </div>
                     <div>
-                        <label for="hr-pass" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{page.login.passLabel}</label>
+                        <label for="hr-pass" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{page.login.passLabel}</label>
                         <input type="password" id="hr-pass" bind:value={pass} onkeydown={onKey} autocomplete="off"
                                class="w-full bg-slate-900 border border-slate-600 rounded-sm p-3 text-slate-200 outline-hidden focus:border-purple-500 transition-colors">
                     </div>
@@ -212,7 +212,7 @@
                 </div>
 
                 {#if data?.policy}
-                    <p class="mt-6 pt-4 border-t border-slate-700 text-[0.625rem] text-slate-500 leading-relaxed">{data.policy}</p>
+                    <p class="mt-6 pt-4 border-t border-slate-700 text-[0.625rem] text-slate-400 leading-relaxed">{data.policy}</p>
                 {/if}
             </div>
         </div>

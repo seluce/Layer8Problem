@@ -13,6 +13,7 @@
 <script>
     import { state } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
+    import ReadButton from './ReadButton.svelte';
 
     import { t, tf, tree } from '../i18n/i18n.svelte.js';
     // i18n-uses: event.type.calls, event.type.boss, event.type.rep
@@ -71,6 +72,11 @@
         && state.excusesLeft > 0
         && !engine.lesson?.isActive
     );
+
+    // The read-aloud button shares the excuse's row. The row stands whenever
+    // either of them does: a boss fight has no excuse and a scene can still
+    // be read out, so the button alone keeps the divider above it.
+    const canRead = $derived(engine.canReplayNarration());
 
     // Hotkeys 1-3 are rebindable, 4-6 are fixed (party stations).
     const hotkey = (index) => {
@@ -135,7 +141,7 @@
         })
     );
 
-    const LOCKED_CLASS = 'w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70';
+    const LOCKED_CLASS = 'w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-400 cursor-not-allowed flex justify-between items-center';
     const OPEN_CLASS   = 'w-full text-left p-2.5 rounded-sm border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group';
 </script>
 
@@ -173,7 +179,15 @@
     {/if}
 
     <div class="flex gap-4 md:gap-6 items-center mb-8">
-        <div class="flex-1 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
+        <!-- min-w-0 is load-bearing. A flex child keeps min-width:auto, so it
+             refuses to shrink below its longest unbreakable word - and
+             overflow-wrap:break-word does not lower that minimum, it only
+             breaks once the box is already too narrow. The coffee machine's
+             'ERROR 418.666.KICK_DETECTED...' is 84 characters, which pushed
+             this box to 887px inside a 275px parent on a phone. body carries
+             overflow-hidden, so nothing scrolled: half the sentence was
+             simply gone, at 0 errors and 0 warnings. -->
+        <div class="flex-1 min-w-0 bg-black/40 p-5 rounded-lg border-l-4 {style.border} shadow-inner">
             <p class="italic text-slate-300 text-lg leading-relaxed font-serif break-words hyphens-auto">{#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}</p>
         </div>
 
@@ -195,14 +209,17 @@
 
     <div class="space-y-2.5">
         {#each options as o (o.index)}
-            <button class={o.locked ? LOCKED_CLASS : OPEN_CLASS}
+            <!-- data-option is what the number keys look for (src/engine.js).
+                 Without it they took every button in the terminal, and with two
+                 options the 3 opened the excuse. -->
+            <button data-option class={o.locked ? LOCKED_CLASS : OPEN_CLASS}
                     disabled={!!o.locked}
                     onclick={() => engine.chooseOption(o.opt, o.index)}>
                 <div class="flex items-center flex-1 mr-2 min-w-0">
                     <span class="mr-3 text-xl shrink-0">
                         {#if o.locked}
                             <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
-                                 width="20" height="20" class="w-6 h-6 select-none"
+                                 width="20" height="20" class="w-6 h-6 select-none opacity-70"
                                  onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
                         {:else if o.opt.checkPool}
                             <!-- The party hub: each station shows its own icon instead of
@@ -219,7 +236,7 @@
                                  onerror={(e) => e.currentTarget.outerHTML = `<span class="${style.color}">➤</span>`}>
                         {:else}<span class="{style.color} group-hover:text-white transition-colors">➤</span>{/if}
                     </span>
-                    <span class="text-left wrap-break-word py-1">
+                    <span class="text-left wrap-break-word min-w-0 py-1">
                         {o.opt.t}
                         {#if o.locked}<span class="text-sm text-red-500 font-normal ml-2">({o.locked})</span>{/if}
                     </span>
@@ -240,12 +257,15 @@
             </button>
         {/each}
 
-        {#if showExcuse}
-            <div class="mt-5 w-full flex justify-end border-t border-slate-800 pt-4">
-                <button onclick={() => engine.openExcuseModal()}
-                        class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all flex items-center gap-2">
-                    <span>{tf('event.useExcuse', { left: state.excusesLeft })}</span>
-                </button>
+        {#if showExcuse || canRead}
+            <div class="mt-5 w-full flex justify-end items-center gap-2 border-t border-slate-800 pt-4">
+                {#if showExcuse}
+                    <button onclick={() => engine.openExcuseModal()}
+                            class="px-3 py-2 bg-slate-800/80 border border-slate-700 text-xs font-bold text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all flex items-center gap-2">
+                        <span>{tf('event.useExcuse', { left: state.excusesLeft })}</span>
+                    </button>
+                {/if}
+                {#if canRead}<ReadButton />{/if}
             </div>
         {/if}
     </div>

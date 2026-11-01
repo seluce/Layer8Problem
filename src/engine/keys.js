@@ -66,6 +66,10 @@ export const KEYS = {
     musicEnabled:  'layer8_music',
     musicVolume:   'layer8_music_volume',
     musicStyle:    'layer8_music_style',
+    narrationEnabled: 'layer8_narration',
+    narrationVolume:  'layer8_narration_volume',
+    narrationKinds:   'layer8_narration_kinds',
+    narrationRate:    'layer8_narration_rate',
 };
 
 /**

@@ -2,7 +2,7 @@ import { DB, ensure } from '../data.js';
 import { t } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
 import { PLAYER_CHAR, charDisplayName } from './chars.js';
-import { findEventById, itemNameValue } from './recipe.js';
+import { findEventById, itemNameValue, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
 /**
@@ -131,6 +131,10 @@ export const events = {
         if (this.state.modal?.open) return false;
         try { localStorage.setItem(key, 'true'); } catch { /* no storage, no second chance */ }
         this.showModal(t(titleKey), t(textKey), false, 'halgerd', then);
+        // narrateWindow, not narrate: showModal has just opened a window over
+        // the terminal, and narrate() refuses to speak behind one. This text
+        // belongs to that window. See engine_voice.narrateWindow().
+        this.narrateWindow(t(textKey));
         return true;
     },
 
@@ -250,7 +254,26 @@ export const events = {
         if (list.length < 2 || Math.random() >= this.UNSEEN_CHANCE) return list;
         const seen = new Set(this.state.archive.seenEvents ?? []);
         const fresh = list.filter(ev => !seen.has(ev.id));
-        return fresh.length ? fresh : list;
+        if (fresh.length) return fresh;
+        // Second stage: once the drawn list holds nothing new, lean towards
+        // the scenes that still have a door this career never opened. The
+        // first stage alone spent its draws on scenes already read to the
+        // end - measured over 25-day careers, 18.6% of all draws. With this
+        // it is 13.2%, and the share of draws landing on a known scene with
+        // something left rises from 33.9% to 39.0%, at the same coverage.
+        //
+        // NOT a replacement for the first stage. Preferring open doors
+        // outright was tried and is worse: a player who keeps picking the
+        // safe answer never finishes a scene, so it would be preferred for
+        // good - 441 events seen against 547, the same scene drawn ten times
+        // over. The order is what makes it work.
+        //
+        // Invisible for roughly the first two weeks of a career, where the
+        // first stage still finds something every time; from there it costs
+        // about 2% on minutes, anger and radar, measured against a noise
+        // band of 0.1%.
+        const open = list.filter(ev => this.openDoorsLeft(ev));
+        return open.length ? open : list;
     },
 
     /**
@@ -313,7 +336,7 @@ export const events = {
         if (isPermanent && alreadyHas) return false;   // still discarded
 
         if (!isPermanent && normalCount >= 10) {
-            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
+            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-400 italic");
             return false;
         }
 
@@ -428,6 +451,61 @@ export const events = {
         const list = kind === 'flag' ? this.state.archive.seenFlags : this.state.archive.seenEvents;
         if (!list || list.includes(value)) return;
         list.push(value);
+    },
+
+    /**
+     * The key a scene's doors are recorded under. A node inside a chain has
+     * no id of its own, so it is addressed through the event carrying it.
+     */
+    optionKey: function(eventId, node) {
+        return node ? `${eventId}:${node}` : eventId;
+    },
+
+    // Above this bit sits the option count, below it the taken options.
+    OPTION_COUNT_SHIFT: 16,
+
+    /** Writes down which door was taken. See archive.seenOptions. */
+    recordOption: function(eventId, node, index, count) {
+        if (!eventId || index < 0 || index >= count) return;
+        if (count > this.OPTION_COUNT_SHIFT) return;   // would overflow the mask
+        const archive = this.state.archive;
+        const map = archive.seenOptions ?? (archive.seenOptions = {});
+        const key = this.optionKey(eventId, node);
+        const prev = map[key] ?? 0;
+        // A different count means the scene was rewritten since: the old
+        // bits point at doors that have moved, so they go rather than lie.
+        const mask = (prev >>> this.OPTION_COUNT_SHIFT) === count
+            ? prev & ((1 << this.OPTION_COUNT_SHIFT) - 1)
+            : 0;
+        map[key] = (mask | (1 << index)) | (count << this.OPTION_COUNT_SHIFT);
+    },
+
+    /**
+     * Has this scene a door the career has never opened?
+     *
+     * True for a scene never shown at all, which makes this a superset of
+     * the "never seen" test above it. A chain counts as open while ANY of
+     * its nodes has an untaken option - which node the player will reach is
+     * not knowable at draw time. A scene without options has no door and is
+     * spent the moment it has been read once.
+     */
+    openDoorsLeft: function(ev) {
+        const map = this.state.archive.seenOptions ?? {};
+        const shift = this.OPTION_COUNT_SHIFT;
+        const open = (key, opts) => {
+            const n = opts?.length ?? 0;
+            if (!n || n > shift) return false;
+            const v = map[key] ?? 0;
+            if ((v >>> shift) !== n) return true;     // never written, or rewritten
+            return (v & ((1 << shift) - 1)) !== (1 << n) - 1;
+        };
+        if (ev.nodes && ev.startNode) {
+            for (const [name, node] of Object.entries(ev.nodes)) {
+                if (open(this.optionKey(ev.id, name), node?.opts)) return true;
+            }
+            return false;
+        }
+        return open(this.optionKey(ev.id, null), ev.opts);
     },
 
     applyPassiveItems: function(charName) {
@@ -592,7 +670,7 @@ export const events = {
                 const rRef = optRef('r');
                 if (opt.ignoreEmail) {
                     setTimeout(() => this.log(rRef ?? { msg: String(opt.r) },
-                                              "text-slate-500 italic"), 500);
+                                              "text-slate-400 italic"), 500);
                 } else {
                     setTimeout(() => this.log({ k: 'log.email.reply', v: { text: rRef ?? opt.r } },
                                               "text-slate-400 italic"), 500);
@@ -1025,8 +1103,9 @@ export const events = {
      * end in the same pure setTerminalEvent() the first render used.
      *
      * What it no longer has to touch, because those surfaces now follow on
-     * their own: the result screen, the morning's status line, the log and the
-     * bubbles of a phone chat. All four used to be frozen here on the argument
+     * their own: the result screen (its TEXT - the voice over it is a separate
+     * matter, see the result branch below), the morning's status line, the log
+     * and the bubbles of a phone chat. All four used to be frozen here on the argument
      * that a record should keep the language it was written in - and the
      * argument did not survive contact with the running game. The log is the
      * account of everything the player has done, half of it in the other
@@ -1060,6 +1139,41 @@ export const events = {
         if (term.mode === 'morning' && this.state.lastMoodId) {
             const mood = (DB.moods ?? []).find(m => m.id === this.state.lastMoodId);
             if (mood) this.setTerminalMorning(mood.title, mood.text, term.morning?.conditions ?? '');
+            return;
+        }
+
+        /*
+         * The result screen: the text follows on its own, the VOICE cannot.
+         *
+         * A result is drawn from a recipe, so renderRecipe() re-reads it out
+         * of the new tree on the next repaint and the sentence on screen
+         * changes language without anything here. The recording does not -
+         * engine.js has just hushed the German line, and nothing would start
+         * the English one, so a switch on a result screen used to mean
+         * silence until the next click.
+         *
+         * Narrated from the recipe rather than from a stored sentence, which
+         * is what makes it exact: what renderRecipe() answers IS what the
+         * player is reading, and the hash of that is the recording. A recipe
+         * that no longer resolves gives null and stays silent, same as the
+         * screen's own fallback.
+         *
+         * A REFERENCE and nothing else, which is narrower than it first looks
+         * and was measured rather than reasoned:
+         *
+         *   { ref }  the normal option result. It points into the tree, so it
+         *            re-resolves and both the text and the recording follow.
+         *   { k }    a dictionary line. Interface rather than written prose,
+         *            never recorded - the same exclusion the first paint makes
+         *            (resolveTerminal hands over `recipe?.k ? null : res`).
+         *   { msg }  a sentence composed at runtime, for a result that could
+         *            not be located. It is FROZEN: the screen keeps the
+         *            language it was written in. Narrating it would ask for
+         *            the old language's checksum under the new language's
+         *            folder - a 404 every time.
+         */
+        if (term.mode === 'result') {
+            if (term.result?.text?.ref) this.narrate(renderRecipe(term.result.text));
             return;
         }
 
@@ -1142,6 +1256,14 @@ export const events = {
     chooseOption: function(opt, index = -1) {
         const ev = this.state.terminal.event ?? {};
         const located = index > -1 && !!this.state.currentEventId;
+        // Which door was taken, for the draw's second stage. terminal.event
+        // carries the options actually on screen, a chain node's as much as
+        // a plain event's, so one line covers both.
+        if (located) {
+            this.recordOption(this.state.currentEventId,
+                              ev.isChain ? this.state.currentChainNode : null,
+                              index, (ev.opts ?? []).length);
+        }
         // An action's arguments can end up on screen - the gala's ending is
         // named in them - so the action is told WHERE they stand, not just what
         // they said. Same shape as the option reference below it.
@@ -1371,7 +1493,7 @@ export const events = {
             if (this.state.time < LUNCH_UNTIL) {
                 triggerLunch = true;
             } else {
-                this.log({ k: 'log.lunchMissed' }, "text-slate-500");
+                this.log({ k: 'log.lunchMissed' }, "text-slate-400");
             }
         }
 
@@ -1492,7 +1614,8 @@ export const events = {
 
         this.setTerminalResult(recipe ?? { msg: String(res ?? '') },
                                m, l, finalA, finalB, btnAction, btnKey, btnColor,
-                               this.state.tickets - ticketsBefore);
+                               this.state.tickets - ticketsBefore,
+                               recipe?.k ? null : res);
     },
 
     // async: lunch is its own pool and loads on demand like the others.
@@ -1759,7 +1882,7 @@ export const events = {
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         
         if (pool.length === 0) {
-            this.log({ k: 'party.noStation' }, "text-slate-500");
+            this.log({ k: 'party.noStation' }, "text-slate-400");
             return;
         }
         
@@ -1845,6 +1968,7 @@ export const events = {
             weekDay = this.state.week.dayIndex;
             this.recordWeekResult('survived', 5);
             balance = this.buildWeekBalance({ isWin: true });
+            this.submitWeekScore(true, 'gala');
             this.endWeek();
         }
 

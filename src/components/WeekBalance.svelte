@@ -51,7 +51,7 @@
              Laziness/Aggro/Boss to L/A/B. This is the one place where the
              letters have to agree with the rows above, and now they sit in the
              same file as those rows. -->
-        <span class="text-[0.5625rem] text-slate-600">{t('week.summary.legend')}</span>
+        <span class="text-[0.625rem] text-slate-400">{t('week.summary.legend')}</span>
     </div>
 
     {#each balance.rows ?? [] as row (row.day)}

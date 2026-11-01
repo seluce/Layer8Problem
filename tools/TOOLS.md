@@ -16,6 +16,10 @@ the repository root.
 | Prose report | `node tools/report-prose.mjs [pool …] [--lang=en]` | after every text wave |
 | Day simulator | `npm run sim [n] [--lang=en]` | before every balance decision (day) |
 | Week simulator | `npm run sim:week [n] [--lang=en]` | before every balance decision (week) |
+| Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
+| Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
+| Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
+| Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; restores `public/audio/` from `docs/` so a build cannot drop it |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -285,10 +289,250 @@ in `data_special.js`.
 **Always compare against a fresh baseline run**, not against memory — even 300
 runs per cell fluctuate by several percentage points.
 
-## 5. `npm test` — the four test suites, in both languages
+## 5. `simulate-coverage.mjs` — what a career gets to see
 
 ```
-npm test        # 16 / 150 / 20 / 39, then the same four again with --lang=en
+npm run sim:coverage                      # 25 days, 200 careers, the live rule
+npm run sim:coverage 50 -- --runs=400
+npm run sim:coverage -- --compare         # the live rule against three others
+npm run sim:coverage -- --lang=en
+```
+
+The other two simulators answer whether a day can be survived. This one
+answers how much of what is WRITTEN a player ever reaches - and it is the
+only one that can, because the draw's unseen preference lives between days
+and both of the others forget everything overnight (`simulate-week.mjs` says
+so in its own comment).
+
+It keeps `archive.seenEvents` and `archive.seenOptions` across the days as
+the save file does, and **calls the engine's own `preferUnseen()` and
+`openDoorsLeft()`** instead of reproducing them. The day simulator copies the
+formulas because it needs them per step and accepts the drift risk; here
+there is no reason to pay it.
+
+| Column | Means |
+|---|---|
+| events seen | how much of the stock the career ever opened |
+| doors taken | how many of the 2338 options were actually chosen |
+| spent repeats | draws landing on a scene already read to the end - **waste** |
+| open repeats | draws on a KNOWN scene with a door left - the good repeat |
+| most drawn | how often the single most repeated scene came up |
+
+`--compare` puts the live two-stage rule beside `flat` (no preference, as
+before 6.4), `unseen-only` (6.4's first stage alone) and `open-only`. It is
+how the current rule was chosen, and `open-only` is the warning: preferring
+open doors INSTEAD of new scenes looks good on one column and is worse
+everywhere else, because a player who keeps picking the safe answer never
+finishes a scene, so it stays preferred for good.
+
+**Both trees must give the same numbers** - only prose differs between them.
+
+**25 days is the useful default.** Below about two weeks the first stage
+still finds something new every draw, so every rule measures the same and
+the run says nothing.
+
+## 6. `make-voice.mjs` — which text becomes which audio file
+
+```
+npm run voice:manifest          # write voice/manifest.de.json and .en.json
+npm run lint:voice              # hold both manifests against both trees
+node tools/make-voice.mjs       # report only, write nothing
+```
+
+Narration is pre-rendered rather than spoken at runtime, so that the voice
+sounds the same on every machine. That makes the audio and the prose two
+separate things which CAN drift apart: edit a line and the file still says
+the old one, at 0 errors and 0 warnings. Every entry therefore carries the
+checksum of its source string, and `--check` is the gate that notices.
+
+**What gets a voice: the terminal.** Eleven pools, listed in `TERMINAL` at
+the top of the tool - a new one is added there and nowhere else. Mails, the
+phone, the intranet, the board, the vending machine, the log and the books
+stay for reading: they run at the player's own pace, or they differ from run
+to run. Scenes marked `kind: 'phone'` are skipped inside the terminal pools
+as well.
+
+**Option labels are deliberately absent.** 3470 files for 114 minutes, and a
+read-out list of buttons sounds like a railway announcement. Whoever needs
+them read has a screen reader, supported since 6.4.
+
+**The key is the path from the pool**, with the nearest enclosing `id`
+standing in for the position in its array: `coffee/cof_milk_1/text`,
+`meetings/meet_audit_1/nodes/liste/text`, `party/party_bar_1/opts/1/r`. An
+event that MOVES within its file keeps its audio; only a rewrite of the prose
+invalidates it. The option index in a key can shift when an option is
+inserted - unlike `archive.seenOptions`, that is harmless here, because the
+checksum then fails and the file is simply respoken.
+
+**Both trees must produce the same keys.** They did on the first run, 4651
+each, no difference in either direction - the same rule that `lint:parity`
+enforces for the data. The fifteen named interface strings bring it to 4663,
+the 118 morning moods (`moods`, the morning screen) to 4781.
+
+| | |
+|---|---|
+| pieces | 4781 per language |
+| characters | 830,693 de · 803,706 en |
+| as speech | 15.4 h · 14.9 h |
+
+**Every entry carries two checksums, and they answer different questions.**
+`sha` is taken over the text as WRITTEN and is the file name - the browser
+hashes the sentence it is about to show and asks for that file. `spk` is taken
+over the text as SENT, after `spokenForm()`, and it is the only thing that can
+see a change to the respelling rules: nothing in the prose moves, so nothing in
+`sha` moves, so the ledger calls the piece finished and the provider is never
+asked again while the file goes on saying the old thing.
+
+This was one `transform` version number before, bumped by hand. It could only
+ever report "all of it is stale" - and `make-audio.mjs` never read it, so
+bumping it marked 4663 pieces changed and re-rendered none of them. A checksum
+per piece is exact in both directions: adding the German `Rack` respelling
+marked 109 pieces and left the other 4554 alone.
+
+**Not part of `lint:all` yet.** Until the audio exists the manifest is a
+plan, and gating every data edit on a plan is noise. It joins the gate with
+the first generated file.
+
+## 7. `make-audio.mjs` — the generation run
+
+```
+npm run voice:models                                  # which models this account may use
+npm run voice:audio -- --dry-run                      # what it would send and cost
+npm run voice:audio -- --trial=v4 --pool=coffee --limit=100
+npm run voice:audio                                   # the real run
+```
+
+Reads `voice/manifest.<lang>.json`, sends every piece that is not finished
+yet, and writes two files per piece: the provider's MP3 into
+`voice/master/<lang>/` and an opus into `public/audio/<lang>/`.
+
+**The key comes from `ELEVENLABS_API_KEY` in the environment.** It is never
+written to a file, a log line or an error message — the wrapper around
+`fetch` re-throws a reason of its own, because the original error can carry
+the request headers.
+
+**Who speaks is in `voice/run.<lang>.json`**, which is committed: voice id,
+model, output format, opus bitrate. `voiceSettings` starts as `null` and is
+filled from the provider on the first run and written back. "Everything on
+default" is only reproducible while the provider's defaults stay put;
+written down, it is reproducible for good.
+
+### The file name is the checksum of the text
+
+`0ca9ab1281f7.opus`, not `coffee--cof_newbie_1--text.opus`. The browser has the
+sentence on screen and has to find the file that speaks it; naming the file
+after its text means hashing what is about to be shown and asking for that —
+no index to ship, and nothing to thread down from the engine. The manifest is
+the map from key to file, and it is in the repository: to find a scene's
+recording, look its key up there and take the `sha`.
+
+Which also means **edited prose with stale audio goes silent rather than
+lying.** `npm run lint:voice` is in `lint:all` and would stop it shipping
+anyway, but if it ever got past, the player hears nothing instead of the
+sentence that used to be there.
+
+`src/engine/sha1.js` computes the same digest in the browser, because
+`crypto.subtle` needs a secure context and the Electron build loads over
+`file://`. `tools/voice.test.mjs` holds the two implementations against each
+other over all 9,296 pieces.
+
+**A `CMD:` result is not collected.** `CMD:OPEN_BOARD` and its two siblings
+stand where prose stands but are instructions — `resolveTerminal` swaps them
+for a dictionary line. Three of them were bought and rendered in 6.4 before
+anyone noticed; the rule that keeps them out is in `voice-text.mjs` and the
+test reads the handled doors out of `engine_events.js`, so a fourth is covered
+the day it is handled.
+
+### Listening to it: `npm run voice:listen`
+
+```
+npm run voice:listen            # writes voice/index.<lang>.html and serves it
+```
+
+The folder is unreadable by eye, which is the price of naming a file after its
+text. This builds the page that reads it back: every piece with its key, its
+file, its length and the sentence it speaks, searchable and filterable by pool,
+with a play button. Both languages, generated from the manifest in a second,
+and gitignored - it is derived, and 3.2 MiB a language that would change on
+every edited line.
+
+**Served rather than double-clicked**, on `localhost:4180`. The page sits in
+`voice/` and the audio in `docs/audio/` - siblings, and since Firefox 68 a
+`file://` page may only read files in its own directory and below. The buttons
+would have been dead in Firefox and alive in Chrome, which is the worst kind of
+difference to hand someone.
+
+### The three places a file goes
+
+| Where | What | In the repository? |
+|---|---|---|
+| `voice/master/<lang>/` | the provider's MP3, 815 MiB for German | no |
+| `public/audio/<lang>/` | opus at 24 kbps, the build's input | no |
+| `docs/audio/<lang>/` | the same opus, what GitHub Pages serves | **yes** |
+
+The masters are the thing that was bought. Re-encoding to another bitrate
+from them is free; asking the provider again costs the whole run. They never
+go into the repository and never onto the published site.
+
+The opus exists twice on disk and once in git. `public/assets` and
+`docs/assets` show what the alternative looks like: 21 MB of identical
+images, committed twice. For audio that would be 310 MiB for German alone,
+and another full copy in the history on every later re-render.
+
+### Resuming
+
+Every finished piece goes into a ledger beside the masters, with its
+checksum and the model it was made with. An abort therefore costs nothing,
+a rewritten line re-renders alone, and switching the model re-renders
+everything — which is the point.
+
+A run refuses to start if the tree and the manifest disagree, so audio can
+never be bought for a text the gate has not seen.
+
+### `--trial`
+
+Writes into `voice/trial/<name>/`, with a ledger of its own, so a trial can
+never damage a finished run — which is what makes an A/B between two models
+safe — and a trial that dies at piece 60 of 100 does not charge for those 60
+again. The useful shape is one pool in manifest order, so what comes out is a
+real play sequence rather than six pieces picked by hand: that is the only
+way to hear whether the voice holds ACROSS calls, which is the actual risk
+at a median of 171 characters a piece.
+
+### `--context`, and why it is off
+
+`previous_text` sends the scene opening along with a result without speaking
+it, and is the documented cure for short, unstable pieces. It is **not**
+documented whether it is billed. The dry run prints both numbers:
+
+```
+to do   100 of 4663 pieces, 15.623 characters
+context 15.087 characters as previous_text (billing unknown)
+at most $1.25 at the published rate, $2.46 if context is billed
+```
+
+Close to 1:1 — being wrong about this doubles the run. So it stays off until a
+run measures it. The report prints **credits spent per character**, and the
+same pool run twice, once with `--context`, settles it by the ratio.
+
+### Credits are not characters
+
+The subscription endpoint calls its counter `character_count`, and it is not
+one. The meetings pool spoke 46,176 characters and spent **5,754 credits** —
+0.125 credits a character on v4 Turbo inside a Starter plan. An earlier
+version of this tool multiplied those credits by the per-character dollar rate
+and printed a figure that meant nothing at all.
+
+So the dollar line before a run is an **upper bound at the published
+pay-as-you-go rate**, which is the dearest way to buy the characters; usage
+inside a plan's included credits has come out cheaper. The line after a run
+reports what was actually spent, in credits, with the rate it worked out to
+and how far the plan's remainder still reaches.
+
+## 8. `npm test` — the five test suites, in both languages
+
+```
+npm test        # 17 / 270 / 20 / 48 / 17, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -318,9 +562,9 @@ engine modules, not against dummies.
 | File | What it secures |
 |---|---|
 | `week-foundation.test.mjs` | the foundation of the week module (state, transitions) |
-| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed |
+| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed. Also the Steam leaderboards: the score, the detail values in both read shapes, the merged list, both week endings submitting, and the main process's allow-list |
 | `dev-script.test.mjs` | every scenario of `dev-week.js` against the real engine |
-| `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER` |
+| `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER`; plus four checks on the markup itself: no type size in px, small print readable on the dark panels (slate-400 or lighter, nothing under 10px), mount targets empty in the markup, and flex items that can shrink |
 
 Sections in `week-flow` (sorted by topic): entering the mode, clocking off, the
 weekend, the morning end check, resume, mode separation, daily quotas, items
@@ -336,7 +580,77 @@ findings, defaults, archive counters.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
 
-## 6. `dev-week.js` — the console tool
+### `voice.test.mjs` — the narration
+
+The fifth suite, and the reason it is its own: every link between a sentence on
+screen and the file that speaks it fails SILENTLY. A digest computed one way in
+Node and another way in the browser does not throw — the narrator is simply
+mute, in the shipped game only. A window that forgets to hush reads a result
+out over the noticeboard. Seventeen checks, sixty-two mutation probes
+(01.11.2026).
+
+Six of those checks arrived with the voiced interface strings and the two
+behaviours around them, and two of them were written twice. The first version
+of the reachability check searched the raw source for each key and passed while
+the call site was deleted: every voiced key also stands in an `i18n-uses:`
+comment a few rows above, and `tutorial.ask.text` is the mark `dressAskModal()`
+writes besides. It now strips comments, claims only that the key has not been
+RENAMED out from under the list, and the four places that actually speak are
+asserted separately.
+
+Two faults the probes could not have found, because both were in the ORDER of
+things and only the running game shows that: a language switch spoke a tutorial
+bubble that `skip()` had left behind in the state, and the mail's resume asked
+`state.isEmailOpen` — a flag every closing path clears one line AFTER hiding
+the window, so the line was never once given back. Both are covered now.
+
+Three more checks came with the respelling rules. Two of them are a pair, held
+in both directions because both directions are silent: the German rule has to
+reach the German tree, and it must not reach the English one, where the voice
+reads `Rack` correctly already. The candidate scan is case-insensitive while
+the rule is not - German capitalises its nouns, so a lowercase `rack` arriving
+in that tree is a gap, and this is where it comes out instead of going quietly
+to the provider.
+
+The third is the one that cost the most to learn. `collectEntries()` was called
+once per language in a loop, and the deferred pools are cached on `DB` by NAME:
+the second call reloaded the core tier and left all eleven terminal pools in
+the first language, with `currentLanguage()` already reporting the second, so
+the guard inside saw nothing. The measurement built on it called 4625 of 4663
+English pieces drifted, which reads like a broken tree rather than a mixed one
+— and acting on it would have bought a second English run. `setLanguage()` is
+the path that drops the cache; the check asserts that every terminal pool
+really changes, because one identical line is ordinary and a whole pool of them
+is the old tree still sitting there.
+
+The sixteenth covers the read-aloud button beside the excuse, and it is three
+checks in one because three separate things about it fail without a sound: the
+door has to go PAST `narrationEnabled` (a button that refuses is a button that
+does nothing in the only case it was built for), `state.narratable` has to come
+from `narrate()` and not from `narrateWindow()` (or it offers to repeat a
+tutorial bubble over a working day), and the speaking flag has to reach the
+rune state through its one writer (or the icon sticks). Both screens that
+carry it have to ask `engine.canReplayNarration()` rather than decide for
+themselves, and the event's tool row has to stand for the button alone, since a
+boss fight has no excuse. Its first version nearly defeated itself: the
+component said in prose that it deliberately does NOT ask
+`narrationEnabled`, and a search of the raw file reads that as asking it — the
+same trap as the reachability check above, and the reason there is now a
+`markup()` helper that strips HTML comments as well.
+
+The seventeenth came with the audit and the two valves, and its first version
+let a probe through: with the rage valve's call deleted, a pattern over the
+whole of `engine_core.js` ran on into `issueChefWarning`, which follows it, and
+found the call there. Each function is cut out on its own now. **A pattern
+over a whole file can always reach the neighbour** — wherever a check is about
+one function, slice that function first.
+
+The behaviour behind the audit is held in `week-flow.test.mjs` on a fake
+element — a notice holding the result and handing it over, a mail dropping onto
+a notice, a hidden tab, a volume of zero — because what has to hold there is
+bookkeeping, and the order of a click is easier to get wrong than to read.
+
+## 9. `dev-week.js` — the console tool
 
 Open the file, paste the contents into the browser console of the running game.
 `dev.help()` lists everything. Indispensable for the three-parters, because it
@@ -372,7 +686,7 @@ otherwise trial runs distort the statistics permanently.
 The tool is covered by `dev-script.test.mjs`: a broken console helper shows up
 in the test suite, not first in the browser.
 
-## 7. Retired tools
+## 10. Retired tools
 
 Four tools used to live here and have been **removed**. They remain only as a
 note, so that nobody finds them in an older note and goes looking:

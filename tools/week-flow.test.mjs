@@ -55,6 +55,11 @@ const { week } = await import('../src/engine/engine_week.js');
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { vendingMachine, crankDelays } = await import('../src/engine/engine_vending.js');
+const { voice } = await import('../src/engine/engine_voice.js');
+// Hoisted for the bench below. The music tests further down import it again
+// inside their own scope, which is what they did before and is left alone.
+const { audio } = await import('../src/engine/engine_audio.js');
+const { voiceHash } = await import('../src/engine/sha1.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -79,6 +84,19 @@ const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
     ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
+    // The real narrator, not a stub. It builds no Audio element until it is
+    // given something to say, and finishGame() calls it to stop the voice
+    // reading the day's last result over the night screen - a stub there would
+    // make that test pass whatever the engine does.
+    //
+    // ...audio with it, because the narrator leans on three things that live
+    // there - canSetVolume, duckMusic and audioCtx - and the engine always
+    // carries both. While the voice only ever stopped in this bench none of
+    // them was reached; the first line it actually SPEAKS here walks into all
+    // three (6.4: the hint in front of the first mail). Both are harmless
+    // with no tracks loaded: duckMusic bails on a missing track, and
+    // playMusic/stopMusic below still win as stubs - later spread wins.
+    ...audio, ...voice,
     showOverlay(t) { const id = overlayId(t); calls.overlays.push(id); openOverlays.add(id); },
     hideOverlay(t) { openOverlays.delete(overlayId(t)); },
     // Answered off that set rather than off the fake document. Every element
@@ -135,6 +153,9 @@ const resetState = () => {
     // The evening is once per career, so a run that had one would refuse to
     // record the next test's.
     state.archive.gala = null;
+    // Which doors a career has opened (6.5). Nothing else reads it, so
+    // clearing it here cannot reach another test.
+    state.archive.seenOptions = {};
     state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
@@ -787,6 +808,35 @@ await ok('Every overlay answers to Escape, or is a named exception', () => {
         !allowedOverlays.has(id) && !escChain.includes(`'${id}'`) && !start.includes(`'${id}'`));
     assert.deepEqual(silent, [], `Escape does not reach: ${silent.join(', ')}`);
 });
+await ok('A window shown at page load does not take the keyboard', () => {
+    // showOverlay() hands the keyboard to the window it opens - right for a
+    // window somebody asked for, wrong for one that is simply THERE at load.
+    // intro-modal IS the start screen, so the game opened with the keyboard on
+    // the DE/EN switch in its corner, and Firefox drew a focus ring around it
+    // while Chromium drew none: with no input yet to judge by, the two
+    // browsers disagree about what :focus-visible means. Found on 01.11.2026
+    // by the operator, on Firefox.
+    //
+    // Asserted on the source because the bench's document has no focus and no
+    // listeners; the behaviour itself was measured in the built game.
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+
+    // The flag exists and is set by real input, not by anything the game does.
+    const listener = ui.match(/for \(const ev of \[([^\]]*)\]\)[\s\S]{0,220}?playerHasActed = true/);
+    assert.ok(listener, 'nothing sets playerHasActed from an input event');
+    for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
+        assert.ok(listener[1].includes(ev), `${ev} does not count as the player acting`);
+    }
+
+    // And showOverlay asks before it moves the keyboard. Scoped to the body of
+    // the function, so a guard sitting somewhere else does not pass for it.
+    const show = ui.slice(ui.indexOf('showOverlay: function'), ui.indexOf('Counterpart to showOverlay'));
+    assert.ok(show.length > 200, 'showOverlay could not be read');
+    assert.match(show, /if \(!playerHasActed\) return;/,
+        'showOverlay moves the keyboard before the player has pressed anything');
+    assert.ok(show.indexOf('playerHasActed') < show.indexOf('.focus()'),
+        'the guard stands after the focus it is supposed to guard');
+});
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
     // the overlay leaves the old screen mounted behind it. softReset() and
@@ -983,7 +1033,7 @@ console.log('Music:');
         const key = state.currentMusicTrack;
         assert.equal(mus.bgmTracks[key].volume, 0, 'does not start at 0');
         await wait(750);
-        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.8) < 0.02, 'does not fade to the target volume');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02, 'does not fade to the target volume');
     });
 
     await ok('The replaced track is paused and reset to its volume', async () => {
@@ -996,7 +1046,7 @@ console.log('Music:');
         await wait(500);
         assert.ok(mus.bgmTracks[previousTrack].paused, 'the old track keeps playing');
         // must not stay at 0, or a later play() without fade would be silent
-        assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - 0.8) < 0.02, 'the volume was not reset');
+        assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - mus.musicTarget(previousTrack)) < 0.02, 'the volume was not reset');
     });
 
     await ok('The music follows the tab, but only what it paused itself', async () => {
@@ -1067,7 +1117,7 @@ console.log('Music:');
         const key = state.currentMusicTrack;
         mus.setMusicVolume(0.3);      // in the middle of the fade-in
         await wait(750);
-        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.3) < 0.02,
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
                   `the fade overwrites the slider: ${mus.bgmTracks[key].volume}`);
     });
 }
@@ -2591,8 +2641,18 @@ await ok('Toast and item dialog carry identities, not words', () => {
     const invSrc = readFileSync(new URL('../src/engine/engine_inventory.js', import.meta.url), 'utf-8');
     const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     assert.ok(/dressItemConfirm\s*:/.test(invSrc), 'the item dialog has no repaint method');
-    assert.ok(/onLanguageChange\([\s\S]{0,400}?dressItemConfirm\(\)/.test(shell),
+    // Scoped to the handler's own body rather than to a character count: the
+    // old bound was 400 characters from the call, and a comment added inside
+    // the handler pushed the match out of reach while the code was right.
+    const onSwitch = shell.match(/onLanguageChange\(\(\) => \{([\s\S]*?)\n\}\);/)?.[1];
+    assert.ok(onSwitch, 'the language-switch handler could not be read');
+    assert.ok(/dressItemConfirm\(\)/.test(onSwitch),
               'a language switch does not repaint the item dialog');
+    // And it stops the voice. A scene repaints itself in the new language, but
+    // a RESULT resolves its recipe on the spot and is never repainted - so
+    // without this the narrator reads the old language over the new text.
+    assert.ok(/hushNarration\(\)/.test(onSwitch),
+              'a language switch leaves the narrator reading the old language');
     // ...and askUseItem/askDiscardItem go through it rather than writing again.
     assert.equal((invSrc.match(/getElementById\('item-confirm-title'\)/g) ?? []).length, 1,
                  'the dialog is written from more than one place again');
@@ -3727,7 +3787,10 @@ await ok('The reset buttons are re-dressed after a language switch', () => {
         assert.ok(uiSrc.includes(`getElementById('${id}')`), `${id} is not dressed from the engine any more`);
     }
     assert.ok(/dressResetButtons\s*:/.test(uiSrc), 'the dressing is no longer a method of its own');
-    assert.ok(/onLanguageChange\([\s\S]{0,300}?dressResetButtons\(\)/.test(shell),
+    // Scoped to the handler's body, for the reason given at the item dialog.
+    const onSwitch = shell.match(/onLanguageChange\(\(\) => \{([\s\S]*?)\n\}\);/)?.[1];
+    assert.ok(onSwitch, 'the language-switch handler could not be read');
+    assert.ok(/dressResetButtons\(\)/.test(onSwitch),
               'a language switch no longer re-dresses the reset buttons');
 });
 await ok('The mail log prints the number the bar actually moved', () => {
@@ -4155,18 +4218,494 @@ await ok('The music ducks once for the fall and comes back once', async () => {
         bgmTracks: { elevator: track },
         fadeTrack(key, target) { fades.push([key, +target.toFixed(3)]); },
     };
+    const lvl = (f) => +(0.2 * audio.MUSIC_TRIM.elevator * f).toFixed(3);
     box.duckMusic(false);
     assert.equal(fades.length, 0, 'un-ducking music that was never ducked started a fade');
     box.duckMusic(true); box.duckMusic(true);
-    assert.deepEqual(fades, [['elevator', 0.024]], 'the duck has to fade once, to a fraction of the volume');
+    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.vending)]],
+        'the duck has to fade once, to a fraction of the levelled volume');
     box.duckMusic(false); box.duckMusic(false);
-    assert.deepEqual(fades[1], ['elevator', 0.2], 'the music has to come back to its own volume');
+    assert.deepEqual(fades[1], ['elevator', lvl(1)], 'the music has to come back to its own volume');
     assert.equal(fades.length, 2, 'the way back faded twice');
+
+    // Two reasons at two depths (6.4). The narrator ducks the music while it
+    // reads; the machine's fall ducks it much further. Whichever is deeper has
+    // to win, and letting go of one while the other still holds must not bring
+    // the music back up - that was the whole reason this stopped being a
+    // boolean.
+    fades.length = 0;
+    box.duckMusic(true, 'narration');
+    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.narration)]], 'speech does not duck the music');
+    box.duckMusic(true, 'vending');
+    assert.deepEqual(fades[1], ['elevator', lvl(audio.DUCK.vending)], 'the deeper reason did not win');
+    box.duckMusic(false, 'narration');
+    assert.equal(fades.length, 2, 'letting go of the shallower reason moved the volume');
+    box.duckMusic(false, 'vending');
+    assert.deepEqual(fades[2], ['elevator', lvl(1)], 'the music never came back');
 
     fades.length = 0;
     box.state.musicEnabled = false;
     box.duckMusic(true); box.duckMusic(false);
     assert.equal(fades.length, 0, 'music that is switched off was faded');
+});
+
+await ok('An interrupted line keeps its place; a stopped one does not', () => {
+    // The mail is the one window that does not end the line it covers (6.4),
+    // and the whole difference between the two is currentTime. Checked on the
+    // module rather than through a window, because what has to hold is the
+    // bookkeeping: a resume that fires without a pause, or after a hush,
+    // would start a recording nothing on screen belongs to.
+    const el = { paused: false, currentTime: 7.5, ended: false, src: 'a.opus',
+                 pause() { this.paused = true; }, play() { this.paused = false; return Promise.resolve(); } };
+    const box = { ...audio, ...voice, state, narrator: el, speaking: true,
+                  bgmTracks: {}, gainNodes: {},
+                  windowOverTerminal: () => false };
+    state.narrationEnabled = true;
+    state.narrationVolume = 0.8;
+
+    box.pauseNarration();
+    assert.equal(el.paused, true, 'the mail did not quieten the narrator');
+    assert.equal(el.currentTime, 7.5, 'the pause rewound, so the scene would start over');
+    assert.equal(box.interrupted, true, 'nothing recorded that the line is owed back');
+
+    // isEmailOpen is still TRUE here, exactly as it is in the game: every
+    // closing path hides the window first and clears the flag on the next
+    // line. A resume that asked about it would never fire once.
+    state.isEmailOpen = true;
+    box.resumeNarration();
+    state.isEmailOpen = false;
+    assert.equal(el.paused, false, 'the line was never given back');
+    assert.equal(el.currentTime, 7.5, 'the line came back at the wrong place');
+    assert.equal(box.interrupted, false, 'still owed after it was paid');
+
+    // A second close must not start anything.
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'a window that took nothing gave something back');
+
+    // And a line thrown away stays thrown away: the player opened a window
+    // over the mail, which ends the scene for good.
+    box.speaking = true;
+    el.paused = false;
+    box.pauseNarration();
+    box.hushNarration();
+    assert.equal(box.interrupted, false, 'a hushed line is still waiting to be resumed');
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'a hushed line was resumed');
+
+    // What the resume still has to refuse: a window the player opened over
+    // the mail. That one ends the scene, flag or no flag.
+    box.speaking = true; el.paused = false;
+    box.pauseNarration();
+    box.windowOverTerminal = () => true;
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'the line came back behind an open window');
+    box.windowOverTerminal = () => false;
+
+    // A mail arriving into SILENCE must owe nothing. The element keeps the
+    // src of whatever it last played, so a pause that books a debt with
+    // nothing running makes closing the mail replay a scene that is three
+    // clicks in the past.
+    box.speaking = false;
+    el.paused = true;
+    box.pauseNarration();
+    assert.equal(box.interrupted, false, 'silence was recorded as an interrupted line');
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'closing the mail replayed an old recording');
+});
+
+// The audit that followed the read-aloud button (01.11.2026). One bench for
+// the three tests below: a fake element that records what it was asked to
+// play, and a box with the real voice module on it. The file name a line asks
+// for is its checksum, so `file()` tells the lines apart without a lookup.
+const voiceBench = () => {
+    const el = { paused: true, currentTime: 0, ended: false, src: '', volume: 1,
+                 pause() { this.paused = true; },
+                 play() { this.paused = false; return Promise.resolve(); } };
+    const box = { ...audio, ...voice, state, narrator: el, speaking: false,
+                  bgmTracks: {}, gainNodes: {}, volumeWorks: true,
+                  windowOverTerminal: () => false };
+    state.narrationEnabled = true;
+    state.narrationVolume = 0.8;
+    state.isEmailOpen = false;
+    globalThis.document.hidden = false;
+    const file = (text) => `${voiceHash(text)}.opus`;
+    const playing = () => (el.paused ? null : el.src.split('/').pop());
+    return { el, box, file, playing };
+};
+
+await ok('A notice holds the screen behind it and hands it over on closing', () => {
+    // Found by the audit: the written warning and the rage valve open from
+    // checkEndConditions() INSIDE the click that produces the result, and
+    // before the result is set. So the result was read out behind the
+    // warning, and once the warning had a voice of its own, the result would
+    // have cut it off a moment after it began.
+    const { box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+
+    open('modal-overlay');
+    box.narrateWindow('The boss looms behind you.');
+    box.narrate('Your hands are shaking, but you lift it.');
+    assert.equal(playing(), file('The boss looms behind you.'), 'the result cut the warning off');
+    assert.equal(box.heldLine, 'Your hands are shaking, but you lift it.', 'the result was not kept for later');
+
+    // A mail drops onto the warning: the warning's voice waits for it...
+    open('email-modal');
+    assert.equal(playing(), null, 'the mail did not quieten the warning');
+    close('email-modal');
+    assert.equal(playing(), file('The boss looms behind you.'), 'the warning did not get its voice back');
+    assert.equal(box.heldLine, 'Your hands are shaking, but you lift it.',
+        'the result was spoken while the warning still covered it');
+
+    // ...and closing the warning hands over to the screen behind it.
+    close('modal-overlay');
+    assert.equal(playing(), file('Your hands are shaking, but you lift it.'), 'the held result was never read');
+    assert.equal(box.heldLine, null);
+
+    // A window's own voice ends with its window, when nothing was held.
+    box.hushNarration();
+    open('modal-overlay');
+    box.narrateWindow('You stare at the microwave.');
+    close('modal-overlay');
+    assert.equal(playing(), null, 'the valve went on reading after it was closed');
+
+    // A terminal line that a notice paused is superseded by a newer screen:
+    // closing must play the screen the player now looks at, not the old one.
+    box.narrate('The first scene.');
+    open('modal-overlay');
+    box.narrate('The second scene.');
+    close('modal-overlay');
+    assert.equal(playing(), file('The second scene.'), 'an old scene came back over the new one');
+
+    // The same when the screen behind went quiet rather than new - the
+    // terminal turned idle while the notice stood. Nothing is held then, and
+    // the paused scene must not come back over an empty terminal.
+    box.narrate('A scene that is over.');
+    open('modal-overlay');
+    box.narrate(null);
+    close('modal-overlay');
+    assert.equal(playing(), null, 'a scene came back over an idle terminal');
+
+    // And a window the player opens on top settles everything: nothing owed.
+    box.hushNarration();
+    open('modal-overlay');
+    box.narrate('A result.');
+    box.windowOverTerminal = () => true;
+    close('modal-overlay');
+    assert.equal(playing(), null, 'a held line was spoken behind a window the player opened');
+    assert.equal(box.heldLine, null, 'a held line survived a window that ends the scene');
+});
+
+await ok('The narrator stops for a tab nobody is looking at', () => {
+    // The music has paused for a hidden tab since 6.3; the narrator went on
+    // reading to nobody - and an Electron window that is minimised is a
+    // hidden tab too.
+    const { el, box, file, playing } = voiceBench();
+    box.narrate('A scene.');
+    el.currentTime = 4.2;
+    globalThis.document.hidden = true;  box.syncNarrationToVisibility();
+    assert.equal(playing(), null, 'the narrator read on in a hidden tab');
+    assert.equal(box.speaking, false, 'the music stays ducked for a voice nobody hears');
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), file('A scene.'), 'the line did not come back with the tab');
+    assert.equal(el.currentTime, 4.2, 'the line came back at the wrong place');
+
+    // A line that arrives while the tab is away is loaded, not started.
+    globalThis.document.hidden = true;
+    box.narrate('A boss timer ran out.');
+    assert.equal(playing(), null, 'a new line started in a hidden tab');
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), file('A boss timer ran out.'), 'the line that arrived meanwhile was lost');
+
+    // A tab that comes back to a hushed narrator owes nothing.
+    globalThis.document.hidden = true;  box.syncNarrationToVisibility();
+    box.hushNarration();
+    globalThis.document.hidden = false; box.syncNarrationToVisibility();
+    assert.equal(playing(), null, 'a hushed line came back with the tab');
+});
+
+await ok('Turning the narrator to zero ends the line', () => {
+    // Muted rather than stopped, it ran on to its last word with the music
+    // ducked under nobody, and the read-aloud button - not offered at zero -
+    // had already gone, so nothing could stop it.
+    const { box, playing } = voiceBench();
+    box.narrate('A long scene.');
+    box.setNarrationVolume(0);
+    assert.equal(playing(), null, 'the line ran on, muted');
+    assert.equal(box.speaking, false, 'the music stays ducked for a silent line');
+    state.narrationVolume = 0.8;
+});
+
+await ok('Each kind of narration can be switched off, and the button still reads', async () => {
+    // The settings let a player choose what the narrator reads of its own
+    // accord: scenes, the morning, the valves, H.A.L.G.E.R.D. and the lesson.
+    // Every one of those is a door that can fail silently - a kind that is
+    // off and still speaks, or one that is on and never does.
+    const { box, file, playing } = voiceBench();
+    state.narrationKinds = { events: true, morning: true, valves: true, halgerd: true };
+
+    box.setNarrationKind('morning', false);
+    box.narrate('A bad morning.', 'morning');
+    assert.equal(playing(), null, 'the morning was read with its kind switched off');
+    box.narrate('A scene.', 'events');
+    assert.equal(playing(), file('A scene.'), 'switching off the morning silenced the scenes');
+
+    box.setNarrationKind('valves', false);
+    box.narrateWindow('You stare at the microwave.', 'valves');
+    assert.equal(playing(), null, 'a valve was read with its kind switched off');
+    box.setNarrationKind('halgerd', false);
+    box.narrateWindow('H.A.L.G.E.R.D.: Notice.');      // a window's text is his by default
+    assert.equal(playing(), null, 'H.A.L.G.E.R.D. spoke with his kind switched off');
+    box.narrateWindow('Test announcement.', 'sample');
+    assert.equal(playing(), file('Test announcement.'), 'the settings sample is subject to the kinds');
+
+    // The button reads regardless: switching a kind off means "do not read it
+    // to me", not "never let me hear it".
+    box.hushNarration();
+    state.narratable = 'A bad morning.';
+    state.terminal = { ...state.terminal, mode: 'morning' };
+    box.replayNarration();
+    assert.equal(playing(), file('A bad morning.'), 'the button refused a kind that was switched off');
+
+    // Switching off the kind that is speaking stops it - unless the player
+    // asked for it with the button.
+    box.setNarrationKind('morning', false);
+    assert.equal(playing(), file('A bad morning.'), 'switching off a kind cut off a line the player asked for');
+    box.hushNarration();
+    box.setNarrationKind('events', true);
+    box.narrate('Another scene.', 'events');
+    box.setNarrationKind('events', false);
+    assert.equal(playing(), null, 'a kind switched off went on being read');
+
+    // A screen held behind a notice keeps its kind when it is finally spoken.
+    box.setNarrationKind('events', true);
+    (box._interruptions = new Set()).add('modal-overlay');
+    box.narrate('A morning behind a notice.', 'morning');
+    box._interruptions.delete('modal-overlay');
+    box.resumeNarration();
+    assert.equal(playing(), null, 'a held morning was read although mornings are switched off');
+
+    state.narrationKinds = { events: true, morning: true, valves: true, halgerd: true };
+
+    // And every kind has its switch on the settings page. A kind added to the
+    // defaults without one would be read with no way to turn it off - and
+    // nothing on screen would say that a switch is missing.
+    const { DEFAULT_NARRATION_KINDS } = await import('../src/engine/engine_state.svelte.js');
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    const listed = page.match(/const KINDS = \[([^\]]*)\]/)?.[1].match(/'(\w+)'/g)?.map(k => k.slice(1, -1)) ?? [];
+    assert.deepEqual([...listed].sort(), Object.keys(DEFAULT_NARRATION_KINDS).sort(),
+        'a kind of narration has no switch in the settings');
+    assert.match(page, /onchange=\{\(e\) => engine\.setNarrationKind\(kind, e\.currentTarget\.checked\)\}/,
+        'the kind switches are wired to nothing');
+});
+
+await ok('Resetting the settings resets every one of them', () => {
+    // The week's preset sat on the settings page and not in resetSettings()
+    // from the day it was added; the narrator was missing too, and the music
+    // came back at 0.2 after its default had dropped to 0.15. Held here as
+    // the page against the reset: every setter the page calls has to be one
+    // the reset calls, or be named below with the reason it is left alone.
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const start = uiSrc.indexOf('    resetSettings: function');
+    const reset = uiSrc.slice(start, uiSrc.indexOf('\n    },', start));
+    const LEFT_ALONE = {
+        confirmResetSettings: 'is the reset',
+        previewNarration: 'plays a sentence, sets nothing',
+        toggleNarration: 'set directly - toggling it on plays the sample over the reset sound',
+        resetKeybinds: 'is called by the reset',
+    };
+    const setters = [...new Set([...page.matchAll(/engine\.(\w+)\(/g)].map(m => m[1]))];
+    assert.ok(setters.length > 20, `expected the page's setters, found ${setters.length}`);
+    const missing = setters.filter(fn => !LEFT_ALONE[fn] && !reset.includes(`this.${fn}(`));
+    assert.deepEqual(missing, [], 'a setting on the page survives a reset');
+    // The language is the one setting that is deliberately kept: a reset that
+    // switched it would leave somebody unable to read the button they pressed.
+    assert.ok(!/switchLanguage/.test(reset), 'the reset changes the language');
+    assert.match(reset, /this\.state\.narrationEnabled = true;/, 'the narrator stays off after a reset');
+    // And the levels come from the same place as a new player's.
+    for (const name of ['DEFAULT_SFX_VOLUME', 'DEFAULT_MUSIC_VOLUME', 'DEFAULT_NARRATION_VOLUME', 'DEFAULT_NARRATION_RATE', 'DEFAULT_NARRATION_KINDS']) {
+        assert.ok(reset.includes(name), `the reset carries its own number instead of ${name}`);
+    }
+    assert.ok(!/setMusicVolume\(0\./.test(reset), 'a literal music level is back in the reset');
+});
+
+await ok('The reading speed reaches the voice, stays in range and survives a new line', () => {
+    resetState();
+    const saved = engine.narrator;
+    const el = { playbackRate: 1, defaultPlaybackRate: 1, preservesPitch: false };
+    engine.narrator = el;
+    try {
+        engine.setNarrationRate('1.5');
+        assert.equal(state.narrationRate, 1.5);
+        assert.equal(el.playbackRate, 1.5, 'the line that is speaking does not change speed');
+        // A new src resets playbackRate to defaultPlaybackRate - set only the
+        // first and the speed holds for exactly one line.
+        assert.equal(el.defaultPlaybackRate, 1.5, 'the next line would fall back to normal speed');
+        assert.equal(el.preservesPitch, true, 'faster would also mean higher');
+        assert.equal(localStorage.getItem(KEYS.narrationRate), '1.5', 'the speed is not remembered');
+
+        engine.setNarrationRate(9);
+        assert.equal(state.narrationRate, 2, 'a rate above the range got through');
+        engine.setNarrationRate('-1');
+        assert.equal(state.narrationRate, 0.75, 'a rate below the range got through');
+        engine.setNarrationRate('abc');
+        assert.equal(state.narrationRate, 1, 'nonsense is not the default');
+    } finally {
+        engine.narrator = saved;
+        engine.setNarrationRate(1);
+    }
+    // And every line is started at that speed, after its src is set.
+    const voiceSrc = readFileSync(new URL('../src/engine/engine_voice.js', import.meta.url), 'utf-8');
+    const speak = voiceSrc.slice(voiceSrc.indexOf('    _speak: function'), voiceSrc.indexOf('    _unpause: function'));
+    assert.ok(speak.indexOf('el.src =') >= 0 && speak.indexOf('this._applyNarrationRate(el)') > speak.indexOf('el.src ='),
+        'a new line starts at normal speed: the rate is not applied after the src');
+});
+
+await ok('Every page of the menu is one showMenuPage() knows, and the menu opens on the tiles', () => {
+    // The menu became tiles with pages behind them (settings, save game,
+    // community). showMenuPage() hides every page it knows and shows one; a
+    // page it does not know would stay standing under the next one, and its
+    // title would never be named.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+
+    const inMarkup = [...html.matchAll(/<div id="([a-z-]+)" data-menu-page\b/g)].map(m => m[1]).sort();
+    const block = uiSrc.match(/MENU_PAGES: \{([\s\S]*?)\}/)?.[1] ?? '';
+    const known = [...block.matchAll(/'([a-z-]+)':/g)].map(m => m[1]).sort();
+    assert.ok(inMarkup.length >= 4, `only ${inMarkup.length} menu pages in the markup`);
+    assert.deepEqual(known, inMarkup, 'the markup and showMenuPage() disagree about the menu pages');
+
+    // Every way to a page goes through it, to a page that exists.
+    const routed = [...actions.matchAll(/'menu\.to\w+':\s*\(\) => engine\.showMenuPage\('([a-z-]+)'\)/g)].map(m => m[1]);
+    assert.ok(routed.length >= 4, 'the menu actions no longer route through showMenuPage()');
+    for (const id of routed) assert.ok(inMarkup.includes(id), `an action leads to "${id}", which is not a page`);
+
+    assert.match(uiSrc, /this\.showMenuPage\('menu-main-view', false\);\s*this\.showOverlay\(modal\);/,
+        'the menu no longer opens on its tiles');
+});
+
+await ok('A window the menu opened leads back to the menu page it came from', () => {
+    // Closing the statistics dropped the player into the game, with the menu
+    // gone - one level too far. Every window reached from a menu tile or page
+    // records where it came from and goes back there when it closes.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+    // A method's body: up to its closing brace, at the depth of the engine
+    // methods or of the nested engine.ui ones, whichever comes first.
+    const body = (name) => {
+        const at = uiSrc.indexOf(`${name}: function`);
+        assert.ok(at >= 0, `${name} is gone`);
+        const ends = ['\n    },', '\n        },'].map(m => uiSrc.indexOf(m, at)).filter(i => i > at);
+        return uiSrc.slice(at, Math.min(...ends));
+    };
+    for (const close of ['closeGlobalStats', 'closeLeaderboard', 'closeReportModal', 'closeModals']) {
+        assert.match(body(close), /backToMenu\(\)/, `${close} no longer leads back to the menu`);
+    }
+    for (const open of ['openGlobalStats', 'openLeaderboard', 'openReportModal', 'openExportModal', 'openImportModal']) {
+        assert.match(body(open), /function\(from = null\)[\s\S]*state\.menuReturn = from;/,
+            `${open} does not record where it was opened from`);
+    }
+    assert.match(body('backToMenu'), /this\.openSettings\(\);\s*if \(page !== 'menu-main-view'\) this\.showMenuPage\(page\);/,
+        'backToMenu() no longer returns to the page');
+
+    // The ways in name their page.
+    assert.match(actions, /'settings\.toExport':[^\n]*openExportModal\('menu-save-view'\)/, 'export forgets the save page');
+    assert.match(actions, /'settings\.toImport':[^\n]*openImportModal\('menu-save-view'\)/, 'import forgets the save page');
+    assert.match(actions, /'settings\.toReport':[^\n]*openReportModal\('menu-community-view'\)/, 'feedback forgets the community page');
+    assert.match(actions, /openGlobalStats:\s*\(from\) => engine\.openGlobalStats\(from \|\| null\)/, 'the stats tile loses its page');
+    assert.match(actions, /openLeaderboard:\s*\(from\) => engine\.openLeaderboard\(from \|\| null\)/, 'the leaderboard tile loses its page');
+    for (const action of ['openGlobalStats', 'openLeaderboard']) {
+        assert.match(html, new RegExp(`data-action="${action}" data-arg="menu-main-view"`), `the ${action} tile does not pass its page`);
+    }
+});
+
+await ok('The hard reset tile has one look per state, written from one place', () => {
+    // The timeout that disarms it used to write a grey bar of its own, unlike
+    // the look it was opened with.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const lines = uiSrc.split('\n').filter(l => /(resetBtn|btn)\.className = /.test(l));
+    assert.ok(lines.length >= 4, `only ${lines.length} class writes found - has the reset moved?`);
+    for (const line of lines) {
+        assert.match(line, /className = HARD_RESET\.(idle|armed|going);/, `a literal class list is back: ${line.trim()}`);
+    }
+});
+
+await ok('A half-done key binding never outlives the key list', () => {
+    // Binding mode listens to the whole document. Since the key bindings are
+    // a tab rather than a window, nothing closes them by itself: another tab,
+    // back to the menu or the menu closed would leave it running, and the
+    // next key pressed anywhere would be bound instead of doing its job.
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    assert.match(page, /function select\(id\) \{\s*if \(game\.isBindingKey\) \{ game\.isBindingKey = false; game\.actionToBind = null; \}/,
+        'changing tabs leaves a key half-bound');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(uiSrc, /closeSettings: function\(\) \{\s*this\.cancelBindingKey\(\);/, 'closing the menu leaves a key half-bound');
+    // Back to the menu - and since the menu has more pages, to any of them:
+    // every page change goes through showMenuPage(), which ends it first.
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+    assert.match(actions, /'menu\.toMain':\s*\(\) => engine\.showMenuPage\('menu-main-view'\)/, 'going back to the menu bypasses showMenuPage()');
+    assert.match(uiSrc, /showMenuPage: function\(id, focus = true\) \{\s*if \(!this\.MENU_PAGES\[id\]\) return;[\s\S]{0,200}?this\.cancelBindingKey\(\);/,
+        'changing the menu page leaves a key half-bound');
+    // The window the bindings used to have is gone for good, from every list.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    for (const [name, src] of [['engine_ui', uiSrc], ['engine.js', keys], ['index.html', html]]) {
+        assert.ok(!src.includes('keybind-modal'), `${name} still refers to the old key window`);
+    }
+});
+
+await ok('An item stands on the same lighter ground wherever it is shown', () => {
+    // The drawings are ink for a white page, and on the panel's slate the
+    // black cable ties, the tie, the headphones and the black card all but
+    // vanished. A mid slate carries both ends of the collection - see the note
+    // in app.css. A slot that holds a picture gets it by itself (:has); the
+    // archive and the window that asks before an item is used say so by class.
+    // Lose any of the three and the items vanish there again, at 0 errors.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    assert.match(css, /\.item-ground,\s*\.inv-slot:has\(> img\) \{[^}]*background-image: linear-gradient/,
+        'filled slots are back on the dark ground');
+    const archive = readFileSync(new URL('../src/components/ArchiveView.svelte', import.meta.url), 'utf-8');
+    const border = archive.slice(archive.indexOf('const itemBorder'), archive.indexOf('};', archive.indexOf('const itemBorder')));
+    // Counted inside the class strings only: the comment above them names the
+    // class too, and counting that let a deleted one go unnoticed.
+    assert.equal((border.match(/ item-ground'/g) ?? []).length, 2, 'a found item in the archive is not on the item ground');
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    assert.match(html, /id="item-confirm-icon"\s+class="[^"]*\bitem-ground\b/, 'the item in the confirm window is not on the item ground');
+});
+
+await ok('All six tracks are levelled to one loudness', async () => {
+    // Measured with ffmpeg's EBU R128 meter, per whole file, and written down
+    // in MUSIC_TRIM. The claim the trim makes is that one slider position is
+    // one loudness: hold each track's own level plus its trim against the
+    // reference and they have to agree within half a decibel. Without this the
+    // table is six numbers nobody can check, and the ten and a half decibels
+    // the music used to span would creep back in unnoticed the next time a
+    // track is added.
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const MEASURED = {          // LUFS, ffmpeg -af ebur128, whole file
+        bossa: -21.9, detective: -21.1, elevator: -19.3,
+        gala: -12.4, boss: -11.3, lofi: -12.2
+    };
+    const INTENT = { boss: 3, gala: 3 };    // dB over the office tracks, on purpose
+    const ref = Math.min(...Object.values(MEASURED));
+    const off = [];
+    for (const [key, lufs] of Object.entries(MEASURED)) {
+        const trim = audio.MUSIC_TRIM[key];
+        assert.ok(typeof trim === 'number', `${key} has no trim`);
+        assert.ok(trim > 0 && trim <= 1, `${key} would be amplified past the element's ceiling`);
+        const played = lufs + 20 * Math.log10(trim);
+        const want = ref + (INTENT[key] ?? 0);
+        if (Math.abs(played - want) > 0.5) off.push(`${key}: plays at ${played.toFixed(1)}, wants ${want.toFixed(1)}`);
+    }
+    assert.deepEqual(off, [], 'a track is not levelled to the reference');
+    assert.deepEqual(Object.keys(audio.MUSIC_TRIM).sort(), Object.keys(MEASURED).sort(),
+        'a track has a trim without a measurement, or a measurement without a trim');
 });
 
 await ok("That evening the diary refuses to write about it", async () => {
@@ -4297,6 +4836,76 @@ await ok('A visit is not part of the day save, and Escape closes it', () => {
     const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     assert.match(keys, /engine\.state\.vendingOpen\) \{ engine\.closeVending\(\); return; \}/,
         'Escape no longer closes the machine');
+});
+
+await ok('The number keys press options and nothing else', () => {
+    // Found while giving the read-aloud button its own key: the option keys
+    // took every button in the terminal that was not a continue button, so
+    // the tools under the options counted as options. With two options on
+    // screen, 3 opened the excuse window - in 6.4.0 already - and the speaker
+    // beside it would have been 4.
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const opts = keys.slice(keys.indexOf('// 5. OPTION SHORTCUTS'));
+    assert.match(opts, /querySelectorAll\('#terminal-content button\[data-option\]'\)/,
+        'the number keys take every button in the terminal again');
+
+    const view = readFileSync(new URL('../src/components/EventView.svelte', import.meta.url), 'utf-8');
+    assert.match(view, /<button data-option class=\{o\.locked/, 'the options are not marked as options');
+    // And nothing else carries the mark: the excuse, and the speaker.
+    assert.equal([...view.matchAll(/data-option/g)].length, 2,      // the button and its comment
+        'something besides the options is marked as one');
+    const button = readFileSync(new URL('../src/components/ReadButton.svelte', import.meta.url), 'utf-8');
+    assert.ok(!/data-option/.test(button), 'the read-aloud button is marked as an option');
+});
+
+await ok('A new key binding never lands on a key the player already uses', async () => {
+    const { mergeKeybinds, DEFAULT_KEYBINDS } = await import('../src/engine/engine_state.svelte.js');
+
+    // One copy of the defaults. The reset used to carry its own, and a key
+    // added to one of the two would have gone missing on a reset.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(uiSrc, /this\.state\.keyBinds = \{ \.\.\.DEFAULT_KEYBINDS \};/, 'the reset keeps its own defaults');
+    assert.ok(!/actCoffee: 'q'/.test(uiSrc), 'a second copy of the defaults is back');
+    assert.equal(DEFAULT_KEYBINDS.readAloud, 'v');
+
+    // The menu that lists them is a keyed each. With one list cut by
+    // separators, the read-aloud row brought a second separator, the two
+    // collided on a fixed key, Svelte threw and the menu came up empty - which
+    // no gate saw, because a duplicate key compiles fine and only fails when
+    // the list is drawn. Groups keyed by id and rows by their action now; the
+    // ids and the actions have to be distinct for that to hold.
+    const menu = readFileSync(new URL('../src/components/KeybindView.svelte', import.meta.url), 'utf-8');
+    assert.match(menu, /\{#each GROUPS as group \(group\.id\)\}/, 'the key groups are not keyed by their id');
+    assert.match(menu, /\{#each group\.rows as row \(row\.action\)\}/, 'the key rows are not keyed by their action');
+    const ids = [...menu.matchAll(/\{ id: '(\w+)'/g)].map(m => m[1]);
+    const acts = [...menu.matchAll(/\{ action: '(\w+)'/g)].map(m => m[1]);
+    assert.equal(new Set(ids).size, ids.length, 'two key groups share an id');
+    assert.equal(new Set(acts).size, acts.length, 'an action is listed twice');
+    // And every binding the game has is on the menu, or it cannot be changed.
+    assert.deepEqual([...acts].sort(), Object.keys(DEFAULT_KEYBINDS).sort(), 'a binding is missing from the key menu');
+
+    // Nothing stored: the defaults, all of them.
+    assert.deepEqual(mergeKeybinds(null), { ...DEFAULT_KEYBINDS });
+
+    // A store from before the read-aloud key: it gets V.
+    const old = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
+                  opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
+    assert.equal(mergeKeybinds(old).readAloud, 'v');
+
+    // ...unless the player put something on V themselves. Then it stays
+    // empty, which matches no key, and coffee keeps the key it was given.
+    const vTaken = mergeKeybinds({ ...old, actCoffee: 'V' });
+    assert.equal(vTaken.actCoffee, 'V');
+    assert.equal(vTaken.readAloud, '', 'the new binding took a key that was already in use');
+
+    // The repairs that were there before still hold.
+    const broken = mergeKeybinds({ confirm: 7, gone: 'x' });
+    assert.equal(broken.confirm, 'Space', 'a number survived as a binding');
+    assert.ok(!('gone' in broken), 'an obsolete binding survived');
+    // And the store handed in is not touched.
+    const stored = { ...old };
+    mergeKeybinds(stored);
+    assert.ok(!('readAloud' in stored), 'the merge wrote into the object it was given');
 });
 
 await ok('No key reaches through a window over the terminal', () => {
@@ -4743,6 +5352,353 @@ await ok('The suite is still running in its own language at the end', () => {
     assert.equal(language(), LANG, 'a test switched the language and did not switch back');
     // Both halves: the rune for the interface and the loaded data tree.
     assert.equal(currentLanguage(), LANG, 'the data tree is in the other language');
+});
+
+// ------------------------------------------------- doors taken, and the draw
+
+await ok('A door taken is written down, and the scene has one fewer', () => {
+    resetState();
+    const ev = { id: 'probe_two', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(ev), true, 'an untouched scene has every door');
+    engine.recordOption('probe_two', null, 0, 2);
+    assert.equal(engine.openDoorsLeft(ev), true, 'one of two taken is not all of them');
+    engine.recordOption('probe_two', null, 1, 2);
+    assert.equal(engine.openDoorsLeft(ev), false, 'both taken, nothing left');
+});
+
+await ok('A rewritten scene forgets which door was taken', () => {
+    resetState();
+    // The index is the key, and an option inserted later moves every index
+    // below it. Keeping the old bits would tell the player they have read a
+    // door they never saw, so the record goes instead.
+    engine.recordOption('probe_grow', null, 0, 2);
+    engine.recordOption('probe_grow', null, 1, 2);
+    const twoDoors = { id: 'probe_grow', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(twoDoors), false, 'both doors of the old scene are taken');
+    const threeDoors = { id: 'probe_grow', opts: [{ t: 'a' }, { t: 'neu' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(threeDoors), true, 'a third option voids the old record');
+
+    // And the WRITE has to start over too, not add to bits that now mean
+    // other doors: without that, 0b11 | 0b100 would read as all three taken
+    // and the scene would be spent without the player ever seeing the new
+    // one. Reading alone does not prove this - it was green while the guard
+    // in recordOption was gone.
+    engine.recordOption('probe_grow', null, 2, 3);
+    assert.equal(state.archive.seenOptions.probe_grow, (3 << 16) | 0b100,
+        'only the door just taken is set, the stale bits are dropped');
+    assert.equal(engine.openDoorsLeft(threeDoors), true, 'two of the three are still open');
+});
+
+await ok('A node inside a chain is recorded under its own key', () => {
+    resetState();
+    const chain = {
+        id: 'probe_chain', startNode: 'root',
+        nodes: { root: { opts: [{ t: 'a' }] }, deeper: { opts: [{ t: 'b' }, { t: 'c' }] } },
+    };
+    engine.recordOption('probe_chain', 'root', 0, 1);
+    assert.equal(engine.openDoorsLeft(chain), true, 'the second node is still untouched');
+    // Not under the bare event id: 313 of the scenes with a choice live in a
+    // nodes block and would otherwise all share one record.
+    assert.ok(!('probe_chain' in state.archive.seenOptions), 'the bare id must stay unused');
+    assert.ok('probe_chain:root' in state.archive.seenOptions, 'the node carries its own key');
+    engine.recordOption('probe_chain', 'deeper', 0, 2);
+    engine.recordOption('probe_chain', 'deeper', 1, 2);
+    assert.equal(engine.openDoorsLeft(chain), false, 'every node read to the end');
+});
+
+await ok('The draw takes what was never shown before what has a door open', () => {
+    resetState();
+    const before = engine.UNSEEN_CHANCE;
+    engine.UNSEEN_CHANCE = 1;                      // the dice are not what is under test
+    try {
+        state.archive.seenEvents = ['known'];
+        engine.recordOption('known', null, 0, 2);  // known, one door still open
+        const list = [{ id: 'known', opts: [{}, {}] }, { id: 'brandnew', opts: [{}, {}] }];
+        for (let i = 0; i < 20; i++) {
+            const got = engine.preferUnseen(list);
+            assert.deepEqual(got.map(e => e.id), ['brandnew'],
+                'the never shown one comes first, every time');
+        }
+    } finally {
+        engine.UNSEEN_CHANCE = before;
+        state.archive.seenEvents = [];
+    }
+});
+
+await ok('With nothing new left, the draw leans to the doors still open', () => {
+    resetState();
+    const before = engine.UNSEEN_CHANCE;
+    engine.UNSEEN_CHANCE = 1;
+    try {
+        state.archive.seenEvents = ['spent', 'halfread'];
+        engine.recordOption('spent', null, 0, 2);
+        engine.recordOption('spent', null, 1, 2);     // read to the end
+        engine.recordOption('halfread', null, 0, 2);  // one door left
+        const list = [{ id: 'spent', opts: [{}, {}] }, { id: 'halfread', opts: [{}, {}] }];
+        for (let i = 0; i < 20; i++) {
+            assert.deepEqual(engine.preferUnseen(list).map(e => e.id), ['halfread'],
+                'the spent scene is passed over while another has something left');
+        }
+        // And it never empties the list: all spent means the draw goes on as
+        // before, rather than returning nothing and stalling the day.
+        engine.recordOption('halfread', null, 1, 2);
+        assert.equal(engine.preferUnseen(list).length, 2, 'everything read means no preference');
+    } finally {
+        engine.UNSEEN_CHANCE = before;
+        state.archive.seenEvents = [];
+    }
+});
+
+await ok('Two machines unite the doors they each opened', () => {
+    // An OR, not a max(): one took option 0, the other option 2, and max()
+    // would answer 4 and lose the first.
+    const local = { seenOptions: { scene: (2 << 16) | 0b01 } };
+    const cloud = { seenOptions: { scene: (2 << 16) | 0b10, other: (3 << 16) | 0b100 } };
+    const out = engine.mergeArchives(local, cloud);
+    assert.equal(out.seenOptions.scene & 0xFFFF, 0b11, 'both doors survive the union');
+    assert.equal(out.seenOptions.other, (3 << 16) | 0b100, 'a scene only the cloud knows comes over');
+
+    // Masks written against different option counts describe different
+    // scenes and cannot be OR-ed; the machine you are on keeps its own.
+    const mine  = { seenOptions: { scene: (2 << 16) | 0b01 } };
+    const their = { seenOptions: { scene: (3 << 16) | 0b100 } };
+    assert.equal(engine.mergeArchives(mine, their).seenOptions.scene, (2 << 16) | 0b01,
+        'a rewritten scene is not merged across');
+});
+
+await ok('Answering in the terminal is what writes the door down', () => {
+    resetState();
+    // The six tests above call recordOption directly, so all of them would
+    // stay green if the ONE line in chooseOption that calls it were gone and
+    // the game wrote nothing down ever again. This drives the real path.
+    state.currentEventId = 'probe_flow';
+    state.currentChainNode = null;
+    state.terminal = {
+        mode: 'event',
+        event: { type: 'coffee', title: 't', text: 'x', opts: [{ t: 'a' }, { t: 'b' }], isChain: false },
+    };
+    engine.chooseOption({ t: 'b', m: 0, l: 0, a: 0, b: 0, r: 'x' }, 1);
+    assert.equal(state.archive.seenOptions.probe_flow, (2 << 16) | 0b10,
+        'the second door of a two-door scene, written by the engine itself');
+});
+
+await ok('A save from before the change reads as all doors open', () => {
+    resetState();
+    delete state.archive.seenOptions;              // exactly what an old save carries
+    const ev = { id: 'probe_old', opts: [{ t: 'a' }, { t: 'b' }] };
+    assert.equal(engine.openDoorsLeft(ev), true, 'no record means nothing read');
+    assert.doesNotThrow(() => engine.preferUnseen([ev, { id: 'x', opts: [{}] }]),
+        'the draw must not fall over on an archive without the field');
+    // And writing one creates it rather than throwing.
+    engine.recordOption('probe_old', null, 0, 2);
+    assert.equal(typeof state.archive.seenOptions, 'object', 'the field is created on first write');
+});
+
+// --- The week leaderboards (Steam) -------------------------------------------
+const lb = await import('../src/engine/leaderboard.js');
+
+await ok('A week is scored in minutes, and a finished week always ranks above a failed one', () => {
+    const at = (day, h, m) => ({ won: false, day, time: h * 60 + m, tickets: 0, a: 0, b: 0 });
+    assert.equal(lb.weekScore(at(1, 8, 0)), 0, 'Monday 08:00 is nothing yet');
+    assert.equal(lb.weekScore(at(3, 14, 12)), 2 * 510 + (14 * 60 + 12 - 480), 'Wednesday 14:12');
+    // A loss AT closing time must stay below the morning it never reached.
+    assert.ok(lb.weekScore(at(3, 16, 30)) < lb.weekScore(at(4, 8, 0)),
+        'a loss at 16:30 on Wednesday outranks Thursday morning');
+    assert.equal(lb.weekScore(at(5, 16, 29)), lb.WEEK_MINUTES - 1);
+    assert.equal(lb.weekScore(at(5, 23, 0)), lb.WEEK_MINUTES - 1, 'a failed week can never reach a finished one');
+
+    const worst = { won: true, day: 5, time: 990, tickets: 10, a: 100, b: 100 };
+    const best = { won: true, day: 5, time: 990, tickets: 0, a: 0, b: 0 };
+    assert.equal(lb.weekScore(worst), lb.WEEK_MINUTES, 'the worst finished week');
+    assert.equal(lb.weekScore(best), lb.WEEK_MINUTES + lb.COMPOSURE_MAX, 'the calmest finished week');
+    assert.equal(lb.composure({ tickets: 3, a: 40, b: 25 }), 60 + 75 + 70);
+    // Out-of-range figures cannot push a score past its bounds.
+    assert.equal(lb.composure({ tickets: -5, a: -20, b: 150 }), 100 + 100 + 0);
+});
+
+await ok('The detail values survive the round trip, in the library\'s broken shape as well', () => {
+    const run = {
+        level: 'hard', won: false, cause: 'rage', day: 3, time: 14 * 60 + 12,
+        tickets: 4, l: 35, a: 100, b: 62, valve: true, warning: false,
+        log: [
+            { dayIndex: 1, endTickets: 1, endL: 10, endA: 20, endB: 15 },
+            { dayIndex: 2, endTickets: 2, endL: 22, endA: 48 },                // endB missing: ?? 0
+        ],
+    };
+    const details = lb.encodeDetails(run);
+    assert.ok(details.length <= 64, `Steam keeps 64 values, this is ${details.length}`);
+    const expect = {
+        level: 'hard', cause: 'rage', won: false, day: 3, time: 852,
+        tickets: 4, l: 35, a: 100, b: 62, valve: true, warning: false,
+        days: [
+            { tickets: 1, l: 10, a: 20, b: 15 },
+            { tickets: 2, l: 22, a: 48, b: 0 },
+            { tickets: 4, l: 35, a: 100, b: 62 },                              // the day it ended on
+            null, null,
+        ],
+    };
+    assert.deepEqual(lb.decodeDetails(details), expect, 'plain numbers, as a fixed library returns them');
+
+    // steamworks-ffi-node 0.11.3: entry j arrives as the first j values. The
+    // padding value is the one this shape loses.
+    const broken = details.map((_, j) => Object.fromEntries(details.slice(0, j).map((v, i) => [i, v])));
+    assert.deepEqual(lb.decodeDetails(broken), expect, 'the shape 0.11.3 returns');
+    assert.deepEqual(lb.decodeDetails(details.map((_, j) => details.slice(0, j))), expect,
+        'the same shape as arrays, which is what main.cjs sends across');
+
+    assert.equal(lb.decodeDetails([]), null, 'no details');
+    assert.equal(lb.decodeDetails(details.slice(0, 12)), null, 'a short list is not read');
+    assert.equal(lb.decodeDetails([99, ...details.slice(1)]), null, 'an unknown format is not read');
+
+    const won = lb.decodeDetails(lb.encodeDetails({ ...run, won: true, cause: 'gala', day: 5 }));
+    assert.equal(won.won, true, 'a gala is a finished week');
+    assert.equal(lb.weekEntry({ ...run, level: 'easy' }).board, 'week_easy');
+});
+
+await ok('The All tab merges the three boards: points first, then the harder level', () => {
+    const merged = lb.mergeBoards({
+        easy:   [{ steamId: 'a', score: 2700, rank: 1 }, { steamId: 'b', score: 1200, rank: 2 }],
+        normal: [{ steamId: 'c', score: 2700, rank: 1 }],
+        hard:   [{ steamId: 'd', score: 2550, rank: 1 }],
+    });
+    assert.deepEqual(merged.map(r => `${r.steamId}:${r.level}`), ['c:normal', 'a:easy', 'd:hard', 'b:easy']);
+    assert.deepEqual(lb.mergeBoards(null), [], 'nothing fetched yet');
+});
+
+await ok('Both endings of a week submit it, with the figures it ended on', async () => {
+    const { platform } = await import('../src/platform.js');
+    const real = { isDesktop: platform.isDesktop, submit: platform.leaderboardSubmit };
+    const sent = [];
+    platform.isDesktop = true;
+    platform.leaderboardSubmit = async (board, score, details) => {
+        sent.push({ board, score, info: lb.decodeDetails(details) });
+        return { ok: true, scoreChanged: true, rank: 3, previousRank: 9 };
+    };
+    try {
+        // A lost Wednesday.
+        resetState();
+        engine.startWeek('hard');
+        state.week.dayIndex = 3;
+        state.week.weekLog = [
+            { dayIndex: 1, endTickets: 1, endL: 10, endA: 20, endB: 15 },
+            { dayIndex: 2, endTickets: 2, endL: 22, endA: 48, endB: 30 },
+        ];
+        state.time = 14 * 60 + 12; state.tickets = 4;
+        state.fl = 35; state.al = 100; state.cr = 62;
+        state.rageWarningReceived = true;           // the valve is spent: 100 is the end
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 1, 'a lost week was not submitted');
+        assert.equal(sent[0].board, 'week_hard');
+        assert.equal(sent[0].score, 2 * 510 + 372);
+        assert.equal(sent[0].info.cause, 'rage');
+        assert.equal(sent[0].info.valve, true, 'the spent valve did not travel');
+        assert.deepEqual(sent[0].info.days[2], { tickets: 4, l: 35, a: 100, b: 62 }, 'not the figures it ended on');
+        await Promise.resolve();
+        assert.deepEqual(state.weekSubmit, { pending: false, score: 1392, level: 'hard', scoreChanged: true, rank: 3 },
+            'the end screen does not learn what Steam answered');
+
+        // The Friday gala, the other way a week ends.
+        resetState();
+        engine.startWeek('easy');
+        state.week.dayIndex = 5;
+        state.tickets = 1; state.al = 20; state.cr = 30;
+        state.currentPartyKey = 'layer8_party_played';
+        state.isPartyMode = true;
+        state.dayActive = true;
+        state.currentEventId = 'party_finale_gossip';
+        await ensure('party');
+        engine.finishParty('SYNERGY!', 'Testabend.');
+        localStorage.removeItem('layer8_party_played');
+        assert.equal(sent.length, 2, 'the gala did not submit the week');
+        assert.equal(sent[1].board, 'week_easy');
+        assert.equal(sent[1].info.cause, 'gala');
+        assert.equal(sent[1].score, lb.WEEK_MINUTES + lb.composure({ tickets: 1, a: 20, b: 30 }));
+
+        // A browser has no Steam: nothing is sent and the end screen says nothing.
+        resetState();
+        platform.isDesktop = false;
+        engine.startWeek('normal');
+        state.week.dayIndex = 2; state.time = 10 * 60; state.al = 100;
+        state.rageWarningReceived = true;
+        state.weekSubmit = null;
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 2, 'the web build submitted a week');
+        assert.equal(state.weekSubmit, null);
+    } finally {
+        platform.isDesktop = real.isDesktop;
+        platform.leaderboardSubmit = real.submit;
+        state.weekSubmit = null;
+    }
+});
+
+await ok('The desktop page has no Node, and one door to the main process', () => {
+    // Until 7.0 the window ran with nodeIntegration on and contextIsolation
+    // off: the page could require('electron') and reach every channel - and
+    // since the leaderboards, a live Steam session behind them. Now it is
+    // sandboxed, and electron/preload.cjs hands it named functions, one per
+    // channel. The three files have to agree, or a channel goes deaf (a
+    // function with no handler) or stays open with nothing to guard it.
+    const main = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
+    const preload = readFileSync(new URL('../electron/preload.cjs', import.meta.url), 'utf-8');
+    const steam = readFileSync(new URL('../src/platform_steam.js', import.meta.url), 'utf-8');
+
+    const prefs = main.match(/webPreferences: \{([\s\S]*?)\}/)?.[1] ?? '';
+    assert.match(prefs, /contextIsolation: true/, 'contextIsolation is off again');
+    assert.match(prefs, /nodeIntegration: false/, 'the page has Node again');
+    assert.match(prefs, /sandbox: true/, 'the page is no longer sandboxed');
+    assert.match(prefs, /preload: path\.join\(__dirname, 'preload\.cjs'\)/, 'the preload is not loaded');
+
+    // Every channel the preload uses is one main.cjs handles, the same way
+    // round: invoke answers through handle(), send through on().
+    const handled = new Set([...main.matchAll(/ipcMain\.(?:on|handle)\('([a-z-]+)'/g)].map(m => m[1]));
+    const used = [...preload.matchAll(/ipcRenderer\.(send|invoke)\('([a-z-]+)'/g)];
+    assert.deepEqual([...new Set(used.map(m => m[2]))].sort(), [...handled].sort(),
+        'preload.cjs and main.cjs disagree about the channels');
+    for (const [, how, channel] of used) {
+        const kind = how === 'invoke' ? 'handle' : 'on';
+        assert.ok(main.includes(`ipcMain.${kind}('${channel}'`), `"${channel}" is ${how}d but main.cjs answers it with the other kind`);
+    }
+
+    // platform_steam.js calls what the preload exposes, all of it, and nothing else.
+    const exposed = [...preload.matchAll(/^\s+(\w+):\s+\(/gm)].map(m => m[1]).sort();
+    const called = [...new Set([...steam.matchAll(/bridge\.(\w+)\(/g)].map(m => m[1]))].sort();
+    assert.deepEqual(called, exposed, 'platform_steam.js and the bridge disagree');
+
+    // No Node in the page, anywhere in src/.
+    const files = [];
+    const walk = (dir) => {
+        for (const entry of readdirSync(new URL(`../${dir}`, import.meta.url), { withFileTypes: true })) {
+            const p = `${dir}/${entry.name}`;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(js|svelte)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+    for (const file of files) {
+        const src = readFileSync(new URL(`../${file}`, import.meta.url), 'utf-8');
+        assert.ok(!/\brequire\s*\(|ipcRenderer\./.test(src), `${file} reaches for Node or ipcRenderer`);
+    }
+
+    // And the window stays one page, with only web addresses let out.
+    assert.match(main, /'will-navigate', \(event, url\) => \{\s*if \(url !== win\.webContents\.getURL\(\)\) event\.preventDefault\(\);/,
+        'the window can be navigated away from the game');
+    assert.match(main, /ipcMain\.on\('open-external-browser', \(event, url\) => \{\s*if \(!isWebUrl\(url\)\) return;/,
+        'any address reaches shell.openExternal again');
+});
+
+await ok('The main process allows exactly the boards the game submits to', () => {
+    // main.cjs cannot import leaderboard.js - only docs/ and electron/ are
+    // packaged - so it keeps its own allow-list and its own score ceiling.
+    // A board renamed on one side only would be refused there in silence.
+    const main = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
+    const listed = [...(main.match(/const LEADERBOARDS = \[([^\]]*)\]/) ?? [, ''])[1].matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
+    assert.deepEqual(listed.sort(), Object.values(lb.BOARD_NAMES).sort(), 'main.cjs allows other boards than the game uses');
+    const max = main.match(/const SCORE_MAX = (\d+) \+ (\d+);/);
+    assert.ok(max, 'SCORE_MAX is no longer written as minutes plus bonus');
+    assert.equal(Number(max[1]), lb.WEEK_MINUTES, 'SCORE_MAX: the minutes differ');
+    assert.equal(Number(max[2]), lb.COMPOSURE_MAX, 'SCORE_MAX: the bonus differs');
 });
 
 console.log(`\n${passed} checks passed.`);

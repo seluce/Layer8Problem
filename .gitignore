@@ -15,3 +15,24 @@ EVENT-DOKTRIN.md
 .claude/settings.local.json
 .claude/settings.local.json.tmp.*
 .claude/launch.json
+
+# Audio. The opus files live in the repository ONCE, in docs/, because that is
+# what GitHub Pages serves. public/audio/ is the local staging area the build
+# copies from; committing both would put every file in the history twice.
+# voice/master/ holds the provider's MP3s - re-encoding from them is free,
+# re-asking the provider is not. They stay out of the repository and out of
+# the published site: 815 MiB for German alone.
+public/audio/
+voice/master/
+voice/trial/
+
+# The listening index is generated from the manifest and the rendered audio in
+# a second (`npm run voice:listen`). 3.2 MiB a language that would otherwise
+# change on every edited line.
+voice/index.*.html
+
+# The Steamworks SDK's redistributable_bin, which steamworks-ffi-node loads.
+# Valve's licence keeps it out of npm and out of a public repository; each
+# developer copies it in from their own SDK download (see README). The
+# desktop build packs it from here.
+steamworks_sdk/

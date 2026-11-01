@@ -1,0 +1,15 @@
+{
+    "lang": "de",
+    "voiceId": "kkJxCnlRCckmfFvzDW5Q",
+    "voiceName": "Alexander - Deep TV Narrator",
+    "modelId": "eleven_v4_turbo",
+    "outputFormat": "mp3_44100_128",
+    "voiceSettings": {
+        "stability": 0.3,
+        "use_speaker_boost": true,
+        "similarity_boost": 0.54,
+        "style": 0.5,
+        "speed": 1.07
+    },
+    "opusBitrate": "24k"
+}

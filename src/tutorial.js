@@ -1,6 +1,6 @@
 import { tick } from 'svelte';
 import { engine } from './engine.js';
-import { applyStaticStrings } from './i18n/i18n.svelte.js';
+import { applyStaticStrings, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 /**
  * The look of a highlight, in one place.
@@ -40,6 +40,7 @@ const tutorial = {
         const askModal = this.dressAskModal('ask');
         if(askModal) {
             engine.showOverlay(askModal);
+            engine.narrateWindow(t('tutorial.ask.text'));
         }
     },
 
@@ -196,6 +197,7 @@ const tutorial = {
         if(askModal) {
             engine.hideOverlay(askModal);
         }
+        engine.hushNarration();
 
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         this.isActive = false;
@@ -387,9 +389,24 @@ const tutorial = {
         //    COFFEE while the bubble above it still said "Kaffee holen", until
         //    the step changed. The component resolves instead, and a component
         //    that calls t() is a reader of the language rune.
+        // 3b. The step's own voice, and only on a CHANGE of step.
+        //
+        //     applyStepLogic() runs again every time one of the tutorial's own
+        //     windows closes, so the same bubble is shown repeatedly - a
+        //     lesson reading itself out afresh because the backpack was shut
+        //     is a stutter, not teaching. The key that is already in the state
+        //     is the one being replaced here (clearGlows() leaves the bubble
+        //     alone), so the comparison needs nothing kept of its own.
+        //
+        //     narrateWindow, because a bubble is not the terminal. See
+        //     engine_voice.narrateWindow().
+        const isNewStep = engine.state.tutorialPointer?.descKey !== descKey;
+
         engine.state.tutorialPointer = {
             visible: true, faded: true, titleKey, descKey, confirmable: !!isInfoStep
         };
+
+        if (isNewStep) engine.narrateWindow(t(descKey));
 
         // 4. Measure only once the bubble is really in the document: a hidden
         //    element has no width, and the arrow would land at the wrong end.
@@ -472,12 +489,14 @@ const tutorial = {
         const askModal = this.dressAskModal('done');
         if(askModal) {
             engine.showOverlay(askModal);
+            engine.narrateWindow(t('tutorial.done.text'));
         }
     },
 
     finish: function() {
         this.isActive = false;
         this.deafen();
+        engine.hushNarration();
         localStorage.setItem(engine.KEYS.tutorialDone, 'true');
         
         const askModal = document.getElementById('tut-ask-modal');
@@ -505,6 +524,46 @@ const tutorial = {
 // slot now: registered from this side, so the engine never has to import a file
 // that imports the engine.
 //
+/**
+ * The lesson's own voice follows a language switch.
+ *
+ * The bubble and the question both carry KEYS rather than sentences, so their
+ * text changes language under applyStaticStrings() and TutorialPointer - and a
+ * line that started before the switch would read the old language out over the
+ * new words. Same question relocaliseScene() answers for the terminal; the
+ * tutorial answers it here, because the keys are its own.
+ *
+ * NOT the two hint boxes. showModal() is handed finished SENTENCES, so a hint
+ * keeps the language it opened in, and the recording playing over it is still
+ * the right one for what is on screen.
+ *
+ * engine.js registered its handler first - its module body runs before this
+ * one, which imports it - so the hush there happens before the line below.
+ * Were that ever the other way round the result would be silence until the
+ * next step, not the wrong language.
+ *
+ * i18n-uses: tutorial.ask.text, tutorial.done.text
+ */
+onLanguageChange(() => {
+    // The face this window is wearing is written on its own elements and
+    // nowhere else - see dressAskModal() - so it is read back from there.
+    if (engine.isOverlayOpen('tut-ask-modal')) {
+        const face = document.getElementById('tut-ask-modal')
+            ?.querySelector('p')?.getAttribute('data-i18n-html');
+        if (face) engine.narrateWindow(t(face));
+        return;
+    }
+    // isActive, not the bubble's own `visible` flag. skip() ends the lesson
+    // without hiding the pointer - nothing on screen, because the overlay goes
+    // and the glows are cleared, but the state still says visible. A switch
+    // after skipping then read step one out over an ordinary workday. Found in
+    // the preview, not by reading: the request went out for the English
+    // bubble while the terminal was showing a coffee result.
+    if (!tutorial.isActive) return;
+    const pointer = engine.state.tutorialPointer;
+    if (pointer?.visible && pointer.descKey) engine.narrateWindow(t(pointer.descKey));
+});
+
 // Set at load rather than at run(): engine.setDifficulty() calls start() before
 // any lesson exists, and `isActive` is the switch, exactly as it was.
 engine.lesson = tutorial;

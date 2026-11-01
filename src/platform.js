@@ -80,6 +80,21 @@ export const platform = {
     globalStats: async () => null,
 
     /**
+     * Submits a finished week to its Steam board. `board` is one of
+     * BOARD_NAMES in engine/leaderboard.js. Resolves to
+     * { ok, scoreChanged, rank, previousRank }, or null where there is no
+     * Steam - which is always, in a browser: the leaderboards are one of the
+     * things the Steam version adds.
+     */
+    leaderboardSubmit: async (board, score, details) => null,
+
+    /**
+     * One board's entries, `scope` 'global' (top 100) or 'friends'. Resolves to
+     * { entries, mine }, or null when unavailable.
+     */
+    leaderboardEntries: async (board, scope) => null,
+
+    /**
      * The language Steam was told to start the game in, or null.
      *
      * Steam keeps a per-game language setting that can differ from the one the
@@ -90,10 +105,11 @@ export const platform = {
 };
 
 // --- DESKTOP UPGRADE ---
-// main.js runs the renderer with nodeIntegration enabled and contextIsolation
-// off, so `require` exists as a global there and nowhere else. That single
-// check is what separates the two builds; the browser never fetches the bridge.
-if (typeof require !== 'undefined') {
+// The desktop shell's preload (electron/preload.cjs) puts `desktopBridge` on
+// the window, and nothing else does. That single check is what separates the
+// two builds; the browser never fetches the Steam file. Until 7.0 the check
+// was `typeof require`, which existed because the page ran with Node in it.
+if (globalThis.desktopBridge) {
     try {
         const { desktop } = await import('./platform_steam.js');
         Object.assign(platform, desktop);

@@ -6,11 +6,12 @@ import { hooks } from './engine/engine_hooks.js';
 import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 import { vendingMachine } from './engine/engine_vending.js';
+import { voice } from './engine/engine_voice.js';
 import { week } from './engine/engine_week.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v6.4.0",
+    VERSION: "v7.0.0",
 
     // 1. Attach the mutable game state
     state: state,
@@ -25,6 +26,7 @@ const engine = {
     ...inventory,
     ...ui,
     ...vendingMachine,
+    ...voice,
     ...week,
 
     // 3. Language. Not a module of its own: these two are all the rest of the
@@ -58,6 +60,11 @@ window.engine = engine;
 // are being replaced. Its two reset buttons say more than their marks can, and
 // the armed hard reset kept its flag while losing its question.
 onLanguageChange(() => {
+    // The voice first: stop the line that belongs to the old language, so it
+    // cannot read German out over the English text replacing it.
+    // relocaliseScene() starts the new recording - for a scene, which
+    // repaints, and for a result, which does not.
+    engine.hushNarration();
     engine.relocaliseScene();
     engine.dressResetButtons();
     // Painted straight into the DOM with no repaint path of its own, and its
@@ -188,10 +195,10 @@ document.addEventListener('keydown', (event) => {
 
         // C. Close submenus and overlays, innermost first
         if (isVisible('item-confirm-modal')) { engine.closeItemConfirm(); return; }
-        if (isVisible('keybind-modal')) { engine.closeKeybinds(); return; }
         if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
         if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
+        if (isVisible('leaderboard-modal')) { engine.closeLeaderboard(); return; }
 
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }
@@ -217,9 +224,14 @@ document.addEventListener('keydown', (event) => {
             return;
         }
 
-        // E. Nothing open at all -> toggle the settings menu
+        // E. Nothing open at all -> toggle the settings menu. On one of its
+        // pages (settings, save game, community) Escape goes back to the
+        // tiles first: one level up, the way it leads from the statistics or
+        // the leaderboard back into the menu. It used to close the whole menu
+        // from a page, and from a window opened on that page it went back.
         if (isVisible('settings-modal')) {
-            engine.closeSettings();
+            if (engine.menuPage() !== 'menu-main-view') engine.showMenuPage('menu-main-view');
+            else engine.closeSettings();
         } else {
             engine.openSettings();
         }
@@ -309,6 +321,21 @@ document.addEventListener('keydown', (event) => {
         if (contBtn && contBtn.offsetParent !== null && !engine.windowOverTerminal()) { press(contBtn); return; }
     }
 
+    // 3b. READ ALOUD (V unless rebound)
+    // The keyboard twin of the speaker button beside the excuse, for somebody
+    // who plays with the narrator off and wants the odd long scene read. The
+    // same three refusals the button has by construction: not through a window
+    // over the terminal or under a mail, where the button cannot be reached
+    // either, and nothing to do when there is nothing to offer.
+    if (key === engine.state.keyBinds.readAloud.toLowerCase()) {
+        if (engine.windowOverTerminal() || engine.state.isEmailOpen
+            || document.body.classList.contains('overflow-hidden')) return;
+        if (!engine.canReplayNarration()) return;
+        event.preventDefault();
+        engine.replayNarration();
+        return;
+    }
+
     // 4. ACTION SHORTCUTS (Q, W, E, R)
     // Only while no event, no open mail and no window is up. The scroll lock
     // alone did not say so: the noticeboard opens without it, and Q started a
@@ -342,10 +369,15 @@ document.addEventListener('keydown', (event) => {
         else if (document.getElementById('app-actions') && document.getElementById('app-actions').offsetParent !== null) {
             visibleOptions = Array.from(document.querySelectorAll('#app-actions button'));
         } 
-        // C: the terminal
+        // C: the terminal - the OPTIONS, by their mark, and nothing else.
+        //
+        // This took every button in the terminal that was not a continue
+        // button, which counted the tools under the options as options too:
+        // with two of them on screen, 3 opened the excuse window, and the
+        // read-aloud button beside it would have been 4. Found while
+        // giving that button its own key.
         else {
-            const termActions = document.querySelectorAll('#terminal-content button');
-            visibleOptions = Array.from(termActions).filter(b => !b.hasAttribute('data-continue'));
+            visibleOptions = Array.from(document.querySelectorAll('#terminal-content button[data-option]'));
         }
 
         if (key === engine.state.keyBinds.opt1.toLowerCase() && visibleOptions[0]) press(visibleOptions[0]);

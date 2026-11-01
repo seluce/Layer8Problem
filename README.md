@@ -98,6 +98,9 @@ and you lose the whole week.
 - **German and English**, in full — not just the menus, but every single event.
   You can switch mid-game: the save file does not depend on the language, so the
   week carries on exactly where it was.
+- **Read out loud** — every scene and every outcome, in both languages, by a
+  synthetic voice (the credits say which). Choose what it reads and how fast,
+  or switch it off and let a button read a single scene when you want one.
 - **Decisions with a memory.** The machine you had Kevin reinstall turns up in
   the rack hours later — with a dragon sticker and a program selling compute
   power overseas. Leave Gabi hanging and you will find a drawer in the tea
@@ -126,6 +129,8 @@ development gets a few technical conveniences on Steam:
   at the desktop in the evening
 - **Dynamic status** — your friends list finds out whether you are currently
   *"Hiding in the server room"* or *"Surviving the Synergy Gala"*
+- **Leaderboards** — one per week level, plus all three in one list: who lasts
+  the longest, how the week ended, and on which values
 
 Both versions run on the same content.
 
@@ -156,10 +161,15 @@ npm run lint:all       # the gate: data (both trees), interface strings, parity
 npm run lint:data      # the German data tree only
 npm run lint:parity    # holds the two trees against each other
 npm run lint:assets    # every image reference, runtime-built ones included
-npm test               # four test suites, run in both languages
+npm test               # five test suites, run in both languages
 npm run sim            # simulates thousands of working days for balance
 npm run sim:week       # the same for whole weeks
 ```
+
+**The Steam build** needs the Steamworks SDK's `redistributable_bin` folder in
+`steamworks_sdk/` (from the SDK download on the Steamworks partner site; it is
+not in the repository for licensing reasons). Without it the desktop build
+still starts, just without Steam.
 
 If you would like to write events: `EVENTS.md` explains the data format, from
 the simple option to the branching dialogue chain. `STRUCTURE.md` explains why

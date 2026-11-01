@@ -357,6 +357,16 @@ export function freshArchive() {
         // for players who already saw the scene.
         seenEvents: [],
         seenFlags: [],
+        // Which doors of a scene this career has already opened. The key is
+        // the event id, or `id:node` for a scene inside a nodes block - 313
+        // of the 1612 scenes with a choice carry no id of their own. The
+        // value packs the taken options as a bitmask and, above bit 16, the
+        // option COUNT the scene had when it was written: insert an option
+        // later and every index below it would mean a different door, so a
+        // record whose count no longer matches is dropped rather than
+        // believed. A map and not a list of `id#i` strings: 33 KB against 80
+        // when full, beside the 24 that seenEvents already takes.
+        seenOptions: {},
         // Per compendium entry: how many notes had been read the last time it
         // was opened. An entry counts as unread again once it has more than
         // that, so a later note re-flags an entry that was already seen.
@@ -368,6 +378,109 @@ export function freshArchive() {
         gala: null,
         stats: { daysStarted: 0, daysSurvived: 0, daysRageQuit: 0, daysFired: 0 },
     };
+}
+
+/**
+ * The key bindings a new player starts with, and what the reset button
+ * restores. One copy: until the read-aloud key arrived the same object stood
+ * here and again in engine_ui.resetKeybinds(), and a binding added to one of
+ * them would have been missing after a reset - or missing for everyone who
+ * never pressed it.
+ *
+ * V is "voice" and "vorlesen" at once, which makes it the one letter that
+ * means the same thing in both languages.
+ */
+/**
+ * The audio levels a new player starts with, and what the settings reset
+ * restores. Named once for the reason DEFAULT_KEYBINDS is: the reset used to
+ * carry its own numbers, and when the music default came down to 0.15 to sit
+ * under the narrator, the reset went on restoring 0.2.
+ */
+export const DEFAULT_SFX_VOLUME = 0.5;
+export const DEFAULT_MUSIC_VOLUME = 0.15;
+export const DEFAULT_NARRATION_VOLUME = 1;
+
+/**
+ * How fast the narrator reads, as a playback rate. The recordings are made at
+ * one speed and the browser stretches them with the pitch kept, so 1.5 is a
+ * quicker reader rather than a higher voice. The range is what stays
+ * intelligible on the stock voice: below 0.75 the pauses drag, above 2 the
+ * words start to smear.
+ */
+export const DEFAULT_NARRATION_RATE = 1;
+export const NARRATION_RATE_MIN = 0.75;
+export const NARRATION_RATE_MAX = 2;
+/** A stored or typed rate made safe: a number, inside the range. */
+export function clampNarrationRate(v) {
+    const n = parseFloat(v);
+    if (!Number.isFinite(n)) return DEFAULT_NARRATION_RATE;
+    return Math.min(NARRATION_RATE_MAX, Math.max(NARRATION_RATE_MIN, n));
+}
+
+/**
+ * What the narrator reads when it is switched on - each kind can be turned off
+ * on its own in the settings. The button beside the excuse (and V) reads any
+ * scene regardless: it is the player asking, not the narrator offering.
+ *
+ *   events   the terminal's scenes and outcomes
+ *   morning  the morning screen
+ *   valves   the rage valve and the written warning
+ *   halgerd  H.A.L.G.E.R.D.'s two first words and the tutorial
+ */
+export const DEFAULT_NARRATION_KINDS = Object.freeze({
+    events: true, morning: true, valves: true, halgerd: true
+});
+
+/** A stored kinds object made safe: unknown keys dropped, missing ones filled. */
+export function mergeNarrationKinds(saved) {
+    const out = { ...DEFAULT_NARRATION_KINDS };
+    if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+        for (const k of Object.keys(out)) if (typeof saved[k] === 'boolean') out[k] = saved[k];
+    }
+    return out;
+}
+
+export const DEFAULT_KEYBINDS = Object.freeze({
+    actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
+    opt1: '1', opt2: '2', opt3: '3', confirm: 'Space',
+    readAloud: 'v'
+});
+
+/**
+ * A player's stored bindings, made safe to use. Pure, and exported so the
+ * week suite can hand it a store and look at what comes out - the factory
+ * below only ever runs once, at module load, against the real localStorage.
+ */
+export function mergeKeybinds(saved) {
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) saved = {};
+    saved = { ...saved };
+    const defaults = DEFAULT_KEYBINDS;
+
+    // Drop obsolete keys left over from older savegames
+    for (let k in saved) {
+        if (!Object.hasOwn(defaults, k)) delete saved[k];
+    }
+
+    // Fill in missing keys - and repair non-STRING values, not just missing
+    // ones. A hand-edited or corrupted store could carry a number here, and
+    // keyBinds.confirm.toLowerCase() then threw on every keypress, which is
+    // exactly what this exists to prevent.
+    //
+    // A binding that is NEW to this player gets its default only if no other
+    // action already holds that key. Somebody who put coffee on V before the
+    // read-aloud key existed would otherwise find both on one key, and
+    // whichever the handler asks first would win without a word. Such a
+    // binding stays empty instead - '' matches no key - and the key menu shows
+    // it as free to set. It is asked again on every start, so it takes its
+    // default the day the player moves the other one away.
+    for (let k in defaults) {
+        if (saved[k] && typeof saved[k] === 'string') continue;
+        const taken = Object.entries(saved)
+            .some(([other, key]) => other !== k && typeof key === 'string'
+                                    && key.toLowerCase() === defaults[k].toLowerCase());
+        saved[k] = taken ? '' : defaults[k];
+    }
+    return saved;
 }
 
 export const state = $state({
@@ -446,6 +559,20 @@ export const state = $state({
     // the web because platform.globalStats() resolves to null there.
     globalStats: { data: null, loading: false, failed: false },
 
+    // The week leaderboards (desktop only, components/LeaderboardView.svelte).
+    // `boards` holds what was fetched per level for the scope on show; the
+    // whole object is replaced on every open, which is the view's signal.
+    leaderboard: { scope: 'global', boards: null, mine: null, loading: false, failed: false },
+    // The menu page a window was opened from (engine_ui.backToMenu()): the
+    // statistics and the leaderboard show a way back to it while it is set.
+    menuReturn: null,
+    // Counts the openings, so the view can reset its tab on each one without
+    // also resetting it when only the scope is flipped.
+    leaderboardOpens: 0,
+    // What the last finished week was worth and what Steam made of it - see
+    // engine_week.submitWeekScore(). Read by the week's end screen.
+    weekSubmit: null,
+
     // Persistent archive (survives a day restart, mirrored into localStorage).
     // The shape lives in freshArchive() above, which the hard reset uses too.
     archive: freshArchive(),
@@ -468,11 +595,35 @@ export const state = $state({
     // User settings
     visualFX: localStorage.getItem(KEYS.visualFX) !== 'false',
     audioEffects: localStorage.getItem(KEYS.audioEffects) !== 'false',
-    audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || '0.5'), // default 50%
+    audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || String(DEFAULT_SFX_VOLUME)),
     musicEnabled: localStorage.getItem(KEYS.musicEnabled) !== 'false',
-    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || '0.2'), // default 20%
+    // 15% since 6.4, and the number is derived rather than chosen: the
+    // recordings come in at -23.6 LUFS, the tracks are levelled to -21.9
+    // (engine_audio.MUSIC_TRIM), and 0.15 puts the music 15 dB under the
+    // voice - broadcast practice for a bed under narration. Reaches new
+    // players only; a stored setting is the player's and is not rewritten.
+    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || String(DEFAULT_MUSIC_VOLUME)),
     musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
+    // The narrator. On by default - 15 hours of speech is not an easter egg -
+    // and at the top of its range, because the recordings come in at -23.6
+    // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.
+    narrationEnabled: localStorage.getItem(KEYS.narrationEnabled) !== 'false',
+    narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || String(DEFAULT_NARRATION_VOLUME)),
+    narrationRate: clampNarrationRate(localStorage.getItem(KEYS.narrationRate) ?? DEFAULT_NARRATION_RATE),
+    narrationKinds: (() => {
+        try { return mergeNarrationKinds(JSON.parse(localStorage.getItem(KEYS.narrationKinds))); }
+        catch { return mergeNarrationKinds(null); }
+    })(),
     currentMusicTrack: null,
+    // The read-aloud button (components/ReadButton.svelte) reads these two,
+    // which is why they are here and not on the voice object: the modules are spread
+    // into `engine`, so a component watching a plain property there would never
+    // hear about it again. `narratable` is the sentence the TERMINAL last
+    // showed - window text goes through narrateWindow() and stays out of it, or
+    // the button would offer to repeat a tutorial bubble over a working day.
+    // Neither is in the save: both are outside freshDay().
+    narratable: null,
+    narrating: false,
     oneClickItem: localStorage.getItem(KEYS.oneClickItem) === 'true',
     fastChat: localStorage.getItem(KEYS.fastChat) === 'true',
     blindStats: localStorage.getItem(KEYS.blindStats) === 'true',
@@ -515,26 +666,10 @@ export const state = $state({
         let saved = {};
         try {
             saved = JSON.parse(localStorage.getItem(KEYS.keyBinds)) || {};
-            if (typeof saved !== 'object' || Array.isArray(saved)) saved = {};
         } catch {
             saved = {};
         }
-        const defaults = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r', opt1: '1', opt2: '2', opt3: '3', confirm: 'Space' };
-
-        // Drop obsolete keys left over from older savegames
-        for (let k in saved) {
-            if (!defaults.hasOwnProperty(k)) delete saved[k];
-        }
-
-        // Fill in missing keys - and repair non-STRING values, not just
-        // missing ones. A hand-edited or corrupted store could carry a
-        // number here, and keyBinds.confirm.toLowerCase() then threw on
-        // every keypress, which is exactly what this factory exists to
-        // prevent.
-        for (let k in defaults) {
-            if (!saved[k] || typeof saved[k] !== 'string') saved[k] = defaults[k];
-        }
-        return saved;
+        return mergeKeybinds(saved);
     })(),
     isBindingKey: false,
     actionToBind: null,

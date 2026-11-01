@@ -151,15 +151,15 @@
                 onclick={() => switchCat(c.id)}
                 aria-current={cat === c.id ? 'page' : undefined}
                 class="px-4 py-2.5 text-[0.625rem] font-bold tracking-[0.14em] border-b-2 -mb-px transition-colors
-                       {cat === c.id ? c.tab : 'border-transparent text-slate-500 hover:text-slate-300'}">
+                       {cat === c.id ? c.tab : 'border-transparent text-slate-400 hover:text-slate-300'}">
                 {t(c.label)}
                 <span class="ml-1.5 tabular-nums transition-colors
-                             {unreadIn(c.id) ? 'text-slate-100 font-bold' : 'font-normal opacity-60'}">
+                             {unreadIn(c.id) ? 'text-slate-100 font-bold' : 'font-normal text-slate-400'}">
                     {countOf(c.id)}/{all.filter(e => e.cat === c.id).length}
                 </span>
             </button>
         {/each}
-        <span class="ml-auto self-center pr-4 text-[0.625rem] text-slate-600 tabular-nums hidden sm:block">
+        <span class="ml-auto self-center pr-4 text-[0.625rem] text-slate-400 tabular-nums hidden sm:block">
             {tf('knowledge.notes', { found, total })}
         </span>
     </div>
@@ -186,7 +186,7 @@
                                  counter would be invisible in that tab. Brightness
                                  works in all four. -->
                             <span class="ml-auto text-[0.625rem] tabular-nums shrink-0 transition-colors
-                                         {e.unread ? 'text-slate-100 font-bold' : e.open ? 'text-slate-500' : 'text-slate-700'}">
+                                         {e.unread ? 'text-slate-100 font-bold' : e.open ? 'text-slate-400' : 'text-slate-700'}">
                                 {e.open ? `${e.notes.length}/${e.total}` : '–'}
                             </span>
                         </button>
@@ -195,7 +195,7 @@
             </ul>
 
             {#if entries.length === 0}
-                <p class="px-4 py-8 text-center text-xs text-slate-600">
+                <p class="px-4 py-8 text-center text-xs text-slate-400">
                     {t('knowledge.empty')}
                 </p>
             {/if}
@@ -211,7 +211,7 @@
 
                 <div class="p-5">
                     <h3 class="text-lg font-bold {theme.text}">{current.name}</h3>
-                    <p class="text-[0.6875rem] text-slate-500 mb-4">{current.role}</p>
+                    <p class="text-[0.6875rem] text-slate-400 mb-4">{current.role}</p>
 
                     <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5 wrap-break-word">
                         {current.summary}
@@ -236,7 +236,7 @@
                     </ul>
 
                     {#if missing > 0}
-                        <p class="mt-5 text-[0.625rem] text-slate-600">
+                        <p class="mt-5 text-[0.625rem] text-slate-400">
                             {missing === 1 ? tf('knowledge.missing.one', { count: missing }) : tf('knowledge.missing.many', { count: missing })}
                         </p>
                     {/if}
@@ -244,7 +244,7 @@
             {:else}
                 <!-- Desktop only: on a phone the register carries this message,
                      because this column is not on screen while it is showing. -->
-                <div class="hidden md:block p-8 text-center text-slate-600 text-xs">
+                <div class="hidden md:block p-8 text-center text-slate-400 text-xs">
                     {t('knowledge.emptyCategory')}
                 </div>
             {/if}

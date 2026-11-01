@@ -29,7 +29,7 @@
         good:   'bg-emerald-900/30 text-emerald-400 border border-emerald-800',
         pilot:  'bg-blue-900/30 text-blue-400 border border-blue-800',
         bad:    'bg-red-900/30 text-red-400 border border-red-800',
-        dead:   'bg-slate-700 text-slate-400 border border-slate-600'
+        dead:   'bg-slate-700 text-slate-300 border border-slate-600'
     };
 </script>
 
@@ -41,16 +41,19 @@
             <p class="text-slate-400">{page.subtitle}</p>
         </div>
         <div class="text-left md:text-right bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-md">
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">{page.leaderLabel}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">{page.leaderLabel}</p>
             <p class="font-bold text-amber-500">{page.leader}</p>
         </div>
     </div>
 
     <div class="space-y-6">
         {#each deals as deal (deal.customer)}
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row gap-6 {deal.dim || deal.tone === 'dead' ? 'opacity-75' : ''}">
+            <div class="bg-slate-800 p-6 rounded-xl border shadow-md flex flex-col md:flex-row gap-6 {deal.dim || deal.tone === 'dead' ? 'border-dashed border-slate-600' : 'border-slate-700'}">
+                <!-- A lost or stalled deal greys its picture and dashes its
+                     frame. The whole card used to sit at 75 % opacity, and
+                     the sentence saying WHY it was lost went down to 3.8. -->
                 <div class="flex flex-col justify-center shrink-0">
-                    <span class="text-5xl">{deal.icon}</span>
+                    <span class="text-5xl {deal.dim || deal.tone === 'dead' ? 'grayscale opacity-60' : ''}">{deal.icon}</span>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center gap-3 mb-2">

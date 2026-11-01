@@ -26,7 +26,7 @@
 
 {#snippet question(text)}
     <div>
-        <p class="font-sans font-bold text-sm text-slate-500 uppercase tracking-wide mb-2">{page.interviewer}</p>
+        <p class="font-sans font-bold text-sm text-slate-400 uppercase tracking-wide mb-2">{page.interviewer}</p>
         <p class="font-bold text-slate-200">{text}</p>
     </div>
 {/snippet}
@@ -69,7 +69,7 @@
         </div>
 
         {#if vision?.note}
-            <p class="mt-12 pt-6 border-t border-slate-700 text-xs text-slate-500 italic leading-relaxed">{vision.note}</p>
+            <p class="mt-12 pt-6 border-t border-slate-700 text-xs text-slate-400 italic leading-relaxed">{vision.note}</p>
         {/if}
     </div>
 </div>

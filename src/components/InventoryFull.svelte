@@ -162,23 +162,23 @@
         // In discard mode every equipment slot looks the same - clickable
         // and outlined in red. Trophies stay as they are.
         if (discardMode && !row.quest) {
-            return 'inv-slot relative group cursor-pointer border-red-900/60 bg-red-950/40 hover:border-red-600 hover:bg-red-900/50' + ring;
+            return 'inv-slot inv-slot-lg relative group cursor-pointer border-red-900/60 bg-red-950/40 hover:border-red-600 hover:bg-red-900/50' + ring;
         }
 
         if (row.entry.id === 'corp_chronicles') {
-            return 'inv-slot relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40' + ring;
+            return 'inv-slot inv-slot-lg relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40' + ring;
         }
-        if (row.quest) return 'inv-slot relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
+        if (row.quest) return 'inv-slot inv-slot-lg relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
 
         if (tree().items[row.entry.id]?.use?.cooldown) {
             return (waitFor(row.entry.id) <= 0
-                ? 'inv-slot relative group cursor-pointer border-green-500 hover:bg-green-900/20'
-                : 'inv-slot relative group cursor-default cursor-not-allowed') + ring;
+                ? 'inv-slot inv-slot-lg relative group cursor-pointer border-green-500 hover:bg-green-900/20'
+                : 'inv-slot inv-slot-lg relative group cursor-default cursor-not-allowed') + ring;
         }
         if (isConsumable(row.entry.id)) {
-            return 'inv-slot relative group cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
+            return 'inv-slot inv-slot-lg relative group cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
         }
-        return 'inv-slot relative group cursor-default' + ring;
+        return 'inv-slot inv-slot-lg relative group cursor-default' + ring;
     }
 
     // Tooltips are wider than a slot, so the ones on the edges would be cut off.
@@ -202,14 +202,14 @@
             const wait = waitFor(id);
             if (wait <= 0) engine.askUseItem(id);
             // The engine builds this one, so all three callers say it alike.
-            else engine.log(engine.itemCooldownLine(id, wait), 'text-slate-500');
+            else engine.log(engine.itemCooldownLine(id, wait), 'text-slate-400');
             return;
         }
 
         if (isConsumable(id)) engine.askUseItem(id);
         // A passive item has no button. Without this line clicking it does
         // nothing at all, which reads as broken rather than as by design.
-        else if (tree().items[id]?.passive) engine.log({ k: 'log.item.passive', v: { item: itemNameValue(id) } }, 'text-slate-500 italic');
+        else if (tree().items[id]?.passive) engine.log({ k: 'log.item.passive', v: { item: itemNameValue(id) } }, 'text-slate-400 italic');
     }
 
     /**
@@ -284,8 +284,13 @@
         {/if}
     </div>
 
-    <!-- Always rendered, empty for a free slot, so all cells match in height. -->
-    <div class="h-4 mt-1 w-full text-center text-[0.5rem] leading-4 text-slate-400 truncate pointer-events-none">
+    <!-- Always rendered, empty for a free slot, so all cells match in height.
+         Two lines of 10px hold about thirteen characters each, and four German
+         names are one word longer than that ("Schraubendreher"). A browser
+         with a German dictionary hyphenates them; Electron ships none, and
+         there the word ends in an ellipsis rather than being cut mid-word -
+         the tooltip carries the whole name. -->
+    <div class="h-8 mt-1 w-full text-center text-[0.625rem] leading-4 text-slate-400 line-clamp-2 hyphens-auto text-ellipsis pointer-events-none">
         {row.item ? row.item.name : ''}
     </div>
 </div>
@@ -295,7 +300,7 @@
      onfocusout={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) pinned = null; }}>
     <div>
         <div class="flex items-center justify-between gap-3 flex-wrap mb-3 border-b border-slate-800 pb-2">
-            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('inv.equipment')}</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('inv.equipment')}</h3>
 
             <!-- Two different things, so they must not look alike: the counter
                  is information and keeps its frame, throwing away is a rarely
@@ -317,7 +322,7 @@
                                text-[0.6875rem] font-bold transition-colors
                                {discardMode
                                  ? 'bg-red-950/40 border border-red-900/60 text-red-300'
-                                 : 'text-slate-500 hover:text-red-300 hover:bg-red-950/40'}">
+                                 : 'text-slate-400 hover:text-red-300 hover:bg-red-950/40'}">
                     <img src="assets/img/ui/ui_trash.webp" alt="" width="14" height="14"
                          class="w-3.5 h-3.5 select-none pointer-events-none {discardMode ? '' : 'opacity-70'}"
                          onerror={(e) => e.currentTarget.remove()}>
@@ -338,8 +343,8 @@
                 <!-- Same cell shape as a filled slot - centring wrapper plus the
                      empty caption line - so free and used slots line up exactly. -->
                 <div class="flex flex-col items-center">
-                    <div class="inv-slot empty"></div>
-                    <div class="h-4 mt-1" aria-hidden="true"></div>
+                    <div class="inv-slot inv-slot-lg empty"></div>
+                    <div class="h-8 mt-1" aria-hidden="true"></div>
                 </div>
             {/each}
         </div>

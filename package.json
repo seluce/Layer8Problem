@@ -1,6 +1,6 @@
 {
   "name": "layer8problem",
-  "version": "6.4.0",
+  "version": "7.0.0",
   "description": "A satirical sysadmin simulator - you are GlobalCorp's entire IT department.",
   "author": "seluce",
   "license": "MIT",
@@ -23,16 +23,24 @@
     "lint:i18n": "node tools/lint-i18n.mjs",
     "lint:parity": "node tools/lint-parity.mjs",
     "lint:assets": "node tools/lint-assets.mjs",
-    "lint:all": "npm run lint:data && npm run lint:data:en && npm run lint:i18n && npm run lint:parity && npm run lint:assets",
+    "lint:voice": "node --conditions browser --import ./tools/register.mjs tools/make-voice.mjs --check && node --conditions browser --import ./tools/register.mjs tools/make-voice.mjs --check --lang=en",
+    "lint:all": "npm run lint:data && npm run lint:data:en && npm run lint:i18n && npm run lint:parity && npm run lint:assets && npm run lint:voice",
     "start": "npm run build && electron .",
     "start:dev": "electron .",
     "build:win": "npm run build && electron-builder --win --x64",
     "build:linux": "npm run build && electron-builder --linux --x64",
     "sim": "node tools/simulate-day.mjs",
-    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en",
+    "test": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs && node --conditions browser --import ./tools/register.mjs tools/voice.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/voice.test.mjs --lang=en",
     "sim:week": "node tools/simulate-week.mjs",
-    "test:de": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs",
-    "test:en": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en"
+    "sim:coverage": "node --conditions browser --import ./tools/register.mjs tools/simulate-coverage.mjs",
+    "voice:manifest": "node --conditions browser --import ./tools/register.mjs tools/make-voice.mjs --write && node --conditions browser --import ./tools/register.mjs tools/make-voice.mjs --write --lang=en",
+    "test:de": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs && node --conditions browser --import ./tools/register.mjs tools/voice.test.mjs",
+    "test:en": "node --conditions browser --import ./tools/register.mjs tools/week-foundation.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/week-flow.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/dev-script.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/i18n.test.mjs --lang=en && node --conditions browser --import ./tools/register.mjs tools/voice.test.mjs --lang=en",
+    "prebuild": "node tools/check-audio.mjs",
+    "voice:models": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs --models",
+    "voice:voices": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs --voices",
+    "voice:audio": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs",
+    "voice:listen": "node --conditions browser --import ./tools/register.mjs tools/voice-index.mjs --all --serve"
   },
   "build": {
     "appId": "com.layer8problem.game",
@@ -43,7 +51,14 @@
     "files": [
       "docs/**/*",
       "electron/**/*",
+      "steamworks_sdk/redistributable_bin/**/*",
       "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks-ffi-node/**",
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**",
+      "steamworks_sdk/redistributable_bin/**"
     ],
     "win": {
       "target": "dir",
@@ -58,13 +73,13 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",
     "acorn": "^8.19.0",
-    "electron": "^45.0.0",
-    "electron-builder": "^26.15.3",
-    "svelte": "^5.57.2",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0",
+    "svelte": "^5.57.3",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.5"
   },
   "dependencies": {
-    "steamworks.js": "^0.4.0"
+    "steamworks-ffi-node": "0.11.3"
   }
 }

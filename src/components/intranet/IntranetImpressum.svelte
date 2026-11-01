@@ -88,7 +88,7 @@
                 </div>
             {/if}
 
-            <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 italic text-slate-500 text-xs">
+            <div class="bg-slate-900 p-5 rounded-lg border border-slate-700 italic text-slate-400 text-xs">
                 <p><strong class="text-slate-300">{page.closing.label}</strong> {page.closing.text}</p>
             </div>
 

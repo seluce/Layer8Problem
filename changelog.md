@@ -1,3 +1,53 @@
+[7.0.0] - 2026-11-01
+
+The game reads itself out loud, Steam keeps a leaderboard for the working week, and the menu, the settings and the items are new.
+
+Sound:
+* The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
+* H.A.L.G.E.R.D. speaks too: the tutorial, and the two warnings before the first email and the first emergency.
+* The morning screen is read out as well - why the day already starts badly.
+* The blow-off and the written warning have a voice too, and the outcome they interrupt is read once they are closed.
+* The narrator pauses while the game is in the background, like the music.
+* The narrator's slider has a line of its own to try, the way the sound and the music do.
+* An email arriving no longer ends the scene being read. It waits, and goes on where it stopped once the mail is answered.
+* Changing language mid-scene starts the new language from the top, on an outcome as well as on an event.
+* A small speaker button beside the excuse reads the scene out, and on an outcome it sits at the end of the numbers. It works with the narrator switched off, so a long scene can be heard once without being read to all day. V does the same from the keyboard, and it can be rebound like the other keys.
+* The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
+
+Steam:
+* Leaderboards for the working week: one per level, and all three in one list. A week earns a point for every working minute it lasted and, if it made it to Friday evening, a bonus for how calmly it ended. Each entry shows how the week ended and on which values, and opens to show it day by day.
+* The end of a week says what it was worth and whether it beat your best.
+
+Menu and settings:
+* The settings are sorted into four tabs - General, Audio, Display and Controls - with room to say what each option does. The key bindings are one of them now, instead of a window of their own.
+* The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
+* The narrator's speed can be set, from slower to twice as fast. The voice keeps its pitch.
+* The menu is laid out anew: coloured tiles for where you can go, and a bar below them for the ways out. The save game and the community each have a page of their own, and in the browser the menu points to the Steam version and the source code.
+* Closing the statistics, the leaderboard, the save dialogs or the feedback form now leads back to the menu instead of straight into the game. The global statistics and the feedback form come in the new look as well.
+* The team, the inventory, the excuse and the interrupted session carry the same header bar as the other windows.
+* Escape in the menu goes back one level at a time: from a window to its menu page, from a page to the tiles, from the tiles into the game.
+* The key bindings call the answers answers, explain the space bar and the read-aloud key, and list the keys that cannot be moved: Escape, 4 to 6 and Tab. A key button keeps its width while it waits for the new key.
+
+The day to day:
+* Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
+* Items in the backpack are larger, and their names have room for two lines.
+* Small grey text is easier to read: hints, counters, captions, the start screen's badges, the intranet, the day and week pickers, the knowledge book, the chronicle, and the achievements still locked in the archive, which used to fade out along with their icon. Nothing is smaller than 10 pixels any more, and white on a light colour - "Use", "Confirm and flee" - sits on a darker one.
+* A locked answer in a scene can be read now, not just the item it is missing. A setting without effect keeps its explanation readable, too.
+* The volume sliders no longer rest half-faded until touched.
+* A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
+
+Bug fixes:
+* Resetting the settings now resets the preset for the working week as well.
+* On a phone, the licence link in the credits no longer runs off the edge.
+* The global statistics no longer say "Connecting to Steam servers..." above figures that have long arrived.
+* The signatures under the noticeboard's notes could hardly be seen - Kevin's, for one, stood near-white on yellow paper. The tear-off slips and a few other lines in pale grey are darker now too.
+* On a phone, the noticeboard's close button no longer sits on top of the title, the team no longer cuts off a long job title, and the labels in the side panel are no longer clipped at the end.
+* With only two answers on screen, the 3 key no longer opens the excuse window.
+* The start screen no longer opens with the keyboard sitting on the language switch in its corner. The focus ring appears when you press Tab, which is when it means something.
+* On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.
+
+---
+
 [6.4.0] - 2026-10-30
 
 A day worth passing on, a phone that plays like one, and a word of warning before the things that arrive uninvited.

@@ -158,7 +158,7 @@
         {/each}
     </div>
 {:else}
-    <p class="text-[0.6875rem] text-slate-500 font-mono text-center py-4">
+    <p class="text-[0.6875rem] text-slate-400 font-mono text-center py-4">
         {t('chart.tooFew')}
     </p>
 {/if}

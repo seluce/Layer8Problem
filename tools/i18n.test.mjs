@@ -733,4 +733,224 @@ await ok('No type size is written in pixels', async () => {
     assert.deepEqual(offenders, [], 'type sizes in px do not follow the text-size setting');
 });
 
+await ok('Small print stays readable on the dark panels', async () => {
+    // Measured on nine screens with a contrast scanner: slate-500 on the dark
+    // panels came out at 3.0 to 3.8 against the 4.5 small text needs, and it
+    // was the colour of nearly every hint, counter and caption - 84 findings
+    // in the archive alone. Under it sat text at 8 and 9 px, the inventory's
+    // captions among it. Both were lifted to slate-400 and 10 px, and both
+    // come back one convenient class at a time unless something says no.
+    //
+    // No exceptions. The noticeboard had one until its papers turned out to
+    // run to pink and grey, and slate-500 failed on one of them; the intranet
+    // had one on the belief that it is a white web page - it is dark like
+    // everything else, and its grey measured 3.0 on every page. Both are
+    // checked like every other file now.
+    // slate-600 is not checked here - on the dark panels it is left only on
+    // separators, disabled controls and the vending machine's gutter, and
+    // telling those from text is a judgement, not a pattern.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const files = ['index.html'];
+    const walk = (dir) => {
+        for (const entry of readdirSync(root + dir, { withFileTypes: true })) {
+            const p = dir + '/' + entry.name;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(svelte|js|html|css)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+    const SMALLEST = 0.625;   // rem, 10 px at the default text size
+
+    const offenders = [];
+    for (const file of files) {
+        let src = readFileSync(root + file, 'utf8');
+        // Stylesheet comments out, for the reason given in the px check above -
+        // their line breaks kept, or every finding below one names the wrong line.
+        if (file.endsWith('.css')) src = src.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ''));
+        src.split('\n').forEach((line, i) => {
+            const at = `${file}:${i + 1}`;
+            for (const hit of line.matchAll(/\btext-slate-500\b/g)) offenders.push(`${at} ${hit[0]}`);
+            for (const hit of line.matchAll(/\btext-\[([\d.]+)rem\]/g)) {
+                if (Number(hit[1]) < SMALLEST) offenders.push(`${at} ${hit[0]}`);
+            }
+            for (const hit of line.matchAll(/font-size:\s*([\d.]+)rem/g)) {
+                if (Number(hit[1]) < SMALLEST) offenders.push(`${at} ${hit[0]}`);
+            }
+        });
+    }
+    assert.deepEqual(offenders, [],
+        'small print: slate-400 or lighter on the panels, darker ink on paper, nothing under 10 px');
+});
+
+await ok('Every element a component mounts into is empty in the markup', async () => {
+    // mount() APPENDS to its target, it does not replace what stands there.
+    // The global statistics carried a "Connecting to Steam servers..." line
+    // inside theirs, and from the day it was mounted that line stood above
+    // the figures once they had arrived - 6.4 shipped it. The component
+    // brings its own loading state; the markup must bring nothing.
+    const { readFileSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    // Comments may stay inside a target - they explain, and render nothing.
+    const html = readFileSync(root + 'index.html', 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+    const main = readFileSync(root + 'src/main.js', 'utf8');
+    const ids = [...main.matchAll(/^mount\([^\n]*getElementById\('([a-z0-9-]+)'\)/gm)].map(m => m[1]);
+    assert.ok(ids.length >= 20, `only ${ids.length} mount targets found - has main.js changed shape?`);
+
+    const offenders = [];
+    for (const id of ids) {
+        const open = html.match(new RegExp(`<([a-z0-9]+)\\b[^>]*\\bid="${id}"[^>]*>`));
+        if (!open) { offenders.push(`#${id}: not in index.html`); continue; }
+        const rest = html.slice(open.index + open[0].length);
+        if (!new RegExp(`^\\s*</${open[1]}>`).test(rest)) {
+            offenders.push(`#${id}: ${rest.trim().slice(0, 60).replace(/\s+/g, ' ')}`);
+        }
+    }
+    assert.deepEqual(offenders, [], 'a mount target carries markup the component will never replace');
+});
+
+await ok('A flex item that wraps long words can shrink', async () => {
+    // A flex item keeps min-width:auto, so it refuses to shrink below its
+    // longest UNBREAKABLE word - and overflow-wrap:break-word does not lower
+    // that minimum, it only breaks once the box is already narrow enough.
+    // Put wrapping prose inside a flex-1 child and one long token blows the
+    // box out of its parent in silence: the coffee machine's 84-character
+    // 'ERROR 418.666.KICK_DETECTED...' pushed the event text to 887px inside
+    // a 275px parent on a phone, and body carries overflow-hidden, so the
+    // sentence was not scrollable, it was cut off. The mail and the phone
+    // had it too, in their reply rows. Three places, 0 errors, 0 warnings.
+    //
+    // The remedy is min-w-0 on the flex child. A child that carries an
+    // overflow of its own needs nothing: a non-visible overflow in either
+    // axis removes the automatic minimum by itself, which is why the
+    // handbook's scrolling page measured sound and the reply rows did not.
+    //
+    // EVERY flex item on the way up, not just the flex-1 ones: flex-shrink
+    // is 1 by default, so they all want to shrink and min-width:auto stops
+    // them all. Reading only flex-1 found the mail's reply ROW and left the
+    // span inside it standing at 322px in a 283px parent - the fix moved the
+    // overflow one level down and changed nothing on screen.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+
+    const files = ['index.html'];
+    const walk = (dir) => {
+        for (const entry of readdirSync(root + dir, { withFileTypes: true })) {
+            const p = dir + '/' + entry.name;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.svelte$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+
+    // Nothing here is self-closing in HTML terms, so they never open a scope.
+    const VOID = new Set(['img', 'br', 'hr', 'input', 'meta', 'link', 'source',
+                          'path', 'circle', 'rect', 'line', 'use', 'area']);
+    // A tag ends at the first > that is outside both an attribute string and
+    // a {} expression. onclick={(e) => ...} and class="{a ? 'x' : 'y'}" each
+    // carry a character a plainer scan would stop at, and stopping early
+    // hands back half a class list - which reads as "no flex-1 here".
+    function* tags(src) {
+        let i = 0;
+        while (i < src.length) {
+            const lt = src.indexOf('<', i);
+            if (lt < 0) return;
+            if (!/[A-Za-z/]/.test(src[lt + 1] || '')) { i = lt + 1; continue; }
+            let j = lt + 1, depth = 0, quote = null;
+            for (; j < src.length; j++) {
+                const c = src[j];
+                if (quote) { if (c === quote) quote = null; continue; }
+                if (c === '"' || c === "'") { if (depth === 0) quote = c; continue; }
+                if (c === '{') depth++;
+                else if (c === '}') depth--;
+                else if (c === '>' && depth === 0) break;
+            }
+            const raw = src.slice(lt, j + 1);
+            yield {
+                raw,
+                name: (raw.match(/^<\/?\s*([A-Za-z][\w:-]*)/) || [, ''])[1],
+                close: raw[1] === '/',
+                self: /\/>$/.test(raw),
+                line: src.slice(0, lt).split('\n').length,
+            };
+            i = j + 1;
+        }
+    }
+    const classOf = (raw) => {
+        const at = raw.indexOf('class=');
+        if (at < 0) return '';
+        const q = raw[at + 6];
+        if (q !== '"' && q !== "'") return '';
+        let depth = 0;
+        for (let k = at + 7; k < raw.length; k++) {
+            const c = raw[k];
+            if (c === '{') depth++;
+            else if (c === '}') depth--;
+            else if (c === q && depth === 0) return raw.slice(at + 7, k);
+        }
+        return '';
+    };
+
+    // A class name stands alone between spaces, quotes or braces - the
+    // quotes because a Tailwind list often lives inside a {} expression.
+    const has = (cls, names) =>
+        new RegExp(`(?:^|[\\s'"\`{}])(?:${names})(?:[\\s'"\`{}]|$)`).test(cls);
+    const WRAP     = 'break-words|wrap-break-word|truncate';
+    const OVERFLOW = 'overflow(?:-[xy])?-(?:hidden|auto|scroll|clip)|truncate';
+    const CROSS    = 'items-(?:start|end|center)';
+    // Horizontal at least at one breakpoint: on a column main axis the
+    // automatic minimum is min-height, and width cannot overflow.
+    const rowFlex = (cls) =>
+        has(cls, 'flex|inline-flex') &&
+        (!has(cls, 'flex-col') || /(?:^|[\s'"`{}])[a-z0-9]+:flex-row(?:[\s'"`{}]|$)/.test(cls));
+
+    const offenders = [];
+    for (const file of files) {
+        const src = readFileSync(root + file, 'utf8');
+        const stack = [];
+        for (const tag of tags(src)) {
+            if (tag.close) {
+                for (let i = stack.length - 1; i >= 0; i--) {
+                    if (stack[i].name === tag.name) { stack.length = i; break; }
+                }
+                continue;
+            }
+            const cls = classOf(tag.raw);
+            if (has(cls, WRAP)) {
+                // The other way a flex box refuses to shrink: on the CROSS
+                // axis an item is only as wide as its container while the
+                // alignment is stretch. items-end makes it content-sized
+                // instead, and then max-width is the only thing holding it.
+                // The phone's outgoing bubble hung 129px off the left edge
+                // of the device that way, while min-w-0 on everything above
+                // it measured sound - the parent had shrunk, the bubble had
+                // not. max-w-full is the remedy there.
+                const outerParent = stack[stack.length - 1];
+                if (outerParent && has(outerParent.cls, 'flex|inline-flex')
+                    && has(outerParent.cls, 'flex-col') && has(outerParent.cls, CROSS)
+                    && !has(cls, 'max-w-full') && !has(cls, OVERFLOW)) {
+                    offenders.push(`${file}:${tag.line} <${tag.name}> wraps prose under a `
+                                 + `cross-axis alignment without max-w-full`);
+                }
+                // The wrapping element itself can be the flex item.
+                const chain = [...stack, { name: tag.name, cls, line: tag.line }];
+                chain.forEach((el, i) => {
+                    const parent = i === 0 ? null : chain[i - 1];
+                    if (!parent || !rowFlex(parent.cls)) return;
+                    if (!has(el.cls, 'min-w-0') && !has(el.cls, OVERFLOW)) {
+                        offenders.push(`${file}:${el.line} <${el.name}> is a flex item without `
+                                     + `min-w-0 and holds wrapping prose (line ${tag.line})`);
+                    }
+                });
+            }
+            if (!tag.self && !VOID.has(tag.name)) stack.push({ name: tag.name, cls, line: tag.line });
+        }
+    }
+    assert.deepEqual([...new Set(offenders)], [],
+        'a flex child that holds wrapping prose cannot shrink without min-w-0');
+});
+
 console.log(`\n${passed} checks passed.`);

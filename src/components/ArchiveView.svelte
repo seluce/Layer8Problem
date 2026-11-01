@@ -216,9 +216,11 @@
     // strength, so the grid looks as it did.
     const itemBorder = (unlocked, quest) => {
         if (!unlocked) return 'border-slate-700/50 text-slate-600/50 bg-slate-900/50 border-dashed';
+        // item-ground (app.css): the same slot an item stands on in the
+        // inventory, so a drawing reads the same wherever it is shown.
         return quest
-            ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
-            : 'border-slate-500/50 text-slate-200 bg-slate-800';
+            ? 'border-amber-500/60 text-amber-100 item-ground'
+            : 'border-slate-500/50 text-slate-200 item-ground';
     };
 
     // Which tile currently has its tooltip pinned, by item id. Touch and
@@ -375,7 +377,7 @@
                             class="flex-1 text-[0.625rem] font-bold uppercase tracking-widest py-1.5 rounded-sm border transition-colors
                                    {mode === m.key
                                      ? `bg-slate-800 ${m.accent} ${m.border}`
-                                     : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
+                                     : 'bg-slate-900/40 text-slate-400 border-slate-700/40 hover:text-slate-300'}">
                         {t(`stats.mode.${m.key}`)}
                     </button>
                 {/each}
@@ -384,7 +386,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {#each counters as stat (stat.key)}
                     <div class="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-sm border border-slate-700/30">
-                        <span class="text-[0.5625rem] text-slate-500 uppercase tracking-widest">{t(stat.label)}</span>
+                        <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest">{t(stat.label)}</span>
                         <span class="font-bold {stat.tone} text-lg leading-tight mt-0.5">{counterValue(stat.key)}</span>
                     </div>
                 {/each}
@@ -397,14 +399,14 @@
                  of capitals - that reads as a sentence. -->
             <div class="flex items-center justify-between px-3 py-2 bg-slate-800/40 rounded-sm border border-slate-700/30">
                 <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest">
-                    {t('archive.streak')}{#if showBest}<span class="text-slate-500 normal-case tracking-normal text-[0.6875rem] ml-2">{tf('archive.bestRun', { day: weekBest })}</span>{/if}
+                    {t('archive.streak')}{#if showBest}<span class="text-slate-400 normal-case tracking-normal text-[0.6875rem] ml-2">{tf('archive.bestRun', { day: weekBest })}</span>{/if}
                 </span>
                 <span class="flex items-baseline gap-1.5 font-mono">
-                    <span class="text-base font-bold {streak > 0 ? 'text-amber-400' : 'text-slate-500'}">{streak}</span>
+                    <span class="text-base font-bold {streak > 0 ? 'text-amber-400' : 'text-slate-400'}">{streak}</span>
                     <span class="text-[0.6875rem] text-slate-400">{streakLabel}</span>
                     <span class="text-slate-700 px-1">·</span>
                     <span class="text-[0.6875rem] text-slate-400">{t('archive.record')}</span>
-                    <span class="text-base font-bold {streakBest > 0 ? 'text-slate-200' : 'text-slate-500'}">{streakBest}</span>
+                    <span class="text-base font-bold {streakBest > 0 ? 'text-slate-200' : 'text-slate-400'}">{streakBest}</span>
                 </span>
             </div>
 
@@ -413,7 +415,7 @@
                 <div class="space-y-1 px-1 pt-0.5">
                     {#each levels as level (level.key)}
                         <div class="flex items-center gap-2">
-                            <span class="text-[0.5625rem] text-slate-500 uppercase tracking-widest w-20 shrink-0">{t(level.label)}</span>
+                            <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest w-20 shrink-0">{t(level.label)}</span>
                             <div class="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full {level.bar} rounded-full transition-all" style="width: {level.percent}%"></div>
                             </div>
@@ -424,7 +426,7 @@
                     {/each}
                 </div>
             {:else}
-                <p class="text-[0.625rem] text-slate-600 text-center py-2">
+                <p class="text-[0.625rem] text-slate-400 text-center py-2">
                     {mode === 'day' ? t('archive.noRun.day') : t('archive.noRun.week')}
                 </p>
             {/if}
@@ -441,7 +443,7 @@
     </div>
 
     <div class="mb-8" onfocusout={unpinOnFocusOut}>
-        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.items')}</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.items')}</h3>
         <div class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
             {#each normalItems as entry, i (entry.id)}
                 {@render tile(entry, i)}
@@ -461,7 +463,7 @@
     {/if}
 
     <div>
-        <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
+        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {#each achievements as row (row.ach.id)}
                 <!-- md:hover:z-50 on the ROW: opacity-60 and grayscale on a
@@ -471,10 +473,10 @@
                      hovered row itself puts the whole context on top. -->
                 <div class="flex gap-3 p-3 rounded-sm border transition-all hover:bg-slate-800 group relative
                             md:hover:z-50
-                            {row.unlocked ? `opacity-100 border-solid bg-slate-900/40 ${row.diff.border}` : 'border-slate-700 opacity-60 border-dashed grayscale bg-slate-950/30'}">
-                    <div class={row.ach.img
+                            {row.unlocked ? `opacity-100 border-solid bg-slate-900/40 ${row.diff.border}` : 'border-slate-700 border-dashed bg-slate-950/30'}">
+                    <div class="{row.ach.img
                         ? 'w-12 h-12 shrink-0 relative z-10 transition-transform duration-300 ease-out origin-center cursor-help md:hover:scale-[2.5] md:hover:z-50'
-                        : 'text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50'}>
+                        : 'text-2xl shrink-0 transition-transform duration-300 ease-out origin-center cursor-help flex items-center justify-center w-12 h-12 bg-slate-900 rounded-full border border-slate-700/50 p-1 md:hover:scale-[1.5] md:hover:z-50'}{row.unlocked ? '' : ' opacity-60 grayscale'}">
                         {#if hasPicture(row.ach)}
                             <img src={row.ach.img} loading="eager" decoding="async" class="w-full h-full object-contain drop-shadow-md" alt={row.ach.title} onerror={() => markBroken(row.ach.img)}>
                         {:else}{row.ach.icon}{/if}
@@ -487,9 +489,9 @@
                         <div class="flex items-start gap-2 mb-0.5">
                             <div class="font-bold text-xs leading-tight {row.unlocked ? 'text-white' : 'text-slate-400'}">{row.ach.title}</div>
                             {#if row.unlocked}
-                                <span class="text-[0.5625rem] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{t(row.diff.label)}</span>
+                                <span class="text-[0.625rem] font-bold border px-1.5 rounded-sm ml-auto shrink-0 {row.diff.badge}">{t(row.diff.label)}</span>
                             {:else}
-                                <span class="text-[0.5625rem] text-slate-500 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">{t('archive.locked')}</span>
+                                <span class="text-[0.625rem] text-slate-400 font-bold border border-slate-700 px-1.5 rounded-sm ml-auto shrink-0">{t('archive.locked')}</span>
                             {/if}
                         </div>
                         <!-- No line-clamp: 33 of 54 texts are longer than two
@@ -497,7 +499,7 @@
                              longer tells you what to do. The grid stretches
                              the cards of a row to the same height anyway, so
                              nothing turns into a staircase. -->
-                        <div class="text-[0.625rem] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-500 italic'}">{row.desc}</div>
+                        <div class="text-[0.625rem] leading-tight {row.unlocked ? 'text-slate-400' : 'text-slate-400 italic'}">{row.desc}</div>
                     </div>
                 </div>
             {/each}

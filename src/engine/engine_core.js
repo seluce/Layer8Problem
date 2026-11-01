@@ -140,6 +140,23 @@ export const core = {
             }
         }
 
+        // Doors taken unite per scene, which is an OR of the two masks and
+        // not a max(): one machine may have taken option 0, the other option
+        // 2, and max() would answer 4 and lose the first. Masks written
+        // against different option counts cannot be compared at all - the
+        // scene was rewritten between them - so the local one stands.
+        {
+            const shift = 16;
+            const map = out.seenOptions ?? (out.seenOptions = {});
+            for (const [k, v] of Object.entries(c.seenOptions ?? {})) {
+                if (typeof v !== 'number') continue;
+                const mine = map[k];
+                if (typeof mine !== 'number') { map[k] = v; continue; }
+                if ((mine >>> shift) !== (v >>> shift)) continue;   // different scene
+                map[k] = mine | v;
+            }
+        }
+
         // The chronicle is NOT an id list, which is where it used to sit.
         //
         // An entry is { day, id, vars } with a RANDOMLY drawn id, so two
@@ -1872,10 +1889,16 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.rage;
-        let warningText = tf('valve.rage', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        const line = texts[Math.floor(Math.random() * texts.length)];
+        let warningText = tf('valve.rage', { text: line, value: resetTo });
         if (this.difficultyTier() === 3) warningText += ' ' + t('valve.rage.hard');
 
         this.showModal(t('valve.rage.title'), warningText, false, 'rage');
+        // The drawn line alone, not the window's sentence around it: that one
+        // carries the reset value, and a number cannot be recorded. Spoken
+        // through the window's door - the result of the same click is held
+        // behind this box until it closes (engine_voice.narrate).
+        this.narrateWindow(line, 'valves');
         return true;
     },
 
@@ -1892,10 +1915,12 @@ export const core = {
         this.recordStatPoint();
 
         const texts = DB.special.valveTexts.chef;
-        let warningText = tf('valve.chef', { text: texts[Math.floor(Math.random() * texts.length)], value: resetTo });
+        const line = texts[Math.floor(Math.random() * texts.length)];
+        let warningText = tf('valve.chef', { text: line, value: resetTo });
         if (this.difficultyTier() === 3) warningText += ' ' + t('valve.chef.hard');
 
         this.showModal(t('valve.chef.title'), warningText, false);
+        this.narrateWindow(line, 'valves');   // see openRageValve
         return true;
     },
 
@@ -2078,6 +2103,10 @@ export const core = {
         // answering it at 16:25 ends the day from up there - each window was
         // still open the next morning. See engine_ui.closeDayWindows.
         this.closeDayWindows();
+        // And the voice, which would otherwise read the last result of the day
+        // over the night screen: the end screens are overlays of their own and
+        // none of them is on the over-terminal list.
+        this.hushNarration();
 
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;

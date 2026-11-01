@@ -62,12 +62,12 @@
                 <div class="md:col-span-2 md:p-4">
                     <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">{page?.classicLabel}</div>
                     <strong>{row.classic.name}</strong><br>
-                    <span class="text-sm text-slate-500">{row.classic.note}</span>
+                    <span class="text-sm text-slate-400">{row.classic.note}</span>
                 </div>
                 <div class="md:col-span-2 md:p-4">
                     <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">{page?.veggieLabel}</div>
                     <strong>{row.veggie.name}</strong><br>
-                    <span class="text-sm text-slate-500">{row.veggie.note}</span>
+                    <span class="text-sm text-slate-400">{row.veggie.note}</span>
                 </div>
             </div>
         {/each}
@@ -75,17 +75,17 @@
         <div class="flex flex-col md:grid md:grid-cols-5 bg-emerald-900/20 md:bg-emerald-900/10 rounded-xl md:rounded-none border border-emerald-800/50 md:border-none hover:bg-emerald-900/30 p-4 md:p-0 gap-3 md:gap-0 shadow-xs md:shadow-none">
             <div class="md:col-span-1 md:p-4 font-bold text-emerald-400 text-lg md:text-base border-b border-emerald-800/50 md:border-none pb-2 md:pb-0 flex flex-col md:justify-center">
                 <span>{page?.saturday.day}</span>
-                <span class="text-[0.625rem] md:text-xs font-normal text-emerald-500 md:text-emerald-600 uppercase tracking-wider mt-0.5">{page?.saturday.sub}</span>
+                <span class="text-[0.625rem] md:text-xs font-normal text-emerald-400 uppercase tracking-wider mt-0.5">{page?.saturday.sub}</span>
             </div>
             <div class="md:col-span-2 md:p-4">
                 <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">{page?.classicLabel}</div>
                 <strong class="text-emerald-300 md:text-white">{page?.saturday.classic.name}</strong><br>
-                <span class="text-sm text-emerald-600/80 md:text-slate-500">{page?.saturday.classic.note}</span>
+                <span class="text-sm text-emerald-600/80 md:text-slate-400">{page?.saturday.classic.note}</span>
             </div>
             <div class="md:col-span-2 md:p-4">
                 <div class="text-[0.625rem] font-bold text-emerald-500 uppercase tracking-widest mb-1 md:hidden">{page?.veggieLabel}</div>
                 <strong class="text-emerald-300 md:text-white">{page?.saturday.veggie.name}</strong><br>
-                <span class="text-sm text-emerald-600/80 md:text-slate-500">{page?.saturday.veggie.note}</span>
+                <span class="text-sm text-emerald-600/80 md:text-slate-400">{page?.saturday.veggie.note}</span>
             </div>
         </div>
 

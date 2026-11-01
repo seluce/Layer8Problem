@@ -29,9 +29,13 @@
     const mine = $derived(game.archive.stats ?? {});
 
     // i18n-uses: stats.mode.day, stats.mode.week
+    // `on` is the tab while chosen, `card` the diagnosis when it names the
+    // average - the colour of its mode, like the tab above it.
     const MODES = [
-        { key: 'day',  accent: 'text-blue-400',   border: 'border-blue-500/60' },
-        { key: 'week', accent: 'text-purple-400', border: 'border-purple-500/60' }
+        { key: 'day',  accent: 'text-blue-300',   on: 'bg-blue-500/15 text-blue-300 border-blue-500/70',
+          card: 'bg-blue-500/10 border-blue-500' },
+        { key: 'week', accent: 'text-purple-300', on: 'bg-purple-500/15 text-purple-300 border-purple-500/70',
+          card: 'bg-purple-500/10 border-purple-500' }
     ];
 
     let mode = $state(localStorage.getItem(KEYS.statsTab) === 'week' ? 'week' : 'day');
@@ -114,9 +118,9 @@
     // comes out of the dictionary under the mode's own keys, so the list is
     // needed once instead of twice.
     const ROWS = [
-        { key: 'survived', icon: '✨', tone: 'text-emerald-400', bar: 'bg-emerald-500' },
-        { key: 'rage',     icon: '🤬', tone: 'text-orange-400',  bar: 'bg-orange-500' },
-        { key: 'fired',    icon: '🚨', tone: 'text-red-500',     bar: 'bg-red-600' }
+        { key: 'survived', icon: '✨', tone: 'text-emerald-300', bar: 'bg-emerald-500' },
+        { key: 'rage',     icon: '🤬', tone: 'text-orange-300',  bar: 'bg-orange-500' },
+        { key: 'fired',    icon: '🚨', tone: 'text-red-300',     bar: 'bg-red-500' }
     ];
 
     // i18n-uses: stats.row.day.survived.label, stats.row.day.survived.better, stats.row.day.survived.worse
@@ -144,9 +148,9 @@
     // of its mode, blue for the day and purple for the week - which is exactly
     // what the tab above it already carries.
     const DIAGNOSIS_TONE = {
-        rage:     'text-orange-400',
-        fired:    'text-red-500',
-        survived: 'text-emerald-400'
+        rage:     { text: 'text-orange-300',  card: 'bg-orange-500/10 border-orange-500' },
+        fired:    { text: 'text-red-300',     card: 'bg-red-500/10 border-red-500' },
+        survived: { text: 'text-emerald-300', card: 'bg-emerald-500/10 border-emerald-500' }
     };
 
     // i18n-uses: stats.diag.day.rage.title, stats.diag.day.rage.text
@@ -173,16 +177,18 @@
         return {
             title: t(`stats.diag.${mode}.${which}.title`),
             text:  t(`stats.diag.${mode}.${which}.text`),
-            tone:  DIAGNOSIS_TONE[which] ?? MODES.find(m => m.key === mode).accent
+            tone:  DIAGNOSIS_TONE[which]?.text ?? MODES.find(m => m.key === mode).accent,
+            card:  DIAGNOSIS_TONE[which]?.card ?? MODES.find(m => m.key === mode).card
         };
     })());
 
     // i18n-uses: stats.started, stats.survived, stats.rageQuits, stats.fired
+    // The four totals as tiles, in the colours of the endings they count.
     const TOTALS = [
-        { key: 'started',  label: 'stats.started',   tone: 'text-white' },
-        { key: 'survived', label: 'stats.survived',  tone: 'text-emerald-400' },
-        { key: 'rage',     label: 'stats.rageQuits', tone: 'text-orange-400' },
-        { key: 'fired',    label: 'stats.fired',     tone: 'text-red-500' }
+        { key: 'started',  label: 'stats.started',   tone: 'text-white',       tile: 'bg-slate-500/10 border-slate-500/40' },
+        { key: 'survived', label: 'stats.survived',  tone: 'text-emerald-300', tile: 'bg-emerald-500/10 border-emerald-500/40' },
+        { key: 'rage',     label: 'stats.rageQuits', tone: 'text-orange-300',  tile: 'bg-orange-500/10 border-orange-500/40' },
+        { key: 'fired',    label: 'stats.fired',     tone: 'text-red-300',     tile: 'bg-red-500/10 border-red-500/40' }
     ];
 
     const pct = (rate) => Math.round((isNaN(rate) ? 0 : rate) * 100) + '%';
@@ -193,99 +199,97 @@
     const empty = $derived(!data || typeof data !== 'object' || Object.keys(data).length === 0);
 </script>
 
+<!-- Back to the menu page it was opened from (engine_ui.backToMenu()), at
+     the top where it is found without scrolling. -->
+{#snippet back()}
+    <button type="button" onclick={() => engine.closeGlobalStats()}
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+        <span aria-hidden="true">◀</span> {t(game.menuReturn ? 'settings.backToMenu' : 'stats.back')}
+    </button>
+{/snippet}
+
+{@render back()}
+
 {#if view.loading}
     <div class="text-center text-slate-400 animate-pulse py-10 font-mono text-sm">{t('stats.loading')}</div>
 {:else if view.failed}
-    <div class="text-center text-red-500 py-10 font-bold">{t('stats.failed')}</div>
+    <div class="text-center text-red-400 py-10 font-bold">{t('stats.failed')}</div>
 {:else if empty}
     <div class="text-center py-12 px-4 fade-in">
-        <div class="text-5xl mb-4 opacity-50">📡</div>
-        <h3 class="text-lg font-bold text-slate-300 mb-2">{t('stats.empty.title')}</h3>
-        <p class="text-sm text-slate-400 leading-relaxed max-w-sm mx-auto">
-            {t('stats.empty.body')}<br><br>
-            <span class="text-xs opacity-70 italic">{t('stats.empty.hint')}</span>
-        </p>
-        <button onclick={() => engine.closeGlobalStats()} class="mt-8 bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-lg transition-colors uppercase tracking-widest text-xs">{t('stats.back')}</button>
+        <img src="assets/img/ui/ui_globe.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto mb-4 opacity-60 grayscale select-none"
+             onerror={(e) => e.currentTarget.remove()}>
+        <h3 class="text-lg font-bold text-slate-200 mb-2">{t('stats.empty.title')}</h3>
+        <p class="text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">{t('stats.empty.body')}</p>
+        <p class="text-xs text-slate-400 italic mt-3 max-w-sm mx-auto">{t('stats.empty.hint')}</p>
     </div>
 {:else}
-    <div class="flex items-center gap-2 mb-4">
+    <div class="grid grid-cols-2 gap-2">
         {#each MODES as m (m.key)}
             <button type="button" onclick={() => setMode(m.key)}
                     aria-pressed={mode === m.key}
-                    class="flex-1 text-[0.625rem] font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
-                           {mode === m.key
-                             ? `bg-slate-800 ${m.accent} ${m.border}`
-                             : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
+                    class="text-[0.625rem] font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
+                           {mode === m.key ? m.on : 'bg-slate-900/40 text-slate-400 border-slate-700/40 hover:text-slate-200 hover:border-slate-600'}">
                 {t(`stats.mode.${m.key}`)}
             </button>
         {/each}
     </div>
 
-    <div class="bg-slate-800/50 border border-slate-700 p-4 rounded-xl shadow-inner mb-4">
-        <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 border-b border-slate-700 pb-2">
-            {tf('stats.totals.title', { unit })}
-        </h3>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono">
+    <div>
+        <h3 class="text-[0.625rem] font-bold text-slate-400 uppercase tracking-widest mb-2">{tf('stats.totals.title', { unit })}</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {#each TOTALS as total (total.key)}
-                <div>
-                    <div class="text-[0.625rem] text-slate-500 uppercase tracking-widest">{t(total.label)}</div>
-                    <div class="text-xl font-bold {total.tone}">{num(world[total.key])}</div>
+                <div class="rounded-xl border p-3 flex flex-col gap-1 {total.tile}">
+                    <span class="text-[0.625rem] text-slate-300 uppercase tracking-widest">{t(total.label)}</span>
+                    <span class="text-2xl font-black font-mono leading-none {total.tone}">{num(world[total.key])}</span>
                 </div>
             {/each}
         </div>
     </div>
 
     {#if !worldReady}
-        <div class="bg-slate-800/50 border border-slate-700 p-5 rounded-xl shadow-inner text-center">
-            <p class="text-sm text-slate-300 font-bold mb-1">{tf('stats.noWorld.title', { unit })}</p>
-            <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">
-                {t('stats.noWorld.body')}
-            </p>
+        <div class="bg-slate-800/50 border border-slate-700 p-5 rounded-xl text-center">
+            <p class="text-sm text-slate-200 font-bold mb-1">{tf('stats.noWorld.title', { unit })}</p>
+            <p class="text-xs text-slate-400 leading-relaxed max-w-sm mx-auto">{t('stats.noWorld.body')}</p>
         </div>
     {:else}
-        <div class="bg-slate-800/50 border border-slate-700 p-4 sm:p-5 rounded-xl shadow-inner">
-            <div class="bg-slate-900 border border-slate-700 rounded-lg p-3 mb-6 shadow-md relative overflow-hidden">
-                <div class="font-bold text-sm mb-1 {diagnosis.tone}">{diagnosis.title}</div>
-                <div class="text-xs text-slate-300 italic leading-snug">{diagnosis.text}</div>
-            </div>
+        <!-- The diagnosis: a card in the colour of the tendency it names. -->
+        <div class="border-l-4 rounded-r-xl p-4 {diagnosis.card}">
+            <div class="font-bold text-sm mb-1 {diagnosis.tone}">{diagnosis.title}</div>
+            <div class="text-xs text-slate-200 italic leading-snug">{diagnosis.text}</div>
+        </div>
 
-            <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-5 border-b border-slate-700 pb-2 flex items-center justify-between">
+        <div class="bg-slate-800/40 border border-slate-700/60 p-4 sm:p-5 rounded-xl">
+            <h3 class="text-xs font-bold text-purple-300 uppercase tracking-widest mb-4 flex items-center justify-between gap-3">
                 <span>{t('stats.profile.title')}</span>
-                <span class="text-[0.5625rem] text-slate-500 font-normal hidden sm:inline">{t('stats.profile.marker')}</span>
+                <span class="text-[0.625rem] text-slate-400 font-normal normal-case tracking-normal hidden sm:inline">{t('stats.profile.marker')}</span>
             </h3>
 
             {#if !mineReady}
-                <p class="text-[0.6875rem] text-slate-500 italic mb-4">
-                    {t('stats.profile.none')}
-                </p>
+                <p class="text-xs text-slate-400 italic mb-4">{t('stats.profile.none')}</p>
             {/if}
 
             <div class="space-y-5">
                 {#each rows as row (row.key)}
                     <div class="flex flex-col gap-1.5">
-                        <div class="flex justify-between text-xs font-bold">
-                            <span class="{row.tone} flex items-center gap-1"><span class="text-sm">{row.icon}</span> {row.label}</span>
+                        <div class="flex flex-wrap justify-between items-center gap-2 text-xs font-bold">
+                            <span class="{row.tone} flex items-center gap-1.5"><span class="text-sm" aria-hidden="true">{row.icon}</span> {row.label}</span>
                             <!-- Two independent labels, each in front of its own
-                                 number - not one sentence cut into pieces. The
-                                 emphasis on the player's share is markup, so
-                                 the value cannot sit inside a single string
-                                 without carrying HTML into the dictionary. -->
-                            <span class="text-slate-300 font-mono">{t('stats.compare.mine')} <span class="text-white">{pct(row.my)}</span> | {t('stats.compare.world')} {pct(row.global)}</span>
+                                 number - not one sentence cut into pieces. -->
+                            <span class="flex gap-1.5 font-mono">
+                                <span class="px-1.5 py-0.5 rounded-sm bg-white/10 text-white">{t('stats.compare.mine')} {pct(row.my)}</span>
+                                <span class="px-1.5 py-0.5 rounded-sm bg-slate-700/60 text-slate-300">{t('stats.compare.world')} {pct(row.global)}</span>
+                            </span>
                         </div>
-                        <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden flex relative border border-slate-700">
-                            <div class="absolute top-0 bottom-0 w-1 bg-white z-10 shadow-[0_0_5px_rgba(255,255,255,0.8)]" style="left: {row.global * 100}%; margin-left:-2px;"></div>
-                            <div class="{row.bar} h-full transition-all duration-1000" style="width: {row.my * 100}%"></div>
+                        <div class="w-full bg-slate-900 h-3.5 rounded-full overflow-hidden relative border border-slate-700">
+                            <div class="absolute top-0 bottom-0 w-1 bg-white z-10" style="left: {row.global * 100}%; margin-left:-2px;"></div>
+                            <div class="{row.bar} h-full rounded-full transition-all duration-1000" style="width: {row.my * 100}%"></div>
                         </div>
                         {#if mineReady}
-                            <div class="text-[0.625rem] text-slate-400 italic mt-0.5">{row.comment}</div>
+                            <div class="text-[0.625rem] text-slate-400 italic">{row.comment}</div>
                         {/if}
                     </div>
                 {/each}
             </div>
         </div>
     {/if}
-
-    <div class="w-full mt-4">
-        <button onclick={() => engine.closeGlobalStats()} class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-colors uppercase tracking-widest text-xs">{t('stats.back')}</button>
-    </div>
 {/if}

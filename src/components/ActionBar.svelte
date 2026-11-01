@@ -29,7 +29,7 @@
     // i18n-uses: action.coffee, action.sidequest, action.server, action.calls
     const ACTIONS = [
         { id: 'btn-coffee',    type: 'coffee',    bind: 'actCoffee', icon: '☕', label: 'action.coffee',    tone: 'text-amber-500' },
-        { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'action.sidequest', tone: 'text-purple-500' },
+        { id: 'btn-sidequest', type: 'sidequest', bind: 'actQuest',  icon: '🎲', label: 'action.sidequest', tone: 'text-purple-400' },
         { id: 'btn-server',    type: 'server',    bind: 'actServer', icon: '💾', label: 'action.server',    tone: 'text-emerald-500' },
         { id: 'btn-calls',     type: 'calls',     bind: 'actCall',   icon: '📞', label: 'action.calls',     tone: 'text-blue-400' }
     ];
