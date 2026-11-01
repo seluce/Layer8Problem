@@ -18,10 +18,16 @@ Settings:
 
 The day to day:
 * Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
+* Items in the backpack are larger, and their names have room for two lines.
+* Small grey text is easier to read: hints, counters, captions, the start screen's badges and the achievements still locked in the archive, which used to fade out along with their icon. Nothing is smaller than 10 pixels any more.
+* A locked answer in a scene can be read now, not just the item it is missing. A setting without effect keeps its explanation readable, too.
+* The volume sliders no longer rest half-faded until touched.
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 
 Bug fixes:
 * Resetting the settings now resets the preset for the working week as well.
+* The signatures under the noticeboard's notes could hardly be seen - Kevin's, for one, stood near-white on yellow paper. The tear-off slips and a few other lines in pale grey are darker now too.
+* On a phone, the noticeboard's close button no longer sits on top of the title, the team no longer cuts off a long job title, and the labels in the side panel are no longer clipped at the end.
 * With only two answers on screen, the 3 key no longer opens the excuse window.
 * The start screen no longer opens with the keyboard sitting on the language switch in its corner. The focus ring appears when you press Tab, which is when it means something.
 * On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.

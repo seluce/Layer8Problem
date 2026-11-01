@@ -141,7 +141,7 @@
         })
     );
 
-    const LOCKED_CLASS = 'w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-600 cursor-not-allowed flex justify-between items-center opacity-70';
+    const LOCKED_CLASS = 'w-full text-left p-2.5 rounded-sm border border-red-900 bg-slate-950 text-slate-400 cursor-not-allowed flex justify-between items-center';
     const OPEN_CLASS   = 'w-full text-left p-2.5 rounded-sm border border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-400 hover:text-white transition-all text-slate-200 font-bold shadow-md flex justify-between items-center group';
 </script>
 
@@ -219,7 +219,7 @@
                     <span class="mr-3 text-xl shrink-0">
                         {#if o.locked}
                             <img src="assets/img/ui/ui_locked.webp" alt={t('common.locked')}
-                                 width="20" height="20" class="w-6 h-6 select-none"
+                                 width="20" height="20" class="w-6 h-6 select-none opacity-70"
                                  onerror={(e) => e.currentTarget.outerHTML = '🔒'}>
                         {:else if o.opt.checkPool}
                             <!-- The party hub: each station shows its own icon instead of

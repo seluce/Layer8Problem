@@ -733,6 +733,59 @@ await ok('No type size is written in pixels', async () => {
     assert.deepEqual(offenders, [], 'type sizes in px do not follow the text-size setting');
 });
 
+await ok('Small print stays readable on the dark panels', async () => {
+    // Measured on nine screens with a contrast scanner: slate-500 on the dark
+    // panels came out at 3.0 to 3.8 against the 4.5 small text needs, and it
+    // was the colour of nearly every hint, counter and caption - 84 findings
+    // in the archive alone. Under it sat text at 8 and 9 px, the inventory's
+    // captions among it. Both were lifted to slate-400 and 10 px, and both
+    // come back one convenient class at a time unless something says no.
+    //
+    // slate-500 is fine on a white ground, so the intranet keeps it - it is a
+    // web page. Not the noticeboard: its papers run to pink and grey, and
+    // slate-500 failed on one of them, so the board's ink is slate-600 and
+    // the board is checked like every other file.
+    // slate-600 is not checked here - on the dark panels it is left only on
+    // separators, disabled controls and the vending machine's gutter, and
+    // telling those from text is a judgement, not a pattern.
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const files = ['index.html'];
+    const walk = (dir) => {
+        for (const entry of readdirSync(root + dir, { withFileTypes: true })) {
+            const p = dir + '/' + entry.name;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(svelte|js|html|css)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+    const LIGHT_GROUND = [/\/intranet\//];
+    const SMALLEST = 0.625;   // rem, 10 px at the default text size
+
+    const offenders = [];
+    for (const file of files) {
+        let src = readFileSync(root + file, 'utf8');
+        // Stylesheet comments out, for the reason given in the px check above -
+        // their line breaks kept, or every finding below one names the wrong line.
+        if (file.endsWith('.css')) src = src.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ''));
+        src.split('\n').forEach((line, i) => {
+            const at = `${file}:${i + 1}`;
+            if (!LIGHT_GROUND.some((re) => re.test(file))) {
+                for (const hit of line.matchAll(/\btext-slate-500\b/g)) offenders.push(`${at} ${hit[0]}`);
+            }
+            for (const hit of line.matchAll(/\btext-\[([\d.]+)rem\]/g)) {
+                if (Number(hit[1]) < SMALLEST) offenders.push(`${at} ${hit[0]}`);
+            }
+            for (const hit of line.matchAll(/font-size:\s*([\d.]+)rem/g)) {
+                if (Number(hit[1]) < SMALLEST) offenders.push(`${at} ${hit[0]}`);
+            }
+        });
+    }
+    assert.deepEqual(offenders, [],
+        'small print on the dark panels: slate-400 or lighter, and nothing under 10 px');
+});
+
 await ok('A flex item that wraps long words can shrink', async () => {
     // A flex item keeps min-width:auto, so it refuses to shrink below its
     // longest UNBREAKABLE word - and overflow-wrap:break-word does not lower

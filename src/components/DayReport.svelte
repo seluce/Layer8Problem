@@ -52,7 +52,7 @@
 </script>
 
 <div class="bg-slate-950 p-4 rounded-lg border border-slate-700 my-4 shadow-inner">
-    <div class="text-[0.625rem] text-slate-500 uppercase tracking-widest mb-3">
+    <div class="text-[0.625rem] text-slate-400 uppercase tracking-widest mb-3">
         {t('dayReport.title')} <span class="text-white font-bold">{diffName}</span>
     </div>
 
@@ -64,11 +64,11 @@
                 <span class="text-[0.625rem] text-slate-400">{s.label}</span>
 
                 {#if guilty === s.key}
-                    <span class="text-[0.5625rem] font-bold {s.color} mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
+                    <span class="text-[0.625rem] font-bold {s.color} mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
                 {/if}
 
                 {#if s.badge}
-                    <span class="text-[0.5rem] font-mono font-bold tracking-widest border-2 rounded-xs px-1.5 py-0.5 mt-2 inline-block {s.badge.cls}">
+                    <span class="text-[0.625rem] font-mono font-bold tracking-widest border-2 rounded-xs px-1.5 py-0.5 mt-2 inline-block {s.badge.cls}">
                         {s.badge.text}
                     </span>
                 {/if}
@@ -80,7 +80,7 @@
         <div class="mt-3 pt-3 border-t border-slate-800 text-center">
             <span class="text-purple-400 font-mono font-bold text-lg">{game.tickets}</span>
             <span class="text-[0.625rem] text-slate-400 ml-1 uppercase tracking-widest">{t('dayReport.openTickets')}</span>
-            <span class="block text-[0.5625rem] font-bold text-purple-400 mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
+            <span class="block text-[0.625rem] font-bold text-purple-400 mt-1 tracking-wider">{t('dayReport.endedHere')}</span>
         </div>
     {/if}
 </div>

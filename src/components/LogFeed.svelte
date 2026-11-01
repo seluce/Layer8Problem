@@ -30,7 +30,7 @@
 
 {#each entries as entry (entry.id)}
     <div>
-        <span class="text-slate-500">[{entry.time}]</span>
+        <span class="text-slate-400">[{entry.time}]</span>
         <span class={entry.color}>{entry.text}</span>
     </div>
 {/each}

@@ -168,7 +168,7 @@
                 <span class="lamp text-lg select-none {lampStill ? 'still' : ''}" aria-hidden="true">🔦</span>
                 <h2 id="vending-title" class="flex-1 text-sm md:text-base font-black tracking-[0.18em] uppercase text-slate-100">{V.title}</h2>
                 <button type="button" onclick={() => engine.closeVending()} aria-label={t('vending.close')}
-                        class="text-slate-500 hover:text-slate-200 px-2 py-1 transition-colors">✕</button>
+                        class="text-slate-400 hover:text-slate-200 px-2 py-1 transition-colors">✕</button>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 md:p-5 text-slate-300">
@@ -187,13 +187,13 @@
                                                    {taken === null ? 'bg-slate-900 border-slate-600/80 hover:border-slate-400 hover:bg-slate-800/70' : ''}
                                                    {taken !== null && !(taken === slot.take && firstOf(slot.take) === i) ? 'bg-slate-950 border-slate-800 opacity-40' : ''}
                                                    {taken === slot.take && firstOf(slot.take) === i ? 'bg-slate-900 border-slate-600 outline outline-1 outline-amber-500 outline-offset-2' : ''}">
-                                        <span class="text-[0.6rem] tracking-[0.16em] text-slate-400">{slot.id}{#if !slot.img && slot.sub}<span class="ml-1.5">· {slot.sub}</span>{/if}</span>
+                                        <span class="text-[0.625rem] tracking-[0.16em] text-slate-400">{slot.id}{#if !slot.img && slot.sub}<span class="ml-1.5">· {slot.sub}</span>{/if}</span>
                                         {#if slot.img}
                                             <span class="flex items-center gap-2">
                                                 <img src={slot.img} alt="" width="44" height="44" class="w-11 h-11 shrink-0 object-contain select-none">
                                                 <span class="text-[0.7rem] leading-snug text-slate-300">
                                                     {slot.name}<br>{slot.sub}<br>
-                                                    {#if slot.was}<s class="text-slate-500 mr-1.5">{slot.was}</s>{/if}{slot.price}
+                                                    {#if slot.was}<s class="text-slate-400 mr-1.5">{slot.was}</s>{/if}{slot.price}
                                                 </span>
                                             </span>
                                     {:else}
@@ -202,8 +202,8 @@
                                     </button>
                             {:else}
                                     <div class="rounded-sm border border-slate-800 bg-slate-950/70 p-2 min-h-16 flex flex-col gap-1">
-                                        <span class="text-[0.6rem] tracking-[0.16em] text-slate-600">{slot.id}</span>
-                                        <span class="text-[0.7rem] leading-snug text-slate-500">{slot.text}</span>
+                                        <span class="text-[0.625rem] tracking-[0.16em] text-slate-400">{slot.id}</span>
+                                        <span class="text-[0.7rem] leading-snug text-slate-400">{slot.text}</span>
                                     </div>
                                 {/if}
                             {/each}
@@ -213,12 +213,12 @@
                              one lit. What it was is the heading of the section below. -->
                         <div in:fade={{ delay: FOLD_MS / 2, duration: 300 }} class="grid grid-cols-6 md:grid-cols-12 gap-1">
                             {#each V.slots as slot, i (slot.id)}
-                                <span class="rounded-sm border py-1 text-center text-[0.6rem] tracking-[0.16em]
+                                <span class="rounded-sm border py-1 text-center text-[0.625rem] tracking-[0.16em]
                                              {i === firstOf(taken) ? 'border-amber-500 bg-slate-900 text-amber-400' : 'border-slate-800 bg-slate-950/70 text-slate-600'}">{slot.id}</span>
                             {/each}
                         </div>
                     {/if}
-                    <div class="mt-3 pt-2 border-t border-dashed border-slate-700/70 flex flex-wrap gap-x-4 gap-y-1 text-[0.6rem] text-slate-500">
+                    <div class="mt-3 pt-2 border-t border-dashed border-slate-700/70 flex flex-wrap gap-x-4 gap-y-1 text-[0.625rem] text-slate-400">
                         {#each V.plate as row}
                             <span><span class="text-slate-400">{row.label}</span> {row.value}</span>
                         {/each}
@@ -257,27 +257,27 @@
                     <p class="text-xs mb-3 text-slate-400">{M.drop}</p>
                     <div class="grid md:grid-cols-[16rem_1fr] gap-4 items-start">
                         <div class="relative aspect-[3/4] w-full max-w-64 mx-auto rounded-sm border border-[#2c3b57] bg-linear-to-b from-[#1f2a40] to-[#101725] p-4 flex flex-col shadow-xl">
-                            <span class="absolute top-4 right-4 text-[0.55rem] text-slate-400 text-right leading-normal">{M.cover.issue}<br>{M.cover.price}</span>
+                            <span class="absolute top-4 right-4 text-[0.625rem] text-slate-400 text-right leading-normal">{M.cover.issue}<br>{M.cover.price}</span>
                             <span class="block h-0.5 w-11 bg-[#c9a24a] mb-2.5"></span>
                             <span class="text-2xl font-black tracking-wider text-slate-100">{M.cover.title}</span>
-                            <span class="text-[0.55rem] tracking-[0.18em] uppercase text-slate-400 mt-1">{M.cover.tagline}</span>
+                            <span class="text-[0.625rem] tracking-[0.18em] uppercase text-slate-400 mt-1">{M.cover.tagline}</span>
                             <span class="mt-auto flex flex-col gap-2">
                                 <span class="text-sm font-black text-slate-100 leading-tight">{M.cover.lead}</span>
                                 {#each M.cover.lines as line}
-                                    <span class="text-[0.6rem] leading-snug text-slate-300 border-l-2 border-[#3b4a66] pl-2">{line}</span>
+                                    <span class="text-[0.625rem] leading-snug text-slate-300 border-l-2 border-[#3b4a66] pl-2">{line}</span>
                                 {/each}
                             </span>
                         </div>
                         <div class="flex flex-col gap-2.5">
                             {#each M.pages as page}
                                 <div class="rounded-sm border border-[#243149] bg-[#141d2d] px-3.5 py-3 text-xs leading-relaxed text-slate-300">
-                                    <span class="block text-[0.6rem] tracking-[0.2em] uppercase text-[#c9a24a] mb-1.5">{page.head}</span>
+                                    <span class="block text-[0.625rem] tracking-[0.2em] uppercase text-[#c9a24a] mb-1.5">{page.head}</span>
                                     {#if page.blank}<em>{page.text}</em>{:else}{page.text}{/if}
                                     {#if page.sign}<span class="block text-right text-[0.7rem] text-slate-400 mt-1">— {page.sign}</span>{/if}
                                 </div>
                             {/each}
                             <div class="rounded-sm border border-[#243149] bg-[#141d2d] px-3.5 py-3 text-xs">
-                                <span class="block text-[0.6rem] tracking-[0.2em] uppercase text-[#c9a24a] mb-1.5">{M.imprint.head}</span>
+                                <span class="block text-[0.625rem] tracking-[0.2em] uppercase text-[#c9a24a] mb-1.5">{M.imprint.head}</span>
                                 <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 text-[0.7rem]">
                                     {#each M.imprint.rows as row}
                                         <dt class="text-slate-400">{row.label}</dt>
@@ -304,11 +304,11 @@
                         {#each P.posts as post}
                             <div class="border-t border-[#c9c4b8] pt-2.5 mt-2.5">
                                 <span class="block text-xs font-black text-[#2d3138]">{post.title} <span class="copied">{post.emoji}</span></span>
-                                <span class="block text-[0.6rem] text-[#7a7f87] mb-1.5">{post.when}</span>
+                                <span class="block text-[0.625rem] text-[#7a7f87] mb-1.5">{post.when}</span>
                                 <p class="text-xs leading-relaxed">{post.text}</p>
                             </div>
                         {/each}
-                        <div class="border-t border-[#c9c4b8] mt-3 pt-2 flex flex-wrap justify-between gap-2 text-[0.6rem] text-[#7a7f87]">
+                        <div class="border-t border-[#c9c4b8] mt-3 pt-2 flex flex-wrap justify-between gap-2 text-[0.625rem] text-[#7a7f87]">
                             <span>{P.signoff} <span class="copied">{P.signoffEmoji}</span></span>
                             <span>{P.comments}</span>
                         </div>

@@ -127,13 +127,13 @@
         <div class="flex-1 min-w-0">
             <div class="flex justify-between items-baseline gap-2">
                 <span class="font-bold text-slate-100 truncate">{mail.sender}</span>
-                <span class="text-[0.625rem] text-slate-500 shrink-0">{timestamp}</span>
+                <span class="text-[0.625rem] text-slate-400 shrink-0">{timestamp}</span>
             </div>
             <div class="text-sm text-slate-300 truncate">{mail.subj}</div>
             {#if cc}
                 <div class="flex gap-2 text-[0.625rem] mt-1">
-                    <span class="w-6 text-slate-500 font-bold text-right">{t('email.cc')}</span>
-                    <span class="text-slate-500">{cc}</span>
+                    <span class="w-6 text-slate-400 font-bold text-right">{t('email.cc')}</span>
+                    <span class="text-slate-400">{cc}</span>
                 </div>
             {/if}
         </div>
@@ -155,7 +155,7 @@
                              : 'hover:bg-blue-900/30 hover:border-blue-500/50 text-slate-300 hover:text-blue-300'}">
                 <div class="flex items-center flex-1 min-w-0 mr-2">
                     <span class="mr-2 transition-colors duration-75 text-base shrink-0
-                                 {o.isDelete ? 'text-slate-600 group-hover:text-red-500' : 'text-slate-500 group-hover:text-blue-400'}">
+                                 {o.isDelete ? 'text-slate-400 group-hover:text-red-500' : 'text-slate-300 group-hover:text-blue-400'}">
                         {#if o.isDelete}
                             <img src="assets/img/ui/ui_trash.webp" alt={t('email.delete')}
                                  width="18" height="18" class="w-5 h-5 select-none"

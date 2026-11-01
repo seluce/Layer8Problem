@@ -70,7 +70,7 @@ export const inventory = {
                 // Two nested sentences, both keeping their identity: the item's
                 // own wording if it has one, otherwise the dictionary fallback
                 // naming the item.
-                this.log(this.itemCooldownLine(id, wait), "text-slate-500");
+                this.log(this.itemCooldownLine(id, wait), "text-slate-400");
                 return; // No modal, abort right away
             }
         }
@@ -267,7 +267,7 @@ export const inventory = {
         if (i === -1) return;
 
         this.state.inventory.splice(i, 1);
-        this.log({ k: 'log.item.discarded', v: { item: itemNameValue(id) } }, 'text-slate-500 italic');
+        this.log({ k: 'log.item.discarded', v: { item: itemNameValue(id) } }, 'text-slate-400 italic');
         this.updateUI();
         this.saveDay();
     },

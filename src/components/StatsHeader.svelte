@@ -45,7 +45,7 @@
     // percentage in a box of 190.
     const valveSpent = $derived(!!state.rageWarningReceived);
     const warned     = $derived(!!state.chefWarningReceived);
-    const MARK = 'shrink-0 text-[0.5rem] font-bold tracking-widest px-1 py-px rounded-sm leading-normal';
+    const MARK = 'shrink-0 text-[0.625rem] font-bold tracking-widest px-1 py-px rounded-sm leading-normal';
 
     // Pulsing is tied to the visual effects setting, same as before.
     const aggroPulse = $derived(state.visualFX && state.al >= 80 ? 'pulse-orange' : '');
@@ -96,7 +96,7 @@
          class="text-3xl lg:text-4xl font-black text-white ticket-counter {state.tickets >= TICKET_WARNING ? 'ticket-pulse' : ''}">
         {ticketText}
     </div>
-    <div class="text-[0.5rem] text-slate-500">{t('header.maxTickets')}</div>
+    <div class="text-[0.625rem] text-slate-400">{t('header.maxTickets')}</div>
 </div>
 
 <div id="stat-row-fl" class="neon-box panel-raised border-green p-2 flex flex-col justify-center col-span-2 lg:col-span-1">

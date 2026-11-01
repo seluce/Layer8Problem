@@ -40,8 +40,8 @@
         <div class="text-[0.625rem] text-slate-300 italic leading-snug">{item.flavor ?? t('item.noInfo')}</div>
         <!-- Whether an item survives being used was written down nowhere -
              you found out once it was gone. -->
-        <div class="text-[0.5625rem] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
-                    {item.quest ? 'text-amber-500' : item.passive ? 'text-indigo-300' : item.keep ? 'text-sky-400' : 'text-slate-500'}">
+        <div class="text-[0.625rem] font-mono uppercase tracking-wider mt-1.5 pt-1.5 border-t border-slate-800
+                    {item.quest ? 'text-amber-500' : item.passive ? 'text-indigo-300' : item.keep ? 'text-sky-400' : 'text-slate-400'}">
             {#if item.quest}{t('item.kind.trophy')}
             {:else if item.passive}{t('item.kind.passive')}
             {:else if item.keep}{t('item.kind.reusable')}

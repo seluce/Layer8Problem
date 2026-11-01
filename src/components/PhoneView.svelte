@@ -141,7 +141,7 @@
                             <div class="bg-blue-600 text-white px-4 py-2 rounded-2xl rounded-br-none shadow-md text-sm leading-relaxed wrap-break-word max-w-full">
                                 {text(msg)}
                             </div>
-                            <span class="text-[0.625rem] text-slate-500 mr-1 mt-0.5">{t('phone.read')}</span>
+                            <span class="text-[0.625rem] text-slate-400 mr-1 mt-0.5">{t('phone.read')}</span>
                         </div>
                     </div>
                 {/if}
@@ -200,7 +200,7 @@
                      onerror={(e) => e.currentTarget.outerHTML = '📩'}>
                 <span class="block">
                     <span class="block text-[0.625rem] font-bold">{t('phone.newMessage')}</span>
-                    <span class="block text-[0.5625rem]">{t('phone.readNow')}</span>
+                    <span class="block text-[0.625rem]">{t('phone.readNow')}</span>
                 </span>
             </button>
         {/if}

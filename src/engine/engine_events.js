@@ -336,7 +336,7 @@ export const events = {
         if (isPermanent && alreadyHas) return false;   // still discarded
 
         if (!isPermanent && normalCount >= 10) {
-            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-500 italic");
+            this.log({ k: 'log.backpackFull', v: { item: itemNameValue(itemId) } }, "text-slate-400 italic");
             return false;
         }
 
@@ -670,7 +670,7 @@ export const events = {
                 const rRef = optRef('r');
                 if (opt.ignoreEmail) {
                     setTimeout(() => this.log(rRef ?? { msg: String(opt.r) },
-                                              "text-slate-500 italic"), 500);
+                                              "text-slate-400 italic"), 500);
                 } else {
                     setTimeout(() => this.log({ k: 'log.email.reply', v: { text: rRef ?? opt.r } },
                                               "text-slate-400 italic"), 500);
@@ -1493,7 +1493,7 @@ export const events = {
             if (this.state.time < LUNCH_UNTIL) {
                 triggerLunch = true;
             } else {
-                this.log({ k: 'log.lunchMissed' }, "text-slate-500");
+                this.log({ k: 'log.lunchMissed' }, "text-slate-400");
             }
         }
 
@@ -1882,7 +1882,7 @@ export const events = {
         let pool = DB.party.filter(ev => ev.loc === loc && !this.state.usedIDs.has(ev.id));
         
         if (pool.length === 0) {
-            this.log({ k: 'party.noStation' }, "text-slate-500");
+            this.log({ k: 'party.noStation' }, "text-slate-400");
             return;
         }
         

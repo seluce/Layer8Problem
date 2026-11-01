@@ -309,7 +309,7 @@
 
     .achievement-toast .ach-label {
         display: block;
-        font-size: 0.5625rem; line-height: 1.2; letter-spacing: 0.14em;
+        font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.14em;
         text-transform: uppercase; font-weight: 700;
         color: #f59e0b;
     }
@@ -359,6 +359,12 @@
     }
 
     .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
+
+    /* The full inventory has the room the side panel lacks. At 40px a drawing
+       is recognised; at 56px it is SEEN - the wifi note's password becomes
+       legible, the argument list shows its lines. 64px added little and made
+       the window markedly bigger. The side slots stay at 40. */
+    .inv-slot.inv-slot-lg { width: 56px; height: 56px; font-size: 1.75rem; }
 
     /* THE GROUND AN ITEM STANDS ON
        The drawings are ink made for a white page, and the slots were the

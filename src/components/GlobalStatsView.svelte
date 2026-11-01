@@ -215,7 +215,7 @@
                     class="flex-1 text-[0.625rem] font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
                            {mode === m.key
                              ? `bg-slate-800 ${m.accent} ${m.border}`
-                             : 'bg-slate-900/40 text-slate-500 border-slate-700/40 hover:text-slate-300'}">
+                             : 'bg-slate-900/40 text-slate-400 border-slate-700/40 hover:text-slate-300'}">
                 {t(`stats.mode.${m.key}`)}
             </button>
         {/each}
@@ -228,7 +228,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center font-mono">
             {#each TOTALS as total (total.key)}
                 <div>
-                    <div class="text-[0.625rem] text-slate-500 uppercase tracking-widest">{t(total.label)}</div>
+                    <div class="text-[0.625rem] text-slate-400 uppercase tracking-widest">{t(total.label)}</div>
                     <div class="text-xl font-bold {total.tone}">{num(world[total.key])}</div>
                 </div>
             {/each}
@@ -251,11 +251,11 @@
 
             <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-5 border-b border-slate-700 pb-2 flex items-center justify-between">
                 <span>{t('stats.profile.title')}</span>
-                <span class="text-[0.5625rem] text-slate-500 font-normal hidden sm:inline">{t('stats.profile.marker')}</span>
+                <span class="text-[0.625rem] text-slate-400 font-normal hidden sm:inline">{t('stats.profile.marker')}</span>
             </h3>
 
             {#if !mineReady}
-                <p class="text-[0.6875rem] text-slate-500 italic mb-4">
+                <p class="text-[0.6875rem] text-slate-400 italic mb-4">
                     {t('stats.profile.none')}
                 </p>
             {/if}

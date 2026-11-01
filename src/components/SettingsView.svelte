@@ -286,11 +286,14 @@
 {/snippet}
 
 <!-- The description at a size somebody can read. It used to be ten pixels in
-     slate-500, which was the price of fitting every control on one page. -->
-{#snippet info(row, iconClass)}
-    {@render icon(row, iconClass)}
+     slate-500, which was the price of fitting every control on one page.
+     An option without effect greys its title and icon, never its words: the
+     whole card used to go to half opacity, and the note saying WHY it had no
+     effect went with it, down to a contrast of 2.3. -->
+{#snippet info(row, iconClass, off = false)}
+    {@render icon(row, off ? `${iconClass} opacity-40` : iconClass)}
     <div class="flex flex-col min-w-0">
-        <span class="text-sm font-medium text-slate-200 leading-tight">{row.title}</span>
+        <span class="text-sm font-medium {off ? 'text-slate-400' : 'text-slate-200'} leading-tight">{row.title}</span>
         <span class="text-xs text-slate-400 mt-1 leading-snug">{row.desc}</span>
     </div>
 {/snippet}
@@ -300,7 +303,7 @@
     <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
         <input type="checkbox" class="sr-only peer" aria-label={row.title} disabled={off}
                checked={row.get()} onchange={(e) => row.set(e.currentTarget.checked)}>
-        <div class={SWITCH}></div>
+        <div class="{SWITCH} {off ? 'opacity-40' : ''}"></div>
     </label>
 {/snippet}
 
@@ -309,11 +312,10 @@
     <!-- An option without effect is greyed out and says why, instead of
          silently swallowing the click. It keeps its stored value: made
          narrower again, it works as before. -->
-    <div class="flex flex-col gap-1 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50
-                {off ? 'opacity-50' : ''}">
+    <div class="flex flex-col gap-1 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
         <div class="flex justify-between items-center gap-4">
             <div class="flex items-start gap-3 flex-1 min-w-0">
-                {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+                {@render info(row, off ? 'text-base mt-0.5' : 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5', off)}
             </div>
             {@render switchInput(row)}
         </div>
@@ -336,8 +338,10 @@
             </div>
             {@render switchInput(row)}
         </div>
-        <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
-            <span class="text-[0.625rem] text-slate-500">🔈</span>
+        <!-- At full strength. It rested at half until hovered, and a phone
+             has no hover: the slider stood there greyed as if switched off. -->
+        <div class="flex items-center gap-3 mt-1 pl-9 pr-1">
+            <span class="text-[0.625rem] text-slate-400">🔈</span>
             <!-- `onchange` as well as `oninput`: a row may want to answer when
                  the slider is LET GO rather than on every step of a drag. The
                  narrator does - its sample is a whole sentence, and restarting
@@ -346,7 +350,7 @@
                    aria-label={row.levelTitle}
                    value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}
                    onchange={() => row.settled?.()}>
-            <span class="text-[0.625rem] text-slate-500">🔊</span>
+            <span class="text-[0.625rem] text-slate-400">🔊</span>
         </div>
     </div>
 {/snippet}
@@ -392,14 +396,13 @@
             <div class="flex items-start gap-3 min-w-0 col-start-1 row-start-1">
                 {@render info(row, 'text-xl opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
             </div>
-            <div class="flex items-center gap-2 col-span-2 md:col-span-1 row-start-2 md:row-start-1 md:col-start-2 pl-9 md:pl-0
-                        opacity-60 focus-within:opacity-100 hover:opacity-100 transition-opacity">
-                <span class="text-[0.625rem] text-slate-500">🔈</span>
+            <div class="flex items-center gap-2 col-span-2 md:col-span-1 row-start-2 md:row-start-1 md:col-start-2 pl-9 md:pl-0">
+                <span class="text-[0.625rem] text-slate-400">🔈</span>
                 <input type="range" min="0" max="1" step={row.step} class={SLIDER}
                        aria-label={row.levelTitle}
                        value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}
                        onchange={() => row.settled?.()}>
-                <span class="text-[0.625rem] text-slate-500">🔊</span>
+                <span class="text-[0.625rem] text-slate-400">🔊</span>
             </div>
             <div class="col-start-2 md:col-start-3 row-start-1 justify-self-end">
                 {@render switchInput(row)}
@@ -409,19 +412,19 @@
         <div class="border-t border-slate-700/60 pt-3 flex flex-col gap-2">
             <span class="text-xs font-bold text-slate-200">{t('set.narration.kinds.title')}</span>
             <span class="text-xs text-slate-400 leading-snug">{t('set.narration.kinds.desc')}</span>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1 {off ? 'opacity-50' : ''}">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 {#each KINDS as kind (kind)}
                     {@const title = t(`set.narration.kind.${kind}.title`)}
                     <div class="flex justify-between items-center gap-3 bg-slate-900/60 border border-slate-700/60 rounded-md px-3 py-2">
                         <div class="flex flex-col min-w-0">
-                            <span class="text-xs font-bold text-slate-200 leading-tight">{title}</span>
+                            <span class="text-xs font-bold {off ? 'text-slate-400' : 'text-slate-200'} leading-tight">{title}</span>
                             <span class="text-[0.6875rem] text-slate-400 mt-0.5 leading-snug">{t(`set.narration.kind.${kind}.desc`)}</span>
                         </div>
                         <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
                             <input type="checkbox" class="sr-only peer" aria-label={title} disabled={off}
                                    checked={game.narrationKinds?.[kind] !== false}
                                    onchange={(e) => engine.setNarrationKind(kind, e.currentTarget.checked)}>
-                            <div class={SWITCH}></div>
+                            <div class="{SWITCH} {off ? 'opacity-40' : ''}"></div>
                         </label>
                     </div>
                 {/each}

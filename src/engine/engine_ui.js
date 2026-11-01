@@ -451,7 +451,10 @@ export const ui = {
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
-    IDLE_CLASS: 'flex-1 flex flex-col justify-center items-center text-center opacity-40',
+    // 60, not 40: at 40 the idle screen's one instruction - "choose an action
+    // below", the first line a new player reads in the terminal - measured a
+    // contrast of 3.3. At 60 it passes and still reads as standby.
+    IDLE_CLASS: 'flex-1 flex flex-col justify-center items-center text-center opacity-60',
 
     // Back to the resting screen. `variant` picks between the plain system
     // prompt and the H.A.L.G.E.R.D. one shown during the tutorial.

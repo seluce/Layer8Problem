@@ -532,7 +532,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 260 / 20 / 46 / 17, then the same five again with --lang=en
+npm test        # 17 / 260 / 20 / 47 / 17, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -564,7 +564,7 @@ engine modules, not against dummies.
 | `week-foundation.test.mjs` | the foundation of the week module (state, transitions) |
 | `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed |
 | `dev-script.test.mjs` | every scenario of `dev-week.js` against the real engine |
-| `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER` |
+| `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER`; plus three checks on the markup itself: no type size in px, small print readable on the dark panels (slate-400 or lighter, nothing under 10px), and flex items that can shrink |
 
 Sections in `week-flow` (sorted by topic): entering the mode, clocking off, the
 weekend, the morning end check, resume, mode separation, daily quotas, items

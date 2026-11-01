@@ -71,7 +71,7 @@
             // glued-on "Min" into the English game, and still as a finished
             // sentence until 6.1.1, which froze the line in whatever language
             // it was clicked in. The engine owns the wording now.
-            else engine.log(engine.itemCooldownLine(slot.id, slot.wait), 'text-slate-500');
+            else engine.log(engine.itemCooldownLine(slot.id, slot.wait), 'text-slate-400');
             return;
         }
 

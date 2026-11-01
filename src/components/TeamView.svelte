@@ -98,7 +98,9 @@
                      no longer beside it. Side by side, four pieces of
                      information competed for the same line, and with
                      "MARKETING & FEEL GOOD" next to "HASST DICH" the name gave
-                     way - Chantal became "Chant…". Stacked, both fit. -->
+                     way - Chantal became "Chant…". Stacked, both fit, and
+                     a long role wraps rather than being cut: on a phone it
+                     ended at "MARKETING & FE…". -->
                 <div class="flex justify-between items-start gap-2 mb-1">
                     <div class="flex flex-col min-w-0">
                         <h3 class="font-bold text-white text-lg truncate flex items-center gap-1.5">
@@ -113,7 +115,7 @@
                                      onerror={(e) => e.currentTarget.outerHTML = '<span class=\'text-pink-400 text-sm\'>❖</span>'}>
                             {/if}
                         </h3>
-                        <span class="text-[0.625rem] text-slate-400 uppercase tracking-wider truncate">{member.char.role}</span>
+                        <span class="text-[0.625rem] text-slate-400 uppercase tracking-wider leading-snug">{member.char.role}</span>
                     </div>
 
                     {#if !member.player}
@@ -139,7 +141,7 @@
                     </div>
 
                     {#if member.toNext && !state.blindStats}
-                        <p class="text-[0.5625rem] text-slate-500 -mt-1 mb-1.5 font-mono">
+                        <p class="text-[0.625rem] text-slate-400 -mt-1 mb-1.5 font-mono">
                             {tf('team.toNext', { gap: member.toNext.gap, level: member.toNext.text })}
                         </p>
                     {/if}

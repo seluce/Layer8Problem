@@ -152,7 +152,7 @@
             <h1 class="text-4xl font-black {theme.title} mb-1">{title}</h1>
 
             {#if tally && isFinal}
-                <div class="text-[0.625rem] font-mono uppercase tracking-widest text-slate-500 mb-4">{tally}</div>
+                <div class="text-[0.625rem] font-mono uppercase tracking-widest text-slate-400 mb-4">{tally}</div>
             {:else}
                 <div class="mb-4"></div>
             {/if}
@@ -191,27 +191,27 @@
                      can put a day into context. -->
                 <div class="flex items-center gap-1.5 mb-3">
                     {#each ['mon','tue','wed','thu','fri'] as day, i}
-                        <span class="flex-1 text-center text-[0.5625rem] font-bold uppercase tracking-widest py-1 rounded-sm border
+                        <span class="flex-1 text-center text-[0.625rem] font-bold uppercase tracking-widest py-1 rounded-sm border
                                      {i < game.week.dayIndex
                                         ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-400'
                                         : i === game.week.dayIndex
                                           ? 'bg-slate-800 border-slate-500 text-white'
-                                          : 'bg-slate-900/40 border-slate-800 text-slate-600'}">
+                                          : 'bg-slate-900/40 border-slate-800 text-slate-400'}">
                             {t(`week.short.${day}`)}
                         </span>
                     {/each}
                 </div>
                 <div class="text-[0.625rem] uppercase tracking-widest text-purple-400 mb-2">{tf('end.carry.title', { day: nextDay })}</div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_ticket.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🎫'}>{t('stat.tickets')}</span>
-                    <span><span class="text-slate-500">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
+                    <span><span class="text-slate-400">{modal.night.ticketsBefore}</span> → <span class="{modal.night.ticketsAfter >= 3 ? 'text-red-400 font-bold' : 'text-white'}">{modal.night.ticketsAfter}</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_angry.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '😡'}>{t('stat.aggro')}</span>
-                    <span><span class="text-slate-500">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
+                    <span><span class="text-slate-400">{rnd(modal.night.alBefore)} %</span> → <span class="{rnd(modal.night.alAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.alAfter)} %</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_eye.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '📡'}>{t('stat.radar')}</span>
-                    <span><span class="text-slate-500">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
+                    <span><span class="text-slate-400">{rnd(modal.night.crBefore)} %</span> → <span class="{rnd(modal.night.crAfter) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.crAfter)} %</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_lazy.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🦥'}>{t('stat.lazy')}</span>
-                    <span><span class="text-slate-500">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
+                    <span><span class="text-slate-400">{rnd(modal.night.fl)} %</span> → <span class="{rnd(modal.night.fl) >= 50 ? 'text-amber-400 font-bold' : 'text-white'}">{rnd(modal.night.fl)} %</span></span></div>
                 <div class="flex justify-between"><span class="flex items-center gap-1.5"><img src="assets/img/ui/ui_excuse.webp" alt="" width="16" height="16" class="w-4 h-4 shrink-0 select-none" onerror={(e) => e.currentTarget.outerHTML = '🃏'}>{t('stat.excuses')}</span>
-                    <span><span class="text-slate-500">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
+                    <span><span class="text-slate-400">{modal.night.excusesBefore}</span> → <span class="text-white">{modal.night.excusesAfter}</span></span></div>
                 <!-- The line about the night itself: prose from the data tree,
                      so it arrives as a path into that tree (see queueNightEnd). -->
                 {#if sleep}
