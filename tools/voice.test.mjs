@@ -468,7 +468,7 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
         'the read-aloud key reaches through a window or under a mail');
     assert.match(read, /if \(!engine\.canReplayNarration\(\)\) return;\s*event\.preventDefault\(\);\s*engine\.replayNarration\(\);/,
         'the read-aloud key does not use the button\'s door');
-    assert.match(markup('components/KeybindView.svelte'), /\{ action: 'readAloud', label: 'keybind\.readAloud' \}/,
+    assert.match(markup('components/KeybindView.svelte'), /\{ action: 'readAloud', label: 'keybind\.readAloud'[^}]*\}/,
         'the read-aloud key cannot be rebound');
 });
 

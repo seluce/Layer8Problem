@@ -741,10 +741,11 @@ await ok('Small print stays readable on the dark panels', async () => {
     // captions among it. Both were lifted to slate-400 and 10 px, and both
     // come back one convenient class at a time unless something says no.
     //
-    // slate-500 is fine on a white ground, so the intranet keeps it - it is a
-    // web page. Not the noticeboard: its papers run to pink and grey, and
-    // slate-500 failed on one of them, so the board's ink is slate-600 and
-    // the board is checked like every other file.
+    // No exceptions. The noticeboard had one until its papers turned out to
+    // run to pink and grey, and slate-500 failed on one of them; the intranet
+    // had one on the belief that it is a white web page - it is dark like
+    // everything else, and its grey measured 3.0 on every page. Both are
+    // checked like every other file now.
     // slate-600 is not checked here - on the dark panels it is left only on
     // separators, disabled controls and the vending machine's gutter, and
     // telling those from text is a judgement, not a pattern.
@@ -760,7 +761,6 @@ await ok('Small print stays readable on the dark panels', async () => {
         }
     };
     walk('src');
-    const LIGHT_GROUND = [/\/intranet\//];
     const SMALLEST = 0.625;   // rem, 10 px at the default text size
 
     const offenders = [];
@@ -771,9 +771,7 @@ await ok('Small print stays readable on the dark panels', async () => {
         if (file.endsWith('.css')) src = src.replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, ''));
         src.split('\n').forEach((line, i) => {
             const at = `${file}:${i + 1}`;
-            if (!LIGHT_GROUND.some((re) => re.test(file))) {
-                for (const hit of line.matchAll(/\btext-slate-500\b/g)) offenders.push(`${at} ${hit[0]}`);
-            }
+            for (const hit of line.matchAll(/\btext-slate-500\b/g)) offenders.push(`${at} ${hit[0]}`);
             for (const hit of line.matchAll(/\btext-\[([\d.]+)rem\]/g)) {
                 if (Number(hit[1]) < SMALLEST) offenders.push(`${at} ${hit[0]}`);
             }
@@ -783,7 +781,7 @@ await ok('Small print stays readable on the dark panels', async () => {
         });
     }
     assert.deepEqual(offenders, [],
-        'small print on the dark panels: slate-400 or lighter, and nothing under 10 px');
+        'small print: slate-400 or lighter on the panels, darker ink on paper, nothing under 10 px');
 });
 
 await ok('Every element a component mounts into is empty in the markup', async () => {

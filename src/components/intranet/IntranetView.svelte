@@ -137,7 +137,7 @@
 
                 <footer class="max-w-6xl mx-auto mt-12 mb-6 px-4 text-center border-t border-slate-800 pt-6">
                     <button type="button" onclick={() => (pageId = 'impressum')}
-                            class="text-xs text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-widest font-bold">
+                            class="text-xs text-slate-400 hover:text-slate-300 transition-colors uppercase tracking-widest font-bold">
                         {t('intranet.footer.legal')}
                     </button>
                 </footer>

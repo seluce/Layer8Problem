@@ -224,9 +224,14 @@ document.addEventListener('keydown', (event) => {
             return;
         }
 
-        // E. Nothing open at all -> toggle the settings menu
+        // E. Nothing open at all -> toggle the settings menu. On one of its
+        // pages (settings, save game, community) Escape goes back to the
+        // tiles first: one level up, the way it leads from the statistics or
+        // the leaderboard back into the menu. It used to close the whole menu
+        // from a page, and from a window opened on that page it went back.
         if (isVisible('settings-modal')) {
-            engine.closeSettings();
+            if (engine.menuPage() !== 'menu-main-view') engine.showMenuPage('menu-main-view');
+            else engine.closeSettings();
         } else {
             engine.openSettings();
         }

@@ -40,16 +40,26 @@
             { action: 'actCall',   label: 'keybind.actCall' }
         ] },
         { id: 'answers', title: 'keybind.group.answers', rows: [
-            // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm
+            // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm, keybind.confirm.hint
             { action: 'opt1', label: 'keybind.opt1' },
             { action: 'opt2', label: 'keybind.opt2' },
             { action: 'opt3', label: 'keybind.opt3' },
-            { action: 'confirm', label: 'keybind.confirm', accent: true }
+            { action: 'confirm', label: 'keybind.confirm', hint: 'keybind.confirm.hint', accent: true }
         ] },
         { id: 'voice', title: 'set.section.narration', rows: [
-            // i18n-uses: keybind.readAloud
-            { action: 'readAloud', label: 'keybind.readAloud' }
+            // i18n-uses: keybind.readAloud, keybind.readAloud.hint
+            { action: 'readAloud', label: 'keybind.readAloud', hint: 'keybind.readAloud.hint' }
         ] }
+    ];
+
+    // The keys that cannot be moved, named where the others are - the
+    // list used to stop at the movable ones, and Escape, the menu key,
+    // appeared nowhere in it.
+    // i18n-uses: keybind.fixed.esc, keybind.fixed.more, keybind.fixed.tab
+    const FIXED = [
+        { keys: ['ESC'],          label: 'keybind.fixed.esc' },
+        { keys: ['4', '5', '6'],  label: 'keybind.fixed.more' },
+        { keys: ['TAB'],          label: 'keybind.fixed.tab' }
     ];
 
     // A section heading, the same as SettingsView's.
@@ -63,7 +73,10 @@
 
     const waiting = (action) => game.isBindingKey && game.actionToBind === action;
 
-    const BASE = 'px-4 py-2 rounded-lg font-bold text-xs uppercase min-w-[80px] transition-colors';
+    // One width for every state. With a minimum only, the button grew from
+    // 80 to 140 px while it waited for a key, and its row shifted under the
+    // pointer; this holds "PRESS A KEY..." in either language.
+    const BASE = 'w-36 shrink-0 px-2 py-2 rounded-lg font-bold text-xs uppercase transition-colors';
 
     // Same construction as the switches in SettingsView.svelte. Written out
     // rather than shared: a common constant would have to live in a .js file,
@@ -89,7 +102,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {#each group.rows as row (row.action)}
                     <div class="flex justify-between items-center gap-3 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 {row.accent ? 'border-l-2 border-l-amber-500' : ''}">
-                        <span class="text-sm font-medium text-slate-200 min-w-0">{t(row.label)}</span>
+                        <span class="flex flex-col min-w-0">
+                            <span class="text-sm font-medium text-slate-200">{t(row.label)}</span>
+                            {#if row.hint}<span class="text-xs text-slate-400 mt-0.5 leading-snug">{t(row.hint)}</span>{/if}
+                        </span>
                         <button id="bind-{row.action}" class={buttonClass(row.action)}
                                 aria-label={tf('keybind.aria', { what: t(row.label), key: shownKey(row.action) })}
                                 onclick={() => engine.startBindingKey(row.action)}>
@@ -100,6 +116,22 @@
             </div>
         </div>
     {/each}
+</div>
+
+<div class="mt-6">
+    <h3 class={HEADING}>{t('keybind.fixed.title')}</h3>
+    <ul class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {#each FIXED as item (item.label)}
+            <li class="flex items-center gap-3 bg-slate-900/40 p-3 rounded-lg border border-slate-700/40">
+                <span class="flex gap-1 shrink-0">
+                    {#each item.keys as key (key)}
+                        <kbd class="min-w-8 px-1.5 py-1 rounded-md border border-slate-600 bg-slate-800 text-slate-200 text-[0.625rem] font-bold font-mono text-center">{key}</kbd>
+                    {/each}
+                </span>
+                <span class="text-xs text-slate-300 leading-snug min-w-0">{t(item.label)}</span>
+            </li>
+        {/each}
+    </ul>
 </div>
 
 <div class="mt-6">

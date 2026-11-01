@@ -1931,6 +1931,12 @@ export const ui = {
         'menu-community-view': 'menu.community',
     },
 
+    /** Which menu page stands, or null while the menu is shut. */
+    menuPage: function() {
+        if (!this.isOverlayOpen('settings-modal')) return null;
+        return Object.keys(this.MENU_PAGES).find(id => this.isOverlayOpen(id)) ?? null;
+    },
+
     showMenuPage: function(id, focus = true) {
         if (!this.MENU_PAGES[id]) return;
         // Binding mode listens to the whole document; leaving the key list

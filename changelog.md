@@ -19,6 +19,9 @@ Settings:
 * The menu is laid out anew: coloured tiles for where you can go, and a bar below them for the ways out. The save game and the community each have a page of their own, and in the browser the menu points to the Steam version and the source code.
 * Closing the statistics, the leaderboard, the save dialogs or the feedback form now leads back to the menu instead of straight into the game. The global statistics and the feedback form come in the new look as well.
 * The team, the inventory, the excuse and the interrupted session carry the same header bar as the other windows.
+* Escape in the menu goes back one level at a time: from a window to its menu page, from a page to the tiles, from the tiles into the game.
+* The key bindings call the answers answers, explain the space bar and the read-aloud key, and list the keys that cannot be moved: Escape, 4 to 6 and Tab. A key button keeps its width while it waits for the new key.
+* Grey text in the intranet, the day and week pickers, the knowledge book and the chronicle is easier to read, and so are the "Use" and "Confirm and flee" buttons.
 
 The day to day:
 * Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
@@ -34,6 +37,7 @@ Steam:
 
 Bug fixes:
 * Resetting the settings now resets the preset for the working week as well.
+* On a phone, the licence link in the credits no longer runs off the edge.
 * The global statistics no longer say "Connecting to Steam servers..." above figures that have long arrived.
 * The signatures under the noticeboard's notes could hardly be seen - Kevin's, for one, stood near-white on yellow paper. The tear-off slips and a few other lines in pale grey are darker now too.
 * On a phone, the noticeboard's close button no longer sits on top of the title, the team no longer cuts off a long job title, and the labels in the side panel are no longer clipped at the end.

@@ -65,9 +65,9 @@
                 {#each data?.feed ?? [] as post (post.id)}
                     <div class="flex gap-4">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold shrink-0"
-                             style="background-color: {post.tone}33; color: {post.tone}">{post.initials}</div>
+                             style="background-color: {post.tone}33; color: color-mix(in srgb, {post.tone} 55%, white)">{post.initials}</div>
                         <div>
-                            <p class="font-bold text-sm text-slate-200">{post.author} <span class="text-slate-500 font-normal">{post.handle}</span></p>
+                            <p class="font-bold text-sm text-slate-200">{post.author} <span class="text-slate-400 font-normal">{post.handle}</span></p>
                             <p class="text-slate-400 text-sm mt-1">{post.text}</p>
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                         <span class="text-slate-400 text-sm">{#each page?.incidentLabel ?? [] as line, i (i)}{line}<br>{/each}</span>
                         <span class="font-black text-3xl {data.incident.days > 0 ? 'text-emerald-400' : 'text-red-400'}">{data.incident.days}</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-2 italic">{data.incident.note}</p>
+                    <p class="text-xs text-slate-400 mt-2 italic">{data.incident.note}</p>
                 </div>
             {/if}
         </div>
@@ -115,10 +115,10 @@
                     <span class="font-black text-3xl text-blue-400">{data.kpi.value}</span>
                 </div>
                 <div class="flex items-baseline justify-between gap-3 mt-1">
-                    <span class="text-slate-500 text-xs uppercase tracking-wider">{page?.kpiTargetLabel}</span>
+                    <span class="text-slate-400 text-xs uppercase tracking-wider">{page?.kpiTargetLabel}</span>
                     <span class="font-bold text-slate-400">{page?.kpiTarget}</span>
                 </div>
-                <p class="text-xs text-slate-500 mt-3 italic leading-relaxed">{data.kpi.text}</p>
+                <p class="text-xs text-slate-400 mt-3 italic leading-relaxed">{data.kpi.text}</p>
             </div>
         {/if}
     </div>

@@ -154,7 +154,7 @@
                        {cat === c.id ? c.tab : 'border-transparent text-slate-400 hover:text-slate-300'}">
                 {t(c.label)}
                 <span class="ml-1.5 tabular-nums transition-colors
-                             {unreadIn(c.id) ? 'text-slate-100 font-bold' : 'font-normal opacity-60'}">
+                             {unreadIn(c.id) ? 'text-slate-100 font-bold' : 'font-normal text-slate-400'}">
                     {countOf(c.id)}/{all.filter(e => e.cat === c.id).length}
                 </span>
             </button>

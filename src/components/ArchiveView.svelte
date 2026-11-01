@@ -463,7 +463,7 @@
     {/if}
 
     <div>
-        <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
+        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">{t('archive.section.achievements')}</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {#each achievements as row (row.ach.id)}
                 <!-- md:hover:z-50 on the ROW: opacity-60 and grayscale on a
